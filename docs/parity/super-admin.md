@@ -1207,3 +1207,14 @@ Added exact SUPER_ADMIN-scoped persisted COLLEGE module rule reader, strictly ty
 
 
 **2026-10-15 chat-6 Readiness no-filter-matches state — PARTIAL:** Readiness page now announces when a valid status/area filter yields zero checks without presenting a false ten-check zero verdict. Overall readiness and raw counts remain computed from all persisted inputs. Responsive content and source test authored; browser/PG proof pending.
+
+
+## 2026-10-28 source-only import reachability checkpoint — Super Admin (NOT ACCEPTED)
+
+Attached to **existing tenant/module, people, interview and operational families**, not a parallel tracker. Legacy FE at `9d56bb7a347b06f242ef615c19fdc298f83329e0`; selected vNext source at `7974c721b163f98ced26ada834f564922d28aba5`; discovery report `docs/audit/legacy-dev-census/2026-10-28-wave3-source-reconciliation.md`.
+
+- **Module hierarchy and access explanation:** legacy `src/pages/superadmin/sections/ModuleAccess.js:L92-L131` explains college module state versus placement-cell learner eligibility and `L165-L184` suppresses stale history on college switches. VNext `src/app/(authenticated)/admin/features/[collegeId]/page.tsx` delegates to `src/components/admin/descendant-feature-rule-editor.tsx` for inherited/explicit/locked descendant scopes. Verify all depth/role/college cases, authorization, stale asynchronous responses, persistence, audit, module-off routing and meaningful disabled states end-to-end; both implementations existing does not prove equivalence.
+- **Tenant administration:** legacy `src/pages/superadmin/sections/CollegeBranding.js`, `CollegeSignIn.js`, `CollegeSubdomain.js`, `ManageCollegeDrawer.js`, `Colleges.js`, `TenantSettings.js` and `RecruiterAccounts.js` are source-verified embedded UI, with actions that need trigger → edit/confirm/discard → authorized save → visible result checks. Preserve tenant isolation and public-join effects.
+- **Interview and readiness sections:** legacy `InterviewForm.js`, `InterviewEditForm.js`, `InterviewFeedbackForm.js`, `ReadinessGate.js` and `FeatureControlsHub.js` contain interfaces separate from the route shell. Inspect booking/edit/reschedule, feedback, negative states and underlying side effects before closing the owning families.
+
+**Source investigation only:** no PostgreSQL/browser acceptance run, no source-derived green, no replacement of the official tracker.

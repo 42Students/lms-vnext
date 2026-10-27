@@ -1,0 +1,3115 @@
+{
+  "schemaVersion": 1,
+  "type": "incremental legacy UI source inspection; not product tracker",
+  "batch": "wave3-e",
+  "sourceSnapshot": {
+    "repo": "42Students/lms2-fe",
+    "sha": "9d56bb7a347b06f242ef615c19fdc298f83329e0"
+  },
+  "parentFrontier": "2026-10-27-derived-import-frontier-post-wave2.json",
+  "method": "Pinned GitHub source reads; literal import resolution against pinned complete source tree; static JSX/control candidates only, not behavioral parity",
+  "requested": 14,
+  "read": 14,
+  "errors": 0,
+  "nodes": [
+    {
+      "path": "src/components/Quiz/quizpanel.js",
+      "sourceSha": "2dad3d95915c43473a582a2171ab228a7c2e485d",
+      "frontierSha": "2dad3d95915c43473a582a2171ab228a7c2e485d",
+      "shaMatches": true,
+      "fromFrontierIndex": 137,
+      "sourceLineCount": 1250,
+      "importedBy": [
+        "src/pages/quiz.js"
+      ],
+      "classification": "inspected-meaningful-ui-source",
+      "classificationScope": "source only; renderability and behavior unverified",
+      "imports": [
+        {
+          "line": 1,
+          "specifier": "@/utils/dateUtils",
+          "kind": "static-or-require",
+          "resolution": {
+            "path": "src/utils/dateUtils.js",
+            "sha": "9b9a8f851534932211d660504ae368cec3c6d73e"
+          }
+        },
+        {
+          "line": 2,
+          "specifier": "@/components/admin/projects/adminProjectUtils",
+          "kind": "static-or-require",
+          "resolution": {
+            "path": "src/components/admin/projects/adminProjectUtils.js",
+            "sha": "3b01a868ba1afa5102d495e2598847ddc9c01a8c"
+          }
+        },
+        {
+          "line": 3,
+          "specifier": "react",
+          "kind": "static-or-require",
+          "resolution": null
+        },
+        {
+          "line": 4,
+          "specifier": "antd",
+          "kind": "static-or-require",
+          "resolution": null
+        },
+        {
+          "line": 6,
+          "specifier": "./leftpanel",
+          "kind": "static-or-require",
+          "resolution": {
+            "path": "src/components/Quiz/leftpanel.js",
+            "sha": "c92b19acdbddfd2655dddfe4200dd4729dbf359a"
+          }
+        },
+        {
+          "line": 15,
+          "specifier": "antd",
+          "kind": "static-or-require",
+          "resolution": null
+        },
+        {
+          "line": 16,
+          "specifier": "react-redux",
+          "kind": "static-or-require",
+          "resolution": null
+        },
+        {
+          "line": 17,
+          "specifier": "interweave",
+          "kind": "static-or-require",
+          "resolution": null
+        },
+        {
+          "line": 18,
+          "specifier": "next/router",
+          "kind": "static-or-require",
+          "resolution": null
+        },
+        {
+          "line": 19,
+          "specifier": "@/api/Services/quizServices",
+          "kind": "static-or-require",
+          "resolution": {
+            "path": "src/api/Services/quizServices.js",
+            "sha": "5416eedaace3201c8dd5cd183ad7d69e8066699c"
+          }
+        },
+        {
+          "line": 20,
+          "specifier": "@/utils/authUtils",
+          "kind": "static-or-require",
+          "resolution": {
+            "path": "src/utils/authUtils.js",
+            "sha": "c79e628b23ecd93e1bb55470f48194a19e1aa007"
+          }
+        },
+        {
+          "line": 21,
+          "specifier": "@/utils/quizRoleUtils",
+          "kind": "static-or-require",
+          "resolution": {
+            "path": "src/utils/quizRoleUtils.js",
+            "sha": "702655c95a21ce7658f63f92109ba77e85028194"
+          }
+        },
+        {
+          "line": 22,
+          "specifier": "@/utils/navigationContext",
+          "kind": "static-or-require",
+          "resolution": {
+            "path": "src/utils/navigationContext.js",
+            "sha": "7b0184b438b230f52a937792680cddbe6980c198"
+          }
+        }
+      ],
+      "signals": [
+        {
+          "line": 205,
+          "type": "navigation-or-browser",
+          "excerpt": "router.replace({"
+        },
+        {
+          "line": 268,
+          "type": "navigation-or-browser",
+          "excerpt": "window.sessionStorage.setItem(key, JSON.stringify(value));"
+        },
+        {
+          "line": 276,
+          "type": "navigation-or-browser",
+          "excerpt": "const raw = window.sessionStorage.getItem(key);"
+        },
+        {
+          "line": 286,
+          "type": "navigation-or-browser",
+          "excerpt": "window.sessionStorage.removeItem(key);"
+        },
+        {
+          "line": 308,
+          "type": "navigation-or-browser",
+          "excerpt": "const mql = typeof window !== \"undefined\" ? window.matchMedia(\"(max-width: 767px)\") : null;"
+        },
+        {
+          "line": 386,
+          "type": "navigation-or-browser",
+          "excerpt": "router.replace({"
+        },
+        {
+          "line": 463,
+          "type": "navigation-or-browser",
+          "excerpt": "router.push({ pathname: \"/learn/allQuizzes\" });"
+        },
+        {
+          "line": 540,
+          "type": "jsx",
+          "excerpt": "icon: <CheckCircleOutlined style={{ color: \"green\" }} />,"
+        },
+        {
+          "line": 550,
+          "type": "navigation-or-browser",
+          "excerpt": "if (isEmbeddedRoadmap && typeof window !== \"undefined\" && window.parent !== window) {"
+        },
+        {
+          "line": 551,
+          "type": "navigation-or-browser",
+          "excerpt": "window.parent.postMessage({ type: \"closeRoadmapQuiz\" }, window.location.origin);"
+        },
+        {
+          "line": 554,
+          "type": "navigation-or-browser",
+          "excerpt": "router.replace(successfulSubmitReturn);"
+        },
+        {
+          "line": 563,
+          "type": "jsx",
+          "excerpt": "icon: <ExclamationCircleOutlined style={{ color: \"red\" }} />,"
+        },
+        {
+          "line": 572,
+          "type": "navigation-or-browser",
+          "excerpt": "try { window.sessionStorage.removeItem(ssKey(\"submitLock\")); } catch {}"
+        },
+        {
+          "line": 590,
+          "type": "navigation-or-browser",
+          "excerpt": "if (typeof window !== \"undefined\" && window.parent !== window) {"
+        },
+        {
+          "line": 591,
+          "type": "navigation-or-browser",
+          "excerpt": "window.parent.postMessage({ type: \"closeRoadmapQuiz\" }, window.location.origin);"
+        },
+        {
+          "line": 595,
+          "type": "navigation-or-browser",
+          "excerpt": "if (typeof window !== \"undefined\" && window.history.length > 1) {"
+        },
+        {
+          "line": 598,
+          "type": "navigation-or-browser",
+          "excerpt": "router.push({ pathname: \"/learn/allQuizzes\" });"
+        },
+        {
+          "line": 658,
+          "type": "jsx",
+          "excerpt": "<div className={`d-md-flex h-100 ln-quiz-page${isEmbeddedRoadmap ? \" ln-quiz-page--embedded\" : \"\"}`}>"
+        },
+        {
+          "line": 660,
+          "type": "jsx",
+          "excerpt": "<div className=\"ln-quiz-left-panel\">"
+        },
+        {
+          "line": 678,
+          "type": "jsx",
+          "excerpt": "<Empty description=\"Loading quiz...\" />"
+        },
+        {
+          "line": 680,
+          "type": "jsx",
+          "excerpt": "<Empty description=\"Open the quiz from the syllabus or quiz list.\" />"
+        },
+        {
+          "line": 684,
+          "type": "jsx",
+          "excerpt": "<div className=\"alert alert-info mb-3\" role=\"alert\">"
+        },
+        {
+          "line": 686,
+          "type": "interactive-prop,navigation-or-browser,jsx",
+          "excerpt": "<Button type=\"link\" onClick={() => router.push({ pathname: \"/learn/allQuizzes\" })}>"
+        },
+        {
+          "line": 692,
+          "type": "jsx",
+          "excerpt": "<div className=\"ln-quiz-teacher-preview\">"
+        },
+        {
+          "line": 693,
+          "type": "jsx",
+          "excerpt": "<div className=\"ln-quiz-teacher-preview__head\">"
+        },
+        {
+          "line": 694,
+          "type": "jsx",
+          "excerpt": "<div className=\"ln-quiz-teacher-preview__nav\">"
+        },
+        {
+          "line": 695,
+          "type": "interactive-prop,jsx",
+          "excerpt": "<Button type=\"default\" onClick={() => router.back()}>"
+        },
+        {
+          "line": 701,
+          "type": "interactive-prop,jsx",
+          "excerpt": "<Button type=\"primary\" icon={<TeamOutlined aria-hidden />} onClick={openSubmissions}>"
+        },
+        {
+          "line": 707,
+          "type": "jsx",
+          "excerpt": "icon={<BarChartOutlined aria-hidden />}"
+        },
+        {
+          "line": 708,
+          "type": "interactive-prop,navigation-or-browser",
+          "excerpt": "onClick={() => router.push({ pathname: \"/teacher/report/quiz/[quizId]\", query: { quizId } })}"
+        },
+        {
+          "line": 716,
+          "type": "jsx",
+          "excerpt": "<div className=\"ln-quiz-teacher-preview__list\">"
+        },
+        {
+          "line": 724,
+          "type": "jsx",
+          "excerpt": "<div key={question?.id ?? index} className=\"ln-quiz-teacher-preview__card\">"
+        },
+        {
+          "line": 725,
+          "type": "jsx",
+          "excerpt": "<div className=\"ln-quiz-teacher-preview__meta\">"
+        },
+        {
+          "line": 729,
+          "type": "jsx",
+          "excerpt": "<div className=\"ln-quiz-teacher-preview__question\">"
+        },
+        {
+          "line": 736,
+          "type": "jsx",
+          "excerpt": "<div className=\"ln-quiz-teacher-preview__answers\">"
+        },
+        {
+          "line": 753,
+          "type": "jsx",
+          "excerpt": "<div className=\"ln-quiz-teacher-preview\">"
+        },
+        {
+          "line": 754,
+          "type": "jsx",
+          "excerpt": "<div className=\"ln-quiz-teacher-preview__head\">"
+        },
+        {
+          "line": 755,
+          "type": "jsx",
+          "excerpt": "<div className=\"ln-quiz-teacher-preview__nav\">"
+        },
+        {
+          "line": 758,
+          "type": "interactive-prop",
+          "excerpt": "onClick={() => {"
+        },
+        {
+          "line": 759,
+          "type": "navigation-or-browser",
+          "excerpt": "if (isEmbeddedRoadmap && typeof window !== \"undefined\" && window.parent !== window) {"
+        },
+        {
+          "line": 760,
+          "type": "navigation-or-browser",
+          "excerpt": "window.parent.postMessage({ type: \"closeRoadmapQuiz\" }, window.location.origin);"
+        },
+        {
+          "line": 763,
+          "type": "navigation-or-browser",
+          "excerpt": "router.push({ pathname: \"/learn/allQuizzes\" });"
+        },
+        {
+          "line": 779,
+          "type": "jsx",
+          "excerpt": "<div className=\"ln-quiz-review-summary ln-quiz-review-summary--hero\">"
+        },
+        {
+          "line": 780,
+          "type": "jsx",
+          "excerpt": "<div className=\"ln-quiz-review-summary__metric\">"
+        },
+        {
+          "line": 791,
+          "type": "jsx",
+          "excerpt": "<div className=\"ln-quiz-review-summary__metric\">"
+        },
+        {
+          "line": 796,
+          "type": "jsx",
+          "excerpt": "<div className=\"ln-quiz-review-summary__metric\">"
+        },
+        {
+          "line": 802,
+          "type": "jsx",
+          "excerpt": "<div className=\"ln-quiz-review-summary__metric\">"
+        },
+        {
+          "line": 808,
+          "type": "jsx",
+          "excerpt": "<div className=\"ln-quiz-review-summary__metric\">"
+        },
+        {
+          "line": 815,
+          "type": "jsx",
+          "excerpt": "<div className=\"ln-quiz-teacher-preview__list\">"
+        },
+        {
+          "line": 828,
+          "type": "jsx",
+          "excerpt": "<div key={question?.id ?? index} className=\"ln-quiz-teacher-preview__card\">"
+        },
+        {
+          "line": 829,
+          "type": "jsx",
+          "excerpt": "<div className=\"ln-quiz-teacher-preview__meta\">"
+        },
+        {
+          "line": 830,
+          "type": "jsx",
+          "excerpt": "<div className=\"ln-quiz-teacher-preview__meta-main\">"
+        },
+        {
+          "line": 832,
+          "type": "jsx",
+          "excerpt": "<Tag color={reviewMeta?.notAttempted ? \"default\" : questionState === \"correct\" ? \"green\" : questionState === \"incorrect\" ? \"red\" : \"default\"}>"
+        },
+        {
+          "line": 846,
+          "type": "jsx",
+          "excerpt": "<div className=\"ln-quiz-teacher-preview__question\">"
+        },
+        {
+          "line": 853,
+          "type": "jsx",
+          "excerpt": "<div className=\"ln-quiz-teacher-preview__answers\">"
+        },
+        {
+          "line": 863,
+          "type": "jsx",
+          "excerpt": "<div className=\"ln-quiz-teacher-preview__option-copy\">"
+        },
+        {
+          "line": 867,
+          "type": "jsx",
+          "excerpt": "<div className=\"ln-quiz-teacher-preview__badges\">"
+        },
+        {
+          "line": 868,
+          "type": "jsx",
+          "excerpt": "{isSelected ? <Tag color=\"geekblue\">Your answer</Tag> : null}"
+        },
+        {
+          "line": 869,
+          "type": "jsx",
+          "excerpt": "{isCorrect ? <Tag color=\"green\">Correct</Tag> : null}"
+        },
+        {
+          "line": 870,
+          "type": "jsx",
+          "excerpt": "{isWrongSelection ? <Tag color=\"red\">Incorrect</Tag> : null}"
+        },
+        {
+          "line": 883,
+          "type": "jsx",
+          "excerpt": "<div className=\"ln-quiz-progress-bar ln-quiz-attempt-header pb-md-4 pb-lg-3 w-100\">"
+        },
+        {
+          "line": 890,
+          "type": "jsx",
+          "excerpt": "<div className=\"d-flex align-items-center justify-content-between\">"
+        },
+        {
+          "line": 891,
+          "type": "jsx",
+          "excerpt": "<div className=\"ln-quiz-step-num clrgray7AE\">"
+        },
+        {
+          "line": 906,
+          "type": "jsx",
+          "excerpt": "<div className=\"d-flex align-items-center ln-quiz-header-actions\">"
+        },
+        {
+          "line": 911,
+          "type": "interactive-prop",
+          "excerpt": "onClick={() => setIsStatusOpen(true)}"
+        },
+        {
+          "line": 921,
+          "type": "jsx",
+          "excerpt": "icon={<ArrowLeftOutlined />}"
+        },
+        {
+          "line": 922,
+          "type": "interactive-prop",
+          "excerpt": "onClick={showModal}"
+        },
+        {
+          "line": 933,
+          "type": "jsx",
+          "excerpt": "icon={<CloseOutlined />}"
+        },
+        {
+          "line": 934,
+          "type": "interactive-prop",
+          "excerpt": "onClick={showModal}"
+        },
+        {
+          "line": 945,
+          "type": "jsx",
+          "excerpt": "<div className=\"ln-quiz-body mt-lg-4 col-12 col-md-8 pe-3 ln-quiz-body-scroll\">"
+        },
+        {
+          "line": 946,
+          "type": "jsx",
+          "excerpt": "<div className=\"ln-quiz\">"
+        },
+        {
+          "line": 947,
+          "type": "jsx",
+          "excerpt": "<div className=\"ln-quiz__item\">"
+        },
+        {
+          "line": 959,
+          "type": "jsx",
+          "excerpt": "<div key={i} className=\"ln-quiz-question-card\">"
+        },
+        {
+          "line": 960,
+          "type": "overlay-or-complex-control",
+          "excerpt": "<Form"
+        },
+        {
+          "line": 975,
+          "type": "overlay-or-complex-control",
+          "excerpt": "<Form.Item"
+        },
+        {
+          "line": 986,
+          "type": "jsx",
+          "excerpt": "<div className=\"ln-quiz-form-item-content\">"
+        },
+        {
+          "line": 988,
+          "type": "jsx",
+          "excerpt": "<div>"
+        },
+        {
+          "line": 991,
+          "type": "interactive-prop",
+          "excerpt": "onChange={Answered}"
+        },
+        {
+          "line": 994,
+          "type": "jsx",
+          "excerpt": "<div className=\"d-flex flex-wrap justify-content-between ln-quiz-radio-group\">"
+        },
+        {
+          "line": 997,
+          "type": "jsx",
+          "excerpt": "<div key={x} className=\"col-12 col-md-6 mb-4 ln-quiz-radio-group__item\">"
+        },
+        {
+          "line": 1014,
+          "type": "jsx",
+          "excerpt": "<div>"
+        },
+        {
+          "line": 1020,
+          "type": "interactive-prop",
+          "excerpt": "onChange={e => {"
+        },
+        {
+          "line": 1041,
+          "type": "jsx",
+          "excerpt": "<div>"
+        },
+        {
+          "line": 1046,
+          "type": "interactive-prop",
+          "excerpt": "onChange={Answered}"
+        },
+        {
+          "line": 1055,
+          "type": "jsx",
+          "excerpt": "<div>"
+        },
+        {
+          "line": 1060,
+          "type": "interactive-prop",
+          "excerpt": "onChange={Answered}"
+        },
+        {
+          "line": 1078,
+          "type": "jsx",
+          "excerpt": "<div className=\"ln-quiz-footer ln-quiz-navigation-footer mt-auto pe-3 ln-quiz-footer-actions\">"
+        },
+        {
+          "line": 1080,
+          "type": "overlay-or-complex-control,jsx",
+          "excerpt": "<Form.Item>"
+        },
+        {
+          "line": 1093,
+          "type": "interactive-prop",
+          "excerpt": "onClick={PreviousStep}"
+        },
+        {
+          "line": 1102,
+          "type": "interactive-prop",
+          "excerpt": "onClick={submits}"
+        }
+      ],
+      "signalCount": 106,
+      "computedImportRequiresReview": false
+    },
+    {
+      "path": "src/components/recruiter/RecruiterNotificationBell.jsx",
+      "sourceSha": "63644885dfa24263be16dc46088609f8f480bb33",
+      "frontierSha": "63644885dfa24263be16dc46088609f8f480bb33",
+      "shaMatches": true,
+      "fromFrontierIndex": 139,
+      "sourceLineCount": 188,
+      "importedBy": [
+        "src/components/recruiter/RecruiterTopBar.jsx"
+      ],
+      "classification": "inspected-meaningful-ui-source",
+      "classificationScope": "source only; renderability and behavior unverified",
+      "imports": [
+        {
+          "line": 1,
+          "specifier": "react",
+          "kind": "static-or-require",
+          "resolution": null
+        },
+        {
+          "line": 2,
+          "specifier": "antd",
+          "kind": "static-or-require",
+          "resolution": null
+        },
+        {
+          "line": 3,
+          "specifier": "@ant-design/icons",
+          "kind": "static-or-require",
+          "resolution": null
+        },
+        {
+          "line": 4,
+          "specifier": "@/utils/placementDateTime",
+          "kind": "static-or-require",
+          "resolution": {
+            "path": "src/utils/placementDateTime.js",
+            "sha": "aa4262262aa93130a2450be8cde2591bfe02e7cd"
+          }
+        },
+        {
+          "line": 5,
+          "specifier": "@/api/Services/RecruiterService",
+          "kind": "static-or-require",
+          "resolution": {
+            "path": "src/api/Services/RecruiterService.js",
+            "sha": "3263f12ec07a3a3f904d48f0bedcf0ddf9a4b4a4"
+          }
+        },
+        {
+          "line": 6,
+          "specifier": "@/components/Common/Skeletons",
+          "kind": "static-or-require",
+          "resolution": {
+            "path": "src/components/Common/Skeletons.jsx",
+            "sha": "19ff7bc7317232a96a7217df406eaa8082567704"
+          }
+        },
+        {
+          "line": 7,
+          "specifier": "@/components/Common/PanelStates",
+          "kind": "static-or-require",
+          "resolution": {
+            "path": "src/components/Common/PanelStates.jsx",
+            "sha": "9e7522f07545b772ee8b5f6ae0b68e2c8bea1a92"
+          }
+        }
+      ],
+      "signals": [
+        {
+          "line": 117,
+          "type": "jsx",
+          "excerpt": "<Badge count={unread} size=\"small\" offset={[-2, 2]}>"
+        },
+        {
+          "line": 118,
+          "type": "interactive-prop,jsx",
+          "excerpt": "<Button className=\"recruiter-bell__button\" icon={<BellOutlined aria-hidden=\"true\" />} onClick={() => (open ? setOpen(false) : openDrawer())} aria-expanded={open} aria-label={unread"
+        },
+        {
+          "line": 121,
+          "type": "jsx",
+          "excerpt": "<div className=\"recruiter-bell__panel tpo-bellpop\" ref={popRef} role=\"dialog\" aria-label=\"Notifications\">"
+        },
+        {
+          "line": 122,
+          "type": "interactive-prop,jsx",
+          "excerpt": "<div className=\"tpo-bellpop__head\"><strong>Notifications</strong>{(unread > 0 || hiddenUnread > 0) && <Button size=\"small\" onClick={retryMarkRead}>Mark all read</Button>}</div>"
+        },
+        {
+          "line": 123,
+          "type": "jsx",
+          "excerpt": "<div className=\"tpo-bellpop__body\">"
+        },
+        {
+          "line": 125,
+          "type": "interactive-prop,jsx",
+          "excerpt": "<Alert type=\"warning\" showIcon message=\"Notifications loaded, but read status could not be saved\" action={<Button size=\"small\" onClick={retryMarkRead}>Retry</Button>} style={{ marg"
+        },
+        {
+          "line": 135,
+          "type": "jsx",
+          "excerpt": "<ListSkeleton rows={4} avatar={false} label=\"Loading recruiter notifications\" />"
+        },
+        {
+          "line": 138,
+          "type": "jsx",
+          "excerpt": "{loading && <RefreshStatus label=\"Refreshing notifications…\" />}"
+        },
+        {
+          "line": 149,
+          "type": "jsx",
+          "excerpt": "<div className=\"tpo-bell-panel__older\" data-testid=\"recruiter.bell.older-unread\">"
+        },
+        {
+          "line": 164,
+          "type": "jsx",
+          "excerpt": "<button type=\"button\" className={`tpo-bell-panel__item${n.isNew ? \" is-new\" : \"\"}`} disabled={!n.link}"
+        },
+        {
+          "line": 165,
+          "type": "interactive-prop",
+          "excerpt": "onClick={() => { setOpen(false); onNavigate?.(n.link); }}>"
+        }
+      ],
+      "signalCount": 11,
+      "computedImportRequiresReview": false
+    },
+    {
+      "path": "src/components/tpo/AddToDriveModal.jsx",
+      "sourceSha": "24ea1480d1533d050291b72dea5a282cf5ceb7b2",
+      "frontierSha": "24ea1480d1533d050291b72dea5a282cf5ceb7b2",
+      "shaMatches": true,
+      "fromFrontierIndex": 141,
+      "sourceLineCount": 123,
+      "importedBy": [
+        "src/pages/tpo/students/index.js"
+      ],
+      "classification": "inspected-meaningful-ui-source",
+      "classificationScope": "source only; renderability and behavior unverified",
+      "imports": [
+        {
+          "line": 1,
+          "specifier": "react",
+          "kind": "static-or-require",
+          "resolution": null
+        },
+        {
+          "line": 2,
+          "specifier": "antd",
+          "kind": "static-or-require",
+          "resolution": null
+        },
+        {
+          "line": 3,
+          "specifier": "@/api/Services/AdminService",
+          "kind": "static-or-require",
+          "resolution": {
+            "path": "src/api/Services/AdminService.js",
+            "sha": "598533e1ce238bbcd917c6f6b6df0e83d8f316c6"
+          }
+        },
+        {
+          "line": 4,
+          "specifier": "@/api/Services/TpoService",
+          "kind": "static-or-require",
+          "resolution": {
+            "path": "src/api/Services/TpoService.js",
+            "sha": "e1977d86ba95f28058265b0e3fff280ecc32e888"
+          }
+        },
+        {
+          "line": 5,
+          "specifier": "@/components/tpo/tpoFiles",
+          "kind": "static-or-require",
+          "resolution": {
+            "path": "src/components/tpo/tpoFiles.js",
+            "sha": "b1b89501d023f13b87af99a521a2b19c3fb9f51d"
+          }
+        },
+        {
+          "line": 6,
+          "specifier": "@/components/tpo/ui/journeyRules",
+          "kind": "static-or-require",
+          "resolution": {
+            "path": "src/components/tpo/ui/journeyRules.js",
+            "sha": "13b506b418fb05aea3623f1d1e77985e6880edbb"
+          }
+        }
+      ],
+      "signals": [
+        {
+          "line": 38,
+          "type": "interactive-prop",
+          "excerpt": "const reasonOk = !force || reason.trim().length >= 3;"
+        },
+        {
+          "line": 70,
+          "type": "overlay-or-complex-control",
+          "excerpt": "Modal.confirm({"
+        },
+        {
+          "line": 82,
+          "type": "overlay-or-complex-control",
+          "excerpt": "<Modal"
+        },
+        {
+          "line": 85,
+          "type": "interactive-prop",
+          "excerpt": "onCancel={requestClose}"
+        },
+        {
+          "line": 90,
+          "type": "interactive-prop,jsx",
+          "excerpt": "footer={result ? <Button type=\"primary\" onClick={onClose}>Done</Button> : ("
+        },
+        {
+          "line": 91,
+          "type": "jsx",
+          "excerpt": "<Space>"
+        },
+        {
+          "line": 92,
+          "type": "interactive-prop,jsx",
+          "excerpt": "<Button onClick={requestClose} disabled={busy}>Cancel</Button>"
+        },
+        {
+          "line": 93,
+          "type": "interactive-prop,jsx",
+          "excerpt": "<Button type=\"primary\" loading={busy} disabled={busy || !jobId || tooMany || !reasonOk} onClick={submit}>"
+        },
+        {
+          "line": 100,
+          "type": "jsx",
+          "excerpt": "<div data-testid=\"add-to-drive.result\">"
+        },
+        {
+          "line": 101,
+          "type": "jsx",
+          "excerpt": "<Alert type={result.added ? \"success\" : \"warning\"} showIcon message={`${result.added} added, ${result.skipped} skipped`}"
+        },
+        {
+          "line": 103,
+          "type": "jsx",
+          "excerpt": "{skipped.length > 0 && <List size=\"small\" style={{ marginTop: 12 }} header=\"Not added\" dataSource={skipped}"
+        },
+        {
+          "line": 104,
+          "type": "jsx",
+          "excerpt": "renderItem={(r) => <List.Item><span>{nameOf(r.learnerId)}</span><Typography.Text type=\"secondary\">{r.message}</Typography.Text></List.Item>} />}"
+        },
+        {
+          "line": 107,
+          "type": "jsx",
+          "excerpt": "<Space direction=\"vertical\" size={12} style={{ width: \"100%\" }}>"
+        },
+        {
+          "line": 108,
+          "type": "jsx",
+          "excerpt": "{error && <Alert type=\"error\" showIcon message={error} />}"
+        },
+        {
+          "line": 109,
+          "type": "jsx",
+          "excerpt": "{tooMany && <Alert type=\"warning\" showIcon message={`Pick at most ${MAX} students at a time.`} />}"
+        },
+        {
+          "line": 110,
+          "type": "jsx",
+          "excerpt": "{drives && drives.length === 0 && !error ? <Empty description=\"No drive is open for applications. Publish one first.\" /> : ("
+        },
+        {
+          "line": 111,
+          "type": "overlay-or-complex-control,interactive-prop,jsx",
+          "excerpt": "<Select style={{ width: \"100%\" }} showSearch placeholder=\"Choose an open drive\" loading={!drives} value={jobId} onChange={setJobId} optionFilterProp=\"label\""
+        },
+        {
+          "line": 114,
+          "type": "jsx",
+          "excerpt": "{jobId && alreadyOn.length > 0 && <Alert type=\"info\" showIcon message={`${alreadyOn.length} of them already applied to this drive. They will be skipped.`} />}"
+        },
+        {
+          "line": 115,
+          "type": "jsx",
+          "excerpt": "{jobId && <Typography.Text type=\"secondary\">Students who are debarred or from another college are always skipped. Anyone not eligible is skipped too, unless you add them on purpose"
+        },
+        {
+          "line": 116,
+          "type": "interactive-prop,jsx",
+          "excerpt": "{jobId && <Checkbox checked={force} onChange={(e) => setForce(e.target.checked)}>Add students who are not eligible anyway</Checkbox>}"
+        },
+        {
+          "line": 117,
+          "type": "interactive-prop,jsx",
+          "excerpt": "{jobId && force && <Input.TextArea rows={2} value={reason} onChange={(e) => setReason(e.target.value)} placeholder=\"Why (kept in the audit log and shown to the company as: Added by"
+        }
+      ],
+      "signalCount": 21,
+      "computedImportRequiresReview": false
+    },
+    {
+      "path": "src/components/tpo/batches/DecidePanel.jsx",
+      "sourceSha": "534f58315fbc9b5638606f86747a6d8757888bef",
+      "frontierSha": "534f58315fbc9b5638606f86747a6d8757888bef",
+      "shaMatches": true,
+      "fromFrontierIndex": 143,
+      "sourceLineCount": 142,
+      "importedBy": [
+        "src/pages/tpo/batches/index.js"
+      ],
+      "classification": "inspected-meaningful-ui-source",
+      "classificationScope": "source only; renderability and behavior unverified",
+      "imports": [
+        {
+          "line": 1,
+          "specifier": "react",
+          "kind": "static-or-require",
+          "resolution": null
+        },
+        {
+          "line": 2,
+          "specifier": "antd",
+          "kind": "static-or-require",
+          "resolution": null
+        },
+        {
+          "line": 3,
+          "specifier": "@ant-design/icons",
+          "kind": "static-or-require",
+          "resolution": null
+        },
+        {
+          "line": 4,
+          "specifier": "@/components/tpo/dj",
+          "kind": "static-or-require",
+          "resolution": {
+            "path": "src/components/tpo/dj.js",
+            "sha": "09399d1614ffde9593c34d5f880680bf5b485d92"
+          }
+        },
+        {
+          "line": 5,
+          "specifier": "@/api/Services/AdminService",
+          "kind": "static-or-require",
+          "resolution": {
+            "path": "src/api/Services/AdminService.js",
+            "sha": "598533e1ce238bbcd917c6f6b6df0e83d8f316c6"
+          }
+        },
+        {
+          "line": 6,
+          "specifier": "@/api/Services/BatchesService",
+          "kind": "static-or-require",
+          "resolution": {
+            "path": "src/api/Services/BatchesService.js",
+            "sha": "40436af84d56c1ce1dc087cddce627ad3dbd78d7"
+          }
+        },
+        {
+          "line": 7,
+          "specifier": "@/components/tpo/ui/rollParser",
+          "kind": "static-or-require",
+          "resolution": {
+            "path": "src/components/tpo/ui/rollParser.js",
+            "sha": "0869a50d9af04c831eb583c1ba15ed961e522611"
+          }
+        },
+        {
+          "line": 8,
+          "specifier": "./batchRules",
+          "kind": "static-or-require",
+          "resolution": {
+            "path": "src/components/tpo/batches/batchRules.js",
+            "sha": "16156886a6ef7320fa6f5befbd2a450df1522055"
+          }
+        }
+      ],
+      "signals": [
+        {
+          "line": 83,
+          "type": "jsx",
+          "excerpt": "<div className=\"tpo-rsp__head\">"
+        },
+        {
+          "line": 84,
+          "type": "jsx",
+          "excerpt": "<div className=\"tpo-co-panel__title\"><strong>Decide {batch.name}</strong><span className=\"tpo-rsp__muted\">{plural(Number(batch.notDecided) || 0, \"student\", \"students\")} not decided"
+        },
+        {
+          "line": 85,
+          "type": "interactive-prop,jsx",
+          "excerpt": "<Button type=\"text\" icon={<CloseOutlined />} onClick={onClose} aria-label=\"Close\" />"
+        },
+        {
+          "line": 87,
+          "type": "jsx",
+          "excerpt": "{error ? <Alert type=\"error\" showIcon message={error} /> : !info || !students ? <Skeleton active paragraph={{ rows: 6 }} /> : ("
+        },
+        {
+          "line": 89,
+          "type": "interactive-prop,jsx",
+          "excerpt": "<div className=\"tpo-decide__summary\">{summary} <button type=\"button\" className=\"tpo-link-btn\" onClick={() => setChanging((x) => !x)}>{changing ? \"Done\" : \"Change\"}</button></div>"
+        },
+        {
+          "line": 91,
+          "type": "jsx",
+          "excerpt": "<div className=\"tpo-decide__switches\">"
+        },
+        {
+          "line": 92,
+          "type": "jsx",
+          "excerpt": "<div className=\"tpo-decide__switch\"><strong>The whole batch</strong>"
+        },
+        {
+          "line": 93,
+          "type": "interactive-prop,jsx",
+          "excerpt": "<span className=\"tpo-seg\"><button type=\"button\" className={batchIn ? \"is-on\" : \"\"} onClick={() => setBatchIn(true)}>In</button><button type=\"button\" className={!batchIn ? \"is-on is"
+        },
+        {
+          "line": 95,
+          "type": "jsx",
+          "excerpt": "<div key={c.classId} className=\"tpo-decide__switch is-class\">"
+        },
+        {
+          "line": 97,
+          "type": "interactive-prop,jsx",
+          "excerpt": "<span className=\"tpo-seg\"><button type=\"button\" className={classIn(c) ? \"is-on\" : \"\"} onClick={() => setClassSet({ ...classSet, [c.classId]: true })}>In</button><button type=\"butto"
+        },
+        {
+          "line": 104,
+          "type": "interactive-prop,jsx",
+          "excerpt": "<div className=\"tpo-decide__head\"><strong>Except these students</strong><button type=\"button\" className=\"tpo-link-btn\" onClick={() => setPasting((x) => !x)}>{pasting ? \"Hide\" : \"Pa"
+        },
+        {
+          "line": 106,
+          "type": "jsx",
+          "excerpt": "<div className=\"tpo-decide__paste\">"
+        },
+        {
+          "line": 107,
+          "type": "interactive-prop,jsx",
+          "excerpt": "<Input.TextArea rows={3} value={pasteText} onChange={(e) => setPasteText(e.target.value)} aria-label=\"Roll numbers\" placeholder=\"Paste roll numbers from the HoD's list, one per lin"
+        },
+        {
+          "line": 108,
+          "type": "jsx",
+          "excerpt": "<div className=\"tpo-decide__paste-foot\"><span className=\"tpo-rsp__muted\">{tokens.length ? `${matched.length} of ${tokens.length} found in this batch${tokens.length > matched.length"
+        },
+        {
+          "line": 109,
+          "type": "interactive-prop,jsx",
+          "excerpt": "<Button size=\"small\" disabled={!matched.length} onClick={() => { setOut({ ...out, ...Object.fromEntries(matched.map((s) => [String(s.learnerId), out[s.learnerId] || INELIGIBLE_REAS"
+        },
+        {
+          "line": 112,
+          "type": "interactive-prop,jsx",
+          "excerpt": "<Input allowClear value={q} onChange={(e) => setQ(e.target.value)} placeholder=\"Find by name or roll number\" aria-label=\"Find a student\" />"
+        },
+        {
+          "line": 113,
+          "type": "jsx",
+          "excerpt": "<div className=\"tpo-decide__list\">"
+        },
+        {
+          "line": 116,
+          "type": "jsx",
+          "excerpt": "<div key={g.c.classId}>"
+        },
+        {
+          "line": 117,
+          "type": "jsx",
+          "excerpt": "<div className=\"tpo-decide__group\">{g.c.name} · {g.items.length}</div>"
+        },
+        {
+          "line": 122,
+          "type": "jsx",
+          "excerpt": "<div key={id} className={`tpo-decide__row${isOut ? \" is-out\" : \"\"}`}>"
+        },
+        {
+          "line": 123,
+          "type": "interactive-prop,jsx",
+          "excerpt": "<Checkbox checked={isOut} onChange={() => { const n = { ...out }; if (isOut) delete n[id]; else n[id] = INELIGIBLE_REASONS[0]; setOut(n); }} aria-label={`Leave ${s.name} out`} />"
+        },
+        {
+          "line": 125,
+          "type": "overlay-or-complex-control,interactive-prop,jsx",
+          "excerpt": "{isOut && <Select size=\"small\" value={out[id]} onChange={(v) => setOut({ ...out, [id]: v })} aria-label={`Why ${s.name} is out`} options={INELIGIBLE_REASONS.map((x) => ({ value: x,"
+        },
+        {
+          "line": 132,
+          "type": "interactive-prop,jsx",
+          "excerpt": "<Checkbox checked={invite} onChange={(e) => setInvite(e.target.checked)}>Then invite them to register (deadline {deadline.format(\"ddd D MMM\")})</Checkbox>"
+        },
+        {
+          "line": 135,
+          "type": "interactive-prop,jsx",
+          "excerpt": "<Button type=\"primary\" size=\"large\" loading={busy} onClick={confirm} data-testid=\"batches.decide.confirm\">{batchIn ? `Put ${inN} in${outN ? ` · ${outN} out` : \"\"}` : `Leave ${batch"
+        }
+      ],
+      "signalCount": 24,
+      "computedImportRequiresReview": false
+    },
+    {
+      "path": "src/components/tpo/batches/IneligibleModal.jsx",
+      "sourceSha": "327b77dc140b5acdeb20138ac015765be0ba7ed9",
+      "frontierSha": "327b77dc140b5acdeb20138ac015765be0ba7ed9",
+      "shaMatches": true,
+      "fromFrontierIndex": 145,
+      "sourceLineCount": 29,
+      "importedBy": [
+        "src/pages/tpo/batches/[batchId].js"
+      ],
+      "classification": "inspected-meaningful-ui-source",
+      "classificationScope": "source only; renderability and behavior unverified",
+      "imports": [
+        {
+          "line": 1,
+          "specifier": "react",
+          "kind": "static-or-require",
+          "resolution": null
+        },
+        {
+          "line": 2,
+          "specifier": "antd",
+          "kind": "static-or-require",
+          "resolution": null
+        },
+        {
+          "line": 3,
+          "specifier": "@/components/tpo/ui/ReasonPicker",
+          "kind": "static-or-require",
+          "resolution": {
+            "path": "src/components/tpo/ui/ReasonPicker.jsx",
+            "sha": "c1b008e7f1babc5f80f17218e88cd1df4e36fe84"
+          }
+        },
+        {
+          "line": 4,
+          "specifier": "./batchRules",
+          "kind": "static-or-require",
+          "resolution": {
+            "path": "src/components/tpo/batches/batchRules.js",
+            "sha": "16156886a6ef7320fa6f5befbd2a450df1522055"
+          }
+        },
+        {
+          "line": 5,
+          "specifier": "@/components/tpo/ui/AsyncModal",
+          "kind": "static-or-require",
+          "resolution": {
+            "path": "src/components/tpo/ui/AsyncModal.jsx",
+            "sha": "d90b051895c54e27a6e7ec18215a97921b9499d2"
+          }
+        }
+      ],
+      "signals": [
+        {
+          "line": 17,
+          "type": "interactive-prop",
+          "excerpt": "open={open} title={`Mark ${what} ineligible`} onCancel={() => { if (!busy) onCancel?.(); }} okText=\"Mark ineligible\""
+        },
+        {
+          "line": 20,
+          "type": "interactive-prop",
+          "excerpt": "onOk={() => ok && !busy && onConfirm(reason.trim())} destroyOnClose"
+        },
+        {
+          "line": 22,
+          "type": "jsx",
+          "excerpt": "<Typography.Paragraph type=\"secondary\" style={{ marginBottom: 12 }}>"
+        },
+        {
+          "line": 25,
+          "type": "interactive-prop,jsx",
+          "excerpt": "<ReasonPicker reasons={INELIGIBLE_REASONS} value={reason} onChange={setReason} placeholder=\"Why are they not in placements?\" />"
+        }
+      ],
+      "signalCount": 4,
+      "computedImportRequiresReview": false
+    },
+    {
+      "path": "src/components/tpo/emails/EmailsTab.jsx",
+      "sourceSha": "d6f76a52146bf42f37f2db7772137118810bbddf",
+      "frontierSha": "d6f76a52146bf42f37f2db7772137118810bbddf",
+      "shaMatches": true,
+      "fromFrontierIndex": 147,
+      "sourceLineCount": 118,
+      "importedBy": [
+        "src/pages/tpo/recruiters/index.js"
+      ],
+      "classification": "inspected-meaningful-ui-source",
+      "classificationScope": "source only; renderability and behavior unverified",
+      "imports": [
+        {
+          "line": 1,
+          "specifier": "react",
+          "kind": "static-or-require",
+          "resolution": null
+        },
+        {
+          "line": 2,
+          "specifier": "antd",
+          "kind": "static-or-require",
+          "resolution": null
+        },
+        {
+          "line": 3,
+          "specifier": "@/components/tpo/dj",
+          "kind": "static-or-require",
+          "resolution": {
+            "path": "src/components/tpo/dj.js",
+            "sha": "09399d1614ffde9593c34d5f880680bf5b485d92"
+          }
+        },
+        {
+          "line": 4,
+          "specifier": "@/api/Services/AdminService",
+          "kind": "static-or-require",
+          "resolution": {
+            "path": "src/api/Services/AdminService.js",
+            "sha": "598533e1ce238bbcd917c6f6b6df0e83d8f316c6"
+          }
+        },
+        {
+          "line": 5,
+          "specifier": "@/api/Services/TpoHubService",
+          "kind": "static-or-require",
+          "resolution": {
+            "path": "src/api/Services/TpoHubService.js",
+            "sha": "79d6fb983fea0566a6743f3d9eeadcd81c35d36b"
+          }
+        },
+        {
+          "line": 6,
+          "specifier": "./EmailDetail",
+          "kind": "static-or-require",
+          "resolution": {
+            "path": "src/components/tpo/emails/EmailDetail.jsx",
+            "sha": "9f456eb30defec0c4c8faf7e22bb3252420071da"
+          }
+        },
+        {
+          "line": 7,
+          "specifier": "@/components/tpo/ui/HoverStory",
+          "kind": "static-or-require",
+          "resolution": {
+            "path": "src/components/tpo/ui/HoverStory.jsx",
+            "sha": "d6f1cd0dc9a446e617de3e11fb0e1ebfe7511e1a"
+          }
+        },
+        {
+          "line": 8,
+          "specifier": "./emailRules",
+          "kind": "static-or-require",
+          "resolution": {
+            "path": "src/components/tpo/emails/emailRules.js",
+            "sha": "b3c4739ab4365f05f6bfcb8249fe449cfc062ef1"
+          }
+        }
+      ],
+      "signals": [
+        {
+          "line": 55,
+          "type": "jsx",
+          "excerpt": "<div className=\"tpo-em\" data-testid=\"emails.tab\">"
+        },
+        {
+          "line": 56,
+          "type": "jsx",
+          "excerpt": "<section className=\"tpo-em__list\" aria-label=\"Emails\">"
+        },
+        {
+          "line": 57,
+          "type": "jsx",
+          "excerpt": "<div className=\"tpo-em__top\">"
+        },
+        {
+          "line": 58,
+          "type": "interactive-prop,jsx",
+          "excerpt": "<Button type=\"primary\" size=\"large\" block onClick={() => onNew()} data-testid=\"emails.new\">New email</Button>"
+        },
+        {
+          "line": 59,
+          "type": "interactive-prop,jsx",
+          "excerpt": "<Input allowClear value={q} onChange={(e) => setQ(e.target.value)} placeholder=\"Search emails\" aria-label=\"Search emails\" />"
+        },
+        {
+          "line": 60,
+          "type": "jsx",
+          "excerpt": "<div className=\"tpo-pills\" role=\"group\" aria-label=\"Whose emails\">"
+        },
+        {
+          "line": 61,
+          "type": "interactive-prop,jsx",
+          "excerpt": "{[[\"all\", \"Everyone's\"], [\"mine\", \"Mine\"]].map(([k, label]) => <button type=\"button\" key={k} aria-pressed={whose === k} className={`tpo-pill${whose === k ? \" is-on\" : \"\"}`} onClick"
+        },
+        {
+          "line": 67,
+          "type": "jsx",
+          "excerpt": "<div className=\"tpo-em__scroll\">"
+        },
+        {
+          "line": 68,
+          "type": "jsx",
+          "excerpt": "{!data ? <div className=\"tpo-em__pad\"><Skeleton active paragraph={{ rows: 6 }} /></div> : ("
+        },
+        {
+          "line": 70,
+          "type": "jsx",
+          "excerpt": "{scheduled.length > 0 && <div className=\"tpo-em__sec\">GOING OUT LATER</div>}"
+        },
+        {
+          "line": 72,
+          "type": "jsx",
+          "excerpt": "<div key={d.id} className={`tpo-em__item${isDraftOpen(d) ? \" is-on\" : \"\"}`} data-testid={`emails.scheduled.${d.id}`}>"
+        },
+        {
+          "line": 73,
+          "type": "interactive-prop,jsx",
+          "excerpt": "<button type=\"button\" className=\"tpo-em__item-main\" onClick={() => onOpenDraft(d)}>"
+        },
+        {
+          "line": 77,
+          "type": "overlay-or-complex-control,jsx",
+          "excerpt": "<Popconfirm title=\"Don't send it?\" description=\"It stays in Drafts.\" okText=\"Don't send\" onConfirm={() => unschedule(d)}><button type=\"button\" className=\"tpo-em__x\" aria-label=\"Don"
+        },
+        {
+          "line": 80,
+          "type": "jsx",
+          "excerpt": "<div className=\"tpo-em__sec\">SENT</div>"
+        },
+        {
+          "line": 86,
+          "type": "interactive-prop,jsx",
+          "excerpt": "<button type=\"button\" key={c.id} className={`tpo-em__item tpo-em__item-main${on ? \" is-on\" : \"\"}`} onClick={() => onOpen(c.id)} aria-current={on ? \"true\" : undefined} data-testid={"
+        },
+        {
+          "line": 89,
+          "type": "jsx",
+          "excerpt": "<HoverStory story={emailTagStory(c)} placement=\"rightTop\"><span className={`tpo-emails__tag is-${kind}`}>{tag}</span></HoverStory>"
+        },
+        {
+          "line": 93,
+          "type": "jsx",
+          "excerpt": "{plain.length > 0 && <div className=\"tpo-em__sec\">DRAFTS</div>}"
+        },
+        {
+          "line": 95,
+          "type": "jsx",
+          "excerpt": "<div key={d.id} className={`tpo-em__item${isDraftOpen(d) ? \" is-on\" : \"\"}`} data-testid={`emails.draft.${d.id}`}>"
+        },
+        {
+          "line": 96,
+          "type": "interactive-prop,jsx",
+          "excerpt": "<button type=\"button\" className=\"tpo-em__item-main\" onClick={() => onOpenDraft(d)}>"
+        },
+        {
+          "line": 101,
+          "type": "overlay-or-complex-control,jsx",
+          "excerpt": "<Popconfirm title=\"Delete this draft?\" okText=\"Delete\" okButtonProps={{ danger: true }} onConfirm={() => remove(d)}><button type=\"button\" className=\"tpo-em__x\" aria-label=\"Delete d"
+        },
+        {
+          "line": 109,
+          "type": "jsx",
+          "excerpt": "<section className=\"tpo-em__pane\" aria-label={composer ? \"New email\" : \"Open email\"}>"
+        },
+        {
+          "line": 110,
+          "type": "jsx",
+          "excerpt": "{data?.emailAvailable === false && <Alert type=\"warning\" showIcon message={EMAIL_NOT_SET_UP} />}"
+        },
+        {
+          "line": 111,
+          "type": "interactive-prop,jsx",
+          "excerpt": "{error && <Alert type=\"error\" showIcon message={error} action={<Button size=\"small\" onClick={load}>Retry</Button>} />}"
+        },
+        {
+          "line": 112,
+          "type": "jsx",
+          "excerpt": "{composer || (shownId ? <EmailDetail key={shownId} id={shownId} meId={meId} onChanged={load} onCompose={onCompose} />"
+        },
+        {
+          "line": 113,
+          "type": "interactive-prop,jsx",
+          "excerpt": ": data ? <div className=\"tpo-em__blank\"><strong>Write to many recruiters at once</strong><span>Each gets their own copy, greeted by name. You see who opened, clicked and replied, a"
+        }
+      ],
+      "signalCount": 25,
+      "computedImportRequiresReview": false
+    },
+    {
+      "path": "src/components/tpo/FollowUpModal.jsx",
+      "sourceSha": "6bb0b811e75667c9fd95894b31042de15cfea821",
+      "frontierSha": "6bb0b811e75667c9fd95894b31042de15cfea821",
+      "shaMatches": true,
+      "fromFrontierIndex": 149,
+      "sourceLineCount": 164,
+      "importedBy": [
+        "src/pages/tpo/calendar.js"
+      ],
+      "classification": "inspected-meaningful-ui-source",
+      "classificationScope": "source only; renderability and behavior unverified",
+      "imports": [
+        {
+          "line": 1,
+          "specifier": "react",
+          "kind": "static-or-require",
+          "resolution": null
+        },
+        {
+          "line": 2,
+          "specifier": "dayjs",
+          "kind": "static-or-require",
+          "resolution": null
+        },
+        {
+          "line": 3,
+          "specifier": "@/components/tpo/dj",
+          "kind": "static-or-require",
+          "resolution": {
+            "path": "src/components/tpo/dj.js",
+            "sha": "09399d1614ffde9593c34d5f880680bf5b485d92"
+          }
+        },
+        {
+          "line": 4,
+          "specifier": "antd",
+          "kind": "static-or-require",
+          "resolution": null
+        },
+        {
+          "line": 5,
+          "specifier": "@/api/Services/AdminService",
+          "kind": "static-or-require",
+          "resolution": {
+            "path": "src/api/Services/AdminService.js",
+            "sha": "598533e1ce238bbcd917c6f6b6df0e83d8f316c6"
+          }
+        },
+        {
+          "line": 6,
+          "specifier": "@/api/Services/TpoHubService",
+          "kind": "static-or-require",
+          "resolution": {
+            "path": "src/api/Services/TpoHubService.js",
+            "sha": "79d6fb983fea0566a6743f3d9eeadcd81c35d36b"
+          }
+        },
+        {
+          "line": 7,
+          "specifier": "@/api/Services/TpoService",
+          "kind": "static-or-require",
+          "resolution": {
+            "path": "src/api/Services/TpoService.js",
+            "sha": "e1977d86ba95f28058265b0e3fff280ecc32e888"
+          }
+        },
+        {
+          "line": 8,
+          "specifier": "next/router",
+          "kind": "static-or-require",
+          "resolution": null
+        }
+      ],
+      "signals": [
+        {
+          "line": 41,
+          "type": "overlay-or-complex-control,navigation-or-browser",
+          "excerpt": "if (window.confirm(\"Discard this follow-up draft?\")) return;"
+        },
+        {
+          "line": 42,
+          "type": "navigation-or-browser",
+          "excerpt": "const addressBar = `${window.location.pathname}${window.location.search}${window.location.hash}`;"
+        },
+        {
+          "line": 43,
+          "type": "navigation-or-browser",
+          "excerpt": "if (addressBar !== Router.asPath) window.history.pushState(null, \"\", Router.asPath);"
+        },
+        {
+          "line": 47,
+          "type": "navigation-or-browser",
+          "excerpt": "window.addEventListener(\"beforeunload\", beforeUnload);"
+        },
+        {
+          "line": 48,
+          "type": "navigation-or-browser",
+          "excerpt": "Router.events.on(\"routeChangeStart\", beforeRouteChange);"
+        },
+        {
+          "line": 50,
+          "type": "navigation-or-browser",
+          "excerpt": "window.removeEventListener(\"beforeunload\", beforeUnload);"
+        },
+        {
+          "line": 51,
+          "type": "navigation-or-browser",
+          "excerpt": "Router.events.off(\"routeChangeStart\", beforeRouteChange);"
+        },
+        {
+          "line": 111,
+          "type": "overlay-or-complex-control",
+          "excerpt": "Modal.confirm({"
+        },
+        {
+          "line": 122,
+          "type": "overlay-or-complex-control",
+          "excerpt": "<Modal"
+        },
+        {
+          "line": 127,
+          "type": "interactive-prop",
+          "excerpt": "onOk={() => form.submit()}"
+        },
+        {
+          "line": 128,
+          "type": "interactive-prop",
+          "excerpt": "onCancel={requestClose}"
+        },
+        {
+          "line": 136,
+          "type": "jsx",
+          "excerpt": "{searchError && <Alert type=\"error\" showIcon style={{ marginBottom: 12 }} message=\"Recruiter search unavailable\" description={searchError} />}"
+        },
+        {
+          "line": 137,
+          "type": "jsx",
+          "excerpt": "{saveError ? <Alert type=\"error\" showIcon message=\"Follow-up was not saved\" description={saveError}"
+        },
+        {
+          "line": 138,
+          "type": "interactive-prop",
+          "excerpt": "closable onClose={() => setSaveError(\"\")} style={{ marginBottom: 12 }} /> : null}"
+        },
+        {
+          "line": 139,
+          "type": "overlay-or-complex-control,jsx",
+          "excerpt": "<Form form={form} layout=\"vertical\" onFinish={save} onValuesChange={() => { setSaveError(\"\"); setDirty(true); }}>"
+        },
+        {
+          "line": 140,
+          "type": "overlay-or-complex-control,jsx",
+          "excerpt": "<Form.Item name=\"recruiterLeadId\" label=\"Recruiter\" rules={[{ required: true, message: \"Choose a recruiter\" }]}>"
+        },
+        {
+          "line": 141,
+          "type": "overlay-or-complex-control,jsx",
+          "excerpt": "<Select showSearch filterOption={false} onSearch={find} options={options} placeholder=\"Type a name or company\" autoFocus />"
+        },
+        {
+          "line": 143,
+          "type": "overlay-or-complex-control",
+          "excerpt": "<Form.Item"
+        },
+        {
+          "line": 159,
+          "type": "overlay-or-complex-control,jsx",
+          "excerpt": "<Form.Item name=\"note\" label=\"Note (optional)\"><Input.TextArea rows={2} /></Form.Item>"
+        }
+      ],
+      "signalCount": 19,
+      "computedImportRequiresReview": false
+    },
+    {
+      "path": "src/components/tpo/grid/SavedViewsManager.jsx",
+      "sourceSha": "99b2f65ae4018d41161add31268d8b2d600ce716",
+      "frontierSha": "99b2f65ae4018d41161add31268d8b2d600ce716",
+      "shaMatches": true,
+      "fromFrontierIndex": 150,
+      "sourceLineCount": 126,
+      "importedBy": [
+        "src/components/tpo/grid/GridWorkspace.jsx"
+      ],
+      "classification": "inspected-meaningful-ui-source",
+      "classificationScope": "source only; renderability and behavior unverified",
+      "imports": [
+        {
+          "line": 1,
+          "specifier": "react",
+          "kind": "static-or-require",
+          "resolution": null
+        },
+        {
+          "line": 2,
+          "specifier": "antd",
+          "kind": "static-or-require",
+          "resolution": null
+        },
+        {
+          "line": 3,
+          "specifier": "@ant-design/icons",
+          "kind": "static-or-require",
+          "resolution": null
+        },
+        {
+          "line": 4,
+          "specifier": "moment",
+          "kind": "static-or-require",
+          "resolution": null
+        },
+        {
+          "line": 5,
+          "specifier": "@/utils/placementDateTime",
+          "kind": "static-or-require",
+          "resolution": {
+            "path": "src/utils/placementDateTime.js",
+            "sha": "aa4262262aa93130a2450be8cde2591bfe02e7cd"
+          }
+        }
+      ],
+      "signals": [
+        {
+          "line": 31,
+          "type": "overlay-or-complex-control",
+          "excerpt": "<Modal"
+        },
+        {
+          "line": 33,
+          "type": "interactive-prop",
+          "excerpt": "onCancel={onClose}"
+        },
+        {
+          "line": 41,
+          "type": "interactive-prop,jsx",
+          "excerpt": "<Input.Search allowClear placeholder=\"Search views\" value={q} onChange={(e) => setQ(e.target.value)} style={{ marginBottom: 12 }} aria-label=\"Search views\" />"
+        },
+        {
+          "line": 44,
+          "type": "jsx",
+          "excerpt": "<Empty description={views?.length ? \"No view matches\" : \"No saved views yet. Set filters and columns, then Views > Save current view.\"} />"
+        },
+        {
+          "line": 60,
+          "type": "jsx",
+          "excerpt": "<Tooltip title={pinned ? \"Unpin from the Views menu\" : \"Pin to the Views menu\"}>"
+        },
+        {
+          "line": 61,
+          "type": "jsx",
+          "excerpt": "<Button type=\"text\" size=\"small\" aria-label={pinned ? `Unpin ${v.name}` : `Pin ${v.name}`} aria-pressed={pinned}"
+        },
+        {
+          "line": 62,
+          "type": "jsx",
+          "excerpt": "icon={pinned ? <StarFilled style={{ color: \"#d4a017\" }} /> : <StarOutlined />}"
+        },
+        {
+          "line": 63,
+          "type": "interactive-prop",
+          "excerpt": "loading={busyId === `pin:${v.id}`} onClick={() => onTogglePin(v)} />"
+        },
+        {
+          "line": 65,
+          "type": "jsx",
+          "excerpt": "<div className=\"tpo-views-manager__main\">"
+        },
+        {
+          "line": 67,
+          "type": "jsx",
+          "excerpt": "<div className=\"tpo-views-manager__edit\">"
+        },
+        {
+          "line": 68,
+          "type": "jsx",
+          "excerpt": "<Input size=\"small\" autoFocus maxLength={100} value={editing.name} aria-label=\"View name\""
+        },
+        {
+          "line": 69,
+          "type": "interactive-prop",
+          "excerpt": "onChange={(e) => setEditing({ ...editing, name: e.target.value })} />"
+        },
+        {
+          "line": 70,
+          "type": "jsx",
+          "excerpt": "<Input size=\"small\" maxLength={200} value={editing.note} aria-label=\"What it is for\" placeholder=\"What it's for (optional)\""
+        },
+        {
+          "line": 71,
+          "type": "interactive-prop",
+          "excerpt": "onChange={(e) => setEditing({ ...editing, note: e.target.value })} />"
+        },
+        {
+          "line": 73,
+          "type": "jsx",
+          "excerpt": "<Button size=\"small\" type=\"primary\" loading={saving} disabled={!editing.name.trim()}"
+        },
+        {
+          "line": 74,
+          "type": "interactive-prop",
+          "excerpt": "onClick={async () => { setSaving(true); const ok = await onEdit(v, { name: editing.name.trim(), note: editing.note }); setSaving(false); if (ok) setEditing(null); }}>Save</Button>"
+        },
+        {
+          "line": 75,
+          "type": "interactive-prop,jsx",
+          "excerpt": "<Button size=\"small\" onClick={() => setEditing(null)}>Cancel</Button>"
+        },
+        {
+          "line": 82,
+          "type": "jsx",
+          "excerpt": "{v.id === viewId && <Tag className=\"tpo-views-manager__tag\" color=\"processing\">Open now</Tag>}"
+        },
+        {
+          "line": 83,
+          "type": "jsx",
+          "excerpt": "{unused && <Tag className=\"tpo-views-manager__tag\">Not used in {UNUSED_DAYS}+ days</Tag>}"
+        },
+        {
+          "line": 89,
+          "type": "jsx",
+          "excerpt": "<Typography.Text type=\"secondary\" className=\"tpo-views-manager__meta\">"
+        },
+        {
+          "line": 98,
+          "type": "jsx",
+          "excerpt": "<div className=\"tpo-views-manager__actions\">"
+        },
+        {
+          "line": 99,
+          "type": "interactive-prop,jsx",
+          "excerpt": "<Button size=\"small\" onClick={() => onOpen(v)}>Open</Button>"
+        },
+        {
+          "line": 100,
+          "type": "interactive-prop,jsx",
+          "excerpt": "<Button size=\"small\" icon={<DownloadOutlined />} loading={busyId === `xlsx:${v.id}`} onClick={() => onDownload(v, \"xlsx\")}>Excel</Button>"
+        },
+        {
+          "line": 101,
+          "type": "interactive-prop,jsx",
+          "excerpt": "<Button size=\"small\" icon={<DownloadOutlined />} loading={busyId === `csv:${v.id}`} onClick={() => onDownload(v, \"csv\")}>CSV</Button>"
+        },
+        {
+          "line": 102,
+          "type": "overlay-or-complex-control,jsx",
+          "excerpt": "<Dropdown trigger={[\"click\"]} menu={{"
+        },
+        {
+          "line": 115,
+          "type": "jsx",
+          "excerpt": "<Button size=\"small\" type=\"text\" icon={<MoreOutlined />} aria-label={`More for ${v.name}`} />"
+        }
+      ],
+      "signalCount": 26,
+      "computedImportRequiresReview": false
+    },
+    {
+      "path": "src/components/tpo/grid/TpoGrid.jsx",
+      "sourceSha": "d2667777dffd55d775a808ae058c7eeace7352fc",
+      "frontierSha": "d2667777dffd55d775a808ae058c7eeace7352fc",
+      "shaMatches": true,
+      "fromFrontierIndex": 151,
+      "sourceLineCount": 277,
+      "importedBy": [
+        "src/components/tpo/grid/GridWorkspace.jsx"
+      ],
+      "classification": "inspected-meaningful-ui-source",
+      "classificationScope": "source only; renderability and behavior unverified",
+      "imports": [
+        {
+          "line": 1,
+          "specifier": "react",
+          "kind": "static-or-require",
+          "resolution": null
+        },
+        {
+          "line": 2,
+          "specifier": "ag-grid-react",
+          "kind": "static-or-require",
+          "resolution": null
+        },
+        {
+          "line": 3,
+          "specifier": "ag-grid-community",
+          "kind": "static-or-require",
+          "resolution": null
+        },
+        {
+          "line": 4,
+          "specifier": "./gridExport",
+          "kind": "static-or-require",
+          "resolution": {
+            "path": "src/components/tpo/grid/gridExport.js",
+            "sha": "7fc8fab6ef865f19651f195ec0bd4ca20863f144"
+          }
+        }
+      ],
+      "signals": [
+        {
+          "line": 140,
+          "type": "navigation-or-browser",
+          "excerpt": "try { window.localStorage.setItem(`tpo.grid.${storageKey}`, JSON.stringify(apiRef.current.getColumnState())); } catch { /* storage may be blocked */ }"
+        },
+        {
+          "line": 157,
+          "type": "navigation-or-browser",
+          "excerpt": "try { window.localStorage.removeItem(`tpo.grid.${storageKey}`); } catch { /* ignore */ }"
+        },
+        {
+          "line": 170,
+          "type": "navigation-or-browser",
+          "excerpt": "const saved = JSON.parse(window.localStorage.getItem(`tpo.grid.${storageKey}`) || \"null\");"
+        },
+        {
+          "line": 196,
+          "type": "navigation-or-browser",
+          "excerpt": "window.getSelection?.()?.removeAllRanges?.();"
+        },
+        {
+          "line": 224,
+          "type": "navigation-or-browser",
+          "excerpt": "if (key === \"c\" && !window.getSelection?.()?.toString()) { ev.preventDefault?.(); copySelection(); }"
+        },
+        {
+          "line": 233,
+          "type": "jsx",
+          "excerpt": "<div className={`tpo-grid${autoHeight ? \" is-auto\" : \"\"}`} style={autoHeight ? undefined : { height }} data-testid=\"tpo-grid\">"
+        }
+      ],
+      "signalCount": 6,
+      "computedImportRequiresReview": false
+    },
+    {
+      "path": "src/components/tpo/MessagesPanel.js",
+      "sourceSha": "1929e09abfceda1dea08bb7f6a7e551f4cf78589",
+      "frontierSha": "1929e09abfceda1dea08bb7f6a7e551f4cf78589",
+      "shaMatches": true,
+      "fromFrontierIndex": 153,
+      "sourceLineCount": 497,
+      "importedBy": [
+        "src/components/tpo/drive/DiscussionTab.jsx"
+      ],
+      "classification": "inspected-meaningful-ui-source",
+      "classificationScope": "source only; renderability and behavior unverified",
+      "imports": [
+        {
+          "line": 1,
+          "specifier": "react",
+          "kind": "static-or-require",
+          "resolution": null
+        },
+        {
+          "line": 2,
+          "specifier": "react-redux",
+          "kind": "static-or-require",
+          "resolution": null
+        },
+        {
+          "line": 3,
+          "specifier": "antd",
+          "kind": "static-or-require",
+          "resolution": null
+        },
+        {
+          "line": 4,
+          "specifier": "@ant-design/icons",
+          "kind": "static-or-require",
+          "resolution": null
+        },
+        {
+          "line": 5,
+          "specifier": "next/router",
+          "kind": "static-or-require",
+          "resolution": null
+        },
+        {
+          "line": 6,
+          "specifier": "@/components/tpo/ui/useRefreshOnFocus",
+          "kind": "static-or-require",
+          "resolution": {
+            "path": "src/components/tpo/ui/useRefreshOnFocus.js",
+            "sha": "59daf12b902550bca1435054fcff60951a4c2f9a"
+          }
+        },
+        {
+          "line": 7,
+          "specifier": "@/components/tpo/dj",
+          "kind": "static-or-require",
+          "resolution": {
+            "path": "src/components/tpo/dj.js",
+            "sha": "09399d1614ffde9593c34d5f880680bf5b485d92"
+          }
+        },
+        {
+          "line": 8,
+          "specifier": "@/components/Common/PanelStates",
+          "kind": "static-or-require",
+          "resolution": {
+            "path": "src/components/Common/PanelStates.jsx",
+            "sha": "9e7522f07545b772ee8b5f6ae0b68e2c8bea1a92"
+          }
+        },
+        {
+          "line": 9,
+          "specifier": "@/components/Common/Skeletons",
+          "kind": "static-or-require",
+          "resolution": {
+            "path": "src/components/Common/Skeletons.jsx",
+            "sha": "19ff7bc7317232a96a7217df406eaa8082567704"
+          }
+        },
+        {
+          "line": 10,
+          "specifier": "@/api/Services/AdminService",
+          "kind": "static-or-require",
+          "resolution": {
+            "path": "src/api/Services/AdminService.js",
+            "sha": "598533e1ce238bbcd917c6f6b6df0e83d8f316c6"
+          }
+        },
+        {
+          "line": 11,
+          "specifier": "@/api/Services/TpoHubService",
+          "kind": "static-or-require",
+          "resolution": {
+            "path": "src/api/Services/TpoHubService.js",
+            "sha": "79d6fb983fea0566a6743f3d9eeadcd81c35d36b"
+          }
+        },
+        {
+          "line": 12,
+          "specifier": "@/components/tpo/ui/useLivePulse",
+          "kind": "static-or-require",
+          "resolution": {
+            "path": "src/components/tpo/ui/useLivePulse.js",
+            "sha": "1a622bab4bc8e95bc376e240f955ea90aacfa88c"
+          }
+        },
+        {
+          "line": 13,
+          "specifier": "@/api/Services/TpoService",
+          "kind": "static-or-require",
+          "resolution": {
+            "path": "src/api/Services/TpoService.js",
+            "sha": "e1977d86ba95f28058265b0e3fff280ecc32e888"
+          }
+        },
+        {
+          "line": 14,
+          "specifier": "@/components/tpo/drive/RequestLine",
+          "kind": "static-or-require",
+          "resolution": {
+            "path": "src/components/tpo/drive/RequestLine.jsx",
+            "sha": "2241c1742e7cf735d89acda080150505bd2ce55e"
+          }
+        }
+      ],
+      "signals": [
+        {
+          "line": 82,
+          "type": "overlay-or-complex-control,navigation-or-browser",
+          "excerpt": "if (window.confirm(\"Discard your unsent recruiter message drafts?\")) return;"
+        },
+        {
+          "line": 83,
+          "type": "navigation-or-browser",
+          "excerpt": "const addressBar = `${window.location.pathname}${window.location.search}${window.location.hash}`;"
+        },
+        {
+          "line": 84,
+          "type": "navigation-or-browser",
+          "excerpt": "if (addressBar !== Router.asPath) window.history.pushState(null, \"\", Router.asPath);"
+        },
+        {
+          "line": 88,
+          "type": "navigation-or-browser",
+          "excerpt": "window.addEventListener(\"beforeunload\", beforeUnload);"
+        },
+        {
+          "line": 89,
+          "type": "navigation-or-browser",
+          "excerpt": "Router.events.on(\"routeChangeStart\", beforeRouteChange);"
+        },
+        {
+          "line": 91,
+          "type": "navigation-or-browser",
+          "excerpt": "window.removeEventListener(\"beforeunload\", beforeUnload);"
+        },
+        {
+          "line": 92,
+          "type": "navigation-or-browser",
+          "excerpt": "Router.events.off(\"routeChangeStart\", beforeRouteChange);"
+        },
+        {
+          "line": 143,
+          "type": "navigation-or-browser",
+          "excerpt": "if (typeof window !== \"undefined\" && window.innerWidth >= 992) open(rows.find((t) => Number(t.unread) > 0) || rows[0]);"
+        },
+        {
+          "line": 206,
+          "type": "overlay-or-complex-control",
+          "excerpt": "Modal.confirm({"
+        },
+        {
+          "line": 278,
+          "type": "jsx",
+          "excerpt": "<div className={`tpo-message-panel ${jobId ? \"tpo-message-panel--drawer\" : \"\"} ${active ? \"tpo-message-panel--has-active\" : \"\"}`}>"
+        },
+        {
+          "line": 281,
+          "type": "interactive-prop,jsx",
+          "excerpt": "<Button className=\"tpo-message-panel__new\" type=\"primary\" icon={<PlusOutlined />} block onClick={startNew}>New message</Button>"
+        },
+        {
+          "line": 287,
+          "type": "interactive-prop",
+          "excerpt": "onChange={setAttentionFilter}"
+        },
+        {
+          "line": 299,
+          "type": "interactive-prop",
+          "excerpt": "onChange={(e) => setQuery(e.target.value)}"
+        },
+        {
+          "line": 304,
+          "type": "jsx",
+          "excerpt": "<div className=\"tpo-message-panel__thread-list\">"
+        },
+        {
+          "line": 306,
+          "type": "jsx",
+          "excerpt": "<PanelError title={threadsError} onRetry={loadThreads} />"
+        },
+        {
+          "line": 308,
+          "type": "jsx",
+          "excerpt": "<ListSkeleton rows={4} avatar={false} label=\"Loading conversations\" />"
+        },
+        {
+          "line": 311,
+          "type": "jsx",
+          "excerpt": "{threadsLoading && threads.length > 0 && <RefreshStatus label=\"Refreshing conversations…\" />}"
+        },
+        {
+          "line": 312,
+          "type": "interactive-prop,jsx",
+          "excerpt": "{threadsError && <Alert className=\"tpo-message-panel__alert\" type=\"error\" showIcon closable message=\"This refresh failed.\" description={threadsError} action={<Button size=\"small\" o"
+        },
+        {
+          "line": 315,
+          "type": "jsx",
+          "excerpt": "locale={{ emptyText: <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description={query.trim() ? \"No conversations match this search\" : \"No conversations yet\"} /> }}"
+        },
+        {
+          "line": 324,
+          "type": "interactive-prop",
+          "excerpt": "onClick={() => open(t)}"
+        },
+        {
+          "line": 334,
+          "type": "jsx",
+          "excerpt": "<div className=\"tpo-message-panel__thread-title\">"
+        },
+        {
+          "line": 335,
+          "type": "jsx",
+          "excerpt": "<span>{t.recruiterName}{t.recruiterCompany ? <Typography.Text type=\"secondary\"> · {t.recruiterCompany}</Typography.Text> : null}</span>"
+        },
+        {
+          "line": 337,
+          "type": "jsx",
+          "excerpt": "<Typography.Text type=\"secondary\">{whenText(t.lastMessageAt)}</Typography.Text>"
+        },
+        {
+          "line": 338,
+          "type": "jsx",
+          "excerpt": "{Number(t.unread) > 0 && <Badge count={t.unread} />}"
+        },
+        {
+          "line": 343,
+          "type": "jsx",
+          "excerpt": "<div className=\"tpo-message-panel__thread-description\">"
+        },
+        {
+          "line": 345,
+          "type": "jsx",
+          "excerpt": "<Typography.Text type=\"secondary\" ellipsis>{t.lastBody || \"No messages yet\"}</Typography.Text>"
+        },
+        {
+          "line": 346,
+          "type": "jsx",
+          "excerpt": "{t.lastSender === \"RECRUITER\" && <Tag color=\"gold\">Waiting for you</Tag>}"
+        },
+        {
+          "line": 347,
+          "type": "jsx",
+          "excerpt": "{t.accessActive !== undefined && !truthy(t.accessActive) && <Tag>Access ended</Tag>}"
+        },
+        {
+          "line": 360,
+          "type": "jsx",
+          "excerpt": "<section className=\"tpo-message-panel__conversation\">"
+        },
+        {
+          "line": 362,
+          "type": "jsx",
+          "excerpt": "<div className=\"tpo-message-panel__conversation-head\">"
+        },
+        {
+          "line": 363,
+          "type": "interactive-prop,jsx",
+          "excerpt": "<Button className=\"tpo-message-panel__back\" type=\"text\" icon={<ArrowLeftOutlined />} aria-label=\"All conversations\" onClick={() => setActive(null)} />"
+        },
+        {
+          "line": 364,
+          "type": "jsx",
+          "excerpt": "<div>"
+        },
+        {
+          "line": 365,
+          "type": "jsx",
+          "excerpt": "<Typography.Title level={5}>{active.recruiterName}{active.recruiterCompany ? <Typography.Text type=\"secondary\"> · {active.recruiterCompany}</Typography.Text> : null}</Typography.Ti"
+        },
+        {
+          "line": 366,
+          "type": "jsx",
+          "excerpt": "<Typography.Text type=\"secondary\">{active.subject || \"General\"}</Typography.Text>"
+        },
+        {
+          "line": 368,
+          "type": "jsx",
+          "excerpt": "{active.lastSender === \"RECRUITER\" && <Tag color=\"gold\">Reply needed</Tag>}"
+        },
+        {
+          "line": 373,
+          "type": "jsx",
+          "excerpt": "<div className=\"tpo-message-panel__conversation-head\">"
+        },
+        {
+          "line": 374,
+          "type": "jsx",
+          "excerpt": "<div>"
+        },
+        {
+          "line": 375,
+          "type": "jsx",
+          "excerpt": "<Typography.Title level={5}>Recruiter messages</Typography.Title>"
+        },
+        {
+          "line": 380,
+          "type": "interactive-prop,jsx",
+          "excerpt": "{threadError && <Alert className=\"tpo-message-panel__alert\" type=\"error\" showIcon closable message=\"This conversation failed to load.\" description={threadError} action={<Button siz"
+        },
+        {
+          "line": 383,
+          "type": "jsx",
+          "excerpt": "<div className=\"tpo-message-panel__empty-conversation\">"
+        },
+        {
+          "line": 386,
+          "type": "jsx",
+          "excerpt": "? <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description={jobId ? \"This drive has no recruiter login. Messages are for drives with a recruiter.\" : \"Choose a conversation\"} />"
+        },
+        {
+          "line": 387,
+          "type": "jsx",
+          "excerpt": ": <Typography.Text type=\"secondary\" className=\"tpo-messages__start\">Start a conversation with New message. Messages about a drive are best sent from that drive.</Typography.Text>}"
+        },
+        {
+          "line": 403,
+          "type": "jsx",
+          "excerpt": "<ListSkeleton rows={5} avatar={false} label=\"Loading conversation\" />"
+        },
+        {
+          "line": 405,
+          "type": "jsx",
+          "excerpt": "<div className=\"tpo-message-panel__empty-messages\">"
+        },
+        {
+          "line": 406,
+          "type": "jsx",
+          "excerpt": "<Typography.Text strong>Conversation history unavailable</Typography.Text>"
+        },
+        {
+          "line": 407,
+          "type": "jsx",
+          "excerpt": "<Typography.Text type=\"secondary\">Retry the conversation before replying.</Typography.Text>"
+        },
+        {
+          "line": 410,
+          "type": "jsx",
+          "excerpt": "<div className=\"tpo-message-panel__empty-messages\">"
+        },
+        {
+          "line": 411,
+          "type": "jsx",
+          "excerpt": "<Typography.Text strong>No messages yet</Typography.Text>"
+        },
+        {
+          "line": 412,
+          "type": "jsx",
+          "excerpt": "<Typography.Text type=\"secondary\">Start the conversation here. Replies stay attached to this recruiter and drive.</Typography.Text>"
+        },
+        {
+          "line": 419,
+          "type": "jsx",
+          "excerpt": "if (isEvent(m)) return <RequestEventLine key={m.id} message={m} who={who} when={dj(m.createdAt).format(\"D MMM, h:mm A\")} onSeeRequest={onSeeRequest} />;"
+        },
+        {
+          "line": 421,
+          "type": "jsx",
+          "excerpt": "<div className={`tpo-message-panel__message-row ${mine ? \"tpo-message-panel__message-row--mine\" : \"\"}`} key={m.id}>"
+        },
+        {
+          "line": 422,
+          "type": "jsx",
+          "excerpt": "{m.request && <RequestQuote request={m.request} onSeeRequest={onSeeRequest} />}"
+        },
+        {
+          "line": 423,
+          "type": "jsx",
+          "excerpt": "<div className={`tpo-message-panel__bubble ${mine ? \"tpo-message-panel__bubble--mine\" : \"\"}`}>{m.body}</div>"
+        },
+        {
+          "line": 424,
+          "type": "jsx",
+          "excerpt": "<Typography.Text className=\"tpo-message-panel__message-meta\" type=\"secondary\">"
+        },
+        {
+          "line": 434,
+          "type": "jsx",
+          "excerpt": "<Alert className=\"tpo-message-panel__alert\" type=\"warning\" showIcon message=\"This recruiter's access to your college has ended, so they cannot read new messages.\""
+        },
+        {
+          "line": 437,
+          "type": "jsx",
+          "excerpt": "<div className=\"tpo-message-panel__composer\">"
+        },
+        {
+          "line": 439,
+          "type": "jsx",
+          "excerpt": "<div className=\"tpo-message-panel__quick\" role=\"group\" aria-label=\"Quick replies\">"
+        },
+        {
+          "line": 445,
+          "type": "interactive-prop",
+          "excerpt": "onClick={() => setDraft((d) => (d ? `${d} ${q}` : q))}"
+        },
+        {
+          "line": 452,
+          "type": "jsx",
+          "excerpt": "{quote && jobId && <RequestQuote request={quote} onRemove={onQuoteClear} />}"
+        },
+        {
+          "line": 459,
+          "type": "interactive-prop",
+          "excerpt": "onChange={(e) => setDraft(e.target.value)}"
+        },
+        {
+          "line": 464,
+          "type": "jsx",
+          "excerpt": "<div className=\"tpo-message-panel__composer-footer\">"
+        },
+        {
+          "line": 465,
+          "type": "jsx",
+          "excerpt": "<Typography.Text type=\"secondary\">Ctrl/Cmd + Enter to send</Typography.Text>"
+        },
+        {
+          "line": 466,
+          "type": "interactive-prop,jsx",
+          "excerpt": "<Button type=\"primary\" loading={busy} disabled={!draft.trim() || accessEnded || Boolean(threadError) || busy} onClick={send}>Send message</Button>"
+        },
+        {
+          "line": 473,
+          "type": "overlay-or-complex-control,interactive-prop,jsx",
+          "excerpt": "<Modal open={composing} title=\"New message to a recruiter\" onCancel={requestCloseCompose} okText=\"Send\" confirmLoading={busy}"
+        },
+        {
+          "line": 475,
+          "type": "interactive-prop",
+          "excerpt": "okButtonProps={{ disabled: !newTo || !newBody.trim() || Boolean(recruitersError) || busy }} onOk={sendNew} destroyOnClose>"
+        },
+        {
+          "line": 483,
+          "type": "interactive-prop,jsx",
+          "excerpt": "action={<Button size=\"small\" onClick={loadRecruiters}>Retry</Button>}"
+        },
+        {
+          "line": 486,
+          "type": "overlay-or-complex-control,interactive-prop,jsx",
+          "excerpt": "<Select showSearch optionFilterProp=\"label\" placeholder={recruitersError ? \"Recruiters unavailable\" : \"Choose a recruiter\"} aria-label=\"Choose a recruiter\" style={{ width: \"100%\", "
+        },
+        {
+          "line": 491,
+          "type": "interactive-prop,jsx",
+          "excerpt": "<Input.TextArea rows={4} maxLength={MAX_MESSAGE} showCount={newBody.length > MAX_MESSAGE - 500} value={newBody} onChange={(e) => setNewBody(e.target.value)} placeholder=\"Write a me"
+        },
+        {
+          "line": 492,
+          "type": "jsx",
+          "excerpt": "<Typography.Text type=\"secondary\">This starts their General thread. Messages about a drive are best sent from that drive.</Typography.Text>"
+        }
+      ],
+      "signalCount": 69,
+      "computedImportRequiresReview": false
+    },
+    {
+      "path": "src/components/tpo/recruiters/RecruiterSidePanel.jsx",
+      "sourceSha": "0480c01c4348dac5807bfdbb4815461b0ce85cfb",
+      "frontierSha": "0480c01c4348dac5807bfdbb4815461b0ce85cfb",
+      "shaMatches": true,
+      "fromFrontierIndex": 155,
+      "sourceLineCount": 69,
+      "importedBy": [
+        "src/pages/tpo/recruiters/index.js"
+      ],
+      "classification": "inspected-meaningful-ui-source",
+      "classificationScope": "source only; renderability and behavior unverified",
+      "imports": [
+        {
+          "line": 1,
+          "specifier": "react",
+          "kind": "static-or-require",
+          "resolution": null
+        },
+        {
+          "line": 2,
+          "specifier": "next/link",
+          "kind": "static-or-require",
+          "resolution": null
+        },
+        {
+          "line": 3,
+          "specifier": "antd",
+          "kind": "static-or-require",
+          "resolution": null
+        },
+        {
+          "line": 4,
+          "specifier": "@ant-design/icons",
+          "kind": "static-or-require",
+          "resolution": null
+        },
+        {
+          "line": 5,
+          "specifier": "@/components/tpo/dj",
+          "kind": "static-or-require",
+          "resolution": {
+            "path": "src/components/tpo/dj.js",
+            "sha": "09399d1614ffde9593c34d5f880680bf5b485d92"
+          }
+        },
+        {
+          "line": 6,
+          "specifier": "@/components/tpo/recruiterLeadStages",
+          "kind": "static-or-require",
+          "resolution": {
+            "path": "src/components/tpo/recruiterLeadStages.js",
+            "sha": "df7b4dcf578e634dd1d6b716c265a02a195d7937"
+          }
+        },
+        {
+          "line": 7,
+          "specifier": "@/components/tpo/ui/NextStepCell",
+          "kind": "static-or-require",
+          "resolution": {
+            "path": "src/components/tpo/ui/NextStepCell.jsx",
+            "sha": "b903a861d03d137bff6964aacb94f2f180f4b50e"
+          }
+        },
+        {
+          "line": 8,
+          "specifier": "@/api/Services/AdminService",
+          "kind": "static-or-require",
+          "resolution": {
+            "path": "src/api/Services/AdminService.js",
+            "sha": "598533e1ce238bbcd917c6f6b6df0e83d8f316c6"
+          }
+        },
+        {
+          "line": 9,
+          "specifier": "@/api/Services/TpoHubService",
+          "kind": "static-or-require",
+          "resolution": {
+            "path": "src/api/Services/TpoHubService.js",
+            "sha": "79d6fb983fea0566a6743f3d9eeadcd81c35d36b"
+          }
+        }
+      ],
+      "signals": [
+        {
+          "line": 34,
+          "type": "jsx",
+          "excerpt": "<div className=\"tpo-rsp__head\">"
+        },
+        {
+          "line": 35,
+          "type": "jsx",
+          "excerpt": "<div className=\"tpo-rsp__who\">"
+        },
+        {
+          "line": 37,
+          "type": "jsx",
+          "excerpt": "<div><strong>{p.name || \"Unnamed contact\"}</strong><span>{[p.designation, p.companyName].filter(Boolean).join(\" · \")}</span></div>"
+        },
+        {
+          "line": 39,
+          "type": "interactive-prop,jsx",
+          "excerpt": "<Button type=\"text\" icon={<CloseOutlined />} onClick={onClose} aria-label=\"Close\" />"
+        },
+        {
+          "line": 41,
+          "type": "jsx",
+          "excerpt": "<div className=\"tpo-rsp__where\"><StageTag stage={p._where.key} hover={p._where.hover} /></div>"
+        },
+        {
+          "line": 42,
+          "type": "jsx",
+          "excerpt": "<div className={`tpo-rsp__next${late ? \" is-late\" : \"\"}`}>"
+        },
+        {
+          "line": 44,
+          "type": "interactive-prop,jsx",
+          "excerpt": "<NextStepCell step={p._next} onClick={() => onStep(p)} />"
+        },
+        {
+          "line": 46,
+          "type": "jsx",
+          "excerpt": "<div className=\"tpo-rsp__btns\">"
+        },
+        {
+          "line": 47,
+          "type": "jsx",
+          "excerpt": "<Button type=\"primary\" href={`/tpo/recruiters/${p.id}?do=log`}>Log activity</Button>"
+        },
+        {
+          "line": 48,
+          "type": "jsx",
+          "excerpt": "{p.phone && <Button href={`tel:${p.phone}`}>Call</Button>}"
+        },
+        {
+          "line": 49,
+          "type": "jsx",
+          "excerpt": "{p.email && <Button href={`mailto:${p.email}`}>Email</Button>}"
+        },
+        {
+          "line": 51,
+          "type": "jsx",
+          "excerpt": "<div className=\"tpo-rsp__block\">"
+        },
+        {
+          "line": 53,
+          "type": "jsx",
+          "excerpt": "{!detail ? <Skeleton active title={false} paragraph={{ rows: 1 }} /> : detail.failed ? <span className=\"tpo-rsp__muted\">Couldn&apos;t load the history.</span>"
+        },
+        {
+          "line": 57,
+          "type": "jsx",
+          "excerpt": "<div className=\"tpo-rsp__block\">"
+        },
+        {
+          "line": 61,
+          "type": "jsx",
+          "excerpt": "<div className=\"tpo-rsp__block\">"
+        },
+        {
+          "line": 65,
+          "type": "jsx",
+          "excerpt": "<Link href={`/tpo/recruiters/${p.id}`} className=\"tpo-rsp__full\">Open full page ›</Link>"
+        }
+      ],
+      "signalCount": 16,
+      "computedImportRequiresReview": false
+    },
+    {
+      "path": "src/components/tpo/students/StudentSidePanel.jsx",
+      "sourceSha": "67504b6fb873ff33d9d757c96f63c27e26bb8492",
+      "frontierSha": "67504b6fb873ff33d9d757c96f63c27e26bb8492",
+      "shaMatches": true,
+      "fromFrontierIndex": 159,
+      "sourceLineCount": 91,
+      "importedBy": [
+        "src/pages/tpo/students/index.js"
+      ],
+      "classification": "inspected-meaningful-ui-source",
+      "classificationScope": "source only; renderability and behavior unverified",
+      "imports": [
+        {
+          "line": 1,
+          "specifier": "react",
+          "kind": "static-or-require",
+          "resolution": null
+        },
+        {
+          "line": 2,
+          "specifier": "next/link",
+          "kind": "static-or-require",
+          "resolution": null
+        },
+        {
+          "line": 3,
+          "specifier": "antd",
+          "kind": "static-or-require",
+          "resolution": null
+        },
+        {
+          "line": 4,
+          "specifier": "@ant-design/icons",
+          "kind": "static-or-require",
+          "resolution": null
+        },
+        {
+          "line": 5,
+          "specifier": "@/api/Services/AdminService",
+          "kind": "static-or-require",
+          "resolution": {
+            "path": "src/api/Services/AdminService.js",
+            "sha": "598533e1ce238bbcd917c6f6b6df0e83d8f316c6"
+          }
+        },
+        {
+          "line": 6,
+          "specifier": "@/api/Services/TpoHubService",
+          "kind": "static-or-require",
+          "resolution": {
+            "path": "src/api/Services/TpoHubService.js",
+            "sha": "79d6fb983fea0566a6743f3d9eeadcd81c35d36b"
+          }
+        },
+        {
+          "line": 7,
+          "specifier": "@/components/tpo/ui/labels",
+          "kind": "static-or-require",
+          "resolution": {
+            "path": "src/components/tpo/ui/labels.js",
+            "sha": "96a56474f1800afeb073cde3e3cca67a9c438747"
+          }
+        },
+        {
+          "line": 8,
+          "specifier": "@/components/tpo/ui/journeyRules",
+          "kind": "static-or-require",
+          "resolution": {
+            "path": "src/components/tpo/ui/journeyRules.js",
+            "sha": "13b506b418fb05aea3623f1d1e77985e6880edbb"
+          }
+        },
+        {
+          "line": 9,
+          "specifier": "@/components/tpo/tpoFiles",
+          "kind": "static-or-require",
+          "resolution": {
+            "path": "src/components/tpo/tpoFiles.js",
+            "sha": "b1b89501d023f13b87af99a521a2b19c3fb9f51d"
+          }
+        },
+        {
+          "line": 10,
+          "specifier": "./studentGridRules",
+          "kind": "static-or-require",
+          "resolution": {
+            "path": "src/components/tpo/students/studentGridRules.js",
+            "sha": "070f1e27278a3aff19d9d42b4d3b1ae07f5e449b"
+          }
+        }
+      ],
+      "signals": [
+        {
+          "line": 57,
+          "type": "jsx",
+          "excerpt": "<div className=\"tpo-rsp__head\">"
+        },
+        {
+          "line": 58,
+          "type": "jsx",
+          "excerpt": "<div className=\"tpo-rsp__who\">"
+        },
+        {
+          "line": 60,
+          "type": "jsx",
+          "excerpt": "<div><strong>{name}</strong><span>{[row.rollNumber, row.branch, row.batchName].filter(Boolean).join(\" · \")}</span></div>"
+        },
+        {
+          "line": 62,
+          "type": "interactive-prop,jsx",
+          "excerpt": "<Button type=\"text\" icon={<CloseOutlined />} onClick={onClose} aria-label=\"Close\" />"
+        },
+        {
+          "line": 64,
+          "type": "jsx",
+          "excerpt": "<div className={`tpo-ssp__need is-${need.tone}`}><span>{need.head}</span><strong>{need.text}</strong></div>"
+        },
+        {
+          "line": 65,
+          "type": "jsx",
+          "excerpt": "<div className=\"tpo-rsp__btns\">"
+        },
+        {
+          "line": 66,
+          "type": "interactive-prop,jsx",
+          "excerpt": "{need.act === \"verify\" ? <Button type=\"primary\" href=\"/tpo/verification\">Verify</Button> : <Button type=\"primary\" onClick={doNeed}>{need.button}</Button>}"
+        },
+        {
+          "line": 67,
+          "type": "interactive-prop,jsx",
+          "excerpt": "{need.act !== \"message\" && <Button onClick={() => onMessage(row, null)}>Message</Button>}"
+        },
+        {
+          "line": 68,
+          "type": "interactive-prop,jsx",
+          "excerpt": "{need.act !== \"add\" && <Button onClick={() => onAddToDrive(row)}>Add to a drive</Button>}"
+        },
+        {
+          "line": 70,
+          "type": "jsx",
+          "excerpt": "<div className=\"tpo-rsp__block\">"
+        },
+        {
+          "line": 76,
+          "type": "jsx",
+          "excerpt": "<div className=\"tpo-rsp__block\">"
+        },
+        {
+          "line": 78,
+          "type": "jsx",
+          "excerpt": "{!detail ? <Skeleton active title={false} paragraph={{ rows: 2 }} /> : detail.failed ? <span className=\"tpo-rsp__muted\">Couldn&apos;t load their applications.</span>"
+        },
+        {
+          "line": 82,
+          "type": "jsx",
+          "excerpt": "<Link href={`/tpo/drives/${a.jobId}`}><strong>{a.companyName}</strong> · {a.jobTitle}</Link>"
+        },
+        {
+          "line": 87,
+          "type": "interactive-prop,jsx",
+          "excerpt": "<button type=\"button\" className=\"tpo-link-btn tpo-rsp__full\" onClick={() => onFull?.()}>Open full profile ›</button>"
+        }
+      ],
+      "signalCount": 14,
+      "computedImportRequiresReview": false
+    },
+    {
+      "path": "src/components/tpo/WeekTimeGrid.jsx",
+      "sourceSha": "a5502e763903ec566b8151761d4ad8d720396768",
+      "frontierSha": "a5502e763903ec566b8151761d4ad8d720396768",
+      "shaMatches": true,
+      "fromFrontierIndex": 162,
+      "sourceLineCount": 92,
+      "importedBy": [
+        "src/pages/tpo/calendar.js"
+      ],
+      "classification": "inspected-meaningful-ui-source",
+      "classificationScope": "source only; renderability and behavior unverified",
+      "imports": [
+        {
+          "line": 1,
+          "specifier": "react",
+          "kind": "static-or-require",
+          "resolution": null
+        },
+        {
+          "line": 2,
+          "specifier": "./dj",
+          "kind": "static-or-require",
+          "resolution": {
+            "path": "src/components/tpo/dj.js",
+            "sha": "09399d1614ffde9593c34d5f880680bf5b485d92"
+          }
+        },
+        {
+          "line": 3,
+          "specifier": "./ui/calendarGrid",
+          "kind": "static-or-require",
+          "resolution": {
+            "path": "src/components/tpo/ui/calendarGrid.js",
+            "sha": "af86e35a63456ff1184f61fb8b25ba066dc9308a"
+          }
+        }
+      ],
+      "signals": [
+        {
+          "line": 32,
+          "type": "jsx",
+          "excerpt": "<div className=\"tpo-timegrid\" role=\"grid\" aria-label=\"Week schedule\">"
+        },
+        {
+          "line": 33,
+          "type": "jsx",
+          "excerpt": "<div className=\"tpo-timegrid__head\" role=\"row\">"
+        },
+        {
+          "line": 34,
+          "type": "jsx",
+          "excerpt": "<div className=\"tpo-timegrid__corner\" />"
+        },
+        {
+          "line": 36,
+          "type": "jsx",
+          "excerpt": "<div key={d.format(\"YYYY-MM-DD\")} role=\"columnheader\" className={`tpo-timegrid__dayhead${d.isSame(today, \"day\") ? \" is-today\" : \"\"}`}>"
+        },
+        {
+          "line": 42,
+          "type": "jsx",
+          "excerpt": "<div className=\"tpo-timegrid__allday\" role=\"row\">"
+        },
+        {
+          "line": 43,
+          "type": "jsx",
+          "excerpt": "<div className=\"tpo-timegrid__corner\">all day</div>"
+        },
+        {
+          "line": 45,
+          "type": "jsx",
+          "excerpt": "<div key={d.format(\"YYYY-MM-DD\")} className=\"tpo-timegrid__allday-cell\" role=\"gridcell\">"
+        },
+        {
+          "line": 51,
+          "type": "jsx",
+          "excerpt": "<div className=\"tpo-timegrid__body\" style={{ height: gridHeight() }}>"
+        },
+        {
+          "line": 52,
+          "type": "jsx",
+          "excerpt": "<div className=\"tpo-timegrid__hours\" aria-hidden=\"true\">"
+        },
+        {
+          "line": 53,
+          "type": "jsx",
+          "excerpt": "{HOURS.map((h) => <div key={h} style={{ height: HOUR_PX }}>{hourLabel(h)}</div>)}"
+        },
+        {
+          "line": 72,
+          "type": "interactive-prop",
+          "excerpt": "onClick={(ev) => { if (ev.target === ev.currentTarget) onSlotClick(slotFromOffset(d, offsetIn(key, ev.clientY))); }}"
+        },
+        {
+          "line": 76,
+          "type": "jsx",
+          "excerpt": "{HOURS.map((h) => <div key={h} className=\"tpo-timegrid__line\" style={{ height: HOUR_PX }} />)}"
+        },
+        {
+          "line": 77,
+          "type": "jsx",
+          "excerpt": "{nowTop != null && <div className=\"tpo-timegrid__now\" style={{ top: nowTop }} />}"
+        }
+      ],
+      "signalCount": 13,
+      "computedImportRequiresReview": false
+    },
+    {
+      "path": "src/components/tracker/auditFindings/AuditFindingDrawer.jsx",
+      "sourceSha": "69e3bc8d47e4f8ceea0490ee2cb2d0e7bd5c9f43",
+      "frontierSha": "69e3bc8d47e4f8ceea0490ee2cb2d0e7bd5c9f43",
+      "shaMatches": true,
+      "fromFrontierIndex": 163,
+      "sourceLineCount": 267,
+      "importedBy": [
+        "src/pages/tracker/audit-findings.js"
+      ],
+      "classification": "inspected-meaningful-ui-source",
+      "classificationScope": "source only; renderability and behavior unverified",
+      "imports": [
+        {
+          "line": 1,
+          "specifier": "react",
+          "kind": "static-or-require",
+          "resolution": null
+        },
+        {
+          "line": 2,
+          "specifier": "antd",
+          "kind": "static-or-require",
+          "resolution": null
+        },
+        {
+          "line": 3,
+          "specifier": "@ant-design/icons",
+          "kind": "static-or-require",
+          "resolution": null
+        },
+        {
+          "line": 12,
+          "specifier": "./auditFindingsModel",
+          "kind": "static-or-require",
+          "resolution": {
+            "path": "src/components/tracker/auditFindings/auditFindingsModel.js",
+            "sha": "ce2303ab79b1d47ff7b31beb275432de8caaf74e"
+          }
+        }
+      ],
+      "signals": [
+        {
+          "line": 18,
+          "type": "jsx",
+          "excerpt": "if (children === null || children === undefined || children === \"\") return <Text type=\"secondary\">Not given</Text>;"
+        },
+        {
+          "line": 19,
+          "type": "jsx",
+          "excerpt": "return <Paragraph style={{ whiteSpace: \"pre-wrap\", marginBottom: 0 }}>{String(children)}</Paragraph>;"
+        },
+        {
+          "line": 104,
+          "type": "overlay-or-complex-control,interactive-prop,jsx",
+          "excerpt": "<Drawer open={open} onClose={onClose} width={720} title={f ? f.title : \"Finding\"} destroyOnClose>"
+        },
+        {
+          "line": 105,
+          "type": "jsx",
+          "excerpt": "{error && <Alert type=\"error\" showIcon message={error} />}"
+        },
+        {
+          "line": 106,
+          "type": "jsx",
+          "excerpt": "{!f && !error && <Skeleton active />}"
+        },
+        {
+          "line": 108,
+          "type": "jsx",
+          "excerpt": "<Space direction=\"vertical\" size=\"large\" style={{ width: \"100%\" }}>"
+        },
+        {
+          "line": 109,
+          "type": "jsx",
+          "excerpt": "<Space wrap>"
+        },
+        {
+          "line": 110,
+          "type": "jsx",
+          "excerpt": "<Tag color={STATUS[f.status]?.color}>{STATUS[f.status]?.label || f.status}</Tag>"
+        },
+        {
+          "line": 111,
+          "type": "jsx",
+          "excerpt": "<Tag color={SEVERITY[f.severity]?.color}>{SEVERITY[f.severity]?.label || f.severity}</Tag>"
+        },
+        {
+          "line": 112,
+          "type": "jsx",
+          "excerpt": "{f.reported_severity !== f.severity && <Text type=\"secondary\">reported as {f.reported_severity}</Text>}"
+        },
+        {
+          "line": 113,
+          "type": "jsx",
+          "excerpt": "<Tag>{f.area}</Tag>"
+        },
+        {
+          "line": 114,
+          "type": "jsx",
+          "excerpt": "<Tag>{f.kind}</Tag>"
+        },
+        {
+          "line": 115,
+          "type": "jsx",
+          "excerpt": "<Text type=\"secondary\" copyable={{ text: f.id }}>{f.id}</Text>"
+        },
+        {
+          "line": 116,
+          "type": "interactive-prop,jsx",
+          "excerpt": "<Button size=\"small\" icon={<CopyOutlined />} onClick={copyPrompt}>Copy for Claude</Button>"
+        },
+        {
+          "line": 119,
+          "type": "jsx",
+          "excerpt": "<Descriptions size=\"small\" column={1} bordered>"
+        },
+        {
+          "line": 120,
+          "type": "jsx",
+          "excerpt": "<Descriptions.Item label=\"Summary\"><Plain>{f.summary}</Plain></Descriptions.Item>"
+        },
+        {
+          "line": 122,
+          "type": "jsx",
+          "excerpt": "<Descriptions.Item label=\"Steps\">"
+        },
+        {
+          "line": 126,
+          "type": "jsx",
+          "excerpt": "<Descriptions.Item label=\"Expected\"><Plain>{f.expected}</Plain></Descriptions.Item>"
+        },
+        {
+          "line": 127,
+          "type": "jsx",
+          "excerpt": "<Descriptions.Item label=\"Actual\"><Plain>{f.actual}</Plain></Descriptions.Item>"
+        },
+        {
+          "line": 128,
+          "type": "jsx",
+          "excerpt": "{f.evidence && <Descriptions.Item label=\"Evidence\"><Plain>{f.evidence}</Plain></Descriptions.Item>}"
+        },
+        {
+          "line": 129,
+          "type": "jsx",
+          "excerpt": "{f.suggested_fix && <Descriptions.Item label=\"Suggested fix\"><Plain>{f.suggested_fix}</Plain></Descriptions.Item>}"
+        },
+        {
+          "line": 130,
+          "type": "jsx",
+          "excerpt": "<Descriptions.Item label=\"Where\">"
+        },
+        {
+          "line": 131,
+          "type": "jsx",
+          "excerpt": "<Plain>{[where.repo && `Repo: ${where.repo}`, where.paths?.length && `Files: ${where.paths.join(\", \")}`,"
+        },
+        {
+          "line": 135,
+          "type": "jsx",
+          "excerpt": "<Descriptions.Item label=\"Affects\"><Plain>{f.roles?.split(\",\").join(\", \")}</Plain></Descriptions.Item>"
+        },
+        {
+          "line": 136,
+          "type": "jsx",
+          "excerpt": "<Descriptions.Item label=\"Seen on\">{f.environment}</Descriptions.Item>"
+        },
+        {
+          "line": 137,
+          "type": "jsx",
+          "excerpt": "<Descriptions.Item label=\"Reported\">"
+        },
+        {
+          "line": 140,
+          "type": "jsx",
+          "excerpt": "{f.duplicate_of && <Descriptions.Item label=\"Duplicate of\">{f.duplicate_of}</Descriptions.Item>}"
+        },
+        {
+          "line": 141,
+          "type": "jsx",
+          "excerpt": "<Descriptions.Item label=\"Fix commits\">"
+        },
+        {
+          "line": 143,
+          "type": "jsx",
+          "excerpt": "? f.fix_commits_json.map((c) => <Tag key={`${c.repo}@${c.sha}`}>{`${c.repo} ${String(c.sha).slice(0, 8)}`}</Tag>)"
+        },
+        {
+          "line": 144,
+          "type": "jsx",
+          "excerpt": ": <Text type=\"secondary\">None yet</Text>}"
+        },
+        {
+          "line": 153,
+          "type": "jsx",
+          "excerpt": "description={data.similar.map((s) => <div key={s.id}><Text code>{s.id}</Text> {String(s.title)} ({STATUS[s.status]?.label || s.status})</div>)}"
+        },
+        {
+          "line": 157,
+          "type": "jsx",
+          "excerpt": "<div>"
+        },
+        {
+          "line": 158,
+          "type": "jsx",
+          "excerpt": "<Text strong>Change status</Text>"
+        },
+        {
+          "line": 159,
+          "type": "jsx",
+          "excerpt": "<Space wrap style={{ width: \"100%\", marginTop: 8 }}>"
+        },
+        {
+          "line": 160,
+          "type": "overlay-or-complex-control",
+          "excerpt": "<Select"
+        },
+        {
+          "line": 164,
+          "type": "interactive-prop",
+          "excerpt": "onChange={setNextStatus}"
+        },
+        {
+          "line": 168,
+          "type": "overlay-or-complex-control",
+          "excerpt": "<Select"
+        },
+        {
+          "line": 172,
+          "type": "interactive-prop",
+          "excerpt": "onChange={setDuplicateOf}"
+        },
+        {
+          "line": 181,
+          "type": "interactive-prop,jsx",
+          "excerpt": "<Input style={{ marginTop: 8 }} placeholder=\"Or paste the original's id\" value={duplicateOf} onChange={(e) => setDuplicateOf(e.target.value.trim())} />"
+        },
+        {
+          "line": 189,
+          "type": "interactive-prop",
+          "excerpt": "onChange={(e) => setNote(e.target.value)}"
+        },
+        {
+          "line": 199,
+          "type": "interactive-prop",
+          "excerpt": "onClick={() => run(() => setAuditFindingStatus(f.id, { status: nextStatus, note, duplicateOf }), () => { setNextStatus(null); setNote(\"\"); setDuplicateOf(\"\"); })}"
+        },
+        {
+          "line": 206,
+          "type": "jsx",
+          "excerpt": "<Space wrap>"
+        },
+        {
+          "line": 207,
+          "type": "jsx",
+          "excerpt": "<div>"
+        },
+        {
+          "line": 208,
+          "type": "jsx",
+          "excerpt": "<Text strong>Severity</Text>"
+        },
+        {
+          "line": 209,
+          "type": "jsx",
+          "excerpt": "<div>"
+        },
+        {
+          "line": 210,
+          "type": "overlay-or-complex-control",
+          "excerpt": "<Select"
+        },
+        {
+          "line": 214,
+          "type": "interactive-prop",
+          "excerpt": "onChange={(severity) => run(() => setAuditFindingSeverity(f.id, { severity }))}"
+        },
+        {
+          "line": 219,
+          "type": "jsx",
+          "excerpt": "<div>"
+        },
+        {
+          "line": 220,
+          "type": "jsx",
+          "excerpt": "<Text strong>Assigned to</Text>"
+        },
+        {
+          "line": 221,
+          "type": "jsx",
+          "excerpt": "<Space.Compact style={{ marginTop: 8, display: \"flex\" }}>"
+        },
+        {
+          "line": 222,
+          "type": "interactive-prop,jsx",
+          "excerpt": "<Input style={{ width: 200 }} maxLength={100} value={assignee} placeholder=\"Name or agent\" onChange={(e) => setAssignee(e.target.value)} />"
+        },
+        {
+          "line": 223,
+          "type": "interactive-prop,jsx",
+          "excerpt": "<Button disabled={busy || (assignee || \"\") === (f.assignee || \"\")} onClick={() => run(() => setAuditFindingAssignee(f.id, { assignee }))}>Save</Button>"
+        },
+        {
+          "line": 228,
+          "type": "jsx",
+          "excerpt": "<div>"
+        },
+        {
+          "line": 229,
+          "type": "jsx",
+          "excerpt": "<Text strong>Link a fix commit</Text>"
+        },
+        {
+          "line": 230,
+          "type": "jsx",
+          "excerpt": "<Space.Compact style={{ marginTop: 8, display: \"flex\" }}>"
+        },
+        {
+          "line": 231,
+          "type": "overlay-or-complex-control,interactive-prop,jsx",
+          "excerpt": "<Select style={{ width: 120 }} value={commit.repo} onChange={(repo) => setCommit((c) => ({ ...c, repo }))} options={REPOS.map((r) => ({ value: r, label: r }))} />"
+        },
+        {
+          "line": 232,
+          "type": "interactive-prop,jsx",
+          "excerpt": "<Input style={{ width: 220 }} placeholder=\"Commit hash\" value={commit.sha} onChange={(e) => setCommit((c) => ({ ...c, sha: e.target.value.trim() }))} />"
+        },
+        {
+          "line": 233,
+          "type": "interactive-prop,jsx",
+          "excerpt": "<Button disabled={busy || !/^[0-9a-f]{7,40}$/.test(commit.sha)} onClick={() => run(() => linkAuditFindingCommit(f.id, commit), () => setCommit((c) => ({ ...c, sha: \"\" })))}>Link</B"
+        },
+        {
+          "line": 237,
+          "type": "jsx",
+          "excerpt": "<div>"
+        },
+        {
+          "line": 238,
+          "type": "jsx",
+          "excerpt": "<Text strong>Comment</Text>"
+        },
+        {
+          "line": 239,
+          "type": "interactive-prop,jsx",
+          "excerpt": "<Input.TextArea style={{ marginTop: 8 }} rows={2} maxLength={4000} value={comment} onChange={(e) => setComment(e.target.value)} placeholder=\"Add to the history\" />"
+        },
+        {
+          "line": 240,
+          "type": "interactive-prop,jsx",
+          "excerpt": "<Button style={{ marginTop: 8 }} disabled={busy || !comment.trim()} onClick={() => run(() => commentOnAuditFinding(f.id, { note: comment }), () => setComment(\"\"))}>Add comment</But"
+        },
+        {
+          "line": 243,
+          "type": "jsx",
+          "excerpt": "<div>"
+        },
+        {
+          "line": 244,
+          "type": "jsx",
+          "excerpt": "<Text strong>History</Text>"
+        },
+        {
+          "line": 252,
+          "type": "jsx",
+          "excerpt": "<div>"
+        },
+        {
+          "line": 253,
+          "type": "jsx",
+          "excerpt": "<Text strong>{EVENT_LABEL[e.type] || e.type}</Text> <Text>{eventText(e)}</Text>"
+        },
+        {
+          "line": 254,
+          "type": "jsx",
+          "excerpt": "<div><Text type=\"secondary\">{String(e.actor)} · {istTime(e.at)}{e.sourceFile ? ` · ${String(e.sourceFile)}` : \"\"}</Text></div>"
+        },
+        {
+          "line": 255,
+          "type": "jsx",
+          "excerpt": "{e.note && <Plain>{e.note}</Plain>}"
+        },
+        {
+          "line": 260,
+          "type": "jsx",
+          "excerpt": ") : <Empty description=\"No history\" />}"
+        }
+      ],
+      "signalCount": 69,
+      "computedImportRequiresReview": false
+    }
+  ]
+}

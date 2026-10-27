@@ -1,0 +1,1125 @@
+{
+  "schemaVersion": 1,
+  "type": "incremental legacy UI source inspection; not product tracker",
+  "batch": "wave3-b",
+  "sourceSnapshot": {
+    "repo": "42Students/lms2-fe",
+    "sha": "9d56bb7a347b06f242ef615c19fdc298f83329e0"
+  },
+  "parentFrontier": "2026-10-27-derived-import-frontier-post-wave2.json",
+  "method": "Pinned GitHub source reads; literal import resolution against pinned complete source tree; static JSX/control candidates only, not behavioral parity",
+  "requested": 14,
+  "read": 14,
+  "errors": 0,
+  "nodes": [
+    {
+      "path": "src/components/admin/projects/superAdminWorkspaceSection.js",
+      "sourceSha": "28c1be35d1340d25eec4b58eea26094b5e7387b9",
+      "frontierSha": "28c1be35d1340d25eec4b58eea26094b5e7387b9",
+      "shaMatches": true,
+      "fromFrontierIndex": 15,
+      "sourceLineCount": 85,
+      "importedBy": [
+        "src/pages/superadmin/projects/workspaces/[workspaceId]/audit.js",
+        "src/pages/superadmin/projects/workspaces/[workspaceId]/delivery.js",
+        "src/pages/superadmin/projects/workspaces/[workspaceId]/meetings.js",
+        "src/pages/superadmin/projects/workspaces/[workspaceId]/overview.js",
+        "src/pages/superadmin/projects/workspaces/[workspaceId]/readiness.js",
+        "src/pages/superadmin/projects/workspaces/[workspaceId]/resources.js",
+        "src/pages/superadmin/projects/workspaces/[workspaceId]/sprints.js",
+        "src/pages/superadmin/projects/workspaces/[workspaceId]/summary.js",
+        "src/pages/superadmin/projects/workspaces/[workspaceId]/tasks.js",
+        "src/pages/superadmin/projects/workspaces/[workspaceId]/team.js"
+      ],
+      "classification": "inspected-non-ui-helper-or-config",
+      "classificationScope": "source only; renderability and behavior unverified",
+      "imports": [
+        {
+          "line": 1,
+          "specifier": "react",
+          "kind": "static-or-require",
+          "resolution": null
+        },
+        {
+          "line": 2,
+          "specifier": "@/api/Services/AdminService",
+          "kind": "static-or-require",
+          "resolution": {
+            "path": "src/api/Services/AdminService.js",
+            "sha": "598533e1ce238bbcd917c6f6b6df0e83d8f316c6"
+          }
+        },
+        {
+          "line": 3,
+          "specifier": "./adminProjectUtils",
+          "kind": "static-or-require",
+          "resolution": {
+            "path": "src/components/admin/projects/adminProjectUtils.js",
+            "sha": "3b01a868ba1afa5102d495e2598847ddc9c01a8c"
+          }
+        },
+        {
+          "line": 4,
+          "specifier": "./projectSectionFieldConfigs",
+          "kind": "static-or-require",
+          "resolution": {
+            "path": "src/components/admin/projects/projectSectionFieldConfigs.js",
+            "sha": "e627cd0a44f3db9b489abbac1e7ac2ea1cadbbc4"
+          }
+        },
+        {
+          "line": 83,
+          "specifier": "./adminWorkspaceSection",
+          "kind": "static-or-require",
+          "resolution": {
+            "path": "src/components/admin/projects/adminWorkspaceSection.js",
+            "sha": "2cd4a2d4e63af45e204bc4c8743e059a2d99cd3c"
+          }
+        }
+      ],
+      "signals": [],
+      "signalCount": 0,
+      "computedImportRequiresReview": false
+    },
+    {
+      "path": "src/components/admin/placements/DriveSubNav.jsx",
+      "sourceSha": "543c15c9589e844b21ca74a5404a9d502d7dd10e",
+      "frontierSha": "543c15c9589e844b21ca74a5404a9d502d7dd10e",
+      "shaMatches": true,
+      "fromFrontierIndex": 16,
+      "sourceLineCount": 62,
+      "importedBy": [
+        "src/pages/college-admin/jobs/[jobId]/applications.js",
+        "src/pages/college-admin/jobs/[jobId]/index.js",
+        "src/pages/college-admin/jobs/[jobId]/interviews.js",
+        "src/pages/college-admin/jobs/[jobId]/settings.js",
+        "src/pages/college-admin/jobs/[jobId]/shortlisted.js",
+        "src/pages/superadmin/jobs/[jobId]/applications.js",
+        "src/pages/superadmin/jobs/[jobId]/index.js",
+        "src/pages/superadmin/jobs/[jobId]/interviews.js",
+        "src/pages/superadmin/jobs/[jobId]/settings.js",
+        "src/pages/superadmin/jobs/[jobId]/shortlisted.js"
+      ],
+      "classification": "inspected-meaningful-ui-source",
+      "classificationScope": "source only; renderability and behavior unverified",
+      "imports": [
+        {
+          "line": 1,
+          "specifier": "next/router",
+          "kind": "static-or-require",
+          "resolution": null
+        },
+        {
+          "line": 2,
+          "specifier": "antd",
+          "kind": "static-or-require",
+          "resolution": null
+        },
+        {
+          "line": 3,
+          "specifier": "next/link",
+          "kind": "static-or-require",
+          "resolution": null
+        },
+        {
+          "line": 4,
+          "specifier": "@/utils/navigationContext",
+          "kind": "static-or-require",
+          "resolution": {
+            "path": "src/utils/navigationContext.js",
+            "sha": "7b0184b438b230f52a937792680cddbe6980c198"
+          }
+        }
+      ],
+      "signals": [
+        {
+          "line": 31,
+          "type": "navigation-or-browser",
+          "excerpt": "router.push(withReturnTo(`${basePath}/jobs/${jobId}${suffix}`, returnTo));"
+        },
+        {
+          "line": 36,
+          "type": "overlay-or-complex-control",
+          "excerpt": "Modal.confirm({"
+        },
+        {
+          "line": 50,
+          "type": "jsx",
+          "excerpt": "<div style={{ marginBottom: 12 }}>"
+        },
+        {
+          "line": 54,
+          "type": "jsx",
+          "excerpt": "{ title: <Link href={returnTo}>Drives</Link> },"
+        },
+        {
+          "line": 58,
+          "type": "overlay-or-complex-control,interactive-prop,jsx",
+          "excerpt": "<Tabs activeKey={active} onChange={handleChange} items={items} />"
+        }
+      ],
+      "signalCount": 5,
+      "computedImportRequiresReview": false
+    },
+    {
+      "path": "src/components/admin/projects/adminWorkspaceSection.js",
+      "sourceSha": "2cd4a2d4e63af45e204bc4c8743e059a2d99cd3c",
+      "frontierSha": "2cd4a2d4e63af45e204bc4c8743e059a2d99cd3c",
+      "shaMatches": true,
+      "fromFrontierIndex": 17,
+      "sourceLineCount": 86,
+      "importedBy": [
+        "src/pages/college-admin/projects/workspaces/[workspaceId]/audit.js",
+        "src/pages/college-admin/projects/workspaces/[workspaceId]/delivery.js",
+        "src/pages/college-admin/projects/workspaces/[workspaceId]/meetings.js",
+        "src/pages/college-admin/projects/workspaces/[workspaceId]/overview.js",
+        "src/pages/college-admin/projects/workspaces/[workspaceId]/readiness.js",
+        "src/pages/college-admin/projects/workspaces/[workspaceId]/resources.js",
+        "src/pages/college-admin/projects/workspaces/[workspaceId]/sprints.js",
+        "src/pages/college-admin/projects/workspaces/[workspaceId]/tasks.js",
+        "src/pages/college-admin/projects/workspaces/[workspaceId]/team.js"
+      ],
+      "classification": "inspected-non-ui-helper-or-config",
+      "classificationScope": "source only; renderability and behavior unverified",
+      "imports": [
+        {
+          "line": 1,
+          "specifier": "react",
+          "kind": "static-or-require",
+          "resolution": null
+        },
+        {
+          "line": 2,
+          "specifier": "@/api/Services/AdminService",
+          "kind": "static-or-require",
+          "resolution": {
+            "path": "src/api/Services/AdminService.js",
+            "sha": "598533e1ce238bbcd917c6f6b6df0e83d8f316c6"
+          }
+        },
+        {
+          "line": 3,
+          "specifier": "./adminProjectUtils",
+          "kind": "static-or-require",
+          "resolution": {
+            "path": "src/components/admin/projects/adminProjectUtils.js",
+            "sha": "3b01a868ba1afa5102d495e2598847ddc9c01a8c"
+          }
+        }
+      ],
+      "signals": [],
+      "signalCount": 0,
+      "computedImportRequiresReview": false
+    },
+    {
+      "path": "src/components/tpo/nav/TpoHubBar.jsx",
+      "sourceSha": "d6bc2217a016bd7561e9b6a5c88a8678be4e1059",
+      "frontierSha": "d6bc2217a016bd7561e9b6a5c88a8678be4e1059",
+      "shaMatches": true,
+      "fromFrontierIndex": 18,
+      "sourceLineCount": 97,
+      "importedBy": [
+        "src/pages/tpo/announcements.js",
+        "src/pages/tpo/audit.js",
+        "src/pages/tpo/batches/index.js",
+        "src/pages/tpo/messages.js",
+        "src/pages/tpo/recruiters/[recruiterLeadId].js",
+        "src/pages/tpo/recruiters/index.js",
+        "src/pages/tpo/requests.js",
+        "src/pages/tpo/settings.js",
+        "src/pages/tpo/students/index.js",
+        "src/pages/tpo/verification.js"
+      ],
+      "classification": "inspected-meaningful-ui-source",
+      "classificationScope": "source only; renderability and behavior unverified",
+      "imports": [
+        {
+          "line": 1,
+          "specifier": "react",
+          "kind": "static-or-require",
+          "resolution": null
+        },
+        {
+          "line": 2,
+          "specifier": "next/link",
+          "kind": "static-or-require",
+          "resolution": null
+        },
+        {
+          "line": 3,
+          "specifier": "react-redux",
+          "kind": "static-or-require",
+          "resolution": null
+        },
+        {
+          "line": 4,
+          "specifier": "antd",
+          "kind": "static-or-require",
+          "resolution": null
+        },
+        {
+          "line": 5,
+          "specifier": "@ant-design/icons",
+          "kind": "static-or-require",
+          "resolution": null
+        },
+        {
+          "line": 6,
+          "specifier": "@/redux/store",
+          "kind": "static-or-require",
+          "resolution": {
+            "path": "src/redux/store.js",
+            "sha": "0541bf78795810713c9a75e2d1ee882641986036"
+          }
+        },
+        {
+          "line": 7,
+          "specifier": "@/api/Services/AdminService",
+          "kind": "static-or-require",
+          "resolution": {
+            "path": "src/api/Services/AdminService.js",
+            "sha": "598533e1ce238bbcd917c6f6b6df0e83d8f316c6"
+          }
+        },
+        {
+          "line": 8,
+          "specifier": "@/api/Services/TpoHubService",
+          "kind": "static-or-require",
+          "resolution": {
+            "path": "src/api/Services/TpoHubService.js",
+            "sha": "79d6fb983fea0566a6743f3d9eeadcd81c35d36b"
+          }
+        },
+        {
+          "line": 9,
+          "specifier": "./tpoHubs",
+          "kind": "static-or-require",
+          "resolution": {
+            "path": "src/components/tpo/nav/tpoHubs.js",
+            "sha": "f8258f78a9c384252daedf7fe2ce8e7109a68b14"
+          }
+        }
+      ],
+      "signals": [
+        {
+          "line": 15,
+          "type": "navigation-or-browser",
+          "excerpt": "try { return window.localStorage.getItem(seenKey(hub)) === \"1\"; } catch { return false; }"
+        },
+        {
+          "line": 18,
+          "type": "navigation-or-browser",
+          "excerpt": "try { window.localStorage.setItem(seenKey(hub), \"1\"); } catch { /* nothing to keep */ }"
+        },
+        {
+          "line": 27,
+          "type": "navigation-or-browser",
+          "excerpt": "try { window.sessionStorage.setItem(hubCountKey(key), String(Number(n) || 0)); } catch { /* the tab just shows no number elsewhere */ }"
+        },
+        {
+          "line": 31,
+          "type": "navigation-or-browser",
+          "excerpt": "try { tabs.forEach((t) => { const v = window.sessionStorage.getItem(hubCountKey(t.count || \"\")); if (t.count && v !== null) out[t.count] = Number(v); }); } catch { /* none kept */ "
+        },
+        {
+          "line": 73,
+          "type": "jsx",
+          "excerpt": "<div className=\"tpo-hub\" data-testid={`tpo.hub.${hub}`}>"
+        },
+        {
+          "line": 74,
+          "type": "jsx",
+          "excerpt": "<nav ref={navRef} className=\"tpo-hub__tabs\" aria-label={`${hub[0].toUpperCase()}${hub.slice(1)} tabs`}>"
+        },
+        {
+          "line": 80,
+          "type": "jsx",
+          "excerpt": "<Link key={t.key} href={t.href} className={`tpo-hub__tab${on ? \" is-on\" : \"\"}`} aria-current={on ? \"page\" : undefined}"
+        },
+        {
+          "line": 83,
+          "type": "jsx",
+          "excerpt": "{n > 0 && <Badge count={n} size=\"small\" overflowCount={99} className=\"tpo-hub__count\" />}"
+        },
+        {
+          "line": 91,
+          "type": "interactive-prop,jsx",
+          "excerpt": "<button type=\"button\" aria-label=\"Hide\" onClick={() => setShowHint(false)}><CloseOutlined /></button>"
+        }
+      ],
+      "signalCount": 9,
+      "computedImportRequiresReview": false
+    },
+    {
+      "path": "src/components/admin/projects/renderStructuredValue.jsx",
+      "sourceSha": "6adb6937aecb9808cdbd584f267901e7c3acec48",
+      "frontierSha": "6adb6937aecb9808cdbd584f267901e7c3acec48",
+      "shaMatches": true,
+      "fromFrontierIndex": 19,
+      "sourceLineCount": 77,
+      "importedBy": [
+        "src/components/admin/ProfileSectionsPanel.js",
+        "src/pages/college-admin/projects/audit/index.js",
+        "src/pages/college-admin/projects/templates/[templateId].js",
+        "src/pages/superadmin/projects/audit/index.js",
+        "src/pages/superadmin/projects/templates/[templateId]/overview.js",
+        "src/pages/superadmin/projects/templates/[templateId]/versions.js",
+        "src/pages/superadmin/sections/JobApplications.js"
+      ],
+      "classification": "inspected-meaningful-ui-source",
+      "classificationScope": "source only; renderability and behavior unverified",
+      "imports": [
+        {
+          "line": 1,
+          "specifier": "antd",
+          "kind": "static-or-require",
+          "resolution": null
+        }
+      ],
+      "signals": [
+        {
+          "line": 19,
+          "type": "jsx",
+          "excerpt": "if (val === null || val === undefined || val === \"\") return <Text type=\"secondary\">—</Text>;"
+        },
+        {
+          "line": 21,
+          "type": "jsx",
+          "excerpt": "return <Text type=\"secondary\" italic>(too deeply nested to display)</Text>;"
+        },
+        {
+          "line": 25,
+          "type": "jsx",
+          "excerpt": "if (!val.length) return <Text type=\"secondary\">—</Text>;"
+        },
+        {
+          "line": 29,
+          "type": "jsx",
+          "excerpt": "<Space wrap size={[4, 4]}>"
+        },
+        {
+          "line": 31,
+          "type": "jsx",
+          "excerpt": "<Tag key={index}>{String(item)}</Tag>"
+        },
+        {
+          "line": 40,
+          "type": "jsx",
+          "excerpt": "<div style={depth > 0 ? { marginLeft: 12, borderLeft: \"2px solid var(--border-color-split, #f0f0f0)\", paddingLeft: 8 } : undefined}>"
+        },
+        {
+          "line": 41,
+          "type": "jsx",
+          "excerpt": "<Space direction=\"vertical\" style={{ width: \"100%\" }} size={6}>"
+        },
+        {
+          "line": 43,
+          "type": "jsx",
+          "excerpt": "<Descriptions key={index} column={1} size=\"small\" bordered>"
+        },
+        {
+          "line": 45,
+          "type": "jsx",
+          "excerpt": "<Descriptions.Item key={key} label={key}>"
+        },
+        {
+          "line": 58,
+          "type": "jsx",
+          "excerpt": "if (!entries.length) return <Text type=\"secondary\">—</Text>;"
+        },
+        {
+          "line": 63,
+          "type": "jsx",
+          "excerpt": "<div style={depth > 0 ? { marginLeft: 12, borderLeft: \"2px solid var(--border-color-split, #f0f0f0)\", paddingLeft: 8 } : undefined}>"
+        },
+        {
+          "line": 64,
+          "type": "jsx",
+          "excerpt": "<Descriptions column={1} size=\"small\" bordered>"
+        },
+        {
+          "line": 66,
+          "type": "jsx",
+          "excerpt": "<Descriptions.Item key={key} label={key}>"
+        }
+      ],
+      "signalCount": 13,
+      "computedImportRequiresReview": false
+    },
+    {
+      "path": "src/components/Course/Common/CourseTabSkeleton.jsx",
+      "sourceSha": "0ff612cb40af843f896e76e7d22d3969825c1a0d",
+      "frontierSha": "0ff612cb40af843f896e76e7d22d3969825c1a0d",
+      "shaMatches": true,
+      "fromFrontierIndex": 20,
+      "sourceLineCount": 186,
+      "importedBy": [
+        "src/pages/learn/courses/[courseId]/[...courseTab].js",
+        "src/pages/learn/courses/[courseId]/index.js",
+        "src/pages/teacher/courses/[courseId]/[...courseTab].js",
+        "src/pages/teacher/courses/[courseId]/index.js"
+      ],
+      "classification": "inspected-meaningful-ui-source",
+      "classificationScope": "source only; renderability and behavior unverified",
+      "imports": [
+        {
+          "line": 1,
+          "specifier": "react",
+          "kind": "static-or-require",
+          "resolution": null
+        }
+      ],
+      "signals": [
+        {
+          "line": 28,
+          "type": "jsx",
+          "excerpt": "<div className=\"course-skeleton course-skeleton--table\">"
+        },
+        {
+          "line": 29,
+          "type": "jsx",
+          "excerpt": "<div className=\"course-skeleton__row course-skeleton__row--head\">"
+        },
+        {
+          "line": 30,
+          "type": "jsx",
+          "excerpt": "<Bar w=\"180px\" h={11} />"
+        },
+        {
+          "line": 31,
+          "type": "jsx",
+          "excerpt": "<Bar w=\"120px\" h={11} />"
+        },
+        {
+          "line": 34,
+          "type": "jsx",
+          "excerpt": "<div className=\"course-skeleton__row\" key={i}>"
+        },
+        {
+          "line": 37,
+          "type": "jsx",
+          "excerpt": "<Bar w=\"140px\" h={13} />"
+        },
+        {
+          "line": 38,
+          "type": "jsx",
+          "excerpt": "<Bar w=\"80px\" h={10} />"
+        },
+        {
+          "line": 40,
+          "type": "jsx",
+          "excerpt": "<Bar w=\"110px\" h={12} />"
+        },
+        {
+          "line": 49,
+          "type": "jsx",
+          "excerpt": "<div className=\"course-skeleton course-skeleton--grid\">"
+        },
+        {
+          "line": 50,
+          "type": "jsx",
+          "excerpt": "<div className=\"course-skeleton__row course-skeleton__row--head\">"
+        },
+        {
+          "line": 51,
+          "type": "jsx",
+          "excerpt": "<Bar w=\"140px\" h={11} />"
+        },
+        {
+          "line": 52,
+          "type": "jsx",
+          "excerpt": "<Bar w=\"200px\" h={11} />"
+        },
+        {
+          "line": 55,
+          "type": "jsx",
+          "excerpt": "<div className=\"course-skeleton__grid-row\" key={row}>"
+        },
+        {
+          "line": 56,
+          "type": "jsx",
+          "excerpt": "<Bar w=\"150px\" h={14} />"
+        },
+        {
+          "line": 70,
+          "type": "jsx",
+          "excerpt": "<div className=\"course-skeleton course-skeleton--chat\">"
+        },
+        {
+          "line": 72,
+          "type": "jsx",
+          "excerpt": "<div className={`course-skeleton__msg ${i % 2 ? \"course-skeleton__msg--alt\" : \"\"}`} key={i}>"
+        },
+        {
+          "line": 75,
+          "type": "jsx",
+          "excerpt": "<Bar w={i % 2 ? \"38%\" : \"52%\"} h={11} />"
+        },
+        {
+          "line": 76,
+          "type": "jsx",
+          "excerpt": "<Bar w={i % 2 ? \"64%\" : \"78%\"} h={13} />"
+        },
+        {
+          "line": 86,
+          "type": "jsx",
+          "excerpt": "<div className=\"course-skeleton course-skeleton--tree\">"
+        },
+        {
+          "line": 88,
+          "type": "jsx",
+          "excerpt": "<div className=\"course-skeleton__lesson\" key={i}>"
+        },
+        {
+          "line": 91,
+          "type": "jsx",
+          "excerpt": "<Bar w=\"46%\" h={15} />"
+        },
+        {
+          "line": 92,
+          "type": "jsx",
+          "excerpt": "<Bar w=\"28%\" h={11} />"
+        },
+        {
+          "line": 102,
+          "type": "jsx",
+          "excerpt": "<div className=\"course-skeleton course-skeleton--overview\">"
+        },
+        {
+          "line": 103,
+          "type": "jsx",
+          "excerpt": "<div className=\"course-skeleton__about\">"
+        },
+        {
+          "line": 104,
+          "type": "jsx",
+          "excerpt": "<Bar w=\"30%\" h={18} />"
+        },
+        {
+          "line": 105,
+          "type": "jsx",
+          "excerpt": "<Bar w=\"92%\" h={12} />"
+        },
+        {
+          "line": 106,
+          "type": "jsx",
+          "excerpt": "<Bar w=\"76%\" h={12} />"
+        },
+        {
+          "line": 108,
+          "type": "jsx",
+          "excerpt": "<div className=\"course-skeleton__cards\">"
+        },
+        {
+          "line": 110,
+          "type": "jsx",
+          "excerpt": "<div className=\"course-skeleton__card\" key={i}>"
+        },
+        {
+          "line": 112,
+          "type": "jsx",
+          "excerpt": "<Bar w=\"60%\" h={13} />"
+        },
+        {
+          "line": 113,
+          "type": "jsx",
+          "excerpt": "<Bar w=\"80%\" h={10} />"
+        },
+        {
+          "line": 114,
+          "type": "jsx",
+          "excerpt": "<Bar w=\"34%\" h={26} r={8} />"
+        },
+        {
+          "line": 129,
+          "type": "jsx",
+          "excerpt": "<div className=\"course-skeleton course-skeleton--overview\">"
+        },
+        {
+          "line": 130,
+          "type": "jsx",
+          "excerpt": "<div className=\"course-skeleton__about\">"
+        },
+        {
+          "line": 131,
+          "type": "jsx",
+          "excerpt": "<Bar w=\"30%\" h={18} />"
+        },
+        {
+          "line": 132,
+          "type": "jsx",
+          "excerpt": "<Bar w=\"92%\" h={12} />"
+        },
+        {
+          "line": 133,
+          "type": "jsx",
+          "excerpt": "<Bar w=\"76%\" h={12} />"
+        },
+        {
+          "line": 135,
+          "type": "jsx",
+          "excerpt": "<div className=\"course-skeleton__command\" aria-hidden=\"true\">"
+        },
+        {
+          "line": 137,
+          "type": "jsx",
+          "excerpt": "<Bar w=\"120px\" h={11} />"
+        },
+        {
+          "line": 138,
+          "type": "jsx",
+          "excerpt": "<Bar w=\"220px\" h={18} />"
+        },
+        {
+          "line": 139,
+          "type": "jsx",
+          "excerpt": "<Bar w=\"70%\" h={12} />"
+        },
+        {
+          "line": 143,
+          "type": "jsx",
+          "excerpt": "<div className=\"course-skeleton__priorities\">"
+        },
+        {
+          "line": 145,
+          "type": "jsx",
+          "excerpt": "<div className=\"course-skeleton__priority-card\" key={i}>"
+        },
+        {
+          "line": 148,
+          "type": "jsx",
+          "excerpt": "<Bar w=\"72%\" h={13} />"
+        },
+        {
+          "line": 149,
+          "type": "jsx",
+          "excerpt": "<Bar w=\"50%\" h={10} />"
+        },
+        {
+          "line": 175,
+          "type": "jsx",
+          "excerpt": "<div className=\"learn-course-canvas\" role=\"status\" aria-live=\"polite\" aria-label=\"Loading course\">"
+        },
+        {
+          "line": 176,
+          "type": "jsx",
+          "excerpt": "<div className=\"scroll-container\">"
+        },
+        {
+          "line": 177,
+          "type": "jsx",
+          "excerpt": "<div className=\"ln-module-card\">"
+        },
+        {
+          "line": 178,
+          "type": "jsx",
+          "excerpt": "<Shape />"
+        }
+      ],
+      "signalCount": 49,
+      "computedImportRequiresReview": false
+    },
+    {
+      "path": "src/components/recruiter/recruiterRoutes.js",
+      "sourceSha": "a147503fbbc9a4a0f2eccbdc9fb44ef4bed827ab",
+      "frontierSha": "a147503fbbc9a4a0f2eccbdc9fb44ef4bed827ab",
+      "shaMatches": true,
+      "fromFrontierIndex": 21,
+      "sourceLineCount": 83,
+      "importedBy": [
+        "src/components/recruiter/RecruiterDriveOverview.jsx",
+        "src/components/recruiter/RecruiterFinder.jsx",
+        "src/components/recruiter/RecruiterToday.jsx",
+        "src/pages/recruiter/calendar.js",
+        "src/pages/recruiter/company.js",
+        "src/pages/recruiter/drives/[jobId].js",
+        "src/pages/recruiter/drives/index.js"
+      ],
+      "classification": "inspected-non-ui-helper-or-config",
+      "classificationScope": "source only; renderability and behavior unverified",
+      "imports": [],
+      "signals": [],
+      "signalCount": 0,
+      "computedImportRequiresReview": false
+    },
+    {
+      "path": "src/components/tpo/invite/inviteState.js",
+      "sourceSha": "9e3225213b74eaabae6a76ec60ece1062a3b0c29",
+      "frontierSha": "9e3225213b74eaabae6a76ec60ece1062a3b0c29",
+      "shaMatches": true,
+      "fromFrontierIndex": 22,
+      "sourceLineCount": 88,
+      "importedBy": [
+        "src/components/tpo/InviteModal.js",
+        "src/components/tpo/recruiterPage.js",
+        "src/pages/tpo/recruiters/[recruiterLeadId].js",
+        "src/pages/tpo/recruiters/index.js"
+      ],
+      "classification": "inspected-non-ui-helper-or-config",
+      "classificationScope": "source only; renderability and behavior unverified",
+      "imports": [
+        {
+          "line": 1,
+          "specifier": "@/components/tpo/dj",
+          "kind": "static-or-require",
+          "resolution": {
+            "path": "src/components/tpo/dj.js",
+            "sha": "09399d1614ffde9593c34d5f880680bf5b485d92"
+          }
+        }
+      ],
+      "signals": [],
+      "signalCount": 0,
+      "computedImportRequiresReview": false
+    },
+    {
+      "path": "src/components/Placements/PlacementsCompanyAvatar.jsx",
+      "sourceSha": "7a1c3424d9f12419ed29448c10cb4c8fc3ff103f",
+      "frontierSha": "7a1c3424d9f12419ed29448c10cb4c8fc3ff103f",
+      "shaMatches": true,
+      "fromFrontierIndex": 23,
+      "sourceLineCount": 53,
+      "importedBy": [
+        "src/pages/college-admin/jobs/[jobId]/index.js",
+        "src/pages/learn/my-placements/applications.js",
+        "src/pages/learn/my-placements/index.js",
+        "src/pages/superadmin/jobs/[jobId]/index.js",
+        "src/pages/superadmin/sections/Companies.js",
+        "src/pages/superadmin/sections/DrivesLanding.js"
+      ],
+      "classification": "inspected-meaningful-ui-source",
+      "classificationScope": "source only; renderability and behavior unverified",
+      "imports": [
+        {
+          "line": 1,
+          "specifier": "react",
+          "kind": "static-or-require",
+          "resolution": null
+        }
+      ],
+      "signals": [
+        {
+          "line": 36,
+          "type": "jsx",
+          "excerpt": "<div className={`${className}-avatar ${className}-avatar--logo`} style={{ width: size, height: size }}>"
+        }
+      ],
+      "signalCount": 1,
+      "computedImportRequiresReview": false
+    },
+    {
+      "path": "src/components/recruiter/recruiterStories.js",
+      "sourceSha": "d7f0301a22ec676116336f1664cf57e290f35755",
+      "frontierSha": "d7f0301a22ec676116336f1664cf57e290f35755",
+      "shaMatches": true,
+      "fromFrontierIndex": 24,
+      "sourceLineCount": 162,
+      "importedBy": [
+        "src/components/recruiter/RecruiterFocusedReview.jsx",
+        "src/components/recruiter/RecruiterToday.jsx",
+        "src/pages/recruiter/calendar.js",
+        "src/pages/recruiter/company.js",
+        "src/pages/recruiter/drives/[jobId].js",
+        "src/pages/recruiter/drives/index.js"
+      ],
+      "classification": "inspected-non-ui-helper-or-config",
+      "classificationScope": "source only; renderability and behavior unverified",
+      "imports": [
+        {
+          "line": 1,
+          "specifier": "moment",
+          "kind": "static-or-require",
+          "resolution": null
+        },
+        {
+          "line": 2,
+          "specifier": "@/utils/placementDateTime",
+          "kind": "static-or-require",
+          "resolution": {
+            "path": "src/utils/placementDateTime.js",
+            "sha": "aa4262262aa93130a2450be8cde2591bfe02e7cd"
+          }
+        }
+      ],
+      "signals": [],
+      "signalCount": 0,
+      "computedImportRequiresReview": false
+    },
+    {
+      "path": "src/components/tpo/filters/filterModel.js",
+      "sourceSha": "ed70138d5c54727846942156d71bfa4fa4b0e479",
+      "frontierSha": "ed70138d5c54727846942156d71bfa4fa4b0e479",
+      "shaMatches": true,
+      "fromFrontierIndex": 25,
+      "sourceLineCount": 146,
+      "importedBy": [
+        "src/components/tpo/drive/ApplicantsTab.js",
+        "src/components/tpo/grid/GridWorkspace.jsx",
+        "src/pages/tpo/batches/[batchId].js",
+        "src/pages/tpo/drives/index.js",
+        "src/pages/tpo/recruiters/index.js",
+        "src/pages/tpo/students/index.js"
+      ],
+      "classification": "inspected-non-ui-helper-or-config",
+      "classificationScope": "source only; renderability and behavior unverified",
+      "imports": [],
+      "signals": [],
+      "signalCount": 0,
+      "computedImportRequiresReview": false
+    },
+    {
+      "path": "src/components/tpo/grid/HeaderFilter.jsx",
+      "sourceSha": "fa30c507e68ddffdb8e6cceb21543dac90b0a82d",
+      "frontierSha": "fa30c507e68ddffdb8e6cceb21543dac90b0a82d",
+      "shaMatches": true,
+      "fromFrontierIndex": 26,
+      "sourceLineCount": 78,
+      "importedBy": [
+        "src/components/tpo/TpoDataTable.js",
+        "src/components/tpo/grid/GridWorkspace.jsx",
+        "src/pages/tpo/students/index.js"
+      ],
+      "classification": "inspected-meaningful-ui-source",
+      "classificationScope": "source only; renderability and behavior unverified",
+      "imports": [
+        {
+          "line": 1,
+          "specifier": "react",
+          "kind": "static-or-require",
+          "resolution": null
+        },
+        {
+          "line": 2,
+          "specifier": "antd",
+          "kind": "static-or-require",
+          "resolution": null
+        },
+        {
+          "line": 3,
+          "specifier": "@ant-design/icons",
+          "kind": "static-or-require",
+          "resolution": null
+        },
+        {
+          "line": 4,
+          "specifier": "@/components/tpo/filters/filterModel",
+          "kind": "static-or-require",
+          "resolution": {
+            "path": "src/components/tpo/filters/filterModel.js",
+            "sha": "ed70138d5c54727846942156d71bfa4fa4b0e479"
+          }
+        }
+      ],
+      "signals": [
+        {
+          "line": 42,
+          "type": "jsx",
+          "excerpt": "<div className=\"tpo-headfilter__list\" data-testid={`headfilter.${filterKey}`}>"
+        },
+        {
+          "line": 45,
+          "type": "interactive-prop,jsx",
+          "excerpt": "<Checkbox checked={picked.has(o.value)} onChange={(e) => toggle(o.value, e.target.checked)} />"
+        },
+        {
+          "line": 50,
+          "type": "jsx",
+          "excerpt": "{options.length === 0 && <Typography.Text type=\"secondary\">Nothing to pick</Typography.Text>}"
+        },
+        {
+          "line": 51,
+          "type": "interactive-prop,jsx",
+          "excerpt": "{active && <Button size=\"small\" type=\"link\" style={{ padding: 0 }} onClick={() => set([])}>Clear</Button>}"
+        },
+        {
+          "line": 56,
+          "type": "jsx",
+          "excerpt": "<div className=\"tpo-headfilter\">"
+        },
+        {
+          "line": 57,
+          "type": "interactive-prop,jsx",
+          "excerpt": "<button type=\"button\" className=\"tpo-headfilter__label\" onClick={(e) => enableSorting && progressSort(e.shiftKey)} title={enableSorting ? \"Sort\" : undefined}>"
+        },
+        {
+          "line": 59,
+          "type": "jsx",
+          "excerpt": "{sort === \"asc\" && <ArrowUpOutlined />}"
+        },
+        {
+          "line": 60,
+          "type": "jsx",
+          "excerpt": "{sort === \"desc\" && <ArrowDownOutlined />}"
+        },
+        {
+          "line": 64,
+          "type": "jsx",
+          "excerpt": "<Tooltip title=\"Hover a cell for the full story\" mouseEnterDelay={0.2}>"
+        },
+        {
+          "line": 65,
+          "type": "jsx",
+          "excerpt": "<InfoCircleOutlined className=\"hs-head__i\" aria-label=\"Hover a cell for the full story\" />"
+        },
+        {
+          "line": 69,
+          "type": "overlay-or-complex-control,jsx",
+          "excerpt": "<Popover trigger=\"click\" placement=\"bottomLeft\" open={open} onOpenChange={setOpen} content={list} title={def.label} arrow={false}>"
+        },
+        {
+          "line": 70,
+          "type": "jsx",
+          "excerpt": "<button type=\"button\" className={`tpo-headfilter__icon${active ? \" is-active\" : \"\"}`} aria-label={`Filter ${def.label}`}>"
+        },
+        {
+          "line": 71,
+          "type": "jsx",
+          "excerpt": "{active ? <FilterFilled /> : <FilterOutlined />}"
+        }
+      ],
+      "signalCount": 13,
+      "computedImportRequiresReview": false
+    },
+    {
+      "path": "src/components/tpo/ui/ReasonPicker.jsx",
+      "sourceSha": "c1b008e7f1babc5f80f17218e88cd1df4e36fe84",
+      "frontierSha": "c1b008e7f1babc5f80f17218e88cd1df4e36fe84",
+      "shaMatches": true,
+      "fromFrontierIndex": 27,
+      "sourceLineCount": 30,
+      "importedBy": [
+        "src/components/tpo/drive/ApplicantsTab.js",
+        "src/components/tpo/drive/OffersTab.js",
+        "src/pages/tpo/drives/[jobId].js"
+      ],
+      "classification": "inspected-meaningful-ui-source",
+      "classificationScope": "source only; renderability and behavior unverified",
+      "imports": [
+        {
+          "line": 1,
+          "specifier": "react",
+          "kind": "static-or-require",
+          "resolution": null
+        },
+        {
+          "line": 2,
+          "specifier": "antd",
+          "kind": "static-or-require",
+          "resolution": null
+        }
+      ],
+      "signals": [
+        {
+          "line": 14,
+          "type": "jsx",
+          "excerpt": "<div className=\"tpo-reason-picker\" data-testid=\"tpo.reason-picker\">"
+        },
+        {
+          "line": 15,
+          "type": "jsx",
+          "excerpt": "<div className=\"tpo-reason-picker__chips\" role=\"group\" aria-label=\"Reason\">"
+        },
+        {
+          "line": 17,
+          "type": "interactive-prop,jsx",
+          "excerpt": "<Tag.CheckableTag key={r} checked={value === r && !other} onChange={() => { setOther(false); onChange(r); }}>{r}</Tag.CheckableTag>"
+        },
+        {
+          "line": 19,
+          "type": "interactive-prop,jsx",
+          "excerpt": "<Tag.CheckableTag checked={other} onChange={() => { setOther(true); if (isPreset) onChange(\"\"); }}>Other</Tag.CheckableTag>"
+        },
+        {
+          "line": 22,
+          "type": "interactive-prop,jsx",
+          "excerpt": "<Input.TextArea autoFocus rows={2} value={isPreset ? \"\" : value || \"\"} placeholder={placeholder} onChange={(e) => onChange(e.target.value)} />"
+        }
+      ],
+      "signalCount": 5,
+      "computedImportRequiresReview": false
+    },
+    {
+      "path": "src/components/admin/people/PeoplePageOverview.jsx",
+      "sourceSha": "a731fcf35b8c5464317fb35202fa2f60b34e9204",
+      "frontierSha": "a731fcf35b8c5464317fb35202fa2f60b34e9204",
+      "shaMatches": true,
+      "fromFrontierIndex": 28,
+      "sourceLineCount": 44,
+      "importedBy": [
+        "src/pages/superadmin/sections/Faculty.js",
+        "src/pages/superadmin/sections/FacultyAssignment.js",
+        "src/pages/superadmin/sections/PeopleDirectory.js",
+        "src/pages/superadmin/sections/Students.js"
+      ],
+      "classification": "inspected-meaningful-ui-source",
+      "classificationScope": "source only; renderability and behavior unverified",
+      "imports": [
+        {
+          "line": 1,
+          "specifier": "antd",
+          "kind": "static-or-require",
+          "resolution": null
+        }
+      ],
+      "signals": [
+        {
+          "line": 14,
+          "type": "jsx",
+          "excerpt": "<Card className=\"people-page-overview\" size=\"small\">"
+        },
+        {
+          "line": 15,
+          "type": "jsx",
+          "excerpt": "<div className=\"people-page-overview__topline\">"
+        },
+        {
+          "line": 16,
+          "type": "jsx",
+          "excerpt": "<div className=\"people-page-overview__copy\">"
+        },
+        {
+          "line": 17,
+          "type": "jsx",
+          "excerpt": "<Text className=\"people-page-overview__eyebrow\">{eyebrow}</Text>"
+        },
+        {
+          "line": 20,
+          "type": "jsx",
+          "excerpt": "<Paragraph type=\"secondary\" className=\"people-page-overview__description\">"
+        },
+        {
+          "line": 25,
+          "type": "jsx",
+          "excerpt": "{actions ? <div className=\"people-page-overview__actions\">{actions}</div> : null}"
+        },
+        {
+          "line": 29,
+          "type": "jsx",
+          "excerpt": "<div className=\"people-page-overview__metrics\" aria-label={`${title} summary`}>"
+        },
+        {
+          "line": 31,
+          "type": "jsx",
+          "excerpt": "<div className=\"people-page-overview__metric\" key={metric.label}>"
+        },
+        {
+          "line": 32,
+          "type": "jsx",
+          "excerpt": "<Text type=\"secondary\">{metric.label}</Text>"
+        },
+        {
+          "line": 33,
+          "type": "jsx",
+          "excerpt": "<div>{metric.value ?? \"—\"}</div>"
+        },
+        {
+          "line": 40,
+          "type": "jsx",
+          "excerpt": "{note ? <div className=\"people-page-overview__note\">{note}</div> : null}"
+        }
+      ],
+      "signalCount": 11,
+      "computedImportRequiresReview": false
+    }
+  ]
+}

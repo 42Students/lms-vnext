@@ -1,0 +1,1335 @@
+{
+  "schemaVersion": 1,
+  "type": "incremental legacy UI source inspection — NOT product tracker",
+  "batch": "wave3-a",
+  "sourceSnapshot": {
+    "repo": "42Students/lms2-fe",
+    "branch": "lms-dev-2026",
+    "sha": "9d56bb7a347b06f242ef615c19fdc298f83329e0"
+  },
+  "parentFrontier": "2026-10-27-derived-import-frontier-post-wave2.json",
+  "method": "Pinned file reads; actual tree-backed import resolution for static/literal dynamic dependencies; JSX/control markers are candidates, not runtime proof; classifications are source-scope",
+  "requested": 14,
+  "read": 14,
+  "errors": 0,
+  "nodes": [
+    {
+      "path": "src/components/admin/projects/useUnsavedFormGuard.js",
+      "sourceSha": "2dff5a03fb4db6d8e65d277b268da306ddffdf79",
+      "frontierSha": "2dff5a03fb4db6d8e65d277b268da306ddffdf79",
+      "shaMatches": true,
+      "fromFrontierIndex": 1,
+      "sourceLineCount": 64,
+      "importedBy": [
+        "src/pages/college-admin/projects/workspaces/[workspaceId]/meetings.js",
+        "src/pages/college-admin/projects/workspaces/[workspaceId]/overview.js",
+        "src/pages/college-admin/projects/workspaces/[workspaceId]/resources.js",
+        "src/pages/college-admin/projects/workspaces/[workspaceId]/sprints.js",
+        "src/pages/college-admin/projects/workspaces/[workspaceId]/summary.js",
+        "src/pages/college-admin/projects/workspaces/[workspaceId]/tasks.js",
+        "src/pages/college-admin/projects/workspaces/new.js",
+        "src/pages/superadmin/projects/templates/[templateId]/overview.js",
+        "src/pages/superadmin/projects/templates/[templateId]/resources.js",
+        "src/pages/superadmin/projects/templates/[templateId]/sprints.js",
+        "src/pages/superadmin/projects/templates/[templateId]/tasks.js",
+        "src/pages/superadmin/projects/templates/new.js",
+        "src/pages/superadmin/projects/workspaces/[workspaceId]/meetings.js",
+        "src/pages/superadmin/projects/workspaces/[workspaceId]/overview.js",
+        "src/pages/superadmin/projects/workspaces/[workspaceId]/resources.js",
+        "src/pages/superadmin/projects/workspaces/[workspaceId]/sprints.js",
+        "src/pages/superadmin/projects/workspaces/[workspaceId]/summary.js",
+        "src/pages/superadmin/projects/workspaces/[workspaceId]/tasks.js",
+        "src/pages/superadmin/projects/workspaces/new.js",
+        "src/pages/superadmin/sections/CollegeBranding.js",
+        "src/pages/superadmin/sections/Colleges.js",
+        "src/pages/superadmin/sections/Organizations.js",
+        "src/pages/superadmin/sections/RecruiterAccounts.js",
+        "src/pages/superadmin/sections/TenantSettings.js"
+      ],
+      "classification": "inspected-nonvisual-interaction-hook",
+      "classificationScope": "source only; renderability and behavior unverified",
+      "imports": [
+        {
+          "line": 1,
+          "specifier": "react",
+          "kind": "static-or-require",
+          "resolution": null
+        },
+        {
+          "line": 2,
+          "specifier": "next/router",
+          "kind": "static-or-require",
+          "resolution": null
+        }
+      ],
+      "signals": [
+        {
+          "line": 9,
+          "type": "navigation-or-browser",
+          "excerpt": "//   - `beforeunload` for a real unload (tab close, reload, typed URL);"
+        },
+        {
+          "line": 14,
+          "type": "navigation-or-browser",
+          "excerpt": "// with only `beforeunload` a half-filled sprint table vanished on a stray tab click with no"
+        },
+        {
+          "line": 33,
+          "type": "overlay-or-complex-control",
+          "excerpt": "if (window.confirm(\"You have unsaved changes. Leave without saving them?\")) return;"
+        },
+        {
+          "line": 42,
+          "type": "navigation-or-browser",
+          "excerpt": "const addressBar = `${window.location.pathname}${window.location.search}${window.location.hash}`;"
+        },
+        {
+          "line": 50,
+          "type": "navigation-or-browser",
+          "excerpt": "window.addEventListener(\"beforeunload\", handleBeforeUnload);"
+        },
+        {
+          "line": 51,
+          "type": "navigation-or-browser",
+          "excerpt": "Router.events.on(\"routeChangeStart\", handleRouteChangeStart);"
+        },
+        {
+          "line": 53,
+          "type": "navigation-or-browser",
+          "excerpt": "window.removeEventListener(\"beforeunload\", handleBeforeUnload);"
+        },
+        {
+          "line": 54,
+          "type": "navigation-or-browser",
+          "excerpt": "Router.events.off(\"routeChangeStart\", handleRouteChangeStart);"
+        },
+        {
+          "line": 60,
+          "type": "navigation-or-browser",
+          "excerpt": "// dirty form silently, since beforeunload only fires on a real page unload/reload — not on"
+        },
+        {
+          "line": 63,
+          "type": "overlay-or-complex-control",
+          "excerpt": "!form.isFieldsTouched() || window.confirm(message);"
+        }
+      ],
+      "signalCount": 10,
+      "computedImportRequiresReview": false,
+      "notice": null
+    },
+    {
+      "path": "src/components/Common/PageShell.jsx",
+      "sourceSha": "0f05dc1e60d652385f03289a608496ab372c92ec",
+      "frontierSha": "0f05dc1e60d652385f03289a608496ab372c92ec",
+      "shaMatches": true,
+      "fromFrontierIndex": 2,
+      "sourceLineCount": 94,
+      "importedBy": [
+        "src/components/Assignments/AssignmentsContent.jsx",
+        "src/components/Course/CoursesContent.jsx",
+        "src/components/Projects/ProjectsShell.jsx",
+        "src/components/admin/AdminGroupShell.jsx",
+        "src/components/admin/AdminWorkspaceShell.jsx",
+        "src/components/admin/SuperAdminGroupShell.jsx",
+        "src/components/admin/SuperAdminTemplateShell.jsx",
+        "src/components/admin/SuperAdminWorkspaceShell.jsx",
+        "src/components/recruiter/RecruiterToday.jsx",
+        "src/components/tpo/DriveFormPage.js",
+        "src/layouts/CourseTabsLayout.js",
+        "src/pages/college-admin/audit.js",
+        "src/pages/college-admin/dashboard.js",
+        "src/pages/college-admin/verification.js",
+        "src/pages/learn/profile.js",
+        "src/pages/recruiter/calendar.js",
+        "src/pages/recruiter/company.js",
+        "src/pages/recruiter/drives/[jobId].js",
+        "src/pages/recruiter/drives/index.js",
+        "src/pages/recruiter/drives/new.js",
+        "src/pages/recruiter/home.js",
+        "src/pages/recruiter/messages.js",
+        "src/pages/recruiter/profile.js",
+        "src/pages/superadmin/audit.js",
+        "src/pages/superadmin/dashboard.js",
+        "src/pages/superadmin/features.js",
+        "src/pages/superadmin/inbound-mail.js",
+        "src/pages/superadmin/module-access.js",
+        "src/pages/superadmin/settings.js",
+        "src/pages/superadmin/tenants.js",
+        "src/pages/superadmin/verification.js",
+        "src/pages/teacher/profile.js",
+        "src/pages/tpo/announcements.js",
+        "src/pages/tpo/audit.js",
+        "src/pages/tpo/batches/[batchId].js",
+        "src/pages/tpo/batches/index.js",
+        "src/pages/tpo/calendar.js",
+        "src/pages/tpo/companies.js",
+        "src/pages/tpo/drive-day/index.js",
+        "src/pages/tpo/drives/[jobId].js",
+        "src/pages/tpo/drives/index.js",
+        "src/pages/tpo/home.js",
+        "src/pages/tpo/messages.js",
+        "src/pages/tpo/more.js",
+        "src/pages/tpo/notifications.js",
+        "src/pages/tpo/profile.js",
+        "src/pages/tpo/recruiters/[recruiterLeadId].js",
+        "src/pages/tpo/recruiters/index.js",
+        "src/pages/tpo/reports/[name].js",
+        "src/pages/tpo/reports/index.js",
+        "src/pages/tpo/requests.js",
+        "src/pages/tpo/settings.js",
+        "src/pages/tpo/students/index.js",
+        "src/pages/tpo/verification.js"
+      ],
+      "classification": "inspected-meaningful-ui-source",
+      "classificationScope": "source only; renderability and behavior unverified",
+      "imports": [
+        {
+          "line": 1,
+          "specifier": "react",
+          "kind": "static-or-require",
+          "resolution": null
+        },
+        {
+          "line": 2,
+          "specifier": "next/link",
+          "kind": "static-or-require",
+          "resolution": null
+        },
+        {
+          "line": 3,
+          "specifier": "@/components/Course/Common/CourseSectionHeader",
+          "kind": "static-or-require",
+          "resolution": {
+            "path": "src/components/Course/Common/CourseSectionHeader.jsx",
+            "sha": "87609fdcbd7b1f9c50d88cf34cba47583081f2c4"
+          }
+        }
+      ],
+      "signals": [
+        {
+          "line": 51,
+          "type": "jsx",
+          "excerpt": "<div className=\"ln-module-card learn-projects__shell\">"
+        },
+        {
+          "line": 69,
+          "type": "jsx",
+          "excerpt": "<nav ref={tabsRef} className=\"learn-projects__tabs\" aria-label={tabsAriaLabel}"
+        },
+        {
+          "line": 72,
+          "type": "interactive-prop",
+          "excerpt": "onKeyDown={handleTabsKeyDown}"
+        },
+        {
+          "line": 78,
+          "type": "jsx",
+          "excerpt": "<Link key={tab.key} href={tab.href}"
+        },
+        {
+          "line": 88,
+          "type": "jsx",
+          "excerpt": "<div className={`learn-projects__content ${contentClassName}`.trim()}>{children}</div>"
+        }
+      ],
+      "signalCount": 5,
+      "computedImportRequiresReview": false,
+      "notice": "Contains statically detected interactive prop (handler behavior not yet proven)"
+    },
+    {
+      "path": "src/components/Common/PanelStates.jsx",
+      "sourceSha": "9e7522f07545b772ee8b5f6ae0b68e2c8bea1a92",
+      "frontierSha": "9e7522f07545b772ee8b5f6ae0b68e2c8bea1a92",
+      "shaMatches": true,
+      "fromFrontierIndex": 3,
+      "sourceLineCount": 333,
+      "importedBy": [
+        "src/components/admin/studentGroups/StudentGroupDetail.jsx",
+        "src/components/tpo/StudentPanel.js",
+        "src/components/tpo/TpoDataTable.js",
+        "src/components/tpo/drive/ApplicantsTab.js",
+        "src/components/tpo/drive/ResultsEntryModal.jsx",
+        "src/components/verification/VerificationWorkspace.jsx",
+        "src/pages/_app.js",
+        "src/pages/college-admin/jobs/[jobId]/settings.js",
+        "src/pages/recruiter/drives/[jobId].js",
+        "src/pages/recruiter/drives/index.js",
+        "src/pages/superadmin/sections/DrivesLanding.js",
+        "src/pages/superadmin/sections/JobApplications.js",
+        "src/pages/superadmin/sections/Jobs.js",
+        "src/pages/superadmin/sections/Projects.js",
+        "src/pages/tpo/audit.js",
+        "src/pages/tpo/batches/[batchId].js",
+        "src/pages/tpo/batches/index.js",
+        "src/pages/tpo/calendar.js",
+        "src/pages/tpo/companies.js",
+        "src/pages/tpo/drive-day/index.js",
+        "src/pages/tpo/drives/[jobId].js",
+        "src/pages/tpo/drives/index.js",
+        "src/pages/tpo/home.js",
+        "src/pages/tpo/notifications.js",
+        "src/pages/tpo/recruiters/[recruiterLeadId].js",
+        "src/pages/tpo/recruiters/index.js",
+        "src/pages/tpo/reports/[name].js",
+        "src/pages/tpo/settings.js",
+        "src/pages/tpo/students/index.js"
+      ],
+      "classification": "inspected-meaningful-ui-source",
+      "classificationScope": "source only; renderability and behavior unverified",
+      "imports": [
+        {
+          "line": 1,
+          "specifier": "antd",
+          "kind": "static-or-require",
+          "resolution": null
+        }
+      ],
+      "signals": [
+        {
+          "line": 69,
+          "type": "interactive-prop",
+          "excerpt": "onClick={onAction}"
+        },
+        {
+          "line": 102,
+          "type": "jsx",
+          "excerpt": "actionIcon={onRetry ? <ReloadOutlined aria-hidden=\"true\" /> : undefined}"
+        },
+        {
+          "line": 181,
+          "type": "jsx",
+          "excerpt": "actionIcon={onRetry ? <ReloadOutlined aria-hidden=\"true\" /> : undefined}"
+        },
+        {
+          "line": 203,
+          "type": "jsx",
+          "excerpt": "actionIcon={onRetry ? <ReloadOutlined aria-hidden=\"true\" /> : undefined}"
+        }
+      ],
+      "signalCount": 4,
+      "computedImportRequiresReview": false,
+      "notice": "Contains statically detected interactive prop (handler behavior not yet proven)"
+    },
+    {
+      "path": "src/components/Global/ListingPageHeader/ListingPageHeader.jsx",
+      "sourceSha": "e51adc75b13a7e51c1f4f0dd3cc056b258e71987",
+      "frontierSha": "e51adc75b13a7e51c1f4f0dd3cc056b258e71987",
+      "shaMatches": true,
+      "fromFrontierIndex": 4,
+      "sourceLineCount": 41,
+      "importedBy": [
+        "src/components/Assignments/AssignmentsContent.jsx",
+        "src/components/Course/CoursesContent.jsx",
+        "src/components/recruiter/RecruiterToday.jsx",
+        "src/components/tpo/DriveFormPage.js",
+        "src/pages/college-admin/profile.js",
+        "src/pages/learn/profile.js",
+        "src/pages/recruiter/drives/[jobId].js",
+        "src/pages/recruiter/drives/new.js",
+        "src/pages/recruiter/home.js",
+        "src/pages/recruiter/messages.js",
+        "src/pages/recruiter/profile.js",
+        "src/pages/teacher/profile.js",
+        "src/pages/tpo/drive-day/index.js",
+        "src/pages/tpo/more.js",
+        "src/pages/tpo/notifications.js",
+        "src/pages/tpo/profile.js",
+        "src/pages/tpo/recruiters/index.js",
+        "src/pages/tpo/settings.js",
+        "src/pages/tpo/students/index.js"
+      ],
+      "classification": "inspected-meaningful-ui-source",
+      "classificationScope": "source only; renderability and behavior unverified",
+      "imports": [
+        {
+          "line": 1,
+          "specifier": "react",
+          "kind": "static-or-require",
+          "resolution": null
+        }
+      ],
+      "signals": [
+        {
+          "line": 26,
+          "type": "jsx",
+          "excerpt": "<div className=\"listing-page-header__left\">"
+        },
+        {
+          "line": 27,
+          "type": "jsx",
+          "excerpt": "<div className=\"listing-page-header__title-row\">"
+        },
+        {
+          "line": 29,
+          "type": "jsx",
+          "excerpt": "{subtitle && <div className=\"listing-page-header__subtitle\">{subtitle}</div>}"
+        },
+        {
+          "line": 32,
+          "type": "jsx",
+          "excerpt": "<div className=\"listing-page-header__metrics\">{metrics}</div>"
+        },
+        {
+          "line": 36,
+          "type": "jsx",
+          "excerpt": "<div className=\"listing-page-header__right\">{rightContent}</div>"
+        }
+      ],
+      "signalCount": 5,
+      "computedImportRequiresReview": false,
+      "notice": null
+    },
+    {
+      "path": "src/components/admin/projects/adminProjectUtils.js",
+      "sourceSha": "3b01a868ba1afa5102d495e2598847ddc9c01a8c",
+      "frontierSha": "3b01a868ba1afa5102d495e2598847ddc9c01a8c",
+      "shaMatches": true,
+      "fromFrontierIndex": 5,
+      "sourceLineCount": 441,
+      "importedBy": [
+        "src/components/admin/SubmissionWork.jsx",
+        "src/components/admin/projects/WorkspaceDeliveryOverview.jsx",
+        "src/components/admin/projects/WorkspaceReadinessOverview.jsx",
+        "src/components/admin/projects/WorkspaceSummarySnapshot.jsx",
+        "src/components/admin/projects/WorkspaceTasksEditor.jsx",
+        "src/components/admin/projects/WorkspaceTeamOverview.jsx",
+        "src/pages/college-admin/projects/at-risk/index.js",
+        "src/pages/college-admin/projects/audit/index.js",
+        "src/pages/college-admin/projects/readiness/index.js",
+        "src/pages/college-admin/projects/submissions/index.js",
+        "src/pages/college-admin/projects/templates/[templateId].js",
+        "src/pages/college-admin/projects/templates/index.js",
+        "src/pages/college-admin/projects/workspaces/[workspaceId]/audit.js",
+        "src/pages/college-admin/projects/workspaces/[workspaceId]/delivery.js",
+        "src/pages/college-admin/projects/workspaces/[workspaceId]/meetings.js",
+        "src/pages/college-admin/projects/workspaces/[workspaceId]/overview.js",
+        "src/pages/college-admin/projects/workspaces/[workspaceId]/readiness.js",
+        "src/pages/college-admin/projects/workspaces/[workspaceId]/resources.js",
+        "src/pages/college-admin/projects/workspaces/[workspaceId]/sprints.js",
+        "src/pages/college-admin/projects/workspaces/[workspaceId]/summary.js",
+        "src/pages/college-admin/projects/workspaces/[workspaceId]/tasks.js",
+        "src/pages/college-admin/projects/workspaces/[workspaceId]/team.js",
+        "src/pages/college-admin/projects/workspaces/deleted.js",
+        "src/pages/college-admin/projects/workspaces/index.js",
+        "src/pages/college-admin/projects/workspaces/reassign-mentor.js",
+        "src/pages/superadmin/projects/at-risk/index.js",
+        "src/pages/superadmin/projects/audit/index.js",
+        "src/pages/superadmin/projects/readiness/index.js",
+        "src/pages/superadmin/projects/submissions/index.js",
+        "src/pages/superadmin/projects/templates/[templateId]/colleges.js",
+        "src/pages/superadmin/projects/templates/[templateId]/overview.js",
+        "src/pages/superadmin/projects/templates/[templateId]/resources.js",
+        "src/pages/superadmin/projects/templates/[templateId]/sprints.js",
+        "src/pages/superadmin/projects/templates/[templateId]/tasks.js",
+        "src/pages/superadmin/projects/templates/[templateId]/versions.js",
+        "src/pages/superadmin/projects/templates/index.js",
+        "src/pages/superadmin/projects/workspaces/[workspaceId]/audit.js",
+        "src/pages/superadmin/projects/workspaces/[workspaceId]/delivery.js",
+        "src/pages/superadmin/projects/workspaces/[workspaceId]/meetings.js",
+        "src/pages/superadmin/projects/workspaces/[workspaceId]/overview.js",
+        "src/pages/superadmin/projects/workspaces/[workspaceId]/readiness.js",
+        "src/pages/superadmin/projects/workspaces/[workspaceId]/resources.js",
+        "src/pages/superadmin/projects/workspaces/[workspaceId]/sprints.js",
+        "src/pages/superadmin/projects/workspaces/[workspaceId]/summary.js",
+        "src/pages/superadmin/projects/workspaces/[workspaceId]/tasks.js",
+        "src/pages/superadmin/projects/workspaces/[workspaceId]/team.js",
+        "src/pages/superadmin/projects/workspaces/deleted.js",
+        "src/pages/superadmin/projects/workspaces/index.js",
+        "src/pages/superadmin/projects/workspaces/reassign-mentor.js",
+        "src/pages/superadmin/sections/Attendance.js",
+        "src/pages/superadmin/sections/AuditLogs.js",
+        "src/pages/superadmin/sections/Quizzes.js",
+        "src/pages/superadmin/sections/Students.js"
+      ],
+      "classification": "inspected-non-ui-helper-or-config",
+      "classificationScope": "source only; renderability and behavior unverified",
+      "imports": [],
+      "signals": [],
+      "signalCount": 0,
+      "computedImportRequiresReview": false,
+      "notice": null
+    },
+    {
+      "path": "src/components/Common/Skeletons.jsx",
+      "sourceSha": "19ff7bc7317232a96a7217df406eaa8082567704",
+      "frontierSha": "19ff7bc7317232a96a7217df406eaa8082567704",
+      "shaMatches": true,
+      "fromFrontierIndex": 6,
+      "sourceLineCount": 373,
+      "importedBy": [
+        "src/components/Assignments/AssignmentsContent.jsx",
+        "src/components/Course/CoursesContent.jsx",
+        "src/components/Projects/ProjectDetailContent.jsx",
+        "src/components/admin/studentGroups/StudentGroupDetail.jsx",
+        "src/components/recruiter/RecruiterToday.jsx",
+        "src/components/tpo/StudentPanel.js",
+        "src/components/tpo/grid/GridWorkspace.jsx",
+        "src/pages/college-admin/courses/[id].js",
+        "src/pages/college-admin/jobs/[jobId]/settings.js",
+        "src/pages/college-admin/profile.js",
+        "src/pages/college-admin/projects/index.js",
+        "src/pages/college-admin/projects/templates/[templateId].js",
+        "src/pages/learn/profile.js",
+        "src/pages/recruiter/calendar.js",
+        "src/pages/recruiter/company.js",
+        "src/pages/recruiter/drives/index.js",
+        "src/pages/recruiter/drives/new.js",
+        "src/pages/recruiter/home.js",
+        "src/pages/recruiter/messages.js",
+        "src/pages/recruiter/profile.js",
+        "src/pages/superadmin/sections/AdminResources.js",
+        "src/pages/superadmin/sections/AdminUsers.js",
+        "src/pages/superadmin/sections/Attendance.js",
+        "src/pages/superadmin/sections/AuditLogs.js",
+        "src/pages/superadmin/sections/Batches.js",
+        "src/pages/superadmin/sections/Classes.js",
+        "src/pages/superadmin/sections/Companies.js",
+        "src/pages/superadmin/sections/CourseProgress.js",
+        "src/pages/superadmin/sections/Courses.js",
+        "src/pages/superadmin/sections/Departments.js",
+        "src/pages/superadmin/sections/DrivesLanding.js",
+        "src/pages/superadmin/sections/FacultyAssignment.js",
+        "src/pages/superadmin/sections/HiringDashboard.js",
+        "src/pages/superadmin/sections/JobApplications.js",
+        "src/pages/superadmin/sections/Jobs.js",
+        "src/pages/superadmin/sections/Lessons.js",
+        "src/pages/superadmin/sections/Organizations.js",
+        "src/pages/superadmin/sections/Programs.js",
+        "src/pages/superadmin/sections/Projects.js",
+        "src/pages/superadmin/sections/Quizzes.js",
+        "src/pages/superadmin/sections/SemesterCourseMapping.js",
+        "src/pages/superadmin/sections/SemesterManagement.js",
+        "src/pages/superadmin/sections/StudentPlacementLookup.js",
+        "src/pages/teacher/profile.js",
+        "src/pages/tpo/batches/[batchId].js",
+        "src/pages/tpo/batches/index.js",
+        "src/pages/tpo/calendar.js",
+        "src/pages/tpo/companies.js",
+        "src/pages/tpo/drive-day/[roundId].js",
+        "src/pages/tpo/drive-day/index.js",
+        "src/pages/tpo/drives/[jobId].js",
+        "src/pages/tpo/home.js",
+        "src/pages/tpo/notifications.js",
+        "src/pages/tpo/profile.js",
+        "src/pages/tpo/recruiters/[recruiterLeadId].js",
+        "src/pages/tpo/reports/[name].js"
+      ],
+      "classification": "inspected-meaningful-ui-source",
+      "classificationScope": "source only; renderability and behavior unverified",
+      "imports": [
+        {
+          "line": 1,
+          "specifier": "react",
+          "kind": "static-or-require",
+          "resolution": null
+        }
+      ],
+      "signals": [
+        {
+          "line": 89,
+          "type": "jsx",
+          "excerpt": "<div className={classes(\"lms-skeleton-text\", className)} aria-hidden=\"true\">"
+        },
+        {
+          "line": 103,
+          "type": "jsx",
+          "excerpt": "<div className=\"lms-skeleton-card\" aria-hidden=\"true\">"
+        },
+        {
+          "line": 136,
+          "type": "jsx",
+          "excerpt": "<SkeletonRegion label={label} className={className}>"
+        },
+        {
+          "line": 142,
+          "type": "jsx",
+          "excerpt": "<SkeletonCard key={index} compact={compact} />"
+        },
+        {
+          "line": 158,
+          "type": "jsx",
+          "excerpt": "<SkeletonRegion label={label} className={className}>"
+        },
+        {
+          "line": 159,
+          "type": "jsx",
+          "excerpt": "<div className=\"lms-skeleton-list\">"
+        },
+        {
+          "line": 166,
+          "type": "jsx",
+          "excerpt": "{avatar && <SkeletonAvatar size={40} />}"
+        },
+        {
+          "line": 167,
+          "type": "jsx",
+          "excerpt": "<div className=\"lms-skeleton-list__content\">"
+        },
+        {
+          "line": 210,
+          "type": "jsx",
+          "excerpt": "<SkeletonRegion label={label} className={className}>"
+        },
+        {
+          "line": 211,
+          "type": "jsx",
+          "excerpt": "<div className=\"lms-skeleton-table-wrap\">"
+        },
+        {
+          "line": 217,
+          "type": "jsx",
+          "excerpt": "<div className=\"lms-skeleton-table__row lms-skeleton-table__row--head\" style={rowStyle}>"
+        },
+        {
+          "line": 227,
+          "type": "jsx",
+          "excerpt": "<div className=\"lms-skeleton-table__row\" key={rowIndex} style={rowStyle}>"
+        },
+        {
+          "line": 257,
+          "type": "jsx",
+          "excerpt": "<SkeletonRegion label={label} className={className}>"
+        },
+        {
+          "line": 258,
+          "type": "jsx",
+          "excerpt": "<div className=\"lms-skeleton-detail\">"
+        },
+        {
+          "line": 267,
+          "type": "jsx",
+          "excerpt": "<div className=\"lms-skeleton-detail__content\" aria-hidden=\"true\">"
+        },
+        {
+          "line": 268,
+          "type": "jsx",
+          "excerpt": "<SkeletonBlock width=\"42%\" height={24} radius={7} />"
+        },
+        {
+          "line": 273,
+          "type": "jsx",
+          "excerpt": "<div className=\"lms-skeleton-detail__meta\">"
+        },
+        {
+          "line": 274,
+          "type": "jsx",
+          "excerpt": "<SkeletonBlock width={92} height={28} radius={999} />"
+        },
+        {
+          "line": 275,
+          "type": "jsx",
+          "excerpt": "<SkeletonBlock width={116} height={28} radius={999} />"
+        },
+        {
+          "line": 277,
+          "type": "jsx",
+          "excerpt": "<SkeletonBlock width={132} height={38} radius={8} />"
+        },
+        {
+          "line": 292,
+          "type": "jsx",
+          "excerpt": "<SkeletonRegion label={label} className={className}>"
+        },
+        {
+          "line": 293,
+          "type": "jsx",
+          "excerpt": "<div className=\"lms-skeleton-dashboard\">"
+        },
+        {
+          "line": 298,
+          "type": "jsx",
+          "excerpt": "<SkeletonText lines={2} widths={[\"34%\", \"52%\"]} />"
+        },
+        {
+          "line": 300,
+          "type": "jsx",
+          "excerpt": "<div className=\"lms-skeleton-dashboard__metrics\">"
+        },
+        {
+          "line": 307,
+          "type": "jsx",
+          "excerpt": "<SkeletonBlock width={86} height={10} />"
+        },
+        {
+          "line": 313,
+          "type": "jsx",
+          "excerpt": "<SkeletonBlock width=\"58%\" height={9} />"
+        },
+        {
+          "line": 317,
+          "type": "jsx",
+          "excerpt": "<div className=\"lms-skeleton-dashboard__panels\">"
+        },
+        {
+          "line": 322,
+          "type": "jsx",
+          "excerpt": "<SkeletonBlock width=\"32%\" height={16} />"
+        },
+        {
+          "line": 323,
+          "type": "jsx",
+          "excerpt": "<SkeletonBlock width=\"100%\" height={210} radius={10} />"
+        },
+        {
+          "line": 329,
+          "type": "jsx",
+          "excerpt": "<SkeletonBlock width=\"46%\" height={16} />"
+        },
+        {
+          "line": 347,
+          "type": "jsx",
+          "excerpt": "<SkeletonRegion label={label} className={className}>"
+        },
+        {
+          "line": 348,
+          "type": "jsx",
+          "excerpt": "<div className=\"lms-skeleton-page\">"
+        },
+        {
+          "line": 353,
+          "type": "jsx",
+          "excerpt": "<div className=\"lms-skeleton-page__title\">"
+        },
+        {
+          "line": 354,
+          "type": "jsx",
+          "excerpt": "<SkeletonBlock width={220} height={24} radius={7} />"
+        },
+        {
+          "line": 355,
+          "type": "jsx",
+          "excerpt": "<SkeletonBlock width={320} height={11} />"
+        },
+        {
+          "line": 357,
+          "type": "jsx",
+          "excerpt": "<SkeletonBlock width={108} height={38} radius={8} />"
+        },
+        {
+          "line": 364,
+          "type": "jsx",
+          "excerpt": "<SkeletonCard />"
+        },
+        {
+          "line": 365,
+          "type": "jsx",
+          "excerpt": "<SkeletonCard />"
+        },
+        {
+          "line": 366,
+          "type": "jsx",
+          "excerpt": "<SkeletonCard />"
+        }
+      ],
+      "signalCount": 39,
+      "computedImportRequiresReview": false,
+      "notice": null
+    },
+    {
+      "path": "src/components/tpo/dj.js",
+      "sourceSha": "09399d1614ffde9593c34d5f880680bf5b485d92",
+      "frontierSha": "09399d1614ffde9593c34d5f880680bf5b485d92",
+      "shaMatches": true,
+      "fromFrontierIndex": 7,
+      "sourceLineCount": 31,
+      "importedBy": [
+        "src/components/recruiter/NoCollegeSession.jsx",
+        "src/components/tpo/DriveFormPage.js",
+        "src/components/tpo/InviteModal.js",
+        "src/components/tpo/StudentPanel.js",
+        "src/components/tpo/companies/CompaniesTab.jsx",
+        "src/components/tpo/drive/ApplicantsTab.js",
+        "src/components/tpo/drive/ChangeRequests.jsx",
+        "src/components/tpo/drive/DriveHeader.jsx",
+        "src/components/tpo/drive/DriveOffersList.jsx",
+        "src/components/tpo/drive/DriveRequestReview.jsx",
+        "src/components/tpo/drive/OffersTab.js",
+        "src/components/tpo/drive/OverviewTab.js",
+        "src/components/tpo/drive/RoundPanel.jsx",
+        "src/components/tpo/drive/RoundsTab.js",
+        "src/components/tpo/drive/ScheduleModal.js",
+        "src/components/tpo/drive/ShareModal.js",
+        "src/components/tpo/invite/BringInWindow.jsx",
+        "src/components/tpo/invite/VerifyCompanyWindow.jsx",
+        "src/components/tpo/recruiterPage.js",
+        "src/components/tpo/settings/PublicLinkCard.jsx",
+        "src/components/tpo/team/TeamComposer.jsx",
+        "src/components/tpo/team/TeamConversation.jsx",
+        "src/components/tpo/team/TeamMessages.jsx",
+        "src/components/verification/VerificationWorkspace.jsx",
+        "src/pages/recruiter/drives/[jobId].js",
+        "src/pages/recruiter/messages.js",
+        "src/pages/recruiter/profile.js",
+        "src/pages/superadmin/announcements.js",
+        "src/pages/superadmin/inbound-mail.js",
+        "src/pages/tpo/announcements.js",
+        "src/pages/tpo/audit.js",
+        "src/pages/tpo/batches/[batchId].js",
+        "src/pages/tpo/batches/index.js",
+        "src/pages/tpo/calendar.js",
+        "src/pages/tpo/companies.js",
+        "src/pages/tpo/drive-day/[roundId].js",
+        "src/pages/tpo/drive-day/index.js",
+        "src/pages/tpo/drives/[jobId].js",
+        "src/pages/tpo/drives/index.js",
+        "src/pages/tpo/home.js",
+        "src/pages/tpo/notifications.js",
+        "src/pages/tpo/profile.js",
+        "src/pages/tpo/recruiters/[recruiterLeadId].js",
+        "src/pages/tpo/recruiters/index.js",
+        "src/pages/tpo/settings.js"
+      ],
+      "classification": "inspected-non-ui-helper-or-config",
+      "classificationScope": "source only; renderability and behavior unverified",
+      "imports": [
+        {
+          "line": 1,
+          "specifier": "dayjs",
+          "kind": "static-or-require",
+          "resolution": null
+        },
+        {
+          "line": 2,
+          "specifier": "dayjs/plugin/relativeTime",
+          "kind": "static-or-require",
+          "resolution": null
+        },
+        {
+          "line": 3,
+          "specifier": "@/utils/placementDateTime",
+          "kind": "static-or-require",
+          "resolution": {
+            "path": "src/utils/placementDateTime.js",
+            "sha": "aa4262262aa93130a2450be8cde2591bfe02e7cd"
+          }
+        }
+      ],
+      "signals": [],
+      "signalCount": 0,
+      "computedImportRequiresReview": false,
+      "notice": null
+    },
+    {
+      "path": "src/components/tpo/tpoFiles.js",
+      "sourceSha": "b1b89501d023f13b87af99a521a2b19c3fb9f51d",
+      "frontierSha": "b1b89501d023f13b87af99a521a2b19c3fb9f51d",
+      "shaMatches": true,
+      "fromFrontierIndex": 8,
+      "sourceLineCount": 141,
+      "importedBy": [
+        "src/components/tpo/ImportPreviewModal.js",
+        "src/components/tpo/StudentPanel.js",
+        "src/components/tpo/drive/ApplicantsBoard.jsx",
+        "src/components/tpo/drive/ApplicantsTab.js",
+        "src/components/tpo/drive/DriveOffersList.jsx",
+        "src/components/tpo/drive/DriveStudents.jsx",
+        "src/components/tpo/drive/OfferLettersModal.jsx",
+        "src/components/tpo/drive/OffersTab.js",
+        "src/components/tpo/drive/ResultsEntryModal.jsx",
+        "src/components/tpo/drive/RoundsTab.js",
+        "src/pages/company-share/[token].js",
+        "src/pages/recruiter/company.js",
+        "src/pages/recruiter/drives/[jobId].js",
+        "src/pages/tpo/audit.js",
+        "src/pages/tpo/drives/[jobId].js",
+        "src/pages/tpo/reports/[name].js",
+        "src/pages/tpo/students/index.js"
+      ],
+      "classification": "inspected-non-ui-helper-or-config",
+      "classificationScope": "source only; renderability and behavior unverified",
+      "imports": [
+        {
+          "line": 101,
+          "specifier": "read-excel-file/browser",
+          "kind": "dynamic-literal",
+          "resolution": null
+        }
+      ],
+      "signals": [
+        {
+          "line": 1,
+          "type": "action-call-candidate",
+          "excerpt": "// File helpers shared by every TPO import and export (TPO V1 - Locked.docx §1 \"Import with preview\", \"Table: export\")."
+        }
+      ],
+      "signalCount": 1,
+      "computedImportRequiresReview": false,
+      "notice": null
+    },
+    {
+      "path": "src/components/tpo/ui/HoverStory.jsx",
+      "sourceSha": "d6f1cd0dc9a446e617de3e11fb0e1ebfe7511e1a",
+      "frontierSha": "d6f1cd0dc9a446e617de3e11fb0e1ebfe7511e1a",
+      "shaMatches": true,
+      "fromFrontierIndex": 9,
+      "sourceLineCount": 107,
+      "importedBy": [
+        "src/components/recruiter/RecruiterFocusedReview.jsx",
+        "src/components/recruiter/RecruiterToday.jsx",
+        "src/components/tpo/companies/CompaniesTab.jsx",
+        "src/components/tpo/drive/ApplicantsTab.js",
+        "src/components/tpo/drive/DriveOffersList.jsx",
+        "src/components/tpo/drive/DriveStudents.jsx",
+        "src/components/tpo/drive/OffersTab.js",
+        "src/components/tpo/drive/RoundPanel.jsx",
+        "src/pages/recruiter/calendar.js",
+        "src/pages/recruiter/company.js",
+        "src/pages/recruiter/drives/[jobId].js",
+        "src/pages/recruiter/drives/index.js",
+        "src/pages/tpo/batches/index.js",
+        "src/pages/tpo/drives/index.js",
+        "src/pages/tpo/recruiters/index.js",
+        "src/pages/tpo/settings.js",
+        "src/pages/tpo/students/index.js"
+      ],
+      "classification": "inspected-meaningful-ui-source",
+      "classificationScope": "source only; renderability and behavior unverified",
+      "imports": [
+        {
+          "line": 1,
+          "specifier": "react",
+          "kind": "static-or-require",
+          "resolution": null
+        },
+        {
+          "line": 2,
+          "specifier": "antd",
+          "kind": "static-or-require",
+          "resolution": null
+        },
+        {
+          "line": 3,
+          "specifier": "@ant-design/icons",
+          "kind": "static-or-require",
+          "resolution": null
+        }
+      ],
+      "signals": [
+        {
+          "line": 40,
+          "type": "jsx",
+          "excerpt": "if (failed) return <div className=\"hs-card__people is-muted\">Couldn&apos;t load the names just now.</div>;"
+        },
+        {
+          "line": 41,
+          "type": "jsx",
+          "excerpt": "if (!state) return <div className=\"hs-card__people is-loading\" aria-busy=\"true\"><span /><span /><span /><em>Loading names…</em></div>;"
+        },
+        {
+          "line": 46,
+          "type": "jsx",
+          "excerpt": "<div className=\"hs-card__people\">"
+        },
+        {
+          "line": 59,
+          "type": "jsx",
+          "excerpt": "<div className={`hs-card is-${tone}`} data-testid=\"hover-story\">"
+        },
+        {
+          "line": 60,
+          "type": "jsx",
+          "excerpt": "{story.eyebrow && <div className=\"hs-card__eyebrow\"><span className=\"hs-card__dot\" aria-hidden=\"true\" />{story.eyebrow}</div>}"
+        },
+        {
+          "line": 61,
+          "type": "jsx",
+          "excerpt": "<div className=\"hs-card__title\">{story.title}</div>"
+        },
+        {
+          "line": 70,
+          "type": "jsx",
+          "excerpt": "{facts.map(([k, v]) => <div key={k}><dt>{k}</dt><dd>{v}</dd></div>)}"
+        },
+        {
+          "line": 73,
+          "type": "jsx",
+          "excerpt": "{story.people && <People people={story.people} />}"
+        },
+        {
+          "line": 75,
+          "type": "jsx",
+          "excerpt": "<div className=\"hs-card__foot\">"
+        },
+        {
+          "line": 79,
+          "type": "interactive-prop,jsx",
+          "excerpt": ": <button type=\"button\" className=\"hs-card__link\" onClick={story.link.onClick}>{story.link.label} ›</button>)}"
+        },
+        {
+          "line": 89,
+          "type": "overlay-or-complex-control,jsx",
+          "excerpt": "<Popover content={<StoryCard story={story} />} trigger={[\"hover\", \"focus\"]} mouseEnterDelay={0.33} mouseLeaveDelay={0.15}"
+        },
+        {
+          "line": 101,
+          "type": "jsx",
+          "excerpt": "<Tooltip title=\"Hover a cell for the full story\" mouseEnterDelay={0.2}>"
+        },
+        {
+          "line": 102,
+          "type": "jsx",
+          "excerpt": "<InfoCircleOutlined className=\"hs-head__i\" aria-label=\"Hover a cell for the full story\" />"
+        }
+      ],
+      "signalCount": 13,
+      "computedImportRequiresReview": false,
+      "notice": "Contains statically detected interactive prop (handler behavior not yet proven)"
+    },
+    {
+      "path": "src/components/tpo/ui/labels.js",
+      "sourceSha": "96a56474f1800afeb073cde3e3cca67a9c438747",
+      "frontierSha": "96a56474f1800afeb073cde3e3cca67a9c438747",
+      "shaMatches": true,
+      "fromFrontierIndex": 10,
+      "sourceLineCount": 45,
+      "importedBy": [
+        "src/components/tpo/DriveFormPage.js",
+        "src/components/tpo/StudentPanel.js",
+        "src/components/tpo/drive/ApplicantsTab.js",
+        "src/components/tpo/drive/DriveOffersList.jsx",
+        "src/components/tpo/drive/DriveStudents.jsx",
+        "src/components/tpo/drive/OffersTab.js",
+        "src/components/tpo/drive/OverviewTab.js",
+        "src/components/tpo/drive/RoundPanel.jsx",
+        "src/components/tpo/drive/RoundsTab.js",
+        "src/components/tpo/drive/ScheduleModal.js",
+        "src/components/tpo/recruiterPage.js",
+        "src/pages/company-share/[token].js",
+        "src/pages/superadmin/sections/StudentPlacementLookup.js",
+        "src/pages/tpo/audit.js",
+        "src/pages/tpo/companies.js",
+        "src/pages/tpo/drive-day/[roundId].js",
+        "src/pages/tpo/drives/[jobId].js",
+        "src/pages/tpo/recruiters/[recruiterLeadId].js"
+      ],
+      "classification": "inspected-non-ui-helper-or-config",
+      "classificationScope": "source only; renderability and behavior unverified",
+      "imports": [],
+      "signals": [],
+      "signalCount": 0,
+      "computedImportRequiresReview": false,
+      "notice": null
+    },
+    {
+      "path": "src/components/ErrorBoundary/JobsErrorBoundary.js",
+      "sourceSha": "c4f3ae2d00d9555dca8b5ae3965e38c1ebc0377c",
+      "frontierSha": "c4f3ae2d00d9555dca8b5ae3965e38c1ebc0377c",
+      "shaMatches": true,
+      "fromFrontierIndex": 11,
+      "sourceLineCount": 56,
+      "importedBy": [
+        "src/pages/college-admin/jobs/[jobId]/applications.js",
+        "src/pages/college-admin/jobs/[jobId]/index.js",
+        "src/pages/college-admin/jobs/[jobId]/interviews.js",
+        "src/pages/college-admin/jobs/[jobId]/settings.js",
+        "src/pages/college-admin/jobs/[jobId]/shortlisted.js",
+        "src/pages/college-admin/jobs/all.js",
+        "src/pages/college-admin/jobs/index.js",
+        "src/pages/superadmin/jobs/[jobId]/applications.js",
+        "src/pages/superadmin/jobs/[jobId]/index.js",
+        "src/pages/superadmin/jobs/[jobId]/interviews.js",
+        "src/pages/superadmin/jobs/[jobId]/settings.js",
+        "src/pages/superadmin/jobs/[jobId]/shortlisted.js",
+        "src/pages/superadmin/jobs/all.js",
+        "src/pages/superadmin/jobs/index.js"
+      ],
+      "classification": "inspected-meaningful-ui-source",
+      "classificationScope": "source only; renderability and behavior unverified",
+      "imports": [
+        {
+          "line": 1,
+          "specifier": "react",
+          "kind": "static-or-require",
+          "resolution": null
+        },
+        {
+          "line": 2,
+          "specifier": "antd",
+          "kind": "static-or-require",
+          "resolution": null
+        },
+        {
+          "line": 3,
+          "specifier": "@/utils/clientErrorReporting",
+          "kind": "static-or-require",
+          "resolution": {
+            "path": "src/utils/clientErrorReporting.js",
+            "sha": "bfe655367fd5014a2a9be0fc2e097a68dcd0a4d8"
+          }
+        }
+      ],
+      "signals": [
+        {
+          "line": 30,
+          "type": "jsx",
+          "excerpt": "<div style={{ padding: 24 }}>"
+        },
+        {
+          "line": 37,
+          "type": "jsx",
+          "excerpt": "<Space>"
+        },
+        {
+          "line": 38,
+          "type": "interactive-prop,jsx",
+          "excerpt": "<Button size=\"small\" onClick={this.handleReset}>"
+        },
+        {
+          "line": 42,
+          "type": "interactive-prop,jsx",
+          "excerpt": "<Button size=\"small\" type=\"primary\" onClick={this.props.onBack}>"
+        }
+      ],
+      "signalCount": 4,
+      "computedImportRequiresReview": false,
+      "notice": "Contains statically detected interactive prop (handler behavior not yet proven)"
+    },
+    {
+      "path": "src/components/admin/AdminTableToolbar.js",
+      "sourceSha": "40b02404196fa52b5fbd35b009b9bd40ec336a65",
+      "frontierSha": "40b02404196fa52b5fbd35b009b9bd40ec336a65",
+      "shaMatches": true,
+      "fromFrontierIndex": 12,
+      "sourceLineCount": 83,
+      "importedBy": [
+        "src/components/admin/electives/ElectivesConsole.jsx",
+        "src/components/admin/electives/OfferingRosterDrawer.jsx",
+        "src/components/admin/studentGroups/StudentGroupDetail.jsx",
+        "src/pages/superadmin/sections/Batches.js",
+        "src/pages/superadmin/sections/Classes.js",
+        "src/pages/superadmin/sections/Courses.js",
+        "src/pages/superadmin/sections/FacultyAssignment.js",
+        "src/pages/superadmin/sections/LectureHalls.js",
+        "src/pages/superadmin/sections/LessonContent.js",
+        "src/pages/superadmin/sections/Lessons.js",
+        "src/pages/superadmin/sections/Programs.js",
+        "src/pages/superadmin/sections/SemesterManagement.js"
+      ],
+      "classification": "inspected-meaningful-ui-source",
+      "classificationScope": "source only; renderability and behavior unverified",
+      "imports": [
+        {
+          "line": 1,
+          "specifier": "react",
+          "kind": "static-or-require",
+          "resolution": null
+        },
+        {
+          "line": 2,
+          "specifier": "antd",
+          "kind": "static-or-require",
+          "resolution": null
+        },
+        {
+          "line": 3,
+          "specifier": "@ant-design/icons",
+          "kind": "static-or-require",
+          "resolution": null
+        },
+        {
+          "line": 4,
+          "specifier": "@/utils/csvExport",
+          "kind": "static-or-require",
+          "resolution": {
+            "path": "src/utils/csvExport.js",
+            "sha": "e2912c9140d913488610c9ae5b070f2a4a0b53e1"
+          }
+        }
+      ],
+      "signals": [
+        {
+          "line": 57,
+          "type": "jsx",
+          "excerpt": "<Space wrap>"
+        },
+        {
+          "line": 68,
+          "type": "interactive-prop",
+          "excerpt": "onChange={(e) => setTypedSearch(e.target.value)}"
+        },
+        {
+          "line": 70,
+          "type": "interactive-prop,jsx",
+          "excerpt": "{typedSearch.trim() && <Button size=\"small\" onClick={() => setTypedSearch(\"\")}>Clear search</Button>}"
+        },
+        {
+          "line": 72,
+          "type": "jsx",
+          "excerpt": "<Typography.Text type=\"secondary\" role=\"status\">{resultCount} of {totalCount} results</Typography.Text>"
+        },
+        {
+          "line": 77,
+          "type": "interactive-prop,jsx",
+          "excerpt": "<Button icon={<DownloadOutlined />} size=\"small\" onClick={handleExport} disabled={!canExport}>Export CSV</Button>"
+        },
+        {
+          "line": 79,
+          "type": "interactive-prop,jsx",
+          "excerpt": "{onRefresh && <Button icon={<ReloadOutlined />} size=\"small\" onClick={onRefresh} loading={loading}>Refresh</Button>}"
+        }
+      ],
+      "signalCount": 6,
+      "computedImportRequiresReview": false,
+      "notice": "Contains statically detected interactive prop (handler behavior not yet proven)"
+    },
+    {
+      "path": "src/layouts/PlacementsTabsLayout.js",
+      "sourceSha": "b7b1f44fc7381da0b3870c323904f5ec6305a3d8",
+      "frontierSha": "b7b1f44fc7381da0b3870c323904f5ec6305a3d8",
+      "shaMatches": true,
+      "fromFrontierIndex": 13,
+      "sourceLineCount": 116,
+      "importedBy": [
+        "src/pages/learn/my-placements/announcements.js",
+        "src/pages/learn/my-placements/applications.js",
+        "src/pages/learn/my-placements/assessments.js",
+        "src/pages/learn/my-placements/calendar.js",
+        "src/pages/learn/my-placements/index.js",
+        "src/pages/learn/my-placements/interviews.js",
+        "src/pages/learn/my-placements/jobs/[jobId].js",
+        "src/pages/learn/my-placements/jobs/index.js",
+        "src/pages/learn/my-placements/offers.js",
+        "src/pages/learn/my-placements/placement.js",
+        "src/pages/learn/my-placements/rules.js",
+        "src/pages/learn/my-placements/schedule.js"
+      ],
+      "classification": "inspected-meaningful-ui-source",
+      "classificationScope": "source only; renderability and behavior unverified",
+      "imports": [
+        {
+          "line": 1,
+          "specifier": "antd",
+          "kind": "static-or-require",
+          "resolution": null
+        },
+        {
+          "line": 2,
+          "specifier": "react",
+          "kind": "static-or-require",
+          "resolution": null
+        },
+        {
+          "line": 4,
+          "specifier": "@/common/lists",
+          "kind": "static-or-require",
+          "resolution": {
+            "path": "src/common/lists.js",
+            "sha": "171e1732da97fdf98d746da214a8284911e190bb"
+          }
+        },
+        {
+          "line": 5,
+          "specifier": "@/layouts/placementsTheme",
+          "kind": "static-or-require",
+          "resolution": {
+            "path": "src/layouts/placementsTheme.js",
+            "sha": "746cc56436497f1c7a3f6830dcfb8ae4ced1fc73"
+          }
+        },
+        {
+          "line": 6,
+          "specifier": "@/components/Common/PageShell",
+          "kind": "static-or-require",
+          "resolution": {
+            "path": "src/components/Common/PageShell.jsx",
+            "sha": "0f05dc1e60d652385f03289a608496ab372c92ec"
+          }
+        },
+        {
+          "line": 7,
+          "specifier": "next/router",
+          "kind": "static-or-require",
+          "resolution": null
+        },
+        {
+          "line": 8,
+          "specifier": "react-redux",
+          "kind": "static-or-require",
+          "resolution": null
+        },
+        {
+          "line": 9,
+          "specifier": "@/utils/accountScopeKey",
+          "kind": "static-or-require",
+          "resolution": {
+            "path": "src/utils/accountScopeKey.js",
+            "sha": "af4e6bd3c25fa260a13898328fca1bb99f74c664"
+          }
+        },
+        {
+          "line": 10,
+          "specifier": "@/hooks/useSwipeNav",
+          "kind": "static-or-require",
+          "resolution": {
+            "path": "src/hooks/useSwipeNav.js",
+            "sha": "415a2063e2abddf7e9ca29f70d70339cbc8508bb"
+          }
+        },
+        {
+          "line": 11,
+          "specifier": "@/api/Services/TpoHubService",
+          "kind": "static-or-require",
+          "resolution": {
+            "path": "src/api/Services/TpoHubService.js",
+            "sha": "79d6fb983fea0566a6743f3d9eeadcd81c35d36b"
+          }
+        }
+      ],
+      "signals": [
+        {
+          "line": 44,
+          "type": "navigation-or-browser",
+          "excerpt": "router.push(newPath);"
+        },
+        {
+          "line": 78,
+          "type": "navigation-or-browser",
+          "excerpt": "window.addEventListener(\"placement-announcements-read\", refresh);"
+        },
+        {
+          "line": 94,
+          "type": "jsx",
+          "excerpt": "<ConfigProvider theme={placementsTheme}>"
+        },
+        {
+          "line": 95,
+          "type": "jsx",
+          "excerpt": "<div className=\"scroll-container learn-projects learn-placements-layout learn-course-layout\">"
+        }
+      ],
+      "signalCount": 4,
+      "computedImportRequiresReview": false,
+      "notice": null
+    },
+    {
+      "path": "src/components/admin/projects/projectSectionFieldConfigs.js",
+      "sourceSha": "e627cd0a44f3db9b489abbac1e7ac2ea1cadbbc4",
+      "frontierSha": "e627cd0a44f3db9b489abbac1e7ac2ea1cadbbc4",
+      "shaMatches": true,
+      "fromFrontierIndex": 14,
+      "sourceLineCount": 433,
+      "importedBy": [
+        "src/pages/college-admin/projects/workspaces/[workspaceId]/meetings.js",
+        "src/pages/college-admin/projects/workspaces/[workspaceId]/resources.js",
+        "src/pages/college-admin/projects/workspaces/[workspaceId]/sprints.js",
+        "src/pages/college-admin/projects/workspaces/[workspaceId]/tasks.js",
+        "src/pages/superadmin/projects/templates/[templateId]/resources.js",
+        "src/pages/superadmin/projects/templates/[templateId]/sprints.js",
+        "src/pages/superadmin/projects/templates/[templateId]/tasks.js",
+        "src/pages/superadmin/projects/templates/new.js",
+        "src/pages/superadmin/projects/workspaces/[workspaceId]/meetings.js",
+        "src/pages/superadmin/projects/workspaces/[workspaceId]/resources.js",
+        "src/pages/superadmin/projects/workspaces/[workspaceId]/sprints.js",
+        "src/pages/superadmin/projects/workspaces/[workspaceId]/tasks.js"
+      ],
+      "classification": "inspected-non-ui-helper-or-config",
+      "classificationScope": "source only; renderability and behavior unverified",
+      "imports": [],
+      "signals": [],
+      "signalCount": 0,
+      "computedImportRequiresReview": false,
+      "notice": null
+    }
+  ]
+}

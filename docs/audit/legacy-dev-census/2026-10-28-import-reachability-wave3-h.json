@@ -1,0 +1,2294 @@
+{
+  "schemaVersion": 1,
+  "type": "incremental legacy UI source inspection; not product tracker",
+  "batch": "wave3-h",
+  "sourceSnapshot": {
+    "repo": "42Students/lms2-fe",
+    "sha": "9d56bb7a347b06f242ef615c19fdc298f83329e0"
+  },
+  "parentFrontier": "2026-10-27-derived-import-frontier-post-wave2.json",
+  "method": "Pinned GitHub source reads; literal import resolution against pinned complete source tree; static JSX/control candidates only, not behavioral parity",
+  "requested": 14,
+  "read": 14,
+  "errors": 0,
+  "nodes": [
+    {
+      "path": "src/components/admin/AdminWorkspaceBreadcrumb.jsx",
+      "sourceSha": "59e1d999e7295999cf4bc2e02bb0026d7f18c0cf",
+      "frontierSha": "59e1d999e7295999cf4bc2e02bb0026d7f18c0cf",
+      "shaMatches": true,
+      "fromFrontierIndex": 102,
+      "sourceLineCount": 18,
+      "importedBy": [
+        "src/components/admin/AdminWorkspaceShell.jsx",
+        "src/components/admin/SuperAdminWorkspaceShell.jsx"
+      ],
+      "classification": "inspected-meaningful-ui-source",
+      "classificationScope": "source only; renderability and behavior unverified",
+      "imports": [
+        {
+          "line": 1,
+          "specifier": "next/link",
+          "kind": "static-or-require",
+          "resolution": null
+        },
+        {
+          "line": 2,
+          "specifier": "antd",
+          "kind": "static-or-require",
+          "resolution": null
+        }
+      ],
+      "signals": [
+        {
+          "line": 8,
+          "type": "jsx",
+          "excerpt": "<nav aria-label=\"Workspace location\" style={{ marginBottom: 14 }}>"
+        },
+        {
+          "line": 10,
+          "type": "jsx",
+          "excerpt": "<li><Link href={`${basePath}/projects/workspaces`}>Projects / Workspaces</Link></li>"
+        },
+        {
+          "line": 12,
+          "type": "jsx",
+          "excerpt": "<li><Link href={`${basePath}/projects/workspaces/${encodeURIComponent(String(workspaceId))}/summary`}>{name}</Link></li>"
+        },
+        {
+          "line": 13,
+          "type": "jsx",
+          "excerpt": "{activeSection && <><li aria-hidden=\"true\">›</li><li aria-current=\"page\"><Typography.Text strong>{activeSection}</Typography.Text></li></>}"
+        }
+      ],
+      "signalCount": 4,
+      "computedImportRequiresReview": false
+    },
+    {
+      "path": "src/components/admin/dashboard/AtAGlance.js",
+      "sourceSha": "d5e069c1be3f08bbbd31c2bb93b2b252c842f68a",
+      "frontierSha": "d5e069c1be3f08bbbd31c2bb93b2b252c842f68a",
+      "shaMatches": true,
+      "fromFrontierIndex": 103,
+      "sourceLineCount": 97,
+      "importedBy": [
+        "src/components/admin/dashboard/AdminDashboardView.js",
+        "src/pages/superadmin/sections/Dashboard.js"
+      ],
+      "classification": "inspected-meaningful-ui-source",
+      "classificationScope": "source only; renderability and behavior unverified",
+      "imports": [
+        {
+          "line": 1,
+          "specifier": "react",
+          "kind": "static-or-require",
+          "resolution": null
+        },
+        {
+          "line": 2,
+          "specifier": "antd",
+          "kind": "static-or-require",
+          "resolution": null
+        },
+        {
+          "line": 3,
+          "specifier": "@ant-design/icons",
+          "kind": "static-or-require",
+          "resolution": null
+        },
+        {
+          "line": 4,
+          "specifier": "@/api/Services/AdminService",
+          "kind": "static-or-require",
+          "resolution": {
+            "path": "src/api/Services/AdminService.js",
+            "sha": "598533e1ce238bbcd917c6f6b6df0e83d8f316c6"
+          }
+        },
+        {
+          "line": 5,
+          "specifier": "@/components/Common/Skeletons",
+          "kind": "static-or-require",
+          "resolution": {
+            "path": "src/components/Common/Skeletons.jsx",
+            "sha": "19ff7bc7317232a96a7217df406eaa8082567704"
+          }
+        }
+      ],
+      "signals": [
+        {
+          "line": 55,
+          "type": "jsx",
+          "excerpt": "{ key: \"studentCount\", label: \"Students\", icon: <UserOutlined /> },"
+        },
+        {
+          "line": 56,
+          "type": "jsx",
+          "excerpt": "{ key: \"facultyCount\", label: \"Faculty\", icon: <TeamOutlined /> },"
+        },
+        {
+          "line": 57,
+          "type": "jsx",
+          "excerpt": "{ key: \"courseCount\", label: \"Courses\", icon: <BookOutlined /> },"
+        },
+        {
+          "line": 58,
+          "type": "jsx",
+          "excerpt": "{ key: \"activeDriveCount\", label: \"Active drives\", icon: <SolutionOutlined /> },"
+        },
+        {
+          "line": 62,
+          "type": "jsx",
+          "excerpt": "<section className=\"admin-dashboard-section admin-dashboard-at-a-glance\">"
+        },
+        {
+          "line": 63,
+          "type": "jsx",
+          "excerpt": "<div className=\"admin-dashboard-section__head\">"
+        },
+        {
+          "line": 65,
+          "type": "interactive-prop,jsx",
+          "excerpt": "{error && summary && <Button size=\"small\" onClick={load} loading={loading}>Retry</Button>}"
+        },
+        {
+          "line": 68,
+          "type": "jsx",
+          "excerpt": "<Alert type=\"error\" showIcon message=\"Couldn't load college summary\" description=\"The rest of the dashboard is still available.\""
+        },
+        {
+          "line": 69,
+          "type": "interactive-prop,jsx",
+          "excerpt": "action={<Button size=\"small\" onClick={load} loading={loading}>Retry</Button>} />"
+        },
+        {
+          "line": 72,
+          "type": "jsx",
+          "excerpt": "{error && summary && <Alert type=\"warning\" showIcon message=\"Summary refresh failed\""
+        },
+        {
+          "line": 74,
+          "type": "jsx",
+          "excerpt": "<Row gutter={[16, 16]}>"
+        },
+        {
+          "line": 76,
+          "type": "jsx",
+          "excerpt": "<Col xs={12} sm={6} key={s.key}>"
+        },
+        {
+          "line": 77,
+          "type": "jsx",
+          "excerpt": "<Card size=\"small\">"
+        },
+        {
+          "line": 78,
+          "type": "jsx",
+          "excerpt": "<Skeleton loading={loading} active paragraph={false} title={{ width: 60 }}>"
+        }
+      ],
+      "signalCount": 14,
+      "computedImportRequiresReview": false
+    },
+    {
+      "path": "src/components/admin/dashboard/AttentionBoard.js",
+      "sourceSha": "bbe081e560eabd227787916b5fb011b8c160231c",
+      "frontierSha": "bbe081e560eabd227787916b5fb011b8c160231c",
+      "shaMatches": true,
+      "fromFrontierIndex": 104,
+      "sourceLineCount": 247,
+      "importedBy": [
+        "src/components/admin/dashboard/AdminDashboardView.js",
+        "src/pages/superadmin/sections/Dashboard.js"
+      ],
+      "classification": "inspected-meaningful-ui-source",
+      "classificationScope": "source only; renderability and behavior unverified",
+      "imports": [
+        {
+          "line": 1,
+          "specifier": "react",
+          "kind": "static-or-require",
+          "resolution": null
+        },
+        {
+          "line": 2,
+          "specifier": "next/link",
+          "kind": "static-or-require",
+          "resolution": null
+        },
+        {
+          "line": 3,
+          "specifier": "dayjs",
+          "kind": "static-or-require",
+          "resolution": null
+        },
+        {
+          "line": 4,
+          "specifier": "antd",
+          "kind": "static-or-require",
+          "resolution": null
+        },
+        {
+          "line": 9,
+          "specifier": "@/api/Services/AdminService",
+          "kind": "static-or-require",
+          "resolution": {
+            "path": "src/api/Services/AdminService.js",
+            "sha": "598533e1ce238bbcd917c6f6b6df0e83d8f316c6"
+          }
+        },
+        {
+          "line": 10,
+          "specifier": "@/components/admin/projects/adminProjectUtils",
+          "kind": "static-or-require",
+          "resolution": {
+            "path": "src/components/admin/projects/adminProjectUtils.js",
+            "sha": "3b01a868ba1afa5102d495e2598847ddc9c01a8c"
+          }
+        }
+      ],
+      "signals": [
+        {
+          "line": 38,
+          "type": "jsx",
+          "excerpt": "<Skeleton active paragraph={{ rows: 3 }} title={false} />"
+        },
+        {
+          "line": 40,
+          "type": "jsx",
+          "excerpt": "<div className=\"admin-dash-attention__muted\">Couldn&apos;t load this. Refresh to try again.</div>"
+        },
+        {
+          "line": 42,
+          "type": "jsx",
+          "excerpt": "<div className=\"admin-dash-attention__clear\"><CheckCircleOutlined aria-hidden=\"true\" /> {empty}</div>"
+        },
+        {
+          "line": 46,
+          "type": "jsx",
+          "excerpt": "{footer && !loading && !failed && !clear ? <div className=\"admin-dash-attention__footer\">{footer}</div> : null}"
+        },
+        {
+          "line": 105,
+          "type": "jsx",
+          "excerpt": "<section className=\"admin-dashboard-section\">"
+        },
+        {
+          "line": 106,
+          "type": "jsx",
+          "excerpt": "<Empty description=\"Couldn't load today's overview.\">"
+        },
+        {
+          "line": 107,
+          "type": "interactive-prop,jsx",
+          "excerpt": "<Button icon={<ReloadOutlined />} onClick={load}>Retry</Button>"
+        },
+        {
+          "line": 126,
+          "type": "jsx",
+          "excerpt": "<section className=\"admin-dashboard-section admin-dash-board\" aria-label=\"Needs attention\">"
+        },
+        {
+          "line": 127,
+          "type": "jsx",
+          "excerpt": "<div className=\"admin-dash-board__head\">"
+        },
+        {
+          "line": 129,
+          "type": "interactive-prop,jsx",
+          "excerpt": "<Button size=\"small\" type=\"text\" icon={<ReloadOutlined />} onClick={load} loading={loading}>Refresh</Button>"
+        },
+        {
+          "line": 132,
+          "type": "jsx",
+          "excerpt": "<div className=\"admin-dash-attention__muted\" role=\"status\" style={{ marginBottom: 12 }}>"
+        },
+        {
+          "line": 137,
+          "type": "jsx",
+          "excerpt": "<div className=\"admin-dash-today\" aria-label=\"Today's classes\">"
+        },
+        {
+          "line": 138,
+          "type": "jsx",
+          "excerpt": "{loading ? <Skeleton active paragraph={false} /> : today ? ("
+        },
+        {
+          "line": 149,
+          "type": "jsx",
+          "excerpt": "<Row gutter={[16, 16]}>"
+        },
+        {
+          "line": 150,
+          "type": "jsx",
+          "excerpt": "<Col xs={24} lg={12} xl={8}>"
+        },
+        {
+          "line": 151,
+          "type": "jsx",
+          "excerpt": "<AttentionCard title=\"Attendance not taken\" icon={<ClockCircleOutlined />} tone=\"danger\""
+        },
+        {
+          "line": 154,
+          "type": "jsx",
+          "excerpt": "footer={<Link href={`${basePath}/attendance`}>Open attendance</Link>}>"
+        },
+        {
+          "line": 155,
+          "type": "jsx",
+          "excerpt": "<Rows items={pending?.items || []} total={pending?.count} render={(r) => ("
+        },
+        {
+          "line": 164,
+          "type": "jsx",
+          "excerpt": "<Col xs={24} lg={12} xl={8}>"
+        },
+        {
+          "line": 165,
+          "type": "jsx",
+          "excerpt": "<AttentionCard title={`Under ${threshold}% attendance`} icon={<WarningOutlined />} tone=\"danger\""
+        },
+        {
+          "line": 168,
+          "type": "jsx",
+          "excerpt": "footer={<span>Last 30 days, marked sessions only · <Link href={`${basePath}/attendance`}>Attendance</Link></span>}>"
+        },
+        {
+          "line": 169,
+          "type": "jsx",
+          "excerpt": "<Rows items={risk?.items || []} total={risk?.count} render={(r) => ("
+        },
+        {
+          "line": 173,
+          "type": "jsx",
+          "excerpt": "<Tag color=\"red\">{r.percent}%</Tag>{r.className} · {r.held - r.absent} of {plural(r.held, \"session\")}"
+        },
+        {
+          "line": 180,
+          "type": "jsx",
+          "excerpt": "<Col xs={24} lg={12} xl={8}>"
+        },
+        {
+          "line": 181,
+          "type": "jsx",
+          "excerpt": "<AttentionCard title=\"Waiting to be graded\" icon={<FormOutlined />}"
+        },
+        {
+          "line": 184,
+          "type": "jsx",
+          "excerpt": "footer={<span>{grading?.oldestSubmittedAt ? `Oldest from ${asDate(grading.oldestSubmittedAt).format(\"D MMM YYYY\")} · ` : \"\"}<Link href={`${basePath}/assignments`}>Assignments</Link"
+        },
+        {
+          "line": 185,
+          "type": "jsx",
+          "excerpt": "<Rows items={grading?.items || []} render={(r) => ("
+        },
+        {
+          "line": 194,
+          "type": "jsx",
+          "excerpt": "<Col xs={24} lg={12} xl={8}>"
+        },
+        {
+          "line": 195,
+          "type": "jsx",
+          "excerpt": "<AttentionCard title=\"Courses with no teacher\" icon={<TeamOutlined />}"
+        },
+        {
+          "line": 198,
+          "type": "jsx",
+          "excerpt": "footer={<span>Students see these with nobody behind them · <Link href={`${basePath}/faculty-assignment`}>Faculty assignment</Link></span>}>"
+        },
+        {
+          "line": 199,
+          "type": "jsx",
+          "excerpt": "<Rows items={unstaffed?.items || []} total={unstaffed?.count} render={(r) => ("
+        },
+        {
+          "line": 208,
+          "type": "jsx",
+          "excerpt": "<Col xs={24} lg={12} xl={8}>"
+        },
+        {
+          "line": 209,
+          "type": "jsx",
+          "excerpt": "<AttentionCard title=\"Setup gaps\" icon={<ToolOutlined />}"
+        },
+        {
+          "line": 212,
+          "type": "jsx",
+          "excerpt": "<Rows items={["
+        },
+        {
+          "line": 218,
+          "type": "jsx",
+          "excerpt": "<Link href={`${basePath}/${g.href}`} className=\"admin-dash-attention__main\">{g.n} {g.n === 1 ? g.label : g.many}</Link>"
+        },
+        {
+          "line": 223,
+          "type": "jsx",
+          "excerpt": "<Col xs={24} lg={12} xl={8}>"
+        },
+        {
+          "line": 224,
+          "type": "jsx",
+          "excerpt": "<AttentionCard title=\"Quizzes closing this week\" icon={<CalendarOutlined />} tone=\"info\""
+        },
+        {
+          "line": 227,
+          "type": "jsx",
+          "excerpt": "footer={<Link href={`${basePath}/quizzes`}>Quizzes</Link>}>"
+        },
+        {
+          "line": 228,
+          "type": "jsx",
+          "excerpt": "<Rows items={due?.items || []} total={due?.quizCount} render={(r) => ("
+        },
+        {
+          "line": 232,
+          "type": "jsx",
+          "excerpt": "<Tooltip title={r.className ? `Only ${r.className}` : \"All sections taking the course\"}>"
+        },
+        {
+          "line": 242,
+          "type": "jsx",
+          "excerpt": "<p className=\"admin-dash-board__allclear\"><CheckCircleOutlined aria-hidden=\"true\" /> Nothing needs you right now.</p>"
+        }
+      ],
+      "signalCount": 41,
+      "computedImportRequiresReview": false
+    },
+    {
+      "path": "src/components/admin/dashboard/QuickActionsGrid.js",
+      "sourceSha": "54cc6d71978e072f52356b6302c1a37f0de0e8ce",
+      "frontierSha": "54cc6d71978e072f52356b6302c1a37f0de0e8ce",
+      "shaMatches": true,
+      "fromFrontierIndex": 106,
+      "sourceLineCount": 34,
+      "importedBy": [
+        "src/components/admin/dashboard/AdminDashboardView.js",
+        "src/pages/superadmin/sections/Dashboard.js"
+      ],
+      "classification": "inspected-meaningful-ui-source",
+      "classificationScope": "source only; renderability and behavior unverified",
+      "imports": [
+        {
+          "line": 1,
+          "specifier": "antd",
+          "kind": "static-or-require",
+          "resolution": null
+        }
+      ],
+      "signals": [
+        {
+          "line": 5,
+          "type": "jsx",
+          "excerpt": "<section className=\"admin-dashboard-section admin-dashboard-quick-actions\" aria-label=\"Quick Actions\">"
+        },
+        {
+          "line": 7,
+          "type": "jsx",
+          "excerpt": "<Row gutter={[16, 16]} className=\"admin-dashboard-quick-actions__grid\">"
+        },
+        {
+          "line": 11,
+          "type": "jsx",
+          "excerpt": "<Col xs={24} sm={12} md={8} lg={6} xl={6} key={action.key}>"
+        },
+        {
+          "line": 14,
+          "type": "interactive-prop",
+          "excerpt": "onClick={() => onNavigate(action.key)}"
+        },
+        {
+          "line": 22,
+          "type": "jsx",
+          "excerpt": "<div className=\"admin-dashboard-quick-action-card__icon\">"
+        },
+        {
+          "line": 23,
+          "type": "jsx",
+          "excerpt": "<Icon />"
+        },
+        {
+          "line": 25,
+          "type": "jsx",
+          "excerpt": "<div className=\"admin-dashboard-quick-action-card__label\">{action.label}</div>"
+        }
+      ],
+      "signalCount": 7,
+      "computedImportRequiresReview": false
+    },
+    {
+      "path": "src/components/admin/SortableTableRow.js",
+      "sourceSha": "dd1409d7f3e53df21e9837c2f6f08fdf8f039c7c",
+      "frontierSha": "dd1409d7f3e53df21e9837c2f6f08fdf8f039c7c",
+      "shaMatches": true,
+      "fromFrontierIndex": 107,
+      "sourceLineCount": 86,
+      "importedBy": [
+        "src/pages/superadmin/sections/Lessons.js",
+        "src/pages/superadmin/sections/SemesterCourseMapping.js"
+      ],
+      "classification": "inspected-meaningful-ui-source",
+      "classificationScope": "source only; renderability and behavior unverified",
+      "imports": [
+        {
+          "line": 1,
+          "specifier": "react",
+          "kind": "static-or-require",
+          "resolution": null
+        },
+        {
+          "line": 2,
+          "specifier": "@dnd-kit/core",
+          "kind": "static-or-require",
+          "resolution": null
+        },
+        {
+          "line": 3,
+          "specifier": "@dnd-kit/sortable",
+          "kind": "static-or-require",
+          "resolution": null
+        },
+        {
+          "line": 4,
+          "specifier": "@dnd-kit/utilities",
+          "kind": "static-or-require",
+          "resolution": null
+        },
+        {
+          "line": 5,
+          "specifier": "@ant-design/icons",
+          "kind": "static-or-require",
+          "resolution": null
+        }
+      ],
+      "signals": [
+        {
+          "line": 30,
+          "type": "jsx",
+          "excerpt": "<button type=\"button\" ref={setActivatorNodeRef} {...attributes} {...listeners}"
+        },
+        {
+          "line": 33,
+          "type": "jsx",
+          "excerpt": "<HolderOutlined aria-hidden=\"true\" />"
+        },
+        {
+          "line": 64,
+          "type": "jsx",
+          "excerpt": "<DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={onDragEnd}>"
+        },
+        {
+          "line": 65,
+          "type": "jsx",
+          "excerpt": "<SortableContext items={ids} strategy={verticalListSortingStrategy}>"
+        },
+        {
+          "line": 72,
+          "type": "jsx",
+          "excerpt": "<ExplicitSortableContext.Provider value={true}>"
+        },
+        {
+          "line": 73,
+          "type": "jsx",
+          "excerpt": "<DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={onDragEnd}>"
+        },
+        {
+          "line": 74,
+          "type": "jsx",
+          "excerpt": "<SortableContext items={ids} strategy={verticalListSortingStrategy}>"
+        }
+      ],
+      "signalCount": 7,
+      "computedImportRequiresReview": false
+    },
+    {
+      "path": "src/components/tpo/drive/CompanyPicker.jsx",
+      "sourceSha": "d88dde925f95adb6016768bbb6584eba3be20a69",
+      "frontierSha": "d88dde925f95adb6016768bbb6584eba3be20a69",
+      "shaMatches": true,
+      "fromFrontierIndex": 109,
+      "sourceLineCount": 184,
+      "importedBy": [
+        "src/components/tpo/DriveFormPage.js",
+        "src/components/tpo/drive/InviteReviewer.jsx"
+      ],
+      "classification": "inspected-meaningful-ui-source",
+      "classificationScope": "source only; renderability and behavior unverified",
+      "imports": [
+        {
+          "line": 1,
+          "specifier": "react",
+          "kind": "static-or-require",
+          "resolution": null
+        },
+        {
+          "line": 2,
+          "specifier": "antd",
+          "kind": "static-or-require",
+          "resolution": null
+        },
+        {
+          "line": 3,
+          "specifier": "@ant-design/icons",
+          "kind": "static-or-require",
+          "resolution": null
+        },
+        {
+          "line": 4,
+          "specifier": "@/components/tpo/ui/AsyncModal",
+          "kind": "static-or-require",
+          "resolution": {
+            "path": "src/components/tpo/ui/AsyncModal.jsx",
+            "sha": "d90b051895c54e27a6e7ec18215a97921b9499d2"
+          }
+        },
+        {
+          "line": 5,
+          "specifier": "@/components/tpo/ui/useDebouncedValue",
+          "kind": "static-or-require",
+          "resolution": {
+            "path": "src/components/tpo/ui/useDebouncedValue.js",
+            "sha": "289cf207badae64a1bb7dc7c761798bad584804c"
+          }
+        },
+        {
+          "line": 6,
+          "specifier": "@/api/Services/AdminService",
+          "kind": "static-or-require",
+          "resolution": {
+            "path": "src/api/Services/AdminService.js",
+            "sha": "598533e1ce238bbcd917c6f6b6df0e83d8f316c6"
+          }
+        },
+        {
+          "line": 7,
+          "specifier": "@/api/Services/TpoHubService",
+          "kind": "static-or-require",
+          "resolution": {
+            "path": "src/api/Services/TpoHubService.js",
+            "sha": "79d6fb983fea0566a6743f3d9eeadcd81c35d36b"
+          }
+        }
+      ],
+      "signals": [
+        {
+          "line": 105,
+          "type": "jsx",
+          "excerpt": "<div className={`tpo-company-picker__option${c.fuzzy ? \" tpo-company-picker__option--fuzzy\" : \"\"}`}>"
+        },
+        {
+          "line": 106,
+          "type": "jsx",
+          "excerpt": "<Space size={6} wrap>"
+        },
+        {
+          "line": 107,
+          "type": "jsx",
+          "excerpt": "<Typography.Text strong>{c.name}</Typography.Text>"
+        },
+        {
+          "line": 108,
+          "type": "jsx",
+          "excerpt": "{c.verifiedBy42 && <Tag color=\"blue\">Verified by 42</Tag>}"
+        },
+        {
+          "line": 109,
+          "type": "jsx",
+          "excerpt": "{c.inMyList && <Tag>In your companies</Tag>}"
+        },
+        {
+          "line": 112,
+          "type": "jsx",
+          "excerpt": "{c.domains?.length > 0 && <Typography.Text type=\"secondary\" className=\"tpo-company-picker__domains\">{c.domains.join(\", \")}</Typography.Text>}"
+        },
+        {
+          "line": 123,
+          "type": "jsx",
+          "excerpt": "label: <div className=\"tpo-company-picker__option\"><Typography.Text>{c.name}</Typography.Text><span className=\"tpo-company-picker__reason\">Add it as a company</span></div>,"
+        },
+        {
+          "line": 126,
+          "type": "jsx",
+          "excerpt": "...(typed.trim().length >= 2 ? [{ value: ADD_OTHER, label: <Typography.Text>Add other: <strong>{typed.trim()}</strong></Typography.Text> }] : []),"
+        },
+        {
+          "line": 132,
+          "type": "jsx",
+          "excerpt": "<div className=\"tpo-company-picker__locked\">"
+        },
+        {
+          "line": 133,
+          "type": "jsx",
+          "excerpt": "<Input id={id} value={value} readOnly aria-label=\"Company (verified by 42)\""
+        },
+        {
+          "line": 134,
+          "type": "jsx",
+          "excerpt": "suffix={<Tag color=\"blue\" style={{ marginInlineEnd: 0 }}>Verified by 42</Tag>} />"
+        },
+        {
+          "line": 135,
+          "type": "interactive-prop,jsx",
+          "excerpt": "{!disabled && <Typography.Link onClick={clear}>Change company</Typography.Link>}"
+        },
+        {
+          "line": 155,
+          "type": "jsx",
+          "excerpt": "{searchError && <Typography.Text type=\"secondary\">{searchError}</Typography.Text>}"
+        },
+        {
+          "line": 156,
+          "type": "interactive-prop,jsx",
+          "excerpt": "<AsyncModal open={adding} title=\"Add a company\" okText=\"Use this company\" onCancel={() => setAdding(false)} destroyOnClose"
+        },
+        {
+          "line": 158,
+          "type": "interactive-prop",
+          "excerpt": "onOk={() => add(false)}>"
+        },
+        {
+          "line": 159,
+          "type": "overlay-or-complex-control,jsx",
+          "excerpt": "<Form form={addForm} layout=\"vertical\" onValuesChange={(ch) => { if (\"name\" in ch) setSame(null); }}>"
+        },
+        {
+          "line": 160,
+          "type": "overlay-or-complex-control,jsx",
+          "excerpt": "<Form.Item name=\"name\" label=\"Company name\" rules={[{ required: true, message: \"Add the company name\" }]}><Input /></Form.Item>"
+        },
+        {
+          "line": 162,
+          "type": "jsx",
+          "excerpt": "<Alert type=\"warning\" showIcon className=\"tpo-company-picker__same\" data-testid=\"company-picker.same\""
+        },
+        {
+          "line": 165,
+          "type": "jsx",
+          "excerpt": "<Space direction=\"vertical\" size={8}>"
+        },
+        {
+          "line": 167,
+          "type": "jsx",
+          "excerpt": "<Space wrap>"
+        },
+        {
+          "line": 168,
+          "type": "interactive-prop,jsx",
+          "excerpt": "<Button type=\"primary\" onClick={useExisting}>Use {same.name}</Button>"
+        },
+        {
+          "line": 169,
+          "type": "interactive-prop,jsx",
+          "excerpt": "<Button onClick={() => add(true)}>It&apos;s a different company</Button>"
+        },
+        {
+          "line": 174,
+          "type": "overlay-or-complex-control,jsx",
+          "excerpt": "<Form.Item name=\"website\" label=\"Company website\" extra=\"Optional. Helps keep each company once.\"><Input placeholder=\"https://www.company.com\" /></Form.Item>"
+        },
+        {
+          "line": 175,
+          "type": "overlay-or-complex-control,jsx",
+          "excerpt": "<Form.Item name=\"recruiterEmail\" label={<Space size={4}>Recruiter email <Tooltip title={RECRUITER_EMAIL_NOTE}><InfoCircleOutlined aria-label={RECRUITER_EMAIL_NOTE} /></Tooltip></Sp"
+        },
+        {
+          "line": 176,
+          "type": "jsx",
+          "excerpt": "extra=\"Optional.\" rules={[{ type: \"email\", message: \"Enter a valid email\" }]}><Input placeholder=\"name@company.com\" /></Form.Item>"
+        },
+        {
+          "line": 177,
+          "type": "jsx",
+          "excerpt": "{addError && <Alert type=\"error\" showIcon message={addError} style={{ marginBottom: 12 }} />}"
+        },
+        {
+          "line": 178,
+          "type": "jsx",
+          "excerpt": "<Alert type=\"info\" showIcon message=\"Add the website or the recruiter's company email: that is how a company is kept once across colleges.\" />"
+        }
+      ],
+      "signalCount": 27,
+      "computedImportRequiresReview": false
+    },
+    {
+      "path": "src/components/admin/dashboard/SetupGuide.js",
+      "sourceSha": "256eb64e6a164940d0cbe440c04ac718d35ff12d",
+      "frontierSha": "256eb64e6a164940d0cbe440c04ac718d35ff12d",
+      "shaMatches": true,
+      "fromFrontierIndex": 119,
+      "sourceLineCount": 65,
+      "importedBy": [
+        "src/components/admin/dashboard/AdminDashboardView.js"
+      ],
+      "classification": "inspected-meaningful-ui-source",
+      "classificationScope": "source only; renderability and behavior unverified",
+      "imports": [
+        {
+          "line": 1,
+          "specifier": "antd",
+          "kind": "static-or-require",
+          "resolution": null
+        },
+        {
+          "line": 2,
+          "specifier": "@ant-design/icons",
+          "kind": "static-or-require",
+          "resolution": null
+        }
+      ],
+      "signals": [
+        {
+          "line": 6,
+          "type": "jsx",
+          "excerpt": "<section className=\"admin-dashboard-section admin-dashboard-setup\" aria-label=\"Setup Guide\">"
+        },
+        {
+          "line": 17,
+          "type": "jsx",
+          "excerpt": "<div className=\"admin-dashboard-setup-phase__header\">"
+        },
+        {
+          "line": 25,
+          "type": "jsx",
+          "excerpt": "<Row gutter={[16, 16]} className=\"admin-dashboard-setup-phase__steps\">"
+        },
+        {
+          "line": 29,
+          "type": "jsx",
+          "excerpt": "<Col xs={24} sm={12} md={8} key={step.step}>"
+        },
+        {
+          "line": 33,
+          "type": "interactive-prop",
+          "excerpt": "onClick={() => onNavigate(step.key)}"
+        },
+        {
+          "line": 40,
+          "type": "jsx",
+          "excerpt": "<div className=\"admin-dashboard-setup-step__inner\">"
+        },
+        {
+          "line": 44,
+          "type": "jsx",
+          "excerpt": "<div className=\"admin-dashboard-setup-step__content\">"
+        },
+        {
+          "line": 45,
+          "type": "jsx",
+          "excerpt": "<div className=\"admin-dashboard-setup-step__title\">"
+        },
+        {
+          "line": 47,
+          "type": "jsx",
+          "excerpt": "<Icon />"
+        },
+        {
+          "line": 51,
+          "type": "jsx",
+          "excerpt": "<div className=\"admin-dashboard-setup-step__desc\">{step.desc}</div>"
+        },
+        {
+          "line": 53,
+          "type": "jsx",
+          "excerpt": "<ArrowRightOutlined aria-hidden=\"true\" className=\"admin-dashboard-setup-step__arrow\" />"
+        }
+      ],
+      "signalCount": 11,
+      "computedImportRequiresReview": false
+    },
+    {
+      "path": "src/components/tpo/batches/BatchRulesTab.jsx",
+      "sourceSha": "71ba226990059d5f9fffbf9b347448dd69fbbbc5",
+      "frontierSha": "71ba226990059d5f9fffbf9b347448dd69fbbbc5",
+      "shaMatches": true,
+      "fromFrontierIndex": 142,
+      "sourceLineCount": 136,
+      "importedBy": [
+        "src/pages/tpo/batches/[batchId].js"
+      ],
+      "classification": "inspected-meaningful-ui-source",
+      "classificationScope": "source only; renderability and behavior unverified",
+      "imports": [
+        {
+          "line": 1,
+          "specifier": "react",
+          "kind": "static-or-require",
+          "resolution": null
+        },
+        {
+          "line": 2,
+          "specifier": "antd",
+          "kind": "static-or-require",
+          "resolution": null
+        },
+        {
+          "line": 3,
+          "specifier": "@/components/Common/PanelStates",
+          "kind": "static-or-require",
+          "resolution": {
+            "path": "src/components/Common/PanelStates.jsx",
+            "sha": "9e7522f07545b772ee8b5f6ae0b68e2c8bea1a92"
+          }
+        },
+        {
+          "line": 4,
+          "specifier": "@/components/Common/Skeletons",
+          "kind": "static-or-require",
+          "resolution": {
+            "path": "src/components/Common/Skeletons.jsx",
+            "sha": "19ff7bc7317232a96a7217df406eaa8082567704"
+          }
+        },
+        {
+          "line": 5,
+          "specifier": "next/router",
+          "kind": "static-or-require",
+          "resolution": null
+        },
+        {
+          "line": 6,
+          "specifier": "@/api/Services/AdminService",
+          "kind": "static-or-require",
+          "resolution": {
+            "path": "src/api/Services/AdminService.js",
+            "sha": "598533e1ce238bbcd917c6f6b6df0e83d8f316c6"
+          }
+        },
+        {
+          "line": 7,
+          "specifier": "@/api/Services/BatchesService",
+          "kind": "static-or-require",
+          "resolution": {
+            "path": "src/api/Services/BatchesService.js",
+            "sha": "40436af84d56c1ce1dc087cddce627ad3dbd78d7"
+          }
+        }
+      ],
+      "signals": [
+        {
+          "line": 53,
+          "type": "overlay-or-complex-control,navigation-or-browser",
+          "excerpt": "if (window.confirm(\"Discard your unsaved batch-rule changes?\")) return;"
+        },
+        {
+          "line": 54,
+          "type": "navigation-or-browser",
+          "excerpt": "const addressBar = `${window.location.pathname}${window.location.search}${window.location.hash}`;"
+        },
+        {
+          "line": 55,
+          "type": "navigation-or-browser",
+          "excerpt": "if (addressBar !== Router.asPath) window.history.pushState(null, \"\", Router.asPath);"
+        },
+        {
+          "line": 59,
+          "type": "navigation-or-browser",
+          "excerpt": "window.addEventListener(\"beforeunload\", beforeUnload);"
+        },
+        {
+          "line": 60,
+          "type": "navigation-or-browser",
+          "excerpt": "Router.events.on(\"routeChangeStart\", beforeRouteChange);"
+        },
+        {
+          "line": 62,
+          "type": "navigation-or-browser",
+          "excerpt": "window.removeEventListener(\"beforeunload\", beforeUnload);"
+        },
+        {
+          "line": 63,
+          "type": "navigation-or-browser",
+          "excerpt": "Router.events.off(\"routeChangeStart\", beforeRouteChange);"
+        },
+        {
+          "line": 67,
+          "type": "jsx",
+          "excerpt": "if (error && !data) return <PanelError title={error} onRetry={load} />;"
+        },
+        {
+          "line": 68,
+          "type": "jsx",
+          "excerpt": "if (!data) return <ListSkeleton rows={4} avatar={false} label=\"Loading batch placement rules\" />;"
+        },
+        {
+          "line": 98,
+          "type": "jsx",
+          "excerpt": "<div className=\"tpo-batch-rules\" data-testid=\"batch-rules\">"
+        },
+        {
+          "line": 99,
+          "type": "jsx",
+          "excerpt": "<Alert type=\"info\" showIcon className=\"tpo-batch-rules__note\""
+        },
+        {
+          "line": 103,
+          "type": "jsx",
+          "excerpt": "<Alert type=\"error\" showIcon closable message=\"Batch rules were not saved\" description={saveError}"
+        },
+        {
+          "line": 104,
+          "type": "interactive-prop,jsx",
+          "excerpt": "action={<Button size=\"small\" onClick={() => save(draft)} disabled={busy}>Retry</Button>}"
+        },
+        {
+          "line": 105,
+          "type": "interactive-prop",
+          "excerpt": "onClose={() => setSaveError(\"\")} style={{ marginBottom: 12 }} />"
+        },
+        {
+          "line": 107,
+          "type": "jsx",
+          "excerpt": "<div className=\"tpo-batch-rules__list\">"
+        },
+        {
+          "line": 112,
+          "type": "jsx",
+          "excerpt": "<div key={r.key} className={`tpo-batch-rules__row${value !== undefined ? \" is-own\" : \"\"}`}>"
+        },
+        {
+          "line": 113,
+          "type": "jsx",
+          "excerpt": "<div className=\"tpo-batch-rules__label\">"
+        },
+        {
+          "line": 115,
+          "type": "jsx",
+          "excerpt": "<Typography.Text type=\"secondary\">College: {r.show(college)}</Typography.Text>"
+        },
+        {
+          "line": 117,
+          "type": "jsx",
+          "excerpt": "<Space wrap>"
+        },
+        {
+          "line": 119,
+          "type": "overlay-or-complex-control,interactive-prop,jsx",
+          "excerpt": "<Select style={{ minWidth: 220 }} value={value ?? college} options={r.options} onChange={(v) => set(r.key, v)} aria-label={r.label} />"
+        },
+        {
+          "line": 121,
+          "type": "interactive-prop,jsx",
+          "excerpt": "<InputNumber min={r.min} max={r.max} value={value ?? college} onChange={(v) => set(r.key, v)} addonAfter={r.suffix} aria-label={r.label} />"
+        },
+        {
+          "line": 123,
+          "type": "interactive-prop,jsx",
+          "excerpt": "{value !== undefined && <Button size=\"small\" type=\"link\" onClick={() => set(r.key, undefined)}>Use the college&apos;s</Button>}"
+        },
+        {
+          "line": 129,
+          "type": "jsx",
+          "excerpt": "<Space wrap>"
+        },
+        {
+          "line": 130,
+          "type": "interactive-prop,jsx",
+          "excerpt": "<Button type=\"primary\" loading={busy} disabled={!changed} onClick={() => save(draft)} data-testid=\"batch-rules.save\">Save</Button>"
+        },
+        {
+          "line": 131,
+          "type": "interactive-prop,jsx",
+          "excerpt": "{Object.keys(own).length > 0 && <Button disabled={busy} onClick={() => save({})}>Follow the college rules</Button>}"
+        }
+      ],
+      "signalCount": 25,
+      "computedImportRequiresReview": false
+    },
+    {
+      "path": "src/components/tpo/batches/EligibilityGrid.jsx",
+      "sourceSha": "89afe0b59f50086994f91bbf691bc3199652e7aa",
+      "frontierSha": "89afe0b59f50086994f91bbf691bc3199652e7aa",
+      "shaMatches": true,
+      "fromFrontierIndex": 144,
+      "sourceLineCount": 152,
+      "importedBy": [
+        "src/pages/tpo/batches/[batchId].js"
+      ],
+      "classification": "inspected-meaningful-ui-source",
+      "classificationScope": "source only; renderability and behavior unverified",
+      "imports": [
+        {
+          "line": 1,
+          "specifier": "react",
+          "kind": "static-or-require",
+          "resolution": null
+        },
+        {
+          "line": 2,
+          "specifier": "@/components/tpo/ui/HoverStory",
+          "kind": "static-or-require",
+          "resolution": {
+            "path": "src/components/tpo/ui/HoverStory.jsx",
+            "sha": "d6f1cd0dc9a446e617de3e11fb0e1ebfe7511e1a"
+          }
+        },
+        {
+          "line": 3,
+          "specifier": "@/components/tpo/stories/studentStories",
+          "kind": "static-or-require",
+          "resolution": {
+            "path": "src/components/tpo/stories/studentStories.js",
+            "sha": "f7c0d2e2bed8bb4e90a4f42650109a43f51e1ad9"
+          }
+        },
+        {
+          "line": 4,
+          "specifier": "@/components/tpo/grid/ChoiceEditor",
+          "kind": "static-or-require",
+          "resolution": {
+            "path": "src/components/tpo/grid/ChoiceEditor.jsx",
+            "sha": "04203bce4392d72c713417fb1dbe4082ef6ce74f"
+          }
+        },
+        {
+          "line": 5,
+          "specifier": "antd",
+          "kind": "static-or-require",
+          "resolution": null
+        },
+        {
+          "line": 6,
+          "specifier": "@ant-design/icons",
+          "kind": "static-or-require",
+          "resolution": null
+        },
+        {
+          "line": 7,
+          "specifier": "@/components/tpo/grid/GridWorkspace",
+          "kind": "static-or-require",
+          "resolution": {
+            "path": "src/components/tpo/grid/GridWorkspace.jsx",
+            "sha": "83e47b081e41e714fdc7447f61ab19d10057ca75"
+          }
+        },
+        {
+          "line": 8,
+          "specifier": "@/components/tpo/grid/HeaderFilter",
+          "kind": "static-or-require",
+          "resolution": {
+            "path": "src/components/tpo/grid/HeaderFilter.jsx",
+            "sha": "fa30c507e68ddffdb8e6cceb21543dac90b0a82d"
+          }
+        },
+        {
+          "line": 9,
+          "specifier": "./IneligibleModal",
+          "kind": "static-or-require",
+          "resolution": {
+            "path": "src/components/tpo/batches/IneligibleModal.jsx",
+            "sha": "327b77dc140b5acdeb20138ac015765be0ba7ed9"
+          }
+        },
+        {
+          "line": 10,
+          "specifier": "@/components/tpo/students/academics",
+          "kind": "static-or-require",
+          "resolution": {
+            "path": "src/components/tpo/students/academics.js",
+            "sha": "7d2d94830a903eba1fc580ad79d4e5aaa8d00ee3"
+          }
+        },
+        {
+          "line": 11,
+          "specifier": "./batchRules",
+          "kind": "static-or-require",
+          "resolution": {
+            "path": "src/components/tpo/batches/batchRules.js",
+            "sha": "16156886a6ef7320fa6f5befbd2a450df1522055"
+          }
+        },
+        {
+          "line": 12,
+          "specifier": "@/components/Common/PanelStates",
+          "kind": "static-or-require",
+          "resolution": {
+            "path": "src/components/Common/PanelStates.jsx",
+            "sha": "9e7522f07545b772ee8b5f6ae0b68e2c8bea1a92"
+          }
+        }
+      ],
+      "signals": [
+        {
+          "line": 48,
+          "type": "jsx",
+          "excerpt": "return <HoverStory story={batchStageStory(data, stage)}><StatusBadge status={st.status} label={st.label} tone={st.tone} /></HoverStory>;"
+        },
+        {
+          "line": 60,
+          "type": "jsx",
+          "excerpt": "<HoverStory story={{ ...decisionStory(data), action: \"Click to make them an exception, or to remove their exception.\" }}><span className={`tpo-decision is-${String(data.eligibility"
+        },
+        {
+          "line": 80,
+          "type": "jsx",
+          "excerpt": "cellRenderer: ({ value, data }) => (data && value ? <HoverStory story={reasonStory(data)}><span>{value}</span></HoverStory> : value || null) },"
+        },
+        {
+          "line": 92,
+          "type": "navigation-or-browser",
+          "excerpt": "* The eligibility grid of a batch: decide in the cell, or act on the view or the selection through the page's Actions window."
+        },
+        {
+          "line": 136,
+          "type": "interactive-prop,jsx",
+          "excerpt": "tools={onImport && !readOnly ? <Button icon={<UploadOutlined />} onClick={onImport}>Import sheet</Button> : null}"
+        },
+        {
+          "line": 142,
+          "type": "interactive-prop",
+          "excerpt": "onCancel={() => { ineligible?.revert?.(); setIneligible(null); }}"
+        }
+      ],
+      "signalCount": 6,
+      "computedImportRequiresReview": false
+    },
+    {
+      "path": "src/components/tpo/filters/FilterPanel.jsx",
+      "sourceSha": "c8096975b5e1af18efa127c66f4dff00f1d02b84",
+      "frontierSha": "c8096975b5e1af18efa127c66f4dff00f1d02b84",
+      "shaMatches": true,
+      "fromFrontierIndex": 148,
+      "sourceLineCount": 189,
+      "importedBy": [
+        "src/components/tpo/grid/GridWorkspace.jsx"
+      ],
+      "classification": "inspected-meaningful-ui-source",
+      "classificationScope": "source only; renderability and behavior unverified",
+      "imports": [
+        {
+          "line": 1,
+          "specifier": "react",
+          "kind": "static-or-require",
+          "resolution": null
+        },
+        {
+          "line": 2,
+          "specifier": "antd",
+          "kind": "static-or-require",
+          "resolution": null
+        },
+        {
+          "line": 3,
+          "specifier": "@ant-design/icons",
+          "kind": "static-or-require",
+          "resolution": null
+        },
+        {
+          "line": 4,
+          "specifier": "./filterModel",
+          "kind": "static-or-require",
+          "resolution": {
+            "path": "src/components/tpo/filters/filterModel.js",
+            "sha": "ed70138d5c54727846942156d71bfa4fa4b0e479"
+          }
+        }
+      ],
+      "signals": [
+        {
+          "line": 13,
+          "type": "navigation-or-browser",
+          "excerpt": "if (typeof window === \"undefined\" || !window.matchMedia) return undefined;"
+        },
+        {
+          "line": 14,
+          "type": "navigation-or-browser",
+          "excerpt": "const mq = window.matchMedia(\"(max-width: 767px)\");"
+        },
+        {
+          "line": 40,
+          "type": "jsx",
+          "excerpt": "<div className=\"tpo-filter__list\">"
+        },
+        {
+          "line": 42,
+          "type": "jsx",
+          "excerpt": "<Input size=\"small\" allowClear placeholder={`Search ${def.label.toLowerCase()}`} value={search}"
+        },
+        {
+          "line": 43,
+          "type": "interactive-prop",
+          "excerpt": "onChange={(e) => setSearch(e.target.value)} className=\"tpo-filter__search\" aria-label={`Search ${def.label}`} />"
+        },
+        {
+          "line": 47,
+          "type": "interactive-prop,jsx",
+          "excerpt": "<Checkbox checked={picked.has(o.value)} onChange={(e) => toggle(o.value, e.target.checked)} />"
+        },
+        {
+          "line": 52,
+          "type": "jsx",
+          "excerpt": "{shown.length === 0 && <Typography.Text type=\"secondary\" style={{ fontSize: 12 }}>Nothing matches</Typography.Text>}"
+        },
+        {
+          "line": 53,
+          "type": "interactive-prop,jsx",
+          "excerpt": "{capped && <button type=\"button\" className=\"tpo-filter__more\" onClick={() => setAll(true)}>Show all {matched.length.toLocaleString()}</button>}"
+        },
+        {
+          "line": 54,
+          "type": "interactive-prop,jsx",
+          "excerpt": "{all && long && !search && <button type=\"button\" className=\"tpo-filter__more\" onClick={() => setAll(false)}>Show fewer</button>}"
+        },
+        {
+          "line": 71,
+          "type": "jsx",
+          "excerpt": "<div className=\"tpo-filter__range\">"
+        },
+        {
+          "line": 72,
+          "type": "jsx",
+          "excerpt": "<InputNumber size=\"small\" placeholder={span ? `Min ${span[0]}` : \"Min\"} value={v.min} min={def.min} max={def.max} step={def.step || 1}"
+        },
+        {
+          "line": 73,
+          "type": "interactive-prop",
+          "excerpt": "onChange={(n) => set(\"min\", n)} aria-label={`${def.label} from`} />"
+        },
+        {
+          "line": 75,
+          "type": "jsx",
+          "excerpt": "<InputNumber size=\"small\" placeholder={span ? `Max ${span[1]}` : \"Max\"} value={v.max} min={def.min} max={def.max} step={def.step || 1}"
+        },
+        {
+          "line": 76,
+          "type": "interactive-prop",
+          "excerpt": "onChange={(n) => set(\"max\", n)} aria-label={`${def.label} to`} />"
+        },
+        {
+          "line": 77,
+          "type": "jsx",
+          "excerpt": "{def.unit && <Typography.Text type=\"secondary\">{def.unit}</Typography.Text>}"
+        },
+        {
+          "line": 121,
+          "type": "overlay-or-complex-control",
+          "excerpt": "<Drawer"
+        },
+        {
+          "line": 122,
+          "type": "interactive-prop",
+          "excerpt": "open={open} onClose={onClose} title={title} placement={phone ? \"bottom\" : \"right\"}"
+        },
+        {
+          "line": 125,
+          "type": "jsx",
+          "excerpt": "<div className=\"tpo-filter__footer\">"
+        },
+        {
+          "line": 127,
+          "type": "interactive-prop,jsx",
+          "excerpt": "<Button onClick={() => setDraft(Object.fromEntries(Object.entries(draft).filter(([k]) => defs.some((d) => d.key === k && d.panel === false))))}"
+        },
+        {
+          "line": 129,
+          "type": "interactive-prop,jsx",
+          "excerpt": "<Button type=\"primary\" onClick={() => { onApply(draft); onClose(); }} data-testid=\"filter.apply\">"
+        },
+        {
+          "line": 140,
+          "type": "jsx",
+          "excerpt": "<div key={def.key} className=\"tpo-filter__item\">"
+        },
+        {
+          "line": 142,
+          "type": "interactive-prop,jsx",
+          "excerpt": "<button type=\"button\" className=\"tpo-filter__section\" aria-expanded={groupOpen} onClick={() => toggleGroup(g)}>"
+        },
+        {
+          "line": 143,
+          "type": "jsx",
+          "excerpt": "{groupOpen ? <DownOutlined /> : <RightOutlined />}"
+        },
+        {
+          "line": 145,
+          "type": "jsx",
+          "excerpt": "{groupActive(g) > 0 && <Tag className=\"tpo-filter__section-count\">{groupActive(g)}</Tag>}"
+        },
+        {
+          "line": 149,
+          "type": "jsx",
+          "excerpt": "<section className=\"tpo-filter__group\" aria-label={def.label}>"
+        },
+        {
+          "line": 150,
+          "type": "jsx",
+          "excerpt": "<div className=\"tpo-filter__group-head\">"
+        },
+        {
+          "line": 153,
+          "type": "interactive-prop,jsx",
+          "excerpt": "<button type=\"button\" className=\"tpo-filter__clear\" onClick={() => set(def.key, undefined)}>Clear</button>"
+        },
+        {
+          "line": 157,
+          "type": "interactive-prop,jsx",
+          "excerpt": "<Checklist def={def} rows={rows} defs={defs} draft={draft} onChange={(v) => set(def.key, v)} />"
+        },
+        {
+          "line": 159,
+          "type": "interactive-prop,jsx",
+          "excerpt": "{def.type === \"range\" && <Range def={def} rows={rows} value={draft[def.key]} onChange={(v) => set(def.key, v)} />}"
+        },
+        {
+          "line": 161,
+          "type": "interactive-prop,jsx",
+          "excerpt": "<Radio.Group size=\"small\" value={draft[def.key] || \"any\"} onChange={(e) => set(def.key, e.target.value === \"any\" ? undefined : e.target.value)}"
+        },
+        {
+          "line": 178,
+          "type": "jsx",
+          "excerpt": "<div className=\"tpo-filter-chips\" aria-label=\"Applied filters\">"
+        },
+        {
+          "line": 180,
+          "type": "jsx",
+          "excerpt": "<Tag key={`${c.key}:${c.value ?? \"\"}`} closable closeIcon={<CloseOutlined aria-label={`Remove ${c.label}`} />}"
+        },
+        {
+          "line": 181,
+          "type": "interactive-prop",
+          "excerpt": "onClose={(e) => { e.preventDefault(); onChange(removeChip(value, c)); }}>"
+        },
+        {
+          "line": 185,
+          "type": "interactive-prop,jsx",
+          "excerpt": "<button type=\"button\" className=\"tpo-filter-chips__clear\" onClick={() => onChange({})}>Clear all</button>"
+        }
+      ],
+      "signalCount": 34,
+      "computedImportRequiresReview": false
+    },
+    {
+      "path": "src/components/tpo/settings/JobTypesTab.jsx",
+      "sourceSha": "36da6833e3ed3754a1d073a1f037bc34fda26ede",
+      "frontierSha": "36da6833e3ed3754a1d073a1f037bc34fda26ede",
+      "shaMatches": true,
+      "fromFrontierIndex": 156,
+      "sourceLineCount": 181,
+      "importedBy": [
+        "src/pages/tpo/settings.js"
+      ],
+      "classification": "inspected-meaningful-ui-source",
+      "classificationScope": "source only; renderability and behavior unverified",
+      "imports": [
+        {
+          "line": 1,
+          "specifier": "react",
+          "kind": "static-or-require",
+          "resolution": null
+        },
+        {
+          "line": 2,
+          "specifier": "antd",
+          "kind": "static-or-require",
+          "resolution": null
+        },
+        {
+          "line": 3,
+          "specifier": "@ant-design/icons",
+          "kind": "static-or-require",
+          "resolution": null
+        },
+        {
+          "line": 4,
+          "specifier": "@/api/Services/AdminService",
+          "kind": "static-or-require",
+          "resolution": {
+            "path": "src/api/Services/AdminService.js",
+            "sha": "598533e1ce238bbcd917c6f6b6df0e83d8f316c6"
+          }
+        },
+        {
+          "line": 5,
+          "specifier": "@/api/Services/TpoHubService",
+          "kind": "static-or-require",
+          "resolution": {
+            "path": "src/api/Services/TpoHubService.js",
+            "sha": "79d6fb983fea0566a6743f3d9eeadcd81c35d36b"
+          }
+        },
+        {
+          "line": 6,
+          "specifier": "@/hooks/useChoices",
+          "kind": "static-or-require",
+          "resolution": {
+            "path": "src/hooks/useChoices.js",
+            "sha": "50425131c9085cf6c01f17a184691048f916072a"
+          }
+        },
+        {
+          "line": 7,
+          "specifier": "@/components/Common/PanelStates",
+          "kind": "static-or-require",
+          "resolution": {
+            "path": "src/components/Common/PanelStates.jsx",
+            "sha": "9e7522f07545b772ee8b5f6ae0b68e2c8bea1a92"
+          }
+        },
+        {
+          "line": 8,
+          "specifier": "@/components/Common/Skeletons",
+          "kind": "static-or-require",
+          "resolution": {
+            "path": "src/components/Common/Skeletons.jsx",
+            "sha": "19ff7bc7317232a96a7217df406eaa8082567704"
+          }
+        }
+      ],
+      "signals": [
+        {
+          "line": 89,
+          "type": "overlay-or-complex-control",
+          "excerpt": "Modal.confirm({"
+        },
+        {
+          "line": 92,
+          "type": "jsx",
+          "excerpt": "<div data-testid=\"settings.job-types-confirm\">"
+        },
+        {
+          "line": 101,
+          "type": "jsx",
+          "excerpt": "if (error) return <PanelError title={error} onRetry={load} />;"
+        },
+        {
+          "line": 102,
+          "type": "jsx",
+          "excerpt": "if (!types) return <ListSkeleton rows={6} avatar={false} label=\"Loading job types\" />;"
+        },
+        {
+          "line": 106,
+          "type": "jsx",
+          "excerpt": "<div className=\"tpo-jobtypes\" data-testid=\"settings.job-types\">"
+        },
+        {
+          "line": 107,
+          "type": "jsx",
+          "excerpt": "<Typography.Paragraph type=\"secondary\">"
+        },
+        {
+          "line": 110,
+          "type": "jsx",
+          "excerpt": "<div className=\"tpo-jobtypes__list\" role=\"table\" aria-label=\"Job types\">"
+        },
+        {
+          "line": 111,
+          "type": "jsx",
+          "excerpt": "<div className=\"tpo-jobtypes__row tpo-jobtypes__row--head\" role=\"row\">"
+        },
+        {
+          "line": 115,
+          "type": "jsx",
+          "excerpt": "<div className={`tpo-jobtypes__row${t.hidden ? \" is-off\" : \"\"}`} role=\"row\" key={t.id || `b-${t.name}`}>"
+        },
+        {
+          "line": 117,
+          "type": "jsx",
+          "excerpt": "{t.builtin ? <span>{t.name} <Tag className=\"tpo-jobtypes__builtin\">Built-in</Tag></span> : ("
+        },
+        {
+          "line": 118,
+          "type": "jsx",
+          "excerpt": "<Input aria-label={`Name of ${t.name}`} value={t.name} maxLength={40} disabled={saving}"
+        },
+        {
+          "line": 120,
+          "type": "interactive-prop",
+          "excerpt": "onChange={(e) => update(i, { name: e.target.value })} />"
+        },
+        {
+          "line": 124,
+          "type": "jsx",
+          "excerpt": "{t.builtin ? <Typography.Text>{t.countsAsPlaced ? \"Yes\" : \"No\"}</Typography.Text> : ("
+        },
+        {
+          "line": 125,
+          "type": "jsx",
+          "excerpt": "<div role=\"radiogroup\" aria-label={`${t.name} counts as placed`}>"
+        },
+        {
+          "line": 126,
+          "type": "jsx",
+          "excerpt": "<Radio.Group size=\"small\" optionType=\"button\" value={t.countsAsPlaced} disabled={saving}"
+        },
+        {
+          "line": 127,
+          "type": "interactive-prop",
+          "excerpt": "onChange={(e) => update(i, { countsAsPlaced: e.target.value })}"
+        },
+        {
+          "line": 134,
+          "type": "jsx",
+          "excerpt": "<Switch checked={!t.hidden} aria-label={`${t.name} in the drive form`}"
+        },
+        {
+          "line": 135,
+          "type": "interactive-prop",
+          "excerpt": "disabled={saving || (!t.hidden && visibleCount === 1)} onChange={(on) => update(i, { hidden: !on })} />"
+        },
+        {
+          "line": 139,
+          "type": "jsx",
+          "excerpt": "<Tooltip title={(t.drives || 0) > 0 ? \"Used by drives: switch it off instead\" : \"Remove\"}>"
+        },
+        {
+          "line": 140,
+          "type": "jsx",
+          "excerpt": "<Button type=\"text\" icon={<DeleteOutlined />} aria-label={`Remove ${t.name}`} disabled={saving || (t.drives || 0) > 0}"
+        },
+        {
+          "line": 141,
+          "type": "interactive-prop",
+          "excerpt": "onClick={() => change(types.filter((_, j) => j !== i))} />"
+        },
+        {
+          "line": 149,
+          "type": "jsx",
+          "excerpt": "<div className=\"tpo-jobtypes__add\">"
+        },
+        {
+          "line": 150,
+          "type": "jsx",
+          "excerpt": "<Typography.Text strong>Add a job type</Typography.Text>"
+        },
+        {
+          "line": 151,
+          "type": "jsx",
+          "excerpt": "<Space wrap align=\"start\">"
+        },
+        {
+          "line": 152,
+          "type": "jsx",
+          "excerpt": "<div>"
+        },
+        {
+          "line": 153,
+          "type": "jsx",
+          "excerpt": "<Input placeholder=\"e.g. Part-time\" aria-label=\"New job type\" value={name} maxLength={40} disabled={saving}"
+        },
+        {
+          "line": 155,
+          "type": "interactive-prop",
+          "excerpt": "onChange={(e) => setName(e.target.value)} onPressEnter={add} style={{ width: 220 }} />"
+        },
+        {
+          "line": 156,
+          "type": "jsx",
+          "excerpt": "{addProblem && <div className=\"tpo-jobtypes__error\">{addProblem}</div>}"
+        },
+        {
+          "line": 158,
+          "type": "jsx",
+          "excerpt": "<Space direction=\"vertical\" size={2}>"
+        },
+        {
+          "line": 159,
+          "type": "jsx",
+          "excerpt": "<Typography.Text>Does an offer of this type count as placed?</Typography.Text>"
+        },
+        {
+          "line": 160,
+          "type": "jsx",
+          "excerpt": "<div role=\"radiogroup\" aria-label=\"New type counts as placed\">"
+        },
+        {
+          "line": 161,
+          "type": "interactive-prop,jsx",
+          "excerpt": "<Radio.Group value={counts} disabled={saving} onChange={(e) => setCounts(e.target.value)} options={[{ value: true, label: \"Yes\" }, { value: false, label: \"No\" }]} />"
+        },
+        {
+          "line": 164,
+          "type": "interactive-prop,jsx",
+          "excerpt": "<Button icon={<PlusOutlined />} onClick={add} disabled={saving || !name.trim() || Boolean(addProblem) || counts === null}>Add</Button>"
+        },
+        {
+          "line": 169,
+          "type": "jsx",
+          "excerpt": "<Alert type=\"error\" showIcon closable message=\"Job types were not saved\" description={saveError}"
+        },
+        {
+          "line": 170,
+          "type": "interactive-prop,jsx",
+          "excerpt": "action={<Button size=\"small\" onClick={save} disabled={saving}>Retry</Button>}"
+        },
+        {
+          "line": 171,
+          "type": "interactive-prop",
+          "excerpt": "onClose={() => setSaveError(null)} style={{ marginBottom: 12 }} />"
+        },
+        {
+          "line": 173,
+          "type": "jsx",
+          "excerpt": "<Alert type=\"info\" showIcon className=\"tpo-jobtypes__note\""
+        },
+        {
+          "line": 175,
+          "type": "jsx",
+          "excerpt": "<div className=\"tpo-settings__actions\">"
+        },
+        {
+          "line": 176,
+          "type": "interactive-prop,jsx",
+          "excerpt": "<Button type=\"primary\" loading={saving} onClick={save}>Save changes</Button>"
+        }
+      ],
+      "signalCount": 39,
+      "computedImportRequiresReview": false
+    },
+    {
+      "path": "src/components/tpo/settings/OutcomeLabelsTab.jsx",
+      "sourceSha": "d531ad7d261719d7c2d75d6c0dcc864ca0fb87f1",
+      "frontierSha": "d531ad7d261719d7c2d75d6c0dcc864ca0fb87f1",
+      "shaMatches": true,
+      "fromFrontierIndex": 157,
+      "sourceLineCount": 136,
+      "importedBy": [
+        "src/pages/tpo/settings.js"
+      ],
+      "classification": "inspected-meaningful-ui-source",
+      "classificationScope": "source only; renderability and behavior unverified",
+      "imports": [
+        {
+          "line": 1,
+          "specifier": "react",
+          "kind": "static-or-require",
+          "resolution": null
+        },
+        {
+          "line": 2,
+          "specifier": "antd",
+          "kind": "static-or-require",
+          "resolution": null
+        },
+        {
+          "line": 3,
+          "specifier": "@ant-design/icons",
+          "kind": "static-or-require",
+          "resolution": null
+        },
+        {
+          "line": 4,
+          "specifier": "@/api/Services/AdminService",
+          "kind": "static-or-require",
+          "resolution": {
+            "path": "src/api/Services/AdminService.js",
+            "sha": "598533e1ce238bbcd917c6f6b6df0e83d8f316c6"
+          }
+        },
+        {
+          "line": 5,
+          "specifier": "@/api/Services/TpoHubService",
+          "kind": "static-or-require",
+          "resolution": {
+            "path": "src/api/Services/TpoHubService.js",
+            "sha": "79d6fb983fea0566a6743f3d9eeadcd81c35d36b"
+          }
+        },
+        {
+          "line": 6,
+          "specifier": "@/hooks/useChoices",
+          "kind": "static-or-require",
+          "resolution": {
+            "path": "src/hooks/useChoices.js",
+            "sha": "50425131c9085cf6c01f17a184691048f916072a"
+          }
+        },
+        {
+          "line": 7,
+          "specifier": "@/components/Common/PanelStates",
+          "kind": "static-or-require",
+          "resolution": {
+            "path": "src/components/Common/PanelStates.jsx",
+            "sha": "9e7522f07545b772ee8b5f6ae0b68e2c8bea1a92"
+          }
+        },
+        {
+          "line": 8,
+          "specifier": "@/components/Common/Skeletons",
+          "kind": "static-or-require",
+          "resolution": {
+            "path": "src/components/Common/Skeletons.jsx",
+            "sha": "19ff7bc7317232a96a7217df406eaa8082567704"
+          }
+        },
+        {
+          "line": 9,
+          "specifier": "@/config/choices",
+          "kind": "static-or-require",
+          "resolution": {
+            "path": "src/config/choices.js",
+            "sha": "9c1b4ada4ac72724d2c551b021c44676dda30cac"
+          }
+        }
+      ],
+      "signals": [
+        {
+          "line": 72,
+          "type": "jsx",
+          "excerpt": "if (error) return <PanelError title={error} onRetry={load} />;"
+        },
+        {
+          "line": 73,
+          "type": "jsx",
+          "excerpt": "if (!labels) return <ListSkeleton rows={6} avatar={false} label=\"Loading outcome labels\" />;"
+        },
+        {
+          "line": 76,
+          "type": "jsx",
+          "excerpt": "<div className=\"tpo-outcomes\" data-testid=\"settings.outcomes\">"
+        },
+        {
+          "line": 77,
+          "type": "jsx",
+          "excerpt": "<Typography.Title level={5}>The choices (fixed)</Typography.Title>"
+        },
+        {
+          "line": 78,
+          "type": "jsx",
+          "excerpt": "<Typography.Paragraph type=\"secondary\">"
+        },
+        {
+          "line": 82,
+          "type": "jsx",
+          "excerpt": "<div className=\"tpo-outcomes__fixed\">"
+        },
+        {
+          "line": 85,
+          "type": "jsx",
+          "excerpt": "{o.label} <Tag>{SETTABLE_OUTCOMES.includes(o.value) ? \"set by you or the student\" : \"automatic\"}</Tag>"
+        },
+        {
+          "line": 90,
+          "type": "jsx",
+          "excerpt": "<Typography.Title level={5}>Your own labels</Typography.Title>"
+        },
+        {
+          "line": 91,
+          "type": "jsx",
+          "excerpt": "<Typography.Paragraph type=\"secondary\">"
+        },
+        {
+          "line": 95,
+          "type": "jsx",
+          "excerpt": "{labels.length === 0 && <Typography.Paragraph type=\"secondary\" className=\"tpo-outcomes__empty\">No labels yet.</Typography.Paragraph>}"
+        },
+        {
+          "line": 97,
+          "type": "jsx",
+          "excerpt": "<Space key={l.id || `n-${i}`} className=\"tpo-outcomes__row\" wrap align=\"start\">"
+        },
+        {
+          "line": 98,
+          "type": "jsx",
+          "excerpt": "<div>"
+        },
+        {
+          "line": 99,
+          "type": "jsx",
+          "excerpt": "<Input aria-label={`Label ${i + 1}`} value={l.label} maxLength={60} disabled={saving}"
+        },
+        {
+          "line": 101,
+          "type": "interactive-prop",
+          "excerpt": "onChange={(e) => change(labels.map((x, j) => (j === i ? { ...x, label: e.target.value } : x)))} />"
+        },
+        {
+          "line": 102,
+          "type": "jsx",
+          "excerpt": "{problem(l.label, i) && <div className=\"tpo-jobtypes__error\">{problem(l.label, i)}</div>}"
+        },
+        {
+          "line": 104,
+          "type": "overlay-or-complex-control,jsx",
+          "excerpt": "<Select aria-label={`Outcome of ${l.label}`} value={l.outcome} style={{ width: 260 }} disabled={saving}"
+        },
+        {
+          "line": 106,
+          "type": "interactive-prop",
+          "excerpt": "onChange={(v) => change(labels.map((x, j) => (j === i ? { ...x, outcome: v } : x)))} />"
+        },
+        {
+          "line": 107,
+          "type": "jsx",
+          "excerpt": "<Button type=\"text\" icon={<DeleteOutlined />} aria-label={`Remove ${l.label}`} disabled={saving}"
+        },
+        {
+          "line": 108,
+          "type": "interactive-prop",
+          "excerpt": "onClick={() => change(labels.filter((_, j) => j !== i))} />"
+        },
+        {
+          "line": 111,
+          "type": "jsx",
+          "excerpt": "<Space wrap align=\"start\" className=\"tpo-outcomes__add\">"
+        },
+        {
+          "line": 112,
+          "type": "jsx",
+          "excerpt": "<div>"
+        },
+        {
+          "line": 113,
+          "type": "jsx",
+          "excerpt": "<Input placeholder=\"New label, e.g. Startup\" aria-label=\"New label\" value={draft.label} maxLength={60}"
+        },
+        {
+          "line": 115,
+          "type": "interactive-prop",
+          "excerpt": "status={draftProblem ? \"error\" : undefined} onChange={(e) => setDraft({ ...draft, label: e.target.value })} onPressEnter={add} />"
+        },
+        {
+          "line": 116,
+          "type": "jsx",
+          "excerpt": "{draftProblem && <div className=\"tpo-jobtypes__error\">{draftProblem}</div>}"
+        },
+        {
+          "line": 118,
+          "type": "overlay-or-complex-control,jsx",
+          "excerpt": "<Select placeholder=\"Counts as...\" aria-label=\"New label counts as\" value={draft.outcome} style={{ width: 260 }} disabled={saving}"
+        },
+        {
+          "line": 119,
+          "type": "interactive-prop",
+          "excerpt": "options={OUTCOMES.filter((o) => SETTABLE_OUTCOMES.includes(o.value))} onChange={(v) => setDraft({ ...draft, outcome: v })} />"
+        },
+        {
+          "line": 120,
+          "type": "interactive-prop,jsx",
+          "excerpt": "<Button icon={<PlusOutlined />} onClick={add} disabled={saving || !draft.label.trim() || Boolean(draftProblem) || !draft.outcome}>Add</Button>"
+        },
+        {
+          "line": 123,
+          "type": "jsx",
+          "excerpt": "<Alert type=\"error\" showIcon closable message=\"Outcome labels were not saved\" description={saveError}"
+        },
+        {
+          "line": 124,
+          "type": "interactive-prop,jsx",
+          "excerpt": "action={<Button size=\"small\" onClick={save} disabled={saving}>Retry</Button>}"
+        },
+        {
+          "line": 125,
+          "type": "interactive-prop",
+          "excerpt": "onClose={() => setSaveError(null)} style={{ marginBottom: 12 }} />"
+        },
+        {
+          "line": 127,
+          "type": "jsx",
+          "excerpt": "<Typography.Paragraph type=\"secondary\" className=\"tpo-outcomes__note\">"
+        },
+        {
+          "line": 130,
+          "type": "jsx",
+          "excerpt": "<div className=\"tpo-settings__actions\">"
+        },
+        {
+          "line": 131,
+          "type": "interactive-prop,jsx",
+          "excerpt": "<Button type=\"primary\" loading={saving} onClick={save}>Save changes</Button>"
+        }
+      ],
+      "signalCount": 33,
+      "computedImportRequiresReview": false
+    },
+    {
+      "path": "src/components/tracker/ClaudeReportModal.jsx",
+      "sourceSha": "b48e385396353d4e3947d026605025a163a631a5",
+      "frontierSha": "b48e385396353d4e3947d026605025a163a631a5",
+      "shaMatches": true,
+      "fromFrontierIndex": 164,
+      "sourceLineCount": 225,
+      "importedBy": [
+        "src/pages/tracker/logs.js"
+      ],
+      "classification": "inspected-meaningful-ui-source",
+      "classificationScope": "source only; renderability and behavior unverified",
+      "imports": [
+        {
+          "line": 1,
+          "specifier": "react",
+          "kind": "static-or-require",
+          "resolution": null
+        },
+        {
+          "line": 2,
+          "specifier": "antd",
+          "kind": "static-or-require",
+          "resolution": null
+        },
+        {
+          "line": 3,
+          "specifier": "@ant-design/icons",
+          "kind": "static-or-require",
+          "resolution": null
+        },
+        {
+          "line": 11,
+          "specifier": "@/api/Services/BugTrackerService",
+          "kind": "static-or-require",
+          "resolution": {
+            "path": "src/api/Services/BugTrackerService.js",
+            "sha": "1d4484defd08904efc9d0111b48c79b6e80a85d4"
+          }
+        },
+        {
+          "line": 12,
+          "specifier": "@/utils/logReportSource",
+          "kind": "static-or-require",
+          "resolution": {
+            "path": "src/utils/logReportSource.js",
+            "sha": "b5c789317718d26bc898a05218adcdf0f0277930"
+          }
+        },
+        {
+          "line": 13,
+          "specifier": "@/utils/bugTrackerUtils",
+          "kind": "static-or-require",
+          "resolution": {
+            "path": "src/utils/bugTrackerUtils.js",
+            "sha": "a92f6c8e1651fefda6f67549fe45826e86213d91"
+          }
+        },
+        {
+          "line": 14,
+          "specifier": "@/utils/downloadText",
+          "kind": "static-or-require",
+          "resolution": {
+            "path": "src/utils/downloadText.js",
+            "sha": "ac5d6eb471160c0663dfca18461c3ef3078b407c"
+          }
+        }
+      ],
+      "signals": [
+        {
+          "line": 112,
+          "type": "overlay-or-complex-control",
+          "excerpt": "<Modal"
+        },
+        {
+          "line": 114,
+          "type": "interactive-prop",
+          "excerpt": "onCancel={running ? undefined : onClose}"
+        },
+        {
+          "line": 127,
+          "type": "jsx",
+          "excerpt": "<div className=\"tracker-report__options\">"
+        },
+        {
+          "line": 128,
+          "type": "jsx",
+          "excerpt": "<div>"
+        },
+        {
+          "line": 132,
+          "type": "interactive-prop",
+          "excerpt": "onChange={setRange}"
+        },
+        {
+          "line": 137,
+          "type": "jsx",
+          "excerpt": "<div>"
+        },
+        {
+          "line": 141,
+          "type": "interactive-prop",
+          "excerpt": "onChange={setLevel}"
+        },
+        {
+          "line": 151,
+          "type": "interactive-prop,jsx",
+          "excerpt": "<Switch size=\"small\" checked={comparePrevious} onChange={setComparePrevious} disabled={running} />"
+        },
+        {
+          "line": 167,
+          "type": "jsx",
+          "excerpt": "<div className=\"tracker-report__progress\" aria-live=\"polite\">"
+        },
+        {
+          "line": 168,
+          "type": "jsx",
+          "excerpt": "<Progress percent={percent} status=\"active\" showInfo={false} />"
+        },
+        {
+          "line": 170,
+          "type": "interactive-prop,jsx",
+          "excerpt": "<Button size=\"small\" onClick={cancel}>Cancel</Button>"
+        },
+        {
+          "line": 174,
+          "type": "jsx",
+          "excerpt": "{error && <Alert type=\"error\" showIcon message={error} className=\"tracker-report__note\" />}"
+        },
+        {
+          "line": 177,
+          "type": "interactive-prop,jsx",
+          "excerpt": "<Button type=\"primary\" icon={<FileTextOutlined />} onClick={build} block size=\"large\">"
+        },
+        {
+          "line": 183,
+          "type": "jsx",
+          "excerpt": "<div className=\"tracker-report__result\">"
+        },
+        {
+          "line": 184,
+          "type": "jsx",
+          "excerpt": "<div className=\"tracker-report__stats\">"
+        },
+        {
+          "line": 185,
+          "type": "jsx",
+          "excerpt": "<div><strong>{model.totalEvents}</strong><span>error events</span></div>"
+        },
+        {
+          "line": 186,
+          "type": "jsx",
+          "excerpt": "<div><strong>{model.groups.length}</strong><span>error types</span></div>"
+        },
+        {
+          "line": 187,
+          "type": "jsx",
+          "excerpt": "<div className={model.newTypes ? \"is-alert\" : \"\"}><strong>{model.newTypes}</strong><span>new</span></div>"
+        },
+        {
+          "line": 188,
+          "type": "jsx",
+          "excerpt": "<div className={model.regressions ? \"is-alert\" : \"\"}><strong>{model.regressions}</strong><span>regressions</span></div>"
+        },
+        {
+          "line": 201,
+          "type": "jsx",
+          "excerpt": "<div className=\"tracker-report__actions\">"
+        },
+        {
+          "line": 202,
+          "type": "interactive-prop,jsx",
+          "excerpt": "<Button type=\"primary\" icon={<DownloadOutlined />} onClick={() => downloadText(result.filename, result.markdown, \"text/markdown\")}>"
+        },
+        {
+          "line": 205,
+          "type": "interactive-prop,jsx",
+          "excerpt": "<Button icon={<CopyOutlined />} onClick={copyReport}>Copy report</Button>"
+        },
+        {
+          "line": 207,
+          "type": "jsx",
+          "excerpt": "icon={<DownloadOutlined />}"
+        },
+        {
+          "line": 208,
+          "type": "interactive-prop",
+          "excerpt": "onClick={() => downloadText(result.filename.replace(/\\.md$/, \".ndjson\"), result.rawText, \"application/x-ndjson\")}"
+        },
+        {
+          "line": 219,
+          "type": "interactive-prop,jsx",
+          "excerpt": "<Button type=\"link\" onClick={() => setResult(null)}>Build another</Button>"
+        }
+      ],
+      "signalCount": 25,
+      "computedImportRequiresReview": false
+    },
+    {
+      "path": "src/components/tracker/IssueLogsPanel.jsx",
+      "sourceSha": "b095e3d58fcd7509a596ba5268d49662786efd5c",
+      "frontierSha": "b095e3d58fcd7509a596ba5268d49662786efd5c",
+      "shaMatches": true,
+      "fromFrontierIndex": 165,
+      "sourceLineCount": 90,
+      "importedBy": [
+        "src/pages/tracker/issues/[issueId].js"
+      ],
+      "classification": "inspected-meaningful-ui-source",
+      "classificationScope": "source only; renderability and behavior unverified",
+      "imports": [
+        {
+          "line": 1,
+          "specifier": "react",
+          "kind": "static-or-require",
+          "resolution": null
+        },
+        {
+          "line": 2,
+          "specifier": "next/link",
+          "kind": "static-or-require",
+          "resolution": null
+        },
+        {
+          "line": 3,
+          "specifier": "antd",
+          "kind": "static-or-require",
+          "resolution": null
+        },
+        {
+          "line": 4,
+          "specifier": "@/api/Services/SuperAdminLogsService",
+          "kind": "static-or-require",
+          "resolution": {
+            "path": "src/api/Services/SuperAdminLogsService.js",
+            "sha": "194d62ee5291ff318fbcf99953baf7e931067ec2"
+          }
+        },
+        {
+          "line": 5,
+          "specifier": "@/utils/logReportSource",
+          "kind": "static-or-require",
+          "resolution": {
+            "path": "src/utils/logReportSource.js",
+            "sha": "b5c789317718d26bc898a05218adcdf0f0277930"
+          }
+        },
+        {
+          "line": 6,
+          "specifier": "@/utils/trackerIssueLogs",
+          "kind": "static-or-require",
+          "resolution": {
+            "path": "src/utils/trackerIssueLogs.js",
+            "sha": "d3c5f3f0d13b5dad82683311dd6cec0f93f66873"
+          }
+        }
+      ],
+      "signals": [
+        {
+          "line": 37,
+          "type": "navigation-or-browser",
+          "excerpt": "setState({ status: \"error\", entries: [], error: err?.message || \"Logs could not be loaded for this window.\" });"
+        },
+        {
+          "line": 45,
+          "type": "jsx",
+          "excerpt": "<section className=\"tracker-detail-card tracker-issue-logs\" aria-label=\"Logs around this report\">"
+        },
+        {
+          "line": 46,
+          "type": "jsx",
+          "excerpt": "<div className=\"tracker-issue-logs__head\">"
+        },
+        {
+          "line": 52,
+          "type": "interactive-prop,jsx",
+          "excerpt": "<Button onClick={load}>Load warnings and errors from that moment</Button>"
+        },
+        {
+          "line": 54,
+          "type": "jsx",
+          "excerpt": "{status === \"loading\" && <Skeleton active paragraph={{ rows: 3 }} />}"
+        },
+        {
+          "line": 55,
+          "type": "interactive-prop,jsx",
+          "excerpt": "{status === \"error\" && <Alert type=\"error\" showIcon message={error} action={<Button size=\"small\" onClick={load}>Retry</Button>} />}"
+        },
+        {
+          "line": 71,
+          "type": "jsx",
+          "excerpt": "<Link href={`/tracker/logs?insertId=${encodeURIComponent(entry.insertId)}&logName=${encodeURIComponent(entry.logName)}&env=${range.environment}`}>"
+        }
+      ],
+      "signalCount": 7,
+      "computedImportRequiresReview": false
+    }
+  ]
+}

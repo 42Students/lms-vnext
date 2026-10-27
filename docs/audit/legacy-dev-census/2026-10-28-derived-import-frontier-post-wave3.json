@@ -1,0 +1,2584 @@
+{
+  "schemaVersion": 1,
+  "classification": "Derived source-import frontier only; NOT a product tracker, page count, or done status",
+  "legacyFrontendSha": "9d56bb7a347b06f242ef615c19fdc298f83329e0",
+  "inputs": [
+    "2026-10-27-import-reachability-wave1.json",
+    "2026-10-27-import-reachability-wave2.json",
+    "2026-10-28-import-reachability-wave3-a.json",
+    "2026-10-28-import-reachability-wave3-b.json",
+    "2026-10-28-import-reachability-wave3-c.json",
+    "2026-10-28-import-reachability-wave3-d.json",
+    "2026-10-28-import-reachability-wave3-e.json",
+    "2026-10-28-import-reachability-wave3-f.json",
+    "2026-10-28-import-reachability-wave3-g.json",
+    "2026-10-28-import-reachability-wave3-h.json"
+  ],
+  "method": "From 284 pending post-wave2 candidates remove exact 112 new SHA-matched reads, add only newly discovered tree-resolved JS/TS UI-folder imports not visited in wave1/wave2/wave3; record non-UI code dependency imports separately. Static line parser does not prove runtime reachability.",
+  "counts": {
+    "routesPreviouslyIndexed": 313,
+    "previousInspectedDistinct": 136,
+    "wave3FilesRead": 112,
+    "inspectedDistinctFiles": 248,
+    "oldFrontierCandidates": 284,
+    "oldFrontierNowRemaining": 172,
+    "newResolvedUiFolderCandidates": 18,
+    "unvisitedImportCandidates": 190,
+    "jsxSourceCandidates": 100,
+    "nonvisualInteractionHooks": 1,
+    "nonUiHelpers": 11,
+    "resolvedLocalImportEdgesFromWave3": 292,
+    "uniqueResolvedImportedPaths": 148,
+    "otherCodeAndAssetImportEdgesNotAddedToUiFrontier": 136,
+    "unresolvedLocalImports": 0,
+    "literalDynamicImports": 4,
+    "sourceShaMismatches": 0,
+    "readFailures": 0
+  },
+  "assertions": {
+    "allBatchNodesUnique": true,
+    "allSourceShasMatch": true,
+    "noPriorWaveDuplicated": true,
+    "inputCount": true,
+    "remainingConservation": true,
+    "sourceEvidenceLinesValid": true
+  },
+  "limitations": [
+    "Source JSX regex can miss multiline JSX; NetworkStatusBanner classification corrected by direct read in wave3-f",
+    "Line-oriented import parser does not resolve every multiline import, computed import, glob, runtime feature flag or global overlay provider",
+    "Some imported code outside UI folders may still contribute to behavior; excluded edges remain backend/API or semantic follow-up work",
+    "Old source-file index and this frontier do not certify rendered UI or functional parity",
+    "No exact unique UI surface, action, scenario or page denominator established"
+  ],
+  "newlyDiscoveredImportCandidates": [
+    {
+      "path": "src/components/tpo/templates/TemplateLibrary.jsx",
+      "sha": "f577546d387ebdd217b47e50aa74d2b9812e02bc",
+      "score": 6,
+      "importedBy": [
+        {
+          "path": "src/components/tpo/announcements/AnnouncementComposer.jsx",
+          "line": 6
+        },
+        {
+          "path": "src/components/tpo/messages/MessagesInbox.jsx",
+          "line": 15
+        }
+      ],
+      "newlyDiscoveredByWave3": true
+    },
+    {
+      "path": "src/components/admin/activity/activityText.js",
+      "sha": "128c0bec2c8a05c397b742a116f8e973fc63a549",
+      "score": 8,
+      "importedBy": [
+        {
+          "path": "src/components/admin/activity/ActivityCenter.jsx",
+          "line": 8
+        }
+      ],
+      "newlyDiscoveredByWave3": true
+    },
+    {
+      "path": "src/components/admin/courses/CourseTeachersPanel.jsx",
+      "sha": "4478125a921f6da8e0085258f4be4a9864fe6284",
+      "score": 6,
+      "importedBy": [
+        {
+          "path": "src/components/admin/courses/AdminCourseHome.jsx",
+          "line": 8
+        }
+      ],
+      "newlyDiscoveredByWave3": true
+    },
+    {
+      "path": "src/components/CalendarComp/CalendarEvents/CalendarEvents.js",
+      "sha": "87b8c2bf343ce1af5a3289dea2a4e584849caec1",
+      "score": 8,
+      "importedBy": [
+        {
+          "path": "src/components/CalendarComp/ClassScheduleContent.jsx",
+          "line": 16
+        }
+      ],
+      "newlyDiscoveredByWave3": true
+    },
+    {
+      "path": "src/components/Global/Button/uploadButton.jsx",
+      "sha": "f95c4bfad88f9fd2a459cf36a5fa62bdca9b1f40",
+      "score": 6,
+      "importedBy": [
+        {
+          "path": "src/components/Global/Offcanvas/Syallabus/videoform.js",
+          "line": 29
+        }
+      ],
+      "newlyDiscoveredByWave3": true
+    },
+    {
+      "path": "src/components/Global/Offcanvas/Syallabus/preview.js",
+      "sha": "4c28361e7034cb0b5fce6d1de02f4a28f690e809",
+      "score": 6,
+      "importedBy": [
+        {
+          "path": "src/components/Global/Offcanvas/Syallabus/videoform.js",
+          "line": 17
+        }
+      ],
+      "newlyDiscoveredByWave3": true
+    },
+    {
+      "path": "src/components/marketing/MarketingFooter.jsx",
+      "sha": "66b048a148bff8a51ccc00a3e1740fc209bf6208",
+      "score": 12,
+      "importedBy": [
+        {
+          "path": "src/components/marketing/MarketingLayout.jsx",
+          "line": 4
+        }
+      ],
+      "newlyDiscoveredByWave3": true
+    },
+    {
+      "path": "src/components/marketing/MarketingHeader.jsx",
+      "sha": "79ede841a07f006d259aaeb945cb94a0caf69833",
+      "score": 12,
+      "importedBy": [
+        {
+          "path": "src/components/marketing/MarketingLayout.jsx",
+          "line": 3
+        }
+      ],
+      "newlyDiscoveredByWave3": true
+    },
+    {
+      "path": "src/components/Placements/JobDetailContent.jsx",
+      "sha": "321745aafc748275bd8dc17910f24b4d86c536a4",
+      "score": 6,
+      "importedBy": [
+        {
+          "path": "src/components/Placements/VerifiedJobDetailContent.jsx",
+          "line": 9
+        }
+      ],
+      "newlyDiscoveredByWave3": true
+    },
+    {
+      "path": "src/components/Quiz/leftpanel.js",
+      "sha": "c92b19acdbddfd2655dddfe4200dd4729dbf359a",
+      "score": 6,
+      "importedBy": [
+        {
+          "path": "src/components/Quiz/quizpanel.js",
+          "line": 6
+        }
+      ],
+      "newlyDiscoveredByWave3": true
+    },
+    {
+      "path": "src/components/Sidebar/index.js",
+      "sha": "456c35a5ad9ec376a7ec8237ce541b19ab8050bb",
+      "score": 6,
+      "importedBy": [
+        {
+          "path": "src/components/Global/MobileMenuDrawer/MobileMenuDrawer.js",
+          "line": 6
+        }
+      ],
+      "newlyDiscoveredByWave3": true
+    },
+    {
+      "path": "src/components/tpo/emails/EmailDetail.jsx",
+      "sha": "9f456eb30defec0c4c8faf7e22bb3252420071da",
+      "score": 6,
+      "importedBy": [
+        {
+          "path": "src/components/tpo/emails/EmailsTab.jsx",
+          "line": 6
+        }
+      ],
+      "newlyDiscoveredByWave3": true
+    },
+    {
+      "path": "src/components/tpo/emails/emailRules.js",
+      "sha": "b3c4739ab4365f05f6bfcb8249fe449cfc062ef1",
+      "score": 6,
+      "importedBy": [
+        {
+          "path": "src/components/tpo/emails/EmailsTab.jsx",
+          "line": 8
+        }
+      ],
+      "newlyDiscoveredByWave3": true
+    },
+    {
+      "path": "src/components/tpo/stories/requestStories.js",
+      "sha": "e5722830915f67322348c7975fe18157e047461f",
+      "score": 8,
+      "importedBy": [
+        {
+          "path": "src/components/tpo/RequestsPanel.js",
+          "line": 6
+        }
+      ],
+      "newlyDiscoveredByWave3": true
+    },
+    {
+      "path": "src/components/tpo/templates/fillTemplate.js",
+      "sha": "c21a93fd8ef04c5a9a60ea269c79d274725adbaf",
+      "score": 6,
+      "importedBy": [
+        {
+          "path": "src/components/tpo/messages/MessagesInbox.jsx",
+          "line": 16
+        }
+      ],
+      "newlyDiscoveredByWave3": true
+    },
+    {
+      "path": "src/components/tpo/ui/calendarGrid.js",
+      "sha": "af86e35a63456ff1184f61fb8b25ba066dc9308a",
+      "score": 6,
+      "importedBy": [
+        {
+          "path": "src/components/tpo/WeekTimeGrid.jsx",
+          "line": 3
+        }
+      ],
+      "newlyDiscoveredByWave3": true
+    },
+    {
+      "path": "src/layouts/placementsTheme.js",
+      "sha": "746cc56436497f1c7a3f6830dcfb8ae4ced1fc73",
+      "score": 12,
+      "importedBy": [
+        {
+          "path": "src/layouts/PlacementsTabsLayout.js",
+          "line": 5
+        }
+      ],
+      "newlyDiscoveredByWave3": true
+    },
+    {
+      "path": "src/pages/Dashboard/course/Home/HomeEditDrawer.js",
+      "sha": "2d3c4cbdde7c5807b6f7ec1d6ee6a54c052f6819",
+      "score": 6,
+      "importedBy": [
+        {
+          "path": "src/components/admin/courses/AdminCourseHome.jsx",
+          "line": 9
+        }
+      ],
+      "newlyDiscoveredByWave3": true
+    }
+  ],
+  "computedLiteralImports": [
+    {
+      "from": "src/components/tpo/tpoFiles.js",
+      "line": 101,
+      "specifier": "read-excel-file/browser",
+      "resolution": null
+    },
+    {
+      "from": "src/components/Global/Editor/editor.js",
+      "line": 4,
+      "specifier": "jodit-react",
+      "resolution": null
+    },
+    {
+      "from": "src/components/Global/RichTextEditor/RichTextEditor.jsx",
+      "line": 5,
+      "specifier": "jodit-react",
+      "resolution": null
+    },
+    {
+      "from": "src/components/admin/courses/AdminCourseHome.jsx",
+      "line": 9,
+      "specifier": "@/pages/Dashboard/course/Home/HomeEditDrawer",
+      "resolution": {
+        "path": "src/pages/Dashboard/course/Home/HomeEditDrawer.js",
+        "sha": "2d3c4cbdde7c5807b6f7ec1d6ee6a54c052f6819"
+      }
+    }
+  ],
+  "unresolvedLocalImports": [],
+  "frontier": [
+    {
+      "path": "src/components/tpo/recruiterNextStep.js",
+      "sha": "0dfe3654529c22ee428851ca88fd976e6f392780",
+      "score": 11,
+      "importedBy": [
+        "src/components/tpo/companies/CompaniesTab.jsx",
+        "src/components/tpo/recruiterPage.js",
+        "src/pages/tpo/companies.js",
+        "src/pages/tpo/recruiters/[recruiterLeadId].js",
+        "src/pages/tpo/recruiters/index.js"
+      ],
+      "accountCandidates": [
+        "graph-descendant",
+        "tpo"
+      ]
+    },
+    {
+      "path": "src/components/tpo/ui/useDebouncedValue.js",
+      "sha": "289cf207badae64a1bb7dc7c761798bad584804c",
+      "score": 11,
+      "importedBy": [
+        "src/components/recruiter/RecruiterFinder.jsx",
+        "src/components/tpo/grid/GridWorkspace.jsx",
+        "src/components/tpo/invite/BringInWindow.jsx",
+        "src/pages/superadmin/sections/CompanyCuration.js",
+        "src/pages/tpo/reports/[name].js"
+      ],
+      "accountCandidates": [
+        "superadmin",
+        "tpo"
+      ]
+    },
+    {
+      "path": "src/components/admin/entitySectionTabs.js",
+      "sha": "68af81a36e26cad2fc107d00ae1588d5d434f267",
+      "score": 10,
+      "importedBy": [
+        "src/components/admin/AdminWorkspaceShell.jsx",
+        "src/components/admin/SuperAdminTemplateShell.jsx",
+        "src/components/admin/SuperAdminWorkspaceShell.jsx"
+      ],
+      "accountCandidates": []
+    },
+    {
+      "path": "src/components/admin/projects/workspaceRowMeta.jsx",
+      "sha": "ea8e3820292da36be2139f584532c291e322853c",
+      "score": 10,
+      "importedBy": [
+        "src/components/admin/projects/WorkspaceSprintsEditor.jsx",
+        "src/components/admin/projects/WorkspaceTasksEditor.jsx",
+        "src/components/admin/projects/WorkspaceTeamOverview.jsx"
+      ],
+      "accountCandidates": []
+    },
+    {
+      "path": "src/components/profile/ProfileSkeleton.js",
+      "sha": "7ac4db71c8bbc0088393bb3fa24b5456c498513a",
+      "score": 10,
+      "importedBy": [
+        "src/pages/college-admin/profile.js",
+        "src/pages/learn/profile.js",
+        "src/pages/teacher/profile.js",
+        "src/pages/tpo/profile.js"
+      ],
+      "accountCandidates": [
+        "college-admin",
+        "faculty",
+        "learner",
+        "tpo"
+      ]
+    },
+    {
+      "path": "src/components/recruiter/useRecruiterCollege.js",
+      "sha": "9b291490eb5d372dc27db37d43023efae3191c1c",
+      "score": 10,
+      "importedBy": [
+        "src/components/recruiter/RecruiterTopBar.jsx",
+        "src/pages/recruiter/calendar.js",
+        "src/pages/recruiter/company.js",
+        "src/pages/recruiter/drives/index.js",
+        "src/pages/recruiter/drives/new.js",
+        "src/pages/recruiter/messages.js"
+      ],
+      "accountCandidates": [
+        "recruiter"
+      ]
+    },
+    {
+      "path": "src/components/tpo/recruiterLeadStages.js",
+      "sha": "df7b4dcf578e634dd1d6b716c265a02a195d7937",
+      "score": 10,
+      "importedBy": [
+        "src/components/tpo/companies/CompaniesTab.jsx",
+        "src/pages/tpo/companies.js",
+        "src/pages/tpo/recruiters/[recruiterLeadId].js",
+        "src/pages/tpo/recruiters/index.js"
+      ],
+      "accountCandidates": [
+        "graph-descendant",
+        "tpo"
+      ]
+    },
+    {
+      "path": "src/components/tpo/students/academics.js",
+      "sha": "7d2d94830a903eba1fc580ad79d4e5aaa8d00ee3",
+      "score": 10,
+      "importedBy": [
+        "src/components/tpo/StudentPanel.js",
+        "src/components/tpo/drive/ApplicantsTab.js",
+        "src/components/tpo/drive/DriveStudents.jsx",
+        "src/pages/tpo/students/index.js"
+      ],
+      "accountCandidates": [
+        "graph-descendant",
+        "tpo"
+      ]
+    },
+    {
+      "path": "src/common/lists.js",
+      "sha": "171e1732da97fdf98d746da214a8284911e190bb",
+      "score": 9,
+      "importedBy": [
+        "src/components/Assignments/AssignmentsContent.jsx",
+        "src/components/Sidebar/AdminSidebar.js",
+        "src/components/Sidebar/Sidebar.js",
+        "src/components/Sidebar/SuperAdminSidebar.js",
+        "src/layouts/CourseTabsLayout.js"
+      ],
+      "accountCandidates": [
+        "graph-descendant"
+      ]
+    },
+    {
+      "path": "src/components/admin/useDependencyCounts.js",
+      "sha": "dccacdb27b5bca8bb304174ca27f0f556943861d",
+      "score": 9,
+      "importedBy": [
+        "src/pages/superadmin/sections/Batches.js",
+        "src/pages/superadmin/sections/Classes.js",
+        "src/pages/superadmin/sections/Courses.js",
+        "src/pages/superadmin/sections/Departments.js",
+        "src/pages/superadmin/sections/Programs.js"
+      ],
+      "accountCandidates": [
+        "superadmin"
+      ]
+    },
+    {
+      "path": "src/components/Common/Facts.jsx",
+      "sha": "97b26edb85a78c005fc370f6d452d263c4a49df4",
+      "score": 9,
+      "importedBy": [
+        "src/components/tpo/StudentPanel.js",
+        "src/pages/college-admin/jobs/[jobId]/index.js",
+        "src/pages/superadmin/jobs/[jobId]/index.js"
+      ],
+      "accountCandidates": [
+        "college-admin",
+        "graph-descendant",
+        "superadmin"
+      ]
+    },
+    {
+      "path": "src/components/Course/Syllabus/ContentTitle.jsx",
+      "sha": "6c763a7745cf456a58fcc74caf5aa1733f0dd9c0",
+      "score": 9,
+      "importedBy": [
+        "src/components/Course/Syllabus/LessonActivityCards.jsx",
+        "src/pages/Dashboard/course/syllabus/liveclass.js",
+        "src/pages/Dashboard/course/syllabus/resource.js",
+        "src/pages/Dashboard/course/syllabus/video.js",
+        "src/pages/Dashboard/course/syllabus/youtube.js"
+      ],
+      "accountCandidates": [
+        "shared-public"
+      ]
+    },
+    {
+      "path": "src/components/profile/about.js",
+      "sha": "cd22b395246016dfbe4649f6e7b8d03fef7367e0",
+      "score": 9,
+      "importedBy": [
+        "src/pages/college-admin/profile.js",
+        "src/pages/learn/profile.js",
+        "src/pages/teacher/profile.js"
+      ],
+      "accountCandidates": [
+        "college-admin",
+        "faculty",
+        "learner"
+      ]
+    },
+    {
+      "path": "src/components/recruiter/enterAfterJoin.js",
+      "sha": "319ed0f62890de9c7c527e9a09e607560b22cdec",
+      "score": 9,
+      "importedBy": [
+        "src/pages/college-join/[token].js",
+        "src/pages/company-join/[token].js",
+        "src/pages/recruiter-invite/[token].js"
+      ],
+      "accountCandidates": [
+        "graph-descendant",
+        "shared-public"
+      ]
+    },
+    {
+      "path": "src/components/tpo/batches/batchRules.js",
+      "sha": "16156886a6ef7320fa6f5befbd2a450df1522055",
+      "score": 9,
+      "importedBy": [
+        "src/components/tpo/StudentPanel.js",
+        "src/pages/tpo/batches/[batchId].js",
+        "src/pages/tpo/batches/index.js"
+      ],
+      "accountCandidates": [
+        "graph-descendant",
+        "tpo"
+      ]
+    },
+    {
+      "path": "src/components/tpo/filters/useUrlFilters.js",
+      "sha": "8144cf6aaf7a10787a66d1dc63a45ec995907b16",
+      "score": 9,
+      "importedBy": [
+        "src/components/tpo/companies/CompaniesTab.jsx",
+        "src/pages/tpo/batches/[batchId].js",
+        "src/pages/tpo/drives/index.js",
+        "src/pages/tpo/recruiters/index.js",
+        "src/pages/tpo/students/index.js"
+      ],
+      "accountCandidates": [
+        "tpo"
+      ]
+    },
+    {
+      "path": "src/components/tpo/team/useTeamPeople.js",
+      "sha": "adcc5161feb368bdcbf2ec26cb346c38dc478395",
+      "score": 9,
+      "importedBy": [
+        "src/components/tpo/drive/DiscussionTab.jsx",
+        "src/pages/tpo/companies.js",
+        "src/pages/tpo/recruiters/[recruiterLeadId].js"
+      ],
+      "accountCandidates": [
+        "graph-descendant",
+        "tpo"
+      ]
+    },
+    {
+      "path": "src/components/tpo/ui/rollParser.js",
+      "sha": "0869a50d9af04c831eb583c1ba15ed961e522611",
+      "score": 9,
+      "importedBy": [
+        "src/components/tpo/drive/ResultsEntryModal.jsx",
+        "src/components/tpo/grid/GridWorkspace.jsx",
+        "src/pages/tpo/drive-day/[roundId].js"
+      ],
+      "accountCandidates": [
+        "graph-descendant",
+        "tpo"
+      ]
+    },
+    {
+      "path": "src/components/tpo/ui/useRefreshOnFocus.js",
+      "sha": "59daf12b902550bca1435054fcff60951a4c2f9a",
+      "score": 9,
+      "importedBy": [
+        "src/components/tpo/team/TeamConversation.jsx",
+        "src/pages/recruiter/drives/[jobId].js",
+        "src/pages/tpo/drives/[jobId].js"
+      ],
+      "accountCandidates": [
+        "graph-descendant",
+        "recruiter",
+        "tpo"
+      ]
+    },
+    {
+      "path": "src/common/superAdminNavGroups.js",
+      "sha": "1254f3187b7be848c28e8bd9a4ce74bcf28e753a",
+      "score": 8,
+      "importedBy": [
+        "src/components/admin/SuperAdminGroupShell.jsx",
+        "src/components/admin/SuperAdminTemplateShell.jsx",
+        "src/components/admin/SuperAdminWorkspaceShell.jsx",
+        "src/pages/superadmin/projects/index.js"
+      ],
+      "accountCandidates": [
+        "superadmin"
+      ]
+    },
+    {
+      "path": "src/components/marketing/sections.jsx",
+      "sha": "b61ea522599c425f26b483ce120aba8e892056af",
+      "score": 8,
+      "importedBy": [
+        "src/pages/enterprises.js",
+        "src/pages/home.js",
+        "src/pages/platform.js",
+        "src/pages/universities.js"
+      ],
+      "accountCandidates": [
+        "shared-public"
+      ]
+    },
+    {
+      "path": "src/components/Placements/student/useJourney.js",
+      "sha": "2a86515d9b6df352e0a7c5b2baf09a926397fd8b",
+      "score": 8,
+      "importedBy": [
+        "src/pages/learn/my-placements/applications.js",
+        "src/pages/learn/my-placements/index.js",
+        "src/pages/learn/my-placements/offers.js",
+        "src/pages/learn/my-placements/schedule.js"
+      ],
+      "accountCandidates": [
+        "learner"
+      ]
+    },
+    {
+      "path": "src/components/Placements/student/words.js",
+      "sha": "46ee37cbf87d007fd6385fcd53f56ea079ef72a0",
+      "score": 8,
+      "importedBy": [
+        "src/pages/learn/my-placements/announcements.js",
+        "src/pages/learn/my-placements/applications.js",
+        "src/pages/learn/my-placements/index.js",
+        "src/pages/learn/my-placements/schedule.js"
+      ],
+      "accountCandidates": [
+        "learner"
+      ]
+    },
+    {
+      "path": "src/common/adminNavGroups.js",
+      "sha": "72b6a2e0df7d5c4d0fbf6dae0216c1fefd5b481f",
+      "score": 7,
+      "importedBy": [
+        "src/components/admin/AdminGroupShell.jsx",
+        "src/components/admin/AdminWorkspaceShell.jsx",
+        "src/pages/college-admin/projects/index.js"
+      ],
+      "accountCandidates": [
+        "college-admin"
+      ]
+    },
+    {
+      "path": "src/components/marketing/data.js",
+      "sha": "4faac887f4a1cce66960a9d32611a062c168109d",
+      "score": 7,
+      "importedBy": [
+        "src/pages/enterprises.js",
+        "src/pages/request-demo.js",
+        "src/pages/universities.js"
+      ],
+      "accountCandidates": [
+        "shared-public"
+      ]
+    },
+    {
+      "path": "src/components/tpo/stories/applicantStories.js",
+      "sha": "322f028771f7ee4330a59b52af96a5107f7c8f85",
+      "score": 7,
+      "importedBy": [
+        "src/components/tpo/drive/ApplicantsTab.js",
+        "src/components/tpo/drive/DriveStudents.jsx",
+        "src/components/tpo/drive/RoundPanel.jsx"
+      ],
+      "accountCandidates": [
+        "graph-descendant"
+      ]
+    },
+    {
+      "path": "src/components/tpo/students/studentGridRules.js",
+      "sha": "070f1e27278a3aff19d9d42b4d3b1ae07f5e449b",
+      "score": 7,
+      "importedBy": [
+        "src/components/tpo/StudentPanel.js",
+        "src/pages/tpo/students/index.js"
+      ],
+      "accountCandidates": [
+        "graph-descendant",
+        "tpo"
+      ]
+    },
+    {
+      "path": "src/components/tpo/team/teamTokens.js",
+      "sha": "487c53d44ecc1fd7bced20c0bb6b3e0b27511fa0",
+      "score": 7,
+      "importedBy": [
+        "src/components/tpo/team/TeamComposer.jsx",
+        "src/components/tpo/team/TeamConversation.jsx",
+        "src/components/tpo/team/TeamMessages.jsx"
+      ],
+      "accountCandidates": [
+        "graph-descendant"
+      ]
+    },
+    {
+      "path": "src/components/tpo/ui/applicantRules.js",
+      "sha": "4853a245bc474c30d83703935156479ade56a357",
+      "score": 7,
+      "importedBy": [
+        "src/components/tpo/drive/ApplicantsBoard.jsx",
+        "src/components/tpo/drive/ApplicantsTab.js",
+        "src/components/tpo/drive/OfferLettersModal.jsx"
+      ],
+      "accountCandidates": [
+        "graph-descendant"
+      ]
+    },
+    {
+      "path": "src/pages/Dashboard/course/syllabus/liveclass.js",
+      "sha": "99a0478f874d25e939280c7b71c04ad47304a28f",
+      "score": 7,
+      "importedBy": [
+        "src/pages/Dashboard/course/syllabus/syllabus.js",
+        "src/pages/Dashboard/course/syllabus/syllabusDetail.js"
+      ],
+      "accountCandidates": [
+        "graph-descendant",
+        "shared-public"
+      ]
+    },
+    {
+      "path": "src/pages/Dashboard/course/syllabus/resource.js",
+      "sha": "f3232b6c0ad32a6f19eb81aacab6737b614ff23b",
+      "score": 7,
+      "importedBy": [
+        "src/pages/Dashboard/course/syllabus/syllabus.js",
+        "src/pages/Dashboard/course/syllabus/syllabusDetail.js"
+      ],
+      "accountCandidates": [
+        "graph-descendant",
+        "shared-public"
+      ]
+    },
+    {
+      "path": "src/pages/Dashboard/course/syllabus/video.js",
+      "sha": "efdebb6a6b6694ebfb8ad35f951ba36a8a0259be",
+      "score": 7,
+      "importedBy": [
+        "src/pages/Dashboard/course/syllabus/syllabus.js",
+        "src/pages/Dashboard/course/syllabus/syllabusDetail.js"
+      ],
+      "accountCandidates": [
+        "graph-descendant",
+        "shared-public"
+      ]
+    },
+    {
+      "path": "src/pages/Dashboard/course/syllabus/youtube.js",
+      "sha": "0e213a228f8df8cb8ad5f90d785e5526f28b207c",
+      "score": 7,
+      "importedBy": [
+        "src/pages/Dashboard/course/syllabus/syllabus.js",
+        "src/pages/Dashboard/course/syllabus/syllabusDetail.js"
+      ],
+      "accountCandidates": [
+        "graph-descendant",
+        "shared-public"
+      ]
+    },
+    {
+      "path": "src/pages/superadmin/sections/AdminResources.js",
+      "sha": "2b8a810aa035c0f81665d4739657ebb289bdb462",
+      "score": 7,
+      "importedBy": [
+        "src/pages/college-admin/lesson-content.js",
+        "src/pages/superadmin/lesson-content.js"
+      ],
+      "accountCandidates": [
+        "college-admin",
+        "superadmin"
+      ]
+    },
+    {
+      "path": "src/pages/superadmin/sections/Attendance.js",
+      "sha": "eae2d9fbec2b7e0a840996d3e8c028ed7752ff2f",
+      "score": 7,
+      "importedBy": [
+        "src/pages/college-admin/attendance.js",
+        "src/pages/superadmin/attendance.js"
+      ],
+      "accountCandidates": [
+        "college-admin",
+        "superadmin"
+      ]
+    },
+    {
+      "path": "src/pages/superadmin/sections/Batches.js",
+      "sha": "d51ca33cd20f051af2d5b4ebcc104cb111f9c947",
+      "score": 7,
+      "importedBy": [
+        "src/pages/college-admin/batches.js",
+        "src/pages/superadmin/batches.js"
+      ],
+      "accountCandidates": [
+        "college-admin",
+        "superadmin"
+      ]
+    },
+    {
+      "path": "src/pages/superadmin/sections/BatchPromotion.js",
+      "sha": "19b96874f80033a98ed0da87c529d79cc21e07c1",
+      "score": 7,
+      "importedBy": [
+        "src/pages/college-admin/batch-promotion.js",
+        "src/pages/superadmin/batch-promotion.js"
+      ],
+      "accountCandidates": [
+        "college-admin",
+        "superadmin"
+      ]
+    },
+    {
+      "path": "src/pages/superadmin/sections/Classes.js",
+      "sha": "0110a7f0f138ab17ce8ca6f6143733512bf3ab0e",
+      "score": 7,
+      "importedBy": [
+        "src/pages/college-admin/classes.js",
+        "src/pages/superadmin/classes.js"
+      ],
+      "accountCandidates": [
+        "college-admin",
+        "superadmin"
+      ]
+    },
+    {
+      "path": "src/pages/superadmin/sections/Companies.js",
+      "sha": "9cabc7e55ae3509ed64028251b039ff15f04c1e4",
+      "score": 7,
+      "importedBy": [
+        "src/pages/college-admin/companies/index.js",
+        "src/pages/superadmin/companies/index.js"
+      ],
+      "accountCandidates": [
+        "college-admin",
+        "superadmin"
+      ]
+    },
+    {
+      "path": "src/pages/superadmin/sections/CourseProgress.js",
+      "sha": "fac727d3135b8f891bf50604472d6971b3578354",
+      "score": 7,
+      "importedBy": [
+        "src/pages/college-admin/course-progress.js",
+        "src/pages/superadmin/course-progress.js"
+      ],
+      "accountCandidates": [
+        "college-admin",
+        "superadmin"
+      ]
+    },
+    {
+      "path": "src/pages/superadmin/sections/Courses.js",
+      "sha": "67efd4780bdc8f46e9333836f4f3168546a6d9a1",
+      "score": 7,
+      "importedBy": [
+        "src/pages/college-admin/courses.js",
+        "src/pages/superadmin/courses.js"
+      ],
+      "accountCandidates": [
+        "college-admin",
+        "superadmin"
+      ]
+    },
+    {
+      "path": "src/pages/superadmin/sections/Departments.js",
+      "sha": "b765b9d4a86a798a543c5c141b5cde5bfad811a2",
+      "score": 7,
+      "importedBy": [
+        "src/pages/college-admin/departments.js",
+        "src/pages/superadmin/departments.js"
+      ],
+      "accountCandidates": [
+        "college-admin",
+        "superadmin"
+      ]
+    },
+    {
+      "path": "src/pages/superadmin/sections/Faculty.js",
+      "sha": "781cfdb83ed6a3322208c019cbcf5b74be2681d2",
+      "score": 7,
+      "importedBy": [
+        "src/pages/college-admin/teachers.js",
+        "src/pages/superadmin/teachers.js"
+      ],
+      "accountCandidates": [
+        "college-admin",
+        "superadmin"
+      ]
+    },
+    {
+      "path": "src/pages/superadmin/sections/FacultyAssignment.js",
+      "sha": "fbc983b5c41a9a10ca3be58bde24b09c2d9daa83",
+      "score": 7,
+      "importedBy": [
+        "src/pages/college-admin/faculty-assignment.js",
+        "src/pages/superadmin/faculty-assignment.js"
+      ],
+      "accountCandidates": [
+        "college-admin",
+        "superadmin"
+      ]
+    },
+    {
+      "path": "src/pages/superadmin/sections/HiringDashboard.js",
+      "sha": "d625eb040bf1569b042ce51cb086ee4db7a41a17",
+      "score": 7,
+      "importedBy": [
+        "src/pages/college-admin/hiring-dashboard.js",
+        "src/pages/superadmin/hiring-dashboard.js"
+      ],
+      "accountCandidates": [
+        "college-admin",
+        "superadmin"
+      ]
+    },
+    {
+      "path": "src/pages/superadmin/sections/Jobs.js",
+      "sha": "d1faaa4d25848c5ff8b0426b8dec5e62f81e75c9",
+      "score": 7,
+      "importedBy": [
+        "src/pages/college-admin/jobs/all.js",
+        "src/pages/superadmin/jobs/all.js"
+      ],
+      "accountCandidates": [
+        "college-admin",
+        "superadmin"
+      ]
+    },
+    {
+      "path": "src/pages/superadmin/sections/LectureHalls.js",
+      "sha": "e272ac32a1645e6cd09a83e86d2d49f375bc207a",
+      "score": 7,
+      "importedBy": [
+        "src/pages/college-admin/lecture-halls.js",
+        "src/pages/superadmin/lecture-halls.js"
+      ],
+      "accountCandidates": [
+        "college-admin",
+        "superadmin"
+      ]
+    },
+    {
+      "path": "src/pages/superadmin/sections/LessonContent.js",
+      "sha": "a69b3c14f704aec5b5c27edeef72b78519ce2db2",
+      "score": 7,
+      "importedBy": [
+        "src/pages/college-admin/lesson-content.js",
+        "src/pages/superadmin/lesson-content.js"
+      ],
+      "accountCandidates": [
+        "college-admin",
+        "superadmin"
+      ]
+    },
+    {
+      "path": "src/pages/superadmin/sections/Lessons.js",
+      "sha": "4f37aa830d8f9a8df727680549d10a2e0c5dbae1",
+      "score": 7,
+      "importedBy": [
+        "src/pages/college-admin/lessons.js",
+        "src/pages/superadmin/lessons.js"
+      ],
+      "accountCandidates": [
+        "college-admin",
+        "superadmin"
+      ]
+    },
+    {
+      "path": "src/pages/superadmin/sections/PeopleDirectory.js",
+      "sha": "e7c4564d7ddf3e2dce33996dc4988e34bd4637c1",
+      "score": 7,
+      "importedBy": [
+        "src/pages/college-admin/people.js",
+        "src/pages/superadmin/people.js"
+      ],
+      "accountCandidates": [
+        "college-admin",
+        "superadmin"
+      ]
+    },
+    {
+      "path": "src/pages/superadmin/sections/Programs.js",
+      "sha": "542a6778ce6c7957cfc715ba38649867b64e4adb",
+      "score": 7,
+      "importedBy": [
+        "src/pages/college-admin/programs.js",
+        "src/pages/superadmin/programs.js"
+      ],
+      "accountCandidates": [
+        "college-admin",
+        "superadmin"
+      ]
+    },
+    {
+      "path": "src/pages/superadmin/sections/Quizzes.js",
+      "sha": "5c131a44595a933026c4d703de182fce48fac4bb",
+      "score": 7,
+      "importedBy": [
+        "src/pages/college-admin/quizzes.js",
+        "src/pages/superadmin/quizzes.js"
+      ],
+      "accountCandidates": [
+        "college-admin",
+        "superadmin"
+      ]
+    },
+    {
+      "path": "src/pages/superadmin/sections/SemesterCourseMapping.js",
+      "sha": "d36fb79f52fdcfe0d5b9f7084cb922d4e69ba700",
+      "score": 7,
+      "importedBy": [
+        "src/pages/college-admin/semester-courses.js",
+        "src/pages/superadmin/semester-courses.js"
+      ],
+      "accountCandidates": [
+        "college-admin",
+        "superadmin"
+      ]
+    },
+    {
+      "path": "src/pages/superadmin/sections/SemesterManagement.js",
+      "sha": "2044cfd6b4ac51adb3ffe695effa724b75be32dc",
+      "score": 7,
+      "importedBy": [
+        "src/pages/college-admin/semesters.js",
+        "src/pages/superadmin/semesters.js"
+      ],
+      "accountCandidates": [
+        "college-admin",
+        "superadmin"
+      ]
+    },
+    {
+      "path": "src/pages/superadmin/sections/Students.js",
+      "sha": "6ae1f8994ab4168b95725f101dbd54e0854eef23",
+      "score": 7,
+      "importedBy": [
+        "src/pages/college-admin/students.js",
+        "src/pages/superadmin/students.js"
+      ],
+      "accountCandidates": [
+        "college-admin",
+        "superadmin"
+      ]
+    },
+    {
+      "path": "src/pages/Dashboard/course/Attendance/StudentAttendanceView.jsx",
+      "sha": "0209e7ce84ce6617fbc1f49f9f24ec19e5a5f762",
+      "score": 6,
+      "importedBy": [
+        "src/pages/Dashboard/course/Attendance/AttendanceReport.js"
+      ],
+      "accountCandidates": [
+        "graph-descendant",
+        "shared-public"
+      ]
+    },
+    {
+      "path": "src/pages/Dashboard/course/Attendance/TeacherAttendanceView.jsx",
+      "sha": "bb2139e0742ad8cd87514789ebf72747a5391191",
+      "score": 6,
+      "importedBy": [
+        "src/pages/Dashboard/course/Attendance/AttendanceReport.js"
+      ],
+      "accountCandidates": [
+        "graph-descendant",
+        "shared-public"
+      ]
+    },
+    {
+      "path": "src/pages/Dashboard/course/syllabus/syllabusDetail.js",
+      "sha": "590e9e189ebe088ec54e130cf51cfd7ee0c22e5e",
+      "score": 6,
+      "importedBy": [
+        "src/pages/Dashboard/course/syllabus/syllabus.js"
+      ],
+      "accountCandidates": [
+        "graph-descendant",
+        "shared-public"
+      ]
+    },
+    {
+      "path": "src/common/navTabMatching.js",
+      "sha": "7e55f1a02c8a682daba4fab0eacdf9d7bf765496",
+      "score": 5,
+      "importedBy": [
+        "src/components/admin/AdminGroupShell.jsx",
+        "src/components/admin/SuperAdminGroupShell.jsx"
+      ],
+      "accountCandidates": []
+    },
+    {
+      "path": "src/components/admin/dashboard/config.js",
+      "sha": "1830967b17d9e0b0ff0e9610060cc94636ebab2f",
+      "score": 5,
+      "importedBy": [
+        "src/components/admin/dashboard/AdminDashboardView.js",
+        "src/pages/superadmin/sections/Dashboard.js"
+      ],
+      "accountCandidates": [
+        "superadmin"
+      ]
+    },
+    {
+      "path": "src/components/admin/workspaceBackTarget.js",
+      "sha": "977beda20a3560bc09e324fed3dd1dab675b53e3",
+      "score": 5,
+      "importedBy": [
+        "src/components/admin/AdminWorkspaceShell.jsx",
+        "src/components/admin/SuperAdminWorkspaceShell.jsx"
+      ],
+      "accountCandidates": []
+    },
+    {
+      "path": "src/components/tpo/grid/gridExport.js",
+      "sha": "7fc8fab6ef865f19651f195ec0bd4ca20863f144",
+      "score": 5,
+      "importedBy": [
+        "src/components/tpo/TpoDataTable.js",
+        "src/components/tpo/grid/GridWorkspace.jsx"
+      ],
+      "accountCandidates": [
+        "graph-descendant"
+      ]
+    },
+    {
+      "path": "src/components/admin/dashboard/index.js",
+      "sha": "1c20be419597ac960f4dd4b7f194cbf4f8b77ed9",
+      "score": 4,
+      "importedBy": [
+        "src/pages/college-admin/dashboard.js"
+      ],
+      "accountCandidates": [
+        "college-admin"
+      ]
+    },
+    {
+      "path": "src/components/admin/projects/useProjectTeamSplit.jsx",
+      "sha": "df91c7db66285b178a2a180467873b7fdea559d5",
+      "score": 4,
+      "importedBy": [
+        "src/pages/college-admin/projects/workspaces/new.js",
+        "src/pages/superadmin/projects/workspaces/new.js"
+      ],
+      "accountCandidates": [
+        "college-admin",
+        "superadmin"
+      ]
+    },
+    {
+      "path": "src/components/contacts/index.js",
+      "sha": "6c9c59bd339a94e03048d3db0c3064e3852a2dbf",
+      "score": 4,
+      "importedBy": [
+        "src/pages/superadmin/sections/PeopleDirectory.js",
+        "src/pages/teacher/contacts/[contactsTab].js"
+      ],
+      "accountCandidates": [
+        "faculty",
+        "superadmin"
+      ]
+    },
+    {
+      "path": "src/components/Course/Home/PerformanceCard.jsx",
+      "sha": "170a0da079466fff79d2e2b38dd314f039335206",
+      "score": 4,
+      "importedBy": [
+        "src/components/Course/Home/index.js"
+      ],
+      "accountCandidates": [
+        "graph-descendant"
+      ]
+    },
+    {
+      "path": "src/components/ErrorBoundary/PageErrorBoundary.js",
+      "sha": "6f2b2d68ff7e871b6c4e285656f266b1e535fcf5",
+      "score": 4,
+      "importedBy": [
+        "src/pages/_app.js"
+      ],
+      "accountCandidates": [
+        "shared-public"
+      ]
+    },
+    {
+      "path": "src/components/Global/RichTextEditor/RichTextDisplay.jsx",
+      "sha": "f302907c0493cae35cd977c11e2452d79f72cecb",
+      "score": 4,
+      "importedBy": [
+        "src/components/recruiter/RecruiterDriveOverview.jsx"
+      ],
+      "accountCandidates": [
+        "graph-descendant"
+      ]
+    },
+    {
+      "path": "src/components/Global/Tooltips/CustomToolTipTable.jsx",
+      "sha": "e587d98e8ad63addcf441782288024f2faec4477",
+      "score": 4,
+      "importedBy": [
+        "src/pages/Dashboard/course/Attendance/TeacherAttendanceView.jsx"
+      ],
+      "accountCandidates": [
+        "shared-public"
+      ]
+    },
+    {
+      "path": "src/components/Quizzes/QuizzesContent.jsx",
+      "sha": "5a3fc14a0e1c0973a10cfd6b46dad31e7c6738c6",
+      "score": 4,
+      "importedBy": [
+        "src/pages/learn/allQuizzes.js",
+        "src/pages/teacher/allQuizzes.js"
+      ],
+      "accountCandidates": [
+        "faculty",
+        "learner"
+      ]
+    },
+    {
+      "path": "src/components/recruiter/recruiterReviewUtils.js",
+      "sha": "0ee5a5deb4ed39f500bbbb89a4a7e7f563ba1772",
+      "score": 4,
+      "importedBy": [
+        "src/components/recruiter/RecruiterFocusedReview.jsx",
+        "src/pages/recruiter/drives/[jobId].js"
+      ],
+      "accountCandidates": [
+        "graph-descendant",
+        "recruiter"
+      ]
+    },
+    {
+      "path": "src/components/tpo/drive/publishPreflight.js",
+      "sha": "76e8d8718a5503ea5ab0453a0bd26e67d1958680",
+      "score": 4,
+      "importedBy": [
+        "src/components/tpo/drive/DriveRequestReview.jsx",
+        "src/pages/tpo/drives/[jobId].js"
+      ],
+      "accountCandidates": [
+        "graph-descendant",
+        "tpo"
+      ]
+    },
+    {
+      "path": "src/components/tpo/grid/viewMemory.js",
+      "sha": "65fc59e1711871573f3a15cc13fe3f538be9cf6d",
+      "score": 4,
+      "importedBy": [
+        "src/components/tpo/grid/GridWorkspace.jsx"
+      ],
+      "accountCandidates": []
+    },
+    {
+      "path": "src/components/tpo/outreach/OutreachTab.jsx",
+      "sha": "2e07c19b3117dd8af1b1455fe4cc2c08fda921a9",
+      "score": 4,
+      "importedBy": [
+        "src/pages/tpo/recruiters/index.js"
+      ],
+      "accountCandidates": [
+        "tpo"
+      ]
+    },
+    {
+      "path": "src/components/tpo/students/outcomes.js",
+      "sha": "8fb568fd3fd990eef40108531bd1691fe58b2fcf",
+      "score": 4,
+      "importedBy": [
+        "src/components/tpo/StudentPanel.js",
+        "src/pages/tpo/students/index.js"
+      ],
+      "accountCandidates": [
+        "graph-descendant",
+        "tpo"
+      ]
+    },
+    {
+      "path": "src/components/tpo/ui/formatWhen.js",
+      "sha": "0bf9ddd6c52efefb7b5518ace7e5b41b98291cfb",
+      "score": 4,
+      "importedBy": [
+        "src/components/tpo/StudentPanel.js"
+      ],
+      "accountCandidates": [
+        "graph-descendant"
+      ]
+    },
+    {
+      "path": "src/components/tpo/ui/useLivePulse.js",
+      "sha": "1a622bab4bc8e95bc376e240f955ea90aacfa88c",
+      "score": 4,
+      "importedBy": [
+        "src/pages/recruiter/drives/[jobId].js",
+        "src/pages/recruiter/messages.js"
+      ],
+      "accountCandidates": [
+        "graph-descendant",
+        "recruiter"
+      ]
+    },
+    {
+      "path": "src/components/tracker/KnownErrorsDrawer.jsx",
+      "sha": "a892c95fc0a64255e28490b78a0cd585ea3bfd76",
+      "score": 4,
+      "importedBy": [
+        "src/pages/tracker/logs.js"
+      ],
+      "accountCandidates": [
+        "shared-public"
+      ]
+    },
+    {
+      "path": "src/components/tracker/LogDigestDrawer.jsx",
+      "sha": "ea3cbae0c32459baa7d64f9f7044f33233695d09",
+      "score": 4,
+      "importedBy": [
+        "src/pages/tracker/logs.js"
+      ],
+      "accountCandidates": [
+        "shared-public"
+      ]
+    },
+    {
+      "path": "src/components/tracker/ScreenshotPicker.jsx",
+      "sha": "4527a4fa1ffba8edebab0090e4eba43c5a9812a9",
+      "score": 4,
+      "importedBy": [
+        "src/pages/tracker/index.js"
+      ],
+      "accountCandidates": [
+        "shared-public"
+      ]
+    },
+    {
+      "path": "src/components/tracker/SimilarIssuesPanel.jsx",
+      "sha": "805aff96118b6fa21bfe25fbe1c1449c8104d011",
+      "score": 4,
+      "importedBy": [
+        "src/pages/tracker/index.js"
+      ],
+      "accountCandidates": [
+        "shared-public"
+      ]
+    },
+    {
+      "path": "src/components/tracker/TrackerLogDetailsDrawer.jsx",
+      "sha": "d691cf9cc215e94a269c4ef49d149cd430fb8040",
+      "score": 4,
+      "importedBy": [
+        "src/pages/tracker/logs.js"
+      ],
+      "accountCandidates": [
+        "shared-public"
+      ]
+    },
+    {
+      "path": "src/layouts/contactsTabLayout.js",
+      "sha": "54eac7c5dc98c1b2eccb8bcbc70ac09a2b02a411",
+      "score": 4,
+      "importedBy": [
+        "src/pages/teacher/contacts/[contactsTab].js"
+      ],
+      "accountCandidates": [
+        "faculty"
+      ]
+    },
+    {
+      "path": "src/pages/Dashboard/course/Attendance/AbsentPresntBtnCol.js",
+      "sha": "1c9db4e4506e615c6222ca4150098126025422a3",
+      "score": 4,
+      "importedBy": [
+        "src/pages/Dashboard/course/Attendance/TakeAttendance.js"
+      ],
+      "accountCandidates": [
+        "shared-public"
+      ]
+    },
+    {
+      "path": "src/pages/Dashboard/course/Attendance/NameWithDp.js",
+      "sha": "325539d5f5eab47bcdf0d1e342272f67e5ef6e14",
+      "score": 4,
+      "importedBy": [
+        "src/pages/Dashboard/course/Attendance/TakeAttendance.js"
+      ],
+      "accountCandidates": [
+        "shared-public"
+      ]
+    },
+    {
+      "path": "src/pages/Dashboard/course/Attendance/TakeAttendance.js",
+      "sha": "383976525bb017269c8f9e55529a3251457ede19",
+      "score": 4,
+      "importedBy": [
+        "src/pages/Dashboard/course/Attendance/TeacherAttendanceView.jsx"
+      ],
+      "accountCandidates": [
+        "shared-public"
+      ]
+    },
+    {
+      "path": "src/pages/superadmin/sections/TenantsHub.js",
+      "sha": "0b12079ce4d7183b90a418658b9dcd478bb03e3e",
+      "score": 4,
+      "importedBy": [
+        "src/pages/superadmin/tenants.js"
+      ],
+      "accountCandidates": [
+        "superadmin"
+      ]
+    },
+    {
+      "path": "src/components/Attendance/CourseAttendeeHeaderFilters/CourseAttendeeHeaderFilters.js",
+      "sha": "a1c11b1c82716fde0d60e60f2005d2991b492c05",
+      "score": 3,
+      "importedBy": [
+        "src/pages/Dashboard/course/Attendance/AttendanceReport.js"
+      ],
+      "accountCandidates": [
+        "graph-descendant",
+        "shared-public"
+      ]
+    },
+    {
+      "path": "src/components/Attendance/TakeAttendanceHeaderFilters/TakeAttendanceHeaderFilters.js",
+      "sha": "b23dbc7ba333f8384bc2f93fb0621000a27877b5",
+      "score": 3,
+      "importedBy": [
+        "src/pages/Dashboard/course/Attendance/AttendanceReport.js"
+      ],
+      "accountCandidates": [
+        "graph-descendant",
+        "shared-public"
+      ]
+    },
+    {
+      "path": "src/components/admin/AdminWorkflowGuide.jsx",
+      "sha": "d97d672cb000f9ab378c6e3975a76a042ca43955",
+      "score": 2,
+      "importedBy": [
+        "src/components/admin/AdminGroupShell.jsx",
+        "src/components/admin/SuperAdminGroupShell.jsx"
+      ],
+      "accountCandidates": []
+    },
+    {
+      "path": "src/components/admin/studentGroups/groupUi.js",
+      "sha": "9f503c0e2f653a5ba3d7f77b59c704c1aebc3cf2",
+      "score": 2,
+      "importedBy": [
+        "src/components/admin/electives/OfferingRosterDrawer.jsx",
+        "src/components/admin/studentGroups/StudentGroupDetail.jsx"
+      ],
+      "accountCandidates": []
+    },
+    {
+      "path": "src/components/Course/Common/CourseSectionHeader.jsx",
+      "sha": "87609fdcbd7b1f9c50d88cf34cba47583081f2c4",
+      "score": 2,
+      "importedBy": [
+        "src/pages/mentor/calendar.js",
+        "src/pages/mentor/notifications.js"
+      ],
+      "accountCandidates": [
+        "mentor"
+      ]
+    },
+    {
+      "path": "src/components/Course/Syllabus/ContentProgressBadge.jsx",
+      "sha": "b6c453987e45c39e896284dd898cb540beff5cbd",
+      "score": 2,
+      "importedBy": [
+        "src/pages/Dashboard/course/syllabus/video.js",
+        "src/pages/Dashboard/course/syllabus/youtube.js"
+      ],
+      "accountCandidates": [
+        "shared-public"
+      ]
+    },
+    {
+      "path": "src/components/Course/Syllabus/MarkCompleteButton.jsx",
+      "sha": "af4823ea68744f53b4eb1fe7b82009d4470388e9",
+      "score": 2,
+      "importedBy": [
+        "src/pages/Dashboard/course/syllabus/liveclass.js",
+        "src/pages/Dashboard/course/syllabus/resource.js"
+      ],
+      "accountCandidates": [
+        "shared-public"
+      ]
+    },
+    {
+      "path": "src/components/Global/Button/button.jsx",
+      "sha": "fdd3b48e28fd3cefc6e0d9d614ac510d7b4181d8",
+      "score": 2,
+      "importedBy": [
+        "src/components/Global/RightDrawer/DrawerWidget.js",
+        "src/pages/Dashboard/course/Attendance/TakeAttendance.js"
+      ],
+      "accountCandidates": [
+        "shared-public"
+      ]
+    },
+    {
+      "path": "src/components/Global/MetricPill/MetricPill.jsx",
+      "sha": "1ccf8904383da10e31bd801b3e7f2a06508cb0cf",
+      "score": 2,
+      "importedBy": [
+        "src/components/Assignments/AssignmentsContent.jsx",
+        "src/components/Course/CoursesContent.jsx"
+      ],
+      "accountCandidates": []
+    },
+    {
+      "path": "src/components/Loader/loader.js",
+      "sha": "4e05bddcbdbf1b14087e4cfda5e684eb36541199",
+      "score": 2,
+      "importedBy": [
+        "src/layouts/AdminLayout.js",
+        "src/layouts/SuperAdminLayout.js"
+      ],
+      "accountCandidates": [
+        "graph-descendant"
+      ]
+    },
+    {
+      "path": "src/components/Placements/student/ScheduleCard.jsx",
+      "sha": "85e868792307e0c0ecc27fd74664b5beeab9aad6",
+      "score": 2,
+      "importedBy": [
+        "src/pages/learn/my-placements/index.js",
+        "src/pages/learn/my-placements/schedule.js"
+      ],
+      "accountCandidates": [
+        "learner"
+      ]
+    },
+    {
+      "path": "src/components/tpo/companies/companyRules.js",
+      "sha": "517391341a00b545663ede1b5a57d00e6035dc83",
+      "score": 2,
+      "importedBy": [
+        "src/components/tpo/companies/CompaniesTab.jsx",
+        "src/pages/tpo/companies.js"
+      ],
+      "accountCandidates": [
+        "tpo"
+      ]
+    },
+    {
+      "path": "src/components/tpo/company/CompanyLinkCard.jsx",
+      "sha": "93d56d100a68bc5866878cc89e84137a6cf4c637",
+      "score": 2,
+      "importedBy": [
+        "src/components/tpo/invite/BringInWindow.jsx",
+        "src/pages/tpo/companies.js"
+      ],
+      "accountCandidates": [
+        "tpo"
+      ]
+    },
+    {
+      "path": "src/components/tpo/JdUpload.jsx",
+      "sha": "854c8dbd7ce7a682350a7b695fef022799528910",
+      "score": 2,
+      "importedBy": [
+        "src/components/tpo/DriveFormPage.js",
+        "src/pages/recruiter/drives/new.js"
+      ],
+      "accountCandidates": [
+        "recruiter"
+      ]
+    },
+    {
+      "path": "src/components/tpo/reportsMeta.js",
+      "sha": "545c6736d516f362fe4880bba552f40b615a9810",
+      "score": 2,
+      "importedBy": [
+        "src/pages/tpo/reports/[name].js",
+        "src/pages/tpo/reports/index.js"
+      ],
+      "accountCandidates": [
+        "tpo"
+      ]
+    },
+    {
+      "path": "src/components/tpo/stories/offerStories.js",
+      "sha": "20f44460ce4cb12c633dfd5c81702dc285f3bc03",
+      "score": 2,
+      "importedBy": [
+        "src/components/tpo/drive/DriveOffersList.jsx",
+        "src/components/tpo/drive/OffersTab.js"
+      ],
+      "accountCandidates": [
+        "graph-descendant"
+      ]
+    },
+    {
+      "path": "src/components/tpo/students/StudentActions.jsx",
+      "sha": "c89758c41e2ac89ff6ad321a9c06df46f97b7f70",
+      "score": 2,
+      "importedBy": [
+        "src/pages/tpo/batches/[batchId].js",
+        "src/pages/tpo/students/index.js"
+      ],
+      "accountCandidates": [
+        "tpo"
+      ]
+    },
+    {
+      "path": "src/components/tpo/ui/JourneyStrip.jsx",
+      "sha": "f7cf68af72c9ee9c108ffa1321015df9266a7b72",
+      "score": 2,
+      "importedBy": [
+        "src/components/tpo/drive/ApplicantsTab.js",
+        "src/components/tpo/drive/OffersTab.js"
+      ],
+      "accountCandidates": [
+        "graph-descendant"
+      ]
+    },
+    {
+      "path": "src/components/tpo/ui/reportFilters.js",
+      "sha": "ac6b6700ab6e57b04015cdc527dd6bd10379a101",
+      "score": 2,
+      "importedBy": [
+        "src/pages/tpo/reports/[name].js",
+        "src/pages/tpo/reports/index.js"
+      ],
+      "accountCandidates": [
+        "tpo"
+      ]
+    },
+    {
+      "path": "src/components/tracker/TrackerPill.jsx",
+      "sha": "02f3ac9c7e6424494ac73a25fb03b4d9725d6f61",
+      "score": 2,
+      "importedBy": [
+        "src/pages/tracker/issues/[issueId].js",
+        "src/pages/tracker/issues/index.js"
+      ],
+      "accountCandidates": [
+        "shared-public"
+      ]
+    },
+    {
+      "path": "src/layouts/layout.js",
+      "sha": "4b8a3bbaec751159be94aaaa1ec4c0ad036fd8ec",
+      "score": 2,
+      "importedBy": [
+        "src/pages/404.js",
+        "src/pages/_app.js"
+      ],
+      "accountCandidates": [
+        "shared-public"
+      ]
+    },
+    {
+      "path": "src/common/constant.js",
+      "sha": "340f2764e4d97caf0f16530723c582a0516ccc14",
+      "score": 1,
+      "importedBy": [
+        "src/layouts/AdminLayout.js"
+      ],
+      "accountCandidates": [
+        "graph-descendant"
+      ]
+    },
+    {
+      "path": "src/common/subDomains.js",
+      "sha": "5d8a2428bd6716cc5d6e330d5adbfb2bec17f3d1",
+      "score": 1,
+      "importedBy": [
+        "src/pages/index.js"
+      ],
+      "accountCandidates": [
+        "shared-public"
+      ]
+    },
+    {
+      "path": "src/components/admin/courses/AdminCourseSyllabus.jsx",
+      "sha": "bcf3a364baf34a24e378817be96af26ba3b9e3d6",
+      "score": 1,
+      "importedBy": [
+        "src/pages/college-admin/courses/[id].js"
+      ],
+      "accountCandidates": [
+        "college-admin"
+      ]
+    },
+    {
+      "path": "src/components/admin/HelpHint.js",
+      "sha": "6e218f2c0be59f21858f8e2ad8d71fd36deaaa83",
+      "score": 1,
+      "importedBy": [
+        "src/pages/superadmin/sections/Colleges.js"
+      ],
+      "accountCandidates": [
+        "superadmin"
+      ]
+    },
+    {
+      "path": "src/components/admin/profileSectionSchemas.js",
+      "sha": "41cedc792b4e5766202ef877a80b2a8caf91b3f6",
+      "score": 1,
+      "importedBy": [
+        "src/components/admin/ProfileSectionsPanel.js"
+      ],
+      "accountCandidates": []
+    },
+    {
+      "path": "src/components/Attendance/AttendanceContent.jsx",
+      "sha": "9e1b04f977918e0d9781e0186e544b72c4f396a1",
+      "score": 1,
+      "importedBy": [
+        "src/pages/learn/attendance.js"
+      ],
+      "accountCandidates": [
+        "learner"
+      ]
+    },
+    {
+      "path": "src/components/Attendance/StudentAttendance/StatusCol.js",
+      "sha": "e015a74c231736eaab3d1ee00b1aea1771d3246a",
+      "score": 1,
+      "importedBy": [
+        "src/pages/Dashboard/course/Attendance/StudentAttendanceView.jsx"
+      ],
+      "accountCandidates": [
+        "shared-public"
+      ]
+    },
+    {
+      "path": "src/components/Course/Home/AtRiskStudentsCard.jsx",
+      "sha": "a767be55aad220734ec6a8d4fa8268d12554dc94",
+      "score": 1,
+      "importedBy": [
+        "src/components/Course/Home/index.js"
+      ],
+      "accountCandidates": [
+        "graph-descendant"
+      ]
+    },
+    {
+      "path": "src/components/Course/Home/InThisCourseSection.jsx",
+      "sha": "31cfcf01978ab73f227ccaa05c3b3467ddca8101",
+      "score": 1,
+      "importedBy": [
+        "src/components/Course/Home/index.js"
+      ],
+      "accountCandidates": [
+        "graph-descendant"
+      ]
+    },
+    {
+      "path": "src/components/Course/Home/UnifiedActivityList.jsx",
+      "sha": "6f4943b09bcac471aaaf0d39238b8cf00d3cece7",
+      "score": 1,
+      "importedBy": [
+        "src/components/Course/Home/index.js"
+      ],
+      "accountCandidates": [
+        "graph-descendant"
+      ]
+    },
+    {
+      "path": "src/components/Course/Syllabus/ContentCompletionCheck.jsx",
+      "sha": "e00e3ef7bcb1fbde716720d2a9e606ffb40f1205",
+      "score": 1,
+      "importedBy": [
+        "src/pages/Dashboard/course/syllabus/syllabusDetail.js"
+      ],
+      "accountCandidates": [
+        "shared-public"
+      ]
+    },
+    {
+      "path": "src/components/Course/Syllabus/LessonProgressBar.jsx",
+      "sha": "6f6b4bfe4b8c9d283fc245a11c9024c43461768d",
+      "score": 1,
+      "importedBy": [
+        "src/pages/Dashboard/course/syllabus/syllabusDetail.js"
+      ],
+      "accountCandidates": [
+        "shared-public"
+      ]
+    },
+    {
+      "path": "src/components/Dropdowns/Profile/profiledropdown.js",
+      "sha": "42807cfb9262412dd9418814bc33049cd9287663",
+      "score": 1,
+      "importedBy": [
+        "src/components/Global/Header/Header.js"
+      ],
+      "accountCandidates": [
+        "graph-descendant"
+      ]
+    },
+    {
+      "path": "src/components/Dropdowns/Profile/SuperAdminProfileDropdown.js",
+      "sha": "1d74b00297c099211e067e58fa72efbda7d77e49",
+      "score": 1,
+      "importedBy": [
+        "src/components/Global/Header/SuperAdminHeader.js"
+      ],
+      "accountCandidates": [
+        "graph-descendant"
+      ]
+    },
+    {
+      "path": "src/components/Global/CroppedImageUpload/BrandingImageUpload.js",
+      "sha": "432380d3efc7aecc029c6e4cbded70291bf1e9d9",
+      "score": 1,
+      "importedBy": [
+        "src/pages/superadmin/sections/CollegeBranding.js"
+      ],
+      "accountCandidates": [
+        "superadmin"
+      ]
+    },
+    {
+      "path": "src/components/Global/Offcanvas/Syallabus/liveclass.js",
+      "sha": "23d6e402392cdf10db5767769a64569b571e8690",
+      "score": 1,
+      "importedBy": [
+        "src/components/Global/Offcanvas/Syallabus/AddNewLessonContentDrawer.js"
+      ],
+      "accountCandidates": [
+        "graph-descendant"
+      ]
+    },
+    {
+      "path": "src/components/Global/Offcanvas/Syallabus/youtube.js",
+      "sha": "9b46960fb1c90c08d43a67af5e2a4afc9caba084",
+      "score": 1,
+      "importedBy": [
+        "src/components/Global/Offcanvas/Syallabus/AddNewLessonContentDrawer.js"
+      ],
+      "accountCandidates": [
+        "graph-descendant"
+      ]
+    },
+    {
+      "path": "src/components/Global/titles/title.js",
+      "sha": "adef720a81f1df7bf8e944d37ffa4d8bf69c1c17",
+      "score": 1,
+      "importedBy": [
+        "src/pages/superadmin/sections/JobApplications.js"
+      ],
+      "accountCandidates": [
+        "superadmin"
+      ]
+    },
+    {
+      "path": "src/components/Global/video/video.jsx",
+      "sha": "1ba9b1a72b72a077f78a3fadc1edd453f6d8d689",
+      "score": 1,
+      "importedBy": [
+        "src/pages/Dashboard/course/syllabus/video.js"
+      ],
+      "accountCandidates": [
+        "shared-public"
+      ]
+    },
+    {
+      "path": "src/components/marketing/icons.jsx",
+      "sha": "5a8bcfd8baaae6a043b75bac1d6c677e939d8f69",
+      "score": 1,
+      "importedBy": [
+        "src/pages/request-demo.js"
+      ],
+      "accountCandidates": [
+        "shared-public"
+      ]
+    },
+    {
+      "path": "src/components/Placements/JobsListContent.jsx",
+      "sha": "8b726d832e0223f29b35497b2ca4cf16fcffdbfb",
+      "score": 1,
+      "importedBy": [
+        "src/pages/learn/my-placements/jobs/index.js"
+      ],
+      "accountCandidates": [
+        "learner"
+      ]
+    },
+    {
+      "path": "src/components/Placements/PlacementCellContent.js",
+      "sha": "528ddc4b83555bf666ab129e967c2e37b6885c8a",
+      "score": 1,
+      "importedBy": [
+        "src/pages/learn/my-placements/placement.js"
+      ],
+      "accountCandidates": [
+        "learner"
+      ]
+    },
+    {
+      "path": "src/components/Placements/student/PlacementRules.jsx",
+      "sha": "d980cc55c42fb5dc19dd60a5603f4c8dc30ae8ac",
+      "score": 1,
+      "importedBy": [
+        "src/pages/learn/my-placements/offers.js"
+      ],
+      "accountCandidates": [
+        "learner"
+      ]
+    },
+    {
+      "path": "src/components/profile/ProfileVerificationCard.jsx",
+      "sha": "33b6f367fd96fdc95a37eed5eaf7ebcfb2582517",
+      "score": 1,
+      "importedBy": [
+        "src/pages/learn/profile.js"
+      ],
+      "accountCandidates": [
+        "learner"
+      ]
+    },
+    {
+      "path": "src/components/Report/AssignmentReportContent.jsx",
+      "sha": "447876e8072a3cb1073567ed12284b91fd495091",
+      "score": 1,
+      "importedBy": [
+        "src/pages/teacher/report/assignment/[contentId].js"
+      ],
+      "accountCandidates": [
+        "faculty"
+      ]
+    },
+    {
+      "path": "src/components/Report/QuizReportContent.jsx",
+      "sha": "113fea69884a0cd6a49facd53916f33be71d57ed",
+      "score": 1,
+      "importedBy": [
+        "src/pages/teacher/report/quiz/[quizId].js"
+      ],
+      "accountCandidates": [
+        "faculty"
+      ]
+    },
+    {
+      "path": "src/components/tpo/accreditationPreflight.js",
+      "sha": "f3c92d38efd5a4d91ae2971b34e3fd9403264461",
+      "score": 1,
+      "importedBy": [
+        "src/pages/tpo/reports/[name].js"
+      ],
+      "accountCandidates": [
+        "tpo"
+      ]
+    },
+    {
+      "path": "src/components/tpo/batches/BatchTop.jsx",
+      "sha": "1218898e0f42fc43ccd2d81d37e1a2bfcee4d1f5",
+      "score": 1,
+      "importedBy": [
+        "src/pages/tpo/batches/[batchId].js"
+      ],
+      "accountCandidates": [
+        "tpo"
+      ]
+    },
+    {
+      "path": "src/components/tpo/eligibilityPresets.js",
+      "sha": "7e3e597deadcc325ff23cbac046535ed351f6a88",
+      "score": 1,
+      "importedBy": [
+        "src/components/tpo/DriveFormPage.js"
+      ],
+      "accountCandidates": []
+    },
+    {
+      "path": "src/components/tpo/emails/EmailComposer.jsx",
+      "sha": "b2268fc4defab5b98dcb86438c00f40a36f9d8dc",
+      "score": 1,
+      "importedBy": [
+        "src/pages/tpo/recruiters/index.js"
+      ],
+      "accountCandidates": [
+        "tpo"
+      ]
+    },
+    {
+      "path": "src/components/tpo/home/homeRows.js",
+      "sha": "d7af17cb78845d8339fc1b004fdb60a9fd5a4c25",
+      "score": 1,
+      "importedBy": [
+        "src/pages/tpo/home.js"
+      ],
+      "accountCandidates": [
+        "tpo"
+      ]
+    },
+    {
+      "path": "src/components/tpo/nav/tpoHubs.js",
+      "sha": "f8258f78a9c384252daedf7fe2ce8e7109a68b14",
+      "score": 1,
+      "importedBy": [
+        "src/components/Sidebar/Sidebar.js"
+      ],
+      "accountCandidates": []
+    },
+    {
+      "path": "src/components/tpo/outreach/outreachRules.js",
+      "sha": "7159f1380a55bd06c0edb51aa7814343022271a1",
+      "score": 1,
+      "importedBy": [
+        "src/pages/tpo/recruiters/index.js"
+      ],
+      "accountCandidates": [
+        "tpo"
+      ]
+    },
+    {
+      "path": "src/components/tpo/reportViews.js",
+      "sha": "15440884a46bce615d18bb1ae08450d8620d8011",
+      "score": 1,
+      "importedBy": [
+        "src/pages/tpo/reports/[name].js"
+      ],
+      "accountCandidates": [
+        "tpo"
+      ]
+    },
+    {
+      "path": "src/components/tpo/stories/accessStories.js",
+      "sha": "20779891a7774d0da844c09da9e369bee2d21e74",
+      "score": 1,
+      "importedBy": [
+        "src/pages/tpo/settings.js"
+      ],
+      "accountCandidates": [
+        "tpo"
+      ]
+    },
+    {
+      "path": "src/components/tpo/stories/batchStories.js",
+      "sha": "597357177ef7d98c02ff9eeff8e0107f4b66a6be",
+      "score": 1,
+      "importedBy": [
+        "src/pages/tpo/batches/index.js"
+      ],
+      "accountCandidates": [
+        "tpo"
+      ]
+    },
+    {
+      "path": "src/components/tpo/stories/companyStories.js",
+      "sha": "d2b461a65618f70a1a39e3d2068ce537be21b697",
+      "score": 1,
+      "importedBy": [
+        "src/components/tpo/companies/CompaniesTab.jsx"
+      ],
+      "accountCandidates": []
+    },
+    {
+      "path": "src/components/tpo/stories/driveStories.js",
+      "sha": "fcb240252d63d0d4f123dc98961a0b9a63930e49",
+      "score": 1,
+      "importedBy": [
+        "src/pages/tpo/drives/index.js"
+      ],
+      "accountCandidates": [
+        "tpo"
+      ]
+    },
+    {
+      "path": "src/components/tpo/stories/recruiterStories.js",
+      "sha": "dd98dd0b1085f8ebabf9666c53892cc30b43e4cc",
+      "score": 1,
+      "importedBy": [
+        "src/pages/tpo/recruiters/index.js"
+      ],
+      "accountCandidates": [
+        "tpo"
+      ]
+    },
+    {
+      "path": "src/components/tpo/stories/studentStories.js",
+      "sha": "f7c0d2e2bed8bb4e90a4f42650109a43f51e1ad9",
+      "score": 1,
+      "importedBy": [
+        "src/pages/tpo/students/index.js"
+      ],
+      "accountCandidates": [
+        "tpo"
+      ]
+    },
+    {
+      "path": "src/components/tpo/students/StudentsTop.jsx",
+      "sha": "1de8b81ca864d6fd6f6b55bcf03913536664af18",
+      "score": 1,
+      "importedBy": [
+        "src/pages/tpo/students/index.js"
+      ],
+      "accountCandidates": [
+        "tpo"
+      ]
+    },
+    {
+      "path": "src/components/tpo/team/TeamContext.jsx",
+      "sha": "f132627d98106805bf5b936d90ee4b918430eb3a",
+      "score": 1,
+      "importedBy": [
+        "src/components/tpo/team/TeamConversation.jsx"
+      ],
+      "accountCandidates": [
+        "graph-descendant"
+      ]
+    },
+    {
+      "path": "src/components/tpo/team/TeamConversations.jsx",
+      "sha": "d2efc1f31589db0e9ba0139ddf3792b288f96305",
+      "score": 1,
+      "importedBy": [
+        "src/pages/tpo/team.js"
+      ],
+      "accountCandidates": [
+        "tpo"
+      ]
+    },
+    {
+      "path": "src/components/tpo/team/TeamPeople.jsx",
+      "sha": "9972b66d10ff1a2a83f7d300798769450534b031",
+      "score": 1,
+      "importedBy": [
+        "src/pages/tpo/team.js"
+      ],
+      "accountCandidates": [
+        "tpo"
+      ]
+    },
+    {
+      "path": "src/components/tpo/today/TodayQueue.jsx",
+      "sha": "913f99d08b8f1614aa0418bbdb6c18d876611f04",
+      "score": 1,
+      "importedBy": [
+        "src/pages/tpo/recruiters/index.js"
+      ],
+      "accountCandidates": [
+        "tpo"
+      ]
+    },
+    {
+      "path": "src/components/tpo/TpoModuleOff.jsx",
+      "sha": "170b3bb306ab0215f344afff72fa0c09ec33d89c",
+      "score": 1,
+      "importedBy": [
+        "src/components/Sidebar/Sidebar.js"
+      ],
+      "accountCandidates": []
+    },
+    {
+      "path": "src/components/tpo/TpoProfileCard.jsx",
+      "sha": "0c32d6d28721e9099aaebfb5e78eb67b79658462",
+      "score": 1,
+      "importedBy": [
+        "src/pages/tpo/profile.js"
+      ],
+      "accountCandidates": [
+        "tpo"
+      ]
+    },
+    {
+      "path": "src/components/tpo/TpoTopBar.js",
+      "sha": "f7dd7e60c58cc1be4945ae3ec638c9e1d91796de",
+      "score": 1,
+      "importedBy": [
+        "src/components/Global/Header/Header.js"
+      ],
+      "accountCandidates": [
+        "graph-descendant"
+      ]
+    },
+    {
+      "path": "src/components/tpo/ui/domain.js",
+      "sha": "75ab54012f08a9229ab2abd3baa6b2137c568ccc",
+      "score": 1,
+      "importedBy": [
+        "src/pages/tpo/settings.js"
+      ],
+      "accountCandidates": [
+        "tpo"
+      ]
+    },
+    {
+      "path": "src/components/tpo/ui/driveDayRules.js",
+      "sha": "30695ac401dc1d9a93575bfe381897178fe153cb",
+      "score": 1,
+      "importedBy": [
+        "src/pages/tpo/drive-day/[roundId].js"
+      ],
+      "accountCandidates": [
+        "tpo"
+      ]
+    },
+    {
+      "path": "src/components/tpo/ui/journeyRules.js",
+      "sha": "13b506b418fb05aea3623f1d1e77985e6880edbb",
+      "score": 1,
+      "importedBy": [
+        "src/pages/tpo/students/index.js"
+      ],
+      "accountCandidates": [
+        "tpo"
+      ]
+    },
+    {
+      "path": "src/components/tpo/ui/recruiterActivity.js",
+      "sha": "be5bc17e5c1e83fb6ddd13b64e1cfd7bce3ac279",
+      "score": 1,
+      "importedBy": [
+        "src/pages/tpo/recruiters/index.js"
+      ],
+      "accountCandidates": [
+        "tpo"
+      ]
+    },
+    {
+      "path": "src/components/tpo/ui/shareMemory.js",
+      "sha": "701cb044b073e438cbea96929415614680cd3c88",
+      "score": 1,
+      "importedBy": [
+        "src/components/tpo/drive/ShareModal.js"
+      ],
+      "accountCandidates": [
+        "graph-descendant"
+      ]
+    },
+    {
+      "path": "src/components/tpo/ui/slotGenerator.js",
+      "sha": "10391e2c689139b4f7e088efd21d64960562a2c5",
+      "score": 1,
+      "importedBy": [
+        "src/components/tpo/drive/ScheduleModal.js"
+      ],
+      "accountCandidates": [
+        "graph-descendant"
+      ]
+    },
+    {
+      "path": "src/components/tracker/ActivityTimeline.jsx",
+      "sha": "114991975b931ef1bede89ff42113dc388261652",
+      "score": 1,
+      "importedBy": [
+        "src/pages/tracker/issues/[issueId].js"
+      ],
+      "accountCandidates": [
+        "shared-public"
+      ]
+    },
+    {
+      "path": "src/components/tracker/auditFindings/auditFindingsModel.js",
+      "sha": "ce2303ab79b1d47ff7b31beb275432de8caaf74e",
+      "score": 1,
+      "importedBy": [
+        "src/pages/tracker/audit-findings.js"
+      ],
+      "accountCandidates": [
+        "shared-public"
+      ]
+    },
+    {
+      "path": "src/components/tracker/EngineeringDetails.jsx",
+      "sha": "da6184590cec7614e2e643b6ae17edd5fb7939c9",
+      "score": 1,
+      "importedBy": [
+        "src/pages/tracker/issues/[issueId].js"
+      ],
+      "accountCandidates": [
+        "shared-public"
+      ]
+    },
+    {
+      "path": "src/components/tracker/LogHealthStrip.jsx",
+      "sha": "6feedbfdb12c5eeb2225d9277c14f8044a0af931",
+      "score": 1,
+      "importedBy": [
+        "src/pages/tracker/logs.js"
+      ],
+      "accountCandidates": [
+        "shared-public"
+      ]
+    },
+    {
+      "path": "src/components/tracker/LogsDownloadControl.jsx",
+      "sha": "3b8992f6a7e48abd168e9f1be13fe21537a618fc",
+      "score": 1,
+      "importedBy": [
+        "src/pages/tracker/logs.js"
+      ],
+      "accountCandidates": [
+        "shared-public"
+      ]
+    },
+    {
+      "path": "src/components/tracker/RetestCard.jsx",
+      "sha": "52c4530fa0cf677f023574f297b383877d3e196f",
+      "score": 1,
+      "importedBy": [
+        "src/pages/tracker/issues/[issueId].js"
+      ],
+      "accountCandidates": [
+        "shared-public"
+      ]
+    },
+    {
+      "path": "src/components/tracker/TrackerQuickReportLauncher.jsx",
+      "sha": "d007cf5881b1d9981f878a555a76a7ddba0a769e",
+      "score": 1,
+      "importedBy": [
+        "src/pages/_app.js"
+      ],
+      "accountCandidates": [
+        "shared-public"
+      ]
+    },
+    {
+      "path": "src/components/tracker/TriageMenu.jsx",
+      "sha": "90342c6d0cfe7050cb205a276e454ca027666cfe",
+      "score": 1,
+      "importedBy": [
+        "src/pages/tracker/logs.js"
+      ],
+      "accountCandidates": [
+        "shared-public"
+      ]
+    },
+    {
+      "path": "src/components/tracker/useLogInsights.js",
+      "sha": "2f8e2b1598d617b435480534536fbcf8d7aba6a6",
+      "score": 1,
+      "importedBy": [
+        "src/pages/tracker/logs.js"
+      ],
+      "accountCandidates": [
+        "shared-public"
+      ]
+    },
+    {
+      "path": "src/components/verification/VerifyQueue.jsx",
+      "sha": "ee24b949b50d03c50a3c60a7c8ac3fa1dc8595b6",
+      "score": 1,
+      "importedBy": [
+        "src/pages/tpo/verification.js"
+      ],
+      "accountCandidates": [
+        "tpo"
+      ]
+    },
+    {
+      "path": "src/components/tpo/templates/TemplateLibrary.jsx",
+      "sha": "f577546d387ebdd217b47e50aa74d2b9812e02bc",
+      "score": 6,
+      "importedBy": [
+        {
+          "path": "src/components/tpo/announcements/AnnouncementComposer.jsx",
+          "line": 6
+        },
+        {
+          "path": "src/components/tpo/messages/MessagesInbox.jsx",
+          "line": 15
+        }
+      ],
+      "newlyDiscoveredByWave3": true
+    },
+    {
+      "path": "src/components/admin/activity/activityText.js",
+      "sha": "128c0bec2c8a05c397b742a116f8e973fc63a549",
+      "score": 8,
+      "importedBy": [
+        {
+          "path": "src/components/admin/activity/ActivityCenter.jsx",
+          "line": 8
+        }
+      ],
+      "newlyDiscoveredByWave3": true
+    },
+    {
+      "path": "src/components/admin/courses/CourseTeachersPanel.jsx",
+      "sha": "4478125a921f6da8e0085258f4be4a9864fe6284",
+      "score": 6,
+      "importedBy": [
+        {
+          "path": "src/components/admin/courses/AdminCourseHome.jsx",
+          "line": 8
+        }
+      ],
+      "newlyDiscoveredByWave3": true
+    },
+    {
+      "path": "src/components/CalendarComp/CalendarEvents/CalendarEvents.js",
+      "sha": "87b8c2bf343ce1af5a3289dea2a4e584849caec1",
+      "score": 8,
+      "importedBy": [
+        {
+          "path": "src/components/CalendarComp/ClassScheduleContent.jsx",
+          "line": 16
+        }
+      ],
+      "newlyDiscoveredByWave3": true
+    },
+    {
+      "path": "src/components/Global/Button/uploadButton.jsx",
+      "sha": "f95c4bfad88f9fd2a459cf36a5fa62bdca9b1f40",
+      "score": 6,
+      "importedBy": [
+        {
+          "path": "src/components/Global/Offcanvas/Syallabus/videoform.js",
+          "line": 29
+        }
+      ],
+      "newlyDiscoveredByWave3": true
+    },
+    {
+      "path": "src/components/Global/Offcanvas/Syallabus/preview.js",
+      "sha": "4c28361e7034cb0b5fce6d1de02f4a28f690e809",
+      "score": 6,
+      "importedBy": [
+        {
+          "path": "src/components/Global/Offcanvas/Syallabus/videoform.js",
+          "line": 17
+        }
+      ],
+      "newlyDiscoveredByWave3": true
+    },
+    {
+      "path": "src/components/marketing/MarketingFooter.jsx",
+      "sha": "66b048a148bff8a51ccc00a3e1740fc209bf6208",
+      "score": 12,
+      "importedBy": [
+        {
+          "path": "src/components/marketing/MarketingLayout.jsx",
+          "line": 4
+        }
+      ],
+      "newlyDiscoveredByWave3": true
+    },
+    {
+      "path": "src/components/marketing/MarketingHeader.jsx",
+      "sha": "79ede841a07f006d259aaeb945cb94a0caf69833",
+      "score": 12,
+      "importedBy": [
+        {
+          "path": "src/components/marketing/MarketingLayout.jsx",
+          "line": 3
+        }
+      ],
+      "newlyDiscoveredByWave3": true
+    },
+    {
+      "path": "src/components/Placements/JobDetailContent.jsx",
+      "sha": "321745aafc748275bd8dc17910f24b4d86c536a4",
+      "score": 6,
+      "importedBy": [
+        {
+          "path": "src/components/Placements/VerifiedJobDetailContent.jsx",
+          "line": 9
+        }
+      ],
+      "newlyDiscoveredByWave3": true
+    },
+    {
+      "path": "src/components/Quiz/leftpanel.js",
+      "sha": "c92b19acdbddfd2655dddfe4200dd4729dbf359a",
+      "score": 6,
+      "importedBy": [
+        {
+          "path": "src/components/Quiz/quizpanel.js",
+          "line": 6
+        }
+      ],
+      "newlyDiscoveredByWave3": true
+    },
+    {
+      "path": "src/components/Sidebar/index.js",
+      "sha": "456c35a5ad9ec376a7ec8237ce541b19ab8050bb",
+      "score": 6,
+      "importedBy": [
+        {
+          "path": "src/components/Global/MobileMenuDrawer/MobileMenuDrawer.js",
+          "line": 6
+        }
+      ],
+      "newlyDiscoveredByWave3": true
+    },
+    {
+      "path": "src/components/tpo/emails/EmailDetail.jsx",
+      "sha": "9f456eb30defec0c4c8faf7e22bb3252420071da",
+      "score": 6,
+      "importedBy": [
+        {
+          "path": "src/components/tpo/emails/EmailsTab.jsx",
+          "line": 6
+        }
+      ],
+      "newlyDiscoveredByWave3": true
+    },
+    {
+      "path": "src/components/tpo/emails/emailRules.js",
+      "sha": "b3c4739ab4365f05f6bfcb8249fe449cfc062ef1",
+      "score": 6,
+      "importedBy": [
+        {
+          "path": "src/components/tpo/emails/EmailsTab.jsx",
+          "line": 8
+        }
+      ],
+      "newlyDiscoveredByWave3": true
+    },
+    {
+      "path": "src/components/tpo/stories/requestStories.js",
+      "sha": "e5722830915f67322348c7975fe18157e047461f",
+      "score": 8,
+      "importedBy": [
+        {
+          "path": "src/components/tpo/RequestsPanel.js",
+          "line": 6
+        }
+      ],
+      "newlyDiscoveredByWave3": true
+    },
+    {
+      "path": "src/components/tpo/templates/fillTemplate.js",
+      "sha": "c21a93fd8ef04c5a9a60ea269c79d274725adbaf",
+      "score": 6,
+      "importedBy": [
+        {
+          "path": "src/components/tpo/messages/MessagesInbox.jsx",
+          "line": 16
+        }
+      ],
+      "newlyDiscoveredByWave3": true
+    },
+    {
+      "path": "src/components/tpo/ui/calendarGrid.js",
+      "sha": "af86e35a63456ff1184f61fb8b25ba066dc9308a",
+      "score": 6,
+      "importedBy": [
+        {
+          "path": "src/components/tpo/WeekTimeGrid.jsx",
+          "line": 3
+        }
+      ],
+      "newlyDiscoveredByWave3": true
+    },
+    {
+      "path": "src/layouts/placementsTheme.js",
+      "sha": "746cc56436497f1c7a3f6830dcfb8ae4ced1fc73",
+      "score": 12,
+      "importedBy": [
+        {
+          "path": "src/layouts/PlacementsTabsLayout.js",
+          "line": 5
+        }
+      ],
+      "newlyDiscoveredByWave3": true
+    },
+    {
+      "path": "src/pages/Dashboard/course/Home/HomeEditDrawer.js",
+      "sha": "2d3c4cbdde7c5807b6f7ec1d6ee6a54c052f6819",
+      "score": 6,
+      "importedBy": [
+        {
+          "path": "src/components/admin/courses/AdminCourseHome.jsx",
+          "line": 9
+        }
+      ],
+      "newlyDiscoveredByWave3": true
+    }
+  ]
+}

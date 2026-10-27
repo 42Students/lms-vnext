@@ -1,0 +1,3509 @@
+{
+  "schemaVersion": 1,
+  "type": "incremental legacy UI source inspection; not product tracker",
+  "batch": "wave3-g",
+  "sourceSnapshot": {
+    "repo": "42Students/lms2-fe",
+    "sha": "9d56bb7a347b06f242ef615c19fdc298f83329e0"
+  },
+  "parentFrontier": "2026-10-27-derived-import-frontier-post-wave2.json",
+  "method": "Pinned GitHub source reads; literal import resolution against pinned complete source tree; static JSX/control candidates only, not behavioral parity",
+  "requested": 14,
+  "read": 14,
+  "errors": 0,
+  "nodes": [
+    {
+      "path": "src/pages/superadmin/sections/CollegeBranding.js",
+      "sourceSha": "ecbc840ac19d5060e1b52b8585d511ee88576d9d",
+      "frontierSha": "ecbc840ac19d5060e1b52b8585d511ee88576d9d",
+      "shaMatches": true,
+      "fromFrontierIndex": 112,
+      "sourceLineCount": 246,
+      "importedBy": [
+        "src/pages/superadmin/sections/ManageCollegeDrawer.js",
+        "src/pages/superadmin/sections/TenantsHub.js"
+      ],
+      "classification": "inspected-meaningful-ui-source",
+      "classificationScope": "source only; renderability and behavior unverified",
+      "imports": [
+        {
+          "line": 1,
+          "specifier": "react",
+          "kind": "static-or-require",
+          "resolution": null
+        },
+        {
+          "line": 2,
+          "specifier": "antd",
+          "kind": "static-or-require",
+          "resolution": null
+        },
+        {
+          "line": 3,
+          "specifier": "@ant-design/icons",
+          "kind": "static-or-require",
+          "resolution": null
+        },
+        {
+          "line": 4,
+          "specifier": "@/api/Services/AdminService",
+          "kind": "static-or-require",
+          "resolution": {
+            "path": "src/api/Services/AdminService.js",
+            "sha": "598533e1ce238bbcd917c6f6b6df0e83d8f316c6"
+          }
+        },
+        {
+          "line": 5,
+          "specifier": "@/api/Services/TenantAdminService",
+          "kind": "static-or-require",
+          "resolution": {
+            "path": "src/api/Services/TenantAdminService.js",
+            "sha": "d7084c6beb478d9bf9c8ae0b799a4d292ba1772f"
+          }
+        },
+        {
+          "line": 6,
+          "specifier": "@/components/Global/CroppedImageUpload/BrandingImageUpload",
+          "kind": "static-or-require",
+          "resolution": {
+            "path": "src/components/Global/CroppedImageUpload/BrandingImageUpload.js",
+            "sha": "432380d3efc7aecc029c6e4cbded70291bf1e9d9"
+          }
+        },
+        {
+          "line": 7,
+          "specifier": "@/components/admin/projects/useUnsavedFormGuard",
+          "kind": "static-or-require",
+          "resolution": {
+            "path": "src/components/admin/projects/useUnsavedFormGuard.js",
+            "sha": "2dff5a03fb4db6d8e65d277b268da306ddffdf79"
+          }
+        }
+      ],
+      "signals": [
+        {
+          "line": 121,
+          "type": "jsx",
+          "excerpt": "<Card title=\"Look and feel\" size=\"small\">"
+        },
+        {
+          "line": 135,
+          "type": "jsx",
+          "excerpt": "icon={<ReloadOutlined />}"
+        },
+        {
+          "line": 136,
+          "type": "interactive-prop",
+          "excerpt": "onClick={() => collegeId && loadBranding(collegeId)}"
+        },
+        {
+          "line": 151,
+          "type": "interactive-prop,jsx",
+          "excerpt": "action={<Button size=\"small\" onClick={() => collegeId && loadBranding(collegeId)}>Retry</Button>}"
+        },
+        {
+          "line": 155,
+          "type": "jsx",
+          "excerpt": "<div style={{ color: \"#595959\", fontSize: 13, marginBottom: 16 }}>"
+        },
+        {
+          "line": 162,
+          "type": "overlay-or-complex-control,jsx",
+          "excerpt": "<Form form={form} layout=\"vertical\" onFinish={save} onValuesChange={() => setDirty(true)}>"
+        },
+        {
+          "line": 163,
+          "type": "overlay-or-complex-control",
+          "excerpt": "<Form.Item"
+        },
+        {
+          "line": 168,
+          "type": "jsx",
+          "excerpt": "<BrandingImageUpload collegeId={collegeId} aspect={1} minWidth={200} minHeight={200} onStaleKey={handleStaleKey} />"
+        },
+        {
+          "line": 173,
+          "type": "jsx",
+          "excerpt": "<div style={{ marginBottom: 20 }}>"
+        },
+        {
+          "line": 174,
+          "type": "jsx",
+          "excerpt": "<div style={{ fontWeight: 600, marginBottom: 8 }}>Preview</div>"
+        },
+        {
+          "line": 178,
+          "type": "interactive-prop",
+          "excerpt": "onChange={setPreviewMode}"
+        },
+        {
+          "line": 216,
+          "type": "jsx",
+          "excerpt": "<div style={{ display: \"flex\", alignItems: \"center\", gap: 5, paddingBottom: 6, marginBottom: 7, borderBottom: \"1px solid #e7ecf2\" }}>"
+        },
+        {
+          "line": 224,
+          "type": "jsx",
+          "excerpt": "<div style={{ height: 6, width: 34, borderRadius: 2, background: \"#172033\", marginBottom: 8 }} />"
+        },
+        {
+          "line": 225,
+          "type": "jsx",
+          "excerpt": "<div style={{ height: 12, borderRadius: 3, border: \"1px solid #d6e1ee\", marginBottom: 6 }} />"
+        },
+        {
+          "line": 226,
+          "type": "jsx",
+          "excerpt": "<div style={{ height: 12, borderRadius: 3, background: accent }} />"
+        },
+        {
+          "line": 231,
+          "type": "jsx",
+          "excerpt": "<div style={{ fontSize: 12, color: \"#8c8c8c\", marginTop: 6 }}>"
+        },
+        {
+          "line": 236,
+          "type": "jsx",
+          "excerpt": "<Button type=\"primary\" htmlType=\"submit\" loading={loading} icon={<SaveOutlined />} disabled={!collegeId || Boolean(loadError) || fetching}>"
+        }
+      ],
+      "signalCount": 17,
+      "computedImportRequiresReview": false
+    },
+    {
+      "path": "src/pages/superadmin/sections/CollegeSignIn.js",
+      "sourceSha": "d26ef64fa72a77b9208f653c6ee590ce8bfaffc5",
+      "frontierSha": "d26ef64fa72a77b9208f653c6ee590ce8bfaffc5",
+      "shaMatches": true,
+      "fromFrontierIndex": 113,
+      "sourceLineCount": 158,
+      "importedBy": [
+        "src/pages/superadmin/sections/ManageCollegeDrawer.js",
+        "src/pages/superadmin/sections/TenantsHub.js"
+      ],
+      "classification": "inspected-meaningful-ui-source",
+      "classificationScope": "source only; renderability and behavior unverified",
+      "imports": [
+        {
+          "line": 1,
+          "specifier": "react",
+          "kind": "static-or-require",
+          "resolution": null
+        },
+        {
+          "line": 2,
+          "specifier": "antd",
+          "kind": "static-or-require",
+          "resolution": null
+        },
+        {
+          "line": 3,
+          "specifier": "@ant-design/icons",
+          "kind": "static-or-require",
+          "resolution": null
+        },
+        {
+          "line": 4,
+          "specifier": "@/api/Services/TenantAdminService",
+          "kind": "static-or-require",
+          "resolution": {
+            "path": "src/api/Services/TenantAdminService.js",
+            "sha": "d7084c6beb478d9bf9c8ae0b799a4d292ba1772f"
+          }
+        }
+      ],
+      "signals": [
+        {
+          "line": 46,
+          "type": "jsx",
+          "excerpt": "<div role=\"radiogroup\" aria-label=\"Sign-in methods\" style={{ display: \"grid\", gridTemplateColumns: \"repeat(auto-fit, minmax(190px, 1fr))\", gap: 10, maxWidth: 640 }}>"
+        },
+        {
+          "line": 55,
+          "type": "interactive-prop",
+          "excerpt": "onClick={() => onChange?.(option.value)}"
+        },
+        {
+          "line": 70,
+          "type": "jsx",
+          "excerpt": "<MethodSketch value={option.value} />"
+        },
+        {
+          "line": 136,
+          "type": "interactive-prop,jsx",
+          "excerpt": "extra={<Button icon={<ReloadOutlined />} size=\"small\" onClick={() => load(fixedCollegeId)}>Reload</Button>}"
+        },
+        {
+          "line": 139,
+          "type": "jsx",
+          "excerpt": "<Alert type=\"error\" showIcon message=\"Sign-in settings could not be loaded\" description={loadError} style={{ marginBottom: 16 }} />"
+        },
+        {
+          "line": 141,
+          "type": "jsx",
+          "excerpt": "<div style={{ color: \"#595959\", fontSize: 13, marginBottom: 16 }}>"
+        },
+        {
+          "line": 145,
+          "type": "overlay-or-complex-control,jsx",
+          "excerpt": "<Form form={form} layout=\"vertical\" onFinish={save} onValuesChange={() => setDirty(true)}>"
+        },
+        {
+          "line": 146,
+          "type": "overlay-or-complex-control,jsx",
+          "excerpt": "<Form.Item name=\"loginMethods\" label=\"Sign-in methods\">"
+        },
+        {
+          "line": 147,
+          "type": "jsx",
+          "excerpt": "<LoginMethodsPicker />"
+        },
+        {
+          "line": 149,
+          "type": "jsx",
+          "excerpt": "<Button type=\"primary\" htmlType=\"submit\" loading={saving} icon={<SaveOutlined />} disabled={Boolean(loadError) || fetching}>"
+        }
+      ],
+      "signalCount": 10,
+      "computedImportRequiresReview": false
+    },
+    {
+      "path": "src/pages/superadmin/sections/CollegeSubdomain.js",
+      "sourceSha": "185b9bedae35e979218bca1cbbdb141526cfe184",
+      "frontierSha": "185b9bedae35e979218bca1cbbdb141526cfe184",
+      "shaMatches": true,
+      "fromFrontierIndex": 114,
+      "sourceLineCount": 164,
+      "importedBy": [
+        "src/pages/superadmin/sections/ManageCollegeDrawer.js",
+        "src/pages/superadmin/sections/TenantsHub.js"
+      ],
+      "classification": "inspected-meaningful-ui-source",
+      "classificationScope": "source only; renderability and behavior unverified",
+      "imports": [
+        {
+          "line": 1,
+          "specifier": "react",
+          "kind": "static-or-require",
+          "resolution": null
+        },
+        {
+          "line": 2,
+          "specifier": "antd",
+          "kind": "static-or-require",
+          "resolution": null
+        },
+        {
+          "line": 3,
+          "specifier": "@ant-design/icons",
+          "kind": "static-or-require",
+          "resolution": null
+        },
+        {
+          "line": 4,
+          "specifier": "@/api/Services/TenantAdminService",
+          "kind": "static-or-require",
+          "resolution": {
+            "path": "src/api/Services/TenantAdminService.js",
+            "sha": "d7084c6beb478d9bf9c8ae0b799a4d292ba1772f"
+          }
+        }
+      ],
+      "signals": [
+        {
+          "line": 81,
+          "type": "overlay-or-complex-control",
+          "excerpt": "Modal.confirm({"
+        },
+        {
+          "line": 94,
+          "type": "overlay-or-complex-control",
+          "excerpt": "Modal.confirm({"
+        },
+        {
+          "line": 125,
+          "type": "interactive-prop,jsx",
+          "excerpt": "extra={<Button icon={<ReloadOutlined />} size=\"small\" onClick={load}>Reload</Button>}"
+        },
+        {
+          "line": 127,
+          "type": "jsx",
+          "excerpt": "{loadError ? <Alert type=\"error\" showIcon message=\"Couldn't load the web address\" description={loadError} style={{ marginBottom: 16 }} /> : null}"
+        },
+        {
+          "line": 128,
+          "type": "jsx",
+          "excerpt": "<div style={{ color: \"#595959\", fontSize: 13, marginBottom: 16 }}>"
+        },
+        {
+          "line": 133,
+          "type": "jsx",
+          "excerpt": "<div style={{ display: \"flex\", alignItems: \"center\", gap: 10, flexWrap: \"wrap\", padding: \"10px 12px\", marginBottom: 16, border: \"1px solid #b7e4c7\", borderRadius: 10, background: \""
+        },
+        {
+          "line": 134,
+          "type": "jsx",
+          "excerpt": "<CheckCircleFilled style={{ color: \"#1a7f37\", fontSize: 16 }} />"
+        },
+        {
+          "line": 135,
+          "type": "jsx",
+          "excerpt": "<Typography.Text strong>Live at</Typography.Text>"
+        },
+        {
+          "line": 136,
+          "type": "jsx",
+          "excerpt": "<a href={`https://${current}`} target=\"_blank\" rel=\"noopener noreferrer\"><LinkOutlined /> {current}</a>"
+        },
+        {
+          "line": 140,
+          "type": "jsx",
+          "excerpt": "<div style={{ display: \"flex\", gap: 8, flexWrap: \"wrap\", maxWidth: 560 }}>"
+        },
+        {
+          "line": 144,
+          "type": "interactive-prop",
+          "excerpt": "onChange={(e) => { setValue(e.target.value.toLowerCase().replace(/[^a-z0-9-]/g, \"\")); setFieldError(null); }}"
+        },
+        {
+          "line": 153,
+          "type": "interactive-prop,jsx",
+          "excerpt": "<Button type=\"primary\" onClick={allot} loading={saving} disabled={!value.trim() || !dirty || Boolean(loadError)}>"
+        },
+        {
+          "line": 156,
+          "type": "interactive-prop,jsx",
+          "excerpt": "{current ? <Button danger onClick={remove} disabled={saving}>Remove</Button> : null}"
+        },
+        {
+          "line": 158,
+          "type": "jsx",
+          "excerpt": "{fieldError ? <div role=\"alert\" style={{ marginTop: 6, fontSize: 13, color: \"#cf1322\" }}>{fieldError}</div> : null}"
+        }
+      ],
+      "signalCount": 14,
+      "computedImportRequiresReview": false
+    },
+    {
+      "path": "src/pages/superadmin/sections/StudentPlacementLookup.js",
+      "sourceSha": "8a389c8ebebde02930c10afac3f5a099f8c43978",
+      "frontierSha": "8a389c8ebebde02930c10afac3f5a099f8c43978",
+      "shaMatches": true,
+      "fromFrontierIndex": 115,
+      "sourceLineCount": 213,
+      "importedBy": [
+        "src/pages/superadmin/sections/DrivesLanding.js",
+        "src/pages/superadmin/sections/Jobs.js"
+      ],
+      "classification": "inspected-meaningful-ui-source",
+      "classificationScope": "source only; renderability and behavior unverified",
+      "imports": [
+        {
+          "line": 1,
+          "specifier": "react",
+          "kind": "static-or-require",
+          "resolution": null
+        },
+        {
+          "line": 2,
+          "specifier": "@/components/tpo/ui/labels",
+          "kind": "static-or-require",
+          "resolution": {
+            "path": "src/components/tpo/ui/labels.js",
+            "sha": "96a56474f1800afeb073cde3e3cca67a9c438747"
+          }
+        },
+        {
+          "line": 3,
+          "specifier": "antd",
+          "kind": "static-or-require",
+          "resolution": null
+        },
+        {
+          "line": 4,
+          "specifier": "@ant-design/icons",
+          "kind": "static-or-require",
+          "resolution": null
+        },
+        {
+          "line": 5,
+          "specifier": "@/api/Services/LearnerSearchService",
+          "kind": "static-or-require",
+          "resolution": {
+            "path": "src/api/Services/LearnerSearchService.js",
+            "sha": "82214d6954d34befa09f8b55c5588f6b4914d73a"
+          }
+        },
+        {
+          "line": 6,
+          "specifier": "@/api/Services/AdminService",
+          "kind": "static-or-require",
+          "resolution": {
+            "path": "src/api/Services/AdminService.js",
+            "sha": "598533e1ce238bbcd917c6f6b6df0e83d8f316c6"
+          }
+        },
+        {
+          "line": 7,
+          "specifier": "@/utils/dateUtils",
+          "kind": "static-or-require",
+          "resolution": {
+            "path": "src/utils/dateUtils.js",
+            "sha": "9b9a8f851534932211d660504ae368cec3c6d73e"
+          }
+        },
+        {
+          "line": 8,
+          "specifier": "@/components/admin/ProfileSectionsPanel",
+          "kind": "static-or-require",
+          "resolution": {
+            "path": "src/components/admin/ProfileSectionsPanel.js",
+            "sha": "9dc95fef85e2496431b57c0b5942bce1ba0484d0"
+          }
+        },
+        {
+          "line": 9,
+          "specifier": "@/components/Common/Skeletons",
+          "kind": "static-or-require",
+          "resolution": {
+            "path": "src/components/Common/Skeletons.jsx",
+            "sha": "19ff7bc7317232a96a7217df406eaa8082567704"
+          }
+        }
+      ],
+      "signals": [
+        {
+          "line": 124,
+          "type": "jsx",
+          "excerpt": "<div style={{ marginBottom: 20 }}>"
+        },
+        {
+          "line": 125,
+          "type": "jsx",
+          "excerpt": "<Text type=\"secondary\" style={{ fontSize: 12, display: \"block\", marginBottom: 6 }}>"
+        },
+        {
+          "line": 135,
+          "type": "jsx",
+          "excerpt": "<Spin size=\"small\" />"
+        },
+        {
+          "line": 137,
+          "type": "jsx",
+          "excerpt": "<Text type=\"danger\">{searchError}</Text>"
+        },
+        {
+          "line": 139,
+          "type": "jsx",
+          "excerpt": "<Text type=\"secondary\">No students match &ldquo;{lastQuery}&rdquo;</Text>"
+        },
+        {
+          "line": 143,
+          "type": "jsx",
+          "excerpt": "<Input.Search placeholder=\"Search a student by name or email\" allowClear />"
+        },
+        {
+          "line": 147,
+          "type": "jsx",
+          "excerpt": "<div style={{ marginTop: 16, padding: 16, background: \"#fafafa\", border: \"1px solid #f0f0f0\", borderRadius: 8 }}>"
+        },
+        {
+          "line": 148,
+          "type": "jsx",
+          "excerpt": "<Text strong>"
+        },
+        {
+          "line": 157,
+          "type": "jsx",
+          "excerpt": "<div style={{ marginTop: 12 }}>"
+        },
+        {
+          "line": 158,
+          "type": "jsx",
+          "excerpt": "<ProfileSectionsPanel role=\"learner\" id={selectedLearner.id} only={[\"resume\", \"skills\", \"jobPreferences\"]} />"
+        },
+        {
+          "line": 162,
+          "type": "jsx",
+          "excerpt": "<RefreshStatus label=\"Refreshing placement history…\" />"
+        },
+        {
+          "line": 170,
+          "type": "interactive-prop,jsx",
+          "excerpt": "action={<Button size=\"small\" onClick={handleRetrySummary}>Retry</Button>}"
+        },
+        {
+          "line": 175,
+          "type": "jsx",
+          "excerpt": "<ListSkeleton rows={4} avatar={false} label=\"Loading placement history\" />"
+        },
+        {
+          "line": 178,
+          "type": "jsx",
+          "excerpt": "<Empty style={{ marginTop: 12 }} description=\"No applications yet — this student hasn't applied to any job posting.\" />"
+        },
+        {
+          "line": 190,
+          "type": "jsx",
+          "excerpt": "<List.Item>"
+        },
+        {
+          "line": 191,
+          "type": "jsx",
+          "excerpt": "<Space direction=\"vertical\" size={2} style={{ width: \"100%\" }}>"
+        },
+        {
+          "line": 192,
+          "type": "jsx",
+          "excerpt": "<Space>"
+        },
+        {
+          "line": 193,
+          "type": "jsx",
+          "excerpt": "<Text strong>{job.jobTitle || \"Job\"}</Text>"
+        },
+        {
+          "line": 194,
+          "type": "jsx",
+          "excerpt": "<Text type=\"secondary\">{job.companyName}</Text>"
+        },
+        {
+          "line": 195,
+          "type": "jsx",
+          "excerpt": "<Tag color={STATUS_COLOR[status] || \"default\"}>{label(\"stage\", status)}</Tag>"
+        },
+        {
+          "line": 197,
+          "type": "jsx",
+          "excerpt": "<Text type=\"secondary\" style={{ fontSize: 12 }}>"
+        }
+      ],
+      "signalCount": 21,
+      "computedImportRequiresReview": false
+    },
+    {
+      "path": "src/pages/superadmin/sections/Colleges.js",
+      "sourceSha": "da028059cc7be617885bf0c5a0eaf538cac375f9",
+      "frontierSha": "da028059cc7be617885bf0c5a0eaf538cac375f9",
+      "shaMatches": true,
+      "fromFrontierIndex": 176,
+      "sourceLineCount": 761,
+      "importedBy": [
+        "src/pages/superadmin/sections/TenantsHub.js"
+      ],
+      "classification": "inspected-meaningful-ui-source",
+      "classificationScope": "source only; renderability and behavior unverified",
+      "imports": [
+        {
+          "line": 1,
+          "specifier": "react",
+          "kind": "static-or-require",
+          "resolution": null
+        },
+        {
+          "line": 2,
+          "specifier": "antd",
+          "kind": "static-or-require",
+          "resolution": null
+        },
+        {
+          "line": 3,
+          "specifier": "@ant-design/icons",
+          "kind": "static-or-require",
+          "resolution": null
+        },
+        {
+          "line": 4,
+          "specifier": "./ManageCollegeDrawer",
+          "kind": "static-or-require",
+          "resolution": {
+            "path": "src/pages/superadmin/sections/ManageCollegeDrawer.js",
+            "sha": "2e61cb17d2ebc8f9ae768474671423d1af7e0f4c"
+          }
+        },
+        {
+          "line": 5,
+          "specifier": "@/components/admin/HelpHint",
+          "kind": "static-or-require",
+          "resolution": {
+            "path": "src/components/admin/HelpHint.js",
+            "sha": "6e218f2c0be59f21858f8e2ad8d71fd36deaaa83"
+          }
+        },
+        {
+          "line": 6,
+          "specifier": "@/components/admin/projects/useUnsavedFormGuard",
+          "kind": "static-or-require",
+          "resolution": {
+            "path": "src/components/admin/projects/useUnsavedFormGuard.js",
+            "sha": "2dff5a03fb4db6d8e65d277b268da306ddffdf79"
+          }
+        },
+        {
+          "line": 7,
+          "specifier": "@/utils/bulkCsvParse",
+          "kind": "static-or-require",
+          "resolution": {
+            "path": "src/utils/bulkCsvParse.js",
+            "sha": "9f7323d327dc575874826e1745aecdac85445ce3"
+          }
+        },
+        {
+          "line": 620,
+          "specifier": " type=",
+          "kind": "static-or-require",
+          "resolution": null
+        }
+      ],
+      "signals": [
+        {
+          "line": 349,
+          "type": "overlay-or-complex-control",
+          "excerpt": "Modal.confirm({"
+        },
+        {
+          "line": 371,
+          "type": "overlay-or-complex-control",
+          "excerpt": "Modal.confirm({"
+        },
+        {
+          "line": 406,
+          "type": "jsx",
+          "excerpt": "<Space size=\"small\">"
+        },
+        {
+          "line": 409,
+          "type": "interactive-prop",
+          "excerpt": "onClick={() => {"
+        },
+        {
+          "line": 422,
+          "type": "jsx",
+          "excerpt": "icon={<EditOutlined />}"
+        },
+        {
+          "line": 423,
+          "type": "interactive-prop",
+          "excerpt": "onClick={() => handleEdit(record)}"
+        },
+        {
+          "line": 428,
+          "type": "overlay-or-complex-control",
+          "excerpt": "<Popconfirm"
+        },
+        {
+          "line": 441,
+          "type": "jsx",
+          "excerpt": "icon={<DeleteOutlined />}"
+        },
+        {
+          "line": 455,
+          "type": "jsx",
+          "excerpt": "<Row gutter={24}>"
+        },
+        {
+          "line": 456,
+          "type": "jsx",
+          "excerpt": "<Col xs={24} lg={10}>"
+        },
+        {
+          "line": 457,
+          "type": "jsx",
+          "excerpt": "<Card title=\"Create New College\" size=\"small\">"
+        },
+        {
+          "line": 458,
+          "type": "overlay-or-complex-control,jsx",
+          "excerpt": "<Form form={form} layout=\"vertical\" onFinish={handleSubmit}>"
+        },
+        {
+          "line": 459,
+          "type": "overlay-or-complex-control",
+          "excerpt": "<Form.Item"
+        },
+        {
+          "line": 464,
+          "type": "overlay-or-complex-control,jsx",
+          "excerpt": "<Select placeholder={organizationsError ? \"Organizations unavailable — Retry above\" : \"Select organization\"} disabled={Boolean(organizationsError) || readOnly}>"
+        },
+        {
+          "line": 466,
+          "type": "jsx",
+          "excerpt": "<Option key={org.id} value={org.id}>"
+        },
+        {
+          "line": 473,
+          "type": "overlay-or-complex-control",
+          "excerpt": "<Form.Item"
+        },
+        {
+          "line": 478,
+          "type": "jsx",
+          "excerpt": "<Input placeholder=\"e.g., Engineering College\" />"
+        },
+        {
+          "line": 481,
+          "type": "overlay-or-complex-control",
+          "excerpt": "<Form.Item"
+        },
+        {
+          "line": 486,
+          "type": "jsx",
+          "excerpt": "<HelpHint title=\"Unique ID / Code\">"
+        },
+        {
+          "line": 497,
+          "type": "jsx",
+          "excerpt": "<Input placeholder=\"e.g., nsrit or eng-college\" />"
+        },
+        {
+          "line": 505,
+          "type": "jsx",
+          "excerpt": "<Collapse ghost style={{ marginBottom: 16 }} items={[{"
+        },
+        {
+          "line": 510,
+          "type": "jsx",
+          "excerpt": "<Row gutter={12}>"
+        },
+        {
+          "line": 511,
+          "type": "jsx",
+          "excerpt": "<Col span={12}>"
+        },
+        {
+          "line": 512,
+          "type": "overlay-or-complex-control,jsx",
+          "excerpt": "<Form.Item name=\"city\" label=\"City\">"
+        },
+        {
+          "line": 513,
+          "type": "jsx",
+          "excerpt": "<Input placeholder=\"City\" />"
+        },
+        {
+          "line": 516,
+          "type": "jsx",
+          "excerpt": "<Col span={12}>"
+        },
+        {
+          "line": 517,
+          "type": "overlay-or-complex-control,jsx",
+          "excerpt": "<Form.Item name=\"state\" label=\"State\">"
+        },
+        {
+          "line": 518,
+          "type": "jsx",
+          "excerpt": "<Input placeholder=\"State\" />"
+        },
+        {
+          "line": 523,
+          "type": "overlay-or-complex-control,jsx",
+          "excerpt": "<Form.Item name=\"addressLine1\" label=\"Address\">"
+        },
+        {
+          "line": 524,
+          "type": "jsx",
+          "excerpt": "<Input.TextArea rows={2} placeholder=\"Full address\" />"
+        },
+        {
+          "line": 527,
+          "type": "jsx",
+          "excerpt": "<Row gutter={12}>"
+        },
+        {
+          "line": 528,
+          "type": "jsx",
+          "excerpt": "<Col span={12}>"
+        },
+        {
+          "line": 529,
+          "type": "overlay-or-complex-control,jsx",
+          "excerpt": "<Form.Item name=\"pinCode\" label=\"Pin Code\">"
+        },
+        {
+          "line": 530,
+          "type": "jsx",
+          "excerpt": "<Input placeholder=\"Pin Code\" />"
+        },
+        {
+          "line": 533,
+          "type": "jsx",
+          "excerpt": "<Col span={12}>"
+        },
+        {
+          "line": 534,
+          "type": "overlay-or-complex-control,jsx",
+          "excerpt": "<Form.Item name=\"country\" label=\"Country\" initialValue=\"India\">"
+        },
+        {
+          "line": 535,
+          "type": "jsx",
+          "excerpt": "<Input placeholder=\"Country\" />"
+        },
+        {
+          "line": 542,
+          "type": "overlay-or-complex-control,jsx",
+          "excerpt": "<Form.Item>"
+        },
+        {
+          "line": 543,
+          "type": "jsx",
+          "excerpt": "<Button type=\"primary\" htmlType=\"submit\" loading={loading} icon={<PlusOutlined />} disabled={readOnly || Boolean(organizationsError) || actionBusy != null}>"
+        },
+        {
+          "line": 551,
+          "type": "jsx",
+          "excerpt": "<Col xs={24} lg={14}>"
+        },
+        {
+          "line": 556,
+          "type": "jsx",
+          "excerpt": "<Space wrap>"
+        },
+        {
+          "line": 563,
+          "type": "interactive-prop",
+          "excerpt": "onChange={(event) => setSearch(event.target.value)}"
+        },
+        {
+          "line": 567,
+          "type": "jsx",
+          "excerpt": "icon={<UploadOutlined />}"
+        },
+        {
+          "line": 568,
+          "type": "interactive-prop",
+          "excerpt": "onClick={() => {"
+        },
+        {
+          "line": 578,
+          "type": "interactive-prop,jsx",
+          "excerpt": "<Button icon={<ReloadOutlined />} onClick={fetchData} size=\"small\" loading={tableLoading}>"
+        },
+        {
+          "line": 584,
+          "type": "jsx",
+          "excerpt": "{loadError && <Alert type={data.length ? \"warning\" : \"error\"} showIcon"
+        },
+        {
+          "line": 587,
+          "type": "interactive-prop,jsx",
+          "excerpt": "action={<Button size=\"small\" onClick={fetchData}>Retry</Button>} style={{ marginBottom: 12 }} />}"
+        },
+        {
+          "line": 588,
+          "type": "jsx",
+          "excerpt": "{organizationsError && <Alert type=\"error\" showIcon message=\"Organizations could not be loaded\""
+        },
+        {
+          "line": 590,
+          "type": "interactive-prop,jsx",
+          "excerpt": "action={<Button size=\"small\" onClick={fetchOrganizations}>Retry organizations</Button>} style={{ marginBottom: 12 }} />}"
+        },
+        {
+          "line": 591,
+          "type": "jsx",
+          "excerpt": "<div style={{ marginBottom: 10 }}>"
+        },
+        {
+          "line": 592,
+          "type": "jsx",
+          "excerpt": "<Tag>{search.trim() ? `${filteredData.length} of ${data.length} colleges` : `${data.length} colleges`}</Tag>"
+        },
+        {
+          "line": 593,
+          "type": "interactive-prop,jsx",
+          "excerpt": "{search.trim() ? <Button type=\"link\" size=\"small\" onClick={() => setSearch(\"\")}>Clear search</Button> : null}"
+        },
+        {
+          "line": 595,
+          "type": "overlay-or-complex-control",
+          "excerpt": "<Table"
+        },
+        {
+          "line": 611,
+          "type": "overlay-or-complex-control",
+          "excerpt": "<Modal"
+        },
+        {
+          "line": 614,
+          "type": "interactive-prop",
+          "excerpt": "onCancel={requestBulkClose}"
+        },
+        {
+          "line": 617,
+          "type": "interactive-prop,jsx",
+          "excerpt": "<Button key=\"close\" onClick={requestBulkClose} disabled={bulkLoading}>"
+        },
+        {
+          "line": 620,
+          "type": "interactive-prop,jsx",
+          "excerpt": "<Button key=\"import\" type=\"primary\" loading={bulkLoading} disabled={!bulkText.trim() || (actionBusy != null && actionBusy !== \"bulk\")} onClick={handleBulkImport}>"
+        },
+        {
+          "line": 625,
+          "type": "jsx",
+          "excerpt": "<div style={{ fontSize: 12, color: \"#666\", marginBottom: 8 }}>"
+        },
+        {
+          "line": 633,
+          "type": "interactive-prop",
+          "excerpt": "onChange={(e) => {"
+        },
+        {
+          "line": 641,
+          "type": "jsx",
+          "excerpt": "<Alert type=\"error\" showIcon message=\"CSV needs attention\" description={bulkParseError} style={{ marginTop: 12 }} />"
+        },
+        {
+          "line": 644,
+          "type": "jsx",
+          "excerpt": "<div style={{ marginTop: 16 }}>"
+        },
+        {
+          "line": 645,
+          "type": "overlay-or-complex-control",
+          "excerpt": "<Table"
+        },
+        {
+          "line": 659,
+          "type": "jsx",
+          "excerpt": "<Tag color=\"green\">Created</Tag>"
+        },
+        {
+          "line": 661,
+          "type": "jsx",
+          "excerpt": "<Tag color=\"red\" title={r.message}>"
+        },
+        {
+          "line": 675,
+          "type": "interactive-prop",
+          "excerpt": "onClose={() => {"
+        },
+        {
+          "line": 683,
+          "type": "overlay-or-complex-control",
+          "excerpt": "<Modal"
+        },
+        {
+          "line": 686,
+          "type": "interactive-prop",
+          "excerpt": "onOk={handleEditSubmit}"
+        },
+        {
+          "line": 687,
+          "type": "interactive-prop",
+          "excerpt": "onCancel={handleEditCancel}"
+        },
+        {
+          "line": 694,
+          "type": "overlay-or-complex-control,jsx",
+          "excerpt": "<Form form={editForm} layout=\"vertical\">"
+        },
+        {
+          "line": 695,
+          "type": "overlay-or-complex-control",
+          "excerpt": "<Form.Item"
+        },
+        {
+          "line": 700,
+          "type": "overlay-or-complex-control,jsx",
+          "excerpt": "<Select placeholder={organizationsError ? \"Organizations unavailable — Retry above\" : \"Select organization\"} disabled={Boolean(organizationsError) || readOnly}>"
+        },
+        {
+          "line": 702,
+          "type": "jsx",
+          "excerpt": "<Option key={org.id} value={org.id}>"
+        },
+        {
+          "line": 709,
+          "type": "overlay-or-complex-control",
+          "excerpt": "<Form.Item"
+        },
+        {
+          "line": 714,
+          "type": "jsx",
+          "excerpt": "<Input placeholder=\"e.g., Engineering College\" />"
+        },
+        {
+          "line": 717,
+          "type": "overlay-or-complex-control",
+          "excerpt": "<Form.Item"
+        },
+        {
+          "line": 722,
+          "type": "jsx",
+          "excerpt": "<Input placeholder=\"e.g., ENG001\" />"
+        },
+        {
+          "line": 725,
+          "type": "jsx",
+          "excerpt": "<Row gutter={12}>"
+        },
+        {
+          "line": 726,
+          "type": "jsx",
+          "excerpt": "<Col span={12}>"
+        },
+        {
+          "line": 727,
+          "type": "overlay-or-complex-control,jsx",
+          "excerpt": "<Form.Item name=\"city\" label=\"City\">"
+        },
+        {
+          "line": 728,
+          "type": "jsx",
+          "excerpt": "<Input placeholder=\"City\" />"
+        },
+        {
+          "line": 731,
+          "type": "jsx",
+          "excerpt": "<Col span={12}>"
+        },
+        {
+          "line": 732,
+          "type": "overlay-or-complex-control,jsx",
+          "excerpt": "<Form.Item name=\"state\" label=\"State\">"
+        },
+        {
+          "line": 733,
+          "type": "jsx",
+          "excerpt": "<Input placeholder=\"State\" />"
+        },
+        {
+          "line": 738,
+          "type": "overlay-or-complex-control,jsx",
+          "excerpt": "<Form.Item name=\"addressLine1\" label=\"Address\">"
+        },
+        {
+          "line": 739,
+          "type": "jsx",
+          "excerpt": "<Input.TextArea rows={2} placeholder=\"Full address\" />"
+        },
+        {
+          "line": 742,
+          "type": "jsx",
+          "excerpt": "<Row gutter={12}>"
+        },
+        {
+          "line": 743,
+          "type": "jsx",
+          "excerpt": "<Col span={12}>"
+        },
+        {
+          "line": 744,
+          "type": "overlay-or-complex-control,jsx",
+          "excerpt": "<Form.Item name=\"pinCode\" label=\"Pin Code\">"
+        },
+        {
+          "line": 745,
+          "type": "jsx",
+          "excerpt": "<Input placeholder=\"Pin Code\" />"
+        },
+        {
+          "line": 748,
+          "type": "jsx",
+          "excerpt": "<Col span={12}>"
+        }
+      ],
+      "signalCount": 92,
+      "computedImportRequiresReview": false
+    },
+    {
+      "path": "src/pages/superadmin/sections/CompanyCuration.js",
+      "sourceSha": "66bb37fe8633bdd8193e70937df588aab8f07ea0",
+      "frontierSha": "66bb37fe8633bdd8193e70937df588aab8f07ea0",
+      "shaMatches": true,
+      "fromFrontierIndex": 177,
+      "sourceLineCount": 177,
+      "importedBy": [
+        "src/pages/superadmin/companies/index.js"
+      ],
+      "classification": "inspected-meaningful-ui-source",
+      "classificationScope": "source only; renderability and behavior unverified",
+      "imports": [
+        {
+          "line": 1,
+          "specifier": "react",
+          "kind": "static-or-require",
+          "resolution": null
+        },
+        {
+          "line": 2,
+          "specifier": "antd",
+          "kind": "static-or-require",
+          "resolution": null
+        },
+        {
+          "line": 3,
+          "specifier": "@/components/tpo/ui/AsyncModal",
+          "kind": "static-or-require",
+          "resolution": {
+            "path": "src/components/tpo/ui/AsyncModal.jsx",
+            "sha": "d90b051895c54e27a6e7ec18215a97921b9499d2"
+          }
+        },
+        {
+          "line": 4,
+          "specifier": "@/components/tpo/ui/useDebouncedValue",
+          "kind": "static-or-require",
+          "resolution": {
+            "path": "src/components/tpo/ui/useDebouncedValue.js",
+            "sha": "289cf207badae64a1bb7dc7c761798bad584804c"
+          }
+        }
+      ],
+      "signals": [
+        {
+          "line": 61,
+          "type": "jsx",
+          "excerpt": "<Space direction=\"vertical\" size={0}>"
+        },
+        {
+          "line": 62,
+          "type": "jsx",
+          "excerpt": "<Space size={6}><Typography.Text strong>{c.name}</Typography.Text>{c.verifiedBy42 ? <Tag color=\"blue\">Verified by 42</Tag> : <Tag>Not verified</Tag>}</Space>"
+        },
+        {
+          "line": 63,
+          "type": "jsx",
+          "excerpt": "{c.website && <Typography.Text type=\"secondary\">{c.website}</Typography.Text>}"
+        },
+        {
+          "line": 64,
+          "type": "jsx",
+          "excerpt": "{c.aliases?.length > 0 && <Typography.Text type=\"secondary\">Also known as {c.aliases.join(\", \")}</Typography.Text>}"
+        },
+        {
+          "line": 66,
+          "type": "jsx",
+          "excerpt": "{ title: \"Domains\", key: \"domains\", render: (_, c) => (c.domains?.length ? c.domains.join(\", \") : <Typography.Text type=\"secondary\">None</Typography.Text>) },"
+        },
+        {
+          "line": 71,
+          "type": "jsx",
+          "excerpt": "<Space wrap>"
+        },
+        {
+          "line": 72,
+          "type": "jsx",
+          "excerpt": "<Button size=\"small\" type={c.verifiedBy42 ? \"default\" : \"primary\"}"
+        },
+        {
+          "line": 73,
+          "type": "interactive-prop",
+          "excerpt": "onClick={() => act(setCompanyVerified(c.id, !c.verifiedBy42), c.verifiedBy42 ? \"Removed from 42's list\" : \"Verified by 42\")}>"
+        },
+        {
+          "line": 76,
+          "type": "interactive-prop,jsx",
+          "excerpt": "<Button size=\"small\" onClick={() => { editForm.setFieldsValue({ name: c.name, website: c.website, industry: c.industry, logoUrl: c.logoUrl, description: c.description }); setEditin"
+        },
+        {
+          "line": 77,
+          "type": "interactive-prop,jsx",
+          "excerpt": "<Button size=\"small\" onClick={() => { setNewDomain(\"\"); setDomainsFor(c); }}>Domains</Button>"
+        },
+        {
+          "line": 78,
+          "type": "interactive-prop,jsx",
+          "excerpt": "<Button size=\"small\" onClick={() => { setNewAlias(\"\"); setAliasesFor(c); }}>Other names</Button>"
+        },
+        {
+          "line": 79,
+          "type": "interactive-prop,jsx",
+          "excerpt": "<Button size=\"small\" onClick={() => { setMergeInto(null); setMerging(c); }}>Merge</Button>"
+        },
+        {
+          "line": 84,
+          "type": "jsx",
+          "excerpt": "<Space direction=\"vertical\" style={{ width: \"100%\" }} size=\"middle\">"
+        },
+        {
+          "line": 85,
+          "type": "jsx",
+          "excerpt": "<Typography.Paragraph type=\"secondary\" style={{ marginBottom: 0 }}>"
+        },
+        {
+          "line": 89,
+          "type": "jsx",
+          "excerpt": "<Space wrap>"
+        },
+        {
+          "line": 90,
+          "type": "interactive-prop,jsx",
+          "excerpt": "<Input.Search allowClear placeholder=\"Search a name, other name or domain\" value={q} onChange={(e) => setQ(e.target.value)} style={{ width: 300 }} />"
+        },
+        {
+          "line": 91,
+          "type": "interactive-prop,jsx",
+          "excerpt": "<Checkbox checked={onlyUnverified} onChange={(e) => setOnlyUnverified(e.target.checked)}>Only not verified</Checkbox>"
+        },
+        {
+          "line": 93,
+          "type": "interactive-prop,jsx",
+          "excerpt": "{error && <Alert type=\"error\" showIcon message={error} action={<Button size=\"small\" onClick={load}>Retry</Button>} />}"
+        },
+        {
+          "line": 94,
+          "type": "overlay-or-complex-control,jsx",
+          "excerpt": "<Table rowKey=\"id\" loading={loading} dataSource={data.items} columns={columns} scroll={{ x: 1060 }}"
+        },
+        {
+          "line": 97,
+          "type": "interactive-prop,jsx",
+          "excerpt": "<AsyncModal open={Boolean(editing)} title={editing ? `Edit ${editing.name}` : \"\"} okText=\"Save\" destroyOnClose onCancel={() => setEditing(null)}"
+        },
+        {
+          "line": 98,
+          "type": "interactive-prop",
+          "excerpt": "onOk={async () => {"
+        },
+        {
+          "line": 102,
+          "type": "overlay-or-complex-control,jsx",
+          "excerpt": "<Form form={editForm} layout=\"vertical\">"
+        },
+        {
+          "line": 103,
+          "type": "overlay-or-complex-control,jsx",
+          "excerpt": "<Form.Item name=\"name\" label=\"Name\" rules={[{ required: true, min: 2, max: 150 }]}><Input /></Form.Item>"
+        },
+        {
+          "line": 104,
+          "type": "overlay-or-complex-control,jsx",
+          "excerpt": "<Form.Item name=\"website\" label=\"Website\"><Input placeholder=\"https://\" /></Form.Item>"
+        },
+        {
+          "line": 105,
+          "type": "overlay-or-complex-control,jsx",
+          "excerpt": "<Form.Item name=\"logoUrl\" label=\"Logo link\"><Input placeholder=\"https://\" /></Form.Item>"
+        },
+        {
+          "line": 106,
+          "type": "overlay-or-complex-control,jsx",
+          "excerpt": "<Form.Item name=\"industry\" label=\"Industry\"><Input /></Form.Item>"
+        },
+        {
+          "line": 107,
+          "type": "overlay-or-complex-control,jsx",
+          "excerpt": "<Form.Item name=\"description\" label=\"About\"><Input.TextArea rows={3} /></Form.Item>"
+        },
+        {
+          "line": 111,
+          "type": "overlay-or-complex-control,interactive-prop,jsx",
+          "excerpt": "<Modal open={Boolean(domainsFor)} title={domainsFor ? `Domains of ${domainsFor.name}` : \"\"} footer={null} onCancel={() => setDomainsFor(null)} destroyOnClose>"
+        },
+        {
+          "line": 113,
+          "type": "jsx",
+          "excerpt": "<Space direction=\"vertical\" style={{ width: \"100%\" }}>"
+        },
+        {
+          "line": 114,
+          "type": "jsx",
+          "excerpt": "<Space wrap>"
+        },
+        {
+          "line": 116,
+          "type": "interactive-prop,jsx",
+          "excerpt": "<Tag key={d} closable={(domainsFor.domains || []).length > 1} onClose={async (e) => {"
+        },
+        {
+          "line": 123,
+          "type": "jsx",
+          "excerpt": "<Space.Compact style={{ width: \"100%\" }}>"
+        },
+        {
+          "line": 124,
+          "type": "interactive-prop,jsx",
+          "excerpt": "<Input placeholder=\"company.com or name@company.com\" value={newDomain} onChange={(e) => setNewDomain(e.target.value)} aria-label=\"New domain\" />"
+        },
+        {
+          "line": 125,
+          "type": "interactive-prop,jsx",
+          "excerpt": "<Button type=\"primary\" disabled={!newDomain.trim()} onClick={async () => {"
+        },
+        {
+          "line": 130,
+          "type": "jsx",
+          "excerpt": "<Typography.Text type=\"secondary\">A domain belongs to one company. Personal and college email domains are refused.</Typography.Text>"
+        },
+        {
+          "line": 135,
+          "type": "overlay-or-complex-control,interactive-prop,jsx",
+          "excerpt": "<Modal open={Boolean(aliasesFor)} title={aliasesFor ? `Other names of ${aliasesFor.name}` : \"\"} footer={null} onCancel={() => setAliasesFor(null)} destroyOnClose>"
+        },
+        {
+          "line": 137,
+          "type": "jsx",
+          "excerpt": "<Space direction=\"vertical\" style={{ width: \"100%\" }}>"
+        },
+        {
+          "line": 138,
+          "type": "jsx",
+          "excerpt": "<Space wrap data-testid=\"company-aliases\">"
+        },
+        {
+          "line": 139,
+          "type": "jsx",
+          "excerpt": "{(aliasesFor.aliases || []).length === 0 && <Typography.Text type=\"secondary\">None yet</Typography.Text>}"
+        },
+        {
+          "line": 141,
+          "type": "interactive-prop,jsx",
+          "excerpt": "<Tag key={a} closable onClose={async (e) => {"
+        },
+        {
+          "line": 148,
+          "type": "jsx",
+          "excerpt": "<Space.Compact style={{ width: \"100%\" }}>"
+        },
+        {
+          "line": 149,
+          "type": "interactive-prop,jsx",
+          "excerpt": "<Input placeholder=\"TCS, L&T, an old or longer name\" value={newAlias} maxLength={150} onChange={(e) => setNewAlias(e.target.value)} aria-label=\"Other name\""
+        },
+        {
+          "line": 151,
+          "type": "interactive-prop,jsx",
+          "excerpt": "<Button type=\"primary\" disabled={newAlias.trim().length < 2} onClick={addAlias}>Add</Button>"
+        },
+        {
+          "line": 153,
+          "type": "jsx",
+          "excerpt": "<Typography.Text type=\"secondary\">"
+        },
+        {
+          "line": 161,
+          "type": "jsx",
+          "excerpt": "<AsyncModal open={Boolean(merging)} title={merging ? `Merge ${merging.name} into…` : \"\"} okText=\"Merge\" okButtonProps={{ danger: true, disabled: !mergeInto }}"
+        },
+        {
+          "line": 162,
+          "type": "interactive-prop",
+          "excerpt": "destroyOnClose onCancel={() => setMerging(null)}"
+        },
+        {
+          "line": 163,
+          "type": "interactive-prop",
+          "excerpt": "onOk={async () => { if (await act(mergeCompany(merging.id, mergeInto), \"Merged\")) setMerging(null); }}>"
+        },
+        {
+          "line": 165,
+          "type": "jsx",
+          "excerpt": "<Space direction=\"vertical\" style={{ width: \"100%\" }}>"
+        },
+        {
+          "line": 166,
+          "type": "jsx",
+          "excerpt": "<Typography.Paragraph>"
+        },
+        {
+          "line": 169,
+          "type": "overlay-or-complex-control,interactive-prop,jsx",
+          "excerpt": "<Select showSearch style={{ width: \"100%\" }} placeholder=\"The company to keep\" value={mergeInto} onChange={setMergeInto} optionFilterProp=\"label\""
+        }
+      ],
+      "signalCount": 50,
+      "computedImportRequiresReview": false
+    },
+    {
+      "path": "src/pages/superadmin/sections/Dashboard.js",
+      "sourceSha": "1c71dd447a9f859899a5ffc3b1169ef8729dc4c6",
+      "frontierSha": "1c71dd447a9f859899a5ffc3b1169ef8729dc4c6",
+      "shaMatches": true,
+      "fromFrontierIndex": 178,
+      "sourceLineCount": 100,
+      "importedBy": [
+        "src/pages/superadmin/dashboard.js"
+      ],
+      "classification": "inspected-meaningful-ui-source",
+      "classificationScope": "source only; renderability and behavior unverified",
+      "imports": [
+        {
+          "line": 1,
+          "specifier": "next/link",
+          "kind": "static-or-require",
+          "resolution": null
+        },
+        {
+          "line": 2,
+          "specifier": "antd",
+          "kind": "static-or-require",
+          "resolution": null
+        },
+        {
+          "line": 11,
+          "specifier": "@/components/admin/dashboard/AtAGlance",
+          "kind": "static-or-require",
+          "resolution": {
+            "path": "src/components/admin/dashboard/AtAGlance.js",
+            "sha": "d5e069c1be3f08bbbd31c2bb93b2b252c842f68a"
+          }
+        },
+        {
+          "line": 12,
+          "specifier": "@/components/admin/dashboard/AttentionBoard",
+          "kind": "static-or-require",
+          "resolution": {
+            "path": "src/components/admin/dashboard/AttentionBoard.js",
+            "sha": "bbe081e560eabd227787916b5fb011b8c160231c"
+          }
+        },
+        {
+          "line": 13,
+          "specifier": "@/components/admin/dashboard/QuickActionsGrid",
+          "kind": "static-or-require",
+          "resolution": {
+            "path": "src/components/admin/dashboard/QuickActionsGrid.js",
+            "sha": "54cc6d71978e072f52356b6302c1a37f0de0e8ce"
+          }
+        },
+        {
+          "line": 14,
+          "specifier": "@/components/admin/dashboard/config",
+          "kind": "static-or-require",
+          "resolution": {
+            "path": "src/components/admin/dashboard/config.js",
+            "sha": "1830967b17d9e0b0ff0e9610060cc94636ebab2f"
+          }
+        }
+      ],
+      "signals": [
+        {
+          "line": 23,
+          "type": "jsx",
+          "excerpt": "icon: <GlobalOutlined />,"
+        },
+        {
+          "line": 29,
+          "type": "jsx",
+          "excerpt": "icon: <ControlOutlined />,"
+        },
+        {
+          "line": 35,
+          "type": "jsx",
+          "excerpt": "icon: <AuditOutlined />,"
+        },
+        {
+          "line": 41,
+          "type": "jsx",
+          "excerpt": "icon: <TeamOutlined />,"
+        },
+        {
+          "line": 48,
+          "type": "jsx",
+          "excerpt": "<div className=\"admin-dashboard-page admin-dashboard-platform\">"
+        },
+        {
+          "line": 49,
+          "type": "jsx",
+          "excerpt": "<section className=\"admin-dashboard-platform__hero\">"
+        },
+        {
+          "line": 50,
+          "type": "jsx",
+          "excerpt": "<Text className=\"admin-dashboard-platform__eyebrow\">Platform operations</Text>"
+        },
+        {
+          "line": 52,
+          "type": "jsx",
+          "excerpt": "<Paragraph type=\"secondary\" className=\"admin-dashboard-platform__description\">"
+        },
+        {
+          "line": 57,
+          "type": "jsx",
+          "excerpt": "<Row gutter={[16, 16]} className=\"admin-dashboard-platform__grid\">"
+        },
+        {
+          "line": 59,
+          "type": "jsx",
+          "excerpt": "<Col xs={24} sm={12} key={link.path}>"
+        },
+        {
+          "line": 60,
+          "type": "jsx",
+          "excerpt": "<Link href={link.path}>"
+        },
+        {
+          "line": 61,
+          "type": "jsx",
+          "excerpt": "<Card hoverable className=\"admin-dashboard-platform__card\">"
+        },
+        {
+          "line": 62,
+          "type": "jsx",
+          "excerpt": "<div className=\"admin-dashboard-platform__card-icon\" aria-hidden=\"true\">{link.icon}</div>"
+        },
+        {
+          "line": 63,
+          "type": "jsx",
+          "excerpt": "<div className=\"admin-dashboard-platform__card-copy\">"
+        },
+        {
+          "line": 64,
+          "type": "jsx",
+          "excerpt": "<div className=\"admin-dashboard-platform__card-title\">{link.label}</div>"
+        },
+        {
+          "line": 65,
+          "type": "jsx",
+          "excerpt": "<Paragraph type=\"secondary\">{link.description}</Paragraph>"
+        },
+        {
+          "line": 67,
+          "type": "jsx",
+          "excerpt": "<RightOutlined className=\"admin-dashboard-platform__card-arrow\" aria-hidden=\"true\" />"
+        },
+        {
+          "line": 74,
+          "type": "jsx",
+          "excerpt": "<div className=\"admin-dashboard-platform__scope-tip\">"
+        },
+        {
+          "line": 75,
+          "type": "jsx",
+          "excerpt": "<ApartmentOutlined aria-hidden=\"true\" />"
+        },
+        {
+          "line": 83,
+          "type": "jsx",
+          "excerpt": "<div className=\"admin-dashboard-page\">"
+        },
+        {
+          "line": 84,
+          "type": "jsx",
+          "excerpt": "<div className=\"admin-dash-hello\">"
+        },
+        {
+          "line": 85,
+          "type": "jsx",
+          "excerpt": "<div className=\"admin-dash-hello__college\">Selected college operations</div>"
+        },
+        {
+          "line": 86,
+          "type": "jsx",
+          "excerpt": "<div className=\"admin-dash-hello__date\">Super Admin scoped view</div>"
+        },
+        {
+          "line": 88,
+          "type": "jsx",
+          "excerpt": "<AtAGlance collegeId={collegeId} />"
+        },
+        {
+          "line": 89,
+          "type": "jsx",
+          "excerpt": "<AttentionBoard collegeId={collegeId} basePath=\"/superadmin\" />"
+        },
+        {
+          "line": 90,
+          "type": "jsx",
+          "excerpt": "<QuickActionsGrid actions={quickActionsCollegeScoped} onNavigate={onNavigate} />"
+        },
+        {
+          "line": 91,
+          "type": "jsx",
+          "excerpt": "<Space wrap>"
+        },
+        {
+          "line": 92,
+          "type": "jsx",
+          "excerpt": "<Link href=\"/superadmin/tenants\"><Button>Back to tenant setup</Button></Link>"
+        },
+        {
+          "line": 93,
+          "type": "jsx",
+          "excerpt": "<Link href=\"/superadmin/audit\"><Button>Platform activity</Button></Link>"
+        }
+      ],
+      "signalCount": 29,
+      "computedImportRequiresReview": false
+    },
+    {
+      "path": "src/pages/superadmin/sections/FeatureControlsHub.js",
+      "sourceSha": "71f7589356d3d13e8585f5bd057dbc364b4b91d9",
+      "frontierSha": "71f7589356d3d13e8585f5bd057dbc364b4b91d9",
+      "shaMatches": true,
+      "fromFrontierIndex": 179,
+      "sourceLineCount": 370,
+      "importedBy": [
+        "src/pages/superadmin/features.js"
+      ],
+      "classification": "inspected-meaningful-ui-source",
+      "classificationScope": "source only; renderability and behavior unverified",
+      "imports": [
+        {
+          "line": 1,
+          "specifier": "react",
+          "kind": "static-or-require",
+          "resolution": null
+        },
+        {
+          "line": 2,
+          "specifier": "antd",
+          "kind": "static-or-require",
+          "resolution": null
+        },
+        {
+          "line": 3,
+          "specifier": "@ant-design/icons",
+          "kind": "static-or-require",
+          "resolution": null
+        },
+        {
+          "line": 4,
+          "specifier": "@/components/admin/AdminControlOverview",
+          "kind": "static-or-require",
+          "resolution": {
+            "path": "src/components/admin/AdminControlOverview.jsx",
+            "sha": "ad91c66c930256f05da0454b8b8106423e53bbdc"
+          }
+        }
+      ],
+      "signals": [
+        {
+          "line": 180,
+          "type": "overlay-or-complex-control",
+          "excerpt": "Modal.confirm({"
+        },
+        {
+          "line": 213,
+          "type": "jsx",
+          "excerpt": "<div>"
+        },
+        {
+          "line": 218,
+          "type": "jsx",
+          "excerpt": "<div style={{ display: \"grid\", gridTemplateColumns: \"repeat(2, minmax(0, 1fr))\", gap: 8, marginTop: 12 }}>"
+        },
+        {
+          "line": 219,
+          "type": "jsx",
+          "excerpt": "<div><Text type=\"secondary\">Active drives</Text><div><strong>{Number(impact.activeJobs || 0)}</strong></div></div>"
+        },
+        {
+          "line": 220,
+          "type": "jsx",
+          "excerpt": "<div><Text type=\"secondary\">In-progress applications</Text><div><strong>{Number(impact.inProgressApplications || 0)}</strong></div></div>"
+        },
+        {
+          "line": 221,
+          "type": "jsx",
+          "excerpt": "<div><Text type=\"secondary\">Pending offers</Text><div><strong>{Number(impact.pendingOffers || 0)}</strong></div></div>"
+        },
+        {
+          "line": 222,
+          "type": "jsx",
+          "excerpt": "<div><Text type=\"secondary\">Upcoming interviews</Text><div><strong>{Number(impact.upcomingInterviews || 0)}</strong></div></div>"
+        },
+        {
+          "line": 224,
+          "type": "jsx",
+          "excerpt": "<Text type=\"secondary\" style={{ display: \"block\", marginTop: 12 }}>"
+        },
+        {
+          "line": 229,
+          "type": "jsx",
+          "excerpt": "<div>"
+        },
+        {
+          "line": 236,
+          "type": "overlay-or-complex-control",
+          "excerpt": "Modal.confirm({"
+        },
+        {
+          "line": 262,
+          "type": "jsx",
+          "excerpt": "<div>"
+        },
+        {
+          "line": 265,
+          "type": "interactive-prop",
+          "excerpt": "onChange={(value) => {"
+        },
+        {
+          "line": 279,
+          "type": "jsx",
+          "excerpt": "<Text type=\"warning\" style={{ display: \"block\", fontSize: 11 }}>"
+        },
+        {
+          "line": 284,
+          "type": "jsx",
+          "excerpt": "<Text type=\"secondary\" style={{ display: \"block\", fontSize: 11 }}>"
+        },
+        {
+          "line": 314,
+          "type": "interactive-prop,jsx",
+          "excerpt": "actions={<Button icon={<ReloadOutlined />} onClick={fetchData} size=\"small\" loading={loading}>Refresh</Button>}"
+        },
+        {
+          "line": 324,
+          "type": "jsx",
+          "excerpt": "<Button size=\"small\" disabled={Boolean(savingId)}"
+        },
+        {
+          "line": 325,
+          "type": "interactive-prop",
+          "excerpt": "onClick={() => handleToggle(mutationError.record, mutationError.module, mutationError.enabled)}>"
+        },
+        {
+          "line": 329,
+          "type": "interactive-prop",
+          "excerpt": "onClose={() => setMutationError(null)}"
+        },
+        {
+          "line": 333,
+          "type": "jsx",
+          "excerpt": "<Card size=\"small\">"
+        },
+        {
+          "line": 334,
+          "type": "jsx",
+          "excerpt": "<div style={{ display: \"flex\", justifyContent: \"space-between\", gap: 12, alignItems: \"center\", flexWrap: \"wrap\", marginBottom: 12 }}>"
+        },
+        {
+          "line": 340,
+          "type": "interactive-prop",
+          "excerpt": "onChange={(event) => setSearch(event.target.value)}"
+        },
+        {
+          "line": 343,
+          "type": "jsx",
+          "excerpt": "<Space size={8}>"
+        },
+        {
+          "line": 344,
+          "type": "jsx",
+          "excerpt": "<Text type=\"secondary\">"
+        },
+        {
+          "line": 347,
+          "type": "interactive-prop,jsx",
+          "excerpt": "{search.trim() ? <Button size=\"small\" type=\"link\" onClick={() => setSearch(\"\")}>Clear</Button> : null}"
+        },
+        {
+          "line": 350,
+          "type": "jsx",
+          "excerpt": "{loadError && <Alert type=\"error\" showIcon style={{ marginBottom: 12 }}"
+        },
+        {
+          "line": 352,
+          "type": "interactive-prop,jsx",
+          "excerpt": "action={<Button size=\"small\" onClick={fetchData}>Retry</Button>} />}"
+        },
+        {
+          "line": 353,
+          "type": "jsx",
+          "excerpt": "{modulesError && !loadError && <Alert type=\"warning\" showIcon style={{ marginBottom: 12 }}"
+        },
+        {
+          "line": 355,
+          "type": "interactive-prop,jsx",
+          "excerpt": "action={<Button size=\"small\" onClick={fetchData}>Retry</Button>} />}"
+        },
+        {
+          "line": 356,
+          "type": "overlay-or-complex-control",
+          "excerpt": "<Table"
+        }
+      ],
+      "signalCount": 29,
+      "computedImportRequiresReview": false
+    },
+    {
+      "path": "src/pages/superadmin/sections/InterviewEditForm.js",
+      "sourceSha": "654e39f38e7727e90a02b44ccd0df4ab00ebcc11",
+      "frontierSha": "654e39f38e7727e90a02b44ccd0df4ab00ebcc11",
+      "shaMatches": true,
+      "fromFrontierIndex": 180,
+      "sourceLineCount": 438,
+      "importedBy": [
+        "src/pages/superadmin/sections/JobApplications.js"
+      ],
+      "classification": "inspected-meaningful-ui-source",
+      "classificationScope": "source only; renderability and behavior unverified",
+      "imports": [
+        {
+          "line": 1,
+          "specifier": "react",
+          "kind": "static-or-require",
+          "resolution": null
+        },
+        {
+          "line": 2,
+          "specifier": "antd",
+          "kind": "static-or-require",
+          "resolution": null
+        },
+        {
+          "line": 3,
+          "specifier": "@/api/Services/interviewService",
+          "kind": "static-or-require",
+          "resolution": {
+            "path": "src/api/Services/interviewService.js",
+            "sha": "68c54043571c97e3d23d10db43cfd10f154001ef"
+          }
+        },
+        {
+          "line": 4,
+          "specifier": "@/utils/interviewConflicts",
+          "kind": "static-or-require",
+          "resolution": {
+            "path": "src/utils/interviewConflicts.js",
+            "sha": "dad979fc674284d8b432031cb8bafaf03d658a0c"
+          }
+        },
+        {
+          "line": 5,
+          "specifier": "@/utils/placementDateTime",
+          "kind": "static-or-require",
+          "resolution": {
+            "path": "src/utils/placementDateTime.js",
+            "sha": "aa4262262aa93130a2450be8cde2591bfe02e7cd"
+          }
+        },
+        {
+          "line": 6,
+          "specifier": "dayjs",
+          "kind": "static-or-require",
+          "resolution": null
+        },
+        {
+          "line": 7,
+          "specifier": "dayjs/plugin/utc",
+          "kind": "static-or-require",
+          "resolution": null
+        },
+        {
+          "line": 8,
+          "specifier": "@/utils/formErrors",
+          "kind": "static-or-require",
+          "resolution": {
+            "path": "src/utils/formErrors.js",
+            "sha": "94717daf4b31733522d8f3fd60972f9acae1710a"
+          }
+        }
+      ],
+      "signals": [
+        {
+          "line": 246,
+          "type": "overlay-or-complex-control",
+          "excerpt": "Modal.confirm({"
+        },
+        {
+          "line": 259,
+          "type": "overlay-or-complex-control",
+          "excerpt": "<Form"
+        },
+        {
+          "line": 273,
+          "type": "interactive-prop",
+          "excerpt": "onClose={() => setSaveError(\"\")}"
+        },
+        {
+          "line": 278,
+          "type": "jsx",
+          "excerpt": "<div style={{ background: \"#fff7e6\", borderRadius: 6, padding: \"10px 14px\", marginBottom: 16, border: \"1px solid #ffd591\" }}>"
+        },
+        {
+          "line": 281,
+          "type": "jsx",
+          "excerpt": "<div style={{ marginTop: 8, paddingTop: 8, borderTop: \"1px solid #ffd591\" }}>"
+        },
+        {
+          "line": 283,
+          "type": "jsx",
+          "excerpt": "<div><strong>Reason:</strong> {interview.rescheduleRequestJson.reason}</div>"
+        },
+        {
+          "line": 286,
+          "type": "jsx",
+          "excerpt": "<div><strong>Note:</strong> {interview.rescheduleRequestJson.note}</div>"
+        },
+        {
+          "line": 289,
+          "type": "jsx",
+          "excerpt": "<div>"
+        },
+        {
+          "line": 301,
+          "type": "jsx",
+          "excerpt": "<div style={{ background: \"#f6f8fa\", borderRadius: 6, padding: \"10px 14px\", marginBottom: 16, border: \"1px solid #e8e8e8\" }}>"
+        },
+        {
+          "line": 306,
+          "type": "overlay-or-complex-control",
+          "excerpt": "<Form.Item"
+        },
+        {
+          "line": 311,
+          "type": "overlay-or-complex-control,jsx",
+          "excerpt": "<Select placeholder=\"Select interview type\">"
+        },
+        {
+          "line": 312,
+          "type": "jsx",
+          "excerpt": "<Option value=\"SCREENING\">Screening</Option>"
+        },
+        {
+          "line": 313,
+          "type": "jsx",
+          "excerpt": "<Option value=\"TECHNICAL\">Technical</Option>"
+        },
+        {
+          "line": 314,
+          "type": "jsx",
+          "excerpt": "<Option value=\"HR\">HR</Option>"
+        },
+        {
+          "line": 315,
+          "type": "jsx",
+          "excerpt": "<Option value=\"MANAGERIAL\">Managerial</Option>"
+        },
+        {
+          "line": 316,
+          "type": "jsx",
+          "excerpt": "<Option value=\"FINAL\">Final</Option>"
+        },
+        {
+          "line": 320,
+          "type": "overlay-or-complex-control",
+          "excerpt": "<Form.Item"
+        },
+        {
+          "line": 328,
+          "type": "jsx",
+          "excerpt": "<TextArea rows={3} placeholder=\"e.g. Technical discussion on DSA and system design\" maxLength={500} showCount />"
+        },
+        {
+          "line": 331,
+          "type": "overlay-or-complex-control",
+          "excerpt": "<Form.Item"
+        },
+        {
+          "line": 343,
+          "type": "jsx",
+          "excerpt": "<Input placeholder=\"e.g. Priya Sharma, Rohan Mehta\" maxLength={255} />"
+        },
+        {
+          "line": 347,
+          "type": "overlay-or-complex-control",
+          "excerpt": "<Form.Item"
+        },
+        {
+          "line": 352,
+          "type": "overlay-or-complex-control,jsx",
+          "excerpt": "<Select placeholder=\"Select duration\">"
+        },
+        {
+          "line": 353,
+          "type": "jsx",
+          "excerpt": "<Option value={15}>15 min</Option>"
+        },
+        {
+          "line": 354,
+          "type": "jsx",
+          "excerpt": "<Option value={30}>30 min</Option>"
+        },
+        {
+          "line": 355,
+          "type": "jsx",
+          "excerpt": "<Option value={45}>45 min</Option>"
+        },
+        {
+          "line": 356,
+          "type": "jsx",
+          "excerpt": "<Option value={60}>1 hour</Option>"
+        },
+        {
+          "line": 357,
+          "type": "jsx",
+          "excerpt": "<Option value={90}>1.5 hours</Option>"
+        },
+        {
+          "line": 358,
+          "type": "jsx",
+          "excerpt": "<Option value={120}>2 hours</Option>"
+        },
+        {
+          "line": 359,
+          "type": "jsx",
+          "excerpt": "<Option value={180}>3 hours</Option>"
+        },
+        {
+          "line": 363,
+          "type": "jsx",
+          "excerpt": "<div style={{ marginBottom: 8, fontSize: 12, color: \"#8c8c8c\" }}>"
+        },
+        {
+          "line": 367,
+          "type": "overlay-or-complex-control,jsx",
+          "excerpt": "<Form.Item name=\"date\" label=\"Date\" rules={[{ required: true, message: \"Please select date\" }]}>"
+        },
+        {
+          "line": 375,
+          "type": "overlay-or-complex-control,jsx",
+          "excerpt": "<Form.Item name=\"time\" label=\"Time\" rules={[{ required: true, message: \"Please select time\" }]}>"
+        },
+        {
+          "line": 376,
+          "type": "jsx",
+          "excerpt": "<TimePicker style={{ width: \"100%\" }} format=\"HH:mm\" minuteStep={5} placeholder=\"Select time\" />"
+        },
+        {
+          "line": 389,
+          "type": "overlay-or-complex-control",
+          "excerpt": "<Form.Item"
+        },
+        {
+          "line": 394,
+          "type": "overlay-or-complex-control,interactive-prop,jsx",
+          "excerpt": "<Select placeholder=\"Select mode\" onChange={handleModeChange}>"
+        },
+        {
+          "line": 395,
+          "type": "jsx",
+          "excerpt": "<Option value=\"ONLINE\">Online</Option>"
+        },
+        {
+          "line": 396,
+          "type": "jsx",
+          "excerpt": "<Option value=\"OFFLINE\">In-person</Option>"
+        },
+        {
+          "line": 400,
+          "type": "overlay-or-complex-control",
+          "excerpt": "<Form.Item"
+        },
+        {
+          "line": 418,
+          "type": "jsx",
+          "excerpt": "<Input placeholder={interviewMode === \"ONLINE\" ? \"https://meet.google.com/...\" : \"Building, Floor, Room number\"} maxLength={500} />"
+        },
+        {
+          "line": 421,
+          "type": "overlay-or-complex-control,jsx",
+          "excerpt": "<Form.Item name=\"notes\" label=\"Notes (Optional)\">"
+        },
+        {
+          "line": 422,
+          "type": "jsx",
+          "excerpt": "<TextArea rows={2} placeholder=\"Additional notes for the candidate...\" maxLength={1000} showCount />"
+        },
+        {
+          "line": 425,
+          "type": "overlay-or-complex-control,jsx",
+          "excerpt": "<Form.Item>"
+        },
+        {
+          "line": 426,
+          "type": "jsx",
+          "excerpt": "<Space>"
+        },
+        {
+          "line": 427,
+          "type": "jsx",
+          "excerpt": "<Button type=\"primary\" htmlType=\"submit\" loading={loading} disabled={loading}>"
+        },
+        {
+          "line": 430,
+          "type": "interactive-prop,jsx",
+          "excerpt": "<Button htmlType=\"button\" onClick={requestCancel} disabled={loading}>"
+        }
+      ],
+      "signalCount": 45,
+      "computedImportRequiresReview": false
+    },
+    {
+      "path": "src/pages/superadmin/sections/InterviewFeedbackForm.js",
+      "sourceSha": "7d3d95ed3f06dd21653413ddff2a9d257abeca57",
+      "frontierSha": "7d3d95ed3f06dd21653413ddff2a9d257abeca57",
+      "shaMatches": true,
+      "fromFrontierIndex": 181,
+      "sourceLineCount": 197,
+      "importedBy": [
+        "src/pages/superadmin/sections/JobApplications.js"
+      ],
+      "classification": "inspected-meaningful-ui-source",
+      "classificationScope": "source only; renderability and behavior unverified",
+      "imports": [
+        {
+          "line": 1,
+          "specifier": "react",
+          "kind": "static-or-require",
+          "resolution": null
+        },
+        {
+          "line": 2,
+          "specifier": "antd",
+          "kind": "static-or-require",
+          "resolution": null
+        },
+        {
+          "line": 3,
+          "specifier": "@/api/Services/interviewService",
+          "kind": "static-or-require",
+          "resolution": {
+            "path": "src/api/Services/interviewService.js",
+            "sha": "68c54043571c97e3d23d10db43cfd10f154001ef"
+          }
+        }
+      ],
+      "signals": [
+        {
+          "line": 54,
+          "type": "overlay-or-complex-control",
+          "excerpt": "Modal.confirm({"
+        },
+        {
+          "line": 73,
+          "type": "jsx",
+          "excerpt": "<div>"
+        },
+        {
+          "line": 74,
+          "type": "jsx",
+          "excerpt": "<div style={{ background: \"#f0f9ff\", borderRadius: 6, padding: \"12px 16px\", marginBottom: 16, border: \"1px solid #bae6fd\" }}>"
+        },
+        {
+          "line": 77,
+          "type": "jsx",
+          "excerpt": "<div style={{ marginTop: 4, fontSize: 12, color: \"#64748b\" }}>"
+        },
+        {
+          "line": 82,
+          "type": "jsx",
+          "excerpt": "<div style={{ padding: \"8px 0\" }}>"
+        },
+        {
+          "line": 83,
+          "type": "jsx",
+          "excerpt": "<div style={{ marginBottom: 8 }}><strong>Rating:</strong> {interview.feedbackRating}/5</div>"
+        },
+        {
+          "line": 85,
+          "type": "jsx",
+          "excerpt": "<div style={{ marginBottom: 8 }}>"
+        },
+        {
+          "line": 91,
+          "type": "jsx",
+          "excerpt": "<div><strong>Comments:</strong> <span style={{ color: \"#64748b\" }}>{interview.feedbackComments}</span></div>"
+        },
+        {
+          "line": 94,
+          "type": "interactive-prop,jsx",
+          "excerpt": "<Button htmlType=\"button\" onClick={handleCancelClick}>Close</Button>"
+        },
+        {
+          "line": 108,
+          "type": "interactive-prop,jsx",
+          "excerpt": "action={<Button size=\"small\" onClick={() => form.submit()} disabled={loading}>Retry</Button>}"
+        },
+        {
+          "line": 109,
+          "type": "interactive-prop",
+          "excerpt": "onClose={() => setSubmitError(null)}"
+        },
+        {
+          "line": 113,
+          "type": "overlay-or-complex-control,jsx",
+          "excerpt": "<Form form={form} layout=\"vertical\" onFinish={handleSubmit} disabled={loading}>"
+        },
+        {
+          "line": 114,
+          "type": "jsx",
+          "excerpt": "<div style={{ background: \"#f6f8fa\", borderRadius: 6, padding: \"10px 14px\", marginBottom: 16, border: \"1px solid #e8e8e8\" }}>"
+        },
+        {
+          "line": 124,
+          "type": "overlay-or-complex-control",
+          "excerpt": "<Form.Item"
+        },
+        {
+          "line": 135,
+          "type": "jsx",
+          "excerpt": "<Rate count={5} />"
+        },
+        {
+          "line": 138,
+          "type": "overlay-or-complex-control",
+          "excerpt": "<Form.Item"
+        },
+        {
+          "line": 144,
+          "type": "overlay-or-complex-control,jsx",
+          "excerpt": "<Select placeholder=\"Select outcome\">"
+        },
+        {
+          "line": 145,
+          "type": "jsx",
+          "excerpt": "<Option value=\"PROCEED_NEXT_ROUND\">Proceed to Next Round</Option>"
+        },
+        {
+          "line": 146,
+          "type": "jsx",
+          "excerpt": "<Option value=\"HIRE\">Hire</Option>"
+        },
+        {
+          "line": 147,
+          "type": "jsx",
+          "excerpt": "<Option value=\"REJECT\">Reject</Option>"
+        },
+        {
+          "line": 148,
+          "type": "jsx",
+          "excerpt": "<Option value=\"HOLD\">Hold</Option>"
+        },
+        {
+          "line": 152,
+          "type": "overlay-or-complex-control,jsx",
+          "excerpt": "<Form.Item noStyle shouldUpdate={(prev, cur) => prev.recommendAction !== cur.recommendAction}>"
+        },
+        {
+          "line": 156,
+          "type": "overlay-or-complex-control",
+          "excerpt": "<Form.Item"
+        },
+        {
+          "line": 183,
+          "type": "overlay-or-complex-control,jsx",
+          "excerpt": "<Form.Item>"
+        },
+        {
+          "line": 184,
+          "type": "jsx",
+          "excerpt": "<Space>"
+        },
+        {
+          "line": 185,
+          "type": "jsx",
+          "excerpt": "<Button type=\"primary\" htmlType=\"submit\" loading={loading}>"
+        },
+        {
+          "line": 188,
+          "type": "interactive-prop,jsx",
+          "excerpt": "<Button htmlType=\"button\" onClick={handleCancelClick} disabled={loading}>"
+        }
+      ],
+      "signalCount": 27,
+      "computedImportRequiresReview": false
+    },
+    {
+      "path": "src/pages/superadmin/sections/InterviewForm.js",
+      "sourceSha": "88111bcd7fdb5a28197f930ff5acd91328bbc561",
+      "frontierSha": "88111bcd7fdb5a28197f930ff5acd91328bbc561",
+      "shaMatches": true,
+      "fromFrontierIndex": 182,
+      "sourceLineCount": 392,
+      "importedBy": [
+        "src/pages/superadmin/sections/JobApplications.js"
+      ],
+      "classification": "inspected-meaningful-ui-source",
+      "classificationScope": "source only; renderability and behavior unverified",
+      "imports": [
+        {
+          "line": 1,
+          "specifier": "react",
+          "kind": "static-or-require",
+          "resolution": null
+        },
+        {
+          "line": 2,
+          "specifier": "antd",
+          "kind": "static-or-require",
+          "resolution": null
+        },
+        {
+          "line": 3,
+          "specifier": "@/api/Services/interviewService",
+          "kind": "static-or-require",
+          "resolution": {
+            "path": "src/api/Services/interviewService.js",
+            "sha": "68c54043571c97e3d23d10db43cfd10f154001ef"
+          }
+        },
+        {
+          "line": 4,
+          "specifier": "@/utils/interviewConflicts",
+          "kind": "static-or-require",
+          "resolution": {
+            "path": "src/utils/interviewConflicts.js",
+            "sha": "dad979fc674284d8b432031cb8bafaf03d658a0c"
+          }
+        },
+        {
+          "line": 5,
+          "specifier": "dayjs",
+          "kind": "static-or-require",
+          "resolution": null
+        },
+        {
+          "line": 6,
+          "specifier": "dayjs/plugin/utc",
+          "kind": "static-or-require",
+          "resolution": null
+        },
+        {
+          "line": 7,
+          "specifier": "@/utils/formErrors",
+          "kind": "static-or-require",
+          "resolution": {
+            "path": "src/utils/formErrors.js",
+            "sha": "94717daf4b31733522d8f3fd60972f9acae1710a"
+          }
+        }
+      ],
+      "signals": [
+        {
+          "line": 192,
+          "type": "overlay-or-complex-control",
+          "excerpt": "Modal.confirm({"
+        },
+        {
+          "line": 215,
+          "type": "overlay-or-complex-control",
+          "excerpt": "<Form"
+        },
+        {
+          "line": 230,
+          "type": "interactive-prop",
+          "excerpt": "onClose={() => setSaveError(\"\")}"
+        },
+        {
+          "line": 235,
+          "type": "jsx",
+          "excerpt": "<div style={{ background: \"#f6f8fa\", borderRadius: 6, padding: \"10px 14px\", marginBottom: 16, border: \"1px solid #e8e8e8\" }}>"
+        },
+        {
+          "line": 240,
+          "type": "jsx",
+          "excerpt": "<Alert type=\"info\" message=\"Rescheduling a cancelled interview — pick a new date and time. Other fields are pre-filled from the cancelled round.\" showIcon style={{ marginBottom: 16"
+        },
+        {
+          "line": 243,
+          "type": "jsx",
+          "excerpt": "<Alert type=\"info\" message={`This application has ${existingInterviewsCount} scheduled interview(s). You are adding another round.`} showIcon style={{ marginBottom: 16 }} />"
+        },
+        {
+          "line": 245,
+          "type": "jsx",
+          "excerpt": "<div style={{ marginBottom: 16, fontSize: 12, color: \"#8c8c8c\" }}>"
+        },
+        {
+          "line": 249,
+          "type": "overlay-or-complex-control",
+          "excerpt": "<Form.Item"
+        },
+        {
+          "line": 254,
+          "type": "overlay-or-complex-control,jsx",
+          "excerpt": "<Select placeholder=\"Select interview type\">"
+        },
+        {
+          "line": 255,
+          "type": "jsx",
+          "excerpt": "<Option value=\"SCREENING\">Screening</Option>"
+        },
+        {
+          "line": 256,
+          "type": "jsx",
+          "excerpt": "<Option value=\"TECHNICAL\">Technical</Option>"
+        },
+        {
+          "line": 257,
+          "type": "jsx",
+          "excerpt": "<Option value=\"HR\">HR</Option>"
+        },
+        {
+          "line": 258,
+          "type": "jsx",
+          "excerpt": "<Option value=\"MANAGERIAL\">Managerial</Option>"
+        },
+        {
+          "line": 259,
+          "type": "jsx",
+          "excerpt": "<Option value=\"FINAL\">Final</Option>"
+        },
+        {
+          "line": 263,
+          "type": "overlay-or-complex-control",
+          "excerpt": "<Form.Item"
+        },
+        {
+          "line": 279,
+          "type": "overlay-or-complex-control",
+          "excerpt": "<Form.Item"
+        },
+        {
+          "line": 284,
+          "type": "jsx",
+          "excerpt": "<Input placeholder=\"e.g. Priya Sharma, Rohan Mehta\" maxLength={255} />"
+        },
+        {
+          "line": 287,
+          "type": "jsx",
+          "excerpt": "<div style={{ marginBottom: 8, fontSize: 12, color: \"#8c8c8c\" }}>"
+        },
+        {
+          "line": 291,
+          "type": "overlay-or-complex-control",
+          "excerpt": "<Form.Item"
+        },
+        {
+          "line": 303,
+          "type": "overlay-or-complex-control",
+          "excerpt": "<Form.Item"
+        },
+        {
+          "line": 328,
+          "type": "overlay-or-complex-control",
+          "excerpt": "<Form.Item"
+        },
+        {
+          "line": 333,
+          "type": "overlay-or-complex-control,jsx",
+          "excerpt": "<Select placeholder=\"Select duration\">"
+        },
+        {
+          "line": 334,
+          "type": "jsx",
+          "excerpt": "<Option value={15}>15 min</Option>"
+        },
+        {
+          "line": 335,
+          "type": "jsx",
+          "excerpt": "<Option value={30}>30 min</Option>"
+        },
+        {
+          "line": 336,
+          "type": "jsx",
+          "excerpt": "<Option value={45}>45 min</Option>"
+        },
+        {
+          "line": 337,
+          "type": "jsx",
+          "excerpt": "<Option value={60}>1 hour</Option>"
+        },
+        {
+          "line": 338,
+          "type": "jsx",
+          "excerpt": "<Option value={90}>1.5 hours</Option>"
+        },
+        {
+          "line": 339,
+          "type": "jsx",
+          "excerpt": "<Option value={120}>2 hours</Option>"
+        },
+        {
+          "line": 340,
+          "type": "jsx",
+          "excerpt": "<Option value={180}>3 hours</Option>"
+        },
+        {
+          "line": 344,
+          "type": "overlay-or-complex-control",
+          "excerpt": "<Form.Item"
+        },
+        {
+          "line": 349,
+          "type": "overlay-or-complex-control,interactive-prop,jsx",
+          "excerpt": "<Select placeholder=\"Select mode\" onChange={handleModeChange}>"
+        },
+        {
+          "line": 350,
+          "type": "jsx",
+          "excerpt": "<Option value=\"ONLINE\">Online</Option>"
+        },
+        {
+          "line": 351,
+          "type": "jsx",
+          "excerpt": "<Option value=\"OFFLINE\">In-person</Option>"
+        },
+        {
+          "line": 355,
+          "type": "overlay-or-complex-control",
+          "excerpt": "<Form.Item"
+        },
+        {
+          "line": 377,
+          "type": "overlay-or-complex-control,jsx",
+          "excerpt": "<Form.Item name=\"notes\" label=\"Notes (Optional)\">"
+        },
+        {
+          "line": 378,
+          "type": "jsx",
+          "excerpt": "<TextArea rows={3} placeholder=\"Additional notes for the candidate...\" maxLength={1000} showCount />"
+        },
+        {
+          "line": 381,
+          "type": "overlay-or-complex-control,jsx",
+          "excerpt": "<Form.Item>"
+        },
+        {
+          "line": 382,
+          "type": "jsx",
+          "excerpt": "<Space>"
+        },
+        {
+          "line": 383,
+          "type": "jsx",
+          "excerpt": "<Button type=\"primary\" htmlType=\"submit\" loading={loading} disabled={loading}>"
+        },
+        {
+          "line": 386,
+          "type": "interactive-prop,jsx",
+          "excerpt": "<Button htmlType=\"button\" onClick={requestCancel} disabled={loading}>Cancel</Button>"
+        }
+      ],
+      "signalCount": 40,
+      "computedImportRequiresReview": false
+    },
+    {
+      "path": "src/pages/superadmin/sections/ReadinessGate.js",
+      "sourceSha": "9094ff4d89b574cc7bf921d8f722bab584d4cdbe",
+      "frontierSha": "9094ff4d89b574cc7bf921d8f722bab584d4cdbe",
+      "shaMatches": true,
+      "fromFrontierIndex": 185,
+      "sourceLineCount": 324,
+      "importedBy": [
+        "src/pages/superadmin/sections/TenantsHub.js"
+      ],
+      "classification": "inspected-meaningful-ui-source",
+      "classificationScope": "source only; renderability and behavior unverified",
+      "imports": [
+        {
+          "line": 1,
+          "specifier": "react",
+          "kind": "static-or-require",
+          "resolution": null
+        },
+        {
+          "line": 2,
+          "specifier": "next/router",
+          "kind": "static-or-require",
+          "resolution": null
+        },
+        {
+          "line": 3,
+          "specifier": "antd",
+          "kind": "static-or-require",
+          "resolution": null
+        },
+        {
+          "line": 12,
+          "specifier": "@/api/Services/TenantAdminService",
+          "kind": "static-or-require",
+          "resolution": {
+            "path": "src/api/Services/TenantAdminService.js",
+            "sha": "d7084c6beb478d9bf9c8ae0b799a4d292ba1772f"
+          }
+        }
+      ],
+      "signals": [
+        {
+          "line": 81,
+          "type": "interactive-prop,jsx",
+          "excerpt": "<Button size=\"small\" type=\"link\" icon={<ArrowRightOutlined />} onClick={() => scrollTo(\"tenant-domains-card\")}>"
+        },
+        {
+          "line": 88,
+          "type": "interactive-prop,jsx",
+          "excerpt": "<Button size=\"small\" type=\"link\" icon={<ArrowRightOutlined />} onClick={() => scrollTo(\"college-branding-card\")}>"
+        },
+        {
+          "line": 95,
+          "type": "jsx",
+          "excerpt": "<Space size={0} wrap>"
+        },
+        {
+          "line": 96,
+          "type": "interactive-prop,navigation-or-browser,jsx",
+          "excerpt": "<Button size=\"small\" type=\"link\" onClick={() => router.push(\"/superadmin/departments\")}>Departments</Button>"
+        },
+        {
+          "line": 97,
+          "type": "interactive-prop,navigation-or-browser,jsx",
+          "excerpt": "<Button size=\"small\" type=\"link\" onClick={() => router.push(\"/superadmin/teachers\")}>Faculty</Button>"
+        },
+        {
+          "line": 98,
+          "type": "interactive-prop,navigation-or-browser,jsx",
+          "excerpt": "<Button size=\"small\" type=\"link\" onClick={() => router.push(\"/superadmin/students\")}>Students</Button>"
+        },
+        {
+          "line": 122,
+          "type": "jsx",
+          "excerpt": "<CloseCircleFilled style={{ color: \"#cf1322\", marginTop: 3, flex: \"0 0 auto\" }} />"
+        },
+        {
+          "line": 124,
+          "type": "jsx",
+          "excerpt": "<ExclamationCircleFilled style={{ color: \"#d48806\", marginTop: 3, flex: \"0 0 auto\" }} />"
+        },
+        {
+          "line": 126,
+          "type": "jsx",
+          "excerpt": "<div style={{ flex: 1, minWidth: 0 }}>"
+        },
+        {
+          "line": 127,
+          "type": "jsx",
+          "excerpt": "<div style={{ fontWeight: 600, color: \"#141414\" }}>"
+        },
+        {
+          "line": 130,
+          "type": "jsx",
+          "excerpt": "<Tooltip title=\"This check has no description yet — raise it with the platform team.\">"
+        },
+        {
+          "line": 131,
+          "type": "jsx",
+          "excerpt": "<InfoCircleOutlined style={{ marginLeft: 6, color: \"#8c8c8c\" }} />"
+        },
+        {
+          "line": 135,
+          "type": "jsx",
+          "excerpt": "{info?.why && <div style={{ color: \"#595959\", fontSize: 13, marginTop: 2 }}>{info.why}</div>}"
+        },
+        {
+          "line": 137,
+          "type": "jsx",
+          "excerpt": "<div style={{ color: \"#141414\", fontSize: 13, marginTop: 4 }}>"
+        },
+        {
+          "line": 142,
+          "type": "jsx",
+          "excerpt": "<div style={{ flex: \"0 0 auto\" }}>"
+        },
+        {
+          "line": 143,
+          "type": "jsx",
+          "excerpt": "<FixAction code={code} router={router} />"
+        },
+        {
+          "line": 202,
+          "type": "jsx",
+          "excerpt": "<Card title=\"Launch checklist\" size=\"small\">"
+        },
+        {
+          "line": 219,
+          "type": "jsx",
+          "excerpt": "icon: <CheckCircleFilled style={{ color: \"#389e0d\" }} />,"
+        },
+        {
+          "line": 225,
+          "type": "jsx",
+          "excerpt": "icon: <CheckCircleFilled style={{ color: \"#389e0d\" }} />,"
+        },
+        {
+          "line": 231,
+          "type": "jsx",
+          "excerpt": "icon: <CloseCircleFilled style={{ color: \"#cf1322\" }} />,"
+        },
+        {
+          "line": 243,
+          "type": "interactive-prop,jsx",
+          "excerpt": "<Button size=\"small\" icon={<ReloadOutlined />} onClick={load}>"
+        },
+        {
+          "line": 248,
+          "type": "jsx",
+          "excerpt": "<div style={{ color: \"#595959\", fontSize: 13, marginBottom: 12 }}>"
+        },
+        {
+          "line": 258,
+          "type": "interactive-prop,jsx",
+          "excerpt": "action={<Button size=\"small\" onClick={load}>Retry</Button>}"
+        },
+        {
+          "line": 277,
+          "type": "jsx",
+          "excerpt": "<div>"
+        },
+        {
+          "line": 278,
+          "type": "jsx",
+          "excerpt": "<div style={{ fontWeight: 600 }}>{headline.text}</div>"
+        },
+        {
+          "line": 279,
+          "type": "jsx",
+          "excerpt": "<div style={{ color: \"#595959\", fontSize: 13 }}>{headline.detail}</div>"
+        },
+        {
+          "line": 285,
+          "type": "jsx",
+          "excerpt": "<div style={{ marginTop: 16 }}>"
+        },
+        {
+          "line": 286,
+          "type": "jsx",
+          "excerpt": "<div style={{ fontWeight: 600, marginBottom: 2 }}>"
+        },
+        {
+          "line": 288,
+          "type": "jsx",
+          "excerpt": "<Tag color=\"red\" style={{ marginLeft: 4 }}>{blockers.length}</Tag>"
+        },
+        {
+          "line": 292,
+          "type": "jsx",
+          "excerpt": "<CheckRow key={b} code={b} severity=\"blocker\" router={router} />"
+        },
+        {
+          "line": 299,
+          "type": "jsx",
+          "excerpt": "<div style={{ marginTop: 16 }}>"
+        },
+        {
+          "line": 300,
+          "type": "jsx",
+          "excerpt": "<div style={{ fontWeight: 600, marginBottom: 2 }}>"
+        },
+        {
+          "line": 302,
+          "type": "jsx",
+          "excerpt": "<Tag color=\"gold\" style={{ marginLeft: 4 }}>{warnings.length}</Tag>"
+        },
+        {
+          "line": 304,
+          "type": "jsx",
+          "excerpt": "<div style={{ color: \"#8c8c8c\", fontSize: 12, marginBottom: 2 }}>"
+        },
+        {
+          "line": 309,
+          "type": "jsx",
+          "excerpt": "<CheckRow key={w} code={w} severity=\"warning\" router={router} />"
+        },
+        {
+          "line": 316,
+          "type": "jsx",
+          "excerpt": "<div style={{ marginTop: 16, color: \"#8c8c8c\", fontSize: 12 }}>"
+        },
+        {
+          "line": 317,
+          "type": "jsx",
+          "excerpt": "<InfoCircleOutlined style={{ marginRight: 6 }} />"
+        }
+      ],
+      "signalCount": 37,
+      "computedImportRequiresReview": false
+    },
+    {
+      "path": "src/pages/superadmin/sections/RecruiterAccounts.js",
+      "sourceSha": "0442e3f737267040023807e6358817a74754398e",
+      "frontierSha": "0442e3f737267040023807e6358817a74754398e",
+      "shaMatches": true,
+      "fromFrontierIndex": 186,
+      "sourceLineCount": 576,
+      "importedBy": [
+        "src/pages/superadmin/recruiters.js"
+      ],
+      "classification": "inspected-meaningful-ui-source",
+      "classificationScope": "source only; renderability and behavior unverified",
+      "imports": [
+        {
+          "line": 1,
+          "specifier": "react",
+          "kind": "static-or-require",
+          "resolution": null
+        },
+        {
+          "line": 5,
+          "specifier": "@ant-design/icons",
+          "kind": "static-or-require",
+          "resolution": null
+        },
+        {
+          "line": 6,
+          "specifier": "dayjs",
+          "kind": "static-or-require",
+          "resolution": null
+        },
+        {
+          "line": 7,
+          "specifier": "@/components/admin/AdminControlOverview",
+          "kind": "static-or-require",
+          "resolution": {
+            "path": "src/components/admin/AdminControlOverview.jsx",
+            "sha": "ad91c66c930256f05da0454b8b8106423e53bbdc"
+          }
+        },
+        {
+          "line": 8,
+          "specifier": "@/api/Services/AdminService",
+          "kind": "static-or-require",
+          "resolution": {
+            "path": "src/api/Services/AdminService.js",
+            "sha": "598533e1ce238bbcd917c6f6b6df0e83d8f316c6"
+          }
+        },
+        {
+          "line": 9,
+          "specifier": "@/components/admin/projects/useUnsavedFormGuard",
+          "kind": "static-or-require",
+          "resolution": {
+            "path": "src/components/admin/projects/useUnsavedFormGuard.js",
+            "sha": "2dff5a03fb4db6d8e65d277b268da306ddffdf79"
+          }
+        }
+      ],
+      "signals": [
+        {
+          "line": 232,
+          "type": "overlay-or-complex-control",
+          "excerpt": "Modal.confirm({"
+        },
+        {
+          "line": 319,
+          "type": "interactive-prop,jsx",
+          "excerpt": "{ title: \"Name\", key: \"name\", render: (_, r) => <Button type=\"link\" onClick={() => openDetail(r.id)}>{fullName(r)}</Button> },"
+        },
+        {
+          "line": 323,
+          "type": "jsx",
+          "excerpt": "{ title: \"Status\", dataIndex: \"status\", key: \"status\", width: 120, render: (v) => <Tag color={STATUS_COLOR[v] || \"default\"}>{v ? v.charAt(0) + v.slice(1).toLowerCase() : \"—\"}</Tag>"
+        },
+        {
+          "line": 331,
+          "type": "jsx",
+          "excerpt": "<Space size={8} wrap>"
+        },
+        {
+          "line": 332,
+          "type": "jsx",
+          "excerpt": "<Tooltip title={accountBlocked ? scopeBlockedReason : undefined}>"
+        },
+        {
+          "line": 333,
+          "type": "interactive-prop,jsx",
+          "excerpt": "<span><Button size=\"small\" onClick={() => openEdit(r)} disabled={accountBlocked || r.status === \"DELETED\" || actionBusy != null}>Edit</Button></span>"
+        },
+        {
+          "line": 336,
+          "type": "jsx",
+          "excerpt": "<Tooltip title={accountBlocked ? scopeBlockedReason : undefined}>"
+        },
+        {
+          "line": 337,
+          "type": "interactive-prop,jsx",
+          "excerpt": "<span><Button size=\"small\" disabled={accountBlocked || actionBusy != null} onClick={() => confirmAction({"
+        },
+        {
+          "line": 343,
+          "type": "jsx",
+          "excerpt": "<Tooltip title={accountBlocked ? scopeBlockedReason : undefined}>"
+        },
+        {
+          "line": 344,
+          "type": "interactive-prop,jsx",
+          "excerpt": "<span><Button size=\"small\" danger disabled={accountBlocked || actionBusy != null} onClick={() => confirmAction({"
+        },
+        {
+          "line": 351,
+          "type": "jsx",
+          "excerpt": "<Typography.Text type=\"secondary\">Deleted</Typography.Text>"
+        },
+        {
+          "line": 353,
+          "type": "jsx",
+          "excerpt": "<Tooltip title={accountBlocked ? scopeBlockedReason : r.status === \"ACTIVE\" ? \"End every session on every device\" : \"Only active recruiters can have live sessions\"}>"
+        },
+        {
+          "line": 354,
+          "type": "interactive-prop,jsx",
+          "excerpt": "<span><Button size=\"small\" disabled={accountBlocked || r.status !== \"ACTIVE\" || actionBusy != null} onClick={() => confirmAction({"
+        },
+        {
+          "line": 371,
+          "type": "jsx",
+          "excerpt": "<Space size={4}>"
+        },
+        {
+          "line": 372,
+          "type": "jsx",
+          "excerpt": "<Tag color={g.active ? \"green\" : \"default\"}>{g.active ? \"Active\" : g.status === \"REVOKED\" ? \"Revoked\" : \"Expired\"}</Tag>"
+        },
+        {
+          "line": 373,
+          "type": "jsx",
+          "excerpt": "{g.validUntil && <Tag color=\"orange\">Until {String(g.validUntil).slice(0, 10)}</Tag>}"
+        },
+        {
+          "line": 385,
+          "type": "jsx",
+          "excerpt": "<Tooltip title={blocked ? \"This college is outside the current Super Admin scope. Change scope before removing this grant.\" : undefined}>"
+        },
+        {
+          "line": 387,
+          "type": "interactive-prop,jsx",
+          "excerpt": "<Button size=\"small\" danger disabled={blocked || actionBusy != null} onClick={() => confirmAction({"
+        },
+        {
+          "line": 404,
+          "type": "jsx",
+          "excerpt": "<div>"
+        },
+        {
+          "line": 417,
+          "type": "interactive-prop,jsx",
+          "excerpt": "actions={<Button type=\"primary\" icon={<PlusOutlined />} onClick={openCreate} disabled={actionBusy != null || Boolean(collegesError)}>Add recruiter</Button>}"
+        },
+        {
+          "line": 430,
+          "type": "jsx",
+          "excerpt": "{loadError ? <Alert type=\"error\" showIcon message=\"Recruiter accounts could not be loaded\" description={loadError}"
+        },
+        {
+          "line": 431,
+          "type": "interactive-prop,jsx",
+          "excerpt": "action={<Button size=\"small\" onClick={() => refresh()}>Retry</Button>} style={{ marginBottom: 12 }} /> : null}"
+        },
+        {
+          "line": 432,
+          "type": "jsx",
+          "excerpt": "{collegesError ? <Alert type=\"warning\" showIcon message=\"College access options unavailable\" description={collegesError}"
+        },
+        {
+          "line": 433,
+          "type": "interactive-prop,jsx",
+          "excerpt": "action={<Button size=\"small\" onClick={loadColleges}>Retry</Button>} style={{ marginBottom: 12 }} /> : null}"
+        },
+        {
+          "line": 437,
+          "type": "jsx",
+          "excerpt": "<Space wrap>"
+        },
+        {
+          "line": 442,
+          "type": "interactive-prop",
+          "excerpt": "onChange={(event) => {"
+        },
+        {
+          "line": 453,
+          "type": "interactive-prop,jsx",
+          "excerpt": "<Button icon={<ReloadOutlined />} onClick={() => refresh()} loading={loading}>Refresh</Button>"
+        },
+        {
+          "line": 457,
+          "type": "overlay-or-complex-control",
+          "excerpt": "<Table"
+        },
+        {
+          "line": 473,
+          "type": "overlay-or-complex-control",
+          "excerpt": "<Modal"
+        },
+        {
+          "line": 476,
+          "type": "interactive-prop",
+          "excerpt": "onCancel={() => {"
+        },
+        {
+          "line": 479,
+          "type": "overlay-or-complex-control",
+          "excerpt": "Modal.confirm({"
+        },
+        {
+          "line": 488,
+          "type": "interactive-prop",
+          "excerpt": "onOk={onSave}"
+        },
+        {
+          "line": 493,
+          "type": "overlay-or-complex-control,jsx",
+          "excerpt": "<Form form={form} layout=\"vertical\" requiredMark=\"optional\">"
+        },
+        {
+          "line": 494,
+          "type": "overlay-or-complex-control,jsx",
+          "excerpt": "<Form.Item name=\"firstName\" label=\"First name\" rules={[{ required: true, whitespace: true, message: \"First name is required\" }]}>"
+        },
+        {
+          "line": 495,
+          "type": "jsx",
+          "excerpt": "<Input maxLength={100} />"
+        },
+        {
+          "line": 497,
+          "type": "overlay-or-complex-control,jsx",
+          "excerpt": "<Form.Item name=\"lastName\" label=\"Last name\">"
+        },
+        {
+          "line": 498,
+          "type": "jsx",
+          "excerpt": "<Input maxLength={100} />"
+        },
+        {
+          "line": 500,
+          "type": "overlay-or-complex-control,jsx",
+          "excerpt": "<Form.Item name=\"contactMobile\" label=\"Mobile (login)\" rules={[{ required: editing === \"new\", message: \"Mobile is required\" }]}"
+        },
+        {
+          "line": 502,
+          "type": "jsx",
+          "excerpt": "<Input inputMode=\"tel\" autoComplete=\"tel\" maxLength={15} />"
+        },
+        {
+          "line": 504,
+          "type": "overlay-or-complex-control,jsx",
+          "excerpt": "<Form.Item name=\"contactMail\" label=\"Email\" rules={[{ type: \"email\", message: \"Enter a valid email\" }]}>"
+        },
+        {
+          "line": 505,
+          "type": "jsx",
+          "excerpt": "<Input inputMode=\"email\" autoComplete=\"email\" maxLength={255} />"
+        },
+        {
+          "line": 507,
+          "type": "overlay-or-complex-control,jsx",
+          "excerpt": "<Form.Item name=\"companyName\" label=\"Company\">"
+        },
+        {
+          "line": 508,
+          "type": "jsx",
+          "excerpt": "<Input maxLength={150} />"
+        },
+        {
+          "line": 510,
+          "type": "overlay-or-complex-control,jsx",
+          "excerpt": "<Form.Item name=\"designation\" label=\"Designation\">"
+        },
+        {
+          "line": 511,
+          "type": "jsx",
+          "excerpt": "<Input maxLength={150} />"
+        },
+        {
+          "line": 514,
+          "type": "overlay-or-complex-control,jsx",
+          "excerpt": "<Form.Item name=\"collegeIds\" label=\"Colleges\""
+        },
+        {
+          "line": 517,
+          "type": "overlay-or-complex-control,jsx",
+          "excerpt": "<Select mode=\"multiple\" showSearch optionFilterProp=\"label\" options={collegeOptions} />"
+        },
+        {
+          "line": 523,
+          "type": "overlay-or-complex-control",
+          "excerpt": "<Drawer"
+        },
+        {
+          "line": 526,
+          "type": "interactive-prop",
+          "excerpt": "onClose={() => { ++detailSeq.current; setDetailLoading(false); setDetail(null); }}"
+        },
+        {
+          "line": 530,
+          "type": "jsx",
+          "excerpt": "<Tooltip title={!isAccountManageableHere(detail) ? scopeBlockedReason : undefined}>"
+        },
+        {
+          "line": 531,
+          "type": "interactive-prop,jsx",
+          "excerpt": "<span><Button danger disabled={!isAccountManageableHere(detail) || actionBusy != null} onClick={() => confirmAction({"
+        },
+        {
+          "line": 540,
+          "type": "jsx",
+          "excerpt": "<div style={{ display: \"grid\", placeItems: \"center\", minHeight: 180 }}>"
+        },
+        {
+          "line": 541,
+          "type": "jsx",
+          "excerpt": "<Spin />"
+        },
+        {
+          "line": 545,
+          "type": "jsx",
+          "excerpt": "<Space direction=\"vertical\" size={16} style={{ width: \"100%\" }}>"
+        },
+        {
+          "line": 546,
+          "type": "jsx",
+          "excerpt": "<div>"
+        },
+        {
+          "line": 547,
+          "type": "jsx",
+          "excerpt": "<Tag color={STATUS_COLOR[detail.status] || \"default\"}>Account: {String(detail.status || \"\").charAt(0) + String(detail.status || \"\").slice(1).toLowerCase()}</Tag>"
+        },
+        {
+          "line": 548,
+          "type": "jsx",
+          "excerpt": "<Typography.Text type=\"secondary\">"
+        },
+        {
+          "line": 552,
+          "type": "jsx",
+          "excerpt": "<Card size=\"small\" title=\"College access\">"
+        },
+        {
+          "line": 553,
+          "type": "overlay-or-complex-control,jsx",
+          "excerpt": "<Table rowKey=\"collegeId\" size=\"small\" pagination={false} dataSource={detail.colleges || []} columns={grantColumns}"
+        },
+        {
+          "line": 555,
+          "type": "jsx",
+          "excerpt": "<Space style={{ marginTop: 12 }} wrap>"
+        },
+        {
+          "line": 556,
+          "type": "overlay-or-complex-control",
+          "excerpt": "<Select"
+        },
+        {
+          "line": 562,
+          "type": "interactive-prop",
+          "excerpt": "onChange={setGrantCollegeId}"
+        },
+        {
+          "line": 566,
+          "type": "interactive-prop,jsx",
+          "excerpt": "<DatePicker placeholder=\"Until (optional)\" value={grantUntil} onChange={setGrantUntil} disabled={detail.status === \"DELETED\"} disabledDate={(current) => current && current.endOf(\"d"
+        },
+        {
+          "line": 567,
+          "type": "interactive-prop,jsx",
+          "excerpt": "<Button type=\"primary\" loading={actionBusy === \"grant\"} disabled={detail.status === \"DELETED\" || !grantCollegeId || Boolean(collegesError) || actionBusy != null} onClick={onGrant}>"
+        }
+      ],
+      "signalCount": 64,
+      "computedImportRequiresReview": false
+    },
+    {
+      "path": "src/pages/superadmin/sections/TenantSettings.js",
+      "sourceSha": "dba02218682957c6153630263f1d4f5e8f820867",
+      "frontierSha": "dba02218682957c6153630263f1d4f5e8f820867",
+      "shaMatches": true,
+      "fromFrontierIndex": 187,
+      "sourceLineCount": 1162,
+      "importedBy": [
+        "src/pages/superadmin/settings.js"
+      ],
+      "classification": "inspected-meaningful-ui-source",
+      "classificationScope": "source only; renderability and behavior unverified",
+      "imports": [
+        {
+          "line": 1,
+          "specifier": "react",
+          "kind": "static-or-require",
+          "resolution": null
+        },
+        {
+          "line": 39,
+          "specifier": "@/components/admin/projects/useUnsavedFormGuard",
+          "kind": "static-or-require",
+          "resolution": {
+            "path": "src/components/admin/projects/useUnsavedFormGuard.js",
+            "sha": "2dff5a03fb4db6d8e65d277b268da306ddffdf79"
+          }
+        },
+        {
+          "line": 40,
+          "specifier": "@/components/admin/AdminControlOverview",
+          "kind": "static-or-require",
+          "resolution": {
+            "path": "src/components/admin/AdminControlOverview.jsx",
+            "sha": "ad91c66c930256f05da0454b8b8106423e53bbdc"
+          }
+        }
+      ],
+      "signals": [
+        {
+          "line": 693,
+          "type": "overlay-or-complex-control",
+          "excerpt": "Modal.confirm({"
+        },
+        {
+          "line": 695,
+          "type": "jsx",
+          "excerpt": "icon: <WarningOutlined style={{ color: \"#faad14\" }} />,"
+        },
+        {
+          "line": 698,
+          "type": "jsx",
+          "excerpt": "<div>"
+        },
+        {
+          "line": 699,
+          "type": "jsx",
+          "excerpt": "<Paragraph style={{ marginBottom: 8 }}>You are changing:</Paragraph>"
+        },
+        {
+          "line": 703,
+          "type": "jsx",
+          "excerpt": "<Text code>{k}</Text> — {knownByKey[k]?.label}"
+        },
+        {
+          "line": 707,
+          "type": "jsx",
+          "excerpt": "<Paragraph type=\"secondary\" style={{ marginBottom: 0 }}>"
+        },
+        {
+          "line": 769,
+          "type": "overlay-or-complex-control",
+          "excerpt": "Modal.confirm({"
+        },
+        {
+          "line": 811,
+          "type": "overlay-or-complex-control",
+          "excerpt": "Modal.confirm({"
+        },
+        {
+          "line": 834,
+          "type": "overlay-or-complex-control",
+          "excerpt": "Modal.confirm({"
+        },
+        {
+          "line": 868,
+          "type": "jsx",
+          "excerpt": "<Space direction=\"vertical\" size={0}>"
+        },
+        {
+          "line": 869,
+          "type": "jsx",
+          "excerpt": "<Text code>{k}</Text>"
+        },
+        {
+          "line": 871,
+          "type": "jsx",
+          "excerpt": "<Text type=\"danger\" style={{ fontSize: 12 }}>"
+        },
+        {
+          "line": 883,
+          "type": "overlay-or-complex-control,jsx",
+          "excerpt": "<Form.Item name={record.key} noStyle>"
+        },
+        {
+          "line": 884,
+          "type": "jsx",
+          "excerpt": "<Input />"
+        },
+        {
+          "line": 893,
+          "type": "jsx",
+          "excerpt": "<Tooltip title=\"Remove this setting\">"
+        },
+        {
+          "line": 898,
+          "type": "jsx",
+          "excerpt": "icon={<DeleteOutlined />}"
+        },
+        {
+          "line": 899,
+          "type": "interactive-prop",
+          "excerpt": "onClick={() => handleDelete(record.key)}"
+        },
+        {
+          "line": 909,
+          "type": "jsx",
+          "excerpt": "return <InputNumber min={s.min} max={s.max} step={1} precision={0} style={{ width: \"100%\" }} placeholder={s.placeholder} />;"
+        },
+        {
+          "line": 912,
+          "type": "jsx",
+          "excerpt": "return <InputNumber min={s.min} max={s.max} step={0.01} style={{ width: \"100%\" }} placeholder={s.placeholder} />;"
+        },
+        {
+          "line": 915,
+          "type": "jsx",
+          "excerpt": "return <Input.TextArea rows={3} placeholder={s.placeholder} allowClear />;"
+        },
+        {
+          "line": 917,
+          "type": "jsx",
+          "excerpt": "return <Input placeholder={s.placeholder} allowClear />;"
+        },
+        {
+          "line": 939,
+          "type": "jsx",
+          "excerpt": "<div>"
+        },
+        {
+          "line": 955,
+          "type": "jsx",
+          "excerpt": "icon={<InfoCircleOutlined />}"
+        },
+        {
+          "line": 963,
+          "type": "jsx",
+          "excerpt": "<Text type=\"secondary\">"
+        },
+        {
+          "line": 998,
+          "type": "interactive-prop,jsx",
+          "excerpt": "action={<Button size=\"small\" onClick={load} disabled={!scopeReady || saving}>Retry</Button>}"
+        },
+        {
+          "line": 1003,
+          "type": "jsx",
+          "excerpt": "<Card size=\"small\" style={{ marginBottom: 16 }}>"
+        },
+        {
+          "line": 1004,
+          "type": "jsx",
+          "excerpt": "<Row gutter={[12, 12]} align=\"middle\">"
+        },
+        {
+          "line": 1005,
+          "type": "jsx",
+          "excerpt": "<Col xs={24} sm={10} md={8}>"
+        },
+        {
+          "line": 1006,
+          "type": "overlay-or-complex-control,interactive-prop,jsx",
+          "excerpt": "<Select value={scopeType} onChange={requestScopeType} disabled={saving} style={{ width: \"100%\" }}>"
+        },
+        {
+          "line": 1008,
+          "type": "jsx",
+          "excerpt": "<Option key={s} value={s}>"
+        },
+        {
+          "line": 1015,
+          "type": "jsx",
+          "excerpt": "<Col xs={24} sm={14} md={16}>"
+        },
+        {
+          "line": 1016,
+          "type": "jsx",
+          "excerpt": "<Space wrap>"
+        },
+        {
+          "line": 1018,
+          "type": "jsx",
+          "excerpt": "<Tag color={scopeId != null ? \"blue\" : \"orange\"}>"
+        },
+        {
+          "line": 1024,
+          "type": "interactive-prop,jsx",
+          "excerpt": "<Button icon={<ReloadOutlined />} onClick={load} loading={loading} disabled={!scopeReady}>"
+        },
+        {
+          "line": 1028,
+          "type": "jsx",
+          "excerpt": "icon={<PlusOutlined />}"
+        },
+        {
+          "line": 1029,
+          "type": "interactive-prop",
+          "excerpt": "onClick={() => setAddOpen(true)}"
+        },
+        {
+          "line": 1036,
+          "type": "jsx",
+          "excerpt": "icon={<SaveOutlined />}"
+        },
+        {
+          "line": 1037,
+          "type": "interactive-prop",
+          "excerpt": "onClick={handleSave}"
+        },
+        {
+          "line": 1055,
+          "type": "overlay-or-complex-control,jsx",
+          "excerpt": "<Form form={form} layout=\"vertical\">"
+        },
+        {
+          "line": 1057,
+          "type": "jsx",
+          "excerpt": "<Card title={g.name} size=\"small\" style={{ marginBottom: 16 }} loading={loading} key={g.name}>"
+        },
+        {
+          "line": 1058,
+          "type": "jsx",
+          "excerpt": "<Row gutter={16}>"
+        },
+        {
+          "line": 1060,
+          "type": "jsx",
+          "excerpt": "<Col xs={24} md={s.type === \"textarea\" ? 24 : 12} key={s.key}>"
+        },
+        {
+          "line": 1061,
+          "type": "overlay-or-complex-control",
+          "excerpt": "<Form.Item"
+        },
+        {
+          "line": 1065,
+          "type": "jsx",
+          "excerpt": "<Space size={4}>"
+        },
+        {
+          "line": 1067,
+          "type": "jsx",
+          "excerpt": "<Text code style={{ fontSize: 12 }}>"
+        },
+        {
+          "line": 1070,
+          "type": "jsx",
+          "excerpt": "{s.dangerous && <Tag color=\"red\">high impact</Tag>}"
+        },
+        {
+          "line": 1091,
+          "type": "jsx",
+          "excerpt": "extra={<Text type=\"secondary\">{additionalRows.length} key(s)</Text>}"
+        },
+        {
+          "line": 1093,
+          "type": "jsx",
+          "excerpt": "<Paragraph type=\"secondary\" style={{ marginTop: 0 }}>"
+        },
+        {
+          "line": 1097,
+          "type": "overlay-or-complex-control",
+          "excerpt": "<Table"
+        },
+        {
+          "line": 1110,
+          "type": "overlay-or-complex-control",
+          "excerpt": "<Modal"
+        },
+        {
+          "line": 1113,
+          "type": "interactive-prop",
+          "excerpt": "onCancel={requestAddClose}"
+        },
+        {
+          "line": 1114,
+          "type": "interactive-prop",
+          "excerpt": "onOk={handleAdd}"
+        },
+        {
+          "line": 1127,
+          "type": "overlay-or-complex-control,jsx",
+          "excerpt": "<Form form={addForm} layout=\"vertical\">"
+        },
+        {
+          "line": 1128,
+          "type": "overlay-or-complex-control",
+          "excerpt": "<Form.Item"
+        },
+        {
+          "line": 1150,
+          "type": "jsx",
+          "excerpt": "<Input placeholder=\"e.g. course.watchedThresholdPercent\" />"
+        },
+        {
+          "line": 1152,
+          "type": "overlay-or-complex-control,jsx",
+          "excerpt": "<Form.Item name=\"value\" label=\"Value\">"
+        },
+        {
+          "line": 1153,
+          "type": "jsx",
+          "excerpt": "<Input placeholder=\"Value\" />"
+        }
+      ],
+      "signalCount": 57,
+      "computedImportRequiresReview": false
+    }
+  ]
+}

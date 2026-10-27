@@ -317,3 +317,14 @@ W05 requested recruiter invitation/reminder outbox transport with idempotency, s
 - [ ] Complete unrelated legacy APP notification, digest, bulk-undo and template surfaces; staging only W05 invite/reminder is not full DB10 parity.
 
 **Status: CODE_STAGED / PROVIDER_NOT_CONNECTED / MIGRATION_BLOCKED / TESTS_UNEXECUTED.**
+
+
+## 2026-10-28 global-shell imported-interface checkpoint — source only
+
+The wave-3 UI source graph identifies previously unexpanded shared descendants. Legacy FE pinned at `9d56bb7a347b06f242ef615c19fdc298f83329e0`; details: `docs/audit/legacy-dev-census/2026-10-28-wave3-source-reconciliation.md`. These are **acceptance checks within existing global notification, auth/shell, error and operations families**, not new project tasks or accepted parity rows.
+
+- **Connectivity and retry:** legacy `src/components/Common/NetworkStatusBanner.jsx:L38-L68` renders offline and reconnected alerts, including alert/status semantics (`L42-L56`). A line-oriented JSX parser initially missed the multiline tag; the corrected wave-3-f record explicitly marks it UI. Trace `src/pages/_app.js` mounting and vNext global shell; then verify offline/online transitions, aria live behavior, permission-safe reconnect retry and mobile visibility. No equivalent vNext runtime implementation was certified by this pass.
+- **Global notifications and responsive navigation:** legacy `src/components/Dropdowns/Notification/NotifivationDropdown.js`, `src/components/Notifications/NotificationsContent.jsx`, `src/components/Global/MobileMenuDrawer/MobileMenuDrawer.js` and `SuperAdminMobileMenuDrawer.js` are child UI. Inspect unread/view/read/deep-link behavior, role/tenant guards, focus/keyboard/Escape, mobile-only destinations and initial/failed/empty states.
+- **System states and operations:** legacy `src/components/Common/PageShell.jsx`, `PanelStates.jsx`, `ErrorBoundary/JobsErrorBoundary.js`, `src/components/tracker/TrackerShell.jsx`, `AuditFindingDrawer.jsx` and `ClaudeReportModal.jsx` need route/provider reachability and accessible action/stale/error state verification, not speculative duplicates in the page count.
+
+These source findings do not count as browser, API, PostgreSQL, UX or release proof. **No global/shared family was marked green.**
