@@ -139,7 +139,7 @@ export function reportFromFiles(filePairs) {
 export function nextFamily(report, account) {
   const name = account === "hr" ? "recruiter" : account;
   return report.pages.find(p => (!name || p.account === name) &&
-    !p.implementationGreen && !p.blocked && !p.problems.length) || null;
+    !p.implementationGreen && !p.blocked) || null;
 }
 export function nextPhaseTask(tracker) {
   const pending = tracker.tasks.filter(t => t.phase === tracker.currentPhase && !t.done);

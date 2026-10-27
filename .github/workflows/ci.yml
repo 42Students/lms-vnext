@@ -90,6 +90,10 @@ jobs:
           node-version: 22
           cache: npm
       - run: npm ci
+      - name: LMS page-closure index — false-green prevention and structural validation
+        run: |
+          npm run test:parity:closure
+          npm run parity:closure:check
       - name: Journal and DB04 source checks
         shell: bash
         run: |

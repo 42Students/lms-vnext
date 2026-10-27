@@ -61,6 +61,13 @@ test("standalone, workspace and report surfaces with the same label stay distinc
     "## Report: Resources\n- [ ] c\n", "college-admin", "college-admin.md");
   assert.deepEqual(x.map(a => a.id), ["college-admin:resources", "college-admin:workspace-resources", "college-admin:report-resources"]);
 });
+test("invalid acceptance is surfaced as next repair target, never skipped", () => {
+  const p = parseAccount(section(receipt("faculty:attendance", { openP0P1: 1 })),
+    "faculty", "faculty.md");
+  const next = nextFamily({ pages: p }, "faculty");
+  assert.equal(next.id, "faculty:attendance");
+  assert.ok(next.problems.length);
+});
 test("unscoped continuation respects current phase dependencies", () => {
   const x = nextPhaseTask({ currentPhase: "DATABASE", tasks: [
     { id: "DB-A", phase: "DATABASE", done: false, dependsOn: ["DB-B"] },
