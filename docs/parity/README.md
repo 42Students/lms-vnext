@@ -74,6 +74,46 @@ Every contract should assign stable child IDs (example: `FAC-BLUEPRINT/SURF-ADD-
 - The next chat recovers status **from GitHub files and exact executed evidence**, not the previous chat's prose. Handoff should identify account/family ID, last verified SHAs, touched code/tests, what truly passed, remaining child IDs, blockers, external dependencies and the single next actionable defect.
 - Do not mutate `docs/tracker.json` merely because a page is visually or functionally improved; project tasks follow their own acceptance contract. Rollups and percentages must be **generated from current detailed evidence**, not copied from historical matrix headers.
 
+### Green-and-move stop rule (binding for page execution)
+
+The project can be exhaustive in discovery **without being endless in acceptance**. A page should be worked to a frozen, finite acceptance contract; chats must not repeatedly invent new requirements to keep one page open. This section clarifies, but does not weaken, the five independent gates above.
+
+**Three achievements, never conflated:**
+- **IMPLEMENTATION GREEN = stop functional work on this family and move to the next.** All *required* legacy child surfaces and vNext retained improvements are mapped; their critical/high-impact actions and applicable data, error, permission, cancellation, conflict and cross-role paths have post-change executable evidence; no known P0/P1 issue remains; focused relevant tests pass at the recorded commit. The page may still be VISUAL PENDING and may depend on global phase/release gates. This is the normal "page green" for functional work.
+- **DESIGN GREEN = final page-level UI/UX accepted.** Actual desktop/mobile behavior, accessibility and visual composition reviewed using our vNext design system. No prototype pixel-identity requirement; no full functional re-audit unless visual changes touch behavior.
+- **RELEASE GREEN = integrated system sign-off.** Global current-commit DB, shared CI, upstream/downstream and deployment gates passed; not inferred from implementation or design green. `docs/tracker.json` is still the authoritative phase/release task tracker.
+
+**Finite contract rule:** A family's first audit must document the **enumerable reachable graph** of sections/tabs/overlays/steps, legacy actions and applicable states, plus named critical scenarios, verification commands and known external prerequisites. Discovery ends when the independently checked legacy route/component/navigation/API closure adds no unexplained reachable nodes; it is *not* an endless effort to invent every imaginable edge case. New P0/P1 legacy/security findings discovered later reopen only the affected requirement. Ideas, optional enhancements and minor P2/P3 polish are recorded as non-blocking design/improvement work; they cannot silently expand a signed-off implementation denominator.
+
+**Priority classification:**
+- P0: privacy/security/data corruption; broken required core job; missing indispensable legacy surface; broken producer→consumer contract.
+- P1: materially broken legacy interaction, required state, accessibility-critical path, navigation/deep link or persistence/validation.
+- P2: noncritical visual consistency, low-impact interaction or copy improvement with safe usable path.
+- P3: new ideas, niceties and nonessential enhancements.
+- Do not waive P0/P1. If a purported P2 makes a daily task unusable or inaccessible, promote it to P1. Do not substitute a "green" badge for evidence.
+
+**Bounded execution rule:**
+1. Audit the chosen family **once** against exact current source SHAs, reconcile existing inventories rather than rebuilding them, and freeze its enumerated required acceptance list. Record no-op findings where already implemented and tested.
+2. Do one cohesive implementation/test batch targeting its remaining P0/P1 failures. Run focused acceptance and fix observed failures. Do a **second focused repair round** if needed; do not start another full source audit.
+3. If all P0/P1 pass, record IMPLEMENTATION GREEN (with witnesses), **stop working on this page**, and advance in canonical account order. If a P0/P1 is blocked after two focused repair rounds by an external approval, migration, test environment or a deeper dependency, record its reproducible blocker, owner/dependency, attempted fixes and next required event; leave **NOT GREEN / BLOCKED**, and advance to the next **independent eligible** family. More rounds are allowed only for a newly isolated executable fix, not repeated broad re-investigation.
+4. Minor P2/P3 issues may remain as explicitly named nonblocking follow-up in the same family section; they do not block IMPLEMENTATION GREEN. They **do** remain visible to the eventual design/release gate if applicable.
+5. After a family is green, **never redo its full audit automatically**. On relevant code, schema, role/permission or source-oracle drift, compute the actual file/contract dependency delta and rerun only impacted evidence. If the contract is materially invalidated, mark only affected gate stale; preserve unaffected acceptance witnesses. Full re-audit is reserved for demonstrated systemic inventory failure or explicit instruction.
+6. A shared global CI failure **outside this family's affected scope** must be recorded but does not revoke a properly evidenced focused IMPLEMENTATION GREEN. However, no RELEASE GREEN while required global checks are red.
+
+**Evidence receipt to leave behind per family:** permanent ID; old FE/BE and vNext SHAs; required surface/action/state IDs; before→after changes; exact passing/failing commands and URLs; any P0/P1 and external blockers; nonblocking P2/P3; `implementationGreen`/ `designGreen` gates with evidence; last material change; **next independently executable action**. These facts belong within the **existing family specification**, not a new chat-owned tracker. Checkbox completion must represent executed evidence, not authored expectations.
+
+### Deterministic continuation, even with a context-free new chat
+
+A new conversation may contain only "continue LMS vNext works." The assistant should not depend on earlier assistant prose or pretend to know another chat's live in-flight work:
+
+1. Read fresh GitHub `AGENTS.md`, `docs/tracker.json` and this page, then current FE/BE/vNext heads, targeted family specifications and actual accepted test evidence.
+2. **If the conversation or user names an account/page**, resume its not-yet-implementation-green family; if green, advance to the next eligible family in that account's existing spec order. Do not restart green pages.
+3. **Without a named scope**, prioritize the earliest unsatisfied prerequisite in the **current phase** of `docs/tracker.json`; consult dependencies and the existing closure-first strategy. Do not invent which unrelated Faculty/TPO page another chat meant. When UI execution is eligible, select the earliest not-green, not-blocked ready family in canonical role/spec order; prefer finishing an existing executable P0/P1 before opening a new family.
+4. Before writing, verify whether another recently landed commit already fixed the exact gap; fetch the latest blob SHA, avoid overwriting competing account work, and keep a single writer for shared files/migrations. If two independent chats receive the same generic instruction concurrently, they may select the same task: **generic wording cannot provide safe multi-chat locking**. For parallel lanes, scope chats explicitly (e.g., "Continue LMS vNext — Faculty" and "Continue LMS vNext — TPO"), one active implementation writer per overlapping family.
+5. Make a real code/test change and record its evidence in GitHub, or report the concrete blocker and the next independent family. Never spend a new chat reproducing already committed research. If the tools/repositories are unavailable, say so rather than inventing a continuation or a green count.
+
+**Existing tooling caveat:** `npm run parity:pages` currently counts Markdown checkboxes in the eight **top-level** `docs/parity/*.md` role files. If page-family specifications are split into `docs/parity/pages/**`, update and test the generator to include them **exactly once** before relying on its totals. It is a checklist count, **not** independent runtime acceptance, account-wide green certification or release readiness.
+
 ### Practical start order
 
 First do a **one-time global census** of legacy dev accounts and their reachable page/overlay graph, reconciling inventories A/B and all eight detailed role specs; record incompletes rather than asserting that static scans exhaust everything. Then use **Faculty Today** as the first full contract pilot (without chasing its PNG), validate that every needed child surface/state is representable, and proceed one page family at a time through Faculty and the other roles. Complete the cross-role producer/consumer joins, integrated acceptance and independent UX/visual work; derive account/global completion only from those leaf records.
