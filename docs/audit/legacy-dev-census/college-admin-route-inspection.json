@@ -1,0 +1,232 @@
+{
+  "ref": "c8b2a5e6779cdab58fdc0f1164f42440786a4154",
+  "account": "college-admin",
+  "totalRoutes": 60,
+  "method": "static direct-page import/JSX/event candidates; inspect nested component closures separately",
+  "records": [
+    {
+      "path": "src/pages/college-admin/assignments.js",
+      "sha": "a57ed1f4a292de6e2fb7ec1228ed2e38ff06c9fb",
+      "lines": 34,
+      "imports": [
+        "../superadmin/sections/Assignments",
+        "@/layouts/AdminLayout",
+        "@/components/admin/AdminGroupShell"
+      ],
+      "jsxComponents": [
+        "Alert",
+        "AdminGroupShell",
+        "Assignments"
+      ],
+      "overlayCandidates": [],
+      "events": 0
+    },
+    {
+      "path": "src/pages/college-admin/attendance.js",
+      "sha": "0775290ba82320c74010fd7dcf6c69f22b400994",
+      "lines": 43,
+      "imports": [
+        "../superadmin/sections/Attendance",
+        "@/layouts/AdminLayout",
+        "@/components/admin/AdminGroupShell",
+        "@/redux/store"
+      ],
+      "jsxComponents": [
+        "Alert",
+        "AdminGroupShell",
+        "Attendance"
+      ],
+      "overlayCandidates": [],
+      "events": 0
+    },
+    {
+      "path": "src/pages/college-admin/audit.js",
+      "sha": "5e870e8354e173cfed533117cb96beaf008ed13b",
+      "lines": 50,
+      "imports": [
+        "@/components/admin/activity/ActivityCenter",
+        "@/layouts/AdminLayout",
+        "@/components/Common/PageShell"
+      ],
+      "jsxComponents": [
+        "Alert",
+        "PageShell",
+        "Link",
+        "Button",
+        "ActivityCenter"
+      ],
+      "overlayCandidates": [],
+      "events": 0
+    },
+    {
+      "path": "src/pages/college-admin/batch-promotion.js",
+      "sha": "1b2cd8dc7733a576b776220901cdc1e53c0888f9",
+      "lines": 41,
+      "imports": [
+        "../superadmin/sections/BatchPromotion",
+        "@/layouts/AdminLayout",
+        "@/components/admin/AdminGroupShell",
+        "@/redux/store"
+      ],
+      "jsxComponents": [
+        "Alert",
+        "AdminGroupShell",
+        "BatchPromotion"
+      ],
+      "overlayCandidates": [],
+      "events": 0
+    },
+    {
+      "path": "src/pages/college-admin/batches.js",
+      "sha": "22bf5cc520f0a03fe9192023dbf23519f5d85d58",
+      "lines": 41,
+      "imports": [
+        "../superadmin/sections/Batches",
+        "@/layouts/AdminLayout",
+        "@/components/admin/AdminGroupShell",
+        "@/redux/store"
+      ],
+      "jsxComponents": [
+        "Alert",
+        "AdminGroupShell",
+        "Batches"
+      ],
+      "overlayCandidates": [],
+      "events": 0
+    },
+    {
+      "path": "src/pages/college-admin/calendar.js",
+      "sha": "b26ce2fc0b0dab0219e85425b50918964f7785bb",
+      "lines": 62,
+      "imports": [
+        "@/components/InterviewCalendar/InterviewCalendarContent",
+        "@/layouts/AdminLayout",
+        "@/components/admin/AdminGroupShell",
+        "@/redux/store"
+      ],
+      "jsxComponents": [
+        "Alert",
+        "AdminGroupShell",
+        "InterviewCalendarContent"
+      ],
+      "overlayCandidates": [],
+      "events": 0
+    },
+    {
+      "path": "src/pages/college-admin/classes.js",
+      "sha": "f746b18ba9811b2bf1353680915b50a6074f33b4",
+      "lines": 41,
+      "imports": [
+        "../superadmin/sections/Classes",
+        "@/layouts/AdminLayout",
+        "@/components/admin/AdminGroupShell",
+        "@/redux/store"
+      ],
+      "jsxComponents": [
+        "Alert",
+        "AdminGroupShell",
+        "Classes"
+      ],
+      "overlayCandidates": [],
+      "events": 0
+    },
+    {
+      "path": "src/pages/college-admin/companies/index.js",
+      "sha": "ad6dd6471704c2954908339405f3f57b00239599",
+      "lines": 43,
+      "imports": [
+        "../../superadmin/sections/Companies",
+        "@/layouts/AdminLayout",
+        "@/components/admin/AdminGroupShell",
+        "@/redux/store"
+      ],
+      "jsxComponents": [
+        "Alert",
+        "AdminGroupShell",
+        "Companies"
+      ],
+      "overlayCandidates": [],
+      "events": 0
+    },
+    {
+      "path": "src/pages/college-admin/course-progress.js",
+      "sha": "7909e80bbce2073664ec0e4035d1a088125c1fef",
+      "lines": 44,
+      "imports": [
+        "../superadmin/sections/CourseProgress",
+        "@/layouts/AdminLayout",
+        "@/components/admin/AdminGroupShell",
+        "@/redux/store"
+      ],
+      "jsxComponents": [
+        "Alert",
+        "AdminGroupShell",
+        "CourseProgress"
+      ],
+      "overlayCandidates": [],
+      "events": 0
+    },
+    {
+      "path": "src/pages/college-admin/courses.js",
+      "sha": "af6c21b53b1a10b8edc82299ecc06468f2fcf9c0",
+      "lines": 41,
+      "imports": [
+        "../superadmin/sections/Courses",
+        "@/layouts/AdminLayout",
+        "@/components/admin/AdminGroupShell",
+        "@/redux/store"
+      ],
+      "jsxComponents": [
+        "Alert",
+        "AdminGroupShell",
+        "Courses"
+      ],
+      "overlayCandidates": [],
+      "events": 0
+    },
+    {
+      "path": "src/pages/college-admin/courses/[id].js",
+      "sha": "13775b4821b402e104ae25e9d56d3c8a1bb8370c",
+      "lines": 185,
+      "imports": [
+        "../../../api/Services/courseServices",
+        "@/layouts/AdminLayout",
+        "@/redux/store",
+        "@/components/admin/courses/AdminCourseHome",
+        "@/components/admin/courses/AdminCourseSyllabus",
+        "@/components/Common/Skeletons"
+      ],
+      "jsxComponents": [
+        "AdminCourseHome",
+        "AdminCourseSyllabus",
+        "Grading",
+        "Result",
+        "Button",
+        "PageSkeleton",
+        "Tabs"
+      ],
+      "overlayCandidates": [
+        "Tabs"
+      ],
+      "events": 1
+    },
+    {
+      "path": "src/pages/college-admin/dashboard.js",
+      "sha": "cf6f3853ef3d2d6318a2ea56303c1f5deead1705",
+      "lines": 74,
+      "imports": [
+        "@/layouts/AdminLayout",
+        "@/components/admin/dashboard",
+        "@/redux/store",
+        "@/components/Common/PageShell"
+      ],
+      "jsxComponents": [
+        "PageShell",
+        "Alert",
+        "AdminDashboardView"
+      ],
+      "overlayCandidates": [],
+      "events": 0
+    }
+  ]
+}
