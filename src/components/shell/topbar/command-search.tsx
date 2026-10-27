@@ -18,6 +18,7 @@ type MentorCommandResult={
 import { topbarCommands, topbarConfigForPath, topbarSearchDestinations } from "./portal-config";
 import { SearchIcon } from "./icons";
 import { TpoFindSuggestions } from "./tpo-find-suggestions";
+import {tpoGoToTerm,tpoGoToPageMatches} from "./tpo-go-to-pages-model";
 import {FacultyFindSuggestions} from "./faculty-find-suggestions";
 import { RecruiterFindSuggestions } from "./recruiter-find-suggestions";
 import style from "./topbar.module.css";
@@ -146,7 +147,10 @@ export function TopbarCommandSearch({ items }: { items: readonly ShellNavItem[] 
     .filter((course):course is LearnerCourse=>Boolean(course)):[];
   const displayedCourses=!query.trim()?courseMatches.filter(course=>!recentIds.includes(course.deliveryId)):courseMatches;
   const commands = useMemo(() => topbarCommands(pathname, items), [pathname, items]);
-  const destinations = topbarSearchDestinations(pathname, query);
+  const goToTerm=config.portal==="tpo"?tpoGoToTerm(query):null;
+  const goToMode=goToTerm!==null;
+  const goToPages=goToMode?tpoGoToPageMatches(query):[];
+  const destinations=goToMode?[]:topbarSearchDestinations(pathname, query);
   const mentorTerm=query.trim();
   const mentorFeedback=mentorSearchFeedback({
     portal:config.portal,query:mentorTerm,lookupTerm:mentorLookup.term,
@@ -181,9 +185,10 @@ export function TopbarCommandSearch({ items }: { items: readonly ShellNavItem[] 
   },[config.portal,open,query]);
   const matches = useMemo(() => {
     const search = query.trim().toLocaleLowerCase("en-IN");
+    if(goToMode)return [];
     return (search ? commands.filter(command =>
       command.label.toLocaleLowerCase("en-IN").includes(search)) : commands).slice(0, 8);
-  }, [query, commands]);
+  }, [query, commands, goToMode]);
 
   useEffect(() => {
     const shortcut = (event: KeyboardEvent) => {
@@ -213,6 +218,10 @@ export function TopbarCommandSearch({ items }: { items: readonly ShellNavItem[] 
   }, [open]);
 
   function submit() {
+    if(goToMode){
+      if(goToPages[0])router.push(goToPages[0].href);
+      setQuery("");closeSearch();return;
+    }
     // Enter selects an actual authorized record result before fallback navigation.
     // Drive and student quick-search options are already validated by their
     // role-scoped API adapters; do not synthesize a URL from raw search text.
@@ -361,12 +370,23 @@ export function TopbarCommandSearch({ items }: { items: readonly ShellNavItem[] 
               setQuery("");
               closeSearch();
             }}/> : null}
-        {config.portal === "tpo" && query.trim().length >= 2
+        {config.portal === "tpo" && query.trim().length >= 2 && !goToMode
           ? <TpoFindSuggestions query={query} onOpen={href => {
               router.push(href);
               setQuery("");
               closeSearch();
             }}/> : null}
+        {goToMode?<section aria-label="TPO go to pages" className="border-t border-border">
+          <p className="px-2 pt-2 text-xs font-semibold uppercase text-muted-foreground">Pages</p>
+          {goToPages.map(page=><Button type="button" variant="ghost" role="option"
+            aria-selected={false} key={page.href} className={style["suggestion"]+" w-full"}
+            onClick={()=>{router.push(page.href);setQuery("");closeSearch();}}>
+            <SearchIcon/><span className="min-w-0 truncate">{page.label}</span>
+          </Button>)}
+          {!goToPages.length?<p role="status" className="p-2 text-xs text-muted-foreground">
+            No matching TPO page. Try another page name.
+          </p>:null}
+         </section>:null}
         {mentorFeedback==="LOADING"?<p role="status" aria-live="polite"
           className="p-2 text-xs text-muted-foreground">
           Searching assigned Mentor projects…

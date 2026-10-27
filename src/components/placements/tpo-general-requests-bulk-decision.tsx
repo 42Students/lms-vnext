@@ -1,5 +1,5 @@
 "use client";
-import {useRef,useState} from "react";
+import {useEffect,useRef,useState} from "react";
 import {apiFetch} from "@/lib/api-fetch";
 import {Button} from "@/components/ui/button";
 import {Checkbox} from "@/components/ui/checkbox";
@@ -28,6 +28,13 @@ export function TpoGeneralRequestsBulkDecision({rows,onReviewed,disabled=false}:
  const [error,setError]=useState("");
  const [outcomes,setOutcomes]=useState<Outcome[]>([]);
  const inFlight=useRef(false);
+ // After paging, a previous page's hidden selection must not trap the
+ // operator in a permanently invalid batch.
+ useEffect(()=>{
+  const currentIds=new Set(rows.map(row=>row.id));
+  setSelected(previous=>previous.every(id=>currentIds.has(id))?
+   previous:previous.filter(id=>currentIds.has(id)));
+ },[rows]);
  const plan=planGeneralRequestBulk(rows,selected,action);
  const note=reason.trim();
  const valid=!disabled&&plan.valid&&(action==="APPROVE"||(note.length>=3&&note.length<=2000));
