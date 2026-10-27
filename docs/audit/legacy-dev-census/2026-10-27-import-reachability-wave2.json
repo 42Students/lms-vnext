@@ -4312,11 +4312,1360 @@
       "actions": [],
       "totalActionCandidates": 0,
       "hasComputedDynamicImport": false
+    },
+    {
+      "path": "src/components/Assignments/AssignmentsContent.jsx",
+      "sha": "f765d1336dcc290d8781422941a8db9ff1fcfd77",
+      "lines": 765,
+      "dependencies": [
+        {
+          "specifier": "@/components/Common/Skeletons",
+          "line": 5,
+          "type": "local",
+          "path": "src/components/Common/Skeletons.jsx",
+          "sha": "19ff7bc7317232a96a7217df406eaa8082567704"
+        },
+        {
+          "specifier": "@/components/Global/ListingPageHeader/ListingPageHeader",
+          "line": 7,
+          "type": "local",
+          "path": "src/components/Global/ListingPageHeader/ListingPageHeader.jsx",
+          "sha": "e51adc75b13a7e51c1f4f0dd3cc056b258e71987"
+        },
+        {
+          "specifier": "@/components/Common/PageShell",
+          "line": 8,
+          "type": "local",
+          "path": "src/components/Common/PageShell.jsx",
+          "sha": "0f05dc1e60d652385f03289a608496ab372c92ec"
+        },
+        {
+          "specifier": "@/components/Global/MetricPill/MetricPill",
+          "line": 9,
+          "type": "local",
+          "path": "src/components/Global/MetricPill/MetricPill.jsx",
+          "sha": "1ccf8904383da10e31bd801b3e7f2a06508cb0cf"
+        },
+        {
+          "specifier": "@/utils/dateUtils",
+          "line": 11,
+          "type": "local",
+          "path": "src/utils/dateUtils.js",
+          "sha": "9b9a8f851534932211d660504ae368cec3c6d73e"
+        },
+        {
+          "specifier": "@/api/Services/courseServices",
+          "line": 13,
+          "type": "local",
+          "path": "src/api/Services/courseServices.js",
+          "sha": "81f6022d7832fbc3db09c7668e9a6e73835a3a79"
+        },
+        {
+          "specifier": "@/utils/learnerApiUtils",
+          "line": 14,
+          "type": "local",
+          "path": "src/utils/learnerApiUtils.js",
+          "sha": "6d28df69c3d8f7b771dd4d1e6a642736cfa6ae22"
+        },
+        {
+          "specifier": "@/components/Global/Offcanvas/Assignment/newAssignment",
+          "line": 15,
+          "type": "local",
+          "path": "src/components/Global/Offcanvas/Assignment/newAssignment.js",
+          "sha": "ab2ca6168ccbdb4dc25347f98e5c116e9bc377cd"
+        },
+        {
+          "specifier": "@/components/Assignments/ViewAssignmentModal",
+          "line": 17,
+          "type": "local",
+          "path": "src/components/Assignments/ViewAssignmentModal.jsx",
+          "sha": "e7d1fcd4c7aa725ba7d24cda51a9948a241121f3"
+        },
+        {
+          "specifier": "@/components/Assignments/ActionAssignment",
+          "line": 18,
+          "type": "local",
+          "path": "src/components/Assignments/ActionAssignment.js",
+          "sha": "96ade34c91ade68b7e4f258ad3c8b431238f8d7d"
+        },
+        {
+          "specifier": "@/pages/Dashboard/course/syllabus/viewSubmissionsModal",
+          "line": 19,
+          "type": "local",
+          "path": "src/pages/Dashboard/course/syllabus/viewSubmissionsModal.jsx",
+          "sha": "ff32ce1e89fba72fd90a725df0c2346f10ab336e"
+        },
+        {
+          "specifier": "@/api/Services/courseServices",
+          "line": 20,
+          "type": "local",
+          "path": "src/api/Services/courseServices.js",
+          "sha": "81f6022d7832fbc3db09c7668e9a6e73835a3a79"
+        },
+        {
+          "specifier": "@/common/lists",
+          "line": 21,
+          "type": "local",
+          "path": "src/common/lists.js",
+          "sha": "171e1732da97fdf98d746da214a8284911e190bb"
+        }
+      ],
+      "externalImportCount": 7,
+      "signalCounts": {
+        "<Select": 1,
+        "<Button": 6
+      },
+      "uiSignals": [
+        {
+          "line": 519,
+          "kind": "<Select"
+        }
+      ],
+      "actions": [
+        {
+          "line": 132,
+          "text": "onClick={() => onView(record)}"
+        },
+        {
+          "line": 163,
+          "text": "onClick={(event) => {"
+        },
+        {
+          "line": 176,
+          "text": "onClick={(event) => {"
+        },
+        {
+          "line": 428,
+          "text": "router.push({ pathname: \"/teacher/report/assignment/[contentId]\", query: { contentId: assignment?.id } });"
+        },
+        {
+          "line": 521,
+          "text": "onChange={(v) => setCourseSlug(v || null)}"
+        },
+        {
+          "line": 533,
+          "text": "<Button type=\"link\" size=\"small\" onClick={() => setCoursesRetry((n) => n + 1)}>Couldn&apos;t load your courses · Retry</Button>"
+        },
+        {
+          "line": 580,
+          "text": "<Button type=\"primary\" onClick={() => setRetryKey((k) => k + 1)}>Retry</Button>"
+        },
+        {
+          "line": 594,
+          "text": "<ViewSubmissionsModal selectedViewAssignment={selectedViewAssignment} open={!!selectedViewAssignment} onClose={() => setSelectedViewAssignment(null)} />"
+        },
+        {
+          "line": 604,
+          "text": "<button type=\"button\" className=\"listing-page-create-btn\" onClick={onClickCreate}>"
+        },
+        {
+          "line": 620,
+          "text": "<Button type=\"primary\" size=\"middle\" className=\"learn-assignments-empty__cta\" icon={<PlusOutlined />} onClick={onClickCreate}>"
+        },
+        {
+          "line": 628,
+          "text": "<DrawerAssignment open={drawerOpen} editSelectedAssignment={selectedAssignment} prevAssignments={assignmentList} onClose={() => { setDrawerOpen(false); setSelec"
+        },
+        {
+          "line": 631,
+          "text": "<ViewAssignmentDrawer open={drawerOpen || teacherView} onClose={() => { setDrawerOpen(false); setTeacherViewer(false); }} assignmentContent={assignmentContent} "
+        },
+        {
+          "line": 642,
+          "text": "<ViewSubmissionsModal selectedViewAssignment={selectedViewAssignment} open={!!selectedViewAssignment} onClose={() => setSelectedViewAssignment(null)} />"
+        },
+        {
+          "line": 645,
+          "text": "<DrawerAssignment open={drawerOpen} editSelectedAssignment={selectedAssignment} prevAssignments={assignmentList} onClose={() => { setDrawerOpen(false); setSelec"
+        },
+        {
+          "line": 648,
+          "text": "<ViewAssignmentDrawer open={drawerOpen || teacherView} onClose={() => { setDrawerOpen(false); setTeacherViewer(false); }} assignmentContent={assignmentContent} "
+        },
+        {
+          "line": 685,
+          "text": "<button type=\"button\" className=\"listing-page-create-btn\" onClick={onClickCreate}>"
+        },
+        {
+          "line": 699,
+          "text": "<Button size=\"small\" onClick={() => onClickDelete(deleteError.record)} disabled={deletingAssignmentId != null}>"
+        },
+        {
+          "line": 704,
+          "text": "onClose={() => setDeleteError(null)}"
+        },
+        {
+          "line": 715,
+          "text": "action={<Button size=\"small\" onClick={() => setRetryKey((k) => k + 1)}>Retry</Button>}"
+        },
+        {
+          "line": 727,
+          "text": "action={<Button size=\"small\" onClick={() => setRetryKey((k) => k + 1)}>Retry</Button>}"
+        },
+        {
+          "line": 755,
+          "text": "onChange={setPage}"
+        }
+      ],
+      "totalActionCandidates": 21,
+      "hasComputedDynamicImport": false
+    },
+    {
+      "path": "src/components/Assignments/SubmitAssignmentModal.jsx",
+      "sha": "b65a854960891623f4b0c885054bb8d24610d87a",
+      "lines": 585,
+      "dependencies": [
+        {
+          "specifier": "@/api/Services/courseServices",
+          "line": 1,
+          "type": "local",
+          "path": "src/api/Services/courseServices.js",
+          "sha": "81f6022d7832fbc3db09c7668e9a6e73835a3a79"
+        },
+        {
+          "specifier": "@/utils/uploadToR2",
+          "line": 2,
+          "type": "local",
+          "path": "src/utils/uploadToR2.js",
+          "sha": "71c0336018a10d333a8333306a9a59aa288c785d"
+        },
+        {
+          "specifier": "@/components/Global/Upload/UploadFromLinkButton",
+          "line": 3,
+          "type": "local",
+          "path": "src/components/Global/Upload/UploadFromLinkButton.jsx",
+          "sha": "314cf6ea0ca8e190ac749193012210faeb7239cf"
+        },
+        {
+          "specifier": "@/components/Global/RightDrawer/DrawerWidget",
+          "line": 4,
+          "type": "local",
+          "path": "src/components/Global/RightDrawer/DrawerWidget.js",
+          "sha": "82319cab10d8a59ba42f81184ef42b9fbdc79dee"
+        },
+        {
+          "specifier": "@/components/Global/Editor/editor",
+          "line": 5,
+          "type": "local",
+          "path": "src/components/Global/Editor/editor.js",
+          "sha": "11388860f6eb8325d81eac86075f550d0288e6b2"
+        },
+        {
+          "specifier": "@/utils/dateUtils",
+          "line": 13,
+          "type": "local",
+          "path": "src/utils/dateUtils.js",
+          "sha": "9b9a8f851534932211d660504ae368cec3c6d73e"
+        },
+        {
+          "specifier": "@/utils/assignmentSchema",
+          "line": 18,
+          "type": "local",
+          "path": "src/utils/assignmentSchema.js",
+          "sha": "dc14444afaf15882c0e5c866b32ca000980b71d3"
+        }
+      ],
+      "externalImportCount": 4,
+      "signalCounts": {
+        "<Modal": 1,
+        "<Button": 7,
+        "<Form": 1,
+        "<Upload": 1
+      },
+      "uiSignals": [
+        {
+          "line": 151,
+          "kind": "<Modal"
+        },
+        {
+          "line": 304,
+          "kind": "<Upload"
+        }
+      ],
+      "actions": [
+        {
+          "line": 52,
+          "text": "function SubmitAssignmentModal({ open, onClose, onSubmitted, assignment }) {"
+        },
+        {
+          "line": 146,
+          "text": "onClose();"
+        },
+        {
+          "line": 155,
+          "text": "onClose();"
+        },
+        {
+          "line": 157,
+          "text": "onCancel={() => setConfirmDiscardOpen(false)}"
+        },
+        {
+          "line": 173,
+          "text": "onClose={requestClose}"
+        },
+        {
+          "line": 195,
+          "text": "action={<Button size=\"small\" onClick={handleSubmit} disabled={isSubmitting || isUploadingFile}>Retry</Button>}"
+        },
+        {
+          "line": 270,
+          "text": "onClick={() => setUploads((prev) => [...prev, createUploadEntry(type)])}>"
+        },
+        {
+          "line": 280,
+          "text": "onClick={() => setUploads((prev) => prev.filter((item) => item.id !== entry.id))}>"
+        },
+        {
+          "line": 295,
+          "text": "onClick={() =>"
+        },
+        {
+          "line": 363,
+          "text": "onClick={() => setLinks((prev) => [...prev, createLinkEntry(type)])}>"
+        },
+        {
+          "line": 376,
+          "text": "onChange={(event) =>"
+        },
+        {
+          "line": 384,
+          "text": "onClick={() => setLinks((prev) => prev.filter((item) => item.id !== entry.id))} />"
+        },
+        {
+          "line": 518,
+          "text": "onClose();"
+        }
+      ],
+      "totalActionCandidates": 13,
+      "hasComputedDynamicImport": false
+    },
+    {
+      "path": "src/components/Course/CoursesContent.jsx",
+      "sha": "da7fd7b667fb9bea0702adae00fa3b39c47d44bb",
+      "lines": 575,
+      "dependencies": [
+        {
+          "specifier": "@/api/Services/SemesterService",
+          "line": 7,
+          "type": "local",
+          "path": "src/api/Services/SemesterService.js",
+          "sha": "e726ce9ffab678cd2333856f203541f1b4145793"
+        },
+        {
+          "specifier": "@/api/Services/FacultyAssignmentService",
+          "line": 8,
+          "type": "local",
+          "path": "src/api/Services/FacultyAssignmentService.js",
+          "sha": "ea0683d738a9c0d4cd628c7e488e8a8a016ec8ee"
+        },
+        {
+          "specifier": "@/components/Global/ListingPageHeader/ListingPageHeader",
+          "line": 9,
+          "type": "local",
+          "path": "src/components/Global/ListingPageHeader/ListingPageHeader.jsx",
+          "sha": "e51adc75b13a7e51c1f4f0dd3cc056b258e71987"
+        },
+        {
+          "specifier": "@/components/Common/PageShell",
+          "line": 10,
+          "type": "local",
+          "path": "src/components/Common/PageShell.jsx",
+          "sha": "0f05dc1e60d652385f03289a608496ab372c92ec"
+        },
+        {
+          "specifier": "@/components/Common/Skeletons",
+          "line": 11,
+          "type": "local",
+          "path": "src/components/Common/Skeletons.jsx",
+          "sha": "19ff7bc7317232a96a7217df406eaa8082567704"
+        },
+        {
+          "specifier": "@/components/Global/MetricPill/MetricPill",
+          "line": 12,
+          "type": "local",
+          "path": "src/components/Global/MetricPill/MetricPill.jsx",
+          "sha": "1ccf8904383da10e31bd801b3e7f2a06508cb0cf"
+        },
+        {
+          "specifier": "@/redux/store",
+          "line": 13,
+          "type": "local",
+          "path": "src/redux/store.js",
+          "sha": "0541bf78795810713c9a75e2d1ee882641986036"
+        },
+        {
+          "specifier": "@/utils/courseListingUtils",
+          "line": 17,
+          "type": "local",
+          "path": "src/utils/courseListingUtils.js",
+          "sha": "d23702ed8c835db8fbb5e162c3c625bcc875d225"
+        },
+        {
+          "specifier": "@/utils/courseUtils/contentAvailability",
+          "line": 18,
+          "type": "local",
+          "path": "src/utils/courseUtils/contentAvailability.js",
+          "sha": "cbb3d8e423ebb1ce01c4165c3d0b64f11288c63a"
+        }
+      ],
+      "externalImportCount": 6,
+      "signalCounts": {
+        "<Select": 2,
+        "<Popover": 1,
+        "<Button": 5
+      },
+      "uiSignals": [
+        {
+          "line": 339,
+          "kind": "<Select"
+        },
+        {
+          "line": 400,
+          "kind": "<Select"
+        },
+        {
+          "line": 411,
+          "kind": "<Popover"
+        }
+      ],
+      "actions": [
+        {
+          "line": 339,
+          "text": "<Select value={selectedSemesterValue} onChange={handleSemesterChange}"
+        },
+        {
+          "line": 352,
+          "text": "{href ? <Link href={href} className=\"metric-popover-item\" onClick={() => activateCourse(course)}>"
+        },
+        {
+          "line": 400,
+          "text": "{isTeacher && sections.length > 1 && <Select value={sectionFilter} onChange={handleSectionFilterChange}"
+        },
+        {
+          "line": 403,
+          "text": "{hasElectives && <Segmented value={effectiveTypeFilter} onChange={handleCourseTypeChange}"
+        },
+        {
+          "line": 415,
+          "text": "{!isTeacher && semestersError && <Button onClick={loadSemesters} loading={semestersLoading}"
+        },
+        {
+          "line": 419,
+          "text": "onChange={(event) => { setSearchQuery(event.target.value); setVisibleLimit(PAGE_SIZE); }} allowClear"
+        },
+        {
+          "line": 446,
+          "text": "<Button type=\"primary\" icon={<ReloadOutlined />} onClick={retryCourses}"
+        },
+        {
+          "line": 477,
+          "text": "<>{\" \"}<Button size=\"small\" type=\"link\" onClick={() => handleSemesterChange(failedSemesterId)}>Retry</Button></>"
+        },
+        {
+          "line": 553,
+          "text": "onClick={() => activateCourse(course)}>{content}</Link>"
+        },
+        {
+          "line": 567,
+          "text": "<Button onClick={() => setVisibleLimit((previous) => previous + PAGE_SIZE)}>"
+        }
+      ],
+      "totalActionCandidates": 10,
+      "hasComputedDynamicImport": false
+    },
+    {
+      "path": "src/components/Course/Syllabus/LessonActivityCards.jsx",
+      "sha": "1364894dbf1168e802e148df667bd7287847a4d4",
+      "lines": 176,
+      "dependencies": [
+        {
+          "specifier": "@/components/Course/Syllabus/ContentTitle",
+          "line": 6,
+          "type": "local",
+          "path": "src/components/Course/Syllabus/ContentTitle.jsx",
+          "sha": "6c763a7745cf456a58fcc74caf5aa1733f0dd9c0"
+        },
+        {
+          "specifier": "@/utils/dateUtils",
+          "line": 7,
+          "type": "local",
+          "path": "src/utils/dateUtils.js",
+          "sha": "9b9a8f851534932211d660504ae368cec3c6d73e"
+        },
+        {
+          "specifier": "@/components/Assignments/ViewAssignmentModal",
+          "line": 9,
+          "type": "local",
+          "path": "src/components/Assignments/ViewAssignmentModal.jsx",
+          "sha": "e7d1fcd4c7aa725ba7d24cda51a9948a241121f3"
+        }
+      ],
+      "externalImportCount": 5,
+      "signalCounts": {
+        "<Button": 1,
+        "<Modal": 1
+      },
+      "uiSignals": [
+        {
+          "line": 153,
+          "kind": "<Modal"
+        }
+      ],
+      "actions": [
+        {
+          "line": 38,
+          "text": "<Button type={actionType} onClick={onAction} disabled={actionDisabled} className=\"ln-activity-card__action\">{actionLabel}</Button>"
+        },
+        {
+          "line": 80,
+          "text": "<ViewAssignmentModal open={open} onClose={() => { setOpen(false); onClosed?.(); }} assignmentContent={content} insideSyllabus />"
+        },
+        {
+          "line": 130,
+          "text": "if (event.origin !== window.location.origin) return;"
+        },
+        {
+          "line": 155,
+          "text": "onCancel={() => { setOpen(false); onClosed?.(); }}"
+        }
+      ],
+      "totalActionCandidates": 4,
+      "hasComputedDynamicImport": false
+    },
+    {
+      "path": "src/components/Course/Syllabus/VideoDrawer.jsx",
+      "sha": "21020d6b212edda856df8aa539ebb7122c7138a2",
+      "lines": 287,
+      "dependencies": [
+        {
+          "specifier": "@/components/Global/Editor/editor",
+          "line": 2,
+          "type": "local",
+          "path": "src/components/Global/Editor/editor.js",
+          "sha": "11388860f6eb8325d81eac86075f550d0288e6b2"
+        },
+        {
+          "specifier": "@/api/Services/courseServices",
+          "line": 7,
+          "type": "local",
+          "path": "src/api/Services/courseServices.js",
+          "sha": "81f6022d7832fbc3db09c7668e9a6e73835a3a79"
+        },
+        {
+          "specifier": "@/api/Services/AdminService",
+          "line": 8,
+          "type": "local",
+          "path": "src/api/Services/AdminService.js",
+          "sha": "598533e1ce238bbcd917c6f6b6df0e83d8f316c6"
+        },
+        {
+          "specifier": "@/utils/uploadToR2",
+          "line": 9,
+          "type": "local",
+          "path": "src/utils/uploadToR2.js",
+          "sha": "71c0336018a10d333a8333306a9a59aa288c785d"
+        },
+        {
+          "specifier": "@/components/Global/RightDrawer/DrawerWidget",
+          "line": 10,
+          "type": "local",
+          "path": "src/components/Global/RightDrawer/DrawerWidget.js",
+          "sha": "82319cab10d8a59ba42f81184ef42b9fbdc79dee"
+        },
+        {
+          "specifier": "@/utils/helper",
+          "line": 11,
+          "type": "local",
+          "path": "src/utils/helper.js",
+          "sha": "fc39f98e11e2d590dfbbddae776b9bba9bff06e7"
+        }
+      ],
+      "externalImportCount": 5,
+      "signalCounts": {
+        "<Form": 4,
+        "<Upload": 1,
+        "<Button": 1,
+        "message.error": 1
+      },
+      "uiSignals": [
+        {
+          "line": 132,
+          "kind": "<Upload"
+        },
+        {
+          "line": 282,
+          "kind": "message.error"
+        }
+      ],
+      "actions": [
+        {
+          "line": 17,
+          "text": "onClose,"
+        },
+        {
+          "line": 37,
+          "text": "onClose={() => {"
+        },
+        {
+          "line": 38,
+          "text": "onClose();"
+        },
+        {
+          "line": 43,
+          "text": "onClose();"
+        },
+        {
+          "line": 117,
+          "text": "// Neither the Upload widget's onChange nor a"
+        },
+        {
+          "line": 136,
+          "text": "onChange={onFileChange}"
+        },
+        {
+          "line": 230,
+          "text": "onClose();"
+        }
+      ],
+      "totalActionCandidates": 7,
+      "hasComputedDynamicImport": false
+    },
+    {
+      "path": "src/components/Course/Syllabus/YoutubeDrawer.jsx",
+      "sha": "5bf2d6112b081d3161655800733f39c03dc4b51d",
+      "lines": 230,
+      "dependencies": [
+        {
+          "specifier": "@/components/Global/Editor/editor",
+          "line": 2,
+          "type": "local",
+          "path": "src/components/Global/Editor/editor.js",
+          "sha": "11388860f6eb8325d81eac86075f550d0288e6b2"
+        },
+        {
+          "specifier": "@/utils/youtubeLink",
+          "line": 3,
+          "type": "local",
+          "path": "src/utils/youtubeLink.js",
+          "sha": "2e14e28af531960f6c73c92cc6e88a528e10dc21"
+        },
+        {
+          "specifier": "@/api/Services/courseServices",
+          "line": 7,
+          "type": "local",
+          "path": "src/api/Services/courseServices.js",
+          "sha": "81f6022d7832fbc3db09c7668e9a6e73835a3a79"
+        },
+        {
+          "specifier": "@/components/Global/RightDrawer/DrawerWidget",
+          "line": 8,
+          "type": "local",
+          "path": "src/components/Global/RightDrawer/DrawerWidget.js",
+          "sha": "82319cab10d8a59ba42f81184ef42b9fbdc79dee"
+        }
+      ],
+      "externalImportCount": 4,
+      "signalCounts": {
+        "<Form": 4
+      },
+      "uiSignals": [],
+      "actions": [
+        {
+          "line": 11,
+          "text": "onClose,"
+        },
+        {
+          "line": 34,
+          "text": "onClose={() => {"
+        },
+        {
+          "line": 35,
+          "text": "onClose();"
+        },
+        {
+          "line": 40,
+          "text": "onClose();"
+        },
+        {
+          "line": 132,
+          "text": "<Input onChange={formatYoutubelink} />"
+        },
+        {
+          "line": 215,
+          "text": "onClose();"
+        }
+      ],
+      "totalActionCandidates": 6,
+      "hasComputedDynamicImport": false
+    },
+    {
+      "path": "src/components/Global/Offcanvas/Syallabus/ResourceComposer.js",
+      "sha": "2a48048cf2eef9299c3114ce76625c828a3db6c9",
+      "lines": 276,
+      "dependencies": [
+        {
+          "specifier": "@/utils/resourceUploadToR2",
+          "line": 5,
+          "type": "local",
+          "path": "src/utils/resourceUploadToR2.js",
+          "sha": "711a45b7bbf628a406a9762b34add2c33e55197c"
+        },
+        {
+          "specifier": "@/api/Services/courseServices",
+          "line": 6,
+          "type": "local",
+          "path": "src/api/Services/courseServices.js",
+          "sha": "81f6022d7832fbc3db09c7668e9a6e73835a3a79"
+        },
+        {
+          "specifier": "@/api/Services/AdminService",
+          "line": 7,
+          "type": "local",
+          "path": "src/api/Services/AdminService.js",
+          "sha": "598533e1ce238bbcd917c6f6b6df0e83d8f316c6"
+        }
+      ],
+      "externalImportCount": 4,
+      "signalCounts": {
+        "message.success": 2,
+        "<Select": 1,
+        "<Button": 5
+      },
+      "uiSignals": [
+        {
+          "line": 195,
+          "kind": "message.success"
+        },
+        {
+          "line": 215,
+          "kind": "message.success"
+        },
+        {
+          "line": 236,
+          "kind": "<Select"
+        }
+      ],
+      "actions": [
+        {
+          "line": 231,
+          "text": "<Input id=\"canonical-resource-title\" value={title} maxLength={255} onChange={event => { setTitle(event.target.value); markDirty(); }} placeholder=\"e.g. Week 2 r"
+        },
+        {
+          "line": 236,
+          "text": "<Select id=\"canonical-resource-scope\" value={scope} disabled={!isAdmin || uploading || saving || containsFiles} onChange={(value) => { setScope(value); markDirt"
+        },
+        {
+          "line": 244,
+          "text": "<Input.TextArea id=\"canonical-resource-notes\" rows={3} value={notes} onChange={event => { setNotes(event.target.value); markDirty(); }} placeholder=\"Context for"
+        },
+        {
+          "line": 249,
+          "text": "onChange={addFiles} style={{ display: \"none\" }} />"
+        },
+        {
+          "line": 251,
+          "text": "loading={uploading} onClick={() => fileInput.current?.click()}>Add files</Button>"
+        },
+        {
+          "line": 253,
+          "text": "<Input placeholder=\"Link title (optional)\" aria-label=\"Resource link title\" value={linkTitle} onChange={event => { setLinkTitle(event.target.value); markDirty()"
+        },
+        {
+          "line": 254,
+          "text": "<Input placeholder=\"https://example.org/reading\" aria-label=\"Resource link URL\" value={link} onChange={event => { setLink(event.target.value); markDirty(); }} /"
+        },
+        {
+          "line": 255,
+          "text": "<Button disabled={uploading || saving || materials.length >= MAX_MATERIALS} onClick={addLink}>Add link</Button>"
+        },
+        {
+          "line": 262,
+          "text": "disabled={uploading || saving} onClick={() => { markDirty(); setMaterials(previous => previous.filter((_, position) => position !== index)); }} />"
+        },
+        {
+          "line": 268,
+          "text": "<Button disabled={saving || uploading} onClick={() => back?.(false)}>Cancel</Button>"
+        },
+        {
+          "line": 269,
+          "text": "<Button type=\"primary\" loading={saving} disabled={uploading || saving} onClick={save}>{editing ? \"Save changes\" : \"Save Resource\"}</Button>"
+        }
+      ],
+      "totalActionCandidates": 11,
+      "hasComputedDynamicImport": false
+    },
+    {
+      "path": "src/components/Global/Offcanvas/Syallabus/AddLessonDrawer.jsx",
+      "sha": "ce4803eb2e8eabd6e86674c0b128789cf6f52a23",
+      "lines": 196,
+      "dependencies": [
+        {
+          "specifier": "../../RightDrawer/DrawerWidget",
+          "line": 1,
+          "type": "local",
+          "path": "src/components/Global/RightDrawer/DrawerWidget.js",
+          "sha": "82319cab10d8a59ba42f81184ef42b9fbdc79dee"
+        },
+        {
+          "specifier": "@/api/ApiMethod",
+          "line": 4,
+          "type": "local",
+          "path": "src/api/ApiMethod.js",
+          "sha": "3d924576b70062beb57f0726f39a4db9a4840f26"
+        }
+      ],
+      "externalImportCount": 4,
+      "signalCounts": {
+        "window.confirm": 1,
+        "Modal.confirm": 1,
+        "message.success": 1,
+        "message.error": 1,
+        "<Form": 3,
+        "<Select": 1
+      },
+      "uiSignals": [
+        {
+          "line": 48,
+          "kind": "window.confirm"
+        },
+        {
+          "line": 75,
+          "kind": "Modal.confirm"
+        },
+        {
+          "line": 115,
+          "kind": "message.success"
+        },
+        {
+          "line": 119,
+          "kind": "message.error"
+        },
+        {
+          "line": 181,
+          "kind": "<Select"
+        }
+      ],
+      "actions": [
+        {
+          "line": 49,
+          "text": "const addressBar = `${window.location.pathname}${window.location.search}${window.location.hash}`;"
+        },
+        {
+          "line": 131,
+          "text": "onClose={handleClose}"
+        },
+        {
+          "line": 184,
+          "text": "onChange={(value) => { setContentScope(value); setDirty(true); }}"
+        }
+      ],
+      "totalActionCandidates": 3,
+      "hasComputedDynamicImport": false
+    },
+    {
+      "path": "src/components/admin/AdminAssignmentBuilderModal.jsx",
+      "sha": "1890a759e6bafd2ac5694c348c118af7c4841e7e",
+      "lines": 441,
+      "dependencies": [
+        {
+          "specifier": "@/api/Services/AdminService",
+          "line": 5,
+          "type": "local",
+          "path": "src/api/Services/AdminService.js",
+          "sha": "598533e1ce238bbcd917c6f6b6df0e83d8f316c6"
+        },
+        {
+          "specifier": "@/api/Services/adminServices/departmentService",
+          "line": 6,
+          "type": "local",
+          "path": "src/api/Services/adminServices/departmentService.js",
+          "sha": "5c85495cb5823e0b4059c11c502143b47fec6a13"
+        },
+        {
+          "specifier": "@/api/Services/AdminAssignmentContentService",
+          "line": 7,
+          "type": "local",
+          "path": "src/api/Services/AdminAssignmentContentService.js",
+          "sha": "49fb196b149dde11577dd034b0bc318e37b22c8b"
+        },
+        {
+          "specifier": "@/utils/uploadToR2",
+          "line": 8,
+          "type": "local",
+          "path": "src/utils/uploadToR2.js",
+          "sha": "71c0336018a10d333a8333306a9a59aa288c785d"
+        },
+        {
+          "specifier": "@/components/Global/Upload/UploadFromLinkButton",
+          "line": 9,
+          "type": "local",
+          "path": "src/components/Global/Upload/UploadFromLinkButton.jsx",
+          "sha": "314cf6ea0ca8e190ac749193012210faeb7239cf"
+        },
+        {
+          "specifier": "@/utils/formErrors",
+          "line": 10,
+          "type": "local",
+          "path": "src/utils/formErrors.js",
+          "sha": "94717daf4b31733522d8f3fd60972f9acae1710a"
+        },
+        {
+          "specifier": "@/utils/assignmentSchema",
+          "line": 17,
+          "type": "local",
+          "path": "src/utils/assignmentSchema.js",
+          "sha": "dc14444afaf15882c0e5c866b32ca000980b71d3"
+        },
+        {
+          "specifier": "@/utils/adminAssignmentResources",
+          "line": 21,
+          "type": "local",
+          "path": "src/utils/adminAssignmentResources.js",
+          "sha": "35288beb460aa593cdf73d8b9a884abf2126d52d"
+        },
+        {
+          "specifier": "@/utils/adminAssignmentEdit",
+          "line": 22,
+          "type": "local",
+          "path": "src/utils/adminAssignmentEdit.js",
+          "sha": "760b368a513b008791adba33464cf3212eb443f4"
+        },
+        {
+          "specifier": "@/utils/dateUtils",
+          "line": 23,
+          "type": "local",
+          "path": "src/utils/dateUtils.js",
+          "sha": "9b9a8f851534932211d660504ae368cec3c6d73e"
+        }
+      ],
+      "externalImportCount": 4,
+      "signalCounts": {
+        "message.error": 3,
+        "message.success": 1,
+        "Modal.confirm": 1,
+        "<Modal": 1,
+        "<Form": 10,
+        "<Select": 4,
+        "<Button": 1
+      },
+      "uiSignals": [
+        {
+          "line": 167,
+          "kind": "message.error"
+        },
+        {
+          "line": 179,
+          "kind": "message.error"
+        },
+        {
+          "line": 235,
+          "kind": "message.success"
+        },
+        {
+          "line": 246,
+          "kind": "message.error"
+        },
+        {
+          "line": 261,
+          "kind": "Modal.confirm"
+        },
+        {
+          "line": 276,
+          "kind": "<Modal"
+        },
+        {
+          "line": 305,
+          "kind": "<Select"
+        },
+        {
+          "line": 319,
+          "kind": "<Select"
+        },
+        {
+          "line": 341,
+          "kind": "<Select"
+        },
+        {
+          "line": 370,
+          "kind": "<Select"
+        }
+      ],
+      "actions": [
+        {
+          "line": 28,
+          "text": "export default function AdminAssignmentBuilderModal({ open, onClose, onSaved, courseOptions = [], assignment, collegeId }) {"
+        },
+        {
+          "line": 258,
+          "text": "onClose?.();"
+        },
+        {
+          "line": 269,
+          "text": "onClose?.();"
+        },
+        {
+          "line": 279,
+          "text": "onCancel={requestClose}"
+        },
+        {
+          "line": 299,
+          "text": "onClose={() => setSaveError(null)}"
+        },
+        {
+          "line": 309,
+          "text": "onChange={(courseId) => {"
+        },
+        {
+          "line": 375,
+          "text": "onSelect={addResource}"
+        },
+        {
+          "line": 384,
+          "text": "onClick={() => { setDirty(true); setResources((current) => current.filter((r) => r.id !== resource.id)); }}>"
+        },
+        {
+          "line": 392,
+          "text": "onChange={(event) => updateResource(resource.id, { title: event.target.value })}"
+        },
+        {
+          "line": 400,
+          "text": "onChange={(event) => updateResource(resource.id, { link: event.target.value })}"
+        },
+        {
+          "line": 411,
+          "text": "onChange={(event) => {"
+        },
+        {
+          "line": 434,
+          "text": "onChange={(value) => { setDirty(true); setSubmissionTypes(value); }}"
+        }
+      ],
+      "totalActionCandidates": 12,
+      "hasComputedDynamicImport": false
+    },
+    {
+      "path": "src/components/admin/electives/ElectivesConsole.jsx",
+      "sha": "0c80ab0939b0ce8b540fb4c546973cc6d4d6a371",
+      "lines": 316,
+      "dependencies": [
+        {
+          "specifier": "@/components/admin/AdminTableToolbar",
+          "line": 4,
+          "type": "local",
+          "path": "src/components/admin/AdminTableToolbar.js",
+          "sha": "40b02404196fa52b5fbd35b009b9bd40ec336a65"
+        },
+        {
+          "specifier": "@/api/Services/AdminService",
+          "line": 5,
+          "type": "local",
+          "path": "src/api/Services/AdminService.js",
+          "sha": "598533e1ce238bbcd917c6f6b6df0e83d8f316c6"
+        },
+        {
+          "specifier": "@/api/Services/ElectiveService",
+          "line": 6,
+          "type": "local",
+          "path": "src/api/Services/ElectiveService.js",
+          "sha": "4f2808742ea28d4d72ca715dce776e2a9106681a"
+        },
+        {
+          "specifier": "./ElectiveSlotPanel",
+          "line": 7,
+          "type": "local",
+          "path": "src/components/admin/electives/ElectiveSlotPanel.jsx",
+          "sha": "4dc3cacf8b3cf731d4a4c5f50ee34afcb0723dae"
+        }
+      ],
+      "externalImportCount": 3,
+      "signalCounts": {
+        "message.success": 3,
+        "message.error": 2,
+        "Modal.confirm": 1,
+        "<Button": 7,
+        "<Popconfirm": 1,
+        "<Select": 4,
+        "<Modal": 1,
+        "<Form": 9
+      },
+      "uiSignals": [
+        {
+          "line": 148,
+          "kind": "message.success"
+        },
+        {
+          "line": 155,
+          "kind": "message.success"
+        },
+        {
+          "line": 161,
+          "kind": "message.error"
+        },
+        {
+          "line": 172,
+          "kind": "message.success"
+        },
+        {
+          "line": 176,
+          "kind": "message.error"
+        },
+        {
+          "line": 194,
+          "kind": "Modal.confirm"
+        },
+        {
+          "line": 220,
+          "kind": "<Popconfirm"
+        },
+        {
+          "line": 237,
+          "kind": "<Select"
+        },
+        {
+          "line": 239,
+          "kind": "<Select"
+        },
+        {
+          "line": 241,
+          "kind": "<Select"
+        },
+        {
+          "line": 262,
+          "kind": "<Modal"
+        },
+        {
+          "line": 270,
+          "kind": "<Select"
+        }
+      ],
+      "actions": [
+        {
+          "line": 206,
+          "text": "<Button type=\"link\" style={{ padding: 0, height: \"auto\", textAlign: \"left\" }} onClick={() => setOpenSlotId(s.id)}><span><strong>{v}</strong>{s.description ? <sp"
+        },
+        {
+          "line": 218,
+          "text": "<Button size=\"small\" type=\"primary\" onClick={() => setOpenSlotId(s.id)} disabled={archiveBusyId != null || saving}>Open</Button>"
+        },
+        {
+          "line": 219,
+          "text": "<Button size=\"small\" onClick={() => openEditor(s)} disabled={s.status !== \"ACTIVE\" || archiveBusyId != null || saving || lookupErrors.includes(\"programs\")}>Edit"
+        },
+        {
+          "line": 221,
+          "text": "disabled={archiveBusyId != null || saving} onConfirm={() => archive(s)}>"
+        },
+        {
+          "line": 237,
+          "text": "<Select allowClear placeholder=\"Program\" size=\"small\" style={{ width: 200 }} value={programId} onChange={setProgramId} showSearch optionFilterProp=\"label\""
+        },
+        {
+          "line": 239,
+          "text": "<Select allowClear placeholder=\"Semester\" size=\"small\" style={{ width: 110 }} value={semester} onChange={setSemester}"
+        },
+        {
+          "line": 241,
+          "text": "<Select size=\"small\" style={{ width: 130 }} value={includeArchived} onChange={setIncludeArchived}"
+        },
+        {
+          "line": 244,
+          "text": "<Button type=\"primary\" icon={<PlusOutlined />} disabled={lookupErrors.includes(\"programs\")} onClick={() => openEditor(null)}>New slot</Button>"
+        },
+        {
+          "line": 252,
+          "text": "action={<Button size=\"small\" onClick={() => window.location.reload()}>Reload</Button>} />}"
+        },
+        {
+          "line": 255,
+          "text": "action={<Button size=\"small\" onClick={load}>Retry slots</Button>} />}"
+        },
+        {
+          "line": 260,
+          "text": "{openSlot && <ElectiveSlotPanel slot={openSlot} lookups={lookups} onClose={() => setOpenSlotId(null)} onChanged={load} />}"
+        },
+        {
+          "line": 262,
+          "text": "<Modal title={editing === \"new\" ? \"New elective slot\" : \"Edit slot\"} open={editing !== null} onCancel={requestEditorClose} onOk={saveSlot}"
+        }
+      ],
+      "totalActionCandidates": 12,
+      "hasComputedDynamicImport": false
+    },
+    {
+      "path": "src/components/admin/electives/AllocateModal.jsx",
+      "sha": "e2d933212f52893888fc9330184ab77ec22ecc4a",
+      "lines": 126,
+      "dependencies": [
+        {
+          "specifier": "@/api/Services/ElectiveService",
+          "line": 3,
+          "type": "local",
+          "path": "src/api/Services/ElectiveService.js",
+          "sha": "4f2808742ea28d4d72ca715dce776e2a9106681a"
+        }
+      ],
+      "externalImportCount": 2,
+      "signalCounts": {
+        "message.error": 1,
+        "Modal.confirm": 1,
+        "<Modal": 1,
+        "<Form": 5,
+        "<Select": 1
+      },
+      "uiSignals": [
+        {
+          "line": 61,
+          "kind": "message.error"
+        },
+        {
+          "line": 77,
+          "kind": "Modal.confirm"
+        },
+        {
+          "line": 92,
+          "kind": "<Modal"
+        },
+        {
+          "line": 105,
+          "kind": "<Select"
+        }
+      ],
+      "actions": [
+        {
+          "line": 6,
+          "text": "export default function AllocateModal({ offering, slot, classes, batches, onClose, onDone }) {"
+        },
+        {
+          "line": 74,
+          "text": "onClose?.();"
+        },
+        {
+          "line": 83,
+          "text": "onOk: () => onClose?.(),"
+        },
+        {
+          "line": 93,
+          "text": "onCancel={requestClose} onOk={() => form.submit()} okText=\"Add students\" confirmLoading={busy}"
+        },
+        {
+          "line": 98,
+          "text": "<Radio.Group value={by} onChange={(e) => { setBy(e.target.value); setResult(null); setDirty(true); }} optionType=\"button\""
+        }
+      ],
+      "totalActionCandidates": 5,
+      "hasComputedDynamicImport": false
+    },
+    {
+      "path": "src/components/admin/electives/OfferingRosterDrawer.jsx",
+      "sha": "0628a10ae2a848c4c8c90f29a7c54095ec3d7048",
+      "lines": 145,
+      "dependencies": [
+        {
+          "specifier": "@/components/admin/AdminTableToolbar",
+          "line": 3,
+          "type": "local",
+          "path": "src/components/admin/AdminTableToolbar.js",
+          "sha": "40b02404196fa52b5fbd35b009b9bd40ec336a65"
+        },
+        {
+          "specifier": "@/api/Services/ElectiveService",
+          "line": 4,
+          "type": "local",
+          "path": "src/api/Services/ElectiveService.js",
+          "sha": "4f2808742ea28d4d72ca715dce776e2a9106681a"
+        },
+        {
+          "specifier": "@/components/admin/studentGroups/groupUi",
+          "line": 5,
+          "type": "local",
+          "path": "src/components/admin/studentGroups/groupUi.js",
+          "sha": "9f503c0e2f653a5ba3d7f77b59c704c1aebc3cf2"
+        }
+      ],
+      "externalImportCount": 2,
+      "signalCounts": {
+        "message.success": 2,
+        "message.error": 2,
+        "<Select": 2,
+        "<Button": 3,
+        "<Popconfirm": 1,
+        "<Drawer": 1
+      },
+      "uiSignals": [
+        {
+          "line": 61,
+          "kind": "message.success"
+        },
+        {
+          "line": 66,
+          "kind": "message.error"
+        },
+        {
+          "line": 80,
+          "kind": "message.success"
+        },
+        {
+          "line": 86,
+          "kind": "message.error"
+        },
+        {
+          "line": 101,
+          "kind": "<Select"
+        },
+        {
+          "line": 110,
+          "kind": "<Popconfirm"
+        },
+        {
+          "line": 120,
+          "kind": "<Drawer"
+        },
+        {
+          "line": 138,
+          "kind": "<Select"
+        }
+      ],
+      "actions": [
+        {
+          "line": 10,
+          "text": "export default function OfferingRosterDrawer({ offering, siblings, onClose, onChanged }) {"
+        },
+        {
+          "line": 102,
+          "text": "onChange={(v) => setMoveTarget((prev) => ({ ...prev, [m.memberId]: v }))}"
+        },
+        {
+          "line": 105,
+          "text": "<Button size=\"small\" onClick={() => move(m)} loading={actionBusyId === m.memberId}"
+        },
+        {
+          "line": 111,
+          "text": "disabled={actionBusyId != null} onConfirm={() => remove(m, false)}>"
+        },
+        {
+          "line": 121,
+          "text": "onClose={() => { if (actionBusyId == null) onClose?.(); }} destroyOnClose closable={actionBusyId == null}"
+        },
+        {
+          "line": 128,
+          "text": "closable onClose={() => setActionError(\"\")} />}"
+        },
+        {
+          "line": 132,
+          "text": "{loadError ? <Alert type=\"error\" showIcon message=\"Elective roster could not be loaded\" description={loadError} action={<Button size=\"small\" onClick={load}>Retr"
+        },
+        {
+          "line": 138,
+          "text": "extra={<Select size=\"small\" style={{ width: 140 }} value={state} onChange={setState}"
+        }
+      ],
+      "totalActionCandidates": 8,
+      "hasComputedDynamicImport": false
     }
   ],
   "scanStatus": {
-    "read": 24,
+    "read": 36,
     "errors": [],
-    "signalCandidates": 482
+    "signalCandidates": 605
   }
 }
