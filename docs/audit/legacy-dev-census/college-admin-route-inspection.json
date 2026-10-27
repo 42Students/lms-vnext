@@ -227,6 +227,272 @@
       ],
       "overlayCandidates": [],
       "events": 0
+    },
+    {
+      "path": "src/pages/college-admin/departments.js",
+      "sha": "1f4e6277738ecfb993dec356b42c720a7271dc14",
+      "lines": 43,
+      "imports": [
+        "../superadmin/sections/Departments",
+        "@/layouts/AdminLayout",
+        "@/components/admin/AdminGroupShell",
+        "@/redux/store"
+      ],
+      "jsxComponents": [
+        "Alert",
+        "AdminGroupShell",
+        "Departments"
+      ],
+      "overlayCandidates": [],
+      "events": 0
+    },
+    {
+      "path": "src/pages/college-admin/electives.js",
+      "sha": "024a0d37f3ff98785cb393fa5d8ea453f6865f99",
+      "lines": 43,
+      "imports": [
+        "@/layouts/AdminLayout",
+        "@/components/admin/AdminGroupShell",
+        "@/components/admin/electives/ElectivesConsole",
+        "@/utils/useCollegeFeatureFlags",
+        "@/components/admin/ModuleGroupGuard",
+        "@/redux/store"
+      ],
+      "jsxComponents": [
+        "Alert",
+        "AdminGroupShell",
+        "Result",
+        "ElectivesConsole"
+      ],
+      "overlayCandidates": [],
+      "events": 0
+    },
+    {
+      "path": "src/pages/college-admin/faculty-assignment.js",
+      "sha": "1732ce13f735a220bd975e9f3b9b1b492ea20c23",
+      "lines": 42,
+      "imports": [
+        "../superadmin/sections/FacultyAssignment",
+        "@/layouts/AdminLayout",
+        "@/components/admin/AdminGroupShell",
+        "@/redux/store"
+      ],
+      "jsxComponents": [
+        "Alert",
+        "AdminGroupShell",
+        "FacultyAssignment"
+      ],
+      "overlayCandidates": [],
+      "events": 0
+    },
+    {
+      "path": "src/pages/college-admin/hiring-dashboard.js",
+      "sha": "64e5e11292671970363b50a645d6c826c9e3ec02",
+      "lines": 47,
+      "imports": [
+        "@/layouts/AdminLayout",
+        "@/pages/superadmin/sections/HiringDashboard",
+        "@/components/admin/AdminGroupShell",
+        "@/redux/store"
+      ],
+      "jsxComponents": [
+        "Alert",
+        "AdminGroupShell",
+        "HiringDashboard"
+      ],
+      "overlayCandidates": [],
+      "events": 0
+    },
+    {
+      "path": "src/pages/college-admin/index.js",
+      "sha": "f3a724101faf4938ab204f1db672bf5a43499147",
+      "lines": 11,
+      "imports": [],
+      "jsxComponents": [],
+      "overlayCandidates": [],
+      "events": 0
+    },
+    {
+      "path": "src/pages/college-admin/jobs/[jobId]/applications.js",
+      "sha": "28c8858b667aaa856976ea926039f5a15b1d0d53",
+      "lines": 56,
+      "imports": [
+        "../../../superadmin/sections/JobApplications",
+        "@/layouts/AdminLayout",
+        "@/components/ErrorBoundary/JobsErrorBoundary",
+        "@/components/admin/placements/DriveSubNav",
+        "@/components/admin/ModuleGroupGuard"
+      ],
+      "jsxComponents": [
+        "Alert",
+        "JobsErrorBoundary",
+        "ModuleGroupGuard",
+        "DriveSubNav",
+        "JobApplications"
+      ],
+      "overlayCandidates": [],
+      "events": 0
+    },
+    {
+      "path": "src/pages/college-admin/jobs/[jobId]/index.js",
+      "sha": "41aa92f588e2548eb463ba6e7abd327c73f2ffe1",
+      "lines": 272,
+      "imports": [
+        "@/utils/placementDateTime",
+        "@/components/Common/Facts",
+        "@/layouts/AdminLayout",
+        "@/components/ErrorBoundary/JobsErrorBoundary",
+        "@/components/admin/placements/DriveSubNav",
+        "@/components/Placements/PlacementsCompanyAvatar",
+        "@/components/admin/ModuleGroupGuard",
+        "@/api/Services/AdminService"
+      ],
+      "jsxComponents": [
+        "Alert",
+        "JobsErrorBoundary",
+        "ModuleGroupGuard",
+        "DriveSubNav",
+        "Skeleton",
+        "Card",
+        "Space",
+        "Skeleton.Button",
+        "Row",
+        "Col",
+        "WarningOutlined",
+        "Text",
+        "Tag",
+        "Button",
+        "RightOutlined",
+        "PlacementsCompanyAvatar",
+        "Title",
+        "Facts",
+        "Fact",
+        "EditOutlined",
+        "TeamOutlined",
+        "Divider",
+        "Paragraph",
+        "Statistic"
+      ],
+      "overlayCandidates": [],
+      "events": 3
+    },
+    {
+      "path": "src/pages/college-admin/jobs/[jobId]/interviews.js",
+      "sha": "bfc396b781d010ec2ee33c7ba46f025749dfb3d2",
+      "lines": 55,
+      "imports": [
+        "@/layouts/AdminLayout",
+        "@/components/ErrorBoundary/JobsErrorBoundary",
+        "@/components/admin/placements/DriveSubNav",
+        "@/components/InterviewCalendar/InterviewCalendarContent",
+        "@/components/admin/ModuleGroupGuard"
+      ],
+      "jsxComponents": [
+        "Alert",
+        "JobsErrorBoundary",
+        "ModuleGroupGuard",
+        "DriveSubNav",
+        "InterviewCalendarContent"
+      ],
+      "overlayCandidates": [],
+      "events": 0
+    },
+    {
+      "path": "src/pages/college-admin/jobs/[jobId]/settings.js",
+      "sha": "7f6faca5a20575e24d4008ae12c4f87abc7211c3",
+      "lines": 224,
+      "imports": [
+        "@/layouts/AdminLayout",
+        "@/components/ErrorBoundary/JobsErrorBoundary",
+        "@/components/admin/placements/DriveSubNav",
+        "../../../superadmin/sections/JobForm",
+        "@/components/admin/ModuleGroupGuard",
+        "@/components/Common/PanelStates",
+        "@/components/Common/Skeletons",
+        "@/api/Services/AdminService"
+      ],
+      "jsxComponents": [
+        "Alert",
+        "JobsErrorBoundary",
+        "ModuleGroupGuard",
+        "DriveSubNav",
+        "DetailSkeleton",
+        "PanelError",
+        "RefreshStatus",
+        "Button",
+        "JobForm",
+        "Card",
+        "Popconfirm",
+        "Text",
+        "DeleteOutlined"
+      ],
+      "overlayCandidates": [
+        "PanelError",
+        "JobForm",
+        "Popconfirm"
+      ],
+      "events": 5
+    },
+    {
+      "path": "src/pages/college-admin/jobs/[jobId]/shortlisted.js",
+      "sha": "dbe27f150dd3e650f44f37d5a1e5f0d0157e1fef",
+      "lines": 60,
+      "imports": [
+        "../../../superadmin/sections/JobApplications",
+        "@/layouts/AdminLayout",
+        "@/components/ErrorBoundary/JobsErrorBoundary",
+        "@/components/admin/placements/DriveSubNav",
+        "@/components/admin/ModuleGroupGuard"
+      ],
+      "jsxComponents": [
+        "Alert",
+        "JobsErrorBoundary",
+        "ModuleGroupGuard",
+        "DriveSubNav",
+        "JobApplications"
+      ],
+      "overlayCandidates": [],
+      "events": 0
+    },
+    {
+      "path": "src/pages/college-admin/jobs/all.js",
+      "sha": "172c80574278ebd97d6e1ac8bd3be7d6a170e801",
+      "lines": 49,
+      "imports": [
+        "../../superadmin/sections/Jobs",
+        "@/layouts/AdminLayout",
+        "@/components/ErrorBoundary/JobsErrorBoundary",
+        "@/components/admin/AdminGroupShell",
+        "@/redux/store"
+      ],
+      "jsxComponents": [
+        "Alert",
+        "JobsErrorBoundary",
+        "AdminGroupShell",
+        "Jobs"
+      ],
+      "overlayCandidates": [],
+      "events": 0
+    },
+    {
+      "path": "src/pages/college-admin/jobs/index.js",
+      "sha": "c9d53cbd877246a8851118ba20a639cdd7329f37",
+      "lines": 44,
+      "imports": [
+        "../../superadmin/sections/DrivesLanding",
+        "@/layouts/AdminLayout",
+        "@/components/ErrorBoundary/JobsErrorBoundary",
+        "@/components/admin/AdminGroupShell",
+        "@/redux/store"
+      ],
+      "jsxComponents": [
+        "Alert",
+        "JobsErrorBoundary",
+        "AdminGroupShell",
+        "DrivesLanding"
+      ],
+      "overlayCandidates": [],
+      "events": 0
     }
   ]
 }
