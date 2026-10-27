@@ -6249,6 +6249,678 @@
           "s": "<Button key=\"u\" type=\"primary\" disabled={sendable.length === 0 || uploading} loading={uploading} onClick={upload}>Upload {sendable.length || \"\"} letter{sendable.length === 1 ? \"\" : \"s\"}</Button>,"
         }
       ]
+    },
+    {
+      "path": "src/components/Sidebar/AdminSidebar.js",
+      "sha": "7b2d15143a74a83a1d76960bf645cd37d7a80128",
+      "lineCount": 120,
+      "imports": [
+        {
+          "specifier": "next/link",
+          "line": 1,
+          "type": "package"
+        },
+        {
+          "specifier": "react-redux",
+          "line": 2,
+          "type": "package"
+        },
+        {
+          "specifier": "react",
+          "line": 3,
+          "type": "package"
+        },
+        {
+          "specifier": "next/router",
+          "line": 4,
+          "type": "package"
+        },
+        {
+          "specifier": "@ant-design/icons",
+          "line": 12,
+          "type": "package"
+        },
+        {
+          "specifier": "@/redux/store",
+          "line": 13,
+          "type": "local",
+          "path": "src/redux/store.js",
+          "sha": "0541bf78795810713c9a75e2d1ee882641986036"
+        },
+        {
+          "specifier": "@/common/lists",
+          "line": 14,
+          "type": "local",
+          "path": "src/common/lists.js",
+          "sha": "171e1732da97fdf98d746da214a8284911e190bb"
+        },
+        {
+          "specifier": "@/utils/navigationActiveKey",
+          "line": 15,
+          "type": "local",
+          "path": "src/utils/navigationActiveKey.js",
+          "sha": "c49a6525ef1bc0cb18aaa12e876c7e829bceb75c"
+        },
+        {
+          "specifier": "@/utils/useCollegeFeatureFlags",
+          "line": 16,
+          "type": "local",
+          "path": "src/utils/useCollegeFeatureFlags.js",
+          "sha": "bd0e7f315bdae7f20d43f165d5a00f180b4e87ec"
+        },
+        {
+          "specifier": "@/utils/featureFlagNavFilter",
+          "line": 17,
+          "type": "local",
+          "path": "src/utils/featureFlagNavFilter.js",
+          "sha": "c0cdd97ed02c44623364a902c2510347879cdb2f"
+        }
+      ],
+      "uiSignals": [],
+      "totalUiSignals": 0,
+      "actionSamples": [
+        {
+          "line": 29,
+          "s": "const AdminSidebarInner = ({ onClose }) => {"
+        },
+        {
+          "line": 94,
+          "s": "onClick={() => { dispatch(appAction.setActiveMenuItem(item.path)); onClose?.(); }}>"
+        }
+      ]
+    },
+    {
+      "path": "src/components/Sidebar/SuperAdminSidebar.js",
+      "sha": "f2c7b134e5366c79531e87ae1dd8df33e2fdf302",
+      "lineCount": 106,
+      "imports": [
+        {
+          "specifier": "next/link",
+          "line": 1,
+          "type": "package"
+        },
+        {
+          "specifier": "react",
+          "line": 2,
+          "type": "package"
+        },
+        {
+          "specifier": "next/router",
+          "line": 3,
+          "type": "package"
+        },
+        {
+          "specifier": "@ant-design/icons",
+          "line": 9,
+          "type": "package"
+        },
+        {
+          "specifier": "@/common/lists",
+          "line": 10,
+          "type": "local",
+          "path": "src/common/lists.js",
+          "sha": "171e1732da97fdf98d746da214a8284911e190bb"
+        },
+        {
+          "specifier": "@/utils/navigationActiveKey",
+          "line": 11,
+          "type": "local",
+          "path": "src/utils/navigationActiveKey.js",
+          "sha": "c49a6525ef1bc0cb18aaa12e876c7e829bceb75c"
+        }
+      ],
+      "uiSignals": [],
+      "totalUiSignals": 0,
+      "actionSamples": [
+        {
+          "line": 22,
+          "s": "const SuperAdminSidebarInner = ({ onClose }) => {"
+        },
+        {
+          "line": 80,
+          "s": "onClick={() => onClose?.()}>"
+        }
+      ]
+    },
+    {
+      "path": "src/components/MobileFooter/MobileFooter.jsx",
+      "sha": "a697b2193eecc12418f8a9e521ecfa054b211712",
+      "lineCount": 230,
+      "imports": [
+        {
+          "specifier": "antd",
+          "line": 1,
+          "type": "package"
+        },
+        {
+          "specifier": "next/image",
+          "line": 2,
+          "type": "package"
+        },
+        {
+          "specifier": "next/link",
+          "line": 3,
+          "type": "package"
+        },
+        {
+          "specifier": "react",
+          "line": 4,
+          "type": "package"
+        },
+        {
+          "specifier": "react-redux",
+          "line": 5,
+          "type": "package"
+        },
+        {
+          "specifier": "next/router",
+          "line": 6,
+          "type": "package"
+        },
+        {
+          "specifier": "@/utils/roleUtils",
+          "line": 7,
+          "type": "local",
+          "path": "src/utils/roleUtils.js",
+          "sha": "a16d7b4ef25833d3ace89759751190e1ce56d22d"
+        },
+        {
+          "specifier": "@/utils/facultyRouteUtils",
+          "line": 8,
+          "type": "local",
+          "path": "src/utils/facultyRouteUtils.js",
+          "sha": "5d09ec63a56f98df9734ebc828f1f592ea285b10"
+        },
+        {
+          "specifier": "@/hooks/useNotificationFeed",
+          "line": 9,
+          "type": "local",
+          "path": "src/hooks/useNotificationFeed.js",
+          "sha": "5eeccc1adc527aaae1f78fcda299c96ce0258264"
+        },
+        {
+          "specifier": "@/config/roles",
+          "line": 10,
+          "type": "local",
+          "path": "src/config/roles.js",
+          "sha": "b434007a7777400839ce20e8b63011bbdac3387c"
+        }
+      ],
+      "uiSignals": [],
+      "totalUiSignals": 0,
+      "actionSamples": []
+    },
+    {
+      "path": "src/components/Global/Header/Header.js",
+      "sha": "777046ae846dcc9a09a0b3fac2df70e584fe27ee",
+      "lineCount": 897,
+      "imports": [
+        {
+          "specifier": "@/components/Dropdowns/Profile/profiledropdown",
+          "line": 1,
+          "type": "local",
+          "path": "src/components/Dropdowns/Profile/profiledropdown.js",
+          "sha": "42807cfb9262412dd9418814bc33049cd9287663"
+        },
+        {
+          "specifier": "@mui/material",
+          "line": 2,
+          "type": "package"
+        },
+        {
+          "specifier": "react-redux",
+          "line": 3,
+          "type": "package"
+        },
+        {
+          "specifier": "next/image",
+          "line": 4,
+          "type": "package"
+        },
+        {
+          "specifier": "@ant-design/icons",
+          "line": 5,
+          "type": "package"
+        },
+        {
+          "specifier": "react",
+          "line": 6,
+          "type": "package"
+        },
+        {
+          "specifier": "antd",
+          "line": 7,
+          "type": "package"
+        },
+        {
+          "specifier": "../MobileMenuDrawer/MobileMenuDrawer",
+          "line": 8,
+          "type": "local",
+          "path": "src/components/Global/MobileMenuDrawer/MobileMenuDrawer.js",
+          "sha": "f691b49e9a023d403a882dd1a5277af002255c5c"
+        },
+        {
+          "specifier": "@ant-design/icons",
+          "line": 9,
+          "type": "package"
+        },
+        {
+          "specifier": "next/router",
+          "line": 10,
+          "type": "package"
+        },
+        {
+          "specifier": "@/utils/facultyRouteUtils",
+          "line": 11,
+          "type": "local",
+          "path": "src/utils/facultyRouteUtils.js",
+          "sha": "5d09ec63a56f98df9734ebc828f1f592ea285b10"
+        },
+        {
+          "specifier": "@ant-design/icons",
+          "line": 12,
+          "type": "package"
+        },
+        {
+          "specifier": "@/api/Services/UserServices",
+          "line": 13,
+          "type": "local",
+          "path": "src/api/Services/UserServices.js",
+          "sha": "bf22db80dc21133955f4ee30bb6cc10ad5b7381e"
+        },
+        {
+          "specifier": "@/components/tpo/TpoTopBar",
+          "line": 14,
+          "type": "local",
+          "path": "src/components/tpo/TpoTopBar.js",
+          "sha": "f7dd7e60c58cc1be4945ae3ec638c9e1d91796de"
+        },
+        {
+          "specifier": "@/components/recruiter/RecruiterTopBar",
+          "line": 15,
+          "type": "local",
+          "path": "src/components/recruiter/RecruiterTopBar.jsx",
+          "sha": "14595ebdb9a78ab756d3215b39e3264d6c4f5790"
+        },
+        {
+          "specifier": "@/components/Dropdowns/Notification/NotifivationDropdown",
+          "line": 16,
+          "type": "local",
+          "path": "src/components/Dropdowns/Notification/NotifivationDropdown.js",
+          "sha": "13309104f47cab30a778e35426320dda06ff3af1"
+        },
+        {
+          "specifier": "@/api/Services/CourseSearchService",
+          "line": 17,
+          "type": "local",
+          "path": "src/api/Services/CourseSearchService.js",
+          "sha": "ce5dad4b1838a6419435a57d448c3640342b3a6e"
+        },
+        {
+          "specifier": "@/api/Services/SemesterService",
+          "line": 18,
+          "type": "local",
+          "path": "src/api/Services/SemesterService.js",
+          "sha": "e726ce9ffab678cd2333856f203541f1b4145793"
+        },
+        {
+          "specifier": "@/api/Services/FacultyAssignmentService",
+          "line": 19,
+          "type": "local",
+          "path": "src/api/Services/FacultyAssignmentService.js",
+          "sha": "ea0683d738a9c0d4cd628c7e488e8a8a016ec8ee"
+        },
+        {
+          "specifier": "lodash",
+          "line": 20,
+          "type": "package"
+        },
+        {
+          "specifier": "@/utils/roleUtils",
+          "line": 21,
+          "type": "local",
+          "path": "src/utils/roleUtils.js",
+          "sha": "a16d7b4ef25833d3ace89759751190e1ce56d22d"
+        },
+        {
+          "specifier": "@/api/Services/AuthOrgService",
+          "line": 22,
+          "type": "local",
+          "path": "src/api/Services/AuthOrgService.js",
+          "sha": "50a0cd44bc4864644007c93e673e6292fa97ee0a"
+        },
+        {
+          "specifier": "@/utils/authUtils",
+          "line": 23,
+          "type": "local",
+          "path": "src/utils/authUtils.js",
+          "sha": "c79e628b23ecd93e1bb55470f48194a19e1aa007"
+        },
+        {
+          "specifier": "@/redux/store",
+          "line": 24,
+          "type": "local",
+          "path": "src/redux/store.js",
+          "sha": "0541bf78795810713c9a75e2d1ee882641986036"
+        },
+        {
+          "specifier": "@/config/roles",
+          "line": 25,
+          "type": "local",
+          "path": "src/config/roles.js",
+          "sha": "b434007a7777400839ce20e8b63011bbdac3387c"
+        }
+      ],
+      "uiSignals": [
+        {
+          "line": 354,
+          "kind": "Modal.confirm"
+        }
+      ],
+      "totalUiSignals": 1,
+      "actionSamples": [
+        {
+          "line": 361,
+          "s": "onCancel: () => resolve(false),"
+        },
+        {
+          "line": 755,
+          "s": "onClose={() => setMenuDrawerOpen(false)}"
+        },
+        {
+          "line": 768,
+          "s": "onClick={() => setMenuDrawerOpen(true)}"
+        },
+        {
+          "line": 784,
+          "s": "onSelect={handleSelect}"
+        },
+        {
+          "line": 824,
+          "s": "onChange={handleOrgSwitch}"
+        },
+        {
+          "line": 857,
+          "s": "onChange={handleOrgSwitch}"
+        }
+      ]
+    },
+    {
+      "path": "src/components/Global/Header/SuperAdminHeader.js",
+      "sha": "8839ee541a6e837411816933388b4acaa26b1c94",
+      "lineCount": 125,
+      "imports": [
+        {
+          "specifier": "@mui/material",
+          "line": 1,
+          "type": "package"
+        },
+        {
+          "specifier": "react-redux",
+          "line": 2,
+          "type": "package"
+        },
+        {
+          "specifier": "@ant-design/icons",
+          "line": 3,
+          "type": "package"
+        },
+        {
+          "specifier": "react",
+          "line": 4,
+          "type": "package"
+        },
+        {
+          "specifier": "antd",
+          "line": 5,
+          "type": "package"
+        },
+        {
+          "specifier": "../MobileMenuDrawer/SuperAdminMobileMenuDrawer",
+          "line": 6,
+          "type": "local",
+          "path": "src/components/Global/MobileMenuDrawer/SuperAdminMobileMenuDrawer.js",
+          "sha": "532cf35fd1f8fb901d498eb3754d33549167744e"
+        },
+        {
+          "specifier": "@/components/Dropdowns/Profile/SuperAdminProfileDropdown",
+          "line": 7,
+          "type": "local",
+          "path": "src/components/Dropdowns/Profile/SuperAdminProfileDropdown.js",
+          "sha": "1d74b00297c099211e067e58fa72efbda7d77e49"
+        },
+        {
+          "specifier": "@/contexts/SuperAdminScopeContext",
+          "line": 8,
+          "type": "local",
+          "path": "src/contexts/SuperAdminScopeContext.js",
+          "sha": "14ae9f2486dae62e41ae8fdb975a015fea35f293"
+        }
+      ],
+      "uiSignals": [],
+      "totalUiSignals": 0,
+      "actionSamples": [
+        {
+          "line": 42,
+          "s": "onClose={() => setMenuDrawerOpen(false)}"
+        },
+        {
+          "line": 54,
+          "s": "onClick={() => setMenuDrawerOpen(true)}"
+        },
+        {
+          "line": 79,
+          "s": "onChange={handleCollegeChange}"
+        },
+        {
+          "line": 105,
+          "s": "onChange={handleCollegeChange}"
+        }
+      ]
+    },
+    {
+      "path": "src/components/Course/Home/index.js",
+      "sha": "d3e33755ec832c8f675ebbdeec623968c22e6946",
+      "lineCount": 14,
+      "imports": [
+        {
+          "specifier": "./InThisCourseSection",
+          "line": 10,
+          "type": "local",
+          "path": "src/components/Course/Home/InThisCourseSection.jsx",
+          "sha": "31cfcf01978ab73f227ccaa05c3b3467ddca8101"
+        },
+        {
+          "specifier": "./UnifiedActivityList",
+          "line": 11,
+          "type": "local",
+          "path": "src/components/Course/Home/UnifiedActivityList.jsx",
+          "sha": "6f4943b09bcac471aaaf0d39238b8cf00d3cece7"
+        },
+        {
+          "specifier": "./AtRiskStudentsCard",
+          "line": 12,
+          "type": "local",
+          "path": "src/components/Course/Home/AtRiskStudentsCard.jsx",
+          "sha": "a767be55aad220734ec6a8d4fa8268d12554dc94"
+        },
+        {
+          "specifier": "./PerformanceCard",
+          "line": 13,
+          "type": "local",
+          "path": "src/components/Course/Home/PerformanceCard.jsx",
+          "sha": "170a0da079466fff79d2e2b38dd314f039335206"
+        }
+      ],
+      "uiSignals": [],
+      "totalUiSignals": 0,
+      "actionSamples": []
+    },
+    {
+      "path": "src/pages/Dashboard/course/Attendance/AttendanceReport.js",
+      "sha": "8aef050e976434f194983015c6ef8a51e2595caa",
+      "lineCount": 104,
+      "imports": [
+        {
+          "specifier": "react",
+          "line": 1,
+          "type": "package"
+        },
+        {
+          "specifier": "next/router",
+          "line": 2,
+          "type": "package"
+        },
+        {
+          "specifier": "@/utils/facultyCourseDetail",
+          "line": 3,
+          "type": "local",
+          "path": "src/utils/facultyCourseDetail.js",
+          "sha": "30be9ec04493a75c7055938b2bd193a0cf666634"
+        },
+        {
+          "specifier": "react-redux",
+          "line": 4,
+          "type": "package"
+        },
+        {
+          "specifier": "antd",
+          "line": 5,
+          "type": "package"
+        },
+        {
+          "specifier": "@/components/Attendance/TakeAttendanceHeaderFilters/TakeAttendanceHeaderFilters",
+          "line": 6,
+          "type": "local",
+          "path": "src/components/Attendance/TakeAttendanceHeaderFilters/TakeAttendanceHeaderFilters.js",
+          "sha": "b23dbc7ba333f8384bc2f93fb0621000a27877b5"
+        },
+        {
+          "specifier": "@/components/Attendance/CourseAttendeeHeaderFilters/CourseAttendeeHeaderFilters",
+          "line": 7,
+          "type": "local",
+          "path": "src/components/Attendance/CourseAttendeeHeaderFilters/CourseAttendeeHeaderFilters.js",
+          "sha": "a1c11b1c82716fde0d60e60f2005d2991b492c05"
+        },
+        {
+          "specifier": "./StudentAttendanceView",
+          "line": 8,
+          "type": "local",
+          "path": "src/pages/Dashboard/course/Attendance/StudentAttendanceView.jsx",
+          "sha": "0209e7ce84ce6617fbc1f49f9f24ec19e5a5f762"
+        },
+        {
+          "specifier": "./TeacherAttendanceView",
+          "line": 9,
+          "type": "local",
+          "path": "src/pages/Dashboard/course/Attendance/TeacherAttendanceView.jsx",
+          "sha": "bb2139e0742ad8cd87514789ebf72747a5391191"
+        },
+        {
+          "specifier": "@/redux/store",
+          "line": 10,
+          "type": "local",
+          "path": "src/redux/store.js",
+          "sha": "0541bf78795810713c9a75e2d1ee882641986036"
+        }
+      ],
+      "uiSignals": [
+        {
+          "line": 25,
+          "kind": "window.confirm"
+        }
+      ],
+      "totalUiSignals": 1,
+      "actionSamples": [
+        {
+          "line": 63,
+          "s": "onChange={handleClassSwitch}"
+        },
+        {
+          "line": 78,
+          "s": "onChange={value => { if (value === \"take\" || confirmDiscardAttendanceDraft()) setTakeAttendance(value === \"take\"); }}"
+        }
+      ]
+    },
+    {
+      "path": "src/components/Projects/ProjectsShell.jsx",
+      "sha": "c5bc1b2c7d83a90375ff01d9fe360d3d221aad84",
+      "lineCount": 59,
+      "imports": [
+        {
+          "specifier": "react",
+          "line": 1,
+          "type": "package"
+        },
+        {
+          "specifier": "next/router",
+          "line": 2,
+          "type": "package"
+        },
+        {
+          "specifier": "@/components/Common/PageShell",
+          "line": 3,
+          "type": "local",
+          "path": "src/components/Common/PageShell.jsx",
+          "sha": "0f05dc1e60d652385f03289a608496ab372c92ec"
+        },
+        {
+          "specifier": "@/data/projectsData",
+          "line": 4,
+          "type": "local",
+          "path": "src/data/projectsData.js",
+          "sha": "5036eed09336821f36928ef58405830363fd5c1c"
+        }
+      ],
+      "uiSignals": [],
+      "totalUiSignals": 0,
+      "actionSamples": []
+    },
+    {
+      "path": "src/components/Projects/ProjectModalShell.jsx",
+      "sha": "657a2c2448d884940f50c4f31a5e8ff00d173e25",
+      "lineCount": 45,
+      "imports": [
+        {
+          "specifier": "react",
+          "line": 1,
+          "type": "package"
+        },
+        {
+          "specifier": "antd",
+          "line": 2,
+          "type": "package"
+        }
+      ],
+      "uiSignals": [
+        {
+          "line": 20,
+          "kind": "<Modal"
+        }
+      ],
+      "totalUiSignals": 1,
+      "actionSamples": [
+        {
+          "line": 4,
+          "s": "function ProjectModalShell({ children, bodyStyle = { padding: 20 }, className, title = null, width = 1120, open, onCancel, ...props }) {"
+        },
+        {
+          "line": 9,
+          "s": "if (!open || !onCancel) return undefined;"
+        },
+        {
+          "line": 12,
+          "s": "onCancel(event);"
+        },
+        {
+          "line": 17,
+          "s": "}, [open, onCancel]);"
+        },
+        {
+          "line": 28,
+          "s": "onCancel={onCancel}"
+        }
+      ]
     }
   ],
   "remaining": "Expand transitive imports of all UI-rendering descendants. Resolve conditional overlays/actions, services/backend, mapping, tests and runtime separately.",
