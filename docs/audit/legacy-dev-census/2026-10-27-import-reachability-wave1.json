@@ -8308,5 +8308,687 @@
       ]
     },
     "vNextRouteCaveat": "Source path existence is not action, guard, state or runtime parity; a renamed/consolidated route is not missing simply due to differing pathname."
-  }
+  },
+  "frontier": [
+    {
+      "path": "src/components/Common/PanelStates.jsx",
+      "sourceSha": "9e7522f07545b772ee8b5f6ae0b68e2c8bea1a92",
+      "importedBy": [
+        "src/pages/tpo/drives/[jobId].js",
+        "src/pages/recruiter/drives/[jobId].js",
+        "src/pages/tpo/recruiters/[recruiterLeadId].js",
+        "src/components/tpo/drive/ApplicantsTab.js",
+        "src/components/tpo/StudentPanel.js",
+        "src/components/tpo/drive/ResultsEntryModal.jsx",
+        "src/components/tpo/TpoDataTable.js"
+      ]
+    },
+    {
+      "path": "src/components/Global/RightDrawer/DrawerWidget.js",
+      "sourceSha": "82319cab10d8a59ba42f81184ef42b9fbdc79dee",
+      "importedBy": [
+        "src/components/Global/Offcanvas/Syallabus/AddNewLessonContentDrawer.js",
+        "src/components/Global/Offcanvas/Assignment/newAssignment.js",
+        "src/components/Assignments/ViewAssignmentModal.jsx"
+      ]
+    },
+    {
+      "path": "src/components/Course/Common/CourseTabSkeleton.jsx",
+      "sourceSha": "0ff612cb40af843f896e76e7d22d3969825c1a0d",
+      "importedBy": [
+        "src/pages/learn/courses/[courseId]/[...courseTab].js",
+        "src/pages/teacher/courses/[courseId]/[...courseTab].js"
+      ]
+    },
+    {
+      "path": "src/components/tpo/drive/DiscussionTab.jsx",
+      "sourceSha": "2fd3f115c22d6f76150a4f7e4ecec7cf6722a586",
+      "importedBy": [
+        "src/components/tpo/drive/DriveRequestReview.jsx",
+        "src/components/tpo/drive/DriveTalk.jsx"
+      ]
+    },
+    {
+      "path": "src/components/tpo/grid/ChoiceEditor.jsx",
+      "sourceSha": "04203bce4392d72c713417fb1dbe4082ef6ce74f",
+      "importedBy": [
+        "src/components/tpo/drive/ResultsEntryModal.jsx",
+        "src/components/tpo/TpoDataTable.js"
+      ]
+    },
+    {
+      "path": "src/components/tpo/grid/GridWorkspace.jsx",
+      "sourceSha": "83e47b081e41e714fdc7447f61ab19d10057ca75",
+      "importedBy": [
+        "src/components/tpo/drive/ResultsEntryModal.jsx",
+        "src/components/tpo/TpoDataTable.js"
+      ]
+    },
+    {
+      "path": "src/components/Assignments/SubmitAssignmentModal.jsx",
+      "sourceSha": "b65a854960891623f4b0c885054bb8d24610d87a",
+      "importedBy": [
+        "src/components/Assignments/ViewAssignmentModal.jsx"
+      ]
+    },
+    {
+      "path": "src/components/Attendance/CourseAttendeeHeaderFilters/CourseAttendeeHeaderFilters.js",
+      "sourceSha": "a1c11b1c82716fde0d60e60f2005d2991b492c05",
+      "importedBy": [
+        "src/pages/Dashboard/course/Attendance/AttendanceReport.js"
+      ]
+    },
+    {
+      "path": "src/components/Attendance/TakeAttendanceHeaderFilters/TakeAttendanceHeaderFilters.js",
+      "sourceSha": "b23dbc7ba333f8384bc2f93fb0621000a27877b5",
+      "importedBy": [
+        "src/pages/Dashboard/course/Attendance/AttendanceReport.js"
+      ]
+    },
+    {
+      "path": "src/components/Course/Home/PerformanceCard.jsx",
+      "sourceSha": "170a0da079466fff79d2e2b38dd314f039335206",
+      "importedBy": [
+        "src/components/Course/Home/index.js"
+      ]
+    },
+    {
+      "path": "src/components/Global/Editor/editor.js",
+      "sourceSha": "11388860f6eb8325d81eac86075f550d0288e6b2",
+      "importedBy": [
+        "src/components/Global/Offcanvas/Assignment/newAssignment.js"
+      ]
+    },
+    {
+      "path": "src/components/Global/ListingPageHeader/ListingPageHeader.jsx",
+      "sourceSha": "e51adc75b13a7e51c1f4f0dd3cc056b258e71987",
+      "importedBy": [
+        "src/pages/recruiter/drives/[jobId].js"
+      ]
+    },
+    {
+      "path": "src/components/Global/MobileMenuDrawer/MobileMenuDrawer.js",
+      "sourceSha": "f691b49e9a023d403a882dd1a5277af002255c5c",
+      "importedBy": [
+        "src/components/Global/Header/Header.js"
+      ]
+    },
+    {
+      "path": "src/components/Global/MobileMenuDrawer/SuperAdminMobileMenuDrawer.js",
+      "sourceSha": "532cf35fd1f8fb901d498eb3754d33549167744e",
+      "importedBy": [
+        "src/components/Global/Header/SuperAdminHeader.js"
+      ]
+    },
+    {
+      "path": "src/components/Global/Offcanvas/Syallabus/videoform.js",
+      "sourceSha": "bb807f6256a63a76306e00c9d5785672d3e211bc",
+      "importedBy": [
+        "src/components/Global/Offcanvas/Syallabus/AddNewLessonContentDrawer.js"
+      ]
+    },
+    {
+      "path": "src/components/Global/RichTextEditor/RichTextDisplay.jsx",
+      "sourceSha": "f302907c0493cae35cd977c11e2452d79f72cecb",
+      "importedBy": [
+        "src/components/recruiter/RecruiterDriveOverview.jsx"
+      ]
+    },
+    {
+      "path": "src/components/Header/LoginHeader.js",
+      "sourceSha": "af1fd51052711fc92ccba83a556b6be9be306d9c",
+      "importedBy": [
+        "src/layouts/SuperAdminLayout.js"
+      ]
+    },
+    {
+      "path": "src/components/tpo/grid/gridExport.js",
+      "sourceSha": "7fc8fab6ef865f19651f195ec0bd4ca20863f144",
+      "importedBy": [
+        "src/components/tpo/TpoDataTable.js"
+      ]
+    },
+    {
+      "path": "src/components/tpo/grid/HeaderFilter.jsx",
+      "sourceSha": "fa30c507e68ddffdb8e6cceb21543dac90b0a82d",
+      "importedBy": [
+        "src/components/tpo/TpoDataTable.js"
+      ]
+    },
+    {
+      "path": "src/components/tpo/RequestsPanel.js",
+      "sourceSha": "bbd6d992c8ddd7628cefbf8c9d8c6445ae5ae4de",
+      "importedBy": [
+        "src/components/tpo/StudentPanel.js"
+      ]
+    },
+    {
+      "path": "src/components/tpo/students/studentGridRules.js",
+      "sourceSha": "070f1e27278a3aff19d9d42b4d3b1ae07f5e449b",
+      "importedBy": [
+        "src/components/tpo/StudentPanel.js"
+      ]
+    },
+    {
+      "path": "src/components/tpo/ui/formatWhen.js",
+      "sourceSha": "0bf9ddd6c52efefb7b5518ace7e5b41b98291cfb",
+      "importedBy": [
+        "src/components/tpo/StudentPanel.js"
+      ]
+    },
+    {
+      "path": "src/pages/Dashboard/course/syllabus/viewSubmissionsModal.jsx",
+      "sourceSha": "ff32ce1e89fba72fd90a725df0c2346f10ab336e",
+      "importedBy": [
+        "src/components/Assignments/ViewAssignmentModal.jsx"
+      ]
+    },
+    {
+      "path": "src/components/tpo/dj.js",
+      "sourceSha": "09399d1614ffde9593c34d5f880680bf5b485d92",
+      "importedBy": [
+        "src/pages/tpo/drives/[jobId].js",
+        "src/pages/recruiter/drives/[jobId].js",
+        "src/pages/tpo/recruiters/[recruiterLeadId].js",
+        "src/components/tpo/drive/DriveHeader.jsx",
+        "src/components/tpo/drive/DriveRequestReview.jsx",
+        "src/components/tpo/drive/ApplicantsTab.js",
+        "src/components/tpo/drive/RoundsTab.js",
+        "src/components/tpo/drive/OffersTab.js",
+        "src/components/tpo/drive/OverviewTab.js",
+        "src/components/tpo/StudentPanel.js",
+        "src/components/recruiter/NoCollegeSession.jsx",
+        "src/components/tpo/InviteModal.js",
+        "src/components/tpo/invite/VerifyCompanyWindow.jsx",
+        "src/components/tpo/team/TeamConversation.jsx",
+        "src/components/tpo/recruiterPage.js",
+        "src/components/tpo/drive/ShareModal.js",
+        "src/components/tpo/drive/ScheduleModal.js",
+        "src/components/tpo/drive/ChangeRequests.jsx",
+        "src/components/tpo/drive/RoundPanel.jsx",
+        "src/components/tpo/drive/DriveOffersList.jsx"
+      ]
+    },
+    {
+      "path": "src/components/tpo/ui/labels.js",
+      "sourceSha": "96a56474f1800afeb073cde3e3cca67a9c438747",
+      "importedBy": [
+        "src/pages/tpo/drives/[jobId].js",
+        "src/pages/tpo/recruiters/[recruiterLeadId].js",
+        "src/components/tpo/drive/ApplicantsTab.js",
+        "src/components/tpo/drive/RoundsTab.js",
+        "src/components/tpo/drive/OffersTab.js",
+        "src/components/tpo/drive/OverviewTab.js",
+        "src/components/tpo/StudentPanel.js",
+        "src/components/tpo/recruiterPage.js",
+        "src/components/tpo/drive/ScheduleModal.js",
+        "src/components/tpo/drive/DriveStudents.jsx",
+        "src/components/tpo/drive/DriveStudents.jsx",
+        "src/components/tpo/drive/RoundPanel.jsx",
+        "src/components/tpo/drive/DriveOffersList.jsx"
+      ]
+    },
+    {
+      "path": "src/components/tpo/tpoFiles.js",
+      "sourceSha": "b1b89501d023f13b87af99a521a2b19c3fb9f51d",
+      "importedBy": [
+        "src/pages/tpo/drives/[jobId].js",
+        "src/pages/recruiter/drives/[jobId].js",
+        "src/components/tpo/drive/ApplicantsTab.js",
+        "src/components/tpo/drive/RoundsTab.js",
+        "src/components/tpo/drive/OffersTab.js",
+        "src/components/tpo/StudentPanel.js",
+        "src/components/tpo/drive/ResultsEntryModal.jsx",
+        "src/components/tpo/drive/OfferLettersModal.jsx",
+        "src/components/tpo/ImportPreviewModal.js",
+        "src/components/tpo/drive/ApplicantsBoard.jsx",
+        "src/components/tpo/drive/DriveStudents.jsx",
+        "src/components/tpo/drive/DriveOffersList.jsx"
+      ]
+    },
+    {
+      "path": "src/components/tpo/ui/HoverStory.jsx",
+      "sourceSha": "d6f1cd0dc9a446e617de3e11fb0e1ebfe7511e1a",
+      "importedBy": [
+        "src/pages/recruiter/drives/[jobId].js",
+        "src/components/tpo/drive/ApplicantsTab.js",
+        "src/components/tpo/drive/OffersTab.js",
+        "src/components/recruiter/RecruiterFocusedReview.jsx",
+        "src/components/tpo/drive/DriveStudents.jsx",
+        "src/components/tpo/drive/RoundPanel.jsx",
+        "src/components/tpo/drive/DriveOffersList.jsx"
+      ]
+    },
+    {
+      "path": "src/components/Common/PageShell.jsx",
+      "sourceSha": "0f05dc1e60d652385f03289a608496ab372c92ec",
+      "importedBy": [
+        "src/pages/tpo/drives/[jobId].js",
+        "src/pages/recruiter/drives/[jobId].js",
+        "src/pages/tpo/recruiters/[recruiterLeadId].js",
+        "src/layouts/CourseTabsLayout.js",
+        "src/components/Projects/ProjectsShell.jsx"
+      ]
+    },
+    {
+      "path": "src/components/Common/Skeletons.jsx",
+      "sourceSha": "19ff7bc7317232a96a7217df406eaa8082567704",
+      "importedBy": [
+        "src/pages/tpo/drives/[jobId].js",
+        "src/pages/tpo/recruiters/[recruiterLeadId].js",
+        "src/components/Projects/ProjectDetailContent.jsx",
+        "src/components/tpo/StudentPanel.js"
+      ]
+    },
+    {
+      "path": "src/common/lists.js",
+      "sourceSha": "171e1732da97fdf98d746da214a8284911e190bb",
+      "importedBy": [
+        "src/layouts/CourseTabsLayout.js",
+        "src/components/Sidebar/AdminSidebar.js",
+        "src/components/Sidebar/SuperAdminSidebar.js"
+      ]
+    },
+    {
+      "path": "src/components/tpo/invite/inviteState.js",
+      "sourceSha": "9e3225213b74eaabae6a76ec60ece1062a3b0c29",
+      "importedBy": [
+        "src/pages/tpo/recruiters/[recruiterLeadId].js",
+        "src/components/tpo/InviteModal.js",
+        "src/components/tpo/recruiterPage.js"
+      ]
+    },
+    {
+      "path": "src/components/tpo/stories/applicantStories.js",
+      "sourceSha": "322f028771f7ee4330a59b52af96a5107f7c8f85",
+      "importedBy": [
+        "src/components/tpo/drive/ApplicantsTab.js",
+        "src/components/tpo/drive/DriveStudents.jsx",
+        "src/components/tpo/drive/RoundPanel.jsx"
+      ]
+    },
+    {
+      "path": "src/components/tpo/students/academics.js",
+      "sourceSha": "7d2d94830a903eba1fc580ad79d4e5aaa8d00ee3",
+      "importedBy": [
+        "src/components/tpo/drive/ApplicantsTab.js",
+        "src/components/tpo/StudentPanel.js",
+        "src/components/tpo/drive/DriveStudents.jsx"
+      ]
+    },
+    {
+      "path": "src/components/tpo/ui/applicantRules.js",
+      "sourceSha": "4853a245bc474c30d83703935156479ade56a357",
+      "importedBy": [
+        "src/components/tpo/drive/ApplicantsTab.js",
+        "src/components/tpo/drive/OfferLettersModal.jsx",
+        "src/components/tpo/drive/ApplicantsBoard.jsx"
+      ]
+    },
+    {
+      "path": "src/components/tpo/ui/ReasonPicker.jsx",
+      "sourceSha": "c1b008e7f1babc5f80f17218e88cd1df4e36fe84",
+      "importedBy": [
+        "src/pages/tpo/drives/[jobId].js",
+        "src/components/tpo/drive/ApplicantsTab.js",
+        "src/components/tpo/drive/OffersTab.js"
+      ]
+    },
+    {
+      "path": "src/components/tpo/ui/useRefreshOnFocus.js",
+      "sourceSha": "59daf12b902550bca1435054fcff60951a4c2f9a",
+      "importedBy": [
+        "src/pages/tpo/drives/[jobId].js",
+        "src/pages/recruiter/drives/[jobId].js",
+        "src/components/tpo/team/TeamConversation.jsx"
+      ]
+    },
+    {
+      "path": "src/components/Loader/loader.js",
+      "sourceSha": "4e05bddcbdbf1b14087e4cfda5e684eb36541199",
+      "importedBy": [
+        "src/layouts/AdminLayout.js",
+        "src/layouts/SuperAdminLayout.js"
+      ]
+    },
+    {
+      "path": "src/components/recruiter/enterAfterJoin.js",
+      "sourceSha": "319ed0f62890de9c7c527e9a09e607560b22cdec",
+      "importedBy": [
+        "src/pages/college-join/[token].js",
+        "src/pages/company-join/[token].js"
+      ]
+    },
+    {
+      "path": "src/components/recruiter/recruiterReviewUtils.js",
+      "sourceSha": "0ee5a5deb4ed39f500bbbb89a4a7e7f563ba1772",
+      "importedBy": [
+        "src/pages/recruiter/drives/[jobId].js",
+        "src/components/recruiter/RecruiterFocusedReview.jsx"
+      ]
+    },
+    {
+      "path": "src/components/recruiter/recruiterRoutes.js",
+      "sourceSha": "a147503fbbc9a4a0f2eccbdc9fb44ef4bed827ab",
+      "importedBy": [
+        "src/pages/recruiter/drives/[jobId].js",
+        "src/components/recruiter/RecruiterDriveOverview.jsx"
+      ]
+    },
+    {
+      "path": "src/components/recruiter/recruiterStories.js",
+      "sourceSha": "d7f0301a22ec676116336f1664cf57e290f35755",
+      "importedBy": [
+        "src/pages/recruiter/drives/[jobId].js",
+        "src/components/recruiter/RecruiterFocusedReview.jsx"
+      ]
+    },
+    {
+      "path": "src/components/tpo/drive/publishPreflight.js",
+      "sourceSha": "76e8d8718a5503ea5ab0453a0bd26e67d1958680",
+      "importedBy": [
+        "src/pages/tpo/drives/[jobId].js",
+        "src/components/tpo/drive/DriveRequestReview.jsx"
+      ]
+    },
+    {
+      "path": "src/components/tpo/recruiterNextStep.js",
+      "sourceSha": "0dfe3654529c22ee428851ca88fd976e6f392780",
+      "importedBy": [
+        "src/pages/tpo/recruiters/[recruiterLeadId].js",
+        "src/components/tpo/recruiterPage.js"
+      ]
+    },
+    {
+      "path": "src/components/tpo/stories/offerStories.js",
+      "sourceSha": "20f44460ce4cb12c633dfd5c81702dc285f3bc03",
+      "importedBy": [
+        "src/components/tpo/drive/OffersTab.js",
+        "src/components/tpo/drive/DriveOffersList.jsx"
+      ]
+    },
+    {
+      "path": "src/components/tpo/ui/JourneyStrip.jsx",
+      "sourceSha": "f7cf68af72c9ee9c108ffa1321015df9266a7b72",
+      "importedBy": [
+        "src/components/tpo/drive/ApplicantsTab.js",
+        "src/components/tpo/drive/OffersTab.js"
+      ]
+    },
+    {
+      "path": "src/common/constant.js",
+      "sourceSha": "340f2764e4d97caf0f16530723c582a0516ccc14",
+      "importedBy": [
+        "src/layouts/AdminLayout.js"
+      ]
+    },
+    {
+      "path": "src/components/Common/Facts.jsx",
+      "sourceSha": "97b26edb85a78c005fc370f6d452d263c4a49df4",
+      "importedBy": [
+        "src/components/tpo/StudentPanel.js"
+      ]
+    },
+    {
+      "path": "src/components/Course/Home/AtRiskStudentsCard.jsx",
+      "sourceSha": "a767be55aad220734ec6a8d4fa8268d12554dc94",
+      "importedBy": [
+        "src/components/Course/Home/index.js"
+      ]
+    },
+    {
+      "path": "src/components/Course/Home/InThisCourseSection.jsx",
+      "sourceSha": "31cfcf01978ab73f227ccaa05c3b3467ddca8101",
+      "importedBy": [
+        "src/components/Course/Home/index.js"
+      ]
+    },
+    {
+      "path": "src/components/Course/Home/UnifiedActivityList.jsx",
+      "sourceSha": "6f4943b09bcac471aaaf0d39238b8cf00d3cece7",
+      "importedBy": [
+        "src/components/Course/Home/index.js"
+      ]
+    },
+    {
+      "path": "src/components/Dropdowns/Notification/NotifivationDropdown.js",
+      "sourceSha": "13309104f47cab30a778e35426320dda06ff3af1",
+      "importedBy": [
+        "src/components/Global/Header/Header.js"
+      ]
+    },
+    {
+      "path": "src/components/Dropdowns/Profile/profiledropdown.js",
+      "sourceSha": "42807cfb9262412dd9418814bc33049cd9287663",
+      "importedBy": [
+        "src/components/Global/Header/Header.js"
+      ]
+    },
+    {
+      "path": "src/components/Dropdowns/Profile/SuperAdminProfileDropdown.js",
+      "sourceSha": "1d74b00297c099211e067e58fa72efbda7d77e49",
+      "importedBy": [
+        "src/components/Global/Header/SuperAdminHeader.js"
+      ]
+    },
+    {
+      "path": "src/components/Global/Offcanvas/Syallabus/liveclass.js",
+      "sourceSha": "23d6e402392cdf10db5767769a64569b571e8690",
+      "importedBy": [
+        "src/components/Global/Offcanvas/Syallabus/AddNewLessonContentDrawer.js"
+      ]
+    },
+    {
+      "path": "src/components/Global/Offcanvas/Syallabus/ResourceComposer.js",
+      "sourceSha": "2a48048cf2eef9299c3114ce76625c828a3db6c9",
+      "importedBy": [
+        "src/components/Global/Offcanvas/Syallabus/AddNewLessonContentDrawer.js"
+      ]
+    },
+    {
+      "path": "src/components/Global/Offcanvas/Syallabus/youtube.js",
+      "sourceSha": "9b46960fb1c90c08d43a67af5e2a4afc9caba084",
+      "importedBy": [
+        "src/components/Global/Offcanvas/Syallabus/AddNewLessonContentDrawer.js"
+      ]
+    },
+    {
+      "path": "src/components/Global/Upload/UploadFromLinkButton.jsx",
+      "sourceSha": "314cf6ea0ca8e190ac749193012210faeb7239cf",
+      "importedBy": [
+        "src/components/Global/Offcanvas/Assignment/newAssignment.js"
+      ]
+    },
+    {
+      "path": "src/components/recruiter/RecruiterTopBar.jsx",
+      "sourceSha": "14595ebdb9a78ab756d3215b39e3264d6c4f5790",
+      "importedBy": [
+        "src/components/Global/Header/Header.js"
+      ]
+    },
+    {
+      "path": "src/components/tpo/batches/batchRules.js",
+      "sourceSha": "16156886a6ef7320fa6f5befbd2a450df1522055",
+      "importedBy": [
+        "src/components/tpo/StudentPanel.js"
+      ]
+    },
+    {
+      "path": "src/components/tpo/drive/DrivePipeline.js",
+      "sourceSha": "deaab0f3e42746136a61d960a09f815504d9dadd",
+      "importedBy": [
+        "src/components/recruiter/RecruiterDriveOverview.jsx"
+      ]
+    },
+    {
+      "path": "src/components/tpo/drive/InviteReviewer.jsx",
+      "sourceSha": "b035a594992214eedbec432b8c391924650ebc65",
+      "importedBy": [
+        "src/components/tpo/drive/DriveTalk.jsx"
+      ]
+    },
+    {
+      "path": "src/components/tpo/filters/filterModel.js",
+      "sourceSha": "ed70138d5c54727846942156d71bfa4fa4b0e479",
+      "importedBy": [
+        "src/components/tpo/drive/ApplicantsTab.js"
+      ]
+    },
+    {
+      "path": "src/components/tpo/nav/TpoHubBar.jsx",
+      "sourceSha": "d6bc2217a016bd7561e9b6a5c88a8678be4e1059",
+      "importedBy": [
+        "src/pages/tpo/recruiters/[recruiterLeadId].js"
+      ]
+    },
+    {
+      "path": "src/components/tpo/recruiterLeadStages.js",
+      "sourceSha": "df7b4dcf578e634dd1d6b716c265a02a195d7937",
+      "importedBy": [
+        "src/pages/tpo/recruiters/[recruiterLeadId].js"
+      ]
+    },
+    {
+      "path": "src/components/tpo/students/outcomes.js",
+      "sourceSha": "8fb568fd3fd990eef40108531bd1691fe58b2fcf",
+      "importedBy": [
+        "src/components/tpo/StudentPanel.js"
+      ]
+    },
+    {
+      "path": "src/components/tpo/team/TeamComposer.jsx",
+      "sourceSha": "99f35cb9c77c6a61176f269dba773e7ddcdf1f34",
+      "importedBy": [
+        "src/components/tpo/team/TeamConversation.jsx"
+      ]
+    },
+    {
+      "path": "src/components/tpo/team/TeamContext.jsx",
+      "sourceSha": "f132627d98106805bf5b936d90ee4b918430eb3a",
+      "importedBy": [
+        "src/components/tpo/team/TeamConversation.jsx"
+      ]
+    },
+    {
+      "path": "src/components/tpo/team/TeamMessages.jsx",
+      "sourceSha": "d38a7d07186b9689e0455bdb8d9c9adb920138f7",
+      "importedBy": [
+        "src/components/tpo/team/TeamConversation.jsx"
+      ]
+    },
+    {
+      "path": "src/components/tpo/team/teamTokens.js",
+      "sourceSha": "487c53d44ecc1fd7bced20c0bb6b3e0b27511fa0",
+      "importedBy": [
+        "src/components/tpo/team/TeamConversation.jsx"
+      ]
+    },
+    {
+      "path": "src/components/tpo/team/useTeamPeople.js",
+      "sourceSha": "adcc5161feb368bdcbf2ec26cb346c38dc478395",
+      "importedBy": [
+        "src/pages/tpo/recruiters/[recruiterLeadId].js"
+      ]
+    },
+    {
+      "path": "src/components/tpo/TpoTopBar.js",
+      "sourceSha": "f7dd7e60c58cc1be4945ae3ec638c9e1d91796de",
+      "importedBy": [
+        "src/components/Global/Header/Header.js"
+      ]
+    },
+    {
+      "path": "src/components/tpo/ui/rollParser.js",
+      "sourceSha": "0869a50d9af04c831eb583c1ba15ed961e522611",
+      "importedBy": [
+        "src/components/tpo/drive/ResultsEntryModal.jsx"
+      ]
+    },
+    {
+      "path": "src/components/tpo/ui/shareMemory.js",
+      "sourceSha": "701cb044b073e438cbea96929415614680cd3c88",
+      "importedBy": [
+        "src/components/tpo/drive/ShareModal.js"
+      ]
+    },
+    {
+      "path": "src/components/tpo/ui/slotGenerator.js",
+      "sourceSha": "10391e2c689139b4f7e088efd21d64960562a2c5",
+      "importedBy": [
+        "src/components/tpo/drive/ScheduleModal.js"
+      ]
+    },
+    {
+      "path": "src/components/tpo/ui/useLivePulse.js",
+      "sourceSha": "1a622bab4bc8e95bc376e240f955ea90aacfa88c",
+      "importedBy": [
+        "src/pages/recruiter/drives/[jobId].js"
+      ]
+    },
+    {
+      "path": "src/pages/Dashboard/course/Attendance/StudentAttendanceView.jsx",
+      "sourceSha": "0209e7ce84ce6617fbc1f49f9f24ec19e5a5f762",
+      "importedBy": [
+        "src/pages/Dashboard/course/Attendance/AttendanceReport.js"
+      ]
+    },
+    {
+      "path": "src/pages/Dashboard/course/Attendance/TeacherAttendanceView.jsx",
+      "sourceSha": "bb2139e0742ad8cd87514789ebf72747a5391191",
+      "importedBy": [
+        "src/pages/Dashboard/course/Attendance/AttendanceReport.js"
+      ]
+    },
+    {
+      "path": "src/pages/Dashboard/course/syllabus/liveclass.js",
+      "sourceSha": "99a0478f874d25e939280c7b71c04ad47304a28f",
+      "importedBy": [
+        "src/pages/Dashboard/course/syllabus/syllabus.js"
+      ]
+    },
+    {
+      "path": "src/pages/Dashboard/course/syllabus/resource.js",
+      "sourceSha": "f3232b6c0ad32a6f19eb81aacab6737b614ff23b",
+      "importedBy": [
+        "src/pages/Dashboard/course/syllabus/syllabus.js"
+      ]
+    },
+    {
+      "path": "src/pages/Dashboard/course/syllabus/syllabusDetail.js",
+      "sourceSha": "590e9e189ebe088ec54e130cf51cfd7ee0c22e5e",
+      "importedBy": [
+        "src/pages/Dashboard/course/syllabus/syllabus.js"
+      ]
+    },
+    {
+      "path": "src/pages/Dashboard/course/syllabus/video.js",
+      "sourceSha": "efdebb6a6b6694ebfb8ad35f951ba36a8a0259be",
+      "importedBy": [
+        "src/pages/Dashboard/course/syllabus/syllabus.js"
+      ]
+    },
+    {
+      "path": "src/pages/Dashboard/course/syllabus/youtube.js",
+      "sourceSha": "0e213a228f8df8cb8ad5f90d785e5526f28b207c",
+      "importedBy": [
+        "src/pages/Dashboard/course/syllabus/syllabus.js"
+      ]
+    }
+  ],
+  "measuredCoverage": {
+    "readNodes": 64,
+    "rootFiles": 10,
+    "edgesExtracted": 649,
+    "localEdges": 409,
+    "unresolvedLocalSpecifiers": 0,
+    "candidateInlineUiSignals": 139,
+    "actionSampleRows": 614,
+    "pendingUiModuleImports": 82,
+    "readErrors": 0,
+    "qualifiedSurfaceCount": null,
+    "runtimeReachabilityVerified": false,
+    "backendActionParityVerified": false
+  },
+  "unresolvedLocalSpecifiers": [],
+  "nextAction": "Continue this graph from frontier, not from routes or previous census. Expand all legitimate UI import descendants; inspect inline overlays and action-to-service/backend chains. Reconcile each candidate into existing docs/parity account/page specs and with vNext code/runtime evidence; never treat signal counts as distinct UI surfaces."
 }
