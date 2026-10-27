@@ -331,6 +331,37 @@
       ]
     },
     {
+      "path": "src/main/java/com/_42students/lms/controller/ClassroomController.java",
+      "sha": "380acd1970ddca78da7378f2c6b1dcb6aa552b50",
+      "lines": 71,
+      "mappings": [
+        {
+          "method": "RequestMapping",
+          "path": "/api/v1/classroom"
+        },
+        {
+          "method": "GetMapping",
+          "path": "/messages"
+        },
+        {
+          "method": "PostMapping",
+          "path": "/messages"
+        },
+        {
+          "method": "PatchMapping",
+          "path": "/messages/{messageId}/pin"
+        },
+        {
+          "method": "DeleteMapping",
+          "path": "/messages/{messageId}"
+        }
+      ],
+      "annotations": [
+        "Valid"
+      ],
+      "guards": []
+    },
+    {
       "path": "src/main/java/com/_42students/lms/controller/ClassScheduleController.java",
       "sha": "0d1e165700e7cce85f6abebcd9378bf2549bce51",
       "lines": 637,
@@ -456,37 +487,6 @@
         "facultyId",
         "collegeId"
       ]
-    },
-    {
-      "path": "src/main/java/com/_42students/lms/controller/ClassroomController.java",
-      "sha": "380acd1970ddca78da7378f2c6b1dcb6aa552b50",
-      "lines": 71,
-      "mappings": [
-        {
-          "method": "RequestMapping",
-          "path": "/api/v1/classroom"
-        },
-        {
-          "method": "GetMapping",
-          "path": "/messages"
-        },
-        {
-          "method": "PostMapping",
-          "path": "/messages"
-        },
-        {
-          "method": "PatchMapping",
-          "path": "/messages/{messageId}/pin"
-        },
-        {
-          "method": "DeleteMapping",
-          "path": "/messages/{messageId}"
-        }
-      ],
-      "annotations": [
-        "Valid"
-      ],
-      "guards": []
     },
     {
       "path": "src/main/java/com/_42students/lms/controller/CourseController.java",
@@ -686,6 +686,500 @@
         "hasRole",
         "collegeId"
       ]
+    },
+    {
+      "path": "src/main/java/com/_42students/lms/controller/tpo/LearnerAnnouncementController.java",
+      "sha": "d508eff0ead1260f451da309615fa0320090c459",
+      "lines": 41,
+      "mappings": [
+        {
+          "method": "RequestMapping",
+          "path": "/api/v1/learner/placement/announcements"
+        },
+        {
+          "method": "GetMapping",
+          "path": null
+        },
+        {
+          "method": "GetMapping",
+          "path": "/unread"
+        }
+      ],
+      "hasAuth": false,
+      "tenantScope": false
+    },
+    {
+      "path": "src/main/java/com/_42students/lms/controller/tpo/LearnerEligibilityController.java",
+      "sha": "1e13ee38234d04ba23c039b2a0bef850753ad4f5",
+      "lines": 162,
+      "mappings": [
+        {
+          "method": "RequestMapping",
+          "path": "/api/v1/learner/drives"
+        },
+        {
+          "method": "GetMapping",
+          "path": "/{jobId}/eligibility"
+        },
+        {
+          "method": "GetMapping",
+          "path": "/{jobId}/apply-check"
+        },
+        {
+          "method": "GetMapping",
+          "path": "/apply-checks"
+        },
+        {
+          "method": "GetMapping",
+          "path": "/placement-rules"
+        },
+        {
+          "method": "GetMapping",
+          "path": "/{jobId}/company-preview"
+        },
+        {
+          "method": "GetMapping",
+          "path": "/calendar-extras"
+        }
+      ],
+      "hasAuth": false,
+      "tenantScope": false
+    },
+    {
+      "path": "src/main/java/com/_42students/lms/controller/tpo/LearnerOfferController.java",
+      "sha": "33ab0ccaad0e9b7b503c939c0c82571104f2df5f",
+      "lines": 54,
+      "mappings": [
+        {
+          "method": "RequestMapping",
+          "path": "/api/v1/learner/offers"
+        },
+        {
+          "method": "PostMapping",
+          "path": "/{offerId}/respond"
+        }
+      ],
+      "hasAuth": false,
+      "tenantScope": false
+    },
+    {
+      "path": "src/main/java/com/_42students/lms/controller/tpo/LearnerPlacementController.java",
+      "sha": "d129b1161acce8b60b4c9570e1994d9054bacf3e",
+      "lines": 53,
+      "mappings": [
+        {
+          "method": "RequestMapping",
+          "path": "/api/v1/learner/placement"
+        },
+        {
+          "method": "GetMapping",
+          "path": "/overview"
+        },
+        {
+          "method": "GetMapping",
+          "path": "/journey"
+        },
+        {
+          "method": "GetMapping",
+          "path": "/drives/{jobId}/process"
+        },
+        {
+          "method": "PostMapping",
+          "path": "/register"
+        }
+      ],
+      "hasAuth": false,
+      "tenantScope": false
+    },
+    {
+      "path": "src/main/java/com/_42students/lms/controller/tpo/LearnerPlacementProfileController.java",
+      "sha": "456351718ec8c0780b2ae2678e7be7bd70ae66d8",
+      "lines": 43,
+      "mappings": [
+        {
+          "method": "RequestMapping",
+          "path": "/api/v1/learner/profile"
+        },
+        {
+          "method": "GetMapping",
+          "path": "/academic-record"
+        },
+        {
+          "method": "GetMapping",
+          "path": "/data-access"
+        }
+      ],
+      "hasAuth": false,
+      "tenantScope": false
+    },
+    {
+      "path": "src/main/java/com/_42students/lms/controller/tpo/LearnerRegistrationController.java",
+      "sha": "86689a3f9754085e828b21b2474458c8aa20550d",
+      "lines": 55,
+      "mappings": [
+        {
+          "method": "RequestMapping",
+          "path": "/api/v1/learner/registration"
+        },
+        {
+          "method": "GetMapping",
+          "path": null
+        },
+        {
+          "method": "PostMapping",
+          "path": null
+        }
+      ],
+      "hasAuth": false,
+      "tenantScope": false
+    },
+    {
+      "path": "src/main/java/com/_42students/lms/controller/tpo/LearnerRequestController.java",
+      "sha": "1b50a7616c6684b85fffe455e8f6b305fa4f5392",
+      "lines": 60,
+      "mappings": [
+        {
+          "method": "RequestMapping",
+          "path": "/api/v1/learner/requests"
+        },
+        {
+          "method": "PostMapping",
+          "path": null
+        },
+        {
+          "method": "GetMapping",
+          "path": "/mine"
+        }
+      ],
+      "hasAuth": false,
+      "tenantScope": false
+    },
+    {
+      "path": "src/main/java/com/_42students/lms/controller/tpo/LearnerScheduleController.java",
+      "sha": "52419076e1feb250248bc04850bab4141f704bb4",
+      "lines": 46,
+      "mappings": [
+        {
+          "method": "RequestMapping",
+          "path": "/api/v1/learner/schedule"
+        },
+        {
+          "method": "GetMapping",
+          "path": null
+        },
+        {
+          "method": "PostMapping",
+          "path": "/rounds/{roundId}/confirm"
+        },
+        {
+          "method": "PostMapping",
+          "path": "/rounds/{roundId}/reschedule-request"
+        }
+      ],
+      "hasAuth": false,
+      "tenantScope": false
+    },
+    {
+      "path": "src/main/java/com/_42students/lms/controller/tpo/ProfileVerificationController.java",
+      "sha": "fcce4639a368f095b2a117453bbb88e3d074270c",
+      "lines": 105,
+      "mappings": [
+        {
+          "method": "GetMapping",
+          "path": "/api/v1/profile/verification"
+        },
+        {
+          "method": "PostMapping",
+          "path": "/api/v1/profile/verification/{section}/submit"
+        },
+        {
+          "method": "GetMapping",
+          "path": "/api/v1/profile-verification/access"
+        },
+        {
+          "method": "GetMapping",
+          "path": "/api/v1/profile-verification/queue"
+        },
+        {
+          "method": "GetMapping",
+          "path": "/api/v1/profile-verification/students/{learnerId}"
+        },
+        {
+          "method": "PostMapping",
+          "path": "/api/v1/profile-verification/students/{learnerId}/{section}/verify"
+        },
+        {
+          "method": "PostMapping",
+          "path": "/api/v1/profile-verification/students/{learnerId}/{section}/send-back"
+        },
+        {
+          "method": "PostMapping",
+          "path": "/api/v1/profile-verification/verify-many"
+        },
+        {
+          "method": "GetMapping",
+          "path": "/api/v1/profile-verification/settings"
+        },
+        {
+          "method": "PutMapping",
+          "path": "/api/v1/profile-verification/settings"
+        }
+      ],
+      "hasAuth": false,
+      "tenantScope": true
+    },
+    {
+      "path": "src/main/java/com/_42students/lms/controller/tpo/TpoAnnouncementController.java",
+      "sha": "fc45dfaeb2aefbc6cba80a5ac89ef3819f1b16fb",
+      "lines": 98,
+      "mappings": [
+        {
+          "method": "RequestMapping",
+          "path": "/api/v1/tpo/announcements"
+        },
+        {
+          "method": "GetMapping",
+          "path": null
+        },
+        {
+          "method": "GetMapping",
+          "path": "/audiences"
+        },
+        {
+          "method": "PostMapping",
+          "path": "/preview"
+        },
+        {
+          "method": "PostMapping",
+          "path": null
+        },
+        {
+          "method": "PutMapping",
+          "path": "/{id}"
+        },
+        {
+          "method": "DeleteMapping",
+          "path": "/{id}"
+        },
+        {
+          "method": "PostMapping",
+          "path": "/{id}/undo"
+        },
+        {
+          "method": "GetMapping",
+          "path": "/{id}/unread"
+        },
+        {
+          "method": "PostMapping",
+          "path": "/{id}/remind"
+        },
+        {
+          "method": "GetMapping",
+          "path": "/from-42"
+        },
+        {
+          "method": "GetMapping",
+          "path": "/from-42/unread"
+        }
+      ],
+      "hasAuth": false,
+      "tenantScope": false
+    },
+    {
+      "path": "src/main/java/com/_42students/lms/controller/tpo/TpoApplicantController.java",
+      "sha": "93368ad186db5c97c7c5232fc92826cf08c62af4",
+      "lines": 128,
+      "mappings": [
+        {
+          "method": "RequestMapping",
+          "path": "/api/v1/tpo/drives/{jobId}/applicants"
+        },
+        {
+          "method": "GetMapping",
+          "path": null
+        },
+        {
+          "method": "GetMapping",
+          "path": "/not-applied"
+        },
+        {
+          "method": "PostMapping",
+          "path": "/remind-not-applied"
+        },
+        {
+          "method": "PostMapping",
+          "path": "/apply-on-behalf/{learnerId}"
+        },
+        {
+          "method": "PostMapping",
+          "path": "/add-students"
+        },
+        {
+          "method": "PostMapping",
+          "path": "/bulk-move"
+        },
+        {
+          "method": "PostMapping",
+          "path": "/bulk-reject"
+        },
+        {
+          "method": "PostMapping",
+          "path": "/undo/{undoGroupId}"
+        }
+      ],
+      "hasAuth": false,
+      "tenantScope": false
+    },
+    {
+      "path": "src/main/java/com/_42students/lms/controller/tpo/TpoBatchesController.java",
+      "sha": "447ed27605cb755520b6153e94eb9a41d901710d",
+      "lines": 146,
+      "mappings": [
+        {
+          "method": "RequestMapping",
+          "path": "/api/v1/tpo"
+        },
+        {
+          "method": "GetMapping",
+          "path": "/batches"
+        },
+        {
+          "method": "GetMapping",
+          "path": "/batches/{batchId}"
+        },
+        {
+          "method": "GetMapping",
+          "path": "/batches/{batchId}/students"
+        },
+        {
+          "method": "GetMapping",
+          "path": "/batches/{batchId}/rules"
+        },
+        {
+          "method": "PutMapping",
+          "path": "/batches/{batchId}/rules"
+        },
+        {
+          "method": "PutMapping",
+          "path": "/batches/{batchId}"
+        },
+        {
+          "method": "PostMapping",
+          "path": "/batches/{batchId}/invite"
+        },
+        {
+          "method": "PostMapping",
+          "path": "/batches/{batchId}/remind"
+        },
+        {
+          "method": "PostMapping",
+          "path": "/eligibility"
+        },
+        {
+          "method": "GetMapping",
+          "path": "/eligibility/last-action"
+        },
+        {
+          "method": "PostMapping",
+          "path": "/eligibility/undo"
+        },
+        {
+          "method": "PostMapping",
+          "path": "/eligibility/import/preview"
+        },
+        {
+          "method": "PostMapping",
+          "path": "/eligibility/import"
+        }
+      ],
+      "hasAuth": false,
+      "tenantScope": true
+    },
+    {
+      "path": "src/main/java/com/_42students/lms/controller/tpo/TpoChangeRequestController.java",
+      "sha": "8155fac1dbd641cf6a0c76936b8942227f4d82ba",
+      "lines": 130,
+      "mappings": [
+        {
+          "method": "RequestMapping",
+          "path": "/api/v1/tpo"
+        },
+        {
+          "method": "GetMapping",
+          "path": "/drives/{jobId}/change-requests"
+        },
+        {
+          "method": "PostMapping",
+          "path": "/drives/{jobId}/change-requests"
+        },
+        {
+          "method": "PostMapping",
+          "path": "/change-requests/{id}/accept"
+        },
+        {
+          "method": "PostMapping",
+          "path": "/change-requests/{id}/answer"
+        },
+        {
+          "method": "PostMapping",
+          "path": "/change-requests/{id}/reply"
+        },
+        {
+          "method": "PostMapping",
+          "path": "/change-requests/{id}/withdraw"
+        },
+        {
+          "method": "PostMapping",
+          "path": "/drives/{jobId}/invite-recruiter"
+        },
+        {
+          "method": "GetMapping",
+          "path": "/drives/{jobId}/internal-notes"
+        },
+        {
+          "method": "PostMapping",
+          "path": "/drives/{jobId}/internal-notes"
+        }
+      ],
+      "hasAuth": false,
+      "tenantScope": false
+    },
+    {
+      "path": "src/main/java/com/_42students/lms/controller/tpo/TpoCompanyController.java",
+      "sha": "3f6c8b26f150fe33a3561307294e9e9566eaa7b8",
+      "lines": 111,
+      "mappings": [
+        {
+          "method": "RequestMapping",
+          "path": "/api/v1/tpo/companies"
+        },
+        {
+          "method": "GetMapping",
+          "path": "/search"
+        },
+        {
+          "method": "PostMapping",
+          "path": "/resolve"
+        },
+        {
+          "method": "GetMapping",
+          "path": "/{companyId}/engagement"
+        },
+        {
+          "method": "PostMapping",
+          "path": "/{companyId}/join-link"
+        },
+        {
+          "method": "PostMapping",
+          "path": "/{companyId}/domains"
+        },
+        {
+          "method": "PutMapping",
+          "path": "/{companyId}/trusted"
+        }
+      ],
+      "hasAuth": false,
+      "tenantScope": false
     }
   ]
 }
