@@ -1155,6 +1155,88 @@
         "Modal"
       ],
       "events": 15
+    },
+    {
+      "path": "src/pages/tracker/logs.js",
+      "sha": "e894f29b92bd88d44a16176a52f475dbe00af569",
+      "lines": 816,
+      "imports": [
+        "@/components/tracker/TrackerShell",
+        "@/components/tracker/TrackerLogDetailsDrawer",
+        "@/components/tracker/KnownErrorsDrawer",
+        "@/components/tracker/LogsDownloadControl",
+        "@/components/tracker/ClaudeReportModal",
+        "@/components/tracker/LogHealthStrip",
+        "@/components/tracker/LogDigestDrawer",
+        "@/components/tracker/TriageMenu",
+        "@/components/tracker/useLogInsights",
+        "@/components/tracker/TrackerLogsAccessGate",
+        "@/utils/bugTrackerUtils",
+        "@/utils/authUtils",
+        "@/api/Services/SuperAdminLogsService",
+        "@/utils/trackerLogsUtils",
+        "@/utils/logGrouping",
+        "@/utils/logListModel",
+        "@/utils/logSignature",
+        "@/utils/logReport",
+        "@/utils/instant"
+      ],
+      "jsxComponents": [
+        "Head",
+        "TrackerShell",
+        "Button",
+        "FileTextOutlined",
+        "LogsDownloadControl",
+        "Dropdown",
+        "MoreOutlined",
+        "LogHealthStrip",
+        "Alert",
+        "Segmented",
+        "Select",
+        "Input",
+        "Switch",
+        "Tag",
+        "Skeleton",
+        "TriageMenu",
+        "Empty",
+        "TrackerLogDetailsDrawer",
+        "KnownErrorsDrawer",
+        "ClaudeReportModal",
+        "LogDigestDrawer",
+        "TrackerLogsPageContent",
+        "TrackerLogsAccessGate"
+      ],
+      "overlayCandidates": [
+        "Dropdown",
+        "TrackerLogDetailsDrawer",
+        "KnownErrorsDrawer",
+        "ClaudeReportModal",
+        "LogDigestDrawer"
+      ],
+      "events": 17
+    },
+    {
+      "path": "src/pages/universities.js",
+      "sha": "719b5064cf2c1a32a18ce90df3233ff56c945464",
+      "lines": 56,
+      "imports": [
+        "@/components/marketing/MarketingLayout",
+        "@/components/marketing/sections",
+        "@/components/marketing/data"
+      ],
+      "jsxComponents": [
+        "MarketingLayout",
+        "PageHero",
+        "AudienceDetail",
+        "AgentGrid",
+        "LifecycleStrip",
+        "CtaBand"
+      ],
+      "overlayCandidates": [
+        "AgentGrid",
+        "CtaBand"
+      ],
+      "events": 0
     }
   ]
 }
