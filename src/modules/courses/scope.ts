@@ -130,6 +130,9 @@ export async function loadCourseOfferingScope(
 
   return {
     ...offering,
+    courseStatus: course.status,
+    courseEnabled: course.enabled,
+    courseAllowedForDisplay: course.legacyAllowedForDisplay,
     collegeId: course.collegeId,
     organizationId: course.organizationId,
     cohortStatus: cohort.status,
@@ -428,6 +431,7 @@ export async function loadLessonContentScope(
     learningPathStatus:
       lesson.learningPathStatus,
     lessonVisibleToStudents: lesson.visibleToStudents,
+    lessonDeletedAt: lesson.deletedAt,
     collegeId: lesson.collegeId,
     organizationId: lesson.organizationId,
   };
