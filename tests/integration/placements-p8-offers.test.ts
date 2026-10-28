@@ -766,12 +766,13 @@ describe("Placement P8 offers and joining", () => {
     const foreign:RequestContext={...tpo,membership:{
       ...tpo.membership!,id:SEED_IDS.facultyCollegeBMembership,collegeId:SEED_IDS.collegeB,
     }};
-    for(const query of [
-      getTpoDriveOfferRegister(foreign,{jobId:job.id,status:"ALL"}),
-      getTpoDriveOfferRegisterCsv(foreign,{jobId:job.id,status:"ALL"}),
-    ]){
-      await expect(query).rejects.toMatchObject({code:"PLACEMENT_JOB_NOT_FOUND"});
-    }
+    // Do not start both rejecting promises before attaching their handlers:
+    // an early rejection was escaping Vitest as an unhandled rejection even
+    // though each authorization assertion eventually passed.
+    await expect(getTpoDriveOfferRegister(foreign,{jobId:job.id,status:"ALL"}))
+      .rejects.toMatchObject({code:"PLACEMENT_JOB_NOT_FOUND"});
+    await expect(getTpoDriveOfferRegisterCsv(foreign,{jobId:job.id,status:"ALL"}))
+      .rejects.toMatchObject({code:"PLACEMENT_JOB_NOT_FOUND"});
     const state=await pool.query<{status:string}>(
       "select status from placement_offers where id=$1",[offer.id]);
     expect(state.rows).toEqual([{status:"ISSUED"}]);
