@@ -29,7 +29,14 @@ export async function updateOwnHrDisplayName(context:RequestContext,raw:unknown)
    throw new PlacementsServiceError("PLACEMENT_RECRUITER_PROFILE_STALE");
   if(person.name===displayName)return {displayName,updatedAt:person.updatedAt.toISOString(),changed:false};
   const newTime=new Date(Math.max(Date.now(),person.updatedAt.getTime()+1));
-  const [updated]=await tx.update(users).set({displayName,updatedAt:newTime})
+  // A free-form display-name edit has no trustworthy first/family boundary.
+  // Clear canonical parts rather than leaving stale names from a previous
+  // structured edit; the structured Recruiter editor can restore exact parts.
+  const [updated]=await tx.update(users).set({
+   displayName,givenName:null,familyName:null,
+   identityProfileVersion:sql`${users.identityProfileVersion}+1`,
+   updatedAt:newTime,
+  })
    .where(and(eq(users.id,context.user.id),eq(users.platformStatus,"ACTIVE"),
     sql`date_trunc('milliseconds', ${users.updatedAt})=${input.expectedUpdatedAt}::timestamptz`))
    .returning({displayName:users.displayName,updatedAt:users.updatedAt});
