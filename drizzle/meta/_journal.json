@@ -2143,6 +2143,13 @@
       "when": 1792359671266,
       "tag": "0305_db05_course_parent_graph_registered",
       "breakpoints": true
+    },
+    {
+      "idx": 306,
+      "version": "7",
+      "when": 1792359731266,
+      "tag": "0306_db03_elective_kernel_integrity",
+      "breakpoints": true
     }
   ]
 }

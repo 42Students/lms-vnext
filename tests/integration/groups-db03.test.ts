@@ -285,6 +285,38 @@ describe("DB03 group kernel on disposable PostgreSQL", () => {
     ]));
   });
 
+  it("DB-006 direct concurrent SQL elective choices obey one slot max_pick", async () => {
+    const {groups,candidate}=await createElectiveFixture();
+    const attempts=await Promise.allSettled(groups.map(group=>pool.query(
+      "INSERT INTO lms_group_members(group_id,membership_id,member_type,state,source) VALUES($1,$2,'LEARNER','ACTIVE','MANUAL')",
+      [group,candidate.membershipId])));
+    expect(attempts.filter(x=>x.status==="fulfilled")).toHaveLength(1);
+    expect(attempts.find(x=>x.status==="rejected"))
+      .toMatchObject({status:"rejected",reason:{code:"23514"}});
+  });
+  it("DB-006 rejects direct SQL admission for stale semester and year", async () => {
+    const {groups,candidate,slotId}=await createElectiveFixture();
+    const insert=()=>pool.query("INSERT INTO lms_group_members(group_id,membership_id,member_type,state,source) VALUES($1,$2,'LEARNER','ACTIVE','MANUAL')",
+      [groups[0],candidate.membershipId]);
+    await pool.query("UPDATE elective_slots SET semester_number=2 WHERE id=$1",[slotId]);
+    await expect(insert()).rejects.toMatchObject({code:"23514"});
+    await pool.query("UPDATE elective_slots SET semester_number=1 WHERE id=$1",[slotId]);
+    const years=await pool.query("SELECT cp.current_academic_year_start AS y FROM cohort_progression_state cp JOIN learner_program_enrollments e ON e.cohort_id=cp.cohort_id WHERE e.membership_id=$1",[candidate.membershipId]);
+    const y=Number(years.rows[0].y)-1;
+    await pool.query("UPDATE elective_slots SET academic_year=$2 WHERE id=$1",
+      [slotId,`${y}-${String(y+1).slice(-2)}`]);
+    await expect(insert()).rejects.toMatchObject({code:"23514"});
+    await pool.query("UPDATE elective_slots SET academic_year=NULL WHERE id=$1",[slotId]);
+    await expect(insert()).resolves.toBeDefined();
+  });
+  it("DB-006 blocks direct structural cohort reparent with live elective", async () => {
+    const {cohortId}=await createElectiveFixture();
+    const other=randomUUID();fixture.programs.push(other);
+    await pool.query("INSERT INTO programs(id,department_id,name,code,duration_terms) VALUES($1,$2,$3,$4,8)",
+      [other,SEED_IDS.departmentA,"DB006 program "+other,"DB006-"+other]);
+    await expect(pool.query("UPDATE cohorts SET program_id=$1 WHERE id=$2",[other,cohortId]))
+      .rejects.toMatchObject({code:"23514"});
+  });
   it("moves an elective atomically between offerings of the same slot", async () => {
     const { groups, candidate } = await createElectiveFixture();
     const active = await joinGroup(candidate.ctx, groups[0], candidate.membershipId);
