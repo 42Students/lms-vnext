@@ -1,5 +1,0 @@
-# LMS vNext continuation runbook
-
-Only for user-triggered or genuinely scheduled work, not a promise of ongoing background execution. Read [AGENTS](../../AGENTS.md), [the single final execution protocol](../planning/database-domain-closure-protocol-2026-10-29.md), [the sole tracker](../tracker.json).
-
-On fresh main: pick a dependency-ready open domain and skip accepted work. Implement a cohesive registered schema/service/consumer/test outcome; safe scoped API/UI is permitted during DATABASE, without phase promotion. Serialize shared migration/journal/snapshot/schema-barrel/tracker writers using non-force optimistic commits. Verify actual registered replay, drift, tenant/privacy/state/race negative checks and persisted user journeys on disposable PostgreSQL. Mark DONE only with complete executed evidence and required decisions; independent release-only checks require structured deferral. Report accepted IDs, exact tested SHA, PASS/FAIL/SKIPPED, count delta, blockers and next executable work. Zero closures means zero. Do not create another plan or tracker.
