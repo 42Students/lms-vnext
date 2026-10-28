@@ -3,7 +3,7 @@ import assert from "node:assert/strict";
 import fs from "node:fs";
 import path from "node:path";
 
-const sql=fs.readFileSync(path.resolve("docs/planning/sql/db09-collaboration-scoped-fk-candidate.sql"),"utf8");
+const sql=fs.readFileSync(path.resolve("drizzle/0075_db09_tpo_collaboration.sql"),"utf8");
 const schema=fs.readFileSync(path.resolve("src/db/schema/tpo-collaboration.ts"),"utf8");
 
 function fn(name) {
