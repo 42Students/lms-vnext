@@ -86,6 +86,7 @@ jobs:
           tests/integration/db01-department-field-semantics.test.ts
           tests/integration/db01-org-college-field-semantics.test.ts
           tests/integration/db01-user-identity-field-semantics.test.ts
+          tests/integration/db01-learner-faculty-otp-field-compat.test.ts
           tests/integration/db01-auth-attempt-field-semantics.test.ts
           tests/integration/db01-device-session-field-semantics.test.ts
           tests/integration/db01-login-consume-account-lock.test.ts
