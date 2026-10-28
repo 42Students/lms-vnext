@@ -37,6 +37,8 @@ function activeRosterQuery(membershipId: string, collegeId: string, deliveryId?:
     eq(courseOfferings.status, "ACTIVE"),
     eq(cohorts.programId, electiveSlots.programId),
     eq(courses.status, "ACTIVE"),
+    eq(courses.enabled, true),
+    isNull(courses.deletedAt),
     eq(departments.collegeId, collegeId),
     isNull(courseSectionDeliveries.endedAt),
     eq(sections.status, "ACTIVE"),
