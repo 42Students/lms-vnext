@@ -84,6 +84,7 @@ jobs:
           tests/integration/db01-learner-faculty-field-semantics.test.ts
           tests/integration/db01-composite-role-field-semantics.test.ts
           tests/integration/db01-email-link-ownership-semantics.test.ts
+          tests/integration/db01-scoped-account-verification.test.ts
           tests/integration/db01-source-account-provenance-field-semantics.test.ts
           tests/integration/db01-role-definition-field-semantics.test.ts
           tests/integration/db01-recruiter-identity-field-semantics.test.ts
