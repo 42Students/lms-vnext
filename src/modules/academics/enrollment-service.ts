@@ -188,10 +188,26 @@ export async function createLearnerProgramEnrollment(
       // the actual LEARNER grant. A concurrent status UPDATE or role DELETE
       // must commit first or wait for this enrollment transaction; otherwise
       // a formerly authorized learner could acquire a fresh enrollment.
+      // A disabled shared identity must not receive a new college enrollment.
+      // Lock the user before its membership (the same parent-first order used
+      // by identity proof and account lifecycle operations) so a concurrent
+      // platform disable commits before this write or waits for its commit.
+      const [liveUser] = await tx
+        .select({ platformStatus: users.platformStatus })
+        .from(users)
+        .innerJoin(collegeMemberships,
+          eq(collegeMemberships.userId, users.id))
+        .where(eq(collegeMemberships.id, input.membershipId))
+        .for("share", {of: users})
+        .limit(1);
+      if (!liveUser || liveUser.platformStatus !== "ACTIVE") {
+        throw new AcademicsServiceError("MEMBERSHIP_NOT_ACTIVE");
+      }
       const [liveMembership] = await tx
         .select({
           collegeId: collegeMemberships.collegeId,
           status: collegeMemberships.status,
+          suspendedAt: collegeMemberships.suspendedAt,
         })
         .from(collegeMemberships)
         .where(eq(collegeMemberships.id, input.membershipId))
@@ -200,7 +216,7 @@ export async function createLearnerProgramEnrollment(
       if (!liveMembership) {
         throw new AcademicsServiceError("MEMBERSHIP_NOT_FOUND");
       }
-      if (liveMembership.status !== "ACTIVE") {
+      if (liveMembership.status !== "ACTIVE" || liveMembership.suspendedAt !== null) {
         throw new AcademicsServiceError("MEMBERSHIP_NOT_ACTIVE");
       }
       if (liveMembership.collegeId !== program.collegeId) {

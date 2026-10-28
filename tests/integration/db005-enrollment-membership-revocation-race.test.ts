@@ -167,6 +167,59 @@ describe("DB005 learner enrollment versus membership/role lifecycle (real Postgr
     });
   });
 
+  it("rejects an ACTIVE membership with a non-null suspension marker", async () => {
+    await withFixture(async f => {
+      await pool.query(
+        "update college_memberships set suspended_at=clock_timestamp() where id=$1",
+        [f.membershipId],
+      );
+      await expect(createLearnerProgramEnrollment(collegeAdmin, {
+        membershipId: f.membershipId, programId: f.programId, cohortId: f.cohortId,
+      })).rejects.toMatchObject({code:"MEMBERSHIP_NOT_ACTIVE"});
+      expect(await enrollmentCount(f.membershipId)).toBe(0);
+    });
+  });
+
+  it("rejects a platform-disabled learner even when the college membership stays ACTIVE", async () => {
+    await withFixture(async f => {
+      await pool.query("update users set platform_status='DISABLED' where id=$1", [f.userId]);
+      await expect(createLearnerProgramEnrollment(collegeAdmin, {
+        membershipId: f.membershipId, programId: f.programId, cohortId: f.cohortId,
+      })).rejects.toMatchObject({code:"MEMBERSHIP_NOT_ACTIVE"});
+      expect(await enrollmentCount(f.membershipId)).toBe(0);
+    });
+  });
+
+  it("serializes platform disablement before a new enrollment", async () => {
+    await withFixture(async f => {
+      const writer = await pool.connect();
+      let open = false;
+      let task: Promise<{accepted:boolean;error?:unknown}> | null = null;
+      try {
+        await writer.query("BEGIN");
+        open = true;
+        await writer.query("update users set platform_status='DISABLED' where id=$1", [f.userId]);
+        let settled = false;
+        task = createLearnerProgramEnrollment(collegeAdmin, {
+          membershipId:f.membershipId,programId:f.programId,cohortId:f.cohortId,
+        }).then(()=>({accepted:true}),error=>({accepted:false,error}))
+          .finally(()=>{settled=true;});
+        await new Promise(resolve=>setTimeout(resolve,120));
+        expect(settled).toBe(false);
+        await writer.query("COMMIT");
+        open = false;
+        const result=await task;
+        expect(result.accepted).toBe(false);
+        expect(result.error).toMatchObject({code:"MEMBERSHIP_NOT_ACTIVE"});
+        expect(await enrollmentCount(f.membershipId)).toBe(0);
+      } finally {
+        if(open)await writer.query("ROLLBACK");
+        writer.release();
+        if(task)await task;
+      }
+    });
+  });
+
   it("serializes a concurrent membership suspension before new enrollment", async () => {
     await withFixture(async f => {
       const writer: PoolClient = await pool.connect();
