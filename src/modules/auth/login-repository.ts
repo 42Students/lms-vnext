@@ -354,9 +354,10 @@ export const drizzleLoginRepository: LoginRepository = {
         if (rowsOf(tenant).length !== 1) return false;
         const membership = await tx.execute(sql`
           SELECT m.id FROM college_memberships m
+          JOIN membership_roles r ON r.membership_id = m.id
           WHERE m.user_id = ${userId} AND m.college_id = ${collegeId}
             AND m.status = 'ACTIVE' AND m.suspended_at IS NULL
-          FOR SHARE OF m
+          FOR SHARE OF m, r
           LIMIT 1
         `);
         if (!rowsOf(membership).length) {
