@@ -28,7 +28,7 @@ beforeEach(()=>{
 
 describe("AUTH-sessions-06: DB-backed device lifecycle and fail-closed revocation",()=>{
   it("unknown token is invalid; does not mutate last seen",async()=>{
-    execute.mockResolvedValueOnce({rows:[]});
+    execute.mockResolvedValueOnce({rows:[]}).mockResolvedValueOnce({rows:[]});
     await expect(resolveSession("unknown-opaque")).resolves.toEqual({ok:false,reason:"SESSION_INVALID"});
     expect(execute).toHaveBeenCalledTimes(2);
   });

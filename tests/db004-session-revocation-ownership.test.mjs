@@ -35,7 +35,9 @@ test("verified session tokens are checked against the device-session table, incl
   assert.match(session, /resolveSession\(sessionCookie\)/);
   assert.match(session, /SESSION_REVOKED/);
   assert.match(sessionService, /revoked_at IS NOT NULL/);
-  assert.match(sessionService, /expires_at <= now\(\)/);
+  assert.match(sessionService, /UPDATE identity_device_sessions AS s/);
+  assert.match(sessionService, /FOR SHARE OF u/);
+  assert.match(sessionService, /expires_at <= clock_timestamp\(\)/);
 });
 
 test("revoking a person ends every live device session of that user", () => {
