@@ -39,6 +39,10 @@ import {
   updateLessonContent,
 } from "@/modules/courses/lesson-content-service";
 import { SEED_IDS } from "../../scripts/db-seed-data";
+import {
+  getLearnerContentProgress,
+  listMyLearnerContentProgressBatch,
+} from "@/modules/courses/progress-service";
 
 const databaseUrl =
   process.env.TEST_DATABASE_URL ??
@@ -655,6 +659,18 @@ describe("courses C2 learning structure against PostgreSQL", () => {
         ),
       ).rejects.toMatchObject({ code: "LESSON_CONTENT_NOT_FOUND" });
     }
+    const batch = await listMyLearnerContentProgressBatch(
+      learner,
+      structure.deliveryA.id,
+      contents.map((content) => content.id),
+    );
+    expect(batch.map((entry) => entry.contentId)).toEqual([contents[0]!.id]);
+    for (const hidden of contents.slice(1)) {
+      await expect(
+        getLearnerContentProgress(learner, hidden.id, structure.deliveryA.id),
+      ).rejects.toMatchObject({ code: "LESSON_CONTENT_NOT_PUBLISHED" });
+    }
+
     // A tombstoned parent with a stale ACTIVE label is not a learner route.
     await pool.query(
       "update course_lessons set deleted_at = clock_timestamp() where id = $1",
@@ -663,6 +679,32 @@ describe("courses C2 learning structure against PostgreSQL", () => {
     await expect(
       listLessonContents(learner, lesson.id, structure.deliveryA.id),
     ).rejects.toMatchObject({ code: "LESSON_NOT_FOUND" });
+    await expect(
+      getLearnerContentProgress(
+        learner, contents[0]!.id, structure.deliveryA.id,
+      ),
+    ).rejects.toMatchObject({ code: "LESSON_CONTENT_NOT_PUBLISHED" });
+
+    await pool.query("update course_lessons set deleted_at = null where id = $1", [
+      lesson.id,
+    ]);
+    await pool.query("update courses set enabled = false where id = $1", [
+      structure.course.id,
+    ]);
+    await expect(
+      listLessonContents(learner, lesson.id, structure.deliveryA.id),
+    ).rejects.toMatchObject({ code: "LEARNING_ACCESS_DENIED" });
+    await expect(
+      getLearnerContentProgress(
+        learner, contents[0]!.id, structure.deliveryA.id,
+      ),
+    ).rejects.toMatchObject({ code: "LEARNING_ACCESS_DENIED" });
+    await pool.query("update courses set enabled = true, legacy_allowed_for_display = 0 where id = $1", [
+      structure.course.id,
+    ]);
+    await expect(
+      listLessonContents(learner, lesson.id, structure.deliveryA.id),
+    ).rejects.toMatchObject({ code: "LEARNING_ACCESS_DENIED" });
   });
 
   it("protects shared structure with admin authority and database uniqueness", async () => {
