@@ -343,20 +343,21 @@ source course. Academic transfers in regression fixtures retire the old active
 enrollment with the required timestamps and create new immutable identities;
 they do not mutate the DB02 program/cohort FK.
 
-**Exact passing acceptance:** commit `e80cafea1ed58294edf00ad69cac955407480657`,
+**Exact passing acceptance:** commit `df74adf75e2a2e58f6df65aa4771924554c746bd`,
 dedicated GitHub Actions run
-https://github.com/42Students/lms-vnext/actions/runs/40750386705
+https://github.com/42Students/lms-vnext/actions/runs/40751132217
 returned **SUCCESS** on Ubuntu/Node 22 with isolated PostgreSQL 17:
 `npm ci`, `npm run db:journal:verify`, full disposable
 `npm run db:test:prepare`, `npm run db:migrate` idempotence,
 `tests/db006-catalog-pg.test.mjs`, four DB03 integration test files
-(**55/55 PASS**) and two DB03 source-contract suites
+(**57/57 PASS**) and two DB03 source-contract suites
 (**17/17 PASS**). The catalog witness verified physical existence of
 all 79 proposed legacy target columns/indexes and registered trigger objects;
 it **did not prove 79/79 producer-consumer field semantics**. The archive-aware
 course, member-history immutability, same-slot race, tenant denial, group
 rule idempotence, project-team mirroring and group-backed attendance/course
-access tests are included in the 55 executed PG tests.
+access tests and the rule refresh's default waitlist=true/explicit false
+parity regression are included in the 57 executed PG tests.
 
 **Do not re-run the original DB03 source inventory or the already-green 55
 integration scenarios merely to count work.** The sole tracker
