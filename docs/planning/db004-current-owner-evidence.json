@@ -24,8 +24,8 @@
     "registeredReplacementPhysicalWitnesses": 22,
     "registeredPhysicalWitnessTotal": 134,
     "stillWithoutPhysicalWitness": 61,
-    "runtimeSemanticsVerified": 14,
-    "runtimeSemanticsUnverified": 181
+    "runtimeSemanticsVerified": 27,
+    "runtimeSemanticsUnverified": 168
   },
   "guidance": [
     "Exact column existence on registered PostgreSQL does not prove legacy reader/writer parity.",
@@ -33,7 +33,8 @@
     "Person name columns registered and own identity API activated; all-role UI/third-party delivery semantics need independent acceptance.",
     "Never advance tracker done without fresh SHA-specific CI and approvals.",
     "22 registered replacement columns are physically witnessed, but still require legacy semantic/product sign-off. The two kinds of evidence are deliberately independent.",
-    "14 active branding fields have explicitly executed, field-level registered PostgreSQL write/read/public projection witnesses. This is behavior verification, NOT product sign-off on legacy deletion, imported data, CDN delivery, provider behavior, or all DB-004 fields."
+    "14 active branding fields have explicitly executed, field-level registered PostgreSQL write/read/public projection witnesses. This is behavior verification, NOT product sign-off on legacy deletion, imported data, CDN delivery, provider behavior, or all DB-004 fields.",
+    "All 13 tenant_domain fields have a passing real PostgreSQL lifecycle witness covering creation, failure diagnostic, verification, tenant routing and tombstone at 56e19061. This is not provider or policy sign-off."
   ],
   "rows": [
     {
@@ -2160,10 +2161,17 @@
       "proposedPhysicalTarget": "tenant_domains.id",
       "evidenceStatus": "EXACT_REGISTERED_FIELD_PG_WITNESS",
       "physicalVerified": true,
-      "runtimeSemanticsVerified": false,
+      "runtimeSemanticsVerified": true,
       "evidence": [
         "tests/integration/db01-registered-physical-field-crosswalk.test.ts"
-      ]
+      ],
+      "runtimeEvidence": {
+        "verifiedFlow": "POSTGRES_REGISTERED_TENANT_DOMAIN_CREATION_DNS_PROOF_PRIMARY_ROUTING_TOMBSTONE",
+        "suite": "tests/integration/tenant-domains.test.ts",
+        "passingRun": "https://github.com/42Students/lms-vnext/actions/runs/40675617789",
+        "testedCommit": "56e19061f54dbdd679bb9820b124ddb336a13367",
+        "limitations": "Domain lifecycle field behavior verified on a disposable PostgreSQL instance; external DNS provider, product-owned host-reuse/purge policy and global release remain separate gates."
+      }
     },
     {
       "legacyField": "tenant_domain.created_at",
@@ -2172,10 +2180,17 @@
       "proposedPhysicalTarget": "tenant_domains.created_at",
       "evidenceStatus": "EXACT_REGISTERED_FIELD_PG_WITNESS",
       "physicalVerified": true,
-      "runtimeSemanticsVerified": false,
+      "runtimeSemanticsVerified": true,
       "evidence": [
         "tests/integration/db01-registered-physical-field-crosswalk.test.ts"
-      ]
+      ],
+      "runtimeEvidence": {
+        "verifiedFlow": "POSTGRES_REGISTERED_TENANT_DOMAIN_CREATION_DNS_PROOF_PRIMARY_ROUTING_TOMBSTONE",
+        "suite": "tests/integration/tenant-domains.test.ts",
+        "passingRun": "https://github.com/42Students/lms-vnext/actions/runs/40675617789",
+        "testedCommit": "56e19061f54dbdd679bb9820b124ddb336a13367",
+        "limitations": "Domain lifecycle field behavior verified on a disposable PostgreSQL instance; external DNS provider, product-owned host-reuse/purge policy and global release remain separate gates."
+      }
     },
     {
       "legacyField": "tenant_domain.updated_at",
@@ -2184,10 +2199,17 @@
       "proposedPhysicalTarget": "tenant_domains.updated_at",
       "evidenceStatus": "EXACT_REGISTERED_FIELD_PG_WITNESS",
       "physicalVerified": true,
-      "runtimeSemanticsVerified": false,
+      "runtimeSemanticsVerified": true,
       "evidence": [
         "tests/integration/db01-registered-physical-field-crosswalk.test.ts"
-      ]
+      ],
+      "runtimeEvidence": {
+        "verifiedFlow": "POSTGRES_REGISTERED_TENANT_DOMAIN_CREATION_DNS_PROOF_PRIMARY_ROUTING_TOMBSTONE",
+        "suite": "tests/integration/tenant-domains.test.ts",
+        "passingRun": "https://github.com/42Students/lms-vnext/actions/runs/40675617789",
+        "testedCommit": "56e19061f54dbdd679bb9820b124ddb336a13367",
+        "limitations": "Domain lifecycle field behavior verified on a disposable PostgreSQL instance; external DNS provider, product-owned host-reuse/purge policy and global release remain separate gates."
+      }
     },
     {
       "legacyField": "tenant_domain.is_deleted",
@@ -2196,10 +2218,17 @@
       "proposedPhysicalTarget": "tenant_domains.deleted_at",
       "evidenceStatus": "EXACT_REGISTERED_FIELD_PG_WITNESS",
       "physicalVerified": true,
-      "runtimeSemanticsVerified": false,
+      "runtimeSemanticsVerified": true,
       "evidence": [
         "tests/integration/db01-registered-physical-field-crosswalk.test.ts"
-      ]
+      ],
+      "runtimeEvidence": {
+        "verifiedFlow": "POSTGRES_REGISTERED_TENANT_DOMAIN_CREATION_DNS_PROOF_PRIMARY_ROUTING_TOMBSTONE",
+        "suite": "tests/integration/tenant-domains.test.ts",
+        "passingRun": "https://github.com/42Students/lms-vnext/actions/runs/40675617789",
+        "testedCommit": "56e19061f54dbdd679bb9820b124ddb336a13367",
+        "limitations": "Domain lifecycle field behavior verified on a disposable PostgreSQL instance; external DNS provider, product-owned host-reuse/purge policy and global release remain separate gates."
+      }
     },
     {
       "legacyField": "tenant_domain.college_id",
@@ -2208,10 +2237,17 @@
       "proposedPhysicalTarget": "tenant_domains.college_id",
       "evidenceStatus": "EXACT_REGISTERED_FIELD_PG_WITNESS",
       "physicalVerified": true,
-      "runtimeSemanticsVerified": false,
+      "runtimeSemanticsVerified": true,
       "evidence": [
         "tests/integration/db01-registered-physical-field-crosswalk.test.ts"
-      ]
+      ],
+      "runtimeEvidence": {
+        "verifiedFlow": "POSTGRES_REGISTERED_TENANT_DOMAIN_CREATION_DNS_PROOF_PRIMARY_ROUTING_TOMBSTONE",
+        "suite": "tests/integration/tenant-domains.test.ts",
+        "passingRun": "https://github.com/42Students/lms-vnext/actions/runs/40675617789",
+        "testedCommit": "56e19061f54dbdd679bb9820b124ddb336a13367",
+        "limitations": "Domain lifecycle field behavior verified on a disposable PostgreSQL instance; external DNS provider, product-owned host-reuse/purge policy and global release remain separate gates."
+      }
     },
     {
       "legacyField": "tenant_domain.host",
@@ -2220,10 +2256,17 @@
       "proposedPhysicalTarget": "tenant_domains.host",
       "evidenceStatus": "EXACT_REGISTERED_FIELD_PG_WITNESS",
       "physicalVerified": true,
-      "runtimeSemanticsVerified": false,
+      "runtimeSemanticsVerified": true,
       "evidence": [
         "tests/integration/db01-registered-physical-field-crosswalk.test.ts"
-      ]
+      ],
+      "runtimeEvidence": {
+        "verifiedFlow": "POSTGRES_REGISTERED_TENANT_DOMAIN_CREATION_DNS_PROOF_PRIMARY_ROUTING_TOMBSTONE",
+        "suite": "tests/integration/tenant-domains.test.ts",
+        "passingRun": "https://github.com/42Students/lms-vnext/actions/runs/40675617789",
+        "testedCommit": "56e19061f54dbdd679bb9820b124ddb336a13367",
+        "limitations": "Domain lifecycle field behavior verified on a disposable PostgreSQL instance; external DNS provider, product-owned host-reuse/purge policy and global release remain separate gates."
+      }
     },
     {
       "legacyField": "tenant_domain.is_primary",
@@ -2232,10 +2275,17 @@
       "proposedPhysicalTarget": "tenant_domains.is_primary",
       "evidenceStatus": "EXACT_REGISTERED_FIELD_PG_WITNESS",
       "physicalVerified": true,
-      "runtimeSemanticsVerified": false,
+      "runtimeSemanticsVerified": true,
       "evidence": [
         "tests/integration/db01-registered-physical-field-crosswalk.test.ts"
-      ]
+      ],
+      "runtimeEvidence": {
+        "verifiedFlow": "POSTGRES_REGISTERED_TENANT_DOMAIN_CREATION_DNS_PROOF_PRIMARY_ROUTING_TOMBSTONE",
+        "suite": "tests/integration/tenant-domains.test.ts",
+        "passingRun": "https://github.com/42Students/lms-vnext/actions/runs/40675617789",
+        "testedCommit": "56e19061f54dbdd679bb9820b124ddb336a13367",
+        "limitations": "Domain lifecycle field behavior verified on a disposable PostgreSQL instance; external DNS provider, product-owned host-reuse/purge policy and global release remain separate gates."
+      }
     },
     {
       "legacyField": "tenant_domain.verification_token",
@@ -2244,10 +2294,17 @@
       "proposedPhysicalTarget": "tenant_domains.verification_token",
       "evidenceStatus": "EXACT_REGISTERED_FIELD_PG_WITNESS",
       "physicalVerified": true,
-      "runtimeSemanticsVerified": false,
+      "runtimeSemanticsVerified": true,
       "evidence": [
         "tests/integration/db01-registered-physical-field-crosswalk.test.ts"
-      ]
+      ],
+      "runtimeEvidence": {
+        "verifiedFlow": "POSTGRES_REGISTERED_TENANT_DOMAIN_CREATION_DNS_PROOF_PRIMARY_ROUTING_TOMBSTONE",
+        "suite": "tests/integration/tenant-domains.test.ts",
+        "passingRun": "https://github.com/42Students/lms-vnext/actions/runs/40675617789",
+        "testedCommit": "56e19061f54dbdd679bb9820b124ddb336a13367",
+        "limitations": "Domain lifecycle field behavior verified on a disposable PostgreSQL instance; external DNS provider, product-owned host-reuse/purge policy and global release remain separate gates."
+      }
     },
     {
       "legacyField": "tenant_domain.verified_at",
@@ -2256,10 +2313,17 @@
       "proposedPhysicalTarget": "tenant_domains.verified_at",
       "evidenceStatus": "EXACT_REGISTERED_FIELD_PG_WITNESS",
       "physicalVerified": true,
-      "runtimeSemanticsVerified": false,
+      "runtimeSemanticsVerified": true,
       "evidence": [
         "tests/integration/db01-registered-physical-field-crosswalk.test.ts"
-      ]
+      ],
+      "runtimeEvidence": {
+        "verifiedFlow": "POSTGRES_REGISTERED_TENANT_DOMAIN_CREATION_DNS_PROOF_PRIMARY_ROUTING_TOMBSTONE",
+        "suite": "tests/integration/tenant-domains.test.ts",
+        "passingRun": "https://github.com/42Students/lms-vnext/actions/runs/40675617789",
+        "testedCommit": "56e19061f54dbdd679bb9820b124ddb336a13367",
+        "limitations": "Domain lifecycle field behavior verified on a disposable PostgreSQL instance; external DNS provider, product-owned host-reuse/purge policy and global release remain separate gates."
+      }
     },
     {
       "legacyField": "tenant_domain.is_verified",
@@ -2268,10 +2332,17 @@
       "proposedPhysicalTarget": "tenant_domains.is_verified",
       "evidenceStatus": "EXACT_REGISTERED_FIELD_PG_WITNESS",
       "physicalVerified": true,
-      "runtimeSemanticsVerified": false,
+      "runtimeSemanticsVerified": true,
       "evidence": [
         "tests/integration/db01-registered-physical-field-crosswalk.test.ts"
-      ]
+      ],
+      "runtimeEvidence": {
+        "verifiedFlow": "POSTGRES_REGISTERED_TENANT_DOMAIN_CREATION_DNS_PROOF_PRIMARY_ROUTING_TOMBSTONE",
+        "suite": "tests/integration/tenant-domains.test.ts",
+        "passingRun": "https://github.com/42Students/lms-vnext/actions/runs/40675617789",
+        "testedCommit": "56e19061f54dbdd679bb9820b124ddb336a13367",
+        "limitations": "Domain lifecycle field behavior verified on a disposable PostgreSQL instance; external DNS provider, product-owned host-reuse/purge policy and global release remain separate gates."
+      }
     },
     {
       "legacyField": "tenant_domain.last_checked_at",
@@ -2280,10 +2351,17 @@
       "proposedPhysicalTarget": "tenant_domains.last_checked_at",
       "evidenceStatus": "EXACT_REGISTERED_FIELD_PG_WITNESS",
       "physicalVerified": true,
-      "runtimeSemanticsVerified": false,
+      "runtimeSemanticsVerified": true,
       "evidence": [
         "tests/integration/db01-registered-physical-field-crosswalk.test.ts"
-      ]
+      ],
+      "runtimeEvidence": {
+        "verifiedFlow": "POSTGRES_REGISTERED_TENANT_DOMAIN_CREATION_DNS_PROOF_PRIMARY_ROUTING_TOMBSTONE",
+        "suite": "tests/integration/tenant-domains.test.ts",
+        "passingRun": "https://github.com/42Students/lms-vnext/actions/runs/40675617789",
+        "testedCommit": "56e19061f54dbdd679bb9820b124ddb336a13367",
+        "limitations": "Domain lifecycle field behavior verified on a disposable PostgreSQL instance; external DNS provider, product-owned host-reuse/purge policy and global release remain separate gates."
+      }
     },
     {
       "legacyField": "tenant_domain.last_check_result",
@@ -2292,10 +2370,17 @@
       "proposedPhysicalTarget": "tenant_domains.last_check_result",
       "evidenceStatus": "EXACT_REGISTERED_FIELD_PG_WITNESS",
       "physicalVerified": true,
-      "runtimeSemanticsVerified": false,
+      "runtimeSemanticsVerified": true,
       "evidence": [
         "tests/integration/db01-registered-physical-field-crosswalk.test.ts"
-      ]
+      ],
+      "runtimeEvidence": {
+        "verifiedFlow": "POSTGRES_REGISTERED_TENANT_DOMAIN_CREATION_DNS_PROOF_PRIMARY_ROUTING_TOMBSTONE",
+        "suite": "tests/integration/tenant-domains.test.ts",
+        "passingRun": "https://github.com/42Students/lms-vnext/actions/runs/40675617789",
+        "testedCommit": "56e19061f54dbdd679bb9820b124ddb336a13367",
+        "limitations": "Domain lifecycle field behavior verified on a disposable PostgreSQL instance; external DNS provider, product-owned host-reuse/purge policy and global release remain separate gates."
+      }
     },
     {
       "legacyField": "tenant_domain.last_found_values",
@@ -2304,13 +2389,20 @@
       "proposedPhysicalTarget": "tenant_domains.last_found_values",
       "evidenceStatus": "REGISTERED_DNS_DIAGNOSTICS_PHYSICAL_WITNESS_SEMANTIC_REVIEW",
       "physicalVerified": true,
-      "runtimeSemanticsVerified": false,
+      "runtimeSemanticsVerified": true,
       "evidence": [
         "src/db/schema/tenant-domains.ts",
         "src/modules/tenant-domains/repository.ts",
         "drizzle/0159_lane15_tenant_domain_diagnostics.sql",
         "tests/integration/tenant-domains.test.ts"
-      ]
+      ],
+      "runtimeEvidence": {
+        "verifiedFlow": "POSTGRES_REGISTERED_TENANT_DOMAIN_CREATION_DNS_PROOF_PRIMARY_ROUTING_TOMBSTONE",
+        "suite": "tests/integration/tenant-domains.test.ts",
+        "passingRun": "https://github.com/42Students/lms-vnext/actions/runs/40675617789",
+        "testedCommit": "56e19061f54dbdd679bb9820b124ddb336a13367",
+        "limitations": "Domain lifecycle field behavior verified on a disposable PostgreSQL instance; external DNS provider, product-owned host-reuse/purge policy and global release remain separate gates."
+      }
     },
     {
       "legacyField": "user.id",
