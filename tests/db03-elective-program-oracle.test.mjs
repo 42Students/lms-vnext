@@ -6,6 +6,7 @@ const read = path => readFileSync(new URL("../" + path, import.meta.url), "utf8"
 const service = read("src/modules/groups/service.ts");
 const eligibility = read("src/modules/groups/elective-eligibility.ts");
 const roster = read("src/modules/groups/roster-access.ts");
+const electivesService = read("src/modules/electives/service.ts");
 const schema = read("src/db/schema/academics.ts");
 const registeredDb02 = read("drizzle/0303_db02_academic_timetable_registered.sql");
 const registeredDb03 = read("drizzle/0306_db03_elective_kernel_integrity.sql");
@@ -19,6 +20,14 @@ test("joinGroup revalidates elective eligibility before idempotent return", () =
   const earlyReturnIndex = join.indexOf('if (existing?.state === "ACTIVE" || existing?.state === "WAITLISTED") return existing;');
   assert.ok(eligibilityIndex >= 0 && earlyReturnIndex > eligibilityIndex);
   assert.match(join, /if \(slot\) await assertElectivePickLimit\(tx, slot, memberId\);/);
+});
+
+test("read and write paths both reject impossible or nonconsecutive elective years", () => {
+  assert.ok(electivesService.includes("if (start < 1900 || start > 9998)"));
+  assert.ok(roster.includes("left(${electiveSlots.academicYear},4)::integer between 1900 and 9998"));
+  assert.ok(roster.includes("length(${electiveSlots.academicYear}) - 5)::integer in"));
+  assert.ok(roster.includes("else false"));
+  assert.ok(rosterTests.includes("impossibleEnd"));
 });
 
 test("the slot matches the learner ACTIVE primary program rather than college alone", () => {
