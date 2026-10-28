@@ -1,0 +1,75 @@
+name: DB-004 identity and tenant acceptance
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - "src/modules/auth/**"
+      - "src/modules/tenant-domains/**"
+      - "src/auth/**"
+      - "tests/integration/db01-*.test.ts"
+      - "tests/unit/chat6-auth-*.test.ts"
+      - "tests/db004-*.test.mjs"
+      - ".github/workflows/db004-identity-acceptance.yml"
+
+permissions:
+  contents: read
+
+# Independent, registered-schema evidence: no staging SQL and no credentials
+# from a shared database. This job is not a substitute for full DB-004
+# source-field, provider, and release certification.
+concurrency:
+  group: lms-db004-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  db004-registered:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    services:
+      postgres:
+        image: postgres:17-alpine
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: lms_vnext_test
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres -d lms_vnext_test"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+    env:
+      DATABASE_URL: postgresql://postgres:postgres@127.0.0.1:5432/lms_vnext_test
+      TEST_DATABASE_URL: postgresql://postgres:postgres@127.0.0.1:5432/lms_vnext_test
+      DB03_ISOLATED_TEST_DATABASE: "1"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Registered migration journal
+        run: npm run db:journal:verify
+      - name: Reset and migrate disposable PostgreSQL from empty
+        env:
+          DATABASE_URL: ""
+        run: npm run db:test:prepare
+      - name: Migration replay idempotence
+        run: npm run db:migrate
+      - name: DB-004 registered tenancy, session and revocation acceptance
+        run: >-
+          npx vitest run --config vitest.db.registered.config.ts
+          tests/integration/db01-session-atomic-authorization.test.ts
+          tests/integration/db01-tenant-routing-lifecycle.test.ts
+          tests/integration/db01-tenant-identity-invariants.test.ts
+          tests/integration/db01-identity-fk-invariants.test.ts
+          tests/integration/db01-concurrent-integrity.test.ts
+      - name: DB-004 source and security disposition checks
+        run: >-
+          node --test
+          tests/db004-session-revocation-ownership.test.mjs
+          tests/db01-final-field-disposition.test.mjs
