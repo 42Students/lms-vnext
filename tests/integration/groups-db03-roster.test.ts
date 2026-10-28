@@ -199,6 +199,19 @@ describe("DB03 elective group-backed course access (PostgreSQL)", () => {
     expect(listed.some(row=>row.deliveryId===f.deliveryId)).toBe(false);
   });
 
+  it("revokes elective content access when its source course is disabled", async () => {
+    const fixture = await setupRosterFixture();
+    const host = await createHostSectionLearner(fixture);
+    await joinGroup(host.ctx, fixture.groupId, host.membershipId);
+    await expect(requireLearningReadAccess(host.ctx, fixture.offeringId, fixture.deliveryId))
+      .resolves.toBe("LEARNER");
+    await pool.query("UPDATE courses SET enabled=false WHERE id=$1", [fixture.courseId]);
+    await expect(requireLearningReadAccess(host.ctx, fixture.offeringId, fixture.deliveryId))
+      .rejects.toMatchObject({ code: "LEARNER_ENROLLMENT_SCOPE_REQUIRED" });
+    expect((await listLearnerCourseDeliveries(host.ctx))
+      .some(row => row.deliveryId === fixture.deliveryId)).toBe(false);
+  });
+
   it("denies archived elective offerings rather than silently using host-section membership", async () => {
     const f = await setupRosterFixture();
     const host = await createHostSectionLearner(f);
