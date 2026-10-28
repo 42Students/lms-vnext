@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "task": "DB-004",
-  "sourceCommit": "c8a87df1cac89d4ccb9797f2a8859ae7b05ceeb6",
+  "sourceCommit": "8819ef623f121af780a6ba3d1960501f0bc6a46c",
   "source": "docs/planning/db004-current-owner-evidence.json",
   "policy": "No approval may be inferred from source code, tests, a passing CI run, or this register.",
   "technicalSnapshot": {
@@ -9,10 +9,10 @@
     "physical": 137,
     "runtimeSemantics": 134,
     "implementationRetired": 34,
-    "technicalCovered": 183,
-    "uncovered": 12,
+    "technicalCovered": 185,
+    "uncovered": 10,
     "approvalPendingRetirements": 34,
-    "compositeImplemented": 15
+    "compositeImplemented": 17
   },
   "uncoveredFieldClasses": {
     "physicalPending": [
@@ -28,9 +28,7 @@
       "email_verification_token.email",
       "email_verification_token.expires_at",
       "email_verification_token.verified",
-      "email_verification_token.verified_at",
-      "faculty_acct_verification.blocked_till_ts",
-      "learner_acct_verification.blocked_till_ts"
+      "email_verification_token.verified_at"
     ]
   },
   "decisions": [

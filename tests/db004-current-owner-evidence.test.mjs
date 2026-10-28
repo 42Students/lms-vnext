@@ -71,8 +71,8 @@ test("physical field proof and runtime proof remain explicitly distinct",()=>{
  assert.ok(current.rows.filter(x=>x.legacyField.startsWith("auth_handoff_token.")||x.legacyField.startsWith("login_user.")).every(x=>!x.runtimeSemanticsVerified));
 
  const composites=current.rows.filter(row=>row.compositeImplementationVerified);
- assert.equal(composites.length,15);
- assert.deepEqual(new Set(composites.map(row=>row.legacyField)),new Set(["faculty.id","faculty.created_at","faculty.is_deleted","faculty.updated_at","learner.id","learner.created_at","learner.is_deleted","learner.updated_at","recruiter.id","role.name","faculty.organization_id","learner.organization_id","user.user_type","user_roles.user_id","user_roles.role_id"]));
+ assert.equal(composites.length,17);
+ assert.deepEqual(new Set(composites.map(row=>row.legacyField)),new Set(["faculty.id","faculty.created_at","faculty.is_deleted","faculty.updated_at","learner.id","learner.created_at","learner.is_deleted","learner.updated_at","recruiter.id","role.name","faculty.organization_id","learner.organization_id","user.user_type","user_roles.user_id","user_roles.role_id","faculty_acct_verification.blocked_till_ts","learner_acct_verification.blocked_till_ts"]));
  const expectedCompositeSuiteByField={
   ...Object.fromEntries(["faculty.organization_id","learner.organization_id",
    "user.user_type","user_roles.user_id","user_roles.role_id"].map(field=>
@@ -83,13 +83,15 @@ test("physical field proof and runtime proof remain explicitly distinct",()=>{
    [field,"tests/integration/db01-source-account-provenance-field-semantics.test.ts"])),
   "recruiter.id":"tests/integration/db01-recruiter-identity-field-semantics.test.ts",
   "role.name":"tests/integration/db01-role-definition-field-semantics.test.ts",
+  "faculty_acct_verification.blocked_till_ts":"tests/integration/db01-learner-faculty-otp-field-compat.test.ts",
+  "learner_acct_verification.blocked_till_ts":"tests/integration/db01-learner-faculty-otp-field-compat.test.ts",
  };
  assert.ok(composites.every(row=>!row.physicalVerified&&!row.runtimeSemanticsVerified&&
   row.compositeEvidence?.suite===expectedCompositeSuiteByField[row.legacyField]&&
   row.compositeEvidence?.passingRun?.startsWith("https://github.com/42Students/lms-vnext/actions/runs/")&&
   row.compositeEvidence?.testedCommit?.length===40&&
   row.compositeEvidence?.limitations?.length>0));
- assert.equal(current.summary.compositeImplementationVerified,15);
+ assert.equal(current.summary.compositeImplementationVerified,17);
  assert.ok(composites.every(row=>
   row.compositeEvidence?.suite&&existsSync(row.compositeEvidence.suite)&&
   row.compositeEvidence?.passingRun?.startsWith("https://github.com/42Students/lms-vnext/actions/runs/")&&
@@ -104,8 +106,8 @@ test("physical field proof and runtime proof remain explicitly distinct",()=>{
   new Set(retirementCandidates.map(x=>x.legacyField)));
  assert.equal(current.summary.retirementImplementationVerified,34);
  assert.equal(current.summary.retirementApprovalPending,34);
- assert.equal(current.summary.technicalEvidenceCoverage,183);
- assert.equal(current.summary.technicalEvidenceUncovered,12);
+ assert.equal(current.summary.technicalEvidenceCoverage,185);
+ assert.equal(current.summary.technicalEvidenceUncovered,10);
  assert.ok(technicallyRetired.every(x=>x.retirementApproved===false &&
   x.runtimeSemanticsVerified===false &&
   x.physicalVerified===false &&

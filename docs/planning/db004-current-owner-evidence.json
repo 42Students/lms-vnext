@@ -47,9 +47,9 @@
     },
     "retirementImplementationVerified": 34,
     "retirementApprovalPending": 34,
-    "technicalEvidenceCoverage": 183,
-    "technicalEvidenceUncovered": 12,
-    "compositeImplementationVerified": 15
+    "technicalEvidenceCoverage": 185,
+    "technicalEvidenceUncovered": 10,
+    "compositeImplementationVerified": 17
   },
   "guidance": [
     "Exact column existence on registered PostgreSQL does not prove legacy reader/writer parity.",
@@ -69,7 +69,8 @@
     "At a6f06efe, registered PostgreSQL DB-004 accepted archived branding negative projection and edit-denial tests. The historical is_deleted runtime mapping is witnessed, but import/retention/product approval remains PENDING.",
     "At 6a9455fd, a registered PG negative source metadata catalog witness adds 13 technically implemented retirements (still unapproved). The recruiter.suspended_at persisted timestamp and fail-closed suspension/restoration lifecycle were directly witnessed at 9efa47bd. These are implementation evidence, not source import or product sign-off.",
     "At 8fdface1, registered PG proved five non-physical composite active-runtime replacements: learner/faculty organization ancestry, active user role selection, and typed membership-role assignment authority. Source numeric-ID migration reconciliation and owner approval remain open. Composite evidence is distinct from the 134 physical runtime witnesses.",
-    "At c8a87df1, registered PostgreSQL witnessed ten more composite implementation mappings: learner/faculty source IDs and timestamps and scoped termination (8), recruiter source ID stored only as provenance (1), source role name typed grant and recruiter denial (1). Historical data migration, source import audits and product/security disposition remain unapproved."
+    "At c8a87df1, registered PostgreSQL witnessed ten more composite implementation mappings: learner/faculty source IDs and timestamps and scoped termination (8), recruiter source ID stored only as provenance (1), source role name typed grant and recruiter denial (1). Historical data migration, source import audits and product/security disposition remain unapproved.",
+    "At 8819ef62, the registered DB-004 PostgreSQL acceptance passed cooldown denial for both Learner and Faculty role-eligible LOGIN challenges and exact evidence-suite certification; two historical role verification cooldown fields have bounded first-party composite replacement evidence, not source data reconciliation or approval."
   ],
   "rows": [
     {
@@ -1620,8 +1621,18 @@
       "runtimeSemanticsVerified": false,
       "evidence": [
         "docs/architecture/first-party-login.md",
-        "docs/planning/db01-chat05-provider-persistence-decision.json"
-      ]
+        "docs/planning/db01-chat05-provider-persistence-decision.json",
+        "src/modules/auth/login-repository.ts",
+        "tests/integration/db01-learner-faculty-otp-field-compat.test.ts"
+      ],
+      "compositeImplementationVerified": true,
+      "compositeEvidence": {
+        "verifiedFlow": "REGISTERED_POSTGRES_SHARED_FIRST_PARTY_CHALLENGE_BLOCKED_COOLDOWN_DENIES_SEND_VERIFY_CONSUME_FOR_SCOPED_LEARNER_AND_FACULTY",
+        "suite": "tests/integration/db01-learner-faculty-otp-field-compat.test.ts",
+        "passingRun": "https://github.com/42Students/lms-vnext/actions/runs/40692244747",
+        "testedCommit": "8819ef623f121af780a6ba3d1960501f0bc6a46c",
+        "limitations": "Proves current role-eligible first-party login challenge cannot send or reserve while blocked and cannot redeem during cooldown; unblocking restores one-time verification. Historical role-specific blocked_till_ts source migration, provider acceptance, product/security decisions and exact legacy backoff policy equivalence are not certified."
+      }
     },
     {
       "legacyField": "faculty_acct_verification.faculty_id",
@@ -2123,8 +2134,18 @@
       "runtimeSemanticsVerified": false,
       "evidence": [
         "docs/architecture/first-party-login.md",
-        "docs/planning/db01-chat05-provider-persistence-decision.json"
-      ]
+        "docs/planning/db01-chat05-provider-persistence-decision.json",
+        "src/modules/auth/login-repository.ts",
+        "tests/integration/db01-learner-faculty-otp-field-compat.test.ts"
+      ],
+      "compositeImplementationVerified": true,
+      "compositeEvidence": {
+        "verifiedFlow": "REGISTERED_POSTGRES_SHARED_FIRST_PARTY_CHALLENGE_BLOCKED_COOLDOWN_DENIES_SEND_VERIFY_CONSUME_FOR_SCOPED_LEARNER_AND_FACULTY",
+        "suite": "tests/integration/db01-learner-faculty-otp-field-compat.test.ts",
+        "passingRun": "https://github.com/42Students/lms-vnext/actions/runs/40692244747",
+        "testedCommit": "8819ef623f121af780a6ba3d1960501f0bc6a46c",
+        "limitations": "Proves current role-eligible first-party login challenge cannot send or reserve while blocked and cannot redeem during cooldown; unblocking restores one-time verification. Historical role-specific blocked_till_ts source migration, provider acceptance, product/security decisions and exact legacy backoff policy equivalence are not certified."
+      }
     },
     {
       "legacyField": "learner_acct_verification.incorrect_attempts",
