@@ -40,6 +40,14 @@ describe("DB-004 learner/faculty source fields normalized to a canonical identit
     await pool.query("insert into membership_roles(membership_id,role) values($1,$2)",
      [memberId,role]);
    }
+   // Legacy role.created_at resolves to a persisted membership-role grant,
+   // never a detached global role-definition timestamp.
+   const roleReceipts=await pool.query<{role:string;created_at:Date}>(
+    "select role,created_at from membership_roles where membership_id=any($1::uuid[])",
+    [[learnerMembershipId,facultyMembershipId]]);
+   expect(roleReceipts.rows).toHaveLength(2);
+   expect(new Set(roleReceipts.rows.map(row=>row.role))).toEqual(new Set(["LEARNER","FACULTY"]));
+   expect(roleReceipts.rows.every(row=>row.created_at instanceof Date)).toBe(true);
    const choices=await listMembershipChoices(identityUid);
    expect(choices).toEqual(expect.arrayContaining([
     expect.objectContaining({id:learnerMembershipId,collegeId:SEED_IDS.collegeA,
