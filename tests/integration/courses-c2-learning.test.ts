@@ -1169,7 +1169,9 @@ describe("courses C2 learning structure against PostgreSQL", () => {
      values($1,$2,3,0)`,[learnerMembershipId,video.id]);
     expect(await totals()).toEqual({completed:0,total:1});
     await pool.query("update lesson_contents set deleted_at=now() where id=$1",[video.id]);
-    expect(await totals()).toEqual({completed:0,total:0});
+    // When the last visible item disappears, the report correctly returns
+    // an empty row set rather than fabricating a zero-item completion row.
+    expect(await totals()).toEqual({completed:undefined,total:0});
   });
 
   it("rejects direct SQL content delivery reparent across course offerings",async()=>{
