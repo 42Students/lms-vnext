@@ -235,6 +235,11 @@ export function inspectTracker(doc) {
       if (dependency === t.id) add(errors, 'SELF_DEPENDENCY',{id:t.id});
     }
   }
+  // The package view is read-only; its coverage must still be exhaustive and unique.
+  const coverage = inspectDomainPackages(doc);
+  for (const id of coverage.unassigned) add(errors,'UNASSIGNED_DATABASE_PACKAGE',{id});
+  for (const id of coverage.duplicates) add(errors,'DUPLICATE_DATABASE_PACKAGE',{id});
+  for (const id of coverage.unknown) add(errors,'UNKNOWN_DATABASE_PACKAGE',{id});
   const visiting = new Set(), visited = new Set();
   function walk(id) {
     if (visiting.has(id)) return add(errors, 'DEPENDENCY_CYCLE',{id});
