@@ -290,6 +290,17 @@ export function bindGlobalEmailSuppressionHashToOutbox(
     .digest("hex");
 }
 
+/** A timestamptz round-trip may canonicalize +05:30 to UTC; compare the
+ * actual instant, while still refusing missing or changed delivery bounds. */
+function sameOutboundInstant(original: string | undefined, stored: string | null) {
+  if (original === undefined || stored === null) {
+    return original === undefined && stored === null;
+  }
+  const first = Date.parse(original);
+  const second = Date.parse(stored);
+  return Number.isFinite(first) && Number.isFinite(second) && first === second;
+}
+
 /** Only a privileged background sender should ever decrypt this. */
 export function openOutboundDelivery(
   sealed: SealedOutboundDelivery,
@@ -328,9 +339,13 @@ export function openOutboundDelivery(
       intent.channel, intent.templateKey, intent.recipient,
     ]));
     if (recipientHash !== sealed.recipientHash || idem !== sealed.idempotencyKey ||
+        intent.organizationId !== sealed.organizationId ||
         intent.collegeId !== sealed.collegeId ||
-        intent.notBefore !== (sealed.notBefore ?? undefined) ||
-        intent.expiresAt !== (sealed.expiresAt ?? undefined)) {
+        intent.sourceEventId !== sealed.sourceEventId ||
+        intent.channel !== sealed.channel ||
+        intent.templateKey !== sealed.templateKey ||
+        !sameOutboundInstant(intent.notBefore, sealed.notBefore) ||
+        !sameOutboundInstant(intent.expiresAt, sealed.expiresAt)) {
       throw new Error("invalid metadata");
     }
     return intent;
