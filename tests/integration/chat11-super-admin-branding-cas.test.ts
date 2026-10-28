@@ -93,7 +93,8 @@ describe("SA-tenants-modules-BRAND-CAS-01 PostgreSQL stale tab protection",()=>{
    privacyUrl:"https://assets.example.test/privacy",
   };
   const saved=await saveCollegeBranding(context,collegeId,payload);
-  expect(saved).toMatchObject({...payload,version:1});
+  const {expectedVersion: _expectedVersion, ...fields}=payload;
+  expect(saved).toMatchObject({...fields,version:1});
   const direct=await pool.query<{
    college_id:string;logo_url:string;favicon_url:string;
    login_background_url:string;login_background_url_mobile:string;
