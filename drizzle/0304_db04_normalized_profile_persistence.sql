@@ -203,6 +203,10 @@ CREATE TRIGGER db04_video_intro_update_guard
   BEFORE UPDATE OR DELETE ON learner_profile_video_intros
   FOR EACH ROW EXECUTE FUNCTION db04_video_intro_immutable();
 --> statement-breakpoint
+CREATE TRIGGER db04_video_intro_no_truncate
+  BEFORE TRUNCATE ON learner_profile_video_intros
+  FOR EACH STATEMENT EXECUTE FUNCTION db04_video_intro_immutable();
+--> statement-breakpoint
 CREATE OR REPLACE FUNCTION db04_reject_event_mutation() RETURNS trigger LANGUAGE plpgsql AS $db04_event$
 BEGIN
  RAISE EXCEPTION 'profile verification event history is immutable' USING ERRCODE = '23514';
@@ -238,7 +242,9 @@ CREATE FUNCTION db04_assert_education_document_usable() RETURNS trigger LANGUAGE
 BEGIN
  PERFORM 1 FROM profile_private_document_receipts r
  WHERE r.id=NEW.receipt_id AND r.owning_membership_id=NEW.learner_membership_id
-   AND r.purpose=NEW.purpose AND r.scan_status='CLEAN'
+   AND r.purpose=NEW.purpose
+   AND (r.related_entry_id IS NULL OR r.related_entry_id=NEW.education_entry_id)
+   AND r.scan_status='CLEAN'
    AND r.revoked_at IS NULL
    AND (r.retention_until IS NULL OR r.retention_until > now())
  FOR SHARE;
