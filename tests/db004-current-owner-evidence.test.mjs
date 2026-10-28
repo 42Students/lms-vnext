@@ -28,9 +28,9 @@ test("physical field proof and runtime proof remain explicitly distinct",()=>{
  assert.equal(current.summary.registeredPhysicalWitnessTotal,134);
  assert.equal(current.summary.stillWithoutPhysicalWitness,61);
  const verified=current.rows.filter(x=>x.runtimeSemanticsVerified);
- assert.equal(verified.length,112);
- assert.equal(current.summary.runtimeSemanticsVerified,112);
- assert.equal(current.summary.runtimeSemanticsUnverified,83);
+ assert.equal(verified.length,130);
+ assert.equal(current.summary.runtimeSemanticsVerified,130);
+ assert.equal(current.summary.runtimeSemanticsUnverified,65);
  const allowed={
   "college_branding.":["tests/integration/chat11-super-admin-branding-cas.test.ts",14],
   "tenant_domain.":["tests/integration/tenant-domains.test.ts",13],
@@ -45,6 +45,8 @@ test("physical field proof and runtime proof remain explicitly distinct",()=>{
   "department.":["tests/integration/db01-department-field-semantics.test.ts",6],
   "recruiter.":["tests/integration/db01-recruiter-identity-field-semantics.test.ts",5],
   "role.":["tests/integration/db01-learner-faculty-field-semantics.test.ts",1],
+  "learner_acct_verification.":["tests/integration/db01-learner-faculty-otp-field-compat.test.ts",9],
+  "faculty_acct_verification.":["tests/integration/db01-learner-faculty-otp-field-compat.test.ts",9],
  };
  for(const [prefix,[suite,count]] of Object.entries(allowed)){
   const group=verified.filter(row=>row.legacyField.startsWith(prefix));
@@ -69,8 +71,8 @@ test("physical field proof and runtime proof remain explicitly distinct",()=>{
   new Set(retirementCandidates.map(x=>x.legacyField)));
  assert.equal(current.summary.retirementImplementationVerified,21);
  assert.equal(current.summary.retirementApprovalPending,21);
- assert.equal(current.summary.technicalEvidenceCoverage,133);
- assert.equal(current.summary.technicalEvidenceUncovered,62);
+ assert.equal(current.summary.technicalEvidenceCoverage,151);
+ assert.equal(current.summary.technicalEvidenceUncovered,44);
  assert.ok(technicallyRetired.every(x=>x.retirementApproved===false &&
   x.runtimeSemanticsVerified===false &&
   x.physicalVerified===false &&
@@ -78,6 +80,10 @@ test("physical field proof and runtime proof remain explicitly distinct",()=>{
   x.retirementEvidence?.testedCommit?.length===40));
  assert.ok(current.rows.filter(x=>!x.retirementImplementationVerified)
   .every(x=>x.retirementApproved!==true));
+ assert.ok(["learner_acct_verification.learner_id",
+  "learner_acct_verification.roll_number",
+  "faculty_acct_verification.faculty_id"].every(field=>
+   current.rows.find(row=>row.legacyField===field)?.runtimeSemanticsVerified===false));
  assert.equal(current.completion,"OPEN_UNTIL_RUNTIME_SEMANTICS_AND_SIGNOFF");
 });
 test("first-party OTP authority and retired credential handoff are not confused",()=>{

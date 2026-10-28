@@ -24,8 +24,8 @@
     "registeredReplacementPhysicalWitnesses": 22,
     "registeredPhysicalWitnessTotal": 134,
     "stillWithoutPhysicalWitness": 61,
-    "runtimeSemanticsVerified": 112,
-    "runtimeSemanticsUnverified": 83,
+    "runtimeSemanticsVerified": 130,
+    "runtimeSemanticsUnverified": 65,
     "runtimeWitnessesByFamily": {
       "college_branding": 14,
       "tenant_domain": 13,
@@ -39,12 +39,14 @@
       "faculty": 8,
       "department": 6,
       "recruiter": 5,
-      "role": 1
+      "role": 1,
+      "learner_acct_verification": 9,
+      "faculty_acct_verification": 9
     },
     "retirementImplementationVerified": 21,
     "retirementApprovalPending": 21,
-    "technicalEvidenceCoverage": 133,
-    "technicalEvidenceUncovered": 62
+    "technicalEvidenceCoverage": 151,
+    "technicalEvidenceUncovered": 44
   },
   "guidance": [
     "Exact column existence on registered PostgreSQL does not prove legacy reader/writer parity.",
@@ -58,7 +60,8 @@
     "At 6db017e4, one account with separate learner and faculty college memberships passed a PostgreSQL witness of contact/name, roles, college IDs and independent suspension fields (16 fields); historical import and policy remain open.",
     "Registered PostgreSQL suite 40679297972 passed department lifecycle and tenant boundary: six department field mappings have executed read/write/archive witnesses. Historic numeric-ID import remains subject to explicit source mapping and approval.",
     "With verified 87/87 then 87+ role-receipt PostgreSQL runs, six more fields have direct runtime witnesses. Remaining 22 physical-but-not-accepted mappings are legacy college-branding deletion and learner/faculty verification challenge semantics; the other 61 have no direct column and require retirement/redesign sign-off.",
-    "21 raw credential or removed login/handoff fields now have registered PG negative proof at 8eaef977: implementation retirement is executed, while product/security approval remains FALSE. Neither these nor other legacy retirements are runtimeSemanticsVerified."
+    "21 raw credential or removed login/handoff fields now have registered PG negative proof at 8eaef977: implementation retirement is executed, while product/security approval remains FALSE. Neither these nor other legacy retirements are runtimeSemanticsVerified.",
+    "18 shared learner/faculty verification fields passed registered PostgreSQL first-party OTP lifecycle 40683051831. Role-specific membership association, roll-number ownership and unapproved legacy retirement remain intentionally unresolved; 21 retired raw-credential fields have separate NEGATIVE implementation proof."
   ],
   "rows": [
     {
@@ -1444,10 +1447,17 @@
       "proposedPhysicalTarget": "identity_auth_attempts.id",
       "evidenceStatus": "EXACT_REGISTERED_FIELD_PG_WITNESS",
       "physicalVerified": true,
-      "runtimeSemanticsVerified": false,
+      "runtimeSemanticsVerified": true,
       "evidence": [
         "tests/integration/db01-registered-physical-field-crosswalk.test.ts"
-      ]
+      ],
+      "runtimeEvidence": {
+        "verifiedFlow": "REGISTERED_POSTGRES_FIRST_PARTY_HUMAN_OTP_RETRY_RESEND_EXPIRY_CONSUME",
+        "suite": "tests/integration/db01-learner-faculty-otp-field-compat.test.ts",
+        "passingRun": "https://github.com/42Students/lms-vnext/actions/runs/40683051831",
+        "testedCommit": "91e79376872907121396e2704d3fa297191f8b01",
+        "limitations": "Common learner/faculty login challenge field behavior is witnessed for active role holders; historic role-specific membership_id, learner roll-number lookup and old account-verification provenance are NOT attested. Product retirement/normalization approval remains pending."
+      }
     },
     {
       "legacyField": "faculty_acct_verification.created_at",
@@ -1456,10 +1466,17 @@
       "proposedPhysicalTarget": "identity_auth_attempts.created_at",
       "evidenceStatus": "EXACT_REGISTERED_FIELD_PG_WITNESS",
       "physicalVerified": true,
-      "runtimeSemanticsVerified": false,
+      "runtimeSemanticsVerified": true,
       "evidence": [
         "tests/integration/db01-registered-physical-field-crosswalk.test.ts"
-      ]
+      ],
+      "runtimeEvidence": {
+        "verifiedFlow": "REGISTERED_POSTGRES_FIRST_PARTY_HUMAN_OTP_RETRY_RESEND_EXPIRY_CONSUME",
+        "suite": "tests/integration/db01-learner-faculty-otp-field-compat.test.ts",
+        "passingRun": "https://github.com/42Students/lms-vnext/actions/runs/40683051831",
+        "testedCommit": "91e79376872907121396e2704d3fa297191f8b01",
+        "limitations": "Common learner/faculty login challenge field behavior is witnessed for active role holders; historic role-specific membership_id, learner roll-number lookup and old account-verification provenance are NOT attested. Product retirement/normalization approval remains pending."
+      }
     },
     {
       "legacyField": "faculty_acct_verification.is_deleted",
@@ -1468,10 +1485,17 @@
       "proposedPhysicalTarget": "identity_auth_attempts.used_at",
       "evidenceStatus": "EXACT_REGISTERED_FIELD_PG_WITNESS",
       "physicalVerified": true,
-      "runtimeSemanticsVerified": false,
+      "runtimeSemanticsVerified": true,
       "evidence": [
         "tests/integration/db01-registered-physical-field-crosswalk.test.ts"
-      ]
+      ],
+      "runtimeEvidence": {
+        "verifiedFlow": "REGISTERED_POSTGRES_FIRST_PARTY_HUMAN_OTP_RETRY_RESEND_EXPIRY_CONSUME",
+        "suite": "tests/integration/db01-learner-faculty-otp-field-compat.test.ts",
+        "passingRun": "https://github.com/42Students/lms-vnext/actions/runs/40683051831",
+        "testedCommit": "91e79376872907121396e2704d3fa297191f8b01",
+        "limitations": "Common learner/faculty login challenge field behavior is witnessed for active role holders; historic role-specific membership_id, learner roll-number lookup and old account-verification provenance are NOT attested. Product retirement/normalization approval remains pending."
+      }
     },
     {
       "legacyField": "faculty_acct_verification.updated_at",
@@ -1518,10 +1542,17 @@
       "proposedPhysicalTarget": "identity_auth_attempts.verification_attempts",
       "evidenceStatus": "EXACT_REGISTERED_FIELD_PG_WITNESS",
       "physicalVerified": true,
-      "runtimeSemanticsVerified": false,
+      "runtimeSemanticsVerified": true,
       "evidence": [
         "tests/integration/db01-registered-physical-field-crosswalk.test.ts"
-      ]
+      ],
+      "runtimeEvidence": {
+        "verifiedFlow": "REGISTERED_POSTGRES_FIRST_PARTY_HUMAN_OTP_RETRY_RESEND_EXPIRY_CONSUME",
+        "suite": "tests/integration/db01-learner-faculty-otp-field-compat.test.ts",
+        "passingRun": "https://github.com/42Students/lms-vnext/actions/runs/40683051831",
+        "testedCommit": "91e79376872907121396e2704d3fa297191f8b01",
+        "limitations": "Common learner/faculty login challenge field behavior is witnessed for active role holders; historic role-specific membership_id, learner roll-number lookup and old account-verification provenance are NOT attested. Product retirement/normalization approval remains pending."
+      }
     },
     {
       "legacyField": "faculty_acct_verification.is_expired",
@@ -1530,10 +1561,17 @@
       "proposedPhysicalTarget": "identity_auth_attempts.expires_at",
       "evidenceStatus": "EXACT_REGISTERED_FIELD_PG_WITNESS",
       "physicalVerified": true,
-      "runtimeSemanticsVerified": false,
+      "runtimeSemanticsVerified": true,
       "evidence": [
         "tests/integration/db01-registered-physical-field-crosswalk.test.ts"
-      ]
+      ],
+      "runtimeEvidence": {
+        "verifiedFlow": "REGISTERED_POSTGRES_FIRST_PARTY_HUMAN_OTP_RETRY_RESEND_EXPIRY_CONSUME",
+        "suite": "tests/integration/db01-learner-faculty-otp-field-compat.test.ts",
+        "passingRun": "https://github.com/42Students/lms-vnext/actions/runs/40683051831",
+        "testedCommit": "91e79376872907121396e2704d3fa297191f8b01",
+        "limitations": "Common learner/faculty login challenge field behavior is witnessed for active role holders; historic role-specific membership_id, learner roll-number lookup and old account-verification provenance are NOT attested. Product retirement/normalization approval remains pending."
+      }
     },
     {
       "legacyField": "faculty_acct_verification.max_resend_attempts",
@@ -1542,10 +1580,17 @@
       "proposedPhysicalTarget": "identity_auth_attempts.resend_attempts",
       "evidenceStatus": "EXACT_REGISTERED_FIELD_PG_WITNESS",
       "physicalVerified": true,
-      "runtimeSemanticsVerified": false,
+      "runtimeSemanticsVerified": true,
       "evidence": [
         "tests/integration/db01-registered-physical-field-crosswalk.test.ts"
-      ]
+      ],
+      "runtimeEvidence": {
+        "verifiedFlow": "REGISTERED_POSTGRES_FIRST_PARTY_HUMAN_OTP_RETRY_RESEND_EXPIRY_CONSUME",
+        "suite": "tests/integration/db01-learner-faculty-otp-field-compat.test.ts",
+        "passingRun": "https://github.com/42Students/lms-vnext/actions/runs/40683051831",
+        "testedCommit": "91e79376872907121396e2704d3fa297191f8b01",
+        "limitations": "Common learner/faculty login challenge field behavior is witnessed for active role holders; historic role-specific membership_id, learner roll-number lookup and old account-verification provenance are NOT attested. Product retirement/normalization approval remains pending."
+      }
     },
     {
       "legacyField": "faculty_acct_verification.otp",
@@ -1554,10 +1599,17 @@
       "proposedPhysicalTarget": "identity_auth_attempts.sms_code_mac",
       "evidenceStatus": "EXACT_REGISTERED_FIELD_PG_WITNESS",
       "physicalVerified": true,
-      "runtimeSemanticsVerified": false,
+      "runtimeSemanticsVerified": true,
       "evidence": [
         "tests/integration/db01-registered-physical-field-crosswalk.test.ts"
-      ]
+      ],
+      "runtimeEvidence": {
+        "verifiedFlow": "REGISTERED_POSTGRES_FIRST_PARTY_HUMAN_OTP_RETRY_RESEND_EXPIRY_CONSUME",
+        "suite": "tests/integration/db01-learner-faculty-otp-field-compat.test.ts",
+        "passingRun": "https://github.com/42Students/lms-vnext/actions/runs/40683051831",
+        "testedCommit": "91e79376872907121396e2704d3fa297191f8b01",
+        "limitations": "Common learner/faculty login challenge field behavior is witnessed for active role holders; historic role-specific membership_id, learner roll-number lookup and old account-verification provenance are NOT attested. Product retirement/normalization approval remains pending."
+      }
     },
     {
       "legacyField": "faculty_acct_verification.phone_number",
@@ -1566,10 +1618,17 @@
       "proposedPhysicalTarget": "identity_auth_attempts.contact_fingerprint",
       "evidenceStatus": "EXACT_REGISTERED_FIELD_PG_WITNESS",
       "physicalVerified": true,
-      "runtimeSemanticsVerified": false,
+      "runtimeSemanticsVerified": true,
       "evidence": [
         "tests/integration/db01-registered-physical-field-crosswalk.test.ts"
-      ]
+      ],
+      "runtimeEvidence": {
+        "verifiedFlow": "REGISTERED_POSTGRES_FIRST_PARTY_HUMAN_OTP_RETRY_RESEND_EXPIRY_CONSUME",
+        "suite": "tests/integration/db01-learner-faculty-otp-field-compat.test.ts",
+        "passingRun": "https://github.com/42Students/lms-vnext/actions/runs/40683051831",
+        "testedCommit": "91e79376872907121396e2704d3fa297191f8b01",
+        "limitations": "Common learner/faculty login challenge field behavior is witnessed for active role holders; historic role-specific membership_id, learner roll-number lookup and old account-verification provenance are NOT attested. Product retirement/normalization approval remains pending."
+      }
     },
     {
       "legacyField": "faculty_acct_verification.verify_status",
@@ -1578,10 +1637,17 @@
       "proposedPhysicalTarget": "identity_auth_attempts.verified_at",
       "evidenceStatus": "EXACT_REGISTERED_FIELD_PG_WITNESS",
       "physicalVerified": true,
-      "runtimeSemanticsVerified": false,
+      "runtimeSemanticsVerified": true,
       "evidence": [
         "tests/integration/db01-registered-physical-field-crosswalk.test.ts"
-      ]
+      ],
+      "runtimeEvidence": {
+        "verifiedFlow": "REGISTERED_POSTGRES_FIRST_PARTY_HUMAN_OTP_RETRY_RESEND_EXPIRY_CONSUME",
+        "suite": "tests/integration/db01-learner-faculty-otp-field-compat.test.ts",
+        "passingRun": "https://github.com/42Students/lms-vnext/actions/runs/40683051831",
+        "testedCommit": "91e79376872907121396e2704d3fa297191f8b01",
+        "limitations": "Common learner/faculty login challenge field behavior is witnessed for active role holders; historic role-specific membership_id, learner roll-number lookup and old account-verification provenance are NOT attested. Product retirement/normalization approval remains pending."
+      }
     },
     {
       "legacyField": "learner.id",
@@ -1819,10 +1885,17 @@
       "proposedPhysicalTarget": "identity_auth_attempts.id",
       "evidenceStatus": "EXACT_REGISTERED_FIELD_PG_WITNESS",
       "physicalVerified": true,
-      "runtimeSemanticsVerified": false,
+      "runtimeSemanticsVerified": true,
       "evidence": [
         "tests/integration/db01-registered-physical-field-crosswalk.test.ts"
-      ]
+      ],
+      "runtimeEvidence": {
+        "verifiedFlow": "REGISTERED_POSTGRES_FIRST_PARTY_HUMAN_OTP_RETRY_RESEND_EXPIRY_CONSUME",
+        "suite": "tests/integration/db01-learner-faculty-otp-field-compat.test.ts",
+        "passingRun": "https://github.com/42Students/lms-vnext/actions/runs/40683051831",
+        "testedCommit": "91e79376872907121396e2704d3fa297191f8b01",
+        "limitations": "Common learner/faculty login challenge field behavior is witnessed for active role holders; historic role-specific membership_id, learner roll-number lookup and old account-verification provenance are NOT attested. Product retirement/normalization approval remains pending."
+      }
     },
     {
       "legacyField": "learner_acct_verification.created_at",
@@ -1831,10 +1904,17 @@
       "proposedPhysicalTarget": "identity_auth_attempts.created_at",
       "evidenceStatus": "EXACT_REGISTERED_FIELD_PG_WITNESS",
       "physicalVerified": true,
-      "runtimeSemanticsVerified": false,
+      "runtimeSemanticsVerified": true,
       "evidence": [
         "tests/integration/db01-registered-physical-field-crosswalk.test.ts"
-      ]
+      ],
+      "runtimeEvidence": {
+        "verifiedFlow": "REGISTERED_POSTGRES_FIRST_PARTY_HUMAN_OTP_RETRY_RESEND_EXPIRY_CONSUME",
+        "suite": "tests/integration/db01-learner-faculty-otp-field-compat.test.ts",
+        "passingRun": "https://github.com/42Students/lms-vnext/actions/runs/40683051831",
+        "testedCommit": "91e79376872907121396e2704d3fa297191f8b01",
+        "limitations": "Common learner/faculty login challenge field behavior is witnessed for active role holders; historic role-specific membership_id, learner roll-number lookup and old account-verification provenance are NOT attested. Product retirement/normalization approval remains pending."
+      }
     },
     {
       "legacyField": "learner_acct_verification.is_deleted",
@@ -1843,10 +1923,17 @@
       "proposedPhysicalTarget": "identity_auth_attempts.used_at",
       "evidenceStatus": "EXACT_REGISTERED_FIELD_PG_WITNESS",
       "physicalVerified": true,
-      "runtimeSemanticsVerified": false,
+      "runtimeSemanticsVerified": true,
       "evidence": [
         "tests/integration/db01-registered-physical-field-crosswalk.test.ts"
-      ]
+      ],
+      "runtimeEvidence": {
+        "verifiedFlow": "REGISTERED_POSTGRES_FIRST_PARTY_HUMAN_OTP_RETRY_RESEND_EXPIRY_CONSUME",
+        "suite": "tests/integration/db01-learner-faculty-otp-field-compat.test.ts",
+        "passingRun": "https://github.com/42Students/lms-vnext/actions/runs/40683051831",
+        "testedCommit": "91e79376872907121396e2704d3fa297191f8b01",
+        "limitations": "Common learner/faculty login challenge field behavior is witnessed for active role holders; historic role-specific membership_id, learner roll-number lookup and old account-verification provenance are NOT attested. Product retirement/normalization approval remains pending."
+      }
     },
     {
       "legacyField": "learner_acct_verification.updated_at",
@@ -1881,10 +1968,17 @@
       "proposedPhysicalTarget": "identity_auth_attempts.verification_attempts",
       "evidenceStatus": "EXACT_REGISTERED_FIELD_PG_WITNESS",
       "physicalVerified": true,
-      "runtimeSemanticsVerified": false,
+      "runtimeSemanticsVerified": true,
       "evidence": [
         "tests/integration/db01-registered-physical-field-crosswalk.test.ts"
-      ]
+      ],
+      "runtimeEvidence": {
+        "verifiedFlow": "REGISTERED_POSTGRES_FIRST_PARTY_HUMAN_OTP_RETRY_RESEND_EXPIRY_CONSUME",
+        "suite": "tests/integration/db01-learner-faculty-otp-field-compat.test.ts",
+        "passingRun": "https://github.com/42Students/lms-vnext/actions/runs/40683051831",
+        "testedCommit": "91e79376872907121396e2704d3fa297191f8b01",
+        "limitations": "Common learner/faculty login challenge field behavior is witnessed for active role holders; historic role-specific membership_id, learner roll-number lookup and old account-verification provenance are NOT attested. Product retirement/normalization approval remains pending."
+      }
     },
     {
       "legacyField": "learner_acct_verification.is_expired",
@@ -1893,10 +1987,17 @@
       "proposedPhysicalTarget": "identity_auth_attempts.expires_at",
       "evidenceStatus": "EXACT_REGISTERED_FIELD_PG_WITNESS",
       "physicalVerified": true,
-      "runtimeSemanticsVerified": false,
+      "runtimeSemanticsVerified": true,
       "evidence": [
         "tests/integration/db01-registered-physical-field-crosswalk.test.ts"
-      ]
+      ],
+      "runtimeEvidence": {
+        "verifiedFlow": "REGISTERED_POSTGRES_FIRST_PARTY_HUMAN_OTP_RETRY_RESEND_EXPIRY_CONSUME",
+        "suite": "tests/integration/db01-learner-faculty-otp-field-compat.test.ts",
+        "passingRun": "https://github.com/42Students/lms-vnext/actions/runs/40683051831",
+        "testedCommit": "91e79376872907121396e2704d3fa297191f8b01",
+        "limitations": "Common learner/faculty login challenge field behavior is witnessed for active role holders; historic role-specific membership_id, learner roll-number lookup and old account-verification provenance are NOT attested. Product retirement/normalization approval remains pending."
+      }
     },
     {
       "legacyField": "learner_acct_verification.learner_id",
@@ -1917,10 +2018,17 @@
       "proposedPhysicalTarget": "identity_auth_attempts.resend_attempts",
       "evidenceStatus": "EXACT_REGISTERED_FIELD_PG_WITNESS",
       "physicalVerified": true,
-      "runtimeSemanticsVerified": false,
+      "runtimeSemanticsVerified": true,
       "evidence": [
         "tests/integration/db01-registered-physical-field-crosswalk.test.ts"
-      ]
+      ],
+      "runtimeEvidence": {
+        "verifiedFlow": "REGISTERED_POSTGRES_FIRST_PARTY_HUMAN_OTP_RETRY_RESEND_EXPIRY_CONSUME",
+        "suite": "tests/integration/db01-learner-faculty-otp-field-compat.test.ts",
+        "passingRun": "https://github.com/42Students/lms-vnext/actions/runs/40683051831",
+        "testedCommit": "91e79376872907121396e2704d3fa297191f8b01",
+        "limitations": "Common learner/faculty login challenge field behavior is witnessed for active role holders; historic role-specific membership_id, learner roll-number lookup and old account-verification provenance are NOT attested. Product retirement/normalization approval remains pending."
+      }
     },
     {
       "legacyField": "learner_acct_verification.otp",
@@ -1929,10 +2037,17 @@
       "proposedPhysicalTarget": "identity_auth_attempts.sms_code_mac",
       "evidenceStatus": "EXACT_REGISTERED_FIELD_PG_WITNESS",
       "physicalVerified": true,
-      "runtimeSemanticsVerified": false,
+      "runtimeSemanticsVerified": true,
       "evidence": [
         "tests/integration/db01-registered-physical-field-crosswalk.test.ts"
-      ]
+      ],
+      "runtimeEvidence": {
+        "verifiedFlow": "REGISTERED_POSTGRES_FIRST_PARTY_HUMAN_OTP_RETRY_RESEND_EXPIRY_CONSUME",
+        "suite": "tests/integration/db01-learner-faculty-otp-field-compat.test.ts",
+        "passingRun": "https://github.com/42Students/lms-vnext/actions/runs/40683051831",
+        "testedCommit": "91e79376872907121396e2704d3fa297191f8b01",
+        "limitations": "Common learner/faculty login challenge field behavior is witnessed for active role holders; historic role-specific membership_id, learner roll-number lookup and old account-verification provenance are NOT attested. Product retirement/normalization approval remains pending."
+      }
     },
     {
       "legacyField": "learner_acct_verification.phone_number",
@@ -1941,10 +2056,17 @@
       "proposedPhysicalTarget": "identity_auth_attempts.contact_fingerprint",
       "evidenceStatus": "EXACT_REGISTERED_FIELD_PG_WITNESS",
       "physicalVerified": true,
-      "runtimeSemanticsVerified": false,
+      "runtimeSemanticsVerified": true,
       "evidence": [
         "tests/integration/db01-registered-physical-field-crosswalk.test.ts"
-      ]
+      ],
+      "runtimeEvidence": {
+        "verifiedFlow": "REGISTERED_POSTGRES_FIRST_PARTY_HUMAN_OTP_RETRY_RESEND_EXPIRY_CONSUME",
+        "suite": "tests/integration/db01-learner-faculty-otp-field-compat.test.ts",
+        "passingRun": "https://github.com/42Students/lms-vnext/actions/runs/40683051831",
+        "testedCommit": "91e79376872907121396e2704d3fa297191f8b01",
+        "limitations": "Common learner/faculty login challenge field behavior is witnessed for active role holders; historic role-specific membership_id, learner roll-number lookup and old account-verification provenance are NOT attested. Product retirement/normalization approval remains pending."
+      }
     },
     {
       "legacyField": "learner_acct_verification.roll_number",
@@ -1965,10 +2087,17 @@
       "proposedPhysicalTarget": "identity_auth_attempts.verified_at",
       "evidenceStatus": "EXACT_REGISTERED_FIELD_PG_WITNESS",
       "physicalVerified": true,
-      "runtimeSemanticsVerified": false,
+      "runtimeSemanticsVerified": true,
       "evidence": [
         "tests/integration/db01-registered-physical-field-crosswalk.test.ts"
-      ]
+      ],
+      "runtimeEvidence": {
+        "verifiedFlow": "REGISTERED_POSTGRES_FIRST_PARTY_HUMAN_OTP_RETRY_RESEND_EXPIRY_CONSUME",
+        "suite": "tests/integration/db01-learner-faculty-otp-field-compat.test.ts",
+        "passingRun": "https://github.com/42Students/lms-vnext/actions/runs/40683051831",
+        "testedCommit": "91e79376872907121396e2704d3fa297191f8b01",
+        "limitations": "Common learner/faculty login challenge field behavior is witnessed for active role holders; historic role-specific membership_id, learner roll-number lookup and old account-verification provenance are NOT attested. Product retirement/normalization approval remains pending."
+      }
     },
     {
       "legacyField": "login_user.id",
