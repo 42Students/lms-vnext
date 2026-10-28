@@ -1,18 +1,19 @@
 /**
- * Learner absence records, not absence/presence rows, are persisted by
- * the Faculty marking endpoint. A roster member with a record is marked
- * absent in the editor; everyone else starts present.
+ * Faculty marking persists ABSENT rows, while College Admin may also persist
+ * PRESENT, EXCUSED, MEDICAL or LATE. Only explicit ABSENT records should
+ * open as absent: treating every saved record as an absence silently changes
+ * administrator-reviewed attendance when a faculty member reopens a session.
  *
  * Keep this derived state scoped to the selected schedule event.
  */
 export function initialAbsencesForSession(
   roster: readonly { membershipId: string }[],
-  absenceRecords: readonly { scheduleEventId: string; membershipId: string }[],
+  absenceRecords: readonly { scheduleEventId: string; membershipId: string; status: string }[],
   scheduleEventId: string,
 ): Set<string> {
   const recorded = new Set(
     absenceRecords
-      .filter((record) => record.scheduleEventId === scheduleEventId)
+      .filter((record) => record.scheduleEventId === scheduleEventId && record.status === "ABSENT")
       .map((record) => record.membershipId),
   );
   return new Set(
