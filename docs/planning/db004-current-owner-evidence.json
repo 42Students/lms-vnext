@@ -23,15 +23,17 @@
     },
     "registeredReplacementPhysicalWitnesses": 22,
     "registeredPhysicalWitnessTotal": 134,
-    "stillWithoutPhysicalWitness": 61
+    "stillWithoutPhysicalWitness": 61,
+    "runtimeSemanticsVerified": 14,
+    "runtimeSemanticsUnverified": 181
   },
   "guidance": [
     "Exact column existence on registered PostgreSQL does not prove legacy reader/writer parity.",
     "Historical Firebase and identity_auth_handoffs proposals are superseded by first-party OTP/session design; do not promote them as credentials.",
     "Person name columns registered and own identity API activated; all-role UI/third-party delivery semantics need independent acceptance.",
-    "RuntimeVerified=false remains until an exact test and business owner acceptance proves that row's behavior.",
     "Never advance tracker done without fresh SHA-specific CI and approvals.",
-    "22 registered replacement columns are physically witnessed, but still require legacy semantic/product sign-off. The two kinds of evidence are deliberately independent."
+    "22 registered replacement columns are physically witnessed, but still require legacy semantic/product sign-off. The two kinds of evidence are deliberately independent.",
+    "14 active branding fields have explicitly executed, field-level registered PostgreSQL write/read/public projection witnesses. This is behavior verification, NOT product sign-off on legacy deletion, imported data, CDN delivery, provider behavior, or all DB-004 fields."
   ],
   "rows": [
     {
@@ -429,13 +431,20 @@
       "proposedPhysicalTarget": "college_branding.college_id",
       "evidenceStatus": "REGISTERED_BRANDING_REPLACEMENT_PHYSICAL_WITNESS_SEMANTIC_REVIEW",
       "physicalVerified": true,
-      "runtimeSemanticsVerified": false,
+      "runtimeSemanticsVerified": true,
       "evidence": [
         "src/db/schema/college-branding.ts",
         "src/modules/colleges/branding-service.ts",
         "tests/integration/chat11-super-admin-branding-cas.test.ts",
         "drizzle/0159_lane15_tenant_domain_diagnostics.sql"
-      ]
+      ],
+      "runtimeEvidence": {
+        "verifiedFlow": "POSTGRES_REGISTERED_BRANDING_SCOPED_WRITE_READBACK_PUBLIC_PROJECTION",
+        "suite": "tests/integration/chat11-super-admin-branding-cas.test.ts",
+        "passingRun": "https://github.com/42Students/lms-vnext/actions/runs/40674185973",
+        "testedCommit": "76903c3ca5cace146cdb2012c4f6749e7eaeda44",
+        "limitations": "Verifies active college branding read/write and public allowlist; legacy data import, third-party asset delivery and historical deletion disposition are not approved."
+      }
     },
     {
       "legacyField": "college_branding.created_at",
@@ -444,13 +453,20 @@
       "proposedPhysicalTarget": "college_branding.created_at",
       "evidenceStatus": "REGISTERED_BRANDING_REPLACEMENT_PHYSICAL_WITNESS_SEMANTIC_REVIEW",
       "physicalVerified": true,
-      "runtimeSemanticsVerified": false,
+      "runtimeSemanticsVerified": true,
       "evidence": [
         "src/db/schema/college-branding.ts",
         "src/modules/colleges/branding-service.ts",
         "tests/integration/chat11-super-admin-branding-cas.test.ts",
         "drizzle/0159_lane15_tenant_domain_diagnostics.sql"
-      ]
+      ],
+      "runtimeEvidence": {
+        "verifiedFlow": "POSTGRES_REGISTERED_BRANDING_SCOPED_WRITE_READBACK_PUBLIC_PROJECTION",
+        "suite": "tests/integration/chat11-super-admin-branding-cas.test.ts",
+        "passingRun": "https://github.com/42Students/lms-vnext/actions/runs/40674185973",
+        "testedCommit": "76903c3ca5cace146cdb2012c4f6749e7eaeda44",
+        "limitations": "Verifies active college branding read/write and public allowlist; legacy data import, third-party asset delivery and historical deletion disposition are not approved."
+      }
     },
     {
       "legacyField": "college_branding.updated_at",
@@ -459,13 +475,20 @@
       "proposedPhysicalTarget": "college_branding.updated_at",
       "evidenceStatus": "REGISTERED_BRANDING_REPLACEMENT_PHYSICAL_WITNESS_SEMANTIC_REVIEW",
       "physicalVerified": true,
-      "runtimeSemanticsVerified": false,
+      "runtimeSemanticsVerified": true,
       "evidence": [
         "src/db/schema/college-branding.ts",
         "src/modules/colleges/branding-service.ts",
         "tests/integration/chat11-super-admin-branding-cas.test.ts",
         "drizzle/0159_lane15_tenant_domain_diagnostics.sql"
-      ]
+      ],
+      "runtimeEvidence": {
+        "verifiedFlow": "POSTGRES_REGISTERED_BRANDING_SCOPED_WRITE_READBACK_PUBLIC_PROJECTION",
+        "suite": "tests/integration/chat11-super-admin-branding-cas.test.ts",
+        "passingRun": "https://github.com/42Students/lms-vnext/actions/runs/40674185973",
+        "testedCommit": "76903c3ca5cace146cdb2012c4f6749e7eaeda44",
+        "limitations": "Verifies active college branding read/write and public allowlist; legacy data import, third-party asset delivery and historical deletion disposition are not approved."
+      }
     },
     {
       "legacyField": "college_branding.is_deleted",
@@ -489,13 +512,20 @@
       "proposedPhysicalTarget": "college_branding.college_id",
       "evidenceStatus": "REGISTERED_BRANDING_REPLACEMENT_PHYSICAL_WITNESS_SEMANTIC_REVIEW",
       "physicalVerified": true,
-      "runtimeSemanticsVerified": false,
+      "runtimeSemanticsVerified": true,
       "evidence": [
         "src/db/schema/college-branding.ts",
         "src/modules/colleges/branding-service.ts",
         "tests/integration/chat11-super-admin-branding-cas.test.ts",
         "drizzle/0159_lane15_tenant_domain_diagnostics.sql"
-      ]
+      ],
+      "runtimeEvidence": {
+        "verifiedFlow": "POSTGRES_REGISTERED_BRANDING_SCOPED_WRITE_READBACK_PUBLIC_PROJECTION",
+        "suite": "tests/integration/chat11-super-admin-branding-cas.test.ts",
+        "passingRun": "https://github.com/42Students/lms-vnext/actions/runs/40674185973",
+        "testedCommit": "76903c3ca5cace146cdb2012c4f6749e7eaeda44",
+        "limitations": "Verifies active college branding read/write and public allowlist; legacy data import, third-party asset delivery and historical deletion disposition are not approved."
+      }
     },
     {
       "legacyField": "college_branding.logo_url",
@@ -504,13 +534,20 @@
       "proposedPhysicalTarget": "college_branding.logo_url",
       "evidenceStatus": "REGISTERED_BRANDING_REPLACEMENT_PHYSICAL_WITNESS_SEMANTIC_REVIEW",
       "physicalVerified": true,
-      "runtimeSemanticsVerified": false,
+      "runtimeSemanticsVerified": true,
       "evidence": [
         "src/db/schema/college-branding.ts",
         "src/modules/colleges/branding-service.ts",
         "tests/integration/chat11-super-admin-branding-cas.test.ts",
         "drizzle/0159_lane15_tenant_domain_diagnostics.sql"
-      ]
+      ],
+      "runtimeEvidence": {
+        "verifiedFlow": "POSTGRES_REGISTERED_BRANDING_SCOPED_WRITE_READBACK_PUBLIC_PROJECTION",
+        "suite": "tests/integration/chat11-super-admin-branding-cas.test.ts",
+        "passingRun": "https://github.com/42Students/lms-vnext/actions/runs/40674185973",
+        "testedCommit": "76903c3ca5cace146cdb2012c4f6749e7eaeda44",
+        "limitations": "Verifies active college branding read/write and public allowlist; legacy data import, third-party asset delivery and historical deletion disposition are not approved."
+      }
     },
     {
       "legacyField": "college_branding.favicon_url",
@@ -519,13 +556,20 @@
       "proposedPhysicalTarget": "college_branding.favicon_url",
       "evidenceStatus": "REGISTERED_BRANDING_REPLACEMENT_PHYSICAL_WITNESS_SEMANTIC_REVIEW",
       "physicalVerified": true,
-      "runtimeSemanticsVerified": false,
+      "runtimeSemanticsVerified": true,
       "evidence": [
         "src/db/schema/college-branding.ts",
         "src/modules/colleges/branding-service.ts",
         "tests/integration/chat11-super-admin-branding-cas.test.ts",
         "drizzle/0159_lane15_tenant_domain_diagnostics.sql"
-      ]
+      ],
+      "runtimeEvidence": {
+        "verifiedFlow": "POSTGRES_REGISTERED_BRANDING_SCOPED_WRITE_READBACK_PUBLIC_PROJECTION",
+        "suite": "tests/integration/chat11-super-admin-branding-cas.test.ts",
+        "passingRun": "https://github.com/42Students/lms-vnext/actions/runs/40674185973",
+        "testedCommit": "76903c3ca5cace146cdb2012c4f6749e7eaeda44",
+        "limitations": "Verifies active college branding read/write and public allowlist; legacy data import, third-party asset delivery and historical deletion disposition are not approved."
+      }
     },
     {
       "legacyField": "college_branding.login_background_url",
@@ -534,13 +578,20 @@
       "proposedPhysicalTarget": "college_branding.login_background_url",
       "evidenceStatus": "REGISTERED_BRANDING_REPLACEMENT_PHYSICAL_WITNESS_SEMANTIC_REVIEW",
       "physicalVerified": true,
-      "runtimeSemanticsVerified": false,
+      "runtimeSemanticsVerified": true,
       "evidence": [
         "src/db/schema/college-branding.ts",
         "src/modules/colleges/branding-service.ts",
         "tests/integration/chat11-super-admin-branding-cas.test.ts",
         "drizzle/0159_lane15_tenant_domain_diagnostics.sql"
-      ]
+      ],
+      "runtimeEvidence": {
+        "verifiedFlow": "POSTGRES_REGISTERED_BRANDING_SCOPED_WRITE_READBACK_PUBLIC_PROJECTION",
+        "suite": "tests/integration/chat11-super-admin-branding-cas.test.ts",
+        "passingRun": "https://github.com/42Students/lms-vnext/actions/runs/40674185973",
+        "testedCommit": "76903c3ca5cace146cdb2012c4f6749e7eaeda44",
+        "limitations": "Verifies active college branding read/write and public allowlist; legacy data import, third-party asset delivery and historical deletion disposition are not approved."
+      }
     },
     {
       "legacyField": "college_branding.login_background_url_mobile",
@@ -549,13 +600,20 @@
       "proposedPhysicalTarget": "college_branding.login_background_url_mobile",
       "evidenceStatus": "REGISTERED_BRANDING_REPLACEMENT_PHYSICAL_WITNESS_SEMANTIC_REVIEW",
       "physicalVerified": true,
-      "runtimeSemanticsVerified": false,
+      "runtimeSemanticsVerified": true,
       "evidence": [
         "src/db/schema/college-branding.ts",
         "src/modules/colleges/branding-service.ts",
         "tests/integration/chat11-super-admin-branding-cas.test.ts",
         "drizzle/0159_lane15_tenant_domain_diagnostics.sql"
-      ]
+      ],
+      "runtimeEvidence": {
+        "verifiedFlow": "POSTGRES_REGISTERED_BRANDING_SCOPED_WRITE_READBACK_PUBLIC_PROJECTION",
+        "suite": "tests/integration/chat11-super-admin-branding-cas.test.ts",
+        "passingRun": "https://github.com/42Students/lms-vnext/actions/runs/40674185973",
+        "testedCommit": "76903c3ca5cace146cdb2012c4f6749e7eaeda44",
+        "limitations": "Verifies active college branding read/write and public allowlist; legacy data import, third-party asset delivery and historical deletion disposition are not approved."
+      }
     },
     {
       "legacyField": "college_branding.primary_color",
@@ -564,13 +622,20 @@
       "proposedPhysicalTarget": "college_branding.primary_color",
       "evidenceStatus": "REGISTERED_BRANDING_REPLACEMENT_PHYSICAL_WITNESS_SEMANTIC_REVIEW",
       "physicalVerified": true,
-      "runtimeSemanticsVerified": false,
+      "runtimeSemanticsVerified": true,
       "evidence": [
         "src/db/schema/college-branding.ts",
         "src/modules/colleges/branding-service.ts",
         "tests/integration/chat11-super-admin-branding-cas.test.ts",
         "drizzle/0159_lane15_tenant_domain_diagnostics.sql"
-      ]
+      ],
+      "runtimeEvidence": {
+        "verifiedFlow": "POSTGRES_REGISTERED_BRANDING_SCOPED_WRITE_READBACK_PUBLIC_PROJECTION",
+        "suite": "tests/integration/chat11-super-admin-branding-cas.test.ts",
+        "passingRun": "https://github.com/42Students/lms-vnext/actions/runs/40674185973",
+        "testedCommit": "76903c3ca5cace146cdb2012c4f6749e7eaeda44",
+        "limitations": "Verifies active college branding read/write and public allowlist; legacy data import, third-party asset delivery and historical deletion disposition are not approved."
+      }
     },
     {
       "legacyField": "college_branding.secondary_color",
@@ -579,13 +644,20 @@
       "proposedPhysicalTarget": "college_branding.secondary_color",
       "evidenceStatus": "REGISTERED_BRANDING_REPLACEMENT_PHYSICAL_WITNESS_SEMANTIC_REVIEW",
       "physicalVerified": true,
-      "runtimeSemanticsVerified": false,
+      "runtimeSemanticsVerified": true,
       "evidence": [
         "src/db/schema/college-branding.ts",
         "src/modules/colleges/branding-service.ts",
         "tests/integration/chat11-super-admin-branding-cas.test.ts",
         "drizzle/0159_lane15_tenant_domain_diagnostics.sql"
-      ]
+      ],
+      "runtimeEvidence": {
+        "verifiedFlow": "POSTGRES_REGISTERED_BRANDING_SCOPED_WRITE_READBACK_PUBLIC_PROJECTION",
+        "suite": "tests/integration/chat11-super-admin-branding-cas.test.ts",
+        "passingRun": "https://github.com/42Students/lms-vnext/actions/runs/40674185973",
+        "testedCommit": "76903c3ca5cace146cdb2012c4f6749e7eaeda44",
+        "limitations": "Verifies active college branding read/write and public allowlist; legacy data import, third-party asset delivery and historical deletion disposition are not approved."
+      }
     },
     {
       "legacyField": "college_branding.support_email",
@@ -594,13 +666,20 @@
       "proposedPhysicalTarget": "college_branding.support_email",
       "evidenceStatus": "REGISTERED_BRANDING_REPLACEMENT_PHYSICAL_WITNESS_SEMANTIC_REVIEW",
       "physicalVerified": true,
-      "runtimeSemanticsVerified": false,
+      "runtimeSemanticsVerified": true,
       "evidence": [
         "src/db/schema/college-branding.ts",
         "src/modules/colleges/branding-service.ts",
         "tests/integration/chat11-super-admin-branding-cas.test.ts",
         "drizzle/0159_lane15_tenant_domain_diagnostics.sql"
-      ]
+      ],
+      "runtimeEvidence": {
+        "verifiedFlow": "POSTGRES_REGISTERED_BRANDING_SCOPED_WRITE_READBACK_PUBLIC_PROJECTION",
+        "suite": "tests/integration/chat11-super-admin-branding-cas.test.ts",
+        "passingRun": "https://github.com/42Students/lms-vnext/actions/runs/40674185973",
+        "testedCommit": "76903c3ca5cace146cdb2012c4f6749e7eaeda44",
+        "limitations": "Verifies active college branding read/write and public allowlist; legacy data import, third-party asset delivery and historical deletion disposition are not approved."
+      }
     },
     {
       "legacyField": "college_branding.support_phone",
@@ -609,13 +688,20 @@
       "proposedPhysicalTarget": "college_branding.support_phone",
       "evidenceStatus": "REGISTERED_BRANDING_REPLACEMENT_PHYSICAL_WITNESS_SEMANTIC_REVIEW",
       "physicalVerified": true,
-      "runtimeSemanticsVerified": false,
+      "runtimeSemanticsVerified": true,
       "evidence": [
         "src/db/schema/college-branding.ts",
         "src/modules/colleges/branding-service.ts",
         "tests/integration/chat11-super-admin-branding-cas.test.ts",
         "drizzle/0159_lane15_tenant_domain_diagnostics.sql"
-      ]
+      ],
+      "runtimeEvidence": {
+        "verifiedFlow": "POSTGRES_REGISTERED_BRANDING_SCOPED_WRITE_READBACK_PUBLIC_PROJECTION",
+        "suite": "tests/integration/chat11-super-admin-branding-cas.test.ts",
+        "passingRun": "https://github.com/42Students/lms-vnext/actions/runs/40674185973",
+        "testedCommit": "76903c3ca5cace146cdb2012c4f6749e7eaeda44",
+        "limitations": "Verifies active college branding read/write and public allowlist; legacy data import, third-party asset delivery and historical deletion disposition are not approved."
+      }
     },
     {
       "legacyField": "college_branding.terms_url",
@@ -624,13 +710,20 @@
       "proposedPhysicalTarget": "college_branding.terms_url",
       "evidenceStatus": "REGISTERED_BRANDING_REPLACEMENT_PHYSICAL_WITNESS_SEMANTIC_REVIEW",
       "physicalVerified": true,
-      "runtimeSemanticsVerified": false,
+      "runtimeSemanticsVerified": true,
       "evidence": [
         "src/db/schema/college-branding.ts",
         "src/modules/colleges/branding-service.ts",
         "tests/integration/chat11-super-admin-branding-cas.test.ts",
         "drizzle/0159_lane15_tenant_domain_diagnostics.sql"
-      ]
+      ],
+      "runtimeEvidence": {
+        "verifiedFlow": "POSTGRES_REGISTERED_BRANDING_SCOPED_WRITE_READBACK_PUBLIC_PROJECTION",
+        "suite": "tests/integration/chat11-super-admin-branding-cas.test.ts",
+        "passingRun": "https://github.com/42Students/lms-vnext/actions/runs/40674185973",
+        "testedCommit": "76903c3ca5cace146cdb2012c4f6749e7eaeda44",
+        "limitations": "Verifies active college branding read/write and public allowlist; legacy data import, third-party asset delivery and historical deletion disposition are not approved."
+      }
     },
     {
       "legacyField": "college_branding.privacy_url",
@@ -639,13 +732,20 @@
       "proposedPhysicalTarget": "college_branding.privacy_url",
       "evidenceStatus": "REGISTERED_BRANDING_REPLACEMENT_PHYSICAL_WITNESS_SEMANTIC_REVIEW",
       "physicalVerified": true,
-      "runtimeSemanticsVerified": false,
+      "runtimeSemanticsVerified": true,
       "evidence": [
         "src/db/schema/college-branding.ts",
         "src/modules/colleges/branding-service.ts",
         "tests/integration/chat11-super-admin-branding-cas.test.ts",
         "drizzle/0159_lane15_tenant_domain_diagnostics.sql"
-      ]
+      ],
+      "runtimeEvidence": {
+        "verifiedFlow": "POSTGRES_REGISTERED_BRANDING_SCOPED_WRITE_READBACK_PUBLIC_PROJECTION",
+        "suite": "tests/integration/chat11-super-admin-branding-cas.test.ts",
+        "passingRun": "https://github.com/42Students/lms-vnext/actions/runs/40674185973",
+        "testedCommit": "76903c3ca5cace146cdb2012c4f6749e7eaeda44",
+        "limitations": "Verifies active college branding read/write and public allowlist; legacy data import, third-party asset delivery and historical deletion disposition are not approved."
+      }
     },
     {
       "legacyField": "department.id",

@@ -23,7 +23,7 @@ const ledger=JSON.parse(readFileSync("docs/planning/db01-chat05-final-field-disp
 const db004=ledger.rows.filter(r=>r.ownerTask==="DB-004");
 const current=JSON.parse(readFileSync("docs/planning/db004-current-owner-evidence.json","utf8")) as {
  rows:{legacyField:string;proposedPhysicalTarget:string|null;physicalVerified:boolean;
- evidenceStatus:string;runtimeSemanticsVerified:boolean}[];
+ evidenceStatus:string;runtimeSemanticsVerified:boolean;runtimeEvidence?:{suite:string}}[];
 };
 const exact=db004.filter(r=>r.decisionStatus==="PROPOSED_TARGET_UNVERIFIED"
   && /^[a-z_][a-z0-9_]*\.[a-z_][a-z0-9_]*$/.test(r.target??""));
@@ -56,7 +56,10 @@ describe("DB-004 registered source → target physical catalog",()=>{
     expect(replacements).toHaveLength(22);
     const missing:string[]=[];
     for(const row of replacements){
-      expect(row.runtimeSemanticsVerified).toBe(false);
+      if(row.runtimeSemanticsVerified)
+        expect(row.runtimeEvidence?.suite).toBe("tests/integration/chat11-super-admin-branding-cas.test.ts");
+      else
+        expect(row.runtimeEvidence).toBeUndefined();
       const target=row.proposedPhysicalTarget;
       expect(target).toMatch(/^[a-z_][a-z0-9_]*\.[a-z_][a-z0-9_]*$/);
       const [table,column]=target!.split(".");

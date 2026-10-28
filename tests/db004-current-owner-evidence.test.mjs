@@ -27,7 +27,14 @@ test("physical field proof and runtime proof remain explicitly distinct",()=>{
  assert.equal(physical.filter(x=>x.evidenceStatus==="REGISTERED_DNS_DIAGNOSTICS_PHYSICAL_WITNESS_SEMANTIC_REVIEW").length,1);
  assert.equal(current.summary.registeredPhysicalWitnessTotal,134);
  assert.equal(current.summary.stillWithoutPhysicalWitness,61);
- assert.ok(current.rows.every(x=>x.runtimeSemanticsVerified===false));
+ const verified=current.rows.filter(x=>x.runtimeSemanticsVerified);
+ assert.equal(verified.length,14);
+ assert.equal(current.summary.runtimeSemanticsVerified,14);
+ assert.equal(current.summary.runtimeSemanticsUnverified,181);
+ assert.ok(verified.every(x=>x.legacyField.startsWith("college_branding.") && x.physicalVerified));
+ assert.ok(verified.every(x=>x.runtimeEvidence?.suite==="tests/integration/chat11-super-admin-branding-cas.test.ts"));
+ assert.ok(current.rows.filter(x=>x.legacyField==="college_branding.is_deleted").every(x=>!x.runtimeSemanticsVerified));
+ assert.ok(current.rows.filter(x=>!x.legacyField.startsWith("college_branding.")).every(x=>!x.runtimeSemanticsVerified));
  assert.equal(current.completion,"OPEN_UNTIL_RUNTIME_SEMANTICS_AND_SIGNOFF");
 });
 test("first-party OTP authority and retired credential handoff are not confused",()=>{
