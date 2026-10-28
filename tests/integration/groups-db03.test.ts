@@ -220,6 +220,36 @@ describe("DB03 group kernel on disposable PostgreSQL", () => {
     expect(events.rows[0].n).toBe(1);
   });
 
+  it("rejects electives from a stale cohort semester and mismatched known academic year", async () => {
+    const { groups, candidate, slotId } = await createElectiveFixture();
+    const progression = await pool.query<{ current_term_number:number; current_academic_year_start:number|null }>(
+      "SELECT cps.current_term_number,cps.current_academic_year_start FROM cohort_progression_state cps JOIN learner_program_enrollments e ON e.cohort_id=cps.cohort_id WHERE e.membership_id=$1",
+      [candidate.membershipId],
+    );
+    expect(progression.rows[0]?.current_term_number).toBe(1);
+    expect(progression.rows[0]?.current_academic_year_start).not.toBeNull();
+
+    // An academic period match must not substitute for semester eligibility.
+    await pool.query("UPDATE elective_slots SET semester_number=2 WHERE id=$1", [slotId]);
+    await expect(joinGroup(candidate.ctx, groups[0], candidate.membershipId))
+      .rejects.toMatchObject({ code: "ELECTIVE_PRIMARY_SECTION_REQUIRED" });
+    await pool.query("UPDATE elective_slots SET semester_number=1 WHERE id=$1", [slotId]);
+
+    const cohortYear = Number(progression.rows[0].current_academic_year_start);
+    const differentYear = cohortYear - 1;
+    await pool.query("UPDATE elective_slots SET academic_year=$2 WHERE id=$1", [
+      slotId, `${differentYear}-${String(differentYear + 1).slice(-2)}`,
+    ]);
+    await expect(joinGroup(candidate.ctx, groups[0], candidate.membershipId))
+      .rejects.toMatchObject({ code: "ELECTIVE_PRIMARY_SECTION_REQUIRED" });
+
+    // Legacy class eligibility does not reject on year when the slot year
+    // is unknown. The semester and program must still match.
+    await pool.query("UPDATE elective_slots SET academic_year=NULL WHERE id=$1", [slotId]);
+    await expect(joinGroup(candidate.ctx, groups[0], candidate.membershipId))
+      .resolves.toMatchObject({ state: "ACTIVE" });
+  });
+
   it("moves an elective atomically between offerings of the same slot", async () => {
     const { groups, candidate } = await createElectiveFixture();
     const active = await joinGroup(candidate.ctx, groups[0], candidate.membershipId);
