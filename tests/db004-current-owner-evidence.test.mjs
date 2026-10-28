@@ -1,6 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { readFileSync } from "node:fs";
+import { readFileSync, existsSync } from "node:fs";
 const load=p=>JSON.parse(readFileSync(p,"utf8"));
 const historical=load("docs/planning/db01-chat05-final-field-disposition.json");
 const current=load("docs/planning/db004-current-owner-evidence.json");
@@ -28,16 +28,32 @@ test("physical field proof and runtime proof remain explicitly distinct",()=>{
  assert.equal(current.summary.registeredPhysicalWitnessTotal,134);
  assert.equal(current.summary.stillWithoutPhysicalWitness,61);
  const verified=current.rows.filter(x=>x.runtimeSemanticsVerified);
- assert.equal(verified.length,27);
- assert.equal(current.summary.runtimeSemanticsVerified,27);
- assert.equal(current.summary.runtimeSemanticsUnverified,168);
- assert.equal(verified.filter(x=>x.legacyField.startsWith("tenant_domain.")).length,13);
- assert.equal(verified.filter(x=>x.legacyField.startsWith("college_branding.")).length,14);
- assert.ok(verified.every(x=>x.physicalVerified && x.runtimeEvidence?.suite));
- assert.ok(verified.filter(x=>x.legacyField.startsWith("tenant_domain.")).every(x=>x.runtimeEvidence?.suite==="tests/integration/tenant-domains.test.ts"));
- assert.ok(verified.filter(x=>x.legacyField.startsWith("college_branding.")).every(x=>x.runtimeEvidence?.suite==="tests/integration/chat11-super-admin-branding-cas.test.ts"));
+ assert.equal(verified.length,84);
+ assert.equal(current.summary.runtimeSemanticsVerified,84);
+ assert.equal(current.summary.runtimeSemanticsUnverified,111);
+ const allowed={
+  "college_branding.":["tests/integration/chat11-super-admin-branding-cas.test.ts",14],
+  "tenant_domain.":["tests/integration/tenant-domains.test.ts",13],
+  "mobile_login_attempt.":["tests/integration/db01-auth-attempt-field-semantics.test.ts",17],
+  "user_session.":["tests/integration/db01-device-session-field-semantics.test.ts",8],
+  "refresh_token_blocklist.":["tests/integration/db01-device-session-field-semantics.test.ts",4],
+  "user.":["tests/integration/db01-user-identity-field-semantics.test.ts",8],
+  "college.":["tests/integration/db01-org-college-field-semantics.test.ts",15],
+  "organization.":["tests/integration/db01-org-college-field-semantics.test.ts",5],
+ };
+ for(const [prefix,[suite,count]] of Object.entries(allowed)){
+  const group=verified.filter(row=>row.legacyField.startsWith(prefix));
+  assert.equal(group.length,count,prefix);
+  assert.ok(group.every(row=>row.physicalVerified&&row.runtimeEvidence?.suite===suite));
+  assert.ok(group.every(row=>row.runtimeEvidence?.passingRun?.startsWith("https://github.com/42Students/lms-vnext/actions/runs/")));
+  assert.ok(group.every(row=>row.runtimeEvidence?.testedCommit?.length===40));
+  assert.ok(group.every(row=>row.runtimeEvidence?.limitations?.length>0));
+  assert.ok(group.every(row=>existsSync(row.runtimeEvidence.suite)));
+ }
  assert.ok(current.rows.filter(x=>x.legacyField==="college_branding.is_deleted").every(x=>!x.runtimeSemanticsVerified));
- assert.ok(current.rows.filter(x=>!x.legacyField.startsWith("college_branding.")&&!x.legacyField.startsWith("tenant_domain.")).every(x=>!x.runtimeSemanticsVerified));
+ assert.ok(current.rows.filter(x=>!Object.keys(allowed).some(prefix=>x.legacyField.startsWith(prefix))).every(x=>!x.runtimeSemanticsVerified));
+ assert.ok(current.rows.filter(x=>x.runtimeSemanticsVerified).every(x=>x.physicalVerified));
+ assert.ok(current.rows.filter(x=>x.legacyField.startsWith("auth_handoff_token.")||x.legacyField.startsWith("login_user.")).every(x=>!x.runtimeSemanticsVerified));
  assert.equal(current.completion,"OPEN_UNTIL_RUNTIME_SEMANTICS_AND_SIGNOFF");
 });
 test("first-party OTP authority and retired credential handoff are not confused",()=>{

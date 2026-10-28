@@ -24,8 +24,18 @@
     "registeredReplacementPhysicalWitnesses": 22,
     "registeredPhysicalWitnessTotal": 134,
     "stillWithoutPhysicalWitness": 61,
-    "runtimeSemanticsVerified": 27,
-    "runtimeSemanticsUnverified": 168
+    "runtimeSemanticsVerified": 84,
+    "runtimeSemanticsUnverified": 111,
+    "runtimeWitnessesByFamily": {
+      "college_branding": 14,
+      "tenant_domain": 13,
+      "mobile_login_attempt": 17,
+      "user_session": 8,
+      "refresh_token_blocklist": 4,
+      "user": 8,
+      "college": 15,
+      "organization": 5
+    }
   },
   "guidance": [
     "Exact column existence on registered PostgreSQL does not prove legacy reader/writer parity.",
@@ -34,7 +44,8 @@
     "Never advance tracker done without fresh SHA-specific CI and approvals.",
     "22 registered replacement columns are physically witnessed, but still require legacy semantic/product sign-off. The two kinds of evidence are deliberately independent.",
     "14 active branding fields have explicitly executed, field-level registered PostgreSQL write/read/public projection witnesses. This is behavior verification, NOT product sign-off on legacy deletion, imported data, CDN delivery, provider behavior, or all DB-004 fields.",
-    "All 13 tenant_domain fields have a passing real PostgreSQL lifecycle witness covering creation, failure diagnostic, verification, tenant routing and tombstone at 56e19061. This is not provider or policy sign-off."
+    "All 13 tenant_domain fields have a passing real PostgreSQL lifecycle witness covering creation, failure diagnostic, verification, tenant routing and tombstone at 56e19061. This is not provider or policy sign-off.",
+    "At 343b356c, registered PostgreSQL DB-004 acceptance executed 18 suites / 84 tests, witnessing 57 additional active identity, OTP, device-session, organization and college field mappings. Historical password, raw token, cross-host handoff and product/purge decisions remain unapproved."
   ],
   "rows": [
     {
@@ -226,10 +237,17 @@
       "proposedPhysicalTarget": "colleges.id",
       "evidenceStatus": "EXACT_REGISTERED_FIELD_PG_WITNESS",
       "physicalVerified": true,
-      "runtimeSemanticsVerified": false,
+      "runtimeSemanticsVerified": true,
       "evidence": [
         "tests/integration/db01-registered-physical-field-crosswalk.test.ts"
-      ]
+      ],
+      "runtimeEvidence": {
+        "verifiedFlow": "REGISTERED_POSTGRES_ORGANIZATION_COLLEGE_CREATE_EDIT_LIST_ARCHIVE",
+        "suite": "tests/integration/db01-org-college-field-semantics.test.ts",
+        "passingRun": "https://github.com/42Students/lms-vnext/actions/runs/40677470938",
+        "testedCommit": "343b356c9a7fefef4766ef2d92b144130056f087",
+        "limitations": "This records current registered first-party application behavior, not import of legacy credentials/IDs, historical data migration, third-party provider delivery, production deployment, or owner/product approval."
+      }
     },
     {
       "legacyField": "college.created_at",
@@ -238,10 +256,17 @@
       "proposedPhysicalTarget": "colleges.created_at",
       "evidenceStatus": "EXACT_REGISTERED_FIELD_PG_WITNESS",
       "physicalVerified": true,
-      "runtimeSemanticsVerified": false,
+      "runtimeSemanticsVerified": true,
       "evidence": [
         "tests/integration/db01-registered-physical-field-crosswalk.test.ts"
-      ]
+      ],
+      "runtimeEvidence": {
+        "verifiedFlow": "REGISTERED_POSTGRES_ORGANIZATION_COLLEGE_CREATE_EDIT_LIST_ARCHIVE",
+        "suite": "tests/integration/db01-org-college-field-semantics.test.ts",
+        "passingRun": "https://github.com/42Students/lms-vnext/actions/runs/40677470938",
+        "testedCommit": "343b356c9a7fefef4766ef2d92b144130056f087",
+        "limitations": "This records current registered first-party application behavior, not import of legacy credentials/IDs, historical data migration, third-party provider delivery, production deployment, or owner/product approval."
+      }
     },
     {
       "legacyField": "college.is_deleted",
@@ -250,10 +275,17 @@
       "proposedPhysicalTarget": "colleges.status",
       "evidenceStatus": "EXACT_REGISTERED_FIELD_PG_WITNESS",
       "physicalVerified": true,
-      "runtimeSemanticsVerified": false,
+      "runtimeSemanticsVerified": true,
       "evidence": [
         "tests/integration/db01-registered-physical-field-crosswalk.test.ts"
-      ]
+      ],
+      "runtimeEvidence": {
+        "verifiedFlow": "REGISTERED_POSTGRES_ORGANIZATION_COLLEGE_CREATE_EDIT_LIST_ARCHIVE",
+        "suite": "tests/integration/db01-org-college-field-semantics.test.ts",
+        "passingRun": "https://github.com/42Students/lms-vnext/actions/runs/40677470938",
+        "testedCommit": "343b356c9a7fefef4766ef2d92b144130056f087",
+        "limitations": "This records current registered first-party application behavior, not import of legacy credentials/IDs, historical data migration, third-party provider delivery, production deployment, or owner/product approval."
+      }
     },
     {
       "legacyField": "college.updated_at",
@@ -262,10 +294,17 @@
       "proposedPhysicalTarget": "colleges.updated_at",
       "evidenceStatus": "EXACT_REGISTERED_FIELD_PG_WITNESS",
       "physicalVerified": true,
-      "runtimeSemanticsVerified": false,
+      "runtimeSemanticsVerified": true,
       "evidence": [
         "tests/integration/db01-registered-physical-field-crosswalk.test.ts"
-      ]
+      ],
+      "runtimeEvidence": {
+        "verifiedFlow": "REGISTERED_POSTGRES_ORGANIZATION_COLLEGE_CREATE_EDIT_LIST_ARCHIVE",
+        "suite": "tests/integration/db01-org-college-field-semantics.test.ts",
+        "passingRun": "https://github.com/42Students/lms-vnext/actions/runs/40677470938",
+        "testedCommit": "343b356c9a7fefef4766ef2d92b144130056f087",
+        "limitations": "This records current registered first-party application behavior, not import of legacy credentials/IDs, historical data migration, third-party provider delivery, production deployment, or owner/product approval."
+      }
     },
     {
       "legacyField": "college.address_line1",
@@ -274,10 +313,17 @@
       "proposedPhysicalTarget": "colleges.address_line1",
       "evidenceStatus": "EXACT_REGISTERED_FIELD_PG_WITNESS",
       "physicalVerified": true,
-      "runtimeSemanticsVerified": false,
+      "runtimeSemanticsVerified": true,
       "evidence": [
         "tests/integration/db01-registered-physical-field-crosswalk.test.ts"
-      ]
+      ],
+      "runtimeEvidence": {
+        "verifiedFlow": "REGISTERED_POSTGRES_ORGANIZATION_COLLEGE_CREATE_EDIT_LIST_ARCHIVE",
+        "suite": "tests/integration/db01-org-college-field-semantics.test.ts",
+        "passingRun": "https://github.com/42Students/lms-vnext/actions/runs/40677470938",
+        "testedCommit": "343b356c9a7fefef4766ef2d92b144130056f087",
+        "limitations": "This records current registered first-party application behavior, not import of legacy credentials/IDs, historical data migration, third-party provider delivery, production deployment, or owner/product approval."
+      }
     },
     {
       "legacyField": "college.address_line2",
@@ -286,10 +332,17 @@
       "proposedPhysicalTarget": "colleges.address_line2",
       "evidenceStatus": "EXACT_REGISTERED_FIELD_PG_WITNESS",
       "physicalVerified": true,
-      "runtimeSemanticsVerified": false,
+      "runtimeSemanticsVerified": true,
       "evidence": [
         "tests/integration/db01-registered-physical-field-crosswalk.test.ts"
-      ]
+      ],
+      "runtimeEvidence": {
+        "verifiedFlow": "REGISTERED_POSTGRES_ORGANIZATION_COLLEGE_CREATE_EDIT_LIST_ARCHIVE",
+        "suite": "tests/integration/db01-org-college-field-semantics.test.ts",
+        "passingRun": "https://github.com/42Students/lms-vnext/actions/runs/40677470938",
+        "testedCommit": "343b356c9a7fefef4766ef2d92b144130056f087",
+        "limitations": "This records current registered first-party application behavior, not import of legacy credentials/IDs, historical data migration, third-party provider delivery, production deployment, or owner/product approval."
+      }
     },
     {
       "legacyField": "college.city",
@@ -298,10 +351,17 @@
       "proposedPhysicalTarget": "colleges.city",
       "evidenceStatus": "EXACT_REGISTERED_FIELD_PG_WITNESS",
       "physicalVerified": true,
-      "runtimeSemanticsVerified": false,
+      "runtimeSemanticsVerified": true,
       "evidence": [
         "tests/integration/db01-registered-physical-field-crosswalk.test.ts"
-      ]
+      ],
+      "runtimeEvidence": {
+        "verifiedFlow": "REGISTERED_POSTGRES_ORGANIZATION_COLLEGE_CREATE_EDIT_LIST_ARCHIVE",
+        "suite": "tests/integration/db01-org-college-field-semantics.test.ts",
+        "passingRun": "https://github.com/42Students/lms-vnext/actions/runs/40677470938",
+        "testedCommit": "343b356c9a7fefef4766ef2d92b144130056f087",
+        "limitations": "This records current registered first-party application behavior, not import of legacy credentials/IDs, historical data migration, third-party provider delivery, production deployment, or owner/product approval."
+      }
     },
     {
       "legacyField": "college.college_chair_id",
@@ -336,10 +396,17 @@
       "proposedPhysicalTarget": "colleges.country",
       "evidenceStatus": "EXACT_REGISTERED_FIELD_PG_WITNESS",
       "physicalVerified": true,
-      "runtimeSemanticsVerified": false,
+      "runtimeSemanticsVerified": true,
       "evidence": [
         "tests/integration/db01-registered-physical-field-crosswalk.test.ts"
-      ]
+      ],
+      "runtimeEvidence": {
+        "verifiedFlow": "REGISTERED_POSTGRES_ORGANIZATION_COLLEGE_CREATE_EDIT_LIST_ARCHIVE",
+        "suite": "tests/integration/db01-org-college-field-semantics.test.ts",
+        "passingRun": "https://github.com/42Students/lms-vnext/actions/runs/40677470938",
+        "testedCommit": "343b356c9a7fefef4766ef2d92b144130056f087",
+        "limitations": "This records current registered first-party application behavior, not import of legacy credentials/IDs, historical data migration, third-party provider delivery, production deployment, or owner/product approval."
+      }
     },
     {
       "legacyField": "college.landmark",
@@ -348,10 +415,17 @@
       "proposedPhysicalTarget": "colleges.landmark",
       "evidenceStatus": "EXACT_REGISTERED_FIELD_PG_WITNESS",
       "physicalVerified": true,
-      "runtimeSemanticsVerified": false,
+      "runtimeSemanticsVerified": true,
       "evidence": [
         "tests/integration/db01-registered-physical-field-crosswalk.test.ts"
-      ]
+      ],
+      "runtimeEvidence": {
+        "verifiedFlow": "REGISTERED_POSTGRES_ORGANIZATION_COLLEGE_CREATE_EDIT_LIST_ARCHIVE",
+        "suite": "tests/integration/db01-org-college-field-semantics.test.ts",
+        "passingRun": "https://github.com/42Students/lms-vnext/actions/runs/40677470938",
+        "testedCommit": "343b356c9a7fefef4766ef2d92b144130056f087",
+        "limitations": "This records current registered first-party application behavior, not import of legacy credentials/IDs, historical data migration, third-party provider delivery, production deployment, or owner/product approval."
+      }
     },
     {
       "legacyField": "college.logo",
@@ -360,10 +434,17 @@
       "proposedPhysicalTarget": "colleges.logo_object_path",
       "evidenceStatus": "EXACT_REGISTERED_FIELD_PG_WITNESS",
       "physicalVerified": true,
-      "runtimeSemanticsVerified": false,
+      "runtimeSemanticsVerified": true,
       "evidence": [
         "tests/integration/db01-registered-physical-field-crosswalk.test.ts"
-      ]
+      ],
+      "runtimeEvidence": {
+        "verifiedFlow": "REGISTERED_POSTGRES_ORGANIZATION_COLLEGE_CREATE_EDIT_LIST_ARCHIVE",
+        "suite": "tests/integration/db01-org-college-field-semantics.test.ts",
+        "passingRun": "https://github.com/42Students/lms-vnext/actions/runs/40677470938",
+        "testedCommit": "343b356c9a7fefef4766ef2d92b144130056f087",
+        "limitations": "This records current registered first-party application behavior, not import of legacy credentials/IDs, historical data migration, third-party provider delivery, production deployment, or owner/product approval."
+      }
     },
     {
       "legacyField": "college.name",
@@ -372,10 +453,17 @@
       "proposedPhysicalTarget": "colleges.name",
       "evidenceStatus": "EXACT_REGISTERED_FIELD_PG_WITNESS",
       "physicalVerified": true,
-      "runtimeSemanticsVerified": false,
+      "runtimeSemanticsVerified": true,
       "evidence": [
         "tests/integration/db01-registered-physical-field-crosswalk.test.ts"
-      ]
+      ],
+      "runtimeEvidence": {
+        "verifiedFlow": "REGISTERED_POSTGRES_ORGANIZATION_COLLEGE_CREATE_EDIT_LIST_ARCHIVE",
+        "suite": "tests/integration/db01-org-college-field-semantics.test.ts",
+        "passingRun": "https://github.com/42Students/lms-vnext/actions/runs/40677470938",
+        "testedCommit": "343b356c9a7fefef4766ef2d92b144130056f087",
+        "limitations": "This records current registered first-party application behavior, not import of legacy credentials/IDs, historical data migration, third-party provider delivery, production deployment, or owner/product approval."
+      }
     },
     {
       "legacyField": "college.org_id",
@@ -384,10 +472,17 @@
       "proposedPhysicalTarget": "colleges.organization_id",
       "evidenceStatus": "EXACT_REGISTERED_FIELD_PG_WITNESS",
       "physicalVerified": true,
-      "runtimeSemanticsVerified": false,
+      "runtimeSemanticsVerified": true,
       "evidence": [
         "tests/integration/db01-registered-physical-field-crosswalk.test.ts"
-      ]
+      ],
+      "runtimeEvidence": {
+        "verifiedFlow": "REGISTERED_POSTGRES_ORGANIZATION_COLLEGE_CREATE_EDIT_LIST_ARCHIVE",
+        "suite": "tests/integration/db01-org-college-field-semantics.test.ts",
+        "passingRun": "https://github.com/42Students/lms-vnext/actions/runs/40677470938",
+        "testedCommit": "343b356c9a7fefef4766ef2d92b144130056f087",
+        "limitations": "This records current registered first-party application behavior, not import of legacy credentials/IDs, historical data migration, third-party provider delivery, production deployment, or owner/product approval."
+      }
     },
     {
       "legacyField": "college.pin_code",
@@ -396,10 +491,17 @@
       "proposedPhysicalTarget": "colleges.postal_code",
       "evidenceStatus": "EXACT_REGISTERED_FIELD_PG_WITNESS",
       "physicalVerified": true,
-      "runtimeSemanticsVerified": false,
+      "runtimeSemanticsVerified": true,
       "evidence": [
         "tests/integration/db01-registered-physical-field-crosswalk.test.ts"
-      ]
+      ],
+      "runtimeEvidence": {
+        "verifiedFlow": "REGISTERED_POSTGRES_ORGANIZATION_COLLEGE_CREATE_EDIT_LIST_ARCHIVE",
+        "suite": "tests/integration/db01-org-college-field-semantics.test.ts",
+        "passingRun": "https://github.com/42Students/lms-vnext/actions/runs/40677470938",
+        "testedCommit": "343b356c9a7fefef4766ef2d92b144130056f087",
+        "limitations": "This records current registered first-party application behavior, not import of legacy credentials/IDs, historical data migration, third-party provider delivery, production deployment, or owner/product approval."
+      }
     },
     {
       "legacyField": "college.state",
@@ -408,10 +510,17 @@
       "proposedPhysicalTarget": "colleges.state",
       "evidenceStatus": "EXACT_REGISTERED_FIELD_PG_WITNESS",
       "physicalVerified": true,
-      "runtimeSemanticsVerified": false,
+      "runtimeSemanticsVerified": true,
       "evidence": [
         "tests/integration/db01-registered-physical-field-crosswalk.test.ts"
-      ]
+      ],
+      "runtimeEvidence": {
+        "verifiedFlow": "REGISTERED_POSTGRES_ORGANIZATION_COLLEGE_CREATE_EDIT_LIST_ARCHIVE",
+        "suite": "tests/integration/db01-org-college-field-semantics.test.ts",
+        "passingRun": "https://github.com/42Students/lms-vnext/actions/runs/40677470938",
+        "testedCommit": "343b356c9a7fefef4766ef2d92b144130056f087",
+        "limitations": "This records current registered first-party application behavior, not import of legacy credentials/IDs, historical data migration, third-party provider delivery, production deployment, or owner/product approval."
+      }
     },
     {
       "legacyField": "college.unique_id",
@@ -420,10 +529,17 @@
       "proposedPhysicalTarget": "colleges.code",
       "evidenceStatus": "EXACT_REGISTERED_FIELD_PG_WITNESS",
       "physicalVerified": true,
-      "runtimeSemanticsVerified": false,
+      "runtimeSemanticsVerified": true,
       "evidence": [
         "tests/integration/db01-registered-physical-field-crosswalk.test.ts"
-      ]
+      ],
+      "runtimeEvidence": {
+        "verifiedFlow": "REGISTERED_POSTGRES_ORGANIZATION_COLLEGE_CREATE_EDIT_LIST_ARCHIVE",
+        "suite": "tests/integration/db01-org-college-field-semantics.test.ts",
+        "passingRun": "https://github.com/42Students/lms-vnext/actions/runs/40677470938",
+        "testedCommit": "343b356c9a7fefef4766ef2d92b144130056f087",
+        "limitations": "This records current registered first-party application behavior, not import of legacy credentials/IDs, historical data migration, third-party provider delivery, production deployment, or owner/product approval."
+      }
     },
     {
       "legacyField": "college_branding.id",
@@ -1646,10 +1762,17 @@
       "proposedPhysicalTarget": "identity_auth_attempts.id",
       "evidenceStatus": "EXACT_REGISTERED_FIELD_PG_WITNESS",
       "physicalVerified": true,
-      "runtimeSemanticsVerified": false,
+      "runtimeSemanticsVerified": true,
       "evidence": [
         "tests/integration/db01-registered-physical-field-crosswalk.test.ts"
-      ]
+      ],
+      "runtimeEvidence": {
+        "verifiedFlow": "REGISTERED_POSTGRES_HMAC_OTP_SEND_RESERVE_VERIFY_CONSUME_REPLAY",
+        "suite": "tests/integration/db01-auth-attempt-field-semantics.test.ts",
+        "passingRun": "https://github.com/42Students/lms-vnext/actions/runs/40677470938",
+        "testedCommit": "343b356c9a7fefef4766ef2d92b144130056f087",
+        "limitations": "This records current registered first-party application behavior, not import of legacy credentials/IDs, historical data migration, third-party provider delivery, production deployment, or owner/product approval."
+      }
     },
     {
       "legacyField": "mobile_login_attempt.created_at",
@@ -1658,10 +1781,17 @@
       "proposedPhysicalTarget": "identity_auth_attempts.created_at",
       "evidenceStatus": "EXACT_REGISTERED_FIELD_PG_WITNESS",
       "physicalVerified": true,
-      "runtimeSemanticsVerified": false,
+      "runtimeSemanticsVerified": true,
       "evidence": [
         "tests/integration/db01-registered-physical-field-crosswalk.test.ts"
-      ]
+      ],
+      "runtimeEvidence": {
+        "verifiedFlow": "REGISTERED_POSTGRES_HMAC_OTP_SEND_RESERVE_VERIFY_CONSUME_REPLAY",
+        "suite": "tests/integration/db01-auth-attempt-field-semantics.test.ts",
+        "passingRun": "https://github.com/42Students/lms-vnext/actions/runs/40677470938",
+        "testedCommit": "343b356c9a7fefef4766ef2d92b144130056f087",
+        "limitations": "This records current registered first-party application behavior, not import of legacy credentials/IDs, historical data migration, third-party provider delivery, production deployment, or owner/product approval."
+      }
     },
     {
       "legacyField": "mobile_login_attempt.is_deleted",
@@ -1670,10 +1800,17 @@
       "proposedPhysicalTarget": "identity_auth_attempts.used_at",
       "evidenceStatus": "EXACT_REGISTERED_FIELD_PG_WITNESS",
       "physicalVerified": true,
-      "runtimeSemanticsVerified": false,
+      "runtimeSemanticsVerified": true,
       "evidence": [
         "tests/integration/db01-registered-physical-field-crosswalk.test.ts"
-      ]
+      ],
+      "runtimeEvidence": {
+        "verifiedFlow": "REGISTERED_POSTGRES_HMAC_OTP_SEND_RESERVE_VERIFY_CONSUME_REPLAY",
+        "suite": "tests/integration/db01-auth-attempt-field-semantics.test.ts",
+        "passingRun": "https://github.com/42Students/lms-vnext/actions/runs/40677470938",
+        "testedCommit": "343b356c9a7fefef4766ef2d92b144130056f087",
+        "limitations": "This records current registered first-party application behavior, not import of legacy credentials/IDs, historical data migration, third-party provider delivery, production deployment, or owner/product approval."
+      }
     },
     {
       "legacyField": "mobile_login_attempt.updated_at",
@@ -1695,10 +1832,17 @@
       "proposedPhysicalTarget": "identity_auth_attempts.id",
       "evidenceStatus": "EXACT_REGISTERED_FIELD_PG_WITNESS",
       "physicalVerified": true,
-      "runtimeSemanticsVerified": false,
+      "runtimeSemanticsVerified": true,
       "evidence": [
         "tests/integration/db01-registered-physical-field-crosswalk.test.ts"
-      ]
+      ],
+      "runtimeEvidence": {
+        "verifiedFlow": "REGISTERED_POSTGRES_HMAC_OTP_SEND_RESERVE_VERIFY_CONSUME_REPLAY",
+        "suite": "tests/integration/db01-auth-attempt-field-semantics.test.ts",
+        "passingRun": "https://github.com/42Students/lms-vnext/actions/runs/40677470938",
+        "testedCommit": "343b356c9a7fefef4766ef2d92b144130056f087",
+        "limitations": "This records current registered first-party application behavior, not import of legacy credentials/IDs, historical data migration, third-party provider delivery, production deployment, or owner/product approval."
+      }
     },
     {
       "legacyField": "mobile_login_attempt.college_id",
@@ -1707,10 +1851,17 @@
       "proposedPhysicalTarget": "identity_auth_attempts.college_id",
       "evidenceStatus": "EXACT_REGISTERED_FIELD_PG_WITNESS",
       "physicalVerified": true,
-      "runtimeSemanticsVerified": false,
+      "runtimeSemanticsVerified": true,
       "evidence": [
         "tests/integration/db01-registered-physical-field-crosswalk.test.ts"
-      ]
+      ],
+      "runtimeEvidence": {
+        "verifiedFlow": "REGISTERED_POSTGRES_HMAC_OTP_SEND_RESERVE_VERIFY_CONSUME_REPLAY",
+        "suite": "tests/integration/db01-auth-attempt-field-semantics.test.ts",
+        "passingRun": "https://github.com/42Students/lms-vnext/actions/runs/40677470938",
+        "testedCommit": "343b356c9a7fefef4766ef2d92b144130056f087",
+        "limitations": "This records current registered first-party application behavior, not import of legacy credentials/IDs, historical data migration, third-party provider delivery, production deployment, or owner/product approval."
+      }
     },
     {
       "legacyField": "mobile_login_attempt.expires_at",
@@ -1719,10 +1870,17 @@
       "proposedPhysicalTarget": "identity_auth_attempts.expires_at",
       "evidenceStatus": "EXACT_REGISTERED_FIELD_PG_WITNESS",
       "physicalVerified": true,
-      "runtimeSemanticsVerified": false,
+      "runtimeSemanticsVerified": true,
       "evidence": [
         "tests/integration/db01-registered-physical-field-crosswalk.test.ts"
-      ]
+      ],
+      "runtimeEvidence": {
+        "verifiedFlow": "REGISTERED_POSTGRES_HMAC_OTP_SEND_RESERVE_VERIFY_CONSUME_REPLAY",
+        "suite": "tests/integration/db01-auth-attempt-field-semantics.test.ts",
+        "passingRun": "https://github.com/42Students/lms-vnext/actions/runs/40677470938",
+        "testedCommit": "343b356c9a7fefef4766ef2d92b144130056f087",
+        "limitations": "This records current registered first-party application behavior, not import of legacy credentials/IDs, historical data migration, third-party provider delivery, production deployment, or owner/product approval."
+      }
     },
     {
       "legacyField": "mobile_login_attempt.email_otp_expires_at",
@@ -1731,10 +1889,17 @@
       "proposedPhysicalTarget": "identity_auth_attempts.email_code_expires_at",
       "evidenceStatus": "EXACT_REGISTERED_FIELD_PG_WITNESS",
       "physicalVerified": true,
-      "runtimeSemanticsVerified": false,
+      "runtimeSemanticsVerified": true,
       "evidence": [
         "tests/integration/db01-registered-physical-field-crosswalk.test.ts"
-      ]
+      ],
+      "runtimeEvidence": {
+        "verifiedFlow": "REGISTERED_POSTGRES_HMAC_OTP_SEND_RESERVE_VERIFY_CONSUME_REPLAY",
+        "suite": "tests/integration/db01-auth-attempt-field-semantics.test.ts",
+        "passingRun": "https://github.com/42Students/lms-vnext/actions/runs/40677470938",
+        "testedCommit": "343b356c9a7fefef4766ef2d92b144130056f087",
+        "limitations": "This records current registered first-party application behavior, not import of legacy credentials/IDs, historical data migration, third-party provider delivery, production deployment, or owner/product approval."
+      }
     },
     {
       "legacyField": "mobile_login_attempt.email_otp_sent_at",
@@ -1743,10 +1908,17 @@
       "proposedPhysicalTarget": "identity_auth_attempts.email_code_sent_at",
       "evidenceStatus": "EXACT_REGISTERED_FIELD_PG_WITNESS",
       "physicalVerified": true,
-      "runtimeSemanticsVerified": false,
+      "runtimeSemanticsVerified": true,
       "evidence": [
         "tests/integration/db01-registered-physical-field-crosswalk.test.ts"
-      ]
+      ],
+      "runtimeEvidence": {
+        "verifiedFlow": "REGISTERED_POSTGRES_HMAC_OTP_SEND_RESERVE_VERIFY_CONSUME_REPLAY",
+        "suite": "tests/integration/db01-auth-attempt-field-semantics.test.ts",
+        "passingRun": "https://github.com/42Students/lms-vnext/actions/runs/40677470938",
+        "testedCommit": "343b356c9a7fefef4766ef2d92b144130056f087",
+        "limitations": "This records current registered first-party application behavior, not import of legacy credentials/IDs, historical data migration, third-party provider delivery, production deployment, or owner/product approval."
+      }
     },
     {
       "legacyField": "mobile_login_attempt.organization_id",
@@ -1755,10 +1927,17 @@
       "proposedPhysicalTarget": "colleges.organization_id",
       "evidenceStatus": "EXACT_REGISTERED_FIELD_PG_WITNESS",
       "physicalVerified": true,
-      "runtimeSemanticsVerified": false,
+      "runtimeSemanticsVerified": true,
       "evidence": [
         "tests/integration/db01-registered-physical-field-crosswalk.test.ts"
-      ]
+      ],
+      "runtimeEvidence": {
+        "verifiedFlow": "REGISTERED_POSTGRES_HMAC_OTP_SEND_RESERVE_VERIFY_CONSUME_REPLAY",
+        "suite": "tests/integration/db01-auth-attempt-field-semantics.test.ts",
+        "passingRun": "https://github.com/42Students/lms-vnext/actions/runs/40677470938",
+        "testedCommit": "343b356c9a7fefef4766ef2d92b144130056f087",
+        "limitations": "This records current registered first-party application behavior, not import of legacy credentials/IDs, historical data migration, third-party provider delivery, production deployment, or owner/product approval."
+      }
     },
     {
       "legacyField": "mobile_login_attempt.otp",
@@ -1767,10 +1946,17 @@
       "proposedPhysicalTarget": "identity_auth_attempts.sms_code_mac",
       "evidenceStatus": "EXACT_REGISTERED_FIELD_PG_WITNESS",
       "physicalVerified": true,
-      "runtimeSemanticsVerified": false,
+      "runtimeSemanticsVerified": true,
       "evidence": [
         "tests/integration/db01-registered-physical-field-crosswalk.test.ts"
-      ]
+      ],
+      "runtimeEvidence": {
+        "verifiedFlow": "REGISTERED_POSTGRES_HMAC_OTP_SEND_RESERVE_VERIFY_CONSUME_REPLAY",
+        "suite": "tests/integration/db01-auth-attempt-field-semantics.test.ts",
+        "passingRun": "https://github.com/42Students/lms-vnext/actions/runs/40677470938",
+        "testedCommit": "343b356c9a7fefef4766ef2d92b144130056f087",
+        "limitations": "This records current registered first-party application behavior, not import of legacy credentials/IDs, historical data migration, third-party provider delivery, production deployment, or owner/product approval."
+      }
     },
     {
       "legacyField": "mobile_login_attempt.email_otp",
@@ -1779,10 +1965,17 @@
       "proposedPhysicalTarget": "identity_auth_attempts.email_code_mac",
       "evidenceStatus": "EXACT_REGISTERED_FIELD_PG_WITNESS",
       "physicalVerified": true,
-      "runtimeSemanticsVerified": false,
+      "runtimeSemanticsVerified": true,
       "evidence": [
         "tests/integration/db01-registered-physical-field-crosswalk.test.ts"
-      ]
+      ],
+      "runtimeEvidence": {
+        "verifiedFlow": "REGISTERED_POSTGRES_HMAC_OTP_SEND_RESERVE_VERIFY_CONSUME_REPLAY",
+        "suite": "tests/integration/db01-auth-attempt-field-semantics.test.ts",
+        "passingRun": "https://github.com/42Students/lms-vnext/actions/runs/40677470938",
+        "testedCommit": "343b356c9a7fefef4766ef2d92b144130056f087",
+        "limitations": "This records current registered first-party application behavior, not import of legacy credentials/IDs, historical data migration, third-party provider delivery, production deployment, or owner/product approval."
+      }
     },
     {
       "legacyField": "mobile_login_attempt.phone",
@@ -1791,10 +1984,17 @@
       "proposedPhysicalTarget": "identity_auth_attempts.contact_fingerprint",
       "evidenceStatus": "EXACT_REGISTERED_FIELD_PG_WITNESS",
       "physicalVerified": true,
-      "runtimeSemanticsVerified": false,
+      "runtimeSemanticsVerified": true,
       "evidence": [
         "tests/integration/db01-registered-physical-field-crosswalk.test.ts"
-      ]
+      ],
+      "runtimeEvidence": {
+        "verifiedFlow": "REGISTERED_POSTGRES_HMAC_OTP_SEND_RESERVE_VERIFY_CONSUME_REPLAY",
+        "suite": "tests/integration/db01-auth-attempt-field-semantics.test.ts",
+        "passingRun": "https://github.com/42Students/lms-vnext/actions/runs/40677470938",
+        "testedCommit": "343b356c9a7fefef4766ef2d92b144130056f087",
+        "limitations": "This records current registered first-party application behavior, not import of legacy credentials/IDs, historical data migration, third-party provider delivery, production deployment, or owner/product approval."
+      }
     },
     {
       "legacyField": "mobile_login_attempt.used",
@@ -1803,10 +2003,17 @@
       "proposedPhysicalTarget": "identity_auth_attempts.used_at",
       "evidenceStatus": "EXACT_REGISTERED_FIELD_PG_WITNESS",
       "physicalVerified": true,
-      "runtimeSemanticsVerified": false,
+      "runtimeSemanticsVerified": true,
       "evidence": [
         "tests/integration/db01-registered-physical-field-crosswalk.test.ts"
-      ]
+      ],
+      "runtimeEvidence": {
+        "verifiedFlow": "REGISTERED_POSTGRES_HMAC_OTP_SEND_RESERVE_VERIFY_CONSUME_REPLAY",
+        "suite": "tests/integration/db01-auth-attempt-field-semantics.test.ts",
+        "passingRun": "https://github.com/42Students/lms-vnext/actions/runs/40677470938",
+        "testedCommit": "343b356c9a7fefef4766ef2d92b144130056f087",
+        "limitations": "This records current registered first-party application behavior, not import of legacy credentials/IDs, historical data migration, third-party provider delivery, production deployment, or owner/product approval."
+      }
     },
     {
       "legacyField": "mobile_login_attempt.user_id",
@@ -1815,10 +2022,17 @@
       "proposedPhysicalTarget": "identity_auth_attempts.user_id",
       "evidenceStatus": "EXACT_REGISTERED_FIELD_PG_WITNESS",
       "physicalVerified": true,
-      "runtimeSemanticsVerified": false,
+      "runtimeSemanticsVerified": true,
       "evidence": [
         "tests/integration/db01-registered-physical-field-crosswalk.test.ts"
-      ]
+      ],
+      "runtimeEvidence": {
+        "verifiedFlow": "REGISTERED_POSTGRES_HMAC_OTP_SEND_RESERVE_VERIFY_CONSUME_REPLAY",
+        "suite": "tests/integration/db01-auth-attempt-field-semantics.test.ts",
+        "passingRun": "https://github.com/42Students/lms-vnext/actions/runs/40677470938",
+        "testedCommit": "343b356c9a7fefef4766ef2d92b144130056f087",
+        "limitations": "This records current registered first-party application behavior, not import of legacy credentials/IDs, historical data migration, third-party provider delivery, production deployment, or owner/product approval."
+      }
     },
     {
       "legacyField": "mobile_login_attempt.user_type",
@@ -1827,10 +2041,17 @@
       "proposedPhysicalTarget": "identity_auth_attempts.target_role",
       "evidenceStatus": "EXACT_REGISTERED_FIELD_PG_WITNESS",
       "physicalVerified": true,
-      "runtimeSemanticsVerified": false,
+      "runtimeSemanticsVerified": true,
       "evidence": [
         "tests/integration/db01-registered-physical-field-crosswalk.test.ts"
-      ]
+      ],
+      "runtimeEvidence": {
+        "verifiedFlow": "REGISTERED_POSTGRES_HMAC_OTP_SEND_RESERVE_VERIFY_CONSUME_REPLAY",
+        "suite": "tests/integration/db01-auth-attempt-field-semantics.test.ts",
+        "passingRun": "https://github.com/42Students/lms-vnext/actions/runs/40677470938",
+        "testedCommit": "343b356c9a7fefef4766ef2d92b144130056f087",
+        "limitations": "This records current registered first-party application behavior, not import of legacy credentials/IDs, historical data migration, third-party provider delivery, production deployment, or owner/product approval."
+      }
     },
     {
       "legacyField": "mobile_login_attempt.verified_at",
@@ -1839,10 +2060,17 @@
       "proposedPhysicalTarget": "identity_auth_attempts.verified_at",
       "evidenceStatus": "EXACT_REGISTERED_FIELD_PG_WITNESS",
       "physicalVerified": true,
-      "runtimeSemanticsVerified": false,
+      "runtimeSemanticsVerified": true,
       "evidence": [
         "tests/integration/db01-registered-physical-field-crosswalk.test.ts"
-      ]
+      ],
+      "runtimeEvidence": {
+        "verifiedFlow": "REGISTERED_POSTGRES_HMAC_OTP_SEND_RESERVE_VERIFY_CONSUME_REPLAY",
+        "suite": "tests/integration/db01-auth-attempt-field-semantics.test.ts",
+        "passingRun": "https://github.com/42Students/lms-vnext/actions/runs/40677470938",
+        "testedCommit": "343b356c9a7fefef4766ef2d92b144130056f087",
+        "limitations": "This records current registered first-party application behavior, not import of legacy credentials/IDs, historical data migration, third-party provider delivery, production deployment, or owner/product approval."
+      }
     },
     {
       "legacyField": "mobile_login_attempt.verification_attempts",
@@ -1851,10 +2079,17 @@
       "proposedPhysicalTarget": "identity_auth_attempts.verification_attempts",
       "evidenceStatus": "EXACT_REGISTERED_FIELD_PG_WITNESS",
       "physicalVerified": true,
-      "runtimeSemanticsVerified": false,
+      "runtimeSemanticsVerified": true,
       "evidence": [
         "tests/integration/db01-registered-physical-field-crosswalk.test.ts"
-      ]
+      ],
+      "runtimeEvidence": {
+        "verifiedFlow": "REGISTERED_POSTGRES_HMAC_OTP_SEND_RESERVE_VERIFY_CONSUME_REPLAY",
+        "suite": "tests/integration/db01-auth-attempt-field-semantics.test.ts",
+        "passingRun": "https://github.com/42Students/lms-vnext/actions/runs/40677470938",
+        "testedCommit": "343b356c9a7fefef4766ef2d92b144130056f087",
+        "limitations": "This records current registered first-party application behavior, not import of legacy credentials/IDs, historical data migration, third-party provider delivery, production deployment, or owner/product approval."
+      }
     },
     {
       "legacyField": "organization.id",
@@ -1863,10 +2098,17 @@
       "proposedPhysicalTarget": "organizations.id",
       "evidenceStatus": "EXACT_REGISTERED_FIELD_PG_WITNESS",
       "physicalVerified": true,
-      "runtimeSemanticsVerified": false,
+      "runtimeSemanticsVerified": true,
       "evidence": [
         "tests/integration/db01-registered-physical-field-crosswalk.test.ts"
-      ]
+      ],
+      "runtimeEvidence": {
+        "verifiedFlow": "REGISTERED_POSTGRES_ORGANIZATION_COLLEGE_CREATE_EDIT_LIST_ARCHIVE",
+        "suite": "tests/integration/db01-org-college-field-semantics.test.ts",
+        "passingRun": "https://github.com/42Students/lms-vnext/actions/runs/40677470938",
+        "testedCommit": "343b356c9a7fefef4766ef2d92b144130056f087",
+        "limitations": "This records current registered first-party application behavior, not import of legacy credentials/IDs, historical data migration, third-party provider delivery, production deployment, or owner/product approval."
+      }
     },
     {
       "legacyField": "organization.created_at",
@@ -1875,10 +2117,17 @@
       "proposedPhysicalTarget": "organizations.created_at",
       "evidenceStatus": "EXACT_REGISTERED_FIELD_PG_WITNESS",
       "physicalVerified": true,
-      "runtimeSemanticsVerified": false,
+      "runtimeSemanticsVerified": true,
       "evidence": [
         "tests/integration/db01-registered-physical-field-crosswalk.test.ts"
-      ]
+      ],
+      "runtimeEvidence": {
+        "verifiedFlow": "REGISTERED_POSTGRES_ORGANIZATION_COLLEGE_CREATE_EDIT_LIST_ARCHIVE",
+        "suite": "tests/integration/db01-org-college-field-semantics.test.ts",
+        "passingRun": "https://github.com/42Students/lms-vnext/actions/runs/40677470938",
+        "testedCommit": "343b356c9a7fefef4766ef2d92b144130056f087",
+        "limitations": "This records current registered first-party application behavior, not import of legacy credentials/IDs, historical data migration, third-party provider delivery, production deployment, or owner/product approval."
+      }
     },
     {
       "legacyField": "organization.is_deleted",
@@ -1887,10 +2136,17 @@
       "proposedPhysicalTarget": "organizations.status",
       "evidenceStatus": "EXACT_REGISTERED_FIELD_PG_WITNESS",
       "physicalVerified": true,
-      "runtimeSemanticsVerified": false,
+      "runtimeSemanticsVerified": true,
       "evidence": [
         "tests/integration/db01-registered-physical-field-crosswalk.test.ts"
-      ]
+      ],
+      "runtimeEvidence": {
+        "verifiedFlow": "REGISTERED_POSTGRES_ORGANIZATION_COLLEGE_CREATE_EDIT_LIST_ARCHIVE",
+        "suite": "tests/integration/db01-org-college-field-semantics.test.ts",
+        "passingRun": "https://github.com/42Students/lms-vnext/actions/runs/40677470938",
+        "testedCommit": "343b356c9a7fefef4766ef2d92b144130056f087",
+        "limitations": "This records current registered first-party application behavior, not import of legacy credentials/IDs, historical data migration, third-party provider delivery, production deployment, or owner/product approval."
+      }
     },
     {
       "legacyField": "organization.updated_at",
@@ -1899,10 +2155,17 @@
       "proposedPhysicalTarget": "organizations.updated_at",
       "evidenceStatus": "EXACT_REGISTERED_FIELD_PG_WITNESS",
       "physicalVerified": true,
-      "runtimeSemanticsVerified": false,
+      "runtimeSemanticsVerified": true,
       "evidence": [
         "tests/integration/db01-registered-physical-field-crosswalk.test.ts"
-      ]
+      ],
+      "runtimeEvidence": {
+        "verifiedFlow": "REGISTERED_POSTGRES_ORGANIZATION_COLLEGE_CREATE_EDIT_LIST_ARCHIVE",
+        "suite": "tests/integration/db01-org-college-field-semantics.test.ts",
+        "passingRun": "https://github.com/42Students/lms-vnext/actions/runs/40677470938",
+        "testedCommit": "343b356c9a7fefef4766ef2d92b144130056f087",
+        "limitations": "This records current registered first-party application behavior, not import of legacy credentials/IDs, historical data migration, third-party provider delivery, production deployment, or owner/product approval."
+      }
     },
     {
       "legacyField": "organization.name",
@@ -1911,10 +2174,17 @@
       "proposedPhysicalTarget": "organizations.name",
       "evidenceStatus": "EXACT_REGISTERED_FIELD_PG_WITNESS",
       "physicalVerified": true,
-      "runtimeSemanticsVerified": false,
+      "runtimeSemanticsVerified": true,
       "evidence": [
         "tests/integration/db01-registered-physical-field-crosswalk.test.ts"
-      ]
+      ],
+      "runtimeEvidence": {
+        "verifiedFlow": "REGISTERED_POSTGRES_ORGANIZATION_COLLEGE_CREATE_EDIT_LIST_ARCHIVE",
+        "suite": "tests/integration/db01-org-college-field-semantics.test.ts",
+        "passingRun": "https://github.com/42Students/lms-vnext/actions/runs/40677470938",
+        "testedCommit": "343b356c9a7fefef4766ef2d92b144130056f087",
+        "limitations": "This records current registered first-party application behavior, not import of legacy credentials/IDs, historical data migration, third-party provider delivery, production deployment, or owner/product approval."
+      }
     },
     {
       "legacyField": "recruiter.id",
@@ -2024,10 +2294,17 @@
       "proposedPhysicalTarget": "identity_device_sessions.credential_digest",
       "evidenceStatus": "EXACT_REGISTERED_FIELD_PG_WITNESS",
       "physicalVerified": true,
-      "runtimeSemanticsVerified": false,
+      "runtimeSemanticsVerified": true,
       "evidence": [
         "tests/integration/db01-registered-physical-field-crosswalk.test.ts"
-      ]
+      ],
+      "runtimeEvidence": {
+        "verifiedFlow": "REGISTERED_POSTGRES_OPAQUE_DEVICE_SESSION_SCOPE_EXPIRY_REVOKE",
+        "suite": "tests/integration/db01-device-session-field-semantics.test.ts",
+        "passingRun": "https://github.com/42Students/lms-vnext/actions/runs/40677470938",
+        "testedCommit": "343b356c9a7fefef4766ef2d92b144130056f087",
+        "limitations": "This records current registered first-party application behavior, not import of legacy credentials/IDs, historical data migration, third-party provider delivery, production deployment, or owner/product approval."
+      }
     },
     {
       "legacyField": "refresh_token_blocklist.user_id",
@@ -2036,10 +2313,17 @@
       "proposedPhysicalTarget": "identity_device_sessions.user_id",
       "evidenceStatus": "EXACT_REGISTERED_FIELD_PG_WITNESS",
       "physicalVerified": true,
-      "runtimeSemanticsVerified": false,
+      "runtimeSemanticsVerified": true,
       "evidence": [
         "tests/integration/db01-registered-physical-field-crosswalk.test.ts"
-      ]
+      ],
+      "runtimeEvidence": {
+        "verifiedFlow": "REGISTERED_POSTGRES_OPAQUE_DEVICE_SESSION_SCOPE_EXPIRY_REVOKE",
+        "suite": "tests/integration/db01-device-session-field-semantics.test.ts",
+        "passingRun": "https://github.com/42Students/lms-vnext/actions/runs/40677470938",
+        "testedCommit": "343b356c9a7fefef4766ef2d92b144130056f087",
+        "limitations": "This records current registered first-party application behavior, not import of legacy credentials/IDs, historical data migration, third-party provider delivery, production deployment, or owner/product approval."
+      }
     },
     {
       "legacyField": "refresh_token_blocklist.user_type",
@@ -2061,10 +2345,17 @@
       "proposedPhysicalTarget": "identity_device_sessions.revoked_at",
       "evidenceStatus": "EXACT_REGISTERED_FIELD_PG_WITNESS",
       "physicalVerified": true,
-      "runtimeSemanticsVerified": false,
+      "runtimeSemanticsVerified": true,
       "evidence": [
         "tests/integration/db01-registered-physical-field-crosswalk.test.ts"
-      ]
+      ],
+      "runtimeEvidence": {
+        "verifiedFlow": "REGISTERED_POSTGRES_OPAQUE_DEVICE_SESSION_SCOPE_EXPIRY_REVOKE",
+        "suite": "tests/integration/db01-device-session-field-semantics.test.ts",
+        "passingRun": "https://github.com/42Students/lms-vnext/actions/runs/40677470938",
+        "testedCommit": "343b356c9a7fefef4766ef2d92b144130056f087",
+        "limitations": "This records current registered first-party application behavior, not import of legacy credentials/IDs, historical data migration, third-party provider delivery, production deployment, or owner/product approval."
+      }
     },
     {
       "legacyField": "refresh_token_blocklist.expires_at",
@@ -2073,10 +2364,17 @@
       "proposedPhysicalTarget": "identity_device_sessions.expires_at",
       "evidenceStatus": "EXACT_REGISTERED_FIELD_PG_WITNESS",
       "physicalVerified": true,
-      "runtimeSemanticsVerified": false,
+      "runtimeSemanticsVerified": true,
       "evidence": [
         "tests/integration/db01-registered-physical-field-crosswalk.test.ts"
-      ]
+      ],
+      "runtimeEvidence": {
+        "verifiedFlow": "REGISTERED_POSTGRES_OPAQUE_DEVICE_SESSION_SCOPE_EXPIRY_REVOKE",
+        "suite": "tests/integration/db01-device-session-field-semantics.test.ts",
+        "passingRun": "https://github.com/42Students/lms-vnext/actions/runs/40677470938",
+        "testedCommit": "343b356c9a7fefef4766ef2d92b144130056f087",
+        "limitations": "This records current registered first-party application behavior, not import of legacy credentials/IDs, historical data migration, third-party provider delivery, production deployment, or owner/product approval."
+      }
     },
     {
       "legacyField": "role.id",
@@ -2411,10 +2709,17 @@
       "proposedPhysicalTarget": "users.id",
       "evidenceStatus": "EXACT_REGISTERED_FIELD_PG_WITNESS",
       "physicalVerified": true,
-      "runtimeSemanticsVerified": false,
+      "runtimeSemanticsVerified": true,
       "evidence": [
         "tests/integration/db01-registered-physical-field-crosswalk.test.ts"
-      ]
+      ],
+      "runtimeEvidence": {
+        "verifiedFlow": "REGISTERED_POSTGRES_FIRST_PARTY_CANONICAL_LOOKUP_AND_DISABLE",
+        "suite": "tests/integration/db01-user-identity-field-semantics.test.ts",
+        "passingRun": "https://github.com/42Students/lms-vnext/actions/runs/40677470938",
+        "testedCommit": "343b356c9a7fefef4766ef2d92b144130056f087",
+        "limitations": "This records current registered first-party application behavior, not import of legacy credentials/IDs, historical data migration, third-party provider delivery, production deployment, or owner/product approval."
+      }
     },
     {
       "legacyField": "user.created_at",
@@ -2423,10 +2728,17 @@
       "proposedPhysicalTarget": "users.created_at",
       "evidenceStatus": "EXACT_REGISTERED_FIELD_PG_WITNESS",
       "physicalVerified": true,
-      "runtimeSemanticsVerified": false,
+      "runtimeSemanticsVerified": true,
       "evidence": [
         "tests/integration/db01-registered-physical-field-crosswalk.test.ts"
-      ]
+      ],
+      "runtimeEvidence": {
+        "verifiedFlow": "REGISTERED_POSTGRES_FIRST_PARTY_CANONICAL_LOOKUP_AND_DISABLE",
+        "suite": "tests/integration/db01-user-identity-field-semantics.test.ts",
+        "passingRun": "https://github.com/42Students/lms-vnext/actions/runs/40677470938",
+        "testedCommit": "343b356c9a7fefef4766ef2d92b144130056f087",
+        "limitations": "This records current registered first-party application behavior, not import of legacy credentials/IDs, historical data migration, third-party provider delivery, production deployment, or owner/product approval."
+      }
     },
     {
       "legacyField": "user.is_deleted",
@@ -2435,10 +2747,17 @@
       "proposedPhysicalTarget": "users.platform_status",
       "evidenceStatus": "EXACT_REGISTERED_FIELD_PG_WITNESS",
       "physicalVerified": true,
-      "runtimeSemanticsVerified": false,
+      "runtimeSemanticsVerified": true,
       "evidence": [
         "tests/integration/db01-registered-physical-field-crosswalk.test.ts"
-      ]
+      ],
+      "runtimeEvidence": {
+        "verifiedFlow": "REGISTERED_POSTGRES_FIRST_PARTY_CANONICAL_LOOKUP_AND_DISABLE",
+        "suite": "tests/integration/db01-user-identity-field-semantics.test.ts",
+        "passingRun": "https://github.com/42Students/lms-vnext/actions/runs/40677470938",
+        "testedCommit": "343b356c9a7fefef4766ef2d92b144130056f087",
+        "limitations": "This records current registered first-party application behavior, not import of legacy credentials/IDs, historical data migration, third-party provider delivery, production deployment, or owner/product approval."
+      }
     },
     {
       "legacyField": "user.updated_at",
@@ -2447,10 +2766,17 @@
       "proposedPhysicalTarget": "users.updated_at",
       "evidenceStatus": "EXACT_REGISTERED_FIELD_PG_WITNESS",
       "physicalVerified": true,
-      "runtimeSemanticsVerified": false,
+      "runtimeSemanticsVerified": true,
       "evidence": [
         "tests/integration/db01-registered-physical-field-crosswalk.test.ts"
-      ]
+      ],
+      "runtimeEvidence": {
+        "verifiedFlow": "REGISTERED_POSTGRES_FIRST_PARTY_CANONICAL_LOOKUP_AND_DISABLE",
+        "suite": "tests/integration/db01-user-identity-field-semantics.test.ts",
+        "passingRun": "https://github.com/42Students/lms-vnext/actions/runs/40677470938",
+        "testedCommit": "343b356c9a7fefef4766ef2d92b144130056f087",
+        "limitations": "This records current registered first-party application behavior, not import of legacy credentials/IDs, historical data migration, third-party provider delivery, production deployment, or owner/product approval."
+      }
     },
     {
       "legacyField": "user.email",
@@ -2459,10 +2785,17 @@
       "proposedPhysicalTarget": "users.email",
       "evidenceStatus": "EXACT_REGISTERED_FIELD_PG_WITNESS",
       "physicalVerified": true,
-      "runtimeSemanticsVerified": false,
+      "runtimeSemanticsVerified": true,
       "evidence": [
         "tests/integration/db01-registered-physical-field-crosswalk.test.ts"
-      ]
+      ],
+      "runtimeEvidence": {
+        "verifiedFlow": "REGISTERED_POSTGRES_FIRST_PARTY_CANONICAL_LOOKUP_AND_DISABLE",
+        "suite": "tests/integration/db01-user-identity-field-semantics.test.ts",
+        "passingRun": "https://github.com/42Students/lms-vnext/actions/runs/40677470938",
+        "testedCommit": "343b356c9a7fefef4766ef2d92b144130056f087",
+        "limitations": "This records current registered first-party application behavior, not import of legacy credentials/IDs, historical data migration, third-party provider delivery, production deployment, or owner/product approval."
+      }
     },
     {
       "legacyField": "user.name",
@@ -2471,10 +2804,17 @@
       "proposedPhysicalTarget": "users.display_name",
       "evidenceStatus": "EXACT_REGISTERED_FIELD_PG_WITNESS",
       "physicalVerified": true,
-      "runtimeSemanticsVerified": false,
+      "runtimeSemanticsVerified": true,
       "evidence": [
         "tests/integration/db01-registered-physical-field-crosswalk.test.ts"
-      ]
+      ],
+      "runtimeEvidence": {
+        "verifiedFlow": "REGISTERED_POSTGRES_FIRST_PARTY_CANONICAL_LOOKUP_AND_DISABLE",
+        "suite": "tests/integration/db01-user-identity-field-semantics.test.ts",
+        "passingRun": "https://github.com/42Students/lms-vnext/actions/runs/40677470938",
+        "testedCommit": "343b356c9a7fefef4766ef2d92b144130056f087",
+        "limitations": "This records current registered first-party application behavior, not import of legacy credentials/IDs, historical data migration, third-party provider delivery, production deployment, or owner/product approval."
+      }
     },
     {
       "legacyField": "user.password",
@@ -2496,10 +2836,17 @@
       "proposedPhysicalTarget": "users.phone_e164",
       "evidenceStatus": "EXACT_REGISTERED_FIELD_PG_WITNESS",
       "physicalVerified": true,
-      "runtimeSemanticsVerified": false,
+      "runtimeSemanticsVerified": true,
       "evidence": [
         "tests/integration/db01-registered-physical-field-crosswalk.test.ts"
-      ]
+      ],
+      "runtimeEvidence": {
+        "verifiedFlow": "REGISTERED_POSTGRES_FIRST_PARTY_CANONICAL_LOOKUP_AND_DISABLE",
+        "suite": "tests/integration/db01-user-identity-field-semantics.test.ts",
+        "passingRun": "https://github.com/42Students/lms-vnext/actions/runs/40677470938",
+        "testedCommit": "343b356c9a7fefef4766ef2d92b144130056f087",
+        "limitations": "This records current registered first-party application behavior, not import of legacy credentials/IDs, historical data migration, third-party provider delivery, production deployment, or owner/product approval."
+      }
     },
     {
       "legacyField": "user.unique_id",
@@ -2508,10 +2855,17 @@
       "proposedPhysicalTarget": "users.identity_uid",
       "evidenceStatus": "EXACT_REGISTERED_FIELD_PG_WITNESS",
       "physicalVerified": true,
-      "runtimeSemanticsVerified": false,
+      "runtimeSemanticsVerified": true,
       "evidence": [
         "tests/integration/db01-registered-physical-field-crosswalk.test.ts"
-      ]
+      ],
+      "runtimeEvidence": {
+        "verifiedFlow": "REGISTERED_POSTGRES_FIRST_PARTY_CANONICAL_LOOKUP_AND_DISABLE",
+        "suite": "tests/integration/db01-user-identity-field-semantics.test.ts",
+        "passingRun": "https://github.com/42Students/lms-vnext/actions/runs/40677470938",
+        "testedCommit": "343b356c9a7fefef4766ef2d92b144130056f087",
+        "limitations": "This records current registered first-party application behavior, not import of legacy credentials/IDs, historical data migration, third-party provider delivery, production deployment, or owner/product approval."
+      }
     },
     {
       "legacyField": "user.user_name",
@@ -2569,10 +2923,17 @@
       "proposedPhysicalTarget": "identity_device_sessions.credential_digest",
       "evidenceStatus": "EXACT_REGISTERED_FIELD_PG_WITNESS",
       "physicalVerified": true,
-      "runtimeSemanticsVerified": false,
+      "runtimeSemanticsVerified": true,
       "evidence": [
         "tests/integration/db01-registered-physical-field-crosswalk.test.ts"
-      ]
+      ],
+      "runtimeEvidence": {
+        "verifiedFlow": "REGISTERED_POSTGRES_OPAQUE_DEVICE_SESSION_SCOPE_EXPIRY_REVOKE",
+        "suite": "tests/integration/db01-device-session-field-semantics.test.ts",
+        "passingRun": "https://github.com/42Students/lms-vnext/actions/runs/40677470938",
+        "testedCommit": "343b356c9a7fefef4766ef2d92b144130056f087",
+        "limitations": "This records current registered first-party application behavior, not import of legacy credentials/IDs, historical data migration, third-party provider delivery, production deployment, or owner/product approval."
+      }
     },
     {
       "legacyField": "user_session.user_id",
@@ -2581,10 +2942,17 @@
       "proposedPhysicalTarget": "identity_device_sessions.user_id",
       "evidenceStatus": "EXACT_REGISTERED_FIELD_PG_WITNESS",
       "physicalVerified": true,
-      "runtimeSemanticsVerified": false,
+      "runtimeSemanticsVerified": true,
       "evidence": [
         "tests/integration/db01-registered-physical-field-crosswalk.test.ts"
-      ]
+      ],
+      "runtimeEvidence": {
+        "verifiedFlow": "REGISTERED_POSTGRES_OPAQUE_DEVICE_SESSION_SCOPE_EXPIRY_REVOKE",
+        "suite": "tests/integration/db01-device-session-field-semantics.test.ts",
+        "passingRun": "https://github.com/42Students/lms-vnext/actions/runs/40677470938",
+        "testedCommit": "343b356c9a7fefef4766ef2d92b144130056f087",
+        "limitations": "This records current registered first-party application behavior, not import of legacy credentials/IDs, historical data migration, third-party provider delivery, production deployment, or owner/product approval."
+      }
     },
     {
       "legacyField": "user_session.user_type",
@@ -2606,10 +2974,17 @@
       "proposedPhysicalTarget": "identity_device_sessions.device_name",
       "evidenceStatus": "EXACT_REGISTERED_FIELD_PG_WITNESS",
       "physicalVerified": true,
-      "runtimeSemanticsVerified": false,
+      "runtimeSemanticsVerified": true,
       "evidence": [
         "tests/integration/db01-registered-physical-field-crosswalk.test.ts"
-      ]
+      ],
+      "runtimeEvidence": {
+        "verifiedFlow": "REGISTERED_POSTGRES_OPAQUE_DEVICE_SESSION_SCOPE_EXPIRY_REVOKE",
+        "suite": "tests/integration/db01-device-session-field-semantics.test.ts",
+        "passingRun": "https://github.com/42Students/lms-vnext/actions/runs/40677470938",
+        "testedCommit": "343b356c9a7fefef4766ef2d92b144130056f087",
+        "limitations": "This records current registered first-party application behavior, not import of legacy credentials/IDs, historical data migration, third-party provider delivery, production deployment, or owner/product approval."
+      }
     },
     {
       "legacyField": "user_session.user_agent",
@@ -2618,10 +2993,17 @@
       "proposedPhysicalTarget": "identity_device_sessions.user_agent",
       "evidenceStatus": "EXACT_REGISTERED_FIELD_PG_WITNESS",
       "physicalVerified": true,
-      "runtimeSemanticsVerified": false,
+      "runtimeSemanticsVerified": true,
       "evidence": [
         "tests/integration/db01-registered-physical-field-crosswalk.test.ts"
-      ]
+      ],
+      "runtimeEvidence": {
+        "verifiedFlow": "REGISTERED_POSTGRES_OPAQUE_DEVICE_SESSION_SCOPE_EXPIRY_REVOKE",
+        "suite": "tests/integration/db01-device-session-field-semantics.test.ts",
+        "passingRun": "https://github.com/42Students/lms-vnext/actions/runs/40677470938",
+        "testedCommit": "343b356c9a7fefef4766ef2d92b144130056f087",
+        "limitations": "This records current registered first-party application behavior, not import of legacy credentials/IDs, historical data migration, third-party provider delivery, production deployment, or owner/product approval."
+      }
     },
     {
       "legacyField": "user_session.ip_address",
@@ -2630,10 +3012,17 @@
       "proposedPhysicalTarget": "identity_device_sessions.ip_address",
       "evidenceStatus": "EXACT_REGISTERED_FIELD_PG_WITNESS",
       "physicalVerified": true,
-      "runtimeSemanticsVerified": false,
+      "runtimeSemanticsVerified": true,
       "evidence": [
         "tests/integration/db01-registered-physical-field-crosswalk.test.ts"
-      ]
+      ],
+      "runtimeEvidence": {
+        "verifiedFlow": "REGISTERED_POSTGRES_OPAQUE_DEVICE_SESSION_SCOPE_EXPIRY_REVOKE",
+        "suite": "tests/integration/db01-device-session-field-semantics.test.ts",
+        "passingRun": "https://github.com/42Students/lms-vnext/actions/runs/40677470938",
+        "testedCommit": "343b356c9a7fefef4766ef2d92b144130056f087",
+        "limitations": "This records current registered first-party application behavior, not import of legacy credentials/IDs, historical data migration, third-party provider delivery, production deployment, or owner/product approval."
+      }
     },
     {
       "legacyField": "user_session.created_at",
@@ -2642,10 +3031,17 @@
       "proposedPhysicalTarget": "identity_device_sessions.created_at",
       "evidenceStatus": "EXACT_REGISTERED_FIELD_PG_WITNESS",
       "physicalVerified": true,
-      "runtimeSemanticsVerified": false,
+      "runtimeSemanticsVerified": true,
       "evidence": [
         "tests/integration/db01-registered-physical-field-crosswalk.test.ts"
-      ]
+      ],
+      "runtimeEvidence": {
+        "verifiedFlow": "REGISTERED_POSTGRES_OPAQUE_DEVICE_SESSION_SCOPE_EXPIRY_REVOKE",
+        "suite": "tests/integration/db01-device-session-field-semantics.test.ts",
+        "passingRun": "https://github.com/42Students/lms-vnext/actions/runs/40677470938",
+        "testedCommit": "343b356c9a7fefef4766ef2d92b144130056f087",
+        "limitations": "This records current registered first-party application behavior, not import of legacy credentials/IDs, historical data migration, third-party provider delivery, production deployment, or owner/product approval."
+      }
     },
     {
       "legacyField": "user_session.last_used_at",
@@ -2654,10 +3050,17 @@
       "proposedPhysicalTarget": "identity_device_sessions.last_seen_at",
       "evidenceStatus": "EXACT_REGISTERED_FIELD_PG_WITNESS",
       "physicalVerified": true,
-      "runtimeSemanticsVerified": false,
+      "runtimeSemanticsVerified": true,
       "evidence": [
         "tests/integration/db01-registered-physical-field-crosswalk.test.ts"
-      ]
+      ],
+      "runtimeEvidence": {
+        "verifiedFlow": "REGISTERED_POSTGRES_OPAQUE_DEVICE_SESSION_SCOPE_EXPIRY_REVOKE",
+        "suite": "tests/integration/db01-device-session-field-semantics.test.ts",
+        "passingRun": "https://github.com/42Students/lms-vnext/actions/runs/40677470938",
+        "testedCommit": "343b356c9a7fefef4766ef2d92b144130056f087",
+        "limitations": "This records current registered first-party application behavior, not import of legacy credentials/IDs, historical data migration, third-party provider delivery, production deployment, or owner/product approval."
+      }
     },
     {
       "legacyField": "user_session.expires_at",
@@ -2666,10 +3069,17 @@
       "proposedPhysicalTarget": "identity_device_sessions.expires_at",
       "evidenceStatus": "EXACT_REGISTERED_FIELD_PG_WITNESS",
       "physicalVerified": true,
-      "runtimeSemanticsVerified": false,
+      "runtimeSemanticsVerified": true,
       "evidence": [
         "tests/integration/db01-registered-physical-field-crosswalk.test.ts"
-      ]
+      ],
+      "runtimeEvidence": {
+        "verifiedFlow": "REGISTERED_POSTGRES_OPAQUE_DEVICE_SESSION_SCOPE_EXPIRY_REVOKE",
+        "suite": "tests/integration/db01-device-session-field-semantics.test.ts",
+        "passingRun": "https://github.com/42Students/lms-vnext/actions/runs/40677470938",
+        "testedCommit": "343b356c9a7fefef4766ef2d92b144130056f087",
+        "limitations": "This records current registered first-party application behavior, not import of legacy credentials/IDs, historical data migration, third-party provider delivery, production deployment, or owner/product approval."
+      }
     }
   ]
 }
