@@ -242,7 +242,7 @@ if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.me
     if (process.argv.includes('--json') || process.argv.includes('--check')) {
       console.log(JSON.stringify(report,null,2));
     } else if (process.argv.includes('--roadmap') || process.argv.includes('--lanes') ||
-               process.argv.some(a => /^--lane=L\\d\\d$/.test(a))) {
+               process.argv.some(a => /^--lane=L\d\d$/.test(a))) {
       const doc=JSON.parse(fs.readFileSync(path.join(root ?? path.resolve(path.dirname(fileURLToPath(import.meta.url)),'..'),'docs/tracker.json'),'utf8'));
       const reportExec=inspectExecution(doc);
       const only=process.argv.find(a=>a.startsWith('--lane='))?.split('=')[1];
