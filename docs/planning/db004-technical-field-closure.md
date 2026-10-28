@@ -1,0 +1,42 @@
+# DB-004 — technical field evidence complete; release remains gated
+
+Verified on `42Students/lms-vnext` using registered PostgreSQL acceptance
+<https://github.com/42Students/lms-vnext/actions/runs/40698092913>
+for implementation commit `ba4a916244e65abd59ecc1ca738b1926ef26e2d6`.
+
+- **195 of 195 source-owned fields** have bounded registered-schema runtime,
+  composite replacement, or safe retirement implementation evidence.
+- **137** fields have direct physical/runtime semantic witnesses, **24**
+  have explicitly bounded composite/first-party service replacements, and
+  **34** have technically implemented secure retirement.
+- The 7 legacy `email_verification_token` columns are replaced by
+  `identity_email_verification_links`, `identity_email_ownership_proofs`,
+  and the internal HMAC email-link service. Tests cover actual
+  same-college placement application ownership, single-use redemption,
+  expiry, email changes, revocation and failed send.
+- The 3 final learner/faculty account-verification fields are backed by
+  canonical same-college membership scope, profile roll lookup, role-specific
+  one-time challenges and denial of login-session conversion.
+
+## Still explicitly NOT accepted
+
+These are technical *field implementation* witnesses, not final release
+sign-off. Do not mark DB-004 or its dependent DB-005 milestone done before:
+
+1. All seven owner decision groups in
+   `docs/planning/db004-closure-decision-register.json` have signed,
+   source-backed approvals.
+2. All 34 technically retired credential/metadata fields receive documented
+   security, migration and retention approval.
+3. Real historical data import and source-ID/timestamp reconciliation,
+   exceptions/quarantine and migration receipts are reviewed.
+4. The first-party email-link and scoped-account-proof issuing/consuming
+   operations are exposed only through deliberately permission-checked routes,
+   with authorized real email/SMS transport evidence; no public issue route or
+   external provider certification is provided by these tests.
+5. The latest production-targeted full CI, browser, provider and release
+   acceptance gates pass, or are explicitly exempted by authorized owners.
+
+**Tracker state is intentionally `DB-004.done=false`.** A green technical
+coverage figure is not permission to enable legacy bearer tokens, bypass
+tenant checks, or invent retrospective owner approvals.

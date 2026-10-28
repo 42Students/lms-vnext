@@ -6,7 +6,7 @@
   "registeredMigration": "drizzle/0300_db01_person_name_identity_profile.sql",
   "firstPartyAuthAuthority": "docs/architecture/first-party-login.md",
   "explicitScope": "DB-004 only; DB-005 DB-007 DB-012 remain separately owned",
-  "completion": "OPEN_UNTIL_RUNTIME_SEMANTICS_AND_SIGNOFF",
+  "completion": "TECHNICAL_FIELD_EVIDENCE_COMPLETE_RELEASE_SIGNOFF_PENDING",
   "summary": {
     "ownerFields": 195,
     "registeredExactFieldWitnesses": 112,
@@ -26,8 +26,8 @@
     "registeredReplacementPhysicalWitnesses": 25,
     "registeredPhysicalWitnessTotal": 137,
     "stillWithoutPhysicalWitness": 58,
-    "runtimeSemanticsVerified": 134,
-    "runtimeSemanticsUnverified": 61,
+    "runtimeSemanticsVerified": 137,
+    "runtimeSemanticsUnverified": 58,
     "runtimeWitnessesByFamily": {
       "college_branding": 15,
       "tenant_domain": 13,
@@ -42,14 +42,14 @@
       "department": 6,
       "recruiter": 6,
       "role": 1,
-      "learner_acct_verification": 9,
-      "faculty_acct_verification": 9
+      "learner_acct_verification": 11,
+      "faculty_acct_verification": 10
     },
     "retirementImplementationVerified": 34,
     "retirementApprovalPending": 34,
-    "technicalEvidenceCoverage": 185,
-    "technicalEvidenceUncovered": 10,
-    "compositeImplementationVerified": 17
+    "technicalEvidenceCoverage": 195,
+    "technicalEvidenceUncovered": 0,
+    "compositeImplementationVerified": 24
   },
   "guidance": [
     "Exact column existence on registered PostgreSQL does not prove legacy reader/writer parity.",
@@ -70,7 +70,8 @@
     "At 6a9455fd, a registered PG negative source metadata catalog witness adds 13 technically implemented retirements (still unapproved). The recruiter.suspended_at persisted timestamp and fail-closed suspension/restoration lifecycle were directly witnessed at 9efa47bd. These are implementation evidence, not source import or product sign-off.",
     "At 8fdface1, registered PG proved five non-physical composite active-runtime replacements: learner/faculty organization ancestry, active user role selection, and typed membership-role assignment authority. Source numeric-ID migration reconciliation and owner approval remain open. Composite evidence is distinct from the 134 physical runtime witnesses.",
     "At c8a87df1, registered PostgreSQL witnessed ten more composite implementation mappings: learner/faculty source IDs and timestamps and scoped termination (8), recruiter source ID stored only as provenance (1), source role name typed grant and recruiter denial (1). Historical data migration, source import audits and product/security disposition remain unapproved.",
-    "At 8819ef62, the registered DB-004 PostgreSQL acceptance passed cooldown denial for both Learner and Faculty role-eligible LOGIN challenges and exact evidence-suite certification; two historical role verification cooldown fields have bounded first-party composite replacement evidence, not source data reconciliation or approval."
+    "At 8819ef62, the registered DB-004 PostgreSQL acceptance passed cooldown denial for both Learner and Faculty role-eligible LOGIN challenges and exact evidence-suite certification; two historical role verification cooldown fields have bounded first-party composite replacement evidence, not source data reconciliation or approval.",
+    "At ba4a9162, registered PostgreSQL DB-004 acceptance proved the final ten bounded implementation mappings: three role/account/roll proof fields and seven secure email-link fields, including a real same-college placement application positive path. All 195 fields now have technical implementation or retirement evidence, but historical source import, public issuer/consumer routing, delivery-provider smoke, 34 formal retirement approvals, seven owner decisions and release certification remain OPEN; tracker DB-004 done:false."
   ],
   "rows": [
     {
@@ -1166,8 +1167,19 @@
       "runtimeSemanticsVerified": false,
       "evidence": [
         "docs/architecture/first-party-login.md",
-        "docs/planning/db01-chat05-provider-persistence-decision.json"
-      ]
+        "docs/planning/db01-chat05-provider-persistence-decision.json",
+        "src/modules/identity/email-link-verification-service.ts",
+        "tests/integration/db01-email-link-ownership-semantics.test.ts",
+        "drizzle/0184_lane15_independent_email_link_proofs.sql"
+      ],
+      "compositeImplementationVerified": true,
+      "compositeEvidence": {
+        "verifiedFlow": "REGISTERED_POSTGRES_24H_EMAIL_TOKEN_HMAC_LINK_APPLICATION_BOUND_PROOF_AND_REPLAY_GUARDS",
+        "suite": "tests/integration/db01-email-link-ownership-semantics.test.ts",
+        "passingRun": "https://github.com/42Students/lms-vnext/actions/runs/40698092913",
+        "testedCommit": "ba4a916244e65abd59ecc1ca738b1926ef26e2d6",
+        "limitations": "Witnesses provider-callback service implementation with signed HMAC digests, 24-hour expiry, persisted email fingerprint, real same-college placement application ownership, current contact, one-winner verification and durable proof. NOT a live public API/verified SMTP integration, historical email-token import or source-time reconciliation, retention approval, or product/security signoff."
+      }
     },
     {
       "legacyField": "email_verification_token.application_id",
@@ -1179,8 +1191,19 @@
       "runtimeSemanticsVerified": false,
       "evidence": [
         "docs/architecture/first-party-login.md",
-        "docs/planning/db01-chat05-provider-persistence-decision.json"
-      ]
+        "docs/planning/db01-chat05-provider-persistence-decision.json",
+        "src/modules/identity/email-link-verification-service.ts",
+        "tests/integration/db01-email-link-ownership-semantics.test.ts",
+        "drizzle/0184_lane15_independent_email_link_proofs.sql"
+      ],
+      "compositeImplementationVerified": true,
+      "compositeEvidence": {
+        "verifiedFlow": "REGISTERED_POSTGRES_24H_EMAIL_TOKEN_HMAC_LINK_APPLICATION_BOUND_PROOF_AND_REPLAY_GUARDS",
+        "suite": "tests/integration/db01-email-link-ownership-semantics.test.ts",
+        "passingRun": "https://github.com/42Students/lms-vnext/actions/runs/40698092913",
+        "testedCommit": "ba4a916244e65abd59ecc1ca738b1926ef26e2d6",
+        "limitations": "Witnesses provider-callback service implementation with signed HMAC digests, 24-hour expiry, persisted email fingerprint, real same-college placement application ownership, current contact, one-winner verification and durable proof. NOT a live public API/verified SMTP integration, historical email-token import or source-time reconciliation, retention approval, or product/security signoff."
+      }
     },
     {
       "legacyField": "email_verification_token.created_at",
@@ -1192,8 +1215,19 @@
       "runtimeSemanticsVerified": false,
       "evidence": [
         "docs/architecture/first-party-login.md",
-        "docs/planning/db01-chat05-provider-persistence-decision.json"
-      ]
+        "docs/planning/db01-chat05-provider-persistence-decision.json",
+        "src/modules/identity/email-link-verification-service.ts",
+        "tests/integration/db01-email-link-ownership-semantics.test.ts",
+        "drizzle/0184_lane15_independent_email_link_proofs.sql"
+      ],
+      "compositeImplementationVerified": true,
+      "compositeEvidence": {
+        "verifiedFlow": "REGISTERED_POSTGRES_24H_EMAIL_TOKEN_HMAC_LINK_APPLICATION_BOUND_PROOF_AND_REPLAY_GUARDS",
+        "suite": "tests/integration/db01-email-link-ownership-semantics.test.ts",
+        "passingRun": "https://github.com/42Students/lms-vnext/actions/runs/40698092913",
+        "testedCommit": "ba4a916244e65abd59ecc1ca738b1926ef26e2d6",
+        "limitations": "Witnesses provider-callback service implementation with signed HMAC digests, 24-hour expiry, persisted email fingerprint, real same-college placement application ownership, current contact, one-winner verification and durable proof. NOT a live public API/verified SMTP integration, historical email-token import or source-time reconciliation, retention approval, or product/security signoff."
+      }
     },
     {
       "legacyField": "email_verification_token.email",
@@ -1205,8 +1239,19 @@
       "runtimeSemanticsVerified": false,
       "evidence": [
         "docs/architecture/first-party-login.md",
-        "docs/planning/db01-chat05-provider-persistence-decision.json"
-      ]
+        "docs/planning/db01-chat05-provider-persistence-decision.json",
+        "src/modules/identity/email-link-verification-service.ts",
+        "tests/integration/db01-email-link-ownership-semantics.test.ts",
+        "drizzle/0184_lane15_independent_email_link_proofs.sql"
+      ],
+      "compositeImplementationVerified": true,
+      "compositeEvidence": {
+        "verifiedFlow": "REGISTERED_POSTGRES_24H_EMAIL_TOKEN_HMAC_LINK_APPLICATION_BOUND_PROOF_AND_REPLAY_GUARDS",
+        "suite": "tests/integration/db01-email-link-ownership-semantics.test.ts",
+        "passingRun": "https://github.com/42Students/lms-vnext/actions/runs/40698092913",
+        "testedCommit": "ba4a916244e65abd59ecc1ca738b1926ef26e2d6",
+        "limitations": "Witnesses provider-callback service implementation with signed HMAC digests, 24-hour expiry, persisted email fingerprint, real same-college placement application ownership, current contact, one-winner verification and durable proof. NOT a live public API/verified SMTP integration, historical email-token import or source-time reconciliation, retention approval, or product/security signoff."
+      }
     },
     {
       "legacyField": "email_verification_token.expires_at",
@@ -1218,8 +1263,19 @@
       "runtimeSemanticsVerified": false,
       "evidence": [
         "docs/architecture/first-party-login.md",
-        "docs/planning/db01-chat05-provider-persistence-decision.json"
-      ]
+        "docs/planning/db01-chat05-provider-persistence-decision.json",
+        "src/modules/identity/email-link-verification-service.ts",
+        "tests/integration/db01-email-link-ownership-semantics.test.ts",
+        "drizzle/0184_lane15_independent_email_link_proofs.sql"
+      ],
+      "compositeImplementationVerified": true,
+      "compositeEvidence": {
+        "verifiedFlow": "REGISTERED_POSTGRES_24H_EMAIL_TOKEN_HMAC_LINK_APPLICATION_BOUND_PROOF_AND_REPLAY_GUARDS",
+        "suite": "tests/integration/db01-email-link-ownership-semantics.test.ts",
+        "passingRun": "https://github.com/42Students/lms-vnext/actions/runs/40698092913",
+        "testedCommit": "ba4a916244e65abd59ecc1ca738b1926ef26e2d6",
+        "limitations": "Witnesses provider-callback service implementation with signed HMAC digests, 24-hour expiry, persisted email fingerprint, real same-college placement application ownership, current contact, one-winner verification and durable proof. NOT a live public API/verified SMTP integration, historical email-token import or source-time reconciliation, retention approval, or product/security signoff."
+      }
     },
     {
       "legacyField": "email_verification_token.verified",
@@ -1231,8 +1287,19 @@
       "runtimeSemanticsVerified": false,
       "evidence": [
         "docs/architecture/first-party-login.md",
-        "docs/planning/db01-chat05-provider-persistence-decision.json"
-      ]
+        "docs/planning/db01-chat05-provider-persistence-decision.json",
+        "src/modules/identity/email-link-verification-service.ts",
+        "tests/integration/db01-email-link-ownership-semantics.test.ts",
+        "drizzle/0184_lane15_independent_email_link_proofs.sql"
+      ],
+      "compositeImplementationVerified": true,
+      "compositeEvidence": {
+        "verifiedFlow": "REGISTERED_POSTGRES_24H_EMAIL_TOKEN_HMAC_LINK_APPLICATION_BOUND_PROOF_AND_REPLAY_GUARDS",
+        "suite": "tests/integration/db01-email-link-ownership-semantics.test.ts",
+        "passingRun": "https://github.com/42Students/lms-vnext/actions/runs/40698092913",
+        "testedCommit": "ba4a916244e65abd59ecc1ca738b1926ef26e2d6",
+        "limitations": "Witnesses provider-callback service implementation with signed HMAC digests, 24-hour expiry, persisted email fingerprint, real same-college placement application ownership, current contact, one-winner verification and durable proof. NOT a live public API/verified SMTP integration, historical email-token import or source-time reconciliation, retention approval, or product/security signoff."
+      }
     },
     {
       "legacyField": "email_verification_token.verified_at",
@@ -1244,8 +1311,19 @@
       "runtimeSemanticsVerified": false,
       "evidence": [
         "docs/architecture/first-party-login.md",
-        "docs/planning/db01-chat05-provider-persistence-decision.json"
-      ]
+        "docs/planning/db01-chat05-provider-persistence-decision.json",
+        "src/modules/identity/email-link-verification-service.ts",
+        "tests/integration/db01-email-link-ownership-semantics.test.ts",
+        "drizzle/0184_lane15_independent_email_link_proofs.sql"
+      ],
+      "compositeImplementationVerified": true,
+      "compositeEvidence": {
+        "verifiedFlow": "REGISTERED_POSTGRES_24H_EMAIL_TOKEN_HMAC_LINK_APPLICATION_BOUND_PROOF_AND_REPLAY_GUARDS",
+        "suite": "tests/integration/db01-email-link-ownership-semantics.test.ts",
+        "passingRun": "https://github.com/42Students/lms-vnext/actions/runs/40698092913",
+        "testedCommit": "ba4a916244e65abd59ecc1ca738b1926ef26e2d6",
+        "limitations": "Witnesses provider-callback service implementation with signed HMAC digests, 24-hour expiry, persisted email fingerprint, real same-college placement application ownership, current contact, one-winner verification and durable proof. NOT a live public API/verified SMTP integration, historical email-token import or source-time reconciliation, retention approval, or product/security signoff."
+      }
     },
     {
       "legacyField": "faculty.id",
@@ -1641,10 +1719,19 @@
       "proposedPhysicalTarget": "identity_auth_attempts.membership_id",
       "evidenceStatus": "EXACT_REGISTERED_FIELD_PG_WITNESS",
       "physicalVerified": true,
-      "runtimeSemanticsVerified": false,
+      "runtimeSemanticsVerified": true,
       "evidence": [
-        "tests/integration/db01-registered-physical-field-crosswalk.test.ts"
-      ]
+        "tests/integration/db01-registered-physical-field-crosswalk.test.ts",
+        "src/modules/identity/scoped-account-verification-service.ts",
+        "tests/integration/db01-scoped-account-verification.test.ts"
+      ],
+      "runtimeEvidence": {
+        "verifiedFlow": "REGISTERED_POSTGRES_SCOPED_LEARNER_FACULTY_PROOF_UUID_MEMBERSHIP_ROLE_AND_NON_CREDENTIAL_ROLL_LOOKUP",
+        "suite": "tests/integration/db01-scoped-account-verification.test.ts",
+        "passingRun": "https://github.com/42Students/lms-vnext/actions/runs/40698092913",
+        "testedCommit": "ba4a916244e65abd59ecc1ca738b1926ef26e2d6",
+        "limitations": "Witnesses new first-party non-login, HMAC-scoped role challenge against active canonical UUID membership, one-winner single-use proof, and learner profile roll lookup; does not certify historical source-ID migration, provider delivery, public API activation, or product/security acceptance."
+      }
     },
     {
       "legacyField": "faculty_acct_verification.incorrect_attempts",
@@ -2192,10 +2279,19 @@
       "proposedPhysicalTarget": "identity_auth_attempts.membership_id",
       "evidenceStatus": "EXACT_REGISTERED_FIELD_PG_WITNESS",
       "physicalVerified": true,
-      "runtimeSemanticsVerified": false,
+      "runtimeSemanticsVerified": true,
       "evidence": [
-        "tests/integration/db01-registered-physical-field-crosswalk.test.ts"
-      ]
+        "tests/integration/db01-registered-physical-field-crosswalk.test.ts",
+        "src/modules/identity/scoped-account-verification-service.ts",
+        "tests/integration/db01-scoped-account-verification.test.ts"
+      ],
+      "runtimeEvidence": {
+        "verifiedFlow": "REGISTERED_POSTGRES_SCOPED_LEARNER_FACULTY_PROOF_UUID_MEMBERSHIP_ROLE_AND_NON_CREDENTIAL_ROLL_LOOKUP",
+        "suite": "tests/integration/db01-scoped-account-verification.test.ts",
+        "passingRun": "https://github.com/42Students/lms-vnext/actions/runs/40698092913",
+        "testedCommit": "ba4a916244e65abd59ecc1ca738b1926ef26e2d6",
+        "limitations": "Witnesses new first-party non-login, HMAC-scoped role challenge against active canonical UUID membership, one-winner single-use proof, and learner profile roll lookup; does not certify historical source-ID migration, provider delivery, public API activation, or product/security acceptance."
+      }
     },
     {
       "legacyField": "learner_acct_verification.max_resend_attempts",
@@ -2261,10 +2357,19 @@
       "proposedPhysicalTarget": "learner_profiles.roll_number",
       "evidenceStatus": "EXACT_REGISTERED_FIELD_PG_WITNESS",
       "physicalVerified": true,
-      "runtimeSemanticsVerified": false,
+      "runtimeSemanticsVerified": true,
       "evidence": [
-        "tests/integration/db01-registered-physical-field-crosswalk.test.ts"
-      ]
+        "tests/integration/db01-registered-physical-field-crosswalk.test.ts",
+        "src/modules/identity/scoped-account-verification-service.ts",
+        "tests/integration/db01-scoped-account-verification.test.ts"
+      ],
+      "runtimeEvidence": {
+        "verifiedFlow": "REGISTERED_POSTGRES_SCOPED_LEARNER_FACULTY_PROOF_UUID_MEMBERSHIP_ROLE_AND_NON_CREDENTIAL_ROLL_LOOKUP",
+        "suite": "tests/integration/db01-scoped-account-verification.test.ts",
+        "passingRun": "https://github.com/42Students/lms-vnext/actions/runs/40698092913",
+        "testedCommit": "ba4a916244e65abd59ecc1ca738b1926ef26e2d6",
+        "limitations": "Witnesses new first-party non-login, HMAC-scoped role challenge against active canonical UUID membership, one-winner single-use proof, and learner profile roll lookup; does not certify historical source-ID migration, provider delivery, public API activation, or product/security acceptance."
+      }
     },
     {
       "legacyField": "learner_acct_verification.verify_status",

@@ -1,35 +1,23 @@
 {
   "schemaVersion": 1,
   "task": "DB-004",
-  "sourceCommit": "8819ef623f121af780a6ba3d1960501f0bc6a46c",
+  "sourceCommit": "ba4a916244e65abd59ecc1ca738b1926ef26e2d6",
   "source": "docs/planning/db004-current-owner-evidence.json",
   "policy": "No approval may be inferred from source code, tests, a passing CI run, or this register.",
   "technicalSnapshot": {
     "total": 195,
     "physical": 137,
-    "runtimeSemantics": 134,
+    "runtimeSemantics": 137,
     "implementationRetired": 34,
-    "technicalCovered": 185,
-    "uncovered": 10,
+    "technicalCovered": 195,
+    "uncovered": 0,
     "approvalPendingRetirements": 34,
-    "compositeImplemented": 17
+    "compositeImplemented": 24
   },
   "uncoveredFieldClasses": {
-    "physicalPending": [
-      "faculty_acct_verification.faculty_id",
-      "learner_acct_verification.learner_id",
-      "learner_acct_verification.roll_number"
-    ],
+    "physicalPending": [],
     "compositePending": [],
-    "retirementOrSecurityPending": [
-      "email_verification_token.token",
-      "email_verification_token.application_id",
-      "email_verification_token.created_at",
-      "email_verification_token.email",
-      "email_verification_token.expires_at",
-      "email_verification_token.verified",
-      "email_verification_token.verified_at"
-    ]
+    "retirementOrSecurityPending": []
   },
   "decisions": [
     {
@@ -198,5 +186,6 @@
       "approvedAt": null,
       "approvalEvidenceUrl": null
     }
-  ]
+  ],
+  "technicalCoverageScope": "Bounded registered PostgreSQL schema/service behavior and safe retirement, NOT live provider integration, full legacy dataset migration, public API enablement or product/security approval. DB-004 remains formally OPEN."
 }
