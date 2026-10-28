@@ -2115,6 +2115,13 @@
       "when": 1792359431266,
       "tag": "0301_db01_retired_host_global_uniqueness",
       "breakpoints": true
+    },
+    {
+      "idx": 302,
+      "version": "7",
+      "when": 1792359491266,
+      "tag": "0302_db01_domain_terminal_owner_guard",
+      "breakpoints": true
     }
   ]
 }

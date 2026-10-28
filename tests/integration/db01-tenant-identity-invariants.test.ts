@@ -134,6 +134,72 @@ describe("DB01 tenant and identity PostgreSQL constraints", () => {
     });
   });
 
+
+  it("direct SQL cannot transfer an existing domain to another college (23514)",async()=>{
+    await withRollback(async client=>{
+      const host=uniqueHost();
+      const created=await client.query<{id:string}>(
+        "insert into tenant_domains(college_id,host) values($1,$2) returning id",
+        [SEED_IDS.collegeA,host],
+      );
+      await expect(client.query(
+        "update tenant_domains set college_id=$2 where id=$1",
+        [created.rows[0]!.id,SEED_IDS.collegeB],
+      )).rejects.toMatchObject({
+        code:"23514",constraint:"db01_domain_owner_immutable_ck",
+      });
+    });
+  });
+
+  it("direct SQL cannot change a verified hostname without resetting DNS proof (23514)",async()=>{
+    await withRollback(async client=>{
+      const created=await client.query<{id:string}>(
+        "insert into tenant_domains(college_id,host,is_verified,verified_at,verification_token) values($1,$2,true,now(),null) returning id",
+        [SEED_IDS.collegeA,uniqueHost()],
+      );
+      await expect(client.query(
+        "update tenant_domains set host=$2 where id=$1",
+        [created.rows[0]!.id,uniqueHost()],
+      )).rejects.toMatchObject({
+        code:"23514",constraint:"db01_domain_host_proof_reset_ck",
+      });
+    });
+  });
+
+  it("direct SQL cannot revive a tombstoned hostname (23514)",async()=>{
+    await withRollback(async client=>{
+      const created=await client.query<{id:string}>(
+        "insert into tenant_domains(college_id,host,is_verified,is_primary,deleted_at) values($1,$2,false,false,now()) returning id",
+        [SEED_IDS.collegeA,uniqueHost()],
+      );
+      await expect(client.query(
+        "update tenant_domains set deleted_at=null where id=$1",
+        [created.rows[0]!.id],
+      )).rejects.toMatchObject({
+        code:"23514",constraint:"db01_domain_tombstone_terminal_ck",
+      });
+    });
+  });
+
+  it("permits a legitimate hostname rotation only with a fresh proof and cleared verification",async()=>{
+    await withRollback(async client=>{
+      const created=await client.query<{id:string}>(
+        "insert into tenant_domains(college_id,host,is_verified,verified_at,verification_token) values($1,$2,true,now(),null) returning id",
+        [SEED_IDS.collegeA,uniqueHost()],
+      );
+      const next=uniqueHost();
+      const rotated=await client.query<{host:string;is_verified:boolean;verification_token:string}>(
+        `update tenant_domains
+          set host=$2,is_verified=false,is_primary=false,verified_at=null,
+              last_checked_at=null,last_check_result=null,verification_token=$3
+          where id=$1 returning host,is_verified,verification_token`,
+        [created.rows[0]!.id,next,"new-proof-"+randomUUID()],
+      );
+      expect(rotated.rows[0]).toMatchObject({host:next,is_verified:false});
+      expect(rotated.rows[0]!.verification_token).toMatch(/^new-proof-/);
+    });
+  });
+
   it("rejects duplicate canonical membership for the same user and college (23505)", async () => {
     await withRollback(async (client) => {
       const rows = await client.query(
