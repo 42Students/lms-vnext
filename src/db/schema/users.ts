@@ -20,6 +20,10 @@ export const users = pgTable(
     phoneE164: varchar("phone_e164", { length: 32 }).unique(),
     email: text("email"),
     displayName: text("display_name"),
+    /** Explicit names, never inferred by splitting display_name. */
+    givenName: varchar("given_name", { length: 120 }),
+    familyName: varchar("family_name", { length: 120 }),
+    identityProfileVersion: integer("identity_profile_version").notNull().default(1),
     /** Legacy identity snapshots are for controlled imports and staff display
      * only. Password hashes are deliberately not copied into vNext. */
     legacyUserName: varchar("legacy_user_name",{length:160}),
@@ -43,6 +47,9 @@ export const users = pgTable(
   },
   (table) => [
     check("users_version_ck", sql`${table.version} > 0`),
+    check("users_given_name_nonblank_ck", sql`${table.givenName} is null or char_length(trim(${table.givenName})) > 0`),
+    check("users_family_name_nonblank_ck", sql`${table.familyName} is null or char_length(trim(${table.familyName})) > 0`),
+    check("users_identity_profile_version_ck", sql`${table.identityProfileVersion} >= 1`),
     index("users_legacy_username_idx")
       .on(sql`lower(${table.legacyUserName})`)
       .where(sql`${table.legacyUserName} is not null`),
