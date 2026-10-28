@@ -28,7 +28,9 @@ test.describe("Recruiter Today prototype — persisted actions and Later",()=>{
   expect(weekBounds!.width).toBeLessThanOrEqual(361);
   const needs=today.getByRole("region",{name:"Needs you"});
   await expect(needs).toBeVisible();
-  await expect(today.getByRole("heading",{level:1,name:/Three things need you/})).toBeVisible();
+  // The same verified E2E shortlisted candidate now adds a fourth, real
+  // recruiter review action. Do not drop that work to preserve an old count.
+  await expect(today.getByRole("heading",{level:1,name:/Four things need you/})).toBeVisible();
   await expect(today.locator('[data-testid^="recruiter.today.task-answer:"]')).toHaveCount(1);
   await expect(today.locator('[data-testid^="recruiter.today.task-slots:"]')).toHaveCount(1);
   await expect(today.getByText("How much of the annual CTC is fixed?",{exact:false})).toBeVisible();
@@ -47,13 +49,13 @@ test.describe("Recruiter Today prototype — persisted actions and Later",()=>{
   await expect(today.getByRole("link",{name:"Calendar ›"})).toHaveAttribute("href",/\/hr\/calendar/);
   await expect(today.getByRole("region",{name:"This week"})).toBeVisible();
   await deadline.getByRole("button",{name:"Later"}).click();
-  await expect(today.getByRole("heading",{level:1,name:/Two things need you/})).toBeVisible();
+  await expect(today.getByRole("heading",{level:1,name:/Three things need you/})).toBeVisible();
   await expect(deadline).toHaveCount(0);
   await page.reload();
-  await expect(today.getByRole("heading",{level:1,name:/Two things need you/})).toBeVisible();
+  await expect(today.getByRole("heading",{level:1,name:/Three things need you/})).toBeVisible();
   await needs.getByRole("button",{name:"Show them"}).click();
   await expect(deadline).toHaveCount(1);
-  await expect(today.getByRole("heading",{level:1,name:/Three things need you/})).toBeVisible();
+  await expect(today.getByRole("heading",{level:1,name:/Four things need you/})).toBeVisible();
   await deadline.getByRole("link",{name:"Open"}).click();
   await expect(page).toHaveURL(/\/recruiter\/drives\/66000000-0000-4000-8000-000000000004\?tab=overview/);
   // Next dev always mounts an innocuous nextjs-portal for its dev badge.

@@ -8,13 +8,16 @@ const drive="/recruiter/drives/66000000-0000-4000-8000-000000000004";
 test.describe("Recruiter Applicants, Rounds and Offers: prototype 05–07",()=>{
  test.skip(!enabled,"Needs isolated, verified recruiter employer grant");
 
- test("Applicants hides unshared learner identities and has no fabricated queue",async({page,context})=>{
+ test("Applicants shows only the real TPO-shortlisted fixture, never invented or unshared learners",async({page,context})=>{
   await authenticateGracefulRole(context,"recruiter");
   await page.goto(drive+"?tab=applicants");
   await expect(page.getByRole("heading",{name:"Shared applicants"})).toBeVisible();
-  await expect(page.getByText("Applicants have not been shared")).toBeVisible();
-  await expect(page.getByRole("link",{name:"Review one by one"})).toHaveCount(0);
+  // The destructive E2E seed now includes one authorized, actively
+  // shortlisted applicant. The previous zero-applicant fixture is obsolete.
+  await expect(page.getByText("Applicants have not been shared")).toHaveCount(0);
+  await expect(page.getByRole("link",{name:"Review one by one"})).toBeVisible();
   await expect(page.getByText(/Only placement-cell-shortlisted applicants are visible/)).toBeVisible();
+  await expect(page.getByText("E2E Prototype Learner", {exact:true})).toHaveCount(0);
   await expectNoRawErrors(page);
  });
 
