@@ -38,6 +38,7 @@ import {getTpoDriveClosePreview,closeTpoDriveWithPreview} from "@/modules/placem
 import {recordTpoOfferLifecycle,finalizeMaturedExternalTpoAcceptances} from "@/modules/placements/tpo-offer-lifecycle-service";
 import {createOwnTpoGeneralRequest,decideTpoGeneralRequest,listOwnTpoGeneralRequestsPage}
  from "@/modules/placements/tpo-general-request-service";
+import {getOwnUnifiedLearnerRequests} from "@/modules/placements/learner-support-request-service";
 import {getTpoJoiningTracker} from "@/modules/placements/tpo-joining-tracker-service";
 import {isoDateInIndia} from "@/modules/placements/tpo-offer-expiry-model";
 import {getTpoDriveOfferRegister,getTpoDriveOfferRegisterCsv} from "@/modules/placements/tpo-drive-offer-register-service";
@@ -344,6 +345,39 @@ describe("Placement P8 offers and joining", () => {
     const secondPage=await listOwnTpoGeneralRequestsPage(learner,{page:7,pageSize:20});
     expect(secondPage.requests).toHaveLength(0);
     expect(secondPage.totalPages).toBe(6);
+
+    // The combined Learner support page previously saw only the latest 100
+    // general requests, silently losing the last five and showing wrong totals.
+    const mergedFirst=await getOwnUnifiedLearnerRequests(learner,{page:1});
+    expect(mergedFirst.total).toBe(105);
+    expect(mergedFirst.totalPages).toBe(6);
+    expect(mergedFirst.items).toHaveLength(20);
+    expect(mergedFirst.generalAvailable).toBe(true);
+    const mergedLast=await getOwnUnifiedLearnerRequests(learner,{page:6});
+    expect(mergedLast.total).toBe(105);
+    expect(mergedLast.items).toHaveLength(5);
+    const mergedIds=new Set<string>();
+    for(let page=1;page<=6;page++){
+      const history=await getOwnUnifiedLearnerRequests(learner,{page});
+      for(const item of history.items){
+        expect(item.source).toBe("GENERAL");
+        expect(mergedIds.has(item.id)).toBe(false);
+        mergedIds.add(item.id);
+      }
+    }
+    expect(mergedIds.size).toBe(105);
+    const filtered=await getOwnUnifiedLearnerRequests(learner,{
+      status:"PENDING",type:"CORRECTION_WITH_PROOF",page:999,
+    });
+    expect(filtered.page).toBe(6);
+    expect(filtered.items).toHaveLength(5);
+    expect(filtered.total).toBe(105);
+    const excluded=await getOwnUnifiedLearnerRequests(learner,{
+      status:"APPROVED",type:"CORRECTION_WITH_PROOF",
+    });
+    expect(excluded.total).toBe(0);
+    expect(excluded.items).toHaveLength(0);
+    await expect(getOwnUnifiedLearnerRequests(tpo,{})).rejects.toThrow();
   });
 
   it("TPO-GENERAL-ACCEPTANCE-DISPUTE-DB restores only a timely provisional offer",async()=>{

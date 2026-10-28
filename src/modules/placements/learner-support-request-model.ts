@@ -103,7 +103,7 @@ export const LEGACY_LEARNER_REQUEST_LABELS:Readonly<Record<string,string>>={
 };
 export const PLACEMENT_AFTER_PLACEMENT_REQUEST_HREF="/learn/my-placements/placement";
 
-const unifiedQuerySchema=z.object({
+export const learnerUnifiedHistoryQuerySchema=z.object({
  status:z.string().trim().max(40).default("ALL"),
  type:z.string().trim().max(64).default("ALL"),
  page:z.coerce.number().int().min(1).max(1000).default(1),
@@ -115,7 +115,7 @@ export function learnerUnifiedPersonalRequestPage(
  placementRows:readonly LearnerSupportRequestRow[],
  generalRows:readonly LearnerGeneralRequestHistorySource[], raw:unknown,
 ){
- const q=unifiedQuerySchema.parse(raw);
+ const q=learnerUnifiedHistoryQuerySchema.parse(raw);
  const all=mergeLearnerPersonalRequestHistory(placementRows,generalRows);
  const filtered=all.filter(row=>(q.status==="ALL"||row.status===q.status)&&
   (q.type==="ALL"||row.type===q.type));
