@@ -24,8 +24,8 @@
     "registeredReplacementPhysicalWitnesses": 22,
     "registeredPhysicalWitnessTotal": 134,
     "stillWithoutPhysicalWitness": 61,
-    "runtimeSemanticsVerified": 84,
-    "runtimeSemanticsUnverified": 111,
+    "runtimeSemanticsVerified": 100,
+    "runtimeSemanticsUnverified": 95,
     "runtimeWitnessesByFamily": {
       "college_branding": 14,
       "tenant_domain": 13,
@@ -34,7 +34,9 @@
       "refresh_token_blocklist": 4,
       "user": 8,
       "college": 15,
-      "organization": 5
+      "organization": 5,
+      "learner": 8,
+      "faculty": 8
     }
   },
   "guidance": [
@@ -45,7 +47,8 @@
     "22 registered replacement columns are physically witnessed, but still require legacy semantic/product sign-off. The two kinds of evidence are deliberately independent.",
     "14 active branding fields have explicitly executed, field-level registered PostgreSQL write/read/public projection witnesses. This is behavior verification, NOT product sign-off on legacy deletion, imported data, CDN delivery, provider behavior, or all DB-004 fields.",
     "All 13 tenant_domain fields have a passing real PostgreSQL lifecycle witness covering creation, failure diagnostic, verification, tenant routing and tombstone at 56e19061. This is not provider or policy sign-off.",
-    "At 343b356c, registered PostgreSQL DB-004 acceptance executed 18 suites / 84 tests, witnessing 57 additional active identity, OTP, device-session, organization and college field mappings. Historical password, raw token, cross-host handoff and product/purge decisions remain unapproved."
+    "At 343b356c, registered PostgreSQL DB-004 acceptance executed 18 suites / 84 tests, witnessing 57 additional active identity, OTP, device-session, organization and college field mappings. Historical password, raw token, cross-host handoff and product/purge decisions remain unapproved.",
+    "At 6db017e4, one account with separate learner and faculty college memberships passed a PostgreSQL witness of contact/name, roles, college IDs and independent suspension fields (16 fields); historical import and policy remain open."
   ],
   "rows": [
     {
@@ -1070,10 +1073,17 @@
       "proposedPhysicalTarget": "college_memberships.suspended_at",
       "evidenceStatus": "EXACT_REGISTERED_FIELD_PG_WITNESS",
       "physicalVerified": true,
-      "runtimeSemanticsVerified": false,
+      "runtimeSemanticsVerified": true,
       "evidence": [
         "tests/integration/db01-registered-physical-field-crosswalk.test.ts"
-      ]
+      ],
+      "runtimeEvidence": {
+        "verifiedFlow": "REGISTERED_POSTGRES_CANONICAL_PERSON_ROLE_COLLEGE_MEMBERSHIP_SUSPENSION_ISOLATION",
+        "suite": "tests/integration/db01-learner-faculty-field-semantics.test.ts",
+        "passingRun": "https://github.com/42Students/lms-vnext/actions/runs/40678058612",
+        "testedCommit": "6db017e4c560844ac097e4cc68069cb8efa2ce8b",
+        "limitations": "Verifies live first-party learner/faculty identity and membership state; does not attest source-ID migration, historical import, independent recruiter semantics or product approval."
+      }
     },
     {
       "legacyField": "faculty.suspension_reason",
@@ -1082,10 +1092,17 @@
       "proposedPhysicalTarget": "college_memberships.suspension_reason",
       "evidenceStatus": "EXACT_REGISTERED_FIELD_PG_WITNESS",
       "physicalVerified": true,
-      "runtimeSemanticsVerified": false,
+      "runtimeSemanticsVerified": true,
       "evidence": [
         "tests/integration/db01-registered-physical-field-crosswalk.test.ts"
-      ]
+      ],
+      "runtimeEvidence": {
+        "verifiedFlow": "REGISTERED_POSTGRES_CANONICAL_PERSON_ROLE_COLLEGE_MEMBERSHIP_SUSPENSION_ISOLATION",
+        "suite": "tests/integration/db01-learner-faculty-field-semantics.test.ts",
+        "passingRun": "https://github.com/42Students/lms-vnext/actions/runs/40678058612",
+        "testedCommit": "6db017e4c560844ac097e4cc68069cb8efa2ce8b",
+        "limitations": "Verifies live first-party learner/faculty identity and membership state; does not attest source-ID migration, historical import, independent recruiter semantics or product approval."
+      }
     },
     {
       "legacyField": "faculty.updated_at",
@@ -1106,10 +1123,17 @@
       "proposedPhysicalTarget": "college_memberships.college_id",
       "evidenceStatus": "EXACT_REGISTERED_FIELD_PG_WITNESS",
       "physicalVerified": true,
-      "runtimeSemanticsVerified": false,
+      "runtimeSemanticsVerified": true,
       "evidence": [
         "tests/integration/db01-registered-physical-field-crosswalk.test.ts"
-      ]
+      ],
+      "runtimeEvidence": {
+        "verifiedFlow": "REGISTERED_POSTGRES_CANONICAL_PERSON_ROLE_COLLEGE_MEMBERSHIP_SUSPENSION_ISOLATION",
+        "suite": "tests/integration/db01-learner-faculty-field-semantics.test.ts",
+        "passingRun": "https://github.com/42Students/lms-vnext/actions/runs/40678058612",
+        "testedCommit": "6db017e4c560844ac097e4cc68069cb8efa2ce8b",
+        "limitations": "Verifies live first-party learner/faculty identity and membership state; does not attest source-ID migration, historical import, independent recruiter semantics or product approval."
+      }
     },
     {
       "legacyField": "faculty.contact_mail",
@@ -1118,10 +1142,17 @@
       "proposedPhysicalTarget": "users.email",
       "evidenceStatus": "EXACT_REGISTERED_FIELD_PG_WITNESS",
       "physicalVerified": true,
-      "runtimeSemanticsVerified": false,
+      "runtimeSemanticsVerified": true,
       "evidence": [
         "tests/integration/db01-registered-physical-field-crosswalk.test.ts"
-      ]
+      ],
+      "runtimeEvidence": {
+        "verifiedFlow": "REGISTERED_POSTGRES_CANONICAL_PERSON_ROLE_COLLEGE_MEMBERSHIP_SUSPENSION_ISOLATION",
+        "suite": "tests/integration/db01-learner-faculty-field-semantics.test.ts",
+        "passingRun": "https://github.com/42Students/lms-vnext/actions/runs/40678058612",
+        "testedCommit": "6db017e4c560844ac097e4cc68069cb8efa2ce8b",
+        "limitations": "Verifies live first-party learner/faculty identity and membership state; does not attest source-ID migration, historical import, independent recruiter semantics or product approval."
+      }
     },
     {
       "legacyField": "faculty.contact_mobile",
@@ -1130,10 +1161,17 @@
       "proposedPhysicalTarget": "users.phone_e164",
       "evidenceStatus": "EXACT_REGISTERED_FIELD_PG_WITNESS",
       "physicalVerified": true,
-      "runtimeSemanticsVerified": false,
+      "runtimeSemanticsVerified": true,
       "evidence": [
         "tests/integration/db01-registered-physical-field-crosswalk.test.ts"
-      ]
+      ],
+      "runtimeEvidence": {
+        "verifiedFlow": "REGISTERED_POSTGRES_CANONICAL_PERSON_ROLE_COLLEGE_MEMBERSHIP_SUSPENSION_ISOLATION",
+        "suite": "tests/integration/db01-learner-faculty-field-semantics.test.ts",
+        "passingRun": "https://github.com/42Students/lms-vnext/actions/runs/40678058612",
+        "testedCommit": "6db017e4c560844ac097e4cc68069cb8efa2ce8b",
+        "limitations": "Verifies live first-party learner/faculty identity and membership state; does not attest source-ID migration, historical import, independent recruiter semantics or product approval."
+      }
     },
     {
       "legacyField": "faculty.first_name",
@@ -1142,12 +1180,19 @@
       "proposedPhysicalTarget": "users.given_name",
       "evidenceStatus": "REGISTERED_IDENTITY_NAME_PHYSICAL_WITNESS_SEMANTIC_REVIEW",
       "physicalVerified": true,
-      "runtimeSemanticsVerified": false,
+      "runtimeSemanticsVerified": true,
       "evidence": [
         "drizzle/0300_db01_person_name_identity_profile.sql",
         "src/modules/people/identity-profile-service.ts",
         "tests/integration/db01-person-name-persistence.test.ts"
-      ]
+      ],
+      "runtimeEvidence": {
+        "verifiedFlow": "REGISTERED_POSTGRES_CANONICAL_PERSON_ROLE_COLLEGE_MEMBERSHIP_SUSPENSION_ISOLATION",
+        "suite": "tests/integration/db01-learner-faculty-field-semantics.test.ts",
+        "passingRun": "https://github.com/42Students/lms-vnext/actions/runs/40678058612",
+        "testedCommit": "6db017e4c560844ac097e4cc68069cb8efa2ce8b",
+        "limitations": "Verifies live first-party learner/faculty identity and membership state; does not attest source-ID migration, historical import, independent recruiter semantics or product approval."
+      }
     },
     {
       "legacyField": "faculty.last_name",
@@ -1156,12 +1201,19 @@
       "proposedPhysicalTarget": "users.family_name",
       "evidenceStatus": "REGISTERED_IDENTITY_NAME_PHYSICAL_WITNESS_SEMANTIC_REVIEW",
       "physicalVerified": true,
-      "runtimeSemanticsVerified": false,
+      "runtimeSemanticsVerified": true,
       "evidence": [
         "drizzle/0300_db01_person_name_identity_profile.sql",
         "src/modules/people/identity-profile-service.ts",
         "tests/integration/db01-person-name-persistence.test.ts"
-      ]
+      ],
+      "runtimeEvidence": {
+        "verifiedFlow": "REGISTERED_POSTGRES_CANONICAL_PERSON_ROLE_COLLEGE_MEMBERSHIP_SUSPENSION_ISOLATION",
+        "suite": "tests/integration/db01-learner-faculty-field-semantics.test.ts",
+        "passingRun": "https://github.com/42Students/lms-vnext/actions/runs/40678058612",
+        "testedCommit": "6db017e4c560844ac097e4cc68069cb8efa2ce8b",
+        "limitations": "Verifies live first-party learner/faculty identity and membership state; does not attest source-ID migration, historical import, independent recruiter semantics or product approval."
+      }
     },
     {
       "legacyField": "faculty.organization_id",
@@ -1195,10 +1247,17 @@
       "proposedPhysicalTarget": "membership_roles.role",
       "evidenceStatus": "EXACT_REGISTERED_FIELD_PG_WITNESS",
       "physicalVerified": true,
-      "runtimeSemanticsVerified": false,
+      "runtimeSemanticsVerified": true,
       "evidence": [
         "tests/integration/db01-registered-physical-field-crosswalk.test.ts"
-      ]
+      ],
+      "runtimeEvidence": {
+        "verifiedFlow": "REGISTERED_POSTGRES_CANONICAL_PERSON_ROLE_COLLEGE_MEMBERSHIP_SUSPENSION_ISOLATION",
+        "suite": "tests/integration/db01-learner-faculty-field-semantics.test.ts",
+        "passingRun": "https://github.com/42Students/lms-vnext/actions/runs/40678058612",
+        "testedCommit": "6db017e4c560844ac097e4cc68069cb8efa2ce8b",
+        "limitations": "Verifies live first-party learner/faculty identity and membership state; does not attest source-ID migration, historical import, independent recruiter semantics or product approval."
+      }
     },
     {
       "legacyField": "faculty_acct_verification.id",
@@ -1389,10 +1448,17 @@
       "proposedPhysicalTarget": "college_memberships.suspended_at",
       "evidenceStatus": "EXACT_REGISTERED_FIELD_PG_WITNESS",
       "physicalVerified": true,
-      "runtimeSemanticsVerified": false,
+      "runtimeSemanticsVerified": true,
       "evidence": [
         "tests/integration/db01-registered-physical-field-crosswalk.test.ts"
-      ]
+      ],
+      "runtimeEvidence": {
+        "verifiedFlow": "REGISTERED_POSTGRES_CANONICAL_PERSON_ROLE_COLLEGE_MEMBERSHIP_SUSPENSION_ISOLATION",
+        "suite": "tests/integration/db01-learner-faculty-field-semantics.test.ts",
+        "passingRun": "https://github.com/42Students/lms-vnext/actions/runs/40678058612",
+        "testedCommit": "6db017e4c560844ac097e4cc68069cb8efa2ce8b",
+        "limitations": "Verifies live first-party learner/faculty identity and membership state; does not attest source-ID migration, historical import, independent recruiter semantics or product approval."
+      }
     },
     {
       "legacyField": "learner.suspension_reason",
@@ -1401,10 +1467,17 @@
       "proposedPhysicalTarget": "college_memberships.suspension_reason",
       "evidenceStatus": "EXACT_REGISTERED_FIELD_PG_WITNESS",
       "physicalVerified": true,
-      "runtimeSemanticsVerified": false,
+      "runtimeSemanticsVerified": true,
       "evidence": [
         "tests/integration/db01-registered-physical-field-crosswalk.test.ts"
-      ]
+      ],
+      "runtimeEvidence": {
+        "verifiedFlow": "REGISTERED_POSTGRES_CANONICAL_PERSON_ROLE_COLLEGE_MEMBERSHIP_SUSPENSION_ISOLATION",
+        "suite": "tests/integration/db01-learner-faculty-field-semantics.test.ts",
+        "passingRun": "https://github.com/42Students/lms-vnext/actions/runs/40678058612",
+        "testedCommit": "6db017e4c560844ac097e4cc68069cb8efa2ce8b",
+        "limitations": "Verifies live first-party learner/faculty identity and membership state; does not attest source-ID migration, historical import, independent recruiter semantics or product approval."
+      }
     },
     {
       "legacyField": "learner.updated_at",
@@ -1425,10 +1498,17 @@
       "proposedPhysicalTarget": "college_memberships.college_id",
       "evidenceStatus": "EXACT_REGISTERED_FIELD_PG_WITNESS",
       "physicalVerified": true,
-      "runtimeSemanticsVerified": false,
+      "runtimeSemanticsVerified": true,
       "evidence": [
         "tests/integration/db01-registered-physical-field-crosswalk.test.ts"
-      ]
+      ],
+      "runtimeEvidence": {
+        "verifiedFlow": "REGISTERED_POSTGRES_CANONICAL_PERSON_ROLE_COLLEGE_MEMBERSHIP_SUSPENSION_ISOLATION",
+        "suite": "tests/integration/db01-learner-faculty-field-semantics.test.ts",
+        "passingRun": "https://github.com/42Students/lms-vnext/actions/runs/40678058612",
+        "testedCommit": "6db017e4c560844ac097e4cc68069cb8efa2ce8b",
+        "limitations": "Verifies live first-party learner/faculty identity and membership state; does not attest source-ID migration, historical import, independent recruiter semantics or product approval."
+      }
     },
     {
       "legacyField": "learner.contact_mail",
@@ -1437,10 +1517,17 @@
       "proposedPhysicalTarget": "users.email",
       "evidenceStatus": "EXACT_REGISTERED_FIELD_PG_WITNESS",
       "physicalVerified": true,
-      "runtimeSemanticsVerified": false,
+      "runtimeSemanticsVerified": true,
       "evidence": [
         "tests/integration/db01-registered-physical-field-crosswalk.test.ts"
-      ]
+      ],
+      "runtimeEvidence": {
+        "verifiedFlow": "REGISTERED_POSTGRES_CANONICAL_PERSON_ROLE_COLLEGE_MEMBERSHIP_SUSPENSION_ISOLATION",
+        "suite": "tests/integration/db01-learner-faculty-field-semantics.test.ts",
+        "passingRun": "https://github.com/42Students/lms-vnext/actions/runs/40678058612",
+        "testedCommit": "6db017e4c560844ac097e4cc68069cb8efa2ce8b",
+        "limitations": "Verifies live first-party learner/faculty identity and membership state; does not attest source-ID migration, historical import, independent recruiter semantics or product approval."
+      }
     },
     {
       "legacyField": "learner.contact_mobile",
@@ -1449,10 +1536,17 @@
       "proposedPhysicalTarget": "users.phone_e164",
       "evidenceStatus": "EXACT_REGISTERED_FIELD_PG_WITNESS",
       "physicalVerified": true,
-      "runtimeSemanticsVerified": false,
+      "runtimeSemanticsVerified": true,
       "evidence": [
         "tests/integration/db01-registered-physical-field-crosswalk.test.ts"
-      ]
+      ],
+      "runtimeEvidence": {
+        "verifiedFlow": "REGISTERED_POSTGRES_CANONICAL_PERSON_ROLE_COLLEGE_MEMBERSHIP_SUSPENSION_ISOLATION",
+        "suite": "tests/integration/db01-learner-faculty-field-semantics.test.ts",
+        "passingRun": "https://github.com/42Students/lms-vnext/actions/runs/40678058612",
+        "testedCommit": "6db017e4c560844ac097e4cc68069cb8efa2ce8b",
+        "limitations": "Verifies live first-party learner/faculty identity and membership state; does not attest source-ID migration, historical import, independent recruiter semantics or product approval."
+      }
     },
     {
       "legacyField": "learner.first_name",
@@ -1461,12 +1555,19 @@
       "proposedPhysicalTarget": "users.given_name",
       "evidenceStatus": "REGISTERED_IDENTITY_NAME_PHYSICAL_WITNESS_SEMANTIC_REVIEW",
       "physicalVerified": true,
-      "runtimeSemanticsVerified": false,
+      "runtimeSemanticsVerified": true,
       "evidence": [
         "drizzle/0300_db01_person_name_identity_profile.sql",
         "src/modules/people/identity-profile-service.ts",
         "tests/integration/db01-person-name-persistence.test.ts"
-      ]
+      ],
+      "runtimeEvidence": {
+        "verifiedFlow": "REGISTERED_POSTGRES_CANONICAL_PERSON_ROLE_COLLEGE_MEMBERSHIP_SUSPENSION_ISOLATION",
+        "suite": "tests/integration/db01-learner-faculty-field-semantics.test.ts",
+        "passingRun": "https://github.com/42Students/lms-vnext/actions/runs/40678058612",
+        "testedCommit": "6db017e4c560844ac097e4cc68069cb8efa2ce8b",
+        "limitations": "Verifies live first-party learner/faculty identity and membership state; does not attest source-ID migration, historical import, independent recruiter semantics or product approval."
+      }
     },
     {
       "legacyField": "learner.last_name",
@@ -1475,12 +1576,19 @@
       "proposedPhysicalTarget": "users.family_name",
       "evidenceStatus": "REGISTERED_IDENTITY_NAME_PHYSICAL_WITNESS_SEMANTIC_REVIEW",
       "physicalVerified": true,
-      "runtimeSemanticsVerified": false,
+      "runtimeSemanticsVerified": true,
       "evidence": [
         "drizzle/0300_db01_person_name_identity_profile.sql",
         "src/modules/people/identity-profile-service.ts",
         "tests/integration/db01-person-name-persistence.test.ts"
-      ]
+      ],
+      "runtimeEvidence": {
+        "verifiedFlow": "REGISTERED_POSTGRES_CANONICAL_PERSON_ROLE_COLLEGE_MEMBERSHIP_SUSPENSION_ISOLATION",
+        "suite": "tests/integration/db01-learner-faculty-field-semantics.test.ts",
+        "passingRun": "https://github.com/42Students/lms-vnext/actions/runs/40678058612",
+        "testedCommit": "6db017e4c560844ac097e4cc68069cb8efa2ce8b",
+        "limitations": "Verifies live first-party learner/faculty identity and membership state; does not attest source-ID migration, historical import, independent recruiter semantics or product approval."
+      }
     },
     {
       "legacyField": "learner.organization_id",
@@ -1514,10 +1622,17 @@
       "proposedPhysicalTarget": "membership_roles.role",
       "evidenceStatus": "EXACT_REGISTERED_FIELD_PG_WITNESS",
       "physicalVerified": true,
-      "runtimeSemanticsVerified": false,
+      "runtimeSemanticsVerified": true,
       "evidence": [
         "tests/integration/db01-registered-physical-field-crosswalk.test.ts"
-      ]
+      ],
+      "runtimeEvidence": {
+        "verifiedFlow": "REGISTERED_POSTGRES_CANONICAL_PERSON_ROLE_COLLEGE_MEMBERSHIP_SUSPENSION_ISOLATION",
+        "suite": "tests/integration/db01-learner-faculty-field-semantics.test.ts",
+        "passingRun": "https://github.com/42Students/lms-vnext/actions/runs/40678058612",
+        "testedCommit": "6db017e4c560844ac097e4cc68069cb8efa2ce8b",
+        "limitations": "Verifies live first-party learner/faculty identity and membership state; does not attest source-ID migration, historical import, independent recruiter semantics or product approval."
+      }
     },
     {
       "legacyField": "learner_acct_verification.id",

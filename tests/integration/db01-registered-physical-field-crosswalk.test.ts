@@ -59,7 +59,9 @@ describe("DB-004 registered source → target physical catalog",()=>{
       if(row.runtimeSemanticsVerified){
         const suite=row.legacyField.startsWith("tenant_domain.")
           ?"tests/integration/tenant-domains.test.ts"
-          :"tests/integration/chat11-super-admin-branding-cas.test.ts";
+          :row.legacyField.startsWith("college_branding.")
+          ?"tests/integration/chat11-super-admin-branding-cas.test.ts"
+          :"tests/integration/db01-learner-faculty-field-semantics.test.ts";
         expect(row.runtimeEvidence?.suite).toBe(suite);
       }else{
         expect(row.runtimeEvidence).toBeUndefined();
