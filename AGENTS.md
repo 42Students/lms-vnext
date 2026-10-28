@@ -1,5 +1,9 @@
 # LMS vNext engineering rules
 
+## Locked execution order — owner directive (2026-10-28)
+
+**Before any vNext work, read [the locked execution-order contract](docs/planning/locked-execution-order-2026-10-28.md).** Its sequence is DATABASE → API/user-job parity → page/surface Implementation Green → final Design Green → Release Green. UI/source discovery may run as read-only preparation during DATABASE, but no global phase skips, repeat whole-census audits or parallel status trackers. Explicit user approval is required to change the sequence; the binary `docs/tracker.json` remains the *sole* task/phase status authority.
+
 ## Generic continuation and page stop rule (2026-10-27)
 
 When asked to **"continue LMS vNext works"**, use the current repository state rather than redoing prior chat research. Start with `docs/tracker.json` and the [cross-chat Green-and-Move protocol](docs/parity/README.md#green-and-move-stop-rule-binding-for-page-execution). The official phase/task progress is **only** `docs/tracker.json`; the parity page files are detailed acceptance evidence, not a competing tracker.

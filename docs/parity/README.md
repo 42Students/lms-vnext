@@ -1,5 +1,7 @@
 # LMS vNext — Detailed Page Parity Specs
 
+**Locked execution priority:** [Owner-locked vNext execution order](../planning/locked-execution-order-2026-10-28.md) is binding for *when* this page/surface protocol runs: DATABASE certification first, then API/user-job parity, then per-family Implementation Green, final Design Green and Release Green. Static discovery can be reused/prepared earlier without implying page acceptance. The page contracts below continue to define *how* each family is verified.
+
 ## Cross-chat master closure operating contract (27 October 2026)
 
 **Canonical entry point:** this README and the eight role/shared specifications linked below. **Do not create a separate chat spreadsheet, duplicate Kanban, or independent percentage of completion.** The official project task and DATABASE/API/UI/RELEASE phase truth remains [`docs/tracker.json`](../tracker.json), validated by `npm run progress`. Detailed UI parity evidence is kept in these page specifications and the existing [account matrix](../planning/account-surface-parity.md), [legacy route inventories](../audit/legacy-inventory-A.md) and [B](../audit/legacy-inventory-B.md). Summary reports are **derived from evidence**, never separately maintained green checkmarks.

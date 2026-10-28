@@ -1,5 +1,9 @@
 # LMS vNext — closure-first delivery strategy
 
+## Binding priority order (2026-10-28)
+
+Follow [the owner-locked execution order](locked-execution-order-2026-10-28.md) for the exclusive cross-chat phase/priority sequence: DATABASE → API/user jobs → per-family UI Implementation Green → final Design Green → Release Green. This strategy continues to define **how** each safe batch is delivered, while `docs/tracker.json` alone defines **what is accepted**. Do not mistake source-census or historic parity counts for closure, and do not create another tracker.
+
 **Effective:** 2026-10-13. **Repository:** `42Students/lms-vnext`, direct to `main`.
 **Operational status:** `docs/tracker.json` is the **only** live task/phase tracker. This file is the execution method, not another queue or source of completion claims.
 **Supersedes** retired six-chat plans and historical checklists for *how to work*. It does **not** waive existing database acceptance, privacy, tenant-security or release gates.
