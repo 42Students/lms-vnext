@@ -2,6 +2,8 @@ import { existsSync, readFileSync, readdirSync } from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 
+const ROOT_SNAPSHOT_PARENT = "00000000-0000-0000-0000-000000000000";
+
 /**
  * Source-level migration gate. It detects orphan/duplicate/out-of-order
  * migrations and broken Drizzle snapshot ancestry, *before* executing SQL.
@@ -20,6 +22,9 @@ export function verifyDrizzleJournal(root = process.cwd()) {
   if (!Array.isArray(journal.entries) || journal.entries.length === 0)
     throw new Error("Drizzle journal must contain at least one migration");
 
+  if (journal.version !== "7" || journal.dialect !== "postgresql")
+    errors.push("Journal version/dialect must match PostgreSQL Drizzle v7");
+
   const tags = new Set();
   const snapshotIds = new Set();
   let previousSnapshotId = null;
@@ -27,6 +32,8 @@ export function verifyDrizzleJournal(root = process.cwd()) {
   for (const [ordinal, entry] of journal.entries.entries()) {
     const prefix = String(ordinal).padStart(4, "0");
     if (entry.idx !== ordinal) errors.push(`Journal entry ${ordinal} has idx ${entry.idx}`);
+    if (entry.version !== journal.version)
+      errors.push(`Journal entry ${ordinal} has mismatched version ${entry.version}`);
     if (typeof entry.tag !== "string" ||
         !new RegExp(`^${prefix}_[A-Za-z0-9_]+$`).test(entry.tag))
       errors.push(`Entry ${ordinal} must have a matching zero-padded migration tag`);
@@ -51,8 +58,12 @@ export function verifyDrizzleJournal(root = process.cwd()) {
     let snapshot;
     try { snapshot = JSON.parse(readFileSync(snapshotPath, "utf8")); }
     catch { errors.push(`Invalid snapshot JSON: ${prefix}`); continue; }
+    if (snapshot.version !== journal.version || snapshot.dialect !== journal.dialect)
+      errors.push(`Snapshot ${prefix} version/dialect differs from journal`);
     if (typeof snapshot.id !== "string" || snapshot.id.length === 0)
       errors.push(`Snapshot ${prefix} has no id`);
+    if (ordinal === 0 && snapshot.prevId !== ROOT_SNAPSHOT_PARENT)
+      errors.push(`Root snapshot ${prefix} must point to Drizzle root sentinel`);
     if (snapshotIds.has(snapshot.id))
       errors.push(`Duplicate snapshot id: ${prefix}`);
     snapshotIds.add(snapshot.id);
