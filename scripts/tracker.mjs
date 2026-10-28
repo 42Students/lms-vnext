@@ -55,7 +55,18 @@ export function inspectExecution(doc) {
     result[stage] = {total:all.length,done:all.filter(m=>m.done===true).length,
       open:all.filter(m=>m.done!==true).map(m=>m.id)};
   }
-  return {lanes:inspectDomainPackages(doc).packages,phases:result,certificates:e.globalPhaseCertificates,
+  const globalPhases=(e.globalPhases??[]).map(p=>({
+    id:p.id,title:p.title,sequence:p.sequence,
+    gateCertified:e.globalPhaseCertificates?.[p.id]?.certified===true,
+    accepted:p.id==='DATABASE'?
+      (doc.tasks??[]).filter(t=>t.phase==='DATABASE'&&t.done===true).length:
+      (result[p.id]?.done??0),
+    total:p.id==='DATABASE'?
+      (doc.tasks??[]).filter(t=>t.phase==='DATABASE').length:
+      (result[p.id]?.total??0),
+    prerequisites:p.prerequisitePhaseIds,
+  }));
+  return {globalPhases,lanes:inspectDomainPackages(doc).packages,phases:result,certificates:e.globalPhaseCertificates,
     readyForNextPhase:false};
 }
 
@@ -153,6 +164,31 @@ export function inspectTracker(doc) {
       seenClaims.add(c.sessionId);
     }
   }
+  // A complete roadmap is mandatory in the same one tracker; no second phase plan.
+  const fullPhaseOrder=['DATABASE','API','UI','DESIGN','RELEASE'];
+  const globalPhases=execution?.globalPhases;
+  if (!Array.isArray(globalPhases) ||
+      JSON.stringify(globalPhases.map(p=>p.id))!==JSON.stringify(fullPhaseOrder))
+    add(errors,'INVALID_FIVE_GLOBAL_PHASES');
+  else for (let i=0;i<globalPhases.length;i++) {
+    const p=globalPhases[i];
+    const expectedPrereq=i===0?[]:[fullPhaseOrder[i-1]];
+    if (p.sequence!==i+1||!validString(p.title)||!validString(p.goal)||
+      !validString(p.completionEvidencePath)||
+      p.completionEvidencePath!=='execution.globalPhaseCertificates.'+p.id||
+      !Array.isArray(p.prerequisitePhaseIds)||
+      JSON.stringify(p.prerequisitePhaseIds)!==JSON.stringify(expectedPrereq)||
+      !Array.isArray(p.entryCriteria)||p.entryCriteria.length===0||
+      !Array.isArray(p.workstreams)||p.workstreams.length===0||
+      !Array.isArray(p.exitCriteria)||p.exitCriteria.length===0||
+      !Array.isArray(p.verification)||p.verification.length===0||
+      !Array.isArray(p.ownerLanes)||p.ownerLanes.length===0||
+      p.ownerLanes.some(id=>!(lanes??[]).some(l=>l.id===id)))
+      add(errors,'INVALID_GLOBAL_PHASE_CONTRACT',{stage:p.id});
+  }
+  if (execution?.globalPhaseRules?.canonicalStageOrder?.includes('DESIGN')!==true ||
+      !validString(execution?.globalPhaseRules?.phasePromotion))
+    add(errors,'MISSING_GLOBAL_PHASE_PROMOTION_POLICY');
   const milestones=execution?.milestones;
   if (!Array.isArray(milestones) || milestones.length===0) add(errors,'MISSING_FUTURE_PHASE_MILESTONES');
   const msIds = new Set();
@@ -171,7 +207,16 @@ export function inspectTracker(doc) {
       add(errors,'OPEN_MILESTONE_HAS_ACCEPTANCE_PROOF',{id:m.id});
   }
   for (const stage of ['DATABASE','API','UI','DESIGN','RELEASE']) {
+    const index=['DATABASE','API','UI','DESIGN','RELEASE'].indexOf(stage);
     const cert=execution?.globalPhaseCertificates?.[stage];
+    if (cert?.certified===true) {
+      for (const prior of ['DATABASE','API','UI','DESIGN','RELEASE'].slice(0,index))
+        if(execution?.globalPhaseCertificates?.[prior]?.certified!==true)
+          add(errors,'PHASE_CERTIFIED_BEFORE_PREREQUISITE',{stage,prior});
+      const notDone=stage==='DATABASE'?(doc.tasks??[]).filter(t=>t.phase==='DATABASE'&&t.done!==true):
+        (milestones??[]).filter(m=>m.stage===stage&&m.done!==true);
+      if (notDone.length>0) add(errors,'PHASE_CERTIFIED_WITH_OPEN_WORK',{stage,open:notDone.length});
+    }
     if (!cert||typeof cert.certified!=='boolean'||!Array.isArray(cert.evidence))
       add(errors,'INVALID_GLOBAL_PHASE_CERTIFICATE',{stage});
     else if (cert.certified && !cert.evidence.some(e=>e?.kind?.startsWith('EXECUTED')&&
@@ -248,6 +293,14 @@ if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.me
       const only=process.argv.find(a=>a.startsWith('--lane='))?.split('=')[1];
       console.log('LMS vNext | SINGLE TRACKER / TEN LANES');
       console.log('Current global phase: '+doc.currentPhase+' | DB DONE '+report.counts.done+'/'+report.counts.total);
+      if (!only) {
+        console.log('Five global phases (one canonical execution plan):');
+        for (const p of reportExec.globalPhases) {
+          console.log('  '+p.sequence+'. '+p.title+' | '+p.accepted+'/'+p.total+
+            ' accepted | GLOBAL '+(p.gateCertified?'CERTIFIED':'NOT CERTIFIED')+
+            (p.prerequisites.length?' | needs '+p.prerequisites.join(', '):''));
+        }
+      }
       for (const lane of reportExec.lanes.filter(l=>!only||l.id===only)) {
         const owned=doc.execution.lanes.find(l=>l.id===lane.id);
         console.log(lane.id+' '+lane.label+': '+lane.done+'/'+lane.total+' DB accepted'+
