@@ -129,10 +129,13 @@ export async function createElectiveOffering(context: RequestContext, raw: unkno
       id: courses.id,
       collegeId: departments.collegeId,
       status: courses.status,
+      enabled: courses.enabled,
+      deletedAt: courses.deletedAt,
     }).from(courses)
       .innerJoin(departments, eq(departments.id, courses.departmentId))
       .where(eq(courses.id, input.courseId)).limit(1);
-    if (!course || course.collegeId !== slot.collegeId || course.status !== "ACTIVE") {
+    if (!course || course.collegeId !== slot.collegeId || course.status !== "ACTIVE" ||
+        !course.enabled || course.deletedAt) {
       throw new ElectivesServiceError("ELECTIVE_COURSE_COLLEGE_MISMATCH");
     }
     if (!group) {
