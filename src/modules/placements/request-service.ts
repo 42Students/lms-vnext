@@ -167,6 +167,9 @@ async function loadRequestContext(requestId: string) {
       request: placementLearnerRequests,
       application: placementApplications,
       job: placementJobs,
+      // Independent legacy FKs are insufficient until DB-066 is registered.
+      roundJobId: placementJobRounds.jobId,
+      offerApplicationId: placementOffers.applicationId,
     })
     .from(placementLearnerRequests)
     .innerJoin(
@@ -183,6 +186,14 @@ async function loadRequestContext(requestId: string) {
         placementApplications.jobId,
       ),
     )
+    .leftJoin(
+      placementJobRounds,
+      eq(placementJobRounds.id, placementLearnerRequests.roundId),
+    )
+    .leftJoin(
+      placementOffers,
+      eq(placementOffers.id, placementLearnerRequests.offerId),
+    )
     .where(
       eq(
         placementLearnerRequests.id,
@@ -191,7 +202,14 @@ async function loadRequestContext(requestId: string) {
     )
     .limit(1);
 
-  if (!row) {
+  // Fail closed if a persisted request targets a different job or a
+  // different application. DB-066 will enforce this at the SQL layer too.
+  if (
+    !row ||
+    (row.request.roundId !== null && row.roundJobId !== row.job.id) ||
+    (row.request.offerId !== null &&
+      row.offerApplicationId !== row.application.id)
+  ) {
     throw new PlacementsServiceError(
       "PLACEMENT_REQUEST_NOT_FOUND",
     );
