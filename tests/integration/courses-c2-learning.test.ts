@@ -40,6 +40,10 @@ import {
 } from "@/modules/courses/lesson-content-service";
 import { SEED_IDS } from "../../scripts/db-seed-data";
 import {
+  getLearnerCourseWorkspace,
+  listLearnerCourseDeliveries,
+} from "@/modules/courses/learner-course-service";
+import {
   getLearnerContentProgress,
   listMyLearnerContentProgressBatch,
 } from "@/modules/courses/progress-service";
@@ -702,6 +706,21 @@ describe("courses C2 learning structure against PostgreSQL", () => {
     await pool.query("update courses set enabled = true, legacy_allowed_for_display = 0 where id = $1", [
       structure.course.id,
     ]);
+    await expect(
+      listLessonContents(learner, lesson.id, structure.deliveryA.id),
+    ).rejects.toMatchObject({ code: "LEARNING_ACCESS_DENIED" });
+
+    // A soft-deleted course with a stale ACTIVE/enabled label is not
+    // visible via catalog cards, workspace URLs or direct lesson endpoints.
+    await pool.query(
+      "update courses set enabled = true, legacy_allowed_for_display = null, deleted_at = clock_timestamp() where id = $1",
+      [structure.course.id],
+    );
+    const cards = await listLearnerCourseDeliveries(learner);
+    expect(cards.some((card) => card.courseId === structure.course.id)).toBe(false);
+    await expect(
+      getLearnerCourseWorkspace(learner, structure.deliveryA.id),
+    ).rejects.toMatchObject({ code: "LEARNING_ACCESS_DENIED" });
     await expect(
       listLessonContents(learner, lesson.id, structure.deliveryA.id),
     ).rejects.toMatchObject({ code: "LEARNING_ACCESS_DENIED" });
