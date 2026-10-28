@@ -117,7 +117,14 @@ test("no DB-004 release green without genuine owner decisions and complete techn
  assert.equal(register.engineeringClosure.acceptanceCommit,
   row.acceptanceEvidence.find(e=>e.kind==="EXECUTED_ACCEPTANCE")?.commitSha);
  assert.equal(register.engineeringClosure.nextTask,"DB-005");
- assert.equal(tracker.tasks.find(x=>x.id==="DB-005")?.done,false);
+ // DB-004's historical next-task receipt was correct at its own closure.
+ // DB-005 has since reached independently evidenced engineering DONE.
+ const db005=tracker.tasks.find(x=>x.id==="DB-005");
+ assert.equal(db005?.done,true);
+ assert.equal(db005?.closureBasis,"ENGINEERING_ACCEPTED_RELEASE_REVIEW_DEFERRED");
+ assert.equal(db005?.deferredRelease?.releaseCertified,false);
+ assert.equal(db005?.acceptanceEvidence?.[0]?.runUrl,
+  "https://github.com/42Students/lms-vnext/actions/runs/40750567279");
  assert.equal(register.releaseEvidence.deferredForRequesterReview.waived,false);
  assert.equal(register.releaseEvidence.deferredForRequesterReview.neverAutoCertify,true);
  assert.ok(register.decisions.every(x=>x.approvalStatus==="PENDING"&&
