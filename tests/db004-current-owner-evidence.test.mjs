@@ -151,7 +151,7 @@ test("physical field proof and runtime proof remain explicitly distinct",()=>{
   "learner_acct_verification.roll_number",
   "faculty_acct_verification.faculty_id"].every(field=>
    current.rows.find(row=>row.legacyField===field)?.runtimeSemanticsVerified===true));
- assert.equal(current.completion,"TECHNICAL_FIELD_EVIDENCE_COMPLETE_RELEASE_SIGNOFF_PENDING");
+ assert.equal(current.completion,"TECHNICAL_FIELD_EVIDENCE_AND_PRODUCT_RETIREMENT_POLICY_COMPLETE_FINAL_SECURITY_RELEASE_PENDING");
 });
 test("first-party OTP authority and retired credential handoff are not confused",()=>{
  const doc=readFileSync("docs/architecture/first-party-login.md","utf8");
