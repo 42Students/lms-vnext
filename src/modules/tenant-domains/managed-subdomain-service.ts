@@ -1,7 +1,8 @@
 import "server-only";
 import {and,eq,isNull,sql} from "drizzle-orm";
 import {getDb} from "@/db/client";
-import {activityEvents,colleges,tenantDomains} from "@/db/schema";
+import {activityEvents,colleges,organizations,tenantDomains} from "@/db/schema";
+import {assertPersistedPlatformPermission} from "@/modules/permissions/persisted-actor";
 import {isSuperAdmin,type RequestContext} from "@/modules/identity/context";
 import {AuthorizationError,requirePermission} from "@/modules/permissions/policy";
 import {managedBaseDomain,managedHost,isManagedHost,managedSubdomainRequest} from "./managed-subdomain-model";
@@ -51,9 +52,30 @@ export async function changeManagedCollegeSubdomain(ctx:RequestContext,collegeIn
  const input=managedSubdomainRequest.parse(raw);
  const host=input.action==="REMOVE"?null:managedHost(input.label!,base);
  return getDb().transaction(async tx=>{
-  const [lockedCollege]=await tx.select({id:colleges.id}).from(colleges)
-   .where(and(eq(colleges.id,college.id),eq(colleges.status,"ACTIVE"))).for("update").limit(1);
+  const [lockedCollege]=await tx.select({
+    id:colleges.id,organizationId:colleges.organizationId,
+  }).from(colleges)
+   .innerJoin(organizations,eq(organizations.id,colleges.organizationId))
+   .where(and(eq(colleges.id,college.id),eq(colleges.status,"ACTIVE"),
+     eq(organizations.status,"ACTIVE"))).for("update").limit(1);
   if(!lockedCollege)throw new TenantDomainServiceError("COLLEGE_NOT_FOUND");
+  // The request-time context can go stale while this mutation waits.
+  // Require the persisted actor to remain active and privileged inside
+  // the same transaction as the DNS ownership and primary-host updates.
+  await assertPersistedPlatformPermission(tx,ctx,"college.manage",{
+    collegeId:lockedCollege.id,organizationId:lockedCollege.organizationId,
+  });
+  // Take host claim locks BEFORE locking domain rows. Custom-domain creation,
+  // editing and deletion follow college-parent -> hostname -> domain order.
+  // Sort the two claims so cross-college swaps cannot create an AB/BA deadlock.
+  const before=await tx.select({id:tenantDomains.id,host:tenantDomains.host})
+    .from(tenantDomains).where(and(eq(tenantDomains.collegeId,college.id),
+      isNull(tenantDomains.deletedAt)));
+  const existingManaged=before.find(row=>isManagedHost(row.host,base));
+  const lockHosts=[existingManaged?.host,host]
+    .filter((value):value is string=>Boolean(value)).sort();
+  for(const claim of new Set(lockHosts))
+    await tx.execute(sql`select pg_advisory_xact_lock(hashtext(${"tenant-domain-host:"+claim}))`);
   const rows=await tx.select({id:tenantDomains.id,host:tenantDomains.host,isPrimary:tenantDomains.isPrimary,isVerified:tenantDomains.isVerified})
    .from(tenantDomains).where(and(eq(tenantDomains.collegeId,college.id),isNull(tenantDomains.deletedAt))).for("update");
   const current=rows.find(row=>isManagedHost(row.host,base));
