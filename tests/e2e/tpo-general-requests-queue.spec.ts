@@ -40,10 +40,11 @@ test.describe("TPO other student requests — authenticated queue and privacy",(
    has:page.locator("summary").filter({hasText:"Advanced request table, exports and additional request tools"}),
   }).first();
   await advanced.locator(":scope > summary").click();
-  const other=advanced.locator('details[data-slot="disclosure"]').filter({
-   has:page.locator("summary").filter({hasText:"Other student requests"}),
-  }).first();
-  await other.locator(":scope > summary").click();
+  // Target the nested disclosure summary directly, not the parent <details>
+  // whose descendant text also contains the child title.
+  const other=advanced.locator('details[data-slot="disclosure"] > summary')
+   .filter({hasText:"Other student requests"});
+  await other.click();
   const region=page.getByRole("region",{name:"Other student requests"});
   await expect(region).toBeVisible();
   await expect(region.getByRole("navigation",{name:"Other request history pages"})).toBeVisible();
