@@ -133,26 +133,9 @@ async function requireLearnerProgressScope(
   const content =
     await loadLessonContentScope(contentId);
 
-  if (!content.lessonVisibleToStudents || content.lessonDeletedAt ||
-      !content.visibleToStudents || content.deletedAt ||
-      content.deletedWithLesson || content.legacyActive === false) {
-    throw new CoursesServiceError("LESSON_CONTENT_NOT_PUBLISHED");
-  }
-  if (content.status !== "PUBLISHED") {
-    throw new CoursesServiceError(
-      "LESSON_CONTENT_NOT_PUBLISHED",
-    );
-  }
-
-  if (
-    content.learningPathStatus !==
-    "PUBLISHED"
-  ) {
-    throw new CoursesServiceError(
-      "LEARNING_PATH_NOT_PUBLISHED",
-    );
-  }
-
+  // Resolve trusted tenant/enrollment/delivery authorization BEFORE revealing
+  // whether a content record is published, soft-deleted or hidden. A foreign
+  // college actor must not be able to probe another tenant's content flags.
   const access =
     await requireLearningReadAccess(
       context,
@@ -176,6 +159,21 @@ async function requireLearnerProgressScope(
     throw new CoursesServiceError(
       "CONTENT_DELIVERY_MISMATCH",
     );
+  }
+
+  if (!content.lessonVisibleToStudents || content.lessonDeletedAt ||
+      !content.visibleToStudents || content.deletedAt ||
+      content.deletedWithLesson || content.legacyActive === false) {
+    throw new CoursesServiceError("LESSON_CONTENT_NOT_PUBLISHED");
+  }
+  if (content.status !== "PUBLISHED") {
+    throw new CoursesServiceError(
+      "LESSON_CONTENT_NOT_PUBLISHED",
+    );
+  }
+
+  if (content.learningPathStatus !== "PUBLISHED") {
+    throw new CoursesServiceError("LEARNING_PATH_NOT_PUBLISHED");
   }
 
   if (
