@@ -1,6 +1,6 @@
 # LMS vNext — Execution Checklist
 
-> **HISTORICAL REFERENCE ONLY (2026-10-13).** This checklist records implementation-era source progress, not current task acceptance. The **only** live DONE/NOT DONE tracker is [docs/tracker.json](../tracker.json); follow [closure-first delivery](closure-first-delivery-strategy.md). The checked boxes below do **not** certify the corresponding feature, runtime, database or UI parity gate.
+> **HISTORICAL REFERENCE ONLY (2026-10-13).** This checklist records implementation-era source progress, not current task acceptance. The **only** live DONE/NOT DONE tracker is [docs/tracker.json](../tracker.json); follow [closure-first delivery](database-domain-closure-protocol-2026-10-29.md). The checked boxes below do **not** certify the corresponding feature, runtime, database or UI parity gate.
 
 **Baseline:** 2026-10-02  
 **Repository:** `42Students/lms-vnext`  
