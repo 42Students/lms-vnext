@@ -22,7 +22,7 @@ if(enabled){
 const pool=enabled?new Pool({connectionString:url,max:8}):null;
 type Sql=Pool|PoolClient;
 type Graph={program:string;period:string;cohort:string;section:string;section2:string;course:string;offering:string;delivery:string;delivery2:string;path:string;lesson:string};
-const made={users:[] as string[],memberships:[] as string[],programs:[] as string[],periods:[] as string[],cohorts:[] as string[],sections:[] as string[],courses:[] as string[],offerings:[] as string[],deliveries:[] as string[],paths:[] as string[],lessons:[] as string[],quizzes:[] as string[],questions:[] as string[],attempts:[] as string[],assignments:[] as string[],submissions:[] as string[],groups:[] as string[],electiveSlots:[] as string[],electiveOfferings:[] as string[]};
+const made={users:[] as string[],memberships:[] as string[],programs:[] as string[],periods:[] as string[],cohorts:[] as string[],sections:[] as string[],courses:[] as string[],terms:[] as string[],termCourses:[] as string[],offerings:[] as string[],deliveries:[] as string[],paths:[] as string[],lessons:[] as string[],quizzes:[] as string[],questions:[] as string[],attempts:[] as string[],assignments:[] as string[],submissions:[] as string[],groups:[] as string[],electiveSlots:[] as string[],electiveOfferings:[] as string[]};
 let A:Graph,B:Graph,learnerEnrollment="",sectionEnrollment="";
 let ownedLearnerMembership="";
 function p(){if(!pool)throw new Error("DB06 requires TEST_DATABASE_URL + DB06_ISOLATED_TEST_DATABASE=1");return pool}
@@ -39,7 +39,13 @@ async function graph(db:Sql,department:string,college:string,label:string):Promi
  await db.query("INSERT INTO cohorts(id,program_id,name,code,start_period_id,status) VALUES($1,$2,$3,$4,$5,'ACTIVE')",[cohort,program,`DB06 ${label} cohort`,`DB06-${label}-C-${cohort}`,period]);
  for(const [id,suffix] of [[section,"A"],[section2,"B"]] as const) await db.query("INSERT INTO sections(id,cohort_id,academic_period_id,name,code,status) VALUES($1,$2,$3,$4,$5,'ACTIVE')",[id,cohort,period,`DB06 ${label} section ${suffix}`,`DB06-${label}-S-${suffix}-${id}`]);
  await db.query("INSERT INTO courses(id,department_id,name,code,status) VALUES($1,$2,$3,$4,'ACTIVE')",[course,department,`DB06 ${label} course`,`DB06-${label}-COURSE-${course}`]);
- await db.query("INSERT INTO course_offerings(id,course_id,cohort_id,academic_period_id,type,credits,display_order,status) VALUES($1,$2,$3,$4,'CORE',4,0,'ACTIVE')",[offering,course,cohort,period]);
+ // DB-005 registered schema requires canonical program-term identity and a
+ // materialized CORE curriculum row. Seed those *explicitly*, never bypass
+ // database tenant checks or loosen the production offering constraints.
+ const term=keep("terms",randomUUID()),termCourse=keep("termCourses",randomUUID());
+ await db.query("INSERT INTO program_terms(id,program_id,term_number,name,is_active) VALUES($1,$2,1,'Semester 1',true)",[term,program]);
+ await db.query("INSERT INTO program_term_courses(id,program_term_id,course_id,type,credits,display_order) VALUES($1,$2,$3,'CORE',4,1)",[termCourse,term,course]);
+ await db.query("INSERT INTO course_offerings(id,course_id,cohort_id,academic_period_id,program_term_id,program_term_course_id,type,credits,display_order,status) VALUES($1,$2,$3,$4,$5,$6,'CORE',4,0,'ACTIVE')",[offering,course,cohort,period,term,termCourse]);
  await db.query("INSERT INTO course_section_deliveries(id,offering_id,section_id) VALUES($1,$2,$3),($4,$2,$5)",[delivery,offering,section,delivery2,section2]);
  await db.query("INSERT INTO course_learning_paths(id,offering_id,title,status) VALUES($1,$2,$3,'PUBLISHED')",[path,offering,`DB06 ${label} path`]);
  await db.query("INSERT INTO course_lessons(id,learning_path_id,name,sequence,status) VALUES($1,$2,$3,0,'ACTIVE')",[lesson,path,`DB06 ${label} lesson`]);
@@ -103,7 +109,7 @@ async function cleanup(){
  if(sectionEnrollment)await pool.query("DELETE FROM section_enrollments WHERE id=$1",[sectionEnrollment]);
  if(learnerEnrollment)await pool.query("DELETE FROM learner_program_enrollments WHERE id=$1",[learnerEnrollment]);
  if(made.memberships.length){await pool.query("DELETE FROM section_enrollments WHERE learner_enrollment_id IN(SELECT id FROM learner_program_enrollments WHERE membership_id=ANY($1::uuid[]))",[made.memberships]);await pool.query("DELETE FROM learner_program_enrollments WHERE membership_id=ANY($1::uuid[])",[made.memberships])}
- for(const [table,key] of [["course_section_deliveries","deliveries"],["course_lessons","lessons"],["course_learning_paths","paths"],["course_offerings","offerings"],["sections","sections"],["cohorts","cohorts"],["academic_periods","periods"],["courses","courses"],["programs","programs"]] as const)if(made[key].length)await pool.query(`DELETE FROM ${table} WHERE id=ANY($1::uuid[])`,[made[key]]);
+ for(const [table,key] of [["course_section_deliveries","deliveries"],["course_lessons","lessons"],["course_learning_paths","paths"],["course_offerings","offerings"],["program_term_courses","termCourses"],["program_terms","terms"],["sections","sections"],["cohorts","cohorts"],["academic_periods","periods"],["courses","courses"],["programs","programs"]] as const)if(made[key].length)await pool.query(`DELETE FROM ${table} WHERE id=ANY($1::uuid[])`,[made[key]]);
  if(made.memberships.length){await pool.query("DELETE FROM membership_roles WHERE membership_id=ANY($1::uuid[])",[made.memberships]);await pool.query("DELETE FROM college_memberships WHERE id=ANY($1::uuid[])",[made.memberships])}
  if(made.users.length)await pool.query("DELETE FROM users WHERE id=ANY($1::uuid[])",[made.users]);
  learnerEnrollment="";sectionEnrollment="";ownedLearnerMembership="";clearMade();

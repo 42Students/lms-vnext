@@ -293,20 +293,22 @@ describe("DB01 parent-lock role mutation against membership END", () => {
   });
 
 
-  it("denies a stale grant after a membership is rebound to a different college", async () => {
+  it("denies a cross-college membership rebind rather than permitting stale grants", async () => {
     await withFixture(async (f) => {
-      const staleMutation = mutationFor(f);
-      await pool.query(
+      // DB-005 now enforces college ownership at the *database* boundary.
+      // An old test that moved a membership to another tenant before checking
+      // stale role authority was no longer a valid fixture: the move itself
+      // must fail. Preserve the stronger prohibition, and do not grant a role
+      // against the foreign college.
+      await expect(pool.query(
         "update college_memberships set college_id=$2 where id=$1",
         [f.membershipId, SEED_IDS.collegeB],
+      )).rejects.toMatchObject({code:"23514"});
+      const current=await pool.query<{college_id:string}>(
+        "select college_id from college_memberships where id=$1",
+        [f.membershipId],
       );
-      await expect(
-        drizzlePeopleRepository.addMembershipRole(
-          f.membershipId,
-          "MENTOR",
-          staleMutation,
-        ),
-      ).rejects.toMatchObject({ code: "MEMBERSHIP_NOT_FOUND" });
+      expect(current.rows[0]?.college_id).toBe(SEED_IDS.collegeA);
       expect(await countRole(f.membershipId, "MENTOR")).toBe(0);
     });
   });
