@@ -56,6 +56,24 @@ describe("DB-004 learner/faculty legacy account challenge common-field replaceme
     expect(initial.rows[0]?.expires_at).toBeInstanceOf(Date);
     expect(initial.rows[0]!.expires_at.getTime()-initial.rows[0]!.created_at.getTime())
      .toBeLessThanOrEqual(300000);
+    // A legacy blocked_till_ts is not imported as a reusable credential.
+    // The normalized shared challenge must deny BOTH delivery and reserve
+    // while the persisted cooldown is active, for either college role.
+    await pool.query(
+     "update identity_auth_attempts set blocked_until=clock_timestamp()+interval '1 minute' where id=$1",
+     [attemptId]);
+    expect(await drizzleLoginRepository.setEmailCode(attemptId,emailMac,0)).toBe(false);
+    expect(await drizzleLoginRepository.reserveVerification(attemptId)).toBe(false);
+    expect(await drizzleLoginRepository.consumeAttempt(attemptId,userId)).toBe(false);
+    const blocked=await pool.query<{
+     blocked_until:Date;resend_attempts:number;verification_attempts:number;used_at:Date|null;
+    }>("select blocked_until,resend_attempts,verification_attempts,used_at from identity_auth_attempts where id=$1",
+     [attemptId]);
+    expect(blocked.rows[0]?.blocked_until).toBeInstanceOf(Date);
+    expect(blocked.rows[0]).toMatchObject({
+     resend_attempts:0,verification_attempts:0,used_at:null,
+    });
+    await pool.query("update identity_auth_attempts set blocked_until=null where id=$1",[attemptId]);
     expect(await drizzleLoginRepository.setEmailCode(attemptId,emailMac,0)).toBe(true);
     expect(await drizzleLoginRepository.reserveVerification(attemptId)).toBe(true);
     const counted=await pool.query<{

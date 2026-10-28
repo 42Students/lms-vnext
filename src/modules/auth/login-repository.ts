@@ -259,8 +259,11 @@ export const drizzleLoginRepository: LoginRepository = {
           resend_attempts = resend_attempts + 1,
           version = version + 1
       WHERE id = ${id}
+        AND target_role = 'LOGIN'
+        AND membership_id IS NULL
         AND used_at IS NULL
         AND superseded_at IS NULL
+        AND (blocked_until IS NULL OR blocked_until <= clock_timestamp())
         AND expires_at > now()
         AND resend_attempts < ${maxResends}
         AND (
@@ -309,7 +312,11 @@ export const drizzleLoginRepository: LoginRepository = {
       SET verification_attempts = verification_attempts + 1,
           version = version + 1
       WHERE id = ${id}
+        AND target_role = 'LOGIN'
+        AND membership_id IS NULL
         AND used_at IS NULL
+        AND superseded_at IS NULL
+        AND (blocked_until IS NULL OR blocked_until <= clock_timestamp())
         AND expires_at > now()
         AND verification_attempts < 5
       RETURNING id
