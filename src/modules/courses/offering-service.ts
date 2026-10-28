@@ -436,7 +436,10 @@ export async function createCourseOffering(
           ${input.credits??null},${appendOrder}
         ) RETURNING id
       `);
-      const createdId=(inserted as {rows?:{id:string}[]}).rows?.[0]?.id;
+      // Drizzle returns QueryResult<Record<string, unknown>>; narrow the
+      // RETURNING field rather than unsafely casting the whole query result.
+      const returnedId = inserted.rows[0]?.id;
+      const createdId = typeof returnedId === "string" ? returnedId : null;
       if(!createdId)throw new CoursesServiceError("OFFERING_CONFLICT");
       const [created]=await tx.select().from(courseOfferings)
         .where(eq(courseOfferings.id,createdId)).limit(1);
