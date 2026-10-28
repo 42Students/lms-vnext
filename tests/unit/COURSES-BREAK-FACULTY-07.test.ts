@@ -30,9 +30,9 @@ describe("COURSES-BREAK-FACULTY-07 attendance role, stale edit and India time",(
  });
  it("FAC-attendance-grades-02 a previous Section session cannot mark foreign or unrelated absent learners",()=>{
   const prior=initialAbsencesForSession(roster,[
-   {scheduleEventId:session,membershipId:learnerA},
-   {scheduleEventId:session,membershipId:outside},
-   {scheduleEventId:otherSession,membershipId:learnerB},
+   {scheduleEventId:session,membershipId:learnerA,status:"ABSENT"},
+   {scheduleEventId:session,membershipId:outside,status:"ABSENT"},
+   {scheduleEventId:otherSession,membershipId:learnerB,status:"ABSENT"},
   ],session);
   expect([...prior]).toEqual([learnerA]);
   expect(facultyAttendanceMarksDirty(roster,prior,new Set([learnerA]))).toBe(false);
