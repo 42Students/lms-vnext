@@ -44,3 +44,6 @@ test("independent DB verifier records exact evidence and cleans Docker", () => {
   assert.match(script, /docker", \["rm", "--force"/);
   assert.match(script, /writeFileSync\(evidencePath/);
 });
+
+// Run fail-closed supplied-target witnesses inside the registered DB parity suite.
+import "./db-independent-verifier-target-preflight.test.mjs";
