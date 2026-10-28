@@ -106,13 +106,9 @@ test.describe("Recruiter prototype functional journeys",()=>{
   const drive="/recruiter/drives/66000000-0000-4000-8000-000000000004";
   await page.goto(drive+"?tab=applicants");
   const review=page.getByRole("link",{name:"Review one by one"});
-  // A fresh college fixture may have zero TPO-shared applicants. That is a
-  // protected empty state, not permission to fabricate candidates.
-  if(!(await review.count())){
-   await expect(page.getByText(/Applicants have not been shared|No shared applicants match this stage/i).first())
-    .toBeVisible();
-   test.skip(true,"Focused-review positive path needs an explicitly shared applicant fixture");
-  }
+  // db-e2e-prepare provisions a real, consent-scoped shortlisted
+  // application in the disposable test database. This positive path must
+  // execute, never silently turn an absent applicant into a skipped test.
   await expect(review).toBeVisible();
   await review.click();
   const chooser=page.getByRole("link",{name:/Review for [0-9]+\./}).first();

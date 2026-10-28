@@ -177,6 +177,37 @@ async function main() {
     timezone:"Asia/Kolkata",mode:"ON_CAMPUS",venue:"Seminar Hall",
     createdByUserId:ids.collegeAdminUser,
   }).onConflictDoNothing();
+  // Recruiter focused-review requires an actually persisted, TPO-shortlisted
+  // learner application. Without it the browser test always skipped its
+  // positive path, so the Keep/Hold/Not selected workflow was unexercised.
+  // These deterministic IDs exist only after the destructive E2E guard.
+  const recruiterRoleId="66000000-0000-4000-8000-000000000007";
+  const recruiterApplicationId="66000000-0000-4000-8000-000000000008";
+  await dbClient.getDb().insert(dbSchema.placementJobRoleOptions).values({
+    id:recruiterRoleId,jobId:recruiterJobId,
+    title:"Software Engineer",position:0,isPrimary:true,
+    employmentType:"FULL_TIME",workMode:"ONSITE",
+    locations:["Vijayawada"],status:"ACTIVE",
+  }).onConflictDoNothing();
+  await dbClient.getDb().insert(dbSchema.placementApplications).values({
+    id:recruiterApplicationId,jobId:recruiterJobId,
+    roleOptionId:recruiterRoleId,
+    membershipId:ids.learnerCollegeAMembership,
+    channel:"INTERNAL",status:"SUBMITTED",
+    eligibilityStatus:"ELIGIBLE",
+    eligibilitySnapshot:{source:"disposable-e2e-recruiter-fixture"},
+    submittedByUserId:ids.learnerUser,
+  }).onConflictDoNothing();
+  await dbClient.getDb().insert(dbSchema.placementApplicationScreenings).values({
+    applicationId:recruiterApplicationId,status:"SHORTLISTED",
+    candidateMessage:"Shortlisted for employer review",
+    decidedByUserId:ids.facultyUser,decidedAt:new Date(),
+  }).onConflictDoNothing();
+  await dbClient.getDb().insert(dbSchema.placementApplicationScreeningHistory).values({
+    applicationId:recruiterApplicationId,fromStatus:"PENDING",
+    toStatus:"SHORTLISTED",actorUserId:ids.facultyUser,
+  }).onConflictDoNothing();
+
   // A real OPEN college-to-company ASK shows up in Recruiter Today.
   // Only this synthetic, disposable E2E database has these fixtures.
   await dbClient.getDb().insert(dbSchema.placementDriveChangeRequests).values({
@@ -188,7 +219,7 @@ async function main() {
     status:"OPEN",
   }).onConflictDoNothing();
   process.stdout.write(
-    "Verified Recruiter prototype identity, grant, drive and interview round seeded.\\n",
+    "Verified Recruiter prototype identity, grant, drive, round and TPO-shortlisted applicant seeded.\\n",
   );
 
   const collegeAdmin: RequestContext = {

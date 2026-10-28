@@ -65,3 +65,8 @@ Rules: exact authored prototype first, legacy dev behavior second, vNext source/
 - Removed obsolete Recruiter source-string assertions in `chat6-final-sprint-rec-home-drives-04/-05` and asserted the new greeting/headline and first-run model behavior directly. Updated `hr-drive-overview-model.test.ts` to assert the newly exposed `closed` state.
 - A general Browser run at SHA 95532b2b failed before executing suites because `tests/e2e/mentor-portfolio-state-acceptance.spec.ts` contains an invalid regular-expression flag at line 189; this is an unrelated Mentor-lane blocker, not evidence of Recruiter pass or failure.
 - As multiple chats commit to main concurrently, CI runs may cancel. Only mark a screen code-verified after exact-SHA typecheck, unit and seeded Recruiter browser results; only mark pixel parity after side-by-side reference/implementation rendered screenshot comparison.
+
+### 2026-10-28 Recruiter focused review — positive-path E2E fixture
+- The disposable-only `scripts/db-e2e-prepare.ts` setup now creates a persisted employer-owned drive role, learner application and TPO-shortlisted screening/history for the already authorized E2E Recruiter. No production authorization bypass, company share of unshortlisted candidates, or real learner record is introduced.
+- `tests/e2e/recruiter-prototype-functional-acceptance.spec.ts` must find `Review one by one` and exercise the Keep / Hold / Not selected UI; it no longer marks missing candidate setup as an acceptable skipped positive-path test.
+- Authenticated execution, results persistence, keyboard interactions, refresh and pixel parity remain distinct acceptance checks. No Recruiter screen is marked Green without a successful exact-SHA browser run.
