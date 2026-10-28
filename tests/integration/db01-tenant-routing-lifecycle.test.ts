@@ -4,6 +4,7 @@ import { Pool } from "pg";
 import type { RequestContext } from "@/modules/identity/context";
 import { SEED_IDS } from "../../scripts/db-seed-data";
 import { closeDatabaseConnection } from "@/db/client";
+import { resolveRequestTenant } from "@/modules/auth/request-tenant";
 import { drizzleTenantDomainRepository } from "@/modules/tenant-domains/repository";
 import {
   deleteTenantDomain,
@@ -75,6 +76,22 @@ afterAll(async () => {
 });
 
 describe("DB01 tenant host lifecycle — real repository SQL", () => {
+  it("does not honor a cached verified host after the owning college is archived", async () => {
+    await withTenantFixture(async (fixture) => {
+      const first = await resolveRequestTenant(fixture.host);
+      expect(first).toMatchObject({kind:"college",collegeId:fixture.collegeId});
+      // This can be committed by another application replica without any
+      // opportunity to invalidate our in-memory lookup.
+      await pool.query(
+        "update colleges set status = 'ARCHIVED' where id = $1",
+        [fixture.collegeId],
+      );
+      await expect(resolveRequestTenant(fixture.host)).resolves.toMatchObject({
+        kind:"unknown",host:fixture.host,
+      });
+    });
+  });
+
   it("resolves a verified active tenant using normalized hostname", async () => {
     await withTenantFixture(async (fixture) => {
       const result = await resolveTenantFromHost(

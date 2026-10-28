@@ -35,16 +35,18 @@ describe("AUTH-tenant-binding-02 resolve host cache and outage fallback",()=>{
   });
   expect(look).toHaveBeenCalledTimes(2);
  });
- it("caches a verified college for the TTL but re-checks after cache reset",async()=>{
+ it("never caches a verified college across authorization requests",async()=>{
   look.mockResolvedValueOnce({domainId:"d1",host:"college.test",collegeId:"A",organizationId:"OA"} as never)
+    .mockResolvedValueOnce(null)
     .mockResolvedValueOnce({domainId:"d2",host:"college.test",collegeId:"B",organizationId:"OB"} as never);
-  const first=await resolveRequestTenant("college.test");
-  expect(first).toMatchObject({kind:"college",collegeId:"A"});
-  await expect(resolveRequestTenant("college.test")).resolves.toEqual(first);
-  expect(look).toHaveBeenCalledTimes(1);
+  await expect(resolveRequestTenant("college.test")).resolves.toMatchObject({kind:"college",collegeId:"A"});
+  // A different process may revoke the host: cached college A is not authority.
+  await expect(resolveRequestTenant("college.test")).resolves.toEqual({kind:"unknown",host:"college.test"});
+  expect(look).toHaveBeenCalledTimes(2);
+  // A newly verified/reassigned host must also be fetched from SQL, not stale cache.
   clearRequestTenantCacheForTests();
   await expect(resolveRequestTenant("college.test")).resolves.toMatchObject({kind:"college",collegeId:"B"});
-  expect(look).toHaveBeenCalledTimes(2);
+  expect(look).toHaveBeenCalledTimes(3);
  });
  it("AUTH-tenant-host-20 rejects invalid hostnames as unknown, without resolving domains or claiming DB outage",async()=>{
   for(const bad of ["bad..campus.test","bad/campus.test","user@campus.test","campus.test?x=y","-wrong.campus.test"]){

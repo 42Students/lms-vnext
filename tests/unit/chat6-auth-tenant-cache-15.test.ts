@@ -12,7 +12,7 @@ beforeEach(()=>{
  vi.mocked(getPlatformHosts).mockReturnValue(new Set(["platform.example.test"]));
 });
 describe("AUTH-tenant-cache-15 bounded tenant-domain resolution",()=>{
- it("evicts the oldest unknown host, not every verified college, when the cache fills",async()=>{
+ it("bounds negative-host caching without storing verified colleges",async()=>{
   lookup.mockImplementation(async host=>{
    if(host==="north.example.test"||host==="south.example.test")return {
      domainId:host,host,collegeId:host==="north.example.test"?"north":"south",organizationId:"org",
@@ -34,9 +34,9 @@ describe("AUTH-tenant-cache-15 bounded tenant-domain resolution",()=>{
   const after=lookup.mock.calls.length;
   await expect(resolveRequestTenant("north.example.test")).resolves.toMatchObject({kind:"college",collegeId:"north"});
   await expect(resolveRequestTenant("south.example.test")).resolves.toMatchObject({kind:"college",collegeId:"south"});
-  expect(lookup).toHaveBeenCalledTimes(after);
+  expect(lookup).toHaveBeenCalledTimes(after+2);
  });
- it("sustained 600-host negative-cache flood cannot displace an early verified tenant",async()=>{
+ it("sustained 600-host negative-cache flood cannot bypass fresh verification",async()=>{
   lookup.mockImplementation(async host=>host==="early.example.test"?{
    domainId:"early",host,collegeId:"early",organizationId:"org",
   } as never:null);
@@ -44,7 +44,7 @@ describe("AUTH-tenant-cache-15 bounded tenant-domain resolution",()=>{
   for(let i=0;i<620;i++)await resolveRequestTenant("attacker-"+i+".example.test");
   const reads=lookup.mock.calls.length;
   await expect(resolveRequestTenant("early.example.test")).resolves.toMatchObject({kind:"college",collegeId:"early"});
-  expect(lookup).toHaveBeenCalledTimes(reads);
+  expect(lookup).toHaveBeenCalledTimes(reads+1);
  });
  it("retains fail-closed unknown and unavailable outcomes independently of cache pressure",async()=>{
   lookup.mockRejectedValueOnce(new Error("tenant DB temporarily down"));

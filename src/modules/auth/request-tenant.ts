@@ -58,7 +58,12 @@ export async function resolveRequestTenant(
   }
 
   const hit = cache.get(host);
-  if (hit && hit.expiresAt > Date.now()) return hit.value;
+  // A previously verified host is an authorization decision, not safe
+  // presentation metadata. Never reuse it across requests: revocation,
+  // host reassignment, and organization archival can commit on a different
+  // application instance, which cannot invalidate this process's cache.
+  if (hit && hit.expiresAt > Date.now() && hit.value.kind === "unknown")
+    return hit.value;
 
   let value: RequestTenant;
   try {
@@ -108,24 +113,19 @@ export async function resolveRequestTenant(
     return {kind:"unavailable",host};
   }
 
-  // Unknown-host floods must not flush every cached, verified college host;
-  // evict expired entries first, then the oldest entry if still at capacity.
+  // Cache only negative lookups to limit unknown-host floods.
+  // Every positive tenant grant must be read from currently committed SQL.
+  if (value.kind === "college") return value;
+
+  // Evict expired negative entries first, then the oldest at capacity.
   const now = Date.now();
   if(cache.size >= CACHE_LIMIT&&!cache.has(host)){
     for(const [key,entry] of cache){
       if(entry.expiresAt<=now)cache.delete(key);
     }
     if(cache.size >= CACHE_LIMIT){
-      // A flood of never-verified Host headers must not evict verified tenants.
-      // Prefer discarding an existing negative-cache entry. If every slot is
-      // verified, return the unknown result without storing it.
-      const negative=[...cache].find(([,entry])=>entry.value.kind==="unknown");
-      if(negative)cache.delete(negative[0]);
-      else if(value.kind==="unknown")return value;
-      else {
-        const oldest=cache.keys().next().value;
-        if(oldest!==undefined)cache.delete(oldest);
-      }
+      const oldest=cache.keys().next().value;
+      if(oldest!==undefined)cache.delete(oldest);
     }
   }
   // Refreshing an existing hostname also refreshes its insertion order.
