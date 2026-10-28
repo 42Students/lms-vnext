@@ -6,6 +6,8 @@ on:
     branches: [main]
     paths:
       - "src/modules/courses/course-service.ts"
+      - "src/modules/groups/roster-access.ts"
+      - "tests/db008-elective-roster-structure.test.mjs"
       - "src/modules/courses/lesson-content-service.ts"
       - "src/modules/courses/learning-access.ts"
       - "src/modules/courses/progress-service.ts"
@@ -69,6 +71,8 @@ jobs:
           npx vitest run --config vitest.db.config.ts
           tests/integration/db008-course-parent-app-pg.test.ts
           tests/integration/courses-c2-learning.test.ts
+      - name: DB-008 elective course-scope SQL source structure
+        run: node --test tests/db008-elective-roster-structure.test.mjs
       - name: DB-008 source parent contracts (not a DB registration claim)
         run: node --test tests/db05-course-parent-integrity.test.mjs tests/db05-archived-learning-hierarchy-access.test.mjs
       - name: TypeScript compile
