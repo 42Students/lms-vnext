@@ -40,6 +40,11 @@ afterAll(async()=>{
  await closeDatabaseConnection();
 });
 async function verifiedChallenge(){
+ // Keep each independent case outside the per-contact 60-second issue
+ // cooldown; do not clear a production challenge or weaken its rate limit.
+ for(const id of challenges)
+  await pool.query("delete from identity_preuser_challenges where id=$1",[id]);
+ challenges.length=0;
  let code="";
  const issue=await issuePreuserChallenge({
   collegeId:SEED_IDS.collegeA,channel:"EMAIL",source:"CONTACT",contact:emailA,
