@@ -32,7 +32,10 @@ export async function PATCH(request:Request){
   const body=await request.text();
   if(body.length>8192)return NextResponse.json({error:"REQUEST_TOO_LARGE"},{status:413,
    headers:{"Cache-Control":"private, no-store"}});
-  const raw:unknown=JSON.parse(body);
+  let raw:unknown;
+  try{raw=JSON.parse(body);}
+  catch{return NextResponse.json({error:"INVALID_REQUEST"},{status:400,
+   headers:{"Cache-Control":"private, no-store"}});}
   const parsed=input.parse(raw);
   const profile=await updateOwnIdentityName(
    await getCurrentRequestContext(),parsed.name,parsed.expectedVersion);
