@@ -287,6 +287,56 @@ export const drizzleTenantDomainRepository: TenantDomainRepository = {
     return domain;
   },
 
+  async ensureVerifiedToken(input) {
+    // Rechecking a VERIFIED host issues a fresh challenge without removing
+    // its original verified proof. Keep DNS diagnostics and current routing
+    // until an explicit host edit or removal occurs.
+    await getDb().transaction(async tx => {
+      const [owner]=await tx.select({collegeId:tenantDomains.collegeId})
+        .from(tenantDomains)
+        .where(and(eq(tenantDomains.id,input.domainId),isNull(tenantDomains.deletedAt)))
+        .limit(1);
+      if(!owner)throw new TenantDomainServiceError("DOMAIN_NOT_FOUND");
+      const [parent]=await tx.select({id:colleges.id,status:colleges.status})
+        .from(colleges).where(eq(colleges.id,owner.collegeId))
+        .for("update").limit(1);
+      if(!parent||parent.status!=="ACTIVE")
+        throw new TenantDomainServiceError("DOMAIN_NOT_FOUND");
+      const [row]=await tx.select({
+        id:tenantDomains.id,collegeId:tenantDomains.collegeId,
+        organizationId:colleges.organizationId,status:colleges.status,
+        host:tenantDomains.host,isVerified:tenantDomains.isVerified,
+        verificationToken:tenantDomains.verificationToken,
+      }).from(tenantDomains)
+        .innerJoin(colleges,eq(colleges.id,tenantDomains.collegeId))
+        .where(and(eq(tenantDomains.id,input.domainId),isNull(tenantDomains.deletedAt)))
+        .for("update").limit(1);
+      if(!row||row.status!=="ACTIVE")throw new TenantDomainServiceError("DOMAIN_NOT_FOUND");
+      await assertPersistedPlatformPermission(tx,input.context,"college.manage",{
+        collegeId:row.collegeId,organizationId:row.organizationId,
+      });
+      if(row.host!==input.expectedHost)
+        throw new TenantDomainServiceError("DOMAIN_HOST_STALE");
+      if(!row.isVerified||row.verificationToken)return;
+      await tx.update(tenantDomains).set({
+        verificationToken:input.token,lastCheckedAt:null,lastCheckResult:null,
+        lastFoundValues:null,updatedAt:new Date(),
+      }).where(and(eq(tenantDomains.id,row.id),isNull(tenantDomains.deletedAt)));
+      await tx.insert(activityEvents).values({
+        organizationId:row.organizationId,collegeId:row.collegeId,
+        actorUserId:input.context.user.id,module:"PLATFORM",
+        eventType:"PLATFORM_COLLEGE_SUBDOMAIN_CHANGED",importance:"HIGH",
+        subjectType:"tenant_domain",subjectId:row.id,
+        summary:"Super Admin requested a verified-host DNS recheck",
+        metadata:{action:"ISSUE_VERIFIED_HOST_RECHECK",host:row.host,
+          currentVerificationRetained:true},
+      });
+    });
+    const updated=await loadDomainFromDb(input.domainId);
+    if(!updated)throw new TenantDomainServiceError("DOMAIN_NOT_FOUND");
+    return updated;
+  },
+
   async editDomainHost(input) {
     try {
       await getDb().transaction(async tx=>{

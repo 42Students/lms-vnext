@@ -16,6 +16,7 @@ import {
   listTenantDomains,
   resolveTenantFromHost,
   setPrimaryTenantDomain,
+  ensureTenantDomainVerificationToken,
   verifyTenantDomain,
 } from "@/modules/tenant-domains/service";
 import { SEED_IDS } from "../../scripts/db-seed-data";
@@ -141,6 +142,69 @@ describe("tenant domains against PostgreSQL", () => {
     await expect(deleteTenantDomain(superAdmin,created.id,drizzleTenantDomainRepository)).rejects.toMatchObject({code:"PRIMARY_HOST_CONFIRMATION_REQUIRED"});
     await expect(deleteTenantDomain(superAdmin,created.id,drizzleTenantDomainRepository,"wrong.example.com")).rejects.toMatchObject({code:"PRIMARY_HOST_CONFIRMATION_REQUIRED"});
     await expect(deleteTenantDomain(superAdmin,created.id,drizzleTenantDomainRepository,"integration-tenant-delete-primary.example.com")).resolves.toBeUndefined();
+  });
+
+
+  it("rechecks a verified host without revoking routing after missing or mismatched TXT",async()=>{
+    const host="integration-tenant-verified-recheck.example.com";
+    const created=await createTenantDomain(superAdmin,{
+      collegeId:SEED_IDS.collegeA,host,
+    },drizzleTenantDomainRepository,()=>"token-initial");
+    const verified=await verifyTenantDomain(superAdmin,created.id,
+      drizzleTenantDomainRepository,verifiedDns);
+    expect(verified.isVerified).toBe(true);
+    expect(verified.isPrimary).toBe(true);
+    const reissued=await ensureTenantDomainVerificationToken(superAdmin,created.id,
+      drizzleTenantDomainRepository,()=>"token-recheck");
+    expect(reissued.verificationToken).toBe("token-recheck");
+    expect(reissued.isVerified).toBe(true);
+    expect(reissued.isPrimary).toBe(true);
+    const repeat=await ensureTenantDomainVerificationToken(superAdmin,created.id,
+      drizzleTenantDomainRepository,()=>"token-should-not-rotate");
+    expect(repeat.verificationToken).toBe("token-recheck");
+
+    const checked=await verifyTenantDomain(superAdmin,created.id,
+      drizzleTenantDomainRepository,{
+        async verify(name,token){
+          expect(name).toBe(host);
+          expect(token).toBe("token-recheck");
+          return {verified:false as const,result:"TXT_VALUE_MISMATCH" as const};
+        },
+      });
+    expect(checked).toMatchObject({
+      isVerified:true,isPrimary:true,verificationToken:"token-recheck",
+      lastCheckResult:"TXT_VALUE_MISMATCH",
+    });
+    await expect(resolveTenantFromHost(host,drizzleTenantDomainRepository))
+      .resolves.toMatchObject({domainId:created.id,collegeId:SEED_IDS.collegeA});
+
+    const refreshed=await verifyTenantDomain(superAdmin,created.id,
+      drizzleTenantDomainRepository,{
+        async verify(name,token){
+          expect(name).toBe(host);
+          expect(token).toBe("token-recheck");
+          return {verified:true as const,result:"VERIFIED" as const};
+        },
+      });
+    expect(refreshed).toMatchObject({
+      isVerified:true,isPrimary:true,verificationToken:null,
+      lastCheckResult:"VERIFIED",
+    });
+    expect(refreshed.verifiedAt?.getTime()).toBe(verified.verifiedAt?.getTime());
+  });
+
+  it("does not expose a verified-host recheck challenge to a college admin",async()=>{
+    const host="integration-tenant-recheck-denied.example.com";
+    const created=await createTenantDomain(superAdmin,{
+      collegeId:SEED_IDS.collegeA,host,
+    },drizzleTenantDomainRepository,()=>"token-denied");
+    await verifyTenantDomain(superAdmin,created.id,drizzleTenantDomainRepository,verifiedDns);
+    await expect(ensureTenantDomainVerificationToken(collegeAAdmin,created.id,
+      drizzleTenantDomainRepository,()=>"token-not-allowed"))
+      .rejects.toBeInstanceOf(AuthorizationError);
+    const stored=await pool.query<{verification_token:string|null}>(
+      "select verification_token from tenant_domains where id=$1",[created.id]);
+    expect(stored.rows[0]?.verification_token).toBeNull();
   });
 
   it("switches one verified primary domain transactionally", async () => {
