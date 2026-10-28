@@ -145,7 +145,7 @@ BEGIN
       USING ERRCODE = '23514';
   END IF;
   RETURN NEW;
-END $$;
+END; $;
 --> statement-breakpoint
 CREATE TRIGGER db04_private_profile_binding_usable_guard
   BEFORE INSERT OR UPDATE OF receipt_id,learner_membership_id,purpose
@@ -186,7 +186,7 @@ BEGIN
       USING ERRCODE = '23514';
   END IF;
   RETURN NEW;
-END $$;
+END; $;
 --> statement-breakpoint
 CREATE TRIGGER db04_video_intro_usable_guard
   BEFORE INSERT ON learner_profile_video_intros
@@ -197,7 +197,7 @@ LANGUAGE plpgsql AS $$
 BEGIN
   RAISE EXCEPTION 'learner video intro is one-time immutable profile state'
     USING ERRCODE = '55000';
-END $$;
+END; $;
 --> statement-breakpoint
 CREATE TRIGGER db04_video_intro_update_guard
   BEFORE UPDATE OR DELETE ON learner_profile_video_intros
