@@ -138,7 +138,10 @@ export async function issueEmailOwnershipLink(scope:EmailLinkScope,send:EmailLin
  * A changed email or revoked membership permanently invalidates the link.
  * This is an ownership proof, not a login/device session or role grant.
  */
-export async function redeemEmailOwnershipLink(token:string):Promise<boolean>{
+export async function redeemEmailOwnershipLink(
+ token:string,
+ expected?:Pick<EmailLinkScope,"userId"|"collegeId"|"membershipId">,
+):Promise<boolean>{
  if(!/^[a-zA-Z0-9_-]{43}$/.test(token))return false;
  const secret=getSecret(),version=keyVersion(),digest=bearerDigest(secret,token);
  return getDb().transaction(async tx=>{
@@ -146,7 +149,7 @@ export async function redeemEmailOwnershipLink(token:string):Promise<boolean>{
    SELECT user_id FROM identity_email_verification_links
     WHERE token_digest=${digest}`))[0];
   const userId=preliminary?.["user_id"];
-  if(typeof userId!=="string")return false;
+  if(typeof userId!=="string" || expected && userId!==expected.userId)return false;
   const user=rows(await tx.execute(sql`
    SELECT id,email FROM users WHERE id=${userId}
     AND platform_status='ACTIVE' FOR UPDATE`))[0];
@@ -157,6 +160,10 @@ export async function redeemEmailOwnershipLink(token:string):Promise<boolean>{
    FROM identity_email_verification_links
    WHERE token_digest=${digest} AND user_id=${userId}
    FOR UPDATE`))[0];
+  // The authenticated API must not redeem another user's or another
+  // college membership's bearer, even when the token leaked externally.
+  if(expected && (link?.["college_id"]!==(expected.collegeId??null)||
+    link?.["membership_id"]!==(expected.membershipId??null)))return false;
   if(!link||link["revoked_at"]||link["verified_at"]||
     link["expires_at"]==null||
     timestamp(link["expires_at"]).getTime()<=Date.now()||

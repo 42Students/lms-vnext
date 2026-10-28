@@ -76,6 +76,13 @@ describe("DB-004 registered email verification link replacements",()=>{
    const ttl=(record.rows[0]?.expires_at.getTime()??0)-
     (record.rows[0]?.created_at.getTime()??0);
    expect(ttl).toBe(24*60*60*1000);
+   // A valid bearer cannot cross another signed-in user/college context.
+   expect(await redeemEmailOwnershipLink(link.token,{
+    userId:randomUUID(),collegeId:null,membershipId:null,
+   })).toBe(false);
+   expect(await redeemEmailOwnershipLink(link.token,{
+    userId:u.userId,collegeId:SEED_IDS.collegeB,membershipId:u.membershipId,
+   })).toBe(false);
    const attempts=await Promise.all([
     redeemEmailOwnershipLink(link.token),redeemEmailOwnershipLink(link.token),
    ]);

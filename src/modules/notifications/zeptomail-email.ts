@@ -146,6 +146,7 @@ function isTemplateId(value: string): boolean {
 
 export type ZeptoMailPurpose =
   | { kind: "OTP" }
+  | { kind: "EMAIL_OWNERSHIP_LINK" }
   | { kind: "EVENT"; event: LegacyMailEvent }
   | { kind: "TPO"; templateName: string }
   | { kind: "PROJECTS"; templateName: "FINAL_SUBMISSION" | "MEETING_REQUEST" };
@@ -206,6 +207,7 @@ export type ZeptoMailSendResult =
   | { accepted: false; code: ZeptoMailFailureCode; httpStatus?: number; providerCode?: string };
 
 function purposeLabel(purpose: ZeptoMailPurpose): string {
+  if(purpose.kind==="EMAIL_OWNERSHIP_LINK")return "EMAIL_OWNERSHIP_LINK";
   return purpose.kind === "EVENT" ? purpose.event :
     purpose.kind === "TPO" ? "TPO" : purpose.kind === "PROJECTS" ? "PROJECTS" : "OTP";
 }
@@ -219,6 +221,10 @@ export function resolveZeptoMailTemplateId(
   let value: string | undefined;
   if (purpose.kind === "OTP") {
     value = config.otpTemplateKey;
+  } else if (purpose.kind === "EMAIL_OWNERSHIP_LINK") {
+    // Owner-provisioned explicit link template, never reuse the 6-digit OTP
+    // template (or echo the 256-bit bearer as an OTP merge variable).
+    value = env["ZEPTOMAIL_TEMPLATE_EMAIL_OWNERSHIP_LINK"];
   } else if (purpose.kind === "EVENT") {
     if (!Object.prototype.hasOwnProperty.call(LEGACY_NOTIFICATION_TEMPLATE_KEYS, purpose.event)) return null;
     const legacyKey = LEGACY_NOTIFICATION_TEMPLATE_KEYS[purpose.event];
@@ -381,6 +387,11 @@ export async function sendZeptoMailTemplate(
   }
   const mergeInfo = validMergeInfo(message.mergeInfo);
   if (!mergeInfo) return notSent(purpose, "MERGE_INFO_INVALID");
+  if (purpose.kind === "EMAIL_OWNERSHIP_LINK" &&
+      (!mergeInfo["verificationUrl"]?.trim() ||
+       !mergeInfo["expiryHours"]?.trim())) {
+    return notSent(purpose, "REQUIRED_VARIABLE_MISSING");
+  }
   if (purpose.kind === "EVENT") {
     const required = REQUIRED_VARIABLES[purpose.event] ?? [];
     if (required.some((key) => !mergeInfo[key]?.trim())) {

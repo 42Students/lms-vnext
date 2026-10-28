@@ -137,3 +137,25 @@ the provider matter be closed **for DB-004**. Accordingly:
 Canonical receipt: `docs/planning/db004-closure-decision-register.json`
 `releaseEvidence.providerOwnerHandoff`, with unverified live tests separately
 recorded in `releaseEvidence.providerAcceptance`.
+
+## 28 October 2026 — application-bound email ownership link API and UI
+
+Added **authenticated, same-host** issue/redeem endpoints for the existing
+24-hour, single-use HMAC email ownership proof. A browser never selects the
+recipient, user, college, membership, template, or redirect. It can select only
+its own currently scoped placement application, which PostgreSQL rechecks
+for active tenant/learner ownership. Redemption additionally checks the
+signed-in device's canonical user and selected membership; a forwarded bearer
+cannot be replayed against a different account.
+
+The verification URL carries the 256-bit bearer in a **fragment**, not a
+request query string; the confirmation page clears that fragment before
+posting to the same-host endpoint. Neither successful proof nor link issue
+creates a session, grants a role, approves a placement, or echoes a token.
+
+The transport uses a **dedicated explicitly provisioned**
+`ZEPTOMAIL_TEMPLATE_EMAIL_OWNERSHIP_LINK` with `verificationUrl` and
+`expiryHours` merge variables, never the 6-digit OTP template. Missing
+provider config/authorization fails closed and revokes the issued challenge
+if the provider rejects delivery. The requester owns real inbox delivery
+evidence during RELEASE; this integration does not claim actual delivery.

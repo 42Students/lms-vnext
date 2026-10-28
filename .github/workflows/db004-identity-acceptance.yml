@@ -9,6 +9,12 @@ on:
       - "src/modules/tenant-domains/**"
       - "src/modules/identity/preuser-onboarding-service.ts"
       - "src/modules/identity/email-link-verification-service.ts"
+      - "src/modules/identity/own-email-ownership-*.ts"
+      - "src/app/api/auth/email-ownership/**"
+      - "src/app/verify-email/**"
+      - "src/modules/notifications/zeptomail-email.ts"
+      - "tests/unit/db004-own-email-ownership-http.test.ts"
+      - "tests/db004-email-link-route-security.test.mjs"
       - "src/modules/identity/scoped-account-verification-service.ts"
       - "src/modules/identity/own-account-proof-*.ts"
       - "src/app/api/auth/account-proof/**"
@@ -112,6 +118,7 @@ jobs:
           npx vitest run
           tests/unit/db004-own-account-proof-authorization.test.ts
           tests/unit/db004-own-account-proof-http.test.ts
+          tests/unit/db004-own-email-ownership-http.test.ts
       - name: DB-004 source and security disposition checks
         run: >-
           node --test
@@ -120,3 +127,4 @@ jobs:
           tests/db004-current-owner-evidence.test.mjs
           tests/db004-closure-gates.test.mjs
           tests/db004-account-proof-route-security.test.mjs
+          tests/db004-email-link-route-security.test.mjs
