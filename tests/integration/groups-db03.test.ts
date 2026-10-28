@@ -130,7 +130,13 @@ afterEach(async () => {
   if(fixture.periods.length) await pool.query("DELETE FROM academic_periods WHERE id = ANY($1::uuid[])",[fixture.periods]);
   if(groupIds.length) await pool.query("DELETE FROM lms_groups WHERE id = ANY($1::uuid[])",[groupIds]);
   if(fixture.courses.length) await pool.query("DELETE FROM courses WHERE id = ANY($1::uuid[])",[fixture.courses]);
-  if(fixture.programs.length) await pool.query("DELETE FROM programs WHERE id = ANY($1::uuid[])",[fixture.programs]);
+  if(fixture.programs.length) {
+    // DB-005 creates program_terms for synthetic programs; drop only test-owned
+    // curriculum after its course offerings have been cleaned.
+    await pool.query("DELETE FROM program_term_courses WHERE program_term_id IN (SELECT id FROM program_terms WHERE program_id = ANY($1::uuid[]))",[fixture.programs]);
+    await pool.query("DELETE FROM program_terms WHERE program_id = ANY($1::uuid[])",[fixture.programs]);
+    await pool.query("DELETE FROM programs WHERE id = ANY($1::uuid[])",[fixture.programs]);
+  }
   if(fixture.memberships.length) {
     await pool.query("DELETE FROM membership_roles WHERE membership_id = ANY($1::uuid[])",[fixture.memberships]);
     await pool.query("DELETE FROM college_memberships WHERE id = ANY($1::uuid[])",[fixture.memberships]);
@@ -405,14 +411,23 @@ describe("DB03 group kernel on disposable PostgreSQL", () => {
       "INSERT INTO sections (id,cohort_id,academic_period_id,name,code) VALUES ($1,$2,$3,$4,$5)",
       [otherSectionId,otherCohortId,periodId,"DB26 Transfer Section "+otherSectionId,"DB26-"+otherSectionId],
     );
+    // DB-005 makes program/cohort identity immutable. A transfer must close
+    // the old enrollment and create a new identity; never rewrite its FK.
+    const nextEnrollment=randomUUID(),nextSectionEnrollment=randomUUID();
+    fixture.learnerEnrollments.push(nextEnrollment);
+    fixture.learnerSections.push(nextSectionEnrollment);
     await pool.query(
-      "UPDATE learner_program_enrollments SET program_id=$1,cohort_id=$2 WHERE id=$3",
-      [otherProgramId,otherCohortId,learnerEnrollmentId],
-    );
+      "UPDATE section_enrollments SET status='MOVED' WHERE learner_enrollment_id=$1 AND status='ACTIVE'",
+      [learnerEnrollmentId]);
     await pool.query(
-      "UPDATE section_enrollments SET section_id=$1 WHERE learner_enrollment_id=$2 AND status='ACTIVE'",
-      [otherSectionId,learnerEnrollmentId],
-    );
+      "UPDATE learner_program_enrollments SET status='WITHDRAWN' WHERE id=$1",
+      [learnerEnrollmentId]);
+    await pool.query(
+      "INSERT INTO learner_program_enrollments(id,membership_id,program_id,cohort_id) VALUES($1,$2,$3,$4)",
+      [nextEnrollment,candidate.membershipId,otherProgramId,otherCohortId]);
+    await pool.query(
+      "INSERT INTO section_enrollments(id,learner_enrollment_id,section_id,academic_period_id) VALUES($1,$2,$3,$4)",
+      [nextSectionEnrollment,nextEnrollment,otherSectionId,periodId]);
 
     await expect(moveElectiveMember(
       admin,fixture.electiveOfferingIds[0],fixture.electiveOfferingIds[1],candidate.membershipId,

@@ -29,6 +29,7 @@ type Fixture = {
   courseId: string; offeringId: string; deliveryId: string; slotId: string;
   groupId: string; scheduleEventId: string; otherUserId?: string; otherMembershipId?: string;
   otherEnrollmentId?: string; otherSectionEnrollmentId?: string;
+  transferredEnrollmentId?: string; transferredSectionEnrollmentId?: string;
   crossProgramId?: string; crossCohortId?: string; crossSectionId?: string;
 };
 const fixtures: Fixture[] = [];
@@ -128,6 +129,8 @@ afterEach(async () => {
     await pool.query("DELETE FROM elective_slots WHERE id=$1",[f.slotId]);
     await pool.query("DELETE FROM section_schedule_event_courses WHERE schedule_event_id=$1",[f.scheduleEventId]);
     await pool.query("DELETE FROM section_schedule_events WHERE id=$1",[f.scheduleEventId]);
+    if(f.transferredSectionEnrollmentId) await pool.query("DELETE FROM section_enrollments WHERE id=$1",[f.transferredSectionEnrollmentId]);
+    if(f.transferredEnrollmentId) await pool.query("DELETE FROM learner_program_enrollments WHERE id=$1",[f.transferredEnrollmentId]);
     if(f.otherSectionEnrollmentId) await pool.query("DELETE FROM section_enrollments WHERE id=$1",[f.otherSectionEnrollmentId]);
     if(f.otherEnrollmentId) await pool.query("DELETE FROM learner_program_enrollments WHERE id=$1",[f.otherEnrollmentId]);
     await pool.query("DELETE FROM course_section_deliveries WHERE id=$1",[f.deliveryId]);
@@ -140,8 +143,10 @@ afterEach(async () => {
     await pool.query("DELETE FROM cohorts WHERE id=$1",[f.cohortId]);
     if(f.crossCohortId) await pool.query("DELETE FROM cohorts WHERE id=$1",[f.crossCohortId]);
     await pool.query("DELETE FROM academic_periods WHERE id=$1",[f.periodId]);
-    await pool.query("DELETE FROM programs WHERE id=$1",[f.programId]);
-    if(f.crossProgramId) await pool.query("DELETE FROM programs WHERE id=$1",[f.crossProgramId]);
+    const programs=[f.programId,...(f.crossProgramId?[f.crossProgramId]:[])];
+    await pool.query("DELETE FROM program_term_courses WHERE program_term_id IN (SELECT id FROM program_terms WHERE program_id=ANY($1::uuid[]))",[programs]);
+    await pool.query("DELETE FROM program_terms WHERE program_id=ANY($1::uuid[])",[programs]);
+    await pool.query("DELETE FROM programs WHERE id=ANY($1::uuid[])",[programs]);
     await pool.query("DELETE FROM lms_groups WHERE id=$1",[f.groupId]);
     if(f.otherMembershipId) {
       await pool.query("DELETE FROM membership_roles WHERE membership_id=$1",[f.otherMembershipId]);
@@ -296,14 +301,18 @@ describe("DB03 elective group-backed course access (PostgreSQL)", () => {
       "INSERT INTO sections (id,cohort_id,academic_period_id,name,code) VALUES ($1,$2,$3,$4,$5)",
       [s,c,f.periodId,label(),label()],
     );
+    // DB-005 immutable enrollment identity: retire old and create fresh
+    // same-college program/section enrollment, preserving historical rows.
+    f.transferredEnrollmentId=randomUUID();
+    f.transferredSectionEnrollmentId=randomUUID();
+    await pool.query("UPDATE section_enrollments SET status='MOVED' WHERE id=$1",[f.otherSectionEnrollmentId]);
+    await pool.query("UPDATE learner_program_enrollments SET status='WITHDRAWN' WHERE id=$1",[f.otherEnrollmentId]);
     await pool.query(
-      "UPDATE learner_program_enrollments SET program_id=$1,cohort_id=$2 WHERE id=$3",
-      [p,c,f.otherEnrollmentId],
-    );
+      "INSERT INTO learner_program_enrollments(id,membership_id,program_id,cohort_id) VALUES($1,$2,$3,$4)",
+      [f.transferredEnrollmentId,student.membershipId,p,c]);
     await pool.query(
-      "UPDATE section_enrollments SET section_id=$1 WHERE id=$2",
-      [s,f.otherSectionEnrollmentId],
-    );
+      "INSERT INTO section_enrollments(id,learner_enrollment_id,section_id,academic_period_id) VALUES($1,$2,$3,$4)",
+      [f.transferredSectionEnrollmentId,f.transferredEnrollmentId,s,f.periodId]);
 
     // Membership history remains, but it must no longer authorize the slot's
     // delivery after the learner's primary program changes.
@@ -343,14 +352,18 @@ describe("DB03 elective group-backed course access (PostgreSQL)", () => {
       "INSERT INTO sections (id,cohort_id,academic_period_id,name,code) VALUES ($1,$2,$3,$4,$5)",
       [s,c,f.periodId,label(),label()],
     );
+    // DB-005 immutable enrollment identity: retire old and create fresh
+    // same-college program/section enrollment, preserving historical rows.
+    f.transferredEnrollmentId=randomUUID();
+    f.transferredSectionEnrollmentId=randomUUID();
+    await pool.query("UPDATE section_enrollments SET status='MOVED' WHERE id=$1",[f.otherSectionEnrollmentId]);
+    await pool.query("UPDATE learner_program_enrollments SET status='WITHDRAWN' WHERE id=$1",[f.otherEnrollmentId]);
     await pool.query(
-      "UPDATE learner_program_enrollments SET program_id=$1,cohort_id=$2 WHERE id=$3",
-      [p,c,f.otherEnrollmentId],
-    );
+      "INSERT INTO learner_program_enrollments(id,membership_id,program_id,cohort_id) VALUES($1,$2,$3,$4)",
+      [f.transferredEnrollmentId,student.membershipId,p,c]);
     await pool.query(
-      "UPDATE section_enrollments SET section_id=$1 WHERE id=$2",
-      [s,f.otherSectionEnrollmentId],
-    );
+      "INSERT INTO section_enrollments(id,learner_enrollment_id,section_id,academic_period_id) VALUES($1,$2,$3,$4)",
+      [f.transferredSectionEnrollmentId,f.transferredEnrollmentId,s,f.periodId]);
     // College and period still match. The pinned legacy service rejects on
     // program mismatch, even though old V167 commentary suggests otherwise.
     await expect(joinGroup(student.ctx,f.groupId,student.membershipId))
