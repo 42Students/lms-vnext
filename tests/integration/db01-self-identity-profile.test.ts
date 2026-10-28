@@ -13,6 +13,9 @@ async function fixture(run:(ctx:RequestContext)=>Promise<void>){
  await pool.query("INSERT INTO users (id,identity_uid,display_name) VALUES ($1,$2,'Original Name')",[id,identityUid]);
  const ctx:RequestContext={user:{id,identityUid,platformStatus:"ACTIVE",systemRoles:[]},membership:null};
  try{await run(ctx);}finally{
+  // Production audit rows are retained. Only this disposable fixture deletes
+  // its own activity record before removing the referenced temporary user.
+  await pool.query("DELETE FROM activity_events WHERE actor_user_id=$1",[id]);
   await pool.query("DELETE FROM users WHERE id=$1",[id]);
  }
 }
