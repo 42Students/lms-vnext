@@ -116,6 +116,27 @@ const learner: RequestContext = {
 };
 
 async function cleanupC2() {
+  // Progress and classroom rows are linked to the fixture offering/delivery.
+  // Do not remove parent lessons before their history rows are retired.
+  await pool.query(
+    `delete from learner_content_progress
+     where lesson_content_id in (
+       select content.id from lesson_contents content
+       join course_lessons lesson on lesson.id=content.lesson_id
+       join course_learning_paths path on path.id=lesson.learning_path_id
+       join course_offerings offering on offering.id=path.offering_id
+       join courses course_row on course_row.id=offering.course_id
+       where course_row.code like 'C2-%'
+     )`,
+  );
+  await pool.query(
+    `delete from course_discussion_messages where delivery_id in (
+       select delivery.id from course_section_deliveries delivery
+       join course_offerings offering on offering.id=delivery.offering_id
+       join courses course_row on course_row.id=offering.course_id
+       where course_row.code like 'C2-%'
+     )`,
+  );
   await pool.query(
     `delete from lesson_contents
      where lesson_id in (
@@ -902,4 +923,80 @@ describe("courses C2 learning structure against PostgreSQL", () => {
       code: "CONTENT_DELIVERY_MISMATCH",
     });
   });
+  it("makes first completion immutable across rewatch and snapshots classroom sender", async () => {
+    const structure = await createStructure();
+    const path = await createLearningPath(collegeAdmin, {
+      offeringId: structure.offering.id, title: "C2 history integrity path",
+    });
+    const lesson = await createCourseLesson(collegeAdmin, {
+      learningPathId: path.id, name: "C2 history lesson", sequence: 0,
+    });
+    const content = await createLessonContent(collegeAdmin, {
+      lessonId: lesson.id, title: "C2 history resource",
+      contentType: "RESOURCE", points: 1, notes: "History guard",
+      sequence: 0,
+    });
+    const completed = await pool.query<{ id: string; first_completed_at: Date }>(
+      `insert into learner_content_progress
+         (membership_id,lesson_content_id,last_position_seconds,completed_at)
+       values($1,$2,0,now()) returning id,first_completed_at`,
+      [learnerMembershipId,content.id],
+    );
+    const progressId = completed.rows[0]!.id;
+    const firstAt = completed.rows[0]!.first_completed_at;
+    expect(firstAt).toBeInstanceOf(Date);
+    const reset = await pool.query<{completed_at: Date|null;first_completed_at:Date}>(
+      `update learner_content_progress set completed_at=null where id=$1
+       returning completed_at,first_completed_at`,[progressId],
+    );
+    expect(reset.rows[0]!.completed_at).toBeNull();
+    expect(reset.rows[0]!.first_completed_at.getTime()).toBe(firstAt.getTime());
+    await expect(pool.query(
+      "update learner_content_progress set first_completed_at=null where id=$1",
+      [progressId],
+    )).rejects.toMatchObject({code:"23514"});
+    await expect(pool.query(
+      `insert into learner_content_progress
+       (membership_id,lesson_content_id,attempt,first_completed_at)
+       values($1,$2,2,now())`,[learnerMembershipId,content.id],
+    )).rejects.toMatchObject({code:"23514"});
+    const second = await pool.query<{first_completed_at:Date|null}>(
+      `insert into learner_content_progress
+       (membership_id,lesson_content_id,attempt,last_position_seconds)
+       values($1,$2,2,0) returning first_completed_at`,
+      [learnerMembershipId,content.id],
+    );
+    expect(second.rows[0]!.first_completed_at).toBeNull();
+
+    const trusted=await pool.query<{display_name:string}>(
+      "select display_name from users where id=$1",[SEED_IDS.facultyUser],
+    );
+    const message=await pool.query<{id:string;sender_name_snapshot:string}>(
+      `insert into course_discussion_messages
+       (delivery_id,sender_membership_id,sender_role,message_text,sender_name_snapshot)
+       values($1,$2,'FACULTY','Trusted history','Spoofed client name')
+       returning id,sender_name_snapshot`,
+      [structure.deliveryA.id,SEED_IDS.facultyCollegeAMembership],
+    );
+    const messageId=message.rows[0]!.id;
+    expect(message.rows[0]!.sender_name_snapshot).toBe(
+      trusted.rows[0]!.display_name.slice(0,160),
+    );
+    await expect(pool.query(
+      `update course_discussion_messages set sender_name_snapshot='Tampered'
+       where id=$1`,[messageId],
+    )).rejects.toMatchObject({code:"23514"});
+    await expect(pool.query(
+      `update course_discussion_messages set sender_membership_id=$1 where id=$2`,
+      [learnerMembershipId,messageId],
+    )).rejects.toMatchObject({code:"23514"});
+    const edited=await pool.query<{sender_name_snapshot:string}>(
+      `update course_discussion_messages set message_text='Edited historical text'
+       where id=$1 returning sender_name_snapshot`,[messageId],
+    );
+    expect(edited.rows[0]!.sender_name_snapshot).toBe(
+      trusted.rows[0]!.display_name.slice(0,160),
+    );
+  });
+
 });
