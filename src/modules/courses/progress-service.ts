@@ -3,6 +3,8 @@ import {
   desc,
   eq,
   inArray,
+  isNull,
+  or,
   sql,
 } from "drizzle-orm";
 import { getDb } from "@/db/client";
@@ -131,7 +133,9 @@ async function requireLearnerProgressScope(
   const content =
     await loadLessonContentScope(contentId);
 
-  if (!content.lessonVisibleToStudents) {
+  if (!content.lessonVisibleToStudents || content.lessonDeletedAt ||
+      !content.visibleToStudents || content.deletedAt ||
+      content.deletedWithLesson || content.legacyActive === false) {
     throw new CoursesServiceError("LESSON_CONTENT_NOT_PUBLISHED");
   }
   if (content.status !== "PUBLISHED") {
@@ -283,6 +287,7 @@ export async function listMyLearnerContentProgressBatch(
    eq(lessonContents.status,"PUBLISHED"),eq(lessonContents.visibleToStudents,true),
    eq(lessonContents.deletedWithLesson,false),
    sql`${lessonContents.deletedAt} is null`,
+   or(isNull(lessonContents.legacyActive),eq(lessonContents.legacyActive,true)),
    sql`(${lessonContents.deliveryId} is null or ${lessonContents.deliveryId} = ${deliveryId})`,
    sql`(${lessonContents.startsAt} is null or ${lessonContents.startsAt} <= now())`,
   )).limit(500);
