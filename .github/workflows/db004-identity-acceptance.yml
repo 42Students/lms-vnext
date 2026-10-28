@@ -79,3 +79,4 @@ jobs:
           node --test
           tests/db004-session-revocation-ownership.test.mjs
           tests/db01-final-field-disposition.test.mjs
+          tests/db004-current-owner-evidence.test.mjs

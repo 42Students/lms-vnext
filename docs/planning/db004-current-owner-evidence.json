@@ -1,0 +1,2441 @@
+{
+  "schemaVersion": 1,
+  "task": "DB-004",
+  "source": "docs/planning/db01-chat05-final-field-disposition.json",
+  "baseCommit": "56baf333b621a67c3eff24f6dcb1fd57feb86cb0",
+  "registeredMigration": "drizzle/0300_db01_person_name_identity_profile.sql",
+  "firstPartyAuthAuthority": "docs/architecture/first-party-login.md",
+  "explicitScope": "DB-004 only; DB-005 DB-007 DB-012 remain separately owned",
+  "completion": "OPEN_UNTIL_RUNTIME_SEMANTICS_AND_SIGNOFF",
+  "summary": {
+    "ownerFields": 195,
+    "registeredExactFieldWitnesses": 112,
+    "sourceDecisionsAccounted": 195,
+    "nonExactOrRetirementRows": 83,
+    "statuses": {
+      "RETIRED_CROSS_HOST_HANDOFF_SOURCE_DECISION": 6,
+      "RETIREMENT_NORMALIZATION_OR_FIRST_PARTY_SECURITY_DECISION": 39,
+      "EXACT_REGISTERED_FIELD_PG_WITNESS": 112,
+      "REGISTERED_BRANDING_REPLACEMENT_SEMANTIC_REVIEW": 15,
+      "COMPOSITE_REDESIGN_SEMANTIC_REVIEW": 16,
+      "REGISTERED_IDENTITY_NAME_ADDITIVE_PARTIAL_RUNTIME": 6,
+      "REGISTERED_DNS_DIAGNOSTICS_SOURCE": 1
+    }
+  },
+  "guidance": [
+    "Exact column existence on registered PostgreSQL does not prove legacy reader/writer parity.",
+    "Historical Firebase and identity_auth_handoffs proposals are superseded by first-party OTP/session design; do not promote them as credentials.",
+    "Person name columns registered and own identity API activated; all-role UI/third-party delivery semantics need independent acceptance.",
+    "RuntimeVerified=false remains until an exact test and business owner acceptance proves that row's behavior.",
+    "Never advance tracker done without fresh SHA-specific CI and approvals."
+  ],
+  "rows": [
+    {
+      "legacyField": "auth_handoff_token.id",
+      "originalDisposition": "PROPOSED_TARGET_UNVERIFIED",
+      "historicalTarget": "identity_auth_handoffs.id",
+      "proposedPhysicalTarget": null,
+      "evidenceStatus": "RETIRED_CROSS_HOST_HANDOFF_SOURCE_DECISION",
+      "physicalVerified": false,
+      "runtimeSemanticsVerified": false,
+      "evidence": [
+        "src/app/auth/handoff/page.tsx",
+        "docs/architecture/first-party-login.md"
+      ]
+    },
+    {
+      "legacyField": "auth_handoff_token.created_at",
+      "originalDisposition": "PROPOSED_TARGET_UNVERIFIED",
+      "historicalTarget": "identity_auth_handoffs.created_at",
+      "proposedPhysicalTarget": null,
+      "evidenceStatus": "RETIRED_CROSS_HOST_HANDOFF_SOURCE_DECISION",
+      "physicalVerified": false,
+      "runtimeSemanticsVerified": false,
+      "evidence": [
+        "src/app/auth/handoff/page.tsx",
+        "docs/architecture/first-party-login.md"
+      ]
+    },
+    {
+      "legacyField": "auth_handoff_token.updated_at",
+      "originalDisposition": "REDESIGNED_NO_SINGLE_FIELD",
+      "historicalTarget": "identity_auth_handoffs.created_at/expires_at/consumed_at",
+      "proposedPhysicalTarget": null,
+      "evidenceStatus": "RETIREMENT_NORMALIZATION_OR_FIRST_PARTY_SECURITY_DECISION",
+      "physicalVerified": false,
+      "runtimeSemanticsVerified": false,
+      "evidence": [
+        "docs/architecture/first-party-login.md",
+        "docs/planning/db01-chat05-provider-persistence-decision.json"
+      ]
+    },
+    {
+      "legacyField": "auth_handoff_token.is_deleted",
+      "originalDisposition": "PROPOSED_TARGET_UNVERIFIED",
+      "historicalTarget": "identity_auth_handoffs.consumed_at",
+      "proposedPhysicalTarget": null,
+      "evidenceStatus": "RETIRED_CROSS_HOST_HANDOFF_SOURCE_DECISION",
+      "physicalVerified": false,
+      "runtimeSemanticsVerified": false,
+      "evidence": [
+        "src/app/auth/handoff/page.tsx",
+        "docs/architecture/first-party-login.md"
+      ]
+    },
+    {
+      "legacyField": "auth_handoff_token.token",
+      "originalDisposition": "PROPOSED_TARGET_UNVERIFIED",
+      "historicalTarget": "identity_auth_handoffs.code_mac",
+      "proposedPhysicalTarget": null,
+      "evidenceStatus": "RETIRED_CROSS_HOST_HANDOFF_SOURCE_DECISION",
+      "physicalVerified": false,
+      "runtimeSemanticsVerified": false,
+      "evidence": [
+        "src/app/auth/handoff/page.tsx",
+        "docs/architecture/first-party-login.md"
+      ]
+    },
+    {
+      "legacyField": "auth_handoff_token.access_token",
+      "originalDisposition": "SECURITY_RETIRED_RAW_SECRET",
+      "historicalTarget": "EXTERNAL_IDENTITY_PROVIDER_SESSION_BOOTSTRAP",
+      "proposedPhysicalTarget": null,
+      "evidenceStatus": "RETIREMENT_NORMALIZATION_OR_FIRST_PARTY_SECURITY_DECISION",
+      "physicalVerified": false,
+      "runtimeSemanticsVerified": false,
+      "evidence": [
+        "docs/architecture/first-party-login.md",
+        "docs/planning/db01-chat05-provider-persistence-decision.json"
+      ]
+    },
+    {
+      "legacyField": "auth_handoff_token.refresh_token",
+      "originalDisposition": "SECURITY_RETIRED_RAW_SECRET",
+      "historicalTarget": "EXTERNAL_IDENTITY_PROVIDER_SESSION_BOOTSTRAP",
+      "proposedPhysicalTarget": null,
+      "evidenceStatus": "RETIREMENT_NORMALIZATION_OR_FIRST_PARTY_SECURITY_DECISION",
+      "physicalVerified": false,
+      "runtimeSemanticsVerified": false,
+      "evidence": [
+        "docs/architecture/first-party-login.md",
+        "docs/planning/db01-chat05-provider-persistence-decision.json"
+      ]
+    },
+    {
+      "legacyField": "auth_handoff_token.expires_at",
+      "originalDisposition": "PROPOSED_TARGET_UNVERIFIED",
+      "historicalTarget": "identity_auth_handoffs.expires_at",
+      "proposedPhysicalTarget": null,
+      "evidenceStatus": "RETIRED_CROSS_HOST_HANDOFF_SOURCE_DECISION",
+      "physicalVerified": false,
+      "runtimeSemanticsVerified": false,
+      "evidence": [
+        "src/app/auth/handoff/page.tsx",
+        "docs/architecture/first-party-login.md"
+      ]
+    },
+    {
+      "legacyField": "auth_handoff_token.used",
+      "originalDisposition": "PROPOSED_TARGET_UNVERIFIED",
+      "historicalTarget": "identity_auth_handoffs.consumed_at",
+      "proposedPhysicalTarget": null,
+      "evidenceStatus": "RETIRED_CROSS_HOST_HANDOFF_SOURCE_DECISION",
+      "physicalVerified": false,
+      "runtimeSemanticsVerified": false,
+      "evidence": [
+        "src/app/auth/handoff/page.tsx",
+        "docs/architecture/first-party-login.md"
+      ]
+    },
+    {
+      "legacyField": "auth_token.id",
+      "originalDisposition": "RETIRED_NO_CURRENT_WORKFLOW",
+      "historicalTarget": null,
+      "proposedPhysicalTarget": null,
+      "evidenceStatus": "RETIREMENT_NORMALIZATION_OR_FIRST_PARTY_SECURITY_DECISION",
+      "physicalVerified": false,
+      "runtimeSemanticsVerified": false,
+      "evidence": [
+        "docs/architecture/first-party-login.md",
+        "docs/planning/db01-chat05-provider-persistence-decision.json"
+      ]
+    },
+    {
+      "legacyField": "auth_token.created_at",
+      "originalDisposition": "RETIRED_NO_CURRENT_WORKFLOW",
+      "historicalTarget": null,
+      "proposedPhysicalTarget": null,
+      "evidenceStatus": "RETIREMENT_NORMALIZATION_OR_FIRST_PARTY_SECURITY_DECISION",
+      "physicalVerified": false,
+      "runtimeSemanticsVerified": false,
+      "evidence": [
+        "docs/architecture/first-party-login.md",
+        "docs/planning/db01-chat05-provider-persistence-decision.json"
+      ]
+    },
+    {
+      "legacyField": "auth_token.is_deleted",
+      "originalDisposition": "RETIRED_NO_CURRENT_WORKFLOW",
+      "historicalTarget": null,
+      "proposedPhysicalTarget": null,
+      "evidenceStatus": "RETIREMENT_NORMALIZATION_OR_FIRST_PARTY_SECURITY_DECISION",
+      "physicalVerified": false,
+      "runtimeSemanticsVerified": false,
+      "evidence": [
+        "docs/architecture/first-party-login.md",
+        "docs/planning/db01-chat05-provider-persistence-decision.json"
+      ]
+    },
+    {
+      "legacyField": "auth_token.updated_at",
+      "originalDisposition": "RETIRED_NO_CURRENT_WORKFLOW",
+      "historicalTarget": null,
+      "proposedPhysicalTarget": null,
+      "evidenceStatus": "RETIREMENT_NORMALIZATION_OR_FIRST_PARTY_SECURITY_DECISION",
+      "physicalVerified": false,
+      "runtimeSemanticsVerified": false,
+      "evidence": [
+        "docs/architecture/first-party-login.md",
+        "docs/planning/db01-chat05-provider-persistence-decision.json"
+      ]
+    },
+    {
+      "legacyField": "auth_token.token",
+      "originalDisposition": "RETIRED_NO_CURRENT_WORKFLOW",
+      "historicalTarget": null,
+      "proposedPhysicalTarget": null,
+      "evidenceStatus": "RETIREMENT_NORMALIZATION_OR_FIRST_PARTY_SECURITY_DECISION",
+      "physicalVerified": false,
+      "runtimeSemanticsVerified": false,
+      "evidence": [
+        "docs/architecture/first-party-login.md",
+        "docs/planning/db01-chat05-provider-persistence-decision.json"
+      ]
+    },
+    {
+      "legacyField": "college.id",
+      "originalDisposition": "PROPOSED_TARGET_UNVERIFIED",
+      "historicalTarget": "colleges.id",
+      "proposedPhysicalTarget": "colleges.id",
+      "evidenceStatus": "EXACT_REGISTERED_FIELD_PG_WITNESS",
+      "physicalVerified": true,
+      "runtimeSemanticsVerified": false,
+      "evidence": [
+        "tests/integration/db01-registered-physical-field-crosswalk.test.ts"
+      ]
+    },
+    {
+      "legacyField": "college.created_at",
+      "originalDisposition": "PROPOSED_TARGET_UNVERIFIED",
+      "historicalTarget": "colleges.created_at",
+      "proposedPhysicalTarget": "colleges.created_at",
+      "evidenceStatus": "EXACT_REGISTERED_FIELD_PG_WITNESS",
+      "physicalVerified": true,
+      "runtimeSemanticsVerified": false,
+      "evidence": [
+        "tests/integration/db01-registered-physical-field-crosswalk.test.ts"
+      ]
+    },
+    {
+      "legacyField": "college.is_deleted",
+      "originalDisposition": "PROPOSED_TARGET_UNVERIFIED",
+      "historicalTarget": "colleges.status",
+      "proposedPhysicalTarget": "colleges.status",
+      "evidenceStatus": "EXACT_REGISTERED_FIELD_PG_WITNESS",
+      "physicalVerified": true,
+      "runtimeSemanticsVerified": false,
+      "evidence": [
+        "tests/integration/db01-registered-physical-field-crosswalk.test.ts"
+      ]
+    },
+    {
+      "legacyField": "college.updated_at",
+      "originalDisposition": "PROPOSED_TARGET_UNVERIFIED",
+      "historicalTarget": "colleges.updated_at",
+      "proposedPhysicalTarget": "colleges.updated_at",
+      "evidenceStatus": "EXACT_REGISTERED_FIELD_PG_WITNESS",
+      "physicalVerified": true,
+      "runtimeSemanticsVerified": false,
+      "evidence": [
+        "tests/integration/db01-registered-physical-field-crosswalk.test.ts"
+      ]
+    },
+    {
+      "legacyField": "college.address_line1",
+      "originalDisposition": "PROPOSED_TARGET_UNVERIFIED",
+      "historicalTarget": "colleges.address_line1",
+      "proposedPhysicalTarget": "colleges.address_line1",
+      "evidenceStatus": "EXACT_REGISTERED_FIELD_PG_WITNESS",
+      "physicalVerified": true,
+      "runtimeSemanticsVerified": false,
+      "evidence": [
+        "tests/integration/db01-registered-physical-field-crosswalk.test.ts"
+      ]
+    },
+    {
+      "legacyField": "college.address_line2",
+      "originalDisposition": "PROPOSED_TARGET_UNVERIFIED",
+      "historicalTarget": "colleges.address_line2",
+      "proposedPhysicalTarget": "colleges.address_line2",
+      "evidenceStatus": "EXACT_REGISTERED_FIELD_PG_WITNESS",
+      "physicalVerified": true,
+      "runtimeSemanticsVerified": false,
+      "evidence": [
+        "tests/integration/db01-registered-physical-field-crosswalk.test.ts"
+      ]
+    },
+    {
+      "legacyField": "college.city",
+      "originalDisposition": "PROPOSED_TARGET_UNVERIFIED",
+      "historicalTarget": "colleges.city",
+      "proposedPhysicalTarget": "colleges.city",
+      "evidenceStatus": "EXACT_REGISTERED_FIELD_PG_WITNESS",
+      "physicalVerified": true,
+      "runtimeSemanticsVerified": false,
+      "evidence": [
+        "tests/integration/db01-registered-physical-field-crosswalk.test.ts"
+      ]
+    },
+    {
+      "legacyField": "college.college_chair_id",
+      "originalDisposition": "REDESIGNED_PRODUCT_FIELD_OMITTED",
+      "historicalTarget": "membership_roles/system_roles if a future leadership permission is introduced",
+      "proposedPhysicalTarget": null,
+      "evidenceStatus": "RETIREMENT_NORMALIZATION_OR_FIRST_PARTY_SECURITY_DECISION",
+      "physicalVerified": false,
+      "runtimeSemanticsVerified": false,
+      "evidence": [
+        "docs/architecture/first-party-login.md",
+        "docs/planning/db01-chat05-provider-persistence-decision.json"
+      ]
+    },
+    {
+      "legacyField": "college.college_vice_chair_id",
+      "originalDisposition": "REDESIGNED_PRODUCT_FIELD_OMITTED",
+      "historicalTarget": "membership_roles/system_roles if a future leadership permission is introduced",
+      "proposedPhysicalTarget": null,
+      "evidenceStatus": "RETIREMENT_NORMALIZATION_OR_FIRST_PARTY_SECURITY_DECISION",
+      "physicalVerified": false,
+      "runtimeSemanticsVerified": false,
+      "evidence": [
+        "docs/architecture/first-party-login.md",
+        "docs/planning/db01-chat05-provider-persistence-decision.json"
+      ]
+    },
+    {
+      "legacyField": "college.country",
+      "originalDisposition": "PROPOSED_TARGET_UNVERIFIED",
+      "historicalTarget": "colleges.country",
+      "proposedPhysicalTarget": "colleges.country",
+      "evidenceStatus": "EXACT_REGISTERED_FIELD_PG_WITNESS",
+      "physicalVerified": true,
+      "runtimeSemanticsVerified": false,
+      "evidence": [
+        "tests/integration/db01-registered-physical-field-crosswalk.test.ts"
+      ]
+    },
+    {
+      "legacyField": "college.landmark",
+      "originalDisposition": "PROPOSED_TARGET_UNVERIFIED",
+      "historicalTarget": "colleges.landmark",
+      "proposedPhysicalTarget": "colleges.landmark",
+      "evidenceStatus": "EXACT_REGISTERED_FIELD_PG_WITNESS",
+      "physicalVerified": true,
+      "runtimeSemanticsVerified": false,
+      "evidence": [
+        "tests/integration/db01-registered-physical-field-crosswalk.test.ts"
+      ]
+    },
+    {
+      "legacyField": "college.logo",
+      "originalDisposition": "PROPOSED_TARGET_UNVERIFIED",
+      "historicalTarget": "colleges.logo_object_path",
+      "proposedPhysicalTarget": "colleges.logo_object_path",
+      "evidenceStatus": "EXACT_REGISTERED_FIELD_PG_WITNESS",
+      "physicalVerified": true,
+      "runtimeSemanticsVerified": false,
+      "evidence": [
+        "tests/integration/db01-registered-physical-field-crosswalk.test.ts"
+      ]
+    },
+    {
+      "legacyField": "college.name",
+      "originalDisposition": "PROPOSED_TARGET_UNVERIFIED",
+      "historicalTarget": "colleges.name",
+      "proposedPhysicalTarget": "colleges.name",
+      "evidenceStatus": "EXACT_REGISTERED_FIELD_PG_WITNESS",
+      "physicalVerified": true,
+      "runtimeSemanticsVerified": false,
+      "evidence": [
+        "tests/integration/db01-registered-physical-field-crosswalk.test.ts"
+      ]
+    },
+    {
+      "legacyField": "college.org_id",
+      "originalDisposition": "PROPOSED_TARGET_UNVERIFIED",
+      "historicalTarget": "colleges.organization_id",
+      "proposedPhysicalTarget": "colleges.organization_id",
+      "evidenceStatus": "EXACT_REGISTERED_FIELD_PG_WITNESS",
+      "physicalVerified": true,
+      "runtimeSemanticsVerified": false,
+      "evidence": [
+        "tests/integration/db01-registered-physical-field-crosswalk.test.ts"
+      ]
+    },
+    {
+      "legacyField": "college.pin_code",
+      "originalDisposition": "PROPOSED_TARGET_UNVERIFIED",
+      "historicalTarget": "colleges.postal_code",
+      "proposedPhysicalTarget": "colleges.postal_code",
+      "evidenceStatus": "EXACT_REGISTERED_FIELD_PG_WITNESS",
+      "physicalVerified": true,
+      "runtimeSemanticsVerified": false,
+      "evidence": [
+        "tests/integration/db01-registered-physical-field-crosswalk.test.ts"
+      ]
+    },
+    {
+      "legacyField": "college.state",
+      "originalDisposition": "PROPOSED_TARGET_UNVERIFIED",
+      "historicalTarget": "colleges.state",
+      "proposedPhysicalTarget": "colleges.state",
+      "evidenceStatus": "EXACT_REGISTERED_FIELD_PG_WITNESS",
+      "physicalVerified": true,
+      "runtimeSemanticsVerified": false,
+      "evidence": [
+        "tests/integration/db01-registered-physical-field-crosswalk.test.ts"
+      ]
+    },
+    {
+      "legacyField": "college.unique_id",
+      "originalDisposition": "PROPOSED_TARGET_UNVERIFIED",
+      "historicalTarget": "colleges.code",
+      "proposedPhysicalTarget": "colleges.code",
+      "evidenceStatus": "EXACT_REGISTERED_FIELD_PG_WITNESS",
+      "physicalVerified": true,
+      "runtimeSemanticsVerified": false,
+      "evidence": [
+        "tests/integration/db01-registered-physical-field-crosswalk.test.ts"
+      ]
+    },
+    {
+      "legacyField": "college_branding.id",
+      "originalDisposition": "PROPOSED_TARGET_UNVERIFIED",
+      "historicalTarget": "college_branding.college_id (STAGED; legacy surrogate id replaced by college key)",
+      "proposedPhysicalTarget": null,
+      "evidenceStatus": "REGISTERED_BRANDING_REPLACEMENT_SEMANTIC_REVIEW",
+      "physicalVerified": false,
+      "runtimeSemanticsVerified": false,
+      "evidence": [
+        "src/db/schema/college-branding.ts",
+        "src/modules/colleges/branding-service.ts"
+      ]
+    },
+    {
+      "legacyField": "college_branding.created_at",
+      "originalDisposition": "PROPOSED_TARGET_UNVERIFIED",
+      "historicalTarget": "college_branding.created_at (STAGED)",
+      "proposedPhysicalTarget": null,
+      "evidenceStatus": "REGISTERED_BRANDING_REPLACEMENT_SEMANTIC_REVIEW",
+      "physicalVerified": false,
+      "runtimeSemanticsVerified": false,
+      "evidence": [
+        "src/db/schema/college-branding.ts",
+        "src/modules/colleges/branding-service.ts"
+      ]
+    },
+    {
+      "legacyField": "college_branding.updated_at",
+      "originalDisposition": "PROPOSED_TARGET_UNVERIFIED",
+      "historicalTarget": "college_branding.updated_at (STAGED)",
+      "proposedPhysicalTarget": null,
+      "evidenceStatus": "REGISTERED_BRANDING_REPLACEMENT_SEMANTIC_REVIEW",
+      "physicalVerified": false,
+      "runtimeSemanticsVerified": false,
+      "evidence": [
+        "src/db/schema/college-branding.ts",
+        "src/modules/colleges/branding-service.ts"
+      ]
+    },
+    {
+      "legacyField": "college_branding.is_deleted",
+      "originalDisposition": "PROPOSED_TARGET_UNVERIFIED",
+      "historicalTarget": "college_branding.archived_at (STAGED)",
+      "proposedPhysicalTarget": null,
+      "evidenceStatus": "REGISTERED_BRANDING_REPLACEMENT_SEMANTIC_REVIEW",
+      "physicalVerified": false,
+      "runtimeSemanticsVerified": false,
+      "evidence": [
+        "src/db/schema/college-branding.ts",
+        "src/modules/colleges/branding-service.ts"
+      ]
+    },
+    {
+      "legacyField": "college_branding.college_id",
+      "originalDisposition": "PROPOSED_TARGET_UNVERIFIED",
+      "historicalTarget": "college_branding.college_id (STAGED)",
+      "proposedPhysicalTarget": null,
+      "evidenceStatus": "REGISTERED_BRANDING_REPLACEMENT_SEMANTIC_REVIEW",
+      "physicalVerified": false,
+      "runtimeSemanticsVerified": false,
+      "evidence": [
+        "src/db/schema/college-branding.ts",
+        "src/modules/colleges/branding-service.ts"
+      ]
+    },
+    {
+      "legacyField": "college_branding.logo_url",
+      "originalDisposition": "PROPOSED_TARGET_UNVERIFIED",
+      "historicalTarget": "college_branding.logo_url (STAGED)",
+      "proposedPhysicalTarget": null,
+      "evidenceStatus": "REGISTERED_BRANDING_REPLACEMENT_SEMANTIC_REVIEW",
+      "physicalVerified": false,
+      "runtimeSemanticsVerified": false,
+      "evidence": [
+        "src/db/schema/college-branding.ts",
+        "src/modules/colleges/branding-service.ts"
+      ]
+    },
+    {
+      "legacyField": "college_branding.favicon_url",
+      "originalDisposition": "PROPOSED_TARGET_UNVERIFIED",
+      "historicalTarget": "college_branding.favicon_url (STAGED)",
+      "proposedPhysicalTarget": null,
+      "evidenceStatus": "REGISTERED_BRANDING_REPLACEMENT_SEMANTIC_REVIEW",
+      "physicalVerified": false,
+      "runtimeSemanticsVerified": false,
+      "evidence": [
+        "src/db/schema/college-branding.ts",
+        "src/modules/colleges/branding-service.ts"
+      ]
+    },
+    {
+      "legacyField": "college_branding.login_background_url",
+      "originalDisposition": "PROPOSED_TARGET_UNVERIFIED",
+      "historicalTarget": "college_branding.login_background_url (STAGED)",
+      "proposedPhysicalTarget": null,
+      "evidenceStatus": "REGISTERED_BRANDING_REPLACEMENT_SEMANTIC_REVIEW",
+      "physicalVerified": false,
+      "runtimeSemanticsVerified": false,
+      "evidence": [
+        "src/db/schema/college-branding.ts",
+        "src/modules/colleges/branding-service.ts"
+      ]
+    },
+    {
+      "legacyField": "college_branding.login_background_url_mobile",
+      "originalDisposition": "PROPOSED_TARGET_UNVERIFIED",
+      "historicalTarget": "college_branding.login_background_url_mobile (STAGED)",
+      "proposedPhysicalTarget": null,
+      "evidenceStatus": "REGISTERED_BRANDING_REPLACEMENT_SEMANTIC_REVIEW",
+      "physicalVerified": false,
+      "runtimeSemanticsVerified": false,
+      "evidence": [
+        "src/db/schema/college-branding.ts",
+        "src/modules/colleges/branding-service.ts"
+      ]
+    },
+    {
+      "legacyField": "college_branding.primary_color",
+      "originalDisposition": "PROPOSED_TARGET_UNVERIFIED",
+      "historicalTarget": "college_branding.primary_color (STAGED)",
+      "proposedPhysicalTarget": null,
+      "evidenceStatus": "REGISTERED_BRANDING_REPLACEMENT_SEMANTIC_REVIEW",
+      "physicalVerified": false,
+      "runtimeSemanticsVerified": false,
+      "evidence": [
+        "src/db/schema/college-branding.ts",
+        "src/modules/colleges/branding-service.ts"
+      ]
+    },
+    {
+      "legacyField": "college_branding.secondary_color",
+      "originalDisposition": "PROPOSED_TARGET_UNVERIFIED",
+      "historicalTarget": "college_branding.secondary_color (STAGED)",
+      "proposedPhysicalTarget": null,
+      "evidenceStatus": "REGISTERED_BRANDING_REPLACEMENT_SEMANTIC_REVIEW",
+      "physicalVerified": false,
+      "runtimeSemanticsVerified": false,
+      "evidence": [
+        "src/db/schema/college-branding.ts",
+        "src/modules/colleges/branding-service.ts"
+      ]
+    },
+    {
+      "legacyField": "college_branding.support_email",
+      "originalDisposition": "PROPOSED_TARGET_UNVERIFIED",
+      "historicalTarget": "college_branding.support_email (STAGED)",
+      "proposedPhysicalTarget": null,
+      "evidenceStatus": "REGISTERED_BRANDING_REPLACEMENT_SEMANTIC_REVIEW",
+      "physicalVerified": false,
+      "runtimeSemanticsVerified": false,
+      "evidence": [
+        "src/db/schema/college-branding.ts",
+        "src/modules/colleges/branding-service.ts"
+      ]
+    },
+    {
+      "legacyField": "college_branding.support_phone",
+      "originalDisposition": "PROPOSED_TARGET_UNVERIFIED",
+      "historicalTarget": "college_branding.support_phone (STAGED)",
+      "proposedPhysicalTarget": null,
+      "evidenceStatus": "REGISTERED_BRANDING_REPLACEMENT_SEMANTIC_REVIEW",
+      "physicalVerified": false,
+      "runtimeSemanticsVerified": false,
+      "evidence": [
+        "src/db/schema/college-branding.ts",
+        "src/modules/colleges/branding-service.ts"
+      ]
+    },
+    {
+      "legacyField": "college_branding.terms_url",
+      "originalDisposition": "PROPOSED_TARGET_UNVERIFIED",
+      "historicalTarget": "college_branding.terms_url (STAGED)",
+      "proposedPhysicalTarget": null,
+      "evidenceStatus": "REGISTERED_BRANDING_REPLACEMENT_SEMANTIC_REVIEW",
+      "physicalVerified": false,
+      "runtimeSemanticsVerified": false,
+      "evidence": [
+        "src/db/schema/college-branding.ts",
+        "src/modules/colleges/branding-service.ts"
+      ]
+    },
+    {
+      "legacyField": "college_branding.privacy_url",
+      "originalDisposition": "PROPOSED_TARGET_UNVERIFIED",
+      "historicalTarget": "college_branding.privacy_url (STAGED)",
+      "proposedPhysicalTarget": null,
+      "evidenceStatus": "REGISTERED_BRANDING_REPLACEMENT_SEMANTIC_REVIEW",
+      "physicalVerified": false,
+      "runtimeSemanticsVerified": false,
+      "evidence": [
+        "src/db/schema/college-branding.ts",
+        "src/modules/colleges/branding-service.ts"
+      ]
+    },
+    {
+      "legacyField": "department.id",
+      "originalDisposition": "PROPOSED_TARGET_UNVERIFIED",
+      "historicalTarget": "departments.id",
+      "proposedPhysicalTarget": "departments.id",
+      "evidenceStatus": "EXACT_REGISTERED_FIELD_PG_WITNESS",
+      "physicalVerified": true,
+      "runtimeSemanticsVerified": false,
+      "evidence": [
+        "tests/integration/db01-registered-physical-field-crosswalk.test.ts"
+      ]
+    },
+    {
+      "legacyField": "department.created_at",
+      "originalDisposition": "PROPOSED_TARGET_UNVERIFIED",
+      "historicalTarget": "departments.created_at",
+      "proposedPhysicalTarget": "departments.created_at",
+      "evidenceStatus": "EXACT_REGISTERED_FIELD_PG_WITNESS",
+      "physicalVerified": true,
+      "runtimeSemanticsVerified": false,
+      "evidence": [
+        "tests/integration/db01-registered-physical-field-crosswalk.test.ts"
+      ]
+    },
+    {
+      "legacyField": "department.is_deleted",
+      "originalDisposition": "PROPOSED_TARGET_UNVERIFIED",
+      "historicalTarget": "departments.archived_at",
+      "proposedPhysicalTarget": "departments.archived_at",
+      "evidenceStatus": "EXACT_REGISTERED_FIELD_PG_WITNESS",
+      "physicalVerified": true,
+      "runtimeSemanticsVerified": false,
+      "evidence": [
+        "tests/integration/db01-registered-physical-field-crosswalk.test.ts"
+      ]
+    },
+    {
+      "legacyField": "department.updated_at",
+      "originalDisposition": "PROPOSED_TARGET_UNVERIFIED",
+      "historicalTarget": "departments.updated_at",
+      "proposedPhysicalTarget": "departments.updated_at",
+      "evidenceStatus": "EXACT_REGISTERED_FIELD_PG_WITNESS",
+      "physicalVerified": true,
+      "runtimeSemanticsVerified": false,
+      "evidence": [
+        "tests/integration/db01-registered-physical-field-crosswalk.test.ts"
+      ]
+    },
+    {
+      "legacyField": "department.college_id",
+      "originalDisposition": "PROPOSED_TARGET_UNVERIFIED",
+      "historicalTarget": "departments.college_id",
+      "proposedPhysicalTarget": "departments.college_id",
+      "evidenceStatus": "EXACT_REGISTERED_FIELD_PG_WITNESS",
+      "physicalVerified": true,
+      "runtimeSemanticsVerified": false,
+      "evidence": [
+        "tests/integration/db01-registered-physical-field-crosswalk.test.ts"
+      ]
+    },
+    {
+      "legacyField": "department.name",
+      "originalDisposition": "PROPOSED_TARGET_UNVERIFIED",
+      "historicalTarget": "departments.name",
+      "proposedPhysicalTarget": "departments.name",
+      "evidenceStatus": "EXACT_REGISTERED_FIELD_PG_WITNESS",
+      "physicalVerified": true,
+      "runtimeSemanticsVerified": false,
+      "evidence": [
+        "tests/integration/db01-registered-physical-field-crosswalk.test.ts"
+      ]
+    },
+    {
+      "legacyField": "email_verification_token.token",
+      "originalDisposition": "EXTERNAL_PROVIDER_MANAGED",
+      "historicalTarget": "Identity Platform verified-email flow / API-phase correlation if product requires it",
+      "proposedPhysicalTarget": null,
+      "evidenceStatus": "RETIREMENT_NORMALIZATION_OR_FIRST_PARTY_SECURITY_DECISION",
+      "physicalVerified": false,
+      "runtimeSemanticsVerified": false,
+      "evidence": [
+        "docs/architecture/first-party-login.md",
+        "docs/planning/db01-chat05-provider-persistence-decision.json"
+      ]
+    },
+    {
+      "legacyField": "email_verification_token.application_id",
+      "originalDisposition": "EXTERNAL_PROVIDER_MANAGED",
+      "historicalTarget": "Identity Platform verified-email flow / API-phase correlation if product requires it",
+      "proposedPhysicalTarget": null,
+      "evidenceStatus": "RETIREMENT_NORMALIZATION_OR_FIRST_PARTY_SECURITY_DECISION",
+      "physicalVerified": false,
+      "runtimeSemanticsVerified": false,
+      "evidence": [
+        "docs/architecture/first-party-login.md",
+        "docs/planning/db01-chat05-provider-persistence-decision.json"
+      ]
+    },
+    {
+      "legacyField": "email_verification_token.created_at",
+      "originalDisposition": "EXTERNAL_PROVIDER_MANAGED",
+      "historicalTarget": "Identity Platform verified-email flow / API-phase correlation if product requires it",
+      "proposedPhysicalTarget": null,
+      "evidenceStatus": "RETIREMENT_NORMALIZATION_OR_FIRST_PARTY_SECURITY_DECISION",
+      "physicalVerified": false,
+      "runtimeSemanticsVerified": false,
+      "evidence": [
+        "docs/architecture/first-party-login.md",
+        "docs/planning/db01-chat05-provider-persistence-decision.json"
+      ]
+    },
+    {
+      "legacyField": "email_verification_token.email",
+      "originalDisposition": "EXTERNAL_PROVIDER_MANAGED",
+      "historicalTarget": "Identity Platform verified-email flow / API-phase correlation if product requires it",
+      "proposedPhysicalTarget": null,
+      "evidenceStatus": "RETIREMENT_NORMALIZATION_OR_FIRST_PARTY_SECURITY_DECISION",
+      "physicalVerified": false,
+      "runtimeSemanticsVerified": false,
+      "evidence": [
+        "docs/architecture/first-party-login.md",
+        "docs/planning/db01-chat05-provider-persistence-decision.json"
+      ]
+    },
+    {
+      "legacyField": "email_verification_token.expires_at",
+      "originalDisposition": "EXTERNAL_PROVIDER_MANAGED",
+      "historicalTarget": "Identity Platform verified-email flow / API-phase correlation if product requires it",
+      "proposedPhysicalTarget": null,
+      "evidenceStatus": "RETIREMENT_NORMALIZATION_OR_FIRST_PARTY_SECURITY_DECISION",
+      "physicalVerified": false,
+      "runtimeSemanticsVerified": false,
+      "evidence": [
+        "docs/architecture/first-party-login.md",
+        "docs/planning/db01-chat05-provider-persistence-decision.json"
+      ]
+    },
+    {
+      "legacyField": "email_verification_token.verified",
+      "originalDisposition": "EXTERNAL_PROVIDER_MANAGED",
+      "historicalTarget": "Identity Platform verified-email flow / API-phase correlation if product requires it",
+      "proposedPhysicalTarget": null,
+      "evidenceStatus": "RETIREMENT_NORMALIZATION_OR_FIRST_PARTY_SECURITY_DECISION",
+      "physicalVerified": false,
+      "runtimeSemanticsVerified": false,
+      "evidence": [
+        "docs/architecture/first-party-login.md",
+        "docs/planning/db01-chat05-provider-persistence-decision.json"
+      ]
+    },
+    {
+      "legacyField": "email_verification_token.verified_at",
+      "originalDisposition": "EXTERNAL_PROVIDER_MANAGED",
+      "historicalTarget": "Identity Platform verified-email flow / API-phase correlation if product requires it",
+      "proposedPhysicalTarget": null,
+      "evidenceStatus": "RETIREMENT_NORMALIZATION_OR_FIRST_PARTY_SECURITY_DECISION",
+      "physicalVerified": false,
+      "runtimeSemanticsVerified": false,
+      "evidence": [
+        "docs/architecture/first-party-login.md",
+        "docs/planning/db01-chat05-provider-persistence-decision.json"
+      ]
+    },
+    {
+      "legacyField": "faculty.id",
+      "originalDisposition": "PROPOSED_TARGET_UNVERIFIED",
+      "historicalTarget": "users.id + college_memberships.id + faculty_profiles.membership_id",
+      "proposedPhysicalTarget": null,
+      "evidenceStatus": "COMPOSITE_REDESIGN_SEMANTIC_REVIEW",
+      "physicalVerified": false,
+      "runtimeSemanticsVerified": false,
+      "evidence": [
+        "docs/planning/db01-chat02-source-reconciliation.md"
+      ]
+    },
+    {
+      "legacyField": "faculty.created_at",
+      "originalDisposition": "PROPOSED_TARGET_UNVERIFIED",
+      "historicalTarget": "college_memberships.created_at / faculty_profiles.created_at",
+      "proposedPhysicalTarget": null,
+      "evidenceStatus": "COMPOSITE_REDESIGN_SEMANTIC_REVIEW",
+      "physicalVerified": false,
+      "runtimeSemanticsVerified": false,
+      "evidence": [
+        "docs/planning/db01-chat02-source-reconciliation.md"
+      ]
+    },
+    {
+      "legacyField": "faculty.is_deleted",
+      "originalDisposition": "PROPOSED_TARGET_UNVERIFIED",
+      "historicalTarget": "college_memberships.status / users.platform_status",
+      "proposedPhysicalTarget": null,
+      "evidenceStatus": "COMPOSITE_REDESIGN_SEMANTIC_REVIEW",
+      "physicalVerified": false,
+      "runtimeSemanticsVerified": false,
+      "evidence": [
+        "docs/planning/db01-chat02-source-reconciliation.md"
+      ]
+    },
+    {
+      "legacyField": "faculty.suspended_at",
+      "originalDisposition": "PROPOSED_TARGET_UNVERIFIED",
+      "historicalTarget": "college_memberships.suspended_at",
+      "proposedPhysicalTarget": "college_memberships.suspended_at",
+      "evidenceStatus": "EXACT_REGISTERED_FIELD_PG_WITNESS",
+      "physicalVerified": true,
+      "runtimeSemanticsVerified": false,
+      "evidence": [
+        "tests/integration/db01-registered-physical-field-crosswalk.test.ts"
+      ]
+    },
+    {
+      "legacyField": "faculty.suspension_reason",
+      "originalDisposition": "PROPOSED_TARGET_UNVERIFIED",
+      "historicalTarget": "college_memberships.suspension_reason",
+      "proposedPhysicalTarget": "college_memberships.suspension_reason",
+      "evidenceStatus": "EXACT_REGISTERED_FIELD_PG_WITNESS",
+      "physicalVerified": true,
+      "runtimeSemanticsVerified": false,
+      "evidence": [
+        "tests/integration/db01-registered-physical-field-crosswalk.test.ts"
+      ]
+    },
+    {
+      "legacyField": "faculty.updated_at",
+      "originalDisposition": "PROPOSED_TARGET_UNVERIFIED",
+      "historicalTarget": "college_memberships.updated_at / faculty_profiles.updated_at",
+      "proposedPhysicalTarget": null,
+      "evidenceStatus": "COMPOSITE_REDESIGN_SEMANTIC_REVIEW",
+      "physicalVerified": false,
+      "runtimeSemanticsVerified": false,
+      "evidence": [
+        "docs/planning/db01-chat02-source-reconciliation.md"
+      ]
+    },
+    {
+      "legacyField": "faculty.college_id",
+      "originalDisposition": "PROPOSED_TARGET_UNVERIFIED",
+      "historicalTarget": "college_memberships.college_id",
+      "proposedPhysicalTarget": "college_memberships.college_id",
+      "evidenceStatus": "EXACT_REGISTERED_FIELD_PG_WITNESS",
+      "physicalVerified": true,
+      "runtimeSemanticsVerified": false,
+      "evidence": [
+        "tests/integration/db01-registered-physical-field-crosswalk.test.ts"
+      ]
+    },
+    {
+      "legacyField": "faculty.contact_mail",
+      "originalDisposition": "PROPOSED_TARGET_UNVERIFIED",
+      "historicalTarget": "users.email",
+      "proposedPhysicalTarget": "users.email",
+      "evidenceStatus": "EXACT_REGISTERED_FIELD_PG_WITNESS",
+      "physicalVerified": true,
+      "runtimeSemanticsVerified": false,
+      "evidence": [
+        "tests/integration/db01-registered-physical-field-crosswalk.test.ts"
+      ]
+    },
+    {
+      "legacyField": "faculty.contact_mobile",
+      "originalDisposition": "PROPOSED_TARGET_UNVERIFIED",
+      "historicalTarget": "users.phone_e164",
+      "proposedPhysicalTarget": "users.phone_e164",
+      "evidenceStatus": "EXACT_REGISTERED_FIELD_PG_WITNESS",
+      "physicalVerified": true,
+      "runtimeSemanticsVerified": false,
+      "evidence": [
+        "tests/integration/db01-registered-physical-field-crosswalk.test.ts"
+      ]
+    },
+    {
+      "legacyField": "faculty.first_name",
+      "originalDisposition": "PROPOSED_TARGET_UNVERIFIED",
+      "historicalTarget": "users.given_name (STAGED W01)",
+      "proposedPhysicalTarget": "users.given_name",
+      "evidenceStatus": "REGISTERED_IDENTITY_NAME_ADDITIVE_PARTIAL_RUNTIME",
+      "physicalVerified": false,
+      "runtimeSemanticsVerified": false,
+      "evidence": [
+        "drizzle/0300_db01_person_name_identity_profile.sql",
+        "src/modules/people/identity-profile-service.ts"
+      ]
+    },
+    {
+      "legacyField": "faculty.last_name",
+      "originalDisposition": "PROPOSED_TARGET_UNVERIFIED",
+      "historicalTarget": "users.family_name (STAGED W01)",
+      "proposedPhysicalTarget": "users.family_name",
+      "evidenceStatus": "REGISTERED_IDENTITY_NAME_ADDITIVE_PARTIAL_RUNTIME",
+      "physicalVerified": false,
+      "runtimeSemanticsVerified": false,
+      "evidence": [
+        "drizzle/0300_db01_person_name_identity_profile.sql",
+        "src/modules/people/identity-profile-service.ts"
+      ]
+    },
+    {
+      "legacyField": "faculty.organization_id",
+      "originalDisposition": "PROPOSED_TARGET_UNVERIFIED",
+      "historicalTarget": "colleges.organization_id via college_memberships.college_id",
+      "proposedPhysicalTarget": null,
+      "evidenceStatus": "COMPOSITE_REDESIGN_SEMANTIC_REVIEW",
+      "physicalVerified": false,
+      "runtimeSemanticsVerified": false,
+      "evidence": [
+        "docs/planning/db01-chat02-source-reconciliation.md"
+      ]
+    },
+    {
+      "legacyField": "faculty.token_version",
+      "originalDisposition": "EXTERNAL_PROVIDER_MANAGED",
+      "historicalTarget": "Firebase/Identity Platform revocation with verifySessionCookie(checkRevoked=true) + live canonical user/membership/grant authorization",
+      "proposedPhysicalTarget": null,
+      "evidenceStatus": "RETIREMENT_NORMALIZATION_OR_FIRST_PARTY_SECURITY_DECISION",
+      "physicalVerified": false,
+      "runtimeSemanticsVerified": false,
+      "evidence": [
+        "docs/architecture/first-party-login.md",
+        "docs/planning/db01-chat05-provider-persistence-decision.json"
+      ]
+    },
+    {
+      "legacyField": "faculty.user_type",
+      "originalDisposition": "PROPOSED_TARGET_UNVERIFIED",
+      "historicalTarget": "membership_roles.role",
+      "proposedPhysicalTarget": "membership_roles.role",
+      "evidenceStatus": "EXACT_REGISTERED_FIELD_PG_WITNESS",
+      "physicalVerified": true,
+      "runtimeSemanticsVerified": false,
+      "evidence": [
+        "tests/integration/db01-registered-physical-field-crosswalk.test.ts"
+      ]
+    },
+    {
+      "legacyField": "faculty_acct_verification.id",
+      "originalDisposition": "PROPOSED_TARGET_UNVERIFIED",
+      "historicalTarget": "identity_auth_attempts.id",
+      "proposedPhysicalTarget": "identity_auth_attempts.id",
+      "evidenceStatus": "EXACT_REGISTERED_FIELD_PG_WITNESS",
+      "physicalVerified": true,
+      "runtimeSemanticsVerified": false,
+      "evidence": [
+        "tests/integration/db01-registered-physical-field-crosswalk.test.ts"
+      ]
+    },
+    {
+      "legacyField": "faculty_acct_verification.created_at",
+      "originalDisposition": "PROPOSED_TARGET_UNVERIFIED",
+      "historicalTarget": "identity_auth_attempts.created_at",
+      "proposedPhysicalTarget": "identity_auth_attempts.created_at",
+      "evidenceStatus": "EXACT_REGISTERED_FIELD_PG_WITNESS",
+      "physicalVerified": true,
+      "runtimeSemanticsVerified": false,
+      "evidence": [
+        "tests/integration/db01-registered-physical-field-crosswalk.test.ts"
+      ]
+    },
+    {
+      "legacyField": "faculty_acct_verification.is_deleted",
+      "originalDisposition": "PROPOSED_TARGET_UNVERIFIED",
+      "historicalTarget": "identity_auth_attempts.used_at",
+      "proposedPhysicalTarget": "identity_auth_attempts.used_at",
+      "evidenceStatus": "EXACT_REGISTERED_FIELD_PG_WITNESS",
+      "physicalVerified": true,
+      "runtimeSemanticsVerified": false,
+      "evidence": [
+        "tests/integration/db01-registered-physical-field-crosswalk.test.ts"
+      ]
+    },
+    {
+      "legacyField": "faculty_acct_verification.updated_at",
+      "originalDisposition": "REDESIGNED_NO_SINGLE_FIELD",
+      "historicalTarget": "identity_auth_attempts.version + transition timestamps",
+      "proposedPhysicalTarget": null,
+      "evidenceStatus": "RETIREMENT_NORMALIZATION_OR_FIRST_PARTY_SECURITY_DECISION",
+      "physicalVerified": false,
+      "runtimeSemanticsVerified": false,
+      "evidence": [
+        "docs/architecture/first-party-login.md",
+        "docs/planning/db01-chat05-provider-persistence-decision.json"
+      ]
+    },
+    {
+      "legacyField": "faculty_acct_verification.blocked_till_ts",
+      "originalDisposition": "REDESIGNED_AUTH_ABUSE_CONTROL",
+      "historicalTarget": "Identity Platform abuse/rate-limit controls plus identity_auth_attempts retry/expiry budget if sidecar is promoted",
+      "proposedPhysicalTarget": null,
+      "evidenceStatus": "RETIREMENT_NORMALIZATION_OR_FIRST_PARTY_SECURITY_DECISION",
+      "physicalVerified": false,
+      "runtimeSemanticsVerified": false,
+      "evidence": [
+        "docs/architecture/first-party-login.md",
+        "docs/planning/db01-chat05-provider-persistence-decision.json"
+      ]
+    },
+    {
+      "legacyField": "faculty_acct_verification.faculty_id",
+      "originalDisposition": "PROPOSED_TARGET_UNVERIFIED",
+      "historicalTarget": "identity_auth_attempts.membership_id",
+      "proposedPhysicalTarget": "identity_auth_attempts.membership_id",
+      "evidenceStatus": "EXACT_REGISTERED_FIELD_PG_WITNESS",
+      "physicalVerified": true,
+      "runtimeSemanticsVerified": false,
+      "evidence": [
+        "tests/integration/db01-registered-physical-field-crosswalk.test.ts"
+      ]
+    },
+    {
+      "legacyField": "faculty_acct_verification.incorrect_attempts",
+      "originalDisposition": "PROPOSED_TARGET_UNVERIFIED",
+      "historicalTarget": "identity_auth_attempts.verification_attempts",
+      "proposedPhysicalTarget": "identity_auth_attempts.verification_attempts",
+      "evidenceStatus": "EXACT_REGISTERED_FIELD_PG_WITNESS",
+      "physicalVerified": true,
+      "runtimeSemanticsVerified": false,
+      "evidence": [
+        "tests/integration/db01-registered-physical-field-crosswalk.test.ts"
+      ]
+    },
+    {
+      "legacyField": "faculty_acct_verification.is_expired",
+      "originalDisposition": "PROPOSED_TARGET_UNVERIFIED",
+      "historicalTarget": "identity_auth_attempts.expires_at",
+      "proposedPhysicalTarget": "identity_auth_attempts.expires_at",
+      "evidenceStatus": "EXACT_REGISTERED_FIELD_PG_WITNESS",
+      "physicalVerified": true,
+      "runtimeSemanticsVerified": false,
+      "evidence": [
+        "tests/integration/db01-registered-physical-field-crosswalk.test.ts"
+      ]
+    },
+    {
+      "legacyField": "faculty_acct_verification.max_resend_attempts",
+      "originalDisposition": "PROPOSED_TARGET_UNVERIFIED",
+      "historicalTarget": "identity_auth_attempts.resend_attempts",
+      "proposedPhysicalTarget": "identity_auth_attempts.resend_attempts",
+      "evidenceStatus": "EXACT_REGISTERED_FIELD_PG_WITNESS",
+      "physicalVerified": true,
+      "runtimeSemanticsVerified": false,
+      "evidence": [
+        "tests/integration/db01-registered-physical-field-crosswalk.test.ts"
+      ]
+    },
+    {
+      "legacyField": "faculty_acct_verification.otp",
+      "originalDisposition": "PROPOSED_TARGET_UNVERIFIED",
+      "historicalTarget": "identity_auth_attempts.sms_code_mac",
+      "proposedPhysicalTarget": "identity_auth_attempts.sms_code_mac",
+      "evidenceStatus": "EXACT_REGISTERED_FIELD_PG_WITNESS",
+      "physicalVerified": true,
+      "runtimeSemanticsVerified": false,
+      "evidence": [
+        "tests/integration/db01-registered-physical-field-crosswalk.test.ts"
+      ]
+    },
+    {
+      "legacyField": "faculty_acct_verification.phone_number",
+      "originalDisposition": "PROPOSED_TARGET_UNVERIFIED",
+      "historicalTarget": "identity_auth_attempts.contact_fingerprint",
+      "proposedPhysicalTarget": "identity_auth_attempts.contact_fingerprint",
+      "evidenceStatus": "EXACT_REGISTERED_FIELD_PG_WITNESS",
+      "physicalVerified": true,
+      "runtimeSemanticsVerified": false,
+      "evidence": [
+        "tests/integration/db01-registered-physical-field-crosswalk.test.ts"
+      ]
+    },
+    {
+      "legacyField": "faculty_acct_verification.verify_status",
+      "originalDisposition": "PROPOSED_TARGET_UNVERIFIED",
+      "historicalTarget": "identity_auth_attempts.verified_at",
+      "proposedPhysicalTarget": "identity_auth_attempts.verified_at",
+      "evidenceStatus": "EXACT_REGISTERED_FIELD_PG_WITNESS",
+      "physicalVerified": true,
+      "runtimeSemanticsVerified": false,
+      "evidence": [
+        "tests/integration/db01-registered-physical-field-crosswalk.test.ts"
+      ]
+    },
+    {
+      "legacyField": "learner.id",
+      "originalDisposition": "PROPOSED_TARGET_UNVERIFIED",
+      "historicalTarget": "users.id + college_memberships.id + learner_profiles.membership_id",
+      "proposedPhysicalTarget": null,
+      "evidenceStatus": "COMPOSITE_REDESIGN_SEMANTIC_REVIEW",
+      "physicalVerified": false,
+      "runtimeSemanticsVerified": false,
+      "evidence": [
+        "docs/planning/db01-chat02-source-reconciliation.md"
+      ]
+    },
+    {
+      "legacyField": "learner.created_at",
+      "originalDisposition": "PROPOSED_TARGET_UNVERIFIED",
+      "historicalTarget": "college_memberships.created_at / learner_profiles.created_at",
+      "proposedPhysicalTarget": null,
+      "evidenceStatus": "COMPOSITE_REDESIGN_SEMANTIC_REVIEW",
+      "physicalVerified": false,
+      "runtimeSemanticsVerified": false,
+      "evidence": [
+        "docs/planning/db01-chat02-source-reconciliation.md"
+      ]
+    },
+    {
+      "legacyField": "learner.is_deleted",
+      "originalDisposition": "PROPOSED_TARGET_UNVERIFIED",
+      "historicalTarget": "college_memberships.status / users.platform_status",
+      "proposedPhysicalTarget": null,
+      "evidenceStatus": "COMPOSITE_REDESIGN_SEMANTIC_REVIEW",
+      "physicalVerified": false,
+      "runtimeSemanticsVerified": false,
+      "evidence": [
+        "docs/planning/db01-chat02-source-reconciliation.md"
+      ]
+    },
+    {
+      "legacyField": "learner.suspended_at",
+      "originalDisposition": "PROPOSED_TARGET_UNVERIFIED",
+      "historicalTarget": "college_memberships.suspended_at",
+      "proposedPhysicalTarget": "college_memberships.suspended_at",
+      "evidenceStatus": "EXACT_REGISTERED_FIELD_PG_WITNESS",
+      "physicalVerified": true,
+      "runtimeSemanticsVerified": false,
+      "evidence": [
+        "tests/integration/db01-registered-physical-field-crosswalk.test.ts"
+      ]
+    },
+    {
+      "legacyField": "learner.suspension_reason",
+      "originalDisposition": "PROPOSED_TARGET_UNVERIFIED",
+      "historicalTarget": "college_memberships.suspension_reason",
+      "proposedPhysicalTarget": "college_memberships.suspension_reason",
+      "evidenceStatus": "EXACT_REGISTERED_FIELD_PG_WITNESS",
+      "physicalVerified": true,
+      "runtimeSemanticsVerified": false,
+      "evidence": [
+        "tests/integration/db01-registered-physical-field-crosswalk.test.ts"
+      ]
+    },
+    {
+      "legacyField": "learner.updated_at",
+      "originalDisposition": "PROPOSED_TARGET_UNVERIFIED",
+      "historicalTarget": "college_memberships.updated_at / learner_profiles.updated_at",
+      "proposedPhysicalTarget": null,
+      "evidenceStatus": "COMPOSITE_REDESIGN_SEMANTIC_REVIEW",
+      "physicalVerified": false,
+      "runtimeSemanticsVerified": false,
+      "evidence": [
+        "docs/planning/db01-chat02-source-reconciliation.md"
+      ]
+    },
+    {
+      "legacyField": "learner.college_id",
+      "originalDisposition": "PROPOSED_TARGET_UNVERIFIED",
+      "historicalTarget": "college_memberships.college_id",
+      "proposedPhysicalTarget": "college_memberships.college_id",
+      "evidenceStatus": "EXACT_REGISTERED_FIELD_PG_WITNESS",
+      "physicalVerified": true,
+      "runtimeSemanticsVerified": false,
+      "evidence": [
+        "tests/integration/db01-registered-physical-field-crosswalk.test.ts"
+      ]
+    },
+    {
+      "legacyField": "learner.contact_mail",
+      "originalDisposition": "PROPOSED_TARGET_UNVERIFIED",
+      "historicalTarget": "users.email",
+      "proposedPhysicalTarget": "users.email",
+      "evidenceStatus": "EXACT_REGISTERED_FIELD_PG_WITNESS",
+      "physicalVerified": true,
+      "runtimeSemanticsVerified": false,
+      "evidence": [
+        "tests/integration/db01-registered-physical-field-crosswalk.test.ts"
+      ]
+    },
+    {
+      "legacyField": "learner.contact_mobile",
+      "originalDisposition": "PROPOSED_TARGET_UNVERIFIED",
+      "historicalTarget": "users.phone_e164",
+      "proposedPhysicalTarget": "users.phone_e164",
+      "evidenceStatus": "EXACT_REGISTERED_FIELD_PG_WITNESS",
+      "physicalVerified": true,
+      "runtimeSemanticsVerified": false,
+      "evidence": [
+        "tests/integration/db01-registered-physical-field-crosswalk.test.ts"
+      ]
+    },
+    {
+      "legacyField": "learner.first_name",
+      "originalDisposition": "PROPOSED_TARGET_UNVERIFIED",
+      "historicalTarget": "users.given_name (STAGED W01)",
+      "proposedPhysicalTarget": "users.given_name",
+      "evidenceStatus": "REGISTERED_IDENTITY_NAME_ADDITIVE_PARTIAL_RUNTIME",
+      "physicalVerified": false,
+      "runtimeSemanticsVerified": false,
+      "evidence": [
+        "drizzle/0300_db01_person_name_identity_profile.sql",
+        "src/modules/people/identity-profile-service.ts"
+      ]
+    },
+    {
+      "legacyField": "learner.last_name",
+      "originalDisposition": "PROPOSED_TARGET_UNVERIFIED",
+      "historicalTarget": "users.family_name (STAGED W01)",
+      "proposedPhysicalTarget": "users.family_name",
+      "evidenceStatus": "REGISTERED_IDENTITY_NAME_ADDITIVE_PARTIAL_RUNTIME",
+      "physicalVerified": false,
+      "runtimeSemanticsVerified": false,
+      "evidence": [
+        "drizzle/0300_db01_person_name_identity_profile.sql",
+        "src/modules/people/identity-profile-service.ts"
+      ]
+    },
+    {
+      "legacyField": "learner.organization_id",
+      "originalDisposition": "PROPOSED_TARGET_UNVERIFIED",
+      "historicalTarget": "colleges.organization_id via college_memberships.college_id",
+      "proposedPhysicalTarget": null,
+      "evidenceStatus": "COMPOSITE_REDESIGN_SEMANTIC_REVIEW",
+      "physicalVerified": false,
+      "runtimeSemanticsVerified": false,
+      "evidence": [
+        "docs/planning/db01-chat02-source-reconciliation.md"
+      ]
+    },
+    {
+      "legacyField": "learner.token_version",
+      "originalDisposition": "EXTERNAL_PROVIDER_MANAGED",
+      "historicalTarget": "Firebase/Identity Platform revocation with verifySessionCookie(checkRevoked=true) + live canonical user/membership/grant authorization",
+      "proposedPhysicalTarget": null,
+      "evidenceStatus": "RETIREMENT_NORMALIZATION_OR_FIRST_PARTY_SECURITY_DECISION",
+      "physicalVerified": false,
+      "runtimeSemanticsVerified": false,
+      "evidence": [
+        "docs/architecture/first-party-login.md",
+        "docs/planning/db01-chat05-provider-persistence-decision.json"
+      ]
+    },
+    {
+      "legacyField": "learner.user_type",
+      "originalDisposition": "PROPOSED_TARGET_UNVERIFIED",
+      "historicalTarget": "membership_roles.role",
+      "proposedPhysicalTarget": "membership_roles.role",
+      "evidenceStatus": "EXACT_REGISTERED_FIELD_PG_WITNESS",
+      "physicalVerified": true,
+      "runtimeSemanticsVerified": false,
+      "evidence": [
+        "tests/integration/db01-registered-physical-field-crosswalk.test.ts"
+      ]
+    },
+    {
+      "legacyField": "learner_acct_verification.id",
+      "originalDisposition": "PROPOSED_TARGET_UNVERIFIED",
+      "historicalTarget": "identity_auth_attempts.id",
+      "proposedPhysicalTarget": "identity_auth_attempts.id",
+      "evidenceStatus": "EXACT_REGISTERED_FIELD_PG_WITNESS",
+      "physicalVerified": true,
+      "runtimeSemanticsVerified": false,
+      "evidence": [
+        "tests/integration/db01-registered-physical-field-crosswalk.test.ts"
+      ]
+    },
+    {
+      "legacyField": "learner_acct_verification.created_at",
+      "originalDisposition": "PROPOSED_TARGET_UNVERIFIED",
+      "historicalTarget": "identity_auth_attempts.created_at",
+      "proposedPhysicalTarget": "identity_auth_attempts.created_at",
+      "evidenceStatus": "EXACT_REGISTERED_FIELD_PG_WITNESS",
+      "physicalVerified": true,
+      "runtimeSemanticsVerified": false,
+      "evidence": [
+        "tests/integration/db01-registered-physical-field-crosswalk.test.ts"
+      ]
+    },
+    {
+      "legacyField": "learner_acct_verification.is_deleted",
+      "originalDisposition": "PROPOSED_TARGET_UNVERIFIED",
+      "historicalTarget": "identity_auth_attempts.used_at",
+      "proposedPhysicalTarget": "identity_auth_attempts.used_at",
+      "evidenceStatus": "EXACT_REGISTERED_FIELD_PG_WITNESS",
+      "physicalVerified": true,
+      "runtimeSemanticsVerified": false,
+      "evidence": [
+        "tests/integration/db01-registered-physical-field-crosswalk.test.ts"
+      ]
+    },
+    {
+      "legacyField": "learner_acct_verification.updated_at",
+      "originalDisposition": "REDESIGNED_NO_SINGLE_FIELD",
+      "historicalTarget": "identity_auth_attempts.version + transition timestamps",
+      "proposedPhysicalTarget": null,
+      "evidenceStatus": "RETIREMENT_NORMALIZATION_OR_FIRST_PARTY_SECURITY_DECISION",
+      "physicalVerified": false,
+      "runtimeSemanticsVerified": false,
+      "evidence": [
+        "docs/architecture/first-party-login.md",
+        "docs/planning/db01-chat05-provider-persistence-decision.json"
+      ]
+    },
+    {
+      "legacyField": "learner_acct_verification.blocked_till_ts",
+      "originalDisposition": "REDESIGNED_AUTH_ABUSE_CONTROL",
+      "historicalTarget": "Identity Platform abuse/rate-limit controls plus identity_auth_attempts retry/expiry budget if sidecar is promoted",
+      "proposedPhysicalTarget": null,
+      "evidenceStatus": "RETIREMENT_NORMALIZATION_OR_FIRST_PARTY_SECURITY_DECISION",
+      "physicalVerified": false,
+      "runtimeSemanticsVerified": false,
+      "evidence": [
+        "docs/architecture/first-party-login.md",
+        "docs/planning/db01-chat05-provider-persistence-decision.json"
+      ]
+    },
+    {
+      "legacyField": "learner_acct_verification.incorrect_attempts",
+      "originalDisposition": "PROPOSED_TARGET_UNVERIFIED",
+      "historicalTarget": "identity_auth_attempts.verification_attempts",
+      "proposedPhysicalTarget": "identity_auth_attempts.verification_attempts",
+      "evidenceStatus": "EXACT_REGISTERED_FIELD_PG_WITNESS",
+      "physicalVerified": true,
+      "runtimeSemanticsVerified": false,
+      "evidence": [
+        "tests/integration/db01-registered-physical-field-crosswalk.test.ts"
+      ]
+    },
+    {
+      "legacyField": "learner_acct_verification.is_expired",
+      "originalDisposition": "PROPOSED_TARGET_UNVERIFIED",
+      "historicalTarget": "identity_auth_attempts.expires_at",
+      "proposedPhysicalTarget": "identity_auth_attempts.expires_at",
+      "evidenceStatus": "EXACT_REGISTERED_FIELD_PG_WITNESS",
+      "physicalVerified": true,
+      "runtimeSemanticsVerified": false,
+      "evidence": [
+        "tests/integration/db01-registered-physical-field-crosswalk.test.ts"
+      ]
+    },
+    {
+      "legacyField": "learner_acct_verification.learner_id",
+      "originalDisposition": "PROPOSED_TARGET_UNVERIFIED",
+      "historicalTarget": "identity_auth_attempts.membership_id",
+      "proposedPhysicalTarget": "identity_auth_attempts.membership_id",
+      "evidenceStatus": "EXACT_REGISTERED_FIELD_PG_WITNESS",
+      "physicalVerified": true,
+      "runtimeSemanticsVerified": false,
+      "evidence": [
+        "tests/integration/db01-registered-physical-field-crosswalk.test.ts"
+      ]
+    },
+    {
+      "legacyField": "learner_acct_verification.max_resend_attempts",
+      "originalDisposition": "PROPOSED_TARGET_UNVERIFIED",
+      "historicalTarget": "identity_auth_attempts.resend_attempts",
+      "proposedPhysicalTarget": "identity_auth_attempts.resend_attempts",
+      "evidenceStatus": "EXACT_REGISTERED_FIELD_PG_WITNESS",
+      "physicalVerified": true,
+      "runtimeSemanticsVerified": false,
+      "evidence": [
+        "tests/integration/db01-registered-physical-field-crosswalk.test.ts"
+      ]
+    },
+    {
+      "legacyField": "learner_acct_verification.otp",
+      "originalDisposition": "PROPOSED_TARGET_UNVERIFIED",
+      "historicalTarget": "identity_auth_attempts.sms_code_mac",
+      "proposedPhysicalTarget": "identity_auth_attempts.sms_code_mac",
+      "evidenceStatus": "EXACT_REGISTERED_FIELD_PG_WITNESS",
+      "physicalVerified": true,
+      "runtimeSemanticsVerified": false,
+      "evidence": [
+        "tests/integration/db01-registered-physical-field-crosswalk.test.ts"
+      ]
+    },
+    {
+      "legacyField": "learner_acct_verification.phone_number",
+      "originalDisposition": "PROPOSED_TARGET_UNVERIFIED",
+      "historicalTarget": "identity_auth_attempts.contact_fingerprint",
+      "proposedPhysicalTarget": "identity_auth_attempts.contact_fingerprint",
+      "evidenceStatus": "EXACT_REGISTERED_FIELD_PG_WITNESS",
+      "physicalVerified": true,
+      "runtimeSemanticsVerified": false,
+      "evidence": [
+        "tests/integration/db01-registered-physical-field-crosswalk.test.ts"
+      ]
+    },
+    {
+      "legacyField": "learner_acct_verification.roll_number",
+      "originalDisposition": "PROPOSED_TARGET_UNVERIFIED",
+      "historicalTarget": "learner_profiles.roll_number",
+      "proposedPhysicalTarget": "learner_profiles.roll_number",
+      "evidenceStatus": "EXACT_REGISTERED_FIELD_PG_WITNESS",
+      "physicalVerified": true,
+      "runtimeSemanticsVerified": false,
+      "evidence": [
+        "tests/integration/db01-registered-physical-field-crosswalk.test.ts"
+      ]
+    },
+    {
+      "legacyField": "learner_acct_verification.verify_status",
+      "originalDisposition": "PROPOSED_TARGET_UNVERIFIED",
+      "historicalTarget": "identity_auth_attempts.verified_at",
+      "proposedPhysicalTarget": "identity_auth_attempts.verified_at",
+      "evidenceStatus": "EXACT_REGISTERED_FIELD_PG_WITNESS",
+      "physicalVerified": true,
+      "runtimeSemanticsVerified": false,
+      "evidence": [
+        "tests/integration/db01-registered-physical-field-crosswalk.test.ts"
+      ]
+    },
+    {
+      "legacyField": "login_user.id",
+      "originalDisposition": "RETIRED_LOCAL_PASSWORD_WORKFLOW",
+      "historicalTarget": "users canonical lifecycle where applicable",
+      "proposedPhysicalTarget": null,
+      "evidenceStatus": "RETIREMENT_NORMALIZATION_OR_FIRST_PARTY_SECURITY_DECISION",
+      "physicalVerified": false,
+      "runtimeSemanticsVerified": false,
+      "evidence": [
+        "docs/architecture/first-party-login.md",
+        "docs/planning/db01-chat05-provider-persistence-decision.json"
+      ]
+    },
+    {
+      "legacyField": "login_user.created_at",
+      "originalDisposition": "RETIRED_LOCAL_PASSWORD_WORKFLOW",
+      "historicalTarget": "users canonical lifecycle where applicable",
+      "proposedPhysicalTarget": null,
+      "evidenceStatus": "RETIREMENT_NORMALIZATION_OR_FIRST_PARTY_SECURITY_DECISION",
+      "physicalVerified": false,
+      "runtimeSemanticsVerified": false,
+      "evidence": [
+        "docs/architecture/first-party-login.md",
+        "docs/planning/db01-chat05-provider-persistence-decision.json"
+      ]
+    },
+    {
+      "legacyField": "login_user.is_deleted",
+      "originalDisposition": "RETIRED_LOCAL_PASSWORD_WORKFLOW",
+      "historicalTarget": "users canonical lifecycle where applicable",
+      "proposedPhysicalTarget": null,
+      "evidenceStatus": "RETIREMENT_NORMALIZATION_OR_FIRST_PARTY_SECURITY_DECISION",
+      "physicalVerified": false,
+      "runtimeSemanticsVerified": false,
+      "evidence": [
+        "docs/architecture/first-party-login.md",
+        "docs/planning/db01-chat05-provider-persistence-decision.json"
+      ]
+    },
+    {
+      "legacyField": "login_user.updated_at",
+      "originalDisposition": "RETIRED_LOCAL_PASSWORD_WORKFLOW",
+      "historicalTarget": "users canonical lifecycle where applicable",
+      "proposedPhysicalTarget": null,
+      "evidenceStatus": "RETIREMENT_NORMALIZATION_OR_FIRST_PARTY_SECURITY_DECISION",
+      "physicalVerified": false,
+      "runtimeSemanticsVerified": false,
+      "evidence": [
+        "docs/architecture/first-party-login.md",
+        "docs/planning/db01-chat05-provider-persistence-decision.json"
+      ]
+    },
+    {
+      "legacyField": "login_user.password",
+      "originalDisposition": "RETIRED_LOCAL_PASSWORD_WORKFLOW",
+      "historicalTarget": "EXTERNAL_IDENTITY_PROVIDER_CREDENTIAL",
+      "proposedPhysicalTarget": null,
+      "evidenceStatus": "RETIREMENT_NORMALIZATION_OR_FIRST_PARTY_SECURITY_DECISION",
+      "physicalVerified": false,
+      "runtimeSemanticsVerified": false,
+      "evidence": [
+        "docs/architecture/first-party-login.md",
+        "docs/planning/db01-chat05-provider-persistence-decision.json"
+      ]
+    },
+    {
+      "legacyField": "login_user.user_name",
+      "originalDisposition": "RETIRED_LOCAL_PASSWORD_WORKFLOW",
+      "historicalTarget": "users.identity_uid/email/phone_e164",
+      "proposedPhysicalTarget": null,
+      "evidenceStatus": "RETIREMENT_NORMALIZATION_OR_FIRST_PARTY_SECURITY_DECISION",
+      "physicalVerified": false,
+      "runtimeSemanticsVerified": false,
+      "evidence": [
+        "docs/architecture/first-party-login.md",
+        "docs/planning/db01-chat05-provider-persistence-decision.json"
+      ]
+    },
+    {
+      "legacyField": "mobile_login_attempt.id",
+      "originalDisposition": "PROPOSED_TARGET_UNVERIFIED",
+      "historicalTarget": "identity_auth_attempts.id",
+      "proposedPhysicalTarget": "identity_auth_attempts.id",
+      "evidenceStatus": "EXACT_REGISTERED_FIELD_PG_WITNESS",
+      "physicalVerified": true,
+      "runtimeSemanticsVerified": false,
+      "evidence": [
+        "tests/integration/db01-registered-physical-field-crosswalk.test.ts"
+      ]
+    },
+    {
+      "legacyField": "mobile_login_attempt.created_at",
+      "originalDisposition": "PROPOSED_TARGET_UNVERIFIED",
+      "historicalTarget": "identity_auth_attempts.created_at",
+      "proposedPhysicalTarget": "identity_auth_attempts.created_at",
+      "evidenceStatus": "EXACT_REGISTERED_FIELD_PG_WITNESS",
+      "physicalVerified": true,
+      "runtimeSemanticsVerified": false,
+      "evidence": [
+        "tests/integration/db01-registered-physical-field-crosswalk.test.ts"
+      ]
+    },
+    {
+      "legacyField": "mobile_login_attempt.is_deleted",
+      "originalDisposition": "PROPOSED_TARGET_UNVERIFIED",
+      "historicalTarget": "identity_auth_attempts.used_at",
+      "proposedPhysicalTarget": "identity_auth_attempts.used_at",
+      "evidenceStatus": "EXACT_REGISTERED_FIELD_PG_WITNESS",
+      "physicalVerified": true,
+      "runtimeSemanticsVerified": false,
+      "evidence": [
+        "tests/integration/db01-registered-physical-field-crosswalk.test.ts"
+      ]
+    },
+    {
+      "legacyField": "mobile_login_attempt.updated_at",
+      "originalDisposition": "REDESIGNED_NO_SINGLE_FIELD",
+      "historicalTarget": "identity_auth_attempts.version + created_at/verified_at/used_at",
+      "proposedPhysicalTarget": null,
+      "evidenceStatus": "RETIREMENT_NORMALIZATION_OR_FIRST_PARTY_SECURITY_DECISION",
+      "physicalVerified": false,
+      "runtimeSemanticsVerified": false,
+      "evidence": [
+        "docs/architecture/first-party-login.md",
+        "docs/planning/db01-chat05-provider-persistence-decision.json"
+      ]
+    },
+    {
+      "legacyField": "mobile_login_attempt.attempt_id",
+      "originalDisposition": "PROPOSED_TARGET_UNVERIFIED",
+      "historicalTarget": "identity_auth_attempts.id",
+      "proposedPhysicalTarget": "identity_auth_attempts.id",
+      "evidenceStatus": "EXACT_REGISTERED_FIELD_PG_WITNESS",
+      "physicalVerified": true,
+      "runtimeSemanticsVerified": false,
+      "evidence": [
+        "tests/integration/db01-registered-physical-field-crosswalk.test.ts"
+      ]
+    },
+    {
+      "legacyField": "mobile_login_attempt.college_id",
+      "originalDisposition": "PROPOSED_TARGET_UNVERIFIED",
+      "historicalTarget": "identity_auth_attempts.college_id",
+      "proposedPhysicalTarget": "identity_auth_attempts.college_id",
+      "evidenceStatus": "EXACT_REGISTERED_FIELD_PG_WITNESS",
+      "physicalVerified": true,
+      "runtimeSemanticsVerified": false,
+      "evidence": [
+        "tests/integration/db01-registered-physical-field-crosswalk.test.ts"
+      ]
+    },
+    {
+      "legacyField": "mobile_login_attempt.expires_at",
+      "originalDisposition": "PROPOSED_TARGET_UNVERIFIED",
+      "historicalTarget": "identity_auth_attempts.expires_at",
+      "proposedPhysicalTarget": "identity_auth_attempts.expires_at",
+      "evidenceStatus": "EXACT_REGISTERED_FIELD_PG_WITNESS",
+      "physicalVerified": true,
+      "runtimeSemanticsVerified": false,
+      "evidence": [
+        "tests/integration/db01-registered-physical-field-crosswalk.test.ts"
+      ]
+    },
+    {
+      "legacyField": "mobile_login_attempt.email_otp_expires_at",
+      "originalDisposition": "PROPOSED_TARGET_UNVERIFIED",
+      "historicalTarget": "identity_auth_attempts.email_code_expires_at",
+      "proposedPhysicalTarget": "identity_auth_attempts.email_code_expires_at",
+      "evidenceStatus": "EXACT_REGISTERED_FIELD_PG_WITNESS",
+      "physicalVerified": true,
+      "runtimeSemanticsVerified": false,
+      "evidence": [
+        "tests/integration/db01-registered-physical-field-crosswalk.test.ts"
+      ]
+    },
+    {
+      "legacyField": "mobile_login_attempt.email_otp_sent_at",
+      "originalDisposition": "PROPOSED_TARGET_UNVERIFIED",
+      "historicalTarget": "identity_auth_attempts.email_code_sent_at",
+      "proposedPhysicalTarget": "identity_auth_attempts.email_code_sent_at",
+      "evidenceStatus": "EXACT_REGISTERED_FIELD_PG_WITNESS",
+      "physicalVerified": true,
+      "runtimeSemanticsVerified": false,
+      "evidence": [
+        "tests/integration/db01-registered-physical-field-crosswalk.test.ts"
+      ]
+    },
+    {
+      "legacyField": "mobile_login_attempt.organization_id",
+      "originalDisposition": "PROPOSED_TARGET_UNVERIFIED",
+      "historicalTarget": "colleges.organization_id",
+      "proposedPhysicalTarget": "colleges.organization_id",
+      "evidenceStatus": "EXACT_REGISTERED_FIELD_PG_WITNESS",
+      "physicalVerified": true,
+      "runtimeSemanticsVerified": false,
+      "evidence": [
+        "tests/integration/db01-registered-physical-field-crosswalk.test.ts"
+      ]
+    },
+    {
+      "legacyField": "mobile_login_attempt.otp",
+      "originalDisposition": "PROPOSED_TARGET_UNVERIFIED",
+      "historicalTarget": "identity_auth_attempts.sms_code_mac",
+      "proposedPhysicalTarget": "identity_auth_attempts.sms_code_mac",
+      "evidenceStatus": "EXACT_REGISTERED_FIELD_PG_WITNESS",
+      "physicalVerified": true,
+      "runtimeSemanticsVerified": false,
+      "evidence": [
+        "tests/integration/db01-registered-physical-field-crosswalk.test.ts"
+      ]
+    },
+    {
+      "legacyField": "mobile_login_attempt.email_otp",
+      "originalDisposition": "PROPOSED_TARGET_UNVERIFIED",
+      "historicalTarget": "identity_auth_attempts.email_code_mac",
+      "proposedPhysicalTarget": "identity_auth_attempts.email_code_mac",
+      "evidenceStatus": "EXACT_REGISTERED_FIELD_PG_WITNESS",
+      "physicalVerified": true,
+      "runtimeSemanticsVerified": false,
+      "evidence": [
+        "tests/integration/db01-registered-physical-field-crosswalk.test.ts"
+      ]
+    },
+    {
+      "legacyField": "mobile_login_attempt.phone",
+      "originalDisposition": "PROPOSED_TARGET_UNVERIFIED",
+      "historicalTarget": "identity_auth_attempts.contact_fingerprint",
+      "proposedPhysicalTarget": "identity_auth_attempts.contact_fingerprint",
+      "evidenceStatus": "EXACT_REGISTERED_FIELD_PG_WITNESS",
+      "physicalVerified": true,
+      "runtimeSemanticsVerified": false,
+      "evidence": [
+        "tests/integration/db01-registered-physical-field-crosswalk.test.ts"
+      ]
+    },
+    {
+      "legacyField": "mobile_login_attempt.used",
+      "originalDisposition": "PROPOSED_TARGET_UNVERIFIED",
+      "historicalTarget": "identity_auth_attempts.used_at",
+      "proposedPhysicalTarget": "identity_auth_attempts.used_at",
+      "evidenceStatus": "EXACT_REGISTERED_FIELD_PG_WITNESS",
+      "physicalVerified": true,
+      "runtimeSemanticsVerified": false,
+      "evidence": [
+        "tests/integration/db01-registered-physical-field-crosswalk.test.ts"
+      ]
+    },
+    {
+      "legacyField": "mobile_login_attempt.user_id",
+      "originalDisposition": "PROPOSED_TARGET_UNVERIFIED",
+      "historicalTarget": "identity_auth_attempts.user_id",
+      "proposedPhysicalTarget": "identity_auth_attempts.user_id",
+      "evidenceStatus": "EXACT_REGISTERED_FIELD_PG_WITNESS",
+      "physicalVerified": true,
+      "runtimeSemanticsVerified": false,
+      "evidence": [
+        "tests/integration/db01-registered-physical-field-crosswalk.test.ts"
+      ]
+    },
+    {
+      "legacyField": "mobile_login_attempt.user_type",
+      "originalDisposition": "PROPOSED_TARGET_UNVERIFIED",
+      "historicalTarget": "identity_auth_attempts.target_role",
+      "proposedPhysicalTarget": "identity_auth_attempts.target_role",
+      "evidenceStatus": "EXACT_REGISTERED_FIELD_PG_WITNESS",
+      "physicalVerified": true,
+      "runtimeSemanticsVerified": false,
+      "evidence": [
+        "tests/integration/db01-registered-physical-field-crosswalk.test.ts"
+      ]
+    },
+    {
+      "legacyField": "mobile_login_attempt.verified_at",
+      "originalDisposition": "PROPOSED_TARGET_UNVERIFIED",
+      "historicalTarget": "identity_auth_attempts.verified_at",
+      "proposedPhysicalTarget": "identity_auth_attempts.verified_at",
+      "evidenceStatus": "EXACT_REGISTERED_FIELD_PG_WITNESS",
+      "physicalVerified": true,
+      "runtimeSemanticsVerified": false,
+      "evidence": [
+        "tests/integration/db01-registered-physical-field-crosswalk.test.ts"
+      ]
+    },
+    {
+      "legacyField": "mobile_login_attempt.verification_attempts",
+      "originalDisposition": "PROPOSED_TARGET_UNVERIFIED",
+      "historicalTarget": "identity_auth_attempts.verification_attempts",
+      "proposedPhysicalTarget": "identity_auth_attempts.verification_attempts",
+      "evidenceStatus": "EXACT_REGISTERED_FIELD_PG_WITNESS",
+      "physicalVerified": true,
+      "runtimeSemanticsVerified": false,
+      "evidence": [
+        "tests/integration/db01-registered-physical-field-crosswalk.test.ts"
+      ]
+    },
+    {
+      "legacyField": "organization.id",
+      "originalDisposition": "PROPOSED_TARGET_UNVERIFIED",
+      "historicalTarget": "organizations.id",
+      "proposedPhysicalTarget": "organizations.id",
+      "evidenceStatus": "EXACT_REGISTERED_FIELD_PG_WITNESS",
+      "physicalVerified": true,
+      "runtimeSemanticsVerified": false,
+      "evidence": [
+        "tests/integration/db01-registered-physical-field-crosswalk.test.ts"
+      ]
+    },
+    {
+      "legacyField": "organization.created_at",
+      "originalDisposition": "PROPOSED_TARGET_UNVERIFIED",
+      "historicalTarget": "organizations.created_at",
+      "proposedPhysicalTarget": "organizations.created_at",
+      "evidenceStatus": "EXACT_REGISTERED_FIELD_PG_WITNESS",
+      "physicalVerified": true,
+      "runtimeSemanticsVerified": false,
+      "evidence": [
+        "tests/integration/db01-registered-physical-field-crosswalk.test.ts"
+      ]
+    },
+    {
+      "legacyField": "organization.is_deleted",
+      "originalDisposition": "PROPOSED_TARGET_UNVERIFIED",
+      "historicalTarget": "organizations.status",
+      "proposedPhysicalTarget": "organizations.status",
+      "evidenceStatus": "EXACT_REGISTERED_FIELD_PG_WITNESS",
+      "physicalVerified": true,
+      "runtimeSemanticsVerified": false,
+      "evidence": [
+        "tests/integration/db01-registered-physical-field-crosswalk.test.ts"
+      ]
+    },
+    {
+      "legacyField": "organization.updated_at",
+      "originalDisposition": "PROPOSED_TARGET_UNVERIFIED",
+      "historicalTarget": "organizations.updated_at",
+      "proposedPhysicalTarget": "organizations.updated_at",
+      "evidenceStatus": "EXACT_REGISTERED_FIELD_PG_WITNESS",
+      "physicalVerified": true,
+      "runtimeSemanticsVerified": false,
+      "evidence": [
+        "tests/integration/db01-registered-physical-field-crosswalk.test.ts"
+      ]
+    },
+    {
+      "legacyField": "organization.name",
+      "originalDisposition": "PROPOSED_TARGET_UNVERIFIED",
+      "historicalTarget": "organizations.name",
+      "proposedPhysicalTarget": "organizations.name",
+      "evidenceStatus": "EXACT_REGISTERED_FIELD_PG_WITNESS",
+      "physicalVerified": true,
+      "runtimeSemanticsVerified": false,
+      "evidence": [
+        "tests/integration/db01-registered-physical-field-crosswalk.test.ts"
+      ]
+    },
+    {
+      "legacyField": "recruiter.id",
+      "originalDisposition": "PROPOSED_TARGET_UNVERIFIED",
+      "historicalTarget": "users.id / placement_recruiter_profiles.user_id",
+      "proposedPhysicalTarget": null,
+      "evidenceStatus": "COMPOSITE_REDESIGN_SEMANTIC_REVIEW",
+      "physicalVerified": false,
+      "runtimeSemanticsVerified": false,
+      "evidence": [
+        "docs/planning/db01-chat02-source-reconciliation.md"
+      ]
+    },
+    {
+      "legacyField": "recruiter.first_name",
+      "originalDisposition": "PROPOSED_TARGET_UNVERIFIED",
+      "historicalTarget": "users.given_name (STAGED W01)",
+      "proposedPhysicalTarget": "users.given_name",
+      "evidenceStatus": "REGISTERED_IDENTITY_NAME_ADDITIVE_PARTIAL_RUNTIME",
+      "physicalVerified": false,
+      "runtimeSemanticsVerified": false,
+      "evidence": [
+        "drizzle/0300_db01_person_name_identity_profile.sql",
+        "src/modules/people/identity-profile-service.ts"
+      ]
+    },
+    {
+      "legacyField": "recruiter.last_name",
+      "originalDisposition": "PROPOSED_TARGET_UNVERIFIED",
+      "historicalTarget": "users.family_name (STAGED W01)",
+      "proposedPhysicalTarget": "users.family_name",
+      "evidenceStatus": "REGISTERED_IDENTITY_NAME_ADDITIVE_PARTIAL_RUNTIME",
+      "physicalVerified": false,
+      "runtimeSemanticsVerified": false,
+      "evidence": [
+        "drizzle/0300_db01_person_name_identity_profile.sql",
+        "src/modules/people/identity-profile-service.ts"
+      ]
+    },
+    {
+      "legacyField": "recruiter.contact_mobile",
+      "originalDisposition": "PROPOSED_TARGET_UNVERIFIED",
+      "historicalTarget": "users.phone_e164",
+      "proposedPhysicalTarget": "users.phone_e164",
+      "evidenceStatus": "EXACT_REGISTERED_FIELD_PG_WITNESS",
+      "physicalVerified": true,
+      "runtimeSemanticsVerified": false,
+      "evidence": [
+        "tests/integration/db01-registered-physical-field-crosswalk.test.ts"
+      ]
+    },
+    {
+      "legacyField": "recruiter.contact_mail",
+      "originalDisposition": "PROPOSED_TARGET_UNVERIFIED",
+      "historicalTarget": "users.email",
+      "proposedPhysicalTarget": "users.email",
+      "evidenceStatus": "EXACT_REGISTERED_FIELD_PG_WITNESS",
+      "physicalVerified": true,
+      "runtimeSemanticsVerified": false,
+      "evidence": [
+        "tests/integration/db01-registered-physical-field-crosswalk.test.ts"
+      ]
+    },
+    {
+      "legacyField": "recruiter.suspended_at",
+      "originalDisposition": "PROPOSED_TARGET_UNVERIFIED",
+      "historicalTarget": "users.platform_status / placement_recruiter_profiles.status",
+      "proposedPhysicalTarget": null,
+      "evidenceStatus": "COMPOSITE_REDESIGN_SEMANTIC_REVIEW",
+      "physicalVerified": false,
+      "runtimeSemanticsVerified": false,
+      "evidence": [
+        "docs/planning/db01-chat02-source-reconciliation.md"
+      ]
+    },
+    {
+      "legacyField": "recruiter.token_version",
+      "originalDisposition": "EXTERNAL_PROVIDER_MANAGED",
+      "historicalTarget": "Firebase/Identity Platform revocation with verifySessionCookie(checkRevoked=true) + live canonical user/membership/grant authorization",
+      "proposedPhysicalTarget": null,
+      "evidenceStatus": "RETIREMENT_NORMALIZATION_OR_FIRST_PARTY_SECURITY_DECISION",
+      "physicalVerified": false,
+      "runtimeSemanticsVerified": false,
+      "evidence": [
+        "docs/architecture/first-party-login.md",
+        "docs/planning/db01-chat05-provider-persistence-decision.json"
+      ]
+    },
+    {
+      "legacyField": "recruiter.is_deleted",
+      "originalDisposition": "PROPOSED_TARGET_UNVERIFIED",
+      "historicalTarget": "placement_recruiter_profiles.archived_at",
+      "proposedPhysicalTarget": "placement_recruiter_profiles.archived_at",
+      "evidenceStatus": "EXACT_REGISTERED_FIELD_PG_WITNESS",
+      "physicalVerified": true,
+      "runtimeSemanticsVerified": false,
+      "evidence": [
+        "tests/integration/db01-registered-physical-field-crosswalk.test.ts"
+      ]
+    },
+    {
+      "legacyField": "refresh_token_blocklist.jti",
+      "originalDisposition": "PROPOSED_TARGET_UNVERIFIED",
+      "historicalTarget": "identity_device_sessions.credential_digest",
+      "proposedPhysicalTarget": "identity_device_sessions.credential_digest",
+      "evidenceStatus": "EXACT_REGISTERED_FIELD_PG_WITNESS",
+      "physicalVerified": true,
+      "runtimeSemanticsVerified": false,
+      "evidence": [
+        "tests/integration/db01-registered-physical-field-crosswalk.test.ts"
+      ]
+    },
+    {
+      "legacyField": "refresh_token_blocklist.user_id",
+      "originalDisposition": "PROPOSED_TARGET_UNVERIFIED",
+      "historicalTarget": "identity_device_sessions.user_id",
+      "proposedPhysicalTarget": "identity_device_sessions.user_id",
+      "evidenceStatus": "EXACT_REGISTERED_FIELD_PG_WITNESS",
+      "physicalVerified": true,
+      "runtimeSemanticsVerified": false,
+      "evidence": [
+        "tests/integration/db01-registered-physical-field-crosswalk.test.ts"
+      ]
+    },
+    {
+      "legacyField": "refresh_token_blocklist.user_type",
+      "originalDisposition": "NORMALIZED_CANONICAL_USER",
+      "historicalTarget": "identity_device_sessions.user_id + current membership/system roles",
+      "proposedPhysicalTarget": null,
+      "evidenceStatus": "RETIREMENT_NORMALIZATION_OR_FIRST_PARTY_SECURITY_DECISION",
+      "physicalVerified": false,
+      "runtimeSemanticsVerified": false,
+      "evidence": [
+        "docs/architecture/first-party-login.md",
+        "docs/planning/db01-chat05-provider-persistence-decision.json"
+      ]
+    },
+    {
+      "legacyField": "refresh_token_blocklist.blocked_at",
+      "originalDisposition": "PROPOSED_TARGET_UNVERIFIED",
+      "historicalTarget": "identity_device_sessions.revoked_at",
+      "proposedPhysicalTarget": "identity_device_sessions.revoked_at",
+      "evidenceStatus": "EXACT_REGISTERED_FIELD_PG_WITNESS",
+      "physicalVerified": true,
+      "runtimeSemanticsVerified": false,
+      "evidence": [
+        "tests/integration/db01-registered-physical-field-crosswalk.test.ts"
+      ]
+    },
+    {
+      "legacyField": "refresh_token_blocklist.expires_at",
+      "originalDisposition": "PROPOSED_TARGET_UNVERIFIED",
+      "historicalTarget": "identity_device_sessions.expires_at",
+      "proposedPhysicalTarget": "identity_device_sessions.expires_at",
+      "evidenceStatus": "EXACT_REGISTERED_FIELD_PG_WITNESS",
+      "physicalVerified": true,
+      "runtimeSemanticsVerified": false,
+      "evidence": [
+        "tests/integration/db01-registered-physical-field-crosswalk.test.ts"
+      ]
+    },
+    {
+      "legacyField": "role.id",
+      "originalDisposition": "NORMALIZED_TYPED_ROLE_MODEL",
+      "historicalTarget": "membership_roles/system_roles typed enums and relation lifecycle",
+      "proposedPhysicalTarget": null,
+      "evidenceStatus": "RETIREMENT_NORMALIZATION_OR_FIRST_PARTY_SECURITY_DECISION",
+      "physicalVerified": false,
+      "runtimeSemanticsVerified": false,
+      "evidence": [
+        "docs/architecture/first-party-login.md",
+        "docs/planning/db01-chat05-provider-persistence-decision.json"
+      ]
+    },
+    {
+      "legacyField": "role.created_at",
+      "originalDisposition": "PROPOSED_TARGET_UNVERIFIED",
+      "historicalTarget": "membership_roles.created_at",
+      "proposedPhysicalTarget": "membership_roles.created_at",
+      "evidenceStatus": "EXACT_REGISTERED_FIELD_PG_WITNESS",
+      "physicalVerified": true,
+      "runtimeSemanticsVerified": false,
+      "evidence": [
+        "tests/integration/db01-registered-physical-field-crosswalk.test.ts"
+      ]
+    },
+    {
+      "legacyField": "role.is_deleted",
+      "originalDisposition": "NORMALIZED_TYPED_ROLE_MODEL",
+      "historicalTarget": "membership_roles/system_roles typed enums and relation lifecycle",
+      "proposedPhysicalTarget": null,
+      "evidenceStatus": "RETIREMENT_NORMALIZATION_OR_FIRST_PARTY_SECURITY_DECISION",
+      "physicalVerified": false,
+      "runtimeSemanticsVerified": false,
+      "evidence": [
+        "docs/architecture/first-party-login.md",
+        "docs/planning/db01-chat05-provider-persistence-decision.json"
+      ]
+    },
+    {
+      "legacyField": "role.updated_at",
+      "originalDisposition": "NORMALIZED_TYPED_ROLE_MODEL",
+      "historicalTarget": "membership_roles/system_roles typed enums and relation lifecycle",
+      "proposedPhysicalTarget": null,
+      "evidenceStatus": "RETIREMENT_NORMALIZATION_OR_FIRST_PARTY_SECURITY_DECISION",
+      "physicalVerified": false,
+      "runtimeSemanticsVerified": false,
+      "evidence": [
+        "docs/architecture/first-party-login.md",
+        "docs/planning/db01-chat05-provider-persistence-decision.json"
+      ]
+    },
+    {
+      "legacyField": "role.description",
+      "originalDisposition": "NORMALIZED_TYPED_ROLE_MODEL",
+      "historicalTarget": "code-defined permission policy documentation",
+      "proposedPhysicalTarget": null,
+      "evidenceStatus": "RETIREMENT_NORMALIZATION_OR_FIRST_PARTY_SECURITY_DECISION",
+      "physicalVerified": false,
+      "runtimeSemanticsVerified": false,
+      "evidence": [
+        "docs/architecture/first-party-login.md",
+        "docs/planning/db01-chat05-provider-persistence-decision.json"
+      ]
+    },
+    {
+      "legacyField": "role.name",
+      "originalDisposition": "PROPOSED_TARGET_UNVERIFIED",
+      "historicalTarget": "membership_roles.role / system_roles.role",
+      "proposedPhysicalTarget": null,
+      "evidenceStatus": "COMPOSITE_REDESIGN_SEMANTIC_REVIEW",
+      "physicalVerified": false,
+      "runtimeSemanticsVerified": false,
+      "evidence": [
+        "docs/planning/db01-chat02-source-reconciliation.md"
+      ]
+    },
+    {
+      "legacyField": "tenant_domain.id",
+      "originalDisposition": "PROPOSED_TARGET_UNVERIFIED",
+      "historicalTarget": "tenant_domains.id",
+      "proposedPhysicalTarget": "tenant_domains.id",
+      "evidenceStatus": "EXACT_REGISTERED_FIELD_PG_WITNESS",
+      "physicalVerified": true,
+      "runtimeSemanticsVerified": false,
+      "evidence": [
+        "tests/integration/db01-registered-physical-field-crosswalk.test.ts"
+      ]
+    },
+    {
+      "legacyField": "tenant_domain.created_at",
+      "originalDisposition": "PROPOSED_TARGET_UNVERIFIED",
+      "historicalTarget": "tenant_domains.created_at",
+      "proposedPhysicalTarget": "tenant_domains.created_at",
+      "evidenceStatus": "EXACT_REGISTERED_FIELD_PG_WITNESS",
+      "physicalVerified": true,
+      "runtimeSemanticsVerified": false,
+      "evidence": [
+        "tests/integration/db01-registered-physical-field-crosswalk.test.ts"
+      ]
+    },
+    {
+      "legacyField": "tenant_domain.updated_at",
+      "originalDisposition": "PROPOSED_TARGET_UNVERIFIED",
+      "historicalTarget": "tenant_domains.updated_at",
+      "proposedPhysicalTarget": "tenant_domains.updated_at",
+      "evidenceStatus": "EXACT_REGISTERED_FIELD_PG_WITNESS",
+      "physicalVerified": true,
+      "runtimeSemanticsVerified": false,
+      "evidence": [
+        "tests/integration/db01-registered-physical-field-crosswalk.test.ts"
+      ]
+    },
+    {
+      "legacyField": "tenant_domain.is_deleted",
+      "originalDisposition": "PROPOSED_TARGET_UNVERIFIED",
+      "historicalTarget": "tenant_domains.deleted_at",
+      "proposedPhysicalTarget": "tenant_domains.deleted_at",
+      "evidenceStatus": "EXACT_REGISTERED_FIELD_PG_WITNESS",
+      "physicalVerified": true,
+      "runtimeSemanticsVerified": false,
+      "evidence": [
+        "tests/integration/db01-registered-physical-field-crosswalk.test.ts"
+      ]
+    },
+    {
+      "legacyField": "tenant_domain.college_id",
+      "originalDisposition": "PROPOSED_TARGET_UNVERIFIED",
+      "historicalTarget": "tenant_domains.college_id",
+      "proposedPhysicalTarget": "tenant_domains.college_id",
+      "evidenceStatus": "EXACT_REGISTERED_FIELD_PG_WITNESS",
+      "physicalVerified": true,
+      "runtimeSemanticsVerified": false,
+      "evidence": [
+        "tests/integration/db01-registered-physical-field-crosswalk.test.ts"
+      ]
+    },
+    {
+      "legacyField": "tenant_domain.host",
+      "originalDisposition": "PROPOSED_TARGET_UNVERIFIED",
+      "historicalTarget": "tenant_domains.host",
+      "proposedPhysicalTarget": "tenant_domains.host",
+      "evidenceStatus": "EXACT_REGISTERED_FIELD_PG_WITNESS",
+      "physicalVerified": true,
+      "runtimeSemanticsVerified": false,
+      "evidence": [
+        "tests/integration/db01-registered-physical-field-crosswalk.test.ts"
+      ]
+    },
+    {
+      "legacyField": "tenant_domain.is_primary",
+      "originalDisposition": "PROPOSED_TARGET_UNVERIFIED",
+      "historicalTarget": "tenant_domains.is_primary",
+      "proposedPhysicalTarget": "tenant_domains.is_primary",
+      "evidenceStatus": "EXACT_REGISTERED_FIELD_PG_WITNESS",
+      "physicalVerified": true,
+      "runtimeSemanticsVerified": false,
+      "evidence": [
+        "tests/integration/db01-registered-physical-field-crosswalk.test.ts"
+      ]
+    },
+    {
+      "legacyField": "tenant_domain.verification_token",
+      "originalDisposition": "PROPOSED_TARGET_UNVERIFIED",
+      "historicalTarget": "tenant_domains.verification_token",
+      "proposedPhysicalTarget": "tenant_domains.verification_token",
+      "evidenceStatus": "EXACT_REGISTERED_FIELD_PG_WITNESS",
+      "physicalVerified": true,
+      "runtimeSemanticsVerified": false,
+      "evidence": [
+        "tests/integration/db01-registered-physical-field-crosswalk.test.ts"
+      ]
+    },
+    {
+      "legacyField": "tenant_domain.verified_at",
+      "originalDisposition": "PROPOSED_TARGET_UNVERIFIED",
+      "historicalTarget": "tenant_domains.verified_at",
+      "proposedPhysicalTarget": "tenant_domains.verified_at",
+      "evidenceStatus": "EXACT_REGISTERED_FIELD_PG_WITNESS",
+      "physicalVerified": true,
+      "runtimeSemanticsVerified": false,
+      "evidence": [
+        "tests/integration/db01-registered-physical-field-crosswalk.test.ts"
+      ]
+    },
+    {
+      "legacyField": "tenant_domain.is_verified",
+      "originalDisposition": "PROPOSED_TARGET_UNVERIFIED",
+      "historicalTarget": "tenant_domains.is_verified",
+      "proposedPhysicalTarget": "tenant_domains.is_verified",
+      "evidenceStatus": "EXACT_REGISTERED_FIELD_PG_WITNESS",
+      "physicalVerified": true,
+      "runtimeSemanticsVerified": false,
+      "evidence": [
+        "tests/integration/db01-registered-physical-field-crosswalk.test.ts"
+      ]
+    },
+    {
+      "legacyField": "tenant_domain.last_checked_at",
+      "originalDisposition": "PROPOSED_TARGET_UNVERIFIED",
+      "historicalTarget": "tenant_domains.last_checked_at",
+      "proposedPhysicalTarget": "tenant_domains.last_checked_at",
+      "evidenceStatus": "EXACT_REGISTERED_FIELD_PG_WITNESS",
+      "physicalVerified": true,
+      "runtimeSemanticsVerified": false,
+      "evidence": [
+        "tests/integration/db01-registered-physical-field-crosswalk.test.ts"
+      ]
+    },
+    {
+      "legacyField": "tenant_domain.last_check_result",
+      "originalDisposition": "PROPOSED_TARGET_UNVERIFIED",
+      "historicalTarget": "tenant_domains.last_check_result",
+      "proposedPhysicalTarget": "tenant_domains.last_check_result",
+      "evidenceStatus": "EXACT_REGISTERED_FIELD_PG_WITNESS",
+      "physicalVerified": true,
+      "runtimeSemanticsVerified": false,
+      "evidence": [
+        "tests/integration/db01-registered-physical-field-crosswalk.test.ts"
+      ]
+    },
+    {
+      "legacyField": "tenant_domain.last_found_values",
+      "originalDisposition": "PROPOSED_TARGET_UNVERIFIED",
+      "historicalTarget": "tenant_domains.last_found_values (STAGED SQL ONLY)",
+      "proposedPhysicalTarget": "tenant_domains.last_found_values",
+      "evidenceStatus": "REGISTERED_DNS_DIAGNOSTICS_SOURCE",
+      "physicalVerified": false,
+      "runtimeSemanticsVerified": false,
+      "evidence": [
+        "src/db/schema/tenant-domains.ts",
+        "src/modules/tenant-domains/repository.ts"
+      ]
+    },
+    {
+      "legacyField": "user.id",
+      "originalDisposition": "PROPOSED_TARGET_UNVERIFIED",
+      "historicalTarget": "users.id",
+      "proposedPhysicalTarget": "users.id",
+      "evidenceStatus": "EXACT_REGISTERED_FIELD_PG_WITNESS",
+      "physicalVerified": true,
+      "runtimeSemanticsVerified": false,
+      "evidence": [
+        "tests/integration/db01-registered-physical-field-crosswalk.test.ts"
+      ]
+    },
+    {
+      "legacyField": "user.created_at",
+      "originalDisposition": "PROPOSED_TARGET_UNVERIFIED",
+      "historicalTarget": "users.created_at",
+      "proposedPhysicalTarget": "users.created_at",
+      "evidenceStatus": "EXACT_REGISTERED_FIELD_PG_WITNESS",
+      "physicalVerified": true,
+      "runtimeSemanticsVerified": false,
+      "evidence": [
+        "tests/integration/db01-registered-physical-field-crosswalk.test.ts"
+      ]
+    },
+    {
+      "legacyField": "user.is_deleted",
+      "originalDisposition": "PROPOSED_TARGET_UNVERIFIED",
+      "historicalTarget": "users.platform_status",
+      "proposedPhysicalTarget": "users.platform_status",
+      "evidenceStatus": "EXACT_REGISTERED_FIELD_PG_WITNESS",
+      "physicalVerified": true,
+      "runtimeSemanticsVerified": false,
+      "evidence": [
+        "tests/integration/db01-registered-physical-field-crosswalk.test.ts"
+      ]
+    },
+    {
+      "legacyField": "user.updated_at",
+      "originalDisposition": "PROPOSED_TARGET_UNVERIFIED",
+      "historicalTarget": "users.updated_at",
+      "proposedPhysicalTarget": "users.updated_at",
+      "evidenceStatus": "EXACT_REGISTERED_FIELD_PG_WITNESS",
+      "physicalVerified": true,
+      "runtimeSemanticsVerified": false,
+      "evidence": [
+        "tests/integration/db01-registered-physical-field-crosswalk.test.ts"
+      ]
+    },
+    {
+      "legacyField": "user.email",
+      "originalDisposition": "PROPOSED_TARGET_UNVERIFIED",
+      "historicalTarget": "users.email",
+      "proposedPhysicalTarget": "users.email",
+      "evidenceStatus": "EXACT_REGISTERED_FIELD_PG_WITNESS",
+      "physicalVerified": true,
+      "runtimeSemanticsVerified": false,
+      "evidence": [
+        "tests/integration/db01-registered-physical-field-crosswalk.test.ts"
+      ]
+    },
+    {
+      "legacyField": "user.name",
+      "originalDisposition": "PROPOSED_TARGET_UNVERIFIED",
+      "historicalTarget": "users.display_name",
+      "proposedPhysicalTarget": "users.display_name",
+      "evidenceStatus": "EXACT_REGISTERED_FIELD_PG_WITNESS",
+      "physicalVerified": true,
+      "runtimeSemanticsVerified": false,
+      "evidence": [
+        "tests/integration/db01-registered-physical-field-crosswalk.test.ts"
+      ]
+    },
+    {
+      "legacyField": "user.password",
+      "originalDisposition": "SECURITY_RETIRED_LOCAL_PASSWORD",
+      "historicalTarget": "EXTERNAL_IDENTITY_PROVIDER_CREDENTIAL",
+      "proposedPhysicalTarget": null,
+      "evidenceStatus": "RETIREMENT_NORMALIZATION_OR_FIRST_PARTY_SECURITY_DECISION",
+      "physicalVerified": false,
+      "runtimeSemanticsVerified": false,
+      "evidence": [
+        "docs/architecture/first-party-login.md",
+        "docs/planning/db01-chat05-provider-persistence-decision.json"
+      ]
+    },
+    {
+      "legacyField": "user.phone",
+      "originalDisposition": "PROPOSED_TARGET_UNVERIFIED",
+      "historicalTarget": "users.phone_e164",
+      "proposedPhysicalTarget": "users.phone_e164",
+      "evidenceStatus": "EXACT_REGISTERED_FIELD_PG_WITNESS",
+      "physicalVerified": true,
+      "runtimeSemanticsVerified": false,
+      "evidence": [
+        "tests/integration/db01-registered-physical-field-crosswalk.test.ts"
+      ]
+    },
+    {
+      "legacyField": "user.unique_id",
+      "originalDisposition": "PROPOSED_TARGET_UNVERIFIED",
+      "historicalTarget": "users.identity_uid",
+      "proposedPhysicalTarget": "users.identity_uid",
+      "evidenceStatus": "EXACT_REGISTERED_FIELD_PG_WITNESS",
+      "physicalVerified": true,
+      "runtimeSemanticsVerified": false,
+      "evidence": [
+        "tests/integration/db01-registered-physical-field-crosswalk.test.ts"
+      ]
+    },
+    {
+      "legacyField": "user.user_name",
+      "originalDisposition": "NORMALIZED_PROVIDER_LOGIN_IDENTIFIER",
+      "historicalTarget": "users.identity_uid / users.email / users.phone_e164",
+      "proposedPhysicalTarget": null,
+      "evidenceStatus": "RETIREMENT_NORMALIZATION_OR_FIRST_PARTY_SECURITY_DECISION",
+      "physicalVerified": false,
+      "runtimeSemanticsVerified": false,
+      "evidence": [
+        "docs/architecture/first-party-login.md",
+        "docs/planning/db01-chat05-provider-persistence-decision.json"
+      ]
+    },
+    {
+      "legacyField": "user.user_type",
+      "originalDisposition": "PROPOSED_TARGET_UNVERIFIED",
+      "historicalTarget": "membership_roles.role / system_roles.role",
+      "proposedPhysicalTarget": null,
+      "evidenceStatus": "COMPOSITE_REDESIGN_SEMANTIC_REVIEW",
+      "physicalVerified": false,
+      "runtimeSemanticsVerified": false,
+      "evidence": [
+        "docs/planning/db01-chat02-source-reconciliation.md"
+      ]
+    },
+    {
+      "legacyField": "user_roles.user_id",
+      "originalDisposition": "PROPOSED_TARGET_UNVERIFIED",
+      "historicalTarget": "users.id / college_memberships.user_id",
+      "proposedPhysicalTarget": null,
+      "evidenceStatus": "COMPOSITE_REDESIGN_SEMANTIC_REVIEW",
+      "physicalVerified": false,
+      "runtimeSemanticsVerified": false,
+      "evidence": [
+        "docs/planning/db01-chat02-source-reconciliation.md"
+      ]
+    },
+    {
+      "legacyField": "user_roles.role_id",
+      "originalDisposition": "PROPOSED_TARGET_UNVERIFIED",
+      "historicalTarget": "membership_roles.role / system_roles.role",
+      "proposedPhysicalTarget": null,
+      "evidenceStatus": "COMPOSITE_REDESIGN_SEMANTIC_REVIEW",
+      "physicalVerified": false,
+      "runtimeSemanticsVerified": false,
+      "evidence": [
+        "docs/planning/db01-chat02-source-reconciliation.md"
+      ]
+    },
+    {
+      "legacyField": "user_session.jti",
+      "originalDisposition": "PROPOSED_TARGET_UNVERIFIED",
+      "historicalTarget": "identity_device_sessions.credential_digest",
+      "proposedPhysicalTarget": "identity_device_sessions.credential_digest",
+      "evidenceStatus": "EXACT_REGISTERED_FIELD_PG_WITNESS",
+      "physicalVerified": true,
+      "runtimeSemanticsVerified": false,
+      "evidence": [
+        "tests/integration/db01-registered-physical-field-crosswalk.test.ts"
+      ]
+    },
+    {
+      "legacyField": "user_session.user_id",
+      "originalDisposition": "PROPOSED_TARGET_UNVERIFIED",
+      "historicalTarget": "identity_device_sessions.user_id",
+      "proposedPhysicalTarget": "identity_device_sessions.user_id",
+      "evidenceStatus": "EXACT_REGISTERED_FIELD_PG_WITNESS",
+      "physicalVerified": true,
+      "runtimeSemanticsVerified": false,
+      "evidence": [
+        "tests/integration/db01-registered-physical-field-crosswalk.test.ts"
+      ]
+    },
+    {
+      "legacyField": "user_session.user_type",
+      "originalDisposition": "NORMALIZED_CANONICAL_USER",
+      "historicalTarget": "identity_device_sessions.user_id + current membership/system roles",
+      "proposedPhysicalTarget": null,
+      "evidenceStatus": "RETIREMENT_NORMALIZATION_OR_FIRST_PARTY_SECURITY_DECISION",
+      "physicalVerified": false,
+      "runtimeSemanticsVerified": false,
+      "evidence": [
+        "docs/architecture/first-party-login.md",
+        "docs/planning/db01-chat05-provider-persistence-decision.json"
+      ]
+    },
+    {
+      "legacyField": "user_session.device_name",
+      "originalDisposition": "PROPOSED_TARGET_UNVERIFIED",
+      "historicalTarget": "identity_device_sessions.device_name",
+      "proposedPhysicalTarget": "identity_device_sessions.device_name",
+      "evidenceStatus": "EXACT_REGISTERED_FIELD_PG_WITNESS",
+      "physicalVerified": true,
+      "runtimeSemanticsVerified": false,
+      "evidence": [
+        "tests/integration/db01-registered-physical-field-crosswalk.test.ts"
+      ]
+    },
+    {
+      "legacyField": "user_session.user_agent",
+      "originalDisposition": "PROPOSED_TARGET_UNVERIFIED",
+      "historicalTarget": "identity_device_sessions.user_agent",
+      "proposedPhysicalTarget": "identity_device_sessions.user_agent",
+      "evidenceStatus": "EXACT_REGISTERED_FIELD_PG_WITNESS",
+      "physicalVerified": true,
+      "runtimeSemanticsVerified": false,
+      "evidence": [
+        "tests/integration/db01-registered-physical-field-crosswalk.test.ts"
+      ]
+    },
+    {
+      "legacyField": "user_session.ip_address",
+      "originalDisposition": "PROPOSED_TARGET_UNVERIFIED",
+      "historicalTarget": "identity_device_sessions.ip_address",
+      "proposedPhysicalTarget": "identity_device_sessions.ip_address",
+      "evidenceStatus": "EXACT_REGISTERED_FIELD_PG_WITNESS",
+      "physicalVerified": true,
+      "runtimeSemanticsVerified": false,
+      "evidence": [
+        "tests/integration/db01-registered-physical-field-crosswalk.test.ts"
+      ]
+    },
+    {
+      "legacyField": "user_session.created_at",
+      "originalDisposition": "PROPOSED_TARGET_UNVERIFIED",
+      "historicalTarget": "identity_device_sessions.created_at",
+      "proposedPhysicalTarget": "identity_device_sessions.created_at",
+      "evidenceStatus": "EXACT_REGISTERED_FIELD_PG_WITNESS",
+      "physicalVerified": true,
+      "runtimeSemanticsVerified": false,
+      "evidence": [
+        "tests/integration/db01-registered-physical-field-crosswalk.test.ts"
+      ]
+    },
+    {
+      "legacyField": "user_session.last_used_at",
+      "originalDisposition": "PROPOSED_TARGET_UNVERIFIED",
+      "historicalTarget": "identity_device_sessions.last_seen_at",
+      "proposedPhysicalTarget": "identity_device_sessions.last_seen_at",
+      "evidenceStatus": "EXACT_REGISTERED_FIELD_PG_WITNESS",
+      "physicalVerified": true,
+      "runtimeSemanticsVerified": false,
+      "evidence": [
+        "tests/integration/db01-registered-physical-field-crosswalk.test.ts"
+      ]
+    },
+    {
+      "legacyField": "user_session.expires_at",
+      "originalDisposition": "PROPOSED_TARGET_UNVERIFIED",
+      "historicalTarget": "identity_device_sessions.expires_at",
+      "proposedPhysicalTarget": "identity_device_sessions.expires_at",
+      "evidenceStatus": "EXACT_REGISTERED_FIELD_PG_WITNESS",
+      "physicalVerified": true,
+      "runtimeSemanticsVerified": false,
+      "evidence": [
+        "tests/integration/db01-registered-physical-field-crosswalk.test.ts"
+      ]
+    }
+  ]
+}
