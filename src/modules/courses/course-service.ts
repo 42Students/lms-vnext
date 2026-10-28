@@ -79,7 +79,8 @@ async function assertCourseUnique(
     const conditions = [
       eq(courses.departmentId, departmentId),
       eq(courses.status, "ACTIVE"),
-      sql<boolean>`lower(${courses.name}) = ${input.name.toLowerCase()}`,
+      isNull(courses.deletedAt),
+      sql<boolean>`lower(btrim(${courses.name})) = ${input.name.trim().toLowerCase()}`,
     ];
 
     if (excludeCourseId) {
@@ -105,7 +106,8 @@ async function assertCourseUnique(
     const conditions = [
       eq(courses.departmentId, departmentId),
       eq(courses.status, "ACTIVE"),
-      sql<boolean>`lower(${courses.code}) = ${input.code.toLowerCase()}`,
+      isNull(courses.deletedAt),
+      sql<boolean>`lower(btrim(${courses.code})) = ${input.code.trim().toLowerCase()}`,
     ];
 
     if (excludeCourseId) {
@@ -140,7 +142,8 @@ async function assertCourseShortTitleUnique(
   const conditions = [
     eq(courses.departmentId, departmentId),
     eq(courses.status, "ACTIVE"),
-    sql<boolean>`lower(${courses.shortTitle}) = ${shortTitle.toLowerCase()}`,
+    isNull(courses.deletedAt),
+    sql<boolean>`lower(btrim(${courses.shortTitle})) = ${shortTitle.trim().toLowerCase()}`,
   ];
   if (excludeCourseId) conditions.push(ne(courses.id, excludeCourseId));
   const [collision] = await tx
@@ -154,14 +157,17 @@ async function assertCourseShortTitleUnique(
 function mapCourseConstraint(error: unknown) {
   switch (postgresConstraintName(error)) {
     case "courses_active_department_name_uq":
+    case "courses_active_department_name_trim_uq":
       return new CoursesServiceError(
         "COURSE_NAME_CONFLICT",
       );
     case "courses_active_department_code_uq":
+    case "courses_active_department_code_live_uq":
       return new CoursesServiceError(
         "COURSE_CODE_CONFLICT",
       );
     case "courses_active_department_short_title_uq":
+    case "courses_active_department_short_title_trim_uq":
       // Preserve the legacy name-or-short-title collision message.
       return new CoursesServiceError("COURSE_NAME_CONFLICT");
     default:
@@ -219,7 +225,7 @@ export async function listCourses(
   if (onlyArchived) {
     conditions.push(eq(courses.status, "ARCHIVED"));
   } else if (!includeArchived) {
-    conditions.push(eq(courses.status, "ACTIVE"));
+    conditions.push(eq(courses.status, "ACTIVE"),isNull(courses.deletedAt));
   }
 
   if (departmentId) {
@@ -474,6 +480,7 @@ export async function updateCourse(
       )).where(and(
         eq(courses.id, courseId),
         eq(courses.departmentId, scope.departmentId),
+        isNull(courses.deletedAt),
       )).for("update", { of: courses }).limit(1);
       if (!locked || locked.status !== "ACTIVE")
         throw new CoursesServiceError("COURSE_NOT_FOUND");
@@ -534,6 +541,7 @@ export async function updateCourse(
         and(
           eq(courses.id, courseId),
           eq(courses.status, "ACTIVE"),
+          isNull(courses.deletedAt),
           // A course moved to a different department since permission lookup
           // must not be edited with stale tenant authorization.
           eq(courses.departmentId, scope.departmentId),

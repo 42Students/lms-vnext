@@ -2171,6 +2171,13 @@
       "when": 1792359911266,
       "tag": "0309_db05_classroom_progress_tenant_guards",
       "breakpoints": true
+    },
+    {
+      "idx": 310,
+      "version": "7",
+      "when": 1792359971266,
+      "tag": "0310_db05_course_identity_trimmed_unique",
+      "breakpoints": true
     }
   ]
 }

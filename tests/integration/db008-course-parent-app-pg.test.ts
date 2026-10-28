@@ -163,4 +163,22 @@ describe.skipIf(!enabled)("DB-008 persisted course parent graph and races", () =
       admin, course.id, SEED_IDS.departmentB, course.updatedAt.toISOString(),
     )).rejects.toMatchObject({ code: "DEPARTMENT_NOT_FOUND" });
   });
+  it("enforces trimmed course identity while reserving slugs after deletion",async()=>{
+    const base=await makeCourse(), other=await makeCourse();
+    await expect(pool!.query("update courses set name=$1 where id=$2",
+      ["  "+base.name.toUpperCase()+"  ",other.id])).rejects.toMatchObject({code:"23505"});
+    await expect(pool!.query("update courses set short_title=$1 where id=$2",
+      ["  "+base.shortTitle!.toUpperCase()+"  ",other.id])).rejects.toMatchObject({code:"23505"});
+    await expect(pool!.query("update courses set slug=$1 where id=$2",
+      [base.slug,other.id])).rejects.toMatchObject({code:"23505"});
+    await expect(pool!.query("update courses set short_title=$1 where id=$2",
+      ["   ",other.id])).rejects.toMatchObject({code:"23514"});
+    await pool!.query("update courses set deleted_at=now() where id=$1",[base.id]);
+    const reused=await createCourse(admin,{departmentId:SEED_IDS.departmentA,
+      name:base.name,shortTitle:base.shortTitle!,code:prefix+"-REUSE-"+(++seq)});
+    createdIds.push(reused.id);
+    expect(reused.name).toBe(base.name);
+    await expect(pool!.query("update courses set slug=$1 where id=$2",
+      [base.slug,reused.id])).rejects.toMatchObject({code:"23505"});
+  });
 });

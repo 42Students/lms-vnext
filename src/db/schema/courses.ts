@@ -93,18 +93,18 @@ export const courses = pgTable(
       .defaultNow(),
   },
   (table) => [
-    uniqueIndex("courses_active_department_name_uq")
+    uniqueIndex("courses_active_department_name_trim_uq")
       .on(
         table.departmentId,
-        sql`lower(${table.name})`,
+        sql`lower(btrim(${table.name}))`,
       )
-      .where(sql`${table.status} = 'ACTIVE'`),
-    uniqueIndex("courses_active_department_code_uq")
+      .where(sql`${table.status} = 'ACTIVE' and ${table.deletedAt} is null`),
+    uniqueIndex("courses_active_department_code_live_uq")
       .on(
         table.departmentId,
-        sql`lower(${table.code})`,
+        sql`lower(btrim(${table.code}))`,
       )
-      .where(sql`${table.status} = 'ACTIVE'`),
+      .where(sql`${table.status} = 'ACTIVE' and ${table.deletedAt} is null`),
     index("courses_department_status_idx").on(
       table.departmentId,
       table.status,
@@ -112,14 +112,17 @@ export const courses = pgTable(
     uniqueIndex("courses_slug_uq").on(table.slug)
       .where(sql`${table.slug} is not null`),
     // Legacy short-title duplicates must be reconciled before 0205 is applied.
-    uniqueIndex("courses_active_department_short_title_uq")
-      .on(table.departmentId, sql`lower(${table.shortTitle})`)
-      .where(sql`${table.status} = 'ACTIVE' and ${table.shortTitle} is not null`),
+    uniqueIndex("courses_active_department_short_title_trim_uq")
+      .on(table.departmentId, sql`lower(btrim(${table.shortTitle}))`)
+      .where(sql`${table.status} = 'ACTIVE' and ${table.deletedAt} is null and ${table.shortTitle} is not null`),
     index("courses_legacy_id_idx").on(table.departmentId,table.legacyCourseId)
       .where(sql`${table.legacyCourseId} is not null`),
     index("courses_visible_department_idx")
       .on(table.departmentId, table.status, table.enabled)
       .where(sql`${table.deletedAt} is null`),
+    check("db05_course_name_nonblank_ck",sql`btrim(${table.name}) <> ''`),
+    check("db05_course_short_title_nonblank_ck",sql`${table.shortTitle} is null or btrim(${table.shortTitle}) <> ''`),
+    check("db05_course_slug_nonblank_ck",sql`${table.slug} is null or btrim(${table.slug}) <> ''`),
     check("courses_card_color_hex_ck",
       sql`${table.cardColor} IS NULL OR ${table.cardColor} ~ '^#[0-9A-Fa-f]{6}$'`,
     ),
