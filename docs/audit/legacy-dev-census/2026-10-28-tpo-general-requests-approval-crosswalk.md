@@ -64,3 +64,16 @@ seeded PostgreSQL positive and stale/other-college/concurrent-maturity
 negative path, browser decision and learner notice/offer refresh, and
 compare the legacy post-reversal response window. Correction-with-proof and
 PAP approvals remain deliberately unsupported.
+
+## PostgreSQL integration acceptance authored
+
+`tests/integration/placements-p8-offers.test.ts` now includes a disposable
+positive approval starting with a genuine seeded issued offer, TPO-reported
+external acceptance and the learner's own persisted in-window dispute,
+then verifies the approved transaction, reset offer fields, renewed response
+deadline, incremented row revision, transition history, learner notice,
+replayed-decision rejection and non-maturation. It also tests that a
+conflicting finalized cascade fails closed without approving the request.
+The existing P8 fixture cleanup removes general-request rows/events before
+offer rows. These tests are **authored, not yet presumed passed**, pending
+the corresponding CI PostgreSQL run. Browser acceptance remains separate.

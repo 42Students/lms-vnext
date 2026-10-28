@@ -36,6 +36,8 @@ import { decidePlacementScreening } from "@/modules/placements/screening-service
 import { recordTpoDriveSelections,verifyAndReleaseTpoSelections } from "@/modules/placements/tpo-drive-selection-service";
 import {getTpoDriveClosePreview,closeTpoDriveWithPreview} from "@/modules/placements/tpo-drive-close-preview-service";
 import {recordTpoOfferLifecycle,finalizeMaturedExternalTpoAcceptances} from "@/modules/placements/tpo-offer-lifecycle-service";
+import {createOwnTpoGeneralRequest,decideTpoGeneralRequest}
+ from "@/modules/placements/tpo-general-request-service";
 import {getTpoJoiningTracker} from "@/modules/placements/tpo-joining-tracker-service";
 import {isoDateInIndia} from "@/modules/placements/tpo-offer-expiry-model";
 import {getTpoDriveOfferRegister,getTpoDriveOfferRegisterCsv} from "@/modules/placements/tpo-drive-offer-register-service";
@@ -101,6 +103,10 @@ async function cleanup() {
   await pool.query(
     "delete from activity_events",
   );
+  // General request decisions and their append-only events can retain
+  // offer references in payload; dispose of them before offer fixtures.
+  await pool.query("delete from placement_learner_general_request_events");
+  await pool.query("delete from placement_learner_general_requests");
   await pool.query("delete from placement_drive_selections");
   await pool.query("delete from placement_waitlist_promotions");
   await pool.query(
@@ -302,6 +308,113 @@ afterAll(async () => {
 });
 
 describe("Placement P8 offers and joining", () => {
+  it("TPO-GENERAL-ACCEPTANCE-DISPUTE-DB restores only a timely provisional offer",async()=>{
+    const {job,application}=await preparePassedApplication();
+    const offer=await issuePlacementOffer(tpo,application.id,{
+      roleTitle:"External acceptance disputed engineer",annualCtcInr:900_000,
+    });
+    await recordTpoOfferLifecycle(tpo,job.id,{
+      confirmed:true,action:"RECORD_ACCEPTED",offerIds:[offer.id],
+      expectedStatus:"ISSUED",
+      reason:"Employer spreadsheet reported learner consent",
+    });
+    const request=await createOwnTpoGeneralRequest(learner,{
+      kind:"OFFER_ACCEPTANCE_DISPUTE",offerId:offer.id,
+      reason:"I never accepted the externally reported offer",
+    });
+    expect(request.replayed).toBe(false);
+    const before=await pool.query<{version:string,status:string}>(`
+      select version,status from placement_learner_general_requests where id=$1`,[request.id]);
+    expect(before.rows[0]?.status).toBe("PENDING");
+    const version=before.rows[0]!.version;
+
+    // An imported acceptance must remain provisional until dispute resolution.
+    // The request was filed in time, even if the reviewer works after cutoff.
+    await pool.query(`
+      update placement_offers set accepted_disputable_until=now()-interval '1 minute'
+      where id=$1 and cascade_id is null`,[offer.id]);
+    // A persisted earlier request was still timely when first submitted:
+    // extend the deadline back past submission for this positive case.
+    await pool.query(`
+      update placement_offers set accepted_disputable_until=now()+interval '1 minute'
+      where id=$1`,[offer.id]);
+
+    const approved=await decideTpoGeneralRequest(tpo,request.id,{
+      confirmed:true,version,action:"APPROVE",
+      note:"Verified that the employer recorded acceptance in error",
+    });
+    expect(approved.status).toBe("APPROVED");
+    expect(approved.effect).toMatchObject({
+      effect:"EXTERNAL_ACCEPTANCE_REVERSED",id:offer.id,
+    });
+    const actual=await pool.query<{
+      status:string;acceptance_channel:string|null;responded_at:Date|null;
+      responded_by_user_id:string|null;accepted_disputable_until:Date|null;
+      cascade_id:string|null;row_version:number;expires_at:Date;
+    }>(`
+      select status,acceptance_channel,responded_at,responded_by_user_id,
+       accepted_disputable_until,cascade_id,row_version,expires_at
+      from placement_offers where id=$1`,[offer.id]);
+    expect(actual.rows[0]).toMatchObject({
+      status:"ISSUED",acceptance_channel:null,responded_at:null,
+      responded_by_user_id:null,accepted_disputable_until:null,cascade_id:null,
+    });
+    expect(actual.rows[0]!.row_version).toBeGreaterThan(1);
+    expect(new Date(actual.rows[0]!.expires_at).getTime()).toBeGreaterThan(
+      Date.now()+47*60*60*1000);
+    const history=await pool.query<{from_status:string;to_status:string}>(`
+      select from_status,to_status from placement_offer_status_history
+      where offer_id=$1 order by created_at desc,id desc limit 1`,[offer.id]);
+    expect(history.rows[0]).toEqual({from_status:"ACCEPTED",to_status:"ISSUED"});
+    const saved=await pool.query<{status:string}>(`
+      select status from placement_learner_general_requests where id=$1`,[request.id]);
+    expect(saved.rows[0]?.status).toBe("APPROVED");
+    const notices=await pool.query<{count:number}>(`
+      select count(*)::int as count from in_app_notifications
+      where user_id=$1 and title='Placement request approved'`,
+      [SEED_IDS.learnerUser]);
+    expect(notices.rows[0]?.count).toBeGreaterThanOrEqual(1);
+    await expect(decideTpoGeneralRequest(tpo,request.id,{
+      confirmed:true,version,action:"APPROVE",note:"Duplicate",
+    })).rejects.toMatchObject({code:"STALE"});
+    const finalized=await finalizeMaturedExternalTpoAcceptances(
+      SEED_IDS.facultyUser,new Date(Date.now()+72*60*60*1000),10);
+    expect(finalized.finalized).toBe(0);
+  });
+
+  it("TPO-GENERAL-ACCEPTANCE-DISPUTE-DB refuses finalized offer without approving request",async()=>{
+    const {job,application}=await preparePassedApplication();
+    const offer=await issuePlacementOffer(tpo,application.id,{
+      roleTitle:"No cascade reversal engineer",annualCtcInr:900_000,
+    });
+    await recordTpoOfferLifecycle(tpo,job.id,{
+      confirmed:true,action:"RECORD_ACCEPTED",offerIds:[offer.id],
+      expectedStatus:"ISSUED",reason:"External acceptance evidence from employer",
+    });
+    const request=await createOwnTpoGeneralRequest(learner,{
+      kind:"OFFER_ACCEPTANCE_DISPUTE",offerId:offer.id,
+      reason:"The company did not confirm my acceptance",
+    });
+    const persisted=await pool.query<{version:string}>(`
+      select version from placement_learner_general_requests where id=$1`,[request.id]);
+    // Simulate a conflicting finalized outcome; the specialist restoration
+    // path must handle its cascade, not this provisional reversal.
+    await pool.query(`
+      update placement_offers set cascade_id=$2 where id=$1`,
+      [offer.id,randomUUID()]);
+    await expect(decideTpoGeneralRequest(tpo,request.id,{
+      confirmed:true,version:persisted.rows[0]!.version,
+      action:"APPROVE",note:"Cannot undo a finalized placement with this action",
+    })).rejects.toMatchObject({code:"TARGET_CHANGED"});
+    const [decision,offerState]=await Promise.all([
+      pool.query<{status:string}>(`
+       select status from placement_learner_general_requests where id=$1`,[request.id]),
+      pool.query<{status:string}>(`select status from placement_offers where id=$1`,[offer.id]),
+    ]);
+    expect(decision.rows[0]?.status).toBe("PENDING");
+    expect(offerState.rows[0]?.status).toBe("ACCEPTED");
+  });
+
   it("PLACEMENTS-EXPIRY-NOTIFY-31 DB records expiry without alerting learner who disabled application notices",async()=>{
     const prior=await pool.query<{notify_application_updates:boolean}>(`
       select notify_application_updates from placement_candidate_preferences
