@@ -4,7 +4,7 @@ import fs from "node:fs";
 import path from "node:path";
 
 const sql = fs.readFileSync(
-  path.resolve(process.cwd(), "docs/planning/sql/db09-collaboration-scoped-fk-candidate.sql"),
+  path.resolve(process.cwd(), "drizzle/0075_db09_tpo_collaboration.sql"),
   "utf8",
 );
 const policy = fs.readFileSync(
