@@ -97,6 +97,18 @@ describe("DB-004 historical learner/faculty account provenance and lifecycle",()
    await expect(resolveRequestContext({
     identityUid,activeMembershipId:facultyMember,activeRole:"FACULTY",
    })).resolves.toMatchObject({membership:{roles:["FACULTY"]}});
+   // Faculty historical deletion follows the same scoped termination
+   // contract without deleting the one common person.
+   await pool.query(
+    "update college_memberships set status='ENDED',legacy_removed_at=clock_timestamp(),updated_at=clock_timestamp() where id=$1",
+    [facultyMember]);
+   const endedFaculty=await pool.query<{status:string;legacy_removed_at:Date}>(
+    "select status,legacy_removed_at from college_memberships where id=$1",[facultyMember]);
+   expect(endedFaculty.rows[0]?.status).toBe("ENDED");
+   expect(endedFaculty.rows[0]?.legacy_removed_at).toBeInstanceOf(Date);
+   await expect(resolveRequestContext({
+    identityUid,activeMembershipId:facultyMember,activeRole:"FACULTY",
+   })).rejects.toMatchObject({code:"MEMBERSHIP_NOT_ACTIVE"});
    // A stale source clock cannot reactivate an ENDED row; database
    // provenance is never an authorization request principal.
    const currentUser=await pool.query<{platform_status:string}>(

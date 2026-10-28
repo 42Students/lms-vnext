@@ -33,9 +33,10 @@ describe("DB-004 active recruiter identity and archival field semantics",()=>{
    await pool.query(
     "insert into placement_company_relationships(id,college_id,company_id,created_by_user_id,status) values($1,$2,$3,$4,'ACTIVE')",
     [relationshipId,SEED_IDS.collegeA,companyId,SEED_IDS.superAdminUser]);insertedRelationship=true;
+   const legacyRecruiterId=1_000_000_000+Math.floor(Math.random()*999_000_000);
    await pool.query(
-    "insert into placement_recruiter_profiles(user_id,company_id,title,status,created_by_user_id) values($1,$2,'Hiring Partner','ACTIVE',$3)",
-    [userId,companyId,SEED_IDS.superAdminUser]);insertedProfile=true;
+    "insert into placement_recruiter_profiles(user_id,company_id,title,status,created_by_user_id,legacy_recruiter_id) values($1,$2,'Hiring Partner','ACTIVE',$3,$4)",
+    [userId,companyId,SEED_IDS.superAdminUser,legacyRecruiterId]);insertedProfile=true;
    await pool.query(
     `insert into placement_recruiter_college_grants
       (id,recruiter_user_id,company_relationship_id,granted_by_user_id,
@@ -44,6 +45,13 @@ describe("DB-004 active recruiter identity and archival field semantics",()=>{
     [grantId,userId,relationshipId,SEED_IDS.superAdminUser]);insertedGrant=true;
    const context=await resolveRequestContext({identityUid});
    expect(context.user.id).toBe(userId);
+   // The source integer account ID is import provenance, not the
+   // canonical UUID or an independently usable recruiter principal.
+   const sourceIdentity=await pool.query<{user_id:string;legacy_recruiter_id:number}>(
+    "select user_id,legacy_recruiter_id from placement_recruiter_profiles where user_id=$1",
+    [userId]);
+   expect(sourceIdentity.rows[0]).toEqual({user_id:userId,legacy_recruiter_id:legacyRecruiterId});
+   expect(String(legacyRecruiterId)).not.toBe(userId);
    expect(context.recruiter).toMatchObject({
     userId,companyId,grants:[expect.objectContaining({id:grantId,collegeId:SEED_IDS.collegeA})],
    });
