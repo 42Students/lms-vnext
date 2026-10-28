@@ -3,6 +3,7 @@
 import { createContext, useCallback, useContext, useMemo, useState, useEffect, useRef, type CSSProperties, type ReactNode } from "react";
 import { cx } from "@/lib/class-names";
 import { Button } from "@/components/ui/button";
+import { createPortal } from "react-dom";
 import { OverlayCloseIcon } from "@/components/ui/overlay-close-icon";
 
 type ToastTone = "success" | "error" | "info";
@@ -88,6 +89,9 @@ export function ToastStack({ toasts, onDismiss, viewport, onInteractionChange }:
 export function ToastProvider({ children }: { children: ReactNode }) {
   const [toasts, setToasts] = useState<ToastItem[]>([]);
   const [viewport, setViewport] = useState<ToastViewport | null>(null);
+  // Native showModal() dialogs are in the browser top layer. A toast mounted
+  // outside that layer is visible but cannot be clicked or keyboard-focused.
+  const [toastModal, setToastModal] = useState<HTMLDialogElement | null>(null);
   const itemsRef = useRef<ToastItem[]>([]);
   const timers = useRef<Map<string, ReturnType<typeof setTimeout>>>(new Map());
   // Store time remaining rather than restarting the full reading duration after a pause.
@@ -144,6 +148,11 @@ export function ToastProvider({ children }: { children: ReactNode }) {
     }
   }, [pauseTimedToasts, scheduleTimedToast]);
   const showToast = useCallback((input: ToastInput) => {
+    // Portal into the uppermost native modal while it is open. z-index alone
+    // cannot place a toast above a top-layer <dialog>; this makes its dismiss
+    // control reachable without closing or weakening the underlying dialog.
+    const modals = document.querySelectorAll<HTMLDialogElement>("dialog:modal");
+    setToastModal(modals.length ? modals[modals.length - 1]! : null);
     const id = "toast-" + ++nextToastOrdinal.current;
     const { items, evictedIds } = enqueueToast(itemsRef.current, { ...input, id });
     clearEvictedToastTimers(evictedIds, timers.current);
@@ -163,6 +172,12 @@ export function ToastProvider({ children }: { children: ReactNode }) {
       scheduleTimedToast(id, readingTime);
     }
   }, [scheduleTimedToast]);
+  useEffect(() => {
+    if (!toastModal) return;
+    const restore = () => setToastModal(current => current === toastModal ? null : current);
+    toastModal.addEventListener("close", restore);
+    return () => toastModal.removeEventListener("close", restore);
+  }, [toastModal]);
   useEffect(() => {
     function visibilityChange() {
       if (document.hidden) {
@@ -200,9 +215,13 @@ export function ToastProvider({ children }: { children: ReactNode }) {
     };
   }, []);
   const value = useMemo(() => ({ showToast }), [showToast]);
+  const toastStack = <ToastStack toasts={toasts} onDismiss={dismiss}
+    viewport={viewport} onInteractionChange={onInteractionChange}/>;
   return <ToastContext.Provider value={value}>
     {children}
-    <ToastStack toasts={toasts} onDismiss={dismiss} viewport={viewport} onInteractionChange={onInteractionChange}/>
+    {toastModal?.isConnected && toastModal.matches(":modal")
+      ? createPortal(toastStack, toastModal)
+      : toastStack}
   </ToastContext.Provider>;
 }
 export function useToast() {

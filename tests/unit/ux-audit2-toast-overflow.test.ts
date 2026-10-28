@@ -1,4 +1,6 @@
 import { describe, expect, it } from "vitest";
+import { readFileSync } from "node:fs";
+import { join } from "node:path";
 import { createElement } from "react";
 import { renderToStaticMarkup } from "react-dom/server";
 import { ToastStack, enqueueToast, clearEvictedToastTimers, type ToastItem } from "@/components/ui/toast";
@@ -7,6 +9,13 @@ const entry = (index: number, tone: "error" | "info" | "success"): ToastItem => 
   id: "notice-"+index, tone, title: "Notice "+index,
 });
 describe("RV-02 A2-14 persistent toast retention", () => {
+  it("keeps dismissible notifications inside the native modal top layer", () => {
+    const source=readFileSync(join(process.cwd(),"src/components/ui/toast.tsx"),"utf8");
+    expect(source).toContain('querySelectorAll<HTMLDialogElement>("dialog:modal")');
+    expect(source).toContain("createPortal(toastStack, toastModal)");
+    expect(source).toContain('toastModal.addEventListener("close", restore)');
+    expect(source).toContain('toastModal.removeEventListener("close", restore)');
+  });
   it("retains all five undismissed errors even with a timed informational overflow", () => {
     let queue: ToastItem[] = [];
     for(let i=1;i<=5;i++) queue=enqueueToast(queue,entry(i,"error")).items;
