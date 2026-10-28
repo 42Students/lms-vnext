@@ -18,7 +18,8 @@ PENDING in the existing original decision registers. They are not counted as
 passed final approvals. They cannot hide an unfixed code defect, an unsafe
 tenant/identity issue, an unregistered required schema or a failed acceptance
 test. **Skip done tasks during future generic continuation.** For the current
-sequence, DB-004 engineering is DONE and **DB-005** is next. This explicit
+sequence, DB-004 and DB-005 engineering are DONE (DB-005 registered acceptance
+run 40750567279), and **DB-007** is next eligible work. This explicit
 owner-approved split between engineering acceptance and release attestation
 supersedes the old rule tying every task's DONE to final owner signatures.
 
@@ -44,7 +45,7 @@ At strategy adoption the strict tracker was **6/81 DATABASE DONE**; original cor
 - **Wave B — Activate downstream persisted contracts:** DB-008 courses/content and DB-012 placements/TPO; reconcile the already-authored DB05/DB08/DB09 work into the current canonical schema. Do not merge incompatible alternatives. Prove parent ownership, learner visibility, state transitions and cross-tenant negative paths.
 - **Wave C — Global acceptance and certification:** DB-019 active-field disposition and DB-020 clean schema drift, migration replay and phase-gate review, plus every remaining required DATABASE task. The original seven are the **first** closure focus, not the only tasks needed for global phase exit.
 
-The real next implementation batch should begin with **DB-005 academic staged-to-registered reconciliation** after checking DB-004 parent dependencies. The desired output is **registered, replayable, tested behavior**. If an exact missing approval or incompatible DDL blocks promotion, fix the dependency or record that precise blocker and move to the next safe eligible integration—not another generic research sweep.
+The DB-005 academic staged-to-registered reconciliation is ENGINEERING DONE with executable PostgreSQL evidence. The real next implementation batch should address **DB-007** or the first currently open dependency-safe database task. The desired output is **registered, replayable, tested behavior**. If an exact missing approval or incompatible DDL blocks promotion, fix the dependency or record that precise blocker and move to the next safe eligible integration—not another generic research sweep.
 
 ## One-batch delivery loop (mandatory)
 

@@ -1,6 +1,6 @@
 # DB02 academic progression and timetable persistence contract
 
-**Task:** DB-005 · **Worker:** Chat 4 · **Phase:** DATABASE · **Status:** 125/125 SOURCE + TARGET DESIGN DISPOSITIONS COMPLETE; NOT RUNTIME VERIFIED  
+**Task:** DB-005 · **Worker:** Chat 4 · **Phase:** DATABASE · **Status:** ENGINEERING DONE; final release certification deferred (125/125 legacy semantic dispositions)  
 **Legacy backend oracle:** `42Students/lms@prod-2026` pinned at `21bad59d4dfaf2fa11fdeaf9353327ce105697d5`  
 **Legacy frontend oracle:** `42Students/lms2-fe@prod-2026` pinned at `e6b09e6dd14ac7b6a0dae1697a7c08ddb27cdde2`  
 **vNext snapshot reviewed:** `drizzle/meta/0040_snapshot.json`
@@ -465,3 +465,27 @@ FKs. Explicit submitted term/curriculum IDs still use strict canonical
 constraints, including source negative SQL witnesses. It never imports or
 reconstructs old production data. A standalone rollback-only PostgreSQL
 fixture proves valid legacy-compatible writes and cross-college denial.
+
+## 2026-10-28 — DB-005 engineering accepted; move to next task
+
+**Registered** DB02 academic/timetable migration `0303_db02_academic_timetable_registered`
+is in the numbered Drizzle journal and replays from an isolated PostgreSQL 17
+database. Full DB-005 registered acceptance [run 40750567279](https://github.com/42Students/lms-vnext/actions/runs/40750567279)
+**PASSED** on commit `9a953286945cb65449e37289c71a83920399dfdd`:
+field/trigger manifests, all canonical PostgreSQL negative/race tests, protected
+academic period windows, cohort progression history, lifecycle constraints,
+and cross-domain identity/learner/assessment integration. Earlier fixture
+cleanup and invalid CORE-to-ELECTIVE mutation were corrected without
+weakening database parent-history guards; PG14D now requires immediate
+cross-college reparent refusal with intact assessment access.
+
+**Engineering status: DONE.** The sole `docs/tracker.json` sets `DB-005.done=true`.
+No new AI agent should repeat DB02 audits or reopen it solely for the deferred
+release-only items below. Advance to the next eligible unfinished DATABASE task.
+
+**Final release review still pending, not waived or passed:** release-ready
+cross-account browser journeys; exact-final-commit full CI/migration review;
+production `btree_gist`/DDL permissions and rollout with greenfield
+**no legacy data import**. These are tracked as `deferredRelease` on DB-005,
+not as unfinished engineering. A material failed guard or newly demonstrated
+security/tenant regression can legitimately reopen this task.

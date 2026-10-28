@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "project": "42Students/lms-vnext",
   "branch": "main",
-  "updatedOn": "2026-10-28",
+  "updatedOn": "2026-10-29",
   "policy": "SOLE ACTIVE TRACKER. done:true means scoped ENGINEERING acceptance passed with executed evidence, or (for a task with deferredRelease metadata) engineering acceptance passed and clearly enumerated independent final-release reviews are scheduled later. done:true does NOT certify security/retention signoff, browser/release, or the overall phase. Missing functionality, database migration, tenant/privacy invariants, or failed core tests are NOT deferrable. Agents skip done tasks unless a concrete regression or owner re-scope occurs. No other task status trackers; pending final attestations remain evidence in original registers and task metadata.",
   "currentPhase": "DATABASE",
   "phaseOrder": [
@@ -189,8 +189,45 @@
       "id": "DB-005",
       "title": "Reconcile DB02 academic and schedule schema",
       "phase": "DATABASE",
-      "done": false,
-      "dependsOn": []
+      "done": true,
+      "dependsOn": [],
+      "acceptedAt": "2026-10-28T19:06:29Z",
+      "closureBasis": "ENGINEERING_ACCEPTED_RELEASE_REVIEW_DEFERRED",
+      "acceptanceEvidence": [
+        {
+          "kind": "EXECUTED_ACCEPTANCE",
+          "commitSha": "9a953286945cb65449e37289c71a83920399dfdd",
+          "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/40750567279",
+          "result": "PASS",
+          "exitCode": 0,
+          "runner": "GitHub Actions ubuntu-latest Node 22 / disposable PostgreSQL 17 DB-005 registered acceptance",
+          "commands": [
+            "npm run db:journal:verify",
+            "npm run db:test:prepare (DATABASE_URL cleared; isolated PG17)",
+            "npm run db:migrate",
+            "node --test tests/db005-registered-canonical-source-contract.test.mjs",
+            "bash scripts/sql/db02-run-disposable-acceptance.sh",
+            "DB02_REGISTERED_PARENT_PERIODS=YES node --test tests/db02-registered-parent-periods-pg.test.mjs",
+            "node --test tests/db005-cross-domain-fixture-lifecycle.test.mjs",
+            "npx vitest run --config vitest.db.registered.config.ts tests/integration/db005-enrollment-membership-revocation-race.test.ts tests/integration/db01-membership-role-parent-lock.test.ts tests/integration/db06-assessment-parent-scope.test.ts"
+          ]
+        }
+      ],
+      "deferredRelease": {
+        "reviewRequired": true,
+        "reviewOwner": "Project requester / authorized production-release reviewers",
+        "when": "AFTER_ALL_ENGINEERING_BEFORE_PRODUCTION_RELEASE",
+        "register": "docs/planning/db02-academic-progression-contract.md",
+        "items": [
+          "Cross-account end-to-end browser acceptance on release-ready build",
+          "Full final commit migration/schema drift and integration CI review",
+          "Production hosting btree_gist/DDL rights and rollout verification without old LMS data import"
+        ],
+        "notWaived": true,
+        "releaseCertified": false,
+        "noAutomaticReopen": true,
+        "reopenOnlyFor": "Demonstrated academic/tenant/security regression, migration failure, or explicit owner re-scope"
+      }
     },
     {
       "id": "DB-006",

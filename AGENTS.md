@@ -13,7 +13,7 @@ tenant/privacy violations. Final RELEASE cannot be certified with unfinished
 deferred checks. Move to next `done:false` engineering task; reopen done work
 only for concrete regressions/dependencies or explicit owner instruction.
 
-**DB-004 is ENGINEERING DONE; do not re-audit it. DB-005 is NEXT.** DB-004's
+**DB-004 AND DB-005 are ENGINEERING DONE; do not re-audit either. NEXT is DB-007 / first open dependency-safe DATABASE task.** DB-004's
 seven independent security signatures, 34 final retirement attestations,
 browser/final-head CI and owner-managed Exotel/ZeptoMail live tests are deferred
 until final release review. Consult the original DB-004 register only when the

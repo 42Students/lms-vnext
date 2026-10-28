@@ -36,15 +36,22 @@ test('each task exposes ONLY a binary completion status',()=>{
   assert.ok(actual.tasks.every(t=>!Object.hasOwn(t,'status')));
   assert.ok(actual.tasks.every(t=>!Object.hasOwn(t,'pickedBy')&&!Object.hasOwn(t,'completedBy')));
 });
-test('DB004 engineering closure moves to DB005 while signed release review stays pending',()=>{
+test('DB004 and DB005 engineering closures remain distinct from final release reviews',()=>{
   const completed=actual.tasks.find(t=>t.id==='DB-004');
   assert.equal(completed.done,true);
   assert.equal(completed.closureBasis,'ENGINEERING_ACCEPTED_RELEASE_REVIEW_DEFERRED');
   assert.equal(completed.deferredRelease.reviewRequired,true);
   assert.equal(completed.deferredRelease.releaseCertified,false);
   assert.equal(completed.deferredRelease.notWaived,true);
-  assert.equal(actual.tasks.find(t=>t.id==='DB-005').done,false);
+  const academic=actual.tasks.find(t=>t.id==='DB-005');
+  assert.equal(academic.done,true);
+  assert.equal(academic.closureBasis,'ENGINEERING_ACCEPTED_RELEASE_REVIEW_DEFERRED');
+  assert.equal(academic.deferredRelease.notWaived,true);
+  assert.equal(academic.deferredRelease.releaseCertified,false);
+  assert.equal(academic.acceptanceEvidence[0].runUrl,'https://github.com/42Students/lms-vnext/actions/runs/40750567279');
+  assert.equal(actual.tasks.find(t=>t.id==='DB-007').done,false);
   assert.ok(inspectTracker(actual).deferredRelease.some(t=>t.id==='DB-004'));
+  assert.ok(inspectTracker(actual).deferredRelease.some(t=>t.id==='DB-005'));
   assert.equal(inspectTracker(actual).readyForNextPhase,false);
 });
 test('deferred release cannot become a fake full acceptance or silent waiver',()=>{
