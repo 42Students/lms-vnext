@@ -13,8 +13,11 @@ import { ACTIVITY_EVENT_TYPES } from "@/modules/activity/taxonomy";
 import {
   academicPeriods,
   cohorts,
+  cohortProgressionState,
   colleges,
   courseOfferings,
+  programTerms,
+  programTermCourses,
   courseSectionDeliveries,
   courses,
   departments,
@@ -279,6 +282,7 @@ export async function createCourseOffering(
       const [lockedCohort] = await tx
         .select({
           id: cohorts.id,
+          programId: cohorts.programId,
           status: cohorts.status,
           collegeId: departments.collegeId,
           startPeriodId: cohorts.startPeriodId,
@@ -365,18 +369,77 @@ export async function createCourseOffering(
       )) : [{max:-1}];
       const appendOrder=input.displayOrder===0?Number(ordering?.max??-1)+1:input.displayOrder;
       if(appendOrder>10000)throw new CoursesServiceError("OFFERING_CONFLICT");
-      const [created] = await tx
-        .insert(courseOfferings)
-        .values({
-          courseId: input.courseId,
-          cohortId: input.cohortId,
-          academicPeriodId:
-            input.academicPeriodId,
-          type: input.type,
-          credits: input.credits ?? null,
-          displayOrder: appendOrder,
-        })
-        .returning();
+      // DB-005: an offering belongs to a canonical program term. The user
+      // authorized adding this course to the cohort; provision exactly its
+      // current term and (for CORE) the corresponding curriculum association
+      // transactionally. Never cast the calendar period to a semester, infer
+      // historical IDs, or bypass the PostgreSQL tenant and parent guards.
+      // Unrelated/import-only legacy records are never created here.
+      const [progress] = await tx.select({
+        term:cohortProgressionState.currentTermNumber,
+      }).from(cohortProgressionState)
+        .where(eq(cohortProgressionState.cohortId,input.cohortId))
+        .for("share").limit(1);
+      if(!progress||progress.term<1)
+        throw new CoursesServiceError("OFFERING_CONFLICT");
+      await tx.insert(programTerms).values({
+        programId:lockedCohort.programId,
+        termNumber:progress.term,
+        name:`Semester ${progress.term}`,
+      }).onConflictDoNothing({
+        target:[programTerms.programId,programTerms.termNumber],
+      });
+      const [term] = await tx.select({
+        id:programTerms.id,isActive:programTerms.isActive,
+      }).from(programTerms)
+        .where(and(
+          eq(programTerms.programId,lockedCohort.programId),
+          eq(programTerms.termNumber,progress.term),
+        )).for("share").limit(1);
+      if(!term||!term.isActive)
+        throw new CoursesServiceError("OFFERING_CONFLICT");
+
+      let curriculumId:string|null=null;
+      if(input.type==="CORE"){
+        // Existing legacy-compatible API carries no explicit curriculum-row
+        // UUID. An authorized CORE offering creation is also its declaration
+        // in this specific program term. Never change a conflicting ELECTIVE
+        // row into CORE or rewrite a materialized curriculum association.
+        await tx.insert(programTermCourses).values({
+          programTermId:term.id,courseId:input.courseId,type:"CORE",
+          credits:input.credits??null,displayOrder:appendOrder+1,
+        }).onConflictDoNothing({
+          target:[programTermCourses.programTermId,programTermCourses.courseId],
+        });
+        const [curriculum]=await tx.select({
+          id:programTermCourses.id,type:programTermCourses.type,
+        }).from(programTermCourses).where(and(
+          eq(programTermCourses.programTermId,term.id),
+          eq(programTermCourses.courseId,input.courseId),
+        )).for("share").limit(1);
+        if(!curriculum||curriculum.type!=="CORE")
+          throw new CoursesServiceError("OFFERING_CONFLICT");
+        curriculumId=curriculum.id;
+      }
+
+      // The registered 0303 SQL has physical NOT NULL/FK columns. Until the
+      // API wave switches all readers to typed program-term projections, use
+      // a bounded parameterized insert here rather than omitting the required
+      // columns via the older Drizzle courseOfferings definition.
+      const inserted=await tx.execute(sql`
+        INSERT INTO course_offerings (
+          course_id,cohort_id,academic_period_id,
+          program_term_id,program_term_course_id,type,credits,display_order
+        ) VALUES (
+          ${input.courseId},${input.cohortId},${input.academicPeriodId},
+          ${term.id},${curriculumId},${input.type},
+          ${input.credits??null},${appendOrder}
+        ) RETURNING id
+      `);
+      const createdId=(inserted as {rows?:{id:string}[]}).rows?.[0]?.id;
+      if(!createdId)throw new CoursesServiceError("OFFERING_CONFLICT");
+      const [created]=await tx.select().from(courseOfferings)
+        .where(eq(courseOfferings.id,createdId)).limit(1);
       if (!created) throw new CoursesServiceError("OFFERING_CONFLICT");
 
       await recordActivityEventInTransaction(tx, context, {
