@@ -125,7 +125,7 @@ beforeEach(async ctx=>{
  clearMade();ownedLearnerMembership="";
  // DB-005 requires curriculum type immutability once a delivery is created.
  // The elective scenarios must start as elective offerings, not rewrite CORE history.
- const electiveScenario=/^PG(?:17|18|19B?)\\b/.test(ctx.task.name);
+ const electiveScenario=/^PG(?:17|18|19B?)\b/.test(ctx.task.name);
  A=await graph(p(),SEED_IDS.departmentA,SEED_IDS.collegeA,"A",electiveScenario?"ELECTIVE":"CORE");
  B=await graph(p(),SEED_IDS.departmentB,SEED_IDS.collegeB,"B");
  // An isolated learner avoids the shared placement test's ACTIVE enrollment:
