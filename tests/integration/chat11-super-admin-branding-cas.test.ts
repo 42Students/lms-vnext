@@ -4,7 +4,7 @@ import {Pool} from "pg";
 import {closeDatabaseConnection} from "@/db/client";
 import type {RequestContext} from "@/modules/identity/context";
 import {
- saveCollegeBranding,CollegeBrandingVersionError,getPublicCollegeBranding,
+ saveCollegeBranding,CollegeBrandingVersionError,getPublicCollegeBranding,getCollegeBranding,
 } from "@/modules/colleges/branding-service";
 import {SEED_IDS} from "../../scripts/db-seed-data";
 
@@ -161,6 +161,37 @@ describe("SA-tenants-modules-BRAND-CAS-01 PostgreSQL stale tab protection",()=>{
    await pool.query("delete from colleges where id=$1",[ownCollege]);
    await pool.query("delete from organizations where id=$1",[ownOrg]);
   }
+ });
+
+ it("keeps imported deleted branding hidden and blocks accidental resurrection",async()=>{
+  await saveCollegeBranding(context,collegeId,{
+   expectedVersion:0,logoUrl:"https://assets.example.test/old-private-logo.png",
+   supportEmail:"old-contact@example.test",
+  });
+  expect(await countChanges()).toBe(1);
+  await pool.query(
+   `update college_branding set legacy_was_deleted=true,
+       legacy_branding_archived_at=clock_timestamp() where college_id=$1`,
+   [collegeId]);
+  const publicBrand=await getPublicCollegeBranding(collegeId);
+  expect(publicBrand).toMatchObject({logoUrl:null,supportEmail:null});
+  expect(JSON.stringify(publicBrand)).not.toContain("old-contact@example.test");
+  expect(JSON.stringify(publicBrand)).not.toContain("old-private-logo.png");
+  const adminBrand=await getCollegeBranding(context,collegeId);
+  expect(adminBrand).toMatchObject({logoUrl:null,supportEmail:null,version:1});
+  await expect(saveCollegeBranding(context,collegeId,{
+   expectedVersion:1,logoUrl:"https://assets.example.test/revived.png",
+  })).rejects.toThrow("COLLEGE_NOT_FOUND");
+  const stored=await pool.query<{
+   legacy_was_deleted:boolean;legacy_branding_archived_at:Date;
+   logo_url:string;support_email:string;version:number;
+  }>("select * from college_branding where college_id=$1",[collegeId]);
+  expect(stored.rows[0]).toMatchObject({
+   legacy_was_deleted:true,logo_url:"https://assets.example.test/old-private-logo.png",
+   support_email:"old-contact@example.test",version:1,
+  });
+  expect(stored.rows[0]?.legacy_branding_archived_at).toBeInstanceOf(Date);
+  expect(await countChanges()).toBe(1);
  });
 
  it("wrong-tenant scoped Super Admin and disabled actor never write branding",async()=>{

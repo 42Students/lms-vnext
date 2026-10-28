@@ -87,6 +87,12 @@ async function loadBranding(collegeId: string) {
 
 function toView(row: Awaited<ReturnType<typeof loadBranding>>): CollegeBrandingView {
   if (!row) return { ...EMPTY_BRANDING, version: 0 };
+  // Historical deleted branding is an import tombstone, not a live public
+  // presentation. Preserve the row for reconciliation, but never republish
+  // an old asset URL or contact merely because its college is still active.
+  if (row.legacyWasDeleted === true || row.legacyBrandingArchivedAt !== null) {
+    return { ...EMPTY_BRANDING, version: row.version };
+  }
   return {
     logoUrl: row.logoUrl ?? null,
     faviconUrl: row.faviconUrl ?? null,
@@ -186,6 +192,12 @@ export async function saveCollegeBranding(
    if(!active)throw new CollegeBrandingNotFoundError();
    const [stored]=await tx.select().from(collegeBranding)
     .where(eq(collegeBranding.collegeId,college.id)).for("update").limit(1);
+   // An ordinary presentation edit must not silently resurrect a
+   // historically deleted brand. Reinstatement requires a distinct,
+   // explicitly approved migration/retention decision.
+   if (stored?.legacyWasDeleted === true || stored?.legacyBrandingArchivedAt) {
+     throw new CollegeBrandingNotFoundError();
+   }
    const previous=toView(stored??null);
    const merged: CollegeBrandingInput = { ...EMPTY_BRANDING, ...previous, ...input };
    // Keep stale references for an authorized post-commit storage worker.

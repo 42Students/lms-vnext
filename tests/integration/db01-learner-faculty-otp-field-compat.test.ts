@@ -89,4 +89,75 @@ describe("DB-004 learner/faculty legacy account challenge common-field replaceme
    }
   });
  }
+ it("cannot consume a college challenge through a different role or suspended membership",async()=>{
+  const userId=randomUUID(),learnerId=randomUUID(),facultyId=randomUUID();
+  const learnerAttempt=randomUUID(),facultyAttempt=randomUUID();
+  const identityUid="db004-otp-scope-"+userId;
+  const mac="a".repeat(64);
+  try{
+   await pool.query("insert into users(id,identity_uid,platform_status) values($1,$2,'ACTIVE')",
+    [userId,identityUid]);
+   await pool.query(
+    "insert into college_memberships(id,user_id,college_id,status) values($1,$2,$3,'ACTIVE')",
+    [learnerId,userId,SEED_IDS.collegeA]);
+   await pool.query(
+    "insert into college_memberships(id,user_id,college_id,status) values($1,$2,$3,'ACTIVE')",
+    [facultyId,userId,SEED_IDS.collegeB]);
+   await pool.query("insert into membership_roles(membership_id,role) values($1,'LEARNER')",
+    [learnerId]);
+   await pool.query("insert into membership_roles(membership_id,role) values($1,'FACULTY')",
+    [facultyId]);
+   for(const [id,collegeId,contact] of [
+    [learnerAttempt,SEED_IDS.collegeA,"b".repeat(64)],
+    [facultyAttempt,SEED_IDS.collegeB,"c".repeat(64)],
+   ]){
+    expect(await drizzleLoginRepository.createAttempt({
+     id,userId,collegeId,contactFingerprint:contact,smsCodeMac:mac,
+     emailCodeMac:null,ipTag:"db004-role-scope",
+     rateLimit:{windowMinutes:10,perContactAndAddress:5,perContact:8,perAddress:20},
+    })).toBe(true);
+   }
+   const owner=await pool.query<{user_id:string;college_id:string;
+    membership_id:string|null;target_role:string}>(
+    "select user_id,college_id,membership_id,target_role from identity_auth_attempts where id=$1",
+    [learnerAttempt]);
+   // LOGIN is a single human challenge; role-specific authorization is
+   // resolved from persisted memberships, never from the challenge itself.
+   expect(owner.rows[0]).toEqual({
+    user_id:userId,college_id:SEED_IDS.collegeA,membership_id:null,target_role:"LOGIN",
+   });
+   // The registered composite FK prevents attaching a different-college
+   // role to the attempt, even with a valid UUID belonging to the same user.
+   await expect(pool.query(
+    "update identity_auth_attempts set membership_id=$1 where id=$2",
+    [facultyId,learnerAttempt])).rejects.toThrow();
+   await pool.query("delete from membership_roles where membership_id=$1",[learnerId]);
+   // The faculty grant in college B cannot authorize a learner-host login
+   // in college A; a failed consume must not burn the single-use challenge.
+   expect(await drizzleLoginRepository.consumeAttempt(learnerAttempt,userId)).toBe(false);
+   const rejected=await pool.query<{used_at:Date|null}>(
+    "select used_at from identity_auth_attempts where id=$1",[learnerAttempt]);
+   expect(rejected.rows[0]?.used_at).toBeNull();
+   await pool.query("insert into membership_roles(membership_id,role) values($1,'LEARNER')",
+    [learnerId]);
+   expect(await drizzleLoginRepository.consumeAttempt(learnerAttempt,userId)).toBe(true);
+   await pool.query(
+    "update college_memberships set status='SUSPENDED',suspended_at=clock_timestamp() where id=$1",
+    [facultyId]);
+   expect(await drizzleLoginRepository.consumeAttempt(facultyAttempt,userId)).toBe(false);
+   await pool.query(
+    "update college_memberships set status='ACTIVE',suspended_at=null where id=$1",
+    [facultyId]);
+   expect(await drizzleLoginRepository.consumeAttempt(facultyAttempt,userId)).toBe(true);
+  }finally{
+   await pool.query("delete from identity_device_sessions where user_id=$1",[userId]);
+   await pool.query("delete from identity_auth_attempts where user_id=$1",[userId]);
+   await pool.query("delete from membership_roles where membership_id=any($1::uuid[])",
+    [[learnerId,facultyId]]);
+   await pool.query("delete from college_memberships where id=any($1::uuid[])",
+    [[learnerId,facultyId]]);
+   await pool.query("delete from users where id=$1",[userId]);
+  }
+ });
+
 });
