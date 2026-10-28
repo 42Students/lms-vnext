@@ -1,5 +1,24 @@
 # LMS vNext engineering rules
 
+## Engineering DONE vs final RELEASE attestation — binding owner decision (2026-10-28)
+
+**Do not repeatedly reopen completed tasks for deferred final sign-offs.** The
+single tracker `docs/tracker.json` uses `done:true` for **executed/tested
+engineering acceptance**. If only *independent* security/retention signatures,
+final browser/CI release freeze or owner-managed provider smoke remains, record
+`deferredRelease` against the task and retain PENDING status in its existing
+original decision register. This is not a waiver or a security pass. Reject
+deferring actual code defects, missing schema, known failing security tests or
+tenant/privacy violations. Final RELEASE cannot be certified with unfinished
+deferred checks. Move to next `done:false` engineering task; reopen done work
+only for concrete regressions/dependencies or explicit owner instruction.
+
+**DB-004 is ENGINEERING DONE; do not re-audit it. DB-005 is NEXT.** DB-004's
+seven independent security signatures, 34 final retirement attestations,
+browser/final-head CI and owner-managed Exotel/ZeptoMail live tests are deferred
+until final release review. Consult the original DB-004 register only when the
+owner initiates that release review, not for ordinary "continue" prompts.
+
 ## Locked execution order — owner directive (2026-10-28)
 
 **Before any vNext work, read [the locked execution-order contract](docs/planning/locked-execution-order-2026-10-28.md).** Its sequence is DATABASE → API/user-job parity → page/surface Implementation Green → final Design Green → Release Green. UI/source discovery may run as read-only preparation during DATABASE, but no global phase skips, repeat whole-census audits or parallel status trackers. Explicit user approval is required to change the sequence; the binary `docs/tracker.json` remains the *sole* task/phase status authority.

@@ -36,9 +36,29 @@ test('each task exposes ONLY a binary completion status',()=>{
   assert.ok(actual.tasks.every(t=>!Object.hasOwn(t,'status')));
   assert.ok(actual.tasks.every(t=>!Object.hasOwn(t,'pickedBy')&&!Object.hasOwn(t,'completedBy')));
 });
-test('previously implemented but unaccepted DB004 and DB005 remain NOT DONE',()=>{
-  assert.equal(actual.tasks.find(t=>t.id==='DB-004').done,false);
+test('DB004 engineering closure moves to DB005 while signed release review stays pending',()=>{
+  const completed=actual.tasks.find(t=>t.id==='DB-004');
+  assert.equal(completed.done,true);
+  assert.equal(completed.closureBasis,'ENGINEERING_ACCEPTED_RELEASE_REVIEW_DEFERRED');
+  assert.equal(completed.deferredRelease.reviewRequired,true);
+  assert.equal(completed.deferredRelease.releaseCertified,false);
+  assert.equal(completed.deferredRelease.notWaived,true);
   assert.equal(actual.tasks.find(t=>t.id==='DB-005').done,false);
+  assert.ok(inspectTracker(actual).deferredRelease.some(t=>t.id==='DB-004'));
+  assert.equal(inspectTracker(actual).readyForNextPhase,false);
+});
+test('deferred release cannot become a fake full acceptance or silent waiver',()=>{
+  const x=clone(actual),t=x.tasks.find(t=>t.id==='DB-004');
+  t.deferredRelease.notWaived=false;
+  assert.ok(bad(x,'INVALID_DEFERRED_RELEASE_CLOSURE'));
+  t.deferredRelease.notWaived=true;
+  t.deferredRelease.releaseCertified=true;
+  assert.ok(bad(x,'INVALID_DEFERRED_RELEASE_CLOSURE'));
+  t.deferredRelease.releaseCertified=false;
+  t.deferredRelease.items=[];
+  assert.ok(bad(x,'INVALID_DEFERRED_RELEASE_CLOSURE'));
+  delete t.deferredRelease;
+  assert.ok(bad(x,'MISSING_DEFERRED_RELEASE_RECEIPT'));
 });
 test('task evidence is required for DONE',()=>{
   const x=clone(actual); x.tasks.find(t=>t.id==='DB-002').acceptanceEvidence=[];

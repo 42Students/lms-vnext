@@ -18,37 +18,30 @@ for implementation commit `ba4a916244e65abd59ecc1ca738b1926ef26e2d6`.
   canonical same-college membership scope, profile roll lookup, role-specific
   one-time challenges and denial of login-session conversion.
 
-## Release/security gates still NOT accepted after product decisions
+## Engineering DONE — final organizational acceptance deferred by owner (2026-10-28)
 
-**Product scope is resolved:** D01–D07 have approved requester-level dispositions,
-and all 34 original-field retirements have corresponding requester disposition.
-The application is **greenfield**: no production legacy records, tokens, identifiers
-or timestamps will be imported. Source-schematic/behavior comparisons and
-synthetic PostgreSQL witnesses remain required, but historical data-import,
-source-ID migration, and migration-receipt demands are **NOT APPLICABLE**.
-Nothing authorizes access to or deletion from the old production LMS.
+**DB-004 is DONE for engineering purposes** on the authoritative `docs/tracker.json`.
+Evidence on `470eb18e798f9df769220255a703c720c8e3feb1`:
 
-This approval does **not** mean DB-004 has independent security/release
-signatures. Keep `docs/tracker.json` DB-004 `done:false` until:
+- Registered PostgreSQL DB-004 acceptance: <https://github.com/42Students/lms-vnext/actions/runs/40718638979> (PASSED).
+- Full CI: <https://github.com/42Students/lms-vnext/actions/runs/40718639073> (PASSED).
+- The 195 field witnesses, 7 requester-approved product policies, 34 requester-approved retirements, and authenticated HMAC email proof routes are implemented.
+- No historical old-LMS production data is imported: greenfield product policy.
 
-1. Required security/data-retention/release owners sign the seven formal
-   decisions (the register deliberately distinguishes product disposition
-   from formal `approvalStatus`).
-2. The 34 requester-approved retirements receive independently evidenced
-   final security/retention signoff; no blanket assertion that legacy
-   production records have been erased or scanned.
-3. The enabled email-link flow is approved and validated with an authorized
-   sending template and application-bound issuing/consuming contract. Distinct
-   learner/faculty role proof routes are already wired and tested.
-4. Current-commit registered migration, database, browser, security
-   and integration acceptance passes. **Exotel and ZeptoMail live delivery
-   are now delegated to the requester for RELEASE**, not a DB-004 blocker.
-   The owner must still validate real approved SMS/email sends before any
-   production delivery is enabled; this handoff is not a successful send,
-   exemption, or authorization to bypass fail-closed provider behavior.
+**Deferred until after engineering for the requester's personal final review — NOT
+signed, PASSED or waived:**
 
-**Do not infer full DB-004 release from 195/195 technical fields, 7/7 product
-choices or 34/34 requester retirement choices.**
+1. Seven independent security/retention/release-owner attestations (D01–D07).
+2. Final security/retention attestations for the 34 legacy-field retirements.
+3. Browser end-to-end verification and full exact-final-commit CI/security review.
+4. Requester-managed Exotel and ZeptoMail live delivery smoke before production activation.
+
+These are RELEASE-stage obligations, not a reason for an AI agent to reopen DB-004.
+The authoritative receipt is `docs/planning/db004-closure-decision-register.json`;
+`approvalStatus`, `retirementApproved`, and provider `liveVerified` remain
+truthful and PENDING. **Proceed directly to DB-005**. Revisit DB-004 code only
+on a real regression or owner-directed change; the database phase itself is not
+yet certified.
 
 ## 28 October 2026 — authenticated scoped-account proof entry points
 

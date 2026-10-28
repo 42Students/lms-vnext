@@ -54,6 +54,21 @@ export function inspectTracker(doc) {
         (validString(e.runUrl) ||
          (Array.isArray(e.commands) && e.commands.length > 0 && e.commands.every(validString)))
       )) add(errors, 'DONE_WITHOUT_EXECUTED_PROOF', {id:t.id});
+      // Engineering closure with a separate final-review obligation is
+      // allowed only with real executed acceptance, never by writing 'deferred'.
+      if (t.deferredRelease !== undefined) {
+        const d=t.deferredRelease;
+        if (t.closureBasis !== 'ENGINEERING_ACCEPTED_RELEASE_REVIEW_DEFERRED' ||
+            d?.reviewRequired !== true || d?.notWaived !== true ||
+            d?.releaseCertified !== false || d?.noAutomaticReopen !== true ||
+            !validString(d?.reviewOwner) || !validString(d?.when) ||
+            !validString(d?.register) || !Array.isArray(d?.items) ||
+            d.items.length===0 || d.items.some(x=>!validString(x))) {
+          add(errors,'INVALID_DEFERRED_RELEASE_CLOSURE',{id:t.id});
+        }
+      } else if(t.closureBasis==='ENGINEERING_ACCEPTED_RELEASE_REVIEW_DEFERRED') {
+        add(errors,'MISSING_DEFERRED_RELEASE_RECEIPT',{id:t.id});
+      }
     } else if (t.acceptedAt != null || (t.acceptanceEvidence?.length ?? 0) > 0) {
       add(errors, 'NOT_DONE_HAS_ACCEPTANCE_PROOF', {id:t.id});
     }
@@ -91,6 +106,9 @@ export function inspectTracker(doc) {
     .filter(id => tasks.get(id)?.done !== true)
     .map(id => ({id,title:tasks.get(id)?.title ?? 'Missing task'}));
   const currentOpen = all.filter(t=>t.phase === doc.currentPhase && t.done !== true);
+  const deferredRelease = all.filter(t=>t.done===true && t.deferredRelease?.reviewRequired===true)
+    .map(t=>({id:t.id,when:t.deferredRelease.when,items:t.deferredRelease.items.length,
+      releaseCertified:t.deferredRelease.releaseCertified}));
   return {
     mode:'TRACKER_STRUCTURE_ONLY_NOT_DATABASE_ACCEPTANCE',
     activePhase:doc.currentPhase,
@@ -98,6 +116,7 @@ export function inspectTracker(doc) {
     core:{total:CORE_ELEVEN.length,done:coreDone,notDone:CORE_ELEVEN.length-coreDone},
     coreRemaining,
     currentPhaseOpen:currentOpen.map(t=>t.id),
+    deferredRelease,
     readyForNextPhase:false, // Executed independent phase-gate signoff is separate.
     errors,
   };

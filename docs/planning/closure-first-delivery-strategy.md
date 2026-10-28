@@ -8,6 +8,20 @@ Follow [the owner-locked execution order](locked-execution-order-2026-10-28.md) 
 **Operational status:** `docs/tracker.json` is the **only** live task/phase tracker. This file is the execution method, not another queue or source of completion claims.
 **Supersedes** retired six-chat plans and historical checklists for *how to work*. It does **not** waive existing database acceptance, privacy, tenant-security or release gates.
 
+## 2026-10-28 owner correction — finish engineering once, defer release review once
+
+The user explicitly revised the previous gate order: mark *actually tested*
+engineering work DONE, even where unrelated independent final-release
+signatures, live-provider tests or final browser/CI freeze will be done later.
+These must appear under `deferredRelease` in the sole tracker and remain
+PENDING in the existing original decision registers. They are not counted as
+passed final approvals. They cannot hide an unfixed code defect, an unsafe
+tenant/identity issue, an unregistered required schema or a failed acceptance
+test. **Skip done tasks during future generic continuation.** For the current
+sequence, DB-004 engineering is DONE and **DB-005** is next. This explicit
+owner-approved split between engineering acceptance and release attestation
+supersedes the old rule tying every task's DONE to final owner signatures.
+
 ## North star: observable product progress, not activity
 
 The goal is an actually usable, legacy-complete LMS with the same daily jobs for Learner, Faculty, Mentor, College Admin, Super Admin, TPO and HR—not the maximum number of draft migrations, tests, documents or CI jobs.

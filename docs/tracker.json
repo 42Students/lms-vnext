@@ -2,8 +2,8 @@
   "schemaVersion": 1,
   "project": "42Students/lms-vnext",
   "branch": "main",
-  "updatedOn": "2026-10-12",
-  "policy": "SOLE ACTIVE TRACKER. done:true means required task acceptance actually passed; committed code, drafts, source assertions, and authored-but-unrun tests remain done:false. There are no worker claims or intermediate states. Git history preserves superseded coordination records.",
+  "updatedOn": "2026-10-28",
+  "policy": "SOLE ACTIVE TRACKER. done:true means scoped ENGINEERING acceptance passed with executed evidence, or (for a task with deferredRelease metadata) engineering acceptance passed and clearly enumerated independent final-release reviews are scheduled later. done:true does NOT certify security/retention signoff, browser/release, or the overall phase. Missing functionality, database migration, tenant/privacy invariants, or failed core tests are NOT deferrable. Agents skip done tasks unless a concrete regression or owner re-scope occurs. No other task status trackers; pending final attestations remain evidence in original registers and task metadata.",
   "currentPhase": "DATABASE",
   "phaseOrder": [
     "DATABASE",
@@ -131,8 +131,59 @@
       "id": "DB-004",
       "title": "Reconcile DB01 tenant and identity field semantics",
       "phase": "DATABASE",
-      "done": false,
-      "dependsOn": []
+      "done": true,
+      "dependsOn": [],
+      "acceptedAt": "2026-10-28",
+      "closureBasis": "ENGINEERING_ACCEPTED_RELEASE_REVIEW_DEFERRED",
+      "acceptanceEvidence": [
+        {
+          "kind": "EXECUTED_ACCEPTANCE",
+          "commitSha": "470eb18e798f9df769220255a703c720c8e3feb1",
+          "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/40718638979",
+          "runner": "GitHub Actions ubuntu-latest PostgreSQL 17 (registered DB-004 workflow)",
+          "commands": [
+            "npm run db:journal:verify",
+            "npm run db:test:prepare",
+            "npm run db:migrate",
+            "DB-004 registered tenant/session/email-link integration tests and own-account route unit/security tests"
+          ],
+          "result": "PASS",
+          "exitCode": 0
+        },
+        {
+          "kind": "EXECUTED_CI",
+          "commitSha": "470eb18e798f9df769220255a703c720c8e3feb1",
+          "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/40718639073",
+          "runner": "GitHub Actions CI Node 22 and PostgreSQL 17",
+          "commands": [
+            "schema-drift",
+            "typecheck",
+            "production build",
+            "unit tests",
+            "registered database integration",
+            "lint"
+          ],
+          "result": "PASS",
+          "exitCode": 0
+        }
+      ],
+      "deferredRelease": {
+        "reviewRequired": true,
+        "reviewOwner": "Project requester / authorized independent security, retention and release reviewers",
+        "when": "AFTER_ALL_ENGINEERING_BEFORE_PRODUCTION_RELEASE",
+        "register": "docs/planning/db004-closure-decision-register.json",
+        "items": [
+          "D01-D07 independent security/retention owner attestations (product policy already approved)",
+          "Final security/retention sign-off of 34 technically retired legacy fields",
+          "Final browser end-to-end acceptance at release-ready SHA",
+          "Final exact-release-commit integrated CI/security signoff",
+          "Requester's authorized Exotel/ZeptoMail live send-and-receipt verification"
+        ],
+        "notWaived": true,
+        "releaseCertified": false,
+        "noAutomaticReopen": true,
+        "reopenOnlyFor": "A demonstrated failing invariant, security regression, failed test, or explicit requester re-scoping"
+      }
     },
     {
       "id": "DB-005",

@@ -100,28 +100,36 @@ test("no DB-004 release green without genuine owner decisions and complete techn
  const provider=register.decisions.find(x=>x.id==="D07").productDecision;
  assert.equal(provider.selectedOption,"REQUIRE_AUTHORIZED_PROVIDER_SMOKE_PLUS_REGISTERED_SCHEMA_AND_CI_NO_IMPORT");
  assert.match(provider.rationale,/Historical data import receipts are NOT APPLICABLE/);
- const done=tracker.tasks.find(x=>x.id==="DB-004")?.done;
- const hasAllEvidence=fields.every(x=>x.runtimeSemanticsVerified||x.compositeImplementationVerified||x.retirementApproved);
- const allDecisionsApproved=register.decisions.every(x=>x.approvalStatus==="APPROVED");
- const gates=register.releaseEvidence;
- assert.ok(gates,"DB-004 security and release provider handoff must be explicit");
- const db004Ready=["finalSecurityReview","finalRetentionReview",
-  "currentCi","browserAcceptance"].every(key=>gates[key]?.status==="PASSED");
- const providerHandoffComplete=gates.providerOwnerHandoff?.status==="CLOSED_RESPONSIBILITY_ASSIGNED";
- const providerLivePassed=gates.providerAcceptance?.status==="PASSED";
- if(done){
-  assert.ok(db004Ready,"DB-004 cannot close without security, retention, CI and browser evidence");
-  assert.ok(providerHandoffComplete||providerLivePassed,
-   "DB-004 needs completed provider handoff to release, or actual live acceptance");
-  for(const key of ["finalSecurityReview","finalRetentionReview",
-                     "currentCi","browserAcceptance"]){
-   assert.match(gates[key].evidenceUrl??gates[key].runUrl??"",/^https:\/\//);
-  }
- }
- if(done)assert.ok(hasAllEvidence&&allDecisionsApproved,
-  "DB-004 is not DONE until every source has evidence and all owner decisions are recorded");
- if(!hasAllEvidence||!allDecisionsApproved)
-  assert.equal(done,false,"DB-004 remains open until field and sign-off gates are met");
+ const row=tracker.tasks.find(x=>x.id==="DB-004");
+ const done=row?.done;
+ const implemented=fields.every(x=>x.runtimeSemanticsVerified||x.compositeImplementationVerified||
+   x.retirementImplementationVerified);
+ assert.ok(implemented,"All 195 engineering field witnesses must be present");
+ assert.equal(register.technicalSnapshot.technicalCovered,195);
+ assert.equal(register.productDisposition.count,7);
+ assert.equal(register.retirementPolicy.requesterApproved,34);
+ assert.equal(done,true,"DB-004 engineering accepted; move to DB-005");
+ assert.equal(row.closureBasis,"ENGINEERING_ACCEPTED_RELEASE_REVIEW_DEFERRED");
+ assert.equal(row.deferredRelease.reviewRequired,true);
+ assert.equal(row.deferredRelease.notWaived,true);
+ assert.equal(row.deferredRelease.releaseCertified,false);
+ assert.equal(register.engineeringClosure.status,"DONE_ENGINEERING_RELEASE_REVIEW_DEFERRED");
+ assert.equal(register.engineeringClosure.acceptanceCommit,
+  row.acceptanceEvidence.find(e=>e.kind==="EXECUTED_ACCEPTANCE")?.commitSha);
+ assert.equal(register.engineeringClosure.nextTask,"DB-005");
+ assert.equal(tracker.tasks.find(x=>x.id==="DB-005")?.done,false);
+ assert.equal(register.releaseEvidence.deferredForRequesterReview.waived,false);
+ assert.equal(register.releaseEvidence.deferredForRequesterReview.neverAutoCertify,true);
+ assert.ok(register.decisions.every(x=>x.approvalStatus==="PENDING"&&
+  x.productDecision.status==="APPROVED_BY_REQUESTER"));
+ assert.equal(fields.filter(x=>x.retirementApproved).length,0);
+ assert.equal(register.releaseEvidence.finalSecurityReview.status,"PENDING");
+ assert.equal(register.releaseEvidence.finalRetentionReview.status,"PENDING");
+ assert.equal(register.releaseEvidence.browserAcceptance.status,"PENDING");
+ assert.equal(register.releaseEvidence.providerAcceptance.liveVerified,false);
+ // Do not conflate engineering DONE with final production RELEASE approval.
+ assert.ok(!register.decisions.every(x=>x.approvalStatus==="APPROVED"));
+
 });
 
 test("DB-004 provider responsibility handoff closes the DB gate without claiming live delivery",()=>{

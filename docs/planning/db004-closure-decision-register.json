@@ -265,7 +265,7 @@
     "policy": "Do not store or transfer obsolete legacy plaintext credentials, username secrets, numeric role grants, raw handoff tokens, obsolete token-version or user-type fields in new vNext; no deletion/modification of legacy production records."
   },
   "releaseEvidence": {
-    "status": "DB004_SECURITY_RETENTION_CI_BROWSER_PENDING_PROVIDER_OWNER_MANAGED_AT_RELEASE",
+    "status": "ENGINEERING_COMPLETE_DEFERRED_FINAL_OWNER_AND_RELEASE_CERTIFICATION",
     "greenfieldNoHistoricalImport": "PRODUCT_APPROVED_NOT_APPLICABLE",
     "providerAcceptance": {
       "status": "PENDING_OWNER_EXECUTION_AT_RELEASE",
@@ -290,16 +290,18 @@
       "evidenceUrl": null
     },
     "currentCi": {
-      "status": "PENDING",
+      "status": "PENDING_FINAL_RELEASE_HEAD_REVALIDATION",
       "checkedCommit": null,
-      "runUrl": null
+      "runUrl": null,
+      "priorPassingRunUrl": "https://github.com/42Students/lms-vnext/actions/runs/40718639073",
+      "priorPassingCommit": "470eb18e798f9df769220255a703c720c8e3feb1"
     },
     "browserAcceptance": {
       "status": "PENDING",
       "checkedCommit": null,
       "runUrl": null
     },
-    "note": "DB-004 may be assessed on identity/schema/tenant/first-party auth security, signed owner/retirement dispositions, current-SHA CI/browser evidence. Exotel and ZeptoMail real delivery were explicitly delegated to the requester and MUST remain outstanding RELEASE/go-live checks. The handoff is completed; the sends are not verified.",
+    "note": "DB-004 engineering is DONE on the sole tracker with passing PG and CI evidence. Seven independent attestations, 34 final retirement security/retention approvals, final-head browser/CI and requester-managed provider acceptance remain PENDING FOR RELEASE. No new AI chat should reopen DB-004 for that pending paperwork: focus on DB-005. Only reopen for proven material regression/security defect or explicit owner request.",
     "providerOwnerHandoff": {
       "status": "CLOSED_RESPONSIBILITY_ASSIGNED",
       "owner": "Project requester",
@@ -313,6 +315,28 @@
       "db004Blocking": false,
       "releaseBlocking": true,
       "noTestResultOrExemptionClaimed": true
+    },
+    "deferredForRequesterReview": {
+      "status": "PENDING_PERSONAL_REVIEW_AFTER_ALL_ENGINEERING",
+      "owner": "Project requester and independent authorized security/retention/release signers",
+      "source": "Explicit user directive 2026-10-28: DB-004 engineering DONE; personally review deferred requirements later",
+      "browserNotRunOnAcceptedCommit": true,
+      "securityAndRetentionNotSigned": true,
+      "legacyRetirementsNotFinallyAttested": 34,
+      "providerLiveSmokeOwnerManaged": true,
+      "waived": false,
+      "neverAutoCertify": true
     }
+  },
+  "engineeringClosure": {
+    "status": "DONE_ENGINEERING_RELEASE_REVIEW_DEFERRED",
+    "acceptedOn": "2026-10-28",
+    "acceptanceCommit": "470eb18e798f9df769220255a703c720c8e3feb1",
+    "postgresRun": "https://github.com/42Students/lms-vnext/actions/runs/40718638979",
+    "fullCiRun": "https://github.com/42Students/lms-vnext/actions/runs/40718639073",
+    "trackerTask": "DB-004",
+    "nextTask": "DB-005",
+    "ownerDirective": "2026-10-28: mark DB-004 done for engineering, skip repeated AI audits and move to DB-005; requester personally revisits release-only signoffs later.",
+    "scope": "Engineering acceptance only; 195/195 physical/composite/retired evidence, 7/7 product decisions, 34/34 product retirements, HMAC email link routes and PG/CI. Not independent audit signoff."
   }
 }
