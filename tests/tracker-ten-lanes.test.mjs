@@ -72,3 +72,49 @@ test('the per-lane and all-lanes CLI read the sole tracker',()=>{
    }
  }
 });
+
+test('all five global phases live in one plan in the correct gate order',()=>{
+ const ids=doc.execution.globalPhases.map(p=>p.id);
+ assert.deepEqual(ids,['DATABASE','API','UI','DESIGN','RELEASE']);
+ const e=inspectExecution(doc);
+ assert.deepEqual(e.globalPhases.map(p=>p.id),ids);
+ for(const [i,p] of doc.execution.globalPhases.entries()){
+   assert.equal(p.sequence,i+1);
+   assert.equal(p.completionEvidencePath,'execution.globalPhaseCertificates.'+p.id);
+   assert.deepEqual(p.prerequisitePhaseIds,i?[ids[i-1]]:[]);
+   assert.ok(p.entryCriteria.length>=1);
+   assert.ok(p.workstreams.length>=1);
+   assert.ok(p.exitCriteria.length>=1);
+   assert.ok(p.verification.length>=1);
+   assert.equal(e.globalPhases[i].gateCertified,false);
+ }
+ assert.equal(e.globalPhases[0].total,81);
+ assert.equal(e.globalPhases[0].accepted,doc.tasks.filter(t=>t.done).length);
+ assert.deepEqual(inspectTracker(doc).errors,[]);
+});
+
+test('a missing, reordered or ungrounded global phase fails closed',()=>{
+ const x=structuredClone(doc);
+ x.execution.globalPhases.splice(3,1);
+ assert.ok(invalid(x,'INVALID_FIVE_GLOBAL_PHASES'));
+ x.execution.globalPhases=structuredClone(doc.execution.globalPhases);
+ x.execution.globalPhases[3].prerequisitePhaseIds=['DATABASE'];
+ assert.ok(invalid(x,'INVALID_GLOBAL_PHASE_CONTRACT'));
+});
+
+test('a later global phase cannot certify before prerequisites or with open milestones',()=>{
+ const x=structuredClone(doc);
+ x.execution.globalPhaseCertificates.DESIGN={
+   certified:true,evidence:[{kind:'EXECUTED_ACCEPTANCE',commitSha:'b'.repeat(40),exitCode:0,result:'PASS'}]
+ };
+ assert.ok(invalid(x,'PHASE_CERTIFIED_BEFORE_PREREQUISITE'));
+ assert.ok(invalid(x,'PHASE_CERTIFIED_WITH_OPEN_WORK'));
+});
+
+test('the roadmap command shows all five phases distinctly including Design Green',()=>{
+ const r=spawnSync(process.execPath,[path.join(root,'scripts/tracker.mjs'),'--roadmap'],{encoding:'utf8'});
+ assert.equal(r.status,0,r.stderr||r.stdout);
+ for(const p of doc.execution.globalPhases)assert.ok(r.stdout.includes(p.title),p.id+' absent');
+ assert.match(r.stdout,/Five global phases/);
+ assert.match(r.stdout,/DESIGN|Design Green/);
+});
