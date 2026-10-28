@@ -1,0 +1,71 @@
+name: DB-008 course and content PostgreSQL acceptance
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - "src/modules/courses/course-service.ts"
+      - "src/modules/courses/lesson-content-service.ts"
+      - "src/modules/courses/learning-access.ts"
+      - "src/modules/courses/progress-service.ts"
+      - "src/modules/courses/scope.ts"
+      - "src/modules/courses/learner-course-service.ts"
+      - "tests/integration/db008-course-parent-app-pg.test.ts"
+      - "tests/integration/courses-c2-learning.test.ts"
+      - ".github/workflows/db008-course-content-acceptance.yml"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: db008-course-content-acceptance-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  registered-course-content:
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    services:
+      postgres:
+        image: postgres:17-alpine
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: lms_vnext_test
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres -d lms_vnext_test"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 15
+    env:
+      DATABASE_URL: postgresql://postgres:postgres@127.0.0.1:5432/lms_vnext_test
+      TEST_DATABASE_URL: postgresql://postgres:postgres@127.0.0.1:5432/lms_vnext_test
+      DB03_ISOLATED_TEST_DATABASE: "1"
+      DB06_ISOLATED_TEST_DATABASE: "1"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Registered journal integrity
+        run: npm run db:journal:verify
+      - name: Replay the full registered journal and seed disposable PG17
+        env:
+          DATABASE_URL: ""
+        run: npm run db:test:prepare
+      - name: Idempotent registered migration replay
+        run: npm run db:migrate
+      - name: DB-008 parent/visibility/progress real PostgreSQL acceptance
+        run: >-
+          npx vitest run --config vitest.db.config.ts
+          tests/integration/db008-course-parent-app-pg.test.ts
+          tests/integration/courses-c2-learning.test.ts
+      - name: DB-008 source parent contracts (not a DB registration claim)
+        run: node --test tests/db05-course-parent-integrity.test.mjs tests/db05-archived-learning-hierarchy-access.test.mjs
+      - name: TypeScript compile
+        run: npm run typecheck
