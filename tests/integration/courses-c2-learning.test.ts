@@ -442,10 +442,14 @@ describe("courses C2 learning structure against PostgreSQL", () => {
       generic.id,
       { action: "PUBLISH" },
     );
-    await transitionLessonContent(
+    const publishedSection = await transitionLessonContent(
       faculty,
       sectionAContent.id,
       { action: "PUBLISH" },
+    );
+    expect(publishedSection.version).toBe(sectionAContent.version + 1);
+    expect(publishedSection.updatedAt.getTime()).toBeGreaterThan(
+      sectionAContent.updatedAt.getTime(),
     );
 
     const sectionBContent =
@@ -573,6 +577,19 @@ describe("courses C2 learning structure against PostgreSQL", () => {
       );
     expect(edited.title).toBe(
       "C2 Section A Walkthrough Updated",
+    );
+    expect(edited.version).toBe(publishedSection.version + 1);
+    expect(edited.updatedAt.getTime()).toBeGreaterThan(
+      publishedSection.updatedAt.getTime(),
+    );
+    const editedAgain = await updateLessonContent(
+      faculty,
+      sectionAContent.id,
+      { title: "C2 Section A Walkthrough Second Edit" },
+    );
+    expect(editedAgain.version).toBe(edited.version + 1);
+    expect(editedAgain.updatedAt.getTime()).toBeGreaterThan(
+      edited.updatedAt.getTime(),
     );
   });
 
