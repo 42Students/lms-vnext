@@ -6,11 +6,11 @@ The next-generation 42Students LMS, rebuilt as a GCP-native TypeScript modular m
 
 **Closure-first, direct to `main`.** The old six-chat system is retired; do not use lane files, issue #21–#26 assignments or historical work queues as live progress.
 
-- **Single execution strategy:** [Final Execution & Database Domain Closure Protocol](docs/planning/database-domain-closure-protocol-2026-10-29.md)
+- **One execution plan and live tracker:** [docs/tracker.json](docs/tracker.json) (`execution`, `tasks`, `phaseGates`) — five stages and ten parallel lanes
 - **Only live tracker:** [docs/tracker.json](docs/tracker.json) — DONE/NOT DONE only
 - **Current global phase:** DATABASE; API/UI/RELEASE require independent phase gates
-- **Progress:** `npm run progress`, `npm run progress -- --domains` (derived package view), `npm run progress -- --check` (structural/package coverage)
-- **Continuation instructions:** [ChatGPT project instructions](docs/coordination/chatgpt-project-instructions.md)
+- **Progress:** `npm run progress`, `npm run progress -- --lanes`, `npm run progress -- --lane=L03`, `npm run progress -- --check`
+- **Continuation instructions:** `docs/tracker.json.execution.startupProcedure` and `.coordination`
 
 Each engineering batch should integrate or repair a concrete runnable capability, run its acceptance tests on a disposable database, commit one cohesive change on fresh `main` and report exact evidence. Draft migrations and partially green CI jobs are **not** completed tasks.
 
@@ -52,9 +52,9 @@ The account-independent deployment decisions and provisioning order are document
 For a new development session, read in this order:
 
 1. `AGENTS.md`
-2. `docs/planning/database-domain-closure-protocol-2026-10-29.md`
+2. `docs/tracker.json` — plan, lanes, task acceptance, phase milestones
 3. `docs/tracker.json`
 4. the specific domain's active code, migration state and executed test evidence
-5. `docs/coordination/chatgpt-project-instructions.md` for the exact single-tracker operating rules
+5. `docs/tracker.json.execution.coordination` for the live claim/handoff rules
 
 `docs/planning/vnext-master-plan.md` and `docs/planning/vnext-execution-checklist.md` are **historical implementation references, not live progress trackers**. When they conflict, `AGENTS.md`, the closure-first strategy and `docs/tracker.json` control.
