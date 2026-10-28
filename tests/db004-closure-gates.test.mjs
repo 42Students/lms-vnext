@@ -48,6 +48,24 @@ test("no DB-004 release green without genuine owner decisions and complete techn
    assert.equal(decision.approvalEvidenceUrl,null);
   }
  }
+ assert.equal(register.productDisposition.count,7);
+ assert.equal(register.productDisposition.legacyHistoricalImport,"NOT_APPLICABLE_NOT_AUTHORIZED");
+ assert.equal(register.productDisposition.noProductionLegacyAccess,true);
+ for(const decision of register.decisions){
+  assert.equal(decision.productDecision.status,"APPROVED_BY_REQUESTER");
+  assert.equal(decision.productDecision.recordedOn,"2026-10-28");
+  assert.ok(decision.options.includes(decision.productDecision.selectedOption));
+  assert.match(decision.productDecision.source,/Explicit user instruction/);
+  // Requester's architectural approval is not an independent role attestation.
+  // Keep real security/release owner acceptance a separate gate.
+  if(decision.approvalStatus==="PENDING")assert.equal(decision.approvedBy,null);
+ }
+ const noImport=register.decisions.find(x=>x.id==="D03").productDecision;
+ assert.equal(noImport.selectedOption,"NOT_APPLICABLE_GREENFIELD_NO_LEGACY_IMPORT");
+ assert.match(noImport.rationale,/do not import old production/);
+ const provider=register.decisions.find(x=>x.id==="D07").productDecision;
+ assert.equal(provider.selectedOption,"REQUIRE_AUTHORIZED_PROVIDER_SMOKE_PLUS_REGISTERED_SCHEMA_AND_CI_NO_IMPORT");
+ assert.match(provider.rationale,/Historical data import receipts are NOT APPLICABLE/);
  const done=tracker.tasks.find(x=>x.id==="DB-004")?.done;
  const hasAllEvidence=fields.every(x=>x.runtimeSemanticsVerified||x.compositeImplementationVerified||x.retirementApproved);
  const allDecisionsApproved=register.decisions.every(x=>x.approvalStatus==="APPROVED");

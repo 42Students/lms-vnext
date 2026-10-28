@@ -41,7 +41,14 @@
       "selectedOption": null,
       "approvedBy": null,
       "approvedAt": null,
-      "approvalEvidenceUrl": null
+      "approvalEvidenceUrl": null,
+      "productDecision": {
+        "status": "APPROVED_BY_REQUESTER",
+        "selectedOption": "APPROVE_REPLACEMENT_WITH_SECURE_DELETION_AND_AUDIT",
+        "rationale": "First-party email/SMS OTP and secure same-host device sessions; no old password, bearer token, or cross-host token transport.",
+        "recordedOn": "2026-10-28",
+        "source": "Explicit user instruction in current ChatGPT conversation: do all seven recommended DB-004 decisions; no independently verified organizational signing identity."
+      }
     },
     {
       "id": "D02",
@@ -65,7 +72,14 @@
       "selectedOption": null,
       "approvedBy": null,
       "approvedAt": null,
-      "approvalEvidenceUrl": null
+      "approvalEvidenceUrl": null,
+      "productDecision": {
+        "status": "APPROVED_BY_REQUESTER",
+        "selectedOption": "APPROVE_SCOPED_FIRST_PARTY_REDESIGN",
+        "rationale": "One canonical user with active college/role grants; maintain separate one-time role proof only for an explicitly scoped workflow. Never authenticate by roll number or legacy numeric ID.",
+        "recordedOn": "2026-10-28",
+        "source": "Explicit user instruction in current ChatGPT conversation: do all seven recommended DB-004 decisions; no independently verified organizational signing identity."
+      }
     },
     {
       "id": "D03",
@@ -78,7 +92,8 @@
       "question": "Authorize migration-only historic identity key mapping into UUID users, scoped memberships and verified role grants?",
       "options": [
         "APPROVE_SOURCE_VERIFIED_CROSSWALK_WITH_QUARANTINE_OF_AMBIGUITIES",
-        "REQUIRE_ADDITIONAL_MANUAL_REVIEW_OR_OMISSION"
+        "REQUIRE_ADDITIONAL_MANUAL_REVIEW_OR_OMISSION",
+        "NOT_APPLICABLE_GREENFIELD_NO_LEGACY_IMPORT"
       ],
       "requiredEvidence": [
         "Deduplicated source ID-to-UUID mapping receipts",
@@ -89,7 +104,14 @@
       "selectedOption": null,
       "approvedBy": null,
       "approvedAt": null,
-      "approvalEvidenceUrl": null
+      "approvalEvidenceUrl": null,
+      "productDecision": {
+        "status": "APPROVED_BY_REQUESTER",
+        "selectedOption": "NOT_APPLICABLE_GREENFIELD_NO_LEGACY_IMPORT",
+        "rationale": "vNext is greenfield: do not import old production user/student/college records, credentials, identifiers or timestamps. Static source crosswalk and synthetic Postgres parity tests remain mandatory. No legacy production database access is authorized.",
+        "recordedOn": "2026-10-28",
+        "source": "Explicit user instruction in current ChatGPT conversation: do all seven recommended DB-004 decisions; no independently verified organizational signing identity."
+      }
     },
     {
       "id": "D04",
@@ -113,7 +135,14 @@
       "selectedOption": null,
       "approvedBy": null,
       "approvedAt": null,
-      "approvalEvidenceUrl": null
+      "approvalEvidenceUrl": null,
+      "productDecision": {
+        "status": "APPROVED_BY_REQUESTER",
+        "selectedOption": "ACTIVE_ASSOCIATIONS_BLOCK_ARCHIVE_TOMBSTONES_STAY_RESERVED",
+        "rationale": "Archive only when active associations permit; retain audit evidence and reserved/archived hostnames until a later explicit, verified reuse/purge authorization.",
+        "recordedOn": "2026-10-28",
+        "source": "Explicit user instruction in current ChatGPT conversation: do all seven recommended DB-004 decisions; no independently verified organizational signing identity."
+      }
     },
     {
       "id": "D05",
@@ -137,7 +166,14 @@
       "selectedOption": null,
       "approvedBy": null,
       "approvedAt": null,
-      "approvalEvidenceUrl": null
+      "approvalEvidenceUrl": null,
+      "productDecision": {
+        "status": "APPROVED_BY_REQUESTER",
+        "selectedOption": "APPROVE_VERIFIED_TYPED_ROLE_DISPOSITION",
+        "rationale": "Only typed persisted active grants confer authority; unknown legacy role metadata is not an authority source and cannot elevate permissions.",
+        "recordedOn": "2026-10-28",
+        "source": "Explicit user instruction in current ChatGPT conversation: do all seven recommended DB-004 decisions; no independently verified organizational signing identity."
+      }
     },
     {
       "id": "D06",
@@ -160,7 +196,14 @@
       "selectedOption": null,
       "approvedBy": null,
       "approvedAt": null,
-      "approvalEvidenceUrl": null
+      "approvalEvidenceUrl": null,
+      "productDecision": {
+        "status": "APPROVED_BY_REQUESTER",
+        "selectedOption": "APPROVE_HMAC_LINK_PROOF_AND_TYPED_SESSION_MODEL",
+        "rationale": "Retain 24-hour, single-use HMAC email ownership links for application-bound authorized workflows only; keep legacy plaintext token/session metadata retired.",
+        "recordedOn": "2026-10-28",
+        "source": "Explicit user instruction in current ChatGPT conversation: do all seven recommended DB-004 decisions; no independently verified organizational signing identity."
+      }
     },
     {
       "id": "D07",
@@ -173,7 +216,8 @@
       "question": "What authorized live-provider and migration evidence is required before DB-004 can be marked done?",
       "options": [
         "REQUIRE_AUTHORIZED_PROVIDER_SMOKE_PLUS_MIGRATION_AND_CI",
-        "RECORD_FORMAL_APPROVED_EXEMPTION_FOR_EACH_NOT_APPLICABLE_PROVIDER"
+        "RECORD_FORMAL_APPROVED_EXEMPTION_FOR_EACH_NOT_APPLICABLE_PROVIDER",
+        "REQUIRE_AUTHORIZED_PROVIDER_SMOKE_PLUS_REGISTERED_SCHEMA_AND_CI_NO_IMPORT"
       ],
       "requiredEvidence": [
         "Live authorized email/SMS provider acceptance or signed scope exemption",
@@ -184,8 +228,23 @@
       "selectedOption": null,
       "approvedBy": null,
       "approvedAt": null,
-      "approvalEvidenceUrl": null
+      "approvalEvidenceUrl": null,
+      "productDecision": {
+        "status": "APPROVED_BY_REQUESTER",
+        "selectedOption": "REQUIRE_AUTHORIZED_PROVIDER_SMOKE_PLUS_REGISTERED_SCHEMA_AND_CI_NO_IMPORT",
+        "rationale": "Require authorized Exotel/ZeptoMail send-and-receipt tests where applicable, registered disposable PostgreSQL migration journal and replay, current-SHA CI, security and release review. Historical data import receipts are NOT APPLICABLE for greenfield vNext.",
+        "recordedOn": "2026-10-28",
+        "source": "Explicit user instruction in current ChatGPT conversation: do all seven recommended DB-004 decisions; no independently verified organizational signing identity."
+      }
     }
   ],
-  "technicalCoverageScope": "Bounded registered PostgreSQL schema/service behavior and safe retirement, NOT live provider integration, full legacy dataset migration, public API enablement or product/security approval. DB-004 remains formally OPEN."
+  "technicalCoverageScope": "195 fields have technical witnesses; 7/7 product policies selected on 2026-10-28. Formal all-owner signoff, 34 final security/retirement approvals and authorized provider/release evidence remain separate. DB-004 not yet release-approved.",
+  "productDisposition": {
+    "status": "SEVEN_OF_SEVEN_APPROVED_BY_REQUESTER",
+    "count": 7,
+    "date": "2026-10-28",
+    "scope": "Product architecture and greenfield policy only; no assertion of independent security, data retention, external-provider or release owner attestation.",
+    "legacyHistoricalImport": "NOT_APPLICABLE_NOT_AUTHORIZED",
+    "noProductionLegacyAccess": true
+  }
 }

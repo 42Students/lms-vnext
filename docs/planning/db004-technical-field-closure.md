@@ -63,3 +63,31 @@ and route safety checks accompany this integration.
 
 Do not infer live-provider acceptance, historical import authorization, D01–D07
 approvals or `DB-004.done=true` from this work.
+
+## 28 October 2026 — seven product decisions approved by project requester
+
+The project requester explicitly selected **all seven recommended policies**
+(D01–D07) in the conversation on 2026-10-28. Each selected product disposition
+is recorded verbatim in the existing
+`db004-closure-decision-register.json` under `productDecision`.
+The selected policies are:
+
+- D01: First-party OTP/device sessions; no legacy password/token handoff.
+- D02: Canonical user and persisted membership roles; distinct scoped role
+  proofs only for workflows that need them.
+- D03: **Greenfield vNext; no historical production-data migration**.
+  Source-schema/behavior reconciliation remains obligatory, but source IDs,
+  timestamp rows, production data import and import receipts are not in scope.
+- D04: Safe archive, retained audit, reserved domain tombstones until
+  separately authorized reuse.
+- D05: Persisted typed role grants only; unknown historic roles confer nothing.
+- D06: 24-hour, single-use HMAC email ownership links for scoped workflows.
+- D07: Real authorized email/SMS provider checks, current-SHA registered
+  migration replay/CI, security and release signoff; no legacy import receipts.
+
+This is **explicit product direction**, not an independently verified signature
+from a security, retention or release officer. The existing per-decision
+`approvalStatus` remains PENDING until the required signers attest.
+No existing old-LMS data or credentials were copied or deleted, and no
+legacy database was contacted. The 34 retired fields are handled under
+the same product policy but require separately recorded final security review.
