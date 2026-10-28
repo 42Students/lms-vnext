@@ -160,4 +160,48 @@ describe("DB-004 learner/faculty legacy account challenge common-field replaceme
   }
  });
 
+ it("does not turn role-specific, blocked or superseded proofs into login sessions",async()=>{
+  const userId=randomUUID(),membershipId=randomUUID(),attemptId=randomUUID();
+  try{
+   await pool.query("insert into users(id,identity_uid,platform_status) values($1,$2,'ACTIVE')",
+    [userId,"db004-role-credential-"+userId]);
+   await pool.query(
+    "insert into college_memberships(id,user_id,college_id,status) values($1,$2,$3,'ACTIVE')",
+    [membershipId,userId,SEED_IDS.collegeA]);
+   await pool.query("insert into membership_roles(membership_id,role) values($1,'FACULTY')",
+    [membershipId]);
+   expect(await drizzleLoginRepository.createAttempt({
+    id:attemptId,userId,collegeId:SEED_IDS.collegeA,
+    contactFingerprint:"d".repeat(64),smsCodeMac:"e".repeat(64),
+    emailCodeMac:null,ipTag:"db004-proof",
+    rateLimit:{windowMinutes:10,perContactAndAddress:5,perContact:8,perAddress:20},
+   })).toBe(true);
+   await pool.query(
+    "update identity_auth_attempts set target_role='FACULTY',membership_id=$1 where id=$2",
+    [membershipId,attemptId]);
+   expect(await drizzleLoginRepository.consumeAttempt(attemptId,userId)).toBe(false);
+   await pool.query(
+    "update identity_auth_attempts set target_role='LOGIN' where id=$1",[attemptId]);
+   expect(await drizzleLoginRepository.consumeAttempt(attemptId,userId)).toBe(false);
+   await pool.query(
+    "update identity_auth_attempts set membership_id=null, blocked_until=now()+interval '1 minute' where id=$1",
+    [attemptId]);
+   expect(await drizzleLoginRepository.consumeAttempt(attemptId,userId)).toBe(false);
+   await pool.query(
+    "update identity_auth_attempts set blocked_until=null, superseded_at=clock_timestamp() where id=$1",
+    [attemptId]);
+   expect(await drizzleLoginRepository.consumeAttempt(attemptId,userId)).toBe(false);
+   await pool.query(
+    "update identity_auth_attempts set superseded_at=null where id=$1",[attemptId]);
+   expect(await drizzleLoginRepository.consumeAttempt(attemptId,userId)).toBe(true);
+   expect(await drizzleLoginRepository.consumeAttempt(attemptId,userId)).toBe(false);
+  }finally{
+   await pool.query("delete from identity_device_sessions where user_id=$1",[userId]);
+   await pool.query("delete from identity_auth_attempts where user_id=$1",[userId]);
+   await pool.query("delete from membership_roles where membership_id=$1",[membershipId]);
+   await pool.query("delete from college_memberships where id=$1",[membershipId]);
+   await pool.query("delete from users where id=$1",[userId]);
+  }
+ });
+
 });

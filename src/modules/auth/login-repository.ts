@@ -333,6 +333,12 @@ export const drizzleLoginRepository: LoginRepository = {
         JOIN identity_auth_attempts a ON a.user_id = u.id
         WHERE a.id = ${id} AND u.id = ${userId}
           AND u.platform_status = 'ACTIVE'
+          -- The login consumer must not redeem onboarding, email-link or
+          -- role-specific proof records as interactive device credentials.
+          AND a.target_role = 'LOGIN'
+          AND a.membership_id IS NULL
+          AND a.superseded_at IS NULL
+          AND (a.blocked_until IS NULL OR a.blocked_until <= clock_timestamp())
         FOR UPDATE OF u
       `);
       const locked = rowsOf(current)[0];
