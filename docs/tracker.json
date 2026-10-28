@@ -1656,6 +1656,19 @@
         "status": "ACCEPTED",
         "requestedAt": "2026-10-28T19:57:24.900Z",
         "integratorReview": "L01 accepts exclusive migration integration. Current placements.ts lacks mandatory new job_id in placement_round_results / placement_learner_requests and job_id+request_type in placement_application_round_exceptions; do NOT register draft until L07 lands typed columns and all read/write/seed paths. Reconcile DB09 parent UNIQUE keys, test preflight dirty rows and transactional backfill/locks as appropriate, then regenerate Drizzle snapshot and run clean disposable PG replay plus negative/race/service witnesses. Not APPLIED; DB-066 remains open."
+      },
+      {
+        "id": "L05-DB035-DB042-SHARED-PROMOTION-20261029",
+        "fromLane": "L05",
+        "toLane": "L01",
+        "paths": [
+          "drizzle/**",
+          "drizzle/meta/_journal.json",
+          "src/db/schema/index.ts"
+        ],
+        "reason": "DB-035 immutable assessment/attendance history and DB-042 roster/marker guards are source-only candidates at docs/planning/sql/db06-assessment-attendance-history-candidate.sql and db06-attendance-scope-candidate.sql. Coordinate single-writer registration only when L05 has completed the transactional grade, attendance MARK/CORRECT event producers and exercised disposable PostgreSQL replay/drift/negative tests. Do not promote the SQL candidates independently; their deferred triggers would reject current faculty/admin writes. This request is NOT acceptance evidence.",
+        "status": "REQUESTED",
+        "requestedAt": "2026-10-28T19:58:45.885Z"
       }
     ],
     "coordination": {
