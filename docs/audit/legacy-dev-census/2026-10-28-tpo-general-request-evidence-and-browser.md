@@ -23,3 +23,9 @@ The changes are **not** marked Green by source review. Verify an authenticated d
   original 100-row truncation boundary without inventing users or
   bypassing the real dedupe constraint. Execution remains subject to
   the queued CI database suite.
+
+## 2026-10-28 unified learner history and dispute acceptance follow-up
+
+- `25b42cf` replaces the separately capped `listOwnTpoGeneralRequests` contribution to `/learn/my-placements/support` with a single SQL UNION feed. The count and filtered page share one PostgreSQL statement and one learner membership/college authorization boundary; the server now transfers only up to 200 matching rows (default 20) regardless of history size. A missing staged general-requests table is omitted from the query, not referenced.
+- The disposable `placements-p8-offers` PostgreSQL acceptance suite covers 105 general requests plus a real specialized placement request in the same feed, category/status filters, page clamp, stable order, source-specific fields and role denial. It also exercises a pending dispute reviewed after the provisional deadline, ensuring the maturity worker cannot finalize before a TPO decision, and refuses newly filed late disputes.
+- These are authored tests pending a current-main green CI/database result. No page is accepted, no DB tracker task is changed and no production migration is added by this follow-up.

@@ -378,6 +378,38 @@ describe("Placement P8 offers and joining", () => {
     expect(excluded.total).toBe(0);
     expect(excluded.items).toHaveLength(0);
     await expect(getOwnUnifiedLearnerRequests(tpo,{})).rejects.toThrow();
+
+    // Add a real specialized request to the same learner feed and prove
+    // source-specific labels, stable merged order, and both type filters.
+    const {application}=await preparePassedApplication();
+    const specialized=await pool.query<{id:string}>(`
+      insert into placement_learner_requests
+        (application_id,learner_membership_id,request_type,scope_key,reason,
+         requested_by_user_id,requested_at)
+      values($1,$2,'APPLICATION_WITHDRAWAL',$3,
+        'Need to withdraw this application',$4,now()+interval '2 minutes')
+      returning id`,
+      [application.id,SEED_IDS.learnerCollegeAMembership,
+        "history-mixed-"+randomUUID(),SEED_IDS.learnerUser]);
+    expect(specialized.rows).toHaveLength(1);
+    const merged=await getOwnUnifiedLearnerRequests(learner,{page:1});
+    expect(merged.total).toBe(106);
+    expect(merged.items[0]).toMatchObject({
+      id:specialized.rows[0]!.id,source:"PLACEMENT",
+      type:"APPLICATION_WITHDRAWAL",status:"PENDING",jobTitle:"Offer Engineer",
+    });
+    expect(merged.items[0]!.updatedAt).toBeInstanceOf(Date);
+    const specializedOnly=await getOwnUnifiedLearnerRequests(learner,{
+      type:"APPLICATION_WITHDRAWAL",
+    });
+    expect(specializedOnly.total).toBe(1);
+    expect(specializedOnly.items).toHaveLength(1);
+    const generalOnly=await getOwnUnifiedLearnerRequests(learner,{
+      type:"CORRECTION_WITH_PROOF",page:6,
+    });
+    expect(generalOnly.total).toBe(105);
+    expect(generalOnly.items).toHaveLength(5);
+    expect(generalOnly.items.every(item=>item.source==="GENERAL")).toBe(true);
   });
 
   it("TPO-GENERAL-ACCEPTANCE-DISPUTE-DB restores only a timely provisional offer",async()=>{
@@ -400,16 +432,24 @@ describe("Placement P8 offers and joining", () => {
     expect(before.rows[0]?.status).toBe("PENDING");
     const version=before.rows[0]!.version;
 
-    // An imported acceptance must remain provisional until dispute resolution.
-    // The request was filed in time, even if the reviewer works after cutoff.
+    // Construct the real temporal edge condition: dispute was submitted
+    // before cutoff but the TPO is reviewing it after cutoff. The maturation
+    // worker must refuse to finalize while this dispute remains pending.
+    await pool.query(`
+      update placement_learner_general_requests
+      set requested_at=now()-interval '2 minutes' where id=$1`,[request.id]);
     await pool.query(`
       update placement_offers set accepted_disputable_until=now()-interval '1 minute'
       where id=$1 and cascade_id is null`,[offer.id]);
-    // A persisted earlier request was still timely when first submitted:
-    // extend the deadline back past submission for this positive case.
-    await pool.query(`
-      update placement_offers set accepted_disputable_until=now()+interval '1 minute'
-      where id=$1`,[offer.id]);
+    const pendingMaturity=await finalizeMaturedExternalTpoAcceptances(
+      SEED_IDS.facultyUser,new Date(),10);
+    expect(pendingMaturity.finalized).toBe(0);
+    expect(pendingMaturity.failed).toBe(0);
+    const stillAccepted=await pool.query<{status:string,cascade_id:string|null}>(`
+      select status,cascade_id from placement_offers where id=$1`,[offer.id]);
+    expect(stillAccepted.rows[0]).toMatchObject({
+      status:"ACCEPTED",cascade_id:null,
+    });
 
     const approved=await decideTpoGeneralRequest(tpo,request.id,{
       confirmed:true,version,action:"APPROVE",
@@ -485,6 +525,30 @@ describe("Placement P8 offers and joining", () => {
     ]);
     expect(decision.rows[0]?.status).toBe("PENDING");
     expect(offerState.rows[0]?.status).toBe("ACCEPTED");
+  });
+
+  it("TPO-GENERAL-ACCEPTANCE-DISPUTE-DB refuses a newly filed dispute after cutoff",async()=>{
+    const {job,application}=await preparePassedApplication();
+    const offer=await issuePlacementOffer(tpo,application.id,{
+      roleTitle:"Past dispute window engineer",annualCtcInr:900_000,
+    });
+    await recordTpoOfferLifecycle(tpo,job.id,{
+      confirmed:true,action:"RECORD_ACCEPTED",offerIds:[offer.id],
+      expectedStatus:"ISSUED",reason:"Employer recorded acceptance",
+    });
+    await pool.query(`
+      update placement_offers set accepted_disputable_until=now()-interval '1 minute'
+      where id=$1`,[offer.id]);
+    await expect(createOwnTpoGeneralRequest(learner,{
+      kind:"OFFER_ACCEPTANCE_DISPUTE",offerId:offer.id,
+      reason:"I dispute this late record",
+    })).rejects.toMatchObject({code:"TARGET_CHANGED"});
+    const requests=await pool.query<{count:number}>(`
+      select count(*)::int as count from placement_learner_general_requests
+      where membership_id=$1 and kind='OFFER_ACCEPTANCE_DISPUTE'
+        and target_key=$2`,
+      [SEED_IDS.learnerCollegeAMembership,offer.id]);
+    expect(requests.rows[0]?.count).toBe(0);
   });
 
   it("PLACEMENTS-EXPIRY-NOTIFY-31 DB records expiry without alerting learner who disabled application notices",async()=>{
