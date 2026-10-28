@@ -121,7 +121,8 @@ describe.skipIf(!enabled)("College Admin Semesters/Batches real PostgreSQL denia
           ["sections", "id", ids.section],
           ["program_term_courses", "id", ids.termCourse],
           ["courses", "id", ids.course],
-          ["cohort_progression_state", "cohort_id", ids.cohort],
+          // Version-0 state is owned by its cohort and cascades on valid cohort
+          // cleanup. Direct deletion is forbidden by registered DB-005 audit guards.
           ["cohorts", "id", ids.cohort],
           ["program_terms", "id", ids.term],
           ["programs", "id", ids.program],

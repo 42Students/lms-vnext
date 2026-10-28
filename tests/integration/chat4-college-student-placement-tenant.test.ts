@@ -12,6 +12,7 @@ if(enabled)assertDb018DisposableTarget(process.env,{serviceBound:true});
 const pool=enabled?new Pool({connectionString:process.env.TEST_DATABASE_URL,max:2}):null;
 const uid=()=>randomUUID();
 const ids={period:uid(),program:uid(),cohort:uid(),section:uid(),
+ foreignPeriod:uid(),foreignProgram:uid(),foreignCohort:uid(),
  ownUser:uid(),ownMembership:uid(),ownEnrollment:uid(),
  foreignUser:uid(),foreignMembership:uid(),foreignEnrollment:uid(),
  actingUser:uid(),actingMembership:uid()};
@@ -48,10 +49,19 @@ describe.skipIf(!enabled)("College Admin class placement tenant and actor guard 
    [ids.cohort,ids.program,tag,tag,ids.period]);
   await pool.query("insert into sections(id,cohort_id,academic_period_id,name,code,status) values($1,$2,$3,$4,$5,'ACTIVE')",
    [ids.section,ids.cohort,ids.period,tag,tag]);
-  for(const [enrollment,member] of [
-   [ids.ownEnrollment,ids.ownMembership],[ids.foreignEnrollment,ids.foreignMembership],
-  ])await pool.query("insert into learner_program_enrollments(id,membership_id,program_id,cohort_id,status) values($1,$2,$3,$4,'ACTIVE')",
-   [enrollment,member,ids.program,ids.cohort]);
+  // Foreign learner must have a legitimate foreign *academic* parent.
+  // The DB-005 tenant guard now rejects corrupt cross-college enrollment
+  // fixtures before the actual class-placement check can run.
+  await pool.query("insert into academic_periods(id,college_id,name,code,start_date,end_date,status) values($1,$2,$3,$4,'2026-07-01','2027-06-30','ACTIVE')",
+   [ids.foreignPeriod,SEED_IDS.collegeB,tag+" foreign period",tag+"-FP"]);
+  await pool.query("insert into programs(id,department_id,name,code,duration_terms,status) values($1,$2,$3,$4,8,'ACTIVE')",
+   [ids.foreignProgram,SEED_IDS.departmentB,tag+" foreign program",tag+"-FPR"]);
+  await pool.query("insert into cohorts(id,program_id,name,code,start_period_id,status) values($1,$2,$3,$4,$5,'ACTIVE')",
+   [ids.foreignCohort,ids.foreignProgram,tag+" foreign cohort",tag+"-FC",ids.foreignPeriod]);
+  await pool.query("insert into learner_program_enrollments(id,membership_id,program_id,cohort_id,status) values($1,$2,$3,$4,'ACTIVE')",
+   [ids.ownEnrollment,ids.ownMembership,ids.program,ids.cohort]);
+  await pool.query("insert into learner_program_enrollments(id,membership_id,program_id,cohort_id,status) values($1,$2,$3,$4,'ACTIVE')",
+   [ids.foreignEnrollment,ids.foreignMembership,ids.foreignProgram,ids.foreignCohort]);
  });
  afterAll(async()=>{
   try {
@@ -59,9 +69,9 @@ describe.skipIf(!enabled)("College Admin class placement tenant and actor guard 
     await pool.query("delete from section_enrollments where section_id=$1",[ids.section]);
     await pool.query("delete from learner_program_enrollments where cohort_id=$1",[ids.cohort]);
     await pool.query("delete from sections where id=$1",[ids.section]);
-    await pool.query("delete from cohorts where id=$1",[ids.cohort]);
-    await pool.query("delete from programs where id=$1",[ids.program]);
-    await pool.query("delete from academic_periods where id=$1",[ids.period]);
+    await pool.query("delete from cohorts where id=ANY($1::uuid[])",[[ids.cohort,ids.foreignCohort]]);
+    await pool.query("delete from programs where id=ANY($1::uuid[])",[[ids.program,ids.foreignProgram]]);
+    await pool.query("delete from academic_periods where id=ANY($1::uuid[])",[[ids.period,ids.foreignPeriod]]);
     // Activity rows preserve author/membership FK identity on this disposable DB.
    }
   }finally{await pool?.end();await closeDatabaseConnection();}

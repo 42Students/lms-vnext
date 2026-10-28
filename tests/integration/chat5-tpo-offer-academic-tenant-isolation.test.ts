@@ -25,6 +25,7 @@ describe("PLACEMENTS-OFFERS-IDOR-07: academic enrichment cannot leak a foreign c
     [identity,"chat5-tenant-test-"+identity,"Tenant-isolation fixture"]);
    await pool.query("insert into college_memberships(id,user_id,college_id) values($1,$2,$3)",
     [member,identity,SEED_IDS.collegeA]);
+   await pool.query("insert into membership_roles(membership_id,role) values($1,'LEARNER')",[member]);
    await pool.query(
     "insert into programs(id,department_id,name,code,duration_terms) values($1,$2,$3,$4,4)",
     [foreignProgram,SEED_IDS.departmentB,"Foreign academic program","B-"+marker]);
@@ -33,9 +34,12 @@ describe("PLACEMENTS-OFFERS-IDOR-07: academic enrichment cannot leak a foreign c
     [foreignPeriod,SEED_IDS.collegeB,"Foreign academic year","BP-"+marker]);
    await pool.query("insert into cohorts(id,program_id,name,code,start_period_id) values($1,$2,$3,$4,$5)",
     [foreignCohort,foreignProgram,"DO NOT LEAK FOREIGN COHORT","BC-"+marker,foreignPeriod]);
-   await pool.query(
+   // DB02 now rejects the cross-college relationship on write, before any
+   // TPO projection can leak it. Keep this negative tenant assertion.
+   await expect(pool.query(
     "insert into learner_program_enrollments(membership_id,program_id,cohort_id) values($1,$2,$3)",
-    [member,foreignProgram,foreignCohort]);
+    [member,foreignProgram,foreignCohort],
+   )).rejects.toMatchObject({code:"23514"});
    const foreign=await enrichTpoOfferFacts(fake,SEED_IDS.collegeA);
    expect(foreign).toHaveLength(1);
    expect(foreign[0]?.candidate.batch).toBeNull();
@@ -52,9 +56,8 @@ describe("PLACEMENTS-OFFERS-IDOR-07: academic enrichment cannot leak a foreign c
     [localPeriod,SEED_IDS.collegeA,"Local academic year","AP-"+marker]);
    // A cohort must actually belong to the enrollment's program; an FK
    // to an unrelated foreign cohort must not expose its name or department.
-   await pool.query(
-    "update learner_program_enrollments set program_id=$1,cohort_id=$2 where membership_id=$3",
-    [localProgram,foreignCohort,member]);
+   // The rejected foreign insert created no enrollment to reparent.
+   // Verify the TPO view remains empty instead of constructing a corrupt row.
    const mismatched=await enrichTpoOfferFacts(fake,SEED_IDS.collegeA);
    expect(mismatched[0]?.candidate.batch).toBeNull();
    expect(mismatched[0]?.candidate.branch).toBeNull();
@@ -76,8 +79,8 @@ describe("PLACEMENTS-OFFERS-IDOR-07: academic enrichment cannot leak a foreign c
    await pool.query("insert into cohorts(id,program_id,name,code,start_period_id) values($1,$2,$3,$4,$5)",
     [localCohort,localProgram,"College A Cohort","AC-"+marker,localPeriod]);
    await pool.query(
-    "update learner_program_enrollments set program_id=$1,cohort_id=$2 where membership_id=$3",
-    [localProgram,localCohort,member]);
+    "insert into learner_program_enrollments(membership_id,program_id,cohort_id) values($1,$2,$3)",
+    [member,localProgram,localCohort]);
    const local=await enrichTpoOfferFacts(fake,SEED_IDS.collegeA);
    expect(local[0]?.candidate.batch).toBe("College A Cohort");
    expect(local[0]?.candidate.branch).toBeTruthy();
@@ -86,6 +89,7 @@ describe("PLACEMENTS-OFFERS-IDOR-07: academic enrichment cannot leak a foreign c
    await pool.query("delete from cohorts where id=any($1::uuid[])",[[foreignCohort,localCohort,wrongPeriodCohort]]);
    await pool.query("delete from academic_periods where id=any($1::uuid[])",[[foreignPeriod,localPeriod]]);
    await pool.query("delete from programs where id=any($1::uuid[])",[[foreignProgram,localProgram]]);
+   await pool.query("delete from membership_roles where membership_id=$1",[member]);
    await pool.query("delete from college_memberships where id=$1",[member]);
    await pool.query("delete from users where id=$1",[identity]);
   }
