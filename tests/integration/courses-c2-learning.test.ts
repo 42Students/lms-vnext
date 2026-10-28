@@ -33,6 +33,7 @@ import {
 } from "@/modules/courses/lesson-service";
 import {
   createLessonContent,
+  getAuthorizedLessonContent,
   listLessonContents,
   transitionLessonContent,
   updateLessonContent,
@@ -573,6 +574,78 @@ describe("courses C2 learning structure against PostgreSQL", () => {
     expect(edited.title).toBe(
       "C2 Section A Walkthrough Updated",
     );
+  });
+
+
+  it("does not disclose unpublished-by-flag or soft-deleted lesson content through listing or direct lookup", async () => {
+    const structure = await createStructure();
+    const path = await createLearningPath(collegeAdmin, {
+      offeringId: structure.offering.id,
+      title: "C2 Private content gate",
+    });
+    const lesson = await createCourseLesson(collegeAdmin, {
+      learningPathId: path.id,
+      name: "C2 Learner-safe content",
+      sequence: 0,
+    });
+    const contents = [];
+    for (const [index, title] of [
+      "Visible",
+      "Hidden by author",
+      "Legacy inactive",
+      "Soft deleted",
+      "Deleted with lesson",
+    ].entries()) {
+      const content = await createLessonContent(collegeAdmin, {
+        lessonId: lesson.id,
+        contentType: "RESOURCE",
+        points: 1,
+        title: "C2 " + title,
+        notes: "private content visibility case",
+        sequence: index,
+      });
+      await transitionLessonContent(collegeAdmin, content.id, { action: "PUBLISH" });
+      contents.push(content);
+    }
+    await transitionLearningPath(collegeAdmin, path.id, { action: "PUBLISH" });
+
+    await pool.query(
+      "update lesson_contents set visible_to_students = false where id = $1",
+      [contents[1]!.id],
+    );
+    await pool.query(
+      "update lesson_contents set legacy_active = false where id = $1",
+      [contents[2]!.id],
+    );
+    await pool.query(
+      "update lesson_contents set deleted_at = clock_timestamp() where id = $1",
+      [contents[3]!.id],
+    );
+    await pool.query(
+      "update lesson_contents set deleted_with_lesson = true where id = $1",
+      [contents[4]!.id],
+    );
+
+    const visible = await listLessonContents(
+      learner, lesson.id, structure.deliveryA.id,
+    );
+    expect(visible.map((content) => content.id)).toEqual([contents[0]!.id]);
+
+    for (const hidden of contents.slice(1)) {
+      await expect(
+        getAuthorizedLessonContent(
+          learner, hidden.id, structure.deliveryA.id,
+        ),
+      ).rejects.toMatchObject({ code: "LESSON_CONTENT_NOT_FOUND" });
+    }
+    // A tombstoned parent with a stale ACTIVE label is not a learner route.
+    await pool.query(
+      "update course_lessons set deleted_at = clock_timestamp() where id = $1",
+      [lesson.id],
+    );
+    await expect(
+      listLessonContents(learner, lesson.id, structure.deliveryA.id),
+    ).rejects.toMatchObject({ code: "LESSON_NOT_FOUND" });
   });
 
   it("protects shared structure with admin authority and database uniqueness", async () => {
