@@ -957,7 +957,12 @@
           "UI learner profile/verification"
         ],
         "operatingNotes": "Private receipts, scan state, owner/purpose and tenant protections required.",
-        "claim": null
+        "claim": {
+          "sessionId": "vnext-db04-l03-chat-20261029-run1",
+          "holder": "ChatGPT L03 DB04 closure session",
+          "claimedAt": "2026-10-28T19:52:39.120Z",
+          "expiresAt": "2026-10-28T23:52:39.120Z"
+        }
       },
       {
         "id": "L04",
