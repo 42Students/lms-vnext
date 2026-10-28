@@ -632,8 +632,9 @@ export async function moveElectiveMember(
 
     assertScope(context, fromGroup, "MANUAL", memberId);
     await assertPersistedGroupActor(tx, context, { collegeId: fromGroup.collegeId, mode: "MANUAL" });
-    if (!(await hasLiveElectiveBacking(tx, fromGroup.id)) ||
-        !(await hasLiveElectiveBacking(tx, toGroup.id)))
+    // A destination must be live. Allow evacuation FROM an ended delivery:
+    // otherwise college admins could not rescue learners after class closure.
+    if (!(await hasLiveElectiveBacking(tx, toGroup.id)))
       throw new GroupServiceError("ELECTIVE_MOVE_OFFERINGS_INVALID");
     await assertTargetMembership(tx, fromGroup, memberId);
     if (!(await hasElectiveAcademicEligibility(tx, slot, memberId)))
