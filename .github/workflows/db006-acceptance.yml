@@ -7,6 +7,7 @@ on:
     paths:
       - 'drizzle/0306_db03_elective_kernel_integrity.sql'
       - 'tests/integration/groups-db03*.test.ts'
+      - 'tests/db006-catalog-pg.test.mjs'
       - 'src/modules/groups/**'
       - 'src/modules/electives/**'
       - '.github/workflows/db006-acceptance.yml'
@@ -54,6 +55,8 @@ jobs:
         run: npm run db:test:prepare
       - name: Replay idempotence
         run: npm run db:migrate
+      - name: DB-006 physical catalog crosswalk and registered integrity triggers
+        run: node --test tests/db006-catalog-pg.test.mjs
       - name: DB03 PostgreSQL roster, tenant, rule and elective race tests
         run: >
           npx vitest run --config vitest.db.config.ts
