@@ -733,3 +733,21 @@ test("DB004 auth SQL preflight detects an unpaired function-body terminator", ()
   assert.throws(() => assertPairedDb01AuthFunctionQuotes(mutated),
     /END|paired SQL function body delimiter/);
 });
+
+test("DB051 hostless PostgreSQL URLs never inherit a socket or PGHOST target", () => {
+  for (const scheme of ["postgres", "postgresql"]) {
+    const url = scheme + ":///lms_vnext_test";
+    assert.throws(() => assertSafeDb01TestTarget({
+      TEST_DATABASE_URL: url,
+      PGHOST: "production.internal",
+      DB01_REMOTE_TEST_DATABASE_CONFIRM: "RESET:/lms_vnext_test",
+    }), /explicit PostgreSQL host/);
+  }
+});
+
+test("DB051 hostless application URL is refused before comparing destructive aliases", () => {
+  assert.throws(() => assertSafeDb01TestTarget({
+    TEST_DATABASE_URL: local,
+    DATABASE_URL: "postgresql:///lms_vnext_test",
+  }), /explicit PostgreSQL host/);
+});
