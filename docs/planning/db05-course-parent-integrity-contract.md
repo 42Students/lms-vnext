@@ -1,6 +1,6 @@
 # DB-008 — one canonical course-parent integrity guard, plus an upstream companion
 
-**Status:** source-only and UNREGISTERED, no PostgreSQL execution. **Owner:** Chat 6, active DATABASE task DB-008; Chat 1 exclusively registers numbered migrations.
+**Current engineering state (2026-10-29):** The canonical course-parent graph and department-college companions are REGISTERED in `drizzle/0305_db05_course_parent_graph_registered.sql` with snapshot `0305`. Fresh disposable PostgreSQL 17 journal replay, idempotent replay, direct SQL parent/cycle/tenant/isolation/race acceptance, scoped application parent tests, and learner content/read checks passed in [DB-008 acceptance run 40748768228](https://github.com/42Students/lms-vnext/actions/runs/40748768228), commit `271704c2b978d57f5c27598aa3b4a8ebf698e762` (TypeScript step was still in progress when recorded). **DB-008 as a whole is NOT DONE:** remaining source field dispositions, unregistered content/history companions, and upstream reparent/integration gates remain open. Six-chat ownership instructions below are historical, not active.
 
 **Legacy oracle:** `42Students/lms@21bad59d4dfaf2fa11fdeaf9353327ce105697d5`, especially `Course.java`, `CourseDTO.java`, and `CourseServiceImpl.setCourseFields`.  
 **vNext:** `src/db/schema/courses.ts`, `src/db/schema/departments.ts`, `src/db/schema/academics.ts` and `src/modules/courses/course-service.ts`.
@@ -9,7 +9,7 @@
 
 During parallel work, two alternative unregistered parent guards appeared. The **canonical** parent implementation remains **`scripts/sql/db05-course-parent-graph-guard.draft.sql`**, already recorded by the DB05 readiness manifest; it uses a single transaction advisory lock `605008001` and rejects non-`READ COMMITTED` writes pending proof. The overlapping `db05-course-parent-integrity.draft.sql` was removed, NOT registered or applied. **Do not register both variants.**
 
-The remaining unique improvement is `scripts/sql/db05-department-college-move.draft.sql`: a *department-table* trigger that uses the **same advisory lock** to forbid moving an existing department between colleges while it has ANY courses. This fills a bypass of a course-row-only guard; it must be merged by Chat 1 **once** with the canonical migration. It has no duplicate column, FK, index or `courses` trigger.
+The companion now incorporated into migration 0305 is `scripts/sql/db05-department-college-move.draft.sql`: a *department-table* trigger that uses the **same advisory lock** to forbid moving an existing department between colleges while it has ANY courses. This fills a bypass of a course-row-only guard; it must be merged by Chat 1 **once** with the canonical migration. It has no duplicate column, FK, index or `courses` trigger.
 
 ## Source evidence
 
@@ -44,4 +44,4 @@ The remaining unique improvement is `scripts/sql/db05-department-college-move.dr
 
 No data is migrated from legacy; this is greenfield parity of behavior and future persisted invariants.
 
-**Current state:** both candidates are UNREGISTERED. Node tests in `tests/db05-course-parent-integrity.test.mjs` are authored, not executed. No fields formally verified. DB-008 remains IN_PROGRESS.
+**Current state:** Both canonical parent/department guards are REGISTERED, with focused direct SQL and application PostgreSQL acceptance passed at the linked commit. The draft files remain unregistered historical sources, not a second migration. Separate academic-period, offering, section, membership and other DB05 content/history guards are NOT RUN or not yet registered; the 92-field global DB05 source review and DB-008 task stay OPEN. Do not mark the full course domain tenant-certified from the two guarded tables. DB-008 remains IN_PROGRESS.
