@@ -1638,8 +1638,9 @@
           "docs/planning/sql/db07-meeting-linked-ancestry-staging.sql"
         ],
         "reason": "DB-068/070/071/073/074/075 already have staged SQL, source guards and gated PG witnesses. L01-only numbered promotion needed: reconcile index/FK ordering and deferred pointers, preflight corrupt rows, register migration+journal+schema, clean disposable replay/drift and execute all gated DB07 integration witnesses plus project template/materialization/review/meeting service regression. Preserve append-only history, valid same-template reassignment and nullable meeting links; do not mark tasks done from source-only results. L06 owns domain services and per-domain remediation.",
-        "status": "REQUESTED",
-        "requestedAt": "2026-10-28T19:55:00.000Z"
+        "status": "ACCEPTED",
+        "requestedAt": "2026-10-28T19:55:00.000Z",
+        "integratorReview": "L01 accepted exclusive migration registration ownership. Source-only preflight found 6 unique indexes, 12 distinct FK constraints, and 2 overlapping index definitions (project_sprints_project_id_id_uq, project_tasks_project_id_id_uq) in DB-073/075. Deduplicate before numbered migration, keep DO preflight and deferred template-pointer FKs, regenerate canonical Drizzle snapshot and execute disposable PostgreSQL journal/catalog/tenant/service witnesses. No migration promoted and no DB07 task certified."
       }
     ],
     "coordination": {
