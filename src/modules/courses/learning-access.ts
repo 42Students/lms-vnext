@@ -249,6 +249,14 @@ export async function requireLearningReadAccess(
       includeHistorical,
     )
   ) {
+    // An enrolled learner must not bypass catalogue visibility using a
+    // saved delivery/content UUID. Faculty and college-admin history access
+    // remains distinct from this learner-only gate.
+    if (offering.courseStatus !== "ACTIVE" ||
+        !offering.courseEnabled ||
+        offering.courseAllowedForDisplay === 0) {
+      throw new CoursesServiceError("LEARNING_ACCESS_DENIED");
+    }
     return "LEARNER";
   }
 
