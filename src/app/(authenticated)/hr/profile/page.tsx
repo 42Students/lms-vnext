@@ -82,6 +82,7 @@ export default async function HrProfilePage({ searchParams }: {
         </details>
         <div className="mt-3 max-w-3xl">
           <RecruiterProfileDetailsEditor key={context.user.id} initialName={profile.displayName}
+            initialFirstName={profile.canonicalFirstName} initialLastName={profile.canonicalLastName}
             initialTitle={profile.title} initialPhone={profile.contactPhoneDigits}
             contactReady={profile.contactReady} userUpdatedAt={profile.userUpdatedAt.toISOString()}
             profileUpdatedAt={profile.profileUpdatedAt.toISOString()} />

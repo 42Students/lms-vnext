@@ -7,6 +7,9 @@ on:
     paths:
       - "src/modules/auth/**"
       - "src/modules/tenant-domains/**"
+      - "src/modules/placements/recruiter-profile-details-service.ts"
+      - "src/modules/placements/recruiter-profile-service.ts"
+      - "src/components/hr/recruiter-profile-details-editor.tsx"
       - "src/auth/**"
       - "tests/integration/db01-*.test.ts"
       - "tests/unit/chat6-auth-*.test.ts"

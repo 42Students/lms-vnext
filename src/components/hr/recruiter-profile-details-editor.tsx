@@ -8,14 +8,17 @@ import {useGuardedAction} from "@/hooks/use-guarded-action";
 import {ConfirmActionDialog} from "@/components/ui/confirm-action-dialog";
 import {splitHrRecruiterName} from "@/modules/placements/hr-recruiter-name-fields-model";
 import {hrProfileSaveErrorFeedback,hrProfileDetailsSaveReceiptSchema,recruiterProfileFieldErrors} from "@/modules/placements/recruiter-profile-details-model";
-export function RecruiterProfileDetailsEditor({initialName,initialTitle,initialPhone,
+export function RecruiterProfileDetailsEditor({initialName,initialFirstName,initialLastName,initialTitle,initialPhone,
  userUpdatedAt,profileUpdatedAt,contactReady}:{
- initialName:string|null;initialTitle:string|null;initialPhone:string|null;
+ initialName:string|null;initialFirstName?:string|null;initialLastName?:string|null;
+ initialTitle:string|null;initialPhone:string|null;
  userUpdatedAt:string;profileUpdatedAt:string;contactReady:boolean;
 }){
  const router=useRouter();
  const {run:runGuarded}=useGuardedAction({timeoutMs:13000});
- const originalName=splitHrRecruiterName(initialName);
+ const fallbackName=splitHrRecruiterName(initialName);
+ const originalName=initialFirstName!=null
+  ?{firstName:initialFirstName,lastName:initialLastName??""}:fallbackName;
  const [saved,setSaved]=useState({firstName:originalName.firstName,lastName:originalName.lastName,
   title:initialTitle??"",phone:initialPhone??""});
  const [form,setForm]=useState(saved),[versions,setVersions]=useState({userUpdatedAt,profileUpdatedAt});
@@ -135,8 +138,10 @@ export function RecruiterProfileDetailsEditor({initialName,initialTitle,initialP
    const receipt=hrProfileDetailsSaveReceiptSchema.safeParse(responseBody);
    if(!receipt.success)throw new Error("NO_CONFIRMED_PROFILE");
    const confirmed=receipt.data.profile;
-   const name=splitHrRecruiterName(confirmed.displayName);
-   const next={...name,title:confirmed.title??"",phone:confirmed.phone};
+   // Trust the persisted first/family name boundaries, not a lossy split.
+   const next={firstName:confirmed.firstName??form.firstName,
+    lastName:confirmed.lastName??form.lastName,
+    title:confirmed.title??"",phone:confirmed.phone};
    setSaved(next);setForm(next);setFieldErrors({});
    setVersions({userUpdatedAt:confirmed.userUpdatedAt,profileUpdatedAt:confirmed.profileUpdatedAt});
    setFeedback("Profile saved");router.refresh();

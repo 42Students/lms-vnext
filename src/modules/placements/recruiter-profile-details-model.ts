@@ -44,6 +44,8 @@ export function hrProfileSaveErrorFeedback(status:number):string{
 export const hrProfileDetailsSaveReceiptSchema=z.strictObject({
  profile:z.strictObject({
   displayName:z.string().trim().min(2).max(160),
+  firstName:z.string().trim().min(1).max(120).optional(),
+  lastName:z.string().max(120).optional(),
   title:z.string().nullable(),
   phone:z.string().regex(/^(?:[0-9]{10})?$/),
   changed:z.boolean(),
