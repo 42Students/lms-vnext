@@ -1641,6 +1641,20 @@
         "status": "ACCEPTED",
         "requestedAt": "2026-10-28T19:55:00.000Z",
         "integratorReview": "L01 accepted exclusive migration registration ownership. Source-only preflight found 6 unique indexes, 12 distinct FK constraints, and 2 overlapping index definitions (project_sprints_project_id_id_uq, project_tasks_project_id_id_uq) in DB-073/075. Deduplicate before numbered migration, keep DO preflight and deferred template-pointer FKs, regenerate canonical Drizzle snapshot and execute disposable PostgreSQL journal/catalog/tenant/service witnesses. No migration promoted and no DB07 task certified."
+      },
+      {
+        "id": "L07-DB066-COMPOSITE-FK-PROMOTION-20261029",
+        "fromLane": "L07",
+        "toLane": "L01",
+        "paths": [
+          "src/db/schema/index.ts",
+          "drizzle/[0-9]*.sql",
+          "drizzle/meta/_journal.json",
+          "drizzle/meta/*_snapshot.json"
+        ],
+        "reason": "DB-066 requires registering canonical same-job/composite parent FKs for placement role, application, round, learner request, offer and round exception (staged candidate docs/planning/sql/db08-cross-parent-consistency-candidate.sql). L07 is updating domain-local read/write guards and will coordinate typed src/db/schema/placements.ts; L01 must deduplicate existing DB09 parent keys and replay disposable PostgreSQL migrations before promotion. No task completion claimed.",
+        "status": "REQUESTED",
+        "requestedAt": "2026-10-28T19:57:24.900Z"
       }
     ],
     "coordination": {
