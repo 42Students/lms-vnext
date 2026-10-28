@@ -8,6 +8,7 @@ on:
       - 'drizzle/0306_db03_elective_kernel_integrity.sql'
       - 'tests/integration/groups-db03*.test.ts'
       - 'tests/db006-catalog-pg.test.mjs'
+      - 'tests/db03-elective-program-oracle.test.mjs'
       - 'src/modules/groups/**'
       - 'src/modules/electives/**'
       - '.github/workflows/db006-acceptance.yml'
