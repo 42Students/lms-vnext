@@ -1,5 +1,8 @@
 # LMS vNext engineering rules
 
+> **2026-10-29 OWNER-APPROVED EXECUTION REPLACEMENT:** The [Database Domain Closure Protocol](docs/planning/database-domain-closure-protocol-2026-10-29.md) supersedes earlier DB task-order and DB-only implementation sequencing. The 81 task acceptance criteria, sole tracker `docs/tracker.json`, global DATABASE phase sign-off, and safety/tenant/privacy gates are unchanged. Domain-local API/service/UI integration necessary to prove a DB consumer may be implemented during DATABASE; that does not certify the global API/UI phase. Read the new protocol first; where older instructions conflict, follow it.
+
+
 ## Engineering DONE vs final RELEASE attestation — binding owner decision (2026-10-28)
 
 **Do not repeatedly reopen completed tasks for deferred final sign-offs.** The

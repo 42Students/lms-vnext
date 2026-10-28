@@ -1,5 +1,7 @@
 # ChatGPT Project instructions — LMS vNext (closure-first)
 
+> **Updated 2026-10-29:** For DB scheduling and default continuation use [the Database Domain Closure Protocol](../planning/database-domain-closure-protocol-2026-10-29.md) first. This supersedes the earlier item-by-item DB queue and the prohibition on domain-local API/UI consumer proof while DATABASE remains the active global phase. Do not change the sole tracker or weaken global phase gates.
+
 **Current direction (2026-10-13):** Implement visible, runnable closure—not repeated planning and source-only tests. Read [closure-first delivery strategy](../planning/closure-first-delivery-strategy.md) and [AGENTS.md](../../AGENTS.md) first. Six-chat assignments, lane checkpoints and worker queues are **retired**.
 
 **Repo:** `42Students/lms-vnext` on fresh `main`.

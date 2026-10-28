@@ -13,6 +13,161 @@ export const CORE_ELEVEN = Object.freeze([
   'DB-002', 'DB-003', 'DB-004', 'DB-005', 'DB-007', 'DB-008',
   'DB-012', 'DB-017', 'DB-019', 'DB-020', 'DB-030',
 ]);
+export const DATABASE_DOMAIN_PACKAGES = Object.freeze([
+  {
+    "label": "FOUNDATION / GLOBAL",
+    "taskIds": [
+      "DB-001",
+      "DB-002",
+      "DB-003",
+      "DB-004",
+      "DB-014",
+      "DB-015",
+      "DB-017",
+      "DB-018",
+      "DB-019",
+      "DB-020",
+      "DB-025",
+      "DB-027",
+      "DB-028",
+      "DB-048",
+      "DB-051",
+      "DB-055",
+      "DB-058",
+      "DB-065",
+      "DB-076"
+    ]
+  },
+  {
+    "label": "DB02 Academic",
+    "taskIds": [
+      "DB-005"
+    ]
+  },
+  {
+    "label": "DB03 Groups",
+    "taskIds": [
+      "DB-006",
+      "DB-026"
+    ]
+  },
+  {
+    "label": "DB04 Profiles",
+    "taskIds": [
+      "DB-007",
+      "DB-016",
+      "DB-077",
+      "DB-080",
+      "DB-081"
+    ]
+  },
+  {
+    "label": "DB05 Courses",
+    "taskIds": [
+      "DB-008",
+      "DB-078"
+    ]
+  },
+  {
+    "label": "DB06 Assessment",
+    "taskIds": [
+      "DB-009",
+      "DB-030",
+      "DB-035",
+      "DB-038",
+      "DB-041",
+      "DB-042",
+      "DB-044",
+      "DB-045",
+      "DB-052",
+      "DB-053"
+    ]
+  },
+  {
+    "label": "DB07 Projects",
+    "taskIds": [
+      "DB-010",
+      "DB-068",
+      "DB-070",
+      "DB-071",
+      "DB-073",
+      "DB-074",
+      "DB-075"
+    ]
+  },
+  {
+    "label": "DB08 Placement",
+    "taskIds": [
+      "DB-011",
+      "DB-021",
+      "DB-029",
+      "DB-054",
+      "DB-066",
+      "DB-069",
+      "DB-072"
+    ]
+  },
+  {
+    "label": "DB09 CRM",
+    "taskIds": [
+      "DB-012",
+      "DB-032",
+      "DB-034",
+      "DB-036",
+      "DB-047",
+      "DB-056",
+      "DB-057",
+      "DB-059",
+      "DB-060",
+      "DB-061",
+      "DB-062",
+      "DB-063",
+      "DB-064",
+      "DB-079"
+    ]
+  },
+  {
+    "label": "DB10 Operations",
+    "taskIds": [
+      "DB-013",
+      "DB-022",
+      "DB-023",
+      "DB-024",
+      "DB-031",
+      "DB-033",
+      "DB-037",
+      "DB-039",
+      "DB-040",
+      "DB-043",
+      "DB-046",
+      "DB-049",
+      "DB-050",
+      "DB-067"
+    ]
+  }
+]);
+
+/** Read-only execution grouping, never an alternative task state or phase gate. */
+export function inspectDomainPackages(doc) {
+  const tasks = new Map((doc?.tasks ?? []).filter(t => t.phase === 'DATABASE').map(t => [t.id,t]));
+  const seen = new Set();
+  const duplicates = [];
+  const unknown = [];
+  const packages = DATABASE_DOMAIN_PACKAGES.map(p => {
+    const actual = p.taskIds.map(id => {
+      if (seen.has(id)) duplicates.push(id);
+      seen.add(id);
+      if (!tasks.has(id)) unknown.push(id);
+      return tasks.get(id);
+    });
+    const done = actual.filter(t => t?.done === true).length;
+    return {label:p.label,done,total:p.taskIds.length,notDone:p.taskIds.length - done,
+      remainingIds:p.taskIds.filter(id => tasks.get(id)?.done !== true)};
+  });
+  const unassigned = [...tasks.keys()].filter(id => !seen.has(id));
+  return {packages,unassigned,duplicates,unknown,readyForNextPhase:false};
+}
+
 const SHA = /^[a-f0-9]{40}$/i;
 const validString = x => typeof x === 'string' && x.trim().length > 0;
 const validDate = x => validString(x) && Number.isFinite(Date.parse(x));
@@ -134,6 +289,19 @@ if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.me
     const report = inspectCheckout(root);
     if (process.argv.includes('--json') || process.argv.includes('--check')) {
       console.log(JSON.stringify(report,null,2));
+    } else if (process.argv.includes('--domains') || process.argv.includes('--packages')) {
+      const groups = inspectDomainPackages(JSON.parse(fs.readFileSync(path.join(root ?? path.resolve(path.dirname(fileURLToPath(import.meta.url)),'..'),'docs/tracker.json'),'utf8')));
+      console.log('LMS vNext | DATABASE DOMAIN PACKAGES (read-only; not phase acceptance)');
+      for (const p of groups.packages) {
+        console.log(p.label + ': DONE ' + p.done + '/' + p.total + ' | OPEN ' + p.notDone +
+          (p.remainingIds.length ? ' | ' + p.remainingIds.join(', ') : ''));
+      }
+      if (groups.unassigned.length || groups.duplicates.length || groups.unknown.length) {
+        console.error(JSON.stringify({unassigned:groups.unassigned,duplicates:groups.duplicates,unknown:groups.unknown}));
+        process.exitCode=2;
+      }
+      if (report.errors.length) {console.error(JSON.stringify(report.errors));process.exitCode=2;}
+      console.log('Global DATABASE phase: NOT CERTIFIED by package counts');
     } else {
       console.log('LMS vNext | ' + report.activePhase);
       console.log('DONE ' + report.counts.done + '/' + report.counts.total +

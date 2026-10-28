@@ -1,5 +1,8 @@
 # LMS vNext
 
+> **Database execution updated 2026-10-29:** [Domain Closure Protocol](docs/planning/database-domain-closure-protocol-2026-10-29.md) is the authoritative DB execution method. Run `npm run progress -- --domains` for the live package breakdown; `docs/tracker.json` is still the only acceptance tracker. Earlier DB scheduling descriptions below are superseded, not completion evidence.
+
+
 The next-generation 42Students LMS, rebuilt as a GCP-native TypeScript modular monolith.
 
 ## How development works now

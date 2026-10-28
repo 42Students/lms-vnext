@@ -1,5 +1,7 @@
 # LMS vNext — closure-first delivery strategy
 
+> **2026-10-29 OWNER-APPROVED EXECUTION REPLACEMENT:** [Database Domain Closure Protocol](database-domain-closure-protocol-2026-10-29.md) supersedes the DB execution order below and permits the integrated consumer proofs defined there. `docs/tracker.json` remains the only task tracker; global DATABASE/API/UI/RELEASE certification and all security/privacy obligations remain unchanged. Do not follow older DB scheduling prose where it conflicts.
+
 ## Binding priority order (2026-10-28)
 
 Follow [the owner-locked execution order](locked-execution-order-2026-10-28.md) for the exclusive cross-chat phase/priority sequence: DATABASE → API/user jobs → per-family UI Implementation Green → final Design Green → Release Green. This strategy continues to define **how** each safe batch is delivered, while `docs/tracker.json` alone defines **what is accepted**. Do not mistake source-census or historic parity counts for closure, and do not create another tracker.

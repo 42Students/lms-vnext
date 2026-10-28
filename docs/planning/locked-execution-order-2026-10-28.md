@@ -1,5 +1,7 @@
 # LMS vNext — LOCKED execution order (owner directive, 28 October 2026)
 
+> **2026-10-29 OWNER-APPROVED EXECUTION REPLACEMENT:** [Database Domain Closure Protocol](database-domain-closure-protocol-2026-10-29.md) supersedes the DB execution order below and permits the integrated consumer proofs defined there. `docs/tracker.json` remains the only task tracker; global DATABASE/API/UI/RELEASE certification and all security/privacy obligations remain unchanged. Do not follow older DB scheduling prose where it conflicts.
+
 > **Binding priority policy for every new vNext chat and implementation pass.** Do not invent a new sequence, start over on already-audited pages, or treat historical progress labels as acceptance. Change this order only on an explicit new user decision, recorded in a reviewed commit. This document defines **priority and phase gates**, not a second task tracker. The sole source of task/phase status remains [`docs/tracker.json`](../tracker.json), and the existing [closure-first delivery strategy](closure-first-delivery-strategy.md) governs how each engineering batch is executed.
 
 ## The short answer — strict order
