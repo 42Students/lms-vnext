@@ -145,6 +145,22 @@ describe("DB-004 scoped role proof is not a login credential",()=>{
    })).toBe(false);
   });
  });
+ it("denies a previously issued proof when its persisted role is revoked",async()=>{
+  await withRole("FACULTY",async actor=>{
+   const issued=await issue({userId:actor.userId,membershipId:actor.memberId,
+    role:"FACULTY",channel:"EMAIL"});
+   await pool.query("delete from membership_roles where membership_id=$1",[actor.memberId]);
+   expect(await redeemScopedAccountProof({
+    challengeId:issued.challengeId,code:issued.code,userId:actor.userId,
+    membershipId:actor.memberId,role:"FACULTY",
+   })).toBe(false);
+   const closed=await pool.query<{superseded_at:Date|null;verified_at:Date|null}>(
+    "select superseded_at,verified_at from identity_auth_attempts where id=$1",
+    [issued.challengeId]);
+   expect(closed.rows[0]?.superseded_at).toBeInstanceOf(Date);
+   expect(closed.rows[0]?.verified_at).toBeNull();
+  });
+ });
  it("uses one atomic five-guess budget across wrong attempts",async()=>{
   await withRole("FACULTY",async actor=>{
    const issued=await issue({userId:actor.userId,membershipId:actor.memberId,

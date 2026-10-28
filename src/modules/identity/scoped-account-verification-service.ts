@@ -63,7 +63,7 @@ async function loadOwner(tx:{execute:(query:ReturnType<typeof sql>)=>Promise<unk
    AND u.platform_status='ACTIVE'
    AND m.status='ACTIVE' AND m.suspended_at IS NULL
    AND c.status='ACTIVE' AND o.status='ACTIVE'
-  FOR UPDATE OF u,m`));
+  FOR UPDATE OF u,m FOR SHARE OF r,c,o`));
  const owner=result[0];
  if(!owner)return null;
  if(request.expectedRollNumber!=null &&
