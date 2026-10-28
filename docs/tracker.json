@@ -1114,7 +1114,12 @@
           "UI TPO and recruiter accounts"
         ],
         "operatingNotes": "For shared placement files, request L07 implementation or a documented single-owner handoff.",
-        "claim": null
+        "claim": {
+          "sessionId": "l08-vnext-20261029-0124-chat",
+          "holder": "GPT-6 Lane 8 / user-directed chat",
+          "claimedAt": "2026-10-28T19:55:15.221Z",
+          "expiresAt": "2026-10-28T21:55:15.221Z"
+        }
       },
       {
         "id": "L09",
