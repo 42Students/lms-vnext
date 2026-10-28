@@ -212,6 +212,41 @@ describe("DB03 elective group-backed course access (PostgreSQL)", () => {
       .some(row => row.deliveryId === fixture.deliveryId)).toBe(false);
   });
 
+  it("revokes elective course and schedule access when the slot no longer matches current term/year", async () => {
+    const f = await setupRosterFixture();
+    const host = await createHostSectionLearner(f);
+    await joinGroup(host.ctx, f.groupId, host.membershipId);
+    await expect(requireLearningReadAccess(host.ctx, f.offeringId, f.deliveryId))
+      .resolves.toBe("LEARNER");
+
+    await pool.query("UPDATE elective_slots SET semester_number=2 WHERE id=$1", [f.slotId]);
+    await expect(requireLearningReadAccess(host.ctx, f.offeringId, f.deliveryId))
+      .rejects.toMatchObject({ code: "LEARNER_ENROLLMENT_SCOPE_REQUIRED" });
+    expect((await listLearnerCourseDeliveries(host.ctx))
+      .some(row => row.deliveryId === f.deliveryId)).toBe(false);
+    expect((await getLearnerClassSchedule(host.ctx)).events
+      .some(row => row.id === f.scheduleEventId)).toBe(false);
+    await expect(joinGroup(host.ctx, f.groupId, host.membershipId))
+      .rejects.toMatchObject({ code: "ELECTIVE_PRIMARY_SECTION_REQUIRED" });
+
+    await pool.query("UPDATE elective_slots SET semester_number=1 WHERE id=$1", [f.slotId]);
+    const currentYear = await pool.query<{ current_academic_year_start:number|null }>(
+      "SELECT cps.current_academic_year_start FROM cohort_progression_state cps WHERE cps.cohort_id=$1",
+      [f.cohortId],
+    );
+    const start = currentYear.rows[0]?.current_academic_year_start;
+    expect(start).not.toBeNull();
+    const otherStart = Number(start) - 1;
+    await pool.query("UPDATE elective_slots SET academic_year=$2 WHERE id=$1", [
+      f.slotId, `${otherStart}-${String(otherStart + 1).slice(-2)}`,
+    ]);
+    await expect(requireLearningReadAccess(host.ctx, f.offeringId, f.deliveryId))
+      .rejects.toMatchObject({ code: "LEARNER_ENROLLMENT_SCOPE_REQUIRED" });
+    await pool.query("UPDATE elective_slots SET academic_year=NULL WHERE id=$1", [f.slotId]);
+    await expect(requireLearningReadAccess(host.ctx, f.offeringId, f.deliveryId))
+      .resolves.toBe("LEARNER");
+  });
+
   it("denies archived elective offerings rather than silently using host-section membership", async () => {
     const f = await setupRosterFixture();
     const host = await createHostSectionLearner(f);
