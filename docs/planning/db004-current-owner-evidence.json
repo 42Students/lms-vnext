@@ -16,18 +16,22 @@
       "RETIRED_CROSS_HOST_HANDOFF_SOURCE_DECISION": 6,
       "RETIREMENT_NORMALIZATION_OR_FIRST_PARTY_SECURITY_DECISION": 39,
       "EXACT_REGISTERED_FIELD_PG_WITNESS": 112,
-      "REGISTERED_BRANDING_REPLACEMENT_SEMANTIC_REVIEW": 15,
+      "REGISTERED_BRANDING_REPLACEMENT_PHYSICAL_WITNESS_SEMANTIC_REVIEW": 15,
       "COMPOSITE_REDESIGN_SEMANTIC_REVIEW": 16,
-      "REGISTERED_IDENTITY_NAME_ADDITIVE_PARTIAL_RUNTIME": 6,
-      "REGISTERED_DNS_DIAGNOSTICS_SOURCE": 1
-    }
+      "REGISTERED_IDENTITY_NAME_PHYSICAL_WITNESS_SEMANTIC_REVIEW": 6,
+      "REGISTERED_DNS_DIAGNOSTICS_PHYSICAL_WITNESS_SEMANTIC_REVIEW": 1
+    },
+    "registeredReplacementPhysicalWitnesses": 22,
+    "registeredPhysicalWitnessTotal": 134,
+    "stillWithoutPhysicalWitness": 61
   },
   "guidance": [
     "Exact column existence on registered PostgreSQL does not prove legacy reader/writer parity.",
     "Historical Firebase and identity_auth_handoffs proposals are superseded by first-party OTP/session design; do not promote them as credentials.",
     "Person name columns registered and own identity API activated; all-role UI/third-party delivery semantics need independent acceptance.",
     "RuntimeVerified=false remains until an exact test and business owner acceptance proves that row's behavior.",
-    "Never advance tracker done without fresh SHA-specific CI and approvals."
+    "Never advance tracker done without fresh SHA-specific CI and approvals.",
+    "22 registered replacement columns are physically witnessed, but still require legacy semantic/product sign-off. The two kinds of evidence are deliberately independent."
   ],
   "rows": [
     {
@@ -422,195 +426,225 @@
       "legacyField": "college_branding.id",
       "originalDisposition": "PROPOSED_TARGET_UNVERIFIED",
       "historicalTarget": "college_branding.college_id (STAGED; legacy surrogate id replaced by college key)",
-      "proposedPhysicalTarget": null,
-      "evidenceStatus": "REGISTERED_BRANDING_REPLACEMENT_SEMANTIC_REVIEW",
-      "physicalVerified": false,
+      "proposedPhysicalTarget": "college_branding.college_id",
+      "evidenceStatus": "REGISTERED_BRANDING_REPLACEMENT_PHYSICAL_WITNESS_SEMANTIC_REVIEW",
+      "physicalVerified": true,
       "runtimeSemanticsVerified": false,
       "evidence": [
         "src/db/schema/college-branding.ts",
-        "src/modules/colleges/branding-service.ts"
+        "src/modules/colleges/branding-service.ts",
+        "tests/integration/chat11-super-admin-branding-cas.test.ts",
+        "drizzle/0159_lane15_tenant_domain_diagnostics.sql"
       ]
     },
     {
       "legacyField": "college_branding.created_at",
       "originalDisposition": "PROPOSED_TARGET_UNVERIFIED",
       "historicalTarget": "college_branding.created_at (STAGED)",
-      "proposedPhysicalTarget": null,
-      "evidenceStatus": "REGISTERED_BRANDING_REPLACEMENT_SEMANTIC_REVIEW",
-      "physicalVerified": false,
+      "proposedPhysicalTarget": "college_branding.created_at",
+      "evidenceStatus": "REGISTERED_BRANDING_REPLACEMENT_PHYSICAL_WITNESS_SEMANTIC_REVIEW",
+      "physicalVerified": true,
       "runtimeSemanticsVerified": false,
       "evidence": [
         "src/db/schema/college-branding.ts",
-        "src/modules/colleges/branding-service.ts"
+        "src/modules/colleges/branding-service.ts",
+        "tests/integration/chat11-super-admin-branding-cas.test.ts",
+        "drizzle/0159_lane15_tenant_domain_diagnostics.sql"
       ]
     },
     {
       "legacyField": "college_branding.updated_at",
       "originalDisposition": "PROPOSED_TARGET_UNVERIFIED",
       "historicalTarget": "college_branding.updated_at (STAGED)",
-      "proposedPhysicalTarget": null,
-      "evidenceStatus": "REGISTERED_BRANDING_REPLACEMENT_SEMANTIC_REVIEW",
-      "physicalVerified": false,
+      "proposedPhysicalTarget": "college_branding.updated_at",
+      "evidenceStatus": "REGISTERED_BRANDING_REPLACEMENT_PHYSICAL_WITNESS_SEMANTIC_REVIEW",
+      "physicalVerified": true,
       "runtimeSemanticsVerified": false,
       "evidence": [
         "src/db/schema/college-branding.ts",
-        "src/modules/colleges/branding-service.ts"
+        "src/modules/colleges/branding-service.ts",
+        "tests/integration/chat11-super-admin-branding-cas.test.ts",
+        "drizzle/0159_lane15_tenant_domain_diagnostics.sql"
       ]
     },
     {
       "legacyField": "college_branding.is_deleted",
       "originalDisposition": "PROPOSED_TARGET_UNVERIFIED",
       "historicalTarget": "college_branding.archived_at (STAGED)",
-      "proposedPhysicalTarget": null,
-      "evidenceStatus": "REGISTERED_BRANDING_REPLACEMENT_SEMANTIC_REVIEW",
-      "physicalVerified": false,
+      "proposedPhysicalTarget": "college_branding.legacy_branding_archived_at",
+      "evidenceStatus": "REGISTERED_BRANDING_REPLACEMENT_PHYSICAL_WITNESS_SEMANTIC_REVIEW",
+      "physicalVerified": true,
       "runtimeSemanticsVerified": false,
       "evidence": [
         "src/db/schema/college-branding.ts",
-        "src/modules/colleges/branding-service.ts"
+        "src/modules/colleges/branding-service.ts",
+        "tests/integration/chat11-super-admin-branding-cas.test.ts",
+        "drizzle/0159_lane15_tenant_domain_diagnostics.sql"
       ]
     },
     {
       "legacyField": "college_branding.college_id",
       "originalDisposition": "PROPOSED_TARGET_UNVERIFIED",
       "historicalTarget": "college_branding.college_id (STAGED)",
-      "proposedPhysicalTarget": null,
-      "evidenceStatus": "REGISTERED_BRANDING_REPLACEMENT_SEMANTIC_REVIEW",
-      "physicalVerified": false,
+      "proposedPhysicalTarget": "college_branding.college_id",
+      "evidenceStatus": "REGISTERED_BRANDING_REPLACEMENT_PHYSICAL_WITNESS_SEMANTIC_REVIEW",
+      "physicalVerified": true,
       "runtimeSemanticsVerified": false,
       "evidence": [
         "src/db/schema/college-branding.ts",
-        "src/modules/colleges/branding-service.ts"
+        "src/modules/colleges/branding-service.ts",
+        "tests/integration/chat11-super-admin-branding-cas.test.ts",
+        "drizzle/0159_lane15_tenant_domain_diagnostics.sql"
       ]
     },
     {
       "legacyField": "college_branding.logo_url",
       "originalDisposition": "PROPOSED_TARGET_UNVERIFIED",
       "historicalTarget": "college_branding.logo_url (STAGED)",
-      "proposedPhysicalTarget": null,
-      "evidenceStatus": "REGISTERED_BRANDING_REPLACEMENT_SEMANTIC_REVIEW",
-      "physicalVerified": false,
+      "proposedPhysicalTarget": "college_branding.logo_url",
+      "evidenceStatus": "REGISTERED_BRANDING_REPLACEMENT_PHYSICAL_WITNESS_SEMANTIC_REVIEW",
+      "physicalVerified": true,
       "runtimeSemanticsVerified": false,
       "evidence": [
         "src/db/schema/college-branding.ts",
-        "src/modules/colleges/branding-service.ts"
+        "src/modules/colleges/branding-service.ts",
+        "tests/integration/chat11-super-admin-branding-cas.test.ts",
+        "drizzle/0159_lane15_tenant_domain_diagnostics.sql"
       ]
     },
     {
       "legacyField": "college_branding.favicon_url",
       "originalDisposition": "PROPOSED_TARGET_UNVERIFIED",
       "historicalTarget": "college_branding.favicon_url (STAGED)",
-      "proposedPhysicalTarget": null,
-      "evidenceStatus": "REGISTERED_BRANDING_REPLACEMENT_SEMANTIC_REVIEW",
-      "physicalVerified": false,
+      "proposedPhysicalTarget": "college_branding.favicon_url",
+      "evidenceStatus": "REGISTERED_BRANDING_REPLACEMENT_PHYSICAL_WITNESS_SEMANTIC_REVIEW",
+      "physicalVerified": true,
       "runtimeSemanticsVerified": false,
       "evidence": [
         "src/db/schema/college-branding.ts",
-        "src/modules/colleges/branding-service.ts"
+        "src/modules/colleges/branding-service.ts",
+        "tests/integration/chat11-super-admin-branding-cas.test.ts",
+        "drizzle/0159_lane15_tenant_domain_diagnostics.sql"
       ]
     },
     {
       "legacyField": "college_branding.login_background_url",
       "originalDisposition": "PROPOSED_TARGET_UNVERIFIED",
       "historicalTarget": "college_branding.login_background_url (STAGED)",
-      "proposedPhysicalTarget": null,
-      "evidenceStatus": "REGISTERED_BRANDING_REPLACEMENT_SEMANTIC_REVIEW",
-      "physicalVerified": false,
+      "proposedPhysicalTarget": "college_branding.login_background_url",
+      "evidenceStatus": "REGISTERED_BRANDING_REPLACEMENT_PHYSICAL_WITNESS_SEMANTIC_REVIEW",
+      "physicalVerified": true,
       "runtimeSemanticsVerified": false,
       "evidence": [
         "src/db/schema/college-branding.ts",
-        "src/modules/colleges/branding-service.ts"
+        "src/modules/colleges/branding-service.ts",
+        "tests/integration/chat11-super-admin-branding-cas.test.ts",
+        "drizzle/0159_lane15_tenant_domain_diagnostics.sql"
       ]
     },
     {
       "legacyField": "college_branding.login_background_url_mobile",
       "originalDisposition": "PROPOSED_TARGET_UNVERIFIED",
       "historicalTarget": "college_branding.login_background_url_mobile (STAGED)",
-      "proposedPhysicalTarget": null,
-      "evidenceStatus": "REGISTERED_BRANDING_REPLACEMENT_SEMANTIC_REVIEW",
-      "physicalVerified": false,
+      "proposedPhysicalTarget": "college_branding.login_background_url_mobile",
+      "evidenceStatus": "REGISTERED_BRANDING_REPLACEMENT_PHYSICAL_WITNESS_SEMANTIC_REVIEW",
+      "physicalVerified": true,
       "runtimeSemanticsVerified": false,
       "evidence": [
         "src/db/schema/college-branding.ts",
-        "src/modules/colleges/branding-service.ts"
+        "src/modules/colleges/branding-service.ts",
+        "tests/integration/chat11-super-admin-branding-cas.test.ts",
+        "drizzle/0159_lane15_tenant_domain_diagnostics.sql"
       ]
     },
     {
       "legacyField": "college_branding.primary_color",
       "originalDisposition": "PROPOSED_TARGET_UNVERIFIED",
       "historicalTarget": "college_branding.primary_color (STAGED)",
-      "proposedPhysicalTarget": null,
-      "evidenceStatus": "REGISTERED_BRANDING_REPLACEMENT_SEMANTIC_REVIEW",
-      "physicalVerified": false,
+      "proposedPhysicalTarget": "college_branding.primary_color",
+      "evidenceStatus": "REGISTERED_BRANDING_REPLACEMENT_PHYSICAL_WITNESS_SEMANTIC_REVIEW",
+      "physicalVerified": true,
       "runtimeSemanticsVerified": false,
       "evidence": [
         "src/db/schema/college-branding.ts",
-        "src/modules/colleges/branding-service.ts"
+        "src/modules/colleges/branding-service.ts",
+        "tests/integration/chat11-super-admin-branding-cas.test.ts",
+        "drizzle/0159_lane15_tenant_domain_diagnostics.sql"
       ]
     },
     {
       "legacyField": "college_branding.secondary_color",
       "originalDisposition": "PROPOSED_TARGET_UNVERIFIED",
       "historicalTarget": "college_branding.secondary_color (STAGED)",
-      "proposedPhysicalTarget": null,
-      "evidenceStatus": "REGISTERED_BRANDING_REPLACEMENT_SEMANTIC_REVIEW",
-      "physicalVerified": false,
+      "proposedPhysicalTarget": "college_branding.secondary_color",
+      "evidenceStatus": "REGISTERED_BRANDING_REPLACEMENT_PHYSICAL_WITNESS_SEMANTIC_REVIEW",
+      "physicalVerified": true,
       "runtimeSemanticsVerified": false,
       "evidence": [
         "src/db/schema/college-branding.ts",
-        "src/modules/colleges/branding-service.ts"
+        "src/modules/colleges/branding-service.ts",
+        "tests/integration/chat11-super-admin-branding-cas.test.ts",
+        "drizzle/0159_lane15_tenant_domain_diagnostics.sql"
       ]
     },
     {
       "legacyField": "college_branding.support_email",
       "originalDisposition": "PROPOSED_TARGET_UNVERIFIED",
       "historicalTarget": "college_branding.support_email (STAGED)",
-      "proposedPhysicalTarget": null,
-      "evidenceStatus": "REGISTERED_BRANDING_REPLACEMENT_SEMANTIC_REVIEW",
-      "physicalVerified": false,
+      "proposedPhysicalTarget": "college_branding.support_email",
+      "evidenceStatus": "REGISTERED_BRANDING_REPLACEMENT_PHYSICAL_WITNESS_SEMANTIC_REVIEW",
+      "physicalVerified": true,
       "runtimeSemanticsVerified": false,
       "evidence": [
         "src/db/schema/college-branding.ts",
-        "src/modules/colleges/branding-service.ts"
+        "src/modules/colleges/branding-service.ts",
+        "tests/integration/chat11-super-admin-branding-cas.test.ts",
+        "drizzle/0159_lane15_tenant_domain_diagnostics.sql"
       ]
     },
     {
       "legacyField": "college_branding.support_phone",
       "originalDisposition": "PROPOSED_TARGET_UNVERIFIED",
       "historicalTarget": "college_branding.support_phone (STAGED)",
-      "proposedPhysicalTarget": null,
-      "evidenceStatus": "REGISTERED_BRANDING_REPLACEMENT_SEMANTIC_REVIEW",
-      "physicalVerified": false,
+      "proposedPhysicalTarget": "college_branding.support_phone",
+      "evidenceStatus": "REGISTERED_BRANDING_REPLACEMENT_PHYSICAL_WITNESS_SEMANTIC_REVIEW",
+      "physicalVerified": true,
       "runtimeSemanticsVerified": false,
       "evidence": [
         "src/db/schema/college-branding.ts",
-        "src/modules/colleges/branding-service.ts"
+        "src/modules/colleges/branding-service.ts",
+        "tests/integration/chat11-super-admin-branding-cas.test.ts",
+        "drizzle/0159_lane15_tenant_domain_diagnostics.sql"
       ]
     },
     {
       "legacyField": "college_branding.terms_url",
       "originalDisposition": "PROPOSED_TARGET_UNVERIFIED",
       "historicalTarget": "college_branding.terms_url (STAGED)",
-      "proposedPhysicalTarget": null,
-      "evidenceStatus": "REGISTERED_BRANDING_REPLACEMENT_SEMANTIC_REVIEW",
-      "physicalVerified": false,
+      "proposedPhysicalTarget": "college_branding.terms_url",
+      "evidenceStatus": "REGISTERED_BRANDING_REPLACEMENT_PHYSICAL_WITNESS_SEMANTIC_REVIEW",
+      "physicalVerified": true,
       "runtimeSemanticsVerified": false,
       "evidence": [
         "src/db/schema/college-branding.ts",
-        "src/modules/colleges/branding-service.ts"
+        "src/modules/colleges/branding-service.ts",
+        "tests/integration/chat11-super-admin-branding-cas.test.ts",
+        "drizzle/0159_lane15_tenant_domain_diagnostics.sql"
       ]
     },
     {
       "legacyField": "college_branding.privacy_url",
       "originalDisposition": "PROPOSED_TARGET_UNVERIFIED",
       "historicalTarget": "college_branding.privacy_url (STAGED)",
-      "proposedPhysicalTarget": null,
-      "evidenceStatus": "REGISTERED_BRANDING_REPLACEMENT_SEMANTIC_REVIEW",
-      "physicalVerified": false,
+      "proposedPhysicalTarget": "college_branding.privacy_url",
+      "evidenceStatus": "REGISTERED_BRANDING_REPLACEMENT_PHYSICAL_WITNESS_SEMANTIC_REVIEW",
+      "physicalVerified": true,
       "runtimeSemanticsVerified": false,
       "evidence": [
         "src/db/schema/college-branding.ts",
-        "src/modules/colleges/branding-service.ts"
+        "src/modules/colleges/branding-service.ts",
+        "tests/integration/chat11-super-admin-branding-cas.test.ts",
+        "drizzle/0159_lane15_tenant_domain_diagnostics.sql"
       ]
     },
     {
@@ -889,12 +923,13 @@
       "originalDisposition": "PROPOSED_TARGET_UNVERIFIED",
       "historicalTarget": "users.given_name (STAGED W01)",
       "proposedPhysicalTarget": "users.given_name",
-      "evidenceStatus": "REGISTERED_IDENTITY_NAME_ADDITIVE_PARTIAL_RUNTIME",
-      "physicalVerified": false,
+      "evidenceStatus": "REGISTERED_IDENTITY_NAME_PHYSICAL_WITNESS_SEMANTIC_REVIEW",
+      "physicalVerified": true,
       "runtimeSemanticsVerified": false,
       "evidence": [
         "drizzle/0300_db01_person_name_identity_profile.sql",
-        "src/modules/people/identity-profile-service.ts"
+        "src/modules/people/identity-profile-service.ts",
+        "tests/integration/db01-person-name-persistence.test.ts"
       ]
     },
     {
@@ -902,12 +937,13 @@
       "originalDisposition": "PROPOSED_TARGET_UNVERIFIED",
       "historicalTarget": "users.family_name (STAGED W01)",
       "proposedPhysicalTarget": "users.family_name",
-      "evidenceStatus": "REGISTERED_IDENTITY_NAME_ADDITIVE_PARTIAL_RUNTIME",
-      "physicalVerified": false,
+      "evidenceStatus": "REGISTERED_IDENTITY_NAME_PHYSICAL_WITNESS_SEMANTIC_REVIEW",
+      "physicalVerified": true,
       "runtimeSemanticsVerified": false,
       "evidence": [
         "drizzle/0300_db01_person_name_identity_profile.sql",
-        "src/modules/people/identity-profile-service.ts"
+        "src/modules/people/identity-profile-service.ts",
+        "tests/integration/db01-person-name-persistence.test.ts"
       ]
     },
     {
@@ -1206,12 +1242,13 @@
       "originalDisposition": "PROPOSED_TARGET_UNVERIFIED",
       "historicalTarget": "users.given_name (STAGED W01)",
       "proposedPhysicalTarget": "users.given_name",
-      "evidenceStatus": "REGISTERED_IDENTITY_NAME_ADDITIVE_PARTIAL_RUNTIME",
-      "physicalVerified": false,
+      "evidenceStatus": "REGISTERED_IDENTITY_NAME_PHYSICAL_WITNESS_SEMANTIC_REVIEW",
+      "physicalVerified": true,
       "runtimeSemanticsVerified": false,
       "evidence": [
         "drizzle/0300_db01_person_name_identity_profile.sql",
-        "src/modules/people/identity-profile-service.ts"
+        "src/modules/people/identity-profile-service.ts",
+        "tests/integration/db01-person-name-persistence.test.ts"
       ]
     },
     {
@@ -1219,12 +1256,13 @@
       "originalDisposition": "PROPOSED_TARGET_UNVERIFIED",
       "historicalTarget": "users.family_name (STAGED W01)",
       "proposedPhysicalTarget": "users.family_name",
-      "evidenceStatus": "REGISTERED_IDENTITY_NAME_ADDITIVE_PARTIAL_RUNTIME",
-      "physicalVerified": false,
+      "evidenceStatus": "REGISTERED_IDENTITY_NAME_PHYSICAL_WITNESS_SEMANTIC_REVIEW",
+      "physicalVerified": true,
       "runtimeSemanticsVerified": false,
       "evidence": [
         "drizzle/0300_db01_person_name_identity_profile.sql",
-        "src/modules/people/identity-profile-service.ts"
+        "src/modules/people/identity-profile-service.ts",
+        "tests/integration/db01-person-name-persistence.test.ts"
       ]
     },
     {
@@ -1794,12 +1832,13 @@
       "originalDisposition": "PROPOSED_TARGET_UNVERIFIED",
       "historicalTarget": "users.given_name (STAGED W01)",
       "proposedPhysicalTarget": "users.given_name",
-      "evidenceStatus": "REGISTERED_IDENTITY_NAME_ADDITIVE_PARTIAL_RUNTIME",
-      "physicalVerified": false,
+      "evidenceStatus": "REGISTERED_IDENTITY_NAME_PHYSICAL_WITNESS_SEMANTIC_REVIEW",
+      "physicalVerified": true,
       "runtimeSemanticsVerified": false,
       "evidence": [
         "drizzle/0300_db01_person_name_identity_profile.sql",
-        "src/modules/people/identity-profile-service.ts"
+        "src/modules/people/identity-profile-service.ts",
+        "tests/integration/db01-person-name-persistence.test.ts"
       ]
     },
     {
@@ -1807,12 +1846,13 @@
       "originalDisposition": "PROPOSED_TARGET_UNVERIFIED",
       "historicalTarget": "users.family_name (STAGED W01)",
       "proposedPhysicalTarget": "users.family_name",
-      "evidenceStatus": "REGISTERED_IDENTITY_NAME_ADDITIVE_PARTIAL_RUNTIME",
-      "physicalVerified": false,
+      "evidenceStatus": "REGISTERED_IDENTITY_NAME_PHYSICAL_WITNESS_SEMANTIC_REVIEW",
+      "physicalVerified": true,
       "runtimeSemanticsVerified": false,
       "evidence": [
         "drizzle/0300_db01_person_name_identity_profile.sql",
-        "src/modules/people/identity-profile-service.ts"
+        "src/modules/people/identity-profile-service.ts",
+        "tests/integration/db01-person-name-persistence.test.ts"
       ]
     },
     {
@@ -2162,12 +2202,14 @@
       "originalDisposition": "PROPOSED_TARGET_UNVERIFIED",
       "historicalTarget": "tenant_domains.last_found_values (STAGED SQL ONLY)",
       "proposedPhysicalTarget": "tenant_domains.last_found_values",
-      "evidenceStatus": "REGISTERED_DNS_DIAGNOSTICS_SOURCE",
-      "physicalVerified": false,
+      "evidenceStatus": "REGISTERED_DNS_DIAGNOSTICS_PHYSICAL_WITNESS_SEMANTIC_REVIEW",
+      "physicalVerified": true,
       "runtimeSemanticsVerified": false,
       "evidence": [
         "src/db/schema/tenant-domains.ts",
-        "src/modules/tenant-domains/repository.ts"
+        "src/modules/tenant-domains/repository.ts",
+        "drizzle/0159_lane15_tenant_domain_diagnostics.sql",
+        "tests/integration/tenant-domains.test.ts"
       ]
     },
     {

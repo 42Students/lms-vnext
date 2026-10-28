@@ -20,8 +20,13 @@ test("DB-004 owner scope accounts for all legacy columns without stealing other 
 });
 test("physical field proof and runtime proof remain explicitly distinct",()=>{
  const physical=current.rows.filter(x=>x.physicalVerified);
- assert.equal(physical.length,112);
- assert.ok(physical.every(x=>x.evidenceStatus==="EXACT_REGISTERED_FIELD_PG_WITNESS"));
+ assert.equal(physical.length,134);
+ assert.equal(physical.filter(x=>x.evidenceStatus==="EXACT_REGISTERED_FIELD_PG_WITNESS").length,112);
+ assert.equal(physical.filter(x=>x.evidenceStatus==="REGISTERED_BRANDING_REPLACEMENT_PHYSICAL_WITNESS_SEMANTIC_REVIEW").length,15);
+ assert.equal(physical.filter(x=>x.evidenceStatus==="REGISTERED_IDENTITY_NAME_PHYSICAL_WITNESS_SEMANTIC_REVIEW").length,6);
+ assert.equal(physical.filter(x=>x.evidenceStatus==="REGISTERED_DNS_DIAGNOSTICS_PHYSICAL_WITNESS_SEMANTIC_REVIEW").length,1);
+ assert.equal(current.summary.registeredPhysicalWitnessTotal,134);
+ assert.equal(current.summary.stillWithoutPhysicalWitness,61);
  assert.ok(current.rows.every(x=>x.runtimeSemanticsVerified===false));
  assert.equal(current.completion,"OPEN_UNTIL_RUNTIME_SEMANTICS_AND_SIGNOFF");
 });
@@ -38,6 +43,6 @@ test("identity names and branding proposals now point to registered active modul
  const branding=readFileSync("src/db/schema/college-branding.ts","utf8");
  assert.match(schema,/identityProfileVersion/);
  assert.match(branding,/collegeBranding = pgTable/);
- assert.equal(current.rows.filter(x=>x.evidenceStatus==="REGISTERED_IDENTITY_NAME_ADDITIVE_PARTIAL_RUNTIME").length,6);
- assert.equal(current.rows.filter(x=>x.evidenceStatus==="REGISTERED_BRANDING_REPLACEMENT_SEMANTIC_REVIEW").length,15);
+ assert.equal(current.rows.filter(x=>x.evidenceStatus==="REGISTERED_IDENTITY_NAME_PHYSICAL_WITNESS_SEMANTIC_REVIEW").length,6);
+ assert.equal(current.rows.filter(x=>x.evidenceStatus==="REGISTERED_BRANDING_REPLACEMENT_PHYSICAL_WITNESS_SEMANTIC_REVIEW").length,15);
 });

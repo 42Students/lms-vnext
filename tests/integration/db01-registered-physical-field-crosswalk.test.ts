@@ -21,6 +21,10 @@ const ledger=JSON.parse(readFileSync("docs/planning/db01-chat05-final-field-disp
   rows:CrosswalkRow[];
 };
 const db004=ledger.rows.filter(r=>r.ownerTask==="DB-004");
+const current=JSON.parse(readFileSync("docs/planning/db004-current-owner-evidence.json","utf8")) as {
+ rows:{legacyField:string;proposedPhysicalTarget:string|null;physicalVerified:boolean;
+ evidenceStatus:string;runtimeSemanticsVerified:boolean}[];
+};
 const exact=db004.filter(r=>r.decisionStatus==="PROPOSED_TARGET_UNVERIFIED"
   && /^[a-z_][a-z0-9_]*\.[a-z_][a-z0-9_]*$/.test(r.target??""));
 const retired=exact.filter(r=>r.target?.startsWith("identity_auth_handoffs."));
@@ -42,6 +46,27 @@ describe("DB-004 registered source → target physical catalog",()=>{
            WHERE table_schema='public' AND table_name=$1 AND column_name=$2
         ) AS present`,[table,column]);
       if(!result.rows[0]?.present)missing.push(row.legacyField+" → "+row.target);
+    }
+    expect(missing).toEqual([]);
+  });
+
+  it("physically witnesses 22 accepted registered replacements without claiming legacy semantic parity",async()=>{
+    const replacements=current.rows.filter(row=>row.physicalVerified &&
+      row.evidenceStatus!=="EXACT_REGISTERED_FIELD_PG_WITNESS");
+    expect(replacements).toHaveLength(22);
+    const missing:string[]=[];
+    for(const row of replacements){
+      expect(row.runtimeSemanticsVerified).toBe(false);
+      const target=row.proposedPhysicalTarget;
+      expect(target).toMatch(/^[a-z_][a-z0-9_]*\.[a-z_][a-z0-9_]*$/);
+      const [table,column]=target!.split(".");
+      const result=await pool.query<{present:boolean}>(`
+        SELECT EXISTS(
+          SELECT 1 FROM information_schema.columns
+          WHERE table_schema='public' AND table_name=$1 AND column_name=$2
+        ) AS present
+      `,[table,column]);
+      if(!result.rows[0]?.present)missing.push(row.legacyField+" → "+target);
     }
     expect(missing).toEqual([]);
   });
