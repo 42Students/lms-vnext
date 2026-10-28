@@ -11,6 +11,9 @@ on:
       - 'src/modules/academics/**'
       - 'src/modules/courses/offering-service.ts'
       - 'tests/integration/db005-*.test.ts'
+      - 'tests/integration/db06-assessment-parent-scope.test.ts'
+      - 'tests/db02-registered-parent-periods-pg.test.mjs'
+      - 'tests/db005-*.test.mjs'
       - '.github/workflows/db005-registered-acceptance.yml'
 permissions:
   contents: read
@@ -61,6 +64,12 @@ jobs:
         run: node --test tests/db005-registered-canonical-source-contract.test.mjs
       - name: DB005 PostgreSQL and race acceptance
         run: bash scripts/sql/db02-run-disposable-acceptance.sh
+      - name: DB005 registered calendar and cross-college academic-period denials
+        env:
+          DB02_REGISTERED_PARENT_PERIODS: 'YES'
+        run: node --test tests/db02-registered-parent-periods-pg.test.mjs
+      - name: DB005 cross-domain fixture lifecycle contracts
+        run: node --test tests/db005-cross-domain-fixture-lifecycle.test.mjs
       - name: Cross-domain identity, assessment, enrollment acceptance
         run: >-
           npx vitest run --config vitest.db.registered.config.ts
