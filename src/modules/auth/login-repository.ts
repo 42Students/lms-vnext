@@ -328,14 +328,63 @@ export const drizzleLoginRepository: LoginRepository = {
       // Lock the persisted user FIRST (also the lock order used by session
       // validation and disablement), then consume the one-time challenge.
       const current = await tx.execute(sql`
-        SELECT u.id
+        SELECT u.id, a.college_id AS attempt_college_id
         FROM users u
         JOIN identity_auth_attempts a ON a.user_id = u.id
         WHERE a.id = ${id} AND u.id = ${userId}
           AND u.platform_status = 'ACTIVE'
         FOR UPDATE OF u
       `);
-      if (rowsOf(current).length !== 1) return false;
+      const locked = rowsOf(current)[0];
+      if (!locked) return false;
+
+      // A checked membership or recruiter grant can be suspended between
+      // the preflight login-service read and this final OTP consumption.
+      // Serialize against the college/org archive and active eligibility
+      // rows BEFORE burning the code or minting a valid device session.
+      const collegeId = locked["attempt_college_id"];
+      if (typeof collegeId === "string") {
+        const tenant = await tx.execute(sql`
+          SELECT c.id FROM colleges c
+          JOIN organizations o ON o.id = c.organization_id
+          WHERE c.id = ${collegeId}
+            AND c.status = 'ACTIVE' AND o.status = 'ACTIVE'
+          FOR SHARE OF c, o
+        `);
+        if (rowsOf(tenant).length !== 1) return false;
+        const membership = await tx.execute(sql`
+          SELECT m.id FROM college_memberships m
+          WHERE m.user_id = ${userId} AND m.college_id = ${collegeId}
+            AND m.status = 'ACTIVE' AND m.suspended_at IS NULL
+          FOR SHARE OF m
+          LIMIT 1
+        `);
+        if (!rowsOf(membership).length) {
+          // Recruiter-only sign-in is valid without a learner/faculty
+          // membership, but only while every grant parent is eligible.
+          const recruiter = await tx.execute(sql`
+            SELECT g.id FROM placement_recruiter_college_grants g
+            JOIN placement_recruiter_profiles p
+              ON p.user_id = g.recruiter_user_id
+            JOIN placement_companies co ON co.id = p.company_id
+            JOIN placement_company_relationships rel
+              ON rel.id = g.company_relationship_id
+            WHERE g.recruiter_user_id = ${userId}
+              AND rel.college_id = ${collegeId}
+              AND rel.company_id = p.company_id
+              AND g.status = 'ACTIVE'
+              AND g.verification_status = 'VERIFIED'
+              AND g.valid_until > clock_timestamp()
+              AND g.capabilities @> ARRAY['DRIVES']::text[]
+              AND p.status = 'ACTIVE'
+              AND co.status = 'ACTIVE'
+              AND rel.status = 'ACTIVE'
+            FOR SHARE OF g, p, co, rel
+            LIMIT 1
+          `);
+          if (!rowsOf(recruiter).length) return false;
+        }
+      }
       const consumed = await consumeInTransaction(tx, id);
       if (!consumed) return false;
       if (session) {
