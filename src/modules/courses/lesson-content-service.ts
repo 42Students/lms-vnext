@@ -609,7 +609,9 @@ export async function updateLessonContent(
       startsAt: normalized.startsAt,
       endsAt: normalized.endsAt,
       sequence: normalized.sequence,
-      updatedAt: new Date(),
+      // The optimistic timestamp must advance even for same-millisecond edits.
+      version: sql<number>`${lessonContents.version} + 1`,
+      updatedAt: sql<Date>`greatest(${lessonContents.updatedAt} + interval '1 millisecond', clock_timestamp())`,
     })
     .where(
       and(
@@ -680,7 +682,8 @@ export async function transitionLessonContent(
     .update(lessonContents)
     .set({
       status: nextStatus,
-      updatedAt: new Date(),
+      version: sql<number>`${lessonContents.version} + 1`,
+      updatedAt: sql<Date>`greatest(${lessonContents.updatedAt} + interval '1 millisecond', clock_timestamp())`,
     })
     .where(
       and(
