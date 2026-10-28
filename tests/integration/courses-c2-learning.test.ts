@@ -176,6 +176,12 @@ async function cleanupC2() {
        where code like 'C2-%'
      )`,
   );
+  // Registered DB-005 curriculum rows now refer to these fixture courses.
+  // Remove only fixture mappings before deleting their course parents.
+  await pool.query(
+    `delete from program_term_courses
+     where course_id in (select id from courses where code like 'C2-%')`,
+  );
   await pool.query(
     "delete from courses where code like 'C2-%'",
   );
