@@ -48,6 +48,7 @@ import {
   listMyLearnerContentProgressBatch,
 } from "@/modules/courses/progress-service";
 import { getCollegeLearnerProgressReport } from "@/modules/courses/college-learner-progress-service";
+import { getAdminLearnerCurrentContentAttempts } from "@/modules/courses/admin-learner-current-progress-service";
 
 const databaseUrl =
   process.env.TEST_DATABASE_URL ??
@@ -1160,10 +1161,18 @@ describe("courses C2 learning structure against PostgreSQL", () => {
      (membership_id,lesson_content_id,attempt,completed_at,last_position_seconds,legacy_was_deleted)
      values($1,$2,2,now(),100,true)`,[learnerMembershipId,video.id]);
     expect(await totals()).toEqual({completed:0,total:1});
+    const adminDeleted=await getAdminLearnerCurrentContentAttempts(
+      collegeAdmin,learnerMembershipId,structure.deliveryA.id);
+    expect(adminDeleted.attempts).toEqual([
+      expect.objectContaining({contentId:video.id,attempt:2,completedAt:null}),
+    ]);
     await pool.query(`update learner_content_progress set legacy_was_deleted=false
      where membership_id=$1 and lesson_content_id=$2 and attempt=2`,
       [learnerMembershipId,video.id]);
     expect(await totals()).toEqual({completed:1,total:1});
+    const adminRestored=await getAdminLearnerCurrentContentAttempts(
+      collegeAdmin,learnerMembershipId,structure.deliveryA.id);
+    expect(adminRestored.attempts[0]?.completedAt).toBeInstanceOf(Date);
     await pool.query(`insert into learner_content_progress
      (membership_id,lesson_content_id,attempt,last_position_seconds)
      values($1,$2,3,0)`,[learnerMembershipId,video.id]);
