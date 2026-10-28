@@ -66,6 +66,7 @@ jobs:
         run: >-
           npx vitest run --config vitest.db.registered.config.ts
           tests/integration/db007-education-projection.test.ts
+          tests/integration/db007-review-lifecycle.test.ts
           tests/integration/learner-profile-document-edit.test.ts
           tests/integration/learner-profile-sections-write.test.ts
       - name: Full TypeScript typecheck after PostgreSQL acceptance
