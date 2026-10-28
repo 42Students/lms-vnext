@@ -2136,6 +2136,13 @@
       "when": 1792359611266,
       "tag": "0304_db04_normalized_profile_persistence",
       "breakpoints": true
+    },
+    {
+      "idx": 305,
+      "version": "7",
+      "when": 1792359671266,
+      "tag": "0305_db05_course_parent_graph_registered",
+      "breakpoints": true
     }
   ]
 }
