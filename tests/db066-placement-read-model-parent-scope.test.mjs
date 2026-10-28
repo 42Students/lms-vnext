@@ -11,18 +11,18 @@ for (const [label, path] of [
 ]) {
   test(`DB-066 ${label} reads never join a role option from another job`, () => {
     const source = readFileSync(path, "utf8");
-    const joins = [...source.matchAll(/\\.innerJoin\\(\\s*placementJobRoleOptions,/g)];
+    const joins = [...source.matchAll(/\.innerJoin\(\s*placementJobRoleOptions,/g)];
     assert.ok(joins.length >= 3, "Expected existing role-option read paths");
     for (const match of joins) {
       const scope = source.slice(match.index, match.index + 470);
-      assert.match(scope, /and\\(/, "Role read must use a compound join");
+      assert.match(scope, /and\(/, "Role read must use a compound join");
       assert.match(
         scope,
-        /eq\\(placementJobRoleOptions\\.id, placementApplications\\.roleOptionId\\)/,
+        /eq\(placementJobRoleOptions\.id, placementApplications\.roleOptionId\)/,
       );
       assert.match(
         scope,
-        /eq\\(placementJobRoleOptions\\.jobId, placementApplications\\.jobId\\)/,
+        /eq\(placementJobRoleOptions\.jobId, placementApplications\.jobId\)/,
         "A valid role ID from an unrelated job must not be exposed",
       );
     }
