@@ -1,0 +1,66 @@
+name: DB-007 private profile database acceptance
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - "drizzle/0304_db04_normalized_profile_persistence.sql"
+      - "drizzle/meta/0304_snapshot.json"
+      - "src/db/schema/db04-*"
+      - "src/db/schema/profile-verification.ts"
+      - "src/modules/profile-verification/**"
+      - "tests/db007-*.test.mjs"
+      - ".github/workflows/db007-profile-acceptance.yml"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: lms-db007-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  db007-registered-postgres:
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    services:
+      postgres:
+        image: postgres:17-alpine
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: lms_vnext_test
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres -d lms_vnext_test"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 20
+    env:
+      DATABASE_URL: postgresql://postgres:postgres@127.0.0.1:5432/lms_vnext_test
+      TEST_DATABASE_URL: postgresql://postgres:postgres@127.0.0.1:5432/lms_vnext_test
+      DB04_REGISTERED_PG: "YES"
+      DB03_ISOLATED_TEST_DATABASE: "1"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Verify registered journal and SQL-to-schema source contracts
+        run: |
+          npm run db:journal:verify
+          node --test tests/db007-normalized-profile-registration.test.mjs tests/db04-profile-education-images-staged.test.mjs tests/db007-live-cgpa-policy-authority.test.mjs tests/db007-live-tpo-verifier-grant-authority.test.mjs tests/db007-private-gallery-publisher-ownership.test.mjs
+      - name: Typecheck private profile modules
+        run: npm run typecheck
+      - name: Migrate and seed disposable PostgreSQL from empty
+        env:
+          DATABASE_URL: ""
+        run: npm run db:test:prepare
+      - name: Idempotent registered replay
+        run: npm run db:migrate
+      - name: DB-007 registered row-level tenant, private receipt and history negatives
+        run: node --test tests/db007-registered-profile-pg.test.mjs
