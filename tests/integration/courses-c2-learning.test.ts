@@ -1172,4 +1172,47 @@ describe("courses C2 learning structure against PostgreSQL", () => {
     expect(await totals()).toEqual({completed:0,total:0});
   });
 
+  it("rejects direct SQL content delivery reparent across course offerings",async()=>{
+    const structure=await createStructure();
+    const path=await createLearningPath(collegeAdmin,{
+      offeringId:structure.offering.id,title:"C2 guarded content path",
+    });
+    const lesson=await createCourseLesson(collegeAdmin,{
+      learningPathId:path.id,name:"C2 guarded lesson",sequence:0,
+    });
+    const generic=await createLessonContent(collegeAdmin,{
+      lessonId:lesson.id,contentType:"RESOURCE",
+      title:"C2 guarded generic",notes:"Protected parent",sequence:0,points:1,
+    });
+    const scoped=await createLessonContent(collegeAdmin,{
+      lessonId:lesson.id,deliveryId:structure.deliveryA.id,
+      contentType:"RESOURCE",title:"C2 guarded section",
+      notes:"Protected delivery",sequence:1,points:1,
+    });
+    const secondCourse=await createCourse(collegeAdmin,{
+      departmentId:SEED_IDS.departmentA,
+      name:"C2 Guard Another Course",code:"C2-GUARD-SECOND",
+    });
+    const secondOffering=await createCourseOffering(collegeAdmin,{
+      courseId:secondCourse.id,cohortId:structure.cohort.id,
+      academicPeriodId:structure.period.id,type:"CORE",credits:3,displayOrder:1,
+    });
+    const secondDelivery=await createCourseSectionDelivery(collegeAdmin,{
+      offeringId:secondOffering.id,sectionId:structure.sectionA.id,
+    });
+    await expect(pool.query(`
+      update lesson_contents set delivery_id=$1 where id=$2`,
+      [secondDelivery.id,generic.id])).rejects.toMatchObject({code:"23514"});
+    await expect(pool.query(`
+      update lesson_contents set delivery_id=$1 where id=$2`,
+      [secondDelivery.id,scoped.id])).rejects.toMatchObject({code:"23514"});
+    const accepted=await pool.query<{delivery_id:string|null}>(`
+      update lesson_contents set delivery_id=$1 where id=$2
+      returning delivery_id`,[structure.deliveryB.id,generic.id]);
+    expect(accepted.rows[0]!.delivery_id).toBe(structure.deliveryB.id);
+    const unchanged=await pool.query<{delivery_id:string|null}>(`
+      select delivery_id from lesson_contents where id=$1`,[scoped.id]);
+    expect(unchanged.rows[0]!.delivery_id).toBe(structure.deliveryA.id);
+  });
+
 });

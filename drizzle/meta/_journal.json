@@ -2178,6 +2178,13 @@
       "when": 1792359971266,
       "tag": "0310_db05_course_identity_trimmed_unique",
       "breakpoints": true
+    },
+    {
+      "idx": 311,
+      "version": "7",
+      "when": 1792360031266,
+      "tag": "0311_db05_lesson_delivery_scope_guard",
+      "breakpoints": true
     }
   ]
 }

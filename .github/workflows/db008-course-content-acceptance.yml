@@ -22,6 +22,7 @@ on:
       - "drizzle/0308_db05_lesson_settings_tenant_storage.sql"
       - "drizzle/0309_db05_classroom_progress_tenant_guards.sql"
       - "drizzle/0310_db05_course_identity_trimmed_unique.sql"
+      - "drizzle/0311_db05_lesson_delivery_scope_guard.sql"
       - "src/db/schema/courses.ts"
       - "src/db/schema/db05-lesson-settings.staged.ts"
       - "tests/integration/db008-course-parent-app-pg.test.ts"
