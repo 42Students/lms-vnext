@@ -24,12 +24,17 @@ afterAll(async()=>{
 });
 
 async function withChallenge(run:(input:{userId:string;attemptId:string})=>Promise<void>){
-  const userId=randomUUID(),attemptId=randomUUID();
+  const userId=randomUUID(),attemptId=randomUUID(),membershipId=randomUUID();
   try{
     await pool.query(
       "insert into users (id,identity_uid,platform_status) values ($1,$2,'ACTIVE')",
       [userId,"db004-otp-consume-"+userId],
     );
+    await pool.query(
+      "insert into college_memberships(id,user_id,college_id,status) values($1,$2,$3,'ACTIVE')",
+      [membershipId,userId,SEED_IDS.collegeA]);
+    await pool.query(
+      "insert into membership_roles(membership_id,role) values($1,'LEARNER')",[membershipId]);
     expect(await repository.createAttempt({
       id:attemptId,userId,collegeId:null,
       contactFingerprint:randomUUID().replaceAll("-","").padEnd(64,"0"),
@@ -43,6 +48,8 @@ async function withChallenge(run:(input:{userId:string;attemptId:string})=>Promi
   }finally{
     await pool.query("delete from identity_device_sessions where user_id=$1",[userId]);
     await pool.query("delete from identity_auth_attempts where user_id=$1",[userId]);
+    await pool.query("delete from membership_roles where membership_id=$1",[membershipId]);
+    await pool.query("delete from college_memberships where id=$1",[membershipId]);
     await pool.query("delete from users where id=$1",[userId]);
   }
 }
@@ -107,6 +114,35 @@ describe("DB-004 tenant authorization is rechecked by final OTP consume",()=>{
   it("does not mint a scoped device after the last role grant is revoked",async()=>{
     await withScopedChallenge(async({userId,attemptId,membershipId})=>{
       await pool.query("delete from membership_roles where membership_id=$1",[membershipId]);
+      expect(await repository.consumeAttempt(attemptId,userId,device())).toBe(false);
+      const devices=await pool.query(
+        "select id from identity_device_sessions where user_id=$1",[userId]);
+      expect(devices.rowCount).toBe(0);
+    });
+  });
+});
+
+describe("DB-004 platform-host OTP entitlement is rechecked atomically",()=>{
+  it("refuses a login after the last global-eligible role is removed",async()=>{
+    await withChallenge(async({userId,attemptId})=>{
+      const membership=await pool.query<{id:string}>(
+        "select id from college_memberships where user_id=$1",[userId]);
+      await pool.query("delete from membership_roles where membership_id=$1",
+        [membership.rows[0]!.id]);
+      expect(await repository.consumeAttempt(attemptId,userId,device())).toBe(false);
+      const attempts=await pool.query<{used_at:Date|null}>(
+        "select used_at from identity_auth_attempts where id=$1",[attemptId]);
+      expect(attempts.rows[0]?.used_at).toBeNull();
+      const devices=await pool.query(
+        "select id from identity_device_sessions where user_id=$1",[userId]);
+      expect(devices.rowCount).toBe(0);
+    });
+  });
+  it("refuses a login after the last platform membership is suspended",async()=>{
+    await withChallenge(async({userId,attemptId})=>{
+      await pool.query(
+        "update college_memberships set status='SUSPENDED',suspended_at=clock_timestamp() where user_id=$1",
+        [userId]);
       expect(await repository.consumeAttempt(attemptId,userId,device())).toBe(false);
       const devices=await pool.query(
         "select id from identity_device_sessions where user_id=$1",[userId]);

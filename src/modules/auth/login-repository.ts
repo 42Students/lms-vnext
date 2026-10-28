@@ -385,6 +385,49 @@ export const drizzleLoginRepository: LoginRepository = {
           `);
           if (!rowsOf(recruiter).length) return false;
         }
+      } else {
+        // A platform-host OTP must also be backed by a live persisted role.
+        // A preflight membership/grant can be revoked before final consume.
+        const systemRole = await tx.execute(sql`
+          SELECT sr.id FROM system_roles sr
+          WHERE sr.user_id = ${userId} AND sr.role = 'SUPER_ADMIN'
+          FOR SHARE OF sr LIMIT 1
+        `);
+        if (!rowsOf(systemRole).length) {
+          const membership = await tx.execute(sql`
+            SELECT m.id FROM college_memberships m
+            JOIN membership_roles r ON r.membership_id = m.id
+            JOIN colleges c ON c.id = m.college_id
+            JOIN organizations o ON o.id = c.organization_id
+            WHERE m.user_id = ${userId} AND m.status = 'ACTIVE'
+              AND m.suspended_at IS NULL
+              AND c.status = 'ACTIVE' AND o.status = 'ACTIVE'
+            FOR SHARE OF m, r, c, o LIMIT 1
+          `);
+          if (!rowsOf(membership).length) {
+            const recruiter = await tx.execute(sql`
+              SELECT g.id FROM placement_recruiter_college_grants g
+              JOIN placement_recruiter_profiles p
+                ON p.user_id = g.recruiter_user_id
+              JOIN placement_companies co ON co.id = p.company_id
+              JOIN placement_company_relationships rel
+                ON rel.id = g.company_relationship_id
+              JOIN colleges c ON c.id = rel.college_id
+              JOIN organizations o ON o.id = c.organization_id
+              WHERE g.recruiter_user_id = ${userId}
+                AND rel.company_id = p.company_id
+                AND g.status = 'ACTIVE'
+                AND g.verification_status = 'VERIFIED'
+                AND g.valid_until > clock_timestamp()
+                AND g.capabilities @> ARRAY['DRIVES']::text[]
+                AND p.status = 'ACTIVE' AND co.status = 'ACTIVE'
+                AND rel.status = 'ACTIVE'
+                AND c.status = 'ACTIVE' AND o.status = 'ACTIVE'
+              FOR SHARE OF g, p, co, rel, c, o LIMIT 1
+            `);
+            if (!rowsOf(recruiter).length) return false;
+          }
+        }
       }
       const consumed = await consumeInTransaction(tx, id);
       if (!consumed) return false;
