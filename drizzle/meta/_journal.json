@@ -2129,6 +2129,13 @@
       "when": 1792359551266,
       "tag": "0303_db02_academic_timetable_registered",
       "breakpoints": true
+    },
+    {
+      "idx": 304,
+      "version": "7",
+      "when": 1792359611266,
+      "tag": "0304_db04_normalized_profile_persistence",
+      "breakpoints": true
     }
   ]
 }

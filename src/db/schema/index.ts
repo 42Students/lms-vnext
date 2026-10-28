@@ -133,3 +133,8 @@ export {
 } from "./db10-log-alerts.draft";
 
 export {mentorGoogleCalendarConnections} from "./mentor-google-calendar-connections";
+
+// DB-007: normalized education/private profile models are journal-registered.
+// The learner gallery table itself was already registered in 0283.
+export {learnerProfileEducationEntries,learnerProfileEducationDocuments,learnerProfileImages} from "./db04-profile-education-images.staged";
+export {learnerProfileIdentitySummaries,learnerProfilePrivateDocumentBindings,learnerProfileVideoIntros} from "./db04-learner-profile-extras.staged";

@@ -11,7 +11,8 @@ export type PrivateDocumentPurpose =
   | "EDUCATION_CERTIFICATE"
   | "CERTIFICATION"
   | "EXPERIENCE_CERTIFICATE"
-  | "OFFER_LETTER";
+  | "OFFER_LETTER"
+  | "VIDEO_INTRO";
 export type Receipt = {
   id: string;
   owningMembershipId: string;

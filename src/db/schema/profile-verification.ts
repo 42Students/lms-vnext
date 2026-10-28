@@ -77,7 +77,7 @@ export const profilePrivateDocumentReceipts = pgTable("profile_private_document_
     t.purpose,
   ),
   check("profile_private_doc_purpose_ck",
-    sql`${t.purpose} in ('AADHAAR','PAN','MARKSHEET','RESUME','PROFILE_IMAGE','EDUCATION_CERTIFICATE','CERTIFICATION','EXPERIENCE_CERTIFICATE','OFFER_LETTER')`),
+    sql`${t.purpose} in ('AADHAAR','PAN','MARKSHEET','RESUME','PROFILE_IMAGE','EDUCATION_CERTIFICATE','CERTIFICATION','EXPERIENCE_CERTIFICATE','OFFER_LETTER','VIDEO_INTRO')`),
   check("profile_private_doc_scan_ck",
     sql`${t.scanStatus} in ('PENDING','CLEAN','REJECTED')`),
   check("profile_private_doc_size_ck",

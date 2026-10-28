@@ -1,11 +1,9 @@
 /**
- * DB04 learner profile gap closure — STAGED ONLY.
+ * DB04 learner profile gap closure — REGISTERED.
  *
- * Source-backed targets for active learner identity/resume/video fields that
- * do not fit the current generic profile_document safely. Do not export this
- * file from src/db/schema/index.ts before W01 registers the matching DB04
- * migration and extends profile_private_document_receipts purpose to
- * VIDEO_INTRO.
+ * Source-backed targets for active learner identity/resume/video fields.
+ * DB-007 registers these tables and the VIDEO_INTRO receipt purpose in 0304.
+ * External uploads still require scanner and object attestation.
  */
 import { sql } from "drizzle-orm";
 import {
@@ -119,6 +117,10 @@ export const learnerProfileVideoIntros = pgTable(
     check(
       "learner_profile_video_intro_purpose_ck",
       sql`${table.receiptPurpose} = 'VIDEO_INTRO'`,
+    ),
+    check(
+      "learner_profile_video_intro_time_ck",
+      sql`${table.uploadedAt} <= now() + interval '5 minutes'`,
     ),
   ],
 );

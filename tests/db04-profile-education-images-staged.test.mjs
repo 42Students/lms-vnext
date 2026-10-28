@@ -16,13 +16,9 @@ const verificationSchema = fs.readFileSync(
   "utf8",
 );
 
-test("DB04 normalized education/image schema remains explicitly staged", () => {
-  assert.match(staged, /STAGED ONLY/);
-  assert.doesNotMatch(
-    schemaIndex,
-    /db04-profile-education-images\.staged/,
-    "W01 must deliberately register DB04 staging; it must not enter the barrel accidentally",
-  );
+test("DB-007 normalized education and image models are explicitly registered", () => {
+  assert.match(staged, /REGISTERED/);
+  assert.match(schemaIndex, /db04-profile-education-images\.staged/);
 });
 
 test("DB04 education staging preserves active qualification semantics", () => {

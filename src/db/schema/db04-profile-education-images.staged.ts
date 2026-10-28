@@ -1,10 +1,9 @@
 /**
- * DB04 normalized education/profile-image persistence — STAGED ONLY.
+ * DB04 normalized education/profile-image persistence — REGISTERED.
  *
- * Do not export from db/schema/index.ts and do not generate a migration from
- * this file until W01 reconciles the DB04 receipt parent keys and migration
- * order. This preserves active legacy qualification + student_image semantics
- * without making an unverified runtime claim.
+ * DB-007 registers education and document tables in 0304. The gallery was
+ * already registered in 0283. Runtime scanner and PostgreSQL acceptance
+ * remain separate mandatory readiness gates.
  */
 import { sql } from "drizzle-orm";
 import {
