@@ -47,8 +47,9 @@
     },
     "retirementImplementationVerified": 34,
     "retirementApprovalPending": 34,
-    "technicalEvidenceCoverage": 168,
-    "technicalEvidenceUncovered": 27
+    "technicalEvidenceCoverage": 173,
+    "technicalEvidenceUncovered": 22,
+    "compositeImplementationVerified": 5
   },
   "guidance": [
     "Exact column existence on registered PostgreSQL does not prove legacy reader/writer parity.",
@@ -66,7 +67,8 @@
     "18 shared learner/faculty verification fields passed registered PostgreSQL first-party OTP lifecycle 40683051831. Role-specific membership association, roll-number ownership and unapproved legacy retirement remain intentionally unresolved; 21 retired raw-credential fields have separate NEGATIVE implementation proof.",
     "Two legacy college leadership fields now use columns colleges.chair_membership_id and colleges.vice_chair_membership_id. Both passed actual PG scoped FACULTY appointment, cross-college rejection and suspension checks in 40684079754. Numeric source IDs are still never blindly imported.",
     "At a6f06efe, registered PostgreSQL DB-004 accepted archived branding negative projection and edit-denial tests. The historical is_deleted runtime mapping is witnessed, but import/retention/product approval remains PENDING.",
-    "At 6a9455fd, a registered PG negative source metadata catalog witness adds 13 technically implemented retirements (still unapproved). The recruiter.suspended_at persisted timestamp and fail-closed suspension/restoration lifecycle were directly witnessed at 9efa47bd. These are implementation evidence, not source import or product sign-off."
+    "At 6a9455fd, a registered PG negative source metadata catalog witness adds 13 technically implemented retirements (still unapproved). The recruiter.suspended_at persisted timestamp and fail-closed suspension/restoration lifecycle were directly witnessed at 9efa47bd. These are implementation evidence, not source import or product sign-off.",
+    "At 8fdface1, registered PG proved five non-physical composite active-runtime replacements: learner/faculty organization ancestry, active user role selection, and typed membership-role assignment authority. Source numeric-ID migration reconciliation and owner approval remain open. Composite evidence is distinct from the 134 physical runtime witnesses."
   ],
   "rows": [
     {
@@ -1437,8 +1439,17 @@
       "physicalVerified": false,
       "runtimeSemanticsVerified": false,
       "evidence": [
-        "docs/planning/db01-chat02-source-reconciliation.md"
-      ]
+        "docs/planning/db01-chat02-source-reconciliation.md",
+        "tests/integration/db01-composite-role-field-semantics.test.ts"
+      ],
+      "compositeImplementationVerified": true,
+      "compositeEvidence": {
+        "verifiedFlow": "REGISTERED_POSTGRES_CANONICAL_USER_VERIFIED_COLLEGE_ORGANIZATION_ANCESTRY_AND_TYPED_ROLE_REVOCATION",
+        "suite": "tests/integration/db01-composite-role-field-semantics.test.ts",
+        "passingRun": "https://github.com/42Students/lms-vnext/actions/runs/40690105240",
+        "testedCommit": "8fdface15fbfe6496cf423e462170b6e4b0c0241",
+        "limitations": "Proves current active canonical UUID user, derived organization ancestry, typed scoped role grants and revocation. Does not migrate or reconcile historic numeric user/role/org IDs, approve old source role mapping, or certify historical imported data."
+      }
     },
     {
       "legacyField": "faculty.token_version",
@@ -1895,8 +1906,17 @@
       "physicalVerified": false,
       "runtimeSemanticsVerified": false,
       "evidence": [
-        "docs/planning/db01-chat02-source-reconciliation.md"
-      ]
+        "docs/planning/db01-chat02-source-reconciliation.md",
+        "tests/integration/db01-composite-role-field-semantics.test.ts"
+      ],
+      "compositeImplementationVerified": true,
+      "compositeEvidence": {
+        "verifiedFlow": "REGISTERED_POSTGRES_CANONICAL_USER_VERIFIED_COLLEGE_ORGANIZATION_ANCESTRY_AND_TYPED_ROLE_REVOCATION",
+        "suite": "tests/integration/db01-composite-role-field-semantics.test.ts",
+        "passingRun": "https://github.com/42Students/lms-vnext/actions/runs/40690105240",
+        "testedCommit": "8fdface15fbfe6496cf423e462170b6e4b0c0241",
+        "limitations": "Proves current active canonical UUID user, derived organization ancestry, typed scoped role grants and revocation. Does not migrate or reconcile historic numeric user/role/org IDs, approve old source role mapping, or certify historical imported data."
+      }
     },
     {
       "legacyField": "learner.token_version",
@@ -3578,8 +3598,17 @@
       "physicalVerified": false,
       "runtimeSemanticsVerified": false,
       "evidence": [
-        "docs/planning/db01-chat02-source-reconciliation.md"
-      ]
+        "docs/planning/db01-chat02-source-reconciliation.md",
+        "tests/integration/db01-composite-role-field-semantics.test.ts"
+      ],
+      "compositeImplementationVerified": true,
+      "compositeEvidence": {
+        "verifiedFlow": "REGISTERED_POSTGRES_CANONICAL_USER_VERIFIED_COLLEGE_ORGANIZATION_ANCESTRY_AND_TYPED_ROLE_REVOCATION",
+        "suite": "tests/integration/db01-composite-role-field-semantics.test.ts",
+        "passingRun": "https://github.com/42Students/lms-vnext/actions/runs/40690105240",
+        "testedCommit": "8fdface15fbfe6496cf423e462170b6e4b0c0241",
+        "limitations": "Proves current active canonical UUID user, derived organization ancestry, typed scoped role grants and revocation. Does not migrate or reconcile historic numeric user/role/org IDs, approve old source role mapping, or certify historical imported data."
+      }
     },
     {
       "legacyField": "user_roles.user_id",
@@ -3590,8 +3619,17 @@
       "physicalVerified": false,
       "runtimeSemanticsVerified": false,
       "evidence": [
-        "docs/planning/db01-chat02-source-reconciliation.md"
-      ]
+        "docs/planning/db01-chat02-source-reconciliation.md",
+        "tests/integration/db01-composite-role-field-semantics.test.ts"
+      ],
+      "compositeImplementationVerified": true,
+      "compositeEvidence": {
+        "verifiedFlow": "REGISTERED_POSTGRES_CANONICAL_USER_VERIFIED_COLLEGE_ORGANIZATION_ANCESTRY_AND_TYPED_ROLE_REVOCATION",
+        "suite": "tests/integration/db01-composite-role-field-semantics.test.ts",
+        "passingRun": "https://github.com/42Students/lms-vnext/actions/runs/40690105240",
+        "testedCommit": "8fdface15fbfe6496cf423e462170b6e4b0c0241",
+        "limitations": "Proves current active canonical UUID user, derived organization ancestry, typed scoped role grants and revocation. Does not migrate or reconcile historic numeric user/role/org IDs, approve old source role mapping, or certify historical imported data."
+      }
     },
     {
       "legacyField": "user_roles.role_id",
@@ -3602,8 +3640,17 @@
       "physicalVerified": false,
       "runtimeSemanticsVerified": false,
       "evidence": [
-        "docs/planning/db01-chat02-source-reconciliation.md"
-      ]
+        "docs/planning/db01-chat02-source-reconciliation.md",
+        "tests/integration/db01-composite-role-field-semantics.test.ts"
+      ],
+      "compositeImplementationVerified": true,
+      "compositeEvidence": {
+        "verifiedFlow": "REGISTERED_POSTGRES_CANONICAL_USER_VERIFIED_COLLEGE_ORGANIZATION_ANCESTRY_AND_TYPED_ROLE_REVOCATION",
+        "suite": "tests/integration/db01-composite-role-field-semantics.test.ts",
+        "passingRun": "https://github.com/42Students/lms-vnext/actions/runs/40690105240",
+        "testedCommit": "8fdface15fbfe6496cf423e462170b6e4b0c0241",
+        "limitations": "Proves current active canonical UUID user, derived organization ancestry, typed scoped role grants and revocation. Does not migrate or reconcile historic numeric user/role/org IDs, approve old source role mapping, or certify historical imported data."
+      }
     },
     {
       "legacyField": "user_session.jti",

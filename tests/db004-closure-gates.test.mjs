@@ -11,8 +11,8 @@ const sorted=items=>[...items].sort();
 
 test("DB-004 finite closure register exactly covers remaining technical gaps",()=>{
  assert.equal(fields.length,195);
- const technical=fields.filter(x=>x.runtimeSemanticsVerified||x.retirementImplementationVerified);
- const missing=fields.filter(x=>!x.runtimeSemanticsVerified&&!x.retirementImplementationVerified);
+ const technical=fields.filter(x=>x.runtimeSemanticsVerified||x.retirementImplementationVerified||x.compositeImplementationVerified);
+ const missing=fields.filter(x=>!x.runtimeSemanticsVerified&&!x.retirementImplementationVerified&&!x.compositeImplementationVerified);
  const physical=missing.filter(x=>x.physicalVerified);
  const composite=missing.filter(x=>x.evidenceStatus==="COMPOSITE_REDESIGN_SEMANTIC_REVIEW");
  const retirement=missing.filter(x=>!x.physicalVerified&&x.evidenceStatus!=="COMPOSITE_REDESIGN_SEMANTIC_REVIEW");
@@ -21,6 +21,7 @@ test("DB-004 finite closure register exactly covers remaining technical gaps",()
  assert.equal(register.technicalSnapshot.total,fields.length);
  assert.equal(register.technicalSnapshot.technicalCovered,technical.length);
  assert.equal(register.technicalSnapshot.uncovered,missing.length);
+ assert.equal(register.technicalSnapshot.compositeImplemented,fields.filter(x=>x.compositeImplementationVerified).length);
  assert.deepEqual(sorted(register.uncoveredFieldClasses.physicalPending),sorted(physical.map(x=>x.legacyField)));
  assert.deepEqual(sorted(register.uncoveredFieldClasses.compositePending),sorted(composite.map(x=>x.legacyField)));
  assert.deepEqual(sorted(register.uncoveredFieldClasses.retirementOrSecurityPending),sorted(retirement.map(x=>x.legacyField)));
@@ -48,9 +49,10 @@ test("no DB-004 release green without genuine owner decisions and complete techn
   }
  }
  const done=tracker.tasks.find(x=>x.id==="DB-004")?.done;
- const hasAllEvidence=fields.every(x=>x.runtimeSemanticsVerified||x.retirementApproved);
+ const hasAllEvidence=fields.every(x=>x.runtimeSemanticsVerified||x.compositeImplementationVerified||x.retirementApproved);
  const allDecisionsApproved=register.decisions.every(x=>x.approvalStatus==="APPROVED");
  if(done)assert.ok(hasAllEvidence&&allDecisionsApproved,
   "DB-004 is not DONE until every source has evidence and all owner decisions are recorded");
- assert.equal(done,false,"DB-004 remains open while approvals and uncovered fields remain");
+ if(!hasAllEvidence||!allDecisionsApproved)
+  assert.equal(done,false,"DB-004 remains open until field and sign-off gates are met");
 });

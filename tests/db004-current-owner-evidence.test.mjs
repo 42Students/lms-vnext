@@ -70,6 +70,15 @@ test("physical field proof and runtime proof remain explicitly distinct",()=>{
  assert.ok(current.rows.filter(x=>x.runtimeSemanticsVerified).every(x=>x.physicalVerified));
  assert.ok(current.rows.filter(x=>x.legacyField.startsWith("auth_handoff_token.")||x.legacyField.startsWith("login_user.")).every(x=>!x.runtimeSemanticsVerified));
 
+ const composites=current.rows.filter(row=>row.compositeImplementationVerified);
+ assert.equal(composites.length,5);
+ assert.deepEqual(new Set(composites.map(row=>row.legacyField)),new Set(["faculty.organization_id","learner.organization_id","user.user_type","user_roles.user_id","user_roles.role_id"]));
+ assert.ok(composites.every(row=>!row.physicalVerified&&!row.runtimeSemanticsVerified&&
+  row.compositeEvidence?.suite==="tests/integration/db01-composite-role-field-semantics.test.ts"&&
+  row.compositeEvidence?.passingRun?.startsWith("https://github.com/42Students/lms-vnext/actions/runs/")&&
+  row.compositeEvidence?.testedCommit?.length===40&&
+  row.compositeEvidence?.limitations?.length>0));
+ assert.equal(current.summary.compositeImplementationVerified,5);
  const technicallyRetired=current.rows.filter(row=>row.retirementImplementationVerified);
  const retirementCandidates=current.rows.filter(row=>
   ["auth_handoff_token.","auth_token.","login_user."].some(p=>row.legacyField.startsWith(p))||
@@ -79,8 +88,8 @@ test("physical field proof and runtime proof remain explicitly distinct",()=>{
   new Set(retirementCandidates.map(x=>x.legacyField)));
  assert.equal(current.summary.retirementImplementationVerified,34);
  assert.equal(current.summary.retirementApprovalPending,34);
- assert.equal(current.summary.technicalEvidenceCoverage,168);
- assert.equal(current.summary.technicalEvidenceUncovered,27);
+ assert.equal(current.summary.technicalEvidenceCoverage,173);
+ assert.equal(current.summary.technicalEvidenceUncovered,22);
  assert.ok(technicallyRetired.every(x=>x.retirementApproved===false &&
   x.runtimeSemanticsVerified===false &&
   x.physicalVerified===false &&
