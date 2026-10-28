@@ -67,43 +67,67 @@ export async function resolveSession(
 > {
   const digest = sessionDigest(getAuthConfig().secret, token);
 
-  const result = await getDb().execute(sql`
-    SELECT s.id AS session_id, s.user_id, u.identity_uid,
-           u.platform_status,
-           (s.revoked_at IS NOT NULL) AS revoked,
-           (s.expires_at <= now()) AS expired
-    FROM identity_device_sessions s
-    JOIN users u ON u.id = s.user_id
-    WHERE s.credential_digest = ${digest}
-    LIMIT 1
+  // One atomic, row-locking eligibility write. The old SELECT-then-heartbeat
+  // sequence could return ok:true even when a concurrent logout committed
+  // between the SELECT and the conditional UPDATE (which then updated zero
+  // rows). An UPDATE rechecks its predicates after waiting for a revoker's
+  // row lock, so no revoked/expired session can win that race.
+  //
+  // The user SHARE lock also serializes account disablement against the
+  // active identity read. We only advance the visible heartbeat once/minute.
+  const eligible = await getDb().execute(sql`
+    WITH active_user AS MATERIALIZED (
+      SELECT u.id, u.identity_uid, u.platform_status
+      FROM users u
+      JOIN identity_device_sessions candidate ON candidate.user_id = u.id
+      WHERE candidate.credential_digest = ${digest}
+        AND u.platform_status = 'ACTIVE'
+      FOR SHARE OF u
+    )
+    UPDATE identity_device_sessions AS s
+    SET last_seen_at = CASE
+      WHEN s.last_seen_at < clock_timestamp() - interval '60 seconds'
+      THEN clock_timestamp()
+      ELSE s.last_seen_at
+    END
+    FROM active_user AS u
+    WHERE s.user_id = u.id
+      AND s.credential_digest = ${digest}
+      AND s.revoked_at IS NULL
+      AND s.expires_at > clock_timestamp()
+    RETURNING s.id AS session_id, s.user_id,
+              u.identity_uid, u.platform_status
   `);
-  const row = rowsOf(result)[0];
-
-  if (!row) return { ok: false, reason: "SESSION_INVALID" };
-  if (row["revoked"]) return { ok: false, reason: "SESSION_REVOKED" };
-  if (row["expired"]) return { ok: false, reason: "SESSION_EXPIRED" };
-  // Account disablement is an immediate session revocation, not merely a UI role gate.
-  if (row["platform_status"] !== "ACTIVE") return { ok: false, reason: "SESSION_REVOKED" };
-
-  // Throttled: at most one write per minute per session.
-  await getDb().execute(sql`
-    UPDATE identity_device_sessions
-    SET last_seen_at = now()
-    WHERE id = ${row["session_id"] as string}
-      AND revoked_at IS NULL
-      AND expires_at > now()
-      AND last_seen_at < now() - interval '60 seconds'
-  `);
-
-  return {
+  const active = rowsOf(eligible)[0];
+  if (active) return {
     ok: true,
     session: {
-      sessionId: row["session_id"] as string,
-      userId: row["user_id"] as string,
-      identityUid: row["identity_uid"] as string,
-      platformStatus: row["platform_status"] as "ACTIVE" | "DISABLED",
+      sessionId: active["session_id"] as string,
+      userId: active["user_id"] as string,
+      identityUid: active["identity_uid"] as string,
+      platformStatus: "ACTIVE",
     },
   };
+
+  // Classification only; this query never issues an authorization grant.
+  // A missing, revoked or expired token must have the same fail-closed
+  // behavior even if the row changes after the UPDATE above.
+  const classified = await getDb().execute(sql`
+    SELECT (s.revoked_at IS NOT NULL) AS revoked,
+           (s.expires_at <= clock_timestamp()) AS expired,
+           u.platform_status
+      FROM identity_device_sessions s
+      JOIN users u ON u.id = s.user_id
+     WHERE s.credential_digest = ${digest}
+     LIMIT 1
+  `);
+  const row = rowsOf(classified)[0];
+  if (!row) return { ok: false, reason: "SESSION_INVALID" };
+  if (row["revoked"] || row["platform_status"] !== "ACTIVE")
+    return { ok: false, reason: "SESSION_REVOKED" };
+  if (row["expired"]) return { ok: false, reason: "SESSION_EXPIRED" };
+  // If eligibility changed between statements, never turn that into success.
+  return { ok: false, reason: "SESSION_INVALID" };
 }
 
 export async function revokeSessionByToken(token: string) {

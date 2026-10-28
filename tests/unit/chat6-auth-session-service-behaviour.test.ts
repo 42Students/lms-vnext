@@ -30,7 +30,7 @@ describe("AUTH-sessions-06: DB-backed device lifecycle and fail-closed revocatio
   it("unknown token is invalid; does not mutate last seen",async()=>{
     execute.mockResolvedValueOnce({rows:[]});
     await expect(resolveSession("unknown-opaque")).resolves.toEqual({ok:false,reason:"SESSION_INVALID"});
-    expect(execute).toHaveBeenCalledOnce();
+    expect(execute).toHaveBeenCalledTimes(2);
   });
   it("revoked, expired and platform-disabled sessions never reach authenticated context",async()=>{
     for(const [patch,reason] of [
@@ -39,28 +39,29 @@ describe("AUTH-sessions-06: DB-backed device lifecycle and fail-closed revocatio
       [{platform_status:"DISABLED"},"SESSION_REVOKED"],
     ] as const){
       execute.mockReset();
-      execute.mockResolvedValueOnce({rows:[{...validRow,...patch}]});
+      execute.mockResolvedValueOnce({rows:[]}).mockResolvedValueOnce({rows:[{...validRow,...patch}]});
       await expect(resolveSession("opaque-token")).resolves.toEqual({ok:false,reason});
-      expect(execute).toHaveBeenCalledOnce();
+      expect(execute).toHaveBeenCalledTimes(2);
     }
   });
   it("active session yields only authenticated identity and throttles last-seen writes",async()=>{
-    execute.mockResolvedValueOnce({rows:[validRow]}).mockResolvedValueOnce({rows:[]});
+    execute.mockResolvedValueOnce({rows:[validRow]});
     const resolved=await resolveSession("opaque-token");
     expect(resolved).toEqual({ok:true,session:{
       sessionId,userId,identityUid:"identity-1",platformStatus:"ACTIVE",
     }});
-    expect(execute).toHaveBeenCalledTimes(2);
+    expect(execute).toHaveBeenCalledOnce();
   });
   it("AUTH-sessions-12 last-seen bookkeeping never touches revoked or expired device rows",()=>{
     const source=readFileSync("src/modules/auth/session-service.ts","utf8");
     const start=source.indexOf("export async function resolveSession(");
     const end=source.indexOf("export async function revokeSessionByToken(",start);
     const section=source.slice(start,end);
-    expect(section).toContain('WHERE id = ${row["session_id"] as string}');
-    expect(section).toContain("AND revoked_at IS NULL");
-    expect(section).toContain("AND expires_at > now()");
-    expect(section).toContain("AND last_seen_at < now() - interval '60 seconds'");
+    expect(section).toContain("UPDATE identity_device_sessions AS s");
+    expect(section).toContain("s.revoked_at IS NULL");
+    expect(section).toContain("s.expires_at > clock_timestamp()");
+    expect(section).toContain("s.last_seen_at < clock_timestamp() - interval '60 seconds'");
+    expect(section).toContain("FOR SHARE OF u");
   });
   it("session token is generated only after a database write succeeds",async()=>{
     execute.mockResolvedValueOnce({rows:[]});

@@ -60,9 +60,9 @@ describe("auth and sessions: persisted device-token ownership and revocation", (
       [{ revoked: false, expired: false, platform_status: "DISABLED" }, "SESSION_REVOKED"],
     ] as const) {
       fakes.execute.mockReset();
-      fakes.execute.mockResolvedValueOnce({ rows: [row] });
+      fakes.execute.mockResolvedValueOnce({ rows: [] }).mockResolvedValueOnce({ rows: [row] });
       expect(await resolveSession("token")).toEqual({ ok: false, reason });
-      expect(fakes.execute).toHaveBeenCalledTimes(1);
+      expect(fakes.execute).toHaveBeenCalledTimes(2);
     }
   });
 
@@ -75,10 +75,11 @@ describe("auth and sessions: persisted device-token ownership and revocation", (
     expect(result).toMatchObject({
       ok: true, session: { sessionId: "session-a", userId: "user-a", identityUid: "identity-a", platformStatus: "ACTIVE" },
     });
-    expect(fakes.execute).toHaveBeenCalledTimes(2);
-    expect(statement(1).sql).toContain("revoked_at IS NULL");
-    expect(statement(1).sql).toContain("expires_at > now()");
-    expect(statement(1).sql).toContain("interval '60 seconds'");
+    expect(fakes.execute).toHaveBeenCalledTimes(1);
+    expect(statement(0).sql).toContain("s.revoked_at IS NULL");
+    expect(statement(0).sql).toContain("s.expires_at > clock_timestamp()");
+    expect(statement(0).sql).toContain("interval '60 seconds'");
+    expect(statement(0).sql).toContain("FOR SHARE OF u");
   });
 
   it("AUTH-SESSION-04 revokes one device only with its persisted owning user and a live-row predicate", async () => {
