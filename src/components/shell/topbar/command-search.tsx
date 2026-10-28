@@ -41,6 +41,7 @@ export function TopbarCommandSearch({ items }: { items: readonly ShellNavItem[] 
   const [popularity,setPopularity]=useState<Record<string,number>>({});
   const [open, setOpen] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [shortcutReady,setShortcutReady]=useState(false);
   const input = useRef<HTMLInputElement>(null);
   // Ctrl/Cmd+K may open the responsive surface only after the key event.
   // Transfer keyboard focus after React commits the open state.
@@ -211,6 +212,8 @@ export function TopbarCommandSearch({ items }: { items: readonly ShellNavItem[] 
     };
     document.addEventListener("keydown", shortcut);
     document.addEventListener("pointerdown", outside);
+    // Streamed markup is not shortcut-ready until the client listener mounts.
+    setShortcutReady(true);
     return () => {
       document.removeEventListener("keydown", shortcut);
       document.removeEventListener("pointerdown", outside);
@@ -284,7 +287,7 @@ export function TopbarCommandSearch({ items }: { items: readonly ShellNavItem[] 
         </Button>
         <label className="sr-only" htmlFor="lms-topbar-command-search">Search workspace</label>
         <Input id="lms-topbar-command-search" ref={input} type="search" value={query} maxLength={200}
-          autoComplete="off" role="combobox" aria-haspopup="listbox" aria-keyshortcuts="Control+K Meta+K"
+          autoComplete="off" role="combobox" data-shortcut-ready={shortcutReady?"true":"false"} aria-haspopup="listbox" aria-keyshortcuts="Control+K Meta+K"
           aria-controls={open ? "lms-topbar-command-results" : undefined} aria-expanded={open} aria-describedby="lms-topbar-command-key-help"
           placeholder={config.placeholder} className={style["searchInput"]}
           onFocus={() => {

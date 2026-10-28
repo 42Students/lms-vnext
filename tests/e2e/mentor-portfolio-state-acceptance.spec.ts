@@ -171,8 +171,10 @@ test.describe("Mentor #45, #53 and #56 authenticated portfolio state acceptance"
       "Requires the disposable assigned Mentor project");
     await signIn(context,"seed-shared-faculty",SEED_IDS.facultyCollegeAMembership);
     await page.goto("/mentor/projects");
-    await page.keyboard.press("Control+k");
     const input=page.getByRole("combobox",{name:"Search workspace"});
+    // Wait for actual keyboard-handler hydration, not an arbitrary timeout.
+    await expect(input).toHaveAttribute("data-shortcut-ready","true");
+    await page.keyboard.press("Control+k");
     await expect(input).toBeFocused();
     const menu=page.getByRole("listbox",{name:"Workspace commands"});
     await expect(menu).toBeVisible();

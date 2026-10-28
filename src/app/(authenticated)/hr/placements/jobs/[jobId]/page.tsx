@@ -567,7 +567,7 @@ export default async function HrPlacementJobPage({
           <p className="text-sm text-body">Choose what to discuss. The placement cell decides; opening a request makes no changes.</p>
           <div className="grid gap-2 sm:grid-cols-2 xl:grid-cols-3">
            {RECRUITER_CHANGE_SHORTCUTS.map(shortcut=><Link key={shortcut.key}
-            href={"/recruiter/drives/"+encodeURIComponent(workspace.job.id)+"?tab=discussion&change="+shortcut.key+returnQuery+"#drive-requests"}
+            href={"/recruiter/drives/"+encodeURIComponent(workspace.job.id)+"?tab=requests&change="+shortcut.key+returnQuery+"#drive-requests"}
             className="flex min-h-11 flex-col justify-center rounded-lg border border-border px-3 py-2 text-sm font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2">
             {shortcut.label}
             {shortcut.help?<span className="text-xs font-normal text-muted-foreground">{shortcut.help}</span>:null}

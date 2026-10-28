@@ -104,6 +104,16 @@ export function LearnerCourseDiscussion({
   const [scopeUnavailable,setScopeUnavailable] = useState(false);
   const [refreshDismissed,setRefreshDismissed] = useState(false);
   const [draft, setDraft] = useState("");
+  const [coarsePointer,setCoarsePointer]=useState(false);
+  useEffect(()=>{
+    // Tablets can have desktop-size viewports and still use touch keyboards.
+    const media=window.matchMedia?.("(pointer: coarse)");
+    if(!media)return;
+    const update=()=>setCoarsePointer(media.matches);
+    update();
+    media.addEventListener?.("change",update);
+    return ()=>media.removeEventListener?.("change",update);
+  },[]);
   const router = useRouter();
   const [leaveHref,setLeaveHref]=useState<string|null>(null);
   const [posting, setPosting] = useState(false);
@@ -762,7 +772,7 @@ export function LearnerCourseDiscussion({
               if (shouldSendLearnerDiscussionOnEnter({
                 key:event.key,shiftKey:event.shiftKey,
                 isComposing:event.nativeEvent.isComposing,
-                coarsePointer:false,
+                coarsePointer:window.matchMedia?.("(pointer: coarse)").matches??coarsePointer,
               })) {
                 event.preventDefault();
                 void submit();
@@ -776,7 +786,7 @@ export function LearnerCourseDiscussion({
           />
           <div className={moderate?"flex shrink-0 items-center":"mt-3 flex min-w-0 flex-col gap-2 sm:flex-row sm:items-center sm:justify-between"}>
             <span id="course-discussion-compose-hint" className={moderate?"sr-only":"text-xs text-muted-foreground"}>
-              Enter to send · Shift+Enter for a new line
+              {coarsePointer?"Press Send to post · Enter for a new line":"Enter to send · Shift+Enter for a new line"}
               {draft.length>3400? " · "+draft.length+"/"+LEARNER_DISCUSSION_MESSAGE_MAX_LENGTH:""}
             </span>
             <Button type="submit" className="min-h-11 w-auto md:min-h-9" disabled={!canPost || scopeUnavailable || !learnerDiscussionDraftValid(draft) || posting || postNeedsReadback}>
