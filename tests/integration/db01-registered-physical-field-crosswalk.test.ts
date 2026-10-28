@@ -56,10 +56,14 @@ describe("DB-004 registered source → target physical catalog",()=>{
     expect(replacements).toHaveLength(22);
     const missing:string[]=[];
     for(const row of replacements){
-      if(row.runtimeSemanticsVerified)
-        expect(row.runtimeEvidence?.suite).toBe("tests/integration/chat11-super-admin-branding-cas.test.ts");
-      else
+      if(row.runtimeSemanticsVerified){
+        const suite=row.legacyField.startsWith("tenant_domain.")
+          ?"tests/integration/tenant-domains.test.ts"
+          :"tests/integration/chat11-super-admin-branding-cas.test.ts";
+        expect(row.runtimeEvidence?.suite).toBe(suite);
+      }else{
         expect(row.runtimeEvidence).toBeUndefined();
+      }
       const target=row.proposedPhysicalTarget;
       expect(target).toMatch(/^[a-z_][a-z0-9_]*\.[a-z_][a-z0-9_]*$/);
       const [table,column]=target!.split(".");
