@@ -37,10 +37,10 @@ async function receipt(db,m,purpose,opts={}) {
   const id=randomUUID();
   await db.query(`INSERT INTO profile_private_document_receipts
     (id,owning_membership_id,purpose,private_object_key,object_generation,
-     sha256_hex,mime_type,size_bytes,scan_status,uploaded_by_user_id,revoked_at)
-    VALUES ($1,$2,$3,$4,'1',$5,'application/pdf',128,$6,$7,$8)`,
+     sha256_hex,mime_type,size_bytes,scan_status,uploaded_by_user_id,revoked_at,related_entry_id)
+    VALUES ($1,$2,$3,$4,'1',$5,'application/pdf',128,$6,$7,$8,$9)`,
     [id,m.id,purpose,`private/${m.college_id}/${m.id}/profile-verification/${randomUUID()}`,
-     "a".repeat(64),opts.scanStatus??"CLEAN",m.user_id,opts.revokedAt??null]);
+     "a".repeat(64),opts.scanStatus??"CLEAN",m.user_id,opts.revokedAt??null,opts.relatedEntryId??null]);
   return id;
 }
 test("DB-007 registered profile tables and immutability triggers exist",async()=>{
@@ -52,6 +52,7 @@ test("DB-007 registered profile tables and immutability triggers exist",async()=
   }
   const names=["db04_education_document_usable_guard","db04_private_profile_binding_usable_guard",
     "db04_video_intro_usable_guard","db04_video_intro_update_guard",
+    "db04_video_intro_no_truncate",
     "db04_profile_verification_events_immutable","db04_profile_verification_events_no_truncate",
     "db04_profile_verifications_revision"];
   const installed=(await pool.query(
@@ -67,6 +68,7 @@ test("normalized education enforces active unique history and same-owner clean r
     const good=await receipt(db,owner,"MARKSHEET");
     const foreign=await receipt(db,other,"MARKSHEET");
     const bad=await receipt(db,owner,"MARKSHEET",{scanStatus:"PENDING"});
+    const wronglyLinked=await receipt(db,owner,"MARKSHEET",{relatedEntryId:randomUUID()});
     const eduId=randomUUID();
     await db.query(`INSERT INTO learner_profile_education_entries
       (id,learner_membership_id,education_type,institution_name,grading_type,
@@ -82,6 +84,9 @@ test("normalized education enforces active unique history and same-owner clean r
     await denies(db,`INSERT INTO learner_profile_education_documents
       (education_entry_id,learner_membership_id,receipt_id,purpose)
        VALUES($1,$2,$3,'MARKSHEET')`,[eduId,owner.id,bad],"23514");
+    await denies(db,`INSERT INTO learner_profile_education_documents
+      (education_entry_id,learner_membership_id,receipt_id,purpose)
+       VALUES($1,$2,$3,'MARKSHEET')`,[eduId,owner.id,wronglyLinked],"23514");
     await db.query(`INSERT INTO learner_profile_education_documents
       (education_entry_id,learner_membership_id,receipt_id,purpose)
        VALUES($1,$2,$3,'MARKSHEET')`,[eduId,owner.id,good]);
