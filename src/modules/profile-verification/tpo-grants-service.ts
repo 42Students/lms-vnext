@@ -2,11 +2,11 @@ import { and, eq } from "drizzle-orm";
 import { z } from "zod";
 import { getDb } from "@/db/client";
 import {
-  activityEvents, collegeMemberships, colleges, membershipRoles, users,
+  activityEvents, collegeMemberships, colleges, membershipRoles, systemRoles, users,
 } from "@/db/schema";
 import { profileVerificationTpoGrants } from "@/db/schema/profile-verification";
-import type { RequestContext } from "@/modules/identity/context";
-import { requirePermission } from "@/modules/permissions/policy";
+import { isSuperAdmin, type RequestContext } from "@/modules/identity/context";
+import { AuthorizationError, requirePermission } from "@/modules/permissions/policy";
 
 const uuid = z.string().uuid();
 
@@ -25,6 +25,34 @@ export async function setTpoProfileVerificationAdminGrant(
       .from(colleges).where(eq(colleges.id,collegeId)).for("update");
     if(!college) throw Error("COLLEGE_NOT_FOUND");
     requirePermission(context,"college.manage",{collegeId,organizationId:college.organizationId});
+    // The HTTP session and membership grants may have been revoked since the
+    // request context was constructed. Hold live user/role locks until commit;
+    // the college lock alone only serializes verification settings updates.
+    const [actingUser]=await tx.select({id:users.id}).from(users)
+      .where(and(eq(users.id,context.user.id),
+        eq(users.platformStatus,"ACTIVE"))).for("share").limit(1);
+    if(!actingUser)throw new AuthorizationError("college.manage");
+    if(isSuperAdmin(context)){
+      const [liveSuperRole]=await tx.select({id:systemRoles.id}).from(systemRoles)
+        .where(and(eq(systemRoles.userId,context.user.id),
+          eq(systemRoles.role,"SUPER_ADMIN"))).for("share").limit(1);
+      if(!liveSuperRole)throw new AuthorizationError("college.manage");
+    }else{
+      const actor=context.membership;
+      if(!actor||actor.collegeId!==collegeId||actor.status!=="ACTIVE")
+        throw new AuthorizationError("college.manage");
+      const [liveCollegeAdmin]=await tx.select({id:collegeMemberships.id})
+        .from(collegeMemberships)
+        .innerJoin(membershipRoles,and(
+          eq(membershipRoles.membershipId,collegeMemberships.id),
+          eq(membershipRoles.role,"COLLEGE_ADMIN")))
+        .where(and(eq(collegeMemberships.id,actor.id),
+          eq(collegeMemberships.userId,context.user.id),
+          eq(collegeMemberships.collegeId,collegeId),
+          eq(collegeMemberships.status,"ACTIVE")))
+        .for("share").limit(1);
+      if(!liveCollegeAdmin)throw new AuthorizationError("college.manage");
+    }
     const [target]=await tx.select({
       memberId:collegeMemberships.id,collegeId:collegeMemberships.collegeId,
       status:collegeMemberships.status,platformStatus:users.platformStatus,
@@ -34,7 +62,7 @@ export async function setTpoProfileVerificationAdminGrant(
     if(!target||target.collegeId!==collegeId) throw Error("MEMBERSHIP_NOT_FOUND");
     const [tpoRole]=await tx.select({role:membershipRoles.role}).from(membershipRoles)
       .where(and(eq(membershipRoles.membershipId,membershipId),
-        eq(membershipRoles.role,"TPO"))).limit(1);
+        eq(membershipRoles.role,"TPO"))).for("share").limit(1);
     if(enabled&&(target.status!=="ACTIVE"||target.platformStatus!=="ACTIVE"||!tpoRole))
       throw Error("TPO_ADMIN_GRANT_TARGET_NOT_ACTIVE");
     if(enabled) {
