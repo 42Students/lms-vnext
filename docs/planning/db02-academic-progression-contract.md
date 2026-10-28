@@ -428,3 +428,26 @@ This script is **authored, NOT EXECUTED** here. The runner does not replace the 
 **Exact GitHub fetched-source V8 assertions performed:** 16/16 source-level expectations passed, including 61 unique paired PL/pgSQL functions (61 opening/closing `$$`), 71 distinct triggers, 125/125 ledger rows classified and target-dispositioned, and runner inclusion of all three new artifacts. These are *not* native Node/PG execution and do not upgrade field runtime equivalence. Important correction: the first append produced malformed `$` delimiters from JavaScript replacement-string semantics; commit `5aa4d21a5b518fd95c8f492203629c9c9be94f31` corrected this, and the fetched `main` SQL blob `525c57f9d39c9fc91c8a6fb9e82c3c0d302a4584` passed the balanced-delimiter source audit.
 
 **DB-005 handoff boundary:** Source semantics 125/125 dispositioned; canonical unregistered SQL now 61 functions/71 triggers, with guarded Node, rollback PG, and multi-session race suites. **0 DB02 fields runtime verified; no numbered DB02 migration or replay.** Chat 1 is the exclusive migration/barrel writer, and must reconcile the new archive trigger, register the full staged DB02 schema, run 0000→head replay on a truly isolated PG instance and execute the guarded acceptance runner; capture command, exact SHA, PostgreSQL version, output and tenant/race results. Until that evidence exists, DB-005 must **not** be DONE_VERIFIED and global DATABASE must not advance.
+
+## DB-005 migration promotion — 2026-10-28
+
+The canonical 2,819-line DB02 staged proposal has been converted into the
+numbered Drizzle `0303_db02_academic_timetable_registered.sql` migration
+with 220 top-level statement breakpoints. This includes cohort progression
+state and history, curriculum term identity, room booking/archive guards,
+cohort and section tenant constraints, schedule GiST overlap exclusions,
+faculty role enforcement and exit/reactivation guards.
+
+Previously the `db02-staged-acceptance` CI job applied raw SQL *outside* the
+registered migration replay. The `db02-registered-acceptance` job now
+executes journal verification, a disposable PostgreSQL 17 clean migration
+replay, replay idempotence, canonical manifest checks, rollback-only SQL
+negative cases, and two-session race cases **without any separate staging
+overlay**. Greenfield means no old production data or IDs are imported.
+If existing vNext course offerings cannot be uniquely mapped to a program
+term, the migration fails rather than fabricating the mapping.
+
+**Acceptance is not claimed until this exact commit's CI jobs pass.** The
+global DATABASE phase remains active, and DB-005 remains `done:false` until
+registration, drift, PostgreSQL and API compatibility are verified.
+

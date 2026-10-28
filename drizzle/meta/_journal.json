@@ -2122,6 +2122,13 @@
       "when": 1792359491266,
       "tag": "0302_db01_domain_terminal_owner_guard",
       "breakpoints": true
+    },
+    {
+      "idx": 303,
+      "version": "7",
+      "when": 1792359551266,
+      "tag": "0303_db02_academic_timetable_registered",
+      "breakpoints": true
     }
   ]
 }

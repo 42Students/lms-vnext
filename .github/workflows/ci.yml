@@ -322,11 +322,10 @@ jobs:
           tests/integration/db01-membership-role-parent-lock.test.ts
 
 
-  # DB-005 staging probe: exercises the UNREGISTERED DB02 proposal on a
-  # disposable instance and executes its negative/concurrent SQL contracts.
-  # Success is NOT proof of numbered migration registration, production
-  # migration replay, or DB-005 task completion.
-  db02-staged-acceptance:
+  # DB-005 registered DB02 academy and schedule acceptance on clean PG17.
+  # Migration 0303 is applied through the normal journal, not a staging overlay.
+  # This proves the final registered schema and the negative/concurrency suite.
+  db02-registered-acceptance:
     runs-on: ubuntu-latest
     timeout-minutes: 45
     services:
@@ -362,12 +361,11 @@ jobs:
         env:
           DATABASE_URL: ""
         run: npm run db:test:prepare
-      - name: Apply UNREGISTERED DB02 staging to disposable database ONLY
-        shell: bash
-        run: |
-          set -euo pipefail
-          psql "$DATABASE_URL" -X -v ON_ERROR_STOP=1 -f scripts/sql/db02-academic-progression-and-rooms-staging.sql
-      - name: DB-005 staged schema, authorization and concurrent SQL acceptance
+      - name: DB-005 registered migration replay idempotence
+        run: npm run db:migrate
+      - name: DB-005 registered journal provenance source checks
+        run: node --test tests/db005-registered-canonical-source-contract.test.mjs
+      - name: DB-005 registered schema, authorization and concurrent SQL acceptance
         shell: bash
         run: bash scripts/sql/db02-run-disposable-acceptance.sh
 
