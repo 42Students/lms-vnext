@@ -7,7 +7,8 @@ const service = read("src/modules/groups/service.ts");
 const eligibility = read("src/modules/groups/elective-eligibility.ts");
 const roster = read("src/modules/groups/roster-access.ts");
 const schema = read("src/db/schema/academics.ts");
-const draft = read("scripts/sql/db02-academic-progression-and-rooms-staging.sql");
+const registeredDb02 = read("drizzle/0303_db02_academic_timetable_registered.sql");
+const registeredDb03 = read("drizzle/0306_db03_elective_kernel_integrity.sql");
 const db03 = read("scripts/sql/db03-elective-learner-integrity-post-db02-staging.sql");
 const rosterTests = read("tests/integration/groups-db03-roster.test.ts");
 
@@ -36,12 +37,14 @@ test("the program oracle is enforced on new join and stale ACTIVE membership", (
   assert.match(rosterTests, /Both cohorts reference the same academic period/);
 });
 
-test("DB02 draft supplies the canonical term/year source and no period UUID shortcut", () => {
-  assert.match(draft, /CREATE TABLE cohort_progression_state/);
-  assert.match(draft, /current_term_number integer NOT NULL DEFAULT 1/);
-  assert.match(draft, /current_academic_year_start integer/);
-  assert.match(db03, /cps\.current_term_number = slot_semester/);
-  assert.match(db03, /cps\.current_academic_year_start = slot_year_start/);
+test("registered DB02 and DB03 migrations enforce canonical term/year instead of period-only eligibility", () => {
+  assert.match(registeredDb02, /CREATE TABLE IF NOT EXISTS cohort_progression_state/);
+  assert.match(registeredDb02, /current_term_number integer NOT NULL DEFAULT 1/);
+  assert.match(registeredDb02, /current_academic_year_start integer/);
+  assert.match(registeredDb03, /cp\.current_term_number=x\.semester_number/);
+  assert.match(registeredDb03, /cp\.current_academic_year_start=y/);
+  assert.match(eligibility, /cohortProgressionState\.currentTermNumber/);
+  assert.match(roster, /cps\.current_term_number = \$\{electiveSlots\.semesterNumber\}/);
 });
 
 test("DB03 staged direct-SQL guard handles both ACTIVE and WAITLISTED, not unrelated groups", () => {
@@ -65,8 +68,9 @@ test("year policy matches legacy nullable-start comparison", () => {
   assert.match(db03, /slot_year !~ '\^\[0-9\]\{4\}/);
 });
 
-test("unregistered staged SQL is explicitly not a numbered migration", () => {
+test("historical stage is not mistaken for the now-registered DB03 enforcement", () => {
   assert.match(db03, /STAGING ONLY; NOT A NUMBERED DRIZZLE MIGRATION/);
-  assert.match(db03, /Prerequisite: DB02 canonical cohort_progression_state/);
-  assert.match(db03, /Do not register before DB02/);
+  assert.match(registeredDb03, /CREATE TRIGGER db03_elective_member_academics_guard/);
+  assert.match(registeredDb03, /CREATE TRIGGER db03_elective_offering_program_guard/);
+  assert.match(registeredDb03, /DB03 elective max_pick exceeded/);
 });
