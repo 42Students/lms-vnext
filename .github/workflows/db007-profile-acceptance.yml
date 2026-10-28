@@ -11,6 +11,10 @@ on:
       - "src/db/schema/profile-verification.ts"
       - "src/modules/profile-verification/**"
       - "tests/db007-*.test.mjs"
+      - "tests/integration/db007-*.test.ts"
+      - "src/modules/people/learner-education-projection-service.ts"
+      - "src/modules/people/learner-profile-section-service.ts"
+      - "src/modules/people/learner-profile-document-edit-service.ts"
       - ".github/workflows/db007-profile-acceptance.yml"
 
 permissions:
