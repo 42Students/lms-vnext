@@ -882,51 +882,12 @@
     "authority": "docs/tracker.json is the sole active execution plan, 81-task DB tracker, 10-lane coordination tracker, and future-phase milestone tracker; no competing current execution documents.",
     "adoptedOn": "2026-10-29",
     "northStar": "Build an actually functional and polished greenfield LMS vNext with complete development-oracle behavior, correct tenant and privacy invariants, tested roles, and independent final release certification; optimize for closed runnable domains not investigations or test-count inflation.",
-    "lifecycle": [
-      {
-        "id": "DATABASE",
-        "globalGate": "DATABASE",
-        "goal": "All registered persistence and 81 tracked tasks accepted with real PostgreSQL and safety evidence",
-        "acceptance": "All 81 DB tasks DONE, clean registered replay/catalog/drift, tenant/privacy/race negatives, independent DATABASE signoff"
-      },
-      {
-        "id": "API",
-        "globalGate": "API",
-        "goal": "All seven-role API and producer-to-consumer user jobs function",
-        "acceptance": "Services, auth, state, side effects, errors and cross-role integration pass"
-      },
-      {
-        "id": "UI",
-        "globalGate": "UI",
-        "goal": "All required account/page families function at implementation-green",
-        "acceptance": "Seven accounts plus shared surfaces, all tabs/modals/actions/mobile/error/permissions verified"
-      },
-      {
-        "id": "DESIGN",
-        "globalGate": "UI",
-        "goal": "Final accessible, responsive, cohesive visual and UX quality",
-        "acceptance": "Design and accessibility acceptance after implementation green; DESIGN is the UI phase sub-gate before RELEASE"
-      },
-      {
-        "id": "RELEASE",
-        "globalGate": "RELEASE",
-        "goal": "Full integrated deployment and customer readiness",
-        "acceptance": "Final target-SHA CI, browser/security/providers/recovery/rollout and production oracle signoffs"
-      }
-    ],
     "completionPolicy": [
       "DB task DONE requires executed evidence at exact code SHA for registered schema, real producer/consumer, permissions, tenant/private/FK/state/race checks and required decisions; never mark DONE from authored tests or prose.",
       "Accepted DB tasks are frozen unless demonstrated affected regression or explicit owner rescope.",
       "Only independent final-release attestations, live-provider checks, end-of-release browser freeze may be deferred with the existing structured deferredRelease; no core functionality/schema/security/privacy gaps may be deferred.",
       "Domain-ready API and functional UI can be implemented during DATABASE as scoped vertical slices without certifying global API/UI/RELEASE.",
       "After two useful passes with zero accepted tasks, isolate one reproducible blocker or move to independent ready work; never abandon unsafe obligations."
-    ],
-    "phaseOrderHumanReadable": [
-      "DATABASE",
-      "API/user-job GREEN",
-      "UI implementation GREEN",
-      "DESIGN GREEN",
-      "RELEASE GREEN"
     ],
     "lanes": [
       {
@@ -1655,6 +1616,233 @@
         "certified": false,
         "evidence": []
       }
+    },
+    "globalPhases": [
+      {
+        "id": "DATABASE",
+        "sequence": 1,
+        "title": "Database Green — reliable persisted foundation",
+        "goal": "Deliver every required legacy-derived persisted concept on the greenfield vNext architecture, with tenant-safe registered PostgreSQL state and executed evidence.",
+        "entryCriteria": [
+          "Current phase DATABASE; independently runnable disposable PostgreSQL and fail-closed targeting",
+          "Pinned legacy development behavior references; old LMS production data will NOT be imported"
+        ],
+        "workstreams": [
+          "Reconcile DB00–DB10 source concepts and dispositions against vNext",
+          "Register canonical Drizzle schema, journal, snapshots and migrations; eliminate drift",
+          "Complete real service/producer/read-model integration for profiles, courses, assessments, projects, placements, TPO/CRM and operations",
+          "Prove tenant/FK/private-object/role/retention/state/uniqueness/deletion/history/race contracts using negative and concurrency tests",
+          "Resolve all required DATABASE tasks, including cross-domain and independent verifier gates"
+        ],
+        "exitCriteria": [
+          "All 81 DATABASE tasks have done=true with individually executed acceptance at pinned code SHAs",
+          "All applicable DATABASE phaseGates.DATABASE conditions hold, evidenced by full registered clean PostgreSQL migration replay, catalog/snapshot drift and required tenant/security/race negatives",
+          "All cross-domain database dependencies and required historical source dispositions resolved; independent DB signoff recorded"
+        ],
+        "verification": [
+          "npm run db:journal:verify",
+          "npm run db:test:prepare, npm run db:migrate on deliberately disposable PostgreSQL",
+          "Registered catalog/drift and negative/domain integration suites on exact source revision",
+          "Independent global DATABASE gate attestation with links, runner and result"
+        ],
+        "concurrentWork": "Domain-safe API and UI user journeys may be built and locally tested with their database parents during this phase, but no later global phase is certified by that work.",
+        "prerequisitePhaseIds": [],
+        "completionEvidencePath": "execution.globalPhaseCertificates.DATABASE",
+        "milestoneSource": "tasks (all 81 DATABASE IDs), including phaseGates.DATABASE",
+        "ownerLanes": [
+          "L01",
+          "L02",
+          "L03",
+          "L04",
+          "L05",
+          "L06",
+          "L07",
+          "L08",
+          "L09",
+          "L10"
+        ]
+      },
+      {
+        "id": "API",
+        "sequence": 2,
+        "title": "API / User-Job Green — complete functional workflows",
+        "goal": "Every required daily job and cross-role business action works against real persisted vNext data, with complete authorization and side effects.",
+        "entryCriteria": [
+          "Global DATABASE certificate has executed acceptance and is certified",
+          "Pinned legacy FE/BE development-source behavioral inventories reused, with narrow discovery for genuine gaps"
+        ],
+        "workstreams": [
+          "Validate identity/session/tenant selection/provisioning, college admin and super-admin jobs",
+          "Complete academic, class, learner/faculty, courses, lessons, assignment/quiz, attendance and grading journeys",
+          "Complete projects, mentoring, placements, offers, TPO and recruiter CRM operations",
+          "Complete private evidence, notifications, external-provider-safe jobs and shared operations",
+          "Execute producer-to-consumer readback, input/error/retry/cancel/concurrency/role/tenant and cross-account negative paths"
+        ],
+        "exitCriteria": [
+          "All API milestones in execution.milestones accepted with executed evidence",
+          "All phaseGates.API conditions satisfied for seven roles and shared flows; no required API/service parity gap remains",
+          "Independent API global certification recorded on the code revision under test"
+        ],
+        "verification": [
+          "Executed integration and negative authorization/tenant/race tests against disposable PostgreSQL",
+          "Current-code service contracts, cross-role producer/consumer tests and relevant build/type checks",
+          "Pin and cite exact legacy FE/BE and vNext SHAs used for final API parity"
+        ],
+        "concurrentWork": "Scoped domain API jobs already built in DATABASE are reused; UI components necessary to prove a service may coexist, but the global UI gate is independent.",
+        "prerequisitePhaseIds": [
+          "DATABASE"
+        ],
+        "completionEvidencePath": "execution.globalPhaseCertificates.API",
+        "milestoneSource": "execution.milestones filtered by stage API",
+        "ownerLanes": [
+          "L01",
+          "L02",
+          "L03",
+          "L04",
+          "L05",
+          "L06",
+          "L07",
+          "L08",
+          "L09",
+          "L10"
+        ]
+      },
+      {
+        "id": "UI",
+        "sequence": 3,
+        "title": "UI Implementation Green — all account surfaces functional",
+        "goal": "All required legacy-development page families and meaningful UI states function with verified vNext API/data and role rules.",
+        "entryCriteria": [
+          "Global API and DATABASE gates certified for whole-phase acceptance; prior scoped UI implementations may be reused",
+          "Detailed existing account/page inventories available and frozen exact legacy source SHAs identified"
+        ],
+        "workstreams": [
+          "Verify seven account journeys: Learner, Faculty, Mentor, College Admin, Super Admin, TPO and Recruiter/HR, plus shared/public",
+          "Enumerate actual reachable navigation, pages, tabs, forms, buttons, filters, bulk actions, drawers/modals/wizards, empty/loading/error/permission/mobile states",
+          "Repair P0/P1 missing behavior, broken route/deep links and cross-role producer/consumer gaps",
+          "Run real browser and integration tests with correct role, tenant, persistence, errors and actions; preserve beneficial vNext extras",
+          "Mark family Implementation Green once proven; avoid functional re-audit after closure absent source drift"
+        ],
+        "exitCriteria": [
+          "All UI milestones in execution.milestones accepted with evidence",
+          "All phaseGates.UI conditions satisfied; parity inventory and page-family checks have zero required unresolved items",
+          "Seven-role and shared browser flows pass; independent global UI implementation certification recorded"
+        ],
+        "verification": [
+          "Per-family detailed UI acceptance under docs/parity/; source and runtime screenshots if applicable",
+          "Desktop/mobile browser E2E plus accessibility-related functional interaction checks",
+          "Current exact vNext and relevant legacy oracle SHAs; clone-parity implementation gate"
+        ],
+        "concurrentWork": "Final design polish is deliberately a separate DESIGN phase; missing functional UI may not be deferred as cosmetic polish.",
+        "prerequisitePhaseIds": [
+          "API"
+        ],
+        "completionEvidencePath": "execution.globalPhaseCertificates.UI",
+        "milestoneSource": "execution.milestones filtered by stage UI",
+        "ownerLanes": [
+          "L01",
+          "L02",
+          "L03",
+          "L04",
+          "L05",
+          "L06",
+          "L07",
+          "L08",
+          "L09",
+          "L10"
+        ]
+      },
+      {
+        "id": "DESIGN",
+        "sequence": 4,
+        "title": "Design Green — polished, consistent, accessible UX",
+        "goal": "Deliver one cohesive, professional, accessible and responsive design system and user experience across the accepted functional LMS.",
+        "entryCriteria": [
+          "Global UI Implementation Green certified; core function and page contracts already accepted",
+          "Shared vNext UI kit and actual LMS brand tokens are the design authority, not screenshot pixel-perfect copying"
+        ],
+        "workstreams": [
+          "Consolidate navigation/sidebars, information architecture, density and cross-role user journeys",
+          "Polish typography, spacing, iconography, forms, validation, overlays and all empty/error/loading content",
+          "Verify accessible colors/contrast, focus, keyboard, screen reader semantics and reduced-motion handling",
+          "Verify mobile/tablet/desktop breakpoints and preserve working behavior",
+          "Retest affected workflows only when visual/design edits materially alter function"
+        ],
+        "exitCriteria": [
+          "All DESIGN milestones accepted with executed visual/accessibility/browser review evidence",
+          "Cross-account design consistency and responsive/accessibility matrix approved",
+          "Independent global DESIGN certificate recorded; no unresolved design P0/P1 or introduced functional regressions"
+        ],
+        "verification": [
+          "Representative actual browser renders at desktop/mobile/tablet with reviewed visual evidence",
+          "Keyboard, focus, accessibility and responsive interaction checks",
+          "Affected service/browser regression tests where design changed behavior"
+        ],
+        "concurrentWork": "Domain-local design fixes may happen earlier, but global DESIGN acceptance occurs only after full UI implementation acceptance.",
+        "prerequisitePhaseIds": [
+          "UI"
+        ],
+        "completionEvidencePath": "execution.globalPhaseCertificates.DESIGN",
+        "milestoneSource": "execution.milestones filtered by stage DESIGN",
+        "ownerLanes": [
+          "L02",
+          "L03",
+          "L04",
+          "L06",
+          "L07",
+          "L09"
+        ]
+      },
+      {
+        "id": "RELEASE",
+        "sequence": 5,
+        "title": "Release Green — production-safe replacement",
+        "goal": "Prove vNext can replace the old customer LMS with no silent loss of required workflows, secure real integrations and an approved rollout/rollback.",
+        "entryCriteria": [
+          "DATABASE, API, UI and DESIGN global certifications completed",
+          "Release candidate SHA and exact frozen prod-2026 FE/BE oracle pinned"
+        ],
+        "workstreams": [
+          "Run complete current-SHA lint/typecheck/build, registered migration/recovery, unit/integration/negative/browser/security/load suites",
+          "Reconcile material legacy development vs frozen production behavior across all accounts; clone parity READY YES",
+          "Verify real authorized first-party OTP/Exotel/ZeptoMail, Cloud SQL, private R2 object storage and relevant providers",
+          "Verify tenant isolation, privacy, backups, restore/rollback, retention, observability and operational readiness",
+          "Resolve independently deferred signatures and final-release reviews; execute rollout and post-launch acceptance"
+        ],
+        "exitCriteria": [
+          "All RELEASE milestones accepted with exact passing evidence and required external signoff",
+          "All phaseGates.RELEASE conditions satisfied, including approved environment/provider tests and recovery",
+          "All prior phase certificates remain valid for target SHA or are revalidated if material changes occurred; no unapproved deferredRelease item remains",
+          "Production rollout/go-no-go and post-launch validation recorded"
+        ],
+        "verification": [
+          "Full applicable current-SHA build/CI/browser/security/adversarial/load/migration/recovery suite",
+          "npm run parity:clone-gate reports READY YES",
+          "Authorized live-provider/identity/storage smoke and independent owner/security signoffs",
+          "Production cutover, rollback and post-launch evidence"
+        ],
+        "concurrentWork": "Never infer release readiness from engineering task counts, mock providers, stale CI or previously accepted UI screenshots.",
+        "prerequisitePhaseIds": [
+          "DESIGN"
+        ],
+        "completionEvidencePath": "execution.globalPhaseCertificates.RELEASE",
+        "milestoneSource": "execution.milestones filtered by stage RELEASE",
+        "ownerLanes": [
+          "L01",
+          "L02",
+          "L03",
+          "L07",
+          "L09",
+          "L10"
+        ]
+      }
+    ],
+    "globalPhaseRules": {
+      "canonicalStageOrder": "execution.globalPhases (DATABASE, API, UI, DESIGN, RELEASE) is the explicit five-stage roadmap in this same tracker; top-level phaseOrder/currentPhase stay the four historical certification buckets for compatibility, with DESIGN an independent sub-gate before RELEASE.",
+      "statusDerivation": "The only authoritative global certification flags and evidence are execution.globalPhaseCertificates; globalPhases contains scope and immutable acceptance contract, not copied done/status fields. Milestone DONE counts derive from execution.milestones; DATABASE from tasks.",
+      "phasePromotion": "Independent certification must only occur after all prerequisite stages are certified, all required scoped tasks/milestones pass, all relevant phaseGates and globalPhases.exitCriteria are satisfied with executed code-SHA evidence. DESIGN must certify after UI and before RELEASE.",
+      "tenChatRule": "All ten lanes can implement dependency-ready work in parallel in the active phase; a domain-local future-stage user journey is a useful implementation but not global certification. All lane claims/handoffs live in this same JSON.",
+      "changes": "Only user-authorized scope changes. Never silently drop an expected phase, required role/surface or test to raise completion percentage."
     }
   }
 }
