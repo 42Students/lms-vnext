@@ -24,6 +24,9 @@ export function projectLegacyCoursePublic(source:CourseProjectionSource){
   slug:source.slug,
   courseName:source.name,
   shortTitle:source.shortTitle,
+  // Legacy NewProgramDetailsDTO derives this wire field; it is not stored in
+  // a second mutable course.formal_title column. Preserve null (not blank) fallback.
+  formal_title:source.shortTitle === null ? source.name : source.shortTitle,
   active:source.status==="ACTIVE"&&source.enabled,
   deptId:source.departmentId,
   allowedForDisplay:source.legacyAllowedForDisplay!==0,
