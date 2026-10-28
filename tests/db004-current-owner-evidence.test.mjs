@@ -73,8 +73,19 @@ test("physical field proof and runtime proof remain explicitly distinct",()=>{
  const composites=current.rows.filter(row=>row.compositeImplementationVerified);
  assert.equal(composites.length,15);
  assert.deepEqual(new Set(composites.map(row=>row.legacyField)),new Set(["faculty.id","faculty.created_at","faculty.is_deleted","faculty.updated_at","learner.id","learner.created_at","learner.is_deleted","learner.updated_at","recruiter.id","role.name","faculty.organization_id","learner.organization_id","user.user_type","user_roles.user_id","user_roles.role_id"]));
+ const expectedCompositeSuiteByField={
+  ...Object.fromEntries(["faculty.organization_id","learner.organization_id",
+   "user.user_type","user_roles.user_id","user_roles.role_id"].map(field=>
+   [field,"tests/integration/db01-composite-role-field-semantics.test.ts"])),
+  ...Object.fromEntries(["faculty.id","faculty.created_at","faculty.is_deleted",
+   "faculty.updated_at","learner.id","learner.created_at","learner.is_deleted",
+   "learner.updated_at"].map(field=>
+   [field,"tests/integration/db01-source-account-provenance-field-semantics.test.ts"])),
+  "recruiter.id":"tests/integration/db01-recruiter-identity-field-semantics.test.ts",
+  "role.name":"tests/integration/db01-role-definition-field-semantics.test.ts",
+ };
  assert.ok(composites.every(row=>!row.physicalVerified&&!row.runtimeSemanticsVerified&&
-  row.compositeEvidence?.suite==="tests/integration/db01-composite-role-field-semantics.test.ts"&&
+  row.compositeEvidence?.suite===expectedCompositeSuiteByField[row.legacyField]&&
   row.compositeEvidence?.passingRun?.startsWith("https://github.com/42Students/lms-vnext/actions/runs/")&&
   row.compositeEvidence?.testedCommit?.length===40&&
   row.compositeEvidence?.limitations?.length>0));
