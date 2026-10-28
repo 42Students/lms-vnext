@@ -1,6 +1,6 @@
 # LMS vNext — Detailed Page Parity Specs
 
-**Locked execution priority:** [Owner-locked vNext execution order](../planning/locked-execution-order-2026-10-28.md) is binding for *when* this page/surface protocol runs: DATABASE certification first, then API/user-job parity, then per-family Implementation Green, final Design Green and Release Green. Static discovery can be reused/prepared earlier without implying page acceptance. The page contracts below continue to define *how* each family is verified.
+**Execution priority:** [Final Execution & Domain Closure Protocol](../planning/database-domain-closure-protocol-2026-10-29.md) controls global phase gates. Dependency-ready scoped API/UI user jobs may be implemented during DATABASE without certifying global API/UI. This page-family contract still governs all detailed UI verification.
 
 ## Cross-chat master closure operating contract (27 October 2026)
 
@@ -12,7 +12,7 @@
 - **Cutover obligation:** the existing [clone-parity protocol](../planning/clone-parity-protocol.md) independently uses production branches as the release oracle. Compare development-only behavior to production before final release. Do not quietly replace that release gate by auditing dev alone.
 - **Design authority:** the shared vNext UI kit and an internally coherent, accessible product design. Prototype screenshots are optional references, **not** a demand for pixel reproduction. Never use a visual redesign to silently remove a required workflow.
 - **No-loss rule:** old page/route equality is **not** the goal. Preserve 100% of required reachable capabilities, transitions, permissions, bookmarks and outcomes. A legacy surface may become a tab, drawer or integrated workspace only after action/state/deep-link parity is proven. Every extra vNext surface must also be classified as an intentional improvement, redundant candidate, or explicitly approved retirement; don't delete a beneficial improvement just to match counts.
-- **Phase boundary:** UI inventory/evidence may be prepared while DATABASE gates remain open; the global UI phase and release are **not** certified until the required upstream DB/API and integrated checks pass. A focused page pass is never a global CI or release pass.
+- **Phase boundary:** UI inventory/evidence and dependency-ready scoped domain-local implementation may proceed while DATABASE remains active; the global UI phase and RELEASE still require their independent upstream DB/API and integrated checks. A focused page pass is never a global CI or release pass.
 
 ### The hierarchy: discover → map → prove
 
