@@ -80,6 +80,7 @@ jobs:
           tests/integration/db01-tenant-identity-invariants.test.ts
           tests/integration/db01-identity-fk-invariants.test.ts
           tests/integration/db01-concurrent-integrity.test.ts
+          tests/integration/db01-org-college-field-semantics.test.ts
           tests/integration/db01-user-identity-field-semantics.test.ts
           tests/integration/db01-auth-attempt-field-semantics.test.ts
           tests/integration/db01-device-session-field-semantics.test.ts
