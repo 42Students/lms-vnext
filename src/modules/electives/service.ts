@@ -49,6 +49,10 @@ function normalizeAcademicYear(raw: string | null | undefined): string | null {
   const match = /^([0-9]{4})(?:-([0-9]{2}|[0-9]{4}))?$/.exec(raw.trim());
   if (!match) throw new ElectivesServiceError("ELECTIVE_ACADEMIC_YEAR_INVALID");
   const start = Number(match[1]), next = start + 1, end = match[2];
+  // Keep the persisted slot in the range supported by canonical DB02
+  // cohort progression; otherwise the slot is impossible to join.
+  if (start < 1900 || start > 9998)
+    throw new ElectivesServiceError("ELECTIVE_ACADEMIC_YEAR_INVALID");
   if (end && Number(end) !== (end.length === 2 ? next % 100 : next))
     throw new ElectivesServiceError("ELECTIVE_ACADEMIC_YEAR_INVALID");
   return start + "-" + String(next % 100).padStart(2,"0");
