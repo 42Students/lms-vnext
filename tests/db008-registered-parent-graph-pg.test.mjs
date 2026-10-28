@@ -66,10 +66,15 @@ test("DB008 registered parent graph: same-college paths, direct SQL negatives an
       await course(ownedDepartment);
       await assert.rejects(pool.query("UPDATE departments SET college_id=$1 WHERE id=$2",
         [collegeB,ownedDepartment]),{code:"23514"});
+      // DB-005 already enforces a stronger invariant: department college
+      // ownership is immutable even before courses attach. Keep that
+      // protection; DB-008's narrower guard must not weaken it.
       const empty=await department();
-      await pool.query("UPDATE departments SET college_id=$1 WHERE id=$2",[collegeB,empty]);
-      const moved=await pool.query("SELECT college_id FROM departments WHERE id=$1",[empty]);
-      assert.equal(moved.rows[0].college_id,collegeB);
+      await assert.rejects(pool.query(
+        "UPDATE departments SET college_id=$1 WHERE id=$2",[collegeB,empty],
+      ),{code:"23514"});
+      const unchanged=await pool.query("SELECT college_id FROM departments WHERE id=$1",[empty]);
+      assert.equal(unchanged.rows[0].college_id,collegeA);
     });
     await t.test("non-read-committed course graph writes explicitly reject", async () => {
       const client=await pool.connect();
