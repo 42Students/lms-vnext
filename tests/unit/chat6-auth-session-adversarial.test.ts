@@ -84,9 +84,12 @@ describe("Chat-6 adversarial OTP, handoff and session lifecycle", () => {
     expect(sessionDigest(secret,tokenA)).not.toBe(sessionDigest(secret,tokenB));
     const sessions=source("src/modules/auth/session-service.ts");
     expect(sessions).toContain("sessionDigest(config.secret, token)");
-    expect(sessions).toContain('if (row["revoked"]) return { ok: false, reason: "SESSION_REVOKED" }');
+    expect(sessions).toContain('if (row["revoked"] || row["platform_status"] !== "ACTIVE")');
     expect(sessions).toContain('if (row["expired"]) return { ok: false, reason: "SESSION_EXPIRED" }');
-    expect(sessions).toContain('if (row["platform_status"] !== "ACTIVE")');
+    expect(sessions).toContain("u.platform_status = 'ACTIVE'");
+    expect(sessions).toContain("s.revoked_at IS NULL");
+    expect(sessions).toContain("s.expires_at > clock_timestamp()");
+    expect(sessions).toContain("UPDATE identity_device_sessions AS s");
     expect(sessions).toContain("WHERE user_id = ${userId}");
     expect(sessions).toContain("AND id <> ${currentSessionId}");
     expect(sessions).toContain("WHERE id = ${sessionId} AND user_id = ${userId}");
