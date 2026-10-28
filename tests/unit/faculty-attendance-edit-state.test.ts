@@ -5,9 +5,9 @@ const roster = [
   { membershipId: "a" }, { membershipId: "b" }, { membershipId: "c" },
 ];
 const records = [
-  { scheduleEventId: "session-1", membershipId: "b" },
-  { scheduleEventId: "session-2", membershipId: "c" },
-  { scheduleEventId: "session-1", membershipId: "outsider" },
+  { scheduleEventId: "session-1", membershipId: "b", status: "ABSENT" },
+  { scheduleEventId: "session-2", membershipId: "c", status: "ABSENT" },
+  { scheduleEventId: "session-1", membershipId: "outsider", status: "ABSENT" },
 ];
 
 describe("Faculty attendance editor current absence state", () => {
@@ -16,6 +16,17 @@ describe("Faculty attendance editor current absence state", () => {
   });
   it("recomputes after changing sessions without carrying absence selections", () => {
     expect([...initialAbsencesForSession(roster, records, "session-2")]).toEqual(["c"]);
+  });
+  it("does not turn admin-coded PRESENT, LATE, EXCUSED or MEDICAL into faculty absences", () => {
+    const adminRecords = ["PRESENT", "LATE", "EXCUSED", "MEDICAL"].map((status) => ({
+      scheduleEventId: "session-1", membershipId: "a", status,
+    }));
+    expect([...initialAbsencesForSession(roster, adminRecords, "session-1")]).toEqual([]);
+    expect([...initialAbsencesForSession(roster, [
+      ...adminRecords,
+      { scheduleEventId: "session-1", membershipId: "b", status: "ABSENT" },
+      { scheduleEventId: "session-2", membershipId: "c", status: "ABSENT" },
+    ], "session-1")]).toEqual(["b"]);
   });
   it("starts all learners present when a new session has no absence records", () => {
     expect(initialAbsencesForSession(roster, records, "new").size).toBe(0);
