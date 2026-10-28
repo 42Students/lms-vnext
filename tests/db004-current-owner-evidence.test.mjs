@@ -20,17 +20,19 @@ test("DB-004 owner scope accounts for all legacy columns without stealing other 
 });
 test("physical field proof and runtime proof remain explicitly distinct",()=>{
  const physical=current.rows.filter(x=>x.physicalVerified);
- assert.equal(physical.length,134);
+ assert.equal(physical.length,136);
  assert.equal(physical.filter(x=>x.evidenceStatus==="EXACT_REGISTERED_FIELD_PG_WITNESS").length,112);
  assert.equal(physical.filter(x=>x.evidenceStatus==="REGISTERED_BRANDING_REPLACEMENT_PHYSICAL_WITNESS_SEMANTIC_REVIEW").length,15);
  assert.equal(physical.filter(x=>x.evidenceStatus==="REGISTERED_IDENTITY_NAME_PHYSICAL_WITNESS_SEMANTIC_REVIEW").length,6);
  assert.equal(physical.filter(x=>x.evidenceStatus==="REGISTERED_DNS_DIAGNOSTICS_PHYSICAL_WITNESS_SEMANTIC_REVIEW").length,1);
- assert.equal(current.summary.registeredPhysicalWitnessTotal,134);
- assert.equal(current.summary.stillWithoutPhysicalWitness,61);
+ assert.equal(physical.filter(x=>x.evidenceStatus==="REGISTERED_COLLEGE_LEADERSHIP_REPLACEMENT_PHYSICAL_WITNESS_SEMANTIC_REVIEW").length,2);
+ assert.equal(current.summary.registeredReplacementPhysicalWitnesses,24);
+ assert.equal(current.summary.registeredPhysicalWitnessTotal,136);
+ assert.equal(current.summary.stillWithoutPhysicalWitness,59);
  const verified=current.rows.filter(x=>x.runtimeSemanticsVerified);
- assert.equal(verified.length,130);
- assert.equal(current.summary.runtimeSemanticsVerified,130);
- assert.equal(current.summary.runtimeSemanticsUnverified,65);
+ assert.equal(verified.length,132);
+ assert.equal(current.summary.runtimeSemanticsVerified,132);
+ assert.equal(current.summary.runtimeSemanticsUnverified,63);
  const allowed={
   "college_branding.":["tests/integration/chat11-super-admin-branding-cas.test.ts",14],
   "tenant_domain.":["tests/integration/tenant-domains.test.ts",13],
@@ -49,7 +51,8 @@ test("physical field proof and runtime proof remain explicitly distinct",()=>{
   "faculty_acct_verification.":["tests/integration/db01-learner-faculty-otp-field-compat.test.ts",9],
  };
  for(const [prefix,[suite,count]] of Object.entries(allowed)){
-  const group=verified.filter(row=>row.legacyField.startsWith(prefix));
+  const group=verified.filter(row=>row.legacyField.startsWith(prefix)&&
+    !(prefix==="college."&&["college.college_chair_id","college.college_vice_chair_id"].includes(row.legacyField)));
   assert.equal(group.length,count,prefix);
   assert.ok(group.every(row=>row.physicalVerified&&row.runtimeEvidence?.suite===suite));
   assert.ok(group.every(row=>row.runtimeEvidence?.passingRun?.startsWith("https://github.com/42Students/lms-vnext/actions/runs/")));
@@ -57,6 +60,10 @@ test("physical field proof and runtime proof remain explicitly distinct",()=>{
   assert.ok(group.every(row=>row.runtimeEvidence?.limitations?.length>0));
   assert.ok(group.every(row=>existsSync(row.runtimeEvidence.suite)));
  }
+ const leadership=verified.filter(x=>["college.college_chair_id","college.college_vice_chair_id"].includes(x.legacyField));
+ assert.equal(leadership.length,2);
+ assert.ok(leadership.every(x=>x.physicalVerified&&
+  x.runtimeEvidence?.suite==="tests/integration/db01-college-leadership-field-semantics.test.ts"));
  assert.ok(current.rows.filter(x=>x.legacyField==="college_branding.is_deleted").every(x=>!x.runtimeSemanticsVerified));
  assert.ok(current.rows.filter(x=>!Object.keys(allowed).some(prefix=>x.legacyField.startsWith(prefix))).every(x=>!x.runtimeSemanticsVerified));
  assert.ok(current.rows.filter(x=>x.runtimeSemanticsVerified).every(x=>x.physicalVerified));
@@ -71,8 +78,8 @@ test("physical field proof and runtime proof remain explicitly distinct",()=>{
   new Set(retirementCandidates.map(x=>x.legacyField)));
  assert.equal(current.summary.retirementImplementationVerified,21);
  assert.equal(current.summary.retirementApprovalPending,21);
- assert.equal(current.summary.technicalEvidenceCoverage,151);
- assert.equal(current.summary.technicalEvidenceUncovered,44);
+ assert.equal(current.summary.technicalEvidenceCoverage,153);
+ assert.equal(current.summary.technicalEvidenceUncovered,42);
  assert.ok(technicallyRetired.every(x=>x.retirementApproved===false &&
   x.runtimeSemanticsVerified===false &&
   x.physicalVerified===false &&

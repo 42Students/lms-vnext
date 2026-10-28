@@ -53,7 +53,7 @@ describe("DB-004 registered source → target physical catalog",()=>{
   it("physically witnesses 22 accepted registered replacements without claiming legacy semantic parity",async()=>{
     const replacements=current.rows.filter(row=>row.physicalVerified &&
       row.evidenceStatus!=="EXACT_REGISTERED_FIELD_PG_WITNESS");
-    expect(replacements).toHaveLength(22);
+    expect(replacements).toHaveLength(24);
     const missing:string[]=[];
     for(const row of replacements){
       if(row.runtimeSemanticsVerified){
@@ -63,6 +63,8 @@ describe("DB-004 registered source → target physical catalog",()=>{
           ?"tests/integration/chat11-super-admin-branding-cas.test.ts"
           :row.legacyField.startsWith("recruiter.")
           ?"tests/integration/db01-recruiter-identity-field-semantics.test.ts"
+          :row.legacyField.startsWith("college.")
+          ?"tests/integration/db01-college-leadership-field-semantics.test.ts"
           :"tests/integration/db01-learner-faculty-field-semantics.test.ts";
         expect(row.runtimeEvidence?.suite).toBe(suite);
       }else{

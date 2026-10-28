@@ -14,18 +14,19 @@
     "nonExactOrRetirementRows": 83,
     "statuses": {
       "RETIRED_CROSS_HOST_HANDOFF_SOURCE_DECISION": 6,
-      "RETIREMENT_NORMALIZATION_OR_FIRST_PARTY_SECURITY_DECISION": 39,
+      "RETIREMENT_NORMALIZATION_OR_FIRST_PARTY_SECURITY_DECISION": 37,
       "EXACT_REGISTERED_FIELD_PG_WITNESS": 112,
+      "REGISTERED_COLLEGE_LEADERSHIP_REPLACEMENT_PHYSICAL_WITNESS_SEMANTIC_REVIEW": 2,
       "REGISTERED_BRANDING_REPLACEMENT_PHYSICAL_WITNESS_SEMANTIC_REVIEW": 15,
       "COMPOSITE_REDESIGN_SEMANTIC_REVIEW": 16,
       "REGISTERED_IDENTITY_NAME_PHYSICAL_WITNESS_SEMANTIC_REVIEW": 6,
       "REGISTERED_DNS_DIAGNOSTICS_PHYSICAL_WITNESS_SEMANTIC_REVIEW": 1
     },
-    "registeredReplacementPhysicalWitnesses": 22,
-    "registeredPhysicalWitnessTotal": 134,
-    "stillWithoutPhysicalWitness": 61,
-    "runtimeSemanticsVerified": 130,
-    "runtimeSemanticsUnverified": 65,
+    "registeredReplacementPhysicalWitnesses": 24,
+    "registeredPhysicalWitnessTotal": 136,
+    "stillWithoutPhysicalWitness": 59,
+    "runtimeSemanticsVerified": 132,
+    "runtimeSemanticsUnverified": 63,
     "runtimeWitnessesByFamily": {
       "college_branding": 14,
       "tenant_domain": 13,
@@ -33,7 +34,7 @@
       "user_session": 8,
       "refresh_token_blocklist": 4,
       "user": 8,
-      "college": 15,
+      "college": 17,
       "organization": 5,
       "learner": 8,
       "faculty": 8,
@@ -45,8 +46,8 @@
     },
     "retirementImplementationVerified": 21,
     "retirementApprovalPending": 21,
-    "technicalEvidenceCoverage": 151,
-    "technicalEvidenceUncovered": 44
+    "technicalEvidenceCoverage": 153,
+    "technicalEvidenceUncovered": 42
   },
   "guidance": [
     "Exact column existence on registered PostgreSQL does not prove legacy reader/writer parity.",
@@ -61,7 +62,8 @@
     "Registered PostgreSQL suite 40679297972 passed department lifecycle and tenant boundary: six department field mappings have executed read/write/archive witnesses. Historic numeric-ID import remains subject to explicit source mapping and approval.",
     "With verified 87/87 then 87+ role-receipt PostgreSQL runs, six more fields have direct runtime witnesses. Remaining 22 physical-but-not-accepted mappings are legacy college-branding deletion and learner/faculty verification challenge semantics; the other 61 have no direct column and require retirement/redesign sign-off.",
     "21 raw credential or removed login/handoff fields now have registered PG negative proof at 8eaef977: implementation retirement is executed, while product/security approval remains FALSE. Neither these nor other legacy retirements are runtimeSemanticsVerified.",
-    "18 shared learner/faculty verification fields passed registered PostgreSQL first-party OTP lifecycle 40683051831. Role-specific membership association, roll-number ownership and unapproved legacy retirement remain intentionally unresolved; 21 retired raw-credential fields have separate NEGATIVE implementation proof."
+    "18 shared learner/faculty verification fields passed registered PostgreSQL first-party OTP lifecycle 40683051831. Role-specific membership association, roll-number ownership and unapproved legacy retirement remain intentionally unresolved; 21 retired raw-credential fields have separate NEGATIVE implementation proof.",
+    "Two legacy college leadership fields now use columns colleges.chair_membership_id and colleges.vice_chair_membership_id. Both passed actual PG scoped FACULTY appointment, cross-college rejection and suspension checks in 40684079754. Numeric source IDs are still never blindly imported."
   ],
   "rows": [
     {
@@ -509,27 +511,47 @@
       "legacyField": "college.college_chair_id",
       "originalDisposition": "REDESIGNED_PRODUCT_FIELD_OMITTED",
       "historicalTarget": "membership_roles/system_roles if a future leadership permission is introduced",
-      "proposedPhysicalTarget": null,
-      "evidenceStatus": "RETIREMENT_NORMALIZATION_OR_FIRST_PARTY_SECURITY_DECISION",
-      "physicalVerified": false,
-      "runtimeSemanticsVerified": false,
+      "proposedPhysicalTarget": "colleges.chair_membership_id",
+      "evidenceStatus": "REGISTERED_COLLEGE_LEADERSHIP_REPLACEMENT_PHYSICAL_WITNESS_SEMANTIC_REVIEW",
+      "physicalVerified": true,
+      "runtimeSemanticsVerified": true,
       "evidence": [
         "docs/architecture/first-party-login.md",
-        "docs/planning/db01-chat05-provider-persistence-decision.json"
-      ]
+        "docs/planning/db01-chat05-provider-persistence-decision.json",
+        "src/db/schema/colleges.ts",
+        "src/modules/colleges/service.ts",
+        "tests/integration/db01-college-leadership-field-semantics.test.ts"
+      ],
+      "runtimeEvidence": {
+        "verifiedFlow": "REGISTERED_POSTGRES_COLLEGE_CHAIR_VICE_CHAIR_SCOPED_FACULTY_MEMBERSHIP_APPOINTMENT",
+        "suite": "tests/integration/db01-college-leadership-field-semantics.test.ts",
+        "passingRun": "https://github.com/42Students/lms-vnext/actions/runs/40684079754",
+        "testedCommit": "97052108e95f568779b9b9c21a92801c0280b3f9",
+        "limitations": "Two active appointment fields are witnessed for currently authorized faculty memberships. Historic numeric college/faculty ID crosswalk, owner acceptance and old data migration remain separate gates."
+      }
     },
     {
       "legacyField": "college.college_vice_chair_id",
       "originalDisposition": "REDESIGNED_PRODUCT_FIELD_OMITTED",
       "historicalTarget": "membership_roles/system_roles if a future leadership permission is introduced",
-      "proposedPhysicalTarget": null,
-      "evidenceStatus": "RETIREMENT_NORMALIZATION_OR_FIRST_PARTY_SECURITY_DECISION",
-      "physicalVerified": false,
-      "runtimeSemanticsVerified": false,
+      "proposedPhysicalTarget": "colleges.vice_chair_membership_id",
+      "evidenceStatus": "REGISTERED_COLLEGE_LEADERSHIP_REPLACEMENT_PHYSICAL_WITNESS_SEMANTIC_REVIEW",
+      "physicalVerified": true,
+      "runtimeSemanticsVerified": true,
       "evidence": [
         "docs/architecture/first-party-login.md",
-        "docs/planning/db01-chat05-provider-persistence-decision.json"
-      ]
+        "docs/planning/db01-chat05-provider-persistence-decision.json",
+        "src/db/schema/colleges.ts",
+        "src/modules/colleges/service.ts",
+        "tests/integration/db01-college-leadership-field-semantics.test.ts"
+      ],
+      "runtimeEvidence": {
+        "verifiedFlow": "REGISTERED_POSTGRES_COLLEGE_CHAIR_VICE_CHAIR_SCOPED_FACULTY_MEMBERSHIP_APPOINTMENT",
+        "suite": "tests/integration/db01-college-leadership-field-semantics.test.ts",
+        "passingRun": "https://github.com/42Students/lms-vnext/actions/runs/40684079754",
+        "testedCommit": "97052108e95f568779b9b9c21a92801c0280b3f9",
+        "limitations": "Two active appointment fields are witnessed for currently authorized faculty memberships. Historic numeric college/faculty ID crosswalk, owner acceptance and old data migration remain separate gates."
+      }
     },
     {
       "legacyField": "college.country",
