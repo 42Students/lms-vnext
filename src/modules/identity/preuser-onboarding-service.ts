@@ -4,7 +4,7 @@ import {and,desc,eq,gt,gte,isNull,sql} from "drizzle-orm";
 import {z} from "zod";
 import {getDb} from "@/db/client";
 import {identityPreuserChallenges} from "@/db/schema/identity-auth-attempts";
-import {collegeMemberships,membershipRoles,colleges} from "@/db/schema";
+import {collegeMemberships,membershipRoles,colleges,organizations,users} from "@/db/schema";
 
 const uuid=z.string().uuid();
 const input=z.strictObject({
@@ -28,7 +28,7 @@ function fingerprint(type:string,value:string){
 /** Trusted enrollment/roll lookup must precede this call. The sender must
  * use the registered provider (Exotel/SMS DLT or verified email transport). */
 export async function issuePreuserChallenge(raw:unknown,
- verifiedDirectory:{collegeId:string;roll:string|null;active:boolean},
+ verifiedDirectory:{collegeId:string;roll:string|null;active:boolean;contact:string},
  send:(target:{channel:"EMAIL"|"PHONE";contact:string;code:string})=>Promise<void>,
 ){
  const data=input.parse(raw);
@@ -37,6 +37,11 @@ export async function issuePreuserChallenge(raw:unknown,
   throw new Error("ONBOARDING_ENROLLMENT_NOT_VERIFIED");
  if((data.source==="ROLL")!==Boolean(data.roll))
   throw new Error("ONBOARDING_INVALID_ROLL");
+ // Directory enrollment/roll proof and ownership of the destination contact
+ // are both required. A valid roll alone must not let an attacker choose any
+ // phone/email address for the challenge.
+ if(verifiedDirectory.contact.trim().toLowerCase()!==data.contact.toLowerCase())
+  throw new Error("ONBOARDING_CONTACT_NOT_VERIFIED");
  const college=await getDb().select({id:colleges.id,status:colleges.status})
    .from(colleges).where(eq(colleges.id,data.collegeId)).limit(1);
  if(college[0]?.status!=="ACTIVE")throw new Error("ONBOARDING_COLLEGE_NOT_FOUND");
@@ -107,14 +112,29 @@ export async function consumePreuserProof(challengeId:string,membershipId:string
     .where(eq(identityPreuserChallenges.id,challengeId)).for("update").limit(1);
   if(!row||!row.verifiedAt||row.revokedAt||row.consumedAt||
      row.expiresAt<=new Date())throw new Error("ONBOARDING_PROOF_EXPIRED");
-  const [member]=await tx.select({id:collegeMemberships.id}).from(collegeMemberships)
+  const [member]=await tx.select({
+    id:collegeMemberships.id,email:users.email,phone:users.phoneE164,
+    platformStatus:users.platformStatus,collegeStatus:colleges.status,
+    organizationStatus:organizations.status,
+  }).from(collegeMemberships)
     .innerJoin(membershipRoles,and(
       eq(membershipRoles.membershipId,collegeMemberships.id),
       eq(membershipRoles.role,"LEARNER")))
+    .innerJoin(users,eq(users.id,collegeMemberships.userId))
+    .innerJoin(colleges,eq(colleges.id,collegeMemberships.collegeId))
+    .innerJoin(organizations,eq(organizations.id,colleges.organizationId))
     .where(and(eq(collegeMemberships.id,membershipId),
       eq(collegeMemberships.collegeId,row.collegeId),
-      eq(collegeMemberships.status,"ACTIVE"))).limit(1);
-  if(!member)throw new Error("ONBOARDING_MEMBERSHIP_NOT_VERIFIED");
+      eq(collegeMemberships.status,"ACTIVE"))).for("share").limit(1);
+  if(!member||member.platformStatus!=="ACTIVE"||
+    member.collegeStatus!=="ACTIVE"||member.organizationStatus!=="ACTIVE")
+    throw new Error("ONBOARDING_MEMBERSHIP_NOT_VERIFIED");
+  // College membership alone does not bind a verified OTP to the right
+  // human. Verify the same channel's CURRENT persisted contact under locks
+  // before allowing its proof to attach to the learner membership.
+  const contact=row.channel==="PHONE"?member.phone:member.email;
+  if(!contact||fingerprint("contact",contact)!==row.contactFingerprint)
+    throw new Error("ONBOARDING_CONTACT_NOT_VERIFIED");
   await tx.update(identityPreuserChallenges).set({consumedAt:new Date()})
     .where(eq(identityPreuserChallenges.id,row.id));
   return {membershipId:member.id,verifiedContactFingerprint:row.contactFingerprint,
