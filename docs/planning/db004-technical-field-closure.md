@@ -40,9 +40,12 @@ signatures. Keep `docs/tracker.json` DB-004 `done:false` until:
 3. The enabled email-link flow is approved and validated with an authorized
    sending template and application-bound issuing/consuming contract. Distinct
    learner/faculty role proof routes are already wired and tested.
-4. Authorized provider send/receipt acceptance (or a specifically approved
-   not-applicable exemption) and current-commit registered migration,
-   browser, security, integration and release checks pass.
+4. Current-commit registered migration, database, browser, security
+   and integration acceptance passes. **Exotel and ZeptoMail live delivery
+   are now delegated to the requester for RELEASE**, not a DB-004 blocker.
+   The owner must still validate real approved SMS/email sends before any
+   production delivery is enabled; this handoff is not a successful send,
+   exemption, or authorization to bypass fail-closed provider behavior.
 
 **Do not infer full DB-004 release from 195/195 technical fields, 7/7 product
 choices or 34/34 requester retirement choices.**
@@ -112,3 +115,25 @@ The per-field `retirementApproved` final-security flag remains `false` until
 actual independent security/retention attestation, source-specific
 negative/security tests, and applicable provider/release acceptance are
 available. Such attestations are not fabricated from the product instruction.
+
+## 28 October 2026 — provider execution transferred to requester
+
+The requester explicitly confirmed they will handle **Exotel and ZeptoMail**
+configuration and authorized real send/receipt checks themselves, and requested
+the provider matter be closed **for DB-004**. Accordingly:
+
+- **DB-004 provider dependency:** CLOSED BY OWNER HANDOFF; external delivery
+  is no longer required to certify *database/identity field* parity.
+- **Deployment/release responsibility:** remains with the requester. Real
+  authorized Exotel SMS and ZeptoMail email receipts are **NOT YET VERIFIED**
+  and remain a hard gate to enabling live transactional send functionality.
+- **App security continues to fail closed:** no credentials or source secrets
+  entered; no simulated delivery, shared OTP, or bypass was enabled.
+- **Independent DB-004 gates still open:** seven formal cross-role/security
+  attestations, 34 final security/retention retirements, approved
+  application-bound email-link path as applicable, current-SHA CI/browser and
+  the remaining applicable security evidence.
+
+Canonical receipt: `docs/planning/db004-closure-decision-register.json`
+`releaseEvidence.providerOwnerHandoff`, with unverified live tests separately
+recorded in `releaseEvidence.providerAcceptance`.

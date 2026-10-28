@@ -36,7 +36,7 @@
       "requiredEvidence": [
         "Registered-schema absence of old password, raw token and cross-host handoff authority (greenfield vNext never imports old credential rows)",
         "Live first-party session/login and revocation negative tests, including cross-host denial",
-        "Authorized email/SMS provider smoke or signed applicable exemption; separate independent security review"
+        "Provider-independent deny/retry/timeout and first-party auth negative tests; real Exotel/ZeptoMail delivery is owner-managed at RELEASE, not a DB-004 database signoff gate"
       ],
       "approvalStatus": "PENDING",
       "selectedOption": null,
@@ -191,8 +191,8 @@
       ],
       "requiredEvidence": [
         "First-party email-link HMAC, one-winner, 24-hour expiry and changed-contact PostgreSQL acceptance",
-        "Application-authorized own-scope issuer and delivery template evidence, if enabled",
-        "No plaintext bearer credentials in persistent DB and authorized email provider/retention acceptance"
+        "Application-authorized own-scope issuer and consumer with secure template contract as applicable; external inbox delivery is owner-managed at RELEASE",
+        "No plaintext bearer credentials in persistent DB; final security/retention attestation remains a DB-004 gate"
       ],
       "approvalStatus": "PENDING",
       "selectedOption": null,
@@ -222,9 +222,9 @@
         "REQUIRE_AUTHORIZED_PROVIDER_SMOKE_PLUS_REGISTERED_SCHEMA_AND_CI_NO_IMPORT"
       ],
       "requiredEvidence": [
-        "Real authorized Exotel/ZeptoMail provider smoke/receipt or explicit signed not-applicable scope decision",
-        "Clean numbered Drizzle journal, disposable PostgreSQL migration replay, isolated DB-004 negative tests",
-        "Exact-current-SHA full CI, relevant browser/security acceptance and independent release attestation; NO historical data import"
+        "Confirmed requester ownership handoff for live Exotel/ZeptoMail configuration, approved recipient checks and send/receipt smoke at RELEASE; NOT claimed as tested or waived",
+        "Registered Drizzle journal, disposable PostgreSQL migration replay, isolated DB-004 identity/tenant/negative tests and documented seven product/34 field dispositions",
+        "Current-commit full CI, relevant browser/security DB-004 acceptance and independent security/retention review; NO historical data import"
       ],
       "approvalStatus": "PENDING",
       "selectedOption": null,
@@ -236,12 +236,19 @@
         "selectedOption": "REQUIRE_AUTHORIZED_PROVIDER_SMOKE_PLUS_REGISTERED_SCHEMA_AND_CI_NO_IMPORT",
         "rationale": "Require authorized Exotel/ZeptoMail send-and-receipt tests where applicable, registered disposable PostgreSQL migration journal and replay, current-SHA CI, security and release review. Historical data import receipts are NOT APPLICABLE for greenfield vNext.",
         "recordedOn": "2026-10-28",
-        "source": "Explicit user instruction in current ChatGPT conversation: do all seven recommended DB-004 decisions; no independently verified organizational signing identity."
+        "source": "Explicit user instruction in current ChatGPT conversation: do all seven recommended DB-004 decisions; no independently verified organizational signing identity.",
+        "providerExecutionHandoff": {
+          "status": "DELEGATED_BY_REQUESTER",
+          "recordedOn": "2026-10-28",
+          "owner": "Project requester",
+          "phase": "RELEASE",
+          "effect": "Authorized live Exotel/ZeptoMail testing delegated to requester; no real delivery proof claimed; not a DB-004 schema/identity acceptance blocker"
+        }
       },
       "legacyQuestion": "What authorized live-provider and migration evidence is required before DB-004 can be marked done?"
     }
   ],
-  "technicalCoverageScope": "195 fields have technical witnesses; 7/7 product policies selected on 2026-10-28. Formal all-owner signoff, 34 final security/retirement approvals and authorized provider/release evidence remain separate. DB-004 not yet release-approved.",
+  "technicalCoverageScope": "195 fields with technical witnesses; 7/7 product dispositions and 34/34 requester retirements recorded. Exotel/ZeptoMail live acceptance is now requester-owned at RELEASE, not blocking DB-004. Independent DB-004 security/retention signoff, CI/browser and app-bound email verification remain separate acceptance gates.",
   "productDisposition": {
     "status": "SEVEN_OF_SEVEN_APPROVED_BY_REQUESTER",
     "count": 7,
@@ -258,13 +265,19 @@
     "policy": "Do not store or transfer obsolete legacy plaintext credentials, username secrets, numeric role grants, raw handoff tokens, obsolete token-version or user-type fields in new vNext; no deletion/modification of legacy production records."
   },
   "releaseEvidence": {
-    "status": "PENDING_AUTHORIZED_PROVIDER_AND_INDEPENDENT_SECURITY_RELEASE_ACCEPTANCE",
+    "status": "DB004_SECURITY_RETENTION_CI_BROWSER_PENDING_PROVIDER_OWNER_MANAGED_AT_RELEASE",
     "greenfieldNoHistoricalImport": "PRODUCT_APPROVED_NOT_APPLICABLE",
     "providerAcceptance": {
-      "status": "PENDING",
+      "status": "PENDING_OWNER_EXECUTION_AT_RELEASE",
       "recordedBy": null,
       "evidenceUrl": null,
-      "approvedExemptions": []
+      "approvedExemptions": [],
+      "phase": "RELEASE",
+      "owner": "Project requester",
+      "db004Blocking": false,
+      "releaseBlocking": true,
+      "liveVerified": false,
+      "notes": "Owner handoff completed. Real Exotel/ZeptoMail delivery remains unverified and required before enabling production SMS/email; no fabricated pass or exemption."
     },
     "finalSecurityReview": {
       "status": "PENDING",
@@ -286,6 +299,20 @@
       "checkedCommit": null,
       "runUrl": null
     },
-    "note": "Registered schema/DB-004 CI passing on earlier commits proves technical behavior, not real inbox/handset delivery or signed production release. Final signoff must match enabled workflows and commit scope."
+    "note": "DB-004 may be assessed on identity/schema/tenant/first-party auth security, signed owner/retirement dispositions, current-SHA CI/browser evidence. Exotel and ZeptoMail real delivery were explicitly delegated to the requester and MUST remain outstanding RELEASE/go-live checks. The handoff is completed; the sends are not verified.",
+    "providerOwnerHandoff": {
+      "status": "CLOSED_RESPONSIBILITY_ASSIGNED",
+      "owner": "Project requester",
+      "decidedOn": "2026-10-28",
+      "source": "User explicitly: 'ohh that thing will be handled by me, close that exotel zepto thing'",
+      "covers": [
+        "Exotel authorized SMS send-and-receipt smoke",
+        "ZeptoMail authorized email send-and-receipt smoke",
+        "Credential/provisioning/approved recipients and live delivery authorization"
+      ],
+      "db004Blocking": false,
+      "releaseBlocking": true,
+      "noTestResultOrExemptionClaimed": true
+    }
   }
 }

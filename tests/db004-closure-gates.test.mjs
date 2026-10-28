@@ -94,7 +94,8 @@ test("no DB-004 release green without genuine owner decisions and complete techn
  assert.doesNotMatch(greenfieldEvidence,/Deduplicated source ID-to-UUID mapping receipts/);
  const providerEvidence=register.decisions.find(x=>x.id==="D07").requiredEvidence.join(" ");
  assert.match(providerEvidence,/NO historical data import/);
- assert.match(providerEvidence,/authorized Exotel\/ZeptoMail/);
+ assert.match(providerEvidence,/Exotel\/ZeptoMail/);
+ assert.match(providerEvidence,/at RELEASE/);
 
  const provider=register.decisions.find(x=>x.id==="D07").productDecision;
  assert.equal(provider.selectedOption,"REQUIRE_AUTHORIZED_PROVIDER_SMOKE_PLUS_REGISTERED_SCHEMA_AND_CI_NO_IMPORT");
@@ -103,12 +104,16 @@ test("no DB-004 release green without genuine owner decisions and complete techn
  const hasAllEvidence=fields.every(x=>x.runtimeSemanticsVerified||x.compositeImplementationVerified||x.retirementApproved);
  const allDecisionsApproved=register.decisions.every(x=>x.approvalStatus==="APPROVED");
  const gates=register.releaseEvidence;
- assert.ok(gates,"Release gates must be explicit, including provider acceptance");
- const releaseReady=["providerAcceptance","finalSecurityReview","finalRetentionReview",
+ assert.ok(gates,"DB-004 security and release provider handoff must be explicit");
+ const db004Ready=["finalSecurityReview","finalRetentionReview",
   "currentCi","browserAcceptance"].every(key=>gates[key]?.status==="PASSED");
+ const providerHandoffComplete=gates.providerOwnerHandoff?.status==="CLOSED_RESPONSIBILITY_ASSIGNED";
+ const providerLivePassed=gates.providerAcceptance?.status==="PASSED";
  if(done){
-  assert.ok(releaseReady,"DB-004 cannot close without real provider, security, retention, CI and browser evidence");
-  for(const key of ["providerAcceptance","finalSecurityReview","finalRetentionReview",
+  assert.ok(db004Ready,"DB-004 cannot close without security, retention, CI and browser evidence");
+  assert.ok(providerHandoffComplete||providerLivePassed,
+   "DB-004 needs completed provider handoff to release, or actual live acceptance");
+  for(const key of ["finalSecurityReview","finalRetentionReview",
                      "currentCi","browserAcceptance"]){
    assert.match(gates[key].evidenceUrl??gates[key].runUrl??"",/^https:\/\//);
   }
@@ -117,4 +122,27 @@ test("no DB-004 release green without genuine owner decisions and complete techn
   "DB-004 is not DONE until every source has evidence and all owner decisions are recorded");
  if(!hasAllEvidence||!allDecisionsApproved)
   assert.equal(done,false,"DB-004 remains open until field and sign-off gates are met");
+});
+
+test("DB-004 provider responsibility handoff closes the DB gate without claiming live delivery",()=>{
+ const handoff=register.releaseEvidence.providerOwnerHandoff;
+ const pending=register.releaseEvidence.providerAcceptance;
+ assert.equal(handoff.status,"CLOSED_RESPONSIBILITY_ASSIGNED");
+ assert.equal(handoff.owner,"Project requester");
+ assert.equal(handoff.db004Blocking,false);
+ assert.equal(handoff.releaseBlocking,true);
+ assert.equal(handoff.noTestResultOrExemptionClaimed,true);
+ assert.deepEqual(handoff.covers,[
+  "Exotel authorized SMS send-and-receipt smoke",
+  "ZeptoMail authorized email send-and-receipt smoke",
+  "Credential/provisioning/approved recipients and live delivery authorization",
+ ]);
+ assert.equal(pending.status,"PENDING_OWNER_EXECUTION_AT_RELEASE");
+ assert.equal(pending.db004Blocking,false);
+ assert.equal(pending.releaseBlocking,true);
+ assert.equal(pending.liveVerified,false);
+ assert.equal(pending.evidenceUrl,null);
+ assert.deepEqual(pending.approvedExemptions,[]);
+ assert.equal(register.decisions.find(x=>x.id==="D07").productDecision.providerExecutionHandoff.status,
+  "DELEGATED_BY_REQUESTER");
 });
