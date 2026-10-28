@@ -1718,6 +1718,20 @@
         "reason": "Legacy GET /attendance/courses / NewProgramDetailsDTO.CourseInfo.formal_title derives from shortTitle when non-null, otherwise courseName. L04 supplied tested src/modules/courses/course-legacy-parity-model.ts legacyFormalTitle; L05 owns attendance API wiring and end-to-end scoped consumer acceptance. Do not add formal_title to PublicCourseDTO or duplicate persisted column.",
         "status": "REQUESTED",
         "requestedAt": "2026-10-28T20:01:01.682Z"
+      },
+      {
+        "id": "L04-L01-DB078-REGISTERED-PG-WITNESS-20261029",
+        "fromLane": "L04",
+        "toLane": "L01",
+        "paths": [
+          "drizzle/meta/_journal.json",
+          "drizzle/meta/*_snapshot.json",
+          "drizzle/[0-9]*.sql",
+          "src/db/schema/index.ts"
+        ],
+        "reason": "Run clean registered-journal migration replay on a guarded disposable PostgreSQL database and execute tests/db078-registered-course-column-disposition-pg.test.mjs (DB078_DISPOSABLE=1). DB-078 requires canonical courses.name/short_title but retirement of historical physical formal_title/default_subscription_days; no new mutable shadow columns. L04 added the runtime wire derivation helper and source tests. If the registered catalog differs, coordinate schema registration as exclusive L01 integrator; return exact SHA/test evidence before any DB-078 DONE transition.",
+        "status": "REQUESTED",
+        "requestedAt": "2026-10-28T20:01:46.415Z"
       }
     ],
     "coordination": {
