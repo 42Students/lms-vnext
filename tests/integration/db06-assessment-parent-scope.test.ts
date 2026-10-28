@@ -83,7 +83,21 @@ async function attempt(db:Sql,q:string,d:string,m:string=ownedLearnerMembership)
 async function answer(db:Sql,a:string,q:string){await db.query("INSERT INTO quiz_attempt_answers(attempt_id,question_id,question_type,prompt_snapshot,points_possible,selected_option_ids,options_snapshot,correct,points_awarded) VALUES($1,$2,'SINGLE_CHOICE','snapshot',10,'[]'::jsonb,'[]'::jsonb,true,10)",[a,q])}
 async function assignment(db:Sql,lesson:string,delivery:string|null=null){const id=keep("assignments",randomUUID());await db.query("INSERT INTO course_assignments(id,lesson_id,delivery_id,title,max_points,sequence,status,created_by_user_id) VALUES($1,$2,$3,$4,100,0,'PUBLISHED',$5)",[id,lesson,delivery,`DB06 assignment ${id}`,SEED_IDS.collegeAdminUser]);return id}
 async function submission(db:Sql,a:string,d:string,m:string=ownedLearnerMembership){const id=keep("submissions",randomUUID());await db.query("INSERT INTO assignment_submissions(id,assignment_id,delivery_id,membership_id,submission_type,text_content) VALUES($1,$2,$3,$4,'TEXT','DB06 answer')",[id,a,d,m]);return id}
-async function alternateOffering(db:Sql,g:Graph){const c=keep("courses",randomUUID()),o=keep("offerings",randomUUID());await db.query("INSERT INTO courses(id,department_id,name,code,status) SELECT $1,department_id,$2,$3,'ACTIVE' FROM courses WHERE id=$4",[c,`DB06 alternate ${c}`,`DB06-ALT-${c}`,g.course]);await db.query("INSERT INTO course_offerings(id,course_id,cohort_id,academic_period_id,type,credits,display_order,status) VALUES($1,$2,$3,$4,'CORE',4,1,'ACTIVE')",[o,c,g.cohort,g.period]);return o}
+async function alternateOffering(db:Sql,g:Graph){
+ const c=keep("courses",randomUUID()),o=keep("offerings",randomUUID());
+ const term=(await db.query("SELECT program_term_id FROM course_offerings WHERE id=$1",[g.offering])).rows[0]?.program_term_id;
+ if(!term)throw new Error("DB005 fixture requires an existing registered program term");
+ await db.query("INSERT INTO courses(id,department_id,name,code,status) SELECT $1,department_id,$2,$3,'ACTIVE' FROM courses WHERE id=$4",
+  [c,`DB06 alternate ${c}`,`DB06-ALT-${c}`,g.course]);
+ // Record the CORE curriculum parent explicitly. Implicit compatibility
+ // auto-creation leaves a hidden row that the rollback fixture cannot own.
+ const curriculum=keep("termCourses",randomUUID());
+ await db.query("INSERT INTO program_term_courses(id,program_term_id,course_id,type,credits,display_order) VALUES($1,$2,$3,'CORE',4,2)",
+  [curriculum,term,c]);
+ await db.query("INSERT INTO course_offerings(id,course_id,cohort_id,academic_period_id,program_term_id,program_term_course_id,type,credits,display_order,status) VALUES($1,$2,$3,$4,$5,$6,'CORE',4,1,'ACTIVE')",
+  [o,c,g.cohort,g.period,term,curriculum]);
+ return o;
+}
 async function bindElective(db:Sql,g:Graph,delivery:string,membership?:string){
  const group=keep("groups",randomUUID()),slot=keep("electiveSlots",randomUUID()),eo=keep("electiveOfferings",randomUUID());
  // The offering was born ELECTIVE. Do not change its academic identity once
