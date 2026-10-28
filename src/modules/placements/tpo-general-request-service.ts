@@ -14,7 +14,7 @@ import {requirePersistedTpoMembership} from "./tpo-persisted-actor-service";
 import {requireTpoJobActor} from "./tpo-job-write-base";
 import {placementTableExists} from "./staged-tables";
 import {tpoGeneralRequestInputSchema,tpoGeneralRequestDecisionSchema,tpoGeneralRequestTarget,
- tpoGeneralRequestPayload,tpoGeneralReviewQuerySchema} from "./tpo-general-request-model";
+ tpoGeneralRequestPayload,tpoGeneralReviewQuerySchema,tpoOwnGeneralRequestQuerySchema} from "./tpo-general-request-model";
 export class TpoGeneralRequestError extends Error{
  constructor(readonly code:"UNAVAILABLE"|"SCOPE"|"STALE"|"EFFECT_UNSUPPORTED"|"TARGET_CHANGED"){
   super(code);
@@ -192,6 +192,34 @@ export async function listOwnTpoGeneralRequests(ctx:RequestContext){
   eq(placementLearnerGeneralRequests.membershipId,member.id)))
   .orderBy(desc(placementLearnerGeneralRequests.requestedAt),desc(placementLearnerGeneralRequests.id)).limit(100);
 }
+/** Personal general-request history is no longer silently truncated at 100 rows.
+ * Count and page share the same live learner membership and college predicates.
+ * The legacy combined support-request reader is unchanged until its independent
+ * cross-kind paging contract can be reconciled. */
+export async function listOwnTpoGeneralRequestsPage(ctx:RequestContext,raw:unknown={}){
+ const member=await requireLearner(ctx);
+ await requireRegistered();
+ const filter=tpoOwnGeneralRequestQuerySchema.parse(raw);
+ const predicate=and(eq(placementLearnerGeneralRequests.collegeId,member.collegeId),
+  eq(placementLearnerGeneralRequests.membershipId,member.id));
+ const [counts,requests]=await Promise.all([
+  getDb().select({count:sql<number>`count(*)::int`})
+   .from(placementLearnerGeneralRequests).where(predicate),
+  getDb().select({
+   id:placementLearnerGeneralRequests.id,kind:placementLearnerGeneralRequests.kind,
+   status:placementLearnerGeneralRequests.status,reason:placementLearnerGeneralRequests.reason,
+   decidedAt:placementLearnerGeneralRequests.decidedAt,
+   decisionNote:placementLearnerGeneralRequests.decisionNote,
+   requestedAt:placementLearnerGeneralRequests.requestedAt,
+  }).from(placementLearnerGeneralRequests).where(predicate)
+   .orderBy(desc(placementLearnerGeneralRequests.requestedAt),desc(placementLearnerGeneralRequests.id))
+   .limit(filter.pageSize).offset((filter.page-1)*filter.pageSize),
+ ]);
+ const total=Number(counts[0]?.count??0);
+ return {requests,total,page:filter.page,pageSize:filter.pageSize,
+  totalPages:Math.max(1,Math.ceil(total/filter.pageSize))};
+}
+
 export async function listTpoGeneralRequests(ctx:RequestContext,raw:unknown={}){
  const college=await requireTpo(ctx);
  await requireRegistered();

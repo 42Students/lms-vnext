@@ -1,6 +1,6 @@
 "use client";
 import { Checkbox } from "@/components/ui/checkbox";
-import {useEffect,useRef,useState} from "react";
+import {useCallback,useEffect,useRef,useState} from "react";
 import {Button} from "@/components/ui/button";
 import {Input} from "@/components/ui/input";
 import {Select} from "@/components/ui/select";
@@ -37,6 +37,10 @@ export function LearnerGeneralRequests({
  initialKind="OFF_CAMPUS_OFFER",initialApplicationId="",initialRoundId="",initialOfferId="",initialNoticeBody="",
 }:{initialKind?:Kind;initialApplicationId?:string;initialRoundId?:string;initialOfferId?:string;initialNoticeBody?:string}){
  const [rows,setRows]=useState<History[]>([]),[cohortId,setCohortId]=useState("");
+ const [historyPage,setHistoryPage]=useState(1),[historyTotal,setHistoryTotal]=useState(0);
+ const [historyTotalPages,setHistoryTotalPages]=useState(1);
+ const [historyLoading,setHistoryLoading]=useState(true),[historyError,setHistoryError]=useState("");
+ const historyGeneration=useRef(0);
  const [kind,setKind]=useState<Kind>(initialKind),[reason,setReason]=useState(initialNoticeBody?`Disputing: "${initialNoticeBody}"`:"");
  const [asking,setAsking]=useState(Boolean(initialApplicationId||initialOfferId||initialNoticeBody));
  const [target,setTarget]=useState(initialKind==="OFFER_ACCEPTANCE_DISPUTE"?initialOfferId:initialApplicationId),[aux,setAux]=useState(initialRoundId),[proofUrl,setProofUrl]=useState("");
@@ -51,13 +55,35 @@ export function LearnerGeneralRequests({
  };
  const cancelDraft=()=>{if(pending)return;if(dirty)setDiscardOpen(true);else{resetDraft();setAsking(false);}};
  const {run,pending}=useGuardedAction();
- async function refresh(){
+ const refresh=useCallback(async (pageNumber:number)=>{
+  const generation=++historyGeneration.current;
+  setHistoryLoading(true);
   try{
-   const data=await apiFetch<{requests:History[];cohortId:string|null}>("/api/placements/requests/general",{cache:"no-store"});
-   setRows(data.requests);setCohortId(data.cohortId??"");
-  }catch{setError("Student requests are not available right now. Please retry.");}
- }
- useEffect(()=>{void Promise.resolve().then(refresh);},[]);
+   const params=new URLSearchParams({page:String(pageNumber),pageSize:"20"});
+   const data=await apiFetch<{
+    requests:History[];cohortId:string|null;total:number;totalPages:number;
+   }>("/api/placements/requests/general?"+params.toString(),{cache:"no-store"});
+   if(generation!==historyGeneration.current)return;
+   if(!Array.isArray(data.requests)||!Number.isSafeInteger(data.total)||data.total<0||
+    !Number.isSafeInteger(data.totalPages)||data.totalPages<1)
+    throw new Error("Invalid personal request history");
+   setHistoryTotal(data.total);setHistoryTotalPages(data.totalPages);
+   setCohortId(data.cohortId??"");
+   if(pageNumber>data.totalPages){setHistoryPage(data.totalPages);return;}
+   setRows(data.requests);setHistoryError("");
+  }catch{
+   if(generation===historyGeneration.current){
+    setRows([]);
+    setHistoryError("Request history could not be loaded. Try refreshing.");
+   }
+  }finally{
+   if(generation===historyGeneration.current)setHistoryLoading(false);
+  }
+ },[]);
+ useEffect(()=>{
+  void Promise.resolve().then(()=>refresh(historyPage));
+  return ()=>{historyGeneration.current++;};
+ },[historyPage,refresh]);
  const payload=()=>{
   switch(kind){
    case "OFF_CAMPUS_OFFER":return {kind,reason,companyName:target,ctcLpa:aux.trim()||null,proofUrl};
@@ -90,7 +116,8 @@ export function LearnerGeneralRequests({
      headers:{"content-type":"application/json"},body:JSON.stringify(parsed.data)});
     resetDraft();setAsking(false);
     setNotice("Sent to the placement cell");
-    await refresh();
+    if(historyPage===1)await refresh(1);
+    else setHistoryPage(1);
    });
   }catch{setError("The request could not be sent. Your entered details are still here; please retry.");}
  }
@@ -169,7 +196,12 @@ export function LearnerGeneralRequests({
   </ConfirmDialog>
   {notice?<p role="status" className="text-sm">{notice}</p>:null}
   <h3 id="learner-general-requests-history" className="sr-only">Request history</h3>
-  {!rows.length?<p role="status" className="text-sm">Need more time on an offer, a correction to your details, or to report an off-campus offer? Send a request and the placement cell will reply here.</p>:
+  {historyLoading?<p role="status" className="text-sm">Loading request history…</p>:
+   historyError?<div role="alert" className="flex flex-wrap items-center gap-3 text-sm">
+    <span>{historyError}</span>
+    <Button type="button" variant="secondary" disabled={pending} onClick={()=>void refresh(historyPage)}>Retry</Button>
+   </div>:
+   !rows.length?<p role="status" className="text-sm">Need more time on an offer, a correction to your details, or to report an off-campus offer? Send a request and the placement cell will reply here.</p>:
    <ul className="divide-y divide-border">{rows.map(row=>{
     const state=requestState[row.status]??{label:row.status.replaceAll("_"," "),tone:"border-[var(--lms-canvas-border)] bg-surface"};
     return <li key={row.id} className="flex min-w-0 flex-wrap justify-between gap-3 border-b border-border py-3 text-sm last:border-b-0">
@@ -182,5 +214,14 @@ export function LearnerGeneralRequests({
      <span className={`self-start rounded-full border px-2 py-1 text-xs font-medium ${state.tone}`}>{state.label}</span>
     </li>;
    })}</ul>}
+  {historyTotal>0?<nav aria-label="Your request history pages" className="flex flex-wrap items-center justify-between gap-3 text-sm">
+   <span role="status">Page {historyPage} of {historyTotalPages} · {historyTotal} requests</span>
+   <div className="flex items-center gap-2">
+    <Button type="button" variant="secondary" disabled={pending||historyLoading||historyPage<=1}
+     onClick={()=>setHistoryPage(page=>Math.max(1,page-1))}>Previous</Button>
+    <Button type="button" variant="secondary" disabled={pending||historyLoading||historyPage>=historyTotalPages}
+     onClick={()=>setHistoryPage(page=>page+1)}>Next</Button>
+   </div>
+  </nav>:null}
  </section>;
 }

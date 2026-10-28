@@ -5,15 +5,23 @@ import {apiErrorResponse} from "@/lib/api-error";
 import {getDb} from "@/db/client";
 import {and,eq} from "drizzle-orm";
 import {learnerProgramEnrollments} from "@/db/schema";
-import {TpoGeneralRequestError,createOwnTpoGeneralRequest,listOwnTpoGeneralRequests} from "@/modules/placements/tpo-general-request-service";
+import {TpoGeneralRequestError,createOwnTpoGeneralRequest,listOwnTpoGeneralRequestsPage} from "@/modules/placements/tpo-general-request-service";
+import {tpoOwnGeneralRequestQuerySchema} from "@/modules/placements/tpo-general-request-model";
 export const runtime="nodejs";export const dynamic="force-dynamic";
-export async function GET(){
+export async function GET(request:Request){
  try{
+  const params=new URL(request.url).searchParams;
+  if([...params.keys()].some(key=>!["page","pageSize"].includes(key))||
+   ["page","pageSize"].some(key=>params.getAll(key).length>1))
+   return NextResponse.json({error:"Invalid history filters"},{status:400});
+  const filter=tpoOwnGeneralRequestQuerySchema.safeParse(Object.fromEntries(params));
+  if(!filter.success)
+   return NextResponse.json({error:"Invalid history filters"},{status:400});
   const ctx=await getCurrentRequestContext();
-  const requests=await listOwnTpoGeneralRequests(ctx);
+  const history=await listOwnTpoGeneralRequestsPage(ctx,filter.data);
   const memberships=ctx.membership?await getDb().select({cohortId:learnerProgramEnrollments.cohortId}).from(learnerProgramEnrollments)
    .where(and(eq(learnerProgramEnrollments.membershipId,ctx.membership.id),eq(learnerProgramEnrollments.status,"ACTIVE"))).limit(2):[];
-  return NextResponse.json({requests,cohortId:memberships.length===1?(memberships[0]?.cohortId??null):null},
+  return NextResponse.json({...history,cohortId:memberships.length===1?(memberships[0]?.cohortId??null):null},
   {headers:{"Cache-Control":"private, no-store"}});}
  catch(error){
   if(error instanceof TpoGeneralRequestError&&error.code==="UNAVAILABLE")

@@ -7,3 +7,9 @@ The legacy placement-cell request history displays Asked and Decided on timestam
 - Added `tests/e2e/tpo-general-requests-queue.spec.ts` for actual role-authenticated API limits, private cache headers, invalid selectors, nested review panel navigation, server-filter responses and learner denial. It is **read-only**, neither simulates writes nor fabricates pending requests. It requires an authorized disposable TPO/learner seed and the staged DB table; full decision effects remain a separate acceptance gate.
 
 Pending: run browser acceptance, database multi-college high-volume queue tests, decision race/notification tests and physical mobile UX. Do not change the official tracker based on source assertions alone.
+
+## Learner personal general-request history paging — source implementation, acceptance pending
+
+The learner's personal general-request component formerly received the newest 100 rows from `listOwnTpoGeneralRequests` without indicating that older decisions were hidden. It now requests 20 rows per page, uses a bounded validated `page`/`pageSize` contract, shows the true scoped total and page controls, and offers an explicit retry when history cannot load. The new reader applies the same learner membership and college predicates to both count and page queries, with stable requested-at/ID ordering. Submission returns the history to page 1. The older 100-row reader remains in the separate unified support-request service, whose cross-kind pagination must be addressed independently.
+
+The changes are **not** marked Green by source review. Verify an authenticated disposable learner with more than 100 general requests, cross-tenant and other-learner denial, stale page after deletion, request post/refresh, and browser previous/next/retry behavior. CI unit/source coverage is separately authored; PostgreSQL and browser acceptance on the exact new SHA remain required.

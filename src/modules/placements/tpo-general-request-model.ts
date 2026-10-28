@@ -38,6 +38,12 @@ export function tpoGeneralRequestCanApprove(kind:string):kind is (typeof TPO_GEN
 
 /** Bounded college-scoped general-request review. The former 1000-row
  * list could silently hide a busy college's outstanding requests. */
+/** Bounded personal history. All selectors are validated before any scoped query. */
+export const tpoOwnGeneralRequestQuerySchema=z.strictObject({
+ page:z.coerce.number().int().min(1).max(10000).default(1),
+ pageSize:z.coerce.number().int().min(10).max(50).default(20),
+});
+
 export const tpoGeneralReviewQuerySchema=z.strictObject({
  page:z.coerce.number().int().min(1).max(10000).default(1),
  pageSize:z.coerce.number().int().min(10).max(50).default(25),
