@@ -103,4 +103,24 @@ describe.skipIf(!enabled)("College hall booking isolated PostgreSQL",()=>{
     expect(rows.rowCount).toBe(1);
     // Retain identity fixtures; immutable audit/history may reference them.
   });
+  it("blocks a closed academic period without blocking planned-period scheduling",async()=>{
+    // The regular fixture is PLANNED and the earlier successful booking proves
+    // forward scheduling is allowed before a period becomes ACTIVE.
+    const latest=await pool!.query<{updated_at:Date}>(
+      "SELECT updated_at FROM sections WHERE id=$1",[ids.section]);
+    token=latest.rows[0]!.updated_at.toISOString();
+    const before=await pool!.query<{total:string}>(
+      "SELECT count(*)::text AS total FROM section_schedule_events WHERE section_id=$1",[ids.section]);
+    await pool!.query("UPDATE academic_periods SET status='CLOSED' WHERE id=$1",[ids.period]);
+    try {
+      await expect(createCollegeHallBooking(own,ids.hall,
+        {...booking(),from:"14:00",to:"15:00"}))
+        .rejects.toMatchObject({code:"SECTION_PERIOD_INVALID"});
+      const after=await pool!.query<{total:string}>(
+        "SELECT count(*)::text AS total FROM section_schedule_events WHERE section_id=$1",[ids.section]);
+      expect(after.rows[0]?.total).toBe(before.rows[0]?.total);
+    } finally {
+      await pool!.query("UPDATE academic_periods SET status='PLANNED' WHERE id=$1",[ids.period]);
+    }
+  });
 });

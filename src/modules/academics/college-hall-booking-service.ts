@@ -29,6 +29,7 @@ export async function createCollegeHallBooking(context:RequestContext,rawHallId:
     const [section]=await tx.select({
       id:sections.id,status:sections.status,capacity:sections.capacity,
       periodStart:academicPeriods.startDate,periodEnd:academicPeriods.endDate,
+      periodStatus:academicPeriods.status,
     }).from(sections)
       .innerJoin(cohorts,eq(cohorts.id,sections.cohortId))
       .innerJoin(programs,eq(programs.id,cohorts.programId))
@@ -44,7 +45,8 @@ export async function createCollegeHallBooking(context:RequestContext,rawHallId:
       sql`date_trunc('milliseconds',${sections.updatedAt}) = ${input.expectedSectionUpdatedAt}::timestamptz`,
     )).limit(1);
     if(!token)throw new CollegeHallBookingError("SECTION_STALE");
-    if(input.date<section.periodStart||input.date>section.periodEnd)
+    // Planned periods may be scheduled in advance; closed periods are immutable.
+    if(section.periodStatus==="CLOSED"||input.date<section.periodStart||input.date>section.periodEnd)
       throw new CollegeHallBookingError("SECTION_PERIOD_INVALID");
     const [hall]=await tx.select({id:lectureHalls.id,capacity:lectureHalls.capacity})
       .from(lectureHalls).where(and(eq(lectureHalls.id,hallId),

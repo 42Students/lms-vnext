@@ -8,6 +8,8 @@ import type { RequestContext } from "@/modules/identity/context";
 import { AuthorizationError } from "@/modules/permissions/policy";
 import { executeCollegeRecurringSchedule,CollegeRecurringExecutionError }
   from "@/modules/academics/college-recurring-execute-service";
+import {previewCollegeRecurringSchedule,RecurringPreviewNotFoundError}
+  from "@/modules/academics/college-recurring-preview-service";
 const enabled=!!process.env.TEST_DATABASE_URL&&process.env.DB03_ISOLATED_TEST_DATABASE==="1";
 if(enabled)assertDb018DisposableTarget(process.env,{serviceBound:true});
 const pool=enabled?new Pool({connectionString:process.env.TEST_DATABASE_URL,max:2}):null;
@@ -60,5 +62,27 @@ describe.skipIf(!enabled)("College recurring execute PostgreSQL",()=>{
       .rejects.toBeInstanceOf(AuthorizationError);
     await expect(executeCollegeRecurringSchedule(own,{...request(),collegeId:SEED_IDS.collegeB}))
       .rejects.toBeDefined();
+  });
+  it("rejects recurring preview and execution once the period is closed",async()=>{
+    const latest=await pool!.query<{updated_at:Date}>(
+      "SELECT updated_at FROM sections WHERE id=$1",[ids.section]);
+    token=latest.rows[0]!.updated_at.toISOString();
+    const before=await pool!.query<{total:string}>(
+      "SELECT count(*)::text AS total FROM section_schedule_events WHERE section_id=$1",[ids.section]);
+    const next={...request(),startTime:"11:00",endTime:"12:00"};
+    const {sectionId,from,to,weekdays,startTime,endTime}=next;
+    await pool!.query("UPDATE academic_periods SET status='CLOSED' WHERE id=$1",[ids.period]);
+    try {
+      await expect(previewCollegeRecurringSchedule(own,
+        {sectionId,from,to,weekdays,startTime,endTime}))
+        .rejects.toBeInstanceOf(RecurringPreviewNotFoundError);
+      await expect(executeCollegeRecurringSchedule(own,next))
+        .rejects.toMatchObject({code:"NOT_FOUND"});
+      const after=await pool!.query<{total:string}>(
+        "SELECT count(*)::text AS total FROM section_schedule_events WHERE section_id=$1",[ids.section]);
+      expect(after.rows[0]?.total).toBe(before.rows[0]?.total);
+    } finally {
+      await pool!.query("UPDATE academic_periods SET status='PLANNED' WHERE id=$1",[ids.period]);
+    }
   });
 });

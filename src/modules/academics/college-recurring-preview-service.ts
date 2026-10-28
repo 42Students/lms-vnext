@@ -1,5 +1,5 @@
 import "server-only";
-import { and, asc, eq, gt, lt, isNull, or } from "drizzle-orm";
+import { and, asc, eq, gt, lt, isNull, or, ne } from "drizzle-orm";
 import { getDb } from "@/db/client";
 import {
   academicPeriods, cohorts, collegeMemberships, departments, lectureHalls,
@@ -24,6 +24,7 @@ export async function previewCollegeRecurringSchedule(context: RequestContext, r
   const [section] = await db.select({
     id: sections.id, status: sections.status,
     periodStart: academicPeriods.startDate, periodEnd: academicPeriods.endDate,
+    periodStatus: academicPeriods.status,
   }).from(sections)
     .innerJoin(cohorts, eq(cohorts.id, sections.cohortId))
     .innerJoin(programs, eq(programs.id, cohorts.programId))
@@ -36,7 +37,8 @@ export async function previewCollegeRecurringSchedule(context: RequestContext, r
       eq(academicPeriods.collegeId, member.collegeId),
     ))
     .where(eq(sections.id, input.sectionId)).limit(1);
-  if (!section || section.status !== "ACTIVE") throw new RecurringPreviewNotFoundError();
+  if (!section || section.status !== "ACTIVE" || section.periodStatus === "CLOSED")
+    throw new RecurringPreviewNotFoundError();
   if (input.from < section.periodStart || input.to > section.periodEnd)
     throw new RecurringPreviewNotFoundError();
 
@@ -133,7 +135,7 @@ export async function listRecurringPreviewOptions(context: RequestContext) {
         eq(departments.collegeId, member.collegeId)))
       .innerJoin(academicPeriods, and(eq(academicPeriods.id, sections.academicPeriodId),
         eq(academicPeriods.collegeId, member.collegeId)))
-      .where(eq(sections.status, "ACTIVE"))
+      .where(and(eq(sections.status, "ACTIVE"), ne(academicPeriods.status, "CLOSED")))
       .orderBy(asc(sections.name), asc(sections.id)),
     db.select({ id: lectureHalls.id, name: lectureHalls.name })
       .from(lectureHalls)

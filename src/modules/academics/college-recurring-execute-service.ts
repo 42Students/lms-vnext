@@ -23,6 +23,7 @@ export async function executeCollegeRecurringSchedule(context: RequestContext, r
     await tx.execute(sql`select pg_advisory_xact_lock(hashtext(${member.collegeId}),hashtext(${input.sectionId}))`);
     const [section]=await tx.select({
       id:sections.id,status:sections.status,periodStart:academicPeriods.startDate,periodEnd:academicPeriods.endDate,
+      periodStatus:academicPeriods.status,
     }).from(sections)
       .innerJoin(cohorts,eq(cohorts.id,sections.cohortId))
       .innerJoin(programs,eq(programs.id,cohorts.programId))
@@ -39,7 +40,8 @@ export async function executeCollegeRecurringSchedule(context: RequestContext, r
         .where(eq(sections.id,input.sectionId)).limit(1);
       throw new CollegeRecurringExecutionError(visible?"STALE_SECTION":"NOT_FOUND");
     }
-    if (section.status!=="ACTIVE" || input.from<section.periodStart || input.to>section.periodEnd)
+    if (section.status!=="ACTIVE" || section.periodStatus==="CLOSED" ||
+      input.from<section.periodStart || input.to>section.periodEnd)
       throw new CollegeRecurringExecutionError("NOT_FOUND");
     if (input.lectureHallId) {
       const [hall]=await tx.select({id:lectureHalls.id}).from(lectureHalls)
