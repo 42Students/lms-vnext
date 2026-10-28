@@ -17,7 +17,11 @@ test("all and only 34 retired DB01 fields have requester disposition and indepen
   }
   assert.equal(row.retirementProductDisposition.status,"APPROVED_BY_REQUESTER");
   assert.match(row.retirementProductDisposition.source,/Explicit user instructions/);
-  assert.equal(row.retirementApproved,false);
+  if(row.retirementApproved){
+   assert.equal(row.retirementFinalApproval?.status,"SIGNED");
+   assert.ok(row.retirementFinalApproval.approvedBy);
+   assert.match(row.retirementFinalApproval.evidenceUrl??"",/^https:\/\//);
+  }else assert.equal(row.retirementFinalApproval,undefined);
  }
 });
 

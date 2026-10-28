@@ -41,8 +41,16 @@ test("DB-004 finite closure register exactly covers remaining technical gaps",()
   const decision=register.decisions.find(x=>x.id===row.retirementProductDisposition?.policyDecisionId);
   assert.ok(decision,"Every deprecated field must trace to a selected policy decision");
   assert.equal(decision.productDecision.status,"APPROVED_BY_REQUESTER");
-  assert.equal(row.retirementApproved,false,
-   "Product approval alone cannot masquerade as external security/retention sign-off");
+  if(row.retirementApproved){
+   assert.equal(row.retirementFinalApproval?.status,"SIGNED");
+   assert.ok(row.retirementFinalApproval.approvedBy);
+   assert.ok(row.retirementFinalApproval.approvedAt);
+   assert.match(row.retirementFinalApproval.evidenceUrl??"",/^https:\/\//);
+   assert.ok(row.retirementFinalApproval.securityOrRetentionScope);
+  }else{
+   assert.equal(row.retirementFinalApproval,undefined,
+    "Unsigned retirement must not display a final approval receipt");
+  }
  }
 
 });
@@ -94,6 +102,17 @@ test("no DB-004 release green without genuine owner decisions and complete techn
  const done=tracker.tasks.find(x=>x.id==="DB-004")?.done;
  const hasAllEvidence=fields.every(x=>x.runtimeSemanticsVerified||x.compositeImplementationVerified||x.retirementApproved);
  const allDecisionsApproved=register.decisions.every(x=>x.approvalStatus==="APPROVED");
+ const gates=register.releaseEvidence;
+ assert.ok(gates,"Release gates must be explicit, including provider acceptance");
+ const releaseReady=["providerAcceptance","finalSecurityReview","finalRetentionReview",
+  "currentCi","browserAcceptance"].every(key=>gates[key]?.status==="PASSED");
+ if(done){
+  assert.ok(releaseReady,"DB-004 cannot close without real provider, security, retention, CI and browser evidence");
+  for(const key of ["providerAcceptance","finalSecurityReview","finalRetentionReview",
+                     "currentCi","browserAcceptance"]){
+   assert.match(gates[key].evidenceUrl??gates[key].runUrl??"",/^https:\/\//);
+  }
+ }
  if(done)assert.ok(hasAllEvidence&&allDecisionsApproved,
   "DB-004 is not DONE until every source has evidence and all owner decisions are recorded");
  if(!hasAllEvidence||!allDecisionsApproved)

@@ -256,5 +256,36 @@
     "finalSecurityOrRetentionSignoffPending": 34,
     "legacyProductionDataTouched": false,
     "policy": "Do not store or transfer obsolete legacy plaintext credentials, username secrets, numeric role grants, raw handoff tokens, obsolete token-version or user-type fields in new vNext; no deletion/modification of legacy production records."
+  },
+  "releaseEvidence": {
+    "status": "PENDING_AUTHORIZED_PROVIDER_AND_INDEPENDENT_SECURITY_RELEASE_ACCEPTANCE",
+    "greenfieldNoHistoricalImport": "PRODUCT_APPROVED_NOT_APPLICABLE",
+    "providerAcceptance": {
+      "status": "PENDING",
+      "recordedBy": null,
+      "evidenceUrl": null,
+      "approvedExemptions": []
+    },
+    "finalSecurityReview": {
+      "status": "PENDING",
+      "approvedBy": null,
+      "evidenceUrl": null
+    },
+    "finalRetentionReview": {
+      "status": "PENDING",
+      "approvedBy": null,
+      "evidenceUrl": null
+    },
+    "currentCi": {
+      "status": "PENDING",
+      "checkedCommit": null,
+      "runUrl": null
+    },
+    "browserAcceptance": {
+      "status": "PENDING",
+      "checkedCommit": null,
+      "runUrl": null
+    },
+    "note": "Registered schema/DB-004 CI passing on earlier commits proves technical behavior, not real inbox/handset delivery or signed production release. Final signoff must match enabled workflows and commit scope."
   }
 }
