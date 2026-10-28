@@ -1,60 +1,15 @@
 # LMS vNext engineering rules
 
-> **2026-10-29 OWNER-APPROVED EXECUTION REPLACEMENT:** The [Database Domain Closure Protocol](docs/planning/database-domain-closure-protocol-2026-10-29.md) supersedes earlier DB task-order and DB-only implementation sequencing. The 81 task acceptance criteria, sole tracker `docs/tracker.json`, global DATABASE phase sign-off, and safety/tenant/privacy gates are unchanged. Domain-local API/service/UI integration necessary to prove a DB consumer may be implemented during DATABASE; that does not certify the global API/UI phase. Read the new protocol first; where older instructions conflict, follow it.
+## Single current execution plan — owner-approved 29 October 2026
 
+**Read the [Final Execution & Database Domain Closure Protocol](docs/planning/database-domain-closure-protocol-2026-10-29.md) and the [sole task tracker](docs/tracker.json) first.** The old closure-first strategy and October 28 locked task order have been retired. Do not invent another status tracker or execution plan.
 
-## Engineering DONE vs final RELEASE attestation — binding owner decision (2026-10-28)
-
-**Do not repeatedly reopen completed tasks for deferred final sign-offs.** The
-single tracker `docs/tracker.json` uses `done:true` for **executed/tested
-engineering acceptance**. If only *independent* security/retention signatures,
-final browser/CI release freeze or owner-managed provider smoke remains, record
-`deferredRelease` against the task and retain PENDING status in its existing
-original decision register. This is not a waiver or a security pass. Reject
-deferring actual code defects, missing schema, known failing security tests or
-tenant/privacy violations. Final RELEASE cannot be certified with unfinished
-deferred checks. Move to next `done:false` engineering task; reopen done work
-only for concrete regressions/dependencies or explicit owner instruction.
-
-**DB-004 AND DB-005 are ENGINEERING DONE; do not re-audit either. NEXT is DB-007 / first open dependency-safe DATABASE task.** DB-004's
-seven independent security signatures, 34 final retirement attestations,
-browser/final-head CI and owner-managed Exotel/ZeptoMail live tests are deferred
-until final release review. Consult the original DB-004 register only when the
-owner initiates that release review, not for ordinary "continue" prompts.
-
-## Locked execution order — owner directive (2026-10-28)
-
-**Before any vNext work, read [the locked execution-order contract](docs/planning/locked-execution-order-2026-10-28.md).** Its sequence is DATABASE → API/user-job parity → page/surface Implementation Green → final Design Green → Release Green. UI/source discovery may run as read-only preparation during DATABASE, but no global phase skips, repeat whole-census audits or parallel status trackers. Explicit user approval is required to change the sequence; the binary `docs/tracker.json` remains the *sole* task/phase status authority.
-
-## Generic continuation and page stop rule (2026-10-27)
-
-When asked to **"continue LMS vNext works"**, use the current repository state rather than redoing prior chat research. Start with `docs/tracker.json` and the [cross-chat Green-and-Move protocol](docs/parity/README.md#green-and-move-stop-rule-binding-for-page-execution). The official phase/task progress is **only** `docs/tracker.json`; the parity page files are detailed acceptance evidence, not a competing tracker.
-
-- Respect a named account or page scope, continue its first not-yet-implementation-green eligible family, and skip already accepted pages. Without an account scope, choose the earliest executable blocker in the current official phase; do not guess another chat's context.
-- **Implementation Green** is the stop point for functional page work once the finite legacy surface/action/state contract, P0/P1 repairs, permission/data tests and focused post-change evidence pass. Record it and move to the next independent page. Design Green and Release Green are separate later gates. Never mark blocked required functionality green.
-- After two focused repair rounds with an unresolved external or dependency blocker, preserve the exact failure and attempted evidence, leave the family not green and move to the next independent eligible unit. Do not repeat full audits of already-green families; revalidate only demonstrably impacted requirements after material changes.
-- For simultaneous chats, constrain concurrent workers to disjoint account/page families and serialize edits to shared components, schema, migration and CI. Generic unscoped prompts are not a concurrency lock. Before changing code, check newest `main` and reconcile other chats' commits.
-
-## Closure-first delivery: authoritative execution method (2026-10-13)
-
-**Read [docs/planning/closure-first-delivery-strategy.md](docs/planning/closure-first-delivery-strategy.md) before beginning an engineering batch.** Optimize for an integrated, runnable, tested capability and a safely closable existing task—not additional source-only plans, parallel trackers, duplicate audits or CI jobs. This delivery method does **not** replace the binary tracker, waive task acceptance, or unlock DATABASE phase gates.
-
-- Each batch declares a testable **before → after outcome**, targets the highest-value prerequisite for the original seven open core tasks, implements real migration/service integration, and produces a remote commit plus executed evidence. Report task counts even if unchanged; never count a green staged-only witness as registered migration completion.
-- Prefer a **single coherent, optimistic-SHA direct-main commit** over repeated tiny pushes and serial GitHub Actions restarts. For shared Drizzle journal/snapshot/schema barrel/CI edits use one writer and fresh ancestry.
-- Start with DB-004/005/007 parent integration, then DB-008/012 downstream, then DB-019/020 global certification (subject to verified dependencies); work on other tasks as required for safe closure, not task inflation.
-- The read-only `npm run progress` command reports the **sole tracker** counts and remaining original core IDs. No secondary kanban/checklist statuses.
-
-## Single tracker and direct-main engineering (2026-10-12 — current authority)
-
-**User directive:** The six-chat system is retired. There are no Chat 1–6 assignments, claims, lane checkpoints, picked/in-progress/completed/blocked statuses, or chat-specific migration/CI ownership. **The sole live tracker is [docs/tracker.json](docs/tracker.json)**. All older files under docs/coordination/ (including work-queue.json, phase-state.json, lanes/ and six-chat-operating-system.md) are historical evidence, not instructions or a second progress tracker. Issues #21–#26 are historical journals.
-
-- Every task has exactly one Boolean: done = true (**DONE**) or done = false (**NOT DONE**). There is no intermediate task status. An implementation can be committed and useful while the task is still NOT DONE.
-- Only mark DONE when the full task's required behavior has independently executed, passing acceptance evidence at the specified source commit and any necessary product/privacy disposition is approved. Source-only scans, PRs, schema drafts, authored-but-unrun tests, and partial passing jobs do **not** qualify. Keep the acceptance evidence attached to that task in the same tracker.
-- Read docs/tracker.json first. Validate with `node scripts/tracker.mjs --check`, report with `node scripts/tracker.mjs`, and maintain the 11 original core DATABASE task IDs as a fixed denominator. No more task inflation to game completion statistics.
-- The current phase is **DATABASE**. API, UI and RELEASE cannot be declared ready until all database tasks, required real PostgreSQL tenant/FK/state/history/concurrency gates, field dispositions, and independent phase certification are satisfied. The tracker validator is only structural; it NEVER certifies a phase.
-- Work directly on fresh `main` in substantial safe batches. Fetch latest Git file blob SHA before each write; reject/reconcile conflicts and verify resulting commits. Never force-push or silently clobber concurrent changes; no new PRs/branches for the ordinary worker.
-- There is no chat-specific file ownership. Changes to numbered migrations, Drizzle journal, schema barrel, CI and root infrastructure still require **single-writer serialization for each change**, explicit dependency review, migration replay and tests; no two simultaneous authors should modify those shared files.
-- Use only disposable/test PostgreSQL; never operate on production/shared databases. GitHub Actions now allocates public-repository runners in practice, although multiple jobs still fail; use available execution paths and report executed/passed/failed/skipped steps truthfully. Missing CI provider is not a reason to fake runtime evidence.
+- **Close domain packages, not serial 81-task investigations:** preserve each task's exact engineering acceptance. `npm run progress -- --domains` is the read-only package grouping; `npm run progress -- --check` validates task and package coverage. Skip accepted `done:true` work absent a reproducible regression or owner rescope.
+- **Safe domain vertical slices are allowed during DATABASE:** implement needed domain-local registered persistence, API and functional UI producer→consumer paths together. This is not permission to certify global API/UI or RELEASE early. `currentPhase` remains DATABASE until its independent gate passes.
+- **Evidence not ceremony:** only genuine executed PG/tenant/privacy/security/state/race/consumer tests at a known code SHA and required product decisions can accept a task. Final release-only independent signatures/live-provider/browser freeze may be `deferredRelease` under the existing strict structured receipt. Missing functionality, code/schema or failing core security may never be deferred.
+- **Parallel domains, serialized integration:** disjoint active domain workers, one registered migration promoter at a time for numbered SQL/journal/snapshot/schema barrel; short fresh-main tracker acceptance commits. Use non-force optimistic ref checks, never clobber concurrent changes.
+- **Freeze and move:** one cohesive code/service/consumer/test batch; close individually accepted tasks, then next ready work. After two no-closure passes, isolate and fix the precise blocker or move to independent ready work. No full re-audit of earlier accepted code, duplicate plans or invented percentages.
+- **Global phases:** DATABASE → API/user jobs → UI Implementation Green → final Design Green → RELEASE. Detailed UI green-and-move contracts live in `docs/parity/README.md`. Approved greenfield: no old LMS production data migration.
 
 ## Non-negotiable architecture rules
 
