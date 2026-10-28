@@ -218,8 +218,14 @@ export async function appendLearnerGalleryImage(
   context: RequestContext, raw: unknown, membershipId?: string,
 ) {
   const input = learnerGalleryUploadSchema.parse(raw);
-  const access = await galleryAccess(context, membershipId);
-  if (!access.canEdit) throw new LearnerGalleryError("GALLERY_FORBIDDEN");
+  // Publishing a gallery photo is the learner's choice, not a college-staff
+  // maintenance action. An administrator may review or deactivate existing
+  // photos, but cannot publish a private receipt in a learner's gallery.
+  // Check the optional target explicitly, rather than accepting a staff
+  // membership supplied by a caller.
+  const access = await requireOwnGalleryUpload(context);
+  if (membershipId !== undefined && uuid.parse(membershipId) !== access.membershipId)
+    throw new LearnerGalleryError("GALLERY_FORBIDDEN");
   const [candidate] = await getDb().select().from(profilePrivateDocumentReceipts)
     .where(and(eq(profilePrivateDocumentReceipts.id, input.receiptId),
       eq(profilePrivateDocumentReceipts.owningMembershipId, access.membershipId),
