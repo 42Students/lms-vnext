@@ -412,6 +412,95 @@ describe("Placement P8 offers and joining", () => {
     expect(generalOnly.items.every(item=>item.source==="GENERAL")).toBe(true);
   });
 
+  it("TPO-GENERAL-ABSENCE-DB approves by correcting the real absent attendance, auditing and notifying",async()=>{
+    const {round,application}=await preparePassedApplication();
+    const absence=await pool.query<{id:string}>(`
+      insert into placement_round_attendance
+        (round_id,application_id,status,marked_by_user_id)
+      values($1,$2,'ABSENT',$3) returning id`,
+      [round.id,application.id,SEED_IDS.facultyUser]);
+    expect(absence.rows).toHaveLength(1);
+    const request=await createOwnTpoGeneralRequest(learner,{
+      kind:"ABSENCE_DISPUTE",applicationId:application.id,roundId:round.id,
+      reason:"I attended the placement interview but was marked absent",
+      proofUrl:"https://example.edu/attendance-proof",
+    });
+    const pending=await pool.query<{status:string,version:string}>(`
+      select status,version from placement_learner_general_requests where id=$1`,
+      [request.id]);
+    expect(pending.rows[0]?.status).toBe("PENDING");
+    const approved=await decideTpoGeneralRequest(tpo,request.id,{
+      confirmed:true,action:"APPROVE",version:pending.rows[0]!.version,
+      note:"Attendance confirmed from authorized interview records",
+    });
+    expect(approved.effect).toMatchObject({
+      effect:"ABSENCE_CORRECTED",id:absence.rows[0]!.id,
+    });
+    const [record,requestState,audit,events,notifications]=await Promise.all([
+      pool.query<{status:string,marked_by_user_id:string}>(`
+        select status,marked_by_user_id from placement_round_attendance
+        where id=$1`,[absence.rows[0]!.id]),
+      pool.query<{status:string,decision_note:string}>(`
+        select status,decision_note from placement_learner_general_requests where id=$1`,
+        [request.id]),
+      pool.query<{count:number}>(`
+        select count(*)::int as count from activity_events
+        where event_type='PLACEMENTS_ATTENDANCE_DISPUTE_CORRECTED'
+          and subject_id=$1`,[absence.rows[0]!.id]),
+      pool.query<{next_status:string}>(`
+        select next_status from placement_learner_general_request_events
+        where request_id=$1 order by created_at`,[request.id]),
+      pool.query<{count:number}>(`
+        select count(*)::int as count from in_app_notifications
+        where user_id=$1 and title='Placement request approved'`,
+        [SEED_IDS.learnerUser]),
+    ]);
+    expect(record.rows[0]).toEqual({
+      status:"PRESENT",marked_by_user_id:SEED_IDS.facultyUser,
+    });
+    expect(requestState.rows[0]).toMatchObject({
+      status:"APPROVED",decision_note:"Attendance confirmed from authorized interview records",
+    });
+    expect(audit.rows[0]?.count).toBe(1);
+    expect(events.rows.map(row=>row.next_status)).toEqual(["PENDING","APPROVED"]);
+    expect(notifications.rows[0]?.count).toBeGreaterThanOrEqual(1);
+    await expect(decideTpoGeneralRequest(tpo,request.id,{
+      confirmed:true,action:"APPROVE",version:pending.rows[0]!.version,
+      note:"Repeat must fail",
+    })).rejects.toMatchObject({code:"STALE"});
+  });
+
+  it("TPO-GENERAL-ABSENCE-DB does not approve after attendance is already corrected",async()=>{
+    const {round,application}=await preparePassedApplication();
+    const absence=await pool.query<{id:string}>(`
+      insert into placement_round_attendance
+        (round_id,application_id,status,marked_by_user_id)
+      values($1,$2,'ABSENT',$3) returning id`,
+      [round.id,application.id,SEED_IDS.facultyUser]);
+    const request=await createOwnTpoGeneralRequest(learner,{
+      kind:"ABSENCE_DISPUTE",applicationId:application.id,roundId:round.id,
+      reason:"My interview attendance needs review",proofUrl:"",
+    });
+    const state=await pool.query<{version:string}>(`
+      select version from placement_learner_general_requests where id=$1`,
+      [request.id]);
+    await pool.query(`
+      update placement_round_attendance set status='PRESENT' where id=$1`,
+      [absence.rows[0]!.id]);
+    await expect(decideTpoGeneralRequest(tpo,request.id,{
+      confirmed:true,action:"APPROVE",version:state.rows[0]!.version,
+      note:"This correction must not be silently approved twice",
+    })).rejects.toMatchObject({code:"TARGET_CHANGED"});
+    const status=await pool.query<{status:string}>(`
+      select status from placement_learner_general_requests where id=$1`,[request.id]);
+    expect(status.rows[0]?.status).toBe("PENDING");
+    const duplicate=await pool.query<{count:number}>(`
+      select count(*)::int as count from activity_events
+      where event_type='PLACEMENTS_ATTENDANCE_DISPUTE_CORRECTED'
+        and subject_id=$1`,[absence.rows[0]!.id]);
+    expect(duplicate.rows[0]?.count).toBe(0);
+  });
+
   it("TPO-GENERAL-ACCEPTANCE-DISPUTE-DB restores only a timely provisional offer",async()=>{
     const {job,application}=await preparePassedApplication();
     const offer=await issuePlacementOffer(tpo,application.id,{
