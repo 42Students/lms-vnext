@@ -5,6 +5,7 @@ import { closeDatabaseConnection } from "@/db/client";
 import { createGroup, joinGroup, leaveGroup } from "@/modules/groups/service";
 import { listLearnerCourseDeliveries } from "@/modules/courses/learner-course-service";
 import { requireLearningReadAccess } from "@/modules/courses/learning-access";
+import { listActiveDeliveryLearners } from "@/modules/courses/delivery-roster";
 import { getLearnerClassSchedule } from "@/modules/academics/learner-schedule-service";
 import type { RequestContext } from "@/modules/identity/context";
 import { SEED_IDS } from "../../scripts/db-seed-data";
@@ -178,6 +179,27 @@ describe("DB03 elective group-backed course access (PostgreSQL)", () => {
       [host.membershipId],
     );
     expect(after.rows[0].n).toBe(before.rows[0].n);
+  });
+
+  it("protects faculty attendance rosters after elective term changes or source revocation", async () => {
+    const f=await setupRosterFixture();
+    const host=await createHostSectionLearner(f);
+    const scope={deliveryId:f.deliveryId,sectionId:f.sectionId,
+      academicPeriodId:f.periodId,collegeId:SEED_IDS.collegeA};
+    expect((await listActiveDeliveryLearners(scope))
+      .some(row=>row.membershipId===host.membershipId)).toBe(false);
+    await joinGroup(host.ctx,f.groupId,host.membershipId);
+    expect((await listActiveDeliveryLearners(scope))
+      .some(row=>row.membershipId===host.membershipId)).toBe(true);
+    await pool.query("UPDATE elective_slots SET semester_number=2 WHERE id=$1",[f.slotId]);
+    expect((await listActiveDeliveryLearners(scope))
+      .some(row=>row.membershipId===host.membershipId)).toBe(false);
+    await pool.query("UPDATE elective_slots SET semester_number=1 WHERE id=$1",[f.slotId]);
+    expect((await listActiveDeliveryLearners(scope))
+      .some(row=>row.membershipId===host.membershipId)).toBe(true);
+    await pool.query("UPDATE courses SET enabled=false WHERE id=$1",[f.courseId]);
+    expect((await listActiveDeliveryLearners(scope))
+      .some(row=>row.membershipId===host.membershipId)).toBe(false);
   });
 
   it("does not grant host-section members an elective they have not joined", async () => {

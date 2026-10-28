@@ -2,6 +2,7 @@ import { and, eq, inArray, isNull, sql } from "drizzle-orm";
 import { getDb } from "@/db/client";
 import {
   cohorts, collegeMemberships, courseOfferings, courseSectionDeliveries, courses,
+  learnerProfiles,
   departments, electiveOfferings, electiveSlots, lmsGroupMembers,
   lmsGroups, membershipRoles, sections, users,
 } from "@/db/schema";
@@ -13,12 +14,12 @@ import {
  * We keep both the course listing and the exact-delivery authorization on this
  * shared predicate so the navigation and API cannot disagree about eligibility.
  */
-function activeRosterQuery(membershipId: string, collegeId: string, deliveryId?: string) {
+function activeRosterQuery(membershipId: string | null, collegeId: string, deliveryId?: string) {
   const conditions = [
-    eq(lmsGroupMembers.membershipId, membershipId),
+    membershipId ? eq(lmsGroupMembers.membershipId, membershipId) : undefined,
     eq(lmsGroupMembers.state, "ACTIVE"),
     eq(lmsGroupMembers.memberType, "LEARNER"),
-    eq(collegeMemberships.id, membershipId),
+    eq(collegeMemberships.id, lmsGroupMembers.membershipId),
     eq(collegeMemberships.collegeId, collegeId),
     eq(collegeMemberships.status, "ACTIVE"),
     eq(users.platformStatus, "ACTIVE"),
@@ -54,7 +55,7 @@ function activeRosterQuery(membershipId: string, collegeId: string, deliveryId?:
       join programs p on p.id = lpe.program_id
       join departments pd on pd.id = p.department_id
       join cohort_progression_state cps on cps.cohort_id = lpe.cohort_id
-      where lpe.membership_id = ${membershipId}
+      where lpe.membership_id = ${lmsGroupMembers.membershipId}
         and lpe.status = 'ACTIVE' and se.status = 'ACTIVE'
         and home.status = 'ACTIVE' and home.cohort_id = lpe.cohort_id
         and home.academic_period_id = se.academic_period_id
@@ -79,7 +80,14 @@ function activeRosterQuery(membershipId: string, collegeId: string, deliveryId?:
   ];
   if (deliveryId) conditions.push(eq(electiveOfferings.backedDeliveryId, deliveryId));
   return getDb()
-    .select({ deliveryId: electiveOfferings.backedDeliveryId })
+    .select({
+      deliveryId: electiveOfferings.backedDeliveryId,
+      membershipId: lmsGroupMembers.membershipId,
+      displayName: users.displayName,
+      email: users.email,
+      phoneE164: users.phoneE164,
+      rollNumber: learnerProfiles.rollNumber,
+    })
     .from(electiveOfferings)
     .innerJoin(electiveSlots, eq(electiveSlots.id, electiveOfferings.slotId))
     .innerJoin(lmsGroups, eq(lmsGroups.id, electiveOfferings.groupId))
@@ -93,7 +101,23 @@ function activeRosterQuery(membershipId: string, collegeId: string, deliveryId?:
     .innerJoin(sections, eq(sections.id, courseSectionDeliveries.sectionId))
     .innerJoin(courses, eq(courses.id, courseOfferings.courseId))
     .innerJoin(departments, eq(departments.id, courses.departmentId))
+    .leftJoin(learnerProfiles, eq(learnerProfiles.membershipId, collegeMemberships.id))
     .where(and(...conditions));
+}
+
+/**
+ * DB-006: faculty attendance and grading must see exactly the same currently
+ * eligible elective members as the learning/read path. Historical ACTIVE group
+ * rows alone must not grant access after a program/term transfer or suspension.
+ */
+export async function listActiveElectiveLearnersForDelivery(
+  collegeId: string, deliveryId: string,
+) {
+  const rows = await activeRosterQuery(null, collegeId, deliveryId);
+  return [...new Map(rows.map(row => [row.membershipId, {
+    membershipId: row.membershipId, displayName: row.displayName,
+    email: row.email, phoneE164: row.phoneE164, rollNumber: row.rollNumber,
+  }])).values()];
 }
 
 /** Used by learner navigation; returns only actual ACTIVE roster deliveries. */

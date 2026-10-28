@@ -1,6 +1,7 @@
 import "server-only";
 
 import { and, asc, eq, isNull } from "drizzle-orm";
+import { listActiveElectiveLearnersForDelivery } from "@/modules/groups/roster-access";
 import { getDb } from "@/db/client";
 import {
   collegeMemberships,
@@ -10,7 +11,6 @@ import {
   electiveSlots,
   learnerProfiles,
   learnerProgramEnrollments,
-  lmsGroupMembers,
   lmsGroups,
   membershipRoles,
   sectionEnrollments,
@@ -104,40 +104,7 @@ export async function listActiveDeliveryLearners(
       elective.slotStatus !== "ACTIVE" || elective.slotDeletedAt !== null ||
       elective.groupStatus !== "ACTIVE" || elective.groupDeletedAt !== null
     ) return [];
-    return db
-      .select(projection)
-      .from(lmsGroupMembers)
-      .innerJoin(
-        collegeMemberships,
-        eq(collegeMemberships.id, lmsGroupMembers.membershipId),
-      )
-      .innerJoin(
-        membershipRoles,
-        and(
-          eq(membershipRoles.membershipId, collegeMemberships.id),
-          eq(membershipRoles.role, "LEARNER"),
-        ),
-      )
-      .innerJoin(users, eq(users.id, collegeMemberships.userId))
-      .leftJoin(
-        learnerProfiles,
-        eq(learnerProfiles.membershipId, collegeMemberships.id),
-      )
-      .where(
-        and(
-          eq(lmsGroupMembers.groupId, elective.groupId),
-          eq(lmsGroupMembers.memberType, "LEARNER"),
-          eq(lmsGroupMembers.state, "ACTIVE"),
-          eq(collegeMemberships.collegeId, scope.collegeId),
-          eq(collegeMemberships.status, "ACTIVE"),
-          eq(users.platformStatus, "ACTIVE"),
-        ),
-      )
-      .orderBy(
-        asc(users.displayName),
-        asc(users.email),
-        asc(collegeMemberships.id),
-      );
+    return listActiveElectiveLearnersForDelivery(scope.collegeId, scope.deliveryId);
   }
 
   return db
