@@ -29,7 +29,7 @@ function p(){if(!pool)throw new Error("DB06 requires TEST_DATABASE_URL + DB06_IS
 function keep<K extends keyof typeof made>(k:K,id:string){made[k].push(id);return id}
 function clearMade(){for(const a of Object.values(made))a.length=0}
 
-async function graph(db:Sql,department:string,college:string,label:string):Promise<Graph>{
+async function graph(db:Sql,department:string,college:string,label:string,offeringType:"CORE"|"ELECTIVE"="CORE"):Promise<Graph>{
  const program=keep("programs",randomUUID()),period=keep("periods",randomUUID()),cohort=keep("cohorts",randomUUID());
  const section=keep("sections",randomUUID()),section2=keep("sections",randomUUID()),course=keep("courses",randomUUID());
  const offering=keep("offerings",randomUUID()),delivery=keep("deliveries",randomUUID()),delivery2=keep("deliveries",randomUUID());
@@ -45,7 +45,7 @@ async function graph(db:Sql,department:string,college:string,label:string):Promi
  const term=keep("terms",randomUUID()),termCourse=keep("termCourses",randomUUID());
  await db.query("INSERT INTO program_terms(id,program_id,term_number,name,is_active) VALUES($1,$2,1,'Semester 1',true)",[term,program]);
  await db.query("INSERT INTO program_term_courses(id,program_term_id,course_id,type,credits,display_order) VALUES($1,$2,$3,'CORE',4,1)",[termCourse,term,course]);
- await db.query("INSERT INTO course_offerings(id,course_id,cohort_id,academic_period_id,program_term_id,program_term_course_id,type,credits,display_order,status) VALUES($1,$2,$3,$4,$5,$6,'CORE',4,0,'ACTIVE')",[offering,course,cohort,period,term,termCourse]);
+ await db.query("INSERT INTO course_offerings(id,course_id,cohort_id,academic_period_id,program_term_id,program_term_course_id,type,credits,display_order,status) VALUES($1,$2,$3,$4,$5,$6,$7,4,0,'ACTIVE')",[offering,course,cohort,period,term,offeringType==="CORE"?termCourse:null,offeringType]);
  await db.query("INSERT INTO course_section_deliveries(id,offering_id,section_id) VALUES($1,$2,$3),($4,$2,$5)",[delivery,offering,section,delivery2,section2]);
  await db.query("INSERT INTO course_learning_paths(id,offering_id,title,status) VALUES($1,$2,$3,'PUBLISHED')",[path,offering,`DB06 ${label} path`]);
  await db.query("INSERT INTO course_lessons(id,learning_path_id,name,sequence,status) VALUES($1,$2,$3,0,'ACTIVE')",[lesson,path,`DB06 ${label} lesson`]);
@@ -86,9 +86,11 @@ async function submission(db:Sql,a:string,d:string,m:string=ownedLearnerMembersh
 async function alternateOffering(db:Sql,g:Graph){const c=keep("courses",randomUUID()),o=keep("offerings",randomUUID());await db.query("INSERT INTO courses(id,department_id,name,code,status) SELECT $1,department_id,$2,$3,'ACTIVE' FROM courses WHERE id=$4",[c,`DB06 alternate ${c}`,`DB06-ALT-${c}`,g.course]);await db.query("INSERT INTO course_offerings(id,course_id,cohort_id,academic_period_id,type,credits,display_order,status) VALUES($1,$2,$3,$4,'CORE',4,1,'ACTIVE')",[o,c,g.cohort,g.period]);return o}
 async function bindElective(db:Sql,g:Graph,delivery:string,membership?:string){
  const group=keep("groups",randomUUID()),slot=keep("electiveSlots",randomUUID()),eo=keep("electiveOfferings",randomUUID());
- // Preserve historical curriculum identity while satisfying DB-005's
- // CORE-only active curriculum FK constraint at the exact elective transition.
- await db.query("UPDATE course_offerings SET type='ELECTIVE', program_term_course_id=NULL WHERE id=$1",[g.offering]);
+ // The offering was born ELECTIVE. Do not change its academic identity once
+ // course deliveries or learner/assessment history reference it.
+ const kind=await db.query("SELECT type,program_term_course_id FROM course_offerings WHERE id=$1",[g.offering]);
+ if(kind.rows[0]?.type!=="ELECTIVE"||kind.rows[0]?.program_term_course_id!==null)
+  throw new Error("DB06 elective fixture must be a native, unlinked ELECTIVE offering");
  await db.query("INSERT INTO lms_groups(id,kind,owner_scope,college_id,name,status,active_count,created_by_user_id) VALUES($1,'ELECTIVE','COLLEGE',$2,$3,'ACTIVE',$4,$5)",[group,SEED_IDS.collegeA,`DB06 elective ${group}`,membership?1:0,SEED_IDS.collegeAdminUser]);
  await db.query("INSERT INTO elective_slots(id,college_id,program_id,academic_period_id,semester_number,name,status) VALUES($1,$2,$3,$4,1,$5,'ACTIVE')",[slot,SEED_IDS.collegeA,g.program,g.period,`DB06 slot ${slot}`]);
  await db.query("INSERT INTO elective_offerings(id,slot_id,course_id,group_id,backed_delivery_id,status) VALUES($1,$2,$3,$4,$5,'ACTIVE')",[eo,slot,g.course,group,delivery]);
@@ -118,10 +120,13 @@ async function cleanup(){
  learnerEnrollment="";sectionEnrollment="";ownedLearnerMembership="";clearMade();
 }
 
-beforeEach(async()=>{
+beforeEach(async ctx=>{
  if(!enabled)return;
  clearMade();ownedLearnerMembership="";
- A=await graph(p(),SEED_IDS.departmentA,SEED_IDS.collegeA,"A");
+ // DB-005 requires curriculum type immutability once a delivery is created.
+ // The elective scenarios must start as elective offerings, not rewrite CORE history.
+ const electiveScenario=/^PG(?:17|18|19B?)\\b/.test(ctx.task.name);
+ A=await graph(p(),SEED_IDS.departmentA,SEED_IDS.collegeA,"A",electiveScenario?"ELECTIVE":"CORE");
  B=await graph(p(),SEED_IDS.departmentB,SEED_IDS.collegeB,"B");
  // An isolated learner avoids the shared placement test's ACTIVE enrollment:
  // DB06 must never mutate or depend on another suite's seeded learner.
