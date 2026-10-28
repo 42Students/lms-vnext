@@ -327,3 +327,46 @@ tasks remain responsible for executed migration/runtime evidence. The
 `backed_class_id -> backed_delivery_id + group-roster consumers` semantic
 redesign also still requires end-to-end course/attendance/assessment proof
 before release certification.
+
+
+## DB-006 registered PostgreSQL engineering receipt (2026-10-29)
+
+**Executed, not staged:** the forward-only registered migration
+`drizzle/0306_db03_elective_kernel_integrity.sql` adds PostgreSQL guards
+for direct-SQL learner program/current term/nullable academic-year eligibility,
+one-slot `max_pick` concurrency serialization, active offering backing-program
+identity and prevention of structural reparenting while an elective is active.
+The registered journal and 0306 snapshot form part of a clean PG17 replay.
+The common elective roster predicate now feeds faculty attendance as well as
+learner learning access, to deny a stale member after term changes and a disabled
+source course. Academic transfers in regression fixtures retire the old active
+enrollment with the required timestamps and create new immutable identities;
+they do not mutate the DB02 program/cohort FK.
+
+**Exact passing acceptance:** commit `e80cafea1ed58294edf00ad69cac955407480657`,
+dedicated GitHub Actions run
+https://github.com/42Students/lms-vnext/actions/runs/40750386705
+returned **SUCCESS** on Ubuntu/Node 22 with isolated PostgreSQL 17:
+`npm ci`, `npm run db:journal:verify`, full disposable
+`npm run db:test:prepare`, `npm run db:migrate` idempotence,
+`tests/db006-catalog-pg.test.mjs`, four DB03 integration test files
+(**55/55 PASS**) and two DB03 source-contract suites
+(**17/17 PASS**). The catalog witness verified physical existence of
+all 79 proposed legacy target columns/indexes and registered trigger objects;
+it **did not prove 79/79 producer-consumer field semantics**. The archive-aware
+course, member-history immutability, same-slot race, tenant denial, group
+rule idempotence, project-team mirroring and group-backed attendance/course
+access tests are included in the 55 executed PG tests.
+
+**Do not re-run the original DB03 source inventory or the already-green 55
+integration scenarios merely to count work.** The sole tracker
+`docs/tracker.json` still correctly keeps **DB-006 done:false** pending
+a full 79-field semantic disposition with executable producer/consumer
+witnesses or justified/approved retirement and the remaining legacy group-rule
+`JobEligibility` contract (verified education percentages, branches/batches,
+verification policy and absence behavior). The existing vNext
+`rule-evaluator.ts` expressly supports only a safe, strict subset of the
+legacy JSON. That is a **real functional gap**, not an independent final
+signature that may be deferred as RELEASE review. Final full database/API/UI
+phase certification is also separate. Continue from this exact gap; do not
+mistake physical 79 target proof for semantic approval.
