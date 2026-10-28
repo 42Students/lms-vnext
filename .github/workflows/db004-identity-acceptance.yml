@@ -10,6 +10,10 @@ on:
       - "src/modules/identity/preuser-onboarding-service.ts"
       - "src/modules/identity/email-link-verification-service.ts"
       - "src/modules/identity/scoped-account-verification-service.ts"
+      - "src/modules/identity/own-account-proof-*.ts"
+      - "src/app/api/auth/account-proof/**"
+      - "tests/unit/db004-own-account-proof-authorization.test.ts"
+      - "tests/db004-account-proof-route-security.test.mjs"
       - "src/modules/colleges/branding-service.ts"
       - "src/app/api/tenant-domains/**"
       - "tests/integration/tenant-domains.test.ts"
@@ -102,6 +106,8 @@ jobs:
           tests/integration/db01-managed-subdomain-authorization-race.test.ts
           tests/integration/tenant-domains.test.ts
           tests/integration/chat11-super-admin-branding-cas.test.ts
+      - name: DB-004 own-account permission boundary
+        run: npx vitest run tests/unit/db004-own-account-proof-authorization.test.ts
       - name: DB-004 source and security disposition checks
         run: >-
           node --test
@@ -109,3 +115,4 @@ jobs:
           tests/db01-final-field-disposition.test.mjs
           tests/db004-current-owner-evidence.test.mjs
           tests/db004-closure-gates.test.mjs
+          tests/db004-account-proof-route-security.test.mjs

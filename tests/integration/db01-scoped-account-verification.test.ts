@@ -161,6 +161,29 @@ describe("DB-004 scoped role proof is not a login credential",()=>{
    expect(closed.rows[0]?.verified_at).toBeNull();
   });
  });
+ it("invalidates a scoped challenge if the provider rejects delivery",async()=>{
+  await withRole("FACULTY",async actor=>{
+   let leakedCode="";
+   await expect(issueScopedAccountProof({
+    userId:actor.userId,membershipId:actor.memberId,role:"FACULTY",
+    channel:"EMAIL",
+   },async ({code})=>{
+    leakedCode=code;
+    throw new Error("MOCK_PROVIDER_REJECTED");
+   })).rejects.toThrow("MOCK_PROVIDER_REJECTED");
+   const saved=await pool.query<{
+    id:string;superseded_at:Date|null;email_code_mac:string|null;
+   }>("select id,superseded_at,email_code_mac from identity_auth_attempts where user_id=$1",
+    [actor.userId]);
+   expect(saved.rows).toHaveLength(1);
+   expect(saved.rows[0]?.superseded_at).toBeInstanceOf(Date);
+   expect(saved.rows[0]?.email_code_mac).toBeNull();
+   expect(await redeemScopedAccountProof({
+    challengeId:saved.rows[0]!.id,code:leakedCode,
+    userId:actor.userId,membershipId:actor.memberId,role:"FACULTY",
+   })).toBe(false);
+  });
+ });
  it("uses one atomic five-guess budget across wrong attempts",async()=>{
   await withRole("FACULTY",async actor=>{
    const issued=await issue({userId:actor.userId,membershipId:actor.memberId,

@@ -40,3 +40,26 @@ sign-off. Do not mark DB-004 or its dependent DB-005 milestone done before:
 **Tracker state is intentionally `DB-004.done=false`.** A green technical
 coverage figure is not permission to enable legacy bearer tokens, bypass
 tenant checks, or invent retrospective owner approvals.
+
+## 28 October 2026 — authenticated scoped-account proof entry points
+
+Added `POST /api/auth/account-proof/start` and
+`POST /api/auth/account-proof/verify` for the current live device session
+and its single active learner/faculty role only. The server derives UUID
+user, college membership and persisted role from live request context, enforces
+Host/Origin and bounded strict JSON, and never accepts a client-supplied
+userId, membershipId or role. Real device-session validation prevents an E2E
+identity fixture from issuing an external proof challenge. Provider adapters
+require Exotel/ZeptoMail acceptance and the role-proof secret; unapproved
+development delivery fails closed. Verification cannot mint LOGIN,
+device credentials or roles.
+
+This closes a bounded integration gap for the distinct role proof; it is
+not a public contact-verification or a first-party login replacement.
+24-hour email ownership link delivery remains server-internal until an
+approved application-bound ZeptoMail template/deep link and owner disposition
+are available. Authorization tests, negative delivery PostgreSQL witnesses
+and route safety checks accompany this integration.
+
+Do not infer live-provider acceptance, historical import authorization, D01–D07
+approvals or `DB-004.done=true` from this work.
