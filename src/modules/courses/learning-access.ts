@@ -254,6 +254,7 @@ export async function requireLearningReadAccess(
     // remains distinct from this learner-only gate.
     if (offering.courseStatus !== "ACTIVE" ||
         !offering.courseEnabled ||
+        offering.courseDeletedAt ||
         offering.courseAllowedForDisplay === 0) {
       throw new CoursesServiceError("LEARNING_ACCESS_DENIED");
     }
