@@ -345,6 +345,20 @@ export async function transitionLearnerProgramEnrollment(
       : "WITHDRAWN";
 
   return db.transaction(async (tx) => {
+    // Lock the program enrollment BEFORE its section placements. A concurrent
+    // section assignment or college-admin move must either finish first and
+    // be included in this exit, or observe the exited program and be denied.
+    // The preflight status is intentionally not trusted after this wait.
+    const [liveEnrollment] = await tx
+      .select({ status: learnerProgramEnrollments.status })
+      .from(learnerProgramEnrollments)
+      .where(eq(learnerProgramEnrollments.id, enrollmentId))
+      .for("update")
+      .limit(1);
+    if (!liveEnrollment || liveEnrollment.status !== "ACTIVE") {
+      throw new AcademicsServiceError("LEARNER_ENROLLMENT_NOT_ACTIVE");
+    }
+
     await tx
       .update(sectionEnrollments)
       .set({

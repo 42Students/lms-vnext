@@ -249,9 +249,57 @@ export async function assignLearnerToSection(
 
   try {
     return await db.transaction(async (tx) => {
-      await tx.execute(
-        sql`select id from sections where id = ${input.sectionId} for update`,
-      );
+      // Serialize every assignment for this learner with completion,
+      // withdrawal and college-admin moves. Preflight can go stale while
+      // another request exits the program; the parent lock is authoritative.
+      const [liveEnrollment] = await tx
+        .select({
+          status: learnerProgramEnrollments.status,
+          cohortId: learnerProgramEnrollments.cohortId,
+        })
+        .from(learnerProgramEnrollments)
+        .where(eq(learnerProgramEnrollments.id, input.learnerEnrollmentId))
+        .for("update")
+        .limit(1);
+      if (!liveEnrollment || liveEnrollment.status !== "ACTIVE") {
+        throw new AcademicsServiceError("LEARNER_ENROLLMENT_NOT_ACTIVE");
+      }
+      if (liveEnrollment.cohortId !== section.cohortId) {
+        throw new AcademicsServiceError("SECTION_COHORT_MISMATCH");
+      }
+
+      // Period-close writers lock the period before its sections. Match
+      // that order and hold a SHARE lock through the placement commit so a
+      // CLOSED period cannot be raced in after the initial scope read.
+      const [livePeriod] = await tx
+        .select({ status: academicPeriods.status })
+        .from(academicPeriods)
+        .where(eq(academicPeriods.id, section.academicPeriodId))
+        .for("share")
+        .limit(1);
+      if (!livePeriod || livePeriod.status === "CLOSED") {
+        throw new AcademicsServiceError("ACADEMIC_PERIOD_CLOSED");
+      }
+
+      const [liveSection] = await tx
+        .select({
+          status: sections.status,
+          cohortId: sections.cohortId,
+          academicPeriodId: sections.academicPeriodId,
+        })
+        .from(sections)
+        .where(eq(sections.id, input.sectionId))
+        .for("update")
+        .limit(1);
+      if (!liveSection || liveSection.status !== "ACTIVE") {
+        throw new AcademicsServiceError("SECTION_NOT_FOUND");
+      }
+      if (liveSection.cohortId !== liveEnrollment.cohortId) {
+        throw new AcademicsServiceError("SECTION_COHORT_MISMATCH");
+      }
+      if (liveSection.academicPeriodId !== section.academicPeriodId) {
+        throw new AcademicsServiceError("ACADEMIC_PERIOD_CLOSED");
+      }
 
       const activePlacements = await tx
         .select({
