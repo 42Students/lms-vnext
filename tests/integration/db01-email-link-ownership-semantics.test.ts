@@ -119,6 +119,56 @@ describe("DB-004 registered email verification link replacements",()=>{
    expect(proofs.rows).toHaveLength(0);
   });
  });
+ it("binds a verified email link to the real owning placement application",async()=>{
+  await withUser(async u=>{
+   const companyId=randomUUID(),relId=randomUUID(),jobId=randomUUID(),
+    optionId=randomUUID(),applicationId=randomUUID();
+   try{
+    await pool.query(
+     "insert into placement_companies(id,name,created_by_user_id,status) values($1,$2,$3,'ACTIVE')",
+     [companyId,"DB004 Email Company "+companyId,SEED_IDS.superAdminUser]);
+    await pool.query(
+     "insert into placement_company_relationships(id,college_id,company_id,created_by_user_id,status) values($1,$2,$3,$4,'ACTIVE')",
+     [relId,SEED_IDS.collegeA,companyId,SEED_IDS.superAdminUser]);
+    await pool.query(`
+     insert into placement_jobs
+      (id,college_id,season_id,company_relationship_id,title,description,
+       employment_type,work_mode,created_by_user_id,status,published_at)
+     values($1,$2,$3,$4,'DB004 Email Job','Scoped verification',
+      'FULL_TIME','REMOTE',$5,'PUBLISHED',clock_timestamp())`,
+     [jobId,SEED_IDS.collegeA,SEED_IDS.placementSeasonA,relId,SEED_IDS.superAdminUser]);
+    await pool.query(`
+     insert into placement_job_role_options
+      (id,job_id,title,employment_type,work_mode,is_primary)
+     values($1,$2,'Engineer','FULL_TIME','REMOTE',true)`,[optionId,jobId]);
+    await pool.query(`
+     insert into placement_applications
+      (id,job_id,role_option_id,membership_id,channel,status,
+       eligibility_status,eligibility_snapshot,submitted_by_user_id)
+     values($1,$2,$3,$4,'INTERNAL','SUBMITTED','ELIGIBLE','{}'::jsonb,$5)`,
+     [applicationId,jobId,optionId,u.membershipId,u.userId]);
+    const link=await issued({userId:u.userId,collegeId:SEED_IDS.collegeA,
+     membershipId:u.membershipId,applicationId});
+    const stored=await pool.query<{
+     application_id:string;membership_id:string;college_id:string;
+     legacy_application_id:string|null;
+    }>("select * from identity_email_verification_links where id=$1",[link.id]);
+    expect(stored.rows[0]).toMatchObject({
+     application_id:applicationId,membership_id:u.membershipId,
+     college_id:SEED_IDS.collegeA,legacy_application_id:null,
+    });
+    expect(await redeemEmailOwnershipLink(link.token)).toBe(true);
+   }finally{
+    await pool.query("delete from identity_email_ownership_proofs where user_id=$1",[u.userId]);
+    await pool.query("delete from identity_email_verification_links where user_id=$1",[u.userId]);
+    await pool.query("delete from placement_applications where id=$1",[applicationId]);
+    await pool.query("delete from placement_job_role_options where id=$1",[optionId]);
+    await pool.query("delete from placement_jobs where id=$1",[jobId]);
+    await pool.query("delete from placement_company_relationships where id=$1",[relId]);
+    await pool.query("delete from placement_companies where id=$1",[companyId]);
+   }
+  });
+ });
  it("invalidates an outstanding link if the canonical email changes",async()=>{
   await withUser(async u=>{
    const link=await issued({userId:u.userId});
