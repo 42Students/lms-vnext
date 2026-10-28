@@ -653,6 +653,10 @@ export async function markFacultyAttendance(
               attendanceRecords.membershipId,
               input.presentMembershipIds,
             ),
+            // Faculty's binary editor must not erase an admin-recorded
+            // EXCUSED, MEDICAL, LATE or explicit PRESENT status when a
+            // different learner's absence is corrected in the same bulk write.
+            eq(attendanceRecords.status, "ABSENT"),
           ),
         );
     }
