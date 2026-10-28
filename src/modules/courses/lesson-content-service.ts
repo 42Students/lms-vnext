@@ -342,7 +342,9 @@ export async function listLessonContents(
     );
 
   // COL-course-tabs-13: hidden lessons are unavailable even by a saved deep link.
-  if (access === "LEARNER" && !lesson.visibleToStudents) {
+  // An active lifecycle label cannot resurrect a soft-deleted lesson.
+  // The workspace already enforces both gates; direct content listing must too.
+  if (access === "LEARNER" && (!lesson.visibleToStudents || lesson.deletedAt)) {
     throw new CoursesServiceError("LESSON_NOT_FOUND");
   }
 
@@ -388,10 +390,17 @@ export async function listLessonContents(
   }))conditions.push(eq(lessonContents.createdByUserId,context.user.id));
 
   if (access === "LEARNER") {
+    // Keep direct lesson-content reads aligned with the learner workspace:
+    // publication alone does not override author visibility, soft deletion,
+    // parent-delete provenance or a legacy active=false snapshot.
     conditions.push(
-      eq(
-        lessonContents.status,
-        "PUBLISHED",
+      eq(lessonContents.status, "PUBLISHED"),
+      eq(lessonContents.visibleToStudents, true),
+      isNull(lessonContents.deletedAt),
+      eq(lessonContents.deletedWithLesson, false),
+      or(
+        isNull(lessonContents.legacyActive),
+        eq(lessonContents.legacyActive, true),
       ),
     );
   } else if (!includeArchived) {
