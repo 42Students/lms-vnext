@@ -43,7 +43,7 @@ describe("DB-004 department field and archive semantics",()=>{
    expect(initial.rows[0]?.created_at).toBeInstanceOf(Date);
    expect(initial.rows[0]?.updated_at).toBeInstanceOf(Date);
    const newName="DB004 Renamed "+suffix;
-   await renameDepartment(superAdmin,id,newName);
+   await renameDepartment(superAdmin,id,{name:newName});
    const updated=await pool.query<{name:string;updated_at:Date}>(
     "select name,updated_at from departments where id=$1",[id]);
    expect(updated.rows[0]?.name).toBe(newName);
