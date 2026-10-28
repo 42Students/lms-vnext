@@ -1050,7 +1050,12 @@
           "UI projects and mentor account"
         ],
         "operatingNotes": "Enforce project parent/ancestry and template revision consistency.",
-        "claim": null
+        "claim": {
+          "sessionId": "vnext-l06-chat-20261029-0124-ist",
+          "holder": "ChatGPT L06 Projects/templates/mentoring",
+          "claimedAt": "2026-10-28T19:54:00.000Z",
+          "expiresAt": "2026-10-28T23:54:00.000Z"
+        }
       },
       {
         "id": "L07",
