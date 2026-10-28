@@ -13,159 +13,50 @@ export const CORE_ELEVEN = Object.freeze([
   'DB-002', 'DB-003', 'DB-004', 'DB-005', 'DB-007', 'DB-008',
   'DB-012', 'DB-017', 'DB-019', 'DB-020', 'DB-030',
 ]);
-export const DATABASE_DOMAIN_PACKAGES = Object.freeze([
-  {
-    "label": "FOUNDATION / GLOBAL",
-    "taskIds": [
-      "DB-001",
-      "DB-002",
-      "DB-003",
-      "DB-004",
-      "DB-014",
-      "DB-015",
-      "DB-017",
-      "DB-018",
-      "DB-019",
-      "DB-020",
-      "DB-025",
-      "DB-027",
-      "DB-028",
-      "DB-048",
-      "DB-051",
-      "DB-055",
-      "DB-058",
-      "DB-065",
-      "DB-076"
-    ]
-  },
-  {
-    "label": "DB02 Academic",
-    "taskIds": [
-      "DB-005"
-    ]
-  },
-  {
-    "label": "DB03 Groups",
-    "taskIds": [
-      "DB-006",
-      "DB-026"
-    ]
-  },
-  {
-    "label": "DB04 Profiles",
-    "taskIds": [
-      "DB-007",
-      "DB-016",
-      "DB-077",
-      "DB-080",
-      "DB-081"
-    ]
-  },
-  {
-    "label": "DB05 Courses",
-    "taskIds": [
-      "DB-008",
-      "DB-078"
-    ]
-  },
-  {
-    "label": "DB06 Assessment",
-    "taskIds": [
-      "DB-009",
-      "DB-030",
-      "DB-035",
-      "DB-038",
-      "DB-041",
-      "DB-042",
-      "DB-044",
-      "DB-045",
-      "DB-052",
-      "DB-053"
-    ]
-  },
-  {
-    "label": "DB07 Projects",
-    "taskIds": [
-      "DB-010",
-      "DB-068",
-      "DB-070",
-      "DB-071",
-      "DB-073",
-      "DB-074",
-      "DB-075"
-    ]
-  },
-  {
-    "label": "DB08 Placement",
-    "taskIds": [
-      "DB-011",
-      "DB-021",
-      "DB-029",
-      "DB-054",
-      "DB-066",
-      "DB-069",
-      "DB-072"
-    ]
-  },
-  {
-    "label": "DB09 CRM",
-    "taskIds": [
-      "DB-012",
-      "DB-032",
-      "DB-034",
-      "DB-036",
-      "DB-047",
-      "DB-056",
-      "DB-057",
-      "DB-059",
-      "DB-060",
-      "DB-061",
-      "DB-062",
-      "DB-063",
-      "DB-064",
-      "DB-079"
-    ]
-  },
-  {
-    "label": "DB10 Operations",
-    "taskIds": [
-      "DB-013",
-      "DB-022",
-      "DB-023",
-      "DB-024",
-      "DB-031",
-      "DB-033",
-      "DB-037",
-      "DB-039",
-      "DB-040",
-      "DB-043",
-      "DB-046",
-      "DB-049",
-      "DB-050",
-      "DB-067"
-    ]
-  }
-]);
+/**
+ * The sole JSON document owns all ten lane/package assignments.
+ * These exports are read-only projections for existing callers and tests.
+ */
+const canonicalPath = path.resolve(path.dirname(fileURLToPath(import.meta.url)),'../docs/tracker.json');
+const canonicalDocument = JSON.parse(fs.readFileSync(canonicalPath,'utf8'));
+export const DATABASE_DOMAIN_PACKAGES = Object.freeze(
+  canonicalDocument.execution.lanes.map(lane => ({
+    label: lane.name,
+    taskIds: Object.freeze([...lane.dbTaskIds]),
+  }))
+);
 
-/** Read-only execution grouping, never an alternative task state or phase gate. */
 export function inspectDomainPackages(doc) {
-  const tasks = new Map((doc?.tasks ?? []).filter(t => t.phase === 'DATABASE').map(t => [t.id,t]));
-  const seen = new Set();
-  const duplicates = [];
-  const unknown = [];
-  const packages = DATABASE_DOMAIN_PACKAGES.map(p => {
-    const actual = p.taskIds.map(id => {
+  const tasks = new Map((doc?.tasks ?? []).filter(t => t.phase==='DATABASE').map(t => [t.id,t]));
+  const lanes = doc?.execution?.lanes ?? [];
+  const seen = new Set(), duplicates = [], unknown = [];
+  const packages = lanes.map(lane => {
+    const ids = Array.isArray(lane.dbTaskIds) ? lane.dbTaskIds : [];
+    const values = ids.map(id => {
       if (seen.has(id)) duplicates.push(id);
       seen.add(id);
       if (!tasks.has(id)) unknown.push(id);
       return tasks.get(id);
     });
-    const done = actual.filter(t => t?.done === true).length;
-    return {label:p.label,done,total:p.taskIds.length,notDone:p.taskIds.length - done,
-      remainingIds:p.taskIds.filter(id => tasks.get(id)?.done !== true)};
+    const done = values.filter(t => t?.done===true).length;
+    return {label:lane.name,id:lane.id,done,total:ids.length,notDone:ids.length-done,
+      remainingIds:ids.filter(id => tasks.get(id)?.done!==true),claimedBy:lane.claim?.sessionId ?? null};
   });
   const unassigned = [...tasks.keys()].filter(id => !seen.has(id));
   return {packages,unassigned,duplicates,unknown,readyForNextPhase:false};
+}
+
+export function inspectExecution(doc) {
+  const e = doc?.execution ?? {};
+  const milestones = Array.isArray(e.milestones) ? e.milestones : [];
+  const result = {};
+  for (const stage of ['API','UI','DESIGN','RELEASE']) {
+    const all = milestones.filter(m=>m.stage===stage);
+    result[stage] = {total:all.length,done:all.filter(m=>m.done===true).length,
+      open:all.filter(m=>m.done!==true).map(m=>m.id)};
+  }
+  return {lanes:inspectDomainPackages(doc).packages,phases:result,certificates:e.globalPhaseCertificates,
+    readyForNextPhase:false};
 }
 
 const SHA = /^[a-f0-9]{40}$/i;
@@ -240,6 +131,62 @@ export function inspectTracker(doc) {
   for (const id of coverage.unassigned) add(errors,'UNASSIGNED_DATABASE_PACKAGE',{id});
   for (const id of coverage.duplicates) add(errors,'DUPLICATE_DATABASE_PACKAGE',{id});
   for (const id of coverage.unknown) add(errors,'UNKNOWN_DATABASE_PACKAGE',{id});
+  const execution = doc.execution;
+  if (execution?.schemaVersion !== 1 || execution.authority?.includes('docs/tracker.json') !== true)
+    add(errors,'INVALID_SINGLE_EXECUTION_AUTHORITY');
+  const lanes = execution?.lanes;
+  if (!Array.isArray(lanes) || lanes.length!==10 ||
+      lanes.map(l=>l.id).sort().join(',') !== ['L01','L02','L03','L04','L05','L06','L07','L08','L09','L10'].join(','))
+    add(errors,'INVALID_TEN_LANE_MAP');
+  const seenClaims=new Set();
+  for (const lane of lanes ?? []) {
+    if (!validString(lane.name) || !Array.isArray(lane.dbTaskIds) ||
+        !Array.isArray(lane.sourceOwnership) || lane.sourceOwnership.length===0 ||
+        !Array.isArray(lane.phaseScopes) || lane.phaseScopes.length===0)
+      add(errors,'INVALID_LANE_CONTRACT',{laneId:lane.id});
+    if (lane.claim != null) {
+      const c=lane.claim;
+      if (!validString(c.sessionId)||!validString(c.holder)||!validDate(c.claimedAt)||
+          !validDate(c.expiresAt)||Date.parse(c.expiresAt)<=Date.parse(c.claimedAt))
+        add(errors,'INVALID_LANE_CLAIM',{laneId:lane.id});
+      if (seenClaims.has(c.sessionId)) add(errors,'DUPLICATE_ACTIVE_LANE_CLAIM',{laneId:lane.id});
+      seenClaims.add(c.sessionId);
+    }
+  }
+  const milestones=execution?.milestones;
+  if (!Array.isArray(milestones) || milestones.length===0) add(errors,'MISSING_FUTURE_PHASE_MILESTONES');
+  const msIds = new Set();
+  for (const m of milestones ?? []) {
+    if (!validString(m.id)||msIds.has(m.id)||!['API','UI','DESIGN','RELEASE'].includes(m.stage)||
+        !(lanes??[]).some(l=>l.id===m.laneId)||!validString(m.title)||
+        !Array.isArray(m.requirements)||m.requirements.length===0||typeof m.done!=='boolean')
+      add(errors,'INVALID_PHASE_MILESTONE',{id:m.id});
+    msIds.add(m.id);
+    if (m.done === true && (!validDate(m.acceptedAt)||!Array.isArray(m.acceptanceEvidence)||
+        !m.acceptanceEvidence.some(e=>e.kind?.startsWith('EXECUTED')&&SHA.test(e.commitSha??'')&&
+          e.exitCode===0&&['PASS','PASSED'].includes(e.result)&&validString(e.runner)&&
+          (validString(e.runUrl)||Array.isArray(e.commands)&&e.commands.length>0))))
+      add(errors,'MILESTONE_DONE_WITHOUT_EXECUTED_PROOF',{id:m.id});
+    if (m.done===false&&(m.acceptedAt!=null||(m.acceptanceEvidence?.length??0)>0))
+      add(errors,'OPEN_MILESTONE_HAS_ACCEPTANCE_PROOF',{id:m.id});
+  }
+  for (const stage of ['DATABASE','API','UI','DESIGN','RELEASE']) {
+    const cert=execution?.globalPhaseCertificates?.[stage];
+    if (!cert||typeof cert.certified!=='boolean'||!Array.isArray(cert.evidence))
+      add(errors,'INVALID_GLOBAL_PHASE_CERTIFICATE',{stage});
+    else if (cert.certified && !cert.evidence.some(e=>e?.kind?.startsWith('EXECUTED')&&
+      SHA.test(e.commitSha??'')&&e.exitCode===0&&['PASS','PASSED'].includes(e.result)))
+      add(errors,'CERTIFIED_PHASE_WITHOUT_EXECUTED_PROOF',{stage});
+  }
+  if (!Array.isArray(execution?.sharedChangeRequests))
+    add(errors,'MISSING_SINGLE_SOURCE_HANDOFF_QUEUE');
+  else for (const request of execution.sharedChangeRequests) {
+    if (!validString(request.id)||!['REQUESTED','ACCEPTED','APPLIED','REJECTED'].includes(request.status)||
+      !(lanes??[]).some(l=>l.id===request.fromLane)||
+      !(lanes??[]).some(l=>l.id===request.toLane)||
+      !Array.isArray(request.paths)||request.paths.length===0)
+      add(errors,'INVALID_HANDOFF_REQUEST',{id:request.id});
+  }
   const visiting = new Set(), visited = new Set();
   function walk(id) {
     if (visiting.has(id)) return add(errors, 'DEPENDENCY_CYCLE',{id});
@@ -294,6 +241,27 @@ if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.me
     const report = inspectCheckout(root);
     if (process.argv.includes('--json') || process.argv.includes('--check')) {
       console.log(JSON.stringify(report,null,2));
+    } else if (process.argv.includes('--roadmap') || process.argv.includes('--lanes') ||
+               process.argv.some(a => /^--lane=L\\d\\d$/.test(a))) {
+      const doc=JSON.parse(fs.readFileSync(path.join(root ?? path.resolve(path.dirname(fileURLToPath(import.meta.url)),'..'),'docs/tracker.json'),'utf8'));
+      const reportExec=inspectExecution(doc);
+      const only=process.argv.find(a=>a.startsWith('--lane='))?.split('=')[1];
+      console.log('LMS vNext | SINGLE TRACKER / TEN LANES');
+      console.log('Current global phase: '+doc.currentPhase+' | DB DONE '+report.counts.done+'/'+report.counts.total);
+      for (const lane of reportExec.lanes.filter(l=>!only||l.id===only)) {
+        const owned=doc.execution.lanes.find(l=>l.id===lane.id);
+        console.log(lane.id+' '+lane.label+': '+lane.done+'/'+lane.total+' DB accepted'+
+          (lane.claimedBy ? ' | CLAIMED '+lane.claimedBy : ' | FREE'));
+        console.log('  Open DB IDs: '+(lane.remainingIds.join(', ')||'none'));
+        console.log('  Ownership: '+owned.sourceOwnership.join('; '));
+        console.log('  Future: '+doc.execution.milestones.filter(m=>m.laneId===lane.id)
+          .map(m=>m.id+(m.done?' ✓':' pending')).join(', '));
+      }
+      if (!only) for (const stage of ['API','UI','DESIGN','RELEASE']) {
+        const p=reportExec.phases[stage];
+        console.log(stage+': '+p.done+'/'+p.total+' milestones accepted (NOT a global phase signoff)');
+      }
+      if (report.errors.length) {console.error(JSON.stringify(report.errors));process.exitCode=2;}
     } else if (process.argv.includes('--domains') || process.argv.includes('--packages')) {
       const groups = inspectDomainPackages(JSON.parse(fs.readFileSync(path.join(root ?? path.resolve(path.dirname(fileURLToPath(import.meta.url)),'..'),'docs/tracker.json'),'utf8')));
       console.log('LMS vNext | DATABASE DOMAIN PACKAGES (read-only; not phase acceptance)');
