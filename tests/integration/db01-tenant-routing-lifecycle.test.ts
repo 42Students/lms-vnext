@@ -112,7 +112,7 @@ describe("DB01 tenant host lifecycle — real repository SQL", () => {
       await pool.query(`
         update tenant_domains
            set deleted_at=clock_timestamp(),is_primary=false,
-               verification_token=null
+               is_verified=false,verification_token=null
          where id=$1`,[fixture.domainId]);
       const after = await resolveCollegeUsage(fixture.collegeId);
       expect(after.tenantDomains).toBe(0);
@@ -149,7 +149,7 @@ describe("DB01 tenant host lifecycle — real repository SQL", () => {
           platformStatus:"ACTIVE",systemRoles:["SUPER_ADMIN"]},membership:null,
       };
       await pool.query(`update tenant_domains set deleted_at=now(),
-        is_primary=false,verification_token=null where id=$1`,[fixture.domainId]);
+        is_primary=false,is_verified=false,verification_token=null where id=$1`,[fixture.domainId]);
       await archiveCollege(superAdmin,fixture.collegeId);
       const lateHost=`late-${randomUUID()}.example.test`;
       await expect(drizzleTenantDomainRepository.createDomain({
