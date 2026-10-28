@@ -20,6 +20,11 @@ function readPgTarget(raw, name) {
   if (!['postgresql:', 'postgres:'].includes(url.protocol)) {
     throw new Error(`${name} must use a PostgreSQL URL`);
   }
+  if (!url.hostname) {
+    // PostgreSQL URI parsers can fall back to PGHOST/Unix sockets when the
+    // hostname is empty. A destructive target must never be resolved by env.
+    throw new Error(`${name} must include an explicit PostgreSQL host`);
+  }
   const targetOverrideParams = ['host', 'hostaddr', 'port', 'database', 'dbname'];
   const redirectedBy = targetOverrideParams.find((key) => url.searchParams.has(key));
   if (redirectedBy) {
