@@ -68,7 +68,7 @@ describe.skipIf(!enabled)("College Admin term-course CRUD PG, scoped guards", ()
         await pool.query("DELETE FROM activity_events WHERE subject_type='program_term_course' AND subject_id=$1", [createdMapping ?? "00000000-0000-4000-8000-000000000000"]);
         await pool.query("DELETE FROM course_offerings WHERE id=$1", [ids.offering]);
         if (createdMapping) await pool.query("DELETE FROM program_term_courses WHERE id=$1", [createdMapping]);
-        await pool.query("DELETE FROM cohort_progression_state WHERE cohort_id=$1", [ids.cohort]);
+        // The version-zero state is cohort-owned; delete of the cohort cascades it.
         await pool.query("DELETE FROM cohorts WHERE id=$1", [ids.cohort]);
         await pool.query("DELETE FROM academic_periods WHERE id=$1", [ids.period]);
         await pool.query("DELETE FROM program_terms WHERE id=$1", [ids.term]);

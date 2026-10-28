@@ -109,7 +109,7 @@ describe.skipIf(!enabled)("College batch create/edit — isolated PostgreSQL", (
           await pool.query(
             "DELETE FROM activity_events WHERE subject_type='cohort' AND subject_id=$1", [id],
           );
-          await pool.query("DELETE FROM cohort_progression_events WHERE cohort_id=$1", [id]);
+          // Progression events are immutable; this CRUD-only fixture creates none.
           await pool.query("DELETE FROM cohorts WHERE id=$1", [id]);
         }
         await pool.query("DELETE FROM programs WHERE id=$1", [fixtures.program]);
