@@ -1,0 +1,30 @@
+name: Single Execution Tracker Acceptance
+on:
+  push:
+    paths:
+      - docs/tracker.json
+      - scripts/tracker.mjs
+      - tests/tracker.test.mjs
+      - tests/database-domain-packages.test.mjs
+      - tests/tracker-ten-lanes.test.mjs
+      - .github/workflows/single-tracker-acceptance.yml
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Validate the one tracker and ten lanes
+        run: node scripts/tracker.mjs --check
+      - name: Verify lane and phase progress rendering
+        run: |
+          node scripts/tracker.mjs --lanes
+          node scripts/tracker.mjs --lane=L03
+      - name: Execute plan, claim and task acceptance tests
+        run: node --test tests/tracker.test.mjs tests/database-domain-packages.test.mjs tests/tracker-ten-lanes.test.mjs
