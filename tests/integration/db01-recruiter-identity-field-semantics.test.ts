@@ -64,6 +64,19 @@ describe("DB-004 active recruiter identity and archival field semantics",()=>{
     given_name:"Alia",family_name:"Khan",email,phone_e164:phone,archived_at:null,
    });
    await pool.query(
+    "update placement_recruiter_profiles set status='SUSPENDED',suspended_at=clock_timestamp(),suspension_reason='DB004 suspension' where user_id=$1",
+    [userId]);
+   const suspended=await pool.query<{suspended_at:Date;suspension_reason:string}>(
+    "select suspended_at,suspension_reason from placement_recruiter_profiles where user_id=$1",[userId]);
+   expect(suspended.rows[0]?.suspended_at).toBeInstanceOf(Date);
+   expect(suspended.rows[0]?.suspension_reason).toBe("DB004 suspension");
+   await expect(getRecruiterSelfProfile(context,SEED_IDS.collegeA)).rejects.toBeDefined();
+   expect((await resolveRequestContext({identityUid})).recruiter).toBeNull();
+   await pool.query(
+    "update placement_recruiter_profiles set status='ACTIVE',suspended_at=null,suspension_reason=null where user_id=$1",
+    [userId]);
+   expect((await resolveRequestContext({identityUid})).recruiter).not.toBeNull();
+   await pool.query(
     "update placement_recruiter_profiles set status='ARCHIVED',archived_at=clock_timestamp() where user_id=$1",
     [userId]);
    const closed=await pool.query<{archived_at:Date}>(
