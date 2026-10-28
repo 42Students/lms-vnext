@@ -25,9 +25,16 @@ describe("course legacy-compatible readonly projection",()=>{
   expect(projection.metaData.image_url_lp).toBeNull();
   expect(projection.metaData.takeaways).toEqual(["Learn parsing","Build compilers"]);
   expect(Object.keys(projection).sort()).toEqual([
-   "active","allowedForDisplay","courseName","deptId","id","metaData","shortTitle","slug",
+   "active","allowedForDisplay","courseName","deptId","formal_title","id","metaData","shortTitle","slug",
   ].sort());
   expect(JSON.stringify(projection)).not.toContain("secret");
+ });
+ it("derives formal_title without a duplicate column and with exact legacy null fallback",()=>{
+  expect(projectLegacyCoursePublic(course).formal_title).toBe("Compilers");
+  expect(projectLegacyCoursePublic({...course,shortTitle:null}).formal_title).toBe("Compiler Design");
+  // The legacy producer falls back only on null, never on an empty/blank value.
+  expect(projectLegacyCoursePublic({...course,shortTitle:""}).formal_title).toBe("");
+  expect(projectLegacyCoursePublic({...course,shortTitle:" "}).formal_title).toBe(" ");
  });
  it("never promotes an archived or disabled course to active just because display is permitted",()=>{
   expect(projectLegacyCoursePublic({...course,status:"ARCHIVED",legacyAllowedForDisplay:1}).active).toBe(false);
