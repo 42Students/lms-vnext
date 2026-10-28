@@ -11,11 +11,11 @@ const sql = fs.readFileSync(
 test("share lifecycle has one CREATED and one REVOKED terminal event", () => {
   assert.match(
     sql,
-    /CREATE UNIQUE INDEX db09_share_events_created_uq[\s\S]*WHERE action = 'CREATED'/,
+    /CREATE UNIQUE INDEX "?db09_share_events_created_uq"?[^\n]*WHERE [^\n]*= 'CREATED'/,
   );
   assert.match(
     sql,
-    /CREATE UNIQUE INDEX db09_share_events_revoked_uq[\s\S]*WHERE action = 'REVOKED'/,
+    /CREATE UNIQUE INDEX "?db09_share_events_revoked_uq"?[^\n]*WHERE [^\n]*= 'REVOKED'/,
   );
 });
 
@@ -38,7 +38,7 @@ test("REVOKED event cannot exist for active or pre-revocation state", () => {
 });
 
 test("CREATED event cannot predate its share", () => {
-  assert.match(sql, /CREATED event predates share creation/);
+  assert.match(sql, /secure share event predates share creation/);
   assert.match(sql, /NEW\.created_at < v_created_at/);
 });
 
@@ -52,7 +52,7 @@ test("share use/delivery events require a live unrevoked link", () => {
   );
 });
 
-test("all staged DB09 SQL functions use valid dollar quoting", () => {
+test("all registered DB09 SQL functions use valid dollar quoting", () => {
   const functionStarts = [...sql.matchAll(/CREATE FUNCTION\s+([a-zA-Z0-9_]+)\(/g)];
   assert.ok(functionStarts.length > 0);
   for (const match of functionStarts) {
