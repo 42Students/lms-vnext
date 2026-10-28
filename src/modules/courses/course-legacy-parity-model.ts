@@ -1,3 +1,9 @@
+/** Legacy attendance/program course-info wire: formal_title is derived, never a
+ * mutable second column. The old Java expression falls back on null only. */
+export function legacyFormalTitle(input: { name: string; shortTitle: string | null }): string {
+ return input.shortTitle === null ? input.name : input.shortTitle;
+}
+
 /** Presentation and import-only mapping. Membership authorization still uses
  * resolved offering+delivery UUIDs, never legacy class/course IDs. */
 export function legacyCourseCode(input:{
