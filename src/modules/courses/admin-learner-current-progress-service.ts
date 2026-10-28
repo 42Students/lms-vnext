@@ -62,6 +62,7 @@ export async function getAdminLearnerCurrentContentAttempts(
    contentId:learnerContentProgress.lessonContentId,
    attempt:learnerContentProgress.attempt,
    completedAt:learnerContentProgress.completedAt,
+   legacyWasDeleted:learnerContentProgress.legacyWasDeleted,
  }).from(learnerContentProgress).where(and(
    eq(learnerContentProgress.membershipId,learnerMembershipId),
    inArray(learnerContentProgress.lessonContentId,validContentIds),
@@ -71,7 +72,10 @@ export async function getAdminLearnerCurrentContentAttempts(
  for(const row of progressRows){
    if(seen.has(row.contentId))continue;
    seen.add(row.contentId);
-   attempts.push(row);
+   // Always choose the latest attempt before applying its deletion state.
+   // The old completed attempt must not reappear after an admin tombstone.
+   attempts.push({contentId:row.contentId,attempt:row.attempt,
+     completedAt:row.legacyWasDeleted===true?null:row.completedAt});
  }
  return {deliveryId,learnerMembershipId,validContentIds,attempts};
 }
