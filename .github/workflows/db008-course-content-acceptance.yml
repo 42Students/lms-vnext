@@ -21,7 +21,7 @@ permissions:
   contents: read
 
 concurrency:
-  group: db008-course-content-acceptance-${{ github.ref }}
+  group: db008-registered-0305-fixed-races-${{ github.ref }}
   cancel-in-progress: false
 
 jobs:
