@@ -253,9 +253,9 @@
     },
     {
       "id": "COURSE_PARENT_GRAPH_SAME_COLLEGE_AND_MULTI_HOP_CYCLES",
-      "status": "BLOCKED",
+      "status": "PASS",
       "owner": 1,
-      "evidence": "Unregistered companion SQL only. Parent self/cycle, cross-college, child and offering reparent PostgreSQL negatives not run."
+      "evidence": "REGISTERED migration 0305, clean and idempotent PG17 replay, cycle/self/3-level/wrong-college direct SQL negative witnesses, reciprocal two-session race, and matching parent service integration passed on 2026-10-28; https://github.com/42Students/lms-vnext/actions/runs/40748768228 at 271704c2b978d57f5c27598aa3b4a8ebf698e762. This is ONE scoped gate. Separate department/academic-period/section/membership upstream, course content drafts, 92-field dispositions, and full DB008 typecheck remain independently unaccepted."
     },
     {
       "id": "COURSE_PARENT_UPSTREAM_COLLEGE_MOVE_INTEGRITY",
