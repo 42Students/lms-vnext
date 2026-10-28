@@ -1,4 +1,4 @@
-import { and, eq } from "drizzle-orm";
+import { and, eq, inArray } from "drizzle-orm";
 import { z } from "zod";
 import { getDb } from "@/db/client";
 import {
@@ -38,6 +38,34 @@ export async function setCollegeCgpaConversionRule(
       .from(colleges).where(eq(colleges.id,collegeId)).for("update");
     if(!college) throw Error("COLLEGE_NOT_FOUND");
     requirePermission(context,"placements.manage",{collegeId,organizationId:college.organizationId});
+    // Refresh the write permission under the same college lock that serializes
+    // verified grade publications. Stale request-context TPO/admin roles must
+    // not change eligibility percentages after a membership/role revocation.
+    const [actorUser]=await tx.select({id:users.id}).from(users)
+      .where(and(eq(users.id,context.user.id),
+        eq(users.platformStatus,"ACTIVE"))).for("share").limit(1);
+    if(!actorUser)throw new AuthorizationError("placements.manage");
+    if(isSuperAdmin(context)){
+      const [role]=await tx.select({id:systemRoles.id}).from(systemRoles)
+        .where(and(eq(systemRoles.userId,context.user.id),
+          eq(systemRoles.role,"SUPER_ADMIN"))).for("share").limit(1);
+      if(!role)throw new AuthorizationError("placements.manage");
+    }else{
+      const membership=context.membership;
+      if(!membership||membership.collegeId!==collegeId||membership.status!=="ACTIVE")
+        throw new AuthorizationError("placements.manage");
+      const [activeGrant]=await tx.select({id:collegeMemberships.id})
+        .from(collegeMemberships)
+        .innerJoin(membershipRoles,and(
+          eq(membershipRoles.membershipId,collegeMemberships.id),
+          inArray(membershipRoles.role,["TPO","COLLEGE_ADMIN"])))
+        .where(and(eq(collegeMemberships.id,membership.id),
+          eq(collegeMemberships.collegeId,collegeId),
+          eq(collegeMemberships.userId,context.user.id),
+          eq(collegeMemberships.status,"ACTIVE")))
+        .for("share").limit(1);
+      if(!activeGrant)throw new AuthorizationError("placements.manage");
+    }
     await tx.insert(profileVerificationSettings).values({
       collegeId,cgpaToPct:rule,updatedByUserId:context.user.id,
     }).onConflictDoUpdate({
