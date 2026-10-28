@@ -215,6 +215,7 @@ single_session_sql=(
   scripts/sql/db02-activation-role-lifecycle-acceptance-unregistered.sql
   scripts/sql/db02-active-parent-lifecycle-acceptance-unregistered.sql
   scripts/sql/db02-program-archive-acceptance-unregistered.sql
+  scripts/sql/db02-registered-offering-compatibility-acceptance.sql
 )
 two_session_bash=(
   scripts/sql/db02-postgres-concurrency-unregistered.sh

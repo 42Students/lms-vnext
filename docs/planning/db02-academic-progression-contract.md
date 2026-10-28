@@ -451,3 +451,17 @@ term, the migration fails rather than fabricating the mapping.
 global DATABASE phase remains active, and DB-005 remains `done:false` until
 registration, drift, PostgreSQL and API compatibility are verified.
 
+
+## First-party writer compatibility on DB-005 registered schema
+
+The newly required `course_offerings.program_term_id` and CORE curriculum
+FK cannot be left blank by existing authorized vNext callers. The registered
+migration adds `compat_course_offering_current_term` (not an alternative
+auth system): it resolves the cohort's *persisted* current term and checks
+the cohort/program/course/period college and ACTIVE state. It creates only the
+term/course association implied by the current authorized CORE offering,
+transactionally and under the existing DB02 tenant guards, then stores exact
+FKs. Explicit submitted term/curriculum IDs still use strict canonical
+constraints, including source negative SQL witnesses. It never imports or
+reconstructs old production data. A standalone rollback-only PostgreSQL
+fixture proves valid legacy-compatible writes and cross-college denial.

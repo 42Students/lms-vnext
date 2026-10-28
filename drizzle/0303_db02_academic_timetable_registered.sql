@@ -3272,3 +3272,89 @@ AFTER UPDATE OF status ON learner_program_enrollments
 FOR EACH ROW EXECUTE FUNCTION db02_close_active_sections_on_program_exit();
 --> statement-breakpoint
 
+-- DB-005 compatibility for existing first-party offering writers and disposable
+-- DB01/DB06/DB05 fixtures predating explicit term IDs. An omitted term is
+-- interpreted ONLY as the cohort's persisted current term, never the calendar
+-- period. A real new CORE offering declares that course in that program term.
+-- Explicit term/curriculum submissions still use strict canonical DB02 checks.
+-- No historical source import and no cross-tenant linkage are permitted.
+CREATE OR REPLACE FUNCTION db02_compat_bind_current_offering_term()
+RETURNS trigger LANGUAGE plpgsql AS $db02_compat$
+DECLARE
+ v_program uuid;
+ v_college uuid;
+ v_course_college uuid;
+ v_term_number integer;
+ v_term uuid;
+ v_active boolean;
+ v_curriculum uuid;
+ v_curriculum_type course_offering_type;
+BEGIN
+ IF NEW.program_term_id IS NOT NULL THEN RETURN NEW; END IF;
+ SELECT p.id,d.college_id INTO v_program,v_college
+ FROM cohorts c
+ JOIN programs p ON p.id=c.program_id
+ JOIN departments d ON d.id=p.department_id
+ WHERE c.id=NEW.cohort_id AND c.status IN ('PLANNED','ACTIVE')
+   AND p.status='ACTIVE'
+ FOR SHARE OF c,p,d;
+ SELECT d.college_id INTO v_course_college
+ FROM courses crs
+ JOIN departments d ON d.id=crs.department_id
+ WHERE crs.id=NEW.course_id AND crs.status='ACTIVE'
+ FOR SHARE OF crs,d;
+ IF v_program IS NULL OR v_college IS NULL OR
+    v_course_college IS DISTINCT FROM v_college THEN
+   RAISE EXCEPTION 'Invalid college scope for implicit course offering term'
+     USING ERRCODE='23514';
+ END IF;
+ PERFORM 1 FROM academic_periods
+ WHERE id=NEW.academic_period_id
+   AND college_id=v_college AND status<>'CLOSED'
+ FOR SHARE;
+ IF NOT FOUND THEN
+   RAISE EXCEPTION 'Course offering academic period belongs to another college or is closed'
+     USING ERRCODE='23514';
+ END IF;
+ SELECT current_term_number INTO v_term_number
+ FROM cohort_progression_state
+ WHERE cohort_id=NEW.cohort_id FOR SHARE;
+ IF v_term_number IS NULL OR v_term_number<1 THEN
+   RAISE EXCEPTION 'Canonical cohort term is missing'
+     USING ERRCODE='23514';
+ END IF;
+ INSERT INTO program_terms(program_id,term_number,name)
+ VALUES(v_program,v_term_number,'Semester '||v_term_number)
+ ON CONFLICT (program_id,term_number) DO NOTHING;
+ SELECT id,is_active INTO v_term,v_active
+ FROM program_terms
+ WHERE program_id=v_program AND term_number=v_term_number FOR SHARE;
+ IF v_term IS NULL OR v_active IS DISTINCT FROM true THEN
+   RAISE EXCEPTION 'Current curriculum term is unavailable'
+     USING ERRCODE='23514';
+ END IF;
+ NEW.program_term_id:=v_term;
+ IF NEW.type='CORE' AND NEW.program_term_course_id IS NULL THEN
+   INSERT INTO program_term_courses(program_term_id,course_id,type,credits,display_order)
+   VALUES(v_term,NEW.course_id,'CORE',NEW.credits,GREATEST(1,NEW.display_order+1))
+   ON CONFLICT (program_term_id,course_id) DO NOTHING;
+   SELECT id,type INTO v_curriculum,v_curriculum_type
+   FROM program_term_courses
+   WHERE program_term_id=v_term AND course_id=NEW.course_id FOR SHARE;
+   IF v_curriculum IS NULL OR v_curriculum_type<>'CORE' THEN
+     RAISE EXCEPTION 'Current course curriculum conflicts with CORE offering'
+       USING ERRCODE='23514';
+   END IF;
+   NEW.program_term_course_id:=v_curriculum;
+ END IF;
+ RETURN NEW;
+END;
+$db02_compat$;
+--> statement-breakpoint
+DROP TRIGGER IF EXISTS compat_course_offering_current_term ON course_offerings;
+--> statement-breakpoint
+CREATE TRIGGER compat_course_offering_current_term
+BEFORE INSERT ON course_offerings
+FOR EACH ROW WHEN (NEW.program_term_id IS NULL)
+EXECUTE FUNCTION db02_compat_bind_current_offering_term();
+--> statement-breakpoint

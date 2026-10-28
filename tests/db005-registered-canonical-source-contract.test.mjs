@@ -32,3 +32,12 @@ test("DB005 additive greenfield migration fails closed on unknown vNext offering
  assert.doesNotMatch(registered,/DELETE FROM (?:users|college_memberships|course_offerings)\b/i);
  assert.match(stage,/DB02 staging proposal ONLY/);
 });
+
+test("DB005 registered compatibility safely binds omitted term without bypassing explicit source checks",()=>{
+ assert.match(registered,/CREATE TRIGGER compat_course_offering_current_term/);
+ assert.match(registered,/v_course_college IS DISTINCT FROM v_college/);
+ assert.match(registered,/current_term_number/);
+ assert.match(registered,/IF NEW.program_term_id IS NOT NULL THEN RETURN NEW/);
+ assert.match(registered,/ON CONFLICT \(program_term_id,course_id\) DO NOTHING/);
+ assert.match(registered,/Current course curriculum conflicts with CORE offering/);
+});
