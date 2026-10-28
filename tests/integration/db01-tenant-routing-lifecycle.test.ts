@@ -4,6 +4,7 @@ import { Pool } from "pg";
 import type { RequestContext } from "@/modules/identity/context";
 import { SEED_IDS } from "../../scripts/db-seed-data";
 import { closeDatabaseConnection } from "@/db/client";
+import { archiveCollege, resolveCollegeUsage } from "@/modules/colleges/service";
 import { resolveRequestTenant } from "@/modules/auth/request-tenant";
 import { drizzleTenantDomainRepository } from "@/modules/tenant-domains/repository";
 import {
@@ -89,6 +90,38 @@ describe("DB01 tenant host lifecycle — real repository SQL", () => {
       await expect(resolveRequestTenant(fixture.host)).resolves.toMatchObject({
         kind:"unknown",host:fixture.host,
       });
+    });
+  });
+
+  it("archives a college after its domain is tombstoned but never while the host is active", async () => {
+    await withTenantFixture(async (fixture) => {
+      const superAdmin: RequestContext = {
+        user: {
+          id: SEED_IDS.superAdminUser,
+          identityUid: "isolated-test-superadmin-uid",
+          platformStatus: "ACTIVE",
+          systemRoles: ["SUPER_ADMIN"],
+        },
+        membership: null,
+      };
+      const before = await resolveCollegeUsage(fixture.collegeId);
+      expect(before.tenantDomains).toBe(1);
+      await expect(archiveCollege(superAdmin,fixture.collegeId)).rejects.toThrow();
+
+      // Retain forensic host ownership, but remove its live routing.
+      await pool.query(`
+        update tenant_domains
+           set deleted_at=clock_timestamp(),is_primary=false,
+               verification_token=null
+         where id=$1`,[fixture.domainId]);
+      const after = await resolveCollegeUsage(fixture.collegeId);
+      expect(after.tenantDomains).toBe(0);
+
+      const archived = await archiveCollege(superAdmin,fixture.collegeId);
+      expect(archived.status).toBe("ARCHIVED");
+      await expect(resolveTenantFromHost(
+        fixture.host,drizzleTenantDomainRepository,
+      )).resolves.toBeNull();
     });
   });
 

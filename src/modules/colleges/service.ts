@@ -483,12 +483,10 @@ export async function resolveCollegeUsage(
         count: sql<number>`count(*)::int`,
       })
       .from(tenantDomains)
-      .where(
-        eq(
-          tenantDomains.collegeId,
-          collegeId,
-        ),
-      ),
+      .where(and(
+        eq(tenantDomains.collegeId, collegeId),
+        isNull(tenantDomains.deletedAt),
+      )),
   ]);
 
   return {
