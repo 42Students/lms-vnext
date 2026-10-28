@@ -8,6 +8,8 @@ on:
       - "src/modules/auth/**"
       - "src/modules/tenant-domains/**"
       - "src/modules/identity/preuser-onboarding-service.ts"
+      - "src/modules/identity/email-link-verification-service.ts"
+      - "src/modules/identity/scoped-account-verification-service.ts"
       - "src/modules/colleges/branding-service.ts"
       - "src/app/api/tenant-domains/**"
       - "tests/integration/tenant-domains.test.ts"
