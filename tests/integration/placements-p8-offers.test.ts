@@ -36,7 +36,7 @@ import { decidePlacementScreening } from "@/modules/placements/screening-service
 import { recordTpoDriveSelections,verifyAndReleaseTpoSelections } from "@/modules/placements/tpo-drive-selection-service";
 import {getTpoDriveClosePreview,closeTpoDriveWithPreview} from "@/modules/placements/tpo-drive-close-preview-service";
 import {recordTpoOfferLifecycle,finalizeMaturedExternalTpoAcceptances} from "@/modules/placements/tpo-offer-lifecycle-service";
-import {createOwnTpoGeneralRequest,decideTpoGeneralRequest}
+import {createOwnTpoGeneralRequest,decideTpoGeneralRequest,listOwnTpoGeneralRequestsPage}
  from "@/modules/placements/tpo-general-request-service";
 import {getTpoJoiningTracker} from "@/modules/placements/tpo-joining-tracker-service";
 import {isoDateInIndia} from "@/modules/placements/tpo-offer-expiry-model";
@@ -308,6 +308,44 @@ afterAll(async () => {
 });
 
 describe("Placement P8 offers and joining", () => {
+  it("LEARNER-GENERAL-HISTORY-DB pages beyond 100 requests without leaking another member",async()=>{
+    // Create entirely disposable request rows against the seeded authorized
+    // learner. Each unique target avoids the real pending dedupe constraint.
+    // None of these test records carries an uploaded private proof URL.
+    const result=await pool.query(`
+      insert into placement_learner_general_requests
+       (college_id,membership_id,kind,target_key,reason,payload,status,requested_by_user_id)
+      select $1,$2,'CORRECTION_WITH_PROOF','EDUCATION:history-'||g.i,
+       'Please review this older education record '||g.i,
+       jsonb_build_object('section','EDUCATION','field','history-'||g.i,
+        'proposedValue','Reviewed','proofUrl','https://example.edu/proof'),
+       'PENDING',$3
+      from generate_series(1,105) as g(i)
+      returning id`,
+      [SEED_IDS.collegeA,SEED_IDS.learnerCollegeAMembership,SEED_IDS.learnerUser]);
+    expect(result.rowCount).toBe(105);
+    const first=await listOwnTpoGeneralRequestsPage(learner,{page:1,pageSize:20});
+    const last=await listOwnTpoGeneralRequestsPage(learner,{page:6,pageSize:20});
+    expect(first.total).toBe(105);
+    expect(first.totalPages).toBe(6);
+    expect(first.requests).toHaveLength(20);
+    expect(last.total).toBe(105);
+    expect(last.requests).toHaveLength(5);
+    const all=new Set<string>();
+    for(let page=1;page<=6;page+=1){
+      const pageOfRows=await listOwnTpoGeneralRequestsPage(learner,{page,pageSize:20});
+      expect(pageOfRows.total).toBe(105);
+      for(const request of pageOfRows.requests){
+        expect(all.has(request.id)).toBe(false);
+        all.add(request.id);
+      }
+    }
+    expect(all.size).toBe(105);
+    const secondPage=await listOwnTpoGeneralRequestsPage(learner,{page:7,pageSize:20});
+    expect(secondPage.requests).toHaveLength(0);
+    expect(secondPage.totalPages).toBe(6);
+  });
+
   it("TPO-GENERAL-ACCEPTANCE-DISPUTE-DB restores only a timely provisional offer",async()=>{
     const {job,application}=await preparePassedApplication();
     const offer=await issuePlacementOffer(tpo,application.id,{

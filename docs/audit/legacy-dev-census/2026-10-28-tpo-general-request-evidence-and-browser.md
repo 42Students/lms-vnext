@@ -15,3 +15,11 @@ The learner's personal general-request component formerly received the newest 10
 The changes are **not** marked Green by source review. Verify an authenticated disposable learner with more than 100 general requests, cross-tenant and other-learner denial, stale page after deletion, request post/refresh, and browser previous/next/retry behavior. CI unit/source coverage is separately authored; PostgreSQL and browser acceptance on the exact new SHA remain required.
 
 - Added authenticated Playwright personal-history coverage for bounded first/second pages, scoped learner view, private cache headers, invalid or repeated filter rejection and TPO denial. This test checks actual API responses and never invents general-request rows. A 100+ row seeded learner remains necessary to prove high-volume navigation, and the Browser workflow must execute successfully before acceptance is claimed.
+
+- Added a disposable PostgreSQL 105-request learner-history test using
+  distinct pending target identities. The exact college/member-scoped
+  paginated service must return all 105 unique records across six pages,
+  a true matching total and an empty seventh page; this exercises the
+  original 100-row truncation boundary without inventing users or
+  bypassing the real dedupe constraint. Execution remains subject to
+  the queued CI database suite.
