@@ -317,6 +317,40 @@ describe("DB03 group kernel on disposable PostgreSQL", () => {
     await expect(pool.query("UPDATE cohorts SET program_id=$1 WHERE id=$2",[other,cohortId]))
       .rejects.toMatchObject({code:"23514"});
   });
+  it("DB-006 registered SQL guard rejects cross-program backed offerings", async () => {
+    const {slotId,periodId}=await createElectiveFixture();
+    const otherProgram=randomUUID(),otherCohort=randomUUID(),otherSection=randomUUID();
+    const otherOffering=randomUUID(),otherDelivery=randomUUID();
+    fixture.programs.push(otherProgram);
+    fixture.cohorts.push(otherCohort);
+    fixture.sections.push(otherSection);
+    fixture.offerings.push(otherOffering);
+    fixture.deliveries.push(otherDelivery);
+    await pool.query(
+      "INSERT INTO programs(id,department_id,name,code,duration_terms) VALUES($1,$2,$3,$4,8)",
+      [otherProgram,SEED_IDS.departmentA,"DB006 cross "+otherProgram,"DB006-"+otherProgram]);
+    await pool.query(
+      "INSERT INTO cohorts(id,program_id,name,code,start_period_id) VALUES($1,$2,$3,$4,$5)",
+      [otherCohort,otherProgram,"DB006 cohort "+otherCohort,"DB006-"+otherCohort,periodId]);
+    await pool.query(
+      "INSERT INTO sections(id,cohort_id,academic_period_id,name,code) VALUES($1,$2,$3,$4,$5)",
+      [otherSection,otherCohort,periodId,"DB006 section "+otherSection,"DB006-"+otherSection]);
+    await pool.query(
+      "INSERT INTO course_offerings(id,course_id,cohort_id,academic_period_id,type,credits,display_order) VALUES($1,$2,$3,$4,'ELECTIVE',3,5)",
+      [otherOffering,fixture.courses[1],otherCohort,periodId]);
+    await pool.query(
+      "INSERT INTO course_section_deliveries(id,offering_id,section_id) VALUES($1,$2,$3)",
+      [otherDelivery,otherOffering,otherSection]);
+    const target=await createActiveGroup("ELECTIVE",5);
+    await expect(pool.query(
+      "INSERT INTO elective_offerings(slot_id,course_id,group_id,backed_delivery_id) VALUES($1,$2,$3,$4)",
+      [slotId,fixture.courses[1],target,otherDelivery]))
+      .rejects.toMatchObject({code:"23514"});
+    const rows=await pool.query(
+      "SELECT count(*)::integer AS n FROM elective_offerings WHERE group_id=$1",[target]);
+    expect(rows.rows[0].n).toBe(0);
+  });
+
   it("moves an elective atomically between offerings of the same slot", async () => {
     const { groups, candidate } = await createElectiveFixture();
     const active = await joinGroup(candidate.ctx, groups[0], candidate.membershipId);
