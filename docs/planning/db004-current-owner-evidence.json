@@ -40,7 +40,11 @@
       "department": 6,
       "recruiter": 5,
       "role": 1
-    }
+    },
+    "retirementImplementationVerified": 21,
+    "retirementApprovalPending": 21,
+    "technicalEvidenceCoverage": 133,
+    "technicalEvidenceUncovered": 62
   },
   "guidance": [
     "Exact column existence on registered PostgreSQL does not prove legacy reader/writer parity.",
@@ -53,7 +57,8 @@
     "At 343b356c, registered PostgreSQL DB-004 acceptance executed 18 suites / 84 tests, witnessing 57 additional active identity, OTP, device-session, organization and college field mappings. Historical password, raw token, cross-host handoff and product/purge decisions remain unapproved.",
     "At 6db017e4, one account with separate learner and faculty college memberships passed a PostgreSQL witness of contact/name, roles, college IDs and independent suspension fields (16 fields); historical import and policy remain open.",
     "Registered PostgreSQL suite 40679297972 passed department lifecycle and tenant boundary: six department field mappings have executed read/write/archive witnesses. Historic numeric-ID import remains subject to explicit source mapping and approval.",
-    "With verified 87/87 then 87+ role-receipt PostgreSQL runs, six more fields have direct runtime witnesses. Remaining 22 physical-but-not-accepted mappings are legacy college-branding deletion and learner/faculty verification challenge semantics; the other 61 have no direct column and require retirement/redesign sign-off."
+    "With verified 87/87 then 87+ role-receipt PostgreSQL runs, six more fields have direct runtime witnesses. Remaining 22 physical-but-not-accepted mappings are legacy college-branding deletion and learner/faculty verification challenge semantics; the other 61 have no direct column and require retirement/redesign sign-off.",
+    "21 raw credential or removed login/handoff fields now have registered PG negative proof at 8eaef977: implementation retirement is executed, while product/security approval remains FALSE. Neither these nor other legacy retirements are runtimeSemanticsVerified."
   ],
   "rows": [
     {
@@ -67,7 +72,16 @@
       "evidence": [
         "src/app/auth/handoff/page.tsx",
         "docs/architecture/first-party-login.md"
-      ]
+      ],
+      "retirementImplementationVerified": true,
+      "retirementApproved": false,
+      "retirementEvidence": {
+        "witness": "tests/integration/db01-credential-retirement-absence.test.ts",
+        "passingRun": "https://github.com/42Students/lms-vnext/actions/runs/40681599392",
+        "testedCommit": "8eaef977d250bdfd3d9170699b1f9466fd9ac2e7",
+        "scope": "REGISTERED_POSTGRES_ABSENCE_AND_FIRST_PARTY_REAUTHENTICATION_ONLY",
+        "limits": "Does not attest other consumers, historical data export, actual provider availability, production cleanup, or product/security approval."
+      }
     },
     {
       "legacyField": "auth_handoff_token.created_at",
@@ -80,7 +94,16 @@
       "evidence": [
         "src/app/auth/handoff/page.tsx",
         "docs/architecture/first-party-login.md"
-      ]
+      ],
+      "retirementImplementationVerified": true,
+      "retirementApproved": false,
+      "retirementEvidence": {
+        "witness": "tests/integration/db01-credential-retirement-absence.test.ts",
+        "passingRun": "https://github.com/42Students/lms-vnext/actions/runs/40681599392",
+        "testedCommit": "8eaef977d250bdfd3d9170699b1f9466fd9ac2e7",
+        "scope": "REGISTERED_POSTGRES_ABSENCE_AND_FIRST_PARTY_REAUTHENTICATION_ONLY",
+        "limits": "Does not attest other consumers, historical data export, actual provider availability, production cleanup, or product/security approval."
+      }
     },
     {
       "legacyField": "auth_handoff_token.updated_at",
@@ -93,7 +116,16 @@
       "evidence": [
         "docs/architecture/first-party-login.md",
         "docs/planning/db01-chat05-provider-persistence-decision.json"
-      ]
+      ],
+      "retirementImplementationVerified": true,
+      "retirementApproved": false,
+      "retirementEvidence": {
+        "witness": "tests/integration/db01-credential-retirement-absence.test.ts",
+        "passingRun": "https://github.com/42Students/lms-vnext/actions/runs/40681599392",
+        "testedCommit": "8eaef977d250bdfd3d9170699b1f9466fd9ac2e7",
+        "scope": "REGISTERED_POSTGRES_ABSENCE_AND_FIRST_PARTY_REAUTHENTICATION_ONLY",
+        "limits": "Does not attest other consumers, historical data export, actual provider availability, production cleanup, or product/security approval."
+      }
     },
     {
       "legacyField": "auth_handoff_token.is_deleted",
@@ -106,7 +138,16 @@
       "evidence": [
         "src/app/auth/handoff/page.tsx",
         "docs/architecture/first-party-login.md"
-      ]
+      ],
+      "retirementImplementationVerified": true,
+      "retirementApproved": false,
+      "retirementEvidence": {
+        "witness": "tests/integration/db01-credential-retirement-absence.test.ts",
+        "passingRun": "https://github.com/42Students/lms-vnext/actions/runs/40681599392",
+        "testedCommit": "8eaef977d250bdfd3d9170699b1f9466fd9ac2e7",
+        "scope": "REGISTERED_POSTGRES_ABSENCE_AND_FIRST_PARTY_REAUTHENTICATION_ONLY",
+        "limits": "Does not attest other consumers, historical data export, actual provider availability, production cleanup, or product/security approval."
+      }
     },
     {
       "legacyField": "auth_handoff_token.token",
@@ -119,7 +160,16 @@
       "evidence": [
         "src/app/auth/handoff/page.tsx",
         "docs/architecture/first-party-login.md"
-      ]
+      ],
+      "retirementImplementationVerified": true,
+      "retirementApproved": false,
+      "retirementEvidence": {
+        "witness": "tests/integration/db01-credential-retirement-absence.test.ts",
+        "passingRun": "https://github.com/42Students/lms-vnext/actions/runs/40681599392",
+        "testedCommit": "8eaef977d250bdfd3d9170699b1f9466fd9ac2e7",
+        "scope": "REGISTERED_POSTGRES_ABSENCE_AND_FIRST_PARTY_REAUTHENTICATION_ONLY",
+        "limits": "Does not attest other consumers, historical data export, actual provider availability, production cleanup, or product/security approval."
+      }
     },
     {
       "legacyField": "auth_handoff_token.access_token",
@@ -132,7 +182,16 @@
       "evidence": [
         "docs/architecture/first-party-login.md",
         "docs/planning/db01-chat05-provider-persistence-decision.json"
-      ]
+      ],
+      "retirementImplementationVerified": true,
+      "retirementApproved": false,
+      "retirementEvidence": {
+        "witness": "tests/integration/db01-credential-retirement-absence.test.ts",
+        "passingRun": "https://github.com/42Students/lms-vnext/actions/runs/40681599392",
+        "testedCommit": "8eaef977d250bdfd3d9170699b1f9466fd9ac2e7",
+        "scope": "REGISTERED_POSTGRES_ABSENCE_AND_FIRST_PARTY_REAUTHENTICATION_ONLY",
+        "limits": "Does not attest other consumers, historical data export, actual provider availability, production cleanup, or product/security approval."
+      }
     },
     {
       "legacyField": "auth_handoff_token.refresh_token",
@@ -145,7 +204,16 @@
       "evidence": [
         "docs/architecture/first-party-login.md",
         "docs/planning/db01-chat05-provider-persistence-decision.json"
-      ]
+      ],
+      "retirementImplementationVerified": true,
+      "retirementApproved": false,
+      "retirementEvidence": {
+        "witness": "tests/integration/db01-credential-retirement-absence.test.ts",
+        "passingRun": "https://github.com/42Students/lms-vnext/actions/runs/40681599392",
+        "testedCommit": "8eaef977d250bdfd3d9170699b1f9466fd9ac2e7",
+        "scope": "REGISTERED_POSTGRES_ABSENCE_AND_FIRST_PARTY_REAUTHENTICATION_ONLY",
+        "limits": "Does not attest other consumers, historical data export, actual provider availability, production cleanup, or product/security approval."
+      }
     },
     {
       "legacyField": "auth_handoff_token.expires_at",
@@ -158,7 +226,16 @@
       "evidence": [
         "src/app/auth/handoff/page.tsx",
         "docs/architecture/first-party-login.md"
-      ]
+      ],
+      "retirementImplementationVerified": true,
+      "retirementApproved": false,
+      "retirementEvidence": {
+        "witness": "tests/integration/db01-credential-retirement-absence.test.ts",
+        "passingRun": "https://github.com/42Students/lms-vnext/actions/runs/40681599392",
+        "testedCommit": "8eaef977d250bdfd3d9170699b1f9466fd9ac2e7",
+        "scope": "REGISTERED_POSTGRES_ABSENCE_AND_FIRST_PARTY_REAUTHENTICATION_ONLY",
+        "limits": "Does not attest other consumers, historical data export, actual provider availability, production cleanup, or product/security approval."
+      }
     },
     {
       "legacyField": "auth_handoff_token.used",
@@ -171,7 +248,16 @@
       "evidence": [
         "src/app/auth/handoff/page.tsx",
         "docs/architecture/first-party-login.md"
-      ]
+      ],
+      "retirementImplementationVerified": true,
+      "retirementApproved": false,
+      "retirementEvidence": {
+        "witness": "tests/integration/db01-credential-retirement-absence.test.ts",
+        "passingRun": "https://github.com/42Students/lms-vnext/actions/runs/40681599392",
+        "testedCommit": "8eaef977d250bdfd3d9170699b1f9466fd9ac2e7",
+        "scope": "REGISTERED_POSTGRES_ABSENCE_AND_FIRST_PARTY_REAUTHENTICATION_ONLY",
+        "limits": "Does not attest other consumers, historical data export, actual provider availability, production cleanup, or product/security approval."
+      }
     },
     {
       "legacyField": "auth_token.id",
@@ -184,7 +270,16 @@
       "evidence": [
         "docs/architecture/first-party-login.md",
         "docs/planning/db01-chat05-provider-persistence-decision.json"
-      ]
+      ],
+      "retirementImplementationVerified": true,
+      "retirementApproved": false,
+      "retirementEvidence": {
+        "witness": "tests/integration/db01-credential-retirement-absence.test.ts",
+        "passingRun": "https://github.com/42Students/lms-vnext/actions/runs/40681599392",
+        "testedCommit": "8eaef977d250bdfd3d9170699b1f9466fd9ac2e7",
+        "scope": "REGISTERED_POSTGRES_ABSENCE_AND_FIRST_PARTY_REAUTHENTICATION_ONLY",
+        "limits": "Does not attest other consumers, historical data export, actual provider availability, production cleanup, or product/security approval."
+      }
     },
     {
       "legacyField": "auth_token.created_at",
@@ -197,7 +292,16 @@
       "evidence": [
         "docs/architecture/first-party-login.md",
         "docs/planning/db01-chat05-provider-persistence-decision.json"
-      ]
+      ],
+      "retirementImplementationVerified": true,
+      "retirementApproved": false,
+      "retirementEvidence": {
+        "witness": "tests/integration/db01-credential-retirement-absence.test.ts",
+        "passingRun": "https://github.com/42Students/lms-vnext/actions/runs/40681599392",
+        "testedCommit": "8eaef977d250bdfd3d9170699b1f9466fd9ac2e7",
+        "scope": "REGISTERED_POSTGRES_ABSENCE_AND_FIRST_PARTY_REAUTHENTICATION_ONLY",
+        "limits": "Does not attest other consumers, historical data export, actual provider availability, production cleanup, or product/security approval."
+      }
     },
     {
       "legacyField": "auth_token.is_deleted",
@@ -210,7 +314,16 @@
       "evidence": [
         "docs/architecture/first-party-login.md",
         "docs/planning/db01-chat05-provider-persistence-decision.json"
-      ]
+      ],
+      "retirementImplementationVerified": true,
+      "retirementApproved": false,
+      "retirementEvidence": {
+        "witness": "tests/integration/db01-credential-retirement-absence.test.ts",
+        "passingRun": "https://github.com/42Students/lms-vnext/actions/runs/40681599392",
+        "testedCommit": "8eaef977d250bdfd3d9170699b1f9466fd9ac2e7",
+        "scope": "REGISTERED_POSTGRES_ABSENCE_AND_FIRST_PARTY_REAUTHENTICATION_ONLY",
+        "limits": "Does not attest other consumers, historical data export, actual provider availability, production cleanup, or product/security approval."
+      }
     },
     {
       "legacyField": "auth_token.updated_at",
@@ -223,7 +336,16 @@
       "evidence": [
         "docs/architecture/first-party-login.md",
         "docs/planning/db01-chat05-provider-persistence-decision.json"
-      ]
+      ],
+      "retirementImplementationVerified": true,
+      "retirementApproved": false,
+      "retirementEvidence": {
+        "witness": "tests/integration/db01-credential-retirement-absence.test.ts",
+        "passingRun": "https://github.com/42Students/lms-vnext/actions/runs/40681599392",
+        "testedCommit": "8eaef977d250bdfd3d9170699b1f9466fd9ac2e7",
+        "scope": "REGISTERED_POSTGRES_ABSENCE_AND_FIRST_PARTY_REAUTHENTICATION_ONLY",
+        "limits": "Does not attest other consumers, historical data export, actual provider availability, production cleanup, or product/security approval."
+      }
     },
     {
       "legacyField": "auth_token.token",
@@ -236,7 +358,16 @@
       "evidence": [
         "docs/architecture/first-party-login.md",
         "docs/planning/db01-chat05-provider-persistence-decision.json"
-      ]
+      ],
+      "retirementImplementationVerified": true,
+      "retirementApproved": false,
+      "retirementEvidence": {
+        "witness": "tests/integration/db01-credential-retirement-absence.test.ts",
+        "passingRun": "https://github.com/42Students/lms-vnext/actions/runs/40681599392",
+        "testedCommit": "8eaef977d250bdfd3d9170699b1f9466fd9ac2e7",
+        "scope": "REGISTERED_POSTGRES_ABSENCE_AND_FIRST_PARTY_REAUTHENTICATION_ONLY",
+        "limits": "Does not attest other consumers, historical data export, actual provider availability, production cleanup, or product/security approval."
+      }
     },
     {
       "legacyField": "college.id",
@@ -1850,7 +1981,16 @@
       "evidence": [
         "docs/architecture/first-party-login.md",
         "docs/planning/db01-chat05-provider-persistence-decision.json"
-      ]
+      ],
+      "retirementImplementationVerified": true,
+      "retirementApproved": false,
+      "retirementEvidence": {
+        "witness": "tests/integration/db01-credential-retirement-absence.test.ts",
+        "passingRun": "https://github.com/42Students/lms-vnext/actions/runs/40681599392",
+        "testedCommit": "8eaef977d250bdfd3d9170699b1f9466fd9ac2e7",
+        "scope": "REGISTERED_POSTGRES_ABSENCE_AND_FIRST_PARTY_REAUTHENTICATION_ONLY",
+        "limits": "Does not attest other consumers, historical data export, actual provider availability, production cleanup, or product/security approval."
+      }
     },
     {
       "legacyField": "login_user.created_at",
@@ -1863,7 +2003,16 @@
       "evidence": [
         "docs/architecture/first-party-login.md",
         "docs/planning/db01-chat05-provider-persistence-decision.json"
-      ]
+      ],
+      "retirementImplementationVerified": true,
+      "retirementApproved": false,
+      "retirementEvidence": {
+        "witness": "tests/integration/db01-credential-retirement-absence.test.ts",
+        "passingRun": "https://github.com/42Students/lms-vnext/actions/runs/40681599392",
+        "testedCommit": "8eaef977d250bdfd3d9170699b1f9466fd9ac2e7",
+        "scope": "REGISTERED_POSTGRES_ABSENCE_AND_FIRST_PARTY_REAUTHENTICATION_ONLY",
+        "limits": "Does not attest other consumers, historical data export, actual provider availability, production cleanup, or product/security approval."
+      }
     },
     {
       "legacyField": "login_user.is_deleted",
@@ -1876,7 +2025,16 @@
       "evidence": [
         "docs/architecture/first-party-login.md",
         "docs/planning/db01-chat05-provider-persistence-decision.json"
-      ]
+      ],
+      "retirementImplementationVerified": true,
+      "retirementApproved": false,
+      "retirementEvidence": {
+        "witness": "tests/integration/db01-credential-retirement-absence.test.ts",
+        "passingRun": "https://github.com/42Students/lms-vnext/actions/runs/40681599392",
+        "testedCommit": "8eaef977d250bdfd3d9170699b1f9466fd9ac2e7",
+        "scope": "REGISTERED_POSTGRES_ABSENCE_AND_FIRST_PARTY_REAUTHENTICATION_ONLY",
+        "limits": "Does not attest other consumers, historical data export, actual provider availability, production cleanup, or product/security approval."
+      }
     },
     {
       "legacyField": "login_user.updated_at",
@@ -1889,7 +2047,16 @@
       "evidence": [
         "docs/architecture/first-party-login.md",
         "docs/planning/db01-chat05-provider-persistence-decision.json"
-      ]
+      ],
+      "retirementImplementationVerified": true,
+      "retirementApproved": false,
+      "retirementEvidence": {
+        "witness": "tests/integration/db01-credential-retirement-absence.test.ts",
+        "passingRun": "https://github.com/42Students/lms-vnext/actions/runs/40681599392",
+        "testedCommit": "8eaef977d250bdfd3d9170699b1f9466fd9ac2e7",
+        "scope": "REGISTERED_POSTGRES_ABSENCE_AND_FIRST_PARTY_REAUTHENTICATION_ONLY",
+        "limits": "Does not attest other consumers, historical data export, actual provider availability, production cleanup, or product/security approval."
+      }
     },
     {
       "legacyField": "login_user.password",
@@ -1902,7 +2069,16 @@
       "evidence": [
         "docs/architecture/first-party-login.md",
         "docs/planning/db01-chat05-provider-persistence-decision.json"
-      ]
+      ],
+      "retirementImplementationVerified": true,
+      "retirementApproved": false,
+      "retirementEvidence": {
+        "witness": "tests/integration/db01-credential-retirement-absence.test.ts",
+        "passingRun": "https://github.com/42Students/lms-vnext/actions/runs/40681599392",
+        "testedCommit": "8eaef977d250bdfd3d9170699b1f9466fd9ac2e7",
+        "scope": "REGISTERED_POSTGRES_ABSENCE_AND_FIRST_PARTY_REAUTHENTICATION_ONLY",
+        "limits": "Does not attest other consumers, historical data export, actual provider availability, production cleanup, or product/security approval."
+      }
     },
     {
       "legacyField": "login_user.user_name",
@@ -1915,7 +2091,16 @@
       "evidence": [
         "docs/architecture/first-party-login.md",
         "docs/planning/db01-chat05-provider-persistence-decision.json"
-      ]
+      ],
+      "retirementImplementationVerified": true,
+      "retirementApproved": false,
+      "retirementEvidence": {
+        "witness": "tests/integration/db01-credential-retirement-absence.test.ts",
+        "passingRun": "https://github.com/42Students/lms-vnext/actions/runs/40681599392",
+        "testedCommit": "8eaef977d250bdfd3d9170699b1f9466fd9ac2e7",
+        "scope": "REGISTERED_POSTGRES_ABSENCE_AND_FIRST_PARTY_REAUTHENTICATION_ONLY",
+        "limits": "Does not attest other consumers, historical data export, actual provider availability, production cleanup, or product/security approval."
+      }
     },
     {
       "legacyField": "mobile_login_attempt.id",
@@ -3031,7 +3216,16 @@
       "evidence": [
         "docs/architecture/first-party-login.md",
         "docs/planning/db01-chat05-provider-persistence-decision.json"
-      ]
+      ],
+      "retirementImplementationVerified": true,
+      "retirementApproved": false,
+      "retirementEvidence": {
+        "witness": "tests/integration/db01-credential-retirement-absence.test.ts",
+        "passingRun": "https://github.com/42Students/lms-vnext/actions/runs/40681599392",
+        "testedCommit": "8eaef977d250bdfd3d9170699b1f9466fd9ac2e7",
+        "scope": "REGISTERED_POSTGRES_ABSENCE_AND_FIRST_PARTY_REAUTHENTICATION_ONLY",
+        "limits": "Does not attest other consumers, historical data export, actual provider availability, production cleanup, or product/security approval."
+      }
     },
     {
       "legacyField": "user.phone",

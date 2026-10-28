@@ -23,7 +23,8 @@ const candidates=[
 describe("DB-004 retired credential schema negative assertions",()=>{
  it("proves 21 canonical source field candidates are explicitly unapproved and have no raw credential authority",async()=>{
   const ledger=JSON.parse(readFileSync("docs/planning/db004-current-owner-evidence.json","utf8")) as {
-   rows:{legacyField:string;runtimeSemanticsVerified:boolean;physicalVerified:boolean}[];
+   rows:{legacyField:string;runtimeSemanticsVerified:boolean;physicalVerified:boolean;
+    retirementImplementationVerified?:boolean;retirementApproved?:boolean}[];
   };
   expect(candidates).toHaveLength(21);
   expect(new Set(candidates).size).toBe(21);
@@ -32,6 +33,8 @@ describe("DB-004 retired credential schema negative assertions",()=>{
    expect(entry,field).toBeDefined();
    expect(entry?.runtimeSemanticsVerified).toBe(false);
    expect(entry?.physicalVerified).toBe(false);
+   expect(entry?.retirementImplementationVerified).toBe(true);
+   expect(entry?.retirementApproved).toBe(false);
   }
   const result=await pool.query<{
    auth_token:string|null;login_user:string|null;handoff:string|null;

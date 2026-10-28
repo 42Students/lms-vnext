@@ -59,6 +59,25 @@ test("physical field proof and runtime proof remain explicitly distinct",()=>{
  assert.ok(current.rows.filter(x=>!Object.keys(allowed).some(prefix=>x.legacyField.startsWith(prefix))).every(x=>!x.runtimeSemanticsVerified));
  assert.ok(current.rows.filter(x=>x.runtimeSemanticsVerified).every(x=>x.physicalVerified));
  assert.ok(current.rows.filter(x=>x.legacyField.startsWith("auth_handoff_token.")||x.legacyField.startsWith("login_user.")).every(x=>!x.runtimeSemanticsVerified));
+
+ const technicallyRetired=current.rows.filter(row=>row.retirementImplementationVerified);
+ const retirementCandidates=current.rows.filter(row=>
+  ["auth_handoff_token.","auth_token.","login_user."].some(p=>row.legacyField.startsWith(p))||
+  row.legacyField==="user.password");
+ assert.equal(technicallyRetired.length,21);
+ assert.deepEqual(new Set(technicallyRetired.map(x=>x.legacyField)),
+  new Set(retirementCandidates.map(x=>x.legacyField)));
+ assert.equal(current.summary.retirementImplementationVerified,21);
+ assert.equal(current.summary.retirementApprovalPending,21);
+ assert.equal(current.summary.technicalEvidenceCoverage,133);
+ assert.equal(current.summary.technicalEvidenceUncovered,62);
+ assert.ok(technicallyRetired.every(x=>x.retirementApproved===false &&
+  x.runtimeSemanticsVerified===false &&
+  x.physicalVerified===false &&
+  x.retirementEvidence?.witness==="tests/integration/db01-credential-retirement-absence.test.ts" &&
+  x.retirementEvidence?.testedCommit?.length===40));
+ assert.ok(current.rows.filter(x=>!x.retirementImplementationVerified)
+  .every(x=>x.retirementApproved!==true));
  assert.equal(current.completion,"OPEN_UNTIL_RUNTIME_SEMANTICS_AND_SIGNOFF");
 });
 test("first-party OTP authority and retired credential handoff are not confused",()=>{
