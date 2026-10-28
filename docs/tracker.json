@@ -1653,8 +1653,9 @@
           "drizzle/meta/*_snapshot.json"
         ],
         "reason": "DB-066 requires registering canonical same-job/composite parent FKs for placement role, application, round, learner request, offer and round exception (staged candidate docs/planning/sql/db08-cross-parent-consistency-candidate.sql). L07 is updating domain-local read/write guards and will coordinate typed src/db/schema/placements.ts; L01 must deduplicate existing DB09 parent keys and replay disposable PostgreSQL migrations before promotion. No task completion claimed.",
-        "status": "REQUESTED",
-        "requestedAt": "2026-10-28T19:57:24.900Z"
+        "status": "ACCEPTED",
+        "requestedAt": "2026-10-28T19:57:24.900Z",
+        "integratorReview": "L01 accepts exclusive migration integration. Current placements.ts lacks mandatory new job_id in placement_round_results / placement_learner_requests and job_id+request_type in placement_application_round_exceptions; do NOT register draft until L07 lands typed columns and all read/write/seed paths. Reconcile DB09 parent UNIQUE keys, test preflight dirty rows and transactional backfill/locks as appropriate, then regenerate Drizzle snapshot and run clean disposable PG replay plus negative/race/service witnesses. Not APPLIED; DB-066 remains open."
       }
     ],
     "coordination": {
