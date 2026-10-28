@@ -255,7 +255,7 @@
       "id": "COURSE_PARENT_GRAPH_SAME_COLLEGE_AND_MULTI_HOP_CYCLES",
       "status": "PASS",
       "owner": 1,
-      "evidence": "REGISTERED migration 0305, clean and idempotent PG17 replay, cycle/self/3-level/wrong-college direct SQL negative witnesses, reciprocal two-session race, and matching parent service integration passed on 2026-10-28; https://github.com/42Students/lms-vnext/actions/runs/40748768228 at 271704c2b978d57f5c27598aa3b4a8ebf698e762. This is ONE scoped gate. Separate department/academic-period/section/membership upstream, course content drafts, 92-field dispositions, and full DB008 typecheck remain independently unaccepted."
+      "evidence": "PASS on registered migration 0305: clean + idempotent full journal PG17 replay; self/deep-cycle, wrong-college, non-read-committed, department-ownership, and two-connection reciprocal parent race negatives; service parent CRUD concurrency + course/content learner visibility integration; matching source contracts and TypeScript compilation. Exact successful run: https://github.com/42Students/lms-vnext/actions/runs/40749907081 at SHA 702fbf34317bb7a2237416ad5d8eea453e9d7c9d. Only this parent graph gate is accepted. Upstream academic-period, offering/section/membership reparenting, remaining seven DB05 schema drafts, 92-field crosswalk and full DB-008 remain open."
     },
     {
       "id": "COURSE_PARENT_UPSTREAM_COLLEGE_MOVE_INTEGRITY",
