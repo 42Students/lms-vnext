@@ -218,6 +218,19 @@ async function cleanupC2() {
        where code like 'C2-%'
      )`,
   );
+  // The canonical DB-005 term is an independently persisted program
+  // parent, even after all section/course rows are removed.
+  await pool.query(
+    `delete from program_term_courses where program_term_id in (
+       select pt.id from program_terms pt join programs p on p.id=pt.program_id
+       where p.code like 'C2-%'
+     )`,
+  );
+  await pool.query(
+    `delete from program_terms where program_id in (
+       select id from programs where code like 'C2-%'
+     )`,
+  );
   await pool.query(
     "delete from programs where code like 'C2-%'",
   );
