@@ -34,3 +34,33 @@ The general model also supports an additional `OFFER_ACCEPTANCE_DISPUTE`, which 
 - Specialist handling or approved parity exceptions are still required for correction, PAP and any other unsupported positive decision.
 - Role and tenant authorization, feature enablement, private proof access and actual UI/prototype acceptance still require their own gates.
 - `docs/tracker.json` and existing page-family Green state must not change solely from this source repair.
+
+## Timely external acceptance dispute — transaction added, runtime acceptance pending
+
+The legacy TPO offer service records employer-reported acceptance without the
+placement cascade and lets the learner dispute it within 48 hours. The vNext
+maturity worker already excludes an in-window PENDING/APPROVED dispute but
+the TPO decision service formerly rejected every positive
+`OFFER_ACCEPTANCE_DISPUTE` decision as `EFFECT_UNSUPPORTED`.
+
+An approved, authenticated TPO decision now validates the active learner
+membership and college, locks membership before the owned offer, confirms that
+the external acceptance is still provisional (`cascadeId` is null), confirms
+the learner filed the request before the recorded cutoff (not necessarily
+that review completed before cutoff), locks and checks PENDING joining state,
+and restores the offer to `ISSUED` with a fresh at-least-48-hour response
+deadline. It clears imported acceptance fields, increments `rowVersion`,
+writes `ACCEPTED -> ISSUED` offer history, and persists the request decision,
+audit and learner notice in the same transaction. Any changed/foreign/finalized
+offer fails closed with no partial approval. The bulk model deliberately
+refuses this action; only individual review can approve it.
+
+The existing `ISSUED` enum in vNext corresponds to the old offer's
+`RELEASED` state. No cascade reversal is attempted: this effect is allowed
+only before the cascade is ever persisted.
+
+This is **CODE COMPLETE / UNVERIFIED**, not Green. Run fresh CI, a real
+seeded PostgreSQL positive and stale/other-college/concurrent-maturity
+negative path, browser decision and learner notice/offer refresh, and
+compare the legacy post-reversal response window. Correction-with-proof and
+PAP approvals remain deliberately unsupported.

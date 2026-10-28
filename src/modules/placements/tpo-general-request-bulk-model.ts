@@ -15,6 +15,10 @@ export function generalRequestBulkBlockReason(
 ):string|null{
  if(row.status!=="PENDING")return "Only waiting requests can be decided.";
  if(action!=="APPROVE")return null;
+ // Restoring an externally reported acceptance changes the learner's offer
+ // response window; require a deliberate one-request-at-a-time review.
+ if(row.kind==="OFFER_ACCEPTANCE_DISPUTE")
+  return "Review each external-acceptance dispute individually.";
  if(!tpoGeneralRequestCanApprove(row.kind))
   return "This request type requires specialist review before approval.";
  const evidence=tpoGeneralRequestReviewFacts(row.kind,row.payload);

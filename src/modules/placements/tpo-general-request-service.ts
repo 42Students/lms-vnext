@@ -5,7 +5,7 @@ import {z} from "zod";
 import {getDb} from "@/db/client";
 import {activityEvents,collegeMemberships,colleges,inAppNotifications,learnerProgramEnrollments,membershipRoles,
  placementBatchRegistrationEvents,placementBatchRegistrations,placementExternalOfferEvents,placementExternalOffers,
- placementLearnerGeneralRequestEvents,placementLearnerGeneralRequests,placementApplications,placementJobRounds,placementJobs,placementOffers,placementRoundAttendance,users} from "@/db/schema";
+ placementLearnerGeneralRequestEvents,placementLearnerGeneralRequests,placementApplications,placementJobRounds,placementJobs,placementOffers,placementOfferStatusHistory,placementJoiningOutcomes,placementRoundAttendance,users} from "@/db/schema";
 import type {RequestContext} from "@/modules/identity/context";
 import {hasMembershipRole} from "@/modules/identity/context";
 import {AuthorizationError,can,requirePermission} from "@/modules/permissions/policy";
@@ -347,6 +347,72 @@ async function approveEffect(tx:Tx,ctx:RequestContext,row:typeof placementLearne
     previousStatus:"ABSENT",status:"PRESENT"},
   });
   return {effect:"ABSENCE_CORRECTED",id:corrected.id};
+ }
+ if(row.kind==="OFFER_ACCEPTANCE_DISPUTE"){
+  // The external reporter may have mistaken a learner's decision. A timely
+  // learner dispute blocks the maturity worker until TPO review even if the
+  // 48-hour window passes while review is pending.
+  const offerId=sqlUuid.safeParse(p["offerId"]);
+  if(!offerId.success||row.targetKey!==offerId.data)
+   throw new TpoGeneralRequestError("TARGET_CHANGED");
+  // Canonical order is learner membership before offer to serialize with the
+  // external-acceptance maturity worker. The decision transaction already
+  // locks the request and validates the live TPO actor/college.
+  const [member]=await tx.select({id:collegeMemberships.id})
+   .from(collegeMemberships).where(and(
+    eq(collegeMemberships.id,row.membershipId),
+    eq(collegeMemberships.collegeId,row.collegeId),
+    eq(collegeMemberships.status,"ACTIVE")))
+   .for("update").limit(1);
+  if(!member)throw new TpoGeneralRequestError("TARGET_CHANGED");
+  const [offer]=await tx.select({
+   id:placementOffers.id,status:placementOffers.status,
+   applicationId:placementOffers.applicationId,
+   acceptanceChannel:placementOffers.acceptanceChannel,
+   acceptedDisputableUntil:placementOffers.acceptedDisputableUntil,
+   cascadeId:placementOffers.cascadeId,
+   rowVersion:placementOffers.rowVersion,
+   expiresAt:placementOffers.expiresAt,
+  }).from(placementOffers)
+   .innerJoin(placementApplications,eq(placementApplications.id,placementOffers.applicationId))
+   .innerJoin(placementJobs,eq(placementJobs.id,placementApplications.jobId))
+   .where(and(eq(placementOffers.id,offerId.data),
+    eq(placementApplications.membershipId,row.membershipId),
+    eq(placementJobs.collegeId,row.collegeId)))
+   .for("update",{of:placementOffers}).limit(1);
+  if(!offer||offer.status!=="ACCEPTED"||
+   offer.acceptanceChannel!=="EXTERNAL_IMPORT"||offer.cascadeId!==null||
+   !offer.acceptedDisputableUntil||
+   row.requestedAt.getTime()>offer.acceptedDisputableUntil.getTime())
+   throw new TpoGeneralRequestError("TARGET_CHANGED");
+  // A joined outcome or any completed cascade needs specialist restorative
+  // handling, never a mere change to offer status.
+  const [joining]=await tx.select({status:placementJoiningOutcomes.status})
+   .from(placementJoiningOutcomes).where(eq(placementJoiningOutcomes.offerId,offer.id))
+   .for("update").limit(1);
+  if(!joining||joining.status!=="PENDING")
+   throw new TpoGeneralRequestError("TARGET_CHANGED");
+  const now=new Date();
+  // The legacy reversal restores a fresh response window. Reissuing with an
+  // already-past expiry would make the reversal immediately unusable.
+  const freshDeadline=new Date(now.getTime()+48*60*60*1000);
+  const expiresAt=offer.expiresAt&&offer.expiresAt>freshDeadline?
+   offer.expiresAt:freshDeadline;
+  const [reverted]=await tx.update(placementOffers).set({
+   status:"ISSUED",acceptanceChannel:null,acceptedDisputableUntil:null,
+   respondedByUserId:null,respondedAt:null,
+   expiresAt,rowVersion:offer.rowVersion+1,updatedAt:now,
+  }).where(and(eq(placementOffers.id,offer.id),
+   eq(placementOffers.status,"ACCEPTED"),
+   eq(placementOffers.rowVersion,offer.rowVersion)))
+   .returning({id:placementOffers.id});
+  if(!reverted)throw new TpoGeneralRequestError("TARGET_CHANGED");
+  await tx.insert(placementOfferStatusHistory).values({
+   offerId:reverted.id,fromStatus:"ACCEPTED",toStatus:"ISSUED",
+   actorUserId:ctx.user.id,
+   reason:"TPO upheld learner's timely external-acceptance dispute: "+row.id,
+  });
+  return {effect:"EXTERNAL_ACCEPTANCE_REVERSED",id:reverted.id};
  }
  throw new TpoGeneralRequestError("EFFECT_UNSUPPORTED");
 }

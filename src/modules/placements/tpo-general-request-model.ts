@@ -30,6 +30,7 @@ export const TPO_GENERAL_REQUEST_APPROVABLE_KINDS=[
   "OFF_CAMPUS_OFFER",
   "REGISTRATION_CHANGE",
   "ABSENCE_DISPUTE",
+  "OFFER_ACCEPTANCE_DISPUTE",
 ] as const;
 
 export function tpoGeneralRequestCanApprove(kind:string):kind is (typeof TPO_GENERAL_REQUEST_APPROVABLE_KINDS)[number]{
