@@ -449,7 +449,7 @@ describe("Placement P8 offers and joining", () => {
           and subject_id=$1`,[absence.rows[0]!.id]),
       pool.query<{next_status:string}>(`
         select next_status from placement_learner_general_request_events
-        where request_id=$1 order by created_at`,[request.id]),
+        where request_id=$1 order by occurred_at`,[request.id]),
       pool.query<{count:number}>(`
         select count(*)::int as count from in_app_notifications
         where user_id=$1 and title='Placement request approved'`,
