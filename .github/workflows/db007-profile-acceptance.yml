@@ -54,8 +54,6 @@ jobs:
         run: |
           npm run db:journal:verify
           node --test tests/db007-normalized-profile-registration.test.mjs tests/db04-profile-education-images-staged.test.mjs tests/db007-live-cgpa-policy-authority.test.mjs tests/db007-live-tpo-verifier-grant-authority.test.mjs tests/db007-private-gallery-publisher-ownership.test.mjs
-      - name: Typecheck private profile modules
-        run: npm run typecheck
       - name: Migrate and seed disposable PostgreSQL from empty
         env:
           DATABASE_URL: ""
@@ -64,3 +62,7 @@ jobs:
         run: npm run db:migrate
       - name: DB-007 registered row-level tenant, private receipt and history negatives
         run: node --test tests/db007-registered-profile-pg.test.mjs
+      - name: Full TypeScript typecheck after PostgreSQL acceptance
+        env:
+          NODE_OPTIONS: --max-old-space-size=6144
+        run: npm run typecheck
