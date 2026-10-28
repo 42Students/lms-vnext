@@ -91,3 +91,18 @@ from a security, retention or release officer. The existing per-decision
 No existing old-LMS data or credentials were copied or deleted, and no
 legacy database was contacted. The 34 retired fields are handled under
 the same product policy but require separately recorded final security review.
+
+## 28 October 2026 — all 34 obsolete fields disposed by requester
+
+The requester also explicitly approved retirement of **all 34** legacy-only
+fields under the already selected D01/D02/D05 architecture policies. Every
+one of the 34 identified original source fields is now individually annotated
+with `retirementProductDisposition.status=APPROVED_BY_REQUESTER`, mapped to a
+selected decision and verified for exact scope by the DB-004 evidence tests.
+
+This concludes **34/34 product disposition choices** (and 195/195 bounded
+technical implementation evidence), without touching production legacy data.
+The per-field `retirementApproved` final-security flag remains `false` until
+actual independent security/retention attestation, source-specific
+negative/security tests, and applicable provider/release acceptance are
+available. Such attestations are not fabricated from the product instruction.

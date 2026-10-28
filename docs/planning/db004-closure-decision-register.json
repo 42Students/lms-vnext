@@ -12,7 +12,8 @@
     "technicalCovered": 195,
     "uncovered": 0,
     "approvalPendingRetirements": 34,
-    "compositeImplemented": 24
+    "compositeImplemented": 24,
+    "retirementProductApproved": 34
   },
   "uncoveredFieldClasses": {
     "physicalPending": [],
@@ -246,5 +247,12 @@
     "scope": "Product architecture and greenfield policy only; no assertion of independent security, data retention, external-provider or release owner attestation.",
     "legacyHistoricalImport": "NOT_APPLICABLE_NOT_AUTHORIZED",
     "noProductionLegacyAccess": true
+  },
+  "retirementPolicy": {
+    "requesterApproved": 34,
+    "requesterApprovalDate": "2026-10-28",
+    "finalSecurityOrRetentionSignoffPending": 34,
+    "legacyProductionDataTouched": false,
+    "policy": "Do not store or transfer obsolete legacy plaintext credentials, username secrets, numeric role grants, raw handoff tokens, obsolete token-version or user-type fields in new vNext; no deletion/modification of legacy production records."
   }
 }

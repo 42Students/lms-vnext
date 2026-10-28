@@ -4,6 +4,23 @@ import { readFileSync, existsSync } from "node:fs";
 const load=p=>JSON.parse(readFileSync(p,"utf8"));
 const historical=load("docs/planning/db01-chat05-final-field-disposition.json");
 const current=load("docs/planning/db004-current-owner-evidence.json");
+test("all and only 34 retired DB01 fields have requester disposition and independent approval remains explicit",()=>{
+ const retired=current.rows.filter(row=>row.retirementImplementationVerified);
+ assert.equal(retired.length,34);
+ assert.equal(current.summary.retirementProductApproved,34);
+ const unique=new Set(retired.map(row=>row.legacyField));
+ assert.equal(unique.size,34);
+ for(const row of current.rows){
+  if(!row.retirementImplementationVerified){
+   assert.equal(row.retirementProductDisposition,undefined);
+   continue;
+  }
+  assert.equal(row.retirementProductDisposition.status,"APPROVED_BY_REQUESTER");
+  assert.match(row.retirementProductDisposition.source,/Explicit user instructions/);
+  assert.equal(row.retirementApproved,false);
+ }
+});
+
 test("DB-004 owner scope accounts for all legacy columns without stealing other domains",()=>{
  const own=historical.rows.filter(x=>x.ownerTask==="DB-004");
  assert.equal(own.length,195);

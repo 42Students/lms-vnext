@@ -28,6 +28,23 @@ test("DB-004 finite closure register exactly covers remaining technical gaps",()
  assert.equal(new Set(Object.values(register.uncoveredFieldClasses).flat()).size,missing.length);
  assert.equal(register.technicalSnapshot.approvalPendingRetirements,
   fields.filter(x=>x.retirementImplementationVerified&&!x.retirementApproved).length);
+ assert.equal(register.technicalSnapshot.retirementProductApproved,34);
+ assert.equal(evidence.summary.retirementProductApproved,34);
+ assert.equal(register.retirementPolicy.requesterApproved,34);
+ assert.equal(register.retirementPolicy.finalSecurityOrRetentionSignoffPending,
+  fields.filter(x=>x.retirementImplementationVerified&&!x.retirementApproved).length);
+ const retired=fields.filter(x=>x.retirementImplementationVerified);
+ assert.equal(retired.length,34);
+ for(const row of retired){
+  assert.equal(row.retirementProductDisposition?.status,"APPROVED_BY_REQUESTER");
+  assert.equal(row.retirementProductDisposition?.recordedOn,"2026-10-28");
+  const decision=register.decisions.find(x=>x.id===row.retirementProductDisposition?.policyDecisionId);
+  assert.ok(decision,"Every deprecated field must trace to a selected policy decision");
+  assert.equal(decision.productDecision.status,"APPROVED_BY_REQUESTER");
+  assert.equal(row.retirementApproved,false,
+   "Product approval alone cannot masquerade as external security/retention sign-off");
+ }
+
 });
 
 test("no DB-004 release green without genuine owner decisions and complete technical evidence",()=>{
