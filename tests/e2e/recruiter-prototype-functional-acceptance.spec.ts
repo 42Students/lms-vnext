@@ -119,6 +119,22 @@ test.describe("Recruiter prototype functional journeys",()=>{
    await expect(editor.getByRole("button",{name,exact:true}).first()).toBeVisible();
   }
   await expect(editor.getByText(/S Keep · H Hold · R Not selected/)).toBeVisible();
+  // Real interactive draft proof: changing outcomes never applies a college
+  // decision on its own, and Undo restores the preceding in-memory draft.
+  const outcome=editor.getByRole("combobox",{name:"Outcome"}).first();
+  await expect(outcome).toHaveValue("PASS");
+  await editor.getByRole("button",{name:"Not selected",exact:true}).first().click();
+  await expect(outcome).toHaveValue("FAIL");
+  await editor.getByRole("button",{name:"Hold",exact:true}).first().click();
+  await expect(outcome).toHaveValue("HOLD");
+  await editor.getByRole("button",{name:"Undo draft",exact:true}).first().click();
+  await expect(outcome).toHaveValue("FAIL");
+  // Non-pass results cannot be sent without a learner-safe candidate message.
+  // The validation path is a client-side rejection; do not mutate fixture.
+  await editor.getByRole("button",{name:"Stage result",exact:true}).first().click();
+  await expect(page.getByText("Candidate message required",{exact:true})).toBeVisible();
+  await editor.getByRole("button",{name:"Keep",exact:true}).first().click();
+  await expect(outcome).toHaveValue("PASS");
   await expectNoRawErrors(page);
  });
 
