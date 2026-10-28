@@ -28,9 +28,9 @@ test("physical field proof and runtime proof remain explicitly distinct",()=>{
  assert.equal(current.summary.registeredPhysicalWitnessTotal,134);
  assert.equal(current.summary.stillWithoutPhysicalWitness,61);
  const verified=current.rows.filter(x=>x.runtimeSemanticsVerified);
- assert.equal(verified.length,100);
- assert.equal(current.summary.runtimeSemanticsVerified,100);
- assert.equal(current.summary.runtimeSemanticsUnverified,95);
+ assert.equal(verified.length,106);
+ assert.equal(current.summary.runtimeSemanticsVerified,106);
+ assert.equal(current.summary.runtimeSemanticsUnverified,89);
  const allowed={
   "college_branding.":["tests/integration/chat11-super-admin-branding-cas.test.ts",14],
   "tenant_domain.":["tests/integration/tenant-domains.test.ts",13],
@@ -42,6 +42,7 @@ test("physical field proof and runtime proof remain explicitly distinct",()=>{
   "organization.":["tests/integration/db01-org-college-field-semantics.test.ts",5],
   "learner.":["tests/integration/db01-learner-faculty-field-semantics.test.ts",8],
   "faculty.":["tests/integration/db01-learner-faculty-field-semantics.test.ts",8],
+  "department.":["tests/integration/db01-department-field-semantics.test.ts",6],
  };
  for(const [prefix,[suite,count]] of Object.entries(allowed)){
   const group=verified.filter(row=>row.legacyField.startsWith(prefix));

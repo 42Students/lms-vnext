@@ -24,8 +24,8 @@
     "registeredReplacementPhysicalWitnesses": 22,
     "registeredPhysicalWitnessTotal": 134,
     "stillWithoutPhysicalWitness": 61,
-    "runtimeSemanticsVerified": 100,
-    "runtimeSemanticsUnverified": 95,
+    "runtimeSemanticsVerified": 106,
+    "runtimeSemanticsUnverified": 89,
     "runtimeWitnessesByFamily": {
       "college_branding": 14,
       "tenant_domain": 13,
@@ -36,7 +36,8 @@
       "college": 15,
       "organization": 5,
       "learner": 8,
-      "faculty": 8
+      "faculty": 8,
+      "department": 6
     }
   },
   "guidance": [
@@ -48,7 +49,8 @@
     "14 active branding fields have explicitly executed, field-level registered PostgreSQL write/read/public projection witnesses. This is behavior verification, NOT product sign-off on legacy deletion, imported data, CDN delivery, provider behavior, or all DB-004 fields.",
     "All 13 tenant_domain fields have a passing real PostgreSQL lifecycle witness covering creation, failure diagnostic, verification, tenant routing and tombstone at 56e19061. This is not provider or policy sign-off.",
     "At 343b356c, registered PostgreSQL DB-004 acceptance executed 18 suites / 84 tests, witnessing 57 additional active identity, OTP, device-session, organization and college field mappings. Historical password, raw token, cross-host handoff and product/purge decisions remain unapproved.",
-    "At 6db017e4, one account with separate learner and faculty college memberships passed a PostgreSQL witness of contact/name, roles, college IDs and independent suspension fields (16 fields); historical import and policy remain open."
+    "At 6db017e4, one account with separate learner and faculty college memberships passed a PostgreSQL witness of contact/name, roles, college IDs and independent suspension fields (16 fields); historical import and policy remain open.",
+    "Registered PostgreSQL suite 40679297972 passed department lifecycle and tenant boundary: six department field mappings have executed read/write/archive witnesses. Historic numeric-ID import remains subject to explicit source mapping and approval."
   ],
   "rows": [
     {
@@ -874,10 +876,17 @@
       "proposedPhysicalTarget": "departments.id",
       "evidenceStatus": "EXACT_REGISTERED_FIELD_PG_WITNESS",
       "physicalVerified": true,
-      "runtimeSemanticsVerified": false,
+      "runtimeSemanticsVerified": true,
       "evidence": [
         "tests/integration/db01-registered-physical-field-crosswalk.test.ts"
-      ]
+      ],
+      "runtimeEvidence": {
+        "verifiedFlow": "REGISTERED_POSTGRES_DEPARTMENT_CREATE_RENAME_CROSS_COLLEGE_READ_ARCHIVE",
+        "suite": "tests/integration/db01-department-field-semantics.test.ts",
+        "passingRun": "https://github.com/42Students/lms-vnext/actions/runs/40679297972",
+        "testedCommit": "adab1e63c19c95ddf7ad192618f4544af00a2e0c",
+        "limitations": "Field-level verified active department lifecycle; no numeric legacy IDs imported and legacy historical timestamp validation or owner signoff not asserted."
+      }
     },
     {
       "legacyField": "department.created_at",
@@ -886,10 +895,17 @@
       "proposedPhysicalTarget": "departments.created_at",
       "evidenceStatus": "EXACT_REGISTERED_FIELD_PG_WITNESS",
       "physicalVerified": true,
-      "runtimeSemanticsVerified": false,
+      "runtimeSemanticsVerified": true,
       "evidence": [
         "tests/integration/db01-registered-physical-field-crosswalk.test.ts"
-      ]
+      ],
+      "runtimeEvidence": {
+        "verifiedFlow": "REGISTERED_POSTGRES_DEPARTMENT_CREATE_RENAME_CROSS_COLLEGE_READ_ARCHIVE",
+        "suite": "tests/integration/db01-department-field-semantics.test.ts",
+        "passingRun": "https://github.com/42Students/lms-vnext/actions/runs/40679297972",
+        "testedCommit": "adab1e63c19c95ddf7ad192618f4544af00a2e0c",
+        "limitations": "Field-level verified active department lifecycle; no numeric legacy IDs imported and legacy historical timestamp validation or owner signoff not asserted."
+      }
     },
     {
       "legacyField": "department.is_deleted",
@@ -898,10 +914,17 @@
       "proposedPhysicalTarget": "departments.archived_at",
       "evidenceStatus": "EXACT_REGISTERED_FIELD_PG_WITNESS",
       "physicalVerified": true,
-      "runtimeSemanticsVerified": false,
+      "runtimeSemanticsVerified": true,
       "evidence": [
         "tests/integration/db01-registered-physical-field-crosswalk.test.ts"
-      ]
+      ],
+      "runtimeEvidence": {
+        "verifiedFlow": "REGISTERED_POSTGRES_DEPARTMENT_CREATE_RENAME_CROSS_COLLEGE_READ_ARCHIVE",
+        "suite": "tests/integration/db01-department-field-semantics.test.ts",
+        "passingRun": "https://github.com/42Students/lms-vnext/actions/runs/40679297972",
+        "testedCommit": "adab1e63c19c95ddf7ad192618f4544af00a2e0c",
+        "limitations": "Field-level verified active department lifecycle; no numeric legacy IDs imported and legacy historical timestamp validation or owner signoff not asserted."
+      }
     },
     {
       "legacyField": "department.updated_at",
@@ -910,10 +933,17 @@
       "proposedPhysicalTarget": "departments.updated_at",
       "evidenceStatus": "EXACT_REGISTERED_FIELD_PG_WITNESS",
       "physicalVerified": true,
-      "runtimeSemanticsVerified": false,
+      "runtimeSemanticsVerified": true,
       "evidence": [
         "tests/integration/db01-registered-physical-field-crosswalk.test.ts"
-      ]
+      ],
+      "runtimeEvidence": {
+        "verifiedFlow": "REGISTERED_POSTGRES_DEPARTMENT_CREATE_RENAME_CROSS_COLLEGE_READ_ARCHIVE",
+        "suite": "tests/integration/db01-department-field-semantics.test.ts",
+        "passingRun": "https://github.com/42Students/lms-vnext/actions/runs/40679297972",
+        "testedCommit": "adab1e63c19c95ddf7ad192618f4544af00a2e0c",
+        "limitations": "Field-level verified active department lifecycle; no numeric legacy IDs imported and legacy historical timestamp validation or owner signoff not asserted."
+      }
     },
     {
       "legacyField": "department.college_id",
@@ -922,10 +952,17 @@
       "proposedPhysicalTarget": "departments.college_id",
       "evidenceStatus": "EXACT_REGISTERED_FIELD_PG_WITNESS",
       "physicalVerified": true,
-      "runtimeSemanticsVerified": false,
+      "runtimeSemanticsVerified": true,
       "evidence": [
         "tests/integration/db01-registered-physical-field-crosswalk.test.ts"
-      ]
+      ],
+      "runtimeEvidence": {
+        "verifiedFlow": "REGISTERED_POSTGRES_DEPARTMENT_CREATE_RENAME_CROSS_COLLEGE_READ_ARCHIVE",
+        "suite": "tests/integration/db01-department-field-semantics.test.ts",
+        "passingRun": "https://github.com/42Students/lms-vnext/actions/runs/40679297972",
+        "testedCommit": "adab1e63c19c95ddf7ad192618f4544af00a2e0c",
+        "limitations": "Field-level verified active department lifecycle; no numeric legacy IDs imported and legacy historical timestamp validation or owner signoff not asserted."
+      }
     },
     {
       "legacyField": "department.name",
@@ -934,10 +971,17 @@
       "proposedPhysicalTarget": "departments.name",
       "evidenceStatus": "EXACT_REGISTERED_FIELD_PG_WITNESS",
       "physicalVerified": true,
-      "runtimeSemanticsVerified": false,
+      "runtimeSemanticsVerified": true,
       "evidence": [
         "tests/integration/db01-registered-physical-field-crosswalk.test.ts"
-      ]
+      ],
+      "runtimeEvidence": {
+        "verifiedFlow": "REGISTERED_POSTGRES_DEPARTMENT_CREATE_RENAME_CROSS_COLLEGE_READ_ARCHIVE",
+        "suite": "tests/integration/db01-department-field-semantics.test.ts",
+        "passingRun": "https://github.com/42Students/lms-vnext/actions/runs/40679297972",
+        "testedCommit": "adab1e63c19c95ddf7ad192618f4544af00a2e0c",
+        "limitations": "Field-level verified active department lifecycle; no numeric legacy IDs imported and legacy historical timestamp validation or owner signoff not asserted."
+      }
     },
     {
       "legacyField": "email_verification_token.token",
