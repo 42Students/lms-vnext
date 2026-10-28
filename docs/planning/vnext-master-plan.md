@@ -1,6 +1,6 @@
 # LMS vNext — Master Execution Plan
 
-> **OPERATING NOTICE — 2026-10-13:** This is a historical architecture and scope reference, **not the active execution schedule or status report**. The current execution method is [closure-first delivery](closure-first-delivery-strategy.md); the sole task/phase progress authority is [docs/tracker.json](../tracker.json). Old `DONE`/`MOSTLY DONE` section labels below are historical authored-scope descriptions, not independently accepted DATABASE task completion. DATABASE remains the current global phase; later phases stay locked until the tracker gates are certified. Do not work through this document sequentially as a second queue.
+> **OPERATING NOTICE — 2026-10-13:** This is a historical architecture and scope reference, **not the active execution schedule or status report**. The current execution method is [closure-first delivery](database-domain-closure-protocol-2026-10-29.md); the sole task/phase progress authority is [docs/tracker.json](../tracker.json). Old `DONE`/`MOSTLY DONE` section labels below are historical authored-scope descriptions, not independently accepted DATABASE task completion. DATABASE remains the current global phase; later phases stay locked until the tracker gates are certified. Do not work through this document sequentially as a second queue.
 
 **Repository:** `42Students/lms-vnext`  
 **Planning baseline date:** 2026-10-02  
