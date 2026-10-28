@@ -129,6 +129,10 @@ export function legacyRoleAssignmentCandidate(input:{
  const role=LEGACY_ROLE_DEFINITION_CROSSWALK[
    key as keyof typeof LEGACY_ROLE_DEFINITION_CROSSWALK];
  if(!role)throw new Error("Unrecognized old role definition");
+ // Recruiters are authorized through verified company profiles and
+ // time-bounded college grants. They are never membership-role enums.
+ if(role==="RECRUITER")
+  throw new Error("Recruiter role requires verified company profile and college grant");
  return {legacyRoleId:input.legacyRoleId,role,
   descriptionForAudit:input.description?.trim().slice(0,500)??null,
   persistedRoleAuthority:false as const};
