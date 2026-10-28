@@ -24,8 +24,8 @@
     "registeredReplacementPhysicalWitnesses": 22,
     "registeredPhysicalWitnessTotal": 134,
     "stillWithoutPhysicalWitness": 61,
-    "runtimeSemanticsVerified": 106,
-    "runtimeSemanticsUnverified": 89,
+    "runtimeSemanticsVerified": 112,
+    "runtimeSemanticsUnverified": 83,
     "runtimeWitnessesByFamily": {
       "college_branding": 14,
       "tenant_domain": 13,
@@ -37,7 +37,9 @@
       "organization": 5,
       "learner": 8,
       "faculty": 8,
-      "department": 6
+      "department": 6,
+      "recruiter": 5,
+      "role": 1
     }
   },
   "guidance": [
@@ -50,7 +52,8 @@
     "All 13 tenant_domain fields have a passing real PostgreSQL lifecycle witness covering creation, failure diagnostic, verification, tenant routing and tombstone at 56e19061. This is not provider or policy sign-off.",
     "At 343b356c, registered PostgreSQL DB-004 acceptance executed 18 suites / 84 tests, witnessing 57 additional active identity, OTP, device-session, organization and college field mappings. Historical password, raw token, cross-host handoff and product/purge decisions remain unapproved.",
     "At 6db017e4, one account with separate learner and faculty college memberships passed a PostgreSQL witness of contact/name, roles, college IDs and independent suspension fields (16 fields); historical import and policy remain open.",
-    "Registered PostgreSQL suite 40679297972 passed department lifecycle and tenant boundary: six department field mappings have executed read/write/archive witnesses. Historic numeric-ID import remains subject to explicit source mapping and approval."
+    "Registered PostgreSQL suite 40679297972 passed department lifecycle and tenant boundary: six department field mappings have executed read/write/archive witnesses. Historic numeric-ID import remains subject to explicit source mapping and approval.",
+    "With verified 87/87 then 87+ role-receipt PostgreSQL runs, six more fields have direct runtime witnesses. Remaining 22 physical-but-not-accepted mappings are legacy college-branding deletion and learner/faculty verification challenge semantics; the other 61 have no direct column and require retirement/redesign sign-off."
   ],
   "rows": [
     {
@@ -2364,12 +2367,19 @@
       "proposedPhysicalTarget": "users.given_name",
       "evidenceStatus": "REGISTERED_IDENTITY_NAME_PHYSICAL_WITNESS_SEMANTIC_REVIEW",
       "physicalVerified": true,
-      "runtimeSemanticsVerified": false,
+      "runtimeSemanticsVerified": true,
       "evidence": [
         "drizzle/0300_db01_person_name_identity_profile.sql",
         "src/modules/people/identity-profile-service.ts",
         "tests/integration/db01-person-name-persistence.test.ts"
-      ]
+      ],
+      "runtimeEvidence": {
+        "verifiedFlow": "REGISTERED_POSTGRES_RECRUITER_CANONICAL_NAME_PRIVATE_LOGIN_CONTACT_GRANT_ARCHIVE",
+        "suite": "tests/integration/db01-recruiter-identity-field-semantics.test.ts",
+        "passingRun": "https://github.com/42Students/lms-vnext/actions/runs/40679858888",
+        "testedCommit": "fa6123885fd273f9dadb397febd8eb43063d52c7",
+        "limitations": "Canonical recruiter identity fields are witnessed through verified scoped grant and archive; public recruiter contact remains separate from private login phone and historical migration/owner approval is not certified."
+      }
     },
     {
       "legacyField": "recruiter.last_name",
@@ -2378,12 +2388,19 @@
       "proposedPhysicalTarget": "users.family_name",
       "evidenceStatus": "REGISTERED_IDENTITY_NAME_PHYSICAL_WITNESS_SEMANTIC_REVIEW",
       "physicalVerified": true,
-      "runtimeSemanticsVerified": false,
+      "runtimeSemanticsVerified": true,
       "evidence": [
         "drizzle/0300_db01_person_name_identity_profile.sql",
         "src/modules/people/identity-profile-service.ts",
         "tests/integration/db01-person-name-persistence.test.ts"
-      ]
+      ],
+      "runtimeEvidence": {
+        "verifiedFlow": "REGISTERED_POSTGRES_RECRUITER_CANONICAL_NAME_PRIVATE_LOGIN_CONTACT_GRANT_ARCHIVE",
+        "suite": "tests/integration/db01-recruiter-identity-field-semantics.test.ts",
+        "passingRun": "https://github.com/42Students/lms-vnext/actions/runs/40679858888",
+        "testedCommit": "fa6123885fd273f9dadb397febd8eb43063d52c7",
+        "limitations": "Canonical recruiter identity fields are witnessed through verified scoped grant and archive; public recruiter contact remains separate from private login phone and historical migration/owner approval is not certified."
+      }
     },
     {
       "legacyField": "recruiter.contact_mobile",
@@ -2392,10 +2409,17 @@
       "proposedPhysicalTarget": "users.phone_e164",
       "evidenceStatus": "EXACT_REGISTERED_FIELD_PG_WITNESS",
       "physicalVerified": true,
-      "runtimeSemanticsVerified": false,
+      "runtimeSemanticsVerified": true,
       "evidence": [
         "tests/integration/db01-registered-physical-field-crosswalk.test.ts"
-      ]
+      ],
+      "runtimeEvidence": {
+        "verifiedFlow": "REGISTERED_POSTGRES_RECRUITER_CANONICAL_NAME_PRIVATE_LOGIN_CONTACT_GRANT_ARCHIVE",
+        "suite": "tests/integration/db01-recruiter-identity-field-semantics.test.ts",
+        "passingRun": "https://github.com/42Students/lms-vnext/actions/runs/40679858888",
+        "testedCommit": "fa6123885fd273f9dadb397febd8eb43063d52c7",
+        "limitations": "Canonical recruiter identity fields are witnessed through verified scoped grant and archive; public recruiter contact remains separate from private login phone and historical migration/owner approval is not certified."
+      }
     },
     {
       "legacyField": "recruiter.contact_mail",
@@ -2404,10 +2428,17 @@
       "proposedPhysicalTarget": "users.email",
       "evidenceStatus": "EXACT_REGISTERED_FIELD_PG_WITNESS",
       "physicalVerified": true,
-      "runtimeSemanticsVerified": false,
+      "runtimeSemanticsVerified": true,
       "evidence": [
         "tests/integration/db01-registered-physical-field-crosswalk.test.ts"
-      ]
+      ],
+      "runtimeEvidence": {
+        "verifiedFlow": "REGISTERED_POSTGRES_RECRUITER_CANONICAL_NAME_PRIVATE_LOGIN_CONTACT_GRANT_ARCHIVE",
+        "suite": "tests/integration/db01-recruiter-identity-field-semantics.test.ts",
+        "passingRun": "https://github.com/42Students/lms-vnext/actions/runs/40679858888",
+        "testedCommit": "fa6123885fd273f9dadb397febd8eb43063d52c7",
+        "limitations": "Canonical recruiter identity fields are witnessed through verified scoped grant and archive; public recruiter contact remains separate from private login phone and historical migration/owner approval is not certified."
+      }
     },
     {
       "legacyField": "recruiter.suspended_at",
@@ -2441,10 +2472,17 @@
       "proposedPhysicalTarget": "placement_recruiter_profiles.archived_at",
       "evidenceStatus": "EXACT_REGISTERED_FIELD_PG_WITNESS",
       "physicalVerified": true,
-      "runtimeSemanticsVerified": false,
+      "runtimeSemanticsVerified": true,
       "evidence": [
         "tests/integration/db01-registered-physical-field-crosswalk.test.ts"
-      ]
+      ],
+      "runtimeEvidence": {
+        "verifiedFlow": "REGISTERED_POSTGRES_RECRUITER_CANONICAL_NAME_PRIVATE_LOGIN_CONTACT_GRANT_ARCHIVE",
+        "suite": "tests/integration/db01-recruiter-identity-field-semantics.test.ts",
+        "passingRun": "https://github.com/42Students/lms-vnext/actions/runs/40679858888",
+        "testedCommit": "fa6123885fd273f9dadb397febd8eb43063d52c7",
+        "limitations": "Canonical recruiter identity fields are witnessed through verified scoped grant and archive; public recruiter contact remains separate from private login phone and historical migration/owner approval is not certified."
+      }
     },
     {
       "legacyField": "refresh_token_blocklist.jti",
@@ -2555,10 +2593,17 @@
       "proposedPhysicalTarget": "membership_roles.created_at",
       "evidenceStatus": "EXACT_REGISTERED_FIELD_PG_WITNESS",
       "physicalVerified": true,
-      "runtimeSemanticsVerified": false,
+      "runtimeSemanticsVerified": true,
       "evidence": [
         "tests/integration/db01-registered-physical-field-crosswalk.test.ts"
-      ]
+      ],
+      "runtimeEvidence": {
+        "verifiedFlow": "REGISTERED_POSTGRES_MEMBERSHIP_ROLE_ASSIGNMENT_CREATION_TIME",
+        "suite": "tests/integration/db01-learner-faculty-field-semantics.test.ts",
+        "passingRun": "https://github.com/42Students/lms-vnext/actions/runs/40679983555",
+        "testedCommit": "7ea051c9ff88d7564bc4ef96b7000d0bf96ba2f6",
+        "limitations": "Membership role assignment timestamp is verified, not a retired global role definition or historical role import."
+      }
     },
     {
       "legacyField": "role.is_deleted",

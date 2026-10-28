@@ -28,9 +28,9 @@ test("physical field proof and runtime proof remain explicitly distinct",()=>{
  assert.equal(current.summary.registeredPhysicalWitnessTotal,134);
  assert.equal(current.summary.stillWithoutPhysicalWitness,61);
  const verified=current.rows.filter(x=>x.runtimeSemanticsVerified);
- assert.equal(verified.length,106);
- assert.equal(current.summary.runtimeSemanticsVerified,106);
- assert.equal(current.summary.runtimeSemanticsUnverified,89);
+ assert.equal(verified.length,112);
+ assert.equal(current.summary.runtimeSemanticsVerified,112);
+ assert.equal(current.summary.runtimeSemanticsUnverified,83);
  const allowed={
   "college_branding.":["tests/integration/chat11-super-admin-branding-cas.test.ts",14],
   "tenant_domain.":["tests/integration/tenant-domains.test.ts",13],
@@ -43,6 +43,8 @@ test("physical field proof and runtime proof remain explicitly distinct",()=>{
   "learner.":["tests/integration/db01-learner-faculty-field-semantics.test.ts",8],
   "faculty.":["tests/integration/db01-learner-faculty-field-semantics.test.ts",8],
   "department.":["tests/integration/db01-department-field-semantics.test.ts",6],
+  "recruiter.":["tests/integration/db01-recruiter-identity-field-semantics.test.ts",5],
+  "role.":["tests/integration/db01-learner-faculty-field-semantics.test.ts",1],
  };
  for(const [prefix,[suite,count]] of Object.entries(allowed)){
   const group=verified.filter(row=>row.legacyField.startsWith(prefix));

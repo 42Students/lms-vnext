@@ -61,6 +61,8 @@ describe("DB-004 registered source → target physical catalog",()=>{
           ?"tests/integration/tenant-domains.test.ts"
           :row.legacyField.startsWith("college_branding.")
           ?"tests/integration/chat11-super-admin-branding-cas.test.ts"
+          :row.legacyField.startsWith("recruiter.")
+          ?"tests/integration/db01-recruiter-identity-field-semantics.test.ts"
           :"tests/integration/db01-learner-faculty-field-semantics.test.ts";
         expect(row.runtimeEvidence?.suite).toBe(suite);
       }else{
