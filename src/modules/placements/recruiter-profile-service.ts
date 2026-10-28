@@ -36,6 +36,8 @@ export async function getRecruiterSelfProfile(context: RequestContext, selectedC
     .select({
       userId: users.id,
       displayName: users.displayName,
+      canonicalFirstName: users.givenName,
+      canonicalLastName: users.familyName,
       userUpdatedAt: users.updatedAt,
       email: users.email,
       phoneE164: users.phoneE164,
@@ -108,8 +110,9 @@ export async function getRecruiterSelfProfile(context: RequestContext, selectedC
     throw new AuthorizationError("placements.recruiter.read");
   }
   const nameParts=(row.displayName??"").trim().split(/\s+/).filter(Boolean);
-  const firstName=nameParts[0]??"";
-  const lastName=nameParts.slice(1).join(" ");
+  const firstName=row.canonicalFirstName??nameParts[0]??"";
+  const lastName=row.canonicalFirstName!==null
+    ?row.canonicalLastName??"":nameParts.slice(1).join(" ");
   return {...row,
     firstName,lastName,
     // Compatibility-shaped self identity is additive; contactMobile is the

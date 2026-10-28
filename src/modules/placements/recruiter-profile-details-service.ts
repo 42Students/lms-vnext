@@ -52,7 +52,8 @@ export async function updateOwnRecruiterProfileDetails(context:RequestContext,ra
   const identityNameChanged=nameChanged||canonicalNameChanged;
   const titleChanged=person.title!==title;
   if(!phoneChanged&&!identityNameChanged&&!titleChanged)
-   return {displayName:name,title,phone,changed:false,
+   return {displayName:name,firstName:input.firstName,lastName:input.lastName,
+    title,phone,changed:false,
     userUpdatedAt:person.userUpdatedAt.toISOString(),
     profileUpdatedAt:person.profileUpdatedAt.toISOString()};
   const now=new Date(Math.max(Date.now(),person.userUpdatedAt.getTime()+1,person.profileUpdatedAt.getTime()+1));
@@ -88,7 +89,8 @@ export async function updateOwnRecruiterProfileDetails(context:RequestContext,ra
    summary:"Recruiter profile details updated",
    metadata:{nameChanged,canonicalNameChanged,titleChanged,phoneChanged},
   });
-  return {displayName:name,title,phone,changed:true,
+  return {displayName:name,firstName:input.firstName,lastName:input.lastName,
+   title,phone,changed:true,
    userUpdatedAt:(identityNameChanged?now:person.userUpdatedAt).toISOString(),
    profileUpdatedAt:(titleChanged?now:person.profileUpdatedAt).toISOString()};
  });
