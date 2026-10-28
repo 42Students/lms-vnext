@@ -8,10 +8,13 @@ const src=(path:string)=>readFileSync(path,"utf8");
 describe("chat-6 high priority auth login OTP session and deactivation adversarial coverage",()=>{
  it("AUTH-session-01 a disabled platform account's session is refused before last_seen mutation",()=>{
   const s=src("src/modules/auth/session-service.ts");
-  const denied=s.indexOf('if (row["platform_status"] !== "ACTIVE")');
-  const updated=s.indexOf('SET last_seen_at = now()');
-  expect(denied).toBeGreaterThan(-1);
-  expect(updated).toBeGreaterThan(denied);
+  // Eligibility and the last-seen write now share the same row-locked
+  // UPDATE, so a concurrent revocation cannot be silently ignored.
+  expect(s).toContain("u.platform_status = 'ACTIVE'");
+  expect(s).toContain("FOR SHARE OF u");
+  expect(s).toContain("UPDATE identity_device_sessions AS s");
+  expect(s).toContain("s.revoked_at IS NULL");
+  expect(s).toContain("s.expires_at > clock_timestamp()");
   expect(s).toContain('reason: "SESSION_REVOKED"');
  });
  it("AUTH-session-02 a different owner cannot revoke a session by guessing its identifier",()=>{

@@ -22,8 +22,9 @@ describe("chat-11 session and attendance parity",()=>{
  it("PUB-auth-public-35 documents five-day absolute session expiry without sliding tokens",()=>{
   expect(SESSION_MAX_AGE_SECONDS).toBe(5*24*60*60);
   const session=source("src/modules/auth/session-service.ts");
-  expect(session).toContain("expires_at <= now()");
-  expect(session).toContain("SET last_seen_at = now()");
+  expect(session).toContain("s.expires_at > clock_timestamp()");
+  expect(session).toContain("expires_at <= clock_timestamp()");
+  expect(session).toContain("SET last_seen_at = CASE");
   expect(session).not.toContain("SET expires_at =");
   expect(source("docs/audit/decisions/session-absolute-expiry.md")).toContain("never extends");
  });

@@ -29,7 +29,8 @@ describe("chat-9 public auth unconfirmed decisions",()=>{
  it("PUB-auth-public-35 retains five-day absolute expiry without sliding sessions",()=>{
   const c=read("src/modules/auth/config.ts"),s=read("src/modules/auth/session-service.ts");
   expect(c).toContain("60 * 60 * 24 * 5");
-  expect(s).toContain("last_seen_at = now()");
+  expect(s).toContain("SET last_seen_at = CASE");
+  expect(s).toContain("s.expires_at > clock_timestamp()");
   expect(s).not.toMatch(/SET expires_at\s*=/);
  });
  it("PUB-auth-public-36 retains registered provider OTP copy without leaking codes to logs",()=>{
