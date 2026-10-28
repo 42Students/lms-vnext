@@ -87,18 +87,21 @@ test("DB008 registered parent graph: same-college paths, direct SQL negatives an
       const clients=await Promise.all([pool.connect(),pool.connect()]);
       try {
         await Promise.all(clients.map(c=>c.query("BEGIN")));
-        const [one,two]=await Promise.allSettled([
-          clients[0].query("UPDATE courses SET parent_course_id=$1 WHERE id=$2",[b,a]),
-          clients[1].query("UPDATE courses SET parent_course_id=$1 WHERE id=$2",[a,b]),
-        ]);
-        const results=[one,two];
-        assert.ok(results.some(r=>r.status==="rejected") ||
-          results.some(r=>r.status==="fulfilled"),"must have a resolved statement");
-        await Promise.all(clients.map(async(c,i)=>{
-          try {await c.query(results[i].status==="fulfilled"?"COMMIT":"ROLLBACK")}
-          catch {await c.query("ROLLBACK").catch(()=>undefined)}
-        }));
-        const rows=await pool.query("SELECT id,parent_course_id FROM courses WHERE id=ANY($1::uuid[])",[[a,b]]);
+        await clients[0].query("UPDATE courses SET parent_course_id=$1 WHERE id=$2",[b,a]);
+        // The second writer is forced to wait on the same transaction lock;
+        // commit the first before awaiting the second to avoid a test deadlock.
+        const pending=clients[1].query(
+          "UPDATE courses SET parent_course_id=$1 WHERE id=$2",[a,b],
+        ).then(()=>({accepted:true,error:null}),error=>({accepted:false,error}));
+        await new Promise(resolve=>setTimeout(resolve,75));
+        await clients[0].query("COMMIT");
+        const second=await pending;
+        assert.equal(second.accepted,false);
+        assert.equal(second.error?.code,"23514");
+        await clients[1].query("ROLLBACK");
+        const rows=await pool.query(
+          "SELECT id,parent_course_id FROM courses WHERE id=ANY($1::uuid[])",[[a,b]],
+        );
         const parents=new Map(rows.rows.map(r=>[r.id,r.parent_course_id]));
         assert.equal(parents.get(a)===b&&parents.get(b)===a,false);
       } finally {
