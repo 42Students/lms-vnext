@@ -250,6 +250,26 @@ describe("DB03 group kernel on disposable PostgreSQL", () => {
       .resolves.toMatchObject({ state: "ACTIVE" });
   });
 
+  it("allows an admin to rescue a learner from an ended source elective", async () => {
+    const { groups, candidate } = await createElectiveFixture();
+    await joinGroup(candidate.ctx, groups[0], candidate.membershipId);
+    await pool.query("UPDATE course_section_deliveries SET ended_at=now() WHERE id=$1", [
+      fixture.deliveries[0],
+    ]);
+    const moved = await moveElectiveMember(
+      admin, fixture.electiveOfferingIds[0], fixture.electiveOfferingIds[1], candidate.membershipId,
+    );
+    expect(moved).toMatchObject({ state: "ACTIVE", groupId: groups[1] });
+    const states = await pool.query(
+      "SELECT group_id,state FROM lms_group_members WHERE group_id=ANY($1::uuid[]) AND membership_id=$2",
+      [groups, candidate.membershipId],
+    );
+    expect(states.rows).toEqual(expect.arrayContaining([
+      expect.objectContaining({ group_id: groups[0], state: "REMOVED" }),
+      expect.objectContaining({ group_id: groups[1], state: "ACTIVE" }),
+    ]));
+  });
+
   it("moves an elective atomically between offerings of the same slot", async () => {
     const { groups, candidate } = await createElectiveFixture();
     const active = await joinGroup(candidate.ctx, groups[0], candidate.membershipId);
