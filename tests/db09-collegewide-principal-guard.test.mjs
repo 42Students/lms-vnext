@@ -67,7 +67,9 @@ test("college-wide collaboration guards use the fail-closed helper", () => {
   }
 });
 
-test("staged SQL documents coordinator non-equivalence", () => {
-  assert.match(sql, /FACULTY_COORDINATOR is[\s\S]*department-scoped/);
-  assert.match(sql, /operation-specific department\/job guards/);
+test("registered recruiter grant checks active same-company principal", () => {
+  const body = functionBody("db09_has_active_recruiter_grant");
+  assert.match(body, /r\.company_id = p\.company_id/);
+  assert.match(body, /g\.status = 'ACTIVE'/);
+  assert.match(body, /u\.platform_status = 'ACTIVE'/);
 });
