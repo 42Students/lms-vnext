@@ -230,6 +230,23 @@ export const drizzleTenantDomainRepository: TenantDomainRepository = {
 
   async ensureToken(input) {
     await getDb().transaction(async tx=>{
+      // All mutations affecting one college's domain state take its parent
+      // lock before any domain row lock. This serializes competing primary
+      // promotions, DNS verification, edits, and removals; otherwise two
+      // requests can lock different domains and deadlock while swapping
+      // primary ownership or writing audit receipts.
+      const [domainOwner] = await tx.select({ collegeId: tenantDomains.collegeId })
+        .from(tenantDomains)
+        .where(and(eq(tenantDomains.id, input.domainId),isNull(tenantDomains.deletedAt)))
+        .limit(1);
+      if (!domainOwner) throw new TenantDomainServiceError("DOMAIN_NOT_FOUND");
+      const [activeParent] = await tx.select({ id: colleges.id, status: colleges.status })
+        .from(colleges)
+        .where(eq(colleges.id, domainOwner.collegeId))
+        .for("update").limit(1);
+      if (!activeParent || activeParent.status !== "ACTIVE")
+        throw new TenantDomainServiceError("DOMAIN_NOT_FOUND");
+
       const [row]=await tx.select({
         id:tenantDomains.id,collegeId:tenantDomains.collegeId,
         organizationId:colleges.organizationId,status:colleges.status,
@@ -264,6 +281,23 @@ export const drizzleTenantDomainRepository: TenantDomainRepository = {
   async editDomainHost(input) {
     try {
       await getDb().transaction(async tx=>{
+      // All mutations affecting one college's domain state take its parent
+      // lock before any domain row lock. This serializes competing primary
+      // promotions, DNS verification, edits, and removals; otherwise two
+      // requests can lock different domains and deadlock while swapping
+      // primary ownership or writing audit receipts.
+      const [domainOwner] = await tx.select({ collegeId: tenantDomains.collegeId })
+        .from(tenantDomains)
+        .where(and(eq(tenantDomains.id, input.domainId),isNull(tenantDomains.deletedAt)))
+        .limit(1);
+      if (!domainOwner) throw new TenantDomainServiceError("DOMAIN_NOT_FOUND");
+      const [activeParent] = await tx.select({ id: colleges.id, status: colleges.status })
+        .from(colleges)
+        .where(eq(colleges.id, domainOwner.collegeId))
+        .for("update").limit(1);
+      if (!activeParent || activeParent.status !== "ACTIVE")
+        throw new TenantDomainServiceError("DOMAIN_NOT_FOUND");
+
         const [row]=await tx.select({
           id:tenantDomains.id,
           collegeId:tenantDomains.collegeId,
@@ -318,6 +352,23 @@ export const drizzleTenantDomainRepository: TenantDomainRepository = {
     const db = getDb();
 
     await db.transaction(async (tx) => {
+      // All mutations affecting one college's domain state take its parent
+      // lock before any domain row lock. This serializes competing primary
+      // promotions, DNS verification, edits, and removals; otherwise two
+      // requests can lock different domains and deadlock while swapping
+      // primary ownership or writing audit receipts.
+      const [domainOwner] = await tx.select({ collegeId: tenantDomains.collegeId })
+        .from(tenantDomains)
+        .where(and(eq(tenantDomains.id, domainId),isNull(tenantDomains.deletedAt)))
+        .limit(1);
+      if (!domainOwner) throw new TenantDomainServiceError("DOMAIN_NOT_FOUND");
+      const [activeParent] = await tx.select({ id: colleges.id, status: colleges.status })
+        .from(colleges)
+        .where(eq(colleges.id, domainOwner.collegeId))
+        .for("update").limit(1);
+      if (!activeParent || activeParent.status !== "ACTIVE")
+        throw new TenantDomainServiceError("DOMAIN_NOT_FOUND");
+
       const [current] = await tx
         .select({
           id: tenantDomains.id,
@@ -407,6 +458,23 @@ export const drizzleTenantDomainRepository: TenantDomainRepository = {
     const db = getDb();
 
     await db.transaction(async (tx) => {
+      // All mutations affecting one college's domain state take its parent
+      // lock before any domain row lock. This serializes competing primary
+      // promotions, DNS verification, edits, and removals; otherwise two
+      // requests can lock different domains and deadlock while swapping
+      // primary ownership or writing audit receipts.
+      const [domainOwner] = await tx.select({ collegeId: tenantDomains.collegeId })
+        .from(tenantDomains)
+        .where(and(eq(tenantDomains.id, domainId),isNull(tenantDomains.deletedAt)))
+        .limit(1);
+      if (!domainOwner) throw new TenantDomainServiceError("DOMAIN_NOT_FOUND");
+      const [activeParent] = await tx.select({ id: colleges.id, status: colleges.status })
+        .from(colleges)
+        .where(eq(colleges.id, domainOwner.collegeId))
+        .for("update").limit(1);
+      if (!activeParent || activeParent.status !== "ACTIVE")
+        throw new TenantDomainServiceError("DOMAIN_NOT_FOUND");
+
       const [target] = await tx
         .select({
           id: tenantDomains.id,
@@ -478,6 +546,23 @@ export const drizzleTenantDomainRepository: TenantDomainRepository = {
     // Soft deletion preserves host ownership and an immutable audit receipt,
     // while the partial host uniqueness index releases the public address.
     await getDb().transaction(async tx=>{
+      // All mutations affecting one college's domain state take its parent
+      // lock before any domain row lock. This serializes competing primary
+      // promotions, DNS verification, edits, and removals; otherwise two
+      // requests can lock different domains and deadlock while swapping
+      // primary ownership or writing audit receipts.
+      const [domainOwner] = await tx.select({ collegeId: tenantDomains.collegeId })
+        .from(tenantDomains)
+        .where(and(eq(tenantDomains.id, domainId),isNull(tenantDomains.deletedAt)))
+        .limit(1);
+      if (!domainOwner) throw new TenantDomainServiceError("DOMAIN_NOT_FOUND");
+      const [activeParent] = await tx.select({ id: colleges.id, status: colleges.status })
+        .from(colleges)
+        .where(eq(colleges.id, domainOwner.collegeId))
+        .for("update").limit(1);
+      if (!activeParent || activeParent.status !== "ACTIVE")
+        throw new TenantDomainServiceError("DOMAIN_NOT_FOUND");
+
       const [current]=await tx.select({
         id:tenantDomains.id,
         collegeId:tenantDomains.collegeId,

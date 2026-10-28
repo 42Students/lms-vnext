@@ -197,6 +197,88 @@ describe("tenant domains against PostgreSQL", () => {
     expect(domains[1]?.isPrimary).toBe(false);
   });
 
+
+  it("serializes simultaneous primary promotions without deadlocking or exposing two primaries", async () => {
+    const first = await createTenantDomain(superAdmin,{
+      collegeId: SEED_IDS.collegeA,host:"integration-tenant-race-primary-a.example.com",
+    },drizzleTenantDomainRepository,()=>"token-race-primary-a");
+    const second = await createTenantDomain(superAdmin,{
+      collegeId: SEED_IDS.collegeA,host:"integration-tenant-race-primary-b.example.com",
+    },drizzleTenantDomainRepository,()=>"token-race-primary-b");
+    await verifyTenantDomain(superAdmin,first.id,drizzleTenantDomainRepository,verifiedDns);
+    await verifyTenantDomain(superAdmin,second.id,drizzleTenantDomainRepository,verifiedDns);
+
+    // Both requests arrive while the college row is locked by another
+    // transaction. They must queue at the common parent before domain locks,
+    // not deadlock by each holding a different domain's row.
+    const blocker=await pool.connect();
+    await blocker.query("begin");
+    try{
+      await blocker.query("select id from colleges where id=$1 for update",[SEED_IDS.collegeA]);
+      const promotions=Promise.all([
+        setPrimaryTenantDomain(superAdmin,first.id,drizzleTenantDomainRepository),
+        setPrimaryTenantDomain(superAdmin,second.id,drizzleTenantDomainRepository),
+      ]);
+      await blocker.query("commit");
+      const results=await promotions;
+      expect(results).toHaveLength(2);
+    }finally{
+      await blocker.query("rollback");
+      blocker.release();
+    }
+    const rows=await pool.query<{id:string;is_primary:boolean}>(
+      "select id,is_primary from tenant_domains where id=any($1::uuid[])",
+      [[first.id,second.id]],
+    );
+    expect(rows.rows).toHaveLength(2);
+    expect(rows.rows.filter(row=>row.is_primary)).toHaveLength(1);
+  });
+
+  it("serializes DNS verification against primary promotion and keeps exactly one verified primary",async()=>{
+    const first=await createTenantDomain(superAdmin,{
+      collegeId:SEED_IDS.collegeA,host:"integration-tenant-race-verify-a.example.com",
+    },drizzleTenantDomainRepository,()=>"token-race-verify-a");
+    const second=await createTenantDomain(superAdmin,{
+      collegeId:SEED_IDS.collegeA,host:"integration-tenant-race-verify-b.example.com",
+    },drizzleTenantDomainRepository,()=>"token-race-verify-b");
+    await verifyTenantDomain(superAdmin,first.id,drizzleTenantDomainRepository,verifiedDns);
+    await Promise.all([
+      verifyTenantDomain(superAdmin,second.id,drizzleTenantDomainRepository,verifiedDns),
+      setPrimaryTenantDomain(superAdmin,first.id,drizzleTenantDomainRepository),
+    ]);
+    const rows=await pool.query<{id:string;is_primary:boolean;is_verified:boolean}>(
+      "select id,is_primary,is_verified from tenant_domains where id=any($1::uuid[])",
+      [[first.id,second.id]],
+    );
+    expect(rows.rows).toHaveLength(2);
+    expect(rows.rows.every(row=>row.is_verified)).toBe(true);
+    expect(rows.rows.filter(row=>row.is_primary).map(row=>row.id)).toEqual([first.id]);
+  });
+
+  it("never resurrects a removed domain when removal races primary promotion",async()=>{
+    const created=await createTenantDomain(superAdmin,{
+      collegeId:SEED_IDS.collegeA,host:"integration-tenant-race-delete.example.com",
+    },drizzleTenantDomainRepository,()=>"token-race-delete");
+    await verifyTenantDomain(superAdmin,created.id,drizzleTenantDomainRepository,verifiedDns);
+    const outcomes=await Promise.allSettled([
+      setPrimaryTenantDomain(superAdmin,created.id,drizzleTenantDomainRepository),
+      deleteTenantDomain(superAdmin,created.id,drizzleTenantDomainRepository,created.host),
+    ]);
+    expect(outcomes[1]?.status).toBe("fulfilled");
+    if(outcomes[0]?.status==="rejected"){
+      expect(outcomes[0].reason).toMatchObject({code:"DOMAIN_NOT_FOUND"});
+    }
+    const rows=await pool.query<{deleted_at:Date|null;is_primary:boolean;is_verified:boolean}>(
+      "select deleted_at,is_primary,is_verified from tenant_domains where id=$1",
+      [created.id],
+    );
+    expect(rows.rows[0]?.deleted_at).not.toBeNull();
+    expect(rows.rows[0]?.is_primary).toBe(false);
+    expect(rows.rows[0]?.is_verified).toBe(false);
+    await expect(resolveTenantFromHost(created.host,drizzleTenantDomainRepository))
+      .resolves.toBeNull();
+  });
+
   it("enforces global host uniqueness and tenant management boundaries", async () => {
     const collegeBDomain = await createTenantDomain(
       superAdmin,
