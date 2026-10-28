@@ -21,9 +21,17 @@ export async function POST(request: Request) {
   try {
     const input = schema.parse(await request.json());
     const context = await getCurrentRequestContext();
+    // The HTTP action discriminator is transport-only. The private-storage
+    // service enforces strict payloads and must never receive an extra "action".
     const result = input.action === "INITIATE"
-      ? await initiateOwnLearnerGalleryUpload(context, input)
-      : await confirmOwnLearnerGalleryUpload(context, input);
+      ? await initiateOwnLearnerGalleryUpload(context, {
+          originalName: input.originalName,
+          contentType: input.contentType,
+          sizeBytes: input.sizeBytes,
+        })
+      : await confirmOwnLearnerGalleryUpload(context, {
+          objectKey: input.objectKey,
+        });
     return NextResponse.json(result, {
       status: input.action === "INITIATE" ? 201 : 200, headers: noStore,
     });

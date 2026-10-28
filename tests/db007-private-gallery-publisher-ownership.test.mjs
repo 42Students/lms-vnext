@@ -30,3 +30,15 @@ test("DB-007 admin cleanup remains scoped and live-authorized without publishing
   assert.match(append, /eq\(profilePrivateDocumentReceipts\.owningMembershipId, access\.membershipId\)/);
   assert.match(append, /await recheckGalleryWriteActor\(tx, context, access\)/);
 });
+
+const uploadRoute = readFileSync(
+  new URL("../src/app/api/profile/learner-gallery/upload/route.ts", import.meta.url),
+  "utf8",
+);
+
+test("DB-007 gallery upload strips transport discriminator for strict storage boundary", () => {
+  assert.match(uploadRoute, /z\.discriminatedUnion\("action"/);
+  assert.match(uploadRoute, /initiateOwnLearnerGalleryUpload\(context, \{\s*originalName: input\.originalName,\s*contentType: input\.contentType,\s*sizeBytes: input\.sizeBytes,/);
+  assert.match(uploadRoute, /confirmOwnLearnerGalleryUpload\(context, \{\s*objectKey: input\.objectKey,/);
+  assert.doesNotMatch(uploadRoute, /(?:initiateOwnLearnerGalleryUpload|confirmOwnLearnerGalleryUpload)\(context, input\)/);
+});
