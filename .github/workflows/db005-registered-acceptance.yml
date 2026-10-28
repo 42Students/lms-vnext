@@ -5,6 +5,7 @@ on:
     branches: [main]
     paths:
       - 'drizzle/0303_db02_academic_timetable_registered.sql'
+      - 'drizzle/0304_db04_normalized_profile_persistence.sql'
       - 'scripts/sql/db02-*.sh'
       - 'scripts/sql/db02-*.sql'
       - 'src/modules/academics/**'
