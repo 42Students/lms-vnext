@@ -69,6 +69,7 @@ jobs:
           tests/integration/db01-registered-physical-field-crosswalk.test.ts
           tests/integration/db01-person-name-persistence.test.ts
           tests/integration/db01-self-identity-profile.test.ts
+          tests/integration/identity-system-roles.test.ts
           tests/integration/db01-session-atomic-authorization.test.ts
           tests/integration/db01-tenant-routing-lifecycle.test.ts
           tests/integration/db01-tenant-identity-invariants.test.ts

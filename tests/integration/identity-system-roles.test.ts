@@ -324,6 +324,25 @@ describe("identity context and system roles against PostgreSQL", () => {
     ).rejects.toBeInstanceOf(AuthorizationError);
   });
 
+  it("rejects a forged Super Admin snapshot when the persisted user lacks privilege",async()=>{
+    // A compromised or stale context can *claim* the SUPER_ADMIN role.
+    // The identity repository must independently re-read current persisted
+    // system_roles under locks; the forged context grants nothing.
+    const spoofed:RequestContext={
+      user:{id:SEED_IDS.learnerUser,identityUid:"seed-learner",
+        platformStatus:"ACTIVE",systemRoles:["SUPER_ADMIN"]},
+      membership:null,
+    };
+    await expect(assignSystemRole(spoofed,{
+      userId:SEED_IDS.facultyUser,role:"SUPER_ADMIN",
+    },drizzleSystemRoleRepository)).rejects.toBeInstanceOf(AuthorizationError);
+    const role=await pool.query(
+      "select 1 from system_roles where user_id=$1 and role='SUPER_ADMIN'",
+      [SEED_IDS.facultyUser],
+    );
+    expect(role.rowCount).toBe(0);
+  });
+
   it("persists secure bootstrap idempotently without a public API path", async () => {
     const identity = createBootstrapDirectory();
     const input = {
