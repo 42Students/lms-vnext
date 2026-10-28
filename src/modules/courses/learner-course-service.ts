@@ -214,6 +214,7 @@ export async function listLearnerCourseDeliveries(
             ),
             eq(courses.status, "ACTIVE"),
             eq(courses.enabled, true),
+            isNull(courses.deletedAt),
             or(isNull(courses.legacyAllowedForDisplay),
               ne(courses.legacyAllowedForDisplay, 0)),
           ),
@@ -351,6 +352,7 @@ export async function listLearnerCourseDeliveries(
       eq(courseOfferings.status, "ACTIVE"),
       eq(courses.status, "ACTIVE"),
       eq(courses.enabled, true),
+      isNull(courses.deletedAt),
       or(isNull(courses.legacyAllowedForDisplay),
         ne(courses.legacyAllowedForDisplay, 0)),
       eq(sections.status, "ACTIVE"),
@@ -530,7 +532,7 @@ export async function getLearnerCourseWorkspace(
   // The catalogue may still list a hidden/archived course for reference,
   // but a direct UUID or legacy bookmark cannot bypass the old active and
   // enabled access flags to reveal lesson/assessment content.
-  if(course.status!=="ACTIVE"||!course.enabled||
+  if(course.status!=="ACTIVE"||!course.enabled||course.deletedAt||
      course.legacyAllowedForDisplay===0)
     throw new CoursesServiceError("LEARNER_PROGRESS_ACCESS_DENIED");
   let [path] = await getDb()
