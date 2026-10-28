@@ -89,6 +89,69 @@ const verifiedDns = {
 };
 
 describe("tenant domains against PostgreSQL", () => {
+  it("round-trips all 13 tenant-domain field behaviors through actual DNS and deletion lifecycle",async()=>{
+    const host="integration-tenant-field-contract.example.com";
+    const created=await createTenantDomain(superAdmin,{
+      collegeId:SEED_IDS.collegeA,host,
+    },drizzleTenantDomainRepository,()=>"token-field-contract");
+    const initial=await pool.query<{
+      id:string;college_id:string;host:string;created_at:Date;updated_at:Date;
+      is_primary:boolean;is_verified:boolean;verification_token:string;
+      verified_at:Date|null;deleted_at:Date|null;
+    }>("select * from tenant_domains where id=$1",[created.id]);
+    expect(initial.rows[0]).toMatchObject({
+      id:created.id,college_id:SEED_IDS.collegeA,host,
+      is_primary:false,is_verified:false,
+      verification_token:"token-field-contract",
+      verified_at:null,deleted_at:null,
+    });
+    expect(initial.rows[0]?.created_at).toBeInstanceOf(Date);
+    expect(initial.rows[0]?.updated_at).toBeInstanceOf(Date);
+
+    await verifyTenantDomain(superAdmin,created.id,drizzleTenantDomainRepository,{
+      async verify(name,token){
+        expect(name).toBe(host);
+        expect(token).toBe("token-field-contract");
+        return {verified:false as const,result:"TXT_VALUE_MISMATCH" as const};
+      },
+    });
+    const failed=await pool.query<{
+      last_checked_at:Date;last_check_result:string;last_found_values:string;
+      is_verified:boolean;
+    }>("select last_checked_at,last_check_result,last_found_values,is_verified from tenant_domains where id=$1",[created.id]);
+    expect(failed.rows[0]?.last_checked_at).toBeInstanceOf(Date);
+    expect(failed.rows[0]?.last_check_result).toBe("TXT_VALUE_MISMATCH");
+    expect(failed.rows[0]?.last_found_values?.length).toBeGreaterThan(0);
+    expect(failed.rows[0]?.last_found_values).not.toContain("token-field-contract");
+    expect(failed.rows[0]?.is_verified).toBe(false);
+
+    await verifyTenantDomain(superAdmin,created.id,drizzleTenantDomainRepository,verifiedDns);
+    const verified=await pool.query<{
+      is_primary:boolean;is_verified:boolean;verification_token:string|null;
+      verified_at:Date;last_check_result:string;last_found_values:string|null;
+      updated_at:Date;
+    }>("select * from tenant_domains where id=$1",[created.id]);
+    expect(verified.rows[0]?.is_primary).toBe(true);
+    expect(verified.rows[0]?.is_verified).toBe(true);
+    expect(verified.rows[0]?.verification_token).toBeNull();
+    expect(verified.rows[0]?.verified_at).toBeInstanceOf(Date);
+    expect(verified.rows[0]?.last_check_result).toBe("VERIFIED");
+    expect(verified.rows[0]?.last_found_values).toBeNull();
+    expect(verified.rows[0]?.updated_at.getTime()).toBeGreaterThanOrEqual(
+      initial.rows[0]!.updated_at.getTime());
+
+    await deleteTenantDomain(superAdmin,created.id,drizzleTenantDomainRepository,host);
+    const tombstoned=await pool.query<{
+      id:string;host:string;deleted_at:Date;is_primary:boolean;is_verified:boolean;
+    }>("select id,host,deleted_at,is_primary,is_verified from tenant_domains where id=$1",[created.id]);
+    expect(tombstoned.rows[0]).toMatchObject({
+      id:created.id,host,is_primary:false,is_verified:false,
+    });
+    expect(tombstoned.rows[0]?.deleted_at).toBeInstanceOf(Date);
+    await expect(resolveTenantFromHost(host,drizzleTenantDomainRepository))
+      .resolves.toBeNull();
+  });
+
   it("creates idempotently, verifies, and resolves a tenant host", async () => {
     const first = await createTenantDomain(
       superAdmin,
