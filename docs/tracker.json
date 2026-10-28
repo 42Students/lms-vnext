@@ -1620,7 +1620,28 @@
         "acceptanceEvidence": []
       }
     ],
-    "sharedChangeRequests": [],
+    "sharedChangeRequests": [
+      {
+        "id": "L06-DB07-PROMOTION-20261029",
+        "fromLane": "L06",
+        "toLane": "L01",
+        "paths": [
+          "src/db/schema/projects.ts",
+          "src/db/schema/index.ts",
+          "drizzle/**",
+          "drizzle/meta/**",
+          "docs/planning/sql/db07-template-version-parent-integrity-staging.sql",
+          "docs/planning/sql/db07-template-version-append-only-staging.sql",
+          "docs/planning/sql/db07-template-version-pointer-fks-staging.sql",
+          "docs/planning/sql/db07-project-lineage-fks-staging.sql",
+          "docs/planning/sql/db07-review-evaluation-parent-fks-staging.sql",
+          "docs/planning/sql/db07-meeting-linked-ancestry-staging.sql"
+        ],
+        "reason": "DB-068/070/071/073/074/075 already have staged SQL, source guards and gated PG witnesses. L01-only numbered promotion needed: reconcile index/FK ordering and deferred pointers, preflight corrupt rows, register migration+journal+schema, clean disposable replay/drift and execute all gated DB07 integration witnesses plus project template/materialization/review/meeting service regression. Preserve append-only history, valid same-template reassignment and nullable meeting links; do not mark tasks done from source-only results. L06 owns domain services and per-domain remediation.",
+        "status": "REQUESTED",
+        "requestedAt": "2026-10-28T19:55:00.000Z"
+      }
+    ],
     "coordination": {
       "oneSessionPerLane": "Each of the ten chats must choose exactly one L01-L10 ID, write a unique sessionId claim into its lane through a fresh-main optimistic commit, and verify no other unexpired claim occupies it. Do not work an already claimed lane without an explicit same-user handoff.",
       "claimContract": "claim = null or {sessionId, holder, claimedAt, expiresAt}; expiresAt is ISO timestamp. Expiry only permits a deliberate fresh-head reclaim and never authorizes clobbering an in-flight commit. Claims are advisory coordination plus optimistic SHA conflict detection, NOT an OS/distributed lock.",
