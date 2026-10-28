@@ -32,6 +32,29 @@ export async function syncLearnerEducationProjection(
     seen.add(item.id);
   }
 
+  // Validate *all* attachment references, including ungraded drafts that
+  // do not yet qualify for screening. A partial JSON edit must never retain
+  // another learner's private document ID as an apparent attachment.
+  const verifiedReceipts = new Map<string,{ id:string; purpose:string }>();
+  for (const item of education) {
+    if (!item.certificateReceiptId) continue;
+    const [receipt] = await tx.select({
+      id: profilePrivateDocumentReceipts.id,
+      purpose: profilePrivateDocumentReceipts.purpose,
+      relatedEntryId: profilePrivateDocumentReceipts.relatedEntryId,
+    }).from(profilePrivateDocumentReceipts).where(and(
+      eq(profilePrivateDocumentReceipts.id, item.certificateReceiptId),
+      eq(profilePrivateDocumentReceipts.owningMembershipId, membershipId),
+      inArray(profilePrivateDocumentReceipts.purpose, ["MARKSHEET", "EDUCATION_CERTIFICATE"]),
+      eq(profilePrivateDocumentReceipts.scanStatus, "CLEAN"),
+      sql`${profilePrivateDocumentReceipts.revokedAt} is null`,
+      sql`(${profilePrivateDocumentReceipts.retentionUntil} is null or ${profilePrivateDocumentReceipts.retentionUntil} > now())`,
+    )).for("share").limit(1);
+    if (!receipt || (receipt.relatedEntryId !== null && receipt.relatedEntryId !== item.id))
+      throw new Error("EDUCATION_RECEIPT_INVALID");
+    verifiedReceipts.set(item.id,receipt);
+  }
+
   const qualified = education.filter(item =>
     item.educationType.trim() && item.institution.trim() &&
     item.gradingType && item.gradeObtained.trim() && item.maxGrade.trim(),
@@ -93,21 +116,8 @@ export async function syncLearnerEducationProjection(
       eq(learnerProfileEducationDocuments.learnerMembershipId, membershipId),
     ));
     if (item.certificateReceiptId) {
-      const [receipt] = await tx.select({
-        id: profilePrivateDocumentReceipts.id,
-        purpose: profilePrivateDocumentReceipts.purpose,
-        relatedEntryId: profilePrivateDocumentReceipts.relatedEntryId,
-      }).from(profilePrivateDocumentReceipts).where(and(
-        eq(profilePrivateDocumentReceipts.id, item.certificateReceiptId),
-        eq(profilePrivateDocumentReceipts.owningMembershipId, membershipId),
-        inArray(profilePrivateDocumentReceipts.purpose, ["MARKSHEET", "EDUCATION_CERTIFICATE"]),
-        eq(profilePrivateDocumentReceipts.scanStatus, "CLEAN"),
-        sql`${profilePrivateDocumentReceipts.revokedAt} is null`,
-        sql`(${profilePrivateDocumentReceipts.retentionUntil} is null or ${profilePrivateDocumentReceipts.retentionUntil} > now())`,
-      )).for("share").limit(1);
-      if (!receipt || (receipt.relatedEntryId !== null &&
-          receipt.relatedEntryId !== item.id))
-        throw new Error("EDUCATION_RECEIPT_INVALID");
+      const receipt=verifiedReceipts.get(item.id);
+      if (!receipt) throw new Error("EDUCATION_RECEIPT_INVALID");
       await tx.insert(learnerProfileEducationDocuments).values({
         educationEntryId: item.id,
         learnerMembershipId: membershipId,

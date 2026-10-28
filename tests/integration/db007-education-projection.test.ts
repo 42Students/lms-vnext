@@ -2,7 +2,7 @@ import { randomUUID } from "node:crypto";
 import { afterAll, describe, expect, it } from "vitest";
 import { eq } from "drizzle-orm";
 import { closeDatabaseConnection, getDb } from "@/db/client";
-import { learnerProfileEducationDocuments, learnerProfileEducationEntries } from "@/db/schema";
+import { learnerProfileEducationDocuments, learnerProfileEducationEntries, profilePrivateDocumentReceipts } from "@/db/schema";
 import { syncLearnerEducationProjection } from "@/modules/people/learner-education-projection-service";
 import { learnerProfileEducationWriteSchema } from "@/modules/people/profile-validation";
 import { SEED_IDS } from "../../scripts/db-seed-data";
@@ -83,4 +83,42 @@ describe.skipIf(!enabled)("DB-007 normalized education follows versioned learner
       expect(docs.filter(x=>x.educationEntryId===id)).toHaveLength(0);
     });
   });
+  it("validates private certificate references even for an ungraded draft",async()=>{
+    await inRollback(async tx=>{
+      const owner=SEED_IDS.learnerCollegeAMembership,id=randomUUID();
+      const input=learnerProfileEducationWriteSchema.parse([{
+        id,educationType:"UG",institution:"DB007 College",
+        gradingType:"",gradeObtained:"",maxGrade:"",
+        certificateReceiptId:randomUUID(),
+      }]);
+      await expect(syncLearnerEducationProjection(tx,owner,input))
+        .rejects.toThrow("EDUCATION_RECEIPT_INVALID");
+    });
+  });
+  it("persists an owned CLEAN marksheet under the same education entry",async()=>{
+    await inRollback(async tx=>{
+      const owner=SEED_IDS.learnerCollegeAMembership,id=randomUUID();
+      const [receipt]=await tx.insert(profilePrivateDocumentReceipts).values({
+        owningMembershipId:owner,purpose:"MARKSHEET",relatedEntryId:id,
+        privateObjectKey:`private/${SEED_IDS.collegeA}/${owner}/profile-verification/${randomUUID()}`,
+        objectGeneration:"1",sha256Hex:"a".repeat(64),
+        mimeType:"application/pdf",sizeBytes:128,scanStatus:"CLEAN",
+        uploadedByUserId:SEED_IDS.learnerUser,
+      }).returning({id:profilePrivateDocumentReceipts.id});
+      expect(receipt).toBeDefined();
+      const entry=learnerProfileEducationWriteSchema.parse([{
+        id,educationType:"UG",institution:"DB007 College",
+        gradingType:"GPA",gradeObtained:"8.3",maxGrade:"10",
+        certificateReceiptId:receipt!.id,
+      }]);
+      await syncLearnerEducationProjection(tx,owner,entry);
+      const linked=await tx.select().from(learnerProfileEducationDocuments)
+        .where(eq(learnerProfileEducationDocuments.educationEntryId,id));
+      expect(linked).toHaveLength(1);
+      expect(linked[0]).toMatchObject({
+        learnerMembershipId:owner,receiptId:receipt!.id,purpose:"MARKSHEET",
+      });
+    });
+  });
+
 });
