@@ -117,9 +117,11 @@ async function loadApplicationContext(
     .from(placementApplications)
     .innerJoin(
       placementJobRoleOptions,
-      eq(
-        placementJobRoleOptions.id,
-        placementApplications.roleOptionId,
+      and(
+        eq(placementJobRoleOptions.id, placementApplications.roleOptionId),
+        // DB-066 defense in depth before registered composite FKs: do not
+        // read a role option attached to a different placement job.
+        eq(placementJobRoleOptions.jobId, placementApplications.jobId),
       ),
     )
     .innerJoin(
@@ -1143,9 +1145,11 @@ function requestListQuery() {
     )
     .innerJoin(
       placementJobRoleOptions,
-      eq(
-        placementJobRoleOptions.id,
-        placementApplications.roleOptionId,
+      and(
+        eq(placementJobRoleOptions.id, placementApplications.roleOptionId),
+        // DB-066 defense in depth before registered composite FKs: do not
+        // read a role option attached to a different placement job.
+        eq(placementJobRoleOptions.jobId, placementApplications.jobId),
       ),
     )
     .innerJoin(
@@ -1325,10 +1329,12 @@ export async function getLearnerPlacementRequestWorkspace(
         )
         .innerJoin(
           placementJobRoleOptions,
-          eq(
-            placementJobRoleOptions.id,
-            placementApplications.roleOptionId,
-          ),
+          and(
+        eq(placementJobRoleOptions.id, placementApplications.roleOptionId),
+        // DB-066 defense in depth before registered composite FKs: do not
+        // read a role option attached to a different placement job.
+        eq(placementJobRoleOptions.jobId, placementApplications.jobId),
+      ),
         )
         .innerJoin(
           placementJobs,
