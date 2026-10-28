@@ -175,6 +175,14 @@ function mapCourseConstraint(error: unknown) {
   }
 }
 
+/** Keep the SQL page and total count on exactly the same soft-delete and
+ * lifecycle scope. A deleted ACTIVE course must never inflate pagination. */
+function courseListingStateConditions(includeArchived: boolean, onlyArchived: boolean) {
+  if (onlyArchived) return [eq(courses.status, "ARCHIVED")];
+  if (includeArchived) return [];
+  return [eq(courses.status, "ACTIVE"), isNull(courses.deletedAt)];
+}
+
 export async function listCourses(
   context: RequestContext,
   collegeIdInput: string,
@@ -222,11 +230,7 @@ export async function listCourses(
     isNull(departments.archivedAt),
   ];
 
-  if (onlyArchived) {
-    conditions.push(eq(courses.status, "ARCHIVED"));
-  } else if (!includeArchived) {
-    conditions.push(eq(courses.status, "ACTIVE"),isNull(courses.deletedAt));
-  }
+  conditions.push(...courseListingStateConditions(includeArchived, onlyArchived));
 
   if (departmentId) {
     conditions.push(
@@ -298,8 +302,7 @@ export async function listCoursesPage(
     eq(departments.collegeId, collegeId),
     isNull(departments.archivedAt),
   ];
-  if (onlyArchived) conditions.push(eq(courses.status, "ARCHIVED"));
-  else if (!includeArchived) conditions.push(eq(courses.status, "ACTIVE"));
+  conditions.push(...courseListingStateConditions(includeArchived, onlyArchived));
   if (departmentId) conditions.push(eq(courses.departmentId, departmentId));
   const [counter] = await getDb()
     .select({ total: sql<number>`count(*)::int` })
