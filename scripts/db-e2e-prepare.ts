@@ -208,6 +208,34 @@ async function main() {
     toStatus:"SHORTLISTED",actorUserId:ids.facultyUser,
   }).onConflictDoNothing();
 
+  // Privacy-negative witness: an ACTIVE learner applied to the same drive
+  // but was NOT shortlisted by the TPO. The employer must not see the
+  // applicant name or forge a focused-review URL for this application.
+  const privateLearnerId="66000000-0000-4000-8000-000000000009";
+  const privateMembershipId="66000000-0000-4000-8000-000000000010";
+  const privateApplicationId="66000000-0000-4000-8000-000000000011";
+  await dbClient.getDb().insert(dbSchema.users).values({
+    id:privateLearnerId,identityUid:"e2e-private-applicant",
+    displayName:"E2E Private Pending Applicant",
+    email:"private-pending-e2e@example.com",platformStatus:"ACTIVE",
+  }).onConflictDoNothing();
+  await dbClient.getDb().insert(dbSchema.collegeMemberships).values({
+    id:privateMembershipId,userId:privateLearnerId,collegeId:ids.collegeA,
+    status:"ACTIVE",
+  }).onConflictDoNothing();
+  await dbClient.getDb().insert(dbSchema.membershipRoles).values({
+    membershipId:privateMembershipId,role:"LEARNER",
+  }).onConflictDoNothing();
+  await dbClient.getDb().insert(dbSchema.placementApplications).values({
+    id:privateApplicationId,jobId:recruiterJobId,roleOptionId:recruiterRoleId,
+    membershipId:privateMembershipId,channel:"INTERNAL",status:"SUBMITTED",
+    eligibilityStatus:"ELIGIBLE",
+    eligibilitySnapshot:{source:"disposable-e2e-private-fixture"},
+    submittedByUserId:privateLearnerId,
+  }).onConflictDoNothing();
+  await dbClient.getDb().insert(dbSchema.placementApplicationScreenings).values({
+    applicationId:privateApplicationId,status:"PENDING",
+  }).onConflictDoNothing();
   // A real OPEN college-to-company ASK shows up in Recruiter Today.
   // Only this synthetic, disposable E2E database has these fixtures.
   await dbClient.getDb().insert(dbSchema.placementDriveChangeRequests).values({

@@ -17,7 +17,7 @@ test.describe("Recruiter Applicants, Rounds and Offers: prototype 05–07",()=>{
   await expect(page.getByText("Applicants have not been shared")).toHaveCount(0);
   await expect(page.getByRole("link",{name:"Review one by one"})).toBeVisible();
   await expect(page.getByText(/Only placement-cell-shortlisted applicants are visible/)).toBeVisible();
-  await expect(page.getByText("E2E Prototype Learner", {exact:true})).toHaveCount(0);
+  await expect(page.getByText("E2E Private Pending Applicant",{exact:true})).toHaveCount(0);
   await expectNoRawErrors(page);
  });
 
@@ -25,7 +25,12 @@ test.describe("Recruiter Applicants, Rounds and Offers: prototype 05–07",()=>{
   await authenticateGracefulRole(context,"recruiter");
   await page.goto(drive+"?tab=applicants&review=1&applicant=66000000-0000-4000-8000-000000000099");
   await expect(page.getByRole("dialog",{name:"Focused review"})).toHaveCount(0);
-  await expect(page.getByText("E2E Verified Applicant",{exact:true})).toHaveCount(0);
+  await expect(page.getByText("E2E Private Pending Applicant",{exact:true})).toHaveCount(0);
+  // Another real application exists in the same college/drive, but its
+  // screening remains PENDING. Supplying its ID must not grant disclosure.
+  await page.goto(drive+"?tab=applicants&review=1&applicant=66000000-0000-4000-8000-000000000011");
+  await expect(page.getByRole("dialog",{name:"Focused review"})).toHaveCount(0);
+  await expect(page.getByText("E2E Private Pending Applicant",{exact:true})).toHaveCount(0);
  });
 
  test("Rounds keeps interview slots, employer proposals and official bookings distinct",async({page,context})=>{
