@@ -121,8 +121,12 @@ export async function getCollegeLearnerProgressReport(
     eq(courseLearningPaths.status,"PUBLISHED"),
     eq(courseLessons.status,"ACTIVE"),
     eq(courseLessons.visibleToStudents,true),
+    isNull(courseLessons.deletedAt),
     eq(lessonContents.status,"PUBLISHED"),
     eq(lessonContents.visibleToStudents,true),
+    isNull(lessonContents.deletedAt),
+    eq(lessonContents.deletedWithLesson,false),
+    or(isNull(lessonContents.legacyActive),eq(lessonContents.legacyActive,true)),
     inArray(lessonContents.contentType,["VIDEO","YOUTUBE"]),
     or(isNull(lessonContents.deliveryId),eq(lessonContents.deliveryId,deliveryId)))),
   db.select({id:courseAssignments.id}).from(courseAssignments)
@@ -131,7 +135,8 @@ export async function getCollegeLearnerProgressReport(
    .where(and(eq(courseLearningPaths.offeringId,offeringId),
     eq(courseLearningPaths.status,"PUBLISHED"),
     eq(courseLessons.status,"ACTIVE"),
-    eq(courseLessons.visibleToStudents,true),eq(courseAssignments.status,"PUBLISHED"),
+    eq(courseLessons.visibleToStudents,true),isNull(courseLessons.deletedAt),
+    eq(courseAssignments.status,"PUBLISHED"),
     or(isNull(courseAssignments.deliveryId),eq(courseAssignments.deliveryId,deliveryId)))),
   db.select({id:courseQuizzes.id}).from(courseQuizzes)
    .innerJoin(courseLessons,eq(courseLessons.id,courseQuizzes.lessonId))
@@ -139,7 +144,7 @@ export async function getCollegeLearnerProgressReport(
    .where(and(eq(courseLearningPaths.offeringId,offeringId),
     eq(courseLearningPaths.status,"PUBLISHED"),
     eq(courseLessons.status,"ACTIVE"),
-    eq(courseLessons.visibleToStudents,true),
+    eq(courseLessons.visibleToStudents,true),isNull(courseLessons.deletedAt),
     eq(courseQuizzes.status,"PUBLISHED"),
     // Native quizzes rely on status and visibility. Imported legacy rows
     // additionally carry independent active/enabled/soft-delete flags; a
@@ -156,6 +161,7 @@ export async function getCollegeLearnerProgressReport(
   members.length&&videoIds.length?db.select({
    membershipId:learnerContentProgress.membershipId,itemId:learnerContentProgress.lessonContentId,
    attempt:learnerContentProgress.attempt,completedAt:learnerContentProgress.completedAt,
+   legacyWasDeleted:learnerContentProgress.legacyWasDeleted,
   }).from(learnerContentProgress).where(and(
    inArray(learnerContentProgress.membershipId,members),
    inArray(learnerContentProgress.lessonContentId,videoIds))):[],
@@ -187,7 +193,10 @@ export async function getCollegeLearnerProgressReport(
   if(!prior||item.attempt>prior.attempt)latestVideo.set(key,item);
  }
  // The current attempt may be incomplete even if an older attempt completed.
- const videos=byMember([...latestVideo.values()].filter(item=>item.completedAt!==null));
+ // Select the newest attempt BEFORE filtering tombstones. A deleted latest
+ // attempt must not resurrect an older completed record.
+ const videos=byMember([...latestVideo.values()].filter(item=>
+  item.completedAt!==null&&item.legacyWasDeleted!==true));
  const assignments=byMember(submissions),quizzes=byMember(attempts);
  const itemsMeasured=videoIds.length+assignmentIds.length+quizIds.length;
  const rows=visible.map(member=>{

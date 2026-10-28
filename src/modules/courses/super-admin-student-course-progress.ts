@@ -98,6 +98,8 @@ export async function getSuperAdminStudentCourseProgress(context:RequestContext,
   join course_learning_paths p on p.id=l.learning_path_id
   where p.offering_id=${offeringId}::uuid and p.status='PUBLISHED'
    and lc.status='PUBLISHED' and lc.visible_to_students=true
+   and lc.deleted_at is null and lc.deleted_with_lesson=false
+   and lc.legacy_active is distinct from false
    and lc.content_type in ('VIDEO','YOUTUBE')
  ), published_assignments as (
   select a.id,a.delivery_id from course_assignments a
@@ -131,6 +133,8 @@ export async function getSuperAdminStudentCourseProgress(context:RequestContext,
   from learner_content_progress pr
   join published_items pi on pi.id=pr.lesson_content_id
   where pr.membership_id=r.membership_id and pr.completed_at is not null
+   and pr.legacy_was_deleted is distinct from true
+   -- Check newer attempts irrespective of their deletion state.
    and not exists (
     select 1 from learner_content_progress newer
     where newer.membership_id=pr.membership_id

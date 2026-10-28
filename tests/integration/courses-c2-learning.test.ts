@@ -47,6 +47,7 @@ import {
   getLearnerContentProgress,
   listMyLearnerContentProgressBatch,
 } from "@/modules/courses/progress-service";
+import { getCollegeLearnerProgressReport } from "@/modules/courses/college-learner-progress-service";
 
 const databaseUrl =
   process.env.TEST_DATABASE_URL ??
@@ -1126,6 +1127,49 @@ describe("courses C2 learning structure against PostgreSQL", () => {
       [accepted.rows[0]!.id],
     );
     expect(after.rows[0]!.delivery_id).toBe(structure.deliveryA.id);
+  });
+
+  it("counts the latest nondeleted video attempt after selecting the latest",async()=>{
+    const structure=await createStructure();
+    const path=await createLearningPath(collegeAdmin,{
+      offeringId:structure.offering.id,title:"C2 video attempts",
+    });
+    const lesson=await createCourseLesson(collegeAdmin,{
+      learningPathId:path.id,name:"C2 progress review lesson",sequence:0,
+    });
+    const video=await createLessonContent(collegeAdmin,{
+      lessonId:lesson.id,title:"C2 video report",
+      contentType:"YOUTUBE",points:1,sequence:0,
+      externalUrl:"https://www.youtube.com/watch?v=abc123",
+      durationSeconds:100,
+    });
+    await transitionLessonContent(collegeAdmin,video.id,{action:"PUBLISH"});
+    await transitionLearningPath(collegeAdmin,path.id,{action:"PUBLISH"});
+    const args={offeringId:structure.offering.id,deliveryId:structure.deliveryA.id};
+    const totals=async()=>{
+      const answer=await getCollegeLearnerProgressReport(collegeAdmin,args);
+      return {completed:answer.report?.rows.find(x=>x.membershipId===learnerMembershipId)?.videoDone,
+        total:answer.report?.totalVideos};
+    };
+    expect(await totals()).toEqual({completed:0,total:1});
+    await pool.query(`insert into learner_content_progress
+     (membership_id,lesson_content_id,attempt,completed_at,last_position_seconds)
+     values($1,$2,1,now(),100)`,[learnerMembershipId,video.id]);
+    expect(await totals()).toEqual({completed:1,total:1});
+    await pool.query(`insert into learner_content_progress
+     (membership_id,lesson_content_id,attempt,completed_at,last_position_seconds,legacy_was_deleted)
+     values($1,$2,2,now(),100,true)`,[learnerMembershipId,video.id]);
+    expect(await totals()).toEqual({completed:0,total:1});
+    await pool.query(`update learner_content_progress set legacy_was_deleted=false
+     where membership_id=$1 and lesson_content_id=$2 and attempt=2`,
+      [learnerMembershipId,video.id]);
+    expect(await totals()).toEqual({completed:1,total:1});
+    await pool.query(`insert into learner_content_progress
+     (membership_id,lesson_content_id,attempt,last_position_seconds)
+     values($1,$2,3,0)`,[learnerMembershipId,video.id]);
+    expect(await totals()).toEqual({completed:0,total:1});
+    await pool.query("update lesson_contents set deleted_at=now() where id=$1",[video.id]);
+    expect(await totals()).toEqual({completed:0,total:0});
   });
 
 });
