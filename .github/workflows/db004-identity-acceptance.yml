@@ -81,6 +81,7 @@ jobs:
           tests/integration/db01-identity-fk-invariants.test.ts
           tests/integration/db01-concurrent-integrity.test.ts
           tests/integration/db01-learner-faculty-field-semantics.test.ts
+          tests/integration/db01-department-field-semantics.test.ts
           tests/integration/db01-org-college-field-semantics.test.ts
           tests/integration/db01-user-identity-field-semantics.test.ts
           tests/integration/db01-auth-attempt-field-semantics.test.ts
