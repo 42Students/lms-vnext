@@ -167,6 +167,16 @@ describe("DB03 group kernel on disposable PostgreSQL", () => {
     );
     expect(afterSections.rows[0].n).toBe(initialSections.rows[0].n);
   });
+  it("rejects elective slot years that canonical progression cannot represent", async () => {
+    const { programId, periodId } = await createElectiveFixture();
+    for (const academicYear of ["1800-01", "9999-00", "2024-29"]) {
+      await expect(createElectiveSlot(admin, {
+        collegeId: SEED_IDS.collegeA, programId, academicPeriodId: periodId,
+        semesterNumber: 1, academicYear, name: "Impossible elective year",
+      })).rejects.toMatchObject({ code: "ELECTIVE_ACADEMIC_YEAR_INVALID" });
+    }
+  });
+
   it("resolves actual elective offering IDs independently from delivery course offering IDs", async () => {
     const { slotId } = await createElectiveFixture();
     expect(fixture.offerings).toHaveLength(2);
