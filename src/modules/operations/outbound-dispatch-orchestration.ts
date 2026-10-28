@@ -120,12 +120,16 @@ export async function executeClaimedOutbound(
     // The transport may have accepted the request before the exception.
     return "RECONCILIATION_REQUIRED";
   }
-  if (response.kind === "UNKNOWN") return "RECONCILIATION_REQUIRED";
+  // Do not trust malformed runtime adapter responses, even if the adapter
+  // has a TypeScript interface. A malformed receipt cannot prove non-send.
+  if (!response || typeof response !== "object" ||
+      response.kind === "UNKNOWN") return "RECONCILIATION_REQUIRED";
 
   let completion: OutboundClaimCompletion;
   let successfulResult: OutboundClaimResult;
   if (response.kind === "ACCEPTED") {
-    if (!providerIdPattern.test(response.providerMessageId)) {
+    if (typeof response.providerMessageId !== "string" ||
+        !providerIdPattern.test(response.providerMessageId)) {
       return "RECONCILIATION_REQUIRED";
     }
     completion = {
