@@ -33,7 +33,8 @@ async function withChallenge(run:(input:{userId:string;attemptId:string})=>Promi
       id:attemptId,userId,collegeId:null,
       contactFingerprint:randomUUID().replaceAll("-","").padEnd(64,"0"),
       smsCodeMac:"a".repeat(64),emailCodeMac:null,
-      ipTag:"otp-consume-"+userId,
+      // identity_auth_attempts.ip_tag is varchar(24); use a valid opaque test address tag.
+      ipTag:"otp-"+userId.slice(0,8),
       rateLimit:{windowMinutes:10,perContactAndAddress:5,perContact:8,perAddress:20},
     })).toBe(true);
     expect(await repository.reserveVerification(attemptId)).toBe(true);
