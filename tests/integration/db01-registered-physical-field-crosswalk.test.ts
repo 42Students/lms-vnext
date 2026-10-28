@@ -53,7 +53,7 @@ describe("DB-004 registered source → target physical catalog",()=>{
   it("physically witnesses 22 accepted registered replacements without claiming legacy semantic parity",async()=>{
     const replacements=current.rows.filter(row=>row.physicalVerified &&
       row.evidenceStatus!=="EXACT_REGISTERED_FIELD_PG_WITNESS");
-    expect(replacements).toHaveLength(24);
+    expect(replacements).toHaveLength(25);
     const missing:string[]=[];
     for(const row of replacements){
       if(row.runtimeSemanticsVerified){

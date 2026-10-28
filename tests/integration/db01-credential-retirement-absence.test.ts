@@ -26,7 +26,7 @@ const metadataRetirements=[
  ["learner.token_version","learner_profiles","token_version"],
  ["recruiter.token_version","placement_recruiter_profiles","token_version"],
  ["user.user_name","users","user_name"],
- ["role.id","membership_roles","legacy_role_id_as_principal"],
+ ["role.id","membership_roles","id"],
  ["role.is_deleted","membership_roles","is_deleted"],
  ["role.updated_at","membership_roles","updated_at"],
  ["role.description","membership_roles","description"],
@@ -130,7 +130,18 @@ describe("DB-004 retired credential schema negative assertions",()=>{
     select exists(select 1 from information_schema.columns
      where table_schema='public' and table_name=$1 and column_name=$2) as present
    `,[table,column]);
-   expect(found.rows[0]?.present,field+" must not become an authority field").toBe(false);
+   if(field==="role.id"){
+    // Grant receipts remain, but they are *new UUIDs*, never source
+    // integer role-definition IDs or independently trusted principals.
+    expect(found.rows[0]?.present).toBe(true);
+    const type=await pool.query<{data_type:string}>(`
+     select data_type from information_schema.columns
+      where table_schema='public' and table_name='membership_roles' and column_name='id'
+    `);
+    expect(type.rows[0]?.data_type).toBe("uuid");
+   }else{
+    expect(found.rows[0]?.present,field+" must not become an authority field").toBe(false);
+   }
   }
   const ledger=JSON.parse(readFileSync("docs/planning/db004-current-owner-evidence.json","utf8")) as {
    rows:{legacyField:string;runtimeSemanticsVerified:boolean;retirementApproved?:boolean}[];

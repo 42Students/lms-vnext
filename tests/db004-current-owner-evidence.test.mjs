@@ -20,19 +20,20 @@ test("DB-004 owner scope accounts for all legacy columns without stealing other 
 });
 test("physical field proof and runtime proof remain explicitly distinct",()=>{
  const physical=current.rows.filter(x=>x.physicalVerified);
- assert.equal(physical.length,136);
+ assert.equal(physical.length,137);
  assert.equal(physical.filter(x=>x.evidenceStatus==="EXACT_REGISTERED_FIELD_PG_WITNESS").length,112);
  assert.equal(physical.filter(x=>x.evidenceStatus==="REGISTERED_BRANDING_REPLACEMENT_PHYSICAL_WITNESS_SEMANTIC_REVIEW").length,15);
  assert.equal(physical.filter(x=>x.evidenceStatus==="REGISTERED_IDENTITY_NAME_PHYSICAL_WITNESS_SEMANTIC_REVIEW").length,6);
  assert.equal(physical.filter(x=>x.evidenceStatus==="REGISTERED_DNS_DIAGNOSTICS_PHYSICAL_WITNESS_SEMANTIC_REVIEW").length,1);
  assert.equal(physical.filter(x=>x.evidenceStatus==="REGISTERED_COLLEGE_LEADERSHIP_REPLACEMENT_PHYSICAL_WITNESS_SEMANTIC_REVIEW").length,2);
- assert.equal(current.summary.registeredReplacementPhysicalWitnesses,24);
- assert.equal(current.summary.registeredPhysicalWitnessTotal,136);
- assert.equal(current.summary.stillWithoutPhysicalWitness,59);
+ assert.equal(physical.filter(x=>x.evidenceStatus==="REGISTERED_RECRUITER_SUSPENSION_PHYSICAL_WITNESS_SEMANTIC_REVIEW").length,1);
+ assert.equal(current.summary.registeredReplacementPhysicalWitnesses,25);
+ assert.equal(current.summary.registeredPhysicalWitnessTotal,137);
+ assert.equal(current.summary.stillWithoutPhysicalWitness,58);
  const verified=current.rows.filter(x=>x.runtimeSemanticsVerified);
- assert.equal(verified.length,133);
- assert.equal(current.summary.runtimeSemanticsVerified,133);
- assert.equal(current.summary.runtimeSemanticsUnverified,62);
+ assert.equal(verified.length,134);
+ assert.equal(current.summary.runtimeSemanticsVerified,134);
+ assert.equal(current.summary.runtimeSemanticsUnverified,61);
  const allowed={
   "college_branding.":["tests/integration/chat11-super-admin-branding-cas.test.ts",15],
   "tenant_domain.":["tests/integration/tenant-domains.test.ts",13],
@@ -45,7 +46,7 @@ test("physical field proof and runtime proof remain explicitly distinct",()=>{
   "learner.":["tests/integration/db01-learner-faculty-field-semantics.test.ts",8],
   "faculty.":["tests/integration/db01-learner-faculty-field-semantics.test.ts",8],
   "department.":["tests/integration/db01-department-field-semantics.test.ts",6],
-  "recruiter.":["tests/integration/db01-recruiter-identity-field-semantics.test.ts",5],
+  "recruiter.":["tests/integration/db01-recruiter-identity-field-semantics.test.ts",6],
   "role.":["tests/integration/db01-learner-faculty-field-semantics.test.ts",1],
   "learner_acct_verification.":["tests/integration/db01-learner-faculty-otp-field-compat.test.ts",9],
   "faculty_acct_verification.":["tests/integration/db01-learner-faculty-otp-field-compat.test.ts",9],
@@ -72,14 +73,14 @@ test("physical field proof and runtime proof remain explicitly distinct",()=>{
  const technicallyRetired=current.rows.filter(row=>row.retirementImplementationVerified);
  const retirementCandidates=current.rows.filter(row=>
   ["auth_handoff_token.","auth_token.","login_user."].some(p=>row.legacyField.startsWith(p))||
-  row.legacyField==="user.password");
- assert.equal(technicallyRetired.length,21);
+  row.legacyField==="user.password" || ["faculty.token_version","learner.token_version","recruiter.token_version","user.user_name","role.id","role.is_deleted","role.updated_at","role.description","refresh_token_blocklist.user_type","user_session.user_type","mobile_login_attempt.updated_at","faculty_acct_verification.updated_at","learner_acct_verification.updated_at"].includes(row.legacyField));
+ assert.equal(technicallyRetired.length,34);
  assert.deepEqual(new Set(technicallyRetired.map(x=>x.legacyField)),
   new Set(retirementCandidates.map(x=>x.legacyField)));
- assert.equal(current.summary.retirementImplementationVerified,21);
- assert.equal(current.summary.retirementApprovalPending,21);
- assert.equal(current.summary.technicalEvidenceCoverage,154);
- assert.equal(current.summary.technicalEvidenceUncovered,41);
+ assert.equal(current.summary.retirementImplementationVerified,34);
+ assert.equal(current.summary.retirementApprovalPending,34);
+ assert.equal(current.summary.technicalEvidenceCoverage,168);
+ assert.equal(current.summary.technicalEvidenceUncovered,27);
  assert.ok(technicallyRetired.every(x=>x.retirementApproved===false &&
   x.runtimeSemanticsVerified===false &&
   x.physicalVerified===false &&

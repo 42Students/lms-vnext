@@ -18,15 +18,16 @@
       "EXACT_REGISTERED_FIELD_PG_WITNESS": 112,
       "REGISTERED_COLLEGE_LEADERSHIP_REPLACEMENT_PHYSICAL_WITNESS_SEMANTIC_REVIEW": 2,
       "REGISTERED_BRANDING_REPLACEMENT_PHYSICAL_WITNESS_SEMANTIC_REVIEW": 15,
-      "COMPOSITE_REDESIGN_SEMANTIC_REVIEW": 16,
+      "COMPOSITE_REDESIGN_SEMANTIC_REVIEW": 15,
       "REGISTERED_IDENTITY_NAME_PHYSICAL_WITNESS_SEMANTIC_REVIEW": 6,
-      "REGISTERED_DNS_DIAGNOSTICS_PHYSICAL_WITNESS_SEMANTIC_REVIEW": 1
+      "REGISTERED_DNS_DIAGNOSTICS_PHYSICAL_WITNESS_SEMANTIC_REVIEW": 1,
+      "REGISTERED_RECRUITER_SUSPENSION_PHYSICAL_WITNESS_SEMANTIC_REVIEW": 1
     },
-    "registeredReplacementPhysicalWitnesses": 24,
-    "registeredPhysicalWitnessTotal": 136,
-    "stillWithoutPhysicalWitness": 59,
-    "runtimeSemanticsVerified": 133,
-    "runtimeSemanticsUnverified": 62,
+    "registeredReplacementPhysicalWitnesses": 25,
+    "registeredPhysicalWitnessTotal": 137,
+    "stillWithoutPhysicalWitness": 58,
+    "runtimeSemanticsVerified": 134,
+    "runtimeSemanticsUnverified": 61,
     "runtimeWitnessesByFamily": {
       "college_branding": 15,
       "tenant_domain": 13,
@@ -39,15 +40,15 @@
       "learner": 8,
       "faculty": 8,
       "department": 6,
-      "recruiter": 5,
+      "recruiter": 6,
       "role": 1,
       "learner_acct_verification": 9,
       "faculty_acct_verification": 9
     },
-    "retirementImplementationVerified": 21,
-    "retirementApprovalPending": 21,
-    "technicalEvidenceCoverage": 154,
-    "technicalEvidenceUncovered": 41
+    "retirementImplementationVerified": 34,
+    "retirementApprovalPending": 34,
+    "technicalEvidenceCoverage": 168,
+    "technicalEvidenceUncovered": 27
   },
   "guidance": [
     "Exact column existence on registered PostgreSQL does not prove legacy reader/writer parity.",
@@ -64,7 +65,8 @@
     "21 raw credential or removed login/handoff fields now have registered PG negative proof at 8eaef977: implementation retirement is executed, while product/security approval remains FALSE. Neither these nor other legacy retirements are runtimeSemanticsVerified.",
     "18 shared learner/faculty verification fields passed registered PostgreSQL first-party OTP lifecycle 40683051831. Role-specific membership association, roll-number ownership and unapproved legacy retirement remain intentionally unresolved; 21 retired raw-credential fields have separate NEGATIVE implementation proof.",
     "Two legacy college leadership fields now use columns colleges.chair_membership_id and colleges.vice_chair_membership_id. Both passed actual PG scoped FACULTY appointment, cross-college rejection and suspension checks in 40684079754. Numeric source IDs are still never blindly imported.",
-    "At a6f06efe, registered PostgreSQL DB-004 accepted archived branding negative projection and edit-denial tests. The historical is_deleted runtime mapping is witnessed, but import/retention/product approval remains PENDING."
+    "At a6f06efe, registered PostgreSQL DB-004 accepted archived branding negative projection and edit-denial tests. The historical is_deleted runtime mapping is witnessed, but import/retention/product approval remains PENDING.",
+    "At 6a9455fd, a registered PG negative source metadata catalog witness adds 13 technically implemented retirements (still unapproved). The recruiter.suspended_at persisted timestamp and fail-closed suspension/restoration lifecycle were directly witnessed at 9efa47bd. These are implementation evidence, not source import or product sign-off."
   ],
   "rows": [
     {
@@ -1448,8 +1450,18 @@
       "runtimeSemanticsVerified": false,
       "evidence": [
         "docs/architecture/first-party-login.md",
-        "docs/planning/db01-chat05-provider-persistence-decision.json"
-      ]
+        "docs/planning/db01-chat05-provider-persistence-decision.json",
+        "tests/integration/db01-credential-retirement-absence.test.ts"
+      ],
+      "retirementImplementationVerified": true,
+      "retirementApproved": false,
+      "retirementEvidence": {
+        "witness": "tests/integration/db01-credential-retirement-absence.test.ts",
+        "passingRun": "https://github.com/42Students/lms-vnext/actions/runs/40689301085",
+        "testedCommit": "6a9455fdea727e16854184fd6861637212e11f08",
+        "scope": "REGISTERED_POSTGRES_LEGACY_SCHEMA_ABSENCE_AND_TYPED_FIRST_PARTY_REPLACEMENTS_ONLY",
+        "limits": "Registered PostgreSQL rejects obsolete identity/source metadata stores; first-party typed memberships, keyed device credentials and attempt versioning are present. No source import, historic data erasure, entire application cutover or product/security approval is certified."
+      }
     },
     {
       "legacyField": "faculty.user_type",
@@ -1537,8 +1549,18 @@
       "runtimeSemanticsVerified": false,
       "evidence": [
         "docs/architecture/first-party-login.md",
-        "docs/planning/db01-chat05-provider-persistence-decision.json"
-      ]
+        "docs/planning/db01-chat05-provider-persistence-decision.json",
+        "tests/integration/db01-credential-retirement-absence.test.ts"
+      ],
+      "retirementImplementationVerified": true,
+      "retirementApproved": false,
+      "retirementEvidence": {
+        "witness": "tests/integration/db01-credential-retirement-absence.test.ts",
+        "passingRun": "https://github.com/42Students/lms-vnext/actions/runs/40689301085",
+        "testedCommit": "6a9455fdea727e16854184fd6861637212e11f08",
+        "scope": "REGISTERED_POSTGRES_LEGACY_SCHEMA_ABSENCE_AND_TYPED_FIRST_PARTY_REPLACEMENTS_ONLY",
+        "limits": "Registered PostgreSQL rejects obsolete identity/source metadata stores; first-party typed memberships, keyed device credentials and attempt versioning are present. No source import, historic data erasure, entire application cutover or product/security approval is certified."
+      }
     },
     {
       "legacyField": "faculty_acct_verification.blocked_till_ts",
@@ -1886,8 +1908,18 @@
       "runtimeSemanticsVerified": false,
       "evidence": [
         "docs/architecture/first-party-login.md",
-        "docs/planning/db01-chat05-provider-persistence-decision.json"
-      ]
+        "docs/planning/db01-chat05-provider-persistence-decision.json",
+        "tests/integration/db01-credential-retirement-absence.test.ts"
+      ],
+      "retirementImplementationVerified": true,
+      "retirementApproved": false,
+      "retirementEvidence": {
+        "witness": "tests/integration/db01-credential-retirement-absence.test.ts",
+        "passingRun": "https://github.com/42Students/lms-vnext/actions/runs/40689301085",
+        "testedCommit": "6a9455fdea727e16854184fd6861637212e11f08",
+        "scope": "REGISTERED_POSTGRES_LEGACY_SCHEMA_ABSENCE_AND_TYPED_FIRST_PARTY_REPLACEMENTS_ONLY",
+        "limits": "Registered PostgreSQL rejects obsolete identity/source metadata stores; first-party typed memberships, keyed device credentials and attempt versioning are present. No source import, historic data erasure, entire application cutover or product/security approval is certified."
+      }
     },
     {
       "legacyField": "learner.user_type",
@@ -1975,8 +2007,18 @@
       "runtimeSemanticsVerified": false,
       "evidence": [
         "docs/architecture/first-party-login.md",
-        "docs/planning/db01-chat05-provider-persistence-decision.json"
-      ]
+        "docs/planning/db01-chat05-provider-persistence-decision.json",
+        "tests/integration/db01-credential-retirement-absence.test.ts"
+      ],
+      "retirementImplementationVerified": true,
+      "retirementApproved": false,
+      "retirementEvidence": {
+        "witness": "tests/integration/db01-credential-retirement-absence.test.ts",
+        "passingRun": "https://github.com/42Students/lms-vnext/actions/runs/40689301085",
+        "testedCommit": "6a9455fdea727e16854184fd6861637212e11f08",
+        "scope": "REGISTERED_POSTGRES_LEGACY_SCHEMA_ABSENCE_AND_TYPED_FIRST_PARTY_REPLACEMENTS_ONLY",
+        "limits": "Registered PostgreSQL rejects obsolete identity/source metadata stores; first-party typed memberships, keyed device credentials and attempt versioning are present. No source import, historic data erasure, entire application cutover or product/security approval is certified."
+      }
     },
     {
       "legacyField": "learner_acct_verification.blocked_till_ts",
@@ -2328,8 +2370,18 @@
       "runtimeSemanticsVerified": false,
       "evidence": [
         "docs/architecture/first-party-login.md",
-        "docs/planning/db01-chat05-provider-persistence-decision.json"
-      ]
+        "docs/planning/db01-chat05-provider-persistence-decision.json",
+        "tests/integration/db01-credential-retirement-absence.test.ts"
+      ],
+      "retirementImplementationVerified": true,
+      "retirementApproved": false,
+      "retirementEvidence": {
+        "witness": "tests/integration/db01-credential-retirement-absence.test.ts",
+        "passingRun": "https://github.com/42Students/lms-vnext/actions/runs/40689301085",
+        "testedCommit": "6a9455fdea727e16854184fd6861637212e11f08",
+        "scope": "REGISTERED_POSTGRES_LEGACY_SCHEMA_ABSENCE_AND_TYPED_FIRST_PARTY_REPLACEMENTS_ONLY",
+        "limits": "Registered PostgreSQL rejects obsolete identity/source metadata stores; first-party typed memberships, keyed device credentials and attempt versioning are present. No source import, historic data erasure, entire application cutover or product/security approval is certified."
+      }
     },
     {
       "legacyField": "mobile_login_attempt.attempt_id",
@@ -2788,13 +2840,23 @@
       "legacyField": "recruiter.suspended_at",
       "originalDisposition": "PROPOSED_TARGET_UNVERIFIED",
       "historicalTarget": "users.platform_status / placement_recruiter_profiles.status",
-      "proposedPhysicalTarget": null,
-      "evidenceStatus": "COMPOSITE_REDESIGN_SEMANTIC_REVIEW",
-      "physicalVerified": false,
-      "runtimeSemanticsVerified": false,
+      "proposedPhysicalTarget": "placement_recruiter_profiles.suspended_at",
+      "evidenceStatus": "REGISTERED_RECRUITER_SUSPENSION_PHYSICAL_WITNESS_SEMANTIC_REVIEW",
+      "physicalVerified": true,
+      "runtimeSemanticsVerified": true,
       "evidence": [
-        "docs/planning/db01-chat02-source-reconciliation.md"
-      ]
+        "docs/planning/db01-chat02-source-reconciliation.md",
+        "src/db/schema/placements.ts",
+        "src/modules/identity/context-service.ts",
+        "tests/integration/db01-recruiter-identity-field-semantics.test.ts"
+      ],
+      "runtimeEvidence": {
+        "verifiedFlow": "REGISTERED_POSTGRES_RECRUITER_PERSISTED_SUSPENSION_TIMESTAMP_AND_GRANT_ELIGIBILITY_RESTORATION",
+        "suite": "tests/integration/db01-recruiter-identity-field-semantics.test.ts",
+        "passingRun": "https://github.com/42Students/lms-vnext/actions/runs/40684590435",
+        "testedCommit": "9efa47bd1fd5282c10a79b4d00c39feb030fb623",
+        "limitations": "An active verified same-college recruiter becomes ineligible on persisted suspension and eligible again only after restoration. Historic numeric recruiter ID crosswalk, migration timestamp provenance, owner policy and production verification remain open."
+      }
     },
     {
       "legacyField": "recruiter.token_version",
@@ -2806,8 +2868,18 @@
       "runtimeSemanticsVerified": false,
       "evidence": [
         "docs/architecture/first-party-login.md",
-        "docs/planning/db01-chat05-provider-persistence-decision.json"
-      ]
+        "docs/planning/db01-chat05-provider-persistence-decision.json",
+        "tests/integration/db01-credential-retirement-absence.test.ts"
+      ],
+      "retirementImplementationVerified": true,
+      "retirementApproved": false,
+      "retirementEvidence": {
+        "witness": "tests/integration/db01-credential-retirement-absence.test.ts",
+        "passingRun": "https://github.com/42Students/lms-vnext/actions/runs/40689301085",
+        "testedCommit": "6a9455fdea727e16854184fd6861637212e11f08",
+        "scope": "REGISTERED_POSTGRES_LEGACY_SCHEMA_ABSENCE_AND_TYPED_FIRST_PARTY_REPLACEMENTS_ONLY",
+        "limits": "Registered PostgreSQL rejects obsolete identity/source metadata stores; first-party typed memberships, keyed device credentials and attempt versioning are present. No source import, historic data erasure, entire application cutover or product/security approval is certified."
+      }
     },
     {
       "legacyField": "recruiter.is_deleted",
@@ -2876,8 +2948,18 @@
       "runtimeSemanticsVerified": false,
       "evidence": [
         "docs/architecture/first-party-login.md",
-        "docs/planning/db01-chat05-provider-persistence-decision.json"
-      ]
+        "docs/planning/db01-chat05-provider-persistence-decision.json",
+        "tests/integration/db01-credential-retirement-absence.test.ts"
+      ],
+      "retirementImplementationVerified": true,
+      "retirementApproved": false,
+      "retirementEvidence": {
+        "witness": "tests/integration/db01-credential-retirement-absence.test.ts",
+        "passingRun": "https://github.com/42Students/lms-vnext/actions/runs/40689301085",
+        "testedCommit": "6a9455fdea727e16854184fd6861637212e11f08",
+        "scope": "REGISTERED_POSTGRES_LEGACY_SCHEMA_ABSENCE_AND_TYPED_FIRST_PARTY_REPLACEMENTS_ONLY",
+        "limits": "Registered PostgreSQL rejects obsolete identity/source metadata stores; first-party typed memberships, keyed device credentials and attempt versioning are present. No source import, historic data erasure, entire application cutover or product/security approval is certified."
+      }
     },
     {
       "legacyField": "refresh_token_blocklist.blocked_at",
@@ -2927,8 +3009,18 @@
       "runtimeSemanticsVerified": false,
       "evidence": [
         "docs/architecture/first-party-login.md",
-        "docs/planning/db01-chat05-provider-persistence-decision.json"
-      ]
+        "docs/planning/db01-chat05-provider-persistence-decision.json",
+        "tests/integration/db01-credential-retirement-absence.test.ts"
+      ],
+      "retirementImplementationVerified": true,
+      "retirementApproved": false,
+      "retirementEvidence": {
+        "witness": "tests/integration/db01-credential-retirement-absence.test.ts",
+        "passingRun": "https://github.com/42Students/lms-vnext/actions/runs/40689301085",
+        "testedCommit": "6a9455fdea727e16854184fd6861637212e11f08",
+        "scope": "REGISTERED_POSTGRES_LEGACY_SCHEMA_ABSENCE_AND_TYPED_FIRST_PARTY_REPLACEMENTS_ONLY",
+        "limits": "Registered PostgreSQL rejects obsolete identity/source metadata stores; first-party typed memberships, keyed device credentials and attempt versioning are present. No source import, historic data erasure, entire application cutover or product/security approval is certified."
+      }
     },
     {
       "legacyField": "role.created_at",
@@ -2959,8 +3051,18 @@
       "runtimeSemanticsVerified": false,
       "evidence": [
         "docs/architecture/first-party-login.md",
-        "docs/planning/db01-chat05-provider-persistence-decision.json"
-      ]
+        "docs/planning/db01-chat05-provider-persistence-decision.json",
+        "tests/integration/db01-credential-retirement-absence.test.ts"
+      ],
+      "retirementImplementationVerified": true,
+      "retirementApproved": false,
+      "retirementEvidence": {
+        "witness": "tests/integration/db01-credential-retirement-absence.test.ts",
+        "passingRun": "https://github.com/42Students/lms-vnext/actions/runs/40689301085",
+        "testedCommit": "6a9455fdea727e16854184fd6861637212e11f08",
+        "scope": "REGISTERED_POSTGRES_LEGACY_SCHEMA_ABSENCE_AND_TYPED_FIRST_PARTY_REPLACEMENTS_ONLY",
+        "limits": "Registered PostgreSQL rejects obsolete identity/source metadata stores; first-party typed memberships, keyed device credentials and attempt versioning are present. No source import, historic data erasure, entire application cutover or product/security approval is certified."
+      }
     },
     {
       "legacyField": "role.updated_at",
@@ -2972,8 +3074,18 @@
       "runtimeSemanticsVerified": false,
       "evidence": [
         "docs/architecture/first-party-login.md",
-        "docs/planning/db01-chat05-provider-persistence-decision.json"
-      ]
+        "docs/planning/db01-chat05-provider-persistence-decision.json",
+        "tests/integration/db01-credential-retirement-absence.test.ts"
+      ],
+      "retirementImplementationVerified": true,
+      "retirementApproved": false,
+      "retirementEvidence": {
+        "witness": "tests/integration/db01-credential-retirement-absence.test.ts",
+        "passingRun": "https://github.com/42Students/lms-vnext/actions/runs/40689301085",
+        "testedCommit": "6a9455fdea727e16854184fd6861637212e11f08",
+        "scope": "REGISTERED_POSTGRES_LEGACY_SCHEMA_ABSENCE_AND_TYPED_FIRST_PARTY_REPLACEMENTS_ONLY",
+        "limits": "Registered PostgreSQL rejects obsolete identity/source metadata stores; first-party typed memberships, keyed device credentials and attempt versioning are present. No source import, historic data erasure, entire application cutover or product/security approval is certified."
+      }
     },
     {
       "legacyField": "role.description",
@@ -2985,8 +3097,18 @@
       "runtimeSemanticsVerified": false,
       "evidence": [
         "docs/architecture/first-party-login.md",
-        "docs/planning/db01-chat05-provider-persistence-decision.json"
-      ]
+        "docs/planning/db01-chat05-provider-persistence-decision.json",
+        "tests/integration/db01-credential-retirement-absence.test.ts"
+      ],
+      "retirementImplementationVerified": true,
+      "retirementApproved": false,
+      "retirementEvidence": {
+        "witness": "tests/integration/db01-credential-retirement-absence.test.ts",
+        "passingRun": "https://github.com/42Students/lms-vnext/actions/runs/40689301085",
+        "testedCommit": "6a9455fdea727e16854184fd6861637212e11f08",
+        "scope": "REGISTERED_POSTGRES_LEGACY_SCHEMA_ABSENCE_AND_TYPED_FIRST_PARTY_REPLACEMENTS_ONLY",
+        "limits": "Registered PostgreSQL rejects obsolete identity/source metadata stores; first-party typed memberships, keyed device credentials and attempt versioning are present. No source import, historic data erasure, entire application cutover or product/security approval is certified."
+      }
     },
     {
       "legacyField": "role.name",
@@ -3434,8 +3556,18 @@
       "runtimeSemanticsVerified": false,
       "evidence": [
         "docs/architecture/first-party-login.md",
-        "docs/planning/db01-chat05-provider-persistence-decision.json"
-      ]
+        "docs/planning/db01-chat05-provider-persistence-decision.json",
+        "tests/integration/db01-credential-retirement-absence.test.ts"
+      ],
+      "retirementImplementationVerified": true,
+      "retirementApproved": false,
+      "retirementEvidence": {
+        "witness": "tests/integration/db01-credential-retirement-absence.test.ts",
+        "passingRun": "https://github.com/42Students/lms-vnext/actions/runs/40689301085",
+        "testedCommit": "6a9455fdea727e16854184fd6861637212e11f08",
+        "scope": "REGISTERED_POSTGRES_LEGACY_SCHEMA_ABSENCE_AND_TYPED_FIRST_PARTY_REPLACEMENTS_ONLY",
+        "limits": "Registered PostgreSQL rejects obsolete identity/source metadata stores; first-party typed memberships, keyed device credentials and attempt versioning are present. No source import, historic data erasure, entire application cutover or product/security approval is certified."
+      }
     },
     {
       "legacyField": "user.user_type",
@@ -3521,8 +3653,18 @@
       "runtimeSemanticsVerified": false,
       "evidence": [
         "docs/architecture/first-party-login.md",
-        "docs/planning/db01-chat05-provider-persistence-decision.json"
-      ]
+        "docs/planning/db01-chat05-provider-persistence-decision.json",
+        "tests/integration/db01-credential-retirement-absence.test.ts"
+      ],
+      "retirementImplementationVerified": true,
+      "retirementApproved": false,
+      "retirementEvidence": {
+        "witness": "tests/integration/db01-credential-retirement-absence.test.ts",
+        "passingRun": "https://github.com/42Students/lms-vnext/actions/runs/40689301085",
+        "testedCommit": "6a9455fdea727e16854184fd6861637212e11f08",
+        "scope": "REGISTERED_POSTGRES_LEGACY_SCHEMA_ABSENCE_AND_TYPED_FIRST_PARTY_REPLACEMENTS_ONLY",
+        "limits": "Registered PostgreSQL rejects obsolete identity/source metadata stores; first-party typed memberships, keyed device credentials and attempt versioning are present. No source import, historic data erasure, entire application cutover or product/security approval is certified."
+      }
     },
     {
       "legacyField": "user_session.device_name",
