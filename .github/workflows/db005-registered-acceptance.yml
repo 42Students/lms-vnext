@@ -1,0 +1,68 @@
+name: DB-005 registered acceptance
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'drizzle/0303_db02_academic_timetable_registered.sql'
+      - 'scripts/sql/db02-*.sh'
+      - 'scripts/sql/db02-*.sql'
+      - 'src/modules/academics/**'
+      - 'src/modules/courses/offering-service.ts'
+      - 'tests/integration/db005-*.test.ts'
+      - '.github/workflows/db005-registered-acceptance.yml'
+permissions:
+  contents: read
+concurrency:
+  group: lms-db005-${{ github.ref }}
+  cancel-in-progress: false
+jobs:
+  registered:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    services:
+      postgres:
+        image: postgres:17-alpine
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: lms_vnext_test
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres -d lms_vnext_test"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+    env:
+      DATABASE_URL: postgresql://postgres:postgres@127.0.0.1:5432/lms_vnext_test
+      TEST_DATABASE_URL: postgresql://postgres:postgres@127.0.0.1:5432/lms_vnext_test
+      DB03_ISOLATED_TEST_DATABASE: '1'
+      DB06_ISOLATED_TEST_DATABASE: '1'
+      DB02_EXPECTED_DATABASE: lms_vnext_test
+      DB02_DISPOSABLE_ACCEPTANCE: 'YES'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Registered journal
+        run: npm run db:journal:verify
+      - name: Fresh disposable PostgreSQL
+        env:
+          DATABASE_URL: ''
+        run: npm run db:test:prepare
+      - name: Registered replay
+        run: npm run db:migrate
+      - name: DB005 field contracts
+        run: node --test tests/db005-registered-canonical-source-contract.test.mjs
+      - name: DB005 PostgreSQL and race acceptance
+        run: bash scripts/sql/db02-run-disposable-acceptance.sh
+      - name: Cross-domain identity, assessment, enrollment acceptance
+        run: >-
+          npx vitest run --config vitest.db.registered.config.ts
+          tests/integration/db005-enrollment-membership-revocation-race.test.ts
+          tests/integration/db01-membership-role-parent-lock.test.ts
+          tests/integration/db06-assessment-parent-scope.test.ts
