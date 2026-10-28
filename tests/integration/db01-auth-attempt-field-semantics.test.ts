@@ -24,12 +24,19 @@ afterAll(async()=>{
 });
 async function withAttempt(run:(input:{userId:string;attemptId:string;
  contactMac:string;smsMac:string;emailMac:string})=>Promise<void>){
- const userId=randomUUID(),attemptId=randomUUID();
+ const userId=randomUUID(),attemptId=randomUUID(),membershipId=randomUUID();
  const contactMac=randomUUID().replaceAll("-","").padEnd(64,"a");
  const smsMac="b".repeat(64),emailMac="c".repeat(64);
  try{
   await pool.query("insert into users(id,identity_uid,platform_status) values($1,$2,'ACTIVE')",
    [userId,"db004-attempt-"+userId]);
+  // This is a college-scoped login: its holder must actually have an
+  // active membership and at least one persisted role before OTP consume.
+  await pool.query(
+   "insert into college_memberships(id,user_id,college_id,status) values($1,$2,$3,'ACTIVE')",
+   [membershipId,userId,SEED_IDS.collegeA]);
+  await pool.query(
+   "insert into membership_roles(membership_id,role) values($1,'LEARNER')",[membershipId]);
   expect(await repository.createAttempt({
    id:attemptId,userId,collegeId:SEED_IDS.collegeA,
    contactFingerprint:contactMac,smsCodeMac:smsMac,
@@ -40,6 +47,8 @@ async function withAttempt(run:(input:{userId:string;attemptId:string;
  }finally{
   await pool.query("delete from identity_device_sessions where user_id=$1",[userId]);
   await pool.query("delete from identity_auth_attempts where user_id=$1",[userId]);
+  await pool.query("delete from membership_roles where membership_id=$1",[membershipId]);
+  await pool.query("delete from college_memberships where id=$1",[membershipId]);
   await pool.query("delete from users where id=$1",[userId]);
  }
 }
