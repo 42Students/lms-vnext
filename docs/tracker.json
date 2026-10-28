@@ -1706,6 +1706,18 @@
         "reason": "After L01 registers DB-067 function grants, independently execute negative/race witnesses: competing claims, stale fence, global/local late opt-out, misbound email hash, quarantine of ambiguous provider calls, role grants, and exact migration replay. Return exact run SHA/evidence; do not green DB-067 without proof.",
         "status": "REQUESTED",
         "requestedAt": "2026-10-28T19:59:00.000Z"
+      },
+      {
+        "id": "L04-L05-DB078-FORMAL-TITLE-20261029",
+        "fromLane": "L04",
+        "toLane": "L05",
+        "paths": [
+          "src/modules/attendance/**",
+          "src/app/api/attendance/**"
+        ],
+        "reason": "Legacy GET /attendance/courses / NewProgramDetailsDTO.CourseInfo.formal_title derives from shortTitle when non-null, otherwise courseName. L04 supplied tested src/modules/courses/course-legacy-parity-model.ts legacyFormalTitle; L05 owns attendance API wiring and end-to-end scoped consumer acceptance. Do not add formal_title to PublicCourseDTO or duplicate persisted column.",
+        "status": "REQUESTED",
+        "requestedAt": "2026-10-28T20:01:01.682Z"
       }
     ],
     "coordination": {
