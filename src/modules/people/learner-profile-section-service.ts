@@ -7,7 +7,7 @@ import { ACTIVITY_EVENT_TYPES } from "@/modules/activity/taxonomy";
 import type { RequestContext } from "@/modules/identity/context";
 import { AuthorizationError, can } from "@/modules/permissions/policy";
 import { validateLearnerProfileSectionEdit,isLearnerProfileSectionStale } from "./learner-profile-section-model";
-import {learnerProfileDocumentSchema} from "./profile-validation";
+import {learnerProfileDocumentSchema,learnerProfileEducationWriteSchema} from "./profile-validation";
 import { PeopleServiceError } from "./errors";
 import { syncLearnerEducationProjection } from "./learner-education-projection-service";
 
@@ -70,7 +70,8 @@ export async function updateOwnLearnerProfileSection(context:RequestContext,rawI
     if(!isLearnerProfileSectionStale(view(current),view(input.items)))
       return {section:input.section,items:view(current)};
     if (input.section === "education") {
-      await syncLearnerEducationProjection(tx, membership.id, input.items);
+      await syncLearnerEducationProjection(tx, membership.id,
+        learnerProfileEducationWriteSchema.parse(input.items));
     }
     const [saved]=await tx.update(learnerProfiles).set({
       profileDocument:sql`jsonb_set(
