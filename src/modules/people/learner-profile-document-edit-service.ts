@@ -9,6 +9,7 @@ import {AuthorizationError} from "@/modules/permissions/policy";
 import {recordActivityEventInTransaction} from "@/modules/activity/service";
 import {ACTIVITY_EVENT_TYPES} from "@/modules/activity/taxonomy";
 import {PeopleServiceError} from "./errors";
+import {syncLearnerEducationProjection} from "./learner-education-projection-service";
 import {requireOwnLearnerProfileAccess} from "./learner-profile-access-service";
 import {learnerProfileDocumentSchema,learnerProfileEducationWriteSchema} from "./profile-validation";
 import {learnerProfileDocumentEditInputSchema,learnerProfileChangedFields,learnerProfileDocumentIsStale} from "./learner-profile-document-edit-model";
@@ -115,6 +116,8 @@ export async function updateOwnLearnerProfileDocument(context:RequestContext,raw
         set:{notifyMatchingJobs:enabled,updatedAt:new Date()},
       });
     }
+    if(fields.includes("education"))
+      await syncLearnerEducationProjection(tx, member.id, nextDocument.education);
     const [saved]=await tx.update(learnerProfiles).set({profileDocument:nextDocument,updatedAt:new Date()})
       .where(eq(learnerProfiles.membershipId,member.id)).returning();
     if(!saved)throw new Error("PROFILE_SAVE_UNAVAILABLE");

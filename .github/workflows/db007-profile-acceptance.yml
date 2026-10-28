@@ -53,7 +53,7 @@ jobs:
       - name: Verify registered journal and SQL-to-schema source contracts
         run: |
           npm run db:journal:verify
-          node --test tests/db007-normalized-profile-registration.test.mjs tests/db04-profile-education-images-staged.test.mjs tests/db007-live-cgpa-policy-authority.test.mjs tests/db007-live-tpo-verifier-grant-authority.test.mjs tests/db007-private-gallery-publisher-ownership.test.mjs
+          node --test tests/db007-normalized-profile-registration.test.mjs tests/db04-profile-education-images-staged.test.mjs tests/db007-live-cgpa-policy-authority.test.mjs tests/db007-live-tpo-verifier-grant-authority.test.mjs tests/db007-private-gallery-publisher-ownership.test.mjs tests/db007-education-projection-contract.test.mjs
       - name: Migrate and seed disposable PostgreSQL from empty
         env:
           DATABASE_URL: ""
@@ -62,6 +62,12 @@ jobs:
         run: npm run db:migrate
       - name: DB-007 registered row-level tenant, private receipt and history negatives
         run: node --test tests/db007-registered-profile-pg.test.mjs
+      - name: DB-007 learner education write/read integration on disposable PostgreSQL
+        run: >-
+          npx vitest run --config vitest.db.registered.config.ts
+          tests/integration/db007-education-projection.test.ts
+          tests/integration/learner-profile-document-edit.test.ts
+          tests/integration/learner-profile-sections-write.test.ts
       - name: Full TypeScript typecheck after PostgreSQL acceptance
         env:
           NODE_OPTIONS: --max-old-space-size=6144

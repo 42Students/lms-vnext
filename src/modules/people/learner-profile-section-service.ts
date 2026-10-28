@@ -9,6 +9,7 @@ import { AuthorizationError, can } from "@/modules/permissions/policy";
 import { validateLearnerProfileSectionEdit,isLearnerProfileSectionStale } from "./learner-profile-section-model";
 import {learnerProfileDocumentSchema} from "./profile-validation";
 import { PeopleServiceError } from "./errors";
+import { syncLearnerEducationProjection } from "./learner-education-projection-service";
 
 /** Sort most recent qualifications for read parity without changing JSONB order. */
 export function sortLearnerEducationForView<T extends {id:string;
@@ -68,6 +69,9 @@ export async function updateOwnLearnerProfileSection(context:RequestContext,rawI
     }
     if(!isLearnerProfileSectionStale(view(current),view(input.items)))
       return {section:input.section,items:view(current)};
+    if (input.section === "education") {
+      await syncLearnerEducationProjection(tx, membership.id, input.items);
+    }
     const [saved]=await tx.update(learnerProfiles).set({
       profileDocument:sql`jsonb_set(
         ${learnerProfiles.profileDocument},
