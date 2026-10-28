@@ -990,7 +990,12 @@
           "UI learner/faculty course flows"
         ],
         "operatingNotes": "Coordinates prereqs with academics and assessment without editing their owned modules.",
-        "claim": null
+        "claim": {
+          "sessionId": "vnext-l04-chat-20261029-0123-ist",
+          "holder": "ChatGPT L04 courses and learning content",
+          "claimedAt": "2026-10-28T19:54:31.784Z",
+          "expiresAt": "2026-10-28T23:54:31.784Z"
+        }
       },
       {
         "id": "L05",
