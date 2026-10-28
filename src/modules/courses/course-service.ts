@@ -341,6 +341,8 @@ export async function createCourse(
 
   try {
     return await transaction(async (tx) => {
+      // Same lock as the DB05 graph and department guards, before row locks.
+      await tx.execute(sql`select pg_advisory_xact_lock(605008001::bigint)`);
       // Department may be archived, transferred to another college, or its
       // college/organization disabled after the permission precheck. Hold
       // SHARE locks on the entire authorized tenant path through INSERT.
@@ -374,10 +376,17 @@ export async function createCourse(
         throw new CoursesServiceError("DEPARTMENT_NOT_FOUND");
       }
 
-      if(input.parentCourseId){
-        const parent=await loadCourseScope(input.parentCourseId);
-        if(parent.collegeId!==department.collegeId||
-           parent.organizationId!==department.organizationId)
+      if (input.parentCourseId) {
+        // Recheck parent scope inside the write transaction with a row lock.
+        const [parent] = await tx.select({
+          id: courses.id, collegeId: departments.collegeId,
+        }).from(courses)
+          .innerJoin(departments, eq(departments.id, courses.departmentId))
+          .where(and(eq(courses.id, input.parentCourseId),
+            eq(courses.status, "ACTIVE"), isNull(courses.deletedAt),
+            isNull(departments.archivedAt)))
+          .for("share", { of: courses }).limit(1);
+        if (!parent || parent.collegeId !== lockedDepartment.collegeId)
           throw new CoursesServiceError("COURSE_PARENT_NOT_FOUND");
       }
       await assertCourseShortTitleUnique(
@@ -450,6 +459,9 @@ export async function updateCourse(
 
   try {
     return await getDb().transaction(async (tx) => {
+      // Serialize reciprocal reparenting *before* locking the child row.
+      if (input.parentCourseId !== undefined)
+        await tx.execute(sql`select pg_advisory_xact_lock(605008001::bigint)`);
       const [locked] = await tx.select({
         id: courses.id, name: courses.name, code: courses.code,
         shortTitle: courses.shortTitle,
@@ -475,18 +487,25 @@ export async function updateCourse(
           id:courses.id,collegeId:departments.collegeId,
         }).from(courses).innerJoin(departments,eq(departments.id,courses.departmentId))
          .where(and(eq(courses.id,input.parentCourseId),
-          eq(courses.status,"ACTIVE"))).for("share").limit(1);
+          eq(courses.status,"ACTIVE"),isNull(courses.deletedAt),
+          isNull(departments.archivedAt)))
+          .for("share", { of: courses }).limit(1);
         if(!parent||parent.collegeId!==scope.collegeId)
           throw new CoursesServiceError("COURSE_PARENT_NOT_FOUND");
-        const ancestry=await tx.execute(sql`with recursive ancestors as (
-          select id,parent_course_id,0 as depth from courses
-          where id=${input.parentCourseId}::uuid
-          union all
-          select c.id,c.parent_course_id,ancestors.depth+1
-          from courses c join ancestors on c.id=ancestors.parent_course_id
-          where ancestors.depth<64
-        ) select id from ancestors where id=${courseId}::uuid limit 1`);
-        if(ancestry.rows.length)
+        // No arbitrary 64-hop cutoff and no endless legacy-corrupt loops.
+        const ancestry=await tx.execute(sql`
+          with recursive ancestors(id,parent_course_id,visited,cycle) as (
+            select c.id,c.parent_course_id,array[c.id],false from courses c
+            where c.id=${input.parentCourseId}::uuid
+            union all
+            select c.id,c.parent_course_id,ancestors.visited||c.id,
+              c.id=any(ancestors.visited)
+            from courses c join ancestors on c.id=ancestors.parent_course_id
+            where not ancestors.cycle
+          )
+          select exists(select 1 from ancestors
+            where id=${courseId}::uuid or cycle) as invalid`);
+        if(ancestry.rows[0]?.invalid)
           throw new CoursesServiceError("COURSE_PARENT_CYCLE");
       }
       await assertCourseShortTitleUnique(
@@ -810,6 +829,7 @@ export async function moveCourseDepartment(
   throw new CoursesServiceError("COURSE_STALE_VERSION");
  try{
   return await getDb().transaction(async tx=>{
+   await tx.execute(sql`select pg_advisory_xact_lock(605008001::bigint)`);
    const [current]=await tx.select({
     id:courses.id,name:courses.name,code:courses.code,shortTitle:courses.shortTitle,
     departmentId:courses.departmentId,status:courses.status,
