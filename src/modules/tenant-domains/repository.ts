@@ -189,6 +189,16 @@ export const drizzleTenantDomainRepository: TenantDomainRepository = {
         await assertPersistedPlatformPermission(tx,input.context,"college.manage",{
           collegeId:input.collegeId,organizationId:input.organizationId,
         });
+        // Serialize with archiveCollege's FOR UPDATE parent lock. An older
+        // loadActiveCollege read alone cannot authorize a late domain insert.
+        const [activeParent]=await tx.select({id:colleges.id})
+          .from(colleges)
+          .innerJoin(organizations,eq(organizations.id,colleges.organizationId))
+          .where(and(eq(colleges.id,input.collegeId),
+            eq(colleges.organizationId,input.organizationId),
+            eq(colleges.status,"ACTIVE"),eq(organizations.status,"ACTIVE")))
+          .for("share").limit(1);
+        if(!activeParent)throw new TenantDomainServiceError("COLLEGE_NOT_FOUND");
         const [created]=await tx.insert(tenantDomains).values({
           collegeId:input.collegeId,host:input.host,
           verificationToken:input.verificationToken,

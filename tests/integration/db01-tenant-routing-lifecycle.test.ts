@@ -125,6 +125,42 @@ describe("DB01 tenant host lifecycle — real repository SQL", () => {
     });
   });
 
+  it("rejects a stale archive preflight after a new domain has committed",async()=>{
+    await withTenantFixture(async fixture=>{
+      const superAdmin:RequestContext={
+        user:{id:SEED_IDS.superAdminUser,identityUid:"isolated-test-superadmin-uid",
+          platformStatus:"ACTIVE",systemRoles:["SUPER_ADMIN"]},membership:null,
+      };
+      const staleEmpty={memberships:0,departments:0,academicPeriods:0,
+        projectTemplateAssignments:0,projects:0,placementRelationships:0,
+        placementSeasons:0,placementJobs:0,tenantDomains:0};
+      await expect(archiveCollege(superAdmin,fixture.collegeId,
+        async()=>staleEmpty)).rejects.toMatchObject({code:"COLLEGE_HAS_DEPENDENCIES"});
+      const status=await pool.query<{status:string}>(
+        "select status from colleges where id=$1",[fixture.collegeId]);
+      expect(status.rows[0]?.status).toBe("ACTIVE");
+    });
+  });
+
+  it("denies late domain creation after the college is archived",async()=>{
+    await withTenantFixture(async fixture=>{
+      const superAdmin:RequestContext={
+        user:{id:SEED_IDS.superAdminUser,identityUid:"isolated-test-superadmin-uid",
+          platformStatus:"ACTIVE",systemRoles:["SUPER_ADMIN"]},membership:null,
+      };
+      await pool.query(`update tenant_domains set deleted_at=now(),
+        is_primary=false,verification_token=null where id=$1`,[fixture.domainId]);
+      await archiveCollege(superAdmin,fixture.collegeId);
+      const lateHost=`late-${randomUUID()}.example.test`;
+      await expect(drizzleTenantDomainRepository.createDomain({
+        collegeId:fixture.collegeId,organizationId:fixture.organizationId,
+        host:lateHost,verificationToken:"late-domain-claim",context:superAdmin,
+      })).rejects.toThrow();
+      const result=await pool.query("select 1 from tenant_domains where host=$1",[lateHost]);
+      expect(result.rowCount).toBe(0);
+    });
+  });
+
   it("resolves a verified active tenant using normalized hostname", async () => {
     await withTenantFixture(async (fixture) => {
       const result = await resolveTenantFromHost(

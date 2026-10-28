@@ -681,6 +681,21 @@ export async function archiveCollege(
     if(!current||current.organizationId!==college.organizationId||
        current.collegeStatus!=="ACTIVE"||current.organizationStatus!=="ACTIVE")
       throw new AuthorizationError("college.manage");
+    // Dependency preflight ran outside this transaction. Recheck tenant
+    // identity children under the parent row lock: a concurrent write may
+    // have committed after the preflight, before this transaction began.
+    const [liveDomains,liveMembers]=await Promise.all([
+      tx.select({count:sql<number>`count(*)::int`}).from(tenantDomains)
+        .where(and(eq(tenantDomains.collegeId,collegeId),
+          isNull(tenantDomains.deletedAt))),
+      tx.select({count:sql<number>`count(*)::int`}).from(collegeMemberships)
+        .where(and(eq(collegeMemberships.collegeId,collegeId),
+          ne(collegeMemberships.status,"ENDED"))),
+    ]);
+    assertCollegeCanArchive({...usage,
+      tenantDomains:Number(liveDomains[0]?.count??0),
+      memberships:Number(liveMembers[0]?.count??0),
+    });
     const [archived]=await tx.update(colleges)
       .set({status:"ARCHIVED",updatedAt:archivedAt})
       .where(and(eq(colleges.id,collegeId),eq(colleges.status,"ACTIVE"),
