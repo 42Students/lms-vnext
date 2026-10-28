@@ -1681,6 +1681,31 @@
         "reason": "Recruiter CRM bell marks only inAppNotifications read while merged unread TPO message threads remain unread=true; mark-all leaves message badge persistent. L08 owns recruiter CRM contract/tests; L07 owns shared placements services. Request L07 to implement producer/consumer parity or accept explicit single-writer handoff after checking legacy mark-all semantics.",
         "status": "REQUESTED",
         "requestedAt": "2026-10-28T19:58:56.924Z"
+      },
+      {
+        "id": "SCR-L09-L01-DB067-20261029",
+        "fromLane": "L09",
+        "toLane": "L01",
+        "paths": [
+          "docs/planning/sql/db10-outbound-dispatch-lease-candidate.sql",
+          "drizzle/**",
+          "src/db/schema/index.ts"
+        ],
+        "reason": "DB-067 requires canonical registration of four currently staged fenced claim/pre-send/complete/expiry PostgreSQL functions, PUBLIC revoke, restricted dispatcher grants, and full registered disposable PostgreSQL replay. DB10 storage 0164 exists; no numbered function migration found. L09 will retain worker implementation ownership.",
+        "status": "REQUESTED",
+        "requestedAt": "2026-10-28T19:59:00.000Z"
+      },
+      {
+        "id": "SCR-L09-L10-DB067-20261029",
+        "fromLane": "L09",
+        "toLane": "L10",
+        "paths": [
+          "tests/integration/db067-global-email-pre-send.test.ts",
+          "tests/integration/db10-outbound-scope-fk.test.ts"
+        ],
+        "reason": "After L01 registers DB-067 function grants, independently execute negative/race witnesses: competing claims, stale fence, global/local late opt-out, misbound email hash, quarantine of ambiguous provider calls, role grants, and exact migration replay. Return exact run SHA/evidence; do not green DB-067 without proof.",
+        "status": "REQUESTED",
+        "requestedAt": "2026-10-28T19:59:00.000Z"
       }
     ],
     "coordination": {
