@@ -192,7 +192,9 @@ export async function refreshGroupRule(context:RequestContext,groupIdInput:strin
         continue;
       }
       const available=group.capacity===null || active<group.capacity;
-      if(!available && group.configJson["allowWaitlist"]!==true) {
+      // Legacy group kernel: absent/non-boolean allowWaitlist defaults to true.
+      // Only an explicit false may reject a RULE-matched overflow candidate.
+      if(!available && group.configJson["allowWaitlist"]===false) {
         skippedCapacity++; continue;
       }
       const state:"ACTIVE"|"WAITLISTED"=available?"ACTIVE":"WAITLISTED";

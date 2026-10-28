@@ -756,6 +756,54 @@ describe("DB03 bounded group rule refresh (PostgreSQL)", () => {
     expect(rows.rows[0].n).toBe(0);
   });
 
+  it("uses the legacy waitlist=true default for rule-refresh overflow with empty config", async () => {
+    const data=await createElectiveFixture();
+    const another=await createLearner();
+    const enrollment=randomUUID();fixture.learnerEnrollments.push(enrollment);
+    await pool.query("INSERT INTO learner_program_enrollments(id,membership_id,program_id,cohort_id) VALUES($1,$2,$3,$4)",
+      [enrollment,another.membershipId,data.programId,data.cohortId]);
+    const group=await createGroup(admin,{
+      collegeId:SEED_IDS.collegeA,kind:"BUS",name:"DB006 default waitlist "+randomUUID(),
+      capacity:1,configJson:{},
+    });
+    fixture.groups.push(group.id);
+    await transitionGroup(admin,group.id,"ACTIVATE");
+    await upsertGroupRule(admin,group.id,{
+      criteria:{allowedProgramIds:[data.programId]},autoRefresh:false,
+    });
+    const result=await refreshGroupRule(admin,group.id);
+    expect(result).toMatchObject({matched:2,active:1,added:2,waitlisted:1,skippedCapacity:0});
+    const states=await pool.query(
+      "SELECT state,count(*)::integer AS n FROM lms_group_members WHERE group_id=$1 GROUP BY state",
+      [group.id]);
+    expect(states.rows.find(row=>row.state==="ACTIVE")?.n).toBe(1);
+    expect(states.rows.find(row=>row.state==="WAITLISTED")?.n).toBe(1);
+    expect(await refreshGroupRule(admin,group.id))
+      .toMatchObject({matched:2,active:1,added:0,waitlisted:0});
+  });
+
+  it("rejects rule-refresh overflow only when allowWaitlist is explicitly false", async () => {
+    const data=await createElectiveFixture();
+    const another=await createLearner();
+    const enrollment=randomUUID();fixture.learnerEnrollments.push(enrollment);
+    await pool.query("INSERT INTO learner_program_enrollments(id,membership_id,program_id,cohort_id) VALUES($1,$2,$3,$4)",
+      [enrollment,another.membershipId,data.programId,data.cohortId]);
+    const group=await createGroup(admin,{
+      collegeId:SEED_IDS.collegeA,kind:"BUS",name:"DB006 closed waitlist "+randomUUID(),
+      capacity:1,configJson:{allowWaitlist:false},
+    });
+    fixture.groups.push(group.id);
+    await transitionGroup(admin,group.id,"ACTIVATE");
+    await upsertGroupRule(admin,group.id,{
+      criteria:{allowedProgramIds:[data.programId]},autoRefresh:false,
+    });
+    expect(await refreshGroupRule(admin,group.id))
+      .toMatchObject({matched:2,active:1,added:1,waitlisted:0,skippedCapacity:1});
+    const count=await pool.query("SELECT count(*)::integer AS n FROM lms_group_members WHERE group_id=$1",
+      [group.id]);
+    expect(count.rows[0].n).toBe(1);
+  });
+
   it("promotes an existing eligible RULE waitlist when a stale active rule member exits", async () => {
     const data=await createElectiveFixture();
     const second=await createLearner();
