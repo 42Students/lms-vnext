@@ -175,6 +175,51 @@ describe("DB03 group kernel on disposable PostgreSQL", () => {
       .toEqual(expect.arrayContaining(fixture.electiveOfferingIds.map(offeringId =>
         expect.objectContaining({ offeringId }))));
   });
+  it("rejects a new elective join after its backed class delivery ends", async () => {
+    const { groups, candidate } = await createElectiveFixture();
+    await pool.query(
+      "UPDATE course_section_deliveries SET ended_at=now() WHERE id=$1",
+      [fixture.deliveries[0]],
+    );
+    await expect(joinGroup(candidate.ctx, groups[0], candidate.membershipId))
+      .rejects.toMatchObject({ code: "ELECTIVE_OFFERING_NOT_ACTIVE" });
+    const roster = await pool.query(
+      "SELECT id FROM lms_group_members WHERE group_id=$1 AND membership_id=$2",
+      [groups[0], candidate.membershipId],
+    );
+    const group = await pool.query("SELECT active_count FROM lms_groups WHERE id=$1", [groups[0]]);
+    expect(roster.rows).toHaveLength(0);
+    expect(group.rows[0].active_count).toBe(0);
+  });
+
+  it("rolls back an elective transfer into an ended backed class", async () => {
+    const { groups, candidate } = await createElectiveFixture();
+    await joinGroup(candidate.ctx, groups[0], candidate.membershipId);
+    await pool.query(
+      "UPDATE course_section_deliveries SET ended_at=now() WHERE id=$1",
+      [fixture.deliveries[1]],
+    );
+    await expect(moveElectiveMember(
+      admin, fixture.electiveOfferingIds[0], fixture.electiveOfferingIds[1], candidate.membershipId,
+    )).rejects.toMatchObject({ code: "ELECTIVE_MOVE_OFFERINGS_INVALID" });
+    const states = await pool.query(
+      "SELECT group_id,state FROM lms_group_members WHERE group_id=ANY($1::uuid[]) AND membership_id=$2",
+      [groups, candidate.membershipId],
+    );
+    expect(states.rows).toHaveLength(1);
+    expect(states.rows[0]).toMatchObject({ group_id: groups[0], state: "ACTIVE" });
+    const counts = await pool.query(
+      "SELECT id,active_count FROM lms_groups WHERE id=ANY($1::uuid[])", [groups],
+    );
+    expect(counts.rows.find(row=>row.id===groups[0]).active_count).toBe(1);
+    expect(counts.rows.find(row=>row.id===groups[1]).active_count).toBe(0);
+    const events = await pool.query(
+      "SELECT count(*)::integer AS n FROM lms_group_member_events WHERE group_id=ANY($1::uuid[])",
+      [groups],
+    );
+    expect(events.rows[0].n).toBe(1);
+  });
+
   it("moves an elective atomically between offerings of the same slot", async () => {
     const { groups, candidate } = await createElectiveFixture();
     const active = await joinGroup(candidate.ctx, groups[0], candidate.membershipId);
