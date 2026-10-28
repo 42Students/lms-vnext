@@ -206,6 +206,8 @@ async function hasLiveElectiveBacking(tx: Tx, groupId: string): Promise<boolean>
       sql`(${electiveSlots.academicPeriodId} IS NULL OR
         ${electiveSlots.academicPeriodId} = ${courseOfferings.academicPeriodId})`,
       eq(courses.status, "ACTIVE"),
+      eq(courses.enabled, true),
+      isNull(courses.deletedAt),
       eq(departments.collegeId, electiveSlots.collegeId),
       isNull(courseSectionDeliveries.endedAt),
     )).limit(1);
