@@ -1,6 +1,6 @@
 # LMS vNext — Detailed Page Parity Specs
 
-**Execution priority:** [Final Execution & Domain Closure Protocol](../planning/database-domain-closure-protocol-2026-10-29.md) controls global phase gates. Dependency-ready scoped API/UI user jobs may be implemented during DATABASE without certifying global API/UI. This page-family contract still governs all detailed UI verification.
+**Execution priority:** [Final Execution & Domain Closure Protocol](../tracker.json) controls global phase gates. Dependency-ready scoped API/UI user jobs may be implemented during DATABASE without certifying global API/UI. This page-family contract still governs all detailed UI verification.
 
 ## Cross-chat master closure operating contract (27 October 2026)
 
