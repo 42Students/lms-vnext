@@ -31,6 +31,11 @@ describe("DB-004 first-party own identity profile",()=>{
     .rejects.toMatchObject({code:"IDENTITY_PROFILE_VERSION_CONFLICT"});
    const current=await getOwnIdentityProfile(ctx);
    expect(current).toMatchObject({givenName:"Mary Ann",familyName:"van der Berg",version:2});
+   const event=await pool.query("SELECT summary,metadata FROM activity_events WHERE actor_user_id=$1 AND event_type='identity.person.name_updated'",[ctx.user.id]);
+   expect(event.rowCount).toBe(1);
+   expect(event.rows[0]?.summary).toBe("Own identity name updated");
+   expect(event.rows[0]?.metadata).toMatchObject({previousVersion:1,nextVersion:2});
+   expect(JSON.stringify(event.rows[0]?.metadata)).not.toContain("Mary Ann");
   });
  });
  it("denies stale disabled identity even with old context and valid version",async()=>{

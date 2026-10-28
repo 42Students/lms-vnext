@@ -41,6 +41,8 @@ export const ACTIVITY_EVENT_TYPES = {
     "platform.college.contact_updated",
   IDENTITY_PERSON_ONBOARDED:
     "identity.person.onboarded",
+  IDENTITY_PERSON_NAME_UPDATED:
+    "identity.person.name_updated",
   IDENTITY_ROLES_CHANGED:
     "identity.membership.roles_changed",
   IDENTITY_LEARNER_PROFILE_SECTION_UPDATED: "identity.learner_profile_section.updated",

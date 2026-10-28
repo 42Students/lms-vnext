@@ -6,6 +6,8 @@ import { users } from "@/db/schema";
 import type { RequestContext } from "@/modules/identity/context";
 import { assertPersistedPlatformPermission } from "@/modules/permissions/persisted-actor";
 import { PeopleServiceError } from "./errors";
+import {recordActivityEventInTransaction} from "@/modules/activity/service";
+import {ACTIVITY_EVENT_TYPES} from "@/modules/activity/taxonomy";
 import { displayNameFromPersonName, personNameSchema } from "./person-name";
 
 /** DB-004 first-party identity: the canonical user row is authoritative.
@@ -48,6 +50,14 @@ export async function updateOwnIdentityName(context:RequestContext,raw:unknown,
       displayName:users.displayName,email:users.email,
       version:users.identityProfileVersion});
   if(!updated)throw new PeopleServiceError("IDENTITY_PROFILE_VERSION_CONFLICT");
+  // Audit the successful CAS in the same transaction, without echoing any
+  // personal name, phone number or verified email into shared metadata.
+  await recordActivityEventInTransaction(tx,context,{
+   eventType:ACTIVITY_EVENT_TYPES.IDENTITY_PERSON_NAME_UPDATED,
+   subjectType:"user",subjectId:context.user.id,
+   summary:"Own identity name updated",
+   metadata:{previousVersion:expectedVersion,nextVersion:updated.version},
+  });
   return updated;
  });
 }
