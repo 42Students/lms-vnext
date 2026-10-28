@@ -320,10 +320,25 @@ export const drizzleLoginRepository: LoginRepository = {
   async consumeAttempt(id, userId, session) {
     // Consume and session insert commit or roll back together, so a failed
     // insert never burns the one-time code.
+    if (!userId) return false;
     return getDb().transaction(async (tx) => {
+      // The preflight application check is outside this transaction. A
+      // concurrent account disable could otherwise commit before the OTP
+      // is consumed and still leave a new valid device session behind.
+      // Lock the persisted user FIRST (also the lock order used by session
+      // validation and disablement), then consume the one-time challenge.
+      const current = await tx.execute(sql`
+        SELECT u.id
+        FROM users u
+        JOIN identity_auth_attempts a ON a.user_id = u.id
+        WHERE a.id = ${id} AND u.id = ${userId}
+          AND u.platform_status = 'ACTIVE'
+        FOR UPDATE OF u
+      `);
+      if (rowsOf(current).length !== 1) return false;
       const consumed = await consumeInTransaction(tx, id);
       if (!consumed) return false;
-      if (session && userId) {
+      if (session) {
         if (session.previousDigest) {
           await tx.execute(sql`
             UPDATE identity_device_sessions

@@ -279,6 +279,43 @@ describe("tenant domains against PostgreSQL", () => {
       .resolves.toBeNull();
   });
 
+  it("reserves a tombstoned hostname against same-college and cross-college reclaim",async()=>{
+    const host="integration-tenant-retired-claim.example.com";
+    const first=await createTenantDomain(superAdmin,{
+      collegeId:SEED_IDS.collegeA,host,
+    },drizzleTenantDomainRepository,()=>"token-retired-claim");
+    await deleteTenantDomain(superAdmin,first.id,drizzleTenantDomainRepository);
+    for(const collegeId of [SEED_IDS.collegeA,SEED_IDS.collegeB]){
+      await expect(createTenantDomain(superAdmin,{collegeId,host},
+        drizzleTenantDomainRepository,()=>"token-illegal-reclaim"))
+        .rejects.toMatchObject({code:"HOST_CONFLICT"});
+    }
+    const saved=await pool.query<{deleted_at:Date|null}>(
+      "select deleted_at from tenant_domains where id=$1",[first.id]);
+    expect(saved.rows[0]?.deleted_at).not.toBeNull();
+    await expect(resolveTenantFromHost(host,drizzleTenantDomainRepository))
+      .resolves.toBeNull();
+  });
+
+  it("cannot race domain removal into fresh ownership of the same host",async()=>{
+    const host="integration-tenant-retired-race.example.com";
+    const first=await createTenantDomain(superAdmin,{
+      collegeId:SEED_IDS.collegeA,host,
+    },drizzleTenantDomainRepository,()=>"token-retired-race");
+    const [removed,reclaimed]=await Promise.allSettled([
+      deleteTenantDomain(superAdmin,first.id,drizzleTenantDomainRepository),
+      createTenantDomain(superAdmin,{collegeId:SEED_IDS.collegeB,host},
+        drizzleTenantDomainRepository,()=>"token-racing-claim"),
+    ]);
+    expect(removed.status).toBe("fulfilled");
+    expect(reclaimed.status).toBe("rejected");
+    if(reclaimed.status==="rejected")
+      expect(reclaimed.reason).toMatchObject({code:"HOST_CONFLICT"});
+    const count=await pool.query<{count:string}>(
+      "select count(*)::text as count from tenant_domains where lower(host)=$1",[host]);
+    expect(Number(count.rows[0]?.count)).toBe(1);
+  });
+
   it("enforces global host uniqueness and tenant management boundaries", async () => {
     const collegeBDomain = await createTenantDomain(
       superAdmin,

@@ -179,11 +179,8 @@ export const drizzleTenantDomainRepository: TenantDomainRepository = {
 
   async createDomain(input) {
     const db=getDb();
-    // Retired hosts preserve ownership and require a reviewed release.
-    const [retired]=await db.select({id:tenantDomains.id}).from(tenantDomains)
-      .where(and(sql<boolean>`lower(${tenantDomains.host}) = ${input.host}`,
-        sql`${tenantDomains.deletedAt} is not null`)).limit(1);
-    if(retired)throw new TenantDomainServiceError("HOST_CONFLICT");
+    // Retired names remain reserved. Check inside the transaction under
+    // the same host advisory lock used by domain removal and rename.
     try{
       const domainId=await db.transaction(async tx=>{
         await assertPersistedPlatformPermission(tx,input.context,"college.manage",{
@@ -199,6 +196,18 @@ export const drizzleTenantDomainRepository: TenantDomainRepository = {
             eq(colleges.status,"ACTIVE"),eq(organizations.status,"ACTIVE")))
           .for("share").limit(1);
         if(!activeParent)throw new TenantDomainServiceError("COLLEGE_NOT_FOUND");
+        await tx.execute(sql`select pg_advisory_xact_lock(hashtext(${"tenant-domain-host:"+input.host}))`);
+        const [claimed]=await tx.select({
+          id:tenantDomains.id,collegeId:tenantDomains.collegeId,
+          deletedAt:tenantDomains.deletedAt,
+        }).from(tenantDomains)
+          .where(sql<boolean>`lower(${tenantDomains.host}) = ${input.host}`)
+          .limit(1);
+        if(claimed){
+          if(claimed.deletedAt===null&&claimed.collegeId===input.collegeId)
+            return claimed.id;
+          throw new TenantDomainServiceError("HOST_CONFLICT");
+        }
         const [created]=await tx.insert(tenantDomains).values({
           collegeId:input.collegeId,host:input.host,
           verificationToken:input.verificationToken,
@@ -318,6 +327,7 @@ export const drizzleTenantDomainRepository: TenantDomainRepository = {
         if(row.host!==input.expectedHost)
           throw new TenantDomainServiceError("DOMAIN_HOST_STALE");
         if(row.host===input.host)return;
+        await tx.execute(sql`select pg_advisory_xact_lock(hashtext(${"tenant-domain-host:"+input.host}))`);
         const [taken]=await tx.select({id:tenantDomains.id})
           .from(tenantDomains)
           .where(sql<boolean>`lower(${tenantDomains.host}) = ${input.host}`).limit(1);
@@ -551,7 +561,9 @@ export const drizzleTenantDomainRepository: TenantDomainRepository = {
       // promotions, DNS verification, edits, and removals; otherwise two
       // requests can lock different domains and deadlock while swapping
       // primary ownership or writing audit receipts.
-      const [domainOwner] = await tx.select({ collegeId: tenantDomains.collegeId })
+      const [domainOwner] = await tx.select({
+        collegeId: tenantDomains.collegeId, host: tenantDomains.host,
+      })
         .from(tenantDomains)
         .where(and(eq(tenantDomains.id, domainId),isNull(tenantDomains.deletedAt)))
         .limit(1);
@@ -562,6 +574,7 @@ export const drizzleTenantDomainRepository: TenantDomainRepository = {
         .for("update").limit(1);
       if (!activeParent || activeParent.status !== "ACTIVE")
         throw new TenantDomainServiceError("DOMAIN_NOT_FOUND");
+      await tx.execute(sql`select pg_advisory_xact_lock(hashtext(${"tenant-domain-host:"+domainOwner.host}))`);
 
       const [current]=await tx.select({
         id:tenantDomains.id,
