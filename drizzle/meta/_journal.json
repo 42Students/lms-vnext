@@ -2164,6 +2164,13 @@
       "when": 1792359851266,
       "tag": "0308_db05_lesson_settings_tenant_storage",
       "breakpoints": true
+    },
+    {
+      "idx": 309,
+      "version": "7",
+      "when": 1792359911266,
+      "tag": "0309_db05_classroom_progress_tenant_guards",
+      "breakpoints": true
     }
   ]
 }

@@ -1075,4 +1075,57 @@ describe("courses C2 learning structure against PostgreSQL", () => {
     expect(legit.rows[0]!.lesson_content_id).toBe(other.id);
   });
 
+  it("rejects wrong-college progress and classroom writes at the database boundary", async () => {
+    const structure=await createStructure();
+    const path=await createLearningPath(collegeAdmin,{
+      offeringId:structure.offering.id,title:"C2 college-scope integrity path",
+    });
+    const lesson=await createCourseLesson(collegeAdmin,{
+      learningPathId:path.id,name:"C2 college-scope lesson",sequence:0,
+    });
+    const content=await createLessonContent(collegeAdmin,{
+      lessonId:lesson.id,title:"C2 scope resource",
+      contentType:"RESOURCE",notes:"Visible notes",sequence:0,points:1,
+    });
+    await expect(pool.query(
+      `insert into learner_content_progress(membership_id,lesson_content_id)
+       values($1,$2)`,[SEED_IDS.facultyCollegeBMembership,content.id],
+    )).rejects.toMatchObject({code:"23514"});
+    const progress=await pool.query<{id:string}>(
+      `insert into learner_content_progress(membership_id,lesson_content_id)
+       values($1,$2) returning id`,[learnerMembershipId,content.id],
+    );
+    await expect(pool.query(
+      `update learner_content_progress set membership_id=$1 where id=$2`,
+      [SEED_IDS.facultyCollegeBMembership,progress.rows[0]!.id],
+    )).rejects.toMatchObject({code:"23514"});
+    await expect(pool.query(
+      `update lesson_contents set delivery_id=$1 where id=$2`,
+      [structure.deliveryA.id,content.id],
+    )).rejects.toMatchObject({code:"23514"});
+    await expect(pool.query(
+      `insert into course_discussion_messages
+       (delivery_id,sender_membership_id,sender_role,message_text)
+       values($1,$2,'FACULTY','Wrong-college classroom sender')`,
+      [structure.deliveryA.id,SEED_IDS.facultyCollegeBMembership],
+    )).rejects.toMatchObject({code:"23514"});
+    const accepted=await pool.query<{id:string}>(
+      `insert into course_discussion_messages
+       (delivery_id,sender_membership_id,sender_role,message_text)
+       values($1,$2,'FACULTY','College-authorized classroom sender')
+       returning id`,
+      [structure.deliveryA.id,SEED_IDS.facultyCollegeAMembership],
+    );
+    expect(accepted.rows[0]!.id).toBeTruthy();
+    await expect(pool.query(
+      "update course_discussion_messages set delivery_id=$1 where id=$2",
+      [structure.deliveryB.id,accepted.rows[0]!.id],
+    )).rejects.toMatchObject({code:"23514"});
+    const after=await pool.query<{delivery_id:string}>(
+      "select delivery_id from course_discussion_messages where id=$1",
+      [accepted.rows[0]!.id],
+    );
+    expect(after.rows[0]!.delivery_id).toBe(structure.deliveryA.id);
+  });
+
 });
