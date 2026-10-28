@@ -20,6 +20,22 @@ const candidates=[
   .map(name=>"login_user."+name),
  "user.password",
 ];
+
+const metadataRetirements=[
+ ["faculty.token_version","faculty_profiles","token_version"],
+ ["learner.token_version","learner_profiles","token_version"],
+ ["recruiter.token_version","placement_recruiter_profiles","token_version"],
+ ["user.user_name","users","user_name"],
+ ["role.id","membership_roles","legacy_role_id_as_principal"],
+ ["role.is_deleted","membership_roles","is_deleted"],
+ ["role.updated_at","membership_roles","updated_at"],
+ ["role.description","membership_roles","description"],
+ ["refresh_token_blocklist.user_type","identity_device_sessions","user_type"],
+ ["user_session.user_type","identity_device_sessions","user_type"],
+ ["mobile_login_attempt.updated_at","identity_auth_attempts","updated_at"],
+ ["faculty_acct_verification.updated_at","identity_auth_attempts","updated_at"],
+ ["learner_acct_verification.updated_at","identity_auth_attempts","updated_at"],
+] as const;
 describe("DB-004 retired credential schema negative assertions",()=>{
  it("proves 21 canonical source field candidates are explicitly unapproved and have no raw credential authority",async()=>{
   const ledger=JSON.parse(readFileSync("docs/planning/db004-current-owner-evidence.json","utf8")) as {
@@ -78,4 +94,53 @@ describe("DB-004 retired credential schema negative assertions",()=>{
   expect(source).toContain("consumeAttempt(");
   expect(source).toContain("sessionDigest(");
  });
+ it("physically excludes 13 obsolete role, username, token-version and update-clock authority fields",async()=>{
+  expect(metadataRetirements).toHaveLength(13);
+  expect(new Set(metadataRetirements.map(x=>x[0])).size).toBe(13);
+  // A new membership_roles.id is a fresh UUID grant receipt, not a
+  // historical role.id principal; the legacy role registry itself is gone.
+  const obsoleteTables=[
+   "role","user_session","refresh_token_blocklist","mobile_login_attempt",
+   "faculty_acct_verification","learner_acct_verification","faculty","learner",
+  ];
+  const stillPresent=await pool.query<{name:string}>(`
+   select table_name as name from information_schema.tables
+   where table_schema='public' and table_name=any($1::text[])
+  `,[obsoleteTables]);
+  expect(stillPresent.rows).toEqual([]);
+  const requiredTargets=[
+   ["users","identity_uid"],["users","email"],["users","phone_e164"],
+   ["learner_profiles","membership_id"],["faculty_profiles","membership_id"],
+   ["placement_recruiter_profiles","user_id"],
+   ["membership_roles","role"],["system_roles","role"],
+   ["identity_device_sessions","credential_digest"],
+   ["identity_device_sessions","revoked_at"],
+   ["identity_auth_attempts","version"],
+   ["identity_auth_attempts","superseded_at"],
+  ];
+  for(const [table,column] of requiredTargets){
+   const found=await pool.query<{present:boolean}>(`
+    select exists(select 1 from information_schema.columns
+     where table_schema='public' and table_name=$1 and column_name=$2) as present
+   `,[table,column]);
+   expect(found.rows[0]?.present,table+"."+column).toBe(true);
+  }
+  for(const [field,table,column] of metadataRetirements){
+   const found=await pool.query<{present:boolean}>(`
+    select exists(select 1 from information_schema.columns
+     where table_schema='public' and table_name=$1 and column_name=$2) as present
+   `,[table,column]);
+   expect(found.rows[0]?.present,field+" must not become an authority field").toBe(false);
+  }
+  const ledger=JSON.parse(readFileSync("docs/planning/db004-current-owner-evidence.json","utf8")) as {
+   rows:{legacyField:string;runtimeSemanticsVerified:boolean;retirementApproved?:boolean}[];
+  };
+  for(const [field] of metadataRetirements){
+   const entry=ledger.rows.find(row=>row.legacyField===field);
+   expect(entry,field).toBeDefined();
+   expect(entry?.retirementApproved).not.toBe(true);
+   expect(entry?.runtimeSemanticsVerified).toBe(false);
+  }
+ });
+
 });
