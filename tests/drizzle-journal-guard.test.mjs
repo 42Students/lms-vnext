@@ -1,6 +1,6 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { mkdtempSync, mkdirSync, writeFileSync, rmSync } from "node:fs";
+import { mkdtempSync, mkdirSync, writeFileSync, rmSync, readFileSync } from "node:fs";
 import os from "node:os";
 import path from "node:path";
 import { randomUUID } from "node:crypto";
@@ -19,8 +19,8 @@ function fixture() {
   writeJournal();
   writeFileSync(path.join(folder,"drizzle","0000_seed.sql"),"SELECT 1;\n");
   writeFileSync(path.join(folder,"drizzle","0001_next.sql"),"SELECT 2;\n");
-  writeFileSync(path.join(meta,"0000_snapshot.json"),JSON.stringify({id:id0,prevId:"",tables:{}}));
-  writeFileSync(path.join(meta,"0001_snapshot.json"),JSON.stringify({id:id1,prevId:id0,tables:{}}));
+  writeFileSync(path.join(meta,"0000_snapshot.json"),JSON.stringify({id:id0,prevId:"00000000-0000-0000-0000-000000000000",version:"7",dialect:"postgresql",tables:{}}));
+  writeFileSync(path.join(meta,"0001_snapshot.json"),JSON.stringify({id:id1,prevId:id0,version:"7",dialect:"postgresql",tables:{}}));
   return { folder, meta, journal, writeJournal,
     cleanup:()=>rmSync(folder,{recursive:true,force:true}) };
 }
@@ -70,5 +70,38 @@ test("rejects empty registered SQL",()=>{
   try {
     writeFileSync(path.join(f.folder,"drizzle","0001_next.sql"),"  ");
     assert.throws(()=>verifyDrizzleJournal(f.folder),/Empty registered SQL/);
+  } finally {f.cleanup();}
+});
+
+test("rejects a corrupted root snapshot even when later ancestry is intact", () => {
+  const f=fixture();
+  try {
+    const original=JSON.parse(readFileSync(path.join(f.meta,"0000_snapshot.json"),"utf8"));
+    writeFileSync(path.join(f.meta,"0000_snapshot.json"),
+      JSON.stringify({...original,prevId:"arbitrary-parent"}));
+    assert.throws(()=>verifyDrizzleJournal(f.folder),/Root snapshot/);
+  } finally {f.cleanup();}
+});
+
+test("rejects journal dialect and per-entry version corruption", () => {
+  const f=fixture();
+  try {
+    f.journal.dialect="sqlite";
+    f.writeJournal();
+    assert.throws(()=>verifyDrizzleJournal(f.folder),/Journal version\/dialect/);
+    f.journal.dialect="postgresql";
+    f.journal.entries[1].version="6";
+    f.writeJournal();
+    assert.throws(()=>verifyDrizzleJournal(f.folder),/mismatched version/);
+  } finally {f.cleanup();}
+});
+
+test("rejects a snapshot with a different dialect or version", () => {
+  const f=fixture();
+  try {
+    const previous=JSON.parse(readFileSync(path.join(f.meta,"0001_snapshot.json"),"utf8"));
+    writeFileSync(path.join(f.meta,"0001_snapshot.json"),
+      JSON.stringify({...previous,version:"6",dialect:"sqlite"}));
+    assert.throws(()=>verifyDrizzleJournal(f.folder),/version\/dialect differs/);
   } finally {f.cleanup();}
 });
