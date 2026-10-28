@@ -80,6 +80,14 @@ test("no DB-004 release green without genuine owner decisions and complete techn
  const noImport=register.decisions.find(x=>x.id==="D03").productDecision;
  assert.equal(noImport.selectedOption,"NOT_APPLICABLE_GREENFIELD_NO_LEGACY_IMPORT");
  assert.match(noImport.rationale,/do not import old production/);
+ const greenfieldEvidence=register.decisions.find(x=>x.id==="D03").requiredEvidence.join(" ");
+ assert.match(greenfieldEvidence,/no-import policy/);
+ assert.match(greenfieldEvidence,/no migration receipts needed/);
+ assert.doesNotMatch(greenfieldEvidence,/Deduplicated source ID-to-UUID mapping receipts/);
+ const providerEvidence=register.decisions.find(x=>x.id==="D07").requiredEvidence.join(" ");
+ assert.match(providerEvidence,/NO historical data import/);
+ assert.match(providerEvidence,/authorized Exotel\/ZeptoMail/);
+
  const provider=register.decisions.find(x=>x.id==="D07").productDecision;
  assert.equal(provider.selectedOption,"REQUIRE_AUTHORIZED_PROVIDER_SMOKE_PLUS_REGISTERED_SCHEMA_AND_CI_NO_IMPORT");
  assert.match(provider.rationale,/Historical data import receipts are NOT APPLICABLE/);

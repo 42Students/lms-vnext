@@ -34,9 +34,9 @@
         "REJECT_AND_SPECIFY_ALTERNATIVE_NONPLAINTEXT_PROTOCOL"
       ],
       "requiredEvidence": [
-        "Document explicit treatment and secure disposal of historical credential secrets",
-        "Verify no legacy raw token/password or cross-host credential handoff in production",
-        "Real, authorized SMS and email provider acceptance as applicable"
+        "Registered-schema absence of old password, raw token and cross-host handoff authority (greenfield vNext never imports old credential rows)",
+        "Live first-party session/login and revocation negative tests, including cross-host denial",
+        "Authorized email/SMS provider smoke or signed applicable exemption; separate independent security review"
       ],
       "approvalStatus": "PENDING",
       "selectedOption": null,
@@ -65,9 +65,9 @@
         "REQUIRE_SEPARATE_VERIFIED_ROLE_CHALLENGES_WITH_EXPLICIT_LIFECYCLE"
       ],
       "requiredEvidence": [
-        "Cross-college FK and revocation PostgreSQL acceptance",
-        "No roll number or historical numeric ID accepted as authentication authority",
-        "Identity-to-membership source reconciliation approved"
+        "Current active scoped UUID membership and role negative/concurrency PostgreSQL acceptance",
+        "No roll number, historical numeric ID or cookie-only role accepted as authentication authority",
+        "Live own-role proof route and no-role-grant/no-login proof with authenticated issuer"
       ],
       "approvalStatus": "PENDING",
       "selectedOption": null,
@@ -90,16 +90,16 @@
         "Data migration owner",
         "Security owner"
       ],
-      "question": "Authorize migration-only historic identity key mapping into UUID users, scoped memberships and verified role grants?",
+      "question": "For greenfield vNext, approve no historical production-data import while retaining source-to-target semantic checks with synthetic fixtures?",
       "options": [
         "APPROVE_SOURCE_VERIFIED_CROSSWALK_WITH_QUARANTINE_OF_AMBIGUITIES",
         "REQUIRE_ADDITIONAL_MANUAL_REVIEW_OR_OMISSION",
         "NOT_APPLICABLE_GREENFIELD_NO_LEGACY_IMPORT"
       ],
       "requiredEvidence": [
-        "Deduplicated source ID-to-UUID mapping receipts",
-        "Same-college and active-role positive/negative cases",
-        "Source ID/timestamp archive and conflict handling"
+        "Greenfield no-import policy recorded; never contact or extract historical production records",
+        "Source-to-target semantic mapping using inspected old FE/BE code and synthetic disposable PostgreSQL fixtures",
+        "Unknown historic ID, role, cross-tenant associations fail closed; no migration receipts needed"
       ],
       "approvalStatus": "PENDING",
       "selectedOption": null,
@@ -112,7 +112,8 @@
         "rationale": "vNext is greenfield: do not import old production user/student/college records, credentials, identifiers or timestamps. Static source crosswalk and synthetic Postgres parity tests remain mandatory. No legacy production database access is authorized.",
         "recordedOn": "2026-10-28",
         "source": "Explicit user instruction in current ChatGPT conversation: do all seven recommended DB-004 decisions; no independently verified organizational signing identity."
-      }
+      },
+      "legacyQuestion": "Authorize migration-only historic identity key mapping into UUID users, scoped memberships and verified role grants?"
     },
     {
       "id": "D04",
@@ -128,9 +129,9 @@
         "ALL_RETAINED_DOMAINS_BLOCK_ARCHIVE_UNTIL_AUTHORIZED_PURGE"
       ],
       "requiredEvidence": [
-        "Reconcile historical branding is_deleted import evidence",
-        "Confirm registered migration/runtime status; ignore stale unregistered SQL notes",
-        "Approve retention, export, cleanup and explicitly authorized host reuse policy"
+        "Registered tenant-domain/branding lifecycle and host-reuse negative PostgreSQL tests",
+        "Preserve current vNext archive/tombstone audit with explicit retention and authorized reuse policy",
+        "No historical branding data import; provider-domain activation requires authorized verification"
       ],
       "approvalStatus": "PENDING",
       "selectedOption": null,
@@ -159,9 +160,9 @@
         "REVIEW_UNKNOWN_ROLE_NAMES_MANUALLY_WITHOUT_ROLE_GRANTS"
       ],
       "requiredEvidence": [
-        "Role definition-to-grant mapping and revocation testing",
-        "Historical role audit retention decisions",
-        "No source role name or numeric role ID as live principal"
+        "Persisted role grants and revocation positive/negative integration acceptance",
+        "Unknown, deleted or source role names must not grant tenant/system permission",
+        "No import of historical role metadata; preserve source-derived audit mapping as specifications only"
       ],
       "approvalStatus": "PENDING",
       "selectedOption": null,
@@ -189,9 +190,9 @@
         "REQUIRE_DIFFERENT_EXPLICIT_APPLICATION_BOUND_FLOW"
       ],
       "requiredEvidence": [
-        "Live email ownership link issuer/consumer and replay/expiry tests if flow remains in scope",
-        "No plaintext token fields or old type-scoped credential reuse",
-        "Provider and retention decisions"
+        "First-party email-link HMAC, one-winner, 24-hour expiry and changed-contact PostgreSQL acceptance",
+        "Application-authorized own-scope issuer and delivery template evidence, if enabled",
+        "No plaintext bearer credentials in persistent DB and authorized email provider/retention acceptance"
       ],
       "approvalStatus": "PENDING",
       "selectedOption": null,
@@ -214,16 +215,16 @@
         "Release owner",
         "Security owner"
       ],
-      "question": "What authorized live-provider and migration evidence is required before DB-004 can be marked done?",
+      "question": "Require authorized provider, registered schema/CI and release-security evidence, with legacy data migration explicitly not applicable?",
       "options": [
         "REQUIRE_AUTHORIZED_PROVIDER_SMOKE_PLUS_MIGRATION_AND_CI",
         "RECORD_FORMAL_APPROVED_EXEMPTION_FOR_EACH_NOT_APPLICABLE_PROVIDER",
         "REQUIRE_AUTHORIZED_PROVIDER_SMOKE_PLUS_REGISTERED_SCHEMA_AND_CI_NO_IMPORT"
       ],
       "requiredEvidence": [
-        "Live authorized email/SMS provider acceptance or signed scope exemption",
-        "Clean numbered Drizzle migration replay and journal check",
-        "SHA-specific DB-004 and full CI, finalized 195-field crosswalk"
+        "Real authorized Exotel/ZeptoMail provider smoke/receipt or explicit signed not-applicable scope decision",
+        "Clean numbered Drizzle journal, disposable PostgreSQL migration replay, isolated DB-004 negative tests",
+        "Exact-current-SHA full CI, relevant browser/security acceptance and independent release attestation; NO historical data import"
       ],
       "approvalStatus": "PENDING",
       "selectedOption": null,
@@ -236,7 +237,8 @@
         "rationale": "Require authorized Exotel/ZeptoMail send-and-receipt tests where applicable, registered disposable PostgreSQL migration journal and replay, current-SHA CI, security and release review. Historical data import receipts are NOT APPLICABLE for greenfield vNext.",
         "recordedOn": "2026-10-28",
         "source": "Explicit user instruction in current ChatGPT conversation: do all seven recommended DB-004 decisions; no independently verified organizational signing identity."
-      }
+      },
+      "legacyQuestion": "What authorized live-provider and migration evidence is required before DB-004 can be marked done?"
     }
   ],
   "technicalCoverageScope": "195 fields have technical witnesses; 7/7 product policies selected on 2026-10-28. Formal all-owner signoff, 34 final security/retirement approvals and authorized provider/release evidence remain separate. DB-004 not yet release-approved.",

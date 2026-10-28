@@ -18,28 +18,34 @@ for implementation commit `ba4a916244e65abd59ecc1ca738b1926ef26e2d6`.
   canonical same-college membership scope, profile roll lookup, role-specific
   one-time challenges and denial of login-session conversion.
 
-## Still explicitly NOT accepted
+## Release/security gates still NOT accepted after product decisions
 
-These are technical *field implementation* witnesses, not final release
-sign-off. Do not mark DB-004 or its dependent DB-005 milestone done before:
+**Product scope is resolved:** D01–D07 have approved requester-level dispositions,
+and all 34 original-field retirements have corresponding requester disposition.
+The application is **greenfield**: no production legacy records, tokens, identifiers
+or timestamps will be imported. Source-schematic/behavior comparisons and
+synthetic PostgreSQL witnesses remain required, but historical data-import,
+source-ID migration, and migration-receipt demands are **NOT APPLICABLE**.
+Nothing authorizes access to or deletion from the old production LMS.
 
-1. All seven owner decision groups in
-   `docs/planning/db004-closure-decision-register.json` have signed,
-   source-backed approvals.
-2. All 34 technically retired credential/metadata fields receive documented
-   security, migration and retention approval.
-3. Real historical data import and source-ID/timestamp reconciliation,
-   exceptions/quarantine and migration receipts are reviewed.
-4. The first-party email-link and scoped-account-proof issuing/consuming
-   operations are exposed only through deliberately permission-checked routes,
-   with authorized real email/SMS transport evidence; no public issue route or
-   external provider certification is provided by these tests.
-5. The latest production-targeted full CI, browser, provider and release
-   acceptance gates pass, or are explicitly exempted by authorized owners.
+This approval does **not** mean DB-004 has independent security/release
+signatures. Keep `docs/tracker.json` DB-004 `done:false` until:
 
-**Tracker state is intentionally `DB-004.done=false`.** A green technical
-coverage figure is not permission to enable legacy bearer tokens, bypass
-tenant checks, or invent retrospective owner approvals.
+1. Required security/data-retention/release owners sign the seven formal
+   decisions (the register deliberately distinguishes product disposition
+   from formal `approvalStatus`).
+2. The 34 requester-approved retirements receive independently evidenced
+   final security/retention signoff; no blanket assertion that legacy
+   production records have been erased or scanned.
+3. The enabled email-link flow is approved and validated with an authorized
+   sending template and application-bound issuing/consuming contract. Distinct
+   learner/faculty role proof routes are already wired and tested.
+4. Authorized provider send/receipt acceptance (or a specifically approved
+   not-applicable exemption) and current-commit registered migration,
+   browser, security, integration and release checks pass.
+
+**Do not infer full DB-004 release from 195/195 technical fields, 7/7 product
+choices or 34/34 requester retirement choices.**
 
 ## 28 October 2026 — authenticated scoped-account proof entry points
 

@@ -24,7 +24,7 @@
 
 **1D. Final database certification:** close **DB-019 active-field disposition**, **DB-020 drift/registered migration/phase-gate review**, and *every other required* open DATABASE task (not just the original eleven). Require fresh registered Drizzle migration journal replay, negative tenant/FK/race tests and the full database gate. Check `docs/tracker.json` for accepted closure, rather than interpreting 195/195 fields or a green isolated workflow as the whole phase.
 
-**Greenfield rule:** `AGENTS.md` explicitly says vNext has **no legacy production data import**. Some historical DB-004 notes demand historical source-ID/timestamp import receipts. Treat this as an **unresolved policy conflict to disposition explicitly with the required owners**, not permission to connect to or migrate the old production database. Use synthetic fixtures/source-schema mappings for parity; actual historical import/backfill requires a new explicit user authorization. Record a formally approved not-applicable decision where appropriate; never fabricate receipts.
+**Greenfield rule (requester-approved D03 on 2026-10-28):** vNext does **not** import historical old-LMS production records, credential material, IDs or timestamps. The requester explicitly approved the `NOT_APPLICABLE_GREENFIELD_NO_LEGACY_IMPORT` disposition in `docs/planning/db004-closure-decision-register.json`; source-code/spec mapping and synthetic disposable PostgreSQL parity checks are still mandatory. Do not request or fabricate historical import receipts, access old production data, or delete anything from old LMS. Independent security/release signoff and authorized provider checks remain separate gates.
 
 ### Step 2 — API and whole-workflow functional parity
 
