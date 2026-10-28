@@ -47,7 +47,7 @@
     ],
     "RELEASE": [
       "All required lint/typecheck/build, migration, integration, negative and release tests executed and passing on the target commit in any approved test environment; GitHub Actions CI is optional and intentionally paused for billing",
-      "Live Identity Platform/Cloud SQL/GCS/outbound/provider integration and smoke validated",
+      "First-party phone/email sign-in, authorized Exotel/ZeptoMail, Cloud SQL, private R2 storage and outbound/provider smoke validated",
       "Security/adversarial/load/restore/rollback acceptance passed",
       "Production launch and post-launch verification accepted"
     ]
