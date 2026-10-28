@@ -34,9 +34,10 @@ export const tenantDomains = pgTable(
     updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
   },
   (table) => [
+    // Retired names remain reserved globally. A partial live-only index
+    // permitted a second owner to claim a tombstoned host via direct SQL.
     uniqueIndex("tenant_domains_host_uq")
-      .on(sql`lower(${table.host})`)
-      .where(sql`${table.deletedAt} is null`),
+      .on(sql`lower(${table.host})`),
     index("tenant_domains_college_idx").on(table.collegeId),
     uniqueIndex("tenant_domains_college_primary_uq")
       .on(table.collegeId)

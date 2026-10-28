@@ -87,6 +87,23 @@ describe("DB01 tenant and identity PostgreSQL constraints", () => {
     });
   });
 
+  it("reserves tombstoned hostnames globally even from direct PostgreSQL writes (23505)", async () => {
+    await withRollback(async client => {
+      const hostname=uniqueHost();
+      await client.query(
+        `insert into tenant_domains
+           (college_id,host,is_verified,is_primary,deleted_at)
+         values ($1,$2,false,false,clock_timestamp())`,
+        [SEED_IDS.collegeA,hostname],
+      );
+      await expect(client.query(
+        `insert into tenant_domains(college_id,host,is_verified,is_primary)
+         values($1,$2,false,false)`,
+        [SEED_IDS.collegeB,hostname.toUpperCase()],
+      )).rejects.toMatchObject({code:"23505",constraint:"tenant_domains_host_uq"});
+    });
+  });
+
   it("rejects a second verified primary domain for the same college (23505)", async () => {
     await withRollback(async (client) => {
       const result = await client.query(

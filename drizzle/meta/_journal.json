@@ -2108,6 +2108,13 @@
       "when": 1792359371266,
       "tag": "0300_db01_person_name_identity_profile",
       "breakpoints": true
+    },
+    {
+      "idx": 301,
+      "version": "7",
+      "when": 1792359431266,
+      "tag": "0301_db01_retired_host_global_uniqueness",
+      "breakpoints": true
     }
   ]
 }
