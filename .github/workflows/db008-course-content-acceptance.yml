@@ -76,4 +76,6 @@ jobs:
       - name: DB-008 source parent contracts (not a DB registration claim)
         run: node --test tests/db05-course-parent-integrity.test.mjs tests/db05-archived-learning-hierarchy-access.test.mjs
       - name: TypeScript compile
+        env:
+          NODE_OPTIONS: --max-old-space-size=6144
         run: npm run typecheck
