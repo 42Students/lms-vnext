@@ -305,8 +305,8 @@ describe("DB03 elective group-backed course access (PostgreSQL)", () => {
     // same-college program/section enrollment, preserving historical rows.
     f.transferredEnrollmentId=randomUUID();
     f.transferredSectionEnrollmentId=randomUUID();
-    await pool.query("UPDATE section_enrollments SET status='MOVED' WHERE id=$1",[f.otherSectionEnrollmentId]);
-    await pool.query("UPDATE learner_program_enrollments SET status='WITHDRAWN' WHERE id=$1",[f.otherEnrollmentId]);
+    await pool.query("UPDATE section_enrollments SET status='MOVED',ended_at=now() WHERE id=$1",[f.otherSectionEnrollmentId]);
+    await pool.query("UPDATE learner_program_enrollments SET status='WITHDRAWN',withdrawn_at=now() WHERE id=$1",[f.otherEnrollmentId]);
     await pool.query(
       "INSERT INTO learner_program_enrollments(id,membership_id,program_id,cohort_id) VALUES($1,$2,$3,$4)",
       [f.transferredEnrollmentId,student.membershipId,p,c]);
@@ -356,8 +356,8 @@ describe("DB03 elective group-backed course access (PostgreSQL)", () => {
     // same-college program/section enrollment, preserving historical rows.
     f.transferredEnrollmentId=randomUUID();
     f.transferredSectionEnrollmentId=randomUUID();
-    await pool.query("UPDATE section_enrollments SET status='MOVED' WHERE id=$1",[f.otherSectionEnrollmentId]);
-    await pool.query("UPDATE learner_program_enrollments SET status='WITHDRAWN' WHERE id=$1",[f.otherEnrollmentId]);
+    await pool.query("UPDATE section_enrollments SET status='MOVED',ended_at=now() WHERE id=$1",[f.otherSectionEnrollmentId]);
+    await pool.query("UPDATE learner_program_enrollments SET status='WITHDRAWN',withdrawn_at=now() WHERE id=$1",[f.otherEnrollmentId]);
     await pool.query(
       "INSERT INTO learner_program_enrollments(id,membership_id,program_id,cohort_id) VALUES($1,$2,$3,$4)",
       [f.transferredEnrollmentId,student.membershipId,p,c]);

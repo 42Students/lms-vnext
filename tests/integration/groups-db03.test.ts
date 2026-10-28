@@ -417,10 +417,10 @@ describe("DB03 group kernel on disposable PostgreSQL", () => {
     fixture.learnerEnrollments.push(nextEnrollment);
     fixture.learnerSections.push(nextSectionEnrollment);
     await pool.query(
-      "UPDATE section_enrollments SET status='MOVED' WHERE learner_enrollment_id=$1 AND status='ACTIVE'",
+      "UPDATE section_enrollments SET status='MOVED',ended_at=now() WHERE learner_enrollment_id=$1 AND status='ACTIVE'",
       [learnerEnrollmentId]);
     await pool.query(
-      "UPDATE learner_program_enrollments SET status='WITHDRAWN' WHERE id=$1",
+      "UPDATE learner_program_enrollments SET status='WITHDRAWN',withdrawn_at=now() WHERE id=$1",
       [learnerEnrollmentId]);
     await pool.query(
       "INSERT INTO learner_program_enrollments(id,membership_id,program_id,cohort_id) VALUES($1,$2,$3,$4)",
