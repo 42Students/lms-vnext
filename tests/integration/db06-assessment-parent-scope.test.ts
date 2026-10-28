@@ -86,7 +86,9 @@ async function submission(db:Sql,a:string,d:string,m:string=ownedLearnerMembersh
 async function alternateOffering(db:Sql,g:Graph){const c=keep("courses",randomUUID()),o=keep("offerings",randomUUID());await db.query("INSERT INTO courses(id,department_id,name,code,status) SELECT $1,department_id,$2,$3,'ACTIVE' FROM courses WHERE id=$4",[c,`DB06 alternate ${c}`,`DB06-ALT-${c}`,g.course]);await db.query("INSERT INTO course_offerings(id,course_id,cohort_id,academic_period_id,type,credits,display_order,status) VALUES($1,$2,$3,$4,'CORE',4,1,'ACTIVE')",[o,c,g.cohort,g.period]);return o}
 async function bindElective(db:Sql,g:Graph,delivery:string,membership?:string){
  const group=keep("groups",randomUUID()),slot=keep("electiveSlots",randomUUID()),eo=keep("electiveOfferings",randomUUID());
- await db.query("UPDATE course_offerings SET type='ELECTIVE' WHERE id=$1",[g.offering]);
+ // Preserve historical curriculum identity while satisfying DB-005's
+ // CORE-only active curriculum FK constraint at the exact elective transition.
+ await db.query("UPDATE course_offerings SET type='ELECTIVE', program_term_course_id=NULL WHERE id=$1",[g.offering]);
  await db.query("INSERT INTO lms_groups(id,kind,owner_scope,college_id,name,status,active_count,created_by_user_id) VALUES($1,'ELECTIVE','COLLEGE',$2,$3,'ACTIVE',$4,$5)",[group,SEED_IDS.collegeA,`DB06 elective ${group}`,membership?1:0,SEED_IDS.collegeAdminUser]);
  await db.query("INSERT INTO elective_slots(id,college_id,program_id,academic_period_id,semester_number,name,status) VALUES($1,$2,$3,$4,1,$5,'ACTIVE')",[slot,SEED_IDS.collegeA,g.program,g.period,`DB06 slot ${slot}`]);
  await db.query("INSERT INTO elective_offerings(id,slot_id,course_id,group_id,backed_delivery_id,status) VALUES($1,$2,$3,$4,$5,'ACTIVE')",[eo,slot,g.course,group,delivery]);
