@@ -876,5 +876,785 @@
       "done": false,
       "dependsOn": []
     }
-  ]
+  ],
+  "execution": {
+    "schemaVersion": 1,
+    "authority": "docs/tracker.json is the sole active execution plan, 81-task DB tracker, 10-lane coordination tracker, and future-phase milestone tracker; no competing current execution documents.",
+    "adoptedOn": "2026-10-29",
+    "northStar": "Build an actually functional and polished greenfield LMS vNext with complete development-oracle behavior, correct tenant and privacy invariants, tested roles, and independent final release certification; optimize for closed runnable domains not investigations or test-count inflation.",
+    "lifecycle": [
+      {
+        "id": "DATABASE",
+        "globalGate": "DATABASE",
+        "goal": "All registered persistence and 81 tracked tasks accepted with real PostgreSQL and safety evidence",
+        "acceptance": "All 81 DB tasks DONE, clean registered replay/catalog/drift, tenant/privacy/race negatives, independent DATABASE signoff"
+      },
+      {
+        "id": "API",
+        "globalGate": "API",
+        "goal": "All seven-role API and producer-to-consumer user jobs function",
+        "acceptance": "Services, auth, state, side effects, errors and cross-role integration pass"
+      },
+      {
+        "id": "UI",
+        "globalGate": "UI",
+        "goal": "All required account/page families function at implementation-green",
+        "acceptance": "Seven accounts plus shared surfaces, all tabs/modals/actions/mobile/error/permissions verified"
+      },
+      {
+        "id": "DESIGN",
+        "globalGate": "UI",
+        "goal": "Final accessible, responsive, cohesive visual and UX quality",
+        "acceptance": "Design and accessibility acceptance after implementation green; DESIGN is the UI phase sub-gate before RELEASE"
+      },
+      {
+        "id": "RELEASE",
+        "globalGate": "RELEASE",
+        "goal": "Full integrated deployment and customer readiness",
+        "acceptance": "Final target-SHA CI, browser/security/providers/recovery/rollout and production oracle signoffs"
+      }
+    ],
+    "completionPolicy": [
+      "DB task DONE requires executed evidence at exact code SHA for registered schema, real producer/consumer, permissions, tenant/private/FK/state/race checks and required decisions; never mark DONE from authored tests or prose.",
+      "Accepted DB tasks are frozen unless demonstrated affected regression or explicit owner rescope.",
+      "Only independent final-release attestations, live-provider checks, end-of-release browser freeze may be deferred with the existing structured deferredRelease; no core functionality/schema/security/privacy gaps may be deferred.",
+      "Domain-ready API and functional UI can be implemented during DATABASE as scoped vertical slices without certifying global API/UI/RELEASE.",
+      "After two useful passes with zero accepted tasks, isolate one reproducible blocker or move to independent ready work; never abandon unsafe obligations."
+    ],
+    "phaseOrderHumanReadable": [
+      "DATABASE",
+      "API/user-job GREEN",
+      "UI implementation GREEN",
+      "DESIGN GREEN",
+      "RELEASE GREEN"
+    ],
+    "lanes": [
+      {
+        "id": "L01",
+        "name": "Shared database integrator and global certification",
+        "dbTaskIds": [
+          "DB-002",
+          "DB-003",
+          "DB-004",
+          "DB-017",
+          "DB-019",
+          "DB-020"
+        ],
+        "sourceOwnership": [
+          "drizzle/meta/_journal.json",
+          "drizzle/meta/*_snapshot.json",
+          "drizzle/[0-9]*.sql",
+          "src/db/schema/index.ts",
+          "global migration registration",
+          "shared acceptance/orchestration CI"
+        ],
+        "phaseScopes": [
+          "DATABASE migration coordination",
+          "cross-domain API integration",
+          "global gate coordination"
+        ],
+        "operatingNotes": "Only lane allowed to register shared numbered migrations/journal/snapshots and merge shared schema barrel; other lanes request promotion. Does not implement unrelated domain behavior.",
+        "claim": null
+      },
+      {
+        "id": "L02",
+        "name": "Academics, groups and electives",
+        "dbTaskIds": [
+          "DB-005",
+          "DB-006",
+          "DB-026"
+        ],
+        "sourceOwnership": [
+          "src/modules/academics/**",
+          "src/modules/groups/**",
+          "academic/group/elective-specific schema and tests"
+        ],
+        "phaseScopes": [
+          "API academic administration and scheduling",
+          "UI college academic/faculty scheduling"
+        ],
+        "operatingNotes": "DB02 already accepted; never reopen without concrete regression.",
+        "claim": null
+      },
+      {
+        "id": "L03",
+        "name": "Learner profiles, identity and private evidence",
+        "dbTaskIds": [
+          "DB-007",
+          "DB-016",
+          "DB-077",
+          "DB-080",
+          "DB-081"
+        ],
+        "sourceOwnership": [
+          "src/modules/people/**",
+          "src/modules/profile-verification/**",
+          "profile/learner document-specific schema and tests"
+        ],
+        "phaseScopes": [
+          "API profile/verification user jobs",
+          "UI learner profile/verification"
+        ],
+        "operatingNotes": "Private receipts, scan state, owner/purpose and tenant protections required.",
+        "claim": null
+      },
+      {
+        "id": "L04",
+        "name": "Courses and learning content",
+        "dbTaskIds": [
+          "DB-008",
+          "DB-078"
+        ],
+        "sourceOwnership": [
+          "src/modules/courses/**",
+          "course and lesson content-specific schema and tests"
+        ],
+        "phaseScopes": [
+          "API courses/offering/content delivery",
+          "UI learner/faculty course flows"
+        ],
+        "operatingNotes": "Coordinates prereqs with academics and assessment without editing their owned modules.",
+        "claim": null
+      },
+      {
+        "id": "L05",
+        "name": "Assignments, quizzes, grading and attendance",
+        "dbTaskIds": [
+          "DB-009",
+          "DB-030",
+          "DB-035",
+          "DB-038",
+          "DB-041",
+          "DB-042",
+          "DB-044",
+          "DB-045",
+          "DB-052",
+          "DB-053"
+        ],
+        "sourceOwnership": [
+          "src/modules/assessments/**",
+          "src/modules/attendance/**",
+          "assessment/attendance-specific schema and tests"
+        ],
+        "phaseScopes": [
+          "API assessment/grading/attendance",
+          "UI assessment and attendance"
+        ],
+        "operatingNotes": "Preserve immutable review/grade history and same-parent integrity.",
+        "claim": null
+      },
+      {
+        "id": "L06",
+        "name": "Projects, templates, mentorship and history",
+        "dbTaskIds": [
+          "DB-010",
+          "DB-068",
+          "DB-070",
+          "DB-071",
+          "DB-073",
+          "DB-074",
+          "DB-075"
+        ],
+        "sourceOwnership": [
+          "src/modules/projects/**",
+          "project/mentor/task/sprint-specific schema and tests"
+        ],
+        "phaseScopes": [
+          "API projects/mentor jobs",
+          "UI projects and mentor account"
+        ],
+        "operatingNotes": "Enforce project parent/ancestry and template revision consistency.",
+        "claim": null
+      },
+      {
+        "id": "L07",
+        "name": "Placement policies, applications and offer lifecycle",
+        "dbTaskIds": [
+          "DB-011",
+          "DB-021",
+          "DB-029",
+          "DB-054",
+          "DB-066",
+          "DB-069",
+          "DB-072"
+        ],
+        "sourceOwnership": [
+          "src/modules/placements/**",
+          "placement/job/drive/offer-specific schema and tests"
+        ],
+        "phaseScopes": [
+          "API placement outcomes and applications",
+          "UI placement application, TPO drive"
+        ],
+        "operatingNotes": "Coordinate shared recruiter policy with L08 without dual-writing.",
+        "claim": null
+      },
+      {
+        "id": "L08",
+        "name": "TPO and recruiter CRM",
+        "dbTaskIds": [
+          "DB-012",
+          "DB-032",
+          "DB-034",
+          "DB-036",
+          "DB-047",
+          "DB-056",
+          "DB-057",
+          "DB-059",
+          "DB-060",
+          "DB-061",
+          "DB-062",
+          "DB-063",
+          "DB-064",
+          "DB-079"
+        ],
+        "sourceOwnership": [
+          "src/modules/tpo/**",
+          "src/modules/recruiter/**",
+          "CRM/messages/shares-specific schema and tests"
+        ],
+        "phaseScopes": [
+          "API TPO/recruiter CRM",
+          "UI TPO and recruiter accounts"
+        ],
+        "operatingNotes": "For shared placement files, request L07 implementation or a documented single-owner handoff.",
+        "claim": null
+      },
+      {
+        "id": "L09",
+        "name": "Operations, notifications and outbound",
+        "dbTaskIds": [
+          "DB-013",
+          "DB-022",
+          "DB-023",
+          "DB-024",
+          "DB-031",
+          "DB-033",
+          "DB-037",
+          "DB-039",
+          "DB-040",
+          "DB-043",
+          "DB-046",
+          "DB-049",
+          "DB-050",
+          "DB-067"
+        ],
+        "sourceOwnership": [
+          "src/modules/notifications/**",
+          "src/modules/operations/**",
+          "outbox/provider/jobs/log/audit-specific schema and tests"
+        ],
+        "phaseScopes": [
+          "API operations and notification workflows",
+          "UI shared operational surfaces"
+        ],
+        "operatingNotes": "Do not use production credentials or send real notifications from tests.",
+        "claim": null
+      },
+      {
+        "id": "L10",
+        "name": "Independent database safety, security and regression verification",
+        "dbTaskIds": [
+          "DB-001",
+          "DB-014",
+          "DB-015",
+          "DB-018",
+          "DB-025",
+          "DB-027",
+          "DB-028",
+          "DB-048",
+          "DB-051",
+          "DB-055",
+          "DB-058",
+          "DB-065",
+          "DB-076"
+        ],
+        "sourceOwnership": [
+          "scripts/db-test-prepare.ts",
+          "scripts/db-reset.ts",
+          "scripts/db-seed.ts",
+          "database targeting/verification and independent witness tests"
+        ],
+        "phaseScopes": [
+          "DATABASE safety preflight",
+          "cross-domain tenant/race negatives",
+          "API/UI security regression",
+          "release verification"
+        ],
+        "operatingNotes": "L10 owns independent verification findings; actual domain implementation defects go to domain owner. Coordinate changes to shared CI with L01.",
+        "claim": null
+      }
+    ],
+    "milestones": [
+      {
+        "id": "API-L01",
+        "stage": "API",
+        "laneId": "L01",
+        "title": "Shared database integrator and global certification — complete user-job integration",
+        "requirements": [
+          "Version-pinned legacy source/user-job crosswalk for owned scope",
+          "Actual authorized producer -> persisted record -> consumer works",
+          "Errors, retries, cross-role side effects and tenant/race negatives executed"
+        ],
+        "done": false,
+        "acceptanceEvidence": []
+      },
+      {
+        "id": "UI-L01",
+        "stage": "UI",
+        "laneId": "L01",
+        "title": "Shared database integrator and global certification — functional UI surfaces",
+        "requirements": [
+          "All reachable owned pages/states/modals/forms/actions accounted for or explicitly retired",
+          "Desktop/mobile and permission/error/empty paths verified in browser",
+          "Relevant working services and real persisted data used, not mock-only"
+        ],
+        "done": false,
+        "acceptanceEvidence": []
+      },
+      {
+        "id": "API-L02",
+        "stage": "API",
+        "laneId": "L02",
+        "title": "Academics, groups and electives — complete user-job integration",
+        "requirements": [
+          "Version-pinned legacy source/user-job crosswalk for owned scope",
+          "Actual authorized producer -> persisted record -> consumer works",
+          "Errors, retries, cross-role side effects and tenant/race negatives executed"
+        ],
+        "done": false,
+        "acceptanceEvidence": []
+      },
+      {
+        "id": "UI-L02",
+        "stage": "UI",
+        "laneId": "L02",
+        "title": "Academics, groups and electives — functional UI surfaces",
+        "requirements": [
+          "All reachable owned pages/states/modals/forms/actions accounted for or explicitly retired",
+          "Desktop/mobile and permission/error/empty paths verified in browser",
+          "Relevant working services and real persisted data used, not mock-only"
+        ],
+        "done": false,
+        "acceptanceEvidence": []
+      },
+      {
+        "id": "API-L03",
+        "stage": "API",
+        "laneId": "L03",
+        "title": "Learner profiles, identity and private evidence — complete user-job integration",
+        "requirements": [
+          "Version-pinned legacy source/user-job crosswalk for owned scope",
+          "Actual authorized producer -> persisted record -> consumer works",
+          "Errors, retries, cross-role side effects and tenant/race negatives executed"
+        ],
+        "done": false,
+        "acceptanceEvidence": []
+      },
+      {
+        "id": "UI-L03",
+        "stage": "UI",
+        "laneId": "L03",
+        "title": "Learner profiles, identity and private evidence — functional UI surfaces",
+        "requirements": [
+          "All reachable owned pages/states/modals/forms/actions accounted for or explicitly retired",
+          "Desktop/mobile and permission/error/empty paths verified in browser",
+          "Relevant working services and real persisted data used, not mock-only"
+        ],
+        "done": false,
+        "acceptanceEvidence": []
+      },
+      {
+        "id": "API-L04",
+        "stage": "API",
+        "laneId": "L04",
+        "title": "Courses and learning content — complete user-job integration",
+        "requirements": [
+          "Version-pinned legacy source/user-job crosswalk for owned scope",
+          "Actual authorized producer -> persisted record -> consumer works",
+          "Errors, retries, cross-role side effects and tenant/race negatives executed"
+        ],
+        "done": false,
+        "acceptanceEvidence": []
+      },
+      {
+        "id": "UI-L04",
+        "stage": "UI",
+        "laneId": "L04",
+        "title": "Courses and learning content — functional UI surfaces",
+        "requirements": [
+          "All reachable owned pages/states/modals/forms/actions accounted for or explicitly retired",
+          "Desktop/mobile and permission/error/empty paths verified in browser",
+          "Relevant working services and real persisted data used, not mock-only"
+        ],
+        "done": false,
+        "acceptanceEvidence": []
+      },
+      {
+        "id": "API-L05",
+        "stage": "API",
+        "laneId": "L05",
+        "title": "Assignments, quizzes, grading and attendance — complete user-job integration",
+        "requirements": [
+          "Version-pinned legacy source/user-job crosswalk for owned scope",
+          "Actual authorized producer -> persisted record -> consumer works",
+          "Errors, retries, cross-role side effects and tenant/race negatives executed"
+        ],
+        "done": false,
+        "acceptanceEvidence": []
+      },
+      {
+        "id": "UI-L05",
+        "stage": "UI",
+        "laneId": "L05",
+        "title": "Assignments, quizzes, grading and attendance — functional UI surfaces",
+        "requirements": [
+          "All reachable owned pages/states/modals/forms/actions accounted for or explicitly retired",
+          "Desktop/mobile and permission/error/empty paths verified in browser",
+          "Relevant working services and real persisted data used, not mock-only"
+        ],
+        "done": false,
+        "acceptanceEvidence": []
+      },
+      {
+        "id": "API-L06",
+        "stage": "API",
+        "laneId": "L06",
+        "title": "Projects, templates, mentorship and history — complete user-job integration",
+        "requirements": [
+          "Version-pinned legacy source/user-job crosswalk for owned scope",
+          "Actual authorized producer -> persisted record -> consumer works",
+          "Errors, retries, cross-role side effects and tenant/race negatives executed"
+        ],
+        "done": false,
+        "acceptanceEvidence": []
+      },
+      {
+        "id": "UI-L06",
+        "stage": "UI",
+        "laneId": "L06",
+        "title": "Projects, templates, mentorship and history — functional UI surfaces",
+        "requirements": [
+          "All reachable owned pages/states/modals/forms/actions accounted for or explicitly retired",
+          "Desktop/mobile and permission/error/empty paths verified in browser",
+          "Relevant working services and real persisted data used, not mock-only"
+        ],
+        "done": false,
+        "acceptanceEvidence": []
+      },
+      {
+        "id": "API-L07",
+        "stage": "API",
+        "laneId": "L07",
+        "title": "Placement policies, applications and offer lifecycle — complete user-job integration",
+        "requirements": [
+          "Version-pinned legacy source/user-job crosswalk for owned scope",
+          "Actual authorized producer -> persisted record -> consumer works",
+          "Errors, retries, cross-role side effects and tenant/race negatives executed"
+        ],
+        "done": false,
+        "acceptanceEvidence": []
+      },
+      {
+        "id": "UI-L07",
+        "stage": "UI",
+        "laneId": "L07",
+        "title": "Placement policies, applications and offer lifecycle — functional UI surfaces",
+        "requirements": [
+          "All reachable owned pages/states/modals/forms/actions accounted for or explicitly retired",
+          "Desktop/mobile and permission/error/empty paths verified in browser",
+          "Relevant working services and real persisted data used, not mock-only"
+        ],
+        "done": false,
+        "acceptanceEvidence": []
+      },
+      {
+        "id": "API-L08",
+        "stage": "API",
+        "laneId": "L08",
+        "title": "TPO and recruiter CRM — complete user-job integration",
+        "requirements": [
+          "Version-pinned legacy source/user-job crosswalk for owned scope",
+          "Actual authorized producer -> persisted record -> consumer works",
+          "Errors, retries, cross-role side effects and tenant/race negatives executed"
+        ],
+        "done": false,
+        "acceptanceEvidence": []
+      },
+      {
+        "id": "UI-L08",
+        "stage": "UI",
+        "laneId": "L08",
+        "title": "TPO and recruiter CRM — functional UI surfaces",
+        "requirements": [
+          "All reachable owned pages/states/modals/forms/actions accounted for or explicitly retired",
+          "Desktop/mobile and permission/error/empty paths verified in browser",
+          "Relevant working services and real persisted data used, not mock-only"
+        ],
+        "done": false,
+        "acceptanceEvidence": []
+      },
+      {
+        "id": "API-L09",
+        "stage": "API",
+        "laneId": "L09",
+        "title": "Operations, notifications and outbound — complete user-job integration",
+        "requirements": [
+          "Version-pinned legacy source/user-job crosswalk for owned scope",
+          "Actual authorized producer -> persisted record -> consumer works",
+          "Errors, retries, cross-role side effects and tenant/race negatives executed"
+        ],
+        "done": false,
+        "acceptanceEvidence": []
+      },
+      {
+        "id": "UI-L09",
+        "stage": "UI",
+        "laneId": "L09",
+        "title": "Operations, notifications and outbound — functional UI surfaces",
+        "requirements": [
+          "All reachable owned pages/states/modals/forms/actions accounted for or explicitly retired",
+          "Desktop/mobile and permission/error/empty paths verified in browser",
+          "Relevant working services and real persisted data used, not mock-only"
+        ],
+        "done": false,
+        "acceptanceEvidence": []
+      },
+      {
+        "id": "API-L10",
+        "stage": "API",
+        "laneId": "L10",
+        "title": "Independent database safety, security and regression verification — complete user-job integration",
+        "requirements": [
+          "Version-pinned legacy source/user-job crosswalk for owned scope",
+          "Actual authorized producer -> persisted record -> consumer works",
+          "Errors, retries, cross-role side effects and tenant/race negatives executed"
+        ],
+        "done": false,
+        "acceptanceEvidence": []
+      },
+      {
+        "id": "UI-L10",
+        "stage": "UI",
+        "laneId": "L10",
+        "title": "Independent database safety, security and regression verification — functional UI surfaces",
+        "requirements": [
+          "All reachable owned pages/states/modals/forms/actions accounted for or explicitly retired",
+          "Desktop/mobile and permission/error/empty paths verified in browser",
+          "Relevant working services and real persisted data used, not mock-only"
+        ],
+        "done": false,
+        "acceptanceEvidence": []
+      },
+      {
+        "id": "DES-01",
+        "stage": "DESIGN",
+        "laneId": "L02",
+        "title": "College academic/faculty admin navigation polish",
+        "requirements": [
+          "Visual and interaction quality verified in actual UI",
+          "Accessibility/keyboard/mobile acceptance",
+          "No required functionality regressed"
+        ],
+        "done": false,
+        "acceptanceEvidence": []
+      },
+      {
+        "id": "DES-02",
+        "stage": "DESIGN",
+        "laneId": "L03",
+        "title": "Learner and profile experience polish",
+        "requirements": [
+          "Visual and interaction quality verified in actual UI",
+          "Accessibility/keyboard/mobile acceptance",
+          "No required functionality regressed"
+        ],
+        "done": false,
+        "acceptanceEvidence": []
+      },
+      {
+        "id": "DES-03",
+        "stage": "DESIGN",
+        "laneId": "L04",
+        "title": "Course/assessment learning journey polish",
+        "requirements": [
+          "Visual and interaction quality verified in actual UI",
+          "Accessibility/keyboard/mobile acceptance",
+          "No required functionality regressed"
+        ],
+        "done": false,
+        "acceptanceEvidence": []
+      },
+      {
+        "id": "DES-04",
+        "stage": "DESIGN",
+        "laneId": "L06",
+        "title": "Mentor and projects experience polish",
+        "requirements": [
+          "Visual and interaction quality verified in actual UI",
+          "Accessibility/keyboard/mobile acceptance",
+          "No required functionality regressed"
+        ],
+        "done": false,
+        "acceptanceEvidence": []
+      },
+      {
+        "id": "DES-05",
+        "stage": "DESIGN",
+        "laneId": "L07",
+        "title": "TPO and recruiter experience polish",
+        "requirements": [
+          "Visual and interaction quality verified in actual UI",
+          "Accessibility/keyboard/mobile acceptance",
+          "No required functionality regressed"
+        ],
+        "done": false,
+        "acceptanceEvidence": []
+      },
+      {
+        "id": "DES-06",
+        "stage": "DESIGN",
+        "laneId": "L09",
+        "title": "Shared shell, accessibility and responsive consistency",
+        "requirements": [
+          "Visual and interaction quality verified in actual UI",
+          "Accessibility/keyboard/mobile acceptance",
+          "No required functionality regressed"
+        ],
+        "done": false,
+        "acceptanceEvidence": []
+      },
+      {
+        "id": "REL-01",
+        "stage": "RELEASE",
+        "laneId": "L01",
+        "title": "Frozen release SHA, migration and deployment signoff",
+        "requirements": [
+          "Exact target SHA and executed acceptance proof",
+          "No unresolved required release gate or undocumented deferral"
+        ],
+        "done": false,
+        "acceptanceEvidence": []
+      },
+      {
+        "id": "REL-02",
+        "stage": "RELEASE",
+        "laneId": "L10",
+        "title": "Adversarial security, tenant privacy, backups and recovery",
+        "requirements": [
+          "Exact target SHA and executed acceptance proof",
+          "No unresolved required release gate or undocumented deferral"
+        ],
+        "done": false,
+        "acceptanceEvidence": []
+      },
+      {
+        "id": "REL-03",
+        "stage": "RELEASE",
+        "laneId": "L09",
+        "title": "Authorized live SMS/email/storage/provider signoff",
+        "requirements": [
+          "Exact target SHA and executed acceptance proof",
+          "No unresolved required release gate or undocumented deferral"
+        ],
+        "done": false,
+        "acceptanceEvidence": []
+      },
+      {
+        "id": "REL-04",
+        "stage": "RELEASE",
+        "laneId": "L02",
+        "title": "Academics and courses release smoke",
+        "requirements": [
+          "Exact target SHA and executed acceptance proof",
+          "No unresolved required release gate or undocumented deferral"
+        ],
+        "done": false,
+        "acceptanceEvidence": []
+      },
+      {
+        "id": "REL-05",
+        "stage": "RELEASE",
+        "laneId": "L07",
+        "title": "Placements and recruiter cross-role release smoke",
+        "requirements": [
+          "Exact target SHA and executed acceptance proof",
+          "No unresolved required release gate or undocumented deferral"
+        ],
+        "done": false,
+        "acceptanceEvidence": []
+      },
+      {
+        "id": "REL-06",
+        "stage": "RELEASE",
+        "laneId": "L03",
+        "title": "All account production browser smoke and design evidence",
+        "requirements": [
+          "Exact target SHA and executed acceptance proof",
+          "No unresolved required release gate or undocumented deferral"
+        ],
+        "done": false,
+        "acceptanceEvidence": []
+      },
+      {
+        "id": "REL-07",
+        "stage": "RELEASE",
+        "laneId": "L01",
+        "title": "Frozen production legacy oracle reconciliation and final go/no-go",
+        "requirements": [
+          "Exact target SHA and executed acceptance proof",
+          "No unresolved required release gate or undocumented deferral"
+        ],
+        "done": false,
+        "acceptanceEvidence": []
+      }
+    ],
+    "sharedChangeRequests": [],
+    "coordination": {
+      "oneSessionPerLane": "Each of the ten chats must choose exactly one L01-L10 ID, write a unique sessionId claim into its lane through a fresh-main optimistic commit, and verify no other unexpired claim occupies it. Do not work an already claimed lane without an explicit same-user handoff.",
+      "claimContract": "claim = null or {sessionId, holder, claimedAt, expiresAt}; expiresAt is ISO timestamp. Expiry only permits a deliberate fresh-head reclaim and never authorizes clobbering an in-flight commit. Claims are advisory coordination plus optimistic SHA conflict detection, NOT an OS/distributed lock.",
+      "writeScope": "Each chat may edit only its own domain implementation and tests. Shared modules, cross-domain files, migration journal/snapshots, schema index, tracker and CI require a named single writer and documented handoff. No same-file parallel edits.",
+      "migrationIntegrator": "Only L01 promotes numbered migrations, journal, snapshots and schema index, atomically from fresh main. Other lanes prepare domain-local change requests and tests; L01 registers in ordered batches. Never independently reserve the next migration number.",
+      "trackerWriter": "Each chat may update its own claim, owned task acceptance and milestones in this one JSON file using a fresh blob SHA / expected head, preserving all other lanes. On any conflict re-read, merge only intended fields, validate, retry without force.",
+      "dependencyPolicy": "Explicit tracker dependsOn gates remain binding. Domain producer owns cross-domain fixes; consumer requests a handoff. Independent verification is L10; global release/schema signoff requires L01 and L10 executed results.",
+      "handoffRequestContract": "Use execution.sharedChangeRequests with {id,fromLane,toLane,paths,reason,status,requestedAt}; status REQUESTED/ACCEPTED/APPLIED/REJECTED. This is coordination metadata, not an accepted task or a second tracker. Do not edit another lane's code before ACCEPTED.",
+      "commitProtocol": "Every cohesive commit must name Lane: LNN in message body; verify changed paths against lane ownership, rebase on fresh main before updating ref, never force. Tagged cross-lane integration requires an explicit handoff and the single designated writer.",
+      "testTiers": [
+        "During change: fast affected static/type/unit tests",
+        "Domain acceptance: actual disposable PG full registered replay + catalog/drift + tenant/private/FK/state/race negatives and real consumer",
+        "Global phase gate: full applicable typecheck/lint/build/browser/security plus release-only provider/recovery at RELEASE"
+      ],
+      "progressRule": "Counts derive from the done booleans in tasks and milestones; lane claim and request status do not imply engineering acceptance."
+    },
+    "startupProcedure": [
+      "Read AGENTS.md, docs/tracker.json (execution + tasks), and latest relevant source/code/test; do not read historical plans as current instruction.",
+      "Take a free designated lane L01-L10 and claim it with a unique sessionId using optimistic Git update; if occupied, pick another idle lane or ask the existing lane to hand off.",
+      "Read assigned unaccepted DB IDs and relevant phase milestones; choose highest-value dependency-ready finite real workflow.",
+      "Implement coherent code+registered migration via L01 if needed+real consumer+tests; run disposable DB acceptance and domain negatives.",
+      "Commit with Lane trailer, update ONLY owned accepted items and exact evidence in this same tracker by fresh-main optimistic merge, then freeze and move.",
+      "Before context ends, release or explicitly hand off lane claim; next chat reads canonical tracker not previous conversation prose."
+    ],
+    "globalPhaseCertificates": {
+      "DATABASE": {
+        "certified": false,
+        "evidence": []
+      },
+      "API": {
+        "certified": false,
+        "evidence": []
+      },
+      "UI": {
+        "certified": false,
+        "evidence": []
+      },
+      "DESIGN": {
+        "certified": false,
+        "evidence": []
+      },
+      "RELEASE": {
+        "certified": false,
+        "evidence": []
+      }
+    }
+  }
 }
