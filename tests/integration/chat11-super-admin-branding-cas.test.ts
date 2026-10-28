@@ -4,7 +4,7 @@ import {Pool} from "pg";
 import {closeDatabaseConnection} from "@/db/client";
 import type {RequestContext} from "@/modules/identity/context";
 import {
- saveCollegeBranding,CollegeBrandingVersionError,
+ saveCollegeBranding,CollegeBrandingVersionError,getPublicCollegeBranding,
 } from "@/modules/colleges/branding-service";
 import {SEED_IDS} from "../../scripts/db-seed-data";
 
@@ -79,6 +79,89 @@ describe("SA-tenants-modules-BRAND-CAS-01 PostgreSQL stale tab protection",()=>{
   expect(query.rows[0]?.version).toBe(2);
   expect(["#112233","#445566"]).toContain(query.rows[0]?.primary_color);
  });
+
+ it("round-trips every active legacy presentation field without leaking private branding metadata",async()=>{
+  const payload={
+   expectedVersion:0,
+   logoUrl:"https://assets.example.test/college-logo.png",
+   faviconUrl:"https://assets.example.test/favicon.ico",
+   loginBackgroundUrl:"https://assets.example.test/login-desktop.webp",
+   loginBackgroundUrlMobile:"https://assets.example.test/login-mobile.webp",
+   primaryColor:"#AABBCC",secondaryColor:"#112233",
+   supportEmail:"helpdesk@example.test",supportPhone:"+91 98765 43210",
+   termsUrl:"https://assets.example.test/terms",
+   privacyUrl:"https://assets.example.test/privacy",
+  };
+  const saved=await saveCollegeBranding(context,collegeId,payload);
+  expect(saved).toMatchObject({...payload,version:1});
+  const direct=await pool.query<{
+   college_id:string;logo_url:string;favicon_url:string;
+   login_background_url:string;login_background_url_mobile:string;
+   primary_color:string;secondary_color:string;support_email:string;
+   support_phone:string;terms_url:string;privacy_url:string;
+   version:number;created_at:Date;updated_at:Date;
+  }>("select * from college_branding where college_id=$1",[collegeId]);
+  expect(direct.rowCount).toBe(1);
+  const actual=direct.rows[0]!;
+  expect(actual.college_id).toBe(collegeId);
+  expect(actual.logo_url).toBe(payload.logoUrl);
+  expect(actual.favicon_url).toBe(payload.faviconUrl);
+  expect(actual.login_background_url).toBe(payload.loginBackgroundUrl);
+  expect(actual.login_background_url_mobile).toBe(payload.loginBackgroundUrlMobile);
+  expect(actual.primary_color).toBe(payload.primaryColor);
+  expect(actual.secondary_color).toBe(payload.secondaryColor);
+  expect(actual.support_email).toBe(payload.supportEmail);
+  expect(actual.support_phone).toBe(payload.supportPhone);
+  expect(actual.terms_url).toBe(payload.termsUrl);
+  expect(actual.privacy_url).toBe(payload.privacyUrl);
+  expect(actual.version).toBe(1);
+  expect(actual.created_at).toBeInstanceOf(Date);
+  expect(actual.updated_at).toBeInstanceOf(Date);
+  const publicView=await getPublicCollegeBranding(collegeId);
+  expect(publicView).toMatchObject({
+   logoUrl:payload.logoUrl,faviconUrl:payload.faviconUrl,
+   loginBackgroundUrl:payload.loginBackgroundUrl,
+   loginBackgroundUrlMobile:payload.loginBackgroundUrlMobile,
+   primaryColor:payload.primaryColor,secondaryColor:payload.secondaryColor,
+   supportEmail:payload.supportEmail,supportPhone:payload.supportPhone,
+   termsUrl:payload.termsUrl,privacyUrl:payload.privacyUrl,
+  });
+  expect(publicView).not.toHaveProperty("version");
+  expect(publicView).not.toHaveProperty("collegeId");
+  expect(publicView).not.toHaveProperty("legacyBrandingId");
+  expect(await countChanges()).toBe(1);
+ });
+
+ it("hides branding and rejects writes when the owning organization becomes archived",async()=>{
+  const ownOrg=randomUUID(),ownCollege=randomUUID();
+  try{
+   await pool.query("insert into organizations(id,name,status) values ($1,$2,'ACTIVE')",
+    [ownOrg,"DB004 archived-branding org "+ownOrg]);
+   await pool.query(
+    "insert into colleges(id,organization_id,name,code,status) values($1,$2,'Archived parent branding',$3,'ACTIVE')",
+    [ownCollege,ownOrg,"brand"+ownCollege.slice(0,8)]);
+   await saveCollegeBranding(context,ownCollege,{expectedVersion:0,
+    supportEmail:"active@example.test"});
+   expect(await getPublicCollegeBranding(ownCollege)).toMatchObject({
+    supportEmail:"active@example.test",
+   });
+   await pool.query("update organizations set status='ARCHIVED' where id=$1",[ownOrg]);
+   await expect(getPublicCollegeBranding(ownCollege)).resolves.toBeNull();
+   await expect(saveCollegeBranding(context,ownCollege,{
+    expectedVersion:1,supportEmail:"unauthorized@example.test",
+   })).rejects.toThrow("COLLEGE_NOT_FOUND");
+   const stored=await pool.query<{support_email:string}>(
+    "select support_email from college_branding where college_id=$1",[ownCollege]);
+   expect(stored.rows[0]?.support_email).toBe("active@example.test");
+  }finally{
+   await pool.query("delete from in_app_notifications where event_id in (select id from activity_events where college_id=$1)",[ownCollege]);
+   await pool.query("delete from activity_events where college_id=$1",[ownCollege]);
+   await pool.query("delete from college_branding where college_id=$1",[ownCollege]);
+   await pool.query("delete from colleges where id=$1",[ownCollege]);
+   await pool.query("delete from organizations where id=$1",[ownOrg]);
+  }
+ });
+
  it("wrong-tenant scoped Super Admin and disabled actor never write branding",async()=>{
   const actors:RequestContext[]=[
    {...context,adminScope:{organizationId:SEED_IDS.organization,collegeId:SEED_IDS.collegeA}},

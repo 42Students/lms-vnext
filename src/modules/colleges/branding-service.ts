@@ -1,6 +1,6 @@
 import { and, eq, sql } from "drizzle-orm";
 import { getDb } from "@/db/client";
-import { collegeBranding, colleges } from "@/db/schema";
+import { collegeBranding, colleges, organizations } from "@/db/schema";
 import {isSuperAdmin,type RequestContext} from "@/modules/identity/context";
 import {recordActivityEventInTransaction} from "@/modules/activity/service";
 import {ACTIVITY_EVENT_TYPES} from "@/modules/activity/taxonomy";
@@ -62,13 +62,15 @@ async function loadCollege(collegeId: string) {
       name: colleges.name,
       organizationId: colleges.organizationId,
       status: colleges.status,
+      organizationStatus: organizations.status,
       logoObjectPath: colleges.logoObjectPath,
     })
     .from(colleges)
+    .innerJoin(organizations, eq(organizations.id, colleges.organizationId))
     .where(eq(colleges.id, collegeId))
     .limit(1);
 
-  if (!college || college.status !== "ACTIVE") {
+  if (!college || college.status !== "ACTIVE" || college.organizationStatus !== "ACTIVE") {
     throw new CollegeBrandingNotFoundError();
   }
   return college;
@@ -177,7 +179,9 @@ export async function saveCollegeBranding(
     collegeId:college.id,organizationId:college.organizationId,
    });
    const [active]=await tx.select({id:colleges.id}).from(colleges)
-    .where(and(eq(colleges.id,college.id),eq(colleges.status,"ACTIVE")))
+    .innerJoin(organizations,eq(organizations.id,colleges.organizationId))
+    .where(and(eq(colleges.id,college.id),eq(colleges.status,"ACTIVE"),
+      eq(organizations.status,"ACTIVE")))
     .for("update").limit(1);
    if(!active)throw new CollegeBrandingNotFoundError();
    const [stored]=await tx.select().from(collegeBranding)
