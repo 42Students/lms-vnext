@@ -1669,6 +1669,18 @@
         "reason": "DB-035 immutable assessment/attendance history and DB-042 roster/marker guards are source-only candidates at docs/planning/sql/db06-assessment-attendance-history-candidate.sql and db06-attendance-scope-candidate.sql. Coordinate single-writer registration only when L05 has completed the transactional grade, attendance MARK/CORRECT event producers and exercised disposable PostgreSQL replay/drift/negative tests. Do not promote the SQL candidates independently; their deferred triggers would reject current faculty/admin writes. This request is NOT acceptance evidence.",
         "status": "REQUESTED",
         "requestedAt": "2026-10-28T19:58:45.885Z"
+      },
+      {
+        "id": "SCR-L08-L07-RECRUITER-BELL-20261029",
+        "fromLane": "L08",
+        "toLane": "L07",
+        "paths": [
+          "src/modules/placements/hr-recruiter-bell-service.ts",
+          "src/modules/placements/hr-conversation-inbox-service.ts"
+        ],
+        "reason": "Recruiter CRM bell marks only inAppNotifications read while merged unread TPO message threads remain unread=true; mark-all leaves message badge persistent. L08 owns recruiter CRM contract/tests; L07 owns shared placements services. Request L07 to implement producer/consumer parity or accept explicit single-writer handoff after checking legacy mark-all semantics.",
+        "status": "REQUESTED",
+        "requestedAt": "2026-10-28T19:58:56.924Z"
       }
     ],
     "coordination": {
