@@ -28,3 +28,16 @@ for (const [label, path] of [
     }
   });
 }
+
+test("DB-066 request reads reject a round from another job or offer from another application", () => {
+  const source = readFileSync("src/modules/placements/request-service.ts", "utf8");
+  const start = source.indexOf("async function loadRequestContext(");
+  const end = source.indexOf("function scopeKeyFor(", start);
+  assert.ok(start >= 0 && end > start);
+  const read = source.slice(start, end);
+  assert.match(read, /\.leftJoin\(\s*placementJobRounds,/);
+  assert.match(read, /\.leftJoin\(\s*placementOffers,/);
+  assert.match(read, /row\.request\.roundId !== null && row\.roundJobId !== row\.job\.id/);
+  assert.match(read, /row\.request\.offerId !== null &&\s*row\.offerApplicationId !== row\.application\.id/);
+  assert.match(read, /"PLACEMENT_REQUEST_NOT_FOUND"/);
+});
