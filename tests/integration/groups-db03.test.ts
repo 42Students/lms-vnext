@@ -175,6 +175,21 @@ describe("DB03 group kernel on disposable PostgreSQL", () => {
       .toEqual(expect.arrayContaining(fixture.electiveOfferingIds.map(offeringId =>
         expect.objectContaining({ offeringId }))));
   });
+  it("refuses an elective offering when the source course is disabled", async () => {
+    const { slotId } = await createElectiveFixture();
+    const unassignedGroup = await createActiveGroup("ELECTIVE", 10);
+    await pool.query("UPDATE courses SET enabled=false WHERE id=$1", [fixture.courses[0]]);
+    await expect(createElectiveOffering(admin, {
+      slotId, courseId: fixture.courses[0], groupId: unassignedGroup,
+      backedDeliveryId: fixture.deliveries[0], capacity: 10,
+    })).rejects.toMatchObject({ code: "ELECTIVE_COURSE_COLLEGE_MISMATCH" });
+    const offerings = await pool.query(
+      "SELECT count(*)::integer AS n FROM elective_offerings WHERE group_id=$1",
+      [unassignedGroup],
+    );
+    expect(offerings.rows[0].n).toBe(0);
+  });
+
   it("rejects a new elective join after its backed class delivery ends", async () => {
     const { groups, candidate } = await createElectiveFixture();
     await pool.query(
