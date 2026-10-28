@@ -18,7 +18,7 @@ export async function updateOwnRecruiterProfileDetails(context:RequestContext,ra
  if(!hasActiveRecruiter(context)||context.recruiter?.userId!==context.user.id)
   throw new AuthorizationError("identity.self.manage");
  // The older employer form edited first and last names independently. The
- // canonical user row stores one displayName, so reject excess combined length
+ // canonical user row must retain both exact name parts, without truncation
  // instead of truncating either field (which would lose identity information).
  const name=joinHrRecruiterName(input.firstName,input.lastName);
  const title=normalizeRecruiterDesignation(input.title);
@@ -31,6 +31,7 @@ export async function updateOwnRecruiterProfileDetails(context:RequestContext,ra
  return getDb().transaction(async tx=>{
   const [person]=await tx.select({
    id:users.id,displayName:users.displayName,userUpdatedAt:users.updatedAt,
+   givenName:users.givenName,familyName:users.familyName,
    title:placementRecruiterProfiles.title,profileUpdatedAt:placementRecruiterProfiles.updatedAt,
   }).from(users).innerJoin(placementRecruiterProfiles,eq(placementRecruiterProfiles.userId,users.id))
    .where(and(eq(users.id,context.user.id),eq(users.platformStatus,"ACTIVE"),
@@ -46,14 +47,20 @@ export async function updateOwnRecruiterProfileDetails(context:RequestContext,ra
      eq(placementRecruiterPublicContacts.recruiterUserId,context.user.id)).for("update").limit(1):[];
   const phoneChanged=(existing?.phone??"")!==phone;
   const nameChanged=(person.displayName??"")!==name;
+  const canonicalNameChanged=person.givenName!==input.firstName||
+    (person.familyName??"")!==input.lastName;
+  const identityNameChanged=nameChanged||canonicalNameChanged;
   const titleChanged=person.title!==title;
-  if(!phoneChanged&&!nameChanged&&!titleChanged)
+  if(!phoneChanged&&!identityNameChanged&&!titleChanged)
    return {displayName:name,title,phone,changed:false,
     userUpdatedAt:person.userUpdatedAt.toISOString(),
     profileUpdatedAt:person.profileUpdatedAt.toISOString()};
   const now=new Date(Math.max(Date.now(),person.userUpdatedAt.getTime()+1,person.profileUpdatedAt.getTime()+1));
-  if(nameChanged){
-   const [updated]=await tx.update(users).set({displayName:name,updatedAt:now})
+  if(identityNameChanged){
+   const [updated]=await tx.update(users).set({
+    displayName:name,givenName:input.firstName,familyName:input.lastName||null,
+    identityProfileVersion:sql`${users.identityProfileVersion}+1`,updatedAt:now,
+   })
     .where(and(eq(users.id,person.id),
      sql`date_trunc('milliseconds', ${users.updatedAt})=${input.expectedUserUpdatedAt}::timestamptz`))
     .returning({id:users.id});
@@ -79,10 +86,10 @@ export async function updateOwnRecruiterProfileDetails(context:RequestContext,ra
    eventType:ACTIVITY_EVENT_TYPES.PLACEMENTS_RECRUITER_PROFILE_UPDATED,
    subjectType:"recruiter_profile",subjectId:context.user.id,
    summary:"Recruiter profile details updated",
-   metadata:{nameChanged,titleChanged,phoneChanged},
+   metadata:{nameChanged,canonicalNameChanged,titleChanged,phoneChanged},
   });
   return {displayName:name,title,phone,changed:true,
-   userUpdatedAt:(nameChanged?now:person.userUpdatedAt).toISOString(),
+   userUpdatedAt:(identityNameChanged?now:person.userUpdatedAt).toISOString(),
    profileUpdatedAt:(titleChanged?now:person.profileUpdatedAt).toISOString()};
  });
 }
