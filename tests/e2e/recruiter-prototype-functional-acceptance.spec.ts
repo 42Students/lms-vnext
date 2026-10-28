@@ -133,6 +133,11 @@ test.describe("Recruiter prototype functional journeys",()=>{
   // The validation path is a client-side rejection; do not mutate fixture.
   await editor.getByRole("button",{name:"Stage result",exact:true}).first().click();
   await expect(page.getByText("Candidate message required",{exact:true})).toBeVisible();
+  // This is an intentionally triggered, readable validation toast, not a
+  // runtime exception. Dismiss it before the generic raw-error sentinel;
+  // never weaken the shared sentinel or suppress the validation message.
+  await page.getByRole("button",{name:"Dismiss error: Candidate message required"}).click();
+  await expect(page.getByText("Candidate message required",{exact:true})).toHaveCount(0);
   await editor.getByRole("button",{name:"Keep",exact:true}).first().click();
   await expect(outcome).toHaveValue("PASS");
   await expectNoRawErrors(page);
