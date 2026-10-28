@@ -13,7 +13,7 @@ import {Select} from "@/components/ui/select";
 import {Textarea} from "@/components/ui/textarea";
 import {Input} from "@/components/ui/input";
 type Request={id:string;kind:string;status:string;reason:string;payload:Record<string,unknown>;
- studentName:string|null;version:string;requestedAt:string;decisionNote:string|null};
+ studentName:string|null;version:string;requestedAt:string;decidedAt:string|null;decisionNote:string|null};
 function TpoGeneralRequestFacts({kind,payload}:{kind:string;payload:Record<string,unknown>}){
  const detail=tpoGeneralRequestReviewFacts(kind,payload);
  return <div className="min-w-0 space-y-2">
@@ -22,7 +22,7 @@ function TpoGeneralRequestFacts({kind,payload}:{kind:string;payload:Record<strin
     <dt className="text-xs text-muted-foreground">{item.label}</dt>
     <dd className="break-words font-medium">{item.value}</dd>
    </div>)}</dl>:null}
-  {detail.proofUrl?<a href={detail.proofUrl}
+  {detail.proofUrl?<a href={detail.proofUrl} target="_blank" rel="noopener noreferrer" referrerPolicy="no-referrer"
    className="inline-flex min-h-11 items-center text-primary-text underline focus-visible:underline">{detail.proofLabel}</a>:
    detail.requiresProof?<InlineNotice tone="error" message={detail.proofIssue??"No proof attached"}/>:null}
  </div>;
@@ -142,11 +142,20 @@ export function TpoGeneralRequestsPanel(){
    <ul tabIndex={0} aria-label="Student requests, scroll for more" className="max-h-[min(70vh,44rem)] min-h-0 min-w-0 divide-y divide-[var(--lms-canvas-border)] overflow-y-auto overscroll-contain [mask-image:linear-gradient(to_bottom,black_0%,black_90%,transparent_100%)]">{rows.map(row=><li key={row.id} className="min-w-0 py-3 text-sm">
     <h3 className="break-words font-semibold">{row.studentName??"Student"} · {row.kind.replaceAll("_"," ").toLowerCase()}</h3>
     <p className="break-words text-body">{row.reason}</p>
-    <p className="text-xs leading-[20px]">{row.status.replaceAll("_"," ")}</p>
+    <p className="text-xs leading-[20px]">{row.status.replaceAll("_"," ")}
+     {" · "}Asked <time dateTime={row.requestedAt}>
+      {new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",dateStyle:"medium",timeStyle:"short"}).format(new Date(row.requestedAt))} IST
+     </time>
+    </p>
+    {row.decidedAt?<p className="text-xs text-muted-foreground">Decided{" "}
+      <time dateTime={row.decidedAt}>
+       {new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",dateStyle:"medium",timeStyle:"short"}).format(new Date(row.decidedAt))} IST
+      </time>
+     </p>:null}
     <details className="min-w-0 py-1"><summary className="min-h-11 cursor-pointer py-3 font-semibold text-primary-text md:min-h-9 md:py-2">Request details</summary>
      <TpoGeneralRequestFacts kind={row.kind} payload={row.payload}/>
     </details>
-    {row.decisionNote?<p>Decision: {row.decisionNote}</p>:null}
+    {row.decisionNote?<p className="whitespace-pre-wrap break-words">Decision: {row.decisionNote}</p>:null}
     {row.status==="PENDING"?<Button variant="secondary" type="button" disabled={pending||loading||stale} className="mt-2 min-h-11 w-full px-3 sm:w-auto md:min-h-9"
       onClick={()=>{setSelection(row);setNote("");setAction("REJECT");}}>Review request</Button>:null}
    </li>)}</ul>}

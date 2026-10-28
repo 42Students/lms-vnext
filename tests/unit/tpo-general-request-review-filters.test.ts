@@ -37,5 +37,8 @@ describe("TPO server-scoped general request filters",()=>{
   expect(panel).toContain('value="CANCELLED">Cancelled');
   expect(panel).toContain("if(normalized===searchQuery&&page===1){void load();return;}");
   expect(panel).toContain('onReviewed={load} disabled={loading||stale||pending}');
+  expect(panel).toContain('dateTime={row.requestedAt}');
+  expect(panel).toContain('dateTime={row.decidedAt}');
+  expect(panel).toContain('timeZone:"Asia/Kolkata"');
  });
 });

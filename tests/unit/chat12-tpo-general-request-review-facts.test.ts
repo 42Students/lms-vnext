@@ -35,6 +35,7 @@ describe("TPO general requests review evidence",()=>{
   const ui=src("src/components/placements/tpo-general-requests-panel.tsx");
   expect(ui).toContain("<TpoGeneralRequestFacts kind={row.kind} payload={row.payload}/>");
   expect(ui).toContain('message={detail.proofIssue??"No proof attached"}');
+  expect(ui).toContain('target="_blank" rel="noopener noreferrer" referrerPolicy="no-referrer"');
   const notice=src("src/components/ui/inline-notice.tsx");
   expect(notice).toContain('role={tone === "error" ? "alert" : "status"}');
  });
