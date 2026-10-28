@@ -146,6 +146,10 @@ export async function redeemScopedAccountProof(
     !["LEARNER","FACULTY"].includes(input.role))return false;
  const key=secret(),role=input.role+"_PROOF";
  return getDb().transaction(async tx=>{
+  const preliminary=rows(await tx.execute(sql`SELECT sms_code_mac FROM identity_auth_attempts WHERE id=${input.challengeId} AND user_id=${input.userId} AND membership_id=${input.membershipId}`))[0];
+  if(!preliminary)return false;
+  const channelHint=preliminary["sms_code_mac"]?"PHONE":"EMAIL";
+  const owner=await loadOwner(tx,{userId:input.userId,membershipId:input.membershipId,role:input.role,channel:channelHint});
   const matched=rows(await tx.execute(sql`
    SELECT target_role,college_id,sms_code_mac,email_code_mac,contact_fingerprint,
      verification_attempts,blocked_until,superseded_at,used_at,expires_at
@@ -160,10 +164,7 @@ export async function redeemScopedAccountProof(
     timestamp(matched["blocked_until"]).getTime()>Date.now())||
    Number(matched["verification_attempts"])>=5)return false;
   const channel=matched["sms_code_mac"]?"PHONE":"EMAIL";
-  const owner=await loadOwner(tx,{
-   userId:input.userId,membershipId:input.membershipId,role:input.role,channel
-  });
-  if(!owner||owner.collegeId!==matched["college_id"]||
+  if(!owner||channel!==channelHint||owner.collegeId!==matched["college_id"]||
    fingerprint(key,channel,owner.contact)!==matched["contact_fingerprint"]){
    await tx.execute(sql`
     UPDATE identity_auth_attempts SET
