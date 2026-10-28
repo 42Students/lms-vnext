@@ -6,6 +6,7 @@ on:
     branches: [main]
     paths:
       - "src/modules/courses/course-service.ts"
+      - "src/modules/courses/offering-service.ts"
       - "src/modules/groups/roster-access.ts"
       - "tests/db008-elective-roster-structure.test.mjs"
       - "src/modules/courses/lesson-content-service.ts"
