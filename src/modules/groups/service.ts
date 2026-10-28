@@ -3,6 +3,7 @@ import { z } from "zod";
 import { getDb } from "@/db/client";
 import {
   collegeMemberships, cohorts, programs, departments, electiveOfferings, electiveSlots,
+  courseOfferings, courseSectionDeliveries, courses,
   learnerProfiles, learnerProgramEnrollments, sectionEnrollments, sections,
   lmsGroupMemberEvents, lmsGroupMembers, lmsGroups, membershipRoles, users,
   projectInstances, projectMembers,
@@ -170,6 +171,47 @@ async function lockElectiveSlot(tx: Tx, groupId: string) {
     throw new GroupServiceError("ELECTIVE_SLOT_NOT_ACTIVE");
   return slot;
 }
+/**
+ * DB-006: the group state and elective slot alone do not make a backed class
+ * usable. A section delivery can be ended or its course/offering disabled
+ * without changing the group row. Validate the actual backing at every
+ * admission/transfer and before any automatic waitlist promotion.
+ *
+ * Membership reads have their own fail-closed authorization predicate.
+ */
+async function hasLiveElectiveBacking(tx: Tx, groupId: string): Promise<boolean> {
+  const [live] = await tx.select({ id: electiveOfferings.id })
+    .from(electiveOfferings)
+    .innerJoin(electiveSlots, eq(electiveSlots.id, electiveOfferings.slotId))
+    .innerJoin(courseSectionDeliveries,
+      eq(courseSectionDeliveries.id, electiveOfferings.backedDeliveryId))
+    .innerJoin(courseOfferings, eq(courseOfferings.id, courseSectionDeliveries.offeringId))
+    .innerJoin(sections, eq(sections.id, courseSectionDeliveries.sectionId))
+    .innerJoin(cohorts, eq(cohorts.id, courseOfferings.cohortId))
+    .innerJoin(courses, eq(courses.id, electiveOfferings.courseId))
+    .innerJoin(departments, eq(departments.id, courses.departmentId))
+    .where(and(
+      eq(electiveOfferings.groupId, groupId),
+      eq(electiveOfferings.status, "ACTIVE"),
+      isNull(electiveOfferings.deletedAt),
+      eq(electiveSlots.status, "ACTIVE"),
+      isNull(electiveSlots.deletedAt),
+      eq(courseOfferings.status, "ACTIVE"),
+      eq(courseOfferings.type, "ELECTIVE"),
+      eq(courseOfferings.courseId, electiveOfferings.courseId),
+      eq(cohorts.programId, electiveSlots.programId),
+      eq(sections.status, "ACTIVE"),
+      eq(sections.cohortId, courseOfferings.cohortId),
+      eq(sections.academicPeriodId, courseOfferings.academicPeriodId),
+      sql`(${electiveSlots.academicPeriodId} IS NULL OR
+        ${electiveSlots.academicPeriodId} = ${courseOfferings.academicPeriodId})`,
+      eq(courses.status, "ACTIVE"),
+      eq(departments.collegeId, electiveSlots.collegeId),
+      isNull(courseSectionDeliveries.endedAt),
+    )).limit(1);
+  return Boolean(live);
+}
+
 async function assertElectivePickLimit(tx: Tx, slot: NonNullable<Awaited<ReturnType<typeof lockElectiveSlot>>>, memberId: string) {
   const [row] = await tx.select({ used: count() })
     .from(lmsGroupMembers)
@@ -312,6 +354,8 @@ export async function joinGroup(
     if (slot) {
       if (group.kind !== "ELECTIVE" || group.collegeId !== slot.collegeId)
         throw new GroupServiceError("ELECTIVE_GROUP_SCOPE_MISMATCH");
+      if (!(await hasLiveElectiveBacking(tx, group.id)))
+        throw new GroupServiceError("ELECTIVE_OFFERING_NOT_ACTIVE");
       if (!(await hasElectiveAcademicEligibility(tx, slot, memberId)))
         throw new GroupServiceError("ELECTIVE_PRIMARY_SECTION_REQUIRED");
     }
@@ -368,6 +412,10 @@ async function promoteEligibleWaitlist(
   slot: Awaited<ReturnType<typeof lockElectiveSlot>>,
   context: RequestContext, now: Date,
 ) {
+  // An ended/disabled class must never acquire a new active roster through
+  // an automatic promotion after an existing learner leaves.
+  if (group.kind === "ELECTIVE" &&
+      (!slot || !(await hasLiveElectiveBacking(tx, group.id)))) return;
   const candidates = await tx.select({
     id: lmsGroupMembers.id,
     membershipId: lmsGroupMembers.membershipId,
@@ -582,6 +630,9 @@ export async function moveElectiveMember(
 
     assertScope(context, fromGroup, "MANUAL", memberId);
     await assertPersistedGroupActor(tx, context, { collegeId: fromGroup.collegeId, mode: "MANUAL" });
+    if (!(await hasLiveElectiveBacking(tx, fromGroup.id)) ||
+        !(await hasLiveElectiveBacking(tx, toGroup.id)))
+      throw new GroupServiceError("ELECTIVE_MOVE_OFFERINGS_INVALID");
     await assertTargetMembership(tx, fromGroup, memberId);
     if (!(await hasElectiveAcademicEligibility(tx, slot, memberId)))
       throw new GroupServiceError("ELECTIVE_PRIMARY_SECTION_REQUIRED");
