@@ -47,9 +47,9 @@
     },
     "retirementImplementationVerified": 34,
     "retirementApprovalPending": 34,
-    "technicalEvidenceCoverage": 173,
-    "technicalEvidenceUncovered": 22,
-    "compositeImplementationVerified": 5
+    "technicalEvidenceCoverage": 183,
+    "technicalEvidenceUncovered": 12,
+    "compositeImplementationVerified": 15
   },
   "guidance": [
     "Exact column existence on registered PostgreSQL does not prove legacy reader/writer parity.",
@@ -68,7 +68,8 @@
     "Two legacy college leadership fields now use columns colleges.chair_membership_id and colleges.vice_chair_membership_id. Both passed actual PG scoped FACULTY appointment, cross-college rejection and suspension checks in 40684079754. Numeric source IDs are still never blindly imported.",
     "At a6f06efe, registered PostgreSQL DB-004 accepted archived branding negative projection and edit-denial tests. The historical is_deleted runtime mapping is witnessed, but import/retention/product approval remains PENDING.",
     "At 6a9455fd, a registered PG negative source metadata catalog witness adds 13 technically implemented retirements (still unapproved). The recruiter.suspended_at persisted timestamp and fail-closed suspension/restoration lifecycle were directly witnessed at 9efa47bd. These are implementation evidence, not source import or product sign-off.",
-    "At 8fdface1, registered PG proved five non-physical composite active-runtime replacements: learner/faculty organization ancestry, active user role selection, and typed membership-role assignment authority. Source numeric-ID migration reconciliation and owner approval remain open. Composite evidence is distinct from the 134 physical runtime witnesses."
+    "At 8fdface1, registered PG proved five non-physical composite active-runtime replacements: learner/faculty organization ancestry, active user role selection, and typed membership-role assignment authority. Source numeric-ID migration reconciliation and owner approval remain open. Composite evidence is distinct from the 134 physical runtime witnesses.",
+    "At c8a87df1, registered PostgreSQL witnessed ten more composite implementation mappings: learner/faculty source IDs and timestamps and scoped termination (8), recruiter source ID stored only as provenance (1), source role name typed grant and recruiter denial (1). Historical data migration, source import audits and product/security disposition remain unapproved."
   ],
   "rows": [
     {
@@ -1254,8 +1255,17 @@
       "physicalVerified": false,
       "runtimeSemanticsVerified": false,
       "evidence": [
-        "docs/planning/db01-chat02-source-reconciliation.md"
-      ]
+        "docs/planning/db01-chat02-source-reconciliation.md",
+        "tests/integration/db01-source-account-provenance-field-semantics.test.ts"
+      ],
+      "compositeImplementationVerified": true,
+      "compositeEvidence": {
+        "verifiedFlow": "REGISTERED_POSTGRES_HISTORICAL_ACCOUNT_SOURCE_ID_TIMESTAMPS_AND_SCOPED_ACCOUNT_TERMINATION",
+        "suite": "tests/integration/db01-source-account-provenance-field-semantics.test.ts",
+        "passingRun": "https://github.com/42Students/lms-vnext/actions/runs/40691269794",
+        "testedCommit": "c8a87df1cac89d4ccb9797f2a8859ae7b05ceeb6",
+        "limitations": "Proved current canonical UUID member-profile identity, explicit source timestamp roundtrips, scoped account end with independent shared user and other memberships. Actual legacy dataset import, source timestamp origin and approved migration disposition remain open."
+      }
     },
     {
       "legacyField": "faculty.created_at",
@@ -1266,8 +1276,17 @@
       "physicalVerified": false,
       "runtimeSemanticsVerified": false,
       "evidence": [
-        "docs/planning/db01-chat02-source-reconciliation.md"
-      ]
+        "docs/planning/db01-chat02-source-reconciliation.md",
+        "tests/integration/db01-source-account-provenance-field-semantics.test.ts"
+      ],
+      "compositeImplementationVerified": true,
+      "compositeEvidence": {
+        "verifiedFlow": "REGISTERED_POSTGRES_HISTORICAL_ACCOUNT_SOURCE_ID_TIMESTAMPS_AND_SCOPED_ACCOUNT_TERMINATION",
+        "suite": "tests/integration/db01-source-account-provenance-field-semantics.test.ts",
+        "passingRun": "https://github.com/42Students/lms-vnext/actions/runs/40691269794",
+        "testedCommit": "c8a87df1cac89d4ccb9797f2a8859ae7b05ceeb6",
+        "limitations": "Proved current canonical UUID member-profile identity, explicit source timestamp roundtrips, scoped account end with independent shared user and other memberships. Actual legacy dataset import, source timestamp origin and approved migration disposition remain open."
+      }
     },
     {
       "legacyField": "faculty.is_deleted",
@@ -1278,8 +1297,17 @@
       "physicalVerified": false,
       "runtimeSemanticsVerified": false,
       "evidence": [
-        "docs/planning/db01-chat02-source-reconciliation.md"
-      ]
+        "docs/planning/db01-chat02-source-reconciliation.md",
+        "tests/integration/db01-source-account-provenance-field-semantics.test.ts"
+      ],
+      "compositeImplementationVerified": true,
+      "compositeEvidence": {
+        "verifiedFlow": "REGISTERED_POSTGRES_HISTORICAL_ACCOUNT_SOURCE_ID_TIMESTAMPS_AND_SCOPED_ACCOUNT_TERMINATION",
+        "suite": "tests/integration/db01-source-account-provenance-field-semantics.test.ts",
+        "passingRun": "https://github.com/42Students/lms-vnext/actions/runs/40691269794",
+        "testedCommit": "c8a87df1cac89d4ccb9797f2a8859ae7b05ceeb6",
+        "limitations": "Proved current canonical UUID member-profile identity, explicit source timestamp roundtrips, scoped account end with independent shared user and other memberships. Actual legacy dataset import, source timestamp origin and approved migration disposition remain open."
+      }
     },
     {
       "legacyField": "faculty.suspended_at",
@@ -1328,8 +1356,17 @@
       "physicalVerified": false,
       "runtimeSemanticsVerified": false,
       "evidence": [
-        "docs/planning/db01-chat02-source-reconciliation.md"
-      ]
+        "docs/planning/db01-chat02-source-reconciliation.md",
+        "tests/integration/db01-source-account-provenance-field-semantics.test.ts"
+      ],
+      "compositeImplementationVerified": true,
+      "compositeEvidence": {
+        "verifiedFlow": "REGISTERED_POSTGRES_HISTORICAL_ACCOUNT_SOURCE_ID_TIMESTAMPS_AND_SCOPED_ACCOUNT_TERMINATION",
+        "suite": "tests/integration/db01-source-account-provenance-field-semantics.test.ts",
+        "passingRun": "https://github.com/42Students/lms-vnext/actions/runs/40691269794",
+        "testedCommit": "c8a87df1cac89d4ccb9797f2a8859ae7b05ceeb6",
+        "limitations": "Proved current canonical UUID member-profile identity, explicit source timestamp roundtrips, scoped account end with independent shared user and other memberships. Actual legacy dataset import, source timestamp origin and approved migration disposition remain open."
+      }
     },
     {
       "legacyField": "faculty.college_id",
@@ -1721,8 +1758,17 @@
       "physicalVerified": false,
       "runtimeSemanticsVerified": false,
       "evidence": [
-        "docs/planning/db01-chat02-source-reconciliation.md"
-      ]
+        "docs/planning/db01-chat02-source-reconciliation.md",
+        "tests/integration/db01-source-account-provenance-field-semantics.test.ts"
+      ],
+      "compositeImplementationVerified": true,
+      "compositeEvidence": {
+        "verifiedFlow": "REGISTERED_POSTGRES_HISTORICAL_ACCOUNT_SOURCE_ID_TIMESTAMPS_AND_SCOPED_ACCOUNT_TERMINATION",
+        "suite": "tests/integration/db01-source-account-provenance-field-semantics.test.ts",
+        "passingRun": "https://github.com/42Students/lms-vnext/actions/runs/40691269794",
+        "testedCommit": "c8a87df1cac89d4ccb9797f2a8859ae7b05ceeb6",
+        "limitations": "Proved current canonical UUID member-profile identity, explicit source timestamp roundtrips, scoped account end with independent shared user and other memberships. Actual legacy dataset import, source timestamp origin and approved migration disposition remain open."
+      }
     },
     {
       "legacyField": "learner.created_at",
@@ -1733,8 +1779,17 @@
       "physicalVerified": false,
       "runtimeSemanticsVerified": false,
       "evidence": [
-        "docs/planning/db01-chat02-source-reconciliation.md"
-      ]
+        "docs/planning/db01-chat02-source-reconciliation.md",
+        "tests/integration/db01-source-account-provenance-field-semantics.test.ts"
+      ],
+      "compositeImplementationVerified": true,
+      "compositeEvidence": {
+        "verifiedFlow": "REGISTERED_POSTGRES_HISTORICAL_ACCOUNT_SOURCE_ID_TIMESTAMPS_AND_SCOPED_ACCOUNT_TERMINATION",
+        "suite": "tests/integration/db01-source-account-provenance-field-semantics.test.ts",
+        "passingRun": "https://github.com/42Students/lms-vnext/actions/runs/40691269794",
+        "testedCommit": "c8a87df1cac89d4ccb9797f2a8859ae7b05ceeb6",
+        "limitations": "Proved current canonical UUID member-profile identity, explicit source timestamp roundtrips, scoped account end with independent shared user and other memberships. Actual legacy dataset import, source timestamp origin and approved migration disposition remain open."
+      }
     },
     {
       "legacyField": "learner.is_deleted",
@@ -1745,8 +1800,17 @@
       "physicalVerified": false,
       "runtimeSemanticsVerified": false,
       "evidence": [
-        "docs/planning/db01-chat02-source-reconciliation.md"
-      ]
+        "docs/planning/db01-chat02-source-reconciliation.md",
+        "tests/integration/db01-source-account-provenance-field-semantics.test.ts"
+      ],
+      "compositeImplementationVerified": true,
+      "compositeEvidence": {
+        "verifiedFlow": "REGISTERED_POSTGRES_HISTORICAL_ACCOUNT_SOURCE_ID_TIMESTAMPS_AND_SCOPED_ACCOUNT_TERMINATION",
+        "suite": "tests/integration/db01-source-account-provenance-field-semantics.test.ts",
+        "passingRun": "https://github.com/42Students/lms-vnext/actions/runs/40691269794",
+        "testedCommit": "c8a87df1cac89d4ccb9797f2a8859ae7b05ceeb6",
+        "limitations": "Proved current canonical UUID member-profile identity, explicit source timestamp roundtrips, scoped account end with independent shared user and other memberships. Actual legacy dataset import, source timestamp origin and approved migration disposition remain open."
+      }
     },
     {
       "legacyField": "learner.suspended_at",
@@ -1795,8 +1859,17 @@
       "physicalVerified": false,
       "runtimeSemanticsVerified": false,
       "evidence": [
-        "docs/planning/db01-chat02-source-reconciliation.md"
-      ]
+        "docs/planning/db01-chat02-source-reconciliation.md",
+        "tests/integration/db01-source-account-provenance-field-semantics.test.ts"
+      ],
+      "compositeImplementationVerified": true,
+      "compositeEvidence": {
+        "verifiedFlow": "REGISTERED_POSTGRES_HISTORICAL_ACCOUNT_SOURCE_ID_TIMESTAMPS_AND_SCOPED_ACCOUNT_TERMINATION",
+        "suite": "tests/integration/db01-source-account-provenance-field-semantics.test.ts",
+        "passingRun": "https://github.com/42Students/lms-vnext/actions/runs/40691269794",
+        "testedCommit": "c8a87df1cac89d4ccb9797f2a8859ae7b05ceeb6",
+        "limitations": "Proved current canonical UUID member-profile identity, explicit source timestamp roundtrips, scoped account end with independent shared user and other memberships. Actual legacy dataset import, source timestamp origin and approved migration disposition remain open."
+      }
     },
     {
       "legacyField": "learner.college_id",
@@ -2773,8 +2846,17 @@
       "physicalVerified": false,
       "runtimeSemanticsVerified": false,
       "evidence": [
-        "docs/planning/db01-chat02-source-reconciliation.md"
-      ]
+        "docs/planning/db01-chat02-source-reconciliation.md",
+        "tests/integration/db01-recruiter-identity-field-semantics.test.ts"
+      ],
+      "compositeImplementationVerified": true,
+      "compositeEvidence": {
+        "verifiedFlow": "REGISTERED_POSTGRES_SOURCE_RECRUITER_ID_PASSIVE_PROVENANCE_SCOPED_CANONICAL_GRANT",
+        "suite": "tests/integration/db01-recruiter-identity-field-semantics.test.ts",
+        "passingRun": "https://github.com/42Students/lms-vnext/actions/runs/40691269794",
+        "testedCommit": "c8a87df1cac89d4ccb9797f2a8859ae7b05ceeb6",
+        "limitations": "Proved legacy recruiter integer ID stored only as passive provenance attached to canonical UUID profile and verified live grant. Actual historical import and conflict reconciliation not certified."
+      }
     },
     {
       "legacyField": "recruiter.first_name",
@@ -3139,8 +3221,17 @@
       "physicalVerified": false,
       "runtimeSemanticsVerified": false,
       "evidence": [
-        "docs/planning/db01-chat02-source-reconciliation.md"
-      ]
+        "docs/planning/db01-chat02-source-reconciliation.md",
+        "tests/integration/db01-role-definition-field-semantics.test.ts"
+      ],
+      "compositeImplementationVerified": true,
+      "compositeEvidence": {
+        "verifiedFlow": "REGISTERED_POSTGRES_SOURCE_ROLE_NAME_TYPED_SCOPE_AND_RECRUITER_DENIAL",
+        "suite": "tests/integration/db01-role-definition-field-semantics.test.ts",
+        "passingRun": "https://github.com/42Students/lms-vnext/actions/runs/40691269794",
+        "testedCommit": "c8a87df1cac89d4ccb9797f2a8859ae7b05ceeb6",
+        "limitations": "Verified current typed role candidate mapping and denial of recruiter role as a membership principal. Historic source role catalogue reconciliation and owner authorization remain open."
+      }
     },
     {
       "legacyField": "tenant_domain.id",

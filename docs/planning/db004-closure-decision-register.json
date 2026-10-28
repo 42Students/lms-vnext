@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "task": "DB-004",
-  "sourceCommit": "8fdface15fbfe6496cf423e462170b6e4b0c0241",
+  "sourceCommit": "c8a87df1cac89d4ccb9797f2a8859ae7b05ceeb6",
   "source": "docs/planning/db004-current-owner-evidence.json",
   "policy": "No approval may be inferred from source code, tests, a passing CI run, or this register.",
   "technicalSnapshot": {
@@ -9,10 +9,10 @@
     "physical": 137,
     "runtimeSemantics": 134,
     "implementationRetired": 34,
-    "technicalCovered": 173,
-    "uncovered": 22,
+    "technicalCovered": 183,
+    "uncovered": 12,
     "approvalPendingRetirements": 34,
-    "compositeImplemented": 5
+    "compositeImplemented": 15
   },
   "uncoveredFieldClasses": {
     "physicalPending": [
@@ -20,18 +20,7 @@
       "learner_acct_verification.learner_id",
       "learner_acct_verification.roll_number"
     ],
-    "compositePending": [
-      "faculty.id",
-      "faculty.created_at",
-      "faculty.is_deleted",
-      "faculty.updated_at",
-      "learner.id",
-      "learner.created_at",
-      "learner.is_deleted",
-      "learner.updated_at",
-      "recruiter.id",
-      "role.name"
-    ],
+    "compositePending": [],
     "retirementOrSecurityPending": [
       "email_verification_token.token",
       "email_verification_token.application_id",
