@@ -2157,6 +2157,13 @@
       "when": 1792359791266,
       "tag": "0307_db05_progress_and_classroom_history_integrity",
       "breakpoints": true
+    },
+    {
+      "idx": 308,
+      "version": "7",
+      "when": 1792359851266,
+      "tag": "0308_db05_lesson_settings_tenant_storage",
+      "breakpoints": true
     }
   ]
 }

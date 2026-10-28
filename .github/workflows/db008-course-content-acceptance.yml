@@ -17,6 +17,8 @@ on:
       - "tests/db008-registered-parent-graph-pg.test.mjs"
       - "drizzle/0305_db05_course_parent_graph_registered.sql"
       - "drizzle/0307_db05_progress_and_classroom_history_integrity.sql"
+      - "drizzle/0308_db05_lesson_settings_tenant_storage.sql"
+      - "src/db/schema/db05-lesson-settings.staged.ts"
       - "tests/integration/db008-course-parent-app-pg.test.ts"
       - "tests/integration/courses-c2-learning.test.ts"
       - ".github/workflows/db008-course-content-acceptance.yml"

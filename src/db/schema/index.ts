@@ -138,3 +138,6 @@ export {mentorGoogleCalendarConnections} from "./mentor-google-calendar-connecti
 // The learner gallery table itself was already registered in 0283.
 export {learnerProfileEducationEntries,learnerProfileEducationDocuments,learnerProfileImages} from "./db04-profile-education-images.staged";
 export {learnerProfileIdentitySummaries,learnerProfilePrivateDocumentBindings,learnerProfileVideoIntros} from "./db04-learner-profile-extras.staged";
+
+// DB-008: 0308 registered authoring-settings storage; runtime remains ACL-gated.
+export { lessonContentSettingsStaged as lessonContentSettings } from "./db05-lesson-settings.staged";

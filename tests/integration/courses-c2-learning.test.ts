@@ -116,6 +116,16 @@ const learner: RequestContext = {
 };
 
 async function cleanupC2() {
+  await pool.query(
+    `delete from lesson_content_settings where lesson_content_id in (
+       select content.id from lesson_contents content
+       join course_lessons lesson on lesson.id=content.lesson_id
+       join course_learning_paths path on path.id=lesson.learning_path_id
+       join course_offerings offering on offering.id=path.offering_id
+       join courses course_row on course_row.id=offering.course_id
+       where course_row.code like 'C2-%'
+    )`,
+  );
   // Progress and classroom rows are linked to the fixture offering/delivery.
   // Do not remove parent lessons before their history rows are retired.
   await pool.query(
@@ -997,6 +1007,72 @@ describe("courses C2 learning structure against PostgreSQL", () => {
     expect(edited.rows[0]!.sender_name_snapshot).toBe(
       trusted.rows[0]!.display_name.slice(0,160),
     );
+  });
+
+  it("persists scoped lesson settings and rejects tenant, actor, CAS and reparent bypasses", async () => {
+    const structure=await createStructure();
+    const path=await createLearningPath(collegeAdmin,{
+      offeringId:structure.offering.id,title:"C2 settings path",
+    });
+    const lesson=await createCourseLesson(collegeAdmin,{
+      learningPathId:path.id,name:"C2 settings lesson",sequence:0,
+    });
+    const content=await createLessonContent(collegeAdmin,{
+      lessonId:lesson.id,title:"C2 Settings Resource",contentType:"RESOURCE",
+      notes:"Persist content configuration",sequence:0,points:1,
+    });
+    const input=[content.id,SEED_IDS.collegeA,SEED_IDS.collegeAdminUser];
+    const created=await pool.query<{version:string;legacy_due_date_raw:string}>(
+      `insert into lesson_content_settings
+       (lesson_content_id,college_id,updated_by_user_id,legacy_due_date_raw,
+        allow_discussions,view_after_schedule,view_before_schedule)
+       values($1,$2,$3,'tomorrow maybe',true,true,true)
+       returning version,legacy_due_date_raw`,input,
+    );
+    expect(Number(created.rows[0]!.version)).toBe(0);
+    expect(created.rows[0]!.legacy_due_date_raw).toBe("tomorrow maybe");
+    const updated=await pool.query<{version:string;allow_discussions:boolean}>(
+      `update lesson_content_settings set version=version+1,
+       allow_discussions=false where lesson_content_id=$1
+       returning version,allow_discussions`,[content.id],
+    );
+    expect(Number(updated.rows[0]!.version)).toBe(1);
+    expect(updated.rows[0]!.allow_discussions).toBe(false);
+    await expect(pool.query(
+      `update lesson_content_settings set allow_discussions=true
+       where lesson_content_id=$1`,[content.id],
+    )).rejects.toMatchObject({code:"23514"});
+    await expect(pool.query(
+      `update lesson_content_settings set version=version+1,college_id=$1
+       where lesson_content_id=$2`,[SEED_IDS.collegeB,content.id],
+    )).rejects.toMatchObject({code:"23514"});
+    await expect(pool.query(
+      `update lesson_contents set delivery_id=$1 where id=$2`,
+      [structure.deliveryA.id,content.id],
+    )).rejects.toMatchObject({code:"23514"});
+    const other=await createLessonContent(collegeAdmin,{
+      lessonId:lesson.id,title:"C2 Second Settings Resource",contentType:"RESOURCE",
+      notes:"Tenant negative",sequence:1,points:1,
+    });
+    await expect(pool.query(
+      `insert into lesson_content_settings
+       (lesson_content_id,college_id,updated_by_user_id)
+       values($1,$2,$3)`,
+      [other.id,SEED_IDS.collegeB,SEED_IDS.collegeAdminUser],
+    )).rejects.toMatchObject({code:"23514"});
+    await expect(pool.query(
+      `insert into lesson_content_settings
+       (lesson_content_id,college_id,updated_by_user_id)
+       values($1,$2,$3)`,
+      [other.id,SEED_IDS.collegeA,learnerUserId],
+    )).rejects.toMatchObject({code:"23514"});
+    const legit=await pool.query<{lesson_content_id:string}>(
+      `insert into lesson_content_settings
+       (lesson_content_id,college_id,updated_by_user_id)
+       values($1,$2,$3) returning lesson_content_id`,
+      [other.id,SEED_IDS.collegeA,SEED_IDS.facultyUser],
+    );
+    expect(legit.rows[0]!.lesson_content_id).toBe(other.id);
   });
 
 });
