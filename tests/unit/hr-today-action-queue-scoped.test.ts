@@ -11,7 +11,7 @@ describe("REC-home-drives-01 scoped task queue",()=>{
   expect(rows.map(row=>row.key)).toEqual(["thread:thread","due:round","notifications","review:11111111-1111-4111-8111-111111111111"]);
   expect(rows.find(row=>row.key==="due:round")?.description).toContain("Results are recorded as outstanding");
  });
- it("opens the exact ASK in Drive discussion and preserves the question",()=>{
+ it("opens the exact ASK in Drive Requests where Answer is available",()=>{
   const id="22222222-2222-4222-8222-222222222222";
   const rows=buildRecruiterActionQueue({jobs:[job],collegeId:"college",companyId:"employer",unread:0,
    changeRequests:[{id,jobId:job.job.id,jobTitle:"Engineer",field:"PAY",kind:"ASK",
@@ -21,7 +21,7 @@ describe("REC-home-drives-01 scoped task queue",()=>{
   expect(rows[0]?.key).toBe("answer:"+job.job.id);
   expect(rows[0]?.label).toContain("needs");
   expect(rows[0]?.description).toContain("How much of the CTC is fixed?");
-  expect(rows[0]?.href).toContain("?tab=discussion&requestId="+id);
+  expect(rows[0]?.href).toBe("/recruiter/drives/"+job.job.id+"?tab=requests#change-request-"+id);
  });
  it("labels non-new shared applicants truthfully and ignores unshared jobs",()=>{
   const rows=buildRecruiterActionQueue({jobs:[job],collegeId:"college",companyId:"employer",unread:0,

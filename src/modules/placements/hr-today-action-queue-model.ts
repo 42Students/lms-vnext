@@ -49,7 +49,7 @@ export function buildRecruiterActionQueue(input:{
   return {key:"answer:"+row.jobId,tone:"SOON" as const,at:row.createdAt,
    label,
    description:row.jobTitle+(row.note?" · “"+row.note+"”":""),
-   href:"/recruiter/drives/"+encodeURIComponent(row.jobId)+"?tab=discussion&requestId="+encodeURIComponent(row.id)};
+   href:"/recruiter/drives/"+encodeURIComponent(row.jobId)+"?tab=requests#change-request-"+encodeURIComponent(row.id)};
  });
  const slots=(input.roundsNeedingSlots??[])
   .filter(row=>authorized.has(row.jobId)&&row.scheduledAt!==null)

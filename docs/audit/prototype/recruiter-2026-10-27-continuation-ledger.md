@@ -74,3 +74,8 @@ Rules: exact authored prototype first, legacy dev behavior second, vNext source/
 ### 2026-10-28 Recruiter privacy-negative E2E fixture
 - A second disposable college learner now has a real application and PENDING screening for the identical E2E employer drive. The recruiter browser tests require that learner's distinctive private name to remain absent and reject a forged focused-review query for the *existing* unshortlisted application ID, not only a nonexistent UUID. This preserves the previously empty-audience privacy test as a stronger positive/negative comparison while allowing the authorized shortlist test to execute.
 - The earlier Recruiter workflow at `49267be` ran 32 successful browser tests, with two failures caused by assertions against the old zero-applicant and three-action fixtures. The separate focused-review positive path passed; no page Green was claimed. Pending rerun on current `main`.
+
+### 2026-10-28 Recruiter Today real ASK navigation
+- A source-to-render trace found `buildRecruiterActionQueue` routed the actionable `Answer` task to `?tab=discussion&requestId=`, which only quotes a request in the conversation. The actual `TpoDriveChangeRequests` ANSWER/DECLINE controls render under `?tab=requests` with DOM id `change-request-{id}`.
+- Changed the task to `?tab=requests#change-request-{id}`. A unit test asserts the exact scoped URL; the authenticated Recruiter Today browser suite follows the CTA to the actual Requests tab and checks that the seeded ASK text is visible before returning to Today.
+- The separate Discussion quoted-reply link remains intact. This is not a new permission or a company-share bypass. Browser acceptance pending on the new commit.

@@ -34,6 +34,19 @@ test.describe("Recruiter Today prototype — persisted actions and Later",()=>{
   await expect(today.locator('[data-testid^="recruiter.today.task-answer:"]')).toHaveCount(1);
   await expect(today.locator('[data-testid^="recruiter.today.task-slots:"]')).toHaveCount(1);
   await expect(today.getByText("How much of the annual CTC is fixed?",{exact:false})).toBeVisible();
+  // A recruiter must reach the actual answer controls, not a Discussion
+  // quote box that cannot resolve the TPO's outstanding ASK.
+  const answer=today.locator('[data-testid^="recruiter.today.task-answer:"]');
+  const answerLink=answer.getByRole("link",{name:"Answer"});
+  await expect(answerLink).toHaveAttribute("href",
+    "/recruiter/drives/66000000-0000-4000-8000-000000000004?tab=requests#change-request-66000000-0000-4000-8000-000000000006");
+  await answerLink.click();
+  await expect(page).toHaveURL(/tab=requests#change-request-/);
+  await expect(page.getByRole("heading",{name:"Requests",exact:true})).toBeVisible();
+  await expect(page.getByText("How much of the annual CTC is fixed?",{exact:false}).first()).toBeVisible();
+  await page.goto("/hr/home");
+  await expect(today).toBeVisible();
+
   // Synthetic seeded data only. One temporary, capped visual sample allows
   // audit against the latest uploaded PNG without exposing production data.
   if(process.env["E2E_CAPTURE_TODAY"]==="true"){
