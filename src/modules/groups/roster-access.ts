@@ -63,133 +63,19 @@ function activeRosterQuery(membershipId: string, collegeId: string, deliveryId?:
         and pd.college_id = ${collegeId}
         and lpe.program_id = ${electiveSlots.programId}
         and cps.current_term_number = ${electiveSlots.semesterNumber}
-        -- The legacy service compares the start years only if both are
-        -- populated. A malformed persisted slot year must fail closed.
+        -- Reject stale term/year access without weakening group ownership.
+        -- A missing legacy academic year is allowed, malformed ones are not.
         and (
           ${electiveSlots.academicYear} is null
           or (
-            ${electiveSlots.academicYear} ~ '^[0-9]{4}(-[0-9]{2}|-[0-9]{4})?
-  ];
-  if (deliveryId) conditions.push(eq(electiveOfferings.backedDeliveryId, deliveryId));
-  return getDb()
-    .select({ deliveryId: electiveOfferings.backedDeliveryId })
-    .from(electiveOfferings)
-    .innerJoin(electiveSlots, eq(electiveSlots.id, electiveOfferings.slotId))
-    .innerJoin(lmsGroups, eq(lmsGroups.id, electiveOfferings.groupId))
-    .innerJoin(lmsGroupMembers, eq(lmsGroupMembers.groupId, lmsGroups.id))
-    .innerJoin(collegeMemberships, eq(collegeMemberships.id, lmsGroupMembers.membershipId))
-    .innerJoin(users, eq(users.id, collegeMemberships.userId))
-    .innerJoin(membershipRoles, eq(membershipRoles.membershipId, collegeMemberships.id))
-    .innerJoin(courseSectionDeliveries, eq(courseSectionDeliveries.id, electiveOfferings.backedDeliveryId))
-    .innerJoin(courseOfferings, eq(courseOfferings.id, courseSectionDeliveries.offeringId))
-    .innerJoin(cohorts, eq(cohorts.id, courseOfferings.cohortId))
-    .innerJoin(sections, eq(sections.id, courseSectionDeliveries.sectionId))
-    .innerJoin(courses, eq(courses.id, courseOfferings.courseId))
-    .innerJoin(departments, eq(departments.id, courses.departmentId))
-    .where(and(...conditions));
-}
-
-/** Used by learner navigation; returns only actual ACTIVE roster deliveries. */
-export async function listActiveElectiveDeliveryIds(membershipId: string, collegeId: string) {
-  const rows = await activeRosterQuery(membershipId, collegeId);
-  return [...new Set(rows.flatMap(row => row.deliveryId ? [row.deliveryId] : []))];
-}
-
-/** Used by content/quiz/assessment APIs; one verified delivery and learner. */
-export async function hasActiveElectiveDeliveryAccess(
-  membershipId: string, collegeId: string, deliveryId: string,
-) {
-  const [row] = await activeRosterQuery(membershipId, collegeId, deliveryId).limit(1);
-  return Boolean(row);
-}
-
-/**
- * Any linked elective delivery is group-owned, even if it is archived.
- * In that case access is denied (not silently granted through the host section).
- */
-export async function isElectiveBackedDelivery(deliveryId: string) {
-  const [row] = await getDb()
-    .select({ id: electiveOfferings.id })
-    .from(electiveOfferings)
-    .where(eq(electiveOfferings.backedDeliveryId, deliveryId))
-    .limit(1);
-  return Boolean(row);
-}
-
-export async function listBoundElectiveDeliveryIds(deliveryIds: string[]) {
-  if (deliveryIds.length === 0) return [];
-  const rows = await getDb()
-    .select({ deliveryId: electiveOfferings.backedDeliveryId })
-    .from(electiveOfferings)
-    .where(inArray(electiveOfferings.backedDeliveryId, deliveryIds));
-  return rows.flatMap(row => row.deliveryId ? [row.deliveryId] : []);
-}
-
+            ${electiveSlots.academicYear} ~ '^[0-9]{4}(-[0-9]{2}|-[0-9]{4})?$'
             and (
               cps.current_academic_year_start is null
-              or (case when ${electiveSlots.academicYear} ~ '^[0-9]{4}(-[0-9]{2}|-[0-9]{4})?
-  ];
-  if (deliveryId) conditions.push(eq(electiveOfferings.backedDeliveryId, deliveryId));
-  return getDb()
-    .select({ deliveryId: electiveOfferings.backedDeliveryId })
-    .from(electiveOfferings)
-    .innerJoin(electiveSlots, eq(electiveSlots.id, electiveOfferings.slotId))
-    .innerJoin(lmsGroups, eq(lmsGroups.id, electiveOfferings.groupId))
-    .innerJoin(lmsGroupMembers, eq(lmsGroupMembers.groupId, lmsGroups.id))
-    .innerJoin(collegeMemberships, eq(collegeMemberships.id, lmsGroupMembers.membershipId))
-    .innerJoin(users, eq(users.id, collegeMemberships.userId))
-    .innerJoin(membershipRoles, eq(membershipRoles.membershipId, collegeMemberships.id))
-    .innerJoin(courseSectionDeliveries, eq(courseSectionDeliveries.id, electiveOfferings.backedDeliveryId))
-    .innerJoin(courseOfferings, eq(courseOfferings.id, courseSectionDeliveries.offeringId))
-    .innerJoin(cohorts, eq(cohorts.id, courseOfferings.cohortId))
-    .innerJoin(sections, eq(sections.id, courseSectionDeliveries.sectionId))
-    .innerJoin(courses, eq(courses.id, courseOfferings.courseId))
-    .innerJoin(departments, eq(departments.id, courses.departmentId))
-    .where(and(...conditions));
-}
-
-/** Used by learner navigation; returns only actual ACTIVE roster deliveries. */
-export async function listActiveElectiveDeliveryIds(membershipId: string, collegeId: string) {
-  const rows = await activeRosterQuery(membershipId, collegeId);
-  return [...new Set(rows.flatMap(row => row.deliveryId ? [row.deliveryId] : []))];
-}
-
-/** Used by content/quiz/assessment APIs; one verified delivery and learner. */
-export async function hasActiveElectiveDeliveryAccess(
-  membershipId: string, collegeId: string, deliveryId: string,
-) {
-  const [row] = await activeRosterQuery(membershipId, collegeId, deliveryId).limit(1);
-  return Boolean(row);
-}
-
-/**
- * Any linked elective delivery is group-owned, even if it is archived.
- * In that case access is denied (not silently granted through the host section).
- */
-export async function isElectiveBackedDelivery(deliveryId: string) {
-  const [row] = await getDb()
-    .select({ id: electiveOfferings.id })
-    .from(electiveOfferings)
-    .where(eq(electiveOfferings.backedDeliveryId, deliveryId))
-    .limit(1);
-  return Boolean(row);
-}
-
-export async function listBoundElectiveDeliveryIds(deliveryIds: string[]) {
-  if (deliveryIds.length === 0) return [];
-  const rows = await getDb()
-    .select({ deliveryId: electiveOfferings.backedDeliveryId })
-    .from(electiveOfferings)
-    .where(inArray(electiveOfferings.backedDeliveryId, deliveryIds));
-  return rows.flatMap(row => row.deliveryId ? [row.deliveryId] : []);
-}
-
-                then left(${electiveSlots.academicYear}, 4)::integer
-                else null end) = cps.current_academic_year_start
+              or left(${electiveSlots.academicYear},4) = cps.current_academic_year_start::text
             )
           )
         )
-    )`
+    )`,
   ];
   if (deliveryId) conditions.push(eq(electiveOfferings.backedDeliveryId, deliveryId));
   return getDb()
