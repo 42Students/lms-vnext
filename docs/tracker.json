@@ -1150,7 +1150,12 @@
           "UI shared operational surfaces"
         ],
         "operatingNotes": "Do not use production credentials or send real notifications from tests.",
-        "claim": null
+        "claim": {
+          "sessionId": "vnext-l09-chat-20261029-0124-ist",
+          "holder": "ChatGPT L09 operations/notifications/outbound",
+          "claimedAt": "2026-10-28T19:55:29.212Z",
+          "expiresAt": "2026-10-28T23:55:29.212Z"
+        }
       },
       {
         "id": "L10",
