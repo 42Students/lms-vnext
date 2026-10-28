@@ -30,11 +30,11 @@ test("physical field proof and runtime proof remain explicitly distinct",()=>{
  assert.equal(current.summary.registeredPhysicalWitnessTotal,136);
  assert.equal(current.summary.stillWithoutPhysicalWitness,59);
  const verified=current.rows.filter(x=>x.runtimeSemanticsVerified);
- assert.equal(verified.length,132);
- assert.equal(current.summary.runtimeSemanticsVerified,132);
- assert.equal(current.summary.runtimeSemanticsUnverified,63);
+ assert.equal(verified.length,133);
+ assert.equal(current.summary.runtimeSemanticsVerified,133);
+ assert.equal(current.summary.runtimeSemanticsUnverified,62);
  const allowed={
-  "college_branding.":["tests/integration/chat11-super-admin-branding-cas.test.ts",14],
+  "college_branding.":["tests/integration/chat11-super-admin-branding-cas.test.ts",15],
   "tenant_domain.":["tests/integration/tenant-domains.test.ts",13],
   "mobile_login_attempt.":["tests/integration/db01-auth-attempt-field-semantics.test.ts",17],
   "user_session.":["tests/integration/db01-device-session-field-semantics.test.ts",8],
@@ -64,7 +64,7 @@ test("physical field proof and runtime proof remain explicitly distinct",()=>{
  assert.equal(leadership.length,2);
  assert.ok(leadership.every(x=>x.physicalVerified&&
   x.runtimeEvidence?.suite==="tests/integration/db01-college-leadership-field-semantics.test.ts"));
- assert.ok(current.rows.filter(x=>x.legacyField==="college_branding.is_deleted").every(x=>!x.runtimeSemanticsVerified));
+ assert.ok(current.rows.filter(x=>x.legacyField==="college_branding.is_deleted").every(x=>x.runtimeSemanticsVerified));
  assert.ok(current.rows.filter(x=>!Object.keys(allowed).some(prefix=>x.legacyField.startsWith(prefix))).every(x=>!x.runtimeSemanticsVerified));
  assert.ok(current.rows.filter(x=>x.runtimeSemanticsVerified).every(x=>x.physicalVerified));
  assert.ok(current.rows.filter(x=>x.legacyField.startsWith("auth_handoff_token.")||x.legacyField.startsWith("login_user.")).every(x=>!x.runtimeSemanticsVerified));
@@ -78,8 +78,8 @@ test("physical field proof and runtime proof remain explicitly distinct",()=>{
   new Set(retirementCandidates.map(x=>x.legacyField)));
  assert.equal(current.summary.retirementImplementationVerified,21);
  assert.equal(current.summary.retirementApprovalPending,21);
- assert.equal(current.summary.technicalEvidenceCoverage,153);
- assert.equal(current.summary.technicalEvidenceUncovered,42);
+ assert.equal(current.summary.technicalEvidenceCoverage,154);
+ assert.equal(current.summary.technicalEvidenceUncovered,41);
  assert.ok(technicallyRetired.every(x=>x.retirementApproved===false &&
   x.runtimeSemanticsVerified===false &&
   x.physicalVerified===false &&

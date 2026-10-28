@@ -1,0 +1,233 @@
+{
+  "schemaVersion": 1,
+  "task": "DB-004",
+  "sourceCommit": "f04426f70b0e7a51023f939bdc3cb80ec2b0f6ea",
+  "source": "docs/planning/db004-current-owner-evidence.json",
+  "policy": "No approval may be inferred from source code, tests, a passing CI run, or this register.",
+  "technicalSnapshot": {
+    "total": 195,
+    "physical": 136,
+    "runtimeSemantics": 133,
+    "implementationRetired": 21,
+    "technicalCovered": 154,
+    "uncovered": 41,
+    "approvalPendingRetirements": 21
+  },
+  "uncoveredFieldClasses": {
+    "physicalPending": [
+      "faculty_acct_verification.faculty_id",
+      "learner_acct_verification.learner_id",
+      "learner_acct_verification.roll_number"
+    ],
+    "compositePending": [
+      "faculty.id",
+      "faculty.created_at",
+      "faculty.is_deleted",
+      "faculty.updated_at",
+      "faculty.organization_id",
+      "learner.id",
+      "learner.created_at",
+      "learner.is_deleted",
+      "learner.updated_at",
+      "learner.organization_id",
+      "recruiter.id",
+      "recruiter.suspended_at",
+      "role.name",
+      "user.user_type",
+      "user_roles.user_id",
+      "user_roles.role_id"
+    ],
+    "retirementOrSecurityPending": [
+      "email_verification_token.token",
+      "email_verification_token.application_id",
+      "email_verification_token.created_at",
+      "email_verification_token.email",
+      "email_verification_token.expires_at",
+      "email_verification_token.verified",
+      "email_verification_token.verified_at",
+      "faculty.token_version",
+      "faculty_acct_verification.updated_at",
+      "faculty_acct_verification.blocked_till_ts",
+      "learner.token_version",
+      "learner_acct_verification.updated_at",
+      "learner_acct_verification.blocked_till_ts",
+      "mobile_login_attempt.updated_at",
+      "recruiter.token_version",
+      "refresh_token_blocklist.user_type",
+      "role.id",
+      "role.is_deleted",
+      "role.updated_at",
+      "role.description",
+      "user.user_name",
+      "user_session.user_type"
+    ]
+  },
+  "decisions": [
+    {
+      "id": "D01",
+      "label": "First-party credential retirement and cross-host sign-in",
+      "ownerRoles": [
+        "Product owner",
+        "Security owner"
+      ],
+      "question": "Approve first-party OTP/device sessions and fresh sign-in instead of historical passwords, raw bearer stores, and cross-host handoff tokens?",
+      "options": [
+        "APPROVE_REPLACEMENT_WITH_SECURE_DELETION_AND_AUDIT",
+        "REJECT_AND_SPECIFY_ALTERNATIVE_NONPLAINTEXT_PROTOCOL"
+      ],
+      "requiredEvidence": [
+        "Document explicit treatment and secure disposal of historical credential secrets",
+        "Verify no legacy raw token/password or cross-host credential handoff in production",
+        "Real, authorized SMS and email provider acceptance as applicable"
+      ],
+      "approvalStatus": "PENDING",
+      "selectedOption": null,
+      "approvedBy": null,
+      "approvedAt": null,
+      "approvalEvidenceUrl": null
+    },
+    {
+      "id": "D02",
+      "label": "Legacy learner/faculty challenge identity",
+      "ownerRoles": [
+        "Product owner",
+        "Security owner",
+        "Data migration owner"
+      ],
+      "question": "Accept human LOGIN challenge with college/role authorization checked against active scoped memberships, rather than minting old faculty_id/learner_id OTPs?",
+      "options": [
+        "APPROVE_SCOPED_FIRST_PARTY_REDESIGN",
+        "REQUIRE_SEPARATE_VERIFIED_ROLE_CHALLENGES_WITH_EXPLICIT_LIFECYCLE"
+      ],
+      "requiredEvidence": [
+        "Cross-college FK and revocation PostgreSQL acceptance",
+        "No roll number or historical numeric ID accepted as authentication authority",
+        "Identity-to-membership source reconciliation approved"
+      ],
+      "approvalStatus": "PENDING",
+      "selectedOption": null,
+      "approvedBy": null,
+      "approvedAt": null,
+      "approvalEvidenceUrl": null
+    },
+    {
+      "id": "D03",
+      "label": "Historical person, recruiter, organization and role identity crosswalk",
+      "ownerRoles": [
+        "Product owner",
+        "Data migration owner",
+        "Security owner"
+      ],
+      "question": "Authorize migration-only historic identity key mapping into UUID users, scoped memberships and verified role grants?",
+      "options": [
+        "APPROVE_SOURCE_VERIFIED_CROSSWALK_WITH_QUARANTINE_OF_AMBIGUITIES",
+        "REQUIRE_ADDITIONAL_MANUAL_REVIEW_OR_OMISSION"
+      ],
+      "requiredEvidence": [
+        "Deduplicated source ID-to-UUID mapping receipts",
+        "Same-college and active-role positive/negative cases",
+        "Source ID/timestamp archive and conflict handling"
+      ],
+      "approvalStatus": "PENDING",
+      "selectedOption": null,
+      "approvedBy": null,
+      "approvedAt": null,
+      "approvalEvidenceUrl": null
+    },
+    {
+      "id": "D04",
+      "label": "Branding deletion, domain archive, and hostname tombstones",
+      "ownerRoles": [
+        "Product owner",
+        "Data retention owner",
+        "Security owner"
+      ],
+      "question": "Set policy for deleted branding, archived colleges, reserved historic domains, physical purge and safe host reuse?",
+      "options": [
+        "ACTIVE_ASSOCIATIONS_BLOCK_ARCHIVE_TOMBSTONES_STAY_RESERVED",
+        "ALL_RETAINED_DOMAINS_BLOCK_ARCHIVE_UNTIL_AUTHORIZED_PURGE"
+      ],
+      "requiredEvidence": [
+        "Reconcile historical branding is_deleted import evidence",
+        "Confirm registered migration/runtime status; ignore stale unregistered SQL notes",
+        "Approve retention, export, cleanup and explicitly authorized host reuse policy"
+      ],
+      "approvalStatus": "PENDING",
+      "selectedOption": null,
+      "approvedBy": null,
+      "approvedAt": null,
+      "approvalEvidenceUrl": null
+    },
+    {
+      "id": "D05",
+      "label": "Historical role names and obsolete metadata",
+      "ownerRoles": [
+        "Product owner",
+        "Security owner",
+        "Data migration owner"
+      ],
+      "question": "Map approved source role definitions only to verified typed, persisted grants, retire metadata without elevation?",
+      "options": [
+        "APPROVE_VERIFIED_TYPED_ROLE_DISPOSITION",
+        "REVIEW_UNKNOWN_ROLE_NAMES_MANUALLY_WITHOUT_ROLE_GRANTS"
+      ],
+      "requiredEvidence": [
+        "Role definition-to-grant mapping and revocation testing",
+        "Historical role audit retention decisions",
+        "No source role name or numeric role ID as live principal"
+      ],
+      "approvalStatus": "PENDING",
+      "selectedOption": null,
+      "approvedBy": null,
+      "approvedAt": null,
+      "approvalEvidenceUrl": null
+    },
+    {
+      "id": "D06",
+      "label": "Email verification links and obsolete session fields",
+      "ownerRoles": [
+        "Product owner",
+        "Security owner"
+      ],
+      "question": "Approve replacement or retirement of 24-hour historical email tokens and old user-type/session/version fields?",
+      "options": [
+        "APPROVE_HMAC_LINK_PROOF_AND_TYPED_SESSION_MODEL",
+        "REQUIRE_DIFFERENT_EXPLICIT_APPLICATION_BOUND_FLOW"
+      ],
+      "requiredEvidence": [
+        "Live email ownership link issuer/consumer and replay/expiry tests if flow remains in scope",
+        "No plaintext token fields or old type-scoped credential reuse",
+        "Provider and retention decisions"
+      ],
+      "approvalStatus": "PENDING",
+      "selectedOption": null,
+      "approvedBy": null,
+      "approvedAt": null,
+      "approvalEvidenceUrl": null
+    },
+    {
+      "id": "D07",
+      "label": "External provider and release acceptance",
+      "ownerRoles": [
+        "Product owner",
+        "Release owner",
+        "Security owner"
+      ],
+      "question": "What authorized live-provider and migration evidence is required before DB-004 can be marked done?",
+      "options": [
+        "REQUIRE_AUTHORIZED_PROVIDER_SMOKE_PLUS_MIGRATION_AND_CI",
+        "RECORD_FORMAL_APPROVED_EXEMPTION_FOR_EACH_NOT_APPLICABLE_PROVIDER"
+      ],
+      "requiredEvidence": [
+        "Live authorized email/SMS provider acceptance or signed scope exemption",
+        "Clean numbered Drizzle migration replay and journal check",
+        "SHA-specific DB-004 and full CI, finalized 195-field crosswalk"
+      ],
+      "approvalStatus": "PENDING",
+      "selectedOption": null,
+      "approvedBy": null,
+      "approvedAt": null,
+      "approvalEvidenceUrl": null
+    }
+  ]
+}
