@@ -67,6 +67,52 @@ test.describe("TPO other student requests — authenticated queue and privacy",(
   await expectNoRawErrors(page);
  });
 
+
+ test("learner personal history is private, bounded and paged",async({page,context})=>{
+  await authenticateGracefulRole(context,"learner");
+  const own="/api/placements/requests/general";
+  const first=await page.request.get(own+"?page=1&pageSize=10");
+  expect(first.status()).toBe(200);
+  expect(first.headers()["cache-control"]).toContain("private");
+  expect(first.headers()["cache-control"]).toContain("no-store");
+  const one=await first.json() as {
+   requests:Array<{id:string;status:string;kind:string}>;page:number;pageSize:number;
+   total:number;totalPages:number;cohortId:string|null;
+  };
+  expect(one.page).toBe(1);
+  expect(one.pageSize).toBe(10);
+  expect(one.requests.length).toBeLessThanOrEqual(10);
+  expect(one.total).toBeGreaterThanOrEqual(one.requests.length);
+  expect(one.totalPages).toBe(Math.max(1,Math.ceil(one.total/10)));
+  const next=await page.request.get(own+"?page=2&pageSize=10");
+  expect(next.status()).toBe(200);
+  const two=await next.json() as typeof one;
+  expect(two.page).toBe(2);
+  expect(two.total).toBe(one.total);
+  const firstIds=new Set(one.requests.map(row=>row.id));
+  expect(two.requests.every(row=>!firstIds.has(row.id))).toBe(true);
+  for(const query of ["?collegeId=foreign","?membershipId=other","?page=1&page=2",
+   "?pageSize=10&pageSize=20","?page=0","?pageSize=1000"]){
+   expect((await page.request.get(own+query)).status(),query).toBe(400);
+  }
+  await page.goto("/learn/my-placements/placement");
+  const region=page.locator('section[aria-labelledby="learner-general-requests-title"]');
+  await expect(region.getByRole("heading",{name:"Your requests"})).toBeVisible();
+  if(one.total>0){
+   await expect(region.getByRole("navigation",{name:"Your request history pages"}))
+    .toContainText(/Page 1 of/);
+  }else{
+   await expect(region.getByText(/Need more time on an offer/)).toBeVisible();
+  }
+  await expectNoRawErrors(page);
+ });
+
+ test("TPO cannot enumerate learner private general-request history",async({page,context})=>{
+  await authenticateGracefulRole(context,"tpo");
+  const response=await page.request.get("/api/placements/requests/general?page=1&pageSize=10");
+  expect([401,403]).toContain(response.status());
+ });
+
  test("learner cannot read another role's general request inbox",async({page,context})=>{
   await authenticateGracefulRole(context,"learner");
   const result=await page.request.get(api+"?status=ALL");
