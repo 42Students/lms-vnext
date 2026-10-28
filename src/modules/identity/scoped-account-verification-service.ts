@@ -21,6 +21,12 @@ export type ScopedAccountProofRequest={
 export type ScopedAccountProofSender=(input:{channel:Channel;to:string;code:string})=>Promise<void>;
 type DbRows=Record<string,unknown>[];
 function rows(result:unknown):DbRows{return (result as {rows:DbRows}).rows??[];}
+/** Raw driver SQL may return timestamptz as ISO strings rather than Date. */
+function timestamp(value:unknown){
+ const date=value instanceof Date?value:typeof value==="string"?new Date(value):null;
+ if(!date||!Number.isFinite(date.getTime()))throw new Error("VERIFICATION_TIMESTAMP_INVALID");
+ return date;
+}
 function secret(){
  const s=process.env["AUTH_ROLE_PROOF_SECRET"]??"";
  if(s.length<32)throw new Error("ROLE_PROOF_PROVIDER_NOT_CONFIGURED");
@@ -85,8 +91,8 @@ export async function issueScopedAccountProof(
     AND created_at>clock_timestamp()-interval '10 minutes'
    ORDER BY created_at DESC LIMIT 5`));
   if(attempts.length>=5||
-     (attempts[0]?.["created_at"] instanceof Date &&
-      Date.now()-(attempts[0]["created_at"] as Date).getTime()<30_000))
+     (attempts[0]?.["created_at"]!=null &&
+      Date.now()-timestamp(attempts[0]["created_at"]).getTime()<30_000))
    throw new Error("ROLE_PROOF_RATE_LIMIT");
   await tx.execute(sql`
    UPDATE identity_auth_attempts SET
@@ -116,7 +122,7 @@ export async function issueScopedAccountProof(
     tick.t,tick.t+interval '5 minutes'
    FROM tick RETURNING id,expires_at`));
   if(inserted.length!==1)throw new Error("ROLE_PROOF_ISSUE_FAILED");
-  return {to:owner.contact,expiresAt:inserted[0]?.["expires_at"] as Date};
+  return {to:owner.contact,expiresAt:timestamp(inserted[0]?.["expires_at"])};
  });
  try{await send({channel:request.channel,to:issued.to,code});}
  catch(error){
@@ -148,10 +154,10 @@ export async function redeemScopedAccountProof(
    FOR UPDATE`))[0];
   if(!matched||matched["target_role"]!==role||
    matched["superseded_at"]||matched["used_at"]||
-   !(matched["expires_at"] instanceof Date)||
-   (matched["expires_at"] as Date).getTime()<=Date.now()||
-   (matched["blocked_until"] instanceof Date &&
-    (matched["blocked_until"] as Date).getTime()>Date.now())||
+   matched["expires_at"]==null||
+   timestamp(matched["expires_at"]).getTime()<=Date.now()||
+   (matched["blocked_until"]!=null &&
+    timestamp(matched["blocked_until"]).getTime()>Date.now())||
    Number(matched["verification_attempts"])>=5)return false;
   const channel=matched["sms_code_mac"]?"PHONE":"EMAIL";
   const owner=await loadOwner(tx,{

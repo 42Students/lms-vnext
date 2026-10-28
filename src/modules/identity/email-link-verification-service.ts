@@ -23,6 +23,12 @@ type DbRow=Record<string,unknown>;
 function rows(result:unknown):DbRow[]{
  return (result as {rows:DbRow[]}).rows??[];
 }
+/** Raw driver SQL may return timestamptz as ISO strings rather than Date. */
+function timestamp(value:unknown){
+ const date=value instanceof Date?value:typeof value==="string"?new Date(value):null;
+ if(!date||!Number.isFinite(date.getTime()))throw new Error("VERIFICATION_TIMESTAMP_INVALID");
+ return date;
+}
 function getSecret(){
  const value=process.env["AUTH_EMAIL_VERIFICATION_SECRET"]??"";
  if(value.length<32)throw new Error("EMAIL_LINK_PROVIDER_NOT_CONFIGURED");
@@ -98,8 +104,8 @@ export async function issueEmailOwnershipLink(scope:EmailLinkScope,send:EmailLin
     AND created_at>clock_timestamp()-interval '24 hours'
    ORDER BY created_at DESC LIMIT 5`));
   if(past.length>=5||
-   (past[0]?.["created_at"] instanceof Date &&
-    Date.now()-(past[0]["created_at"] as Date).getTime()<60_000))
+   (past[0]?.["created_at"]!=null &&
+    Date.now()-timestamp(past[0]["created_at"]).getTime()<60_000))
    throw new Error("EMAIL_LINK_RATE_LIMIT");
   await tx.execute(sql`
    UPDATE identity_email_verification_links SET revoked_at=clock_timestamp()
@@ -116,7 +122,7 @@ export async function issueEmailOwnershipLink(scope:EmailLinkScope,send:EmailLin
      ${fingerprint},${version},${digest},tick.t,tick.t+interval '24 hours'
    FROM tick RETURNING id,expires_at`));
   if(inserted.length!==1)throw new Error("EMAIL_LINK_ISSUE_FAILED");
-  return {id,expiresAt:inserted[0]?.["expires_at"] as Date,email};
+  return {id,expiresAt:timestamp(inserted[0]?.["expires_at"]),email};
  });
  try{await send({to:result.email,token,expiresAt:result.expiresAt});}
  catch(error){
@@ -152,8 +158,8 @@ export async function redeemEmailOwnershipLink(token:string):Promise<boolean>{
    WHERE token_digest=${digest} AND user_id=${userId}
    FOR UPDATE`))[0];
   if(!link||link["revoked_at"]||link["verified_at"]||
-    !(link["expires_at"] instanceof Date)||
-    (link["expires_at"] as Date).getTime()<=Date.now()||
+    link["expires_at"]==null||
+    timestamp(link["expires_at"]).getTime()<=Date.now()||
     link["email_key_version"]!==version)return false;
   const contact=user["email"];
   const validContact=typeof contact==="string"&&
