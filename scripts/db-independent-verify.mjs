@@ -3,6 +3,7 @@ import { mkdirSync, writeFileSync } from "node:fs";
 import { dirname, resolve } from "node:path";
 import { spawnSync } from "node:child_process";
 import net from "node:net";
+import { assertSafeDb01TestTarget } from "./db01-test-database-guard.mjs";
 
 const postgresImage =
   process.env.DB_VERIFY_POSTGRES_IMAGE ?? "postgres:17-alpine";
@@ -227,10 +228,15 @@ function providedPostgresVersion(env) {
 
 function redactDatabaseUrl(value) {
   if (!value) return null;
-  const parsed = new URL(value);
-  if (parsed.password) parsed.password = "***";
-  if (parsed.username) parsed.username = "***";
-  return parsed.toString();
+  try {
+    const parsed = new URL(value);
+    if (parsed.password) parsed.password = "***";
+    if (parsed.username) parsed.username = "***";
+    return parsed.toString();
+  } catch {
+    // Evidence must never echo secrets in a malformed supplied URL.
+    return "<invalid PostgreSQL URL>";
+  }
 }
 
 async function main() {
@@ -246,6 +252,14 @@ async function main() {
     npmVersion = shellText("npm", ["--version"]);
 
     if (databaseUrl) {
+      // A supplied URL is untrusted. Fail before any PostgreSQL connection,
+      // including the nominally read-only server-version probe. Do not hide
+      // DATABASE_URL here: it may identify the same application database via
+      // different credentials or equivalent loopback host aliases.
+      assertSafeDb01TestTarget({
+        ...process.env,
+        TEST_DATABASE_URL: databaseUrl,
+      });
       const env = {
         ...process.env,
         DATABASE_URL: databaseUrl,
