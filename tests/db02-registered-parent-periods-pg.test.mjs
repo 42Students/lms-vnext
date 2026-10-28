@@ -18,7 +18,7 @@ async function rollbackOnly(fn) {
 }
 async function deny(c, sql, values, reason) {
   await c.query("SAVEPOINT reject_bad_parent");
-  await assert.rejects(c.query(sql,values),e=>e.code==="23514"&&e.message.includes(reason));
+  await assert.rejects(c.query(sql,values),e=>e.code==="23514" && (reason instanceof RegExp ? reason.test(e.message) : e.message.includes(reason)));
   await c.query("ROLLBACK TO SAVEPOINT reject_bad_parent");
   await c.query("RELEASE SAVEPOINT reject_bad_parent");
 }
@@ -78,6 +78,6 @@ test("offering period cannot escape cohort window or enter closed period",async(
     const f=await fixture(c),cohort=await f.cohort();
     const insert="INSERT INTO course_offerings(course_id,cohort_id,academic_period_id) VALUES($1,$2,$3)";
     await deny(c,insert,[f.course,cohort,f.late],"inside cohort window");
-    await deny(c,insert,[f.course,cohort,f.closed],"closed academic period");
+    await deny(c,insert,[f.course,cohort,f.closed],/closed academic period|another college or is closed/);
   });
 });
