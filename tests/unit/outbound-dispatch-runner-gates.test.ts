@@ -119,23 +119,21 @@ describe("DB-050/DB-067 trusted outbound runner gate", () => {
     expect(send).not.toHaveBeenCalled();
   });
 
-  it("SMS does not borrow the EMAIL-only HMAC or activation state", async () => {
-    mocks.open.mockReturnValue({
-      ...emailIntent, channel: "SMS", recipient: "+919876543210",
-    });
-    mocks.emailVerified.mockRejectedValue(new Error("EMAIL_DISABLED"));
-    const send = vi.fn(async () => ({
-      kind: "ACCEPTED" as const,
-      providerMessageId: "sms:123",
-    }));
-    await expect(dispatchClaimedOutbound(claim, "worker-1", { send }))
-      .resolves.toBe("PROVIDER_ACCEPTED");
-    expect(mocks.emailVerified).not.toHaveBeenCalled();
-    expect(mocks.globalHash).not.toHaveBeenCalled();
-    expect(mocks.authorize).toHaveBeenCalledWith(
-      expect.objectContaining({ globalEmailHash: null }),
-    );
-  });
+  it.each(["SMS", "WHATSAPP"] as const)(
+    "refuses %s until independently approved DLT/consent transport exists", async (channel) => {
+      mocks.open.mockReturnValue({
+        ...emailIntent, channel, recipient: "+919876543210",
+      });
+      const send = vi.fn();
+      await expect(dispatchClaimedOutbound(claim, "worker-1", { send }))
+        .resolves.toBe("RECONCILIATION_REQUIRED");
+      expect(mocks.emailVerified).not.toHaveBeenCalled();
+      expect(mocks.globalHash).not.toHaveBeenCalled();
+      expect(mocks.authorize).not.toHaveBeenCalled();
+      expect(mocks.complete).not.toHaveBeenCalled();
+      expect(send).not.toHaveBeenCalled();
+    },
+  );
 
   it("loads only a live, exact worker/fence and request-digest claim", async () => {
     await dispatchClaimedOutbound(claim, "worker-1", {
