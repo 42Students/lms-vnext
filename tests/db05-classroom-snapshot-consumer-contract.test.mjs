@@ -9,9 +9,8 @@ const migration = read("drizzle/0307_db05_progress_and_classroom_history_integri
 const integration = read("tests/integration/learner-course-discussion-actions.test.ts");
 
 test("DB05 trusted sender snapshot is used by timeline, first pin and delta feed", () => {
-  const use = "senderName: immutableDiscussionSenderName,";
-  assert.equal(service.split(use).length - 1, 3,
-    "All three reader projections must use the persisted sender snapshot");
+  assert.equal((service.match(/senderName:\s*immutableDiscussionSenderName,/g) ?? []).length, 4,
+    "Timeline, pin, delta and content-scoped readers must use persisted sender attribution");
   assert.doesNotMatch(service, /senderName:\s*users\.displayName/);
   assert.match(service, /nullif\(\$\{courseDiscussionMessages\.senderNameSnapshot\}, ''\)/);
   assert.match(service, /\$\{users\.displayName\}/);
