@@ -6,6 +6,7 @@ import {
   createCourseDiscussionMessage,
   deleteCourseDiscussionMessage,
   listCourseDiscussionMessages,
+  listCourseDiscussionChanges,
   toggleCourseDiscussionPin,
 } from "@/modules/courses/discussion-service";
 import { SEED_IDS } from "../../scripts/db-seed-data";
@@ -67,6 +68,46 @@ describe("learner Section discussions with fresh PostgreSQL actors", () => {
     expect(removed.id).toBe(reply.id);
     const after = await listCourseDiscussionMessages(context, ids.delivery);
     expect(after.messages.some(message => message.id === reply.id)).toBe(false);
+  }, 30_000);
+
+  it("preserves send-time attribution through profile renames and rejects SQL spoofing", async () => {
+    const { context, ids } = fixture!;
+    const posted = await createCourseDiscussionMessage(context, ids.delivery, {
+      messageText: "Name before the profile update",
+      // Sender identity is authenticated/persisted, not caller controlled.
+    });
+    const first = (await listCourseDiscussionMessages(context, ids.delivery))
+      .messages.find(message => message.id === posted.id);
+    expect(first?.senderName).toBeTruthy();
+    const originalName = first!.senderName;
+    const snapshot = await pool.query<{sender_name_snapshot: string}>(
+      "SELECT sender_name_snapshot FROM course_discussion_messages WHERE id=$1",
+      [posted.id],
+    );
+    expect(snapshot.rows[0]?.sender_name_snapshot).toBe(originalName);
+
+    const newName = "Renamed DB05 " + posted.id.slice(0, 8);
+    await pool.query("UPDATE users SET display_name=$1 WHERE id=$2",
+      [newName, context.user.id]);
+    const second = (await listCourseDiscussionMessages(context, ids.delivery))
+      .messages.find(message => message.id === posted.id);
+    expect(second?.senderName).toBe(originalName);
+    expect(second?.senderName).not.toBe(newName);
+    const changes = await listCourseDiscussionChanges(context, ids.delivery, {
+      since: new Date(posted.createdAt.getTime() - 1_000).toISOString(),
+    });
+    expect(changes.changes.find(message => message.id === posted.id))
+      .toMatchObject({ senderName: originalName, deleted: false });
+
+    await expect(pool.query(
+      "UPDATE course_discussion_messages SET sender_name_snapshot=$1 WHERE id=$2",
+      ["Forged historical attribution", posted.id],
+    )).rejects.toMatchObject({ code: "23514" });
+    const retained = await pool.query<{sender_name_snapshot: string}>(
+      "SELECT sender_name_snapshot FROM course_discussion_messages WHERE id=$1",
+      [posted.id],
+    );
+    expect(retained.rows[0]?.sender_name_snapshot).toBe(originalName);
   }, 30_000);
 
   it("denies forged-college, suspended, wrong-role and swapped actor writes", async () => {
