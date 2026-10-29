@@ -53,13 +53,7 @@ beforeEach(async () => {
 afterEach(async () => {
   const current = fixture;
   fixture = null;
-  if (current) {
-    // DB-005 registered curriculum seeds program_term_courses on course
-    // creation. Retire only this fixture's mapping before its course parent.
-    await pool.query("DELETE FROM program_term_courses WHERE course_id=$1",
-      [current.ids.course]);
-    await cleanupLearnerCourseWriteFixture(pool, current);
-  }
+  if (current) await cleanupLearnerCourseWriteFixture(pool, current);
 }, 45_000);
 afterAll(async () => {
   await pool.end();
