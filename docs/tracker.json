@@ -1898,9 +1898,9 @@
           "recruiter bell UI and tests"
         ],
         "reason": "L07 readHrRecruiterBell produces hrConversationsHref for general no-job TPO message threads; parseHrBellResponse currently only accepts /hr/placements/jobs/:uuid URLs and rejects entire READY response when a general conversation is in the bell. L08 owns recruiter-facing bell UI/model; allow exact authorized conversations URL shape in parse without widening to arbitrary navigation and cover general-thread case. L07 owns mark-all message receipt fix.",
-        "status": "ACCEPTED",
+        "status": "APPLIED",
         "requestedAt": "2026-10-29T05:30:18.577Z",
-        "integratorReview": "L08 accepts narrowly scoped model/parser fix for canonical /hr/conversations?collegeId=...&q=&unreadOnly=true&page=1&sort=LATEST&scope=ALL href and negative injection coverage. Implementation will remain in named recruiter-bell model and tests only; L07 owns producer."
+        "integratorReview": "L08 landed exact canonical /hr/conversations?collegeId=...&q=&unreadOnly=true&page=1&sort=LATEST&scope=ALL validation in recruiter bell parser and unit negative cases; main commits bec3d04afdb485bba6ce877ad80cd7f301ed7933 + b986be8be79af7f85fd3f0e4312e0c414e35e1b4. Executed 13 positive/negative cases on extracted GitHub guard in isolated V8. Native Vitest/browser not executed; UI-L08 NOT accepted."
       },
       {
         "id": "L02-REGRESSION-ROSTER-DUPLICATE-20261029",
@@ -2111,6 +2111,19 @@
           "src/modules/courses/faculty-quiz-authoring-service.ts"
         ],
         "reason": "L05 owns DB06 acceptance for DB-035/038/041/044/052/053, but the active assessment/quiz producers live under L04-owned src/modules/courses/**. Please coordinate exact single-writer ownership or accept L05 handoff before changing these files. DB-035 gradeAssignmentSubmission/publishAssignmentGrade need atomic immutable grade events+version; DB-041 quiz shuffle persistence, DB-044 assignment attempts and DB-052 lifecycle require producer-side registration. L05 will stage and test domain contracts under its owned assessment/attendance scope and will not edit L04-owned files without ACCEPTED."
+      },
+      {
+        "id": "SCR-L08-L07-DB034-PREP-COURSE-CONSUMER-20261029",
+        "fromLane": "L08",
+        "toLane": "L07",
+        "paths": [
+          "src/modules/placements/tpo-configuration-read-service.ts",
+          "src/modules/placements/tpo-config-service.ts",
+          "src/app/(authenticated)/tpo/settings/prep-readiness/page.tsx"
+        ],
+        "reason": "DB-034 normalized placement_tpo_prep_courses requires active prep courses across the college's organization (legacy prepCourses(organizationId)), but current listTpoPrepCourses() reads courses joined to departments where departments.collegeId = current college; it excludes eligible courses in sibling colleges and does not use placement_tpo_prep_courses selection. L07 owns shared placement producer/consumer service: reconcile org-scope selector and persisted normalized settings, preserve TPO auth + active-course restrictions, and add same-org/sibling-college positive and other-org denial tests. L08 will verify DB09 persistence and task evidence.",
+        "status": "REQUESTED",
+        "requestedAt": "2026-10-29T05:49:22.309Z"
       }
     ],
     "coordination": {
