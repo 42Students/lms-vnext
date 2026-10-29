@@ -84,13 +84,16 @@ test("DB078 PostgreSQL witness preserves application URL during alias preflight"
 
 test("DB078 witness refuses an aliased application DB before any connection", () => {
   const secret = "db078AliasFixtureSecret";
+  // Node 22 propagates NODE_TEST_CONTEXT to test workers; nested --test
+  // otherwise silently skips this witness and exits 0 without DB preflight.
+  const { NODE_TEST_CONTEXT: _parentTestContext, ...safeProcessEnv } = process.env;
   const result = spawnSync(process.execPath,
     ["--test", "tests/db078-registered-course-column-disposition-pg.test.mjs"],
     {
       cwd: root,
       encoding: "utf8",
       env: {
-        ...process.env,
+        ...safeProcessEnv,
         DB078_DISPOSABLE: "1",
         TEST_DATABASE_URL: "postgresql://test:password@127.0.0.1:1/lms_vnext_test",
         DATABASE_URL: "postgresql://app:" + secret + "@localhost:1/lms_vnext_test",
@@ -98,6 +101,7 @@ test("DB078 witness refuses an aliased application DB before any connection", ()
     });
   const output = `${result.stdout ?? ""}\n${result.stderr ?? ""}`;
   assert.notEqual(result.status, 0);
+  assert.doesNotMatch(output, /node:test run\(\) is being called recursively/i);
   assert.match(output, /Refusing to reset the configured application database/);
   assert.doesNotMatch(output, /ECONNREFUSED|ENOTFOUND|connection refused/i);
   assert.doesNotMatch(output, new RegExp(secret));
