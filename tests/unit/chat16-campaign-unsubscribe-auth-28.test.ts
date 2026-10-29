@@ -18,6 +18,7 @@ const claim = {
 beforeEach(() => {
   vi.resetAllMocks();
   vi.stubEnv("TPO_CAMPAIGN_RECIPIENT_TOKEN_SECRET", secret);
+ vi.stubEnv("DB10_GLOBAL_EMAIL_HMAC_KEY_BASE64", "");
 });
 afterEach(() => vi.unstubAllEnvs());
 
