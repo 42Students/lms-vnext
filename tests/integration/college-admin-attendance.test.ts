@@ -9,6 +9,8 @@ import {
   getAdminAttendanceOptions,
 } from "@/modules/attendance/admin-service";
 import { SEED_IDS } from "../../scripts/db-seed-data";
+import {facultyAttendanceCorrectionTokenMatches}
+  from "@/modules/attendance/faculty-correction-token-model";
 
 if (!process.env.TEST_DATABASE_URL) {
   throw new Error("Attendance DB tests require disposable TEST_DATABASE_URL");
@@ -230,6 +232,27 @@ describe("College Admin attendance tenant isolation with PostgreSQL", () => {
       [own.event],
     );
     expect(stillUnmarked.rows).toHaveLength(0);
+  });
+
+  it("admin correction invalidates an already marked Faculty session token", async () => {
+    const input={collegeId:SEED_IDS.collegeA,deliveryId:own.delivery,membershipId:own.learner};
+    const oldMarkedAt=new Date(Date.now()-60_000);
+    await pool.query(
+      "insert into attendance_sessions (schedule_event_id,status,marked_by_user_id,marked_at) values ($1,'MARKED',$2,$3)",
+      [own.event,admin.user.id,oldMarkedAt],
+    );
+    await correctAdminAttendance(admin,own.event,{...input,status:"ABSENT"});
+    const result=await pool.query(
+      "select status,marked_at from attendance_sessions where schedule_event_id=$1",
+      [own.event],
+    );
+    expect(result.rows).toHaveLength(1);
+    expect(result.rows[0]?.status).toBe("MARKED");
+    const current=new Date(result.rows[0]?.marked_at);
+    expect(current.getTime()).toBeGreaterThan(oldMarkedAt.getTime());
+    expect(facultyAttendanceCorrectionTokenMatches(
+      "MARKED",current,oldMarkedAt.toISOString(),
+    )).toBe(false);
   });
 
   it("keeps explicit PRESENT identity and prevents inactive-member corrections", async () => {
