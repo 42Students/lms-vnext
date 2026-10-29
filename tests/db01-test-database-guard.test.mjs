@@ -809,3 +809,22 @@ test("DB28 only exempts an exactly triple-bound explicitly named E2E test databa
   assert.doesNotMatch(output, /ECONNREFUSED|ENOTFOUND|connection refused/i);
   assert.doesNotMatch(output, new RegExp(secret));
 });
+
+test("DB28 accepts the intentional disposable E2E triple URL preflight", () => {
+  const tsx = "node_modules/tsx/dist/cli.mjs";
+  assert.ok(existsSync(tsx), "tsx must be installed before running DB28 process regression");
+  const url = "postgresql://e2e:private-disposable-test@127.0.0.1:1/lms_vnext_e2e";
+  const result = spawnSync(process.execPath, [tsx, "scripts/db-e2e-prepare.ts"], {
+    encoding: "utf8",
+    env: {
+      ...process.env,
+      DATABASE_URL: url,
+      TEST_DATABASE_URL: url,
+      E2E_DATABASE_URL: url,
+    },
+  });
+  const output = `${result.stdout ?? ""}\n${result.stderr ?? ""}`;
+  assert.match(output, /DB01 test-target preflight PASS: local 127\.0\.0\.1\/lms_vnext_e2e/);
+  assert.doesNotMatch(output, /Refusing to reset the configured application database/);
+  assert.doesNotMatch(output, /private-disposable-test/);
+});
