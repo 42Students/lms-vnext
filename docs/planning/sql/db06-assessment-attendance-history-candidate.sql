@@ -1,5 +1,12 @@
 -- DB-035 / DB06 SOURCE-ONLY CANDIDATE.
 -- DO NOT register independently. Promotion must include producer/API changes in
+-- The assignment_grade_events table is ALREADY REGISTERED by
+-- drizzle/0205_lane15_assignment_grade_events.sql, which supports HIDE_GRADE.
+-- This document is a SOURCE CONTRACT, NOT A STANDALONE MIGRATION.
+-- L01 must upgrade existing 0205 guards/constraints in-place and separately
+-- register new attendance history under a coordinated producer cutover.
+-- Never apply this file verbatim: its CREATE TABLE would duplicate 0205.
+--
 -- the same release because deferred constraint triggers require event rows for
 -- every grade/publish and attendance mark/correction transaction.
 --
@@ -12,7 +19,7 @@
 --     every explicit status (including PRESENT) plus immutable versioned events.
 --
 -- Normalized vNext event actions:
---   assignment_grade_events: GRADE, REGRADE, PUBLISH_GRADE
+--   assignment_grade_events: GRADE, REGRADE, HIDE_GRADE, PUBLISH_GRADE
 --   attendance_record_events: MARK, CORRECT
 
 -- Fail closed on historical state that cannot be reconstructed truthfully.
@@ -97,7 +104,7 @@ CREATE TABLE assignment_grade_events (
     CHECK ((actor_role = 'SUPER_ADMIN' AND actor_membership_id IS NULL)
        OR (actor_role IN ('COLLEGE_ADMIN','FACULTY') AND actor_membership_id IS NOT NULL)),
   CONSTRAINT assignment_grade_events_action_ck
-    CHECK (action IN ('GRADE','REGRADE','PUBLISH_GRADE')),
+    CHECK (action IN ('GRADE','REGRADE','HIDE_GRADE','PUBLISH_GRADE')),
   CONSTRAINT assignment_grade_events_status_ck
     CHECK (
       previous_grading_status IN ('NOT_GRADED','GRADED')
@@ -138,6 +145,16 @@ CREATE TABLE assignment_grade_events (
         AND new_grading_status = 'GRADED'
         AND previous_grade_published = false
         AND new_grade_published = true
+        AND previous_points IS NOT DISTINCT FROM new_points
+        AND previous_feedback IS NOT DISTINCT FROM new_feedback
+        AND previous_graded_by_user_id IS NOT DISTINCT FROM new_graded_by_user_id
+        AND previous_graded_at IS NOT DISTINCT FROM new_graded_at)
+      OR
+      (action = 'HIDE_GRADE'
+        AND previous_grading_status = 'GRADED'
+        AND new_grading_status = 'GRADED'
+        AND previous_grade_published = true
+        AND new_grade_published = false
         AND previous_points IS NOT DISTINCT FROM new_points
         AND previous_feedback IS NOT DISTINCT FROM new_feedback
         AND previous_graded_by_user_id IS NOT DISTINCT FROM new_graded_by_user_id
@@ -560,6 +577,13 @@ BEGIN
   expected_action := CASE
     WHEN OLD.grade_published = false AND NEW.grade_published = true
       THEN 'PUBLISH_GRADE'
+    WHEN OLD.grade_published = true AND NEW.grade_published = false
+         AND OLD.points_awarded IS NOT DISTINCT FROM NEW.points_awarded
+         AND OLD.feedback IS NOT DISTINCT FROM NEW.feedback
+         AND OLD.grading_status IS NOT DISTINCT FROM NEW.grading_status
+         AND OLD.graded_by_user_id IS NOT DISTINCT FROM NEW.graded_by_user_id
+         AND OLD.graded_at IS NOT DISTINCT FROM NEW.graded_at
+      THEN 'HIDE_GRADE'
     WHEN OLD.grading_status = 'NOT_GRADED' AND NEW.grading_status = 'GRADED'
       THEN 'GRADE'
     ELSE 'REGRADE'
@@ -588,7 +612,7 @@ BEGIN
         AND e.submission_version_before = OLD.version
         AND e.submission_version_after = NEW.version
         AND (
-          expected_action = 'PUBLISH_GRADE'
+          expected_action IN ('PUBLISH_GRADE','HIDE_GRADE')
           OR e.actor_user_id = NEW.graded_by_user_id
         )
   ) THEN
