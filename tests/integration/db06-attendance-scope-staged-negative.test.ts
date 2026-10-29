@@ -1,5 +1,6 @@
 import {randomUUID} from "node:crypto";
 import {readFileSync} from "node:fs";
+import {spawnSync} from "node:child_process";
 import {Pool, type PoolClient} from "pg";
 import {expect,it} from "vitest";
 import {SEED_IDS} from "../../scripts/db-seed-data";
@@ -14,6 +15,16 @@ import {SEED_IDS} from "../../scripts/db-seed-data";
  * The deferred marker constraint is forced IMMEDIATE to surface failures
  * inside savepoints. This test deliberately does NOT register a migration.
  */
+function assertWitnessDisposableDb(){
+ const check=spawnSync(process.execPath,["scripts/db01-test-database-guard.mjs"],{
+  env:process.env,encoding:"utf8",
+ });
+ if(check.error||check.status!==0){
+  throw new Error("DB06 witness refused unsafe PostgreSQL target: "+
+   (check.error?.message??check.stderr??"preflight failed"));
+ }
+}
+
 const enabled=Boolean(process.env.TEST_DATABASE_URL &&
   process.env.DB06_RUN_ATTENDANCE_SCOPE_WITNESSES==="1" &&
   process.env.DB06_DISPOSABLE_DB_CONFIRM==="YES");
@@ -36,6 +47,7 @@ async function expectRejectCode(
 }
 
 run("DB042 staged roster, marker and retention guards reject SQL bypasses",async()=>{
+ assertWitnessDisposableDb();
  const pool=new Pool({connectionString:process.env.TEST_DATABASE_URL,max:1});
  const client=await pool.connect();
  const uid=randomUUID();
