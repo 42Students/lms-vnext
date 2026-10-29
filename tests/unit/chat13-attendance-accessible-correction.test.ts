@@ -11,7 +11,9 @@ describe("Super Admin attendance correction accessibility",()=>{
   expect(source).toContain('useGuardedAction({busyLabel:');
   expect(source).toContain('disabled={correcting||refreshing||verifyingRecord||!verifiedRecord}');
   expect(source).toContain('dismissible={!correcting&&!correctionGuard.pending}');
-  expect(source).toContain("This change is recorded.");
+  expect(source).toContain("Note edits are also recorded.");
+  expect(source).toContain("Present corrections retain the learner");
+  expect(source).toContain("Save note");
   expect(source).toContain('role="alert"');
   expect(source).toContain('setTarget(null)');
  });
