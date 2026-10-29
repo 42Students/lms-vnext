@@ -41,3 +41,17 @@ export function adminAttendanceRecordTokenMatches(
   const parsed=new Date(expected);
   return Number.isFinite(parsed.getTime())&&parsed.getTime()===persisted.getTime();
 }
+
+/** Preserve legacy absence/present audit aliases for real status transitions,
+ * but give note-only edits a truthful event type instead of falsely asserting
+ * that an administrator newly marked an absence.
+ */
+export function adminAttendanceAuditEventType(
+  statusChanged:boolean,
+  status:string,
+):"ADMIN_ATTENDANCE_NOTE_UPDATED"|"ADMIN_ATTENDANCE_MARK_PRESENT"|"ADMIN_ATTENDANCE_MARK_ABSENT"{
+  return !statusChanged
+    ?"ADMIN_ATTENDANCE_NOTE_UPDATED"
+    :status==="PRESENT"
+      ?"ADMIN_ATTENDANCE_MARK_PRESENT":"ADMIN_ATTENDANCE_MARK_ABSENT";
+}
