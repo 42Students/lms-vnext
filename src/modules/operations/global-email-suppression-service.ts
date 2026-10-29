@@ -40,8 +40,14 @@ export class GlobalEmailSuppressionUnavailable extends Error {
  * denied by the DB-067 exact-fence pre-send check; a crash-ambiguous provider
  * attempt must never be rewritten as definitely unsent.
  */
+/** A trusted test or an already-validated internal service may provide its
+ * own transaction-capable database handle. Browser callers never select DB
+ * connections or recipient hashes. This enables independent disposable-PG
+ * acceptance without falling back to the application DATABASE_URL. */
+type SuppressionWriter = Pick<ReturnType<typeof getDb>, "transaction">;
 export async function persistVerifiedGlobalEmailSuppression(
   verified: VerifiedGlobalEmailSuppression,
+  writer?: SuppressionWriter,
 ): Promise<void> {
   if (!verified || !HASH.test(verified.recipientHash) ||
       !["UNSUBSCRIBED", "BOUNCE", "COMPLAINT"].includes(verified.reason) ||
@@ -50,7 +56,7 @@ export async function persistVerifiedGlobalEmailSuppression(
     throw new GlobalEmailSuppressionUnavailable();
   }
 
-  const db = getDb();
+  const db = writer ?? getDb();
   await db.transaction(async (tx) => {
     const readiness = await tx.execute<{
       global_ready: boolean;
