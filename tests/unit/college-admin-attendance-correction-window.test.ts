@@ -11,7 +11,10 @@ describe("COL-attendance-01 / COL-attendance-02",()=>{
  });
  it("writes a scoped audit event in the same transaction and suppresses no-ops",()=>{
   const correction=service.slice(service.indexOf("export async function correctAdminAttendance"));
-  expect(correction).toContain("if(priorStatus===input.status)");
+  expect(correction).toContain("if(!change.changed)");
+  expect(correction).toContain("adminAttendanceCorrectionChange({");
+  expect(correction).toContain("note:change.nextNote");
+  expect(correction).toContain("change.statusChanged");
   expect(correction).toContain("tx.insert(activityEvents)");
   expect(correction).toContain("ADMIN_ATTENDANCE_MARK_PRESENT");
   expect(correction).toContain("ADMIN_ATTENDANCE_MARK_ABSENT");
