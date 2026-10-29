@@ -23,18 +23,19 @@ export async function updateMentorTaskDetails(
   const scope=await requireProjectLifecycleMutationAccess(context,params.projectId);
   const expected=new Date(input.expectedUpdatedAt);
   return getDb().transaction(async tx=>{
-    const [project]=await tx.select({status:projectInstances.status})
+    const [project]=await tx.select({status:projectInstances.status,deletedAt:projectInstances.deletedAt})
       .from(projectInstances)
       .where(and(eq(projectInstances.id,scope.project.id),
         eq(projectInstances.collegeId,scope.collegeId)))
       .for("update").limit(1);
-    if(!project||!["PLANNED","ACTIVE"].includes(project.status))
+    if(!project||project.deletedAt||!["PLANNED","ACTIVE"].includes(project.status))
       throw new ProjectsServiceError("PROJECT_TASK_INVALID_STATE");
     await assertPersistedProjectMutationActor(tx,context,scope);
 
     const [task]=await tx.select().from(projectTasks)
       .where(and(eq(projectTasks.id,params.taskId),
-        eq(projectTasks.projectId,scope.project.id)))
+        eq(projectTasks.projectId,scope.project.id),
+        isNull(projectTasks.deletedAt)))
       .for("update").limit(1);
     if(!task) throw new ProjectsServiceError("PROJECT_TASK_NOT_FOUND");
     if(task.status==="IN_REVIEW"||task.status==="DONE")
@@ -44,7 +45,8 @@ export async function updateMentorTaskDetails(
       status:projectSprints.status,releaseId:projectSprints.releaseId,
     }).from(projectSprints)
       .where(and(eq(projectSprints.id,task.sprintId),
-        eq(projectSprints.projectId,scope.project.id)))
+        eq(projectSprints.projectId,scope.project.id),
+        isNull(projectSprints.deletedAt)))
       .limit(1):[null];
     if(task.sprintId&&(!sprint||sprint.status==="COMPLETED"))
       throw new ProjectsServiceError("PROJECT_TASK_INVALID_STATE");
