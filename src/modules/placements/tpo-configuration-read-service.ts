@@ -110,9 +110,15 @@ export async function listTpoPrepCourses(ctx:RequestContext){
   await assertPersistedPlatformPermission(tx,ctx,"placements.manage",{
    collegeId,organizationId:college.organizationId,
   });
+  // Legacy preparation choices belong to the college's ORGANIZATION, not
+  // only its own departments. A sibling college's active course is eligible,
+  // but an archived/disabled course or a foreign-organization course is not.
   return tx.select({id:courses.id,name:courses.name,code:courses.code}).from(courses)
    .innerJoin(departments,eq(departments.id,courses.departmentId))
-   .where(and(eq(departments.collegeId,collegeId),isNull(departments.archivedAt),eq(courses.status,"ACTIVE")))
+   .innerJoin(colleges,eq(colleges.id,departments.collegeId))
+   .where(and(eq(colleges.organizationId,college.organizationId),
+    eq(colleges.status,"ACTIVE"),isNull(departments.archivedAt),
+    eq(courses.status,"ACTIVE"),eq(courses.enabled,true),isNull(courses.deletedAt)))
    .orderBy(asc(courses.name),asc(courses.id));
  });
 }
