@@ -165,6 +165,8 @@ afterAll(async () => {
 
 describe("College Admin attendance tenant isolation with PostgreSQL", () => {
   it("lists only own-college deliveries and catalogue entries", async () => {
+    const shortTitle="Attendance formal "+nonce;
+    await pool.query("update courses set short_title=$1 where id=$2",[shortTitle,own.course]);
     const options = await getAdminAttendanceOptions(admin, SEED_IDS.collegeA);
     expect(options.deliveries.some((row) => row.deliveryId === own.delivery)).toBe(true);
     expect(options.deliveries.some((row) => row.deliveryId === foreign.delivery)).toBe(false);
@@ -174,7 +176,7 @@ describe("College Admin attendance tenant isolation with PostgreSQL", () => {
     const ownDelivery=options.deliveries.find(row=>row.deliveryId===own.delivery);
     const ownCourse=options.courses.find(row=>row.id===own.course);
     expect(ownDelivery?.formalTitle).toBe(ownCourse?.formalTitle);
-    expect(typeof ownDelivery?.formalTitle).toBe("string");
+    expect(ownDelivery?.formalTitle).toBe(shortTitle);
     await expect(getAdminAttendanceOptions(admin, SEED_IDS.collegeB)).rejects.toThrow();
   });
 
