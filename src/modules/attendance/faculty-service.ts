@@ -678,6 +678,19 @@ export async function markFacultyAttendance(
       );
     }
 
+    // A MARKED session has one stable current row per authorized learner,
+    // including PRESENT learners. A missing row must never be mistaken for
+    // a durable MARK event during the DB-035 history cutover.
+    if (changes.insertPresentMembershipIds.length > 0) {
+      await tx.insert(attendanceRecords).values(
+        changes.insertPresentMembershipIds.map(membershipId => ({
+          scheduleEventId, membershipId, status: "PRESENT",
+          markedByUserId: context.user.id, note: markReason,
+          markedAt: now, updatedAt: now,
+        })),
+      );
+    }
+
     if (existingSession) {
       const [changed]=await tx
         .update(attendanceSessions)
