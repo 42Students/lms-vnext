@@ -406,3 +406,21 @@ test("DB074 final lock and review deny deletion before idempotent success or mut
  assert.match(unit,/DB074 denies both a new lock and an idempotent retry after project deletion/);
  assert.match(unit,/DB074 denies College Admin final review on a deleted project/);
 });
+
+
+// L06 DB07 disposable-Postgres project integration safety.
+test("DB07 destructive Projects integration suites require isolated disposable PostgreSQL",()=>{
+  for(const path of [
+    "tests/integration/projects-p5-lifecycle.test.ts",
+    "tests/integration/projects-p6b-final-evaluation.test.ts",
+    "tests/integration/projects-adversarial.test.ts",
+  ]){
+    const source=fs.readFileSync(path,"utf8");
+    assert.match(source,/import \{assertDb018DisposableTarget\} from "\.\.\/support\/db018-test-target\.mjs"/);
+    assert.match(source,/const databaseUrl = process\.env\.TEST_DATABASE_URL/);
+    assert.match(source,/assertDb018DisposableTarget\(process\.env,\{serviceBound:true\}\)/);
+    assert.doesNotMatch(source,/\?\?\s*process\.env\.DATABASE_URL/);
+    assert.ok(source.indexOf("assertDb018DisposableTarget(")<
+      source.indexOf("const pool = new Pool("),path);
+  }
+});
