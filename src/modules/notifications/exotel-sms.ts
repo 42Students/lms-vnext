@@ -290,8 +290,13 @@ export function createExotelSmsProvider(
         const accepted = isExotelAcceptedResponse(body);
         const status = (body.SMSMessage?.Status ?? "").trim().toLowerCase();
         if (!accepted) {
+          // Provider status is untrusted text. Do not echo arbitrary API
+          // strings into audit logs: they could include an OTP or recipient.
+          const safeStatus = ["failed", "rejected", "invalid", "cancelled",
+            "canceled", "undelivered"].includes(status)
+            ? status : "UNRECOGNIZED";
           writeStructuredLog("WARNING", "sms.otp_not_accepted", {
-            providerStatus: status.slice(0, 32),
+            providerStatus: safeStatus,
           });
           await bestEffortOtpAttempt(canonicalPhone!, "FAILED", null, "PROVIDER_NOT_ACCEPTED");
           return false;
