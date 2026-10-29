@@ -299,8 +299,18 @@ export async function listMyLearnerContentProgressBatch(
   firstCompletedAt:learnerContentProgress.firstCompletedAt,
  }).from(learnerContentProgress)
   .where(and(eq(learnerContentProgress.membershipId,context.membership.id),
-   inArray(learnerContentProgress.lessonContentId,available.map(row=>row.id))))
-  .orderBy(desc(learnerContentProgress.attempt)).limit(5000);
+   inArray(learnerContentProgress.lessonContentId,available.map(row=>row.id)),
+   // Resolve the newest attempt independently for EACH requested content.
+   // A global 5,000-history-row limit let heavy retakes of one video
+   // starve unrelated content and silently show it as NOT_STARTED.
+   // The unique (membership,content,attempt) index bounds this to one
+   // persisted row per visible content (at most 500).
+   sql`${learnerContentProgress.attempt} = (
+     select max(history.attempt) from learner_content_progress history
+     where history.membership_id = ${context.membership.id}
+       and history.lesson_content_id = ${learnerContentProgress.lessonContentId}
+   )`,
+ ));
  const byContent=new Map<string,(typeof latest)[number]>();
  for(const row of latest)if(!byContent.has(row.contentId))byContent.set(row.contentId,row);
  const byId=new Map(available.map(content=>[content.id,content] as const));
