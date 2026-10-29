@@ -74,6 +74,43 @@ describe("scheduled Telegram alerts", () => {
     expect(source).toContain(".limit(5)");
     expect(source).not.toContain(".limit(1000)");
   });
+  it("DB-023 formats bigint daily counts without floating-point precision loss", async () => {
+    const aboveMax = "9007199254740995";
+    const msg = formatDailyDigest({
+      day: "2099-06-30",
+      total: aboveMax,
+      firstSeen: "5",
+      muted: 4n,
+      spikes: "2",
+      top: [{ hash: "a".repeat(64), count: aboveMax }],
+    });
+    expect(msg).toContain("Errors: 9007199254740995");
+    expect(msg).toContain("Recurring occurrences: 9007199254740990");
+    expect(msg).toContain("New signatures: 5");
+    expect(msg).toContain("Muted signatures: 4");
+    expect(msg).toContain("aaaaaaaaaaaa: 9007199254740995 occurrences");
+    expect(msg).not.toContain("9007199254740996");
+    // The SQL must request decimal text before Drizzle's number-mode mapping.
+    const { readFileSync } = await import("node:fs");
+    const source = readFileSync("src/modules/log-alerts/scheduler.ts", "utf8");
+    expect(source).toContain('count: sql<string>`${daily.occurrenceCount}::text`');
+    expect(source).not.toContain("total: Number(counts?.total");
+  });
+
+  it("DB-023 keeps invalid/unsafe count presentations bounded", () => {
+    const msg = formatDailyDigest({
+      day: "2099-06-30",
+      total: Number.MAX_SAFE_INTEGER + 2,
+      firstSeen: "not-a-count", muted: -1, spikes: 1.5,
+      top: [{ hash: "123456789abc", count: "7" }],
+    });
+    expect(msg).toContain("Errors: 0");
+    expect(msg).toContain("Recurring occurrences: 0");
+    expect(msg).toContain("New signatures: 0");
+    expect(msg).toContain("Muted signatures: 0");
+    expect(msg).toContain("Spike signatures: 0");
+  });
+
   it("GR-119 digest uses 09:00 IST rather than UTC and lists top recurring", () => {
     expect(istDayAndHour(new Date("2099-07-01T03:30:00Z")))
       .toEqual({ day: "2099-07-01", hour: 9 });
