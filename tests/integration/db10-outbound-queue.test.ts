@@ -149,6 +149,19 @@ describe("W06 transactional outbound queue security", () => {
     }
   });
 
+  it("fails closed on HMAC/encryption secret reuse without inserting an outbox row", async () => {
+    const eventId = issueId();
+    process.env.DB10_GLOBAL_EMAIL_HMAC_KEY_BASE64 = key;
+    await expect(queueInIsolatedDatabase(adminA, intent(eventId)))
+      .rejects.toMatchObject({ code: "OUTBOUND_KEY_UNAVAILABLE" });
+    const rows = await pool.query(
+      "select id from outbound_messages where source_event_id=$1",
+      [eventId],
+    );
+    expect(rows.rowCount).toBe(0);
+    process.env.DB10_GLOBAL_EMAIL_HMAC_KEY_BASE64 = globalKey;
+  });
+
   it("enqueues ciphertext, returns QUEUED not sent, deduplicates retries", async () => {
     const sourceEventId = issueId();
     const result = await queueInIsolatedDatabase(adminA, intent(sourceEventId));
