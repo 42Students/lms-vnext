@@ -20,13 +20,14 @@ export async function createLearnerOwnTask(context:RequestContext,rawParams:unkn
  const scope=await requireProjectReadAccess(context,projectId),membership=context.membership;
  if(scope.access!=="LEARNER"||!membership)throw new ProjectsServiceError("PROJECT_ACCESS_DENIED");
  return getDb().transaction(async tx=>{
-  const [project]=await tx.select({status:projectInstances.status}).from(projectInstances)
+  const [project]=await tx.select({status:projectInstances.status,deletedAt:projectInstances.deletedAt}).from(projectInstances)
    .where(and(eq(projectInstances.id,projectId),eq(projectInstances.collegeId,scope.collegeId)))
    .for("update").limit(1);
-  if(project?.status!=="ACTIVE")throw new ProjectsServiceError("PROJECT_TASK_INVALID_STATE");
+  if(!project||project.deletedAt||project.status!=="ACTIVE")throw new ProjectsServiceError("PROJECT_TASK_INVALID_STATE");
   await assertPersistedLearnerProjectMutation(tx,context,projectId,scope.collegeId);
   const [sprint]=input.sprintId?await tx.select().from(projectSprints)
-   .where(and(eq(projectSprints.id,input.sprintId),eq(projectSprints.projectId,projectId)))
+   .where(and(eq(projectSprints.id,input.sprintId),eq(projectSprints.projectId,projectId),
+     isNull(projectSprints.deletedAt)))
    .for("update").limit(1):[null];
   if(input.sprintId&&(!sprint||sprint.status!=="ACTIVE"||
    sprint.updatedAt.getTime()!==Date.parse(input.expectedSprintUpdatedAt??"")))
@@ -76,10 +77,10 @@ export async function deleteLearnerOwnTask(context:RequestContext,rawParams:unkn
  const scope=await requireProjectReadAccess(context,projectId),membership=context.membership;
  if(scope.access!=="LEARNER"||!membership)throw new ProjectsServiceError("PROJECT_ACCESS_DENIED");
  return getDb().transaction(async tx=>{
-  const [project]=await tx.select({status:projectInstances.status}).from(projectInstances)
+  const [project]=await tx.select({status:projectInstances.status,deletedAt:projectInstances.deletedAt}).from(projectInstances)
     .where(and(eq(projectInstances.id,projectId),eq(projectInstances.collegeId,scope.collegeId)))
     .for("update").limit(1);
-  if(project?.status!=="ACTIVE")throw new ProjectsServiceError("PROJECT_TASK_INVALID_STATE");
+  if(!project||project.deletedAt||project.status!=="ACTIVE")throw new ProjectsServiceError("PROJECT_TASK_INVALID_STATE");
   await assertPersistedLearnerProjectMutation(tx,context,projectId,scope.collegeId);
   const [task]=await tx.select().from(projectTasks).where(and(eq(projectTasks.id,taskId),
     eq(projectTasks.projectId,projectId),isNull(projectTasks.deletedAt)))
@@ -88,7 +89,8 @@ export async function deleteLearnerOwnTask(context:RequestContext,rawParams:unkn
     task.assigneeMembershipId!==membership.id||task.status!=="TODO")
     throw new ProjectsServiceError("PROJECT_TASK_INVALID_STATE");
   const [sprint]=task.sprintId?await tx.select().from(projectSprints)
-   .where(and(eq(projectSprints.id,task.sprintId),eq(projectSprints.projectId,projectId)))
+   .where(and(eq(projectSprints.id,task.sprintId),eq(projectSprints.projectId,projectId),
+     isNull(projectSprints.deletedAt)))
    .for("update").limit(1):[null];
   if(task.sprintId&&sprint?.status!=="ACTIVE")
    throw new ProjectsServiceError("PROJECT_TASK_INVALID_STATE");
