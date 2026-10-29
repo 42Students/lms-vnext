@@ -37,7 +37,7 @@ let fallbackSent = 0;
 export function formatAlert(input: {
   kind: string; environment: string; time: Date; event: string;
   path: string; message: string; requestId?: string; status?: number;
-  count?: number; affectedAccounts?: number|null; component?: string;
+  count?: number | bigint | string; affectedAccounts?: number|null; component?: string;
   browserFamily?:string;viewport?:{width:number;height:number};buildId?:string;
 }): string {
   return [
@@ -226,7 +226,9 @@ export async function reportErrorForAlert(input: ReportableError): Promise<boole
         ...(input.browserFamily !== undefined ? { browserFamily: input.browserFamily } : {}),
         ...(input.viewport !== undefined ? { viewport: input.viewport } : {}),
         ...(input.buildId !== undefined ? { buildId: input.buildId } : {}),
-        count: current ? Number(current.occurrenceCount) + 1 : 1,
+        // Keep PostgreSQL BIGINT exact even when the message spans more
+        // than Number.MAX_SAFE_INTEGER historical occurrences.
+        count: current ? current.occurrenceCount + 1n : 1n,
         affectedAccounts:radiusTotal>0 ? radiusTotal : accountHash?1:null,
       }), { acknowledgeSignatureId: id });
       if (!delivered) {
