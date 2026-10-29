@@ -31,10 +31,10 @@ export async function writeMentorProjectRelease(
  const releaseId=releaseIdInput?uuid.parse(releaseIdInput):null;
  const input=operation==="DELETE"?mentorReleaseDeleteSchema.parse(raw):body.parse(raw);
  return getDb().transaction(async tx=>{
-  const [project]=await tx.select({status:projectInstances.status}).from(projectInstances)
+  const [project]=await tx.select({status:projectInstances.status,deletedAt:projectInstances.deletedAt}).from(projectInstances)
    .where(and(eq(projectInstances.id,projectId),eq(projectInstances.collegeId,scope.collegeId)))
    .for("update").limit(1);
-  if(!project||project.status!=="ACTIVE"&&project.status!=="PLANNED")
+  if(!project||project.deletedAt||(project.status!=="ACTIVE"&&project.status!=="PLANNED"))
    throw new ProjectsServiceError("PROJECT_LIFECYCLE_INVALID_STATE");
   // Prevent a stale tab from publishing release changes after Mentor grant revocation.
   await assertPersistedProjectMutationActor(tx,context,scope);
