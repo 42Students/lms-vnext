@@ -4,6 +4,7 @@ import { dirname, resolve } from "node:path";
 import { spawnSync } from "node:child_process";
 import net from "node:net";
 import { assertSafeDb01TestTarget } from "./db01-test-database-guard.mjs";
+import { redactVerifierOutput } from "./db-independent-verifier-redaction.mjs";
 
 const postgresImage =
   process.env.DB_VERIFY_POSTGRES_IMAGE ?? "postgres:17-alpine";
@@ -30,7 +31,7 @@ function shellText(command, args = [], env = process.env) {
   if (result.error) throw result.error;
   if (result.status !== 0) {
     throw new Error(
-      `${command} ${args.join(" ")} failed (${result.status})\n${result.stderr || result.stdout}`,
+      redactVerifierOutput(`${command} ${args.join(" ")} failed (${result.status})\n${result.stderr || result.stdout}`),
     );
   }
   return (result.stdout || result.stderr || "").trim();
@@ -53,8 +54,8 @@ function runEmptyOutputStep(name, command, args, env) {
   });
   const stdout = result.stdout ?? "";
   const stderr = result.stderr ?? "";
-  process.stdout.write(stdout);
-  process.stderr.write(stderr);
+  process.stdout.write(redactVerifierOutput(stdout));
+  process.stderr.write(redactVerifierOutput(stderr));
   const combined = `${stdout}\n${stderr}`;
   const unexpectedOutput = stdout.trim();
   const record = {
@@ -65,7 +66,7 @@ function runEmptyOutputStep(name, command, args, env) {
     exitCode: result.status,
     signal: result.signal ?? null,
     outputSha256: createHash("sha256").update(combined).digest("hex"),
-    outputTail: outputTail(combined),
+    outputTail: outputTail(redactVerifierOutput(combined)),
     expectedEmptyStdout: true,
     stdoutWasEmpty: unexpectedOutput.length === 0,
   };
@@ -76,7 +77,7 @@ function runEmptyOutputStep(name, command, args, env) {
   }
   if (unexpectedOutput) {
     throw new Error(
-      `${name} found unregistered files:\n${unexpectedOutput}`,
+      redactVerifierOutput(`${name} found unregistered files:\n${unexpectedOutput}`),
     );
   }
 }
@@ -93,8 +94,8 @@ function runStep(name, command, args, env) {
   });
   const stdout = result.stdout ?? "";
   const stderr = result.stderr ?? "";
-  process.stdout.write(stdout);
-  process.stderr.write(stderr);
+  process.stdout.write(redactVerifierOutput(stdout));
+  process.stderr.write(redactVerifierOutput(stderr));
   const combined = `${stdout}\n${stderr}`;
   const record = {
     name,
@@ -104,7 +105,7 @@ function runStep(name, command, args, env) {
     exitCode: result.status,
     signal: result.signal ?? null,
     outputSha256: createHash("sha256").update(combined).digest("hex"),
-    outputTail: outputTail(combined),
+    outputTail: outputTail(redactVerifierOutput(combined)),
   };
   results.push(record);
   if (result.error) throw result.error;
@@ -362,7 +363,7 @@ async function main() {
     );
   } catch (error) {
     failure =
-      error instanceof Error ? error.stack ?? error.message : String(error);
+      redactVerifierOutput(error instanceof Error ? error.stack ?? error.message : String(error));
     throw error;
   } finally {
     const evidence = {
