@@ -10,7 +10,7 @@ const state=vi.hoisted(()=>({
   access:"ADMIN" as "ADMIN"|"MENTOR"|"LEARNER",
   adminAllowed:true,
   mentorAllowed:true,
-  projectStatus:"ACTIVE",
+  projectStatus:"ACTIVE",projectDeletedAt:null as Date|null,
   submissionStatus:"APPROVED",
   locks:0,checks:0,mentors:0,inserts:0,events:0,transactions:0,
 }));
@@ -39,7 +39,7 @@ vi.mock("@/db/client",()=>({
         select:()=>{
           const step=reads++;
           const result=step===0
-            ?[{status:state.projectStatus}]
+            ?[{status:state.projectStatus,deletedAt:state.projectDeletedAt}]
             :state.access==="MENTOR"&&step===1
               ?(state.mentorAllowed?[{id:"persisted-project-mentor"}]:[])
               :[{id:submissionId,status:state.submissionStatus}];
@@ -83,7 +83,7 @@ const mentor=():RequestContext=>({
 const valid={items:[{criterion:"Completion",score:8,maxScore:10}],summary:"Reviewed against rubric"};
 beforeEach(()=>{
   state.access="ADMIN";state.adminAllowed=true;state.mentorAllowed=true;
-  state.projectStatus="ACTIVE";state.submissionStatus="APPROVED";
+  state.projectStatus="ACTIVE";state.projectDeletedAt=null;state.submissionStatus="APPROVED";
   state.locks=0;state.checks=0;state.mentors=0;state.inserts=0;state.events=0;state.transactions=0;
 });
 describe("IIT Dharwad Projects evaluation write: persisted role and grading integrity",()=>{
@@ -121,6 +121,14 @@ describe("IIT Dharwad Projects evaluation write: persisted role and grading inte
     expect(state.mentors).toBe(1);
     expect(state.inserts).toBe(2);
     expect(state.events).toBe(1);
+  });
+  it("DB074 denies grading after project soft deletion without rubric or event writes",async()=>{
+    state.projectDeletedAt=new Date("2026-10-20T10:00:00.000Z");
+    await expect(createProjectEvaluation(admin(),projectId,submissionId,valid))
+      .rejects.toThrow("PROJECT_EVALUATION_INVALID_STATE");
+    expect(state.inserts).toBe(0);
+    expect(state.events).toBe(0);
+    expect(state.checks).toBe(0);
   });
   it("PROJ-BREAK-grading-08 archived and nonapproved deliveries deny before inserting rubric rows",async()=>{
     state.projectStatus="ARCHIVED";
