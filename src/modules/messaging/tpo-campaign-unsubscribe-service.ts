@@ -5,7 +5,9 @@ import {activityEvents,colleges,collegeMemberships,membershipRoles,users,inAppNo
 import {tpoCampaignUnsubscribeEvent} from "./tpo-campaign-unsubscribe-notification-model";
 import {getDb} from "@/db/client";
 import {placementTpoLeads,placementTpoLeadActivities,placementTpoEmailCampaignRecipients} from "@/db/schema/tpo-crm";
-import {verifyTpoCampaignRecipientToken,campaignUnsubscribeDecision,resolveTpoCampaignRecipientSecret,legacyCampaignRecipientTokenDigest} from "./tpo-campaign-recipient-token";
+import {verifyTpoCampaignRecipientToken,campaignUnsubscribeDecision,resolveTpoCampaignRecipientSecret,legacyCampaignRecipientTokenDigest,matchesTpoCampaignEmailRecipientKey} from "./tpo-campaign-recipient-token";
+import {deriveGlobalEmailSuppressionHashForAddress} from "@/modules/operations/outbound-delivery-envelope";
+import {persistVerifiedGlobalEmailSuppression} from "@/modules/operations/global-email-suppression-service";
 
 export class CampaignUnsubscribeInvalid extends Error {
   constructor(){super("CAMPAIGN_UNSUBSCRIBE_INVALID");this.name="CampaignUnsubscribeInvalid";}
@@ -37,13 +39,51 @@ export async function unsubscribeTpoCampaignRecipient(
   const db=getDb();
   const registered=await db.execute<{ready:boolean}>(sql`select to_regclass('public.placement_tpo_email_campaign_recipients') is not null as ready`);
   if(registered.rows[0]?.ready!==true)throw new Error('TPO_CAMPAIGNS_NOT_REGISTERED');
+  const recipientScope=claim?and(
+    eq(placementTpoEmailCampaignRecipients.id,claim.recipientId),
+    eq(placementTpoEmailCampaignRecipients.collegeId,claim.collegeId),
+    eq(placementTpoEmailCampaignRecipients.campaignId,claim.campaignId),
+  ):eq(placementTpoEmailCampaignRecipients.legacyUnsubscribeSha256,legacyHash!);
+  // A purpose-bound recipient link is proof only for its persisted campaign
+  // identity, never for an arbitrary email string from the caller. Resolve
+  // the current recipient email through its same-college lead relationship,
+  // then require that it still matches the immutable campaign snapshot key.
+  //
+  // Persist the verified global opt-out BEFORE the local CRM transaction:
+  // the shared writer uses its own atomic outbox transaction, and writing
+  // globally first prevents a local success from masquerading as a completed
+  // global opt-out when cancellation/storage is unavailable. Global success
+  // followed by a local failure conservatively keeps that email suppressed;
+  // a retry safely completes the per-campaign state.
+  const globalKey=process.env["DB10_GLOBAL_EMAIL_HMAC_KEY_BASE64"]??"";
+  if(globalKey){
+    const [recipient]=await db.select({
+      recipientKey:placementTpoEmailCampaignRecipients.recipientKey,
+      email:placementTpoLeads.emailNorm,
+    }).from(placementTpoEmailCampaignRecipients)
+      .innerJoin(placementTpoLeads,and(
+        eq(placementTpoLeads.id,placementTpoEmailCampaignRecipients.leadId),
+        eq(placementTpoLeads.collegeId,placementTpoEmailCampaignRecipients.collegeId),
+      ))
+      .where(recipientScope)
+      .orderBy(asc(placementTpoEmailCampaignRecipients.createdAt),
+        asc(placementTpoEmailCampaignRecipients.id)).limit(1);
+    if(recipient?.email && matchesTpoCampaignEmailRecipientKey(
+      recipient.recipientKey,recipient.email,key,
+    )){
+      await persistVerifiedGlobalEmailSuppression({
+        recipientHash:deriveGlobalEmailSuppressionHashForAddress(recipient.email,globalKey),
+        reason:"UNSUBSCRIBED",
+      });
+    }
+    // When a lead's address no longer matches the campaign's original
+    // recipientKey, we cannot prove the old email identity. Do NOT suppress
+    // an unrelated replacement address. The local signed opt-out remains
+    // valid and prevents future TPO sends to that lead.
+  }
   const outcome=await db.transaction(async tx=>{
     const [row]=await tx.select().from(placementTpoEmailCampaignRecipients)
-      .where(claim?and(
-        eq(placementTpoEmailCampaignRecipients.id,claim.recipientId),
-        eq(placementTpoEmailCampaignRecipients.collegeId,claim.collegeId),
-        eq(placementTpoEmailCampaignRecipients.campaignId,claim.campaignId),
-      ):eq(placementTpoEmailCampaignRecipients.legacyUnsubscribeSha256,legacyHash!))
+      .where(recipientScope)
       .orderBy(asc(placementTpoEmailCampaignRecipients.createdAt),
         asc(placementTpoEmailCampaignRecipients.id))
       .for("update").limit(1);
