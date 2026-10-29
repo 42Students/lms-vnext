@@ -259,6 +259,10 @@ export async function getLegacyInterviewFeedbackContext(
   .innerJoin(placementJobRounds,and(eq(placementJobRounds.id,placementRoundCandidateSlots.roundId),
     eq(placementJobRounds.jobId,placementRoundCandidateSlots.jobId)))
   .innerJoin(placementJobs,eq(placementJobs.id,placementRoundCandidateSlots.jobId))
+  .innerJoin(placementApplications,and(
+    eq(placementApplications.id,placementRoundCandidateSlots.applicationId),
+    eq(placementApplications.jobId,placementRoundCandidateSlots.jobId),
+  ))
   .where(and(eq(placementRoundCandidateSlots.legacyInterviewId,interviewId),
     eq(placementRoundCandidateSlots.status,"BOOKED"))).limit(1);
  if(!record||!record.slot.applicationId)
