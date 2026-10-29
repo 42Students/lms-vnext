@@ -1,5 +1,4 @@
 import {beforeEach,describe,expect,it,vi} from "vitest";
-import {getDb} from "@/db/client";
 import {isSameOriginRequest} from "@/auth/origin";
 import {verifyUnsubscribeToken} from "@/modules/messaging/unsubscribe-model";
 import {verifyTpoCampaignRecipientToken} from "@/modules/messaging/tpo-campaign-recipient-token";
@@ -8,8 +7,8 @@ import {CampaignUnsubscribeInvalid,unsubscribeTpoCampaignRecipient}
 import {POST} from "@/app/api/public/campaign-unsubscribe/route";
 import {POST as POSTPathCompat} from "@/app/api/public/campaign-unsubscribe/[token]/route";
 import {POST as POSTLegacy} from "@/app/api/v1/public/campaign-unsubscribe/[token]/route";
+import {GlobalEmailSuppressionUnavailable,persistVerifiedGlobalEmailSuppression} from "@/modules/operations/global-email-suppression-service";
 
-vi.mock("@/db/client",()=>({getDb:vi.fn()}));
 vi.mock("@/auth/origin",()=>({isSameOriginRequest:vi.fn()}));
 vi.mock("@/modules/messaging/unsubscribe-model",()=>({verifyUnsubscribeToken:vi.fn()}));
 vi.mock("@/modules/messaging/tpo-campaign-recipient-token",()=>({
@@ -19,6 +18,10 @@ vi.mock("@/modules/messaging/tpo-campaign-recipient-token",()=>({
 vi.mock("@/modules/messaging/tpo-campaign-unsubscribe-service",()=>({
  CampaignUnsubscribeInvalid:class CampaignUnsubscribeInvalid extends Error {},
  unsubscribeTpoCampaignRecipient:vi.fn(),
+}));
+vi.mock("@/modules/operations/global-email-suppression-service",()=>({
+ GlobalEmailSuppressionUnavailable:class GlobalEmailSuppressionUnavailable extends Error {},
+ persistVerifiedGlobalEmailSuppression:vi.fn(),
 }));
 
 const url="https://42lms.com/api/public/campaign-unsubscribe";
@@ -32,6 +35,7 @@ const recipientKey="a".repeat(64);
 const college="11111111-1111-4111-8111-111111111111";
 beforeEach(()=>{
  vi.clearAllMocks();
+ vi.mocked(persistVerifiedGlobalEmailSuppression).mockReset();
  vi.mocked(isSameOriginRequest).mockReturnValue(true);
  vi.mocked(verifyUnsubscribeToken).mockReturnValue(null);
  vi.mocked(verifyTpoCampaignRecipientToken).mockReturnValue(null);
@@ -45,7 +49,7 @@ describe("chat-16 explicit public campaign suppression API response and side eff
   expect(await response.json()).toEqual({error:"INVALID_ORIGIN"});
   expect(verifyUnsubscribeToken).not.toHaveBeenCalled();
   expect(verifyTpoCampaignRecipientToken).not.toHaveBeenCalled();
-  expect(getDb).not.toHaveBeenCalled();
+  expect(persistVerifiedGlobalEmailSuppression).not.toHaveBeenCalled();
  });
  it("campaign-unsubscribe-route-17 rejects absent, unsigned and huge tokens without falsely confirming removal",async()=>{
   const results=await Promise.all([request(null),request("not-signed"),request("x".repeat(2049))]
@@ -53,7 +57,7 @@ describe("chat-16 explicit public campaign suppression API response and side eff
   expect(results.map(result=>result.status)).toEqual([303,303,303]);
   for(const response of results)
    expect(response.headers.get("location")).toBe("https://42lms.com/campaign-unsubscribe/confirmed?scope=placement-cell");
-  expect(getDb).not.toHaveBeenCalled();
+  expect(persistVerifiedGlobalEmailSuppression).not.toHaveBeenCalled();
   expect(unsubscribeTpoCampaignRecipient).toHaveBeenCalledExactlyOnceWith("not-signed");
  });
  it("campaign-unsubscribe-route-18 keeps placement-cell opt-outs on their signed, scoped service path",async()=>{
@@ -65,7 +69,7 @@ describe("chat-16 explicit public campaign suppression API response and side eff
   expect(response.status).toBe(303);
   expect(response.headers.get("location")).toBe("https://42lms.com/campaign-unsubscribe/confirmed?scope=placement-cell");
   expect(unsubscribeTpoCampaignRecipient).toHaveBeenCalledExactlyOnceWith(token);
-  expect(getDb).not.toHaveBeenCalled();
+  expect(persistVerifiedGlobalEmailSuppression).not.toHaveBeenCalled();
  });
  it("campaign-unsubscribe-route-19 returns 400 when the locked campaign recipient no longer exists",async()=>{
   vi.mocked(verifyTpoCampaignRecipientToken).mockReturnValue({
@@ -76,7 +80,7 @@ describe("chat-16 explicit public campaign suppression API response and side eff
   // A revoked recipient is indistinguishable from a completed opt-out.
   expect(response.status).toBe(303);
   expect(response.headers.get("location")).toBe("https://42lms.com/campaign-unsubscribe/confirmed?scope=placement-cell");
-  expect(getDb).not.toHaveBeenCalled();
+  expect(persistVerifiedGlobalEmailSuppression).not.toHaveBeenCalled();
  });
  it("W1-1 signed recruiter unsubscribe never reports success when recipient migration is unavailable",async()=>{
   vi.mocked(verifyTpoCampaignRecipientToken).mockReturnValue({
@@ -90,32 +94,45 @@ describe("chat-16 explicit public campaign suppression API response and side eff
   expect(await response.json()).toEqual({
    error:"SUPPRESSIONS_NOT_READY",message:"That didn't work. Please try again.",
   });
-  expect(getDb).not.toHaveBeenCalled();
+  expect(persistVerifiedGlobalEmailSuppression).not.toHaveBeenCalled();
  });
- it("campaign-unsubscribe-route-20 distinguishes unregistered global suppression storage from successful opt-out",async()=>{
+ it("campaign-unsubscribe-route-20 refuses false success when atomic suppression storage is unavailable",async()=>{
   vi.mocked(verifyUnsubscribeToken).mockReturnValue({
    version:1,recipientKey,expiresAt:4102444800000,
   });
-  const execute=vi.fn(async()=>({rows:[{ready:false}]}));
-  vi.mocked(getDb).mockReturnValue({execute} as unknown as ReturnType<typeof getDb>);
+  vi.mocked(persistVerifiedGlobalEmailSuppression).mockRejectedValue(
+   new GlobalEmailSuppressionUnavailable());
   const response=await POST(request("signed.global-token"));
   expect(response.status).toBe(503);
-  expect(await response.json()).toEqual({error:"SUPPRESSIONS_NOT_READY",message:"That didn't work. Please try again."});
-  expect(execute).toHaveBeenCalledTimes(1);
+  expect(response.headers.get("cache-control")).toBe("no-store");
+  expect(await response.json()).toEqual({
+   error:"SUPPRESSIONS_NOT_READY",message:"That didn't work. Please try again.",
+  });
+  expect(persistVerifiedGlobalEmailSuppression).toHaveBeenCalledExactlyOnceWith({
+   recipientHash:recipientKey,reason:"UNSUBSCRIBED",
+  });
   expect(unsubscribeTpoCampaignRecipient).not.toHaveBeenCalled();
  });
- it("campaign-unsubscribe-route-21 stores only a signed opaque global recipient key, never a caller address",async()=>{
+ it("campaign-unsubscribe-route-21 only sends a signed global hash to the atomic suppression writer",async()=>{
   vi.mocked(verifyUnsubscribeToken).mockReturnValue({
    version:1,recipientKey,expiresAt:4102444800000,
   });
-  const execute=vi.fn().mockResolvedValueOnce({rows:[{ready:true}]}).mockResolvedValueOnce({rows:[]});
-  vi.mocked(getDb).mockReturnValue({execute} as unknown as ReturnType<typeof getDb>);
+  vi.mocked(persistVerifiedGlobalEmailSuppression).mockResolvedValue();
   const response=await POST(request("signed.global-token"));
   expect(response.status).toBe(303);
   expect(response.headers.get("location")).toBe("https://42lms.com/campaign-unsubscribe/confirmed");
-  expect(execute).toHaveBeenCalledTimes(2);
-  expect(verifyUnsubscribeToken).toHaveBeenCalledWith("signed.global-token",expect.any(String),expect.any(Number));
+  expect(persistVerifiedGlobalEmailSuppression).toHaveBeenCalledExactlyOnceWith({
+   recipientHash:recipientKey,reason:"UNSUBSCRIBED",
+  });
+  expect(verifyUnsubscribeToken).toHaveBeenCalledWith(
+   "signed.global-token",expect.any(String),expect.any(Number));
   expect(unsubscribeTpoCampaignRecipient).not.toHaveBeenCalled();
+ });
+ it("campaign-unsubscribe-route-21b never starts global cancellation from an invalid token",async()=>{
+  vi.mocked(verifyUnsubscribeToken).mockReturnValue(null);
+  const response=await POST(request("opaque.invalid.global"));
+  expect(response.status).toBe(303);
+  expect(persistVerifiedGlobalEmailSuppression).not.toHaveBeenCalled();
  });
  it("W1-1 preserves the verified Host when the path-token adapter forwards to the durable suppression writer",async()=>{
   vi.mocked(isSameOriginRequest).mockImplementation(req=>
