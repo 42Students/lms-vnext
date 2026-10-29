@@ -1,6 +1,6 @@
 import {beforeEach,describe,expect,it,vi} from "vitest";
 import type {RequestContext} from "@/modules/identity/context";
-import {lockAdminProjectSubmission} from "@/modules/projects/admin-submission-review-service";
+import {lockAdminProjectSubmission,reviewAdminProjectSubmission} from "@/modules/projects/admin-submission-review-service";
 
 const projectId="11111111-1111-4111-8111-111111111111";
 const submissionId="22222222-2222-4222-8222-222222222222";
@@ -96,6 +96,15 @@ describe("IIT Dharwad College Admin delivery final lock transaction",()=>{
   expect(state.updates).toBe(1);
   expect(state.deliveryEvents).toBe(1);
   expect(state.activityEvents).toBe(1);
+ });
+ it("DB074 denies College Admin final review on a deleted project before any mutation",async()=>{
+  state.projectDeletedAt=new Date("2026-10-20T12:00:00.000Z");
+  await expect(reviewAdminProjectSubmission(actor(),projectId,submissionId,{
+    action:"APPROVED",expectedUpdatedAt:"2026-10-19T12:00:00.000Z",
+  })).rejects.toThrow("PROJECT_SUBMISSION_INVALID_STATE");
+  expect(state.updates).toBe(0);
+  expect(state.deliveryEvents).toBe(0);
+  expect(state.activityEvents).toBe(0);
  });
  it("DB074 denies both a new lock and an idempotent retry after project deletion",async()=>{
   state.projectDeletedAt=new Date("2026-10-20T12:00:00.000Z");
