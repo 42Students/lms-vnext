@@ -208,6 +208,39 @@ describe("Mentor task create — migrated PostgreSQL",()=>{
     })).rejects.toBeDefined();
   });
 
+  it("creates assigned tasks only for a currently active learner in the same project",async()=>{
+    const {project,sprint}=await fixture();
+    const params={projectId:project.id};
+    const input={
+      sprintId:sprint.id,title:"Assigned only to active member",
+      description:null,acceptanceCriteria:"Check project learner grant",
+      priority:"MEDIUM" as const,assigneeMembershipId:SEED_IDS.learnerCollegeAMembership,
+      expectedSprintUpdatedAt:sprint.updatedAt.toISOString(),
+    };
+    const created=await createMentorProjectTask(mentor,params,input);
+    expect(created).toMatchObject({
+      projectId:project.id,assigneeMembershipId:SEED_IDS.learnerCollegeAMembership,
+    });
+    // End the learner's membership in this specific project only. A stale
+    // request cannot reuse a formerly authorized assignee even with a fresh
+    // sprint token. The service locks the checked membership rows FOR SHARE.
+    await pool.query(
+      "UPDATE project_members SET ended_at=now() WHERE project_id=$1 AND membership_id=$2",
+      [project.id,SEED_IDS.learnerCollegeAMembership],
+    );
+    const token=await pool.query<{updated_at:Date}>(
+      "SELECT updated_at FROM project_sprints WHERE id=$1",[sprint.id],
+    );
+    await expect(createMentorProjectTask(mentor,params,{
+      ...input,title:"Revoked learner should not be assigned",
+      expectedSprintUpdatedAt:token.rows[0]!.updated_at.toISOString(),
+    })).rejects.toMatchObject({code:"PROJECT_MEMBER_ROLE_REQUIRED"});
+    const tasks=await pool.query<{title:string}>(
+      "SELECT title FROM project_tasks WHERE project_id=$1 ORDER BY sequence",[project.id],
+    );
+    expect(tasks.rows.map(row=>row.title)).not.toContain("Revoked learner should not be assigned");
+  });
+
   it("creates a TODO task exactly once, audits and rejects forged/foreign/stale writes",async()=>{
     const {project,sprint}=await fixture();
     const params={projectId:project.id};
