@@ -18,7 +18,7 @@ import {
 } from "./learner-image-gallery-parity-model";
 
 const uuid = z.string().uuid();
-export type GalleryAccess = { membershipId: string; collegeId: string; canEdit: boolean };
+export type GalleryAccess = { membershipId: string; collegeId: string; canEdit: boolean; canUpload: boolean };
 export class LearnerGalleryError extends Error {
   constructor(public readonly code:
     "GALLERY_NOT_READY" | "GALLERY_FORBIDDEN" | "GALLERY_NOT_FOUND" |
@@ -63,7 +63,9 @@ async function galleryAccess(context: RequestContext, rawMembershipId: unknown):
   if (!self && !staff && !superAdmin)
     throw new LearnerGalleryError("GALLERY_FORBIDDEN");
   return { membershipId: target.id, collegeId: target.collegeId,
-    canEdit: target.status === "ACTIVE" && (self || staff || superAdmin) };
+    canEdit: target.status === "ACTIVE" && (self || staff || superAdmin),
+    // Staff may remove unsafe pictures, but publishing is learner-owned.
+    canUpload: target.status === "ACTIVE" && self && context.membership?.status === "ACTIVE" };
 }
 function summary(row: typeof learnerProfileImages.$inferSelect) {
   return {
@@ -93,7 +95,7 @@ async function requireOwnGalleryUpload(context: RequestContext) {
       context.membership.status !== "ACTIVE")
     throw new LearnerGalleryError("GALLERY_FORBIDDEN");
   const access = await galleryAccess(context, context.membership.id);
-  if (!access.canEdit || access.membershipId !== context.membership.id)
+  if (!access.canUpload || access.membershipId !== context.membership.id)
     throw new LearnerGalleryError("GALLERY_FORBIDDEN");
   return access;
 }
@@ -189,6 +191,7 @@ export async function listLearnerGallery(context: RequestContext, membershipId?:
     .orderBy(asc(learnerProfileImages.displayOrder), asc(learnerProfileImages.id))
     .limit(MAX_LEARNER_PROFILE_IMAGES + 1);
   return { images: rows.map(summary), canEdit: access.canEdit,
+    canUpload: access.canUpload,
     remaining: Math.max(0, MAX_LEARNER_PROFILE_IMAGES - rows.length) };
 }
 
