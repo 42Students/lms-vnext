@@ -520,6 +520,26 @@ describe("Projects P7B meetings", () => {
     });
   });
 
+  it("does not revive or notify for soft-deleted scheduled meetings",async()=>{
+    const project=await createProject();
+    const window={
+      title:"Soft deleted meeting",startsAt:"2099-07-04T09:10:00+05:30",
+      endsAt:"2099-07-04T09:40:00+05:30",
+      timeZone:"Asia/Kolkata" as const,
+      meetingUrl:"https://meet.example.com/deleted-meeting",
+    };
+    const scheduled=await scheduleProjectMeeting(collegeAdmin,project.id,null,window);
+    await pool.query("UPDATE project_meetings SET deleted_at=now() WHERE id=$1",[scheduled.id]);
+    await expect(scheduleProjectMeeting(collegeAdmin,project.id,scheduled.id,{
+      ...window,title:"Must not revive",
+      expectedUpdatedAt:scheduled.updatedAt.toISOString(),
+    })).rejects.toMatchObject({code:"PROJECT_MEETING_NOT_FOUND"});
+    const persisted=await pool.query<{title:string;deleted_at:Date|null}>(
+      "SELECT title,deleted_at FROM project_meetings WHERE id=$1",[scheduled.id]);
+    expect(persisted.rows[0]?.title).toBe(window.title);
+    expect(persisted.rows[0]?.deleted_at).not.toBeNull();
+  });
+
   it("persists in-person venues through real scheduling and rescheduling, with CAS and role checks",async()=>{
     const project=await createProject();
     const workspace=await getProjectInstanceWorkspace(mentor,project.id);
