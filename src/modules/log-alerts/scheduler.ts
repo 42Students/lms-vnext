@@ -22,22 +22,38 @@ export function istDayAndHour(now: Date) {
   return { day: ist.toISOString().slice(0, 10), hour: ist.getUTCHours() };
 }
 
+/** Daily counts are PostgreSQL BIGINT. Never round them through Number,
+ * including top-signature counts; decimal strings come directly from SQL. */
+function exactNonnegativeCount(value: number | bigint | string): bigint {
+  if (typeof value === "bigint") return value >= 0n ? value : 0n;
+  if (typeof value === "number") {
+    return Number.isSafeInteger(value) && value >= 0 ? BigInt(value) : 0n;
+  }
+  return /^(?:0|[1-9][0-9]*)$/.test(value) ? BigInt(value) : 0n;
+}
+
 export function formatDailyDigest(input: {
-  day: string; total: number; firstSeen: number;
-  muted: number; spikes: number; top: { hash: string; count: number }[];
+  day: string;
+  total: number | bigint | string;
+  firstSeen: number | bigint | string;
+  muted: number | bigint | string;
+  spikes: number | bigint | string;
+  top: { hash: string; count: number | bigint | string }[];
   deploy?: string;
   health?: string;
 }): string {
+  const total = exactNonnegativeCount(input.total);
+  const newSignatures = exactNonnegativeCount(input.firstSeen);
   return [
     "vNext daily error digest (" + input.day + ", IST)",
-    "Errors: " + input.total,
-    "Recurring occurrences: " + Math.max(0, input.total - input.firstSeen),
-    "New signatures: " + input.firstSeen,
-    "Muted signatures: " + input.muted,
-    "Spike signatures: " + input.spikes,
+    "Errors: " + total,
+    "Recurring occurrences: " + (total > newSignatures ? total - newSignatures : 0n),
+    "New signatures: " + newSignatures,
+    "Muted signatures: " + exactNonnegativeCount(input.muted),
+    "Spike signatures: " + exactNonnegativeCount(input.spikes),
     "Top recurring:",
     ...(input.top.length ? input.top.map((item) =>
-      item.hash.slice(0, 12) + ": " + item.count + " occurrences") : ["None"]),
+      item.hash.slice(0, 12) + ": " + exactNonnegativeCount(item.count) + " occurrences") : ["None"]),
     "Deploy: " + (input.deploy ?? "not recorded"),
     "Health watch: " + (input.health ?? "not configured"),
   ].join("\n");
@@ -345,7 +361,8 @@ export async function runAlertTick(now = new Date()): Promise<{ acquired: boolea
     }).from(daily).innerJoin(signatures, eq(daily.signatureId, signatures.id))
       .where(predicate);
     const top = await db.select({
-      hash: signatures.signatureHash, count: daily.occurrenceCount,
+      hash: signatures.signatureHash,
+      count: sql<string>`${daily.occurrenceCount}::text`,
     }).from(daily).innerJoin(signatures, eq(daily.signatureId, signatures.id))
       .where(predicate).orderBy(desc(daily.occurrenceCount)).limit(5);
     const [health] = await db.select({
@@ -358,10 +375,10 @@ export async function runAlertTick(now = new Date()): Promise<{ acquired: boolea
       health: healthWatchStatus(health, now),
       ...(deployCommit && /^[0-9a-f]{7,64}$/i.test(deployCommit)
         ? { deploy: deployCommit } : {}),
-      total: Number(counts?.total ?? 0),
-      firstSeen: Number(counts?.firstSeen ?? 0),
-      muted: Number(counts?.muted ?? 0),
-      spikes: Number(counts?.spikes ?? 0),
+      total: counts?.total ?? "0",
+      firstSeen: counts?.firstSeen ?? "0",
+      muted: counts?.muted ?? "0",
+      spikes: counts?.spikes ?? "0",
       top: top.map(row => ({ hash: row.hash, count: row.count })),
     });
     if (!await sendTelegramAlert(message)) return;
