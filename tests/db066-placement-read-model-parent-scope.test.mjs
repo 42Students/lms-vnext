@@ -56,3 +56,19 @@ test("DB-066 staff round-result listings enforce the same job on result and appl
     assert.match(body, /rows\.map\(\(\{result\}\)=>result\)/);
   }
 });
+
+test("DB-066 round-result apply validates same-job ancestry before changing status", () => {
+  const source = readFileSync("src/modules/placements/result-service.ts", "utf8");
+  const start = source.indexOf("async function loadResultContext(");
+  const apply = source.indexOf("export async function applyPlacementRoundResult(", start);
+  const end = source.indexOf("\nexport async function ", apply + 20);
+  assert.ok(start >= 0 && apply > start);
+  const read = source.slice(start, apply);
+  const write = source.slice(apply, end > apply ? end : undefined);
+  assert.match(read, /eq\(placementApplications\.jobId,\s*placementJobRounds\.jobId\)/);
+  assert.match(write, /eq\(placementApplications\.jobId,\s*current\.job\.id\)/);
+  assert.match(write, /lockedResult\.roundId !== current\.round\.id/);
+  assert.match(write, /lockedResult\.applicationId !== current\.application\.id/);
+  const mutate = write.indexOf(".update(placementRoundResults)");
+  assert.ok(mutate > write.indexOf("lockedResult.applicationId !== current.application.id"));
+});
