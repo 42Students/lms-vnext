@@ -59,9 +59,24 @@ async function cleanup(){
     tracked.projects=[];
   }
   if(tracked.templates.length){
-    await pool.query("delete from project_template_college_assignments where template_id=any($1::uuid[])",[tracked.templates]);
-    await pool.query("delete from project_template_versions where template_id=any($1::uuid[])",[tracked.templates]);
-    await pool.query("delete from project_templates where id=any($1::uuid[])",[tracked.templates]);
+    // DB070 forbids rewriting or deleting template revision history. DB071
+    // also anchors header pointers to those immutable revisions. Keep the
+    // generated fixtures in disposable databases instead of disabling guards.
+    const retention=await pool.query<{retainHistory:boolean}>(
+      "select (exists (select 1 from pg_trigger " +
+        "where tgrelid='project_template_versions'::regclass " +
+        "and tgname='db07_project_template_versions_append_only' " +
+        "and tgenabled='O' and not tgisinternal) " +
+        "or exists (select 1 from pg_constraint " +
+        "where conrelid='project_templates'::regclass " +
+        "and conname in ('project_templates_current_version_snapshot_fk', " +
+        "'project_templates_published_version_snapshot_fk'))) as \"retainHistory\"",
+    );
+    if(!retention.rows[0]?.retainHistory){
+      await pool.query("delete from project_template_college_assignments where template_id=any($1::uuid[])",[tracked.templates]);
+      await pool.query("delete from project_template_versions where template_id=any($1::uuid[])",[tracked.templates]);
+      await pool.query("delete from project_templates where id=any($1::uuid[])",[tracked.templates]);
+    }
     tracked.templates=[];
   }
 }
