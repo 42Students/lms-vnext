@@ -76,7 +76,8 @@ negative("DB035 HIDE_GRADE event cannot mutate prior points or feedback",async()
         select s.id,s.assignment_id,s.delivery_id,s.membership_id,
                g.college_id,g.actor_user_id,g.actor_membership_id,
                g.actor_role,'HIDE_GRADE',s.points_awarded,
-               s.points_awarded+1,s.feedback,s.feedback,
+               case when s.points_awarded>0 then s.points_awarded-1 else 1 end,
+               s.feedback,s.feedback,
                s.grading_status,s.grading_status,true,false,
                s.graded_by_user_id,s.graded_by_user_id,
                s.graded_at,s.graded_at,s.version,s.version+1
