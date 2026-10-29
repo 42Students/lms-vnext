@@ -35,6 +35,10 @@ describe("scheduled Telegram alerts", () => {
     expect(burstOverflowText(13, "DEVELOPMENT")).toContain("13 more");
     expect(burstOverflowText(13, "DEVELOPMENT")).toContain("Logs page");
     expect(burstOverflowText(Number.NaN, "PRODUCTION")).toContain("0 more");
+    expect(burstOverflowText(9007199254740997n, "PRODUCTION"))
+      .toContain("9007199254740997 more");
+    expect(burstOverflowText("9007199254740999", "PRODUCTION"))
+      .toContain("9007199254740999 more");
   });
   it("GR-118 resumes the exact provider page and timestamp window after a bounded tick", () => {
     const now = new Date("2099-07-01T03:30:00Z");
@@ -95,6 +99,27 @@ describe("scheduled Telegram alerts", () => {
     const source = readFileSync("src/modules/log-alerts/scheduler.ts", "utf8");
     expect(source).toContain('count: sql<string>`${daily.occurrenceCount}::text`');
     expect(source).not.toContain("total: Number(counts?.total");
+  });
+
+  it("DB-023 maps all unbounded PostgreSQL alert histories to exact bigint values", async () => {
+    const { readFileSync } = await import("node:fs");
+    const schema = readFileSync("src/db/schema/db10-log-alerts.draft.ts", "utf8");
+    for (const [name, initial] of [
+      ["day_occurrences", "1n"],
+      ["overflow_count", "0n"],
+      ["occurrence_count", "1n"],
+      ["spike_count", "0n"],
+    ]) {
+      expect(schema).toContain(
+        `bigint("${name}", { mode: "bigint" }).notNull().default(${initial})`,
+      );
+    }
+    const reporter = readFileSync("src/modules/log-alerts/reporter.ts", "utf8");
+    expect(reporter).toContain("current.dayOccurrences + 1n");
+    expect(reporter).toContain("Math.min(25, current.recentWindowCount + 1)");
+    expect(reporter).toContain("occurrenceCount: 1n");
+    const scheduler = readFileSync("src/modules/log-alerts/scheduler.ts", "utf8");
+    expect(scheduler).toContain("overflowCount: 0n");
   });
 
   it("DB-023 keeps invalid/unsafe count presentations bounded", () => {
