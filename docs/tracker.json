@@ -2165,6 +2165,33 @@
         "reason": "Independent verifier run 40825547851 printed `TypeError: Do not know how to serialize a BigInt` from drizzle-kit generate yet step returned exit code 0 and verifier proceeded. L10 owns safety verification: make canonical generate gate fail closed on stderr serialization/uncaught-generator exceptions even when process returns 0; assert no migration/schema-drift false-green and report/redact evidence. L01 still owns shared migration journal; coordinate changes through accepted handoff before touching its shared orchestration files. Keep global DB gate blocked until exact-SHA reexecution.",
         "status": "REQUESTED",
         "requestedAt": "2026-10-29T05:50:00.000Z"
+      },
+      {
+        "id": "SCR-L08-L01-DB09-REVERIFY-20261029",
+        "fromLane": "L08",
+        "toLane": "L01",
+        "paths": [
+          "tests/db09-collaboration-registered-pg-acceptance.mjs",
+          "tests/db09-share-registered-pg-acceptance.mjs",
+          "scripts/db-independent-verify.mjs"
+        ],
+        "reason": "Run a new clean disposable PostgreSQL 17 full registered journal replay against fresh main at or after L08 commit 7cd45e6b110e329077337bc7585ce28e65dc3660 and reexecute BOTH DB09 PG witnesses (not rerun old failed GitHub Actions SHA). First previous run 40825524568 incorrectly expected saved-view DELETE denial; second run 40825547851 unexpectedly allowed fixture-seeded faculty. Witness now tests permitted view DELETE and creates a fresh FACULTY-only principal, with explicit db09_has_active_tpo_actor false + SQLSTATE 23514 negatives; SQL security guard unchanged. Record exact run SHA and output; no DB09 tasks DONE until PG/producer/consumer closure.",
+        "status": "REQUESTED",
+        "requestedAt": "2026-10-29T05:57:24.160Z"
+      },
+      {
+        "id": "SCR-L08-L09-DB050-ACCEPTANCE-20261029",
+        "fromLane": "L08",
+        "toLane": "L09",
+        "paths": [
+          "src/app/api/public/campaign-unsubscribe/route.ts",
+          "src/modules/messaging/tpo-campaign-unsubscribe-service.ts",
+          "tests/unit/tpo-campaign-global-email-optout-l08.test.ts",
+          "tests/unit/chat16-campaign-unsubscribe-post-route-16.test.ts"
+        ],
+        "reason": "L08 applied verified global-token/campaign-recipient producer paths through L09's atomic persistVerifiedGlobalEmailSuppression writer; code commits 162dd2f,ca64546,7089aba,88cdbfd and tests 040c5e3/580c20c. Run targeted native Vitest, DB-050 signed token + cross-organization outbox PENDING/RETRY/CLAIMED replay + corrupt/mismatched recipient negatives at fresh SHA. Matched campaign snapshot suppresses global before local CRM mutation; changed-email historical snapshot cannot safely recover old address, so local opt-out only (L09 policy/migration decision needed for immutable hash retention). Never mark DB-050 done from authored tests or source assertions.",
+        "status": "REQUESTED",
+        "requestedAt": "2026-10-29T05:57:24.160Z"
       }
     ],
     "coordination": {
