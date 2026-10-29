@@ -626,9 +626,10 @@ async function loadResultContext(resultId: string) {
     )
     .innerJoin(
       placementApplications,
-      eq(
-        placementApplications.id,
-        placementRoundResults.applicationId,
+      and(
+        eq(placementApplications.id, placementRoundResults.applicationId),
+        // Never authorize or display an application from a different drive.
+        eq(placementApplications.jobId, placementJobRounds.jobId),
       ),
     )
     .innerJoin(
@@ -734,12 +735,10 @@ export async function applyPlacementRoundResult(
         status: placementApplications.status,
       })
       .from(placementApplications)
-      .where(
-        eq(
-          placementApplications.id,
-          current.application.id,
-        ),
-      )
+      .where(and(
+        eq(placementApplications.id, current.application.id),
+        eq(placementApplications.jobId, current.job.id),
+      ))
       .for("update")
       .limit(1);
 
@@ -771,7 +770,9 @@ export async function applyPlacementRoundResult(
       .for("update")
       .limit(1);
 
-    if (!lockedResult) {
+    if (!lockedResult ||
+        lockedResult.roundId !== current.round.id ||
+        lockedResult.applicationId !== current.application.id) {
       throw new PlacementsServiceError(
         "PLACEMENT_RESULT_NOT_FOUND",
       );
