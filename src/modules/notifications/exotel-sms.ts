@@ -107,7 +107,18 @@ export type SmsAttemptInput = {
  */
 export async function appendSmsDeliveryAttempt(input: SmsAttemptInput): Promise<"RECORDED" | "STORAGE_PENDING" | "FAILED"> {
   const attempt = validatedSmsAttempt(input);
-  if (!attempt) return "FAILED";
+  if (!attempt) {
+    // Keep provider acceptance separate from audit storage. In particular,
+    // Exotel may return a SID longer than the registered 64-char column.
+    // Never silently drop that attempt or truncate an opaque provider ID.
+    writeStructuredLog("WARNING", "sms.delivery_attempt_ledger_invalid",
+      { purpose: typeof input?.purpose === "string" &&
+          ["otp","job.update","notification","attendance.absence",
+            "attendance.correction"].includes(input.purpose)
+          ? input.purpose : "UNKNOWN",
+        reason: "ATTEMPT_AUDIT_VALIDATION_FAILED" });
+    return "FAILED";
+  }
   try {
     const db = getDb();
     // Drizzle 0162 registers this table; the retired DB-031 staging layout is
@@ -306,8 +317,11 @@ export function createExotelSmsProvider(
         writeStructuredLog("INFO", "sms.otp_accepted", {
           providerStatus: status,
         });
+        // The acceptance model trims the opaque provider SID before
+        // validating it. Persist that SAME canonical SID, not the untrimmed
+        // transport response that would otherwise be rejected by the ledger.
         await bestEffortOtpAttempt(canonicalPhone!, "PROVIDER_ACCEPTED",
-          body.SMSMessage?.Sid ?? null, null);
+          body.SMSMessage?.Sid?.trim() ?? null, null);
         return true;
       } catch (error) {
         // Never log the URL, credentials, phone, code or response body.
