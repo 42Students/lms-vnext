@@ -44,6 +44,7 @@ import { indiaAttendanceMonthWindow } from "./month-window";
 import {enqueueAttendanceParentSms,dispatchQueuedAttendanceParentSms} from "./parent-sms-service";
 import {legacyFormalTitle} from "@/modules/courses/course-legacy-parity-model";
 import {facultyAttendanceNextMarkedAt} from "./faculty-correction-token-model";
+import {adminAttendanceCorrectionChange} from "./admin-correction-change-model";
 
 
 /** Options are independent reads. A failed class-offering query must never
@@ -685,76 +686,37 @@ export async function correctAdminAttendance(
           input.expectedMarkedAt !== (priorRecord?.markedAt?.toISOString()??null)) {
         throw new CoursesServiceError("ATTENDANCE_ROSTER_CONFLICT");
       }
-      const priorStatus=priorRecord?.status??"PRESENT";
-      // A repeated correction is a no-op and must not create a false event.
-      if(priorStatus===input.status){
-        return {scheduleEventId,membershipId:input.membershipId,status:input.status,correctedAt:now,smsOutboxId:null};
+      const change=adminAttendanceCorrectionChange({
+        previous:priorRecord
+          ?{status:priorRecord.status,note:priorRecord.note}:null,
+        requestedStatus:input.status,requestedNote:input.note,
+      });
+      // Repeating the same status and same note cannot create a false
+      // correction event, increment a token or resend a parent's SMS.
+      if(!change.changed){
+        return {scheduleEventId,membershipId:input.membershipId,
+          status:input.status,correctedAt:now,smsOutboxId:null};
       }
-
-      // Retain the same current-record UUID when correcting ABSENT to
-      // PRESENT. DB-035 immutable attendance history must never lose its
-      // parent row; a missing record still means implicit PRESENT until a
-      // reviewed explicit mark has been recorded.
-      if (input.status === "PRESENT") {
-        if (!priorRecord) throw new CoursesServiceError("ATTENDANCE_ROSTER_CONFLICT");
+      // Monotonic per-record token. Two corrections in one millisecond must
+      // not expose the same compare-and-set value to another administrator.
+      const correctedMarkedAt=facultyAttendanceNextMarkedAt(
+        now,priorRecord?.markedAt??null,
+      );
+      if(priorRecord){
         await tx.update(attendanceRecords).set({
-          status: "PRESENT",
-          markedByUserId: context.user.id,
-          markedAt: now,
-          updatedAt: now,
-          ...(input.note !== undefined ? { note: input.note || null } : {}),
-        }).where(eq(attendanceRecords.id, priorRecord.id));
-      } else {
-        const [existing] = await tx
-          .select({ id: attendanceRecords.id })
-          .from(attendanceRecords)
-          .where(
-            and(
-              eq(
-                attendanceRecords.scheduleEventId,
-                scheduleEventId,
-              ),
-              eq(
-                attendanceRecords.membershipId,
-                input.membershipId,
-              ),
-            ),
-          )
-          .for("update")
-          .limit(1);
-
-        if (existing) {
-          await tx
-            .update(attendanceRecords)
-            .set({
-              status: input.status,
-              markedByUserId:
-                context.user.id,
-              markedAt: now,
-              updatedAt: now,
-              ...(input.note !== undefined ? {note:input.note || null} : {}),
-            })
-            .where(
-              eq(
-                attendanceRecords.id,
-                existing.id,
-              ),
-            );
-        } else {
-          await tx
-            .insert(attendanceRecords)
-            .values({
-              scheduleEventId,
-              membershipId:
-                input.membershipId,
-              status: input.status,
-              markedByUserId:
-                context.user.id,
-              markedAt: now,
-              updatedAt: now,
-              note:input.note || null,
-            });
-        }
+          status:input.status,note:change.nextNote,
+          markedByUserId:context.user.id,
+          markedAt:correctedMarkedAt,updatedAt:correctedMarkedAt,
+        }).where(eq(attendanceRecords.id,priorRecord.id));
+      }else{
+        // An explicit PRESENT note also deserves a durable review record;
+        // the default implicit PRESENT with no note remains a no-op.
+        await tx.insert(attendanceRecords).values({
+          scheduleEventId,membershipId:input.membershipId,
+          status:input.status,note:change.nextNote,
+          markedByUserId:context.user.id,
+          markedAt:correctedMarkedAt,updatedAt:correctedMarkedAt,
+        });
       }
 
       // College Admin must never create a MARKED session: that would
@@ -793,13 +755,13 @@ export async function correctAdminAttendance(
         metadata:{
           deliveryId:delivery.deliveryId,
           learnerMembershipId:input.membershipId,
-          from:priorStatus,to:input.status,
-          correctionNote:input.note ?? priorRecord?.note ?? null,
+          from:change.previousStatus,to:input.status,
+          correctionNote:change.nextNote,
         },
         occurredAt:now,
       }).returning({id:activityEvents.id});
-      const smsKind=input.status==="ABSENT"?"ABSENT" as const:
-       input.status==="PRESENT"&&priorStatus==="ABSENT"?"CORRECTED" as const:null;
+      const smsKind=change.shouldNotifyAbsent?"ABSENT" as const:
+       change.shouldNotifyCorrected?"CORRECTED" as const:null;
       const smsOutboxId=smsKind&&audit?await enqueueAttendanceParentSms(tx,{
        eventId:audit.id,collegeId:college.id,membershipId:input.membershipId,
        scheduleEventId,kind:smsKind,courseName:delivery.courseName,
