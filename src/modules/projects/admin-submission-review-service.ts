@@ -33,13 +33,13 @@ export async function lockAdminProjectSubmission(ctx:RequestContext,projectIdRaw
   if(!mayRecordCollegeAdminDeliveryLock(persisted,scope.collegeId,scope.organizationId)||
      persisted.membership?.id!==actorMembershipId)
    throw new ProjectsServiceError("PROJECT_LIFECYCLE_ACCESS_DENIED");
-  const [project]=await tx.select({status:projectInstances.status}).from(projectInstances)
+  const [project]=await tx.select({status:projectInstances.status,deletedAt:projectInstances.deletedAt}).from(projectInstances)
    .where(and(eq(projectInstances.id,scope.project.id),eq(projectInstances.collegeId,scope.collegeId)))
    .for("update").limit(1);
   const [submission]=await tx.select().from(projectSubmissions)
    .where(and(eq(projectSubmissions.id,submissionId),eq(projectSubmissions.projectId,scope.project.id)))
    .for("update").limit(1);
-  if(!project||!submission)throw new ProjectsServiceError("PROJECT_SUBMISSION_INVALID_STATE");
+  if(!project||project.deletedAt||!submission)throw new ProjectsServiceError("PROJECT_SUBMISSION_INVALID_STATE");
   // Holding the parent FOR UPDATE serializes draft creation with this read.
   // A stale tab may retain an earlier submission ID; never lock or retry a
   // superseded revision, even if that older row was already locked.
@@ -114,6 +114,8 @@ export async function reviewAdminProjectSubmission(
    eq(projectSubmissions.id,submissionId),eq(projectSubmissions.projectId,scope.project.id),
   )).for("update").limit(1);
   if(!project||!submission)throw new ProjectsServiceError("PROJECT_SUBMISSION_NOT_FOUND");
+  // A response retry must never resurrect a review on a deleted workspace.
+  if(project.deletedAt)throw new ProjectsServiceError("PROJECT_SUBMISSION_INVALID_STATE");
   const [latest]=await tx.select({id:projectSubmissions.id}).from(projectSubmissions)
    .where(eq(projectSubmissions.projectId,scope.project.id))
    .orderBy(desc(projectSubmissions.version)).limit(1);
