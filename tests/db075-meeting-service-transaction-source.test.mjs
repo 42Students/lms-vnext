@@ -15,12 +15,15 @@ const schedule = source.slice(scheduleStart, transitionStart);
 
 function ancestryValidatedInsideLockedWrite(body) {
   const tx = body.indexOf("return getDb().transaction(async (tx) =>");
-  const projectLock = body.indexOf('.for("update").limit(1)', tx);
+  const projectRead = body.indexOf("const [project] = await tx.select(", tx);
+  const projectLock = body.indexOf('.for("update").limit(1)', projectRead);
+  const persistedActor = body.indexOf("await assertPersistedProjectMutationActor(", projectRead);
   const effective = body.indexOf("const effectiveSprintId=", tx);
   const finalCheck = body.indexOf("validateMeetingLinks(tx,scope.project.id,effectiveSprintId,effectiveTaskId)", tx);
   const meetingWrite = body.indexOf("const [created] = await tx.insert(projectMeetings)", tx);
   const updateWrite = body.indexOf("const [updated] = await tx.update(projectMeetings)", tx);
-  return tx >= 0 && projectLock > tx && effective > projectLock &&
+  return tx >= 0 && projectRead > tx && projectLock > projectRead &&
+    projectLock < persistedActor && effective > persistedActor &&
     finalCheck > effective && meetingWrite > finalCheck && updateWrite > finalCheck &&
     body.slice(0,tx).indexOf("validateMeetingLinks(") === -1;
 }
