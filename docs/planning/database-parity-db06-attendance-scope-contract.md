@@ -6,6 +6,16 @@
 **Status:** SOURCE/STAGING IMPLEMENTED — not registered, not PostgreSQL verified  
 **Legacy backend oracle:** `21bad59d4dfaf2fa11fdeaf9353327ce105697d5`
 
+## Administrative correction without whole-class marking
+
+An authorized College Admin/Super Admin may write one explicitly reviewed
+`attendance_records` row while `attendance_sessions` is absent or UNMARKED.
+That row applies to that learner only; it must not silently mark the remaining
+roster present. DB-042's deferred marker guard permits this exception only for
+`db06_attendance_actor_kind` = `COLLEGE_ADMIN` or `SUPER_ADMIN`; Faculty
+must still mark the whole class in the same transaction. Existing timing, scope,
+roster and DB-035 immutable event requirements apply to both paths.
+
 ## Why DB-042 exists
 
 DB-035 stages immutable grade/attendance history and versioning. It does not, by itself, prove that the **current** attendance row belongs to the right tenant/roster or that the user recorded in `marked_by_user_id` was allowed to mark that session.
@@ -89,7 +99,7 @@ It stages:
 4. **Marker classifier** — SUPER_ADMIN / same-college COLLEGE_ADMIN / assigned FACULTY only.
 5. **Timing function** — scheduled event, no pre-start marks, faculty correction window, admin bypass after end only.
 6. **Current-record trigger** — immutable event/member identity, exact roster, marker/timing, sane timestamps.
-7. **Deferred current-row→session trigger** — an attendance row cannot commit unless its session ends MARKED.
+7. **Deferred current-row→session trigger** — Faculty attendance rows require a final MARKED session at commit; authorized COLLEGE_ADMIN/SUPER_ADMIN may correct one learner in an otherwise UNMARKED session without falsely marking the entire class.
 8. **Session trigger** — event identity immutable, MARKED cannot become UNMARKED, timing/marker enforced, mark time cannot move backward.
 9. **Current-row retention guard** — attendance current rows cannot be physically deleted once the normalized history design is adopted; PRESENT is a status correction.
 10. **Marked-session retention guard** — a MARKED session cannot be deleted and made indistinguishable from "never taken".
@@ -117,7 +127,7 @@ Existing vNext services currently delete an exception row to represent PRESENT. 
 - Materially future `marked_at` rejected.
 - MARKED session cannot become UNMARKED.
 - Session `marked_at` cannot move backwards.
-- Attendance row without final MARKED session fails at transaction commit.
+- Faculty row without final MARKED session fails at transaction commit; an authorized College Admin/Super Admin's individual correction is retained without creating a MARKED session. A learner, mentor, TPO or unrelated faculty actor cannot use this exception.
 - Existing event/member unique constraint still rejects duplicates under concurrency.
 - Physical DELETE of an attendance current row is rejected after normalized history cutover.
 - PRESENT correction is represented by retained current row + DB-035 CORRECT history event.
