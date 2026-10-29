@@ -1,3 +1,4 @@
+import {randomUUID} from "node:crypto";
 import {
   afterAll,
   beforeEach,
@@ -255,30 +256,44 @@ async function cleanup() {
   await pool.query(
     "delete from project_instances where slug like 'p6b-%'",
   );
-  await pool.query(
-    `delete from project_template_college_assignments
-     where template_id in (
-       select id from project_templates
-       where slug like 'p6b-%'
-     )`,
+  // DB070 append-only revisions and DB071 template-version pointer FKs
+  // prohibit deleting historical versions. Keep those disposable fixtures
+  // with unique slugs; do not disable the audit/retention guards.
+  const retention=await pool.query<{retainHistory:boolean}>(
+    "select (exists (select 1 from pg_trigger " +
+      "where tgrelid='project_template_versions'::regclass " +
+      "and tgname='db07_project_template_versions_append_only' " +
+      "and tgenabled='O' and not tgisinternal) " +
+      "or exists (select 1 from pg_constraint " +
+      "where conrelid='project_templates'::regclass " +
+      "and conname in ('project_templates_current_version_snapshot_fk', " +
+      "'project_templates_published_version_snapshot_fk'))) as \"retainHistory\"",
   );
-  await pool.query(
-    `delete from project_template_versions
-     where template_id in (
-       select id from project_templates
-       where slug like 'p6b-%'
-     )`,
-  );
-  await pool.query(
-    "delete from project_templates where slug like 'p6b-%'",
-  );
+  if(!retention.rows[0]?.retainHistory){
+    await pool.query(
+      `delete from project_template_college_assignments
+       where template_id in (
+         select id from project_templates
+         where slug like 'p6b-%'
+       )`,
+    );
+    await pool.query(
+      `delete from project_template_versions
+       where template_id in (
+         select id from project_templates
+         where slug like 'p6b-%'
+       )`,
+    );
+    await pool.query("delete from project_templates where slug like 'p6b-%'");
+  }
 }
 
 async function createProject() {
+  const suffix=randomUUID().replaceAll("-","").slice(0,12);
   const template = await createProjectTemplate(
     superAdmin,
     {
-      slug: "p6b-final-template",
+      slug: "p6b-final-template-"+suffix,
       title: "P6B Final Template",
       blueprint: blueprint(),
     },
@@ -298,7 +313,7 @@ async function createProject() {
     {
       collegeId: SEED_IDS.collegeA,
       templateId: template.template.id,
-      slug: "p6b-final-project",
+      slug: "p6b-final-project-"+suffix,
       title: "P6B Final Project",
     },
   );
