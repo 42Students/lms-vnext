@@ -265,7 +265,7 @@
       "dependsOn": [],
       "sourceProgress": {
         "state": "SOURCE_PATCHED_NOT_ACCEPTED",
-        "summary": "Mentor reschedule window checked again after row-lock contention, before DB update. Does not complete DB010's full 358-field active-vs-retired semantic reconciliation. Existing soft-deleted meetings are now excluded under the scheduling row lock, preventing revival or notification on an already-deleted meeting; integration and registered source regression authored. Subsequent domain pass now rejects deleted project parents on task/sprint/release commands; task creation rejects tombstoned sprint; active assignee membership is protected by a SHARE lock during eligibility. Disposable integration regression scenarios authored, but not yet executed. Follow-up closes project/deleted sprint/task tombstone write guards in Mentor detail editors and learner-owned task create/delete. Source tests added to DB07 parity suite; disposable PG verification remains pending. Task-comment mutation now rejects deleted project/task ancestry, preserving historical read availability and blocking new discussion on tombstones; source and opt-in PG regression authored. Database acceptance pending.",
+        "summary": "Mentor reschedule window checked again after row-lock contention, before DB update. Does not complete DB010's full 358-field active-vs-retired semantic reconciliation. Existing soft-deleted meetings are now excluded under the scheduling row lock, preventing revival or notification on an already-deleted meeting; integration and registered source regression authored. Subsequent domain pass now rejects deleted project parents on task/sprint/release commands; task creation rejects tombstoned sprint; active assignee membership is protected by a SHARE lock during eligibility. Disposable integration regression scenarios authored, but not yet executed. Follow-up closes project/deleted sprint/task tombstone write guards in Mentor detail editors and learner-owned task create/delete. Source tests added to DB07 parity suite; disposable PG verification remains pending. Task-comment mutation now rejects deleted project/task ancestry, preserving historical read availability and blocking new discussion on tombstones; source and opt-in PG regression authored. Database acceptance pending. Evaluation and College Admin final review now reject deleted project writes under row locks. DB074 owns same-project review/evaluation FK migration; DB010 remains open pending active field reconciliation and executed witnesses.",
         "implementationCommit": "3243c7c108a50736a143ac8a67efa1d44827f217",
         "sourceTestCommits": [
           "4140fb6ecf441dba7d1765509e2692b559d4caa5",
@@ -306,7 +306,8 @@
         "additionalSourceTestsCommit": "b8557a004c5654cb2012850e0934ffa646dbbe87",
         "commentGuardCommit": "02b920f8db78ed3dffeb68cade1e3d34ee7a4ad8",
         "commentRegressionCommit": "db7e4dea1a7074059240bfd8dbaa2580ea493f0d",
-        "commentRegisteredParityCommit": "df1acc8b5b0131c6429e9f8b82303ca33d1c295d"
+        "commentRegisteredParityCommit": "df1acc8b5b0131c6429e9f8b82303ca33d1c295d",
+        "evaluationGuardCommitted": true
       }
     },
     {
@@ -839,7 +840,7 @@
       "dependsOn": [],
       "sourceProgress": {
         "state": "TEST_FIXTURE_READY_NOT_ACCEPTED",
-        "summary": "Source SQL/tests for DB070 append-only history remain staged; adapted the Mentor task/sprint integration fixture teardown to retain permanent template revisions once the append-only trigger or deferred pointer FK exists, matching the prior project-template suite policy. Mentor task details fixture now also checks DB070 trigger/DB071 pointer constraints before historical template cleanup; no privileged bypasses.",
+        "summary": "Source SQL/tests for DB070 append-only history remain staged; adapted the Mentor task/sprint integration fixture teardown to retain permanent template revisions once the append-only trigger or deferred pointer FK exists, matching the prior project-template suite policy. Mentor task details fixture now also checks DB070 trigger/DB071 pointer constraints before historical template cleanup; no privileged bypasses. P6B evaluation integration fixture now uses per-run template/project slugs and preserves history when DB070 immutable trigger or DB071 pointers are present.",
         "testInfrastructureCommits": [
           "5599a38e76d3c8df494d94b22dfc95ddc7271e33",
           "e37fce43a9b4d5f72f7e351e6352d2f770ffb7fe",
@@ -851,7 +852,8 @@
           "Run the full template/mentor integration suite after trigger promotion"
         ],
         "additionalTestInfrastructureCommit": "2f332a10aec29fc2d863cf022ec900567f45efec",
-        "additionalParityCommit": "b8557a004c5654cb2012850e0934ffa646dbbe87"
+        "additionalParityCommit": "b8557a004c5654cb2012850e0934ffa646dbbe87",
+        "evaluationFixtureCommit": "c501751ed40b2ccbba543b5a84580cdf3bfd7ae8"
       }
     },
     {
@@ -917,7 +919,37 @@
       "title": "Enforce DB07 project submission review and evaluation parent scope",
       "phase": "DATABASE",
       "done": false,
-      "dependsOn": []
+      "dependsOn": [],
+      "sourceProgress": {
+        "state": "SOURCE_PATCHED_NOT_ACCEPTED",
+        "summary": "Scoped evaluation writes now lock matching project and college, reject soft-deleted project before rubric creation. College Admin delivery locking and review reject tombstoned project even on idempotent retry. DB074 same-project review/evaluation FK SQL and PG witnesses remain staged for L01 registration.",
+        "implementationCommits": [
+          "0ca2c863cdf9c9cd2de7f92d440acf97811105f4",
+          "38a30e0dab0d7c52830117e41f7ca228eae66d36",
+          "aa1113edb340e867f561edd5b5899e8c1720afde"
+        ],
+        "testCommits": [
+          "249439ec0cf70f2b5bb775fb002b526d9302eb6e",
+          "d069b274339c8b3f8b6ac55d6ff44fd98433f016",
+          "9c085f71358af003d0efe582dbb014ae231846ca",
+          "74e177b224e6fa747e178d1d1501c0407f6df55c",
+          "d8dfbe132d1d5bfccbb57dbffac756e868139f71"
+        ],
+        "executedEvidence": [
+          {
+            "kind": "EXECUTED_SOURCE_CONTRACT_ONLY",
+            "result": "PASS",
+            "checks": 8,
+            "runner": "Connector V8 read-only checks of latest GitHub file blobs",
+            "codeBlob": "9c9eb327ec476738733421c0f2c60a8a2c654155"
+          }
+        ],
+        "pending": [
+          "L01 registered DB074 parent-scope FK migration and canonical Drizzle snapshot",
+          "Disposable PostgreSQL replay, invalid cross-project review/evaluation cases",
+          "Run mocked behavioral tests, real PG evaluation and College Admin review test, full typecheck and CI"
+        ]
+      }
     },
     {
       "id": "DB-075",
