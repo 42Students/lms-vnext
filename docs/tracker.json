@@ -265,7 +265,7 @@
       "dependsOn": [],
       "sourceProgress": {
         "state": "SOURCE_PATCHED_NOT_ACCEPTED",
-        "summary": "Mentor reschedule window checked again after row-lock contention, before DB update. Does not complete DB010's full 358-field active-vs-retired semantic reconciliation.",
+        "summary": "Mentor reschedule window checked again after row-lock contention, before DB update. Does not complete DB010's full 358-field active-vs-retired semantic reconciliation. Existing soft-deleted meetings are now excluded under the scheduling row lock, preventing revival or notification on an already-deleted meeting; integration and registered source regression authored.",
         "implementationCommit": "3243c7c108a50736a143ac8a67efa1d44827f217",
         "sourceTestCommits": [
           "4140fb6ecf441dba7d1765509e2692b559d4caa5",
@@ -282,7 +282,10 @@
         "pending": [
           "358-field source semantic/disposition reconciliation and owner decisions",
           "Disposable PG, full application typecheck and mentor workflow integration"
-        ]
+        ],
+        "softDeleteFixCommit": "425273fe91960b41d7b0ebade293d55c3da9f51e",
+        "softDeleteTestCommit": "0d245582b1baca4d9c3dcaf07c2427c906cf3ed2",
+        "registeredParityTestCommit": "404767072b807643e6f6985e9c499eb714d11cab"
       }
     },
     {
@@ -868,6 +871,13 @@
             "result": "PASS",
             "checks": 6,
             "codeBlob": "a1bce3c325dc6892d5e9301e26a1503398667795"
+          },
+          {
+            "kind": "EXECUTED_SOURCE_CONTRACT_ONLY",
+            "runner": "Connector V8 read-only checks on current GitHub blobs",
+            "result": "PASS",
+            "checks": 7,
+            "codeBlob": "cea4ec2eb2d66f712488f7415d3b85169dc8c5a7"
           }
         ],
         "pending": [
@@ -875,7 +885,8 @@
           "Disposable PG negative and concurrency witnesses",
           "Project meeting service integration tests",
           "Full typecheck/lint/CI and cross-role browser acceptance"
-        ]
+        ],
+        "registeredParityTestCommit": "404767072b807643e6f6985e9c499eb714d11cab"
       }
     },
     {
