@@ -3,6 +3,7 @@ import { Pool } from "pg";
 import { spawnSync } from "node:child_process";
 import { fileURLToPath } from "node:url";
 import { closeDatabaseConnection } from "@/db/client";
+import { SEED_IDS } from "../../scripts/db-seed-data";
 import {
   createCourseDiscussionMessage,
   listCourseDiscussionChanges,
@@ -64,8 +65,17 @@ describe("DB05 classroom sender snapshot end-to-end PostgreSQL contract", () => 
 
     const changedName = "Updated identity " + ids.user.slice(0, 8);
     await pool.query("UPDATE users SET display_name=$1 WHERE id=$2", [changedName, ids.user]);
+    // Arrange a pinned persisted message without giving this learner a
+    // moderation grant. Read-only highlighted-pin projection must also use
+    // the write-time attribution instead of the renamed current directory.
+    await pool.query(
+      "UPDATE course_discussion_messages SET pinned=true,pinned_by_user_id=$1 WHERE id=$2",
+      [SEED_IDS.collegeAdminUser, posted.id],
+    );
     const timeline = await listCourseDiscussionMessages(context, ids.delivery);
     expect(timeline.messages.find(row => row.id === posted.id)?.senderName).toBe(originalName);
+    expect(timeline.highlightedPinned?.senderName).toBe(originalName);
+    expect(timeline.pinnedCount).toBe(1);
     const lesson = await listLessonContentDiscussionMessages(context, ids.delivery, ids.content);
     expect(lesson.messages.find(row => row.id === posted.id)?.senderName).toBe(originalName);
     const changes = await listCourseDiscussionChanges(context, ids.delivery, {
