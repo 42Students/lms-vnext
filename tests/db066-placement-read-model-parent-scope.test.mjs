@@ -41,3 +41,18 @@ test("DB-066 request reads reject a round from another job or offer from another
   assert.match(read, /row\.request\.offerId !== null &&\s*row\.offerApplicationId !== row\.application\.id/);
   assert.match(read, /"PLACEMENT_REQUEST_NOT_FOUND"/);
 });
+
+test("DB-066 staff round-result listings enforce the same job on result and application", () => {
+  const source = readFileSync("src/modules/placements/result-service.ts", "utf8");
+  const first = source.indexOf("export async function listPlacementRoundResults(");
+  const last = source.indexOf("export async function listPendingPlacementRoundResults(", first);
+  const end = source.indexOf("export async function getLegacyInterviewFeedbackContext(", last);
+  assert.ok(first >= 0 && last > first && end > last);
+  for (const body of [source.slice(first, last), source.slice(last, end)]) {
+    assert.match(body, /select\(\{\s*result:\s*placementRoundResults\s*\}\)/);
+    assert.match(body, /\.innerJoin\(\s*placementApplications,\s*and\(/);
+    assert.match(body, /eq\(placementApplications\.id,\s*placementRoundResults\.applicationId\)/);
+    assert.match(body, /eq\(placementApplications\.jobId,\s*round\.jobId\)/);
+    assert.match(body, /rows\.map\(\(\{result\}\)=>result\)/);
+  }
+});
