@@ -3,6 +3,11 @@ const m=vi.hoisted(()=>({jobs:vi.fn(),getDb:vi.fn()}));
 vi.mock("server-only",()=>({}));
 vi.mock("@/modules/placements/recruiter-service",()=>({listOwnRecruiterPlacementJobs:m.jobs}));
 vi.mock("@/db/client",()=>({getDb:m.getDb}));
+vi.mock("@/modules/placements/hr-recruiter-read-watermark-service",()=>({
+ getRecruiterNotificationReadThreshold:vi.fn(async()=>({
+  firstVisit:true,readThrough:null,unreadSince:new Date("2020-01-01T00:00:00Z"),
+ })),
+}));
 import {listHrNotifications} from "@/modules/placements/hr-notifications-service";
 const own="123e4567-e89b-42d3-a456-426614174001";
 const other="123e4567-e89b-42d3-a456-426614174002";
