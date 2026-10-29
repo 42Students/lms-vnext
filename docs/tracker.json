@@ -1151,10 +1151,10 @@
         ],
         "operatingNotes": "Do not use production credentials or send real notifications from tests.",
         "claim": {
-          "sessionId": "vnext-l09-chat-20261029-0124-ist",
-          "holder": "ChatGPT L09 operations/notifications/outbound",
-          "claimedAt": "2026-10-28T19:55:29.212Z",
-          "expiresAt": "2026-10-28T23:55:29.212Z"
+          "sessionId": "vnext-l09-chat-20261029-1055-ist",
+          "holder": "ChatGPT L09 operations/notifications/outbound continuation",
+          "claimedAt": "2026-10-29T05:26:27.402Z",
+          "expiresAt": "2026-10-29T09:26:27.405Z"
         }
       },
       {
