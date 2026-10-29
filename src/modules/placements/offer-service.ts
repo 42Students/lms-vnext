@@ -47,6 +47,7 @@ import {
   type RequestContext,
 } from "@/modules/identity/context";
 import { AuthorizationError, can } from "@/modules/permissions/policy";
+import {assertPersistedPlatformPermission} from "@/modules/permissions/persisted-actor";
 import { PlacementsServiceError } from "./errors";
 import { isDebarmentActive } from "./batch-registration-policy";
 import { parsePlacementCascadeId, isPlacementInternship, shouldKeepPlacementCascadeSibling } from "./placement-cascade-policy";
@@ -396,7 +397,7 @@ export async function issuePlacementOffer(
   const current =
     await loadApplicationContext(applicationId);
 
-  await requirePlacementManageScope(
+  const staffCollege=await requirePlacementManageScope(
     context,
     current.job.collegeId,
   );
@@ -447,6 +448,12 @@ export async function issuePlacementOffer(
     if(liveSeason?.status!=="ACTIVE"||
       liveSeason.collegeId!==current.job.collegeId)
       throw new PlacementsServiceError("PLACEMENT_OFFER_NOT_READY");
+    // DB029: authorization snapshots can be revoked while offer terms are
+    // prepared. Persisted role/member/account locks guard the write itself.
+    await assertPersistedPlatformPermission(tx,context,"placements.manage",{
+      collegeId:current.job.collegeId,
+      organizationId:staffCollege.organizationId,
+    });
     // Per-learner serialization for cross-drive releases, in the same
     // membership-before-application order used by learner withdrawal.
     const [member] = await tx.select({
@@ -848,6 +855,7 @@ export async function actOnPlacementOffer(
   // to bypass the expiration guard.
   if(!Number.isFinite(now.getTime()))throw new PlacementsServiceError("PLACEMENT_OFFER_EXPIRED");
 
+  let staffCollege:Awaited<ReturnType<typeof requirePlacementManageScope>>|null=null;
   if (
     input.action === "ACCEPT" ||
     input.action === "DECLINE"
@@ -864,7 +872,7 @@ export async function actOnPlacementOffer(
       organizationId: context.membership.organizationId,
     })) throw new AuthorizationError("placements.read");
   } else {
-    await requirePlacementManageScope(
+    staffCollege=await requirePlacementManageScope(
       context,
       current.job.collegeId,
     );
@@ -890,6 +898,18 @@ export async function actOnPlacementOffer(
           member.status !== "ACTIVE" || !account || account.status !== "ACTIVE") {
         throw new AuthorizationError("placements.read");
       }
+      const [learnerRole]=await tx.select({id:membershipRoles.id})
+        .from(membershipRoles).where(and(
+          eq(membershipRoles.membershipId,context.membership!.id),
+          eq(membershipRoles.role,"LEARNER"),
+        )).for("share").limit(1);
+      if(!learnerRole)throw new AuthorizationError("placements.read");
+    } else {
+      if(!staffCollege)throw new AuthorizationError("placements.manage");
+      await assertPersistedPlatformPermission(tx,context,"placements.manage",{
+        collegeId:current.job.collegeId,
+        organizationId:staffCollege.organizationId,
+      });
     }
     const [offer] = await tx
       .select()
@@ -900,11 +920,20 @@ export async function actOnPlacementOffer(
       .for("update")
       .limit(1);
 
-    if (!offer) {
+    if (!offer || offer.applicationId!==current.application.id) {
       throw new PlacementsServiceError(
         "PLACEMENT_OFFER_NOT_FOUND",
       );
     }
+    const [liveParent]=await tx.select({
+      jobId:placementApplications.jobId,
+      membershipId:placementApplications.membershipId,
+    }).from(placementApplications).where(
+      eq(placementApplications.id,offer.applicationId)
+    ).for("share").limit(1);
+    if(!liveParent||liveParent.jobId!==current.job.id||
+       liveParent.membershipId!==current.application.membershipId)
+      throw new PlacementsServiceError("PLACEMENT_OFFER_NOT_FOUND");
     // A caller can wait on this offer row lock past its response deadline.
     // The function-entry instant must not let an already expired offer
     // transition after a competing transaction releases the lock.
@@ -1003,7 +1032,11 @@ export async function actOnPlacementOffer(
       const [acceptedRole] = await tx.select({
         employmentType: placementJobRoleOptions.employmentType,
       }).from(placementJobRoleOptions)
-        .where(eq(placementJobRoleOptions.id,current.application.roleOptionId)).limit(1);
+        .where(and(
+          eq(placementJobRoleOptions.id,current.application.roleOptionId),
+          eq(placementJobRoleOptions.jobId,current.job.id),
+        )).limit(1);
+      if(!acceptedRole)throw new PlacementsServiceError("PLACEMENT_OFFER_NOT_READY");
       const [collegeRules] = await tx.select({
         maxHeldOffers: placementCollegeRules.maxHeldOffers,
         upliftPct: placementCollegeRules.upliftPct,
