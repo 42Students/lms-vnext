@@ -58,6 +58,12 @@ export function LearnerImageGallery({ membershipId }: { membershipId?: string })
       const body: unknown = await response.json().catch(() => null);
       const code = body && typeof body === "object" && "error" in body &&
         typeof body.error === "string" ? body.error : undefined;
+      if (response.status === 409 && code === "GALLERY_IMAGE_REMOVED") {
+        // A removed receipt cannot be republished. Clear the pending retry
+        // target so the learner can choose a new file and upload grant.
+        setPendingObjectKey(null);
+        setSelectedFile(null);
+      }
       throw new Error(learnerGalleryConfirmationError(response.status, code));
     }
     setPendingObjectKey(null);
