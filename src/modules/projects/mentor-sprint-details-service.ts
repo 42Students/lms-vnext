@@ -38,12 +38,12 @@ export async function updateMentorSprintDetails(
   const expected = new Date(input.expectedUpdatedAt);
   const db = getDb();
   return db.transaction(async tx => {
-    const [project] = await tx.select({status:projectInstances.status})
+    const [project] = await tx.select({status:projectInstances.status,deletedAt:projectInstances.deletedAt})
       .from(projectInstances)
       .where(and(eq(projectInstances.id,scope.project.id),
         eq(projectInstances.collegeId,scope.collegeId)))
       .for("update").limit(1);
-    if (!project || !["PLANNED","ACTIVE"].includes(project.status)) {
+    if (!project || project.deletedAt || !["PLANNED","ACTIVE"].includes(project.status)) {
       throw new ProjectsServiceError("PROJECT_SPRINT_INVALID_STATE");
     }
     await assertPersistedProjectMutationActor(tx,context,scope);
