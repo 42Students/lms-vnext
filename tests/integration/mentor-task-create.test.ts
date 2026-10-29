@@ -8,6 +8,7 @@ import {addProjectMember} from "@/modules/projects/member-service";
 import {createProjectInstance,getProjectInstanceWorkspace} from "@/modules/projects/instance-service";
 import {createProjectTemplate,publishProjectTemplate,assignProjectTemplateToCollege} from "@/modules/projects/template-service";
 import {createMentorProjectTask} from "@/modules/projects/mentor-task-create-service";
+import {postProjectTaskComment} from "@/modules/projects/task-comment-service";
 import {getMentorTeamMeetings} from "@/modules/projects/mentor-team-meetings-service";
 import {getMentorPortfolioActivity} from "@/modules/projects/mentor-portfolio-service";
 import {mentorPortfolioActivityCsv} from "@/modules/projects/mentor-portfolio-activity-export-model";
@@ -221,6 +222,35 @@ describe("Mentor task create — migrated PostgreSQL",()=>{
     await expect(getMentorTeamMeetings(mentor,{
       projectId:project.id,collegeId:SEED_IDS.collegeB,
     })).rejects.toBeDefined();
+  });
+
+  it("refuses new comments on soft-deleted tasks and deleted projects",async()=>{
+    const {project}=await fixture();
+    const workspace=await getProjectInstanceWorkspace(mentor,project.id);
+    const task=workspace.tasks[0]!;
+    const comment={
+      body:"Must not revive the historical task",
+      commentKind:"NOTE" as const,
+      expectedTaskUpdatedAt:task.updatedAt.toISOString(),
+    };
+    await pool.query("UPDATE project_tasks SET deleted_at=now() WHERE id=$1",[task.id]);
+    try {
+      await expect(postProjectTaskComment(mentor,project.id,task.id,comment))
+        .rejects.toMatchObject({code:"PROJECT_TASK_NOT_FOUND"});
+    } finally {
+      await pool.query("UPDATE project_tasks SET deleted_at=null WHERE id=$1",[task.id]);
+    }
+    await pool.query("UPDATE project_instances SET deleted_at=now() WHERE id=$1",[project.id]);
+    try {
+      await expect(postProjectTaskComment(mentor,project.id,task.id,comment)).rejects.toBeDefined();
+    } finally {
+      await pool.query("UPDATE project_instances SET deleted_at=null WHERE id=$1",[project.id]);
+    }
+    const rows=await pool.query<{total:number}>(
+      "SELECT count(*)::int AS total FROM project_task_comments WHERE project_id=$1 AND task_id=$2",
+      [project.id,task.id],
+    );
+    expect(rows.rows[0]?.total).toBe(0);
   });
 
   it("refuses new tasks in an archived sprint even when its project remains active",async()=>{
