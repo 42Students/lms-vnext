@@ -1046,12 +1046,7 @@
           "global gate coordination"
         ],
         "operatingNotes": "Only lane allowed to register shared numbered migrations/journal/snapshots and merge shared schema barrel; other lanes request promotion. Does not implement unrelated domain behavior.",
-        "claim": {
-          "sessionId": "vnext-l01-chat-20261029-1111-ist",
-          "holder": "GPT-6 L01 shared migration integrator continuation",
-          "claimedAt": "2026-10-29T05:41:00.000Z",
-          "expiresAt": "2026-10-29T09:41:00.000Z"
-        }
+        "claim": null
       },
       {
         "id": "L02",
@@ -2144,6 +2139,31 @@
         "reason": "DB-008 accepted workflow 40825566602 (SHA fd0f6daeac3b) passed PG17 registered journal replay, DB-008 parent graph SQL, 17/17 Vitest PG tests (including classroom rename/snapshot) and immutable classroom source contracts, but failed tests/db008-elective-roster-structure.test.mjs at academic-year guard. Current roster-access.ts `cps.current_academic_year_start is null OR cps.current_academic_year_start = left(electiveSlots.academicYear,4)::integer` broadens roster access to unknown progression-year rows; contract had required exact year match. L02 owns groups source; restore fail-closed match with explicit normalized academic-year semantics (keep full-year regex, term and program guards). Do not simply weaken the DB-008 test. Return a targeted source diff plus real DB-008 acceptance run/negative year mismatch evidence.",
         "status": "REQUESTED",
         "requestedAt": "2026-10-29T05:51:02.160Z"
+      },
+      {
+        "id": "L01-L08-DB09-PG-NEGATIVE-FIX-20261029",
+        "fromLane": "L01",
+        "toLane": "L08",
+        "paths": [
+          "tests/db09-collaboration-registered-pg-acceptance.mjs",
+          "tests/db09-user-state-lifecycle.test.mjs",
+          "drizzle/0075_db09_tpo_collaboration.sql"
+        ],
+        "reason": "L01 executed DB09 rollback-only PG17 acceptance. Run 40825524568 (exact SHA 41d2154...) failed `saved view delete forbidden was incorrectly allowed` at collaboration witness line 49: registered 0075 trigger only covers BEFORE INSERT OR UPDATE and source test explicitly asserts saved view DELETE is legal. L08 owns contract; correct PG witness to required create/delete-only behavior, not SQL trigger. Separate independent run 40825547851 (SHA 14c000d1...) failed `ordinary faculty denied TPO preferences was incorrectly allowed` at line 43; investigate seed/role contamination vs SQL principal guard using exact event commits and fix source or fixture, without weakening TPO authorization. Reexecute both DB09 PG witnesses on latest registered disposable replay and provide exact code SHA. No DB09 task accepted.",
+        "status": "REQUESTED",
+        "requestedAt": "2026-10-29T05:50:00.000Z"
+      },
+      {
+        "id": "L01-L10-DB076-DRIZZLE-GENERATOR-EXIT-20261029",
+        "fromLane": "L01",
+        "toLane": "L10",
+        "paths": [
+          "scripts/db-independent-verify.mjs",
+          "tests/db-independent-verifier.test.mjs"
+        ],
+        "reason": "Independent verifier run 40825547851 printed `TypeError: Do not know how to serialize a BigInt` from drizzle-kit generate yet step returned exit code 0 and verifier proceeded. L10 owns safety verification: make canonical generate gate fail closed on stderr serialization/uncaught-generator exceptions even when process returns 0; assert no migration/schema-drift false-green and report/redact evidence. L01 still owns shared migration journal; coordinate changes through accepted handoff before touching its shared orchestration files. Keep global DB gate blocked until exact-SHA reexecution.",
+        "status": "REQUESTED",
+        "requestedAt": "2026-10-29T05:50:00.000Z"
       }
     ],
     "coordination": {
