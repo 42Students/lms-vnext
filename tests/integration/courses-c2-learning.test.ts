@@ -935,6 +935,52 @@ describe("courses C2 learning structure against PostgreSQL", () => {
       code: "CONTENT_DELIVERY_MISMATCH",
     });
   });
+  it("keeps batch progress for other content after 5000 retakes of one video", async () => {
+    const structure = await createStructure();
+    const path = await createLearningPath(collegeAdmin, {
+      offeringId: structure.offering.id, title: "C2 per-content attempt isolation",
+    });
+    const lesson = await createCourseLesson(collegeAdmin, {
+      learningPathId: path.id, name: "C2 attempt-isolated lesson", sequence: 0,
+    });
+    const busy = await createLessonContent(collegeAdmin, {
+      lessonId: lesson.id, title: "C2 many prior attempts",
+      contentType: "RESOURCE", points: 1, notes: "Bulk attempt history",
+      sequence: 0,
+    });
+    const peer = await createLessonContent(collegeAdmin, {
+      lessonId: lesson.id, title: "C2 independently completed",
+      contentType: "RESOURCE", points: 1, notes: "Completion must survive",
+      sequence: 1,
+    });
+    await transitionLessonContent(collegeAdmin, busy.id, { action: "PUBLISH" });
+    await transitionLessonContent(collegeAdmin, peer.id, { action: "PUBLISH" });
+    await transitionLearningPath(collegeAdmin, path.id, { action: "PUBLISH" });
+
+    // A single INSERT..SELECT tests the old 5000-row global cap without 5001
+    // client round trips. Every row belongs to this fixture and is cleaned
+    // by the existing C2 transaction-safe teardown.
+    await pool.query(
+      `insert into learner_content_progress
+        (membership_id,lesson_content_id,attempt,last_position_seconds)
+       select $1,$2,ordinal,0 from generate_series(1,5001) ordinal`,
+      [learnerMembershipId,busy.id],
+    );
+    await pool.query(
+      `insert into learner_content_progress
+        (membership_id,lesson_content_id,attempt,last_position_seconds,completed_at)
+       values($1,$2,1,0,now())`,
+      [learnerMembershipId,peer.id],
+    );
+    const batch = await listMyLearnerContentProgressBatch(
+      learner, structure.deliveryA.id, [peer.id,busy.id],
+    );
+    expect(batch.map(entry=>entry.contentId)).toEqual([peer.id,busy.id]);
+    expect(batch[0]).toMatchObject({attempt:1,status:"COMPLETED"});
+    expect(batch[0]?.completedAt).toBeInstanceOf(Date);
+    expect(batch[1]).toMatchObject({attempt:5001,status:"NOT_STARTED"});
+  }, 90_000);
+
   it("makes first completion immutable across rewatch and snapshots classroom sender", async () => {
     const structure = await createStructure();
     const path = await createLearningPath(collegeAdmin, {
