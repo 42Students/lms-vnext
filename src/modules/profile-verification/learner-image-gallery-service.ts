@@ -22,7 +22,7 @@ export type GalleryAccess = { membershipId: string; collegeId: string; canEdit: 
 export class LearnerGalleryError extends Error {
   constructor(public readonly code:
     "GALLERY_NOT_READY" | "GALLERY_FORBIDDEN" | "GALLERY_NOT_FOUND" |
-    "GALLERY_LIMIT" | "GALLERY_RECEIPT_INVALID") {
+    "GALLERY_LIMIT" | "GALLERY_RECEIPT_INVALID" | "GALLERY_IMAGE_REMOVED") {
     super(code);
     this.name = "LearnerGalleryError";
   }
@@ -291,7 +291,7 @@ export async function appendLearnerGalleryImage(
       // receipt/history and require a new verified upload, never silently
       // report successful publication for an invisible picture.
       if (!same.isActive || same.deactivatedAt)
-        throw new LearnerGalleryError("GALLERY_RECEIPT_INVALID");
+        throw new LearnerGalleryError("GALLERY_IMAGE_REMOVED");
       return { image: summary(same), alreadyAdded: true };
     }
     const active = existing.filter(image => image.isActive && !image.deactivatedAt);
