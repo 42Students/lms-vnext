@@ -346,3 +346,23 @@ test("DB070 mentor task-details integration fixture also preserves permanent his
  assert.match(source,/if\(!retention\.rows\[0\]\?\.retainHistory\)/);
  assert.match(source,/refuses edits to a deleted task, deleted sprint, or deleted project/);
 });
+
+
+// L06 DB07 task discussion tombstone write guard.
+test("DB07 historical comments cannot be posted to deleted project/task rows",()=>{
+ const source=fs.readFileSync("src/modules/projects/task-comment-service.ts","utf8");
+ const writer=source.slice(source.indexOf("export async function postProjectTaskComment("));
+ const tx=writer.indexOf("return getDb().transaction(async tx=>");
+ const project=writer.indexOf("const [project]=await tx.select(",tx);
+ const projectLock=writer.indexOf('.for("update").limit(1)',project);
+ const deleted=writer.indexOf("project.deletedAt",projectLock);
+ const task=writer.indexOf("const [task]=await tx.select()",deleted);
+ const deletedTask=writer.indexOf("isNull(projectTasks.deletedAt)",task);
+ const insert=writer.indexOf("await tx.insert(projectTaskComments)",deletedTask);
+ assert.ok(tx>=0&&project>tx&&projectLock>project&&deleted>projectLock);
+ assert.ok(task>deleted&&deletedTask>task&&insert>deletedTask);
+ assert.match(writer,/eq\(projectTasks\.projectId,scope\.project\.id\)/);
+ assert.match(writer,/eq\(projectTasks\.id,taskId\)/);
+ const integration=fs.readFileSync("tests/integration/mentor-task-create.test.ts","utf8");
+ assert.match(integration,/refuses new comments on soft-deleted tasks and deleted projects/);
+});
