@@ -223,6 +223,27 @@ describe("Mentor task create — migrated PostgreSQL",()=>{
     })).rejects.toBeDefined();
   });
 
+  it("refuses new tasks in an archived sprint even when its project remains active",async()=>{
+    const {project,sprint}=await fixture();
+    const before=await pool.query<{total:number}>(
+      "SELECT count(*)::int AS total FROM project_tasks WHERE project_id=$1",[project.id],
+    );
+    await pool.query("UPDATE project_sprints SET deleted_at=now() WHERE id=$1",[sprint.id]);
+    try {
+      await expect(createMentorProjectTask(mentor,{projectId:project.id},{
+        sprintId:sprint.id,title:"Must not target deleted sprint",
+        description:null,acceptanceCriteria:null,priority:"MEDIUM",
+        expectedSprintUpdatedAt:sprint.updatedAt.toISOString(),
+      })).rejects.toMatchObject({code:"PROJECT_TASK_INVALID_STATE"});
+      const after=await pool.query<{total:number}>(
+        "SELECT count(*)::int AS total FROM project_tasks WHERE project_id=$1",[project.id],
+      );
+      expect(after.rows[0]?.total).toBe(before.rows[0]?.total);
+    } finally {
+      await pool.query("UPDATE project_sprints SET deleted_at=null WHERE id=$1",[sprint.id]);
+    }
+  });
+
   it("creates assigned tasks only for a currently active learner in the same project",async()=>{
     const {project,sprint}=await fixture();
     const params={projectId:project.id};
