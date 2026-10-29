@@ -2133,6 +2133,17 @@
         "reason": "DB-034 normalized placement_tpo_prep_courses requires active prep courses across the college's organization (legacy prepCourses(organizationId)), but current listTpoPrepCourses() reads courses joined to departments where departments.collegeId = current college; it excludes eligible courses in sibling colleges and does not use placement_tpo_prep_courses selection. L07 owns shared placement producer/consumer service: reconcile org-scope selector and persisted normalized settings, preserve TPO auth + active-course restrictions, and add same-org/sibling-college positive and other-org denial tests. L08 will verify DB09 persistence and task evidence.",
         "status": "REQUESTED",
         "requestedAt": "2026-10-29T05:49:22.309Z"
+      },
+      {
+        "id": "L04-L06-DB008-ELECTIVE-YEAR-FAILCLOSED-20261029",
+        "fromLane": "L04",
+        "toLane": "L06",
+        "paths": [
+          "src/modules/groups/roster-access.ts"
+        ],
+        "reason": "DB-008 accepted workflow 40825566602 (SHA fd0f6daeac3b) passed PG17 registered journal replay, DB-008 parent graph SQL, 17/17 Vitest PG tests (including classroom rename/snapshot) and immutable classroom source contracts, but failed tests/db008-elective-roster-structure.test.mjs at academic-year guard. Current roster-access.ts `cps.current_academic_year_start is null OR cps.current_academic_year_start = left(electiveSlots.academicYear,4)::integer` broadens roster access to unknown progression-year rows; contract had required exact year match. L06 owns groups source; restore fail-closed match with explicit normalized academic-year semantics (keep full-year regex, term and program guards). Do not simply weaken the DB-008 test. Return a targeted source diff plus real DB-008 acceptance run/negative year mismatch evidence.",
+        "status": "REQUESTED",
+        "requestedAt": "2026-10-29T05:51:02.160Z"
       }
     ],
     "coordination": {
