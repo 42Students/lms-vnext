@@ -44,8 +44,9 @@ import {facultyReplyParentTokenMatches} from "./faculty-discussion-reply-model";
  * first; never accept a client-selected class ID as a grant to another tenant.
  * Discussion history uses (createdAt,id) for paging and (updatedAt,id) for
  * delta/upsert/tombstones, with timestamps as exact PostgreSQL UTC strings.
- * Sender display names remain current-directory values, not historical
- * snapshots; a profile edit must not rewrite stored messages or identities.
+ * Sender display names use trusted, immutable send-time snapshots where
+ * recorded; only pre-snapshot rows fall back to the current directory name.
+ * A later profile rename cannot rewrite retained message attribution.
  * Lesson-scoped messages now have an optional checked lessonContentId;
  * delivery-wide messages retain null. Query the specific lesson in its
  * same-class delivery instead of merging unrelated lesson discussions. */
