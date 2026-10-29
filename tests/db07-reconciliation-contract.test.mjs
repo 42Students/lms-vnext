@@ -238,3 +238,17 @@ test("DB07 mentor reschedule write clock is checked after project and meeting lo
   assert.ok(stateCheck>meetingLock&&timeCheck>stateCheck&&write>timeCheck);
   assert.equal((source.match(/if\(start\.getTime\(\)<=Date\.now\(\)\)/g)??[]).length,2);
 });
+
+
+// DB07 project meetings must fail closed for soft-deleted rows on schedule edits.
+test("DB07 scheduling cannot mutate a soft-deleted meeting",()=>{
+  const source=fs.readFileSync("src/modules/projects/meeting-service.ts","utf8");
+  const schedule=source.slice(source.indexOf("export async function scheduleProjectMeeting("),
+    source.indexOf("export async function transitionProjectMeeting("));
+  const existing= schedule.slice(schedule.indexOf("const [existing] = meetingIdInput"),
+    schedule.indexOf("if (meetingIdInput && !existing)"));
+  assert.match(existing,/eq\(projectMeetings\.id,projectMeetingIdSchema\.parse\(meetingIdInput\)\)/);
+  assert.match(existing,/eq\(projectMeetings\.projectId,scope\.project\.id\)/);
+  assert.match(existing,/isNull\(projectMeetings\.deletedAt\)/);
+  assert.match(existing,/\.for\("update"\)/);
+});
