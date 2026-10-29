@@ -57,6 +57,17 @@ test("elective offering edits reject disabled and soft-deleted courses", () => {
     /rejects elective reassignment to disabled or deleted courses without mutating/);
 });
 
+test("elective rebind never detaches its GROUP_BACKED class period", () => {
+  const edit = electivesService.slice(electivesService.indexOf(
+    "export async function updateCollegeElectiveOffering("),
+    electivesService.indexOf("export async function archiveCollegeElectiveOffering("));
+  assert.match(edit, /if \(offering\.backedClassOfferingId\)/);
+  assert.match(edit, /eq\(groupBackedClassOfferings\.rosterGroupId, group\.id\)/);
+  assert.match(edit, /eq\(groupBackedClassOfferings\.status, "ACTIVE"\)/);
+  assert.match(edit, /backedClass\.academicPeriodId !== delivery\.offeringPeriodId/);
+  assert.match(rosterTests, /rejects cross-period elective rebind that would orphan/);
+});
+
 test("the slot matches the learner ACTIVE primary program rather than college alone", () => {
   assert.match(eligibility, /eq\(learnerProgramEnrollments\.programId, slot\.programId\)/);
   assert.match(eligibility, /eq\(learnerProgramEnrollments\.status, "ACTIVE"\)/);
