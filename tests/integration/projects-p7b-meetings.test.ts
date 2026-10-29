@@ -476,6 +476,50 @@ describe("Projects P7B meetings", () => {
     });
   });
 
+  it("validates retained and partially cleared meeting links before saving an edit",async()=>{
+    const project=await createProject();
+    const workspace=await getProjectInstanceWorkspace(mentor,project.id);
+    const sprintId=workspace.sprints[0]!.id;
+    const taskId=workspace.tasks[0]!.id;
+    const window={
+      title:"DB075 ancestry retention",startsAt:"2099-06-03T18:05:00+05:30",
+      endsAt:"2099-06-03T18:35:00+05:30",
+      timeZone:"Asia/Kolkata" as const,
+      meetingUrl:"https://meet.example.com/db075-ancestry",
+    };
+    const first=await scheduleProjectMeeting(collegeAdmin,project.id,null,{
+      ...window,linkedSprintId:sprintId,linkedTaskId:taskId,
+    });
+    // Older clients omit link fields when editing title or facilitation.
+    // The retained final pair still requires same-project/same-sprint checks.
+    const kept=await scheduleProjectMeeting(collegeAdmin,project.id,first.id,{
+      ...window,title:"Edited DB075 meeting",
+    });
+    expect(kept).toMatchObject({
+      linkedSprintId:sprintId,linkedTaskId:taskId,
+      title:"Edited DB075 meeting",
+    });
+    // Null explicitly clears a sprint link without clearing the same-project task.
+    const taskOnly=await scheduleProjectMeeting(collegeAdmin,project.id,kept.id,{
+      ...window,title:"Task-only DB075 meeting",linkedSprintId:null,
+    });
+    expect(taskOnly).toMatchObject({
+      linkedSprintId:null,linkedTaskId:taskId,
+    });
+    const foreignProject=await createProject();
+    const foreign=await getProjectInstanceWorkspace(mentor,foreignProject.id);
+    await expect(scheduleProjectMeeting(collegeAdmin,project.id,taskOnly.id,{
+      ...window,title:"Invalid foreign sprint",linkedSprintId:foreign.sprints[0]!.id,
+    })).rejects.toMatchObject({code:"PROJECT_MEETING_LINK_INVALID"});
+    const stored=await pool.query<{
+      linked_sprint_id:string|null;linked_task_id:string;title:string;
+    }>("SELECT linked_sprint_id,linked_task_id,title FROM project_meetings WHERE id=$1",
+      [first.id]);
+    expect(stored.rows[0]).toMatchObject({
+      linked_sprint_id:null,linked_task_id:taskId,title:"Task-only DB075 meeting",
+    });
+  });
+
   it("persists in-person venues through real scheduling and rescheduling, with CAS and role checks",async()=>{
     const project=await createProject();
     const workspace=await getProjectInstanceWorkspace(mentor,project.id);
