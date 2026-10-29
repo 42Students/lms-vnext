@@ -119,5 +119,13 @@ try{
  await reject("revoked recruiter cannot create applicant notes",()=>db.query(
   "insert into placement_recruiter_applicant_notes(recruiter_user_id,college_id,job_id,application_id,note) values($1,$2,$3,$4,'revoked')",
   [recruiter.id,a.id,job.id,application.id]));
+ // DB-079: UPDATE of a rating/note must consult the live recruiter grant,
+ // not just immutable identity columns. A no-longer-authorized recruiter must
+ // not use a previously created note as a permanent write capability.
+ // The +1 second timestamp is within the permitted five-minute drift and
+ // guarantees this cannot accidentally fail the monotonic timestamp rule.
+ await reject("revoked recruiter cannot edit prior private note",()=>db.query(
+  "update placement_recruiter_applicant_notes set note='after revoke',updated_at=statement_timestamp()+interval '1 second' where id=$1",
+  [note.id]));
  process.stdout.write("DB09 registered recruiter private notes PASSED: "+count+" checks (rolled back)\n");
 }finally{try{await db.query("ROLLBACK");}finally{await db.end();}}
