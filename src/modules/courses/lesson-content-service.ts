@@ -13,6 +13,7 @@ import {lessonContentMaterials} from "@/db/schema/lesson-content-materials";
 import {resourceMaterialLinkSchema,resourceMaterialsWriteReady} from "./lesson-resource-materials-model";
 import { lockLiveLessonWriteAncestry } from "./lesson-write-ancestry";
 import { lessonContentOrderRuntimeEnabled } from "./lesson-content-order-readiness";
+import { learnerVisibleContentExternalUrl } from "./learner-live-link-availability-model";
 // Learner-only visibility helper is dynamically loaded below; browser seed uses this service without it.
 import { courseLessons, courseSectionDeliveries, lessonContents } from "@/db/schema";
 import type { RequestContext } from "@/modules/identity/context";
@@ -433,8 +434,27 @@ export async function listLessonContents(
     : rows;
   // Never expose an opaque private R2 object key to a learner even when a
   // lesson is published. Grants are separately scoped, signed on Open.
+  // The learner workspace releases external links according to start/end
+  // availability and strips unsafe schemes or embedded credentials. Apply the
+  // same read-boundary policy to direct lesson listings and bookmarked content,
+  // which otherwise leaked raw faculty/legacy external_url values.
+  const now = Date.now();
   const visibleRows = access === "LEARNER"
-    ? audienceRows.map(row=>({...row,storageKey:null})) : audienceRows;
+    ? audienceRows.map(row=>{
+        const availability = row.contentType === "LIVE_CLASS" && row.endsAt &&
+          row.endsAt.getTime() <= now ? "ENDED"
+          : row.startsAt && row.startsAt.getTime() > now ? "SCHEDULED"
+          : "AVAILABLE";
+        return {
+          ...row,
+          storageKey: null,
+          externalUrl: learnerVisibleContentExternalUrl({
+            contentType: row.contentType,
+            availability,
+            externalUrl: row.externalUrl,
+          }),
+        };
+      }) : audienceRows;
   if (!deliveryId || visibleRows.length <= 1 || !lessonContentOrderRuntimeEnabled()) {
     return visibleRows;
   }
