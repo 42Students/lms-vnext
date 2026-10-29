@@ -110,12 +110,15 @@ afterAll(async () => {
 
 describe("DB-050 verified global EMAIL suppression persists atomically", () => {
   it("suppresses matching pending/retry across colleges but never overwrites claimed or another recipient", async () => {
-    const first = intent("cancel-me@example.test", SEED_IDS.collegeA);
-    const second = intent("cancel-me@example.test", SEED_IDS.collegeB);
-    const wrong = intent("other-recipient@example.test", SEED_IDS.collegeB);
+    // Per-run addresses prevent collision with other disposable suites and
+    // ensure afterAll cannot erase another test's global suppression record.
+    const address = `cancel-${randomUUID()}@example.test`;
+    const first = intent(address, SEED_IDS.collegeA);
+    const second = intent(address, SEED_IDS.collegeB);
+    const wrong = intent(`other-${randomUUID()}@example.test`, SEED_IDS.collegeB);
     const pending = await insertMessage(first, "PENDING");
     const retry = await insertMessage(second, "RETRY");
-    const claimed = await insertMessage(intent("cancel-me@example.test"), "CLAIMED");
+    const claimed = await insertMessage(intent(address), "CLAIMED");
     const untouched = await insertMessage(wrong, "PENDING");
     expect(pending.hash).toBe(retry.hash);
     expect(pending.hash).toBe(claimed.hash);
