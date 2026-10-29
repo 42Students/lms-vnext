@@ -271,6 +271,8 @@ describe("DB03 group kernel on disposable PostgreSQL", () => {
     await pool.query(
       "UPDATE elective_offerings SET backed_class_offering_id=$1 WHERE id=$2",
       [backingId,fixture.electiveOfferingIds[0]]);
+    const originalGroup = (await pool.query(
+      "SELECT capacity,version FROM lms_groups WHERE id=$1", [groups[0]])).rows[0];
     // A period-agnostic elective slot can still have one fixed-period class identity.
     await pool.query("UPDATE elective_slots SET academic_period_id=NULL WHERE id=$1",[slotId]);
     const secondPeriod=randomUUID(), secondSection=randomUUID();
@@ -311,7 +313,7 @@ describe("DB03 group kernel on disposable PostgreSQL", () => {
     expect(classAfter).toMatchObject({academic_period_id:periodId,status:"ACTIVE"});
     const group = (await pool.query("SELECT capacity,version FROM lms_groups WHERE id=$1",
       [groups[0]])).rows[0];
-    expect(group).toMatchObject({capacity:1,version:1});
+    expect(group).toEqual(originalGroup);
   });
 
   it("rejects a new elective join after its backed class delivery ends", async () => {
