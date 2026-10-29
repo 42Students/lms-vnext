@@ -66,6 +66,17 @@ describe("DB-050 EMAIL sender preflight before provider claims",()=>{
   expect(mock.getDb).not.toHaveBeenCalled();
  });
 
+ it("does not claim on missing or malformed encryption master key",()=>{
+  delete process.env["DB10_OUTBOUND_ENCRYPTION_KEY_BASE64"];
+  expect(globalEmailSuppressionActivationState()).toMatchObject({
+   active:false,keyConfigured:false,
+  });
+  process.env["DB10_OUTBOUND_ENCRYPTION_KEY_BASE64"]="not-canonical-base64";
+  expect(globalEmailSuppressionActivationState().active).toBe(false);
+  process.env["DB10_OUTBOUND_ENCRYPTION_KEY_BASE64"]=Buffer.alloc(32,82).toString("base64");
+  expect(globalEmailSuppressionActivationState().active).toBe(true);
+ });
+
  it("blocks unapproved sender or global suppression migration even with a good HMAC",()=>{
   delete process.env["DB10_EMAIL_SENDER_VERIFIED"];
   expect(globalEmailSuppressionActivationState().active).toBe(false);
