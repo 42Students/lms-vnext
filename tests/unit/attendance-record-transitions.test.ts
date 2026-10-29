@@ -12,6 +12,7 @@ describe("DB06 attendance stable-record correction planner", () => {
     expect(planAttendanceRecordTransitions([a], [], ["a"])).toEqual({
       previousAbsentMembershipIds: ["a"],
       insertAbsentMembershipIds: [],
+      insertPresentMembershipIds: [],
       changeToAbsentRecordIds: [],
       changeToPresentRecordIds: ["row-a"],
     });
@@ -21,6 +22,7 @@ describe("DB06 attendance stable-record correction planner", () => {
     expect(planAttendanceRecordTransitions([b,c,d,e], [], ["b","c","d","e"])).toEqual({
       previousAbsentMembershipIds: [],
       insertAbsentMembershipIds: [],
+      insertPresentMembershipIds: [],
       changeToAbsentRecordIds: [],
       changeToPresentRecordIds: [],
     });
@@ -30,6 +32,7 @@ describe("DB06 attendance stable-record correction planner", () => {
     expect(planAttendanceRecordTransitions([a,b,c], ["a","b","new"], ["c"])).toEqual({
       previousAbsentMembershipIds: ["a"],
       insertAbsentMembershipIds: ["new"],
+      insertPresentMembershipIds: [],
       changeToAbsentRecordIds: ["row-b"],
       changeToPresentRecordIds: [],
     });
@@ -38,6 +41,17 @@ describe("DB06 attendance stable-record correction planner", () => {
   it("does not rewrite unchanged absence rows while correcting another student", () => {
     expect(planAttendanceRecordTransitions([a,b], ["a"], ["b"])).toMatchObject({
       insertAbsentMembershipIds: [],
+      insertPresentMembershipIds: [],
+      changeToAbsentRecordIds: [],
+      changeToPresentRecordIds: [],
+    });
+  });
+
+  it("materializes a stable PRESENT row for each newly marked learner", () => {
+    expect(planAttendanceRecordTransitions([], [], ["p","q"])).toEqual({
+      previousAbsentMembershipIds: [],
+      insertAbsentMembershipIds: [],
+      insertPresentMembershipIds: ["p","q"],
       changeToAbsentRecordIds: [],
       changeToPresentRecordIds: [],
     });
