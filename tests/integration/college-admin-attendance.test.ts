@@ -209,12 +209,24 @@ describe("College Admin attendance tenant isolation with PostgreSQL", () => {
     ]);
     expect(sessionRows.rows).toHaveLength(0);
     expect(recordRows.rows).toMatchObject([{status:"ABSENT"}]);
+    const previous = await pool.query(
+      "select id from attendance_records where schedule_event_id=$1 and membership_id=$2",
+      [own.event, own.learner],
+    );
     await correctAdminAttendance(admin,own.event,{...input,status:"PRESENT"});
-    const cleaned = await pool.query("select id from attendance_records where schedule_event_id=$1 and membership_id=$2",[own.event,own.learner]);
-    expect(cleaned.rows).toHaveLength(0);
+    const corrected = await pool.query(
+      "select id,status from attendance_records where schedule_event_id=$1 and membership_id=$2",
+      [own.event,own.learner],
+    );
+    expect(corrected.rows).toMatchObject([{id:previous.rows[0]?.id,status:"PRESENT"}]);
+    const stillUnmarked = await pool.query(
+      "select status from attendance_sessions where schedule_event_id=$1",
+      [own.event],
+    );
+    expect(stillUnmarked.rows).toHaveLength(0);
   });
 
-  it("keeps PRESENT as no record and prevents inactive-member corrections", async () => {
+  it("keeps explicit PRESENT identity and prevents inactive-member corrections", async () => {
     const input = {
       collegeId: SEED_IDS.collegeA,
       deliveryId: own.delivery,
@@ -223,10 +235,10 @@ describe("College Admin attendance tenant isolation with PostgreSQL", () => {
     await correctAdminAttendance(admin, own.event, { ...input, status: "ABSENT" });
     await correctAdminAttendance(admin, own.event, { ...input, status: "PRESENT" });
     const check = await pool.query(
-      "select id from attendance_records where schedule_event_id=$1 and membership_id=$2",
+      "select id,status from attendance_records where schedule_event_id=$1 and membership_id=$2",
       [own.event, own.learner],
     );
-    expect(check.rows).toHaveLength(0);
+    expect(check.rows).toMatchObject([{status:"PRESENT"}]);
     await pool.query(
       "update college_memberships set status='SUSPENDED',suspended_at=now() where id=$1",
       [own.learner],
