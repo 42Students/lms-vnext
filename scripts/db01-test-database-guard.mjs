@@ -57,7 +57,13 @@ export function assertSafeDb01TestTarget(env = process.env) {
     }
   }
   if (!LOCAL_HOSTS.has(test.host)) {
-    const expected = `RESET:${test.host}/${test.db}`;
+    // Preserve existing PostgreSQL-default-port approvals, but require a
+    // port-scoped confirmation for any non-default service on the same host.
+    // Otherwise confirmation for pg.internal/database would also authorize
+    // an unrelated server on port 6432, 5544, etc.
+    const expected = test.port === '5432'
+      ? `RESET:${test.host}/${test.db}`
+      : `RESET:${test.host}:${test.port}/${test.db}`;
     if (env.DB01_REMOTE_TEST_DATABASE_CONFIRM !== expected) {
       throw new Error('Remote test database requires DB01_REMOTE_TEST_DATABASE_CONFIRM for the exact target');
     }
