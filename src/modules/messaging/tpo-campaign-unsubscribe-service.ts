@@ -7,7 +7,7 @@ import {getDb} from "@/db/client";
 import {placementTpoLeads,placementTpoLeadActivities,placementTpoEmailCampaignRecipients} from "@/db/schema/tpo-crm";
 import {verifyTpoCampaignRecipientToken,campaignUnsubscribeDecision,resolveTpoCampaignRecipientSecret,legacyCampaignRecipientTokenDigest,matchesTpoCampaignEmailRecipientKey} from "./tpo-campaign-recipient-token";
 import {deriveGlobalEmailSuppressionHashForAddress} from "@/modules/operations/outbound-delivery-envelope";
-import {persistVerifiedGlobalEmailSuppression} from "@/modules/operations/global-email-suppression-service";
+import {GlobalEmailSuppressionUnavailable,persistVerifiedGlobalEmailSuppression} from "@/modules/operations/global-email-suppression-service";
 
 export class CampaignUnsubscribeInvalid extends Error {
   constructor(){super("CAMPAIGN_UNSUBSCRIBE_INVALID");this.name="CampaignUnsubscribeInvalid";}
@@ -71,9 +71,16 @@ export async function unsubscribeTpoCampaignRecipient(
     if(recipient?.email && matchesTpoCampaignEmailRecipientKey(
       recipient.recipientKey,recipient.email,key,
     )){
+      // Never acknowledge a verified recipient's opt-out when the configured
+      // global HMAC cannot be derived. No email is logged or persisted here.
+      let recipientHash:string;
+      try{
+        recipientHash=deriveGlobalEmailSuppressionHashForAddress(recipient.email,globalKey);
+      }catch{
+        throw new GlobalEmailSuppressionUnavailable();
+      }
       await persistVerifiedGlobalEmailSuppression({
-        recipientHash:deriveGlobalEmailSuppressionHashForAddress(recipient.email,globalKey),
-        reason:"UNSUBSCRIBED",
+        recipientHash,reason:"UNSUBSCRIBED",
       });
     }
     // When a lead's address no longer matches the campaign's original
