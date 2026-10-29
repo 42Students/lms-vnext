@@ -282,6 +282,11 @@ describe("College Admin attendance tenant isolation with PostgreSQL", () => {
     expect(new Date(after.marked_at).getTime()).toBeGreaterThan(
       new Date(old.marked_at).getTime(),
     );
+    // A note-only correction advances the optimistic token. A concurrent
+    // editor's previous snapshot can no longer overwrite the reviewed note.
+    await expect(correctAdminAttendance(admin,own.event,{
+      ...input,status:"PRESENT",expectedMarkedAt:new Date(old.marked_at).toISOString(),
+    })).rejects.toMatchObject({code:"ATTENDANCE_STALE_VERSION"});
     await correctAdminAttendance(admin,own.event,{
       ...input,status:"ABSENT",note:"Reviewed with course coordinator",
       expectedMarkedAt:new Date(after.marked_at).toISOString(),
