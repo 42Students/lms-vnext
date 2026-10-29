@@ -64,6 +64,8 @@ test("DB-007 learner-only publisher permission differs from staff-only cleanup",
   assert.match(gallery,/if \(!access\.canUpload \|\| access\.membershipId !== context\.membership\.id\)/);
   assert.match(gallery,/canUpload: access\.canUpload/);
   assert.match(galleryUi,/setCanUpload\(value\.canUpload === true\)/);
+  assert.match(galleryUi,/code === "GALLERY_IMAGE_REMOVED"/);
+  assert.match(galleryUi,/setPendingObjectKey\(null\)/);
   assert.match(galleryUi,/\{canUpload \? <div className="max-w-lg/);
   assert.match(galleryUi,/\{canEdit \? <Button variant="secondary" type="button" disabled=\{busy\} onClick=\{\(\) => void deactivate/);
 });
