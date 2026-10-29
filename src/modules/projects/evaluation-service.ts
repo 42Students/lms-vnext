@@ -131,13 +131,16 @@ export async function createProjectEvaluation(
   try {
     return await db.transaction(async (tx) => {
       const [project] = await tx
-        .select({ status: projectInstances.status })
+        .select({ status: projectInstances.status, deletedAt:projectInstances.deletedAt })
         .from(projectInstances)
-        .where(eq(projectInstances.id, scope.project.id))
+        .where(and(
+          eq(projectInstances.id, scope.project.id),
+          eq(projectInstances.collegeId,scope.collegeId),
+        ))
         .for("update")
         .limit(1);
 
-      if (!project || project.status === "ARCHIVED" || project.status === "COMPLETED") {
+      if (!project || project.deletedAt || project.status === "ARCHIVED" || project.status === "COMPLETED") {
         throw new ProjectsServiceError(
           "PROJECT_EVALUATION_INVALID_STATE",
         );
