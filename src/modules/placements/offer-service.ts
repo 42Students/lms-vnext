@@ -1036,7 +1036,8 @@ export async function actOnPlacementOffer(
         .innerJoin(placementApplications,
           eq(placementApplications.id,placementOffers.applicationId))
         .innerJoin(placementJobRoleOptions,
-          eq(placementJobRoleOptions.id,placementApplications.roleOptionId))
+          and(eq(placementJobRoleOptions.id,placementApplications.roleOptionId),
+             eq(placementJobRoleOptions.jobId,placementApplications.jobId)))
         .innerJoin(placementJobs,eq(placementJobs.id,placementApplications.jobId))
         .where(and(
           eq(placementApplications.membershipId,current.application.membershipId),
@@ -1083,7 +1084,8 @@ export async function actOnPlacementOffer(
         isDream:placementJobs.isDream,
       }).from(placementApplications)
         .innerJoin(placementJobRoleOptions,
-          eq(placementJobRoleOptions.id,placementApplications.roleOptionId))
+          and(eq(placementJobRoleOptions.id,placementApplications.roleOptionId),
+             eq(placementJobRoleOptions.jobId,placementApplications.jobId)))
         .innerJoin(placementJobs,eq(placementJobs.id,placementApplications.jobId))
         .where(and(
           eq(placementApplications.membershipId,current.application.membershipId),
@@ -1389,7 +1391,8 @@ export async function previewOwnOfferAcceptanceImpact(
    jobEmploymentType:placementJobs.employmentType,isDream:placementJobs.isDream,
   }).from(placementOffers)
    .innerJoin(placementApplications,eq(placementApplications.id,placementOffers.applicationId))
-   .innerJoin(placementJobRoleOptions,eq(placementJobRoleOptions.id,placementApplications.roleOptionId))
+   .innerJoin(placementJobRoleOptions,and(eq(placementJobRoleOptions.id,placementApplications.roleOptionId),
+             eq(placementJobRoleOptions.jobId,placementApplications.jobId)))
    .innerJoin(placementJobs,eq(placementJobs.id,placementApplications.jobId))
    .where(and(eq(placementApplications.membershipId,membership.id),
     eq(placementJobs.collegeId,membership.collegeId),
@@ -1404,7 +1407,8 @@ export async function previewOwnOfferAcceptanceImpact(
    jobEmploymentType:placementJobs.employmentType,
    isDream:placementJobs.isDream,
   }).from(placementApplications)
-   .innerJoin(placementJobRoleOptions,eq(placementJobRoleOptions.id,placementApplications.roleOptionId))
+   .innerJoin(placementJobRoleOptions,and(eq(placementJobRoleOptions.id,placementApplications.roleOptionId),
+             eq(placementJobRoleOptions.jobId,placementApplications.jobId)))
    .innerJoin(placementJobs,eq(placementJobs.id,placementApplications.jobId))
    .where(and(eq(placementApplications.membershipId,membership.id),
     eq(placementJobs.collegeId,membership.collegeId))),
@@ -1673,7 +1677,8 @@ export async function listOwnPlacementOffers(
     )
     .innerJoin(
       placementJobRoleOptions,
-      eq(placementJobRoleOptions.id,placementApplications.roleOptionId),
+      and(eq(placementJobRoleOptions.id,placementApplications.roleOptionId),
+             eq(placementJobRoleOptions.jobId,placementApplications.jobId)),
     )
     .innerJoin(
       placementCompanyRelationships,
@@ -1864,10 +1869,8 @@ export async function listPlacementOfferCandidates(
         )
         .innerJoin(
           placementJobRoleOptions,
-          eq(
-            placementJobRoleOptions.id,
-            placementApplications.roleOptionId,
-          ),
+          and(eq(placementJobRoleOptions.id,placementApplications.roleOptionId),
+            eq(placementJobRoleOptions.jobId,placementApplications.jobId)),
         )
         .innerJoin(
           collegeMemberships,
