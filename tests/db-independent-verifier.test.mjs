@@ -126,3 +126,4 @@ test("both DB09 witnesses require an isolated database and rollback-only writes"
     assert.match(witness,/ROLLBACK/);
   }
 });
+import "./db-independent-verifier-zero-exit-generation.test.mjs";
