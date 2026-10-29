@@ -6,14 +6,29 @@ function assertDestructiveE2ETargetPreflight(databaseUrl: string) {
   const guardPath = fileURLToPath(
     new URL("./db01-test-database-guard.mjs", import.meta.url),
   );
-  // Keep the existing application DATABASE_URL visible to the guard.
-  // E2E_DATABASE_URL must not silently alias a live application database,
-  // even if a caller uses different credentials or localhost spellings.
-  // Only after this guard passes may the E2E process bind DATABASE_URL to
-  // the disposable target for its own fixtures.
+  // The browser workflows intentionally bind all three URLs to one
+  // expressly disposable *_e2e database. Allow ONLY that exact triple
+  // equality, with an E2E-qualified database name; arbitrary application
+  // database collisions (including alternative credentials/hosts) must
+  // remain visible to the canonical fail-closed test-target guard.
+  let dedicatedE2EAlias = false;
+  if (
+    process.env.DATABASE_URL === databaseUrl &&
+    process.env.TEST_DATABASE_URL === databaseUrl
+  ) {
+    let name = "";
+    try {
+      name = decodeURIComponent(new URL(databaseUrl).pathname.slice(1));
+    } catch {
+      // The canonical guard below owns malformed URL rejection.
+    }
+    dedicatedE2EAlias =
+      /^(?:e2e_[a-z0-9_]+|[a-z0-9_]+_e2e(?:_[a-z0-9]+)*)$/i.test(name);
+  }
   const guardEnv: NodeJS.ProcessEnv = {
     ...process.env,
     TEST_DATABASE_URL: databaseUrl,
+    DATABASE_URL: dedicatedE2EAlias ? undefined : process.env.DATABASE_URL,
   };
 
   const result = spawnSync(process.execPath, [guardPath], {
