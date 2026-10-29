@@ -77,6 +77,14 @@ export function courseDiscussionErrorMessage(code: string): string {
   }
 }
 
+/** Trusted send-time sender name. DB05 stores and locks this snapshot;
+ * older/pre-snapshot rows fall back to the current display name only when
+ * no original attribution was persisted. Never accept a client-provided name. */
+const immutableDiscussionSenderName = sql<string>`coalesce(
+  nullif(${courseDiscussionMessages.senderNameSnapshot}, ''),
+  ${users.displayName}
+)`;
+
 const historySchema = z.object({
   limit: z.coerce.number().int().min(1).max(100).default(60),
   beforeCreatedAt: z.string().datetime({ offset: true }).optional(),
@@ -201,7 +209,7 @@ export async function listCourseDiscussionMessages(
       deliveryId: courseDiscussionMessages.deliveryId,
       senderMembershipId: courseDiscussionMessages.senderMembershipId,
       senderRole: courseDiscussionMessages.senderRole,
-      senderName: users.displayName,
+      senderName: immutableDiscussionSenderName,
       messageText: courseDiscussionMessages.messageText,
       pinned: courseDiscussionMessages.pinned,
       createdAt: courseDiscussionMessages.createdAt,
@@ -226,7 +234,7 @@ export async function listCourseDiscussionMessages(
     .select({
       id: courseDiscussionMessages.id,
       messageText: courseDiscussionMessages.messageText,
-      senderName: users.displayName,
+      senderName: immutableDiscussionSenderName,
       createdAt: courseDiscussionMessages.createdAt,
       updatedAt: courseDiscussionMessages.updatedAt,
     })
@@ -333,7 +341,7 @@ export async function listCourseDiscussionChanges(
     id: courseDiscussionMessages.id,
     deliveryId: courseDiscussionMessages.deliveryId,
     senderMembershipId: courseDiscussionMessages.senderMembershipId,
-    senderName: users.displayName,
+    senderName: immutableDiscussionSenderName,
     messageText: courseDiscussionMessages.messageText,
     pinned: courseDiscussionMessages.pinned,
     deletedAt: courseDiscussionMessages.deletedAt,
