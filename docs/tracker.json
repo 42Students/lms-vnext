@@ -2307,8 +2307,9 @@
           "scripts/db-independent-verify.mjs"
         ],
         "reason": "L08 created two NEW rollback-only registered PostgreSQL17 witnesses on main: DB-061 message sender grant, deferred last-message projection, append-only history, one-way read receipts, revoke denial (commit b2734945f22d66d2a69995d63ff741475db3f1c1); DB-062 recruiter private applicant note grant and immutable job/application/recruiter identity, timestamp monotonicity and update/revocation checks (commit 47a90172d1874f0f6b071a3802a8474e3d07928b). Both require canonical journal replay/seed and DB09_ISOLATED_TEST_DATABASE=1; no production data, no commit. Run after disposable preflight; report exact SHA and first failing SQLSTATE, if any. Wire as gated tests ONLY after running them green. Existing collaboration/share witness requests remain separate. Do not mark DB061 or DB062 DONE without PG + real consumer evidence.",
-        "status": "REQUESTED",
-        "requestedAt": "2026-10-29T06:36:24.796Z"
+        "status": "ACCEPTED",
+        "requestedAt": "2026-10-29T06:36:24.796Z",
+        "integratorReview": "L01 accepts new DB-061/062 rollback-only PostgreSQL witnesses for verification review. Do not insert as mandatory global verifier steps until both have passed on a clean full-journal disposable PostgreSQL replay at an exact SHA. Generator currently fails on native BigInt defaults (e58c64b4). L08 owns DB09 fixture and domain repairs; no task acceptance claimed."
       },
       {
         "id": "SCR-L09-L01-DB067-EMAIL-CLAIMS-20261029",
@@ -2357,8 +2358,9 @@
           "tests/db09-recruiter-note-registered-pg-acceptance.mjs"
         ],
         "reason": "Security gap source-audited on registered 0075: trigger db09_recruiter_private_note_scope_guard fires BEFORE INSERT OR UPDATE OF recruiter_user_id,college_id,job_id,application_id, so UPDATE rating/note after recruiter grant revocation bypasses db09_has_active_recruiter_grant. Lifecycle guard db09_restrict_recruiter_private_note_lifecycle enforces identity/timestamps but no live grant. L08 added explicit rollback-only PostgreSQL negative in commit 49e11726170c7ad32d92b2e4dc8ce8f514df5abb: revoked recruiter UPDATE note with advancing timestamp must SQLSTATE23514; current registered schema appears to allow. L01 is single migration writer: append a forward-only registered migration to enforce live grant on every content UPDATE, never mutate applied 0075 in place without agreed migration strategy. Rerun after clean disposable replay, verify no legitimate authorized editor regression and no cross-company leakage. Do not mark DB079/DB062 DONE until passing evidence.",
-        "status": "REQUESTED",
-        "requestedAt": "2026-10-29T06:39:01.030Z"
+        "status": "ACCEPTED",
+        "requestedAt": "2026-10-29T06:39:01.030Z",
+        "integratorReview": "L01 source-reviewed 0075 and confirms column-list UPDATE bypass of revoked recruiter grant when only rating/note changes. Added source-only forward migration candidate docs/planning/sql/db09-recruiter-private-note-update-grant-forward-candidate.sql at 317c49b9; it replaces trigger firing to BEFORE INSERT OR UPDATE (all columns), preserving existing grant-function and lifecycle guard. NO journal promotion/PG test/DB079 closure until BigInt generator and independent PG negative/race witnesses pass."
       },
       {
         "id": "SCR-L08-L07-DB079-NOTE-REVOKE-CONSUMER-20261029",
@@ -2409,8 +2411,9 @@
           "src/db/schema/index.ts"
         ],
         "reason": "DB034 normalized placement_tpo_prep_courses is now dual-written with legacy placement_tpo_prep_readiness.config.courseIds, and reader suppresses readiness evidence when the two drift. Any older existing JSON-only selections need source-verified backfill before fully accepting DB034. created_by_user_id is NOT derivable from JSON; reconcile latest authoritative TPO settings-change audit actor or require audited manual remediation. Do not invent an actor, migrate foreign-org/archived courses, or weaken FK tenant/actor guards. Register only with clean disposable PG replay and negative tests.",
-        "status": "REQUESTED",
-        "requestedAt": "2026-10-29T06:41:31.445Z"
+        "status": "ACCEPTED",
+        "requestedAt": "2026-10-29T06:41:31.445Z",
+        "integratorReview": "L01 accepts integration review of historical JSON-only prep selections but cannot synthesize trustworthy created_by_user_id or copy out-of-org/archived courses. Backfill requires verified audit actor provenance, tenant-safe filtering, transactional writer compatibility, negative tests, and clean PG replay; owner L07 must furnish authoritative source policy before migration. No guessed backfill, no DB034 acceptance."
       },
       {
         "id": "SCR-L03-L01-DB007-GALLERY-VITEST-20261029",
@@ -2421,8 +2424,9 @@
           "shared DB-007 acceptance/test registration"
         ],
         "reason": "L03 fixed strict HTTP gallery upload payloads, scanner-pending versus storage-provider failure handling, learner-only upload versus staff cleanup permission, and deactivated receipt false-success. Include tests/unit/learner-gallery-upload-http-contract.test.ts, learner-gallery-attestation.test.ts, learner-gallery-feedback.test.ts, learner-gallery-inactive-receipt.test.ts as focused Vitest in existing DB-007 acceptance job (after npm ci), alongside already registered PG17 journal/replay/integration/static checks. Require exact code SHA and real PASS before DB-007/080 acceptance. Domain code owned by L03; CI/shared workflow edits only by L01. Do not mark tasks done from authored tests.",
-        "status": "REQUESTED",
-        "requestedAt": "2026-10-29T06:42:23.616Z"
+        "status": "ACCEPTED",
+        "requestedAt": "2026-10-29T06:42:23.616Z",
+        "integratorReview": "L01 registered all four L03 gallery HTTP/attestation/feedback/inactive-receipt Vitest suites in existing PG17 DB007 acceptance workflow, commit 0cf0ede63739d4ba19b3e1a205c9033fc0c1a36b; source glob triggers reruns. No exact-SHA PostgreSQL or test PASS asserted; L03 retains domain ownership, DB007/080 open pending execution."
       }
     ],
     "coordination": {
