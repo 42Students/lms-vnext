@@ -31,6 +31,7 @@ export default async function PrepSettings(){
   {!data.ready?<Alert tone="warning">Readiness settings storage is pending migration registration.</Alert>:
   <>
    {!parsed.success?<Alert tone="error">The saved readiness config uses an unsupported shape. No changes will be made until it is reviewed.</Alert>:null}
+   {data.selectionSynchronized===false?<Alert tone="warning">The saved course choices are not yet synchronized with the normalized preparation-course selections. Learner readiness evidence is temporarily unavailable until the settings are reviewed and saved again.</Alert>:null}
    {!coursesResult.ok?<Alert tone="warning">
      Couldn&apos;t load preparation courses. Saved choices were not changed. <a href="/tpo/settings/prep-readiness" className="inline-flex min-h-11 items-center font-semibold text-link underline hover:text-primary-text focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Retry</a>
    </Alert>:null}
