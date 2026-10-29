@@ -7,7 +7,7 @@ const submissionId="22222222-2222-4222-8222-222222222222";
 const collegeId="33333333-3333-4333-8333-333333333333";
 const organizationId="44444444-4444-4444-8444-444444444444";
 const state=vi.hoisted(()=>({
- projectStatus:"ACTIVE",submissionStatus:"SUBMITTED",
+ projectStatus:"ACTIVE",projectDeletedAt:null as Date|null,submissionStatus:"SUBMITTED",
  lockedAt:null as Date|null,found:true,checks:0,allowed:true,
  updates:0,deliveryEvents:0,activityEvents:0,
  previousReason:null as string|null,previousActor:null as string|null,
@@ -35,7 +35,7 @@ vi.mock("@/db/client",()=>({
    const tx={
     select:()=>{
      const step=reads++;
-     const rows=step===0?[{status:state.projectStatus}]:
+     const rows=step===0?[{status:state.projectStatus,deletedAt:state.projectDeletedAt}]:
       step===1?(state.found?[{id:submissionId,projectId,status:state.submissionStatus,
        lockedAt:state.lockedAt,version:2}]:[]):
       step===2?[{id:state.latestId}]:
@@ -67,7 +67,7 @@ const actor=():RequestContext=>({
  adminScope:null,
 });
 beforeEach(()=>{
- state.projectStatus="ACTIVE";state.submissionStatus="SUBMITTED";state.lockedAt=null;
+ state.projectStatus="ACTIVE";state.projectDeletedAt=null;state.submissionStatus="SUBMITTED";state.lockedAt=null;
  state.found=true;state.checks=0;state.allowed=true;
  state.updates=0;state.deliveryEvents=0;state.activityEvents=0;
  state.previousReason=null;state.previousActor=null;
@@ -96,6 +96,18 @@ describe("IIT Dharwad College Admin delivery final lock transaction",()=>{
   expect(state.updates).toBe(1);
   expect(state.deliveryEvents).toBe(1);
   expect(state.activityEvents).toBe(1);
+ });
+ it("DB074 denies both a new lock and an idempotent retry after project deletion",async()=>{
+  state.projectDeletedAt=new Date("2026-10-20T12:00:00.000Z");
+  await expect(lockAdminProjectSubmission(actor(),projectId,submissionId,{reason:"Stale lock"}))
+   .rejects.toThrow("PROJECT_SUBMISSION_INVALID_STATE");
+  state.lockedAt=new Date("2026-10-19T12:00:00.000Z");
+  state.previousReason="Existing lock";state.previousActor=actor().membership!.id;
+  await expect(lockAdminProjectSubmission(actor(),projectId,submissionId,{reason:"Existing lock"}))
+   .rejects.toThrow("PROJECT_SUBMISSION_INVALID_STATE");
+  expect(state.updates).toBe(0);
+  expect(state.deliveryEvents).toBe(0);
+  expect(state.activityEvents).toBe(0);
  });
  it("PROJ-BREAK-state-26 archived project cannot lock or retry an existing final lock",async()=>{
   state.projectStatus="ARCHIVED";
