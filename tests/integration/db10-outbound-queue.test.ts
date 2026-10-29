@@ -135,6 +135,20 @@ afterAll(async () => {
 });
 
 describe("W06 transactional outbound queue security", () => {
+  it("rejects unapproved SMS and WhatsApp invitation commands before SQL", async () => {
+    for (const channel of ["SMS", "WHATSAPP"]) {
+      const sourceEventId = issueId();
+      await expect(queueInIsolatedDatabase(adminA, intent(sourceEventId, {
+        channel, recipient: "+919876543210",
+      }))).rejects.toMatchObject({ code: "INVALID_OUTBOUND_INTENT" });
+      const rows = await pool.query(
+        "select id from outbound_messages where source_event_id=$1",
+        [sourceEventId],
+      );
+      expect(rows.rowCount).toBe(0);
+    }
+  });
+
   it("enqueues ciphertext, returns QUEUED not sent, deduplicates retries", async () => {
     const sourceEventId = issueId();
     const result = await queueInIsolatedDatabase(adminA, intent(sourceEventId));
