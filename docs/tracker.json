@@ -262,7 +262,28 @@
       "title": "Reconcile DB07 projects and history/task invariants",
       "phase": "DATABASE",
       "done": false,
-      "dependsOn": []
+      "dependsOn": [],
+      "sourceProgress": {
+        "state": "SOURCE_PATCHED_NOT_ACCEPTED",
+        "summary": "Mentor reschedule window checked again after row-lock contention, before DB update. Does not complete DB010's full 358-field active-vs-retired semantic reconciliation.",
+        "implementationCommit": "3243c7c108a50736a143ac8a67efa1d44827f217",
+        "sourceTestCommits": [
+          "4140fb6ecf441dba7d1765509e2692b559d4caa5",
+          "c851b23977fb1acec05fccbdcac44c124ab5d6e4"
+        ],
+        "executedEvidence": [
+          {
+            "kind": "EXECUTED_SOURCE_CONTRACT_ONLY",
+            "runner": "Connector V8 read-only checks on current GitHub file blobs",
+            "result": "PASS",
+            "codeBlob": "5d2708355d68a96bf92c001a6d3c656b487373e4"
+          }
+        ],
+        "pending": [
+          "358-field source semantic/disposition reconciliation and owner decisions",
+          "Disposable PG, full application typecheck and mentor workflow integration"
+        ]
+      }
     },
     {
       "id": "DB-011",
@@ -828,7 +849,34 @@
       "title": "Enforce DB07 meeting-linked sprint and task ancestry",
       "phase": "DATABASE",
       "done": false,
-      "dependsOn": []
+      "dependsOn": [],
+      "sourceProgress": {
+        "state": "SOURCE_PATCHED_NOT_ACCEPTED",
+        "summary": "Meeting scheduling now revalidates final supplied or retained sprint/task links under project transaction and parent-row SHARE locks, preserving optional null links. Source tests and PostgreSQL service scenario authored and registered in DB07 parity tests. DB FK registration, PG replay, integration, typecheck and concurrency witnesses remain required.",
+        "implementationCommit": "1ce5131a1570e21b34b4bff471668d7f2a8acb44",
+        "sourceTestCommits": [
+          "b4cc8649311d67027c888801f2a86ccacd76f876",
+          "269ac8943cf7d82e8b9e1c63edec031d828941f8",
+          "c851b23977fb1acec05fccbdcac44c124ab5d6e4"
+        ],
+        "integrationTestCommit": "adb100014ddedfe8602139018512de8ca28f856a",
+        "sourcePassCommit": "c851b23977fb1acec05fccbdcac44c124ab5d6e4",
+        "executedEvidence": [
+          {
+            "kind": "EXECUTED_SOURCE_CONTRACT_ONLY",
+            "runner": "Connector V8 read-only checks on current GitHub file blobs",
+            "result": "PASS",
+            "checks": 6,
+            "codeBlob": "a1bce3c325dc6892d5e9301e26a1503398667795"
+          }
+        ],
+        "pending": [
+          "L01 registered DB075 composite-FK migration and clean journal replay",
+          "Disposable PG negative and concurrency witnesses",
+          "Project meeting service integration tests",
+          "Full typecheck/lint/CI and cross-role browser acceptance"
+        ]
+      }
     },
     {
       "id": "DB-076",
