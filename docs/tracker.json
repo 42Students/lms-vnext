@@ -1952,8 +1952,9 @@
           "drizzle/**"
         ],
         "reason": "DB-031 source/runtime mismatch: src/modules/messaging/provider-acceptance-model.ts treats an Exotel Sid up to 128 opaque chars as provider-accepted, while registered 0162 messaging_sms_delivery_attempts.provider_message_id and L09 SMS attempt writer allow only 64. A valid 65-128-character provider receipt can be accepted by transport but fail audit persistence. Coordinate widening to varchar(128), exact registered PG replay and existing consumers; L09 will update validator to 128 only after migration is applied. Never truncate/hash provider identifiers or mislabel accepted sends as failed.",
-        "status": "REQUESTED",
-        "requestedAt": "2026-10-29T05:37:04.055Z"
+        "status": "ACCEPTED",
+        "requestedAt": "2026-10-29T05:37:04.055Z",
+        "integratorReview": "L01 confirms real 64/128 mismatch: Exotel provider-acceptance-model.ts accepts opaque Sid up to 128; registered 0162_lane15_sms_attempt_audit.sql defines messaging_sms_delivery_attempts.provider_message_id varchar(64), canonical src/db/schema/messaging-receipts.ts uses varchar(64) and the existing helper silently slice(0,64). Additional blocker: Drizzle 0162 AND current 0311 head snapshot omit public.messaging_sms_delivery_attempts although 0162 SQL registers it and src/db/schema/index.ts exports messaging-receipts. Do NOT generate a naive CREATE TABLE/double registration, rewrite historical snapshots, truncate IDs, activate widened writer, or mark DB-031 done. Reconcile missing snapshot/table structural drift against current PG catalog and an exact fresh generated migration, prepare forward-only varchar(128) widening, update helper/worker together with L09, run zero-to-head disposable PG17 replay, no-drift and 65/128-character receipt negative/positive witnesses before promotion."
       }
     ],
     "coordination": {
