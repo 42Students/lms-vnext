@@ -44,7 +44,7 @@ function fakeVerifiedDb(snapshotKey:string|null,locked=true){
 }
 
 beforeEach(()=>{
- vi.clearAllMocks();
+ vi.resetAllMocks();
  vi.stubEnv("TPO_CAMPAIGN_RECIPIENT_TOKEN_SECRET",secret);
  vi.stubEnv("DB10_GLOBAL_EMAIL_HMAC_KEY_BASE64",globalKey);
 });
@@ -54,7 +54,7 @@ describe("L08 / DB-050 campaign opt-outs use verified snapshots before global su
  it("persistently suppresses exactly the original verified email, even on an idempotent replay",async()=>{
   const savedKey=issueTpoCampaignEmailRecipientKey(email,secret);
   const db=fakeVerifiedDb(savedKey);
-  vi.mocked(persistVerifiedGlobalEmailSuppression).mockResolvedValue();
+  vi.mocked(persistVerifiedGlobalEmailSuppression).mockResolvedValue(undefined);
   await expect(unsubscribeTpoCampaignRecipient(token)).resolves.toEqual({unsubscribed:true});
   const recipientHash=deriveGlobalEmailSuppressionHashForAddress(email,globalKey);
   expect(persistVerifiedGlobalEmailSuppression).toHaveBeenCalledExactlyOnceWith({
