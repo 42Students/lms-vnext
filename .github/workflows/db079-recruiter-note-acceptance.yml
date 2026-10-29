@@ -62,11 +62,23 @@ jobs:
         run: npm run db:test:prepare
       - name: Verify registered migration idempotence
         run: npm run db:migrate
-      - name: DB079 recruiter private note active-grant and revoked-edit negatives
-        run: node tests/db09-recruiter-note-registered-pg-acceptance.mjs
-      - name: DB061 TPO message sender, chronology and revoke negatives
-        run: node tests/db09-message-registered-pg-acceptance.mjs
-      - name: DB056 DB057 scoped CRM principal and read negatives
-        run: node tests/db09-collaboration-registered-pg-acceptance.mjs
-      - name: DB059 DB060 secure share immutable lifecycle negatives
-        run: node tests/db09-share-registered-pg-acceptance.mjs
+      - name: DB09 registered private note, message, CRM and share negatives
+        run: |
+          # Run every independent rollback-only witness against the same
+          # seeded disposable PG17 database, even if an earlier one fails.
+          # Preserve an overall nonzero exit code unless all four pass.
+          set +e
+          failed=0
+          for witness in \
+            tests/db09-recruiter-note-registered-pg-acceptance.mjs \
+            tests/db09-message-registered-pg-acceptance.mjs \
+            tests/db09-collaboration-registered-pg-acceptance.mjs \
+            tests/db09-share-registered-pg-acceptance.mjs; do
+            echo "::group::Running ${witness}"
+            node "${witness}"
+            result=$?
+            echo "::endgroup::"
+            echo "DB09 witness ${witness} exit: ${result}"
+            if [ "${result}" -ne 0 ]; then failed=1; fi
+          done
+          exit "$failed"
