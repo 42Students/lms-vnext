@@ -63,6 +63,7 @@ test("DB035 grade history is versioned, tenant scoped and publisher-aware", () =
     "role = 'SUPER_ADMIN'",
     "GRADE",
     "REGRADE",
+    "HIDE_GRADE",
     "PUBLISH_GRADE",
   ]) {
     assert.ok(sql.includes(token), token);
@@ -97,12 +98,27 @@ test("DB035 grading mutations require matching immutable events at commit", () =
   );
   assert.match(
     sql,
-    /expected_action = 'PUBLISH_GRADE'[\s\S]*e\.actor_user_id = NEW\.graded_by_user_id/,
+    /expected_action IN \('PUBLISH_GRADE','HIDE_GRADE'\)[\s\S]*e\.actor_user_id = NEW\.graded_by_user_id/,
   );
   assert.doesNotMatch(
     sql,
     /CREATE CONSTRAINT TRIGGER db06_assignment_grade_event_required[\s\S]{0,100}UPDATE OF/,
   );
+});
+
+test("DB035 HIDE_GRADE is a restricted reverse publication, not a regrade",()=>{
+  const hideShape=sql.split("(action = 'HIDE_GRADE'")[1]
+    ?.split("CREATE UNIQUE INDEX assignment_grade_events_submission_version_uq")[0]??"";
+  assert.match(sql,/CHECK \(action IN \('GRADE','REGRADE','HIDE_GRADE','PUBLISH_GRADE'\)\)/);
+  assert.match(hideShape,/previous_grade_published = true/);
+  assert.match(hideShape,/new_grade_published = false/);
+  assert.match(hideShape,/previous_points IS NOT DISTINCT FROM new_points/);
+  assert.match(hideShape,/previous_feedback IS NOT DISTINCT FROM new_feedback/);
+  assert.match(hideShape,/previous_graded_by_user_id IS NOT DISTINCT FROM new_graded_by_user_id/);
+  assert.match(hideShape,/previous_graded_at IS NOT DISTINCT FROM new_graded_at/);
+  assert.match(sql,/THEN 'HIDE_GRADE'/);
+  assert.match(sql,/expected_action IN \('PUBLISH_GRADE','HIDE_GRADE'\)/);
+  assert.match(sql,/drizzle\/0205_lane15_assignment_grade_events\.sql/);
 });
 
 test("DB035 attendance corrections use optimistic versions and deferred event completeness", () => {
