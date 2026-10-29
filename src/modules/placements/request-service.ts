@@ -36,6 +36,7 @@ import {
   type RequestContext,
 } from "@/modules/identity/context";
 import { AuthorizationError } from "@/modules/permissions/policy";
+import {assertPersistedPlatformPermission} from "@/modules/permissions/persisted-actor";
 import { PlacementsServiceError } from "./errors";
 import { requireLearnerPlacementAccess } from "./learner-participation-guard";
 import {learnerPlacementRoundDeadlineAvailable} from "./learner-assessment-deadline-readiness";
@@ -1015,6 +1016,37 @@ export async function actOnPlacementRequest(
         "PLACEMENT_REQUEST_INVALID_STATE",
       );
     }
+
+    // DB-066: the preflight context is advisory. A concurrent SQL writer
+    // could retarget a request after that read but before this row lock.
+    // Never apply, reject or cancel a decision against a different parent.
+    if (request.applicationId !== current.application.id ||
+        request.requestType !== current.request.requestType ||
+        request.roundId !== current.request.roundId ||
+        request.offerId !== current.request.offerId) {
+      throw new PlacementsServiceError("PLACEMENT_REQUEST_TARGET_MISMATCH");
+    }
+    const [persistedApplication] = await tx.select({
+      id:placementApplications.id,
+      jobId:placementApplications.jobId,
+      membershipId:placementApplications.membershipId,
+    }).from(placementApplications).where(
+      eq(placementApplications.id,request.applicationId)
+    ).for("share").limit(1);
+    if (!persistedApplication ||
+        persistedApplication.jobId !== current.job.id ||
+        persistedApplication.membershipId !== current.application.membershipId) {
+      throw new PlacementsServiceError("PLACEMENT_REQUEST_TARGET_MISMATCH");
+    }
+
+    // The request can remain open after membership suspension, role removal
+    // or account disablement. Rebuild permissions from locked persisted rows,
+    // so any racing revoke either precedes this decision or waits for commit.
+    const requiredPermission = input.action === "CANCEL"
+      ? "placements.read" as const : "placements.manage" as const;
+    await assertPersistedPlatformPermission(tx,context,requiredPermission,{
+      collegeId:current.job.collegeId,
+    });
 
     const now = new Date();
     let nextStatus:
