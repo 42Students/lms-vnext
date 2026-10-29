@@ -1,5 +1,5 @@
 import {describe,expect,it} from "vitest";
-import {adminAttendanceCorrectionChange,adminAttendanceRecordTokenMatches} from "@/modules/attendance/admin-correction-change-model";
+import {adminAttendanceCorrectionChange,adminAttendanceRecordTokenMatches,adminAttendanceAuditEventType} from "@/modules/attendance/admin-correction-change-model";
 
 describe("DB06 admin attendance correction change detection",()=>{
   it("does not rewrite unchanged implicit PRESENT or notify a guardian",()=>{
@@ -74,4 +74,18 @@ describe("DB06 admin reviewed-record CAS token",()=>{
     expect(adminAttendanceRecordTokenMatches("2026-10-29T06:30:00Z",null)).toBe(false);
     expect(adminAttendanceRecordTokenMatches(undefined,current)).toBe(true);
   });
+});
+
+describe("DB06 admin attendance audit attribution",()=>{
+ it("records note-only edits without claiming a new absence",()=>{
+  for(const status of ["PRESENT","ABSENT","EXCUSED","MEDICAL","LATE"]){
+   expect(adminAttendanceAuditEventType(false,status)).toBe("ADMIN_ATTENDANCE_NOTE_UPDATED");
+  }
+ });
+ it("retains legacy status transition aliases for existing audit consumers",()=>{
+  expect(adminAttendanceAuditEventType(true,"PRESENT")).toBe("ADMIN_ATTENDANCE_MARK_PRESENT");
+  for(const status of ["ABSENT","EXCUSED","MEDICAL","LATE"]){
+   expect(adminAttendanceAuditEventType(true,status)).toBe("ADMIN_ATTENDANCE_MARK_ABSENT");
+  }
+ });
 });
