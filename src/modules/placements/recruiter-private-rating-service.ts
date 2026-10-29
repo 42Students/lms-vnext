@@ -10,6 +10,7 @@ import {hasActiveRecruiter,type RequestContext} from "@/modules/identity/context
 import {can} from "@/modules/permissions/policy";
 import {PlacementsServiceError} from "./errors";
 import {getRecruiterPlacementWorkspace} from "./recruiter-workspace-service";
+import {placementRecruiterApplicantNotes} from "@/db/schema/tpo-collaboration";
 import {recruiterOwnJobPredicate} from "./recruiter-job-ownership";
 
 export const privateRecruiterRatingSchema=z.strictObject({
@@ -19,6 +20,9 @@ export const privateRecruiterRatingSchema=z.strictObject({
 });
 export class RecruiterPrivateReviewConflict extends Error {
  constructor(){super("The rating was changed. Reload it before saving.");}
+}
+export class RecruiterPrivateReviewMigrationPending extends Error {
+ constructor(){super("This private review requires a verified historical migration before edits.");}
 }
 async function verifyOwnSharedApplication(ctx:RequestContext,jobId:string,applicationId:string){
  if(!hasActiveRecruiter(ctx)||!ctx.recruiter||ctx.recruiter.userId!==ctx.user.id)
@@ -46,13 +50,25 @@ async function verifyOwnSharedApplication(ctx:RequestContext,jobId:string,applic
 export async function readRecruiterPrivateReview(ctx:RequestContext,rawJobId:string,rawApplicationId:string){
  const jobId=z.string().uuid().parse(rawJobId),applicationId=z.string().uuid().parse(rawApplicationId);
  await verifyOwnSharedApplication(ctx,jobId,applicationId);
- const [review]=await getDb().select({rating:placementRecruiterPrivateReviews.rating,
+ // DB062: one authoritative writable table. Read the registered scoped
+ // DB09 record first. Unmigrated legacy private reviews are visible only to
+ // their authorized owner, never silently discarded or rewritten.
+ const [review]=await getDb().select({rating:placementRecruiterApplicantNotes.rating,
+  note:placementRecruiterApplicantNotes.note,updatedAt:placementRecruiterApplicantNotes.updatedAt})
+  .from(placementRecruiterApplicantNotes)
+  .where(and(eq(placementRecruiterApplicantNotes.applicationId,applicationId),
+   eq(placementRecruiterApplicantNotes.jobId,jobId),
+   eq(placementRecruiterApplicantNotes.collegeId,scope.college.id),
+   eq(placementRecruiterApplicantNotes.recruiterUserId,ctx.user.id))).limit(1);
+ if(review)return {rating:review.rating,note:review.note??"",
+  updatedAt:review.updatedAt.toISOString()};
+ const [legacy]=await getDb().select({rating:placementRecruiterPrivateReviews.rating,
   note:placementRecruiterPrivateReviews.note,updatedAt:placementRecruiterPrivateReviews.updatedAt})
   .from(placementRecruiterPrivateReviews)
   .where(and(eq(placementRecruiterPrivateReviews.applicationId,applicationId),
    eq(placementRecruiterPrivateReviews.recruiterUserId,ctx.user.id))).limit(1);
- return {rating:review?.rating??null,note:review?.note??"",
-  updatedAt:review?.updatedAt.toISOString()??null};
+ return {rating:legacy?.rating??null,note:legacy?.note??"",
+  updatedAt:legacy?.updatedAt.toISOString()??null};
 }
 export async function writeRecruiterPrivateReview(ctx:RequestContext,rawJobId:string,
  rawApplicationId:string,raw:unknown){
@@ -107,28 +123,52 @@ export async function writeRecruiterPrivateReview(ctx:RequestContext,rawJobId:st
     eq(placementApplicationScreenings.status,"SHORTLISTED")))
    .for("update").limit(1);
   if(!owned)throw new PlacementsServiceError("PLACEMENT_APPLICATION_NOT_FOUND");
-  const [current]=await tx.select({id:placementRecruiterPrivateReviews.id,
-   updatedAt:placementRecruiterPrivateReviews.updatedAt})
+  // Never make the old table a second authority. An existing legacy-only
+  // note must be backfilled through a reviewed provenance-aware migration;
+  // do not erase or overwrite it with a deceptively fresh DB09 record.
+  const [legacy]=await tx.select({id:placementRecruiterPrivateReviews.id})
    .from(placementRecruiterPrivateReviews)
    .where(and(eq(placementRecruiterPrivateReviews.applicationId,applicationId),
-    eq(placementRecruiterPrivateReviews.recruiterUserId,ctx.user.id))).limit(1);
+    eq(placementRecruiterPrivateReviews.recruiterUserId,ctx.user.id)))
+   .for("share").limit(1);
+  if(legacy)throw new RecruiterPrivateReviewMigrationPending();
+  const target=and(eq(placementRecruiterApplicantNotes.applicationId,applicationId),
+   eq(placementRecruiterApplicantNotes.jobId,jobId),
+   eq(placementRecruiterApplicantNotes.collegeId,scope.college.id),
+   eq(placementRecruiterApplicantNotes.recruiterUserId,ctx.user.id));
+  const [current]=await tx.select({id:placementRecruiterApplicantNotes.id,
+   updatedAt:placementRecruiterApplicantNotes.updatedAt})
+   .from(placementRecruiterApplicantNotes).where(target).for("update").limit(1);
   if((current?.updatedAt.toISOString()??null)!==input.expectedUpdatedAt)
    throw new RecruiterPrivateReviewConflict();
-  if(current){
-   const [updated]=await tx.update(placementRecruiterPrivateReviews).set({
-    rating:input.rating,note:input.note,
-    updatedAt:sql`greatest(clock_timestamp(),${placementRecruiterPrivateReviews.updatedAt} + interval '1 millisecond')`,
-   }).where(eq(placementRecruiterPrivateReviews.id,current.id))
-    .returning({rating:placementRecruiterPrivateReviews.rating,
-     note:placementRecruiterPrivateReviews.note,updatedAt:placementRecruiterPrivateReviews.updatedAt});
-   if(!updated)throw new RecruiterPrivateReviewConflict();
-   return {rating:updated.rating,note:updated.note,updatedAt:updated.updatedAt.toISOString()};
+  // DB09 CHECK requires a rating or nonblank note. Clearing both deletes
+  // the caller-owned row after the same grant/candidate locks; never emit
+  // an invalid placeholder or a synthetic rating.
+  if(input.rating===null && input.note===""){
+   if(current){
+    const [cleared]=await tx.delete(placementRecruiterApplicantNotes)
+     .where(and(eq(placementRecruiterApplicantNotes.id,current.id),target))
+     .returning({id:placementRecruiterApplicantNotes.id});
+    if(!cleared)throw new RecruiterPrivateReviewConflict();
+   }
+   return {rating:null,note:"",updatedAt:null};
   }
-  const [created]=await tx.insert(placementRecruiterPrivateReviews).values({
-   applicationId,recruiterUserId:ctx.user.id,rating:input.rating,note:input.note,
-  }).returning({rating:placementRecruiterPrivateReviews.rating,
-   note:placementRecruiterPrivateReviews.note,updatedAt:placementRecruiterPrivateReviews.updatedAt});
+  if(current){
+   const [updated]=await tx.update(placementRecruiterApplicantNotes).set({
+    rating:input.rating,note:input.note,
+    updatedAt:sql`greatest(clock_timestamp(),${placementRecruiterApplicantNotes.updatedAt} + interval '1 millisecond')`,
+   }).where(and(eq(placementRecruiterApplicantNotes.id,current.id),target))
+    .returning({rating:placementRecruiterApplicantNotes.rating,
+     note:placementRecruiterApplicantNotes.note,updatedAt:placementRecruiterApplicantNotes.updatedAt});
+   if(!updated)throw new RecruiterPrivateReviewConflict();
+   return {rating:updated.rating,note:updated.note??"",updatedAt:updated.updatedAt.toISOString()};
+  }
+  const [created]=await tx.insert(placementRecruiterApplicantNotes).values({
+   applicationId,jobId,collegeId:scope.college.id,
+   recruiterUserId:ctx.user.id,rating:input.rating,note:input.note,
+  }).returning({rating:placementRecruiterApplicantNotes.rating,
+   note:placementRecruiterApplicantNotes.note,updatedAt:placementRecruiterApplicantNotes.updatedAt});
   if(!created)throw new RecruiterPrivateReviewConflict();
-  return {rating:created.rating,note:created.note,updatedAt:created.updatedAt.toISOString()};
+  return {rating:created.rating,note:created.note??"",updatedAt:created.updatedAt.toISOString()};
  });
 }
