@@ -2,6 +2,7 @@ import "server-only";
 import {sql} from "drizzle-orm";
 import {getDb} from "@/db/client";
 import {outboundQueueRuntimeEnabled,outboundDispatchRuntimeEnabled} from "./outbound-delivery-queue";
+import {deriveGlobalEmailSuppressionHashForAddress} from "./outbound-delivery-envelope";
 
 /** No email may be dispatched based on an unverified local suppression table.
  * Global recipient HMAC suppression and the provider's pre-send fence must
@@ -12,7 +13,15 @@ export function globalEmailSuppressionActivationState(){
  const dispatcherReady=outboundDispatchRuntimeEnabled();
  const senderVerified=process.env["DB10_EMAIL_SENDER_VERIFIED"]==="DB10_VERIFIED";
  const migrationVerified=process.env["DB10_GLOBAL_SUPPRESSION_VERIFIED"]==="DB10_VERIFIED";
- const keyConfigured=Boolean(process.env["DB10_GLOBAL_EMAIL_HMAC_KEY_BASE64"]);
+ // A nonempty string is not proof of a canonical 32-byte HMAC secret.
+ // Validate BEFORE claim acquisition: malformed deployment secrets must not
+ // strand the first pending EMAIL row in a claim that cannot be completed.
+ let keyConfigured=false;
+ try{
+  deriveGlobalEmailSuppressionHashForAddress(
+   "readiness@example.org",process.env["DB10_GLOBAL_EMAIL_HMAC_KEY_BASE64"]??"");
+  keyConfigured=true;
+ }catch{keyConfigured=false;}
  return {
   active:queueReady&&dispatcherReady&&senderVerified&&migrationVerified&&keyConfigured,
   queueReady,dispatcherReady,senderVerified,migrationVerified,keyConfigured,
