@@ -42,6 +42,7 @@ import {
 } from "@/modules/courses/delivery-roster";
 import { indiaAttendanceMonthWindow } from "./month-window";
 import {enqueueAttendanceParentSms,dispatchQueuedAttendanceParentSms} from "./parent-sms-service";
+import {legacyFormalTitle} from "@/modules/courses/course-legacy-parity-model";
 
 
 /** Options are independent reads. A failed class-offering query must never
@@ -171,6 +172,7 @@ export async function getAdminAttendanceOptions(
           sectionCode: sections.code,
           courseId: courses.id,
           courseName: courses.name,
+          courseShortTitle: courses.shortTitle,
           courseCode: courses.code,
           offeringType:courseOfferings.type,
           isPast:sql<boolean>`(${courseSectionDeliveries.endedAt} is not null or ${academicPeriods.endDate} < (now() at time zone 'Asia/Kolkata')::date)`,
@@ -241,6 +243,7 @@ export async function getAdminAttendanceOptions(
           id: courses.id,
           code: courses.code,
           name: courses.name,
+          shortTitle: courses.shortTitle,
         })
         .from(courses)
         .innerJoin(departments, eq(departments.id, courses.departmentId))
@@ -267,8 +270,17 @@ export async function getAdminAttendanceOptions(
         eligibilityThresholdPercent: 75,
         correctionWindowHours: 24,
       },
-    deliveries,
-    courses: allCourses,
+    deliveries: deliveries.map(({courseShortTitle,...delivery}) => ({
+      ...delivery,
+      // Legacy formal_title is shortTitle when non-null, otherwise name.
+      formalTitle: legacyFormalTitle({
+        name: delivery.courseName, shortTitle: courseShortTitle,
+      }),
+    })),
+    courses: allCourses.map(({shortTitle,...course}) => ({
+      ...course,
+      formalTitle: legacyFormalTitle({name: course.name,shortTitle}),
+    })),
   };
 }
 
