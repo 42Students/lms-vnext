@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useState } from "react";
 import {Button} from "@/components/ui/button";
 import {Input} from "@/components/ui/input";
+import {learnerGalleryConfirmationError} from "@/modules/profile-verification/learner-image-gallery-parity-model";
 
 type Image = { id: string; imageId: string | number; displayOrder: number; isActive: boolean };
 export function LearnerImageGallery({ membershipId }: { membershipId?: string }) {
@@ -49,7 +50,12 @@ export function LearnerImageGallery({ membershipId }: { membershipId?: string })
       method: "POST", headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ action: "CONFIRM", objectKey }),
     });
-    if (!response.ok) throw new Error("The image is awaiting its private security scan. Retry verification.");
+    if (!response.ok) {
+      const body: unknown = await response.json().catch(() => null);
+      const code = body && typeof body === "object" && "error" in body &&
+        typeof body.error === "string" ? body.error : undefined;
+      throw new Error(learnerGalleryConfirmationError(response.status, code));
+    }
     setPendingObjectKey(null);
     setSelectedFile(null);
     await load();
