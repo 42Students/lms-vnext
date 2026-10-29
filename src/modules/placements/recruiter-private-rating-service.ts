@@ -47,38 +47,17 @@ async function verifyOwnSharedApplication(ctx:RequestContext,jobId:string,applic
  if(!row)throw new PlacementsServiceError("PLACEMENT_APPLICATION_NOT_FOUND");
  return workspace;
 }
-export async function readRecruiterPrivateReview(ctx:RequestContext,rawJobId:string,rawApplicationId:string){
- const jobId=z.string().uuid().parse(rawJobId),applicationId=z.string().uuid().parse(rawApplicationId);
- const scope=await verifyOwnSharedApplication(ctx,jobId,applicationId);
- // DB062: one authoritative writable table. Read the registered scoped
- // DB09 record first. Unmigrated legacy private reviews are visible only to
- // their authorized owner, never silently discarded or rewritten.
- const [review]=await getDb().select({rating:placementRecruiterApplicantNotes.rating,
-  note:placementRecruiterApplicantNotes.note,updatedAt:placementRecruiterApplicantNotes.updatedAt})
-  .from(placementRecruiterApplicantNotes)
-  .where(and(eq(placementRecruiterApplicantNotes.applicationId,applicationId),
-   eq(placementRecruiterApplicantNotes.jobId,jobId),
-   eq(placementRecruiterApplicantNotes.collegeId,scope.college.id),
-   eq(placementRecruiterApplicantNotes.recruiterUserId,ctx.user.id))).limit(1);
- if(review)return {rating:review.rating,note:review.note??"",
-  updatedAt:review.updatedAt.toISOString()};
- const [legacy]=await getDb().select({rating:placementRecruiterPrivateReviews.rating,
-  note:placementRecruiterPrivateReviews.note,updatedAt:placementRecruiterPrivateReviews.updatedAt})
-  .from(placementRecruiterPrivateReviews)
-  .where(and(eq(placementRecruiterPrivateReviews.applicationId,applicationId),
-   eq(placementRecruiterPrivateReviews.recruiterUserId,ctx.user.id))).limit(1);
- return {rating:legacy?.rating??null,note:legacy?.note??"",
-  updatedAt:legacy?.updatedAt.toISOString()??null};
-}
-export async function writeRecruiterPrivateReview(ctx:RequestContext,rawJobId:string,
- rawApplicationId:string,raw:unknown){
- const jobId=z.string().uuid().parse(rawJobId),applicationId=z.string().uuid().parse(rawApplicationId);
- const input=privateRecruiterRatingSchema.parse(raw);
- const scope=await verifyOwnSharedApplication(ctx,jobId,applicationId);
- return getDb().transaction(async tx=>{
-  // Lock the candidate before an optimistic write, so two reviewer tabs
-  // cannot silently replace each other's note or rating.
-  const [owned]=await tx.select({id:placementApplications.id})
+type PrivateReviewTx=Parameters<Parameters<ReturnType<typeof getDb>["transaction"]>[0]>[0];
+type PrivateReviewScope=Awaited<ReturnType<typeof verifyOwnSharedApplication>>;
+/**
+ * Locks the same persisted company/job/grant and shortlisted candidate for
+ * both reads and writes. A revocation or ownership change must wait for this
+ * transaction, or be observed and denied before the note is returned.
+ */
+async function lockPrivateReviewScope(tx:PrivateReviewTx,ctx:RequestContext,
+ jobId:string,applicationId:string,scope:PrivateReviewScope,
+ lock:"share"|"update"){
+ const query=tx.select({id:placementApplications.id})
    .from(placementApplications)
    .innerJoin(placementJobs,eq(placementJobs.id,placementApplications.jobId))
    .innerJoin(placementApplicationScreenings,
@@ -121,8 +100,48 @@ export async function writeRecruiterPrivateReview(ctx:RequestContext,rawJobId:st
     recruiterOwnJobPredicate(ctx.user.id),
     eq(placementApplications.status,"SUBMITTED"),
     eq(placementApplicationScreenings.status,"SHORTLISTED")))
-   .for("update").limit(1);
-  if(!owned)throw new PlacementsServiceError("PLACEMENT_APPLICATION_NOT_FOUND");
+;
+
+ const [owned]=lock==="update"
+  ?await query.for("update").limit(1)
+  :await query.for("share").limit(1);
+ if(!owned)throw new PlacementsServiceError("PLACEMENT_APPLICATION_NOT_FOUND");
+}
+export async function readRecruiterPrivateReview(ctx:RequestContext,rawJobId:string,rawApplicationId:string){
+ const jobId=z.string().uuid().parse(rawJobId),applicationId=z.string().uuid().parse(rawApplicationId);
+ const scope=await verifyOwnSharedApplication(ctx,jobId,applicationId);
+ return getDb().transaction(async tx=>{
+ await lockPrivateReviewScope(tx,ctx,jobId,applicationId,scope,"share");
+ // DB062: one authoritative writable table. Read the registered scoped
+ // DB09 record first. Unmigrated legacy private reviews are visible only to
+ // their authorized owner, never silently discarded or rewritten.
+ const [review]=await tx.select({rating:placementRecruiterApplicantNotes.rating,
+  note:placementRecruiterApplicantNotes.note,updatedAt:placementRecruiterApplicantNotes.updatedAt})
+  .from(placementRecruiterApplicantNotes)
+  .where(and(eq(placementRecruiterApplicantNotes.applicationId,applicationId),
+   eq(placementRecruiterApplicantNotes.jobId,jobId),
+   eq(placementRecruiterApplicantNotes.collegeId,scope.college.id),
+   eq(placementRecruiterApplicantNotes.recruiterUserId,ctx.user.id))).limit(1);
+ if(review)return {rating:review.rating,note:review.note??"",
+  updatedAt:review.updatedAt.toISOString()};
+ const [legacy]=await tx.select({rating:placementRecruiterPrivateReviews.rating,
+  note:placementRecruiterPrivateReviews.note,updatedAt:placementRecruiterPrivateReviews.updatedAt})
+  .from(placementRecruiterPrivateReviews)
+  .where(and(eq(placementRecruiterPrivateReviews.applicationId,applicationId),
+   eq(placementRecruiterPrivateReviews.recruiterUserId,ctx.user.id))).limit(1);
+ return {rating:legacy?.rating??null,note:legacy?.note??"",
+  updatedAt:legacy?.updatedAt.toISOString()??null};
+ });
+}
+export async function writeRecruiterPrivateReview(ctx:RequestContext,rawJobId:string,
+ rawApplicationId:string,raw:unknown){
+ const jobId=z.string().uuid().parse(rawJobId),applicationId=z.string().uuid().parse(rawApplicationId);
+ const input=privateRecruiterRatingSchema.parse(raw);
+ const scope=await verifyOwnSharedApplication(ctx,jobId,applicationId);
+ return getDb().transaction(async tx=>{
+  // Lock the candidate before an optimistic write, so two reviewer tabs
+  // cannot silently replace each other's note or rating.
+  await lockPrivateReviewScope(tx,ctx,jobId,applicationId,scope,"update");
   // Never make the old table a second authority. An existing legacy-only
   // note must be backfilled through a reviewed provenance-aware migration;
   // do not erase or overwrite it with a deceptively fresh DB09 record.
