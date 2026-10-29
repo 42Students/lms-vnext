@@ -245,11 +245,24 @@ async function main() {
   const nodeVersion = process.version;
   let npmVersion = null;
   let gitSha = null;
+  let sourceTreeClean = false;
   let provider = null;
   let failure = null;
 
   try {
     gitSha = shellText("git", ["rev-parse", "HEAD"]);
+    // A SHA cannot certify code if tests execute from a modified checkout.
+    // Fail before Docker startup or a supplied PostgreSQL version probe, and
+    // never print untracked filenames (they may contain sensitive data).
+    const dirtyEntries = shellText("git", [
+      "status", "--porcelain=v1", "--untracked-files=normal",
+    ]);
+    if (dirtyEntries) {
+      throw new Error(
+        "Independent database verification requires a clean tracked and untracked source tree",
+      );
+    }
+    sourceTreeClean = true;
     npmVersion = shellText("npm", ["--version"]);
 
     if (databaseUrl) {
@@ -370,6 +383,7 @@ async function main() {
       schemaVersion: 1,
       purpose: "CI-independent disposable PostgreSQL verification",
       gitSha,
+      sourceTreeClean,
       startedAt,
       finishedAt: new Date().toISOString(),
       nodeVersion,
@@ -381,6 +395,7 @@ async function main() {
       databaseUrlRedacted: redactDatabaseUrl(databaseUrl),
       steps: results,
       passed:
+        sourceTreeClean &&
         failure === null &&
         provider !== null &&
         results.length === 10 &&
