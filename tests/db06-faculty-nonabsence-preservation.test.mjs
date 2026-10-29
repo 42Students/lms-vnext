@@ -33,9 +33,13 @@ test("DB06 faculty correction plans only changed records and retains immutable p
   assert.match(planner, /ATTENDANCE_DUPLICATE_CURRENT_RECORD/);
 });
 
-test("DB06 administrator corrections keep explicit PRESENT history parents", () => {
-  assert.match(admin, /if \(input.status === "PRESENT"\)/);
-  assert.match(admin, /\.where\(eq\(attendanceRecords.id, priorRecord.id\)\)/);
+test("DB06 administrator corrections keep stable row identity and review-note edits", () => {
+  assert.match(admin, /adminAttendanceCorrectionChange\(/);
+  assert.match(admin, /if\(priorRecord\)/);
+  assert.match(admin, /\.where\(eq\(attendanceRecords.id,priorRecord.id\)\)/);
+  assert.match(admin, /note:change.nextNote/);
+  assert.match(admin, /change.shouldNotifyAbsent/);
+  assert.match(admin, /change.shouldNotifyCorrected/);
   assert.doesNotMatch(admin, /\.delete\(attendanceRecords\)/);
 });
 
