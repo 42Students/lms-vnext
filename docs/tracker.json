@@ -1904,8 +1904,9 @@
           "scripts/db-independent-verify.mjs"
         ],
         "reason": "DB-059/DB-060 registered PostgreSQL secure-share lifecycle witness added on main: share CREATED and REVOKED deferred-event completeness, immutable snapshot, code rotation, one-way revocation, same-college TPO creator and append-only events; standalone rollback-only disposable DB tests. Integrate/run after fresh journal replay + canonical seed with DB09_ISOLATED_TEST_DATABASE=1. Share exact command/results and current code SHA for L08 acceptance review; existing DB09 collaboration witness is tracked by separate accepted L01 handoff.",
-        "status": "REQUESTED",
-        "requestedAt": "2026-10-29T05:34:42.957Z"
+        "status": "ACCEPTED",
+        "requestedAt": "2026-10-29T05:34:42.957Z",
+        "integratorReview": "L01 accepts DB09 secure-share registered PostgreSQL witness into pending independent execution queue. Source is authored rollback-only against guarded disposable target, but no PostgreSQL run/evidence exists. Do not mark DB-059/060 done or add as mandatory green gate until exact-SHA replay, catalog and negative checks pass. L08 retains fixture/domain fixes."
       },
       {
         "id": "SCR-L08-L01-DB09-CI-REGISTRATION-20261029",
@@ -1924,8 +1925,9 @@
           "tests/db09-message-chronology.test.mjs"
         ],
         "reason": "Current npm run test:db:parity explicitly enumerates tests but omits all eight L08 registered DB09 SQL static regressions. L08 updated those suites to inspect registered drizzle/0075; isolated assertion harness saw 54/54 pass, but native node command not yet executed. As package.json and CI verifier are shared, request L01 single-writer registration and actual Node test execution; also wire both opt-in DB09 PostgreSQL witnesses after clean replay with exact per-test results. No DB task DONE until live PostgreSQL/consumer negatives.",
-        "status": "REQUESTED",
-        "requestedAt": "2026-10-29T05:35:26.136Z"
+        "status": "ACCEPTED",
+        "requestedAt": "2026-10-29T05:35:26.136Z",
+        "integratorReview": "L01 registered all 8 L08 static DB09 principal/read/share/chronology regressions into npm run test:db:parity in commit 85bd3e9fbbff1915ee420599d0d937865cdc177f (39 explicit .mjs paths total). Their actual node:test execution and both opt-in PostgreSQL witnesses still require full disposable PG runtime. Do not claim an executed result or DB task closure. L08 owns domain services/tests; L01 retains shared CI wiring."
       },
       {
         "id": "SCR-L08-L07-DB09-SHARE-PRODUCER-20261029",
