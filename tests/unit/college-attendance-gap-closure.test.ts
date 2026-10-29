@@ -41,7 +41,9 @@ describe("College Attendance legacy and graceful-state gaps",()=>{
   expect(s).not.toContain("window.confirm");
   expect(s).toContain('disabled={correcting||refreshing||verifyingRecord');
   expect(s).toContain("Current status");
-  expect(s).toContain("This change is recorded."); 
+  expect(s).toContain("Note edits are also recorded.");
+  expect(s).toContain("Present corrections retain the learner");
+  expect(s).toContain('onClick={()=>void correct(verifiedRecord.status)}'); 
  });
  it("COL-attendance-07 vNext models Excused Medical Late distinctly rather than silently absent",()=>{
   expect(adminAttendanceCellState(a,{status:"EXCUSED"},now).label).toBe("Excused");
