@@ -448,7 +448,28 @@
       "title": "Correct DB10 log-alert account identity and bigint retention semantics",
       "phase": "DATABASE",
       "done": false,
-      "dependsOn": []
+      "dependsOn": [],
+      "implementationCheckpoint": {
+        "status": "IMPLEMENTED_AWAITING_INDEPENDENT_PG_ACCEPTANCE",
+        "verifiedScope": "Exact bigint historical daily/overflow/spike counters; bounded recent threshold; HMAC account identity; out-of-order timestamps.",
+        "sourceChecks": {
+          "executed": 13,
+          "passed": 13,
+          "runner": "connector in-process source-derived V8 (not Vitest/PG)",
+          "sourceSha": "94a759a164cc21ea7efa473850ac360cd0e9571b"
+        },
+        "focusedTests": [
+          "tests/unit/graceful-alert-scheduler.test.ts",
+          "tests/unit/graceful-alert-correlation.test.ts",
+          "tests/unit/log-alert-account-identity.test.ts"
+        ],
+        "openEvidence": [
+          "Execute TypeScript unit suite, registered PostgreSQL history/retention and multithread/identity negative tests at exact current main SHA",
+          "L10 independent DB-023 witness pending"
+        ],
+        "recordedOn": "2026-10-29",
+        "evidenceIsNotAcceptance": true
+      }
     },
     {
       "id": "DB-024",
@@ -549,7 +570,27 @@
       "title": "Stage DB10 privacy-safe SMS provider attempt ledger",
       "phase": "DATABASE",
       "done": false,
-      "dependsOn": []
+      "dependsOn": [],
+      "implementationCheckpoint": {
+        "status": "PARTIAL_IMPLEMENTATION_MIGRATION_BLOCKED",
+        "verifiedScope": "Privacy-safe SMS attempt validation, canonical Exotel SID, explicit safe ledger rejection telemetry, support query.",
+        "sourceChecks": {
+          "executed": 14,
+          "passed": 14,
+          "runner": "connector in-process source-derived V8 (partially covers shared DB-023/DB-050)",
+          "sourceSha": "1670afddebeac0f083e72db1e2c6aeffca208e1d"
+        },
+        "focusedTests": [
+          "tests/unit/sms-attempt-validation.test.ts",
+          "tests/unit/exotel-sms-audit-normalization.test.ts"
+        ],
+        "openEvidence": [
+          "L01 registered provider_message_id width 128 migration not yet applied: Exotel response accepts up to 128, DB insert/validator currently allow 64",
+          "Run focused provider tests and independent disposable PG append/support/privacy/FK tests, then widen validator after column deployment"
+        ],
+        "recordedOn": "2026-10-29",
+        "evidenceIsNotAcceptance": true
+      }
     },
     {
       "id": "DB-032",
@@ -682,7 +723,22 @@
       "title": "Preserve global email opt-out across organizations",
       "phase": "DATABASE",
       "done": false,
-      "dependsOn": []
+      "dependsOn": [],
+      "implementationCheckpoint": {
+        "status": "IMPLEMENTED_AWAITING_REGISTERED_PG_RACE_ACCEPTANCE",
+        "verifiedScope": "Verified global EMAIL opt-out writer; idempotency; optional absent outbox; cancellation of PENDING/RETRY, CLAIMED unchanged; injectable isolated-PG writer; public verified unsubscribe route integration by L08.",
+        "focusedTests": [
+          "tests/unit/global-email-suppression-service.test.ts",
+          "tests/integration/db10-global-email-suppression-service.test.ts",
+          "tests/integration/db10-outbound-queue.test.ts"
+        ],
+        "openEvidence": [
+          "Execute registered disposable PostgreSQL suite with DB10_ISOLATED_TEST_DATABASE=1 and explicit TEST_DATABASE_URL",
+          "L10 independent wrong-binding, cross-tenant, unsubscribe/send race witnesses and authorized opt-out validation"
+        ],
+        "recordedOn": "2026-10-29",
+        "evidenceIsNotAcceptance": true
+      }
     },
     {
       "id": "DB-051",
@@ -828,7 +884,23 @@
       "title": "Stage safe outbound sender claim, fencing and pre-send suppression",
       "phase": "DATABASE",
       "done": false,
-      "dependsOn": []
+      "dependsOn": [],
+      "implementationCheckpoint": {
+        "status": "CODE_READY_AWAITING_SQL_INTEGRATION_AND_PG_FENCING",
+        "verifiedScope": "EMAIL-only queue/worker, exact claim fence, live claim expiry, suppression HMAC key checks, privacy-safe completion, provider uncertainty quarantine and bounded retries.",
+        "focusedTests": [
+          "tests/unit/outbound-dispatch-runner-gates.test.ts",
+          "tests/unit/outbound-dispatch-orchestration.test.ts",
+          "tests/unit/outbound-dispatch-batch.test.ts",
+          "tests/integration/db067-global-email-pre-send.test.ts"
+        ],
+        "openEvidence": [
+          "L01 must register candidate SQL functions and private grants with EMAIL-only claim restriction; current candidate is staged",
+          "L10 independent disposable PG claim/pre-send/late-suppression/concurrency/grants; no provider enabled or live sends"
+        ],
+        "recordedOn": "2026-10-29",
+        "evidenceIsNotAcceptance": true
+      }
     },
     {
       "id": "DB-068",
@@ -2076,7 +2148,8 @@
         ],
         "reason": "Independently verify global email opt-out insert + PENDING/RETRY cancellation on registered disposable PostgreSQL, wrong-email commitment unaffected, CLAIMED quarantined, cross-organization same HMAC suppression, concurrent queue/claim/opt-out race, and no public PII leakage. Service landed in L09; tests/unit/global-email-suppression-service.test.ts authored, not executed. No positive DONE until exact-SHA runtime proof.",
         "status": "REQUESTED",
-        "requestedAt": "2026-10-29T05:32:52.823Z"
+        "requestedAt": "2026-10-29T05:32:52.823Z",
+        "l09Followup": "New isolated test: tests/integration/db10-global-email-suppression-service.test.ts; writer accepts trusted injected disposable PostgreSQL handle; run with opt-in DB10_ISOLATED_TEST_DATABASE=1 and explicit _test database."
       },
       {
         "id": "SCR-L10-L01-INDEPENDENT-PG-20261029",
@@ -2153,7 +2226,8 @@
         "reason": "DB-031 source/runtime mismatch: src/modules/messaging/provider-acceptance-model.ts treats an Exotel Sid up to 128 opaque chars as provider-accepted, while registered 0162 messaging_sms_delivery_attempts.provider_message_id and L09 SMS attempt writer allow only 64. A valid 65-128-character provider receipt can be accepted by transport but fail audit persistence. Coordinate widening to varchar(128), exact registered PG replay and existing consumers; L09 will update validator to 128 only after migration is applied. Never truncate/hash provider identifiers or mislabel accepted sends as failed.",
         "status": "ACCEPTED",
         "requestedAt": "2026-10-29T05:37:04.055Z",
-        "integratorReview": "L01 confirms real 64/128 mismatch: Exotel provider-acceptance-model.ts accepts opaque Sid up to 128; registered 0162_lane15_sms_attempt_audit.sql defines messaging_sms_delivery_attempts.provider_message_id varchar(64), canonical src/db/schema/messaging-receipts.ts uses varchar(64) and the existing helper silently slice(0,64). Additional blocker: Drizzle 0162 AND current 0311 head snapshot omit public.messaging_sms_delivery_attempts although 0162 SQL registers it and src/db/schema/index.ts exports messaging-receipts. Do NOT generate a naive CREATE TABLE/double registration, rewrite historical snapshots, truncate IDs, activate widened writer, or mark DB-031 done. Reconcile missing snapshot/table structural drift against current PG catalog and an exact fresh generated migration, prepare forward-only varchar(128) widening, update helper/worker together with L09, run zero-to-head disposable PG17 replay, no-drift and 65/128-character receipt negative/positive witnesses before promotion."
+        "integratorReview": "L01 confirms real 64/128 mismatch: Exotel provider-acceptance-model.ts accepts opaque Sid up to 128; registered 0162_lane15_sms_attempt_audit.sql defines messaging_sms_delivery_attempts.provider_message_id varchar(64), canonical src/db/schema/messaging-receipts.ts uses varchar(64) and the existing helper silently slice(0,64). Additional blocker: Drizzle 0162 AND current 0311 head snapshot omit public.messaging_sms_delivery_attempts although 0162 SQL registers it and src/db/schema/index.ts exports messaging-receipts. Do NOT generate a naive CREATE TABLE/double registration, rewrite historical snapshots, truncate IDs, activate widened writer, or mark DB-031 done. Reconcile missing snapshot/table structural drift against current PG catalog and an exact fresh generated migration, prepare forward-only varchar(128) widening, update helper/worker together with L09, run zero-to-head disposable PG17 replay, no-drift and 65/128-character receipt negative/positive witnesses before promotion.",
+        "l09Followup": "Provider SID 65-128 is now explicitly logged as safe audit validation failure, never truncated: still must register varchar128 and coordinate validator update; tests/unit/exotel-sms-audit-normalization.test.ts covers mismatch."
       },
       {
         "id": "L04-L01-DB008-DIRECT-LINK-GATE-PG-20261029",
@@ -2182,7 +2256,8 @@
         ],
         "reason": "Independently execute DB-023 source/functional and disposable PG acceptance: bigint occurrenceCount > MAX_SAFE_INTEGER; exact daily digest totals and top counts; HMAC identity compatibility across colleges and malformed identity fail-closed; out-of-order event history, multiple writers and account dedupe. L09 source changes are code-only; no DB-023 closure until exact-SHA migration/replay/concurrency evidence.",
         "status": "REQUESTED",
-        "requestedAt": "2026-10-29T06:20:00.000Z"
+        "requestedAt": "2026-10-29T06:20:00.000Z",
+        "l09Followup": "Current source now maps log daily occurrence/spike and overflow counters to BigInt; add exact >MAX_SAFE_INTEGER disposable PostgreSQL audit and runtime functional regression."
       },
       {
         "id": "SCR-L09-L10-DB031-20261029",
