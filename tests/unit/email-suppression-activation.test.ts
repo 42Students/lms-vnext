@@ -23,6 +23,7 @@ const flagNames=[
  "DB10_EMAIL_SENDER_VERIFIED",
  "DB10_GLOBAL_SUPPRESSION_VERIFIED",
  "DB10_GLOBAL_EMAIL_HMAC_KEY_BASE64",
+ "DB10_OUTBOUND_ENCRYPTION_KEY_BASE64",
 ] as const;
 const original=Object.fromEntries(flagNames.map(key=>[key,process.env[key]]));
 
@@ -36,6 +37,7 @@ describe("DB-050 EMAIL sender preflight before provider claims",()=>{
   process.env["DB10_EMAIL_SENDER_VERIFIED"]="DB10_VERIFIED";
   process.env["DB10_GLOBAL_SUPPRESSION_VERIFIED"]="DB10_VERIFIED";
   process.env["DB10_GLOBAL_EMAIL_HMAC_KEY_BASE64"]=Buffer.alloc(32,81).toString("base64");
+  process.env["DB10_OUTBOUND_ENCRYPTION_KEY_BASE64"]=Buffer.alloc(32,82).toString("base64");
  });
  afterEach(()=>{
   for(const key of flagNames){
@@ -55,6 +57,15 @@ describe("DB-050 EMAIL sender preflight before provider claims",()=>{
   });
   expect(mock.execute).not.toHaveBeenCalled();
  });
+ it("refuses key reuse that would erase global opt-outs during encryption rotation",()=>{
+  process.env["DB10_GLOBAL_EMAIL_HMAC_KEY_BASE64"]=
+   process.env["DB10_OUTBOUND_ENCRYPTION_KEY_BASE64"];
+  expect(globalEmailSuppressionActivationState()).toMatchObject({
+   active:false,keyConfigured:false,
+  });
+  expect(mock.getDb).not.toHaveBeenCalled();
+ });
+
  it("blocks unapproved sender or global suppression migration even with a good HMAC",()=>{
   delete process.env["DB10_EMAIL_SENDER_VERIFIED"];
   expect(globalEmailSuppressionActivationState().active).toBe(false);
