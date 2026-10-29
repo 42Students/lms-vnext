@@ -47,9 +47,9 @@ describe("DB-050 verified global EMAIL suppression persistence", () => {
       { recipientHash, reason: "ADMIN_BLOCK" },
       { recipientHash, reason: "BOUNCE", sourceEventId: "not-a-uuid" },
       { recipientHash: "A".repeat(64), reason: "COMPLAINT" },
-    ] as never[];
+    ] as unknown[];
     for (const data of invalid) {
-      await expect(persistVerifiedGlobalEmailSuppression(data))
+      await expect(persistVerifiedGlobalEmailSuppression(data as never))
         .rejects.toBeInstanceOf(GlobalEmailSuppressionUnavailable);
     }
     expect(mocks.getDb).not.toHaveBeenCalled();
