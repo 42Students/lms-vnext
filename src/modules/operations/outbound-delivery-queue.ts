@@ -9,6 +9,10 @@ import {
   parseOutboundIntent,
 } from "./outbound-delivery-contract";
 import { bindGlobalEmailSuppressionHashToOutbox, deriveGlobalEmailSuppressionHash, sealOutboundDelivery } from "./outbound-delivery-envelope";
+import {
+  validOutboundCompletion,
+  type OutboundCompletionInput,
+} from "./outbound-dispatch-completion";
 
 /**
  * W06 durable queue boundary, deliberately disabled until W01 migrates the
@@ -276,25 +280,14 @@ export async function authorizeOutboundProviderSend(input: {
  * network outcomes remain CLAIMED for manual/provider reconciliation. Rows
  * may be marked provider accepted only with a real provider message id.
  * Completion uses exact holder/fence and the already-authorized pre-send fence. */
-export async function completeOutboundDispatch(input: {
-  messageId: string;
-  worker: string;
-  fence: number;
-  outcome: "PROVIDER_ACCEPTED" | "RETRY" | "FAILED";
-  providerMessageId?: string | null;
-  safeFailureCode?: string | null;
-  nextAttemptAt?: Date | null;
-}): Promise<boolean> {
+export async function completeOutboundDispatch(
+  input: OutboundCompletionInput,
+): Promise<boolean> {
   requireOutboundDispatchReady();
-  validateDispatchWorker(input.worker);
-  if (!/^[0-9a-f-]{36}$/i.test(input.messageId) ||
-      !Number.isSafeInteger(input.fence) || input.fence < 1 ||
-      (input.safeFailureCode != null && !/^[A-Z0-9_]{1,40}$/.test(input.safeFailureCode))) {
+  if (!validOutboundCompletion(input)) {
     throw new OutboundDispatchNotReadyError();
   }
   const nextAttemptAt = input.nextAttemptAt ?? null;
-  if (nextAttemptAt && (!(nextAttemptAt instanceof Date) ||
-      !Number.isFinite(nextAttemptAt.getTime()))) throw new OutboundDispatchNotReadyError();
   const result = await getDb().execute<{ completed: boolean }>(sql`
     select db10_complete_outbound_claim(
       ${input.messageId}::uuid, ${input.worker}, ${input.fence},
