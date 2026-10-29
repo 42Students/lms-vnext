@@ -12,6 +12,7 @@ on:
       - "src/modules/profile-verification/**"
       - "tests/db007-*.test.mjs"
       - "tests/integration/db007-*.test.ts"
+      - "tests/unit/learner-gallery-*.test.ts"
       - "src/modules/people/learner-education-projection-service.ts"
       - "src/modules/people/learner-profile-section-service.ts"
       - "src/modules/people/learner-profile-document-edit-service.ts"
@@ -54,6 +55,13 @@ jobs:
           node-version: 22
           cache: npm
       - run: npm ci
+      - name: DB-007 learner gallery HTTP, attestation and receipt safety
+        run: >-
+          npx vitest run
+          tests/unit/learner-gallery-upload-http-contract.test.ts
+          tests/unit/learner-gallery-attestation.test.ts
+          tests/unit/learner-gallery-feedback.test.ts
+          tests/unit/learner-gallery-inactive-receipt.test.ts
       - name: Verify registered journal and SQL-to-schema source contracts
         run: |
           npm run db:journal:verify
