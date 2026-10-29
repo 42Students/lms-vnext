@@ -40,6 +40,18 @@ test("DB03 roster source is not duplicated or truncated", () => {
   assert.equal(roster.split("`").length % 2, 1);
   assert.match(roster, /when \$\{electiveSlots\.academicYear\} ~/);
 });
+test("elective offering edits reject disabled and soft-deleted courses", () => {
+  const edit = electivesService.slice(electivesService.indexOf(
+    "export async function updateCollegeElectiveOffering("),
+    electivesService.indexOf("export async function archiveCollegeElectiveOffering("));
+  assert.match(edit, /courseEnabled:\\s*courses\\.enabled/);
+  assert.match(edit, /courseDeletedAt:\\s*courses\\.deletedAt/);
+  assert.match(edit, /!delivery\\.courseEnabled/);
+  assert.match(edit, /delivery\\.courseDeletedAt !== null/);
+  assert.match(rosterTests,
+    /rejects elective reassignment to disabled or deleted courses without mutating/);
+});
+
 test("the slot matches the learner ACTIVE primary program rather than college alone", () => {
   assert.match(eligibility, /eq\(learnerProgramEnrollments\.programId, slot\.programId\)/);
   assert.match(eligibility, /eq\(learnerProgramEnrollments\.status, "ACTIVE"\)/);
