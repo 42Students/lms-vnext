@@ -27,7 +27,10 @@ export function deriveVerifiedAlertAccountHash(input: {
   // Case normalization prevents multiple hashes for the same canonical UUID.
   const scope = input.collegeId?.toLowerCase() ?? "platform";
   const canonicalUser = input.userId.toLowerCase();
+  // Preserve the pre-existing scope:user identity derivation. Changing the
+  // HMAC namespace without migrating historic hashes would double-count
+  // existing accounts, even with the same stable secret.
   return createHmac("sha256", input.key)
-    .update("log-alert-account-v1:" + scope + ":" + canonicalUser)
+    .update(scope + ":" + canonicalUser)
     .digest("hex");
 }
