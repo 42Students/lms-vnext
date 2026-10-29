@@ -13,7 +13,7 @@ This document is the migration-integrator decision for the source-only DB06 hist
 - `scripts/db41-history-schema-drift.mjs`
 - `tests/db41-history-schema-drift.test.mjs`
 
-It does **not** claim PostgreSQL execution or migration registration.
+It does **not** claim PostgreSQL execution or registration of the DB035/042 incremental enforcement. The base `assignment_grade_events` table was already registered in `drizzle/0205_lane15_assignment_grade_events.sql`; the DB035 candidate's duplicate `CREATE TABLE` is reference-only and must be composed as an **in-place upgrade**.
 
 ## Decision summary
 
@@ -32,8 +32,17 @@ Every grading mutation must eventually be one transaction:
 Actions:
 
 - first grade: `GRADE`;
-- later grade/feedback correction: `REGRADE`;
-- publication: `PUBLISH_GRADE`.
+- later grade/feedback correction: `REGRADE` (including published grades whose score/feedback changed);
+- publication: `PUBLISH_GRADE`;
+- pure withdrawal of a published grade, preserving points, feedback and original grader: `HIDE_GRADE`.
+
+`HIDE_GRADE` is **not** `REGRADE`: the current L04 producer can hide a
+published grade without changing its evaluated content. L01's incremental
+completeness trigger must classify true→false publication with unchanged
+grade snapshot as HIDE; true→false with changed snapshot remains REGRADE.
+For HIDE and PUBLISH, the acting publisher/editor may legitimately differ
+from the previous graded-by user, so the event guard must authorize the
+request actor rather than require equality to the saved grader.
 
 The event actor is the request actor. In particular, `PUBLISH_GRADE.actor_user_id` is the **publisher**, not the original `graded_by_user_id`. The grade snapshot still preserves the original/current grader in `previous_graded_by_user_id` and `new_graded_by_user_id`.
 
