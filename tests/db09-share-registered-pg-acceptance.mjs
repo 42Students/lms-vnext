@@ -4,6 +4,7 @@
  * Clean journal replay + canonical seed required. Rollback-only; no staged SQL.
  * DB09_ISOLATED_TEST_DATABASE=1 TEST_DATABASE_URL=<disposable> node tests/db09-share-registered-pg-acceptance.mjs
  */
+import {createHash} from "node:crypto";
 import pg from "pg";
 import {assertDb018DisposableTarget} from "./support/db018-test-target.mjs";
 if(process.env.DB09_ISOLATED_TEST_DATABASE!=="1"||!process.env.TEST_DATABASE_URL)
@@ -33,7 +34,7 @@ try{
  const company=await one("insert into placement_companies(name,status,created_by_user_id) values($1,'ACTIVE',$2) returning id",["L08 secure share "+suffix,admin.id]);
  const rel=await one("insert into placement_company_relationships(college_id,company_id,status,is_trusted,owner_membership_id,created_by_user_id) values($1,$2,'ACTIVE',false,$3,$4) returning id",[college.id,company.id,owner.id,admin.id]);
  const job=await one("insert into placement_jobs(college_id,season_id,company_relationship_id,title,description,employment_type,work_mode,created_by_user_id) values($1,$2,$3,$4,'DB09 secure share witness','FULL_TIME','ONSITE',$5) returning id",[college.id,season.id,rel.id,"L08 share job "+suffix,admin.id]);
- const sha="a".repeat(64);
+ const sha=createHash("sha256").update("L08 secure share "+suffix).digest("hex");
  const link=await one("insert into placement_tpo_share_links(college_id,job_id,token_hash,recipient_email,created_by_user_id,expires_at,columns) values($1,$2,$3,$4,$5,now()+interval '7 days','[\"name\",\"resume\"]'::jsonb) returning id",[college.id,job.id,sha,"recruiter-"+suffix+"@example.com",admin.id]);
  await denial("share missing CREATED event", "23514",()=>db.query("SET CONSTRAINTS ALL IMMEDIATE"));
  const created=await one("insert into placement_tpo_share_events(share_id,action) values($1,'CREATED') returning id",[link.id]);
