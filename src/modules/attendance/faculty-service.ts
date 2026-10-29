@@ -39,6 +39,7 @@ import {facultyAttendanceCorrectionTokenMatches,facultyAttendanceNextMarkedAt}
  from "./faculty-correction-token-model";
 import {facultyCorrectionDelta,facultyCorrectionReasonValid,
  facultyAttendanceChangedMemberships} from "./faculty-correction-audit-model";
+import {planAttendanceRecordTransitions} from "./attendance-record-transitions";
 
 const uuid = z.string().uuid();
 const sessionInputSchema = z
@@ -629,67 +630,51 @@ export async function markFacultyAttendance(
     const isCorrection=existingSession?.status==="MARKED";
     if(isCorrection&&!facultyCorrectionReasonValid(input.correctionReason))
       throw new CoursesServiceError("ATTENDANCE_CORRECTION_REASON_REQUIRED");
-    const oldAbsent=isCorrection?await tx.select({membershipId:attendanceRecords.membershipId})
-      .from(attendanceRecords).where(and(
-        eq(attendanceRecords.scheduleEventId,scheduleEventId),
-        eq(attendanceRecords.status,"ABSENT"),
-      )):[];
-    const delta=facultyCorrectionDelta(oldAbsent.map(row=>row.membershipId),input.absentMembershipIds);
+    // Lock every current record in this exact authorized roster. Repeated
+    // correction must retain row UUIDs for immutable audit/history FKs.
+    const existingRecords = await tx.select({
+      id: attendanceRecords.id,
+      membershipId: attendanceRecords.membershipId,
+      status: attendanceRecords.status,
+    }).from(attendanceRecords).where(and(
+      eq(attendanceRecords.scheduleEventId, scheduleEventId),
+      inArray(attendanceRecords.membershipId, [...submitted]),
+    )).for("update");
+    const changes = planAttendanceRecordTransitions(
+      existingRecords, input.absentMembershipIds, input.presentMembershipIds,
+    );
+    const oldAbsent = changes.previousAbsentMembershipIds;
+    const delta=facultyCorrectionDelta(oldAbsent,input.absentMembershipIds);
     const notificationChanges=facultyAttendanceChangedMemberships(
-      oldAbsent.map(row=>row.membershipId),input.absentMembershipIds);
+      oldAbsent,input.absentMembershipIds);
     if(isCorrection&&!delta.changed)throw new CoursesServiceError("ATTENDANCE_CORRECTION_NO_CHANGE");
     const writtenAt=facultyAttendanceNextMarkedAt(now,existingSession?.markedAt??null);
+    const markReason = isCorrection
+      ? input.correctionReason!.trim()
+      : input.correctionReason?.trim() || "Attendance marked";
 
-    if (input.presentMembershipIds.length > 0) {
-      await tx
-        .delete(attendanceRecords)
-        .where(
-          and(
-            eq(
-              attendanceRecords.scheduleEventId,
-              scheduleEventId,
-            ),
-            inArray(
-              attendanceRecords.membershipId,
-              input.presentMembershipIds,
-            ),
-            // Faculty's binary editor must not erase an admin-recorded
-            // EXCUSED, MEDICAL, LATE or explicit PRESENT status when a
-            // different learner's absence is corrected in the same bulk write.
-            eq(attendanceRecords.status, "ABSENT"),
-          ),
-        );
+    // A previously ABSENT learner moves to an explicit PRESENT current row,
+    // not a DELETE. Preserve historical identity and never overwrite an
+    // administrator's EXCUSED, MEDICAL or LATE status on unrelated learners.
+    if (changes.changeToPresentRecordIds.length > 0) {
+      await tx.update(attendanceRecords).set({
+        status: "PRESENT", note: markReason,
+        markedByUserId: context.user.id, markedAt: now, updatedAt: now,
+      }).where(inArray(attendanceRecords.id, changes.changeToPresentRecordIds));
     }
-
-    if (input.absentMembershipIds.length > 0) {
-      await tx
-        .delete(attendanceRecords)
-        .where(
-          and(
-            eq(
-              attendanceRecords.scheduleEventId,
-              scheduleEventId,
-            ),
-            inArray(
-              attendanceRecords.membershipId,
-              input.absentMembershipIds,
-            ),
-          ),
-        );
-
+    if (changes.changeToAbsentRecordIds.length > 0) {
+      await tx.update(attendanceRecords).set({
+        status: "ABSENT", note: markReason,
+        markedByUserId: context.user.id, markedAt: now, updatedAt: now,
+      }).where(inArray(attendanceRecords.id, changes.changeToAbsentRecordIds));
+    }
+    if (changes.insertAbsentMembershipIds.length > 0) {
       await tx.insert(attendanceRecords).values(
-        input.absentMembershipIds.map(
-          (membershipId) => ({
-            scheduleEventId,
-            membershipId,
-            status: "ABSENT",
-            markedByUserId: context.user.id,
-            note: isCorrection ? input.correctionReason!.trim() :
-              (input.correctionReason?.trim() || "Mark Absent"),
-            markedAt: now,
-            updatedAt: now,
-          }),
-        ),
+        changes.insertAbsentMembershipIds.map(membershipId => ({
+          scheduleEventId, membershipId, status: "ABSENT",
+          markedByUserId: context.user.id, note: markReason,
+          markedAt: now, updatedAt: now,
+        })),
       );
     }
 
