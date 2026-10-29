@@ -1928,7 +1928,7 @@
         "integratorReview": "L01 accepts shared migration registration request, but promotion remains BLOCKED until L05 lands transactional grade/attendance MARK/CORRECT producers and executes their domain negative witnesses. Do not register deferred history triggers against current writes or certify DB-035/042 from source-only coverage.",
         "domainProgress": {
           "stage": "REGISTERED_DB030_GREEN_DB035_DB042_STAGED_NOT_CERTIFIED",
-          "latestAt": "2026-10-29T08:27:06.544Z",
+          "latestAt": "2026-10-29T08:33:21.708Z",
           "stagedEventBuilder": "src/modules/attendance/db06-attendance-history-staged.ts",
           "stagedEventTests": "tests/unit/db06-attendance-history-staged.test.ts",
           "stagedGuard": "docs/planning/sql/db06-attendance-scope-candidate.sql",
@@ -1983,6 +1983,25 @@
             "CORRECTED queued guardian SMS now accepts explicit PRESENT current rows, never sends stale notices after another status change",
             "Distinct ADMIN_ATTENDANCE_NOTE_UPDATED audit event type prevents mislabelling note-only edits as newly marked absence",
             "Guards in both staged DB042 and DB035 PostgreSQL witnesses call canonical disposable DB01 target preflight"
+          ],
+          "registeredFacultyAttendanceAcceptance": {
+            "workflow": "Faculty Course Attendance acceptance",
+            "url": "https://github.com/42Students/lms-vnext/actions/runs/40842745926",
+            "commit": "b3ab651c58d0e3c705879983b64abfcc7648a453",
+            "job": "postgres",
+            "conclusion": "success",
+            "coverage": "Registered full Faculty course attendance integration including marked/corrected attendance, CAS, authorized faculty scope and test fixture cleanup; DB035/042 deferred event/guard migrations NOT included",
+            "qualification": "Passing registered-schema Faculty workflow, not acceptance of 9 pending DB06 tasks"
+          },
+          "targetedSourceAndRuntimeChecks": {
+            "adminAndSmsDirectSourceAssertions": "20/20 evaluated from exact GitHub blob matched current admin correction model and parent SMS state helper",
+            "changedStaticContracts": "11/11 checks across four repaired attendance tests, admin audit, guardian SMS state, and canonical PG witness safety"
+          },
+          "currentOutstandingBlocks": [
+            "L01 DB035/042 immutable attendance grade-event registration and exact transactional producers not cut over",
+            "L04 owns assessment producers and DB041/044/052 implementations",
+            "L10 staged DB042/grade-hide disposable witness acceptance not executed",
+            "Full CI still includes unrelated global gates"
           ]
         }
       },
