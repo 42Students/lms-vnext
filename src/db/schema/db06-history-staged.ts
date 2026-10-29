@@ -13,10 +13,10 @@
  *
  * Source contracts:
  * - legacy grade_audit_log: immutable before/after grading audit, actor + action
- * - legacy attendance correction: the mutable current row can be updated,
- *   deleted for PRESENT, or recreated; immutable history must therefore be
- *   anchored to schedule/delivery/learner identity rather than the current
- *   attendance_records row.
+ * - legacy attendance correction: mutable absence exceptions were deleted
+ *   for PRESENT in the legacy system. vNext instead retains stable current-row
+ *   identity (including PRESENT), increments version, and appends immutable
+ *   events anchored to attendance_records + schedule/delivery/learner scope.
  */
 import { sql } from "drizzle-orm";
 import {
