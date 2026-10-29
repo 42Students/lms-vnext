@@ -195,44 +195,54 @@ function sameStagedResult(
   );
 }
 
+/** DB-066: a round owned by this college is not proof that a result's
+ * application belongs to the same job. Until the same-job composite FK is
+ * registered, enforce that ancestry at the read boundary as well. */
 export async function listPlacementRoundResults(
   context: RequestContext,
   roundIdInput: string,
 ) {
-  const roundId = placementRoundIdSchema.parse(
-    roundIdInput,
-  );
-  const { round, job } =
-    await loadRoundContext(roundId);
-  await requirePlacementManageScope(
-    context,
-    job.collegeId,
-  );
+  const roundId = placementRoundIdSchema.parse(roundIdInput);
+  const { round, job } = await loadRoundContext(roundId);
+  await requirePlacementManageScope(context, job.collegeId);
 
-  return getDb()
-    .select()
+  const rows = await getDb()
+    .select({ result: placementRoundResults })
     .from(placementRoundResults)
-    .where(
-      eq(placementRoundResults.roundId, round.id),
+    .innerJoin(
+      placementApplications,
+      and(
+        eq(placementApplications.id, placementRoundResults.applicationId),
+        eq(placementApplications.jobId, round.jobId),
+      ),
     )
+    .where(eq(placementRoundResults.roundId, round.id))
     .orderBy(
       asc(placementRoundResults.applicationId),
       desc(placementRoundResults.version),
     );
+  return rows.map(({result})=>result);
 }
 
 /** Old GET /tpo/results/pending never included applied/superseded versions.
- * Keep this separate from the auditing view which lists all history. */
+ * Keep this separate from the auditing view which lists all history.
+ * Same-job ancestry also applies to pending-only readback. */
 export async function listPendingPlacementRoundResults(
  context:RequestContext,roundIdInput:string,
 ){
  const roundId=placementRoundIdSchema.parse(roundIdInput);
  const {round,job}=await loadRoundContext(roundId);
  await requirePlacementManageScope(context,job.collegeId);
- return getDb().select().from(placementRoundResults)
+ const rows=await getDb().select({result:placementRoundResults})
+  .from(placementRoundResults)
+  .innerJoin(placementApplications,and(
+   eq(placementApplications.id,placementRoundResults.applicationId),
+   eq(placementApplications.jobId,round.jobId),
+  ))
   .where(and(eq(placementRoundResults.roundId,round.id),
    eq(placementRoundResults.status,"STAGED")))
   .orderBy(asc(placementRoundResults.applicationId),desc(placementRoundResults.version));
+ return rows.map(({result})=>result);
 }
 
 /** The legacy interview ID is a source locator, not a vNext permission grant.
