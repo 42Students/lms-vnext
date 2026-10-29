@@ -38,3 +38,17 @@ export function authorizedGalleryItem(row:LearnerImageReference,signedUrl:string
  return {id:row.id,imageId:row.legacyImageId??row.id,
    imageUrl:signedUrl,active:row.isActive,displayOrder:row.displayOrder};
 }
+
+/** User-facing confirmation errors must not pretend that permission failures,
+ * disabled gallery storage or provider outages are merely an in-progress scan.
+ * The receipt-invalid response can cover both pending scans and bad objects,
+ * so it deliberately does not promise that retrying will always succeed. */
+export function learnerGalleryConfirmationError(status:number,code?:string):string{
+ if(status===401||status===403)return "You no longer have permission to upload this photo. Refresh your session.";
+ if(status===503)return "Private photo storage is not ready. Please try again later.";
+ if(status===409&&code==="GALLERY_LIMIT")return "The gallery already has ten photos. Remove one before adding another.";
+ if(status===409&&code==="GALLERY_RECEIPT_INVALID")
+   return "This photo has not passed private verification. You can retry after scanning finishes, or choose another file.";
+ if(status===404)return "The uploaded photo could not be found. Choose the file again.";
+ return "Private photo verification is temporarily unavailable. Please try again later.";
+}
