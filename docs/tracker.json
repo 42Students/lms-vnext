@@ -2032,6 +2032,35 @@
         "reason": "L04 fixed direct lesson content listing/bookmark externalUrl bypass. src/modules/courses/lesson-content-service.ts now invokes same learnerVisibleContentExternalUrl policy as workspace for safe scheme/credentials and LIVE_CLASS future/ended release; admin authoring remains raw. Add tests/integration/db008-learner-direct-content-link-gates.test.ts to registered DB-008 PG17 acceptance job; ensure tests run against exact checkout SHA with seeded disposable PG, negative javascript URL / credential URL / ended class and positive future live/https resource, then report run conclusion. L04 owns source/test but not shared workflow. Do not mark DB-008 closed without actual execution.",
         "status": "REQUESTED",
         "requestedAt": "2026-10-29T05:44:15.509Z"
+      },
+      {
+        "id": "SCR-L09-L10-DB023-20261029",
+        "fromLane": "L09",
+        "toLane": "L10",
+        "paths": [
+          "src/modules/log-alerts/reporter.ts",
+          "src/modules/log-alerts/scheduler.ts",
+          "src/modules/log-alerts/account-identity.ts",
+          "tests/unit/graceful-alert-correlation.test.ts",
+          "tests/unit/graceful-alert-scheduler.test.ts",
+          "tests/unit/log-alert-account-identity.test.ts"
+        ],
+        "reason": "Independently execute DB-023 source/functional and disposable PG acceptance: bigint occurrenceCount > MAX_SAFE_INTEGER; exact daily digest totals and top counts; HMAC identity compatibility across colleges and malformed identity fail-closed; out-of-order event history, multiple writers and account dedupe. L09 source changes are code-only; no DB-023 closure until exact-SHA migration/replay/concurrency evidence.",
+        "status": "REQUESTED",
+        "requestedAt": "2026-10-29T06:20:00.000Z"
+      },
+      {
+        "id": "SCR-L09-L10-DB031-20261029",
+        "fromLane": "L09",
+        "toLane": "L10",
+        "paths": [
+          "src/modules/notifications/sms-attempt-validation.ts",
+          "src/modules/notifications/exotel-sms.ts",
+          "src/db/schema/messaging-receipts.ts"
+        ],
+        "reason": "After L01 provider SID-width registration, run DB-031 independent disposable PostgreSQL witnesses for append-only attempted SMS, PII-free support search, valid EXOTEL SID 65-128 not dropped, malformed purpose/identity rejection, forged organization/college ownership and direct DB writes. Accepted transport must not silently lose audit. No live SMS provider in tests.",
+        "status": "REQUESTED",
+        "requestedAt": "2026-10-29T06:20:00.000Z"
       }
     ],
     "coordination": {
