@@ -8,6 +8,8 @@ import { placementTableExists } from "./staged-tables";
 import {assertPersistedPlatformPermission} from "@/modules/permissions/persisted-actor";
 import {AuthorizationError} from "@/modules/permissions/policy";
 import {TPO_BUILTIN_JOB_TYPES} from "./tpo-builtin-job-types";
+import {tpoPrepConfigSchema} from "./tpo-configuration-model";
+import {placementTpoPrepCourses} from "@/db/schema/tpo-collaboration";
 import {codingProfileChoices} from "./tpo-coding-profile-model";
 import {registrationChoiceOptions,afterCollegeAllOptions,AFTER_COLLEGE_LABELS} from "./tpo-after-college-model";
 import {DEFAULT_LEARNER_EDUCATION_CATALOG} from "@/modules/people/learner-education-picker-model";
@@ -87,6 +89,7 @@ export async function getTpoBlockedDates(ctx:RequestContext){
 export async function getTpoPrepReadiness(ctx:RequestContext){
  const collegeId=await requireTpoBatchActor(ctx);
  const ready=await placementTableExists("placement_tpo_prep_readiness");
+ const selectionReady=await placementTableExists("placement_tpo_prep_courses");
  return getDb().transaction(async tx=>{
   const [college]=await tx.select({organizationId:colleges.organizationId,status:colleges.status})
    .from(colleges).where(eq(colleges.id,collegeId)).for("share").limit(1);
@@ -97,7 +100,23 @@ export async function getTpoPrepReadiness(ctx:RequestContext){
   const [row]=ready?await tx.select({
    config:tpoPrepReadiness.config,updatedAt:tpoPrepReadiness.updatedAt,
   }).from(tpoPrepReadiness).where(eq(tpoPrepReadiness.collegeId,collegeId)).limit(1):[];
-  return {ready,config:row?.config??null,updatedAt:row?.updatedAt??null};
+  const selected=selectionReady?await tx.select({
+   courseId:placementTpoPrepCourses.courseId,
+  }).from(placementTpoPrepCourses).where(
+   eq(placementTpoPrepCourses.collegeId,collegeId)
+  ).orderBy(asc(placementTpoPrepCourses.courseId)):[];
+  const normalizedCourseIds=selected.map(item=>item.courseId);
+  const config=tpoPrepConfigSchema.safeParse(
+   row?.config??{courseIds:[],minimumCompleted:0}
+  );
+  const selectionSynchronized=selectionReady&&config.success&&
+   normalizedCourseIds.length===config.data.courseIds.length&&
+   config.data.courseIds.every(id=>normalizedCourseIds.includes(id));
+  // Legacy JSON remains a compatibility read until the DB09 backfill is
+  // registered, but mismatched normalized selections are never treated as
+  // successful course-progress evidence.
+  return {ready,config:row?.config??null,updatedAt:row?.updatedAt??null,
+   normalizedCourseIds,selectionSynchronized,selectionReady};
  });
 }
 
