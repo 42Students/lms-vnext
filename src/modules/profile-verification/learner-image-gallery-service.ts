@@ -10,6 +10,7 @@ import {
 import { learnerProfileImages } from "@/db/schema/db04-profile-education-images.staged";
 import {
   createPrivateReadGrant, createPrivateUploadGrant, readPrivateObjectAttestation,
+  PrivateObjectStorageError,
 } from "@/modules/storage/private-object-storage";
 import { hasMembershipRole, isSuperAdmin, type RequestContext } from "@/modules/identity/context";
 import {
@@ -97,6 +98,23 @@ async function requireOwnGalleryUpload(context: RequestContext) {
   return access;
 }
 
+/** Pending, missing or unscanned objects are retryable conflicts, not success.
+ * Actual provider outages must propagate; never fabricate a CLEAN receipt. */
+export async function checkedGalleryObjectAttestation(
+  objectKey: string, access: GalleryAccess,
+) {
+  try {
+    return await readPrivateObjectAttestation(objectKey, {
+      collegeId: access.collegeId, ownerMembershipId: access.membershipId,
+    });
+  } catch (error) {
+    if (error instanceof PrivateObjectStorageError &&
+        error.code === "PRIVATE_STORAGE_OBJECT_NOT_ATTESTED")
+      throw new LearnerGalleryError("GALLERY_RECEIPT_INVALID");
+    throw error;
+  }
+}
+
 export async function initiateOwnLearnerGalleryUpload(
   context: RequestContext, raw: unknown,
 ) {
@@ -131,9 +149,7 @@ export async function confirmOwnLearnerGalleryUpload(
   const segments = input.objectKey.split("/");
   if (segments[1] !== access.collegeId || segments[2] !== access.membershipId)
     throw new LearnerGalleryError("GALLERY_FORBIDDEN");
-  const attestation = await readPrivateObjectAttestation(input.objectKey, {
-    collegeId: access.collegeId, ownerMembershipId: access.membershipId,
-  });
+  const attestation = await checkedGalleryObjectAttestation(input.objectKey, access);
   if (!["image/jpeg", "image/png"].includes(attestation.contentType) ||
       attestation.sizeBytes > MAX_GALLERY_UPLOAD_BYTES)
     throw new LearnerGalleryError("GALLERY_RECEIPT_INVALID");
@@ -235,9 +251,7 @@ export async function appendLearnerGalleryImage(
   if (!candidate || (candidate.retentionUntil && candidate.retentionUntil <= new Date()) ||
       !["image/jpeg", "image/png"].includes(candidate.mimeType))
     throw new LearnerGalleryError("GALLERY_RECEIPT_INVALID");
-  const attestation = await readPrivateObjectAttestation(candidate.privateObjectKey, {
-    collegeId: access.collegeId, ownerMembershipId: access.membershipId,
-  });
+  const attestation = await checkedGalleryObjectAttestation(candidate.privateObjectKey, access);
   if (attestation.generation !== candidate.objectGeneration ||
       attestation.sha256Hex.toLowerCase() !== candidate.sha256Hex.toLowerCase() ||
       attestation.contentType !== candidate.mimeType ||
