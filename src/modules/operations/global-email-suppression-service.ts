@@ -62,8 +62,12 @@ export async function persistVerifiedGlobalEmailSuppression(
         to_regclass('public.outbound_messages') is not null
           as outbound_ready
     `);
-    if (readiness.rows[0]?.global_ready !== true ||
-        readiness.rows[0]?.outbound_ready !== true) {
+    // A person must be able to withdraw EMAIL consent even before the
+    // outbox migration is installed. The global suppression table is the
+    // durable consent record; the outbox is optional only when absent.
+    // If an outbox exists, its unsent cancellation remains mandatory and
+    // transactional: any SQL error rolls back the consent writer.
+    if (readiness.rows[0]?.global_ready !== true) {
       throw new GlobalEmailSuppressionUnavailable();
     }
 
@@ -84,7 +88,8 @@ export async function persistVerifiedGlobalEmailSuppression(
     // verified global hash. This cannot contact or enumerate other tenants.
     // A CLAIMED row is NOT overwritten: a provider may already have accepted
     // it, and the pre-send fence is its suppression check.
-    await tx.execute(sql`
+    if (readiness.rows[0]?.outbound_ready === true) {
+      await tx.execute(sql`
       update outbound_messages as message
       set status = 'SUPPRESSED',
           next_attempt_at = null,
@@ -98,6 +103,7 @@ export async function persistVerifiedGlobalEmailSuppression(
               message.id::text || ':' || ${verified.recipientHash},
             'UTF8'
           )), 'hex')
-    `);
+      `);
+    }
   });
 }
