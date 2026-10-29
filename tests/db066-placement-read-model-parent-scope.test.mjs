@@ -72,3 +72,35 @@ test("DB-066 round-result apply validates same-job ancestry before changing stat
   const mutate = write.indexOf(".update(placementRoundResults)");
   assert.ok(mutate > write.indexOf("lockedResult.applicationId !== current.application.id"));
 });
+
+test("DB-066 learner and staff request lists reject foreign round and offer ancestry", () => {
+  const source=readFileSync("src/modules/placements/request-service.ts","utf8");
+  const head=source.indexOf("function requestListQuery()");
+  const own=source.indexOf("export async function listOwnPlacementRequests(",head);
+  const job=source.indexOf("export async function listPlacementJobRequests(",own);
+  const after=source.indexOf("export async function getLearnerPlacementRequestWorkspace(",job);
+  assert.ok(head>=0&&own>head&&job>own&&after>job);
+  const query=source.slice(head,own);
+  assert.match(query,/eq\(placementJobRounds\.jobId, placementApplications\.jobId\)/);
+  assert.match(query,/eq\(placementOffers\.applicationId, placementApplications\.id\)/);
+  assert.match(query,/eq\(placementApplicationRoundExceptions\.applicationId, placementApplications\.id\)/);
+  assert.match(query,/eq\(placementApplicationRoundExceptions\.roundId, placementLearnerRequests\.roundId\)/);
+  for(const section of [source.slice(own,job),source.slice(job,after)]) {
+    assert.match(section,/or\(isNull\(placementLearnerRequests\.roundId\)/);
+    assert.match(section,/or\(isNull\(placementLearnerRequests\.offerId\)/);
+    assert.match(section,/eq\(placementJobRounds\.id, placementLearnerRequests\.roundId\)/);
+    assert.match(section,/eq\(placementOffers\.id, placementLearnerRequests\.offerId\)/);
+  }
+  assert.match(source,/import \{[\s\S]*?isNull,[\s\S]*?or,[\s\S]*?\} from "drizzle-orm"/);
+});
+
+test("DB-066 legacy interview feedback never exports another job's booked application",()=>{
+  const source=readFileSync("src/modules/placements/result-service.ts","utf8");
+  const start=source.indexOf("export async function getLegacyInterviewFeedbackContext(");
+  const end=source.indexOf("export async function stagePlacementRoundResult(",start);
+  assert.ok(start>=0&&end>start);
+  const feedback=source.slice(start,end);
+  assert.match(feedback,/\.innerJoin\(placementApplications,and\(/);
+  assert.match(feedback,/eq\(placementApplications\.id,placementRoundCandidateSlots\.applicationId\)/);
+  assert.match(feedback,/eq\(placementApplications\.jobId,placementRoundCandidateSlots\.jobId\)/);
+});
