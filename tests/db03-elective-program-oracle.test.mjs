@@ -44,10 +44,10 @@ test("elective offering edits reject disabled and soft-deleted courses", () => {
   const edit = electivesService.slice(electivesService.indexOf(
     "export async function updateCollegeElectiveOffering("),
     electivesService.indexOf("export async function archiveCollegeElectiveOffering("));
-  assert.match(edit, /courseEnabled:\\s*courses\\.enabled/);
-  assert.match(edit, /courseDeletedAt:\\s*courses\\.deletedAt/);
-  assert.match(edit, /!delivery\\.courseEnabled/);
-  assert.match(edit, /delivery\\.courseDeletedAt !== null/);
+  assert.match(edit, /courseEnabled:\s*courses\.enabled/);
+  assert.match(edit, /courseDeletedAt:\s*courses\.deletedAt/);
+  assert.match(edit, /!delivery\.courseEnabled/);
+  assert.match(edit, /delivery\.courseDeletedAt !== null/);
   assert.match(rosterTests,
     /rejects elective reassignment to disabled or deleted courses without mutating/);
 });
