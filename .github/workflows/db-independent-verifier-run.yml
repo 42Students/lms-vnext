@@ -7,6 +7,10 @@ on:
     branches: [main]
     paths:
       - ".github/workflows/db-independent-verifier-run.yml"
+      - "scripts/db-independent-verify.mjs"
+      - "tests/db-independent-verifier.test.mjs"
+      - "tests/db09-collaboration-registered-pg-acceptance.mjs"
+      - "tests/db09-share-registered-pg-acceptance.mjs"
 
 permissions:
   contents: read
@@ -24,14 +28,14 @@ jobs:
           node-version: 22
           cache: npm
       - run: npm ci
-      - name: Pin latest main
+      - name: Verify exact triggering commit
         shell: bash
         run: |
           set -euo pipefail
-          git fetch origin main
-          git reset --hard origin/main
-          echo "INDEPENDENT_VERIFY_SHA=$(git rev-parse HEAD)" >> "$GITHUB_ENV"
-          echo "Verifying $(git rev-parse HEAD)"
+          actual="$(git rev-parse HEAD)"
+          test "$actual" = "$GITHUB_SHA"
+          echo "INDEPENDENT_VERIFY_SHA=$actual" >> "$GITHUB_ENV"
+          echo "Verifying exact event commit $actual"
       - name: Run repository-owned CI-independent verifier
         run: npm run db:verify:independent
       - name: Show verifier evidence
