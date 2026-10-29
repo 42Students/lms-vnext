@@ -1,4 +1,5 @@
 import {expect,it} from "vitest";
+import {spawnSync} from "node:child_process";
 import {Pool} from "pg";
 
 /**
@@ -10,6 +11,16 @@ import {Pool} from "pg";
  * It is deliberately RED before L01 registers the incremental deferred
  * grade-audit completeness trigger. Skip is not acceptance evidence.
  */
+function assertWitnessDisposableDb(){
+ const check=spawnSync(process.execPath,["scripts/db01-test-database-guard.mjs"],{
+  env:process.env,encoding:"utf8",
+ });
+ if(check.error||check.status!==0){
+  throw new Error("DB06 witness refused unsafe PostgreSQL target: "+
+   (check.error?.message??check.stderr??"preflight failed"));
+ }
+}
+
 const enabled=Boolean(
   process.env.TEST_DATABASE_URL &&
   process.env.DB06_GRADE_HIDE_SUBMISSION_ID &&
@@ -19,6 +30,7 @@ const enabled=Boolean(
 const negative=enabled?it:it.skip;
 
 negative("DB035 direct HIDE_GRADE state mutation without event fails 23514",async()=>{
+ assertWitnessDisposableDb();
   const pool=new Pool({connectionString:process.env.TEST_DATABASE_URL,max:1});
   const client=await pool.connect();
   try{
@@ -45,6 +57,7 @@ negative("DB035 direct HIDE_GRADE state mutation without event fails 23514",asyn
 });
 
 negative("DB035 HIDE_GRADE event cannot mutate prior points or feedback",async()=>{
+ assertWitnessDisposableDb();
   const pool=new Pool({connectionString:process.env.TEST_DATABASE_URL,max:1});
   const client=await pool.connect();
   try{
