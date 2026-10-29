@@ -1832,6 +1832,18 @@
         "reason": "L10 hardened independent DB verifier (untrusted supplied target preflight, staged Drizzle diff, E2E app target collision refusal) and added regression witnesses. This session lacks Docker and PostgreSQL binaries, so cannot independently execute clean registered PG replay/catalog/negative suites. Request L01 coordinate an authorized disposable PG17 test environment at a pinned current main SHA, preserving dedicated *_e2e triple URL semantics, and provide exact migration/catalog/type/negative evidence; L10 will independently review failing witnesses and only accept its own tasks after full executed evidence. No CI billing dependency.",
         "status": "REQUESTED",
         "requestedAt": "2026-10-29T05:25:00.000Z"
+      },
+      {
+        "id": "SCR-L08-L01-DB09-SHARE-PG-ACCEPTANCE-20261029",
+        "fromLane": "L08",
+        "toLane": "L01",
+        "paths": [
+          "tests/db09-share-registered-pg-acceptance.mjs",
+          "scripts/db-independent-verify.mjs"
+        ],
+        "reason": "DB-059/DB-060 registered PostgreSQL secure-share lifecycle witness added on main: share CREATED and REVOKED deferred-event completeness, immutable snapshot, code rotation, one-way revocation, same-college TPO creator and append-only events; standalone rollback-only disposable DB tests. Integrate/run after fresh journal replay + canonical seed with DB09_ISOLATED_TEST_DATABASE=1. Share exact command/results and current code SHA for L08 acceptance review; existing DB09 collaboration witness is tracked by separate accepted L01 handoff.",
+        "status": "REQUESTED",
+        "requestedAt": "2026-10-29T05:34:42.957Z"
       }
     ],
     "coordination": {
