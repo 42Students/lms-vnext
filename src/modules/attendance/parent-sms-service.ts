@@ -1,4 +1,5 @@
 import "server-only";
+import {attendanceParentSmsCurrentStateEligible} from "./parent-sms-current-state";
 import {and,asc,eq,sql} from "drizzle-orm";
 import {getDb} from "@/db/client";
 import {activityEvents,colleges,attendanceParentContacts,attendanceParentSmsOutbox,attendanceRecords,collegeMemberships,membershipRoles,users} from "@/db/schema";
@@ -119,8 +120,9 @@ export async function dispatchQueuedAttendanceParentSms(rawId:string){
   .from(attendanceRecords).where(and(
    eq(attendanceRecords.scheduleEventId,entry.scheduleEventId),
    eq(attendanceRecords.membershipId,entry.membershipId))).limit(1);
- const actualAbsent=currentAttendance?.status==="ABSENT";
- const eventStillCurrent=entry.kind==="ABSENT"?actualAbsent:currentAttendance===undefined;
+ const eventStillCurrent=attendanceParentSmsCurrentStateEligible(
+  entry.kind as AttendanceParentSmsKind,currentAttendance?.status,
+ );
  if(!eventStillCurrent){
   await db.update(attendanceParentSmsOutbox).set({status:"SKIPPED"}).where(and(
    eq(attendanceParentSmsOutbox.id,id),eq(attendanceParentSmsOutbox.status,"QUEUED")));
