@@ -1506,7 +1506,7 @@ export async function recordPlacementJoiningOutcome(
   const current =
     await loadOfferContext(offerId);
 
-  await requirePlacementManageScope(
+  const staffCollege=await requirePlacementManageScope(
     context,
     current.job.collegeId,
   );
@@ -1522,6 +1522,7 @@ export async function recordPlacementJoiningOutcome(
     const [lockedOffer] = await tx
       .select({
         status: placementOffers.status,
+        applicationId: placementOffers.applicationId,
       })
       .from(placementOffers)
       .where(
@@ -1535,12 +1536,30 @@ export async function recordPlacementJoiningOutcome(
 
     if (
       !lockedOffer ||
-      lockedOffer.status !== "ACCEPTED"
+      lockedOffer.status !== "ACCEPTED" ||
+      lockedOffer.applicationId !== current.application.id
     ) {
       throw new PlacementsServiceError(
         "PLACEMENT_JOINING_NOT_READY",
       );
     }
+
+    // Joining evidence is a durable placement decision. Revalidate live
+    // staff authority after the offer lock and verify the same-job parent
+    // before any new joining row/history is persisted.
+    await assertPersistedPlatformPermission(tx,context,"placements.manage",{
+      collegeId:current.job.collegeId,
+      organizationId:staffCollege.organizationId,
+    });
+    const [liveApplication]=await tx.select({
+      jobId:placementApplications.jobId,
+      membershipId:placementApplications.membershipId,
+    }).from(placementApplications)
+      .where(eq(placementApplications.id,lockedOffer.applicationId))
+      .for("share").limit(1);
+    if(!liveApplication||liveApplication.jobId!==current.job.id||
+       liveApplication.membershipId!==current.application.membershipId)
+      throw new PlacementsServiceError("PLACEMENT_JOINING_NOT_READY");
 
     await tx
       .insert(placementJoiningOutcomes)
