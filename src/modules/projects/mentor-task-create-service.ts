@@ -55,7 +55,8 @@ export async function createMentorProjectTask(context:RequestContext,rawParams:u
       await assertPersistedProjectMutationActor(tx,context,scope);
       const [sprint]=input.sprintId?await tx.select().from(projectSprints)
         .where(and(eq(projectSprints.id,input.sprintId),
-          eq(projectSprints.projectId,scope.project.id)))
+          eq(projectSprints.projectId,scope.project.id),
+          isNull(projectSprints.deletedAt)))
         .for("update").limit(1):[null];
       if(input.sprintId&&(!sprint||sprint.status==="COMPLETED"||
           sprint.updatedAt.getTime()!==Date.parse(input.expectedSprintUpdatedAt??"")))
