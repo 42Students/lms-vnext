@@ -136,6 +136,10 @@ export async function cleanupLearnerCourseWriteFixture(
   await pool.query("DELETE FROM learner_program_enrollments WHERE id=$1", [ids.learnerEnrollment]);
   // cohort_progression_state is owned by its cohort (ON DELETE CASCADE).
   await pool.query("DELETE FROM cohorts WHERE id=$1", [ids.cohort]);
+  // DB-002 materializes program_terms when constructing the academic
+  // progression. Delete this fixture's empty terms after roster/offering
+  // and curriculum teardown, before removing the owning program.
+  await pool.query("DELETE FROM program_terms WHERE program_id=$1", [ids.program]);
   await pool.query("DELETE FROM programs WHERE id=$1", [ids.program]);
   await pool.query("DELETE FROM academic_periods WHERE id=$1", [ids.period]);
 
