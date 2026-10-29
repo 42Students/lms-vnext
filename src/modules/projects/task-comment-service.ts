@@ -133,13 +133,14 @@ export async function postProjectTaskComment(context:RequestContext,projectId:st
      )).for("share").limit(1);
     if(!activeMember)throw new ProjectsServiceError("PROJECT_ACCESS_DENIED");
   }
-  const [project]=await tx.select({status:projectInstances.status}).from(projectInstances)
+  const [project]=await tx.select({status:projectInstances.status,deletedAt:projectInstances.deletedAt}).from(projectInstances)
    .where(and(eq(projectInstances.id,scope.project.id),eq(projectInstances.collegeId,scope.collegeId)))
    .for("update").limit(1);
-  if(!project||project.status==="ARCHIVED"||project.status==="COMPLETED")
+  if(!project||project.deletedAt||project.status==="ARCHIVED"||project.status==="COMPLETED")
    throw new ProjectsServiceError("PROJECT_TASK_INVALID_STATE");
   const [task]=await tx.select().from(projectTasks).where(and(
     eq(projectTasks.projectId,scope.project.id),eq(projectTasks.id,taskId),
+    isNull(projectTasks.deletedAt),
   )).for("update").limit(1);
   if(!task)throw new ProjectsServiceError("PROJECT_TASK_NOT_FOUND");
   if(task.updatedAt.getTime()!==Date.parse(input.expectedTaskUpdatedAt))
