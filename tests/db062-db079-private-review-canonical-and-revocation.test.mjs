@@ -7,6 +7,7 @@ const readStart=service.indexOf("export async function readRecruiterPrivateRevie
 const writeStart=service.indexOf("export async function writeRecruiterPrivateReview(");
 assert.ok(readStart>=0&&writeStart>readStart);
 const reader=service.slice(readStart,writeStart),writer=service.slice(writeStart);
+const guard=service.slice(service.indexOf("async function lockPrivateReviewScope("),readStart);
 
 test("DB062 canonical scoped reads precede strictly owner-bound legacy fallback",()=>{
  for(const text of [
@@ -37,10 +38,13 @@ test("DB079 mutation locks fresh persisted grant, tenant and recruiter principal
   'eq(placementApplications.status,"SUBMITTED")',
   'eq(placementApplicationScreenings.status,"SHORTLISTED")',
   '.for("update").limit(1)',
- ])assert.ok(writer.includes(frag),"Missing live private note guard: "+frag);
- const lock=writer.indexOf('.for("update").limit(1)');
- const mutation=writer.indexOf("await tx.update(placementRecruiterApplicantNotes)");
- assert.ok(lock>0&&mutation>lock);
+ ])assert.ok(guard.includes(frag),"Missing live private note guard: "+frag);
+ assert.ok(guard.includes('await query.for("update").limit(1)'));
+ assert.ok(guard.includes('await query.for("share").limit(1)'));
+ assert.ok(reader.includes('lockPrivateReviewScope(tx,ctx,jobId,applicationId,scope,"share")'));
+ assert.ok(writer.includes('lockPrivateReviewScope(tx,ctx,jobId,applicationId,scope,"update")'));
+ assert.ok(writer.indexOf('lockPrivateReviewScope(tx,ctx,jobId,applicationId,scope,"update")') <
+  writer.indexOf("await tx.update(placementRecruiterApplicantNotes)"));
 });
 
 test("DB062 single canonical note writer uses CAS, scoped identity and no dual writes",()=>{
