@@ -678,23 +678,19 @@ export async function correctAdminAttendance(
         return {scheduleEventId,membershipId:input.membershipId,status:input.status,correctedAt:now,smsOutboxId:null};
       }
 
-      // Preserve Faculty/Learner semantics: PRESENT is an absent
-      // exception row, not a stored PRESENT record.
+      // Retain the same current-record UUID when correcting ABSENT to
+      // PRESENT. DB-035 immutable attendance history must never lose its
+      // parent row; a missing record still means implicit PRESENT until a
+      // reviewed explicit mark has been recorded.
       if (input.status === "PRESENT") {
-        await tx
-          .delete(attendanceRecords)
-          .where(
-            and(
-              eq(
-                attendanceRecords.scheduleEventId,
-                scheduleEventId,
-              ),
-              eq(
-                attendanceRecords.membershipId,
-                input.membershipId,
-              ),
-            ),
-          );
+        if (!priorRecord) throw new CoursesServiceError("ATTENDANCE_ROSTER_CONFLICT");
+        await tx.update(attendanceRecords).set({
+          status: "PRESENT",
+          markedByUserId: context.user.id,
+          markedAt: now,
+          updatedAt: now,
+          ...(input.note !== undefined ? { note: input.note || null } : {}),
+        }).where(eq(attendanceRecords.id, priorRecord.id));
       } else {
         const [existing] = await tx
           .select({ id: attendanceRecords.id })
