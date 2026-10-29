@@ -1,6 +1,7 @@
 "use client";
 
 import { ADMIN_ATTENDANCE_COPY } from "@/modules/attendance/admin-attendance-copy";
+import {adminAttendanceCorrectionChange} from "@/modules/attendance/admin-correction-change-model";
 import {AdminAttendanceParentContactEditor} from "./admin-attendance-parent-contact-editor";
 import {apiFetch,FriendlyFetchError} from "@/lib/api-fetch";
 import {useGuardedAction} from "@/hooks/use-guarded-action";
@@ -159,6 +160,10 @@ export function AdminAttendanceWorkspace({
     status:"PRESENT"|"ABSENT"|"EXCUSED"|"MEDICAL"|"LATE";
     note:string|null;expectedMarkedAt:string|null;
   }|null>(null);
+  const noteEdited=verifiedRecord!==null&&adminAttendanceCorrectionChange({
+    previous:{status:verifiedRecord.status,note:verifiedRecord.note},
+    requestedStatus:verifiedRecord.status,requestedNote:correctionNote,
+  }).noteChanged;
   const [verifyingRecord,setVerifyingRecord]=useState(false);
   const recordRequest=useRef(0);
   const [sectionId, setSectionId] = useState(data.selectedSectionId ?? "");
@@ -336,7 +341,10 @@ export function AdminAttendanceWorkspace({
       !data.selectedDeliveryId ||
       correcting || verifyingRecord || !verifiedRecord ||
       new Date(target.session.startsAt).getTime()>loadedAt ||
-      status === verifiedRecord.status
+      !adminAttendanceCorrectionChange({
+        previous:{status:verifiedRecord.status,note:verifiedRecord.note},
+        requestedStatus:status,requestedNote:correctionNote,
+      }).changed
     ) {
       return;
     }
@@ -354,7 +362,7 @@ export function AdminAttendanceWorkspace({
             membershipId: target.learner.membershipId,
             status,
             expectedMarkedAt:verifiedRecord.expectedMarkedAt,
-            ...(correctionNote.trim() ? { note: correctionNote.trim() } : {}),
+            note: correctionNote.trim(), // empty string explicitly clears a saved note
           }),
         },
       );
@@ -743,6 +751,13 @@ export function AdminAttendanceWorkspace({
               ) : null}
               <Button size="sm" variant="secondary" disabled={correcting||refreshing||verifyingRecord}
                 onClick={()=>{recordRequest.current+=1;setTarget(null);setVerifiedRecord(null);startRefresh(()=>router.refresh());}}>Refresh grid and reopen</Button>
+              {noteEdited && verifiedRecord ? (
+                <Button size="sm" variant="secondary"
+                  disabled={correcting||refreshing||verifyingRecord}
+                  onClick={()=>void correct(verifiedRecord.status)}>
+                  {correcting?"Saving…":"Save note"}
+                </Button>
+              ) : null}
               {verifiedRecord?.status && verifiedRecord.status !== "PRESENT" ? (
                 <Button size="sm" disabled={correcting||refreshing||verifyingRecord||!verifiedRecord} onClick={()=>void correct("PRESENT")}>
                   {correcting?"Saving…":"Mark present"}
@@ -789,7 +804,7 @@ export function AdminAttendanceWorkspace({
             </label>
             <p className="text-xs text-muted-foreground">The current attendance record is re-read from the selected college immediately before editing. A changed record is rejected on save; refresh and retry to avoid overwriting someone else&apos;s correction.</p>
             <p className="text-xs text-muted-foreground">
-              The Faculty correction window is {data.policy.correctionWindowHours} hours. College Admin corrections are not limited by it. Present corrections remove the absence exception. This change is recorded.
+              The Faculty correction window is {data.policy.correctionWindowHours} hours. College Admin corrections are not limited by it. Present corrections retain the learner’s attendance record and correction history. Note edits are also recorded.
             </p>
             {target.record?.note ? (
               <p className="text-sm text-body">Note: {target.record.note}</p>
