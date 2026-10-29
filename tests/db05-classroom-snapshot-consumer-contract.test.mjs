@@ -12,16 +12,16 @@ test("DB05 trusted sender snapshot is used by timeline, first pin and delta feed
   const use = "senderName: immutableDiscussionSenderName,";
   assert.equal(service.split(use).length - 1, 3,
     "All three reader projections must use the persisted sender snapshot");
-  assert.doesNotMatch(service, /senderName:\\s*users\\.displayName/);
-  assert.match(service, /nullif\\(\\$\\{courseDiscussionMessages\\.senderNameSnapshot\\}, ''\\)/);
-  assert.match(service, /\\$\\{users\\.displayName\\}/);
-  assert.match(schema, /senderNameSnapshot: varchar\\("sender_name_snapshot"/);
+  assert.doesNotMatch(service, /senderName:\s*users\.displayName/);
+  assert.match(service, /nullif\(\$\{courseDiscussionMessages\.senderNameSnapshot\}, ''\)/);
+  assert.match(service, /\$\{users\.displayName\}/);
+  assert.match(schema, /senderNameSnapshot: varchar\("sender_name_snapshot"/);
 });
 
 test("DB05 database persists a trusted name and rejects later sender spoofing", () => {
   assert.match(service, /senderNameSnapshot:senderName/);
-  assert.match(migration, /NEW\\.sender_name_snapshot := left\\(trusted_display_name, 160\\)/);
-  assert.match(migration, /NEW\\.sender_name_snapshot IS DISTINCT FROM OLD\\.sender_name_snapshot/);
+  assert.match(migration, /NEW\.sender_name_snapshot := left\(trusted_display_name, 160\)/);
+  assert.match(migration, /NEW\.sender_name_snapshot IS DISTINCT FROM OLD\.sender_name_snapshot/);
   assert.match(migration, /classroom sender attribution is immutable/);
   assert.match(integration, /preserves send-time attribution through profile renames/);
   assert.match(integration, /UPDATE course_discussion_messages SET sender_name_snapshot/);
