@@ -1777,6 +1777,19 @@
         "reason": "L04 corrected all four course_discussion_messages read models to use registered immutable sender_name_snapshot with null-row fallback, including timeline/pin/delta/content-scoped readers. Execute tests/db05-classroom-snapshot-consumer-contract.test.mjs and tests/integration/db05-classroom-sender-snapshot.test.ts after disposable PG17 registered replay + seeded fixtures at the current revision; add these owned tests to DB008 workflow's independent job, without weakening broader gates. Real PostgreSQL negative verifies attempted sender_name_snapshot rewrite returns SQLSTATE 23514, plus historical profile rename and pinned projection. Return exact runner SHA/run; L04 will not certify DB-008 from authored tests.",
         "status": "REQUESTED",
         "requestedAt": "2026-10-29T05:32:43.981Z"
+      },
+      {
+        "id": "SCR-L08-L07-DB057-WATERMARK-CONSUMER-20261029",
+        "fromLane": "L08",
+        "toLane": "L07",
+        "paths": [
+          "src/modules/placements/hr-recruiter-bell-service.ts",
+          "src/modules/placements/hr-notifications-service.ts",
+          "src/modules/placements/hr-conversation-inbox-service.ts"
+        ],
+        "reason": "The prior recruiter-bell unread-message handoff is APPLIED on main, but DB-057 is still unaccepted: placement_recruiter_notification_reads/read_through has a registered PostgreSQL guard and no runtime producer/consumer in current recruiter bell. Reconcile legacy markAllRead upsert watermark vs vNext in_app_notifications receipts and 7-day first visit; implement exact/approved equivalent scoped persistence, ensure revocation/concurrency negatives, then provide PG and real consumer evidence. L08 will handle DB09 domain tests and tracker closure; do not duplicate placement service writes.",
+        "status": "REQUESTED",
+        "requestedAt": "2026-10-29T05:32:48.539Z"
       }
     ],
     "coordination": {
