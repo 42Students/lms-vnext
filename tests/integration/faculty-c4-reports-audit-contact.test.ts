@@ -69,6 +69,10 @@ async function cleanup(){
  await pool.query("delete from learner_program_enrollments where id=$1",[f.enrollmentId]);
  await pool.query("delete from sections where id=$1",[f.sectionId]);
  await pool.query("delete from cohorts where id=$1",[f.cohortId]);
+ // Program creation materializes canonical term definitions. Remove only
+ // this disposable fixture's unused terms after its cohort, offerings and
+ // curriculum links are gone; DB02 forbids deleting referenced live terms.
+ await pool.query("delete from program_terms where program_id=$1",[f.programId]);
  await pool.query("delete from programs where id=$1",[f.programId]);
  await pool.query("delete from academic_periods where id=$1",[f.periodId]);
  // Preserve append-only actor identity references if any writer added one.
