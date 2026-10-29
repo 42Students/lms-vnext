@@ -42,3 +42,14 @@ test("DB-007 gallery upload strips transport discriminator for strict storage bo
   assert.match(uploadRoute, /confirmOwnLearnerGalleryUpload\(context, \{\s*objectKey: input\.objectKey,/);
   assert.doesNotMatch(uploadRoute, /(?:initiateOwnLearnerGalleryUpload|confirmOwnLearnerGalleryUpload)\(context, input\)/);
 });
+
+
+test("DB-007 pending-scan gallery reads map to retryable conflict without hiding storage errors",()=>{
+  assert.match(gallery,/export async function checkedGalleryObjectAttestation\(/);
+  assert.match(gallery,/error instanceof PrivateObjectStorageError/);
+  assert.match(gallery,/error\.code === "PRIVATE_STORAGE_OBJECT_NOT_ATTESTED"/);
+  assert.match(gallery,/throw new LearnerGalleryError\("GALLERY_RECEIPT_INVALID"\)/);
+  assert.match(gallery,/throw error;/);
+  assert.match(gallery,/checkedGalleryObjectAttestation\(input\.objectKey, access\)/);
+  assert.match(gallery,/checkedGalleryObjectAttestation\(candidate\.privateObjectKey, access\)/);
+});
