@@ -18,8 +18,12 @@ export function globalEmailSuppressionActivationState(){
  // strand the first pending EMAIL row in a claim that cannot be completed.
  let keyConfigured=false;
  try{
-  deriveGlobalEmailSuppressionHashForAddress(
-   "readiness@example.org",process.env["DB10_GLOBAL_EMAIL_HMAC_KEY_BASE64"]??"");
+  const stableKey=process.env["DB10_GLOBAL_EMAIL_HMAC_KEY_BASE64"]??"";
+  const encryptionKey=process.env["DB10_OUTBOUND_ENCRYPTION_KEY_BASE64"]??"";
+  // Never bind global opt-out identity to the ciphertext encryption secret:
+  // ordinary encryption rotation must not reset consent across colleges.
+  if(stableKey===encryptionKey)throw new Error("OUTBOUND_KEY_REUSE");
+  deriveGlobalEmailSuppressionHashForAddress("readiness@example.org",stableKey);
   keyConfigured=true;
  }catch{keyConfigured=false;}
  return {
