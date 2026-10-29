@@ -5,7 +5,7 @@ import { closeDatabaseConnection } from "@/db/client";
 import type { RequestContext } from "@/modules/identity/context";
 import { createGroup, joinGroup, leaveGroup, moveElectiveMember, transitionGroup } from "@/modules/groups/service";
 import { SEED_IDS } from "../../scripts/db-seed-data";
-import { createElectiveOffering, createElectiveSlot, listElectiveOfferings } from "@/modules/electives/service";
+import { createElectiveOffering, createElectiveSlot, listElectiveOfferings, updateCollegeElectiveOffering } from "@/modules/electives/service";
 import { upsertGroupRule, refreshGroupRule } from "@/modules/groups/rules-service";
 
 const url = process.env.TEST_DATABASE_URL;
