@@ -2215,9 +2215,9 @@
           "src/app/(authenticated)/tpo/settings/prep-readiness/page.tsx"
         ],
         "reason": "DB-034 normalized placement_tpo_prep_courses requires active prep courses across the college's organization (legacy prepCourses(organizationId)), but current listTpoPrepCourses() reads courses joined to departments where departments.collegeId = current college; it excludes eligible courses in sibling colleges and does not use placement_tpo_prep_courses selection. L07 owns shared placement producer/consumer service: reconcile org-scope selector and persisted normalized settings, preserve TPO auth + active-course restrictions, and add same-org/sibling-college positive and other-org denial tests. L08 will verify DB09 persistence and task evidence.",
-        "status": "ACCEPTED",
+        "status": "APPLIED",
         "requestedAt": "2026-10-29T05:49:22.309Z",
-        "integratorReview": "L07 takes placement prep course read/write/derived scope, with L08 owning DB034 acceptance tests. Target: active courses in sibling colleges of same organization, persisted normalized selections with guarded membership/course scope, explicit compatibility for existing JSON. No database migration edits."
+        "integratorReview": "L07 committed org-scoped active course catalogue, writer validation and atomic DB09 normalized selection upsert, derived learner evidence from sibling-college courses, normalized/JSON drift detection and fail-closed learner evidence, and settings warning. Commits ae12f7b, ef265a0, 5c99cf9, 71ba40f, b202a5f, a45c8fe, f2fbca0. Updated legacy exact-college source tests to assert organization ownership while preserving learner-specific college scope. Source acceptance only; actual PG/CI/browser and historical JSON backfill still pending L08/L01. DB034 must NOT be marked done yet."
       },
       {
         "id": "L04-L02-DB008-ELECTIVE-YEAR-FAILCLOSED-20261029",
@@ -2396,6 +2396,19 @@
         "reason": "DB-062 domain parity gap: active recruiter private rating/note service reads/writes placement_recruiter_private_reviews (schema placement-recruiter-candidate-ratings.ts, 5 columns, unique recruiter+application), not registered DB09 placement_recruiter_applicant_notes (10 columns, scoped job+college, immutable identity/timestamps). L08 PG witness now covers historical-named DB09 table, but the real consumer does not touch it. L07 owns service: confirm approved single canonical data model and migrate/retire redundant table only through L01 migration ownership, or adapt current producer and consumer to DB09 table with real same-company grant and source versioning. No unreviewed dual writes; no DB062 acceptance on orphan-table-only PG success. Source comparison confirmed this discrepancy. Coordinate DB079 post-revocation UPDATE guard with L01 handoff.",
         "status": "REQUESTED",
         "requestedAt": "2026-10-29T06:40:40.644Z"
+      },
+      {
+        "id": "SCR-L07-L01-DB034-PREP-SELECTION-BACKFILL-20261029",
+        "fromLane": "L07",
+        "toLane": "L01",
+        "paths": [
+          "drizzle/[0-9]*.sql",
+          "drizzle/meta/*",
+          "src/db/schema/index.ts"
+        ],
+        "reason": "DB034 normalized placement_tpo_prep_courses is now dual-written with legacy placement_tpo_prep_readiness.config.courseIds, and reader suppresses readiness evidence when the two drift. Any older existing JSON-only selections need source-verified backfill before fully accepting DB034. created_by_user_id is NOT derivable from JSON; reconcile latest authoritative TPO settings-change audit actor or require audited manual remediation. Do not invent an actor, migrate foreign-org/archived courses, or weaken FK tenant/actor guards. Register only with clean disposable PG replay and negative tests.",
+        "status": "REQUESTED",
+        "requestedAt": "2026-10-29T06:41:31.445Z"
       }
     ],
     "coordination": {
