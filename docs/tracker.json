@@ -1927,8 +1927,8 @@
         "requestedAt": "2026-10-28T19:58:45.885Z",
         "integratorReview": "L01 accepts shared migration registration request, but promotion remains BLOCKED until L05 lands transactional grade/attendance MARK/CORRECT producers and executes their domain negative witnesses. Do not register deferred history triggers against current writes or certify DB-035/042 from source-only coverage.",
         "domainProgress": {
-          "stage": "SOURCE_ONLY_NOT_PG_ACCEPTED",
-          "latestAt": "2026-10-29T06:50:05.181Z",
+          "stage": "REGISTERED_DB030_GREEN_DB035_DB042_STAGED_NOT_CERTIFIED",
+          "latestAt": "2026-10-29T08:27:06.544Z",
           "stagedEventBuilder": "src/modules/attendance/db06-attendance-history-staged.ts",
           "stagedEventTests": "tests/unit/db06-attendance-history-staged.test.ts",
           "stagedGuard": "docs/planning/sql/db06-attendance-scope-candidate.sql",
@@ -1964,7 +1964,26 @@
             ],
             "verification": "15/15 isolated model assertions, 20/21 ad-hoc source checks (one intentionally mismatched check; relevant named behavior assertions verified); disposable PostgreSQL integration tests committed but not executed"
           },
-          "gradeHistoryUpgrade": "0205 already has assignment_grade_events with HIDE_GRADE. DB035 must be in-place upgrade. 21/21 source contract checks on migrated base, revised staged SQL/model, producer and opt-in PG witness; not runtime PG."
+          "gradeHistoryUpgrade": "0205 already has assignment_grade_events with HIDE_GRADE. DB035 must be in-place upgrade. 21/21 source contract checks on migrated base, revised staged SQL/model, producer and opt-in PG witness; not runtime PG.",
+          "observedCI": {
+            "url": "https://github.com/42Students/lms-vnext/actions/runs/40840530790",
+            "headSha": "87f58283152f4c2bdaa008af1d6ec8c75fa0c625",
+            "acceptedScope": "db06-acceptance job 28/28 PostgreSQL tests success; this validates already registered DB030 parent scope and not the unregistered DB035/DB042 enforcement",
+            "unrelatedGates": "source-contracts failing one native BigInt schema-default assertion (L01), DB05 staged/DB058 failures (other owners); no full green CI claim"
+          },
+          "witness": {
+            "path": "tests/integration/db06-attendance-scope-staged-negative.test.ts",
+            "sourceSql": "docs/planning/sql/db06-attendance-scope-candidate.sql",
+            "setup": "Run on disposable migrated seeded TEST_DATABASE_URL with DB06_RUN_ATTENDANCE_SCOPE_WITNESSES=1 DB06_DISPOSABLE_DB_CONFIRM=YES; canonical db01-test-database-guard.mjs required",
+            "scope": "Single client transaction applies candidate DDL, inserts synthetic course and learner/foreign fixtures, checks authorized admin solo correction, wrong learner, unauthorized marker, row identity, record/session no-delete, never persists on test completion",
+            "acceptance": "NOT RUN. Must execute PG17 and inspect success+negative SQLSTATE; then L01 must compose source migration atomically with event writers."
+          },
+          "facultyAdminBehaviorFixes": [
+            "Existing four attendance unit tests updated to assert new note-only/no-delete semantics instead of obsolete source literals",
+            "CORRECTED queued guardian SMS now accepts explicit PRESENT current rows, never sends stale notices after another status change",
+            "Distinct ADMIN_ATTENDANCE_NOTE_UPDATED audit event type prevents mislabelling note-only edits as newly marked absence",
+            "Guards in both staged DB042 and DB035 PostgreSQL witnesses call canonical disposable DB01 target preflight"
+          ]
         }
       },
       {
@@ -2605,6 +2624,18 @@
           "tests/db09-recruiter-note-registered-pg-acceptance.mjs"
         ],
         "reason": "L07 switched active recruiter review producer/read to DB09 placement_recruiter_applicant_notes with scoped job/college and DB079 live grant transaction locks (commits d208ead,684c56a,aa6c29c,668a7e1,736c6b8). Existing placement_recruiter_private_reviews may contain sensitive historical ratings/notes and has no created_at/college_id/job_id. L07 keeps authenticated owner-only read fallback but blocks editing legacy rows (503 REVIEW_MIGRATION_PENDING) to avoid data loss or contradictory dual writes. L01 should design registered forward-only, auditable backfill of legacy notes only when application-job-college, same-company active grant, profile & user ownership are provable; reconcile empty rating/note (DB09 nonblank CHECK), source updated_at provenance, collisions and revoked-owner history explicitly. Do NOT fabricate creation timestamps, silently drop notes, create foreign-company writes or guess grants. After migration, retired old table needs controlled deprecation. Also DB09 DELETE of review is runtime actor-gated but SQL not yet guarded against revoked recruiter; plan forward guard for DELETE or justify immutable retention. Return isolated PG positive/negative/race evidence."
+      },
+      {
+        "id": "L05-L10-DB042-PG-NEGATIVE-WITNESS-20261029",
+        "fromLane": "L05",
+        "toLane": "L10",
+        "paths": [
+          "tests/integration/db06-attendance-scope-staged-negative.test.ts",
+          "tests/integration/db06-grade-hide-negative-witness.test.ts"
+        ],
+        "status": "REQUESTED",
+        "requestedAt": "2026-10-29T08:27:06.544Z",
+        "reason": "Please independently run/review DB042 staged SQL and DB035 grade-hide negative witnesses on a disposable PG17; both now require canonical scripts/db01-test-database-guard.mjs, opt-in flags, and always ROLLBACK. These are NOT presently executed/certified, and final trigger migration is still blocked on atomic event producers; report SQLSTATE witness results and any unsafe target/fixture assumptions to L05/L01."
       }
     ],
     "coordination": {
