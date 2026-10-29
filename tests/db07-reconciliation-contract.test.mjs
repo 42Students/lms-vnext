@@ -202,3 +202,39 @@ test("DB07 cross-domain invariants remain blockers until atomic/runtime evidence
     /cross-college/i,
   );
 });
+
+
+// L06 DB07 transaction-boundary regression proofs (also run by test:db:parity).
+test("DB07 meeting link parents are checked and locked inside the scheduling transaction", () => {
+  const source=fs.readFileSync("src/modules/projects/meeting-service.ts","utf8");
+  const helper=source.slice(source.indexOf("async function validateMeetingLinks("),
+    source.indexOf("export type ProjectMeetingListOptions"));
+  const body=source.slice(source.indexOf("export async function scheduleProjectMeeting("),
+    source.indexOf("export async function transitionProjectMeeting("));
+  const tx=body.indexOf("return getDb().transaction(async (tx) =>");
+  const projectLock=body.indexOf('.for("update").limit(1)',tx);
+  const actor=body.indexOf("await assertPersistedProjectMutationActor(",projectLock);
+  const links=body.indexOf("validateMeetingLinks(tx,scope.project.id,effectiveSprintId,effectiveTaskId)",actor);
+  const insert=body.indexOf("await tx.insert(projectMeetings)",links);
+  const update=body.indexOf("await tx.update(projectMeetings)",links);
+  assert.ok(tx>=0&&projectLock>tx&&actor>projectLock&&links>actor);
+  assert.ok(insert>links&&update>links);
+  assert.equal((helper.match(/\.for\("share"\)/g)??[]).length,2);
+  assert.match(helper,/eq\(projectSprints\.projectId, projectId\)/);
+  assert.match(helper,/eq\(projectTasks\.projectId, projectId\)/);
+  assert.match(helper,/task\.sprintId !== sprint\.id/);
+  assert.ok(!body.slice(0,tx).includes("validateMeetingLinks("));
+});
+
+test("DB07 mentor reschedule write clock is checked after project and meeting locks", () => {
+  const source=fs.readFileSync("src/modules/projects/mentor-meeting-reschedule-service.ts","utf8");
+  const tx=source.indexOf("return getDb().transaction(async tx=>");
+  const projectLock=source.indexOf('.for("update").limit(1)',tx);
+  const meetingLock=source.indexOf('.for("update").limit(1)',projectLock+1);
+  const stateCheck=source.indexOf("mentorMeetingCanReschedule(meeting.status,project.status)",meetingLock);
+  const timeCheck=source.indexOf("if(start.getTime()<=Date.now())",stateCheck);
+  const write=source.indexOf("await tx.update(projectMeetings)",timeCheck);
+  assert.ok(tx>=0&&projectLock>tx&&meetingLock>projectLock);
+  assert.ok(stateCheck>meetingLock&&timeCheck>stateCheck&&write>timeCheck);
+  assert.equal((source.match(/if\(start\.getTime\(\)<=Date\.now\(\)\)/g)??[]).length,2);
+});
