@@ -2175,7 +2175,7 @@
           "tests/db09-share-registered-pg-acceptance.mjs",
           "scripts/db-independent-verify.mjs"
         ],
-        "reason": "Run a new clean disposable PostgreSQL 17 full registered journal replay against fresh main at or after L08 commit 7cd45e6b110e329077337bc7585ce28e65dc3660 and reexecute BOTH DB09 PG witnesses (not rerun old failed GitHub Actions SHA). First previous run 40825524568 incorrectly expected saved-view DELETE denial; second run 40825547851 unexpectedly allowed fixture-seeded faculty. Witness now tests permitted view DELETE and creates a fresh FACULTY-only principal, with explicit db09_has_active_tpo_actor false + SQLSTATE 23514 negatives; SQL security guard unchanged. Record exact run SHA and output; no DB09 tasks DONE until PG/producer/consumer closure.",
+        "reason": "Run a new clean disposable PostgreSQL 17 full registered journal replay against fresh main at or after L08 commit 7cd45e6b110e329077337bc7585ce28e65dc3660 and reexecute BOTH DB09 PG witnesses (not rerun old failed GitHub Actions SHA). First previous run 40825524568 incorrectly expected saved-view DELETE denial; second run 40825547851 unexpectedly allowed fixture-seeded faculty. Witness now tests permitted view DELETE and creates a fresh FACULTY-only principal, with explicit db09_has_active_tpo_actor false + SQLSTATE 23514 negatives; SQL security guard unchanged. Record exact run SHA and output; no DB09 tasks DONE until PG/producer/consumer closure. Also, secure-share witness now independently creates a FACULTY-only author with a direct negative TPO principal check in commit 5ef8a5e36ea3f845affa9be3258e9b2a2d67d9a7; run both on same fresh HEAD.",
         "status": "REQUESTED",
         "requestedAt": "2026-10-29T05:57:24.160Z"
       },
