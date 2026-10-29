@@ -10,6 +10,7 @@ export function LearnerImageGallery({ membershipId }: { membershipId?: string })
   const [images, setImages] = useState<Image[]>([]);
   const [loading, setLoading] = useState(true);
   const [canEdit, setCanEdit] = useState(false);
+  const [canUpload, setCanUpload] = useState(false);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [pendingObjectKey, setPendingObjectKey] = useState<string | null>(null);
   const [preview, setPreview] = useState<{ id: string; url: string } | null>(null);
@@ -24,11 +25,14 @@ export function LearnerImageGallery({ membershipId }: { membershipId?: string })
       const result = await fetch("/api/profile/learner-gallery" + suffix, { cache: "no-store" });
       if (!result.ok) throw new Error(result.status === 503 ?
         "This gallery is awaiting verified storage setup." : "Could not load gallery.");
-      const value: { images: Image[]; canEdit: boolean } = await result.json();
+      const value: { images: Image[]; canEdit: boolean; canUpload: boolean } = await result.json();
       setImages(value.images);
       setCanEdit(value.canEdit);
+      setCanUpload(value.canUpload === true);
     } catch (cause) {
       setImages([]);
+      setCanEdit(false);
+      setCanUpload(false);
       setError(cause instanceof Error ? cause.message : "Could not load gallery.");
     } finally { setLoading(false); }
   }, [suffix]);
@@ -130,7 +134,7 @@ export function LearnerImageGallery({ membershipId }: { membershipId?: string })
               alt={"Profile image " + (image.displayOrder + 1)} referrerPolicy="no-referrer" /> : null}
         </li>)}
       </ul>}
-    {canEdit ? <div className="max-w-lg space-y-2 rounded-xl border border-border bg-surface p-3">
+    {canUpload ? <div className="max-w-lg space-y-2 rounded-xl border border-border bg-surface p-3">
       <label htmlFor="gallery-upload" className="block text-sm font-medium">
         Add a profile photo
       </label>
