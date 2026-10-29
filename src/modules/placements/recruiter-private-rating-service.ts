@@ -49,7 +49,7 @@ async function verifyOwnSharedApplication(ctx:RequestContext,jobId:string,applic
 }
 export async function readRecruiterPrivateReview(ctx:RequestContext,rawJobId:string,rawApplicationId:string){
  const jobId=z.string().uuid().parse(rawJobId),applicationId=z.string().uuid().parse(rawApplicationId);
- await verifyOwnSharedApplication(ctx,jobId,applicationId);
+ const scope=await verifyOwnSharedApplication(ctx,jobId,applicationId);
  // DB062: one authoritative writable table. Read the registered scoped
  // DB09 record first. Unmigrated legacy private reviews are visible only to
  // their authorized owner, never silently discarded or rewritten.
