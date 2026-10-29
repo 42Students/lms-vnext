@@ -1782,7 +1782,27 @@
         "reason": "DB-035 immutable assessment/attendance history and DB-042 roster/marker guards are source-only candidates at docs/planning/sql/db06-assessment-attendance-history-candidate.sql and db06-attendance-scope-candidate.sql. Coordinate single-writer registration only when L05 has completed the transactional grade, attendance MARK/CORRECT event producers and exercised disposable PostgreSQL replay/drift/negative tests. Do not promote the SQL candidates independently; their deferred triggers would reject current faculty/admin writes. This request is NOT acceptance evidence.",
         "status": "ACCEPTED",
         "requestedAt": "2026-10-28T19:58:45.885Z",
-        "integratorReview": "L01 accepts shared migration registration request, but promotion remains BLOCKED until L05 lands transactional grade/attendance MARK/CORRECT producers and executes their domain negative witnesses. Do not register deferred history triggers against current writes or certify DB-035/042 from source-only coverage."
+        "integratorReview": "L01 accepts shared migration registration request, but promotion remains BLOCKED until L05 lands transactional grade/attendance MARK/CORRECT producers and executes their domain negative witnesses. Do not register deferred history triggers against current writes or certify DB-035/042 from source-only coverage.",
+        "domainProgress": {
+          "stage": "SOURCE_ONLY_NOT_PG_ACCEPTED",
+          "latestAt": "2026-10-29T05:49:04.565Z",
+          "stagedEventBuilder": "src/modules/attendance/db06-attendance-history-staged.ts",
+          "stagedEventTests": "tests/unit/db06-attendance-history-staged.test.ts",
+          "stagedGuard": "docs/planning/sql/db06-attendance-scope-candidate.sql",
+          "changes": [
+            "Faculty marking materializes stable PRESENT and ABSENT current record rows",
+            "Faculty/Admin correct current rows in place, preserving record identity",
+            "Administrator corrected MARKED sessions invalidate Faculty optimistic tokens",
+            "DB042 staged deferred guard now permits only COLLEGE_ADMIN/SUPER_ADMIN single-learner correction in UNMARKED sessions"
+          ],
+          "verification": "Isolated planner 8/8 and immutable payload 12/12 passed via TypeScript compile and node:test in local sandbox; 11/11 source checks on fetched main blobs. NOT PostgreSQL/integration/full-repo acceptance.",
+          "blocksPromotion": [
+            "Live Faculty/Admin producers must insert DB035 immutable MARK/CORRECT events for every initial/change row within same transaction as version increments",
+            "Assignment grading/publishing live producers need DB035 grade events and versions (coordinate with L04)",
+            "L01 registered migration replay + drift and L10 DB negatives not executed for integrated cutover",
+            "DB042 admin-only exception needs disposable PostgreSQL negative tests"
+          ]
+        }
       },
       {
         "id": "SCR-L08-L07-RECRUITER-BELL-20261029",
