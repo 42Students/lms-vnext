@@ -362,6 +362,20 @@ async function main() {
       ["--test", "tests/db078-registered-course-column-disposition-pg.test.mjs"],
       { ...destructiveEnv, DB078_DISPOSABLE: "1" },
     );
+    // L08 CRM negative suites exercise the registered/seeded disposable DB,
+    // use no staged SQL, and roll back all writes.
+    runStep(
+      "DB09 registered CRM principal and read authorization negatives",
+      "node",
+      ["tests/db09-collaboration-registered-pg-acceptance.mjs"],
+      { ...destructiveEnv, DB09_ISOLATED_TEST_DATABASE: "1" },
+    );
+    runStep(
+      "DB09 registered secure-share lifecycle and disclosure negatives",
+      "node",
+      ["tests/db09-share-registered-pg-acceptance.mjs"],
+      { ...destructiveEnv, DB09_ISOLATED_TEST_DATABASE: "1" },
+    );
     runStep(
       "Database parity source/static contracts",
       "npm",
@@ -398,7 +412,7 @@ async function main() {
         sourceTreeClean &&
         failure === null &&
         provider !== null &&
-        results.length === 10 &&
+        results.length === 12 &&
         results.every(
           (step) =>
             step.exitCode === 0 &&
