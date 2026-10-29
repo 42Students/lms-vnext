@@ -168,9 +168,11 @@ export async function reportErrorForAlert(input: ReportableError): Promise<boole
       const elapsed = current?.recentWindowAt
         ? now.getTime() - current.recentWindowAt.getTime() : null;
       const inWindow = elapsed !== null && elapsed >= 0 && elapsed < 300_000;
+      // The spike detector only asks whether this window reached 20/25.
+      // Bound its number-mode counter at 25 so it never loses JS precision.
       const recentCount = clockOutOfOrder && current
-        ? current.recentWindowCount
-        : current && inWindow ? current.recentWindowCount + 1 : 1;
+        ? Math.min(25, current.recentWindowCount)
+        : current && inWindow ? Math.min(25, current.recentWindowCount + 1) : 1;
       const decision = clockOutOfOrder ? "NONE" : decideAlert({
         known: Boolean(current), muted: current?.muted ?? false,
         fixStatus: current?.fixStatus ?? "OPEN", fixedAt: current?.fixedAt ?? null,
@@ -191,10 +193,10 @@ export async function reportErrorForAlert(input: ReportableError): Promise<boole
           recentWindowCount: recentCount,
           dayKey: olderDay ? current.dayKey : dayKey,
           dayOccurrences: olderDay ? current.dayOccurrences :
-            current.dayKey === dayKey ? current.dayOccurrences + 1 : 1,
+            current.dayKey === dayKey ? current.dayOccurrences + 1n : 1n,
         }).where(eq(signatures.id, current.id));
         await tx.insert(daily).values({
-          signatureId: current.id, dayKey, occurrenceCount: 1,
+          signatureId: current.id, dayKey, occurrenceCount: 1n,
         }).onConflictDoUpdate({
           target: [daily.signatureId, daily.dayKey],
           set: { occurrenceCount: sql.raw("log_alert_daily_counts.occurrence_count + 1") },
@@ -263,9 +265,9 @@ export async function reportErrorForAlert(input: ReportableError): Promise<boole
           id, environment, signatureHash: hash, sampleMessage: message,
           samplePath: path, firstSeenAt: now, lastSeenAt: now,
           occurrenceCount: 1n, recentWindowAt: now, recentWindowCount: 1,
-          alertedAt: now, dayKey, dayOccurrences: 1,
+          alertedAt: now, dayKey, dayOccurrences: 1n,
         });
-        await tx.insert(daily).values({ signatureId: id, dayKey, occurrenceCount: 1 });
+        await tx.insert(daily).values({ signatureId: id, dayKey, occurrenceCount: 1n });
         if (accountHash) await tx.insert(accounts).values({
           signatureId: id, accountKeyHash: accountHash, firstSeenAt: now,
         }).onConflictDoNothing();
