@@ -308,3 +308,41 @@ test("DB070/071 Mentor integration fixture cleanup preserves immutable template 
     assert.ok(retention>=0&&revDelete>retention,path);
   }
 });
+
+
+// L06 DB07 deleted ancestor guards in remaining learner and Mentor edit writers.
+test("DB07 Mentor metadata edit writers fail closed on deleted parents",()=>{
+ const sources=[
+   "src/modules/projects/mentor-task-details-service.ts",
+   "src/modules/projects/mentor-sprint-details-service.ts",
+ ];
+ for(const path of sources){
+   const source=fs.readFileSync(path,"utf8");
+   const project=source.indexOf("const [project] = await tx.select(")>=0
+     ?source.indexOf("const [project] = await tx.select(")
+     :source.indexOf("const [project]=await tx.select(");
+   const lock=source.indexOf('.for("update").limit(1)',project);
+   const tombstone=source.indexOf("project.deletedAt",project);
+   const actor=source.indexOf("assertPersistedProjectMutationActor(tx,context,scope)",lock);
+   assert.ok(project>=0&&lock>project&&tombstone>lock&&actor>tombstone,path);
+ }
+ const task=fs.readFileSync(sources[0],"utf8");
+ assert.match(task,/isNull\(projectTasks\.deletedAt\)/);
+ assert.match(task,/isNull\(projectSprints\.deletedAt\)/);
+});
+
+test("DB07 both learner-owned task mutations recheck project and sprint tombstones",()=>{
+ const source=fs.readFileSync("src/modules/projects/learner-own-task-service.ts","utf8");
+ assert.equal((source.match(/project\.deletedAt/g)??[]).length,2);
+ assert.equal((source.match(/isNull\(projectSprints\.deletedAt\)/g)??[]).length,2);
+ assert.equal((source.match(/assertPersistedLearnerProjectMutation\(tx,context,projectId,scope\.collegeId\)/g)??[]).length,2);
+ assert.match(source,/isNull\(projectTasks\.deletedAt\)/);
+});
+
+test("DB070 mentor task-details integration fixture also preserves permanent history",()=>{
+ const source=fs.readFileSync("tests/integration/mentor-task-details-update.test.ts","utf8");
+ assert.match(source,/db07_project_template_versions_append_only/);
+ assert.match(source,/project_templates_current_version_snapshot_fk/);
+ assert.match(source,/if\(!retention\.rows\[0\]\?\.retainHistory\)/);
+ assert.match(source,/refuses edits to a deleted task, deleted sprint, or deleted project/);
+});
