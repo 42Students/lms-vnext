@@ -74,7 +74,10 @@ try{
  await db.query("update placement_tpo_share_links set email_code_hash=$2,email_code_expires_at=now()+interval '2 hours' where id=$1",[link.id,"b".repeat(64)]);
  checks++;
  // Revocation is a distinct, one-way transition and requires a terminal event.
- await db.query("update placement_tpo_share_links set revoked_at=clock_timestamp() where id=$1",[link.id]);
+ // The registered trigger forbids a revoked_at later than statement_timestamp().
+ // clock_timestamp() inside this UPDATE advances past that boundary and
+ // incorrectly fails a valid revocation even without an attacker.
+ await db.query("update placement_tpo_share_links set revoked_at=statement_timestamp() where id=$1",[link.id]);
  await denial("revocation missing terminal event", "23514",()=>db.query("SET CONSTRAINTS ALL IMMEDIATE"));
  await db.query("insert into placement_tpo_share_events(share_id,action,created_at) values($1,'REVOKED',clock_timestamp())",[link.id]);
  await db.query("SET CONSTRAINTS ALL IMMEDIATE");
