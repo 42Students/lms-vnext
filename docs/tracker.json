@@ -1211,10 +1211,10 @@
         ],
         "operatingNotes": "Preserve immutable review/grade history and same-parent integrity.",
         "claim": {
-          "sessionId": "vnext-l05-chat-20261029-1056-ist",
-          "holder": "ChatGPT L05 assessments, grading and attendance continuation",
-          "claimedAt": "2026-10-29T05:26:53.158Z",
-          "expiresAt": "2026-10-29T08:26:53.158Z"
+          "sessionId": "vnext-l05-chat-20261029-1345-ist",
+          "holder": "ChatGPT Lane 5 DB06 assessment and attendance closure pass",
+          "claimedAt": "2026-10-29T08:15:58.534Z",
+          "expiresAt": "2026-10-29T11:15:58.534Z"
         }
       },
       {
