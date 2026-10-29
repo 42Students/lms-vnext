@@ -7,6 +7,8 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { inspectDatabaseProgress, formatDatabaseProgress } from './progress-evidence.mjs';
+export {inspectDatabaseProgress,formatDatabaseProgress} from './progress-evidence.mjs';
 
 export const PHASES = Object.freeze(['DATABASE', 'API', 'UI', 'RELEASE']);
 export const CORE_ELEVEN = Object.freeze([
@@ -137,6 +139,8 @@ export function inspectTracker(doc) {
       if (dependency === t.id) add(errors, 'SELF_DEPENDENCY',{id:t.id});
     }
   }
+  // Stage labels are evidence-informed estimates, never proof of task acceptance.
+  errors.push(...inspectDatabaseProgress(doc).errors);
   // The package view is read-only; its coverage must still be exhaustive and unique.
   const coverage = inspectDomainPackages(doc);
   for (const id of coverage.unassigned) add(errors,'UNASSIGNED_DATABASE_PACKAGE',{id});
@@ -284,7 +288,11 @@ if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.me
     const root = process.argv[2] && !process.argv[2].startsWith('--')
       ? path.resolve(process.argv[2]) : undefined;
     const report = inspectCheckout(root);
-    if (process.argv.includes('--json') || process.argv.includes('--check')) {
+    if (process.argv.includes('--progress')) {
+      const doc=JSON.parse(fs.readFileSync(path.join(root ?? path.resolve(path.dirname(fileURLToPath(import.meta.url)),'..'),'docs/tracker.json'),'utf8'));
+      const laneId=process.argv.find(a=>/^--lane=L\d\d$/.test(a))?.split('=')[1];
+      console.log(formatDatabaseProgress(doc,{detailed:true,laneId}));
+    } else if (process.argv.includes('--json') || process.argv.includes('--check')) {
       console.log(JSON.stringify(report,null,2));
     } else if (process.argv.includes('--roadmap') || process.argv.includes('--lanes') ||
                process.argv.some(a => /^--lane=L\d\d$/.test(a))) {
@@ -293,6 +301,7 @@ if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.me
       const only=process.argv.find(a=>a.startsWith('--lane='))?.split('=')[1];
       console.log('LMS vNext | SINGLE TRACKER / TEN LANES');
       console.log('Current global phase: '+doc.currentPhase+' | DB DONE '+report.counts.done+'/'+report.counts.total);
+      console.log(formatDatabaseProgress(doc));
       if (!only) {
         console.log('Five global phases (one canonical execution plan):');
         for (const p of reportExec.globalPhases) {
@@ -332,6 +341,8 @@ if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.me
       console.log('LMS vNext | ' + report.activePhase);
       console.log('DONE ' + report.counts.done + '/' + report.counts.total +
         ' | NOT DONE ' + report.counts.notDone);
+      const doc=JSON.parse(fs.readFileSync(path.join(root ?? path.resolve(path.dirname(fileURLToPath(import.meta.url)),'..'),'docs/tracker.json'),'utf8'));
+      console.log(formatDatabaseProgress(doc));
       console.log('Original core: DONE ' + report.core.done +
         '/' + report.core.total + ' | NOT DONE ' + report.core.notDone);
       console.log('Original core remaining: ' +
