@@ -50,7 +50,11 @@ describe("TPO-settings-audit-PREP-CAS-01 safe course setup writes",()=>{
   expect(eligibility).toBeGreaterThan(stale);
   expect(write).toBeGreaterThan(eligibility);
   expect(audit).toBeGreaterThan(write);
-  expect(source).toContain('eq(departments.collegeId,collegeId)');
+  expect(source).toContain('eq(colleges.organizationId,college.organizationId)');
+  expect(source).toContain('eq(colleges.status,"ACTIVE")');
+  expect(source).toContain('eq(courses.enabled,true)');
+  expect(source).toContain('isNull(courses.deletedAt)');
+  expect(source).toContain('tx.insert(placementTpoPrepCourses)');
   expect(source).toContain('new Set(available.map(row=>row.id)).size!==input.courseIds.length');
   expect(source).toContain("return {changed:false,updatedAt:current.updatedAt.toISOString()}");
   expect(source).toContain("return {changed:true,updatedAt:saved.updatedAt.toISOString()}");
