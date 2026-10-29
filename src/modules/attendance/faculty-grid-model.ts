@@ -104,7 +104,7 @@ export function facultyAttendanceDayCell(
       // A legacy/imported absence is itself evidence that this learner was
       // marked, even when the session-level marker is missing.
       if (record && isAbsenceLike(record.status)) absent += 1;
-      else if(record && ["PRESENT","LATE","EXCUSED","MEDICAL"].includes(record.status)) present += 1;
+      else if(record && ["LATE","EXCUSED","MEDICAL"].includes(record.status)) present += 1;
       else notMarked += 1;
       continue;
     }
