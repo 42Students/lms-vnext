@@ -51,6 +51,7 @@ export function learnerGalleryConfirmationError(status:number,code?:string):stri
  if(status===401||status===403)return "You no longer have permission to upload this photo. Refresh your session.";
  if(status===503)return "Private photo storage is not ready. Please try again later.";
  if(status===409&&code==="GALLERY_LIMIT")return "The gallery already has ten photos. Remove one before adding another.";
+ if(status===409&&code==="GALLERY_IMAGE_REMOVED")return "This photo was previously removed. Choose the file and upload it again as a new verified image.";
  if(status===409&&code==="GALLERY_RECEIPT_INVALID")
    return "This photo has not passed private verification. You can retry after scanning finishes, or choose another file.";
  if(status===404)return "The uploaded photo could not be found. Choose the file again.";
