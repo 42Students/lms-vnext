@@ -33,6 +33,7 @@ export function planAttendanceRecordTransitions(
     .filter((record) => record.status === "ABSENT")
     .map((record) => record.membershipId);
   const insertAbsentMembershipIds: string[] = [];
+  const insertPresentMembershipIds: string[] = [];
   const changeToAbsentRecordIds: string[] = [];
   const changeToPresentRecordIds: string[] = [];
 
@@ -44,11 +45,13 @@ export function planAttendanceRecordTransitions(
   for (const membershipId of presentMembershipIds) {
     const existing = byMembership.get(membershipId);
     // Preserve explicitly recorded PRESENT, EXCUSED, MEDICAL and LATE rows.
-    if (existing?.status === "ABSENT") changeToPresentRecordIds.push(existing.id);
+    if (!existing) insertPresentMembershipIds.push(membershipId);
+    else if (existing.status === "ABSENT") changeToPresentRecordIds.push(existing.id);
   }
   return {
     previousAbsentMembershipIds,
     insertAbsentMembershipIds,
+    insertPresentMembershipIds,
     changeToAbsentRecordIds,
     changeToPresentRecordIds,
   };
