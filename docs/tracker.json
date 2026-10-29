@@ -1103,12 +1103,7 @@
           "global gate coordination"
         ],
         "operatingNotes": "Only lane allowed to register shared numbered migrations/journal/snapshots and merge shared schema barrel; other lanes request promotion. Does not implement unrelated domain behavior.",
-        "claim": {
-          "sessionId": "vnext-l01-evidence-progress-20261029",
-          "holder": "ChatGPT Lane 1 single-tracker evidence progress model",
-          "claimedAt": "2026-10-29T08:12:42.446Z",
-          "expiresAt": "2026-10-29T12:12:42.446Z"
-        }
+        "claim": null
       },
       {
         "id": "L02",
