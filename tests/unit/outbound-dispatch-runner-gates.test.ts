@@ -147,6 +147,25 @@ describe("DB-050/DB-067 trusted outbound runner gate", () => {
     expect(sql).toContain("request_digest = ");
   });
 
+  it("does not claim any EMAIL row while sender approval is missing", async () => {
+    mocks.emailVerified.mockRejectedValue(new Error("GLOBAL_EMAIL_SUPPRESSION_NOT_VERIFIED"));
+    const send = vi.fn();
+    await expect(dispatchDueOutboundBatch("worker-1", { send }, 10))
+      .rejects.toThrow("GLOBAL_EMAIL_SUPPRESSION_NOT_VERIFIED");
+    expect(mocks.claim).not.toHaveBeenCalled();
+    expect(mocks.execute).not.toHaveBeenCalled();
+    expect(send).not.toHaveBeenCalled();
+  });
+
+  it("preflights EMAIL approval before the first batch claim", async () => {
+    const send = vi.fn();
+    await expect(dispatchDueOutboundBatch("worker-1", { send }, 5))
+      .resolves.toMatchObject({ claimed: 0, requiresReconciliation: false });
+    expect(mocks.emailVerified).toHaveBeenCalledTimes(1);
+    expect(mocks.claim).toHaveBeenCalledTimes(1);
+    expect(send).not.toHaveBeenCalled();
+  });
+
   it("never dispatches an empty or unowned queue batch when disabled", async () => {
     mocks.outboundReady.mockReturnValue(false);
     const send = vi.fn();
