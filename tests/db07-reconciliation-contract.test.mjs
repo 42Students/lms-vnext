@@ -252,3 +252,59 @@ test("DB07 scheduling cannot mutate a soft-deleted meeting",()=>{
   assert.match(existing,/isNull\(projectMeetings\.deletedAt\)/);
   assert.match(existing,/\.for\("update"\)/);
 });
+
+
+// L06 DB07 parent tombstone and assignment-retention regressions.
+test("DB07 Mentor task writes lock assignment and reject deleted project or sprint ancestry",()=>{
+  const source=fs.readFileSync("src/modules/projects/mentor-task-create-service.ts","utf8");
+  const tx=source.indexOf("return await getDb().transaction(async tx=>");
+  const project=source.indexOf("const [project]=await tx.select(",tx);
+  const projectLock=source.indexOf('.for("update").limit(1)',project);
+  const deleted=source.indexOf("project.deletedAt",project);
+  const sprint=source.indexOf("const [sprint]=input.sprintId?",projectLock);
+  const deletedSprint=source.indexOf("isNull(projectSprints.deletedAt)",sprint);
+  const assignee=source.indexOf("if(input.assigneeMembershipId)",sprint);
+  const memberLock=source.indexOf('.for("share").limit(1)',assignee);
+  const write=source.indexOf("await tx.insert(projectTasks)",assignee);
+  assert.ok(tx>=0&&project>tx&&projectLock>project&&deleted>projectLock);
+  assert.ok(sprint>deleted&&deletedSprint>sprint&&deletedSprint<assignee);
+  assert.ok(memberLock>assignee&&memberLock<write);
+  for(const term of [
+    "eq(projectMembers.projectId,scope.project.id)",
+    "eq(projectMembers.membershipId,input.assigneeMembershipId)",
+    "eq(projectMembers.role,\"LEARNER\")",
+    "isNull(projectMembers.endedAt)",
+    "eq(collegeMemberships.collegeId,scope.collegeId)",
+    "eq(collegeMemberships.status,\"ACTIVE\")",
+    "eq(users.platformStatus,\"ACTIVE\")",
+  ]) assert.ok(source.includes(term),term);
+});
+
+test("DB07 Mentor sprint and release writers recheck deleted project under write lock",()=>{
+  for(const path of [
+    "src/modules/projects/mentor-sprint-write-service.ts",
+    "src/modules/projects/mentor-release-write-service.ts",
+  ]){
+    const source=fs.readFileSync(path,"utf8");
+    const project=source.indexOf("const [project]=await tx.select(");
+    const lock=source.indexOf('.for("update").limit(1)',project);
+    const deleted=source.indexOf("project.deletedAt",project);
+    const actor=source.indexOf("await assertPersistedProjectMutationActor(",project);
+    assert.ok(project>=0&&lock>project&&deleted>lock&&actor>deleted,path);
+  }
+});
+
+test("DB070/071 Mentor integration fixture cleanup preserves immutable template versions",()=>{
+  for(const path of [
+    "tests/integration/mentor-task-create.test.ts",
+    "tests/integration/mentor-sprint-details-update.test.ts",
+  ]){
+    const source=fs.readFileSync(path,"utf8");
+    assert.match(source,/db07_project_template_versions_append_only/);
+    assert.match(source,/project_templates_current_version_snapshot_fk/);
+    assert.match(source,/if\(!retention\.rows\[0\]\?\.retainHistory\)/);
+    const revDelete=source.indexOf('"delete from project_template_versions');
+    const retention=source.indexOf('if(!retention.rows[0]?.retainHistory)');
+    assert.ok(retention>=0&&revDelete>retention,path);
+  }
+});
