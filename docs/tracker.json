@@ -1679,9 +1679,9 @@
           "src/modules/placements/hr-conversation-inbox-service.ts"
         ],
         "reason": "Recruiter CRM bell marks only inAppNotifications read while merged unread TPO message threads remain unread=true; mark-all leaves message badge persistent. L08 owns recruiter CRM contract/tests; L07 owns shared placements services. Request L07 to implement producer/consumer parity or accept explicit single-writer handoff after checking legacy mark-all semantics.",
-        "status": "ACCEPTED",
+        "status": "APPLIED",
         "requestedAt": "2026-10-28T19:58:56.924Z",
-        "integratorReview": "L07 accepts exclusive edit ownership of named shared placements services for recruiter bell mark-all behavior; L08 owns recruiter UI/tests and should not dual-write named files during handoff. Will verify legacy behavior and add focused tests."
+        "integratorReview": "L07 implemented atomic scoped notification and TPO message read receipts in recruiter bell using persisted grant/college/job/thread checks; commits 91ba6b8, d298e58, 2eab6ea. Source-level guard review only; database runtime/typecheck NOT yet executed; L08 still owns recruiter UI/browser acceptance."
       },
       {
         "id": "SCR-L09-L01-DB067-20261029",
@@ -1733,6 +1733,18 @@
         "reason": "Run clean registered-journal migration replay on a guarded disposable PostgreSQL database and execute tests/db078-registered-course-column-disposition-pg.test.mjs (DB078_DISPOSABLE=1). DB-078 requires canonical courses.name/short_title but retirement of historical physical formal_title/default_subscription_days; no new mutable shadow columns. L04 added the runtime wire derivation helper and source tests. If the registered catalog differs, coordinate schema registration as exclusive L01 integrator; return exact SHA/test evidence before any DB-078 DONE transition.",
         "status": "REQUESTED",
         "requestedAt": "2026-10-28T20:01:46.415Z"
+      },
+      {
+        "id": "SCR-L07-L08-RECRUITER-BELL-GENERAL-HREF-20261029",
+        "fromLane": "L07",
+        "toLane": "L08",
+        "paths": [
+          "src/modules/placements/hr-recruiter-bell-model.ts",
+          "recruiter bell UI and tests"
+        ],
+        "reason": "L07 readHrRecruiterBell produces hrConversationsHref for general no-job TPO message threads; parseHrBellResponse currently only accepts /hr/placements/jobs/:uuid URLs and rejects entire READY response when a general conversation is in the bell. L08 owns recruiter-facing bell UI/model; allow exact authorized conversations URL shape in parse without widening to arbitrary navigation and cover general-thread case. L07 owns mark-all message receipt fix.",
+        "status": "REQUESTED",
+        "requestedAt": "2026-10-29T05:30:18.577Z"
       }
     ],
     "coordination": {
