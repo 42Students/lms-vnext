@@ -81,6 +81,19 @@ describe("DB-050 verified global EMAIL suppression persistence", () => {
       entry.text.includes("update outbound_messages"))).toBe(false);
   });
 
+  it("uses only the trusted injected database, never the configured application pool", async () => {
+    const store = simulatedStore();
+    const trusted = mocks.getDb.mock.results[0]?.value;
+    mocks.getDb.mockClear();
+    await expect(persistVerifiedGlobalEmailSuppression({
+      recipientHash, reason: "UNSUBSCRIBED",
+    }, trusted as Parameters<typeof persistVerifiedGlobalEmailSuppression>[1]))
+      .resolves.toBeUndefined();
+    expect(store.wasCommitted()).toBe(true);
+    expect(store.statements).toHaveLength(3);
+    expect(mocks.getDb).not.toHaveBeenCalled();
+  });
+
   it("records only a hash and cancels unsent matching EMAIL in one transaction", async () => {
     const store = simulatedStore();
     await expect(persistVerifiedGlobalEmailSuppression({
