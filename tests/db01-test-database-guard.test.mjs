@@ -240,9 +240,14 @@ test("DB28 browser E2E preflight runs before DATABASE_URL assignment and reset",
   assert.ok(setApplicationUrl > preflight);
   assert.ok(imports > setApplicationUrl);
   assert.ok(reset > imports);
-  assert.match(
+  assert.doesNotMatch(
     dbE2EPrepareSource,
     /delete guardEnv\.DATABASE_URL/,
+    "E2E must preserve the current application target for alias detection",
+  );
+  assert.match(
+    dbE2EPrepareSource,
+    /TEST_DATABASE_URL: databaseUrl/,
   );
   assert.match(
     dbE2EPrepareSource,
@@ -750,4 +755,24 @@ test("DB051 hostless application URL is refused before comparing destructive ali
     TEST_DATABASE_URL: local,
     DATABASE_URL: "postgresql:///lms_vnext_test",
   }), /explicit PostgreSQL host/);
+});
+
+test("DB28 browser E2E preparation refuses an alias of the configured application DB", () => {
+  const tsx = "node_modules/tsx/dist/cli.mjs";
+  assert.ok(existsSync(tsx), "tsx must be installed before running DB28 process regression");
+  const secret = "doNotLeakE2EAliasSecret";
+  const result = spawnSync(process.execPath, [tsx, "scripts/db-e2e-prepare.ts"], {
+    encoding: "utf8",
+    env: {
+      ...process.env,
+      E2E_DATABASE_URL: `postgresql://e2e:${secret}@127.0.0.1:1/lms_vnext_e2e`,
+      DATABASE_URL: "postgresql://app:other-secret@localhost:1/lms_vnext_e2e",
+      TEST_DATABASE_URL: "",
+    },
+  });
+  const output = `${result.stdout ?? ""}\n${result.stderr ?? ""}`;
+  assert.notEqual(result.status, 0);
+  assert.match(output, /Refusing to reset the configured application database/);
+  assert.doesNotMatch(output, /ECONNREFUSED|ENOTFOUND|connection refused/i);
+  assert.doesNotMatch(output, new RegExp(secret));
 });
