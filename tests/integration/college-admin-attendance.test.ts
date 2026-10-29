@@ -167,6 +167,12 @@ describe("College Admin attendance tenant isolation with PostgreSQL", () => {
     expect(options.deliveries.some((row) => row.deliveryId === own.delivery)).toBe(true);
     expect(options.deliveries.some((row) => row.deliveryId === foreign.delivery)).toBe(false);
     expect(options.courses.some((row) => row.id === foreign.course)).toBe(false);
+    // CourseInfo.formal_title is derived from the course's short title,
+    // with the unchanged course name as a null-only fallback.
+    const ownDelivery=options.deliveries.find(row=>row.deliveryId===own.delivery);
+    const ownCourse=options.courses.find(row=>row.id===own.course);
+    expect(ownDelivery?.formalTitle).toBe(ownCourse?.formalTitle);
+    expect(typeof ownDelivery?.formalTitle).toBe("string");
     await expect(getAdminAttendanceOptions(admin, SEED_IDS.collegeB)).rejects.toThrow();
   });
 
