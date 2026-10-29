@@ -15,7 +15,11 @@ import {
 const recipientHash = "a".repeat(64);
 const dialect = new PgDialect();
 
-function simulatedStore(ready = true, failAt: number | null = null) {
+function simulatedStore(
+  ready = true,
+  failAt: number | null = null,
+  outboxReady = ready,
+) {
   const statements: Array<{ text: string; params: unknown[] }> = [];
   let committed = false;
   let callIndex = 0;
@@ -25,7 +29,7 @@ function simulatedStore(ready = true, failAt: number | null = null) {
     statements.push({ text: rendered.sql, params: rendered.params });
     if (failAt === callIndex) throw new Error("TRANSACTION_ABORT");
     if (callIndex === 1) {
-      return { rows: [{ global_ready: ready, outbound_ready: ready }] };
+      return { rows: [{ global_ready: ready, outbound_ready: outboxReady }] };
     }
     return { rows: [] };
   });
@@ -62,6 +66,19 @@ describe("DB-050 verified global EMAIL suppression persistence", () => {
     })).rejects.toThrow("GLOBAL_EMAIL_SUPPRESSION_UNAVAILABLE");
     expect(store.statements).toHaveLength(1);
     expect(store.wasCommitted()).toBe(false);
+  });
+
+  it("preserves consent when only the global opt-out store is installed", async () => {
+    const store = simulatedStore(true, null, false);
+    await expect(persistVerifiedGlobalEmailSuppression({
+      recipientHash, reason: "UNSUBSCRIBED",
+    })).resolves.toBeUndefined();
+    expect(store.wasCommitted()).toBe(true);
+    expect(store.statements).toHaveLength(2);
+    expect(store.statements[1]!.text)
+      .toContain("insert into outbound_global_email_suppressions");
+    expect(store.statements.some(entry =>
+      entry.text.includes("update outbound_messages"))).toBe(false);
   });
 
   it("records only a hash and cancels unsent matching EMAIL in one transaction", async () => {
