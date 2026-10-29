@@ -366,3 +366,43 @@ test("DB07 historical comments cannot be posted to deleted project/task rows",()
  const integration=fs.readFileSync("tests/integration/mentor-task-create.test.ts","utf8");
  assert.match(integration,/refuses new comments on soft-deleted tasks and deleted projects/);
 });
+
+
+// L06 DB074 final evaluation and delivery-review deletion guards.
+test("DB074 evaluation writes lock a tenant-scoped project and reject deletion before grading",()=>{
+ const source=fs.readFileSync("src/modules/projects/evaluation-service.ts","utf8");
+ const body=source.slice(source.indexOf("export async function createProjectEvaluation("),
+   source.indexOf("export async function getProjectEvaluation("));
+ const tx=body.indexOf("return await db.transaction(async (tx) =>");
+ const read=body.indexOf(".select({ status: projectInstances.status, deletedAt:projectInstances.deletedAt })",tx);
+ const scope=body.indexOf("eq(projectInstances.collegeId,scope.collegeId)",read);
+ const lock=body.indexOf('.for("update")',scope);
+ const deleted=body.indexOf("project.deletedAt",lock);
+ const evalInsert=body.indexOf(".insert(projectEvaluations)",deleted);
+ assert.ok(tx>=0&&read>tx&&scope>read&&lock>scope&&deleted>lock&&evalInsert>deleted);
+ assert.match(body,/eq\(projectSubmissions\.projectId, scope\.project\.id\)/);
+ const unit=fs.readFileSync("tests/unit/PROJ-BREAK-chat9-evaluation-mutation-auth.test.ts","utf8");
+ assert.match(unit,/DB074 denies grading after project soft deletion/);
+});
+
+test("DB074 final lock and review deny deletion before idempotent success or mutation",()=>{
+ const source=fs.readFileSync("src/modules/projects/admin-submission-review-service.ts","utf8");
+ const lockBody=source.slice(source.indexOf("export async function lockAdminProjectSubmission("),
+   source.indexOf("const adminReviewInput="));
+ const reviewBody=source.slice(source.indexOf("export async function reviewAdminProjectSubmission("),
+   source.indexOf("export async function listAdminProjectDeliveryHistory("));
+ for(const body of [lockBody,reviewBody]){
+   const project=body.indexOf("const [project]=await tx.select({status:projectInstances.status,deletedAt:projectInstances.deletedAt})");
+   const lock=body.indexOf('.for("update").limit(1)',project);
+   const check=body.indexOf("project.deletedAt",lock);
+   const returnSuccess=body.indexOf("return {submission",check);
+   const update=body.indexOf("await tx.update(projectSubmissions)",check);
+   assert.ok(project>=0&&lock>project&&check>lock);
+   assert.ok(returnSuccess<0||returnSuccess>check);
+   assert.ok(update>check);
+   assert.match(body,/eq\(projectInstances\.collegeId,scope\.collegeId\)/);
+ }
+ const unit=fs.readFileSync("tests/unit/PROJ-BREAK-chat9-admin-delivery-lock.test.ts","utf8");
+ assert.match(unit,/DB074 denies both a new lock and an idempotent retry after project deletion/);
+ assert.match(unit,/DB074 denies College Admin final review on a deleted project/);
+});
