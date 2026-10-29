@@ -149,13 +149,29 @@ export async function executeClaimedOutbound(
     if (!(now instanceof Date) || !Number.isFinite(now.getTime())) {
       return "RECONCILIATION_REQUIRED";
     }
-    completion = {
-      messageId: claim.messageId, worker, fence: claim.fence,
-      outcome: "RETRY", safeFailureCode: "CONFIRMED_NOT_SENT",
-      nextAttemptAt: new Date(now.getTime() +
-        outboundRetryDelayMs(opened.attempts)),
-    };
-    successfulResult = "RETRY_SCHEDULED";
+    const retryAt = new Date(now.getTime() +
+      outboundRetryDelayMs(opened.attempts));
+    // The PostgreSQL completion function rightfully rejects retries on or
+    // after expires_at. A definitely-unsent attempt close to expiry should
+    // finish as FAILED rather than leave the claim needlessly quarantined.
+    // Unknown/possibly accepted sends still go through the earlier quarantine.
+    const expiry = opened.intent.expiresAt === undefined
+      ? null : Date.parse(opened.intent.expiresAt);
+    if (expiry !== null && (!Number.isFinite(expiry) ||
+        retryAt.getTime() >= expiry)) {
+      completion = {
+        messageId: claim.messageId, worker, fence: claim.fence,
+        outcome: "FAILED", safeFailureCode: "RETRY_WINDOW_EXPIRED",
+      };
+      successfulResult = "FAILED_UNSENT";
+    } else {
+      completion = {
+        messageId: claim.messageId, worker, fence: claim.fence,
+        outcome: "RETRY", safeFailureCode: "CONFIRMED_NOT_SENT",
+        nextAttemptAt: retryAt,
+      };
+      successfulResult = "RETRY_SCHEDULED";
+    }
   } else {
     return "RECONCILIATION_REQUIRED";
   }
