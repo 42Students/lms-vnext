@@ -78,7 +78,7 @@ export async function readTpoLearnerPrepOutcomes(
   getTpoPrepReadiness(context),getTpoCommunicationSettings(context),
  ]);
  const config=tpoPrepConfigSchema.safeParse(stored.config);
- if(!stored.ready||!communication.ready||!config.success)return deliver(false);
+ if(!stored.ready||stored.selectionSynchronized===false||!communication.ready||!config.success)return deliver(false);
  const ids=config.data.courseIds;
  if(!ids.length){
   for(const row of learners)outcomes.set(row.membershipId,"UNCONFIGURED");
