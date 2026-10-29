@@ -1,5 +1,7 @@
 import { afterAll, afterEach, beforeEach, describe, expect, it } from "vitest";
 import { Pool } from "pg";
+import { spawnSync } from "node:child_process";
+import { fileURLToPath } from "node:url";
 import { closeDatabaseConnection } from "@/db/client";
 import {
   createCourseDiscussionMessage,
@@ -18,6 +20,14 @@ import {
 if (!process.env.TEST_DATABASE_URL ||
     process.env.DATABASE_URL !== process.env.TEST_DATABASE_URL) {
   throw new Error("DB05 immutable attribution requires identical disposable DATABASE_URL and TEST_DATABASE_URL");
+}
+const preflight = spawnSync(process.execPath,
+  [fileURLToPath(new URL("../../scripts/db01-test-database-guard.mjs", import.meta.url))], {
+    env: { ...process.env, DATABASE_URL: "" },
+    encoding: "utf8", stdio: ["ignore", "pipe", "pipe"],
+  });
+if (preflight.error || preflight.status !== 0) {
+  throw new Error("DB05 sender snapshot tests refused an unsafe PostgreSQL target");
 }
 const pool = new Pool({ connectionString: process.env.TEST_DATABASE_URL, max: 1 });
 let fixture: LearnerCourseWriteFixture | null = null;
