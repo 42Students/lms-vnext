@@ -4,7 +4,7 @@ import { Pool } from "pg";
 import { closeDatabaseConnection } from "@/db/client";
 import type { RequestContext } from "@/modules/identity/context";
 import {
-  createCourse, moveCourseDepartment, updateCourse,
+  createCourse, listCoursesPage, listArchivedCoursesPage, moveCourseDepartment, updateCourse,
 } from "@/modules/courses/course-service";
 import { SEED_IDS } from "../../scripts/db-seed-data";
 import { assertDb018DisposableTarget } from "../support/db018-test-target.mjs";
@@ -55,6 +55,34 @@ afterAll(async () => {
 });
 
 describe.skipIf(!enabled)("DB-008 persisted course parent graph and races", () => {
+  it("paged course totals exclude soft-deleted ACTIVE rows and preserve archive counts", async () => {
+    const baseline = await listCoursesPage(
+      admin, SEED_IDS.collegeA, { limit: 10, offset: 0 }, SEED_IDS.departmentA,
+    );
+    const archivedBaseline = await listArchivedCoursesPage(
+      admin, SEED_IDS.collegeA, { limit: 10, offset: 0 }, SEED_IDS.departmentA,
+    );
+    const live = await makeCourse();
+    const softDeleted = await makeCourse();
+    const archived = await makeCourse();
+    await pool!.query("UPDATE courses SET deleted_at=now() WHERE id=$1", [softDeleted.id]);
+    await pool!.query("UPDATE courses SET status='ARCHIVED' WHERE id=$1", [archived.id]);
+
+    const visiblePage = await listCoursesPage(
+      admin, SEED_IDS.collegeA, { limit: 10, offset: 0 }, SEED_IDS.departmentA,
+    );
+    const archivePage = await listArchivedCoursesPage(
+      admin, SEED_IDS.collegeA, { limit: 10, offset: 0 }, SEED_IDS.departmentA,
+    );
+    expect(visiblePage.total).toBe(baseline.total + 1);
+    expect(archivePage.total).toBe(archivedBaseline.total + 1);
+    const currentIds = await pool!.query<{ id: string }>(
+      "SELECT id FROM courses WHERE id=ANY($1::uuid[]) AND status='ACTIVE' AND deleted_at IS NULL",
+      [[live.id, softDeleted.id, archived.id]],
+    );
+    expect(currentIds.rows.map(row => row.id)).toEqual([live.id]);
+  });
+
   it("preserves same-college deep parent ancestry and rejects an indirect cycle", async () => {
     const root = await makeCourse();
     const middle = await makeCourse({ parentCourseId: root.id });
