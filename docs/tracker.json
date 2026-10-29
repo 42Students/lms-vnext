@@ -1662,8 +1662,9 @@
           "src/db/schema/index.ts"
         ],
         "reason": "DB-035 immutable assessment/attendance history and DB-042 roster/marker guards are source-only candidates at docs/planning/sql/db06-assessment-attendance-history-candidate.sql and db06-attendance-scope-candidate.sql. Coordinate single-writer registration only when L05 has completed the transactional grade, attendance MARK/CORRECT event producers and exercised disposable PostgreSQL replay/drift/negative tests. Do not promote the SQL candidates independently; their deferred triggers would reject current faculty/admin writes. This request is NOT acceptance evidence.",
-        "status": "REQUESTED",
-        "requestedAt": "2026-10-28T19:58:45.885Z"
+        "status": "ACCEPTED",
+        "requestedAt": "2026-10-28T19:58:45.885Z",
+        "integratorReview": "L01 accepts shared migration registration request, but promotion remains BLOCKED until L05 lands transactional grade/attendance MARK/CORRECT producers and executes their domain negative witnesses. Do not register deferred history triggers against current writes or certify DB-035/042 from source-only coverage."
       },
       {
         "id": "SCR-L08-L07-RECRUITER-BELL-20261029",
@@ -1688,8 +1689,9 @@
           "src/db/schema/index.ts"
         ],
         "reason": "DB-067 requires canonical registration of four currently staged fenced claim/pre-send/complete/expiry PostgreSQL functions, PUBLIC revoke, restricted dispatcher grants, and full registered disposable PostgreSQL replay. DB10 storage 0164 exists; no numbered function migration found. L09 will retain worker implementation ownership.",
-        "status": "REQUESTED",
-        "requestedAt": "2026-10-28T19:59:00.000Z"
+        "status": "ACCEPTED",
+        "requestedAt": "2026-10-28T19:59:00.000Z",
+        "integratorReview": "L01 accepts outbound function-migration intake. Candidate functions currently contain PUBLIC revokes but no reviewed dedicated dispatcher principal/GRANT implementation; worker and security grants must be compatible before journal promotion. No numbered migration or PostgreSQL acceptance has occurred. Reject runtime activation until a restricted role and two-session/suppression/timeout witnesses prove correct behavior."
       },
       {
         "id": "SCR-L09-L10-DB067-20261029",
@@ -1727,8 +1729,9 @@
           "src/db/schema/index.ts"
         ],
         "reason": "Run clean registered-journal migration replay on a guarded disposable PostgreSQL database and execute tests/db078-registered-course-column-disposition-pg.test.mjs (DB078_DISPOSABLE=1). DB-078 requires canonical courses.name/short_title but retirement of historical physical formal_title/default_subscription_days; no new mutable shadow columns. L04 added the runtime wire derivation helper and source tests. If the registered catalog differs, coordinate schema registration as exclusive L01 integrator; return exact SHA/test evidence before any DB-078 DONE transition.",
-        "status": "REQUESTED",
-        "requestedAt": "2026-10-28T20:01:46.415Z"
+        "status": "ACCEPTED",
+        "requestedAt": "2026-10-28T20:01:46.415Z",
+        "integratorReview": "L01 integrated the registered DB078 course-column witness into scripts/db-independent-verify.mjs after clean replay/catalog verification, preserving application URL alias checks and isolated TEST_DATABASE_URL. Commits 0efc51ed7a7b039000ab61eb5a5911262cde4b98, 0f77181d17bdcd7bd8faf4b3a6e85f4612d69165, fde4553bc45c2ee6ca504aa2560cd09c141db5f7. Source-only checks complete; no actual PostgreSQL replay/evidence in this environment. Do not mark APPLIED or DB078 done before executed witness."
       },
       {
         "id": "SCR-L07-L08-RECRUITER-BELL-GENERAL-HREF-20261029",
@@ -1764,8 +1767,9 @@
           "drizzle/meta/_journal.json"
         ],
         "reason": "L08 added rollback-only real PostgreSQL witness for registered DB09 TPO principal/user-preference/saved-view/student-note/recruiter-read integrity. Run after disposable clean journal replay and canonical seed with DB09_ISOLATED_TEST_DATABASE=1, add it to single-writer independent verification if green, fix fixture or failing DB constraints with L08 after concrete outputs. Do not mark DB-056/057/063/064 accepted until registered replay, negative checks, real producer/consumer and code SHA evidence recorded.",
-        "status": "REQUESTED",
-        "requestedAt": "2026-10-29T05:31:28.495Z"
+        "status": "ACCEPTED",
+        "requestedAt": "2026-10-29T05:31:28.495Z",
+        "integratorReview": "L01 accepts L08's rollback-only registered DB09 PostgreSQL witness for verification review. A clean disposable full journal replay plus seed and exact negative/role tests must execute before inclusion in mandatory full verifier. L08 retains domain fixture/constraint remediation ownership; no executed result or DB056/057/063/064 acceptance claimed."
       },
       {
         "id": "L04-L01-DB008-SNAPSHOT-CONSUMER-ACCEPTANCE-20261029",
