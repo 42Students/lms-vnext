@@ -2110,7 +2110,13 @@
           "src/modules/courses/quiz-attempt-service.ts",
           "src/modules/courses/faculty-quiz-authoring-service.ts"
         ],
-        "reason": "L05 owns DB06 acceptance for DB-035/038/041/044/052/053, but the active assessment/quiz producers live under L04-owned src/modules/courses/**. Please coordinate exact single-writer ownership or accept L05 handoff before changing these files. DB-035 gradeAssignmentSubmission/publishAssignmentGrade need atomic immutable grade events+version; DB-041 quiz shuffle persistence, DB-044 assignment attempts and DB-052 lifecycle require producer-side registration. L05 will stage and test domain contracts under its owned assessment/attendance scope and will not edit L04-owned files without ACCEPTED."
+        "reason": "L05 owns DB06 acceptance for DB-035/038/041/044/052/053, but the active assessment/quiz producers live under L04-owned src/modules/courses/**. Please coordinate exact single-writer ownership or accept L05 handoff before changing these files. DB-035 gradeAssignmentSubmission/publishAssignmentGrade need atomic immutable grade events+version; DB-041 quiz shuffle persistence, DB-044 assignment attempts and DB-052 lifecycle require producer-side registration. L05 will stage and test domain contracts under its owned assessment/attendance scope and will not edit L04-owned files without ACCEPTED.",
+        "discoveredIssue": {
+          "path": "src/modules/courses/assignment-grade-audit-service.ts",
+          "issue": "Existing staged helper accepts HIDE_GRADE, but DB035 candidate SQL action check permits only GRADE/REGRADE/PUBLISH_GRADE. Source-only transition derivation can yield hide path. Align on approved visible-state semantics and add database-negative evidence before cutover; do not silently register a draft that would fail at runtime.",
+          "producerOwner": "L04",
+          "verified": "Source inspection only"
+        }
       },
       {
         "id": "SCR-L08-L07-DB034-PREP-COURSE-CONSUMER-20261029",
