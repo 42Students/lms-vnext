@@ -57,6 +57,16 @@ describe("College Admin attendance center", () => {
     expect(adminAttendancePercent("learner-b",[notMarked],[absent],NOW)).toBeNull();
   });
 
+  it("keeps a retained PRESENT correction uncounted until Faculty marks the session", () => {
+    const unmarked=session("reviewed", "2026-10-13T06:00:00Z", "UNMARKED");
+    const present={scheduleEventId:"reviewed",membershipId:"learner",status:"PRESENT"};
+    expect(adminAttendanceCellState(unmarked,present,NOW))
+      .toMatchObject({code:"—",label:"Not marked",counted:false,present:false});
+    expect(adminAttendancePercent("learner",[unmarked],[present],NOW)).toBeNull();
+    expect(adminAttendanceCellState({...unmarked,attendanceStatus:"MARKED"},present,NOW))
+      .toMatchObject({code:"P",label:"Present",counted:true,present:true});
+  });
+
   it("honors exact correction-window start and end boundaries", () => {
     const base = {
       startsAt: new Date("2026-10-14T07:00:00Z"),
