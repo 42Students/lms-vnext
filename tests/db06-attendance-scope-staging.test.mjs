@@ -85,12 +85,19 @@ test("DB042 current record must be roster-scoped, authorized and identity-stable
   assert.match(sql, /NEW\.updated_at < NEW\.marked_at/);
 });
 
-test("DB042 attendance record requires final MARKED session at transaction commit", () => {
+test("DB042 faculty rows require a MARKED session, but admin solo corrections do not mark everyone", () => {
   assert.match(sql, /CREATE CONSTRAINT TRIGGER db06_attendance_record_requires_marked_session/);
   assert.match(sql, /DEFERRABLE INITIALLY DEFERRED/);
   assert.match(sql, /s\.status = 'MARKED'/);
   assert.match(sql, /s\.marked_at IS NOT NULL/);
   assert.match(sql, /s\.marked_by_user_id IS NOT NULL/);
+  const guard = sql.split("CREATE FUNCTION db06_attendance_record_requires_marked_session()")[1]
+    ?.split("CREATE CONSTRAINT TRIGGER db06_attendance_record_requires_marked_session")[0] ?? "";
+  assert.match(guard, /db06_attendance_actor_kind\(/);
+  assert.match(guard, /v_actor_kind NOT IN \('COLLEGE_ADMIN', 'SUPER_ADMIN'\)/);
+  assert.match(guard, /OR v_actor_kind IS NULL/);
+  assert.match(contract, /Faculty attendance rows require a final MARKED session/);
+  assert.match(contract, /authorized COLLEGE_ADMIN\/SUPER_ADMIN may correct one learner/);
 });
 
 test("DB042 session mark lifecycle cannot be erased or time-reversed", () => {
