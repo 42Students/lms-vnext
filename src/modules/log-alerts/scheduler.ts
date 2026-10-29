@@ -94,8 +94,8 @@ export async function withScheduledLease(jobName: string, now: Date, task: () =>
 }
 
 /** Subsequent burst errors are recorded in the state row and sent during the next tick. */
-export function burstOverflowText(count: number, environment: string): string {
-  const safeCount = Number.isSafeInteger(count) && count > 0 ? count : 0;
+export function burstOverflowText(count: number | bigint | string, environment: string): string {
+  const safeCount = exactNonnegativeCount(count);
   return "vNext alert burst: " + safeCount +
     " more new or recurring errors; see the Logs page. Environment: " + environment;
 }
@@ -115,7 +115,7 @@ async function flushOverflow(now: Date): Promise<boolean> {
       return false;
     }
     await tx.update(states).set({
-      overflowCount: 0,
+      overflowCount: 0n,
       burstMinuteAt: minute,
       burstCount: sent + 1,
     }).where(eq(states.stateKey, key));
