@@ -24,12 +24,22 @@ test("joinGroup revalidates elective eligibility before idempotent return", () =
 
 test("read and write paths both reject impossible or nonconsecutive elective years", () => {
   assert.ok(electivesService.includes("if (start < 1900 || start > 9998)"));
-  assert.ok(roster.includes("left(${electiveSlots.academicYear},4)::integer between 1900 and 9998"));
+  assert.ok(roster.includes("left(${electiveSlots.academicYear}, 4)::integer between 1900 and 9998"));
   assert.ok(roster.includes("length(${electiveSlots.academicYear}) - 5)::integer in"));
   assert.ok(roster.includes("else false"));
   assert.ok(rosterTests.includes("impossibleEnd"));
 });
 
+test("DB03 roster source is not duplicated or truncated", () => {
+  for (const name of ["listActiveElectiveLearnersForDelivery",
+    "listActiveElectiveDeliveryIds", "hasActiveElectiveDeliveryAccess",
+    "isElectiveBackedDelivery", "listBoundElectiveDeliveryIds"]) {
+    assert.equal(roster.split("export async function " + name + "(").length - 1, 1);
+  }
+  assert.equal(roster.split("function activeRosterQuery(").length - 1, 1);
+  assert.equal(roster.split("`").length % 2, 1);
+  assert.match(roster, /when \$\{electiveSlots\.academicYear\} ~/);
+});
 test("the slot matches the learner ACTIVE primary program rather than college alone", () => {
   assert.match(eligibility, /eq\(learnerProgramEnrollments\.programId, slot\.programId\)/);
   assert.match(eligibility, /eq\(learnerProgramEnrollments\.status, "ACTIVE"\)/);
