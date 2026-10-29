@@ -45,12 +45,12 @@ export async function createMentorProjectTask(context:RequestContext,rawParams:u
   }))throw new ProjectsServiceError("PROJECT_ACCESS_DENIED");
   try{
     return await getDb().transaction(async tx=>{
-      const [project]=await tx.select({status:projectInstances.status})
+      const [project]=await tx.select({status:projectInstances.status,deletedAt:projectInstances.deletedAt})
         .from(projectInstances)
         .where(and(eq(projectInstances.id,scope.project.id),
           eq(projectInstances.collegeId,scope.collegeId)))
         .for("update").limit(1);
-      if(!project||!["PLANNED","ACTIVE"].includes(project.status))
+      if(!project||project.deletedAt||!["PLANNED","ACTIVE"].includes(project.status))
         throw new ProjectsServiceError("PROJECT_TASK_INVALID_STATE");
       await assertPersistedProjectMutationActor(tx,context,scope);
       const [sprint]=input.sprintId?await tx.select().from(projectSprints)
@@ -83,7 +83,7 @@ export async function createMentorProjectTask(context:RequestContext,rawParams:u
             eq(projectMembers.membershipId,input.assigneeMembershipId),
             eq(projectMembers.role,"LEARNER"),isNull(projectMembers.endedAt),
             eq(collegeMemberships.collegeId,scope.collegeId),eq(collegeMemberships.status,"ACTIVE"),
-            eq(users.platformStatus,"ACTIVE"))).limit(1);
+            eq(users.platformStatus,"ACTIVE"))).for("share").limit(1);
         if(!eligible)throw new ProjectsServiceError("PROJECT_MEMBER_ROLE_REQUIRED");
       }
       const [last]=await tx.select({sequence:projectTasks.sequence})
