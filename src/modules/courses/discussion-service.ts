@@ -675,7 +675,7 @@ export async function listLessonContentDiscussionMessages(
   id:courseDiscussionMessages.id,
   lessonContentId:courseDiscussionMessages.lessonContentId,
   messageText:courseDiscussionMessages.messageText,
-  senderName:users.displayName,createdAt:courseDiscussionMessages.createdAt,
+  senderName:immutableDiscussionSenderName,createdAt:courseDiscussionMessages.createdAt,
   cursorCreatedAt:sql<string>`to_char(${courseDiscussionMessages.createdAt}
     AT TIME ZONE 'UTC','YYYY-MM-DD"T"HH24:MI:SS.US"Z"')`,
   legacySequence:courseDiscussionMessages.legacyLessonSequence,
