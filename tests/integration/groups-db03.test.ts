@@ -206,6 +206,59 @@ describe("DB03 group kernel on disposable PostgreSQL", () => {
     expect(offerings.rows[0].n).toBe(0);
   });
 
+  it("rejects elective reassignment to disabled or deleted courses without mutating the offering or group", async () => {
+    const { slotId, cohortId, sectionId, periodId, groups } = await createElectiveFixture();
+    const offeringId = fixture.electiveOfferingIds[0];
+    const targetCourseId = randomUUID(), targetOfferingId = randomUUID(), targetDeliveryId = randomUUID();
+    fixture.courses.push(targetCourseId);
+    fixture.offerings.push(targetOfferingId);
+    fixture.deliveries.push(targetDeliveryId);
+    await pool.query(
+      "INSERT INTO courses (id,department_id,name,code) VALUES ($1,$2,$3,$4)",
+      [targetCourseId,SEED_IDS.departmentA,"DB03 edit target "+targetCourseId,"DB03-"+targetCourseId]);
+    await pool.query(
+      "INSERT INTO course_offerings (id,course_id,cohort_id,academic_period_id,type,credits,display_order) VALUES ($1,$2,$3,$4,'ELECTIVE',3,50)",
+      [targetOfferingId,targetCourseId,cohortId,periodId]);
+    await pool.query(
+      "INSERT INTO course_section_deliveries (id,offering_id,section_id) VALUES ($1,$2,$3)",
+      [targetDeliveryId,targetOfferingId,sectionId]);
+
+    const original = (await pool.query(
+      "SELECT course_id,backed_delivery_id,capacity,version FROM elective_offerings WHERE id=$1",
+      [offeringId])).rows[0];
+    const originalGroup = (await pool.query(
+      "SELECT capacity,version,active_count FROM lms_groups WHERE id=$1",
+      [groups[0]])).rows[0];
+
+    for (const state of ["disabled", "deleted"] as const) {
+      await pool.query(
+        state === "disabled"
+          ? "UPDATE courses SET enabled=false,deleted_at=NULL WHERE id=$1"
+          : "UPDATE courses SET enabled=true,deleted_at=now() WHERE id=$1",
+        [targetCourseId]);
+      await expect(updateCollegeElectiveOffering(admin,slotId,offeringId,{
+        courseId:targetCourseId,backedDeliveryId:targetDeliveryId,
+        capacity:5,expectedVersion:original.version,
+      })).rejects.toMatchObject({code:"ELECTIVE_DELIVERY_MISMATCH"});
+      const after = (await pool.query(
+        "SELECT course_id,backed_delivery_id,capacity,version FROM elective_offerings WHERE id=$1",
+        [offeringId])).rows[0];
+      const afterGroup = (await pool.query(
+        "SELECT capacity,version,active_count FROM lms_groups WHERE id=$1",
+        [groups[0]])).rows[0];
+      expect(after).toEqual(original);
+      expect(afterGroup).toEqual(originalGroup);
+    }
+
+    await pool.query("UPDATE courses SET enabled=true,deleted_at=NULL WHERE id=$1", [targetCourseId]);
+    const updated = await updateCollegeElectiveOffering(admin,slotId,offeringId,{
+      courseId:original.course_id,backedDeliveryId:original.backed_delivery_id,
+      capacity:5,expectedVersion:original.version,
+    });
+    expect(updated.capacity).toBe(5);
+    expect(updated.version).toBe(original.version + 1);
+  });
+
   it("rejects a new elective join after its backed class delivery ends", async () => {
     const { groups, candidate } = await createElectiveFixture();
     await pool.query(
