@@ -58,3 +58,21 @@ test("DB029 response deadline uses post-lock time and cannot shrink while waitin
  assert.ok(start>=0&&ready>start&&clock>ready&&min>clock&&save>min);
  assert.match(issue,/input.expiresAt.getTime\(\) <=\s*requestTime.getTime\(\)/);
 });
+
+test("DB066 issuance validates same-job application and role ancestry after job lock",()=>{
+ for(const guard of [
+  "liveJob.collegeId!==current.job.collegeId",
+  "liveJob.seasonId!==current.job.seasonId",
+  "lockedApplication.jobId!==current.job.id",
+  "lockedApplication.membershipId!==member.id",
+  "lockedApplication.roleOptionId!==current.application.roleOptionId",
+  "eq(placementJobRoleOptions.id,lockedApplication.roleOptionId)",
+  "eq(placementJobRoleOptions.jobId,current.job.id)",
+  'if(!liveRole)throw new PlacementsServiceError("PLACEMENT_OFFER_NOT_READY")',
+ ])assert.ok(issue.includes(guard),"Missing locked issuer ancestry: "+guard);
+ const app=issue.indexOf("const [lockedApplication]");
+ const role=issue.indexOf("const [liveRole]",app);
+ const readiness=issue.indexOf("await assertApplicationOfferReady(",role);
+ const insert=issue.indexOf(".insert(placementOffers)",readiness);
+ assert.ok(app>=0&&role>app&&readiness>role&&insert>readiness);
+});
