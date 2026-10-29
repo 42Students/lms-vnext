@@ -40,6 +40,16 @@ export function buildAttendanceHistoryEvent(input: AttendanceHistoryInput) {
       (before && !Number.isFinite(before.markedAt.getTime()))) {
     throw new Error("ATTENDANCE_HISTORY_INVALID_TIME");
   }
+  const statuses: readonly string[] = [
+    "PRESENT", "ABSENT", "EXCUSED", "MEDICAL", "LATE",
+  ];
+  if (!statuses.includes(after.status) ||
+      (before && !statuses.includes(before.status))) {
+    throw new Error("ATTENDANCE_HISTORY_INVALID_STATUS");
+  }
+  if (!["FACULTY", "COLLEGE_ADMIN", "SUPER_ADMIN"].includes(input.actorRole)) {
+    throw new Error("ATTENDANCE_HISTORY_INVALID_ACTOR_ROLE");
+  }
   if (after.markedByUserId !== input.actorUserId) {
     throw new Error("ATTENDANCE_HISTORY_MARKER_ACTOR_MISMATCH");
   }
