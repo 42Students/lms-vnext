@@ -1,11 +1,10 @@
 import {NextResponse} from "next/server";
-import {sql} from "drizzle-orm";
-import {getDb} from "@/db/client";
 import {isSameOriginRequest} from "@/auth/origin";
 import {readBoundedUtf8Body} from "@/lib/bounded-utf8-body";
 import {verifyUnsubscribeToken} from "@/modules/messaging/unsubscribe-model";
 import {verifyTpoCampaignRecipientToken,resolveTpoCampaignRecipientSecret} from "@/modules/messaging/tpo-campaign-recipient-token";
 import {CampaignUnsubscribeInvalid,unsubscribeTpoCampaignRecipient} from "@/modules/messaging/tpo-campaign-unsubscribe-service";
+import {GlobalEmailSuppressionUnavailable,persistVerifiedGlobalEmailSuppression} from "@/modules/operations/global-email-suppression-service";
 export const runtime="nodejs";
 /** Do not acknowledge a signed opt-out when its recipient table has not
  * been deployed. Public callers get a generic retryable state, never a
@@ -79,14 +78,19 @@ export async function POST(request:Request){
  // The legacy public controller acknowledged both already-cleared and unknown
  // links identically; only verified claims ever reach the suppression writer.
  if(!claim)return successResponse(request,"placement-cell");
- const db=getDb();
- const exists=await db.execute<{ready:boolean}>(sql`select to_regclass('public.outbound_global_email_suppressions') is not null as ready`);
- if(exists.rows[0]?.ready!==true)return NextResponse.json({error:"SUPPRESSIONS_NOT_READY",message:"That didn\u0027t work. Please try again."},{status:503,headers:{"Cache-Control":"no-store"}});
- // The global HMAC is already signed in the token; never accept an email address from the request.
- await db.execute(sql`
-  insert into outbound_global_email_suppressions (recipient_hash,reason)
-  values (${claim.recipientKey}::varchar,'UNSUBSCRIBED')
-  on conflict (recipient_hash) where cleared_at is null do nothing
- `);
+ // The signed global token supplies a verified HMAC only. Never derive a
+ // suppression key from a caller-controlled address or use an ad-hoc INSERT:
+ // this writer atomically terminalizes matching unclaimed queued EMAIL rows.
+ try{
+  await persistVerifiedGlobalEmailSuppression({
+   recipientHash:claim.recipientKey,reason:"UNSUBSCRIBED",
+  });
+ }catch(error){
+  if(error instanceof GlobalEmailSuppressionUnavailable)
+   return NextResponse.json({
+    error:"SUPPRESSIONS_NOT_READY",message:"That didn't work. Please try again.",
+   },{status:503,headers:{"Cache-Control":"no-store"}});
+  throw error;
+ }
  return successResponse(request,null);
 }
