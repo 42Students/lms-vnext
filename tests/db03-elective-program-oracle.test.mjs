@@ -48,6 +48,11 @@ test("elective offering edits reject disabled and soft-deleted courses", () => {
   assert.match(edit, /courseDeletedAt:\s*courses\.deletedAt/);
   assert.match(edit, /!delivery\.courseEnabled/);
   assert.match(edit, /delivery\.courseDeletedAt !== null/);
+  // Source-course college, not the target program department, owns the edit.
+  assert.match(edit, /\.innerJoin\(departments, eq\(departments\.id, courses\.departmentId\)\)/);
+  assert.doesNotMatch(edit, /\.innerJoin\(departments, eq\(departments\.id, programs\.departmentId\)\)/);
+  assert.match(edit, /group\.ownerScope !== "COLLEGE"/);
+  assert.match(edit, /group\.kind !== "ELECTIVE"/);
   assert.match(rosterTests,
     /rejects elective reassignment to disabled or deleted courses without mutating/);
 });
