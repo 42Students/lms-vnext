@@ -66,7 +66,7 @@ type MessagingActor = {
   companyRelationshipId: string | null;
 };
 
-async function loadActiveRecruiterGrant(
+export async function loadActiveRecruiterGrant(
   db: Db | Tx,
   userId: string,
   collegeId: string,
