@@ -71,6 +71,16 @@ describe("W02 Faculty attendance daily aggregation", () => {
     ], new Map(), now).code).toBe("S");
   });
 
+  it("does not count an unmarked session from a retained explicit PRESENT record", () => {
+    const sess={id:"reviewed",startsAt:"2026-10-08T03:30:00.000Z",attendanceStatus:null};
+    const present={scheduleEventId:"reviewed",membershipId:"learner",status:"PRESENT"};
+    expect(facultyAttendanceDayCell([sess],new Map([["reviewed",present]]),now))
+      .toMatchObject({code:"—",present:0,absent:0,notMarked:1});
+    expect(facultyAttendanceDayCell([{...sess,attendanceStatus:"MARKED"}],
+      new Map([["reviewed",present]]),now))
+      .toMatchObject({code:"P",present:1,notMarked:0});
+  });
+
   it("keeps imported medical/excused evidence marked without inventing an absence", () => {
     const cell = facultyAttendanceDayCell([
       { id: "legacy", startsAt: "2026-10-08T03:30:00.000Z", attendanceStatus: null },
