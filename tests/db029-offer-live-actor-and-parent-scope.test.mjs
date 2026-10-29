@@ -48,3 +48,13 @@ test("DB029 joining outcome protects staff authority and offer/application paren
  assert.match(join,/organizationId:staffCollege.organizationId/);
  assert.match(join,/liveApplication.membershipId!==current.application.membershipId/);
 });
+
+test("DB029 response deadline uses post-lock time and cannot shrink while waiting",()=>{
+ const start=issue.indexOf("const requestTime = new Date()");
+ const ready=issue.indexOf("await assertApplicationOfferReady(");
+ const clock=issue.indexOf("const now=new Date()",ready);
+ const min=issue.indexOf("minimumOfferResponseDeadline(",clock);
+ const save=issue.indexOf(".insert(placementOffers)",min);
+ assert.ok(start>=0&&ready>start&&clock>ready&&min>clock&&save>min);
+ assert.match(issue,/input.expiresAt.getTime\(\) <=\s*requestTime.getTime\(\)/);
+});
