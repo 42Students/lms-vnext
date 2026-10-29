@@ -11,6 +11,7 @@ const recipient="33333333-3333-4333-8333-333333333333";
 const lead="44444444-4444-4444-8444-444444444444";
 const secret="s".repeat(64);
 const prior=process.env.TPO_CAMPAIGN_RECIPIENT_TOKEN_SECRET;
+const priorGlobal=process.env.DB10_GLOBAL_EMAIL_HMAC_KEY_BASE64;
 const token=issueTpoCampaignRecipientToken({
  v:1,collegeId:college,campaignId:campaign,recipientId:recipient,
  expiresAt:4102444800000,
@@ -30,10 +31,15 @@ function fakeDb(registered:boolean,row:Stored|null){
 beforeEach(()=>{
  vi.clearAllMocks();
  process.env.TPO_CAMPAIGN_RECIPIENT_TOKEN_SECRET=secret;
+ // These legacy CRM-only fixtures intentionally do not simulate DB10 global
+ // suppression; snapshot-matched global-path tests live in L08's suite.
+ delete process.env.DB10_GLOBAL_EMAIL_HMAC_KEY_BASE64;
 });
 afterEach(()=>{
  if(prior===undefined)delete process.env.TPO_CAMPAIGN_RECIPIENT_TOKEN_SECRET;
  else process.env.TPO_CAMPAIGN_RECIPIENT_TOKEN_SECRET=prior;
+ if(priorGlobal===undefined)delete process.env.DB10_GLOBAL_EMAIL_HMAC_KEY_BASE64;
+ else process.env.DB10_GLOBAL_EMAIL_HMAC_KEY_BASE64=priorGlobal;
 });
 
 describe("chat-16 TPO recipient unsubscribe live row decision",()=>{
