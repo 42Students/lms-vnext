@@ -1875,8 +1875,9 @@
           "src/modules/messaging/tpo-campaign-unsubscribe-service.ts"
         ],
         "reason": "L09 implemented persistVerifiedGlobalEmailSuppression in src/modules/operations/global-email-suppression-service.ts. L08 owns TPO/campaign public producer paths: route existing verified global opt-out and signed campaign-recipient opt-out to the shared write path. The writer atomically inserts HMAC-only global suppression and terminalizes PENDING/RETRY encrypted outbox rows; never switch CLAIMED rows. Preserve signed-token verification, idempotent public result, and CRM/lead transaction semantics. Coordinate transaction interface as needed; NO blind parallel writes.",
-        "status": "REQUESTED",
-        "requestedAt": "2026-10-29T05:32:52.823Z"
+        "status": "ACCEPTED",
+        "requestedAt": "2026-10-29T05:32:52.823Z",
+        "integratorReview": "L08 accepts verified global opt-out producer route integration with L09 writer. Signed global token will call persisted writer, not ad-hoc SQL, with generic 503 on unavailable storage. Campaign-recipient scoped path needs snapshot-matched address and atomic writer coordination; will not claim the full cross-path handoff completed until that safety contract is resolved."
       },
       {
         "id": "SCR-L09-L10-DB050-20261029",
