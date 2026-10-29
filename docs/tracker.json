@@ -2004,8 +2004,9 @@
           "src/db/schema/tpo-collaboration.ts"
         ],
         "reason": "DB-059/DB-060 registered DB09 placement_tpo_share_links / placement_tpo_share_events have strict SQL lifecycle guards, but current active issueTpoCompanyApplicantShare producer writes placement_company_applicant_shares and companion schema, not DB09 legacy-named share tables. Reconcile one canonical secure-share producer/read/revoke path with legacy behavior; classify DB09 tables as approved redesign/retirement or wire real producer+consumer with tested disclosure/event invariants. Do not maintain conflicting parallel token lifecycles. L07 owns shared placement services; L08 owns DB09 contract and negative PG witnesses.",
-        "status": "REQUESTED",
-        "requestedAt": "2026-10-29T05:36:20.853Z"
+        "status": "ACCEPTED",
+        "requestedAt": "2026-10-29T05:36:20.853Z",
+        "integratorReview": "L07 accepts exclusive ownership of company-share manage/public services for reconciled canonical capability behavior; L08 retains DB09 verification/migrations. Will preserve token+code, tenant/selection and append-only audit, avoid schema or migration dual-writes; no task accepted without runtime proof."
       },
       {
         "id": "SCR-L09-L01-DB031-SID-20261029",
