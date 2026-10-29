@@ -38,6 +38,14 @@ describe("DB035 immutable attendance history payload (staging only)",()=>{
       newMarkedAt:changedAt,
     });
   });
+  it("rejects invalid runtime status and unauthorized actor role before SQL",()=>{
+    expect(()=>buildAttendanceHistoryEvent({...actor,before,
+      after:{...correction,status:"REDACTED" as "ABSENT"}}))
+      .toThrow("ATTENDANCE_HISTORY_INVALID_STATUS");
+    expect(()=>buildAttendanceHistoryEvent({...actor,
+      actorRole:"MENTOR" as "COLLEGE_ADMIN",before,after:correction}))
+      .toThrow("ATTENDANCE_HISTORY_INVALID_ACTOR_ROLE");
+  });
   it("rejects direct SQL-like parent swapping or skipped optimistic version",()=>{
     expect(()=>buildAttendanceHistoryEvent({...actor,before,
       after:{...correction,id:"record-other"}}))
