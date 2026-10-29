@@ -1962,9 +1962,9 @@
           "src/modules/messaging/tpo-campaign-unsubscribe-service.ts"
         ],
         "reason": "L09 implemented persistVerifiedGlobalEmailSuppression in src/modules/operations/global-email-suppression-service.ts. L08 owns TPO/campaign public producer paths: route existing verified global opt-out and signed campaign-recipient opt-out to the shared write path. The writer atomically inserts HMAC-only global suppression and terminalizes PENDING/RETRY encrypted outbox rows; never switch CLAIMED rows. Preserve signed-token verification, idempotent public result, and CRM/lead transaction semantics. Coordinate transaction interface as needed; NO blind parallel writes.",
-        "status": "ACCEPTED",
+        "status": "APPLIED",
         "requestedAt": "2026-10-29T05:32:52.823Z",
-        "integratorReview": "L08 accepts verified global opt-out producer route integration with L09 writer. Signed global token will call persisted writer, not ad-hoc SQL, with generic 503 on unavailable storage. Campaign-recipient scoped path needs snapshot-matched address and atomic writer coordination; will not claim the full cross-path handoff completed until that safety contract is resolved."
+        "integratorReview": "L08 integrated verified global token route with L09 atomic suppression writer (162dd2fa2b748c0815d431c44c659dde5ec5233b; retryable generic 503 d3075dea), and snapshot-verified campaign recipient global opt-out before local CRM write (ca64546c,88cdbfd,7089aba) plus 7 unit scenarios (040c5e39,72d425,580c20c). Changed-address campaign recipient remains local opt-out only because old email cannot be reconstructed from purpose HMAC; no unrelated replacement email is globally suppressed. DB-050 native unit/PG tests and release acceptance still required; L09 owns global database signoff."
       },
       {
         "id": "SCR-L09-L10-DB050-20261029",
@@ -2150,8 +2150,9 @@
           "drizzle/0075_db09_tpo_collaboration.sql"
         ],
         "reason": "L01 executed DB09 rollback-only PG17 acceptance. Run 40825524568 (exact SHA 41d2154...) failed `saved view delete forbidden was incorrectly allowed` at collaboration witness line 49: registered 0075 trigger only covers BEFORE INSERT OR UPDATE and source test explicitly asserts saved view DELETE is legal. L08 owns contract; correct PG witness to required create/delete-only behavior, not SQL trigger. Separate independent run 40825547851 (SHA 14c000d1...) failed `ordinary faculty denied TPO preferences was incorrectly allowed` at line 43; investigate seed/role contamination vs SQL principal guard using exact event commits and fix source or fixture, without weakening TPO authorization. Reexecute both DB09 PG witnesses on latest registered disposable replay and provide exact code SHA. No DB09 task accepted.",
-        "status": "REQUESTED",
-        "requestedAt": "2026-10-29T05:50:00.000Z"
+        "status": "APPLIED",
+        "requestedAt": "2026-10-29T05:50:00.000Z",
+        "integratorReview": "L08 corrected DB09 registered-PG witness in commit 7cd45e6b110e329077337bc7585ce28e65dc3660: saved views are immutable on UPDATE but owner-delete remains permitted as registered source test requires; test now asserts delete returns 1 and no row remains. Replaced mutable seeded faculty role assumption with fresh ACTIVE faculty-only principal + explicit db09_has_active_tpo_actor=false check; negatives still require SQLSTATE 23514. Underlying 0075 security trigger was NOT changed. Exact-SHA disposable PG replay/reexecution remains necessary, and DB09 task DONE flags remain false."
       },
       {
         "id": "L01-L10-DB076-DRIZZLE-GENERATOR-EXIT-20261029",
