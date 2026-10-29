@@ -394,7 +394,9 @@ export async function updateCollegeElectiveOffering(
       throw new ElectivesServiceError("ELECTIVE_OFFERING_STALE");
     const [group] = await tx.select().from(lmsGroups)
       .where(eq(lmsGroups.id, offering.groupId)).for("update").limit(1);
-    if (!group || group.collegeId !== slot.collegeId || group.deletedAt)
+    if (!group || group.ownerScope !== "COLLEGE" || group.kind !== "ELECTIVE" ||
+        group.collegeId !== slot.collegeId || group.deletedAt ||
+        !["DRAFT", "ACTIVE"].includes(group.status))
       throw new ElectivesServiceError("ELECTIVE_GROUP_SCOPE_MISMATCH");
     if (input.capacity !== null && input.capacity < group.activeCount)
       throw new ElectivesServiceError("ELECTIVE_CAPACITY_BELOW_ENROLLMENT", group.activeCount);
@@ -428,7 +430,7 @@ export async function updateCollegeElectiveOffering(
       .innerJoin(sections, eq(sections.id, courseSectionDeliveries.sectionId))
       .innerJoin(cohorts, eq(cohorts.id, courseOfferings.cohortId))
       .innerJoin(programs, eq(programs.id, cohorts.programId))
-      .innerJoin(departments, eq(departments.id, programs.departmentId))
+      .innerJoin(departments, eq(departments.id, courses.departmentId))
       .where(eq(courseSectionDeliveries.id, input.backedDeliveryId)).limit(1);
     // A course switch is safe only when the new backed delivery and its
     // section are in the same active college/program/academic period.
