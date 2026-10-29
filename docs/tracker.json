@@ -1752,6 +1752,19 @@
         "reason": "Concurrent L02 owner independently restored the malformed/duplicated elective authorization query in commit 3f01d63206ca7b15bafbf244452c26feb770e5ac. Please add source/compile regression witness for exactly one roster query and each exported function, complete anchored academic-year SQL regex, then run focused DB03 acceptance at the integrated SHA; no second worker should edit L02 concurrently. Coordination-only follow-up, not acceptance evidence.",
         "status": "REQUESTED",
         "requestedAt": "2026-10-29T05:30:00.000Z"
+      },
+      {
+        "id": "SCR-L08-L01-DB09-PG-ACCEPTANCE-20261029",
+        "fromLane": "L08",
+        "toLane": "L01",
+        "paths": [
+          "scripts/db-independent-verify.mjs",
+          "tests/db09-collaboration-registered-pg-acceptance.mjs",
+          "drizzle/meta/_journal.json"
+        ],
+        "reason": "L08 added rollback-only real PostgreSQL witness for registered DB09 TPO principal/user-preference/saved-view/student-note/recruiter-read integrity. Run after disposable clean journal replay and canonical seed with DB09_ISOLATED_TEST_DATABASE=1, add it to single-writer independent verification if green, fix fixture or failing DB constraints with L08 after concrete outputs. Do not mark DB-056/057/063/064 accepted until registered replay, negative checks, real producer/consumer and code SHA evidence recorded.",
+        "status": "REQUESTED",
+        "requestedAt": "2026-10-29T05:31:28.495Z"
       }
     ],
     "coordination": {
