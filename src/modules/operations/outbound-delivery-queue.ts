@@ -57,6 +57,13 @@ export async function queueOutboundDeliveryInTransaction(
     throw new OutboundDeliveryError("OUTBOUND_QUEUE_DISABLED");
   }
   const intent = parseOutboundIntent(rawIntent);
+  // No SMS/WhatsApp recruiter invitation DLT/consent registry is approved.
+  // Refuse those commands at producer entry, instead of leasing a row that
+  // the EMAIL-only dispatcher must quarantine forever. The schema retains
+  // future channels without claiming the transport is production-ready.
+  if (intent.channel !== "EMAIL") {
+    throw new OutboundDeliveryError("INVALID_OUTBOUND_INTENT");
+  }
 
   // W05/Recruiter invitation templates require persisted TPO or selected
   // Admin placement management permission. Never trust the college in JSON.
