@@ -67,3 +67,12 @@ test("DB-007 learner-only publisher permission differs from staff-only cleanup",
   assert.match(galleryUi,/\{canUpload \? <div className="max-w-lg/);
   assert.match(galleryUi,/\{canEdit \? <Button variant="secondary" type="button" disabled=\{busy\} onClick=\{\(\) => void deactivate/);
 });
+
+
+test("DB-007 never calls a deactivated receipt a successfully published image",()=>{
+ const insert=gallery.slice(gallery.indexOf("export async function appendLearnerGalleryImage("),
+   gallery.indexOf("export async function deactivateLearnerGalleryImage("));
+ assert.match(insert,/if \(!same\.isActive \|\| same\.deactivatedAt\)/);
+ assert.match(insert,/throw new LearnerGalleryError\("GALLERY_RECEIPT_INVALID"\)/);
+ assert.match(insert,/alreadyAdded: true/);
+});
