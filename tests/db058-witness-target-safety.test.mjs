@@ -171,3 +171,17 @@ test("DB10 log-alert integration never uses the app URL as a test-target fallbac
     "DB10 must verify service target and preflight before opening a pool");
   assert.doesNotMatch(source, /TEST_DATABASE_URL\s*\?\?\s*process\.env\.DATABASE_URL/);
 });
+
+test("DB058 negative witnesses refuse remote non-default port without port-scoped confirmation", () => {
+  const testUrl = "postgresql://tester:secret@pg.internal:6432/lms_vnext_test_4242";
+  const env = {
+    DB018_ISOLATED_TEST_DATABASE: "1",
+    TEST_DATABASE_URL: testUrl,
+    DB01_REMOTE_TEST_DATABASE_CONFIRM: "RESET:pg.internal/lms_vnext_test_4242",
+  };
+  assert.throws(() => assertDb018DisposableTarget(env), /Remote test database requires/);
+  assert.deepEqual(assertDb018DisposableTarget({
+    ...env,
+    DB01_REMOTE_TEST_DATABASE_CONFIRM: "RESET:pg.internal:6432/lms_vnext_test_4242",
+  }), { host:"pg.internal", database:"lms_vnext_test_4242", mode:"explicit-remote" });
+});
