@@ -11,6 +11,8 @@ describe("DB-007 private learner-gallery confirmation feedback",()=>{
   it("distinguishes missing setup, max gallery capacity and unverified uploads",()=>{
     expect(learnerGalleryConfirmationError(503,"GALLERY_NOT_READY")).toMatch(/not ready/);
     expect(learnerGalleryConfirmationError(409,"GALLERY_LIMIT")).toMatch(/ten photos/);
+    expect(learnerGalleryConfirmationError(409,"GALLERY_IMAGE_REMOVED")).toMatch(/previously removed/);
+    expect(learnerGalleryConfirmationError(409,"GALLERY_IMAGE_REMOVED")).toMatch(/upload it again/);
     const unverified=learnerGalleryConfirmationError(409,"GALLERY_RECEIPT_INVALID");
     expect(unverified).toMatch(/not passed private verification/);
     expect(unverified).toMatch(/retry/);
