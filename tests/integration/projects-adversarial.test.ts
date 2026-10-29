@@ -1,3 +1,4 @@
+import {randomUUID} from "node:crypto";
 import {
   afterAll,
   beforeEach,
@@ -329,23 +330,38 @@ async function cleanup() {
   await pool.query(
     "delete from project_instances where slug like 'adv-%'",
   );
-  await pool.query(
-    `delete from project_template_college_assignments
-     where template_id in (
-       select id from project_templates
-       where slug like 'adv-%'
-     )`,
+  // DB070 immutable template fixture retention -- L06. A permanent
+  // template version is never removed by a disposable test teardown.
+  // DB071 version-pointer FKs also require retaining template headers.
+  const retention=await pool.query<{retainHistory:boolean}>(
+    "select (exists (select 1 from pg_trigger " +
+      "where tgrelid='project_template_versions'::regclass " +
+      "and tgname='db07_project_template_versions_append_only' " +
+      "and tgenabled='O' and not tgisinternal) " +
+      "or exists (select 1 from pg_constraint " +
+      "where conrelid='project_templates'::regclass " +
+      "and conname in ('project_templates_current_version_snapshot_fk', " +
+      "'project_templates_published_version_snapshot_fk'))) as \"retainHistory\"",
   );
-  await pool.query(
-    `delete from project_template_versions
-     where template_id in (
-       select id from project_templates
-       where slug like 'adv-%'
-     )`,
-  );
-  await pool.query(
-    "delete from project_templates where slug like 'adv-%'",
-  );
+  if(!retention.rows[0]?.retainHistory){
+    await pool.query(
+      `delete from project_template_college_assignments
+       where template_id in (
+         select id from project_templates
+         where slug like 'adv-%'
+       )`,
+    );
+    await pool.query(
+      `delete from project_template_versions
+       where template_id in (
+         select id from project_templates
+         where slug like 'adv-%'
+       )`,
+    );
+    await pool.query(
+      "delete from project_templates where slug like 'adv-%'",
+    );
+  }
   await pool.query(
     "delete from membership_roles where membership_id = $1",
     [outsiderIds.membership],
@@ -394,10 +410,11 @@ async function seedOutsider() {
 }
 
 async function createTemplate() {
+  const suffix=randomUUID().replaceAll("-","").slice(0,12);
   const template = await createProjectTemplate(
     superAdmin,
     {
-      slug: "adv-template",
+      slug: "adv-template-"+suffix,
       title: "Adversarial Template",
       blueprint: blueprint(),
     },
