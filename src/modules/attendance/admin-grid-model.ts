@@ -88,12 +88,13 @@ export function adminAttendanceCellState(
   if (new Date(session.startsAt).getTime() > now.getTime()) {
     return { code: "S", label: "Scheduled", counted: false, present: false };
   }
-  // A session marked by faculty defaults every learner to PRESENT.
-  // Only non-present learner exceptions have attendance_records rows.
+  // A marked session counts every learner. A standalone Admin correction
+  // can predate Faculty's session-level marking: explicit PRESENT must not
+  // turn that otherwise-unmarked class into an attended session.
   const facultyMarked = session.attendanceStatus === "MARKED";
-  // Legacy absence rows counted even when the original attendance-marked
-  // flag was absent. This is per learner, not a default for the entire class.
-  const counted = facultyMarked || Boolean(record);
+  // Legacy absence exceptions still count for that learner even if the old
+  // attendance_marked flag was missing. A retained PRESENT row does not.
+  const counted = facultyMarked || Boolean(record && record.status !== "PRESENT");
   if (!counted) {
     return { code: "—", label: "Not marked", counted: false, present: false };
   }
