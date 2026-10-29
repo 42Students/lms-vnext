@@ -35,6 +35,10 @@ BEGIN
     SELECT m.id
     FROM outbound_messages AS m
     WHERE m.status IN ('PENDING', 'RETRY')
+      -- DB-067: the only audited provider worker is EMAIL-scoped.
+      -- Never claim SMS/WHATSAPP messages before their separate DLT,
+      -- opt-in and provider-reconciliation contracts are approved.
+      AND m.channel = 'EMAIL'
       AND m.attempts < 5
       AND m.provider_accepted_at IS NULL
       AND m.provider_message_id IS NULL
