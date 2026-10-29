@@ -758,6 +758,14 @@ export function AdminAttendanceWorkspace({
                   {correcting?"Saving…":"Save note"}
                 </Button>
               ) : null}
+              {verifiedRecord && verifiedRecord.status !== "PRESENT" &&
+                absenceReason !== verifiedRecord.status ? (
+                <Button size="sm" variant="secondary"
+                  disabled={correcting||refreshing||verifyingRecord}
+                  onClick={()=>void correct(absenceReason)}>
+                  {correcting?"Saving…":"Update reason"}
+                </Button>
+              ) : null}
               {verifiedRecord?.status && verifiedRecord.status !== "PRESENT" ? (
                 <Button size="sm" disabled={correcting||refreshing||verifyingRecord||!verifiedRecord} onClick={()=>void correct("PRESENT")}>
                   {correcting?"Saving…":"Mark present"}
@@ -782,9 +790,9 @@ export function AdminAttendanceWorkspace({
                   verifiedRecord?.status??"Current record could not be verified"}
               </p>
             </div>
-            {verifiedRecord?.status==="PRESENT" ? (
+            {verifiedRecord ? (
               <fieldset disabled={correcting||refreshing||verifyingRecord} className="space-y-2">
-                <legend className="text-sm font-semibold text-body">Reason for absence</legend>
+                <legend className="text-sm font-semibold text-body">Attendance reason</legend>
                 <div className="flex flex-wrap gap-4">
                   {([["ABSENT","Absent"],["EXCUSED","Excused"],["MEDICAL","Medical"],["LATE","Late"]] as const).map(([value,label])=>
                     <label key={value} className="inline-flex min-h-11 items-center gap-2 text-sm">
