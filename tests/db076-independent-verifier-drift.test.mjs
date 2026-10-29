@@ -23,9 +23,9 @@ test("DB076 requires all independent safety gates in order and exact executed-st
   // Other lanes may add legitimate domain-specific PG checks, but they must
   // remain accounted for in the verifier's exact pass condition. Never loosen
   // the ordered mandatory safety gate contract.
-  const executedSteps=[...script.matchAll(/run(?:EmptyOutput)?Step\\(\\s*"([^"]+)"\\s*,/g)]
+  const executedSteps=[...script.matchAll(/run(?:EmptyOutput)?Step\(\s*"([^"]+)"\s*,/g)]
     .map((match)=>match[1]);
-  const declared=script.match(/results\\.length === (\\d+)/);
+  const declared=script.match(/results\.length === (\d+)/);
   assert.ok(declared,"the verifier must require an exact completed-step count");
   assert.equal(Number(declared[1]),executedSteps.length,
     "all declared steps must be accounted for in the pass gate");
