@@ -31,6 +31,21 @@ try{
  const admin=await one("select id from users where email='collegeadmin.seed@example.com'");
  const faculty=await one("select id from users where email='faculty.seed@example.com'");
  const owner=await one("select m.id from college_memberships m join membership_roles r on r.membership_id=m.id where m.user_id=$1 and m.college_id=$2 and r.role='FACULTY'",[faculty.id,college.id]);
+ // Construct a principal with exactly the FACULTY role. Seeded faculty can
+ // gain TPO responsibilities in another test, so using that seed as a
+ // negative principal would be unsound.
+ const ordinaryShareFaculty=await one(
+  "insert into users(identity_uid,email,display_name,platform_status) values($1,$2,'L08 share faculty','ACTIVE') returning id",
+  ["l08-share-faculty-"+suffix,"l08-share-faculty-"+suffix+"@example.com"]);
+ const ordinaryMember=await one(
+  "insert into college_memberships(user_id,college_id,status) values($1,$2,'ACTIVE') returning id",
+  [ordinaryShareFaculty.id,college.id]);
+ await db.query("insert into membership_roles(membership_id,role) values($1,'FACULTY')",[ordinaryMember.id]);
+ const ordinaryIsTpo=await one("select db09_has_active_tpo_actor($1::uuid,$2::uuid) as permitted",
+  [ordinaryShareFaculty.id,college.id]);
+ if(ordinaryIsTpo.permitted)throw Error("FACULTY-only share principal received college-wide TPO authority");
+ checks++;
+
  const company=await one("insert into placement_companies(name,status,created_by_user_id) values($1,'ACTIVE',$2) returning id",["L08 secure share "+suffix,admin.id]);
  const rel=await one("insert into placement_company_relationships(college_id,company_id,status,is_trusted,owner_membership_id,created_by_user_id) values($1,$2,'ACTIVE',false,$3,$4) returning id",[college.id,company.id,owner.id,admin.id]);
  const job=await one("insert into placement_jobs(college_id,season_id,company_relationship_id,title,description,employment_type,work_mode,created_by_user_id) values($1,$2,$3,$4,'DB09 secure share witness','FULL_TIME','ONSITE',$5) returning id",[college.id,season.id,rel.id,"L08 share job "+suffix,admin.id]);
@@ -71,6 +86,6 @@ try{
    await db.query("insert into placement_tpo_share_events(share_id,action,created_at) values($1,'DOWNLOADED_LIST',clock_timestamp())",[link.id]);
    await db.query("SET CONSTRAINTS ALL IMMEDIATE");
  });
- await denial("faculty cannot author a secure share", "23514",()=>db.query("insert into placement_tpo_share_links(college_id,job_id,token_hash,recipient_email,created_by_user_id,expires_at) values($1,$2,$3,$4,$5,now()+interval '7 days')",[college.id,job.id,"d".repeat(64),"other@example.com",faculty.id]));
+ await denial("faculty cannot author a secure share", "23514",()=>db.query("insert into placement_tpo_share_links(college_id,job_id,token_hash,recipient_email,created_by_user_id,expires_at) values($1,$2,$3,$4,$5,now()+interval '7 days')",[college.id,job.id,"d".repeat(64),"other@example.com",ordinaryShareFaculty.id]));
  process.stdout.write("DB09 registered share lifecycle: "+checks+" PostgreSQL checks passed (rolled back)\n");
 }finally{try{await db.query("ROLLBACK");}finally{await db.end();}}
