@@ -64,7 +64,7 @@ test("DB078 independent witness runs after registered PG replay using isolated e
     script.slice(witness, witness + 180),
     /destructiveEnv/,
   );
-  assert.match(script, /results\.length === 10/);
+  assert.match(script, /results\.length === 12/);
 });
 
 test("DB078 PostgreSQL witness preserves application URL during alias preflight", () => {
@@ -103,3 +103,26 @@ test("DB078 witness refuses an aliased application DB before any connection", ()
   assert.doesNotMatch(output, new RegExp(secret));
 });
 import "./db-independent-verifier-redaction.test.mjs";
+
+test("L08 registered DB09 witnesses are sequenced after PostgreSQL replay and catalog", () => {
+  const catalog=script.indexOf('"scripts/db002-postgres-catalog-acceptance.mjs"');
+  const crm=script.indexOf('"tests/db09-collaboration-registered-pg-acceptance.mjs"');
+  const sharing=script.indexOf('"tests/db09-share-registered-pg-acceptance.mjs"');
+  const parity=script.indexOf('"test:db:parity"');
+  assert.ok(catalog>=0 && crm>catalog && sharing>crm && parity>sharing);
+  for(const i of [crm,sharing]){
+    const spec=script.slice(i,i+180);
+    assert.match(spec,/destructiveEnv/);
+    assert.match(spec,/DB09_ISOLATED_TEST_DATABASE/);
+  }
+});
+
+test("both DB09 witnesses require an isolated database and rollback-only writes", () => {
+  for(const file of ["db09-collaboration-registered-pg-acceptance.mjs","db09-share-registered-pg-acceptance.mjs"]){
+    const witness=fs.readFileSync(path.join(root,"tests",file),"utf8");
+    assert.match(witness,/assertDb018DisposableTarget/);
+    assert.match(witness,/DB09_ISOLATED_TEST_DATABASE/);
+    assert.match(witness,/TEST_DATABASE_URL/);
+    assert.match(witness,/ROLLBACK/);
+  }
+});
