@@ -43,6 +43,7 @@ import {
 import { indiaAttendanceMonthWindow } from "./month-window";
 import {enqueueAttendanceParentSms,dispatchQueuedAttendanceParentSms} from "./parent-sms-service";
 import {legacyFormalTitle} from "@/modules/courses/course-legacy-parity-model";
+import {facultyAttendanceNextMarkedAt} from "./faculty-correction-token-model";
 
 
 /** Options are independent reads. A failed class-offering query must never
@@ -756,10 +757,24 @@ export async function correctAdminAttendance(
         }
       }
 
-      // COL-attendance-R01: a College Admin corrects one learner's
-      // absence exception. Only Faculty can mark the entire session.
-      // Never create or mark attendance_sessions here: doing so would
-      // silently count all other learners as present.
+      // College Admin must never create a MARKED session: that would
+      // falsely count all other learners present. However, if Faculty has
+      // already marked the session, an admin correction must advance its
+      // optimistic token so a previously opened Faculty editor cannot
+      // silently revert this administrator-reviewed change.
+      const [markedSession] = await tx.select({
+        status: attendanceSessions.status,
+        markedAt: attendanceSessions.markedAt,
+      }).from(attendanceSessions)
+        .where(eq(attendanceSessions.scheduleEventId, scheduleEventId))
+        .for("update").limit(1);
+      if (markedSession?.status === "MARKED" && markedSession.markedAt) {
+        const correctionToken = facultyAttendanceNextMarkedAt(now, markedSession.markedAt);
+        await tx.update(attendanceSessions).set({
+          markedAt: correctionToken, markedByUserId: context.user.id,
+          updatedAt: correctionToken,
+        }).where(eq(attendanceSessions.scheduleEventId, scheduleEventId));
+      }
 
       // COL-attendance-02: persist audit in the same transaction. It also
       // records corrections to PRESENT, which delete the absence exception row.
