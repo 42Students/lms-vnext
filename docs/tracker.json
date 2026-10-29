@@ -2228,8 +2228,9 @@
           "tests/db-independent-verifier.test.mjs"
         ],
         "reason": "Independent verifier run 40825547851 printed `TypeError: Do not know how to serialize a BigInt` from drizzle-kit generate yet step returned exit code 0 and verifier proceeded. L10 owns safety verification: make canonical generate gate fail closed on stderr serialization/uncaught-generator exceptions even when process returns 0; assert no migration/schema-drift false-green and report/redact evidence. L01 still owns shared migration journal; coordinate changes through accepted handoff before touching its shared orchestration files. Keep global DB gate blocked until exact-SHA reexecution.",
-        "status": "REQUESTED",
-        "requestedAt": "2026-10-29T05:50:00.000Z"
+        "status": "APPLIED",
+        "requestedAt": "2026-10-29T05:50:00.000Z",
+        "integratorReview": "L10 reviewed exact registered PG17 verifier run 40825547851 (job 123287640013, SHA 14c000d1fd37118ca12a6e17bfdc618bac55fefe). Added canonical-generation fail-closed stderr/exception guard, evidence diagnostics and isolated fake-npm/docker zero-exit BigInt regression, registered in test:db:parity. Source commits 1e11a974, e58c64b4, 980b3b64, 4f43a9b9, 4f2207e9. Six focused local Node helper checks passed after fixing stdout TypeError matcher. Full exact-SHA repository DB replay has NOT been rerun; root drizzle-kit BigInt failure remains with L01 integrator."
       },
       {
         "id": "SCR-L08-L01-DB09-REVERIFY-20261029",
@@ -2343,6 +2344,19 @@
         "reason": "L08 identified a DB079 revocation gap in registered note SQL: private note rating/content UPDATE currently bypasses the live grant guard (only identity-column UPDATE triggers it). L01 has SQL migration handoff. L07 owns recruiter private notes/rating runtime; please verify existing mutation service rechecks persisted active same-company grant under transaction/appropriate locks and rejects stale sessions after revocation. Return exact code/test SHA, no duplicate writes to migration. L08 owns DB09 negative PG witness and closure.",
         "status": "REQUESTED",
         "requestedAt": "2026-10-29T06:39:01.030Z"
+      },
+      {
+        "id": "SCR-L10-L08-DB09-TPO-PREFERENCES-20261029",
+        "fromLane": "L10",
+        "toLane": "L08",
+        "paths": [
+          "tests/db09-collaboration-registered-pg-acceptance.mjs",
+          "drizzle/0075_db09_collaboration_and_ux_prefs.sql",
+          "src/modules/tpo/**"
+        ],
+        "reason": "Independent PG17 run 40825547851 / job 123287640013 at SHA 14c000d1fd37118ca12a6e17bfdc618bac55fefe fails DB09 collaborator negative: `ordinary faculty denied TPO preferences was incorrectly allowed`. Witness creates fresh ACTIVE FACULTY-only user/membership, verifies db09_has_active_tpo_actor returns false, then INSERT into placement_tpo_user_preferences unexpectedly succeeds rather than SQLSTATE 23514. Investigate registered trigger guard and actual DB rule; ensure cross-college/immutable owner and read scope remain fail-closed. Preserve real negative checks; do not weaken assertions or report DB09 green without exact-SHA disposable PG17 rerun. L01 owns numbered migration registration.",
+        "status": "REQUESTED",
+        "requestedAt": "2026-10-29T06:31:00.000Z"
       }
     ],
     "coordination": {
