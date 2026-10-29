@@ -83,7 +83,7 @@ describe("DB-050 verified global EMAIL suppression persistence", () => {
 
   it("uses only the trusted injected database, never the configured application pool", async () => {
     const store = simulatedStore();
-    const trusted = mocks.getDb.mock.results[0]?.value;
+    const trusted = mocks.getDb();
     mocks.getDb.mockClear();
     await expect(persistVerifiedGlobalEmailSuppression({
       recipientHash, reason: "UNSUBSCRIBED",
