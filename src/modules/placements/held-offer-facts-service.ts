@@ -1,4 +1,4 @@
-import { and, eq, inArray } from "drizzle-orm";
+import { and, eq, inArray, isNull, or } from "drizzle-orm";
 import { getDb } from "@/db/client";
 import {
   placementApplications, placementJobs, placementOffers,
@@ -45,7 +45,10 @@ export async function loadPlacementHeldOfferFacts(
       eq(placementJobs.id, placementApplications.jobId))
     .where(and(
       eq(placementJobs.collegeId, collegeId),
-      eq(placementJobs.countsAsPlaced, true),
+      // An unaudited NULL policy cannot waive a learner's held-offer cap.
+      // Only an explicit reviewed FALSE excludes this campus offer.
+      or(eq(placementJobs.countsAsPlaced, true),
+         isNull(placementJobs.countsAsPlaced)),
       eq(placementApplications.membershipId, membershipId),
       eq(placementOffers.kind, "OFFER"),
       inArray(placementOffers.status, ["ISSUED", "ACCEPTED"]),
