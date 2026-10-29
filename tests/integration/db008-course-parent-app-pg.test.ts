@@ -55,6 +55,22 @@ afterAll(async () => {
 });
 
 describe.skipIf(!enabled)("DB-008 persisted course parent graph and races", () => {
+  it("DB078 canonical course catalog omits retired physical columns", async () => {
+    // Witness the actual registered PostgreSQL journal, not a staged draft or
+    // an inferred TypeScript shape. formal_title is an attendance wire
+    // projection; default_subscription_days has no active persisted meaning.
+    const { rows } = await pool!.query<{ column_name: string }>(
+      `SELECT column_name FROM information_schema.columns
+       WHERE table_schema=current_schema() AND table_name='courses'`,
+    );
+    const columns = new Set(rows.map(row=>row.column_name));
+    for(const required of ["id","name","short_title"])expect(columns.has(required)).toBe(true);
+    for(const retired of [
+      "formal_title","default_subscription_days",
+      "legacy_formal_title","legacy_default_subscription_days",
+    ])expect(columns.has(retired)).toBe(false);
+  });
+
   it("paged course totals exclude soft-deleted ACTIVE rows and preserve archive counts", async () => {
     const baseline = await listCoursesPage(
       admin, SEED_IDS.collegeA, { limit: 10, offset: 0 }, SEED_IDS.departmentA,
