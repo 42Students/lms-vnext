@@ -424,3 +424,23 @@ test("DB07 destructive Projects integration suites require isolated disposable P
       source.indexOf("const pool = new Pool("),path);
   }
 });
+
+
+// L06 DB070/DB071 immutable lifecycle and adversarial fixture retention.
+test("DB070/071 lifecycle and adversarial fixtures retain immutable templates and unique slugs",()=>{
+  for(const [path,slug] of [
+    ["tests/integration/projects-p5-lifecycle.test.ts","p5-lifecycle-template"],
+    ["tests/integration/projects-adversarial.test.ts","adv-template"],
+    ["tests/integration/projects-p6b-final-evaluation.test.ts","p6b-final-template"],
+  ]){
+    const source=fs.readFileSync(path,"utf8");
+    assert.match(source,/db07_project_template_versions_append_only/);
+    assert.match(source,/project_templates_current_version_snapshot_fk/);
+    assert.match(source,/if\(!retention\.rows\[0\]\?\.retainHistory\)/);
+    assert.match(source,/import \{randomUUID\} from "node:crypto"/);
+    assert.ok(source.includes('slug: "'+slug+'-"+suffix'),path);
+    const guarded=source.indexOf("if(!retention.rows[0]?.retainHistory)");
+    const deletion=source.indexOf("delete from project_template_versions");
+    assert.ok(guarded>=0&&deletion>guarded,path);
+  }
+});
