@@ -2,6 +2,7 @@ import test from "node:test";
 import assert from "node:assert/strict";
 import fs from "node:fs";
 import path from "node:path";
+import { spawnSync } from "node:child_process";
 
 const root = process.cwd();
 const script = fs.readFileSync(
@@ -47,3 +48,57 @@ test("independent DB verifier records exact evidence and cleans Docker", () => {
 
 // Run fail-closed supplied-target witnesses inside the registered DB parity suite.
 import "./db-independent-verifier-target-preflight.test.mjs";
+
+test("DB078 independent witness runs after registered PG replay using isolated environment", () => {
+  const migration = script.indexOf('"db:migrate"');
+  const catalog = script.indexOf('"scripts/db002-postgres-catalog-acceptance.mjs"');
+  const witness = script.indexOf('"tests/db078-registered-course-column-disposition-pg.test.mjs"');
+  const sourceContracts = script.indexOf('"test:db:parity"');
+  assert.ok(migration !== -1 && catalog > migration);
+  assert.ok(witness > catalog && sourceContracts > witness);
+  assert.match(
+    script.slice(witness, witness + 180),
+    /DB078_DISPOSABLE:\s*"1"/,
+  );
+  assert.match(
+    script.slice(witness, witness + 180),
+    /destructiveEnv/,
+  );
+  assert.match(script, /results\.length === 10/);
+});
+
+test("DB078 PostgreSQL witness preserves application URL during alias preflight", () => {
+  const witness = fs.readFileSync(
+    path.join(root, "tests/db078-registered-course-column-disposition-pg.test.mjs"),
+    "utf8",
+  );
+  assert.match(witness, /assertSafeDb01TestTarget\(process\.env\)/);
+  assert.doesNotMatch(
+    witness,
+    /assertSafeDb01TestTarget\(\{[^}]*DATABASE_URL:\s*["']["']/,
+  );
+  const preflight = witness.indexOf("assertSafeDb01TestTarget(process.env)");
+  const connect = witness.indexOf("new pg.Pool(");
+  assert.ok(preflight > 0 && connect > preflight);
+});
+
+test("DB078 witness refuses an aliased application DB before any connection", () => {
+  const secret = "db078AliasFixtureSecret";
+  const result = spawnSync(process.execPath,
+    ["--test", "tests/db078-registered-course-column-disposition-pg.test.mjs"],
+    {
+      cwd: root,
+      encoding: "utf8",
+      env: {
+        ...process.env,
+        DB078_DISPOSABLE: "1",
+        TEST_DATABASE_URL: "postgresql://test:password@127.0.0.1:1/lms_vnext_test",
+        DATABASE_URL: "postgresql://app:" + secret + "@localhost:1/lms_vnext_test",
+      },
+    });
+  const output = `${result.stdout ?? ""}\n${result.stderr ?? ""}`;
+  assert.notEqual(result.status, 0);
+  assert.match(output, /Refusing to reset the configured application database/);
+  assert.doesNotMatch(output, /ECONNREFUSED|ENOTFOUND|connection refused/i);
+  assert.doesNotMatch(output, new RegExp(secret));
+});
