@@ -30,9 +30,12 @@ describe("COL-attendance-R02 verified parent absence/correction SMS",()=>{
  });
  it("COL-attendance-R02 creates outbox rows only after changed audited absence or ABSENT-to-PRESENT transitions",()=>{
   const svc=source("src/modules/attendance/admin-service.ts");
-  expect(svc).toContain("if(priorStatus===input.status)");
-  expect(svc).toContain('input.status==="ABSENT"?"ABSENT"');
-  expect(svc).toContain('input.status==="PRESENT"&&priorStatus==="ABSENT"?"CORRECTED"');
+  const change=source("src/modules/attendance/admin-correction-change-model.ts");
+  expect(svc).toContain("if(!change.changed)");
+  expect(svc).toContain("change.shouldNotifyAbsent");
+  expect(svc).toContain("change.shouldNotifyCorrected");
+  expect(change).toContain('shouldNotifyAbsent:statusChanged&&input.requestedStatus==="ABSENT"');
+  expect(change).toContain('shouldNotifyCorrected:statusChanged&&previousStatus==="ABSENT"&&input.requestedStatus==="PRESENT"');
   expect(svc).toContain("enqueueAttendanceParentSms(tx");
   expect(svc).toContain("return publicReceipt");
   expect(svc).toContain("dispatchQueuedAttendanceParentSms(smsOutboxId)");
