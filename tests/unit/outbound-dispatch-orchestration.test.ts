@@ -128,6 +128,49 @@ describe("DB-067 outbound worker cannot silently double-send", () => {
     }]);
   });
 
+  it("does not schedule a definitely-unsent retry beyond message expiry", async () => {
+    const { port, completion } = fixture({
+      load: { ...opened, intent: { ...intent, expiresAt: "2026-10-29T02:00:30.000Z" } },
+      result: { kind: "DEFINITELY_UNSENT_RETRYABLE" },
+    });
+    // The fake send is permitted to see only the original sample, so match
+    // the updated expiry-bearing intent just for this provider adapter.
+    port.send = async () => ({ kind: "DEFINITELY_UNSENT_RETRYABLE" });
+    expect(await executeClaimedOutbound(claim, "worker-01", port))
+      .toBe("FAILED_UNSENT");
+    expect(completion).toEqual([{
+      messageId: claim.messageId, worker: "worker-01", fence: 3,
+      outcome: "FAILED", safeFailureCode: "RETRY_WINDOW_EXPIRED",
+    }]);
+  });
+
+  it("preserves a retry when expiry is strictly after its next due instant", async () => {
+    const { port, completion } = fixture({
+      load: { ...opened, intent: { ...intent, expiresAt: "2026-10-29T02:01:01.000Z" } },
+      result: { kind: "DEFINITELY_UNSENT_RETRYABLE" },
+    });
+    port.send = async () => ({ kind: "DEFINITELY_UNSENT_RETRYABLE" });
+    expect(await executeClaimedOutbound(claim, "worker-01", port))
+      .toBe("RETRY_SCHEDULED");
+    expect(completion).toEqual([{
+      messageId: claim.messageId, worker: "worker-01", fence: 3,
+      outcome: "RETRY", safeFailureCode: "CONFIRMED_NOT_SENT",
+      nextAttemptAt: new Date("2026-10-29T02:01:00.000Z"),
+    }]);
+  });
+
+  it("never schedules a retry at the exact expiry boundary", async () => {
+    const { port, completion } = fixture({
+      load: { ...opened, intent: { ...intent, expiresAt: "2026-10-29T02:01:00.000Z" } },
+      result: { kind: "DEFINITELY_UNSENT_RETRYABLE" },
+    });
+    port.send = async () => ({ kind: "DEFINITELY_UNSENT_RETRYABLE" });
+    expect(await executeClaimedOutbound(claim, "worker-01", port))
+      .toBe("FAILED_UNSENT");
+    expect(completion[0]).toMatchObject({ outcome: "FAILED",
+      safeFailureCode: "RETRY_WINDOW_EXPIRED" });
+  });
+
   it("fails definitely-unsent attempts at the fifth try, never schedules a sixth", async () => {
     const { port, completion } = fixture({
       load: { ...opened, attempts: 5 },
