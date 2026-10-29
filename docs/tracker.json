@@ -1926,6 +1926,20 @@
         "reason": "Current npm run test:db:parity explicitly enumerates tests but omits all eight L08 registered DB09 SQL static regressions. L08 updated those suites to inspect registered drizzle/0075; isolated assertion harness saw 54/54 pass, but native node command not yet executed. As package.json and CI verifier are shared, request L01 single-writer registration and actual Node test execution; also wire both opt-in DB09 PostgreSQL witnesses after clean replay with exact per-test results. No DB task DONE until live PostgreSQL/consumer negatives.",
         "status": "REQUESTED",
         "requestedAt": "2026-10-29T05:35:26.136Z"
+      },
+      {
+        "id": "SCR-L08-L07-DB09-SHARE-PRODUCER-20261029",
+        "fromLane": "L08",
+        "toLane": "L07",
+        "paths": [
+          "src/modules/placements/company-share/manage-service.ts",
+          "src/modules/placements/company-share/public-service.ts",
+          "src/db/schema/placement-company-shares.ts",
+          "src/db/schema/tpo-collaboration.ts"
+        ],
+        "reason": "DB-059/DB-060 registered DB09 placement_tpo_share_links / placement_tpo_share_events have strict SQL lifecycle guards, but current active issueTpoCompanyApplicantShare producer writes placement_company_applicant_shares and companion schema, not DB09 legacy-named share tables. Reconcile one canonical secure-share producer/read/revoke path with legacy behavior; classify DB09 tables as approved redesign/retirement or wire real producer+consumer with tested disclosure/event invariants. Do not maintain conflicting parallel token lifecycles. L07 owns shared placement services; L08 owns DB09 contract and negative PG witnesses.",
+        "status": "REQUESTED",
+        "requestedAt": "2026-10-29T05:36:20.853Z"
       }
     ],
     "coordination": {
