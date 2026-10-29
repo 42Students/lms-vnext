@@ -1236,23 +1236,25 @@ function requestListQuery() {
     )
     .leftJoin(
       placementJobRounds,
-      eq(
-        placementJobRounds.id,
-        placementLearnerRequests.roundId,
+      and(
+        eq(placementJobRounds.id, placementLearnerRequests.roundId),
+        eq(placementJobRounds.jobId, placementApplications.jobId),
       ),
     )
     .leftJoin(
       placementOffers,
-      eq(
-        placementOffers.id,
-        placementLearnerRequests.offerId,
+      and(
+        eq(placementOffers.id, placementLearnerRequests.offerId),
+        eq(placementOffers.applicationId, placementApplications.id),
       ),
     )
     .leftJoin(
       placementApplicationRoundExceptions,
-      eq(
-        placementApplicationRoundExceptions.requestId,
-        placementLearnerRequests.id,
+      and(
+        eq(placementApplicationRoundExceptions.requestId, placementLearnerRequests.id),
+        eq(placementApplicationRoundExceptions.applicationId, placementApplications.id),
+        eq(placementApplicationRoundExceptions.roundId, placementLearnerRequests.roundId),
+        eq(placementLearnerRequests.requestType, "ROUND_RESCHEDULE"),
       ),
     );
 }
@@ -1263,12 +1265,14 @@ export async function listOwnPlacementRequests(
   const membership = requireLearner(context);
   await requireLearnerPlacementAccess(context);
   return requestListQuery()
-    .where(
-      eq(
-        placementApplications.membershipId,
-        membership.id,
-      ),
-    )
+    .where(and(
+      eq(placementApplications.membershipId, membership.id),
+      // A malformed target cannot expose unrelated interview/offer metadata.
+      or(isNull(placementLearnerRequests.roundId),
+        eq(placementJobRounds.id, placementLearnerRequests.roundId)),
+      or(isNull(placementLearnerRequests.offerId),
+        eq(placementOffers.id, placementLearnerRequests.offerId)),
+    ))
     .orderBy(
       desc(
         placementLearnerRequests.requestedAt,
@@ -1299,12 +1303,13 @@ export async function listPlacementJobRequests(
   );
 
   return requestListQuery()
-    .where(
-      eq(
-        placementApplications.jobId,
-        job.id,
-      ),
-    )
+    .where(and(
+      eq(placementApplications.jobId, job.id),
+      or(isNull(placementLearnerRequests.roundId),
+        eq(placementJobRounds.id, placementLearnerRequests.roundId)),
+      or(isNull(placementLearnerRequests.offerId),
+        eq(placementOffers.id, placementLearnerRequests.offerId)),
+    ))
     .orderBy(
       asc(placementLearnerRequests.status),
       desc(
