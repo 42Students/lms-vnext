@@ -935,6 +935,69 @@ describe("courses C2 learning structure against PostgreSQL", () => {
       code: "CONTENT_DELIVERY_MISMATCH",
     });
   });
+  it("keeps imported tokens and scheduled links off direct learner reads", async () => {
+    const structure = await createStructure();
+    const path = await createLearningPath(collegeAdmin, {
+      offeringId: structure.offering.id, title: "C2 direct content read boundary",
+    });
+    const lesson = await createCourseLesson(collegeAdmin, {
+      learningPathId: path.id, name: "C2 link release lesson", sequence: 0,
+    });
+    const resource = await createLessonContent(collegeAdmin, {
+      lessonId: lesson.id, title: "C2 historical raw resource",
+      contentType: "RESOURCE", notes: "Public summary", points: 1,
+      sequence: 0,
+    });
+    const futureStart = new Date(Date.now() + 48 * 3600_000);
+    const futureEnd = new Date(Date.now() + 72 * 3600_000);
+    const live = await createLessonContent(collegeAdmin, {
+      lessonId: lesson.id, title: "C2 upcoming live room",
+      contentType: "LIVE_CLASS", externalUrl: "https://example.org/class/live",
+      startsAt: futureStart.toISOString(), endsAt: futureEnd.toISOString(),
+      points: 1, sequence: 1,
+    });
+    await transitionLessonContent(collegeAdmin, resource.id, { action: "PUBLISH" });
+    await transitionLessonContent(collegeAdmin, live.id, { action: "PUBLISH" });
+    await transitionLearningPath(collegeAdmin, path.id, { action: "PUBLISH" });
+    await pool.query(
+      "UPDATE lesson_contents SET external_url=$1,legacy_content_data=$2::jsonb WHERE id=$3",
+      ["javascript:alert(1)", JSON.stringify({storageKey:"private-asset",token:"embedded-secret"}),resource.id],
+    );
+    const visible = await listLessonContents(learner, lesson.id, structure.deliveryA.id);
+    const directResource = visible.find(item=>item.id===resource.id);
+    expect(directResource).toMatchObject({
+      externalUrl:null,storageKey:null,legacyContentData:null,
+    });
+    const bookmarked = await getAuthorizedLessonContent(
+      learner, resource.id, structure.deliveryA.id,
+    );
+    expect(bookmarked.externalUrl).toBeNull();
+    expect(bookmarked.legacyContentData).toBeNull();
+    const adminRows = await listLessonContents(collegeAdmin, lesson.id, structure.deliveryA.id);
+    const rawAdmin = adminRows.find(item=>item.id===resource.id);
+    expect(rawAdmin?.legacyContentData).toMatchObject({token:"embedded-secret"});
+
+    // Live meeting links are intentionally allowed before startsAt, but
+    // cannot survive expiry or credential-bearing URLs.
+    expect(visible.find(item=>item.id===live.id)?.externalUrl)
+      .toBe("https://example.org/class/live");
+    await pool.query(
+      "UPDATE lesson_contents SET external_url=$1 WHERE id=$2",
+      ["https://alice:password@example.org/class/live",live.id],
+    );
+    const credentialed = await getAuthorizedLessonContent(
+      learner,live.id,structure.deliveryA.id,
+    );
+    expect(credentialed.externalUrl).toBeNull();
+    await pool.query(
+      "UPDATE lesson_contents SET external_url=$1,starts_at=$2,ends_at=$3 WHERE id=$4",
+      ["https://example.org/class/live",new Date(Date.now()-72*3600_000),
+        new Date(Date.now()-48*3600_000),live.id],
+    );
+    const ended = await getAuthorizedLessonContent(learner,live.id,structure.deliveryA.id);
+    expect(ended.externalUrl).toBeNull();
+  }, 45_000);
+
   it("keeps batch progress for other content after 5000 retakes of one video", async () => {
     const structure = await createStructure();
     const path = await createLearningPath(collegeAdmin, {
