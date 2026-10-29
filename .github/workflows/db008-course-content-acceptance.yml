@@ -13,6 +13,9 @@ on:
       - "src/modules/groups/roster-access.ts"
       - "tests/db008-elective-roster-structure.test.mjs"
       - "src/modules/courses/lesson-content-service.ts"
+      - "src/modules/courses/discussion-service.ts"
+      - "tests/db05-classroom-snapshot-consumer-contract.test.mjs"
+      - "tests/integration/db05-classroom-sender-snapshot.test.ts"
       - "src/modules/courses/learning-access.ts"
       - "src/modules/courses/progress-service.ts"
       - "src/modules/courses/scope.ts"
@@ -82,6 +85,9 @@ jobs:
           npx vitest run --config vitest.db.config.ts
           tests/integration/db008-course-parent-app-pg.test.ts
           tests/integration/courses-c2-learning.test.ts
+          tests/integration/db05-classroom-sender-snapshot.test.ts
+      - name: DB-008 immutable classroom sender projection contract
+        run: node --test tests/db05-classroom-snapshot-consumer-contract.test.mjs
       - name: DB-008 elective course-scope SQL source structure
         run: node --test tests/db008-elective-roster-structure.test.mjs
       - name: DB-008 source parent contracts (not a DB registration claim)
