@@ -8,6 +8,11 @@ vi.mock("@/db/client",()=>({getDb:vi.fn()}));
 vi.mock("@/modules/placements/recruiter-service",()=>({
  listOwnRecruiterPlacementJobs:vi.fn(),
 }));
+vi.mock("@/modules/placements/hr-recruiter-read-watermark-service",()=>({
+ getRecruiterNotificationReadThreshold:vi.fn(async()=>({
+  firstVisit:true,readThrough:null,unreadSince:new Date("2020-01-01T00:00:00Z"),
+ })),
+}));
 const college="11111111-1111-4111-8111-111111111111";
 const other="22222222-2222-4222-8222-222222222222";
 const company="33333333-3333-4333-8333-333333333333";
