@@ -94,6 +94,14 @@ async function openLiveOutboundClaim(
   const intent = openOutboundDelivery(
     sealed, process.env["DB10_OUTBOUND_ENCRYPTION_KEY_BASE64"] ?? "",
   );
+  // This worker has only the recruiter EMAIL contract. An injected provider
+  // is NOT proof of TRAI/DLT registration, SMS opt-in or WhatsApp approval.
+  // Never let a generic transport adapter silently activate other channels.
+  // Add an independently verified channel-specific worker before sending
+  // queued SMS/WHATSAPP; until then leave such claims for reconciliation.
+  if (intent.channel !== "EMAIL") {
+    throw new OutboundDispatchNotReadyError();
+  }
   // Both queue/dispatch flags alone do not certify the global suppression
   // migration or authorized EMAIL provider. Without both independent gates,
   // even a correctly claimed EMAIL may never reach a transport adapter.
