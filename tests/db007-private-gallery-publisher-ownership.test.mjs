@@ -53,3 +53,17 @@ test("DB-007 pending-scan gallery reads map to retryable conflict without hiding
   assert.match(gallery,/checkedGalleryObjectAttestation\(input\.objectKey, access\)/);
   assert.match(gallery,/checkedGalleryObjectAttestation\(candidate\.privateObjectKey, access\)/);
 });
+
+
+const galleryUi=readFileSync(
+  new URL("../src/components/profile/learner-image-gallery.tsx",import.meta.url),"utf8",
+);
+test("DB-007 learner-only publisher permission differs from staff-only cleanup",()=>{
+  assert.match(gallery,/canUpload: target\.status === "ACTIVE" && self/);
+  assert.match(gallery,/canEdit: target\.status === "ACTIVE" && \(self \|\| staff \|\| superAdmin\)/);
+  assert.match(gallery,/if \(!access\.canUpload \|\| access\.membershipId !== context\.membership\.id\)/);
+  assert.match(gallery,/canUpload: access\.canUpload/);
+  assert.match(galleryUi,/setCanUpload\(value\.canUpload === true\)/);
+  assert.match(galleryUi,/\{canUpload \? <div className="max-w-lg/);
+  assert.match(galleryUi,/\{canEdit \? <Button variant="secondary" type="button" disabled=\{busy\} onClick=\{\(\) => void deactivate/);
+});
