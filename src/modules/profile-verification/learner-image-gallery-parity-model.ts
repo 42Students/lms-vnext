@@ -14,7 +14,11 @@ export const learnerGalleryUploadSchema=z.strictObject({
 });
 export function nextGalleryInsert(rows:readonly LearnerImageReference[],receiptId:string){
  const existing=rows.find(row=>row.receiptId===receiptId);
- if(existing)return {kind:"EXISTS" as const,id:existing.id};
+ if(existing){
+  // A revoked gallery membership is history, not a publishable active image.
+  if(!existing.isActive||existing.deactivatedAt)return {kind:"INACTIVE" as const};
+  return {kind:"EXISTS" as const,id:existing.id};
+ }
  const active=rows.filter(row=>row.isActive&&!row.deactivatedAt);
  if(active.length>=MAX_LEARNER_PROFILE_IMAGES)return {kind:"LIMIT" as const};
  return {kind:"APPEND" as const,displayOrder:Math.max(-1,...active.map(row=>row.displayOrder))+1};
