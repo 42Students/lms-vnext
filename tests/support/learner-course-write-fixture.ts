@@ -127,6 +127,10 @@ export async function cleanupLearnerCourseWriteFixture(
   await pool.query("DELETE FROM section_enrollments WHERE id=$1", [ids.sectionEnrollment]);
   await pool.query("DELETE FROM course_section_deliveries WHERE id=$1", [ids.delivery]);
   await pool.query("DELETE FROM course_offerings WHERE id=$1", [ids.offering]);
+  // The registered DB-002 curriculum guard forbids removing a course's
+  // program-term mapping while an offering still exists. Remove it only
+  // after deleting this fixture's offering and before its parent course.
+  await pool.query("DELETE FROM program_term_courses WHERE course_id=$1", [ids.course]);
   await pool.query("DELETE FROM courses WHERE id=$1", [ids.course]);
   await pool.query("DELETE FROM sections WHERE id=$1", [ids.section]);
   await pool.query("DELETE FROM learner_program_enrollments WHERE id=$1", [ids.learnerEnrollment]);
