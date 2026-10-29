@@ -286,7 +286,14 @@ export async function appendLearnerGalleryImage(
       .where(eq(learnerProfileImages.learnerMembershipId, access.membershipId))
       .orderBy(asc(learnerProfileImages.displayOrder), asc(learnerProfileImages.id));
     const same = existing.find(image => image.receiptId === candidate.id);
-    if (same) return { image: summary(same), alreadyAdded: true };
+    if (same) {
+      // An inactive photo has been explicitly removed. Retain its immutable
+      // receipt/history and require a new verified upload, never silently
+      // report successful publication for an invisible picture.
+      if (!same.isActive || same.deactivatedAt)
+        throw new LearnerGalleryError("GALLERY_RECEIPT_INVALID");
+      return { image: summary(same), alreadyAdded: true };
+    }
     const active = existing.filter(image => image.isActive && !image.deactivatedAt);
     if (active.length >= MAX_LEARNER_PROFILE_IMAGES)
       throw new LearnerGalleryError("GALLERY_LIMIT");
