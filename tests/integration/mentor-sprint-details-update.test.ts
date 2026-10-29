@@ -12,6 +12,8 @@ import {
   createProjectTemplate, publishProjectTemplate, assignProjectTemplateToCollege,
 } from "@/modules/projects/template-service";
 import { updateMentorSprintDetails } from "@/modules/projects/mentor-sprint-details-service";
+import {createMentorProjectTask} from "@/modules/projects/mentor-task-create-service";
+import {writeMentorProjectRelease} from "@/modules/projects/mentor-release-write-service";
 import { getMentorSprintProgress } from "@/modules/projects/mentor-sprint-progress-service";
 import {
   createMentorProjectSprint, transitionMentorProjectSprint,
@@ -237,6 +239,36 @@ describe("Mentor sprint details PATCH: fresh PostgreSQL positive, audit, denial"
       projectId:randomUUID(),taskAttention:"NO_TASKS",
     })).rejects.toBeDefined();
   });
+  it("rejects task, sprint and release creation after a project is soft-deleted",async()=>{
+    const {project,sprint}=await fixture();
+    const totals=()=>pool.query<{sprints:number;tasks:number;releases:number}>(`
+      select
+       (select count(*)::int from project_sprints where project_id=$1) as sprints,
+       (select count(*)::int from project_tasks where project_id=$1) as tasks,
+       (select count(*)::int from project_releases where project_id=$1) as releases
+    `,[project.id]);
+    const before=(await totals()).rows[0];
+    await pool.query("update project_instances set deleted_at=now() where id=$1",[project.id]);
+    try {
+      await expect(createMentorProjectTask(mentor,{projectId:project.id},{
+        sprintId:sprint.id,title:"Deleted project task",description:null,
+        acceptanceCriteria:"Never materialized",priority:"MEDIUM",
+        expectedSprintUpdatedAt:sprint.updatedAt.toISOString(),
+      })).rejects.toBeDefined();
+      await expect(createMentorProjectSprint(mentor,{projectId:project.id},{
+        releaseId:sprint.releaseId,title:"Deleted project sprint",
+        description:null,goal:null,definitionOfDone:null,
+        startDate:null,endDate:null,dueDate:null,
+      })).rejects.toBeDefined();
+      await expect(writeMentorProjectRelease(mentor,project.id,null,"POST",{
+        title:"Deleted project release",
+      })).rejects.toBeDefined();
+      expect((await totals()).rows[0]).toEqual(before);
+    } finally {
+      await pool.query("update project_instances set deleted_at=null where id=$1",[project.id]);
+    }
+  });
+
   it("creates a registered planned sprint, audits three token-checked transitions and denies scope forgery",async()=>{
     const {project,sprint:original}=await fixture();
     const params={projectId:project.id};
