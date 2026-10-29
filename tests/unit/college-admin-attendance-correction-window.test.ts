@@ -16,8 +16,11 @@ describe("COL-attendance-01 / COL-attendance-02",()=>{
   expect(correction).toContain("note:change.nextNote");
   expect(correction).toContain("change.statusChanged");
   expect(correction).toContain("tx.insert(activityEvents)");
-  expect(correction).toContain("ADMIN_ATTENDANCE_MARK_PRESENT");
-  expect(correction).toContain("ADMIN_ATTENDANCE_MARK_ABSENT");
+  expect(correction).toContain("adminAttendanceAuditEventType(change.statusChanged,input.status)");
+  const model=readFileSync(new URL("../../src/modules/attendance/admin-correction-change-model.ts",import.meta.url),"utf8");
+  expect(model).toContain("ADMIN_ATTENDANCE_MARK_PRESENT");
+  expect(model).toContain("ADMIN_ATTENDANCE_MARK_ABSENT");
+  expect(model).toContain("ADMIN_ATTENDANCE_NOTE_UPDATED");
   expect(correction).toContain("organizationId:college.organizationId");
   expect(correction).toContain("learnerMembershipId:input.membershipId");
  });
