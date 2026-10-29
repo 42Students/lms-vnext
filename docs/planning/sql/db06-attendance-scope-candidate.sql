@@ -384,14 +384,17 @@ CREATE TRIGGER db06_attendance_record_no_delete
 BEFORE DELETE ON attendance_records
 FOR EACH ROW EXECUTE FUNCTION db06_reject_attendance_record_delete();
 
--- A row means attendance was taken for the session. Faculty/admin services
--- currently write the row(s) before upserting attendance_sessions in the same
--- transaction, so make this commit-time rather than immediate.
+-- Faculty marking is whole-roster and must set the MARKED session in the
+-- same transaction. A College/Super Admin can instead correct one learner in
+-- an otherwise UNMARKED session; that explicit record must not silently mark
+-- every other learner present. Restrict this exception to authorized admins.
 CREATE FUNCTION db06_attendance_record_requires_marked_session()
 RETURNS trigger
 LANGUAGE plpgsql AS $db06_record_session$
+DECLARE
+  v_actor_kind text;
 BEGIN
-  IF NOT EXISTS (
+  IF EXISTS (
     SELECT 1
       FROM attendance_sessions s
      WHERE s.schedule_event_id = NEW.schedule_event_id
@@ -399,7 +402,16 @@ BEGIN
        AND s.marked_at IS NOT NULL
        AND s.marked_by_user_id IS NOT NULL
   ) THEN
-    RAISE EXCEPTION 'DB06 attendance record requires a marked session'
+    RETURN NEW;
+  END IF;
+
+  v_actor_kind := db06_attendance_actor_kind(
+    NEW.marked_by_user_id,
+    NEW.schedule_event_id
+  );
+  IF v_actor_kind NOT IN ('COLLEGE_ADMIN', 'SUPER_ADMIN')
+     OR v_actor_kind IS NULL THEN
+    RAISE EXCEPTION 'DB06 faculty attendance record requires a marked session'
       USING ERRCODE = '23514';
   END IF;
   RETURN NEW;
