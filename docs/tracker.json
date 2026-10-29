@@ -2791,6 +2791,860 @@
       "phasePromotion": "Independent certification must only occur after all prerequisite stages are certified, all required scoped tasks/milestones pass, all relevant phaseGates and globalPhases.exitCriteria are satisfied with executed code-SHA evidence. DESIGN must certify after UI and before RELEASE.",
       "tenChatRule": "All ten lanes can implement dependency-ready work in parallel in the active phase; a domain-local future-stage user journey is a useful implementation but not global certification. All lane claims/handoffs live in this same JSON.",
       "changes": "Only user-authorized scope changes. Never silently drop an expected phase, required role/surface or test to raise completion percentage."
+    },
+    "databaseProgress": {
+      "version": 1,
+      "authority": "docs/tracker.json.execution.databaseProgress: evidence-guided engineering indicator ONLY; task.done and executed acceptance remain authoritative",
+      "recordedAt": "2026-10-29",
+      "sourceNotice": "Initial row-level bands are conservative estimates manually classified from the RETIRED October 12 work queue notes, current main DB-007/DB-008 passing PG17 workflows and passing *scoped* DB09 witnesses in a failing combined workflow. Historical queue COMPLETED means source/staging, not canonical accepted. No percentage is a claim that tests or user journeys passed.",
+      "methodology": {
+        "population": "All 81 DATABASE tasks, one equal-weight observation each. This is NOT an effort-weighted estimate, a deadline prediction, or phase certification.",
+        "discovery": "0 NOT_ASSESSED; 0.5 PARTIAL_INVENTORY; 0.9 SOURCE_REVIEWED; 1.0 only canonical task.done. This measures known source/contract work, not field-level runtime parity.",
+        "implementation": "0.1 GATE_PENDING; 0.35 SOURCE_STAGED; 0.55 CODE_PARTIAL; 0.8 INTEGRATED_PARTIAL; 1.0 only canonical task.done. Partial does not assert full producer/consumer coverage.",
+        "verification": "0 NOT_RUN; 0.05 STAGED_NOT_VERIFIED; 0.2 SOURCE_OR_STATIC_CHECKS; 0.65 SCOPED_POSTGRES_PASS; 1.0 only canonical task.done. An overall failed run can support scoped passing witnesses but never global green.",
+        "accepted": "Derived exactly from task.done, never editable by these labels.",
+        "updates": "Lane owners propose upgrades with exact code SHA, executed command/runner URL and specific verified scope; L01 coordinates edits to this shared progress section via fresh-main optimistic SHA. Never infer completion from historical queue statuses or increase scores without new evidence.",
+        "integrity": "Task ID coverage exactly matches canonical tasks; unsupported PG claims, duplicate rows and false accepted labels fail the tracker integrity CLI.",
+        "excluded": "API/UI/DESIGN/RELEASE milestone percentages are outside this DATABASE-only model."
+      },
+      "activeBlockerRefs": [
+        {
+          "id": "DB-001",
+          "reason": "Independent verifier Drizzle BigInt generation failure",
+          "url": "https://github.com/42Students/lms-vnext/actions/runs/40830776736"
+        },
+        {
+          "id": "DB-061",
+          "reason": "Combined DB09 workflow red despite three other scoped witnesses passing; timestamp precision fixture",
+          "url": "https://github.com/42Students/lms-vnext/actions/runs/40832809717"
+        }
+      ],
+      "items": [
+        {
+          "id": "DB-001",
+          "discovery": "SOURCE_REVIEWED",
+          "implementation": "CODE_PARTIAL",
+          "verification": "SOURCE_OR_STATIC_CHECKS",
+          "basis": {
+            "source": "RETIRED_2026_10_12_QUEUE",
+            "taskId": "DB-001"
+          }
+        },
+        {
+          "id": "DB-002",
+          "discovery": "ACCEPTED_BY_CANONICAL_DONE",
+          "implementation": "ACCEPTED_BY_CANONICAL_DONE",
+          "verification": "ACCEPTED_BY_CANONICAL_DONE"
+        },
+        {
+          "id": "DB-003",
+          "discovery": "ACCEPTED_BY_CANONICAL_DONE",
+          "implementation": "ACCEPTED_BY_CANONICAL_DONE",
+          "verification": "ACCEPTED_BY_CANONICAL_DONE"
+        },
+        {
+          "id": "DB-004",
+          "discovery": "ACCEPTED_BY_CANONICAL_DONE",
+          "implementation": "ACCEPTED_BY_CANONICAL_DONE",
+          "verification": "ACCEPTED_BY_CANONICAL_DONE"
+        },
+        {
+          "id": "DB-005",
+          "discovery": "ACCEPTED_BY_CANONICAL_DONE",
+          "implementation": "ACCEPTED_BY_CANONICAL_DONE",
+          "verification": "ACCEPTED_BY_CANONICAL_DONE"
+        },
+        {
+          "id": "DB-006",
+          "discovery": "SOURCE_REVIEWED",
+          "implementation": "CODE_PARTIAL",
+          "verification": "SOURCE_OR_STATIC_CHECKS",
+          "basis": {
+            "source": "RETIRED_2026_10_12_QUEUE",
+            "taskId": "DB-006"
+          }
+        },
+        {
+          "id": "DB-007",
+          "discovery": "SOURCE_REVIEWED",
+          "implementation": "INTEGRATED_PARTIAL",
+          "verification": "SCOPED_POSTGRES_PASS",
+          "basis": {
+            "source": "RETIRED_2026_10_12_QUEUE",
+            "taskId": "DB-007"
+          },
+          "runs": [
+            {
+              "url": "https://github.com/42Students/lms-vnext/actions/runs/40831268589",
+              "scope": "WORKFLOW_PASSED"
+            }
+          ]
+        },
+        {
+          "id": "DB-008",
+          "discovery": "PARTIAL_INVENTORY",
+          "implementation": "INTEGRATED_PARTIAL",
+          "verification": "SCOPED_POSTGRES_PASS",
+          "basis": {
+            "source": "RETIRED_2026_10_12_QUEUE",
+            "taskId": "DB-008"
+          },
+          "runs": [
+            {
+              "url": "https://github.com/42Students/lms-vnext/actions/runs/40831919328",
+              "scope": "WORKFLOW_PASSED"
+            }
+          ]
+        },
+        {
+          "id": "DB-009",
+          "discovery": "SOURCE_REVIEWED",
+          "implementation": "CODE_PARTIAL",
+          "verification": "SOURCE_OR_STATIC_CHECKS",
+          "basis": {
+            "source": "RETIRED_2026_10_12_QUEUE",
+            "taskId": "DB-009"
+          }
+        },
+        {
+          "id": "DB-010",
+          "discovery": "SOURCE_REVIEWED",
+          "implementation": "CODE_PARTIAL",
+          "verification": "SOURCE_OR_STATIC_CHECKS",
+          "basis": {
+            "source": "RETIRED_2026_10_12_QUEUE",
+            "taskId": "DB-010"
+          }
+        },
+        {
+          "id": "DB-011",
+          "discovery": "PARTIAL_INVENTORY",
+          "implementation": "SOURCE_STAGED",
+          "verification": "STAGED_NOT_VERIFIED",
+          "basis": {
+            "source": "RETIRED_2026_10_12_QUEUE",
+            "taskId": "DB-011"
+          }
+        },
+        {
+          "id": "DB-012",
+          "discovery": "SOURCE_REVIEWED",
+          "implementation": "CODE_PARTIAL",
+          "verification": "SOURCE_OR_STATIC_CHECKS",
+          "basis": {
+            "source": "RETIRED_2026_10_12_QUEUE",
+            "taskId": "DB-012"
+          }
+        },
+        {
+          "id": "DB-013",
+          "discovery": "PARTIAL_INVENTORY",
+          "implementation": "SOURCE_STAGED",
+          "verification": "STAGED_NOT_VERIFIED",
+          "basis": {
+            "source": "RETIRED_2026_10_12_QUEUE",
+            "taskId": "DB-013"
+          }
+        },
+        {
+          "id": "DB-014",
+          "discovery": "SOURCE_REVIEWED",
+          "implementation": "CODE_PARTIAL",
+          "verification": "SOURCE_OR_STATIC_CHECKS",
+          "basis": {
+            "source": "RETIRED_2026_10_12_QUEUE",
+            "taskId": "DB-014"
+          }
+        },
+        {
+          "id": "DB-015",
+          "discovery": "SOURCE_REVIEWED",
+          "implementation": "CODE_PARTIAL",
+          "verification": "SOURCE_OR_STATIC_CHECKS",
+          "basis": {
+            "source": "RETIRED_2026_10_12_QUEUE",
+            "taskId": "DB-015"
+          }
+        },
+        {
+          "id": "DB-016",
+          "discovery": "SOURCE_REVIEWED",
+          "implementation": "CODE_PARTIAL",
+          "verification": "SOURCE_OR_STATIC_CHECKS",
+          "basis": {
+            "source": "RETIRED_2026_10_12_QUEUE",
+            "taskId": "DB-016"
+          }
+        },
+        {
+          "id": "DB-017",
+          "discovery": "ACCEPTED_BY_CANONICAL_DONE",
+          "implementation": "ACCEPTED_BY_CANONICAL_DONE",
+          "verification": "ACCEPTED_BY_CANONICAL_DONE"
+        },
+        {
+          "id": "DB-018",
+          "discovery": "SOURCE_REVIEWED",
+          "implementation": "CODE_PARTIAL",
+          "verification": "SOURCE_OR_STATIC_CHECKS",
+          "basis": {
+            "source": "RETIRED_2026_10_12_QUEUE",
+            "taskId": "DB-018"
+          }
+        },
+        {
+          "id": "DB-019",
+          "discovery": "NOT_ASSESSED",
+          "implementation": "GATE_PENDING",
+          "verification": "NOT_RUN"
+        },
+        {
+          "id": "DB-020",
+          "discovery": "NOT_ASSESSED",
+          "implementation": "GATE_PENDING",
+          "verification": "NOT_RUN"
+        },
+        {
+          "id": "DB-021",
+          "discovery": "SOURCE_REVIEWED",
+          "implementation": "SOURCE_STAGED",
+          "verification": "STAGED_NOT_VERIFIED",
+          "basis": {
+            "source": "RETIRED_2026_10_12_QUEUE",
+            "taskId": "DB-021"
+          }
+        },
+        {
+          "id": "DB-022",
+          "discovery": "SOURCE_REVIEWED",
+          "implementation": "SOURCE_STAGED",
+          "verification": "STAGED_NOT_VERIFIED",
+          "basis": {
+            "source": "RETIRED_2026_10_12_QUEUE",
+            "taskId": "DB-022"
+          }
+        },
+        {
+          "id": "DB-023",
+          "discovery": "SOURCE_REVIEWED",
+          "implementation": "SOURCE_STAGED",
+          "verification": "STAGED_NOT_VERIFIED",
+          "basis": {
+            "source": "RETIRED_2026_10_12_QUEUE",
+            "taskId": "DB-023"
+          }
+        },
+        {
+          "id": "DB-024",
+          "discovery": "SOURCE_REVIEWED",
+          "implementation": "SOURCE_STAGED",
+          "verification": "STAGED_NOT_VERIFIED",
+          "basis": {
+            "source": "RETIRED_2026_10_12_QUEUE",
+            "taskId": "DB-024"
+          }
+        },
+        {
+          "id": "DB-025",
+          "discovery": "ACCEPTED_BY_CANONICAL_DONE",
+          "implementation": "ACCEPTED_BY_CANONICAL_DONE",
+          "verification": "ACCEPTED_BY_CANONICAL_DONE"
+        },
+        {
+          "id": "DB-026",
+          "discovery": "SOURCE_REVIEWED",
+          "implementation": "CODE_PARTIAL",
+          "verification": "SOURCE_OR_STATIC_CHECKS",
+          "basis": {
+            "source": "RETIRED_2026_10_12_QUEUE",
+            "taskId": "DB-026"
+          }
+        },
+        {
+          "id": "DB-027",
+          "discovery": "SOURCE_REVIEWED",
+          "implementation": "CODE_PARTIAL",
+          "verification": "SOURCE_OR_STATIC_CHECKS",
+          "basis": {
+            "source": "RETIRED_2026_10_12_QUEUE",
+            "taskId": "DB-027"
+          }
+        },
+        {
+          "id": "DB-028",
+          "discovery": "SOURCE_REVIEWED",
+          "implementation": "CODE_PARTIAL",
+          "verification": "SOURCE_OR_STATIC_CHECKS",
+          "basis": {
+            "source": "RETIRED_2026_10_12_QUEUE",
+            "taskId": "DB-028"
+          }
+        },
+        {
+          "id": "DB-029",
+          "discovery": "SOURCE_REVIEWED",
+          "implementation": "SOURCE_STAGED",
+          "verification": "STAGED_NOT_VERIFIED",
+          "basis": {
+            "source": "RETIRED_2026_10_12_QUEUE",
+            "taskId": "DB-029"
+          }
+        },
+        {
+          "id": "DB-030",
+          "discovery": "ACCEPTED_BY_CANONICAL_DONE",
+          "implementation": "ACCEPTED_BY_CANONICAL_DONE",
+          "verification": "ACCEPTED_BY_CANONICAL_DONE"
+        },
+        {
+          "id": "DB-031",
+          "discovery": "SOURCE_REVIEWED",
+          "implementation": "SOURCE_STAGED",
+          "verification": "STAGED_NOT_VERIFIED",
+          "basis": {
+            "source": "RETIRED_2026_10_12_QUEUE",
+            "taskId": "DB-031"
+          }
+        },
+        {
+          "id": "DB-032",
+          "discovery": "SOURCE_REVIEWED",
+          "implementation": "CODE_PARTIAL",
+          "verification": "SOURCE_OR_STATIC_CHECKS",
+          "basis": {
+            "source": "RETIRED_2026_10_12_QUEUE",
+            "taskId": "DB-032"
+          }
+        },
+        {
+          "id": "DB-033",
+          "discovery": "SOURCE_REVIEWED",
+          "implementation": "SOURCE_STAGED",
+          "verification": "STAGED_NOT_VERIFIED",
+          "basis": {
+            "source": "RETIRED_2026_10_12_QUEUE",
+            "taskId": "DB-033"
+          }
+        },
+        {
+          "id": "DB-034",
+          "discovery": "SOURCE_REVIEWED",
+          "implementation": "CODE_PARTIAL",
+          "verification": "SOURCE_OR_STATIC_CHECKS",
+          "basis": {
+            "source": "RETIRED_2026_10_12_QUEUE",
+            "taskId": "DB-034"
+          }
+        },
+        {
+          "id": "DB-035",
+          "discovery": "SOURCE_REVIEWED",
+          "implementation": "SOURCE_STAGED",
+          "verification": "STAGED_NOT_VERIFIED",
+          "basis": {
+            "source": "RETIRED_2026_10_12_QUEUE",
+            "taskId": "DB-035"
+          }
+        },
+        {
+          "id": "DB-036",
+          "discovery": "SOURCE_REVIEWED",
+          "implementation": "CODE_PARTIAL",
+          "verification": "SOURCE_OR_STATIC_CHECKS",
+          "basis": {
+            "source": "RETIRED_2026_10_12_QUEUE",
+            "taskId": "DB-036"
+          }
+        },
+        {
+          "id": "DB-037",
+          "discovery": "SOURCE_REVIEWED",
+          "implementation": "SOURCE_STAGED",
+          "verification": "STAGED_NOT_VERIFIED",
+          "basis": {
+            "source": "RETIRED_2026_10_12_QUEUE",
+            "taskId": "DB-037"
+          }
+        },
+        {
+          "id": "DB-038",
+          "discovery": "SOURCE_REVIEWED",
+          "implementation": "SOURCE_STAGED",
+          "verification": "STAGED_NOT_VERIFIED",
+          "basis": {
+            "source": "RETIRED_2026_10_12_QUEUE",
+            "taskId": "DB-038"
+          }
+        },
+        {
+          "id": "DB-039",
+          "discovery": "SOURCE_REVIEWED",
+          "implementation": "SOURCE_STAGED",
+          "verification": "STAGED_NOT_VERIFIED",
+          "basis": {
+            "source": "RETIRED_2026_10_12_QUEUE",
+            "taskId": "DB-039"
+          }
+        },
+        {
+          "id": "DB-040",
+          "discovery": "SOURCE_REVIEWED",
+          "implementation": "SOURCE_STAGED",
+          "verification": "STAGED_NOT_VERIFIED",
+          "basis": {
+            "source": "RETIRED_2026_10_12_QUEUE",
+            "taskId": "DB-040"
+          }
+        },
+        {
+          "id": "DB-041",
+          "discovery": "SOURCE_REVIEWED",
+          "implementation": "CODE_PARTIAL",
+          "verification": "SOURCE_OR_STATIC_CHECKS",
+          "basis": {
+            "source": "RETIRED_2026_10_12_QUEUE",
+            "taskId": "DB-041"
+          }
+        },
+        {
+          "id": "DB-042",
+          "discovery": "SOURCE_REVIEWED",
+          "implementation": "CODE_PARTIAL",
+          "verification": "SOURCE_OR_STATIC_CHECKS",
+          "basis": {
+            "source": "RETIRED_2026_10_12_QUEUE",
+            "taskId": "DB-042"
+          }
+        },
+        {
+          "id": "DB-043",
+          "discovery": "SOURCE_REVIEWED",
+          "implementation": "SOURCE_STAGED",
+          "verification": "STAGED_NOT_VERIFIED",
+          "basis": {
+            "source": "RETIRED_2026_10_12_QUEUE",
+            "taskId": "DB-043"
+          }
+        },
+        {
+          "id": "DB-044",
+          "discovery": "SOURCE_REVIEWED",
+          "implementation": "CODE_PARTIAL",
+          "verification": "SOURCE_OR_STATIC_CHECKS",
+          "basis": {
+            "source": "RETIRED_2026_10_12_QUEUE",
+            "taskId": "DB-044"
+          }
+        },
+        {
+          "id": "DB-045",
+          "discovery": "SOURCE_REVIEWED",
+          "implementation": "CODE_PARTIAL",
+          "verification": "SOURCE_OR_STATIC_CHECKS",
+          "basis": {
+            "source": "RETIRED_2026_10_12_QUEUE",
+            "taskId": "DB-045"
+          }
+        },
+        {
+          "id": "DB-046",
+          "discovery": "PARTIAL_INVENTORY",
+          "implementation": "SOURCE_STAGED",
+          "verification": "STAGED_NOT_VERIFIED",
+          "basis": {
+            "source": "RETIRED_2026_10_12_QUEUE",
+            "taskId": "DB-046"
+          }
+        },
+        {
+          "id": "DB-047",
+          "discovery": "SOURCE_REVIEWED",
+          "implementation": "CODE_PARTIAL",
+          "verification": "SOURCE_OR_STATIC_CHECKS",
+          "basis": {
+            "source": "RETIRED_2026_10_12_QUEUE",
+            "taskId": "DB-047"
+          }
+        },
+        {
+          "id": "DB-048",
+          "discovery": "SOURCE_REVIEWED",
+          "implementation": "CODE_PARTIAL",
+          "verification": "SOURCE_OR_STATIC_CHECKS",
+          "basis": {
+            "source": "RETIRED_2026_10_12_QUEUE",
+            "taskId": "DB-048"
+          }
+        },
+        {
+          "id": "DB-049",
+          "discovery": "SOURCE_REVIEWED",
+          "implementation": "CODE_PARTIAL",
+          "verification": "SOURCE_OR_STATIC_CHECKS",
+          "basis": {
+            "source": "RETIRED_2026_10_12_QUEUE",
+            "taskId": "DB-049"
+          }
+        },
+        {
+          "id": "DB-050",
+          "discovery": "SOURCE_REVIEWED",
+          "implementation": "CODE_PARTIAL",
+          "verification": "SOURCE_OR_STATIC_CHECKS",
+          "basis": {
+            "source": "RETIRED_2026_10_12_QUEUE",
+            "taskId": "DB-050"
+          }
+        },
+        {
+          "id": "DB-051",
+          "discovery": "SOURCE_REVIEWED",
+          "implementation": "CODE_PARTIAL",
+          "verification": "SOURCE_OR_STATIC_CHECKS",
+          "basis": {
+            "source": "RETIRED_2026_10_12_QUEUE",
+            "taskId": "DB-051"
+          }
+        },
+        {
+          "id": "DB-052",
+          "discovery": "SOURCE_REVIEWED",
+          "implementation": "CODE_PARTIAL",
+          "verification": "SOURCE_OR_STATIC_CHECKS",
+          "basis": {
+            "source": "RETIRED_2026_10_12_QUEUE",
+            "taskId": "DB-052"
+          }
+        },
+        {
+          "id": "DB-053",
+          "discovery": "SOURCE_REVIEWED",
+          "implementation": "CODE_PARTIAL",
+          "verification": "SOURCE_OR_STATIC_CHECKS",
+          "basis": {
+            "source": "RETIRED_2026_10_12_QUEUE",
+            "taskId": "DB-053"
+          }
+        },
+        {
+          "id": "DB-054",
+          "discovery": "SOURCE_REVIEWED",
+          "implementation": "CODE_PARTIAL",
+          "verification": "SOURCE_OR_STATIC_CHECKS",
+          "basis": {
+            "source": "RETIRED_2026_10_12_QUEUE",
+            "taskId": "DB-054"
+          }
+        },
+        {
+          "id": "DB-055",
+          "discovery": "SOURCE_REVIEWED",
+          "implementation": "CODE_PARTIAL",
+          "verification": "SOURCE_OR_STATIC_CHECKS",
+          "basis": {
+            "source": "RETIRED_2026_10_12_QUEUE",
+            "taskId": "DB-055"
+          }
+        },
+        {
+          "id": "DB-056",
+          "discovery": "SOURCE_REVIEWED",
+          "implementation": "INTEGRATED_PARTIAL",
+          "verification": "SCOPED_POSTGRES_PASS",
+          "basis": {
+            "source": "RETIRED_2026_10_12_QUEUE",
+            "taskId": "DB-056"
+          },
+          "runs": [
+            {
+              "url": "https://github.com/42Students/lms-vnext/actions/runs/40832809717",
+              "scope": "SCOPED_PASS_OVERALL_FAIL"
+            }
+          ]
+        },
+        {
+          "id": "DB-057",
+          "discovery": "SOURCE_REVIEWED",
+          "implementation": "INTEGRATED_PARTIAL",
+          "verification": "SCOPED_POSTGRES_PASS",
+          "basis": {
+            "source": "RETIRED_2026_10_12_QUEUE",
+            "taskId": "DB-057"
+          },
+          "runs": [
+            {
+              "url": "https://github.com/42Students/lms-vnext/actions/runs/40832809717",
+              "scope": "SCOPED_PASS_OVERALL_FAIL"
+            }
+          ]
+        },
+        {
+          "id": "DB-058",
+          "discovery": "SOURCE_REVIEWED",
+          "implementation": "CODE_PARTIAL",
+          "verification": "SOURCE_OR_STATIC_CHECKS",
+          "basis": {
+            "source": "RETIRED_2026_10_12_QUEUE",
+            "taskId": "DB-058"
+          }
+        },
+        {
+          "id": "DB-059",
+          "discovery": "SOURCE_REVIEWED",
+          "implementation": "INTEGRATED_PARTIAL",
+          "verification": "SCOPED_POSTGRES_PASS",
+          "basis": {
+            "source": "RETIRED_2026_10_12_QUEUE",
+            "taskId": "DB-059"
+          },
+          "runs": [
+            {
+              "url": "https://github.com/42Students/lms-vnext/actions/runs/40832809717",
+              "scope": "SCOPED_PASS_OVERALL_FAIL"
+            }
+          ]
+        },
+        {
+          "id": "DB-060",
+          "discovery": "SOURCE_REVIEWED",
+          "implementation": "INTEGRATED_PARTIAL",
+          "verification": "SCOPED_POSTGRES_PASS",
+          "basis": {
+            "source": "RETIRED_2026_10_12_QUEUE",
+            "taskId": "DB-060"
+          },
+          "runs": [
+            {
+              "url": "https://github.com/42Students/lms-vnext/actions/runs/40832809717",
+              "scope": "SCOPED_PASS_OVERALL_FAIL"
+            }
+          ]
+        },
+        {
+          "id": "DB-061",
+          "discovery": "SOURCE_REVIEWED",
+          "implementation": "CODE_PARTIAL",
+          "verification": "SOURCE_OR_STATIC_CHECKS",
+          "basis": {
+            "source": "RETIRED_2026_10_12_QUEUE",
+            "taskId": "DB-061"
+          }
+        },
+        {
+          "id": "DB-062",
+          "discovery": "SOURCE_REVIEWED",
+          "implementation": "INTEGRATED_PARTIAL",
+          "verification": "SCOPED_POSTGRES_PASS",
+          "basis": {
+            "source": "RETIRED_2026_10_12_QUEUE",
+            "taskId": "DB-062"
+          },
+          "runs": [
+            {
+              "url": "https://github.com/42Students/lms-vnext/actions/runs/40832809717",
+              "scope": "SCOPED_PASS_OVERALL_FAIL"
+            }
+          ]
+        },
+        {
+          "id": "DB-063",
+          "discovery": "SOURCE_REVIEWED",
+          "implementation": "INTEGRATED_PARTIAL",
+          "verification": "SOURCE_OR_STATIC_CHECKS",
+          "basis": {
+            "source": "RETIRED_2026_10_12_QUEUE",
+            "taskId": "DB-063"
+          }
+        },
+        {
+          "id": "DB-064",
+          "discovery": "SOURCE_REVIEWED",
+          "implementation": "INTEGRATED_PARTIAL",
+          "verification": "SCOPED_POSTGRES_PASS",
+          "basis": {
+            "source": "RETIRED_2026_10_12_QUEUE",
+            "taskId": "DB-064"
+          },
+          "runs": [
+            {
+              "url": "https://github.com/42Students/lms-vnext/actions/runs/40832809717",
+              "scope": "SCOPED_PASS_OVERALL_FAIL"
+            }
+          ]
+        },
+        {
+          "id": "DB-065",
+          "discovery": "ACCEPTED_BY_CANONICAL_DONE",
+          "implementation": "ACCEPTED_BY_CANONICAL_DONE",
+          "verification": "ACCEPTED_BY_CANONICAL_DONE"
+        },
+        {
+          "id": "DB-066",
+          "discovery": "SOURCE_REVIEWED",
+          "implementation": "SOURCE_STAGED",
+          "verification": "STAGED_NOT_VERIFIED",
+          "basis": {
+            "source": "RETIRED_2026_10_12_QUEUE",
+            "taskId": "DB-066"
+          }
+        },
+        {
+          "id": "DB-067",
+          "discovery": "SOURCE_REVIEWED",
+          "implementation": "SOURCE_STAGED",
+          "verification": "STAGED_NOT_VERIFIED",
+          "basis": {
+            "source": "RETIRED_2026_10_12_QUEUE",
+            "taskId": "DB-067"
+          }
+        },
+        {
+          "id": "DB-068",
+          "discovery": "SOURCE_REVIEWED",
+          "implementation": "SOURCE_STAGED",
+          "verification": "STAGED_NOT_VERIFIED",
+          "basis": {
+            "source": "RETIRED_2026_10_12_QUEUE",
+            "taskId": "DB-068"
+          }
+        },
+        {
+          "id": "DB-069",
+          "discovery": "SOURCE_REVIEWED",
+          "implementation": "SOURCE_STAGED",
+          "verification": "STAGED_NOT_VERIFIED",
+          "basis": {
+            "source": "RETIRED_2026_10_12_QUEUE",
+            "taskId": "DB-069"
+          }
+        },
+        {
+          "id": "DB-070",
+          "discovery": "SOURCE_REVIEWED",
+          "implementation": "SOURCE_STAGED",
+          "verification": "STAGED_NOT_VERIFIED",
+          "basis": {
+            "source": "RETIRED_2026_10_12_QUEUE",
+            "taskId": "DB-070"
+          }
+        },
+        {
+          "id": "DB-071",
+          "discovery": "SOURCE_REVIEWED",
+          "implementation": "SOURCE_STAGED",
+          "verification": "STAGED_NOT_VERIFIED",
+          "basis": {
+            "source": "RETIRED_2026_10_12_QUEUE",
+            "taskId": "DB-071"
+          }
+        },
+        {
+          "id": "DB-072",
+          "discovery": "SOURCE_REVIEWED",
+          "implementation": "SOURCE_STAGED",
+          "verification": "STAGED_NOT_VERIFIED",
+          "basis": {
+            "source": "RETIRED_2026_10_12_QUEUE",
+            "taskId": "DB-072"
+          }
+        },
+        {
+          "id": "DB-073",
+          "discovery": "SOURCE_REVIEWED",
+          "implementation": "SOURCE_STAGED",
+          "verification": "STAGED_NOT_VERIFIED",
+          "basis": {
+            "source": "RETIRED_2026_10_12_QUEUE",
+            "taskId": "DB-073"
+          }
+        },
+        {
+          "id": "DB-074",
+          "discovery": "SOURCE_REVIEWED",
+          "implementation": "SOURCE_STAGED",
+          "verification": "STAGED_NOT_VERIFIED",
+          "basis": {
+            "source": "RETIRED_2026_10_12_QUEUE",
+            "taskId": "DB-074"
+          }
+        },
+        {
+          "id": "DB-075",
+          "discovery": "SOURCE_REVIEWED",
+          "implementation": "SOURCE_STAGED",
+          "verification": "STAGED_NOT_VERIFIED",
+          "basis": {
+            "source": "RETIRED_2026_10_12_QUEUE",
+            "taskId": "DB-075"
+          }
+        },
+        {
+          "id": "DB-076",
+          "discovery": "SOURCE_REVIEWED",
+          "implementation": "CODE_PARTIAL",
+          "verification": "SOURCE_OR_STATIC_CHECKS",
+          "basis": {
+            "source": "RETIRED_2026_10_12_QUEUE",
+            "taskId": "DB-076"
+          }
+        },
+        {
+          "id": "DB-077",
+          "discovery": "SOURCE_REVIEWED",
+          "implementation": "SOURCE_STAGED",
+          "verification": "STAGED_NOT_VERIFIED",
+          "basis": {
+            "source": "RETIRED_2026_10_12_QUEUE",
+            "taskId": "DB-077"
+          }
+        },
+        {
+          "id": "DB-078",
+          "discovery": "SOURCE_REVIEWED",
+          "implementation": "CODE_PARTIAL",
+          "verification": "SOURCE_OR_STATIC_CHECKS",
+          "basis": {
+            "source": "RETIRED_2026_10_12_QUEUE",
+            "taskId": "DB-078"
+          }
+        },
+        {
+          "id": "DB-079",
+          "discovery": "SOURCE_REVIEWED",
+          "implementation": "INTEGRATED_PARTIAL",
+          "verification": "SCOPED_POSTGRES_PASS",
+          "basis": {
+            "source": "RETIRED_2026_10_12_QUEUE",
+            "taskId": "DB-079"
+          },
+          "runs": [
+            {
+              "url": "https://github.com/42Students/lms-vnext/actions/runs/40832809717",
+              "scope": "SCOPED_PASS_OVERALL_FAIL"
+            }
+          ]
+        },
+        {
+          "id": "DB-080",
+          "discovery": "SOURCE_REVIEWED",
+          "implementation": "CODE_PARTIAL",
+          "verification": "SOURCE_OR_STATIC_CHECKS",
+          "basis": {
+            "source": "RETIRED_2026_10_12_QUEUE",
+            "taskId": "DB-080"
+          }
+        },
+        {
+          "id": "DB-081",
+          "discovery": "PARTIAL_INVENTORY",
+          "implementation": "SOURCE_STAGED",
+          "verification": "STAGED_NOT_VERIFIED",
+          "basis": {
+            "source": "RETIRED_2026_10_12_QUEUE",
+            "taskId": "DB-081"
+          }
+        }
+      ]
     }
   }
 }
