@@ -2270,6 +2270,30 @@
         "reason": "L09 has now fail-closed the recruiter outbox writer and trusted worker to EMAIL only; SMS/WHATSAPP require independently verified DLT/consent adapters. Before registering DB-067 claims, restrict db10_claim_outbound_messages eligibility to channel='EMAIL' (or design a channel-selective authorized claim API) so legacy/staged non-EMAIL PENDING rows are not stranded as CLAIMED/reconciliation when EMAIL worker drains. Add negative disposable PG witness proving non-EMAIL cannot be claimed by EMAIL worker. Preserve existing fence, pre-send and suppression controls.",
         "status": "REQUESTED",
         "requestedAt": "2026-10-29T06:40:00.000Z"
+      },
+      {
+        "id": "L01-L04-DRIZZLE-BIGINT-DEFAULT-20261029",
+        "fromLane": "L01",
+        "toLane": "L04",
+        "paths": [
+          "src/db/schema/db05-lesson-settings.staged.ts",
+          "tests/db05-typed-staged-schema-parity.test.mjs"
+        ],
+        "reason": "EXACT BLOCKER from executed independent PG verifier e58c64b4: drizzle-kit 0.31.10 exits 0 with TypeError Do not know how to serialize a BigInt during db:generate before PG. Registered DB05 lesson settings uses bigint('version',{mode:'bigint'}).notNull().default(0n). Change native JS BigInt default to SQL tagged expression sql`0` (preserve mode bigint, default zero, runtime BigInt fidelity), update source test that currently requires .default(0n). Own this domain patch, do not alter numbered migrations. After BOTH L04 and L09 fixes, L01 re-verifies exact fresh SHA.",
+        "status": "REQUESTED",
+        "requestedAt": "2026-10-29T06:36:00.000Z"
+      },
+      {
+        "id": "L01-L09-DRIZZLE-BIGINT-DEFAULT-20261029",
+        "fromLane": "L01",
+        "toLane": "L09",
+        "paths": [
+          "src/db/schema/db10-log-alerts.draft.ts",
+          "tests/db10-column-default-parity.test.mjs"
+        ],
+        "reason": "EXACT BLOCKER from independent PG verifier e58c64b4: drizzle-kit 0.31.10 fails BigInt JSON serialization during generation. Registered DB10 log alerts uses occurrenceCount: bigint('occurrence_count',{mode:'bigint'}).notNull().default(1n). Replace native JS BigInt default with SQL tagged expression sql`1` (preserve PostgreSQL BIGINT default 1 and BigInt runtime mode); verify DB10 source regression remains valid. Do not weaken numeric precision or change migrations. L01 owns re-verification after both default changes.",
+        "status": "REQUESTED",
+        "requestedAt": "2026-10-29T06:36:00.000Z"
       }
     ],
     "coordination": {
