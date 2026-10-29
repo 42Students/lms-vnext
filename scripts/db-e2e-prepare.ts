@@ -6,13 +6,15 @@ function assertDestructiveE2ETargetPreflight(databaseUrl: string) {
   const guardPath = fileURLToPath(
     new URL("./db01-test-database-guard.mjs", import.meta.url),
   );
-  // Preserve the full process-env index signature: deleting DATABASE_URL
-  // is intentional and must typecheck without weakening fail-closed preflight.
+  // Keep the existing application DATABASE_URL visible to the guard.
+  // E2E_DATABASE_URL must not silently alias a live application database,
+  // even if a caller uses different credentials or localhost spellings.
+  // Only after this guard passes may the E2E process bind DATABASE_URL to
+  // the disposable target for its own fixtures.
   const guardEnv: NodeJS.ProcessEnv = {
     ...process.env,
     TEST_DATABASE_URL: databaseUrl,
   };
-  delete guardEnv.DATABASE_URL;
 
   const result = spawnSync(process.execPath, [guardPath], {
     env: guardEnv,
