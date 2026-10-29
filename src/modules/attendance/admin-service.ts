@@ -776,8 +776,8 @@ export async function correctAdminAttendance(
         }).where(eq(attendanceSessions.scheduleEventId, scheduleEventId));
       }
 
-      // COL-attendance-02: persist audit in the same transaction. It also
-      // records corrections to PRESENT, which delete the absence exception row.
+      // COL-attendance-02: persist audit in this same transaction,
+      // including explicit PRESENT corrections with the same retained row ID.
       const [audit]=await tx.insert(activityEvents).values({
         organizationId:college.organizationId,
         collegeId:college.id,
