@@ -20,6 +20,8 @@ import {
   type TrustedProviderResult,
 } from "./outbound-dispatch-orchestration";
 import type { OutboundDeliveryIntent } from "./outbound-delivery-contract";
+import { drainOutboundBatch } from "./outbound-dispatch-batch";
+import { claimOutboundDispatchBatch } from "./outbound-delivery-queue";
 
 /** A trusted worker supplies the transport after independent verification.
  * Never mount this runner on a public/tenant API route. */
@@ -115,5 +117,26 @@ export async function dispatchClaimedOutbound(
     complete: completeOutboundDispatch,
     send: intent => provider.send(intent),
     now: () => new Date(),
+  });
+}
+
+/**
+ * Batch entrypoint for a separately provisioned trusted worker, not an HTTP
+ * route. A lease is acquired immediately before each individual provider
+ * call rather than claiming a queueful of records with expiring leases.
+ *
+ * Operator activation still requires verified PostgreSQL functions, private
+ * dispatcher DB grants and a provider adapter whose UNSENT classification is
+ * independently tested. Unknown results stop the batch and are never retried.
+ */
+export async function dispatchDueOutboundBatch(
+  worker: string,
+  provider: TrustedOutboundProvider,
+  maxMessages = 10,
+) {
+  if (!outboundDispatchRuntimeEnabled()) throw new OutboundDispatchNotReadyError();
+  return drainOutboundBatch(worker, maxMessages, {
+    claimOne: (holder) => claimOutboundDispatchBatch(holder, 1, 60),
+    processOne: (claim, holder) => dispatchClaimedOutbound(claim, holder, provider),
   });
 }
