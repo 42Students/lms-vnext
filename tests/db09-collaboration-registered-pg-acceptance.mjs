@@ -6,10 +6,12 @@
  * All writes roll back. No staged SQL is executed.
  */
 import pg from "pg";
-import { assertSafeDb01TestTarget } from "../scripts/db01-test-database-guard.mjs";
+import { assertDb018DisposableTarget } from "./support/db018-test-target.mjs";
 if(process.env.DB09_ISOLATED_TEST_DATABASE!=="1"||!process.env.TEST_DATABASE_URL)
  throw Error("DB09 requires explicit disposable PostgreSQL opt-in");
-assertSafeDb01TestTarget(process.env);
+// The canonical disposable-target gate permits DATABASE_URL===TEST_DATABASE_URL
+// only in the independent DB03 verifier's isolated replay environment.
+assertDb018DisposableTarget({...process.env,DB018_ISOLATED_TEST_DATABASE:"1"});
 const db=new pg.Client({connectionString:process.env.TEST_DATABASE_URL});
 const suffix=process.pid+"-"+Date.now();
 let seq=0,checks=0;
