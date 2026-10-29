@@ -2,8 +2,10 @@ import "server-only";
 import {and,eq,gt,sql} from "drizzle-orm";
 import {z} from "zod";
 import {getDb} from "@/db/client";
-import {collegeMemberships,placementApplications,placementApplicationScreenings,
- placementJobs,placementRecruiterCollegeGrants,placementRecruiterPrivateReviews,users} from "@/db/schema";
+import {collegeMemberships,colleges,organizations,placementApplications,placementApplicationScreenings,
+ placementJobs,placementCompanies,placementCompanyRelationships,
+ placementRecruiterProfiles,placementRecruiterCollegeGrants,
+ placementRecruiterPrivateReviews,users} from "@/db/schema";
 import {hasActiveRecruiter,type RequestContext} from "@/modules/identity/context";
 import {can} from "@/modules/permissions/policy";
 import {PlacementsServiceError} from "./errors";
@@ -65,16 +67,44 @@ export async function writeRecruiterPrivateReview(ctx:RequestContext,rawJobId:st
    .innerJoin(placementJobs,eq(placementJobs.id,placementApplications.jobId))
    .innerJoin(placementApplicationScreenings,
     eq(placementApplicationScreenings.applicationId,placementApplications.id))
-   .innerJoin(placementRecruiterCollegeGrants,
-    and(eq(placementRecruiterCollegeGrants.recruiterUserId,ctx.user.id),
-     eq(placementRecruiterCollegeGrants.companyRelationshipId,scope.job.companyRelationshipId),
+   // DB079: do not trust a recruiter session or an earlier workspace read.
+   // Lock every live principal/relationship/grant used for the decision,
+   // alongside the candidate. A concurrent revoke must serialize here.
+   .innerJoin(collegeMemberships,and(
+     eq(collegeMemberships.id,placementApplications.membershipId),
+     eq(collegeMemberships.collegeId,placementJobs.collegeId),
+     eq(collegeMemberships.status,"ACTIVE")))
+   .innerJoin(users,and(eq(users.id,ctx.user.id),
+     eq(users.platformStatus,"ACTIVE")))
+   .innerJoin(placementRecruiterProfiles,and(
+     eq(placementRecruiterProfiles.userId,users.id),
+     eq(placementRecruiterProfiles.status,"ACTIVE")))
+   .innerJoin(placementCompanyRelationships,and(
+     eq(placementCompanyRelationships.id,placementJobs.companyRelationshipId),
+     eq(placementCompanyRelationships.collegeId,placementJobs.collegeId),
+     eq(placementCompanyRelationships.companyId,placementRecruiterProfiles.companyId),
+     eq(placementCompanyRelationships.status,"ACTIVE")))
+   .innerJoin(placementCompanies,and(
+     eq(placementCompanies.id,placementCompanyRelationships.companyId),
+     eq(placementCompanies.status,"ACTIVE")))
+   .innerJoin(colleges,and(eq(colleges.id,placementJobs.collegeId),
+     eq(colleges.status,"ACTIVE")))
+   .innerJoin(organizations,and(eq(organizations.id,colleges.organizationId),
+     eq(organizations.status,"ACTIVE")))
+   .innerJoin(placementRecruiterCollegeGrants,and(
+     eq(placementRecruiterCollegeGrants.recruiterUserId,ctx.user.id),
+     eq(placementRecruiterCollegeGrants.companyRelationshipId,placementJobs.companyRelationshipId),
      eq(placementRecruiterCollegeGrants.status,"ACTIVE"),
      eq(placementRecruiterCollegeGrants.verificationStatus,"VERIFIED"),
-     gt(placementRecruiterCollegeGrants.validUntil,new Date()),
+     gt(placementRecruiterCollegeGrants.validUntil,sql`clock_timestamp()`),
      sql`'DRIVES' = any(${placementRecruiterCollegeGrants.capabilities})`))
    .where(and(eq(placementApplications.id,applicationId),
-    eq(placementApplications.jobId,jobId),recruiterOwnJobPredicate(ctx.user.id),
-    eq(placementApplications.status,"SUBMITTED"),eq(placementApplicationScreenings.status,"SHORTLISTED")))
+    eq(placementApplications.jobId,jobId),
+    eq(placementJobs.collegeId,scope.college.id),
+    eq(placementRecruiterProfiles.companyId,scope.company.id),
+    recruiterOwnJobPredicate(ctx.user.id),
+    eq(placementApplications.status,"SUBMITTED"),
+    eq(placementApplicationScreenings.status,"SHORTLISTED")))
    .for("update").limit(1);
   if(!owned)throw new PlacementsServiceError("PLACEMENT_APPLICATION_NOT_FOUND");
   const [current]=await tx.select({id:placementRecruiterPrivateReviews.id,
