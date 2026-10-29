@@ -2,7 +2,8 @@ import "server-only";
 import {and,eq,gte,inArray,isNull,lte,sql} from "drizzle-orm";
 import {getDb} from "@/db/client";
 import {activityEvents,inAppNotifications,placementJobs} from "@/db/schema";
-import {placementTpoMessages,placementTpoMessageThreads} from "@/db/schema/tpo-collaboration";
+import {placementRecruiterNotificationReads,placementTpoMessages,placementTpoMessageThreads} from "@/db/schema/tpo-collaboration";
+import {getRecruiterNotificationReadThreshold} from "./hr-recruiter-read-watermark-service";
 import {hasActiveRecruiter,type RequestContext} from "@/modules/identity/context";
 import {AuthorizationError} from "@/modules/permissions/policy";
 import {listOwnRecruiterPlacementJobs} from "./recruiter-service";
@@ -17,8 +18,8 @@ import {hrConversationsHref} from "./hr-conversation-urls-model";
 
 /** A scoped aggregate for the 30-second badge poll. No private feed is sent.
  * There is no legacy MySQL data migration in vNext; a recruiter's first
- * persisted read receipt replaces the old read-through watermark. Until then
- * only the last seven days are initially counted as new.
+ * read-through watermark is now the durable first-visit boundary. Until its
+ * first explicit acknowledgement, only the last seven days count as new.
  */
 export async function countHrRecruiterBellUnread(ctx:RequestContext){
  if(!hasActiveRecruiter(ctx)||!ctx.recruiter||ctx.recruiter.userId!==ctx.user.id)
@@ -26,29 +27,28 @@ export async function countHrRecruiterBellUnread(ctx:RequestContext){
  const grants=[...new Set(ctx.recruiter.grants.map(grant=>grant.collegeId))];
  if(grants.length!==1)return {status:grants.length?"CHOOSE_COLLEGE" as const:"NO_ACCESS" as const,
   unread:0,firstVisit:true};
- // Legacy bell also lists threads with unread TPO messages and a last
- // message within 30 days; they count toward the unread badge.
  const collegeId=grants[0];
  if(!collegeId)return {status:"NO_ACCESS" as const,unread:0,firstVisit:true};
+ const threshold=await getRecruiterNotificationReadThreshold(ctx.user.id,collegeId);
+ // TPO private message threads have their own persisted read_at receipts;
+ // event notifications instead use the per-college read-through watermark.
  const unreadThreads=(await listRecentUnreadRecruiterThreads(ctx,collegeId)).length;
  const jobs=(await listOwnRecruiterPlacementJobs(ctx,collegeId))
   .filter(row=>row.collegeId===collegeId&&row.companyId===ctx.recruiter!.companyId);
  const ids=[...new Set(jobs.map(row=>row.job.id))];
- if(ids.length===0)return {status:"READY" as const,unread:unreadThreads,firstVisit:true};
+ if(ids.length===0)return {status:"READY" as const,unread:unreadThreads,
+  firstVisit:threshold.firstVisit};
  const scope=and(eq(inAppNotifications.userId,ctx.user.id),
   eq(activityEvents.module,"PLACEMENTS"),eq(activityEvents.subjectType,"placement_job"),
   eq(activityEvents.collegeId,collegeId),inArray(activityEvents.subjectId,ids),
   inArray(activityEvents.eventType,[...HR_NOTIFICATION_EVENTS]),
   sql`${inAppNotifications.createdAt} >= now() - interval '30 days'`);
  const [stats]=await getDb().select({
-  totalUnread:sql<number>`count(*) filter (where ${inAppNotifications.readAt} is null)::integer`,
-  recentUnread:sql<number>`count(*) filter (where ${inAppNotifications.readAt} is null and ${inAppNotifications.createdAt} >= now() - interval '7 days')::integer`,
-  readReceipts:sql<number>`count(*) filter (where ${inAppNotifications.readAt} is not null)::integer`,
+  unread:sql<number>`count(*) filter (where ${inAppNotifications.readAt} is null and ${inAppNotifications.createdAt} > ${threshold.unreadSince})::integer`,
  }).from(inAppNotifications).innerJoin(activityEvents,eq(activityEvents.id,inAppNotifications.eventId))
   .where(scope);
- const firstVisit=Number(stats?.readReceipts??0)===0;
- return {status:"READY" as const,firstVisit,
-  unread:Number(firstVisit?stats?.recentUnread??0:stats?.totalUnread??0)+unreadThreads};
+ return {status:"READY" as const,firstVisit:threshold.firstVisit,
+  unread:Number(stats?.unread??0)+unreadThreads};
 }
 function hrBellTab(label:string):"overview"|"applicants"|"rounds"|"offers"|"requests"|"discussion"{
  if(label==="Drive closed"||label.includes("offer")||label.includes("Offer"))return "offers";
@@ -69,10 +69,9 @@ export async function readHrRecruiterBell(ctx:RequestContext){
  const cutoff=Date.now()-30*24*60*60*1000;
  const rows=[...data.rows,...(more?.status==="READY"?more.rows:[])]
   .filter(item=>item.createdAt.getTime()>=cutoff);
- const sevenDaysAgo=Date.now()-7*86400000;
  const eventItems=rows.map(item=>({
    id:item.id,label:item.label,title:item.title,
-   unread:item.unread&&(!count.firstVisit||item.createdAt.getTime()>=sevenDaysAgo),
+   unread:item.unread,
    at:item.createdAt.toISOString(),
    href:"/hr/placements/jobs/"+encodeURIComponent(item.jobId)+"?tab="+hrBellTab(item.label),
  }));
@@ -163,6 +162,17 @@ export async function markHrRecruiterBellRead(ctx:RequestContext){
     isNull(placementTpoMessages.readAt),
     lte(placementTpoMessages.createdAt,now),
    )).returning({id:placementTpoMessages.id}):[];
+  // A real, monotonic marker is required even when the recruiter has no
+  // drive/event receipts. Use database statement time to satisfy the DB09
+  // future-value guard; GREATEST makes concurrent clicks non-regressing.
+  await tx.insert(placementRecruiterNotificationReads).values({
+   recruiterUserId:ctx.user.id,collegeId:feed.collegeId,
+   readThrough:sql`statement_timestamp()`,
+  }).onConflictDoUpdate({
+   target:[placementRecruiterNotificationReads.recruiterUserId,
+    placementRecruiterNotificationReads.collegeId],
+   set:{readThrough:sql`greatest(${placementRecruiterNotificationReads.readThrough}, statement_timestamp())`},
+  });
   return {marked:notifications.length+messages.length,
    notificationsMarked:notifications.length,messagesMarked:messages.length};
  });
