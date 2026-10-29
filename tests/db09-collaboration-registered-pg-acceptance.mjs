@@ -34,24 +34,45 @@ try{
  const faculty=await one("select id from users where email='faculty.seed@example.com'");
  const learner=await one("select id from users where email='learner.seed@example.com'");
  const lm=await one("select m.id from college_memberships m join membership_roles r on r.membership_id=m.id where m.user_id=$1 and m.college_id=$2 and m.status='ACTIVE' and r.role='LEARNER'",[learner.id,ca.id]);
+ // The seeded faculty principal may legitimately receive additional roles
+ // in independent fixtures. Manufacture a fresh ACTIVE FACULTY-only user to
+ // prove the database rejects an ordinary college member, not an arbitrary
+ // user whose effective permission set can change across test passes.
+ const ordinaryFaculty=await one(
+  "insert into users(identity_uid,email,display_name,platform_status) values($1,$2,'L08 ordinary faculty','ACTIVE') returning id",
+  ["l08-ordinary-"+suffix,"l08-ordinary-"+suffix+"@example.com"]);
+ const ordinaryMembership=await one(
+  "insert into college_memberships(user_id,college_id,status) values($1,$2,'ACTIVE') returning id",
+  [ordinaryFaculty.id,ca.id]);
+ await db.query("insert into membership_roles(membership_id,role) values($1,'FACULTY')",[ordinaryMembership.id]);
+ const ordinaryAuthority=await one(
+  "select db09_has_active_tpo_actor($1::uuid,$2::uuid) as permitted",
+  [ordinaryFaculty.id,ca.id]);
+ same("FACULTY-only principal has no college-wide TPO authority",ordinaryAuthority.permitted,false);
+
  // Scoped TPO user preferences have true/false defaults and an immutable key.
  const p=await one("insert into placement_tpo_user_preferences(college_id,user_id) values($1,$2) returning morning_digest,recruiter_messages,requests,results_ready,follow_ups",[ca.id,admin.id]);
  same("digest off",p.morning_digest,false);
  for(const key of ["recruiter_messages","requests","results_ready","follow_ups"])same(key+" on",p[key],true);
  const updated=await one("update placement_tpo_user_preferences set recruiter_messages=false where college_id=$1 and user_id=$2 returning recruiter_messages,requests",[ca.id,admin.id]);
  same("disabled switch persists",updated.recruiter_messages,false);same("unmodified switch preserved",updated.requests,true);
- await deny("ordinary faculty denied TPO preferences",()=>db.query("insert into placement_tpo_user_preferences(college_id,user_id) values($1,$2)",[ca.id,faculty.id]));
+ await deny("ordinary faculty denied TPO preferences",()=>db.query("insert into placement_tpo_user_preferences(college_id,user_id) values($1,$2)",[ca.id,ordinaryFaculty.id]));
  await deny("cross-college preference denied",()=>db.query("insert into placement_tpo_user_preferences(college_id,user_id) values($1,$2)",[cb.id,admin.id]));
- await deny("preference owner immutable",()=>db.query("update placement_tpo_user_preferences set user_id=$3 where college_id=$1 and user_id=$2",[ca.id,admin.id,faculty.id]));
+ await deny("preference owner immutable",()=>db.query("update placement_tpo_user_preferences set user_id=$3 where college_id=$1 and user_id=$2",[ca.id,admin.id,ordinaryFaculty.id]));
  await deny("preference delete forbidden",()=>db.query("delete from placement_tpo_user_preferences where college_id=$1 and user_id=$2",[ca.id,admin.id]));
  const v=await one("insert into placement_tpo_saved_views(college_id,user_id,scope,name) values($1,$2,'RECRUITER_LEADS',$3) returning id",[ca.id,admin.id,"L08 "+suffix]);
  await deny("saved view rewrite forbidden",()=>db.query("update placement_tpo_saved_views set name='forged' where id=$1",[v.id]));
- await deny("saved view delete forbidden",()=>db.query("delete from placement_tpo_saved_views where id=$1",[v.id]));
+ // This is a create/delete-only collection. Rewriting an existing view is
+ // forbidden, but owner-initiated removal is an intentional, tested flow.
+ const removed=await db.query("delete from placement_tpo_saved_views where id=$1 returning id",[v.id]);
+ same("saved view owner can remove view",removed.rows.length,1);
+ const afterView=await db.query("select id from placement_tpo_saved_views where id=$1",[v.id]);
+ same("saved view removed without tombstone",afterView.rows.length,0);
  // History can be appended only by a TPO actor about an active learner.
  const n=await one("insert into placement_tpo_student_notes(college_id,learner_membership_id,note,created_by_user_id) values($1,$2,'Valid note',$3) returning id",[ca.id,lm.id,admin.id]);
  await deny("student note rewrite forbidden",()=>db.query("update placement_tpo_student_notes set note='forged' where id=$1",[n.id]));
  await deny("student note delete forbidden",()=>db.query("delete from placement_tpo_student_notes where id=$1",[n.id]));
- await deny("ordinary faculty cannot author student notes",()=>db.query("insert into placement_tpo_student_notes(college_id,learner_membership_id,note,created_by_user_id) values($1,$2,'forged',$3)",[ca.id,lm.id,faculty.id]));
+ await deny("ordinary faculty cannot author student notes",()=>db.query("insert into placement_tpo_student_notes(college_id,learner_membership_id,note,created_by_user_id) values($1,$2,'forged',$3)",[ca.id,lm.id,ordinaryFaculty.id]));
  // A fresh active same-company recruiter grant must be present for reads.
  const co=await one("insert into placement_companies(name,status,created_by_user_id) values($1,'ACTIVE',$2) returning id",["L08 company "+suffix,admin.id]);
  const fm=await one("select m.id from college_memberships m join membership_roles r on r.membership_id=m.id where m.user_id=$1 and m.college_id=$2 and r.role='FACULTY'",[faculty.id,ca.id]);
