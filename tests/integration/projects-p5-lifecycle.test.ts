@@ -6,6 +6,7 @@ import {
   it,
 } from "vitest";
 import { Pool } from "pg";
+import {assertDb018DisposableTarget} from "../support/db018-test-target.mjs";
 import { closeDatabaseConnection } from "@/db/client";
 import type { RequestContext } from "@/modules/identity/context";
 import {
@@ -41,15 +42,12 @@ import {postProjectTaskComment,listProjectTaskComments} from "@/modules/projects
 import {autoAssignMentorNextSprint} from "@/modules/projects/mentor-auto-assign-service";
 import {transitionMentorProjectSprint} from "@/modules/projects/mentor-sprint-write-service";
 
-const databaseUrl =
-  process.env.TEST_DATABASE_URL ??
-  process.env.DATABASE_URL;
-
+// This suite deletes fixture rows. Never fall back to the application DB.
+const databaseUrl = process.env.TEST_DATABASE_URL;
 if (!databaseUrl) {
-  throw new Error(
-    "TEST_DATABASE_URL or DATABASE_URL is required for DB integration tests",
-  );
+  throw new Error("Disposable TEST_DATABASE_URL is required for Projects integration tests");
 }
+assertDb018DisposableTarget(process.env,{serviceBound:true});
 
 const pool = new Pool({
   connectionString: databaseUrl,
