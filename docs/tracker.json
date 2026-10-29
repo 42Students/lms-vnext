@@ -1942,6 +1942,18 @@
         "reason": "DB-059/DB-060 registered DB09 placement_tpo_share_links / placement_tpo_share_events have strict SQL lifecycle guards, but current active issueTpoCompanyApplicantShare producer writes placement_company_applicant_shares and companion schema, not DB09 legacy-named share tables. Reconcile one canonical secure-share producer/read/revoke path with legacy behavior; classify DB09 tables as approved redesign/retirement or wire real producer+consumer with tested disclosure/event invariants. Do not maintain conflicting parallel token lifecycles. L07 owns shared placement services; L08 owns DB09 contract and negative PG witnesses.",
         "status": "REQUESTED",
         "requestedAt": "2026-10-29T05:36:20.853Z"
+      },
+      {
+        "id": "SCR-L09-L01-DB031-SID-20261029",
+        "fromLane": "L09",
+        "toLane": "L01",
+        "paths": [
+          "src/db/schema/messaging-receipts.ts",
+          "drizzle/**"
+        ],
+        "reason": "DB-031 source/runtime mismatch: src/modules/messaging/provider-acceptance-model.ts treats an Exotel Sid up to 128 opaque chars as provider-accepted, while registered 0162 messaging_sms_delivery_attempts.provider_message_id and L09 SMS attempt writer allow only 64. A valid 65-128-character provider receipt can be accepted by transport but fail audit persistence. Coordinate widening to varchar(128), exact registered PG replay and existing consumers; L09 will update validator to 128 only after migration is applied. Never truncate/hash provider identifiers or mislabel accepted sends as failed.",
+        "status": "REQUESTED",
+        "requestedAt": "2026-10-29T05:37:04.055Z"
       }
     ],
     "coordination": {
