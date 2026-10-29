@@ -14,10 +14,10 @@ vi.mock("@/db/client", () => ({
 }));
 vi.mock("@/observability/logger", () => ({ writeStructuredLog: mocks.log }));
 
-import { createExotelSmsProvider, appendSmsDeliveryAttempt } from
-  "@/modules/notifications/exotel-sms";
+import { createExotelSmsProvider, appendSmsDeliveryAttempt,
+  type ExotelConfig } from "@/modules/notifications/exotel-sms";
 
-const config = {
+const config: ExotelConfig = {
   apiKey: "fake-id", apiToken: "fake-secret", accountSid: "test-account",
   dltEntityId: "1234567890", otpSenderId: "TESTER",
   otpDltTemplateId: "otp-template", smsType: "transactional_opt_in",
