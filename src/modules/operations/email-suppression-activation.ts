@@ -2,7 +2,8 @@ import "server-only";
 import {sql} from "drizzle-orm";
 import {getDb} from "@/db/client";
 import {outboundQueueRuntimeEnabled,outboundDispatchRuntimeEnabled} from "./outbound-delivery-queue";
-import {deriveGlobalEmailSuppressionHashForAddress} from "./outbound-delivery-envelope";
+import {deriveGlobalEmailSuppressionHashForAddress,outboundEncryptionKeyConfigured}
+ from "./outbound-delivery-envelope";
 
 /** No email may be dispatched based on an unverified local suppression table.
  * Global recipient HMAC suppression and the provider's pre-send fence must
@@ -22,7 +23,8 @@ export function globalEmailSuppressionActivationState(){
   const encryptionKey=process.env["DB10_OUTBOUND_ENCRYPTION_KEY_BASE64"]??"";
   // Never bind global opt-out identity to the ciphertext encryption secret:
   // ordinary encryption rotation must not reset consent across colleges.
-  if(stableKey===encryptionKey)throw new Error("OUTBOUND_KEY_REUSE");
+  if(stableKey===encryptionKey||!outboundEncryptionKeyConfigured(encryptionKey))
+   throw new Error("OUTBOUND_KEY_UNAVAILABLE");
   deriveGlobalEmailSuppressionHashForAddress("readiness@example.org",stableKey);
   keyConfigured=true;
  }catch{keyConfigured=false;}
