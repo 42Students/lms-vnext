@@ -2293,8 +2293,9 @@
           "tests/db-independent-verifier.test.mjs"
         ],
         "reason": "Latest CI 40826466935 source-contract failure: 'DB078 witness refuses an aliased application DB before any connection' expected child exit nonzero, got 0. Root cause independently REPRODUCED on Node v22.16: node --test parent sets NODE_TEST_CONTEXT=child-v8; spawnSync(process.execPath,['--test',child],{env:{...process.env,...}}) inherits NODE_TEST_CONTEXT and Node emits 'node:test run() is being called recursively within a test file. skipping running files', exiting 0 WITHOUT executing DB078 witness. Fix in L10-owned tests/db-independent-verifier.test.mjs by stripping NODE_TEST_CONTEXT from the child env (e.g. destructure const {NODE_TEST_CONTEXT: _ignored,...safeEnv}=process.env; then pass {...safeEnv,...}). Keep SQL alias refusal and no-network assertions intact. Run source-contract suite and confirm nonzero exit with expected preflight error, no ECONNREFUSED. Do NOT weaken asserted refusal or change L04 witness.",
-        "status": "REQUESTED",
-        "requestedAt": "2026-10-29T06:34:36.116Z"
+        "status": "APPLIED",
+        "requestedAt": "2026-10-29T06:34:36.116Z",
+        "integratorReview": "L10 patched tests/db-independent-verifier.test.mjs (commit 2c22e3e0eb92c2cdaabee5ee5198178b696de27d): remove inherited NODE_TEST_CONTEXT from the nested `node --test` spawn so the real DB078 alias-preflight witness runs. Preserved SQL alias refusal, nonzero exit assertion and no-network assertion; added recursive-test-skip negative assertion. Isolated local Node v22.16 reproducer confirmed both cases: inherited context silently skips nested child with exit 0; stripped context executes child and exits nonzero as expected (2/2). Full repo source contract and disposable PG17 acceptance remain unexecuted at this new SHA; do not mark DB078 DONE."
       },
       {
         "id": "SCR-L08-L01-DB09-MESSAGES-NOTES-PG-20261029",
