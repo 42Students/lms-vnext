@@ -44,6 +44,8 @@ import {
   scheduleProjectMeetingInputSchema,
 } from "./validation";
 
+type ProjectMeetingTx = Parameters<Parameters<ReturnType<typeof getDb>["transaction"]>[0]>[0];
+
 /** The old RepeatingItemEditor submitted up to 500 meetings in a single
  * section PUT with a meetingsToken. vNext uses item-level CAS per meeting.
  * This preflight is intentionally side-effect free: malformed batches return
@@ -153,7 +155,10 @@ export async function resolveLegacyMeetingLinksByKey(
   return { linkedSprintId, linkedTaskId };
 }
 
+/** Lock the effective linked sprint/task until the meeting write commits.
+ * Pre-transaction checks race with reparenting and miss retained old links. */
 async function validateMeetingLinks(
+  tx: ProjectMeetingTx,
   projectId: string,
   sprintId: string | null | undefined,
   taskId: string | null | undefined,
@@ -166,7 +171,7 @@ async function validateMeetingLinks(
     | null = null;
 
   if (sprintId) {
-    const [row] = await getDb()
+    const [row] = await tx
       .select({ id: projectSprints.id })
       .from(projectSprints)
       .where(
@@ -175,6 +180,7 @@ async function validateMeetingLinks(
           eq(projectSprints.projectId, projectId),
         ),
       )
+      .for("share")
       .limit(1);
     sprint = row ?? null;
 
@@ -186,7 +192,7 @@ async function validateMeetingLinks(
   }
 
   if (taskId) {
-    const [row] = await getDb()
+    const [row] = await tx
       .select({
         id: projectTasks.id,
         sprintId: projectTasks.sprintId,
@@ -198,6 +204,7 @@ async function validateMeetingLinks(
           eq(projectTasks.projectId, projectId),
         ),
       )
+      .for("share")
       .limit(1);
     task = row ?? null;
 
@@ -376,7 +383,6 @@ export async function scheduleProjectMeeting(
   if (!isFutureProjectMeetingWindow(startsAt, endsAt, Date.now())) {
     throw new ProjectsServiceError("PROJECT_MEETING_INVALID_STATE");
   }
-  const links = await validateMeetingLinks(scope.project.id,input.linkedSprintId,input.linkedTaskId);
   return getDb().transaction(async (tx) => {
     const [project] = await tx.select({
       status:projectInstances.status,updatedAt:projectInstances.updatedAt,
@@ -447,16 +453,12 @@ export async function scheduleProjectMeeting(
     if (targetStatus!=="DRAFT" && conflict) throw new ProjectsServiceError("PROJECT_MEETING_SCHEDULE_CONFLICT");
     // Preserve existing links when a private facilitation edit omits them.
     const effectiveSprintId=input.linkedSprintId===undefined
-      ? existing?.linkedSprintId??null : links.linkedSprintId;
+      ? existing?.linkedSprintId??null : input.linkedSprintId;
     const effectiveTaskId=input.linkedTaskId===undefined
-      ? existing?.linkedTaskId??null : links.linkedTaskId;
-    if(effectiveSprintId && effectiveTaskId){
-      const [linkedTask]=await tx.select({sprintId:projectTasks.sprintId})
-        .from(projectTasks).where(and(eq(projectTasks.id,effectiveTaskId),
-          eq(projectTasks.projectId,scope.project.id))).limit(1);
-      if(!linkedTask||linkedTask.sprintId!==effectiveSprintId)
-        throw new ProjectsServiceError("PROJECT_MEETING_LINK_INVALID");
-    }
+      ? existing?.linkedTaskId??null : input.linkedTaskId;
+    // Revalidate retained as well as supplied links after the project lock.
+    // Parent row locks fence concurrent reparenting until the meeting commits.
+    const links=await validateMeetingLinks(tx,scope.project.id,effectiveSprintId,effectiveTaskId);
     const values = {
       status: targetStatus,
       meetingType: input.meetingType ?? existing?.meetingType ?? "GENERAL" as const,
@@ -466,7 +468,7 @@ export async function scheduleProjectMeeting(
       meetingUrl: targetStatus==="DRAFT"?null:effectiveMeetingUrl,
       scheduledByUserId: targetStatus==="DRAFT"?null:organiserId,
       scheduledByMembershipId:targetStatus==="DRAFT"?null:(existing?.scheduledByMembershipId??context.membership?.id??null),
-      linkedSprintId: effectiveSprintId, linkedTaskId: effectiveTaskId,
+      linkedSprintId: links.linkedSprintId, linkedTaskId: links.linkedTaskId,
       outcome: input.outcome===undefined?existing?.outcome??null:input.outcome,
       // Keep structured attendee/action/retro keys when an older client
       // submits just free-text facilitation fields. No flattening into notes.
