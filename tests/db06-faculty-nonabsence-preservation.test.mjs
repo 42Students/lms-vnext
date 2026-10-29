@@ -37,3 +37,16 @@ test("DB06 administrator corrections keep explicit PRESENT history parents", () 
   assert.match(admin, /\.where\(eq\(attendanceRecords.id, priorRecord.id\)\)/);
   assert.doesNotMatch(admin, /\.delete\(attendanceRecords\)/);
 });
+
+test("DB06 admin edits invalidate marked Faculty session tokens but never mark an unmarked class", () => {
+  assert.match(admin, /markedSession\?\.status === "MARKED"/);
+  assert.match(admin, /facultyAttendanceNextMarkedAt\(now, markedSession\.markedAt\)/);
+  assert.match(admin, /\.update\(attendanceSessions\)/);
+  assert.doesNotMatch(admin, /\.insert\(attendanceSessions\)/);
+});
+
+test("DB06 attendance course option titles use the canonical null-only legacy mapping", () => {
+  assert.match(admin, /courseShortTitle: courses\.shortTitle/);
+  assert.match(admin, /formalTitle: legacyFormalTitle\(/);
+  assert.match(admin, /shortTitle: courses\.shortTitle/);
+});
