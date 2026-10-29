@@ -5,7 +5,7 @@
  * generic build gate, schema generation must be quiet on stderr, so an
  * unexpected warning also requires review before schema certification.
  */
-const FATAL_STDOUT = /(?:^|\n)\s*(?:(?:[A-Za-z_$][\w.$]*\.)?(?:Error|Exception)|UnhandledPromiseRejection|Uncaught|npm\s+error)\b\s*(?::|\[|\s)|Do not know how to serialize a BigInt/mi;
+const FATAL_STDOUT = /(?:^|\n)\s*(?:(?:[A-Za-z_$][\w.$]*?(?:Error|Exception))|Error|Exception|UnhandledPromiseRejection|Uncaught|npm\s+error)\b\s*(?::|\[|\s)|Do not know how to serialize a BigInt/mi;
 
 export function inspectCanonicalGenerationOutput({ stdout = "", stderr = "" } = {}) {
   const stderrWasEmpty = String(stderr).trim().length === 0;
