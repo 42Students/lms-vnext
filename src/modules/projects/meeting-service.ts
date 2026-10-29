@@ -401,7 +401,8 @@ export async function scheduleProjectMeeting(
       throw new ProjectsServiceError("PROJECT_MEETING_INVALID_STATE");
     const [existing] = meetingIdInput ? await tx.select().from(projectMeetings)
       .where(and(eq(projectMeetings.id,projectMeetingIdSchema.parse(meetingIdInput)),
-        eq(projectMeetings.projectId,scope.project.id))).for("update").limit(1) : [null];
+        eq(projectMeetings.projectId,scope.project.id),
+        isNull(projectMeetings.deletedAt))).for("update").limit(1) : [null];
     if (meetingIdInput && !existing) throw new ProjectsServiceError("PROJECT_MEETING_NOT_FOUND");
     // MEN-projects-meetings-R07: reject obsolete mentor submissions before
     // making any meeting or activity changes inside the locked transaction.
