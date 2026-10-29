@@ -1804,8 +1804,9 @@
           "recruiter bell UI and tests"
         ],
         "reason": "L07 readHrRecruiterBell produces hrConversationsHref for general no-job TPO message threads; parseHrBellResponse currently only accepts /hr/placements/jobs/:uuid URLs and rejects entire READY response when a general conversation is in the bell. L08 owns recruiter-facing bell UI/model; allow exact authorized conversations URL shape in parse without widening to arbitrary navigation and cover general-thread case. L07 owns mark-all message receipt fix.",
-        "status": "REQUESTED",
-        "requestedAt": "2026-10-29T05:30:18.577Z"
+        "status": "ACCEPTED",
+        "requestedAt": "2026-10-29T05:30:18.577Z",
+        "integratorReview": "L08 accepts narrowly scoped model/parser fix for canonical /hr/conversations?collegeId=...&q=&unreadOnly=true&page=1&sort=LATEST&scope=ALL href and negative injection coverage. Implementation will remain in named recruiter-bell model and tests only; L07 owns producer."
       },
       {
         "id": "L02-REGRESSION-ROSTER-DUPLICATE-20261029",
