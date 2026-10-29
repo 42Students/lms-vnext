@@ -265,7 +265,7 @@
       "dependsOn": [],
       "sourceProgress": {
         "state": "SOURCE_PATCHED_NOT_ACCEPTED",
-        "summary": "Mentor reschedule window checked again after row-lock contention, before DB update. Does not complete DB010's full 358-field active-vs-retired semantic reconciliation. Existing soft-deleted meetings are now excluded under the scheduling row lock, preventing revival or notification on an already-deleted meeting; integration and registered source regression authored. Subsequent domain pass now rejects deleted project parents on task/sprint/release commands; task creation rejects tombstoned sprint; active assignee membership is protected by a SHARE lock during eligibility. Disposable integration regression scenarios authored, but not yet executed. Follow-up closes project/deleted sprint/task tombstone write guards in Mentor detail editors and learner-owned task create/delete. Source tests added to DB07 parity suite; disposable PG verification remains pending.",
+        "summary": "Mentor reschedule window checked again after row-lock contention, before DB update. Does not complete DB010's full 358-field active-vs-retired semantic reconciliation. Existing soft-deleted meetings are now excluded under the scheduling row lock, preventing revival or notification on an already-deleted meeting; integration and registered source regression authored. Subsequent domain pass now rejects deleted project parents on task/sprint/release commands; task creation rejects tombstoned sprint; active assignee membership is protected by a SHARE lock during eligibility. Disposable integration regression scenarios authored, but not yet executed. Follow-up closes project/deleted sprint/task tombstone write guards in Mentor detail editors and learner-owned task create/delete. Source tests added to DB07 parity suite; disposable PG verification remains pending. Task-comment mutation now rejects deleted project/task ancestry, preserving historical read availability and blocking new discussion on tombstones; source and opt-in PG regression authored. Database acceptance pending.",
         "implementationCommit": "3243c7c108a50736a143ac8a67efa1d44827f217",
         "sourceTestCommits": [
           "4140fb6ecf441dba7d1765509e2692b559d4caa5",
@@ -303,7 +303,10 @@
           "e34c56f05c83267a15dabc74194e4e68f74e2b53"
         ],
         "mentorEditRegressionCommit": "2f332a10aec29fc2d863cf022ec900567f45efec",
-        "additionalSourceTestsCommit": "b8557a004c5654cb2012850e0934ffa646dbbe87"
+        "additionalSourceTestsCommit": "b8557a004c5654cb2012850e0934ffa646dbbe87",
+        "commentGuardCommit": "02b920f8db78ed3dffeb68cade1e3d34ee7a4ad8",
+        "commentRegressionCommit": "db7e4dea1a7074059240bfd8dbaa2580ea493f0d",
+        "commentRegisteredParityCommit": "df1acc8b5b0131c6429e9f8b82303ca33d1c295d"
       }
     },
     {
