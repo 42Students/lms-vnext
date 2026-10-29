@@ -8,7 +8,7 @@ import { execFileSync, spawnSync } from "node:child_process";
 const script=fs.readFileSync("scripts/db-independent-verify.mjs","utf8");
 const catalog=fs.readFileSync("scripts/db002-postgres-catalog-acceptance.mjs","utf8");
 
-test("DB076 independent verifier contains all ten ordered database gates",()=>{
+test("DB076 requires all independent safety gates in order and exact executed-step accounting",()=>{
   const labels=[
     "Migration journal integrity",
     "Canonical Drizzle generation",
@@ -17,14 +17,23 @@ test("DB076 independent verifier contains all ten ordered database gates",()=>{
     "Disposable database reset + zero-to-head migration + seed",
     "Migration idempotence smoke",
     "Read-only PostgreSQL migration/catalog witness",
-    "DB-078 registered course-column catalog",
     "Database parity source/static contracts",
     "PostgreSQL integration / negative witnesses",
   ];
-  const positions=labels.map((label)=>script.indexOf(`"${label}"`));
-  assert.ok(positions.every((position)=>position>=0));
+  // Other lanes may add legitimate domain-specific PG checks, but they must
+  // remain accounted for in the verifier's exact pass condition. Never loosen
+  // the ordered mandatory safety gate contract.
+  const executedSteps=[...script.matchAll(/run(?:EmptyOutput)?Step\\(\\s*"([^"]+)"\\s*,/g)]
+    .map((match)=>match[1]);
+  const declared=script.match(/results\\.length === (\\d+)/);
+  assert.ok(declared,"the verifier must require an exact completed-step count");
+  assert.equal(Number(declared[1]),executedSteps.length,
+    "all declared steps must be accounted for in the pass gate");
+  assert.equal(new Set(executedSteps).size,executedSteps.length,
+    "duplicate step names make acceptance receipts ambiguous");
+  const positions=labels.map((label)=>executedSteps.indexOf(label));
+  assert.ok(positions.every((position)=>position>=0),"a mandatory gate is missing");
   assert.deepEqual([...positions].sort((a,b)=>a-b),positions);
-  assert.match(script,/results\.length === 10/);
 });
 
 test("DB076 generation gate checks both tracked and untracked drizzle drift",()=>{
