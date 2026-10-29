@@ -1813,6 +1813,20 @@
         "reason": "Independently verify global email opt-out insert + PENDING/RETRY cancellation on registered disposable PostgreSQL, wrong-email commitment unaffected, CLAIMED quarantined, cross-organization same HMAC suppression, concurrent queue/claim/opt-out race, and no public PII leakage. Service landed in L09; tests/unit/global-email-suppression-service.test.ts authored, not executed. No positive DONE until exact-SHA runtime proof.",
         "status": "REQUESTED",
         "requestedAt": "2026-10-29T05:32:52.823Z"
+      },
+      {
+        "id": "SCR-L10-L01-INDEPENDENT-PG-20261029",
+        "fromLane": "L10",
+        "toLane": "L01",
+        "paths": [
+          "scripts/db-independent-verify.mjs",
+          "scripts/db002-postgres-catalog-acceptance.mjs",
+          "drizzle/meta/_journal.json",
+          "drizzle/**"
+        ],
+        "reason": "L10 hardened independent DB verifier (untrusted supplied target preflight, staged Drizzle diff, E2E app target collision refusal) and added regression witnesses. This session lacks Docker and PostgreSQL binaries, so cannot independently execute clean registered PG replay/catalog/negative suites. Request L01 coordinate an authorized disposable PG17 test environment at a pinned current main SHA, preserving dedicated *_e2e triple URL semantics, and provide exact migration/catalog/type/negative evidence; L10 will independently review failing witnesses and only accept its own tasks after full executed evidence. No CI billing dependency.",
+        "status": "REQUESTED",
+        "requestedAt": "2026-10-29T05:25:00.000Z"
       }
     ],
     "coordination": {
