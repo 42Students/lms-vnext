@@ -994,7 +994,12 @@
           "UI college academic/faculty scheduling"
         ],
         "operatingNotes": "DB02 already accepted; never reopen without concrete regression.",
-        "claim": null
+        "claim": {
+          "sessionId": "vnext-l02-chat-20261029-1102-ist",
+          "holder": "ChatGPT L02 academic/electives domain closure",
+          "claimedAt": "2026-10-29T05:40:38.944Z",
+          "expiresAt": "2026-10-29T09:40:38.944Z"
+        }
       },
       {
         "id": "L03",
