@@ -443,6 +443,21 @@ export async function updateCollegeElectiveOffering(
         delivery.sectionPeriodId !== delivery.offeringPeriodId ||
         (slot.academicPeriodId !== null && slot.academicPeriodId !== delivery.offeringPeriodId))
       throw new ElectivesServiceError("ELECTIVE_DELIVERY_MISMATCH");
+    // GROUP_BACKED class identity is period-scoped. An elective rebind must
+    // not leave the class directory on the old term while the new delivery
+    // and timetable belong to another academic period.
+    if (offering.backedClassOfferingId) {
+      const [backedClass] = await tx.select({
+        academicPeriodId: groupBackedClassOfferings.academicPeriodId,
+      }).from(groupBackedClassOfferings)
+        .where(and(
+          eq(groupBackedClassOfferings.id, offering.backedClassOfferingId),
+          eq(groupBackedClassOfferings.rosterGroupId, group.id),
+          eq(groupBackedClassOfferings.status, "ACTIVE"),
+        )).for("share").limit(1);
+      if (!backedClass || backedClass.academicPeriodId !== delivery.offeringPeriodId)
+        throw new ElectivesServiceError("ELECTIVE_DELIVERY_MISMATCH");
+    }
     if (group.capacity !== input.capacity) {
       await tx.update(lmsGroups).set({
         capacity: input.capacity, version: group.version + 1, updatedAt: new Date(),
