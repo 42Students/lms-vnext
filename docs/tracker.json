@@ -2200,6 +2200,17 @@
         "reason": "L08 applied verified global-token/campaign-recipient producer paths through L09's atomic persistVerifiedGlobalEmailSuppression writer; code commits 162dd2f,ca64546,7089aba,88cdbfd and tests 040c5e3/580c20c. Run targeted native Vitest, DB-050 signed token + cross-organization outbox PENDING/RETRY/CLAIMED replay + corrupt/mismatched recipient negatives at fresh SHA. Matched campaign snapshot suppresses global before local CRM mutation; changed-email historical snapshot cannot safely recover old address, so local opt-out only (L09 policy/migration decision needed for immutable hash retention). Never mark DB-050 done from authored tests or source assertions.",
         "status": "REQUESTED",
         "requestedAt": "2026-10-29T05:57:24.160Z"
+      },
+      {
+        "id": "L04-L10-DB078-NESTED-TEST-PROCESS-20261029",
+        "fromLane": "L04",
+        "toLane": "L10",
+        "paths": [
+          "tests/db-independent-verifier.test.mjs"
+        ],
+        "reason": "Latest CI 40826466935 source-contract failure: 'DB078 witness refuses an aliased application DB before any connection' expected child exit nonzero, got 0. Root cause independently REPRODUCED on Node v22.16: node --test parent sets NODE_TEST_CONTEXT=child-v8; spawnSync(process.execPath,['--test',child],{env:{...process.env,...}}) inherits NODE_TEST_CONTEXT and Node emits 'node:test run() is being called recursively within a test file. skipping running files', exiting 0 WITHOUT executing DB078 witness. Fix in L10-owned tests/db-independent-verifier.test.mjs by stripping NODE_TEST_CONTEXT from the child env (e.g. destructure const {NODE_TEST_CONTEXT: _ignored,...safeEnv}=process.env; then pass {...safeEnv,...}). Keep SQL alias refusal and no-network assertions intact. Run source-contract suite and confirm nonzero exit with expected preflight error, no ECONNREFUSED. Do NOT weaken asserted refusal or change L04 witness.",
+        "status": "REQUESTED",
+        "requestedAt": "2026-10-29T06:34:36.116Z"
       }
     ],
     "coordination": {
