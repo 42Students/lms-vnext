@@ -1,5 +1,5 @@
 import {describe,expect,it} from "vitest";
-import {adminAttendanceCorrectionChange} from "@/modules/attendance/admin-correction-change-model";
+import {adminAttendanceCorrectionChange,adminAttendanceRecordTokenMatches} from "@/modules/attendance/admin-correction-change-model";
 
 describe("DB06 admin attendance correction change detection",()=>{
   it("does not rewrite unchanged implicit PRESENT or notify a guardian",()=>{
@@ -53,5 +53,25 @@ describe("DB06 admin attendance correction change detection",()=>{
       previous:{status:"ABSENT",note:null},requestedStatus:"LATE",
       requestedNote:undefined,
     })).toMatchObject({shouldNotifyAbsent:false,shouldNotifyCorrected:false});
+  });
+});
+
+describe("DB06 admin reviewed-record CAS token",()=>{
+  it("uses exact instants rather than timezone formatting",()=>{
+    const current=new Date("2026-10-29T06:30:00.000Z");
+    expect(adminAttendanceRecordTokenMatches(
+      "2026-10-29T12:00:00.000+05:30",current,
+    )).toBe(true);
+    expect(adminAttendanceRecordTokenMatches(
+      "2026-10-29T06:30:00.001Z",current,
+    )).toBe(false);
+    expect(adminAttendanceRecordTokenMatches("not-a-date",current)).toBe(false);
+  });
+  it("requires null only for a genuinely uncreated record",()=>{
+    const current=new Date("2026-10-29T06:30:00.000Z");
+    expect(adminAttendanceRecordTokenMatches(null,null)).toBe(true);
+    expect(adminAttendanceRecordTokenMatches(null,current)).toBe(false);
+    expect(adminAttendanceRecordTokenMatches("2026-10-29T06:30:00Z",null)).toBe(false);
+    expect(adminAttendanceRecordTokenMatches(undefined,current)).toBe(true);
   });
 });
