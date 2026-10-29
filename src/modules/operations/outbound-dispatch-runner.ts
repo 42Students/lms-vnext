@@ -22,6 +22,7 @@ import {
 import type { OutboundDeliveryIntent } from "./outbound-delivery-contract";
 import { drainOutboundBatch } from "./outbound-dispatch-batch";
 import { claimOutboundDispatchBatch } from "./outbound-delivery-queue";
+import { requireVerifiedGlobalEmailSuppression } from "./email-suppression-activation";
 
 /** A trusted worker supplies the transport after independent verification.
  * Never mount this runner on a public/tenant API route. */
@@ -66,6 +67,7 @@ async function openLiveOutboundClaim(
       and status = 'CLAIMED'
       and claimed_by = ${worker}
       and claim_fence = ${claim.fence}
+      and claim_expires_at > clock_timestamp()
       and request_digest = ${claim.requestDigest}
     limit 1
   `);
@@ -92,6 +94,12 @@ async function openLiveOutboundClaim(
   const intent = openOutboundDelivery(
     sealed, process.env["DB10_OUTBOUND_ENCRYPTION_KEY_BASE64"] ?? "",
   );
+  // Both queue/dispatch flags alone do not certify the global suppression
+  // migration or authorized EMAIL provider. Without both independent gates,
+  // even a correctly claimed EMAIL may never reach a transport adapter.
+  if (intent.channel === "EMAIL") {
+    await requireVerifiedGlobalEmailSuppression();
+  }
   const globalEmailHash = intent.channel === "EMAIL"
     ? deriveGlobalEmailSuppressionHashForAddress(
         intent.recipient,
