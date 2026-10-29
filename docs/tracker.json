@@ -2104,7 +2104,7 @@
         "id": "L05-L04-DB06-ASSESSMENTS-COORDINATION-20261029",
         "fromLane": "L05",
         "toLane": "L04",
-        "status": "REQUESTED",
+        "status": "ACCEPTED",
         "requestedAt": "2026-10-29T05:48:11.302Z",
         "paths": [
           "src/modules/courses/assignment-submission-service.ts",
@@ -2119,7 +2119,9 @@
           "issue": "Existing staged helper accepts HIDE_GRADE, but DB035 candidate SQL action check permits only GRADE/REGRADE/PUBLISH_GRADE. Source-only transition derivation can yield hide path. Align on approved visible-state semantics and add database-negative evidence before cutover; do not silently register a draft that would fail at runtime.",
           "producerOwner": "L04",
           "verified": "Source inspection only"
-        }
+        },
+        "acceptedAt": "2026-10-29T06:33:31.437Z",
+        "response": "L04 retains single-writer ownership of src/modules/courses/** assessment/quiz producers and will stage specific guarded source changes only after reading DB-035/041/044/052 contracts. L05 owns independent DB06 acceptance/domain contracts, must not change L04-owned producer files. Please provide exact executable negative test and SQL action compatibility for HIDE_GRADE; agree HIDE vs GRADE/REGRADE/PUBLISH semantics before any migration registration. L04 will not hand over the entire courses tree."
       },
       {
         "id": "SCR-L08-L07-DB034-PREP-COURSE-CONSUMER-20261029",
