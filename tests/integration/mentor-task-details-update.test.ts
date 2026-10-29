@@ -67,9 +67,23 @@ async function cleanup() {
     tracked.projectIds=[];
   }
   if(templateIds.length) {
-    await pool.query("delete from project_template_college_assignments where template_id = any($1::uuid[])",[templateIds]);
-    await pool.query("delete from project_template_versions where template_id = any($1::uuid[])",[templateIds]);
-    await pool.query("delete from project_templates where id = any($1::uuid[])",[templateIds]);
+    // Retain the immutable DB070 revision rows and DB071-referenced template
+    // headers when the respective migration is present. Never disable guards.
+    const retention=await pool.query<{retainHistory:boolean}>(
+      "select (exists (select 1 from pg_trigger " +
+        "where tgrelid='project_template_versions'::regclass " +
+        "and tgname='db07_project_template_versions_append_only' " +
+        "and tgenabled='O' and not tgisinternal) " +
+        "or exists (select 1 from pg_constraint " +
+        "where conrelid='project_templates'::regclass " +
+        "and conname in ('project_templates_current_version_snapshot_fk', " +
+        "'project_templates_published_version_snapshot_fk'))) as \"retainHistory\"",
+    );
+    if(!retention.rows[0]?.retainHistory){
+      await pool.query("delete from project_template_college_assignments where template_id = any($1::uuid[])",[templateIds]);
+      await pool.query("delete from project_template_versions where template_id = any($1::uuid[])",[templateIds]);
+      await pool.query("delete from project_templates where id = any($1::uuid[])",[templateIds]);
+    }
     tracked.templateIds=[];
   }
 }
@@ -111,6 +125,41 @@ async function fixture() {
 
 
 describe("Mentor task details PATCH: fresh PostgreSQL success, audit and denial",()=>{
+  it("refuses edits to a deleted task, deleted sprint, or deleted project",async()=>{
+    const {project,task}=await fixture();
+    const input={
+      title:"Must never overwrite history",description:"Forbidden after deletion",
+      acceptanceCriteria:"Not editable",priority:"HIGH",
+      expectedUpdatedAt:task.updatedAt.toISOString(),
+    };
+    const params={projectId:project.id,taskId:task.id};
+    await pool.query("UPDATE project_tasks SET deleted_at=now() WHERE id=$1",[task.id]);
+    try {
+      await expect(updateMentorTaskDetails(mentor,params,input))
+        .rejects.toMatchObject({code:"PROJECT_TASK_NOT_FOUND"});
+    } finally {
+      await pool.query("UPDATE project_tasks SET deleted_at=null WHERE id=$1",[task.id]);
+    }
+    if(!task.sprintId)throw new Error("Fixture task requires a sprint");
+    await pool.query("UPDATE project_sprints SET deleted_at=now() WHERE id=$1",[task.sprintId]);
+    try {
+      await expect(updateMentorTaskDetails(mentor,params,input))
+        .rejects.toMatchObject({code:"PROJECT_TASK_INVALID_STATE"});
+    } finally {
+      await pool.query("UPDATE project_sprints SET deleted_at=null WHERE id=$1",[task.sprintId]);
+    }
+    await pool.query("UPDATE project_instances SET deleted_at=now() WHERE id=$1",[project.id]);
+    try {
+      await expect(updateMentorTaskDetails(mentor,params,input)).rejects.toBeDefined();
+    } finally {
+      await pool.query("UPDATE project_instances SET deleted_at=null WHERE id=$1",[project.id]);
+    }
+    const stored=await pool.query<{title:string}>(
+      "SELECT title FROM project_tasks WHERE id=$1",[task.id],
+    );
+    expect(stored.rows[0]?.title).toBe(task.title);
+  });
+
   it("updates registered fields exactly once and rejects stale, forged and foreign inputs",async()=>{
     const {project,task:created}=await fixture();
     // Force a fresh-DB microsecond fraction to test JS-millisecond optimistic tokens.
