@@ -40,6 +40,18 @@ describe("GR-114 request ID correlation and GR-124 config safety", () => {
     expect(alert).toContain("Request ID: -");
     expect(alert).not.toContain("AlicePrivateName");
   });
+  it("DB-023 retains monotonic incident history under out-of-order pod clocks", async () => {
+    const { readFileSync } = await import("node:fs");
+    const source = readFileSync("src/modules/log-alerts/reporter.ts", "utf8");
+    expect(source).toContain("least(${signatures.firstSeenAt}, ${now})");
+    expect(source).toContain("greatest(${signatures.lastSeenAt}, ${now})");
+    expect(source).toContain("now.getTime() < current.lastSeenAt.getTime()");
+    expect(source).toContain("elapsed !== null && elapsed >= 0 && elapsed < 300_000");
+    expect(source).toContain('const decision = clockOutOfOrder ? "NONE"');
+    expect(source).toContain("dayKey: olderDay ? current.dayKey : dayKey");
+    expect(source).not.toContain("lastSeenAt: now, occurrenceCount:");
+  });
+
   it("GR-114 retains an opaque request ID and timestamp in Telegram alert payloads", async () => {
     const original = {
       app: process.env.APP_ENV, token: process.env.TELEGRAM_ALERT_BOT_TOKEN,
