@@ -309,7 +309,9 @@ async function main() {
     runStep(
       "Tracked Drizzle schema drift",
       "git",
-      ["diff", "--exit-code", "--", "drizzle/"],
+      // Include both staged/index and unstaged working-tree changes.
+      // A plain `git diff` ignores staged generated migrations.
+      ["diff", "--exit-code", "HEAD", "--", "drizzle/"],
       env,
     );
     runEmptyOutputStep(
