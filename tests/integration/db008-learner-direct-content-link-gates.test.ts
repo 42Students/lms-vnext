@@ -69,15 +69,16 @@ afterAll(async () => {
 describe("DB008 learner direct lesson-content link parity", () => {
   it("sanitizes unsafe persisted resource URLs without altering manager authorship", async () => {
     const { ids, context } = fixture!;
-    await pool.query("UPDATE lesson_contents SET external_url=$1 WHERE id=$2",
-      ["javascript:alert(1)", ids.content]);
+    await pool.query("UPDATE lesson_contents SET external_url=$1,legacy_content_data=$2::jsonb WHERE id=$3",
+      ["javascript:alert(1)", JSON.stringify({storageKey:"private/r2/key",token:"legacy-secret"}), ids.content]);
     const learner = await listLessonContents(context, ids.lesson, ids.delivery);
     expect(learner).toHaveLength(1);
-    expect(learner[0]).toMatchObject({ id: ids.content, externalUrl: null, storageKey: null });
+    expect(learner[0]).toMatchObject({ id: ids.content, externalUrl: null, storageKey: null, legacyContentData: null });
     const bookmarked = await getAuthorizedLessonContent(context, ids.content, ids.delivery);
     expect(bookmarked.externalUrl).toBeNull();
     const admin = await listLessonContents(manager, ids.lesson, ids.delivery);
     expect(admin[0]?.externalUrl).toBe("javascript:alert(1)");
+    expect(admin[0]?.legacyContentData).toMatchObject({storageKey:"private/r2/key",token:"legacy-secret"});
 
     // A valid HTTPS resource link remains available; no over-redaction.
     await pool.query("UPDATE lesson_contents SET external_url=$1 WHERE id=$2",
