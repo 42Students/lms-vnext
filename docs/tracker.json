@@ -2068,8 +2068,9 @@
           "GitHub Actions DB-008 disposable PostgreSQL acceptance"
         ],
         "reason": "L04 fixed direct lesson content listing/bookmark externalUrl bypass. src/modules/courses/lesson-content-service.ts now invokes same learnerVisibleContentExternalUrl policy as workspace for safe scheme/credentials and LIVE_CLASS future/ended release; admin authoring remains raw. Add tests/integration/db008-learner-direct-content-link-gates.test.ts to registered DB-008 PG17 acceptance job; ensure tests run against exact checkout SHA with seeded disposable PG, negative javascript URL / credential URL / ended class and positive future live/https resource, then report run conclusion. L04 owns source/test but not shared workflow. Do not mark DB-008 closed without actual execution.",
-        "status": "REQUESTED",
-        "requestedAt": "2026-10-29T05:44:15.509Z"
+        "status": "ACCEPTED",
+        "requestedAt": "2026-10-29T05:44:15.509Z",
+        "integratorReview": "L01 integrated tests/integration/db008-learner-direct-content-link-gates.test.ts into the DB-008 PG17 registered-journal acceptance workflow at commit df8185b699f92073b8de2aa4c0547d4203ced4a3; its file path triggers workflow and the Vitest step runs after disposable journal replay. No CI/PostgreSQL run is claimed. L04 owns app source and direct-link test."
       },
       {
         "id": "SCR-L09-L10-DB023-20261029",
@@ -2184,8 +2185,9 @@
           "scripts/db-independent-verify.mjs"
         ],
         "reason": "Run a new clean disposable PostgreSQL 17 full registered journal replay against fresh main at or after L08 commit 7cd45e6b110e329077337bc7585ce28e65dc3660 and reexecute BOTH DB09 PG witnesses (not rerun old failed GitHub Actions SHA). First previous run 40825524568 incorrectly expected saved-view DELETE denial; second run 40825547851 unexpectedly allowed fixture-seeded faculty. Witness now tests permitted view DELETE and creates a fresh FACULTY-only principal, with explicit db09_has_active_tpo_actor false + SQLSTATE 23514 negatives; SQL security guard unchanged. Record exact run SHA and output; no DB09 tasks DONE until PG/producer/consumer closure. Also, secure-share witness now independently creates a FACULTY-only author with a direct negative TPO principal check in commit 5ef8a5e36ea3f845affa9be3258e9b2a2d67d9a7; run both on same fresh HEAD.",
-        "status": "REQUESTED",
-        "requestedAt": "2026-10-29T05:57:24.160Z"
+        "status": "ACCEPTED",
+        "requestedAt": "2026-10-29T05:57:24.160Z",
+        "integratorReview": "L01 reviewed latest registered rollback-only DB09 collaboration and secure-share witnesses. Both are ALREADY mandatory steps in scripts/db-independent-verify.mjs after complete registered journal replay, with DB09_ISOLATED_TEST_DATABASE=1 and a guarded disposable target. Reverification of BOTH against a fresh exact SHA is still awaiting a live disposable PG17 runner; old failing runs are not acceptance. L08 owns fixtures and DB09 domain remediation. L01 must not certify without fresh passing evidence."
       },
       {
         "id": "SCR-L08-L09-DB050-ACCEPTANCE-20261029",
