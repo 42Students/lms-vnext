@@ -1828,8 +1828,9 @@
           "shared acceptance/orchestration CI"
         ],
         "reason": "L04 corrected all four course_discussion_messages read models to use registered immutable sender_name_snapshot with null-row fallback, including timeline/pin/delta/content-scoped readers. Execute tests/db05-classroom-snapshot-consumer-contract.test.mjs and tests/integration/db05-classroom-sender-snapshot.test.ts after disposable PG17 registered replay + seeded fixtures at the current revision; add these owned tests to DB008 workflow's independent job, without weakening broader gates. Real PostgreSQL negative verifies attempted sender_name_snapshot rewrite returns SQLSTATE 23514, plus historical profile rename and pinned projection. Return exact runner SHA/run; L04 will not certify DB-008 from authored tests.",
-        "status": "REQUESTED",
-        "requestedAt": "2026-10-29T05:32:43.981Z"
+        "status": "ACCEPTED",
+        "requestedAt": "2026-10-29T05:32:43.981Z",
+        "integratorReview": "L01 wired L04's 4-read-model immutable classroom sender snapshot source test and real PostgreSQL rename/pin/delta/SQLSTATE-23514 regression into DB008 registered PG17 acceptance workflow in commit 009745f82a9404b719f2b2db1852879ba64d16c. Trigger paths cover source/tests. No PG17 workflow run or DB008 engineering closure claimed; L04 retains service/fixture ownership."
       },
       {
         "id": "SCR-L08-L07-DB057-WATERMARK-CONSUMER-20261029",
@@ -1879,8 +1880,9 @@
           "drizzle/**"
         ],
         "reason": "L10 hardened independent DB verifier (untrusted supplied target preflight, staged Drizzle diff, E2E app target collision refusal) and added regression witnesses. This session lacks Docker and PostgreSQL binaries, so cannot independently execute clean registered PG replay/catalog/negative suites. Request L01 coordinate an authorized disposable PG17 test environment at a pinned current main SHA, preserving dedicated *_e2e triple URL semantics, and provide exact migration/catalog/type/negative evidence; L10 will independently review failing witnesses and only accept its own tasks after full executed evidence. No CI billing dependency.",
-        "status": "REQUESTED",
-        "requestedAt": "2026-10-29T05:25:00.000Z"
+        "status": "ACCEPTED",
+        "requestedAt": "2026-10-29T05:25:00.000Z",
+        "integratorReview": "L01 accepts exact-SHA independent registered PostgreSQL verification coordination. L10 source preflight/alias/redaction work is preserved; DB078 catalog witness also wired into verifier. Current executor has no Docker/PG binaries or GitHub Actions billing-independent runner access, so clean zero-to-head replay/negative suites are unexecuted. Do not certify DB-001/018/019/020 or any phase. L10 remains independent reviewer; execution requires approved disposable PG17 environment."
       },
       {
         "id": "SCR-L08-L01-DB09-SHARE-PG-ACCEPTANCE-20261029",
