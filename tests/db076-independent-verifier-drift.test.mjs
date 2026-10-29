@@ -104,3 +104,40 @@ test("DB076 guards both staged and unstaged tracked migration drift relative to 
     fs.rmSync(dir,{recursive:true,force:true});
   }
 });
+
+test("DB076 source cleanliness gate precedes Docker and supplied PostgreSQL connections",()=>{
+  const cleanAt=script.indexOf('const dirtyEntries = shellText("git"');
+  const probeAt=script.indexOf("postgresVersion: providedPostgresVersion(env)");
+  const dockerAt=script.indexOf("provider = await startDockerPostgres()");
+  assert.ok(cleanAt>0 && probeAt>cleanAt && dockerAt>cleanAt);
+  assert.match(script,/sourceTreeClean:\s*false|let sourceTreeClean = false/);
+  assert.match(script,/sourceTreeClean = true/);
+  assert.match(script,/passed:\s*sourceTreeClean\s*&&/);
+  assert.match(script,/requires a clean tracked and untracked source tree/);
+});
+
+test("DB076 clean checkout preflight refuses tracked, staged and untracked changes",()=>{
+  const dir=fs.mkdtempSync(path.join(os.tmpdir(),"db076-clean-source-"));
+  const git=(...args)=>execFileSync("git",args,{cwd:dir,encoding:"utf8"});
+  const status=()=>git("status","--porcelain=v1","--untracked-files=normal").trim();
+  try {
+    git("init","-q");
+    git("config","user.name","L10 Test");
+    git("config","user.email","l10@example.invalid");
+    fs.writeFileSync(path.join(dir,"source.txt"),"initial\n");
+    git("add","source.txt");
+    git("commit","-qm","initial");
+    assert.equal(status(),"");
+    fs.writeFileSync(path.join(dir,"source.txt"),"unstaged\n");
+    assert.notEqual(status(),"","unstaged edits must refuse");
+    git("add","source.txt");
+    assert.notEqual(status(),"","staged edits must refuse");
+    git("reset","--hard","HEAD");
+    fs.writeFileSync(path.join(dir,"untracked-sensitive-file.txt"),"not included in output");
+    assert.notEqual(status(),"","untracked files must refuse");
+    fs.rmSync(path.join(dir,"untracked-sensitive-file.txt"));
+    assert.equal(status(),"","clean checkout can proceed");
+  } finally {
+    fs.rmSync(dir,{recursive:true,force:true});
+  }
+});
