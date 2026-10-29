@@ -1922,7 +1922,19 @@
         "reason": "Run clean registered-journal migration replay on a guarded disposable PostgreSQL database and execute tests/db078-registered-course-column-disposition-pg.test.mjs (DB078_DISPOSABLE=1). DB-078 requires canonical courses.name/short_title but retirement of historical physical formal_title/default_subscription_days; no new mutable shadow columns. L04 added the runtime wire derivation helper and source tests. If the registered catalog differs, coordinate schema registration as exclusive L01 integrator; return exact SHA/test evidence before any DB-078 DONE transition.",
         "status": "ACCEPTED",
         "requestedAt": "2026-10-28T20:01:46.415Z",
-        "integratorReview": "L01 integrated the registered DB078 course-column witness into scripts/db-independent-verify.mjs after clean replay/catalog verification, preserving application URL alias checks and isolated TEST_DATABASE_URL. Commits 0efc51ed7a7b039000ab61eb5a5911262cde4b98, 0f77181d17bdcd7bd8faf4b3a6e85f4612d69165, fde4553bc45c2ee6ca504aa2560cd09c141db5f7. Source-only checks complete; no actual PostgreSQL replay/evidence in this environment. Do not mark APPLIED or DB078 done before executed witness."
+        "integratorReview": "L01 integrated the registered DB078 course-column witness into scripts/db-independent-verify.mjs after clean replay/catalog verification, preserving application URL alias checks and isolated TEST_DATABASE_URL. Commits 0efc51ed7a7b039000ab61eb5a5911262cde4b98, 0f77181d17bdcd7bd8faf4b3a6e85f4612d69165, fde4553bc45c2ee6ca504aa2560cd09c141db5f7. Source-only checks complete; no actual PostgreSQL replay/evidence in this environment. Do not mark APPLIED or DB078 done before executed witness.",
+        "latestL04Witness": {
+          "runId": 40830322784,
+          "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/40830322784",
+          "testedCommit": "9cea2dca65eb23e98e7dcf728048bb0635f453f9",
+          "registeredPg17": true,
+          "vitest": "23/23 passed in 4 files",
+          "catalogTest": "DB078 canonical course catalog omits retired physical columns: PASS",
+          "classroomAndLinkTests": "PASS",
+          "result": "PARTIAL_ACCEPTANCE_ONLY",
+          "workflowOverall": "FAIL from L02-owned elective-roster source contract",
+          "recordedAt": "2026-10-29T06:38:55.156Z"
+        }
       },
       {
         "id": "SCR-L07-L08-RECRUITER-BELL-GENERAL-HREF-20261029",
@@ -1974,7 +1986,19 @@
         "reason": "L04 corrected all four course_discussion_messages read models to use registered immutable sender_name_snapshot with null-row fallback, including timeline/pin/delta/content-scoped readers. Execute tests/db05-classroom-snapshot-consumer-contract.test.mjs and tests/integration/db05-classroom-sender-snapshot.test.ts after disposable PG17 registered replay + seeded fixtures at the current revision; add these owned tests to DB008 workflow's independent job, without weakening broader gates. Real PostgreSQL negative verifies attempted sender_name_snapshot rewrite returns SQLSTATE 23514, plus historical profile rename and pinned projection. Return exact runner SHA/run; L04 will not certify DB-008 from authored tests.",
         "status": "ACCEPTED",
         "requestedAt": "2026-10-29T05:32:43.981Z",
-        "integratorReview": "L01 wired L04's 4-read-model immutable classroom sender snapshot source test and real PostgreSQL rename/pin/delta/SQLSTATE-23514 regression into DB008 registered PG17 acceptance workflow in commit 009745f82a9404b719f2b2db1852879ba64d16c. Trigger paths cover source/tests. No PG17 workflow run or DB008 engineering closure claimed; L04 retains service/fixture ownership."
+        "integratorReview": "L01 wired L04's 4-read-model immutable classroom sender snapshot source test and real PostgreSQL rename/pin/delta/SQLSTATE-23514 regression into DB008 registered PG17 acceptance workflow in commit 009745f82a9404b719f2b2db1852879ba64d16c. Trigger paths cover source/tests. No PG17 workflow run or DB008 engineering closure claimed; L04 retains service/fixture ownership.",
+        "latestL04Witness": {
+          "runId": 40830322784,
+          "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/40830322784",
+          "testedCommit": "9cea2dca65eb23e98e7dcf728048bb0635f453f9",
+          "registeredPg17": true,
+          "vitest": "23/23 passed in 4 files",
+          "catalogTest": "DB078 canonical course catalog omits retired physical columns: PASS",
+          "classroomAndLinkTests": "PASS",
+          "result": "PARTIAL_ACCEPTANCE_ONLY",
+          "workflowOverall": "FAIL from L02-owned elective-roster source contract",
+          "recordedAt": "2026-10-29T06:38:55.156Z"
+        }
       },
       {
         "id": "SCR-L08-L07-DB057-WATERMARK-CONSUMER-20261029",
