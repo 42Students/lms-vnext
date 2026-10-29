@@ -60,6 +60,10 @@ async function cleanup(){
  await pool.query("delete from course_teaching_assignments where delivery_id=$1",[f.deliveryId]);
  await pool.query("delete from course_section_deliveries where id=$1",[f.deliveryId]);
  await pool.query("delete from course_offerings where id=$1",[f.offeringId]);
+ // Creating an academic CORE offering may persist the curriculum link.
+ // Remove only this fixture course's link AFTER its offering; otherwise the
+ // protected FK rejects deleting the course and prevents later cleanup.
+ await pool.query("delete from program_term_courses where course_id=$1",[f.courseId]);
  await pool.query("delete from courses where id=$1",[f.courseId]);
  await pool.query("delete from section_enrollments where learner_enrollment_id=$1",[f.enrollmentId]);
  await pool.query("delete from learner_program_enrollments where id=$1",[f.enrollmentId]);
