@@ -102,3 +102,4 @@ test("DB078 witness refuses an aliased application DB before any connection", ()
   assert.doesNotMatch(output, /ECONNREFUSED|ENOTFOUND|connection refused/i);
   assert.doesNotMatch(output, new RegExp(secret));
 });
+import "./db-independent-verifier-redaction.test.mjs";
