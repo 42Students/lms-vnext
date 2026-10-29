@@ -4,6 +4,8 @@ on:
     paths:
       - docs/tracker.json
       - scripts/tracker.mjs
+      - scripts/progress-evidence.mjs
+      - tests/tracker-progress-evidence.test.mjs
       - tests/tracker.test.mjs
       - tests/database-domain-packages.test.mjs
       - tests/tracker-ten-lanes.test.mjs
@@ -26,5 +28,7 @@ jobs:
         run: |
           node scripts/tracker.mjs --lanes
           node scripts/tracker.mjs --lane=L03
+          node scripts/tracker.mjs --progress
+          node scripts/tracker.mjs --progress --lane=L03
       - name: Execute plan, claim and task acceptance tests
-        run: node --test tests/tracker.test.mjs tests/database-domain-packages.test.mjs tests/tracker-ten-lanes.test.mjs
+        run: node --test tests/tracker.test.mjs tests/database-domain-packages.test.mjs tests/tracker-ten-lanes.test.mjs tests/tracker-progress-evidence.test.mjs
