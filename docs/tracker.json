@@ -456,7 +456,8 @@
           "executed": 13,
           "passed": 13,
           "runner": "connector in-process source-derived V8 (not Vitest/PG)",
-          "sourceSha": "94a759a164cc21ea7efa473850ac360cd0e9571b"
+          "sourceSha": "94a759a164cc21ea7efa473850ac360cd0e9571b",
+          "note": "13/13 source-derived cases run against exact GitHub blob; zero committed Vitest/PG cases executed in this session."
         },
         "focusedTests": [
           "tests/unit/graceful-alert-scheduler.test.ts",
@@ -2149,7 +2150,24 @@
         "reason": "Independently verify global email opt-out insert + PENDING/RETRY cancellation on registered disposable PostgreSQL, wrong-email commitment unaffected, CLAIMED quarantined, cross-organization same HMAC suppression, concurrent queue/claim/opt-out race, and no public PII leakage. Service landed in L09; tests/unit/global-email-suppression-service.test.ts authored, not executed. No positive DONE until exact-SHA runtime proof.",
         "status": "REQUESTED",
         "requestedAt": "2026-10-29T05:32:52.823Z",
-        "l09Followup": "New isolated test: tests/integration/db10-global-email-suppression-service.test.ts; writer accepts trusted injected disposable PostgreSQL handle; run with opt-in DB10_ISOLATED_TEST_DATABASE=1 and explicit _test database."
+        "l09Followup": "New isolated test: tests/integration/db10-global-email-suppression-service.test.ts; writer accepts trusted injected disposable PostgreSQL handle; run with opt-in DB10_ISOLATED_TEST_DATABASE=1 and explicit _test database.",
+        "l09ExecutableAcceptance": {
+          "preconditions": [
+            "Disposable PostgreSQL 17+ database whose name ends _test",
+            "Registered migration journal and seeded SEED_IDS organization + two colleges",
+            "DB10_ISOLATED_TEST_DATABASE=1 and explicit TEST_DATABASE_URL distinct from DATABASE_URL",
+            "No live provider integration or notification sends"
+          ],
+          "command": "DB10_ISOLATED_TEST_DATABASE=1 TEST_DATABASE_URL='postgres://.../lms_vnext_test' npx vitest run --config vitest.db.config.ts tests/integration/db10-global-email-suppression-service.test.ts",
+          "tests": "PENDING/RETRY cancellation, CLAIMED preservation, wrong-recipient no-op, cross-college global suppression, idempotent repeated verified opt-out",
+          "requiredExtraWitnesses": [
+            "Multi-session enqueue/opt-out race",
+            "Actual registered DB-067 pre-send fencing and late opt-out",
+            "Denied ordinary DB roles and negative recipient binding",
+            "Rollback on failed cancellation"
+          ],
+          "evidentiaryStatus": "AUTHORED_ONLY_NOT_EXECUTED"
+        }
       },
       {
         "id": "SCR-L10-L01-INDEPENDENT-PG-20261029",
