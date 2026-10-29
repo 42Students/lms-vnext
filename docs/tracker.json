@@ -1765,6 +1765,18 @@
         "reason": "L08 added rollback-only real PostgreSQL witness for registered DB09 TPO principal/user-preference/saved-view/student-note/recruiter-read integrity. Run after disposable clean journal replay and canonical seed with DB09_ISOLATED_TEST_DATABASE=1, add it to single-writer independent verification if green, fix fixture or failing DB constraints with L08 after concrete outputs. Do not mark DB-056/057/063/064 accepted until registered replay, negative checks, real producer/consumer and code SHA evidence recorded.",
         "status": "REQUESTED",
         "requestedAt": "2026-10-29T05:31:28.495Z"
+      },
+      {
+        "id": "L04-L01-DB008-SNAPSHOT-CONSUMER-ACCEPTANCE-20261029",
+        "fromLane": "L04",
+        "toLane": "L01",
+        "paths": [
+          ".github/workflows/db008-course-content-acceptance.yml",
+          "shared acceptance/orchestration CI"
+        ],
+        "reason": "L04 corrected all four course_discussion_messages read models to use registered immutable sender_name_snapshot with null-row fallback, including timeline/pin/delta/content-scoped readers. Execute tests/db05-classroom-snapshot-consumer-contract.test.mjs and tests/integration/db05-classroom-sender-snapshot.test.ts after disposable PG17 registered replay + seeded fixtures at the current revision; add these owned tests to DB008 workflow's independent job, without weakening broader gates. Real PostgreSQL negative verifies attempted sender_name_snapshot rewrite returns SQLSTATE 23514, plus historical profile rename and pinned projection. Return exact runner SHA/run; L04 will not certify DB-008 from authored tests.",
+        "status": "REQUESTED",
+        "requestedAt": "2026-10-29T05:32:43.981Z"
       }
     ],
     "coordination": {
