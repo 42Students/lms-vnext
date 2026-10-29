@@ -2185,6 +2185,13 @@
       "when": 1792360031266,
       "tag": "0311_db05_lesson_delivery_scope_guard",
       "breakpoints": true
+    },
+    {
+      "idx": 312,
+      "version": "7",
+      "when": 1793257150954,
+      "tag": "0312_db09_recruiter_note_grant_on_update",
+      "breakpoints": true
     }
   ]
 }

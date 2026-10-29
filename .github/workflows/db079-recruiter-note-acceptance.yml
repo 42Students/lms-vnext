@@ -1,0 +1,72 @@
+name: DB-079 registered recruiter-note grant acceptance
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - "drizzle/0312_db09_recruiter_note_grant_on_update.sql"
+      - "drizzle/meta/0312_snapshot.json"
+      - "tests/db079-recruiter-note-registered-source.test.mjs"
+      - "tests/db09-recruiter-note-registered-pg-acceptance.mjs"
+      - "tests/db09-message-registered-pg-acceptance.mjs"
+      - "tests/db09-collaboration-registered-pg-acceptance.mjs"
+      - "tests/db09-share-registered-pg-acceptance.mjs"
+      - ".github/workflows/db079-recruiter-note-acceptance.yml"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: db079-registered-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  db079-recruiter-note-grant:
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    services:
+      postgres:
+        image: postgres:17-alpine
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: lms_vnext_test
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres -d lms_vnext_test"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 15
+    env:
+      DATABASE_URL: postgresql://postgres:postgres@127.0.0.1:5432/lms_vnext_test
+      TEST_DATABASE_URL: postgresql://postgres:postgres@127.0.0.1:5432/lms_vnext_test
+      DB03_ISOLATED_TEST_DATABASE: "1"
+      DB09_ISOLATED_TEST_DATABASE: "1"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Verify registered migration journal and trigger source contract
+        run: >-
+          npm run db:journal:verify
+      - name: DB079 forward-only trigger-only migration contract
+        run: node --test tests/db079-recruiter-note-registered-source.test.mjs
+      - name: Reset, migrate and seed a disposable PostgreSQL 17 database
+        env:
+          DATABASE_URL: ""
+        run: npm run db:test:prepare
+      - name: Verify registered migration idempotence
+        run: npm run db:migrate
+      - name: DB079 recruiter private note active-grant and revoked-edit negatives
+        run: node tests/db09-recruiter-note-registered-pg-acceptance.mjs
+      - name: DB061 TPO message sender, chronology and revoke negatives
+        run: node tests/db09-message-registered-pg-acceptance.mjs
+      - name: DB056 DB057 scoped CRM principal and read negatives
+        run: node tests/db09-collaboration-registered-pg-acceptance.mjs
+      - name: DB059 DB060 secure share immutable lifecycle negatives
+        run: node tests/db09-share-registered-pg-acceptance.mjs
