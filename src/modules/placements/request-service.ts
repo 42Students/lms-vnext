@@ -5,6 +5,8 @@ import {
   desc,
   eq,
   inArray,
+  isNull,
+  or,
   lt,
   ne,
   sql,
