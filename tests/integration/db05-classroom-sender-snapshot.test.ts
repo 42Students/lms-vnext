@@ -95,6 +95,12 @@ describe("DB05 classroom sender snapshot end-to-end PostgreSQL contract", () => 
       "UPDATE course_discussion_messages SET sender_name_snapshot=$1 WHERE id=$2",
       ["Forged historical display name", posted.id],
     )).rejects.toMatchObject({ code: "23514" });
+    // Changing role attribution is another direct-SQL write that must not
+    // reclassify the person who authored an existing discussion.
+    await expect(pool.query(
+      "UPDATE course_discussion_messages SET sender_role='FACULTY' WHERE id=$1",
+      [posted.id],
+    )).rejects.toMatchObject({ code: "23514" });
     const row = await pool.query<{sender_name_snapshot:string}>(
       "SELECT sender_name_snapshot FROM course_discussion_messages WHERE id=$1", [posted.id]);
     expect(row.rows[0]?.sender_name_snapshot).toContain("Course learner");
