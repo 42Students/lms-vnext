@@ -413,11 +413,11 @@ export async function issuePlacementOffer(
     );
   }
 
-  const now = new Date();
+  const requestTime = new Date();
   if (
     input.expiresAt &&
     input.expiresAt.getTime() <=
-      now.getTime()
+      requestTime.getTime()
   ) {
     throw new PlacementsServiceError(
       "PLACEMENT_OFFER_EXPIRED",
@@ -513,6 +513,9 @@ export async function issuePlacementOffer(
       throw new PlacementsServiceError("PLACEMENT_OFFER_NOT_READY");
     }
     await assertApplicationOfferReady(tx, current.application.id, current.job.id);
+    // DB029: an issuer may have waited behind a job, season or learner
+    // lock. Start the minimum response clock only after those waits.
+    const now=new Date();
 
     const [active] = await tx
       .select()
