@@ -2396,9 +2396,9 @@
           "tests/db09-recruiter-note-registered-pg-acceptance.mjs"
         ],
         "reason": "Security gap source-audited on registered 0075: trigger db09_recruiter_private_note_scope_guard fires BEFORE INSERT OR UPDATE OF recruiter_user_id,college_id,job_id,application_id, so UPDATE rating/note after recruiter grant revocation bypasses db09_has_active_recruiter_grant. Lifecycle guard db09_restrict_recruiter_private_note_lifecycle enforces identity/timestamps but no live grant. L08 added explicit rollback-only PostgreSQL negative in commit 49e11726170c7ad32d92b2e4dc8ce8f514df5abb: revoked recruiter UPDATE note with advancing timestamp must SQLSTATE23514; current registered schema appears to allow. L01 is single migration writer: append a forward-only registered migration to enforce live grant on every content UPDATE, never mutate applied 0075 in place without agreed migration strategy. Rerun after clean disposable replay, verify no legitimate authorized editor regression and no cross-company leakage. Do not mark DB079/DB062 DONE until passing evidence.",
-        "status": "ACCEPTED",
+        "status": "APPLIED",
         "requestedAt": "2026-10-29T06:39:01.030Z",
-        "integratorReview": "L01 source-reviewed 0075 and confirms column-list UPDATE bypass of revoked recruiter grant when only rating/note changes. Added source-only forward migration candidate docs/planning/sql/db09-recruiter-private-note-update-grant-forward-candidate.sql at 317c49b9; it replaces trigger firing to BEFORE INSERT OR UPDATE (all columns), preserving existing grant-function and lifecycle guard. NO journal promotion/PG test/DB079 closure until BigInt generator and independent PG negative/race witnesses pass."
+        "integratorReview": "L01 source-reviewed 0075 and confirms column-list UPDATE bypass of revoked recruiter grant when only rating/note changes. Added source-only forward migration candidate docs/planning/sql/db09-recruiter-private-note-update-grant-forward-candidate.sql at 317c49b9; it replaces trigger firing to BEFORE INSERT OR UPDATE (all columns), preserving existing grant-function and lifecycle guard. NO journal promotion/PG test/DB079 closure until BigInt generator and independent PG negative/race witnesses pass. L01 registered forward-only 0312 trigger-firing fix and unchanged-shape snapshot at 3ccb08602a5f9d0b845997b7f53d0aa944241751. Dedicated PG17 run 40832552981 verified journal, zero-to-head replay, idempotence, and DB079 revoked-recruiter note mutation negative test PASS. Overall workflow FAILED later in DB061 chronology fixture; do not mark DB079 task green without independent whole-domain closure."
       },
       {
         "id": "SCR-L08-L07-DB079-NOTE-REVOKE-CONSUMER-20261029",
@@ -2490,6 +2490,17 @@
         "reason": "CLOSURE EVIDENCE: registered DB008 workflow 40831919328 (https://github.com/42Students/lms-vnext/actions/runs/40831919328) at exact SHA c9431ce87126f5939270cc12048c6d45570c65e0 passed journal integrity, clean PG17 migration+seed, idempotence, direct-SQL tenant/parent/concurrency negatives, real course/lesson/progress+direct content link+historical snapshot PG integration, and all source contracts including repaired numeric school-year roster assertion. TypeScript compile was still RUNNING at first review; check FINAL workflow conclusion before acceptance. L04 review full DB008 scope/producer/consumer and exact SHA; mark green ONLY with all required acceptance gates and after BigInt schema fix. L01 does not claim DB008 complete. FINAL SUCCESS verified: same exact run 40831919328 completed with conclusion=success, including final TypeScript compile and cleanup, all mandatory workflow steps green. This does not settle all DB008 active-field dispositions or the global Drizzle generator gate; domain owner must make scoped acceptance decision.",
         "status": "REQUESTED",
         "requestedAt": "2026-10-29T06:54:46.433Z"
+      },
+      {
+        "id": "L01-L08-DB061-PG-TIMESTAMP-PRECISION-20261029",
+        "fromLane": "L01",
+        "toLane": "L08",
+        "paths": [
+          "tests/db09-message-registered-pg-acceptance.mjs"
+        ],
+        "reason": "BLOCKING EXECUTED PG17 FAILURE: DB079 acceptance workflow run 40832552981 at SHA 3ccb08602a5f9d0b845997b7f53d0aa944241751, after DB079 note negative suite PASS, DB061 message witness failed at line 94 with SQLSTATE 23514 `message thread last_message_at does not match persisted chronology`. Line 92 sends first.created_at (pg parsed as JS Date, millisecond precision) through Node parameter binding to PostgreSQL timestamp (microseconds). This may lose fractional microseconds and violate exact deferred trigger. Update fixture to set last_message_at using an in-database max(created_at) subquery with exact timestamp, like the later source already does. Preserve deferred chronology negative assertions; rerun clean PG17 and independently verify expected SQLSTATE negatives. Do not weaken trigger or mark DB061 green from authored source.",
+        "status": "REQUESTED",
+        "requestedAt": "2026-10-29T07:01:16.556Z"
       }
     ],
     "coordination": {
