@@ -43,14 +43,14 @@ jobs:
           node-version: 22
           cache: npm
       - run: npm ci
-      - name: Pin latest main SHA
+      - name: Verify exact triggering commit
         shell: bash
         run: |
           set -euo pipefail
-          git fetch origin main
-          git reset --hard origin/main
-          echo "DB_SAFETY_VERIFY_SHA=$(git rev-parse HEAD)" >> "$GITHUB_ENV"
-          echo "Verifying $(git rev-parse HEAD)"
+          actual="$(git rev-parse HEAD)"
+          test "$actual" = "$GITHUB_SHA"
+          echo "DB_SAFETY_VERIFY_SHA=$actual" >> "$GITHUB_ENV"
+          echo "Verifying exact event commit $actual"
       - name: Execute fail-before-network safety suite
         run: node --test tests/db01-test-database-guard.test.mjs
       - name: Explicit disposable test reset and seed
