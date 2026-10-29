@@ -265,7 +265,7 @@
       "dependsOn": [],
       "sourceProgress": {
         "state": "SOURCE_PATCHED_NOT_ACCEPTED",
-        "summary": "Mentor reschedule window checked again after row-lock contention, before DB update. Does not complete DB010's full 358-field active-vs-retired semantic reconciliation. Existing soft-deleted meetings are now excluded under the scheduling row lock, preventing revival or notification on an already-deleted meeting; integration and registered source regression authored. Subsequent domain pass now rejects deleted project parents on task/sprint/release commands; task creation rejects tombstoned sprint; active assignee membership is protected by a SHARE lock during eligibility. Disposable integration regression scenarios authored, but not yet executed.",
+        "summary": "Mentor reschedule window checked again after row-lock contention, before DB update. Does not complete DB010's full 358-field active-vs-retired semantic reconciliation. Existing soft-deleted meetings are now excluded under the scheduling row lock, preventing revival or notification on an already-deleted meeting; integration and registered source regression authored. Subsequent domain pass now rejects deleted project parents on task/sprint/release commands; task creation rejects tombstoned sprint; active assignee membership is protected by a SHARE lock during eligibility. Disposable integration regression scenarios authored, but not yet executed. Follow-up closes project/deleted sprint/task tombstone write guards in Mentor detail editors and learner-owned task create/delete. Source tests added to DB07 parity suite; disposable PG verification remains pending.",
         "implementationCommit": "3243c7c108a50736a143ac8a67efa1d44827f217",
         "sourceTestCommits": [
           "4140fb6ecf441dba7d1765509e2692b559d4caa5",
@@ -296,7 +296,14 @@
           "checks": 9,
           "runner": "Connector V8 on current main blobs",
           "codeBlob": "c78ee4feb5562beab8fa6356d9c1fc0a7d1bcc00"
-        }
+        },
+        "editGuardCommit": "cd77e90806f76435cc8fd1c0976238ea5eb689d4",
+        "mentorEditGuardCommits": [
+          "759ba21f4e1c11b6ed68ad887df74e0bcd577549",
+          "e34c56f05c83267a15dabc74194e4e68f74e2b53"
+        ],
+        "mentorEditRegressionCommit": "2f332a10aec29fc2d863cf022ec900567f45efec",
+        "additionalSourceTestsCommit": "b8557a004c5654cb2012850e0934ffa646dbbe87"
       }
     },
     {
@@ -829,7 +836,7 @@
       "dependsOn": [],
       "sourceProgress": {
         "state": "TEST_FIXTURE_READY_NOT_ACCEPTED",
-        "summary": "Source SQL/tests for DB070 append-only history remain staged; adapted the Mentor task/sprint integration fixture teardown to retain permanent template revisions once the append-only trigger or deferred pointer FK exists, matching the prior project-template suite policy.",
+        "summary": "Source SQL/tests for DB070 append-only history remain staged; adapted the Mentor task/sprint integration fixture teardown to retain permanent template revisions once the append-only trigger or deferred pointer FK exists, matching the prior project-template suite policy. Mentor task details fixture now also checks DB070 trigger/DB071 pointer constraints before historical template cleanup; no privileged bypasses.",
         "testInfrastructureCommits": [
           "5599a38e76d3c8df494d94b22dfc95ddc7271e33",
           "e37fce43a9b4d5f72f7e351e6352d2f770ffb7fe",
@@ -839,7 +846,9 @@
           "L01 registered DB070 append-only trigger and snapshot replay",
           "Disposable PostgreSQL denial of UPDATE, DELETE and TRUNCATE CASCADE, with INSERT permitted",
           "Run the full template/mentor integration suite after trigger promotion"
-        ]
+        ],
+        "additionalTestInfrastructureCommit": "2f332a10aec29fc2d863cf022ec900567f45efec",
+        "additionalParityCommit": "b8557a004c5654cb2012850e0934ffa646dbbe87"
       }
     },
     {
@@ -866,7 +875,7 @@
       "dependsOn": [],
       "sourceProgress": {
         "state": "SOURCE_PATCHED_NOT_ACCEPTED",
-        "summary": "DB073 parent scope: the mentor task-create writer now rejects tombstoned sprint and project ancestry and locks the current assignee eligibility rows before insert. Composite FK preflight/migration staged and owned by L01; not registered or PG accepted.",
+        "summary": "DB073 parent scope: the mentor task-create writer now rejects tombstoned sprint and project ancestry and locks the current assignee eligibility rows before insert. Composite FK preflight/migration staged and owned by L01; not registered or PG accepted. Extra ancestor checks now cover Mentor task metadata, sprint metadata, learner own task create/delete and deleted task row edits. No registered composite-FK acceptance claimed.",
         "sourceCommits": [
           "7d11aa07f8d849a0bbfc71d742295ad7c27280f0",
           "74c46440907fc5333bde5acaca1d4ad4029f7a0c",
@@ -891,6 +900,12 @@
           "L01 registered DB073 composite lineage FKs",
           "Disposable PG lineage negative and concurrent writer tests",
           "App typecheck, full domain integration and CI"
+        ],
+        "additionalSourceCommits": [
+          "759ba21f4e1c11b6ed68ad887df74e0bcd577549",
+          "e34c56f05c83267a15dabc74194e4e68f74e2b53",
+          "cd77e90806f76435cc8fd1c0976238ea5eb689d4",
+          "b8557a004c5654cb2012850e0934ffa646dbbe87"
         ]
       }
     },
