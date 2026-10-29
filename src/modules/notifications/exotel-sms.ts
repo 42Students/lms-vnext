@@ -7,6 +7,7 @@ import { getDb } from "@/db/client";
 import { writeStructuredLog } from "@/observability/logger";
 import type { SmsProvider } from "./types";
 import { isExotelAcceptedResponse } from "@/modules/messaging/provider-acceptance-model";
+import { validatedSmsAttempt } from "./sms-attempt-validation";
 
 /**
  * Exotel transactional SMS, matching the legacy LMS integration.
@@ -98,24 +99,15 @@ export type SmsAttemptInput = {
   collegeId?: string | null;
   organizationId?: string | null;
 };
-const smsUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+
 /**
  * Shared append-only DB-031 adapter for OTP/job/attendance/notice transports.
  * Return value describes audit storage ONLY; never interpret it as send status.
  * No external send is triggered here. The schema lane owns the migration.
  */
 export async function appendSmsDeliveryAttempt(input: SmsAttemptInput): Promise<"RECORDED" | "STORAGE_PENDING" | "FAILED"> {
-  const suffix = normalizeSmsSupportSuffix(input.recipient) || null;
-  const code = input.failureCode ?? null;
-  const sid = input.providerSid ?? null;
-  const pairIsPresent = Boolean(input.collegeId) === Boolean(input.organizationId);
-  const validIds = (!input.collegeId || smsUuid.test(input.collegeId)) &&
-    (!input.organizationId || smsUuid.test(input.organizationId)) &&
-    (!input.sourceEventId || smsUuid.test(input.sourceEventId));
-  const validResult = input.outcome === "PROVIDER_ACCEPTED"
-    ? Boolean(sid && /^[A-Za-z0-9][A-Za-z0-9._:-]{0,63}$/.test(sid) && !code)
-    : Boolean(code && /^[A-Z0-9_.:-]{1,40}$/.test(code) && !sid);
-  if (!pairIsPresent || !validIds || !validResult) return "FAILED";
+  const attempt = validatedSmsAttempt(input);
+  if (!attempt) return "FAILED";
   try {
     const db = getDb();
     // Drizzle 0162 registers this table; the retired DB-031 staging layout is
@@ -123,7 +115,7 @@ export async function appendSmsDeliveryAttempt(input: SmsAttemptInput): Promise<
     const readyResult = await db.execute(sql<{ready:boolean}>`select to_regclass('public.messaging_sms_delivery_attempts') is not null as ready`);
     if (!readyResult.rows[0]?.["ready"]) {
       writeStructuredLog("WARNING", "sms.delivery_attempt_ledger_unavailable",
-        { purpose: input.purpose, reason: "DB31_NOT_REGISTERED" });
+        { purpose: attempt.purpose, reason: "DB31_NOT_REGISTERED" });
       return "STORAGE_PENDING";
     }
     // 0162 registers the audit fields above; never assume the optional
@@ -133,14 +125,14 @@ export async function appendSmsDeliveryAttempt(input: SmsAttemptInput): Promise<
       insert into messaging_sms_delivery_attempts
         (organization_id, college_id, purpose, recipient_suffix, outcome,
          provider_message_id, error_code, attempted_at)
-      values (${input.organizationId ?? null}, ${input.collegeId ?? null},
-        ${input.purpose}, ${suffix}, ${input.outcome}, ${sid}, ${code},
+      values (${attempt.organizationId}, ${attempt.collegeId},
+        ${attempt.purpose}, ${attempt.suffix}, ${attempt.outcome}, ${attempt.providerSid}, ${attempt.failureCode},
         clock_timestamp())
     `);
     return "RECORDED";
   } catch {
     writeStructuredLog("WARNING", "sms.delivery_attempt_ledger_write_failed",
-      { purpose: input.purpose, reason: "ATTEMPT_AUDIT_UNAVAILABLE" });
+      { purpose: attempt.purpose, reason: "ATTEMPT_AUDIT_UNAVAILABLE" });
     return "FAILED";
   }
 }
