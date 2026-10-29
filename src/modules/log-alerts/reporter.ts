@@ -1,4 +1,5 @@
-import { createHash, createHmac, randomUUID } from "node:crypto";
+import { createHash, randomUUID } from "node:crypto";
+import { deriveVerifiedAlertAccountHash } from "./account-identity";
 import { and, count, eq, sql } from "drizzle-orm";
 import { getDb } from "@/db/client";
 import {
@@ -87,10 +88,11 @@ export function observedEventHash(
  * Telegram credentials, and Cloud Logging reader IAM for the polling job.
  */
 function trustedAccountHash(input: ReportableError): string | null {
-  const key = process.env["LOG_ALERT_ACCOUNT_HASH_KEY"];
-  if (!key || !input.userId || !/^[a-f0-9-]{20,64}$/i.test(input.userId)) return null;
-  return createHmac("sha256", key)
-    .update((input.collegeId ?? "platform") + ":" + input.userId).digest("hex");
+  return deriveVerifiedAlertAccountHash({
+    userId: input.userId,
+    collegeId: input.collegeId,
+    key: process.env["LOG_ALERT_ACCOUNT_HASH_KEY"],
+  });
 }
 
 async function emergencySend(hash: string, message: string): Promise<boolean> {
