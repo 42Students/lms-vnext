@@ -17,6 +17,20 @@ describe("GR-114 request ID correlation and GR-124 config safety", () => {
     expect(withoutRequest).toBe(observedEventHash("PRODUCTION", "a".repeat(64), undefined, providerId));
     expect(withoutRequest).not.toBe(observedEventHash("PRODUCTION", "a".repeat(64), undefined, providerId + "-other"));
   });
+  it("DB-023 retains exact bigint occurrence counts in operator alerts", () => {
+    const alert = formatAlert({
+      kind: "error spike",
+      environment: "PRODUCTION",
+      time: new Date("2099-07-01T03:30:00Z"),
+      event: "api.unhandled_error",
+      path: "/api/jobs",
+      message: "opaque error",
+      count: 9007199254740995n,
+    });
+    expect(alert).toContain("Count: 9007199254740995");
+    expect(alert).not.toContain("Count: 9007199254740996");
+  });
+
   it("GR-113 GR-114 refuses a non-reference user value in formatted Telegram messages", () => {
     const alert = formatAlert({
       kind: "new error", environment: "DEVELOPMENT",
