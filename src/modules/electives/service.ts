@@ -137,7 +137,8 @@ export async function createElectiveOffering(context: RequestContext, raw: unkno
       deletedAt: courses.deletedAt,
     }).from(courses)
       .innerJoin(departments, eq(departments.id, courses.departmentId))
-      .where(eq(courses.id, input.courseId)).limit(1);
+      .where(eq(courses.id, input.courseId))
+      .for("share", { of: courses }).limit(1);
     if (!course || course.collegeId !== slot.collegeId || course.status !== "ACTIVE" ||
         !course.enabled || course.deletedAt) {
       throw new ElectivesServiceError("ELECTIVE_COURSE_COLLEGE_MISMATCH");
@@ -431,7 +432,8 @@ export async function updateCollegeElectiveOffering(
       .innerJoin(cohorts, eq(cohorts.id, courseOfferings.cohortId))
       .innerJoin(programs, eq(programs.id, cohorts.programId))
       .innerJoin(departments, eq(departments.id, courses.departmentId))
-      .where(eq(courseSectionDeliveries.id, input.backedDeliveryId)).limit(1);
+      .where(eq(courseSectionDeliveries.id, input.backedDeliveryId))
+      .for("share", { of: courses }).limit(1);
     // A course switch is safe only when the new backed delivery and its
     // section are in the same active college/program/academic period.
     if (!delivery || delivery.courseId !== input.courseId ||
