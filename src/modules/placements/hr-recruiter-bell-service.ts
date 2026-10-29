@@ -1,13 +1,15 @@
 import "server-only";
-import {and,eq,inArray,isNull,lte,sql} from "drizzle-orm";
+import {and,eq,gte,inArray,isNull,lte,sql} from "drizzle-orm";
 import {getDb} from "@/db/client";
-import {activityEvents,inAppNotifications} from "@/db/schema";
+import {activityEvents,inAppNotifications,placementJobs} from "@/db/schema";
+import {placementTpoMessages,placementTpoMessageThreads} from "@/db/schema/tpo-collaboration";
 import {hasActiveRecruiter,type RequestContext} from "@/modules/identity/context";
 import {AuthorizationError} from "@/modules/permissions/policy";
 import {listOwnRecruiterPlacementJobs} from "./recruiter-service";
 import {listHrNotifications} from "./hr-notifications-service";
 import {HR_NOTIFICATION_EVENTS} from "./hr-notifications-model";
 import {listRecentUnreadRecruiterThreads} from "./hr-conversation-inbox-service";
+import {loadActiveRecruiterGrant} from "./tpo-messaging-service";
 import {hrConversationsHref} from "./hr-conversation-urls-model";
 /** Scope is resolved by the inbox service before either feed page is read.
  * Only the newest 40 events from the last 30 days are shown in the bell.
@@ -95,27 +97,73 @@ export async function readHrRecruiterBell(ctx:RequestContext){
  return {status:"READY" as const,unread:count.unread,unreadTotal:count.unread,
   hiddenUnread,feed:items,items};
 }
-/** Mark only the caller's notifications for persisted employer-visible drives.
- * Other users, ungranted colleges and message threads cannot be modified. */
+/** A single click acknowledges both event receipts and the TPO messages that
+ * contribute to the recruiter bell badge. It never modifies another
+ * recruiter/college/company or an ungranted drive. The persisted active grant
+ * and job/thread parents are rechecked under transaction locks, rather than
+ * trusting a stale session or the earlier badge projection. */
 export async function markHrRecruiterBellRead(ctx:RequestContext){
- if(!hasActiveRecruiter(ctx)||!ctx.recruiter)
+ if(!hasActiveRecruiter(ctx)||!ctx.recruiter||ctx.recruiter.userId!==ctx.user.id)
   throw new AuthorizationError("placements.recruiter.read");
  const feed=await listHrNotifications(ctx,{});
- if(feed.status!=="READY")return {marked:0};
+ if(feed.status!=="READY")return {marked:0,notificationsMarked:0,messagesMarked:0};
  const visible=(await listOwnRecruiterPlacementJobs(ctx,feed.collegeId))
-  .filter(x=>x.companyId===ctx.recruiter!.companyId && x.collegeId===feed.collegeId);
- const ids=[...new Set(visible.map(x=>x.job.id))];
- const colleges=[...new Set(visible.map(x=>x.collegeId))];
- if(!ids.length||!colleges.length)return {marked:0};
- const nested=getDb().select({id:activityEvents.id}).from(activityEvents)
-  .where(and(eq(activityEvents.module,"PLACEMENTS"),eq(activityEvents.subjectType,"placement_job"),
-   inArray(activityEvents.subjectId,ids),
-   inArray(activityEvents.collegeId,colleges),
-   inArray(activityEvents.eventType,[...HR_NOTIFICATION_EVENTS])));
- const updated=await getDb().update(inAppNotifications).set({readAt:sql`CURRENT_TIMESTAMP`})
-  .where(and(eq(inAppNotifications.userId,ctx.user.id),isNull(inAppNotifications.readAt),
-   inArray(inAppNotifications.eventId,nested),
-   lte(inAppNotifications.createdAt,sql`CURRENT_TIMESTAMP`)))
-  .returning({id:inAppNotifications.id});
- return {marked:updated.length};
+  .filter(row=>row.companyId===ctx.recruiter!.companyId&&row.collegeId===feed.collegeId);
+ const candidateJobIds=[...new Set(visible.map(row=>row.job.id))];
+ // General conversations have no job and must still be acknowledged when the
+ // recruiter has no drives. Only threads in the 30-day bell are considered.
+ const recentThreads=await listRecentUnreadRecruiterThreads(ctx,feed.collegeId);
+ const candidateThreadIds=recentThreads.map(thread=>thread.id);
+ const cutoff=new Date(Date.now()-30*86400000);
+ return getDb().transaction(async tx=>{
+  const grant=await loadActiveRecruiterGrant(tx,ctx.user.id,feed.collegeId,true);
+  if(!grant)throw new AuthorizationError("placements.recruiter.read");
+  // A job belonging to the same employer but a different relationship/college
+  // must never be acknowledged with an outdated in-memory recruiter grant.
+  const jobs=candidateJobIds.length?await tx.select({id:placementJobs.id})
+   .from(placementJobs).where(and(
+    inArray(placementJobs.id,candidateJobIds),
+    eq(placementJobs.collegeId,feed.collegeId),
+    eq(placementJobs.companyRelationshipId,grant.companyRelationshipId),
+   )).orderBy(placementJobs.id).for("share"):[];
+  const jobIds=jobs.map(job=>job.id);
+  const allowedJobs=new Set(jobIds);
+  const threads=candidateThreadIds.length?await tx.select({
+   id:placementTpoMessageThreads.id,
+   jobId:placementTpoMessageThreads.jobId,
+  }).from(placementTpoMessageThreads).where(and(
+   inArray(placementTpoMessageThreads.id,candidateThreadIds),
+   eq(placementTpoMessageThreads.collegeId,feed.collegeId),
+   eq(placementTpoMessageThreads.recruiterUserId,ctx.user.id),
+   gte(placementTpoMessageThreads.lastMessageAt,cutoff),
+  )).orderBy(placementTpoMessageThreads.id).for("share"):[];
+  const threadIds=threads.filter(thread=>!thread.jobId||allowedJobs.has(thread.jobId))
+   .map(thread=>thread.id);
+  const now=new Date();
+  const eventIds=jobIds.length?tx.select({id:activityEvents.id})
+   .from(activityEvents).where(and(
+    eq(activityEvents.module,"PLACEMENTS"),
+    eq(activityEvents.subjectType,"placement_job"),
+    eq(activityEvents.collegeId,feed.collegeId),
+    inArray(activityEvents.subjectId,jobIds),
+    inArray(activityEvents.eventType,[...HR_NOTIFICATION_EVENTS]),
+   )):null;
+  const notifications=eventIds?await tx.update(inAppNotifications).set({readAt:now})
+   .where(and(
+    eq(inAppNotifications.userId,ctx.user.id),
+    isNull(inAppNotifications.readAt),
+    inArray(inAppNotifications.eventId,eventIds),
+    lte(inAppNotifications.createdAt,now),
+   )).returning({id:inAppNotifications.id}):[];
+  const messages=threadIds.length?await tx.update(placementTpoMessages).set({readAt:now})
+   .where(and(
+    inArray(placementTpoMessages.threadId,threadIds),
+    eq(placementTpoMessages.senderType,"TPO"),
+    eq(placementTpoMessages.kind,"MESSAGE"),
+    isNull(placementTpoMessages.readAt),
+    lte(placementTpoMessages.createdAt,now),
+   )).returning({id:placementTpoMessages.id}):[];
+  return {marked:notifications.length+messages.length,
+   notificationsMarked:notifications.length,messagesMarked:messages.length};
+ });
 }
