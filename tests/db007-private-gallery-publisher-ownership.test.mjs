@@ -73,6 +73,6 @@ test("DB-007 never calls a deactivated receipt a successfully published image",(
  const insert=gallery.slice(gallery.indexOf("export async function appendLearnerGalleryImage("),
    gallery.indexOf("export async function deactivateLearnerGalleryImage("));
  assert.match(insert,/if \(!same\.isActive \|\| same\.deactivatedAt\)/);
- assert.match(insert,/throw new LearnerGalleryError\("GALLERY_RECEIPT_INVALID"\)/);
+ assert.match(insert,/throw new LearnerGalleryError\("GALLERY_IMAGE_REMOVED"\)/);
  assert.match(insert,/alreadyAdded: true/);
 });
