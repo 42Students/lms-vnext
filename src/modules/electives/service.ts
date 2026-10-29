@@ -419,6 +419,8 @@ export async function updateCollegeElectiveOffering(
       sectionPeriodId: sections.academicPeriodId,
       sectionStatus: sections.status,
       courseStatus: courses.status,
+      courseEnabled: courses.enabled,
+      courseDeletedAt: courses.deletedAt,
       endedAt: courseSectionDeliveries.endedAt,
     }).from(courseSectionDeliveries)
       .innerJoin(courseOfferings, eq(courseOfferings.id, courseSectionDeliveries.offeringId))
@@ -433,7 +435,8 @@ export async function updateCollegeElectiveOffering(
     if (!delivery || delivery.courseId !== input.courseId ||
         delivery.collegeId !== slot.collegeId || delivery.offeringProgramId !== slot.programId ||
         delivery.offeringType !== "ELECTIVE" || delivery.offeringStatus !== "ACTIVE" ||
-        delivery.courseStatus !== "ACTIVE" || delivery.sectionStatus !== "ACTIVE" ||
+        delivery.courseStatus !== "ACTIVE" || !delivery.courseEnabled ||
+        delivery.courseDeletedAt !== null || delivery.sectionStatus !== "ACTIVE" ||
         delivery.endedAt !== null || delivery.sectionCohortId !== delivery.offeringCohortId ||
         delivery.sectionPeriodId !== delivery.offeringPeriodId ||
         (slot.academicPeriodId !== null && slot.academicPeriodId !== delivery.offeringPeriodId))
