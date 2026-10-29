@@ -55,10 +55,12 @@ export async function unsubscribeTpoCampaignRecipient(
   // global opt-out when cancellation/storage is unavailable. Global success
   // followed by a local failure conservatively keeps that email suppressed;
   // a retry safely completes the per-campaign state.
+  let globalSnapshotProof:{recipientKey:string;leadId:string}|null=null;
   const globalKey=process.env["DB10_GLOBAL_EMAIL_HMAC_KEY_BASE64"]??"";
   if(globalKey){
     const [recipient]=await db.select({
       recipientKey:placementTpoEmailCampaignRecipients.recipientKey,
+      leadId:placementTpoEmailCampaignRecipients.leadId,
       email:placementTpoLeads.emailNorm,
     }).from(placementTpoEmailCampaignRecipients)
       .innerJoin(placementTpoLeads,and(
@@ -82,6 +84,9 @@ export async function unsubscribeTpoCampaignRecipient(
       await persistVerifiedGlobalEmailSuppression({
         recipientHash,reason:"UNSUBSCRIBED",
       });
+      globalSnapshotProof={
+        recipientKey:recipient.recipientKey,leadId:recipient.leadId,
+      };
     }
     // When a lead's address no longer matches the campaign's original
     // recipientKey, we cannot prove the old email identity. Do NOT suppress
@@ -95,6 +100,14 @@ export async function unsubscribeTpoCampaignRecipient(
         asc(placementTpoEmailCampaignRecipients.id))
       .for("update").limit(1);
     if(!row)return "ALREADY";
+    // The global proof was derived for this locked recipient snapshot.
+    // If another actor repointed a campaign recipient between the verified
+    // preflight and this row lock, do not apply their opt-out to a different
+    // CRM lead after having suppressed the original email.
+    if(globalSnapshotProof && (
+      row.recipientKey!==globalSnapshotProof.recipientKey ||
+      row.leadId!==globalSnapshotProof.leadId
+    ))throw new GlobalEmailSuppressionUnavailable();
     const decision=claim?campaignUnsubscribeDecision(claim,row):
       row.unsubscribedAt?"ALREADY":"APPLY";
     if(decision!=="APPLY")return decision;
