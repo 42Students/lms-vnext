@@ -50,12 +50,12 @@ export async function createMentorProjectSprint(
   const scope=await mentorSprintWriteScope(context,params.projectId);
   try {
     return await getDb().transaction(async tx=>{
-      const [project]=await tx.select({status:projectInstances.status})
+      const [project]=await tx.select({status:projectInstances.status,deletedAt:projectInstances.deletedAt})
         .from(projectInstances)
         .where(and(eq(projectInstances.id,scope.project.id),
           eq(projectInstances.collegeId,scope.collegeId)))
         .for("update").limit(1);
-      if(!project || !mentorSprintProjectWritable(project.status)) {
+      if(!project || project.deletedAt || !mentorSprintProjectWritable(project.status)) {
         throw new ProjectsServiceError("PROJECT_SPRINT_INVALID_STATE");
       }
       await assertPersistedProjectMutationActor(tx,context,scope);
