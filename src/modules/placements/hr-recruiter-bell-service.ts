@@ -105,9 +105,9 @@ export async function markHrRecruiterBellRead(ctx:RequestContext){
  if(!hasActiveRecruiter(ctx)||!ctx.recruiter||ctx.recruiter.userId!==ctx.user.id)
   throw new AuthorizationError("placements.recruiter.read");
  const feed=await listHrNotifications(ctx,{});
- if(feed.status!=="READY")return {marked:0,notificationsMarked:0,messagesMarked:0};
+ if(feed.status!=="READY")return {marked:0};
  const visible=(await listOwnRecruiterPlacementJobs(ctx,feed.collegeId))
-  .filter(row=>row.companyId===ctx.recruiter!.companyId&&row.collegeId===feed.collegeId);
+  .filter(x=>x.companyId===ctx.recruiter!.companyId && x.collegeId===feed.collegeId);
  const candidateJobIds=[...new Set(visible.map(row=>row.job.id))];
  // General conversations have no job and must still be acknowledged when the
  // recruiter has no drives. Only threads in the 30-day bell are considered.
