@@ -448,6 +448,10 @@ export async function listLessonContents(
         return {
           ...row,
           storageKey: null,
+          // The original unvalidated import JSON may contain private R2
+          // keys, raw HTML or embedded tokens. Only normalized, vetted
+          // reader fields are exposed outside the authoring boundary.
+          legacyContentData: null,
           externalUrl: learnerVisibleContentExternalUrl({
             contentType: row.contentType,
             availability,
