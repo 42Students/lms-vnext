@@ -89,12 +89,18 @@ export async function queueOutboundDeliveryInTransaction(
   }
 
   const encryptionKey = process.env["DB10_OUTBOUND_ENCRYPTION_KEY_BASE64"] ?? "";
+  const globalEmailKey = process.env["DB10_GLOBAL_EMAIL_HMAC_KEY_BASE64"] ?? "";
+  // A stable cross-college consent HMAC cannot share the encryption secret.
+  // Rotating ciphertext keys must not erase a recipient's previous opt-out.
+  if (intent.channel === "EMAIL" && encryptionKey === globalEmailKey) {
+    throw new OutboundDeliveryError("OUTBOUND_KEY_UNAVAILABLE");
+  }
   const envelope = sealOutboundDelivery(intent, encryptionKey);
   // Global email recipient HMAC is intentionally different from the
   // organization-scoped recipientHash. Null for SMS and WhatsApp.
   const globalEmailSuppressionHash = deriveGlobalEmailSuppressionHash(
     intent,
-    process.env["DB10_GLOBAL_EMAIL_HMAC_KEY_BASE64"] ?? "",
+    globalEmailKey,
   );
   // A unique per-message commitment lets the dispatcher prove its global
   // EMAIL opt-out HMAC matches the queued recipient without storing that
