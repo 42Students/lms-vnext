@@ -44,6 +44,11 @@ export async function rescheduleMentorMeeting(context:RequestContext,rawParams:u
     if(!meeting||meeting.deletedAt)throw new ProjectsServiceError("PROJECT_MEETING_NOT_FOUND");
     if(!project||project.deletedAt||!mentorMeetingCanReschedule(meeting.status,project.status))
       throw new ProjectsServiceError("PROJECT_MEETING_INVALID_STATE");
+    // A queued reschedule can acquire the project/meeting locks after its
+    // proposed start time has passed. Recheck the actual write-time clock,
+    // not just the request-time preflight above.
+    if(start.getTime()<=Date.now())
+      throw new ProjectsServiceError("PROJECT_MEETING_INVALID_STATE");
     // Legacy @Version Long becomes persisted updatedAt with millisecond CAS.
     // JPA's fresh-row null version is not a valid client token here: the
     // selected persisted meeting must supply expectedUpdatedAt.
