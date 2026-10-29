@@ -431,10 +431,13 @@ export async function issuePlacementOffer(
     const [liveJob] = await tx.select({
       status: placementJobs.status, archivedAt: placementJobs.archivedAt,
       openings: placementJobs.openings,
+      collegeId:placementJobs.collegeId,seasonId:placementJobs.seasonId,
     }).from(placementJobs).where(eq(placementJobs.id, current.job.id))
       .for("update").limit(1);
     if (!liveJob || liveJob.status !== "PUBLISHED" ||
-        liveJob.archivedAt !== null) {
+        liveJob.archivedAt !== null ||
+        liveJob.collegeId!==current.job.collegeId ||
+        liveJob.seasonId!==current.job.seasonId) {
       throw new PlacementsServiceError("PLACEMENT_OFFER_NOT_READY");
     }
     // An inconsistent PUBLISHED job must never issue a new offer after the
@@ -479,6 +482,9 @@ export async function issuePlacementOffer(
         .select({
           status:
             placementApplications.status,
+          jobId:placementApplications.jobId,
+          membershipId:placementApplications.membershipId,
+          roleOptionId:placementApplications.roleOptionId,
         })
         .from(placementApplications)
         .where(
@@ -493,7 +499,10 @@ export async function issuePlacementOffer(
     if (
       !lockedApplication ||
       lockedApplication.status !==
-        "SUBMITTED"
+        "SUBMITTED" ||
+      lockedApplication.jobId!==current.job.id ||
+      lockedApplication.membershipId!==member.id ||
+      lockedApplication.roleOptionId!==current.application.roleOptionId
     ) {
       throw new PlacementsServiceError(
         "PLACEMENT_OFFER_NOT_READY",
@@ -512,6 +521,14 @@ export async function issuePlacementOffer(
     if (!lockedScreening || lockedScreening.status !== "SHORTLISTED") {
       throw new PlacementsServiceError("PLACEMENT_OFFER_NOT_READY");
     }
+    // DB066: a role-option UUID is not sufficient ancestry evidence before
+    // composite same-job FKs become authoritative in the registered schema.
+    const [liveRole]=await tx.select({id:placementJobRoleOptions.id})
+      .from(placementJobRoleOptions).where(and(
+        eq(placementJobRoleOptions.id,lockedApplication.roleOptionId),
+        eq(placementJobRoleOptions.jobId,current.job.id),
+      )).for("share").limit(1);
+    if(!liveRole)throw new PlacementsServiceError("PLACEMENT_OFFER_NOT_READY");
     await assertApplicationOfferReady(tx, current.application.id, current.job.id);
     // DB029: an issuer may have waited behind a job, season or learner
     // lock. Start the minimum response clock only after those waits.
