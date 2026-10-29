@@ -2357,6 +2357,20 @@
         "reason": "Independent PG17 run 40825547851 / job 123287640013 at SHA 14c000d1fd37118ca12a6e17bfdc618bac55fefe fails DB09 collaborator negative: `ordinary faculty denied TPO preferences was incorrectly allowed`. Witness creates fresh ACTIVE FACULTY-only user/membership, verifies db09_has_active_tpo_actor returns false, then INSERT into placement_tpo_user_preferences unexpectedly succeeds rather than SQLSTATE 23514. Investigate registered trigger guard and actual DB rule; ensure cross-college/immutable owner and read scope remain fail-closed. Preserve real negative checks; do not weaken assertions or report DB09 green without exact-SHA disposable PG17 rerun. L01 owns numbered migration registration.",
         "status": "REQUESTED",
         "requestedAt": "2026-10-29T06:31:00.000Z"
+      },
+      {
+        "id": "SCR-L08-L07-DB062-CANONICAL-NOTES-20261029",
+        "fromLane": "L08",
+        "toLane": "L07",
+        "paths": [
+          "src/modules/placements/recruiter-private-rating-service.ts",
+          "src/db/schema/placement-recruiter-candidate-ratings.ts",
+          "src/db/schema/tpo-collaboration.ts",
+          "tests/db09-recruiter-note-registered-pg-acceptance.mjs"
+        ],
+        "reason": "DB-062 domain parity gap: active recruiter private rating/note service reads/writes placement_recruiter_private_reviews (schema placement-recruiter-candidate-ratings.ts, 5 columns, unique recruiter+application), not registered DB09 placement_recruiter_applicant_notes (10 columns, scoped job+college, immutable identity/timestamps). L08 PG witness now covers historical-named DB09 table, but the real consumer does not touch it. L07 owns service: confirm approved single canonical data model and migrate/retire redundant table only through L01 migration ownership, or adapt current producer and consumer to DB09 table with real same-company grant and source versioning. No unreviewed dual writes; no DB062 acceptance on orphan-table-only PG success. Source comparison confirmed this discrepancy. Coordinate DB079 post-revocation UPDATE guard with L01 handoff.",
+        "status": "REQUESTED",
+        "requestedAt": "2026-10-29T06:40:40.644Z"
       }
     ],
     "coordination": {
