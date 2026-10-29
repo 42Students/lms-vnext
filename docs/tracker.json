@@ -1773,9 +1773,12 @@
           "src/app/api/attendance/**"
         ],
         "reason": "Legacy GET /attendance/courses / NewProgramDetailsDTO.CourseInfo.formal_title derives from shortTitle when non-null, otherwise courseName. L04 supplied tested src/modules/courses/course-legacy-parity-model.ts legacyFormalTitle; L05 owns attendance API wiring and end-to-end scoped consumer acceptance. Do not add formal_title to PublicCourseDTO or duplicate persisted column.",
-        "status": "ACCEPTED",
+        "status": "APPLIED",
         "requestedAt": "2026-10-28T20:01:01.682Z",
-        "acceptedAt": "2026-10-29T05:33:11.519Z"
+        "acceptedAt": "2026-10-29T05:33:11.519Z",
+        "appliedAt": "2026-10-29T05:39:57.207Z",
+        "appliedCommitSha": "6193d7a980cc43a5798dc2fbd792ce7b2e3855cb",
+        "verification": "Tenant-scoped delivery and course options project the same legacyFormalTitle; disposable PostgreSQL integration assertions committed but not executed. APPLIED denotes code integration only, not DB06 task acceptance."
       },
       {
         "id": "L04-L01-DB078-REGISTERED-PG-WITNESS-20261029",
