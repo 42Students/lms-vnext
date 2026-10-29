@@ -2061,6 +2061,21 @@
         "reason": "After L01 provider SID-width registration, run DB-031 independent disposable PostgreSQL witnesses for append-only attempted SMS, PII-free support search, valid EXOTEL SID 65-128 not dropped, malformed purpose/identity rejection, forged organization/college ownership and direct DB writes. Accepted transport must not silently lose audit. No live SMS provider in tests.",
         "status": "REQUESTED",
         "requestedAt": "2026-10-29T06:20:00.000Z"
+      },
+      {
+        "id": "L05-L04-DB06-ASSESSMENTS-COORDINATION-20261029",
+        "fromLane": "L05",
+        "toLane": "L04",
+        "status": "REQUESTED",
+        "requestedAt": "2026-10-29T05:48:11.302Z",
+        "paths": [
+          "src/modules/courses/assignment-submission-service.ts",
+          "src/modules/courses/assignment-bulk-grade-publish-service.ts",
+          "src/modules/courses/quiz-service.ts",
+          "src/modules/courses/quiz-attempt-service.ts",
+          "src/modules/courses/faculty-quiz-authoring-service.ts"
+        ],
+        "reason": "L05 owns DB06 acceptance for DB-035/038/041/044/052/053, but the active assessment/quiz producers live under L04-owned src/modules/courses/**. Please coordinate exact single-writer ownership or accept L05 handoff before changing these files. DB-035 gradeAssignmentSubmission/publishAssignmentGrade need atomic immutable grade events+version; DB-041 quiz shuffle persistence, DB-044 assignment attempts and DB-052 lifecycle require producer-side registration. L05 will stage and test domain contracts under its owned assessment/attendance scope and will not edit L04-owned files without ACCEPTED."
       }
     ],
     "coordination": {
