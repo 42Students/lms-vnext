@@ -154,6 +154,17 @@ function keyMaterial(keyBase64: string) {
   return { cipherKey, digestKey };
 }
 
+/** Pre-claim secret readiness: validate with the SAME strict decoder used
+ * for encryption/decryption, without exposing a derived key or payload. */
+export function outboundEncryptionKeyConfigured(raw: string): boolean {
+  try {
+    keyMaterial(raw);
+    return true;
+  } catch {
+    return false;
+  }
+}
+
 function digest(key: Buffer, label: string, payload: string) {
   return createHmac("sha256", key)
     .update(label + ":" + payload, "utf8")
