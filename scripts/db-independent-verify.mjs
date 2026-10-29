@@ -5,6 +5,7 @@ import { spawnSync } from "node:child_process";
 import net from "node:net";
 import { assertSafeDb01TestTarget } from "./db01-test-database-guard.mjs";
 import { redactVerifierOutput } from "./db-independent-verifier-redaction.mjs";
+import { inspectCanonicalGenerationOutput } from "./db-independent-verifier-generation-guard.mjs";
 
 const postgresImage =
   process.env.DB_VERIFY_POSTGRES_IMAGE ?? "postgres:17-alpine";
@@ -97,6 +98,10 @@ function runStep(name, command, args, env) {
   process.stdout.write(redactVerifierOutput(stdout));
   process.stderr.write(redactVerifierOutput(stderr));
   const combined = `${stdout}\n${stderr}`;
+  const canonicalGeneration =
+    name === "Canonical Drizzle generation"
+      ? inspectCanonicalGenerationOutput({ stdout, stderr })
+      : null;
   const record = {
     name,
     command: [command, ...args],
@@ -106,11 +111,19 @@ function runStep(name, command, args, env) {
     signal: result.signal ?? null,
     outputSha256: createHash("sha256").update(combined).digest("hex"),
     outputTail: outputTail(redactVerifierOutput(combined)),
+    ...(canonicalGeneration ? { canonicalGeneration } : {}),
   };
   results.push(record);
   if (result.error) throw result.error;
   if (result.status !== 0) {
     throw new Error(`${name} failed with exit code ${result.status}`);
+  }
+  if (canonicalGeneration && !canonicalGeneration.passed) {
+    // drizzle-kit can print fatal TypeError stacks while exiting successfully.
+    // Later clean-diff checks cannot retroactively prove generation completed.
+    throw new Error(
+      "Canonical Drizzle generation emitted diagnostics despite exit code 0; schema drift certification refused",
+    );
   }
 }
 
