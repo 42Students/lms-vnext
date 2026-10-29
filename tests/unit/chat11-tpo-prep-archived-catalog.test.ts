@@ -22,16 +22,18 @@ describe("TPO-settings-audit-PREP-CATALOG-07 archive-safe preparation courses",(
   expect(result.courses).toEqual([]);
   expect(result.minimumCompleted).toBe(1);
  });
- it("applies active department and exact college restriction to both catalog and published evidence",()=>{
+ it("applies active departments and same-organization course scope to catalog and published evidence",()=>{
   const config=readFileSync("src/modules/placements/tpo-configuration-read-service.ts","utf8");
   const derived=readFileSync("src/modules/placements/tpo-prep-readiness-derived-service.ts","utf8");
   const catalog=config.slice(config.indexOf("export async function listTpoPrepCourses("));
   const evidence=derived.slice(derived.indexOf("const contents=await db.select("));
   expect(catalog).toContain("isNull(departments.archivedAt)");
-  expect(catalog).toContain('eq(departments.collegeId,collegeId)');
+  expect(catalog).toContain('eq(colleges.organizationId,college.organizationId)');
+  expect(catalog).toContain('eq(colleges.status,"ACTIVE")');
   expect(catalog).toContain('eq(courses.status,"ACTIVE")');
   expect(evidence).toContain("isNull(departments.archivedAt)");
-  expect(evidence).toContain('eq(departments.collegeId,collegeId)');
+  expect(evidence).toContain('eq(colleges.organizationId,scope.organizationId)');
+  expect(evidence).toContain('eq(colleges.status,"ACTIVE")');
   expect(evidence).toContain('eq(courseOfferings.status,"ACTIVE")');
   expect(evidence).toContain('eq(lessonContents.status,"PUBLISHED")');
   expect(evidence).toContain('inArray(courseOfferings.cohortId,requestedCohortIds)');
