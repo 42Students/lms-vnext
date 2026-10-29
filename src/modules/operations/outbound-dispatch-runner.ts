@@ -151,6 +151,10 @@ export async function dispatchDueOutboundBatch(
   maxMessages = 10,
 ) {
   if (!outboundDispatchRuntimeEnabled()) throw new OutboundDispatchNotReadyError();
+  // Do not even acquire a lease while global EMAIL suppression or sender
+  // readiness is unverified. Otherwise the first due row becomes CLAIMED
+  // and must be quarantined despite zero provider calls.
+  await requireVerifiedGlobalEmailSuppression();
   return drainOutboundBatch(worker, maxMessages, {
     claimOne: (holder) => claimOutboundDispatchBatch(holder, 1, 60),
     processOne: (claim, holder) => dispatchClaimedOutbound(claim, holder, provider),
