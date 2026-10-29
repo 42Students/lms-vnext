@@ -47,7 +47,9 @@ export async function issueTpoCompanyApplicantShare(context: RequestContext, raw
   const parsed = companyShareIssueSchema.parse(raw);
   const college = await tpoJob(context,parsed.jobId);
   if (!await companyShareTablesReady()) throw new CompanyShareError("MIGRATION_PENDING");
-  if(parsed.selectedApplicationIds?.length && !await placementTableExists("placement_company_share_selections"))
+  // Both explicit and default shares persist an immutable applicant scope.
+  // Never issue a public capability without its row-level authorization table.
+  if(!await placementTableExists("placement_company_share_selections"))
     throw new CompanyShareError("MIGRATION_PENDING");
   if (!context.membership) throw new CompanyShareError("NOT_FOUND");
   const actorMembershipId=context.membership.id;
@@ -70,23 +72,29 @@ export async function issueTpoCompanyApplicantShare(context: RequestContext, raw
     if(!canIssueCompanyApplicantShare(existing?.total??0)){
       throw new CompanyShareError("ACTIVE_LINK_LIMIT");
     }
-    if(parsed.selectedApplicationIds?.length){
-      const eligible=await tx.select({id:placementApplications.id}).from(placementApplications)
-       .innerJoin(placementApplicationScreenings,
-         eq(placementApplicationScreenings.applicationId,placementApplications.id))
-       .innerJoin(collegeMemberships,
-         eq(collegeMemberships.id,placementApplications.membershipId))
-       .innerJoin(users,eq(users.id,collegeMemberships.userId))
-       .where(and(eq(placementApplications.jobId,job.id),
-         inArray(placementApplications.id,parsed.selectedApplicationIds),
-         eq(placementApplications.status,"SUBMITTED"),
-         eq(placementApplicationScreenings.status,"SHORTLISTED"),
-         eq(collegeMemberships.collegeId,college.id),
-         eq(collegeMemberships.status,"ACTIVE"),
-         eq(users.platformStatus,"ACTIVE")));
-      if(eligible.length!==parsed.selectedApplicationIds.length)
-        throw new CompanyShareError("NOT_SHAREABLE");
-    }
+    // An omitted explicit selection means "share the current shortlist".
+    // Freeze that audience when issuing: later shortlisting must never expand
+    // an already distributed token's access without another TPO decision.
+    const requestedIds=parsed.selectedApplicationIds??null;
+    const eligible=await tx.select({id:placementApplications.id}).from(placementApplications)
+      .innerJoin(placementApplicationScreenings,
+        eq(placementApplicationScreenings.applicationId,placementApplications.id))
+      .innerJoin(collegeMemberships,
+        eq(collegeMemberships.id,placementApplications.membershipId))
+      .innerJoin(users,eq(users.id,collegeMemberships.userId))
+      .where(and(eq(placementApplications.jobId,job.id),
+        requestedIds?inArray(placementApplications.id,requestedIds):undefined,
+        eq(placementApplications.status,"SUBMITTED"),
+        eq(placementApplicationScreenings.status,"SHORTLISTED"),
+        eq(collegeMemberships.collegeId,college.id),
+        eq(collegeMemberships.status,"ACTIVE"),
+        eq(users.platformStatus,"ACTIVE")))
+      .orderBy(placementApplications.id)
+      .limit(201);
+    if(eligible.length>200 ||
+       (requestedIds&&eligible.length!==requestedIds.length))
+      throw new CompanyShareError("NOT_SHAREABLE");
+    const selectedIds=eligible.map(candidate=>candidate.id);
     const {token,digest}=issueCompanyShareToken();
     const challenge=issueCompanyShareAccessCode();
     const expiresAt=companyShareExpiry(new Date(),parsed.expiresInDays);
@@ -101,8 +109,8 @@ export async function issueTpoCompanyApplicantShare(context: RequestContext, raw
       shortlistBy:parsed.shortlistBy?new Date(parsed.shortlistBy):null,
     }).returning({id:shares.id});
     if(!row)throw new CompanyShareError("NOT_SHAREABLE");
-    if(parsed.selectedApplicationIds?.length){
-      await tx.insert(selectedShares).values(parsed.selectedApplicationIds.map(applicationId=>({
+    if(selectedIds.length){
+      await tx.insert(selectedShares).values(selectedIds.map(applicationId=>({
         shareId:row.id,applicationId,
       })));
     }
@@ -112,12 +120,12 @@ export async function issueTpoCompanyApplicantShare(context: RequestContext, raw
       jobId:job.id,shareId:row.id,
     });
     await tx.insert(activityEvents).values({...event,metadata:{
-      ...event.metadata,selectionMode:parsed.selectedApplicationIds?.length?"EXACT_SELECTION":"CURRENT_SHORTLIST",
-      selectedCount:parsed.selectedApplicationIds?.length??null,
+      ...event.metadata,selectionMode:requestedIds?"EXACT_SELECTION":"CURRENT_SHORTLIST_SNAPSHOT",
+      selectedCount:selectedIds.length,
       columns:parsed.selectedColumns,shortlistBy:parsed.shortlistBy,
     }});
     return {shareId:row.id,token,accessCode:challenge.code,expiresAt:expiresAt.toISOString(),
-       selectedCount:parsed.selectedApplicationIds?.length??null};
+       selectedCount:selectedIds.length};
   });
 }
 export async function listTpoCompanyApplicantShares(
