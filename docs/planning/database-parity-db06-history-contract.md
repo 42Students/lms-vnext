@@ -11,6 +11,34 @@ Artifacts:
 - `docs/planning/sql/db06-assessment-attendance-history-candidate.sql`
 - `tests/db06-history-staging.test.mjs`
 
+## Registered 0205 compatibility — do not re-create grade events
+
+`drizzle/0205_lane15_assignment_grade_events.sql` already registers
+`assignment_grade_events` with the four actions `GRADE`, `REGRADE`,
+`HIDE_GRADE`, and `PUBLISH_GRADE`. The earlier DB035 SQL candidate's
+`CREATE TABLE assignment_grade_events` is a historical source shape, **not
+an executable migration step**. L01 must compose an in-place upgrade of
+0205's existing constraints and append-only/completeness guards; it must not
+create the table a second time.
+
+Exact compatibility requirements:
+
+- `HIDE_GRADE` is true→false publication only, unchanged graded state,
+  score, feedback, grader and grade timestamp; writer and grader can differ;
+- `REGRADE` may also cause true→false publication, but must have a changed
+  grade snapshot; the deferred guard must distinguish this from a pure hide;
+- `PUBLISH_GRADE` and `HIDE_GRADE` require the initiating actor, not the
+  saved grader; the authorizing service still applies persisted scope checks;
+- each grading mutation increments submission version exactly once and writes
+  exactly one matching event in the same transaction.
+
+Negative PostgreSQL witnesses: (1) HIDE with changed points/feedback/grader
+must fail `23514`; (2) direct published→unpublished update with no event
+must fail `23514`; (3) grade reversion labeled HIDE when grade values change
+must fail `23514`; (4) two concurrent writes at the same expected version
+must not both commit; (5) malicious actor/tenant membership must fail.
+These are acceptance requirements, **not** executed evidence.
+
 ## Why this exists
 
 DB-009 found two active legacy persistence jobs with no equivalent vNext history:
@@ -59,8 +87,9 @@ Legacy source actions confirmed in `AssignmentServiceImpl` include:
 vNext has one normalized grading mutation surface, so the target event actions are:
 
 - `GRADE` — first `NOT_GRADED → GRADED` mutation;
-- `REGRADE` — later points/feedback grade mutation;
-- `PUBLISH_GRADE` — unpublished graded result becomes learner-visible.
+- `REGRADE` — later points/feedback grade mutation, including a published result becoming unpublished because the grade changed;
+- `HIDE_GRADE` — an already published grade becomes private with the same score, feedback, grader and graded timestamp; the hiding actor may differ from the grader;
+- `PUBLISH_GRADE` — unpublished graded result becomes learner-visible; the publisher may differ from the grader.
 
 The source action names remain documented provenance; they are not copied blindly into a target enum whose producer model is different.
 
