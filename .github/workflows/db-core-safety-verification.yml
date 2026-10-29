@@ -7,6 +7,8 @@ on:
     branches: [main]
     paths:
       - ".github/workflows/db-core-safety-verification.yml"
+      - "tests/db09-collaboration-registered-pg-acceptance.mjs"
+      - "tests/db09-share-registered-pg-acceptance.mjs"
 
 permissions:
   contents: read
@@ -59,3 +61,16 @@ jobs:
         run: npm run db:seed
       - name: Journal remains valid after safety workflows
         run: npm run db:journal:verify
+      # L01 accepted L08's two real, rollback-only DB09 handoffs.
+      # The explicit isolation flags permit the controlled alias only on this
+      # already disposable PostgreSQL 17 service; no production DB is contacted.
+      - name: DB09 college-wide CRM principal and read-scope PostgreSQL negatives
+        env:
+          DB03_ISOLATED_TEST_DATABASE: "1"
+          DB09_ISOLATED_TEST_DATABASE: "1"
+        run: node tests/db09-collaboration-registered-pg-acceptance.mjs
+      - name: DB09 secure-share lifecycle PostgreSQL negatives
+        env:
+          DB03_ISOLATED_TEST_DATABASE: "1"
+          DB09_ISOLATED_TEST_DATABASE: "1"
+        run: node tests/db09-share-registered-pg-acceptance.mjs
