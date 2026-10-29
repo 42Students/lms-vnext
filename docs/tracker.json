@@ -1790,6 +1790,29 @@
         "reason": "The prior recruiter-bell unread-message handoff is APPLIED on main, but DB-057 is still unaccepted: placement_recruiter_notification_reads/read_through has a registered PostgreSQL guard and no runtime producer/consumer in current recruiter bell. Reconcile legacy markAllRead upsert watermark vs vNext in_app_notifications receipts and 7-day first visit; implement exact/approved equivalent scoped persistence, ensure revocation/concurrency negatives, then provide PG and real consumer evidence. L08 will handle DB09 domain tests and tracker closure; do not duplicate placement service writes.",
         "status": "REQUESTED",
         "requestedAt": "2026-10-29T05:32:48.539Z"
+      },
+      {
+        "id": "SCR-L09-L08-DB050-20261029",
+        "fromLane": "L09",
+        "toLane": "L08",
+        "paths": [
+          "src/app/api/public/campaign-unsubscribe/route.ts",
+          "src/modules/messaging/tpo-campaign-unsubscribe-service.ts"
+        ],
+        "reason": "L09 implemented persistVerifiedGlobalEmailSuppression in src/modules/operations/global-email-suppression-service.ts. L08 owns TPO/campaign public producer paths: route existing verified global opt-out and signed campaign-recipient opt-out to the shared write path. The writer atomically inserts HMAC-only global suppression and terminalizes PENDING/RETRY encrypted outbox rows; never switch CLAIMED rows. Preserve signed-token verification, idempotent public result, and CRM/lead transaction semantics. Coordinate transaction interface as needed; NO blind parallel writes.",
+        "status": "REQUESTED",
+        "requestedAt": "2026-10-29T05:32:52.823Z"
+      },
+      {
+        "id": "SCR-L09-L10-DB050-20261029",
+        "fromLane": "L09",
+        "toLane": "L10",
+        "paths": [
+          "tests/integration/db050-global-email-suppression-pg.test.ts"
+        ],
+        "reason": "Independently verify global email opt-out insert + PENDING/RETRY cancellation on registered disposable PostgreSQL, wrong-email commitment unaffected, CLAIMED quarantined, cross-organization same HMAC suppression, concurrent queue/claim/opt-out race, and no public PII leakage. Service landed in L09; tests/unit/global-email-suppression-service.test.ts authored, not executed. No positive DONE until exact-SHA runtime proof.",
+        "status": "REQUESTED",
+        "requestedAt": "2026-10-29T05:32:52.823Z"
       }
     ],
     "coordination": {
