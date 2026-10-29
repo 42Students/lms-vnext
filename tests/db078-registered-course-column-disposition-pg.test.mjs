@@ -11,7 +11,10 @@ import { assertSafeDb01TestTarget } from "../scripts/db01-test-database-guard.mj
 if (process.env.DB078_DISPOSABLE !== "1" || !process.env.TEST_DATABASE_URL) {
   throw new Error("DB-078 requires DB078_DISPOSABLE=1 and TEST_DATABASE_URL");
 }
-assertSafeDb01TestTarget({ ...process.env, DATABASE_URL: "" });
+// Preserve the configured application target for alias detection. The
+// independent verifier deliberately clears DATABASE_URL only for this
+// separate, read-only disposable witness subprocess.
+assertSafeDb01TestTarget(process.env);
 const pool = new pg.Pool({ connectionString: process.env.TEST_DATABASE_URL, max: 1 });
 after(async () => pool.end());
 
