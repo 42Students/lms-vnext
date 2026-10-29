@@ -828,3 +828,36 @@ test("DB28 accepts the intentional disposable E2E triple URL preflight", () => {
   assert.doesNotMatch(output, /Refusing to reset the configured application database/);
   assert.doesNotMatch(output, /private-disposable-test/);
 });
+
+test("DB51 remote PostgreSQL approvals are port-specific for non-default services", () => {
+  const TEST_DATABASE_URL =
+    "postgresql://tester:private-secret@pg.internal:6543/lms_vnext_test";
+  const formerUnscoped = {
+    TEST_DATABASE_URL,
+    DB01_REMOTE_TEST_DATABASE_CONFIRM: "RESET:pg.internal/lms_vnext_test",
+  };
+  assert.throws(
+    () => assertSafeDb01TestTarget(formerUnscoped),
+    /Remote test database requires DB01_REMOTE_TEST_DATABASE_CONFIRM/,
+    "a default-port confirmation must not authorize a different PostgreSQL service",
+  );
+  const wrongPort = {
+    TEST_DATABASE_URL,
+    DB01_REMOTE_TEST_DATABASE_CONFIRM: "RESET:pg.internal:5432/lms_vnext_test",
+  };
+  assert.throws(
+    () => assertSafeDb01TestTarget(wrongPort),
+    /Remote test database requires DB01_REMOTE_TEST_DATABASE_CONFIRM/,
+  );
+  assert.deepEqual(assertSafeDb01TestTarget({
+    TEST_DATABASE_URL,
+    DB01_REMOTE_TEST_DATABASE_CONFIRM: "RESET:pg.internal:6543/lms_vnext_test",
+  }), {host: "pg.internal", database: "lms_vnext_test", mode: "explicit-remote"});
+});
+
+test("DB51 historical default-port confirmation remains narrowly compatible", () => {
+  assert.deepEqual(assertSafeDb01TestTarget({
+    TEST_DATABASE_URL: "postgresql://tester:secret@pg.internal:5432/lms_vnext_test",
+    DB01_REMOTE_TEST_DATABASE_CONFIRM: "RESET:pg.internal/lms_vnext_test",
+  }), {host: "pg.internal", database: "lms_vnext_test", mode: "explicit-remote"});
+});
