@@ -246,6 +246,8 @@ async function main() {
   let npmVersion = null;
   let gitSha = null;
   let sourceTreeClean = false;
+  let sourceTreeCleanAtEnd = false;
+  let gitHeadUnchanged = false;
   let provider = null;
   let failure = null;
 
@@ -388,6 +390,18 @@ async function main() {
       ["run", "test:db"],
       env,
     );
+    // Do not award a pinned-SHA certificate if another worker moved HEAD
+    // or edited the source after the initial cleanliness preflight.
+    const finalHead = shellText("git", ["rev-parse", "HEAD"]);
+    gitHeadUnchanged = finalHead === gitSha;
+    sourceTreeCleanAtEnd = !shellText("git", [
+      "status", "--porcelain=v1", "--untracked-files=normal",
+    ]);
+    if (!gitHeadUnchanged || !sourceTreeCleanAtEnd) {
+      throw new Error(
+        "Independent database verification source checkout changed during the run",
+      );
+    }
   } catch (error) {
     failure =
       redactVerifierOutput(error instanceof Error ? error.stack ?? error.message : String(error));
@@ -398,6 +412,8 @@ async function main() {
       purpose: "CI-independent disposable PostgreSQL verification",
       gitSha,
       sourceTreeClean,
+      sourceTreeCleanAtEnd,
+      gitHeadUnchanged,
       startedAt,
       finishedAt: new Date().toISOString(),
       nodeVersion,
@@ -410,6 +426,8 @@ async function main() {
       steps: results,
       passed:
         sourceTreeClean &&
+        sourceTreeCleanAtEnd &&
+        gitHeadUnchanged &&
         failure === null &&
         provider !== null &&
         results.length === 12 &&
