@@ -84,6 +84,14 @@ export async function readTpoLearnerPrepOutcomes(
   for(const row of learners)outcomes.set(row.membershipId,"UNCONFIGURED");
   return deliver(true);
  }
+ // The prep catalogue is organization-scoped, while learner membership,
+ // cohort and content-progress checks remain scoped to this college.
+ // Resolve the active owning organization from persisted state, not a
+ // possibly stale request-context organization ID.
+ const [scope]=await db.select({organizationId:colleges.organizationId})
+   .from(colleges).where(and(eq(colleges.id,collegeId),
+     eq(colleges.status,"ACTIVE"))).limit(1);
+ if(!scope)return deliver(false);
  const requestedCohortIds=requested.cohortIds;
  const contents=await db.select({
   courseId:courseOfferings.courseId,
@@ -95,10 +103,14 @@ export async function readTpoLearnerPrepOutcomes(
   .innerJoin(courseOfferings,eq(courseOfferings.id,courseLearningPaths.offeringId))
   .innerJoin(courses,eq(courses.id,courseOfferings.courseId))
   .innerJoin(departments,eq(departments.id,courses.departmentId))
+  .innerJoin(colleges,eq(colleges.id,departments.collegeId))
   .where(and(
-   eq(departments.collegeId,collegeId),
+   eq(colleges.organizationId,scope.organizationId),
+   eq(colleges.status,"ACTIVE"),
    isNull(departments.archivedAt),
    eq(courses.status,"ACTIVE"),
+   eq(courses.enabled,true),
+   isNull(courses.deletedAt),
    eq(courseOfferings.status,"ACTIVE"),
    eq(courseLearningPaths.status,"PUBLISHED"),
    eq(courseLessons.status,"ACTIVE"),
