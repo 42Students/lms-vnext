@@ -68,6 +68,17 @@ test("elective rebind never detaches its GROUP_BACKED class period", () => {
   assert.match(rosterTests, /rejects cross-period elective rebind that would orphan/);
 });
 
+test("elective create and edit lock source course against concurrent disable", () => {
+  const create = electivesService.slice(electivesService.indexOf(
+    "export async function createElectiveOffering("),
+    electivesService.indexOf("export async function listElectiveOfferings("));
+  const edit = electivesService.slice(electivesService.indexOf(
+    "export async function updateCollegeElectiveOffering("),
+    electivesService.indexOf("export async function archiveCollegeElectiveOffering("));
+  assert.match(create, /\.where\(eq\(courses\.id, input\.courseId\)\)\s*\.for\("share", \{ of: courses \}\)/);
+  assert.match(edit, /\.where\(eq\(courseSectionDeliveries\.id, input\.backedDeliveryId\)\)\s*\.for\("share", \{ of: courses \}\)/);
+});
+
 test("the slot matches the learner ACTIVE primary program rather than college alone", () => {
   assert.match(eligibility, /eq\(learnerProgramEnrollments\.programId, slot\.programId\)/);
   assert.match(eligibility, /eq\(learnerProgramEnrollments\.status, "ACTIVE"\)/);
