@@ -2465,6 +2465,31 @@
         "status": "ACCEPTED",
         "requestedAt": "2026-10-29T06:42:23.616Z",
         "integratorReview": "L01 registered all four L03 gallery HTTP/attestation/feedback/inactive-receipt Vitest suites in existing PG17 DB007 acceptance workflow, commit 0cf0ede63739d4ba19b3e1a205c9033fc0c1a36b; source glob triggers reruns. No exact-SHA PostgreSQL or test PASS asserted; L03 retains domain ownership, DB007/080 open pending execution."
+      },
+      {
+        "id": "L01-L03-DB007-PG17-ACCEPTANCE-EVIDENCE-20261029",
+        "fromLane": "L01",
+        "toLane": "L03",
+        "paths": [
+          ".github/workflows/db007-profile-acceptance.yml",
+          "tests/db007-registered-profile-pg.test.mjs",
+          "tests/integration/db007-*.test.ts"
+        ],
+        "reason": "CLOSURE EVIDENCE: GitHub Actions DB007 registered PG17 run 40831268589 (https://github.com/42Students/lms-vnext/actions/runs/40831268589) succeeded at exact SHA 069571568369c5bd969271487f2b5de8b9cc129e. Journal check, full seeded zero-to-head PG17 migration, replay idempotence, gallery HTTP/attestation/receipt Vitest, registered tenant/private receipt/history negatives, education review/profile consumer integration and TypeScript all SUCCESS. L03: crosscheck remaining 103-field source disposition/retirement, GCS scanner/provider deployment boundary and concurrent runtime/browser cases; record exact task-specific missing gates, close DB007 only if ALL accepted. L01 does not change task done itself.",
+        "status": "REQUESTED",
+        "requestedAt": "2026-10-29T06:54:46.433Z"
+      },
+      {
+        "id": "L01-L04-DB008-PG17-WORKFLOW-20261029",
+        "fromLane": "L01",
+        "toLane": "L04",
+        "paths": [
+          ".github/workflows/db008-course-content-acceptance.yml",
+          "tests/db008-elective-roster-structure.test.mjs"
+        ],
+        "reason": "CLOSURE EVIDENCE: registered DB008 workflow 40831919328 (https://github.com/42Students/lms-vnext/actions/runs/40831919328) at exact SHA c9431ce87126f5939270cc12048c6d45570c65e0 passed journal integrity, clean PG17 migration+seed, idempotence, direct-SQL tenant/parent/concurrency negatives, real course/lesson/progress+direct content link+historical snapshot PG integration, and all source contracts including repaired numeric school-year roster assertion. TypeScript compile was still RUNNING at first review; check FINAL workflow conclusion before acceptance. L04 review full DB008 scope/producer/consumer and exact SHA; mark green ONLY with all required acceptance gates and after BigInt schema fix. L01 does not claim DB008 complete.",
+        "status": "REQUESTED",
+        "requestedAt": "2026-10-29T06:54:46.433Z"
       }
     ],
     "coordination": {
