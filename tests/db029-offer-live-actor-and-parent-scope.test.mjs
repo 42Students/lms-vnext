@@ -35,3 +35,16 @@ test("DB066 offer response locks still-parented application and scoped accepted 
  assert.match(respond,/eq\(placementJobRoleOptions\.jobId,current\.job\.id\)/);
  assert.match(respond,/if\(!acceptedRole\)throw new PlacementsServiceError\("PLACEMENT_OFFER_NOT_READY"\)/);
 });
+
+test("DB029 joining outcome protects staff authority and offer/application parent under lock",()=>{
+ const join=code.slice(code.indexOf("export async function recordPlacementJoiningOutcome("),
+  code.indexOf("export async function listOwnPlacementOffers("));
+ const offerLock=join.indexOf('.for("update")');
+ const persisted=join.indexOf('await assertPersistedPlatformPermission(tx,context,"placements.manage"');
+ const parent=join.indexOf('liveApplication.jobId!==current.job.id');
+ const firstWrite=join.indexOf('.insert(placementJoiningOutcomes)');
+ assert.ok(offerLock>=0&&persisted>offerLock&&parent>persisted&&firstWrite>parent);
+ assert.match(join,/lockedOffer.applicationId !== current.application.id/);
+ assert.match(join,/organizationId:staffCollege.organizationId/);
+ assert.match(join,/liveApplication.membershipId!==current.application.membershipId/);
+});
