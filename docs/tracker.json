@@ -940,12 +940,7 @@
           "UI college academic/faculty scheduling"
         ],
         "operatingNotes": "DB02 already accepted; never reopen without concrete regression.",
-        "claim": {
-          "sessionId": "vnext-l02-domain-closure-20261029-1056-ist",
-          "holder": "ChatGPT L02 / domain group and elective continuation",
-          "claimedAt": "2026-10-29T05:26:00.000Z",
-          "expiresAt": "2026-10-29T09:26:00.000Z"
-        }
+        "claim": null
       },
       {
         "id": "L03",
@@ -1745,6 +1740,18 @@
         "reason": "L07 readHrRecruiterBell produces hrConversationsHref for general no-job TPO message threads; parseHrBellResponse currently only accepts /hr/placements/jobs/:uuid URLs and rejects entire READY response when a general conversation is in the bell. L08 owns recruiter-facing bell UI/model; allow exact authorized conversations URL shape in parse without widening to arbitrary navigation and cover general-thread case. L07 owns mark-all message receipt fix.",
         "status": "REQUESTED",
         "requestedAt": "2026-10-29T05:30:18.577Z"
+      },
+      {
+        "id": "L02-REGRESSION-ROSTER-DUPLICATE-20261029",
+        "fromLane": "L02",
+        "toLane": "L02",
+        "paths": [
+          "src/modules/groups/roster-access.ts",
+          "tests/db03-elective-program-oracle.test.mjs"
+        ],
+        "reason": "Concurrent L02 owner independently restored the malformed/duplicated elective authorization query in commit 3f01d63206ca7b15bafbf244452c26feb770e5ac. Please add source/compile regression witness for exactly one roster query and each exported function, complete anchored academic-year SQL regex, then run focused DB03 acceptance at the integrated SHA; no second worker should edit L02 concurrently. Coordination-only follow-up, not acceptance evidence.",
+        "status": "REQUESTED",
+        "requestedAt": "2026-10-29T05:30:00.000Z"
       }
     ],
     "coordination": {
