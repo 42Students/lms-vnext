@@ -44,7 +44,7 @@ import { indiaAttendanceMonthWindow } from "./month-window";
 import {enqueueAttendanceParentSms,dispatchQueuedAttendanceParentSms} from "./parent-sms-service";
 import {legacyFormalTitle} from "@/modules/courses/course-legacy-parity-model";
 import {facultyAttendanceNextMarkedAt} from "./faculty-correction-token-model";
-import {adminAttendanceCorrectionChange} from "./admin-correction-change-model";
+import {adminAttendanceCorrectionChange,adminAttendanceRecordTokenMatches} from "./admin-correction-change-model";
 
 
 /** Options are independent reads. A failed class-offering query must never
@@ -64,6 +64,7 @@ export const adminAttendanceActionErrorCopy = {
   CONTENT_DELIVERY_MISMATCH: "Class schedule not found",
   ATTENDANCE_ROSTER_CONFLICT: "Learner is not enrolled in this class",
   ATTENDANCE_VERSION_CONFLICT: "Attendance changed. Please refresh and try again.",
+  ATTENDANCE_STALE_VERSION: "Attendance changed. Please refresh and try again.",
 } as const;
 
 const uuid = z.string().uuid();
@@ -682,9 +683,10 @@ export async function correctAdminAttendance(
       )).for("update").limit(1);
       // A requested compare-and-set token prevents overwriting another
       // administrator's correction made after the current-record read.
-      if (input.expectedMarkedAt !== undefined &&
-          input.expectedMarkedAt !== (priorRecord?.markedAt?.toISOString()??null)) {
-        throw new CoursesServiceError("ATTENDANCE_ROSTER_CONFLICT");
+      if (!adminAttendanceRecordTokenMatches(
+        input.expectedMarkedAt,priorRecord?.markedAt??null,
+      )) {
+        throw new CoursesServiceError("ATTENDANCE_STALE_VERSION");
       }
       const change=adminAttendanceCorrectionChange({
         previous:priorRecord
@@ -751,11 +753,15 @@ export async function correctAdminAttendance(
         subjectType:"attendance_session",
         subjectId:scheduleEventId,
         subjectLabel:"Attendance correction",
-        summary:"College Admin corrected attendance",
+        summary:change.statusChanged
+          ?"College Admin corrected attendance"
+          :"College Admin updated an attendance note",
         metadata:{
           deliveryId:delivery.deliveryId,
           learnerMembershipId:input.membershipId,
           from:change.previousStatus,to:input.status,
+          statusChanged:change.statusChanged,
+          noteChanged:change.noteChanged,
           correctionNote:change.nextNote,
         },
         occurredAt:now,
