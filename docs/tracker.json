@@ -1893,6 +1893,26 @@
         "reason": "DB-059/DB-060 registered PostgreSQL secure-share lifecycle witness added on main: share CREATED and REVOKED deferred-event completeness, immutable snapshot, code rotation, one-way revocation, same-college TPO creator and append-only events; standalone rollback-only disposable DB tests. Integrate/run after fresh journal replay + canonical seed with DB09_ISOLATED_TEST_DATABASE=1. Share exact command/results and current code SHA for L08 acceptance review; existing DB09 collaboration witness is tracked by separate accepted L01 handoff.",
         "status": "REQUESTED",
         "requestedAt": "2026-10-29T05:34:42.957Z"
+      },
+      {
+        "id": "SCR-L08-L01-DB09-CI-REGISTRATION-20261029",
+        "fromLane": "L08",
+        "toLane": "L01",
+        "paths": [
+          "package.json",
+          "scripts/db-independent-verify.mjs",
+          "tests/db09-collegewide-principal-guard.test.mjs",
+          "tests/db09-recruiter-private-note-lifecycle.test.mjs",
+          "tests/db09-student-note-history.test.mjs",
+          "tests/db09-user-state-lifecycle.test.mjs",
+          "tests/db09-recruiter-read-watermark.test.mjs",
+          "tests/db09-secure-share-lifecycle.test.mjs",
+          "tests/db09-share-event-completeness.test.mjs",
+          "tests/db09-message-chronology.test.mjs"
+        ],
+        "reason": "Current npm run test:db:parity explicitly enumerates tests but omits all eight L08 registered DB09 SQL static regressions. L08 updated those suites to inspect registered drizzle/0075; isolated assertion harness saw 54/54 pass, but native node command not yet executed. As package.json and CI verifier are shared, request L01 single-writer registration and actual Node test execution; also wire both opt-in DB09 PostgreSQL witnesses after clean replay with exact per-test results. No DB task DONE until live PostgreSQL/consumer negatives.",
+        "status": "REQUESTED",
+        "requestedAt": "2026-10-29T05:35:26.136Z"
       }
     ],
     "coordination": {
