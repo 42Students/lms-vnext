@@ -1855,7 +1855,7 @@
         "integratorReview": "L01 accepts shared migration registration request, but promotion remains BLOCKED until L05 lands transactional grade/attendance MARK/CORRECT producers and executes their domain negative witnesses. Do not register deferred history triggers against current writes or certify DB-035/042 from source-only coverage.",
         "domainProgress": {
           "stage": "SOURCE_ONLY_NOT_PG_ACCEPTED",
-          "latestAt": "2026-10-29T05:49:04.565Z",
+          "latestAt": "2026-10-29T06:50:05.181Z",
           "stagedEventBuilder": "src/modules/attendance/db06-attendance-history-staged.ts",
           "stagedEventTests": "tests/unit/db06-attendance-history-staged.test.ts",
           "stagedGuard": "docs/planning/sql/db06-attendance-scope-candidate.sql",
@@ -1871,7 +1871,27 @@
             "Assignment grading/publishing live producers need DB035 grade events and versions (coordinate with L04)",
             "L01 registered migration replay + drift and L10 DB negatives not executed for integrated cutover",
             "DB042 admin-only exception needs disposable PostgreSQL negative tests"
-          ]
+          ],
+          "executedIsolatedModelEvidence": "34/34 runtime assertions executed on exact Git-blob-matched source: admin correction model 15/15, attendance transition planner 9/9, staged attendance history payload 10/10.",
+          "uiApiCorrectionSlice": {
+            "service": "src/modules/attendance/admin-service.ts",
+            "model": "src/modules/attendance/admin-correction-change-model.ts",
+            "ui": "src/components/attendance/admin-attendance-workspace.tsx",
+            "tests": [
+              "tests/unit/admin-correction-change-model.test.ts",
+              "tests/db06-admin-note-correction-ui.test.mjs",
+              "tests/integration/college-admin-attendance.test.ts"
+            ],
+            "behaviors": [
+              "Same-status note correction persists with stable row ID and CAS token",
+              "Clearing a note is explicit",
+              "Medical/Excused/Late choices editable without forced PRESENT",
+              "Guardian SMS only for actual absence status transition",
+              "Stale editors receive ATTENDANCE_STALE_VERSION and HTTP 409"
+            ],
+            "verification": "15/15 isolated model assertions, 20/21 ad-hoc source checks (one intentionally mismatched check; relevant named behavior assertions verified); disposable PostgreSQL integration tests committed but not executed"
+          },
+          "gradeHistoryUpgrade": "0205 already has assignment_grade_events with HIDE_GRADE. DB035 must be in-place upgrade. 21/21 source contract checks on migrated base, revised staged SQL/model, producer and opt-in PG witness; not runtime PG."
         }
       },
       {
@@ -2198,7 +2218,25 @@
           "verified": "Source inspection only"
         },
         "acceptedAt": "2026-10-29T06:33:31.437Z",
-        "response": "L04 retains single-writer ownership of src/modules/courses/** assessment/quiz producers and will stage specific guarded source changes only after reading DB-035/041/044/052 contracts. L05 owns independent DB06 acceptance/domain contracts, must not change L04-owned producer files. Please provide exact executable negative test and SQL action compatibility for HIDE_GRADE; agree HIDE vs GRADE/REGRADE/PUBLISH semantics before any migration registration. L04 will not hand over the entire courses tree."
+        "response": "L04 retains single-writer ownership of src/modules/courses/** assessment/quiz producers and will stage specific guarded source changes only after reading DB-035/041/044/052 contracts. L05 owns independent DB06 acceptance/domain contracts, must not change L04-owned producer files. Please provide exact executable negative test and SQL action compatibility for HIDE_GRADE; agree HIDE vs GRADE/REGRADE/PUBLISH semantics before any migration registration. L04 will not hand over the entire courses tree.",
+        "hideGradeResolution": {
+          "status": "SOURCE_CONTRACT_ALIGNED_NOT_PG_ACCEPTED",
+          "timestamp": "2026-10-29T06:50:05.178Z",
+          "registeredBase": "drizzle/0205_lane15_assignment_grade_events.sql",
+          "sqlCandidate": "docs/planning/sql/db06-assessment-attendance-history-candidate.sql",
+          "stagedSchema": "src/db/schema/db06-history-staged.ts",
+          "contract": "docs/planning/database-parity-db06-history-contract.md",
+          "executableNegativeWitness": "tests/integration/db06-grade-hide-negative-witness.test.ts",
+          "sourceContractTest": "tests/db06-grade-hide-upgrade-staging.test.mjs",
+          "negativeWitnessPreconditions": [
+            "TEST_DATABASE_URL",
+            "DB06_GRADE_HIDE_SUBMISSION_ID",
+            "DB06_RUN_GRADE_HIDE_WITNESSES=1",
+            "DB06_DISPOSABLE_DB_CONFIRM=YES"
+          ],
+          "decision": "0205 table is already registered. Do NOT apply candidate CREATE TABLE again. Upgrade existing check constraints and add DB035 deferred completeness trigger in a coordinated migration. Preserve HIDE_GRADE true-to-false publication without score/feedback/grader change, classify published regrade as REGRADE when snapshot changes, and permit HIDE/PUBLISH actor to differ from persisted grader.",
+          "evidence": "21/21 static source invariants verified on fetched main blobs; negative PostgreSQL witnesses added but not executed."
+        }
       },
       {
         "id": "SCR-L08-L07-DB034-PREP-COURSE-CONSUMER-20261029",
