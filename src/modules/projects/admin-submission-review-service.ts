@@ -107,7 +107,7 @@ export async function reviewAdminProjectSubmission(
   await assertPersistedPlatformPermission(tx,ctx,"projects.manage",{
    organizationId:scope.organizationId,collegeId:scope.collegeId,
   });
-  const [project]=await tx.select({status:projectInstances.status})
+  const [project]=await tx.select({status:projectInstances.status,deletedAt:projectInstances.deletedAt})
    .from(projectInstances).where(and(eq(projectInstances.id,scope.project.id),
     eq(projectInstances.collegeId,scope.collegeId))).for("update").limit(1);
   const [submission]=await tx.select().from(projectSubmissions).where(and(
