@@ -24,7 +24,7 @@ describe("TPO persisted course progress readiness",()=>{
  it("TPO-settings-audit-41 reads only active published college content and completedAt records",()=>{
   const service=readFileSync("src/modules/placements/tpo-prep-readiness-derived-service.ts","utf8");
   const roster=readFileSync("src/modules/placements/tpo-students-service.ts","utf8");
-  for(const fragment of ['eq(departments.collegeId,collegeId)','eq(courseLearningPaths.status,"PUBLISHED")',
+  for(const fragment of ['eq(colleges.organizationId,scope.organizationId)','eq(courseLearningPaths.status,"PUBLISHED")',
    'eq(lessonContents.status,"PUBLISHED")','isNotNull(learnerContentProgress.completedAt)',
    "getTpoPrepReadiness(context)","getTpoCommunicationSettings(context)"])
     expect(service).toContain(fragment);
