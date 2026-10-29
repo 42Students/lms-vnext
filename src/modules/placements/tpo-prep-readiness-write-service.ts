@@ -5,6 +5,7 @@ import {assertPersistedPlatformPermission} from "@/modules/permissions/persisted
 import {getDb} from "@/db/client";
 import {activityEvents,colleges,courses,departments} from "@/db/schema";
 import {placementTpoPrepReadiness} from "@/db/schema/tpo-configuration";
+import {placementTpoPrepCourses} from "@/db/schema/tpo-collaboration";
 import type {RequestContext} from "@/modules/identity/context";
 import {requireTpoBatchActor} from "./tpo-batch-workspace-read-service";
 import {placementTableExists} from "./staged-tables";
@@ -15,7 +16,9 @@ export class PrepReadinessError extends Error{
 }
 export async function setTpoPrepReadiness(context:RequestContext,raw:unknown){
  const input=tpoPrepReadinessSaveSchema.parse(raw),collegeId=await requireTpoBatchActor(context);
- if(!await placementTableExists("placement_tpo_prep_readiness"))throw new PrepReadinessError("PREP_STORAGE_PENDING");
+ if(!await placementTableExists("placement_tpo_prep_readiness")||
+    !await placementTableExists("placement_tpo_prep_courses"))
+   throw new PrepReadinessError("PREP_STORAGE_PENDING");
  return getDb().transaction(async tx=>{
   const [college]=await tx.select({id:colleges.id,organizationId:colleges.organizationId,status:colleges.status})
    .from(colleges).where(eq(colleges.id,collegeId)).for("update").limit(1);
@@ -25,18 +28,26 @@ export async function setTpoPrepReadiness(context:RequestContext,raw:unknown){
   });
   const [current]=await tx.select().from(placementTpoPrepReadiness)
    .where(eq(placementTpoPrepReadiness.collegeId,collegeId)).limit(1);
-  // A successful request retried after a dropped response is a no-op. Recheck
-  // the actor first, and compare the complete selected-course policy under
-  // the same college row lock before the caller's old optimistic token.
-  if(current&&tpoPrepReadinessSamePolicy(current.config,input))
+  // Compare both the legacy configuration and the normalized selected rows.
+  // A previous partial/legacy write must not appear idempotent while the
+  // DB09 course-selection relation is empty or out of sync.
+  const selected=await tx.select({courseId:placementTpoPrepCourses.courseId})
+    .from(placementTpoPrepCourses).where(eq(placementTpoPrepCourses.collegeId,collegeId))
+    .orderBy(placementTpoPrepCourses.courseId);
+  const normalizedMatches=selected.length===input.courseIds.length&&
+    input.courseIds.every(id=>selected.some(row=>row.courseId===id));
+  if(current&&normalizedMatches&&tpoPrepReadinessSamePolicy(current.config,input))
    return {changed:false,updatedAt:current.updatedAt.toISOString()};
   if((current?.updatedAt.toISOString()??"none")!==input.expectedVersion)
    throw new PrepReadinessError("PREP_STALE");
   if(input.courseIds.length){
    const available=await tx.select({id:courses.id}).from(courses)
     .innerJoin(departments,eq(departments.id,courses.departmentId))
-    .where(and(eq(departments.collegeId,collegeId),isNull(departments.archivedAt),
-     eq(courses.status,"ACTIVE"),inArray(courses.id,input.courseIds)));
+    .innerJoin(colleges,eq(colleges.id,departments.collegeId))
+    .where(and(eq(colleges.organizationId,college.organizationId),
+     eq(colleges.status,"ACTIVE"),isNull(departments.archivedAt),
+     eq(courses.status,"ACTIVE"),eq(courses.enabled,true),isNull(courses.deletedAt),
+     inArray(courses.id,input.courseIds)));
    if(new Set(available.map(row=>row.id)).size!==input.courseIds.length)
     throw new PrepReadinessError("PREP_INVALID_COURSE");
   }
@@ -50,6 +61,14 @@ export async function setTpoPrepReadiness(context:RequestContext,raw:unknown){
    set:{config,updatedAt:sql`greatest(clock_timestamp(),date_trunc('milliseconds',${placementTpoPrepReadiness.updatedAt}) + interval '1 millisecond')`},
   }).returning({updatedAt:placementTpoPrepReadiness.updatedAt});
   if(!saved)throw new PrepReadinessError("PREP_STORAGE_PENDING");
+  // The normalized set is in the same transaction as JSON compatibility
+  // fields, CAS version and immutable activity. Empty selection deletes all
+  // rows; a failed insert rolls back the JSON change and audit together.
+  await tx.delete(placementTpoPrepCourses)
+    .where(eq(placementTpoPrepCourses.collegeId,collegeId));
+  if(input.courseIds.length)await tx.insert(placementTpoPrepCourses).values(
+    input.courseIds.map(courseId=>({collegeId,courseId,createdByUserId:context.user.id}))
+  );
   await tx.insert(activityEvents).values({organizationId:college.organizationId,collegeId,
    actorUserId:context.user.id,actorMembershipId:context.membership!.id,module:"PLACEMENTS",
    eventType:"placements.tpo_prep_readiness.updated",subjectType:"COLLEGE",subjectId:collegeId,
