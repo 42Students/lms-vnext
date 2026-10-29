@@ -2133,8 +2133,9 @@
           "src/app/(authenticated)/tpo/settings/prep-readiness/page.tsx"
         ],
         "reason": "DB-034 normalized placement_tpo_prep_courses requires active prep courses across the college's organization (legacy prepCourses(organizationId)), but current listTpoPrepCourses() reads courses joined to departments where departments.collegeId = current college; it excludes eligible courses in sibling colleges and does not use placement_tpo_prep_courses selection. L07 owns shared placement producer/consumer service: reconcile org-scope selector and persisted normalized settings, preserve TPO auth + active-course restrictions, and add same-org/sibling-college positive and other-org denial tests. L08 will verify DB09 persistence and task evidence.",
-        "status": "REQUESTED",
-        "requestedAt": "2026-10-29T05:49:22.309Z"
+        "status": "ACCEPTED",
+        "requestedAt": "2026-10-29T05:49:22.309Z",
+        "integratorReview": "L07 takes placement prep course read/write/derived scope, with L08 owning DB034 acceptance tests. Target: active courses in sibling colleges of same organization, persisted normalized selections with guarded membership/course scope, explicit compatibility for existing JSON. No database migration edits."
       },
       {
         "id": "L04-L02-DB008-ELECTIVE-YEAR-FAILCLOSED-20261029",
