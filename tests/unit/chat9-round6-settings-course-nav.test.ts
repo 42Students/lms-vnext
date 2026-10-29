@@ -6,7 +6,8 @@ describe("TPO settings responsive navigation and course policy",()=>{
  it("TPO-settings-audit-42 loads the entire authorized active-college preparation course list, not first 200",()=>{
   const s=source("src/modules/placements/tpo-configuration-read-service.ts");
   const p=s.slice(s.indexOf("export async function listTpoPrepCourses"));
-  expect(p).toContain("eq(departments.collegeId,collegeId)");
+  expect(p).toContain("eq(colleges.organizationId,college.organizationId)");
+  expect(p).toContain('eq(colleges.status,"ACTIVE")');
   expect(p).toContain('eq(courses.status,"ACTIVE")');
   expect(p).not.toContain("limit(200)");
   expect(source("src/components/tpo/tpo-prep-readiness-editor.tsx")).toContain("search");
