@@ -60,10 +60,11 @@ describe("TPO-settings-audit-CONFIG-READ-11 tenant settings role-revocation barr
   expect(fn.slice(read)).toContain(table);
   expect(fn).not.toContain("await getDb().select({");
  });
- it("keeps the saved prep-course catalog scoped to non-archived same-college departments",()=>{
+ it("keeps prep-course catalog scoped to non-archived same-organization active colleges",()=>{
   const prep=body("listTpoPrepCourses");
   expect(prep).toContain("isNull(departments.archivedAt)");
-  expect(prep).toContain("eq(departments.collegeId,collegeId)");
+  expect(prep).toContain("eq(colleges.organizationId,college.organizationId)");
+  expect(prep).toContain('eq(colleges.status,"ACTIVE")');
   expect(prep).toContain('eq(courses.status,"ACTIVE")');
   expect(prep).toContain("asc(courses.name)");
  });
