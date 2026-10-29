@@ -1853,9 +1853,9 @@
           "src/modules/placements/hr-conversation-inbox-service.ts"
         ],
         "reason": "The prior recruiter-bell unread-message handoff is APPLIED on main, but DB-057 is still unaccepted: placement_recruiter_notification_reads/read_through has a registered PostgreSQL guard and no runtime producer/consumer in current recruiter bell. Reconcile legacy markAllRead upsert watermark vs vNext in_app_notifications receipts and 7-day first visit; implement exact/approved equivalent scoped persistence, ensure revocation/concurrency negatives, then provide PG and real consumer evidence. L08 will handle DB09 domain tests and tracker closure; do not duplicate placement service writes.",
-        "status": "ACCEPTED",
+        "status": "APPLIED",
         "requestedAt": "2026-10-29T05:32:48.539Z",
-        "integratorReview": "L07 accepts exclusive ownership of recruiter bell/inbox read-through runtime integration, preserving registered 0075 guard and L08 independent DB-057 acceptance. No shared migration edits."
+        "integratorReview": "L07 landed runtime per-recruiter/college watermark read-through, seven-day default, coherent bell/inbox unread projections, and atomic monotonic DB-clock upsert with notifications/messages: commits 74374f7, c2304fe, 3dcb2be, 9d52c1f. 11 direct source invariant checks passed. No disposable PostgreSQL / TS typecheck / browser witness executed; L08 must independently verify DB-057 and update its owned task only after executed acceptance. No DB task marked done."
       },
       {
         "id": "SCR-L09-L08-DB050-20261029",
