@@ -502,12 +502,12 @@ export async function createFacultyAttendanceSession(
  *   delivery roster (combined maximum 500); historical departed students are
  *   not exposed in the current Faculty roster; old partial batches are not
  *   accepted;
- * - first mark writes an absence-only record set + a MARKED session;
+ * - first mark writes stable PRESENT/ABSENT rows for the complete roster and a MARKED session;
  * - corrections require an optimistic markedAt token and an audit explanation.
  *
  * The write is all-or-none, not the old "some succeeded / retry failed IDs"
- * operation. First-save reason defaults to "Mark Absent" for stored absent
- * records, while a later correction must explain its delta. The single
+ * operation. A first mark persists an explicit status for every submitted
+ * roster member, while a later correction must explain its delta. The single
  * COURSES_ATTENDANCE_MARKED activity event is the vNext equivalent of old
  * ATTENDANCE_MARK_BULK: counts, correction reason and schedule/delivery IDs
  * are logged once per successful transaction; only changed learners are
@@ -717,8 +717,9 @@ export async function markFacultyAttendance(
       });
     }
 
-    // A correction may remove the last absence row; retain the history
-    // independently of the current absence-only record representation.
+    // A correction may resolve the last ABSENT status to PRESENT without
+    // deleting any current row. Preserve the activity audit independently of
+    // the stable record identities and the staged DB035 immutable ledger.
     // Counts and scope are safe audit metadata; omit private learner identities.
     const activity=await recordActivityEventInTransaction(tx, context, {
       eventType: ACTIVITY_EVENT_TYPES.COURSES_ATTENDANCE_MARKED,
