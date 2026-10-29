@@ -2409,6 +2409,18 @@
         "reason": "DB034 normalized placement_tpo_prep_courses is now dual-written with legacy placement_tpo_prep_readiness.config.courseIds, and reader suppresses readiness evidence when the two drift. Any older existing JSON-only selections need source-verified backfill before fully accepting DB034. created_by_user_id is NOT derivable from JSON; reconcile latest authoritative TPO settings-change audit actor or require audited manual remediation. Do not invent an actor, migrate foreign-org/archived courses, or weaken FK tenant/actor guards. Register only with clean disposable PG replay and negative tests.",
         "status": "REQUESTED",
         "requestedAt": "2026-10-29T06:41:31.445Z"
+      },
+      {
+        "id": "SCR-L03-L01-DB007-GALLERY-VITEST-20261029",
+        "fromLane": "L03",
+        "toLane": "L01",
+        "paths": [
+          ".github/workflows/db007-profile-acceptance.yml",
+          "shared DB-007 acceptance/test registration"
+        ],
+        "reason": "L03 fixed strict HTTP gallery upload payloads, scanner-pending versus storage-provider failure handling, learner-only upload versus staff cleanup permission, and deactivated receipt false-success. Include tests/unit/learner-gallery-upload-http-contract.test.ts, learner-gallery-attestation.test.ts, learner-gallery-feedback.test.ts, learner-gallery-inactive-receipt.test.ts as focused Vitest in existing DB-007 acceptance job (after npm ci), alongside already registered PG17 journal/replay/integration/static checks. Require exact code SHA and real PASS before DB-007/080 acceptance. Domain code owned by L03; CI/shared workflow edits only by L01. Do not mark tasks done from authored tests.",
+        "status": "REQUESTED",
+        "requestedAt": "2026-10-29T06:42:23.616Z"
       }
     ],
     "coordination": {
