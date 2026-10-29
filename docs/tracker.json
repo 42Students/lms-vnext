@@ -2318,6 +2318,31 @@
         "reason": "EXACT BLOCKER from independent PG verifier e58c64b4: drizzle-kit 0.31.10 fails BigInt JSON serialization during generation. Registered DB10 log alerts uses occurrenceCount: bigint('occurrence_count',{mode:'bigint'}).notNull().default(1n). Replace native JS BigInt default with SQL tagged expression sql`1` (preserve PostgreSQL BIGINT default 1 and BigInt runtime mode); verify DB10 source regression remains valid. Do not weaken numeric precision or change migrations. L01 owns re-verification after both default changes.",
         "status": "REQUESTED",
         "requestedAt": "2026-10-29T06:36:00.000Z"
+      },
+      {
+        "id": "SCR-L08-L01-DB079-NOTE-REVOKE-GUARD-20261029",
+        "fromLane": "L08",
+        "toLane": "L01",
+        "paths": [
+          "drizzle/0075_db09_tpo_collaboration.sql",
+          "drizzle/meta/_journal.json",
+          "tests/db09-recruiter-note-registered-pg-acceptance.mjs"
+        ],
+        "reason": "Security gap source-audited on registered 0075: trigger db09_recruiter_private_note_scope_guard fires BEFORE INSERT OR UPDATE OF recruiter_user_id,college_id,job_id,application_id, so UPDATE rating/note after recruiter grant revocation bypasses db09_has_active_recruiter_grant. Lifecycle guard db09_restrict_recruiter_private_note_lifecycle enforces identity/timestamps but no live grant. L08 added explicit rollback-only PostgreSQL negative in commit 49e11726170c7ad32d92b2e4dc8ce8f514df5abb: revoked recruiter UPDATE note with advancing timestamp must SQLSTATE23514; current registered schema appears to allow. L01 is single migration writer: append a forward-only registered migration to enforce live grant on every content UPDATE, never mutate applied 0075 in place without agreed migration strategy. Rerun after clean disposable replay, verify no legitimate authorized editor regression and no cross-company leakage. Do not mark DB079/DB062 DONE until passing evidence.",
+        "status": "REQUESTED",
+        "requestedAt": "2026-10-29T06:39:01.030Z"
+      },
+      {
+        "id": "SCR-L08-L07-DB079-NOTE-REVOKE-CONSUMER-20261029",
+        "fromLane": "L08",
+        "toLane": "L07",
+        "paths": [
+          "src/modules/placements/recruiter-private-rating-service.ts",
+          "src/modules/placements/recruiter-workspace-service.ts"
+        ],
+        "reason": "L08 identified a DB079 revocation gap in registered note SQL: private note rating/content UPDATE currently bypasses the live grant guard (only identity-column UPDATE triggers it). L01 has SQL migration handoff. L07 owns recruiter private notes/rating runtime; please verify existing mutation service rechecks persisted active same-company grant under transaction/appropriate locks and rejects stale sessions after revocation. Return exact code/test SHA, no duplicate writes to migration. L08 owns DB09 negative PG witness and closure.",
+        "status": "REQUESTED",
+        "requestedAt": "2026-10-29T06:39:01.030Z"
       }
     ],
     "coordination": {
