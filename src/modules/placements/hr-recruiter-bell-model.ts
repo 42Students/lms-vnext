@@ -1,3 +1,4 @@
+import {hrConversationsHref} from "./hr-conversation-urls-model";
 export type HrBellNotification={id:string;label:string;title?:string;unread:boolean;at:string;href:string};
 export type HrBellResponse={status:string;unread:number;hiddenUnread:number;items:HrBellNotification[]};
 export function relativeHrBellTime(at:string,now:number):string{
@@ -26,8 +27,27 @@ export function createHrBellMutationGate(){
  };
 }
 
+/**
+ * The recruiter service may return a job-scoped bell link or a general TPO
+ * conversation without a job. Accept only the exact canonical URL produced
+ * by our conversation link helper (including known filters and query order).
+ * This is deliberately NOT an unrestricted /hr/conversations prefix match:
+ * external schemes, encoded paths, extra query keys and arbitrary searches
+ * are never trusted as notification destinations.
+ */
+const HR_BELL_JOB_HREF=/^\/hr\/placements\/jobs\/[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}(?:\?tab=(?:overview|applicants|rounds|offers|requests|discussion))?$/i;
+const HR_BELL_GENERAL_HREF=/^\/hr\/conversations\?collegeId=([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})&q=&unreadOnly=true&page=1&sort=LATEST&scope=ALL$/i;
+export function isAuthorizedHrBellHref(href:string):boolean{
+ if(HR_BELL_JOB_HREF.test(href))return true;
+ const match=HR_BELL_GENERAL_HREF.exec(href);
+ if(!match)return false;
+ return href===hrConversationsHref({
+  collegeId:match[1],q:"",unreadOnly:"true",page:1,
+ });
+}
+
 /** Treat JSON returned to a persistent notification bell as untrusted.
- * Never navigate to a URL other than a recruiter-scoped hiring job.
+ * Only canonical recruiter job URLs and the generated scoped general inbox link are allowed.
  * 40 visible rows match the old drawer; the hidden unread counter does not
  * authorize marking notifications outside the list as read. */
 export function parseHrBellResponse(raw:unknown):HrBellResponse|null{
@@ -45,7 +65,7 @@ export function parseHrBellResponse(raw:unknown):HrBellResponse|null{
      typeof item["at"]!=="string"||typeof item["href"]!=="string"||
      typeof item["unread"]!=="boolean"||item["label"].length>500||
      !Number.isFinite(Date.parse(item["at"]))||
-     !/^\/hr\/placements\/jobs\/[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}(?:\?tab=(?:overview|applicants|rounds|offers|requests|discussion))?$/i.test(item["href"])){
+     !isAuthorizedHrBellHref(item["href"])){
    return null;
   }
   if(item["title"]!==undefined&&(typeof item["title"]!=="string"||item["title"].length>300))return null;
