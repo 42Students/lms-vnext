@@ -619,6 +619,31 @@ describe("Projects P6B final delivery and evaluation", () => {
     })).rejects.toMatchObject({name:"ZodError"});
   });
 
+  it("DB074 never records a rubric on a soft-deleted project with an approved delivery",async()=>{
+    const project=await createProject();
+    await finishExecution(project.id);
+    const draft=await createProjectSubmissionDraft(learner,project.id,{
+      summary:"Deletion evaluation witness",sourceUrl:"https://example.com/deletion-evidence",
+    });
+    await submitProjectSubmission(learner,project.id,draft.id,{
+      expectedUpdatedAt:draft.updatedAt.toISOString(),
+    });
+    await reviewProjectSubmission(mentor,project.id,draft.id,{decision:"APPROVED"});
+    await pool.query("UPDATE project_instances SET deleted_at=now() WHERE id=$1",[project.id]);
+    try{
+      await expect(createProjectEvaluation(mentor,project.id,draft.id,{
+        items:[{criterion:"No grade after deletion",score:5,maxScore:10}],
+      })).rejects.toBeDefined();
+      const recorded=await pool.query<{count:number}>(
+        "SELECT count(*)::int AS count FROM project_evaluations WHERE project_id=$1",
+        [project.id],
+      );
+      expect(recorded.rows[0]?.count).toBe(0);
+    }finally{
+      await pool.query("UPDATE project_instances SET deleted_at=null WHERE id=$1",[project.id]);
+    }
+  });
+
   it("creates one rubric evaluation only for an approved submission and exposes it only to authorized reviewers", async () => {
     const project = await createProject();
     await finishExecution(project.id);
