@@ -15,7 +15,7 @@ import {PrivateObjectStorageError} from "@/modules/storage/private-object-storag
 const access={
   membershipId:"11111111-1111-4111-8111-111111111111",
   collegeId:"22222222-2222-4222-8222-222222222222",
-  canEdit:true,
+  canEdit:true,canUpload:true,
 };
 const key="private/22222222-2222-4222-8222-222222222222/11111111-1111-4111-8111-111111111111/profile-verification/33333333-3333-4333-8333-333333333333";
 
