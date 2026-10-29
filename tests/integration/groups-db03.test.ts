@@ -27,6 +27,7 @@ const fixture = {
   users: [] as string[], memberships: [] as string[],
   periods: [] as string[], cohorts: [] as string[], sections: [] as string[],
   offerings: [] as string[], electiveOfferingIds: [] as string[], deliveries: [] as string[],
+  groupBackedClasses: [] as string[],
   learnerEnrollments: [] as string[], learnerSections: [] as string[],
 };
 
@@ -120,6 +121,7 @@ afterEach(async () => {
     await pool.query("DELETE FROM lms_group_rules WHERE group_id = ANY($1::uuid[])",[groupIds]);
     await pool.query("DELETE FROM elective_offerings WHERE group_id = ANY($1::uuid[])",[groupIds]);
   }
+  if(fixture.groupBackedClasses.length) await pool.query("DELETE FROM group_backed_class_offerings WHERE id = ANY($1::uuid[])",[fixture.groupBackedClasses]);
   if(fixture.slots.length) await pool.query("DELETE FROM elective_slots WHERE id = ANY($1::uuid[])",[fixture.slots]);
   if(fixture.learnerSections.length) await pool.query("DELETE FROM section_enrollments WHERE id = ANY($1::uuid[])",[fixture.learnerSections]);
   if(fixture.learnerEnrollments.length) await pool.query("DELETE FROM learner_program_enrollments WHERE id = ANY($1::uuid[])",[fixture.learnerEnrollments]);
@@ -257,6 +259,59 @@ describe("DB03 group kernel on disposable PostgreSQL", () => {
     });
     expect(updated.capacity).toBe(5);
     expect(updated.version).toBe(original.version + 1);
+  });
+
+  it("rejects cross-period elective rebind that would orphan its group-backed class", async () => {
+    const { slotId, cohortId, periodId, groups } = await createElectiveFixture();
+    const backingId = randomUUID();
+    fixture.groupBackedClasses.push(backingId);
+    await pool.query(
+      "INSERT INTO group_backed_class_offerings (id,academic_period_id,roster_group_id,name) VALUES ($1,$2,$3,'DB03 original backed class')",
+      [backingId,periodId,groups[0]]);
+    await pool.query(
+      "UPDATE elective_offerings SET backed_class_offering_id=$1 WHERE id=$2",
+      [backingId,fixture.electiveOfferingIds[0]]);
+    // A period-agnostic elective slot can still have one fixed-period class identity.
+    await pool.query("UPDATE elective_slots SET academic_period_id=NULL WHERE id=$1",[slotId]);
+    const secondPeriod=randomUUID(), secondSection=randomUUID();
+    const secondOffering=randomUUID(), secondDelivery=randomUUID();
+    fixture.periods.push(secondPeriod);
+    fixture.sections.push(secondSection);
+    fixture.offerings.push(secondOffering);
+    fixture.deliveries.push(secondDelivery);
+    await pool.query(
+      "INSERT INTO academic_periods (id,college_id,name,code,start_date,end_date,status) VALUES ($1,$2,$3,$4,'2027-01-01','2027-06-30','ACTIVE')",
+      [secondPeriod,SEED_IDS.collegeA,"DB03 next period "+secondPeriod,"DB03-"+secondPeriod]);
+    await pool.query(
+      "INSERT INTO sections (id,cohort_id,academic_period_id,name,code) VALUES ($1,$2,$3,$4)",
+      [secondSection,cohortId,secondPeriod,"DB03 next section "+secondSection,"DB03-"+secondSection]);
+    await pool.query(
+      "INSERT INTO course_offerings (id,course_id,cohort_id,academic_period_id,type,credits,display_order) VALUES ($1,$2,$3,$4,'ELECTIVE',3,51)",
+      [secondOffering,fixture.courses[0],cohortId,secondPeriod]);
+    await pool.query(
+      "INSERT INTO course_section_deliveries (id,offering_id,section_id) VALUES ($1,$2,$3)",
+      [secondDelivery,secondOffering,secondSection]);
+
+    await expect(updateCollegeElectiveOffering(admin,slotId,fixture.electiveOfferingIds[0],{
+      courseId:fixture.courses[0],backedDeliveryId:secondDelivery,
+      capacity:3,expectedVersion:0,
+    })).rejects.toMatchObject({code:"ELECTIVE_DELIVERY_MISMATCH"});
+    const saved = (await pool.query(
+      "SELECT backed_delivery_id,capacity,version,backed_class_offering_id FROM elective_offerings WHERE id=$1",
+      [fixture.electiveOfferingIds[0]])).rows[0];
+    expect(saved).toMatchObject({
+      backed_delivery_id:fixture.deliveries[0],
+      capacity:null,
+      version:0,
+      backed_class_offering_id:backingId,
+    });
+    const classAfter = (await pool.query(
+      "SELECT academic_period_id,status FROM group_backed_class_offerings WHERE id=$1",
+      [backingId])).rows[0];
+    expect(classAfter).toMatchObject({academic_period_id:periodId,status:"ACTIVE"});
+    const group = (await pool.query("SELECT capacity,version FROM lms_groups WHERE id=$1",
+      [groups[0]])).rows[0];
+    expect(group).toMatchObject({capacity:1,version:1});
   });
 
   it("rejects a new elective join after its backed class delivery ends", async () => {
