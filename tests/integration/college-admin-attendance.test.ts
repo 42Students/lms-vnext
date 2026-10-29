@@ -257,6 +257,55 @@ describe("College Admin attendance tenant isolation with PostgreSQL", () => {
     )).toBe(false);
   });
 
+  it("persists note-only admin corrections with stable row tokens and no spurious rewrite", async () => {
+    const input={
+      collegeId:SEED_IDS.collegeA,deliveryId:own.delivery,membershipId:own.learner,
+    };
+    const before=await pool.query(
+      "select id,status,note,marked_at from attendance_records where schedule_event_id=$1 and membership_id=$2",
+      [own.event,own.learner],
+    );
+    expect(before.rows[0]?.status).toBe("ABSENT");
+    const old=before.rows[0];
+    const changed=await correctAdminAttendance(admin,own.event,{
+      ...input,status:"ABSENT",note:"Reviewed with course coordinator",
+      expectedMarkedAt:new Date(old.marked_at).toISOString(),
+    });
+    expect(changed.status).toBe("ABSENT");
+    const corrected=await pool.query(
+      "select id,status,note,marked_at from attendance_records where schedule_event_id=$1 and membership_id=$2",
+      [own.event,own.learner],
+    );
+    const after=corrected.rows[0];
+    expect(after.id).toBe(old.id);
+    expect(after.note).toBe("Reviewed with course coordinator");
+    expect(new Date(after.marked_at).getTime()).toBeGreaterThan(
+      new Date(old.marked_at).getTime(),
+    );
+    await correctAdminAttendance(admin,own.event,{
+      ...input,status:"ABSENT",note:"Reviewed with course coordinator",
+      expectedMarkedAt:new Date(after.marked_at).toISOString(),
+    });
+    const noOp=await pool.query(
+      "select id,note,marked_at from attendance_records where schedule_event_id=$1 and membership_id=$2",
+      [own.event,own.learner],
+    );
+    expect(noOp.rows[0]?.id).toBe(after.id);
+    expect(noOp.rows[0]?.note).toBe(after.note);
+    expect(new Date(noOp.rows[0].marked_at).getTime()).toBe(
+      new Date(after.marked_at).getTime(),
+    );
+    await correctAdminAttendance(admin,own.event,{
+      ...input,status:"ABSENT",note:"",
+      expectedMarkedAt:new Date(after.marked_at).toISOString(),
+    });
+    const cleared=await pool.query(
+      "select id,note from attendance_records where schedule_event_id=$1 and membership_id=$2",
+      [own.event,own.learner],
+    );
+    expect(cleared.rows).toMatchObject([{id:after.id,note:null}]);
+  });
+
   it("keeps explicit PRESENT identity and prevents inactive-member corrections", async () => {
     const input = {
       collegeId: SEED_IDS.collegeA,
