@@ -22,7 +22,7 @@ const token=issueTpoCampaignRecipientToken({
  v:1,collegeId:college,campaignId:campaign,recipientId,expiresAt:4102444800000,
 },secret);
 
-function fakeVerifiedDb(snapshotKey:string|null,locked=true){
+function fakeVerifiedDb(snapshotKey:string|null,locked=true,lockedKeyOverride?:string){
  const preflightLimit=vi.fn(async()=>snapshotKey?[{
   recipientKey:snapshotKey,email,
  }]:[]);
@@ -31,6 +31,7 @@ function fakeVerifiedDb(snapshotKey:string|null,locked=true){
  }));
  const lockedRow=locked?[{
   id:recipientId,collegeId:college,campaignId:campaign,leadId:lead,
+  recipientKey:lockedKeyOverride??snapshotKey,
   unsubscribedAt:new Date("2026-10-18T00:00:00Z"),
  }]:[];
  const txLimit=vi.fn(async()=>lockedRow);
@@ -66,6 +67,17 @@ describe("L08 / DB-050 campaign opt-outs use verified snapshots before global su
   expect(db.tx.insert).not.toHaveBeenCalled();
   expect(JSON.stringify(vi.mocked(persistVerifiedGlobalEmailSuppression).mock.calls))
    .not.toContain(email);
+ });
+ it("cannot apply the CRM opt-out to a recipient that changed after a verified global preflight",async()=>{
+  const savedKey=issueTpoCampaignEmailRecipientKey(email,secret);
+  const db=fakeVerifiedDb(savedKey,true,"c".repeat(64));
+  vi.mocked(persistVerifiedGlobalEmailSuppression).mockResolvedValue(undefined);
+  await expect(unsubscribeTpoCampaignRecipient(token))
+   .rejects.toBeInstanceOf(GlobalEmailSuppressionUnavailable);
+  // Conservatively suppressing the original verified email is safe; the
+  // changed target cannot silently inherit the signed recipient's consent.
+  expect(persistVerifiedGlobalEmailSuppression).toHaveBeenCalledOnce();
+  expect(db.tx.update).not.toHaveBeenCalled();
  });
  it("does not globally suppress a replacement email whose campaign snapshot no longer matches",async()=>{
   const db=fakeVerifiedDb("a".repeat(64));
