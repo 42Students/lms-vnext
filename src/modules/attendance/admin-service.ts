@@ -44,7 +44,7 @@ import { indiaAttendanceMonthWindow } from "./month-window";
 import {enqueueAttendanceParentSms,dispatchQueuedAttendanceParentSms} from "./parent-sms-service";
 import {legacyFormalTitle} from "@/modules/courses/course-legacy-parity-model";
 import {facultyAttendanceNextMarkedAt} from "./faculty-correction-token-model";
-import {adminAttendanceCorrectionChange,adminAttendanceRecordTokenMatches} from "./admin-correction-change-model";
+import {adminAttendanceCorrectionChange,adminAttendanceRecordTokenMatches,adminAttendanceAuditEventType} from "./admin-correction-change-model";
 
 
 /** Options are independent reads. A failed class-offering query must never
@@ -749,7 +749,7 @@ export async function correctAdminAttendance(
         actorMembershipId:context.membership?.collegeId===college.id
           ?context.membership?.id??null:null,
         module:"COURSES",
-        eventType:input.status==="PRESENT"?"ADMIN_ATTENDANCE_MARK_PRESENT":"ADMIN_ATTENDANCE_MARK_ABSENT",
+        eventType:adminAttendanceAuditEventType(change.statusChanged,input.status),
         subjectType:"attendance_session",
         subjectId:scheduleEventId,
         subjectLabel:"Attendance correction",
