@@ -10,7 +10,9 @@ export const runtime="nodejs";
  * been deployed. Public callers get a generic retryable state, never a
  * recipient-lookup oracle or a false "unsubscribed" confirmation. */
 function recipientStorageUnavailable(error:unknown):NextResponse|null {
- if(!(error instanceof Error)||error.message!=="TPO_CAMPAIGNS_NOT_REGISTERED")return null;
+ if(!(error instanceof Error)||
+    (error.message!=="TPO_CAMPAIGNS_NOT_REGISTERED"&&
+     !(error instanceof GlobalEmailSuppressionUnavailable)))return null;
  return NextResponse.json({error:"SUPPRESSIONS_NOT_READY",message:"That didn't work. Please try again."},{
   status:503,headers:{"Cache-Control":"no-store"},
  });
