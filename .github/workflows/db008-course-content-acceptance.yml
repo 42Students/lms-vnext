@@ -31,6 +31,7 @@ on:
       - "src/db/schema/db05-lesson-settings.staged.ts"
       - "tests/integration/db008-course-parent-app-pg.test.ts"
       - "tests/integration/courses-c2-learning.test.ts"
+      - "tests/integration/db008-learner-direct-content-link-gates.test.ts"
       - ".github/workflows/db008-course-content-acceptance.yml"
 
 permissions:
@@ -85,6 +86,7 @@ jobs:
           npx vitest run --config vitest.db.config.ts
           tests/integration/db008-course-parent-app-pg.test.ts
           tests/integration/courses-c2-learning.test.ts
+          tests/integration/db008-learner-direct-content-link-gates.test.ts
           tests/integration/db05-classroom-sender-snapshot.test.ts
       - name: DB-008 immutable classroom sender projection contract
         run: node --test tests/db05-classroom-snapshot-consumer-contract.test.mjs
