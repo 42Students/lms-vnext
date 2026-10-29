@@ -26,3 +26,18 @@ export function adminAttendanceCorrectionChange(input: {
     shouldNotifyCorrected:statusChanged&&previousStatus==="ABSENT"&&input.requestedStatus==="PRESENT",
   };
 }
+
+/** Compare a browser's reviewed record token at millisecond precision.
+ * The initial null token means no persisted record; undefined is the
+ * explicitly unsupported legacy caller mode (no optimistic guard).
+ */
+export function adminAttendanceRecordTokenMatches(
+  expected:string|null|undefined,
+  persisted:Date|null,
+):boolean {
+  if(expected===undefined)return true;
+  if(expected===null)return persisted===null;
+  if(!persisted)return false;
+  const parsed=new Date(expected);
+  return Number.isFinite(parsed.getTime())&&parsed.getTime()===persisted.getTime();
+}
