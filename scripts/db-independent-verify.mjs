@@ -338,6 +338,16 @@ async function main() {
       ["scripts/db002-postgres-catalog-acceptance.mjs"],
       env,
     );
+    // DB-078 is a real registered-catalog witness, not a source assertion.
+    // Keep the destructive/isolated target environment (no application URL)
+    // even though this particular witness performs read-only catalog queries.
+    // This makes a mistakenly aliased app/test URL fail closed if introduced.
+    runStep(
+      "DB-078 registered course-column catalog",
+      "node",
+      ["--test", "tests/db078-registered-course-column-disposition-pg.test.mjs"],
+      { ...destructiveEnv, DB078_DISPOSABLE: "1" },
+    );
     runStep(
       "Database parity source/static contracts",
       "npm",
@@ -372,7 +382,7 @@ async function main() {
       passed:
         failure === null &&
         provider !== null &&
-        results.length === 9 &&
+        results.length === 10 &&
         results.every(
           (step) =>
             step.exitCode === 0 &&
