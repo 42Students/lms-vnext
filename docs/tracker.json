@@ -2258,6 +2258,18 @@
         "reason": "L08 created two NEW rollback-only registered PostgreSQL17 witnesses on main: DB-061 message sender grant, deferred last-message projection, append-only history, one-way read receipts, revoke denial (commit b2734945f22d66d2a69995d63ff741475db3f1c1); DB-062 recruiter private applicant note grant and immutable job/application/recruiter identity, timestamp monotonicity and update/revocation checks (commit 47a90172d1874f0f6b071a3802a8474e3d07928b). Both require canonical journal replay/seed and DB09_ISOLATED_TEST_DATABASE=1; no production data, no commit. Run after disposable preflight; report exact SHA and first failing SQLSTATE, if any. Wire as gated tests ONLY after running them green. Existing collaboration/share witness requests remain separate. Do not mark DB061 or DB062 DONE without PG + real consumer evidence.",
         "status": "REQUESTED",
         "requestedAt": "2026-10-29T06:36:24.796Z"
+      },
+      {
+        "id": "SCR-L09-L01-DB067-EMAIL-CLAIMS-20261029",
+        "fromLane": "L09",
+        "toLane": "L01",
+        "paths": [
+          "docs/planning/sql/db10-outbound-dispatch-lease-candidate.sql",
+          "drizzle/**"
+        ],
+        "reason": "L09 has now fail-closed the recruiter outbox writer and trusted worker to EMAIL only; SMS/WHATSAPP require independently verified DLT/consent adapters. Before registering DB-067 claims, restrict db10_claim_outbound_messages eligibility to channel='EMAIL' (or design a channel-selective authorized claim API) so legacy/staged non-EMAIL PENDING rows are not stranded as CLAIMED/reconciliation when EMAIL worker drains. Add negative disposable PG witness proving non-EMAIL cannot be claimed by EMAIL worker. Preserve existing fence, pre-send and suppression controls.",
+        "status": "REQUESTED",
+        "requestedAt": "2026-10-29T06:40:00.000Z"
       }
     ],
     "coordination": {
