@@ -141,3 +141,37 @@ test("DB076 clean checkout preflight refuses tracked, staged and untracked chang
     fs.rmSync(dir,{recursive:true,force:true});
   }
 });
+
+test("DB076 final acceptance requires the original HEAD and a clean checkout",()=>{
+  const lastIntegration=script.indexOf('"PostgreSQL integration / negative witnesses"');
+  const finalHead=script.indexOf('const finalHead = shellText("git", ["rev-parse", "HEAD"])');
+  const finalStatus=script.indexOf('sourceTreeCleanAtEnd = !shellText("git"');
+  assert.ok(lastIntegration>=0 && finalHead>lastIntegration && finalStatus>finalHead,
+    "final source attestation must happen after all database gates");
+  assert.match(script,/gitHeadUnchanged = finalHead === gitSha/);
+  assert.match(script,/if \(!gitHeadUnchanged \|\| !sourceTreeCleanAtEnd\)/);
+  assert.match(script,/passed:\s*sourceTreeClean\s*&&\s*sourceTreeCleanAtEnd\s*&&\s*gitHeadUnchanged\s*&&/);
+  assert.match(script,/source checkout changed during the run/);
+});
+
+test("DB076 git-head witness detects commit movement while source is otherwise clean",()=>{
+  const dir=fs.mkdtempSync(path.join(os.tmpdir(),"db076-head-"));
+  const git=(...args)=>execFileSync("git",args,{cwd:dir,encoding:"utf8"}).trim();
+  try {
+    git("init","-q");
+    git("config","user.name","L10 Test");
+    git("config","user.email","l10@example.invalid");
+    fs.writeFileSync(path.join(dir,"source.txt"),"first\n");
+    git("add","source.txt");
+    git("commit","-qm","first");
+    const original=git("rev-parse","HEAD");
+    fs.writeFileSync(path.join(dir,"source.txt"),"second\n");
+    git("add","source.txt");
+    git("commit","-qm","second");
+    assert.notEqual(git("rev-parse","HEAD"),original,"original SHA must become invalid");
+    assert.equal(git("status","--porcelain=v1","--untracked-files=normal"),"",
+      "clean worktree alone is insufficient proof of the original SHA");
+  } finally {
+    fs.rmSync(dir,{recursive:true,force:true});
+  }
+});
