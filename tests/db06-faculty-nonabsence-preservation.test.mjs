@@ -26,6 +26,7 @@ test("DB06 faculty correction plans only changed records and retains immutable p
   assert.match(faculty, /changeToPresentRecordIds/);
   assert.match(faculty, /changeToAbsentRecordIds/);
   assert.match(faculty, /insertAbsentMembershipIds/);
+  assert.match(faculty, /insertPresentMembershipIds/);
   assert.doesNotMatch(faculty, /\.delete\(attendanceRecords\)/);
   assert.match(planner, /existing\.status === "ABSENT"/);
   assert.match(planner, /existing\.status !== "ABSENT"/);
