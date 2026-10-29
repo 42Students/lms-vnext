@@ -146,7 +146,7 @@ export const assignmentGradeEventsStaged = pgTable(
     ),
     check(
       "assignment_grade_events_action_ck",
-      sql.raw(`"action" in ('GRADE','REGRADE','PUBLISH_GRADE')`),
+      sql.raw(`"action" in ('GRADE','REGRADE','HIDE_GRADE','PUBLISH_GRADE')`),
     ),
     check(
       "assignment_grade_events_status_ck",
@@ -162,7 +162,7 @@ export const assignmentGradeEventsStaged = pgTable(
     ),
     check(
       "assignment_grade_events_shape_ck",
-      sql.raw(`(("action" = 'GRADE' and "previous_grading_status" = 'NOT_GRADED' and "new_grading_status" = 'GRADED' and "previous_points" is null and "new_points" is not null and "previous_grade_published" = false and "new_grade_published" = false and "new_graded_by_user_id" is not null and "new_graded_at" is not null) or ("action" = 'REGRADE' and "previous_grading_status" = 'GRADED' and "new_grading_status" = 'GRADED' and "new_points" is not null and "new_grade_published" = false and "new_graded_by_user_id" is not null and "new_graded_at" is not null) or ("action" = 'PUBLISH_GRADE' and "previous_grading_status" = 'GRADED' and "new_grading_status" = 'GRADED' and "previous_grade_published" = false and "new_grade_published" = true and "previous_points" is not distinct from "new_points" and "previous_feedback" is not distinct from "new_feedback" and "previous_graded_by_user_id" is not distinct from "new_graded_by_user_id" and "previous_graded_at" is not distinct from "new_graded_at"))`),
+      sql.raw(`(("action" = 'GRADE' and "previous_grading_status" = 'NOT_GRADED' and "new_grading_status" = 'GRADED' and "previous_points" is null and "new_points" is not null and "previous_grade_published" = false and "new_grade_published" = false and "new_graded_by_user_id" is not null and "new_graded_at" is not null) or ("action" = 'REGRADE' and "previous_grading_status" = 'GRADED' and "new_grading_status" = 'GRADED' and "new_points" is not null and "new_grade_published" = false and "new_graded_by_user_id" is not null and "new_graded_at" is not null) or ("action" = 'PUBLISH_GRADE' and "previous_grading_status" = 'GRADED' and "new_grading_status" = 'GRADED' and "previous_grade_published" = false and "new_grade_published" = true and "previous_points" is not distinct from "new_points" and "previous_feedback" is not distinct from "new_feedback" and "previous_graded_by_user_id" is not distinct from "new_graded_by_user_id" and "previous_graded_at" is not distinct from "new_graded_at") or ("action" = 'HIDE_GRADE' and "previous_grading_status" = 'GRADED' and "new_grading_status" = 'GRADED' and "previous_grade_published" = true and "new_grade_published" = false and "previous_points" is not distinct from "new_points" and "previous_feedback" is not distinct from "new_feedback" and "previous_graded_by_user_id" is not distinct from "new_graded_by_user_id" and "previous_graded_at" is not distinct from "new_graded_at"))`),
     ),
   ],
 );
