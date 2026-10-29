@@ -160,21 +160,38 @@ export async function reportErrorForAlert(input: ReportableError): Promise<boole
         eq(signatures.environment, environment),
         eq(signatures.signatureHash, hash),
       )).limit(1).for("update");
-      const inWindow = Boolean(current?.recentWindowAt &&
-        now.getTime() - current.recentWindowAt.getTime() < 300_000);
-      const recentCount = current && inWindow ? current.recentWindowCount + 1 : 1;
-      const decision = decideAlert({
+      // Different pod clocks (or delayed observed events) can report an
+      // older instant. Do not rewind rolling counters or produce a false
+      // spike/regression solely because a late report crossed a boundary.
+      const clockOutOfOrder = Boolean(current &&
+        now.getTime() < current.lastSeenAt.getTime());
+      const elapsed = current?.recentWindowAt
+        ? now.getTime() - current.recentWindowAt.getTime() : null;
+      const inWindow = elapsed !== null && elapsed >= 0 && elapsed < 300_000;
+      const recentCount = clockOutOfOrder && current
+        ? current.recentWindowCount
+        : current && inWindow ? current.recentWindowCount + 1 : 1;
+      const decision = clockOutOfOrder ? "NONE" : decideAlert({
         known: Boolean(current), muted: current?.muted ?? false,
         fixStatus: current?.fixStatus ?? "OPEN", fixedAt: current?.fixedAt ?? null,
         recentCount, lastSpikeAt: current?.lastSpikeAlertAt ?? null, now,
       });
       const accountHash = trustedAccountHash(input);
       if (current) {
+        const olderDay = current.dayKey !== null && current.dayKey > dayKey;
         await tx.update(signatures).set({
-          lastSeenAt: now, occurrenceCount: sql.raw("log_alert_signatures.occurrence_count + 1"),
-          recentWindowAt: inWindow ? current.recentWindowAt : now,
+          // SQL LEAST/GREATEST, not application read-modify-write, preserve
+          // temporal history even if a second writer commits out of order.
+          firstSeenAt: sql`least(${signatures.firstSeenAt}, ${now})`,
+          lastSeenAt: sql`greatest(${signatures.lastSeenAt}, ${now})`,
+          occurrenceCount: sql.raw("log_alert_signatures.occurrence_count + 1"),
+          recentWindowAt: clockOutOfOrder
+            ? current.recentWindowAt
+            : inWindow ? current.recentWindowAt : now,
           recentWindowCount: recentCount,
-          dayKey, dayOccurrences: current.dayKey === dayKey ? current.dayOccurrences + 1 : 1,
+          dayKey: olderDay ? current.dayKey : dayKey,
+          dayOccurrences: olderDay ? current.dayOccurrences :
+            current.dayKey === dayKey ? current.dayOccurrences + 1 : 1,
         }).where(eq(signatures.id, current.id));
         await tx.insert(daily).values({
           signatureId: current.id, dayKey, occurrenceCount: 1,
