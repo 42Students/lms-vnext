@@ -41,11 +41,11 @@ describe("PROJ-HARNESS-ROLLBACK real PostgreSQL: nested rollback and FK integrit
        [f.graph.taskId]))[0]?.status).toBe("TODO");
    });
  });
- it("PROJ-HARNESS-ROLLBACK-03 project template version deletion is RESTRICT, preserving assigned lineage",async()=>{
+ it("PROJ-HARNESS-ROLLBACK-03 project template versions are immutable, preserving assigned lineage",async()=>{
    await withProjectPg(pool,async db=>{
      const f=await prepared(db);
      await db.expectSqlState(()=>db.query(
-       "delete from project_template_versions where id=$1",[f.graph.versionId]),"23503");
+       "delete from project_template_versions where id=$1",[f.graph.versionId]),"23514");
      expect((await db.query("select id from project_template_versions where id=$1",
        [f.graph.versionId]))).toHaveLength(1);
      expect((await db.query("select id from project_instances where id=$1",
