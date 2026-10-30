@@ -274,6 +274,7 @@ async function insertAcademicWitnessFixture(client: PoolClient, id: string) {
   const period = randomUUID();
   const cohort = randomUUID();
   const section = randomUUID();
+  let selectedOffering: string | null = null;
   const code = randomUUID().replaceAll("-", "").slice(0, 12);
   await client.query(
     "INSERT INTO programs (id,department_id,name,code,duration_terms) VALUES ($1,$2,$3,$4,8)",
@@ -294,6 +295,7 @@ async function insertAcademicWitnessFixture(client: PoolClient, id: string) {
   if (["P5-19","P5-20","P5-21"].includes(id)) {
     const course = randomUUID();
     const offering = randomUUID();
+    selectedOffering = offering;
     const delivery = randomUUID();
     await client.query(
       "INSERT INTO courses (id,department_id,name,code,status) VALUES ($1,$2,$3,$4,'ACTIVE')",
@@ -391,6 +393,7 @@ async function insertAcademicWitnessFixture(client: PoolClient, id: string) {
       [enrollment,section,period],
     );
   }
+  return { section, offering: selectedOffering };
 }
 
 async function withRollback(run: (client: PoolClient) => Promise<void>, readOnly = false) {
@@ -558,6 +561,60 @@ describe.skipIf(!enabled)("DB018: direct-SQL negative database boundaries", () =
         "INSERT INTO academic_periods(id,college_id,name,code,start_date,end_date) VALUES($1,$2,$3,$4,'2027-06-30','2026-07-01')",
         [id,SEED_IDS.collegeA,"DB018 negative period "+tag,"N-"+tag],
       )).rejects.toMatchObject({code:"23514",constraint:"academic_periods_date_order_ck"});
+    });
+  });
+
+  // Five isolated, real registered CHECK boundaries. Each witness contains
+  // a legitimate FK parent and rolls back the rejected mutation.
+  it("rejects nonpositive user identity versions (23514)", async () => {
+    await withRollback(async (client) => {
+      const user = randomUUID();
+      await expect(client.query(
+        "INSERT INTO users(id,identity_uid,display_name,version) VALUES($1,$2,'DB018 invalid revision',0)",
+        [user,"db018-version-"+user],
+      )).rejects.toMatchObject({code:"23514",constraint:"users_version_ck"});
+    });
+  });
+
+  it("rejects zero section capacity in a real cohort (23514)", async () => {
+    await withRollback(async (client) => {
+      const { section } = await insertAcademicWitnessFixture(client,"P5-17");
+      await expect(client.query(
+        "UPDATE sections SET capacity=0 WHERE id=$1",
+        [section],
+      )).rejects.toMatchObject({code:"23514",constraint:"sections_capacity_ck"});
+    });
+  });
+
+  it("rejects section minimum size above capacity (23514)", async () => {
+    await withRollback(async (client) => {
+      const { section } = await insertAcademicWitnessFixture(client,"P5-17");
+      await expect(client.query(
+        "UPDATE sections SET capacity=10,min_size=11 WHERE id=$1",
+        [section],
+      )).rejects.toMatchObject({code:"23514",constraint:"sections_min_size_ck"});
+    });
+  });
+
+  it("rejects offering credits above the registered ceiling (23514)", async () => {
+    await withRollback(async (client) => {
+      const { offering } = await insertAcademicWitnessFixture(client,"P5-19");
+      expect(offering).not.toBeNull();
+      await expect(client.query(
+        "UPDATE course_offerings SET credits=31 WHERE id=$1",
+        [offering],
+      )).rejects.toMatchObject({code:"23514",constraint:"course_offerings_credits_ck"});
+    });
+  });
+
+  it("rejects nonpositive placement company revisions (23514)", async () => {
+    await withRollback(async (client) => {
+      const company = randomUUID();
+      const tag = company.replaceAll("-","").slice(0,12);
+      await expect(client.query(
+        "INSERT INTO placement_companies(id,name,status,version,created_by_user_id) VALUES($1,$2,'ACTIVE',0,$3)",
+        [company,"DB018 private company "+tag,SEED_IDS.collegeAdminUser],
+      )).rejects.toMatchObject({code:"23514",constraint:"placement_companies_version_ck"});
     });
   });
 
