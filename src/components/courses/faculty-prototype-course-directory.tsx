@@ -29,7 +29,9 @@ export function FacultyPrototypeCourseDirectory({rows,totalAssignments,pendingBy
 }){
  const [q,setQ]=useState("");
  const [kind,setKind]=useState<"All"|"Regular"|"Elective">("All");
- const [period,setPeriod]=useState(rows[0]?.course.academicPeriodId??"all");
+ // The list itself is authorized. Never silently hide other assigned terms
+ // on initial load: the Faculty must choose a term explicitly.
+ const [period,setPeriod]=useState("all");
  const grouped=new Map<string,CourseRow>();
  for(const {course,workspace} of rows){
   const key=course.courseId+":"+course.academicPeriodId;
@@ -95,8 +97,8 @@ export function FacultyPrototypeCourseDirectory({rows,totalAssignments,pendingBy
    <table className="faculty-proto-table">
     <thead><tr><th>Course</th><th>Classes</th><th>To do</th><th>Attendance</th><th><span className="sr-only">Open</span></th></tr></thead>
     <tbody>{visible.map(course=><tr key={course.id}>
-     <td><Link className="faculty-proto-link" href={"/teacher/courses/"+encodeURIComponent(course.deliveries[0]!)+"/home"}>
-      {course.name}</Link>
+     <td>{course.classLinks.length===1?<Link className="faculty-proto-link" href={"/teacher/courses/"+encodeURIComponent(course.deliveries[0]!)+"/home"}>
+      {course.name}</Link>:<strong className="text-[#078191]">{course.name}</strong>}
       <p className="faculty-proto-subtitle">{course.code} · {course.kind}{course.credits!==null?" · "+course.credits+" credits":""}</p>
      </td>
      <td><div className="flex flex-wrap gap-x-1 gap-y-2">
@@ -106,13 +108,18 @@ export function FacultyPrototypeCourseDirectory({rows,totalAssignments,pendingBy
      <td><span className={"rounded-full px-2.5 py-1 text-xs font-semibold "+(course.toGrade>0?"bg-red-50 text-red-700":course.drafts>0?"bg-amber-50 text-amber-800":"bg-emerald-50 text-emerald-800")}>
        {course.toGrade>0?course.toGrade+" to grade":course.drafts>0?course.drafts+" to publish":"Nothing waiting"}
      </span></td>
-     <td><Link className="text-sm text-[#1d293f] hover:text-[#078191] hover:underline" href={"/teacher/courses/"+encodeURIComponent(course.deliveries[0]!)+"/attendanceDetail"}>{course.attendancePossible>0?Math.round(course.attendancePresent*100/course.attendancePossible)+"% this month":"Not recorded"}</Link></td>
-     <td><Link className="faculty-proto-secondary !min-h-9 !px-3 !py-1.5 !text-xs" href={"/teacher/courses/"+encodeURIComponent(course.deliveries[0]!)+"/home"}>Open</Link></td>
+     <td>{course.classLinks.length===1?<Link className="text-sm text-[#1d293f] hover:text-[#078191] hover:underline" href={"/teacher/courses/"+encodeURIComponent(course.deliveries[0]!)+"/attendanceDetail"}>{course.attendancePossible>0?Math.round(course.attendancePresent*100/course.attendancePossible)+"% this month":"Not recorded"}</Link>
+      :<span className="text-sm text-body">{course.classLinks.length} classes · Select a class to view attendance</span>}</td>
+     <td>{course.classLinks.length===1?<Link className="faculty-proto-secondary !min-h-9 !px-3 !py-1.5 !text-xs" href={"/teacher/courses/"+encodeURIComponent(course.deliveries[0]!)+"/home"}>Open</Link>
+      :<span className="text-sm font-semibold text-[#078191]">Choose class</span>}</td>
     </tr>)}</tbody>
    </table>
   </div>
-  {visible.length===0?<p className="faculty-proto-subtitle rounded-lg border border-[#dce5ee] p-5">
-   {q.trim()?"No courses match your search":"No assigned courses match this course type."}</p>:null}
-  {courses.length>0?<p className="faculty-proto-subtitle">A course with no class assigned to you shows “Not assigned to a class” in the detailed course view. Ask the college admin. Your class links and advanced teaching filters remain available.</p>:null}
+  {visible.length===0?<div role="status" className="faculty-proto-subtitle rounded-lg border border-[#dce5ee] p-5">
+   {courses.length===0?<p>No teaching assignments found. Please contact your administrator.</p>:
+    <p>{q.trim()?"No courses match your search":"No assigned courses match this course type."}</p>}
+   {courses.length===0?<p>Your teaching courses will appear after an administrator assigns you a class.</p>:null}
+  </div>:null}
+  {courses.length>0?<p className="faculty-proto-subtitle">Each class name opens that exact authorized teaching Section. For courses taught across classes, choose the class explicitly; the detailed teaching filters remain available below.</p>:null}
  </section>;
 }
