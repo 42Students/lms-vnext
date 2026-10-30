@@ -483,8 +483,29 @@
       "id": "DB-022",
       "title": "Preserve DB10 skill alias and independent usage persistence",
       "phase": "DATABASE",
-      "done": false,
-      "dependsOn": []
+      "done": true,
+      "dependsOn": [],
+      "acceptedAt": "2026-10-30",
+      "acceptanceEvidence": [
+        {
+          "kind": "EXECUTED_POSTGRESQL_17",
+          "result": "PASS",
+          "exitCode": 0,
+          "commitSha": "30a800706d2bf0b38a74389f9a381d83ce711993",
+          "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/41060834336",
+          "jobId": 124079849555,
+          "runner": "GitHub Actions ubuntu-latest, Node.js 22, disposable PostgreSQL 17-alpine",
+          "commands": [
+            "npm ci",
+            "npm run db:journal:verify",
+            "npm run db:test:prepare (with DATABASE_URL cleared during reset)",
+            "npm run db:migrate (replay idempotence)",
+            "psql \"$TEST_DATABASE_URL\" -X -v ON_ERROR_STOP=1 -f scripts/sql/db10-skills-catalog-staging.sql (disposable verification overlay only)",
+            "npx vitest run --config vitest.db.config.ts tests/integration/db10-skills-catalog.test.ts"
+          ],
+          "details": "All workflow steps passed on registered PostgreSQL 17. Eight of eight integration tests passed: multi-skill synonym resolution, exact-name precedence, independent v2 usage popularity, category visibility, folded name uniqueness and negative FK/checks, repeated same-skill aliases, independent catalog versus free-text counts, and 20 concurrent atomic free-text UPSERT increments without a catalog parent. Forward-only registered migration 0313 removes incorrect per-skill synonym uniqueness from migration 0263 and adds a non-unique parent/alias lookup index. This accepts DB-022-specific persistence; not the global DATABASE phase or full historical import."
+        }
+      ]
     },
     {
       "id": "DB-023",
