@@ -38,6 +38,8 @@ Legacy slug, numeric and class-hint links resolve only against persisted active 
 - [x] Loading/empty/error states exist for workspace and reports; desktop/mobile browser exercised correct linked transitions and no page errors/overflow.
 
 ### Blueprint
+**2026-10-31 final closure evidence in progress:** Mixed shared/Section lesson-content ordering now submits the full server-required content set while keeping shared slots fixed ([source fix](https://github.com/42Students/lms-vnext/commit/4c5e2499b1f84f7cdf256de8b6c9c3aad8eb60da)); added strict stale/duplicate/foreign-order and empty/unpublished lesson regressions. The dedicated [Blueprint acceptance workflow](https://github.com/42Students/lms-vnext/actions/workflows/faculty-blueprint-prototype-acceptance.yml) now additionally runs persisted Section Resource edit, real Assignment/Quiz creation-edit-archive and IST scheduling. **Do not close the four remaining implementation rows before the expanded workflow passes**; the separate live private-object-storage condition remains explicitly deferred.
+
 - [x] **NOT APPLICABLE to Faculty:** shared syllabus lesson create/edit/delete is a college-admin operation, not an authorized Faculty Section mutation. Legacy `docs/legacy-source/frontend/src/components/Global/Offcanvas/Syallabus/AddLessonDrawer.jsx` explicitly says it is opened only by `AdminCourseSyllabus.jsx`; `src/modules/courses/lesson-service.ts` requires college-admin/superadmin to change shared lesson structure. Faculty can instead author items inside an assigned Section lesson. The disabled + Lesson/Rename affordances now explain this boundary.
 - [x] **NOT APPLICABLE to Faculty for shared lessons:** syllabus lesson ordering/reordering is college-managed (legacy `src/pages/superadmin/sections/Lessons.js`). Faculty-specific **content** ordering remains governed by `DB05_CONTENT_ORDER_READY=DB05_VERIFIED` and does not grant shared lesson edit rights.
 - [ ] Resource/video/live-class content create/edit/delete.
@@ -255,12 +257,13 @@ Legacy `QuizzesContent` runs in Faculty mode.
 **Still externally BLOCKED (not implementation-green):** real profile photo/import and private identity evidence upload, scan verdict, preview/revocation and signed retrieval require an approved private object provider, malware scanner and operator-managed storage environment. Retain the photo and Aadhaar/PAN rows OPEN until those live flows are exercised using authorized test identities; neither source-only checks nor disposable database receipt tests prove the provider is live. The unrelated Faculty resume remains correctly N/A. The official visual acceptance/release gates stay separate.
 
 
-**Source-only partial implementation:** `/teacher/profile` now has Faculty-only
+**Closure implementation and acceptance evidence in progress:** `/teacher/profile` now has Faculty-only
 membership-scoped reads, basic identity/teaching details, Faculty navigation and
 loading/error/retry states. It deliberately does **not** let Faculty edit
 college-owned academic title, employment type or department assignments.
-The legacy rich About sections, profile-document persistence, private uploads,
-verified browser parity and cross-role workflow remain open; do not mark DONE.
+The rich About, personal/contact/social/address, repeatable professional sections and
+versioned private-document CAS are implemented and covered by PostgreSQL integration.
+The strict [Profile acceptance workflow](https://github.com/42Students/lms-vnext/actions/workflows/faculty-profile-closure-acceptance.yml) tests full editor role/scope, browser saves/reloads (About, Contacts, Address, Social, Experience), stale denial and private-field safety on a disposable Faculty-only identity. Profile photo/Aadhaar/PAN and private attachment transfer success still require real authorized storage/scanner readiness. **Do not mark the remaining checklist rows green until matching tests pass; provider-dependent release acceptance stays separate.**
 
 Audited shared Faculty-profile sections:
 - user summary/profile image/completeness;
