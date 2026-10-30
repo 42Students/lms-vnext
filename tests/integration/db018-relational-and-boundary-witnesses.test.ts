@@ -2,7 +2,11 @@ import { assertDb018DisposableTarget } from "../support/db018-test-target.mjs";
 import { randomUUID } from "node:crypto";
 import { readFileSync } from "node:fs";
 import { afterAll, describe, expect, it } from "vitest";
-import { Pool, type PoolClient } from "pg";
+import { Pool, type PoolClient, type QueryResultRow } from "pg";
+import {
+  createTenant, createPrincipal, createProjectFixture, createTaskSubmission,
+  type PgHarness,
+} from "./support/projects-placements-pg-harness";
 import { SEED_IDS } from "../../scripts/db-seed-data";
 
 /**
@@ -120,9 +124,57 @@ const academicFixtureProbes = new Set(["P5-17", "P5-18", "P5-19"]);
 const placementFixtureProbes = new Set([
   "P5-07", "P5-08", "P5-09", "P5-10", "P5-11",
 ]);
-const populatedFixtureProbes = new Set([
-  ...academicFixtureProbes, ...placementFixtureProbes,
+const projectFixtureProbes = new Set([
+  "P5-01", "P5-02", "P5-03", "P5-04", "P5-05", "P5-06",
 ]);
+const populatedFixtureProbes = new Set([
+  ...academicFixtureProbes, ...placementFixtureProbes, ...projectFixtureProbes,
+]);
+
+/**
+ * Populate project ancestry against this SAME rollback transaction; a
+ * different connection would not see the uncommitted seed rows.
+ */
+async function insertProjectWitnessFixture(client: PoolClient, id: string) {
+  if (!projectFixtureProbes.has(id)) throw new Error("Unreviewed project probe fixture");
+  let savepointCounter = 0;
+  const fixtureDb: PgHarness = {
+    client, runId: randomUUID(),
+    async query<T extends QueryResultRow = QueryResultRow>(statement: string, args?: unknown[]) {
+      return (await client.query<T>(statement, args)).rows;
+    },
+    async savepoint<T>(work: () => Promise<T>, discard = false): Promise<T> {
+      const name = "db018_project_sp_" + ++savepointCounter;
+      await client.query("SAVEPOINT " + name);
+      try {
+        const result = await work();
+        await client.query(discard ? "ROLLBACK TO SAVEPOINT " + name : "RELEASE SAVEPOINT " + name);
+        if (discard) await client.query("RELEASE SAVEPOINT " + name);
+        return result;
+      } catch(error) {
+        await client.query("ROLLBACK TO SAVEPOINT " + name);
+        await client.query("RELEASE SAVEPOINT " + name);
+        throw error;
+      }
+    },
+    async expectSqlState() { throw new Error("DB018 project fixture does not perform negative writes"); },
+  };
+  const tenant = await createTenant(fixtureDb,"DB018 isolated project tenant");
+  const admin = await createPrincipal(fixtureDb,tenant,["COLLEGE_ADMIN"]);
+  const mentor = await createPrincipal(fixtureDb,tenant,["MENTOR"]);
+  const learner = await createPrincipal(fixtureDb,tenant,["LEARNER"]);
+  const project = await createProjectFixture(fixtureDb,tenant,admin,mentor,learner);
+  if (["P5-02","P5-03","P5-04"].includes(id)) {
+    const submission = await createTaskSubmission(fixtureDb,project,learner);
+    if (id === "P5-04") {
+      // P5-04's relational join uses the optional reviewer member.
+      await client.query(
+        "UPDATE project_task_submissions SET reviewed_by_membership_id=$1 WHERE id=$2",
+        [mentor.membershipId,submission],
+      );
+    }
+  }
+}
 
 async function insertPlacementWitnessFixture(client: PoolClient, id: string) {
   if (!placementFixtureProbes.has(id)) throw new Error("Unreviewed fixture");
@@ -295,14 +347,16 @@ describe.skipIf(!enabled)("DB018: Pass-5 relational consistency on disposable Po
     it(`${probe.id} [${probe.family}] has no existing relational violations`, async () => {
       const sql = sqlFor(probe);
       await withRollback(async (client) => {
-        // Eight selected joins are tested with real in-transaction fixture
-        // edges. All other probes remain strictly read-only observational
-        // checks; never promote an empty sample to prevention evidence.
+        // Fourteen joins now have real in-transaction fixture edges.
+        // The other seven remain observational and cannot prove prevention.
         if (academicFixtureProbes.has(probe.id)) {
           await insertAcademicWitnessFixture(client, probe.id);
         }
         if (placementFixtureProbes.has(probe.id)) {
           await insertPlacementWitnessFixture(client, probe.id);
+        }
+        if (projectFixtureProbes.has(probe.id)) {
+          await insertProjectWitnessFixture(client, probe.id);
         }
         const sample = await client.query<{ sample_count: string }>(sql.sample);
         const count = await client.query<{ violations: string }>(sql.violations);
@@ -318,8 +372,8 @@ describe.skipIf(!enabled)("DB018: Pass-5 relational consistency on disposable Po
   }
 
   it("requires real populated academic joins rather than vacuous zeroes", () => {
-    // Source-only, empty results in the other families remain explicitly
-    // unverified; this only covers the three synthetically populated joins.
+    // Empty joins in the remaining families stay explicitly unverified.
+    // Fixture population is not proof of prevention against invalid writes.
     for (const id of populatedFixtureProbes) expect(nonEmpty).toContain(id);
     expect(nonEmpty.length).toBeGreaterThanOrEqual(populatedFixtureProbes.size);
   });
