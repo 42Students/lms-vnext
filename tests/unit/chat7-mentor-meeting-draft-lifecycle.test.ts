@@ -62,9 +62,9 @@ describe("MEN-projects-meetings-27 meeting draft lifecycle", () => {
     expect(service).toContain('scheduledByUserId: targetStatus==="DRAFT"?null:organiserId');
     expect(service).toContain('meetingType: input.meetingType ?? existing?.meetingType');
     expect(service).toContain("const effectiveSprintId=input.linkedSprintId===undefined");
-    expect(service).toContain("existing?.linkedSprintId??null : links.linkedSprintId");
+    expect(service).toContain("existing?.linkedSprintId??null : input.linkedSprintId");
     expect(service).toContain("const effectiveTaskId=input.linkedTaskId===undefined");
-    expect(service).toContain("existing?.linkedTaskId??null : links.linkedTaskId");
+    expect(service).toContain("existing?.linkedTaskId??null : input.linkedTaskId");
     expect(service).toContain('throw new ProjectsServiceError("PROJECT_MEETING_LINK_INVALID")');
   });
   it("MEN-projects-meetings-27 does not announce manager-only facilitator changes", () => {
