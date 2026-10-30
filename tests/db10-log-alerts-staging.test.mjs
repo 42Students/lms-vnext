@@ -35,7 +35,7 @@ test("DB23 persistence includes the three legacy durable families", () => {
 
 test("DB23 bigint count uses full precision, not JavaScript number", () => {
   assert.match(sql, /occurrence_count bigint NOT NULL DEFAULT 1/);
-  assert.match(schema, /occurrenceCount: bigint\("occurrence_count", \{ mode: "bigint" \}\)\.notNull\(\)\.default\(1n\)/);
+  assert.match(schema, /occurrenceCount: bigint\("occurrence_count", \{ mode: "bigint" \}\)\.notNull\(\)\.default\(sql`1`\)/);
   assert.doesNotMatch(schema, /occurrence_count", \{ mode: "number" \}/);
   assert.match(sql, /db10_log_alert_signature_count_ck/);
 });
