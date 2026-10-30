@@ -9,6 +9,9 @@ on:
       - docs/database-workflow.md
       - docs/parity/README.md
       - scripts/tracker.mjs
+      - scripts/verify-db08-cross-parent-source.mjs
+      - src/modules/placements/result-service.ts
+      - src/db/schema/placements.ts
       - scripts/progress-evidence.mjs
       - tests/tracker-progress-evidence.test.mjs
       - tests/tracker.test.mjs
