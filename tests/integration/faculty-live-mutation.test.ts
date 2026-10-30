@@ -48,9 +48,11 @@ async function cleanup(){
  await pool.query("delete from course_teaching_assignments where delivery_id=$1",[f.deliveryId]);
  await pool.query("delete from course_section_deliveries where id=$1",[f.deliveryId]);
  await pool.query("delete from course_offerings where id=$1",[f.offeringId]);
+ await pool.query("delete from program_term_courses where course_id=$1",[f.courseId]);
  await pool.query("delete from courses where id=$1",[f.courseId]);
  await pool.query("delete from sections where id=$1",[f.sectionId]);
  await pool.query("delete from cohorts where id=$1",[f.cohortId]);
+ await pool.query("delete from program_terms where program_id=$1",[f.programId]);
  await pool.query("delete from programs where id=$1",[f.programId]);
  await pool.query("delete from academic_periods where id=$1",[f.periodId]);
  active=null;

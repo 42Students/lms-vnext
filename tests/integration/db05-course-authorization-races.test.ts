@@ -78,6 +78,7 @@ async function cleanup() {
   await pool.query(`DELETE FROM course_offerings WHERE course_id IN (
     SELECT id FROM courses WHERE code LIKE 'S6LK-%'
   )`);
+  await pool.query("DELETE FROM program_term_courses WHERE course_id IN (SELECT id FROM courses WHERE code LIKE 'S6LK-%')");
   await pool.query("DELETE FROM courses WHERE code LIKE 'S6LK-%'");
   await pool.query(`DELETE FROM sections WHERE cohort_id IN (
     SELECT c.id FROM cohorts c JOIN programs p ON p.id=c.program_id
@@ -86,6 +87,7 @@ async function cleanup() {
   await pool.query(`DELETE FROM cohorts WHERE program_id IN (
     SELECT id FROM programs WHERE code LIKE 'S6LK-%'
   )`);
+  await pool.query("DELETE FROM program_terms WHERE program_id IN (SELECT id FROM programs WHERE code LIKE 'S6LK-%')");
   await pool.query("DELETE FROM programs WHERE code LIKE 'S6LK-%'");
   await pool.query("DELETE FROM academic_periods WHERE code LIKE 'S6LK-%'");
   await pool.query("DELETE FROM departments WHERE name=$1 AND college_id=$2", ["S6LK Locked Department", SEED_IDS.collegeA]);
