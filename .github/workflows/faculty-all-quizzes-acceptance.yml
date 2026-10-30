@@ -6,6 +6,7 @@ on:
     paths:
       - ".github/workflows/faculty-all-quizzes-acceptance.yml"
       - "tests/e2e/faculty-all-quizzes.spec.ts"
+      - "tests/e2e/faculty-quizzes-closure.spec.ts"
       - "tests/integration/faculty-section-authoring.test.ts"
       - "src/components/courses/faculty-choice-quiz-builder.tsx"
       - "src/modules/courses/faculty-quiz-authoring-*"
@@ -50,6 +51,10 @@ jobs:
         env:
           DATABASE_URL: ""
         run: npm run db:test:prepare
+      - name: Registered quiz shuffle columns and authored-order persistence on PostgreSQL 17
+        env:
+          DB041_REGISTERED_PG: "YES"
+        run: node --test tests/db041-registered-quiz-shuffle-pg.test.mjs
       - name: Faculty Quiz create edit publish close archive, audit, report and denial tests
         run: npx vitest run --config vitest.db.config.ts tests/integration/faculty-section-authoring.test.ts
   browser:
@@ -91,5 +96,9 @@ jobs:
           echo "E2E_AUTH_SECRET=$(openssl rand -hex 32)" >> "$GITHUB_ENV"
           echo "AUTH_SECRET=$(openssl rand -hex 32)" >> "$GITHUB_ENV"
           echo "PLATFORM_HOSTS=localhost,127.0.0.1" >> "$GITHUB_ENV"
-      - name: Faculty Quiz lifecycle and report desktop/mobile
-        run: npx playwright test tests/e2e/faculty-all-quizzes.spec.ts --workers=1
+      - name: Faculty Quiz lifecycle, shuffle, attempted review and error recovery on desktop/mobile
+        run: >-
+          npx playwright test
+          tests/e2e/faculty-all-quizzes.spec.ts
+          tests/e2e/faculty-quizzes-closure.spec.ts
+          --workers=1
