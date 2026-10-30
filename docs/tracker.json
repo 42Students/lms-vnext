@@ -2394,7 +2394,7 @@
     "adoptedOn": "2026-10-29",
     "northStar": "Build an actually functional and polished greenfield LMS vNext with complete development-oracle behavior, correct tenant and privacy invariants, tested roles, and independent final release certification; optimize for closed runnable domains not investigations or test-count inflation.",
     "completionPolicy": [
-      "DB task DONE requires executed evidence at exact code SHA for registered schema, real producer/consumer, permissions, tenant/private/FK/state/race checks and required decisions; never mark DONE from authored tests or prose.",
+      "DONE is exact-original-scope engineering acceptance: live persistence/writer tasks require registered PG and producer/consumer/tenant/privacy/race checks, while explicitly isolated staging/disposition deliverables may close on executed exact-SHA source tests ONLY with acceptanceScope and named still-OPEN downstream runtime tasks; never promote staging evidence into deployed DB acceptance.",
       "Accepted DB tasks are frozen unless demonstrated affected regression or explicit owner rescope.",
       "Only independent final-release attestations, live-provider checks, end-of-release browser freeze may be deferred with the existing structured deferredRelease; no core functionality/schema/security/privacy gaps may be deferred.",
       "Domain-ready API and functional UI can be implemented during DATABASE as scoped vertical slices without certifying global API/UI/RELEASE.",
@@ -3912,15 +3912,15 @@
         "Global phase gate: full applicable typecheck/lint/build/browser/security plus release-only provider/recovery at RELEASE"
       ],
       "progressRule": "Counts derive from the done booleans in tasks and milestones; lane claim and request status do not imply engineering acceptance.",
-      "closureFirst": "All chats must read execution.closureFirstProtocol and run npm run progress -- --closure-next. In each pass, choose one OPEN task, its exact missing executed gate, and a finite acceptance path. Two unaccepted passes maximum before precise owner handoff + lane-safe switch. No done-task revisits except concrete regressions. No second tracker; accepted count from task.done only."
+      "closureFirst": "Pick one OPEN lane-owned task from npm run progress -- --closure-next, close its ORIGINAL engineering scope, then freeze/move. Small isolated source/staging/disposition tasks may close from executed source proof only when runtime integration stays explicitly OPEN in other tasks. Live schema/tenant/privacy/producer obligations never defer. After two no-closure passes hand off exact blocker to L01/L10 and switch."
     },
     "startupProcedure": [
       "Read AGENTS.md and the sole docs/tracker.json; execute npm run progress -- --closure-next BEFORE choosing work. Ignore retired plans/duplicate trackers.",
       "Claim one free L01-L10 lane with a fresh-head optimistic update; never displace an unexpired claim or edit another lane's domain files.",
       "Pick ONE OPEN task by closureFirstProtocol.selectionPriority; prefer registered PG acceptance-ready tasks and a precise proof gate, not an already DONE domain.",
-      "Inspect exact task criteria and current code/migrations/CI; write the one missing gate and its required safety/integration evidence before implementation.",
+      "Check original task scope: source-stage/disposition tasks must have executed pinned source tests and name still-open runtime parent tasks, while registered/runtime tasks need exact SQL/tenant/privacy/race/producer-consumer evidence. Do not relabel runtime work as staging.",
       "Close with coherent owned-domain implementation+L01 promotion if necessary+producer/consumer+actual disposable PG tests; no source-only finish-line.",
-      "Update task.done and executed SHA/run evidence in this tracker immediately after verification, freeze task and move; any queue entry for now-DONE task must be pruned with the same edit.",
+      "Immediately accept full original task scope with exact executed evidence. Stage-scoped acceptance must name acceptanceScope, notInThisTaskAcceptance and remainingDistinctIntegrationTasks; it never accepts the downstream runtime. Freeze and move; stale focus hints are automatically filtered from the CLI.",
       "After two useful passes without acceptance, hand off the verified blocker to its exact owner then switch to another independent OPEN task; do not indefinitely re-audit.",
       "Before context ends, release or hand off lane claim and report exact accepted delta and unresolved blockers; never imply background work."
     ],
@@ -5033,8 +5033,8 @@
         "Inspect that exact task's accept criteria, latest main HEAD, migration registration, consumer behavior, executable witnesses, and CI receipts before touching code.",
         "State a finite single-task closure hypothesis and all missing proof; prefer an acceptance-ready task with registered PG and live producer/consumer over a source-only candidate.",
         "Implement the smallest correct blocker fix and meaningful negative tests in one cohesive owned-domain batch; use L01 for numbered migrations/shared schema and L10 for independent verification; do not bypass lane ownership.",
-        "Execute focused proof on exact main SHA, including registered schema/tenant/privacy/race/consumer requirements for that specific task; source-only, staged-only, queued, cancelled, or a success from unrelated older commit is not acceptance.",
-        "If and only if every scoped engineering gate passes, atomically record done:true, acceptedAt and executed acceptanceEvidence in the same sole tracker with fresh GitHub blob SHA; freeze this task and immediately select the next OPEN task.",
+        "Execute exact-SHA proof required by the task's ORIGINAL scope: isolated staging/disposition tasks require genuine source tests and named still-open registered-runtime owner tasks; runtime tasks require registered PostgreSQL/tenant/privacy/race/producer-consumer acceptance. Queued, cancelled, unrelated or fabricated passing runs never count.",
+        "Accept a task ONLY after its complete original scoped gate passed: record done:true, acceptedAt and executed acceptanceEvidence. For a staging/disposition-only task, also require acceptanceScope, notInThisTaskAcceptance and remainingDistinctIntegrationTasks kept OPEN. Freeze and move; never imply source-stage completion makes the parent production ready.",
         "After two passes without task acceptance, document one precise executable blocker and named owner, hand off shared migration/verification to the owning lane and MOVE to another independent ready OPEN task; never run a third pass of the same speculative audit.",
         "Before ending, report only changed accepted count, accepted IDs, exact run URLs and remaining named blockers. Never call unverified staging closure, global database certification, or release completion."
       ],
@@ -5047,51 +5047,71 @@
         "Marking a task done from prose, authored tests, inferred quality, unreliable historical statuses or somebody else's unverified statement"
       ],
       "selectionPriority": [
-        "P0: OPEN task with all required registered PostgreSQL, consumer, security and race evidence already executed: validate exact task scope and immediately record acceptance",
-        "P1: OPEN task with one finite demonstrable blocker (missing test/witness/schema registration) and no external secrets or ambiguous owner decision",
-        "P2: OPEN independent producer/consumer slice that unblocks multiple others, with a concrete acceptance plan",
-        "P3: broad cross-domain/global audits only after constituent P0-P2 task closures or a demonstrated dependency gate"
+        "P0: Independently OPEN task with *all evidence for its original, explicit scope* already genuinely executed. Accept a finished isolated staging/disposition task only when its separate, still-open runtime integration owners are enumerated; accept live persistence only with full registered PostgreSQL/producer/security witnesses.",
+        "P1: OPEN task with a precise finite blocker and safe owned path. Prefer the smallest 1-2-pass closure over broad source rediscovery.",
+        "P2: OPEN independent runnable producer/consumer slice that unlocks several integration tasks; document L01 and L10 handoffs.",
+        "P3: global and 100+-field reconciliations after bounded upstream tasks and independently executed domain parity, never from synthetic percentages."
       ],
       "focusTasks": [
         {
-          "id": "DB-007",
-          "laneId": "L03",
-          "nextGate": "Cross-check 103-field profile source disposition and privacy/producer scope against already passing registered PG17 DB007 acceptance; certify only when all required gaps are closed."
+          "id": "DB-035",
+          "laneId": "L05",
+          "nextGate": "Close original immutable grading/attendance history STAGING contract only if full source tests execute; leave DB009 registered history + producer consumers OPEN."
         },
         {
-          "id": "DB-008",
-          "laneId": "L04",
-          "nextGate": "Verify exact DB05 source semantics and course/content live writers against completed registered PG17 workflow; accept if no unresolved required runtime fields."
+          "id": "DB-038",
+          "laneId": "L05",
+          "nextGate": "Close exact assessment immutability/retention STAGING contract only after executed source/negative tests; DB009 runtime integration stays OPEN."
         },
         {
           "id": "DB-042",
           "laneId": "L05",
-          "nextGate": "Prove attendance roster scope/marker invariants on registered PG17 after L01 migration registration; no staged-only credit."
-        },
-        {
-          "id": "DB-072",
-          "laneId": "L07",
-          "nextGate": "Resolve stored RECRUITER round-result code with exact registered migration and writer/read compatibility; run focused PG tenant and state negatives."
-        },
-        {
-          "id": "DB-012",
-          "laneId": "L08",
-          "nextGate": "Choose smallest independently accepted DB09 CRM persistence subdomain, verify real producer/consumer and  full source-field scope rather than repeat accepted DB032/033/037/040/046."
+          "nextGate": "Finish scoped attendance roster/tenant/marker guard contract and test; do not claim registered runtime without L01 migration and PG negatives."
         },
         {
           "id": "DB-031",
           "laneId": "L09",
-          "nextGate": "Coordinate provider_message_id width migration with L01, prove restricted SMS ledger, privacy/FK/support read and Exotel receipt on PG17 before acceptance."
+          "nextGate": "Resolve privacy-safe SMS ledger stage, 128-char provider SID discrepancy and named L01 migration/producer handoff; only stage scope can close without live PG."
+        },
+        {
+          "id": "DB-067",
+          "laneId": "L09",
+          "nextGate": "Complete safe outbound sender claim/fence source-stage package and executed contracts; keep registered claim function and dispatcher PG fencing integration OPEN."
+        },
+        {
+          "id": "DB-072",
+          "laneId": "L07",
+          "nextGate": "Resolve two-phase stored recruiter-code compatibility and exact L01 migration handoff. Live stored-code cutover requires registered PG and mixed-writer negatives."
+        },
+        {
+          "id": "DB-007",
+          "laneId": "L03",
+          "nextGate": "Finish active 103-field DB04 profile source disposition and private-document protection using prior registered PG17 run; accept only complete original scope."
+        },
+        {
+          "id": "DB-008",
+          "laneId": "L04",
+          "nextGate": "Reconcile open DB05 source semantic gaps, legacy progression/tombstone/history producers with registered PG17 domain suite; accept only when complete."
+        },
+        {
+          "id": "DB-012",
+          "laneId": "L08",
+          "nextGate": "Finish outstanding DB09 CRM end-to-end original persistence scope; do not reopen accepted stage-only DB032/033/037/040/046 tasks."
         },
         {
           "id": "DB-001",
           "laneId": "L10",
-          "nextGate": "Resolve independent verifier's failing Drizzle generation/drift on current main with L01; require all 12 independent clean-tree PG steps to pass."
+          "nextGate": "With L01, make all 12 steps of independent disposable PostgreSQL verification pass including canonical Drizzle generation/drift. No source-only acceptance."
         },
         {
           "id": "DB-018",
           "laneId": "L10",
-          "nextGate": "Assess PG17 92-case registered witness suite and remaining dependency/race gaps only after DB001 independent gate; do not promote from focused partial success."
+          "nextGate": "After DB001, reconcile 92-case registered PG17 full witness matrix plus unresolved domain races, then accept only its original cross-domain scope."
+        },
+        {
+          "id": "DB-010",
+          "laneId": "L06",
+          "nextGate": "Close finite project history/task guard group with verified registered PG/mentor consumer suite before returning to the 358-field global source reconciliation."
         }
       ],
       "laneRules": {
@@ -5103,6 +5123,17 @@
         "independentAcceptance": "L10",
         "noAutomaticTaskPromotion": true,
         "noGlobalPhaseCertificationFromCounts": true
+      },
+      "scopeSemantics": {
+        "registeredRuntimeTask": "For tasks whose deliverable is registered persistence or live functionality, done:true requires executed exact-SHA PostgreSQL replay, task-specific database/tenant/auth/privacy/state/race negatives and real producer/consumer proof. Source or staged-only testing cannot substitute.",
+        "isolatedStageOrDispositionTask": "Only tasks explicitly scoped to staging, preflight, source classification, or disposition may accept a fully completed isolated source/staging artifact without registering SQL, provided they have genuinely executed exact-source tests, an acceptanceScope, an unambiguous boundary from production, and individually named remainingDistinctIntegrationTasks that stay OPEN. Such completion says the scoped stage is done, never runtime or phase readiness.",
+        "stagedEvidenceSafeguards": [
+          "A stage task cannot be marked done merely because its SQL or prose exists; execute its actual scoped assertions at a pinned source commit and record runner/exit/result.",
+          "Never count unrelated registered PostgreSQL regression coverage as proof that an unregistered stage has been deployed.",
+          "Require acceptanceScope, notInThisTaskAcceptance, and remainingDistinctIntegrationTasks pointing to real parent tasks still open; preserve all source-to-target unimplemented runtime obligations.",
+          "A task involving live writer, tenant/security boundary, migration or runtime consumer cannot be re-labeled staging to avoid original engineering requirements.",
+          "No staged task, however many accepted, certifies DATABASE or removes the need for DB-019/DB-020 and domain-specific registered producer/consumer acceptance."
+        ]
       }
     }
   }
