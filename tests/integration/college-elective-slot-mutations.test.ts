@@ -42,7 +42,7 @@ describe.skipIf(!enabled)("College elective slot create/edit isolated PostgreSQL
       delivery: randomUUID(), group: randomUUID(), electiveOffering: randomUUID(),
       roster: randomUUID(), learnerUser: randomUUID(),
       learnerMembership: randomUUID(), learnerRole: randomUUID(),
-      learnerEnrollment: randomUUID(),
+      learnerEnrollment: randomUUID(), learnerSectionEnrollment: randomUUID(),
     };
     const marker = "elw-" + ids.program.slice(0, 8);
     await expect(getDb().transaction(async tx => {
@@ -56,7 +56,9 @@ describe.skipIf(!enabled)("College elective slot create/edit isolated PostgreSQL
         updateCollegeElectiveSlot(ctx, id, raw, (cb) => tx.transaction(cb));
       const input = {
         programId: ids.program, academicPeriodId: ids.period,
-        semesterNumber: 2, academicYear: "2026-27",
+        // A freshly created cohort starts in term 1. Match the persisted
+        // cohort progression; a term-2 elective would correctly be denied.
+        semesterNumber: 1, academicYear: "2026-27",
         name: marker, description: null,
         credits: 3, minPick: 1, maxPick: 2, confirm: true,
       };
@@ -106,6 +108,12 @@ describe.skipIf(!enabled)("College elective slot create/edit isolated PostgreSQL
       await tx.execute(sql`insert into learner_program_enrollments
         (id,membership_id,program_id,cohort_id,status)
         values (${ids.learnerEnrollment},${ids.learnerMembership},${ids.program},${ids.cohort},'ACTIVE')`);
+      // The registered elective roster guard also checks a live section
+      // enrollment, not just a matching primary programme enrollment.
+      await tx.execute(sql`insert into section_enrollments
+        (id,learner_enrollment_id,section_id,academic_period_id,status)
+        values (${ids.learnerSectionEnrollment},${ids.learnerEnrollment},
+          ${ids.section},${ids.period},'ACTIVE')`);
       await tx.execute(sql`insert into lms_group_members(id,group_id,membership_id,state,source,member_type)
         values (${ids.roster},${ids.group},${ids.learnerMembership},'ACTIVE','MANUAL','LEARNER')`);
       await expect(runEdit(admin, slot.id, {
