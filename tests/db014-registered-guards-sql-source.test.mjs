@@ -17,7 +17,7 @@ test("DB014 0318 registered PLpgSQL functions have balanced, valid dollar quoted
   "db14_group_member_event_scope",
  ]){
   assert.equal(sql.split("AS $" + tag + "$").length - 1,1,tag+" opening");
-  assert.equal(sql.split("\\n$" + tag + "$;").length - 1,1,tag+" terminator");
+  assert.equal(sql.split("\n$" + tag + "$;").length - 1,1,tag+" terminator");
  }
  assert.doesNotMatch(sql,/^\$;$/m);
  assert.equal((sql.match(/CREATE TRIGGER db14_/g)||[]).length,3);
