@@ -108,28 +108,28 @@ describe.skipIf(!enabled)("DB-018 registered concurrency witnesses", () => {
     const sprintId = randomUUID();
     const taskId = randomUUID();
 
-    await pool.query(
-      `insert into project_templates
-         (id, slug, title, status, current_version, created_by_user_id)
-       values ($1, $2, $3, 'PUBLISHED', 1, $4)`,
-      [
-        templateId,
-        `db18-cas-${suffix}`,
-        `DB18 CAS template ${suffix}`,
-        SEED_IDS.collegeAdminUser,
-      ],
-    );
-    await pool.query(
-      `insert into project_template_versions
-         (id, template_id, version, title, blueprint, created_by_user_id)
-       values ($1, $2, 1, $3, '{}'::jsonb, $4)`,
-      [
-        versionId,
-        templateId,
-        `DB18 CAS template v1 ${suffix}`,
-        SEED_IDS.collegeAdminUser,
-      ],
-    );
+    // DB071: the initially absent snapshot is permitted only inside the
+    // same transaction that inserts the immutable revision.
+    const client=await pool.connect();
+    try {
+      await client.query("BEGIN");
+      await client.query(
+        `insert into project_templates
+           (id, slug, title, status, current_version, created_by_user_id)
+         values ($1, $2, $3, 'PUBLISHED', 1, $4)`,
+        [templateId,`db18-cas-${suffix}`,`DB18 CAS template ${suffix}`,SEED_IDS.collegeAdminUser],
+      );
+      await client.query(
+        `insert into project_template_versions
+           (id, template_id, version, title, blueprint, created_by_user_id)
+         values ($1, $2, 1, $3, '{}'::jsonb, $4)`,
+        [versionId,templateId,`DB18 CAS template v1 ${suffix}`,SEED_IDS.collegeAdminUser],
+      );
+      await client.query("COMMIT");
+    } catch(error) {
+      await client.query("ROLLBACK");
+      throw error;
+    } finally { client.release(); }
     await pool.query(
       `insert into project_instances
          (id, college_id, template_id, template_version_id, slug, title,
@@ -229,8 +229,16 @@ describe.skipIf(!enabled)("DB-018 registered concurrency witnesses", () => {
       await pool.query("delete from project_sprints where id = $1", [sprintId]);
       await pool.query("delete from project_releases where id = $1", [releaseId]);
       await pool.query("delete from project_instances where id = $1", [projectId]);
-      await pool.query("delete from project_template_versions where id = $1", [versionId]);
-      await pool.query("delete from project_templates where id = $1", [templateId]);
+      // DB070 immutable revisions and DB071 header pointers are permanent;
+      // only disposable, UUID-unique fixture state is retained.
+      const retention=await pool.query<{retainHistory:boolean}>("select (exists (select 1 from pg_trigger where tgrelid='project_template_versions'::regclass " +
+      "and tgname='db07_project_template_versions_append_only' and tgenabled='O') " +
+      "or exists (select 1 from pg_constraint where conrelid='project_templates'::regclass " +
+      "and conname='project_templates_current_version_snapshot_fk')) as \"retainHistory\"");
+      if(!retention.rows[0]?.retainHistory){
+        await pool.query("delete from project_template_versions where id = $1", [versionId]);
+        await pool.query("delete from project_templates where id = $1", [templateId]);
+      }
     }
   });
 
