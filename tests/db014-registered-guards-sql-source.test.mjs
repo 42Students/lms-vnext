@@ -6,7 +6,7 @@ const sql=readFileSync("drizzle/0318_db014_cross_domain_event_guards.sql","utf8"
 const journal=JSON.parse(readFileSync("drizzle/meta/_journal.json","utf8"));
 
 test("DB014 0318 registered PLpgSQL functions have balanced, valid dollar quoted bodies",()=>{
- assert.equal(journal.entries.at(-1)?.tag,"0318_db014_cross_domain_event_guards");
+ assert.ok(journal.entries.some(x=>x.tag==="0318_db014_cross_domain_event_guards"),"0318 registered guard must remain in immutable journal");
  assert.equal((sql.match(/CREATE OR REPLACE FUNCTION db14_/g)||[]).length,3);
  assert.equal((sql.match(/\bAS \$\$/g)||[]).length,3);
  assert.equal((sql.match(/^\$\$;$/gm)||[]).length,3);
