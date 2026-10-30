@@ -897,8 +897,30 @@
       "id": "DB-036",
       "title": "Normalize DB09 notification toggle and TPO preference booleans",
       "phase": "DATABASE",
-      "done": false,
-      "dependsOn": []
+      "done": true,
+      "dependsOn": [],
+      "acceptedAt": "2026-10-30",
+      "closureBasis": "DB09_REGISTERED_BOOLEAN_NORMALIZATION_PG17_AND_AUTHORIZED_WRITE_MODEL",
+      "acceptanceEvidence": [
+        {
+          "kind": "EXECUTED_REGISTERED_POSTGRES_17_AND_SERVICE_AUTHORIZATION",
+          "commitSha": "14d860117e236f275b3b145c8bbbff7e66140b10",
+          "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/41087432533",
+          "runner": "GitHub Actions ubuntu-latest Node.js 22 postgres:17-alpine",
+          "commands": [
+            "npm run db:journal:verify",
+            "node --test tests/db09-notification-preferences-normalization.test.mjs",
+            "npx vitest run tests/unit/chat16-tpo-notification-preferences-write-16.test.ts tests/unit/chat11-tpo-communication-adversarial.test.ts tests/unit/tpo-my-notifications-model.test.ts",
+            "npm run db:test:prepare",
+            "npm run db:migrate",
+            "node --test --test-name-pattern=DB036 tests/db034-db036-registered-tpo-settings-pg.test.mjs"
+          ],
+          "result": "PASS",
+          "exitCode": 0,
+          "details": "Independent full workflow SUCCESS: nine DB09 normalized boolean columns persisted with source-correct defaults, atomic writes and not-null/PK negatives on PG17; authorization, stale CAS, idempotent retry, privacy-safe event decision model and journal idempotence passed. TPO external provider dispatch and optional-email outbox delivery remain outside this narrowly scoped DB036 normalization task; DB024/067 remain open."
+        }
+      ],
+      "acceptanceScope": "DB036 normalizes DB09 four optional college switches and five per-user preference booleans, validates their stored defaults, updates, SQL negative constraints, authorized writer/CAS model. Future delivery sender integration is not certified."
     },
     {
       "id": "DB-037",
