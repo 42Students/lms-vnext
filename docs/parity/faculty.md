@@ -71,8 +71,12 @@ Tabs: All Contacts, Teachers, Students.
 - [x] Teachers tab matches the approved public directory fields (name, active role and department; private email/phone/profile withheld), with exact same-college role detail.
 - [x] Students tab matches approved public-only Learner directory (name, active Student role, department), same-college scope, search and role-checked detail, without exposing private learner contact details.
 - [ ] Search/filter/pagination behavior from ContactsGrid is matched.
-- [ ] Contact actions/deep links are matched.
+- [x] Contact actions/deep links are matched within the approved public-directory privacy scope: role-specific list → membership detail → context-preserving Back link, plus denied foreign/invalid membership. Legacy Email/Contact values remain intentionally masked. Previously executed [Faculty Contacts acceptance 38608927968](https://github.com/42Students/lms-vnext/actions/runs/38608927968) passed 9/9 registered PG17 and 6/6 desktop/mobile Chromium cases at `8fba44b728c84f59e60c3aeb814930acada5cd38`; deep-link source and authorization contracts are unchanged by the 2026-10-31 retry/search adjustments.
 - [ ] Empty/loading/error states are verified.
+
+  
+**2026-10-31 Contacts bounded recovery pass (pending new executed acceptance):** [d994290](https://github.com/42Students/lms-vnext/commit/d9942904f0b4ac15c432d6bbebcf1683771ead8c) restores URL-owned search after browser Back/Forward; [86b2913](https://github.com/42Students/lms-vnext/commit/86b2913a9967bec51b97f50040e02567a3582dfb) changes failed directory Retry from same-URL linking to an actual App Router refresh; [ecbcfce](https://github.com/42Students/lms-vnext/commit/ecbcfce38f072335025b2a345e0248780c1cf2e7) adds desktop/mobile tab-query and history-navigation assertions. The existing `faculty-contacts-acceptance.yml` push-triggered database/browser gate is the required new executable witness. Keep search/filter and empty/loading/error rows OPEN until the post-change run is confirmed passing, including retry semantics; a committed test alone is not acceptance.
+
 - [x] College scoping is enforced.
 
 ## Page: All Assignments — DONE (2026-10-14)
