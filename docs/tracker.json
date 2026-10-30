@@ -395,7 +395,7 @@
       "done": false,
       "dependsOn": [],
       "implementationCheckpoint": {
-        "status": "STAGED_PG17_TENANT_SCOPE_AND_TWO_SESSION_RACE_WITNESSES_PASS_NOT_REGISTERED",
+        "status": "STAGED_SCOPE_AND_PLACEMENT_FK_VALIDATION_PROVED_GLOBAL_CATALOG_NOT_READY",
         "recordedOn": "2026-10-30",
         "verifiedScope": "DB14 staged SQL candidate applies transactionally to clean registered PG17 without journal changes; tenant/actor, inbox recipient, group-history owner/role/SYSTEM checks and member status/role revocation SHARE-lock races executed PASS. All temporary SQL guards and test fixture rows were rolled back. This is a DB014 sub-scope witness, not global DB/FK/cascade gate acceptance.",
         "sourceCommits": [
@@ -427,9 +427,40 @@
           "Execute full registered PostgreSQL catalog and cross-domain tenant FK negative matrix at exact migration SHA, not staged overlay",
           "Reconcile latest registered schema against stale historical DB014 0040 baseline and disposition newly introduced FK/trigger edges",
           "Resolve nine legacy cascade/retention semantics and globally scoped uniqueness reviews",
-          "Prove producer/consumer tenant authorization and DB018/DB020 global database gate; do not claim whole DB014 DONE from a staged candidate"
+          "Prove producer/consumer tenant authorization and DB018/DB020 global database gate; do not claim whole DB014 DONE from a staged candidate",
+          "L01 promote both placement_application FK validation constraints after zero-cross-job dirty-row preflight and coordinate DB066 owner review",
+          "Re-run current registered PG17 FK catalog gate to prove both constraints convalidated=true without disposable overlays"
         ],
-        "evidenceIsNotAcceptance": true
+        "evidenceIsNotAcceptance": true,
+        "catalogDiagnosis": {
+          "sourceRun": "https://github.com/42Students/lms-vnext/actions/runs/41079277894",
+          "result": "FAIL_CLOSED_INTENTIONALLY",
+          "unvalidatedRegisteredForeignKeys": [
+            "placement_applications_current_round_job_fk",
+            "placement_applications_role_option_job_fk"
+          ],
+          "introducedBy": [
+            "drizzle/0139_lane15_application_provenance.sql",
+            "drizzle/0137_lanes_round_4.sql"
+          ],
+          "note": "Both parent FKs were registered NOT VALID. PostgreSQL protects new writes but the existing-row validation proof was deliberately deferred. This is not a waived gate."
+        },
+        "placementValidationCandidate": {
+          "sourceCommits": [
+            "643803a0909bfaa482bb9a494eeae7585c65e41b",
+            "a12aa2689f1b66bdccc1c29d44ddc8c8b31c1642",
+            "6234a25e87da5f6dc4f10297ab992bea5d92b14f"
+          ],
+          "sql": "docs/planning/sql/db014-placement-fk-validation-candidate.sql",
+          "test": "tests/db014-placement-fk-validation-staged-pg.test.mjs",
+          "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/41079677226",
+          "substep": "Validate two legacy NOT VALID placement FKs in rollback-only PG transaction",
+          "substepResult": "PASS",
+          "workflowResult": "FAIL_EXPECTED_REGISTERED_CATALOG_STILL_UNVALIDATED",
+          "registered": false,
+          "productionApplied": false,
+          "scope": "Preflight and VALIDATE CONSTRAINT succeed on disposable registered PG17 seed, DDL rolled back; needs L01 review, forward-only numbered registration and post-replay catalog proof."
+        }
       }
     },
     {
