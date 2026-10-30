@@ -81,17 +81,10 @@ export const projectTemplates = pgTable(
       "project_templates_published_version_ck",
       sql`${table.publishedVersion} is null or (${table.publishedVersion} >= 1 and ${table.publishedVersion} <= ${table.currentVersion})`,
     ),
-    // DB020: registered snapshot-version FKs already exist in PostgreSQL.
-    // These relationships prevent a template from pointing at another
-    // template's history. Do NOT generate duplicate DDL from this metadata.
-    foreignKey({name:"project_templates_current_version_snapshot_fk",
-      columns:[table.id,table.currentVersion],
-      foreignColumns:[projectTemplateVersions.templateId,projectTemplateVersions.version]
-    }).onDelete("no action"),
-    foreignKey({name:"project_templates_published_version_snapshot_fk",
-      columns:[table.id,table.publishedVersion],
-      foreignColumns:[projectTemplateVersions.templateId,projectTemplateVersions.version]
-    }).onDelete("no action"),
+    // Two registered template-version composite FKs remain SQL-only here.
+    // A typed mutual projectTemplates <-> projectTemplateVersions declaration
+    // creates a TypeScript self-inference cycle; live registered DB FKs are
+    // independently catalog-verified by DB020.
   ],
 );
 
