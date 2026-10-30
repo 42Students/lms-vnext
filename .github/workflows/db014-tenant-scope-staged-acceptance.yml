@@ -7,6 +7,7 @@ on:
     branches: [main]
     paths:
       - "tests/db014-cross-domain-scope-staged-pg.test.mjs"
+      - "tests/db014-registered-tenant-catalog-pg.test.mjs"
       - "docs/planning/sql/db14-cross-domain-event-scope-candidate.sql"
       - ".github/workflows/db014-tenant-scope-staged-acceptance.yml"
 
@@ -58,6 +59,8 @@ jobs:
         run: npm run db:test:prepare
       - name: Registered migration idempotence
         run: npm run db:migrate
+      - name: Read-only registered PostgreSQL FK catalog
+        run: node --test tests/db014-registered-tenant-catalog-pg.test.mjs
       - name: Staged-only event, notification, group history cross-tenant negatives
         run: node --test tests/db014-cross-domain-scope-staged-pg.test.mjs
       # This check must never mark DB-014 DONE. The candidate is deliberately
