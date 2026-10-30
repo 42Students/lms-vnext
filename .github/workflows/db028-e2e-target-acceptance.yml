@@ -1,0 +1,73 @@
+name: DB-028 browser E2E destructive-target acceptance
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/db028-e2e-target-acceptance.yml"
+      - "scripts/db-e2e-prepare.ts"
+      - "scripts/db01-test-database-guard.mjs"
+      - "scripts/db-lib.ts"
+      - "tests/db01-test-database-guard.test.mjs"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: db028-acceptance-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  db028-guard-and-real-disposable-pg:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    services:
+      postgres:
+        image: postgres:17-alpine
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: lms_vnext_e2e
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres -d lms_vnext_e2e"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 15
+    env:
+      TEST_DATABASE_URL: postgresql://postgres:postgres@127.0.0.1:5432/lms_vnext_e2e
+      DATABASE_URL: postgresql://postgres:postgres@127.0.0.1:5432/lms_vnext_e2e
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - run: npm ci
+      - name: Verify the full numbered migration journal
+        run: npm run db:journal:verify
+      - name: Execute browser destructive-target and no-connect security regressions
+        run: node --test tests/db01-test-database-guard.test.mjs
+      - name: Fresh destructive reset and full registered migration replay on disposable PG17
+        env:
+          DATABASE_URL: ""
+        run: npm run db:test:prepare
+      - name: Idempotent migration replay
+        run: npm run db:migrate
+      - name: Verify physical PostgreSQL fixture and seed
+        run: |
+          node --input-type=module -e '
+            import pg from "pg";
+            const pool = new pg.Pool({connectionString:process.env.TEST_DATABASE_URL});
+            try {
+              const db = await pool.query("select current_database() as name");
+              if (db.rows[0]?.name !== "lms_vnext_e2e") throw new Error("Wrong database");
+              const seeded = await pool.query("select count(*)::int as n from colleges");
+              if (seeded.rows[0].n < 2) throw new Error("Seed did not persist");
+              const journal = await pool.query("select count(*)::int as n from drizzle.__drizzle_migrations");
+              if (journal.rows[0].n < 300) throw new Error("Registered migrations did not replay");
+              console.log("DB028 PG17 positive witness: registered migration replay and seeded disposable E2E database PASS",journal.rows[0].n);
+            } finally {await pool.end();}
+          '
