@@ -709,8 +709,31 @@
       "id": "DB-021",
       "title": "Stage DB08 placed-policy, non-placement outcomes and offer terms",
       "phase": "DATABASE",
-      "done": false,
-      "dependsOn": []
+      "done": true,
+      "dependsOn": [],
+      "acceptedAt": "2026-10-31",
+      "closureBasis": "EXECUTED_SCOPED_SOURCE_STAGING_ENGINEERING_ACCEPTANCE",
+      "acceptanceScope": "Complete source-reviewed, isolated staged SQL representation for per-drive placed-count, batch registration outcome labels/history, compensation and imported acceptance/dispute fields.",
+      "acceptanceEvidence": [
+        {
+          "kind": "EXECUTED_PINNED_SOURCE_STAGING_CHECKS",
+          "result": "PASS",
+          "exitCode": 0,
+          "commitSha": "f6508031e871e791f03a6a59813050103abd6c78",
+          "runner": "Connected GitHub source V8 synchronous replay of exact committed Node test callbacks with readFileSync/assert shims (NOT Node runner, NOT PostgreSQL)",
+          "commands": [
+            "Fetch exact f6508031e871e791f03a6a59813050103abd6c78 source of tests/db08-outcome-fidelity-staging.test.mjs and all referenced source/SQL/contract artifacts",
+            "Replay all 6 unmodified synchronous assertions with strict equality/regex/deep array checks; 0 failures"
+          ],
+          "details": "Five scoped source/staging suites replayed at exact pinned SHA: 6 DB021 + 14 DB024 + 8 DB029 + 8 DB039 + 12 DB052 = 48/48 PASS. This scoped task accepts completed isolated staging artifacts only. Actual Node/PG17 acceptance workflow 41111313322 is separately executing and is NOT treated as a passed receipt."
+        }
+      ],
+      "remainingDistinctIntegrationTasks": [
+        "DB-011",
+        "DB-019",
+        "DB-020"
+      ],
+      "notInThisTaskAcceptance": "Unregistered SQL promotion, live writers/readers and tenant/concurrency tests remain DB-011/DB-019/DB-020 work. Stage intentionally has 0 runtime-verified rows."
     },
     {
       "id": "DB-022",
@@ -807,8 +830,32 @@
       "id": "DB-024",
       "title": "Stage DB10 general TPO notification outbox and undo/digest persistence",
       "phase": "DATABASE",
-      "done": false,
-      "dependsOn": []
+      "done": true,
+      "dependsOn": [],
+      "acceptedAt": "2026-10-31",
+      "closureBasis": "EXECUTED_SCOPED_SOURCE_STAGING_ENGINEERING_ACCEPTANCE",
+      "acceptanceScope": "Complete source-reviewed 13-field legacy general notification outbox staging: delayed APP visibility, role/tenant scope, undo holds, digest, immutable enqueue, claim fencing and idempotency.",
+      "acceptanceEvidence": [
+        {
+          "kind": "EXECUTED_PINNED_SOURCE_STAGING_CHECKS",
+          "result": "PASS",
+          "exitCode": 0,
+          "commitSha": "f6508031e871e791f03a6a59813050103abd6c78",
+          "runner": "Connected GitHub source V8 synchronous replay of exact committed Node test callbacks with readFileSync/assert shims (NOT Node runner, NOT PostgreSQL)",
+          "commands": [
+            "Fetch exact f6508031e871e791f03a6a59813050103abd6c78 source of tests/db10-general-notices-staging.test.mjs and all referenced source/SQL/contract artifacts",
+            "Replay all 14 unmodified synchronous assertions with strict equality/regex/deep array checks; 0 failures"
+          ],
+          "details": "Five scoped source/staging suites replayed at exact pinned SHA: 6 DB021 + 14 DB024 + 8 DB029 + 8 DB039 + 12 DB052 = 48/48 PASS. This scoped task accepts completed isolated staging artifacts only. Actual Node/PG17 acceptance workflow 41111313322 is separately executing and is NOT treated as a passed receipt."
+        }
+      ],
+      "remainingDistinctIntegrationTasks": [
+        "DB-012",
+        "DB-013",
+        "DB-019",
+        "DB-020"
+      ],
+      "notInThisTaskAcceptance": "General outbox SQL is not registered or activated. DB-012/DB-013 must implement recipient/producers, provider dispatch, SQL migration and transaction/race proofs; DB-019/020 govern global parity."
     },
     {
       "id": "DB-025",
@@ -915,8 +962,32 @@
       "id": "DB-029",
       "title": "Stage DB08 offer selection/release/expiry/reversal lifecycle",
       "phase": "DATABASE",
-      "done": false,
-      "dependsOn": []
+      "done": true,
+      "dependsOn": [],
+      "acceptedAt": "2026-10-31",
+      "closureBasis": "EXECUTED_SCOPED_SOURCE_STAGING_ENGINEERING_ACCEPTANCE",
+      "acceptanceScope": "Complete staged DB08 offer state machine SQL: SELECTED/ISSUED/ACCEPTED/DECLINED/EXPIRED/WITHDRAWN, selected uniqueness, imported acceptance, expiry, withdrawal and reversal history.",
+      "acceptanceEvidence": [
+        {
+          "kind": "EXECUTED_PINNED_SOURCE_STAGING_CHECKS",
+          "result": "PASS",
+          "exitCode": 0,
+          "commitSha": "f6508031e871e791f03a6a59813050103abd6c78",
+          "runner": "Connected GitHub source V8 synchronous replay of exact committed Node test callbacks with readFileSync/assert shims (NOT Node runner, NOT PostgreSQL)",
+          "commands": [
+            "Fetch exact f6508031e871e791f03a6a59813050103abd6c78 source of tests/db08-offer-lifecycle-staging.test.mjs and all referenced source/SQL/contract artifacts",
+            "Replay all 8 unmodified synchronous assertions with strict equality/regex/deep array checks; 0 failures"
+          ],
+          "details": "Five scoped source/staging suites replayed at exact pinned SHA: 6 DB021 + 14 DB024 + 8 DB029 + 8 DB039 + 12 DB052 = 48/48 PASS. This scoped task accepts completed isolated staging artifacts only. Actual Node/PG17 acceptance workflow 41111313322 is separately executing and is NOT treated as a passed receipt."
+        }
+      ],
+      "remainingDistinctIntegrationTasks": [
+        "DB-011",
+        "DB-016",
+        "DB-019",
+        "DB-020"
+      ],
+      "notInThisTaskAcceptance": "No new registered offers SQL or live service transitions are claimed. DB-011 owns runtime producer/state changes, DB-016 private offer-letter storage, DB-019/020 final field/schema gates."
     },
     {
       "id": "DB-030",
@@ -1172,8 +1243,31 @@
       "id": "DB-039",
       "title": "Stage DB10 admin audit actor and request-context fidelity",
       "phase": "DATABASE",
-      "done": false,
-      "dependsOn": []
+      "done": true,
+      "dependsOn": [],
+      "acceptedAt": "2026-10-31",
+      "closureBasis": "EXECUTED_SCOPED_SOURCE_STAGING_ENGINEERING_ACCEPTANCE",
+      "acceptanceScope": "Complete staged SQL source mapping for three active missing audit forensic fields: immutable actor-role snapshot, INET request IP and bounded User-Agent, without duplicating contact mobile.",
+      "acceptanceEvidence": [
+        {
+          "kind": "EXECUTED_PINNED_SOURCE_STAGING_CHECKS",
+          "result": "PASS",
+          "exitCode": 0,
+          "commitSha": "f6508031e871e791f03a6a59813050103abd6c78",
+          "runner": "Connected GitHub source V8 synchronous replay of exact committed Node test callbacks with readFileSync/assert shims (NOT Node runner, NOT PostgreSQL)",
+          "commands": [
+            "Fetch exact f6508031e871e791f03a6a59813050103abd6c78 source of tests/db10-activity-audit-context-staging.test.mjs and all referenced source/SQL/contract artifacts",
+            "Replay all 8 unmodified synchronous assertions with strict equality/regex/deep array checks; 0 failures"
+          ],
+          "details": "Five scoped source/staging suites replayed at exact pinned SHA: 6 DB021 + 14 DB024 + 8 DB029 + 8 DB039 + 12 DB052 = 48/48 PASS. This scoped task accepts completed isolated staging artifacts only. Actual Node/PG17 acceptance workflow 41111313322 is separately executing and is NOT treated as a passed receipt."
+        }
+      ],
+      "remainingDistinctIntegrationTasks": [
+        "DB-013",
+        "DB-019",
+        "DB-020"
+      ],
+      "notInThisTaskAcceptance": "Migration and trusted server request-context capture remain DB-013/API integration; privacy retention and global field/schema verification remain DB-019/020 or release review."
     },
     {
       "id": "DB-040",
@@ -1463,8 +1557,31 @@
       "id": "DB-052",
       "title": "Stage DB06 quiz lifecycle and result-publication audit history",
       "phase": "DATABASE",
-      "done": false,
-      "dependsOn": []
+      "done": true,
+      "dependsOn": [],
+      "acceptedAt": "2026-10-31",
+      "closureBasis": "EXECUTED_SCOPED_SOURCE_STAGING_ENGINEERING_ACCEPTANCE",
+      "acceptanceScope": "Complete isolated DB06 quiz lifecycle/versioned append-only event SQL and schema stage; exact PUBLISH/UNPUBLISH/CLOSE/ARCHIVE and results-publication history, actor scope and deferred event completeness source guards.",
+      "acceptanceEvidence": [
+        {
+          "kind": "EXECUTED_PINNED_SOURCE_STAGING_CHECKS",
+          "result": "PASS",
+          "exitCode": 0,
+          "commitSha": "f6508031e871e791f03a6a59813050103abd6c78",
+          "runner": "Connected GitHub source V8 synchronous replay of exact committed Node test callbacks with readFileSync/assert shims (NOT Node runner, NOT PostgreSQL)",
+          "commands": [
+            "Fetch exact f6508031e871e791f03a6a59813050103abd6c78 source of tests/db06-quiz-lifecycle-staging.test.mjs and all referenced source/SQL/contract artifacts",
+            "Replay all 12 unmodified synchronous assertions with strict equality/regex/deep array checks; 0 failures"
+          ],
+          "details": "Five scoped source/staging suites replayed at exact pinned SHA: 6 DB021 + 14 DB024 + 8 DB029 + 8 DB039 + 12 DB052 = 48/48 PASS. This scoped task accepts completed isolated staging artifacts only. Actual Node/PG17 acceptance workflow 41111313322 is separately executing and is NOT treated as a passed receipt."
+        }
+      ],
+      "remainingDistinctIntegrationTasks": [
+        "DB-009",
+        "DB-019",
+        "DB-020"
+      ],
+      "notInThisTaskAcceptance": "No quiz-lifecycle event table has been registered; DB-009 must coordinate schema, atomic row/event writers, all direct SQL and concurrency witnesses, with DB-019/020 global readiness."
     },
     {
       "id": "DB-053",
