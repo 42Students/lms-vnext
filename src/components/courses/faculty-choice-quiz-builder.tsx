@@ -16,7 +16,7 @@ import {apiFetch} from "@/lib/api-fetch";
 import {friendlyApiError} from "@/lib/friendly-error";
 import {authoringLocalDateTime,authoringDueInstant}
  from "@/modules/courses/faculty-authoring-datetime-model";
-import {facultyAuthoringQuestionsFromResponse,facultyQuizDraftIssue,facultyChangeQuizChoiceType,facultyQuizDraftEditable,facultyQuizMetadataEditable,facultyToggleQuizAnswer,facultyRemoveQuizOption,facultyQuizConfirmationAfterEdit,facultyRemoveQuizQuestion,facultyAppendQuizQuestion,facultyQuizDraftLoadAllowsAction,facultyQuizMetadataIssue,facultyQuizCanRetryDetails,facultyQuizSavedFromCommand,facultyQuizReconcileRows,facultyMoveQuizQuestion,facultyMoveQuizOption,facultyDuplicateQuizQuestion,facultyDuplicateQuizOption,facultyQuizSwitchNeedsConfirmation,facultyBeginQuizWrite,facultyQuizDraftReview,facultyQuizCanSaveChanges,facultyQuizMayResetDraft,facultyQuizCanCopyToDraft,facultyQuizCopyTitle,facultyQuizNormalizeQuestions,facultyQuizMatchesSearch,facultyQuizQuestionIssue,facultyQuizAnswerSummary,facultyInsertQuizQuestionAfter,facultyMoveQuizQuestionToEdge,facultyInsertQuizOptionAfter,facultyQuizOptionRemovalNeedsConfirmation,facultyQuizQuestionRemovalPrompt,facultyQuizApplyPastedOptions,facultyQuizLoadedBankIssue,facultyQuizRetryNeedsConfirmation,facultyQuizTitleConflict,facultyQuizReviewIssues,facultyQuizShouldDisplayQuestion,facultyQuizReadErrorMessage,facultyQuizOptionRemovalPrompt,facultyQuizReadyToPublish}
+import {facultyAuthoringQuestionsFromResponse,facultyQuizShuffleSettingsFromResponse,facultyQuizDraftIssue,facultyChangeQuizChoiceType,facultyQuizDraftEditable,facultyQuizMetadataEditable,facultyToggleQuizAnswer,facultyRemoveQuizOption,facultyQuizConfirmationAfterEdit,facultyRemoveQuizQuestion,facultyAppendQuizQuestion,facultyQuizDraftLoadAllowsAction,facultyQuizMetadataIssue,facultyQuizCanRetryDetails,facultyQuizSavedFromCommand,facultyQuizReconcileRows,facultyMoveQuizQuestion,facultyMoveQuizOption,facultyDuplicateQuizQuestion,facultyDuplicateQuizOption,facultyQuizSwitchNeedsConfirmation,facultyBeginQuizWrite,facultyQuizDraftReview,facultyQuizCanSaveChanges,facultyQuizMayResetDraft,facultyQuizCanCopyToDraft,facultyQuizCopyTitle,facultyQuizNormalizeQuestions,facultyQuizMatchesSearch,facultyQuizQuestionIssue,facultyQuizAnswerSummary,facultyInsertQuizQuestionAfter,facultyMoveQuizQuestionToEdge,facultyInsertQuizOptionAfter,facultyQuizOptionRemovalNeedsConfirmation,facultyQuizQuestionRemovalPrompt,facultyQuizApplyPastedOptions,facultyQuizLoadedBankIssue,facultyQuizRetryNeedsConfirmation,facultyQuizTitleConflict,facultyQuizReviewIssues,facultyQuizShouldDisplayQuestion,facultyQuizReadErrorMessage,facultyQuizOptionRemovalPrompt,facultyQuizReadyToPublish}
  from "@/modules/courses/faculty-quiz-builder-model";
 type Option={id?:string;clientKey?:string;text:string;correct:boolean;sequence:number};
 let nextDraftOptionKey=0;
@@ -93,8 +93,13 @@ export function FacultyChoiceQuizBuilder({deliveryId,lessons,quizzes,initialLess
    // SINGLE_CHOICE answer becomes false and draft edits fail validation.
    // Learner requests remain restricted by getCourseQuiz's release policy.
    const fetched=facultyAuthoringQuestionsFromResponse(response);
+   const settings=facultyQuizShuffleSettingsFromResponse(response);
    const loadIssue=facultyQuizLoadedBankIssue(q.status,fetched.length);
    if(loadIssue)throw new Error(loadIssue);
+   // The saved persisted flags are authoritative. A stale Section list must
+   // never silently clear shuffle when Faculty edits an existing Quiz.
+   setShuffleQuestions(settings.shuffleQuestions);
+   setShuffleOptions(settings.shuffleOptions);
    setQuestions(fetched.map(question=>({...question,options:question.options.map(option=>({...(option.id!==undefined?{id:option.id}:{}),text:option.text,correct:option.correct,sequence:option.sequence}))})));
   }catch(e){if(token===choiceRequest.current){setError(facultyQuizReadErrorMessage(e));setQuestions([]);setDetailsFailed(true);}}
   finally{if(token===choiceRequest.current)setPending(false);}
