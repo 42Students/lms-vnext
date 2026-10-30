@@ -92,3 +92,27 @@ Current legacy backend contains `GlobalTpo*Controller` and `GlobalTpoFenceFilter
 - A *fresh* legacy-to-current source delta must still be supplied to the checker. The dated `oracle-drift-2026-10-27.json` file is historical and does not automatically know about changes landing on 30 October. The 27 newly seen dev-only workspace routes above were found by an independent live source-tree comparison, not by pretending the old drift input was current.
 
 These are verification-tooling improvements only. They do not satisfy the UI inventory, functional, design or release gates for any page.
+
+
+## 2026-10-30 closure-first TPO drives bookmark implementation (source routing fixed)
+
+**Scope:** strictly the old `/tpo/drives`, `/tpo/drives/new`, `/tpo/drives/[jobId]`, and existing `/tpo/drives/[jobId]/edit` compatibility entrypoints. These now route into existing vNext authorized surfaces, not duplicated forms, jobs or database behavior. The other domain-lane DB work was not touched.
+
+| Legacy link/state | Verified source disposition |
+| --- | --- |
+| `/tpo/drives` and `?tab=requests|drafts|live|closed` | Existing redirect amended to preserve recognized tab, keyword search, page and UUID recruiter request selection; valid request-only bookmarks open Requests rather than possibly defaulting to Live |
+| `/tpo/drives/new?company=...` | New compatibility page preserves prefill for the existing create workspace; repeated/overlong prefills remain invalid in the canonical page |
+| `/tpo/drives/[jobId]` | New compatibility page validates UUID and directs to canonical authorized job workspace |
+| `?tab=students|driveday|talk|overview` | Explicit legacy aliases map to Applicants, Rounds, Discussion and About |
+| `?tab=rounds&roundId=<uuid>` | Valid round anchor retained for the canonical job router; malformed anchors ignored |
+| `?show=not-applied` | Opens existing scoped registered-eligible non-applicants worklist |
+| `?publish=1` | Preserves canonical publish preflight handoff, without bypassing job authorization |
+| `/tpo/drives/[jobId]/edit` | **Already existed** with UUID validation and protected canonical edit destination; no redundant implementation made |
+
+**Implementation commits:** `62b0e4842fc0b2f251c3d093e58df5775e30b3f4` model; `901d5326290ee3d35a6b5d85a4c3450bfd497ec6` New Drive wrapper; `106f84c26af245ca932aa6e98d047cae5c798ed5` detail wrapper; `d0d2aea710dda30f712905fdb9f02abfc6ce4663` list redirect; `16268b1824e803a64e299be76d09b8b35e013456` request-link fix; `6e7784fa08f35a91682e02fad217563668715b3c` invalid-ID guard. Focused Vitest regression file `tests/unit/tpo-legacy-drive-route-model.test.ts` was authored at `30cab94222062d42a0735dade864e232034cc8e0` and extended at `24ee714acc976d0d1eb39fee5d61a91c717d8d75`.
+
+**Executed isolated runtime evidence:** copied the exact final `tpo-legacy-drive-route-model.ts` bytes into a temporary Node22 environment; `git hash-object` matched repository blob `25c03afc27eef30ebd78e94a98eb40510b1da8c2`. `node --experimental-strip-types /mnt/data/vnext-ui-check/check.mjs` executed **36/36** focused helper assertions with exit 0, covering destination, tabs, filters, prefills, query injection, ID encoding, publish and student worklist. Independent `tsc --noEmit --strict --skipLibCheck --target es2022 --module nodenext --lib es2022,dom` against that byte-identical model exited 0. This is **not** the repository-wide Vitest run, an authenticated browser test, or PostgreSQL execution; the script path is local to this isolated acceptance environment and is not a checked-in artifact. No unsupported pass is claimed.
+
+**Route inventory recheck:** `lms2-fe@08db1a76d9ed390bf7ce8706e5b9bb6ea18b815a` exposes 27 source route files under `src/pages/tpo/`. Current vNext `main@e5165b00084caddebbc6937c7c33ff4e4bbf2145` contains 137 TPO page files and now has **27/27 matching normalized TPO route patterns**, allowing renamed dynamic parameter identifiers. This is a **file-level route mapping**, not 27 fully verified page families or UI actions.
+
+**Remaining gate:** desktop/mobile authenticated browser redirect checks (especially return navigation and expiring sessions), old `f_*` filters and legacy numeric IDs versus greenfield UUID records, TPO roles/tenant negatives, and unrelated create/detail/edit forms still need scoped acceptance. The global UI milestone and the actual TPO page-family implementation/design/release green flags remain **NOT CERTIFIED**. Once the browser test environment is available, exercise old link → redirect → persisted authorized destination and verify wrong-tenant/role denies. Do not re-audit already matched static routes unless affected code changes.
