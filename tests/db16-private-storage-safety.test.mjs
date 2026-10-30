@@ -70,7 +70,7 @@ test("DB16 refuses to invent membership ownership for bug reporter screenshots",
 });
 
 test("DB16 does not claim encryption configuration verification from schema alone", () => {
-  assert.match(reconciliation, /do not mark [“"]encryption controls verified[”"]/i);
+  assert.match(reconciliation, /do not mark [“"]encryption controls verified\.?[”"]/i);
   assert.match(reconciliation, /CMEK/);
   assert.match(overlay, /Schema cannot prove the bucket\/database encryption configuration/);
 });
