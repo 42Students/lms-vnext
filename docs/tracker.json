@@ -989,6 +989,28 @@
           ],
           "notAcceptance": true,
           "priorRunUrl": "https://github.com/42Students/lms-vnext/actions/runs/41145308434"
+        },
+        "latestVerifiedSerialAlias": {
+          "sourceCommit": "6f4f8f9f310dbdce1411822b56d4185a175719ee",
+          "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/41146040059",
+          "result": "PASS_PG17_DIAGNOSTIC_NOT_DB020_ACCEPTANCE",
+          "registeredMigrationsAtRun": 320,
+          "verifiedTypedAndRegisteredColumnGaps": 0,
+          "rawTypeDescriptionDifferences": 804,
+          "unexplainedTypeDifferencesAfterCatalogProof": 0,
+          "exactSerialProof": {
+            "field": "placement_eligibility_events.sequence",
+            "pgType": "bigint",
+            "ownedSequence": "public.placement_eligibility_events_sequence_seq",
+            "pgDefault": "nextval('placement_eligibility_events_sequence_seq'::regclass)",
+            "ownedSequenceType": "bigint"
+          },
+          "remaining": [
+            "Global SQL generated schema drift and CHECK/index/default FK/trigger policies",
+            "Full exact-current-main registered replay after other contributors' newer migrations",
+            "DB001, DB014, DB018, DB019, DB045 and DB020 global certification"
+          ],
+          "notAcceptance": true
         }
       }
     },
