@@ -65,7 +65,8 @@ describe.skipIf(!enabled)("College Admin term-course CRUD PG, scoped guards", ()
   afterAll(async () => {
     try {
       if (pool) {
-        await pool.query("DELETE FROM activity_events WHERE subject_type='program_term_course' AND subject_id=$1", [createdMapping ?? "00000000-0000-4000-8000-000000000000"]);
+        // Activity events are append-only; retain this fixture's historical
+        // event records in the disposable database instead of deleting them.
         await pool.query("DELETE FROM course_offerings WHERE id=$1", [ids.offering]);
         if (createdMapping) await pool.query("DELETE FROM program_term_courses WHERE id=$1", [createdMapping]);
         // The version-zero state is cohort-owned; delete of the cohort cascades it.
@@ -107,7 +108,7 @@ describe.skipIf(!enabled)("College Admin term-course CRUD PG, scoped guards", ()
     // DB02 preserves historical term/course identity even after archival:
     // no service may silently delete the underlying curriculum link.
     await expect(removeCollegeTermMapping(context, createdMapping!, { confirm: true }))
-      .rejects.toMatchObject({ code: "23514" });
+      .rejects.toMatchObject({ cause: { code: "23514" } });
     const preserved = await pool!.query(
       "SELECT id FROM program_term_courses WHERE id=$1", [createdMapping],
     );
