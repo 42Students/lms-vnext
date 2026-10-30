@@ -283,8 +283,32 @@
       "id": "DB-007",
       "title": "Reconcile DB04 profile verification and private documents",
       "phase": "DATABASE",
-      "done": false,
-      "dependsOn": []
+      "done": true,
+      "dependsOn": [],
+      "acceptedAt": "2026-10-30T20:51:16.607Z",
+      "closureBasis": "EXECUTED_SCOPED_SOURCE_REVIEW_AND_STAGE_ACCEPTANCE",
+      "acceptanceScope": "Original DB04 bounded source audit and staging: all 103/103 source profile/verification fields reviewed into 27 active source+consumer, 43 DDL-to-normalized-schema candidate, and 33 historical usage unproven; no approved retirement; current numbered DB04 0063/0231/0304 schema source and private receipt checksum/scan/generation constraints verified; raw Aadhaar/PAN persistence remains intentionally fail-closed and private object overlay retains revocation/retention/scanner requirements.",
+      "notInThisTaskAcceptance": "NOT 103/103 field semantic or runtime certification, active raw national-ID storage or KMS-backed vault, real private R2 bucket/encryption/lifecycle/scanner configuration, public-access hardening proof, or global PostgreSQL catalog/tenant/security/phase acceptance. Historical 33 active/retired decisions and production provider verification remain open through global field and release gates.",
+      "remainingDistinctIntegrationTasks": [
+        "DB-014",
+        "DB-018",
+        "DB-019",
+        "DB-020"
+      ],
+      "acceptanceEvidence": [
+        {
+          "kind": "EXECUTED_ORIGINAL_SCOPE_NODE_SOURCE_AUDIT",
+          "result": "PASS",
+          "exitCode": 0,
+          "commitSha": "7c780740abb5515b96af40b520e6dec72c47050f",
+          "runner": "GitHub Actions Node22; native node:test source-review; DB007 focused step 2/2 PASS and complete tracker workflow PASS",
+          "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/41126235819/job/124305386659",
+          "commands": [
+            "node --test tests/db007-profile-source-reconciliation.test.mjs"
+          ],
+          "scope": "Source/review/staged schema acceptance, not real bucket or 103 field runtime parity."
+        }
+      ]
     },
     {
       "id": "DB-008",
@@ -3573,9 +3597,9 @@
         },
         {
           "id": "DB-007",
-          "discovery": "SOURCE_REVIEWED",
-          "implementation": "INTEGRATED_PARTIAL",
-          "verification": "SCOPED_POSTGRES_PASS",
+          "discovery": "ACCEPTED_BY_CANONICAL_DONE",
+          "implementation": "ACCEPTED_BY_CANONICAL_DONE",
+          "verification": "ACCEPTED_BY_CANONICAL_DONE",
           "basis": {
             "source": "RETIRED_2026_10_12_QUEUE",
             "taskId": "DB-007"
@@ -3585,7 +3609,8 @@
               "url": "https://github.com/42Students/lms-vnext/actions/runs/40831268589",
               "scope": "WORKFLOW_PASSED"
             }
-          ]
+          ],
+          "acceptanceRunUrl": "https://github.com/42Students/lms-vnext/actions/runs/41126235819/job/124305386659"
         },
         {
           "id": "DB-008",
