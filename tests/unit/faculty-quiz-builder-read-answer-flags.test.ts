@@ -1,5 +1,23 @@
 import {describe,expect,it} from "vitest";
-import {facultyAuthoringQuestionsFromResponse,facultyQuizDraftIssue} from "@/modules/courses/faculty-quiz-builder-model";
+import {facultyAuthoringQuestionsFromResponse,facultyQuizDraftIssue,facultyQuizShuffleSettingsFromResponse} from "@/modules/courses/faculty-quiz-builder-model";
+
+describe("faculty saved shuffle settings",()=>{
+ it("rehydrates true/false independently from the authenticated Quiz detail",()=>{
+  expect(facultyQuizShuffleSettingsFromResponse({quiz:{
+   quiz:{shuffleQuestions:true,shuffleOptions:false},questions:[],
+  }})).toEqual({shuffleQuestions:true,shuffleOptions:false});
+  expect(facultyQuizShuffleSettingsFromResponse({quiz:{
+   quiz:{shuffleQuestions:false,shuffleOptions:true},questions:[],
+  }})).toEqual({shuffleQuestions:false,shuffleOptions:true});
+ });
+ it("fails closed for missing or non-boolean persisted flags",()=>{
+  for(const input of [
+   null,{}, {quiz:{questions:[]}},
+   {quiz:{quiz:{shuffleQuestions:true},questions:[]}},
+   {quiz:{quiz:{shuffleQuestions:"true",shuffleOptions:false},questions:[]}},
+  ])expect(()=>facultyQuizShuffleSettingsFromResponse(input)).toThrow(/shuffle settings are unavailable/);
+ });
+});
 
 describe("faculty quiz editing saved answers",()=>{
  it("round trips the persisted correct answer through edit validation",()=>{
