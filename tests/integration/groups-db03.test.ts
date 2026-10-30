@@ -131,7 +131,10 @@ afterEach(async () => {
   if(fixture.cohorts.length) await pool.query("DELETE FROM cohorts WHERE id = ANY($1::uuid[])",[fixture.cohorts]);
   if(fixture.periods.length) await pool.query("DELETE FROM academic_periods WHERE id = ANY($1::uuid[])",[fixture.periods]);
   if(groupIds.length) await pool.query("DELETE FROM lms_groups WHERE id = ANY($1::uuid[])",[groupIds]);
-  if(fixture.courses.length) await pool.query("DELETE FROM courses WHERE id = ANY($1::uuid[])",[fixture.courses]);
+  if(fixture.courses.length) {
+    await pool.query("DELETE FROM program_term_courses WHERE course_id = ANY($1::uuid[])",[fixture.courses]);
+    await pool.query("DELETE FROM courses WHERE id = ANY($1::uuid[])",[fixture.courses]);
+  }
   if(fixture.programs.length) {
     // DB-005 creates program_terms for synthetic programs; drop only test-owned
     // curriculum after its course offerings have been cleaned.
