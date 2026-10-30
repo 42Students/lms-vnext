@@ -758,6 +758,7 @@
         {
           "kind": "EXECUTED_FAIL_CLOSED_SECURITY_REGRESSION",
           "result": "PASS",
+          "exitCode": 0,
           "commitSha": "62cbeddddec8181a8e220b0504c97aac23360b7b",
           "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/41022022531",
           "jobId": 123951295281,
@@ -811,6 +812,7 @@
         {
           "kind": "EXECUTED_FAIL_CLOSED_SECURITY_AND_DISPOSABLE_POSTGRES",
           "result": "PASS",
+          "exitCode": 0,
           "commitSha": "62cbeddddec8181a8e220b0504c97aac23360b7b",
           "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/41022022531",
           "jobId": 123951295281,
@@ -859,6 +861,7 @@
         {
           "kind": "EXECUTED_FAIL_CLOSED_SECURITY_AND_DISPOSABLE_POSTGRES",
           "result": "PASS",
+          "exitCode": 0,
           "commitSha": "62cbeddddec8181a8e220b0504c97aac23360b7b",
           "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/41022022531",
           "jobId": 123951295281,
