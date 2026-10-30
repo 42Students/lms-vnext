@@ -55,7 +55,8 @@ export const colleges = pgTable(
     uniqueIndex("colleges_id_organization_uq").on(table.id, table.organizationId),
     // The two scoped leadership FKs are enforced by migration 0161.
     // Declaring them here would create a TypeScript schema cycle because
-    // college_memberships already references colleges.    index("colleges_organization_idx").on(table.organizationId),
+    // college_memberships already references colleges.
+    index("colleges_organization_idx").on(table.organizationId),
     index("colleges_organization_status_idx").on(
       table.organizationId,
       table.status,
