@@ -60,25 +60,33 @@
       "done": false,
       "dependsOn": [],
       "implementationCheckpoint": {
-        "status": "SECURITY_REDACTION_HARDENED_AWAITING_FULL_INDEPENDENT_PG_ACCEPTANCE",
+        "status": "INDEPENDENT_PG17_EXECUTED_CANONICAL_DRIZZLE_0316_SNAPSHOT_MALFORMED_FAIL_CLOSED",
         "verifiedScope": "Verifier acceptance receipts now remove all PostgreSQL URL query and fragment data, and child-output redaction removes URL query/fragment secrets even when the printed URL differs from environment variables.",
         "sourceCommits": [
           "545481e79e275235f4ce6bb64b2b90314469e8da",
           "dde71187cb6a4f40a834118c01f3eeb994583ba3",
           "fcff8f77669c595c96ed37fe162dcab33ba121b0",
-          "a779b1865f46cca6e2ac7d9e425f9acfd0ed9b19"
+          "a779b1865f46cca6e2ac7d9e425f9acfd0ed9b19",
+          "c213c482d8a94394d82947a86cbcb45444f9636b",
+          "370886d63fdc76d724c13deee359085775c0653f",
+          "19193559f6c48b361964ec681de7e8bf410751b7",
+          "31cdcbd3825472bb26755844009d6c63509c7e73",
+          "76778a0b6181bb8f448ffbd109959f96e94154df"
         ],
         "sourceChecks": {
-          "runner": "Connector V8 evaluated exact GitHub redactor blob ba15c88254e479efb437970c9abb95d1a7a54314; isolated Node v22.16.0 URI fixture",
-          "result": "PASS",
-          "note": "Isolated secret-redaction fixtures only; committed full Node test suite and PostgreSQL independent verifier not executed in this session."
+          "runner": "GitHub Actions Node22, standalone CLI with explicitly disposable PostgreSQL17 service, exact main SHA",
+          "result": "FAIL_CLOSED_AT_CANONICAL_GENERATION",
+          "note": "Isolated secret-redaction fixtures only; committed full Node test suite and PostgreSQL independent verifier not executed in this session.",
+          "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/41126990955",
+          "commitSha": "19193559f6c48b361964ec681de7e8bf410751b7",
+          "observation": "Drizzle-kit prints drizzle/meta/0316_snapshot.json data is malformed while exiting code 0; strengthened generation guard now correctly refuses 12/12 certification before resetting PostgreSQL."
         },
         "openEvidence": [
-          "Execute focused node:test redaction and failed-target evidence suites on exact current main SHA",
-          "Execute complete npm run db:verify:independent on a disposable PostgreSQL 17 target with zero-to-head migrations, drift/catalog and negative integration evidence",
-          "Recheck clean-tree and main-SHA pinning before accepting DB-001"
+          "Reconcile canonical drizzle/meta/0316_snapshot.json against 0315 and all registered migrations, without rewriting applied DDL or concealing schema drift",
+          "Rerun all 12 independent verifier steps on exact clean main SHA; require PASS and record redacted evidence receipt",
+          "Prove source and runtime producer/consumer negative suite and fresh PostgreSQL registered catalog with zero missing/invalid constraints"
         ],
-        "recordedOn": "2026-10-30",
+        "recordedOn": "2026-10-31",
         "evidenceIsNotAcceptance": true
       }
     },
