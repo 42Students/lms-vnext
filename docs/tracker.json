@@ -666,6 +666,12 @@
             "cascadeFks": 21
           },
           "notGlobalAcceptance": true
+        },
+        "latestRegisteredMatrix": {
+          "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/41129846754",
+          "commitSha": "2a0d21cac8bc1cd6d5b03856e8bd067bd2f5e6a7",
+          "result": "PASS",
+          "scope": "320/320 registered PG17 replay, DB018 92/92 direct-negative/race, 0318 active tenant guards, 0319 grade provenance column, additional PG catalog negative tests. Retention/cascade and global DB020 signoff unaccepted."
         }
       }
     },
@@ -914,7 +920,20 @@
           "Reconcile 44 typed-but-already-registered tables and 10 SQL-only tables without applying duplicated generated CREATE TABLE DDL",
           "Disposition 22 registered columns missing from typed schema, generated type/default/unique/check/foreign-key semantics and naming/cascade differences",
           "Execute clean Drizzle generation with no unexpected migration; run DB001 and DB018 exact-head gate; independently certify database phase"
-        ]
+        ],
+        "latestFkStructuralComparison": {
+          "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/41130350910",
+          "commitSha": "e6ba0f048730ec80766965acb5265b0f5c22c864",
+          "result": "PASS_DIAGNOSTIC_NOT_CERTIFICATION",
+          "matchingNameAndShapeFks": 405,
+          "sameShapeDifferentNameFks": 271,
+          "sameNameDifferentReferentialActionFks": 3,
+          "typedFkShapesNotMatched": 11,
+          "registeredFkShapesNotMatched": 53,
+          "registeredMigrations": 320,
+          "missingTypedColumns": 0,
+          "comment": "Name mismatches are not 240 missing FKs; 271 pairs same shape. The three action-drift schema definitions have since been aligned with nondeferrable NO ACTION live catalog; a final exact-head regenerated probe still required."
+        }
       }
     },
     {
