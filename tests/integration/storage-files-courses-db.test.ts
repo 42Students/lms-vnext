@@ -136,6 +136,7 @@ async function cleanup() {
   await q(`delete from sections where cohort_id in (
       select c.id from cohorts c join programs p on p.id = c.program_id where p.code like '${PREFIX}%')`);
   await q(`delete from cohorts where program_id in (select id from programs where code like '${PREFIX}%')`);
+  await q(`delete from program_terms where program_id in (select id from programs where code like '${PREFIX}%')`);
   await q(`delete from programs where code like '${PREFIX}%'`);
   await q(`delete from academic_periods where code like '${PREFIX}%'`);
 }

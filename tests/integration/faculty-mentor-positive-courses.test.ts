@@ -175,6 +175,7 @@ async function cleanup() {
     select c.id from cohorts c join programs p on p.id=c.program_id where p.code like $1)`, [codePattern]);
   await pool.query(`delete from cohorts where program_id in (
     select id from programs where code like $1)`, [codePattern]);
+  await pool.query("delete from program_terms where program_id in (select id from programs where code like $1)", [codePattern]);
   await pool.query("delete from programs where code like $1", [codePattern]);
   await pool.query("delete from academic_periods where code like $1", [codePattern]);
   // Only the principal created by THIS suite: do not mutate deterministic seed users.

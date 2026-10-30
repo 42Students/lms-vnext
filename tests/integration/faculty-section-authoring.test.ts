@@ -76,6 +76,7 @@ async function cleanup(){
  await pool.query(`delete from sections where cohort_id in(
   select h.id from cohorts h join programs p on p.id=h.program_id where p.code like $1)`,[like]);
  await pool.query("delete from cohorts where program_id in(select id from programs where code like $1)",[like]);
+ await pool.query("delete from program_terms where program_id in(select id from programs where code like $1)",[like]);
  await pool.query("delete from programs where code like $1",[like]);
  await pool.query("delete from academic_periods where code like $1",[like]);
 }

@@ -216,6 +216,7 @@ async function cleanupA2() {
        where code like 'A2-SCHED-%'
      )`,
   );
+  await pool.query("delete from program_term_courses where course_id in (select id from courses where code like 'A2-SCHED-%')");
   await pool.query(
     "delete from courses where code like 'A2-SCHED-%'",
   );
@@ -239,6 +240,7 @@ async function cleanupA2() {
      )`,
   );
 
+  await pool.query("delete from program_terms where program_id in (select id from programs where code like 'A2-%')");
   await pool.query(
     "delete from programs where code like 'A2-%'",
   );

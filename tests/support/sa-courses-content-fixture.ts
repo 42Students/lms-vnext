@@ -43,6 +43,7 @@ export async function createCoursesContentFixture(pool: Pool, label: string) {
     await q("delete from program_term_courses where course_id=$1", [ids.course]);
     await q("delete from courses where id=$1", [ids.course]);
     await q("delete from cohorts where id=$1", [ids.cohort]);
+    await q("delete from program_terms where program_id=$1", [ids.program]);
     await q("delete from programs where id=$1", [ids.program]);
     await q("delete from academic_periods where id=$1", [ids.period]);
   }
