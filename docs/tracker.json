@@ -1108,9 +1108,30 @@
       "id": "DB-061",
       "title": "Enforce DB09 message chronology and thread projection",
       "phase": "DATABASE",
-      "done": false,
+      "done": true,
       "dependsOn": [
         "DB-056"
+      ],
+      "acceptedAt": "2026-10-30",
+      "acceptanceEvidence": [
+        {
+          "kind": "EXECUTED_POSTGRESQL_17",
+          "result": "PASS",
+          "exitCode": 0,
+          "commitSha": "a03791fff56250197d0a2c688f5c63595bcb78d4",
+          "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/41070289498",
+          "jobId": 124112304752,
+          "runner": "GitHub Actions ubuntu-latest Node.js 22, disposable PostgreSQL 17-alpine, two independently connected transactions",
+          "commands": [
+            "npm run db:journal:verify",
+            "node --test tests/db09-message-chronology.test.mjs",
+            "npm run db:test:prepare (DATABASE_URL cleared)",
+            "npm run db:migrate",
+            "node tests/db09-message-registered-pg-acceptance.mjs",
+            "node tests/db061-registered-message-concurrency-pg.mjs"
+          ],
+          "details": "Source chronology contracts 5/5 passed, rollback-only registered PostgreSQL message/read/sender/immutability/last-message projection negatives 22/22 passed. Separate disposable-only two-session race committed two distinct simultaneous messages; second sender waited on FK-compatible NO KEY UPDATE thread lock; persisted thread.last_message_at matched SQL MAX(created_at) exactly. Timestamp witness uses database-native microseconds. All job steps succeeded and the only subsequent main change was unrelated verifier test source. This closes DB061 scoped chronology constraints, not all CRM or global DATABASE."
+        }
       ]
     },
     {
