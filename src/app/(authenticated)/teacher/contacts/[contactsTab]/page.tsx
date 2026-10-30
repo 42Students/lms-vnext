@@ -134,7 +134,8 @@ export default async function FacultyContactsPage({
               {result.search ? <> matching “{result.search}”</> : null}
             </p>
           </div>
-          <FacultyContactsLiveSearch baseHref={baseHref} initialSearch={result.search} pageSize={result.pageSize}/>
+          <FacultyContactsLiveSearch key={baseHref + ":" + result.search + ":" + result.pageSize}
+            baseHref={baseHref} initialSearch={result.search} pageSize={result.pageSize}/>
         </div>
         <p className="text-xs text-muted-foreground">Contact fields are masked for this role. The legacy Email and Contact columns remain visible as Private; no other learner or teacher phone number is disclosed.</p>
       </section>
