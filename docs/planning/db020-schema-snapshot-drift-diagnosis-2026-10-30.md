@@ -10,6 +10,49 @@
 - Examples among the 44 include `skills`, `skill_synonyms`, `skill_usage`, `outbound_messages`, `log_alert_signatures`, `learner_profile_images`, `assignment_grade_events` and `learner_import_batches`. A literal application of the generator's CREATE TABLE output could collide with earlier registered DDL.
 - The later, separately reviewed `0313_db10_skill_synonym_parity.sql` was registered and successfully replayed with idempotence by the dedicated [DB-022 PostgreSQL acceptance run](https://github.com/42Students/lms-vnext/actions/runs/41060834336). This **does not** reconcile the wider 44/116 snapshot discrepancy or make DB-020 complete.
 
+## 31 October: executed registered PostgreSQL catalog comparison (not certification)
+
+The GitHub Actions [DB020 disposable PG17 diagnostic run](https://github.com/42Students/lms-vnext/actions/runs/41129279756)
+executed an exact registered **319/319** migration replay and idempotence
+on disposable PostgreSQL 17, then generated an **unapplied** Drizzle 0319
+diagnostic snapshot and compared it with the actual registered catalog.
+
+| Dimension | Observed |
+| --- | ---: |
+| Registered PostgreSQL tables | 276 |
+| Previous Drizzle snapshot tables | 222 |
+| Newly generated typed snapshot tables | 266 |
+| Newly typed tables **already in PostgreSQL** | 44/44 |
+| SQL-only PostgreSQL tables outside typed snapshot | 10 |
+| Typed columns missing from registered PostgreSQL | 1 |
+| Registered columns missing from typed snapshot | 22 |
+| Textually different type descriptions, not semantic failures by default | 795 |
+| Registered PostgreSQL foreign keys | 732 |
+| Unvalidated registered foreign keys | 0 |
+| Registered FK names missing from typed snapshot | 120 |
+| Typed FK names missing from registered catalog | 120 |
+
+The one **confirmed missing typed column** was
+`assignment_grade_events.source_action`, an optional `varchar(120)`
+source-provenance field. A forward-only, nullable
+`0319_db020_grade_event_source_action.sql` was added afterward, without
+rewriting registered `0205` or inventing historical actions. Its registered
+PostgreSQL proof is separate from the earlier diagnostic.
+
+The pair of 120-count FK name discrepancies must be compared by actual
+`child-table, parent-table, ordered source/target columns, delete/update
+actions` before calling them 240 missing constraints. They may partly be
+different names for identical structural relationships. Most of the 795
+textual type differences include `varchar(n)` versus PostgreSQL's
+`character varying(n)`, which is **not automatically schema drift**.
+Conversely, missing columns, FK targets, defaults, CHECKs, retention and
+tenant authorization must not be silently normalized away.
+
+**No wholesale generated CREATE TABLE SQL was applied**: all 44
+new-to-snapshot tables already exist. Existing migrations are immutable.
+The remaining snapshot reconciliation is a comparison and carefully
+reviewed metadata/forward-only DDL exercise, never blind promotion.
+
 ## Safe follow-up sequence
 
 1. Treat newly generated migration SQL as **diagnostics only**. Do not apply the wholesale `0313_*` artifact, rewrite old applied SQL or bypass the `schema-drift` CI check.
