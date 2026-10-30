@@ -252,6 +252,8 @@ Legacy `QuizzesContent` runs in Faculty mode.
 
 ## Page: Faculty Profile
 
+**Executed exact-SHA closure evidence (2026-10-31):** [run 41131298991](https://github.com/42Students/lms-vnext/actions/runs/41131298991) on [`a567b3d5723b95ea9e8c3ea0aefbd9d4e7ba6919`](https://github.com/42Students/lms-vnext/commit/a567b3d5723b95ea9e8c3ea0aefbd9d4e7ba6919) completed **SUCCESS**, with `faculty-profile-closure-acceptance/pg-browser` exact-commit status **success**. The dedicated gate executes real PostgreSQL migration and Faculty self-document scope tests, profile page/completeness/social/privacy unit tests, and authenticated desktop/mobile profile browser journeys. The 13 persisted section/completeness rows below are closed against that gate; photo, Aadhaar/PAN private-object transfers and full loading/visibility lifecycle remain OPEN pending separate live evidence. This does not certify object-store/scanner readiness or full account release.
+
 **2026-10-31 closure-first implementation pass (final browser gate pending):** The 13 editable profile sections have a shared persisted completeness model; successful versioned section saves refresh the server header, and the self-profile identity header survives a failed optional private-document source without pretending empty data. Contacts, social links, address, personal details, experience, education, skills, certifications, languages, publications, awards and metadata have dedicated persisted self-edit/CRUD checks, including legacy coding-link preservation. The full-identity reader now respects the explicitly selected Faculty role even when the persisted membership also contains Mentor/Admin, while the request-context role gate, persisted Faculty membership, owner, and tenant checks remain enforced. [Focused PostgreSQL/unit/browser workflow](https://github.com/42Students/lms-vnext/actions/workflows/faculty-profile-closure-acceptance.yml) includes a disposable Faculty-only editing actor and a separate selected-Faculty/multi-role negative browser check. Check each source verification below only after the **new** exact-SHA run reports success.
 
 **Still externally BLOCKED (not implementation-green):** real profile photo/import and private identity evidence upload, scan verdict, preview/revocation and signed retrieval require an approved private object provider, malware scanner and operator-managed storage environment. Retain the photo and Aadhaar/PAN rows OPEN until those live flows are exercised using authorized test identities; neither source-only checks nor disposable database receipt tests prove the provider is live. The unrelated Faculty resume remains correctly N/A. The official visual acceptance/release gates stay separate.
@@ -282,21 +284,21 @@ Audited shared Faculty-profile sections:
 - partial-section failure tolerance.
 
 - [ ] User summary/profile image edit behavior matches.
-- [ ] Profile completeness refresh matches.
+- [x] Profile completeness refresh matches.
 - [x] Resume upload/import/remove is **Learner-only**, not a Faculty UI requirement. Legacy `src/components/profile/about.js` wraps its Resume card in `!isFacultyProfileSchema`; vNext correctly does not expose learner resume editing. Classified **NOT APPLICABLE**, not a newly implemented upload.
-- [ ] Contacts edit.
-- [ ] Social edit.
-- [ ] Address edit.
-- [ ] Personal details edit.
+- [x] Contacts edit.
+- [x] Social edit.
+- [x] Address edit.
+- [x] Personal details edit.
 - [ ] Identity edit + Aadhaar/PAN storage flow.
-- [ ] Experience add/edit/delete.
-- [ ] Education add/edit/delete.
-- [ ] Skills add/edit/delete/proficiency.
-- [ ] Certifications add/edit/delete.
-- [ ] Languages add/edit/delete.
-- [ ] Publications add/edit/delete.
-- [ ] Awards add/edit/delete.
-- [ ] Metadata edit.
+- [x] Experience add/edit/delete.
+- [x] Education add/edit/delete.
+- [x] Skills add/edit/delete/proficiency.
+- [x] Certifications add/edit/delete.
+- [x] Languages add/edit/delete.
+- [x] Publications add/edit/delete.
+- [x] Awards add/edit/delete.
+- [x] Metadata edit.
 - [x] Partial endpoint failures do not blank unrelated sections: a failed private-document read retains the authenticated Faculty identity and teaching surface, disables unverified editing, and exposes a fresh retry without leaking backend text. The focused SSR failure/ready-state tests passed in [run 41130479588](https://github.com/42Students/lms-vnext/actions/runs/41130479588); the run's separate browser job did not pass.
 - [ ] Loading/hard-error/retry/visibility-refresh behavior matches.
 - [x] Learner/Admin/Mentor/TPO role misroutes are safely redirected/fenced: targeted role and suspended-membership negative SSR tests passed in [run 41130479588](https://github.com/42Students/lms-vnext/actions/runs/41130479588), without calling Faculty profile storage. Whole-run/browser acceptance remains open.
