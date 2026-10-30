@@ -1,0 +1,87 @@
+name: DB09 registered scope, share and private-history acceptance
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/db09-guard-bundle-acceptance.yml"
+      - "tests/db09-collaboration-registered-pg-acceptance.mjs"
+      - "tests/db09-share-registered-pg-acceptance.mjs"
+      - "tests/db09-recruiter-note-registered-pg-acceptance.mjs"
+      - "tests/db079-recruiter-note-registered-source.test.mjs"
+      - "tests/db09-collegewide-principal-guard.test.mjs"
+      - "tests/db09-recruiter-read-watermark.test.mjs"
+      - "tests/db09-secure-share-lifecycle.test.mjs"
+      - "tests/db09-share-event-completeness.test.mjs"
+      - "tests/db09-recruiter-private-note-lifecycle.test.mjs"
+      - "tests/db09-student-note-history.test.mjs"
+      - "tests/db09-user-state-lifecycle.test.mjs"
+      - "tests/db062-db079-private-review-canonical-and-revocation.test.mjs"
+      - "drizzle/**"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: db09-guard-bundle-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  db09-registered-guards:
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    services:
+      postgres:
+        image: postgres:17-alpine
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: lms_vnext_test
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres -d lms_vnext_test"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 20
+    env:
+      TEST_DATABASE_URL: postgresql://postgres:postgres@127.0.0.1:5432/lms_vnext_test
+      DATABASE_URL: postgresql://postgres:postgres@127.0.0.1:5432/lms_vnext_test
+      DB03_ISOLATED_TEST_DATABASE: "1"
+      DB09_ISOLATED_TEST_DATABASE: "1"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Assert exact triggering source revision
+        run: test "$(git rev-parse HEAD)" = "$GITHUB_SHA"
+      - name: Verify registered migration journal
+        run: npm run db:journal:verify
+      - name: DB09 registered guard, chronology and legacy-source contracts
+        run: |
+          node --test \
+            tests/db09-collegewide-principal-guard.test.mjs \
+            tests/db09-recruiter-read-watermark.test.mjs \
+            tests/db09-secure-share-lifecycle.test.mjs \
+            tests/db09-share-event-completeness.test.mjs \
+            tests/db09-recruiter-private-note-lifecycle.test.mjs \
+            tests/db09-student-note-history.test.mjs \
+            tests/db09-user-state-lifecycle.test.mjs \
+            tests/db079-recruiter-note-registered-source.test.mjs \
+            tests/db062-db079-private-review-canonical-and-revocation.test.mjs
+      - name: Prepare empty disposable PostgreSQL 17 and registered seed
+        env:
+          DATABASE_URL: ""
+        run: npm run db:test:prepare
+      - name: Verify full journal replay idempotence
+        run: npm run db:migrate
+      - name: DB056, DB057, DB063, DB064 rollback-only principal, read and note negative witnesses
+        run: node tests/db09-collaboration-registered-pg-acceptance.mjs
+      - name: DB059 and DB060 rollback-only immutable disclosure and lifecycle negatives
+        run: node tests/db09-share-registered-pg-acceptance.mjs
+      - name: DB062 and DB079 rollback-only private-note identity and grant-revocation negatives
+        run: node tests/db09-recruiter-note-registered-pg-acceptance.mjs
