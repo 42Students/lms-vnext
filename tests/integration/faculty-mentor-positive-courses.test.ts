@@ -1,3 +1,4 @@
+import { deleteDisposableFixtureGradeEvents } from "../support/db045-immutable-grade-fixture-cleanup.mjs";
 import { requireLearningReadAccess, requireDeliveryContentMutation } from "@/modules/courses/learning-access";
 import { facultySubmissionReportSearchSchema } from "@/modules/courses/faculty-assignment-submissions-model";
 import { facultyQuizAttemptSearchSchema } from "@/modules/courses/faculty-quiz-attempts-model";
@@ -132,7 +133,7 @@ async function cleanup() {
     join course_offerings co on co.id=lp.offering_id join courses c on c.id=co.course_id
     where c.code like $1)`, [codePattern]);
   // Remove only the disposable C4POS fixture's restricted grade events.
-  await pool.query(`delete from assignment_grade_events where assignment_submission_id in (
+  await deleteDisposableFixtureGradeEvents(`delete from assignment_grade_events where assignment_submission_id in (
     select s.id from assignment_submissions s
     join course_assignments a on a.id=s.assignment_id
     join course_lessons l on l.id=a.lesson_id

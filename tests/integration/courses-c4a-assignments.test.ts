@@ -1,3 +1,4 @@
+import { deleteDisposableFixtureGradeEvents } from "../support/db045-immutable-grade-fixture-cleanup.mjs";
 import { facultyAssessmentFixtureToken } from "../support/faculty-assessment-token";
 import { randomUUID } from "node:crypto";
 import {
@@ -113,7 +114,7 @@ const learner: RequestContext = {
 async function cleanupC4A() {
   // The immutable grade ledger retains strict submission identity. Fixture
   // teardown clears only its test-owned rows before removing the parent.
-  await pool.query(
+  await deleteDisposableFixtureGradeEvents(
     `delete from assignment_grade_events where assignment_submission_id in (
       select s.id from assignment_submissions s
       join course_assignments a on a.id=s.assignment_id
@@ -758,6 +759,17 @@ describe("courses C4A assignments against PostgreSQL", () => {
       gradePublished: false,
       version: 1,
     });
+    // DB045: real grading producer persists a row; unlike disposable
+    // fixture cleanup, normal SQL cannot rewrite or erase its history.
+    await expect(pool.query(
+      "UPDATE assignment_grade_events SET action=action WHERE assignment_submission_id=$1",
+      [submitted.id],
+    )).rejects.toMatchObject({ code: "23514" });
+    await expect(pool.query(
+      "DELETE FROM assignment_grade_events WHERE assignment_submission_id=$1",
+      [submitted.id],
+    )).rejects.toMatchObject({ code: "23514" });
+
 
     const hidden =
       await getMyAssignmentSubmission(

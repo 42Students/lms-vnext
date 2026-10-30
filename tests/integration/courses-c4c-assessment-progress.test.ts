@@ -1,3 +1,4 @@
+import { deleteDisposableFixtureGradeEvents } from "../support/db045-immutable-grade-fixture-cleanup.mjs";
 import { randomUUID } from "node:crypto";
 import {
   afterAll,
@@ -160,7 +161,7 @@ async function cleanupC4C() {
   );
   // The immutable grade ledger retains strict submission identity. Fixture
   // teardown clears only its test-owned rows before removing the parent.
-  await pool.query(
+  await deleteDisposableFixtureGradeEvents(
     `delete from assignment_grade_events where assignment_submission_id in (
       select s.id from assignment_submissions s
       join course_assignments a on a.id=s.assignment_id

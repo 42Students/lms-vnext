@@ -49,3 +49,9 @@ jobs:
         run: npm run db:migrate
       - name: Grade-history protection and missing-submission negative witnesses
         run: node --test tests/db045-registered-grade-history-pg.test.mjs
+      - name: Grade, publish and immutable test-fixture teardown integration
+        run: >
+          npx vitest run --config vitest.db.config.ts
+          tests/integration/courses-c4a-assignments.test.ts
+          tests/integration/courses-c4c-assessment-progress.test.ts
+          tests/integration/faculty-mentor-positive-courses.test.ts
