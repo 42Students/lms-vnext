@@ -228,7 +228,7 @@ async function insertPlacementWitnessFixture(client: PoolClient, id: string) {
     if (["P5-12","P5-13","P5-14","P5-15","P5-16"].includes(id)) {
       const round = randomUUID();
       await client.query(
-        "INSERT INTO placement_job_rounds (id,job_id,sequence,kind,name,status,created_by_user_id) VALUES ($1,$2,1,'INTERVIEW','DB018 private round','PENDING',$3)",
+        "INSERT INTO placement_job_rounds (id,job_id,sequence,kind,name,mode,scheduled_at,timezone,meeting_url,status,created_by_user_id) VALUES ($1,$2,1,'INTERVIEW','DB018 private round','VIRTUAL',now(),'Asia/Kolkata','https://example.test/db018-round','SCHEDULED',$3)",
         [round,job,SEED_IDS.collegeAdminUser],
       );
       if (id === "P5-12") {
