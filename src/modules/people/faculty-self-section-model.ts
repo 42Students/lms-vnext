@@ -148,6 +148,13 @@ export function updateFacultyProfileSection(
   }
   // Contact is self-reported, not the verified sign-in identity.
   if (patch.section === "contact") facultyContactEditSchema.parse(patch.value);
+  // The visible link editor exposes the six public scalar URLs, while legacy
+  // documents may also contain codingProfiles and codingProfileLinks. An edit
+  // of LinkedIn must not silently erase those unseen persisted collections.
+  const socialValue=patch.section==="socialProfiles"&&patch.value&&
+    typeof patch.value==="object"&&!Array.isArray(patch.value)
+    ? {...current.socialProfiles,...patch.value as Record<string,unknown>}
+    : patch.value;
   // New public links must be secure. Unchanged historical HTTP links are
   // retained to avoid destroying unrelated legacy data during section updates.
   if(patch.section==="socialProfiles") {
@@ -155,7 +162,7 @@ export function updateFacultyProfileSection(
     // as scalar URLs. Validating it as Record<string,string> rejected every
     // legitimate update that retained either nested field.
     const incoming=facultyProfileDocumentSchema.parse({
-      ...current,socialProfiles:patch.value,
+      ...current,socialProfiles:socialValue,
     }).socialProfiles;
     const previous=current.socialProfiles;
     const entries=(profile:typeof previous):Array<[string,string]>=>[
@@ -185,7 +192,9 @@ export function updateFacultyProfileSection(
     }
   }
   // Reparse the *whole* document; cross-entry chronology, URLs and IDs apply.
-  const copy: Record<string,unknown> = {...current, [patch.section]:patch.value};
+  const copy: Record<string,unknown> = {
+    ...current,[patch.section]:patch.section==="socialProfiles"?socialValue:patch.value,
+  };
   const next=facultyProfileDocumentSchema.parse(copy);
   if(patch.section==="skills" && (next.skills.some(row=>!row.skill.trim()) ||
     new Set(next.skills.map(row=>row.id)).size!==next.skills.length))
