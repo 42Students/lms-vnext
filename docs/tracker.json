@@ -1581,15 +1581,101 @@
       "id": "DB-080",
       "title": "Finalize DB04 active student-image normalized persistence contract",
       "phase": "DATABASE",
-      "done": false,
-      "dependsOn": []
+      "done": true,
+      "dependsOn": [],
+      "acceptedAt": "2026-10-30",
+      "closureBasis": "ENGINEERING_ACCEPTED_REGISTERED_DB04_PG17_WITH_RELEASE_VERIFICATION_DEFERRED",
+      "acceptanceEvidence": [
+        {
+          "kind": "EXECUTED_REGISTERED_POSTGRESQL_17_AND_APPLICATION_ACCEPTANCE",
+          "commitSha": "5d4df75deb99514fc337c3236386973156e58231",
+          "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/41076866677",
+          "jobId": 124135267291,
+          "runner": "GitHub Actions Node 22, disposable PG17",
+          "commands": [
+            "npm run db:journal:verify",
+            "npm run db:test:prepare (DATABASE_URL cleared)",
+            "npm run db:migrate",
+            "node --test tests/db007-registered-profile-pg.test.mjs",
+            "npx vitest run --config vitest.db.registered.config.ts tests/integration/db080-learner-gallery-service.test.ts tests/integration/db007-education-projection.test.ts tests/integration/db007-review-lifecycle.test.ts tests/integration/learner-profile-document-edit.test.ts tests/integration/learner-profile-sections-write.test.ts",
+            "npx vitest run learner-gallery HTTP/private-attestation unit suite",
+            "npm run typecheck"
+          ],
+          "result": "PASS",
+          "exitCode": 0,
+          "details": "PG17 zero-to-head replay and idempotence; actual learner gallery service producer, persisted receipt, list/read and idempotent deactivation; cross-member and wrong-purpose negative cases; HTTP and storage-attestation unit boundaries; TypeScript."
+        }
+      ],
+      "deferredRelease": {
+        "reviewRequired": true,
+        "when": "AFTER_ALL_ENGINEERING_BEFORE_PRODUCTION_RELEASE",
+        "reviewOwner": "Authorized release and storage reviewers",
+        "items": [
+          "Final browser workflow acceptance on release-ready main SHA",
+          "Authorized private object store/scanner/provider smoke and permission review at release environment",
+          "Final exact-release-commit global migration/drift/integrated CI certification"
+        ],
+        "notWaived": true,
+        "releaseCertified": false,
+        "noAutomaticReopen": true,
+        "reopenOnlyFor": "Demonstrated profile/security regression, migration/API failure or explicit owner re-scope"
+      }
     },
     {
       "id": "DB-081",
       "title": "Finalize DB04 qualification 24-field normalized crosswalk",
       "phase": "DATABASE",
-      "done": false,
-      "dependsOn": []
+      "done": true,
+      "dependsOn": [],
+      "acceptedAt": "2026-10-30",
+      "closureBasis": "ENGINEERING_ACCEPTED_REGISTERED_DB04_PG17_WITH_RELEASE_VERIFICATION_DEFERRED",
+      "acceptanceEvidence": [
+        {
+          "kind": "EXECUTED_REGISTERED_POSTGRESQL_17_AND_APPLICATION_ACCEPTANCE",
+          "commitSha": "5d4df75deb99514fc337c3236386973156e58231",
+          "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/41076866677",
+          "jobId": 124135267291,
+          "runner": "GitHub Actions Node 22, disposable PG17",
+          "commands": [
+            "npm run db:journal:verify",
+            "npm run db:test:prepare (DATABASE_URL cleared)",
+            "npm run db:migrate",
+            "node --test tests/db007-registered-profile-pg.test.mjs",
+            "npx vitest run --config vitest.db.registered.config.ts tests/integration/db080-learner-gallery-service.test.ts tests/integration/db007-education-projection.test.ts tests/integration/db007-review-lifecycle.test.ts tests/integration/learner-profile-document-edit.test.ts tests/integration/learner-profile-sections-write.test.ts",
+            "npx vitest run learner-gallery HTTP/private-attestation unit suite",
+            "npm run typecheck"
+          ],
+          "result": "PASS",
+          "exitCode": 0,
+          "details": "All 24 legacy qualification fields explicitly dispositioned; 23 direct education columns in 0304 and one private education-document receipt relation; registered PG17 GPA/year/recent/tenant/private-FK negatives, real education write/read projection and verifier lifecycle integration; TypeScript."
+        },
+        {
+          "kind": "EXECUTED_SOURCE_CROSSWALK_REGRESSION",
+          "commitSha": "5bdef6c19fb19083bdc6d79dc0bc15963507075c",
+          "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/41070514523",
+          "runner": "GitHub Actions source-contracts job",
+          "commands": [
+            "npm run test:db:parity including 24-field physical-column/receipt-join regression"
+          ],
+          "result": "PASS",
+          "exitCode": 0,
+          "details": "DB081 exact 24/24 crosswalk and current registered SQL targets; this source test is complementary to live PG17 integration, not a substitute."
+        }
+      ],
+      "deferredRelease": {
+        "reviewRequired": true,
+        "when": "AFTER_ALL_ENGINEERING_BEFORE_PRODUCTION_RELEASE",
+        "reviewOwner": "Authorized release and storage reviewers",
+        "items": [
+          "Final browser workflow acceptance on release-ready main SHA",
+          "Authorized private object store/scanner/provider smoke and permission review at release environment",
+          "Final exact-release-commit global migration/drift/integrated CI certification"
+        ],
+        "notWaived": true,
+        "releaseCertified": false,
+        "noAutomaticReopen": true,
+        "reopenOnlyFor": "Demonstrated profile/security regression, migration/API failure or explicit owner re-scope"
+      }
     }
   ],
   "execution": {
