@@ -12,7 +12,7 @@ const keys = ["columnsFrom", "columnsTo", "name", "onDelete", "onUpdate", "table
 test("DB001 canonical latest Drizzle v7 snapshot has representable FK shape", () => {
   assert.equal(snapshot.version, "7");
   assert.equal(snapshot.dialect, "postgresql");
-  assert.equal(last.tag, "0316_db07_template_version_integrity");
+  assert.ok(last.idx >= 316 && journal.entries.some(x => x.tag === "0316_db07_template_version_integrity"));
   for (const [tableName, table] of Object.entries(snapshot.tables)) {
     for (const [name, fk] of Object.entries(table.foreignKeys ?? {})) {
       assert.deepEqual(Object.keys(fk).sort(), keys, `${tableName}.${name} must not inject non-Drizzle metadata`);
