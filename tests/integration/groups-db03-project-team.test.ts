@@ -26,14 +26,26 @@ async function setupTeam() {
   });
   const templateId=randomUUID(),versionId=randomUUID(),projectId=randomUUID();
   fixtures.push({groupId:group.id,projectId,templateId,versionId});
-  await pool.query(
-    "INSERT INTO project_templates (id,slug,title,created_by_user_id) VALUES ($1,$2,'DB03 Team Template',$3)",
-    [templateId,"db03-team-"+templateId,SEED_IDS.collegeAdminUser],
-  );
-  await pool.query(
-    "INSERT INTO project_template_versions (id,template_id,version,title,blueprint,created_by_user_id) VALUES ($1,$2,1,'DB03 Team Version',$3::jsonb,$4)",
-    [versionId,templateId,JSON.stringify({releases:[]}),SEED_IDS.collegeAdminUser],
-  );
+  // DB071's header-current-version FK is deferred until COMMIT. A template
+  // header and its immutable initial revision must share one transaction.
+  const client = await pool.connect();
+  try {
+    await client.query("BEGIN");
+    await client.query(
+      "INSERT INTO project_templates (id,slug,title,created_by_user_id) VALUES ($1,$2,'DB03 Team Template',$3)",
+      [templateId,"db03-team-"+templateId,SEED_IDS.collegeAdminUser],
+    );
+    await client.query(
+      "INSERT INTO project_template_versions (id,template_id,version,title,blueprint,created_by_user_id) VALUES ($1,$2,1,'DB03 Team Version',$3::jsonb,$4)",
+      [versionId,templateId,JSON.stringify({releases:[]}),SEED_IDS.collegeAdminUser],
+    );
+    await client.query("COMMIT");
+  } catch (error) {
+    await client.query("ROLLBACK");
+    throw error;
+  } finally {
+    client.release();
+  }
   await pool.query(
     "INSERT INTO project_instances (id,college_id,template_id,template_version_id,slug,title,created_by_user_id) VALUES ($1,$2,$3,$4,$5,'DB03 Team Workspace',$6)",
     [projectId,SEED_IDS.collegeA,templateId,versionId,"db03-team-"+projectId,SEED_IDS.collegeAdminUser],
@@ -46,8 +58,17 @@ afterEach(async () => {
     await pool.query("DELETE FROM lms_group_members WHERE group_id=$1",[f.groupId]);
     await pool.query("DELETE FROM project_members WHERE project_id=$1",[f.projectId]);
     await pool.query("DELETE FROM project_instances WHERE id=$1",[f.projectId]);
-    await pool.query("DELETE FROM project_template_versions WHERE id=$1",[f.versionId]);
-    await pool.query("DELETE FROM project_templates WHERE id=$1",[f.templateId]);
+    // Do not remove DB070 append-only revisions or the DB071 parent header.
+    const retention=await pool.query<{retainHistory:boolean}>(
+      "select (exists (select 1 from pg_trigger where tgrelid='project_template_versions'::regclass " +
+      "and tgname='db07_project_template_versions_append_only' and tgenabled='O') " +
+      "or exists (select 1 from pg_constraint where conrelid='project_templates'::regclass " +
+      "and conname='project_templates_current_version_snapshot_fk')) as \"retainHistory\"",
+    );
+    if (!retention.rows[0]?.retainHistory) {
+      await pool.query("DELETE FROM project_template_versions WHERE id=$1",[f.versionId]);
+      await pool.query("DELETE FROM project_templates WHERE id=$1",[f.templateId]);
+    }
     await pool.query("DELETE FROM lms_groups WHERE id=$1",[f.groupId]);
   }
   fixtures.length=0;
