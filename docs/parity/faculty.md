@@ -46,7 +46,7 @@ Legacy slug, numeric and class-hint links resolve only against persisted active 
 - [ ] Scheduling/visibility controls.
 - [ ] Content validation and destructive confirmations.
 - [ ] Empty and partial-content states.
-- [ ] File/video storage-dependent actions remain explicit BLOCKED items until live.
+- [x] **Explicit deployment BLOCKER recorded (not falsely implemented):** file/video/thumbnail and private material transfers require a provisioned private object store, CORS, trusted object attestation and malware-scanner verdict. The UI uses the existing gated upload flow and does not claim an unscanned object is published; full live upload/download acceptance is **DEFERRED** until operator-provided storage/scanner integration is ready. This checkbox verifies blocker transparency, **not** live storage readiness.
 
 ### Students — DONE (current Section roster acceptance 2026-10-14)
 - [x] Class roster fields follow approved Faculty need-to-know access: public name, roll, and learner contact for the assigned teaching Section only; CSV never exports contact.
