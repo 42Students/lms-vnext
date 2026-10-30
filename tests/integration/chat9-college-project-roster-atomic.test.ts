@@ -1,4 +1,5 @@
 import {afterAll,beforeEach,describe,expect,it} from "vitest";
+import {randomUUID} from "node:crypto";
 import {Pool} from "pg";
 import {closeDatabaseConnection} from "@/db/client";
 import type {RequestContext} from "@/modules/identity/context";
@@ -30,12 +31,22 @@ async function cleanup(){
  await pool.query("delete from project_instances where slug like '"+prefix+"%'");
  const templateIds="select id from project_templates where slug like '"+prefix+"%'";
  await pool.query("delete from project_template_college_assignments where template_id in ("+templateIds+")");
- await pool.query("delete from project_template_versions where template_id in ("+templateIds+")");
- await pool.query("delete from project_templates where slug like '"+prefix+"%'");
+ // Keep DB070 immutable snapshots and their DB071 parent headers intact.
+ const retention=await pool.query<{retainHistory:boolean}>(
+  "select (exists (select 1 from pg_trigger where tgrelid='project_template_versions'::regclass " +
+  "and tgname='db07_project_template_versions_append_only' and tgenabled='O') " +
+  "or exists (select 1 from pg_constraint where conrelid='project_templates'::regclass " +
+  "and conname='project_templates_current_version_snapshot_fk')) as \"retainHistory\"",
+ );
+ if(!retention.rows[0]?.retainHistory){
+  await pool.query("delete from project_template_versions where template_id in ("+templateIds+")");
+  await pool.query("delete from project_templates where slug like '"+prefix+"%'");
+ }
 }
 async function createProject(){
+ const nonce=randomUUID().slice(0,12);
  const template=await createProjectTemplate(superAdmin,{
-  slug:"chat9-roster-template",title:"Chat9 roster template",
+  slug:"chat9-roster-template-"+nonce,title:"Chat9 roster template",
   blueprint:{overview:{goal:"Scoped learner roster",deliverables:["Working roster"]},
    releases:[{key:"release-1",title:"Release",sequence:0}],
    sprints:[{key:"sprint-1",releaseKey:"release-1",title:"Sprint",sequence:0}],
@@ -44,7 +55,7 @@ async function createProject(){
  await publishProjectTemplate(superAdmin,template.template.id);
  await assignProjectTemplateToCollege(scopedAdmin,template.template.id,SEED_IDS.collegeA);
  return createProjectInstance(collegeAdmin,{collegeId:SEED_IDS.collegeA,
-  templateId:template.template.id,slug:"chat9-roster-project",title:"Chat9 roster project"});
+  templateId:template.template.id,slug:"chat9-roster-project-"+nonce,title:"Chat9 roster project"});
 }
 beforeEach(cleanup);
 afterAll(async()=>{await cleanup();await pool.end();await closeDatabaseConnection();});
