@@ -13,6 +13,12 @@ on:
       - "tests/integration/db18-concurrency-witnesses.test.ts"
       - "tests/integration/db18-known-race-gaps.test.ts"
       - "tests/integration/db18-placement-race-gap.test.ts"
+      - "drizzle/0317_db014_placement_fk_validation.sql"
+      - "drizzle/0318_db014_cross_domain_event_guards.sql"
+      - "drizzle/0319_db020_grade_event_source_action.sql"
+      - "tests/db014-cross-domain-scope-staged-pg.test.mjs"
+      - "tests/db014-registered-tenant-catalog-pg.test.mjs"
+      - "tests/db020-registered-grade-event-provenance-pg.test.mjs"
 
 permissions:
   contents: read
@@ -45,6 +51,7 @@ jobs:
       DB018_ISOLATED_TEST_DATABASE: "1"
       DB03_ISOLATED_TEST_DATABASE: "1"
       DB06_ISOLATED_TEST_DATABASE: "1"
+      DB014_STAGED_PG: "YES"
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -70,6 +77,9 @@ jobs:
             tests/integration/db18-placement-race-gap.test.ts \
             tests/integration/groups-db03.test.ts \
             tests/integration/courses-c4b-quizzes.test.ts
+      - name: Current registered DB014 tenant scope, catalog and DB020 provenance negatives
+        run: |
+          node --test tests/db014-registered-tenant-catalog-pg.test.mjs tests/db014-cross-domain-scope-staged-pg.test.mjs tests/db020-registered-grade-event-provenance-pg.test.mjs
       - name: Source manifest and witness identity cross-check
         run: node --test tests/db-parity-pass5.test.mjs
       - name: Explicit evidence scope
