@@ -324,6 +324,8 @@ export const lessonVideoAssets = pgTable(
       t.deliveryId,
       t.sequence,
     ),
+    check("lesson_video_assets_uploader_actor_ck",
+      sql`num_nonnulls(${t.uploaderMembershipId},${t.uploaderUserId}) = 1`),
     index("lesson_video_assets_content_idx").on(t.lessonContentId),
     index("lesson_video_assets_college_status_idx").on(t.collegeId, t.processingStatus),
     foreignKey({

@@ -113,6 +113,8 @@ export const placementTpoMessages = pgTable(
     index("placement_tpo_messages_change_request_idx").on(table.changeRequestId, table.createdAt),
     check("placement_tpo_messages_kind_ck", sql`${table.kind} in ('MESSAGE','EVENT')`),
     check("placement_tpo_messages_via_ck", sql`${table.via} in ('APP','EMAIL')`),
+    check("placement_tpo_messages_delivery_ck",
+      sql`${table.deliveryChannel} in ('APP','EMAIL')`),
     check("placement_tpo_messages_event_shape_ck",
       sql`${table.kind} <> 'EVENT' or (${table.event} is not null and ${table.changeRequestId} is not null)`),
     check(
