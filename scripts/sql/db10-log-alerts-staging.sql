@@ -96,23 +96,7 @@ CREATE TABLE IF NOT EXISTS log_alert_observed_events (
   event_hash varchar(64) PRIMARY KEY,
   observed_at timestamp with time zone NOT NULL DEFAULT now(),
   CONSTRAINT db10_log_alert_observed_hash_ck
-    CHECK (event_hash ~ '^[0-9a-f]{64}
--- A: per-environment hash upsert must atomically increment the BIGINT counter
---    and use LEAST(first_seen_at,new_time), GREATEST(last_seen_at,new_time)
---    for out-of-order log entries; preserve FIXED/EXPECTED triage decisions.
--- B: regression detection is an atomic, one-time FIXED -> regressed_at stamp
---    conditioned on original fixed_at/commit/grace; no duplicate alert.
--- C: signature/account insert is ON CONFLICT DO NOTHING to maintain exact
---    distinct count; no raw account IDs, untrusted client marker or PII.
--- D: durable cursor CAS and lease/leader ownership prevent multiple pollers
---    from double-counting a scanned log batch after restart.
--- E: sample_message/sample_path MUST be PII-sanitized/redacted upstream;
---    retention and scoped access need a private security policy.
--- F: absence of account identity must yield UNKNOWN (null blast-radius
---    count), never a misleading zero.
---
--- No live migration, producer or PostgreSQL proof is claimed.
-)
+    CHECK (event_hash ~ '^[0-9a-f]{64}$')
 );
 CREATE INDEX IF NOT EXISTS db10_log_alert_observed_at_idx
   ON log_alert_observed_events(observed_at);
