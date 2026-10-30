@@ -54,8 +54,11 @@ export function buildLegacyCensusStatus({census,inspectionFiles,overlay,deep,bac
   if(unknownBack.length)problems.push("inspected backend controllers not in frozen controller list: "+unknownBack.slice(0,8).join(", "));
   const missingRoutePaths=diff(expectedRoutes,scannedRoutes), missingComponentPaths=diff(expectedComponents,candidateChecked),
     missingControllerPaths=diff(expectedBack,backPaths);
-  const changedRoutes=(drift.legacyFrontend?.changedSourcePages||[]).map(x=>x.path);
-  const affectedRoutes=changedRoutes.filter(p=>expectedRoutes.includes(p));
+  const changedRoutes=(drift.legacyFrontend?.changedSourcePages||[]).map(x=>x.path).filter(Boolean);
+  const affectedRoutes=unique(changedRoutes.filter(p=>expectedRoutes.includes(p)));
+  // Changed/added dev pages absent from the frozen census MUST be surfaced.
+  // Otherwise an entirely new account can be invisible to --assert-exhaustive.
+  const unmappedChangedRoutePaths=unique(changedRoutes.filter(p=>!expectedRoutes.includes(p)));
   const affectedComponents=(drift.legacyFrontend?.changedSourceComponents||[]).map(x=>x.path)
     .filter(p=>expectedComponents.includes(p));
   const status={
@@ -79,7 +82,7 @@ export function buildLegacyCensusStatus({census,inspectionFiles,overlay,deep,bac
       deepComponentRecords:unique(deepPaths).length,
       obsoleteOrUnmatchedInspectionPaths:unknownComponents,
       staleAfterDevChanges:{changedRouteFiles:affectedRoutes.length,changedComponentFiles:affectedComponents.length,
-        routes:affectedRoutes,components:affectedComponents},
+        routes:affectedRoutes,components:affectedComponents,unmappedChangedRoutePaths},
     },
     backend:{controllerCandidateFiles:expectedBack.length,
       controllerSourceFilesInspected:unique(backPaths).length,
@@ -131,6 +134,7 @@ export function run(argv=process.argv.slice(2),root=ROOT){
     result.frontend.obsoleteOrUnmatchedInspectionPaths.length||
     result.backend.uninspectedControllerSourceFiles||
     result.frontend.staleAfterDevChanges.changedRouteFiles||
+    result.frontend.staleAfterDevChanges.unmappedChangedRoutePaths.length||
     result.frontend.staleAfterDevChanges.changedComponentFiles))return 2;
   return 0;
 }
