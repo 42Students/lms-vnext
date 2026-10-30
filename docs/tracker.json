@@ -540,10 +540,10 @@
         "DB-025"
       ],
       "implementationCheckpoint": {
-        "status": "REGISTERED_21_NONEMPTY_JOIN_AND_7_DIRECT_SQL_NEGATIVES_PASS_RACES_PENDING",
+        "status": "PG17_21_NONEMPTY_16_DIRECT_NEGATIVES_4_CONCURRENCY_2_FIXED_RACES_PASS_GLOBAL_GATE_PENDING",
         "tailRelationalSourceCheckpoint": {
           "recordedOn": "2026-10-30",
-          "state": "PARTIAL_PG17_ACCEPTED_NOT_DB018_DONE",
+          "state": "FOCUSED_PG17_MATRIX_PASSED_NOT_GLOBAL_DB018_DONE",
           "sourceCommits": [
             "9283731b81c757f0d3bd66b847a66acc2407ea43",
             "e77b979af36b788b9ddee2402ee2af888024185e",
@@ -554,12 +554,12 @@
           "testPath": "tests/integration/db018-relational-and-boundary-witnesses.test.ts",
           "scope": "Executed rollback-only populated fixture paths for all 21 relational probes (including P5-12..P5-16 and P5-20..P5-21) plus 7 registered direct-SQL negatives; zero empty joins or mismatches on disposable PG17.",
           "requestedRunUrl": "https://github.com/42Students/lms-vnext/actions/runs/41103680109",
-          "runStatusAtRecording": "SUCCESS_PG17_EXACT_SHA",
+          "runStatusAtRecording": "SUCCESS_FULL_FOCUSED_MATRIX_ON_C78",
           "notAcceptance": true,
           "recheckRequired": [
-            "Run the remaining 9 direct DB03/DB06 negative witnesses and 4 positive concurrency witnesses",
-            "Run fixed P5-R01/R02 service-backed two-session race regressions",
-            "Recheck full parent tenant producer/consumer and independent DB001/DB020 phase gates before DB018 acceptance"
+            "Review five remaining source inventory race gaps P5-R09/R10/R11/R21/R22 (some depend on unregistered schema or policy); do not treat this focused runtime matrix as global gap closure",
+            "Execute DB014 full registered tenant/FK/cascade catalog and verify no cross-domain scoped joins leak outside approved tenants",
+            "Complete DB001 independent verifier and DB020 fresh schema drift/producer-consumer evidence at exact accepted main SHA, then assess DB018 gate and task completion"
           ]
         },
         "recordedOn": "2026-10-30",
@@ -588,13 +588,33 @@
             "jobId": 124230398612,
             "runner": "GitHub Actions Node22 and disposable PostgreSQL 17-alpine",
             "details": "30/30 PG tests PASS; 21/21 joins sampled real rollback-only relationships, zero empty joins, zero relational mismatches, 7/7 direct SQL negatives PASS. Does not prove preventability of untested bad mutations or any concurrency races."
+          },
+          {
+            "kind": "EXECUTED_DISPOSABLE_POSTGRESQL17_FULL_DB018_WITNESS_MATRIX",
+            "result": "PASS",
+            "commitSha": "c78eb936db33489cbb3b57281793dfda5f10382d",
+            "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/41104567182",
+            "jobId": 124231024807,
+            "runner": "GitHub Actions Node22; isolated PostgreSQL 17-alpine; clean registered Drizzle journal",
+            "commands": [
+              "npm run db:journal:verify",
+              "npm run db:test:prepare (application DATABASE_URL cleared)",
+              "npm run db:migrate",
+              "vitest.db.registered DB018 relational 30/30",
+              "vitest.db.registered registered DB03/DB06 negatives 9/9",
+              "vitest.db.registered DB18 direct concurrency 2/2",
+              "vitest.db.registered fixed P5-R01/R02 races 2/2",
+              "vitest.db.registered DB03 concurrent elective slot 1/1",
+              "vitest.db.registered C4b final quiz attempt 1/1",
+              "node --test tests/db-parity-pass5.test.mjs"
+            ],
+            "details": "45/45 focused PostgreSQL tests passed in 6 suites/segments: 21/21 populated relational observations (zero mismatches); 16/16 direct SQL negatives; 4/4 concurrency tests; 2/2 repaired race regressions. Also source probe identity gate passed. Observation alone not prevention; cross-domain coverage and global database phase gate remain separate."
           }
         ],
         "pending": [
-          "Execute and accept 9 remaining registered direct DB03/DB06 SQL negatives",
-          "Execute and accept 4 positive concurrency witnesses, including DB03 elective and C4b quiz final attempt races",
-          "Execute fixed-but-unverified P5-R01/R02 service-backed races and other 5 listed protection gaps",
-          "Complete cross-domain tenant producer/consumer proof and independent registered phase gates before DB018 DONE_VERIFIED"
+          "Review five remaining source inventory race gaps P5-R09/R10/R11/R21/R22 (some depend on unregistered schema or policy); do not treat this focused runtime matrix as global gap closure",
+          "Execute DB014 full registered tenant/FK/cascade catalog and verify no cross-domain scoped joins leak outside approved tenants",
+          "Complete DB001 independent verifier and DB020 fresh schema drift/producer-consumer evidence at exact accepted main SHA, then assess DB018 gate and task completion"
         ],
         "evidenceIsNotAcceptance": true
       }
