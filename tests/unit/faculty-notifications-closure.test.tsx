@@ -21,11 +21,14 @@ vi.mock("@/modules/announcements/service",()=>({
 }));
 vi.mock("@/components/activity/notification-list",async()=>{
  const {createElement}=await import("react");
- return {NotificationList:({items,emptyText}:{items:{id:string;title:string;actionHref:string|null;source?:string}[];emptyText:string})=>
-  createElement("section",{"data-feed":"yes"},
+ return {NotificationList:({items,emptyText,emptyAction}:{
+  items:{id:string;title:string;actionHref:string|null;source?:string}[];
+  emptyText:string;emptyAction?:import("react").ReactNode;
+ })=>createElement("section",{"data-feed":"yes"},
    items.length ? items.map(item=>createElement("p",{
     key:item.id,"data-id":item.id,"data-source":item.source??"PERSONAL",
-   },item.title+" → "+(item.actionHref??"no action"))) : emptyText)};
+   },item.title+" → "+(item.actionHref??"no action")))
+   : createElement("div",null,emptyText,emptyAction))};
 });
 vi.mock("@/components/activity/notification-toolbar",async()=>{
  const {createElement}=await import("react");
