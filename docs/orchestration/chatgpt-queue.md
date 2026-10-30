@@ -1,5 +1,8 @@
 # ChatGPT orchestration queue
 
+> **ARCHIVED WORK QUEUE — NOT FOR CURRENT CHATS (2026-10-31).** The four-tab Claude/direct-push/patch-mode queue below is historical. Do not assign, execute, or calculate completion from it. The sole current plan is `docs/tracker.json`, with ten exclusive lanes and `execution.closureFirstProtocol`. Every ChatGPT session starts with `AGENTS.md` and `npm run progress -- --closure-next --lane=LNN`; choose one `done:false` task, close its exact executed acceptance gate, then freeze/move. After two unsuccessful passes, hand off the precise blocker and switch to an independent open task. Never reopen `done:true` without a demonstrated regression.
+
+
 Claude orchestrates several ChatGPT chats (browser pane tabs). Each chat gets one work item at a time sized for about 30 minutes.
 
 ## Modes
