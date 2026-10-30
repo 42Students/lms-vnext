@@ -33,6 +33,10 @@ const sourceModel = readFileSync(
   resolve("src/modules/placements/round-result-source-model.ts"),
   "utf8",
 );
+const todayResultsService = readFileSync(
+  resolve("src/modules/placements/recruiter-today-staged-results-service.ts"),
+  "utf8",
+);
 
 function sections() {
   const expandAt = candidate.indexOf("-- === DB072 EXPAND");
@@ -63,6 +67,16 @@ test("DB-072 source sweep currently identifies the known HR family only", () => 
     "round-result provenance writer, reader, or DB CHECK is in an unexplained intermediate state");
   assert.match(verifier, /src\/db\/schema/);
   assert.match(verifier, /src\/modules\/placements/);
+});
+
+test("DB-072 recruiter Today read includes old HR and new RECRUITER stage sources", () => {
+  assert.match(
+    todayResultsService,
+    /sql<boolean>`\$\{placementRoundResults\.source\} in \('HR','RECRUITER'\)`/,
+  );
+  assert.match(todayResultsService, /eq\(placementRoundResults\.submittedByUserId,context\.user\.id\)/);
+  assert.match(todayResultsService, /recruiterOwnJobPredicate\(context\.user\.id\)/);
+  assert.doesNotMatch(todayResultsService, /eq\(placementRoundResults\.source,"HR"\)/);
 });
 
 test("DB-072 EXPAND is forward-compatible and non-destructive", () => {
