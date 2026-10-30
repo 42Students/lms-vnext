@@ -184,6 +184,62 @@ test("Faculty Blueprint persists an authorized Section Resource edit after a ful
   }
 });
 
+test("Faculty Blueprint creates, edits and archives an own-Section Resource without private storage", async ({page,context}) => {
+  test.setTimeout(120_000);
+  await facultyLogin(context);
+  await page.goto("/teacher/courses");
+  await page.getByRole("link",{name:/E2E Browser Course/}).first().click();
+  await expect(page).toHaveURL(/\/teacher\/courses\/[0-9a-f-]{36}\/home$/i);
+  const deliveryId=new URL(page.url()).pathname.split("/")[3]!;
+  await page.getByRole("navigation",{name:"Faculty course tabs"})
+    .getByRole("link",{name:"Blueprint"}).click();
+  const explorer=page.getByRole("region",{name:"Course blueprint lesson explorer"});
+  const activeLessonHref=await explorer.getByRole("complementary")
+    .getByRole("link",{current:"page"}).getAttribute("href");
+  const lessonId=new URL(activeLessonHref!,page.url()).searchParams.get("lesson");
+  expect(lessonId).toMatch(/^[0-9a-f-]{36}$/i);
+  const base="/teacher/courses/"+deliveryId+"/blueprint?lesson="+lessonId;
+  await page.goto(base+"&advanced=1&create=RESOURCE");
+  await expect(page.getByRole("textbox",{name:"Content Title"})).toBeVisible();
+  const title="Faculty Section Resource receipt "+Date.now();
+  const originalNotes="Disposable Section metadata only";
+  const revisedNotes="Persisted authorized Resource edit";
+  await page.getByRole("textbox",{name:"Content Title"}).fill(title);
+  await page.getByRole("textbox",{name:"Notes (optional)"}).fill(originalNotes);
+  await page.getByRole("checkbox",{name:/Publish now/}).uncheck();
+  const creating=page.waitForResponse(response=>response.request().method()==="POST" &&
+    new URL(response.url()).pathname==="/api/courses/lesson-contents");
+  await page.getByRole("button",{name:"Create draft"}).click();
+  const created=await creating;
+  expect(created.ok()).toBe(true);
+  const contentId:string=(await created.json()).content?.id;
+  expect(contentId).toMatch(/^[0-9a-f-]{36}$/i);
+  await expect(page.getByText("Resource saved",{exact:true})).toBeVisible();
+  await page.goto(base);
+  const order=page.getByRole("list",{name:"Lesson content order"});
+  const row=order.getByRole("listitem").filter({has:page.getByRole("link",{name:title,exact:true})});
+  await expect(row).toBeVisible();
+  await row.getByRole("button",{name:"Edit",exact:true}).click();
+  const editor=page.getByRole("dialog",{name:"Edit RESOURCE"});
+  await editor.getByLabel("Notes").fill(revisedNotes);
+  const patching=page.waitForResponse(response=>response.request().method()==="PATCH" &&
+    new URL(response.url()).pathname==="/api/courses/lesson-contents/"+contentId);
+  await editor.getByRole("button",{name:"Save content"}).click();
+  expect((await patching).ok()).toBe(true);
+  await expect(editor).toBeHidden();
+  await page.goto(base);
+  await expect(order).toContainText(revisedNotes);
+  await row.getByRole("button",{name:"Remove "+title}).click();
+  const confirm=page.getByRole("alertdialog",{name:"Remove "+title+"?"});
+  await expect(confirm).toBeVisible();
+  const archiving=page.waitForResponse(response=>response.request().method()==="POST" &&
+    new URL(response.url()).pathname==="/api/courses/lesson-contents/"+contentId+"/transition");
+  await confirm.getByRole("button",{name:"Archive item"}).click();
+  expect((await archiving).ok()).toBe(true);
+  await page.goto(base);
+  await expect(order.getByRole("link",{name:title,exact:true})).toHaveCount(0);
+});
+
 test("Faculty Students links an authorized roster member to mobile-readable attendance history", async ({ page, context }) => {
   await facultyLogin(context);
   await page.goto("/teacher/courses");
