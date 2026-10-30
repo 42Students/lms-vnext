@@ -1,0 +1,68 @@
+name: DB-036 TPO typed notification settings registered acceptance
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - "tests/db034-db036-registered-tpo-settings-pg.test.mjs"
+      - ".github/workflows/db036-tpo-notification-settings-acceptance.yml"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: db036-tpo-preferences-main
+  cancel-in-progress: false
+
+jobs:
+  registered-preferences:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    services:
+      postgres:
+        image: postgres:17-alpine
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: lms_vnext_test
+        ports: ["5432:5432"]
+        options: >-
+          --health-cmd "pg_isready -U postgres -d lms_vnext_test"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 20
+    env:
+      DATABASE_URL: postgresql://postgres:postgres@127.0.0.1:5432/lms_vnext_test
+      TEST_DATABASE_URL: postgresql://postgres:postgres@127.0.0.1:5432/lms_vnext_test
+      DB03_ISOLATED_TEST_DATABASE: "1"
+      DB034_036_REGISTERED_PG: "YES"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Verify exact registered migration and DB036 source
+        run: |
+          npm run db:journal:verify
+          node --test tests/db09-notification-preferences-normalization.test.mjs
+      - name: TPO preference authorization, CAS, retry and optional-email model
+        run: >-
+          npx vitest run
+          tests/unit/chat16-tpo-notification-preferences-write-16.test.ts
+          tests/unit/chat11-tpo-communication-adversarial.test.ts
+          tests/unit/tpo-my-notifications-model.test.ts
+      - name: Fresh disposable PG17 registered migration and seed
+        env:
+          DATABASE_URL: ""
+        run: npm run db:test:prepare
+      - name: Idempotent registered journal replay
+        run: npm run db:migrate
+      - name: DB036 typed defaults, update and negative PG17 (DB034 separate)
+        run: node --test --test-name-pattern=DB036 tests/db034-db036-registered-tpo-settings-pg.test.mjs
+      - name: Journal unchanged
+        run: |
+          npm run db:journal:verify
+          test -z "$(git status --porcelain -- drizzle/)"
