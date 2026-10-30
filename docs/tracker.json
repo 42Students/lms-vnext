@@ -548,8 +548,25 @@
       "id": "DB-026",
       "title": "Resolve DB03 elective slot-program oracle conflict",
       "phase": "DATABASE",
-      "done": false,
-      "dependsOn": []
+      "done": true,
+      "dependsOn": [],
+      "acceptedAt": "2026-10-30",
+      "acceptanceEvidence": [{
+        "kind": "EXECUTED_POSTGRESQL_17",
+        "result": "PASS",
+        "exitCode": 0,
+        "commitSha": "e6a30b01f3609c9a5c01b54ed3670dd2fe2a9a8a",
+        "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/41031829604",
+        "jobId": 123983130471,
+        "runner": "GitHub Actions ubuntu-latest Node.js 22 and ephemeral PostgreSQL 17-alpine",
+        "commands": [
+          "npm run db:journal:verify; npm run db:test:prepare; npm run db:migrate",
+          "node --test tests/db006-catalog-pg.test.mjs",
+          "npx vitest run --config vitest.db.config.ts tests/integration/groups-db03.test.ts tests/integration/groups-db03-roster.test.ts tests/integration/groups-db03-project-team.test.ts tests/integration/groups-db03-actor-freshness.test.ts",
+          "node --test tests/db-parity-db03-schema.test.mjs tests/db03-elective-program-oracle.test.mjs"
+        ],
+        "details": "DB-026 executable-legacy same-slot-program oracle is accepted via the DB-006 registered PostgreSQL 17 integration suite: wrong-program first admission/rejoin, stale ACTIVE membership after transfer, read/schedule and faculty roster suppression, admin move atomic denial, registered direct-SQL wrong-program backed offering and cohort reparent rejection, and canonical DB02 term/year mismatch defenses. Catalog witnesses verified required DB03 trigger installation. All workflow steps passed; no relevant code or test change since this run. This closes the oracle conflict only, not the whole DATABASE gate."
+      }]
     },
     {
       "id": "DB-027",
