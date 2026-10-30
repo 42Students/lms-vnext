@@ -99,4 +99,38 @@ describe("Faculty staged private profile integration",()=>{
     [facultyRoleId,facultyMembershipId,"FACULTY"]);
   }
  });
-});
+ it("persists contacts, address, social, personal details, skills and metadata without touching verified identity",async()=>{
+  const sections=[
+   {section:"contact",value:{contactMobile:"9876543210",contactPhone:"9123456780",contactMail:"faculty-public@example.invalid"}},
+   {section:"address",value:{currentAddress:"Faculty Block",currentCity:"Hyderabad",currentState:"Telangana",currentPincode:"500001"}},
+   {section:"socialProfiles",value:{linkedIn:"https://www.linkedin.com/in/verified-faculty"}},
+   {section:"personalDetails",value:{gender:"Prefer not to say",dateOfBirth:"1985-05-06",bloodGroup:""}},
+   {section:"skills",value:[{id:randomUUID(),skill:"Teaching",proficiency:"Advanced"}]},
+   {section:"metadata",value:{officeHours:"Tuesday 10:00"}},
+  ] as const;
+  let version=(await loadOwnFacultyProfileDocumentStaged(faculty)).version;
+  for(const row of sections){
+   const updated=await patchOwnFacultyProfileSection(faculty,{
+    section:row.section,value:row.value,expectedVersion:version,
+   });
+   expect(updated.version).toBe(version+1);
+   version=updated.version;
+  }
+  const reloaded=await loadOwnFacultyProfileDocumentStaged(faculty);
+  expect(reloaded.document.contact.contactMobile).toBe("9876543210");
+  expect(reloaded.document.address.currentCity).toBe("Hyderabad");
+  expect(reloaded.document.socialProfiles.linkedIn).toBe("https://www.linkedin.com/in/verified-faculty");
+  expect(reloaded.document.personalDetails.dateOfBirth).toBe("1985-05-06");
+  expect(reloaded.document.skills[0]?.skill).toBe("Teaching");
+  expect(reloaded.document.metadata["officeHours"]).toBe("Tuesday 10:00");
+  expect(reloaded.document.identitySummary.aadhaarLast4).toBe("");
+  await expect(patchOwnFacultyProfileSection(faculty,{
+   section:"metadata",value:{aadhaarNumber:"123456789012"},expectedVersion:version,
+  })).rejects.toBeDefined();
+  await expect(patchOwnFacultyProfileSection(faculty,{
+   section:"socialProfiles",value:{linkedIn:"http://private.test"},expectedVersion:version,
+  })).rejects.toBeDefined();
+  await expect(patchOwnFacultyProfileSection(learner,{
+   section:"about",value:{description:"Learner hijack"},expectedVersion:version,
+  })).rejects.toBeDefined();
+
