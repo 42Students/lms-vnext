@@ -48,7 +48,12 @@ check("registered Drizzle still has independent vulnerable IDs", () => {
   const app = schema.slice(schema.indexOf("export const placementApplications"), schema.indexOf("export const placementApplicationStatusHistory"));
   assert.match(app, /jobId: uuid\("job_id"\)/);
   assert.match(app, /roleOptionId: uuid\("role_option_id"\)/);
-  assert.doesNotMatch(app, /foreignKey\(/);
+  // Current registered schema already contains these two same-job keys.
+  // Replacing them with a new DB066 constraint would duplicate protection.
+  assert.match(app, /name: "placement_applications_role_option_job_fk"/);
+  assert.match(app, /columns: \[table\.roleOptionId, table\.jobId\]/);
+  assert.match(app, /foreignColumns: \[placementJobRoleOptions\.id, placementJobRoleOptions\.jobId\]/);
+  assert.match(app, /name: "placement_applications_current_round_job_fk"/);
 
   const result = schema.slice(schema.indexOf("export const placementRoundResults"), schema.indexOf("export const placementOffers"));
   assert.match(result, /roundId: uuid\("round_id"\)/);
