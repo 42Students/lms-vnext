@@ -8,6 +8,22 @@
 
 DB-016 is cross-domain. It does not declare a domain database complete and it does not authorize a migration by itself. The goal is to prevent private files, identity secrets, object URLs and retention/revocation state from becoming inconsistent merely because each feature invented a different persistence shape.
 
+## Current main drift correction — 31 October 2026
+
+The previous GCS-specific assertions and the expectation that DB04 profile
+verification was not in the schema barrel no longer matched `main`. The
+current application uses **private Cloudflare R2** with an exact
+`private/{collegeId}/{ownerMembershipId}/{namespace}/{objectId}` key,
+one-to-fifteen-minute signed grants, scope validation, token-hash and
+CLEAN-scan attestation. DB04 profile-verification tables are already
+barrel-exported/registered; DB06 assignment upload receipts and the DB16
+revocation/retention overlay remain separate staged work.
+
+Neither source visibility nor a storage adapter guarantees a deployed bucket
+is private, encryption/lifecycle policies are correctly configured or an
+independent scanner actually ran. Those runtime/security gates remain OPEN.
+This reconciliation cannot be used as production privacy sign-off.
+
 ## Safety baseline
 
 A persisted private-object reference is not sufficient merely because it points at a bucket key. Before a private file can become effective evidence or an application attachment, the owning domain must be able to prove:
@@ -32,12 +48,12 @@ A domain may intentionally expose an ordinary HTTP(S) link. That is an external-
 
 | Surface | Current source state | Strong controls present | Missing / decision before promotion | Disposition |
 | --- | --- | --- | --- | --- |
-| Shared GCS private-object adapter | Runtime code exists in `src/modules/storage/private-object-storage.ts` | tenant/member key prefix; short-lived PUT/GET; token hash; immutable generation; actual size/MIME; SHA-256; CLEAN privileged-scanner metadata; UBLA + Public Access Prevention fail-closed | no source proof of bucket lifecycle/retention/versioning or required CMEK/default KMS key; no durable cross-domain receipt/audit table | **GOOD BASE, INFRA EVIDENCE BLOCKED** |
+| Shared R2 private-object adapter | Runtime code exists in `src/modules/storage/private-object-storage.ts` | tenant/member exact five-segment key; short-lived PUT/GET; upload-token hash; object generation; actual size/MIME; SHA-256; CLEAN privileged-scanner metadata; fail-closed scope/key verification | no source proof of R2 bucket privacy, lifecycle/retention/versioning or approved encryption-key policy; no durable cross-domain receipt/audit table | **GOOD BASE, INFRA EVIDENCE BLOCKED** |
 | Learner raw Aadhaar/PAN | Current learner profile service/repository | two independent write guards reject raw Aadhaar/PAN with `PRIVATE_IDENTITY_STORAGE_NOT_READY`; verification snapshots require masked identity | encrypted/private identity-vault design and key lifecycle not provisioned | **FAIL-CLOSED — KEEP UNAVAILABLE** |
 | Faculty identity | Structured staged Faculty document | raw Aadhaar/PAN forbidden; masked summary + receipt UUIDs only | receipt schema + Faculty profile columns are not registered; KMS/private-vault path still blocked | **STAGED / FAIL-CLOSED** |
-| Profile verification documents | `src/db/schema/profile-verification.ts` + candidate SQL, not exported by schema barrel | owner, purpose, related target, generation, digest, MIME/size, scan status, revocation time, retention time; service reattests object and scanner | add explicit revocation actor/reason and durable scan attester/time; register only after generated migration/replay; actual bucket/scanner proof absent | **STAGED** |
+| Profile verification documents | registered `src/db/schema/profile-verification.ts` (barrel-exported) plus separate DB16 source overlay | owner, purpose, related target, generation, digest, MIME/size, scan status, revocation time, retention time; service reattests object and scanner | add explicit revocation actor/reason and durable scan attester/time; DB04 base is registered; DB16 revocation/attester overlay remains unregistered, and actual R2 bucket/scanner proof is absent | **REGISTERED BASE; OVERLAY STAGED** |
 | DB04 proposed SQL | candidate-only | normalized verification/history/receipts and receipt-backed education/images | file was source-corrupted; repaired in DB-016; still unregistered and unexecuted | **REPAIRED SOURCE INPUT** |
-| Assignment submission files | staged `course-upload-receipts-staged.ts`, runtime-gated | owner/college/purpose/target; token hash; generation/actual MIME/size/SHA; consumed submission; shared GCS attestation | `revoked boolean` has no actor/time/reason; no retention field; scanner result/attester not durably captured; schema not registered | **STAGED — HARDEN BEFORE PROMOTION** |
+| Assignment submission files | staged `course-upload-receipts-staged.ts`, runtime-gated | owner/college/purpose/target; token hash; generation/actual MIME/size/SHA; consumed submission; shared GCS attestation | `revoked boolean` has no actor/time/reason; no retention field; scanner result/attester not durably captured; DB053 source-only hardening exists; schema, scanner+provider and runtime cutover not registered | **STAGED — PRIVACY GATED** |
 | Course resource uploads | purpose exists in staged course receipt model | same base receipt machinery can support private course resources | final material binding and lifecycle/retention still staged; do not treat a presigned URL as persistent identity | **STAGED** |
 | Project resources | live schema stores optional HTTP(S) `url` and description | validation makes this explicitly an HTTP(S) external-link surface | shared adapter exposes a `project-resource` namespace but no receipt-backed project file relation is active. Decide external-link-only vs private-file product type before using upload storage | **EXTERNAL LINK ONLY TODAY** |
 | Project task/final submission URLs | current project schema/service stores HTTP(S) submission/source/demo URLs | explicitly validated external URLs | these are not private uploads; if private artifacts are added, use a separate receipt-backed file relation rather than overloading URL columns | **EXTERNAL LINK ONLY TODAY** |
@@ -127,7 +143,7 @@ Before DB-016 can be `DONE_VERIFIED`:
 - bug screenshot can only bind to the exact issue/report owner and is never publicly addressable;
 - external project URLs remain ordinary links and cannot masquerade as private object keys;
 - private signed reads are short-lived and authorization-scoped;
-- bucket UBLA + PAP + scanner + approved encryption/lifecycle configuration are witnessed against real infrastructure;
+- private R2 bucket/public-access policy + scanner + approved encryption/lifecycle configuration are witnessed against real infrastructure;
 - clean migration replay and schema/snapshot drift checks pass.
 
 ## Current blockers
@@ -135,7 +151,7 @@ Before DB-016 can be `DONE_VERIFIED`:
 1. DB-001 still prevents disposable PostgreSQL/runtime verification.
 2. DB04 and DB06 receipt schemas are staged and not in the schema barrel/journal.
 3. DB10 bug tracker is still a draft/gated domain.
-4. actual private GCS bucket/scanner/encryption/lifecycle configuration has not been executed in this worker.
+4. actual private R2 bucket/scanner/encryption/lifecycle configuration has not been executed in this worker.
 5. government-ID secret storage remains intentionally unavailable until an encrypted vault policy exists.
 
 Source work may be marked complete when every current private-file/identity surface has a disposition, but none of these blockers may be converted into a green runtime claim.
