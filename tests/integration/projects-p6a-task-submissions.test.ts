@@ -5,6 +5,7 @@ import {
   expect,
   it,
 } from "vitest";
+import { randomUUID } from "node:crypto";
 import { Pool } from "pg";
 import { closeDatabaseConnection } from "@/db/client";
 import type { RequestContext } from "@/modules/identity/context";
@@ -200,23 +201,36 @@ async function cleanup() {
        where slug like 'p6a-%'
      )`,
   );
-  await pool.query(
-    `delete from project_template_versions
-     where template_id in (
-       select id from project_templates
-       where slug like 'p6a-%'
-     )`,
+  // Registered DB070 makes every revision permanent and DB071 anchors the
+  // header to that snapshot. Retain only this disposable fixture history.
+  // Per-invocation UUID slugs keep repeated tests isolated without bypassing
+  // PostgreSQL triggers or relaxing assertions.
+  const retention = await pool.query<{ retainHistory: boolean }>(
+    "select (exists (select 1 from pg_trigger " +
+      "where tgrelid='project_template_versions'::regclass " +
+      "and tgname='db07_project_template_versions_append_only' and tgenabled='O') " +
+      "or exists (select 1 from pg_constraint " +
+      "where conrelid='project_templates'::regclass " +
+      "and conname='project_templates_current_version_snapshot_fk')) as \"retainHistory\"",
   );
-  await pool.query(
-    "delete from project_templates where slug like 'p6a-%'",
-  );
+  if (!retention.rows[0]?.retainHistory) {
+    await pool.query(
+      `delete from project_template_versions
+       where template_id in (
+         select id from project_templates
+         where slug like 'p6a-%'
+       )`,
+    );
+    await pool.query("delete from project_templates where slug like 'p6a-%'");
+  }
 }
 
 async function createProject() {
+  const fixtureSuffix = randomUUID().slice(0, 12);
   const template = await createProjectTemplate(
     superAdmin,
     {
-      slug: "p6a-task-template",
+      slug: "p6a-task-template-" + fixtureSuffix,
       title: "P6A Task Template",
       blueprint: blueprint(),
     },
@@ -236,7 +250,7 @@ async function createProject() {
     {
       collegeId: SEED_IDS.collegeA,
       templateId: template.template.id,
-      slug: "p6a-task-project",
+      slug: "p6a-task-project-" + fixtureSuffix,
       title: "P6A Task Project",
     },
   );
