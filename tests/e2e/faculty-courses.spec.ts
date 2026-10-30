@@ -462,65 +462,90 @@ test("Faculty Assignment aggregate creates, filters, edits and archives an actua
 });
 
 test("Faculty Quiz aggregate persists questions, metadata edits and archival", async ({ page, context }, testInfo) => {
-  test.setTimeout(90_000);
+  test.setTimeout(120_000);
   await facultyLogin(context);
-  await page.goto("/teacher/allQuizzes");
-  await page.getByRole("button", { name: "+ Create Quiz" }).click();
-  const create = page.getByRole("dialog", { name: "Create Quiz" });
-  await expect(create.getByLabel("Choose assessment lesson")).toBeVisible();
-  const title = "Faculty quiz browser acceptance " + testInfo.retry;
-  const updated = "Faculty quiz amended acceptance " + testInfo.retry;
-  await create.getByLabel("Title", { exact: true }).fill(title);
-  await create.getByLabel("Prompt", { exact: true }).fill("What is one plus one?");
-  await create.getByLabel("Option 1", { exact: true }).fill("Two");
-  await create.getByLabel("Option 2", { exact: true }).fill("Three");
-  const creation = page.waitForResponse((response) =>
-    response.request().method() === "POST" &&
-    new URL(response.url()).pathname === "/api/courses/quizzes");
-  await create.getByRole("button", { name: "Create draft" }).click();
-  const response = await creation;
-  const payload = await response.json();
-  expect(response.status(), JSON.stringify(payload)).toBe(201);
-  const quizId: string = payload.quiz.id;
-  expect(quizId).toBeTruthy();
-  await page.goto("/teacher/allQuizzes");
+  await page.goto("/teacher/courses");
+  await page.getByRole("link",{name:/E2E Browser Course/}).first().click();
+  await expect(page).toHaveURL(/\/teacher\/courses\/[0-9a-f-]{36}\/home$/i);
+  const deliveryId=new URL(page.url()).pathname.split("/")[3]!;
+  const commandPath="/api/courses/faculty/quizzes/"+deliveryId+"/command";
+  await page.goto("/teacher/courses/"+deliveryId+"/quizzes/manage");
+  await expect(page.getByRole("heading",{name:"Choice-question quiz builder"})).toBeVisible();
+  const title="Faculty cross-course quiz "+Date.now()+" "+testInfo.retry;
+  const revised=title+" amended";
+  await page.getByRole("textbox",{name:"Quiz title"}).fill(title);
+  await page.getByRole("textbox",{name:"Prompt"}).fill("What is one plus one?");
+  await page.getByRole("textbox",{name:"Option 1"}).fill("Two");
+  await page.getByRole("textbox",{name:"Option 2"}).fill("Three");
+  await page.getByRole("textbox",{name:"Due date (IST, required before publishing)"})
+    .fill(new Date(Date.now()+14*86400000).toISOString().slice(0,16));
+  await page.getByRole("checkbox",{name:"Publish now"}).uncheck();
+  const creating=page.waitForResponse(response=>response.request().method()==="POST" &&
+    new URL(response.url()).pathname===commandPath);
+  await page.getByRole("button",{name:"Create draft"}).click();
+  const created=await creating;
+  expect(created.status()).toBe(200);
+  const saved=await created.json();
+  const quizId:string=saved.quiz?.id;
+  const staleToken:string=saved.quiz?.updatedAt;
+  expect(quizId).toMatch(/^[0-9a-f-]{36}$/i);
+  const authorized=await page.request.get("/api/courses/quizzes/"+quizId+
+    "?deliveryId="+deliveryId+"&includeCorrectAnswers=true");
+  expect(authorized.status()).toBe(200);
+  const record=await authorized.json();
+  const options=record.quiz?.questions?.[0]?.options;
+  expect(Array.isArray(options)).toBe(true);
+  expect(options.filter((option:{correct?:boolean})=>option.correct===true)).toHaveLength(1);
 
-  const search = page.getByLabel("Search assessments");
-  await search.fill("no-such-quiz-value");
-  await expect(page.getByText("No matching assessments")).toBeVisible();
-  await search.fill(title);
-  const row = page.getByRole("article").filter({ hasText: title });
-  await expect(row).toContainText("DRAFT");
-  await row.getByRole("button", { name: "Edit", exact: true }).click();
-  const editor = page.getByRole("dialog", { name: "Edit Quiz" });
-  await expect(editor.getByLabel("Title", { exact: true })).toHaveValue(title);
-  await editor.getByLabel("Title", { exact: true }).fill(updated);
-  await editor.getByLabel("Maximum attempts").fill("3");
-  const editResponse = page.waitForResponse((res) =>
-    res.request().method() === "PATCH" &&
-    new URL(res.url()).pathname === "/api/courses/quizzes/" + quizId);
-  await editor.getByRole("button", { name: "Save changes" }).click();
-  const edit = await editResponse;
-  expect(edit.status(), await edit.text()).toBe(200);
+  await page.reload();
+  await page.getByRole("combobox",{name:"Quiz",exact:true})
+    .selectOption({label:title+" (DRAFT)"});
+  await page.getByRole("textbox",{name:"Quiz title"}).fill(revised);
+  await page.getByRole("textbox",{name:"Prompt"}).fill("Which number equals 1 + 1?");
+  await page.getByRole("spinbutton",{name:"Maximum attempts"}).fill("3");
+  const editing=page.waitForResponse(response=>response.request().method()==="POST" &&
+    new URL(response.url()).pathname===commandPath);
+  await page.getByRole("button",{name:"Save draft"}).click();
+  const edited=await editing;
+  expect(edited.status()).toBe(200);
+  expect((await edited.json()).quiz.title).toBe(revised);
+  const stale=await page.evaluate(async({commandPath,quizId,staleToken})=>
+    (await fetch(commandPath,{method:"POST",headers:{"Content-Type":"application/json"},
+      body:JSON.stringify({action:"ARCHIVE",quizId,expectedUpdatedAt:staleToken,confirmed:true})})).status,
+    {commandPath,quizId,staleToken});
+  expect(stale).toBeGreaterThanOrEqual(400);
 
   await page.goto("/teacher/allQuizzes");
-  await page.getByLabel("Search assessments").fill(updated);
-  const amended = page.getByRole("article").filter({ hasText: updated });
-  await expect(amended).toBeVisible();
-  await expect(amended).toContainText("3 allowed attempts");
-  await amended.getByRole("button", { name: "Edit", exact: true }).click();
-  const editAgain = page.getByRole("dialog", { name: "Edit Quiz" });
-  await expect(editAgain.getByLabel("Title", { exact: true })).toHaveValue(updated);
-  await expect(editAgain.getByLabel("Maximum attempts")).toHaveValue("3");
-  page.once("dialog", (confirm) => confirm.accept());
-  const archiving = page.waitForResponse((res) =>
-    res.request().method() === "POST" &&
-    new URL(res.url()).pathname === "/api/courses/quizzes/" + quizId + "/transition");
-  await editAgain.getByRole("button", { name: "Delete", exact: true }).click();
-  const archivedResponse = await archiving;
-  const archived = await archivedResponse.json();
-  expect(archivedResponse.status(), JSON.stringify(archived)).toBe(200);
-  expect(archived.quiz.status).toBe("ARCHIVED");
+  await expect(page.getByRole("heading",{level:1,name:"My Quizzes"})).toBeVisible();
+  await page.getByRole("combobox",{name:"Status"}).selectOption("DRAFT");
+  await page.getByRole("textbox",{name:"Search assessments"}).fill(revised);
+  const card=page.locator("article").filter({has:page.getByRole("heading",{name:revised})});
+  await expect(card).toBeVisible();
+  await expect(card.getByText("This Section",{exact:true}).first()).toBeVisible();
+  await card.locator("summary").filter({hasText:/^Actions/}).click();
+  await expect(card.getByRole("link",{name:"View Report"}))
+    .toHaveAttribute("href",new RegExp("/teacher/report/quiz/"+quizId));
+
+  await page.goto("/teacher/courses/"+deliveryId+"/quizzes/manage");
+  await page.getByRole("combobox",{name:"Quiz",exact:true})
+    .selectOption({label:revised+" (DRAFT)"});
+  await expect(page.getByRole("textbox",{name:"Prompt"}))
+    .toHaveValue("Which number equals 1 + 1?");
+  await expect(page.getByRole("spinbutton",{name:"Maximum attempts"})).toHaveValue("3");
+  const archiving=page.waitForResponse(response=>response.request().method()==="POST" &&
+    new URL(response.url()).pathname===commandPath);
+  await page.locator("summary").filter({hasText:/^Archive quiz/}).click();
+  await page.getByRole("button",{name:"Archive quiz"}).click();
+  await page.getByRole("alertdialog").getByRole("button",{name:"Confirm"}).click();
+  const archived=await archiving;
+  expect(archived.status()).toBe(200);
+  expect((await archived.json()).quiz.status).toBe("ARCHIVED");
+  const foreign=await page.evaluate(async({quizId,foreignDeliveryId})=>
+    (await fetch("/api/courses/faculty/quizzes/"+foreignDeliveryId+"/command",{
+      method:"POST",headers:{"Content-Type":"application/json"},
+      body:JSON.stringify({action:"ARCHIVE",quizId,expectedUpdatedAt:new Date().toISOString(),confirmed:true}),
+    })).status,{quizId,foreignDeliveryId:SEED_IDS.collegeB});
+  expect(foreign).toBeGreaterThanOrEqual(400);
 });
 
 test("Faculty Assessment results filter only assigned teaching Sections and preserve deep links", async ({ page, context }) => {
