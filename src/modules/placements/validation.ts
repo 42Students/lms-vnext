@@ -1260,12 +1260,16 @@ export const placementRoundResultOutcomes = [
   "ABSENT",
 ] as const;
 
-/** Legacy StageRequest.source is a self-asserted import value, never a live
- * authorization grant. The runtime derives provenance from the verified actor
- * and submission channel; historical data must use this explicit crosswalk.
+/** Legacy StageRequest.source is a self-asserted import value, never a
+ * live authorization grant. This crosswalk is for final canonical historical
+ * migration/disposition ONLY; the current recruiter writer must keep emitting
+ * HR until DB072 EXPAND is registered, and FINALIZE is separately release-gated.
+ * Preserve distinct PANELIST and DRIVE_DAY provenance instead of relabeling
+ * trusted reviews as FACULTY or TPO.
  */
 export const LEGACY_ROUND_RESULT_SOURCE_TO_VNEXT={
- recruiter:"HR",PANELIST:"FACULTY",DRIVE_DAY:"TPO",EXCEL:"IMPORT",TPO:"TPO",
+ recruiter:"RECRUITER",PANELIST:"PANELIST",DRIVE_DAY:"DRIVE_DAY",
+ EXCEL:"IMPORT",TPO:"TPO",
 } as const;
 export function mapHistoricalRoundResultSource(source:unknown){
  if(typeof source!=="string" ||
