@@ -60,7 +60,7 @@ test("DB39 leaves retention and trusted-proxy decisions explicit", () => {
   assert.match(contract, /does not invent a retention duration/);
   assert.match(contract, /trusted provenance/);
   assert.match(contract, /retention\/purge duration/);
-  assert.match(contract, /Current `RequestContext`.*does not.*network headers/s);
+  assert.match(contract, /Current `RequestContext`[\s\S]*does\s+not\s+carry network headers/);
 });
 
 test("DB39 enumerates all 18 acceptance requirements", () => {
