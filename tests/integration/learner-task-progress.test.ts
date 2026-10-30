@@ -1,7 +1,9 @@
 import { randomUUID } from "node:crypto";
 import { Pool } from "pg";
 import { afterAll, describe, expect, it } from "vitest";
-import { closeDatabaseConnection } from "@/db/client";
+import { closeDatabaseConnection, getDb } from "@/db/client";
+import {eq} from "drizzle-orm";
+import {projectTasks} from "@/db/schema";
 import type { RequestContext } from "@/modules/identity/context";
 import { SEED_IDS } from "../../scripts/db-seed-data";
 import { assertDb018DisposableTarget } from "../support/db018-test-target.mjs";
@@ -10,6 +12,9 @@ import { createProjectInstance, getProjectInstanceWorkspace } from "@/modules/pr
 import { startProjectSprint } from "@/modules/projects/lifecycle-service";
 import { updateLearnerProjectTaskProgress } from "@/modules/projects/learner-task-progress-service";
 import { moveMentorBacklogTask, createMentorBacklogTask } from "@/modules/projects/mentor-backlog-service";
+import {createAdminTaskPlanItem} from "@/modules/projects/admin-task-plan-create-service";
+import {projectTaskPlanToken} from "@/modules/projects/project-task-plan-token";
+import {changeProjectSoftDeleteState} from "@/modules/projects/project-soft-delete-service";
 import {
   assignProjectTemplateToCollege, createProjectTemplate, publishProjectTemplate,
 } from "@/modules/projects/template-service";
@@ -211,6 +216,48 @@ describe.skipIf(!enabled)("LEARNER-projects-25 authorized persisted task progres
     const checked=await pool!.query<{sprint_id:string|null}>(
       "select sprint_id from project_tasks where id=$1",[backlog.id]);
     expect(checked.rows[0]?.sprint_id).toBeNull();
+  });
+
+
+  it("refuses College Admin task creation under a deleted release", async()=>{
+    const {project,tasks}=await fixture();
+    const sprintId=tasks[0]!.sprintId!;
+    const current=await getDb().select().from(projectTasks).where(eq(projectTasks.projectId,project.id));
+    const expectedTasksToken=projectTaskPlanToken(current);
+    const [release]= (await pool!.query<{release_id:string}>(
+      "select release_id from project_sprints where id=$1",[sprintId])).rows;
+    await pool!.query("update project_releases set deleted_at=clock_timestamp() where id=$1",[release!.release_id]);
+    await expect(createAdminTaskPlanItem(collegeAdmin,project.id,{
+      expectedTasksToken,sprintId,title:"Must not create under removed release",
+      priority:"MEDIUM",estimatePoints:null,taskType:null,dueLabel:null,
+      description:null,acceptanceCriteria:null,approach:null,
+    })).rejects.toMatchObject({code:"PROJECT_TASK_INVALID_STATE"});
+    const after=await pool!.query<{n:number}>(
+      "select count(*)::int as n from project_tasks where project_id=$1",[project.id]);
+    expect(after.rows[0]?.n).toBe(current.length);
+  });
+
+  it("denies learner and Mentor mutations after the project is soft-deleted",async()=>{
+    const {project,tasks}=await fixture();
+    const first=tasks[0]!;
+    const version=await pool!.query<{updated_at:Date}>(
+      "select updated_at from project_instances where id=$1",[project.id]);
+    const deleted=await changeProjectSoftDeleteState(collegeAdmin,project.id,{
+      expectedUpdatedAt:version.rows[0]!.updated_at.toISOString(),
+    },false);
+    expect(deleted.changed).toBe(true);
+    await expect(updateLearnerProjectTaskProgress(learner,{
+      projectId:project.id,taskId:first.id,
+    },{action:"STATUS",status:"IN_PROGRESS",
+      expectedUpdatedAt:first.updatedAt.toISOString(),
+    })).rejects.toBeDefined();
+    await expect(createMentorBacklogTask(mentor,project.id,{
+      title:"Must not mutate a deleted project",
+    })).rejects.toBeDefined();
+    const after=await pool!.query<{status:string;deleted_at:Date|null}>(
+      "select status,deleted_at from project_instances where id=$1",[project.id]);
+    expect(after.rows[0]?.status).toBe("ARCHIVED");
+    expect(after.rows[0]?.deleted_at).not.toBeNull();
   });
 
 });
