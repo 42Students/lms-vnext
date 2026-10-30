@@ -37,6 +37,10 @@ const todayResultsService = readFileSync(
   resolve("src/modules/placements/recruiter-today-staged-results-service.ts"),
   "utf8",
 );
+const validation = readFileSync(
+  resolve("src/modules/placements/validation.ts"),
+  "utf8",
+);
 
 function sections() {
   const expandAt = candidate.indexOf("-- === DB072 EXPAND");
@@ -77,6 +81,12 @@ test("DB-072 recruiter Today read includes old HR and new RECRUITER stage source
   assert.match(todayResultsService, /eq\(placementRoundResults\.submittedByUserId,context\.user\.id\)/);
   assert.match(todayResultsService, /recruiterOwnJobPredicate\(context\.user\.id\)/);
   assert.doesNotMatch(todayResultsService, /eq\(placementRoundResults\.source,"HR"\)/);
+});
+
+test("DB-072 historical normalization retains distinct trusted source provenance", () => {
+  assert.match(validation, /recruiter:"RECRUITER",PANELIST:"PANELIST",DRIVE_DAY:"DRIVE_DAY"/);
+  assert.match(validation, /EXCEL:"IMPORT",TPO:"TPO"/);
+  assert.doesNotMatch(validation, /recruiter:"HR",PANELIST:"FACULTY",DRIVE_DAY:"TPO"/);
 });
 
 test("DB-072 EXPAND is forward-compatible and non-destructive", () => {
