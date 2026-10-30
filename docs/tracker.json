@@ -2220,12 +2220,7 @@
           "UI placement application, TPO drive"
         ],
         "operatingNotes": "Coordinate shared recruiter policy with L08 without dual-writing.",
-        "claim": {
-          "sessionId": "vnext-l07-ui-bookmark-20261030-001",
-          "holder": "UI-only TPO drive legacy bookmark compatibility (separate new page files; no DB/schema/service edits)",
-          "claimedAt": "2026-10-30T18:03:30.549Z",
-          "expiresAt": "2026-10-30T19:03:30.553Z"
-        }
+        "claim": null
       },
       {
         "id": "L08",
