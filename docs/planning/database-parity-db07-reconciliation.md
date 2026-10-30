@@ -199,3 +199,18 @@ disposable PostgreSQL integration or two-session deletion races.
 DB-010 is still **OPEN**: execute the registered PG17 negative/race and
 producer→consumer suites at a pinned SHA, finish 358-field semantic
 disposition and independently verify the remaining global DB07 gate.
+
+
+## 2026-10-30 — DB-010 second hardening batch: live tombstones and bounded append sequences
+
+**Changes on main (source-patched, not DB-010 accepted):**
+
+- `065e66ce76e3ca229814581ce87516fed2524449` — Mentor backlog move now locks a non-deleted project, source task and destination sprint, with a final deleted-task CAS guard; backlog creation also requires a live parent
+- `743d19180e15a0c568ca3ff9a96d574438c6b835` — College Admin task creation rejects a tombstoned parent release before inserting a task
+- `d58887f51be8a3b4e0996b58e31049d5f02f2c2b` — corrected source-test assertion syntax; all 43 source-contract fixtures in that revision passed in an isolated V8 execution of current repository contents
+- `e5913d4b80889812ab8705d5c365ead822858412` — `nextProjectSequence` bounds all eight live task/sprint/release tail append allocations to PostgreSQL `int4`, and the all-row index still reserves soft-deleted positions; includes Vitest helper tests and source contract checks
+- `5ea8088bbf1fda1ac34f617d5f285b75a00b6115` and `85815b6a15a15352d47f53d1bc5cb295e4cde5a4` — five new disposable-PostgreSQL integration scenarios in `tests/integration/learner-task-progress.test.ts`: reorder around a deleted task's reserved sequence, deny writes on a deleted sprint, deny Mentor move of deleted tasks / into deleted sprints, deny College Admin creation under a deleted release, and deny learner/Mentor writes after project soft-deletion
+
+The isolated source-contract check passed **43/43**, the helper's verified boundary examples passed, and all eight converted call sites match the committed helper. The new PostgreSQL scenarios are **authored, not yet independently executed** on their final source SHA. Do not count authored PG tests, the helper checks, or queued CI as DB-010 acceptance.
+
+**Required for DB-010 closure remains unchanged:** confirm actual registered PG17 replay and targeted negative/concurrency producer→consumer tests, complete all 358 active source-field semantic dispositions including missing histories/comments, verify no regression to legacy daily-use workflows, and retain executed SHA-pinned evidence in the sole tracker. This checkpoint must not be promoted to a DONE state without those gates.
