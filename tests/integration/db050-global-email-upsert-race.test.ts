@@ -6,7 +6,7 @@ import {assertDb018DisposableTarget} from "../support/db018-test-target.mjs";
 import {persistVerifiedGlobalEmailSuppression} from "@/modules/operations/global-email-suppression-service";
 
 const enabled=process.env.DB10_ISOLATED_TEST_DATABASE==="1"&&Boolean(process.env.TEST_DATABASE_URL);
-if(enabled)assertDb018DisposableTarget({...process.env,DB018_ISOLATED_TEST_DATABASE:"1"},{serviceBound:true});
+if(enabled)assertDb018DisposableTarget({...process.env,DB018_ISOLATED_TEST_DATABASE:"1"});
 const pool=enabled?new Pool({connectionString:process.env.TEST_DATABASE_URL,max:6}):null;
 afterAll(async()=>{await pool?.end()});
 
