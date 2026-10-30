@@ -32,6 +32,9 @@ test("Faculty notifications "+viewport.name+" stay within the selected college, 
   const notificationA1 = randomUUID();
   const notificationA2 = randomUUID();
   const notificationB = randomUUID();
+  const announcementA = randomUUID(), announcementB = randomUUID();
+  const announcementTitleA = "Faculty College A announcement " + suffix;
+  const announcementTitleB = "Faculty College B announcement " + suffix;
   const identityUid = "faculty-e2e-notifications-" + suffix;
   const noticeA1 = "Faculty College A notice one " + suffix;
   const noticeA2 = "Faculty College A notice two " + suffix;
@@ -76,6 +79,15 @@ test("Faculty notifications "+viewport.name+" stay within the selected college, 
       );
     }
 
+    // Actual announcement table, not a mocked browser-only card.
+    for(const [id,collegeId,title] of [
+      [announcementA,SEED_IDS.collegeA,announcementTitleA],
+      [announcementB,SEED_IDS.collegeB,announcementTitleB],
+    ])await pool.query(
+      "insert into announcements (id,organization_id,college_id,receiver_type,receiver_id,title,message,sender_user_id,sender_type) values ($1::uuid,$2::uuid,$3::uuid,'COLLEGE',$4::uuid,$5::text,$6::text,$7::uuid,'FACULTY')",
+      [id,SEED_IDS.organization,collegeId,collegeId,title,"College-scoped notice",userId],
+    );
+
     await context.addCookies([
       { name: E2E_IDENTITY_COOKIE_NAME, value: identityUid, url: BASE_URL, httpOnly: true, sameSite: "Lax" },
       { name: E2E_SECRET_COOKIE_NAME, value: secret!, url: BASE_URL, httpOnly: true, sameSite: "Lax" },
@@ -86,6 +98,8 @@ test("Faculty notifications "+viewport.name+" stay within the selected college, 
     await expect(page.getByText(noticeA1, { exact: true })).toBeVisible();
     await expect(page.getByText(noticeA2, { exact: true })).toBeVisible();
     await expect(page.getByText(noticeB, { exact: true })).toHaveCount(0);
+    await expect(page.getByText(announcementTitleA,{exact:true})).toBeVisible();
+    await expect(page.getByText(announcementTitleB,{exact:true})).toHaveCount(0);
     await expect(page.getByRole("link", { name: "Unread (2)" })).toBeVisible();
     // The five legacy tabs remain navigable; Personal must not widen to
     // foreign-college events, and returning to All must restore the feed.
@@ -94,10 +108,12 @@ test("Faculty notifications "+viewport.name+" stay within the selected college, 
     await expect(page).toHaveURL(/tab=personal/);
     await expect(page.getByText(noticeA1,{exact:true})).toBeVisible();
     await expect(page.getByText(noticeB,{exact:true})).toHaveCount(0);
+    await expect(page.getByText(announcementTitleA,{exact:true})).toHaveCount(0);
     await page.getByRole("navigation",{name:"Notification categories"})
       .getByRole("link",{name:/All/}).click();
     await expect(page).toHaveURL(/\/teacher\/notifications\?view=all$/);
     await expect(page.getByText(noticeA1,{exact:true})).toBeVisible();
+    await expect(page.getByText(announcementTitleA,{exact:true})).toBeVisible();
 
     const first = page.getByRole("article").filter({ hasText: noticeA1 });
     const marked = page.waitForResponse((response) =>
@@ -112,6 +128,7 @@ test("Faculty notifications "+viewport.name+" stay within the selected college, 
     await expect(page).toHaveURL(/view=unread/);
     await expect(page.getByText(noticeA1,{exact:true})).toHaveCount(0);
     await expect(page.getByText(noticeA2,{exact:true})).toBeVisible();
+    await expect(page.getByText(announcementTitleA,{exact:true})).toHaveCount(0);
     await page.getByRole("group",{name:"Notification filter"})
       .getByRole("link",{name:"All",exact:true}).click();
     await expect(page.getByText(noticeA1,{exact:true})).toBeVisible();
@@ -136,6 +153,8 @@ test("Faculty notifications "+viewport.name+" stay within the selected college, 
     await page.reload();
     await expect(page.getByText(noticeB, { exact: true })).toBeVisible();
     await expect(page.getByText(noticeA1, { exact: true })).toHaveCount(0);
+    await expect(page.getByText(announcementTitleB,{exact:true})).toBeVisible();
+    await expect(page.getByText(announcementTitleA,{exact:true})).toHaveCount(0);
     await expect(page.getByRole("link", { name: "Unread (1)" })).toBeVisible();
 
     const deniedStatus = await page.evaluate(async (id) => {
@@ -144,6 +163,7 @@ test("Faculty notifications "+viewport.name+" stay within the selected college, 
     }, notificationA1);
     expect(deniedStatus).toBeGreaterThanOrEqual(400);
   } finally {
+    await pool.query("delete from announcements where id = any($1::uuid[])",[[announcementA,announcementB]]);
     await pool.query("delete from in_app_notifications where id = any($1::uuid[])", [[notificationA1, notificationA2, notificationB]]);
     // activity_events is immutable. Preserve its audit actor and membership
     // references in this disposable E2E database; never purge the history.
