@@ -904,8 +904,29 @@
       "id": "DB-047",
       "title": "Align DB09 company share defaults with canonical placement schema",
       "phase": "DATABASE",
-      "done": false,
-      "dependsOn": []
+      "done": true,
+      "dependsOn": [],
+      "acceptedAt": "2026-10-30",
+      "closureBasis": "ENGINEERING_ACCEPTED_CANONICAL_RELATIONSHIP_SHARE_DEFAULT_SCHEMA",
+      "acceptanceEvidence": [
+        {
+          "kind": "EXECUTED_REGISTERED_POSTGRESQL_17_ACCEPTANCE",
+          "commitSha": "6316c04e56d9738b409d95283226562a86fcfe19",
+          "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/41079498636",
+          "jobId": 124144504689,
+          "runner": "GitHub Actions Node 22 PostgreSQL 17-alpine disposable database",
+          "commands": [
+            "npm run db:journal:verify",
+            "node --test tests/db09-company-share-defaults-staging.test.mjs",
+            "npm run db:test:prepare with DATABASE_URL cleared",
+            "npm run db:migrate",
+            "node scripts/db017-share-defaults-pg-acceptance.mjs"
+          ],
+          "result": "PASS",
+          "exitCode": 0,
+          "details": "Registered 0043 canonical company relationship column/check; two colleges referencing same global company retain independent defaults; 12-item disclosure allowlist enforced; arrays with unknown/sensitive fields and JSON scalar/null rejected; SQL NULL accepted; updates to one college do not mutate other. Legacy global default intentionally had no live runtime consumer, so this accepts only DB047 structural persistence without inventing API/UI."
+        }
+      ]
     },
     {
       "id": "DB-048",
