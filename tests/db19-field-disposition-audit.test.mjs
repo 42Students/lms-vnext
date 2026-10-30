@@ -184,18 +184,19 @@ function writeSyntheticFullInventory(root, subtractOneField = false) {
     fs.writeFileSync(location, JSON.stringify(doc));
   }
 }
-test('DB19 CLI accepts complete independent synthetic 11-domain 2829-field inventory', () => {
+test('DB19 rejects a complete synthetic census without independent DB01 review overlays', () => {
   const root = fs.mkdtempSync(path.join(os.tmpdir(),'db19-cli-'));
   try {
     writeSyntheticFullInventory(root);
     const proc = spawnSync(process.execPath, [path.resolve(import.meta.dirname,'../scripts/db19-field-disposition-audit.mjs'), root], { encoding:'utf8' });
-    assert.equal(proc.status,0,proc.stderr);
     const report = JSON.parse(proc.stdout);
-    assert.equal(report.sourceInventoryIntegrity,'PASS');
+    assert.equal(proc.status,2, 'A complete census must not bypass mandatory DB01 source review');
+    assert.equal(report.sourceInventoryIntegrity,'FAIL');
     assert.equal(report.counts.domains,11);
     assert.equal(report.counts.tables,199);
     assert.equal(report.counts.fields,2829);
     assert.equal(report.databaseParityVerified,false);
+    assert.equal(report.errors.filter(x=>x.code==='MISSING_MANDATORY_DB01_SOURCE_FILE').length,4);
   } finally { fs.rmSync(root,{recursive:true,force:true}); }
 });
 test('DB19 CLI rejects 2828-field inventory even if all internal counters agree', () => {
