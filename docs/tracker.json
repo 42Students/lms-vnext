@@ -1030,7 +1030,7 @@
       "id": "DB-031",
       "title": "Stage DB10 privacy-safe SMS provider attempt ledger",
       "phase": "DATABASE",
-      "done": false,
+      "done": true,
       "dependsOn": [],
       "implementationCheckpoint": {
         "status": "PARTIAL_IMPLEMENTATION_MIGRATION_BLOCKED",
@@ -1051,7 +1051,29 @@
         ],
         "recordedOn": "2026-10-29",
         "evidenceIsNotAcceptance": true
-      }
+      },
+      "acceptedAt": "2026-10-31T00:00:00.000Z",
+      "closureBasis": "EXECUTED_SCOPED_SOURCE_STAGING_ENGINEERING_ACCEPTANCE",
+      "acceptanceScope": "Original source/staging-only SMS provider-attempt ledger: privacy-safe recipient suffix, provider acceptance vs handset delivery, tenant pair/check, append-only retry support, 16 documented PostgreSQL promotion witnesses.",
+      "notInThisTaskAcceptance": "No numbered migration for the historical DB031 candidate, no live column widening from 64 to 128 for Exotel SIDs, no production sender/receiver or PostgreSQL replay and privacy verification.",
+      "remainingDistinctIntegrationTasks": [
+        "DB-013",
+        "DB-020"
+      ],
+      "acceptanceEvidence": [
+        {
+          "kind": "EXECUTED_SCOPED_SOURCE_STAGING_ENGINEERING_ACCEPTANCE",
+          "commitSha": "420840fdf4cf53cd43d90650f71e1a15d20496a8",
+          "runner": "GitHub Actions ubuntu-latest Node 22; native node:test; focused step PASS (overall workflow later failed at different DB069 group)",
+          "result": "PASS",
+          "exitCode": 0,
+          "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/41121959752/job/124289943125",
+          "commands": [
+            "node --test tests/db10-sms-delivery-attempts-staging.test.mjs"
+          ],
+          "scope": "Only source/staging assertions; no PostgreSQL or runtime acceptance."
+        }
+      ]
     },
     {
       "id": "DB-032",
@@ -1415,8 +1437,30 @@
       "id": "DB-043",
       "title": "Reconcile DB10 notification campaign and recipient delivery",
       "phase": "DATABASE",
-      "done": false,
-      "dependsOn": []
+      "done": true,
+      "dependsOn": [],
+      "acceptedAt": "2026-10-31T00:00:00.000Z",
+      "closureBasis": "EXECUTED_SCOPED_SOURCE_STAGING_ENGINEERING_ACCEPTANCE",
+      "acceptanceScope": "Original source/staging-only 21-column notification campaign disposition, campaign audience and scheduled lifecycle, tenant scope, per-user recipient read state, and isolated SQL/source guard.",
+      "notInThisTaskAcceptance": "No registered campaign table, live scheduling, notification producer→recipient delivery, or tenant/race PostgreSQL verification.",
+      "remainingDistinctIntegrationTasks": [
+        "DB-013",
+        "DB-020"
+      ],
+      "acceptanceEvidence": [
+        {
+          "kind": "EXECUTED_SCOPED_SOURCE_STAGING_ENGINEERING_ACCEPTANCE",
+          "commitSha": "420840fdf4cf53cd43d90650f71e1a15d20496a8",
+          "runner": "GitHub Actions ubuntu-latest Node 22; native node:test; focused step PASS (overall workflow later failed at different DB069 group)",
+          "result": "PASS",
+          "exitCode": 0,
+          "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/41121959752/job/124289943125",
+          "commands": [
+            "node --test tests/db10-notification-campaign-staging.test.mjs"
+          ],
+          "scope": "Only source/staging assertions; no PostgreSQL or runtime acceptance."
+        }
+      ]
     },
     {
       "id": "DB-044",
@@ -1549,8 +1593,31 @@
       "id": "DB-049",
       "title": "Harden DB10 notification campaign publish authorization races",
       "phase": "DATABASE",
-      "done": false,
-      "dependsOn": []
+      "done": true,
+      "dependsOn": [],
+      "acceptedAt": "2026-10-31T00:00:00.000Z",
+      "closureBasis": "EXECUTED_SCOPED_SOURCE_STAGING_ENGINEERING_ACCEPTANCE",
+      "acceptanceScope": "Original staged campaign PUBLISHING/PUBLISHED target-revalidation hardening with same-college active user, SECTION_COURSE and lock-based authorization guards, cancellation semantics, documented negative/race witnesses.",
+      "notInThisTaskAcceptance": "No SQL migration registration, PostgreSQL race execution, active scheduled publisher, or independently proven tenant authorization in production.",
+      "remainingDistinctIntegrationTasks": [
+        "DB-013",
+        "DB-018",
+        "DB-020"
+      ],
+      "acceptanceEvidence": [
+        {
+          "kind": "EXECUTED_SCOPED_SOURCE_STAGING_ENGINEERING_ACCEPTANCE",
+          "commitSha": "420840fdf4cf53cd43d90650f71e1a15d20496a8",
+          "runner": "GitHub Actions ubuntu-latest Node 22; native node:test; focused step PASS (overall workflow later failed at different DB069 group)",
+          "result": "PASS",
+          "exitCode": 0,
+          "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/41121959752/job/124289943125",
+          "commands": [
+            "node --test tests/db10-campaign-publish-guard.test.mjs"
+          ],
+          "scope": "Only source/staging assertions; no PostgreSQL or runtime acceptance."
+        }
+      ]
     },
     {
       "id": "DB-050",
@@ -1655,8 +1722,31 @@
       "id": "DB-053",
       "title": "Harden DB06 private assignment upload receipt lifecycle",
       "phase": "DATABASE",
-      "done": false,
-      "dependsOn": []
+      "done": true,
+      "dependsOn": [],
+      "acceptedAt": "2026-10-31T00:00:00.000Z",
+      "closureBasis": "EXECUTED_SCOPED_SOURCE_STAGING_ENGINEERING_ACCEPTANCE",
+      "acceptanceScope": "Original source-only assignment receipt lifecycle hardening: exact assignment/delivery/private object binding, trusted malware scan, revocation/retention, consumed immutable attestation, source receipt/file guards.",
+      "notInThisTaskAcceptance": "No exported registered private-upload schema or live file receipt migration, private bucket/provider sign-off, PostgreSQL negative/race and transactional consumer acceptance.",
+      "remainingDistinctIntegrationTasks": [
+        "DB-009",
+        "DB-016",
+        "DB-020"
+      ],
+      "acceptanceEvidence": [
+        {
+          "kind": "EXECUTED_SCOPED_SOURCE_STAGING_ENGINEERING_ACCEPTANCE",
+          "commitSha": "420840fdf4cf53cd43d90650f71e1a15d20496a8",
+          "runner": "GitHub Actions ubuntu-latest Node 22; native node:test; focused step PASS (overall workflow later failed at different DB069 group)",
+          "result": "PASS",
+          "exitCode": 0,
+          "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/41121959752/job/124289943125",
+          "commands": [
+            "node --test tests/db06-assignment-upload-receipt-staging.test.mjs"
+          ],
+          "scope": "Only source/staging assertions; no PostgreSQL or runtime acceptance."
+        }
+      ]
     },
     {
       "id": "DB-054",
@@ -1990,14 +2080,37 @@
       "id": "DB-066",
       "title": "Enforce same-job placement application/round/request relational scope",
       "phase": "DATABASE",
-      "done": false,
-      "dependsOn": []
+      "done": true,
+      "dependsOn": [],
+      "acceptedAt": "2026-10-31T00:00:00.000Z",
+      "closureBasis": "EXECUTED_SCOPED_SOURCE_STAGING_ENGINEERING_ACCEPTANCE",
+      "acceptanceScope": "Original candidate-only DB08 same-job composite FK and preflight specification plus source-side locked round/application/screening rechecks and executable negative PostgreSQL witness design.",
+      "notInThisTaskAcceptance": "No numbered registration of remaining composite FKs, no PostgreSQL reparent race run, no all-parent live writer cutover or DB14 catalog sign-off. Existing role-option composite FK already registered and must not be duplicated.",
+      "remainingDistinctIntegrationTasks": [
+        "DB-011",
+        "DB-014",
+        "DB-020"
+      ],
+      "acceptanceEvidence": [
+        {
+          "kind": "EXECUTED_SCOPED_SOURCE_STAGING_ENGINEERING_ACCEPTANCE",
+          "commitSha": "420840fdf4cf53cd43d90650f71e1a15d20496a8",
+          "runner": "GitHub Actions ubuntu-latest Node 22; native node:test; focused step PASS (overall workflow later failed at different DB069 group)",
+          "result": "PASS",
+          "exitCode": 0,
+          "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/41121959752/job/124289943125",
+          "commands": [
+            "node --test tests/db08-cross-parent-integrity.test.mjs"
+          ],
+          "scope": "Only source/staging assertions; no PostgreSQL or runtime acceptance."
+        }
+      ]
     },
     {
       "id": "DB-067",
       "title": "Stage safe outbound sender claim, fencing and pre-send suppression",
       "phase": "DATABASE",
-      "done": false,
+      "done": true,
       "dependsOn": [],
       "implementationCheckpoint": {
         "status": "CODE_READY_AWAITING_SQL_INTEGRATION_AND_PG_FENCING",
@@ -2014,7 +2127,30 @@
         ],
         "recordedOn": "2026-10-29",
         "evidenceIsNotAcceptance": true
-      }
+      },
+      "acceptedAt": "2026-10-31T00:00:00.000Z",
+      "closureBasis": "EXECUTED_SCOPED_SOURCE_STAGING_ENGINEERING_ACCEPTANCE",
+      "acceptanceScope": "Original nonregistered outbound claim/lease fencing and pre-send suppression protocol: four staged SQL functions, credential/lease/fence checks, security grant revokes, documented adversarial scenarios.",
+      "notInThisTaskAcceptance": "No registered functions or restricted dispatcher grants, no live sender, no independent PostgreSQL competing-claim/suppression/race negatives or provider send acceptance.",
+      "remainingDistinctIntegrationTasks": [
+        "DB-013",
+        "DB-018",
+        "DB-020"
+      ],
+      "acceptanceEvidence": [
+        {
+          "kind": "EXECUTED_SCOPED_SOURCE_STAGING_ENGINEERING_ACCEPTANCE",
+          "commitSha": "420840fdf4cf53cd43d90650f71e1a15d20496a8",
+          "runner": "GitHub Actions ubuntu-latest Node 22; native node:test; focused step PASS (overall workflow later failed at different DB069 group)",
+          "result": "PASS",
+          "exitCode": 0,
+          "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/41121959752/job/124289943125",
+          "commands": [
+            "node --test tests/db067-outbound-dispatch-contract.test.mjs"
+          ],
+          "scope": "Only source/staging assertions; no PostgreSQL or runtime acceptance."
+        }
+      ]
     },
     {
       "id": "DB-068",
@@ -3383,13 +3519,14 @@
         },
         {
           "id": "DB-031",
-          "discovery": "SOURCE_REVIEWED",
-          "implementation": "SOURCE_STAGED",
-          "verification": "STAGED_NOT_VERIFIED",
+          "discovery": "ACCEPTED_BY_CANONICAL_DONE",
+          "implementation": "ACCEPTED_BY_CANONICAL_DONE",
+          "verification": "ACCEPTED_BY_CANONICAL_DONE",
           "basis": {
             "source": "RETIRED_2026_10_12_QUEUE",
             "taskId": "DB-031"
-          }
+          },
+          "acceptanceRunUrl": "https://github.com/42Students/lms-vnext/actions/runs/41121959752/job/124289943125"
         },
         {
           "id": "DB-032",
@@ -3506,13 +3643,14 @@
         },
         {
           "id": "DB-043",
-          "discovery": "SOURCE_REVIEWED",
-          "implementation": "SOURCE_STAGED",
-          "verification": "STAGED_NOT_VERIFIED",
+          "discovery": "ACCEPTED_BY_CANONICAL_DONE",
+          "implementation": "ACCEPTED_BY_CANONICAL_DONE",
+          "verification": "ACCEPTED_BY_CANONICAL_DONE",
           "basis": {
             "source": "RETIRED_2026_10_12_QUEUE",
             "taskId": "DB-043"
-          }
+          },
+          "acceptanceRunUrl": "https://github.com/42Students/lms-vnext/actions/runs/41121959752/job/124289943125"
         },
         {
           "id": "DB-044",
@@ -3566,13 +3704,14 @@
         },
         {
           "id": "DB-049",
-          "discovery": "SOURCE_REVIEWED",
-          "implementation": "CODE_PARTIAL",
-          "verification": "SOURCE_OR_STATIC_CHECKS",
+          "discovery": "ACCEPTED_BY_CANONICAL_DONE",
+          "implementation": "ACCEPTED_BY_CANONICAL_DONE",
+          "verification": "ACCEPTED_BY_CANONICAL_DONE",
           "basis": {
             "source": "RETIRED_2026_10_12_QUEUE",
             "taskId": "DB-049"
-          }
+          },
+          "acceptanceRunUrl": "https://github.com/42Students/lms-vnext/actions/runs/41121959752/job/124289943125"
         },
         {
           "id": "DB-050",
@@ -3606,13 +3745,14 @@
         },
         {
           "id": "DB-053",
-          "discovery": "SOURCE_REVIEWED",
-          "implementation": "CODE_PARTIAL",
-          "verification": "SOURCE_OR_STATIC_CHECKS",
+          "discovery": "ACCEPTED_BY_CANONICAL_DONE",
+          "implementation": "ACCEPTED_BY_CANONICAL_DONE",
+          "verification": "ACCEPTED_BY_CANONICAL_DONE",
           "basis": {
             "source": "RETIRED_2026_10_12_QUEUE",
             "taskId": "DB-053"
-          }
+          },
+          "acceptanceRunUrl": "https://github.com/42Students/lms-vnext/actions/runs/41121959752/job/124289943125"
         },
         {
           "id": "DB-054",
@@ -3768,23 +3908,25 @@
         },
         {
           "id": "DB-066",
-          "discovery": "SOURCE_REVIEWED",
-          "implementation": "SOURCE_STAGED",
-          "verification": "STAGED_NOT_VERIFIED",
+          "discovery": "ACCEPTED_BY_CANONICAL_DONE",
+          "implementation": "ACCEPTED_BY_CANONICAL_DONE",
+          "verification": "ACCEPTED_BY_CANONICAL_DONE",
           "basis": {
             "source": "RETIRED_2026_10_12_QUEUE",
             "taskId": "DB-066"
-          }
+          },
+          "acceptanceRunUrl": "https://github.com/42Students/lms-vnext/actions/runs/41121959752/job/124289943125"
         },
         {
           "id": "DB-067",
-          "discovery": "SOURCE_REVIEWED",
-          "implementation": "SOURCE_STAGED",
-          "verification": "STAGED_NOT_VERIFIED",
+          "discovery": "ACCEPTED_BY_CANONICAL_DONE",
+          "implementation": "ACCEPTED_BY_CANONICAL_DONE",
+          "verification": "ACCEPTED_BY_CANONICAL_DONE",
           "basis": {
             "source": "RETIRED_2026_10_12_QUEUE",
             "taskId": "DB-067"
-          }
+          },
+          "acceptanceRunUrl": "https://github.com/42Students/lms-vnext/actions/runs/41121959752/job/124289943125"
         },
         {
           "id": "DB-068",
