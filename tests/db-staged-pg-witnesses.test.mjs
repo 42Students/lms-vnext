@@ -46,6 +46,12 @@ test("remote database needs exact host/port/name confirmation",()=>denied({...ba
 test("remote database with exact confirmation and opted-in test name is allowed",()=>{
   assert.equal(validateTarget({...base(),TEST_DATABASE_URL:"postgresql://x@pg.example.net:5433/lms_test",ALLOW_REMOTE_TEST_WITNESS:"true",DB_WITNESS_REMOTE_CONFIRM:"DISPOSABLE:pg.example.net:5433/lms_test"}).safe,true);
 });
+test("non-default remote witness confirmation is port-bound at the shared guard",()=>{
+  const env={...base(),TEST_DATABASE_URL:"postgresql://x@pg.example.net:5433/lms_test",
+    ALLOW_REMOTE_TEST_WITNESS:"true",DB_WITNESS_REMOTE_CONFIRM:"DISPOSABLE:pg.example.net:5433/lms_test"};
+  assert.equal(validateTarget(env).safe,true,JSON.stringify(validateTarget(env).errors));
+  denied({...env,DB_WITNESS_REMOTE_CONFIRM:"DISPOSABLE:pg.example.net:5432/lms_test"},"confirmation");
+});
 test("safe local disposable target accepts explicit authorization",()=>assert.equal(validateTarget(base()).safe,true));
 test("success TAP requires a real positive test count",()=>{
   assert.equal(assertPass(0,"# tests 2\n# pass 2\n# fail 0\n# skipped 0\n# cancelled 0\n").pass,2);
