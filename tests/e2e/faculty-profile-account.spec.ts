@@ -89,6 +89,57 @@ for(const view of [{name:"desktop",width:1280,height:800},{name:"mobile",width:3
    });
    expect(afterStale.status).toBe(200);
    expect(afterStale.body.document.about.description).toBe(marker);
+   for(const row of [
+    {form:"Contacts",field:"Primary mobile",section:"contact",key:"contactMobile",value:"9876543219"},
+    {form:"Address",field:"Current city",section:"address",key:"currentCity",value:"Hyderabad"},
+    {form:"Social Profiles",field:"LinkedIn",section:"socialProfiles",key:"linkedIn",value:"https://www.linkedin.com/in/faculty-acceptance"},
+   ]){
+    const form=page.getByRole("form",{name:row.form});
+    await form.getByRole("textbox",{name:row.field}).fill(row.value);
+    const confirmed=page.waitForResponse(response=>response.request().method()==="PATCH"&&
+     new URL(response.url()).pathname==="/api/people/faculty-self-document");
+    await form.getByRole("button",{name:"Save "+row.form}).click();
+    expect((await confirmed).status()).toBe(200);
+    await page.reload();
+    await expect(page.getByRole("form",{name:row.form}).getByRole("textbox",{name:row.field}))
+     .toHaveValue(row.value);
+    const persisted=await page.evaluate(async section=>{
+     const response=await fetch("/api/people/faculty-self-document?section="+encodeURIComponent(section));
+     return {status:response.status,body:await response.json()};
+    },row.section);
+    expect(persisted.status).toBe(200);
+    expect(persisted.body.value[row.key]).toBe(row.value);
+   }
+   // An actual repeatable-section draft is not persisted until Save; removal
+   // requires the confirm dialog and its own versioned write.
+   const employer="Faculty browser experience "+randomUUID().slice(0,10);
+   const history=page.getByRole("form",{name:"Experience"});
+   await history.getByRole("button",{name:"Add experience record"}).click();
+   await history.getByRole("textbox",{name:"Organization"}).last().fill(employer);
+   const addedResponse=page.waitForResponse(response=>response.request().method()==="PATCH"&&
+    new URL(response.url()).pathname==="/api/people/faculty-self-document");
+   await history.getByRole("button",{name:"Save experience"}).click();
+   expect((await addedResponse).status()).toBe(200);
+   await page.reload();
+   const added=await page.evaluate(async()=>{
+    const response=await fetch("/api/people/faculty-self-document?section=experiences");
+    return response.json();
+   });
+   expect(added.value.some((row:{organization:string})=>row.organization===employer)).toBe(true);
+   const persistedHistory=page.getByRole("form",{name:"Experience"});
+   await persistedHistory.getByRole("button",{name:"Remove draft record"}).last().click();
+   await page.getByRole("alertdialog",{name:"Remove this entry?"})
+    .getByRole("button",{name:"Remove entry"}).click();
+   const removedResponse=page.waitForResponse(response=>response.request().method()==="PATCH"&&
+    new URL(response.url()).pathname==="/api/people/faculty-self-document");
+   await persistedHistory.getByRole("button",{name:"Save experience"}).click();
+   expect((await removedResponse).status()).toBe(200);
+   await page.reload();
+   const removed=await page.evaluate(async()=>{
+    const response=await fetch("/api/people/faculty-self-document?section=experiences");
+    return response.json();
+   });
+   expect(removed.value.some((row:{organization:string})=>row.organization===employer)).toBe(false);
    if(view.name==="mobile"){
     const width=await page.evaluate(()=>document.documentElement.scrollWidth);
     expect(width).toBeLessThanOrEqual(view.width+1);
