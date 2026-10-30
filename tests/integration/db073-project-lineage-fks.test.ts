@@ -188,7 +188,7 @@ describe.skipIf(!enabled)("DB073 scoped project lineage PostgreSQL constraints",
   it("rejects moving an existing sprint to another project's release", async () => {
     await withFixture(async (f) => {
       await expect(f.client.query(
-        "UPDATE project_sprints SET release_id=$1 WHERE id=$2",
+        "UPDATE project_sprints SET release_id=$1, sequence=99 WHERE id=$2",
         [f.releaseB, f.sprintA],
       )).rejects.toMatchObject({
         code: "23503", constraint: "project_sprints_project_release_fk",
@@ -212,7 +212,7 @@ describe.skipIf(!enabled)("DB073 scoped project lineage PostgreSQL constraints",
   it("rejects moving an existing task to another project's sprint", async () => {
     await withFixture(async (f) => {
       await expect(f.client.query(
-        "UPDATE project_tasks SET sprint_id=$1 WHERE id=$2",
+        "UPDATE project_tasks SET sprint_id=$1, sequence=99 WHERE id=$2",
         [f.sprintB, f.taskA],
       )).rejects.toMatchObject({
         code: "23503", constraint: "project_tasks_project_sprint_fk",
