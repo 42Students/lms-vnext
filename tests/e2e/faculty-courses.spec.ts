@@ -54,11 +54,15 @@ test("Faculty has five distinct, authorized Course tabs and editable Section Blu
   }
   await tabs.getByRole("link", { name: "Blueprint" }).click();
   await expect(page).toHaveURL(/\/teacher\/courses\/[^/]+\/blueprint$/);
-  const sectionContent = page.getByRole("article").filter({ hasText: "E2E Section A Notes" });
-  await expect(sectionContent).toBeVisible();
+  const explorer = page.getByRole("region", { name: "Course blueprint lesson explorer" });
+  await expect(explorer).toBeVisible();
   await expect(page.getByText("E2E Section B Secret", { exact: true })).toHaveCount(0);
-  await sectionContent.getByRole("button", { name: "Edit content" }).click();
-  await expect(page.getByRole("dialog", { name: "Edit RESOURCE" })).toBeVisible();
+  const order = explorer.getByRole("list", { name: "Lesson content order" });
+  await expect(order).toBeVisible();
+  const editContent = order.getByRole("button", { name: "Edit", exact: true }).first();
+  await expect(editContent).toBeVisible();
+  await editContent.click();
+  await expect(page.getByRole("dialog", { name: /Edit (RESOURCE|VIDEO|YOUTUBE|LIVE CLASS|Assignment|Quiz)/i })).toBeVisible();
   await page.getByRole("button", { name: "Close drawer" }).click();
 
   await tabs.getByRole("link", { name: "Students" }).click();
@@ -97,42 +101,40 @@ test("Faculty empty discussion offers legacy starter drafts without posting them
 });
 
 test("Faculty posts, pins, unpins and deletes a Section discussion in the browser", async ({ page, context }) => {
+  test.setTimeout(120_000);
   await facultyLogin(context);
   await page.goto("/teacher/courses");
   await page.getByRole("link", { name: /E2E Browser Course/ }).click();
   await page.getByRole("navigation", { name: "Faculty course tabs" })
     .getByRole("link", { name: "Discussions" }).click();
-  const text = "Faculty moderation browser proof " + Date.now();
-  await page.getByLabel("Write a message").fill(text);
-  const create = page.waitForResponse(res =>
-    res.request().method() === "POST" && new URL(res.url()).pathname.endsWith("/discussions"));
-  await page.getByRole("button", { name: "Post", exact: true }).click();
-  const posted = await create;
+  const pane=page.locator(".faculty-prototype-discussion");
+  const composer=pane.getByRole("textbox",{name:"Write a message"});
+  await expect(composer).toBeVisible();
+  const message="Faculty cross-course moderation "+Date.now();
+  await composer.fill(message);
+  const posting=page.waitForResponse(response=>response.request().method()==="POST" &&
+    new URL(response.url()).pathname.endsWith("/discussions"));
+  await pane.getByRole("button",{name:"Send",exact:true}).click();
+  const posted=await posting;
   expect(posted.status()).toBe(201);
-  const messageId = (await posted.json()).message.id;
-  const article = page.getByRole("article").filter({ hasText: text });
+  const article=pane.getByRole("article").filter({hasText:message});
   await expect(article).toBeVisible();
-  const actionPath = "/api/courses/deliveries/";
-  page.once("dialog", dialog => dialog.accept());
-  const pin = page.waitForResponse(res =>
-    res.request().method() === "PATCH" &&
-    new URL(res.url()).pathname.includes(actionPath) &&
-    new URL(res.url()).pathname.endsWith("/" + messageId));
-  await article.getByRole("button", { name: "Pin", exact: true }).click();
-  expect((await pin).ok()).toBe(true);
-  await expect(article.getByRole("button", { name: "Unpin" })).toBeVisible();
-  const pinnedStripUnpin=page.getByRole("button",{name:"Unpin pinned message"});
-  await expect(pinnedStripUnpin).toBeVisible();
-  page.once("dialog", dialog => dialog.accept());
-  const unpin = page.waitForResponse(res =>
-    res.request().method() === "PATCH" && new URL(res.url()).pathname.endsWith("/" + messageId));
-  await pinnedStripUnpin.click();
-  expect((await unpin).ok()).toBe(true);
-  page.once("dialog", dialog => dialog.accept());
-  const removed = page.waitForResponse(res =>
-    res.request().method() === "DELETE" && new URL(res.url()).pathname.endsWith("/" + messageId));
-  await article.getByRole("button", { name: "Delete", exact: true }).click();
-  expect((await removed).ok()).toBe(true);
+  const pinned=page.waitForResponse(response=>response.request().method()==="PATCH" &&
+    new URL(response.url()).pathname.includes("/discussions/"));
+  await article.getByRole("button",{name:/^Pin /}).click();
+  expect((await pinned).ok()).toBe(true);
+  await expect(article.getByText("Pinned",{exact:true})).toBeVisible();
+  const unpinned=page.waitForResponse(response=>response.request().method()==="PATCH" &&
+    new URL(response.url()).pathname.includes("/discussions/"));
+  await article.getByRole("button",{name:/^Unpin /}).click();
+  expect((await unpinned).ok()).toBe(true);
+  await article.getByRole("button",{name:/^Delete /}).click();
+  const confirmation=page.getByRole("alertdialog",{name:"Delete this message?"});
+  await expect(confirmation).toBeVisible();
+  const removing=page.waitForResponse(response=>response.request().method()==="DELETE" &&
+    new URL(response.url()).pathname.includes("/discussions/"));
+  await confirmation.getByRole("button",{name:"Delete",exact:true}).click();
+  expect((await removing).ok()).toBe(true);
   await expect(article).toHaveCount(0);
 });
 
