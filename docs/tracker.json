@@ -915,8 +915,20 @@
       "id": "DB-058",
       "title": "Fail-close PostgreSQL negative-witness database targeting",
       "phase": "DATABASE",
-      "done": false,
-      "dependsOn": []
+      "done": true,
+      "dependsOn": [],
+      "acceptedAt": "2026-10-30",
+      "acceptanceEvidence": [{
+        "kind": "EXECUTED_ACCEPTANCE",
+        "result": "PASS",
+        "exitCode": 0,
+        "commitSha": "548da856bbe57fd9c062df4b98e33ed036a022a7",
+        "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/41032049378/job/123984731050",
+        "jobId": 123984731050,
+        "runner": "GitHub Actions ubuntu-latest Node.js 22, native no-connect test harness",
+        "commands": ["node --test tests/db058-witness-target-safety.test.mjs tests/db-staged-pg-witnesses.test.mjs"],
+        "details": "47/47 security tests PASS, zero failures/skips. DB058 isolation opt-in, test-only URL naming, application alias and loopback equivalence, port-bound remote confirmation, no credential leak, before-Pool guards, and all staged witness target checks passed. No production database was connected; scope is negative witness target selection, not all DB18 relational tests. All source/test files relevant to this task remained unchanged through recorded acceptance."
+      }]
     },
     {
       "id": "DB-059",
