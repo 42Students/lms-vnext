@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 import {
   createCollegeElectiveSlotSchema,
   editCollegeElectiveSlotSchema,
+  electiveSlotFormErrorsFromIssues,
   normalizeSlotYear,
   slotSelectionChanged,
 } from "@/modules/electives/college-slot-mutation-model";
@@ -43,6 +44,56 @@ describe("college elective slot mutation model", () => {
     expect(editCollegeElectiveSlotSchema.safeParse({ ...edit, programId: create.programId }).success).toBe(true);
     expect(editCollegeElectiveSlotSchema.safeParse({ ...edit, programId: "foreign-college" }).success).toBe(false);
     expect(editCollegeElectiveSlotSchema.safeParse({ ...edit, collegeId: create.programId }).success).toBe(false);
+  });
+
+  it("maps real Zod API names onto visible elective slot fields", () => {
+    const result = createCollegeElectiveSlotSchema.safeParse({
+      ...create, semesterNumber: 13, academicYear: "2026-29",
+      minPick: 4, maxPick: 2,
+    });
+    expect(result.success).toBe(false);
+    if (result.success) throw new Error("Expected invalid elective slot");
+    const fields = electiveSlotFormErrorsFromIssues(result.error.issues);
+    expect(fields["term"]).toBeTruthy();
+    expect(fields["year"]).toBeTruthy();
+    expect(fields["maxPick"]).toBeTruthy();
+    expect(fields["semesterNumber"]).toBeUndefined();
+    expect(fields["academicYear"]).toBeUndefined();
+  });
+
+  it("preserves known API field errors and displays period/description issues", () => {
+    expect(electiveSlotFormErrorsFromIssues([
+      { path: ["academicPeriodId"], message: "Period is unavailable" },
+      { path: ["description"], message: "Too long" },
+      { path: ["programId"], message: "Unknown program" },
+      { path: ["name"], message: "Name required" },
+      { path: ["academicPeriodId"], message: "Later duplicate" },
+    ])).toEqual({
+      periodId: "Period is unavailable",
+      description: "Too long",
+      programId: "Unknown program",
+      name: "Name required",
+    });
+  });
+
+  it("ignores malformed and unrecognized server paths without prototype pollution", () => {
+    const errors = electiveSlotFormErrorsFromIssues([
+      { path: ["__proto__"], message: "unsafe" },
+      { path: ["constructor"], message: "unsafe" },
+      { path: [0, "name"], message: "numeric" },
+      { path: "semesterNumber", message: "not an array" },
+      { path: ["body", "semesterNumber"], message: "unknown wrapper" },
+      null,
+      { path: ["academicYear"], message: "" },
+      { path: ["maxPick"], message: "Bad maximum" },
+    ]);
+    expect(errors).toEqual({
+      year: "Please check this field",
+      maxPick: "Bad maximum",
+    });
+    expect(Object.hasOwn(errors, "__proto__")).toBe(false);
+    expect(electiveSlotFormErrorsFromIssues(null)).toEqual({});
+    expect(electiveSlotFormErrorsFromIssues({ path: ["name"] })).toEqual({});
   });
 
   it("normalizes years and detects actual enrollment-impacting edits", () => {
