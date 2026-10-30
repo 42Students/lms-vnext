@@ -15,6 +15,7 @@ on:
       - "tests/unit/faculty-profile-social-merge-closure.test.ts"
       - "tests/unit/faculty-self-profile-read.test.ts"
       - "src/modules/people/faculty-self-section-model.ts"
+      - "src/modules/people/profile-service.ts"
       - "src/modules/people/faculty-profile-self.staged.ts"
       - "src/modules/people/faculty-self-section-service.ts"
       - "tests/unit/faculty-profile-page-closure.test.tsx"
