@@ -1,4 +1,5 @@
 import "server-only";
+import {nextProjectSequence} from "./project-sequence-allocation";
 import {and,desc,eq,isNull,sql} from "drizzle-orm";
 import {z} from "zod";
 import {getDb} from "@/db/client";
@@ -63,7 +64,7 @@ export async function writeMentorProjectRelease(
     templateKey=write.releaseKey;
    }
    const [row]=await tx.insert(projectReleases).values({
-    projectId,templateKey,sequence:(last?.sequence??-1)+1,
+    projectId,templateKey,sequence:nextProjectSequence(last?.sequence,"PROJECT_LIFECYCLE_INVALID_STATE"),
     title:write.title,description:write.description??null,
     targetDate:write.targetDate??null,notes:write.notes??null,status:"PLANNED",
    }).returning();

@@ -1,4 +1,5 @@
 import "server-only";
+import {nextProjectSequence} from "./project-sequence-allocation";
 
 import {randomUUID} from "node:crypto";
 import {and,desc,eq,isNull} from "drizzle-orm";
@@ -94,7 +95,7 @@ export async function createMentorProjectTask(context:RequestContext,rawParams:u
       const [created]=await tx.insert(projectTasks).values({
         projectId:scope.project.id,sprintId:sprint?.id??null,
         templateKey:"mentor-"+randomUUID().replaceAll("-",""),
-        sequence:(last?.sequence??-1)+1,
+        sequence:nextProjectSequence(last?.sequence,"PROJECT_TASK_INVALID_STATE"),
         title:input.title,description:input.description,approach:input.approach,
         acceptanceCriteria:input.acceptanceCriteria,priority:input.priority,
         status:input.status,assigneeMembershipId:input.assigneeMembershipId,

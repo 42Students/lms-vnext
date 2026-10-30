@@ -1,4 +1,5 @@
 import "server-only";
+import {nextProjectSequence} from "./project-sequence-allocation";
 
 import { randomUUID } from "node:crypto";
 import { and, desc, eq, ne, isNull, inArray, sql } from "drizzle-orm";
@@ -104,7 +105,7 @@ export async function createMentorProjectSprint(
         title:input.title,
         description:input.description,goal:input.goal,definitionOfDone:input.definitionOfDone,
         startDate:input.startDate,endDate:input.endDate,dueDate:input.dueDate,
-        sequence:(last?.sequence??-1)+1,
+        sequence:nextProjectSequence(last?.sequence,"PROJECT_SPRINT_INVALID_STATE"),
         status:"PLANNED",
         updatedAt:now,
       }).returning();

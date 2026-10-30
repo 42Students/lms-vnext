@@ -1,4 +1,5 @@
 import "server-only";
+import {nextProjectSequence} from "./project-sequence-allocation";
 
 import {randomUUID} from "node:crypto";
 import {and,desc,eq,isNull} from "drizzle-orm";
@@ -79,7 +80,7 @@ export async function createAdminTaskPlanItem(
    const [created]=await tx.insert(projectTasks).values({
     projectId:scope.project.id,sprintId,
     templateKey:"admin-"+randomUUID().replaceAll("-",""),
-    legacyTaskKey:key,sequence:(last?.sequence??-1)+1,
+    legacyTaskKey:key,sequence:nextProjectSequence(last?.sequence,"PROJECT_TASK_INVALID_STATE"),
     title:input.title,status:"TODO",priority:input.priority,
     estimatePoints:input.estimatePoints,taskType:input.taskType,
     dueLabel:input.dueLabel,description:input.description,

@@ -103,3 +103,24 @@ test("DB010 admin task creation cannot target a soft-deleted release",()=>{
   const release=src.slice(src.indexOf("const [release]"),src.indexOf("if(!release"));
   assert.match(release,/isNull\(projectReleases\.deletedAt\)/);
 });
+
+test("DB010 all live append operations use bounded int4 sequences, including tombstones",()=>{
+  const allocations=[
+    ["mentor-backlog-service.ts",2,"PROJECT_TASK_INVALID_STATE"],
+    ["learner-own-task-service.ts",1,"PROJECT_TASK_INVALID_STATE"],
+    ["admin-task-plan-create-service.ts",1,"PROJECT_TASK_INVALID_STATE"],
+    ["mentor-task-create-service.ts",1,"PROJECT_TASK_INVALID_STATE"],
+    ["mentor-sprint-write-service.ts",1,"PROJECT_SPRINT_INVALID_STATE"],
+    ["mentor-release-write-service.ts",1,"PROJECT_LIFECYCLE_INVALID_STATE"],
+    ["learner-backlog-pull-service.ts",1,"PROJECT_TASK_INVALID_STATE"],
+  ];
+  for(const [path,count,code] of allocations){
+    const src=read(path);
+    assert.equal(src.split("nextProjectSequence(last?.sequence,").length-1,count,path);
+    assert.ok(src.includes('nextProjectSequence(last?.sequence,"'+code+'")'),path);
+    assert.doesNotMatch(src,/sequence\s*:\s*\(last\?\.sequence\s*\?\?\s*-1\)\s*\+\s*1/);
+  }
+  const helper=read("project-sequence-allocation.ts");
+  assert.match(helper,/previous >= 2147483647/);
+  assert.match(helper,/Number\.isInteger\(previous\)/);
+});

@@ -1,4 +1,5 @@
 import "server-only";
+import {nextProjectSequence} from "./project-sequence-allocation";
 import {randomUUID} from "node:crypto";
 import {and,desc,eq,isNull} from "drizzle-orm";
 import {z} from "zod";
@@ -45,7 +46,7 @@ export async function createLearnerOwnTask(context:RequestContext,rawParams:unkn
    .orderBy(desc(projectTasks.sequence)).limit(1);
   const [task]=await tx.insert(projectTasks).values({
    projectId,sprintId:sprint?.id??null,templateKey:keyFor(membership.id),
-   sequence:(last?.sequence??-1)+1,title:input.title,description:input.description,
+   sequence:nextProjectSequence(last?.sequence,"PROJECT_TASK_INVALID_STATE"),title:input.title,description:input.description,
    approach:input.approach,
    acceptanceCriteria:input.acceptanceCriteria,priority:input.priority,dueDate:input.dueDate,
    estimatePoints:input.estimatePoints,taskType:input.taskType,assigneeMembershipId:membership.id,

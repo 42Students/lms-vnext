@@ -1,4 +1,5 @@
 import "server-only";
+import {nextProjectSequence} from "./project-sequence-allocation";
 import { and,desc,eq,isNull,sql } from "drizzle-orm";
 import { z } from "zod";
 import {getDb} from "@/db/client";
@@ -48,7 +49,7 @@ export async function pullOwnBacklogTask(context:RequestContext,projectIdInput:s
     .where(and(eq(projectTasks.projectId,scope.project.id),eq(projectTasks.sprintId,sprint.id)))
     .orderBy(desc(projectTasks.sequence)).limit(1);
   const [updated]=await tx.update(projectTasks).set({
-    sprintId:sprint.id,sequence:(last?.sequence??-1)+1,
+    sprintId:sprint.id,sequence:nextProjectSequence(last?.sequence,"PROJECT_TASK_INVALID_STATE"),
     updatedAt:new Date(Math.max(Date.now(),task.updatedAt.getTime()+1)),
   }).where(and(eq(projectTasks.projectId,scope.project.id),eq(projectTasks.id,task.id),
     isNull(projectTasks.sprintId),isNull(projectTasks.deletedAt),

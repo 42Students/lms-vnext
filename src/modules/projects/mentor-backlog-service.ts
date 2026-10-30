@@ -1,4 +1,5 @@
 import "server-only";
+import {nextProjectSequence} from "./project-sequence-allocation";
 import { randomUUID } from "node:crypto";
 import { and, desc, eq, isNull, sql } from "drizzle-orm";
 import { z } from "zod";
@@ -65,7 +66,7 @@ export async function moveMentorBacklogTask(context: RequestContext, projectIdIn
     const now = new Date(Math.max(Date.now(),task.updatedAt.getTime()+1));
     const [updated] = await tx.update(projectTasks).set({
       sprintId:input.targetSprintId,
-      sequence:(last?.sequence??-1)+1,
+      sequence:nextProjectSequence(last?.sequence,"PROJECT_TASK_INVALID_STATE"),
       // Any direct sprint-to-sprint move is real carry-over, not just a
       // reordered task. Backlog -> sprint retains its recorded previous sprint.
       carriedFromSprintId:task.sprintId??task.carriedFromSprintId,
@@ -102,7 +103,7 @@ export async function createMentorBacklogTask(context: RequestContext, projectId
     const [task] = await tx.insert(projectTasks).values({
       projectId:scope.project.id,sprintId:null,
       templateKey:"backlog-"+randomUUID().replaceAll("-",""),
-      sequence:(last?.sequence??-1)+1,title:input.title,description:input.description,
+      sequence:nextProjectSequence(last?.sequence,"PROJECT_TASK_INVALID_STATE"),title:input.title,description:input.description,
       approach:input.approach,
       acceptanceCriteria:input.acceptanceCriteria,priority:input.priority,status:"TODO",
       estimatePoints:input.estimatePoints,
