@@ -5,6 +5,7 @@ import {
   expect,
   it,
 } from "vitest";
+import { randomUUID } from "node:crypto";
 import { Pool } from "pg";
 import { closeDatabaseConnection } from "@/db/client";
 import type { RequestContext } from "@/modules/identity/context";
@@ -265,23 +266,30 @@ async function cleanup() {
        where slug like 'p7a-%'
      )`,
   );
-  await pool.query(
-    `delete from project_template_versions
-     where template_id in (
-       select id from project_templates
-       where slug like 'p7a-%'
-     )`,
+  // DB070 append-only project history and DB071 deferred version pointers
+  // are genuine invariants. Keep unique test template revisions rather than
+  // deleting them or disabling SQL triggers.
+  const retention=await pool.query<{retainHistory:boolean}>(
+    "select (exists (select 1 from pg_trigger where tgrelid='project_template_versions'::regclass " +
+      "and tgname='db07_project_template_versions_append_only' and tgenabled='O') " +
+      "or exists (select 1 from pg_constraint where conrelid='project_templates'::regclass " +
+      "and conname='project_templates_current_version_snapshot_fk')) as \"retainHistory\"",
   );
-  await pool.query(
-    "delete from project_templates where slug like 'p7a-%'",
-  );
+  if(!retention.rows[0]?.retainHistory){
+    await pool.query(
+      `delete from project_template_versions
+       where template_id in (select id from project_templates where slug like 'p7a-%')`,
+    );
+    await pool.query("delete from project_templates where slug like 'p7a-%'");
+  }
 }
 
 async function createProject() {
+  const fixtureSuffix=randomUUID().slice(0,12);
   const template = await createProjectTemplate(
     superAdmin,
     {
-      slug: "p7a-resource-template",
+      slug: "p7a-resource-template-" + fixtureSuffix,
       title: "P7A Resource Template",
       blueprint: blueprint(),
     },
@@ -300,7 +308,7 @@ async function createProject() {
     {
       collegeId: SEED_IDS.collegeA,
       templateId: template.template.id,
-      slug: "p7a-resource-project",
+      slug: "p7a-resource-project-" + fixtureSuffix,
       title: "P7A Resource Project",
     },
   );
