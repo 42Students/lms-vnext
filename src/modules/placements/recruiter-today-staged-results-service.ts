@@ -12,7 +12,7 @@ import type {RequestContext} from "@/modules/identity/context";
 import {AuthorizationError,requirePermission} from "@/modules/permissions/policy";
 import {recruiterTodayStagedResultsWaiting} from "./recruiter-today-staged-results-model";
 
-/** Legacy Today "results are with placement cell". A current HR-STAGED
+/** Legacy Today "results are with placement cell". A current recruiter-STAGED
  * submission is visible only to its authenticated author, on an employer-owned
  * drive with a persisted active, verified, unexpired exact relationship grant.
  * No candidate names or scores leave this aggregate. */
@@ -63,7 +63,11 @@ export async function listRecruiterTodayStagedResultsWaiting(
   .where(and(
    inArray(placementJobs.id,ids),eq(placementJobs.collegeId,collegeId),
    inArray(placementJobs.status,["PUBLISHED","CLOSED"]),
-   eq(placementRoundResults.source,"HR"),
+   // DB-072 transitional provenance: recruiter-owned results written by
+   // pre-cutover HR producers and post-expand RECRUITER producers are the
+   // same logical category. The strict migration runs only after old writers
+   // are drained; the read side must safely understand both meanwhile.
+   sql<boolean>`${placementRoundResults.source} in ('HR','RECRUITER')`,
    eq(placementRoundResults.status,"STAGED"),
    eq(placementRoundResults.submittedByUserId,context.user.id),
    recruiterOwnJobPredicate(context.user.id),
