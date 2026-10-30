@@ -6,6 +6,7 @@ on:
     branches: [main]
     paths:
       - "tests/integration/db10-global-email-suppression-service.test.ts"
+      - "tests/integration/db050-global-email-upsert-race.test.ts"
       - "tests/db10-global-email-suppression-contract.test.mjs"
       - ".github/workflows/db050-global-email-acceptance.yml"
       - "src/modules/operations/global-email-suppression-service.ts"
@@ -64,3 +65,4 @@ jobs:
         run: >-
           npx vitest run --config vitest.db.registered.config.ts
           tests/integration/db10-global-email-suppression-service.test.ts
+          tests/integration/db050-global-email-upsert-race.test.ts
