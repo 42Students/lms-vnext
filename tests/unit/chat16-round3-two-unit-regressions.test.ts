@@ -20,7 +20,8 @@ describe("REC-calendar-messages-profile-21 Round 3 notification polling",()=>{
   expect(service).toContain("listOwnRecruiterPlacementJobs(ctx,feed.collegeId)");
   expect(service).toContain("eq(inAppNotifications.userId,ctx.user.id)");
   expect(service).toContain("x.companyId===ctx.recruiter!.companyId && x.collegeId===feed.collegeId");
-  expect(service).toContain("inArray(activityEvents.collegeId,colleges)");
+  expect(service).toContain("eq(activityEvents.collegeId,feed.collegeId)");
+  expect(service).toContain("inArray(activityEvents.subjectId,jobIds)");
  });
 });
 
