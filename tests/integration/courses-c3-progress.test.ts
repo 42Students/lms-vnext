@@ -769,10 +769,19 @@ describe("courses C3 learner progress against PostgreSQL", () => {
        where id = $1`,
       [structure.period.id],
     );
+    // DB05 forbids ending a delivery while teachers are still assigned.
+    // Assert that safety guard, then close the teaching roster first.
+    await expect(pool.query(
+      `update course_section_deliveries set ended_at = now() where id = $1`,
+      [structure.deliveryA.id],
+    )).rejects.toMatchObject({ code: "23514" });
     await pool.query(
-      `update course_section_deliveries
-       set ended_at = now()
-       where id = $1`,
+      `update course_teaching_assignments set ended_at = now()
+       where delivery_id = $1 and ended_at is null`,
+      [structure.deliveryA.id],
+    );
+    await pool.query(
+      `update course_section_deliveries set ended_at = now() where id = $1`,
       [structure.deliveryA.id],
     );
 
