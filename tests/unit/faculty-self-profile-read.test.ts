@@ -66,9 +66,19 @@ describe("Faculty self-profile read authorization", () => {
     expect(repository.loadFacultyProfile).not.toHaveBeenCalled();
   });
 
-  it("rejects persisted Mentor status even if the request snapshot says Faculty", async () => {
-    const repository = repo("faculty-user", ["FACULTY", "MENTOR"]);
-    await expect(getOwnFacultyProfile(ctx(["FACULTY"]), repository))
+  it("allows a persisted mixed-role membership only under selected Faculty context", async () => {
+    for(const roles of [
+      ["FACULTY","MENTOR"],["FACULTY","COLLEGE_ADMIN"],
+    ] as Array<Array<"FACULTY"|"MENTOR"|"COLLEGE_ADMIN">>) {
+      const repository=repo("faculty-user",roles);
+      const result=await getOwnFacultyProfile(ctx(["FACULTY"]),repository);
+      expect(result.person.user.id).toBe("faculty-user");
+      expect(repository.loadFacultyProfile).toHaveBeenCalledWith(membershipId);
+    }
+  });
+  it("rejects a forged stale Faculty request if the persisted grant is Mentor-only",async()=>{
+    const repository=repo("faculty-user",["MENTOR"]);
+    await expect(getOwnFacultyProfile(ctx(["FACULTY"]),repository))
       .rejects.toBeInstanceOf(AuthorizationError);
     expect(repository.loadFacultyProfile).not.toHaveBeenCalled();
   });
