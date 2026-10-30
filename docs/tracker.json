@@ -2379,12 +2379,7 @@
           "release verification"
         ],
         "operatingNotes": "L10 owns independent verification findings; actual domain implementation defects go to domain owner. Coordinate changes to shared CI with L01.",
-        "claim": {
-          "sessionId": "vnext-l10-faculty-evidence-priority-20261030",
-          "holder": "Independent Faculty UI closure evidence + read-only closure-first selector, no domain service/DB source edits",
-          "claimedAt": "2026-10-30T18:20:15.505Z",
-          "expiresAt": "2026-10-30T19:20:15.506Z"
-        }
+        "claim": null
       }
     ],
     "milestones": [
