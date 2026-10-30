@@ -2192,6 +2192,13 @@
       "when": 1793257150954,
       "tag": "0312_db09_recruiter_note_grant_on_update",
       "breakpoints": true
+    },
+    {
+      "idx": 313,
+      "version": "7",
+      "when": 1793257210954,
+      "tag": "0313_db10_skill_synonym_parity",
+      "breakpoints": true
     }
   ]
 }
