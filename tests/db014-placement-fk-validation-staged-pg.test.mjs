@@ -26,7 +26,7 @@ async function status(db){
   return rows;
 }
 
-test("DB014 both currently unvalidated application parent FKs can be validated without data changes",async()=>{
+test("DB014 registered placement parent FKs are validated and candidate preflight remains safe",async()=>{
   const db=new pg.Client({
     connectionString:process.env.TEST_DATABASE_URL,
     connectionTimeoutMillis:10000,query_timeout:20000,
@@ -35,8 +35,15 @@ test("DB014 both currently unvalidated application parent FKs can be validated w
   let active=false;
   try{
     const before=await status(db);
-    assert.ok(before.every(x=>x.convalidated===false),
-      "This stage is only for known unvalidated FKs; reroute if L01 registered validation");
+    const allValidated=before.every(x=>x.convalidated===true);
+    const allUnvalidated=before.every(x=>x.convalidated===false);
+    assert.ok(allValidated||allUnvalidated,
+      "A partial registered validation must never be silently accepted");
+    const journal=JSON.parse(readFileSync("drizzle/meta/_journal.json","utf8"));
+    const registered=journal.entries.some(
+      x=>x.tag==="0317_db014_placement_fk_validation");
+    assert.equal(allValidated,registered,
+      "Current clean replay must match the exact 0317 validation registration");
     await db.query("BEGIN");
     active=true;
     await db.query(candidate);
@@ -46,13 +53,13 @@ test("DB014 both currently unvalidated application parent FKs can be validated w
     await db.query("ROLLBACK");
     active=false;
     assert.deepEqual(await status(db),before,
-      "Rollback-only verification must not promote candidate DDL");
+      "Rollback-only candidate must never change the registered catalog");
     console.log(JSON.stringify({
-      type:"DB014_STAGED_PLACEMENT_FK_VALIDATION",
+      type:"DB014_REGISTERED_PLACEMENT_FK_VALIDATION",
       sourceConstraints:required,
       validationPassed:true,
-      registeredMigrationApplied:false,
-      promoted:false,
+      registeredMigrationApplied:registered,
+      promoted:allValidated,
     }));
   }finally{
     if(active)await db.query("ROLLBACK").catch(()=>{});
