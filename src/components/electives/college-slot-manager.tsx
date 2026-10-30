@@ -10,7 +10,7 @@ import { useToast } from "@/components/ui/toast";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { useRouter } from "next/navigation";
-import { electiveSlotFormErrorsFromIssues } from "@/modules/electives/college-slot-mutation-model";
+import { electiveSlotDraftFromRow, electiveSlotFormErrorsFromIssues } from "@/modules/electives/college-slot-mutation-model";
 import { useRef, useState, useTransition, type FormEvent } from "react";
 
 export type SlotFormRow = {
@@ -72,9 +72,29 @@ export function CollegeSlotManager({ options, row }: {
     return JSON.stringify({ programId, periodId, term, year, name, description, credits, minPick, maxPick });
   }
 
+  function applyDraft(draft: ReturnType<typeof electiveSlotDraftFromRow>) {
+    setProgramId(draft.programId);
+    setPeriodId(draft.periodId);
+    setTerm(draft.term);
+    setYear(draft.year);
+    setName(draft.name);
+    setDescription(draft.description);
+    setCredits(draft.credits);
+    setMinPick(draft.minPick);
+    setMaxPick(draft.maxPick);
+  }
+
   function openEditor() {
     if (open) { requestClose(); return; }
-    initialDraft.current = snapshot();
+    // Router refresh may have supplied a newer row while this component kept
+    // its previous React state. Never reopen a stale edit draft.
+    if (row) {
+      const fresh = electiveSlotDraftFromRow(row);
+      initialDraft.current = JSON.stringify(fresh);
+      applyDraft(fresh);
+    } else {
+      initialDraft.current = snapshot();
+    }
     setFieldErrors({});
     setError(null);
     setOpen(true);
@@ -88,12 +108,7 @@ export function CollegeSlotManager({ options, row }: {
   }
 
   function discard() {
-    setProgramId(row?.programId ?? "");
-    setPeriodId(row?.academicPeriodId ?? "");
-    setTerm(String(row?.semesterNumber ?? 1)); setYear(row?.academicYear ?? "");
-    setName(row?.name ?? ""); setDescription(row?.description ?? "");
-    setCredits(String(row?.credits ?? 3)); setMinPick(String(row?.minPick ?? 1));
-    setMaxPick(String(row?.maxPick ?? 1));
+    applyDraft(electiveSlotDraftFromRow(row));
     setFieldErrors({}); setError(null);
     setDiscardOpen(false); setOpen(false);
   }
