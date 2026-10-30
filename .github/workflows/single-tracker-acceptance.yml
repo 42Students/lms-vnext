@@ -52,13 +52,14 @@ jobs:
       - name: DB066 and DB067 source-stage contract checks
         run: |
           node --test tests/db08-cross-parent-integrity.test.mjs tests/db067-outbound-dispatch-contract.test.mjs
+      - name: DB016 private-object source safety contract
+        run: node --test tests/db16-private-storage-safety.test.mjs
+      - name: DB010 projects source reconciliation and tombstone regression
+        run: node --test tests/db07-reconciliation-contract.test.mjs
       - name: DB069 and DB072 source-stage contract checks
         run: |
           node scripts/verify-db09-team-owner-source.mjs
           node --test tests/db09-team-owner-lifecycle.test.mjs tests/db08-recruiter-code-contract.test.mjs
           node scripts/verify-db08-recruiter-code-source.mjs
-      - name: DB010 and DB016 original reconciliation source contracts
-        run: |
-          node --test tests/db07-reconciliation-contract.test.mjs tests/db16-private-storage-safety.test.mjs
       - name: Execute plan and task acceptance tests
         run: node --test tests/tracker.test.mjs tests/database-domain-packages.test.mjs tests/tracker-ten-lanes.test.mjs tests/tracker-progress-evidence.test.mjs tests/closure-first-protocol.test.mjs
