@@ -16,8 +16,9 @@ async function login(context:BrowserContext){
  ]);
 }
 
-test("Faculty Blueprint persists YouTube and live-class create edit archive for its own Section",async({page,context})=>{
- test.setTimeout(210_000);
+for(const mode of ["YOUTUBE","LIVE_CLASS"] as const){
+ test("Faculty Blueprint persists "+mode+" create edit archive for its own Section",async({page,context})=>{
+ test.setTimeout(150_000);
  await login(context);
  await page.goto("/teacher/courses");
  await page.getByRole("link",{name:/E2E Browser Course/}).first().click();
@@ -40,8 +41,7 @@ test("Faculty Blueprint persists YouTube and live-class create edit archive for 
  expect(target.YOUTUBE).toContain("lesson="+encodeURIComponent(lessonId!));
  expect(target.LIVE_CLASS).toContain("lesson="+encodeURIComponent(lessonId!));
  const futureDate=new Date(Date.now()+15*86400_000).toISOString().slice(0,10);
- for(const mode of ["YOUTUBE","LIVE_CLASS"] as const){
-  const title="Faculty "+mode+" scoped lifecycle "+Date.now();
+ const title="Faculty "+mode+" scoped lifecycle "+Date.now();
   const revisedNotes="Verified "+mode+" notes persisted";
   await page.goto(target[mode]!);
   await expect(page.getByRole("textbox",{name:"Content Title"})).toBeVisible({timeout:30_000});
@@ -116,5 +116,5 @@ test("Faculty Blueprint persists YouTube and live-class create edit archive for 
    await expect(order).toBeVisible();
    await expect(order.getByRole("link",{name:title,exact:true})).toHaveCount(0);
   }finally{await verificationPage.close();}
- }
 });
+}
