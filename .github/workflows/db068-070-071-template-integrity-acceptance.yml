@@ -80,6 +80,8 @@ jobs:
           tests/integration/projects-p5-lifecycle.test.ts
           tests/integration/projects-p6b-final-evaluation.test.ts
       - name: TypeScript and journal integrity with no migrated fixture changes
+        env:
+          NODE_OPTIONS: --max-old-space-size=6144
         run: |
           npm run typecheck
           npm run db:journal:verify
