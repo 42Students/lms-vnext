@@ -26,6 +26,12 @@ describe("TPO legacy drive bookmarks",()=>{
    .toContain("request="+round);
   expect(legacyTpoDrivesListHref({request:"unsafe"})).toBe("/tpo/placements/lifecycle");
  });
+ it("opens the Requests tab for a direct saved request URL",()=>{
+  expect(legacyTpoDrivesListHref({request:round}))
+   .toBe("/tpo/placements/lifecycle?tab=requests&request="+round);
+  expect(legacyTpoDrivesListHref({tab:"live",request:round}))
+   .toBe("/tpo/placements/lifecycle?tab=live");
+ });
  it("rejects duplicate, oversized and invalid list parameters",()=>{
   expect(legacyTpoDrivesListHref({tab:["live","closed"],q:["one","two"],page:"-2"}))
    .toBe("/tpo/placements/lifecycle");
