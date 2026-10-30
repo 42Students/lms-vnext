@@ -18,6 +18,12 @@ on:
       - tests/database-domain-packages.test.mjs
       - tests/tracker-ten-lanes.test.mjs
       - tests/closure-first-protocol.test.mjs
+      - tests/db16-private-storage-safety.test.mjs
+      - tests/db07-reconciliation-contract.test.mjs
+      - tests/db09-team-owner-lifecycle.test.mjs
+      - scripts/verify-db09-team-owner-source.mjs
+      - docs/planning/database-parity-db16-private-storage-safety.md
+      - docs/planning/db09-team-owner-lifecycle-audit.md
       - .github/workflows/single-tracker-acceptance.yml
   workflow_dispatch:
 permissions:
