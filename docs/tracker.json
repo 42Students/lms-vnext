@@ -920,6 +920,11 @@
             "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/41129786508",
             "result": "PASS_DIAGNOSTIC_NOT_CERTIFICATION",
             "scope": "Registered PG17 320 migrations; 276 tables, 732 FKs all validated, 266 generated typed tables; all 44 newly typed tables already exist; 10 SQL-only tables; zero typed columns missing after 0319; 22 registered columns not in typed definitions; FK/name/constraint semantic comparison still open."
+          },
+          {
+            "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/41147412594",
+            "result": "PASS_DIAGNOSTIC_NOT_CERTIFICATION",
+            "scope": "Current PG17 registered 321 migration idempotent replay; full read-only catalog exported (276 tables, 3576 columns, 1916 constraints, 1032 indexes) and 266 typed table representation re-generated; source 0133 nullable application request reconciled; CHECK/index/default provenance and 44 duplicate DDL still pending."
           }
         ],
         "sourceCommits": [
@@ -1009,6 +1014,30 @@
             "Global SQL generated schema drift and CHECK/index/default FK/trigger policies",
             "Full exact-current-main registered replay after other contributors' newer migrations",
             "DB001, DB014, DB018, DB019, DB045 and DB020 global certification"
+          ],
+          "notAcceptance": true
+        },
+        "latestFullCatalogDiff": {
+          "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/41147412594",
+          "sourceCommit": "000b01b554478790cdfab96e98a0f04af672af5d",
+          "result": "PASS_READ_ONLY_CATALOG_DIAGNOSIS_NOT_ACCEPTANCE",
+          "registeredMigrations": 321,
+          "registeredTables": 276,
+          "registeredColumns": 3576,
+          "registeredIndexes": 1032,
+          "registeredConstraints": 1916,
+          "typedTables": 266,
+          "sqlOnlyTables": 10,
+          "verifiedChanges": [
+            "Fixed stale typed placement_learner_requests.application_id NOT NULL declaration against registered migration 0133, preserving five extra general-support request types and scope shape",
+            "Read-only exact PG17 constraints/indexes/defaults/triggers export now runnable, artifact attached to this run; no generated duplicate DDL applied"
+          ],
+          "unresolvedFromFullConstraintReview": [
+            "Generated migration still proposes 44 CREATE TABLE and 975 ALTER TABLE statements, despite 44 generated tables already being registered",
+            "Source metadata contains 4 index names unmatched against current catalog (two may be named unique aliases); 21 registered indexes not represented by typed index names include scheduling exclusion safety",
+            "15 typed CHECK names unmatched against physical CHECK names, 26 physical CHECK constraints not named in source (many aliases; semantics not yet certified)",
+            "Project instance sprint_length_weeks and public page metric_keys default expressions differ between typed and catalog; classify before baseline",
+            "SQL-only/circular FK and future snapshot generation baseline remain unresolved"
           ],
           "notAcceptance": true
         }
