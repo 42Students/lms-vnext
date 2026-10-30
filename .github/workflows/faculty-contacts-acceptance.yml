@@ -8,6 +8,7 @@ on:
       - ".github/workflows/faculty-contacts-acceptance.yml"
       - "tests/integration/faculty-contacts-*-acceptance.test.ts"
       - "tests/e2e/faculty-contacts-*.spec.ts"
+      - "tests/unit/faculty-contacts-recovery.test.tsx"
       - "src/modules/courses/faculty-contacts-service.ts"
       - "src/modules/courses/faculty-contact-detail-model.ts"
       - "src/components/courses/faculty-contacts-table.tsx"
@@ -65,6 +66,8 @@ jobs:
           tests/integration/faculty-contacts-all-acceptance.test.ts
           tests/integration/faculty-contacts-teachers-acceptance.test.ts
           tests/integration/faculty-contacts-students-acceptance.test.ts
+      - name: Verify Contacts empty/loading/denied/retry UI unit contract
+        run: npx vitest run tests/unit/faculty-contacts-recovery.test.tsx
 
   browser:
     runs-on: ubuntu-latest
