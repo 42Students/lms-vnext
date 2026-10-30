@@ -393,7 +393,44 @@
       "title": "Cross-domain tenant FK integrity sweep",
       "phase": "DATABASE",
       "done": false,
-      "dependsOn": []
+      "dependsOn": [],
+      "implementationCheckpoint": {
+        "status": "STAGED_PG17_TENANT_SCOPE_AND_TWO_SESSION_RACE_WITNESSES_PASS_NOT_REGISTERED",
+        "recordedOn": "2026-10-30",
+        "verifiedScope": "DB14 staged SQL candidate applies transactionally to clean registered PG17 without journal changes; tenant/actor, inbox recipient, group-history owner/role/SYSTEM checks and member status/role revocation SHARE-lock races executed PASS. All temporary SQL guards and test fixture rows were rolled back. This is a DB014 sub-scope witness, not global DB/FK/cascade gate acceptance.",
+        "sourceCommits": [
+          "3e072d4ad43f9dda0bb2cb88ee3d3d750178df67",
+          "f6c520a37946a667b3f17de26ac3a6313a4f1383",
+          "eb223d83eff2fb2fa004467c23d7fdc051a29461",
+          "f2e7435ee8373d5aa467b84fb84a5606369c46bf"
+        ],
+        "executedEvidence": [
+          {
+            "kind": "EXECUTED_STAGED_PG17_NEGATIVES",
+            "result": "PASS",
+            "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/41078110489",
+            "commitSha": "f6c520a37946a667b3f17de26ac3a6313a4f1383",
+            "runner": "GitHub Actions disposable PostgreSQL 17",
+            "scope": "Clean registered journal replay, staged rollback-only trigger installation, activity actor scope, notification recipient scope, group event cross-college and role denial, no persistent staged DDL."
+          },
+          {
+            "kind": "EXECUTED_STAGED_PG17_CONCURRENCY",
+            "result": "PASS",
+            "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/41078465024",
+            "commitSha": "f2e7435ee8373d5aa467b84fb84a5606369c46bf",
+            "runner": "GitHub Actions disposable PostgreSQL 17",
+            "scope": "Same witnesses plus two-session 55P03 lock-timeout confirmation that group-history accepted writer SHARE-locks member status and role until transaction end."
+          }
+        ],
+        "pending": [
+          "L01 migration integrator review and register forward-only DB14 scope SQL; keep snapshot/journal ownership centralized",
+          "Execute full registered PostgreSQL catalog and cross-domain tenant FK negative matrix at exact migration SHA, not staged overlay",
+          "Reconcile latest registered schema against stale historical DB014 0040 baseline and disposition newly introduced FK/trigger edges",
+          "Resolve nine legacy cascade/retention semantics and globally scoped uniqueness reviews",
+          "Prove producer/consumer tenant authorization and DB018/DB020 global database gate; do not claim whole DB014 DONE from a staged candidate"
+        ],
+        "evidenceIsNotAcceptance": true
+      }
     },
     {
       "id": "DB-015",
