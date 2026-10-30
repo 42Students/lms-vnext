@@ -4,15 +4,16 @@ The next-generation 42Students LMS, rebuilt as a GCP-native TypeScript modular m
 
 ## How development works now
 
-**Closure-first, direct to `main`.** The old six-chat system is retired; do not use lane files, issue #21–#26 assignments or historical work queues as live progress.
+**Closure-first is mandatory for every coding chat, direct to `main`.** Read `AGENTS.md` and `docs/tracker.json.execution.closureFirstProtocol` before taking work. Keep ten exclusive lanes, their claims and engineering acceptance intact. The old six-chat system, archived work queues and historical checkbox counts are not live progress.
 
 - **One execution plan and live tracker:** [docs/tracker.json](docs/tracker.json) (`execution`, `tasks`, `phaseGates`) — five stages and ten parallel lanes
 - **Only live tracker:** [docs/tracker.json](docs/tracker.json) — DONE/NOT DONE only
 - **Current global phase:** DATABASE; API/UI/RELEASE require independent phase gates
-- **Progress:** `npm run progress`, `npm run progress -- --lanes`, `npm run progress -- --lane=L03`, `npm run progress -- --check`
+- **Mandatory next-closure selection:** `npm run progress -- --closure-next` (or `--closure-next --lane=L03`); then `npm run progress -- --check` to validate the tracker.
+- **Progress and exclusive lanes:** `npm run progress`, `npm run progress -- --lanes`, `npm run progress -- --lane=L03`. Accepted task counts come only from `done:true` with executed evidence.
 - **Continuation instructions:** `docs/tracker.json.execution.startupProcedure` and `.coordination`
 
-Each engineering batch should integrate or repair a concrete runnable capability, run its acceptance tests on a disposable database, commit one cohesive change on fresh `main` and report exact evidence. Draft migrations and partially green CI jobs are **not** completed tasks.
+**Mandatory closure loop:** choose one OPEN task by nearest executed acceptance, identify its precise missing gate, perform the smallest correct lane-owned change and real disposable registered-PostgreSQL/producer/consumer/security tests. Immediately set `done:true` with exact SHA/run evidence only if the complete scoped gate passes, freeze that task, and select another. **After two useful passes with no closure, hand off the verified blocker to the exact owner and switch to an independent OPEN task.** Draft migrations, source-only tests, queued/cancelled CI and partially green runs are **not** completed tasks. The tracker, not a chat's prose, determines N/81.
 
 ## Core stack
 
@@ -53,8 +54,8 @@ For a new development session, read in this order:
 
 1. `AGENTS.md`
 2. `docs/tracker.json` — plan, lanes, task acceptance, phase milestones
-3. `docs/tracker.json`
-4. the specific domain's active code, migration state and executed test evidence
+3. `npm run progress -- --closure-next --lane=LNN` (or without a lane to inspect all open candidates)
+4. the selected OPEN task's domain code, migration state, required gates and executed test evidence
 5. `docs/tracker.json.execution.coordination` for the live claim/handoff rules
 
 `docs/planning/vnext-master-plan.md` and `docs/planning/vnext-execution-checklist.md` are **historical implementation references, not live progress trackers**. When they conflict, `AGENTS.md`, the closure-first strategy and `docs/tracker.json` control.
