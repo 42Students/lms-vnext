@@ -18,7 +18,7 @@ test("DB23 is source-staged, not runtime-verified", () => {
 
 test("DB23 persistence includes the three legacy durable families", () => {
   for (const table of ["log_alert_signatures","log_alert_signature_accounts","log_alert_states"]) {
-    assert.match(sql, new RegExp("CREATE TABLE "+table+" \\("));
+    assert.match(sql, new RegExp("CREATE TABLE(?: IF NOT EXISTS)? "+table+" \\("));
     assert.ok(schema.includes('"'+table+'"'));
   }
   for (const index of [
