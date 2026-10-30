@@ -1852,14 +1852,27 @@
             "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/41129846754",
             "result": "PASS_PARTIAL_REGISTERED_PG",
             "scope": "Registered nullable assignment_grade_events.source_action varchar(120) via forward-only 0319; native PG17 column/catalog proof passed alongside full registered DB018 matrix. DB41 staged history schema/SQL alignment source checks pass separately, not migration/producer cutover."
+          },
+          {
+            "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/41146091082",
+            "commitSha": "330dedaec54c7c7ed9cc55e5a5d04e431107b257",
+            "result": "PASS_PARTIAL_REGISTERED_PG17",
+            "scope": "321 registered forward-only journal migrations replayed and idempotent on disposable PostgreSQL 17. Registered 0320 grade-history INSERT tenant/actor/scope check and append-only row mutation/truncate guards are active. Dedicated source + catalog/negative tests 3/3 passed. No attendance history table, no attendance producer cutover, and no deferred grade-event completeness installed; DB045 remains OPEN."
           }
         ],
         "pending": [
-          "Compose grade-event upgrade against registered 0205 WITHOUT duplicate CREATE TABLE, register attendance version/current-row/history SQL, and preserve explicit PRESENT",
-          "Atomically cut over grade/publish and attendance mark/correction writers to exact immutable event insert and deferred completeness; no direct row delete for PRESENT",
-          "Execute all 30 DB045 negative/race/tenant/consumer acceptance witnesses in disposable PG17 at current main SHA"
+          "Register attendance version/current-row/history SQL and preserve explicit PRESENT without duplicate creation of existing assignment_grade_events",
+          "Atomically cut over faculty and administrator attendance mark/correction writes with complete immutable events and transactionally guarded revision ordering; evaluate/defer grade event completeness only with real registered producer and runtime proof",
+          "Execute DB045 full 30 negative/race/tenant/consumer acceptance witnesses on disposable PG17 at exact current main SHA"
         ],
-        "evidenceIsNotAcceptance": true
+        "evidenceIsNotAcceptance": true,
+        "registeredGradeGuards": {
+          "migration": "drizzle/0320_db045_grade_event_guards.sql",
+          "status": "REGISTERED_AND_EXECUTED_PARTIAL",
+          "receipt": "https://github.com/42Students/lms-vnext/actions/runs/41146091082",
+          "sourceSha": "330dedaec54c7c7ed9cc55e5a5d04e431107b257",
+          "notAcceptance": true
+        }
       }
     },
     {
