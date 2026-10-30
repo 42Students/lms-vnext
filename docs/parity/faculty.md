@@ -145,7 +145,69 @@ Legacy `QuizzesContent` runs in Faculty mode.
 - [x] Report resolves exact assigned Section through authoritative Faculty aggregate and reused authorized submission reader; wrong-tenant DB tests OPEN.
 
 
-**2026-10-30 closure-first source reconciliation — SOURCE-IMPLEMENTED, NOT IMPLEMENTATION GREEN:** The four previously unchecked implementation rows above are now source-verified, not newly built. Legacy oracle `42Students/lms2-fe@lms-dev-2026`, `src/components/Report/AssignmentReportContent.jsx` (blob `447876e8072a3cb1073567ed12284b91fd495091`), `src/utils/scoreDistribution.js` (blob `49088cf13dd5210c3682bf8586e3df01cc9fd970`). vNext `src/app/(authenticated)/teacher/report/assignment/[contentId]/page.tsx` (blob `2e8953f829dc9b057872f6f25d8f624baeb3d2e7`), `loading.tsx` (`10ac3b8c511d6182fdd200d9ff543453f586a601`), `error.tsx` (`0562e40edba69e4528a6b17954891bdf3580c0fc`), `src/components/courses/faculty-prototype-assignment-report.tsx` (`55b27f9bed433e150e55a5bd0b69289c51fe9b40`), `src/modules/courses/faculty-assessment-report-service.ts` (`1ff5b82923bb2bae84c38ddb6c080b5043d8f3aa`) and the existing `/grade` and `/submissions` routes show source-level coverage. An isolated execution compared old and new score bucket functions for five datasets (including 0, 59.5, 69.5, 89.5, empty and 201 half-point boundary values): **5/5 equal** under the legacy report's percentage rounding. Additional desktop/mobile assertions were authored in `tests/e2e/faculty-assignment-report.spec.ts` at commit `f41480a398d4c09904ded1c49851cfb2d5eb17c1`; **browser/PG tests were not executed in this pass**. Historic `- [x]` here means the required implementation was located and reconciled, **not** current-SHA acceptance. Formal `page-closure` receipt remains absent; code and source proof alone do not satisfy functional, authorization, desktop/mobile evidence, or design/release certification.
+**2026-10-30 closure-first source reconciliation — SOURCE-IMPLEMENTED, NOT IMPLEMENTATION GREEN:** The four previously unchecked implementation rows above are now source-verified, not newly built. Legacy oracle `42Students/lms2-fe@lms-dev-2026`, `src/components/Report/AssignmentReportContent.jsx` (blob `447876e8072a3cb1073567ed12284b91fd495091`), `src/utils/scoreDistribution.js` (blob `49088cf13dd5210c3682bf8586e3df01cc9fd970`). vNext `src/app/(authenticated)/teacher/report/assignment/[contentId]/page.tsx` (blob `2e8953f829dc9b057872f6f25d8f624baeb3d2e7`), `loading.tsx` (`10ac3b8c511d6182fdd200d9ff543453f586a601`), `error.tsx` (`0562e40edba69e4528a6b17954891bdf3580c0fc`), `src/components/courses/faculty-prototype-assignment-report.tsx` (`55b27f9bed433e150e55a5bd0b69289c51fe9b40`), `src/modules/courses/faculty-assessment-report-service.ts` (`1ff5b82923bb2bae84c38ddb6c080b5043d8f3aa`) and the existing `/grade` and `/submissions` routes show source-level coverage. An isolated execution compared old and new score bucket functions for five datasets (including 0, 59.5, 69.5, 89.5, empty and 201 half-point boundary values): **5/5 equal** under the legacy report's percentage rounding. Additional desktop/mobile assertions were authored in `tests/e2e/faculty-assignment-report.spec.ts` at commit `f41480a398d4c09904ded1c49851cfb2d5eb17c1`; the automatic focused [Faculty Assignment Report acceptance run 41106574850](https://github.com/42Students/lms-vnext/actions/runs/41106574850) subsequently **PASSED** at that exact commit: **2/2 desktop/mobile Chromium**, and **8/8 disposable PostgreSQL faculty Section authoring/integration tests**. The browser tests include an invalid report ID, empty grading view, ungraded distribution, CSV download and a foreign-delivery CSV denial. This is a scoped passing run, **not** the full CI/browser suite or evidence that graded and late-submission positive cases, interrupted loading/retry, runtime unknown-roster cases or all role/tenant negatives have been accepted. The browser job logs also contain two separate HTTP 500 `Network request failed` application events of unresolved attribution despite its test cases passing; these warrant inspection before page-level green. The checklist `- [x]` rows refer to source-implemented requirements. **Implementation Green remains OPEN**, and the acceptance receipt below records only the scope actually tested.
+
+<!-- page-closure
+{
+  "id": "faculty:assignment-report",
+  "implementation": {
+    "status": "open",
+    "legacyFeSha": "08db1a76d9ed390bf7ce8706e5b9bb6ea18b815a",
+    "legacyBeSha": "94ea965c01f89e688851ead087bee81d4dc3173b",
+    "vnextSha": "f41480a398d4c09904ded1c49851cfb2d5eb17c1",
+    "inventoryComplete": false,
+    "surfaces": [
+      "faculty-assignment-summary",
+      "five-band-score-distribution",
+      "missing-learner-rows",
+      "grading-drill-in",
+      "partial-roster-state",
+      "loading-and-error"
+    ],
+    "actions": [
+      "section-scoped-report-open",
+      "csv-download",
+      "open-grade-view",
+      "invalid-id-return"
+    ],
+    "states": [
+      "draft-with-no-grades",
+      "empty-submission-review",
+      "invalid-report-id",
+      "cross-tenant-csv-denial",
+      "desktop",
+      "mobile"
+    ],
+    "evidence": [
+      {
+        "kind": "browser-desktop",
+        "sha": "f41480a398d4c09904ded1c49851cfb2d5eb17c1",
+        "result": "passed",
+        "url": "https://github.com/42Students/lms-vnext/actions/runs/41106574850"
+      },
+      {
+        "kind": "browser-mobile",
+        "sha": "f41480a398d4c09904ded1c49851cfb2d5eb17c1",
+        "result": "passed",
+        "url": "https://github.com/42Students/lms-vnext/actions/runs/41106574850"
+      },
+      {
+        "kind": "faculty-authoring-postgres",
+        "sha": "f41480a398d4c09904ded1c49851cfb2d5eb17c1",
+        "result": "passed",
+        "url": "https://github.com/42Students/lms-vnext/actions/runs/41106574850"
+      }
+    ],
+    "outstanding": [
+      "Real graded and late-submission positive browser journeys and score-bucket verification with persisted grades",
+      "Current-Section missing learner and roster-unavailable runtime journeys",
+      "Full report authorization/tenant-negative, retry/error and security coverage at a known current SHA",
+      "Attribution/remediation or explicit permitted disposition for HTTP 500 server log events in browser acceptance",
+      "Independent full CI/browser gates and required release/source freeze"
+    ]
+  }
+}
+-->
 
 ## Page: Quiz Report — DONE (2026-10-14)
 
