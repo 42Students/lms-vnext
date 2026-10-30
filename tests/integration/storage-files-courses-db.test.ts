@@ -128,6 +128,7 @@ async function cleanup() {
   await q(`delete from course_section_deliveries where offering_id in (
       select co.id from course_offerings co join courses c on c.id = co.course_id where c.code like '${PREFIX}%')`);
   await q(`delete from course_offerings where course_id in (select id from courses where code like '${PREFIX}%')`);
+  await q(`delete from program_term_courses where course_id in (select id from courses where code like '${PREFIX}%')`);
   await q(`delete from courses where code like '${PREFIX}%'`);
   await q(`delete from section_enrollments where learner_enrollment_id in (
       select lpe.id from learner_program_enrollments lpe join programs p on p.id = lpe.program_id where p.code like '${PREFIX}%')`);
