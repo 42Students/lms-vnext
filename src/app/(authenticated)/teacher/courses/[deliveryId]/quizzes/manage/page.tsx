@@ -15,6 +15,7 @@ export default async function Page({params,searchParams}:{params:Promise<{delive
  const quizzes=workspace.lessons.flatMap(l=>l.quizzes.filter(x=>x.deliveryId===deliveryId).map(x=>({
   id:x.id,lessonId:l.id,title:x.title,description:x.description,dueAt:x.dueAt?.toISOString()??null,
   maxAttempts:x.maxAttempts,sequence:x.sequence,status:x.status,updatedAt:x.updatedAt.toISOString(),
+  shuffleQuestions:x.shuffleQuestions,shuffleOptions:x.shuffleOptions,
  })));
  return <div className="min-w-0 max-w-full space-y-4">
   <PageHeader eyebrow="Faculty · Courses" title="Section quizzes"
