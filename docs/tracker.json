@@ -714,7 +714,7 @@
       "done": false,
       "dependsOn": [],
       "implementationCheckpoint": {
-        "status": "IMPLEMENTED_AWAITING_INDEPENDENT_PG_ACCEPTANCE",
+        "status": "STAGED_PG17_NEGATIVE_MATRIX_PASSED_REGISTERED_RUNTIME_PENDING",
         "verifiedScope": "Exact bigint historical daily/overflow/spike counters; bounded recent threshold; HMAC account identity; out-of-order timestamps.",
         "sourceChecks": {
           "executed": 13,
@@ -729,11 +729,45 @@
           "tests/unit/log-alert-account-identity.test.ts"
         ],
         "openEvidence": [
-          "Execute TypeScript unit suite, registered PostgreSQL history/retention and multithread/identity negative tests at exact current main SHA",
-          "L10 independent DB-023 witness pending"
+          "Staged PostgreSQL 17 schema and SQL negatives PASS in run 41106843101 (not registered SQL)",
+          "Register DB10 log-alert tables through L01, then run registered PostgreSQL producer/consumer, privacy/authorization and two-session race acceptance",
+          "Independently verify 24-field DB10 scope and recorded owner decisions; do not enable runtime flag or mark done before those gates"
         ],
-        "recordedOn": "2026-10-29",
-        "evidenceIsNotAcceptance": true
+        "recordedOn": "2026-10-30",
+        "evidenceIsNotAcceptance": true,
+        "stagedSchemaProgress": {
+          "recordedOn": "2026-10-30",
+          "stageSql": "scripts/sql/db10-log-alerts-staging.sql",
+          "draftSchema": "src/db/schema/db10-log-alerts.draft.ts",
+          "sourceCommits": [
+            "9b1a8677d6a0ec7e9a9a693ac815108639bcb88b",
+            "bd12a7e9c652a7dba91144ff2fb476b57b64d190",
+            "d84f7b1ca460c3a2b09117eb65e1821a578a33ce",
+            "18b0d5e0ae2562887e0eebafc2d7d1a5ff8c0458",
+            "e84620e71c3dd3793ee982aa7a80b2779444b86b"
+          ],
+          "executedEvidence": [
+            {
+              "kind": "EXECUTED_STAGED_POSTGRESQL_17_NOT_REGISTERED",
+              "result": "PASS",
+              "commitSha": "bd12a7e9c652a7dba91144ff2fb476b57b64d190",
+              "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/41106843101",
+              "jobId": 124238784099,
+              "runner": "GitHub Actions ubuntu-latest Node 22 and isolated postgres:17-alpine",
+              "scope": "Clean registered migration replay then rollback-only overlay of all five DB023 draft tables. Exact bigint/daily/overflow history, canonical cursor state, HMAC-shape identity, duplicate uniqueness, foreign-key and CHECK SQLSTATE negatives; no registered DB10 migration, provider delivery, account authorization or concurrency certification.",
+              "notAcceptance": true
+            }
+          ],
+          "sourceTest": "tests/db10-log-alerts-staging.test.mjs",
+          "postgresTest": "tests/db023-staged-log-alerts-pg.test.mjs",
+          "workflow": ".github/workflows/db023-log-alerts-staged-pg-acceptance.yml",
+          "pending": [
+            "L01 review and register forward-only five-table DB10 migration and Drizzle snapshot/barrel without skipping global drift resolution",
+            "Execute current registered PostgreSQL replay and full producer/reporter/scheduler consumers at exact SHA with runtime readiness enabled only after migration certification",
+            "Execute two-session concurrent signature/account and cursor lease race witnesses plus redaction, retention, role-scope and blast-radius privacy negatives",
+            "Prove exact legacy-to-vNext DB10 24-field disposition and independently accept DB-023; stage-only green must never set done:true"
+          ]
+        }
       }
     },
     {
