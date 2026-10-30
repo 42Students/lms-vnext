@@ -46,8 +46,8 @@ describe.skipIf(!enabled)("College elective slot create/edit isolated PostgreSQL
     };
     const marker = "elw-" + ids.program.slice(0, 8);
     await expect(getDb().transaction(async tx => {
-      await tx.execute(sql`insert into academic_periods(id,college_id,name,code,start_date,end_date)
-        values (${ids.period},${SEED_IDS.collegeA},${marker},${marker},'2026-07-01','2026-12-31')`);
+      await tx.execute(sql`insert into academic_periods(id,college_id,name,code,start_date,end_date,status)
+        values (${ids.period},${SEED_IDS.collegeA},${marker},${marker},'2026-07-01','2026-12-31','ACTIVE')`);
       await tx.execute(sql`insert into programs(id,department_id,name,code,duration_terms)
         values (${ids.program},${SEED_IDS.departmentA},${marker},${marker},4)`);
       const runCreate = (ctx: RequestContext, raw: unknown) =>
@@ -58,7 +58,11 @@ describe.skipIf(!enabled)("College elective slot create/edit isolated PostgreSQL
         programId: ids.program, academicPeriodId: ids.period,
         // A freshly created cohort starts in term 1. Match the persisted
         // cohort progression; a term-2 elective would correctly be denied.
-        semesterNumber: 1, academicYear: "2026-27",
+        // This tests the slot selection lock, not academic-year matching.
+        // The DB03 year mismatch rejection has dedicated positive/negative
+        // PostgreSQL coverage in groups-db03.test.ts. Use a period-bound
+        // slot with no extra year filter so the valid learner roster can form.
+        semesterNumber: 1, academicYear: null,
         name: marker, description: null,
         credits: 3, minPick: 1, maxPick: 2, confirm: true,
       };
