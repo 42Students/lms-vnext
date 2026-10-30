@@ -111,6 +111,8 @@ jobs:
         run: node --test tests/prototype-parity-shell-contract.test.mjs
       - name: Nine-domain crosswalk regression
         run: node --test tests/db019-crosswalk-identity.test.mjs
+      - name: Global 2,829-field census and unresolved-evidence preflight
+        run: node --test tests/db019-source-ledger-preflight.test.mjs
       - name: Global source audit and crosswalk gate
         shell: bash
         run: |
