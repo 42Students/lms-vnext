@@ -11,6 +11,16 @@ export function FacultyContactsLiveSearch({baseHref,initialSearch,pageSize}:{
  const router=useRouter();
  const [value,setValue]=useState(initialSearch);
  useEffect(()=>{
+  // Next's soft navigation preserves this component. Browser Back/Forward
+  // must restore the URL-owned search, not replay a stale debounced draft.
+  const restoreFromHistory=()=>{
+   const query=new URLSearchParams(window.location.search).get("q")??"";
+   setValue(query.trim());
+  };
+  window.addEventListener("popstate",restoreFromHistory);
+  return ()=>window.removeEventListener("popstate",restoreFromHistory);
+ },[]);
+ useEffect(()=>{
   // Live filtering follows the legacy Contacts grid. Keep server-side
   // role masking authoritative; never fetch or search hidden contact fields.
   if(value.trim()===initialSearch)return;
@@ -38,4 +48,13 @@ export function FacultyContactsLiveSearch({baseHref,initialSearch,pageSize}:{
    className="absolute right-1"
    >×</Button>:null}
  </div>;
+}
+
+/** A same-URL Link can reuse a cached App Router payload after a failed
+ * server directory read. Refresh forces a new RSC request and DB attempt. */
+export function FacultyContactsRetry(){
+ const router=useRouter();
+ return <Button type="button" variant="secondary" onClick={()=>router.refresh()}>
+  Retry contacts
+ </Button>;
 }
