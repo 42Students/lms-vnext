@@ -62,6 +62,29 @@ test("closure protocol fails closed on wrong lane ownership or missing executabl
   assert.ok(inspectTracker(duplicate).errors.some(e=>e.code==="INVALID_CLOSURE_FIRST_FOCUS"));
 });
 
+test("a stage-only accepted task cannot erase its remaining runtime implementation", () => {
+  const doc=fresh();
+  const stage=doc.tasks.find(t => t.done &&
+    /^EXECUTED_SCOPED_SOURCE.*ENGINEERING_ACCEPTANCE$/.test(t.closureBasis ?? ""));
+  assert.ok(stage,"Expected an existing scoped stage acceptance fixture");
+  const noOwners=clone(doc);
+  noOwners.tasks.find(t=>t.id===stage.id).remainingDistinctIntegrationTasks=[];
+  assert.ok(inspectTracker(noOwners).errors.some(e =>
+    e.code==="STAGED_SCOPE_MISSING_DISTINCT_RUNTIME_OWNER" && e.id===stage.id));
+  const noBoundary=clone(doc);
+  delete noBoundary.tasks.find(t=>t.id===stage.id).notInThisTaskAcceptance;
+  assert.ok(inspectTracker(noBoundary).errors.some(e =>
+    e.code==="STAGED_SCOPE_MISSING_DISTINCT_RUNTIME_OWNER" && e.id===stage.id));
+  const noScope=clone(doc);
+  noScope.tasks.find(t=>t.id===stage.id).acceptanceScope="";
+  assert.ok(inspectTracker(noScope).errors.some(e =>
+    e.code==="STAGED_SCOPE_MISSING_DISTINCT_RUNTIME_OWNER" && e.id===stage.id));
+  const noSemantics=clone(doc);
+  delete noSemantics.execution.closureFirstProtocol.scopeSemantics;
+  assert.ok(inspectTracker(noSemantics).errors.some(e =>
+    e.code==="INVALID_CLOSURE_SCOPE_SEMANTICS"));
+});
+
 test("explicit closure-first instructions are visible to every entrypoint", () => {
   const agent=readFileSync("AGENTS.md","utf8");
   const readme=readFileSync("README.md","utf8");
