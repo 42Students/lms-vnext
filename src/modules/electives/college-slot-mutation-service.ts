@@ -26,7 +26,7 @@ export class CollegeElectiveSlotMutationError extends Error {
     "ELECTIVE_SLOT_NOT_FOUND" | "ELECTIVE_PROGRAM_NOT_FOUND" |
     "ELECTIVE_PERIOD_INVALID" | "ELECTIVE_SEMESTER_INVALID" |
     "ELECTIVE_SLOT_STALE" | "ELECTIVE_SELECTION_LOCKED" |
-    "ELECTIVE_YEAR_INVALID" | "ELECTIVE_SLOT_ARCHIVED") {
+    "ELECTIVE_PICK_RANGE_INVALID" | "ELECTIVE_YEAR_INVALID" | "ELECTIVE_SLOT_ARCHIVED") {
     super(code); this.name = "CollegeElectiveSlotMutationError";
   }
 }
@@ -137,6 +137,12 @@ export async function updateCollegeElectiveSlot(
       throw new CollegeElectiveSlotMutationError("ELECTIVE_SLOT_ARCHIVED");
     if (slot.version !== input.expectedVersion)
       throw new CollegeElectiveSlotMutationError("ELECTIVE_SLOT_STALE");
+    // Existing legacy rows can retain historic pick ranges above the new
+    // browser cap, but no mutation may introduce or increase an over-cap limit.
+    // Check under the slot FOR UPDATE lock, never against client-sent originals.
+    if ((input.minPick > 10 && input.minPick !== slot.minPick) ||
+        (input.maxPick > 10 && input.maxPick !== slot.maxPick))
+      throw new CollegeElectiveSlotMutationError("ELECTIVE_PICK_RANGE_INVALID");
     await assertPersistedGroupActor(tx, context, { collegeId: member.collegeId, mode: "MANUAL" });
     const nextProgramId = input.programId ?? slot.programId;
     const nextSemesterNumber = input.semesterNumber ?? slot.semesterNumber;
