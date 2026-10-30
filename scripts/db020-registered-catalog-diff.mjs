@@ -92,12 +92,12 @@ try{
          cardinality(c.conkey)::int AS child_columns,
          c.confdeltype,c.confupdtype,
          ARRAY(
-          SELECT a.attname FROM unnest(c.conkey) WITH ORDINALITY k(attnum,ord)
+          SELECT a.attname::text FROM unnest(c.conkey) WITH ORDINALITY k(attnum,ord)
            JOIN pg_attribute a ON a.attrelid=c.conrelid AND a.attnum=k.attnum
            ORDER BY k.ord
          ) AS columns_from,
          ARRAY(
-          SELECT a.attname FROM unnest(c.confkey) WITH ORDINALITY k(attnum,ord)
+          SELECT a.attname::text FROM unnest(c.confkey) WITH ORDINALITY k(attnum,ord)
            JOIN pg_attribute a ON a.attrelid=c.confrelid AND a.attnum=k.attnum
            ORDER BY k.ord
          ) AS columns_to
