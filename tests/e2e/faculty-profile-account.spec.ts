@@ -42,6 +42,12 @@ for(const view of [{name:"desktop",width:1280,height:800},{name:"mobile",width:3
    });
    expect(initialResponse.status).toBe(200);
    const original:string=initialResponse.body.document.about.description;
+   const originalSections={
+    about:initialResponse.body.document.about,
+    contact:initialResponse.body.document.contact,
+    address:initialResponse.body.document.address,
+    socialProfiles:initialResponse.body.document.socialProfiles,
+   };
    const oldVersion:number=initialResponse.body.version;
    const marker="Faculty account closure proof "+randomUUID().slice(0,10);
    try{
@@ -68,6 +74,29 @@ for(const view of [{name:"desktop",width:1280,height:800},{name:"mobile",width:3
     });
     expect(afterStale.status).toBe(200);
     expect(afterStale.body.document.about.description).toBe(marker);
+    // Exercise actual browser forms, not only direct service calls. Each
+    // Section persists independently and reloads its confirmed version.
+    for(const row of [
+     {form:"Contacts",field:"Primary mobile",section:"contact",key:"contactMobile",value:"9876543219"},
+     {form:"Address",field:"Current city",section:"address",key:"currentCity",value:"Hyderabad"},
+     {form:"Social Profiles",field:"LinkedIn",section:"socialProfiles",key:"linkedIn",value:"https://www.linkedin.com/in/faculty-acceptance"},
+    ]){
+     const form=page.getByRole("form",{name:row.form});
+     await form.getByRole("textbox",{name:row.field}).fill(row.value);
+     const saved=page.waitForResponse(response=>response.request().method()==="PATCH" &&
+      new URL(response.url()).pathname==="/api/people/faculty-self-document");
+     await form.getByRole("button",{name:"Save "+row.form}).click();
+     expect((await saved).status()).toBe(200);
+     await page.reload();
+     await expect(page.getByRole("form",{name:row.form}).getByRole("textbox",{name:row.field}))
+      .toHaveValue(row.value);
+     const persisted=await page.evaluate(async(section)=>{
+      const response=await fetch("/api/people/faculty-self-document?section="+encodeURIComponent(section));
+      return {status:response.status,body:await response.json()};
+     },row.section);
+     expect(persisted.status).toBe(200);
+     expect(persisted.body.value[row.key]).toBe(row.value);
+    }
     if(view.name==="mobile"){
      const width=await page.evaluate(()=>document.documentElement.scrollWidth);
      expect(width).toBeLessThanOrEqual(view.width+1);
@@ -76,16 +105,20 @@ for(const view of [{name:"desktop",width:1280,height:800},{name:"mobile",width:3
    } finally {
     // The seed identity is shared by other suites. Restore its initial
     // persisted value even if an assertion fails after the mutation.
-    const restored=await page.evaluate(async(description)=>{
-      const read=await fetch("/api/people/faculty-self-document");
-      if(!read.ok)return read.status;
-      const body=await read.json();
-      const response=await fetch("/api/people/faculty-self-document",{
-       method:"PATCH",headers:{"Content-Type":"application/json"},
-       body:JSON.stringify({section:"about",value:{description},expectedVersion:body.version}),
-      });
-      return response.status;
-    },original).catch(()=>0);
+    const restored=await page.evaluate(async(snapshots)=>{
+      for(const [section,value] of Object.entries(snapshots)){
+       const read=await fetch("/api/people/faculty-self-document");
+       if(!read.ok)return read.status;
+       const body=await read.json();
+       if(JSON.stringify(body.document[section])===JSON.stringify(value))continue;
+       const response=await fetch("/api/people/faculty-self-document",{
+        method:"PATCH",headers:{"Content-Type":"application/json"},
+        body:JSON.stringify({section,value,expectedVersion:body.version}),
+       });
+       if(!response.ok)return response.status;
+      }
+      return 200;
+    },originalSections).catch(()=>0);
     expect(restored).toBe(200);
    }
   });
