@@ -53,7 +53,7 @@ const allHits = [...schemaHits, ...placementHits];
 // non-provenance HR expression unless it has an individually reviewed shape.
 function isReviewedNonProvenanceHr(text) {
   if (/^(?:\/\/|\/\*|\*|--)/.test(text)) return true;
-  return /legacyInterviewType|interviewType|type:z\.enum|\bTECHNICAL:|\.includes\(filters\.type\)|HR interview|HR Round|Technical, HR|start the HR/i.test(text);
+  return /legacyInterviewType|interviewType|type:z\.enum|\bTECHNICAL:|\.includes\(filters\.type\)|HR interview|HR Round|Technical, HR|start the HR|kind:"INTERVIEW",name:"HR"/i.test(text);
 }
 const allowedFiles = new Set([
   "src/db/schema/placements.ts",
@@ -78,6 +78,19 @@ const resultService = readFileSync(
 const sourceModel = readFileSync(
   resolve("src/modules/placements/round-result-source-model.ts"),
   "utf8",
+);
+const historicalValidation = readFileSync(
+  resolve("src/modules/placements/validation.ts"),
+  "utf8",
+);
+assert.match(
+  historicalValidation,
+  /recruiter:"RECRUITER",PANELIST:"PANELIST",DRIVE_DAY:"DRIVE_DAY"/,
+  "final historical normalization must preserve recruiter/panelist/drive-day source identity",
+);
+assert.doesNotMatch(
+  historicalValidation,
+  /recruiter:"HR",PANELIST:"FACULTY",DRIVE_DAY:"TPO"/,
 );
 const candidate = readFileSync(
   resolve("docs/planning/sql/db08-recruiter-round-result-code-candidate.sql"),
