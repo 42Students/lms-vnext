@@ -4,6 +4,7 @@ import {
   boolean,
   check,
   date,
+  foreignKey,
   index,
   integer,
   jsonb,
@@ -93,6 +94,10 @@ export const courses = pgTable(
       .defaultNow(),
   },
   (table) => [
+    // Already registered in PostgreSQL: recursive course ancestry cannot
+    // point at a deleted or nonexistent catalog course.
+    foreignKey({name:"courses_parent_course_id_fkey",
+      columns:[table.parentCourseId],foreignColumns:[table.id]}).onDelete("restrict"),
     uniqueIndex("courses_active_department_name_trim_uq")
       .on(
         table.departmentId,

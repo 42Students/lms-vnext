@@ -4,7 +4,7 @@
  * This is not the bug_reports tracker schema.
  */
 import {sql} from "drizzle-orm";
-import {pgTable,uuid,varchar,text,timestamp,integer,jsonb,uniqueIndex,index,check} from "drizzle-orm/pg-core";
+import {pgTable,uuid,varchar,text,timestamp,integer,jsonb,uniqueIndex,index,check,foreignKey} from "drizzle-orm/pg-core";
 import {users} from "./users";
 
 export const db10AuditFindings=pgTable("audit_findings",{
@@ -39,6 +39,10 @@ export const db10AuditFindings=pgTable("audit_findings",{
   importedAt:timestamp("imported_at",{withTimezone:true}).notNull().defaultNow(),
   updatedAt:timestamp("updated_at",{withTimezone:true}).notNull().defaultNow(),
 },t=>[
+  // Mirrors the registered duplicate-of FK; self-reference is optional
+  // but must never point to a nonexistent historical audit finding.
+  foreignKey({name:"db10_audit_findings_duplicate_fk",
+    columns:[t.duplicateOf],foreignColumns:[t.id]}).onDelete("restrict"),
   uniqueIndex("db10_audit_findings_external_id_uq").on(t.externalId),
   index("db10_audit_findings_status_severity_idx").on(t.status,t.severity,t.foundAt),
   index("db10_audit_findings_area_kind_idx").on(t.area,t.kind),

@@ -14,6 +14,7 @@ on:
       - "src/db/schema/tpo-company-team.ts"
       - "src/db/schema/academics.ts"
       - "src/db/schema/courses.ts"
+      - "src/db/schema/db10-audit-findings.draft.ts"
       - "src/modules/people/e2e-fixture-seed-service.ts"
       - "src/db/schema/storage-files.ts"
       - "src/db/schema/placement-general-requests.ts"
