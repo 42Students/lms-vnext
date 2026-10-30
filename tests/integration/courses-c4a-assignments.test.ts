@@ -939,6 +939,25 @@ describe("courses C4A assignments against PostgreSQL", () => {
         },
       );
 
+    // DB045: a direct SQL grade or feedback edit cannot commit without its
+    // immutable 0205 ledger transition. A denied write must preserve the CAS token.
+    await expect(pool.query(
+      `update assignment_submissions set grading_status='GRADED',
+         points_awarded=3, graded_by_user_id=$2, graded_at=now(),
+         version=version+1 where id=$1`,
+      [submission.id, faculty.user.id],
+    )).rejects.toMatchObject({ code: "23514" });
+    await expect(pool.query(
+      `update assignment_submissions set feedback='unaudited edit',
+         version=version+1 where id=$1`,
+      [submission.id],
+    )).rejects.toMatchObject({ code: "23514" });
+    const unaltered = await pool.query<{version:number, grading_status:string}>(
+      "select version,grading_status from assignment_submissions where id=$1",
+      [submission.id],
+    );
+    expect(unaltered.rows[0]).toMatchObject({ version: 0, grading_status: "NOT_GRADED" });
+
     await expect(
       gradeAssignmentSubmission(
         collegeAdmin,

@@ -34,7 +34,7 @@ async function mustReject23514(work) {
 }
 
 test("DB045 registered grade-ledger INSERT, row-mutation and TRUNCATE guards active", async () => {
-  assert.equal(journal.entries.at(-1)?.tag, "0320_db045_grade_event_guards");
+  assert.equal(journal.entries.at(-1)?.tag, "0321_db045_grade_event_completeness");
   await withRollback(async db => {
     const { rows } = await db.query(`
       SELECT tgname,tgenabled FROM pg_trigger
@@ -42,13 +42,15 @@ test("DB045 registered grade-ledger INSERT, row-mutation and TRUNCATE guards act
         AND NOT tgisinternal AND tgname IN (
           'db06_grade_event_scope_guard',
           'db06_grade_events_no_mutation',
-          'db06_grade_events_no_truncate'
+          'db06_grade_events_no_truncate',
+          'db06_assignment_grade_event_required'
         )
     `);
     assert.deepEqual(rows.map(x => x.tgname).sort(), [
       "db06_grade_event_scope_guard",
       "db06_grade_events_no_mutation",
       "db06_grade_events_no_truncate",
+      "db06_assignment_grade_event_required",
     ].sort());
     assert.ok(rows.every(x => x.tgenabled === "O" || x.tgenabled === "A"));
   });

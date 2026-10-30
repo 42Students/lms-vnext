@@ -5,6 +5,9 @@ on:
     branches: [main]
     paths:
       - "drizzle/0320_db045_grade_event_guards.sql"
+      - "drizzle/0321_db045_grade_event_completeness.sql"
+      - "drizzle/meta/0321_snapshot.json"
+      - "drizzle/meta/_journal.json"
       - "drizzle/meta/0320_snapshot.json"
       - "tests/db045-registered-grade-history-pg.test.mjs"
       - "tests/support/db045-immutable-grade-fixture-cleanup.mjs"
