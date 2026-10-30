@@ -1,0 +1,66 @@
+name: DB-001 standalone verifier with disposable PostgreSQL 17
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - "scripts/db-independent-verify.mjs"
+      - "scripts/db-independent-verifier-redaction.mjs"
+      - "scripts/db-independent-verifier-generation-guard.mjs"
+      - ".github/workflows/db001-independent-verifier-acceptance.yml"
+permissions:
+  contents: read
+concurrency:
+  group: db001-independent-verify-${{ github.ref }}
+  cancel-in-progress: false
+jobs:
+  stand-alone-command:
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    services:
+      postgres:
+        image: postgres:17-alpine
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: lms_vnext_test
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres -d lms_vnext_test"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 20
+    env:
+      # Exact same CLI/target mode runs outside CI. The runner merely supplies
+      # a disposable PG17 target, not a CI-specific verifier implementation.
+      TEST_DATABASE_URL: postgresql://postgres:postgres@127.0.0.1:5432/lms_vnext_test
+      DATABASE_URL: ""
+      DB_VERIFY_EVIDENCE_PATH: .verification/db001-pinned.json
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Pin exact code SHA and clean checkout before independent command
+        run: |
+          test "$(git rev-parse HEAD)" = "$GITHUB_SHA"
+          test -z "$(git status --porcelain)"
+          node --check scripts/db-independent-verify.mjs
+      - name: Execute all 12 independently invocable verification gates
+        run: npm run db:verify:independent
+      - name: Prove independent evidence really passed on pinned source
+        if: success()
+        run: |
+          node --input-type=module -e 'import fs from "node:fs"; const e=JSON.parse(fs.readFileSync(".verification/db001-pinned.json","utf8")); if(!e.passed || !e.gitHeadUnchanged || !e.sourceTreeCleanAtEnd || e.steps.length!==12 || e.steps.some(s=>s.exitCode!==0)) process.exit(1); console.log("DB001 12/12 PASS",e.gitSha,"runInActions=",e.githubActionsUsed);'
+      - name: Retain redacted acceptance or failure receipt
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: db001-independent-verifier-evidence
+          path: .verification/db001-pinned.json
+          retention-days: 7
+          if-no-files-found: warn
