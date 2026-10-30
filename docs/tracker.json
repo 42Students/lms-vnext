@@ -1162,8 +1162,31 @@
       "id": "DB-035",
       "title": "Stage DB06 immutable grading and attendance correction history",
       "phase": "DATABASE",
-      "done": false,
-      "dependsOn": []
+      "done": true,
+      "dependsOn": [],
+      "acceptedAt": "2026-10-30T19:58:50.777Z",
+      "closureBasis": "EXECUTED_SCOPED_SOURCE_STAGE_ENGINEERING_ACCEPTANCE",
+      "acceptanceEvidence": [
+        {
+          "kind": "EXECUTED_SCOPED_SOURCE_STAGE_ENGINEERING_ACCEPTANCE",
+          "commitSha": "3866723a4bb6871769973145d7f14c0d4ae611ab",
+          "exitCode": 0,
+          "result": "PASS",
+          "runner": "GitHub Actions ubuntu-latest Node 22, Single Execution Tracker Acceptance / verify, DB06 staging contracts step",
+          "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/41119480257/job/124282229483",
+          "commands": [
+            "node --test tests/db06-history-staging.test.mjs tests/db06-assessment-retention-staging.test.mjs"
+          ],
+          "scope": "Source/staged SQL and source-ledger contracts only, not registered PostgreSQL, live producers, or phase acceptance.",
+          "taskId": "DB-035"
+        }
+      ],
+      "remainingDistinctIntegrationTasks": [
+        "DB-009",
+        "DB-045"
+      ],
+      "acceptanceScope": "Completed bounded source-only staging of immutable assignment-grade and attendance correction history: actor/tenant provenance, exact parent keys, append-only/completeness/version/retention guards, compatibility and contract tests.",
+      "notInThisTaskAcceptance": "Not a registered migration or live grading/attendance event-producer cutover. DB-009 and DB-045 remain OPEN for atomic production integration, PostgreSQL negative/race witnesses and registered replay."
     },
     {
       "id": "DB-036",
@@ -1236,8 +1259,31 @@
       "id": "DB-038",
       "title": "Stage DB06 submitted assessment immutability and retention",
       "phase": "DATABASE",
-      "done": false,
-      "dependsOn": []
+      "done": true,
+      "dependsOn": [],
+      "acceptedAt": "2026-10-30T19:58:50.777Z",
+      "closureBasis": "EXECUTED_SCOPED_SOURCE_STAGE_ENGINEERING_ACCEPTANCE",
+      "acceptanceEvidence": [
+        {
+          "kind": "EXECUTED_SCOPED_SOURCE_STAGE_ENGINEERING_ACCEPTANCE",
+          "commitSha": "3866723a4bb6871769973145d7f14c0d4ae611ab",
+          "exitCode": 0,
+          "result": "PASS",
+          "runner": "GitHub Actions ubuntu-latest Node 22, Single Execution Tracker Acceptance / verify, DB06 staging contracts step",
+          "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/41119480257/job/124282229483",
+          "commands": [
+            "node --test tests/db06-history-staging.test.mjs tests/db06-assessment-retention-staging.test.mjs"
+          ],
+          "scope": "Source/staged SQL and source-ledger contracts only, not registered PostgreSQL, live producers, or phase acceptance.",
+          "taskId": "DB-038"
+        }
+      ],
+      "remainingDistinctIntegrationTasks": [
+        "DB-009",
+        "DB-053"
+      ],
+      "acceptanceScope": "Completed bounded source-only staging of retained immutable quiz attempts/answers and assignment learner payload: quiz definition guards, scoring/snapshot/sequence constraints, non-destructive preflight and source contract tests.",
+      "notInThisTaskAcceptance": "Not a registered retention migration or PostgreSQL proof; does not cover unregistered private assignment upload receipts. DB-009 and DB-053 remain OPEN for runtime integration and private-file protection."
     },
     {
       "id": "DB-039",
@@ -3355,13 +3401,14 @@
         },
         {
           "id": "DB-035",
-          "discovery": "SOURCE_REVIEWED",
-          "implementation": "SOURCE_STAGED",
-          "verification": "STAGED_NOT_VERIFIED",
+          "discovery": "ACCEPTED_BY_CANONICAL_DONE",
+          "implementation": "ACCEPTED_BY_CANONICAL_DONE",
+          "verification": "ACCEPTED_BY_CANONICAL_DONE",
           "basis": {
             "source": "RETIRED_2026_10_12_QUEUE",
             "taskId": "DB-035"
-          }
+          },
+          "acceptanceRunUrl": "https://github.com/42Students/lms-vnext/actions/runs/41119480257/job/124282229483"
         },
         {
           "id": "DB-036",
@@ -3385,13 +3432,14 @@
         },
         {
           "id": "DB-038",
-          "discovery": "SOURCE_REVIEWED",
-          "implementation": "SOURCE_STAGED",
-          "verification": "STAGED_NOT_VERIFIED",
+          "discovery": "ACCEPTED_BY_CANONICAL_DONE",
+          "implementation": "ACCEPTED_BY_CANONICAL_DONE",
+          "verification": "ACCEPTED_BY_CANONICAL_DONE",
           "basis": {
             "source": "RETIRED_2026_10_12_QUEUE",
             "taskId": "DB-038"
-          }
+          },
+          "acceptanceRunUrl": "https://github.com/42Students/lms-vnext/actions/runs/41119480257/job/124282229483"
         },
         {
           "id": "DB-039",
