@@ -12,6 +12,7 @@ const registeredDb02 = read("drizzle/0303_db02_academic_timetable_registered.sql
 const registeredDb03 = read("drizzle/0306_db03_elective_kernel_integrity.sql");
 const db03 = read("scripts/sql/db03-elective-learner-integrity-post-db02-staging.sql");
 const rosterTests = read("tests/integration/groups-db03-roster.test.ts");
+const electiveIntegrationTests = read("tests/integration/groups-db03.test.ts");
 
 test("joinGroup revalidates elective eligibility before idempotent return", () => {
   const join = service.slice(service.indexOf("export async function joinGroup("),
@@ -53,7 +54,7 @@ test("elective offering edits reject disabled and soft-deleted courses", () => {
   assert.doesNotMatch(edit, /\.innerJoin\(departments, eq\(departments\.id, programs\.departmentId\)\)/);
   assert.match(edit, /group\.ownerScope !== "COLLEGE"/);
   assert.match(edit, /group\.kind !== "ELECTIVE"/);
-  assert.match(rosterTests,
+  assert.match(electiveIntegrationTests,
     /rejects elective reassignment to disabled or deleted courses without mutating/);
 });
 
@@ -65,7 +66,7 @@ test("elective rebind never detaches its GROUP_BACKED class period", () => {
   assert.match(edit, /eq\(groupBackedClassOfferings\.rosterGroupId, group\.id\)/);
   assert.match(edit, /eq\(groupBackedClassOfferings\.status, "ACTIVE"\)/);
   assert.match(edit, /backedClass\.academicPeriodId !== delivery\.offeringPeriodId/);
-  assert.match(rosterTests, /rejects cross-period elective rebind that would orphan/);
+  assert.match(electiveIntegrationTests, /rejects cross-period elective rebind that would orphan/);
 });
 
 test("elective create and edit lock source course against concurrent disable", () => {
