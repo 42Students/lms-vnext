@@ -91,4 +91,79 @@ describe("DB10 skills catalog source-backed PostgreSQL consumer", () => {
     });
     expect(requireItems(result)).toHaveLength(2);
   });
+
+  it("enforces folded catalog uniqueness and rejects invalid source-backed skill values", async () => {
+    await expect(pool.query(
+      "insert into skills (name,display_name) values ($1,'Duplicate')",
+      [names[0].toUpperCase()],
+    )).rejects.toMatchObject({code:"23505"});
+    await expect(pool.query(
+      "insert into skills (name,display_name) values ('   ','Blank name')",
+    )).rejects.toMatchObject({code:"23514"});
+    await expect(pool.query(
+      "update skills set usage_count=-1 where id=$1",[ids[0]],
+    )).rejects.toMatchObject({code:"23514"});
+    await expect(pool.query(
+      "update skills set search_priority=101 where id=$1",[ids[0]],
+    )).rejects.toMatchObject({code:"23514"});
+    await expect(pool.query(
+      "insert into skill_synonyms (skill_id,synonym) values ($1,'unknown parent')",
+      [crypto.randomUUID()],
+    )).rejects.toMatchObject({code:"23503"});
+  });
+
+  it("allows repeated aliases without accidentally merging distinct skill IDs", async () => {
+    const inserted=await pool.query<{id:string}>(
+      "insert into skill_synonyms (skill_id,synonym) values ($1,$2) returning id",
+      [ids[0],synonym],
+    );
+    const extraId=inserted.rows[0]!.id;
+    try {
+      const result=await readSkillCatalog({mode:"search",query:synonym,limit:10});
+      expect(requireItems(result).map(row=>row.name).sort()).toEqual(names.slice(0,2).sort());
+    } finally {
+      await pool.query("delete from skill_synonyms where id=$1",[extraId]);
+    }
+  });
+
+  it("keeps the catalog count independent of the free-text usage counter", async () => {
+    const previous=(await pool.query<{usage_count:number}>(
+      "select usage_count from skills where id=$1",[ids[1]],
+    )).rows[0]!.usage_count;
+    try {
+      await pool.query("update skills set usage_count=usage_count+3 where id=$1",[ids[1]]);
+      const rows=await pool.query<{usage_count:number}>(
+        "select usage_count from skill_usage where skill_name=$1",[names[1]],
+      );
+      expect(rows.rows[0]?.usage_count).toBe(500);
+    } finally {
+      await pool.query("update skills set usage_count=$1 where id=$2",[previous,ids[1]]);
+    }
+  });
+
+  it("atomically counts 20 concurrent free-text uses without needing a catalog parent", async () => {
+    const key="w06unknown"+suffix;
+    try {
+      await Promise.all(Array.from({length:20},()=>pool.query(
+        `insert into skill_usage(skill_name,usage_count,last_used)
+           values ($1,1,clock_timestamp())
+           on conflict (skill_name) do update
+             set usage_count=skill_usage.usage_count+1,
+                 last_used=clock_timestamp()`,
+        [key],
+      )));
+      const usage=await pool.query<{usage_count:number}>(
+        "select usage_count from skill_usage where skill_name=$1",[key],
+      );
+      expect(usage.rows[0]?.usage_count).toBe(20);
+      const catalog=await pool.query("select id from skills where name=$1",[key]);
+      expect(catalog.rows).toHaveLength(0);
+      const existing=await pool.query<{usage_count:number}>(
+        "select usage_count from skills where id=$1",[ids[0]],
+      );
+      expect(existing.rows[0]?.usage_count).toBe(90);
+    } finally {
+      await pool.query("delete from skill_usage where skill_name=$1",[key]);
+    }
+  });
 });
