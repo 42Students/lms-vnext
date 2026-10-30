@@ -9,6 +9,8 @@ on:
       - "src/components/people/faculty-profile-editor.tsx"
       - "src/components/people/faculty-avatar-upload.tsx"
       - "src/modules/people/faculty-profile-readiness.ts"
+      - "src/modules/people/faculty-profile-completeness-model.ts"
+      - "tests/unit/faculty-profile-completeness-closure.test.ts"
       - "src/modules/people/faculty-profile-self.staged.ts"
       - "src/modules/people/faculty-self-section-service.ts"
       - "tests/unit/faculty-profile-page-closure.test.tsx"
@@ -64,6 +66,7 @@ jobs:
         run: >-
           npx vitest run
           tests/unit/faculty-profile-page-closure.test.tsx
+          tests/unit/faculty-profile-completeness-closure.test.ts
           tests/unit/faculty-profile-storage-contract.test.ts
           tests/unit/faculty-profile-error-model.test.ts
 
