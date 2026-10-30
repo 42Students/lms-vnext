@@ -1,0 +1,62 @@
+name: DB02 DB03 course and elective regression
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/db02-db03-core-regression.yml"
+      - "src/db/schema/courses.ts"
+      - "src/modules/courses/offering-service.ts"
+      - "src/modules/courses/college-offering-metadata-service.ts"
+      - "src/modules/electives/college-slot-mutation-service.ts"
+      - "tests/integration/college-elective-slot-mutations.test.ts"
+      - "tests/integration/college-offering-metadata.test.ts"
+      - "tests/integration/college-offering-writes.test.ts"
+      - "tests/integration/courses-c1.test.ts"
+      - "drizzle/**"
+  workflow_dispatch:
+concurrency:
+  group: db02-db03-core-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  registered-course-elective-integration:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    services:
+      postgres:
+        image: postgres:17-alpine
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: lms_vnext_test
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres -d lms_vnext_test"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+    env:
+      DATABASE_URL: postgresql://postgres:postgres@127.0.0.1:5432/lms_vnext_test
+      TEST_DATABASE_URL: postgresql://postgres:postgres@127.0.0.1:5432/lms_vnext_test
+      DB03_ISOLATED_TEST_DATABASE: "1"
+      DB06_ISOLATED_TEST_DATABASE: "1"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Registered migration journal
+        run: npm run db:journal:verify
+      - name: Prepare exclusive disposable PostgreSQL 17 target
+        env:
+          DATABASE_URL: ""
+        run: npm run db:test:prepare
+      - name: CORE-to-ELECTIVE, college metadata, and valid group-roster negatives
+        run: >
+          npx vitest run --config vitest.db.registered.config.ts
+          tests/integration/college-elective-slot-mutations.test.ts
+          tests/integration/college-offering-metadata.test.ts
+          tests/integration/college-offering-writes.test.ts
+          tests/integration/courses-c1.test.ts
