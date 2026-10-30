@@ -61,6 +61,11 @@ jobs:
         run: npx playwright install --with-deps chromium
       - name: Prepare disposable E2E database
         run: npm run db:e2e:prepare
+      - name: Persisted Faculty Blueprint quiz, assignment and schedule commands
+        run: >-
+          npx vitest run --config vitest.db.config.ts
+          tests/integration/faculty-mentor-positive-courses.test.ts
+          -t "authors Section quiz questions|writes a confirmed own-Section assignment draft|persists IST Faculty schedule inputs"
       - name: Generate isolated auth credentials
         shell: bash
         run: |
@@ -75,6 +80,11 @@ jobs:
         run: >-
           npx playwright test tests/e2e/faculty-courses.spec.ts
           --grep "Faculty Blueprint persists an authorized Section Resource edit after a full reload"
+          --workers=1
+      - name: Confirm real Section Assignment and Quiz create, edit and archive journeys
+        run: >-
+          npx playwright test tests/e2e/faculty-courses.spec.ts
+          --grep "Faculty (Assignment|Quiz) aggregate"
           --workers=1
 
   record_result:
