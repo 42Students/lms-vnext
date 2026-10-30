@@ -12,6 +12,7 @@ import {
 import { FacultyContactsLiveSearch, FacultyContactsRetry } from "./faculty-contacts-live-search";
 import { PageHeader } from "@/components/ui/page-header";
 import { ErrorState } from "@/components/ui/error-state";
+import { FacultyContactsFailureToast } from "@/components/courses/faculty-contacts-failure-toast";
 import { AuthorizationError } from "@/modules/permissions/policy";
 import { CoursesServiceError } from "@/modules/courses/errors";
 import { Tabs } from "@/components/ui/tabs";
@@ -90,6 +91,7 @@ export default async function FacultyContactsPage({
     return (
       <section className="min-w-0 space-y-4">
         <PageHeader title="Contacts" />
+        {!loaded.denied ? <FacultyContactsFailureToast /> : null}
         <ErrorState
           title={loaded.denied ? "Contacts access denied" : "Couldn't load contacts"}
           description={loaded.denied
