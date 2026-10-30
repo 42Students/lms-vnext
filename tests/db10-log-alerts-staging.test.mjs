@@ -33,6 +33,44 @@ test("DB23 persistence includes the three legacy durable families", () => {
   }
 });
 
+test("DB23 staging covers every active reporter and scheduler persistence column", () => {
+  const required = {
+    log_alert_signatures: [
+      "alerted_at", "acknowledged_at", "last_spike_alert_at",
+      "recent_window_at", "recent_window_count", "day_key", "day_occurrences",
+    ],
+    log_alert_states: [
+      "poll_page_token", "poll_window_start_at", "poll_window_end_at",
+      "burst_minute_at", "burst_count", "overflow_count", "last_digest_day",
+    ],
+    log_alert_daily_counts: [
+      "signature_id", "day_key", "occurrence_count", "spike_count",
+    ],
+    log_alert_observed_events: ["event_hash", "observed_at"],
+  };
+  for (const [table, fields] of Object.entries(required)) {
+    const first = sql.indexOf("CREATE TABLE IF NOT EXISTS " + table + " (");
+    assert.ok(first >= 0, "Missing required stage table " + table);
+    const nextTable = sql.indexOf("CREATE TABLE IF NOT EXISTS ", first + 1);
+    const own = sql.slice(first, nextTable === -1 ? undefined : nextTable);
+    for (const field of fields) {
+      assert.match(own, new RegExp("\\b" + field + "\\b"),
+        "Missing " + table + "." + field);
+      assert.ok(schema.includes('"' + field + '"'),
+        "Drizzle source missing column " + field);
+    }
+  }
+  for (const table of Object.keys(required)) {
+    assert.ok(schema.includes('"' + table + '"'), table + " missing from Drizzle");
+  }
+  assert.match(sql, /day_occurrences bigint NOT NULL DEFAULT 1/);
+  assert.match(sql, /overflow_count bigint NOT NULL DEFAULT 0/);
+  assert.match(sql, /spike_count bigint NOT NULL DEFAULT 0/);
+  assert.match(sql, /db10_log_alert_daily_count_ck/);
+  assert.match(sql, /db10_log_alert_observed_hash_ck/);
+  assert.match(sql, /STAGING ONLY/);
+});
+
 test("DB23 bigint count uses full precision, not JavaScript number", () => {
   assert.match(sql, /occurrence_count bigint NOT NULL DEFAULT 1/);
   assert.match(schema, /occurrenceCount: bigint\("occurrence_count", \{ mode: "bigint" \}\)\.notNull\(\)\.default\(sql`1`\)/);
