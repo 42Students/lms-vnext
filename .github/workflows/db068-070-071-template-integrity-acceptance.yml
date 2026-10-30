@@ -1,0 +1,86 @@
+name: DB-068/070/071 registered template-version integrity acceptance
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - "drizzle/0316_db07_template_version_integrity.sql"
+      - "tests/integration/db07-template-version-parent-integrity.test.ts"
+      - "tests/integration/db07-template-version-append-only.test.ts"
+      - "tests/integration/db07-template-version-pointer-fks.test.ts"
+      - ".github/workflows/db068-070-071-template-integrity-acceptance.yml"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: db068-070-071-template-main
+  cancel-in-progress: false
+
+jobs:
+  registered-template-integrity:
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    services:
+      postgres:
+        image: postgres:17-alpine
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: lms_vnext_test
+        ports: ["5432:5432"]
+        options: >-
+          --health-cmd "pg_isready -U postgres -d lms_vnext_test"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 20
+    env:
+      DATABASE_URL: postgresql://postgres:postgres@127.0.0.1:5432/lms_vnext_test
+      TEST_DATABASE_URL: postgresql://postgres:postgres@127.0.0.1:5432/lms_vnext_test
+      DB03_ISOLATED_TEST_DATABASE: "1"
+      DB018_ISOLATED_TEST_DATABASE: "1"
+      DB07_TEMPLATE_SCOPE_ENFORCED: "1"
+      DB07_TEMPLATE_VERSION_APPEND_ONLY: "1"
+      DB07_TEMPLATE_POINTER_FKS_ENFORCED: "1"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Exact triggering SHA, registered journal, template history source
+        run: |
+          test "$(git rev-parse HEAD)" = "$GITHUB_SHA"
+          npm run db:journal:verify
+          node --test tests/db07-template-version-parent-integrity-source.test.mjs tests/db07-template-version-append-only-source.test.mjs tests/db07-template-version-pointer-source.test.mjs
+      - name: Fresh disposable PostgreSQL 17 from empty registered journal and seed
+        env:
+          DATABASE_URL: ""
+        run: npm run db:test:prepare
+      - name: Registered migration idempotence
+        run: npm run db:migrate
+      - name: DB068 template and materialized project version owner FK negatives
+        run: >-
+          npx vitest run --config vitest.db.registered.config.ts
+          tests/integration/db07-template-version-parent-integrity.test.ts
+      - name: DB070 immutable revisions UPDATE DELETE TRUNCATE and parent header positive
+        run: >-
+          npx vitest run --config vitest.db.registered.config.ts
+          tests/integration/db07-template-version-append-only.test.ts
+      - name: DB071 DEFERRABLE INITIALLY DEFERRED version pointers and commit checks
+        run: >-
+          npx vitest run --config vitest.db.registered.config.ts
+          tests/integration/db07-template-version-pointer-fks.test.ts
+      - name: Real template create revise publish duplicate and college materialization
+        run: >-
+          npx vitest run --config vitest.db.registered.config.ts
+          tests/integration/projects-p2-templates.test.ts
+          tests/integration/projects-p5-lifecycle.test.ts
+          tests/integration/projects-p6b-final-evaluation.test.ts
+      - name: TypeScript and journal integrity with no migrated fixture changes
+        run: |
+          npm run typecheck
+          npm run db:journal:verify
+          test -z "$(git status --porcelain -- drizzle/)"
