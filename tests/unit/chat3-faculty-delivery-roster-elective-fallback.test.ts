@@ -19,6 +19,11 @@ vi.mock("@/db/client",()=>({getDb:()=>({
    innerJoin(){this.joins.push("inner");return this;}
    leftJoin(){this.joins.push("left");return this;}
    where(){return this;}
+   // Drizzle select builders are thenable; the active elective roster is
+   // awaited directly, without an orderBy/limit call.
+   then(resolve:(rows:Record<string,unknown>[])=>unknown,reject?:(reason:unknown)=>unknown){
+    return Promise.resolve(type==="roster"?stubs.electiveRows:stubs.sectionRows).then(resolve,reject);
+   }
    async limit(){
     const chosen=type==="elective"?stubs.elective:stubs.backed;
     return chosen?[chosen]:[];
