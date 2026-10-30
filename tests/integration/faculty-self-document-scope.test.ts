@@ -134,3 +134,5 @@ describe("Faculty staged private profile integration",()=>{
    section:"about",value:{description:"Learner hijack"},expectedVersion:version,
   })).rejects.toBeDefined();
 
+ });
+});
