@@ -123,6 +123,7 @@ function sqlFor(probe: Probe): { violations: string; sample: string } {
 const academicFixtureProbes = new Set(["P5-17", "P5-18", "P5-19"]);
 const placementFixtureProbes = new Set([
   "P5-07", "P5-08", "P5-09", "P5-10", "P5-11",
+  "P5-12", "P5-13", "P5-14", "P5-15", "P5-16",
 ]);
 const projectFixtureProbes = new Set([
   "P5-01", "P5-02", "P5-03", "P5-04", "P5-05", "P5-06",
@@ -214,15 +215,54 @@ async function insertPlacementWitnessFixture(client: PoolClient, id: string) {
     "INSERT INTO placement_jobs (id,college_id,season_id,company_relationship_id,title,description,employment_type,work_mode,application_mode,status,published_at,created_by_user_id) VALUES ($1,$2,$3,$4,$5,'DB018 isolated role','FULL_TIME','ONSITE','INTERNAL','PUBLISHED',now(),$6)",
     [job,SEED_IDS.collegeA,season,relationship,"DB018 isolated drive "+suffix,SEED_IDS.collegeAdminUser],
   );
-  if (id === "P5-10" || id === "P5-11") {
+  if (["P5-10","P5-11","P5-12","P5-13","P5-14","P5-15","P5-16"].includes(id)) {
     await client.query(
       "INSERT INTO placement_job_role_options (id,job_id,title,employment_type,work_mode,is_primary,status) VALUES ($1,$2,'Engineer','FULL_TIME','ONSITE',true,'ACTIVE')",
       [role,job],
     );
-    await client.query(
-      "INSERT INTO placement_applications (job_id,role_option_id,membership_id,channel,eligibility_status,eligibility_snapshot,submitted_by_user_id) VALUES ($1,$2,$3,'INTERNAL','ELIGIBLE','{}'::jsonb,$4)",
+    const applicationResult = await client.query<{id:string}>(
+      "INSERT INTO placement_applications (job_id,role_option_id,membership_id,channel,eligibility_status,eligibility_snapshot,submitted_by_user_id) VALUES ($1,$2,$3,'INTERNAL','ELIGIBLE','{}'::jsonb,$4) RETURNING id",
       [job,role,SEED_IDS.learnerCollegeAMembership,SEED_IDS.learnerUser],
     );
+    const application = applicationResult.rows[0]!.id;
+    if (["P5-12","P5-13","P5-14","P5-15","P5-16"].includes(id)) {
+      const round = randomUUID();
+      await client.query(
+        "INSERT INTO placement_job_rounds (id,job_id,sequence,kind,name,status,created_by_user_id) VALUES ($1,$2,1,'INTERVIEW','DB018 private round','PENDING',$3)",
+        [round,job,SEED_IDS.collegeAdminUser],
+      );
+      if (id === "P5-12") {
+        await client.query(
+          "INSERT INTO placement_round_attendance(round_id,application_id,status,marked_by_user_id) VALUES ($1,$2,'PRESENT',$3)",
+          [round,application,SEED_IDS.collegeAdminUser],
+        );
+      } else {
+        const request = randomUUID();
+        if (id === "P5-16") {
+          const offer = randomUUID();
+          await client.query(
+            "INSERT INTO placement_offers(id,application_id,version,kind,status,role_title,annual_ctc_inr,issued_by_user_id) VALUES($1,$2,1,'OFFER','ISSUED','Engineer',900000,$3)",
+            [offer,application,SEED_IDS.collegeAdminUser],
+          );
+          await client.query(
+            "INSERT INTO placement_learner_requests(id,application_id,learner_membership_id,request_type,offer_id,scope_key,reason,status,requested_by_user_id) VALUES($1,$2,$3,'OFFER_EXTENSION',$4,$5,'Request more time to reply','PENDING',$6)",
+            [request,application,SEED_IDS.learnerCollegeAMembership,offer,"DB018-"+request,SEED_IDS.learnerUser],
+          );
+        } else {
+          const approved = id === "P5-13" || id === "P5-14";
+          await client.query(
+            "INSERT INTO placement_learner_requests(id,application_id,learner_membership_id,request_type,round_id,scope_key,reason,status,requested_by_user_id,decided_by_user_id,decided_at) VALUES($1,$2,$3,'ROUND_RESCHEDULE',$4,$5,'Request a different interview slot',$6,$7,$8)",
+            [request,application,SEED_IDS.learnerCollegeAMembership,round,"DB018-"+request,approved?"APPROVED":"PENDING",SEED_IDS.learnerUser,approved?SEED_IDS.collegeAdminUser:null,approved?new Date():null],
+          );
+          if (approved) {
+            await client.query(
+              "INSERT INTO placement_application_round_exceptions(application_id,round_id,request_id,scheduled_at,timezone,mode,meeting_url) VALUES($1,$2,$3,now(),'Asia/Kolkata','VIRTUAL','https://example.test/db018-interview')",
+              [application,round,request],
+            );
+          }
+        }
+      }
+    }
   }
 }
 
