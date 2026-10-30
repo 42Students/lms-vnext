@@ -10,6 +10,7 @@ import { facultyProfileDocumentStorageReady } from "@/modules/people/faculty-pro
 import { loadOwnFacultyProfileDocumentStaged } from "@/modules/people/faculty-profile-self.staged";
 import { PageHeader } from "@/components/ui/page-header";
 import { getOwnFacultyProfileWithRuntime } from "@/modules/people/runtime";
+import {facultyProfileCompleteness} from "@/modules/people/faculty-profile-completeness-model";
 
 export const dynamic = "force-dynamic";
 
@@ -66,14 +67,7 @@ export default async function FacultyProfilePage({searchParams}:{searchParams:Pr
   const document=selfDocument?.document??null;
   const birthday=document?.personalDetails.dateOfBirth??"";
   const dob=/^\d{4}-\d{2}-\d{2}$/.test(birthday)?birthday.split("-").reverse().join("-"):"Not specified";
-  const completeness=[
-   Boolean(person.user.displayName?.trim()),Boolean(profile?.academicTitle),Boolean(profile?.employmentType),
-   Boolean(document?.about.description),Boolean(document?.personalDetails.gender),
-   Boolean(document?.personalDetails.dateOfBirth),Boolean(document?.contact.contactMail),
-   Boolean(document?.contact.contactMobile),Boolean(document?.education.length),
-   Boolean(document?.experiences.length),
-  ];
-  const completenessScore=document?Math.round(completeness.filter(Boolean).length/completeness.length*100):null;
+  const completenessScore=document?facultyProfileCompleteness(document).percent:null;
   const fields: Array<{ label: string; value: string | null }> = [
     { label: "Name", value: person.user.displayName },
     { label: "Email", value: person.user.email },
