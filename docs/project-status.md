@@ -4,11 +4,11 @@
 > checklist's directional `npm run status` report; it is **not** the live task
 > completion tracker. For all vNext implementation chats and the 81 DB items,
 > read `AGENTS.md` and `docs/tracker.json.execution.closureFirstProtocol`,
-> run `npm run progress -- --closure-next [--lane=LNN]` before work and
+> run `npm run progress -- --closure-next` before work and
 > `npm run progress -- --check` before reporting. Only tracker `done:true`
 > with executed scoped acceptance changes N/81. Freeze accepted tasks, close
 > runnable open tasks first and switch after two unaccepted passes with a
-> named blocker handoff. Keep this historical status script only for its
+> named, reproducible blocker. Keep this historical status script only for its
 > separately labeled implementation-checklist metrics, never as evidence
 > that database/API/UI/release gates passed.
 
