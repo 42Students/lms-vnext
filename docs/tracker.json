@@ -751,8 +751,25 @@
       "id": "DB-048",
       "title": "Require exact confirmation for destructive remote database reset",
       "phase": "DATABASE",
-      "done": false,
-      "dependsOn": []
+      "done": true,
+      "dependsOn": [],
+      "acceptedAt": "2026-10-30",
+      "acceptanceEvidence": [
+        {
+          "kind": "EXECUTED_FAIL_CLOSED_SECURITY_REGRESSION",
+          "result": "PASS",
+          "commitSha": "62cbeddddec8181a8e220b0504c97aac23360b7b",
+          "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/41022022531",
+          "jobId": 123951295281,
+          "runner": "GitHub Actions ubuntu-latest Node.js 22 and disposable PostgreSQL 17-alpine",
+          "commands": [
+            "node --test tests/db01-test-database-guard.test.mjs",
+            "npm run db:test:prepare with DATABASE_URL explicitly blanked",
+            "npm run db:migrate"
+          ],
+          "details": "All 46 database-target tests passed, including 8 DB-048 security cases: remote exact host/port/database confirmation, missing/wrong approval no-network refusals, localhost/query target-redirection defense, protected database names, independent verifier remote confirmation preservation and E2E reset confirmation flow. Reset/migration/seed replay passed on disposable PG17. No actual remote DB was destructively reset. Later main commits through this acceptance changed no DB-048 guard, reset script, E2E preflight, or test sources."
+        }
+      ]
     },
     {
       "id": "DB-049",
