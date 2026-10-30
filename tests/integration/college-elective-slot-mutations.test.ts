@@ -40,7 +40,9 @@ describe.skipIf(!enabled)("College elective slot create/edit isolated PostgreSQL
       period: randomUUID(), program: randomUUID(), cohort: randomUUID(),
       section: randomUUID(), course: randomUUID(), offering: randomUUID(),
       delivery: randomUUID(), group: randomUUID(), electiveOffering: randomUUID(),
-      roster: randomUUID(),
+      roster: randomUUID(), learnerUser: randomUUID(),
+      learnerMembership: randomUUID(), learnerRole: randomUUID(),
+      learnerEnrollment: randomUUID(),
     };
     const marker = "elw-" + ids.program.slice(0, 8);
     await expect(getDb().transaction(async tx => {
@@ -92,8 +94,20 @@ describe.skipIf(!enabled)("College elective slot create/edit isolated PostgreSQL
           ${SEED_IDS.collegeAdminUser},'ACTIVE',1)`);
       await tx.execute(sql`insert into elective_offerings(id,slot_id,course_id,group_id,backed_delivery_id)
         values (${ids.electiveOffering},${slot.id},${ids.course},${ids.group},${ids.delivery})`);
+      // DB03 elective membership requires an active learner with a current
+      // enrollment in this slot's programme. The globally seeded learner has
+      // a different programme; never alter that unrelated account.
+      await tx.execute(sql`insert into users(id,identity_uid,display_name)
+        values (${ids.learnerUser},${marker + "-learner"},'Elective test learner')`);
+      await tx.execute(sql`insert into college_memberships(id,user_id,college_id,status)
+        values (${ids.learnerMembership},${ids.learnerUser},${SEED_IDS.collegeA},'ACTIVE')`);
+      await tx.execute(sql`insert into membership_roles(id,membership_id,role)
+        values (${ids.learnerRole},${ids.learnerMembership},'LEARNER')`);
+      await tx.execute(sql`insert into learner_program_enrollments
+        (id,membership_id,program_id,cohort_id,status)
+        values (${ids.learnerEnrollment},${ids.learnerMembership},${ids.program},${ids.cohort},'ACTIVE')`);
       await tx.execute(sql`insert into lms_group_members(id,group_id,membership_id,state,source,member_type)
-        values (${ids.roster},${ids.group},${SEED_IDS.learnerCollegeAMembership},'ACTIVE','MANUAL','LEARNER')`);
+        values (${ids.roster},${ids.group},${ids.learnerMembership},'ACTIVE','MANUAL','LEARNER')`);
       await expect(runEdit(admin, slot.id, {
         ...changed, expectedVersion: 1, maxPick: 1,
       })).rejects.toMatchObject({ code: "ELECTIVE_SELECTION_LOCKED" });
