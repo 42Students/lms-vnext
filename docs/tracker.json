@@ -548,12 +548,13 @@
             "9283731b81c757f0d3bd66b847a66acc2407ea43",
             "e77b979af36b788b9ddee2402ee2af888024185e",
             "a885c015c312976ad3e856098b30e503333f09f6",
-            "4a4dfd3529327edd4eb98f50f7f6e2c68ed8fdcf"
+            "4a4dfd3529327edd4eb98f50f7f6e2c68ed8fdcf",
+            "19793e89ccfb463bf4e394ff52a7e95882182f9b"
           ],
           "testPath": "tests/integration/db018-relational-and-boundary-witnesses.test.ts",
           "scope": "Rollback-only populated fixture paths added for P5-12..P5-16 and P5-20..P5-21; three extra real SQL CHECK negatives (user nonblank given name, program term lower bound, academic period date order) authored. With preceding 14 sources, all 21 relational samples should now be nonempty, but must be observed in PostgreSQL.",
-          "requestedRunUrl": "https://github.com/42Students/lms-vnext/actions/runs/41102939704",
-          "runStatusAtRecording": "QUEUED_NOT_ACCEPTED",
+          "requestedRunUrl": "https://github.com/42Students/lms-vnext/actions/runs/41103680109",
+          "runStatusAtRecording": "QUEUED_NOT_ACCEPTED_AFTER_SQL_VALUE_FIX",
           "notAcceptance": true,
           "recheckRequired": [
             "Execute registered PostgreSQL 17 fixture suite and verify 21/21 nonempty joins, 0 mismatches, 7/7 direct negatives and zero failures",
