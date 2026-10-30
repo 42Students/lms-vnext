@@ -4,15 +4,16 @@
 
 Legacy navigation: Courses, Contacts, Notifications, Class Schedule, All Quizzes, All Assignments, Profile.
 
-## Page: Courses list
-- [ ] Teaching assignments determine visible courses.
-- [ ] Course/class context is visible.
-- [ ] Course cards/list metadata matches legacy.
-- [ ] Loading/empty/error states are verified.
-- [ ] Navigation preserves correct class context.
+## Page: Courses list — DONE (2026-10-31)
+- [x] Teaching assignments determine visible courses: the persisted active Faculty membership, current assigned delivery, period, college and role are authoritative; revoked/de-roled/disabled/foreign contexts cannot list their retired courses.
+- [x] Course/class context is visible: course name/code, credits, offering kind, academic period and assigned Section names; all authorized periods are initially shown rather than silently selecting the first one.
+- [x] Course cards/list metadata matches the approved legacy scope: authorized class-specific links, assignment/Section and academic summary, teaching role and content counts; progressive display no longer loses authorized cards after the old 100-card summary cap.
+- [x] Loading/empty/error states are verified: loading route and hard-error boundary, explicit zero-assignment administrator guidance, search-no-match, invalid-filter fail-closed reset, and fresh in-place retry for a failed list request.
+- [x] Navigation preserves correct class context: a single-class course opens its exact delivery, while a multi-class course requires an explicit Section link and never defaults generic Open/attendance to the first class.
 
-**2026-10-31 closure work (awaiting executed acceptance):** The active-Faculty teaching-delivery service already enforces persisted college, membership, Faculty role, active offering/Section/period, and current grant dates. The visible list now starts on **all authorized periods** rather than the first, groups cards with explicit Section links and never sends a multi-class course's generic Open/attendance link to an arbitrary first class. Genuine zero assignments now have an honest administrator-action empty state. The progressive summary service covers the **full authorized cumulative page**, not just the first 100 deliveries. The caught list error uses a current-URL `router.refresh()` retry. See [course summary fix f616aba](https://github.com/42Students/lms-vnext/commit/f616aba9aebc28fe7e5739ad2f342d13aeb6584d), [multi-class and all-period list fix 838fc63](https://github.com/42Students/lms-vnext/commit/838fc636bd63b4a13e617d31a83bb094431a98e0), [fresh retry 09d65a3](https://github.com/42Students/lms-vnext/commit/09d65a3ea681c6b7df69d5a72c454b7553045d35). The [dedicated acceptance workflow](https://github.com/42Students/lms-vnext/actions/workflows/faculty-courses-list-acceptance.yml) runs a targeted PostgreSQL Faculty revocation/tenant filter scenario, three unit contract suites and real desktop/mobile Chromium list navigation. **Keep all five rows open until a passing exact-SHA run is recorded**. The separate five bootstrap/class-chooser rows under Course detail are out of scope for this closure.
+**Independent executed acceptance — 2026-10-31:** [Faculty Courses list workflow 41126982586](https://github.com/42Students/lms-vnext/actions/runs/41126982586) at exact tested source SHA [`dd02d394acaa2e4ca80c8909eeb4328057755e60`](https://github.com/42Students/lms-vnext/commit/dd02d394acaa2e4ca80c8909eeb4328057755e60); **all three jobs SUCCESS**, `faculty-courses-list-acceptance/pg-browser` commit status **success**. Focused real PostgreSQL 17 Faculty assigned-delivery/revocation/role/tenant test **1/1 PASS** (25 unrelated tests intentionally excluded by the named target). Unit/model/SSR and 144-course progressive regression **11/11 PASS**. Authenticated desktop/mobile Chromium list, invalid filters, search, Section-specific navigation and responsive state **2/2 PASS**.
 
+**Implementation evidence:** [progressive 100-card fix](https://github.com/42Students/lms-vnext/commit/f616aba9aebc28fe7e5739ad2f342d13aeb6584d), [all-period and multi-class navigation fix](https://github.com/42Students/lms-vnext/commit/838fc636bd63b4a13e617d31a83bb094431a98e0), [fresh failure retry](https://github.com/42Students/lms-vnext/commit/09d65a3ea681c6b7df69d5a72c454b7553045d35), and [registered page-family CI](https://github.com/42Students/lms-vnext/blob/main/.github/workflows/faculty-courses-list-acceptance.yml). This closes the **Courses-list UI implementation checklist**, not the distinct five-item Course detail bootstrap/class-chooser group, full Faculty release, or global CI.
 
 ## Page family: Course detail
 **Legacy tabs:** Overview, Blueprint, Students, Attendance, Discussions.
