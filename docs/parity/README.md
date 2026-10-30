@@ -1,5 +1,19 @@
 # LMS vNext — Detailed Page Parity Specs
 
+> **Closure-first for every UI/account chat:** The single live execution authority
+> is `docs/tracker.json.execution.closureFirstProtocol`, not an open-ended
+> re-audit of already accepted pages. Read `AGENTS.md`; run
+> `npm run progress -- --closure-next --lane=LNN` when working on shared DB/API
+> dependencies. For page parity, pick one OPEN page-family/user-job with
+> its original detailed contract, complete its producer→consumer, permissions,
+> mobile/negative/browser acceptance, then mark CLOSED in the existing page
+> spec with exact evidence and move on. After two passes without a legitimate
+> closure, state one reproducible blocker and owner and switch to independent
+> eligible OPEN work. Previously CLOSED family/page evidence is frozen unless
+> a proven regression or legacy-oracle change demands a scoped recheck.
+> A page closure never increments DATABASE N/81; only tracker `done:true`
+> accepted DB tasks do.
+
 **Execution priority:** [Final Execution & Domain Closure Protocol](../tracker.json) controls global phase gates. Dependency-ready scoped API/UI user jobs may be implemented during DATABASE without certifying global API/UI. This page-family contract still governs all detailed UI verification.
 
 ## Cross-chat master closure operating contract (27 October 2026)
