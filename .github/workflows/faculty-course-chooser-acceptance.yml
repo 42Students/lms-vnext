@@ -1,0 +1,126 @@
+name: Faculty Course chooser acceptance
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/faculty-course-chooser-acceptance.yml"
+      - "src/app/(authenticated)/teacher/courses/[deliveryId]/**"
+      - "src/components/courses/faculty-course-tab-navigation.tsx"
+      - "src/modules/courses/faculty-course-navigation.ts"
+      - "src/modules/courses/faculty-course-service.ts"
+      - "tests/unit/faculty-course-chooser-closure.test.tsx"
+      - "tests/unit/faculty-course-navigation.test.ts"
+      - "tests/e2e/faculty-course-chooser.spec.ts"
+
+permissions:
+  contents: read
+  statuses: write
+
+concurrency:
+  group: faculty-course-chooser-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  postgres:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    services:
+      postgres:
+        image: postgres:17-alpine
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: lms_vnext_test
+        ports: ["5432:5432"]
+        options: >-
+          --health-cmd "pg_isready -U postgres -d lms_vnext_test"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+    env:
+      DATABASE_URL: postgresql://postgres:postgres@127.0.0.1:5432/lms_vnext_test
+      TEST_DATABASE_URL: postgresql://postgres:postgres@127.0.0.1:5432/lms_vnext_test
+      DB03_ISOLATED_TEST_DATABASE: "1"
+      DB06_ISOLATED_TEST_DATABASE: "1"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm run db:journal:verify
+      - name: Prepare disposable PostgreSQL
+        env:
+          DATABASE_URL: ""
+        run: npm run db:test:prepare
+      - name: Verify revoked and forged teaching assignments in PostgreSQL
+        run: >-
+          npx vitest run --config vitest.db.config.ts
+          tests/integration/faculty-mentor-positive-courses.test.ts
+          -t "filters only persisted Faculty teaching deliveries and invalidates revoked assignments"
+      - name: Verify five-tab class chooser and canonical links
+        run: >-
+          npx vitest run
+          tests/unit/faculty-course-navigation.test.ts
+          tests/unit/faculty-course-chooser-closure.test.tsx
+
+  browser:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    services:
+      postgres:
+        image: postgres:17-alpine
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: lms_vnext_e2e
+        ports: ["5432:5432"]
+        options: >-
+          --health-cmd "pg_isready -U postgres -d lms_vnext_e2e"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+    env:
+      DATABASE_URL: postgresql://postgres:postgres@127.0.0.1:5432/lms_vnext_e2e
+      TEST_DATABASE_URL: postgresql://postgres:postgres@127.0.0.1:5432/lms_vnext_e2e
+      E2E_DATABASE_URL: postgresql://postgres:postgres@127.0.0.1:5432/lms_vnext_e2e
+      E2E_AUTH_ENABLED: "true"
+      APP_ENV: development
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npx playwright install --with-deps chromium
+      - run: npm run db:e2e:prepare
+      - name: Generate disposable browser authorization
+        shell: bash
+        run: |
+          echo "E2E_AUTH_SECRET=$(openssl rand -hex 32)" >> "$GITHUB_ENV"
+          echo "AUTH_SECRET=$(openssl rand -hex 32)" >> "$GITHUB_ENV"
+          echo "PLATFORM_HOSTS=localhost,127.0.0.1" >> "$GITHUB_ENV"
+      - name: Execute desktop and mobile Faculty chooser
+        run: npx playwright test tests/e2e/faculty-course-chooser.spec.ts --workers=1
+
+  record_result:
+    if: ${{ always() }}
+    needs: [postgres, browser]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/github-script@v7
+        with:
+          script: |
+            const pg = "${{ needs.postgres.result }}";
+            const browser = "${{ needs.browser.result }}";
+            await github.rest.repos.createCommitStatus({
+              owner: context.repo.owner, repo: context.repo.repo, sha: context.sha,
+              state: pg === "success" && browser === "success" ? "success" : "failure",
+              context: "faculty-course-chooser-acceptance/pg-browser",
+              description: "Faculty course chooser PostgreSQL/unit/browser",
+              target_url: `${context.serverUrl}/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}`,
+            });
