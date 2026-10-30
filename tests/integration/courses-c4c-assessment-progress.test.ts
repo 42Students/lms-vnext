@@ -254,6 +254,7 @@ async function cleanupC4C() {
        where code like 'C4C-%'
      )`,
   );
+  await pool.query("delete from program_term_courses where course_id in (select id from courses where code like 'C4C-%')");
   await pool.query(
     "delete from courses where code like 'C4C-%'",
   );
@@ -287,6 +288,7 @@ async function cleanupC4C() {
        where code like 'C4C-%'
      )`,
   );
+  await pool.query("delete from program_terms where program_id in (select id from programs where code like 'C4C-%')");
   await pool.query(
     "delete from programs where code like 'C4C-%'",
   );

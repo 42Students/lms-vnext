@@ -176,6 +176,7 @@ async function cleanupC3() {
        where code like 'C3-%'
      )`,
   );
+  await pool.query("delete from program_term_courses where course_id in (select id from courses where code like 'C3-%')");
   await pool.query(
     "delete from courses where code like 'C3-%'",
   );
@@ -211,6 +212,7 @@ async function cleanupC3() {
        where code like 'C3-%'
      )`,
   );
+  await pool.query("delete from program_terms where program_id in (select id from programs where code like 'C3-%')");
   await pool.query(
     "delete from programs where code like 'C3-%'",
   );
