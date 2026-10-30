@@ -31,7 +31,12 @@ test("DB-069 separates mutable owner from immutable creator", () => {
   const end = placements.indexOf("export const placementJobRoleOptions", start);
   const current = placements.slice(start, end);
   assert.match(current, /createdByUserId: uuid\("created_by_user_id"\)/);
-  assert.doesNotMatch(current, /ownerMembershipId: uuid\("owner_membership_id"\)/);
+  // The typed owner column and same-college composite FK are already
+  // registered. Do not weaken this to an existence-only or absence check.
+  assert.match(current, /ownerMembershipId: uuid\("owner_membership_id"\)/);
+  assert.match(current, /name: "placement_jobs_owner_college_fk"/);
+  assert.match(current, /columns: \[table\.ownerMembershipId, table\.collegeId\]/);
+  assert.match(current, /foreignColumns: \[collegeMemberships\.id, collegeMemberships\.collegeId\]/);
 
   assert.match(candidate, /ADD COLUMN owner_membership_id uuid/);
   assert.match(candidate, /db069_job_owner_college_fk/);
@@ -75,9 +80,9 @@ test("DB-069 serializes owner assignment against removal", () => {
   assert.match(candidate, /v_new_college::text \|\| ':' \|\| v_new_owner::text/);
 });
 
-test("source verifier covers frozen owner fields and current schema gap", () => {
+test("source verifier covers frozen owner fields and current registered owner boundary", () => {
   assert.match(verifier, /owner_faculty_id/);
-  assert.match(verifier, /current placement_jobs has creator but no mutable owner/);
+  assert.match(verifier, /registered placement_jobs preserves creator and now carries scoped mutable owner identity/);
   assert.match(verifier, /direct team identity removal\/change refuses owned leads and live jobs/);
   assert.match(verifier, /lock ordering includes full college\+membership identity/);
 });
