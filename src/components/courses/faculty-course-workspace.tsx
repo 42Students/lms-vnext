@@ -706,7 +706,7 @@ export function FacultyCourseWorkspace({
                             Video · Resources · Quiz · Assignment · Live Session
                           </p>
                       <FacultyLessonAuthoring
-                        key={lesson.id+":"+(selectedLessonId===lesson.id?initialCreateMode??"default":"default")}
+                        key={"authoring:"+lesson.id+":"+(selectedLessonId===lesson.id?initialCreateMode??"default":"default")}
                         initialMode={selectedLessonId===lesson.id&&initialCreateMode!=="VIDEO"?initialCreateMode:null}
                         lessonId={lesson.id}
                         deliveryId={course.deliveryId}
@@ -723,7 +723,7 @@ export function FacultyCourseWorkspace({
                       />
 
                       <FacultyLessonVideoManager
-                        key={lesson.id+":"+(selectedLessonId===lesson.id&&initialCreateMode==="VIDEO"?"upload":"default")}
+                        key={"video-manager:"+lesson.id+":"+(selectedLessonId===lesson.id&&initialCreateMode==="VIDEO"?"upload":"default")}
                         openUploadOnMount={selectedLessonId===lesson.id&&initialCreateMode==="VIDEO"}
                         lessonId={lesson.id}
                         deliveryId={course.deliveryId}
