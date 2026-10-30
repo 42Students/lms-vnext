@@ -38,8 +38,8 @@ Legacy slug, numeric and class-hint links resolve only against persisted active 
 - [x] Loading/empty/error states exist for workspace and reports; desktop/mobile browser exercised correct linked transitions and no page errors/overflow.
 
 ### Blueprint
-- [ ] Lesson create/edit/delete.
-- [ ] Lesson ordering/reordering.
+- [x] **NOT APPLICABLE to Faculty:** shared syllabus lesson create/edit/delete is a college-admin operation, not an authorized Faculty Section mutation. Legacy `docs/legacy-source/frontend/src/components/Global/Offcanvas/Syallabus/AddLessonDrawer.jsx` explicitly says it is opened only by `AdminCourseSyllabus.jsx`; `src/modules/courses/lesson-service.ts` requires college-admin/superadmin to change shared lesson structure. Faculty can instead author items inside an assigned Section lesson. The disabled + Lesson/Rename affordances now explain this boundary.
+- [x] **NOT APPLICABLE to Faculty for shared lessons:** syllabus lesson ordering/reordering is college-managed (legacy `src/pages/superadmin/sections/Lessons.js`). Faculty-specific **content** ordering remains governed by `DB05_CONTENT_ORDER_READY=DB05_VERIFIED` and does not grant shared lesson edit rights.
 - [ ] Resource/video/live-class content create/edit/delete.
 - [ ] Assignment create/edit/delete.
 - [ ] Quiz create/edit/delete.
