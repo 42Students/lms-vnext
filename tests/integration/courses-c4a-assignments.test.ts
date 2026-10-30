@@ -114,7 +114,7 @@ const learner: RequestContext = {
 async function cleanupC4A() {
   // The immutable grade ledger retains strict submission identity. Fixture
   // teardown clears only its test-owned rows before removing the parent.
-  await deleteDisposableFixtureGradeEvents(
+  await deleteDisposableFixtureGradeEvents(pool, 
     `delete from assignment_grade_events where assignment_submission_id in (
       select s.id from assignment_submissions s
       join course_assignments a on a.id=s.assignment_id

@@ -133,7 +133,7 @@ async function cleanup() {
     join course_offerings co on co.id=lp.offering_id join courses c on c.id=co.course_id
     where c.code like $1)`, [codePattern]);
   // Remove only the disposable C4POS fixture's restricted grade events.
-  await deleteDisposableFixtureGradeEvents(`delete from assignment_grade_events where assignment_submission_id in (
+  await deleteDisposableFixtureGradeEvents(pool, `delete from assignment_grade_events where assignment_submission_id in (
     select s.id from assignment_submissions s
     join course_assignments a on a.id=s.assignment_id
     join course_lessons l on l.id=a.lesson_id
