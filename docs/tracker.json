@@ -58,7 +58,29 @@
       "title": "Provide CI-independent disposable PostgreSQL verification",
       "phase": "DATABASE",
       "done": false,
-      "dependsOn": []
+      "dependsOn": [],
+      "implementationCheckpoint": {
+        "status": "SECURITY_REDACTION_HARDENED_AWAITING_FULL_INDEPENDENT_PG_ACCEPTANCE",
+        "verifiedScope": "Verifier acceptance receipts now remove all PostgreSQL URL query and fragment data, and child-output redaction removes URL query/fragment secrets even when the printed URL differs from environment variables.",
+        "sourceCommits": [
+          "545481e79e275235f4ce6bb64b2b90314469e8da",
+          "dde71187cb6a4f40a834118c01f3eeb994583ba3",
+          "fcff8f77669c595c96ed37fe162dcab33ba121b0",
+          "a779b1865f46cca6e2ac7d9e425f9acfd0ed9b19"
+        ],
+        "sourceChecks": {
+          "runner": "Connector V8 evaluated exact GitHub redactor blob ba15c88254e479efb437970c9abb95d1a7a54314; isolated Node v22.16.0 URI fixture",
+          "result": "PASS",
+          "note": "Isolated secret-redaction fixtures only; committed full Node test suite and PostgreSQL independent verifier not executed in this session."
+        },
+        "openEvidence": [
+          "Execute focused node:test redaction and failed-target evidence suites on exact current main SHA",
+          "Execute complete npm run db:verify:independent on a disposable PostgreSQL 17 target with zero-to-head migrations, drift/catalog and negative integration evidence",
+          "Recheck clean-tree and main-SHA pinning before accepting DB-001"
+        ],
+        "recordedOn": "2026-10-30",
+        "evidenceIsNotAcceptance": true
+      }
     },
     {
       "id": "DB-002",
