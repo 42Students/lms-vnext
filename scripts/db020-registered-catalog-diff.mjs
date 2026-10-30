@@ -106,7 +106,7 @@ try{
   const table=difference.field.slice(0,split);
   const column=difference.field.slice(split+1);
   const actual=existing.get(difference.field);
-  const nextval=/^nextval\\('([^']+)'::regclass\\)$/.exec(actual?.pg_default??"");
+  const nextval=/^nextval\('([^']+)'::regclass\)$/.exec(actual?.pg_default??"");
   if(!table||!column||!actual?.attnotnull||!nextval){
    remainingUnexplainedTypes.push(difference);continue;
   }
