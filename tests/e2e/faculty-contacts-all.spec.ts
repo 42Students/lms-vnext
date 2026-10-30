@@ -52,6 +52,7 @@ for(const view of [{name:"desktop",width:1280,height:800},{name:"mobile",width:3
   await page.getByRole("button",{name:"Clear search"}).click();
   await expect(page.getByRole("searchbox",{name:"Search contacts"})).toHaveValue("");
   await expect(page.locator('a[href*="/'+SEED_IDS.learnerCollegeAMembership+'"]:visible').first()).toBeVisible({timeout:20000});
+  await expect(page).toHaveURL(/\/teacher\/contacts\/allContacts\?pageSize=50$/,{timeout:20000});
   // A real Back navigation must discard unsaved search text and restore URL state,
   // rather than firing a late replace() with stale draft content.
   await page.evaluate(()=>{
