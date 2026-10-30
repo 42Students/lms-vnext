@@ -76,6 +76,8 @@ jobs:
       - name: DB-007 registered row-level tenant, private receipt and history negatives
         run: node --test tests/db007-registered-profile-pg.test.mjs
       - name: DB-007 learner education write/read integration on disposable PostgreSQL
+        env:
+          DB04_PROFILE_GALLERY_READY: "DB04_VERIFIED"
         run: >-
           npx vitest run --config vitest.db.registered.config.ts
           tests/integration/db080-learner-gallery-service.test.ts
