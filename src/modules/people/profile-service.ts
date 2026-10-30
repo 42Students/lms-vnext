@@ -221,9 +221,11 @@ export async function getOwnFacultyProfile(
     person.membership.collegeId !== membership.collegeId ||
     person.organizationId !== membership.organizationId ||
     person.membership.status !== "ACTIVE" ||
-    !person.membership.roles.includes("FACULTY") ||
-    person.membership.roles.includes("MENTOR") ||
-    person.membership.roles.includes("COLLEGE_ADMIN")
+    // The request context is already narrowed to the explicit active portal
+    // role by resolveRequestContext. Persisted membership can legitimately
+    // include an additional Mentor/Admin grant: those *inactive* roles must
+    // not prevent the user reading their own selected Faculty profile.
+    !person.membership.roles.includes("FACULTY")
   ) {
     throw new AuthorizationError("profile.self.manage");
   }
