@@ -10992,9 +10992,7 @@
             "version"
           ],
           "onDelete": "no action",
-          "onUpdate": "no action",
-          "deferrable": true,
-          "initiallyDeferred": true
+          "onUpdate": "no action"
         },
         "project_templates_published_version_snapshot_fk": {
           "name": "project_templates_published_version_snapshot_fk",
@@ -11009,9 +11007,7 @@
             "version"
           ],
           "onDelete": "no action",
-          "onUpdate": "no action",
-          "deferrable": true,
-          "initiallyDeferred": true
+          "onUpdate": "no action"
         }
       },
       "compositePrimaryKeys": {},
