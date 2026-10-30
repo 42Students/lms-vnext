@@ -144,22 +144,32 @@ test("DB018 runtime witness has current-journal schema grounding", () => {
 test("DB18 witness index remains honest about authored versus executed coverage", () => {
   const index = load("tests/integration/db18-witness-index.json");
   assert.equal(index.task, "DB-018");
-  assert.equal(index.status, "AUTHORED_EXECUTION_NOT_RUN");
+  assert.equal(index.status, "FOCUSED_PG17_WITNESSES_VERIFIED_GLOBAL_GATE_PENDING");
   assert.equal(index.counts.directNegativeAuthored, 9);
   assert.equal(index.counts.existingConcurrencyAuthored, 4);
   assert.equal(index.counts.explicitConcurrencyMissing, 0);
   assert.equal(index.counts.draftUnregisteredExcluded, 3);
   assert.equal(index.counts.knownRedRaceAuthored, 0);
-  assert.equal(index.counts.fixAuthoredRaceRuntimePending, 2);
-  assert.equal(index.counts.runtimeExecuted, 0);
-  assert.equal(index.counts.runtimePassed, 0);
+  assert.equal(index.counts.fixAuthoredRaceRuntimePending, 0);
+  assert.equal(index.counts.runtimeExecuted, 43);
+  assert.equal(index.counts.runtimePassed, 43);
+  assert.equal(index.runtimeEvidence.result, "PASS");
+  assert.equal(index.runtimeEvidence.runUrl,
+    "https://github.com/42Students/lms-vnext/actions/runs/41104567182");
+  assert.equal(index.runtimeEvidence.commitSha,
+    "c78eb936db33489cbb3b57281793dfda5f10382d");
+  assert.equal(index.runtimeEvidence.domainWitnessesPassed, 43);
+  assert.equal(index.runtimeEvidence.focusedVitestTestsPassed, 45);
+  assert.equal(index.runtimeEvidence.relational.empty, 0);
+  assert.equal(index.runtimeEvidence.relational.mismatches, 0);
+  assert.equal(index.runtimeEvidence.globalDatabasePhaseAccepted, false);
 
   const directSource = fs.readFileSync(
     "tests/integration/db18-registered-negative-witnesses.test.ts",
     "utf8",
   );
   for (const witness of index.directNegativeWitnesses) {
-    assert.equal(witness.execution, "NOT_RUN");
+    assert.equal(witness.execution, "PASS");
     assert.ok(["23514", "23503"].includes(witness.expectedSqlState));
     assert.ok(fs.existsSync(witness.migration), witness.id + ": migration missing");
     assert.ok(directSource.includes(witness.title), witness.id + ": test title missing");
@@ -171,7 +181,7 @@ test("DB18 witness index remains honest about authored versus executed coverage"
     assert.ok(fs.existsSync(witness.file), witness.id + ": test file missing");
     const source = fs.readFileSync(witness.file, "utf8");
     assert.ok(source.includes(witness.title), witness.id + ": concurrency test title missing");
-    assert.match(witness.state, /(NOT_RUN_IN_DB018|DB018_NOT_RUN)$/);
+    assert.equal(witness.state, "FOCUSED_PG17_VERIFIED");
   }
 
   assert.deepEqual(index.missingConcurrencyWitnesses, []);
@@ -180,12 +190,8 @@ test("DB18 witness index remains honest about authored versus executed coverage"
     ["P5-R01", "P5-R02"],
   );
   for (const witness of index.knownRedRaceWitnesses) {
-    assert.equal(witness.execution, "NOT_RUN");
-    assert.ok(
-      /EXPECTED_FAIL_UNTIL_FIXED$/.test(witness.state) ||
-        witness.state === "FIX_AUTHORED_RUNTIME_NOT_RUN",
-      witness.id + ": unexpected race state " + witness.state,
-    );
+    assert.equal(witness.execution, "PASS");
+    assert.equal(witness.state, "FIXED_AND_PG17_VERIFIED");
     assert.ok(fs.existsSync(witness.file), witness.id + ": race test file missing");
     const source = fs.readFileSync(witness.file, "utf8");
     assert.ok(source.includes(witness.title), witness.id + ": race title missing");
@@ -234,11 +240,11 @@ test("DB18 stale-check source state tracks authored placement and academics fixe
   );
   assert.equal(
     index.knownRedRaceWitnesses.find((w) => w.raceProbe === "P5-R01")?.state,
-    "FIX_AUTHORED_RUNTIME_NOT_RUN",
+    "FIXED_AND_PG17_VERIFIED",
   );
   assert.equal(
     index.knownRedRaceWitnesses.find((w) => w.raceProbe === "P5-R02")?.state,
-    "FIX_AUTHORED_RUNTIME_NOT_RUN",
+    "FIXED_AND_PG17_VERIFIED",
   );
   assert.deepEqual(index.missingConcurrencyWitnesses, []);
 });
@@ -256,23 +262,24 @@ test("DB18 canonical denominator stays source-grounded", () => {
   const unresolvedRaces = index.knownRedRaceWitnesses.filter(
     (w) => w.state === "EXPECTED_FAIL_UNTIL_FIXED",
   );
-  const fixedPending = index.knownRedRaceWitnesses.filter(
-    (w) => w.state === "FIX_AUTHORED_RUNTIME_NOT_RUN",
+  const verifiedFixed = index.knownRedRaceWitnesses.filter(
+    (w) => w.state === "FIXED_AND_PG17_VERIFIED",
   );
   assert.equal(index.counts.knownRedRaceAuthored, unresolvedRaces.length);
-  assert.equal(index.counts.fixAuthoredRaceRuntimePending, fixedPending.length);
+  assert.equal(index.counts.fixAuthoredRaceRuntimePending, 0);
+  assert.equal(index.counts.fixedRaceRuntimeVerified, verifiedFixed.length);
   assert.equal(unresolvedRaces.length, 0);
-  assert.deepEqual(fixedPending.map((w) => w.raceProbe), ["P5-R01", "P5-R02"]);
-  assert.ok(fixedPending.every((w) => w.execution === "NOT_RUN"));
+  assert.deepEqual(verifiedFixed.map((w) => w.raceProbe), ["P5-R01", "P5-R02"]);
+  assert.ok(verifiedFixed.every((w) => w.execution === "PASS"));
   assert.equal(index.counts.explicitConcurrencyMissing, 0);
-  assert.equal(index.counts.runtimeExecuted, 0);
-  assert.equal(index.counts.runtimePassed, 0);
+  assert.equal(index.counts.runtimeExecuted, 43);
+  assert.equal(index.counts.runtimePassed, 43);
 
   assert.equal(index.observationalWitnesses.count, manifest.probes.length);
   assert.ok(fs.existsSync(index.observationalWitnesses.executableFile));
 
   for (const witness of index.baselineDirectBoundaryWitnesses) {
-    assert.equal(witness.execution, "NOT_RUN");
+    assert.equal(witness.execution, "PASS");
     assert.ok(["23503", "23505", "23514"].includes(witness.expectedSqlState));
     assert.ok(fs.existsSync(witness.file));
     const source = fs.readFileSync(witness.file, "utf8");
@@ -283,11 +290,11 @@ test("DB18 canonical denominator stays source-grounded", () => {
     "docs/planning/db18-negative-witness-coverage.md",
     "utf8",
   );
-  assert.match(coverage, /Read-only relational mismatch probes \| 21 \| 0/);
-  assert.match(coverage, /Direct negative SQL boundary tests \| 16 \| 0/);
-  assert.match(coverage, /Positive concurrency witnesses \| 4 \| 0/);
+  assert.match(coverage, /Read-only relational mismatch probes \| 21 \| 21/);
+  assert.match(coverage, /Direct negative SQL boundary tests \| 16 \| 16/);
+  assert.match(coverage, /Positive concurrency witnesses \| 4 \| 4/);
   assert.match(coverage, /Known-defect red concurrency witnesses \| 0 \| 0/);
-  assert.match(coverage, /Fix-authored race regression pending runtime \| 2 \| 0/);
+  assert.match(coverage, /Fix-authored race regression verified \| 2 \| 2/);
   assert.match(coverage, /must \*\*not\*\* become `DONE_VERIFIED`/);
 });
 
