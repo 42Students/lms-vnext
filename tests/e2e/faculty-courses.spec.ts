@@ -190,7 +190,8 @@ test("Faculty Students links an authorized roster member to mobile-readable atte
   await page.getByRole("link", { name: /E2E Browser Course/ }).click();
   await page.getByRole("navigation", { name: "Faculty course tabs" })
     .getByRole("link", { name: "Students" }).click();
-  const detailLink = page.getByRole("link", { name: "View student details" }).first();
+  const detailLink = page.getByRole("region", { name: "Faculty prototype students" })
+    .getByRole("row").getByRole("link").first();
   await expect(detailLink).toBeVisible();
   const href = await detailLink.getAttribute("href");
   expect(href).toMatch(/\/teacher\/courses\/[^/]+\/students\/[0-9a-f-]{36}$/i);
