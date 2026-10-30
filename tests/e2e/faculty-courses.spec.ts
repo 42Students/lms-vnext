@@ -240,51 +240,6 @@ test("Faculty Blueprint creates, edits and archives an own-Section Resource with
   await expect(order.getByRole("link",{name:title,exact:true})).toHaveCount(0);
 });
 
-test("Faculty Blueprint creates and archives a persisted Section Resource without private storage", async ({page,context}) => {
-  test.setTimeout(120_000);
-  await facultyLogin(context);
-  await page.goto("/teacher/courses");
-  await page.getByRole("link",{name:/E2E Browser Course/}).first().click();
-  const deliveryId=new URL(page.url()).pathname.split("/")[3]!;
-  await page.getByRole("navigation",{name:"Faculty course tabs"})
-    .getByRole("link",{name:"Blueprint"}).click();
-  const explorer=page.getByRole("region",{name:"Course blueprint lesson explorer"});
-  const chosen=explorer.getByRole("complementary").getByRole("link",{current:"page"});
-  const lessonId=new URL((await chosen.getAttribute("href"))!,page.url()).searchParams.get("lesson");
-  expect(lessonId).toMatch(/^[0-9a-f-]{36}$/i);
-  const marker="Faculty owned Resource "+Date.now();
-  await page.goto("/teacher/courses/"+deliveryId+"/blueprint?lesson="+encodeURIComponent(lessonId!)+"&advanced=1&create=RESOURCE");
-  await page.getByRole("textbox",{name:"Content Title"}).fill(marker);
-  await page.getByRole("textbox",{name:"Notes (optional)"}).fill("Section-only text resource, no private upload");
-  await page.getByRole("checkbox",{name:/Publish now/}).uncheck();
-  const creating=page.waitForResponse(response=>response.request().method()==="POST" &&
-    new URL(response.url()).pathname==="/api/courses/lesson-contents");
-  await page.getByRole("button",{name:"Create draft"}).click();
-  const created=await creating;
-  expect(created.status()).toBe(200);
-  const contentId:string=(await created.json()).content?.id;
-  expect(contentId).toMatch(/^[0-9a-f-]{36}$/i);
-  await page.goto("/teacher/courses/"+deliveryId+"/blueprint?lesson="+encodeURIComponent(lessonId!));
-  const order=page.getByRole("list",{name:"Lesson content order"});
-  const item=order.locator("li").filter({has:page.getByRole("link",{name:marker,exact:true})});
-  await expect(item).toBeVisible();
-  await expect(item.getByText("Draft",{exact:true})).toBeVisible();
-  await expect(page.getByText("E2E Section B Secret",{exact:true})).toHaveCount(0);
-  await item.getByRole("button",{name:"Remove "+marker}).click();
-  const dialog=page.getByRole("alertdialog",{name:"Remove "+marker+"?"});
-  await expect(dialog).toBeVisible();
-  const archiving=page.waitForResponse(response=>response.request().method()==="POST" &&
-    new URL(response.url()).pathname==="/api/courses/lesson-contents/"+contentId+"/transition");
-  await dialog.getByRole("button",{name:"Archive item"}).click();
-  const archived=await archiving;
-  expect(archived.status()).toBe(200);
-  const receipt=await archived.json();
-  expect(receipt.content?.id).toBe(contentId);
-  expect(receipt.content?.status).toBe("ARCHIVED");
-  await page.reload();
-  await expect(order.getByRole("link",{name:marker,exact:true})).toHaveCount(0);
-});
-
 test("Faculty Students links an authorized roster member to mobile-readable attendance history", async ({ page, context }) => {
   await facultyLogin(context);
   await page.goto("/teacher/courses");
