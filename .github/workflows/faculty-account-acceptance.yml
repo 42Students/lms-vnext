@@ -19,6 +19,10 @@ jobs:
   source:
     runs-on: ubuntu-latest
     timeout-minutes: 25
+    env:
+      # The full 42LMS type graph exceeds the default ~4 GiB Node heap.
+      # Retain full type diagnostics rather than excluding unrelated modules.
+      NODE_OPTIONS: "--max-old-space-size=6144"
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
