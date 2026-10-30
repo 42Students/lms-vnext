@@ -60,6 +60,29 @@ test("DB034 registered trusted-domain and prep-course tenant/FK policy",async()=
   await denied(db,prep,[ca,far.id,admin],["23514"]);
  });
 });
+test("DB034 two committed concurrent trusted-domain inserts cannot create duplicate tenant entries",async()=>{
+ const suffix=randomUUID().slice(0,12),domain="race-"+suffix+".example.edu";
+ const a=new pg.Client({connectionString:process.env.TEST_DATABASE_URL,connectionTimeoutMillis:10000,query_timeout:15000});
+ const b=new pg.Client({connectionString:process.env.TEST_DATABASE_URL,connectionTimeoutMillis:10000,query_timeout:15000});
+ await Promise.all([a.connect(),b.connect()]);
+ try{
+  const sql="INSERT INTO placement_tpo_trusted_domains(college_id,domain,created_by_user_id) VALUES($1,$2,$3)";
+  const writes=await Promise.allSettled([
+   a.query(sql,[ca,domain,admin]),
+   b.query(sql,[ca,domain,admin]),
+  ]);
+  assert.equal(writes.filter(x=>x.status==="fulfilled").length,1);
+  const failed=writes.find(x=>x.status==="rejected");
+  assert.equal(failed?.status,"rejected");
+  assert.equal(failed.reason?.code,"23505","duplicate trusted domain must be rejected by PK under race");
+  const count=await a.query("SELECT count(*)::integer AS n FROM placement_tpo_trusted_domains WHERE college_id=$1 AND domain=$2",[ca,domain]);
+  assert.equal(count.rows[0].n,1);
+ }finally{
+  await a.query("DELETE FROM placement_tpo_trusted_domains WHERE college_id=$1 AND domain=$2",[ca,domain]).catch(()=>{});
+  await Promise.all([a.end(),b.end()]);
+ }
+});
+
 test("DB036 nine registered toggles preserve defaults, durable updates and non-null",async()=>{
  await withTx(async db=>{
   const a=await row(db,"INSERT INTO placement_tpo_college_settings(college_id) VALUES($1) "+
