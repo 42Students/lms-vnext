@@ -297,9 +297,9 @@ Audited shared Faculty-profile sections:
 - [ ] Publications add/edit/delete.
 - [ ] Awards add/edit/delete.
 - [ ] Metadata edit.
-- [ ] Partial endpoint failures do not blank unrelated sections.
+- [x] Partial endpoint failures do not blank unrelated sections: a failed private-document read retains the authenticated Faculty identity and teaching surface, disables unverified editing, and exposes a fresh retry without leaking backend text. The focused SSR failure/ready-state tests passed in [run 41130479588](https://github.com/42Students/lms-vnext/actions/runs/41130479588); the run's separate browser job did not pass.
 - [ ] Loading/hard-error/retry/visibility-refresh behavior matches.
-- [ ] Learner/Admin/Mentor/TPO role misroutes are safely redirected/fenced.
+- [x] Learner/Admin/Mentor/TPO role misroutes are safely redirected/fenced: targeted role and suspended-membership negative SSR tests passed in [run 41130479588](https://github.com/42Students/lms-vnext/actions/runs/41130479588), without calling Faculty profile storage. Whole-run/browser acceptance remains open.
 
 ## Retired route: File Explorer
 Legacy `/teacher/fileExplorer` only redirects to Courses.
