@@ -54,13 +54,18 @@ test("DB014 actual registered PG17 FK, history, trigger and cascade catalog",asy
       "JOIN pg_namespace n ON n.oid=r.relnamespace "+
       "WHERE n.nspname='public' AND NOT t.tgisinternal "+
       "ORDER BY r.relname,t.tgname");
-    const triggers=new Set(triggerResult.rows.map(x=>x.child+"."+x.tgname));
+    const triggers=new Map(triggerResult.rows.map(x=>[x.child+"."+x.tgname,x.tgenabled]));
+    const assertGuardActive=(table,name)=>{
+      const state=triggers.get(table+"."+name);
+      assert.ok(state==="O"||state==="A",
+        "Registered tenant guard is missing or disabled for ordinary writes: "+table+"."+name+" (state="+state+")");
+    };
     for(const [table,name] of [
       ["lms_group_members","db03_member_tenant_guard"],
       ["elective_slots","db03_elective_slot_scope_guard"],
       ["elective_offerings","db03_elective_offering_scope_guard"],
       ["project_instances","db03_project_team_scope_guard"]
-    ])assert.ok(triggers.has(table+"."+name),"Missing registered guard "+name);
+    ])assertGuardActive(table,name);
     const guardsRegistered=journal.entries.some(
       entry=>entry.tag==="0318_db014_cross_domain_event_guards");
     const newlyPromoted=[
@@ -72,6 +77,7 @@ test("DB014 actual registered PG17 FK, history, trigger and cascade catalog",asy
       const exists=triggers.has(table+"."+name);
       assert.equal(exists,guardsRegistered,
         "Exact journal to registered trigger mismatch: "+table+"."+name);
+      if(guardsRegistered)assertGuardActive(table,name);
     }
     const uniqueResult=await db.query(
       "SELECT t.relname AS table_name,i.relname AS index_name, "+
