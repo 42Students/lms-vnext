@@ -236,6 +236,9 @@ Legacy `QuizzesContent` runs in Faculty mode.
 - [ ] Empty/loading/error/stale states.
 - [ ] College and role scoping.
 
+**2026-10-31 Notifications closure work, pending exact-SHA execution:** The Faculty feed now separates personal read receipts from read-state-free announcements, exposes strict older-announcement keyset cursor links, rejects malformed/foreign query selectors, retains partial data when one feed or the unread counter fails, and retries the current URL with a fresh RSC request. [Source update 26c505e](https://github.com/42Students/lms-vnext/commit/26c505e9ebd5c4cf7e25281e380cc0a8b27e8f72) and [safe retry 8c21ba3](https://github.com/42Students/lms-vnext/commit/8c21ba3490617d9cdd3d36a8209b39de4970ff67). [Nine focused SSR/query/role unit cases](https://github.com/42Students/lms-vnext/blob/main/tests/unit/faculty-notifications-closure.test.tsx), [real registered PG17 announcements pagination/tenant fixture](https://github.com/42Students/lms-vnext/blob/main/tests/integration/faculty-announcements-acceptance.test.ts), existing Faculty cross-college notification read/write integration, and [desktop/mobile Chromium acceptance](https://github.com/42Students/lms-vnext/blob/main/tests/e2e/faculty-notifications.spec.ts) execute via the [dedicated SHA status workflow](https://github.com/42Students/lms-vnext/blob/main/.github/workflows/faculty-notifications-acceptance.yml). **Keep all four checks open until the post-change workflow genuinely passes**; do not count older results, source-only tests, or disabled announcement flags as acceptance. Global Faculty CI and release remain separate.
+
+
 ## Page: Faculty Profile
 
 **Source-only partial implementation:** `/teacher/profile` now has Faculty-only
