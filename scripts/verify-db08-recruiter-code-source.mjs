@@ -48,15 +48,26 @@ const schemaHits = hrHits(schemaFiles);
 const placementHits = hrHits(placementFiles);
 const allHits = [...schemaHits, ...placementHits];
 
+// HR still legitimately names a legacy interview TYPE or describes recruiter
+// UI copy. Those are not persisted round-result SOURCE values. Reject any new
+// non-provenance HR expression unless it has an individually reviewed shape.
+function isReviewedNonProvenanceHr(text) {
+  if (/^(?:\/\/|\/\*|\*|--)/.test(text)) return true;
+  return /legacyInterviewType|interviewType|type:z\.enum|\bTECHNICAL:|\.includes\(filters\.type\)|HR interview|HR Round|Technical, HR|start the HR/i.test(text);
+}
 const allowedFiles = new Set([
   "src/db/schema/placements.ts",
   "src/modules/placements/result-service.ts",
   "src/modules/placements/round-result-source-model.ts",
+  "src/modules/placements/recruiter-today-staged-results-service.ts",
 ]);
+const unexplained = allHits.filter(
+  hit => !allowedFiles.has(hit.file) && !isReviewedNonProvenanceHr(hit.text),
+);
 assert.deepEqual(
-  [...new Set(allHits.map((hit) => hit.file).filter((file) => !allowedFiles.has(file)))],
+  unexplained,
   [],
-  "unexpected HR literal outside the known pre-cutover round-result family",
+  "unexpected HR stored-code/provenance literal outside the reviewed compatibility family",
 );
 
 const placements = readFileSync(resolve("src/db/schema/placements.ts"), "utf8");
@@ -72,6 +83,17 @@ const candidate = readFileSync(
   resolve("docs/planning/sql/db08-recruiter-round-result-code-candidate.sql"),
   "utf8",
 );
+const todayResultsService = readFileSync(
+  resolve("src/modules/placements/recruiter-today-staged-results-service.ts"),
+  "utf8",
+);
+assert.match(
+  todayResultsService,
+  /sql<boolean>`\$\{placementRoundResults\.source\} in \('HR','RECRUITER'\)`/,
+  "recruiter Today must recognize legacy and canonical staged provenance",
+);
+assert.doesNotMatch(todayResultsService, /eq\(placementRoundResults\.source,"HR"\)/);
+
 const inventory = JSON.parse(
   readFileSync(
     resolve("docs/planning/db-pass4-columns-db08_placement_policy_and_outcomes.json"),
@@ -93,9 +115,11 @@ assert.match(resultService, /!isRecruiterRoundResultSource\(current\.source\)/);
 assert.ok(placementHits.some(hit => hit.file === "src/modules/placements/round-result-source-model.ts"),
   "the compatibility model must explicitly recognize legacy HR provenance");
 if (preCutover) {
-  assert.equal(schemaHits.length, 1);
-  assert.equal(schemaHits[0].file, "src/db/schema/placements.ts");
-  assert.match(schemaHits[0].text, /'TPO', 'HR', 'IMPORT'/);
+  const persistedSourceChecks = schemaHits.filter(
+    hit => hit.file === "src/db/schema/placements.ts",
+  );
+  assert.equal(persistedSourceChecks.length, 1);
+  assert.match(persistedSourceChecks[0].text, /'TPO', 'HR', 'IMPORT'/);
   assert.ok(placementHits.some(hit =>
     hit.file === "src/modules/placements/result-service.ts" && /"HR"/.test(hit.text)),
     "legacy writer must remain until the forward-compatible EXPAND migration is registered");
