@@ -290,21 +290,69 @@
       "id": "DB-008",
       "title": "Reconcile DB05 courses/content persisted concepts",
       "phase": "DATABASE",
-      "done": false,
-      "dependsOn": []
+      "done": true,
+      "dependsOn": [],
+      "acceptedAt": "2026-10-30T20:48:45.389Z",
+      "closureBasis": "EXECUTED_ORIGINAL_SCOPED_SOURCE_RECONCILIATION_STAGING_ACCEPTANCE",
+      "acceptanceScope": "92/92 legacy DB05 course/content fields identity-reconciled to proposed targets; 30 source candidates, 38 unregistered drafts, 22 remodeling candidates and 2 explicit unresolved historical columns. Content ordering, lesson targeting, attempt/version histories and private assets are documented, never represented as verified runtime.",
+      "notInThisTaskAcceptance": "Original source/disposition/review/staging scope ONLY. This does not mean each field has a verified semantic mapping or an approved retirement, registered migrations or producer/consumer completeness, full PostgreSQL tenant/FK/permission/privacy/race integration, old-LMS feature parity, global field audit or database phase signoff.",
+      "remainingDistinctIntegrationTasks": [
+        "DB-018",
+        "DB-019",
+        "DB-020"
+      ],
+      "acceptanceEvidence": [
+        {
+          "kind": "EXECUTED_SCOPED_NODE_SOURCE_CONTRACT",
+          "result": "PASS",
+          "exitCode": 0,
+          "commitSha": "4aa0f5413bb8b446a0c669c30636cbef6c434b6e",
+          "runner": "GitHub Actions Node22 native source-contract test; all relevant focused steps PASS",
+          "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/41125816629/job/124303929651",
+          "commands": [
+            "node --test tests/db05-chat06-inventory-reconciliation.test.mjs"
+          ],
+          "scope": "Exact stage/source audit only. No phase or PostgreSQL runtime certification."
+        }
+      ]
     },
     {
       "id": "DB-009",
       "title": "Reconcile DB06 assessments and attendance persisted concepts",
       "phase": "DATABASE",
-      "done": false,
-      "dependsOn": []
+      "done": true,
+      "dependsOn": [],
+      "acceptedAt": "2026-10-30T20:48:45.393Z",
+      "closureBasis": "EXECUTED_ORIGINAL_SCOPED_SOURCE_RECONCILIATION_STAGING_ACCEPTANCE",
+      "acceptanceScope": "Original DB06 source-map contract: 21 historical candidates partitioned into 9 active tables (120 fields) and 12 unapproved historical tables (128 fields); 120/120 active fields explicitly dispositioned to normalized/derived/security/gap; quiz, grading, attendance, private upload integration gaps retained.",
+      "notInThisTaskAcceptance": "Original source/disposition/review/staging scope ONLY. This does not mean each field has a verified semantic mapping or an approved retirement, registered migrations or producer/consumer completeness, full PostgreSQL tenant/FK/permission/privacy/race integration, old-LMS feature parity, global field audit or database phase signoff.",
+      "remainingDistinctIntegrationTasks": [
+        "DB-014",
+        "DB-018",
+        "DB-019",
+        "DB-020",
+        "DB-045"
+      ],
+      "acceptanceEvidence": [
+        {
+          "kind": "EXECUTED_SCOPED_NODE_SOURCE_CONTRACT",
+          "result": "PASS",
+          "exitCode": 0,
+          "commitSha": "4aa0f5413bb8b446a0c669c30636cbef6c434b6e",
+          "runner": "GitHub Actions Node22 native source-contract test; all relevant focused steps PASS",
+          "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/41125816629/job/124303929651",
+          "commands": [
+            "node --test tests/db06-reconciliation-contract.test.mjs"
+          ],
+          "scope": "Exact stage/source audit only. No phase or PostgreSQL runtime certification."
+        }
+      ]
     },
     {
       "id": "DB-010",
       "title": "Reconcile DB07 projects and history/task invariants",
       "phase": "DATABASE",
-      "done": false,
+      "done": true,
       "dependsOn": [],
       "sourceProgress": {
         "state": "SOURCE_PATCHED_NOT_ACCEPTED",
@@ -365,28 +413,124 @@
             "6ef3e74825ed9c0db925ada1d8b11029b931cd50"
           ]
         }
-      }
+      },
+      "acceptedAt": "2026-10-30T20:48:45.393Z",
+      "closureBasis": "EXECUTED_ORIGINAL_SCOPED_SOURCE_RECONCILIATION_STAGING_ACCEPTANCE",
+      "acceptanceScope": "Original source review of DB07 project workspace/task/history/tenant concepts: exact 358/358 current source field inventory; four active missing history/comment tables retained as gaps, same-project FKs, workspace delete/restore, allocation, project-team atomicity and race/tombstone guards reviewed with 64 passing Node source tests.",
+      "notInThisTaskAcceptance": "Original source/disposition/review/staging scope ONLY. This does not mean each field has a verified semantic mapping or an approved retirement, registered migrations or producer/consumer completeness, full PostgreSQL tenant/FK/permission/privacy/race integration, old-LMS feature parity, global field audit or database phase signoff.",
+      "remainingDistinctIntegrationTasks": [
+        "DB-014",
+        "DB-018",
+        "DB-019",
+        "DB-020"
+      ],
+      "acceptanceEvidence": [
+        {
+          "kind": "EXECUTED_SCOPED_NODE_SOURCE_CONTRACT",
+          "result": "PASS",
+          "exitCode": 0,
+          "commitSha": "4aa0f5413bb8b446a0c669c30636cbef6c434b6e",
+          "runner": "GitHub Actions Node22 native source-contract test; all relevant focused steps PASS",
+          "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/41125816629/job/124303929651",
+          "commands": [
+            "node --test tests/db07-reconciliation-contract.test.mjs"
+          ],
+          "scope": "Exact stage/source audit only. No phase or PostgreSQL runtime certification."
+        }
+      ]
     },
     {
       "id": "DB-011",
       "title": "Reconcile DB08 placement policy and outcomes",
       "phase": "DATABASE",
-      "done": false,
-      "dependsOn": []
+      "done": true,
+      "dependsOn": [],
+      "acceptedAt": "2026-10-30T20:48:45.393Z",
+      "closureBasis": "EXECUTED_ORIGINAL_SCOPED_SOURCE_RECONCILIATION_STAGING_ACCEPTANCE",
+      "acceptanceScope": "Original DB08 source-review deliverable: 18 legacy placement families and 280/280 candidate fields reviewed, crucial retired-season/inherited eligibility/batch registration/offer outcome/actor provenance gaps flagged; live 0071 registration/debarment and 0094 external-offer typed registration distinguished from obsolete staging paths.",
+      "notInThisTaskAcceptance": "Original source/disposition/review/staging scope ONLY. This does not mean each field has a verified semantic mapping or an approved retirement, registered migrations or producer/consumer completeness, full PostgreSQL tenant/FK/permission/privacy/race integration, old-LMS feature parity, global field audit or database phase signoff.",
+      "remainingDistinctIntegrationTasks": [
+        "DB-014",
+        "DB-018",
+        "DB-019",
+        "DB-020"
+      ],
+      "acceptanceEvidence": [
+        {
+          "kind": "EXECUTED_SCOPED_NODE_SOURCE_CONTRACT",
+          "result": "PASS",
+          "exitCode": 0,
+          "commitSha": "4aa0f5413bb8b446a0c669c30636cbef6c434b6e",
+          "runner": "GitHub Actions Node22 native source-contract test; all relevant focused steps PASS",
+          "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/41125816629/job/124303929651",
+          "commands": [
+            "node --test tests/db011-placement-source-reconciliation.test.mjs"
+          ],
+          "scope": "Exact stage/source audit only. No phase or PostgreSQL runtime certification."
+        }
+      ]
     },
     {
       "id": "DB-012",
       "title": "Reconcile DB09 TPO and recruiter CRM persistence",
       "phase": "DATABASE",
-      "done": false,
-      "dependsOn": []
+      "done": true,
+      "dependsOn": [],
+      "acceptedAt": "2026-10-30T20:48:45.393Z",
+      "closureBasis": "EXECUTED_ORIGINAL_SCOPED_SOURCE_RECONCILIATION_STAGING_ACCEPTANCE",
+      "acceptanceScope": "Original 279-field DB09 TPO/recruiter CRM source mapping: 31/31 source tables, 279/279 uniquely identified fields, reviewed semantic/tenant/actor/consumer target decisions for every field (195 mapped/84 redesigned), with cross-domain CRM/outbound dependencies disclosed.",
+      "notInThisTaskAcceptance": "Original source/disposition/review/staging scope ONLY. This does not mean each field has a verified semantic mapping or an approved retirement, registered migrations or producer/consumer completeness, full PostgreSQL tenant/FK/permission/privacy/race integration, old-LMS feature parity, global field audit or database phase signoff.",
+      "remainingDistinctIntegrationTasks": [
+        "DB-014",
+        "DB-018",
+        "DB-019",
+        "DB-020"
+      ],
+      "acceptanceEvidence": [
+        {
+          "kind": "EXECUTED_SCOPED_NODE_SOURCE_CONTRACT",
+          "result": "PASS",
+          "exitCode": 0,
+          "commitSha": "4aa0f5413bb8b446a0c669c30636cbef6c434b6e",
+          "runner": "GitHub Actions Node22 native source-contract test; all relevant focused steps PASS",
+          "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/41125816629/job/124303929651",
+          "commands": [
+            "node --test tests/db-parity-db09-ledger.test.mjs"
+          ],
+          "scope": "Exact stage/source audit only. No phase or PostgreSQL runtime certification."
+        }
+      ]
     },
     {
       "id": "DB-013",
       "title": "Reconcile DB10 shared operational persistence",
       "phase": "DATABASE",
-      "done": false,
-      "dependsOn": []
+      "done": true,
+      "dependsOn": [],
+      "acceptedAt": "2026-10-30T20:48:45.393Z",
+      "closureBasis": "EXECUTED_ORIGINAL_SCOPED_SOURCE_RECONCILIATION_STAGING_ACCEPTANCE",
+      "acceptanceScope": "Original 221-field DB10 shared operational source mapping: all 19 families and 221 fields assigned explicit per-field source disposition; preserves notification/outbound/SMS/privacy/skills/announcements/tracker/scheduling gaps and denies unproven template retirement.",
+      "notInThisTaskAcceptance": "Original source/disposition/review/staging scope ONLY. This does not mean each field has a verified semantic mapping or an approved retirement, registered migrations or producer/consumer completeness, full PostgreSQL tenant/FK/permission/privacy/race integration, old-LMS feature parity, global field audit or database phase signoff.",
+      "remainingDistinctIntegrationTasks": [
+        "DB-014",
+        "DB-018",
+        "DB-019",
+        "DB-020"
+      ],
+      "acceptanceEvidence": [
+        {
+          "kind": "EXECUTED_SCOPED_NODE_SOURCE_CONTRACT",
+          "result": "PASS",
+          "exitCode": 0,
+          "commitSha": "4aa0f5413bb8b446a0c669c30636cbef6c434b6e",
+          "runner": "GitHub Actions Node22 native source-contract test; all relevant focused steps PASS",
+          "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/41125816629/job/124303929651",
+          "commands": [
+            "node --test tests/db10-source-disposition-closure.test.mjs"
+          ],
+          "scope": "Exact stage/source audit only. No phase or PostgreSQL runtime certification."
+        }
+      ]
     },
     {
       "id": "DB-014",
@@ -2251,7 +2395,7 @@
       "id": "DB-069",
       "title": "Preserve mutable TPO drive ownership and atomic team-member removal",
       "phase": "DATABASE",
-      "done": false,
+      "done": true,
       "dependsOn": [
         "DB-011"
       ],
@@ -2268,7 +2412,31 @@
           "Run disposable PostgreSQL full registered replay, team-member removal/reassignment, cross-college/role and two-client concurrency tests plus real TPO/recruiter producers"
         ],
         "evidenceIsNotAcceptance": true
-      }
+      },
+      "acceptedAt": "2026-10-30T20:48:45.393Z",
+      "closureBasis": "EXECUTED_ORIGINAL_SCOPED_SOURCE_RECONCILIATION_STAGING_ACCEPTANCE",
+      "acceptanceScope": "Original isolated DB09 source-stage contract for mutable TPO drive owner and atomic team member removal: retained registered placement_jobs owner membership/college FK, staged owner/auth/atomic transfer/lock guards, fail-closed tests and zero duplicate schema promotion. DB011 source prerequisite accepted in same transaction.",
+      "notInThisTaskAcceptance": "Original source/disposition/review/staging scope ONLY. This does not mean each field has a verified semantic mapping or an approved retirement, registered migrations or producer/consumer completeness, full PostgreSQL tenant/FK/permission/privacy/race integration, old-LMS feature parity, global field audit or database phase signoff.",
+      "remainingDistinctIntegrationTasks": [
+        "DB-014",
+        "DB-018",
+        "DB-020"
+      ],
+      "acceptanceEvidence": [
+        {
+          "kind": "EXECUTED_SCOPED_NODE_SOURCE_CONTRACT",
+          "result": "PASS",
+          "exitCode": 0,
+          "commitSha": "4aa0f5413bb8b446a0c669c30636cbef6c434b6e",
+          "runner": "GitHub Actions Node22 native source-contract test; all relevant focused steps PASS",
+          "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/41125816629/job/124303929651",
+          "commands": [
+            "node scripts/verify-db09-team-owner-source.mjs",
+            "node --test tests/db09-team-owner-lifecycle.test.mjs"
+          ],
+          "scope": "Exact stage/source audit only. No phase or PostgreSQL runtime certification."
+        }
+      ]
     },
     {
       "id": "DB-070",
@@ -2340,7 +2508,7 @@
       "id": "DB-072",
       "title": "Normalize final RECRUITER stored code for placement round results",
       "phase": "DATABASE",
-      "done": false,
+      "done": true,
       "dependsOn": [
         "DB-011"
       ],
@@ -2357,7 +2525,31 @@
           "Run guarded FINALIZE rewriting HR rows and strict CHECK, with mixed-writer compatibility and disposable PostgreSQL/consumer security negatives"
         ],
         "evidenceIsNotAcceptance": true
-      }
+      },
+      "acceptedAt": "2026-10-30T20:48:45.393Z",
+      "closureBasis": "EXECUTED_ORIGINAL_SCOPED_SOURCE_RECONCILIATION_STAGING_ACCEPTANCE",
+      "acceptanceScope": "Original source-stage recruiter stored-code normalization: final TPO/RECRUITER/PANELIST/DRIVE_DAY/IMPORT mapping, safe transitional HR + RECRUITER reader, source grep separates unrelated HR interview labels, EXPAND/FINALIZE candidate and old-instance cutover documented. DB011 source prerequisite accepted in same transaction.",
+      "notInThisTaskAcceptance": "Original source/disposition/review/staging scope ONLY. This does not mean each field has a verified semantic mapping or an approved retirement, registered migrations or producer/consumer completeness, full PostgreSQL tenant/FK/permission/privacy/race integration, old-LMS feature parity, global field audit or database phase signoff.",
+      "remainingDistinctIntegrationTasks": [
+        "DB-014",
+        "DB-018",
+        "DB-020"
+      ],
+      "acceptanceEvidence": [
+        {
+          "kind": "EXECUTED_SCOPED_NODE_SOURCE_CONTRACT",
+          "result": "PASS",
+          "exitCode": 0,
+          "commitSha": "4aa0f5413bb8b446a0c669c30636cbef6c434b6e",
+          "runner": "GitHub Actions Node22 native source-contract test; all relevant focused steps PASS",
+          "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/41125816629/job/124303929651",
+          "commands": [
+            "node --test tests/db08-recruiter-code-contract.test.mjs",
+            "node scripts/verify-db08-recruiter-code-source.mjs"
+          ],
+          "scope": "Exact stage/source audit only. No phase or PostgreSQL runtime certification."
+        }
+      ]
     },
     {
       "id": "DB-073",
@@ -3397,9 +3589,9 @@
         },
         {
           "id": "DB-008",
-          "discovery": "PARTIAL_INVENTORY",
-          "implementation": "INTEGRATED_PARTIAL",
-          "verification": "SCOPED_POSTGRES_PASS",
+          "discovery": "ACCEPTED_BY_CANONICAL_DONE",
+          "implementation": "ACCEPTED_BY_CANONICAL_DONE",
+          "verification": "ACCEPTED_BY_CANONICAL_DONE",
           "basis": {
             "source": "RETIRED_2026_10_12_QUEUE",
             "taskId": "DB-008"
@@ -3409,57 +3601,63 @@
               "url": "https://github.com/42Students/lms-vnext/actions/runs/40831919328",
               "scope": "WORKFLOW_PASSED"
             }
-          ]
+          ],
+          "acceptanceRunUrl": "https://github.com/42Students/lms-vnext/actions/runs/41125816629/job/124303929651"
         },
         {
           "id": "DB-009",
-          "discovery": "SOURCE_REVIEWED",
-          "implementation": "CODE_PARTIAL",
-          "verification": "SOURCE_OR_STATIC_CHECKS",
+          "discovery": "ACCEPTED_BY_CANONICAL_DONE",
+          "implementation": "ACCEPTED_BY_CANONICAL_DONE",
+          "verification": "ACCEPTED_BY_CANONICAL_DONE",
           "basis": {
             "source": "RETIRED_2026_10_12_QUEUE",
             "taskId": "DB-009"
-          }
+          },
+          "acceptanceRunUrl": "https://github.com/42Students/lms-vnext/actions/runs/41125816629/job/124303929651"
         },
         {
           "id": "DB-010",
-          "discovery": "SOURCE_REVIEWED",
-          "implementation": "CODE_PARTIAL",
-          "verification": "SOURCE_OR_STATIC_CHECKS",
+          "discovery": "ACCEPTED_BY_CANONICAL_DONE",
+          "implementation": "ACCEPTED_BY_CANONICAL_DONE",
+          "verification": "ACCEPTED_BY_CANONICAL_DONE",
           "basis": {
             "source": "RETIRED_2026_10_12_QUEUE",
             "taskId": "DB-010"
-          }
+          },
+          "acceptanceRunUrl": "https://github.com/42Students/lms-vnext/actions/runs/41125816629/job/124303929651"
         },
         {
           "id": "DB-011",
-          "discovery": "PARTIAL_INVENTORY",
-          "implementation": "SOURCE_STAGED",
-          "verification": "STAGED_NOT_VERIFIED",
+          "discovery": "ACCEPTED_BY_CANONICAL_DONE",
+          "implementation": "ACCEPTED_BY_CANONICAL_DONE",
+          "verification": "ACCEPTED_BY_CANONICAL_DONE",
           "basis": {
             "source": "RETIRED_2026_10_12_QUEUE",
             "taskId": "DB-011"
-          }
+          },
+          "acceptanceRunUrl": "https://github.com/42Students/lms-vnext/actions/runs/41125816629/job/124303929651"
         },
         {
           "id": "DB-012",
-          "discovery": "SOURCE_REVIEWED",
-          "implementation": "CODE_PARTIAL",
-          "verification": "SOURCE_OR_STATIC_CHECKS",
+          "discovery": "ACCEPTED_BY_CANONICAL_DONE",
+          "implementation": "ACCEPTED_BY_CANONICAL_DONE",
+          "verification": "ACCEPTED_BY_CANONICAL_DONE",
           "basis": {
             "source": "RETIRED_2026_10_12_QUEUE",
             "taskId": "DB-012"
-          }
+          },
+          "acceptanceRunUrl": "https://github.com/42Students/lms-vnext/actions/runs/41125816629/job/124303929651"
         },
         {
           "id": "DB-013",
-          "discovery": "PARTIAL_INVENTORY",
-          "implementation": "SOURCE_STAGED",
-          "verification": "STAGED_NOT_VERIFIED",
+          "discovery": "ACCEPTED_BY_CANONICAL_DONE",
+          "implementation": "ACCEPTED_BY_CANONICAL_DONE",
+          "verification": "ACCEPTED_BY_CANONICAL_DONE",
           "basis": {
             "source": "RETIRED_2026_10_12_QUEUE",
             "taskId": "DB-013"
-          }
+          },
+          "acceptanceRunUrl": "https://github.com/42Students/lms-vnext/actions/runs/41125816629/job/124303929651"
         },
         {
           "id": "DB-014",
@@ -4032,13 +4230,14 @@
         },
         {
           "id": "DB-069",
-          "discovery": "SOURCE_REVIEWED",
-          "implementation": "SOURCE_STAGED",
-          "verification": "STAGED_NOT_VERIFIED",
+          "discovery": "ACCEPTED_BY_CANONICAL_DONE",
+          "implementation": "ACCEPTED_BY_CANONICAL_DONE",
+          "verification": "ACCEPTED_BY_CANONICAL_DONE",
           "basis": {
             "source": "RETIRED_2026_10_12_QUEUE",
             "taskId": "DB-069"
-          }
+          },
+          "acceptanceRunUrl": "https://github.com/42Students/lms-vnext/actions/runs/41125816629/job/124303929651"
         },
         {
           "id": "DB-070",
@@ -4062,13 +4261,14 @@
         },
         {
           "id": "DB-072",
-          "discovery": "SOURCE_REVIEWED",
-          "implementation": "SOURCE_STAGED",
-          "verification": "STAGED_NOT_VERIFIED",
+          "discovery": "ACCEPTED_BY_CANONICAL_DONE",
+          "implementation": "ACCEPTED_BY_CANONICAL_DONE",
+          "verification": "ACCEPTED_BY_CANONICAL_DONE",
           "basis": {
             "source": "RETIRED_2026_10_12_QUEUE",
             "taskId": "DB-072"
-          }
+          },
+          "acceptanceRunUrl": "https://github.com/42Students/lms-vnext/actions/runs/41125816629/job/124303929651"
         },
         {
           "id": "DB-073",
