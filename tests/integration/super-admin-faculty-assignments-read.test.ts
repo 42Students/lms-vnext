@@ -30,7 +30,8 @@ describe.skipIf(!enabled)("Super Admin faculty assignment PostgreSQL",()=>{
  afterAll(async()=>{try{
   for(const [table,id] of [["course_teaching_assignments",ids.assignment],["course_section_deliveries",ids.delivery],
    ["sections",ids.section],["course_offerings",ids.offering],["courses",ids.course],["cohorts",ids.cohort],
-   ["programs",ids.program],["academic_periods",ids.period]] as const)await pool?.query(`delete from ${table} where id=$1`,[id]);
+   ["programs",ids.program],["academic_periods",ids.period]] as const){if(table==="courses") await pool?.query("delete from program_term_courses where course_id=$1",[id]);
+    await pool?.query(`delete from ${table} where id=$1`,[id]);}
  }finally{await pool?.end();await closeDatabaseConnection();}});
  it("resolves only selected-college teaching assignments and denies wrong role",async()=>{
   expect((await listAdminFacultyAssignments(admin,{q:name})).items).toEqual([expect.objectContaining({id:ids.assignment,status:"ACTIVE"})]);
