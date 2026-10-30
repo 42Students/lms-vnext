@@ -1,4 +1,5 @@
 import { afterAll, beforeEach, describe, expect, it } from "vitest";
+import { randomUUID } from "node:crypto";
 import { Pool } from "pg";
 import { closeDatabaseConnection } from "@/db/client";
 import type { RequestContext } from "@/modules/identity/context";
@@ -45,12 +46,23 @@ async function cleanup() {
   await pool.query("delete from project_instances where slug like '" + prefix + "%'");
   const templates = "select id from project_templates where slug like '" + prefix + "%'";
   await pool.query("delete from project_template_college_assignments where template_id in (" + templates + ")");
-  await pool.query("delete from project_template_versions where template_id in (" + templates + ")");
-  await pool.query("delete from project_templates where slug like '" + prefix + "%'");
+  // Preserve DB070 append-only history and DB071 deferred version pointers.
+  // The disposable fixture slugs/UUIDs are unique; no guard bypass is used.
+  const retention = await pool.query<{retainHistory:boolean}>(
+    "select (exists (select 1 from pg_trigger where tgrelid='project_template_versions'::regclass " +
+    "and tgname='db07_project_template_versions_append_only' and tgenabled='O') " +
+    "or exists (select 1 from pg_constraint where conrelid='project_templates'::regclass " +
+    "and conname='project_templates_current_version_snapshot_fk')) as \"retainHistory\"",
+  );
+  if (!retention.rows[0]?.retainHistory) {
+    await pool.query("delete from project_template_versions where template_id in (" + templates + ")");
+    await pool.query("delete from project_templates where slug like '" + prefix + "%'");
+  }
 }
 async function createProject() {
+  const nonce = randomUUID().slice(0,12);
   const template = await createProjectTemplate(superAdmin, {
-    slug: prefix + "template", title: "Roster retry template",
+    slug: prefix + "template-" + nonce, title: "Roster retry template",
     blueprint: {
       overview: { goal: "Idempotent admin roster", deliverables: ["Valid roster"] },
       releases: [{ key: "r1", title: "Release", sequence: 0 }],
@@ -62,7 +74,7 @@ async function createProject() {
   await publishProjectTemplate(superAdmin, template.template.id);
   await assignProjectTemplateToCollege(scopedAdmin, template.template.id, SEED_IDS.collegeA);
   return createProjectInstance(admin, { collegeId: SEED_IDS.collegeA,
-    templateId: template.template.id, slug: prefix + "project", title: "Roster retry project" });
+    templateId: template.template.id, slug: prefix + "project-" + nonce, title: "Roster retry project" });
 }
 
 beforeEach(cleanup);
