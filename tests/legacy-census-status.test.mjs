@@ -63,3 +63,26 @@ test("new dev-only route paths absent from the frozen census are explicit stale 
  assert.equal(s.frontend.missingRouteSourceFiles,1);
  assert.equal(s.structuralProblems.length,0);
 });
+
+test("new overlay and navigation files cannot be hidden by the old source denominator",()=>{
+ const f=fixture();
+ f.drift.legacyFrontend.changedSourceComponents.push(
+   {path:"src/components/tpo/invite/BringInWindow.jsx"},
+   {path:"src/components/tpo/invite/VerifyCompanyWindow.jsx"},
+   {path:"src/components/tpo/invite/BringInWindow.jsx"},
+ );
+ f.drift.legacyFrontend.changedNavigationOrLayout=[
+   {path:"src/components/Global/Header/Header.js"},
+   "src/components/tpo/TpoSidebar.jsx",
+ ];
+ const s=buildLegacyCensusStatus(f);
+ assert.deepEqual(s.frontend.staleAfterDevChanges.unmappedChangedComponentPaths,[
+   "src/components/tpo/invite/BringInWindow.jsx",
+   "src/components/tpo/invite/VerifyCompanyWindow.jsx",
+ ]);
+ assert.deepEqual(s.frontend.staleAfterDevChanges.changedNavigationOrLayoutPaths,[
+   "src/components/Global/Header/Header.js",
+   "src/components/tpo/TpoSidebar.jsx",
+ ]);
+ assert.equal(s.frontend.staleAfterDevChanges.changedComponentFiles,0);
+});
