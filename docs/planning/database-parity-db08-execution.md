@@ -5,6 +5,26 @@
 **Status:** **SOURCE-AUDITED / NOT IMPLEMENTED OR DATABASE-VERIFIED IN THIS WORKSTREAM.** Never interpret this as a completed DB domain.  
 **Machine-readable companion:** `docs/planning/database-parity-db08-field-ledger.json`.
 
+## 31 October 2026 source-integration update
+
+**Historical staging paths in the 11 October field ledger are stale.**
+`scripts/sql/db08-registration-staging.sql` and
+`scripts/sql/db08-debarment-staging.sql` do not exist on current `main`.
+Registration and debarment are already present as typed barrel exports and
+a numbered `drizzle/0071_db08_registration_debarments.sql` migration.
+The DB08 external-offer schema is also barrel-exported and records migration
+0094. Do not attempt to re-create those older candidate SQL files or run
+duplicate migrations.
+
+**Not a parity signoff:** 280/280 legacy source fields were reviewed to
+candidate families, with 0/280 complete original-semantic runtime
+certifications. Mandatory season retirement, registration outcome detail,
+offer breakup/bond/dispute, counts-as-placed and inherited eligibility
+remain real implementation/acceptance obligations. They must be addressed
+through the still-open cross-domain/global audit and runtime phase gates.
+This document's historical source map is a review deliverable, **not**
+verification that placement product behavior has fully shipped.
+
 ## Domain contract and critical discovery
 
 The vNext placement system is not yet behaviorally equivalent to the **latest** legacy placement model. Legacy `V188__placement_batches_and_eligibility.sql` and `docs/tpo-ux/BATCHES-AND-ELIGIBILITY-DESIGN.md` explicitly *replace placement seasons* with academic batches, per-batch registration and eligibility inherited from BATCH → CLASS → LEARNER. The vNext `placement_seasons` table and `season-service.ts` still make a season an obligatory grouping and enforce **only one ACTIVE season per college**. This is a genuine source-contract mismatch; do not close it by adding fields to the season table alone.
