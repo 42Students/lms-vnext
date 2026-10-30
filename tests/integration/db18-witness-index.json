@@ -17,8 +17,8 @@
       "migration": "drizzle/0039_db03_scope_triggers.sql",
       "expectedSqlState": "23514",
       "execution": "PASS",
-      "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/41104567182",
-      "commitSha": "c78eb936db33489cbb3b57281793dfda5f10382d"
+      "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/41107736939",
+      "commitSha": "654cbc9d69759100ca3fd87a538c6e0cfb3bc2c3"
     },
     {
       "id": "DB18-N02",
@@ -28,8 +28,8 @@
       "migration": "drizzle/0039_db03_scope_triggers.sql",
       "expectedSqlState": "23514",
       "execution": "PASS",
-      "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/41104567182",
-      "commitSha": "c78eb936db33489cbb3b57281793dfda5f10382d"
+      "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/41107736939",
+      "commitSha": "654cbc9d69759100ca3fd87a538c6e0cfb3bc2c3"
     },
     {
       "id": "DB18-N03",
@@ -39,8 +39,8 @@
       "migration": "drizzle/0039_db03_scope_triggers.sql",
       "expectedSqlState": "23514",
       "execution": "PASS",
-      "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/41104567182",
-      "commitSha": "c78eb936db33489cbb3b57281793dfda5f10382d"
+      "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/41107736939",
+      "commitSha": "654cbc9d69759100ca3fd87a538c6e0cfb3bc2c3"
     },
     {
       "id": "DB18-N04",
@@ -50,8 +50,8 @@
       "migration": "drizzle/0039_db03_scope_triggers.sql",
       "expectedSqlState": "23514",
       "execution": "PASS",
-      "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/41104567182",
-      "commitSha": "c78eb936db33489cbb3b57281793dfda5f10382d"
+      "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/41107736939",
+      "commitSha": "654cbc9d69759100ca3fd87a538c6e0cfb3bc2c3"
     },
     {
       "id": "DB18-N05",
@@ -61,8 +61,8 @@
       "migration": "drizzle/0041_db06_assessment_parent_scope.sql",
       "expectedSqlState": "23514",
       "execution": "PASS",
-      "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/41104567182",
-      "commitSha": "c78eb936db33489cbb3b57281793dfda5f10382d"
+      "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/41107736939",
+      "commitSha": "654cbc9d69759100ca3fd87a538c6e0cfb3bc2c3"
     },
     {
       "id": "DB18-N06",
@@ -72,8 +72,8 @@
       "migration": "drizzle/0041_db06_assessment_parent_scope.sql",
       "expectedSqlState": "23514",
       "execution": "PASS",
-      "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/41104567182",
-      "commitSha": "c78eb936db33489cbb3b57281793dfda5f10382d"
+      "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/41107736939",
+      "commitSha": "654cbc9d69759100ca3fd87a538c6e0cfb3bc2c3"
     },
     {
       "id": "DB18-N07",
@@ -83,8 +83,8 @@
       "migration": "drizzle/0041_db06_assessment_parent_scope.sql",
       "expectedSqlState": "23514",
       "execution": "PASS",
-      "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/41104567182",
-      "commitSha": "c78eb936db33489cbb3b57281793dfda5f10382d"
+      "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/41107736939",
+      "commitSha": "654cbc9d69759100ca3fd87a538c6e0cfb3bc2c3"
     },
     {
       "id": "DB18-N08",
@@ -94,8 +94,8 @@
       "migration": "drizzle/0042_db06_assessment_scope_hardening.sql",
       "expectedSqlState": "23514",
       "execution": "PASS",
-      "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/41104567182",
-      "commitSha": "c78eb936db33489cbb3b57281793dfda5f10382d"
+      "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/41107736939",
+      "commitSha": "654cbc9d69759100ca3fd87a538c6e0cfb3bc2c3"
     },
     {
       "id": "DB18-N09",
@@ -105,8 +105,8 @@
       "migration": "drizzle/0037_db03_groups_electives.sql",
       "expectedSqlState": "23503",
       "execution": "PASS",
-      "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/41104567182",
-      "commitSha": "c78eb936db33489cbb3b57281793dfda5f10382d"
+      "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/41107736939",
+      "commitSha": "654cbc9d69759100ca3fd87a538c6e0cfb3bc2c3"
     }
   ],
   "existingConcurrencyWitnesses": [
@@ -116,8 +116,8 @@
       "file": "tests/integration/groups-db03.test.ts",
       "title": "serializes simultaneous choices from different offerings of the same max_pick=1 slot",
       "state": "FOCUSED_PG17_VERIFIED",
-      "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/41104567182",
-      "commitSha": "c78eb936db33489cbb3b57281793dfda5f10382d"
+      "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/41107736939",
+      "commitSha": "654cbc9d69759100ca3fd87a538c6e0cfb3bc2c3"
     },
     {
       "id": "DB18-C02",
@@ -125,8 +125,8 @@
       "file": "tests/integration/courses-c4b-quizzes.test.ts",
       "title": "allows only one concurrent final attempt and enforces database score bounds",
       "state": "FOCUSED_PG17_VERIFIED",
-      "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/41104567182",
-      "commitSha": "c78eb936db33489cbb3b57281793dfda5f10382d"
+      "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/41107736939",
+      "commitSha": "654cbc9d69759100ca3fd87a538c6e0cfb3bc2c3"
     },
     {
       "id": "DB18-C03",
@@ -134,8 +134,8 @@
       "file": "tests/integration/db18-concurrency-witnesses.test.ts",
       "title": "allows exactly one concurrent cohort compare-and-set transition",
       "state": "FOCUSED_PG17_VERIFIED",
-      "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/41104567182",
-      "commitSha": "c78eb936db33489cbb3b57281793dfda5f10382d"
+      "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/41107736939",
+      "commitSha": "654cbc9d69759100ca3fd87a538c6e0cfb3bc2c3"
     },
     {
       "id": "DB18-C04",
@@ -143,8 +143,8 @@
       "file": "tests/integration/db18-concurrency-witnesses.test.ts",
       "title": "allows exactly one concurrent project task submission transition",
       "state": "FOCUSED_PG17_VERIFIED",
-      "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/41104567182",
-      "commitSha": "c78eb936db33489cbb3b57281793dfda5f10382d"
+      "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/41107736939",
+      "commitSha": "654cbc9d69759100ca3fd87a538c6e0cfb3bc2c3"
     }
   ],
   "missingConcurrencyWitnesses": [],
@@ -167,17 +167,19 @@
     "existingConcurrencyAuthored": 4,
     "explicitConcurrencyMissing": 0,
     "draftUnregisteredExcluded": 3,
-    "runtimeExecuted": 43,
-    "runtimePassed": 43,
+    "runtimeExecuted": 48,
+    "runtimePassed": 48,
     "knownRedRaceAuthored": 0,
     "observationalReadOnlyAuthored": 21,
-    "baselineDirectBoundaryAuthored": 7,
-    "directNegativeTotalAuthored": 16,
+    "baselineDirectBoundaryAuthored": 12,
+    "directNegativeTotalAuthored": 21,
     "positiveConcurrencyAuthored": 4,
     "fixAuthoredRaceRuntimePending": 0,
     "fixedRaceRuntimeVerified": 2,
-    "focusedVitestTestsExecuted": 45,
-    "focusedVitestTestsPassed": 45
+    "focusedVitestTestsExecuted": 50,
+    "focusedVitestTestsPassed": 50,
+    "fullSuiteVitestTestsExecuted": 92,
+    "fullSuiteVitestTestsPassed": 92
   },
   "knownRedRaceWitnesses": [
     {
@@ -194,8 +196,8 @@
         "src/modules/placements/eligibility-service.ts",
         "tests/db54-placement-application-race.test.mjs"
       ],
-      "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/41104567182",
-      "commitSha": "c78eb936db33489cbb3b57281793dfda5f10382d"
+      "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/41107736939",
+      "commitSha": "654cbc9d69759100ca3fd87a538c6e0cfb3bc2c3"
     },
     {
       "id": "DB18-R02",
@@ -210,8 +212,8 @@
         "src/modules/academics/enrollment-service.ts",
         "tests/integration/db18-known-race-gaps.test.ts"
       ],
-      "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/41104567182",
-      "commitSha": "c78eb936db33489cbb3b57281793dfda5f10382d"
+      "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/41107736939",
+      "commitSha": "654cbc9d69759100ca3fd87a538c6e0cfb3bc2c3"
     }
   ],
   "observationalWitnesses": {
@@ -220,8 +222,8 @@
     "executableFile": "tests/integration/db018-relational-and-boundary-witnesses.test.ts",
     "state": "FOCUSED_PG17_NONEMPTY_ZERO_MISMATCH_VERIFIED",
     "caveat": "Zero mismatches are observational only and cannot prove a preventing constraint; fixture must contain nonempty joined samples.",
-    "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/41104567182",
-    "commitSha": "c78eb936db33489cbb3b57281793dfda5f10382d"
+    "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/41107736939",
+    "commitSha": "654cbc9d69759100ca3fd87a538c6e0cfb3bc2c3"
   },
   "baselineDirectBoundaryWitnesses": [
     {
@@ -230,8 +232,8 @@
       "title": "rejects a membership with a nonexistent user using a real FK (23503)",
       "expectedSqlState": "23503",
       "execution": "PASS",
-      "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/41104567182",
-      "commitSha": "c78eb936db33489cbb3b57281793dfda5f10382d"
+      "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/41107736939",
+      "commitSha": "654cbc9d69759100ca3fd87a538c6e0cfb3bc2c3"
     },
     {
       "id": "DB18-B02",
@@ -239,8 +241,8 @@
       "title": "rejects a role grant to a nonexistent membership (23503)",
       "expectedSqlState": "23503",
       "execution": "PASS",
-      "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/41104567182",
-      "commitSha": "c78eb936db33489cbb3b57281793dfda5f10382d"
+      "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/41107736939",
+      "commitSha": "654cbc9d69759100ca3fd87a538c6e0cfb3bc2c3"
     },
     {
       "id": "DB18-B03",
@@ -248,8 +250,8 @@
       "title": "rejects an unverified primary tenant domain (23514)",
       "expectedSqlState": "23514",
       "execution": "PASS",
-      "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/41104567182",
-      "commitSha": "c78eb936db33489cbb3b57281793dfda5f10382d"
+      "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/41107736939",
+      "commitSha": "654cbc9d69759100ca3fd87a538c6e0cfb3bc2c3"
     },
     {
       "id": "DB18-B04",
@@ -257,8 +259,8 @@
       "title": "rejects duplicate user membership within the same college (23505)",
       "expectedSqlState": "23505",
       "execution": "PASS",
-      "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/41104567182",
-      "commitSha": "c78eb936db33489cbb3b57281793dfda5f10382d"
+      "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/41107736939",
+      "commitSha": "654cbc9d69759100ca3fd87a538c6e0cfb3bc2c3"
     },
     {
       "id": "DB18-B05",
@@ -266,8 +268,8 @@
       "title": "rejects a whitespace-only user given name under registered CHECK (23514)",
       "expectedSqlState": "23514",
       "execution": "PASS",
-      "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/41104567182",
-      "commitSha": "c78eb936db33489cbb3b57281793dfda5f10382d"
+      "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/41107736939",
+      "commitSha": "654cbc9d69759100ca3fd87a538c6e0cfb3bc2c3"
     },
     {
       "id": "DB18-B06",
@@ -275,8 +277,8 @@
       "title": "rejects a program with zero academic terms under registered CHECK (23514)",
       "expectedSqlState": "23514",
       "execution": "PASS",
-      "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/41104567182",
-      "commitSha": "c78eb936db33489cbb3b57281793dfda5f10382d"
+      "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/41107736939",
+      "commitSha": "654cbc9d69759100ca3fd87a538c6e0cfb3bc2c3"
     },
     {
       "id": "DB18-B07",
@@ -284,21 +286,66 @@
       "title": "rejects a reversed academic period under registered CHECK (23514)",
       "expectedSqlState": "23514",
       "execution": "PASS",
-      "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/41104567182",
-      "commitSha": "c78eb936db33489cbb3b57281793dfda5f10382d"
+      "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/41107736939",
+      "commitSha": "654cbc9d69759100ca3fd87a538c6e0cfb3bc2c3"
+    },
+    {
+      "id": "DB18-B08",
+      "file": "tests/integration/db018-relational-and-boundary-witnesses.test.ts",
+      "title": "rejects nonpositive user identity versions (23514)",
+      "expectedSqlState": "23514",
+      "execution": "PASS",
+      "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/41107736939",
+      "commitSha": "654cbc9d69759100ca3fd87a538c6e0cfb3bc2c3"
+    },
+    {
+      "id": "DB18-B09",
+      "file": "tests/integration/db018-relational-and-boundary-witnesses.test.ts",
+      "title": "rejects zero section capacity in a real cohort (23514)",
+      "expectedSqlState": "23514",
+      "execution": "PASS",
+      "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/41107736939",
+      "commitSha": "654cbc9d69759100ca3fd87a538c6e0cfb3bc2c3"
+    },
+    {
+      "id": "DB18-B10",
+      "file": "tests/integration/db018-relational-and-boundary-witnesses.test.ts",
+      "title": "rejects section minimum size above capacity (23514)",
+      "expectedSqlState": "23514",
+      "execution": "PASS",
+      "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/41107736939",
+      "commitSha": "654cbc9d69759100ca3fd87a538c6e0cfb3bc2c3"
+    },
+    {
+      "id": "DB18-B11",
+      "file": "tests/integration/db018-relational-and-boundary-witnesses.test.ts",
+      "title": "rejects offering credits above the registered ceiling (23514)",
+      "expectedSqlState": "23514",
+      "execution": "PASS",
+      "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/41107736939",
+      "commitSha": "654cbc9d69759100ca3fd87a538c6e0cfb3bc2c3"
+    },
+    {
+      "id": "DB18-B12",
+      "file": "tests/integration/db018-relational-and-boundary-witnesses.test.ts",
+      "title": "rejects nonpositive placement company revisions (23514)",
+      "expectedSqlState": "23514",
+      "execution": "PASS",
+      "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/41107736939",
+      "commitSha": "654cbc9d69759100ca3fd87a538c6e0cfb3bc2c3"
     }
   ],
   "runtimeEvidence": {
     "result": "PASS",
-    "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/41104567182",
-    "commitSha": "c78eb936db33489cbb3b57281793dfda5f10382d",
-    "jobId": 124231024807,
+    "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/41107736939",
+    "commitSha": "654cbc9d69759100ca3fd87a538c6e0cfb3bc2c3",
+    "jobId": 124242154376,
     "executedOn": "2026-10-30",
     "database": "isolated PostgreSQL 17 after clean registered migration replay",
-    "focusedVitestTestsPassed": 45,
-    "focusedVitestTestsExecuted": 45,
-    "domainWitnessesPassed": 43,
-    "domainWitnessesExecuted": 43,
+    "focusedVitestTestsPassed": 50,
+    "focusedVitestTestsExecuted": 50,
+    "domainWitnessesPassed": 48,
+    "domainWitnessesExecuted": 48,
     "relational": {
       "total": 21,
       "populated": 21,
@@ -308,9 +355,9 @@
     },
     "directSqlNegatives": {
       "registeredDb03Db06": 9,
-      "baselineAndAdded": 7,
-      "total": 16,
-      "passed": 16
+      "baselineAndAdded": 12,
+      "total": 21,
+      "passed": 21
     },
     "positiveConcurrency": {
       "total": 4,
@@ -321,6 +368,11 @@
       "passed": 2
     },
     "globalDatabasePhaseAccepted": false,
-    "caveat": "Run verifies the focused DB018 corpus, not DB001 independent verifier, DB014 global FK catalog, DB020 drift certification, or five other Pass5 domain gap families."
+    "caveat": "Run verifies the focused DB018 corpus, not DB001 independent verifier, DB014 global FK catalog, DB020 drift certification, or five other Pass5 domain gap families.",
+    "focusedRunUrl": "https://github.com/42Students/lms-vnext/actions/runs/41107736976",
+    "previousMatrixRunUrl": "https://github.com/42Students/lms-vnext/actions/runs/41104567182",
+    "fullSuiteVitestTestsExecuted": 92,
+    "fullSuiteVitestTestsPassed": 92,
+    "note": "Five new distinct constraint rejection witnesses passed (users_version_ck, sections_capacity_ck, sections_min_size_ck, registered db02_course_offerings_credits_ck, placement_companies_version_ck). All real registered PostgreSQL constraints, no disabled guards."
   }
 }
