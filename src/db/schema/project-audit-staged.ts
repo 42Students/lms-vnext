@@ -19,7 +19,11 @@ const json = (name:string) => jsonb(name).$type<Record<string,unknown>>();
 export const projectMeetingAuditHistoryStaged = pgTable("project_meeting_history",{
   id:uuid("id").defaultRandom().primaryKey(),
   projectId:uuid("project_id").notNull().references(()=>projectInstances.id,{onDelete:"restrict"}),
-  meetingId:uuid("project_meeting_id").references(()=>projectMeetings.id,{onDelete:"restrict"}),
+  // The registered `project_meeting_history_project_fk` composite reference
+  // (project_id,project_meeting_id) -> (project_id,id) already enforces parent
+  // existence and same-project scope. Do not declare a second unregistered
+  // single-column parent FK that disagrees with the live catalog.
+  meetingId:uuid("project_meeting_id"),
   meetingKey:varchar("meeting_key",{length:120}).notNull(),
   legacyHistoryId:bigint("legacy_history_id",{mode:"bigint"}),
   legacyOccurredAtLocal:varchar("legacy_occurred_at_local",{length:40}),
