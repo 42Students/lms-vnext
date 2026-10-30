@@ -1,0 +1,66 @@
+name: DB-044 one-assignment submission persistence acceptance
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - "tests/db044-registered-assignment-uniqueness-pg.test.mjs"
+      - "tests/db06-assignment-attempt-staging.test.mjs"
+      - "src/db/schema/assessments.ts"
+      - "src/modules/courses/assignment-submission-service.ts"
+      - ".github/workflows/db044-assignment-acceptance.yml"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: db044-assignment-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  db044-registered-pg:
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    services:
+      postgres:
+        image: postgres:17-alpine
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: lms_vnext_test
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres -d lms_vnext_test"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 20
+    env:
+      DATABASE_URL: postgresql://postgres:postgres@127.0.0.1:5432/lms_vnext_test
+      TEST_DATABASE_URL: postgresql://postgres:postgres@127.0.0.1:5432/lms_vnext_test
+      DB03_ISOLATED_TEST_DATABASE: "1"
+      DB044_REGISTERED_PG: "YES"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Verify registered migrations and explicit no-op/derived attempt policy
+        run: |
+          npm run db:journal:verify
+          node --test tests/db06-assignment-attempt-staging.test.mjs
+      - name: Prepare empty disposable PostgreSQL 17 and canonical seed
+        env:
+          DATABASE_URL: ""
+        run: npm run db:test:prepare
+      - name: Verify registered migration replay is idempotent
+        run: npm run db:migrate
+      - name: Prove exact registered uniqueness, not attempt-number shadow key
+        env:
+          DATABASE_URL: ""
+        run: node --test tests/db044-registered-assignment-uniqueness-pg.test.mjs
+      - name: Real assignment submit, duplicate and grading integration
+        run: npx vitest run --config vitest.db.registered.config.ts tests/integration/courses-c4a-assignments.test.ts
