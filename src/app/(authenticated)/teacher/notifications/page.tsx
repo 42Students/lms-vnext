@@ -146,7 +146,8 @@ export default async function FacultyNotificationsPage({
     .sort((a,b)=>Date.parse(b.createdAt)-Date.parse(a.createdAt)||b.id.localeCompare(a.id));
   const failedFeed = (!notificationRead.available && showPersonal) ||
     (!announcementRead.available && showAnnouncements);
-  const allEmpty = feed.length === 0 && !invalid && !failedFeed &&
+  const onOlderPage = Boolean(cursor || noticeCursor);
+  const allEmpty = feed.length === 0 && !invalid && !failedFeed && !onOlderPage &&
     view === "all" && scopeTab === "all";
   return (
     <div className="min-w-0 max-w-full space-y-6">
@@ -168,6 +169,9 @@ export default async function FacultyNotificationsPage({
         <strong>Couldn't load notifications.</strong> Personal notifications could not be loaded.
         <FacultyNotificationsRetry />
       </Alert>:null}
+      {showAnnouncements && !announcementsEnabled?<Alert tone="info">
+        College announcements are currently unavailable. Personal notifications remain accessible.
+      </Alert>:null}
       {showAnnouncements && announcementsEnabled && !announcementRead.available?<Alert tone="warning">
         Couldn't load college announcements. Personal notifications remain available.
         <FacultyNotificationsRetry />
@@ -187,7 +191,7 @@ export default async function FacultyNotificationsPage({
           <p role="status" className="text-sm text-body">Announcements have no read status. Select All to view {scopeTab} announcements, or Personal for unread messages.</p> : null}
         {!invalid && (!failedFeed || feed.length > 0) ?
         <NotificationList readEndpoint="/api/notifications/faculty" items={feed}
-          emptyText={allEmpty?"No notifications yet":view==="unread"?"No unread notifications yet":
+          emptyText={onOlderPage?"No older notifications on this page":allEmpty?"No notifications yet":view==="unread"?"No unread notifications yet":
             "No "+(scopeTab==="all"?"new":scopeTab)+" notifications yet"}
           emptyAction={feed.length===0&&!allEmpty?<Link href={FACULTY_INBOX+"?view=all"}
             className="inline-flex min-h-11 items-center font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">
