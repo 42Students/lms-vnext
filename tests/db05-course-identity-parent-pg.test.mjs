@@ -46,7 +46,7 @@ async function rejected(client, query, params, code, constraint) {
   await client.query("SAVEPOINT db05_expected_rejection");
   await assert.rejects(client.query(query, params), error =>
     error.code === code &&
-    (Array.isArray(constraint) ? constraint.includes(error.constraint) : error.constraint === constraint),
+    (Array.isArray(constraint) ? (constraint.includes(error.constraint) || constraint.includes(error.message)) : error.constraint === constraint),
     "unexpected SQLSTATE/constraint: " + constraint);
   await client.query("ROLLBACK TO SAVEPOINT db05_expected_rejection");
   await client.query("RELEASE SAVEPOINT db05_expected_rejection");
@@ -93,7 +93,9 @@ test("DB05 parent self-reference fails closed without relying on a service", asy
     const id = await insertCourse(client);
     await rejected(client,
       "update courses set parent_course_id=$1 where id=$1",
-      [id], "23514", "db05_course_parent_not_self_ck");
+      // Registered migration 0305 rejects via a named SQLSTATE 23514 trigger;
+      // the staged CHECK may instead report its named constraint.
+      [id], "23514", ["db05_course_parent_not_self_ck", "course cannot parent itself"]);
   });
 });
 
