@@ -51,7 +51,9 @@ export function FacultyCourseTabNavigation({
     const onReturn = () => {
       if (document.visibilityState !== "visible") return;
       // Never keep a possibly revoked roster mounted while disconnected.
-      if (!navigator.onLine) { router.replace("/teacher/courses"); return; }
+      // Offline does not mean the assignment has been revoked. Do not
+      // destroy the currently selected Section or discard course context.
+      if (!navigator.onLine) return;
       router.refresh();
     };
     window.addEventListener("focus", onReturn);
@@ -69,13 +71,12 @@ export function FacultyCourseTabNavigation({
       <p className="sr-only">{courseName} · {sectionName}</p>
       <div className="flex min-w-0 items-center justify-between gap-3">
         {/* The prototype places the sole back link in the shared course header. */}
-        {teachingSections.length > 1 &&
-         (activeTab==="students"||activeTab==="attendanceDetail") ? (
+        {teachingSections.length > 1 ? (
           <label htmlFor="faculty-course-section" className="grid w-full min-w-0 gap-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)] sm:w-40">
             Class
             <Select
               id="faculty-course-section"
-              aria-label={activeTab==="students"?"Select class to view its roster":"Select class to view attendance"}
+              aria-label={"Select class for "+facultyCourseTabs.find(tab=>tab.path===activeTab)?.label}
               value={deliveryId}
               onChange={(event) => router.push(facultyCourseTabHref(event.target.value, activeTab))}
               className="min-h-11 w-full min-w-0 md:min-h-9"
