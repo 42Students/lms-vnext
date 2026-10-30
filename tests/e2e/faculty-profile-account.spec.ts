@@ -140,6 +140,14 @@ for(const view of [{name:"desktop",width:1280,height:800},{name:"mobile",width:3
     return response.json();
    });
    expect(removed.value.some((row:{organization:string})=>row.organization===employer)).toBe(false);
+   // The toolbar Refresh control and a visibility return must preserve the
+   // last authorized persisted profile rather than clearing it to defaults.
+   await page.getByRole("button",{name:"Refresh profile"}).click();
+   await expect(page.getByRole("form",{name:"About"}).getByRole("textbox",{name:"About me"}))
+    .toHaveValue(marker);
+   await page.evaluate(()=>document.dispatchEvent(new Event("visibilitychange")));
+   await expect(page.getByRole("form",{name:"About"}).getByRole("textbox",{name:"About me"}))
+    .toHaveValue(marker);
    if(view.name==="mobile"){
     const width=await page.evaluate(()=>document.documentElement.scrollWidth);
     expect(width).toBeLessThanOrEqual(view.width+1);
