@@ -50,9 +50,20 @@ async function cleanup(){
     tracked.projects=[];
   }
   if(tracked.templates.length){
-    for(const table of ["project_template_college_assignments","project_template_versions"])
+    for(const table of ["project_template_college_assignments"])
       await pool.query("delete from "+table+" where template_id=any($1::uuid[])",[tracked.templates]);
-    await pool.query("delete from project_templates where id=any($1::uuid[])",[tracked.templates]);
+    // DB070/071: historical revisions and parent pointers are permanent;
+    // preserving unique disposable fixtures is safer than disabling triggers.
+    const retention=await pool.query<{retainHistory:boolean}>(
+      "select (exists (select 1 from pg_trigger where tgrelid='project_template_versions'::regclass " +
+      "and tgname='db07_project_template_versions_append_only' and tgenabled='O') " +
+      "or exists (select 1 from pg_constraint where conrelid='project_templates'::regclass " +
+      "and conname='project_templates_current_version_snapshot_fk')) as \"retainHistory\"",
+    );
+    if(!retention.rows[0]?.retainHistory){
+      await pool.query("delete from project_template_versions where template_id=any($1::uuid[])",[tracked.templates]);
+      await pool.query("delete from project_templates where id=any($1::uuid[])",[tracked.templates]);
+    }
     tracked.templates=[];
   }
   // Do not delete append-only activity_events.
