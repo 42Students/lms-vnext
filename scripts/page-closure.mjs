@@ -159,8 +159,19 @@ export function workMode(page) {
 }
 export function nextFamily(report, account) {
   const name = account === "hr" ? "recruiter" : account;
-  return report.pages.find(p => (!name || p.account === name) &&
-    !p.implementationGreen && !p.blocked) || null;
+  const pending = report.pages.filter(p => (!name || p.account === name) &&
+    !p.implementationGreen && !p.blocked);
+  // Closure-first: reconcile prior fully checked work before proposing new
+  // implementation. An unchecked checklist is NOT proof code is absent.
+  // Among unfinished work, prefer smaller documented acceptance gaps.
+  const effort = p => p.problems.length ? 1 :
+    p.checked > 0 && p.unchecked === 0 ? 0 : 2;
+  return pending
+    .map((page, index) => ({ page, index }))
+    .sort((a, b) => effort(a.page) - effort(b.page) ||
+      a.page.unchecked - b.page.unchecked ||
+      a.page.checked - b.page.checked ||
+      a.index - b.index)[0]?.page ?? null;
 }
 export function nextPhaseTask(tracker) {
   const pending = tracker.tasks.filter(t => t.phase === tracker.currentPhase && !t.done);
