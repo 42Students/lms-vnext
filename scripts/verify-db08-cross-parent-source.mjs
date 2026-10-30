@@ -24,6 +24,18 @@ check("result service rejects application from another round job", () => {
   assert.match(resultService, /row\.application\.jobId\s*!==\s*round\.jobId/);
 });
 
+check("result staging revalidates exact job and shortlist under row locks", () => {
+  const begin=resultService.indexOf("export async function stagePlacementRoundResult");
+  const end=resultService.indexOf("async function loadResultContext",begin);
+  assert.ok(begin>=0 && end>begin);
+  const staging=resultService.slice(begin,end);
+  assert.match(staging,/const \[lockedRound\][\s\S]*eq\(placementJobRounds\.jobId,job\.id\)[\s\S]*\.for\("update"\)/);
+  assert.match(staging,/const \[lockedApplication\][\s\S]*eq\(placementApplications\.jobId,job\.id\)[\s\S]*\.for\("update"\)/);
+  assert.match(staging,/const \[lockedScreening\][\s\S]*\.for\("share"\)/);
+  assert.match(staging,/lockedScreening\.status!=="SHORTLISTED"/);
+  assert.match(staging,/PLACEMENT_RESULT_SCREENING_NOT_SHORTLISTED/);
+});
+
 check("request service rejects cross-job round", () => {
   assert.match(requestService, /round\.jobId\s*!==\s*application\.job\.id/);
 });
