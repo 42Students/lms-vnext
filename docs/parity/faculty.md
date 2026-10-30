@@ -283,14 +283,14 @@ Audited shared Faculty-profile sections:
 - deep-link section scrolling;
 - partial-section failure tolerance.
 
-- [ ] User summary/profile image edit behavior matches.
+- [ ] **BLOCKED — provider-dependent:** user summary/profile image edit and live private photo upload/scan/preview/revocation require provisioned, authorized private object storage and malware-scanner evidence.
 - [x] Profile completeness refresh matches.
 - [x] Resume upload/import/remove is **Learner-only**, not a Faculty UI requirement. Legacy `src/components/profile/about.js` wraps its Resume card in `!isFacultyProfileSchema`; vNext correctly does not expose learner resume editing. Classified **NOT APPLICABLE**, not a newly implemented upload.
 - [x] Contacts edit.
 - [x] Social edit.
 - [x] Address edit.
 - [x] Personal details edit.
-- [ ] Identity edit + Aadhaar/PAN storage flow.
+- [ ] **BLOCKED — provider-dependent:** identity evidence edit plus Aadhaar/PAN private upload, scan, preview and signed retrieval require real authorized storage/scanner acceptance. No mock provider is release evidence.
 - [x] Experience add/edit/delete.
 - [x] Education add/edit/delete.
 - [x] Skills add/edit/delete/proficiency.
@@ -300,7 +300,7 @@ Audited shared Faculty-profile sections:
 - [x] Awards add/edit/delete.
 - [x] Metadata edit.
 - [x] Partial endpoint failures do not blank unrelated sections: a failed private-document read retains the authenticated Faculty identity and teaching surface, disables unverified editing, and exposes a fresh retry without leaking backend text. The focused SSR failure/ready-state tests passed in [run 41130479588](https://github.com/42Students/lms-vnext/actions/runs/41130479588); the run's separate browser job did not pass.
-- [ ] Loading/hard-error/retry/visibility-refresh behavior matches.
+- [x] Loading/hard-error/retry/visibility-refresh behavior: profile route loading and non-leaking hard-error Retry are unit-tested, failed optional-source SSR retains verified identity, and authenticated desktop/mobile browser confirms Refresh and visibility return retain persisted edits without page exceptions. Evidence: [dedicated Faculty Profile PostgreSQL + unit + browser run 41144015762](https://github.com/42Students/lms-vnext/actions/runs/41144015762) **SUCCESS** on exact source SHA [`018ebb998733c6c155c607dc3aaf46d65ec8b3c3`](https://github.com/42Students/lms-vnext/commit/018ebb998733c6c155c607dc3aaf46d65ec8b3c3).
 - [x] Learner/Admin/Mentor/TPO role misroutes are safely redirected/fenced: targeted role and suspended-membership negative SSR tests passed in [run 41130479588](https://github.com/42Students/lms-vnext/actions/runs/41130479588), without calling Faculty profile storage. Whole-run/browser acceptance remains open.
 
 ## Retired route: File Explorer
