@@ -145,42 +145,45 @@ test("Faculty Blueprint persists an authorized Section Resource edit after a ful
   await page.getByRole("link", { name: /E2E Browser Course/ }).first().click();
   await page.getByRole("navigation", { name: "Faculty course tabs" })
     .getByRole("link", { name: "Blueprint" }).click();
-  const explorer=page.getByRole("region",{name:"Course blueprint lesson explorer"});
-  const order=explorer.getByRole("list",{name:"Lesson content order"});
+  const blueprintUrl=page.url();
+  const order=page.getByRole("region",{name:"Course blueprint lesson explorer"})
+    .getByRole("list",{name:"Lesson content order"});
   await expect(order).toBeVisible();
-  // The actual lesson explorer uses <li> rows and inline Edit actions.
-  // The old standalone <article> resource cards no longer exist.
-  const openEditor=async()=>{
-    await order.getByRole("button",{name:"Edit",exact:true}).first().click();
-    const editor=page.getByRole("dialog",{name:"Edit RESOURCE"});
-    await expect(editor).toBeVisible();
-    return editor;
-  };
-  const editor=await openEditor();
+  // Work with an explicitly Section-owned RESOURCE, never an unrelated shared item.
+  await order.getByRole("button",{name:"Edit",exact:true}).first().click();
+  const editor=page.getByRole("dialog",{name:"Edit RESOURCE"});
+  await expect(editor).toBeVisible();
   const original=await editor.getByLabel("Notes").inputValue();
   const marker="Faculty persisted-resource browser proof "+Date.now();
-  const patchNotes=async(value:string)=>{
-    const dialog=page.getByRole("dialog",{name:"Edit RESOURCE"});
+  const patchNotes=async(target:typeof page,value:string)=>{
+    const dialog=target.getByRole("dialog",{name:"Edit RESOURCE"});
     await dialog.getByLabel("Notes").fill(value);
-    const saving=page.waitForResponse(response=>response.request().method()==="PATCH" &&
+    const saving=target.waitForResponse(response=>response.request().method()==="PATCH" &&
       /^\/api\/courses\/lesson-contents\/[^/]+$/.test(new URL(response.url()).pathname));
     await dialog.getByRole("button",{name:"Save content"}).click();
     expect((await saving).ok()).toBe(true);
   };
   try {
-    await patchNotes(marker);
-    await page.reload();
-    await expect(order).toContainText(marker);
-    await expect(page.getByText("E2E Section B Secret",{exact:true})).toHaveCount(0);
-  } finally {
-    if(!page.isClosed()){
-      await page.goto("/teacher/courses");
-      await page.getByRole("link",{name:/E2E Browser Course/}).first().click();
-      await page.getByRole("navigation",{name:"Faculty course tabs"})
-        .getByRole("link",{name:"Blueprint"}).click();
-      await openEditor();
-      await patchNotes(original);
-    }
+    await patchNotes(page,marker);
+    // Save triggers a Next.js router.refresh on the mutating tab. A fresh
+    // authenticated tab proves persistent server readback without a racing reload.
+    const verified=await context.newPage();
+    try {
+      await verified.goto(blueprintUrl);
+      const persistedOrder=verified.getByRole("list",{name:"Lesson content order"});
+      await expect(persistedOrder).toContainText(marker);
+      await expect(verified.getByText("E2E Section B Secret",{exact:true})).toHaveCount(0);
+    }finally{await verified.close();}
+  }finally{
+    // Preserve the seeded fixture for other suites, even if verification fails.
+    const restore=await context.newPage();
+    try{
+      await restore.goto(blueprintUrl);
+      const restoreOrder=restore.getByRole("list",{name:"Lesson content order"});
+      await restoreOrder.getByRole("button",{name:"Edit",exact:true}).first().click();
+      await expect(restore.getByRole("dialog",{name:"Edit RESOURCE"})).toBeVisible();
+      await patchNotes(restore,original);
+    }finally{await restore.close();}
   }
 });
 
