@@ -123,11 +123,21 @@ for(const view of [{name:"desktop",width:1280,height:800},{name:"mobile",width:3
    const answerKey=author.questions.map((q:{id:string;options:Array<{id:string;correct?:boolean}>})=>({
      questionId:q.id,selectedOptionIds:q.options.filter(o=>o.correct).map(o=>o.id),
    }));
-   const submission=await learnerContext.request.post("/api/courses/quizzes/"+id+"/submit",{
-    data:{deliveryId,answers:answerKey,shownQuestionIds:learner.questions.map((q:{id:string})=>q.id)},
-   });
-   expect(submission.status()).toBe(200);
-   expect((await submission.json()).attempt?.attemptNumber).toBe(1);
+   // Actual browser fetch carries the same-origin header. An APIRequestContext
+   // POST omits Origin and is intentionally rejected by the production CSRF
+   // guard; testing that would not exercise learner quiz submission.
+   const learnerPage=await learnerContext.newPage();
+   await learnerPage.goto("/learn");
+   const submission=await learnerPage.evaluate(async args=>{
+    const response=await fetch("/api/courses/quizzes/"+args.id+"/submit",{
+     method:"POST",headers:{"Content-Type":"application/json"},
+     body:JSON.stringify({deliveryId:args.deliveryId,answers:args.answers,
+      shownQuestionIds:args.shownQuestionIds}),
+    });
+    return {status:response.status,body:await response.json()};
+   },{id,deliveryId,answers:answerKey,shownQuestionIds:learner.questions.map((q:{id:string})=>q.id)});
+   expect(submission.status,JSON.stringify(submission.body)).toBe(200);
+   expect(submission.body.attempt?.attemptNumber).toBe(1);
    // Learner cannot read or edit the Faculty question bank even after an attempt.
    const beforeRelease=await learnerContext.request.get(url);
    expect(beforeRelease.status()).toBe(200);
@@ -150,10 +160,17 @@ for(const view of [{name:"desktop",width:1280,height:800},{name:"mobile",width:3
   await expect(drawer).toBeVisible();
   await expect(drawer.getByText("No submissions yet")).toHaveCount(0);
   await expect(drawer).toContainText("1");
-  const forbidden=await context.request.post(commandPath,{
-   data:{action:"ARCHIVE",quizId:id,expectedUpdatedAt:author.quiz.updatedAt,confirmed:true},
-  });
-  expect(forbidden.status()).toBeGreaterThanOrEqual(400);
+  // A real same-origin Faculty write must be denied *because an attempt
+  // exists*, rather than passing merely on CSRF-origin rejection.
+  const forbidden=await page.evaluate(async({commandPath,id,expectedUpdatedAt})=>{
+   const response=await fetch(commandPath,{
+    method:"POST",headers:{"Content-Type":"application/json"},
+    body:JSON.stringify({action:"ARCHIVE",quizId:id,expectedUpdatedAt,confirmed:true}),
+   });
+   return {status:response.status,body:await response.json()};
+  },{commandPath,id,expectedUpdatedAt:author.quiz.updatedAt});
+  expect(forbidden.status,JSON.stringify(forbidden.body)).toBeGreaterThanOrEqual(400);
+  expect(forbidden.body.error).toMatch(/QUIZ_HAS_ATTEMPTS|INVALID_QUIZ_TRANSITION/);
   if(view.name==="mobile"){
    expect(await page.evaluate(()=>document.documentElement.scrollWidth))
      .toBeLessThanOrEqual(view.width+1);
