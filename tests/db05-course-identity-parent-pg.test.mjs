@@ -59,7 +59,7 @@ test("DB05 case/whitespace folded active course names are unique inside a depart
     await rejected(client,
       "insert into courses(department_id,name,code) values ($1,$2,$3)",
       [dept, "  " + name.toUpperCase() + "  ", "db05-" + randomUUID()],
-      "23505", "db05_course_active_department_name_trim_uq");
+      "23505", ["courses_active_department_name_trim_uq","db05_course_active_department_name_trim_uq"]);
   });
 });
 
@@ -70,7 +70,7 @@ test("DB05 short title is independent of course code and uses trimmed uniqueness
     await rejected(client,
       "insert into courses(department_id,name,code,short_title) values ($1,$2,$3,$4)",
       [dept, "another " + randomUUID(), "db05-" + randomUUID(), "  " + shortTitle.toUpperCase() + " "],
-      "23505", "db05_course_active_department_short_title_trim_uq");
+      "23505", ["courses_active_department_short_title_trim_uq","db05_course_active_department_short_title_trim_uq"]);
   });
 });
 
