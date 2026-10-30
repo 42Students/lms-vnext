@@ -19,6 +19,7 @@ on:
       - "src/modules/people/faculty-profile-self.staged.ts"
       - "src/modules/people/faculty-self-section-service.ts"
       - "tests/unit/faculty-profile-page-closure.test.tsx"
+      - "tests/unit/faculty-private-identity-closure.test.ts"
       - "tests/integration/faculty-profile-schema-ready.test.ts"
       - "tests/integration/faculty-self-document-scope.test.ts"
       - "tests/e2e/faculty-profile-account.spec.ts"
@@ -75,7 +76,7 @@ jobs:
           tests/unit/faculty-profile-social-merge-closure.test.ts
           tests/unit/faculty-self-profile-read.test.ts
           tests/unit/faculty-profile-storage-contract.test.ts
-          tests/unit/faculty-profile-error-model.test.ts
+          tests/unit/faculty-profile-error-model.test.ts tests/unit/faculty-private-identity-closure.test.ts
 
   browser:
     runs-on: ubuntu-latest
