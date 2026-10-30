@@ -236,8 +236,16 @@ test("Faculty Blueprint creates, edits and archives an own-Section Resource with
     new URL(response.url()).pathname==="/api/courses/lesson-contents/"+contentId+"/transition");
   await confirm.getByRole("button",{name:"Archive item"}).click();
   expect((await archiving).ok()).toBe(true);
-  await page.goto(base);
-  await expect(order.getByRole("link",{name:title,exact:true})).toHaveCount(0);
+  // The mutation triggers router.refresh on the editor page. Verify persisted
+  // archive from a fresh authorized tab so its in-flight RSC navigation cannot
+  // abort a simultaneous page.goto on the mutation tab.
+  const readback=await context.newPage();
+  try{
+    await readback.goto(base);
+    const authoritativeOrder=readback.getByRole("list",{name:"Lesson content order"});
+    await expect(authoritativeOrder).toBeVisible();
+    await expect(authoritativeOrder.getByRole("link",{name:title,exact:true})).toHaveCount(0);
+  }finally{await readback.close();}
 });
 
 test("Faculty Students links an authorized roster member to mobile-readable attendance history", async ({ page, context }) => {
