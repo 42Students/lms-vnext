@@ -47,8 +47,15 @@ async function cleanup(){
  created.projects.length=0;
  for(const id of created.templates.reverse()){
   await pool.query("delete from project_template_college_assignments where template_id=$1",[id]);
-  await pool.query("delete from project_template_versions where template_id=$1",[id]);
-  await pool.query("delete from project_templates where id=$1",[id]);
+  // DB070 immutable revisions and DB071 header pointers must remain intact.
+  const retention=await pool.query<{retainHistory:boolean}>("select (exists (select 1 from pg_trigger where tgrelid='project_template_versions'::regclass " +
+      "and tgname='db07_project_template_versions_append_only' and tgenabled='O') " +
+      "or exists (select 1 from pg_constraint where conrelid='project_templates'::regclass " +
+      "and conname='project_templates_current_version_snapshot_fk')) as \"retainHistory\"");
+  if(!retention.rows[0]?.retainHistory){
+    await pool.query("delete from project_template_versions where template_id=  ",[id]);
+    await pool.query("delete from project_templates where id=  ",[id]);
+  }
  }
  created.templates.length=0;
  // Activity events are append-only; do not delete or alter audit history.
