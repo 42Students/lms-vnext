@@ -9,11 +9,14 @@ import {
 } from "@/modules/courses/faculty-content-order-ui-model";
 import {courseApiError} from "./learner-course-api";
 import {facultyBlueprintWriteNeedsReload} from "@/modules/courses/faculty-blueprint-write-recovery";
+import {facultyBlueprintFullContentOrder} from "@/modules/courses/faculty-blueprint-full-content-order";
 
 export type FacultyBlueprintItem={
  id:string;title:string;kind:string;description:string|null;
  status:string;href:string;reorderable:boolean;sequence:number;
  editor?:FacultyBlueprintRowEditor|null;
+ /** True for both shared and Section-owned content; false for assessments. */
+ contentOrderMember?:boolean;
  scheduled?:boolean;
 };
 function glyph(kind:string){
@@ -34,6 +37,8 @@ function FacultyPrototypeLessonItemsInner({items,lessonId,deliveryId,enabled}:{
  const router=useRouter();
  const [saving,startTransition]=useTransition();
  const content=items.filter(item=>item.reorderable);
+ const fullContent=items.filter(item=>item.contentOrderMember);
+ const fullBaseline=useRef(fullContent.map(item=>item.id));
  const [ordered,setOrdered]=useState(()=>content.map(item=>item.id));
  const baseline=useRef(content.map(item=>item.id));
  const [dragging,setDragging]=useState<string|null>(null);
@@ -73,8 +78,9 @@ function FacultyPrototypeLessonItemsInner({items,lessonId,deliveryId,enabled}:{
     const response=await fetch("/api/courses/lesson-contents/order",{
      method:"PUT",headers:{"Content-Type":"application/json"},
      body:JSON.stringify({
-      lessonId,deliveryId,orderedContentIds:ordered,
-      expectedOrderedContentIds:baseline.current,
+      lessonId,deliveryId,
+      orderedContentIds:facultyBlueprintFullContentOrder(fullContent,ordered),
+      expectedOrderedContentIds:fullBaseline.current,
      }),
     });
     status=response.status;
@@ -83,11 +89,13 @@ function FacultyPrototypeLessonItemsInner({items,lessonId,deliveryId,enabled}:{
      throw new Error(await courseApiError(response));
     }
     const receipt:unknown=await response.json().catch(()=>null);
-    if(!facultyContentOrderReceiptMatches(deliveryId,ordered,receipt)){
+    const fullOrder=facultyBlueprintFullContentOrder(fullContent,ordered);
+    if(!facultyContentOrderReceiptMatches(deliveryId,fullOrder,receipt)){
      setOutcomeUnknown(true);
      throw new Error("The save result could not be confirmed. Refresh the class before retrying.");
     }
     baseline.current=[...ordered];
+    fullBaseline.current=fullOrder;
     setLocalVersion(n=>n+1);
     setMessage({ok:true,text:"Lesson content order saved for this class."});
     router.refresh();
@@ -169,6 +177,6 @@ function FacultyPrototypeLessonItemsInner({items,lessonId,deliveryId,enabled}:{
 export function FacultyPrototypeLessonItems(props:Parameters<typeof FacultyPrototypeLessonItemsInner>[0]){
  const key=[props.deliveryId,props.lessonId,
   // Server-side reorder with the same IDs must reset an optimistic baseline.
-  ...props.items.filter(item=>item.reorderable).map(item=>item.id+":"+item.sequence)].join(":");
+  ...props.items.filter(item=>item.contentOrderMember).map(item=>item.id+":"+item.sequence)].join(":");
  return <FacultyPrototypeLessonItemsInner {...props} key={key}/>;
 }
