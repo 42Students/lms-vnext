@@ -7,6 +7,7 @@ on:
     paths:
       - ".github/workflows/db020-registered-catalog-diff.yml"
       - "scripts/db020-registered-catalog-diff.mjs"
+      - "scripts/db020-full-registered-catalog-export.mjs"
       - "scripts/db020-fk-shape.mjs"
       - "scripts/db020-sql-type.mjs"
       - "tests/db020-sql-type.test.mjs"
@@ -91,6 +92,8 @@ jobs:
           test "$(git ls-files --others --exclude-standard 'drizzle/meta/*_snapshot.json' | wc -l)" -eq 1
       - name: Compare the generated typed schema against registered PostgreSQL
         run: node scripts/db020-registered-catalog-diff.mjs
+      - name: Export full registered SQL constraint and index definitions (read-only)
+        run: node scripts/db020-full-registered-catalog-export.mjs
       - name: Keep output as diagnostic only; never promote generated DDL
         run: |
           test -f .verification/db020-catalog-disposition.json
@@ -101,6 +104,8 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: db020-registered-catalog-diagnosis
-          path: .verification/db020-catalog-disposition.json
+          path: |
+            .verification/db020-catalog-disposition.json
+            .verification/db020-registered-catalog-full.json
           retention-days: 7
           if-no-files-found: warn
