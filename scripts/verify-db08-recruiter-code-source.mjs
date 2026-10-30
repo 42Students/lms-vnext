@@ -51,6 +51,7 @@ const allHits = [...schemaHits, ...placementHits];
 const allowedFiles = new Set([
   "src/db/schema/placements.ts",
   "src/modules/placements/result-service.ts",
+  "src/modules/placements/round-result-source-model.ts",
 ]);
 assert.deepEqual(
   [...new Set(allHits.map((hit) => hit.file).filter((file) => !allowedFiles.has(file)))],
@@ -61,6 +62,10 @@ assert.deepEqual(
 const placements = readFileSync(resolve("src/db/schema/placements.ts"), "utf8");
 const resultService = readFileSync(
   resolve("src/modules/placements/result-service.ts"),
+  "utf8",
+);
+const sourceModel = readFileSync(
+  resolve("src/modules/placements/round-result-source-model.ts"),
   "utf8",
 );
 const candidate = readFileSync(
@@ -81,31 +86,23 @@ for (const source of ["HR", "PANELIST", "DRIVE_DAY", "EXCEL", "TPO"]) {
   assert.match(sourceField.sourceDefinition, new RegExp(source));
 }
 
-const preCutover = allHits.length > 0;
+// Old writer remains required until the DB072 EXPAND migration is registered.
+const preCutover = /source:\\s*recruiterCanStage\\s*\\?\\s*"HR"/.test(resultService);
+assert.match(sourceModel, /source === "HR" \\|\\| source === "RECRUITER"/);
+assert.match(resultService, /!isRecruiterRoundResultSource\\(current\\.source\\)/);
+assert.ok(placementHits.some(hit => hit.file === "src/modules/placements/round-result-source-model.ts"),
+  "the compatibility model must explicitly recognize legacy HR provenance");
 if (preCutover) {
   assert.equal(schemaHits.length, 1);
   assert.equal(schemaHits[0].file, "src/db/schema/placements.ts");
   assert.match(schemaHits[0].text, /'TPO', 'HR', 'IMPORT'/);
-
-  assert.equal(placementHits.length, 2);
-  assert.ok(
-    placementHits.every(
-      (hit) => hit.file === "src/modules/placements/result-service.ts",
-    ),
-  );
-  assert.match(resultService, /current\.source !== "HR"/);
-  assert.match(resultService, /source: recruiterCanStage \? "HR" : "TPO"/);
+  assert.ok(placementHits.some(hit =>
+    hit.file === "src/modules/placements/result-service.ts" && /"HR"/.test(hit.text)),
+    "legacy writer must remain until the forward-compatible EXPAND migration is registered");
 } else {
-  // After API/Drizzle cutover, the same verifier remains useful and requires
-  // the final name rather than making the old mismatch a permanent assertion.
-  assert.match(
-    placements,
-    /source} in \([^)]*'RECRUITER'[^)]*\)/s,
-  );
-  assert.match(
-    resultService,
-    /source: recruiterCanStage \? "RECRUITER" : "TPO"/,
-  );
+  // Do not accept a new RECRUITER writer against an old-only CHECK.
+  assert.match(placements, /source} in \\([^)]*'RECRUITER'[^)]*\\)/s);
+  assert.match(resultService, /source:\\s*recruiterCanStage\\s*\\?\\s*"RECRUITER"/);
 }
 
 const expandAt = candidate.indexOf("-- === DB072 EXPAND");
