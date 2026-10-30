@@ -1,0 +1,69 @@
+name: DB-077 and DB-078 source-retirement and registered-catalog acceptance
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/db077-db078-disposition-acceptance.yml"
+      - "tests/db077-db04-historical-final-disposition.test.mjs"
+      - "tests/db078-db05-historical-course-column-disposition.test.mjs"
+      - "tests/db078-registered-course-column-disposition-pg.test.mjs"
+      - "docs/planning/db04-chat05-historical-final-disposition-2026-10-12.json"
+      - "docs/planning/db05-chat05-historical-course-column-final-disposition-2026-10-12.json"
+      - "drizzle/**"
+      - "scripts/db01-test-database-guard.mjs"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: db077-db078-retirement-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  disposition-and-catalog:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    services:
+      postgres:
+        image: postgres:17-alpine
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: lms_vnext_test
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres -d lms_vnext_test"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 20
+    env:
+      TEST_DATABASE_URL: postgresql://postgres:postgres@127.0.0.1:5432/lms_vnext_test
+      DB078_DISPOSABLE: "1"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Pin exact tested source revision
+        shell: bash
+        run: test "$(git rev-parse HEAD)" = "$GITHUB_SHA"
+      - name: Journal integrity
+        run: npm run db:journal:verify
+      - name: Execute DB077 and DB078 pinned-source field disposition contracts
+        run: >-
+          node --test
+          tests/db077-db04-historical-final-disposition.test.mjs
+          tests/db078-db05-historical-course-column-disposition.test.mjs
+      - name: Clean disposable PostgreSQL 17 migration replay and seed
+        run: npm run db:test:prepare
+      - name: Registered migration idempotence
+        env:
+          DATABASE_URL: ${{ env.TEST_DATABASE_URL }}
+        run: npm run db:migrate
+      - name: DB078 physical-column absence on registered PostgreSQL catalog
+        run: node --test tests/db078-registered-course-column-disposition-pg.test.mjs
