@@ -17,9 +17,16 @@ try{
  await db.query("BEGIN READ ONLY");
  const version=Number((await db.query("SHOW server_version_num")).rows[0].server_version_num);
  if(version<170000||version>=180000)throw new Error("DB020 catalog requires PG17");
+ // Drizzle generate intentionally adds one *unapplied* diagnostic migration
+ // to the runner's local journal. Compare against the pinned real pre-generate
+ // count from the separate registered-vs-typed catalog witness instead.
  const journal=JSON.parse(readFileSync("drizzle/meta/_journal.json","utf8"));
+ const diagnosis=JSON.parse(readFileSync(".verification/db020-catalog-disposition.json","utf8"));
  const applied=Number((await db.query("select count(*)::integer n from drizzle.__drizzle_migrations")).rows[0].n);
- if(applied!==journal.entries.length)throw new Error("DB020 export refuses partially registered catalog");
+ if(applied!==diagnosis.registeredMigrations ||
+    journal.entries.length!==applied+1 ||
+    journal.entries.at(-2)?.tag!==diagnosis.registeredHead)
+   throw new Error("DB020 export refuses unexpected registered/catalog/diagnostic journal divergence");
  const tables=(await db.query(`
    SELECT n.nspname AS schema,t.relname AS name,
           t.relkind,
@@ -74,7 +81,7 @@ try{
    ORDER BY t.relname,g.tgname
  `)).rows;
  const data={kind:"DB020_EXACT_REGISTERED_PG17_CATALOG",
-   registeredHead:journal.entries.at(-1).tag,registeredMigrations:applied,
+   registeredHead:diagnosis.registeredHead,registeredMigrations:applied,
    tables,columns,constraints,indexes,triggers};
  mkdirSync(".verification",{recursive:true});
  writeFileSync(".verification/db020-registered-catalog-full.json",JSON.stringify(data,null,2)+"\n");
