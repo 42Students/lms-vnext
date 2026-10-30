@@ -255,8 +255,29 @@
       "id": "DB-006",
       "title": "Reconcile DB03 groups/electives invariants",
       "phase": "DATABASE",
-      "done": false,
-      "dependsOn": []
+      "done": true,
+      "dependsOn": [],
+      "acceptedAt": "2026-10-30",
+      "acceptanceEvidence": [
+        {
+          "kind": "EXECUTED_ACCEPTANCE",
+          "result": "PASS",
+          "exitCode": 0,
+          "commitSha": "e6a30b01f3609c9a5c01b54ed3670dd2fe2a9a8a",
+          "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/41031829604",
+          "jobId": 123983130471,
+          "runner": "GitHub Actions ubuntu-latest Node.js 22 and ephemeral PostgreSQL 17-alpine",
+          "commands": [
+            "npm run db:journal:verify",
+            "npm run db:test:prepare (disposable isolated lms_vnext_test PostgreSQL 17)",
+            "npm run db:migrate (idempotence)",
+            "node --test tests/db006-catalog-pg.test.mjs",
+            "npx vitest run --config vitest.db.config.ts tests/integration/groups-db03.test.ts tests/integration/groups-db03-roster.test.ts tests/integration/groups-db03-project-team.test.ts tests/integration/groups-db03-actor-freshness.test.ts",
+            "node --test tests/db-parity-db03-schema.test.mjs tests/db03-elective-program-oracle.test.mjs"
+          ],
+          "details": "All dedicated workflow steps passed, including 2/2 physical PG catalog/integrity tests, four passing PG17 integration test files for roster/tenant/rule/elective race behavior, and 22/22 source/rule checks. The result certifies the DB03 groups/electives scope, not the global DATABASE phase. Subsequent main changes before closure touched only two messaging-unit tests, no DB03 code or evidence files."
+        }
+      ]
     },
     {
       "id": "DB-007",
