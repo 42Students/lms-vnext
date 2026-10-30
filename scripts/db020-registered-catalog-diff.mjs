@@ -6,6 +6,7 @@ import {execFileSync} from "node:child_process";
 import pg from "pg";
 import {assertDb018DisposableTarget} from "../tests/support/db018-test-target.mjs";
 import {compareForeignKeyShapes,partitionCatalogOnlyForeignKeys} from "./db020-fk-shape.mjs";
+import {canonicalPgTypeLabel} from "./db020-sql-type.mjs";
 
 if(process.env.DB020_DISPOSABLE_PG!=="1")
   throw new Error("DB020 catalog inspection requires explicit disposable PostgreSQL");
@@ -68,7 +69,7 @@ try{
     AND a.attnum>0 AND NOT a.attisdropped
  `)).rows;
  const existing=new Map(columns.map(x=>[x.table_name+"."+x.column_name,x]));
- const missingColumns=[],extraCatalogColumns=[],typeDifferences=[];
+ const missingColumns=[],extraCatalogColumns=[],typeDifferences=[],unexplainedTypeDifferences=[];
  const generatedColumnIds=new Set();
  for(const [key,t] of Object.entries(latest.tables)){
   const name=tableName(key);
@@ -81,8 +82,12 @@ try{
    // PostgreSQL format equivalent types/defaults in different notations.
    const pgType=String(actual.pg_type).toLowerCase();
    const modelType=String(col.type).toLowerCase();
-   if(pgType!==modelType)
-    typeDifferences.push({field:id,pg:actual.pg_type,typed:col.type});
+   if(pgType!==modelType) {
+    const difference={field:id,pg:actual.pg_type,typed:col.type};
+    typeDifferences.push(difference);
+    if(canonicalPgTypeLabel(pgType)!==canonicalPgTypeLabel(modelType))
+      unexplainedTypeDifferences.push(difference);
+   }
   }
  }
  for(const id of existing.keys())if(snapSet.has(id.split(".")[0])&&!generatedColumnIds.has(id))
@@ -141,6 +146,7 @@ try{
    generatedTypedMissingColumns:missingColumns.length,
    registeredExtraColumnsOnTypedTables:extraCatalogColumns.length,
    textuallyDifferentTypes:typeDifferences.length,
+   unexplainedTypeDifferences:unexplainedTypeDifferences.length,
    registeredFks:allFks.length,
    unvalidatedFks:invalidFks.length,
    registeredFksMissingFromTypedSnapshot:metadataOnlyFks.length,
@@ -167,6 +173,7 @@ try{
       pgDefault:c.pg_default};
   }),
   typeDifferences:typeDifferences.slice(0,120),
+  unexplainedTypeDifferences:unexplainedTypeDifferences.slice(0,120),
   unvalidatedFks:lines(invalidFks),
   registeredFksWithoutDrizzleRepresentation:metadataOnlyFks,
   drizzleFksWithoutRegisteredCatalog:typedFkMissing,

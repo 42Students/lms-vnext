@@ -8,6 +8,8 @@ on:
       - ".github/workflows/db020-registered-catalog-diff.yml"
       - "scripts/db020-registered-catalog-diff.mjs"
       - "scripts/db020-fk-shape.mjs"
+      - "scripts/db020-sql-type.mjs"
+      - "tests/db020-sql-type.test.mjs"
       - "tests/db020-fk-shape.test.mjs"
       - "src/db/schema/tpo-company-team.ts"
       - "src/db/schema/academics.ts"
@@ -60,7 +62,7 @@ jobs:
           cache: npm
       - run: npm ci
       - name: Compare FK signatures in static adversarial fixtures
-        run: node --test tests/db020-fk-shape.test.mjs
+        run: node --test tests/db020-fk-shape.test.mjs tests/db020-sql-type.test.mjs
       - name: Pinned journal and clean registration
         run: |
           test "$(git rev-parse HEAD)" = "$GITHUB_SHA"
