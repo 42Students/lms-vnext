@@ -119,7 +119,8 @@ afterAll(async () => {
 describe("placement offer kind (letter of intent)", () => {
   it("records an LOI distinctly, defaults to OFFER, stays idempotent per kind and notifies the learner", async () => {
     const application = await passedApplication();
-    const input = { roleTitle: "Software Engineer", annualCtcInr: 1_000_000, expiresAt: new Date("2026-11-01T18:29:59.000Z") };
+    // The minimum response window is measured from issue time (48h default).
+    const input = { roleTitle: "Software Engineer", annualCtcInr: 1_000_000, expiresAt: new Date(Date.now() + 14 * 86_400_000) };
     const loi = await issuePlacementOffer(tpo, application.id, { ...input, kind: "LOI" });
     expect(loi).toMatchObject({ kind: "LOI", status: "ISSUED", version: 1 });
     expect((await issuePlacementOffer(tpo, application.id, { ...input, kind: "LOI" })).id).toBe(loi.id);
