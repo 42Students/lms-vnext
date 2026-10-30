@@ -122,6 +122,23 @@ describe("college elective slot mutation model", () => {
     });
   });
 
+  it("caps new slots at ten picks but parses historical edits losslessly", () => {
+    expect(createCollegeElectiveSlotSchema.safeParse({
+      ...create, minPick: 11, maxPick: 14,
+    }).success).toBe(false);
+    const historicEdit = {
+      expectedVersion: 5, name: "Historical elective", description: "Rename",
+      credits: 3, minPick: 11, maxPick: 14, confirm: true,
+    };
+    expect(editCollegeElectiveSlotSchema.safeParse(historicEdit).success).toBe(true);
+    expect(editCollegeElectiveSlotSchema.safeParse({
+      ...historicEdit, minPick: -1,
+    }).success).toBe(false);
+    expect(editCollegeElectiveSlotSchema.safeParse({
+      ...historicEdit, maxPick: Number.MAX_SAFE_INTEGER + 1,
+    }).success).toBe(false);
+  });
+
   it("normalizes years and detects actual enrollment-impacting edits", () => {
     expect(normalizeSlotYear("2026-2027")).toBe("2026-27");
     expect(normalizeSlotYear("2026-27")).toBe("2026-27");
