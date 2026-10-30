@@ -5,6 +5,7 @@ import {
   expect,
   it,
 } from "vitest";
+import { randomUUID } from "node:crypto";
 import { Pool } from "pg";
 import { closeDatabaseConnection } from "@/db/client";
 import type { RequestContext } from "@/modules/identity/context";
@@ -175,16 +176,22 @@ async function cleanup() {
        where slug like 'p3-%'
      )`,
   );
-  await pool.query(
-    `delete from project_template_versions
-     where template_id in (
-       select id from project_templates
-       where slug like 'p3-%'
-     )`,
+  // DB070 append-only project history and DB071 deferred version pointers
+  // are genuine invariants. Keep unique test template revisions rather than
+  // deleting them or disabling SQL triggers.
+  const retention=await pool.query<{retainHistory:boolean}>(
+    "select (exists (select 1 from pg_trigger where tgrelid='project_template_versions'::regclass " +
+      "and tgname='db07_project_template_versions_append_only' and tgenabled='O') " +
+      "or exists (select 1 from pg_constraint where conrelid='project_templates'::regclass " +
+      "and conname='project_templates_current_version_snapshot_fk')) as \"retainHistory\"",
   );
-  await pool.query(
-    "delete from project_templates where slug like 'p3-%'",
-  );
+  if(!retention.rows[0]?.retainHistory){
+    await pool.query(
+      `delete from project_template_versions
+       where template_id in (select id from project_templates where slug like 'p3-%')`,
+    );
+    await pool.query("delete from project_templates where slug like 'p3-%'");
+  }
 }
 
 beforeEach(cleanup);
@@ -195,13 +202,15 @@ afterAll(async () => {
   await closeDatabaseConnection();
 });
 
+const fixtureRunSuffix=randomUUID().slice(0,12);
+
 describe("Projects P3 deterministic materialization", () => {
   it("freezes normalized instance state at the assigned template version", async () => {
     const createdTemplate =
       await createProjectTemplate(
         superAdmin,
         {
-          slug: "p3-materialization",
+          slug: "p3-materialization-" + fixtureRunSuffix,
           title: "P3 Materialization",
           blueprint: blueprint("V1"),
         },
@@ -379,7 +388,7 @@ describe("Projects P3 deterministic materialization", () => {
     const template = await createProjectTemplate(
       superAdmin,
       {
-        slug: "p3-unassigned",
+        slug: "p3-unassigned-" + fixtureRunSuffix,
         title: "P3 Unassigned",
         blueprint: blueprint("Unassigned"),
       },
@@ -393,7 +402,7 @@ describe("Projects P3 deterministic materialization", () => {
       createProjectInstance(collegeAdmin, {
         collegeId: SEED_IDS.collegeA,
         templateId: template.template.id,
-        slug: "p3-no-assignment",
+        slug: "p3-no-assignment-" + fixtureRunSuffix,
         title: "P3 No Assignment",
       }),
     ).rejects.toMatchObject({
@@ -404,7 +413,7 @@ describe("Projects P3 deterministic materialization", () => {
       createProjectInstance(collegeAdmin, {
         collegeId: SEED_IDS.collegeB,
         templateId: template.template.id,
-        slug: "p3-foreign-college",
+        slug: "p3-foreign-college-" + fixtureRunSuffix,
         title: "P3 Foreign College",
       }),
     ).rejects.toBeInstanceOf(
@@ -416,7 +425,7 @@ describe("Projects P3 deterministic materialization", () => {
     const template = await createProjectTemplate(
       superAdmin,
       {
-        slug: "p3-invalid-mentor-template",
+        slug: "p3-invalid-mentor-template-" + fixtureRunSuffix,
         title: "P3 Invalid Mentor",
         blueprint: blueprint("Invalid Mentor"),
       },
@@ -457,7 +466,7 @@ describe("Projects P3 deterministic materialization", () => {
     const template = await createProjectTemplate(
       superAdmin,
       {
-        slug: "p3-slug-template",
+        slug: "p3-slug-template-" + fixtureRunSuffix,
         title: "P3 Slug Template",
         blueprint: blueprint("Slug"),
       },
