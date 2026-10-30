@@ -22,6 +22,9 @@ on:
       - tests/db07-reconciliation-contract.test.mjs
       - tests/db09-team-owner-lifecycle.test.mjs
       - scripts/verify-db09-team-owner-source.mjs
+      - scripts/verify-db08-recruiter-code-source.mjs
+      - tests/db08-recruiter-code-contract.test.mjs
+      - src/modules/placements/recruiter-today-staged-results-service.ts
       - docs/planning/database-parity-db16-private-storage-safety.md
       - docs/planning/db09-team-owner-lifecycle-audit.md
       - .github/workflows/single-tracker-acceptance.yml
