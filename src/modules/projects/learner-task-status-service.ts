@@ -30,7 +30,7 @@ export async function moveOwnLearnerProjectTask(context:RequestContext,rawProjec
  return getDb().transaction(async tx=>{
   const [project]=await tx.select({status:projectInstances.status})
    .from(projectInstances).where(and(eq(projectInstances.id,projectId),
-    eq(projectInstances.collegeId,scope.collegeId))).for("update").limit(1);
+    eq(projectInstances.collegeId,scope.collegeId),isNull(projectInstances.deletedAt))).for("update").limit(1);
   if(!project || project.status!=="ACTIVE")throw new ProjectsServiceError("PROJECT_TASK_INVALID_STATE");
   const [member]=await tx.select({id:projectMembers.id}).from(projectMembers)
    .innerJoin(collegeMemberships,eq(collegeMemberships.id,projectMembers.membershipId))
@@ -45,7 +45,8 @@ export async function moveOwnLearnerProjectTask(context:RequestContext,rawProjec
     eq(users.platformStatus,"ACTIVE"))).for("share").limit(1);
   if(!member)throw new ProjectsServiceError("PROJECT_ACCESS_DENIED");
   const [task]=await tx.select().from(projectTasks).where(and(
-    eq(projectTasks.id,taskId),eq(projectTasks.projectId,projectId))).for("update").limit(1);
+    eq(projectTasks.id,taskId),eq(projectTasks.projectId,projectId),
+      isNull(projectTasks.deletedAt))).for("update").limit(1);
   if(!task)throw new ProjectsServiceError("PROJECT_TASK_NOT_FOUND");
   if(task.assigneeMembershipId!==membership.id ||
    task.updatedAt.getTime()!==Date.parse(input.expectedUpdatedAt) ||
@@ -54,7 +55,7 @@ export async function moveOwnLearnerProjectTask(context:RequestContext,rawProjec
   if(task.sprintId===null)throw new ProjectsServiceError("PROJECT_TASK_INVALID_STATE");
   const [sprint]=await tx.select({status:projectSprints.status,releaseId:projectSprints.releaseId})
    .from(projectSprints).where(and(eq(projectSprints.id,task.sprintId),
-    eq(projectSprints.projectId,projectId))).for("share").limit(1);
+    eq(projectSprints.projectId,projectId),isNull(projectSprints.deletedAt))).for("share").limit(1);
   if(sprint?.status!=="ACTIVE")throw new ProjectsServiceError("PROJECT_TASK_INVALID_STATE");
   const [release]=await tx.select({status:projectReleases.status}).from(projectReleases)
    .where(and(eq(projectReleases.id,sprint.releaseId),eq(projectReleases.projectId,projectId),
@@ -65,6 +66,7 @@ export async function moveOwnLearnerProjectTask(context:RequestContext,rawProjec
     blockerReason:input.status==="BLOCKED"?input.blockerReason!:null,updatedAt:now})
    .where(and(eq(projectTasks.id,task.id),eq(projectTasks.projectId,projectId),
     eq(projectTasks.status,task.status),eq(projectTasks.assigneeMembershipId,membership.id),
+    isNull(projectTasks.deletedAt),
     sql`date_trunc('milliseconds', ${projectTasks.updatedAt}) = ${new Date(input.expectedUpdatedAt).toISOString()}::timestamptz`))
    .returning();
   if(!updated)throw new ProjectsServiceError("PROJECT_TASK_INVALID_STATE");

@@ -16,7 +16,7 @@ export async function deleteMentorProjectTask(context:RequestContext,projectIdRa
  const input=schema.parse(raw),scope=await requireProjectLifecycleMutationAccess(context,projectId);
  return getDb().transaction(async tx=>{
   const [project]=await tx.select({status:projectInstances.status}).from(projectInstances)
-   .where(and(eq(projectInstances.id,scope.project.id),eq(projectInstances.collegeId,scope.collegeId)))
+   .where(and(eq(projectInstances.id,scope.project.id),eq(projectInstances.collegeId,scope.collegeId),isNull(projectInstances.deletedAt)))
    .for("update").limit(1);
   if(!project||!["PLANNED","ACTIVE"].includes(project.status))
     throw new ProjectsServiceError("PROJECT_TASK_INVALID_STATE");

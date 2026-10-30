@@ -328,6 +328,7 @@ export async function reassignProjectPrimaryMentor(
               projectInstances.collegeId,
               scope.collegeId,
             ),
+            isNull(projectInstances.deletedAt),
           ),
         )
         .for("update")

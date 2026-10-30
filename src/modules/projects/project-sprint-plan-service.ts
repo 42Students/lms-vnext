@@ -27,7 +27,8 @@ export async function saveProjectSprintPlan(
     const [project] = await tx.select({ id: projectInstances.id, status: projectInstances.status })
       .from(projectInstances)
       .where(and(eq(projectInstances.id, scope.project.id),
-        eq(projectInstances.collegeId, scope.collegeId)))
+        eq(projectInstances.collegeId, scope.collegeId),
+        isNull(projectInstances.deletedAt)))
       .for("update").limit(1);
     if (!project || !["PLANNED", "ACTIVE"].includes(project.status)) {
       throw new ProjectsServiceError("PROJECT_SPRINT_INVALID_STATE");

@@ -17,7 +17,7 @@ export async function deleteMentorProjectSprint(context:RequestContext,rawPath:u
  const scope=await requireProjectLifecycleMutationAccess(context,path.projectId);
  return getDb().transaction(async tx=>{
   const [project]=await tx.select({status:projectInstances.status}).from(projectInstances)
-   .where(and(eq(projectInstances.id,scope.project.id),eq(projectInstances.collegeId,scope.collegeId)))
+   .where(and(eq(projectInstances.id,scope.project.id),eq(projectInstances.collegeId,scope.collegeId),isNull(projectInstances.deletedAt)))
    .for("update").limit(1);
   if(!project||!["PLANNED","ACTIVE"].includes(project.status))
    throw new ProjectsServiceError("PROJECT_SPRINT_INVALID_STATE");

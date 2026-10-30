@@ -22,19 +22,21 @@ export async function pullOwnBacklogTask(context:RequestContext,projectIdInput:s
  const membership=context.membership;
  return getDb().transaction(async tx=>{
   const [project]=await tx.select({status:projectInstances.status}).from(projectInstances)
-    .where(and(eq(projectInstances.id,scope.project.id),eq(projectInstances.collegeId,scope.collegeId)))
+    .where(and(eq(projectInstances.id,scope.project.id),eq(projectInstances.collegeId,scope.collegeId),isNull(projectInstances.deletedAt)))
     .for("update").limit(1);
   if(project?.status!=="ACTIVE")throw new ProjectsServiceError("PROJECT_TASK_INVALID_STATE");
   await assertPersistedLearnerProjectMutation(tx,context,scope.project.id,scope.collegeId);
   const [task]=await tx.select().from(projectTasks)
-    .where(and(eq(projectTasks.id,input.taskId),eq(projectTasks.projectId,scope.project.id)))
+    .where(and(eq(projectTasks.id,input.taskId),eq(projectTasks.projectId,scope.project.id),
+      isNull(projectTasks.deletedAt)))
     .for("update").limit(1);
   if(!task||task.sprintId!==null||task.status!=="TODO"||
     task.assigneeMembershipId!==membership.id||
     task.updatedAt.getTime()!==Date.parse(input.expectedUpdatedAt))
     throw new ProjectsServiceError("PROJECT_TASK_INVALID_STATE");
   const [sprint]=await tx.select().from(projectSprints)
-    .where(and(eq(projectSprints.id,input.sprintId),eq(projectSprints.projectId,scope.project.id)))
+    .where(and(eq(projectSprints.id,input.sprintId),eq(projectSprints.projectId,scope.project.id),
+      isNull(projectSprints.deletedAt)))
     .for("update").limit(1);
   if(sprint?.status!=="ACTIVE")throw new ProjectsServiceError("PROJECT_TASK_INVALID_STATE");
   const [release]=await tx.select({status:projectReleases.status}).from(projectReleases)
@@ -43,13 +45,14 @@ export async function pullOwnBacklogTask(context:RequestContext,projectIdInput:s
     .for("share").limit(1);
   if(!release||!["PLANNED","IN_PROGRESS"].includes(release.status))throw new ProjectsServiceError("PROJECT_TASK_INVALID_STATE");
   const [last]=await tx.select({sequence:projectTasks.sequence}).from(projectTasks)
-    .where(and(eq(projectTasks.projectId,scope.project.id),eq(projectTasks.sprintId,sprint.id)))
+    .where(and(eq(projectTasks.projectId,scope.project.id),eq(projectTasks.sprintId,sprint.id),
+      isNull(projectTasks.deletedAt)))
     .orderBy(desc(projectTasks.sequence)).limit(1);
   const [updated]=await tx.update(projectTasks).set({
     sprintId:sprint.id,sequence:(last?.sequence??-1)+1,
     updatedAt:new Date(Math.max(Date.now(),task.updatedAt.getTime()+1)),
   }).where(and(eq(projectTasks.projectId,scope.project.id),eq(projectTasks.id,task.id),
-    isNull(projectTasks.sprintId),
+    isNull(projectTasks.sprintId),isNull(projectTasks.deletedAt),
     sql`date_trunc('milliseconds', ${projectTasks.updatedAt}) = ${new Date(input.expectedUpdatedAt).toISOString()}::timestamptz`)).returning();
   if(!updated)throw new ProjectsServiceError("PROJECT_TASK_INVALID_STATE");
   const event=await recordActivityEventInTransaction(tx,context,{
