@@ -77,6 +77,37 @@ export const legacyElectivePickImportSchema=z.strictObject({
   path:["maxPick"],message:"Pick range is invalid",
 });
 
+/** Zod reports API payload keys, while the form uses several legacy DOM names.
+ * Translate only known scalar field names; never use arbitrary server paths in
+ * form selectors (including "__proto__" or nested array indices).
+ */
+const slotApiIssueFields = {
+  programId: "programId",
+  academicPeriodId: "periodId",
+  semesterNumber: "term",
+  academicYear: "year",
+  name: "name",
+  description: "description",
+  credits: "credits",
+  minPick: "minPick",
+  maxPick: "maxPick",
+} as const;
+
+export function electiveSlotFormErrorsFromIssues(issues: unknown): Record<string, string> {
+  const errors: Record<string, string> = {};
+  if (!Array.isArray(issues)) return errors;
+  for (const issue of issues) {
+    if (!issue || typeof issue !== "object") continue;
+    const { path, message } = issue as { path?: unknown; message?: unknown };
+    if (!Array.isArray(path) || typeof path[0] !== "string") continue;
+    const field = slotApiIssueFields[path[0] as keyof typeof slotApiIssueFields];
+    if (!field || errors[field]) continue;
+    errors[field] = typeof message === "string" && message.trim()
+      ? message : "Please check this field";
+  }
+  return errors;
+}
+
 /** Normalized legacy form and constraint feedback for user-facing dialogs. */
 export function collegeElectiveSlotErrorMessage(errorCode:string):string{
   const codes:Record<string,string>={
