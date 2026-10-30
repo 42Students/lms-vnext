@@ -824,8 +824,30 @@
       "id": "DB-044",
       "title": "Resolve DB06 assignment re-attempt persistence parity",
       "phase": "DATABASE",
-      "done": false,
-      "dependsOn": []
+      "done": true,
+      "dependsOn": [],
+      "acceptedAt": "2026-10-30",
+      "closureBasis": "ENGINEERING_ACCEPTED_RETAIN_ONE_SUBMISSION_PER_ASSIGNMENT",
+      "acceptanceEvidence": [
+        {
+          "kind": "EXECUTED_REGISTERED_POSTGRESQL_17_ACCEPTANCE",
+          "commitSha": "065c8e09ca70823837a1d56174d126a345fc413c",
+          "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/41076765924",
+          "jobId": 124134923511,
+          "runner": "GitHub Actions ubuntu-latest Node 22 isolated PostgreSQL 17",
+          "commands": [
+            "npm run db:journal:verify",
+            "node --test tests/db06-assignment-attempt-staging.test.mjs",
+            "npm run db:test:prepare with DATABASE_URL cleared",
+            "npm run db:migrate idempotence",
+            "node --test tests/db044-registered-assignment-uniqueness-pg.test.mjs",
+            "npx vitest run --config vitest.db.registered.config.ts tests/integration/courses-c4a-assignments.test.ts"
+          ],
+          "result": "PASS",
+          "exitCode": 0,
+          "details": "Registered composite assignment/member uniqueness verified in PostgreSQL 17; dormant attempt/semester columns are not unique identity. Real assignment producer and duplicate-submission/grading consumer integration passed. No new attempt migration required or applied. DB035/DB038 independent history/retention scopes remain open."
+        }
+      ]
     },
     {
       "id": "DB-045",
