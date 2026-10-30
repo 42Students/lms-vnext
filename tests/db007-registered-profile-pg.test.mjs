@@ -137,6 +137,7 @@ test("DB-080 registered gallery owner/state negatives and DB-081 qualification G
     // The DB-080 persistence contract must reject a valid receipt belonging
     // to a different learner, and reject non-image purposes even for self.
     const ownImage=await receipt(db,owner,"PROFILE_IMAGE");
+    const ownImageForBadOrder=await receipt(db,owner,"PROFILE_IMAGE");
     const otherImage=await receipt(db,other,"PROFILE_IMAGE");
     const marksheet=await receipt(db,owner,"MARKSHEET");
     const imageId=randomUUID();
@@ -155,7 +156,7 @@ test("DB-080 registered gallery owner/state negatives and DB-081 qualification G
       [owner.id,marksheet],"23503");
     await denies(db,
       "INSERT INTO learner_profile_images (learner_membership_id,receipt_id,display_order) VALUES ($1,$2,-1)",
-      [owner.id,otherImage],"23514");
+      [owner.id,ownImageForBadOrder],"23514");
     await denies(db,
       "UPDATE learner_profile_images SET is_active=false WHERE id=$1",
       [imageId],"23514");
