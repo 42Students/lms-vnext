@@ -883,8 +883,30 @@
       "id": "DB-034",
       "title": "Normalize DB09 trusted domains and prep-course settings",
       "phase": "DATABASE",
-      "done": false,
-      "dependsOn": []
+      "done": true,
+      "dependsOn": [],
+      "acceptedAt": "2026-10-30",
+      "closureBasis": "DB09_REGISTERED_TPO_DOMAIN_AND_PREP_COURSE_SCOPE_WITH_RACE_NEGATIVES",
+      "acceptanceEvidence": [
+        {
+          "kind": "EXECUTED_REGISTERED_POSTGRES_17_AND_TWO_SESSION_SCOPE_RACE",
+          "commitSha": "ebc47fa1b682aa436f8b5cc7a513b3bcbef1741d",
+          "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/41088977936",
+          "runner": "GitHub Actions ubuntu-latest Node.js 22 postgres:17-alpine",
+          "commands": [
+            "npm run db:journal:verify",
+            "node --test tests/db09-tpo-settings-normalization.test.mjs tests/db034-tpo-prep-courses-runtime-contract.test.mjs",
+            "npm run db:test:prepare",
+            "npm run db:migrate",
+            "node --test --test-name-pattern=DB034 tests/db034-db036-registered-tpo-settings-pg.test.mjs",
+            "npx vitest run tests/unit/chat2-settings-people-trusted-links-cas.test.ts tests/unit/chat11-tpo-settings-write-model-matrix.test.ts"
+          ],
+          "result": "PASS",
+          "exitCode": 0,
+          "details": "Standalone exact-SHA workflow green: migration 0314 registered forward-only; previous cross-college writer SQL defect now blocked, genuine LEARNER-only same-college principal rejected, foreign-org prep course rejected, active sibling-college course accepted, wrong domain and FK negatives, and simultaneous committed duplicate trusted-domain inserts yield exactly one row with other 23505. Source CAS/read writer and registered migration idempotence pass. Separate future API/outbound/scheduling workflows remain independent."
+        }
+      ],
+      "acceptanceScope": "DB034 trusted-domain and prep-course normalized settings persistence and tenant/active-actor scope on registered PG17; source-backed service authorizations and atomic policy model tested. Global DB09 parity, future detached service provider sends and parent lifecycle audit remain outside this narrow task."
     },
     {
       "id": "DB-035",
