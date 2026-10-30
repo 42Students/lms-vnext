@@ -42,7 +42,7 @@ export function validateTarget(env, optIn=true){
      DB01_REMOTE_TEST_DATABASE_CONFIRM:
        !isLocal(u.hostname)&&env.ALLOW_REMOTE_TEST_WITNESS==="true"&&
        env.DB_WITNESS_REMOTE_CONFIRM===remoteConfirmation
-         ? "RESET:"+u.hostname.toLowerCase()+"/"+db : undefined,
+         ? "RESET:"+u.hostname.toLowerCase()+(u.port && u.port!=="5432" ? ":"+u.port : "")+"/"+db : undefined,
    };
    try{assertSafeDb01TestTarget(canonicalEnv)}
    catch(error){errors.push("Canonical disposable target refused: "+error.message)}
