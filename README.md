@@ -4,16 +4,16 @@ The next-generation 42Students LMS, rebuilt as a GCP-native TypeScript modular m
 
 ## How development works now
 
-**Closure-first is mandatory for every coding chat, direct to `main`.** Read `AGENTS.md` and `docs/tracker.json.execution.closureFirstProtocol` before taking work. Keep ten exclusive lanes, their claims and engineering acceptance intact. The old six-chat system, archived work queues and historical checkbox counts are not live progress.
+**Closure-first is mandatory for every coding chat, direct to `main`.** Read `AGENTS.md` and `docs/tracker.json.execution.closureFirstProtocol` before taking work. No exclusive worker lanes or claims are active; preserve evidence-based engineering acceptance. The old six-chat system, archived work queues and historical checkbox counts are not live progress.
 
-- **One execution plan and live tracker:** [docs/tracker.json](docs/tracker.json) (`execution`, `tasks`, `phaseGates`) — five stages and ten parallel lanes
+- **One execution plan and live tracker:** [docs/tracker.json](docs/tracker.json) (`execution`, `tasks`, `phaseGates`) — five stages, open task selection and informational domain groups
 - **Only live tracker:** [docs/tracker.json](docs/tracker.json) — DONE/NOT DONE only
 - **Current global phase:** DATABASE; API/UI/RELEASE require independent phase gates
-- **Mandatory next-closure selection:** `npm run progress -- --closure-next` (or `--closure-next --lane=L03`); then `npm run progress -- --check` to validate the tracker.
-- **Progress and exclusive lanes:** `npm run progress`, `npm run progress -- --lanes`, `npm run progress -- --lane=L03`. Accepted task counts come only from `done:true` with executed evidence.
+- **Mandatory next-closure selection:** `npm run progress -- --closure-next` (all OPEN tasks, no worker assignment); then `npm run progress -- --check` to validate the tracker.
+- **Progress and domain visibility:** `npm run progress`, `npm run progress -- --domains`, `npm run progress -- --roadmap`. Accepted task counts come only from `done:true` with executed evidence.
 - **Continuation instructions:** `docs/tracker.json.execution.startupProcedure` and `.coordination`
 
-**Mandatory closure loop:** choose one OPEN task, identify its precise missing gate and perform the smallest lane-owned change. For functional database/runtime tasks, execute registered-PostgreSQL/producer/consumer/security acceptance on a disposable target. For tasks explicitly scoped to a source/staging/disposition *deliverable*, executed pinned source checks may close only that bounded stage; the separate named migration/runtime tasks remain OPEN. Immediately set `done:true` with executed exact-SHA evidence only for the task's original fulfilled scope, freeze it and select another. **After two useful passes with no closure, hand off the verified blocker and switch to an independent OPEN task.** Source-stage evidence never certifies deployed SQL, tenant safety or an integrated parent domain. Queued/cancelled CI and unrelated green runs never count as executed acceptance. The tracker, not a chat's prose, determines N/81.
+**Mandatory closure loop:** choose one OPEN task, identify its precise missing gate and perform the smallest safe, coherent change. For functional database/runtime tasks, execute registered-PostgreSQL/producer/consumer/security acceptance on a disposable target. For tasks explicitly scoped to a source/staging/disposition *deliverable*, executed pinned source checks may close only that bounded stage; the separate named migration/runtime tasks remain OPEN. Immediately set `done:true` with executed exact-SHA evidence only for the task's original fulfilled scope, freeze it and select another. **After two useful passes with no closure, hand off the verified blocker and switch to an independent OPEN task.** Source-stage evidence never certifies deployed SQL, tenant safety or an integrated parent domain. Queued/cancelled CI and unrelated green runs never count as executed acceptance. The tracker, not a chat's prose, determines N/81.
 
 ## Core stack
 
@@ -53,9 +53,9 @@ The account-independent deployment decisions and provisioning order are document
 For a new development session, read in this order:
 
 1. `AGENTS.md`
-2. `docs/tracker.json` — plan, lanes, task acceptance, phase milestones
-3. `npm run progress -- --closure-next --lane=LNN` (or without a lane to inspect all open candidates)
+2. `docs/tracker.json` — plan, domain groups, task acceptance, phase milestones
+3. `npm run progress -- --closure-next` (every OPEN task is eligible)
 4. the selected OPEN task's domain code, migration state, required gates and executed test evidence
-5. `docs/tracker.json.execution.coordination` for the live claim/handoff rules
+5. `docs/tracker.json.execution.coordination` for current concurrency and fresh-main conflict-safety rules
 
 `docs/planning/vnext-master-plan.md` and `docs/planning/vnext-execution-checklist.md` are **historical implementation references, not live progress trackers**. When they conflict, `AGENTS.md`, the closure-first strategy and `docs/tracker.json` control.
