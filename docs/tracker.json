@@ -933,6 +933,24 @@
           "registeredMigrations": 320,
           "missingTypedColumns": 0,
           "comment": "Name mismatches are not 240 missing FKs; 271 pairs same shape. The three action-drift schema definitions have since been aligned with nondeferrable NO ACTION live catalog; a final exact-head regenerated probe still required."
+        },
+        "latestTypedSchemaReconciliation": {
+          "recordedOn": "2026-10-31",
+          "commitSha": "02b10690dee669b991986232fd4a1e54cc415d18",
+          "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/41144369677",
+          "result": "PASS_DIAGNOSTIC_NOT_CERTIFICATION",
+          "registeredMigrations": 320,
+          "registeredTables": 276,
+          "generatedTypedTables": 266,
+          "newlyTypedTablesAlreadyRegistered": 44,
+          "sqlOnlyRegisteredTables": 10,
+          "missingTypedColumnsInCatalog": 0,
+          "catalogColumnsNotInTypedSchema": 1,
+          "remainingColumn": "course_offerings.program_term_id",
+          "typedFkShapesAbsentFromCatalog": 0,
+          "catalogFkShapesAbsentFromTypedSnapshot": 42,
+          "unvalidatedRegisteredFks": 0,
+          "note": "TypeScript historical request provenance, six registered academic/video/message fields, 10 FK referential actions reconciled. One NOT NULL trigger-populated curriculum field remains intentionally OPEN for writer-safe schema alignment. 42 catalog-only FK relationships, nullability/default/CHECK/index/retention and generation/journal drift still require decisions; do not mark DB020 or DB001 DONE. Post-run check metadata added in 3a9a36e7 awaits exact-SHA rerun."
         }
       }
     },
