@@ -94,9 +94,9 @@ test("DB010 mentor backlog move forbids deleted task, sprint and direct CAS",()=
   const src=read("mentor-backlog-service.ts");
   const move=src.slice(src.indexOf("export async function moveMentorBacklogTask("),
     src.indexOf("export async function createMentorBacklogTask("));
-  assert.match(move.slice(move.indexOf("const [task]"),move.indexOf("if(!task")),),/isNull\(projectTasks\.deletedAt\)/);
-  assert.match(move.slice(move.indexOf("const [sprint]"),move.indexOf("if(!sprint")),),/isNull\(projectSprints\.deletedAt\)/);
-  assert.match(move.slice(move.indexOf("const [updated]"),move.indexOf("if(!updated")),),/isNull\(projectTasks\.deletedAt\)/);
+  assert.match(move.slice(move.indexOf("const [task]"),move.indexOf("if(!task")),/isNull\(projectTasks\.deletedAt\)/);
+  assert.match(move.slice(move.indexOf("const [sprint]"),move.indexOf("if(!sprint")),/isNull\(projectSprints\.deletedAt\)/);
+  assert.match(move.slice(move.indexOf("const [updated]"),move.indexOf("if(!updated")),/isNull\(projectTasks\.deletedAt\)/);
 });
 test("DB010 admin task creation cannot target a soft-deleted release",()=>{
   const src=read("admin-task-plan-create-service.ts");
