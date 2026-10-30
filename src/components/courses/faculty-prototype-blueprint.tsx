@@ -28,7 +28,7 @@ export function FacultyPrototypeBlueprint({workspace,selectedLessonId,engagement
  const items:FacultyBlueprintItem[]=current?orderFacultyBlueprintContentSlots(
   current.contents.map(item=>({
    id:item.id,title:item.title,kind:item.contentType,status:item.status,sequence:item.sequence,
-   reorderable:owned(item.deliveryId),scheduled:item.contentType==="LIVE_CLASS"&&
+   contentOrderMember:true,reorderable:owned(item.deliveryId),scheduled:item.contentType==="LIVE_CLASS"&&
     Boolean(item.startsAt&&item.startsAt.getTime()>Date.now()),
    description:item.contentType==="VIDEO"?
     (item.durationSeconds?Math.max(1,Math.round(item.durationSeconds/60))+" min · ":"")+"Uploaded "+istDate(item.createdAt):
