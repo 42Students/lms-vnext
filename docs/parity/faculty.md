@@ -18,14 +18,18 @@ Legacy navigation: Courses, Contacts, Notifications, Class Schedule, All Quizzes
 ## Page family: Course detail
 **Legacy tabs:** Overview, Blueprint, Students, Attendance, Discussions.
 
-### Course bootstrap / class chooser behavior
-Legacy route resolves slug/numeric identifiers, validates active Faculty assignment, resolves class context, canonicalizes URL and periodically revalidates assignment.
+### Course bootstrap / class chooser behavior — DONE (2026-10-31)
+Legacy slug, numeric and class-hint links resolve only against persisted active Faculty teaching grants; ambiguous/unauthorized routes fail closed. Canonical URL is the selected Section delivery UUID.
 
-- [ ] Course identifier/canonical URL behavior is defined.
-- [ ] Active teaching assignment is authoritative.
-- [ ] Faculty with multiple class assignments can select/resolve correct class.
-- [ ] Revoked/remapped assignment invalidates stale page state.
-- [ ] Access error and retry states match.
+- [x] Course identifier/canonical URL behavior is defined: active authorized slug/numeric crosswalk resolves unambiguously, with exact Section delivery canonical destinations.
+- [x] Active teaching assignment is authoritative: persisted member Faculty role, college, Section, offering and grant dates are checked before course content loads.
+- [x] Faculty with multiple class assignments can select/resolve correct class from **all five** tabs; each destination retains its own Section-scoped delivery ID.
+- [x] Revoked/remapped assignment invalidates stale page state; focus/visibility/timed refresh revalidates server state, while temporary offline state does not falsely revoke a selected class.
+- [x] Access error and retry states match: malformed/ambiguous/foreign routes fail closed, with explicit unauthorized/temporary-failure and back/retry UI.
+
+**Independent executed acceptance — 2026-10-31:** [Faculty course chooser workflow 41128329270](https://github.com/42Students/lms-vnext/actions/runs/41128329270) on exact test SHA [`f073d134008ecb8354a72f9acb82ae4ea889fea0`](https://github.com/42Students/lms-vnext/commit/f073d134008ecb8354a72f9acb82ae4ea889fea0). All three jobs **SUCCESS**, commit status `faculty-course-chooser-acceptance/pg-browser` **success**: PostgreSQL authorized/foreign/revoked roles **1/1** (25 unrelated tests deliberately excluded), unit route/class-selector and safe link contracts **7/7**, authenticated desktop/mobile five-tab exact-delivery navigation and foreign denial **2/2**. The [initial failed browser run 41127996180](https://github.com/42Students/lms-vnext/actions/runs/41127996180) was repaired by awaiting the real Next navigation before parsing the URL; the rerun passed without weakening access checks.
+
+
 
 ### Overview — DONE (2026-10-14, scoped live acceptance)
 - [x] Course/class/faculty summary shows persisted current teaching assignment and exact Section, never another class's draft content.
