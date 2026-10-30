@@ -1183,10 +1183,31 @@
       "id": "DB-054",
       "title": "Close P5-R01 placement application access and eligibility race",
       "phase": "DATABASE",
-      "done": false,
+      "done": true,
       "dependsOn": [
         "DB-018"
-      ]
+      ],
+      "acceptedAt": "2026-10-30",
+      "closureBasis": "PLACEMENT_APPLICATION_ACCESS_REVOCATION_TWO_SESSION_PG17_NEGATIVE_RACE",
+      "acceptanceEvidence": [
+        {
+          "kind": "EXECUTED_DISPOSABLE_POSTGRES_17_RACE_AND_APP_SERVICE",
+          "commitSha": "2d0aaa009cb093ad1ea6ef2cf74b59c6a6b2ba2f",
+          "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/41088358848",
+          "runner": "GitHub Actions ubuntu-latest Node.js 22 postgres:17-alpine",
+          "commands": [
+            "npm run db:journal:verify",
+            "node --test tests/db54-placement-application-race.test.mjs",
+            "npm run db:test:prepare",
+            "npm run db:migrate",
+            "npx vitest run --config vitest.db.registered.config.ts tests/integration/db18-placement-race-gap.test.ts"
+          ],
+          "result": "PASS",
+          "exitCode": 0,
+          "details": "Dedicated run SUCCESS with exact source+PG17. P5-R01 real two-session writer revokes paid Placements module after learner precheck but before transaction locks; application operation rejects and database contains ZERO persisted applications; schema journal idempotent. DB054 restricts this concrete app gate race; P5-R02 academic cohort and hypothetical future uncoordinated rule writers still require independent tasks."
+        }
+      ],
+      "acceptanceScope": "P5-R01 placement application access/eligibility after-precheck revocation race guarded by ordered job/membership/scope locks and live eligibility recheck; real PG two-session negative test confirms no write."
     },
     {
       "id": "DB-055",
