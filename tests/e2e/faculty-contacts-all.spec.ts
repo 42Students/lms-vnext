@@ -45,7 +45,7 @@ for(const view of [{name:"desktop",width:1280,height:800},{name:"mobile",width:3
   await expect(page).toHaveURL(/q=private-email-not-public%40example\.invalid/);
   // Switching roles must preserve the public search and the 10/20/50 row-size choice.
   await tabs.getByRole("link",{name:"Students"}).click();
-  await expect(page).toHaveURL(/\/teacher\/contacts\/students\?.*q=private-email-not-public/);
+  await expect(page).toHaveURL(/\/teacher\/contacts\/students\?.*q=private-email-not-public.*pageSize=50/);
   await expect(page.getByRole("searchbox",{name:"Search contacts"})).toHaveValue("private-email-not-public@example.invalid");
   await page.getByRole("navigation",{name:"Contacts sections"}).getByRole("link",{name:"All Contacts"}).click();
   await expect(page.getByRole("searchbox",{name:"Search contacts"})).toHaveValue("private-email-not-public@example.invalid");
@@ -67,5 +67,15 @@ for(const view of [{name:"desktop",width:1280,height:800},{name:"mobile",width:3
    expect(width).toBeLessThanOrEqual(view.width+1);
   }
   expect(errors).toEqual([]);
+ });
+ test("Faculty All Contacts "+view.name+" invalid filters have a safe recovery link",async({page,context})=>{
+  await login(context);
+  await page.setViewportSize({width:view.width,height:view.height});
+  await page.goto("/teacher/contacts/allContacts?pageSize=500&collegeId=forged");
+  await expect(page.getByRole("heading",{name:"Invalid directory filters"})).toBeVisible();
+  await expect(page.locator('a[href*="/'+SEED_IDS.learnerCollegeAMembership+'"]')).toHaveCount(0);
+  await page.getByRole("link",{name:"Return to Contacts"}).click();
+  await expect(page).toHaveURL(/\/teacher\/contacts\/allContacts$/);
+  await expect(page.getByRole("heading",{level:1,name:"All Contacts"})).toBeVisible();
  });
 }
