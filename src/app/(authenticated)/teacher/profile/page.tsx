@@ -39,14 +39,27 @@ export default async function FacultyProfilePage({searchParams}:{searchParams:Pr
       <PageHeader title="Profile"/>
       <ErrorState title="Couldn't refresh profile"
         description="We couldn't load your profile. Please try again. Previously saved details have not been changed."
-        action={<Link href="/teacher/profile" className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">Retry profile</Link>}/>
+        action={<FacultyProfileRefresh />}/>
     </div>;
   }
   const {person,profile}=profileRead.value;
-  const documentReady = await facultyProfileDocumentStorageReady();
-  const selfDocument = documentReady
+  // One optional private-document source must not blank a healthy Faculty
+  // identity/teaching profile. Keep self-editing disabled until a verified
+  // document snapshot is available; don't pretend an outage is an empty doc.
+  const readiness = await facultyProfileDocumentStorageReady()
+    .then(ready => ({ok:true as const,ready}))
+    .catch(() => ({ok:false as const,ready:false}));
+  const documentReady = readiness.ready;
+  const documentRead = documentReady
     ? await loadOwnFacultyProfileDocumentStaged(context)
-    : null;
+        .then(value => ({ok:true as const,value}))
+        .catch(error => {
+          if(error instanceof AuthorizationError)throw error;
+          return {ok:false as const,value:null};
+        })
+    : {ok:false as const,value:null};
+  const selfDocument = documentRead.value;
+  const privateDocumentFailed = !readiness.ok || (documentReady && !documentRead.ok);
   const displayName = person.user.displayName?.trim() || person.user.email?.split("@")[0] || "Faculty";
   const initials = displayName.split(/\s+/)
     .slice(0, 2).map(part => part.slice(0, 1).toUpperCase()).join("");
@@ -131,11 +144,14 @@ export default async function FacultyProfilePage({searchParams}:{searchParams:Pr
         <p className="text-sm text-muted-foreground">About · Personal Details · Contacts · Education/Qualification · Experiences · Certifications · Publications · Awards · Social Profiles</p>
         {!documentReady || !selfDocument ? (
           <div role="status" className="border-y border-[var(--lms-canvas-border)] py-5">
-            <p className="font-semibold text-foreground">Profile editing unavailable</p>
+            <p className="font-semibold text-foreground">{privateDocumentFailed?
+              "Profile sections temporarily unavailable":"Profile editing unavailable"}</p>
             <p className="mt-2 max-w-prose text-sm text-body">
-              Private Faculty profile storage awaits an approved database migration.
-              No edits will be sent or saved until it is ready.
+              {privateDocumentFailed?
+               "The private profile sections could not be verified. Your identity and current teaching information remain visible. Retry to load your last saved details.":
+               "Private Faculty profile storage awaits an approved database migration. No edits will be sent or saved until it is ready."}
             </p>
+            {privateDocumentFailed?<FacultyProfileRefresh />:null}
           </div>
         ) : (
           <FacultyProfileEditor initialDocument={selfDocument.document}
