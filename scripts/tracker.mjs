@@ -212,6 +212,26 @@ export function inspectTracker(doc) {
       closure?.laneRules?.noAutomaticTaskPromotion!==true ||
       closure?.laneRules?.sharedMigrationSingleWriter!=='L01')
     add(errors,'INVALID_CLOSURE_FIRST_PROTOCOL');
+  // Scope-aware task acceptance: isolated SOURCE/STAGING deliveries are not
+  // deployed DB claims. Preserve an explicit downstream OPEN runtime owner
+  // instead of making unregistered SQL disappear behind a done:true flag.
+  if (!validString(closure?.scopeSemantics?.registeredRuntimeTask) ||
+      !validString(closure?.scopeSemantics?.isolatedStageOrDispositionTask) ||
+      !Array.isArray(closure?.scopeSemantics?.stagedEvidenceSafeguards) ||
+      closure.scopeSemantics.stagedEvidenceSafeguards.length<3)
+    add(errors,'INVALID_CLOSURE_SCOPE_SEMANTICS');
+  for (const task of tasks.values()) {
+    if (task.done!==true ||
+        !/^EXECUTED_SCOPED_SOURCE.*ENGINEERING_ACCEPTANCE$/.test(task.closureBasis ?? ''))
+      continue;
+    if (!validString(task.acceptanceScope) ||
+        !validString(task.notInThisTaskAcceptance) ||
+        !Array.isArray(task.remainingDistinctIntegrationTasks) ||
+        task.remainingDistinctIntegrationTasks.length===0 ||
+        task.remainingDistinctIntegrationTasks.some(id =>
+          !tasks.has(id) || id===task.id))
+      add(errors,'STAGED_SCOPE_MISSING_DISTINCT_RUNTIME_OWNER',{id:task.id});
+  }
   if (!Array.isArray(closure?.focusTasks) || closure.focusTasks.length===0 ||
       closure.focusTasks.length>12) add(errors,'INVALID_CLOSURE_FIRST_QUEUE');
   const focusIds=new Set();
