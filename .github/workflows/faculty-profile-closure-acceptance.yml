@@ -24,8 +24,8 @@ permissions:
   contents: read
   statuses: write
 concurrency:
-  group: faculty-profile-closure-${{ github.ref }}
-  cancel-in-progress: true
+  group: faculty-profile-closure-${{ github.sha }}
+  cancel-in-progress: false
 jobs:
   postgres:
     runs-on: ubuntu-latest
