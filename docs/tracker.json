@@ -986,15 +986,77 @@
       "id": "DB-032",
       "title": "Adversarial DB09 staged principal and race hardening",
       "phase": "DATABASE",
-      "done": false,
-      "dependsOn": []
+      "done": true,
+      "dependsOn": [],
+      "acceptedAt": "2026-10-31",
+      "closureBasis": "EXECUTED_SCOPED_SOURCE_AND_STAGING_ENGINEERING_ACCEPTANCE",
+      "acceptanceScope": "Adversarial source/staging hardening: recruiter/TPO principal, company/grant, parent scope, immutable history, coordinator, slot capacity, and notification claim draft contracts",
+      "acceptanceEvidence": [
+        {
+          "kind": "EXECUTED_SCOPED_SOURCE_AND_REGISTERED_POSTGRESQL17_REGRESSION",
+          "result": "PASS",
+          "exitCode": 0,
+          "commitSha": "c36aec79033a1f382b56f7760d99e70f45e10855",
+          "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/41109381569",
+          "jobId": 124247536527,
+          "runner": "GitHub Actions ubuntu-latest Node22, canonical registered migration replay on disposable PostgreSQL 17-alpine",
+          "commands": [
+            "npm run db:journal:verify",
+            "node --test tests/db09-integration-staging-guard.test.mjs tests/db10-app-setting-disposition.test.mjs tests/db10-notification-template-disposition.test.mjs tests/db10-staged-drafts-source-map.test.mjs tests/db10-source-disposition-closure.test.mjs",
+            "npm run db:test:prepare (with application DATABASE_URL cleared)",
+            "npm run db:migrate",
+            "node tests/db09-collaboration-registered-pg-acceptance.mjs",
+            "node tests/db09-share-registered-pg-acceptance.mjs",
+            "node tests/db09-recruiter-note-registered-pg-acceptance.mjs",
+            "npm run db:journal:verify; assert clean drizzle/ tree"
+          ],
+          "details": "All 59 scoped Node source/staging assertions PASS plus 62 registered DB09 rollback-only PostgreSQL guards PASS (25 collaboration, 19 disclosure, 18 private-note). The focused suite tests/db09-integration-staging-guard.test.mjs is included in the Node run. This is scoped engineering source/staging acceptance; neither draft schema registration nor full global database parity/producer-consumer activation is certified."
+        }
+      ],
+      "remainingDistinctIntegrationTasks": [
+        "DB-012",
+        "DB-019",
+        "DB-020"
+      ],
+      "notInThisTaskAcceptance": "Canonical DB09 staging is hardened, not asserted registered or runtime-active. Parent DB-012 still owns promotion of unregistered shapes, producer/consumer coverage and their staged concurrency acceptance."
     },
     {
       "id": "DB-033",
       "title": "Disposition active legacy app_setting runtime keys",
       "phase": "DATABASE",
-      "done": false,
-      "dependsOn": []
+      "done": true,
+      "dependsOn": [],
+      "acceptedAt": "2026-10-31",
+      "closureBasis": "EXECUTED_SCOPED_SOURCE_AND_STAGING_ENGINEERING_ACCEPTANCE",
+      "acceptanceScope": "Source-identified 25 legacy app_setting keys assigned uniquely across DB01/05/08/10/module access or explicitly retired; security/client whitelist and unknown dynamic key boundaries recorded",
+      "acceptanceEvidence": [
+        {
+          "kind": "EXECUTED_SCOPED_SOURCE_AND_REGISTERED_POSTGRESQL17_REGRESSION",
+          "result": "PASS",
+          "exitCode": 0,
+          "commitSha": "c36aec79033a1f382b56f7760d99e70f45e10855",
+          "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/41109381569",
+          "jobId": 124247536527,
+          "runner": "GitHub Actions ubuntu-latest Node22, canonical registered migration replay on disposable PostgreSQL 17-alpine",
+          "commands": [
+            "npm run db:journal:verify",
+            "node --test tests/db09-integration-staging-guard.test.mjs tests/db10-app-setting-disposition.test.mjs tests/db10-notification-template-disposition.test.mjs tests/db10-staged-drafts-source-map.test.mjs tests/db10-source-disposition-closure.test.mjs",
+            "npm run db:test:prepare (with application DATABASE_URL cleared)",
+            "npm run db:migrate",
+            "node tests/db09-collaboration-registered-pg-acceptance.mjs",
+            "node tests/db09-share-registered-pg-acceptance.mjs",
+            "node tests/db09-recruiter-note-registered-pg-acceptance.mjs",
+            "npm run db:journal:verify; assert clean drizzle/ tree"
+          ],
+          "details": "All 59 scoped Node source/staging assertions PASS plus 62 registered DB09 rollback-only PostgreSQL guards PASS (25 collaboration, 19 disclosure, 18 private-note). The focused suite tests/db10-app-setting-disposition.test.mjs is included in the Node run. This is scoped engineering source/staging acceptance; neither draft schema registration nor full global database parity/producer-consumer activation is certified."
+        }
+      ],
+      "remainingDistinctIntegrationTasks": [
+        "DB-013",
+        "DB-019",
+        "DB-020"
+      ],
+      "notInThisTaskAcceptance": "Source-key dispositions accepted; typed runtime setting registry and owner integration are NOT certified. Unknown live arbitrary-key census is outside greenfield source-scoped disposition and remains a final parity/tenant policy obligation."
     },
     {
       "id": "DB-034",
@@ -1065,8 +1127,39 @@
       "id": "DB-037",
       "title": "Disposition duplicate legacy notification template registries",
       "phase": "DATABASE",
-      "done": false,
-      "dependsOn": []
+      "done": true,
+      "dependsOn": [],
+      "acceptedAt": "2026-10-31",
+      "closureBasis": "EXECUTED_SCOPED_SOURCE_AND_STAGING_ENGINEERING_ACCEPTANCE",
+      "acceptanceScope": "56/56 legacy notification template registry fields assigned explicit code/provider/DLT redesign or source-retirement candidacy, with no false claims of runtime parity",
+      "acceptanceEvidence": [
+        {
+          "kind": "EXECUTED_SCOPED_SOURCE_AND_REGISTERED_POSTGRESQL17_REGRESSION",
+          "result": "PASS",
+          "exitCode": 0,
+          "commitSha": "c36aec79033a1f382b56f7760d99e70f45e10855",
+          "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/41109381569",
+          "jobId": 124247536527,
+          "runner": "GitHub Actions ubuntu-latest Node22, canonical registered migration replay on disposable PostgreSQL 17-alpine",
+          "commands": [
+            "npm run db:journal:verify",
+            "node --test tests/db09-integration-staging-guard.test.mjs tests/db10-app-setting-disposition.test.mjs tests/db10-notification-template-disposition.test.mjs tests/db10-staged-drafts-source-map.test.mjs tests/db10-source-disposition-closure.test.mjs",
+            "npm run db:test:prepare (with application DATABASE_URL cleared)",
+            "npm run db:migrate",
+            "node tests/db09-collaboration-registered-pg-acceptance.mjs",
+            "node tests/db09-share-registered-pg-acceptance.mjs",
+            "node tests/db09-recruiter-note-registered-pg-acceptance.mjs",
+            "npm run db:journal:verify; assert clean drizzle/ tree"
+          ],
+          "details": "All 59 scoped Node source/staging assertions PASS plus 62 registered DB09 rollback-only PostgreSQL guards PASS (25 collaboration, 19 disclosure, 18 private-note). The focused suite tests/db10-notification-template-disposition.test.mjs is included in the Node run. This is scoped engineering source/staging acceptance; neither draft schema registration nor full global database parity/producer-consumer activation is certified."
+        }
+      ],
+      "remainingDistinctIntegrationTasks": [
+        "DB-013",
+        "DB-019",
+        "DB-020"
+      ],
+      "notInThisTaskAcceptance": "56 source dispositions accepted; 20 candidate retirements remain unapproved and 36 redesigned targets are not runtime verified. DB-019 global consumer/retirement checks and DB-013 delivery work are still OPEN."
     },
     {
       "id": "DB-038",
@@ -1086,8 +1179,39 @@
       "id": "DB-040",
       "title": "Preflight DB10 staged announcements bug tracker and job leases",
       "phase": "DATABASE",
-      "done": false,
-      "dependsOn": []
+      "done": true,
+      "dependsOn": [],
+      "acceptedAt": "2026-10-31",
+      "closureBasis": "EXECUTED_SCOPED_SOURCE_AND_STAGING_ENGINEERING_ACCEPTANCE",
+      "acceptanceScope": "75/75 legacy announcements, bug tracker and scheduled-job-lease fields source-mapped to reviewed structural drafts with private evidence, tenant, CAS and fence preflight checks",
+      "acceptanceEvidence": [
+        {
+          "kind": "EXECUTED_SCOPED_SOURCE_AND_REGISTERED_POSTGRESQL17_REGRESSION",
+          "result": "PASS",
+          "exitCode": 0,
+          "commitSha": "c36aec79033a1f382b56f7760d99e70f45e10855",
+          "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/41109381569",
+          "jobId": 124247536527,
+          "runner": "GitHub Actions ubuntu-latest Node22, canonical registered migration replay on disposable PostgreSQL 17-alpine",
+          "commands": [
+            "npm run db:journal:verify",
+            "node --test tests/db09-integration-staging-guard.test.mjs tests/db10-app-setting-disposition.test.mjs tests/db10-notification-template-disposition.test.mjs tests/db10-staged-drafts-source-map.test.mjs tests/db10-source-disposition-closure.test.mjs",
+            "npm run db:test:prepare (with application DATABASE_URL cleared)",
+            "npm run db:migrate",
+            "node tests/db09-collaboration-registered-pg-acceptance.mjs",
+            "node tests/db09-share-registered-pg-acceptance.mjs",
+            "node tests/db09-recruiter-note-registered-pg-acceptance.mjs",
+            "npm run db:journal:verify; assert clean drizzle/ tree"
+          ],
+          "details": "All 59 scoped Node source/staging assertions PASS plus 62 registered DB09 rollback-only PostgreSQL guards PASS (25 collaboration, 19 disclosure, 18 private-note). The focused suite tests/db10-staged-drafts-source-map.test.mjs is included in the Node run. This is scoped engineering source/staging acceptance; neither draft schema registration nor full global database parity/producer-consumer activation is certified."
+        }
+      ],
+      "remainingDistinctIntegrationTasks": [
+        "DB-013",
+        "DB-019",
+        "DB-020"
+      ],
+      "notInThisTaskAcceptance": "Static source-to-stage preflight accepted only. Lease migration and any other unregistered DB10 DDL, live producers, field verification and race/concurrency tests are NOT claimed; owned by DB-013 and final gates."
     },
     {
       "id": "DB-041",
@@ -1172,8 +1296,39 @@
       "id": "DB-046",
       "title": "Close DB10 221-field source disposition denominator",
       "phase": "DATABASE",
-      "done": false,
-      "dependsOn": []
+      "done": true,
+      "dependsOn": [],
+      "acceptedAt": "2026-10-31",
+      "closureBasis": "EXECUTED_SCOPED_SOURCE_AND_STAGING_ENGINEERING_ACCEPTANCE",
+      "acceptanceScope": "221/221 DB10 legacy fields source-dispositioned, including final 77-row overlay, preserving 0/221 runtime-verified and 221 UNMAPPED statuses",
+      "acceptanceEvidence": [
+        {
+          "kind": "EXECUTED_SCOPED_SOURCE_AND_REGISTERED_POSTGRESQL17_REGRESSION",
+          "result": "PASS",
+          "exitCode": 0,
+          "commitSha": "c36aec79033a1f382b56f7760d99e70f45e10855",
+          "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/41109381569",
+          "jobId": 124247536527,
+          "runner": "GitHub Actions ubuntu-latest Node22, canonical registered migration replay on disposable PostgreSQL 17-alpine",
+          "commands": [
+            "npm run db:journal:verify",
+            "node --test tests/db09-integration-staging-guard.test.mjs tests/db10-app-setting-disposition.test.mjs tests/db10-notification-template-disposition.test.mjs tests/db10-staged-drafts-source-map.test.mjs tests/db10-source-disposition-closure.test.mjs",
+            "npm run db:test:prepare (with application DATABASE_URL cleared)",
+            "npm run db:migrate",
+            "node tests/db09-collaboration-registered-pg-acceptance.mjs",
+            "node tests/db09-share-registered-pg-acceptance.mjs",
+            "node tests/db09-recruiter-note-registered-pg-acceptance.mjs",
+            "npm run db:journal:verify; assert clean drizzle/ tree"
+          ],
+          "details": "All 59 scoped Node source/staging assertions PASS plus 62 registered DB09 rollback-only PostgreSQL guards PASS (25 collaboration, 19 disclosure, 18 private-note). The focused suite tests/db10-source-disposition-closure.test.mjs is included in the Node run. This is scoped engineering source/staging acceptance; neither draft schema registration nor full global database parity/producer-consumer activation is certified."
+        }
+      ],
+      "remainingDistinctIntegrationTasks": [
+        "DB-013",
+        "DB-019",
+        "DB-020"
+      ],
+      "notInThisTaskAcceptance": "Entire 221-field source/design denominator accepted. Zero fields are certified deployed from this source work; DB-013 integration and DB-019/020 runtime/schema gates remain OPEN."
     },
     {
       "id": "DB-047",
