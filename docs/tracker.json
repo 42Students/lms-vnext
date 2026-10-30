@@ -60,7 +60,7 @@
       "done": false,
       "dependsOn": [],
       "implementationCheckpoint": {
-        "status": "INDEPENDENT_PG17_EXECUTED_CANONICAL_DRIZZLE_0316_SNAPSHOT_MALFORMED_FAIL_CLOSED",
+        "status": "DRIZZLE_V7_0316_PARSER_FIXED_DRIFT_GUARD_STILL_FAILS_CLOSED",
         "verifiedScope": "Verifier acceptance receipts now remove all PostgreSQL URL query and fragment data, and child-output redaction removes URL query/fragment secrets even when the printed URL differs from environment variables.",
         "sourceCommits": [
           "545481e79e275235f4ce6bb64b2b90314469e8da",
@@ -82,12 +82,14 @@
           "observation": "Drizzle-kit prints drizzle/meta/0316_snapshot.json data is malformed while exiting code 0; strengthened generation guard now correctly refuses 12/12 certification before resetting PostgreSQL."
         },
         "openEvidence": [
-          "Reconcile canonical drizzle/meta/0316_snapshot.json against 0315 and all registered migrations, without rewriting applied DDL or concealing schema drift",
-          "Rerun all 12 independent verifier steps on exact clean main SHA; require PASS and record redacted evidence receipt",
-          "Prove source and runtime producer/consumer negative suite and fresh PostgreSQL registered catalog with zero missing/invalid constraints"
+          "Reconcile all generated snapshot-to-registered-PG structural gaps, not blindly apply 44 existing tables",
+          "Rerun exact clean-main npm run db:verify:independent and collect 12/12 PASS/PG17 evidence; until then DB001 remains OPEN"
         ],
         "recordedOn": "2026-10-31",
-        "evidenceIsNotAcceptance": true
+        "evidenceIsNotAcceptance": true,
+        "scope": "Source snapshot parse repaired; standalone verifier runs on PG17 but correctly rejects generated untracked Drizzle schema drift before executing remaining 12 gates.",
+        "sourceFixCommit": "e4b49fe10a7872666da08b9099c8566de6d0e0c6",
+        "latestFailedEvidenceRun": "https://github.com/42Students/lms-vnext/actions/runs/41128343067"
       }
     },
     {
@@ -768,7 +770,7 @@
         "DB-025"
       ],
       "implementationCheckpoint": {
-        "status": "PG17_21_NONEMPTY_21_DIRECT_NEGATIVES_4_CONCURRENCY_2_FIXED_RACES_PASS_GLOBAL_GATE_PENDING",
+        "status": "REGISTERED_PG17_320_MIGRATION_92_OF_92_FULL_WITNESS_PASS_GATE_DEPENDENCIES_OPEN",
         "tailRelationalSourceCheckpoint": {
           "recordedOn": "2026-10-30",
           "state": "FOCUSED_PG17_MATRIX_PASSED_NOT_GLOBAL_DB018_DONE",
@@ -790,70 +792,19 @@
             "Complete DB001 independent verifier and DB020 fresh schema drift/producer-consumer evidence at exact accepted main SHA, then assess DB018 gate and task completion"
           ]
         },
-        "recordedOn": "2026-10-30",
+        "recordedOn": "2026-10-31",
         "executedEvidence": [
           {
-            "kind": "EXECUTED_DISPOSABLE_POSTGRESQL17_PARTIAL_ACCEPTANCE",
+            "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/41129846754",
+            "commitSha": "2a0d21cac8bc1cd6d5b03856e8bd067bd2f5e6a7",
             "result": "PASS",
-            "commitSha": "1846222cff922dd4cc1a3d0cb9f51e890572b3f2",
-            "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/41082861342",
-            "jobId": 124156250717,
-            "runner": "GitHub Actions Node22; disposable PostgreSQL 17-alpine",
-            "commands": [
-              "npm run db:journal:verify",
-              "npm run db:test:prepare with application DATABASE_URL cleared",
-              "npm run db:migrate",
-              "npx vitest run --config vitest.db.registered.config.ts tests/integration/db018-relational-and-boundary-witnesses.test.ts",
-              "node --test tests/db-parity-pass5.test.mjs"
-            ],
-            "details": "27/27 PG tests PASS, 9/9 source tests PASS; 21/21 observational relational checks executed, 8 with real rollback-only fixture join samples, 13 with zero joined sample rows; 4/4 negative SQL checks pass. Active LEARNER role is seeded in synthetic fixture to satisfy registered DB02 membership authorization, never disables trigger."
-          },
-          {
-            "kind": "EXECUTED_DISPOSABLE_POSTGRESQL17_RELATIONAL_PLUS_SQL_NEGATIVES",
-            "result": "PASS",
-            "commitSha": "19793e89ccfb463bf4e394ff52a7e95882182f9b",
-            "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/41103680109",
-            "jobId": 124230398612,
-            "runner": "GitHub Actions Node22 and disposable PostgreSQL 17-alpine",
-            "details": "30/30 PG tests PASS; 21/21 joins sampled real rollback-only relationships, zero empty joins, zero relational mismatches, 7/7 direct SQL negatives PASS. Does not prove preventability of untested bad mutations or any concurrency races."
-          },
-          {
-            "kind": "EXECUTED_DISPOSABLE_POSTGRESQL17_FULL_DB018_WITNESS_MATRIX",
-            "result": "PASS",
-            "commitSha": "c78eb936db33489cbb3b57281793dfda5f10382d",
-            "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/41104567182",
-            "jobId": 124231024807,
-            "runner": "GitHub Actions Node22; isolated PostgreSQL 17-alpine; clean registered Drizzle journal",
-            "commands": [
-              "npm run db:journal:verify",
-              "npm run db:test:prepare (application DATABASE_URL cleared)",
-              "npm run db:migrate",
-              "vitest.db.registered DB018 relational 30/30",
-              "vitest.db.registered registered DB03/DB06 negatives 9/9",
-              "vitest.db.registered DB18 direct concurrency 2/2",
-              "vitest.db.registered fixed P5-R01/R02 races 2/2",
-              "vitest.db.registered DB03 concurrent elective slot 1/1",
-              "vitest.db.registered C4b final quiz attempt 1/1",
-              "node --test tests/db-parity-pass5.test.mjs"
-            ],
-            "details": "45/45 focused PostgreSQL tests passed in 6 suites/segments: 21/21 populated relational observations (zero mismatches); 16/16 direct SQL negatives; 4/4 concurrency tests; 2/2 repaired race regressions. Also source probe identity gate passed. Observation alone not prevention; cross-domain coverage and global database phase gate remain separate."
-          },
-          {
-            "kind": "EXECUTED_DISPOSABLE_POSTGRESQL17_FIVE_NEW_SQL_CHECKS_AND_FULL_WITNESS_MATRIX",
-            "result": "PASS",
-            "commitSha": "654cbc9d69759100ca3fd87a538c6e0cfb3bc2c3",
-            "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/41107736939",
-            "jobId": 124242154376,
-            "runner": "GitHub Actions Node22; disposable PostgreSQL17-alpine; registered journal replay",
-            "focusedRunUrl": "https://github.com/42Students/lms-vnext/actions/runs/41107736976",
-            "focusedJobId": 124242035311,
-            "details": "92/92 PostgreSQL integration tests passed across seven files; focused relational suite 35/35 PASS with 21 populated zero-mismatch joins and 12 baseline SQL negatives; other DB03/DB06 suite 9/9 negatives; canonical DB018 names 48/48 passing (21 joins, 21 direct negatives, 4 concurrency, 2 fixed races). Five new SQL23514 CHECK rejections: users_version_ck, sections_capacity_ck, sections_min_size_ck, registered db02_course_offerings_credits_ck, placement_companies_version_ck. Source and migration constraints unchanged, rollback-only fixture. Whole DB018 NOT done."
+            "scope": "320/320 Drizzle PG17 replay, idempotence, seven integration files 92/92 PASS, current DB014 registered catalog/scope and DB020 new provenance witnesses 7/7 PASS; 9/9 source manifest PASS"
           }
         ],
         "pending": [
-          "Review five remaining source inventory race gaps P5-R09/R10/R11/R21/R22 (some depend on unregistered schema or policy); do not treat this focused runtime matrix as global gap closure",
-          "Execute DB014 full registered tenant/FK/cascade catalog and verify no cross-domain scoped joins leak outside approved tenants",
-          "Complete DB001 independent verifier and DB020 fresh schema drift/producer-consumer evidence at exact accepted main SHA, then assess DB018 gate and task completion"
+          "DB001 exact independent verifier unfinished; original DB018 dependency still OPEN",
+          "DB019 comprehensive field semantic disposition and DB020 final global catalog/drift certification OPEN; 92 tests are only the committed witness set",
+          "Resolve additional untested producer/consumer authorization, two-session races and lifecycle invariants from DB014/DB020 before global acceptance"
         ],
         "evidenceIsNotAcceptance": true,
         "fiveFastWitnessClosures": {
@@ -897,7 +848,23 @@
         "DB-011",
         "DB-012",
         "DB-013"
-      ]
+      ],
+      "implementationCheckpoint": {
+        "status": "FULL_2829_SOURCE_INVENTORY_AND_1844_NINE_DOMAIN_CROSSWALK_IDENTITIES_PASS_UNVERIFIED_SEMANTICS_REMAIN",
+        "recordedOn": "2026-10-31",
+        "executedEvidence": [
+          {
+            "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/41129334549",
+            "result": "PASS",
+            "scope": "11-domain frozen-source inventory: 199 tables/2829 fields, explicit DB01 overlays and nine additional crosswalks spanning 1844 source-field identities with zero omissions/duplicates/mismatched legacy oracle; no schema/consumer semantics certified."
+          }
+        ],
+        "pending": [
+          "All 2829 source candidates must receive justified active/mapped/redesigned/retired/external final disposition; independent source identity alone cannot classify semantics",
+          "Remaining raw field statuses include unverified semantics; no unproven retirement or runtime mapping may be marked verified"
+        ],
+        "evidenceIsNotAcceptance": true
+      }
     },
     {
       "id": "DB-020",
@@ -912,8 +879,8 @@
         "DB-025"
       ],
       "implementationCheckpoint": {
-        "status": "DRIZZLE_SNAPSHOT_DRIFT_CONFIRMED_NOT_ACCEPTED",
-        "recordedOn": "2026-10-30",
+        "status": "REGISTERED_PG17_320_CATALOG_DIFF_EXECUTED_TYPED_COLUMNS_COMPLETE_GLOBAL_SCHEMA_DRIFT_OPEN",
+        "recordedOn": "2026-10-31",
         "report": "docs/planning/db020-schema-snapshot-drift-diagnosis-2026-10-30.md",
         "evidenceRun": "https://github.com/42Students/lms-vnext/actions/runs/41032764607",
         "observations": {
@@ -930,7 +897,24 @@
           "Keep automatic promotion and applied migration rewriting prohibited",
           "Run clean schema generation, zero-to-head replay and all phase-gate negative witnesses"
         ],
-        "evidenceIsNotAcceptance": true
+        "evidenceIsNotAcceptance": true,
+        "executedEvidence": [
+          {
+            "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/41129786508",
+            "result": "PASS_DIAGNOSTIC_NOT_CERTIFICATION",
+            "scope": "Registered PG17 320 migrations; 276 tables, 732 FKs all validated, 266 generated typed tables; all 44 newly typed tables already exist; 10 SQL-only tables; zero typed columns missing after 0319; 22 registered columns not in typed definitions; FK/name/constraint semantic comparison still open."
+          }
+        ],
+        "sourceCommits": [
+          "c1898779183ce4a0deae842f2ef7788eca7d65f1",
+          "94fc76872a3905066bdf1d06cebd22ea3145d397",
+          "e6ba0f048730ec80766965acb5265b0f5c22c864"
+        ],
+        "pending": [
+          "Reconcile 44 typed-but-already-registered tables and 10 SQL-only tables without applying duplicated generated CREATE TABLE DDL",
+          "Disposition 22 registered columns missing from typed schema, generated type/default/unique/check/foreign-key semantics and naming/cascade differences",
+          "Execute clean Drizzle generation with no unexpected migration; run DB001 and DB018 exact-head gate; independently certify database phase"
+        ]
       }
     },
     {
@@ -1762,7 +1746,24 @@
       "title": "Reconcile DB06 attendance event-history identity and atomic producer cutover",
       "phase": "DATABASE",
       "done": false,
-      "dependsOn": []
+      "dependsOn": [],
+      "implementationCheckpoint": {
+        "status": "REGISTERED_NULLABLE_GRADE_PROVENANCE_COLUMN_SOURCE_ALIGNMENT_PASS_ATOMIC_ATTENDANCE_PRODUCERS_OPEN",
+        "recordedOn": "2026-10-31",
+        "executedEvidence": [
+          {
+            "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/41129846754",
+            "result": "PASS_PARTIAL_REGISTERED_PG",
+            "scope": "Registered nullable assignment_grade_events.source_action varchar(120) via forward-only 0319; native PG17 column/catalog proof passed alongside full registered DB018 matrix. DB41 staged history schema/SQL alignment source checks pass separately, not migration/producer cutover."
+          }
+        ],
+        "pending": [
+          "Compose grade-event upgrade against registered 0205 WITHOUT duplicate CREATE TABLE, register attendance version/current-row/history SQL, and preserve explicit PRESENT",
+          "Atomically cut over grade/publish and attendance mark/correction writers to exact immutable event insert and deferred completeness; no direct row delete for PRESENT",
+          "Execute all 30 DB045 negative/race/tenant/consumer acceptance witnesses in disposable PG17 at current main SHA"
+        ],
+        "evidenceIsNotAcceptance": true
+      }
     },
     {
       "id": "DB-046",
