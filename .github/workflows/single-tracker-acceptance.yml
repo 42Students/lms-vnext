@@ -36,7 +36,7 @@ jobs:
           node scripts/tracker.mjs --roadmap
           node scripts/tracker.mjs --progress
           node scripts/tracker.mjs --closure-next
-      - name: Execute original DB035 and DB038 source-staging contracts
-        run: node --test tests/db06-history-staging.test.mjs tests/db06-assessment-retention-staging.test.mjs
+      - name: Execute DB035 DB038 and DB042 source-staging contracts
+        run: node --test tests/db06-history-staging.test.mjs tests/db06-assessment-retention-staging.test.mjs tests/db06-attendance-scope-staging.test.mjs
       - name: Execute plan and task acceptance tests
         run: node --test tests/tracker.test.mjs tests/database-domain-packages.test.mjs tests/tracker-ten-lanes.test.mjs tests/tracker-progress-evidence.test.mjs tests/closure-first-protocol.test.mjs
