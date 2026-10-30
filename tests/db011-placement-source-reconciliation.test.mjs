@@ -52,15 +52,24 @@ test("DB011 identifies inherited eligibility, explicit registration history, and
   assert.match(source.sourceReview.completionMeaning, /downstream gates/);
 });
 
-test("DB011 staged candidates are source-only and do not certify the registered database phase", () => {
+test("DB011 source inventory remains honest about verified fields while newer registrations are detected", () => {
   assert.equal(review.gate.disposablePostgresReplay, "NOT_RUN");
   assert.equal(review.gate.fieldMappingsVerified, 0);
   assert.equal(review.gate.fieldsUnverified, 280);
-  assert.equal(review.gate.bSchemasStaged.length, 2);
-  assert.equal(review.gate.bMigrationStaged.length, 2);
-  assert.ok(review.gate.cSchemasStaged.length >= 1);
-  for(const f of [...review.gate.bSchemasStaged,...review.gate.bMigrationStaged,...review.gate.cSchemasStaged]) {
-    assert.ok(file(f).length > 200, "Missing source staging candidate " + f);
+  // The 2026-10-11 review lists two obsolete scripts/sql staging paths.
+  // Current main has since registered DB08-B in journal migration 0071,
+  // and exports the real DB08-B/C Drizzle schemas. Verify the live source
+  // rather than misreporting the historical paths as present.
+  const journal = JSON.parse(file("drizzle/meta/_journal.json"));
+  assert.ok(journal.entries.some(e => e.tag === "0071_db08_registration_debarments"));
+  const migration = file("drizzle/0071_db08_registration_debarments.sql");
+  assert.match(migration, /CREATE TABLE "placement_batch_registrations"/);
+  assert.match(migration, /CREATE TABLE "placement_debarments"/);
+  const barrel = file("src/db/schema/index.ts");
+  for(const p of ["placement-registration","placement-debarments","placement-external"]) {
+    assert.ok(barrel.includes('export * from "./' + p + '";'), p);
+    assert.ok(file("src/db/schema/" + p + ".ts").length > 200);
   }
+  assert.match(file("src/db/schema/placement-external.ts"), /Registered in migration 0094/);
   for(const finding of review.gate.blockingFindings) assert.ok(finding.length > 35);
 });
