@@ -1,0 +1,61 @@
+name: DB-027 staged SQL source preflight acceptance
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'scripts/db27-stage-sql-preflight.mjs'
+      - 'tests/db27-stage-sql-preflight.test.mjs'
+      - '.github/workflows/db027-staged-sql-preflight.yml'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: db027-preflight-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  source-preflight:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm run db:journal:verify
+      - name: Execute staged SQL analyzer's full adversarial source regressions
+        run: node --test tests/db27-stage-sql-preflight.test.mjs
+      - name: Inventory all registered and staged migrations read-only; report hazards without automatic promotion
+        run: |
+          node --input-type=module <<'NODE'
+          import assert from "node:assert/strict";
+          import { analyzeCheckout } from "./scripts/db27-stage-sql-preflight.mjs";
+          const report=analyzeCheckout(process.cwd());
+          assert.equal(report.verification,"SOURCE_ONLY_NO_MIGRATION_OR_POSTGRES_EXECUTED");
+          assert.equal(report.safeForAutomaticPromotion,false);
+          assert.ok(report.counts.scanned>0);
+          assert.ok(report.counts.active>0);
+          assert.equal(report.counts.scanned,report.counts.active+report.counts.ignored);
+          for(const key of ["duplicates","repeatedWithinFile","lexicalHazards",
+                            "registeredOverlap","unresolved","cycles","destructive"])
+            assert.ok(Array.isArray(report[key]),key);
+          const summary={
+            verification:report.verification,
+            canAutoPromote:report.safeForAutomaticPromotion,
+            counts:report.counts,
+            duplicateCreators:report.duplicates.length,
+            repeatedWithinFile:report.repeatedWithinFile.length,
+            lexicalHazards:report.lexicalHazards.length,
+            registeredOverlap:report.registeredOverlap.length,
+            unresolvedParents:report.unresolved.length,
+            cycles:report.cycles.length,
+            destructive:report.destructive.length,
+            hazards:report.hazards,
+          };
+          console.log(JSON.stringify(summary,null,2));
+          NODE
