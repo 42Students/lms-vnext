@@ -140,6 +140,17 @@ describe("Faculty Notifications page acceptance",()=>{
   });
   expect(stubs.announcement).toHaveBeenLastCalledWith(actor,expect.any(Date),parsed.noticeCursor);
  });
+ it("treats a valid exhausted older page as stale pagination, not a brand-new empty inbox",async()=>{
+  stubs.personal.mockResolvedValueOnce({items:[],nextCursor:null});
+  stubs.announcement.mockResolvedValueOnce({items:[],nextCursor:null});
+  const html=renderToStaticMarkup(await page({
+   beforeCreatedAt:"2026-10-29T12:00:00.000Z",
+   beforeId:"55555555-5555-4555-8555-555555555555",
+  }));
+  expect(html).toContain("No older notifications on this page");
+  expect(html).toContain("View all");
+  expect(html).not.toContain("No notifications yet");
+ });
  it("preserves announcements if personal data fails, and personal data if announcements fail",async()=>{
   stubs.personal.mockRejectedValueOnce(new Error("private backend exception"));
   const first=renderToStaticMarkup(await page());
