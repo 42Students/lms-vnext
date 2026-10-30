@@ -1,4 +1,5 @@
 import { afterAll, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
+import { randomUUID } from "node:crypto";
 import { Pool } from "pg";
 import { closeDatabaseConnection } from "@/db/client";
 import type { RequestContext } from "@/modules/identity/context";
@@ -75,13 +76,28 @@ async function cleanup() {
   await pool.query(`delete from project_resource_audit where project_id in (${projects})`);
   await pool.query(`delete from project_instances where slug like '${SLUG}%'`);
   await pool.query(`delete from project_template_college_assignments where template_id in (select id from project_templates where slug like '${SLUG}%')`);
-  await pool.query(`delete from project_template_versions where template_id in (select id from project_templates where slug like '${SLUG}%')`);
-  await pool.query(`delete from project_templates where slug like '${SLUG}%'`);
+  // Registered DB070 makes every revision permanent and DB071 anchors the
+  // header to that snapshot. Retain only this disposable fixture history.
+  // Per-invocation UUID slugs keep repeated tests isolated without bypassing
+  // PostgreSQL triggers or relaxing assertions.
+  const retention = await pool.query<{ retainHistory: boolean }>(
+    "select (exists (select 1 from pg_trigger " +
+      "where tgrelid='project_template_versions'::regclass " +
+      "and tgname='db07_project_template_versions_append_only' and tgenabled='O') " +
+      "or exists (select 1 from pg_constraint " +
+      "where conrelid='project_templates'::regclass " +
+      "and conname='project_templates_current_version_snapshot_fk')) as \"retainHistory\"",
+  );
+  if (!retention.rows[0]?.retainHistory) {
+    await pool.query(`delete from project_template_versions where template_id in (select id from project_templates where slug like '${SLUG}%')`);
+    await pool.query(`delete from project_templates where slug like '${SLUG}%'`);
+  }
 }
 
 async function createProject() {
+  const fixtureSuffix = randomUUID().slice(0, 12);
   const template = await createProjectTemplate(superAdmin, {
-    slug: "sfp-template",
+    slug: "sfp-template-" + fixtureSuffix,
     title: "SFP Template",
     blueprint: {
       overview: { goal: "files", deliverables: ["demo"] },
@@ -96,7 +112,7 @@ async function createProject() {
   const project = await createProjectInstance(collegeAdmin, {
     collegeId: SEED_IDS.collegeA,
     templateId: template.template.id,
-    slug: "sfp-project",
+    slug: "sfp-project-" + fixtureSuffix,
     title: "SFP Project",
   });
   await addProjectMember(collegeAdmin, project.id, { membershipId: SEED_IDS.learnerCollegeAMembership, role: "LEARNER" });
