@@ -155,6 +155,52 @@ test("DB014 registered replay plus staged event/notification/group tenant bounda
       ]);
     });
 
+    await t.test("two-session revocation cannot overtake accepted membership and role history writes", async () => {
+      // The writer's accepted group-history INSERT above must retain SHARE
+      // locks on the exact membership and persisted role until COMMIT/ROLLBACK.
+      // FK KEY SHARE alone does NOT protect mutable status or role removal.
+      const revoker = new pg.Client({
+        connectionString: process.env.TEST_DATABASE_URL,
+        connectionTimeoutMillis: 10000,
+        query_timeout: 5000,
+      });
+      await revoker.connect();
+      try {
+        await revoker.query("BEGIN");
+        await revoker.query("SET LOCAL lock_timeout='350ms'");
+        await revoker.query("SAVEPOINT membership_revocation");
+        await assert.rejects(
+          revoker.query(
+            "UPDATE college_memberships SET status='SUSPENDED' WHERE id=$1",
+            [SEED.learnerCollegeAMembership],
+          ),
+          error => {
+            assert.equal(error?.code, "55P03",
+              "A concurrent status revocation must block on writer SHARE lock");
+            return true;
+          },
+        );
+        await revoker.query("ROLLBACK TO SAVEPOINT membership_revocation");
+        await revoker.query("SAVEPOINT role_revocation");
+        await assert.rejects(
+          revoker.query(
+            "DELETE FROM membership_roles WHERE membership_id=$1 AND role='LEARNER'",
+            [SEED.learnerCollegeAMembership],
+          ),
+          error => {
+            assert.equal(error?.code, "55P03",
+              "A concurrent role removal must block on writer SHARE lock");
+            return true;
+          },
+        );
+        await revoker.query("ROLLBACK TO SAVEPOINT role_revocation");
+        await revoker.query("ROLLBACK");
+      } finally {
+        await revoker.query("ROLLBACK").catch(() => {});
+        await revoker.end();
+      }
+    });
+
     // Roll back all inserted rows AND CREATE TRIGGER/FUNCTION DDL.
     await db.query("ROLLBACK");
     transactionOpen = false;
