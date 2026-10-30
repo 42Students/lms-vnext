@@ -61,6 +61,18 @@ test("DB014 actual registered PG17 FK, history, trigger and cascade catalog",asy
       ["elective_offerings","db03_elective_offering_scope_guard"],
       ["project_instances","db03_project_team_scope_guard"]
     ])assert.ok(triggers.has(table+"."+name),"Missing registered guard "+name);
+    const guardsRegistered=journal.entries.some(
+      entry=>entry.tag==="0318_db014_cross_domain_event_guards");
+    const newlyPromoted=[
+      ["activity_events","db14_activity_event_scope_guard"],
+      ["in_app_notifications","db14_notification_recipient_scope_guard"],
+      ["lms_group_member_events","db14_group_member_event_scope_guard"],
+    ];
+    for(const [table,name] of newlyPromoted){
+      const exists=triggers.has(table+"."+name);
+      assert.equal(exists,guardsRegistered,
+        "Exact journal to registered trigger mismatch: "+table+"."+name);
+    }
     const uniqueResult=await db.query(
       "SELECT t.relname AS table_name,i.relname AS index_name, "+
       "pg_get_indexdef(ix.indexrelid) AS definition "+
