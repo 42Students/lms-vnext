@@ -1,0 +1,85 @@
+name: Faculty Blueprint persisted authoring acceptance
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/faculty-blueprint-persistence-acceptance.yml"
+      - "src/modules/courses/faculty-blueprint-full-content-order.ts"
+      - "src/modules/courses/faculty-blueprint-write-recovery.ts"
+      - "tests/integration/faculty-mentor-positive-courses.test.ts"
+      - "tests/unit/faculty-blueprint-full-content-order.test.ts"
+      - "tests/unit/faculty-blueprint-empty-states-closure.test.tsx"
+permissions:
+  contents: read
+  statuses: write
+concurrency:
+  group: faculty-blueprint-persistence-${{ github.sha }}
+  cancel-in-progress: false
+jobs:
+  persistence:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    services:
+      postgres:
+        image: postgres:17-alpine
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: lms_vnext_test
+        ports: ["5432:5432"]
+        options: >-
+          --health-cmd "pg_isready -U postgres -d lms_vnext_test"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+    env:
+      DATABASE_URL: postgresql://postgres:postgres@127.0.0.1:5432/lms_vnext_test
+      TEST_DATABASE_URL: postgresql://postgres:postgres@127.0.0.1:5432/lms_vnext_test
+      DB03_ISOLATED_TEST_DATABASE: "1"
+      DB06_ISOLATED_TEST_DATABASE: "1"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Verify exact checked-out Git revision
+        run: test "$(git rev-parse HEAD)" = "$GITHUB_SHA"
+      - run: npm run db:journal:verify
+      - name: Prepare real disposable PostgreSQL 17
+        env:
+          DATABASE_URL: ""
+        run: npm run db:test:prepare
+      - name: Verify persisted Faculty Section authoring and visibility
+        run: >-
+          npx vitest run --config vitest.db.config.ts
+          tests/integration/faculty-mentor-positive-courses.test.ts
+          -t "authors Section quiz questions|writes a confirmed own-Section assignment draft|persists IST Faculty schedule inputs|toggles CLOSED Quiz result visibility"
+      - name: Verify complete mixed-content ordering, empty and unpublished UI
+        run: >-
+          npx vitest run
+          tests/unit/faculty-blueprint-full-content-order.test.ts
+          tests/unit/faculty-blueprint-empty-states-closure.test.tsx
+          tests/unit/faculty-blueprint-archive-receipt.test.ts
+          tests/unit/faculty-blueprint-write-recovery.test.ts
+
+  record_result:
+    if: ${{ always() }}
+    needs: [persistence]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/github-script@v7
+        with:
+          script: |
+            const succeeded = "${{ needs.persistence.result }}" === "success";
+            await github.rest.repos.createCommitStatus({
+              owner:context.repo.owner,repo:context.repo.repo,sha:context.sha,
+              state:succeeded ? "success":"failure",
+              context:"faculty-blueprint-persistence/pg-unit",
+              description:succeeded
+                ? "Real Faculty Section authoring PG17 and Blueprint unit green"
+                : "Faculty Blueprint persisted authoring acceptance failed",
+              target_url:`${context.serverUrl}/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}`,
+            });
