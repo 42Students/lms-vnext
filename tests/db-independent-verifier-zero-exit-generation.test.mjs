@@ -16,6 +16,9 @@ test("DB076 accepts a clean and silent generator, but rejects zero-exit fatal ou
   assert.equal(inspectCanonicalGenerationOutput({stdout:"TypeError: BigInt serialization failed"}).passed,false);
   assert.equal(inspectCanonicalGenerationOutput({stderr:"Warning: generator result unverified"}).passed,false);
   assert.equal(inspectCanonicalGenerationOutput({stdout:"UnhandledPromiseRejection: generator crashed"}).passed,false);
+  assert.deepEqual(inspectCanonicalGenerationOutput({
+    stdout:"drizzle/meta/0316_snapshot.json data is malformed",stderr:"",
+  }),{stderrWasEmpty:true,fatalOutputDetected:true,passed:false});
   assert.equal(inspectCanonicalGenerationOutput({stdout:"error-free schema"}).passed,true);
 });
 
