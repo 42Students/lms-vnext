@@ -10,6 +10,7 @@ import { useToast } from "@/components/ui/toast";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { useRouter } from "next/navigation";
+import { electiveSlotFormErrorsFromIssues } from "@/modules/electives/college-slot-mutation-model";
 import { useRef, useState, useTransition, type FormEvent } from "react";
 
 export type SlotFormRow = {
@@ -177,10 +178,7 @@ export function CollegeSlotManager({ options, row }: {
         );
         const result = await response.json().catch(() => null);
         if (!response.ok) {
-          const serverFields: Record<string, string> = {};
-          for (const issue of (result?.issues ?? []) as { path?: (string | number)[]; message?: string }[]) {
-            if (issue.path?.length) serverFields[String(issue.path[0])] = issue.message ?? "Please check this field";
-          }
+          const serverFields = electiveSlotFormErrorsFromIssues(result?.issues);
           if (Object.keys(serverFields).length) {
              setFieldErrors(serverFields);
              const field=Object.keys(serverFields)[0]!;
@@ -223,7 +221,7 @@ export function CollegeSlotManager({ options, row }: {
           <option value="">Select program</option>
           {options.programs.map(p => <option key={p.id} value={p.id}>{p.name}</option>)}
         </Select></Field>
-        <Field label="Academic period (optional)"><Select name="periodId" disabled={locked} className={fieldClass} value={periodId}
+        <Field label="Academic period (optional)" error={fieldErrors["periodId"]}><Select name="periodId" aria-invalid={Boolean(fieldErrors["periodId"])} disabled={locked} className={fieldClass} value={periodId}
           onChange={event => setPeriodId(event.target.value)}>
           <option value="">No period linked</option>
           {options.periods.map(p => <option key={p.id} value={p.id}>{p.name}</option>)}
@@ -236,7 +234,7 @@ export function CollegeSlotManager({ options, row }: {
       </> : null}
       <Field label="Slot name" error={fieldErrors["name"]}><Input name="name" maxLength={150} error={Boolean(fieldErrors["name"])} className={fieldClass}
         value={name} onChange={event => setName(event.target.value)} /></Field>
-      <Field label="Description"><Textarea name="description" rows={2} maxLength={1000}
+      <Field label="Description" error={fieldErrors["description"]}><Textarea name="description" aria-invalid={Boolean(fieldErrors["description"])} rows={2} maxLength={1000}
          placeholder="Enter slot description (optional)" className={fieldClass}
          value={description} onChange={event => setDescription(event.target.value)} /></Field>
       <Field label="Credits" error={fieldErrors["credits"]}><Input name="credits" aria-invalid={Boolean(fieldErrors["credits"])} disabled={locked} type="number" min={0} max={30}
