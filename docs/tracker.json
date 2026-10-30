@@ -519,8 +519,28 @@
       "id": "DB-028",
       "title": "Fail-close browser E2E destructive database target",
       "phase": "DATABASE",
-      "done": false,
-      "dependsOn": []
+      "done": true,
+      "dependsOn": [],
+      "acceptedAt": "2026-10-30T07:46:15.000Z",
+      "acceptanceEvidence": [
+        {
+          "kind": "EXECUTED_ACCEPTANCE",
+          "commitSha": "62cbeddddec8181a8e220b0504c97aac23360b7b",
+          "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/41022022531",
+          "jobId": 123951295281,
+          "runner": "GitHub Actions ubuntu-latest Node.js 22, disposable PostgreSQL 17-alpine (explicit lms_vnext_e2e database)",
+          "commands": [
+            "npm run db:journal:verify (313 registered migrations)",
+            "node --test tests/db01-test-database-guard.test.mjs (46/46; E2E production/alias/URL negatives verified before connection)",
+            "npm run db:test:prepare (DATABASE_URL explicitly cleared; preflight + fresh PG17 journal replay + seed)",
+            "npm run db:migrate (idempotent 313-migration replay)",
+            "PG17 catalog/seed witness: 313 registered migrations and ≥2 seeded colleges in lms_vnext_e2e"
+          ],
+          "result": "PASS",
+          "exitCode": 0,
+          "details": "DB-028 scope is destructive browser E2E target selection only. Negative processes prove no connection for production-like targets, app DB aliases, and non-E2E triple URL. Exact triple-bound isolated E2E target takes positive preflight path; registered PostgreSQL reset/migrate/seed positive executed on disposable DB. Full Playwright browser behavior is outside DB-028 certification."
+        }
+      ]
     },
     {
       "id": "DB-029",
@@ -1444,12 +1464,7 @@
           "release verification"
         ],
         "operatingNotes": "L10 owns independent verification findings; actual domain implementation defects go to domain owner. Coordinate changes to shared CI with L01.",
-        "claim": {
-          "sessionId": "db028-independent-closure-20261030",
-          "holder": "DB028 single-task guard closure",
-          "claimedAt": "2026-10-30T06:47:00.000Z",
-          "expiresAt": "2026-10-30T10:47:00.000Z"
-        }
+        "claim": null
       }
     ],
     "milestones": [
@@ -3210,13 +3225,9 @@
         },
         {
           "id": "DB-028",
-          "discovery": "SOURCE_REVIEWED",
-          "implementation": "CODE_PARTIAL",
-          "verification": "SOURCE_OR_STATIC_CHECKS",
-          "basis": {
-            "source": "RETIRED_2026_10_12_QUEUE",
-            "taskId": "DB-028"
-          }
+          "discovery": "ACCEPTED_BY_CANONICAL_DONE",
+          "implementation": "ACCEPTED_BY_CANONICAL_DONE",
+          "verification": "ACCEPTED_BY_CANONICAL_DONE"
         },
         {
           "id": "DB-029",
