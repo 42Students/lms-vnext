@@ -22,6 +22,8 @@ for(const device of [{name:"desktop",width:1280,height:800},{name:"mobile",width
    .getByRole("row").filter({hasText:"E2E Browser Course"}).first();
   await expect(course).toBeVisible();
   await course.getByRole("link",{name:"Open",exact:true}).click();
+  // Wait for Next App Router's actual navigation before reading page.url().
+  await expect(page).toHaveURL(/\/teacher\/courses\/[^/]+\/home$/);
   const chosen=page.url().match(/\/teacher\/courses\/([^/]+)\/home$/)?.[1];
   expect(chosen).toBeTruthy();
   const tabs=page.getByRole("navigation",{name:"Faculty course tabs"});
