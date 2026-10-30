@@ -849,7 +849,8 @@ describe("courses UI2A faculty read model", () => {
           where schedule_event_id = $1`,
         [session.id],
       );
-    expect(exceptionRows.rows).toHaveLength(0);
+    // DB06 retains the explicit PRESENT correction as current state/history.
+    expect(exceptionRows.rows).toEqual([{ status: "PRESENT" }]);
 
     const audits = await pool.query<{
       event_type: string;
