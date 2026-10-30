@@ -1,0 +1,66 @@
+name: DB-054 placement access revocation race acceptance
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - "src/modules/placements/application-service.ts"
+      - "tests/integration/db18-placement-race-gap.test.ts"
+      - ".github/workflows/db054-placement-access-race-acceptance.yml"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: db054-application-access-race-main
+  cancel-in-progress: false
+
+jobs:
+  placement-race:
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    services:
+      postgres:
+        image: postgres:17-alpine
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: lms_vnext_test
+        ports: ["5432:5432"]
+        options: >-
+          --health-cmd "pg_isready -U postgres -d lms_vnext_test"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 20
+    env:
+      DATABASE_URL: postgresql://postgres:postgres@127.0.0.1:5432/lms_vnext_test
+      TEST_DATABASE_URL: postgresql://postgres:postgres@127.0.0.1:5432/lms_vnext_test
+      DB03_ISOLATED_TEST_DATABASE: "1"
+      DB018_ISOLATED_TEST_DATABASE: "1"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Registered migrations and application ordering source contract
+        run: |
+          test "$(git rev-parse HEAD)" = "$GITHUB_SHA"
+          npm run db:journal:verify
+          node --test tests/db54-placement-application-race.test.mjs
+      - name: Fresh disposable PG17 and seed
+        env:
+          DATABASE_URL: ""
+        run: npm run db:test:prepare
+      - name: Idempotent registered migration replay
+        run: npm run db:migrate
+      - name: Real two-session paid-access revocation race and no-application proof
+        run: >-
+          npx vitest run --config vitest.db.registered.config.ts
+          tests/integration/db18-placement-race-gap.test.ts
+      - name: Verify no migration changes during test
+        run: |
+          npm run db:journal:verify
+          test -z "$(git status --porcelain -- drizzle/)"
