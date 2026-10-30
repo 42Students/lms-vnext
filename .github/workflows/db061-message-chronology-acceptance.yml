@@ -1,0 +1,66 @@
+name: DB-061 registered message chronology and two-session acceptance
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/db061-message-chronology-acceptance.yml"
+      - "tests/db061-registered-message-concurrency-pg.mjs"
+      - "tests/db09-message-registered-pg-acceptance.mjs"
+      - "tests/db09-message-chronology.test.mjs"
+      - "drizzle/0075_db09_tpo_collaboration.sql"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: db061-chronology-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  db061-registered:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    services:
+      postgres:
+        image: postgres:17-alpine
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: lms_vnext_test
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres -d lms_vnext_test"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 20
+    env:
+      TEST_DATABASE_URL: postgresql://postgres:postgres@127.0.0.1:5432/lms_vnext_test
+      DATABASE_URL: postgresql://postgres:postgres@127.0.0.1:5432/lms_vnext_test
+      DB03_ISOLATED_TEST_DATABASE: "1"
+      DB09_ISOLATED_TEST_DATABASE: "1"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Pin exact triggering revision
+        run: test "$(git rev-parse HEAD)" = "$GITHUB_SHA"
+      - name: Registered journal integrity
+        run: npm run db:journal:verify
+      - name: Source-defined immutable chronology contract
+        run: node --test tests/db09-message-chronology.test.mjs
+      - name: Reset and seed disposable PostgreSQL 17
+        env:
+          DATABASE_URL: ""
+        run: npm run db:test:prepare
+      - name: Registered migration replay idempotence
+        run: npm run db:migrate
+      - name: DB061 direct SQL negative, receipt and thread projection witness
+        run: node tests/db09-message-registered-pg-acceptance.mjs
+      - name: DB061 two-session ordered-commit and exact MAX chronology witness
+        run: node tests/db061-registered-message-concurrency-pg.mjs
