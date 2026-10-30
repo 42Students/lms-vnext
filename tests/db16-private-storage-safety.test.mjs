@@ -7,6 +7,7 @@ const root = process.cwd();
 const text = p => fs.readFileSync(path.join(root, p), "utf8");
 
 const schemaBarrel = text("src/db/schema/index.ts");
+const verifiedProfileSchema = text("src/db/schema/profile-verification.ts");
 const learnerProfileService = text("src/modules/people/profile-service.ts");
 const learnerProfileRepo = text("src/modules/people/profile-repository.ts");
 const verificationDomain = text("src/modules/profile-verification/domain.ts");
@@ -23,17 +24,24 @@ test("DB16 keeps raw national identity persistence fail-closed", () => {
   assert.match(verificationDomain, /aadhaarNumber\|panNumber\|identityNumber/);
 });
 
-test("DB04 and DB06 receipt schemas remain staged rather than falsely registered", () => {
-  assert.doesNotMatch(schemaBarrel, /profile-verification/);
+test("registered DB04 verification remains distinct from unregistered DB06 assignment receipts", () => {
+  assert.match(schemaBarrel, /export \* from "\.\/profile-verification"/);
+  assert.match(verifiedProfileSchema, /profilePrivateDocumentReceipts = pgTable/);
+  assert.match(verifiedProfileSchema, /privateObjectKey: text\("private_object_key"\)/);
   assert.doesNotMatch(schemaBarrel, /course-upload-receipts-staged/);
   assert.match(assignmentFiles, /DB06_ASSIGNMENT_FILES_MIGRATIONS_PENDING/);
 });
 
 test("shared private storage is tenant/member scoped and fail-closed on public access", () => {
-  assert.match(privateStorage, /private\/\$\{input\.collegeId\}\/\$\{input\.ownerMembershipId\}/);
-  assert.match(privateStorage, /uniformBucketLevelAccess/);
-  assert.match(privateStorage, /publicAccessPrevention/);
+  // R2 uses a validated five-segment key; it has no GCS UBLA/PAP fields.
+  assert.match(privateStorage, /\["private", input\.collegeId, input\.ownerMembershipId, input\.namespace, objectId\]\.join\("\/"\)/);
+  assert.match(privateStorage, /function assertScopedKey/);
+  assert.match(privateStorage, /parts\[1\] !== expected\.collegeId/);
+  assert.match(privateStorage, /parts\[2\] !== expected\.ownerMembershipId/);
+  assert.match(privateStorage, /getPrivateR2Config/);
+  assert.match(privateStorage, /PRIVATE_STORAGE_OBJECT_NOT_ATTESTED/);
   assert.match(privateStorage, /lms-vnext-privileged-scanner/);
+  assert.match(privateStorage, /"malware-scan-status"\] !== "CLEAN"/);
   assert.match(privateStorage, /sha256/);
   assert.match(privateStorage, /generation/);
 });
@@ -57,12 +65,12 @@ test("DB16 overlay records auditable revocation and retention instead of a boole
 
 test("DB16 refuses to invent membership ownership for bug reporter screenshots", () => {
   assert.match(overlay, /reporter-access/);
-  assert.match(overlay, /refuses\s+to fabricate college\/member ownership/);
+  assert.match(overlay, /refuses[\s\S]{0,120}to fabricate college\/member ownership/);
   assert.match(reconciliation, /NEED ISSUE\/REPORTER PRIVATE OWNER CONTRACT/);
 });
 
 test("DB16 does not claim encryption configuration verification from schema alone", () => {
-  assert.match(reconciliation, /no .*encryption controls verified/i);
+  assert.match(reconciliation, /do not mark [“"]encryption controls verified[”"]/i);
   assert.match(reconciliation, /CMEK/);
   assert.match(overlay, /Schema cannot prove the bucket\/database encryption configuration/);
 });
