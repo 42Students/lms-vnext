@@ -109,6 +109,10 @@ jobs:
         run: npm run test:db:parity
       - name: Prototype portal source contracts (TPO, Recruiter, Mentor)
         run: node --test tests/prototype-parity-shell-contract.test.mjs
+      - name: DB-072 recruiter provenance compatibility (source contract only)
+        run: |
+          node scripts/verify-db08-recruiter-code-source.mjs
+          node --test tests/db08-recruiter-code-contract.test.mjs
       - name: Nine-domain crosswalk regression
         run: node --test tests/db019-crosswalk-identity.test.mjs
       - name: Global 2,829-field census and unresolved-evidence preflight
