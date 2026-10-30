@@ -72,13 +72,22 @@ async function setup() {
     values($1,$2,$3,$4,'ACTIVE')`,
     [ids.enrollment,ids.membership,ids.program,ids.cohort]);
   // Minimal project-template lineage is per-test and is not a shared seeded project.
-  await pool.query(`insert into project_templates
-    (id,slug,title,status,created_by_user_id) values ($1,$2,'Chat7 Template','PUBLISHED',$3)`,
-    [ids.template,"chat7-"+suffix,SEED_IDS.superAdminUser]);
-  await pool.query(`insert into project_template_versions
-    (id,template_id,version,title,blueprint,created_by_user_id)
-    values($1,$2,1,'Chat7 Template','{}'::jsonb,$3)`,
-    [ids.version,ids.template,SEED_IDS.superAdminUser]);
+  // DB071 defers the mandatory header-to-revision pointer until COMMIT.
+  const client=await pool.connect();
+  try {
+    await client.query("BEGIN");
+    await client.query(`insert into project_templates
+      (id,slug,title,status,created_by_user_id) values ($1,$2,'Chat7 Template','PUBLISHED',$3)`,
+      [ids.template,"chat7-"+suffix,SEED_IDS.superAdminUser]);
+    await client.query(`insert into project_template_versions
+      (id,template_id,version,title,blueprint,created_by_user_id)
+      values($1,$2,1,'Chat7 Template','{}'::jsonb,$3)`,
+      [ids.version,ids.template,SEED_IDS.superAdminUser]);
+    await client.query("COMMIT");
+  } catch(error) {
+    await client.query("ROLLBACK");
+    throw error;
+  } finally { client.release(); }
   await pool.query(`insert into project_template_college_assignments
     (id,template_id,template_version_id,college_id,assigned_by_user_id)
     values($1,$2,$3,$4,$5)`,
