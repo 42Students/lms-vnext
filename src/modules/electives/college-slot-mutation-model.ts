@@ -108,6 +108,34 @@ export function electiveSlotFormErrorsFromIssues(issues: unknown): Record<string
   return errors;
 }
 
+/** Rebuild edit drafts from the newest server row each time a dialog reopens.
+ * React keeps state across router.refresh; reusing the previous form state can
+ * silently overwrite a newer saved name, description or elective rule.
+ */
+export function electiveSlotDraftFromRow(row: {
+  programId?: string;
+  academicPeriodId?: string | null;
+  semesterNumber?: number;
+  academicYear?: string | null;
+  name?: string;
+  description?: string | null;
+  credits?: number;
+  minPick?: number;
+  maxPick?: number;
+} | undefined) {
+  return {
+    programId: row?.programId ?? "",
+    periodId: row?.academicPeriodId ?? "",
+    term: String(row?.semesterNumber ?? 1),
+    year: row?.academicYear ?? "",
+    name: row?.name ?? "",
+    description: row?.description ?? "",
+    credits: String(row?.credits ?? 3),
+    minPick: String(row?.minPick ?? 1),
+    maxPick: String(row?.maxPick ?? 1),
+  };
+}
+
 /** Normalized legacy form and constraint feedback for user-facing dialogs. */
 export function collegeElectiveSlotErrorMessage(errorCode:string):string{
   const codes:Record<string,string>={
