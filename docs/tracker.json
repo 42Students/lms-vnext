@@ -467,8 +467,40 @@
       "id": "DB-015",
       "title": "Database state transition and race inventory",
       "phase": "DATABASE",
-      "done": false,
-      "dependsOn": []
+      "done": true,
+      "dependsOn": [],
+      "acceptedAt": "2026-10-30",
+      "closureBasis": "SOURCE_INVENTORY_ACCEPTED_NOT_RACE_FIX_ACCEPTANCE",
+      "scope": "DB015 source-backed 23-case database state-transition and race inventory ONLY. Not engineering acceptance of any underlying race fix; DB018, DB054, DB020 and domain-specific acceptance remain OPEN.",
+      "acceptanceEvidence": [
+        {
+          "kind": "EXECUTED_INVENTORY_SOURCE_CONTRACT",
+          "result": "PASS",
+          "exitCode": 0,
+          "commitSha": "e20ec6735c374921bb1345caa152423ff4f78cca",
+          "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/41079899230",
+          "runner": "GitHub Actions Node.js 22, CI source-contracts job",
+          "commands": [
+            "npm run test:db:parity (tests/db-parity-pass5.test.mjs)"
+          ],
+          "details": "Executed manifest identity/coverage checks: exact 23 distinct source-grounded race probes, explicit per-probe required witness and source paths, 13 source-protected but runtime-unproven, 3 unmigrated draft, 2 source-confirmed gaps, 2 source fixes needing execution, 1 partial dispatcher gap, 1 draft-unimplemented, 1 policy undecided. Seven blocking P5-R01,R02,R09,R10,R11,R21,R22 preserved explicitly as NOT_RUN and not waived."
+        }
+      ],
+      "deferredRelease": {
+        "reviewRequired": true,
+        "when": "BEFORE_GLOBAL_DATABASE_PHASE_GATE_DB020",
+        "reviewOwner": "L01/L10 and affected domain owners",
+        "items": [
+          "Execute and close all DB018 negative/two-session race witnesses",
+          "Promote and verify 3 source-protected but unregistered constraint drafts",
+          "Resolve 7 tracked blocking race/dispatcher/policy issues: P5-R01/R02/R09/R10/R11/R21/R22"
+        ],
+        "notWaived": true,
+        "releaseCertified": false,
+        "noAutomaticReopen": true,
+        "reopenOnlyFor": "New untracked race, incorrect inventory assignment, false source claim or explicit scope change",
+        "register": "docs/planning/database-parity-pass5-probe-manifest.json"
+      }
     },
     {
       "id": "DB-016",
