@@ -110,6 +110,11 @@ describe.skipIf(!enabled)("College elective slot create/edit isolated PostgreSQL
         values (${ids.learnerEnrollment},${ids.learnerMembership},${ids.program},${ids.cohort},'ACTIVE')`);
       // The registered elective roster guard also checks a live section
       // enrollment, not just a matching primary programme enrollment.
+      // DB03 requires current cohort progression to match the elective slot
+      // semester. A direct-fixture cohort might not yet have a state row.
+      await tx.execute(sql`insert into cohort_progression_state
+        (cohort_id,current_term_number)
+        values (${ids.cohort},1) on conflict (cohort_id) do nothing`);
       await tx.execute(sql`insert into section_enrollments
         (id,learner_enrollment_id,section_id,academic_period_id,status)
         values (${ids.learnerSectionEnrollment},${ids.learnerEnrollment},
