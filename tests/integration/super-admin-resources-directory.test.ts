@@ -33,7 +33,8 @@ describe.skipIf(!enabled)("Super Admin resources directory disposable PostgreSQL
   for(const [table,id] of [["lesson_contents",ids.video],["lesson_contents",ids.resource],["course_lessons",ids.lesson],
    ["course_learning_paths",ids.path],["course_offerings",ids.offering],["courses",ids.course],
    ["cohorts",ids.cohort],["programs",ids.program],["academic_periods",ids.period]] as const)
-   await pool.query(`delete from ${table} where id=$1`,[id]);
+   {if(table==="courses") await pool.query("delete from program_term_courses where course_id=$1",[id]);
+    await pool.query(`delete from ${table} where id=$1`,[id]);}
  }}finally{await pool?.end();await closeDatabaseConnection();}});
  it("returns only resources, hides other kinds and foreign-college content",async()=>{
   const videos=await listSuperAdminContentDirectory(admin,"RESOURCES",{q:name,offeringId:ids.offering});
