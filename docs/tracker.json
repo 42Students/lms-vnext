@@ -1609,9 +1609,42 @@
       "id": "DB-079",
       "title": "Harden DB09 CRM principal revocation races and append-only history",
       "phase": "DATABASE",
-      "done": false,
+      "done": true,
       "dependsOn": [
         "DB-002"
+      ],
+      "acceptedAt": "2026-10-30",
+      "closureBasis": "ENGINEERING_ACCEPTED_REGISTERED_CRM_PRINCIPAL_RACE_AND_APPEND_ONLY",
+      "acceptanceEvidence": [
+        {
+          "kind": "EXECUTED_REGISTERED_POSTGRESQL_17_ACCEPTANCE",
+          "commitSha": "10f30974ba69046bb612a00bdd3bf56974faf929",
+          "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/41078438955",
+          "jobId": 124140807597,
+          "runner": "GitHub Actions Node 22 disposable PostgreSQL 17-alpine",
+          "commands": [
+            "npm run db:journal:verify",
+            "node --test tests/db079-db09-crm-race-hardening.test.mjs",
+            "npm run db:test:prepare with DATABASE_URL cleared",
+            "npm run db:migrate",
+            "node --import tsx --test tests/db079-crm-principal-two-session-pg.test.mjs"
+          ],
+          "result": "PASS",
+          "exitCode": 0,
+          "details": "Eight two-session executable CRM lock/revocation and append-only negative tests passed: owner membership suspension, accepted staff role removal, user disable, company relationship archive, recruiter grant revocation, recruiter profile suspension, global company archive, lead-activity TRUNCATE denial. Registered migration 0048 SHARE locks serialize revocation with accepted writes; invalid principal writes rejected."
+        },
+        {
+          "kind": "EXECUTED_REGISTERED_RECRUITER_NOTE_ACCEPTANCE",
+          "commitSha": "a03791fff5",
+          "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/41070287567",
+          "runner": "GitHub Actions disposable PostgreSQL 17",
+          "commands": [
+            "DB079 0312 registered grant and recruiter-note scope acceptance"
+          ],
+          "result": "PASS",
+          "exitCode": 0,
+          "details": "Supporting registered recruiter-note source grant and SQL negative witnesses; main DB079 two-session evidence is primary."
+        }
       ]
     },
     {
