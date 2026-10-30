@@ -593,22 +593,24 @@
       "done": true,
       "dependsOn": [],
       "acceptedAt": "2026-10-30",
-      "acceptanceEvidence": [{
-        "kind": "EXECUTED_POSTGRESQL_17",
-        "result": "PASS",
-        "exitCode": 0,
-        "commitSha": "e6a30b01f3609c9a5c01b54ed3670dd2fe2a9a8a",
-        "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/41031829604",
-        "jobId": 123983130471,
-        "runner": "GitHub Actions ubuntu-latest Node.js 22 and ephemeral PostgreSQL 17-alpine",
-        "commands": [
-          "npm run db:journal:verify; npm run db:test:prepare; npm run db:migrate",
-          "node --test tests/db006-catalog-pg.test.mjs",
-          "npx vitest run --config vitest.db.config.ts tests/integration/groups-db03.test.ts tests/integration/groups-db03-roster.test.ts tests/integration/groups-db03-project-team.test.ts tests/integration/groups-db03-actor-freshness.test.ts",
-          "node --test tests/db-parity-db03-schema.test.mjs tests/db03-elective-program-oracle.test.mjs"
-        ],
-        "details": "DB-026 executable-legacy same-slot-program oracle is accepted via the DB-006 registered PostgreSQL 17 integration suite: wrong-program first admission/rejoin, stale ACTIVE membership after transfer, read/schedule and faculty roster suppression, admin move atomic denial, registered direct-SQL wrong-program backed offering and cohort reparent rejection, and canonical DB02 term/year mismatch defenses. Catalog witnesses verified required DB03 trigger installation. All workflow steps passed; no relevant code or test change since this run. This closes the oracle conflict only, not the whole DATABASE gate."
-      }]
+      "acceptanceEvidence": [
+        {
+          "kind": "EXECUTED_POSTGRESQL_17",
+          "result": "PASS",
+          "exitCode": 0,
+          "commitSha": "e6a30b01f3609c9a5c01b54ed3670dd2fe2a9a8a",
+          "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/41031829604",
+          "jobId": 123983130471,
+          "runner": "GitHub Actions ubuntu-latest Node.js 22 and ephemeral PostgreSQL 17-alpine",
+          "commands": [
+            "npm run db:journal:verify; npm run db:test:prepare; npm run db:migrate",
+            "node --test tests/db006-catalog-pg.test.mjs",
+            "npx vitest run --config vitest.db.config.ts tests/integration/groups-db03.test.ts tests/integration/groups-db03-roster.test.ts tests/integration/groups-db03-project-team.test.ts tests/integration/groups-db03-actor-freshness.test.ts",
+            "node --test tests/db-parity-db03-schema.test.mjs tests/db03-elective-program-oracle.test.mjs"
+          ],
+          "details": "DB-026 executable-legacy same-slot-program oracle is accepted via the DB-006 registered PostgreSQL 17 integration suite: wrong-program first admission/rejoin, stale ACTIVE membership after transfer, read/schedule and faculty roster suppression, admin move atomic denial, registered direct-SQL wrong-program backed offering and cohort reparent rejection, and canonical DB02 term/year mismatch defenses. Catalog witnesses verified required DB03 trigger installation. All workflow steps passed; no relevant code or test change since this run. This closes the oracle conflict only, not the whole DATABASE gate."
+        }
+      ]
     },
     {
       "id": "DB-027",
@@ -1036,17 +1038,21 @@
       "done": true,
       "dependsOn": [],
       "acceptedAt": "2026-10-30",
-      "acceptanceEvidence": [{
-        "kind": "EXECUTED_ACCEPTANCE",
-        "result": "PASS",
-        "exitCode": 0,
-        "commitSha": "548da856bbe57fd9c062df4b98e33ed036a022a7",
-        "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/41032049378/job/123984731050",
-        "jobId": 123984731050,
-        "runner": "GitHub Actions ubuntu-latest Node.js 22, native no-connect test harness",
-        "commands": ["node --test tests/db058-witness-target-safety.test.mjs tests/db-staged-pg-witnesses.test.mjs"],
-        "details": "47/47 security tests PASS, zero failures/skips. DB058 isolation opt-in, test-only URL naming, application alias and loopback equivalence, port-bound remote confirmation, no credential leak, before-Pool guards, and all staged witness target checks passed. No production database was connected; scope is negative witness target selection, not all DB18 relational tests. All source/test files relevant to this task remained unchanged through recorded acceptance."
-      }]
+      "acceptanceEvidence": [
+        {
+          "kind": "EXECUTED_ACCEPTANCE",
+          "result": "PASS",
+          "exitCode": 0,
+          "commitSha": "548da856bbe57fd9c062df4b98e33ed036a022a7",
+          "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/41032049378/job/123984731050",
+          "jobId": 123984731050,
+          "runner": "GitHub Actions ubuntu-latest Node.js 22, native no-connect test harness",
+          "commands": [
+            "node --test tests/db058-witness-target-safety.test.mjs tests/db-staged-pg-witnesses.test.mjs"
+          ],
+          "details": "47/47 security tests PASS, zero failures/skips. DB058 isolation opt-in, test-only URL naming, application alias and loopback equivalence, port-bound remote confirmation, no credential leak, before-Pool guards, and all staged witness target checks passed. No production database was connected; scope is negative witness target selection, not all DB18 relational tests. All source/test files relevant to this task remained unchanged through recorded acceptance."
+        }
+      ]
     },
     {
       "id": "DB-059",
@@ -1465,10 +1471,29 @@
       "id": "DB-076",
       "title": "Harden independent verifier with schema-drift and catalog gates",
       "phase": "DATABASE",
-      "done": false,
+      "done": true,
       "dependsOn": [
         "DB-002"
-      ]
+      ],
+      "acceptedAt": "2026-10-30",
+      "closureBasis": "INDEPENDENT_VERIFIER_HARDENING_MECHANISM_ACCEPTED_NOT_GLOBAL_DB_CERTIFICATION",
+      "acceptanceEvidence": [
+        {
+          "kind": "EXECUTED_SOURCE_AND_FAILURE_GATE_ACCEPTANCE",
+          "commitSha": "5bdef6c19fb19083bdc6d79dc0bc15963507075c",
+          "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/41070514523",
+          "runner": "GitHub Actions ubuntu-latest Node.js 22",
+          "commands": [
+            "npm run db:journal:verify",
+            "npm run test:db:parity (including tests/db076-independent-verifier-drift.test.mjs)",
+            "CI schema-drift job: canonical db:generate deliberate fail-closed on actual unregistered drift"
+          ],
+          "result": "PASS",
+          "exitCode": 0,
+          "details": "The source-contracts job passed, including the executable DB076 drift/clean-source/index-and-HEAD regressions. Independently the schema-drift job failed on confirmed actual Drizzle drift as intended. This certifies fail-closed verifier gate implementation only, NOT successful zero-drift, independent full verifier replay or global DATABASE acceptance."
+        }
+      ],
+      "acceptanceScope": "DB076 verifier implementation; DB001 independent full PostgreSQL run and DB020 no-drift readiness remain OPEN; registered schema drift and runtime contract issues cannot be deferred."
     },
     {
       "id": "DB-077",
