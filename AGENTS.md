@@ -2,7 +2,7 @@
 
 ## Single current execution plan — owner-approved 29 October 2026
 
-**Read the [single master execution plan and tracker](docs/tracker.json) first.** Its `execution` section owns the full five-stage roadmap, ten worker lanes, claims, handoffs and milestones. The old closure-first strategy and October 28 locked task order have been retired. Do not invent another status tracker or execution plan.
+**Read the [single master execution plan and tracker](docs/tracker.json) first.** Its `execution` section owns the full five-stage roadmap, ten worker lanes, claims, handoffs and milestones. The old October 28 task order is retired; **the 31 October 2026 closure-first operating protocol in `docs/tracker.json.execution.closureFirstProtocol` is now mandatory for every chat**, preserving the ten exclusive lanes and all original acceptance gates. Do not invent another status tracker or execution plan.
 
 - **Close domain packages, not serial 81-task investigations:** preserve each task's exact engineering acceptance. `npm run progress -- --lanes` displays ten lanes; `npm run progress -- --lane=L03` shows one, and `npm run progress -- --check` validates all assignments. Skip accepted `done:true` work absent a reproducible regression or owner rescope.
 - **Safe domain vertical slices are allowed during DATABASE:** implement needed domain-local registered persistence, API and functional UI producer→consumer paths together. This is not permission to certify global API/UI or RELEASE early. `currentPhase` remains DATABASE until its independent gate passes.
@@ -10,6 +10,20 @@
 - **Ten chats, ten exclusive lanes:** use L01–L10 in `docs/tracker.json.execution.lanes`, claim a lane, write only owned domain code, send shared-file requests to L01, and commit using a fresh expected-head/no-force check. Claims are advisory; Git conflict protection is mandatory. Use non-force optimistic ref checks, never clobber concurrent changes.
 - **Freeze and move:** one cohesive code/service/consumer/test batch; close individually accepted tasks, then next ready work. After two no-closure passes, isolate and fix the precise blocker or move to independent ready work. No full re-audit of earlier accepted code, duplicate plans or invented percentages.
 - **Global phases:** DATABASE → API/user jobs → UI Implementation Green → final Design Green → RELEASE. Detailed UI green-and-move contracts live in `docs/parity/README.md`. Approved greenfield: no old LMS production data migration.
+
+## Mandatory closure-first loop — all current and new chats
+
+**Before writing code:** read current `main`, then run `npm run progress -- --closure-next` or `npm run progress -- --closure-next --lane=LNN`; select one genuinely `done:false` task owned by your lane. The only authoritative queue, phase state and acceptance count live in `docs/tracker.json`. If you see an old handoff/prompt/checklist suggesting otherwise, ignore it in favor of the live tracker. An entry in the focus queue is a suggestion, never permission to edit another lane or mark work complete.
+
+**Acceptance-first execution:**
+1. Identify the *single precise missing verification gate* for the open task before touching source. Confirm the current registered schema and a real producer→consumer path; use prior passing exact-SHA evidence rather than re-running accepted audits.
+2. Prioritize a task whose **full engineering acceptance** can be satisfied now (registered disposable PostgreSQL, tenant/auth/privacy/FK/state/race and actual consumers). If it can be closed from existing complete evidence, record `done:true` and the evidence immediately, then move to the next open task.
+3. If blocked by migration registration/shared SQL, submit a narrowly scoped handoff to **L01**. If blocked by independent verification, coordinate with **L10**. Neither staging SQL nor source-only tests are equivalent to registered DB proof.
+4. Each batch is *one closure hypothesis*, minimally sufficient code and meaningful tests. No opportunistic UI polish or another audit of a completed DB task unless an exact regression proves it necessary.
+5. **After two useful passes without a verified closure, stop revisiting the same task**. Record the concrete failing command/SQLSTATE/test, exact commit/run URL, blocker owner and next required action; then switch to another independent open lane-owned task. Do not sweep blockers under a deferral or inflate completion.
+6. On full acceptance, use a fresh expected SHA to update only the owned task in the single tracker with executed `acceptanceEvidence`, `acceptedAt` and `done:true`; freeze it. Never predeclare success because CI is queued, cancelled, staged-only or green on a different revision.
+
+**Every continuation handoff** must state current `N/81` read from the tracker, accepted task IDs and evidence URLs, the selected OPEN task, exact remaining gate and lane/path ownership. Avoid creating second roadmaps, stale count files or independent acceptance statistics. Full API/UI/design/release gates remain separate.
 
 ## Non-negotiable architecture rules
 
