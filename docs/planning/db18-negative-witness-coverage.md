@@ -2,21 +2,25 @@
 
 **Phase:** DATABASE  
 **Task:** DB-018 — Negative DB integration witness suite  
-**State:** implementation authored; runtime acceptance NOT RUN  
-**Rule:** CI availability is not a blocker, but authored tests are not passing evidence.
+**State:** focused disposable PostgreSQL 17 matrix PASSED; DB-018 global acceptance still OPEN  
+**Rule:** Only exact-run PostgreSQL results count as executed evidence. Passing this witness corpus does not waive DB-001, DB-014, DB-020 or five separate race-gap obligations.
 
-## Current authored denominator
+## Executed focused witness denominator
 
 | Family | Authored | Runtime passed | Meaning |
 | --- | ---: | ---: | --- |
-| Read-only relational mismatch probes | 21 | 0 | Existing-row observation only; zero mismatches do not prove prevention |
-| Direct negative SQL boundary tests | 16 | 0 | Real FK/check/trigger/unique violations against registered schema |
-| Positive concurrency witnesses | 4 | 0 | Races whose current source has a locking/CAS strategy |
+| Read-only relational mismatch probes | 21 | 21 | Existing-row observation only; zero mismatches do not prove prevention |
+| Direct negative SQL boundary tests | 16 | 16 | Real FK/check/trigger/unique violations against registered schema |
+| Positive concurrency witnesses | 4 | 4 | Races whose current source has a locking/CAS strategy |
 | Known-defect red concurrency witnesses | 0 | 0 | No currently known race is still source-unfixed |
-| Fix-authored race regression pending runtime | 2 | 0 | P5-R01 placement and P5-R02 academics fixes are authored; PostgreSQL execution still required |
+| Fix-authored race regression verified | 2 | 2 | P5-R01 placement and P5-R02 academics regressions passed against disposable PG17 |
 | Draft/unregistered race families excluded | 3 | 0 | Lease, outbound and log-alert candidates are not registered runtime schema |
 
 Machine-readable denominator: `tests/integration/db18-witness-index.json`.
+
+**Evidence:** [GitHub Actions DB-018 PostgreSQL 17 run 41104567182](https://github.com/42Students/lms-vnext/actions/runs/41104567182) at exact commit `c78eb936db33489cbb3b57281793dfda5f10382d`: **45/45 focused Vitest cases PASS**, corresponding to **43/43 named domain witnesses** plus two fixture/inventory checks. All 21 joins were populated; no mismatches. The [repeat full matrix at 89a905a7](https://github.com/42Students/lms-vnext/actions/runs/41104843226) also passed after the denominator updates. This is a **partial task acceptance**, not overall DB-018 DONE.
+
+
 
 ## Direct registered-schema negatives
 
@@ -46,7 +50,7 @@ These are deliberately direct SQL so an API/service bypass cannot hide a databas
 
 ## Concurrency witnesses
 
-### Source-protected / expected green after execution
+### Source-protected / verified green in focused PG17 execution
 
 - **P5-R04:** simultaneous elective choices under `max_pick=1` — existing `groups-db03.test.ts`.
 - **P5-R05:** concurrent final quiz attempt under `max_attempts=1` — existing `courses-c4b-quizzes.test.ts`.
@@ -55,15 +59,15 @@ These are deliberately direct SQL so an API/service bypass cannot hide a databas
 
 ### Race defects and fix state
 
-**P5-R01 — placement application stale access snapshot — FIX AUTHORED, RUNTIME PENDING**
+**P5-R01 — placement application stale access snapshot — FIXED, RUNTIME VERIFIED**
 
-`tests/integration/db18-placement-race-gap.test.ts` creates an isolated tenant, learner, enrollment, paid Placements rule, eligibility decision and published job. It locks the access-rule and learner-membership rows, lets the fail-fast prechecks observe allowed state, then revokes paid module access while the submission waits. DB-054 now locks the live application gate inputs inside the application transaction, re-evaluates learner access/job eligibility after those locks, persists only that live result, serializes policy/override writers on the job row, and serializes academic-evidence writers on the membership row. The regression must reject and leave zero applications. It is authored but not runtime-verified.
+`tests/integration/db18-placement-race-gap.test.ts` creates an isolated tenant, learner, enrollment, paid Placements rule, eligibility decision and published job. It locks the access-rule and learner-membership rows, lets the fail-fast prechecks observe allowed state, then revokes paid module access while the submission waits. DB-054 now locks the live application gate inputs inside the application transaction, re-evaluates learner access/job eligibility after those locks, persists only that live result, serializes policy/override writers on the job row, and serializes academic-evidence writers on the membership row. The regression rejects and leaves zero applications in the passing disposable-PG17 witness run.
 
 **P5-R02 — learner enrollment stale cohort state**
 
-`tests/integration/db18-known-race-gaps.test.ts` blocks the enrollment insert after source prechecks, changes the cohort to `COMPLETED`, releases the insert, and requires the operation to reject. The source fix now re-reads and `FOR SHARE` locks the cohort within the enrollment transaction. This test remains unverified until an isolated PostgreSQL race execution passes; source inspection alone does not establish correctness.
+`tests/integration/db18-known-race-gaps.test.ts` blocks the enrollment insert after source prechecks, changes the cohort to `COMPLETED`, releases the insert, and requires the operation to reject. The source fix now re-reads and `FOR SHARE` locks the cohort within the enrollment transaction. The race test passed against isolated PostgreSQL 17; this is an executed fix-regression witness, not merely source inspection.
 
-These red tests are evidence of known defects, not failed infrastructure.
+Both previously red regressions are green. Their successful execution does not settle unrelated race families.
 
 ## Runtime safety
 
@@ -91,7 +95,7 @@ Both P5-R01 and P5-R02 fixes are authored. Their race tests must now execute gre
 
 The dedicated `.github/workflows/db018-relational-witness-acceptance.yml` now invokes the registered direct DB03/DB06 negative suite, both DB18 concurrency tests, both fixed-race regressions (P5-R01/P5-R02), and the original DB03 elective and C4b quiz max-attempt two-session witnesses. These run against the workflow's isolated PostgreSQL 17 database with `TEST_DATABASE_URL` and `DATABASE_URL` pointing to the same disposable target.
 
-**Execution is not assumed:** the workflow must complete green at an exact commit. The denominator is now **21 observational probes + 16 direct negatives + 4 positive concurrency witnesses + 2 fixed-race regressions**. The results of the 21 joins (including populated fixtures) alone cannot certify prevention.
+**Execution is verified on the exact runs linked above:** the denominator is **21 observational probes + 16 direct negatives + 4 positive concurrency witnesses + 2 fixed-race regressions**. The results of the 21 joins (including populated fixtures) alone cannot certify prevention.
 
 ## DB-018 completion interpretation
 
