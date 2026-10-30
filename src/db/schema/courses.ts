@@ -148,6 +148,8 @@ export const courseOfferings = pgTable(
       .references(() => academicPeriods.id, {
         onDelete: "restrict",
       }),
+    /** Registered DB02 curriculum, independent of the legacy semester ID. */
+    programTermCourseId: uuid("program_term_course_id"),
     legacySemesterCourseId: integer("legacy_semester_course_id"),
     legacySortOrder: integer("legacy_sort_order"),
     legacyWasElective: boolean("legacy_was_elective"),

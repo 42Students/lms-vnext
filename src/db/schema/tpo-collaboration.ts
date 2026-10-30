@@ -97,6 +97,8 @@ export const placementTpoMessages = pgTable(
     changeRequestId: uuid("change_request_id")
       .references(() => placementDriveChangeRequests.id, { onDelete: "restrict" }),
     via: varchar("via", { length: 12 }).notNull().default("APP"),
+    /** Registered 0135 email bridge channel, distinct from via. */
+    deliveryChannel: varchar("delivery_channel", { length: 8 }).notNull().default("APP"),
     body: text("body").notNull(),
     readAt: timestamp("read_at", { withTimezone: true }),
     createdAt: timestamp("created_at", { withTimezone: true })

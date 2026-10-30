@@ -274,7 +274,9 @@ export const lessonVideoAssets = pgTable(
     deliveryId: uuid("delivery_id").references(() => courseSectionDeliveries.id),
     /** Optional VIDEO lesson content row this asset backs. */
     lessonContentId: uuid("lesson_content_id").references(() => lessonContents.id),
-    uploaderMembershipId: uuid("uploader_membership_id").notNull(),
+    /** Registered 0133 permits exactly one membership or platform uploader. */
+    uploaderMembershipId: uuid("uploader_membership_id"),
+    uploaderUserId: uuid("uploader_user_id").references(() => users.id),
     title: varchar("title", { length: 255 }).notNull(),
     sequence: integer("sequence").notNull().default(0),
     publishStatus: varchar("publish_status", { length: 16 }).notNull().default("DRAFT"),

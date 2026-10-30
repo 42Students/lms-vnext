@@ -223,6 +223,10 @@ export const sections = pgTable(
     capacity: integer("capacity"),
     // Legacy class fidelity (migration 0098): capacity floor and description.
     minSize: integer("min_size"),
+    /** Registered DB02 fields distinct from old starts_on/min_size columns. */
+    minimumCapacity: integer("minimum_capacity").notNull().default(0),
+    startDate: date("start_date", { mode: "string" }),
+    endDate: date("end_date", { mode: "string" }),
     description: text("description"),
     /** Optional legacy class-specific bounds; otherwise use academic period. */
     startsOn: date("starts_on", { mode: "string" }),
