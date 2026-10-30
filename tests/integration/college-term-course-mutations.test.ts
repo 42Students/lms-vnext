@@ -95,7 +95,7 @@ describe.skipIf(!enabled)("College Admin term-course CRUD PG, scoped guards", ()
     await expect(removeCollegeTermMapping(foreign, createdMapping!, { confirm: true }))
       .rejects.toBeInstanceOf(CollegeTermMappingError);
   });
-  it("blocks unmap with current active term offering; succeeds after end", async () => {
+  it("blocks unmap both during an offering and after archival, preserving curriculum history", async () => {
     await pool!.query(
       "INSERT INTO course_offerings(id,course_id,cohort_id,academic_period_id,status) " +
       "VALUES($1,$2,$3,$4,'ACTIVE')",
