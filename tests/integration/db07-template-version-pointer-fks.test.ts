@@ -155,6 +155,22 @@ describe.skipIf(!enabled)("DB071 deferrable template version pointers (disposabl
     });
   });
 
+  it("allows header-first publication when the owned snapshot arrives before commit", async () => {
+    await withPair(async ({ client, templateA }) => {
+      await client.query(
+        "update project_templates set current_version = 2, published_version = 2 where id = $1",
+        [templateA],
+      );
+      await addVersion(client, templateA, 2);
+      await expect(client.query("SET CONSTRAINTS ALL IMMEDIATE")).resolves.toBeDefined();
+      const result = await client.query(
+        "select current_version, published_version from project_templates where id = $1",
+        [templateA],
+      );
+      expect(result.rows[0]).toMatchObject({ current_version: 2, published_version: 2 });
+    });
+  });
+
   it("rejects incrementing current_version without appending owned revision", async () => {
     await withPair(async ({ client, templateA }) => {
       await client.query(
