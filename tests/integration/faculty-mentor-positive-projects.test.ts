@@ -1,4 +1,5 @@
 import { afterAll, beforeEach, describe, expect, it } from "vitest";
+import { randomUUID } from "node:crypto";
 import { Pool } from "pg";
 import { closeDatabaseConnection } from "@/db/client";
 import type { RequestContext } from "@/modules/identity/context";
@@ -84,20 +85,30 @@ async function cleanup() {
   }
   await pool.query(`delete from project_template_college_assignments where template_id in
     (select id from project_templates where slug like 'chat4-positive-%')`);
-  await pool.query(`delete from project_template_versions where template_id in
-    (select id from project_templates where slug like 'chat4-positive-%')`);
-  await pool.query("delete from project_templates where slug like 'chat4-positive-%'");
+  // Keep DB070 immutable snapshots and their DB071 parent headers intact.
+  const retention=await pool.query<{retainHistory:boolean}>(
+   "select (exists (select 1 from pg_trigger where tgrelid='project_template_versions'::regclass " +
+   "and tgname='db07_project_template_versions_append_only' and tgenabled='O') " +
+   "or exists (select 1 from pg_constraint where conrelid='project_templates'::regclass " +
+   "and conname='project_templates_current_version_snapshot_fk')) as \"retainHistory\"",
+  );
+  if(!retention.rows[0]?.retainHistory){
+    await pool.query(`delete from project_template_versions where template_id in
+      (select id from project_templates where slug like 'chat4-positive-%')`);
+    await pool.query("delete from project_templates where slug like 'chat4-positive-%'");
+  }
 }
 
 async function fixture() {
+  const nonce=randomUUID().slice(0,12);
   const created=await createProjectTemplate(root,{
-    slug:"chat4-positive-template",title:"Chat4 Positive Template",blueprint:blueprint(),
+    slug:"chat4-positive-template-"+nonce,title:"Chat4 Positive Template",blueprint:blueprint(),
   });
   await publishProjectTemplate(root,created.template.id);
   await assignProjectTemplateToCollege(scopedRoot,created.template.id,SEED_IDS.collegeA);
   const project=await createProjectInstance(admin,{
     collegeId:SEED_IDS.collegeA,templateId:created.template.id,
-    slug:"chat4-positive-project",title:"Chat4 Positive Project",
+    slug:"chat4-positive-project-"+nonce,title:"Chat4 Positive Project",
   });
   await addProjectMember(admin,project.id,{
     membershipId:SEED_IDS.learnerCollegeAMembership,role:"LEARNER",
