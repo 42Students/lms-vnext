@@ -1,6 +1,6 @@
 import { randomUUID } from "node:crypto";
 import { afterAll, describe, expect, it, vi } from "vitest";
-import { eq, and } from "drizzle-orm";
+import { eq } from "drizzle-orm";
 import { getDb, closeDatabaseConnection } from "@/db/client";
 import { profilePrivateDocumentReceipts } from "@/db/schema/profile-verification";
 import { learnerProfileImages } from "@/db/schema/db04-profile-education-images.staged";
@@ -50,17 +50,19 @@ const context: RequestContext = {
 };
 
 async function addReceipt(membershipId: string, purpose: "PROFILE_IMAGE" | "MARKSHEET") {
+  const foreignCollege = membershipId === SEED_IDS.facultyCollegeBMembership;
+  const collegeId = foreignCollege ? SEED_IDS.collegeB : SEED_IDS.collegeA;
   const [row] = await getDb().insert(profilePrivateDocumentReceipts).values({
     owningMembershipId: membershipId,
     purpose,
-    privateObjectKey: "private/" + SEED_IDS.collegeA + "/" + membershipId +
+    privateObjectKey: "private/" + collegeId + "/" + membershipId +
       "/profile-verification/" + randomUUID(),
     objectGeneration: "1",
     sha256Hex: "a".repeat(64),
     mimeType: "image/png",
     sizeBytes: 128,
     scanStatus: "CLEAN",
-    uploadedByUserId: SEED_IDS.learnerUser,
+    uploadedByUserId: foreignCollege ? SEED_IDS.facultyUser : SEED_IDS.learnerUser,
   }).returning({ id: profilePrivateDocumentReceipts.id });
   if (!row) throw new Error("Disposable receipt insert failed");
   return row.id;
@@ -102,11 +104,9 @@ describe.skipIf(!enabled)("DB-080 registered gallery real producer/persistence/c
         receiptId: receipt, idempotencyKey: randomUUID(),
       })).rejects.toMatchObject({code: "GALLERY_IMAGE_REMOVED"});
     } finally {
-      if (imageId) await getDb().delete(learnerProfileImages)
-        .where(and(eq(learnerProfileImages.id, imageId),
-          eq(learnerProfileImages.learnerMembershipId, owner)));
-      await getDb().delete(profilePrivateDocumentReceipts)
-        .where(eq(profilePrivateDocumentReceipts.id, receipt));
+      // Intentionally retain private receipt and image history. This whole
+      // PostgreSQL database is disposable and removed after the workflow.
+      // Never make acceptance depend on deleting retention-protected records.
     }
   });
 
@@ -120,10 +120,8 @@ describe.skipIf(!enabled)("DB-080 registered gallery real producer/persistence/c
         })).rejects.toMatchObject({code: "GALLERY_RECEIPT_INVALID"});
       }
     } finally {
-      await getDb().delete(profilePrivateDocumentReceipts)
-        .where(eq(profilePrivateDocumentReceipts.id, otherReceipt));
-      await getDb().delete(profilePrivateDocumentReceipts)
-        .where(eq(profilePrivateDocumentReceipts.id, marksheet));
+      // Receipt rows remain intact to preserve the registered append-only
+      // evidence contract inside the disposable test database.
     }
   });
 });
