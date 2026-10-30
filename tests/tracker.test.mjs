@@ -49,7 +49,12 @@ test('DB004 and DB005 engineering closures remain distinct from final release re
   assert.equal(academic.deferredRelease.notWaived,true);
   assert.equal(academic.deferredRelease.releaseCertified,false);
   assert.equal(academic.acceptanceEvidence[0].runUrl,'https://github.com/42Students/lms-vnext/actions/runs/40750567279');
-  assert.equal(actual.tasks.find(t=>t.id==='DB-007').done,false);
+  // DB007 now has its own registered PG17 source/consumer proof. It cannot
+  // certify the global database phase or waive DB004/005 release reviews.
+  const profile = actual.tasks.find(t=>t.id==='DB-007');
+  assert.equal(profile.done,true);
+  assert.ok(profile.acceptanceEvidence.some(e=>e.kind==='EXECUTED_REGISTERED_PG17_PRIVATE_PROFILE_AND_CONSUMER_SUITE' && e.result==='PASS'));
+  assert.equal(actual.tasks.find(t=>t.id==='DB-020').done,false);
   assert.ok(inspectTracker(actual).deferredRelease.some(t=>t.id==='DB-004'));
   assert.ok(inspectTracker(actual).deferredRelease.some(t=>t.id==='DB-005'));
   assert.equal(inspectTracker(actual).readyForNextPhase,false);
