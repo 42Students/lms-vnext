@@ -55,7 +55,7 @@ for(const view of [{name:"desktop",width:1280,height:800},{name:"mobile",width:3
    new URL(r.url()).pathname===commandPath);
   await page.getByRole("button",{name:"Create draft"}).click();
   const created=await creating;
-  expect(created.status(),await created.text()).toBe(200);
+  expect(created.status()).toBe(200);
   const payload=await created.json().catch(()=>null);
   const id:string=payload?.quiz?.id;
   expect(id).toMatch(/^[0-9a-f-]{36}$/i);
@@ -107,7 +107,7 @@ for(const view of [{name:"desktop",width:1280,height:800},{name:"mobile",width:3
    const url="/api/courses/quizzes/"+id+
      "?deliveryId="+deliveryId+"&includeCorrectAnswers=true";
    const once=await learnerContext.request.get(url);
-   expect(once.status(),await once.text()).toBe(200);
+   expect(once.status()).toBe(200);
    const learner=(await once.json()).quiz;
    const twice=await learnerContext.request.get(url);
    expect(twice.status()).toBe(200);
@@ -126,7 +126,7 @@ for(const view of [{name:"desktop",width:1280,height:800},{name:"mobile",width:3
    const submission=await learnerContext.request.post("/api/courses/quizzes/"+id+"/submit",{
     data:{deliveryId,answers:answerKey,shownQuestionIds:learner.questions.map((q:{id:string})=>q.id)},
    });
-   expect(submission.status(),await submission.text()).toBe(200);
+   expect(submission.status()).toBe(200);
    expect((await submission.json()).attempt?.attemptNumber).toBe(1);
    // Learner cannot read or edit the Faculty question bank even after an attempt.
    const beforeRelease=await learnerContext.request.get(url);
