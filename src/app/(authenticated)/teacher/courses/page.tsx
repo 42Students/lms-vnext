@@ -15,6 +15,7 @@ import { PageHeader } from "@/components/ui/page-header";
 import { Alert } from "@/components/ui/alert";
 import { listFacultyCourseCardSummaries } from "@/modules/courses/faculty-course-card-summary-service";
 import { listFacultyCourseAssignmentDiagnostics } from "@/modules/courses/faculty-course-service";
+import { FacultyCoursesRetry } from "./faculty-courses-retry";
 
 export default async function TeacherCoursesPage({searchParams}: {
   searchParams: Promise<Record<string,string|string[]|undefined>>;
@@ -36,7 +37,7 @@ export default async function TeacherCoursesPage({searchParams}: {
    <PageHeader title="My Courses"/>
    <ErrorState title="Failed to load courses. Please try again."
     description="Your authorized course list could not be loaded. No empty roster has been assumed."
-    action={<Link href="/teacher/courses" className="inline-flex min-h-11 items-center font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Try again</Link>}/>
+    action={<FacultyCoursesRetry />}/>
   </div>;
   const list=listResult.value;
   const [summaries,display,diagnosticResult]=await Promise.all([
