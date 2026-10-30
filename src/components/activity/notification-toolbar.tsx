@@ -17,6 +17,7 @@ export function NotificationToolbar({
   baseHref = "/notifications",
   markAllEndpoint = "/api/notifications/read-all",
   confirmMarkAll = false,
+  canMarkAll = true,
   confirmMessage = "Mark all unread Mentor notifications in this college as read?",
   categories = [],
   selectedCategory,
@@ -30,6 +31,8 @@ export function NotificationToolbar({
   baseHref?: string;
   markAllEndpoint?: string;
   confirmMarkAll?: boolean;
+  /** Hide bulk personal mutations on tabs containing only read-state-free notices. */
+  canMarkAll?: boolean;
   confirmMessage?: string;
   categories?: readonly {id:string;label:string;unread:number}[];
   selectedCategory?: string;
@@ -78,7 +81,7 @@ export function NotificationToolbar({
           Unread ({unreadCount})
         </Link>
       </div>:null}
-      {display!=="filters"?<Button
+      {display!=="filters"&&canMarkAll?<Button
         size="sm"
         variant="secondary"
         className="min-h-11 w-full min-[768px]:min-h-9 min-[768px]:w-auto"
@@ -108,7 +111,7 @@ export function NotificationToolbar({
           })}
         </nav>
       ):null}
-      {confirmMarkAll ? <ConfirmActionDialog
+      {confirmMarkAll && canMarkAll ? <ConfirmActionDialog
         open={confirmOpen}
         title="Mark all as read"
         consequence={confirmMessage}
