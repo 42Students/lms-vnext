@@ -101,3 +101,42 @@ test("unscoped continuation respects current phase dependencies", () => {
   ]});
   assert.equal(x.next.id, "DB-B");
 });
+
+test("closure-first next targets fully checked acceptance before unchecked pages", () => {
+  const md = [
+    "## Page: Courses list",
+    "- [ ] Build missing course state",
+    "## Page: All Assignments",
+    "- [x] Authorized list",
+    "- [x] Submission drawer",
+    "## Retired route: File Explorer",
+    "- [x] Redirect classified retired",
+  ].join("\n");
+  const report = reportFromFiles([{ account: "faculty", file: "faculty.md", markdown: md }]);
+  const next = nextFamily(report, "faculty");
+  assert.equal(next.id, "faculty:redirect-file-explorer");
+  assert.equal(next.checked, 1);
+  assert.equal(next.unchecked, 0);
+  assert.equal(next.implementationGreen, false, "checked is never an acceptance receipt");
+});
+
+test("closure-first next prioritizes repairing invalid receipts then smallest open gap", () => {
+  const invalid = section(receipt("faculty:attendance", { openP0P1: 1 }));
+  const md = "## Page: Courses\n- [ ] item one\n- [ ] item two\n" +
+    "## Page: Notifications\n- [ ] unread state\n" + invalid;
+  const report = reportFromFiles([{ account: "faculty", file: "faculty.md", markdown: md }]);
+  assert.equal(nextFamily(report, "faculty").id, "faculty:attendance");
+  const withoutInvalid = reportFromFiles([{ account: "faculty", file: "faculty.md",
+    markdown: md.replace(invalid, "") }]);
+  assert.equal(nextFamily(withoutInvalid, "faculty").id, "faculty:notifications");
+});
+
+test("closure-first leaves accepted and blocked families untouched", () => {
+  const green = section(receipt("faculty:attendance"));
+  const blocked = "## Page: Notifications\n- [ ] notifications\n" +
+    "<!-- page-closure\n" + JSON.stringify({ id: "faculty:notifications",
+      implementation: { status: "blocked", blockers: ["awaiting provider"] } }) + "\n-->\n";
+  const pages = reportFromFiles([{ account: "faculty", file: "faculty.md",
+    markdown: green + blocked + "## Page: Courses\n- [ ] missing feature\n" }]);
+  assert.equal(nextFamily(pages, "faculty").id, "faculty:courses");
+});
