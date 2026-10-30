@@ -15,37 +15,27 @@ export const CORE_ELEVEN = Object.freeze([
   'DB-002', 'DB-003', 'DB-004', 'DB-005', 'DB-007', 'DB-008',
   'DB-012', 'DB-017', 'DB-019', 'DB-020', 'DB-030',
 ]);
-/**
- * The sole JSON document owns all ten lane/package assignments.
- * These exports are read-only projections for existing callers and tests.
- */
+/** Thematic groups are informational: no exclusive workers or claims. */
 const canonicalPath = path.resolve(path.dirname(fileURLToPath(import.meta.url)),'../docs/tracker.json');
 const canonicalDocument = JSON.parse(fs.readFileSync(canonicalPath,'utf8'));
 export const DATABASE_DOMAIN_PACKAGES = Object.freeze(
-  canonicalDocument.execution.lanes.map(lane => ({
-    label: lane.name,
-    taskIds: Object.freeze([...lane.dbTaskIds]),
+  canonicalDocument.execution.domains.map(domain => ({
+    label:domain.name,taskIds:Object.freeze([...domain.dbTaskIds]),
   }))
 );
-
 export function inspectDomainPackages(doc) {
-  const tasks = new Map((doc?.tasks ?? []).filter(t => t.phase==='DATABASE').map(t => [t.id,t]));
-  const lanes = doc?.execution?.lanes ?? [];
-  const seen = new Set(), duplicates = [], unknown = [];
-  const packages = lanes.map(lane => {
-    const ids = Array.isArray(lane.dbTaskIds) ? lane.dbTaskIds : [];
-    const values = ids.map(id => {
-      if (seen.has(id)) duplicates.push(id);
-      seen.add(id);
-      if (!tasks.has(id)) unknown.push(id);
-      return tasks.get(id);
-    });
-    const done = values.filter(t => t?.done===true).length;
-    return {label:lane.name,id:lane.id,done,total:ids.length,notDone:ids.length-done,
-      remainingIds:ids.filter(id => tasks.get(id)?.done!==true),claimedBy:lane.claim?.sessionId ?? null};
+  const tasks=new Map((doc?.tasks??[]).filter(t=>t.phase==='DATABASE').map(t=>[t.id,t]));
+  const domains=doc?.execution?.domains??[];
+  const seen=new Set(),duplicates=[],unknown=[];
+  const packages=domains.map(domain=>{
+    const ids=Array.isArray(domain.dbTaskIds)?domain.dbTaskIds:[];
+    for(const id of ids){if(seen.has(id))duplicates.push(id);seen.add(id);if(!tasks.has(id))unknown.push(id)}
+    const done=ids.filter(id=>tasks.get(id)?.done===true).length;
+    return {label:domain.name,done,total:ids.length,notDone:ids.length-done,
+      remainingIds:ids.filter(id=>tasks.get(id)?.done!==true)};
   });
-  const unassigned = [...tasks.keys()].filter(id => !seen.has(id));
-  return {packages,unassigned,duplicates,unknown,readyForNextPhase:false};
+  return {packages,unassigned:[...tasks.keys()].filter(id=>!seen.has(id)),
+    duplicates,unknown,readyForNextPhase:false};
 }
 
 /**
@@ -53,29 +43,21 @@ export function inspectDomainPackages(doc) {
  * focusTasks are suggestions, never additional completion records.
  * Accepted IDs are suppressed even if another lane has not refreshed hints.
  */
-export function inspectClosureFirst(doc, laneId = null) {
-  const e = doc?.execution ?? {};
-  const p = e.closureFirstProtocol ?? {};
-  const tasks = new Map((doc?.tasks ?? []).map(t => [t.id,t]));
-  const lanes = new Map((e.lanes ?? []).map(l => [l.id,l]));
-  const focus = (p.focusTasks ?? []).filter(q => !laneId || q.laneId === laneId);
-  const selected = focus.map(q => {
-    const task = tasks.get(q.id);
-    const lane = lanes.get(q.laneId);
-    const blockedBy = (task?.dependsOn ?? []).filter(id => tasks.get(id)?.done !== true);
-    return {
-      id:q.id, title:task?.title ?? 'Unknown task',
-      laneId:q.laneId, accepted:task?.done===true, blockedBy,
-      nextGate:q.nextGate,
-      laneClaim:lane?.claim?.sessionId ?? null,
-    };
-  }).filter(q => !q.accepted);
-  const open = (doc?.tasks ?? []).filter(t => t.done!==true &&
-    (!laneId || (e.lanes ?? []).some(l => l.id===laneId && l.dbTaskIds.includes(t.id))));
-  return {mode:'CLOSURE_FIRST_NOT_ACCEPTANCE', accepted:(doc?.tasks ?? []).filter(t=>t.done===true).length,
-    total:(doc?.tasks ?? []).length, remaining:open.length, priority: selected,
-    otherOpen:open.filter(t=>!selected.some(q=>q.id===t.id)).map(t=>t.id),
-    maximumUnacceptedPassesPerTask:p.laneRules?.maximumUnacceptedPassesPerTask ?? null};
+export function inspectClosureFirst(doc) {
+  const protocol=doc?.execution?.closureFirstProtocol??{};
+  const tasks=new Map((doc?.tasks??[]).map(t=>[t.id,t]));
+  const priority=(protocol.focusTasks??[]).map(q=>{
+    const task=tasks.get(q.id);
+    return {id:q.id,title:task?.title??'Unknown task',accepted:task?.done===true,
+      blockedBy:(task?.dependsOn??[]).filter(id=>tasks.get(id)?.done!==true),
+      nextGate:q.nextGate};
+  }).filter(q=>!q.accepted);
+  const open=(doc?.tasks??[]).filter(t=>t.done!==true);
+  return {mode:'CLOSURE_FIRST_NOT_ACCEPTANCE',
+    accepted:(doc?.tasks??[]).filter(t=>t.done===true).length,
+    total:(doc?.tasks??[]).length,remaining:open.length,priority,
+    otherOpen:open.filter(t=>!priority.some(q=>q.id===t.id)).map(t=>t.id),
+    maximumUnacceptedPassesPerTask:protocol.operatingRules?.maximumUnacceptedPassesPerTask??null};
 }
 
 export function inspectExecution(doc) {
@@ -98,7 +80,7 @@ export function inspectExecution(doc) {
       (result[p.id]?.total??0),
     prerequisites:p.prerequisitePhaseIds,
   }));
-  return {globalPhases,lanes:inspectDomainPackages(doc).packages,phases:result,certificates:e.globalPhaseCertificates,
+  return {globalPhases,domains:inspectDomainPackages(doc).packages,phases:result,certificates:e.globalPhaseCertificates,
     readyForNextPhase:false};
 }
 
@@ -171,48 +153,35 @@ export function inspectTracker(doc) {
   }
   // Stage labels are evidence-informed estimates, never proof of task acceptance.
   errors.push(...inspectDatabaseProgress(doc).errors);
-  // The package view is read-only; its coverage must still be exhaustive and unique.
-  const coverage = inspectDomainPackages(doc);
-  for (const id of coverage.unassigned) add(errors,'UNASSIGNED_DATABASE_PACKAGE',{id});
-  for (const id of coverage.duplicates) add(errors,'DUPLICATE_DATABASE_PACKAGE',{id});
-  for (const id of coverage.unknown) add(errors,'UNKNOWN_DATABASE_PACKAGE',{id});
-  const execution = doc.execution;
-  if (execution?.schemaVersion !== 1 || execution.authority?.includes('docs/tracker.json') !== true)
+  // Thematic domain groups remain exhaustive, but do not assign ownership.
+  const coverage=inspectDomainPackages(doc);
+  for(const id of coverage.unassigned)add(errors,'UNASSIGNED_DATABASE_PACKAGE',{id});
+  for(const id of coverage.duplicates)add(errors,'DUPLICATE_DATABASE_PACKAGE',{id});
+  for(const id of coverage.unknown)add(errors,'UNKNOWN_DATABASE_PACKAGE',{id});
+  const execution=doc.execution;
+  if(execution?.schemaVersion!==1||execution.authority?.includes('docs/tracker.json')!==true)
     add(errors,'INVALID_SINGLE_EXECUTION_AUTHORITY');
-  const lanes = execution?.lanes;
-  if (!Array.isArray(lanes) || lanes.length!==10 ||
-      lanes.map(l=>l.id).sort().join(',') !== ['L01','L02','L03','L04','L05','L06','L07','L08','L09','L10'].join(','))
-    add(errors,'INVALID_TEN_LANE_MAP');
-  const seenClaims=new Set();
-  for (const lane of lanes ?? []) {
-    if (!validString(lane.name) || !Array.isArray(lane.dbTaskIds) ||
-        !Array.isArray(lane.sourceOwnership) || lane.sourceOwnership.length===0 ||
-        !Array.isArray(lane.phaseScopes) || lane.phaseScopes.length===0)
-      add(errors,'INVALID_LANE_CONTRACT',{laneId:lane.id});
-    if (lane.claim != null) {
-      const c=lane.claim;
-      if (!validString(c.sessionId)||!validString(c.holder)||!validDate(c.claimedAt)||
-          !validDate(c.expiresAt)||Date.parse(c.expiresAt)<=Date.parse(c.claimedAt))
-        add(errors,'INVALID_LANE_CLAIM',{laneId:lane.id});
-      if (seenClaims.has(c.sessionId)) add(errors,'DUPLICATE_ACTIVE_LANE_CLAIM',{laneId:lane.id});
-      seenClaims.add(c.sessionId);
-    }
-  }
-  // Closure-first hints must be actionable, domain-owned and consistent with
-  // the single tracker. A newly accepted task is filtered from the queue
-  // automatically; stale hints must NEVER be allowed to reopen done:true.
-  const closure = execution?.closureFirstProtocol;
-  if (closure?.schemaVersion !== 1 || !validString(closure?.objective) ||
-      !Array.isArray(closure?.requiredSequence) || closure.requiredSequence.length<5 ||
-      closure.requiredSequence.some(x=>!validString(x)) ||
-      !Array.isArray(closure?.selectionPriority) || closure.selectionPriority.length<3 ||
-      closure.selectionPriority.some(x=>!validString(x)) ||
-      closure?.laneRules?.maximumUnacceptedPassesPerTask!==2 ||
-      closure?.laneRules?.acceptedTasksFrozen!==true ||
-      closure?.laneRules?.noAutomaticTaskPromotion!==true ||
-      closure?.laneRules?.sharedMigrationSingleWriter!=='L01')
+  const domains=execution?.domains;
+  if(!Array.isArray(domains)||domains.length===0||
+     domains.some(d=>!validString(d?.name)||!Array.isArray(d.dbTaskIds)||d.dbTaskIds.length===0)||
+     new Set((domains??[]).map(d=>d.name)).size!==(domains??[]).length)
+    add(errors,'INVALID_DOMAIN_GROUPS');
+  if(execution && (Object.hasOwn(execution,'lanes')||Object.hasOwn(execution,'sharedChangeRequests')))
+    add(errors,'RETIRED_LANE_COORDINATION_PRESENT');
+  const closure=execution?.closureFirstProtocol;
+  const rules=closure?.operatingRules;
+  if(closure?.schemaVersion!==1||!validString(closure?.objective)||
+     !Array.isArray(closure?.requiredSequence)||closure.requiredSequence.length<5||
+     closure.requiredSequence.some(x=>!validString(x))||
+     !Array.isArray(closure?.selectionPriority)||closure.selectionPriority.length<3||
+     closure.selectionPriority.some(x=>!validString(x))||
+     rules?.maximumUnacceptedPassesPerTask!==2||
+     rules?.acceptedTasksFrozen!==true||
+     rules?.noAutomaticTaskPromotion!==true||
+     rules?.concurrentWritesRequireFreshHead!==true||
+     rules?.sharedMigrationsRequireSerializedWrites!==true)
     add(errors,'INVALID_CLOSURE_FIRST_PROTOCOL');
-  // Scope-aware task acceptance: isolated SOURCE/STAGING deliveries are not
+  // Scope-aware task acceptance:  // Scope-aware task acceptance: isolated SOURCE/STAGING deliveries are not
   // deployed DB claims. Preserve an explicit downstream OPEN runtime owner
   // instead of making unregistered SQL disappear behind a done:true flag.
   if (!validString(closure?.scopeSemantics?.registeredRuntimeTask) ||
@@ -232,18 +201,16 @@ export function inspectTracker(doc) {
           !tasks.has(id) || id===task.id))
       add(errors,'STAGED_SCOPE_MISSING_DISTINCT_RUNTIME_OWNER',{id:task.id});
   }
-  if (!Array.isArray(closure?.focusTasks) || closure.focusTasks.length===0 ||
-      closure.focusTasks.length>12) add(errors,'INVALID_CLOSURE_FIRST_QUEUE');
+  if(!Array.isArray(closure?.focusTasks)||closure.focusTasks.length===0||
+     closure.focusTasks.length>12)add(errors,'INVALID_CLOSURE_FIRST_QUEUE');
   const focusIds=new Set();
-  for (const focus of closure?.focusTasks ?? []) {
-    const owner=(lanes??[]).find(l=>l.id===focus.laneId);
-    if (!/^DB-[0-9]{3}$/.test(focus.id ?? '') ||
-        focusIds.has(focus.id) || !tasks.has(focus.id) ||
-        !owner?.dbTaskIds.includes(focus.id) || !validString(focus.nextGate))
-      add(errors,'INVALID_CLOSURE_FIRST_FOCUS',{id:focus.id});
+  for(const focus of closure?.focusTasks??[]){
+    if(!/^DB-[0-9]{3}$/.test(focus.id??'')||focusIds.has(focus.id)||
+       !tasks.has(focus.id)||!validString(focus.nextGate)||
+       Object.hasOwn(focus,'laneId'))add(errors,'INVALID_CLOSURE_FIRST_FOCUS',{id:focus.id});
     focusIds.add(focus.id);
   }
-  // A complete roadmap is mandatory in the same one tracker; no second phase plan.
+  // A complete roadmap is mandatory  // A complete roadmap is mandatory in the same one tracker; no second phase plan.
   const fullPhaseOrder=['DATABASE','API','UI','DESIGN','RELEASE'];
   const globalPhases=execution?.globalPhases;
   if (!Array.isArray(globalPhases) ||
@@ -261,8 +228,7 @@ export function inspectTracker(doc) {
       !Array.isArray(p.workstreams)||p.workstreams.length===0||
       !Array.isArray(p.exitCriteria)||p.exitCriteria.length===0||
       !Array.isArray(p.verification)||p.verification.length===0||
-      !Array.isArray(p.ownerLanes)||p.ownerLanes.length===0||
-      p.ownerLanes.some(id=>!(lanes??[]).some(l=>l.id===id)))
+      Object.hasOwn(p,'ownerLanes'))
       add(errors,'INVALID_GLOBAL_PHASE_CONTRACT',{stage:p.id});
   }
   if (execution?.globalPhaseRules?.canonicalStageOrder?.includes('DESIGN')!==true ||
@@ -273,7 +239,7 @@ export function inspectTracker(doc) {
   const msIds = new Set();
   for (const m of milestones ?? []) {
     if (!validString(m.id)||msIds.has(m.id)||!['API','UI','DESIGN','RELEASE'].includes(m.stage)||
-        !(lanes??[]).some(l=>l.id===m.laneId)||!validString(m.title)||
+        Object.hasOwn(m,'laneId')||!validString(m.title)||
         !Array.isArray(m.requirements)||m.requirements.length===0||typeof m.done!=='boolean')
       add(errors,'INVALID_PHASE_MILESTONE',{id:m.id});
     msIds.add(m.id);
@@ -302,16 +268,16 @@ export function inspectTracker(doc) {
       SHA.test(e.commitSha??'')&&e.exitCode===0&&['PASS','PASSED'].includes(e.result)))
       add(errors,'CERTIFIED_PHASE_WITHOUT_EXECUTED_PROOF',{stage});
   }
-  if (!Array.isArray(execution?.sharedChangeRequests))
-    add(errors,'MISSING_SINGLE_SOURCE_HANDOFF_QUEUE');
-  else for (const request of execution.sharedChangeRequests) {
-    if (!validString(request.id)||!['REQUESTED','ACCEPTED','APPLIED','REJECTED'].includes(request.status)||
-      !(lanes??[]).some(l=>l.id===request.fromLane)||
-      !(lanes??[]).some(l=>l.id===request.toLane)||
-      !Array.isArray(request.paths)||request.paths.length===0)
-      add(errors,'INVALID_HANDOFF_REQUEST',{id:request.id});
+  if(!Array.isArray(execution?.integrationNotes))
+    add(errors,'MISSING_INTEGRATION_NOTES');
+  else for(const note of execution.integrationNotes){
+    if(!validString(note.id)||!Array.isArray(note.paths)||note.paths.length===0||
+       note.paths.some(p=>!validString(p))||
+       !['REQUESTED','ACCEPTED','APPLIED','REJECTED'].includes(note.status)||
+       Object.hasOwn(note,'fromLane')||Object.hasOwn(note,'toLane'))
+      add(errors,'INVALID_INTEGRATION_NOTE',{id:note.id});
   }
-  const visiting = new Set(), visited = new Set();
+  const visiting = new Set()  const visiting = new Set(), visited = new Set();
   function walk(id) {
     if (visiting.has(id)) return add(errors, 'DEPENDENCY_CYCLE',{id});
     if (visited.has(id)) return;
@@ -364,58 +330,42 @@ if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.me
       ? path.resolve(process.argv[2]) : undefined;
     const report = inspectCheckout(root);
     if (process.argv.includes('--closure-next')) {
-      const doc=JSON.parse(fs.readFileSync(path.join(root ?? path.resolve(path.dirname(fileURLToPath(import.meta.url)),'..'),'docs/tracker.json'),'utf8'));
-      const laneId=process.argv.find(a=>/^--lane=L\d\d$/.test(a))?.split('=')[1] ?? null;
-      const queue=inspectClosureFirst(doc,laneId);
+      const doc=JSON.parse(fs.readFileSync(path.join(root??path.resolve(path.dirname(fileURLToPath(import.meta.url)),'..'),'docs/tracker.json'),'utf8'));
+      const queue=inspectClosureFirst(doc);
       console.log('LMS vNext | CLOSURE FIRST | '+queue.accepted+'/'+queue.total+
         ' accepted | OPEN '+(queue.total-queue.accepted));
-      console.log('Focus is advisory; DONE status and executed registered evidence are authoritative.');
-      for (const q of queue.priority) {
-        console.log(q.id+' '+q.laneId+' | '+q.title+
+      console.log('Focus is advisory; task DONE requires exact-scope executed evidence.');
+      for(const q of queue.priority){
+        console.log(q.id+' | '+q.title+
           (q.blockedBy.length?' | BLOCKED BY '+q.blockedBy.join(', '):' | dependency ready'));
         console.log('  Exact next proof: '+q.nextGate);
-        if (q.laneClaim) console.log('  Existing lane claim: '+q.laneClaim+' (verify expiry before working)');
       }
-      console.log('Other OPEN tasks'+(laneId?' in '+laneId:'')+': '+(queue.otherOpen.join(', ')||'none'));
-      console.log('Two no-closure passes max: name the blocker+owner, hand off, switch to an independent OPEN task.');
-      console.log('Staged/source-only/cancelled runs are NOT acceptance. Migration registration is L01-only.');
-      if (report.errors.length) {console.error(JSON.stringify(report.errors));process.exitCode=2;}
-    } else if (process.argv.includes('--progress')) {
-      const doc=JSON.parse(fs.readFileSync(path.join(root ?? path.resolve(path.dirname(fileURLToPath(import.meta.url)),'..'),'docs/tracker.json'),'utf8'));
-      const laneId=process.argv.find(a=>/^--lane=L\d\d$/.test(a))?.split('=')[1];
-      console.log(formatDatabaseProgress(doc,{detailed:true,laneId}));
-    } else if (process.argv.includes('--json') || process.argv.includes('--check')) {
+      console.log('Other OPEN tasks: '+(queue.otherOpen.join(', ')||'none'));
+      console.log('Two no-closure passes max: record exact blocker, switch to independent OPEN work.');
+      console.log('No exclusive assignments; shared migrations need serialized registration and PostgreSQL proof.');
+      if(report.errors.length){console.error(JSON.stringify(report.errors));process.exitCode=2}
+    } else if(process.argv.includes('--progress')){
+      const doc=JSON.parse(fs.readFileSync(path.join(root??path.resolve(path.dirname(fileURLToPath(import.meta.url)),'..'),'docs/tracker.json'),'utf8'));
+      console.log(formatDatabaseProgress(doc,{detailed:true}));
+      if(report.errors.length){console.error(JSON.stringify(report.errors));process.exitCode=2}
+    } else if(process.argv.includes('--json')||process.argv.includes('--check')){
       console.log(JSON.stringify(report,null,2));
-    } else if (process.argv.includes('--roadmap') || process.argv.includes('--lanes') ||
-               process.argv.some(a => /^--lane=L\d\d$/.test(a))) {
-      const doc=JSON.parse(fs.readFileSync(path.join(root ?? path.resolve(path.dirname(fileURLToPath(import.meta.url)),'..'),'docs/tracker.json'),'utf8'));
-      const reportExec=inspectExecution(doc);
-      const only=process.argv.find(a=>a.startsWith('--lane='))?.split('=')[1];
-      console.log('LMS vNext | SINGLE TRACKER / TEN LANES');
-      console.log('Current global phase: '+doc.currentPhase+' | DB DONE '+report.counts.done+'/'+report.counts.total);
-      console.log(formatDatabaseProgress(doc));
-      if (!only) {
-        console.log('Five global phases (one canonical execution plan):');
-        for (const p of reportExec.globalPhases) {
-          console.log('  '+p.sequence+'. '+p.title+' | '+p.accepted+'/'+p.total+
-            ' accepted | GLOBAL '+(p.gateCertified?'CERTIFIED':'NOT CERTIFIED')+
-            (p.prerequisites.length?' | needs '+p.prerequisites.join(', '):''));
-        }
+    } else if(process.argv.includes('--roadmap')){
+      const doc=JSON.parse(fs.readFileSync(path.join(root??path.resolve(path.dirname(fileURLToPath(import.meta.url)),'..'),'docs/tracker.json'),'utf8'));
+      const stages=inspectExecution(doc);
+      console.log('LMS vNext | SINGLE TRACKER / OPEN CONTRIBUTION');
+      console.log('Current phase: '+doc.currentPhase+' | DB accepted '+report.counts.done+'/'+report.counts.total);
+      console.log('Five global phases (one canonical execution plan):');
+      for(const p of stages.globalPhases){
+        console.log('  '+p.sequence+'. '+p.title+' | '+p.accepted+'/'+p.total+
+          ' accepted | GLOBAL '+(p.gateCertified?'CERTIFIED':'NOT CERTIFIED')+
+          (p.prerequisites.length?' | needs '+p.prerequisites.join(', '):''));
       }
-      for (const lane of reportExec.lanes.filter(l=>!only||l.id===only)) {
-        const owned=doc.execution.lanes.find(l=>l.id===lane.id);
-        console.log(lane.id+' '+lane.label+': '+lane.done+'/'+lane.total+' DB accepted'+
-          (lane.claimedBy ? ' | CLAIMED '+lane.claimedBy : ' | FREE'));
-        console.log('  Open DB IDs: '+(lane.remainingIds.join(', ')||'none'));
-        console.log('  Ownership: '+owned.sourceOwnership.join('; '));
-        console.log('  Future: '+doc.execution.milestones.filter(m=>m.laneId===lane.id)
-          .map(m=>m.id+(m.done?' ✓':' pending')).join(', '));
+      for(const stage of ['API','UI','DESIGN','RELEASE']){
+        const p=stages.phases[stage];
+        console.log(stage+': '+p.done+'/'+p.total+' accepted milestones (not global phase signoff)');
       }
-      if (!only) for (const stage of ['API','UI','DESIGN','RELEASE']) {
-        const p=reportExec.phases[stage];
-        console.log(stage+': '+p.done+'/'+p.total+' milestones accepted (NOT a global phase signoff)');
-      }
-      if (report.errors.length) {console.error(JSON.stringify(report.errors));process.exitCode=2;}
+      if(report.errors.length){console.error(JSON.stringify(report.errors));process.exitCode=2}
     } else if (process.argv.includes('--domains') || process.argv.includes('--packages')) {
       const groups = inspectDomainPackages(JSON.parse(fs.readFileSync(path.join(root ?? path.resolve(path.dirname(fileURLToPath(import.meta.url)),'..'),'docs/tracker.json'),'utf8')));
       console.log('LMS vNext | DATABASE DOMAIN PACKAGES (read-only; not phase acceptance)');
