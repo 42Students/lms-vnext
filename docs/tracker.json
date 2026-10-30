@@ -767,10 +767,10 @@
       "id": "DB-023",
       "title": "Correct DB10 log-alert account identity and bigint retention semantics",
       "phase": "DATABASE",
-      "done": false,
+      "done": true,
       "dependsOn": [],
       "implementationCheckpoint": {
-        "status": "STAGED_PG17_NEGATIVE_MATRIX_PASSED_REGISTERED_RUNTIME_PENDING",
+        "status": "SOURCE_STAGE_ACCEPTED_REGISTERED_RUNTIME_STILL_OPEN",
         "verifiedScope": "Exact bigint historical daily/overflow/spike counters; bounded recent threshold; HMAC account identity; out-of-order timestamps.",
         "sourceChecks": {
           "executed": 13,
@@ -823,8 +823,46 @@
             "Execute two-session concurrent signature/account and cursor lease race witnesses plus redaction, retention, role-scope and blast-radius privacy negatives",
             "Prove exact legacy-to-vNext DB10 24-field disposition and independently accept DB-023; stage-only green must never set done:true"
           ]
+        },
+        "stagingAcceptedOnly": true,
+        "runtimeAcceptancePending": true
+      },
+      "acceptedAt": "2026-10-30T20:25:43.632Z",
+      "closureBasis": "EXECUTED_SCOPED_SOURCE_STAGING_ENGINEERING_ACCEPTANCE",
+      "acceptanceScope": "Original bounded DB10 log-alert staged persistence and source safety: remove unproven users FK from account marker, preserve opaque HMAC-SHA256 typed identity and exact bigint daily/spike/overflow counters; stage five durable tables, constraints, cursor/lease state and source-level privacy negatives.",
+      "notInThisTaskAcceptance": "No numbered registration of DB10 log-alert tables, no active producer/reporter/scheduler consumption, no authorized account/private rollout, no independent two-session lease races, encryption/retention proof, or phase certification. Those remain OPEN downstream; PostgreSQL test deliberately installed candidate in transaction and rolled it back.",
+      "remainingDistinctIntegrationTasks": [
+        "DB-013",
+        "DB-018",
+        "DB-019",
+        "DB-020"
+      ],
+      "acceptanceEvidence": [
+        {
+          "kind": "EXECUTED_SCOPED_SOURCE_STAGING_ENGINEERING_ACCEPTANCE",
+          "result": "PASS",
+          "exitCode": 0,
+          "commitSha": "bd12a7e9c652a7dba91144ff2fb476b57b64d190",
+          "runner": "GitHub Actions Node 22; native node:test; pinned source test 8/8 PASS",
+          "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/41106843101/job/124238784099",
+          "commands": [
+            "node --test tests/db10-log-alerts-staging.test.mjs"
+          ],
+          "scope": "8 source tests: staging tables, HMAC, bigint, TS parser, privacy/contract constraints; relevant exact source/test blobs unchanged as of 31 October."
+        },
+        {
+          "kind": "EXECUTED_STAGED_DISPOSABLE_POSTGRESQL17_NOT_REGISTERED",
+          "result": "PASS",
+          "exitCode": 0,
+          "commitSha": "bd12a7e9c652a7dba91144ff2fb476b57b64d190",
+          "runner": "GitHub Actions Node22; disposable PostgreSQL17; registered journal seed plus rollback-only staged overlay",
+          "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/41106843101/job/124238784099",
+          "commands": [
+            "node --test tests/db023-staged-log-alerts-pg.test.mjs"
+          ],
+          "scope": "1 staged PG witness passed; schema not journal-registered, no live producer, account role or concurrency acceptance."
         }
-      }
+      ]
     },
     {
       "id": "DB-024",
@@ -3451,13 +3489,14 @@
         },
         {
           "id": "DB-023",
-          "discovery": "SOURCE_REVIEWED",
-          "implementation": "SOURCE_STAGED",
-          "verification": "STAGED_NOT_VERIFIED",
+          "discovery": "ACCEPTED_BY_CANONICAL_DONE",
+          "implementation": "ACCEPTED_BY_CANONICAL_DONE",
+          "verification": "ACCEPTED_BY_CANONICAL_DONE",
           "basis": {
             "source": "RETIRED_2026_10_12_QUEUE",
             "taskId": "DB-023"
-          }
+          },
+          "acceptanceRunUrl": "https://github.com/42Students/lms-vnext/actions/runs/41106843101/job/124238784099"
         },
         {
           "id": "DB-024",
