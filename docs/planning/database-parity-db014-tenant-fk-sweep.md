@@ -1,5 +1,35 @@
 # DB-014 — cross-domain tenant/FK integrity sweep
 
+## Registered PostgreSQL 17 integration update — 31 October 2026
+
+The earlier snapshot-0040 findings below remain a historical baseline and **must
+not** be mistaken for the current registered catalog. The exact-main disposable
+PostgreSQL witness now passes on 319 registered journal entries:
+
+- `0317_db014_placement_fk_validation.sql` permanently validates the two
+  preexisting `placement_applications` role-option and current-round same-job
+  foreign keys. A locking, fail-closed dirty-row preflight runs first.
+- `0318_db014_cross_domain_event_guards.sql` registers three tenant/scope
+  triggers: activity actor membership, in-app notification recipient, and
+  group-member history actor/member/role. It refuses a nonempty unreviewed
+  affected ledger at migration time rather than inventing retrospective audit
+  evidence. SQL source parser regression protects PL/pgSQL quoting.
+- <https://github.com/42Students/lms-vnext/actions/runs/41129019399>:
+  zero-to-head replay and migration idempotence PASS, 319/319 applied,
+  PostgreSQL 17 registered catalog 276 tables/732 FKs/116 composite FKs,
+  zero unvalidated FKs, three active guards, two formerly NOT VALID FKs
+  validated, and five staged/registered negative and two-session race
+  subtests passed. The staged test now exercises **registered** guards rather
+  than installing duplicate rollback-only triggers.
+
+This is **substantial DB-014 integration evidence**, not global DB-014
+acceptance. There are still 21 registered CASCADE FKs whose ownership and
+retention behavior needs explicit disposition; global tenant/actor/producer
+authorization and uniqueness semantics need wider domain-level negatives.
+DB-018 and DB-020 have not certified the overall database phase. The source
+stage and final certification are separate.
+
+
 **Observed:** 2026-10-11 IST  
 **Global phase:** DATABASE · **Worker:** Chat 1  
 **Registered journal head:** `0040_db03_history_actor_types`  
