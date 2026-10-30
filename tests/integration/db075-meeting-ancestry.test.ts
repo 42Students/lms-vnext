@@ -98,9 +98,9 @@ async function insertMeeting(
   const id = randomUUID();
   await f.client.query(
     `INSERT INTO project_meetings
-      (id, project_id, title, starts_at, ends_at, time_zone,
+      (id, project_id, status, title, starts_at, ends_at, time_zone,
        linked_sprint_id, linked_task_id, created_by_user_id)
-     VALUES ($1, $2, 'DB075 meeting', now()+interval '1 day',
+     VALUES ($1, $2, 'DRAFT', 'DB075 meeting', now()+interval '1 day',
              now()+interval '1 day 1 hour', 'Asia/Kolkata', $3, $4, $5)`,
     [id, opts.projectId, opts.sprintId ?? null, opts.taskId ?? null,
       SEED_IDS.superAdminUser],
