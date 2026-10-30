@@ -1858,6 +1858,12 @@
             "commitSha": "330dedaec54c7c7ed9cc55e5a5d04e431107b257",
             "result": "PASS_PARTIAL_REGISTERED_PG17",
             "scope": "321 registered forward-only journal migrations replayed and idempotent on disposable PostgreSQL 17. Registered 0320 grade-history INSERT tenant/actor/scope check and append-only row mutation/truncate guards are active. Dedicated source + catalog/negative tests 3/3 passed. No attendance history table, no attendance producer cutover, and no deferred grade-event completeness installed; DB045 remains OPEN."
+          },
+          {
+            "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/41146685170",
+            "commitSha": "1824c483ef7079311329cabd2ea9ff5fcf7f5dbb",
+            "result": "PASS_PARTIAL_REGISTERED_PG17",
+            "scope": "Disposable PG17 replay and migration idempotence passed after 0320; active triggers and 3/3 negative source/catalog tests passed; real grade/publish/regade consumer suites passed 33/33 across C4A, C4C and Faculty-Mentor including 23514 no UPDATE/DELETE and scoped superuser-only disposable-fixture cleanup. DB045 remains OPEN until full attendance history and 30 required race/tenant tests."
           }
         ],
         "pending": [
@@ -1868,9 +1874,11 @@
         "evidenceIsNotAcceptance": true,
         "registeredGradeGuards": {
           "migration": "drizzle/0320_db045_grade_event_guards.sql",
-          "status": "REGISTERED_AND_EXECUTED_PARTIAL",
-          "receipt": "https://github.com/42Students/lms-vnext/actions/runs/41146091082",
-          "sourceSha": "330dedaec54c7c7ed9cc55e5a5d04e431107b257",
+          "status": "REGISTERED_AND_EXECUTED_PARTIAL_WITH_REAL_GRADE_WRITERS",
+          "receipt": "https://github.com/42Students/lms-vnext/actions/runs/41146685170",
+          "sourceSha": "1824c483ef7079311329cabd2ea9ff5fcf7f5dbb",
+          "negativeTests": 3,
+          "integrations": 33,
           "notAcceptance": true
         }
       }
