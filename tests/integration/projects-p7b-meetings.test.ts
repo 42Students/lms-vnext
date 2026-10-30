@@ -467,6 +467,9 @@ describe("Projects P7B meetings", () => {
           timeZone: "Asia/Kolkata" as const,
           meetingUrl:
             "https://meet.example.com/bad",
+          // Mentor scheduling requires a fresh optimistic project token;
+          // otherwise stale-version denial correctly runs before link checks.
+          expectedProjectUpdatedAt: (await getProjectInstanceWorkspace(mentor, project.id)).project.updatedAt.toISOString(),
           linkedTaskId:
             "00000000-0000-4000-8000-000000000001",
         },
