@@ -89,8 +89,10 @@ try{
   [thread.id,admin.id]);
  // Deferred checks must fail if a client forgets to project the message time.
  await negative("message without last-message projection",()=>db.query("SET CONSTRAINTS ALL IMMEDIATE"));
- await db.query("update placement_tpo_message_threads set last_message_at=$2 where id=$1",
-  [thread.id,first.created_at]);
+ // Preserve PostgreSQL microseconds; node-postgres Date serialization rounds
+ // to milliseconds and cannot satisfy the registered exact-MAX trigger.
+ await db.query("update placement_tpo_message_threads set last_message_at=(select max(created_at) from placement_tpo_messages where thread_id=$1) where id=$1",
+  [thread.id]);
  await db.query("SET CONSTRAINTS ALL IMMEDIATE");
  await db.query("SET CONSTRAINTS ALL DEFERRED");
  count++;
