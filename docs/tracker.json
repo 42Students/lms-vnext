@@ -286,7 +286,7 @@
       "done": true,
       "dependsOn": [],
       "acceptedAt": "2026-10-30T20:51:16.607Z",
-      "closureBasis": "EXECUTED_SCOPED_SOURCE_REVIEW_AND_STAGE_ACCEPTANCE",
+      "closureBasis": "EXECUTED_SCOPED_SOURCE_RECONCILIATION_WITH_REGISTERED_PG17_CONSUMER_WITNESSES",
       "acceptanceScope": "Original DB04 bounded source audit and staging: all 103/103 source profile/verification fields reviewed into 27 active source+consumer, 43 DDL-to-normalized-schema candidate, and 33 historical usage unproven; no approved retirement; current numbered DB04 0063/0231/0304 schema source and private receipt checksum/scan/generation constraints verified; raw Aadhaar/PAN persistence remains intentionally fail-closed and private object overlay retains revocation/retention/scanner requirements.",
       "notInThisTaskAcceptance": "NOT 103/103 field semantic or runtime certification, active raw national-ID storage or KMS-backed vault, real private R2 bucket/encryption/lifecycle/scanner configuration, public-access hardening proof, or global PostgreSQL catalog/tenant/security/phase acceptance. Historical 33 active/retired decisions and production provider verification remain open through global field and release gates.",
       "remainingDistinctIntegrationTasks": [
@@ -307,6 +307,23 @@
             "node --test tests/db007-profile-source-reconciliation.test.mjs"
           ],
           "scope": "Source/review/staged schema acceptance, not real bucket or 103 field runtime parity."
+        },
+        {
+          "kind": "EXECUTED_REGISTERED_PG17_PRIVATE_PROFILE_AND_CONSUMER_SUITE",
+          "result": "PASS",
+          "exitCode": 0,
+          "commitSha": "007555b486f651e1357b6a1455f6f79a1e97f71d",
+          "runner": "GitHub Actions ubuntu-latest Node 22, npm ci and isolated PostgreSQL 17, registered zero-to-head Drizzle journal",
+          "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/41125989727/job/124304531383",
+          "commands": [
+            "npm run db:journal:verify",
+            "npm run db:test:prepare",
+            "npm run db:migrate",
+            "node --test tests/db007-registered-profile-pg.test.mjs",
+            "npx vitest run --config vitest.db.registered.config.ts tests/integration/db080-learner-gallery-service.test.ts tests/integration/db007-education-projection.test.ts tests/integration/db007-review-lifecycle.test.ts tests/integration/learner-profile-document-edit.test.ts tests/integration/learner-profile-sections-write.test.ts",
+            "npm run typecheck"
+          ],
+          "scope": "Registered PG17 privacy/tenant/receipt/history negatives, learner gallery and profile write/read integration, journal idempotence and TypeScript typecheck; not live R2/KMS, 103-field global disposition or release."
         }
       ]
     },
