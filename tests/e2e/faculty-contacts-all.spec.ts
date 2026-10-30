@@ -56,6 +56,10 @@ for(const view of [{name:"desktop",width:1280,height:800},{name:"mobile",width:3
   await expect(page).toHaveURL(/\/teacher\/contacts\/students\?.*q=private-email-not-public.*pageSize=50/);
   await expect(page.getByRole("searchbox",{name:"Search contacts"})).toHaveValue("private-email-not-public@example.invalid");
   await page.getByRole("navigation",{name:"Contacts sections"}).getByRole("link",{name:"All Contacts"}).click();
+  // The same search value exists on both tabs; await the actual destination
+  // before clearing, or a fast browser can clear the departing Students tab.
+  await expect(page).toHaveURL(/\/teacher\/contacts\/allContacts\?.*q=private-email-not-public.*pageSize=50/);
+  await expect(page.getByRole("heading",{level:1,name:"All Contacts"})).toBeVisible();
   await expect(page.getByRole("searchbox",{name:"Search contacts"})).toHaveValue("private-email-not-public@example.invalid");
   await page.getByRole("button",{name:"Clear search"}).click();
   await expect(page.getByRole("searchbox",{name:"Search contacts"})).toHaveValue("");
