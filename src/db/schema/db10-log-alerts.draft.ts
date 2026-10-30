@@ -37,7 +37,7 @@ export const db10LogAlertSignatures = pgTable(
     firstSeenAt: timestamp("first_seen_at", { withTimezone: true }).notNull(),
     lastSeenAt: timestamp("last_seen_at", { withTimezone: true }).notNull(),
     // PostgreSQL bigint can exceed Number.MAX_SAFE_INTEGER. Never coerce into JS number.
-    occurrenceCount: bigint("occurrence_count", { mode: "bigint" }).notNull().default(1n),
+    occurrenceCount: bigint("occurrence_count", { mode: "bigint" }).notNull().default(sql`1`),
     muted: boolean("muted").notNull().default(false),
     fixStatus: varchar("fix_status", { length: 16 }).notNull().default("OPEN"),
     fixedInCommit: varchar("fixed_in_commit", { length: 64 }),
@@ -54,7 +54,7 @@ export const db10LogAlertSignatures = pgTable(
     recentWindowAt: timestamp("recent_window_at", { withTimezone: true }),
     recentWindowCount: bigint("recent_window_count", { mode: "number" }).notNull().default(1),
     dayKey: varchar("day_key", { length: 10 }),
-    dayOccurrences: bigint("day_occurrences", { mode: "bigint" }).notNull().default(1n),
+    dayOccurrences: bigint("day_occurrences", { mode: "bigint" }).notNull().default(sql`1`),
   },
   (t) => [
     uniqueIndex("db10_log_alert_signature_env_hash_uq")
@@ -109,7 +109,7 @@ export const db10LogAlertStates = pgTable(
     adminLastViewedAt: timestamp("admin_last_viewed_at", { withTimezone: true }),
     burstMinuteAt: timestamp("burst_minute_at", { withTimezone: true }),
     burstCount: bigint("burst_count", { mode: "number" }).notNull().default(0),
-    overflowCount: bigint("overflow_count", { mode: "bigint" }).notNull().default(0n),
+    overflowCount: bigint("overflow_count", { mode: "bigint" }).notNull().default(sql`0`),
     lastDigestDay: varchar("last_digest_day", { length: 10 }),
   },
   (t) => [
@@ -124,8 +124,8 @@ export const db10LogAlertDailyCounts = pgTable(
   {
     signatureId: uuid("signature_id").notNull().references(() => db10LogAlertSignatures.id, { onDelete: "cascade" }),
     dayKey: varchar("day_key", { length: 10 }).notNull(),
-    occurrenceCount: bigint("occurrence_count", { mode: "bigint" }).notNull().default(1n),
-    spikeCount: bigint("spike_count", { mode: "bigint" }).notNull().default(0n),
+    occurrenceCount: bigint("occurrence_count", { mode: "bigint" }).notNull().default(sql`1`),
+    spikeCount: bigint("spike_count", { mode: "bigint" }).notNull().default(sql`0`),
   },
   (t) => [
     primaryKey({ columns: [t.signatureId, t.dayKey] }),
