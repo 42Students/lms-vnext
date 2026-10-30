@@ -112,6 +112,10 @@ export const projectTemplateVersions = pgTable(
       .defaultNow(),
   },
   (table) => [
+    // DB068: composite target to guarantee the version belongs to its template.
+    uniqueIndex("project_template_versions_template_id_id_uq").on(
+      table.templateId, table.id,
+    ),
     uniqueIndex(
       "project_template_versions_template_version_uq",
     ).on(table.templateId, table.version),
@@ -196,6 +200,11 @@ export const projectTemplateCollegeAssignments =
       }),
     },
     (table) => [
+      foreignKey({
+        name: "project_template_assignments_template_version_owner_fk",
+        columns: [table.templateId, table.templateVersionId],
+        foreignColumns: [projectTemplateVersions.templateId, projectTemplateVersions.id],
+      }).onDelete("restrict"),
       uniqueIndex(
         "project_template_college_assignments_active_uq",
       )
@@ -345,6 +354,11 @@ export const projectInstances = pgTable(
       .defaultNow(),
   },
   (table) => [
+    foreignKey({
+      name: "project_instances_template_version_owner_fk",
+      columns: [table.templateId, table.templateVersionId],
+      foreignColumns: [projectTemplateVersions.templateId, projectTemplateVersions.id],
+    }).onDelete("restrict"),
     uniqueIndex("project_instances_college_slug_uq").on(
       table.collegeId,
       sql`lower(${table.slug})`,
