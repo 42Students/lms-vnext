@@ -932,8 +932,30 @@
       "id": "DB-041",
       "title": "Stage DB06 quiz shuffle persistence parity",
       "phase": "DATABASE",
-      "done": false,
-      "dependsOn": []
+      "done": true,
+      "dependsOn": [],
+      "acceptedAt": "2026-10-30",
+      "closureBasis": "REGISTERED_POSTGRES_PERSISTENCE_AND_ACTIVE_QUIZ_SERVICE_ACCEPTANCE",
+      "acceptanceEvidence": [
+        {
+          "kind": "EXECUTED_REGISTERED_POSTGRES_17_AND_SERVICE_INTEGRATION",
+          "commitSha": "d0d784353dc9ab18b855925e25bf178a48659392",
+          "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/41087287900",
+          "runner": "GitHub Actions ubuntu-latest Node.js 22 postgres:17-alpine",
+          "commands": [
+            "npm run db:journal:verify",
+            "node --test tests/db06-quiz-shuffle-staging.test.mjs",
+            "npm run db:test:prepare",
+            "npm run db:migrate",
+            "node --test tests/db041-registered-quiz-shuffle-pg.test.mjs",
+            "npx vitest run --config vitest.db.registered.config.ts tests/integration/courses-c4b-quizzes.test.ts"
+          ],
+          "result": "PASS",
+          "exitCode": 0,
+          "details": "Complete independent workflow SUCCESS on exact SHA. Registered PG17 catalog verifies two boolean NOT NULL false-default fields, direct true/false write/read, toggle updates leave authored question/option sequences unchanged, NULL refusal and rollback; real quiz authoring and submission integration passed. DB041 database persistence only; optional learner-specific UI permutation and controls remain later API/UI phase, not falsely accepted."
+        }
+      ],
+      "acceptanceScope": "DB06 persisted quiz-shuffle metadata parity on registered PostgreSQL plus functioning quiz authoring, read and submit; UI deterministic shuffle belongs later API/UI phase."
     },
     {
       "id": "DB-042",
