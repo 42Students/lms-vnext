@@ -30,7 +30,12 @@ test("DB007 103/103 legacy profile source identities retain explicit reviewed st
   for(const row of rows) {
     assert.equal(row.reviewStatus,"UNVERIFIED_FIELD_SEMANTICS");
     assert.equal(row.verifiedMapping,null);
-    assert.ok(row.sourceReview?.status && row.sourceReview?.candidateDisposition && row.sourceReview?.openProbes?.length>0);
+    assert.ok(row.sourceReview?.status && row.sourceReview?.openProbes?.length>0);
+    assert.equal(row.sourceReview.legacyOracleSha, source.sourceReviewSummary.legacyBackendSha);
+    if(row.sourceReview.status==="LEGACY_DDL_TO_STAGED_TARGET_COMPARED_NOT_VERIFIED")
+      assert.ok(row.candidateVnextTables?.length>0,"Unmapped source-reviewed staged candidate");
+    else assert.ok(row.sourceReview.candidateDisposition && row.sourceReview.candidateVnextTarget,
+      "Active/historical review requires explicit preserve-or-retire disposition");
   }
 });
 
