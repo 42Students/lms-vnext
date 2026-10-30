@@ -1,0 +1,60 @@
+# Source-stage verification for ten OPEN DATABASE tasks.
+# Passing these checks proves only checked staging contracts, not migration,
+# API/producer/consumer, tenant negative, concurrency, or release acceptance.
+name: Database tail ten source-contract verification
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/db-tail-10-source-acceptance.yml"
+      - "tests/db08-outcome-fidelity-staging.test.mjs"
+      - "tests/db10-log-alerts-staging.test.mjs"
+      - "tests/db10-general-notices-staging.test.mjs"
+      - "tests/db08-offer-lifecycle-staging.test.mjs"
+      - "tests/db10-sms-delivery-attempts-staging.test.mjs"
+      - "tests/db10-app-setting-disposition.test.mjs"
+      - "tests/db10-notification-template-disposition.test.mjs"
+      - "tests/db10-activity-audit-context-staging.test.mjs"
+      - "tests/db10-staged-drafts-source-map.test.mjs"
+      - "tests/db10-source-disposition-closure.test.mjs"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: lms-db-tail-source-ten-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  db-tail-source:
+    name: Ten source-stage contracts (NOT database acceptance)
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Execute all ten independent staged source contract suites
+        run: |
+          set -eu
+          node --test \
+            tests/db08-outcome-fidelity-staging.test.mjs \
+            tests/db10-log-alerts-staging.test.mjs \
+            tests/db10-general-notices-staging.test.mjs \
+            tests/db08-offer-lifecycle-staging.test.mjs \
+            tests/db10-sms-delivery-attempts-staging.test.mjs \
+            tests/db10-app-setting-disposition.test.mjs \
+            tests/db10-notification-template-disposition.test.mjs \
+            tests/db10-activity-audit-context-staging.test.mjs \
+            tests/db10-staged-drafts-source-map.test.mjs \
+            tests/db10-source-disposition-closure.test.mjs
+      - name: Evidence boundary
+        if: always()
+        run: |
+          echo "DB-021/023/024/029/031/033/037/039/040/046: SOURCE-STAGE ONLY."
+          echo "No registered PostgreSQL, migration integration, service or security acceptance claimed."
