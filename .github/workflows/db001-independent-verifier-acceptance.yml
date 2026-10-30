@@ -8,6 +8,8 @@ on:
       - "scripts/db-independent-verify.mjs"
       - "scripts/db-independent-verifier-redaction.mjs"
       - "scripts/db-independent-verifier-generation-guard.mjs"
+      - "drizzle/meta/0316_snapshot.json"
+      - "tests/db001-drizzle-deferred-fk-snapshot-contract.test.mjs"
       - ".github/workflows/db001-independent-verifier-acceptance.yml"
 permissions:
   contents: read
@@ -50,6 +52,8 @@ jobs:
           test "$(git rev-parse HEAD)" = "$GITHUB_SHA"
           test -z "$(git status --porcelain)"
           node --check scripts/db-independent-verify.mjs
+      - name: Verify Drizzle v7 representability and deferred SQL integrity
+        run: node --test tests/db001-drizzle-deferred-fk-snapshot-contract.test.mjs
       - name: Execute all 12 independently invocable verification gates
         run: npm run db:verify:independent
       - name: Prove independent evidence really passed on pinned source
