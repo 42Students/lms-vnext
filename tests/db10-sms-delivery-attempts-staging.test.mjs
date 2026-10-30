@@ -6,7 +6,8 @@ const sql = readFileSync("scripts/sql/db10-sms-delivery-attempts-staging.sql", "
 const contract = readFileSync("docs/planning/database-parity-db10-sms-delivery-attempts.md", "utf8");
 
 test("DB31 is staging-only and keeps runtime evidence unclaimed", () => {
-  assert.match(sql, /STAGING ONLY, NOT A DRIZZLE MIGRATION/);
+  assert.match(sql, /HISTORICAL DB-031 PROPOSAL ONLY; DO NOT EXECUTE THIS AS A MIGRATION/);
+  assert.match(sql, /registered provider-attempt table is messaging_sms_delivery_attempts/);
   assert.match(sql, /21bad59d4dfaf2fa11fdeaf9353327ce105697d5/);
   assert.match(contract, /STAGED_NOT_REGISTERED \/ POSTGRES_NOT_RUN/);
   assert.match(contract, /ALL NOT_RUN/);
@@ -57,7 +58,7 @@ test("DB31 is append-only and supports retry history instead of overwriting rows
   assert.match(sql, /CREATE TRIGGER db31_sms_attempt_append_only_guard/);
   assert.match(sql, /BEFORE UPDATE OR DELETE ON sms_delivery_attempts/);
   assert.match(sql, /ERRCODE = '55000'/);
-  assert.match(contract, /A retry is a new row with a higher/);
+  assert.match(contract, /A retry is a new row with a\s+higher/);
 });
 
 test("DB31 stays separate from recruiter command queue and does not enum-lock purpose", () => {
