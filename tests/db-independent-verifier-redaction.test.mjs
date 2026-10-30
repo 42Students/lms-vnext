@@ -35,3 +35,15 @@ test("DB001 verifier does not mutate ordinary clean output", () => {
   const summary = "9 gates PASS; postgres 17; schema drift clean";
   assert.equal(redactVerifierOutput(summary, {}), summary);
 });
+
+test("DB001 verifier redacts query and fragment secrets in subprocess URLs", () => {
+  const output = redactVerifierOutput(
+    "failed at postgresql://worker:privatePassword@pg.internal:5432/lms_vnext_test?password=hiddenQueryPassword&sslkey=privateKey#hiddenFragment", {},
+  );
+  assert.match(output, /pg\.internal:5432\/lms_vnext_test/);
+  for (const secret of ["worker", "privatePassword", "hiddenQueryPassword", "privateKey", "hiddenFragment"]) {
+    assert.doesNotMatch(output, new RegExp(secret));
+  }
+  assert.match(output, /\?\[REDACTED\]/);
+  assert.match(output, /#\[REDACTED\]/);
+});
