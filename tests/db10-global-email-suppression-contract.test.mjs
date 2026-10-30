@@ -35,8 +35,9 @@ test("global suppression stores keyed opaque identity and limits reasons to EMAI
 test("global email HMAC is domain-separated from organization-scoped outbox recipient", () => {
   assert.match(envelope, /export function deriveGlobalEmailSuppressionHash\(/);
   assert.match(envelope, /intent\.channel !== "EMAIL"\) return null/);
-  assert.match(envelope, /"global-email-suppression-v1", intent\.recipient/);
-  assert.match(envelope, /const \{ digestKey \} = keyMaterial\(globalEmailHmacKeyBase64\)/);
+  assert.match(envelope, /deriveGlobalEmailSuppressionHashForAddress\(intent\.recipient,globalEmailHmacKeyBase64\)/);
+  assert.match(envelope, /"global-email-suppression-v1",address/);
+  assert.match(envelope, /const\s*\{\s*digestKey\s*\}\s*=\s*keyMaterial\(globalEmailHmacKeyBase64\)/);
   assert.match(envelope, /"recipient", JSON\.stringify\(\[\s*intent\.organizationId, intent\.channel, intent\.recipient,/);
   const sealedType = envelope.split("export type SealedOutboundDelivery")[1].split("};")[0];
   assert.doesNotMatch(sealedType, /globalEmailSuppressionHash/,
