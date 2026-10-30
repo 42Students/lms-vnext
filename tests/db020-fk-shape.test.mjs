@@ -50,3 +50,35 @@ test("DB020 canonical public-qualified and unqualified parent names match",()=>{
  const b={...base,name:"catalog",parent:"public.college_memberships"};
  assert.equal(foreignKeyShape(a),foreignKeyShape(b));
 });
+
+test("DB020 prioritizes structurally identical renamed FK over misleading same-name drift",()=>{
+ const target={...base,name:"typed_scope"};
+ const stale={...base,name:"typed_scope",onDelete:"cascade"};
+ const equivalent={...base,name:"other_catalog_name"};
+ const result=compareForeignKeyShapes([target],[stale,equivalent]);
+ assert.equal(result.exactSameShapeCount,1);
+ assert.equal(result.sameNameDrift.length,0);
+ assert.equal(result.differentNameSameShape.length,1);
+ assert.deepEqual(result.catalogShapeWithoutTyped,[stale]);
+ assert.equal(result.missingTypedShape.length,0);
+});
+
+test("DB020 pairing is not affected by typed declaration order when names overlap",()=>{
+ const a={...base,name:"a"};
+ const b={...base,name:"b",onDelete:"cascade"};
+ const result=compareForeignKeyShapes([b,a],[a,b]);
+ assert.equal(result.sameNameSameShape.length,2);
+ assert.equal(result.exactSameShapeCount,2);
+ assert.equal(result.sameNameDrift.length,0);
+ assert.equal(result.catalogShapeWithoutTyped.length,0);
+});
+
+test("DB020 duplicate typed relationship cannot reuse one catalog FK",()=>{
+ const a={...base,name:"typed_one"};
+ const b={...base,name:"typed_two"};
+ const c={...base,name:"catalog_only"};
+ const result=compareForeignKeyShapes([a,b],[c]);
+ assert.equal(result.exactSameShapeCount,1);
+ assert.equal(result.missingTypedShape.length,1);
+ assert.equal(result.catalogShapeWithoutTyped.length,0);
+});
