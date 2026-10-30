@@ -7,6 +7,10 @@ on:
       - "drizzle/0320_db045_grade_event_guards.sql"
       - "drizzle/meta/0320_snapshot.json"
       - "tests/db045-registered-grade-history-pg.test.mjs"
+      - "tests/support/db045-immutable-grade-fixture-cleanup.mjs"
+      - "tests/integration/courses-c4a-assignments.test.ts"
+      - "tests/integration/courses-c4c-assessment-progress.test.ts"
+      - "tests/integration/faculty-mentor-positive-courses.test.ts"
       - ".github/workflows/db045-grade-history-guards.yml"
 permissions:
   contents: read
