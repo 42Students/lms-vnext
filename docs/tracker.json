@@ -1386,8 +1386,30 @@
       "id": "DB-042",
       "title": "Stage DB06 attendance roster, tenant and marker integrity",
       "phase": "DATABASE",
-      "done": false,
-      "dependsOn": []
+      "done": true,
+      "dependsOn": [],
+      "acceptedAt": "2026-10-30T19:59:58.257Z",
+      "closureBasis": "EXECUTED_SCOPED_SOURCE_STAGE_ENGINEERING_ACCEPTANCE",
+      "acceptanceScope": "Completed original source-only staging of attendance current-row roster/tenant scope and marker integrity, including course/elective membership, start-time/window/lifecycle guards, same-college authorization and compatibility with immutable attendance history.",
+      "notInThisTaskAcceptance": "Staged SQL not in numbered journal, not applied to registered PostgreSQL and not live producer/consumer or two-session race acceptance. DB-009 and DB-045 remain OPEN for attendance DB integration and atomic history cutover.",
+      "remainingDistinctIntegrationTasks": [
+        "DB-009",
+        "DB-045"
+      ],
+      "acceptanceEvidence": [
+        {
+          "kind": "EXECUTED_SCOPED_SOURCE_STAGE_ENGINEERING_ACCEPTANCE",
+          "commitSha": "86405c39943188c8785bfdf64fda5e11a7a4252f",
+          "exitCode": 0,
+          "result": "PASS",
+          "runner": "GitHub Actions ubuntu-latest Node 22 / Single Execution Tracker Acceptance, DB06 staged contracts step",
+          "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/41119681680/job/124282934633",
+          "commands": [
+            "node --test tests/db06-history-staging.test.mjs tests/db06-assessment-retention-staging.test.mjs tests/db06-attendance-scope-staging.test.mjs"
+          ],
+          "scope": "DB042 attendance source-staging assertions passed; no registered migration or PostgreSQL runtime witness."
+        }
+      ]
     },
     {
       "id": "DB-043",
@@ -3473,13 +3495,14 @@
         },
         {
           "id": "DB-042",
-          "discovery": "SOURCE_REVIEWED",
-          "implementation": "CODE_PARTIAL",
-          "verification": "SOURCE_OR_STATIC_CHECKS",
+          "discovery": "ACCEPTED_BY_CANONICAL_DONE",
+          "implementation": "ACCEPTED_BY_CANONICAL_DONE",
+          "verification": "ACCEPTED_BY_CANONICAL_DONE",
           "basis": {
             "source": "RETIRED_2026_10_12_QUEUE",
             "taskId": "DB-042"
-          }
+          },
+          "acceptanceRunUrl": "https://github.com/42Students/lms-vnext/actions/runs/41119681680/job/124282934633"
         },
         {
           "id": "DB-043",
