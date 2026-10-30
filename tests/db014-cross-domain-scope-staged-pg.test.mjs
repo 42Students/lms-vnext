@@ -1,4 +1,4 @@
-// DB-014 cross-domain tenant/scope staged witness. NEVER a migration acceptance.
+// DB-014 cross-domain tenant/scope PG witness: staged or registered catalog.
 // Apply candidate SQL only inside a rollback transaction on an explicitly
 // disposable, already migrated PostgreSQL 17 test database. Full DB-014 closure
 // still needs registered migration, global FK/cascade review and phase gating.
@@ -75,11 +75,25 @@ test("DB014 registered replay plus staged event/notification/group tenant bounda
     assert.ok(catalog.rows[0].activity && catalog.rows[0].inbox && catalog.rows[0].history,
       "Registered journal replay must have created the three parent/child families");
 
+    const journal=JSON.parse(readFileSync("drizzle/meta/_journal.json","utf8"));
+    const registered=journal.entries.some(
+      entry=>entry.tag==="0318_db014_cross_domain_event_guards");
+    const triggerNames=[
+      "db14_activity_event_scope_guard",
+      "db14_notification_recipient_scope_guard",
+      "db14_group_member_event_scope_guard",
+    ];
+    const preflight=await db.query(
+      "SELECT tgname FROM pg_trigger WHERE NOT tgisinternal AND tgname=ANY($1::text[])",
+      [triggerNames],
+    );
+    assert.equal(preflight.rows.length,registered?3:0,
+      "The catalog must exactly match 0318 journal registration, not partial guard rollout");
     await db.query("BEGIN");
     transactionOpen = true;
-    // The candidate is NOT in the canonical journal; transaction rollback
-    // guarantees this witness never promotes its DDL into persistent state.
-    await db.query(proposal);
+    // Before registration, apply candidate only inside rollback-only fixture.
+    // After registration, exercise the actual durable triggers directly.
+    if(!registered)await db.query(proposal);
     const triggerRows = await db.query(
       "SELECT tgname FROM pg_trigger WHERE NOT tgisinternal AND " +
       "tgname = ANY($1::text[]) ORDER BY tgname",
@@ -208,8 +222,8 @@ test("DB014 registered replay plus staged event/notification/group tenant bounda
       "SELECT count(*)::int AS n FROM pg_trigger WHERE NOT tgisinternal AND " +
       "tgname LIKE 'db14_%_scope_guard'",
     );
-    assert.equal(after.rows[0].n, 0,
-      "Staged DB14 DDL must never survive verification transaction rollback");
+    assert.equal(after.rows[0].n, registered?3:0,
+      "Rollback must preserve only formally journal-registered DB014 guards");
   } finally {
     if (transactionOpen) await db.query("ROLLBACK").catch(() => {});
     await db.end();
