@@ -272,6 +272,22 @@ test("DB081: all 24 historical qualification fields map to normalized registered
   assert.equal(crosswalk.rows.length,24);
   assert.equal(new Set(crosswalk.rows.map(x=>x.legacyField)).size,24);
   assert.ok(crosswalk.rows.every(x=>x.target&&x.kind));
+
+  // 23 directly normalized legacy fields must exist as real registered
+  // physical columns; the certificate_upload field is instead a receipt join.
+  for(const row of crosswalk.rows){
+    const field=/learner_profile_education_entries\.([a-z_]+)\b/.exec(row.target);
+    if(!field){
+      assert.equal(row.legacyField,"qualification.certificate_upload",
+        "only the private receipt relation may map outside the education row");
+      continue;
+    }
+    const column=field[1];
+    const physical=new RegExp("\\b"+column+"\\s+(?:uuid|varchar|text|integer|boolean|timestamptz|jsonb)\\b","i");
+    assert.match(tailRead("drizzle/0304_db04_normalized_profile_persistence.sql"),
+      physical,row.legacyField+" must exist as a registered database column");
+  }
+
   assert.equal(tailJournal().entries.filter(x=>x.tag==="0304_db04_normalized_profile_persistence").length,1);
   const sql=tailRead("drizzle/0304_db04_normalized_profile_persistence.sql");
   assert.match(sql,/CREATE TABLE learner_profile_education_entries/);
