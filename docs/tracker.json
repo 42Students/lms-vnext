@@ -540,7 +540,7 @@
         "DB-025"
       ],
       "implementationCheckpoint": {
-        "status": "PG17_21_NONEMPTY_16_DIRECT_NEGATIVES_4_CONCURRENCY_2_FIXED_RACES_PASS_GLOBAL_GATE_PENDING",
+        "status": "PG17_21_NONEMPTY_21_DIRECT_NEGATIVES_4_CONCURRENCY_2_FIXED_RACES_PASS_GLOBAL_GATE_PENDING",
         "tailRelationalSourceCheckpoint": {
           "recordedOn": "2026-10-30",
           "state": "FOCUSED_PG17_MATRIX_PASSED_NOT_GLOBAL_DB018_DONE",
@@ -552,7 +552,7 @@
             "19793e89ccfb463bf4e394ff52a7e95882182f9b"
           ],
           "testPath": "tests/integration/db018-relational-and-boundary-witnesses.test.ts",
-          "scope": "Executed rollback-only populated fixture paths for all 21 relational probes (including P5-12..P5-16 and P5-20..P5-21) plus 7 registered direct-SQL negatives; zero empty joins or mismatches on disposable PG17.",
+          "scope": "All 21 real joins and 12 focused rollback-only SQL negatives PASS, including the five new constraint witnesses; full PG17 direct-negative/race matrix 92/92 PASS. Global database gate remains open.",
           "requestedRunUrl": "https://github.com/42Students/lms-vnext/actions/runs/41103680109",
           "runStatusAtRecording": "SUCCESS_FULL_FOCUSED_MATRIX_ON_C78",
           "notAcceptance": true,
@@ -609,6 +609,17 @@
               "node --test tests/db-parity-pass5.test.mjs"
             ],
             "details": "45/45 focused PostgreSQL tests passed in 6 suites/segments: 21/21 populated relational observations (zero mismatches); 16/16 direct SQL negatives; 4/4 concurrency tests; 2/2 repaired race regressions. Also source probe identity gate passed. Observation alone not prevention; cross-domain coverage and global database phase gate remain separate."
+          },
+          {
+            "kind": "EXECUTED_DISPOSABLE_POSTGRESQL17_FIVE_NEW_SQL_CHECKS_AND_FULL_WITNESS_MATRIX",
+            "result": "PASS",
+            "commitSha": "654cbc9d69759100ca3fd87a538c6e0cfb3bc2c3",
+            "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/41107736939",
+            "jobId": 124242154376,
+            "runner": "GitHub Actions Node22; disposable PostgreSQL17-alpine; registered journal replay",
+            "focusedRunUrl": "https://github.com/42Students/lms-vnext/actions/runs/41107736976",
+            "focusedJobId": 124242035311,
+            "details": "92/92 PostgreSQL integration tests passed across seven files; focused relational suite 35/35 PASS with 21 populated zero-mismatch joins and 12 baseline SQL negatives; other DB03/DB06 suite 9/9 negatives; canonical DB018 names 48/48 passing (21 joins, 21 direct negatives, 4 concurrency, 2 fixed races). Five new SQL23514 CHECK rejections: users_version_ck, sections_capacity_ck, sections_min_size_ck, registered db02_course_offerings_credits_ck, placement_companies_version_ck. Source and migration constraints unchanged, rollback-only fixture. Whole DB018 NOT done."
           }
         ],
         "pending": [
@@ -616,7 +627,29 @@
           "Execute DB014 full registered tenant/FK/cascade catalog and verify no cross-domain scoped joins leak outside approved tenants",
           "Complete DB001 independent verifier and DB020 fresh schema drift/producer-consumer evidence at exact accepted main SHA, then assess DB018 gate and task completion"
         ],
-        "evidenceIsNotAcceptance": true
+        "evidenceIsNotAcceptance": true,
+        "fiveFastWitnessClosures": {
+          "recordedOn": "2026-10-30",
+          "state": "FIVE_SCOPED_SQL_BOUNDARIES_VERIFIED_PG17_NOT_DB018_DONE",
+          "commitSha": "654cbc9d69759100ca3fd87a538c6e0cfb3bc2c3",
+          "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/41107736939",
+          "witnessIds": [
+            "DB18-B08",
+            "DB18-B09",
+            "DB18-B10",
+            "DB18-B11",
+            "DB18-B12"
+          ],
+          "exactConstraints": [
+            "users_version_ck",
+            "sections_capacity_ck",
+            "sections_min_size_ck",
+            "db02_course_offerings_credits_ck",
+            "placement_companies_version_ck"
+          ],
+          "result": "PASS_5_OF_5",
+          "noProductionSqlChanges": true
+        }
       }
     },
     {
