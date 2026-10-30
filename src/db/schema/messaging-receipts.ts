@@ -187,11 +187,19 @@ export function legacySmsAttemptDisposition(input:{
   throw new Error("Invalid legacy SMS suffix");
  if(input.sourceCollegeId!==null&&!input.resolvedCollegeId)
   throw new Error("Historic SMS college requires verified mapping");
+ // Opaque provider SIDs are identifiers, not presentation text. Truncating
+ // changes identity, can collapse two distinct receipts, and conceals the
+ // existing registered 64-vs-128 column mismatch. Reject nonrepresentable
+ // historical values until the migration integrator widens that column.
+ const providerId=input.providerId?.trim()??null;
+ if(providerId!==null && providerId!=="" &&
+    !/^[A-Za-z0-9._:-]{1,64}$/.test(providerId))
+   throw new Error("Legacy SMS provider reference requires verified schema support");
  const outcome=input.sourceStatus==="SENT"?"PROVIDER_ACCEPTED":
    input.sourceStatus==="FAILED"||input.sourceStatus==="REJECTED"
    ?"FAILED":"NOT_CONFIGURED";
  return {outcome,recipientSuffix:suffix,
-  providerMessageId:input.providerId?.trim().slice(0,64)??null,
+  providerMessageId:providerId || null,
   resolvedCollegeId:input.resolvedCollegeId,
   deliveryConfirmed:false as const};
 }
