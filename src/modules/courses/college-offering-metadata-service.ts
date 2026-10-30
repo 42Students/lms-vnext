@@ -57,15 +57,37 @@ export async function updateCollegeOfferingMetadata(context:RequestContext,rawId
           isNull(courseSectionDeliveries.endedAt))).limit(1);
       if(dependent)throw new CollegeOfferingMetadataError("OFFERING_HAS_ACTIVE_DELIVERIES");
     }
-    const [updated]=await tx.update(courseOfferings).set({
-      type:input.type,credits:input.credits,displayOrder:input.displayOrder,
-      // An elective cannot retain the CORE curriculum-row foreign key.
-      // Keep the type and referenced-row transition atomic under DB02.
-      ...(input.type==="ELECTIVE"?{programTermCourseId:null}:{}),
-      updatedAt:sql<Date>`greatest(${courseOfferings.updatedAt} + interval '1 millisecond',clock_timestamp())`,
-    }).where(eq(courseOfferings.id,id))
-      .returning({id:courseOfferings.id,type:courseOfferings.type,credits:courseOfferings.credits,
-        displayOrder:courseOfferings.displayOrder,updatedAt:courseOfferings.updatedAt});
+    let updated: {id:string;type:"CORE"|"ELECTIVE";credits:number|null;
+      displayOrder:number;updatedAt:Date}|undefined;
+    if(input.type==="ELECTIVE"){
+      // DB02 added the curriculum FK by a registered SQL migration, but the
+      // older Drizzle snapshot does not map it. Updating with an unmapped
+      // .set() key discards that column, so clear it in this SAME SQL statement.
+      const changed=await tx.execute(sql`
+        UPDATE course_offerings
+           SET type = 'ELECTIVE',
+               program_term_course_id = NULL,
+               credits = ${input.credits},
+               display_order = ${input.displayOrder},
+               updated_at = greatest(updated_at + interval '1 millisecond',clock_timestamp())
+         WHERE id = ${id}
+         RETURNING id
+      `);
+      if(changed.rows.length>0){
+        [updated]=await tx.select({
+          id:courseOfferings.id,type:courseOfferings.type,
+          credits:courseOfferings.credits,displayOrder:courseOfferings.displayOrder,
+          updatedAt:courseOfferings.updatedAt,
+        }).from(courseOfferings).where(eq(courseOfferings.id,id)).limit(1);
+      }
+    }else{
+      [updated]=await tx.update(courseOfferings).set({
+        type:input.type,credits:input.credits,displayOrder:input.displayOrder,
+        updatedAt:sql<Date>`greatest(${courseOfferings.updatedAt} + interval '1 millisecond',clock_timestamp())`,
+      }).where(eq(courseOfferings.id,id))
+        .returning({id:courseOfferings.id,type:courseOfferings.type,credits:courseOfferings.credits,
+          displayOrder:courseOfferings.displayOrder,updatedAt:courseOfferings.updatedAt});
+    }
     if(!updated)throw new CollegeOfferingMetadataError("OFFERING_STALE");
     await recordActivityEventInTransaction(tx,context,{
       eventType:ACTIVITY_EVENT_TYPES.COURSES_OFFERING_UPDATED,
