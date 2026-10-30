@@ -7,8 +7,8 @@ import {collegeMemberships} from "./memberships";
 
 export const placementTpoCompanyTeamMessages=pgTable("placement_tpo_company_team_messages",{
  id:uuid("id").defaultRandom().primaryKey(),
- collegeId:uuid("college_id").notNull().references(()=>colleges.id,{onDelete:"restrict"}),
- companyId:uuid("company_id").notNull().references(()=>placementCompanies.id,{onDelete:"restrict"}),
+ collegeId:uuid("college_id").notNull().references(()=>colleges.id,{onDelete:"no action"}),
+ companyId:uuid("company_id").notNull().references(()=>placementCompanies.id,{onDelete:"no action"}),
  authorMembershipId:uuid("author_membership_id").notNull(),
  // Optional for existing internal writes; browser posts always supply the key.
  idempotencyKey:uuid("idempotency_key"),
@@ -33,8 +33,8 @@ export const placementTpoCompanyTeamMessages=pgTable("placement_tpo_company_team
 ]);
 
 export const placementTpoCompanyTeamFollows=pgTable("placement_tpo_company_team_follows",{
- collegeId:uuid("college_id").notNull().references(()=>colleges.id,{onDelete:"restrict"}),
- companyId:uuid("company_id").notNull().references(()=>placementCompanies.id,{onDelete:"restrict"}),
+ collegeId:uuid("college_id").notNull().references(()=>colleges.id,{onDelete:"no action"}),
+ companyId:uuid("company_id").notNull().references(()=>placementCompanies.id,{onDelete:"no action"}),
  membershipId:uuid("membership_id").notNull(),
  followedAt:timestamp("followed_at",{withTimezone:true}).notNull().defaultNow(),
 },t=>[

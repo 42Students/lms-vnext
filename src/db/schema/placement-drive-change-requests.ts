@@ -36,7 +36,7 @@ export const placementDriveChangeRequests=pgTable("placement_drive_change_reques
  resolvedAt:timestamp("resolved_at",{withTimezone:true}),
  /** Atomic accepted-suggestion application receipt; null means not applied. */
  appliedAt:timestamp("applied_at",{withTimezone:true}),
- appliedByUserId:uuid("applied_by_user_id").references(()=>users.id),
+ appliedByUserId:uuid("applied_by_user_id").references(()=>users.id,{onDelete:"restrict"}),
  appliedJobVersion:integer("applied_job_version"),
  createdAt:timestamp("created_at",{withTimezone:true}).notNull().defaultNow(),
  updatedAt:timestamp("updated_at",{withTimezone:true}).notNull().defaultNow(),

@@ -13,7 +13,7 @@ export const placementPublicPageSettings = pgTable(
     enabled: boolean("enabled").notNull().default(false),
     legacyPublicationId: integer("legacy_publication_id"),
     legacyPublicationPayload: jsonb("legacy_publication_payload").$type<Record<string,unknown>>(),
-    updatedByUserId:uuid("updated_by_user_id").references(()=>users.id,{onDelete:"restrict"}),
+    updatedByUserId:uuid("updated_by_user_id").references(()=>users.id,{onDelete:"no action"}),
     placedCount: integer("placed_count"),
     offerCount: integer("offer_count"),
     employerCount: integer("employer_count"),

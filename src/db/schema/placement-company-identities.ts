@@ -6,7 +6,7 @@ import {colleges} from "./colleges";
 
 export const placementCompanyDomains=pgTable("placement_company_domains",{
  id:uuid("id").defaultRandom().primaryKey(),
- companyId:uuid("company_id").notNull().references(()=>placementCompanies.id,{onDelete:"restrict"}),
+ companyId:uuid("company_id").notNull().references(()=>placementCompanies.id,{onDelete:"no action"}),
  domain:varchar("domain",{length:253}).notNull(),
  /** Domain trust is independent of company-level verification. */
  verifiedBy42:boolean("verified_by_42").notNull().default(false),
@@ -22,7 +22,7 @@ export const placementCompanyDomains=pgTable("placement_company_domains",{
  legacyAddedByUserName:varchar("legacy_added_by_user_name",{length:160}),
  legacySourceTimeZone:varchar("legacy_source_time_zone",{length:60}),
  /** Imported system actor may have no surviving user; live service still requires an actor. */
- addedByUserId:uuid("added_by_user_id").references(()=>users.id,{onDelete:"restrict"}),
+ addedByUserId:uuid("added_by_user_id").references(()=>users.id,{onDelete:"no action"}),
  createdAt:timestamp("created_at",{withTimezone:true}).notNull().defaultNow(),
 },t=>[
  uniqueIndex("placement_company_domains_lower_domain_uq").on(sql`lower(${t.domain})`),
@@ -34,9 +34,9 @@ export const placementCompanyDomains=pgTable("placement_company_domains",{
 
 export const placementCompanyAliases=pgTable("placement_company_aliases",{
  id:uuid("id").defaultRandom().primaryKey(),
- companyId:uuid("company_id").notNull().references(()=>placementCompanies.id,{onDelete:"restrict"}),
+ companyId:uuid("company_id").notNull().references(()=>placementCompanies.id,{onDelete:"no action"}),
  alias:varchar("alias",{length:160}).notNull(),
- addedByUserId:uuid("added_by_user_id").notNull().references(()=>users.id,{onDelete:"restrict"}),
+ addedByUserId:uuid("added_by_user_id").notNull().references(()=>users.id,{onDelete:"no action"}),
  createdAt:timestamp("created_at",{withTimezone:true}).notNull().defaultNow(),
 },t=>[
  uniqueIndex("placement_company_aliases_lower_alias_uq").on(sql`lower(${t.alias})`),
