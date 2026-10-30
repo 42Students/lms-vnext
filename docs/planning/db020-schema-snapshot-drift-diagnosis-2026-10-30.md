@@ -53,6 +53,31 @@ new-to-snapshot tables already exist. Existing migrations are immutable.
 The remaining snapshot reconciliation is a comparison and carefully
 reviewed metadata/forward-only DDL exercise, never blind promotion.
 
+### 31 October second pass: accurate FK-shape reconciliation and grade provenance
+
+The independently executable [PG17 FK-shape diagnostic](https://github.com/42Students/lms-vnext/actions/runs/41130350910)
+compares ordered source/target columns, parent relations and update/delete
+actions, not FK constraint names alone. At exact SHA `e6ba0f04` it showed:
+
+- **405** same-name/same-shape FKs, plus **271** same-shape constraints with
+  *different names*. Do not attempt to add 271 duplicate FKs.
+- **3** same-name but differing referential actions, all TPO company-team
+  owner/member links declared `RESTRICT` in typed schema but registered as
+  nondeferrable `NO ACTION` because the earlier `0135` migration already
+  created them before a later `0137 IF NOT EXISTS` proposal. The typed
+  declarations were subsequently aligned to the actual registered behavior.
+- **11** typed FK shapes not found in registered catalog and **53**
+  registered FK shapes not represented in the generated typed snapshot.
+  These include some SQL-only tables by design. Each demands a focused
+  duplicate-versus-gap and tenant/retention decision; no promotion is implied.
+
+The [PG17 registered 0319 run](https://github.com/42Students/lms-vnext/actions/runs/41129786508)
+confirmed `assignment_grade_events.source_action` now exists as a
+nullable `varchar(120)`, reducing **missing typed columns from 1 to 0**.
+This is an exact registered-field fix, not approval of the remaining 22
+catalog-only typed-table columns, SQL-only relations, 21 cascade edges,
+default/index/CHECK differences or any unfinished producer cutover.
+
 ## Safe follow-up sequence
 
 1. Treat newly generated migration SQL as **diagnostics only**. Do not apply the wholesale `0313_*` artifact, rewrite old applied SQL or bypass the `schema-drift` CI check.
