@@ -1,0 +1,77 @@
+# DB-023 staging acceptance only: do not mark registered migration/producer DONE.
+# No live notifier credentials, sends or user data. All staged DDL is rolled back.
+name: DB-023 log-alert staging PostgreSQL witness
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/db023-log-alerts-staged-pg-acceptance.yml"
+      - "scripts/sql/db10-log-alerts-staging.sql"
+      - "src/db/schema/db10-log-alerts.draft.ts"
+      - "tests/db10-log-alerts-staging.test.mjs"
+      - "tests/db023-staged-log-alerts-pg.test.mjs"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: lms-db023-staged-pg-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  staged-postgres:
+    name: DB023 staged schema/negative witness (NOT registered acceptance)
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    services:
+      postgres:
+        image: postgres:17-alpine
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: lms_vnext_test
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres -d lms_vnext_test"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 20
+    env:
+      DATABASE_URL: postgresql://postgres:postgres@127.0.0.1:5432/lms_vnext_test
+      TEST_DATABASE_URL: postgresql://postgres:postgres@127.0.0.1:5432/lms_vnext_test
+      DB03_ISOLATED_TEST_DATABASE: "1"
+      DB023_STAGED_PG: "YES"
+      DB10_LOG_ALERTS_READY: "NO"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Pin exact source and verify registered journal
+        run: |
+          test "$(git rev-parse HEAD)" = "$GITHUB_SHA"
+          npm run db:journal:verify
+      - name: Execute staged schema/source parity negatives
+        run: node --test tests/db10-log-alerts-staging.test.mjs
+      - name: Seed disposable PostgreSQL from registered zero-to-head journal
+        env:
+          DATABASE_URL: ""
+        run: npm run db:test:prepare
+      - name: Re-run registered migration idempotence
+        run: npm run db:migrate
+      - name: DB023 rollback-only staged persistence and SQL negatives
+        run: node --test tests/db023-staged-log-alerts-pg.test.mjs
+      - name: Confirm no tracked migration edits
+        run: |
+          npm run db:journal:verify
+          test -z "$(git status --porcelain -- drizzle/)"
+      - name: Evidence boundary
+        if: always()
+        run: |
+          echo "DB023 staged PostgreSQL execution only."
+          echo "No registered DB10 migration, producer/consumer authorization, provider sending, or tracker DONE claim."
