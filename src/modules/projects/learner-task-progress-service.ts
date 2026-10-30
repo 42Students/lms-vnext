@@ -55,10 +55,12 @@ export async function updateLearnerProjectTaskProgress(
     if (!release || !["PLANNED","IN_PROGRESS"].includes(release.status))
       throw new ProjectsServiceError("PROJECT_TASK_INVALID_STATE");
 
-    const siblings = await tx.select().from(projectTasks).where(and(
+    const allSiblings = await tx.select().from(projectTasks).where(and(
       eq(projectTasks.projectId, scope.project.id), eq(projectTasks.sprintId, candidate.sprintId),
-      isNull(projectTasks.deletedAt),
     )).orderBy(asc(projectTasks.sequence), asc(projectTasks.id)).for("update");
+    // Soft-deleted tasks cannot move, but their reserved sequence numbers are
+    // still covered by the unconditional sprint/sequence unique index.
+    const siblings = allSiblings.filter(item => !item.deletedAt);
     const task = siblings.find(item => item.id === params.taskId);
     if (!task) throw new ProjectsServiceError("PROJECT_TASK_NOT_FOUND");
     if (task.assigneeMembershipId !== membershipId)
@@ -106,7 +108,10 @@ export async function updateLearnerProjectTaskProgress(
     const other = siblings[index + (input.action === "MOVE_UP" ? -1 : 1)];
     if (!other) throw new ProjectsServiceError("PROJECT_TASK_INVALID_STATE");
     // Unique(sprint, sequence) is immediate; use an unused temporary sequence.
-    const temporary = Math.max(...siblings.map(item => item.sequence)) + 1;
+    const maxReservedSequence = Math.max(...allSiblings.map(item => item.sequence));
+    if (maxReservedSequence >= 2147483647)
+      throw new ProjectsServiceError("PROJECT_TASK_INVALID_STATE");
+    const temporary = maxReservedSequence + 1;
     await tx.update(projectTasks).set({ sequence: temporary, updatedAt: now })
       .where(and(eq(projectTasks.id, task.id), eq(projectTasks.projectId, scope.project.id)));
     await tx.update(projectTasks).set({ sequence: task.sequence, updatedAt: now })
