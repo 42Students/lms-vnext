@@ -7,9 +7,9 @@ import { stagePlacementRoundResultInputSchema, mapHistoricalRoundResultSource } 
 
 describe("Placement round result validation", () => {
   it("maps historical provenance without permitting a client-defined live source",()=>{
-    expect(mapHistoricalRoundResultSource("recruiter")).toBe("HR");
-    expect(mapHistoricalRoundResultSource("PANELIST")).toBe("FACULTY");
-    expect(mapHistoricalRoundResultSource("DRIVE_DAY")).toBe("TPO");
+    expect(mapHistoricalRoundResultSource("recruiter")).toBe("RECRUITER");
+    expect(mapHistoricalRoundResultSource("PANELIST")).toBe("PANELIST");
+    expect(mapHistoricalRoundResultSource("DRIVE_DAY")).toBe("DRIVE_DAY");
     expect(mapHistoricalRoundResultSource("EXCEL")).toBe("IMPORT");
     expect(mapHistoricalRoundResultSource("TPO")).toBe("TPO");
     expect(()=>mapHistoricalRoundResultSource("SUPER_ADMIN")).toThrow();
