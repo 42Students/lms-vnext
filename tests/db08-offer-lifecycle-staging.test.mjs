@@ -9,7 +9,7 @@ test("DB29 remains staging-only and keeps source/runtime evidence honest", () =>
   assert.match(sql, /STAGING ONLY, NOT A DRIZZLE MIGRATION/);
   assert.match(sql, /21bad59d4dfaf2fa11fdeaf9353327ce105697d5/);
   assert.match(contract, /STAGED_NOT_REGISTERED \/ POSTGRES_NOT_RUN/);
-  assert.match(contract, /does not claim runtime verification/);
+  assert.match(contract, /does not claim runtime\s+verification/);
   assert.doesNotMatch(sql, /^\s*(?:DROP TABLE|DROP COLUMN|DELETE FROM|TRUNCATE)\b/im);
 });
 
