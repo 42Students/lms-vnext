@@ -90,6 +90,101 @@ test("DB014 actual registered PG17 FK, history, trigger and cascade catalog",asy
       "WHERE a.attrelid=t.oid AND a.attname='college_id') "+
       "ORDER BY t.relname,i.relname");
     const cascade=fks.filter(x=>x.confdeltype==="c");
+    // Snapshot-only reviews can silently miss destructive FK changes. This
+    // multiset pins the 21 CURRENT registered CASCADE edges, including the
+    // duplicate composite/single-column relationships. Any new/removed edge
+    // needs explicit retention review, not an automatic green count.
+    const expectedCascadePairs = [
+      [
+            "assignment_submission_links -> assignment_submissions",
+            1
+      ],
+      [
+            "attendance_records -> section_schedule_events",
+            1
+      ],
+      [
+            "attendance_sessions -> section_schedule_events",
+            1
+      ],
+      [
+            "cohort_progression_state -> cohorts",
+            1
+      ],
+      [
+            "course_discussion_messages -> course_section_deliveries",
+            1
+      ],
+      [
+            "lesson_content_delivery_sequences -> lesson_contents",
+            2
+      ],
+      [
+            "lesson_content_delivery_sequences -> course_section_deliveries",
+            2
+      ],
+      [
+            "lesson_content_materials -> lesson_contents",
+            1
+      ],
+      [
+            "log_alert_daily_counts -> log_alert_signatures",
+            1
+      ],
+      [
+            "log_alert_signature_accounts -> log_alert_signatures",
+            1
+      ],
+      [
+            "placement_cell_announcement_reads -> announcements",
+            1
+      ],
+      [
+            "placement_cell_announcement_reads -> colleges",
+            1
+      ],
+      [
+            "placement_drive_day_coordinator_assignments -> placement_jobs",
+            1
+      ],
+      [
+            "placement_drive_day_coordinator_assignments -> college_memberships",
+            1
+      ],
+      [
+            "placement_job_role_options -> placement_jobs",
+            1
+      ],
+      [
+            "placement_round_attendance -> placement_applications",
+            1
+      ],
+      [
+            "placement_round_attendance -> placement_job_rounds",
+            1
+      ],
+      [
+            "platform_broadcast_targets -> platform_broadcasts",
+            1
+      ],
+      [
+            "section_schedule_event_courses -> section_schedule_events",
+            1
+      ]
+];
+    const cascadeCounts = new Map();
+    for (const edge of cascade) {
+      const key = edge.child+" -> "+edge.parent;
+      cascadeCounts.set(key,(cascadeCounts.get(key)??0)+1);
+    }
+    assert.deepEqual(
+      [...cascadeCounts.entries()].sort((a,b)=>a[0].localeCompare(b[0])),
+      expectedCascadePairs.sort((a,b)=>a[0].localeCompare(b[0])),
+      "Registered ON DELETE CASCADE edges changed without DB014 retention review",
+    );
+    // A passing edge inventory is NOT proof that active/history parents
+    // cannot be hard-deleted; those producer/release witnesses remain open.
+
     console.log(JSON.stringify({
       kind:"DB014_CURRENT_REGISTERED_PG17_CATALOG",
       journalHead:head.tag,expectedMigrations:journal.entries.length,
