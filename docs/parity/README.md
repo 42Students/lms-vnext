@@ -3,7 +3,7 @@
 > **Closure-first for every UI/account chat:** The single live execution authority
 > is `docs/tracker.json.execution.closureFirstProtocol`, not an open-ended
 > re-audit of already accepted pages. Read `AGENTS.md`; run
-> `npm run progress -- --closure-next --lane=LNN` when working on shared DB/API
+> `npm run progress -- --closure-next` when working on shared DB/API
 > dependencies. For page parity, pick one OPEN page-family/user-job with
 > its original detailed contract, complete its producer→consumer, permissions,
 > mobile/negative/browser acceptance, then mark CLOSED in the existing page
@@ -125,7 +125,7 @@ A new conversation may contain only "continue LMS vNext works." The assistant sh
 1. Read fresh GitHub `AGENTS.md`, `docs/tracker.json` and this page, then current FE/BE/vNext heads, targeted family specifications and actual accepted test evidence.
 2. **If the conversation or user names an account/page**, resume its not-yet-implementation-green family; if green, advance to the next eligible family in that account's existing spec order. Do not restart green pages.
 3. **Without a named scope**, prioritize the earliest unsatisfied prerequisite in the **current phase** of `docs/tracker.json`; consult dependencies and the existing closure-first strategy. Do not invent which unrelated Faculty/TPO page another chat meant. When UI execution is eligible, select the earliest not-green, not-blocked ready family in canonical role/spec order; prefer finishing an existing executable P0/P1 before opening a new family.
-4. Before writing, verify whether another recently landed commit already fixed the exact gap; fetch the latest blob SHA, avoid overwriting competing account work, and keep a single writer for shared files/migrations. If two independent chats receive the same generic instruction concurrently, they may select the same task: **generic wording cannot provide safe multi-chat locking**. For parallel lanes, scope chats explicitly (e.g., "Continue LMS vNext — Faculty" and "Continue LMS vNext — TPO"), one active implementation writer per overlapping family.
+4. Before writing, verify whether another recently landed commit already fixed the exact gap; fetch the latest blob SHA, avoid overwriting competing account work, and keep a single writer for shared files/migrations. If two independent chats receive the same generic instruction concurrently, they may select the same task: **generic wording cannot provide safe multi-chat locking**. No exclusive lanes or claims exist. Coordinate overlapping file edits directly and use fresh-head conflict checks, especially for shared migrations.
 5. Make a real code/test change and record its evidence in GitHub, or report the concrete blocker and the next independent family. Never spend a new chat reproducing already committed research. If the tools/repositories are unavailable, say so rather than inventing a continuation or a green count.
 
 **Existing tooling caveat:** `npm run parity:pages` currently counts Markdown checkboxes in the eight **top-level** `docs/parity/*.md` role files. If page-family specifications are split into `docs/parity/pages/**`, update and test the generator to include them **exactly once** before relying on its totals. It is a checklist count, **not** independent runtime acceptance, account-wide green certification or release readiness.
