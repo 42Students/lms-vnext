@@ -672,6 +672,12 @@
           "commitSha": "2a0d21cac8bc1cd6d5b03856e8bd067bd2f5e6a7",
           "result": "PASS",
           "scope": "320/320 registered PG17 replay, DB018 92/92 direct-negative/race, 0318 active tenant guards, 0319 grade provenance column, additional PG catalog negative tests. Retention/cascade and global DB020 signoff unaccepted."
+        },
+        "latestCascadeInventoryAcceptance": {
+          "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/41144711510",
+          "commitSha": "d2f77f20dba7fcc1c97883a8881fb2f826662c39",
+          "result": "PASS_SCOPED_PG17_NOT_GLOBAL_RETENTION",
+          "findings": "All 21 registered CASCADE edges pinned against unreviewed drift and registered tenant triggers must be enabled; consumer hard-delete/retention proof remains open."
         }
       }
     },
@@ -834,6 +840,11 @@
           ],
           "result": "PASS_5_OF_5",
           "noProductionSqlChanges": true
+        },
+        "latestRerun": {
+          "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/41144711387",
+          "commitSha": "d2f77f20dba7fcc1c97883a8881fb2f826662c39",
+          "result": "PASS_SCOPED_PG17_NOT_FULL_DB018_CERTIFICATION"
         }
       }
     },
@@ -951,6 +962,32 @@
           "catalogFkShapesAbsentFromTypedSnapshot": 42,
           "unvalidatedRegisteredFks": 0,
           "note": "TypeScript historical request provenance, six registered academic/video/message fields, 10 FK referential actions reconciled. One NOT NULL trigger-populated curriculum field remains intentionally OPEN for writer-safe schema alignment. 42 catalog-only FK relationships, nullability/default/CHECK/index/retention and generation/journal drift still require decisions; do not mark DB020 or DB001 DONE. Post-run check metadata added in 3a9a36e7 awaits exact-SHA rerun."
+        },
+        "latestScopedCatalogDiagnostic": {
+          "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/41145308434",
+          "commitSha": "82d7226b9a3dbe35ed1627460c79fbd7c0e88f98",
+          "result": "PASS_DIAGNOSTIC_NOT_PHASE_CERTIFICATION",
+          "verified": {
+            "registeredMigrations": 320,
+            "registeredTables": 276,
+            "registeredForeignKeys": 732,
+            "unvalidatedForeignKeys": 0,
+            "missingGeneratedTypedColumns": 0,
+            "registeredColumnsMissingFromTypedSchema": 0,
+            "typedForeignKeyShapesMissingFromCatalog": 0,
+            "catalogOnlyForeignKeyShapes": 37,
+            "sqlOnlyTableForeignKeys": 30,
+            "typedTableUnmodeledForeignKeys": 7,
+            "textualTypeDifferences": 804,
+            "typeDifferencesNotProvenEquivalent": 1
+          },
+          "remaining": [
+            "Exact current-main PG validation of 6cc4c8a project/course/audit typed-FK changes",
+            "Review the bigint-versus-bigserial owned-sequence/default contract",
+            "Reconcile generated migration DDL with 320 registered SQL migrations without duplicate CREATE TABLEs",
+            "Complete field semantic disposition, attendance history and independent release gate"
+          ],
+          "notAcceptance": true
         }
       }
     },
