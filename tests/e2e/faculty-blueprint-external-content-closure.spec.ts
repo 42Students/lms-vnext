@@ -66,6 +66,16 @@ for(const mode of ["YOUTUBE","LIVE_CLASS"] as const){
   const contentId:string=receipt.content?.id;
   expect(contentId).toMatch(/^[0-9a-f-]{36}$/i);
   expect(receipt.content?.status).toBe("DRAFT");
+  // First prove that the server persisted the exact authoring context before
+  // asserting the separately rendered Blueprint projection.
+  expect(receipt.content?.lessonId).toBe(lessonId);
+  expect(receipt.content?.deliveryId).toBe(deliveryId);
+  const scopedRead=await page.request.get("/api/courses/lesson-contents?"+
+    new URLSearchParams({lessonId:lessonId!,deliveryId}).toString());
+  expect(scopedRead.status()).toBe(200);
+  const scopedBody=await scopedRead.json();
+  expect(scopedBody.contents.some((item:{id:string;title:string})=>
+    item.id===contentId&&item.title===title)).toBe(true);
   // A separate authenticated page proves persisted readback without racing
   // the mutation page's Next.js router.refresh navigation.
   const editorPage=await context.newPage();
