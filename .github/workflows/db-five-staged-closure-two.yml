@@ -1,0 +1,89 @@
+# Five bounded source/staging engineering acceptance packages.
+# These tests do not promote unregistered SQL or certify downstream DB-011,
+# DB-009, DB-012, DB-013, DB-019 or DB-020 runtime/phase readiness.
+name: Five scoped DB task acceptances (021 024 029 039 052)
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/db-five-staged-closure-two.yml"
+      - "tests/db08-outcome-fidelity-staging.test.mjs"
+      - "tests/db10-general-notices-staging.test.mjs"
+      - "tests/db08-offer-lifecycle-staging.test.mjs"
+      - "tests/db10-activity-audit-context-staging.test.mjs"
+      - "tests/db06-quiz-lifecycle-staging.test.mjs"
+      - "scripts/sql/db08-outcome-fidelity-staging.sql"
+      - "scripts/sql/db10-general-notices-staging.sql"
+      - "scripts/sql/db08-offer-lifecycle-staging.sql"
+      - "scripts/sql/db10-activity-audit-context-staging.sql"
+      - "docs/planning/sql/db06-quiz-lifecycle-history-candidate.sql"
+      - "docs/tracker.json"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: lms-five-staged-db-batch-two-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  scoped-source-and-registered-db-regression:
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    services:
+      postgres:
+        image: postgres:17-alpine
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: lms_vnext_test
+        ports: ["5432:5432"]
+        options: >-
+          --health-cmd "pg_isready -U postgres -d lms_vnext_test"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 20
+    env:
+      TEST_DATABASE_URL: postgresql://postgres:postgres@127.0.0.1:5432/lms_vnext_test
+      DATABASE_URL: postgresql://postgres:postgres@127.0.0.1:5432/lms_vnext_test
+      DB03_ISOLATED_TEST_DATABASE: "1"
+      DB018_ISOLATED_TEST_DATABASE: "1"
+      DB041_REGISTERED_PG: "YES"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Pin source revision and verify registered migration journal
+        run: |
+          test "$(git rev-parse HEAD)" = "$GITHUB_SHA"
+          npm run db:journal:verify
+      - name: Verify five entire bounded staging-source contracts
+        run: |
+          node --test \
+            tests/db08-outcome-fidelity-staging.test.mjs \
+            tests/db10-general-notices-staging.test.mjs \
+            tests/db08-offer-lifecycle-staging.test.mjs \
+            tests/db10-activity-audit-context-staging.test.mjs \
+            tests/db06-quiz-lifecycle-staging.test.mjs
+      - name: Prepare isolated PostgreSQL17 and all registered migrations
+        env:
+          DATABASE_URL: ""
+        run: npm run db:test:prepare
+      - name: Verify idempotent migration replay
+        run: npm run db:migrate
+      - name: Registered relational and direct negative SQL boundary regressions
+        run: >-
+          npx vitest run --config vitest.db.registered.config.ts
+          tests/integration/db018-relational-and-boundary-witnesses.test.ts
+      - name: Registered quiz shuffle persistence and round-trip regressions
+        run: node --test tests/db041-registered-quiz-shuffle-pg.test.mjs
+      - name: Confirm clean migration source and explicit acceptance boundary
+        run: |
+          npm run db:journal:verify
+          test -z "$(git status --porcelain -- drizzle/)"
+          echo "DB021/024/029/039/052 source/staging acceptance only; unregistered draft SQL not executed or certified as deployed."
