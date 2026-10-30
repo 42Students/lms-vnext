@@ -254,7 +254,7 @@ Audited shared Faculty-profile sections:
 
 - [ ] User summary/profile image edit behavior matches.
 - [ ] Profile completeness refresh matches.
-- [ ] Resume upload/import/remove matches.
+- [x] Resume upload/import/remove is **Learner-only**, not a Faculty UI requirement. Legacy `src/components/profile/about.js` wraps its Resume card in `!isFacultyProfileSchema`; vNext correctly does not expose learner resume editing. Classified **NOT APPLICABLE**, not a newly implemented upload.
 - [ ] Contacts edit.
 - [ ] Social edit.
 - [ ] Address edit.
