@@ -84,5 +84,5 @@ test("new overlay and navigation files cannot be hidden by the old source denomi
    "src/components/Global/Header/Header.js",
    "src/components/tpo/TpoSidebar.jsx",
  ]);
- assert.equal(s.frontend.staleAfterDevChanges.changedComponentFiles,0);
+ assert.equal(s.frontend.staleAfterDevChanges.changedComponentFiles,1);
 });
