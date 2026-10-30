@@ -13,6 +13,8 @@ on:
       - "tests/unit/faculty-notification-link-model.test.ts"
       - "tests/e2e/faculty-notifications.spec.ts"
       - "src/app/(authenticated)/teacher/notifications/**"
+      - "src/components/activity/notification-toolbar.tsx"
+      - "src/modules/announcements/readiness.ts"
       - "src/modules/activity/faculty-notification-service.ts"
       - "src/modules/activity/faculty-notifications-access.ts"
       - "src/modules/courses/faculty-inbox-query-model.ts"
