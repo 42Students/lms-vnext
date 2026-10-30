@@ -1313,15 +1313,52 @@
       "id": "DB-077",
       "title": "Finalize DB04 historical registration and approver-card source dispositions",
       "phase": "DATABASE",
-      "done": false,
-      "dependsOn": []
+      "done": true,
+      "dependsOn": [],
+      "acceptedAt": "2026-10-30",
+      "acceptanceEvidence": [
+        {
+          "kind": "EXECUTED_SOURCE_RETIREMENT",
+          "result": "PASS",
+          "exitCode": 0,
+          "commitSha": "855fd88f8e9f95a4a4b678a16ef41ecc12bad4dc",
+          "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/41068845699",
+          "jobId": 124107291709,
+          "runner": "GitHub Actions ubuntu-latest Node.js 22, ephemeral PostgreSQL 17-alpine",
+          "commands": [
+            "npm run db:journal:verify",
+            "node --test tests/db077-db04-historical-final-disposition.test.mjs"
+          ],
+          "details": "All five DB077 executed source-retirement assertions passed on pinned legacy-source dispositions: 33/33 historical fields, removed proctored-exam approver cards and absent external student-registration sync ledger. Neither current placement registration nor qualifying-exam identity is silently mapped to retired tables. Runtime DB cutover is explicitly not applicable to this source-retirement-only task; full DB04 live profiles remain DB007/DB080/DB081."
+        }
+      ]
     },
     {
       "id": "DB-078",
       "title": "Finalize DB05 historical course-column persistence disposition",
       "phase": "DATABASE",
-      "done": false,
-      "dependsOn": []
+      "done": true,
+      "dependsOn": [],
+      "acceptedAt": "2026-10-30",
+      "acceptanceEvidence": [
+        {
+          "kind": "EXECUTED_POSTGRESQL_17",
+          "result": "PASS",
+          "exitCode": 0,
+          "commitSha": "855fd88f8e9f95a4a4b678a16ef41ecc12bad4dc",
+          "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/41068845699",
+          "jobId": 124107291709,
+          "runner": "GitHub Actions ubuntu-latest Node.js 22, ephemeral PostgreSQL 17-alpine",
+          "commands": [
+            "npm run db:journal:verify",
+            "node --test tests/db078-db05-historical-course-column-disposition.test.mjs",
+            "npm run db:test:prepare (ephemeral PostgreSQL 17 with application DATABASE_URL unset)",
+            "npm run db:migrate",
+            "DB078_DISPOSABLE=1 node --test tests/db078-registered-course-column-disposition-pg.test.mjs"
+          ],
+          "details": "All five source-field disposition assertions and the independent registered PostgreSQL 17 catalog test passed: canonical courses.name / courses.short_title exist; retired formal_title and default_subscription_days shadow columns do not. The historical formal_title wire response is explicitly derived from short_title when non-null, otherwise name. This accepts physical-column disposition only, not future API/browser or all DB05 acceptance."
+        }
+      ]
     },
     {
       "id": "DB-079",
