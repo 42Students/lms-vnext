@@ -25,7 +25,7 @@ const college=SEED_IDS.collegeA;
 
 async function insertLead(db){
   return db.query(
-    "insert into placement_tpo_leads(college_id,name,email_norm,owner_membership_id) values($1,'DB079 race','$2',$3) returning id",
+    "insert into placement_tpo_leads(college_id,name,email_norm,owner_membership_id) values($1,'DB079 race',$2,$3) returning id",
     [college, "db079-"+randomUUID()+"@example.test",owner],
   );
 }
