@@ -26,8 +26,8 @@ permissions:
   contents: read
   statuses: write
 concurrency:
-  group: faculty-blueprint-prototype-acceptance-${{ github.ref }}
-  cancel-in-progress: true
+  group: faculty-blueprint-prototype-acceptance-${{ github.sha }}
+  cancel-in-progress: false
 jobs:
   browser:
     runs-on: ubuntu-latest
