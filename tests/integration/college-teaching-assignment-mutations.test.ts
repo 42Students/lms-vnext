@@ -126,9 +126,11 @@ describe.skipIf(!enabled)("College Admin Faculty teaching assignment mutations â
         await pool.query("DELETE FROM course_teaching_assignments WHERE delivery_id=$1", [ids.delivery]);
         await pool.query("DELETE FROM course_section_deliveries WHERE id=$1", [ids.delivery]);
         await pool.query("DELETE FROM course_offerings WHERE id=$1", [ids.offering]);
+        await pool.query("DELETE FROM program_term_courses WHERE course_id=$1",[ids.course]);
         await pool.query("DELETE FROM courses WHERE id=$1", [ids.course]);
         await pool.query("DELETE FROM sections WHERE id=$1", [ids.section]);
         await pool.query("DELETE FROM cohorts WHERE id=$1", [ids.cohort]);
+        await pool.query("DELETE FROM program_terms WHERE program_id=$1",[ids.program]);
         await pool.query("DELETE FROM programs WHERE id=$1", [ids.program]);
         await pool.query("DELETE FROM academic_periods WHERE id=$1", [ids.period]);
         await pool.query("DELETE FROM membership_roles WHERE id=$1", [ids.otherRole]);

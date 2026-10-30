@@ -73,7 +73,11 @@ describe.skipIf(!enabled)("College Faculty reassign PostgreSQL fixtures",()=>{
     for(const [table,id] of [
       ["course_section_deliveries",ids.delivery],["course_offerings",ids.offering],["courses",ids.course],
       ["sections",ids.section],["cohorts",ids.cohort],["programs",ids.program],["academic_periods",ids.period],
-    ] as const)await pool.query(`DELETE FROM ${table} WHERE id=$1`,[id]);
+    ] as const){
+      if(table==="courses") await pool.query("DELETE FROM program_term_courses WHERE course_id=$1",[id]);
+      if(table==="programs") await pool.query("DELETE FROM program_terms WHERE program_id=$1",[id]);
+      await pool.query(`DELETE FROM ${table} WHERE id=$1`,[id]);
+    }
     // User, membership and role fixtures retained: immutable activity_events may reference them.
   }}finally{await pool?.end();await closeDatabaseConnection();}});
   it("denies foreign/not-found/wrong-role/forged and stale, then reassigns atomically",async()=>{

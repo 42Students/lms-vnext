@@ -54,8 +54,10 @@ describe.skipIf(!enabled)("College offering writes — disposable PostgreSQL", (
     try {
       if (pool) {
         if (offeringId) await pool.query("DELETE FROM course_offerings WHERE id=$1", [offeringId]);
+        await pool.query("DELETE FROM program_term_courses WHERE course_id=$1",[ids.course]);
         await pool.query("DELETE FROM courses WHERE id=$1", [ids.course]);
         await pool.query("DELETE FROM cohorts WHERE id=$1", [ids.cohort]);
+        await pool.query("DELETE FROM program_terms WHERE program_id=$1",[ids.program]);
         await pool.query("DELETE FROM programs WHERE id=$1", [ids.program]);
         await pool.query("DELETE FROM academic_periods WHERE id=$1", [ids.period]);
         // Never delete append-only activity_events; subjects are string identifiers.
