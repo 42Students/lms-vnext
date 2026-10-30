@@ -150,4 +150,31 @@ describe("Faculty staged private profile integration",()=>{
   expect(removed.document.skills.some(item=>item.id===record.id)).toBe(false);
  });
 
+ it("round-trips the six remaining repeatable Faculty histories across real database writes",async()=>{
+  const cases=[
+   {section:"languages",row:{id:randomUUID(),language:"Hindi"},field:"language",edited:"Telugu"},
+   {section:"experiences",row:{id:randomUUID(),organization:"Teaching College"},field:"organization",edited:"Another College"},
+   {section:"education",row:{id:randomUUID(),institutionName:"University A"},field:"institutionName",edited:"University B"},
+   {section:"certifications",row:{id:randomUUID(),name:"Certification A"},field:"name",edited:"Certification B"},
+   {section:"publications",row:{id:randomUUID(),title:"Publication A"},field:"title",edited:"Publication B"},
+   {section:"awards",row:{id:randomUUID(),title:"Award A"},field:"title",edited:"Award B"},
+  ] as const;
+  for(const item of cases){
+   const before=await loadOwnFacultyProfileDocumentStaged(faculty);
+   const previous=before.document[item.section];
+   const inserted=await patchOwnFacultyProfileSection(faculty,{
+    section:item.section,value:[...previous,item.row],expectedVersion:before.version});
+   const modified=await patchOwnFacultyProfileSection(faculty,{
+    section:item.section,value:[...previous,{...item.row,[item.field]:item.edited}],
+    expectedVersion:inserted.version});
+   const found=(await loadOwnFacultyProfileDocumentStaged(faculty)).document[item.section]
+    .find(row=>row.id===item.row.id);
+   expect(found).toMatchObject({[item.field]:item.edited});
+   const deleted=await patchOwnFacultyProfileSection(faculty,{
+    section:item.section,value:[...previous],expectedVersion:modified.version});
+   expect(deleted.version).toBe(modified.version+1);
+   expect(deleted.document[item.section].some(row=>row.id===item.row.id)).toBe(false);
+  }
+ });
+
 });
