@@ -105,10 +105,10 @@ describe("scheduled Telegram alerts", () => {
     const { readFileSync } = await import("node:fs");
     const schema = readFileSync("src/db/schema/db10-log-alerts.draft.ts", "utf8");
     for (const [name, initial] of [
-      ["day_occurrences", "1n"],
-      ["overflow_count", "0n"],
-      ["occurrence_count", "1n"],
-      ["spike_count", "0n"],
+      ["day_occurrences", "sql`1`"],
+      ["overflow_count", "sql`0`"],
+      ["occurrence_count", "sql`1`"],
+      ["spike_count", "sql`0`"],
     ]) {
       expect(schema).toContain(
         `bigint("${name}", { mode: "bigint" }).notNull().default(${initial})`,
