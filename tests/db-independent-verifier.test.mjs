@@ -13,14 +13,14 @@ const pkg = JSON.parse(
   fs.readFileSync(path.join(root, "package.json"), "utf8"),
 );
 
-test("independent DB verifier is wired without GitHub Actions", () => {
+test("independent DB verifier never requires GitHub Actions but records its actual runner", () => {
   assert.equal(
     pkg.scripts["db:verify:independent"],
     "node scripts/db-independent-verify.mjs",
   );
   assert.match(script, /postgres:17-alpine/);
   assert.match(script, /TEST_DATABASE_URL/);
-  assert.match(script, /githubActionsUsed:\s*false/);
+  assert.match(script, /githubActionsUsed:\s*process\.env\.GITHUB_ACTIONS\s*===\s*"true"/);
   assert.doesNotMatch(script, /gh\s+workflow|actions\/runs|rerun.*workflow/i);
 });
 
