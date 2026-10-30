@@ -39,7 +39,7 @@ test('fake PostgreSQL or task acceptance labels fail closed',()=>{
 test('historical source notes never unlock phase acceptance',()=>{
   const x=copy(),r=inspectDatabaseProgress(x);
   assert.ok(r.items.find(t=>t.id==='DB-020').scores.implementation<1);
-  assert.equal(r.measurements.accepted.equivalentTasks,8);
+  assert.equal(r.measurements.accepted.equivalentTasks,x.tasks.filter(t=>t.done).length);
   assert.equal(inspectTracker(x).readyForNextPhase,false);
   assert.equal(x.execution.globalPhaseCertificates.DATABASE.certified,false);
 });
@@ -48,7 +48,7 @@ test('progress CLI displays both all-lane metrics and one-lane breakdown',()=>{
   assert.equal(p.status,0,p.stderr);
   assert.match(p.stdout,/NON|NON_CERTIFYING|evidence-weighted heuristic/);
   assert.match(p.stdout,/DB-081/);
-  assert.match(p.stdout,/accepted 9\.9%/);
+  assert.ok(p.stdout.includes('accepted '+(100*doc.tasks.filter(t=>t.done).length/doc.tasks.length).toFixed(1)+'%'));
   const lane=spawnSync(process.execPath,[path.join(root,'scripts/tracker.mjs'),'--progress','--lane=L01'],{encoding:'utf8'});
   assert.equal(lane.status,0,lane.stderr);
   assert.match(lane.stdout,/DB-019/);
