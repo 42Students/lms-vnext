@@ -153,6 +153,7 @@ export default async function FacultyNotificationsPage({
     <div className="min-w-0 max-w-full space-y-6">
       <PageHeader title="Notifications" />
       <NotificationToolbar view={view} unreadCount={unreadCount} baseHref={FACULTY_INBOX}
+        canMarkAll={showPersonal}
         markAllEndpoint="/api/notifications/faculty/read-all" categoryParam="tab" selectedCategory={scopeTab}
         categories={[
          {id:"all",label:"All",unread:page.items.length+announcementRead.items.length},
