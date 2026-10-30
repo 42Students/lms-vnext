@@ -1,0 +1,76 @@
+# Read-only provenance audit; generated migrations never promoted or applied.
+name: DB-020 disposable PostgreSQL vs generated schema diagnosis
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/db020-registered-catalog-diff.yml"
+      - "scripts/db020-registered-catalog-diff.mjs"
+      - "drizzle/meta/0318_snapshot.json"
+permissions:
+  contents: read
+jobs:
+  diagnosis:
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    services:
+      postgres:
+        image: postgres:17-alpine
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: lms_vnext_test
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres -d lms_vnext_test"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 20
+    env:
+      TEST_DATABASE_URL: postgresql://postgres:postgres@127.0.0.1:5432/lms_vnext_test
+      DATABASE_URL: postgresql://postgres:postgres@127.0.0.1:5432/lms_vnext_test
+      DB020_DISPOSABLE_PG: "1"
+      DB03_ISOLATED_TEST_DATABASE: "1"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Pinned journal and clean registration
+        run: |
+          test "$(git rev-parse HEAD)" = "$GITHUB_SHA"
+          npm run db:journal:verify
+      - name: Disposable PG17 replay and seed
+        env:
+          DATABASE_URL: ""
+        run: npm run db:test:prepare
+      - name: Idempotent registered replay
+        run: npm run db:migrate
+      - name: Generate diagnostic snapshot only (DO NOT apply SQL)
+        run: |
+          npm run db:generate > .db020-generation.log 2>&1
+          cat .db020-generation.log
+          if grep -E "data is malformed|TypeError:|Error:" .db020-generation.log; then
+            echo "Drizzle generation failed; refuse diagnostic" >&2
+            exit 1
+          fi
+          test "$(git ls-files --others --exclude-standard 'drizzle/meta/*_snapshot.json' | wc -l)" -eq 1
+      - name: Compare the generated typed schema against registered PostgreSQL
+        run: node scripts/db020-registered-catalog-diff.mjs
+      - name: Keep output as diagnostic only; never promote generated DDL
+        run: |
+          test -f .verification/db020-catalog-disposition.json
+          test "$(git rev-parse HEAD)" = "$GITHUB_SHA"
+          node -e 'const j=require("./.verification/db020-catalog-disposition.json"); if(j.passCertification!==false)process.exit(1)'
+      - name: Store exact-source diagnostic artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: db020-registered-catalog-diagnosis
+          path: .verification/db020-catalog-disposition.json
+          retention-days: 7
+          if-no-files-found: warn
