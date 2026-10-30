@@ -11,6 +11,9 @@ Legacy navigation: Courses, Contacts, Notifications, Class Schedule, All Quizzes
 - [ ] Loading/empty/error states are verified.
 - [ ] Navigation preserves correct class context.
 
+**2026-10-31 closure work (awaiting executed acceptance):** The active-Faculty teaching-delivery service already enforces persisted college, membership, Faculty role, active offering/Section/period, and current grant dates. The visible list now starts on **all authorized periods** rather than the first, groups cards with explicit Section links and never sends a multi-class course's generic Open/attendance link to an arbitrary first class. Genuine zero assignments now have an honest administrator-action empty state. The progressive summary service covers the **full authorized cumulative page**, not just the first 100 deliveries. The caught list error uses a current-URL `router.refresh()` retry. See [course summary fix f616aba](https://github.com/42Students/lms-vnext/commit/f616aba9aebc28fe7e5739ad2f342d13aeb6584d), [multi-class and all-period list fix 838fc63](https://github.com/42Students/lms-vnext/commit/838fc636bd63b4a13e617d31a83bb094431a98e0), [fresh retry 09d65a3](https://github.com/42Students/lms-vnext/commit/09d65a3ea681c6b7df69d5a72c454b7553045d35). The [dedicated acceptance workflow](https://github.com/42Students/lms-vnext/actions/workflows/faculty-courses-list-acceptance.yml) runs a targeted PostgreSQL Faculty revocation/tenant filter scenario, three unit contract suites and real desktop/mobile Chromium list navigation. **Keep all five rows open until a passing exact-SHA run is recorded**. The separate five bootstrap/class-chooser rows under Course detail are out of scope for this closure.
+
+
 ## Page family: Course detail
 **Legacy tabs:** Overview, Blueprint, Students, Attendance, Discussions.
 
