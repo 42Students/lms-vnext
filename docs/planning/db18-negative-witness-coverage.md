@@ -10,7 +10,7 @@
 | Family | Authored | Runtime passed | Meaning |
 | --- | ---: | ---: | --- |
 | Read-only relational mismatch probes | 21 | 21 | Existing-row observation only; zero mismatches do not prove prevention |
-| Direct negative SQL boundary tests | 16 | 16 | Real FK/check/trigger/unique violations against registered schema |
+| Direct negative SQL boundary tests | 21 | 21 | Real FK/check/trigger/unique violations against registered schema |
 | Positive concurrency witnesses | 4 | 4 | Races whose current source has a locking/CAS strategy |
 | Known-defect red concurrency witnesses | 0 | 0 | No currently known race is still source-unfixed |
 | Fix-authored race regression verified | 2 | 2 | P5-R01 placement and P5-R02 academics regressions passed against disposable PG17 |
@@ -18,13 +18,15 @@
 
 Machine-readable denominator: `tests/integration/db18-witness-index.json`.
 
+**Five newly verified checks:** [Full DB-018 PG17 acceptance run 41107736939](https://github.com/42Students/lms-vnext/actions/runs/41107736939) at commit `654cbc9d69759100ca3fd87a538c6e0cfb3bc2c3` passed **92/92 tests** across seven integration files. [Focused registered relational run 41107736976](https://github.com/42Students/lms-vnext/actions/runs/41107736976) passed **35/35** in the relational/direct SQL file, including all five new constraints. The named domain witness denominator increased from 43 to **48/48 verified**, with **21/21 direct SQL negatives**. No production SQL was changed and all fixture mutations rolled back.
+
 **Evidence:** [GitHub Actions DB-018 PostgreSQL 17 run 41104567182](https://github.com/42Students/lms-vnext/actions/runs/41104567182) at exact commit `c78eb936db33489cbb3b57281793dfda5f10382d`: **45/45 focused Vitest cases PASS**, corresponding to **43/43 named domain witnesses** plus two fixture/inventory checks. All 21 joins were populated; no mismatches. The [repeat full matrix at 89a905a7](https://github.com/42Students/lms-vnext/actions/runs/41104843226) also passed after the denominator updates. This is a **partial task acceptance**, not overall DB-018 DONE.
 
 
 
 ## Direct registered-schema negatives
 
-`tests/integration/db018-relational-and-boundary-witnesses.test.ts` contributes seven foundational identity/tenant and SQL CHECK tests:
+`tests/integration/db018-relational-and-boundary-witnesses.test.ts` contributes twelve foundational identity, academic, course and placement SQL boundary tests:
 
 1. missing user FK on `college_memberships` → 23503;
 2. missing membership FK on `membership_roles` → 23503;
@@ -32,7 +34,12 @@ Machine-readable denominator: `tests/integration/db18-witness-index.json`.
 4. duplicate user/college membership → 23505;
 5. whitespace-only user given name → 23514;
 6. invalid zero academic terms → 23514;
-7. reversed academic period dates → 23514.
+7. reversed academic period dates → 23514;
+8. nonpositive user identity version (`users_version_ck`) → 23514;
+9. zero section capacity (`sections_capacity_ck`) → 23514;
+10. section minimum size greater than capacity (`sections_min_size_ck`) → 23514;
+11. course offering credits above the maximum (`db02_course_offerings_credits_ck`) → 23514;
+12. nonpositive placement-company version (`placement_companies_version_ck`) → 23514.
 
 `tests/integration/db18-registered-negative-witnesses.test.ts` contributes nine additional DB03/DB06 tests:
 
@@ -89,21 +96,21 @@ npx vitest run --config vitest.db.config.ts \
   tests/integration/db18-placement-race-gap.test.ts
 ```
 
-Both P5-R01 and P5-R02 fixes are authored. Their race tests must now execute green on disposable PostgreSQL before either is counted runtime-passed; they must not be suppressed or skipped.
+Both P5-R01 and P5-R02 passed on disposable PostgreSQL. Preserve those actual race witnesses on every subsequent registered DB-018 acceptance, without suppression or skips.
 
 ## Expanded CI gate (2026-10-30)
 
 The dedicated `.github/workflows/db018-relational-witness-acceptance.yml` now invokes the registered direct DB03/DB06 negative suite, both DB18 concurrency tests, both fixed-race regressions (P5-R01/P5-R02), and the original DB03 elective and C4b quiz max-attempt two-session witnesses. These run against the workflow's isolated PostgreSQL 17 database with `TEST_DATABASE_URL` and `DATABASE_URL` pointing to the same disposable target.
 
-**Execution is verified on the exact runs linked above:** the denominator is **21 observational probes + 16 direct negatives + 4 positive concurrency witnesses + 2 fixed-race regressions**. The results of the 21 joins (including populated fixtures) alone cannot certify prevention.
+**Execution is verified on exact commits:** the denominator is **21 observational probes + 21 direct negatives + 4 positive concurrency witnesses + 2 fixed-race regressions**. The results of the 21 joins (including populated fixtures) alone cannot certify prevention.
 
 ## DB-018 completion interpretation
 
-DB-018 may be marked **COMPLETED (implementation authored, unverified)** once this coverage/index is committed. It must **not** become `DONE_VERIFIED` until:
+DB-018 is **not** globally DONE, although its full registered witness matrix has passed. Global DB-018 acceptance still depends on DB-001 independent verification, DB-014 tenant/FK sweep, DB-020 schema drift/phase-gate certification and outstanding source race-gap dispositions. The focused matrix established that:
 
 - the registered migration journal is replayed on disposable PostgreSQL;
 - all 21 read-only probes execute with non-vacuous fixture coverage and zero mismatch rows;
-- the 16 direct negative mutations reject with their expected SQLSTATE;
+- the 21 direct negative mutations reject with their expected SQLSTATE;
 - the 4 positive concurrency witnesses pass;
 - P5-R01 and P5-R02 are fixed and their red tests turn green;
 - execution evidence is recorded against exact commits.
