@@ -8,8 +8,17 @@ const journal=JSON.parse(readFileSync("drizzle/meta/_journal.json","utf8"));
 test("DB014 0318 registered PLpgSQL functions have balanced, valid dollar quoted bodies",()=>{
  assert.ok(journal.entries.some(x=>x.tag==="0318_db014_cross_domain_event_guards"),"0318 registered guard must remain in immutable journal");
  assert.equal((sql.match(/CREATE OR REPLACE FUNCTION db14_/g)||[]).length,3);
- assert.equal((sql.match(/\bAS \$\$/g)||[]).length,3);
- assert.equal((sql.match(/^\$\$;$/gm)||[]).length,3);
+ // Tagged SQL dollar delimiters must balance. Named tags are intentional:
+ // the Drizzle migrator splits on "--> statement-breakpoint" and plain $
+ // can be accidentally rewritten or reinterpreted by migration tooling.
+ for(const tag of [
+  "db14_activity_event_scope",
+  "db14_notification_recipient_scope",
+  "db14_group_member_event_scope",
+ ]){
+  assert.equal(sql.split("AS $" + tag + "$").length - 1,1,tag+" opening");
+  assert.equal(sql.split("\\n$" + tag + "$;").length - 1,1,tag+" terminator");
+ }
  assert.doesNotMatch(sql,/^\$;$/m);
  assert.equal((sql.match(/CREATE TRIGGER db14_/g)||[]).length,3);
  for(const name of [
