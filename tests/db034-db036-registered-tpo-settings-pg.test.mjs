@@ -6,7 +6,7 @@ import { assertDb018DisposableTarget } from "./support/db018-test-target.mjs";
 if(process.env.DB034_036_REGISTERED_PG!=="YES")throw Error("Explicit disposable registered PG required");
 assertDb018DisposableTarget(process.env,{serviceBound:true});
 const ca="20000000-0000-4000-8000-000000000001",cb="20000000-0000-4000-8000-000000000002";
-const admin="30000000-0000-4000-8000-000000000002",faculty="30000000-0000-4000-8000-000000000003";
+const admin="30000000-0000-4000-8000-000000000002";
 const deptA="21000000-0000-4000-8000-000000000001",deptB="21000000-0000-4000-8000-000000000002";
 async function withTx(fn){
  const db=new pg.Client({connectionString:process.env.TEST_DATABASE_URL,connectionTimeoutMillis:10000,query_timeout:15000});
@@ -31,7 +31,16 @@ test("DB034 registered trusted-domain and prep-course tenant/FK policy",async()=
    await denied(db,insert,[ca,invalid,admin],["23514"]);
   await denied(db,insert,[ca,"corp-"+suffix+".example.edu",admin],["23505"]);
   await denied(db,insert,[cb,"denied-"+suffix+".edu",admin]);
-  await denied(db,insert,[ca,"denied-"+suffix+".edu",faculty]);
+  // The shared seeded faculty can hold additional placement roles in other
+  // fixtures. Construct a genuine LEARNER-only principal for this SQL denial.
+  const unauthorized=await row(db,"INSERT INTO users(identity_uid,display_name) VALUES($1,$2) RETURNING id",
+   ["db034-learner-"+suffix,"DB034 unauthorized writer "+suffix]);
+  const member=await row(db,"INSERT INTO college_memberships(user_id,college_id) VALUES($1,$2) RETURNING id",
+   [unauthorized.id,ca]);
+  await db.query("INSERT INTO membership_roles(membership_id,role) VALUES($1,'LEARNER')",[member.id]);
+  const principal=await row(db,"SELECT db09_has_active_tpo_actor($1,$2) AS accepted",[unauthorized.id,ca]);
+  assert.equal(principal.accepted,false,"a real learner principal cannot write TPO settings");
+  await denied(db,insert,[ca,"denied-"+suffix+".edu",unauthorized.id]);
   const a=await row(db,"INSERT INTO courses(department_id,name,code) VALUES($1,$2,$3) RETURNING id",
    [deptA,"DB034 own "+suffix,"DB034-A-"+suffix]);
   const b=await row(db,"INSERT INTO courses(department_id,name,code) VALUES($1,$2,$3) RETURNING id",
