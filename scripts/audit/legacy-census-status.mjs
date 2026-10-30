@@ -59,8 +59,13 @@ export function buildLegacyCensusStatus({census,inspectionFiles,overlay,deep,bac
   // Changed/added dev pages absent from the frozen census MUST be surfaced.
   // Otherwise an entirely new account can be invisible to --assert-exhaustive.
   const unmappedChangedRoutePaths=unique(changedRoutes.filter(p=>!expectedRoutes.includes(p)));
-  const affectedComponents=(drift.legacyFrontend?.changedSourceComponents||[]).map(x=>x.path)
-    .filter(p=>expectedComponents.includes(p));
+  const changedComponents=(drift.legacyFrontend?.changedSourceComponents||[]).map(x=>x.path).filter(Boolean);
+  const affectedComponents=unique(changedComponents.filter(p=>expectedComponents.includes(p)));
+  // Newly introduced dialog/drawer/interactive components must not disappear
+  // from the frozen component inspection denominator.
+  const unmappedChangedComponentPaths=unique(changedComponents.filter(p=>!expectedComponents.includes(p)));
+  const changedNavigationOrLayoutPaths=unique((drift.legacyFrontend?.changedNavigationOrLayout||[])
+    .map(x=>typeof x==="string"?x:x?.path).filter(Boolean));
   const status={
     sourceBaseline:{
       frontend:census.sourceSnapshots?.legacyFrontend?.treeSha,
@@ -82,7 +87,8 @@ export function buildLegacyCensusStatus({census,inspectionFiles,overlay,deep,bac
       deepComponentRecords:unique(deepPaths).length,
       obsoleteOrUnmatchedInspectionPaths:unknownComponents,
       staleAfterDevChanges:{changedRouteFiles:affectedRoutes.length,changedComponentFiles:affectedComponents.length,
-        routes:affectedRoutes,components:affectedComponents,unmappedChangedRoutePaths},
+        routes:affectedRoutes,components:affectedComponents,unmappedChangedRoutePaths,
+        unmappedChangedComponentPaths,changedNavigationOrLayoutPaths},
     },
     backend:{controllerCandidateFiles:expectedBack.length,
       controllerSourceFilesInspected:unique(backPaths).length,
@@ -135,7 +141,9 @@ export function run(argv=process.argv.slice(2),root=ROOT){
     result.backend.uninspectedControllerSourceFiles||
     result.frontend.staleAfterDevChanges.changedRouteFiles||
     result.frontend.staleAfterDevChanges.unmappedChangedRoutePaths.length||
-    result.frontend.staleAfterDevChanges.changedComponentFiles))return 2;
+    result.frontend.staleAfterDevChanges.changedComponentFiles||
+    result.frontend.staleAfterDevChanges.unmappedChangedComponentPaths.length||
+    result.frontend.staleAfterDevChanges.changedNavigationOrLayoutPaths.length))return 2;
   return 0;
 }
 if(process.argv[1]&&path.resolve(process.argv[1])===fileURLToPath(import.meta.url)){
