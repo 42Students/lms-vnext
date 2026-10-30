@@ -22,7 +22,7 @@ END $db014_legacy_event_preflight$;
 CREATE OR REPLACE FUNCTION db14_guard_activity_event_scope()
 RETURNS trigger
 LANGUAGE plpgsql
-AS $$
+AS $db14_activity_event_scope$
 DECLARE
   resolved_organization_id uuid;
   actor_membership_user_id uuid;
@@ -65,7 +65,7 @@ BEGIN
 
   RETURN NEW;
 END;
-$$;
+$db14_activity_event_scope$;
 --> statement-breakpoint
 CREATE TRIGGER db14_activity_event_scope_guard
 BEFORE INSERT OR UPDATE OF
@@ -84,7 +84,7 @@ EXECUTE FUNCTION db14_guard_activity_event_scope();
 CREATE OR REPLACE FUNCTION db14_guard_notification_recipient_scope()
 RETURNS trigger
 LANGUAGE plpgsql
-AS $$
+AS $db14_notification_recipient_scope$
 DECLARE
   event_college_id uuid;
   event_organization_id uuid;
@@ -172,7 +172,7 @@ BEGIN
 
   RETURN NEW;
 END;
-$$;
+$db14_notification_recipient_scope$;
 --> statement-breakpoint
 CREATE TRIGGER db14_notification_recipient_scope_guard
 BEFORE INSERT OR UPDATE OF user_id, event_id
@@ -190,7 +190,7 @@ EXECUTE FUNCTION db14_guard_notification_recipient_scope();
 CREATE OR REPLACE FUNCTION db14_guard_group_member_event_scope()
 RETURNS trigger
 LANGUAGE plpgsql
-AS $$
+AS $db14_group_member_event_scope$
 DECLARE
   group_owner_scope text;
   group_college_id uuid;
@@ -265,7 +265,7 @@ BEGIN
 
   RETURN NEW;
 END;
-$$;
+$db14_group_member_event_scope$;
 --> statement-breakpoint
 CREATE TRIGGER db14_group_member_event_scope_guard
 BEFORE INSERT OR UPDATE OF
