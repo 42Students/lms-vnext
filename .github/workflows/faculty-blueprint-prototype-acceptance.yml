@@ -17,6 +17,7 @@ on:
       - "src/components/courses/faculty-course-workspace.tsx"
       - "tests/e2e/faculty-blueprint-prototype.spec.ts"
       - "tests/e2e/faculty-courses.spec.ts"
+      - "tests/e2e/faculty-blueprint-external-content-closure.spec.ts"
       - "tests/unit/faculty-content-order-ui-model.test.ts"
       - "tests/unit/faculty-blueprint-sort-model.test.ts"
       - "tests/unit/faculty-blueprint-archive-receipt.test.ts"
@@ -90,6 +91,10 @@ jobs:
         run: >-
           npx playwright test tests/e2e/faculty-courses.spec.ts
           --grep "Faculty Blueprint creates, edits and archives an own-Section Resource without private storage"
+          --workers=1
+      - name: Verify Faculty YouTube and live-class non-storage lifecycle on persisted Section
+        run: >-
+          npx playwright test tests/e2e/faculty-blueprint-external-content-closure.spec.ts
           --workers=1
       - name: Confirm real Section Assignment and Quiz create, edit and archive journeys
         run: >-
