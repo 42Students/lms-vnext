@@ -129,3 +129,66 @@ test("verification history is immutable and ownership/version changes cannot byp
     await db.query("UPDATE profile_verifications SET row_version=2 WHERE id=$1",[id]);
   });
 });
+
+
+test("DB-080 registered gallery owner/state negatives and DB-081 qualification GPA/year rules",async()=>{
+  await rollbackOnly(async db=>{
+    const [owner,other]=await members(db);
+    // The DB-080 persistence contract must reject a valid receipt belonging
+    // to a different learner, and reject non-image purposes even for self.
+    const ownImage=await receipt(db,owner,"PROFILE_IMAGE");
+    const otherImage=await receipt(db,other,"PROFILE_IMAGE");
+    const marksheet=await receipt(db,owner,"MARKSHEET");
+    const imageId=randomUUID();
+    await db.query(
+      "INSERT INTO learner_profile_images (id,learner_membership_id,receipt_id) VALUES ($1,$2,$3)",
+      [imageId,owner.id,ownImage],
+    );
+    await denies(db,
+      "INSERT INTO learner_profile_images (learner_membership_id,receipt_id) VALUES ($1,$2)",
+      [owner.id,otherImage],"23503");
+    await denies(db,
+      "INSERT INTO learner_profile_images (learner_membership_id,receipt_id) VALUES ($1,$2)",
+      [other.id,ownImage],"23503");
+    await denies(db,
+      "INSERT INTO learner_profile_images (learner_membership_id,receipt_id) VALUES ($1,$2)",
+      [owner.id,marksheet],"23503");
+    await denies(db,
+      "INSERT INTO learner_profile_images (learner_membership_id,receipt_id,display_order) VALUES ($1,$2,-1)",
+      [owner.id,otherImage],"23514");
+    await denies(db,
+      "UPDATE learner_profile_images SET is_active=false WHERE id=$1",
+      [imageId],"23514");
+    await db.query(
+      "UPDATE learner_profile_images SET is_active=false,deactivated_at=now() WHERE id=$1",
+      [imageId],
+    );
+    const inactive=(await db.query(
+      "SELECT is_active,deactivated_at FROM learner_profile_images WHERE id=$1",[imageId]
+    )).rows[0];
+    assert.equal(inactive.is_active,false);
+    assert.ok(inactive.deactivated_at);
+    await denies(db,
+      "INSERT INTO learner_profile_images (learner_membership_id,receipt_id) VALUES ($1,$2)",
+      [owner.id,ownImage],"23505");
+
+    // A valid GPA education is accepted without relying on a conflicting
+    // is_recent_education insert that could hide an incorrect grading CHECK.
+    await db.query(
+      "INSERT INTO learner_profile_education_entries "+
+      "(learner_membership_id,education_type,institution_name,grading_type,grade_obtained,max_grade,start_year,end_year) "+
+      "VALUES ($1,'UG','Disposable College','GPA','3.8','4.0',2022,2026)",
+      [owner.id],
+    );
+    await denies(db,
+      "INSERT INTO learner_profile_education_entries "+
+      "(learner_membership_id,education_type,institution_name,grading_type,grade_obtained,max_grade,start_year,end_year) "+
+      "VALUES ($1,'UG','Disposable College','GPA','3.8','4.0',2027,2026)",
+      [owner.id],"23514");
+    await denies(db,
+      "INSERT INTO learner_profile_education_entries "+
+      "(learner_membership_id,education_type,institution_name,grading_type,grade_obtained,max_grade,is_currently_pursuing,end_year) "+
+      "VALUES ($1,'UG','Disposable College','GPA','3.8','4.0',true,2026)",
+      [owner.id],"23514");
+  });
+});
