@@ -24,7 +24,7 @@ const token=issueTpoCampaignRecipientToken({
 
 function fakeVerifiedDb(snapshotKey:string|null,locked=true,lockedKeyOverride?:string){
  const preflightLimit=vi.fn(async()=>snapshotKey?[{
-  recipientKey:snapshotKey,email,
+  recipientKey:snapshotKey,leadId:lead,email,
  }]:[]);
  const select=vi.fn(()=>({
   from:()=>({innerJoin:()=>({where:()=>({orderBy:()=>({limit:preflightLimit})})})}),
