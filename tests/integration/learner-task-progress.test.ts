@@ -9,6 +9,7 @@ import { addProjectMember } from "@/modules/projects/member-service";
 import { createProjectInstance, getProjectInstanceWorkspace } from "@/modules/projects/instance-service";
 import { startProjectSprint } from "@/modules/projects/lifecycle-service";
 import { updateLearnerProjectTaskProgress } from "@/modules/projects/learner-task-progress-service";
+import { moveMentorBacklogTask, createMentorBacklogTask } from "@/modules/projects/mentor-backlog-service";
 import {
   assignProjectTemplateToCollege, createProjectTemplate, publishProjectTemplate,
 } from "@/modules/projects/template-service";
@@ -55,6 +56,7 @@ async function fixture() {
       tasks: [
         { key: "task-1", sprintKey: "sprint-1", title: "First task", priority: "HIGH" as const, sequence: 0 },
         { key: "task-2", sprintKey: "sprint-1", title: "Second task", priority: "MEDIUM" as const, sequence: 1 },
+        { key: "task-3", sprintKey: "sprint-1", title: "Reserved task", priority: "LOW" as const, sequence: 2 },
       ],
       resources: [],
     },
@@ -148,4 +150,67 @@ describe.skipIf(!enabled)("LEARNER-projects-25 authorized persisted task progres
       projectId: project.id, taskId: randomUUID(),
     }, input)).rejects.toMatchObject({ code: "PROJECT_TASK_NOT_FOUND" });
   });
+
+  it("preserves a soft-deleted task's unique sequence reservation during learner reorder", async () => {
+    const { project, tasks } = await fixture();
+    const first = tasks.find(task => task.templateKey === "task-1")!;
+    const second = tasks.find(task => task.templateKey === "task-2")!;
+    const retired = tasks.find(task => task.templateKey === "task-3")!;
+    // The registered unconditional (sprint_id, sequence) unique index
+    // continues to reserve sequence=2 even after this task is soft-deleted.
+    await pool!.query("update project_tasks set deleted_at=clock_timestamp() where id=$1", [retired.id]);
+    const moved = await updateLearnerProjectTaskProgress(learner, {
+      projectId: project.id, taskId: first.id,
+    }, { action: "MOVE_DOWN", expectedUpdatedAt: first.updatedAt.toISOString() });
+    expect(moved.sequence).toBe(1);
+    const result = await pool!.query<{id:string;sequence:number;deleted_at:Date|null}>(
+      "select id,sequence,deleted_at from project_tasks where id=any($1::uuid[])",
+      [[first.id,second.id,retired.id]],
+    );
+    const rows = new Map(result.rows.map(row => [row.id, row]));
+    expect(rows.get(first.id)?.sequence).toBe(1);
+    expect(rows.get(second.id)?.sequence).toBe(0);
+    expect(rows.get(retired.id)?.sequence).toBe(2);
+    expect(rows.get(retired.id)?.deleted_at).not.toBeNull();
+    await expect(updateLearnerProjectTaskProgress(learner, {
+      projectId:project.id,taskId:retired.id,
+    }, { action:"STATUS",status:"IN_PROGRESS",
+      expectedUpdatedAt:retired.updatedAt.toISOString(),
+    })).rejects.toMatchObject({code:"PROJECT_TASK_NOT_FOUND"});
+  });
+
+  it("rejects learner task mutations on a deleted sprint", async () => {
+    const {project,tasks} = await fixture();
+    const first=tasks.find(task=>task.templateKey==="task-1")!;
+    await pool!.query("update project_sprints set deleted_at=clock_timestamp() where id=$1",[first.sprintId]);
+    await expect(updateLearnerProjectTaskProgress(learner,{
+      projectId:project.id,taskId:first.id,
+    },{action:"STATUS",status:"IN_PROGRESS",
+      expectedUpdatedAt:first.updatedAt.toISOString(),
+    })).rejects.toMatchObject({code:"PROJECT_TASK_INVALID_STATE"});
+    const checked=await pool!.query<{status:string}>("select status from project_tasks where id=$1",[first.id]);
+    expect(checked.rows[0]?.status).toBe("TODO");
+  });
+
+  it("denies mentor backlog movement of deleted tasks and into deleted sprints", async () => {
+    const {project,tasks} = await fixture();
+    const first=tasks.find(task=>task.templateKey==="task-1")!;
+    await pool!.query("update project_tasks set deleted_at=clock_timestamp() where id=$1",[first.id]);
+    const retired=await pool!.query<{updated_at:Date}>(
+      "select updated_at from project_tasks where id=$1",[first.id]);
+    await expect(moveMentorBacklogTask(mentor,project.id,{
+      taskId:first.id,targetSprintId:null,
+      expectedUpdatedAt:retired.rows[0]!.updated_at.toISOString(),
+    })).rejects.toMatchObject({code:"PROJECT_TASK_INVALID_STATE"});
+    const backlog=await createMentorBacklogTask(mentor,project.id,{title:"Active backlog task"});
+    await pool!.query("update project_sprints set deleted_at=clock_timestamp() where id=$1",[first.sprintId]);
+    await expect(moveMentorBacklogTask(mentor,project.id,{
+      taskId:backlog.id,targetSprintId:first.sprintId,
+      expectedUpdatedAt:backlog.updatedAt.toISOString(),
+    })).rejects.toMatchObject({code:"PROJECT_TASK_INVALID_STATE"});
+    const checked=await pool!.query<{sprint_id:string|null}>(
+      "select sprint_id from project_tasks where id=$1",[backlog.id]);
+    expect(checked.rows[0]?.sprint_id).toBeNull();
+  });
+
 });
