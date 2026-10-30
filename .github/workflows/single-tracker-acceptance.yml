@@ -43,5 +43,22 @@ jobs:
         run: node --test tests/db06-history-staging.test.mjs tests/db06-assessment-retention-staging.test.mjs tests/db06-attendance-scope-staging.test.mjs
       - name: Verify DB066 locked result staging source guard
         run: node scripts/verify-db08-cross-parent-source.mjs
+      - name: DB031 and DB043 source-stage contract checks
+        run: |
+          node --test tests/db10-sms-delivery-attempts-staging.test.mjs tests/db10-notification-campaign-staging.test.mjs
+      - name: DB049 and DB053 source-stage contract checks
+        run: |
+          node --test tests/db10-campaign-publish-guard.test.mjs tests/db06-assignment-upload-receipt-staging.test.mjs
+      - name: DB066 and DB067 source-stage contract checks
+        run: |
+          node --test tests/db08-cross-parent-integrity.test.mjs tests/db067-outbound-dispatch-contract.test.mjs
+      - name: DB069 and DB072 source-stage contract checks
+        run: |
+          node scripts/verify-db09-team-owner-source.mjs
+          node --test tests/db09-team-owner-lifecycle.test.mjs tests/db08-recruiter-code-contract.test.mjs
+          node scripts/verify-db08-recruiter-code-source.mjs
+      - name: DB010 and DB016 original reconciliation source contracts
+        run: |
+          node --test tests/db07-reconciliation-contract.test.mjs tests/db16-private-storage-safety.test.mjs
       - name: Execute plan and task acceptance tests
         run: node --test tests/tracker.test.mjs tests/database-domain-packages.test.mjs tests/tracker-ten-lanes.test.mjs tests/tracker-progress-evidence.test.mjs tests/closure-first-protocol.test.mjs
