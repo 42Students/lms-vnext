@@ -223,6 +223,13 @@ async function insertAcademicWitnessFixture(client: PoolClient, id: string) {
       "INSERT INTO college_memberships (id,user_id,college_id,status) VALUES ($1,$2,$3,'ACTIVE')",
       [membership,user,SEED_IDS.collegeA],
     );
+    // DB02's registered enrollment guard requires a live LEARNER role.
+    // Seed the role inside the same rollback-only transaction so the
+    // relational join has real rows without bypassing authorization.
+    await client.query(
+      "INSERT INTO membership_roles (membership_id,role) VALUES ($1,'LEARNER')",
+      [membership],
+    );
     await client.query(
       "INSERT INTO learner_program_enrollments (id,membership_id,program_id,cohort_id,status) VALUES ($1,$2,$3,$4,'ACTIVE')",
       [enrollment,membership,program,cohort],
