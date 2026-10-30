@@ -29,11 +29,22 @@ test("Faculty Blueprint persists YouTube and live-class create edit archive for 
  const lessonId=new URL((await chosen.getAttribute("href"))!,page.url()).searchParams.get("lesson");
  expect(lessonId).toMatch(/^[0-9a-f-]{36}$/i);
  const base="/teacher/courses/"+deliveryId+"/blueprint?lesson="+encodeURIComponent(lessonId!);
+ // Follow the actual Blueprint action links, rather than reconstructing a
+ // URL and silently testing a different navigation from the learner-facing UI.
+ const add=explorer.locator("details").filter({hasText:"+ Add content"}).first();
+ await add.locator("summary").click();
+ const target={
+  YOUTUBE:await add.getByRole("link",{name:"YouTube",exact:true}).getAttribute("href"),
+  LIVE_CLASS:await add.getByRole("link",{name:"Live class",exact:true}).getAttribute("href"),
+ };
+ expect(target.YOUTUBE).toContain("lesson="+encodeURIComponent(lessonId!));
+ expect(target.LIVE_CLASS).toContain("lesson="+encodeURIComponent(lessonId!));
  const futureDate=new Date(Date.now()+15*86400_000).toISOString().slice(0,10);
  for(const mode of ["YOUTUBE","LIVE_CLASS"] as const){
   const title="Faculty "+mode+" scoped lifecycle "+Date.now();
   const revisedNotes="Verified "+mode+" notes persisted";
-  await page.goto(base+"&advanced=1&create="+mode);
+  await page.goto(target[mode]!);
+  await expect(page.getByRole("textbox",{name:"Content Title"})).toBeVisible({timeout:30_000});
   await page.getByRole("textbox",{name:"Content Title"}).fill(title);
   if(mode==="YOUTUBE"){
    await page.getByRole("textbox",{name:"YouTube URL"}).fill("https://youtu.be/aBcDeFgHi12");
