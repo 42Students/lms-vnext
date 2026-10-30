@@ -168,9 +168,12 @@ async function insertProjectWitnessFixture(client: PoolClient, id: string) {
     const submission = await createTaskSubmission(fixtureDb,project,learner);
     if (id === "P5-04") {
       // P5-04's relational join uses the optional reviewer member.
+      // This row must satisfy the real submitted-vs-reviewed check; an
+      // isolated reviewer ID alone would create an impossible state.
       await client.query(
-        "UPDATE project_task_submissions SET reviewed_by_membership_id=$1 WHERE id=$2",
-        [mentor.membershipId,submission],
+        "UPDATE project_task_submissions SET status='APPROVED', " +
+        "reviewed_by_user_id=$1, reviewed_by_membership_id=$2, reviewed_at=now() WHERE id=$3",
+        [mentor.userId,mentor.membershipId,submission],
       );
     }
   }
