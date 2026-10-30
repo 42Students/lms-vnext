@@ -50,7 +50,7 @@ async function assertShareLockPreventsRevocation(label,updateSql,args){
     await writer.query("ROLLBACK");
     // Revocation succeeds only after accepted writer releases its SHARE locks.
     const changed=await revoker.query(updateSql,args);
-    assert.equal(changed.rowCount,1,label+" must be revocable without held writer lock");
+    assert.ok(changed.rowCount>=1,label+" must be revocable without held writer lock");
     await revoker.query("SAVEPOINT denied_write");
     await expectError(insertLead(revoker),"23514");
     await revoker.query("ROLLBACK TO SAVEPOINT denied_write");
@@ -73,14 +73,14 @@ test("DB079 lead owner membership revocation serializes with accepted insert",as
 test("DB079 lead owner role removal serializes with accepted insert",async()=>{
   await assertShareLockPreventsRevocation(
     "role",
-    "delete from membership_roles where membership_id=$1 and role='FACULTY'",
+    "delete from membership_roles where membership_id=$1 and role in ('FACULTY','COLLEGE_ADMIN','TPO')",
     [owner],
   );
 });
 test("DB079 lead owner platform disable serializes with accepted insert",async()=>{
   await assertShareLockPreventsRevocation(
     "user",
-    "update users set platform_status='SUSPENDED' where id=$1",
+    "update users set platform_status='DISABLED' where id=$1",
     [SEED_IDS.facultyUser],
   );
 });
