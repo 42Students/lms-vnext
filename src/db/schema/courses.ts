@@ -151,12 +151,6 @@ export const courseOfferings = pgTable(
     legacySemesterCourseId: integer("legacy_semester_course_id"),
     legacySortOrder: integer("legacy_sort_order"),
     legacyWasElective: boolean("legacy_was_elective"),
-    // Registered DB02 curriculum reference. This field was absent from the
-    // Drizzle model, causing .set({programTermCourseId:null}) to silently
-    // omit the SQL column during a legitimate CORE -> ELECTIVE transition.
-    // Its FK is owned by the numbered DB02 migration (academic-terms imports
-    // courses, so referencing it here would make a circular schema import).
-    programTermCourseId: uuid("program_term_course_id"),
     type: courseOfferingTypeEnum("type")
       .notNull()
       .default("CORE"),
