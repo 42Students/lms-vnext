@@ -13,6 +13,9 @@ on:
       - "tests/integration/groups-db03.test.ts"
       - "tests/integration/courses-c4b-quizzes.test.ts"
       - "docs/planning/database-parity-pass5-probe-manifest.json"
+      - "docs/planning/db18-negative-witness-coverage.md"
+      - "tests/integration/db18-witness-index.json"
+      - "tests/db-parity-pass5.test.mjs"
       - ".github/workflows/db018-relational-witness-acceptance.yml"
 
 permissions:
