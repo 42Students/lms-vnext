@@ -804,8 +804,26 @@
       "id": "DB-051",
       "title": "Fail-close localhost/proxy destructive database reset ambiguity",
       "phase": "DATABASE",
-      "done": false,
-      "dependsOn": []
+      "done": true,
+      "dependsOn": [],
+      "acceptedAt": "2026-10-30",
+      "acceptanceEvidence": [
+        {
+          "kind": "EXECUTED_FAIL_CLOSED_SECURITY_AND_DISPOSABLE_POSTGRES",
+          "result": "PASS",
+          "commitSha": "62cbeddddec8181a8e220b0504c97aac23360b7b",
+          "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/41022022531",
+          "jobId": 123951295281,
+          "runner": "GitHub Actions ubuntu-latest Node.js 22 and disposable PostgreSQL 17-alpine",
+          "commands": [
+            "node --test tests/db01-test-database-guard.test.mjs (46/46 PASS)",
+            "npm run db:test:prepare with DATABASE_URL cleared",
+            "npm run db:migrate",
+            "PostgreSQL catalog/fixture witness"
+          ],
+          "details": "Nine source/process no-network checks exercise test-only local bypass, exact local non-test reset confirmation, loopback aliases, hostless URLs, port-scoped remote approval and wrong-confirmation refusal; real disposable PG17 migration/seed reset succeeded. No production/proxy database was touched. All applicable guard/seed scripts and tests remained unchanged on main through this closure. Scope is database target safety, not full product release."
+        }
+      ]
     },
     {
       "id": "DB-052",
@@ -834,8 +852,26 @@
       "id": "DB-055",
       "title": "Fail-close deterministic database seed target selection",
       "phase": "DATABASE",
-      "done": false,
-      "dependsOn": []
+      "done": true,
+      "dependsOn": [],
+      "acceptedAt": "2026-10-30",
+      "acceptanceEvidence": [
+        {
+          "kind": "EXECUTED_FAIL_CLOSED_SECURITY_AND_DISPOSABLE_POSTGRES",
+          "result": "PASS",
+          "commitSha": "62cbeddddec8181a8e220b0504c97aac23360b7b",
+          "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/41022022531",
+          "jobId": 123951295281,
+          "runner": "GitHub Actions ubuntu-latest Node.js 22 and disposable PostgreSQL 17-alpine",
+          "commands": [
+            "node --test tests/db01-test-database-guard.test.mjs (46/46 PASS)",
+            "npm run db:test:prepare with DATABASE_URL cleared",
+            "npm run db:migrate",
+            "PostgreSQL catalog/fixture witness"
+          ],
+          "details": "Five direct-seed guard tests establish pre-connection authorization, non-disposable local rejection, remote seed opt-in plus exact confirmation, rejection of query-directed target redirection and reset-authorized seed strict remote checks; disposable PostgreSQL 17 positive seed and physical fixture were executed. All applicable guard/seed scripts and tests remained unchanged on main through this closure. Scope is database target safety, not full product release."
+        }
+      ]
     },
     {
       "id": "DB-056",
