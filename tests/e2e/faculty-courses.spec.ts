@@ -381,62 +381,84 @@ test("Faculty can start Course-bound Assignment and Quiz drafts on aggregate pag
 });
 
 test("Faculty Assignment aggregate creates, filters, edits and archives an actual Section draft", async ({ page, context }, testInfo) => {
-  test.setTimeout(90_000);
+  test.setTimeout(120_000);
   await facultyLogin(context);
+  await page.goto("/teacher/courses");
+  await page.getByRole("link", { name: /E2E Browser Course/ }).first().click();
+  await expect(page).toHaveURL(/\/teacher\/courses\/[0-9a-f-]{36}\/home$/i);
+  const deliveryId=new URL(page.url()).pathname.split("/")[3]!;
+  const commandPath="/api/courses/faculty/assignments/"+deliveryId+"/command";
+  await page.goto("/teacher/courses/"+deliveryId+"/assignments/manage");
+  await expect(page.getByRole("heading",{name:"Assignment authoring"})).toBeVisible();
+  const first="Faculty cross-course assignment "+Date.now()+" "+testInfo.retry;
+  const renamed=first+" amended";
+  await page.getByRole("textbox",{name:"Title",exact:true}).fill(first);
+  await page.getByRole("textbox",{name:"Text instructions"}).fill("E2E class-scoped assignment");
+  await page.getByRole("checkbox",{name:"Publish now"}).uncheck();
+  const creating=page.waitForResponse(response=>response.request().method()==="POST" &&
+    new URL(response.url()).pathname===commandPath);
+  await page.getByRole("button",{name:"Create draft"}).click();
+  const created=await creating;
+  expect(created.status()).toBe(200);
+  const saved=await created.json();
+  const assignmentId:string=saved.assignment?.id;
+  expect(assignmentId).toMatch(/^[0-9a-f-]{36}$/i);
+  const staleToken:string=saved.assignment.updatedAt;
+  await page.reload();
+  await page.getByRole("combobox",{name:"Choose draft or create new"})
+    .selectOption({label:first+" (DRAFT)"});
+  await page.getByRole("textbox",{name:"Title",exact:true}).fill(renamed);
+  const editing=page.waitForResponse(response=>response.request().method()==="POST" &&
+    new URL(response.url()).pathname===commandPath);
+  await page.getByRole("button",{name:"Save draft"}).click();
+  const edited=await editing;
+  expect(edited.status()).toBe(200);
+  expect((await edited.json()).assignment.title).toBe(renamed);
+  const stale=await page.evaluate(async ({commandPath,assignmentId,staleToken})=>{
+    return (await fetch(commandPath,{method:"POST",headers:{"Content-Type":"application/json"},
+      body:JSON.stringify({action:"ARCHIVE",assignmentId,expectedUpdatedAt:staleToken,confirmed:true})})).status;
+  },{commandPath,assignmentId,staleToken});
+  expect(stale).toBeGreaterThanOrEqual(400);
+
   await page.goto("/teacher/allAssignments");
-  await page.getByRole("button", { name: "+ Create Assignment" }).click();
-  const create = page.getByRole("dialog", { name: "Create Assignment" });
-  await expect(create.getByLabel("Choose assessment lesson")).toBeVisible();
-  const first = "Faculty draft browser acceptance " + testInfo.retry;
-  const renamed = "Faculty updated browser acceptance " + testInfo.retry;
-  await create.getByLabel("Title", { exact: true }).fill(first);
-  const createdResponse = page.waitForResponse((res) =>
-    res.request().method() === "POST" &&
-    new URL(res.url()).pathname === "/api/courses/assignments");
-  await create.getByRole("button", { name: "Create draft" }).click();
-  const created = await createdResponse;
-  expect(created.status()).toBe(201);
-  const assignmentId: string = (await created.json()).assignment.id;
-  expect(assignmentId).toBeTruthy();
+  await expect(page.getByRole("heading",{level:1,name:"My Assignments"})).toBeVisible();
+  await page.getByRole("textbox",{name:"Search assessments"}).fill(renamed);
+  await page.getByRole("combobox",{name:"Status"}).selectOption("DRAFT");
+  const card=page.locator("article").filter({has:page.getByRole("heading",{name:renamed})});
+  await expect(card).toBeVisible();
+  await expect(card.getByText("This Section",{exact:true}).first()).toBeVisible();
+  await card.locator("summary").filter({hasText:/^Actions/}).click();
+  await expect(card.getByRole("link",{name:"View Report"}))
+    .toHaveAttribute("href",new RegExp("/teacher/report/assignment/"+assignmentId));
+
+  await page.goto("/teacher/courses/"+deliveryId+"/assignments/manage");
+  await page.getByRole("combobox",{name:"Choose draft or create new"})
+    .selectOption({label:renamed+" (DRAFT)"});
+  const publishing=page.waitForResponse(response=>response.request().method()==="POST" &&
+    new URL(response.url()).pathname===commandPath);
+  await page.getByRole("button",{name:"Publish",exact:true}).click();
+  expect((await publishing).status()).toBe(200);
   await page.reload();
-
-  const search = page.getByLabel("Search assessments");
-  await search.fill("no matching faculty assessment x-y-z");
-  await expect(page.getByText("No matching assessments")).toBeVisible();
-  await search.fill(first);
-  const row = page.getByRole("article").filter({ hasText: first });
-  await expect(row).toBeVisible();
-  await expect(row).toContainText("DRAFT");
-  await row.getByRole("button", { name: "Edit", exact: true }).click();
-  let dialog = page.getByRole("dialog", { name: "Edit Assignment" });
-  await dialog.getByLabel("Title", { exact: true }).fill("Unsaved cancellation");
-  await dialog.getByRole("button", { name: "Close drawer" }).click();
-  await row.getByRole("button", { name: "Edit", exact: true }).click();
-  dialog = page.getByRole("dialog", { name: "Edit Assignment" });
-  await expect(dialog.getByLabel("Title", { exact: true })).toHaveValue(first);
-
-  await dialog.getByLabel("Title", { exact: true }).fill(renamed);
-  const editedResponse = page.waitForResponse((res) =>
-    res.request().method() === "PATCH" &&
-    new URL(res.url()).pathname === "/api/courses/assignments/" + assignmentId);
-  await dialog.getByRole("button", { name: "Save changes" }).click();
-  expect((await editedResponse).ok()).toBe(true);
+  await page.getByRole("combobox",{name:"Choose draft or create new"})
+    .selectOption({label:renamed+" (PUBLISHED)"});
+  const archiving=page.waitForResponse(response=>response.request().method()==="POST" &&
+    new URL(response.url()).pathname===commandPath);
+  await page.locator('details[data-slot="dropdown-root"] > summary')
+    .filter({hasText:/^More/}).click();
+  await page.getByRole("menuitem",{name:"Archive"}).click();
+  await page.getByRole("alertdialog").getByRole("button",{name:"Confirm"}).click();
+  const archived=await archiving;
+  expect(archived.status()).toBe(200);
+  expect((await archived.json()).assignment.status).toBe("ARCHIVED");
   await page.reload();
-  await page.getByLabel("Search assessments").fill(renamed);
-  const updatedRow = page.getByRole("article").filter({ hasText: renamed });
-  await expect(updatedRow).toBeVisible();
-  await updatedRow.getByRole("button", { name: "Edit", exact: true }).click();
-  dialog = page.getByRole("dialog", { name: "Edit Assignment" });
-  await expect(dialog.getByLabel("Title", { exact: true })).toHaveValue(renamed);
-
-  page.once("dialog", (confirm) => confirm.accept());
-  const archiveResponse = page.waitForResponse((res) =>
-    res.request().method() === "POST" &&
-    new URL(res.url()).pathname === "/api/courses/assignments/" + assignmentId + "/transition");
-  await dialog.getByRole("button", { name: "Delete", exact: true }).click();
-  const archive = await archiveResponse;
-  expect(archive.ok()).toBe(true);
-  expect((await archive.json()).assignment.status).toBe("ARCHIVED");
+  await expect(page.getByRole("combobox",{name:"Choose draft or create new"}))
+    .not.toContainText(renamed);
+  const wrongCollege=await page.evaluate(async({assignmentId,foreignDeliveryId})=>
+    (await fetch("/api/courses/faculty/assignments/"+foreignDeliveryId+"/command",{
+      method:"POST",headers:{"Content-Type":"application/json"},
+      body:JSON.stringify({action:"ARCHIVE",assignmentId,expectedUpdatedAt:new Date().toISOString(),confirmed:true}),
+    })).status,{assignmentId,foreignDeliveryId:SEED_IDS.collegeB});
+  expect(wrongCollege).toBeGreaterThanOrEqual(400);
 });
 
 test("Faculty Quiz aggregate persists questions, metadata edits and archival", async ({ page, context }, testInfo) => {
