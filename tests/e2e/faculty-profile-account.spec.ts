@@ -41,7 +41,6 @@ for(const view of [{name:"desktop",width:1280,height:800},{name:"mobile",width:3
     return {status:response.status,body:await response.json()};
    });
    expect(initialResponse.status).toBe(200);
-   const original:string=initialResponse.body.document.about.description;
    const originalSections={
     about:initialResponse.body.document.about,
     contact:initialResponse.body.document.contact,
