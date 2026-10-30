@@ -496,6 +496,8 @@ test("Faculty Assessment results filter only assigned teaching Sections and pres
   await facultyLogin(context);
   await page.goto("/teacher/results");
   await expect(page.getByRole("heading", { name: "Assessment results", level: 1 })).toBeVisible();
+  // The advanced filters intentionally live behind a disclosure.
+  await page.locator("summary").filter({hasText:"More filters"}).click();
   const section = page.getByRole("combobox", { name: "Teaching Section" });
   await expect(section.locator("option").first()).toHaveText("All teaching sections");
   const choices = section.locator("option");
@@ -520,54 +522,66 @@ test("Faculty Notifications keep the Faculty route through unread and cursor rec
   await facultyLogin(context);
   await page.goto("/teacher/notifications");
   await expect(page.getByRole("heading", { name: "Notifications", level: 1 })).toBeVisible();
+  // Modern inbox defaults to all categories. Opening Personal is a real,
+  // independently authorized category transition, not a hidden heading.
+  await page.getByRole("navigation", { name: "Notification categories" })
+    .getByRole("link", { name: /^Personal \(/ }).click();
   await expect(page.getByRole("heading", { name: "Personal notifications" })).toBeVisible();
   const filters = page.getByRole("group", { name: "Notification filter" });
   await filters.getByRole("link", { name: /Unread/ }).click();
-  await expect(page).toHaveURL(/\/teacher\/notifications\?view=unread$/);
+  await expect(page).toHaveURL(/\/teacher\/notifications\?view=unread&tab=personal$/);
   await expect(page.getByRole("button", { name: "Mark all as read" })).toBeVisible();
   await filters.getByRole("link", { name: "All", exact: true }).click();
-  await expect(page).toHaveURL(/\/teacher\/notifications\?view=all$/);
+  await expect(page).toHaveURL(/\/teacher\/notifications\?view=all&tab=personal$/);
 
-  await page.goto("/teacher/notifications?view=unread&beforeCreatedAt=invalid&beforeId=bad-id");
-  const invalid = page.getByRole("alert").filter({ hasText: "notification page link is invalid" });
+  await page.goto("/teacher/notifications?view=unread&tab=personal&beforeCreatedAt=invalid&beforeId=bad-id");
+  const invalid = page.getByRole("alert").filter({ hasText: "notification filters or page link are invalid" });
   await expect(invalid).toBeVisible();
-  await invalid.getByRole("link", { name: "Return to the newest notifications" }).click();
+  await invalid.getByRole("link", { name: "View all notifications" }).click();
   await expect(page).toHaveURL(/\/teacher\/notifications\?view=unread$/);
 });
 
 test("Faculty Contacts verifies public-only role cards, scoped search and page size", async ({ page, context }) => {
   await facultyLogin(context);
   await page.goto("/teacher/contacts/allContacts");
-  await expect(page.getByRole("heading", { level: 1, name: "Contacts" })).toBeVisible();
-  const tabs = page.getByRole("navigation", { name: "Contact types" });
+  await expect(page.getByRole("heading", { level: 1, name: "All Contacts" })).toBeVisible();
+  const tabs = page.getByRole("navigation", { name: "Contacts sections" });
   for (const label of ["All Contacts", "Teachers", "Students"]) {
     await expect(tabs.getByRole("link", { name: label })).toBeVisible();
   }
-  const publicLearner = page.locator("article").filter({
-    has: page.locator('a[href$="/' + SEED_IDS.learnerCollegeAMembership + '"]'),
+  const publicLearner = page.getByRole("row").filter({
+    has: page.locator('a[href*="/' + SEED_IDS.learnerCollegeAMembership + '"]'),
   });
   await expect(publicLearner).toBeVisible();
   await expect(publicLearner.getByRole("list", { name: "Current college roles" })).toContainText("Student");
-  await expect(page.getByRole("table")).toHaveCount(0);
-  // The public directory deliberately does not search or disclose login email.
-  await page.getByLabel("Search contacts").fill("learner.seed@example.com");
-  await page.getByLabel("Contacts per page").selectOption("50");
-  await page.getByRole("button", { name: "Search", exact: true }).click();
-  await expect(page).toHaveURL(/q=learner.seed%40example.com/);
+  // The new responsive directory deliberately shows masked columns on
+  // desktop rather than removing the entire table.
+  await expect(page.getByRole("table", { name: "Contacts directory" })).toBeVisible();
+  await expect(publicLearner).toContainText("Private");
+  await expect(publicLearner).not.toContainText("learner.seed@example.com");
+
+  // Page-size is an applied filter; search itself is debounced live.
+  await page.getByLabel("Rows per page").selectOption("50");
+  await page.getByRole("button", { name: "Apply", exact: true }).click();
   await expect(page).toHaveURL(/pageSize=50/);
-  await expect(page.getByText("No public directory members found")).toBeVisible();
-  await page.getByRole("link", { name: "Clear search" }).click();
-  await tabs.getByRole("link", { name: "Teachers" }).click();
-  await expect(page.locator('a[href$="/' + SEED_IDS.learnerCollegeAMembership + '"]')).toHaveCount(0);
-  await tabs.getByRole("link", { name: "Students" }).click();
-  await expect(page.locator('a[href$="/' + SEED_IDS.learnerCollegeAMembership + '"]')).toBeVisible();
+  await page.getByRole("searchbox", { name: "Search contacts" }).fill("learner.seed@example.com");
+  await expect(page).toHaveURL(/q=learner.seed%40example.com/);
+  await expect(page.getByText(/No contacts match/)).toBeVisible();
+  await page.getByRole("button", { name: "Clear search" }).click();
+  await expect(page.getByRole("searchbox", { name: "Search contacts" })).toHaveValue("");
+  await page.getByRole("navigation", { name: "Contacts sections" })
+    .getByRole("link", { name: "Teachers" }).click();
+  await expect(page.locator('a[href*="/' + SEED_IDS.learnerCollegeAMembership + '"]')).toHaveCount(0);
+  await page.getByRole("navigation", { name: "Contacts sections" })
+    .getByRole("link", { name: "Students" }).click();
+  await expect(page.locator('a[href*="/' + SEED_IDS.learnerCollegeAMembership + '"]')).toBeVisible();
 });
 
 test("Faculty Contacts shows authorized public profile cards on mobile without private emails", async ({ page, context }) => {
   await facultyLogin(context);
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto("/teacher/contacts/students?pageSize=10");
-  await expect(page.getByRole("heading", { level: 1, name: "Contacts" })).toBeVisible();
+  await expect(page.getByRole("heading", { level: 1, name: "Students" })).toBeVisible();
   const card = page.locator("article").filter({
     has: page.locator('a[href$="/' + SEED_IDS.learnerCollegeAMembership + '"]'),
   });
