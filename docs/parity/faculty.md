@@ -138,11 +138,14 @@ Legacy `QuizzesContent` runs in Faculty mode.
 - [x] Report derives submission and grading counts from the authorized live submission reader; not DB-executed yet.
 - [x] Report table renders learner identity, submitted timestamp, late/on-time and published/private grade.
 - [x] Source-authored report distinguishes submissions after the assignment due instant; timezone/browser verification OPEN.
-- [ ] Score distribution matches.
-- [ ] Not-submitted learners are visible.
-- [ ] Submission detail/grading drill-in matches.
-- [ ] Empty/loading/error states.
+- [x] Score distribution uses the legacy 90/80/70/60/below-60 five-bucket model; source and boundary-vector parity checked, current browser reacceptance open.
+- [x] Current authorized Section roster determines not-submitted learners; a failed roster read shows unknown rather than invented zero, source-verified.
+- [x] Submission preview and grading drill-in link to authorized Section submission/review and grading workspaces; current browser reacceptance open.
+- [x] Empty/no-grades, invalid-link, loading skeleton, hard-error retry and partial-roster warning states are implemented; current browser reacceptance open.
 - [x] Report resolves exact assigned Section through authoritative Faculty aggregate and reused authorized submission reader; wrong-tenant DB tests OPEN.
+
+
+**2026-10-30 closure-first source reconciliation — SOURCE-IMPLEMENTED, NOT IMPLEMENTATION GREEN:** The four previously unchecked implementation rows above are now source-verified, not newly built. Legacy oracle `42Students/lms2-fe@lms-dev-2026`, `src/components/Report/AssignmentReportContent.jsx` (blob `447876e8072a3cb1073567ed12284b91fd495091`), `src/utils/scoreDistribution.js` (blob `49088cf13dd5210c3682bf8586e3df01cc9fd970`). vNext `src/app/(authenticated)/teacher/report/assignment/[contentId]/page.tsx` (blob `2e8953f829dc9b057872f6f25d8f624baeb3d2e7`), `loading.tsx` (`10ac3b8c511d6182fdd200d9ff543453f586a601`), `error.tsx` (`0562e40edba69e4528a6b17954891bdf3580c0fc`), `src/components/courses/faculty-prototype-assignment-report.tsx` (`55b27f9bed433e150e55a5bd0b69289c51fe9b40`), `src/modules/courses/faculty-assessment-report-service.ts` (`1ff5b82923bb2bae84c38ddb6c080b5043d8f3aa`) and the existing `/grade` and `/submissions` routes show source-level coverage. An isolated execution compared old and new score bucket functions for five datasets (including 0, 59.5, 69.5, 89.5, empty and 201 half-point boundary values): **5/5 equal** under the legacy report's percentage rounding. Additional desktop/mobile assertions were authored in `tests/e2e/faculty-assignment-report.spec.ts` at commit `f41480a398d4c09904ded1c49851cfb2d5eb17c1`; **browser/PG tests were not executed in this pass**. Historic `- [x]` here means the required implementation was located and reconciled, **not** current-SHA acceptance. Formal `page-closure` receipt remains absent; code and source proof alone do not satisfy functional, authorization, desktop/mobile evidence, or design/release certification.
 
 ## Page: Quiz Report — DONE (2026-10-14)
 
