@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "task": "DB-018",
-  "status": "AUTHORED_EXECUTION_NOT_RUN",
+  "status": "FOCUSED_PG17_WITNESSES_VERIFIED_GLOBAL_GATE_PENDING",
   "safety": {
     "database": "Mutation/race witnesses require explicit TEST_DATABASE_URL plus DB018_ISOLATED_TEST_DATABASE=1 or DB03_ISOLATED_TEST_DATABASE=1; no DATABASE_URL fallback.",
     "fixtures": "Direct negative tests are rollback-only; concurrency/race tests create isolated UUID fixtures and clean them. The independent verifier provisions/resets the disposable database before execution.",
@@ -16,7 +16,9 @@
       "guard": "db03_member_tenant_guard",
       "migration": "drizzle/0039_db03_scope_triggers.sql",
       "expectedSqlState": "23514",
-      "execution": "NOT_RUN"
+      "execution": "PASS",
+      "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/41104567182",
+      "commitSha": "c78eb936db33489cbb3b57281793dfda5f10382d"
     },
     {
       "id": "DB18-N02",
@@ -25,7 +27,9 @@
       "guard": "db03_member_tenant_guard",
       "migration": "drizzle/0039_db03_scope_triggers.sql",
       "expectedSqlState": "23514",
-      "execution": "NOT_RUN"
+      "execution": "PASS",
+      "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/41104567182",
+      "commitSha": "c78eb936db33489cbb3b57281793dfda5f10382d"
     },
     {
       "id": "DB18-N03",
@@ -34,7 +38,9 @@
       "guard": "db03_group_owner_immutable_guard",
       "migration": "drizzle/0039_db03_scope_triggers.sql",
       "expectedSqlState": "23514",
-      "execution": "NOT_RUN"
+      "execution": "PASS",
+      "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/41104567182",
+      "commitSha": "c78eb936db33489cbb3b57281793dfda5f10382d"
     },
     {
       "id": "DB18-N04",
@@ -43,7 +49,9 @@
       "guard": "db03_elective_slot_scope_guard",
       "migration": "drizzle/0039_db03_scope_triggers.sql",
       "expectedSqlState": "23514",
-      "execution": "NOT_RUN"
+      "execution": "PASS",
+      "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/41104567182",
+      "commitSha": "c78eb936db33489cbb3b57281793dfda5f10382d"
     },
     {
       "id": "DB18-N05",
@@ -52,7 +60,9 @@
       "guard": "db06_course_quiz_parent_guard",
       "migration": "drizzle/0041_db06_assessment_parent_scope.sql",
       "expectedSqlState": "23514",
-      "execution": "NOT_RUN"
+      "execution": "PASS",
+      "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/41104567182",
+      "commitSha": "c78eb936db33489cbb3b57281793dfda5f10382d"
     },
     {
       "id": "DB18-N06",
@@ -61,7 +71,9 @@
       "guard": "db06_quiz_attempt_parent_guard",
       "migration": "drizzle/0041_db06_assessment_parent_scope.sql",
       "expectedSqlState": "23514",
-      "execution": "NOT_RUN"
+      "execution": "PASS",
+      "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/41104567182",
+      "commitSha": "c78eb936db33489cbb3b57281793dfda5f10382d"
     },
     {
       "id": "DB18-N07",
@@ -70,7 +82,9 @@
       "guard": "db06_quiz_answer_parent_guard",
       "migration": "drizzle/0041_db06_assessment_parent_scope.sql",
       "expectedSqlState": "23514",
-      "execution": "NOT_RUN"
+      "execution": "PASS",
+      "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/41104567182",
+      "commitSha": "c78eb936db33489cbb3b57281793dfda5f10382d"
     },
     {
       "id": "DB18-N08",
@@ -79,7 +93,9 @@
       "guard": "db06_assignment_submission_parent_guard",
       "migration": "drizzle/0042_db06_assessment_scope_hardening.sql",
       "expectedSqlState": "23514",
-      "execution": "NOT_RUN"
+      "execution": "PASS",
+      "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/41104567182",
+      "commitSha": "c78eb936db33489cbb3b57281793dfda5f10382d"
     },
     {
       "id": "DB18-N09",
@@ -88,7 +104,9 @@
       "guard": "lms_group_members_group_id_lms_groups_id_fk",
       "migration": "drizzle/0037_db03_groups_electives.sql",
       "expectedSqlState": "23503",
-      "execution": "NOT_RUN"
+      "execution": "PASS",
+      "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/41104567182",
+      "commitSha": "c78eb936db33489cbb3b57281793dfda5f10382d"
     }
   ],
   "existingConcurrencyWitnesses": [
@@ -97,28 +115,36 @@
       "raceProbe": "P5-R04",
       "file": "tests/integration/groups-db03.test.ts",
       "title": "serializes simultaneous choices from different offerings of the same max_pick=1 slot",
-      "state": "AUTHORED_EXISTING_NOT_RUN_IN_DB018"
+      "state": "FOCUSED_PG17_VERIFIED",
+      "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/41104567182",
+      "commitSha": "c78eb936db33489cbb3b57281793dfda5f10382d"
     },
     {
       "id": "DB18-C02",
       "raceProbe": "P5-R05",
       "file": "tests/integration/courses-c4b-quizzes.test.ts",
       "title": "allows only one concurrent final attempt and enforces database score bounds",
-      "state": "AUTHORED_EXISTING_NOT_RUN_IN_DB018"
+      "state": "FOCUSED_PG17_VERIFIED",
+      "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/41104567182",
+      "commitSha": "c78eb936db33489cbb3b57281793dfda5f10382d"
     },
     {
       "id": "DB18-C03",
       "raceProbe": "P5-R07",
       "file": "tests/integration/db18-concurrency-witnesses.test.ts",
       "title": "allows exactly one concurrent cohort compare-and-set transition",
-      "state": "AUTHORED_DB018_NOT_RUN"
+      "state": "FOCUSED_PG17_VERIFIED",
+      "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/41104567182",
+      "commitSha": "c78eb936db33489cbb3b57281793dfda5f10382d"
     },
     {
       "id": "DB18-C04",
       "raceProbe": "P5-R06",
       "file": "tests/integration/db18-concurrency-witnesses.test.ts",
       "title": "allows exactly one concurrent project task submission transition",
-      "state": "AUTHORED_DB018_NOT_RUN"
+      "state": "FOCUSED_PG17_VERIFIED",
+      "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/41104567182",
+      "commitSha": "c78eb936db33489cbb3b57281793dfda5f10382d"
     }
   ],
   "missingConcurrencyWitnesses": [],
@@ -141,14 +167,17 @@
     "existingConcurrencyAuthored": 4,
     "explicitConcurrencyMissing": 0,
     "draftUnregisteredExcluded": 3,
-    "runtimeExecuted": 0,
-    "runtimePassed": 0,
+    "runtimeExecuted": 43,
+    "runtimePassed": 43,
     "knownRedRaceAuthored": 0,
     "observationalReadOnlyAuthored": 21,
     "baselineDirectBoundaryAuthored": 7,
     "directNegativeTotalAuthored": 16,
     "positiveConcurrencyAuthored": 4,
-    "fixAuthoredRaceRuntimePending": 2
+    "fixAuthoredRaceRuntimePending": 0,
+    "fixedRaceRuntimeVerified": 2,
+    "focusedVitestTestsExecuted": 45,
+    "focusedVitestTestsPassed": 45
   },
   "knownRedRaceWitnesses": [
     {
@@ -157,14 +186,16 @@
       "domain": "PLACEMENTS",
       "file": "tests/integration/db18-placement-race-gap.test.ts",
       "title": "P5-R01 rejects placement application if paid access is revoked after precheck",
-      "state": "FIX_AUTHORED_RUNTIME_NOT_RUN",
-      "execution": "NOT_RUN",
+      "state": "FIXED_AND_PG17_VERIFIED",
+      "execution": "PASS",
       "requiredFix": "Authored in DB-054: application locks/revalidates current gate inputs; policy/override writers serialize on job; evidence writers serialize on membership. Disposable PostgreSQL race execution remains pending.",
       "fixEvidence": [
         "src/modules/placements/application-service.ts",
         "src/modules/placements/eligibility-service.ts",
         "tests/db54-placement-application-race.test.mjs"
-      ]
+      ],
+      "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/41104567182",
+      "commitSha": "c78eb936db33489cbb3b57281793dfda5f10382d"
     },
     {
       "id": "DB18-R02",
@@ -172,21 +203,25 @@
       "domain": "ACADEMICS",
       "file": "tests/integration/db18-known-race-gaps.test.ts",
       "title": "P5-R02 rejects enrollment if the cohort stops being mutable after precheck",
-      "state": "FIX_AUTHORED_RUNTIME_NOT_RUN",
-      "execution": "NOT_RUN",
+      "state": "FIXED_AND_PG17_VERIFIED",
+      "execution": "PASS",
       "requiredFix": "Authored: enrollment transaction re-reads and FOR SHARE locks cohort status/program before insert; PostgreSQL race execution remains pending.",
       "fixEvidence": [
         "src/modules/academics/enrollment-service.ts",
         "tests/integration/db18-known-race-gaps.test.ts"
-      ]
+      ],
+      "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/41104567182",
+      "commitSha": "c78eb936db33489cbb3b57281793dfda5f10382d"
     }
   ],
   "observationalWitnesses": {
     "count": 21,
     "manifest": "docs/planning/database-parity-pass5-probe-manifest.json",
     "executableFile": "tests/integration/db018-relational-and-boundary-witnesses.test.ts",
-    "state": "AUTHORED_READ_ONLY_EXECUTION_NOT_RUN",
-    "caveat": "Zero mismatches are observational only and cannot prove a preventing constraint; fixture must contain nonempty joined samples."
+    "state": "FOCUSED_PG17_NONEMPTY_ZERO_MISMATCH_VERIFIED",
+    "caveat": "Zero mismatches are observational only and cannot prove a preventing constraint; fixture must contain nonempty joined samples.",
+    "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/41104567182",
+    "commitSha": "c78eb936db33489cbb3b57281793dfda5f10382d"
   },
   "baselineDirectBoundaryWitnesses": [
     {
@@ -194,49 +229,98 @@
       "file": "tests/integration/db018-relational-and-boundary-witnesses.test.ts",
       "title": "rejects a membership with a nonexistent user using a real FK (23503)",
       "expectedSqlState": "23503",
-      "execution": "NOT_RUN"
+      "execution": "PASS",
+      "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/41104567182",
+      "commitSha": "c78eb936db33489cbb3b57281793dfda5f10382d"
     },
     {
       "id": "DB18-B02",
       "file": "tests/integration/db018-relational-and-boundary-witnesses.test.ts",
       "title": "rejects a role grant to a nonexistent membership (23503)",
       "expectedSqlState": "23503",
-      "execution": "NOT_RUN"
+      "execution": "PASS",
+      "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/41104567182",
+      "commitSha": "c78eb936db33489cbb3b57281793dfda5f10382d"
     },
     {
       "id": "DB18-B03",
       "file": "tests/integration/db018-relational-and-boundary-witnesses.test.ts",
       "title": "rejects an unverified primary tenant domain (23514)",
       "expectedSqlState": "23514",
-      "execution": "NOT_RUN"
+      "execution": "PASS",
+      "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/41104567182",
+      "commitSha": "c78eb936db33489cbb3b57281793dfda5f10382d"
     },
     {
       "id": "DB18-B04",
       "file": "tests/integration/db018-relational-and-boundary-witnesses.test.ts",
       "title": "rejects duplicate user membership within the same college (23505)",
       "expectedSqlState": "23505",
-      "execution": "NOT_RUN"
+      "execution": "PASS",
+      "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/41104567182",
+      "commitSha": "c78eb936db33489cbb3b57281793dfda5f10382d"
     },
     {
       "id": "DB18-B05",
       "file": "tests/integration/db018-relational-and-boundary-witnesses.test.ts",
       "title": "rejects a whitespace-only user given name under registered CHECK (23514)",
       "expectedSqlState": "23514",
-      "execution": "NOT_RUN"
+      "execution": "PASS",
+      "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/41104567182",
+      "commitSha": "c78eb936db33489cbb3b57281793dfda5f10382d"
     },
     {
       "id": "DB18-B06",
       "file": "tests/integration/db018-relational-and-boundary-witnesses.test.ts",
       "title": "rejects a program with zero academic terms under registered CHECK (23514)",
       "expectedSqlState": "23514",
-      "execution": "NOT_RUN"
+      "execution": "PASS",
+      "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/41104567182",
+      "commitSha": "c78eb936db33489cbb3b57281793dfda5f10382d"
     },
     {
       "id": "DB18-B07",
       "file": "tests/integration/db018-relational-and-boundary-witnesses.test.ts",
       "title": "rejects a reversed academic period under registered CHECK (23514)",
       "expectedSqlState": "23514",
-      "execution": "NOT_RUN"
+      "execution": "PASS",
+      "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/41104567182",
+      "commitSha": "c78eb936db33489cbb3b57281793dfda5f10382d"
     }
-  ]
+  ],
+  "runtimeEvidence": {
+    "result": "PASS",
+    "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/41104567182",
+    "commitSha": "c78eb936db33489cbb3b57281793dfda5f10382d",
+    "jobId": 124231024807,
+    "executedOn": "2026-10-30",
+    "database": "isolated PostgreSQL 17 after clean registered migration replay",
+    "focusedVitestTestsPassed": 45,
+    "focusedVitestTestsExecuted": 45,
+    "domainWitnessesPassed": 43,
+    "domainWitnessesExecuted": 43,
+    "relational": {
+      "total": 21,
+      "populated": 21,
+      "empty": 0,
+      "mismatches": 0,
+      "preventionNotProvedByJoins": true
+    },
+    "directSqlNegatives": {
+      "registeredDb03Db06": 9,
+      "baselineAndAdded": 7,
+      "total": 16,
+      "passed": 16
+    },
+    "positiveConcurrency": {
+      "total": 4,
+      "passed": 4
+    },
+    "previouslyFixedRaces": {
+      "total": 2,
+      "passed": 2
+    },
+    "globalDatabasePhaseAccepted": false,
+    "caveat": "Run verifies the focused DB018 corpus, not DB001 independent verifier, DB014 global FK catalog, DB020 drift certification, or five other Pass5 domain gap families."
+  }
 }
