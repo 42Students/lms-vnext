@@ -29,8 +29,11 @@ vi.mock("@/components/activity/notification-list",async()=>{
 });
 vi.mock("@/components/activity/notification-toolbar",async()=>{
  const {createElement}=await import("react");
- return {NotificationToolbar:({unreadCount,selectedCategory}:{unreadCount:number;selectedCategory:string})=>
-  createElement("nav",{"data-unread":unreadCount,"data-category":selectedCategory},"Faculty inbox filters")};
+ return {NotificationToolbar:({unreadCount,selectedCategory,canMarkAll}:{
+  unreadCount:number;selectedCategory:string;canMarkAll:boolean;
+ })=>createElement("nav",{"data-unread":unreadCount,
+    "data-category":selectedCategory,"data-can-mark-all":String(canMarkAll)},
+    "Faculty inbox filters")};
 });
 vi.mock("@/app/(authenticated)/teacher/notifications/faculty-notifications-retry",async()=>{
  const {createElement}=await import("react");
@@ -97,6 +100,7 @@ describe("Faculty Notifications page acceptance",()=>{
   expect(html).toContain("College update");
   expect(html).not.toContain("Personal update");
   expect(html).toContain('data-category="college"');
+  expect(html).toContain('data-can-mark-all="false"');
   expect(stubs.personal).not.toHaveBeenCalled();
  });
  it("fails closed on duplicate or forged cursor selectors and has a recovery action",async()=>{
