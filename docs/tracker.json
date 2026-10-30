@@ -2254,7 +2254,21 @@
       "done": false,
       "dependsOn": [
         "DB-011"
-      ]
+      ],
+      "implementationCheckpoint": {
+        "status": "SOURCE_STAGING_VERIFIED_DEPENDENCY_AND_REGISTERED_SQL_PENDING",
+        "recordedOn": "2026-10-31",
+        "evidenceRun": "https://github.com/42Students/lms-vnext/actions/runs/41123747972/job/124296816073",
+        "evidenceCommit": "766c650dbcfbf91ad30489538b4120b9600c4d7f",
+        "scope": "Executed native Node source contracts only; parent DB-011 prerequisite and registered PostgreSQL acceptance not satisfied.",
+        "verifiedSourceChanges": "Existing placement_jobs.owner_membership_id and owner-college FK are registered in typed schema. Old source tests now assert the real registered FK instead of falsely requiring absence; staged candidate still contains duplicate ADD COLUMN and must be reconciled, with team-removal atomicity and two-session races still open.",
+        "openEvidence": [
+          "Prerequisite DB-011 original DB08 domain reconciliation remains OPEN",
+          "Remove duplicate owner column/composite FK from future numbered DB069 migration; register only needed owner/team lifecycle guards",
+          "Run disposable PostgreSQL full registered replay, team-member removal/reassignment, cross-college/role and two-client concurrency tests plus real TPO/recruiter producers"
+        ],
+        "evidenceIsNotAcceptance": true
+      }
     },
     {
       "id": "DB-070",
@@ -2329,7 +2343,21 @@
       "done": false,
       "dependsOn": [
         "DB-011"
-      ]
+      ],
+      "implementationCheckpoint": {
+        "status": "TRANSITIONAL_HR_RECRUITER_READ_FIX_SOURCE_VERIFIED_DEPENDENCY_PG_PENDING",
+        "recordedOn": "2026-10-31",
+        "evidenceRun": "https://github.com/42Students/lms-vnext/actions/runs/41123747972/job/124296816073",
+        "evidenceCommit": "766c650dbcfbf91ad30489538b4120b9600c4d7f",
+        "scope": "Executed native Node source contracts only; parent DB-011 prerequisite and registered PostgreSQL acceptance not satisfied.",
+        "verifiedSourceChanges": "Recruiter Today reads legacy HR and final RECRUITER staged provenance with author/job/grant scope; historical crosswalk now preserves RECRUITER, PANELIST, DRIVE_DAY instead of collapsing to HR/FACULTY/TPO. Full schema+placements HR token sweep distinguishes legitimate HR interview type/labels from stored result source and source contract passed.",
+        "openEvidence": [
+          "Prerequisite DB-011 original DB08 domain reconciliation remains OPEN",
+          "Register additive EXPAND accepting HR plus RECRUITER, then cut over all writers after old instances drain",
+          "Run guarded FINALIZE rewriting HR rows and strict CHECK, with mixed-writer compatibility and disposable PostgreSQL/consumer security negatives"
+        ],
+        "evidenceIsNotAcceptance": true
+      }
     },
     {
       "id": "DB-073",
