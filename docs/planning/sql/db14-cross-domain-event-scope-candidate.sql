@@ -24,7 +24,8 @@ BEGIN
     SELECT c.organization_id
       INTO resolved_organization_id
       FROM colleges c
-     WHERE c.id = NEW.college_id;
+     WHERE c.id = NEW.college_id
+     FOR SHARE;
 
     IF resolved_organization_id IS NULL
        OR NEW.organization_id IS DISTINCT FROM resolved_organization_id THEN
@@ -39,7 +40,8 @@ BEGIN
       INTO actor_membership_user_id, actor_membership_college_id,
            actor_membership_status
       FROM college_memberships cm
-     WHERE cm.id = NEW.actor_membership_id;
+     WHERE cm.id = NEW.actor_membership_id
+     FOR SHARE;
 
     IF NEW.college_id IS NULL
        OR actor_membership_user_id IS NULL
@@ -82,12 +84,14 @@ BEGIN
   SELECT ae.college_id, ae.organization_id
     INTO event_college_id, event_organization_id
     FROM activity_events ae
-   WHERE ae.id = NEW.event_id;
+   WHERE ae.id = NEW.event_id
+   FOR SHARE;
 
   SELECT (u.platform_status::text = 'ACTIVE')
     INTO recipient_active
     FROM users u
-   WHERE u.id = NEW.user_id;
+   WHERE u.id = NEW.user_id
+   FOR SHARE;
 
   IF recipient_active IS DISTINCT FROM TRUE THEN
     RAISE EXCEPTION
@@ -116,6 +120,7 @@ BEGIN
              AND c.organization_id = event_organization_id
            )
          )
+       FOR SHARE OF cm, c
     )
     OR EXISTS (
       SELECT 1
@@ -139,12 +144,14 @@ BEGIN
              AND c.organization_id = event_organization_id
            )
          )
+       FOR SHARE OF g, rp, rel, c
     )
     OR EXISTS (
       SELECT 1
         FROM system_roles sr
        WHERE sr.user_id = NEW.user_id
          AND sr.role::text = 'SUPER_ADMIN'
+       FOR SHARE OF sr
     );
 
   IF recipient_authorized IS DISTINCT FROM TRUE THEN
@@ -182,12 +189,14 @@ BEGIN
   SELECT g.owner_scope, g.college_id
     INTO group_owner_scope, group_college_id
     FROM lms_groups g
-   WHERE g.id = NEW.group_id;
+   WHERE g.id = NEW.group_id
+   FOR SHARE;
 
   SELECT cm.college_id, cm.status::text
     INTO membership_college_id, membership_status
     FROM college_memberships cm
-   WHERE cm.id = NEW.membership_id;
+   WHERE cm.id = NEW.membership_id
+   FOR SHARE;
 
   IF membership_college_id IS NULL
      OR membership_status <> 'ACTIVE' THEN
@@ -208,6 +217,7 @@ BEGIN
       FROM membership_roles mr
      WHERE mr.membership_id = NEW.membership_id
        AND mr.role::text = NEW.member_type
+     FOR SHARE OF mr
   ) THEN
     RAISE EXCEPTION
       'group event member role mismatch'
@@ -228,12 +238,14 @@ BEGIN
         WHERE cm.user_id = NEW.actor_user_id
           AND cm.college_id = group_college_id
           AND cm.status::text = 'ACTIVE'
+        FOR SHARE OF cm
      )
      AND NOT EXISTS (
        SELECT 1
          FROM system_roles sr
         WHERE sr.user_id = NEW.actor_user_id
           AND sr.role::text = 'SUPER_ADMIN'
+        FOR SHARE OF sr
      ) THEN
     RAISE EXCEPTION
       'group event actor outside group college scope'
