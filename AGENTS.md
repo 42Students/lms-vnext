@@ -15,13 +15,13 @@
 
 **Before writing code:** read current `main`, then run `npm run progress -- --closure-next` or `npm run progress -- --closure-next --lane=LNN`; select one genuinely `done:false` task owned by your lane. The only authoritative queue, phase state and acceptance count live in `docs/tracker.json`. If you see an old handoff/prompt/checklist suggesting otherwise, ignore it in favor of the live tracker. An entry in the focus queue is a suggestion, never permission to edit another lane or mark work complete.
 
-**Acceptance-first execution:**
+**Acceptance-first execution (scope-aware, never evidence-waived):**
 1. Identify the *single precise missing verification gate* for the open task before touching source. Confirm the current registered schema and a real producer→consumer path; use prior passing exact-SHA evidence rather than re-running accepted audits.
-2. Prioritize a task whose **full engineering acceptance** can be satisfied now (registered disposable PostgreSQL, tenant/auth/privacy/FK/state/race and actual consumers). If it can be closed from existing complete evidence, record `done:true` and the evidence immediately, then move to the next open task.
+2. Prioritize a task whose **full original scoped engineering acceptance** can be satisfied now. For live persistence/runtime, require registered disposable PostgreSQL, tenant/auth/privacy/FK/state/race and actual consumers. For explicitly bounded **source/staging/disposition** deliverables, an executed exact-SHA source suite can close the *stage task* only when `acceptanceScope`, `notInThisTaskAcceptance` and still-named `remainingDistinctIntegrationTasks` keep all unregistered production/runtime obligations OPEN. Never re-label functional work as staging to get a green count.
 3. If blocked by migration registration/shared SQL, submit a narrowly scoped handoff to **L01**. If blocked by independent verification, coordinate with **L10**. Neither staging SQL nor source-only tests are equivalent to registered DB proof.
 4. Each batch is *one closure hypothesis*, minimally sufficient code and meaningful tests. No opportunistic UI polish or another audit of a completed DB task unless an exact regression proves it necessary.
 5. **After two useful passes without a verified closure, stop revisiting the same task**. Record the concrete failing command/SQLSTATE/test, exact commit/run URL, blocker owner and next required action; then switch to another independent open lane-owned task. Do not sweep blockers under a deferral or inflate completion.
-6. On full acceptance, use a fresh expected SHA to update only the owned task in the single tracker with executed `acceptanceEvidence`, `acceptedAt` and `done:true`; freeze it. Never predeclare success because CI is queued, cancelled, staged-only or green on a different revision.
+6. On full acceptance of the task's original scope, use a fresh expected SHA to update only the owned task in the single tracker with executed `acceptanceEvidence`, `acceptedAt` and `done:true`; freeze it. A staged-scope closure is NOT registered migration/runtime acceptance. Never predeclare an unexecuted run as success because CI is queued or cancelled, or rely on an unrelated suite.
 
 **Every continuation handoff** must state current `N/81` read from the tracker, accepted task IDs and evidence URLs, the selected OPEN task, exact remaining gate and lane/path ownership. Avoid creating second roadmaps, stale count files or independent acceptance statistics. Full API/UI/design/release gates remain separate.
 
@@ -49,7 +49,7 @@
 ## Quality gates — targeted during implementation, full at acceptance
 
 - **Inside a cohesive batch:** run the relevant focused lint/typecheck/unit or SQL/database tests that can detect the touched regression quickly. Keep the known full-suite failures visible; do not add skip flags to hide them.
-- **Before declaring a database migration or a task DONE:** independently execute the required **registered-journal replay, drift check, tenant/FK/history/state/concurrency and affected service tests on disposable PostgreSQL**, plus all other task-specific acceptance and approvals. A staged-only test is not promotion proof.
+- **Before declaring a registered migration, live persistence, or runtime task DONE:** independently execute **registered-journal replay, drift, tenant/FK/history/state/concurrency and affected service tests on disposable PostgreSQL**, plus task-specific acceptance and decisions. For explicitly isolated source/staging/disposition-only deliverables, run their actual source tests and preserve named open runtime integration tasks; a staged-only test remains **never** promotion proof.
 - **Before phase or release sign-off:** execute and pass the complete applicable lint, typecheck, unit, build and relevant browser/Playwright matrix on an identified revision. Unrelated red CI jobs remain blockers to global acceptance, even if the focused batch succeeds.
 - Commit and test **one coherent batch**, rather than causing a full serial GitHub Actions run on every small document/test adjustment.
 
