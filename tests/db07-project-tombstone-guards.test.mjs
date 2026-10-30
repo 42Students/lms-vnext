@@ -19,6 +19,7 @@ const cases = [
   ["learner-backlog-pull-service.ts", ["learner backlog pull"]],
   ["admin-task-plan-create-service.ts", ["admin task creation"]],
   ["learner-task-status-service.ts", ["learner own-task status"]],
+  ["mentor-backlog-service.ts", ["mentor backlog move", "mentor backlog create"]],
 ];
 const read = name => fs.readFileSync("src/modules/projects/" + name,"utf8");
 
@@ -87,4 +88,18 @@ test("DB010 the registered all-row task sequence index requires tombstone-aware 
   const backlog=read("learner-backlog-pull-service.ts");
   assert.doesNotMatch(backlog.slice(backlog.indexOf("const [last]"),backlog.indexOf("const [updated]")),
     /isNull\(projectTasks\.deletedAt\)/);
+});
+
+test("DB010 mentor backlog move forbids deleted task, sprint and direct CAS",()=>{
+  const src=read("mentor-backlog-service.ts");
+  const move=src.slice(src.indexOf("export async function moveMentorBacklogTask("),
+    src.indexOf("export async function createMentorBacklogTask("));
+  assert.match(move.slice(move.indexOf("const [task]"),move.indexOf("if(!task")),),/isNull\(projectTasks\.deletedAt\)/);
+  assert.match(move.slice(move.indexOf("const [sprint]"),move.indexOf("if(!sprint")),),/isNull\(projectSprints\.deletedAt\)/);
+  assert.match(move.slice(move.indexOf("const [updated]"),move.indexOf("if(!updated")),),/isNull\(projectTasks\.deletedAt\)/);
+});
+test("DB010 admin task creation cannot target a soft-deleted release",()=>{
+  const src=read("admin-task-plan-create-service.ts");
+  const release=src.slice(src.indexOf("const [release]"),src.indexOf("if(!release"));
+  assert.match(release,/isNull\(projectReleases\.deletedAt\)/);
 });
