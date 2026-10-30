@@ -109,6 +109,8 @@ jobs:
         run: npm run test:db:parity
       - name: Prototype portal source contracts (TPO, Recruiter, Mentor)
         run: node --test tests/prototype-parity-shell-contract.test.mjs
+      - name: DB-066 same-job staging locks and parent scope (source contract only)
+        run: node scripts/verify-db08-cross-parent-source.mjs
       - name: DB-072 recruiter provenance compatibility (source contract only)
         run: |
           node scripts/verify-db08-recruiter-code-source.mjs
