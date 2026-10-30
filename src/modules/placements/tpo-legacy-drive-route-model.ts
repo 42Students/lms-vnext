@@ -33,7 +33,12 @@ export function legacyTpoDrivesListHref(query:LegacyTpoDriveQuery={}):string{
  const page=single(query.page,5);
  if(page&&/^[1-9][0-9]{0,3}$/.test(page))params.set("page",page);
  const request=single(query.request,36);
- if(request&&uuid.test(request))params.set("request",request);
+ if(request&&uuid.test(request)&&(!tab||tab==="requests")){
+  // A saved direct request link must open the Requests view, even when
+  // Live would otherwise be the canonical list's default.
+  if(!tab)params.set("tab","requests");
+  params.set("request",request);
+ }
  return withQuery(listPath,params);
 }
 
