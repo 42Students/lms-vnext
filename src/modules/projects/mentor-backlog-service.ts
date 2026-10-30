@@ -33,19 +33,21 @@ export async function moveMentorBacklogTask(context: RequestContext, projectIdIn
   const scope = await requireProjectLifecycleMutationAccess(context, projectIdInput);
   return getDb().transaction(async tx => {
     const [project] = await tx.select({ status: projectInstances.status }).from(projectInstances)
-      .where(and(eq(projectInstances.id, scope.project.id),eq(projectInstances.collegeId, scope.collegeId)))
+      .where(and(eq(projectInstances.id, scope.project.id),eq(projectInstances.collegeId, scope.collegeId),isNull(projectInstances.deletedAt)))
       .for("update").limit(1);
     await assertPersistedProjectMutationActor(tx,context,scope);
     if(project?.status !== "ACTIVE")throw new ProjectsServiceError("PROJECT_TASK_INVALID_STATE");
     const [task] = await tx.select().from(projectTasks)
-      .where(and(eq(projectTasks.projectId,scope.project.id),eq(projectTasks.id,input.taskId)))
+      .where(and(eq(projectTasks.projectId,scope.project.id),eq(projectTasks.id,input.taskId),
+        isNull(projectTasks.deletedAt)))
       .for("update").limit(1);
     if(!task || ["DONE","IN_REVIEW"].includes(task.status) ||
       task.updatedAt.getTime() !== Date.parse(input.expectedUpdatedAt) ||
       task.sprintId === input.targetSprintId)throw new ProjectsServiceError("PROJECT_TASK_INVALID_STATE");
     if(input.targetSprintId){
       const [sprint] = await tx.select().from(projectSprints)
-        .where(and(eq(projectSprints.id,input.targetSprintId),eq(projectSprints.projectId,scope.project.id)))
+        .where(and(eq(projectSprints.id,input.targetSprintId),eq(projectSprints.projectId,scope.project.id),
+          isNull(projectSprints.deletedAt)))
         .for("update").limit(1);
       if(!sprint || sprint.status === "COMPLETED")throw new ProjectsServiceError("PROJECT_TASK_INVALID_STATE");
       const [release] = await tx.select({status:projectReleases.status}).from(projectReleases)
@@ -70,6 +72,7 @@ export async function moveMentorBacklogTask(context: RequestContext, projectIdIn
       carriedOverAt:task.sprintId?now:task.carriedOverAt,
       updatedAt:now,
     }).where(and(eq(projectTasks.id,task.id),eq(projectTasks.projectId,scope.project.id),
+      isNull(projectTasks.deletedAt),
       sql`date_trunc('milliseconds', ${projectTasks.updatedAt}) = ${task.updatedAt.toISOString()}::timestamptz`)).returning();
     if(!updated)throw new ProjectsServiceError("PROJECT_TASK_INVALID_STATE");
     await recordActivityEventInTransaction(tx,context,{
@@ -88,7 +91,7 @@ export async function createMentorBacklogTask(context: RequestContext, projectId
   const scope = await requireProjectLifecycleMutationAccess(context,projectIdInput);
   return getDb().transaction(async tx => {
     const [project] = await tx.select({status:projectInstances.status}).from(projectInstances)
-      .where(and(eq(projectInstances.id,scope.project.id),eq(projectInstances.collegeId,scope.collegeId)))
+      .where(and(eq(projectInstances.id,scope.project.id),eq(projectInstances.collegeId,scope.collegeId),isNull(projectInstances.deletedAt)))
       .for("update").limit(1);
     await assertPersistedProjectMutationActor(tx,context,scope);
     if(!project || !["PLANNED","ACTIVE"].includes(project.status))
