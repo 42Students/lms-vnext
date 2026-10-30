@@ -37,6 +37,14 @@ test("DB020 same constraint name with different relationship shape is rejected",
  assert.equal(r.sameNameDrift.length,1);
  assert.equal(r.exactSameShapeCount,0);
 });
+test("DB020 nondeferrable NO ACTION remains distinct from RESTRICT in exact catalog comparison",()=>{
+ const a={...base,name:"owned",onDelete:"no action"};
+ const b={...base,name:"owned",onDelete:"restrict"};
+ const r=compareForeignKeyShapes([a],[b]);
+ assert.equal(r.sameNameDrift.length,1);
+ assert.equal(r.exactSameShapeCount,0);
+});
+
 test("DB020 canonical public-qualified and unqualified parent names match",()=>{
  const a={...base,name:"type"};
  const b={...base,name:"catalog",parent:"public.college_memberships"};
