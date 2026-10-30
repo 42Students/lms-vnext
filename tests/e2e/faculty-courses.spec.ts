@@ -401,6 +401,9 @@ test("Faculty Assignment aggregate creates, filters, edits and archives an actua
   const renamed=first+" amended";
   await page.getByRole("textbox",{name:"Title",exact:true}).fill(first);
   await page.getByRole("textbox",{name:"Text instructions"}).fill("E2E class-scoped assignment");
+  // Publishing requires a future deadline. Use a real persisted value rather than bypassing the guard.
+  await page.getByRole("textbox",{name:"Due date (IST, required before publishing)"})
+    .fill(new Date(Date.now()+14*86400000).toISOString().slice(0,16));
   await page.getByRole("checkbox",{name:"Publish now"}).uncheck();
   const creating=page.waitForResponse(response=>response.request().method()==="POST" &&
     new URL(response.url()).pathname===commandPath);
@@ -414,6 +417,8 @@ test("Faculty Assignment aggregate creates, filters, edits and archives an actua
   await page.reload();
   await page.getByRole("combobox",{name:"Choose draft or create new"})
     .selectOption({label:first+" (DRAFT)"});
+  // The editor intentionally blocks writes until the persisted submission methods are authorized and loaded.
+  await expect(page.getByRole("group",{name:"Allowed submission methods"})).toBeEnabled();
   await page.getByRole("textbox",{name:"Title",exact:true}).fill(renamed);
   const editing=page.waitForResponse(response=>response.request().method()==="POST" &&
     new URL(response.url()).pathname===commandPath);
@@ -441,6 +446,7 @@ test("Faculty Assignment aggregate creates, filters, edits and archives an actua
   await page.goto("/teacher/courses/"+deliveryId+"/assignments/manage");
   await page.getByRole("combobox",{name:"Choose draft or create new"})
     .selectOption({label:renamed+" (DRAFT)"});
+  await expect(page.getByRole("group",{name:"Allowed submission methods"})).toBeEnabled();
   const publishing=page.waitForResponse(response=>response.request().method()==="POST" &&
     new URL(response.url()).pathname===commandPath);
   await page.getByRole("button",{name:"Publish",exact:true}).click();
@@ -448,6 +454,7 @@ test("Faculty Assignment aggregate creates, filters, edits and archives an actua
   await page.reload();
   await page.getByRole("combobox",{name:"Choose draft or create new"})
     .selectOption({label:renamed+" (PUBLISHED)"});
+  await expect(page.getByRole("group",{name:"Allowed submission methods"})).toBeEnabled();
   const archiving=page.waitForResponse(response=>response.request().method()==="POST" &&
     new URL(response.url()).pathname===commandPath);
   await page.locator('details[data-slot="dropdown-root"] > summary')
