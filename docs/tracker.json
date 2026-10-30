@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "project": "42Students/lms-vnext",
   "branch": "main",
-  "updatedOn": "2026-10-29",
+  "updatedOn": "2026-10-31",
   "policy": "SOLE ACTIVE TRACKER. done:true means scoped ENGINEERING acceptance passed with executed evidence, or (for a task with deferredRelease metadata) engineering acceptance passed and clearly enumerated independent final-release reviews are scheduled later. done:true does NOT certify security/retention signoff, browser/release, or the overall phase. Missing functionality, database migration, tenant/privacy invariants, or failed core tests are NOT deferrable. Agents skip done tasks unless a concrete regression or owner re-scope occurs. No other task status trackers; pending final attestations remain evidence in original registers and task metadata.",
   "currentPhase": "DATABASE",
   "phaseOrder": [
@@ -3794,15 +3794,18 @@
         "Domain acceptance: actual disposable PG full registered replay + catalog/drift + tenant/private/FK/state/race negatives and real consumer",
         "Global phase gate: full applicable typecheck/lint/build/browser/security plus release-only provider/recovery at RELEASE"
       ],
-      "progressRule": "Counts derive from the done booleans in tasks and milestones; lane claim and request status do not imply engineering acceptance."
+      "progressRule": "Counts derive from the done booleans in tasks and milestones; lane claim and request status do not imply engineering acceptance.",
+      "closureFirst": "All chats must read execution.closureFirstProtocol and run npm run progress -- --closure-next. In each pass, choose one OPEN task, its exact missing executed gate, and a finite acceptance path. Two unaccepted passes maximum before precise owner handoff + lane-safe switch. No done-task revisits except concrete regressions. No second tracker; accepted count from task.done only."
     },
     "startupProcedure": [
-      "Read AGENTS.md, docs/tracker.json (execution + tasks), and latest relevant source/code/test; do not read historical plans as current instruction.",
-      "Take a free designated lane L01-L10 and claim it with a unique sessionId using optimistic Git update; if occupied, pick another idle lane or ask the existing lane to hand off.",
-      "Read assigned unaccepted DB IDs and relevant phase milestones; choose highest-value dependency-ready finite real workflow.",
-      "Implement coherent code+registered migration via L01 if needed+real consumer+tests; run disposable DB acceptance and domain negatives.",
-      "Commit with Lane trailer, update ONLY owned accepted items and exact evidence in this same tracker by fresh-main optimistic merge, then freeze and move.",
-      "Before context ends, release or explicitly hand off lane claim; next chat reads canonical tracker not previous conversation prose."
+      "Read AGENTS.md and the sole docs/tracker.json; execute npm run progress -- --closure-next BEFORE choosing work. Ignore retired plans/duplicate trackers.",
+      "Claim one free L01-L10 lane with a fresh-head optimistic update; never displace an unexpired claim or edit another lane's domain files.",
+      "Pick ONE OPEN task by closureFirstProtocol.selectionPriority; prefer registered PG acceptance-ready tasks and a precise proof gate, not an already DONE domain.",
+      "Inspect exact task criteria and current code/migrations/CI; write the one missing gate and its required safety/integration evidence before implementation.",
+      "Close with coherent owned-domain implementation+L01 promotion if necessary+producer/consumer+actual disposable PG tests; no source-only finish-line.",
+      "Update task.done and executed SHA/run evidence in this tracker immediately after verification, freeze task and move; any queue entry for now-DONE task must be pruned with the same edit.",
+      "After two useful passes without acceptance, hand off the verified blocker to its exact owner then switch to another independent OPEN task; do not indefinitely re-audit.",
+      "Before context ends, release or hand off lane claim and report exact accepted delta and unresolved blockers; never imply background work."
     ],
     "globalPhaseCertificates": {
       "DATABASE": {
@@ -4902,6 +4905,88 @@
           }
         }
       ]
+    },
+    "closureFirstProtocol": {
+      "schemaVersion": 1,
+      "adoptedOn": "2026-10-31",
+      "authority": "This is an operating procedure embedded in the sole docs/tracker.json; it does not define a second task tracker or relax task.done acceptance.",
+      "objective": "Maximize independently accepted open DB tasks and complete runnable vertical slices, not authored commits, test counts, staging documents, or repeated deep-audits of already accepted domains.",
+      "requiredSequence": [
+        "Read current docs/tracker.json and AGENTS.md; use npm run progress -- --closure-next to select one existing open task assigned to your lane.",
+        "Inspect that exact task's accept criteria, latest main HEAD, migration registration, consumer behavior, executable witnesses, and CI receipts before touching code.",
+        "State a finite single-task closure hypothesis and all missing proof; prefer an acceptance-ready task with registered PG and live producer/consumer over a source-only candidate.",
+        "Implement the smallest correct blocker fix and meaningful negative tests in one cohesive owned-domain batch; use L01 for numbered migrations/shared schema and L10 for independent verification; do not bypass lane ownership.",
+        "Execute focused proof on exact main SHA, including registered schema/tenant/privacy/race/consumer requirements for that specific task; source-only, staged-only, queued, cancelled, or a success from unrelated older commit is not acceptance.",
+        "If and only if every scoped engineering gate passes, atomically record done:true, acceptedAt and executed acceptanceEvidence in the same sole tracker with fresh GitHub blob SHA; freeze this task and immediately select the next OPEN task.",
+        "After two passes without task acceptance, document one precise executable blocker and named owner, hand off shared migration/verification to the owning lane and MOVE to another independent ready OPEN task; never run a third pass of the same speculative audit.",
+        "Before ending, report only changed accepted count, accepted IDs, exact run URLs and remaining named blockers. Never call unverified staging closure, global database certification, or release completion."
+      ],
+      "forbiddenPatterns": [
+        "Working on done:true DB tasks to raise the DB acceptance counter without a demonstrated regression or explicit user re-scope",
+        "Re-inventorying the same 81 rows, cloning progress documents or rewriting old planning prose instead of closing a runnable missing gate",
+        "Bundling unrelated fixes that each trigger noisy CI without a single task acceptance hypothesis",
+        "Treating a passing source/static/staged-only suite or green unrelated run as registered PostgreSQL, runtime or privacy acceptance",
+        "Deferring missing migration, authorization, privacy/tenant isolation, runnable workflow or failing critical assertions",
+        "Marking a task done from prose, authored tests, inferred quality, unreliable historical statuses or somebody else's unverified statement"
+      ],
+      "selectionPriority": [
+        "P0: OPEN task with all required registered PostgreSQL, consumer, security and race evidence already executed: validate exact task scope and immediately record acceptance",
+        "P1: OPEN task with one finite demonstrable blocker (missing test/witness/schema registration) and no external secrets or ambiguous owner decision",
+        "P2: OPEN independent producer/consumer slice that unblocks multiple others, with a concrete acceptance plan",
+        "P3: broad cross-domain/global audits only after constituent P0-P2 task closures or a demonstrated dependency gate"
+      ],
+      "focusTasks": [
+        {
+          "id": "DB-007",
+          "laneId": "L03",
+          "nextGate": "Cross-check 103-field profile source disposition and privacy/producer scope against already passing registered PG17 DB007 acceptance; certify only when all required gaps are closed."
+        },
+        {
+          "id": "DB-008",
+          "laneId": "L04",
+          "nextGate": "Verify exact DB05 source semantics and course/content live writers against completed registered PG17 workflow; accept if no unresolved required runtime fields."
+        },
+        {
+          "id": "DB-042",
+          "laneId": "L05",
+          "nextGate": "Prove attendance roster scope/marker invariants on registered PG17 after L01 migration registration; no staged-only credit."
+        },
+        {
+          "id": "DB-072",
+          "laneId": "L07",
+          "nextGate": "Resolve stored RECRUITER round-result code with exact registered migration and writer/read compatibility; run focused PG tenant and state negatives."
+        },
+        {
+          "id": "DB-012",
+          "laneId": "L08",
+          "nextGate": "Choose smallest independently accepted DB09 CRM persistence subdomain, verify real producer/consumer and  full source-field scope rather than repeat accepted DB032/033/037/040/046."
+        },
+        {
+          "id": "DB-031",
+          "laneId": "L09",
+          "nextGate": "Coordinate provider_message_id width migration with L01, prove restricted SMS ledger, privacy/FK/support read and Exotel receipt on PG17 before acceptance."
+        },
+        {
+          "id": "DB-001",
+          "laneId": "L10",
+          "nextGate": "Resolve independent verifier's failing Drizzle generation/drift on current main with L01; require all 12 independent clean-tree PG steps to pass."
+        },
+        {
+          "id": "DB-018",
+          "laneId": "L10",
+          "nextGate": "Assess PG17 92-case registered witness suite and remaining dependency/race gaps only after DB001 independent gate; do not promote from focused partial success."
+        }
+      ],
+      "laneRules": {
+        "oneOpenTaskAtATime": true,
+        "acceptedTasksFrozen": true,
+        "maximumUnacceptedPassesPerTask": 2,
+        "claimAndPathOwnershipPreserved": true,
+        "sharedMigrationSingleWriter": "L01",
+        "independentAcceptance": "L10",
+        "noAutomaticTaskPromotion": true,
+        "noGlobalPhaseCertificationFromCounts": true
+      }
     }
   }
 }
