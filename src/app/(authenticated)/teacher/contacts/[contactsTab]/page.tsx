@@ -9,7 +9,7 @@ import {
   FacultyContactsPagination,
   FacultyContactsTable,
 } from "@/components/courses/faculty-contacts-table";
-import { FacultyContactsLiveSearch } from "./faculty-contacts-live-search";
+import { FacultyContactsLiveSearch, FacultyContactsRetry } from "./faculty-contacts-live-search";
 import { PageHeader } from "@/components/ui/page-header";
 import { ErrorState } from "@/components/ui/error-state";
 import { AuthorizationError } from "@/modules/permissions/policy";
@@ -95,9 +95,11 @@ export default async function FacultyContactsPage({
           description={loaded.denied
             ? "You no longer have access to these contacts."
             : "Something went wrong on our end. Please try again."}
-          action={<Link href={retryHref} className="font-semibold text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">
-            {loaded.denied ? "Back to teaching" : "Retry contacts"}
-          </Link>}
+          action={loaded.denied
+            ? <Link href={retryHref} className="font-semibold text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">
+                Back to teaching
+              </Link>
+            : <FacultyContactsRetry />}
         />
       </section>
     );
