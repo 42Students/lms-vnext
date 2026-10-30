@@ -23,6 +23,8 @@ vi.mock("@/components/people/faculty-avatar-upload",()=>({
  FacultyAvatarUpload:({initials}:{initials:string})=><div>Avatar {initials}</div>,
 }));
 import Page from "@/app/(authenticated)/teacher/profile/page";
+import Loading from "@/app/(authenticated)/teacher/profile/loading";
+import ErrorBoundary from "@/app/(authenticated)/teacher/profile/error";
 
 const faculty={
  user:{id:"teacher",platformStatus:"ACTIVE",systemRoles:[]},
@@ -42,6 +44,15 @@ beforeEach(()=>{
  fakes.ready.mockResolvedValue(false);
 });
 describe("Faculty profile account page closure",()=>{
+ it("shows accessible loading and safe hard-error Retry UI without leaking the failure",()=>{
+  const loading=renderToStaticMarkup(<Loading/>);
+  expect(loading).toContain("Loading faculty profile");
+  const hardError=renderToStaticMarkup(<ErrorBoundary error={new Error("sensitive profile read failure")} reset={()=>{}}/>);
+  expect(hardError).toContain("Unable to load your profile");
+  expect(hardError).toContain("Retry");
+  expect(hardError).toContain("/teacher/courses");
+  expect(hardError).not.toContain("sensitive profile read failure");
+ });
  it("keeps verified identity and teaching metadata visible when private document storage is not yet enabled",async()=>{
   const text=await html();
   expect(text).toContain("Faculty Example");
