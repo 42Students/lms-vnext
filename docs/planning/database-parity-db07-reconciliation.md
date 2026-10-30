@@ -158,3 +158,44 @@ Static contract coverage is authored in `tests/unit/w03-db07-tenant-integrity-dr
 - Concurrency witnesses for task versioning, delivery revision, workspace delete/restore and readiness override have not executed.
 
 Therefore DB-010 remains **IN_PROGRESS** after this source batch.
+
+## 2026-10-30 — DB-010 transactional tombstone hardening (source-only checkpoint)
+
+A distinct L06 source batch hardened **18 project mutation entry points across 15
+project service files**. Every newly covered mutation re-checks the live
+`project_instances.deleted_at IS NULL` predicate **under a project-row
+`FOR UPDATE` lock**, rather than relying on the authorization snapshot taken
+before the transaction. The affected paths include learner task status and
+reordering, learner backlog pulls, mentor task/sprint transitions and deletes,
+task assignment, mentor overview, readiness overrides, resource create/update/
+archive/reorder and full-library save, College Admin task/sprint plans and
+task creation, and primary-mentor reassignment.
+
+Children used by these mutations are separately checked for soft deletion
+where a tombstoned task/sprint must not be edited or brought back into an
+active workflow. Crucially, **soft-deleted task rows still reserve
+`(sprint_id, sequence)`** under the *unconditional* registered
+`project_tasks_sprint_sequence_uq` index. Learner reorder therefore locks
+all sibling sequence rows, edits only active siblings and obtains the
+temporary sequence above all reserved positions (with a 32-bit overflow
+guard). Learner backlog pulls likewise include historical rows when finding
+the next free destination sequence. Filtering those history rows would cause
+unique collisions and is intentionally prohibited.
+
+Source commits:
+
+- `96aa39b151b35ba89e08c57125915512261469df` — first 10 write paths plus contract registration
+- `67914b296558a448e53b0651a1b4454918fd393c` — eight further paths, including child ancestry guards
+- `216d9a1aed98bb985914ce667f25a242e536c966` — backlog history-aware sequence allocation
+- `13ff34d3f0449771d62f137b9360cc04a9b2dafa` — reorder history-aware sequence allocation
+- `ba8662439e9ce1524aafc271f2ea76871099afcf` — source regression for unconditional reserved sequence slots
+
+`tests/db07-project-tombstone-guards.test.mjs` is imported by the existing
+`tests/db07-reconciliation-contract.test.mjs` parity suite. Isolated
+source-contract evaluations passed for the first and second code batches
+and 12 additional sequence/correctness checks against the committed source.
+These are **not** proof of the committed Node test suite, typecheck,
+disposable PostgreSQL integration or two-session deletion races.
+DB-010 is still **OPEN**: execute the registered PG17 negative/race and
+producer→consumer suites at a pinned SHA, finish 358-field semantic
+disposition and independently verify the remaining global DB07 gate.
