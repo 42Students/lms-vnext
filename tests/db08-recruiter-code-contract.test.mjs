@@ -29,6 +29,10 @@ const resultService = readFileSync(
   resolve("src/modules/placements/result-service.ts"),
   "utf8",
 );
+const sourceModel = readFileSync(
+  resolve("src/modules/placements/round-result-source-model.ts"),
+  "utf8",
+);
 
 function sections() {
   const expandAt = candidate.indexOf("-- === DB072 EXPAND");
@@ -46,16 +50,17 @@ test("DB-072 source sweep currently identifies the known HR family only", () => 
   const roundResults = placements.slice(schemaStart, schemaEnd);
 
   // This test intentionally accepts pre-cutover OR future post-cutover source.
-  const pre =
-    /'TPO', 'HR', 'IMPORT'/.test(roundResults) &&
-    /current\.source !== "HR"/.test(resultService) &&
-    /source: recruiterCanStage \? "HR" : "TPO"/.test(resultService);
-
-  const post =
-    /'RECRUITER'/.test(roundResults) &&
-    /source: recruiterCanStage \? "RECRUITER" : "TPO"/.test(resultService);
-
-  assert.ok(pre || post, "round-result recruiter source is in an unexplained intermediate state");
+  // Read-side compatibility is safe before EXPAND: the writer must continue
+  // emitting HR until the numbered migration accepts RECRUITER. In both
+  // phases the conflict guard recognizes historic recruiter-owned rows.
+  const reader = /!isRecruiterRoundResultSource\(current\.source\)/.test(resultService) &&
+    /source === "HR" \|\| source === "RECRUITER"/.test(sourceModel);
+  const pre = /'TPO', 'HR', 'IMPORT'/.test(roundResults) &&
+    /source:\s*recruiterCanStage\s*\?\s*"HR"/.test(resultService);
+  const post = /'RECRUITER'/.test(roundResults) &&
+    /source:\s*recruiterCanStage\s*\?\s*"RECRUITER"/.test(resultService);
+  assert.ok(reader && (pre || post),
+    "round-result provenance writer, reader, or DB CHECK is in an unexplained intermediate state");
   assert.match(verifier, /src\/db\/schema/);
   assert.match(verifier, /src\/modules\/placements/);
 });
