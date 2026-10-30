@@ -164,6 +164,7 @@ async function cleanup() {
     where c.code like $1)`, [codePattern]);
   await pool.query(`delete from course_offerings where course_id in (
     select id from courses where code like $1)`, [codePattern]);
+  await pool.query("delete from program_term_courses where course_id in (select id from courses where code like $1)", [codePattern]);
   await pool.query("delete from courses where code like $1", [codePattern]);
   await pool.query(`delete from section_enrollments where learner_enrollment_id in (
     select e.id from learner_program_enrollments e
