@@ -593,8 +593,27 @@
       "id": "DB-027",
       "title": "Cross-domain staged SQL collision and dependency preflight",
       "phase": "DATABASE",
-      "done": false,
-      "dependsOn": []
+      "done": true,
+      "dependsOn": [],
+      "acceptedAt": "2026-10-30",
+      "acceptanceEvidence": [
+        {
+          "kind": "EXECUTED_SOURCE_PREFLIGHT",
+          "result": "PASS",
+          "exitCode": 0,
+          "commitSha": "ee6c26e338ff42d326056c240ce1776ca5c67151",
+          "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/41061202621",
+          "jobId": 124081097738,
+          "runner": "GitHub Actions ubuntu-latest, Node.js 22; full checkout read-only source analyzer",
+          "commands": [
+            "npm ci",
+            "npm run db:journal:verify",
+            "node --test tests/db27-stage-sql-preflight.test.mjs",
+            "node --input-type=module (import analyzeCheckout from scripts/db27-stage-sql-preflight.mjs and inspect complete registered/staged checkout)"
+          ],
+          "details": "Source-only staged SQL collision/dependency preflight accepted: 34/34 adversarial source regression tests passed, 0 failures/skips. Full checkout scan: 121 SQL files, 108 staged and 13 excluded; 73 proposed table creators; 0 duplicate creators, 0 repeated CREATE within files, 0 lexical hazards, 0 unresolved parents and 0 cycles; 13 staged parent dependencies. It explicitly reports 49 overlaps with registered tables and 8 potentially destructive staged SQL drafts as BLOCKERS, and always returns safeForAutomaticPromotion=false. These findings remain migration integrator work: no staged SQL automatically promoted and no PostgreSQL migration/runtime acceptance claimed by this source-scanner task."
+        }
+      ]
     },
     {
       "id": "DB-028",
