@@ -628,6 +628,7 @@ jobs:
           tests/integration/db10-outbound-queue.test.ts
           tests/integration/db10-outbound-scope-fk.test.ts
           tests/integration/db067-global-email-pre-send.test.ts
+          tests/integration/db10-global-email-suppression-service.test.ts
 
 
   # Original core DB-008: SQL-only evidence for source-backed COURSE identity

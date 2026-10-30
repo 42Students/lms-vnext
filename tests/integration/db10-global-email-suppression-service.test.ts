@@ -16,20 +16,21 @@ import { persistVerifiedGlobalEmailSuppression } from
  * Explicit injection of this isolated pool is mandatory: never use getDb()
  * or fall back to an app database. A live provider is never invoked.
  */
-if (process.env.DB10_ISOLATED_TEST_DATABASE !== "1")
-  throw new Error("DB050 requires DB10_ISOLATED_TEST_DATABASE=1");
+// This destructive witness runs only in its dedicated, opt-in disposable PG17 job.
+// Generic integration CI must never connect it to the application database.
+const db050Enabled = process.env.DB10_ISOLATED_TEST_DATABASE === "1";
 const rawUrl = process.env.TEST_DATABASE_URL;
-if (!rawUrl) throw new Error("DB050 requires explicit TEST_DATABASE_URL");
-const target = new URL(rawUrl);
-if (!["postgres:", "postgresql:"].includes(target.protocol) ||
-    !decodeURIComponent(target.pathname.slice(1)).toLowerCase().endsWith("_test") ||
-    !target.username || !target.hostname || target.search || target.hash)
+if (db050Enabled && !rawUrl) throw new Error("DB050 requires explicit TEST_DATABASE_URL");
+const target = db050Enabled ? new URL(rawUrl!) : null;
+if (db050Enabled && (!["postgres:", "postgresql:"].includes(target!.protocol) ||
+    !decodeURIComponent(target!.pathname.slice(1)).toLowerCase().endsWith("_test") ||
+    !target!.username || !target!.hostname || target!.search || target!.hash))
   throw new Error("DB050 refuses non-disposable PostgreSQL URL");
-if (process.env.DATABASE_URL) {
+if (db050Enabled && process.env.DATABASE_URL) {
   const production = new URL(process.env.DATABASE_URL);
   const identity = (u: URL) =>
     `${u.hostname.toLowerCase()}:${u.port || "5432"}:${decodeURIComponent(u.pathname).toLowerCase()}`;
-  if (identity(production) === identity(target))
+  if (identity(production) === identity(target!))
     throw new Error("DB050 refuses the application database");
 }
 
@@ -86,6 +87,7 @@ async function insertMessage(
 }
 
 beforeAll(async () => {
+  if (!db050Enabled) return;
   const { rows } = await pool.query<{ ready: boolean }>(`
     select to_regclass('public.outbound_messages') is not null
       and to_regclass('public.outbound_global_email_suppressions') is not null
@@ -95,6 +97,7 @@ beforeAll(async () => {
     throw new Error("DB050 migration not replayed on disposable PostgreSQL");
 });
 afterAll(async () => {
+  if (!db050Enabled) { await pool.end(); return; }
   try {
     if (insertedIds.length)
       await pool.query("delete from outbound_messages where id=any($1::uuid[])", [insertedIds]);
@@ -108,7 +111,7 @@ afterAll(async () => {
   }
 });
 
-describe("DB-050 verified global EMAIL suppression persists atomically", () => {
+describe.skipIf(!db050Enabled)("DB-050 verified global EMAIL suppression persists atomically", () => {
   it("suppresses matching pending/retry across colleges but never overwrites claimed or another recipient", async () => {
     // Per-run addresses prevent collision with other disposable suites and
     // ensure afterAll cannot erase another test's global suppression record.
