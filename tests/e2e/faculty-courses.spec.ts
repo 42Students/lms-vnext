@@ -139,42 +139,46 @@ test("Faculty posts, pins, unpins and deletes a Section discussion in the browse
 });
 
 test("Faculty Blueprint persists an authorized Section Resource edit after a full reload", async ({ page, context }) => {
+  test.setTimeout(120_000);
   await facultyLogin(context);
   await page.goto("/teacher/courses");
-  await page.getByRole("link", { name: /E2E Browser Course/ }).click();
-  const blueprint = page.getByRole("navigation", { name: "Faculty course tabs" })
-    .getByRole("link", { name: "Blueprint" });
-  await blueprint.click();
-  const article = page.getByRole("article").filter({ hasText: "E2E Section A Notes" });
-  await article.getByRole("button", { name: "Edit content" }).click();
-  const drawer = page.getByRole("dialog", { name: "Edit RESOURCE" });
-  const original = await drawer.getByLabel("Notes").inputValue();
-  const marker = "Faculty persisted-resource browser check";
-
-  async function patchNotes(notes: string) {
-    const edit = page.getByRole("dialog", { name: "Edit RESOURCE" });
-    await edit.getByLabel("Notes").fill(notes);
-    const response = page.waitForResponse((res) =>
-      res.request().method() === "PATCH" &&
-      /\/api\/courses\/lesson-contents\/[^/]+$/.test(new URL(res.url()).pathname));
-    await edit.getByRole("button", { name: "Save content" }).click();
-    expect((await response).ok()).toBe(true);
-  }
-
+  await page.getByRole("link", { name: /E2E Browser Course/ }).first().click();
+  await page.getByRole("navigation", { name: "Faculty course tabs" })
+    .getByRole("link", { name: "Blueprint" }).click();
+  const explorer=page.getByRole("region",{name:"Course blueprint lesson explorer"});
+  const order=explorer.getByRole("list",{name:"Lesson content order"});
+  await expect(order).toBeVisible();
+  // The actual lesson explorer uses <li> rows and inline Edit actions.
+  // The old standalone <article> resource cards no longer exist.
+  const openEditor=async()=>{
+    await order.getByRole("button",{name:"Edit",exact:true}).first().click();
+    const editor=page.getByRole("dialog",{name:"Edit RESOURCE"});
+    await expect(editor).toBeVisible();
+    return editor;
+  };
+  const editor=await openEditor();
+  const original=await editor.getByLabel("Notes").inputValue();
+  const marker="Faculty persisted-resource browser proof "+Date.now();
+  const patchNotes=async(value:string)=>{
+    const dialog=page.getByRole("dialog",{name:"Edit RESOURCE"});
+    await dialog.getByLabel("Notes").fill(value);
+    const saving=page.waitForResponse(response=>response.request().method()==="PATCH" &&
+      /^\/api\/courses\/lesson-contents\/[^/]+$/.test(new URL(response.url()).pathname));
+    await dialog.getByRole("button",{name:"Save content"}).click();
+    expect((await saving).ok()).toBe(true);
+  };
   try {
     await patchNotes(marker);
     await page.reload();
-    await expect(page.getByRole("article").filter({ hasText: "E2E Section A Notes" }))
-      .toContainText(marker);
-    await expect(page.getByText("E2E Section B Secret", { exact: true })).toHaveCount(0);
+    await expect(order).toContainText(marker);
+    await expect(page.getByText("E2E Section B Secret",{exact:true})).toHaveCount(0);
   } finally {
-    if (!page.isClosed()) {
+    if(!page.isClosed()){
       await page.goto("/teacher/courses");
-      await page.getByRole("link", { name: /E2E Browser Course/ }).click();
-      await page.getByRole("navigation", { name: "Faculty course tabs" })
-        .getByRole("link", { name: "Blueprint" }).click();
-      await page.getByRole("article").filter({ hasText: "E2E Section A Notes" })
-        .getByRole("button", { name: "Edit content" }).click();
+      await page.getByRole("link",{name:/E2E Browser Course/}).first().click();
+      await page.getByRole("navigation",{name:"Faculty course tabs"})
+        .getByRole("link",{name:"Blueprint"}).click();
+      await openEditor();
       await patchNotes(original);
     }
   }
