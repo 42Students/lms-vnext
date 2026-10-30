@@ -1,0 +1,90 @@
+# Acceptance of five explicitly source/staging-scoped DATABASE tasks.
+# Registered domain PostgreSQL checks are non-regression evidence; unregistered
+# stages are NOT asserted to be deployed. Global DB-013/DB-012/DB-019/DB-020
+# readiness remains separate.
+name: Five scoped DB task acceptances (032 033 037 040 046)
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/db-five-staged-scope-acceptance.yml"
+      - "tests/db09-integration-staging-guard.test.mjs"
+      - "tests/db10-app-setting-disposition.test.mjs"
+      - "tests/db10-notification-template-disposition.test.mjs"
+      - "tests/db10-staged-drafts-source-map.test.mjs"
+      - "tests/db10-source-disposition-closure.test.mjs"
+      - "docs/planning/database-parity-app-setting-disposition.json"
+      - "docs/planning/database-parity-db10-notification-template-disposition.json"
+      - "docs/planning/database-parity-db10-source-disposition-closure.json"
+      - "docs/planning/database-parity-db10-field-ledger.json"
+      - "docs/tracker.json"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: lms-five-scoped-db-main-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  five-source-scopes-and-db09-regression:
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    services:
+      postgres:
+        image: postgres:17-alpine
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: lms_vnext_test
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres -d lms_vnext_test"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 20
+    env:
+      TEST_DATABASE_URL: postgresql://postgres:postgres@127.0.0.1:5432/lms_vnext_test
+      DATABASE_URL: postgresql://postgres:postgres@127.0.0.1:5432/lms_vnext_test
+      DB03_ISOLATED_TEST_DATABASE: "1"
+      DB09_ISOLATED_TEST_DATABASE: "1"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Exact source SHA and registered migration journal
+        run: |
+          test "$(git rev-parse HEAD)" = "$GITHUB_SHA"
+          npm run db:journal:verify
+      - name: Five independent scoped source and staging acceptance suites
+        run: |
+          set -eu
+          node --test \
+            tests/db09-integration-staging-guard.test.mjs \
+            tests/db10-app-setting-disposition.test.mjs \
+            tests/db10-notification-template-disposition.test.mjs \
+            tests/db10-staged-drafts-source-map.test.mjs \
+            tests/db10-source-disposition-closure.test.mjs
+      - name: Registered PostgreSQL 17 clean seed and zero-to-head migration
+        env:
+          DATABASE_URL: ""
+        run: npm run db:test:prepare
+      - name: Registered journal idempotent replay
+        run: npm run db:migrate
+      - name: DB09 live principal, tenant and immutable-history negatives
+        run: node tests/db09-collaboration-registered-pg-acceptance.mjs
+      - name: DB09 secure disclosure negatives
+        run: node tests/db09-share-registered-pg-acceptance.mjs
+      - name: DB09 private-note identity and authorization negatives
+        run: node tests/db09-recruiter-note-registered-pg-acceptance.mjs
+      - name: Preserve original registered journal and five task scope
+        run: |
+          npm run db:journal:verify
+          test -z "$(git status --porcelain -- drizzle/)"
+          echo "DB-032/033/037/040/046: source/staging contracts verified; not global database schema/producer-consumer certification."
