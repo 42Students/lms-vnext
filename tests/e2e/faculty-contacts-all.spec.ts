@@ -42,9 +42,25 @@ for(const view of [{name:"desktop",width:1280,height:800},{name:"mobile",width:3
   await expect(page).toHaveURL(/\/teacher\/contacts\/allContacts(?:\?.*)?$/,{timeout:20000});
   await page.getByRole("searchbox",{name:"Search contacts"}).fill("private-email-not-public@example.invalid");
   await expect(page.getByText(/No contacts match/)).toBeVisible({timeout:20000});
+  await expect(page).toHaveURL(/q=private-email-not-public%40example\.invalid/);
+  // Switching roles must preserve the public search and the 10/20/50 row-size choice.
+  await tabs.getByRole("link",{name:"Students"}).click();
+  await expect(page).toHaveURL(/\/teacher\/contacts\/students\?.*q=private-email-not-public/);
+  await expect(page.getByRole("searchbox",{name:"Search contacts"})).toHaveValue("private-email-not-public@example.invalid");
+  await page.getByRole("navigation",{name:"Contacts sections"}).getByRole("link",{name:"All Contacts"}).click();
+  await expect(page.getByRole("searchbox",{name:"Search contacts"})).toHaveValue("private-email-not-public@example.invalid");
   await page.getByRole("button",{name:"Clear search"}).click();
   await expect(page.getByRole("searchbox",{name:"Search contacts"})).toHaveValue("");
   await expect(page.locator('a[href*="/'+SEED_IDS.learnerCollegeAMembership+'"]:visible').first()).toBeVisible({timeout:20000});
+  // A real Back navigation must discard unsaved search text and restore URL state,
+  // rather than firing a late replace() with stale draft content.
+  await page.evaluate(()=>{
+   window.history.pushState({},"","/teacher/contacts/allContacts?q=temporary&pageSize=50");
+  });
+  await page.getByRole("searchbox",{name:"Search contacts"}).fill("draft-search-not-committed");
+  await page.goBack();
+  await expect(page).toHaveURL(/\/teacher\/contacts\/allContacts\?pageSize=50$/);
+  await expect(page.getByRole("searchbox",{name:"Search contacts"})).toHaveValue("");
   if(view.name==="mobile"){
    const width=await page.evaluate(()=>document.documentElement.scrollWidth);
    expect(width).toBeLessThanOrEqual(view.width+1);
