@@ -40,9 +40,19 @@ async function cleanup(){
     await pool.query("delete from project_instances where id=any($1::uuid[])",[tracked.projects]);
   }
   if(tracked.templates.length){
-    for(const table of ["project_template_college_assignments","project_template_versions"])
+    for(const table of ["project_template_college_assignments"])
       await pool.query("delete from "+table+" where template_id=any($1::uuid[])",[tracked.templates]);
-    await pool.query("delete from project_templates where id=any($1::uuid[])",[tracked.templates]);
+    // DB070 historical revisions are append-only and DB071 preserves header pointers.
+    const retention=await pool.query<{retainHistory:boolean}>(
+      "select (exists (select 1 from pg_trigger where tgrelid='project_template_versions'::regclass " +
+      "and tgname='db07_project_template_versions_append_only' and tgenabled='O') " +
+      "or exists (select 1 from pg_constraint where conrelid='project_templates'::regclass " +
+      "and conname='project_templates_current_version_snapshot_fk')) as \"retainHistory\"",
+    );
+    if(!retention.rows[0]?.retainHistory){
+      await pool.query("delete from project_template_versions where template_id=any($1::uuid[])",[tracked.templates]);
+      await pool.query("delete from project_templates where id=any($1::uuid[])",[tracked.templates]);
+    }
   }
   tracked.projects=[];tracked.templates=[];
 }
