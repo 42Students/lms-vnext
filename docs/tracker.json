@@ -943,7 +943,7 @@
       "id": "DB-050",
       "title": "Preserve global email opt-out across organizations",
       "phase": "DATABASE",
-      "done": false,
+      "done": true,
       "dependsOn": [],
       "implementationCheckpoint": {
         "status": "IMPLEMENTED_AWAITING_REGISTERED_PG_RACE_ACCEPTANCE",
@@ -959,7 +959,28 @@
         ],
         "recordedOn": "2026-10-29",
         "evidenceIsNotAcceptance": true
-      }
+      },
+      "acceptedAt": "2026-10-30",
+      "closureBasis": "ENGINEERING_ACCEPTED_GLOBAL_EMAIL_CONSENT_PERSISTENCE_NOT_DISPATCH_RELEASE",
+      "acceptanceEvidence": [
+        {
+          "kind": "EXECUTED_REGISTERED_POSTGRESQL_17_ACCEPTANCE",
+          "commitSha": "05634e012012eaac22c7d6b70af01561cfaea88f",
+          "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/41079223105",
+          "jobId": 124143537979,
+          "runner": "GitHub Actions ubuntu-latest Node 22 + disposable PostgreSQL 17-alpine",
+          "commands": [
+            "npm run db:journal:verify",
+            "node --test tests/db10-global-email-suppression-contract.test.mjs",
+            "npm run db:test:prepare (with DATABASE_URL cleared)",
+            "npm run db:migrate",
+            "npx vitest run --config vitest.db.registered.config.ts tests/integration/db10-global-email-suppression-service.test.ts tests/integration/db050-global-email-upsert-race.test.ts"
+          ],
+          "result": "PASS",
+          "exitCode": 0,
+          "details": "Registered global email suppression table with dedicated recipient HMAC; cross-college pending/retry rows suppressed, claimed provider-ambiguous rows left untouched, unrelated recipient isolated, duplicate event idempotent, 6 simultaneous verified unsubscribe/provider events converge to one active HMAC. No live provider calls. DB067 pre-send dispatcher authorization and release validation remain independent."
+        }
+      ]
     },
     {
       "id": "DB-051",
