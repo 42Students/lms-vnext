@@ -215,6 +215,8 @@ Legacy `/teacher/fileExplorer` only redirects to Courses.
 
 - [x] Classified RETIRED in master matrix; do not recreate as a product page.
 
+**2026-10-30 current-source check:** Legacy `src/pages/teacher/fileExplorer.js` (blob `058d5184eb33a1a6e3d2baceef0a0c5b26dc08b3`) redirects to `/teacher/courses`. vNext `src/app/(authenticated)/teacher/fileExplorer/page.tsx` (blob `2d2cdc6e8bef7005a7619179529010195d36081d`) does the same without creating an unrelated file-manager screen. Desktop and mobile authenticated redirect/responsive assertions were added to `tests/e2e/faculty-courses.spec.ts` in commit `c7fd8d1437e87b24f9e99716ba4b4fd1517f024d`. **Browser acceptance was not executed on the present revision, and this source-level classification is not an Implementation Green receipt.**
+
 ## 2026-10-10 W02 Faculty assessment aggregate implementation
 
 - [x] Exact legacy `/teacher/allQuizzes` and `/teacher/allAssignments` routes exist on `main`, with Faculty sidebar links, published/draft filtering, class context, progress/pagination and existing view-attempt/grade-publish modules.
