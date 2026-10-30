@@ -44,6 +44,7 @@ on:
       - tests/db019-crosswalk-identity.test.mjs
       - tests/db19-field-disposition-audit.test.mjs
       - scripts/db19-field-disposition-audit.mjs
+      - scripts/db019-crosswalk-identity.mjs
       - .github/workflows/single-tracker-acceptance.yml
   workflow_dispatch:
 permissions:
@@ -112,5 +113,6 @@ jobs:
         run: |
           node --test tests/db019-source-ledger-preflight.test.mjs tests/db019-crosswalk-identity.test.mjs tests/db19-field-disposition-audit.test.mjs
           node scripts/db19-field-disposition-audit.mjs
+          node scripts/db019-crosswalk-identity.mjs
       - name: Execute plan and task acceptance tests
         run: node --test tests/tracker.test.mjs tests/database-domain-packages.test.mjs tests/tracker-ten-lanes.test.mjs tests/tracker-progress-evidence.test.mjs tests/closure-first-protocol.test.mjs
