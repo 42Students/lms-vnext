@@ -1,5 +1,19 @@
 # Database workflow
 
+> **Mandatory closure-first database operating rule (2026-10-31):**
+> Before editing migrations, read `AGENTS.md` and the sole
+> `docs/tracker.json.execution.closureFirstProtocol`; run
+> `npm run progress -- --closure-next --lane=LNN`. Choose ONE OPEN task,
+> name its exact missing registered PostgreSQL / tenant / privacy / state /
+> race / producer-to-consumer acceptance gate, and close that gate before
+> revisiting other audits. After two passes with no accepted task, record the
+> exact failing witness and hand off the blocker to L01 (numbered migrations)
+> or L10 (independent verification), then switch to another independent OPEN
+> item. Never mark staging SQL or a green source test as registered migration
+> proof. Only `docs/tracker.json` changes N/81 after exact-SHA executed
+> acceptance. Existing disposable-target and no-prod-write protections remain
+> fully in force.
+
 vNext uses one PostgreSQL database with Drizzle migrations as the canonical schema history.
 
 ## Local PostgreSQL
