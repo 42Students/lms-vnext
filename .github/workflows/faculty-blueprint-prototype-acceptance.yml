@@ -5,6 +5,7 @@ on:
     branches: [main]
     paths:
       - ".github/workflows/faculty-blueprint-prototype-acceptance.yml"
+      - "drizzle/0318_db014_cross_domain_event_guards.sql"
       - "src/components/courses/faculty-prototype-blueprint.tsx"
       - "src/components/courses/faculty-prototype-lesson-items.tsx"
       - "src/components/courses/faculty-prototype-blueprint-row-actions.tsx"
