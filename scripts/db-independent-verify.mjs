@@ -438,7 +438,7 @@ async function main() {
       postgresImage:
         provider?.mode === "docker" ? postgresImage : null,
       provider,
-      githubActionsUsed: false,
+      // Record the actual host honestly. The command itself remains usable\n      // outside CI with either Docker or a supplied disposable PG target.\n      githubActionsUsed: process.env.GITHUB_ACTIONS === "true",
       databaseUrlRedacted: redactDatabaseUrl(databaseUrl),
       steps: results,
       passed:
