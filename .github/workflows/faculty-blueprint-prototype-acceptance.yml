@@ -16,6 +16,7 @@ on:
       - "src/components/courses/faculty-assessment-editor.tsx"
       - "src/components/courses/faculty-course-workspace.tsx"
       - "tests/e2e/faculty-blueprint-prototype.spec.ts"
+      - "tests/e2e/faculty-courses.spec.ts"
       - "tests/unit/faculty-content-order-ui-model.test.ts"
       - "tests/unit/faculty-blueprint-sort-model.test.ts"
       - "tests/unit/faculty-blueprint-archive-receipt.test.ts"
