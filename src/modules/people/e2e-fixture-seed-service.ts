@@ -16,7 +16,7 @@ import {
  placementCollegeApplicationStages,placementCollegeApplicationStageHistory,
  placementCompanies,placementCompanyRelationships,placementJobRoleOptions,
  placementJobRounds,placementJobs,placementRoundCandidateSlots,
- placementSeasons,programs,projectInstances,projectMembers,
+ placementSeasons,programs,programTerms,programTermCourses,projectInstances,projectMembers,
  projectTemplates,projectTemplateVersions,sectionEnrollments,sections,
  sectionScheduleEvents,
  systemRoles,users,
@@ -165,6 +165,19 @@ export async function seedIsolatedE2EAcademicGraph(
     throw new Error("E2E_PROGRAM_COLLISION");
   }
   seeded.add("programA");seeded.add("programB");
+  // Create real term parents before seeding registered 0303 course offerings.
+  const termA=auxId(namespace,"programTermA"),termB=auxId(namespace,"programTermB");
+  for(const row of [
+   {id:termA,programId:d.programA,termNumber:1,name:"E2E Term 1 A "+namespace},
+   {id:termB,programId:d.programB,termNumber:1,name:"E2E Term 1 B "+namespace},
+  ]){
+   await tx.insert(programTerms).values(row).onConflictDoNothing();
+   const [stored]=await tx.select({
+    programId:programTerms.programId,termNumber:programTerms.termNumber,
+   }).from(programTerms).where(eq(programTerms.id,row.id)).limit(1);
+   if(!stored||stored.programId!==row.programId||stored.termNumber!==row.termNumber)
+    throw new Error("E2E_CURRICULUM_TERM_COLLISION");
+  }
 
   const periodA=auxId(namespace,"periodA"),periodB=auxId(namespace,"periodB");
   for(const row of [
@@ -299,13 +312,32 @@ export async function seedIsolatedE2EAcademicGraph(
     throw new Error("E2E_COURSE_COLLISION");
   }
   seeded.add("courseA");seeded.add("courseB");
+  const curriculumA=auxId(namespace,"curriculumA");
+  const curriculumB=auxId(namespace,"curriculumB");
+  for(const row of [
+   {id:curriculumA,programTermId:termA,courseId:d.courseA,
+    type:"CORE" as const,credits:3,displayOrder:1},
+   {id:curriculumB,programTermId:termB,courseId:d.courseB,
+    type:"CORE" as const,credits:3,displayOrder:1},
+  ]){
+   await tx.insert(programTermCourses).values(row).onConflictDoNothing();
+   const [stored]=await tx.select({
+    programTermId:programTermCourses.programTermId,
+    courseId:programTermCourses.courseId,type:programTermCourses.type,
+   }).from(programTermCourses).where(eq(programTermCourses.id,row.id)).limit(1);
+   if(!stored||stored.programTermId!==row.programTermId||
+      stored.courseId!==row.courseId||stored.type!=="CORE")
+    throw new Error("E2E_CURRICULUM_COURSE_COLLISION");
+  }
   const lessonDeliveries={} as Record<"A"|"B",string>;
   for(const row of [
    {suffix:"A" as const,courseId:d.courseA,cohortId:d.batchA,
-    periodId:periodA,sectionId:d.classA,facultyId:d.facultyA,
+    periodId:periodA,termId:termA,curriculumId:curriculumA,
+    sectionId:d.classA,facultyId:d.facultyA,
     lessonId:d.lessonA,title:"E2E Intro Java "+namespace},
    {suffix:"B" as const,courseId:d.courseB,cohortId:d.batchB,
-    periodId:periodB,sectionId:d.classB,facultyId:d.facultyB,
+    periodId:periodB,termId:termB,curriculumId:curriculumB,
+    sectionId:d.classB,facultyId:d.facultyB,
     lessonId:d.lessonB,title:"E2E Intro Circuits "+namespace},
   ]){
    const offering=auxId(namespace,"offering"+row.suffix);
@@ -314,7 +346,8 @@ export async function seedIsolatedE2EAcademicGraph(
    lessonDeliveries[row.suffix]=delivery;
    await tx.insert(courseOfferings).values({
     id:offering,courseId:row.courseId,cohortId:row.cohortId,
-    academicPeriodId:row.periodId,
+    academicPeriodId:row.periodId,programTermId:row.termId,
+    programTermCourseId:row.curriculumId,type:"CORE",
    }).onConflictDoNothing();
    await tx.insert(courseSectionDeliveries).values({
     id:delivery,offeringId:offering,sectionId:row.sectionId,

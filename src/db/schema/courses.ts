@@ -148,6 +148,9 @@ export const courseOfferings = pgTable(
       .references(() => academicPeriods.id, {
         onDelete: "restrict",
       }),
+    /** Registered 0303 NOT NULL field; FK is SQL-owned to avoid the
+     * courses <-> academic-terms module import cycle. */
+    programTermId: uuid("program_term_id").notNull(),
     /** Registered DB02 curriculum, independent of the legacy semester ID. */
     programTermCourseId: uuid("program_term_course_id"),
     legacySemesterCourseId: integer("legacy_semester_course_id"),
