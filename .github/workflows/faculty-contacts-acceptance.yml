@@ -15,12 +15,14 @@ on:
 
 permissions:
   contents: read
+  statuses: write
 
-# Independent of long-lived multi-module CI. Subsequent unrelated main pushes
-# cannot cancel or mask this exact registered Faculty acceptance evidence.
+# Only the newest main revision matters for final Faculty Contacts closure.
+# Cancel obsolete Contacts-only runs when a newer Contacts fix is pushed;
+# unrelated changes do not match the paths filter.
 concurrency:
   group: faculty-contacts-acceptance-${{ github.ref }}
-  cancel-in-progress: false
+  cancel-in-progress: true
 
 jobs:
   postgres:
@@ -110,3 +112,28 @@ jobs:
           tests/e2e/faculty-contacts-teachers.spec.ts
           tests/e2e/faculty-contacts-students.spec.ts
           --workers=1
+
+  record_result:
+    name: Record immutable SHA-scoped Faculty Contacts acceptance result
+    if: ${{ always() }}
+    needs: [postgres, browser]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Publish PostgreSQL + browser result to commit status
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const postgres = "${{ needs.postgres.result }}";
+            const browser = "${{ needs.browser.result }}";
+            const passed = postgres === "success" && browser === "success";
+            await github.rest.repos.createCommitStatus({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              sha: context.sha,
+              state: passed ? "success" : "failure",
+              context: "faculty-contacts-acceptance/pg-browser",
+              description: passed
+                ? "Registered PostgreSQL and Chromium acceptance passed"
+                : "Faculty Contacts acceptance is not green; inspect job results",
+              target_url: `${context.serverUrl}/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}`,
+            });
