@@ -135,4 +135,19 @@ describe("Faculty staged private profile integration",()=>{
   })).rejects.toBeDefined();
 
  });
+ it("round-trips Faculty skills add, edit and removal with persisted version guards",async()=>{
+  const start=await loadOwnFacultyProfileDocumentStaged(faculty);
+  const base=start.document.skills;
+  const record={id:randomUUID(),skill:"Mentoring",proficiency:"Intermediate"};
+  const inserted=await patchOwnFacultyProfileSection(faculty,{
+   section:"skills",value:[...base,record],expectedVersion:start.version});
+  const edited=await patchOwnFacultyProfileSection(faculty,{
+   section:"skills",value:[...base,{...record,proficiency:"Advanced"}],expectedVersion:inserted.version});
+  expect((await loadOwnFacultyProfileDocumentStaged(faculty)).document.skills
+   .find(item=>item.id===record.id)?.proficiency).toBe("Advanced");
+  const removed=await patchOwnFacultyProfileSection(faculty,{
+   section:"skills",value:base,expectedVersion:edited.version});
+  expect(removed.document.skills.some(item=>item.id===record.id)).toBe(false);
+ });
+
 });
