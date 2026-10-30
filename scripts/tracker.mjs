@@ -48,6 +48,36 @@ export function inspectDomainPackages(doc) {
   return {packages,unassigned,duplicates,unknown,readyForNextPhase:false};
 }
 
+/**
+ * Closure-first work selection is derived from the SAME canonical tracker;
+ * focusTasks are suggestions, never additional completion records.
+ * Accepted IDs are suppressed even if another lane has not refreshed hints.
+ */
+export function inspectClosureFirst(doc, laneId = null) {
+  const e = doc?.execution ?? {};
+  const p = e.closureFirstProtocol ?? {};
+  const tasks = new Map((doc?.tasks ?? []).map(t => [t.id,t]));
+  const lanes = new Map((e.lanes ?? []).map(l => [l.id,l]));
+  const focus = (p.focusTasks ?? []).filter(q => !laneId || q.laneId === laneId);
+  const selected = focus.map(q => {
+    const task = tasks.get(q.id);
+    const lane = lanes.get(q.laneId);
+    const blockedBy = (task?.dependsOn ?? []).filter(id => tasks.get(id)?.done !== true);
+    return {
+      id:q.id, title:task?.title ?? 'Unknown task',
+      laneId:q.laneId, accepted:task?.done===true, blockedBy,
+      nextGate:q.nextGate,
+      laneClaim:lane?.claim?.sessionId ?? null,
+    };
+  }).filter(q => !q.accepted);
+  const open = (doc?.tasks ?? []).filter(t => t.done!==true &&
+    (!laneId || (e.lanes ?? []).some(l => l.id===laneId && l.dbTaskIds.includes(t.id))));
+  return {mode:'CLOSURE_FIRST_NOT_ACCEPTANCE', accepted:(doc?.tasks ?? []).filter(t=>t.done===true).length,
+    total:(doc?.tasks ?? []).length, remaining:open.length, priority: selected,
+    otherOpen:open.filter(t=>!selected.some(q=>q.id===t.id)).map(t=>t.id),
+    maximumUnacceptedPassesPerTask:p.laneRules?.maximumUnacceptedPassesPerTask ?? null};
+}
+
 export function inspectExecution(doc) {
   const e = doc?.execution ?? {};
   const milestones = Array.isArray(e.milestones) ? e.milestones : [];
@@ -167,6 +197,31 @@ export function inspectTracker(doc) {
       if (seenClaims.has(c.sessionId)) add(errors,'DUPLICATE_ACTIVE_LANE_CLAIM',{laneId:lane.id});
       seenClaims.add(c.sessionId);
     }
+  }
+  // Closure-first hints must be actionable, domain-owned and consistent with
+  // the single tracker. A newly accepted task is filtered from the queue
+  // automatically; stale hints must NEVER be allowed to reopen done:true.
+  const closure = execution?.closureFirstProtocol;
+  if (closure?.schemaVersion !== 1 || !validString(closure?.objective) ||
+      !Array.isArray(closure?.requiredSequence) || closure.requiredSequence.length<5 ||
+      closure.requiredSequence.some(x=>!validString(x)) ||
+      !Array.isArray(closure?.selectionPriority) || closure.selectionPriority.length<3 ||
+      closure.selectionPriority.some(x=>!validString(x)) ||
+      closure?.laneRules?.maximumUnacceptedPassesPerTask!==2 ||
+      closure?.laneRules?.acceptedTasksFrozen!==true ||
+      closure?.laneRules?.noAutomaticTaskPromotion!==true ||
+      closure?.laneRules?.sharedMigrationSingleWriter!=='L01')
+    add(errors,'INVALID_CLOSURE_FIRST_PROTOCOL');
+  if (!Array.isArray(closure?.focusTasks) || closure.focusTasks.length===0 ||
+      closure.focusTasks.length>12) add(errors,'INVALID_CLOSURE_FIRST_QUEUE');
+  const focusIds=new Set();
+  for (const focus of closure?.focusTasks ?? []) {
+    const owner=(lanes??[]).find(l=>l.id===focus.laneId);
+    if (!/^DB-[0-9]{3}$/.test(focus.id ?? '') ||
+        focusIds.has(focus.id) || !tasks.has(focus.id) ||
+        !owner?.dbTaskIds.includes(focus.id) || !validString(focus.nextGate))
+      add(errors,'INVALID_CLOSURE_FIRST_FOCUS',{id:focus.id});
+    focusIds.add(focus.id);
   }
   // A complete roadmap is mandatory in the same one tracker; no second phase plan.
   const fullPhaseOrder=['DATABASE','API','UI','DESIGN','RELEASE'];
@@ -288,7 +343,24 @@ if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.me
     const root = process.argv[2] && !process.argv[2].startsWith('--')
       ? path.resolve(process.argv[2]) : undefined;
     const report = inspectCheckout(root);
-    if (process.argv.includes('--progress')) {
+    if (process.argv.includes('--closure-next')) {
+      const doc=JSON.parse(fs.readFileSync(path.join(root ?? path.resolve(path.dirname(fileURLToPath(import.meta.url)),'..'),'docs/tracker.json'),'utf8'));
+      const laneId=process.argv.find(a=>/^--lane=L\d\d$/.test(a))?.split('=')[1] ?? null;
+      const queue=inspectClosureFirst(doc,laneId);
+      console.log('LMS vNext | CLOSURE FIRST | '+queue.accepted+'/'+queue.total+
+        ' accepted | OPEN '+(queue.total-queue.accepted));
+      console.log('Focus is advisory; DONE status and executed registered evidence are authoritative.');
+      for (const q of queue.priority) {
+        console.log(q.id+' '+q.laneId+' | '+q.title+
+          (q.blockedBy.length?' | BLOCKED BY '+q.blockedBy.join(', '):' | dependency ready'));
+        console.log('  Exact next proof: '+q.nextGate);
+        if (q.laneClaim) console.log('  Existing lane claim: '+q.laneClaim+' (verify expiry before working)');
+      }
+      console.log('Other OPEN tasks'+(laneId?' in '+laneId:'')+': '+(queue.otherOpen.join(', ')||'none'));
+      console.log('Two no-closure passes max: name the blocker+owner, hand off, switch to an independent OPEN task.');
+      console.log('Staged/source-only/cancelled runs are NOT acceptance. Migration registration is L01-only.');
+      if (report.errors.length) {console.error(JSON.stringify(report.errors));process.exitCode=2;}
+    } else if (process.argv.includes('--progress')) {
       const doc=JSON.parse(fs.readFileSync(path.join(root ?? path.resolve(path.dirname(fileURLToPath(import.meta.url)),'..'),'docs/tracker.json'),'utf8'));
       const laneId=process.argv.find(a=>/^--lane=L\d\d$/.test(a))?.split('=')[1];
       console.log(formatDatabaseProgress(doc,{detailed:true,laneId}));
