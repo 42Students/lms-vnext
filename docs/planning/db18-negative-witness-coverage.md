@@ -106,7 +106,7 @@ The dedicated `.github/workflows/db018-relational-witness-acceptance.yml` now in
 
 ## DB-018 completion interpretation
 
-DB-018 is **not** globally DONE, although its full registered witness matrix has passed. Global DB-018 acceptance still depends on DB-001 independent verification, DB-014 tenant/FK sweep, DB-020 schema drift/phase-gate certification and outstanding source race-gap dispositions. The focused matrix established that:
+DB-018 is **not** globally DONE, although its full registered witness matrix has passed. It must **not** become `DONE_VERIFIED` until independent global gates are accepted. Global DB-018 acceptance still depends on DB-001 independent verification, DB-014 tenant/FK sweep, DB-020 schema drift/phase-gate certification and outstanding source race-gap dispositions. The focused matrix established that:
 
 - the registered migration journal is replayed on disposable PostgreSQL;
 - all 21 read-only probes execute with non-vacuous fixture coverage and zero mismatch rows;
