@@ -17,3 +17,17 @@ test("DB020 type comparison preserves material type and length differences",()=>
     ["varchar(30)[]","varchar(30)"],
   ]) assert.notEqual(canonicalPgTypeLabel(a),canonicalPgTypeLabel(b));
 });
+
+test("DB020 safe timestamp and decimal formatting aliases do not hide precision",()=>{
+ assert.equal(canonicalPgTypeLabel("timestamp without time zone"),
+   canonicalPgTypeLabel("timestamp"));
+ assert.equal(canonicalPgTypeLabel("numeric(12,4)"),
+   canonicalPgTypeLabel("numeric(12, 4)"));
+ assert.notEqual(canonicalPgTypeLabel("numeric(12,4)"),
+   canonicalPgTypeLabel("numeric(12, 3)"));
+ assert.notEqual(canonicalPgTypeLabel("timestamp with time zone"),
+   canonicalPgTypeLabel("timestamp"));
+ // SERIAL is an identity/default contract, not a SQL column type alias.
+ assert.notEqual(canonicalPgTypeLabel("bigint"),
+   canonicalPgTypeLabel("bigserial"));
+});
