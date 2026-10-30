@@ -87,9 +87,9 @@ for (const source of ["HR", "PANELIST", "DRIVE_DAY", "EXCEL", "TPO"]) {
 }
 
 // Old writer remains required until the DB072 EXPAND migration is registered.
-const preCutover = /source:\\s*recruiterCanStage\\s*\\?\\s*"HR"/.test(resultService);
-assert.match(sourceModel, /source === "HR" \\|\\| source === "RECRUITER"/);
-assert.match(resultService, /!isRecruiterRoundResultSource\\(current\\.source\\)/);
+const preCutover = /source:\s*recruiterCanStage\s*\?\s*"HR"/.test(resultService);
+assert.match(sourceModel, /source === "HR" \|\| source === "RECRUITER"/);
+assert.match(resultService, /!isRecruiterRoundResultSource\(current\.source\)/);
 assert.ok(placementHits.some(hit => hit.file === "src/modules/placements/round-result-source-model.ts"),
   "the compatibility model must explicitly recognize legacy HR provenance");
 if (preCutover) {
@@ -101,8 +101,8 @@ if (preCutover) {
     "legacy writer must remain until the forward-compatible EXPAND migration is registered");
 } else {
   // Do not accept a new RECRUITER writer against an old-only CHECK.
-  assert.match(placements, /source} in \\([^)]*'RECRUITER'[^)]*\\)/s);
-  assert.match(resultService, /source:\\s*recruiterCanStage\\s*\\?\\s*"RECRUITER"/);
+  assert.match(placements, /source} in \([^)]*'RECRUITER'[^)]*\)/s);
+  assert.match(resultService, /source:\s*recruiterCanStage\s*\?\s*"RECRUITER"/);
 }
 
 const expandAt = candidate.indexOf("-- === DB072 EXPAND");
