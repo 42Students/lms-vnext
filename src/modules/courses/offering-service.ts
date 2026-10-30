@@ -587,24 +587,43 @@ export async function updateCourseOffering(
       throw new CoursesServiceError("OFFERING_NOT_MUTABLE");
     }
 
-    const [updated] = await tx
-      .update(courseOfferings)
-      .set({
-        ...input,
-        // DB02: an ELECTIVE offering is term-bound but must not retain a
-        // fixed CORE curriculum-row FK. Update both columns atomically so
-        // the registered check/trigger sees a valid final record.
-        ...(input.type === "ELECTIVE" ? { programTermCourseId: null } : {}),
-        updatedAt: new Date(),
-      })
-      .where(and(
-        eq(courseOfferings.id, offeringId),
-        eq(courseOfferings.status, "ACTIVE"),
-        eq(courseOfferings.courseId, current.courseId),
-        eq(courseOfferings.cohortId, current.cohortId),
-        eq(courseOfferings.academicPeriodId, current.academicPeriodId),
-      ))
-      .returning();
+    let updated: typeof courseOfferings.$inferSelect | undefined;
+    if (input.type === "ELECTIVE") {
+      // The DB02-registered column program_term_course_id is intentionally
+      // absent from the pre-DB02 Drizzle table snapshot. Passing an unknown
+      // key to .set() silently discards it; the write MUST be one SQL UPDATE
+      // because the CORE/ELECTIVE check runs after each statement.
+      const changed = await tx.execute(sql`
+        UPDATE course_offerings
+           SET type = 'ELECTIVE',
+               program_term_course_id = NULL,
+               credits = ${input.credits === undefined ? sql`credits` : sql`${input.credits}`},
+               display_order = ${input.displayOrder === undefined ? sql`display_order` : sql`${input.displayOrder}`},
+               updated_at = ${new Date()}
+         WHERE id = ${offeringId}
+           AND status = 'ACTIVE'
+           AND course_id = ${current.courseId}
+           AND cohort_id = ${current.cohortId}
+           AND academic_period_id = ${current.academicPeriodId}
+         RETURNING id
+      `);
+      if (changed.rows.length > 0) {
+        [updated] = await tx.select().from(courseOfferings)
+          .where(eq(courseOfferings.id, offeringId)).limit(1);
+      }
+    } else {
+      [updated] = await tx
+        .update(courseOfferings)
+        .set({ ...input, updatedAt: new Date() })
+        .where(and(
+          eq(courseOfferings.id, offeringId),
+          eq(courseOfferings.status, "ACTIVE"),
+          eq(courseOfferings.courseId, current.courseId),
+          eq(courseOfferings.cohortId, current.cohortId),
+          eq(courseOfferings.academicPeriodId, current.academicPeriodId),
+        ))
+        .returning();
+    }
 
     if (!updated) {
       throw new CoursesServiceError("OFFERING_NOT_FOUND");
