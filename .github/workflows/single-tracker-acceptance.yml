@@ -20,6 +20,12 @@ on:
       - tests/closure-first-protocol.test.mjs
       - tests/db16-private-storage-safety.test.mjs
       - tests/db07-reconciliation-contract.test.mjs
+      - tests/db011-placement-source-reconciliation.test.mjs
+      - tests/db05-chat06-inventory-reconciliation.test.mjs
+      - tests/db06-reconciliation-contract.test.mjs
+      - tests/db-parity-db09-ledger.test.mjs
+      - tests/db10-source-disposition-closure.test.mjs
+      - tests/db41-history-schema-drift.test.mjs
       - tests/db09-team-owner-lifecycle.test.mjs
       - scripts/verify-db09-team-owner-source.mjs
       - scripts/verify-db08-recruiter-code-source.mjs
@@ -65,6 +71,18 @@ jobs:
         run: node --test tests/db16-private-storage-safety.test.mjs
       - name: DB010 projects source reconciliation and tombstone regression
         run: node --test tests/db07-reconciliation-contract.test.mjs
+      - name: DB008 original 92-field course source reconciliation
+        run: node --test tests/db05-chat06-inventory-reconciliation.test.mjs
+      - name: DB009 original assessment and attendance source reconciliation
+        run: node --test tests/db06-reconciliation-contract.test.mjs
+      - name: DB011 original 280-field placement source review
+        run: node --test tests/db011-placement-source-reconciliation.test.mjs
+      - name: DB012 original 279-field CRM source disposition
+        run: node --test tests/db-parity-db09-ledger.test.mjs
+      - name: DB013 original 221-field shared operations source disposition
+        run: node --test tests/db10-source-disposition-closure.test.mjs
+      - name: DB045 source history schema-drift regression (not runtime acceptance)
+        run: node --test tests/db41-history-schema-drift.test.mjs
       - name: DB069 and DB072 source-stage contract checks
         run: |
           node scripts/verify-db09-team-owner-source.mjs
