@@ -103,7 +103,6 @@ describe.skipIf(!enabled)("College Admin promotion preview, actual PostgreSQL ro
           ["section_enrollments", "id", ids.sectionEnrollment],
           ["learner_program_enrollments", "id", ids.enrollment],
           ["sections", "id", ids.section],
-          ["cohort_progression_state", "cohort_id", ids.cohort],
           ["cohorts", "id", ids.cohort],
           ["program_term_courses", "id", ids.mappedCourse],
           ["program_terms", "id", ids.term1],

@@ -67,9 +67,10 @@ describe.skipIf(!enabled)("College Admin class placement tenant and actor guard 
   try {
    if(pool){
     await pool.query("delete from section_enrollments where section_id=$1",[ids.section]);
-    await pool.query("delete from learner_program_enrollments where cohort_id=$1",[ids.cohort]);
+    await pool.query("delete from learner_program_enrollments where cohort_id=ANY($1::uuid[])",[[ids.cohort,ids.foreignCohort]]);
     await pool.query("delete from sections where id=$1",[ids.section]);
     await pool.query("delete from cohorts where id=ANY($1::uuid[])",[[ids.cohort,ids.foreignCohort]]);
+    await pool.query("delete from program_terms where program_id=ANY($1::uuid[])",[[ids.program,ids.foreignProgram]]);
     await pool.query("delete from programs where id=ANY($1::uuid[])",[[ids.program,ids.foreignProgram]]);
     await pool.query("delete from academic_periods where id=ANY($1::uuid[])",[[ids.period,ids.foreignPeriod]]);
     // Activity rows preserve author/membership FK identity on this disposable DB.

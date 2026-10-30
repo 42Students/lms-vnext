@@ -142,9 +142,11 @@ afterAll(async () => {
       ["learner_program_enrollments", "id", f.enrollment],
       ["course_section_deliveries", "id", f.delivery],
       ["course_offerings", "id", f.offering],
+      ["program_term_courses", "course_id", f.course],
       ["courses", "id", f.course],
       ["sections", "id", f.section],
       ["cohorts", "id", f.cohort],
+      ["program_terms", "program_id", f.program],
       ["programs", "id", f.program],
       ["academic_periods", "id", f.period],
     ] as const;
