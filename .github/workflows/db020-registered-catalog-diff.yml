@@ -18,6 +18,8 @@ on:
       - "src/db/schema/placement-public-page.ts"
       - "src/db/schema/placement-drive-change-requests.ts"
       - "src/db/schema/tpo-collaboration.ts"
+      - "src/db/schema/projects.ts"
+      - "src/db/schema/profiles.ts"
       - "src/db/schema/project-audit-staged.ts"
       - "drizzle/meta/0318_snapshot.json"
       - "drizzle/0317_db014_placement_fk_validation.sql"

@@ -12,6 +12,7 @@ import {
 import { collegeMemberships } from "./memberships";
 import { departments } from "./departments";
 import { cohorts } from "./academics";
+import { colleges } from "./colleges";
 
 export const learnerProfiles = pgTable("learner_profiles", {
   membershipId: uuid("membership_id")
@@ -136,7 +137,7 @@ export function canUndoImportedLearnerBatch(input:{
 export const facultyAvatarCleanupQueue=pgTable("faculty_avatar_cleanup_queue",{
  id:uuid("id").defaultRandom().primaryKey(),
  membershipId:uuid("membership_id").notNull().references(()=>collegeMemberships.id,{onDelete:"restrict"}),
- collegeId:uuid("college_id").notNull(),
+ collegeId:uuid("college_id").notNull().references(()=>colleges.id,{onDelete:"restrict"}),
  oldObjectKey:varchar("old_object_key",{length:1024}).notNull(),
  status:varchar("status",{length:16}).notNull().default("PENDING"),
  createdAt:timestamp("created_at",{withTimezone:true}).notNull().defaultNow(),

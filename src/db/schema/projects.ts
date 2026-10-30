@@ -81,6 +81,17 @@ export const projectTemplates = pgTable(
       "project_templates_published_version_ck",
       sql`${table.publishedVersion} is null or (${table.publishedVersion} >= 1 and ${table.publishedVersion} <= ${table.currentVersion})`,
     ),
+    // DB020: registered snapshot-version FKs already exist in PostgreSQL.
+    // These relationships prevent a template from pointing at another
+    // template's history. Do NOT generate duplicate DDL from this metadata.
+    foreignKey({name:"project_templates_current_version_snapshot_fk",
+      columns:[table.id,table.currentVersion],
+      foreignColumns:[projectTemplateVersions.templateId,projectTemplateVersions.version]
+    }).onDelete("no action"),
+    foreignKey({name:"project_templates_published_version_snapshot_fk",
+      columns:[table.id,table.publishedVersion],
+      foreignColumns:[projectTemplateVersions.templateId,projectTemplateVersions.version]
+    }).onDelete("no action"),
   ],
 );
 
@@ -867,6 +878,16 @@ export const projectResources = pgTable(
       sql`${table.accessNotes} is null or length(${table.accessNotes}) <= 4000`),
     index("project_resources_sprint_idx").on(table.projectId,table.sprintId),
     index("project_resources_task_idx").on(table.projectId,table.taskId),
+    // DB020: live PostgreSQL composite FKs enforce that a linked sprint or
+    // task belongs to the resource's own project (not merely that it exists).
+    foreignKey({name:"project_resources_sprint_project_fk",
+      columns:[table.sprintId,table.projectId],
+      foreignColumns:[projectSprints.id,projectSprints.projectId]
+    }).onDelete("restrict"),
+    foreignKey({name:"project_resources_task_project_fk",
+      columns:[table.taskId,table.projectId],
+      foreignColumns:[projectTasks.id,projectTasks.projectId]
+    }).onDelete("restrict"),
     index("project_resources_visibility_idx")
       .on(table.projectId, table.visibility)
       .where(sql`${table.status} = 'ACTIVE'`),
