@@ -181,7 +181,7 @@ export function inspectTracker(doc) {
      rules?.concurrentWritesRequireFreshHead!==true||
      rules?.sharedMigrationsRequireSerializedWrites!==true)
     add(errors,'INVALID_CLOSURE_FIRST_PROTOCOL');
-  // Scope-aware task acceptance:  // Scope-aware task acceptance: isolated SOURCE/STAGING deliveries are not
+  // Scope-aware task acceptance: isolated SOURCE/STAGING deliveries are not
   // deployed DB claims. Preserve an explicit downstream OPEN runtime owner
   // instead of making unregistered SQL disappear behind a done:true flag.
   if (!validString(closure?.scopeSemantics?.registeredRuntimeTask) ||
@@ -210,7 +210,7 @@ export function inspectTracker(doc) {
        Object.hasOwn(focus,'laneId'))add(errors,'INVALID_CLOSURE_FIRST_FOCUS',{id:focus.id});
     focusIds.add(focus.id);
   }
-  // A complete roadmap is mandatory  // A complete roadmap is mandatory in the same one tracker; no second phase plan.
+  // A complete roadmap is mandatory in the same one tracker; no second phase plan.
   const fullPhaseOrder=['DATABASE','API','UI','DESIGN','RELEASE'];
   const globalPhases=execution?.globalPhases;
   if (!Array.isArray(globalPhases) ||
@@ -277,7 +277,7 @@ export function inspectTracker(doc) {
        Object.hasOwn(note,'fromLane')||Object.hasOwn(note,'toLane'))
       add(errors,'INVALID_INTEGRATION_NOTE',{id:note.id});
   }
-  const visiting = new Set()  const visiting = new Set(), visited = new Set();
+  const visiting = new Set(), visited = new Set();
   function walk(id) {
     if (visiting.has(id)) return add(errors, 'DEPENDENCY_CYCLE',{id});
     if (visited.has(id)) return;
