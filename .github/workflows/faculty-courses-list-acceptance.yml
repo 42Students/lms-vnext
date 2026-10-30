@@ -1,0 +1,146 @@
+name: Faculty Courses list acceptance
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/faculty-courses-list-acceptance.yml"
+      - "src/app/(authenticated)/teacher/courses/page.tsx"
+      - "src/app/(authenticated)/teacher/courses/error.tsx"
+      - "src/app/(authenticated)/teacher/courses/loading.tsx"
+      - "src/app/(authenticated)/teacher/courses/faculty-courses-retry.tsx"
+      - "src/components/courses/faculty-course-list.tsx"
+      - "src/components/courses/faculty-prototype-course-directory.tsx"
+      - "src/components/courses/faculty-course-filter-auto-submit.tsx"
+      - "src/modules/courses/faculty-course-list-model.ts"
+      - "src/modules/courses/faculty-course-list-service.ts"
+      - "src/modules/courses/faculty-course-card-summary-service.ts"
+      - "src/modules/courses/faculty-course-card-summary-model.ts"
+      - "tests/unit/faculty-course-list-model.test.ts"
+      - "tests/unit/faculty-courses-list-closure.test.tsx"
+      - "tests/unit/faculty-courses-summary-window-closure.test.ts"
+      - "tests/integration/faculty-mentor-positive-courses.test.ts"
+      - "tests/e2e/faculty-courses-list-closure.spec.ts"
+
+permissions:
+  contents: read
+  statuses: write
+
+concurrency:
+  group: faculty-courses-list-acceptance-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  postgres:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    services:
+      postgres:
+        image: postgres:17-alpine
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: lms_vnext_test
+        ports: ["5432:5432"]
+        options: >-
+          --health-cmd "pg_isready -U postgres -d lms_vnext_test"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+    env:
+      DATABASE_URL: postgresql://postgres:postgres@127.0.0.1:5432/lms_vnext_test
+      TEST_DATABASE_URL: postgresql://postgres:postgres@127.0.0.1:5432/lms_vnext_test
+      DB03_ISOLATED_TEST_DATABASE: "1"
+      DB06_ISOLATED_TEST_DATABASE: "1"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Verify registered migration journal
+        run: npm run db:journal:verify
+      - name: Prepare and seed disposable PostgreSQL 17
+        env:
+          DATABASE_URL: ""
+        run: npm run db:test:prepare
+      - name: Verify persisted active Faculty teaching grants and revocation
+        run: >-
+          npx vitest run --config vitest.db.config.ts
+          tests/integration/faculty-mentor-positive-courses.test.ts
+          -t "filters only persisted Faculty teaching deliveries and invalidates revoked assignments"
+      - name: Verify course list, summary caps, filters and Section link UI
+        run: >-
+          npx vitest run
+          tests/unit/faculty-course-list-model.test.ts
+          tests/unit/faculty-courses-list-closure.test.tsx
+          tests/unit/faculty-courses-summary-window-closure.test.ts
+
+  browser:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    services:
+      postgres:
+        image: postgres:17-alpine
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: lms_vnext_e2e
+        ports: ["5432:5432"]
+        options: >-
+          --health-cmd "pg_isready -U postgres -d lms_vnext_e2e"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+    env:
+      DATABASE_URL: postgresql://postgres:postgres@127.0.0.1:5432/lms_vnext_e2e
+      TEST_DATABASE_URL: postgresql://postgres:postgres@127.0.0.1:5432/lms_vnext_e2e
+      E2E_DATABASE_URL: postgresql://postgres:postgres@127.0.0.1:5432/lms_vnext_e2e
+      E2E_AUTH_ENABLED: "true"
+      APP_ENV: development
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Install Playwright Chromium
+        run: npx playwright install --with-deps chromium
+      - name: Prepare disposable E2E database
+        run: npm run db:e2e:prepare
+      - name: Generate ephemeral E2E auth keys
+        shell: bash
+        run: |
+          echo "E2E_AUTH_SECRET=$(openssl rand -hex 32)" >> "$GITHUB_ENV"
+          echo "AUTH_SECRET=$(openssl rand -hex 32)" >> "$GITHUB_ENV"
+          echo "PLATFORM_HOSTS=localhost,127.0.0.1" >> "$GITHUB_ENV"
+      - name: Execute desktop and mobile Faculty Courses list acceptance
+        run: npx playwright test tests/e2e/faculty-courses-list-closure.spec.ts --workers=1
+
+  record_result:
+    name: Record exact-SHA Faculty Courses list acceptance
+    if: ${{ always() }}
+    needs: [postgres, browser]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Publish PostgreSQL/unit/browser result to commit status
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const postgres = "${{ needs.postgres.result }}";
+            const browser = "${{ needs.browser.result }}";
+            const passed = postgres === "success" && browser === "success";
+            await github.rest.repos.createCommitStatus({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              sha: context.sha,
+              state: passed ? "success" : "failure",
+              context: "faculty-courses-list-acceptance/pg-browser",
+              description: passed
+                ? "Faculty Courses list PostgreSQL, unit, browser passed"
+                : "Faculty Courses list acceptance not green",
+              target_url: `${context.serverUrl}/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}`,
+            });
