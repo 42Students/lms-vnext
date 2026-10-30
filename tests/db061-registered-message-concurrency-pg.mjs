@@ -63,7 +63,7 @@ try {
   const firstMessage = await row(first,
     "insert into placement_tpo_messages(thread_id,sender_type,sender_user_id,body,created_at) values($1,'TPO',$2,'first',statement_timestamp()+interval '2 seconds') returning id",
     [thread.id,admin.id]);
-  await first.query("select id from placement_tpo_message_threads where id=$1 for update",[thread.id]);
+  await first.query("select id from placement_tpo_message_threads where id=$1 for no key update",[thread.id]);
   await first.query(
     "update placement_tpo_message_threads set last_message_at=(select max(created_at) from placement_tpo_messages where thread_id=$1) where id=$1",
     [thread.id]);
@@ -76,7 +76,7 @@ try {
 
   let secondLockResolved=false;
   const secondLock=second.query(
-    "select id from placement_tpo_message_threads where id=$1 for update",[thread.id])
+    "select id from placement_tpo_message_threads where id=$1 for no key update",[thread.id])
     .then(result=>{secondLockResolved=true;return result;});
   // Prove the second sender cannot bypass the first sender's row lock.
   await new Promise(resolve=>setTimeout(resolve,120));
