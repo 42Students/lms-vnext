@@ -154,6 +154,14 @@ try{
   sqlOnlyTables:lines(sqlOnlyTables),
   missingColumns:lines(missingColumns),
   extraCatalogColumns:lines(extraCatalogColumns),
+  // Diagnostic only: reveal exact registered column metadata so a reviewer
+  // can reconcile each SQL-added field without inventing a typed definition.
+  extraCatalogColumnDefinitions:extraCatalogColumns.sort().map(field=>{
+    const c=existing.get(field);
+    if(!c)throw new Error("Catalog metadata disappeared: "+field);
+    return {field,pgType:c.pg_type,nullable:!c.attnotnull,
+      pgDefault:c.pg_default};
+  }),
   typeDifferences:typeDifferences.slice(0,120),
   unvalidatedFks:lines(invalidFks),
   registeredFksWithoutDrizzleRepresentation:metadataOnlyFks,
