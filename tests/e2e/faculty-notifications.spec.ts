@@ -89,6 +89,7 @@ test("Faculty notifications "+viewport.name+" stay within the selected college, 
     );
 
     await context.addCookies([
+      { name: "lms_role", value: "FACULTY", url: BASE_URL, httpOnly: true, sameSite: "Lax" },
       { name: E2E_IDENTITY_COOKIE_NAME, value: identityUid, url: BASE_URL, httpOnly: true, sameSite: "Lax" },
       { name: E2E_SECRET_COOKIE_NAME, value: secret!, url: BASE_URL, httpOnly: true, sameSite: "Lax" },
       { name: "lms_membership", value: membershipA, url: BASE_URL, httpOnly: true, sameSite: "Lax" },
