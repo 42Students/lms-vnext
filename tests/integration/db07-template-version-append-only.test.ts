@@ -159,14 +159,25 @@ describe.skipIf(!enabled)("DB070 immutable project template versions (opt-in Pos
     });
   });
 
-  it("rejects TRUNCATE CASCADE on revisions, which bypasses DELETE row triggers", async () => {
-    // Catalog preflight above checks the enabled statement trigger. The
-    // disposable transaction is rolled back by withVersion, including errors.
-    await withVersion(async ({ client }) => {
+  it("rejects TRUNCATE CASCADE with the immutable statement trigger, not a pending FK event", async () => {
+    if (!pool) throw new Error("DB070 PostgreSQL pool unavailable");
+    // No fixture inserts before TRUNCATE: pending DEFERRABLE FK events
+    // otherwise reject the statement before our immutable-history trigger runs.
+    // This transaction is strictly rollback-only even if the trigger regresses.
+    const client = await pool.connect();
+    try {
+      await client.query("BEGIN");
       await expect(client.query("TRUNCATE TABLE project_template_versions CASCADE"))
-        .rejects.toMatchObject({ code: "23514" });
-    });
+        .rejects.toMatchObject({ code: "23514", message: expect.stringContaining("immutable (TRUNCATE)") });
+    } finally {
+      try {
+        await client.query("ROLLBACK");
+      } finally {
+        client.release();
+      }
+    }
   });
+
   it("leaves the mutable project template header writable", async () => {
     await withVersion(async ({ client, templateId }) => {
       const updated = await client.query(
