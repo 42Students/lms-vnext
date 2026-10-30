@@ -1,0 +1,61 @@
+name: DB-079 CRM principal two-session race acceptance
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - "tests/db079-crm-principal-two-session-pg.test.mjs"
+      - "drizzle/0048_db09_crm_principal_race_hardening.sql"
+      - ".github/workflows/db079-crm-race-acceptance.yml"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: db079-crm-race-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  crm-principal-races:
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    services:
+      postgres:
+        image: postgres:17-alpine
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: lms_vnext_test
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres -d lms_vnext_test"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 20
+    env:
+      DATABASE_URL: postgresql://postgres:postgres@127.0.0.1:5432/lms_vnext_test
+      TEST_DATABASE_URL: postgresql://postgres:postgres@127.0.0.1:5432/lms_vnext_test
+      DB09_ISOLATED_TEST_DATABASE: "1"
+      DB03_ISOLATED_TEST_DATABASE: "1"
+      DB079_CRM_RACE_PG: "YES"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Registered CRM migration and source lock-contract checks
+        run: |
+          npm run db:journal:verify
+          node --test tests/db079-db09-crm-race-hardening.test.mjs
+      - name: Clean disposable PostgreSQL 17 replay and seed
+        env:
+          DATABASE_URL: ""
+        run: npm run db:test:prepare
+      - name: Verify migration replay idempotence
+        run: npm run db:migrate
+      - name: Two-session membership, role, user revocation and append-only negatives
+        run: node --import tsx --test tests/db079-crm-principal-two-session-pg.test.mjs
