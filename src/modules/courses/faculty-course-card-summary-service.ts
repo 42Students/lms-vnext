@@ -55,7 +55,10 @@ export async function listFacultyCourseCardSummaries(
   assigned: readonly AssignedCourse[],
 ): Promise<Map<string, FacultyCourseCardSummary>> {
   const result = new Map<string, FacultyCourseCardSummary>();
-  const visible=facultyCourseSummaryWindow(assigned,true).items;
+  // The caller already passes the cumulatively paginated, authorized rows.
+  // A hidden 100-card cap used to drop every Section after card 100 when a
+  // Faculty member selected "Show more" for the third time.
+  const visible=assigned;
   if (!visible.length) return result;
   const offeringIds = [...new Set(visible.map((course) => course.offeringId))];
   const paths = await getDb().select().from(courseLearningPaths)
