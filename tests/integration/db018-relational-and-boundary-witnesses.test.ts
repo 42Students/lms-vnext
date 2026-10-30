@@ -251,7 +251,7 @@ async function insertPlacementWitnessFixture(client: PoolClient, id: string) {
         } else {
           const approved = id === "P5-13" || id === "P5-14";
           await client.query(
-            "INSERT INTO placement_learner_requests(id,application_id,learner_membership_id,request_type,round_id,scope_key,reason,status,requested_by_user_id,decided_by_user_id,decided_at) VALUES($1,$2,$3,'ROUND_RESCHEDULE',$4,$5,'Request a different interview slot',$6,$7,$8)",
+            "INSERT INTO placement_learner_requests(id,application_id,learner_membership_id,request_type,round_id,scope_key,reason,status,requested_by_user_id,decided_by_user_id,decided_at) VALUES($1,$2,$3,'ROUND_RESCHEDULE',$4,$5,'Request a different interview slot',$6,$7,$8,$9)",
             [request,application,SEED_IDS.learnerCollegeAMembership,round,"DB018-"+request,approved?"APPROVED":"PENDING",SEED_IDS.learnerUser,approved?SEED_IDS.collegeAdminUser:null,approved?new Date():null],
           );
           if (approved) {
