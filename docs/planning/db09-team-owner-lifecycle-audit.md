@@ -193,6 +193,21 @@ Before migration activation:
 7. any existing greenfield rows are backfilled only when a same-college owner
    can be resolved without ambiguity.
 
+## Current-main integration drift (31 October 2026)
+
+The current typed `placementJobs` schema **already includes**
+`ownerMembershipId` and registered composite same-college
+`placement_jobs_owner_college_fk`. Earlier source checks incorrectly asserted
+the column was absent; those checks have been corrected to require the actual
+existing column *and* composite FK.
+
+**Do not apply this isolated SQL candidate verbatim.** Its `ADD COLUMN
+owner_membership_id` and `db069_job_owner_college_fk` design were written
+before these definitions landed. A future numbered promotion must reconcile
+and omit duplicate DDL, then implement the *remaining* live-owner, team-removal
+and race guards with successful registered PostgreSQL evidence. The candidate
+and static tests are source/staging artifacts, not runtime completion.
+
 ## PostgreSQL acceptance witnesses
 
 At minimum execute:
