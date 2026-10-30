@@ -10,6 +10,8 @@ on:
       - "drizzle/0317_db014_placement_fk_validation.sql"
       - "drizzle/0318_db014_cross_domain_event_guards.sql"
       - "tests/db014-registered-guards-sql-source.test.mjs"
+      - "drizzle/0319_db020_grade_event_source_action.sql"
+      - "tests/db020-registered-grade-event-provenance-pg.test.mjs"
       - "tests/db014-registered-tenant-catalog-pg.test.mjs"
       - "tests/db014-placement-fk-validation-staged-pg.test.mjs"
       - "docs/planning/sql/db014-placement-fk-validation-candidate.sql"
@@ -64,6 +66,8 @@ jobs:
         env:
           DATABASE_URL: ""
         run: npm run db:test:prepare
+      - name: DB020 source_action registered nullable column proof
+        run: node --test tests/db020-registered-grade-event-provenance-pg.test.mjs
       - name: Registered migration idempotence
         run: npm run db:migrate
       - name: Validate two legacy NOT VALID placement FKs in rollback-only PG transaction
