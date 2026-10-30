@@ -59,6 +59,9 @@ export async function updateCollegeOfferingMetadata(context:RequestContext,rawId
     }
     const [updated]=await tx.update(courseOfferings).set({
       type:input.type,credits:input.credits,displayOrder:input.displayOrder,
+      // An elective cannot retain the CORE curriculum-row foreign key.
+      // Keep the type and referenced-row transition atomic under DB02.
+      ...(input.type==="ELECTIVE"?{programTermCourseId:null}:{}),
       updatedAt:sql<Date>`greatest(${courseOfferings.updatedAt} + interval '1 millisecond',clock_timestamp())`,
     }).where(eq(courseOfferings.id,id))
       .returning({id:courseOfferings.id,type:courseOfferings.type,credits:courseOfferings.credits,
