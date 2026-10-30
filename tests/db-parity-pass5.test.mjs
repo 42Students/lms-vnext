@@ -151,15 +151,18 @@ test("DB18 witness index remains honest about authored versus executed coverage"
   assert.equal(index.counts.draftUnregisteredExcluded, 3);
   assert.equal(index.counts.knownRedRaceAuthored, 0);
   assert.equal(index.counts.fixAuthoredRaceRuntimePending, 0);
-  assert.equal(index.counts.runtimeExecuted, 43);
-  assert.equal(index.counts.runtimePassed, 43);
+  assert.equal(index.counts.runtimeExecuted, 48);
+  assert.equal(index.counts.runtimePassed, 48);
   assert.equal(index.runtimeEvidence.result, "PASS");
   assert.equal(index.runtimeEvidence.runUrl,
-    "https://github.com/42Students/lms-vnext/actions/runs/41104567182");
+    "https://github.com/42Students/lms-vnext/actions/runs/41107736939");
   assert.equal(index.runtimeEvidence.commitSha,
-    "c78eb936db33489cbb3b57281793dfda5f10382d");
-  assert.equal(index.runtimeEvidence.domainWitnessesPassed, 43);
-  assert.equal(index.runtimeEvidence.focusedVitestTestsPassed, 45);
+    "654cbc9d69759100ca3fd87a538c6e0cfb3bc2c3");
+  assert.equal(index.runtimeEvidence.domainWitnessesPassed, 48);
+  assert.equal(index.runtimeEvidence.focusedVitestTestsPassed, 50);
+  assert.equal(index.runtimeEvidence.fullSuiteVitestTestsPassed, 92);
+  assert.equal(index.runtimeEvidence.directSqlNegatives.passed, 21);
+  assert.equal(index.counts.baselineDirectBoundaryAuthored, 12);
   assert.equal(index.runtimeEvidence.relational.empty, 0);
   assert.equal(index.runtimeEvidence.relational.mismatches, 0);
   assert.equal(index.runtimeEvidence.globalDatabasePhaseAccepted, false);
@@ -253,7 +256,7 @@ test("DB18 stale-check source state tracks authored placement and academics fixe
 test("DB18 canonical denominator stays source-grounded", () => {
   const index = load("tests/integration/db18-witness-index.json");
   assert.equal(index.counts.observationalReadOnlyAuthored, 21);
-  assert.equal(index.counts.directNegativeTotalAuthored, 16);
+  assert.equal(index.counts.directNegativeTotalAuthored, 21);
   assert.equal(index.counts.baselineDirectBoundaryAuthored, index.baselineDirectBoundaryWitnesses.length);
   assert.equal(index.counts.directNegativeTotalAuthored, index.counts.directNegativeAuthored + index.counts.baselineDirectBoundaryAuthored);
   assert.equal(index.counts.positiveConcurrencyAuthored, 4);
@@ -272,8 +275,8 @@ test("DB18 canonical denominator stays source-grounded", () => {
   assert.deepEqual(verifiedFixed.map((w) => w.raceProbe), ["P5-R01", "P5-R02"]);
   assert.ok(verifiedFixed.every((w) => w.execution === "PASS"));
   assert.equal(index.counts.explicitConcurrencyMissing, 0);
-  assert.equal(index.counts.runtimeExecuted, 43);
-  assert.equal(index.counts.runtimePassed, 43);
+  assert.equal(index.counts.runtimeExecuted, 48);
+  assert.equal(index.counts.runtimePassed, 48);
 
   assert.equal(index.observationalWitnesses.count, manifest.probes.length);
   assert.ok(fs.existsSync(index.observationalWitnesses.executableFile));
@@ -291,7 +294,7 @@ test("DB18 canonical denominator stays source-grounded", () => {
     "utf8",
   );
   assert.match(coverage, /Read-only relational mismatch probes \| 21 \| 21/);
-  assert.match(coverage, /Direct negative SQL boundary tests \| 16 \| 16/);
+  assert.match(coverage, /Direct negative SQL boundary tests \| 21 \| 21/);
   assert.match(coverage, /Positive concurrency witnesses \| 4 \| 4/);
   assert.match(coverage, /Known-defect red concurrency witnesses \| 0 \| 0/);
   assert.match(coverage, /Fix-authored race regression verified \| 2 \| 2/);
