@@ -33,9 +33,12 @@ test("DB071 create writes parent first and revision one later in a transaction",
   assert.ok(s.indexOf(".insert(projectTemplates)") < s.indexOf(".insert(projectTemplateVersions)"));
 });
 
-test("DB071 revise increments currentVersion before inserting its snapshot", () => {
+test("DB071 revise locks and compare-and-swaps currentVersion before inserting its snapshot", () => {
   const s = section("reviseProjectTemplate");
-  assert.match(s, /currentVersion: sql`\$\{projectTemplates\.currentVersion\} \+ 1`/);
+  assert.match(s, /\.for\("update"\)/);
+  assert.match(s, /locked\.currentVersion !== input\.expectedVersion/);
+  assert.match(s, /currentVersion: locked\.currentVersion \+ 1/);
+  assert.match(s, /eq\(projectTemplates\.currentVersion, input\.expectedVersion\)/);
   assert.ok(s.indexOf(".update(projectTemplates)") < s.indexOf(".insert(projectTemplateVersions)"));
 });
 
