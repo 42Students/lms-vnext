@@ -10,6 +10,9 @@ on:
       - 'scripts/sql/db10-skills-catalog-staging.sql'
       - 'drizzle/0195_lane15_db10_skills_catalog.sql'
       - 'drizzle/0244_db10_skills_catalog_staged.sql'
+      - 'drizzle/0313_db10_skill_synonym_parity.sql'
+      - 'drizzle/meta/_journal.json'
+      - 'drizzle/meta/0313_snapshot.json'
       - 'tests/integration/db10-skills-catalog.test.ts'
       - '.github/workflows/db022-skills-acceptance.yml'
 
