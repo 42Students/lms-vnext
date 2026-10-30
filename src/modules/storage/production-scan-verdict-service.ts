@@ -133,7 +133,9 @@ export async function applyProductionScanVerdict(raw:unknown){
   )).limit(1);
   // R2 object and scanner receipt must have a real college membership owner.
   if(!candidate?.ownerMembershipId)throw new Error("SCAN_RECORD_NOT_FOUND");
-  row=candidate;
+  // Preserve the refined non-null membership in the object type; database
+  // inference remains nullable because platform uploader rows may exist.
+  row={...candidate,ownerMembershipId:candidate.ownerMembershipId};
  }
  if(!row||row.deletedAt||row.objectGeneration!==input.generation)
   throw new Error("SCAN_RECORD_NOT_FOUND");
