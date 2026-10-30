@@ -428,7 +428,7 @@ afterAll(async () => {
           joinedSamplesNonEmpty: nonEmpty.length,
           joinedSamplesEmpty: empty.length,
           emptyProbeIds: empty,
-          directSqlNegativeCases: 7,
+          directSqlNegativeCases: 12,
           syntheticRollbackFixtureProbeIds: [...populatedFixtureProbes],
           caveat:
             "Zero violations and nonempty fixture counts do NOT establish prevention; mutation/race witnesses and source semantics still require acceptance.",
