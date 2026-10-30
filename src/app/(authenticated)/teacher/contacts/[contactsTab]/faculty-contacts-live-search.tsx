@@ -11,6 +11,12 @@ export function FacultyContactsLiveSearch({baseHref,initialSearch,pageSize}:{
  const router=useRouter();
  const [value,setValue]=useState(initialSearch);
  useEffect(()=>{
+  // Tab changes and server-rendered search changes may reuse this component.
+  // Reset the draft to the canonical server query to prevent a stale
+  // debounce from undoing Clear, paging, and role navigation.
+  setValue(initialSearch);
+ },[baseHref,initialSearch]);
+ useEffect(()=>{
   // Next's soft navigation preserves this component. Browser Back/Forward
   // must restore the URL-owned search, not replay a stale debounced draft.
   const restoreFromHistory=()=>{
