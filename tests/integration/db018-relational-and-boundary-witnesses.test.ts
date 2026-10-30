@@ -425,7 +425,7 @@ afterAll(async () => {
           joinedSamplesNonEmpty: nonEmpty.length,
           joinedSamplesEmpty: empty.length,
           emptyProbeIds: empty,
-          directSqlNegativeCases: 4,
+          directSqlNegativeCases: 7,
           syntheticRollbackFixtureProbeIds: [...populatedFixtureProbes],
           caveat:
             "Zero violations and nonempty fixture counts do NOT establish prevention; mutation/race witnesses and source semantics still require acceptance.",
@@ -447,8 +447,8 @@ describe.skipIf(!enabled)("DB018: Pass-5 relational consistency on disposable Po
     it(`${probe.id} [${probe.family}] has no existing relational violations`, async () => {
       const sql = sqlFor(probe);
       await withRollback(async (client) => {
-        // Fourteen joins now have real in-transaction fixture edges.
-        // The other seven remain observational and cannot prove prevention.
+        // All 21 joins require private rollback-only fixture edges.
+        // Nonempty zero-mismatch observations are NOT prevention proof.
         if (academicFixtureProbes.has(probe.id)) {
           await insertAcademicWitnessFixture(client, probe.id);
         }
@@ -472,8 +472,8 @@ describe.skipIf(!enabled)("DB018: Pass-5 relational consistency on disposable Po
   }
 
   it("requires real populated academic joins rather than vacuous zeroes", () => {
-    // Empty joins in the remaining families stay explicitly unverified.
-    // Fixture population is not proof of prevention against invalid writes.
+    // Populated joins are required; malicious-write prevention still needs
+    // independent negative mutation and race witnesses.
     for (const id of populatedFixtureProbes) expect(nonEmpty).toContain(id);
     expect(nonEmpty.length).toBeGreaterThanOrEqual(populatedFixtureProbes.size);
   });
@@ -529,4 +529,36 @@ describe.skipIf(!enabled)("DB018: direct-SQL negative database boundaries", () =
       });
     });
   });
+  it("rejects a whitespace-only user given name under registered CHECK (23514)", async () => {
+    await withRollback(async (client) => {
+      const user = randomUUID();
+      await expect(client.query(
+        "INSERT INTO users(id,identity_uid,display_name,given_name) VALUES($1,$2,'DB018 private negative','   ')",
+        [user,"db018-bad-name-"+user],
+      )).rejects.toMatchObject({code:"23514",constraint:"users_given_name_nonblank_ck"});
+    });
+  });
+
+  it("rejects a program with zero academic terms under registered CHECK (23514)", async () => {
+    await withRollback(async (client) => {
+      const id = randomUUID();
+      const tag = id.replaceAll("-","").slice(0,12);
+      await expect(client.query(
+        "INSERT INTO programs(id,department_id,name,code,duration_terms) VALUES($1,$2,$3,$4,0)",
+        [id,SEED_IDS.departmentA,"DB018 negative program "+tag,"N-"+tag],
+      )).rejects.toMatchObject({code:"23514",constraint:"programs_duration_terms_ck"});
+    });
+  });
+
+  it("rejects a reversed academic period under registered CHECK (23514)", async () => {
+    await withRollback(async (client) => {
+      const id = randomUUID();
+      const tag = id.replaceAll("-","").slice(0,12);
+      await expect(client.query(
+        "INSERT INTO academic_periods(id,college_id,name,code,start_date,end_date) VALUES($1,$2,$3,$4,'2027-06-30','2026-07-01')",
+        [id,SEED_IDS.collegeA,"DB018 negative period "+tag,"N-"+tag],
+      )).rejects.toMatchObject({code:"23514",constraint:"academic_periods_date_order_ck"});
+    });
+  });
+
 });
