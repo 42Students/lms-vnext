@@ -389,12 +389,12 @@ export async function stagePlacementRoundResult(
         status: placementJobRounds.status,
       })
       .from(placementJobRounds)
-      .where(
-        eq(
-          placementJobRounds.id,
-          round.id,
-        ),
-      )
+      // Recheck round ancestry under its row lock: the earlier preview
+      // must never authorize staging after a concurrent parent reassignment.
+      .where(and(
+        eq(placementJobRounds.id,round.id),
+        eq(placementJobRounds.jobId,job.id),
+      ))
       .for("update")
       .limit(1);
 
@@ -419,12 +419,12 @@ export async function stagePlacementRoundResult(
         status: placementApplications.status,
       })
       .from(placementApplications)
-      .where(
-        eq(
-          placementApplications.id,
-          input.applicationId,
-        ),
-      )
+      // A submission belongs to the exact locked job, not merely to a
+      // UUID that was valid before this transaction began.
+      .where(and(
+        eq(placementApplications.id,input.applicationId),
+        eq(placementApplications.jobId,job.id),
+      ))
       .for("update")
       .limit(1);
 
@@ -436,6 +436,17 @@ export async function stagePlacementRoundResult(
         "PLACEMENT_RESULT_APPLICATION_INACTIVE",
       );
     }
+
+    // Screening may change after the pre-transaction eligibility preview.
+    // Hold a shared lock through result staging to prevent a stale shortlisted
+    // decision from being persisted against a newly rejected learner.
+    const [lockedScreening]=await tx.select({
+      status:placementApplicationScreenings.status,
+    }).from(placementApplicationScreenings)
+      .where(eq(placementApplicationScreenings.applicationId,input.applicationId))
+      .for("share").limit(1);
+    if(!lockedScreening||lockedScreening.status!=="SHORTLISTED")
+      throw new PlacementsServiceError("PLACEMENT_RESULT_SCREENING_NOT_SHORTLISTED");
 
     if(input.outcome==="ABSENT"){
       // TPO-requests-verification-05: a learner awaiting withdrawal is excused
