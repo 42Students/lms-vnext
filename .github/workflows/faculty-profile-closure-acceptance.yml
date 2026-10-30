@@ -5,6 +5,7 @@ on:
     branches: [main]
     paths:
       - ".github/workflows/faculty-profile-closure-acceptance.yml"
+      - "drizzle/0318_db014_cross_domain_event_guards.sql"
       - "src/app/(authenticated)/teacher/profile/**"
       - "src/components/people/faculty-profile-editor.tsx"
       - "src/components/people/faculty-avatar-upload.tsx"
