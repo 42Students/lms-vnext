@@ -92,6 +92,41 @@ try{
  }
  for(const id of existing.keys())if(snapSet.has(id.split(".")[0])&&!generatedColumnIds.has(id))
    extraCatalogColumns.push(id);
+
+ // Bigserial is a BIGINT column plus an owned BIGINT sequence and matching
+ // nextval default, NOT an alias of bigint. Verify all three facts against
+ // the registered PG catalog before discounting a type spelling difference.
+ const provenBigserialColumns=[];
+ const remainingUnexplainedTypes=[];
+ for(const difference of unexplainedTypeDifferences){
+  if(difference.pg!=="bigint"||difference.typed!=="bigserial"){
+   remainingUnexplainedTypes.push(difference);continue;
+  }
+  const split=difference.field.lastIndexOf(".");
+  const table=difference.field.slice(0,split);
+  const column=difference.field.slice(split+1);
+  const actual=existing.get(difference.field);
+  const nextval=/^nextval\\('([^']+)'::regclass\\)$/.exec(actual?.pg_default??"");
+  if(!table||!column||!actual?.attnotnull||!nextval){
+   remainingUnexplainedTypes.push(difference);continue;
+  }
+  const ownership=(await client.query(
+   "SELECT pg_get_serial_sequence($1,$2) AS owned_sequence",
+   ["public."+table,column])).rows[0]?.owned_sequence;
+  if(!ownership){
+   remainingUnexplainedTypes.push(difference);continue;
+  }
+  const witness=(await client.query(`
+   SELECT ($1::regclass::oid=$2::regclass::oid) AS is_owned_default,
+          s.seqtypid = 'pg_catalog.int8'::regtype AS is_bigint_sequence
+   FROM pg_sequence s WHERE s.seqrelid=$1::regclass
+  `,[ownership,nextval[1]])).rows[0];
+  if(witness?.is_owned_default!==true||witness?.is_bigint_sequence!==true){
+   remainingUnexplainedTypes.push(difference);continue;
+  }
+  provenBigserialColumns.push({field:difference.field,ownedSequence:ownership,
+   pgDefault:actual.pg_default});
+ }
  const allFks=(await client.query(`
   SELECT c.conname,c.convalidated,cl.relname AS child, parent.relname AS parent,
          cardinality(c.conkey)::int AS child_columns,
@@ -146,7 +181,8 @@ try{
    generatedTypedMissingColumns:missingColumns.length,
    registeredExtraColumnsOnTypedTables:extraCatalogColumns.length,
    textuallyDifferentTypes:typeDifferences.length,
-   unexplainedTypeDifferences:unexplainedTypeDifferences.length,
+   unexplainedTypeDifferences:remainingUnexplainedTypes.length,
+   verifiedBigserialSemantics:provenBigserialColumns.length,
    registeredFks:allFks.length,
    unvalidatedFks:invalidFks.length,
    registeredFksMissingFromTypedSnapshot:metadataOnlyFks.length,
@@ -173,7 +209,8 @@ try{
       pgDefault:c.pg_default};
   }),
   typeDifferences:typeDifferences.slice(0,120),
-  unexplainedTypeDifferences:unexplainedTypeDifferences.slice(0,120),
+  unexplainedTypeDifferences:remainingUnexplainedTypes.slice(0,120),
+  verifiedBigserialSemantics:provenBigserialColumns,
   unvalidatedFks:lines(invalidFks),
   registeredFksWithoutDrizzleRepresentation:metadataOnlyFks,
   drizzleFksWithoutRegisteredCatalog:typedFkMissing,
