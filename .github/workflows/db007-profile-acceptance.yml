@@ -12,6 +12,7 @@ on:
       - "src/modules/profile-verification/**"
       - "tests/db007-*.test.mjs"
       - "tests/integration/db007-*.test.ts"
+      - "tests/integration/db080-learner-gallery-service.test.ts"
       - "tests/unit/learner-gallery-*.test.ts"
       - "src/modules/people/learner-education-projection-service.ts"
       - "src/modules/people/learner-profile-section-service.ts"
@@ -77,6 +78,7 @@ jobs:
       - name: DB-007 learner education write/read integration on disposable PostgreSQL
         run: >-
           npx vitest run --config vitest.db.registered.config.ts
+          tests/integration/db080-learner-gallery-service.test.ts
           tests/integration/db007-education-projection.test.ts
           tests/integration/db007-review-lifecycle.test.ts
           tests/integration/learner-profile-document-edit.test.ts
