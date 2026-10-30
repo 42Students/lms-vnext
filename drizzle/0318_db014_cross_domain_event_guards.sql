@@ -65,7 +65,7 @@ BEGIN
 
   RETURN NEW;
 END;
-$;
+$$;
 --> statement-breakpoint
 CREATE TRIGGER db14_activity_event_scope_guard
 BEFORE INSERT OR UPDATE OF
@@ -172,7 +172,7 @@ BEGIN
 
   RETURN NEW;
 END;
-$;
+$$;
 --> statement-breakpoint
 CREATE TRIGGER db14_notification_recipient_scope_guard
 BEFORE INSERT OR UPDATE OF user_id, event_id
@@ -265,7 +265,7 @@ BEGIN
 
   RETURN NEW;
 END;
-$;
+$$;
 --> statement-breakpoint
 CREATE TRIGGER db14_group_member_event_scope_guard
 BEFORE INSERT OR UPDATE OF
