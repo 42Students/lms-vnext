@@ -7,6 +7,8 @@ on:
       - ".github/workflows/faculty-blueprint-prototype-acceptance.yml"
       - "drizzle/0318_db014_cross_domain_event_guards.sql"
       - "src/components/courses/faculty-prototype-blueprint.tsx"
+      - "src/modules/courses/faculty-blueprint-full-content-order.ts"
+      - "tests/unit/faculty-blueprint-full-content-order.test.ts"
       - "src/components/courses/faculty-prototype-lesson-items.tsx"
       - "src/components/courses/faculty-prototype-blueprint-row-actions.tsx"
       - "src/components/courses/faculty-content-editor.tsx"
@@ -57,7 +59,7 @@ jobs:
           cache: npm
       - run: npm ci
       - name: Unit-test Blueprint models and write recovery
-        run: npx vitest run tests/unit/faculty-content-order-ui-model.test.ts tests/unit/faculty-blueprint-sort-model.test.ts tests/unit/faculty-blueprint-archive-receipt.test.ts tests/unit/faculty-blueprint-add-target.test.ts tests/unit/faculty-blueprint-write-recovery.test.ts tests/unit/faculty-blueprint-lesson-engagement-model.test.ts
+        run: npx vitest run tests/unit/faculty-content-order-ui-model.test.ts tests/unit/faculty-blueprint-sort-model.test.ts tests/unit/faculty-blueprint-archive-receipt.test.ts tests/unit/faculty-blueprint-add-target.test.ts tests/unit/faculty-blueprint-write-recovery.test.ts tests/unit/faculty-blueprint-lesson-engagement-model.test.ts tests/unit/faculty-blueprint-full-content-order.test.ts
       - name: Install Chromium
         run: npx playwright install --with-deps chromium
       - name: Prepare disposable E2E database
