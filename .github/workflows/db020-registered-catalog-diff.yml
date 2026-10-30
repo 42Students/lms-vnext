@@ -10,6 +10,9 @@ on:
       - "drizzle/meta/0318_snapshot.json"
       - "drizzle/0317_db014_placement_fk_validation.sql"
       - "drizzle/0318_db014_cross_domain_event_guards.sql"
+      - "drizzle/0319_db020_grade_event_source_action.sql"
+      - "drizzle/meta/0319_snapshot.json"
+      - "tests/db020-registered-grade-event-provenance-pg.test.mjs"
 permissions:
   contents: read
 jobs:
