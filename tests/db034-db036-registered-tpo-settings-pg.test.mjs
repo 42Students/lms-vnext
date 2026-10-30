@@ -48,7 +48,8 @@ test("DB034 registered trusted-domain and prep-course tenant/FK policy",async()=
   const prep="INSERT INTO placement_tpo_prep_courses(college_id,course_id,created_by_user_id) VALUES($1,$2,$3)";
   await db.query(prep,[ca,a.id,admin]);await db.query(prep,[ca,b.id,admin]);
   await denied(db,prep,[ca,a.id,admin],["23505"]);
-  await denied(db,prep,[ca,randomUUID(),admin],["23503"]);
+  // A BEFORE INSERT tenant guard may reject the orphan before the FK does. Both fail closed.
+  await denied(db,prep,[ca,randomUUID(),admin],["23503","23514"]);
   const org=await row(db,"INSERT INTO organizations(name) VALUES($1) RETURNING id",["DB034 foreign "+suffix]);
   const col=await row(db,"INSERT INTO colleges(organization_id,name,code) VALUES($1,$2,$3) RETURNING id",
    [org.id,"DB034 foreign college "+suffix,"DB034-"+suffix]);
