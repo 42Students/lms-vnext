@@ -39,6 +39,21 @@ export function facultyQuizDraftIssue(
  return valid.success?null:(valid.error.issues[0]?.message??"Review question options and points.");
 }
 
+/** Rehydrate author-only shuffle flags from the authenticated persisted Quiz.
+ * The Section list can be stale or omit these columns; fail closed instead of
+ * silently resetting a saved setting to false during the next draft edit. */
+export function facultyQuizShuffleSettingsFromResponse(raw:unknown){
+ const parsed=z.object({quiz:z.object({quiz:z.object({
+  shuffleQuestions:z.boolean(),shuffleOptions:z.boolean(),
+ }).passthrough()}).passthrough()}).passthrough().safeParse(raw);
+ if(!parsed.success)
+  throw new Error("Saved Quiz shuffle settings are unavailable. Reload before editing.");
+ return {
+  shuffleQuestions:parsed.data.quiz.quiz.shuffleQuestions,
+  shuffleOptions:parsed.data.quiz.quiz.shuffleOptions,
+ };
+}
+
 /** Switching a multiselect question to single choice must not retain multiple
  * marked answers; ensure a defined answer even in an incomplete draft. */
 export function facultyChangeQuizChoiceType<
