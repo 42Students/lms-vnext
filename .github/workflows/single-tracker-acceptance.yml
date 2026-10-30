@@ -76,6 +76,8 @@ jobs:
         run: node --test tests/db16-private-storage-safety.test.mjs
       - name: DB010 projects source reconciliation and tombstone regression
         run: node --test tests/db07-reconciliation-contract.test.mjs
+      - name: Install dependencies for DB001 native PG import safety fixtures
+        run: npm ci --ignore-scripts
       - name: DB001 standalone verifier safety and malformed snapshot fail-closed contracts
         run: node --test tests/db-independent-verifier.test.mjs tests/db-independent-verifier-zero-exit-generation.test.mjs
       - name: DB007 original 103-field profile and private document source review
