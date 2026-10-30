@@ -624,7 +624,7 @@ describe("courses C1 against PostgreSQL", () => {
     await expect(
       pool.query(
         `update course_offerings
-         set credits = 0
+         set credits = -1
          where id = $1`,
         [offering.id],
       ),
