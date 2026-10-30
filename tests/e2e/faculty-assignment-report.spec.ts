@@ -51,6 +51,9 @@ for(const view of [{name:"desktop",width:1280,height:800},{name:"mobile",width:3
   await expect(page.getByRole("heading",{level:1,name:title})).toBeVisible();
   await expect(page.getByRole("heading",{name:"Score distribution"})).toBeVisible();
   await expect(page.getByRole("heading",{name:"When they handed in"})).toBeVisible();
+  // An ungraded assignment cannot manufacture score data or unknown roster facts.
+  await expect(page.getByText("No graded submissions yet.")).toBeVisible();
+  await expect(page.getByText("Not handed in",{exact:true})).toBeVisible();
   await page.getByText("Advanced report analysis, full student records and grading tools",{exact:true}).click();
   await expect(page.getByRole("heading",{name:"Submission timing"})).toBeVisible();
   await expect(page.getByRole("link",{name:"Filter submissions and export"})).toBeVisible();
@@ -71,6 +74,14 @@ for(const view of [{name:"desktop",width:1280,height:800},{name:"mobile",width:3
    return (await fetch(url)).status;
   },{id,forged:SEED_IDS.collegeB});
   expect(denied).toBeGreaterThanOrEqual(400);
+  // A draft with no student submissions has no grading rows.
+  await page.goto("/teacher/report/assignment/"+id+"/grade?deliveryId="+deliveryId);
+  await expect(page.getByRole("heading",{name:title})).toBeVisible();
+  await expect(page.getByText("No matching submissions.")).toBeVisible();
+  // Invalid IDs must not disclose any other Section's report.
+  await page.goto("/teacher/report/assignment/not-a-uuid?deliveryId="+deliveryId);
+  await expect(page.getByText("Report not found.")).toBeVisible();
+  await expect(page.getByRole("link",{name:"Back to assignments"})).toBeVisible();
   if(view.name==="mobile"){
    const width=await page.evaluate(()=>document.documentElement.scrollWidth);
    expect(width).toBeLessThanOrEqual(view.width+1);
