@@ -46,3 +46,20 @@ test("complete static sources still do not certify runtime surface count",()=>{
  assert.equal(s.backend.uninspectedControllerSourceFiles,0);
  assert.ok(s.disclaimers.some(x=>x.includes("FILE coverage counts")));
 });
+
+test("new dev-only route paths absent from the frozen census are explicit stale candidates",()=>{
+ const f=fixture();
+ f.drift.legacyFrontend.changedSourcePages.push(
+   {path:"src/pages/course-coordinator/index.js"},
+   {path:"src/pages/global-tpo/index.js"},
+   {path:"src/pages/global-tpo/index.js"},
+ );
+ const s=buildLegacyCensusStatus(f);
+ assert.deepEqual(s.frontend.staleAfterDevChanges.unmappedChangedRoutePaths,[
+   "src/pages/course-coordinator/index.js",
+   "src/pages/global-tpo/index.js",
+ ]);
+ assert.equal(s.frontend.staleAfterDevChanges.changedRouteFiles,1);
+ assert.equal(s.frontend.missingRouteSourceFiles,1);
+ assert.equal(s.structuralProblems.length,0);
+});
