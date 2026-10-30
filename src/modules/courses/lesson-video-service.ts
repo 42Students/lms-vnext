@@ -84,6 +84,16 @@ export function lessonVideoUploadFeedback(row: {
 }
 type VideoRow = typeof lessonVideoAssets.$inferSelect;
 
+/** Signed-storage operations require a persisted college membership owner.
+ * Historical platform-user-only provenance is not a substitute for a
+ * membership in private object authorization or scan attestation.
+ */
+function requirePersistedVideoUploaderMembership(row:VideoRow):string{
+ const owner=row.uploaderMembershipId;
+ if(!owner)throw new StorageFileError("STORAGE_UPLOADER_MEMBERSHIP_REQUIRED");
+ return owner;
+}
+
 const idSchema = z.string().uuid();
 const durationSchema = z.number().int().min(1).max(MAX_VIDEO_DURATION_SECONDS);
 
@@ -360,7 +370,7 @@ export async function completeVideoUpload(context: RequestContext, videoIdInput:
   const outcome = await verifyUploadedObject({
     objectKey: row.objectKey,
     collegeId: row.collegeId,
-    ownerMembershipId: row.uploaderMembershipId,
+    ownerMembershipId: requirePersistedVideoUploaderMembership(row),
     kind: "lesson-video",
     declaredContentType: row.declaredContentType,
     declaredSizeBytes: row.declaredSizeBytes,
@@ -628,7 +638,7 @@ export async function issueVideoThumbnailUploadGrant(
   const { row } = await loadManagedVideo(context, videoIdInput);
   const grant = await issueObjectUpload({
     collegeId: row.collegeId,
-    ownerMembershipId: row.uploaderMembershipId,
+    ownerMembershipId: requirePersistedVideoUploaderMembership(row),
     kind: "lesson-video-thumbnail",
     contentType: declaration.value.contentType,
     sizeBytes: declaration.value.sizeBytes,
@@ -688,7 +698,7 @@ export async function completeVideoThumbnailUpload(context: RequestContext, vide
   const outcome = await verifyUploadedObject({
     objectKey: row.thumbnailObjectKey,
     collegeId: row.collegeId,
-    ownerMembershipId: row.uploaderMembershipId,
+    ownerMembershipId: requirePersistedVideoUploaderMembership(row),
     kind: "lesson-video-thumbnail",
     declaredContentType: row.thumbnailContentType,
     declaredSizeBytes: row.thumbnailSizeBytes,
@@ -847,7 +857,7 @@ export async function issueVideoPlaybackGrant(
     {
       objectKey: row.objectKey,
       collegeId: row.collegeId,
-      ownerMembershipId: row.uploaderMembershipId,
+      ownerMembershipId: requirePersistedVideoUploaderMembership(row),
       generation: row.objectGeneration,
       sizeBytes: row.verifiedSizeBytes,
       contentType: row.verifiedContentType,
@@ -869,7 +879,7 @@ export async function issueVideoPlaybackGrant(
           {
             objectKey: row.thumbnailObjectKey,
             collegeId: row.collegeId,
-            ownerMembershipId: row.uploaderMembershipId,
+            ownerMembershipId: requirePersistedVideoUploaderMembership(row),
             generation: row.thumbnailGeneration,
             sizeBytes: row.thumbnailSizeBytes,
             contentType: row.thumbnailContentType,

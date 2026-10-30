@@ -131,6 +131,8 @@ export async function applyProductionScanVerdict(raw:unknown){
   }).from(lessonVideoAssets).where(and(
    eq(lessonVideoAssets.id,input.fileId),eq(lessonVideoAssets.collegeId,input.collegeId),
   )).limit(1);
+  // R2 object and scanner receipt must have a real college membership owner.
+  if(!candidate?.ownerMembershipId)throw new Error("SCAN_RECORD_NOT_FOUND");
   row=candidate;
  }
  if(!row||row.deletedAt||row.objectGeneration!==input.generation)
