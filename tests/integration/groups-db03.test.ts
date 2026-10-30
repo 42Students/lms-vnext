@@ -285,7 +285,7 @@ describe("DB03 group kernel on disposable PostgreSQL", () => {
       "INSERT INTO academic_periods (id,college_id,name,code,start_date,end_date,status) VALUES ($1,$2,$3,$4,'2027-01-01','2027-06-30','ACTIVE')",
       [secondPeriod,SEED_IDS.collegeA,"DB03 next period "+secondPeriod,"DB03-"+secondPeriod]);
     await pool.query(
-      "INSERT INTO sections (id,cohort_id,academic_period_id,name,code) VALUES ($1,$2,$3,$4)",
+      "INSERT INTO sections (id,cohort_id,academic_period_id,name,code) VALUES ($1,$2,$3,$4,$5)",
       [secondSection,cohortId,secondPeriod,"DB03 next section "+secondSection,"DB03-"+secondSection]);
     await pool.query(
       "INSERT INTO course_offerings (id,course_id,cohort_id,academic_period_id,type,credits,display_order) VALUES ($1,$2,$3,$4,'ELECTIVE',3,51)",
