@@ -64,3 +64,11 @@ test("DB001 refuses malformed URLs and redacts them in its evidence", () => {
   }, /not a valid PostgreSQL URL/, "secretMalformedXYZ");
   assert.equal(evidence.databaseUrlRedacted, "<invalid PostgreSQL URL>");
 });
+
+test("DB001 failed target evidence strips URI query/fragment secrets", () => {
+  const evidence = rejectedBeforeConnecting("remote-query-secret", {
+    test: "postgresql://worker:privatePassword@pg.internal/lms_vnext_test?password=hiddenQueryPassword&sslkey=privateKey#hiddenFragment",
+  }, /Remote test database requires DB01_REMOTE_TEST_DATABASE_CONFIRM/, "hiddenQueryPassword");
+  assert.equal(evidence.databaseUrlRedacted, "postgresql://***:***@pg.internal/lms_vnext_test");
+  assert.doesNotMatch(JSON.stringify(evidence), /privatePassword|privateKey|hiddenFragment/);
+});
