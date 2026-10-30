@@ -1,0 +1,67 @@
+name: DB-041 registered quiz shuffle persistence acceptance
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - "tests/db041-registered-quiz-shuffle-pg.test.mjs"
+      - ".github/workflows/db041-quiz-shuffle-acceptance.yml"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: db041-shuffle-acceptance-main
+  cancel-in-progress: false
+
+jobs:
+  quiz-registered:
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    services:
+      postgres:
+        image: postgres:17-alpine
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: lms_vnext_test
+        ports: ["5432:5432"]
+        options: >-
+          --health-cmd "pg_isready -U postgres -d lms_vnext_test"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 20
+    env:
+      DATABASE_URL: postgresql://postgres:postgres@127.0.0.1:5432/lms_vnext_test
+      TEST_DATABASE_URL: postgresql://postgres:postgres@127.0.0.1:5432/lms_vnext_test
+      DB03_ISOLATED_TEST_DATABASE: "1"
+      DB041_REGISTERED_PG: "YES"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Verify journal and shuffle field source contract
+        run: |
+          test "$(git rev-parse HEAD)" = "$GITHUB_SHA"
+          npm run db:journal:verify
+          node --test tests/db06-quiz-shuffle-staging.test.mjs
+      - name: Fresh isolated PG17 migration and seed
+        env:
+          DATABASE_URL: ""
+        run: npm run db:test:prepare
+      - name: Idempotent registered migration replay
+        run: npm run db:migrate
+      - name: Registered PG17 quiz flags, null/default and author-order negatives
+        run: node --test tests/db041-registered-quiz-shuffle-pg.test.mjs
+      - name: Real quiz authoring, read and submission integration
+        run: >-
+          npx vitest run --config vitest.db.registered.config.ts
+          tests/integration/courses-c4b-quizzes.test.ts
+      - name: Verify journal remains unchanged
+        run: |
+          npm run db:journal:verify
+          test -z "$(git status --porcelain -- drizzle/)"
