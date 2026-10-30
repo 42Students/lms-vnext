@@ -1,6 +1,6 @@
 import "server-only";
 
-import {and,asc,eq} from "drizzle-orm";
+import {and,asc,eq,isNull} from "drizzle-orm";
 import {getDb} from "@/db/client";
 import {projectInstances,projectResources} from "@/db/schema";
 import {assertPersistedPlatformPermission} from "@/modules/permissions/persisted-actor";
@@ -24,6 +24,7 @@ export async function saveProjectResourceLibrary(context:RequestContext,projectI
       .from(projectInstances).where(and(
         eq(projectInstances.id,scope.project.id),
         eq(projectInstances.collegeId,scope.collegeId),
+        isNull(projectInstances.deletedAt),
       )).for("update").limit(1);
     if(!project||!["ACTIVE","PLANNED"].includes(project.status))
       throw new ProjectsServiceError("PROJECT_RESOURCE_INVALID_STATE");

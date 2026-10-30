@@ -126,7 +126,8 @@ export async function createProjectResource(
         .select({ status: projectInstances.status })
         .from(projectInstances)
         .where(and(eq(projectInstances.id, scope.project.id),
-          eq(projectInstances.collegeId,scope.collegeId)))
+          eq(projectInstances.collegeId,scope.collegeId),
+        isNull(projectInstances.deletedAt)))
         .for("update")
         .limit(1);
 
@@ -279,7 +280,8 @@ export async function updateProjectResource(
       .select({ status: projectInstances.status })
       .from(projectInstances)
       .where(and(eq(projectInstances.id, scope.project.id),
-        eq(projectInstances.collegeId,scope.collegeId)))
+        eq(projectInstances.collegeId,scope.collegeId),
+        isNull(projectInstances.deletedAt)))
       .for("update")
       .limit(1);
 
@@ -457,7 +459,8 @@ export async function archiveProjectResource(
       .select({ status: projectInstances.status })
       .from(projectInstances)
       .where(and(eq(projectInstances.id, scope.project.id),
-        eq(projectInstances.collegeId,scope.collegeId)))
+        eq(projectInstances.collegeId,scope.collegeId),
+        isNull(projectInstances.deletedAt)))
       .for("update")
       .limit(1);
 
@@ -538,7 +541,8 @@ export async function reorderProjectResources(
   return getDb().transaction(async tx=>{
     const [project]=await tx.select({status:projectInstances.status})
       .from(projectInstances).where(and(eq(projectInstances.id,scope.project.id),
-        eq(projectInstances.collegeId,scope.collegeId)))
+        eq(projectInstances.collegeId,scope.collegeId),
+        isNull(projectInstances.deletedAt)))
       .for("update").limit(1);
     if(!project)throw new ProjectsServiceError("PROJECT_NOT_FOUND");
     ensureMutableProject(project.status);

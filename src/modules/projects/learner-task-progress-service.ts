@@ -26,14 +26,16 @@ export async function updateLearnerProjectTaskProgress(
 
   return getDb().transaction(async tx => {
     const [project] = await tx.select({ status: projectInstances.status }).from(projectInstances)
-      .where(and(eq(projectInstances.id, scope.project.id), eq(projectInstances.collegeId, scope.collegeId)))
+      .where(and(eq(projectInstances.id, scope.project.id), eq(projectInstances.collegeId, scope.collegeId),
+        isNull(projectInstances.deletedAt)))
       .for("update").limit(1);
     if (!project || project.status !== "ACTIVE")
       throw new ProjectsServiceError("PROJECT_TASK_INVALID_STATE");
     await assertPersistedLearnerProjectMutation(tx,context,scope.project.id,scope.collegeId);
 
     const [candidate] = await tx.select({ sprintId: projectTasks.sprintId }).from(projectTasks)
-      .where(and(eq(projectTasks.projectId, scope.project.id), eq(projectTasks.id, params.taskId))).limit(1);
+      .where(and(eq(projectTasks.projectId, scope.project.id), eq(projectTasks.id, params.taskId),
+        isNull(projectTasks.deletedAt))).limit(1);
     if (!candidate) throw new ProjectsServiceError("PROJECT_TASK_NOT_FOUND");
     if (!candidate.sprintId) throw new ProjectsServiceError("PROJECT_TASK_INVALID_STATE");
 
@@ -41,6 +43,7 @@ export async function updateLearnerProjectTaskProgress(
     const [sprint] = await tx.select({ status: projectSprints.status, releaseId: projectSprints.releaseId })
       .from(projectSprints).where(and(
         eq(projectSprints.id, candidate.sprintId), eq(projectSprints.projectId, scope.project.id),
+        isNull(projectSprints.deletedAt),
       )).for("update").limit(1);
     if (!sprint || sprint.status !== "ACTIVE")
       throw new ProjectsServiceError("PROJECT_TASK_INVALID_STATE");
@@ -54,6 +57,7 @@ export async function updateLearnerProjectTaskProgress(
 
     const siblings = await tx.select().from(projectTasks).where(and(
       eq(projectTasks.projectId, scope.project.id), eq(projectTasks.sprintId, candidate.sprintId),
+      isNull(projectTasks.deletedAt),
     )).orderBy(asc(projectTasks.sequence), asc(projectTasks.id)).for("update");
     const task = siblings.find(item => item.id === params.taskId);
     if (!task) throw new ProjectsServiceError("PROJECT_TASK_NOT_FOUND");

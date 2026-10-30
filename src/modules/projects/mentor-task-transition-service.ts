@@ -22,12 +22,14 @@ export async function transitionMentorProjectTask(
     const [project] = await tx.select({status:projectInstances.status})
       .from(projectInstances).where(and(
         eq(projectInstances.id,scope.project.id), eq(projectInstances.collegeId,scope.collegeId),
+        isNull(projectInstances.deletedAt),
       )).for("update").limit(1);
     if (!project || !["PLANNED","ACTIVE"].includes(project.status))
       throw new ProjectsServiceError("PROJECT_TASK_INVALID_STATE");
     await assertPersistedProjectMutationActor(tx,context,scope);
     const [task] = await tx.select().from(projectTasks).where(and(
       eq(projectTasks.id,params.taskId), eq(projectTasks.projectId,scope.project.id),
+      isNull(projectTasks.deletedAt),
     )).for("update").limit(1);
     if (!task) throw new ProjectsServiceError("PROJECT_TASK_NOT_FOUND");
     if (!allowedMentorTaskTransition(task.status,input.status) ||
@@ -37,6 +39,7 @@ export async function transitionMentorProjectTask(
     const [sprint] = await tx.select({status:projectSprints.status,releaseId:projectSprints.releaseId})
       .from(projectSprints).where(and(
         eq(projectSprints.id,task.sprintId), eq(projectSprints.projectId,scope.project.id),
+        isNull(projectSprints.deletedAt),
       )).for("update").limit(1);
     if (!sprint || sprint.status !== "ACTIVE")
       throw new ProjectsServiceError("PROJECT_TASK_INVALID_STATE");
@@ -57,6 +60,7 @@ export async function transitionMentorProjectTask(
       blockerReason:input.status==="BLOCKED"?input.blockerReason!:null,
     }).where(and(
       eq(projectTasks.id,task.id),eq(projectTasks.projectId,scope.project.id),
+      isNull(projectTasks.deletedAt),
       eq(projectTasks.status,task.status),
       sql`date_trunc('milliseconds', ${projectTasks.updatedAt}) = ${new Date(input.expectedUpdatedAt).toISOString()}::timestamptz`,
     )).returning();

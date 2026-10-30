@@ -1,6 +1,7 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import fs from "node:fs";
+import "./db07-project-tombstone-guards.test.mjs";
 
 const review = JSON.parse(
   fs.readFileSync("docs/planning/db07-w03-field-review.json", "utf8"),

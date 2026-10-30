@@ -1,6 +1,6 @@
 import "server-only";
 import {randomUUID} from "node:crypto";
-import {and,desc,eq} from "drizzle-orm";
+import {and,desc,eq,isNull} from "drizzle-orm";
 import {getDb} from "@/db/client";
 import {activityEvents,projectInstances,users} from "@/db/schema";
 import {recordActivityEventInTransaction} from "@/modules/activity/service";
@@ -46,7 +46,8 @@ export async function overrideProjectReadiness(context:RequestContext,projectIdI
   return getDb().transaction(async tx=>{
     const [project]=await tx.select({id:projectInstances.id,title:projectInstances.title,status:projectInstances.status})
       .from(projectInstances).where(and(eq(projectInstances.id,scope.project.id),
-        eq(projectInstances.collegeId,scope.collegeId))).for("update").limit(1);
+        eq(projectInstances.collegeId,scope.collegeId),
+        isNull(projectInstances.deletedAt))).for("update").limit(1);
     if(!project||project.status==="ARCHIVED")throw new ProjectsServiceError("PROJECT_INVALID_STATE");
     // Session roles can change between opening the dialog and submitting.
     // Check the persisted user/membership under transactional locks before

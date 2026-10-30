@@ -1,5 +1,5 @@
 import "server-only";
-import {and,eq} from "drizzle-orm";
+import {and,eq,isNull} from "drizzle-orm";
 import {getDb} from "@/db/client";
 import {projectInstances} from "@/db/schema";
 import type {RequestContext} from "@/modules/identity/context";
@@ -15,7 +15,8 @@ export async function updateMentorProjectOverview(context:RequestContext,project
  const scope=await requireProjectLifecycleMutationAccess(context,projectId);
  return getDb().transaction(async tx=>{
   const [current]=await tx.select().from(projectInstances)
-   .where(and(eq(projectInstances.id,scope.project.id),eq(projectInstances.collegeId,scope.collegeId)))
+   .where(and(eq(projectInstances.id,scope.project.id),eq(projectInstances.collegeId,scope.collegeId),
+    isNull(projectInstances.deletedAt)))
    .for("update").limit(1);
   if(!current||current.status==="ARCHIVED"||current.status==="COMPLETED")
    throw new ProjectsServiceError("PROJECT_SUBMISSION_INVALID_STATE");
@@ -28,7 +29,8 @@ export async function updateMentorProjectOverview(context:RequestContext,project
    summary:input.summary,dueLabel:input.dueLabel,blocker:input.blocker,
    nextAction:input.nextAction,
    updatedAt:new Date(Math.max(Date.now(),current.updatedAt.getTime()+1)),
-  }).where(and(eq(projectInstances.id,current.id),eq(projectInstances.collegeId,scope.collegeId))).returning();
+  }).where(and(eq(projectInstances.id,current.id),eq(projectInstances.collegeId,scope.collegeId),
+    isNull(projectInstances.deletedAt))).returning();
   if(!updated)throw new ProjectsServiceError("PROJECT_SUBMISSION_CONFLICT");
   const event=await recordActivityEventInTransaction(tx,context,{
    eventType:ACTIVITY_EVENT_TYPES.PROJECTS_PROJECT_SUMMARY_UPDATED,

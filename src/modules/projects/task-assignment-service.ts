@@ -22,7 +22,8 @@ export async function assignProjectTask(context:RequestContext,projectIdInput:st
   const scope=await requireProjectLifecycleMutationAccess(context,projectIdInput);
   return getDb().transaction(async tx=>{
     const [project]=await tx.select({status:projectInstances.status}).from(projectInstances)
-      .where(and(eq(projectInstances.id,scope.project.id),eq(projectInstances.collegeId,scope.collegeId)))
+      .where(and(eq(projectInstances.id,scope.project.id),eq(projectInstances.collegeId,scope.collegeId),
+        isNull(projectInstances.deletedAt)))
       .for("update").limit(1);
     if(!project||!["PLANNED","ACTIVE"].includes(project.status))
       throw new ProjectsServiceError("PROJECT_TASK_INVALID_STATE");
