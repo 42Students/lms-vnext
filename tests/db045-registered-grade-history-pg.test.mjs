@@ -42,17 +42,27 @@ test("DB045 registered grade-ledger INSERT, row-mutation and TRUNCATE guards act
         AND NOT tgisinternal AND tgname IN (
           'db06_grade_event_scope_guard',
           'db06_grade_events_no_mutation',
-          'db06_grade_events_no_truncate',
-          'db06_assignment_grade_event_required'
+          'db06_grade_events_no_truncate'
         )
     `);
     assert.deepEqual(rows.map(x => x.tgname).sort(), [
       "db06_grade_event_scope_guard",
       "db06_grade_events_no_mutation",
       "db06_grade_events_no_truncate",
-      "db06_assignment_grade_event_required",
     ].sort());
     assert.ok(rows.every(x => x.tgenabled === "O" || x.tgenabled === "A"));
+    // Deferred completeness lives on the mutable parent, not the ledger.
+    const required = await db.query(`
+      SELECT tgname,tgenabled,tgdeferrable,tginitdeferred
+      FROM pg_trigger
+      WHERE tgrelid='public.assignment_submissions'::regclass
+        AND NOT tgisinternal
+        AND tgname='db06_assignment_grade_event_required'
+    `);
+    assert.equal(required.rows.length, 1);
+    assert.ok(["O", "A"].includes(required.rows[0].tgenabled));
+    assert.equal(required.rows[0].tgdeferrable, true);
+    assert.equal(required.rows[0].tginitdeferred, true);
   });
 });
 
