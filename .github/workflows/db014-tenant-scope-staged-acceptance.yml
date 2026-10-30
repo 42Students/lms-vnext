@@ -7,6 +7,9 @@ on:
     branches: [main]
     paths:
       - "tests/db014-cross-domain-scope-staged-pg.test.mjs"
+      - "drizzle/0317_db014_placement_fk_validation.sql"
+      - "drizzle/0318_db014_cross_domain_event_guards.sql"
+      - "tests/db014-registered-guards-sql-source.test.mjs"
       - "tests/db014-registered-tenant-catalog-pg.test.mjs"
       - "tests/db014-placement-fk-validation-staged-pg.test.mjs"
       - "docs/planning/sql/db014-placement-fk-validation-candidate.sql"
@@ -55,6 +58,8 @@ jobs:
         run: test "$(git rev-parse HEAD)" = "$GITHUB_SHA"
       - name: Registered migration journal integrity
         run: npm run db:journal:verify
+      - name: Registered DB014 SQL source parser/guard regression
+        run: node --test tests/db014-registered-guards-sql-source.test.mjs
       - name: Reset, migrate and seed strictly disposable PostgreSQL 17
         env:
           DATABASE_URL: ""
