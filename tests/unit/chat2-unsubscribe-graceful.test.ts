@@ -29,6 +29,9 @@ describe("Public unsubscribe confirmations",()=>{
   expect(route).toContain('url.searchParams.set(\"scope\",\"placement-cell\")');
   expect(route).toContain("isSameOriginRequest(request)");
   expect(route).toContain("if(!claim)return successResponse");
-  expect(route).toContain("await db.execute(sql`");
+  // The registered-table preflight moved into the shared service and must
+  // remain ahead of any recipient lookup or CRM mutation.
+  expect(service).toContain("await db.execute<{ready:boolean}>(sql`");
+  expect(service.indexOf("await db.execute")).toBeLessThan(service.indexOf("const recipientScope="));
  });
 });
