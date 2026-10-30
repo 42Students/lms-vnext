@@ -47,8 +47,18 @@ async function cleanup(){
   }
   if(created.templateIds.length){
     await pool.query("delete from project_template_college_assignments where template_id=any($1::uuid[])",[created.templateIds]);
-    await pool.query("delete from project_template_versions where template_id=any($1::uuid[])",[created.templateIds]);
-    await pool.query("delete from project_templates where id=any($1::uuid[])",[created.templateIds]);
+    // Preserve DB070 append-only history and DB071 deferred version pointers.
+    // The disposable fixture slugs/UUIDs are unique; no guard bypass is used.
+    const retention = await pool.query<{retainHistory:boolean}>(
+      "select (exists (select 1 from pg_trigger where tgrelid='project_template_versions'::regclass " +
+      "and tgname='db07_project_template_versions_append_only' and tgenabled='O') " +
+      "or exists (select 1 from pg_constraint where conrelid='project_templates'::regclass " +
+      "and conname='project_templates_current_version_snapshot_fk')) as \"retainHistory\"",
+    );
+    if (!retention.rows[0]?.retainHistory) {
+      await pool.query("delete from project_template_versions where template_id=any($1::uuid[])",[created.templateIds]);
+      await pool.query("delete from project_templates where id=any($1::uuid[])",[created.templateIds]);
+    }
     created.templateIds=[];
   }
   // Immutable audit events retain FK references to an actor membership/user.
