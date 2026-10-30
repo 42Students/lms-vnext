@@ -158,3 +158,14 @@ for(const view of [{name:"desktop",width:1280,height:800},{name:"mobile",width:3
   }
  });
 }
+
+test("selected Faculty portal reads its own profile despite separate persisted Mentor grant",async({page,context})=>{
+ await facultyLogin(context,"seed-shared-faculty",SEED_IDS.facultyCollegeAMembership);
+ await page.goto("/teacher/profile");
+ await expect(page.getByRole("heading",{name:"Profile",level:1})).toBeVisible();
+ await expect(page.getByRole("region",{name:"Full faculty profile"})).toBeVisible();
+ // The same identity must not open this Faculty page when Mentor is selected.
+ await context.addCookies([{name:"lms_role",value:"MENTOR",url:BASE,httpOnly:true,sameSite:"Lax"}]);
+ await page.reload();
+ await expect(page.getByRole("region",{name:"Full faculty profile"})).toHaveCount(0);
+});
