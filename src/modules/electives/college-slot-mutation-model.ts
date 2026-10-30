@@ -37,7 +37,12 @@ export const editCollegeElectiveSlotSchema = z.object({
   academicYear: academicYear.optional(),
   name: title,
   description,
-  ...pickCounts,
+  // Old persisted slots may exceed the new-form 10-choice cap. Parse their
+  // original values without truncation; the locked service must reject any
+  // attempt to CHANGE an over-cap limit (new slots still cap both fields at 10).
+  credits: pickCounts.credits,
+  minPick: z.number().int().min(0, "Pick range is invalid").safe(),
+  maxPick: z.number().int().min(1, "Pick range is invalid").safe(),
   confirm: z.literal(true),
 }).strict().refine((value) => value.minPick <= value.maxPick, {
   path: ["maxPick"], message: "Pick range is invalid",
