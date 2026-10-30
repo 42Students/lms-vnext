@@ -145,12 +145,17 @@ test("Faculty Blueprint persists an authorized Section Resource edit after a ful
   await page.getByRole("link", { name: /E2E Browser Course/ }).first().click();
   await page.getByRole("navigation", { name: "Faculty course tabs" })
     .getByRole("link", { name: "Blueprint" }).click();
-  const blueprintUrl=page.url();
-  const order=page.getByRole("region",{name:"Course blueprint lesson explorer"})
-    .getByRole("list",{name:"Lesson content order"});
+  const explorer=page.getByRole("region",{name:"Course blueprint lesson explorer"});
+  const activeLesson=explorer.getByRole("complementary").getByRole("link",{current:"page"});
+  const blueprintUrl=new URL((await activeLesson.getAttribute("href"))!,page.url()).toString();
+  const order=explorer.getByRole("list",{name:"Lesson content order"});
   await expect(order).toBeVisible();
-  // Work with an explicitly Section-owned RESOURCE, never an unrelated shared item.
-  await order.getByRole("button",{name:"Edit",exact:true}).first().click();
+  // Pin both initial edit and restoration to the same seeded, Faculty-owned item.
+  const resourceTitle="E2E Section A Notes";
+  const ownedRow=(target:typeof page)=>target.getByRole("list",{name:"Lesson content order"})
+    .locator("li").filter({has:target.getByRole("link",{name:resourceTitle,exact:true})});
+  await expect(ownedRow(page)).toBeVisible();
+  await ownedRow(page).getByRole("button",{name:"Edit",exact:true}).click();
   const editor=page.getByRole("dialog",{name:"Edit RESOURCE"});
   await expect(editor).toBeVisible();
   const original=await editor.getByLabel("Notes").inputValue();
@@ -163,8 +168,10 @@ test("Faculty Blueprint persists an authorized Section Resource edit after a ful
     await dialog.getByRole("button",{name:"Save content"}).click();
     expect((await saving).ok()).toBe(true);
   };
+  let saved=false;
   try {
     await patchNotes(page,marker);
+    saved=true;
     // Save triggers a Next.js router.refresh on the mutating tab. A fresh
     // authenticated tab proves persistent server readback without a racing reload.
     const verified=await context.newPage();
@@ -175,15 +182,17 @@ test("Faculty Blueprint persists an authorized Section Resource edit after a ful
       await expect(verified.getByText("E2E Section B Secret",{exact:true})).toHaveCount(0);
     }finally{await verified.close();}
   }finally{
-    // Preserve the seeded fixture for other suites, even if verification fails.
+    // Only restore when a write succeeded; do not bury an initial authoring failure.
+    if(saved){
     const restore=await context.newPage();
     try{
       await restore.goto(blueprintUrl);
-      const restoreOrder=restore.getByRole("list",{name:"Lesson content order"});
-      await restoreOrder.getByRole("button",{name:"Edit",exact:true}).first().click();
+      await expect(ownedRow(restore)).toBeVisible();
+      await ownedRow(restore).getByRole("button",{name:"Edit",exact:true}).click();
       await expect(restore.getByRole("dialog",{name:"Edit RESOURCE"})).toBeVisible();
       await patchNotes(restore,original);
     }finally{await restore.close();}
+    }
   }
 });
 
