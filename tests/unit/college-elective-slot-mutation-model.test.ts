@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 import {
   createCollegeElectiveSlotSchema,
   editCollegeElectiveSlotSchema,
+  electiveSlotDraftFromRow,
   electiveSlotFormErrorsFromIssues,
   normalizeSlotYear,
   slotSelectionChanged,
@@ -94,6 +95,31 @@ describe("college elective slot mutation model", () => {
     expect(Object.hasOwn(errors, "__proto__")).toBe(false);
     expect(electiveSlotFormErrorsFromIssues(null)).toEqual({});
     expect(electiveSlotFormErrorsFromIssues({ path: ["name"] })).toEqual({});
+  });
+
+  it("rebuilds the freshest form draft after route refresh instead of preserving stale local fields", () => {
+    const older = {
+      name: "Old slot name", description: "Old notes",
+      programId: create.programId, academicPeriodId: null,
+      semesterNumber: 2, academicYear: "2026-27",
+      credits: 3, minPick: 1, maxPick: 2,
+    };
+    const current = {
+      ...older, name: "Updated on another screen", description: "New notes",
+      academicPeriodId: "20000000-0000-4000-8000-000000000002",
+      semesterNumber: 3, academicYear: "2027-28", credits: 5, maxPick: 3,
+    };
+    expect(electiveSlotDraftFromRow(current)).toEqual({
+      programId: current.programId, periodId: current.academicPeriodId,
+      term: "3", year: "2027-28", name: "Updated on another screen",
+      description: "New notes", credits: "5", minPick: "1", maxPick: "3",
+    });
+    expect(electiveSlotDraftFromRow(current).name)
+      .not.toBe(electiveSlotDraftFromRow(older).name);
+    expect(electiveSlotDraftFromRow(undefined)).toEqual({
+      programId: "", periodId: "", term: "1", year: "", name: "",
+      description: "", credits: "3", minPick: "1", maxPick: "1",
+    });
   });
 
   it("normalizes years and detects actual enrollment-impacting edits", () => {
