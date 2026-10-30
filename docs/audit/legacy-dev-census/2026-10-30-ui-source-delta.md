@@ -83,3 +83,12 @@ Current legacy backend contains `GlobalTpo*Controller` and `GlobalTpoFenceFilter
 5. **Acceptance wall:** no `docs/tracker.json` UI milestone, page `implementationGreen` receipt, or global phase transition was changed. This report has **source inspection only**, no executed browser, live PostgreSQL, provider, responsive or accessibility verification.
 
 **Bottom line:** 27 concrete **unmapped legacy development route-source files** belong to two recently added account types; this is a scope-reconciliation finding, **not** a claim of 27 missing production pages. The currently actionable same-scope frontend pilot is the TPO legacy drive deep-link mapping. Both are independently testable without reopening completed DB tasks.
+
+## Follow-up: source-census guard hardening on main
+
+- `367a834b94d54e0be97a392d444e0af793543870`: `scripts/audit/legacy-census-status.mjs` now exposes `unmappedChangedRoutePaths` for dev-source page paths absent from the frozen route census. The strict `--assert-exhaustive` gate rejects these.
+- `428048c129fd040466b9ee2749c89dfe191686e3`: the same checker now exposes `unmappedChangedComponentPaths` and `changedNavigationOrLayoutPaths` and includes both in strict completeness checks. The actual dated drift input already identifies two previously absent TPO interactive components: `BringInWindow.jsx` and `VerifyCompanyWindow.jsx`.
+- `4a74220ff2851d68ab7c5b1b495cddd3fc4f59b5`, `399fc7b96bdc9e41c91bb8d0cf2451a4cdc59e14`, `4504528af6f73838131d730508547ee343d1cbc5`: focused regression fixtures in the existing `tests/legacy-census-status.test.mjs` (new routes, new overlay components, and shell/navigation drift). **6/6** fixtures passed against the exact committed pure `buildLegacyCensusStatus` function in an isolated V8 runner (source blob `83c97b865bdbf8b5374c64c88caf6360d8da0ed7`, test blob `d3e5584c3c02366de46195851749f344c85e991f`). **Node `node:test`, complete repository tests, browser and DB were not run in this audit session.**
+- A *fresh* legacy-to-current source delta must still be supplied to the checker. The dated `oracle-drift-2026-10-27.json` file is historical and does not automatically know about changes landing on 30 October. The 27 newly seen dev-only workspace routes above were found by an independent live source-tree comparison, not by pretending the old drift input was current.
+
+These are verification-tooling improvements only. They do not satisfy the UI inventory, functional, design or release gates for any page.
