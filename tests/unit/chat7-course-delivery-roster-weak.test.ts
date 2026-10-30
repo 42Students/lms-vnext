@@ -17,6 +17,10 @@ beforeEach(()=>{
  state.select.mockImplementation(()=>{
   const which=step++===0?"elective":"roster";
   return {from(){return this;},innerJoin(){return this;},leftJoin(){return this;},
+   // Model the real Drizzle thenable when the group roster query is awaited.
+   then(resolve:(rows:unknown[])=>unknown,reject?:(reason:unknown)=>unknown){
+    return Promise.resolve(which==="roster"?state.learners:state.elective).then(resolve,reject);
+   },
    where(){return this;},
    orderBy(){return Promise.resolve(state.learners);},
    limit(){return Promise.resolve(state.elective);},
