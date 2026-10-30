@@ -1,0 +1,87 @@
+name: DB-073-075 registered project-lineage PostgreSQL acceptance
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - "drizzle/0315_db07_project_lineage_scope_fks.sql"
+      - "src/db/schema/projects.ts"
+      - "tests/integration/db073-project-lineage-fks.test.ts"
+      - "tests/integration/db074-review-evaluation-parent-fks.test.ts"
+      - "tests/integration/db075-meeting-ancestry.test.ts"
+      - ".github/workflows/db073-075-project-lineage-acceptance.yml"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: db073-075-project-lineage-main
+  cancel-in-progress: false
+
+jobs:
+  registered-db07-lineage:
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    services:
+      postgres:
+        image: postgres:17-alpine
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: lms_vnext_test
+        ports: ["5432:5432"]
+        options: >-
+          --health-cmd "pg_isready -U postgres -d lms_vnext_test"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 20
+    env:
+      DATABASE_URL: postgresql://postgres:postgres@127.0.0.1:5432/lms_vnext_test
+      TEST_DATABASE_URL: postgresql://postgres:postgres@127.0.0.1:5432/lms_vnext_test
+      DB03_ISOLATED_TEST_DATABASE: "1"
+      DB018_ISOLATED_TEST_DATABASE: "1"
+      DB073_PROJECT_LINEAGE_ENFORCED: "1"
+      DB074_REVIEW_EVALUATION_ENFORCED: "1"
+      DB075_MEETING_ANCESTRY_ENFORCED: "1"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Exactly pinned registered migrations and DB073-075 source contracts
+        run: |
+          test "$(git rev-parse HEAD)" = "$GITHUB_SHA"
+          npm run db:journal:verify
+          node --test tests/db073-project-lineage-source.test.mjs tests/db074-review-evaluation-source.test.mjs tests/db075-meeting-ancestry-source.test.mjs
+      - name: Fresh strictly disposable PostgreSQL 17 migrations and seed
+        env:
+          DATABASE_URL: ""
+        run: npm run db:test:prepare
+      - name: Registered migration idempotence
+        run: npm run db:migrate
+      - name: DB073 composite FK same-project release, sprint, task and submission negatives
+        run: >-
+          npx vitest run --config vitest.db.registered.config.ts
+          tests/integration/db073-project-lineage-fks.test.ts
+      - name: DB074 composite FK review and evaluation parent negatives
+        run: >-
+          npx vitest run --config vitest.db.registered.config.ts
+          tests/integration/db074-review-evaluation-parent-fks.test.ts
+      - name: DB075 nullable meeting link and same-sprint/task ancestry negatives
+        run: >-
+          npx vitest run --config vitest.db.registered.config.ts
+          tests/integration/db075-meeting-ancestry.test.ts
+      - name: Actual DB07 project template and lifecycle service regressions
+        run: >-
+          npx vitest run --config vitest.db.registered.config.ts
+          tests/integration/projects-p2-templates.test.ts
+          tests/integration/projects-p5-lifecycle.test.ts
+          tests/integration/projects-p6b-final-evaluation.test.ts
+      - name: Final journal and TS schema parity checks
+        run: |
+          npm run db:journal:verify
+          npm run typecheck
+          test -z "$(git status --porcelain -- drizzle/)"
