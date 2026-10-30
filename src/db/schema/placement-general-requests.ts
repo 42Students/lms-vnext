@@ -1,5 +1,5 @@
 import {sql} from "drizzle-orm";
-import {check,foreignKey,index,jsonb,pgTable,text,timestamp,uniqueIndex,uuid,varchar} from "drizzle-orm/pg-core";
+import {bigint,check,foreignKey,index,integer,jsonb,pgTable,text,timestamp,uniqueIndex,uuid,varchar} from "drizzle-orm/pg-core";
 import {colleges} from "./colleges";
 import {collegeMemberships} from "./memberships";
 import {users} from "./users";
@@ -9,6 +9,20 @@ import {users} from "./users";
  * Keep Drizzle CHECK aligned with the effective registered constraint. */
 export const placementLearnerGeneralRequests=pgTable("placement_learner_general_requests",{
  id:uuid("id").defaultRandom().primaryKey(),
+ /** Registered historical source provenance. These nullable values are not authorization fields. */
+ legacyRequestId:bigint("legacy_request_id",{mode:"bigint"}),
+ legacyLearnerId:integer("legacy_learner_id"),
+ legacyJobId:integer("legacy_job_id"),
+ legacyApplicationId:integer("legacy_application_id"),
+ legacyRequestType:varchar("legacy_request_type",{length:64}),
+ legacyStatus:varchar("legacy_status",{length:24}),
+ legacyDecisionActorId:integer("legacy_decision_actor_id"),
+ legacyDecisionActorType:varchar("legacy_decision_actor_type",{length:32}),
+ legacyCreatedLocal:timestamp("legacy_created_local",{withTimezone:false}),
+ legacyDecidedLocal:timestamp("legacy_decided_local",{withTimezone:false}),
+ legacySourceTimeZone:varchar("legacy_source_time_zone",{length:80}),
+ legacyDecisionNote:text("legacy_decision_note"),
+ escalateAt:timestamp("escalate_at",{withTimezone:true}),
  collegeId:uuid("college_id").notNull().references(()=>colleges.id,{onDelete:"restrict"}),
  membershipId:uuid("membership_id").notNull(),
  kind:varchar("kind",{length:40}).notNull(),
@@ -49,6 +63,9 @@ export const placementLearnerGeneralRequestEvents=pgTable("placement_learner_gen
  nextStatus:varchar("next_status",{length:20}).notNull(),
  actorUserId:uuid("actor_user_id").notNull().references(()=>users.id,{onDelete:"restrict"}),
  note:text("note"),
+ /** Historical actor identifiers are never used to authorize an event. */
+ legacyActorId:integer("legacy_actor_id"),
+ legacyActorType:varchar("legacy_actor_type",{length:32}),
  occurredAt:timestamp("occurred_at",{withTimezone:true}).notNull().defaultNow(),
 },t=>[
  index("placement_general_request_events_parent_idx").on(t.requestId,t.occurredAt),
