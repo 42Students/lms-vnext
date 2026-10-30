@@ -603,7 +603,7 @@ describe.skipIf(!enabled)("DB018: direct-SQL negative database boundaries", () =
       await expect(client.query(
         "UPDATE course_offerings SET credits=31 WHERE id=$1",
         [offering],
-      )).rejects.toMatchObject({code:"23514",constraint:"course_offerings_credits_ck"});
+      )).rejects.toMatchObject({code:"23514",constraint:"db02_course_offerings_credits_ck"});
     });
   });
 
