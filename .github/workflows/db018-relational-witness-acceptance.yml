@@ -1,0 +1,62 @@
+name: DB-018 registered relational witnesses
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - "tests/integration/db018-relational-and-boundary-witnesses.test.ts"
+      - "docs/planning/database-parity-pass5-probe-manifest.json"
+      - ".github/workflows/db018-relational-witness-acceptance.yml"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: lms-db018-relational-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  db018-registered-relational:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    services:
+      postgres:
+        image: postgres:17-alpine
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: lms_vnext_test
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres -d lms_vnext_test"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 20
+    env:
+      DATABASE_URL: postgresql://postgres:postgres@127.0.0.1:5432/lms_vnext_test
+      TEST_DATABASE_URL: postgresql://postgres:postgres@127.0.0.1:5432/lms_vnext_test
+      DB03_ISOLATED_TEST_DATABASE: "1"
+      DB018_ISOLATED_TEST_DATABASE: "1"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Verify exact registered migration journal
+        run: npm run db:journal:verify
+      - name: Prepare independent disposable PostgreSQL 17
+        env:
+          DATABASE_URL: ""
+        run: npm run db:test:prepare
+      - name: Reapply registered journal idempotently
+        run: npm run db:migrate
+      - name: Execute non-vacuous 21 relational and direct SQL negative witnesses
+        run: >-
+          npx vitest run --config vitest.db.registered.config.ts
+          tests/integration/db018-relational-and-boundary-witnesses.test.ts
+      - name: Re-run DB15/18 source probe identity contracts
+        run: node --test tests/db-parity-pass5.test.mjs
