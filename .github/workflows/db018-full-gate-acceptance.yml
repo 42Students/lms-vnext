@@ -1,0 +1,79 @@
+# Independent DB-018 FULL witness gate, not a replacement for DB-020.
+# All writes are confined to a seeded disposable PostgreSQL 17 test database.
+name: DB-018 complete PostgreSQL negative and race acceptance
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/db018-full-gate-acceptance.yml"
+      - "tests/integration/db018-relational-and-boundary-witnesses.test.ts"
+      - "tests/integration/db18-registered-negative-witnesses.test.ts"
+      - "tests/integration/db18-concurrency-witnesses.test.ts"
+      - "tests/integration/db18-known-race-gaps.test.ts"
+      - "tests/integration/db18-placement-race-gap.test.ts"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: lms-db018-full-gate-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  db018-full-negative-race:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    services:
+      postgres:
+        image: postgres:17-alpine
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: lms_vnext_test
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres -d lms_vnext_test"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 20
+    env:
+      DATABASE_URL: postgresql://postgres:postgres@127.0.0.1:5432/lms_vnext_test
+      TEST_DATABASE_URL: postgresql://postgres:postgres@127.0.0.1:5432/lms_vnext_test
+      DB018_ISOLATED_TEST_DATABASE: "1"
+      DB03_ISOLATED_TEST_DATABASE: "1"
+      DB06_ISOLATED_TEST_DATABASE: "1"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Confirm registered migration journal and disposable target
+        run: npm run db:journal:verify
+      - name: Prepare isolated PostgreSQL and full seed
+        env:
+          DATABASE_URL: ""
+        run: npm run db:test:prepare
+      - name: Prove idempotent migration replay
+        run: npm run db:migrate
+      - name: Run all relational, direct-negative and two-session race witnesses
+        run: |
+          npx vitest run --config vitest.db.registered.config.ts \
+            tests/integration/db018-relational-and-boundary-witnesses.test.ts \
+            tests/integration/db18-registered-negative-witnesses.test.ts \
+            tests/integration/db18-concurrency-witnesses.test.ts \
+            tests/integration/db18-known-race-gaps.test.ts \
+            tests/integration/db18-placement-race-gap.test.ts \
+            tests/integration/groups-db03.test.ts \
+            tests/integration/courses-c4b-quizzes.test.ts
+      - name: Source manifest and witness identity cross-check
+        run: node --test tests/db-parity-pass5.test.mjs
+      - name: Explicit evidence scope
+        if: always()
+        run: |
+          echo "DB018 execution covers registered PG17 direct SQL and race tests."
+          echo "A green job alone does not sign off source field parity DB019 or global DB020."
