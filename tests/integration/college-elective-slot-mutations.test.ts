@@ -85,6 +85,40 @@ describe.skipIf(!enabled)("College elective slot create/edit isolated PostgreSQL
         code: "ELECTIVE_SLOT_STALE",
       });
 
+      // A persisted pre-vNext slot can have selection limits above the new
+      // browser's cap of 10. Metadata-only edits must preserve those facts;
+      // a new over-cap value is never allowed, even for an old slot.
+      const legacySlot = await runCreate(admin, {
+        ...input, name: marker + "-historical",
+      });
+      await tx.execute(sql`update elective_slots set min_pick=11,max_pick=14 where id=${legacySlot.id}`);
+      const renamedLegacy = await runEdit(admin, legacySlot.id, {
+        expectedVersion: 0, name: marker + "-historical-renamed",
+        description: "Metadata-only update", credits: 3,
+        minPick: 11, maxPick: 14, confirm: true,
+      });
+      expect(renamedLegacy).toMatchObject({
+        version: 1, minPick: 11, maxPick: 14,
+        name: marker + "-historical-renamed",
+      });
+      await expect(runEdit(admin, legacySlot.id, {
+        expectedVersion: 1, name: marker + "-historical-renamed",
+        description: "Should not change", credits: 3,
+        minPick: 11, maxPick: 15, confirm: true,
+      })).rejects.toMatchObject({ code: "ELECTIVE_PICK_RANGE_INVALID" });
+      const unchangedLegacy = await tx.execute(sql`select min_pick,max_pick,version from elective_slots where id=${legacySlot.id}`);
+      expect(unchangedLegacy.rows[0]).toMatchObject({
+        min_pick: 11, max_pick: 14, version: 1,
+      });
+      const normalizedLegacy = await runEdit(admin, legacySlot.id, {
+        expectedVersion: 1, name: marker + "-historical-renamed",
+        description: "Normalized choices", credits: 3,
+        minPick: 2, maxPick: 10, confirm: true,
+      });
+      expect(normalizedLegacy).toMatchObject({
+        version: 2, minPick: 2, maxPick: 10,
+      });
+
       await tx.execute(sql`insert into cohorts(id,program_id,name,code,start_period_id,status)
         values (${ids.cohort},${ids.program},${marker},${marker},${ids.period},'ACTIVE')`);
       await tx.execute(sql`insert into sections(id,cohort_id,academic_period_id,name,code)
