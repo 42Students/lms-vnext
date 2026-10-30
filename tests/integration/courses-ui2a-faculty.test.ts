@@ -1469,7 +1469,13 @@ describe("courses UI2A faculty read model", () => {
           month: sessionMonth,
         },
       );
-    expect(corrected.records).toHaveLength(0);
+    // A corrected PRESENT state remains a persisted record for DB06 audit parity.
+    expect(corrected.records).toEqual([
+      expect.objectContaining({
+        membershipId: facultyFixtureLearnerMembershipId,
+        status: "PRESENT",
+      }),
+    ]);
 
     await expect(
       getAdminAttendanceOptions(
