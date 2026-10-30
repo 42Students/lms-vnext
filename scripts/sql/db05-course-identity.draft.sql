@@ -28,11 +28,26 @@ ALTER TABLE courses
   ADD COLUMN IF NOT EXISTS short_title varchar(255),
   ADD COLUMN IF NOT EXISTS slug varchar(64);
 
-ALTER TABLE courses
-  ADD CONSTRAINT db05_course_short_title_nonblank_ck
-    CHECK (short_title IS NULL OR length(btrim(short_title)) > 0),
-  ADD CONSTRAINT db05_course_slug_nonblank_ck
-    CHECK (slug IS NULL OR length(btrim(slug)) > 0);
+-- The named guards are already installed by registered migration 0310.
+-- Keep the draft independently replayable without dropping or weakening a guard.
+DO $db05$ BEGIN
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_constraint
+    WHERE conrelid = 'courses'::regclass
+      AND conname = 'db05_course_short_title_nonblank_ck'
+  ) THEN
+    ALTER TABLE courses ADD CONSTRAINT db05_course_short_title_nonblank_ck
+      CHECK (short_title IS NULL OR length(btrim(short_title)) > 0);
+  END IF;
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_constraint
+    WHERE conrelid = 'courses'::regclass
+      AND conname = 'db05_course_slug_nonblank_ck'
+  ) THEN
+    ALTER TABLE courses ADD CONSTRAINT db05_course_slug_nonblank_ck
+      CHECK (slug IS NULL OR length(btrim(slug)) > 0);
+  END IF;
+END $db05$;
 
 -- Legacy slug reservation is GLOBAL, including archived/soft-deleted rows.
 CREATE UNIQUE INDEX IF NOT EXISTS db05_course_slug_reserved_uq
@@ -44,11 +59,11 @@ CREATE UNIQUE INDEX IF NOT EXISTS db05_course_slug_reserved_uq
 -- but their immutable/public slug is still reserved forever.
 CREATE UNIQUE INDEX IF NOT EXISTS db05_course_active_department_short_title_trim_uq
   ON courses (department_id, lower(btrim(short_title)))
-  WHERE status = 'ACTIVE' AND short_title IS NOT NULL;
+  WHERE status = 'ACTIVE' AND deleted_at IS NULL AND short_title IS NOT NULL;
 
 CREATE UNIQUE INDEX IF NOT EXISTS db05_course_active_department_name_trim_uq
   ON courses (department_id, lower(btrim(name)))
-  WHERE status = 'ACTIVE';
+  WHERE status = 'ACTIVE' AND deleted_at IS NULL;
 
 COMMIT;
 
