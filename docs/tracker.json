@@ -538,7 +538,36 @@
       "dependsOn": [
         "DB-001",
         "DB-025"
-      ]
+      ],
+      "implementationCheckpoint": {
+        "status": "REGISTERED_21_PROBES_4_DIRECT_NEGATIVES_PASS_REMAINING_RACE_AND_EMPTY_JOIN_GATES_OPEN",
+        "recordedOn": "2026-10-30",
+        "executedEvidence": [
+          {
+            "kind": "EXECUTED_DISPOSABLE_POSTGRESQL17_PARTIAL_ACCEPTANCE",
+            "result": "PASS",
+            "commitSha": "1846222cff922dd4cc1a3d0cb9f51e890572b3f2",
+            "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/41082861342",
+            "jobId": 124156250717,
+            "runner": "GitHub Actions Node22; disposable PostgreSQL 17-alpine",
+            "commands": [
+              "npm run db:journal:verify",
+              "npm run db:test:prepare with application DATABASE_URL cleared",
+              "npm run db:migrate",
+              "npx vitest run --config vitest.db.registered.config.ts tests/integration/db018-relational-and-boundary-witnesses.test.ts",
+              "node --test tests/db-parity-pass5.test.mjs"
+            ],
+            "details": "27/27 PG tests PASS, 9/9 source tests PASS; 21/21 observational relational checks executed, 8 with real rollback-only fixture join samples, 13 with zero joined sample rows; 4/4 negative SQL checks pass. Active LEARNER role is seeded in synthetic fixture to satisfy registered DB02 membership authorization, never disables trigger."
+          }
+        ],
+        "pending": [
+          "13 relational probes still only have vacuous observational checks; add populated scoped fixtures or classify as observational explicitly",
+          "Run remainder of DB018 13 direct negative witnesses and four two-session concurrency checks",
+          "Run two fixed-but-unverified P5-R01/R02 races and resolve other 5 listed gaps",
+          "Only then use full fresh registered schema/producer/consumer proof and mark DB018 accepted"
+        ],
+        "evidenceIsNotAcceptance": true
+      }
     },
     {
       "id": "DB-019",
