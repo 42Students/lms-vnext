@@ -1563,8 +1563,34 @@
       "id": "DB-068",
       "title": "Enforce DB07 project-template version ownership in assignments and instances",
       "phase": "DATABASE",
-      "done": false,
-      "dependsOn": []
+      "done": true,
+      "dependsOn": [],
+      "acceptedAt": "2026-10-30",
+      "closureBasis": "EXECUTED_REGISTERED_PG17_DOMAIN_ENGINEERING_ACCEPTANCE",
+      "acceptanceEvidence": [
+        {
+          "kind": "EXECUTED_REGISTERED_POSTGRESQL_17_ACCEPTANCE",
+          "result": "PASS",
+          "exitCode": 0,
+          "commitSha": "72e7c2db2b1b145f96d3ff647500c9df145dd3d7",
+          "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/41094992815",
+          "jobId": 124198322668,
+          "runner": "GitHub Actions ubuntu-latest Node.js 22 with disposable PostgreSQL 17-alpine",
+          "commands": [
+            "npm run db:journal:verify",
+            "npm run db:test:prepare (DATABASE_URL cleared; disposable PG17)",
+            "npm run db:migrate (idempotence)",
+            "node --test tests/db07-template-version-parent-integrity-source.test.mjs tests/db07-template-version-append-only-source.test.mjs tests/db07-template-version-pointer-source.test.mjs",
+            "npx vitest run --config vitest.db.registered.config.ts tests/integration/db07-template-version-parent-integrity.test.ts",
+            "npx vitest run --config vitest.db.registered.config.ts tests/integration/db07-template-version-append-only.test.ts",
+            "npx vitest run --config vitest.db.registered.config.ts tests/integration/db07-template-version-pointer-fks.test.ts",
+            "npx vitest run --config vitest.db.registered.config.ts tests/integration/projects-p2-templates.test.ts tests/integration/projects-p5-lifecycle.test.ts tests/integration/projects-p6b-final-evaluation.test.ts",
+            "NODE_OPTIONS=--max-old-space-size=6144 npm run typecheck",
+            "npm run db:journal:verify; assert clean drizzle/ tree"
+          ],
+          "details": "All steps in dedicated workflow passed on the exact recorded SHA: registered clean database replay and catalog/negative domain acceptance, current project producer/consumer template/lifecycle/regression tests, full TypeScript and journal checks. Scoped DB07 acceptance only; does NOT certify global database or CI, which remains open."
+        }
+      ]
     },
     {
       "id": "DB-069",
@@ -1579,38 +1605,67 @@
       "id": "DB-070",
       "title": "Preserve immutable DB07 project-template revision history",
       "phase": "DATABASE",
-      "done": false,
+      "done": true,
       "dependsOn": [],
-      "sourceProgress": {
-        "state": "TEST_FIXTURE_READY_NOT_ACCEPTED",
-        "summary": "Source SQL/tests for DB070 append-only history remain staged; adapted the Mentor task/sprint integration fixture teardown to retain permanent template revisions once the append-only trigger or deferred pointer FK exists, matching the prior project-template suite policy. Mentor task details fixture now also checks DB070 trigger/DB071 pointer constraints before historical template cleanup; no privileged bypasses. P6B evaluation integration fixture now uses per-run template/project slugs and preserves history when DB070 immutable trigger or DB071 pointers are present. P5/P6B/adversarial project fixtures use unique template slugs and skip revision/history teardown once immutable triggers or header pointer constraints exist.",
-        "testInfrastructureCommits": [
-          "5599a38e76d3c8df494d94b22dfc95ddc7271e33",
-          "e37fce43a9b4d5f72f7e351e6352d2f770ffb7fe",
-          "cd6bafb8b0672659825258a946b473fa75fea110"
-        ],
-        "pending": [
-          "L01 registered DB070 append-only trigger and snapshot replay",
-          "Disposable PostgreSQL denial of UPDATE, DELETE and TRUNCATE CASCADE, with INSERT permitted",
-          "Run the full template/mentor integration suite after trigger promotion"
-        ],
-        "additionalTestInfrastructureCommit": "2f332a10aec29fc2d863cf022ec900567f45efec",
-        "additionalParityCommit": "b8557a004c5654cb2012850e0934ffa646dbbe87",
-        "evaluationFixtureCommit": "c501751ed40b2ccbba543b5a84580cdf3bfd7ae8",
-        "safeFixtureCommits": [
-          "c501751ed40b2ccbba543b5a84580cdf3bfd7ae8",
-          "4dc972101132cbf57f9065da377609cbdef45aec",
-          "69a9d5f49014d958475a7a50b849868e559eb8d2",
-          "bc5e6ab64a7edd3b104c99a94d0d57be2c3ae6f1"
-        ]
-      }
+      "acceptedAt": "2026-10-30",
+      "closureBasis": "EXECUTED_REGISTERED_PG17_DOMAIN_ENGINEERING_ACCEPTANCE",
+      "acceptanceEvidence": [
+        {
+          "kind": "EXECUTED_REGISTERED_POSTGRESQL_17_ACCEPTANCE",
+          "result": "PASS",
+          "exitCode": 0,
+          "commitSha": "72e7c2db2b1b145f96d3ff647500c9df145dd3d7",
+          "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/41094992815",
+          "jobId": 124198322668,
+          "runner": "GitHub Actions ubuntu-latest Node.js 22 with disposable PostgreSQL 17-alpine",
+          "commands": [
+            "npm run db:journal:verify",
+            "npm run db:test:prepare (DATABASE_URL cleared; disposable PG17)",
+            "npm run db:migrate (idempotence)",
+            "node --test tests/db07-template-version-parent-integrity-source.test.mjs tests/db07-template-version-append-only-source.test.mjs tests/db07-template-version-pointer-source.test.mjs",
+            "npx vitest run --config vitest.db.registered.config.ts tests/integration/db07-template-version-parent-integrity.test.ts",
+            "npx vitest run --config vitest.db.registered.config.ts tests/integration/db07-template-version-append-only.test.ts",
+            "npx vitest run --config vitest.db.registered.config.ts tests/integration/db07-template-version-pointer-fks.test.ts",
+            "npx vitest run --config vitest.db.registered.config.ts tests/integration/projects-p2-templates.test.ts tests/integration/projects-p5-lifecycle.test.ts tests/integration/projects-p6b-final-evaluation.test.ts",
+            "NODE_OPTIONS=--max-old-space-size=6144 npm run typecheck",
+            "npm run db:journal:verify; assert clean drizzle/ tree"
+          ],
+          "details": "All steps in dedicated workflow passed on the exact recorded SHA: registered clean database replay and catalog/negative domain acceptance, current project producer/consumer template/lifecycle/regression tests, full TypeScript and journal checks. Scoped DB07 acceptance only; does NOT certify global database or CI, which remains open."
+        }
+      ]
     },
     {
       "id": "DB-071",
       "title": "Enforce deferred DB07 current/published template revision pointers",
       "phase": "DATABASE",
-      "done": false,
-      "dependsOn": []
+      "done": true,
+      "dependsOn": [],
+      "acceptedAt": "2026-10-30",
+      "closureBasis": "EXECUTED_REGISTERED_PG17_DOMAIN_ENGINEERING_ACCEPTANCE",
+      "acceptanceEvidence": [
+        {
+          "kind": "EXECUTED_REGISTERED_POSTGRESQL_17_ACCEPTANCE",
+          "result": "PASS",
+          "exitCode": 0,
+          "commitSha": "72e7c2db2b1b145f96d3ff647500c9df145dd3d7",
+          "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/41094992815",
+          "jobId": 124198322668,
+          "runner": "GitHub Actions ubuntu-latest Node.js 22 with disposable PostgreSQL 17-alpine",
+          "commands": [
+            "npm run db:journal:verify",
+            "npm run db:test:prepare (DATABASE_URL cleared; disposable PG17)",
+            "npm run db:migrate (idempotence)",
+            "node --test tests/db07-template-version-parent-integrity-source.test.mjs tests/db07-template-version-append-only-source.test.mjs tests/db07-template-version-pointer-source.test.mjs",
+            "npx vitest run --config vitest.db.registered.config.ts tests/integration/db07-template-version-parent-integrity.test.ts",
+            "npx vitest run --config vitest.db.registered.config.ts tests/integration/db07-template-version-append-only.test.ts",
+            "npx vitest run --config vitest.db.registered.config.ts tests/integration/db07-template-version-pointer-fks.test.ts",
+            "npx vitest run --config vitest.db.registered.config.ts tests/integration/projects-p2-templates.test.ts tests/integration/projects-p5-lifecycle.test.ts tests/integration/projects-p6b-final-evaluation.test.ts",
+            "NODE_OPTIONS=--max-old-space-size=6144 npm run typecheck",
+            "npm run db:journal:verify; assert clean drizzle/ tree"
+          ],
+          "details": "All steps in dedicated workflow passed on the exact recorded SHA: registered clean database replay and catalog/negative domain acceptance, current project producer/consumer template/lifecycle/regression tests, full TypeScript and journal checks. Scoped DB07 acceptance only; does NOT certify global database or CI, which remains open."
+        }
+      ]
     },
     {
       "id": "DB-072",
@@ -1625,127 +1680,100 @@
       "id": "DB-073",
       "title": "Enforce DB07 release-sprint-task-submission same-project lineage",
       "phase": "DATABASE",
-      "done": false,
+      "done": true,
       "dependsOn": [],
-      "sourceProgress": {
-        "state": "SOURCE_PATCHED_NOT_ACCEPTED",
-        "summary": "DB073 parent scope: the mentor task-create writer now rejects tombstoned sprint and project ancestry and locks the current assignee eligibility rows before insert. Composite FK preflight/migration staged and owned by L01; not registered or PG accepted. Extra ancestor checks now cover Mentor task metadata, sprint metadata, learner own task create/delete and deleted task row edits. No registered composite-FK acceptance claimed.",
-        "sourceCommits": [
-          "7d11aa07f8d849a0bbfc71d742295ad7c27280f0",
-          "74c46440907fc5333bde5acaca1d4ad4029f7a0c",
-          "ab28f7e4b539bad273e54b93a838e64b2ad0dd2a",
-          "69f4c21b396b5b39cadae0d0d06f2cfad78d65b8"
-        ],
-        "sourceTestCommits": [
-          "b987b0e2af79afea6d9ea6435521b6e6a7e207a0",
-          "a80228ca32a7ed6dec05c3e83591e93cfb005d2c",
-          "a259d457a5fff7a8a597ef3823e738428c78f6cd",
-          "cd6bafb8b0672659825258a946b473fa75fea110"
-        ],
-        "executedEvidence": [
-          {
-            "kind": "EXECUTED_SOURCE_CONTRACT_ONLY",
-            "result": "PASS",
-            "checks": 9,
-            "runner": "Connector V8 live source inspection"
-          }
-        ],
-        "pending": [
-          "L01 registered DB073 composite lineage FKs",
-          "Disposable PG lineage negative and concurrent writer tests",
-          "App typecheck, full domain integration and CI"
-        ],
-        "additionalSourceCommits": [
-          "759ba21f4e1c11b6ed68ad887df74e0bcd577549",
-          "e34c56f05c83267a15dabc74194e4e68f74e2b53",
-          "cd77e90806f76435cc8fd1c0976238ea5eb689d4",
-          "b8557a004c5654cb2012850e0934ffa646dbbe87"
-        ]
-      }
+      "acceptedAt": "2026-10-30",
+      "closureBasis": "EXECUTED_REGISTERED_PG17_DOMAIN_ENGINEERING_ACCEPTANCE",
+      "acceptanceEvidence": [
+        {
+          "kind": "EXECUTED_REGISTERED_POSTGRESQL_17_ACCEPTANCE",
+          "result": "PASS",
+          "exitCode": 0,
+          "commitSha": "1e838a89a51bcec03c14fdb26b8294e3c8032b26",
+          "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/41094986944",
+          "jobId": 124198322595,
+          "runner": "GitHub Actions ubuntu-latest Node.js 22 with disposable PostgreSQL 17-alpine",
+          "commands": [
+            "npm run db:journal:verify",
+            "npm run db:test:prepare (DATABASE_URL cleared; disposable PG17)",
+            "npm run db:migrate (idempotence)",
+            "node --test tests/db073-project-lineage-source.test.mjs tests/db074-review-evaluation-source.test.mjs tests/db075-meeting-ancestry-source.test.mjs",
+            "npx vitest run --config vitest.db.registered.config.ts tests/integration/db073-project-lineage-fks.test.ts",
+            "npx vitest run --config vitest.db.registered.config.ts tests/integration/db074-review-evaluation-parent-fks.test.ts",
+            "npx vitest run --config vitest.db.registered.config.ts tests/integration/db075-meeting-ancestry.test.ts",
+            "npx vitest run --config vitest.db.registered.config.ts tests/integration/projects-p2-templates.test.ts tests/integration/projects-p5-lifecycle.test.ts tests/integration/projects-p6b-final-evaluation.test.ts",
+            "NODE_OPTIONS=--max-old-space-size=6144 npm run typecheck",
+            "npm run db:journal:verify; assert clean drizzle/ tree"
+          ],
+          "details": "All steps in dedicated workflow passed on the exact recorded SHA: registered clean database replay and catalog/negative domain acceptance, current project producer/consumer template/lifecycle/regression tests, full TypeScript and journal checks. Scoped DB07 acceptance only; does NOT certify global database or CI, which remains open."
+        }
+      ]
     },
     {
       "id": "DB-074",
       "title": "Enforce DB07 project submission review and evaluation parent scope",
       "phase": "DATABASE",
-      "done": false,
+      "done": true,
       "dependsOn": [],
-      "sourceProgress": {
-        "state": "SOURCE_PATCHED_NOT_ACCEPTED",
-        "summary": "Scoped evaluation writes now lock matching project and college, reject soft-deleted project before rubric creation. College Admin delivery locking and review reject tombstoned project even on idempotent retry. DB074 same-project review/evaluation FK SQL and PG witnesses remain staged for L01 registration. Evaluation PG fixture now uses a unique project/template slug, retains immutable revisions and requires a disposable PostgreSQL target; no actual PostgreSQL test was executed.",
-        "implementationCommits": [
-          "0ca2c863cdf9c9cd2de7f92d440acf97811105f4",
-          "38a30e0dab0d7c52830117e41f7ca228eae66d36",
-          "aa1113edb340e867f561edd5b5899e8c1720afde"
-        ],
-        "testCommits": [
-          "249439ec0cf70f2b5bb775fb002b526d9302eb6e",
-          "d069b274339c8b3f8b6ac55d6ff44fd98433f016",
-          "9c085f71358af003d0efe582dbb014ae231846ca",
-          "74e177b224e6fa747e178d1d1501c0407f6df55c",
-          "d8dfbe132d1d5bfccbb57dbffac756e868139f71"
-        ],
-        "executedEvidence": [
-          {
-            "kind": "EXECUTED_SOURCE_CONTRACT_ONLY",
-            "result": "PASS",
-            "checks": 8,
-            "runner": "Connector V8 read-only checks of latest GitHub file blobs",
-            "codeBlob": "9c9eb327ec476738733421c0f2c60a8a2c654155"
-          }
-        ],
-        "pending": [
-          "L01 registered DB074 parent-scope FK migration and canonical Drizzle snapshot",
-          "Disposable PostgreSQL replay, invalid cross-project review/evaluation cases",
-          "Run mocked behavioral tests, real PG evaluation and College Admin review test, full typecheck and CI"
-        ],
-        "safetyTestsCommit": "bc5e6ab64a7edd3b104c99a94d0d57be2c3ae6f1",
-        "fixtureCommits": [
-          "c501751ed40b2ccbba543b5a84580cdf3bfd7ae8",
-          "ef9df7f1611381bfee34c9fa4b139e79b66bfb76"
-        ]
-      }
+      "acceptedAt": "2026-10-30",
+      "closureBasis": "EXECUTED_REGISTERED_PG17_DOMAIN_ENGINEERING_ACCEPTANCE",
+      "acceptanceEvidence": [
+        {
+          "kind": "EXECUTED_REGISTERED_POSTGRESQL_17_ACCEPTANCE",
+          "result": "PASS",
+          "exitCode": 0,
+          "commitSha": "1e838a89a51bcec03c14fdb26b8294e3c8032b26",
+          "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/41094986944",
+          "jobId": 124198322595,
+          "runner": "GitHub Actions ubuntu-latest Node.js 22 with disposable PostgreSQL 17-alpine",
+          "commands": [
+            "npm run db:journal:verify",
+            "npm run db:test:prepare (DATABASE_URL cleared; disposable PG17)",
+            "npm run db:migrate (idempotence)",
+            "node --test tests/db073-project-lineage-source.test.mjs tests/db074-review-evaluation-source.test.mjs tests/db075-meeting-ancestry-source.test.mjs",
+            "npx vitest run --config vitest.db.registered.config.ts tests/integration/db073-project-lineage-fks.test.ts",
+            "npx vitest run --config vitest.db.registered.config.ts tests/integration/db074-review-evaluation-parent-fks.test.ts",
+            "npx vitest run --config vitest.db.registered.config.ts tests/integration/db075-meeting-ancestry.test.ts",
+            "npx vitest run --config vitest.db.registered.config.ts tests/integration/projects-p2-templates.test.ts tests/integration/projects-p5-lifecycle.test.ts tests/integration/projects-p6b-final-evaluation.test.ts",
+            "NODE_OPTIONS=--max-old-space-size=6144 npm run typecheck",
+            "npm run db:journal:verify; assert clean drizzle/ tree"
+          ],
+          "details": "All steps in dedicated workflow passed on the exact recorded SHA: registered clean database replay and catalog/negative domain acceptance, current project producer/consumer template/lifecycle/regression tests, full TypeScript and journal checks. Scoped DB07 acceptance only; does NOT certify global database or CI, which remains open."
+        }
+      ]
     },
     {
       "id": "DB-075",
       "title": "Enforce DB07 meeting-linked sprint and task ancestry",
       "phase": "DATABASE",
-      "done": false,
+      "done": true,
       "dependsOn": [],
-      "sourceProgress": {
-        "state": "SOURCE_PATCHED_NOT_ACCEPTED",
-        "summary": "Meeting scheduling now revalidates final supplied or retained sprint/task links under project transaction and parent-row SHARE locks, preserving optional null links. Source tests and PostgreSQL service scenario authored and registered in DB07 parity tests. DB FK registration, PG replay, integration, typecheck and concurrency witnesses remain required.",
-        "implementationCommit": "1ce5131a1570e21b34b4bff471668d7f2a8acb44",
-        "sourceTestCommits": [
-          "b4cc8649311d67027c888801f2a86ccacd76f876",
-          "269ac8943cf7d82e8b9e1c63edec031d828941f8",
-          "c851b23977fb1acec05fccbdcac44c124ab5d6e4"
-        ],
-        "integrationTestCommit": "adb100014ddedfe8602139018512de8ca28f856a",
-        "sourcePassCommit": "c851b23977fb1acec05fccbdcac44c124ab5d6e4",
-        "executedEvidence": [
-          {
-            "kind": "EXECUTED_SOURCE_CONTRACT_ONLY",
-            "runner": "Connector V8 read-only checks on current GitHub file blobs",
-            "result": "PASS",
-            "checks": 6,
-            "codeBlob": "a1bce3c325dc6892d5e9301e26a1503398667795"
-          },
-          {
-            "kind": "EXECUTED_SOURCE_CONTRACT_ONLY",
-            "runner": "Connector V8 read-only checks on current GitHub blobs",
-            "result": "PASS",
-            "checks": 7,
-            "codeBlob": "cea4ec2eb2d66f712488f7415d3b85169dc8c5a7"
-          }
-        ],
-        "pending": [
-          "L01 registered DB075 composite-FK migration and clean journal replay",
-          "Disposable PG negative and concurrency witnesses",
-          "Project meeting service integration tests",
-          "Full typecheck/lint/CI and cross-role browser acceptance"
-        ],
-        "registeredParityTestCommit": "404767072b807643e6f6985e9c499eb714d11cab"
-      }
+      "acceptedAt": "2026-10-30",
+      "closureBasis": "EXECUTED_REGISTERED_PG17_DOMAIN_ENGINEERING_ACCEPTANCE",
+      "acceptanceEvidence": [
+        {
+          "kind": "EXECUTED_REGISTERED_POSTGRESQL_17_ACCEPTANCE",
+          "result": "PASS",
+          "exitCode": 0,
+          "commitSha": "1e838a89a51bcec03c14fdb26b8294e3c8032b26",
+          "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/41094986944",
+          "jobId": 124198322595,
+          "runner": "GitHub Actions ubuntu-latest Node.js 22 with disposable PostgreSQL 17-alpine",
+          "commands": [
+            "npm run db:journal:verify",
+            "npm run db:test:prepare (DATABASE_URL cleared; disposable PG17)",
+            "npm run db:migrate (idempotence)",
+            "node --test tests/db073-project-lineage-source.test.mjs tests/db074-review-evaluation-source.test.mjs tests/db075-meeting-ancestry-source.test.mjs",
+            "npx vitest run --config vitest.db.registered.config.ts tests/integration/db073-project-lineage-fks.test.ts",
+            "npx vitest run --config vitest.db.registered.config.ts tests/integration/db074-review-evaluation-parent-fks.test.ts",
+            "npx vitest run --config vitest.db.registered.config.ts tests/integration/db075-meeting-ancestry.test.ts",
+            "npx vitest run --config vitest.db.registered.config.ts tests/integration/projects-p2-templates.test.ts tests/integration/projects-p5-lifecycle.test.ts tests/integration/projects-p6b-final-evaluation.test.ts",
+            "NODE_OPTIONS=--max-old-space-size=6144 npm run typecheck",
+            "npm run db:journal:verify; assert clean drizzle/ tree"
+          ],
+          "details": "All steps in dedicated workflow passed on the exact recorded SHA: registered clean database replay and catalog/negative domain acceptance, current project producer/consumer template/lifecycle/regression tests, full TypeScript and journal checks. Scoped DB07 acceptance only; does NOT certify global database or CI, which remains open."
+        }
+      ]
     },
     {
       "id": "DB-076",
