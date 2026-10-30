@@ -45,8 +45,7 @@ export async function pullOwnBacklogTask(context:RequestContext,projectIdInput:s
     .for("share").limit(1);
   if(!release||!["PLANNED","IN_PROGRESS"].includes(release.status))throw new ProjectsServiceError("PROJECT_TASK_INVALID_STATE");
   const [last]=await tx.select({sequence:projectTasks.sequence}).from(projectTasks)
-    .where(and(eq(projectTasks.projectId,scope.project.id),eq(projectTasks.sprintId,sprint.id),
-      isNull(projectTasks.deletedAt)))
+    .where(and(eq(projectTasks.projectId,scope.project.id),eq(projectTasks.sprintId,sprint.id)))
     .orderBy(desc(projectTasks.sequence)).limit(1);
   const [updated]=await tx.update(projectTasks).set({
     sprintId:sprint.id,sequence:(last?.sequence??-1)+1,
