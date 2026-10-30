@@ -81,10 +81,10 @@ jobs:
         run: npx playwright test tests/e2e/faculty-blueprint-prototype.spec.ts --workers=1
       # Keep repo-wide TS enforcement, but do not let unrelated account code
       # prevent the disposable-DB Faculty browser suite from running.
-      - name: Confirm persisted Faculty Section resource edit and safe sibling isolation
+      - name: Confirm persisted Faculty Section resource create/edit/archive and safe sibling isolation
         run: >-
           npx playwright test tests/e2e/faculty-courses.spec.ts
-          --grep "Faculty Blueprint persists an authorized Section Resource edit after a full reload"
+          --grep "Faculty Blueprint (persists an authorized Section Resource edit|creates and archives a persisted Section Resource)"
           --workers=1
       - name: Confirm real Faculty Section Resource create, edit and archive without storage
         run: >-
