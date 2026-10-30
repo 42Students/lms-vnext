@@ -55,7 +55,7 @@ describe("TPO-settings-audit-PREP-ROLE-12 learner course-progress privacy",()=>{
   expect(roster).toBeGreaterThan(projection);
   expect(progress).toBeGreaterThan(roster);
   expect(finished).toBeGreaterThan(progress);
-  expect(source).toContain("if(!stored.ready||!communication.ready||!config.success)return deliver(false)");
+  expect(source).toContain("if(!stored.ready||stored.selectionSynchronized===false||!communication.ready||!config.success)return deliver(false)");
   expect(source).toContain("if(contents.length>5000)return deliver(false)");
   expect(source).toContain("return deliver(true)");
   expect(source).not.toContain("return {available:false,outcomes}");
