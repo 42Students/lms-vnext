@@ -275,6 +275,8 @@ test("Faculty marks and corrects a persisted session from its Calendar class lin
   expect(destination).toMatch(/\/teacher\/courses\/[^/]+\/attendanceDetail$/);
   await courseAttendance.click();
   await expect(page).toHaveURL(/\/teacher\/courses\/[^/]+\/attendanceDetail$/);
+  // Scheduling is a separate advanced workflow, intentionally collapsed.
+  await page.locator("summary").filter({hasText:"Advanced attendance session scheduling"}).click();
   const deliveryId = new URL(page.url()).pathname.split("/").at(-2)!;
   expect(deliveryId).toBeTruthy();
 
@@ -358,17 +360,24 @@ test("Faculty marks and corrects a persisted session from its Calendar class lin
 test("Faculty can start Course-bound Assignment and Quiz drafts on aggregate pages", async ({ page, context }) => {
   await facultyLogin(context);
   await page.goto("/teacher/allAssignments");
-  await page.getByRole("button", { name: "+ Create Assignment" }).click();
-  const assignments = page.getByRole("dialog", { name: "Create Assignment" });
-  await expect(assignments.getByLabel("Choose assessment lesson")).toBeVisible();
-  await expect(assignments.getByRole("button", { name: "Create draft" })).toBeVisible();
-  await assignments.getByRole("button", { name: "Close drawer" }).click();
+  await page.getByRole("button", { name: "Create Assignment", exact: true }).click();
+  const assignments = page.getByRole("dialog", { name: "Create New Assignment" });
+  await expect(assignments.getByRole("combobox", { name: "Select course and class" })).toBeVisible();
+  await assignments.getByRole("combobox", { name: "Select course and class" }).selectOption({index:1});
+  await assignments.getByRole("combobox", { name: "Select lesson" }).selectOption({index:1});
+  // The canonical builder must bind creation to a current teaching
+  // Section and an actual lesson before the Save action is enabled.
+  await expect(assignments.getByRole("button", { name: "Create", exact: true })).toBeEnabled();
+  await assignments.getByRole("button", { name: "Cancel" }).click();
 
   await page.goto("/teacher/allQuizzes");
-  await page.getByRole("button", { name: "+ Create Quiz" }).click();
+  await page.getByRole("button", { name: "Create Quiz", exact: true }).first().click();
   const quizzes = page.getByRole("dialog", { name: "Create Quiz" });
-  await expect(quizzes.getByLabel("Choose assessment lesson")).toBeVisible();
-  await expect(quizzes.getByRole("button", { name: "Create draft" })).toBeVisible();
+  await quizzes.getByRole("combobox", { name: "Select course and class" }).selectOption({index:1});
+  await quizzes.getByRole("combobox", { name: "Select lesson" }).selectOption({index:1});
+  await quizzes.getByRole("button", { name: "Continue" }).click();
+  await expect(page.getByRole("dialog", { name: "Quiz Builder" })).toBeVisible();
+  await expect(page.getByRole("button", { name: "Back to course and lesson" })).toBeVisible();
 });
 
 test("Faculty Assignment aggregate creates, filters, edits and archives an actual Section draft", async ({ page, context }, testInfo) => {
