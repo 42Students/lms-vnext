@@ -450,6 +450,7 @@ export const projectReleases = pgTable(
       .defaultNow(),
   },
   (table) => [
+    uniqueIndex("project_releases_project_id_id_uq").on(table.projectId, table.id),
     uniqueIndex("project_releases_project_key_uq").on(
       table.projectId,
       table.templateKey,
@@ -530,6 +531,8 @@ export const projectSprints = pgTable(
       .defaultNow(),
   },
   (table) => [
+    uniqueIndex("project_sprints_project_id_id_uq").on(table.projectId, table.id),
+    foreignKey({ name: "project_sprints_project_release_fk", columns: [table.projectId, table.releaseId], foreignColumns: [projectReleases.projectId, projectReleases.id] }).onDelete("restrict"),
     index("project_sprints_source_order_idx").on(table.projectId,table.releaseId,table.legacySortOrder,table.id),
     uniqueIndex("project_sprints_project_key_uq").on(
       table.projectId,
@@ -634,6 +637,8 @@ export const projectTasks = pgTable(
       .defaultNow(),
   },
   (table) => [
+    uniqueIndex("project_tasks_sprint_id_id_uq").on(table.sprintId, table.id),
+    foreignKey({ name: "project_tasks_project_sprint_fk", columns: [table.projectId, table.sprintId], foreignColumns: [projectSprints.projectId, projectSprints.id] }).onDelete("restrict"),
     uniqueIndex("project_tasks_project_id_id_uq").on(
       table.projectId,
       table.id,
@@ -1003,6 +1008,7 @@ export const projectTaskSubmissions = pgTable(
       .defaultNow(),
   },
   (table) => [
+    foreignKey({ name: "project_task_submissions_project_task_fk", columns: [table.projectId, table.taskId], foreignColumns: [projectTasks.projectId, projectTasks.id] }).onDelete("restrict"),
     uniqueIndex(
       "project_task_submissions_task_version_uq",
     ).on(table.taskId, table.version),
@@ -1283,6 +1289,7 @@ export const projectSubmissionReviews = pgTable(
       .defaultNow(),
   },
   (table) => [
+    foreignKey({ name: "project_submission_reviews_project_submission_fk", columns: [table.projectId, table.submissionId], foreignColumns: [projectSubmissions.projectId, projectSubmissions.id] }).onDelete("restrict"),
     uniqueIndex(
       "project_submission_reviews_submission_uq",
     ).on(table.submissionId),
@@ -1339,6 +1346,7 @@ export const projectEvaluations = pgTable(
       .defaultNow(),
   },
   (table) => [
+    foreignKey({ name: "project_evaluations_project_submission_fk", columns: [table.projectId, table.submissionId], foreignColumns: [projectSubmissions.projectId, projectSubmissions.id] }).onDelete("restrict"),
     uniqueIndex(
       "project_evaluations_submission_uq",
     ).on(table.submissionId),
@@ -1476,6 +1484,9 @@ export const projectMeetings = pgTable(
       .defaultNow(),
   },
   (table) => [
+    foreignKey({ name: "project_meetings_project_sprint_fk", columns: [table.projectId, table.linkedSprintId], foreignColumns: [projectSprints.projectId, projectSprints.id] }).onDelete("restrict"),
+    foreignKey({ name: "project_meetings_project_task_fk", columns: [table.projectId, table.linkedTaskId], foreignColumns: [projectTasks.projectId, projectTasks.id] }).onDelete("restrict"),
+    foreignKey({ name: "project_meetings_linked_sprint_task_fk", columns: [table.linkedSprintId, table.linkedTaskId], foreignColumns: [projectTasks.sprintId, projectTasks.id] }).onDelete("restrict"),
     uniqueIndex("project_meetings_project_key_uq")
       .on(table.projectId, sql`lower(${table.meetingKey})`)
       .where(sql`${table.meetingKey} is not null`),
