@@ -1,0 +1,135 @@
+#!/usr/bin/env node
+// DB020 read-only catalog-vs-generated-schema diagnosis. This is NOT a migration
+// promotion and can never certify runtime parity by itself.
+import {readFileSync,readdirSync,mkdirSync,writeFileSync} from "node:fs";
+import pg from "pg";
+import {assertDb018DisposableTarget} from "../tests/support/db018-test-target.mjs";
+
+if(process.env.DB020_DISPOSABLE_PG!=="1")
+  throw new Error("DB020 catalog inspection requires explicit disposable PostgreSQL");
+assertDb018DisposableTarget(process.env,{serviceBound:true});
+
+const journal=JSON.parse(readFileSync("drizzle/meta/_journal.json","utf8"));
+const head=journal.entries.at(-1);
+const generatedFiles=readdirSync("drizzle/meta")
+  .filter(x=>/^\d{4}_snapshot\.json$/.test(x))
+  .filter(x=>Number(x.slice(0,4))>head.idx)
+  .sort();
+if(generatedFiles.length!==1)
+ throw new Error("Require exactly one disposable generated snapshot after current registered head");
+const latest=JSON.parse(readFileSync("drizzle/meta/"+generatedFiles[0],"utf8"));
+const base=JSON.parse(readFileSync(
+  "drizzle/meta/"+String(head.idx).padStart(4,"0")+"_snapshot.json","utf8"));
+if(latest.prevId!==base.id)
+ throw new Error("Generated snapshot does not reference actual registered head");
+
+const client=new pg.Client({
+ connectionString:process.env.TEST_DATABASE_URL,connectionTimeoutMillis:10000,
+ query_timeout:30000,
+});
+const tableName=key=>key.startsWith("public.")?key.slice(7):key;
+const lines=xs=>xs.sort().slice(0,120);
+try{
+ await client.connect();
+ await client.query("BEGIN READ ONLY");
+ const version=Number((await client.query("SHOW server_version_num")).rows[0].server_version_num);
+ if(version<170000||version>=180000)throw new Error("Requires PostgreSQL 17");
+ const applied=Number((await client.query(
+  "SELECT count(*)::int n FROM drizzle.__drizzle_migrations")).rows[0].n);
+ if(applied!==journal.entries.length)
+  throw new Error("Exact registered migration count mismatch");
+ const catalog=(await client.query(`
+  SELECT c.relname AS table_name
+  FROM pg_class c JOIN pg_namespace n ON n.oid=c.relnamespace
+  WHERE n.nspname='public' AND c.relkind IN ('r','p')
+ `)).rows.map(x=>x.table_name);
+ const catalogSet=new Set(catalog);
+ const snapTables=Object.keys(latest.tables).map(tableName);
+ const snapSet=new Set(snapTables);
+ const priorTables=new Set(Object.keys(base.tables).map(tableName));
+ const absentFromCatalog=snapTables.filter(x=>!catalogSet.has(x));
+ const sqlOnlyTables=catalog.filter(x=>!snapSet.has(x));
+ const newlyTypedTables=snapTables.filter(x=>!priorTables.has(x));
+
+ const columns=(await client.query(`
+  SELECT c.relname AS table_name,a.attname AS column_name,
+         format_type(a.atttypid,a.atttypmod) AS pg_type,
+         a.attnotnull,pg_get_expr(d.adbin,d.adrelid) AS pg_default
+  FROM pg_attribute a
+  JOIN pg_class c ON c.oid=a.attrelid
+  JOIN pg_namespace n ON n.oid=c.relnamespace
+  LEFT JOIN pg_attrdef d ON d.adrelid=a.attrelid AND d.adnum=a.attnum
+  WHERE n.nspname='public' AND c.relkind IN ('r','p')
+    AND a.attnum>0 AND NOT a.attisdropped
+ `)).rows;
+ const existing=new Map(columns.map(x=>[x.table_name+"."+x.column_name,x]));
+ const missingColumns=[],extraCatalogColumns=[],typeDifferences=[];
+ const generatedColumnIds=new Set();
+ for(const [key,t] of Object.entries(latest.tables)){
+  const name=tableName(key);
+  for(const col of Object.values(t.columns??{})){
+   const id=name+"."+col.name;
+   generatedColumnIds.add(id);
+   const actual=existing.get(id);
+   if(!actual){missingColumns.push(id);continue;}
+   // Exact textual differences are diagnostic, not assertions. Drizzle and
+   // PostgreSQL format equivalent types/defaults in different notations.
+   const pgType=String(actual.pg_type).toLowerCase();
+   const modelType=String(col.type).toLowerCase();
+   if(pgType!==modelType)
+    typeDifferences.push({field:id,pg:actual.pg_type,typed:col.type});
+  }
+ }
+ for(const id of existing.keys())if(snapSet.has(id.split(".")[0])&&!generatedColumnIds.has(id))
+   extraCatalogColumns.push(id);
+ const allFks=(await client.query(`
+  SELECT c.conname,c.convalidated,cl.relname AS child,
+         cardinality(c.conkey)::int AS child_columns
+  FROM pg_constraint c JOIN pg_class cl ON cl.oid=c.conrelid
+  JOIN pg_namespace n ON n.oid=cl.relnamespace
+  WHERE n.nspname='public' AND c.contype='f'
+ `)).rows;
+ const invalidFks=allFks.filter(x=>x.convalidated!==true).map(x=>x.child+"."+x.conname);
+ const typedFkIds=new Set(Object.entries(latest.tables).flatMap(([k,t])=>
+   Object.keys(t.foreignKeys??{}).map(name=>tableName(k)+"."+name)));
+ const catalogFkIds=new Set(allFks.map(x=>x.child+"."+x.conname));
+ const metadataOnlyFks=lines([...catalogFkIds].filter(x=>!typedFkIds.has(x)));
+ const typedFkMissing=lines([...typedFkIds].filter(x=>!catalogFkIds.has(x)));
+ await client.query("COMMIT");
+ const report={
+  kind:"DB020_DISPOSABLE_PG17_REGISTERED_VS_GENERATED_DIAGNOSIS",
+  registeredHead:head.tag,registeredMigrations:applied,
+  generatedSnapshot:generatedFiles[0],passCertification:false,
+  counts:{
+   registeredTables:catalogSet.size,priorSnapshotTables:priorTables.size,
+   generatedTypedTables:snapSet.size,newlyTypedTables:newlyTypedTables.length,
+   generatedAbsentInRegisteredPg:absentFromCatalog.length,
+   registeredSqlOnlyTables:sqlOnlyTables.length,
+   generatedTypedMissingColumns:missingColumns.length,
+   registeredExtraColumnsOnTypedTables:extraCatalogColumns.length,
+   textuallyDifferentTypes:typeDifferences.length,
+   registeredFks:allFks.length,
+   unvalidatedFks:invalidFks.length,
+   registeredFksMissingFromTypedSnapshot:metadataOnlyFks.length,
+   typedFksMissingFromRegisteredCatalog:typedFkMissing.length,
+  },
+  newlyTypedTables:lines(newlyTypedTables),
+  absentFromRegisteredCatalog:lines(absentFromCatalog),
+  sqlOnlyTables:lines(sqlOnlyTables),
+  missingColumns:lines(missingColumns),
+  extraCatalogColumns:lines(extraCatalogColumns),
+  typeDifferences:typeDifferences.slice(0,120),
+  unvalidatedFks:lines(invalidFks),
+  registeredFksWithoutDrizzleRepresentation:metadataOnlyFks,
+  drizzleFksWithoutRegisteredCatalog:typedFkMissing,
+  requirements:["Review every structural difference against registered DDL and live catalog",
+    "Do not apply the generated SQL as a migration or rewrite already applied SQL",
+    "Do not accept DB020 or DB001 from a diagnostic report"],
+ };
+ mkdirSync(".verification",{recursive:true});
+ writeFileSync(".verification/db020-catalog-disposition.json",JSON.stringify(report,null,2)+"\n");
+ console.log(JSON.stringify(report,null,2));
+}finally{
+ await client.query("ROLLBACK").catch(()=>{});
+ await client.end();
+}
