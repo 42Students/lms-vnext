@@ -38,6 +38,12 @@ on:
       - src/modules/placements/recruiter-today-staged-results-service.ts
       - docs/planning/database-parity-db16-private-storage-safety.md
       - docs/planning/db09-team-owner-lifecycle-audit.md
+      - tests/db014-tenant-fk-sweep.test.mjs
+      - tests/db41-history-schema-drift.test.mjs
+      - tests/db019-source-ledger-preflight.test.mjs
+      - tests/db019-crosswalk-identity.test.mjs
+      - tests/db19-field-disposition-audit.test.mjs
+      - scripts/db19-field-disposition-audit.mjs
       - .github/workflows/single-tracker-acceptance.yml
   workflow_dispatch:
 permissions:
@@ -99,5 +105,12 @@ jobs:
           node scripts/verify-db09-team-owner-source.mjs
           node --test tests/db09-team-owner-lifecycle.test.mjs tests/db08-recruiter-code-contract.test.mjs
           node scripts/verify-db08-recruiter-code-source.mjs
+      - name: DB014 cross-tenant source integrity and DB045 history drift
+        run: |
+          node --test tests/db014-tenant-fk-sweep.test.mjs tests/db41-history-schema-drift.test.mjs
+      - name: DB019 independent eleven-domain source inventory and crosswalk
+        run: |
+          node --test tests/db019-source-ledger-preflight.test.mjs tests/db019-crosswalk-identity.test.mjs tests/db19-field-disposition-audit.test.mjs
+          node scripts/db19-field-disposition-audit.mjs
       - name: Execute plan and task acceptance tests
         run: node --test tests/tracker.test.mjs tests/database-domain-packages.test.mjs tests/tracker-ten-lanes.test.mjs tests/tracker-progress-evidence.test.mjs tests/closure-first-protocol.test.mjs
