@@ -506,8 +506,32 @@
       "id": "DB-016",
       "title": "Private document, identity and storage schema safety",
       "phase": "DATABASE",
-      "done": false,
-      "dependsOn": []
+      "done": true,
+      "dependsOn": [],
+      "acceptedAt": "2026-10-30T20:26:26.472Z",
+      "closureBasis": "EXECUTED_SCOPED_SOURCE_AND_STAGING_ENGINEERING_ACCEPTANCE",
+      "acceptanceScope": "Original source-and-staging cross-domain private-document schema safety review: fail-closed raw Aadhaar/PAN, exact owner/college R2 key, scanner/checksum/generation attestation, registered DB04 verification vs separately unregistered DB06 assignment receipts, source revocation/retention overlay, unscoped bug reporter refusal and external-link distinction. Updated stale GCS/unregistered-source audit to current R2 and registered DB04 code.",
+      "notInThisTaskAcceptance": "Not a certified live private bucket, R2 public-access or encryption/lifecycle configuration, scanner principal or key rotation, actual regulated identity vault, registered DB16 receipt overlays, private-upload provider approval, or real tenant/auth race/provider execution. These core runtime/security obligations remain OPEN in DB007, DB009, DB013 and global DB020/release gates.",
+      "remainingDistinctIntegrationTasks": [
+        "DB-007",
+        "DB-009",
+        "DB-013",
+        "DB-020"
+      ],
+      "acceptanceEvidence": [
+        {
+          "kind": "EXECUTED_SCOPED_SOURCE_AND_STAGING_ENGINEERING_ACCEPTANCE",
+          "commitSha": "b3aeba67b755b756f3681accb2667c3ed52b17e4",
+          "exitCode": 0,
+          "result": "PASS",
+          "runner": "GitHub Actions ubuntu-latest Node 22; native node:test; independent DB016 focused step 7/7 PASS (overall workflow later failed DB072)",
+          "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/41123083488/job/124294422348",
+          "commands": [
+            "node --test tests/db16-private-storage-safety.test.mjs"
+          ],
+          "scope": "Source/contract/staging only; no real R2 bucket, storage security or database runtime certification."
+        }
+      ]
     },
     {
       "id": "DB-017",
@@ -3431,13 +3455,14 @@
         },
         {
           "id": "DB-016",
-          "discovery": "SOURCE_REVIEWED",
-          "implementation": "CODE_PARTIAL",
-          "verification": "SOURCE_OR_STATIC_CHECKS",
+          "discovery": "ACCEPTED_BY_CANONICAL_DONE",
+          "implementation": "ACCEPTED_BY_CANONICAL_DONE",
+          "verification": "ACCEPTED_BY_CANONICAL_DONE",
           "basis": {
             "source": "RETIRED_2026_10_12_QUEUE",
             "taskId": "DB-016"
-          }
+          },
+          "acceptanceRunUrl": "https://github.com/42Students/lms-vnext/actions/runs/41123083488/job/124294422348"
         },
         {
           "id": "DB-017",
