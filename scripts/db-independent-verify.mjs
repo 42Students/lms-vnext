@@ -246,6 +246,10 @@ function redactDatabaseUrl(value) {
     const parsed = new URL(value);
     if (parsed.password) parsed.password = "***";
     if (parsed.username) parsed.username = "***";
+    // PostgreSQL connection options may contain password/sslkey secrets.
+    // Evidence requires only host and database, never query or fragment data.
+    parsed.search = "";
+    parsed.hash = "";
     return parsed.toString();
   } catch {
     // Evidence must never echo secrets in a malformed supplied URL.
