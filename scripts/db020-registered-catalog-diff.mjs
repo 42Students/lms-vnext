@@ -2,6 +2,7 @@
 // DB020 read-only catalog-vs-generated-schema diagnosis. This is NOT a migration
 // promotion and can never certify runtime parity by itself.
 import {readFileSync,readdirSync,mkdirSync,writeFileSync} from "node:fs";
+import {execFileSync} from "node:child_process";
 import pg from "pg";
 import {assertDb018DisposableTarget} from "../tests/support/db018-test-target.mjs";
 
@@ -9,7 +10,10 @@ if(process.env.DB020_DISPOSABLE_PG!=="1")
   throw new Error("DB020 catalog inspection requires explicit disposable PostgreSQL");
 assertDb018DisposableTarget(process.env,{serviceBound:true});
 
-const journal=JSON.parse(readFileSync("drizzle/meta/_journal.json","utf8"));
+// Generation changes the working journal. The immutable commit's journal
+// remains the only honest registered baseline for migration/catalog checks.
+const journal=JSON.parse(execFileSync("git",
+ ["show","HEAD:drizzle/meta/_journal.json"],{encoding:"utf8"}));
 const head=journal.entries.at(-1);
 const generatedFiles=readdirSync("drizzle/meta")
   .filter(x=>/^\d{4}_snapshot\.json$/.test(x))
