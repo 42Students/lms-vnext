@@ -104,12 +104,18 @@ describe.skipIf(!enabled)("College Admin term-course CRUD PG, scoped guards", ()
     await expect(removeCollegeTermMapping(context, createdMapping!, { confirm: true }))
       .rejects.toMatchObject({ code: "TERM_COURSE_IN_USE" });
     await pool!.query("UPDATE course_offerings SET status='ARCHIVED' WHERE id=$1", [ids.offering]);
-    const result = await removeCollegeTermMapping(context, createdMapping!, { confirm: true });
-    expect(result.id).toBe(createdMapping);
+    // DB02 preserves historical term/course identity even after archival:
+    // no service may silently delete the underlying curriculum link.
+    await expect(removeCollegeTermMapping(context, createdMapping!, { confirm: true }))
+      .rejects.toMatchObject({ code: "23514" });
+    const preserved = await pool!.query(
+      "SELECT id FROM program_term_courses WHERE id=$1", [createdMapping],
+    );
+    expect(preserved.rows).toEqual([{ id: createdMapping }]);
     const audit = await pool!.query(
       "SELECT event_type FROM activity_events WHERE subject_type='program_term_course' AND subject_id=$1 ORDER BY occurred_at",
       [createdMapping],
     );
-    expect(audit.rows).toHaveLength(2);
+    expect(audit.rows).toHaveLength(1);
   });
 });
