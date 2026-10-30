@@ -79,7 +79,13 @@ test("Faculty Blueprint persists YouTube and live-class create edit archive for 
    await archivalPage.goto(base);
    const order=archivalPage.getByRole("list",{name:"Lesson content order"});
    const row=order.locator("li").filter({has:archivalPage.getByRole("link",{name:title,exact:true})});
-   await expect(row).toContainText(revisedNotes);
+   // The compact YouTube/live-class rows display their media or schedule, not Notes.
+   // Verify the persisted author-owned metadata in its actual editor instead.
+   await row.getByRole("button",{name:"Edit",exact:true}).click();
+   const persistedEditor=archivalPage.getByRole("dialog",{name:"Edit "+(mode==="YOUTUBE"?"YOUTUBE":"LIVE CLASS")});
+   await expect(persistedEditor.getByLabel("Notes")).toHaveValue(revisedNotes);
+   await archivalPage.getByRole("button",{name:"Close drawer"}).click();
+   await expect(persistedEditor).toBeHidden();
    await row.getByRole("button",{name:"Remove "+title}).click();
    const dialog=archivalPage.getByRole("alertdialog",{name:"Remove "+title+"?"});
    await expect(dialog).toBeVisible();
