@@ -42,7 +42,8 @@ test("DB014 actual registered PG17 FK, history, trigger and cascade catalog",asy
       "ORDER BY r.relname,f.conname");
     const fks=fkResult.rows;
     assert.ok(fks.length>=211,"registered schema dropped historical FK baseline");
-    assert.ok(fks.every(x=>x.convalidated===true),"unvalidated FK cannot be accepted");
+    const unvalidated=fks.filter(x=>x.convalidated!==true).map(x=>({child:x.child,parent:x.parent,name:x.conname}));
+    assert.deepEqual(unvalidated,[],"Unvalidated registered FKs: "+JSON.stringify(unvalidated));
     const countFor=table=>fks.filter(x=>x.child===table).length;
     assert.ok(countFor("activity_events")>=4);
     assert.ok(countFor("in_app_notifications")>=2);
