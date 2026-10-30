@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Alert } from "@/components/ui/alert";
 import { LoadingState } from "@/components/ui/loading-state";
 import { useRef,useState } from "react";
+import { useRouter } from "next/navigation";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { beginFacultyProfileSave } from "@/modules/people/faculty-profile-save-lock";
 import {FACULTY_PROFILE_LEGACY_NAV} from "@/modules/people/faculty-profile-navigation";
@@ -37,6 +38,7 @@ const AWARDS_FIELDS = [{name:"title",label:"Award title",maxLength:300,required:
 export function FacultyProfileEditor({initialDocument,initialVersion}:{
  initialDocument:FacultyProfileDocument;initialVersion:number;
 }){
+ const router=useRouter();
  const [document,setDocument]=useState(initialDocument);
  const [version,setVersion]=useState(initialVersion);
  const [sectionRevisions,setSectionRevisions]=useState<Partial<Record<FacultySelfSection,number>>>({});
@@ -76,6 +78,9 @@ export function FacultyProfileEditor({initialDocument,initialVersion}:{
    // "Deleted" applies only after the server confirms a shorter saved list.
    setSuccess(removed?"Deleted successfully!":added?"Added successfully!":"Updated successfully!");
    window.dispatchEvent(new Event("profileUpdated"));
+   // The enclosing server-owned identity card and percentage use the last
+   // persisted snapshot. Refresh them only after the versioned save succeeds.
+   router.refresh();
   }catch(error){
    if(error instanceof FacultyProfileSaveResponseError){
     setNeedsReload(true);
