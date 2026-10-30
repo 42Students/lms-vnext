@@ -6,6 +6,12 @@ on:
     branches: [main]
     paths:
       - "tests/integration/db018-relational-and-boundary-witnesses.test.ts"
+      - "tests/integration/db18-registered-negative-witnesses.test.ts"
+      - "tests/integration/db18-concurrency-witnesses.test.ts"
+      - "tests/integration/db18-known-race-gaps.test.ts"
+      - "tests/integration/db18-placement-race-gap.test.ts"
+      - "tests/integration/groups-db03.test.ts"
+      - "tests/integration/courses-c4b-quizzes.test.ts"
       - "docs/planning/database-parity-pass5-probe-manifest.json"
       - ".github/workflows/db018-relational-witness-acceptance.yml"
 
@@ -58,5 +64,28 @@ jobs:
         run: >-
           npx vitest run --config vitest.db.registered.config.ts
           tests/integration/db018-relational-and-boundary-witnesses.test.ts
+      - name: Execute nine registered DB03/DB06 negative SQL witnesses
+        run: >-
+          npx vitest run --config vitest.db.registered.config.ts
+          tests/integration/db18-registered-negative-witnesses.test.ts
+      - name: Execute cohort and project transaction concurrency witnesses
+        run: >-
+          npx vitest run --config vitest.db.registered.config.ts
+          tests/integration/db18-concurrency-witnesses.test.ts
+      - name: Execute both previously fixed access and cohort races
+        run: >-
+          npx vitest run --config vitest.db.registered.config.ts
+          tests/integration/db18-known-race-gaps.test.ts
+          tests/integration/db18-placement-race-gap.test.ts
+      - name: Execute DB03 elective max-pick two-session witness
+        run: >-
+          npx vitest run --config vitest.db.registered.config.ts
+          tests/integration/groups-db03.test.ts
+          -t "serializes simultaneous choices from different offerings of the same max_pick=1 slot"
+      - name: Execute concurrent final quiz-attempt witness
+        run: >-
+          npx vitest run --config vitest.db.registered.config.ts
+          tests/integration/courses-c4b-quizzes.test.ts
+          -t "allows only one concurrent final attempt and enforces database score bounds"
       - name: Re-run DB15/18 source probe identity contracts
         run: node --test tests/db-parity-pass5.test.mjs
