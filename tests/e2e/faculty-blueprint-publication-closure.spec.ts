@@ -53,7 +53,7 @@ test("Faculty published Section Resource becomes visible to enrolled learner and
  try{
   await authenticate(learnerContext,"LEARNER");
   const learner=await learnerContext.newPage();
-  await learner.goto("/learn/courses");
+  await learner.goto("http://localhost:3000/learn/courses");
   const read=async()=>{
    return learner.evaluate(async({lessonId,deliveryId})=>{
     const response=await fetch("/api/courses/lesson-contents?lessonId="+
