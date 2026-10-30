@@ -102,6 +102,12 @@ test("Faculty notifications "+viewport.name+" stay within the selected college, 
     await expect(page.getByText(announcementTitleA,{exact:true})).toBeVisible();
     await expect(page.getByText(announcementTitleB,{exact:true})).toHaveCount(0);
     await expect(page.getByRole("link", { name: "Unread (2)" })).toBeVisible();
+    // Announcements have no personal read flag: their category must never
+    // offer to mark unseen personal messages from another tab.
+    await page.getByRole("navigation",{name:"Notification categories"})
+      .getByRole("link",{name:/College/}).click();
+    await expect(page.getByText(announcementTitleA,{exact:true})).toBeVisible();
+    await expect(page.getByRole("button",{name:"Mark all as read"})).toHaveCount(0);
     // The five legacy tabs remain navigable; Personal must not widen to
     // foreign-college events, and returning to All must restore the feed.
     await page.getByRole("navigation",{name:"Notification categories"})
