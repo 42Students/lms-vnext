@@ -39,7 +39,10 @@ test("DB010 learner progress excludes deleted task/sprint ancestry",()=>{
   const s=read("learner-task-progress-service.ts");
   assert.match(s.slice(s.indexOf("const [candidate]"),s.indexOf("if (!candidate)")),/isNull\(projectTasks\.deletedAt\)/);
   assert.match(s.slice(s.indexOf("const [sprint]"),s.indexOf("if (!sprint")),/isNull\(projectSprints\.deletedAt\)/);
-  assert.match(s.slice(s.indexOf("const siblings"),s.indexOf("const task = siblings")),/isNull\(projectTasks\.deletedAt\)/);
+  const siblings=s.slice(s.indexOf("const allSiblings"),s.indexOf("const task = siblings"));
+  assert.match(siblings,/const siblings = allSiblings\.filter\(item => !item\.deletedAt\)/);
+  assert.doesNotMatch(siblings,/isNull\(projectTasks\.deletedAt\)/);
+  assert.match(s,/Math\.max\(\.\.\.allSiblings\.map\(item => item\.sequence\)\)/);
 });
 test("DB010 mentor transitions exclude deleted task and sprint ancestors",()=>{
   const s=read("mentor-task-transition-service.ts");
@@ -64,7 +67,8 @@ test("DB010 backlog pull refuses deleted task and sprint ancestry",()=>{
   const s=read("learner-backlog-pull-service.ts");
   assert.match(s.slice(s.indexOf("const [task]"),s.indexOf("if(!task")),/isNull\(projectTasks\.deletedAt\)/);
   assert.match(s.slice(s.indexOf("const [sprint]"),s.indexOf("if(sprint?.")),/isNull\(projectSprints\.deletedAt\)/);
-  assert.match(s.slice(s.indexOf("const [last]"),s.indexOf("const [updated]")),/isNull\(projectTasks\.deletedAt\)/);
+  // Deleted rows keep unique (sprint_id, sequence) slots reserved.
+  assert.doesNotMatch(s.slice(s.indexOf("const [last]"),s.indexOf("const [updated]")),/isNull\(projectTasks\.deletedAt\)/);
   assert.match(s.slice(s.indexOf("const [updated]"),s.indexOf("if(!updated)")),/isNull\(projectTasks\.deletedAt\)/);
 });
 test("DB010 learner own task status refuses deleted task and sprint",()=>{
@@ -72,4 +76,15 @@ test("DB010 learner own task status refuses deleted task and sprint",()=>{
   assert.match(s.slice(s.indexOf("const [task]"),s.indexOf("if(!task)")),/isNull\(projectTasks\.deletedAt\)/);
   assert.match(s.slice(s.indexOf("const [sprint]"),s.indexOf("if(sprint?.")),/isNull\(projectSprints\.deletedAt\)/);
   assert.match(s.slice(s.indexOf("const [updated]"),s.indexOf("if(!updated)")),/isNull\(projectTasks\.deletedAt\)/);
+});
+
+test("DB010 the registered all-row task sequence index requires tombstone-aware allocation",()=>{
+  const schema=fs.readFileSync("src/db/schema/projects.ts","utf8");
+  assert.match(schema,/uniqueIndex\("project_tasks_sprint_sequence_uq"\)\.on\(/);
+  const progress=read("learner-task-progress-service.ts");
+  assert.match(progress,/maxReservedSequence >= 2147483647/);
+  assert.match(progress,/const siblings = allSiblings\.filter\(item => !item\.deletedAt\)/);
+  const backlog=read("learner-backlog-pull-service.ts");
+  assert.doesNotMatch(backlog.slice(backlog.indexOf("const [last]"),backlog.indexOf("const [updated]")),
+    /isNull\(projectTasks\.deletedAt\)/);
 });
