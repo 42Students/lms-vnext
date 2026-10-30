@@ -1584,7 +1584,7 @@
       "done": true,
       "dependsOn": [],
       "acceptedAt": "2026-10-30",
-      "closureBasis": "ENGINEERING_ACCEPTED_REGISTERED_DB04_PG17_WITH_RELEASE_VERIFICATION_DEFERRED",
+      "closureBasis": "ENGINEERING_ACCEPTED_RELEASE_REVIEW_DEFERRED",
       "acceptanceEvidence": [
         {
           "kind": "EXECUTED_REGISTERED_POSTGRESQL_17_AND_APPLICATION_ACCEPTANCE",
@@ -1618,7 +1618,8 @@
         "notWaived": true,
         "releaseCertified": false,
         "noAutomaticReopen": true,
-        "reopenOnlyFor": "Demonstrated profile/security regression, migration/API failure or explicit owner re-scope"
+        "reopenOnlyFor": "Demonstrated profile/security regression, migration/API failure or explicit owner re-scope",
+        "register": "docs/planning/db04-qualification-image-persistence-contract.md"
       }
     },
     {
@@ -1628,7 +1629,7 @@
       "done": true,
       "dependsOn": [],
       "acceptedAt": "2026-10-30",
-      "closureBasis": "ENGINEERING_ACCEPTED_REGISTERED_DB04_PG17_WITH_RELEASE_VERIFICATION_DEFERRED",
+      "closureBasis": "ENGINEERING_ACCEPTED_RELEASE_REVIEW_DEFERRED",
       "acceptanceEvidence": [
         {
           "kind": "EXECUTED_REGISTERED_POSTGRESQL_17_AND_APPLICATION_ACCEPTANCE",
@@ -1674,7 +1675,8 @@
         "notWaived": true,
         "releaseCertified": false,
         "noAutomaticReopen": true,
-        "reopenOnlyFor": "Demonstrated profile/security regression, migration/API failure or explicit owner re-scope"
+        "reopenOnlyFor": "Demonstrated profile/security regression, migration/API failure or explicit owner re-scope",
+        "register": "docs/planning/db04-qualification-image-persistence-contract.md"
       }
     }
   ],
