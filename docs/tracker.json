@@ -470,7 +470,28 @@
         "DB-018",
         "DB-019",
         "DB-025"
-      ]
+      ],
+      "implementationCheckpoint": {
+        "status": "DRIZZLE_SNAPSHOT_DRIFT_CONFIRMED_NOT_ACCEPTED",
+        "recordedOn": "2026-10-30",
+        "report": "docs/planning/db020-schema-snapshot-drift-diagnosis-2026-10-30.md",
+        "evidenceRun": "https://github.com/42Students/lms-vnext/actions/runs/41032764607",
+        "observations": {
+          "previousSnapshotTables": 222,
+          "generatedSnapshotTables": 266,
+          "newRelativeToSnapshot": 44,
+          "changedRelativeToSnapshot": 116,
+          "addedTableNamesAlreadyPresentInRegisteredCreateDdl": 44,
+          "independentMigrationReplayOnCurrentMain": "NOT_VERIFIED"
+        },
+        "openEvidence": [
+          "Compare all 44 SQL-created tables to live PostgreSQL catalog and current typed schema",
+          "Reconcile 116 changed snapshot definitions against registered migrations, constraints and catalogs",
+          "Keep automatic promotion and applied migration rewriting prohibited",
+          "Run clean schema generation, zero-to-head replay and all phase-gate negative witnesses"
+        ],
+        "evidenceIsNotAcceptance": true
+      }
     },
     {
       "id": "DB-021",
