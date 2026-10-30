@@ -6,7 +6,7 @@
  */
 export function redactVerifierOutput(value, env = process.env) {
   let output = String(value ?? "");
-  const sensitive = [env.TEST_DATABASE_URL, env.DATABASE_URL, env.DB_PASSWORD]
+  const sensitive = [env.TEST_DATABASE_URL, env.DATABASE_URL, env.DB_PASSWORD, env.PGPASSWORD, env.POSTGRES_PASSWORD]
     .filter((candidate) => typeof candidate === "string" && candidate.length > 0);
   for (const secret of new Set(sensitive)) {
     output = output.split(secret).join("[REDACTED]");
@@ -30,5 +30,15 @@ export function redactVerifierOutput(value, env = process.env) {
     /\b(postgres(?:ql)?:\/\/[^\s#]+)#[^\s]*/gi,
     "$1#[REDACTED]",
   );
+
+  // libpq keyword DSNs, psql/driver diagnostics and environment echoes can
+  // expose passwords without printing a postgres:// URL. Keep host/db context,
+  // but never persist a credential value in logs or acceptance receipts.
+  // Handle single/double quoted values (including escaped quotes) as one unit.
+  output = output.replace(
+    /\b((?:PGPASSWORD|POSTGRES_PASSWORD|DB_PASSWORD|sslpassword|password)\s*(?:=|:)\s*)(?:"(?:\\.|[^"\\])*"|'(?:\\.|[^'\\])*'|[^\s;,"'\x60]+)/gi,
+    "$1[REDACTED]",
+  );
+
   return output;
 }
