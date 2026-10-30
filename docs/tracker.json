@@ -486,20 +486,20 @@
           "details": "Executed manifest identity/coverage checks: exact 23 distinct source-grounded race probes, explicit per-probe required witness and source paths, 13 source-protected but runtime-unproven, 3 unmigrated draft, 2 source-confirmed gaps, 2 source fixes needing execution, 1 partial dispatcher gap, 1 draft-unimplemented, 1 policy undecided. Seven blocking P5-R01,R02,R09,R10,R11,R21,R22 preserved explicitly as NOT_RUN and not waived."
         }
       ],
-      "deferredRelease": {
-        "reviewRequired": true,
-        "when": "BEFORE_GLOBAL_DATABASE_PHASE_GATE_DB020",
-        "reviewOwner": "L01/L10 and affected domain owners",
-        "items": [
-          "Execute and close all DB018 negative/two-session race witnesses",
-          "Promote and verify 3 source-protected but unregistered constraint drafts",
-          "Resolve 7 tracked blocking race/dispatcher/policy issues: P5-R01/R02/R09/R10/R11/R21/R22"
+      "openInventoryFindings": {
+        "notAcceptance": "DB015 inventory closure does not accept any missing protection; domain race fixes remain separate unaccepted tasks",
+        "blockingRaceIds": [
+          "P5-R01",
+          "P5-R02",
+          "P5-R09",
+          "P5-R10",
+          "P5-R11",
+          "P5-R21",
+          "P5-R22"
         ],
-        "notWaived": true,
-        "releaseCertified": false,
-        "noAutomaticReopen": true,
-        "reopenOnlyFor": "New untracked race, incorrect inventory assignment, false source claim or explicit scope change",
-        "register": "docs/planning/database-parity-pass5-probe-manifest.json"
+        "unregisteredDraftProbes": 3,
+        "requiredNextGate": "DB018 runtime/two-session witness suite then DB020 global gate",
+        "source": "docs/planning/database-parity-pass5-probe-manifest.json"
       }
     },
     {
