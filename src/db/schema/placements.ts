@@ -2226,9 +2226,10 @@ export const placementLearnerRequests = pgTable(
   "placement_learner_requests",
   {
     id: uuid("id").defaultRandom().primaryKey(),
-    // Registered migration 0133 makes the owning learner membership mandatory.
+    // Migration 0133 permits application-free learner support requests.
+    // Only APPLICATION_WITHDRAWAL, ROUND_RESCHEDULE and OFFER_EXTENSION
+    // require an application. Membership identity remains mandatory.
     applicationId: uuid("application_id")
-      .notNull()
       .references(() => placementApplications.id, {
         onDelete: "restrict",
       }),
@@ -2293,7 +2294,7 @@ export const placementLearnerRequests = pgTable(
     ),
     check(
       "placement_learner_requests_type_ck",
-      sql`${table.requestType} in ('APPLICATION_WITHDRAWAL', 'ROUND_RESCHEDULE', 'OFFER_EXTENSION')`,
+      sql`${table.requestType} in ('APPLICATION_WITHDRAWAL','ROUND_RESCHEDULE','OFFER_EXTENSION','OFF_CAMPUS_OFFER','REGISTRATION_CHANGE','ABSENCE_DISPUTE','CORRECTION_WITH_PROOF','PLACEMENT_AFTER_PLACEMENT')`,
     ),
     check(
       "placement_learner_requests_status_ck",
@@ -2305,9 +2306,12 @@ export const placementLearnerRequests = pgTable(
     ),
     check(
       "placement_learner_requests_target_shape_ck",
-      sql`(${table.requestType} = 'APPLICATION_WITHDRAWAL' and ${table.roundId} is null and ${table.offerId} is null)
-        or (${table.requestType} = 'ROUND_RESCHEDULE' and ${table.roundId} is not null and ${table.offerId} is null)
-        or (${table.requestType} = 'OFFER_EXTENSION' and ${table.roundId} is null and ${table.offerId} is not null)`,
+      sql`(${table.requestType} = 'APPLICATION_WITHDRAWAL' and ${table.applicationId} is not null and ${table.roundId} is null and ${table.offerId} is null)
+        or (${table.requestType} = 'ROUND_RESCHEDULE' and ${table.applicationId} is not null and ${table.roundId} is not null and ${table.offerId} is null)
+        or (${table.requestType} = 'OFFER_EXTENSION' and ${table.applicationId} is not null and ${table.roundId} is null and ${table.offerId} is not null)
+        or (${table.requestType} in ('OFF_CAMPUS_OFFER','REGISTRATION_CHANGE','ABSENCE_DISPUTE','CORRECTION_WITH_PROOF','PLACEMENT_AFTER_PLACEMENT')
+          and ${table.roundId} is null and ${table.offerId} is null
+          and jsonb_typeof(${table.effectPayload}) = 'object')`,
     ),
     check(
       "placement_learner_requests_lifecycle_ck",

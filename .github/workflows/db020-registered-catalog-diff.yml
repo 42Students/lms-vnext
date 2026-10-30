@@ -16,6 +16,8 @@ on:
       - "src/db/schema/academics.ts"
       - "src/db/schema/courses.ts"
       - "src/db/schema/colleges.ts"
+      - "src/db/schema/placements.ts"
+      - "tests/db020-placement-request-schema.test.mjs"
       - "tests/db020-college-index-schema.test.mjs"
       - "src/db/schema/db10-audit-findings.draft.ts"
       - "src/modules/people/e2e-fixture-seed-service.ts"
@@ -70,7 +72,7 @@ jobs:
           cache: npm
       - run: npm ci
       - name: Compare FK signatures in static adversarial fixtures
-        run: node --test tests/db020-fk-shape.test.mjs tests/db020-sql-type.test.mjs tests/db020-college-index-schema.test.mjs
+        run: node --test tests/db020-fk-shape.test.mjs tests/db020-sql-type.test.mjs tests/db020-college-index-schema.test.mjs tests/db020-placement-request-schema.test.mjs
       - name: Pinned journal and clean registration
         run: |
           test "$(git rev-parse HEAD)" = "$GITHUB_SHA"
