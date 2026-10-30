@@ -33,7 +33,7 @@ describe.skipIf(!enabled)("Super Admin live classes directory disposable Postgre
   for(const [table,id] of [["lesson_contents",ids.live],["lesson_contents",ids.resource],["course_lessons",ids.lesson],
    ["course_learning_paths",ids.path],["course_offerings",ids.offering],["courses",ids.course],
    ["cohorts",ids.cohort],["programs",ids.program],["academic_periods",ids.period]] as const)
-   {if(table==="courses") await pool.query("delete from program_term_courses where course_id=$1",[id]);
+   {if(table==="courses") await pool.query("delete from program_term_courses where course_id=$1",[id]); if(table==="programs") await pool.query("delete from program_terms where program_id=$1",[id]);
     await pool.query(`delete from ${table} where id=$1`,[id]);}
  }}finally{await pool?.end();await closeDatabaseConnection();}});
  it("returns only live classes, hides other kinds and foreign-college content",async()=>{
