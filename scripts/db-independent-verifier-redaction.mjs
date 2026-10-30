@@ -20,5 +20,15 @@ export function redactVerifierOutput(value, env = process.env) {
   // Docker failures may echo the generated, short-lived container password
   // from an argument, not from the caller's environment.
   output = output.replace(/(POSTGRES_PASSWORD=)[^\s"'\x60]+/g, "$1[REDACTED]");
+  // A normalized URL in child output may differ from configured env URLs.
+  // Query strings and fragments may carry passwords or private key material.
+  output = output.replace(
+    /\b(postgres(?:ql)?:\/\/[^\s?#]+)\?[^\s#]*/gi,
+    "$1?[REDACTED]",
+  );
+  output = output.replace(
+    /\b(postgres(?:ql)?:\/\/[^\s#]+)#[^\s]*/gi,
+    "$1#[REDACTED]",
+  );
   return output;
 }
