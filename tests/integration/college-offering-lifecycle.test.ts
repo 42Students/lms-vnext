@@ -46,7 +46,11 @@ describe.skipIf(!enabled)("College offering archive/restore real PostgreSQL",()=
       for(const [table,id] of [
         ["course_offerings",ids.offering],["sections",ids.section],["courses",ids.course],
         ["cohorts",ids.cohort],["programs",ids.program],["academic_periods",ids.period],
-      ]as const)await pool.query(`DELETE FROM ${table} WHERE id=$1`,[id]);
+      ]as const) {
+        if(table==="courses") await pool.query("DELETE FROM program_term_courses WHERE course_id=$1",[id]);
+        if(table==="programs") await pool.query("DELETE FROM program_terms WHERE program_id=$1",[id]);
+        await pool.query(`DELETE FROM ${table} WHERE id=$1`,[id]);
+      }
       // Never delete from append-only activity_events.
     }}finally{await pool?.end();await closeDatabaseConnection();}
   });

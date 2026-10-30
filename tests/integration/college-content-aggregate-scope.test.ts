@@ -146,6 +146,8 @@ describe.skipIf(!enabled)("College Admin content aggregates DB scope", () => {
           ["academic_periods", ids.period],
         ];
         for (const [table, id] of owned) {
+          if(table==="courses") await pool.query("DELETE FROM program_term_courses WHERE course_id=$1",[id]);
+          if(table==="programs") await pool.query("DELETE FROM program_terms WHERE program_id=$1",[id]);
           await pool.query(`DELETE FROM ${table} WHERE id = $1`, [id]);
         }
       }
