@@ -979,15 +979,55 @@
       "id": "DB-056",
       "title": "Fail-close DB09 college-wide TPO principal guards",
       "phase": "DATABASE",
-      "done": false,
-      "dependsOn": []
+      "done": true,
+      "dependsOn": [],
+      "acceptedAt": "2026-10-30",
+      "acceptanceEvidence": [
+        {
+          "kind": "EXECUTED_POSTGRESQL_17",
+          "result": "PASS",
+          "exitCode": 0,
+          "commitSha": "a5184f68cc27ce3c5c82989700af82f88df1c9e9",
+          "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/41069271500",
+          "jobId": 124108765413,
+          "runner": "GitHub Actions ubuntu-latest Node.js 22, fresh disposable PostgreSQL 17-alpine",
+          "commands": [
+            "npm run db:journal:verify",
+            "node --test tests/db09-collegewide-principal-guard.test.mjs",
+            "npm run db:test:prepare (DATABASE_URL cleared)",
+            "npm run db:migrate",
+            "node tests/db09-collaboration-registered-pg-acceptance.mjs"
+          ],
+          "details": "College-wide TPO authority restricted to persisted TPO/COLLEGE_ADMIN roles; FACULTY-only is denied, and share, student-note and preference DB principal guards use the same fail-closed scope. Direct PostgreSQL faculty-negative and revoked-grant witnesses passed. Pinned job: 55/55 focused source contracts, 25/25 collaboration, 19/19 share, 18/18 private note PostgreSQL checks, zero job failures. This scoped task is accepted without certifying unrelated DB09, schema drift, or global DATABASE."
+        }
+      ]
     },
     {
       "id": "DB-057",
       "title": "Harden recruiter notification read watermark integrity",
       "phase": "DATABASE",
-      "done": false,
-      "dependsOn": []
+      "done": true,
+      "dependsOn": [],
+      "acceptedAt": "2026-10-30",
+      "acceptanceEvidence": [
+        {
+          "kind": "EXECUTED_POSTGRESQL_17",
+          "result": "PASS",
+          "exitCode": 0,
+          "commitSha": "a5184f68cc27ce3c5c82989700af82f88df1c9e9",
+          "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/41069271500",
+          "jobId": 124108765413,
+          "runner": "GitHub Actions ubuntu-latest Node.js 22, fresh disposable PostgreSQL 17-alpine",
+          "commands": [
+            "npm run db:journal:verify",
+            "node --test tests/db09-recruiter-read-watermark.test.mjs",
+            "npm run db:test:prepare (DATABASE_URL cleared)",
+            "npm run db:migrate",
+            "node tests/db09-collaboration-registered-pg-acceptance.mjs"
+          ],
+          "details": "Registered recruiter notification watermark has tenant/identity and grant scope; future or backward timestamps, cross-college/identity reassignment and post-revocation mutation were rejected in rollback-only PostgreSQL witnesses; valid monotonic transition succeeded. Pinned job: 55/55 focused source contracts, 25/25 collaboration, 19/19 share, 18/18 private note PostgreSQL checks, zero job failures. This scoped task is accepted without certifying unrelated DB09, schema drift, or global DATABASE."
+        }
+      ]
     },
     {
       "id": "DB-058",
@@ -1012,16 +1052,56 @@
       "id": "DB-059",
       "title": "Freeze DB09 secure share disclosure contract after creation",
       "phase": "DATABASE",
-      "done": false,
-      "dependsOn": []
+      "done": true,
+      "dependsOn": [],
+      "acceptedAt": "2026-10-30",
+      "acceptanceEvidence": [
+        {
+          "kind": "EXECUTED_POSTGRESQL_17",
+          "result": "PASS",
+          "exitCode": 0,
+          "commitSha": "a5184f68cc27ce3c5c82989700af82f88df1c9e9",
+          "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/41069271500",
+          "jobId": 124108765413,
+          "runner": "GitHub Actions ubuntu-latest Node.js 22, fresh disposable PostgreSQL 17-alpine",
+          "commands": [
+            "npm run db:journal:verify",
+            "node --test tests/db09-secure-share-lifecycle.test.mjs",
+            "npm run db:test:prepare (DATABASE_URL cleared)",
+            "npm run db:migrate",
+            "node tests/db09-share-registered-pg-acceptance.mjs"
+          ],
+          "details": "Secure-share disclosure fields (recipient, selected columns and expiry) rejected updates on registered PostgreSQL; source contract asserts full immutable identity, token, job and disclosure fields. One-way revocation, limited live code rotation, and post-revocation rotation denial passed. Pinned job: 55/55 focused source contracts, 25/25 collaboration, 19/19 share, 18/18 private note PostgreSQL checks, zero job failures. This scoped task is accepted without certifying unrelated DB09, schema drift, or global DATABASE."
+        }
+      ]
     },
     {
       "id": "DB-060",
       "title": "Require DB09 secure share lifecycle event completeness",
       "phase": "DATABASE",
-      "done": false,
+      "done": true,
       "dependsOn": [
         "DB-059"
+      ],
+      "acceptedAt": "2026-10-30",
+      "acceptanceEvidence": [
+        {
+          "kind": "EXECUTED_POSTGRESQL_17",
+          "result": "PASS",
+          "exitCode": 0,
+          "commitSha": "a5184f68cc27ce3c5c82989700af82f88df1c9e9",
+          "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/41069271500",
+          "jobId": 124108765413,
+          "runner": "GitHub Actions ubuntu-latest Node.js 22, fresh disposable PostgreSQL 17-alpine",
+          "commands": [
+            "npm run db:journal:verify",
+            "node --test tests/db09-share-event-completeness.test.mjs",
+            "npm run db:test:prepare (DATABASE_URL cleared)",
+            "npm run db:migrate",
+            "node tests/db09-share-registered-pg-acceptance.mjs"
+          ],
+          "details": "Registered deferred share lifecycle checks refused missing CREATED and REVOKED events, duplicate CREATED, REVOKED without matching revoked link, backdated events, event update/delete, and post-revocation download; valid create/revoke and rollback path passed. Pinned job: 55/55 focused source contracts, 25/25 collaboration, 19/19 share, 18/18 private note PostgreSQL checks, zero job failures. This scoped task is accepted without certifying unrelated DB09, schema drift, or global DATABASE."
+        }
       ]
     },
     {
@@ -1037,27 +1117,87 @@
       "id": "DB-062",
       "title": "Freeze recruiter-private applicant note identity and timestamp lifecycle",
       "phase": "DATABASE",
-      "done": false,
+      "done": true,
       "dependsOn": [
         "DB-056"
+      ],
+      "acceptedAt": "2026-10-30",
+      "acceptanceEvidence": [
+        {
+          "kind": "EXECUTED_POSTGRESQL_17",
+          "result": "PASS",
+          "exitCode": 0,
+          "commitSha": "a5184f68cc27ce3c5c82989700af82f88df1c9e9",
+          "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/41069271500",
+          "jobId": 124108765413,
+          "runner": "GitHub Actions ubuntu-latest Node.js 22, fresh disposable PostgreSQL 17-alpine",
+          "commands": [
+            "npm run db:journal:verify",
+            "node --test tests/db09-recruiter-private-note-lifecycle.test.mjs tests/db062-db079-private-review-canonical-and-revocation.test.mjs",
+            "npm run db:test:prepare (DATABASE_URL cleared)",
+            "npm run db:migrate",
+            "node tests/db09-recruiter-note-registered-pg-acceptance.mjs"
+          ],
+          "details": "Private applicant-note ownership, parent identity and timestamp monotonicity are immutable in the registered database; direct SQL negative checks for wrong college, forged timestamps, parent/owner changes, stale updates and revoked recruiter write passed; canonical producer uses persisted grant locks. Pinned job: 55/55 focused source contracts, 25/25 collaboration, 19/19 share, 18/18 private note PostgreSQL checks, zero job failures. This scoped task is accepted without certifying unrelated DB09, schema drift, or global DATABASE."
+        }
       ]
     },
     {
       "id": "DB-063",
       "title": "Make DB09 TPO student notes append-only",
       "phase": "DATABASE",
-      "done": false,
+      "done": true,
       "dependsOn": [
         "DB-056"
+      ],
+      "acceptedAt": "2026-10-30",
+      "acceptanceEvidence": [
+        {
+          "kind": "EXECUTED_POSTGRESQL_17",
+          "result": "PASS",
+          "exitCode": 0,
+          "commitSha": "a5184f68cc27ce3c5c82989700af82f88df1c9e9",
+          "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/41069271500",
+          "jobId": 124108765413,
+          "runner": "GitHub Actions ubuntu-latest Node.js 22, fresh disposable PostgreSQL 17-alpine",
+          "commands": [
+            "npm run db:journal:verify",
+            "node --test tests/db09-student-note-history.test.mjs",
+            "npm run db:test:prepare (DATABASE_URL cleared)",
+            "npm run db:migrate",
+            "node tests/db09-collaboration-registered-pg-acceptance.mjs"
+          ],
+          "details": "Registered TPO student-note history enforces append-only behavior: attempted UPDATE and DELETE were rejected in rollback-only PostgreSQL, with role scope also rejecting non-TPO faculty authors. Pinned job: 55/55 focused source contracts, 25/25 collaboration, 19/19 share, 18/18 private note PostgreSQL checks, zero job failures. This scoped task is accepted without certifying unrelated DB09, schema drift, or global DATABASE."
+        }
       ]
     },
     {
       "id": "DB-064",
       "title": "Harden DB09 TPO preferences and saved-view lifecycle",
       "phase": "DATABASE",
-      "done": false,
+      "done": true,
       "dependsOn": [
         "DB-056"
+      ],
+      "acceptedAt": "2026-10-30",
+      "acceptanceEvidence": [
+        {
+          "kind": "EXECUTED_POSTGRESQL_17",
+          "result": "PASS",
+          "exitCode": 0,
+          "commitSha": "a5184f68cc27ce3c5c82989700af82f88df1c9e9",
+          "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/41069271500",
+          "jobId": 124108765413,
+          "runner": "GitHub Actions ubuntu-latest Node.js 22, fresh disposable PostgreSQL 17-alpine",
+          "commands": [
+            "npm run db:journal:verify",
+            "node --test tests/db09-user-state-lifecycle.test.mjs",
+            "npm run db:test:prepare (DATABASE_URL cleared)",
+            "npm run db:migrate",
+            "node tests/db09-collaboration-registered-pg-acceptance.mjs"
+          ],
+          "details": "Persisted TPO user-preference and saved-view lifecycle enforced: canonical five-booleans and owner identity, valid transitions, cross-college/preference deletion denial, immutable saved-view history, monotonic timestamps and permitted owner removal all checked against PostgreSQL. Pinned job: 55/55 focused source contracts, 25/25 collaboration, 19/19 share, 18/18 private note PostgreSQL checks, zero job failures. This scoped task is accepted without certifying unrelated DB09, schema drift, or global DATABASE."
+        }
       ]
     },
     {
