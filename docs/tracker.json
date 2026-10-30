@@ -2211,10 +2211,10 @@
         ],
         "operatingNotes": "Coordinate shared recruiter policy with L08 without dual-writing.",
         "claim": {
-          "sessionId": "vnext-l07-20261029-1056-ist",
-          "holder": "ChatGPT L07 placements/offers implementation",
-          "claimedAt": "2026-10-29T05:27:03.671Z",
-          "expiresAt": "2026-10-29T09:27:03.671Z"
+          "sessionId": "vnext-l07-ui-bookmark-20261030-001",
+          "holder": "UI-only TPO drive legacy bookmark compatibility (separate new page files; no DB/schema/service edits)",
+          "claimedAt": "2026-10-30T18:03:30.549Z",
+          "expiresAt": "2026-10-30T19:03:30.553Z"
         }
       },
       {
