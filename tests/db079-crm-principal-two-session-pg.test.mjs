@@ -3,7 +3,13 @@ import test from "node:test";
 import assert from "node:assert/strict";
 import pg from "pg";
 import {assertDb018DisposableTarget} from "./support/db018-test-target.mjs";
-import {SEED_IDS} from "../scripts/db-seed-data.ts";
+// Canonical disposable seed identities. No TypeScript import loader required
+// for this native Node PostgreSQL witness.
+const SEED_IDS = {
+  collegeA: "20000000-0000-4000-8000-000000000001",
+  facultyUser: "30000000-0000-4000-8000-000000000003",
+  facultyCollegeAMembership: "40000000-0000-4000-8000-000000000002",
+};
 
 if(process.env.DB079_CRM_RACE_PG!=="YES"||!process.env.TEST_DATABASE_URL)
   throw new Error("DB079 requires explicit disposable registered PG");
