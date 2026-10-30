@@ -15,6 +15,26 @@ async function facultyLogin(context: BrowserContext) {
   ]);
 }
 
+// File Explorer was a legacy redirect, not an additional file manager.
+for (const view of [{ name: "desktop", width: 1280, height: 800 },
+                    { name: "mobile", width: 390, height: 844 }]) {
+  test("Faculty legacy File Explorer bookmark resolves to Courses on " + view.name,
+    async ({ page, context }) => {
+      await facultyLogin(context);
+      await page.setViewportSize({ width: view.width, height: view.height });
+      const errors: string[] = [];
+      page.on("pageerror", error => errors.push(error.message));
+      await page.goto("/teacher/fileExplorer");
+      await expect.poll(() => new URL(page.url()).pathname).toBe("/teacher/courses");
+      await expect(page.getByRole("heading", { level: 1, name: "Courses" })).toBeVisible();
+      if (view.name === "mobile") {
+        const width = await page.evaluate(() => document.documentElement.scrollWidth);
+        expect(width).toBeLessThanOrEqual(view.width + 1);
+      }
+      expect(errors).toEqual([]);
+    });
+}
+
 test("Faculty has five distinct, authorized Course tabs and editable Section Blueprint", async ({ page, context }) => {
   await facultyLogin(context);
   await page.goto("/teacher/courses");
