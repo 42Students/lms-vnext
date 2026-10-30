@@ -540,10 +540,10 @@
         "DB-025"
       ],
       "implementationCheckpoint": {
-        "status": "REGISTERED_21_PROBES_4_DIRECT_NEGATIVES_PASS_REMAINING_RACE_AND_EMPTY_JOIN_GATES_OPEN",
+        "status": "REGISTERED_21_NONEMPTY_JOIN_AND_7_DIRECT_SQL_NEGATIVES_PASS_RACES_PENDING",
         "tailRelationalSourceCheckpoint": {
           "recordedOn": "2026-10-30",
-          "state": "SOURCE_AUTHORED_EXECUTION_PENDING",
+          "state": "PARTIAL_PG17_ACCEPTED_NOT_DB018_DONE",
           "sourceCommits": [
             "9283731b81c757f0d3bd66b847a66acc2407ea43",
             "e77b979af36b788b9ddee2402ee2af888024185e",
@@ -552,14 +552,14 @@
             "19793e89ccfb463bf4e394ff52a7e95882182f9b"
           ],
           "testPath": "tests/integration/db018-relational-and-boundary-witnesses.test.ts",
-          "scope": "Rollback-only populated fixture paths added for P5-12..P5-16 and P5-20..P5-21; three extra real SQL CHECK negatives (user nonblank given name, program term lower bound, academic period date order) authored. With preceding 14 sources, all 21 relational samples should now be nonempty, but must be observed in PostgreSQL.",
+          "scope": "Executed rollback-only populated fixture paths for all 21 relational probes (including P5-12..P5-16 and P5-20..P5-21) plus 7 registered direct-SQL negatives; zero empty joins or mismatches on disposable PG17.",
           "requestedRunUrl": "https://github.com/42Students/lms-vnext/actions/runs/41103680109",
-          "runStatusAtRecording": "QUEUED_NOT_ACCEPTED_AFTER_SQL_VALUE_FIX",
+          "runStatusAtRecording": "SUCCESS_PG17_EXACT_SHA",
           "notAcceptance": true,
           "recheckRequired": [
-            "Execute registered PostgreSQL 17 fixture suite and verify 21/21 nonempty joins, 0 mismatches, 7/7 direct negatives and zero failures",
-            "Check same-parent and tenant semantics and all DB018 race/mutation witnesses on exact accepted SHA",
-            "Do not mark DB018 done from populated observational joins alone"
+            "Run the remaining 9 direct DB03/DB06 negative witnesses and 4 positive concurrency witnesses",
+            "Run fixed P5-R01/R02 service-backed two-session race regressions",
+            "Recheck full parent tenant producer/consumer and independent DB001/DB020 phase gates before DB018 acceptance"
           ]
         },
         "recordedOn": "2026-10-30",
@@ -579,13 +579,22 @@
               "node --test tests/db-parity-pass5.test.mjs"
             ],
             "details": "27/27 PG tests PASS, 9/9 source tests PASS; 21/21 observational relational checks executed, 8 with real rollback-only fixture join samples, 13 with zero joined sample rows; 4/4 negative SQL checks pass. Active LEARNER role is seeded in synthetic fixture to satisfy registered DB02 membership authorization, never disables trigger."
+          },
+          {
+            "kind": "EXECUTED_DISPOSABLE_POSTGRESQL17_RELATIONAL_PLUS_SQL_NEGATIVES",
+            "result": "PASS",
+            "commitSha": "19793e89ccfb463bf4e394ff52a7e95882182f9b",
+            "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/41103680109",
+            "jobId": 124230398612,
+            "runner": "GitHub Actions Node22 and disposable PostgreSQL 17-alpine",
+            "details": "30/30 PG tests PASS; 21/21 joins sampled real rollback-only relationships, zero empty joins, zero relational mismatches, 7/7 direct SQL negatives PASS. Does not prove preventability of untested bad mutations or any concurrency races."
           }
         ],
         "pending": [
-          "13 relational probes still only have vacuous observational checks; add populated scoped fixtures or classify as observational explicitly",
-          "Run remainder of DB018 13 direct negative witnesses and four two-session concurrency checks",
-          "Run two fixed-but-unverified P5-R01/R02 races and resolve other 5 listed gaps",
-          "Only then use full fresh registered schema/producer/consumer proof and mark DB018 accepted"
+          "Execute and accept 9 remaining registered direct DB03/DB06 SQL negatives",
+          "Execute and accept 4 positive concurrency witnesses, including DB03 elective and C4b quiz final attempt races",
+          "Execute fixed-but-unverified P5-R01/R02 service-backed races and other 5 listed protection gaps",
+          "Complete cross-domain tenant producer/consumer proof and independent registered phase gates before DB018 DONE_VERIFIED"
         ],
         "evidenceIsNotAcceptance": true
       }
