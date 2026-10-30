@@ -10,6 +10,7 @@ import {FACULTY_PROFILE_LEGACY_NAV} from "@/modules/people/faculty-profile-navig
 import {facultyProfileSaveFailure,facultyProfileUnconfirmedSaveMessage,facultyProfileErrorCode,facultyProfileSaveSectionLabel,facultyProfileReloadRequired} from "@/modules/people/faculty-profile-error-model";
 import {facultyProfileSaveReceipt,FacultyProfileSaveResponseError} from "@/modules/people/faculty-profile-save-response";
 import type { FacultyProfileDocument } from "@/modules/people/faculty-profile-document";
+import {facultyProfileCompleteness} from "@/modules/people/faculty-profile-completeness-model";
 import type { FacultySelfSection } from "@/modules/people/faculty-self-section-model";
 import { advanceFacultySectionRevision } from "@/modules/people/faculty-section-revision-model";
 import { FacultyProfileTextSection } from "./faculty-profile-text-section";
@@ -101,14 +102,9 @@ export function FacultyProfileEditor({initialDocument,initialVersion}:{
   <section aria-label="Profile completeness" className="min-w-0 rounded-[var(--lms-radius-card)] border border-border bg-surface px-4 py-3">
     <div className="flex flex-wrap items-center justify-between gap-3">
       <span className="text-sm font-semibold text-foreground">Profile Completeness</span>
-      <strong className="text-sm tabular-nums text-foreground">{[
-        Boolean(document.personalDetails.gender && document.personalDetails.dateOfBirth),
-        document.experiences.length > 0,document.education.length > 0,
-        document.certifications.length > 0,document.skills.length > 0,
-        document.languages.length > 0,document.publications.length > 0,
-        document.awards.length > 0,Boolean(document.socialProfiles.linkedIn),
-        Boolean(document.address.currentAddress),
-      ].filter(Boolean).length} of 10 sections</strong>
+      <strong className="text-sm tabular-nums text-foreground">
+        {facultyProfileCompleteness(document).completed} of {facultyProfileCompleteness(document).total} sections · {facultyProfileCompleteness(document).percent}%
+      </strong>
     </div>
     <p className="mt-2 text-xs text-muted-foreground">Select Edit or Add in a profile section to keep your record up to date. This is not a verification or hiring-eligibility score.</p>
   </section>
