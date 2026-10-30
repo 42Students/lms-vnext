@@ -75,13 +75,31 @@ async function setup() {
     values($1,$2,$3,$4,'ACTIVE')`,
     [ids.enrollment,ids.membership,ids.program,ids.cohort]);
   // Minimal project-template lineage is per-test and is not a shared seeded project.
-  await pool.query(`insert into project_templates
-    (id,slug,title,status,created_by_user_id) values ($1,$2,'Chat7 Template','PUBLISHED',$3)`,
-    [ids.template,"chat7-"+suffix,SEED_IDS.superAdminUser]);
-  await pool.query(`insert into project_template_versions
-    (id,template_id,version,title,blueprint,created_by_user_id)
-    values($1,$2,1,'Chat7 Template','{}'::jsonb,$3)`,
-    [ids.version,ids.template,SEED_IDS.superAdminUser]);
+  // Template revisions are permanent history under DB070. Share this file's
+  // unique version across tests, and create the header plus its initial
+  // snapshot in ONE transaction for DB071's deferred header FK.
+  const existingTemplate = await pool.query("select 1 from project_templates where id=$1", [ids.template]);
+  if (existingTemplate.rowCount === 0) {
+    const client = await pool.connect();
+    try {
+      await client.query("BEGIN");
+      await client.query(`insert into project_templates
+        (id,slug,title,status,created_by_user_id) values ($1,$2,'Chat7 Template','PUBLISHED',$3)`,
+        [ids.template,"chat7-"+suffix,SEED_IDS.superAdminUser]);
+      await client.query(`insert into project_template_versions
+        (id,template_id,version,title,blueprint,created_by_user_id)
+        values($1,$2,1,'Chat7 Template',$3::jsonb,$4)`,
+        [ids.version,ids.template,
+          JSON.stringify({overview:{goal:"Build service",deliverables:["Release code"]}}),
+          SEED_IDS.superAdminUser]);
+      await client.query("COMMIT");
+    } catch (error) {
+      await client.query("ROLLBACK");
+      throw error;
+    } finally {
+      client.release();
+    }
+  }
   await pool.query(`insert into project_template_college_assignments
     (id,template_id,template_version_id,college_id,assigned_by_user_id)
     values($1,$2,$3,$4,$5)`,
@@ -109,8 +127,19 @@ async function cleanup() {
   await pool.query("delete from project_members where project_id=$1",[ids.project]);
   await pool.query("delete from project_instances where id=$1",[ids.project]);
   await pool.query("delete from project_template_college_assignments where id=$1",[ids.assignment]);
-  await pool.query("delete from project_template_versions where id=$1",[ids.version]);
-  await pool.query("delete from project_templates where id=$1",[ids.template]);
+  // Never destroy DB070 append-only revisions or their DB071 parent headers.
+  // The file-level UUIDs are unique, so retained history cannot collide with
+  // another test process or a later independent disposable database run.
+  const retention = await pool.query<{ retainHistory: boolean }>(
+    "select (exists (select 1 from pg_trigger where tgrelid='project_template_versions'::regclass " +
+    "and tgname='db07_project_template_versions_append_only' and tgenabled='O') " +
+    "or exists (select 1 from pg_constraint where conrelid='project_templates'::regclass " +
+    "and conname='project_templates_current_version_snapshot_fk')) as \"retainHistory\"",
+  );
+  if (!retention.rows[0]?.retainHistory) {
+    await pool.query("delete from project_template_versions where id=$1",[ids.version]);
+    await pool.query("delete from project_templates where id=$1",[ids.template]);
+  }
   await pool.query("delete from learner_program_enrollments where id=$1",[ids.enrollment]);
   await pool.query("delete from cohorts where id=$1",[ids.cohort]);
   await pool.query("delete from academic_periods where id=$1",[ids.period]);
@@ -350,9 +379,6 @@ describe("L21-012 protected learner Project detail read",()=>{
 
 describe("L22-002 authored project Overview from own immutable template version",()=>{
   it("loads only the learner-assigned persisted template-version goals",async()=>{
-    await pool.query("update project_template_versions set blueprint=$2::jsonb where id=$1",[
-      ids.version,JSON.stringify({overview:{goal:"Build service",deliverables:["Release code"]}}),
-    ]);
     expect(await getLearnerProjectGoals(context,ids.project)).toMatchObject({
       goal:"Build service",deliverables:["Release code"],
     });
