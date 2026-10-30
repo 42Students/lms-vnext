@@ -39,6 +39,7 @@ import { requirePlacementManageScope } from "./scope";
 import {assertPersistedPlatformPermission} from "@/modules/permissions/persisted-actor";
 import { requireLearnerPlacementAccess } from "./learner-participation-guard";
 import {recruiterOwnJobExists} from "./recruiter-job-ownership";
+import {isRecruiterRoundResultSource} from "./round-result-source-model";
 import {notifyTpoOfRecruiterAction} from "./hr-tpo-notification-service";
 import {
   placementResultIdSchema,
@@ -487,7 +488,7 @@ export async function stagePlacementRoundResult(
     if (
       recruiterCanStage &&
       current?.status === "STAGED" &&
-      current.source !== "HR"
+      !isRecruiterRoundResultSource(current.source)
     ) {
       throw new PlacementsServiceError(
         "PLACEMENT_RECRUITER_RESULT_CONFLICT",
