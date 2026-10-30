@@ -7,11 +7,17 @@ const prior = JSON.parse(readFileSync("drizzle/meta/0311_snapshot.json", "utf8")
 const current = JSON.parse(readFileSync("drizzle/meta/0312_snapshot.json", "utf8"));
 const sql = readFileSync("drizzle/0312_db09_recruiter_note_grant_on_update.sql", "utf8");
 
-test("DB079 forward-only migration is uniquely registered after 0311", () => {
-  const e = journal.entries.at(-1);
+test("DB079 forward-only migration is uniquely registered immediately after 0311", () => {
+  // Independent migrations from other lanes may be appended after DB079.
+  // Check DB079's exact position, rather than assuming it remains the last entry.
+  const e = journal.entries.find(x => x.tag === "0312_db09_recruiter_note_grant_on_update");
+  const before = journal.entries.find(x => x.tag === "0311_db05_lesson_delivery_scope_guard");
+  assert.ok(e, "DB079 migration must be in the registered journal");
+  assert.ok(before, "the preceding DB05 migration must be registered");
   assert.equal(e.idx, 312);
-  assert.equal(e.tag, "0312_db09_recruiter_note_grant_on_update");
+  assert.equal(e.idx, before.idx + 1);
   assert.equal(journal.entries.filter(x => x.tag === e.tag).length, 1);
+  assert.equal(journal.entries.filter(x => x.idx === e.idx).length, 1);
   assert.equal(current.prevId, prior.id);
   assert.notEqual(current.id, prior.id);
 });
