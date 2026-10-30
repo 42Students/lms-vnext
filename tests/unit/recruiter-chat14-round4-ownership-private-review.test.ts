@@ -41,7 +41,7 @@ describe("chat-14 recruiter ownership and private review gap closure",()=>{
    const service=source("src/modules/placements/recruiter-private-rating-service.ts");
    expect(workspace).toContain("companyRelationshipId: scope.relationshipId");
    expect(service).toContain("workspace.job.companyRelationshipId");
-   expect(service).toContain("scope.job.companyRelationshipId");
+   expect(service).toContain("eq(placementRecruiterCollegeGrants.companyRelationshipId,placementJobs.companyRelationshipId)");
    expect(service).toContain("eq(placementJobs.id,placementApplications.jobId)");
    expect(service).toContain("recruiterOwnJobPredicate(ctx.user.id)");
  });
@@ -180,7 +180,7 @@ describe("chat-14 recruiter ownership and private review gap closure",()=>{
   const service=source("src/modules/placements/recruiter-private-rating-service.ts");
   expect(service.split('eq(placementApplications.status,"SUBMITTED")').length-1).toBe(2);
   expect(service).toContain('eq(placementRecruiterCollegeGrants.verificationStatus,"VERIFIED")');
-  expect(service).toContain('gt(placementRecruiterCollegeGrants.validUntil,new Date())');
+  expect(service).toContain('gt(placementRecruiterCollegeGrants.validUntil,sql`clock_timestamp()`)');
  });
  it("REC-home-drives-41 stores 1–5 reviews individually by recruiter and applicant",()=>{
   const schema=source("src/db/schema/placement-recruiter-candidate-ratings.ts");
@@ -195,7 +195,8 @@ describe("chat-14 recruiter ownership and private review gap closure",()=>{
  });
  it("REC-home-drives-41 degrades safely when the proposed private-review table is not installed",()=>{
   const route=source("src/app/api/placements/recruiter/jobs/[jobId]/applicants/[applicationId]/private-rating/route.ts");
-  expect(route).toContain('placementTableExists("placement_recruiter_private_reviews")');
+  expect(route).toContain('placementTableExists("placement_recruiter_applicant_notes")');
+  expect(route).toContain('RecruiterPrivateReviewMigrationPending');
   expect(route).toContain('error:"SERVICE_UNAVAILABLE"');
   expect(route).toContain('status:503,headers');
   expect(route).toContain('if(!hasActiveRecruiter(context)||context.recruiter?.userId!==context.user.id)');
