@@ -247,7 +247,9 @@ test("DB18 stale-check source state tracks authored placement and academics fixe
 test("DB18 canonical denominator stays source-grounded", () => {
   const index = load("tests/integration/db18-witness-index.json");
   assert.equal(index.counts.observationalReadOnlyAuthored, 21);
-  assert.equal(index.counts.directNegativeTotalAuthored, 13);
+  assert.equal(index.counts.directNegativeTotalAuthored, 16);
+  assert.equal(index.counts.baselineDirectBoundaryAuthored, index.baselineDirectBoundaryWitnesses.length);
+  assert.equal(index.counts.directNegativeTotalAuthored, index.counts.directNegativeAuthored + index.counts.baselineDirectBoundaryAuthored);
   assert.equal(index.counts.positiveConcurrencyAuthored, 4);
   // Source fixes exist for both races, but no PostgreSQL race acceptance ran.
   // Derive the denominator from the canonical witness entries to catch drift.
@@ -282,7 +284,7 @@ test("DB18 canonical denominator stays source-grounded", () => {
     "utf8",
   );
   assert.match(coverage, /Read-only relational mismatch probes \| 21 \| 0/);
-  assert.match(coverage, /Direct negative SQL boundary tests \| 13 \| 0/);
+  assert.match(coverage, /Direct negative SQL boundary tests \| 16 \| 0/);
   assert.match(coverage, /Positive concurrency witnesses \| 4 \| 0/);
   assert.match(coverage, /Known-defect red concurrency witnesses \| 0 \| 0/);
   assert.match(coverage, /Fix-authored race regression pending runtime \| 2 \| 0/);
