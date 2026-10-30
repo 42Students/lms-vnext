@@ -57,6 +57,10 @@ jobs:
       # DB018 guard permits this alias only with the independent DB03 verifier flag.
       DB03_ISOLATED_TEST_DATABASE: "1"
       E2E_AUTH_ENABLED: "true"
+      # The disposable PostgreSQL service uses the same E2E URL for service-backed
+      # witnesses; DB018 explicitly requires the independent verifier isolation flag.
+      # Do not relax the DB018/DB01 target guard for non-test databases.
+      DB03_ISOLATED_TEST_DATABASE: "1"
       APP_ENV: development
     steps:
       - uses: actions/checkout@v4
