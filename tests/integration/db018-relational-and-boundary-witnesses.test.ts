@@ -120,7 +120,7 @@ function sqlFor(probe: Probe): { violations: string; sample: string } {
  * rollback transaction, so P5-17/18/19 execute against populated joins.
  * No fixture identity or PII escapes; all inserts are rolled back.
  */
-const academicFixtureProbes = new Set(["P5-17", "P5-18", "P5-19"]);
+const academicFixtureProbes = new Set(["P5-17", "P5-18", "P5-19", "P5-20", "P5-21"]);
 const placementFixtureProbes = new Set([
   "P5-07", "P5-08", "P5-09", "P5-10", "P5-11",
   "P5-12", "P5-13", "P5-14", "P5-15", "P5-16",
@@ -291,9 +291,10 @@ async function insertAcademicWitnessFixture(client: PoolClient, id: string) {
     "INSERT INTO sections (id,cohort_id,academic_period_id,name,code,status) VALUES ($1,$2,$3,$4,$5,'ACTIVE')",
     [section,cohort,period,"DB018 isolated section "+code,"P5-"+code],
   );
-  if (id === "P5-19") {
+  if (["P5-19","P5-20","P5-21"].includes(id)) {
     const course = randomUUID();
     const offering = randomUUID();
+    const delivery = randomUUID();
     await client.query(
       "INSERT INTO courses (id,department_id,name,code,status) VALUES ($1,$2,$3,$4,'ACTIVE')",
       [course,SEED_IDS.departmentA,"DB018 isolated course "+code,"P5-"+code],
@@ -303,9 +304,65 @@ async function insertAcademicWitnessFixture(client: PoolClient, id: string) {
       [offering,course,cohort,period],
     );
     await client.query(
-      "INSERT INTO course_section_deliveries (offering_id,section_id) VALUES ($1,$2)",
-      [offering,section],
+      "INSERT INTO course_section_deliveries (id,offering_id,section_id) VALUES ($1,$2,$3)",
+      [delivery,offering,section],
     );
+    if (id !== "P5-19") {
+      const path = randomUUID();
+      const lesson = randomUUID();
+      const user = randomUUID();
+      const membership = randomUUID();
+      const enrollment = randomUUID();
+      await client.query(
+        "INSERT INTO course_learning_paths(id,offering_id,title,status) VALUES($1,$2,$3,'DRAFT')",
+        [path,offering,"DB018 isolated path "+code],
+      );
+      await client.query(
+        "INSERT INTO course_lessons(id,learning_path_id,name,sequence,status) VALUES($1,$2,$3,1,'ACTIVE')",
+        [lesson,path,"DB018 isolated lesson "+code],
+      );
+      await client.query(
+        "INSERT INTO users(id,identity_uid,display_name,platform_status) VALUES($1,$2,'DB018 private learner','ACTIVE')",
+        [user,"db018-assessment-"+user],
+      );
+      await client.query(
+        "INSERT INTO college_memberships(id,user_id,college_id,status) VALUES($1,$2,$3,'ACTIVE')",
+        [membership,user,SEED_IDS.collegeA],
+      );
+      await client.query(
+        "INSERT INTO membership_roles(membership_id,role) VALUES($1,'LEARNER')",
+        [membership],
+      );
+      await client.query(
+        "INSERT INTO learner_program_enrollments(id,membership_id,program_id,cohort_id,status) VALUES($1,$2,$3,$4,'ACTIVE')",
+        [enrollment,membership,program,cohort],
+      );
+      await client.query(
+        "INSERT INTO section_enrollments(learner_enrollment_id,section_id,academic_period_id,status) VALUES($1,$2,$3,'ACTIVE')",
+        [enrollment,section,period],
+      );
+      if (id === "P5-20") {
+        const quiz = randomUUID();
+        await client.query(
+          "INSERT INTO course_quizzes(id,lesson_id,delivery_id,title,total_points,sequence,status,created_by_user_id) VALUES($1,$2,$3,$4,10,1,'PUBLISHED',$5)",
+          [quiz,lesson,delivery,"DB018 isolated quiz "+code,SEED_IDS.collegeAdminUser],
+        );
+        await client.query(
+          "INSERT INTO quiz_attempts(quiz_id,delivery_id,membership_id,attempt_number,score,max_score) VALUES($1,$2,$3,1,8,10)",
+          [quiz,delivery,membership],
+        );
+      } else {
+        const assignment = randomUUID();
+        await client.query(
+          "INSERT INTO course_assignments(id,lesson_id,delivery_id,title,max_points,sequence,status,created_by_user_id) VALUES($1,$2,$3,$4,10,1,'PUBLISHED',$5)",
+          [assignment,lesson,delivery,"DB018 isolated assignment "+code,SEED_IDS.collegeAdminUser],
+        );
+        await client.query(
+          "INSERT INTO assignment_submissions(assignment_id,delivery_id,membership_id,submission_type,text_content) VALUES($1,$2,$3,'TEXT','DB018 private answer')",
+          [assignment,delivery,membership],
+        );
+      }
+    }
   } else {
     const user = randomUUID();
     const membership = randomUUID();
