@@ -1,5 +1,6 @@
 import { Suspense } from "react";
 import Link from "next/link";
+import {PageHeader} from "@/components/ui/page-header";
 import { Disclosure } from "@/components/ui/disclosure";
 import {ErrorState} from "@/components/ui/error-state";
 import {CoursesServiceError} from "@/modules/courses/errors";
@@ -112,6 +113,7 @@ async function FacultyCourseAttendanceContent({
 
   return (
     <div className="min-w-0 max-w-full space-y-4">
+      <PageHeader title="Attendance" description={data.course.courseName+" · "+data.course.sectionName}/>
       {sections.length>1?
         <FacultyClassSwitcher currentDeliveryId={deliveryId}
           sections={sections.map(item=>({
