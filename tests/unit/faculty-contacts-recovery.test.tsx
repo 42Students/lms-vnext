@@ -23,7 +23,11 @@ import FacultyContactsError from "@/app/(authenticated)/teacher/contacts/[contac
 import {FacultyContactsRetry} from "@/app/(authenticated)/teacher/contacts/[contactsTab]/faculty-contacts-live-search";
 
 const load=(tab="allContacts",searchParams:Record<string,string|string[]|undefined>={})=>
- FacultyContactsPage({params:Promise.resolve({contactsTab:tab}),searchParams:Promise.resolve(searchParams)});
+ FacultyContactsPage({
+  params:Promise.resolve({contactsTab:tab}),
+  // Deliberately pass duplicated/unknown keys that a real Next URL may supply.
+  searchParams:Promise.resolve(searchParams as unknown as {q?:string;page?:string;pageSize?:string}),
+ });
 
 beforeEach(()=>{
  vi.resetAllMocks();
