@@ -250,6 +250,11 @@ Legacy `QuizzesContent` runs in Faculty mode.
 
 ## Page: Faculty Profile
 
+**2026-10-31 closure-first implementation pass (final browser gate pending):** The 13 editable profile sections have a shared persisted completeness model; successful versioned section saves refresh the server header, and the self-profile identity header survives a failed optional private-document source without pretending empty data. Contacts, social links, address, personal details, experience, education, skills, certifications, languages, publications, awards and metadata have dedicated persisted self-edit/CRUD checks, including legacy coding-link preservation. The full-identity reader now respects the explicitly selected Faculty role even when the persisted membership also contains Mentor/Admin, while the request-context role gate, persisted Faculty membership, owner, and tenant checks remain enforced. [Focused PostgreSQL/unit/browser workflow](https://github.com/42Students/lms-vnext/actions/workflows/faculty-profile-closure-acceptance.yml) includes a disposable Faculty-only editing actor and a separate selected-Faculty/multi-role negative browser check. Check each source verification below only after the **new** exact-SHA run reports success.
+
+**Still externally BLOCKED (not implementation-green):** real profile photo/import and private identity evidence upload, scan verdict, preview/revocation and signed retrieval require an approved private object provider, malware scanner and operator-managed storage environment. Retain the photo and Aadhaar/PAN rows OPEN until those live flows are exercised using authorized test identities; neither source-only checks nor disposable database receipt tests prove the provider is live. The unrelated Faculty resume remains correctly N/A. The official visual acceptance/release gates stay separate.
+
+
 **Source-only partial implementation:** `/teacher/profile` now has Faculty-only
 membership-scoped reads, basic identity/teaching details, Faculty navigation and
 loading/error/retry states. It deliberately does **not** let Faculty edit
