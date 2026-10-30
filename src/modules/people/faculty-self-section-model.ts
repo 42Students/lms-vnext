@@ -153,7 +153,7 @@ export function updateFacultyProfileSection(
   // of LinkedIn must not silently erase those unseen persisted collections.
   const socialValue=patch.section==="socialProfiles"&&patch.value&&
     typeof patch.value==="object"&&!Array.isArray(patch.value)
-    ? {...current.socialProfiles,...patch.value as Record<string,unknown>}
+    ? {...current.socialProfiles,...(patch.value as Record<string,unknown>)}
     : patch.value;
   // New public links must be secure. Unchanged historical HTTP links are
   // retained to avoid destroying unrelated legacy data during section updates.
