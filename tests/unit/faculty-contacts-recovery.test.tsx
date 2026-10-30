@@ -63,7 +63,8 @@ describe("Faculty Contacts recovery and privacy UI",()=>{
  it("shows actionable retry and nonblocking legacy alert without leaking backend errors",async()=>{
   mocks.list.mockRejectedValueOnce(new Error("sensitive postgres failure detail"));
   const html=renderToStaticMarkup(await load());
-  expect(html).toContain("Couldn't load contacts");
+  // SSR correctly escapes the apostrophe while the browser renders it as text.
+  expect(html).toMatch(/Couldn(?:&#x27;|')t load contacts/);
   expect(html).toContain("Retry contacts");
   expect(html).toContain("Contacts load notification");
   expect(html).not.toContain("sensitive postgres failure detail");
