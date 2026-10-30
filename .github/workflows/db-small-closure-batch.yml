@@ -1,0 +1,83 @@
+name: DATABASE small-closure batch DB034 DB036 DB041 DB046
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - "tests/db034-db036-registered-tpo-settings-pg.test.mjs"
+      - "tests/db041-registered-quiz-shuffle-pg.test.mjs"
+      - "tests/db10-source-disposition-closure.test.mjs"
+      - ".github/workflows/db-small-closure-batch.yml"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: db-small-closure-main
+  cancel-in-progress: false
+
+jobs:
+  registered-postgresql:
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    services:
+      postgres:
+        image: postgres:17-alpine
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: lms_vnext_test
+        ports: ["5432:5432"]
+        options: >-
+          --health-cmd "pg_isready -U postgres -d lms_vnext_test"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 20
+    env:
+      DATABASE_URL: postgresql://postgres:postgres@127.0.0.1:5432/lms_vnext_test
+      TEST_DATABASE_URL: postgresql://postgres:postgres@127.0.0.1:5432/lms_vnext_test
+      DB03_ISOLATED_TEST_DATABASE: "1"
+      DB034_036_REGISTERED_PG: "YES"
+      DB041_REGISTERED_PG: "YES"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Exact revision and registered migration journal
+        run: |
+          test "$(git rev-parse HEAD)" = "$GITHUB_SHA"
+          npm run db:journal:verify
+      - name: DB034 and DB036 source-to-runtime contracts
+        run: >-
+          node --test
+          tests/db09-tpo-settings-normalization.test.mjs
+          tests/db034-tpo-prep-courses-runtime-contract.test.mjs
+          tests/db09-notification-preferences-normalization.test.mjs
+      - name: DB041 persisted shuffle and DB046 source-denominator contracts
+        run: >-
+          node --test
+          tests/db06-quiz-shuffle-staging.test.mjs
+          tests/db10-source-disposition-closure.test.mjs
+      - name: Reset, migrate and seed canonical disposable PostgreSQL 17
+        env:
+          DATABASE_URL: ""
+        run: npm run db:test:prepare
+      - name: Registered migration replay idempotence
+        run: npm run db:migrate
+      - name: DB041 actual quiz boolean defaults, writes, toggle and authored order
+        run: node --test tests/db041-registered-quiz-shuffle-pg.test.mjs
+      - name: DB034 and DB036 actual TPO settings, tenant and preference negatives
+        run: node --test tests/db034-db036-registered-tpo-settings-pg.test.mjs
+      - name: Registered TPO preferences and quiz service integration
+        run: >-
+          npx vitest run --config vitest.db.registered.config.ts
+          tests/integration/db09-tpo-policy.test.ts
+          tests/integration/courses-c4b-quizzes.test.ts
+      - name: Verify journal unmodified
+        run: |
+          npm run db:journal:verify
+          test -z "$(git status --porcelain -- drizzle/)"
