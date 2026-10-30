@@ -5,6 +5,7 @@ import {readFileSync,readdirSync,mkdirSync,writeFileSync} from "node:fs";
 import {execFileSync} from "node:child_process";
 import pg from "pg";
 import {assertDb018DisposableTarget} from "../tests/support/db018-test-target.mjs";
+import {compareForeignKeyShapes} from "./db020-fk-shape.mjs";
 
 if(process.env.DB020_DISPOSABLE_PG!=="1")
   throw new Error("DB020 catalog inspection requires explicit disposable PostgreSQL");
@@ -87,9 +88,21 @@ try{
  for(const id of existing.keys())if(snapSet.has(id.split(".")[0])&&!generatedColumnIds.has(id))
    extraCatalogColumns.push(id);
  const allFks=(await client.query(`
-  SELECT c.conname,c.convalidated,cl.relname AS child,
-         cardinality(c.conkey)::int AS child_columns
+  SELECT c.conname,c.convalidated,cl.relname AS child, parent.relname AS parent,
+         cardinality(c.conkey)::int AS child_columns,
+         c.confdeltype,c.confupdtype,
+         ARRAY(
+          SELECT a.attname FROM unnest(c.conkey) WITH ORDINALITY k(attnum,ord)
+           JOIN pg_attribute a ON a.attrelid=c.conrelid AND a.attnum=k.attnum
+           ORDER BY k.ord
+         ) AS columns_from,
+         ARRAY(
+          SELECT a.attname FROM unnest(c.confkey) WITH ORDINALITY k(attnum,ord)
+           JOIN pg_attribute a ON a.attrelid=c.confrelid AND a.attnum=k.attnum
+           ORDER BY k.ord
+         ) AS columns_to
   FROM pg_constraint c JOIN pg_class cl ON cl.oid=c.conrelid
+  JOIN pg_class parent ON parent.oid=c.confrelid
   JOIN pg_namespace n ON n.oid=cl.relnamespace
   WHERE n.nspname='public' AND c.contype='f'
  `)).rows;
@@ -99,6 +112,20 @@ try{
  const catalogFkIds=new Set(allFks.map(x=>x.child+"."+x.conname));
  const metadataOnlyFks=lines([...catalogFkIds].filter(x=>!typedFkIds.has(x)));
  const typedFkMissing=lines([...typedFkIds].filter(x=>!catalogFkIds.has(x)));
+ const actionLabel={a:"no action",r:"restrict",c:"cascade",n:"set null",d:"set default"};
+ const canonicalTypedFks=Object.entries(latest.tables).flatMap(([key,t])=>
+  Object.entries(t.foreignKeys??{}).map(([name,fk])=>({
+   name,child:tableName(key),parent:fk.tableTo,
+   columnsFrom:fk.columnsFrom,columnsTo:fk.columnsTo,
+   onDelete:fk.onDelete??"no action",onUpdate:fk.onUpdate??"no action",
+  })));
+ const canonicalCatalogFks=allFks.map(x=>({
+  name:x.conname,child:x.child,parent:x.parent,
+  columnsFrom:x.columns_from,columnsTo:x.columns_to,
+  onDelete:actionLabel[x.confdeltype]??x.confdeltype,
+  onUpdate:actionLabel[x.confupdtype]??x.confupdtype,
+ }));
+ const fkShapes=compareForeignKeyShapes(canonicalTypedFks,canonicalCatalogFks);
  await client.query("COMMIT");
  const report={
   kind:"DB020_DISPOSABLE_PG17_REGISTERED_VS_GENERATED_DIAGNOSIS",
@@ -116,6 +143,11 @@ try{
    unvalidatedFks:invalidFks.length,
    registeredFksMissingFromTypedSnapshot:metadataOnlyFks.length,
    typedFksMissingFromRegisteredCatalog:typedFkMissing.length,
+   equalShapeDifferentNameFks:fkShapes.differentNameSameShape.length,
+   matchingNameAndShapeFks:fkShapes.sameNameSameShape.length,
+   matchingNameDifferentShapeFks:fkShapes.sameNameDrift.length,
+   typedFkShapesMissingFromCatalog:fkShapes.missingTypedShape.length,
+   catalogFkShapesMissingFromTypedSnapshot:fkShapes.catalogShapeWithoutTyped.length,
   },
   newlyTypedTables:lines(newlyTypedTables),
   absentFromRegisteredCatalog:lines(absentFromCatalog),
@@ -126,6 +158,10 @@ try{
   unvalidatedFks:lines(invalidFks),
   registeredFksWithoutDrizzleRepresentation:metadataOnlyFks,
   drizzleFksWithoutRegisteredCatalog:typedFkMissing,
+  fkNameAliases:fkShapes.differentNameSameShape.slice(0,120),
+  fkSameNameShapeConflicts:fkShapes.sameNameDrift.slice(0,80),
+  fkTypedShapeMissing:fkShapes.missingTypedShape.slice(0,80),
+  fkCatalogShapeMissing:fkShapes.catalogShapeWithoutTyped.slice(0,80),
   requirements:["Review every structural difference against registered DDL and live catalog",
     "Do not apply the generated SQL as a migration or rewrite already applied SQL",
     "Do not accept DB020 or DB001 from a diagnostic report"],
