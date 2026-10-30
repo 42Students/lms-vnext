@@ -9,6 +9,8 @@ on:
       - "scripts/db020-registered-catalog-diff.mjs"
       - "scripts/db020-fk-shape.mjs"
       - "tests/db020-fk-shape.test.mjs"
+      - "src/db/schema/tpo-company-team.ts"
+      - "src/db/schema/project-audit-staged.ts"
       - "drizzle/meta/0318_snapshot.json"
       - "drizzle/0317_db014_placement_fk_validation.sql"
       - "drizzle/0318_db014_cross_domain_event_guards.sql"
