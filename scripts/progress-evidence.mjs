@@ -72,14 +72,12 @@ export function formatDatabaseProgress(doc,opts={}) {
     .map(key=>key+' '+m[key].percent.toFixed(1)+'%').join(' | ');
   if(!opts.detailed)return 'DATABASE evidence-weighted heuristic | '+compact+
     ' | NOT phase certification';
-  const only=opts.laneId && doc.execution.lanes.find(l=>l.id===opts.laneId);
-  const ids=only?new Set(only.dbTaskIds):null;
   const lines=['DATABASE evidence-weighted heuristic | '+compact,
     'Equal task weights; source/staging/PG scopes scored by a declared rubric, not hours or done status.',
     'Retired work queue only anchors historical source notes; PASSING scope != global acceptance.',
     'Official DONE '+m.accepted.equivalentTasks+'/'+m.accepted.total+'; global phase remains independently gated.',
     'ID     Discovery            Implementation           Verification                Accepted  Evidence'];
-  for(const item of r.items.filter(x=>!ids||ids.has(x.id))){
+  for(const item of r.items){
     lines.push(item.id.padEnd(7)+item.labels.discovery.padEnd(21)+
       item.labels.implementation.padEnd(25)+item.labels.verification.padEnd(28)+
       String(item.done).padEnd(10)+(item.runs.map(x=>x.scope).join(',')||
