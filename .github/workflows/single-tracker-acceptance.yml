@@ -22,6 +22,10 @@ on:
       - tests/db07-reconciliation-contract.test.mjs
       - tests/db011-placement-source-reconciliation.test.mjs
       - tests/db007-profile-source-reconciliation.test.mjs
+      - tests/db-independent-verifier.test.mjs
+      - tests/db-independent-verifier-zero-exit-generation.test.mjs
+      - scripts/db-independent-verify.mjs
+      - scripts/db-independent-verifier-generation-guard.mjs
       - tests/db05-chat06-inventory-reconciliation.test.mjs
       - tests/db06-reconciliation-contract.test.mjs
       - tests/db-parity-db09-ledger.test.mjs
@@ -72,6 +76,8 @@ jobs:
         run: node --test tests/db16-private-storage-safety.test.mjs
       - name: DB010 projects source reconciliation and tombstone regression
         run: node --test tests/db07-reconciliation-contract.test.mjs
+      - name: DB001 standalone verifier safety and malformed snapshot fail-closed contracts
+        run: node --test tests/db-independent-verifier.test.mjs tests/db-independent-verifier-zero-exit-generation.test.mjs
       - name: DB007 original 103-field profile and private document source review
         run: node --test tests/db007-profile-source-reconciliation.test.mjs
       - name: DB008 original 92-field course source reconciliation
