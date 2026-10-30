@@ -1,0 +1,63 @@
+name: DB-022 registered skills and independent usage PostgreSQL acceptance
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'src/modules/skills/**'
+      - 'src/db/schema/db10-skills-catalog.draft.ts'
+      - 'scripts/sql/db10-skills-catalog-staging.sql'
+      - 'drizzle/0195_lane15_db10_skills_catalog.sql'
+      - 'drizzle/0244_db10_skills_catalog_staged.sql'
+      - 'tests/integration/db10-skills-catalog.test.ts'
+      - '.github/workflows/db022-skills-acceptance.yml'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: db022-postgres-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  skills-postgres:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    services:
+      postgres:
+        image: postgres:17-alpine
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: lms_vnext_test
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres -d lms_vnext_test"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+    env:
+      DATABASE_URL: postgresql://postgres:postgres@127.0.0.1:5432/lms_vnext_test
+      TEST_DATABASE_URL: postgresql://postgres:postgres@127.0.0.1:5432/lms_vnext_test
+      DB03_ISOLATED_TEST_DATABASE: "1"
+      DB018_ISOLATED_TEST_DATABASE: "1"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm run db:journal:verify
+      - name: Fresh registered migration replay and seed on disposable PostgreSQL 17 only
+        env:
+          DATABASE_URL: ""
+        run: npm run db:test:prepare
+      - name: Verify replay idempotence
+        run: npm run db:migrate
+      - name: Overlay source-backed skill contract on isolated test schema only
+        run: psql "$TEST_DATABASE_URL" -X -v ON_ERROR_STOP=1 -f scripts/sql/db10-skills-catalog-staging.sql
+      - name: Prove alias multiplicity, tenant-safe reads, negative constraints and concurrent free-text counts
+        run: npx vitest run --config vitest.db.config.ts tests/integration/db10-skills-catalog.test.ts
