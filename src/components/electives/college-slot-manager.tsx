@@ -117,6 +117,7 @@ export function CollegeSlotManager({ options, row }: {
     switch (result?.error) {
       case "ELECTIVE_SLOT_STALE": return "This elective slot was changed elsewhere. Copy your changes before refreshing and retrying.";
       case "ELECTIVE_SELECTION_LOCKED": return "Enrollment history prevents changes to program, semester, year, credits or pick limits.";
+      case "ELECTIVE_PICK_RANGE_INVALID": return "Existing historical pick limits above 10 can be preserved, but new limits must be 10 or fewer.";
       case "ELECTIVE_SLOT_ARCHIVED": return "An archived slot cannot be edited";
       case "ELECTIVE_YEAR_INVALID": return "Academic year must use YYYY-YY format, e.g. 2026-27";
       case "ELECTIVE_SEMESTER_INVALID": return `This program has only ${limit} semesters`;
@@ -148,7 +149,8 @@ export function CollegeSlotManager({ options, row }: {
     if (!Number.isInteger(Number(credits)) || Number(credits) < 0 || Number(credits) > 30) {
       fields["credits"] = "Credits must be a whole number from 0 to 30";
     }
-    if (!Number.isInteger(Number(minPick)) || Number(minPick) < 0 || Number(minPick) > 10) {
+    if (!Number.isInteger(Number(minPick)) || Number(minPick) < 0 ||
+        (Number(minPick) > 10 && (!row || Number(minPick) !== row.minPick))) {
       fields["minPick"] = "Minimum choices must be from 0 to 10";
     }
     if (!Number.isInteger(Number(maxPick)) || Number(maxPick) < 1 ||
