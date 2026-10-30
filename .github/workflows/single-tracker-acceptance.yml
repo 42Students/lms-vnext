@@ -3,12 +3,18 @@ on:
   push:
     paths:
       - docs/tracker.json
+      - AGENTS.md
+      - README.md
+      - docs/project-status.md
+      - docs/database-workflow.md
+      - docs/parity/README.md
       - scripts/tracker.mjs
       - scripts/progress-evidence.mjs
       - tests/tracker-progress-evidence.test.mjs
       - tests/tracker.test.mjs
       - tests/database-domain-packages.test.mjs
       - tests/tracker-ten-lanes.test.mjs
+      - tests/closure-first-protocol.test.mjs
       - .github/workflows/single-tracker-acceptance.yml
   workflow_dispatch:
 permissions:
@@ -29,6 +35,8 @@ jobs:
           node scripts/tracker.mjs --lanes
           node scripts/tracker.mjs --lane=L03
           node scripts/tracker.mjs --progress
+          node scripts/tracker.mjs --closure-next
+          node scripts/tracker.mjs --closure-next --lane=L09
           node scripts/tracker.mjs --progress --lane=L03
       - name: Execute plan, claim and task acceptance tests
-        run: node --test tests/tracker.test.mjs tests/database-domain-packages.test.mjs tests/tracker-ten-lanes.test.mjs tests/tracker-progress-evidence.test.mjs
+        run: node --test tests/tracker.test.mjs tests/database-domain-packages.test.mjs tests/tracker-ten-lanes.test.mjs tests/tracker-progress-evidence.test.mjs tests/closure-first-protocol.test.mjs
