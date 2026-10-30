@@ -43,12 +43,16 @@ check("frozen DB09 inventory contains recruiter-lead owner", () => {
   assert.match(row.sourceDefinition, /INT|int/);
 });
 
-check("current placement_jobs has creator but no mutable owner", () => {
+check("registered placement_jobs preserves creator and now carries scoped mutable owner identity", () => {
   const start = placements.indexOf("export const placementJobs");
   const end = placements.indexOf("export const placementJobRoleOptions", start);
   const job = placements.slice(start, end);
+  assert.ok(start >= 0 && end > start);
   assert.match(job, /createdByUserId: uuid\("created_by_user_id"\)/);
-  assert.doesNotMatch(job, /ownerMembershipId: uuid\("owner_membership_id"\)/);
+  assert.match(job, /ownerMembershipId: uuid\("owner_membership_id"\)/);
+  assert.match(job, /name: "placement_jobs_owner_college_fk"/);
+  assert.match(job, /columns: \[table\.ownerMembershipId, table\.collegeId\]/);
+  assert.match(job, /foreignColumns: \[collegeMemberships\.id, collegeMemberships\.collegeId\]/);
 });
 
 check("current collaboration schema models delegated placement team roles", () => {
