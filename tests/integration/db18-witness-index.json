@@ -145,8 +145,8 @@
     "runtimePassed": 0,
     "knownRedRaceAuthored": 0,
     "observationalReadOnlyAuthored": 21,
-    "baselineDirectBoundaryAuthored": 4,
-    "directNegativeTotalAuthored": 13,
+    "baselineDirectBoundaryAuthored": 7,
+    "directNegativeTotalAuthored": 16,
     "positiveConcurrencyAuthored": 4,
     "fixAuthoredRaceRuntimePending": 2
   },
@@ -215,6 +215,27 @@
       "file": "tests/integration/db018-relational-and-boundary-witnesses.test.ts",
       "title": "rejects duplicate user membership within the same college (23505)",
       "expectedSqlState": "23505",
+      "execution": "NOT_RUN"
+    },
+    {
+      "id": "DB18-B05",
+      "file": "tests/integration/db018-relational-and-boundary-witnesses.test.ts",
+      "title": "rejects a whitespace-only user given name under registered CHECK (23514)",
+      "expectedSqlState": "23514",
+      "execution": "NOT_RUN"
+    },
+    {
+      "id": "DB18-B06",
+      "file": "tests/integration/db018-relational-and-boundary-witnesses.test.ts",
+      "title": "rejects a program with zero academic terms under registered CHECK (23514)",
+      "expectedSqlState": "23514",
+      "execution": "NOT_RUN"
+    },
+    {
+      "id": "DB18-B07",
+      "file": "tests/integration/db018-relational-and-boundary-witnesses.test.ts",
+      "title": "rejects a reversed academic period under registered CHECK (23514)",
+      "expectedSqlState": "23514",
       "execution": "NOT_RUN"
     }
   ]
