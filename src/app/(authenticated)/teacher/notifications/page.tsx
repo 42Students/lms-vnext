@@ -56,7 +56,7 @@ export default async function FacultyNotificationsPage({
   // as unread personal notifications or imply "mark all" can acknowledge them.
   const showPersonal = scopeTab === "all" || scopeTab === "personal";
   const showAnnouncements = view === "all" && scopeTab !== "personal";
-  const [notificationRead, unreadCount, announcementRead] = await Promise.all([
+  const [notificationRead, unreadRead, announcementRead] = await Promise.all([
     (invalid || !showPersonal
       ? Promise.resolve({ items: [], nextCursor: null })
       : listOwnNotificationPage(context, {
@@ -69,7 +69,12 @@ export default async function FacultyNotificationsPage({
             if(error instanceof AuthorizationError)throw error;
             return {available:false as const,value:{items:[],nextCursor:null}};
           }),
-    countOwnUnreadNotifications(context, { collegeId: membership.collegeId }),
+    countOwnUnreadNotifications(context, { collegeId: membership.collegeId })
+      .then(value => ({ available: true as const, value }))
+      .catch(error => {
+        if (error instanceof AuthorizationError) throw error;
+        return { available: false as const, value: 0 };
+      }),
     announcementsEnabled && showAnnouncements && !invalid
       ? listVisibleAnnouncementsForMembershipPage(context, new Date(), noticeCursor ?? undefined)
           .then(value => ({ available: true as const, ...value }))
@@ -80,6 +85,7 @@ export default async function FacultyNotificationsPage({
       : Promise.resolve({ available: true as const, items: [], nextCursor: null }),
   ]);
   const page=notificationRead.value;
+  const unreadCount = unreadRead.value;
   const announcements = announcementRead.items.filter(item =>
     scopeTab === "all" ||
     (scopeTab !== "personal" && item.receiverType.toLowerCase() === scopeTab),
@@ -154,6 +160,10 @@ export default async function FacultyNotificationsPage({
          {id:"faculty",label:"Faculty",unread:announcementRead.items.filter(item=>item.receiverType.toLowerCase()==="faculty").length},
          {id:"personal",label:"Personal",unread:page.items.length},
         ]}/>
+      {!unreadRead.available?<Alert tone="warning">
+        Unread counts are temporarily unavailable. The message list may still be available.
+        <FacultyNotificationsRetry />
+      </Alert>:null}
       {!notificationRead.available && showPersonal?<Alert tone="error">
         <strong>Couldn't load notifications.</strong> Personal notifications could not be loaded.
         <FacultyNotificationsRetry />
@@ -175,7 +185,7 @@ export default async function FacultyNotificationsPage({
         {allEmpty?<p className="text-sm text-body">Announcements across college, department, and faculty will appear here.</p>:null}
         {view === "unread" && scopeTab !== "personal" && scopeTab !== "all" ?
           <p role="status" className="text-sm text-body">Announcements have no read status. Select All to view {scopeTab} announcements, or Personal for unread messages.</p> : null}
-        {(!failedFeed || feed.length > 0 || invalid) ?
+        {!invalid && (!failedFeed || feed.length > 0) ?
         <NotificationList readEndpoint="/api/notifications/faculty" items={feed}
           emptyText={allEmpty?"No notifications yet":view==="unread"?"No unread notifications yet":
             "No "+(scopeTab==="all"?"new":scopeTab)+" notifications yet"}
