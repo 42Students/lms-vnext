@@ -184,3 +184,109 @@ test("DB076 git-head witness detects commit movement while source is otherwise c
     fs.rmSync(dir,{recursive:true,force:true});
   }
 });
+
+
+// DB-072–DB-081 independent tail-backlog acceptance preconditions
+// These ten are SOURCE-LEVEL guardrails, NOT an assertion that the corresponding
+// DB task is accepted. Full registered PostgreSQL, producer/consumer, tenant,
+// concurrency and migration evidence remains a separate required gate.
+const tailRead = p => fs.readFileSync(p,"utf8");
+const tailJournal = () => JSON.parse(tailRead("drizzle/meta/_journal.json"));
+const tailTracker = () => JSON.parse(tailRead("docs/tracker.json"));
+
+test("DB072: two-phase recruiter-code cutover cannot silently lose HR compatibility",()=>{
+  const sql=tailRead("docs/planning/sql/db08-recruiter-round-result-code-candidate.sql");
+  const expand=sql.indexOf("DB072 EXPAND");
+  const finalize=sql.indexOf("DB072 FINALIZE");
+  assert.ok(expand>=0&&finalize>expand,"EXPAND must precede FINALIZE");
+  assert.match(sql.slice(expand,finalize),/'HR'/);
+  assert.match(sql.slice(finalize),/SET source='RECRUITER'/);
+  assert.match(sql.slice(finalize),/WHERE source='HR'/);
+});
+test("DB073: staged release-sprint-task-submission ancestry names all three DB FKs",()=>{
+  const sql=tailRead("docs/planning/sql/db07-project-lineage-fks-staging.sql");
+  assert.match(sql,/DO \$db073_project_lineage_preflight\$/);
+  for(const name of ["project_sprints_project_release_fk","project_tasks_project_sprint_fk",
+    "project_task_submissions_project_task_fk"]){
+    assert.ok(sql.includes("ADD CONSTRAINT "+name),name);
+  }
+});
+test("DB074: review and evaluation parent-scope checks are distinct",()=>{
+  const sql=tailRead("docs/planning/sql/db07-review-evaluation-parent-fks-staging.sql");
+  assert.match(sql,/DO \$db074_review_evaluation_preflight\$/);
+  for(const name of ["project_submission_reviews_project_submission_fk",
+    "project_evaluations_project_submission_fk"]){
+    assert.ok(sql.includes("ADD CONSTRAINT "+name),name);
+  }
+});
+test("DB075: nullable meeting ancestry still checks each present link and paired sprint",()=>{
+  const sql=tailRead("docs/planning/sql/db07-meeting-linked-ancestry-staging.sql");
+  assert.match(sql,/DO \$db075_meeting_link_preflight\$/);
+  assert.match(sql,/MATCH SIMPLE intentionally skips/);
+  for(const name of ["project_meetings_project_sprint_fk",
+    "project_meetings_project_task_fk","project_meetings_linked_sprint_task_fk"]){
+    assert.ok(sql.includes("ADD CONSTRAINT "+name),name);
+  }
+});
+test("DB076: the independent verifier fails closed on generator diagnostics and checkout movement",()=>{
+  assert.match(script,/canonicalGeneration && !canonicalGeneration\.passed/);
+  assert.match(script,/sourceTreeCleanAtEnd/);
+  assert.match(script,/gitHeadUnchanged/);
+  assert.match(script,/results\.every\(/);
+});
+test("DB077: both historical DB04 retirements cover 33 fields without shadow tables",()=>{
+  const j=JSON.parse(tailRead("docs/planning/db04-chat05-historical-final-disposition-2026-10-12.json"));
+  assert.equal(j.summary.fieldsDispositioned,33);
+  assert.equal(j.summary.anonymousDispositionGaps,0);
+  assert.deepEqual(j.dispositions.map(x=>x.legacyTable).sort(),["approver_id_card","student_registration"]);
+  assert.ok(j.dispositions.every(x=>x.currentProductRequired===false&&x.replacementTarget===null));
+});
+test("DB078: retired physical course columns are checked in the registered PostgreSQL catalog",()=>{
+  const witness=tailRead("tests/db078-registered-course-column-disposition-pg.test.mjs");
+  assert.match(witness,/information_schema\.columns/);
+  assert.match(witness,/default_subscription_days/);
+  assert.match(witness,/formal_title/);
+  assert.match(witness,/assertSafeDb01TestTarget/);
+});
+test("DB079: recruiter-note grant rechecks run on any UPDATE in the registered journal",()=>{
+  const tag="0312_db09_recruiter_note_grant_on_update";
+  const journal=tailJournal();
+  assert.equal(journal.entries.filter(x=>x.tag===tag).length,1);
+  const sql=tailRead("drizzle/"+tag+".sql");
+  assert.match(sql,/BEFORE INSERT OR UPDATE\s+ON placement_recruiter_applicant_notes/);
+  assert.doesNotMatch(sql,/UPDATE OF recruiter_user_id/);
+});
+test("DB080: registered image-gallery persistence binds owner, receipt and active state",()=>{
+  assert.equal(tailJournal().entries.filter(x=>x.tag==="0283_chat14_learner_gallery").length,1);
+  const sql=tailRead("drizzle/0283_chat14_learner_gallery.sql");
+  assert.match(sql,/learner_profile_images_receipt_fk/);
+  assert.match(sql,/receipt_id, learner_membership_id, receipt_purpose/);
+  assert.match(sql,/learner_profile_images_active_ck/);
+  assert.match(sql,/learner_profile_images_owner_receipt_uq/);
+});
+test("DB081: all 24 historical qualification fields map to normalized registered education",()=>{
+  const crosswalk=JSON.parse(tailRead("docs/planning/db04-chat05-qualification-24-field-crosswalk-2026-10-12.json"));
+  assert.equal(crosswalk.summary.sourceFields,24);
+  assert.equal(crosswalk.summary.mappedFields,24);
+  assert.equal(crosswalk.summary.anonymousGaps,0);
+  assert.equal(crosswalk.rows.length,24);
+  assert.equal(new Set(crosswalk.rows.map(x=>x.legacyField)).size,24);
+  assert.ok(crosswalk.rows.every(x=>x.target&&x.kind));
+  assert.equal(tailJournal().entries.filter(x=>x.tag==="0304_db04_normalized_profile_persistence").length,1);
+  const sql=tailRead("drizzle/0304_db04_normalized_profile_persistence.sql");
+  assert.match(sql,/CREATE TABLE learner_profile_education_entries/);
+  assert.match(sql,/CREATE TABLE learner_profile_education_documents/);
+  assert.match(sql,/'CGPA','GPA','Percentage','Grade'/);
+});
+test("tail backlog: source-only progress cannot be recorded as accepted DB engineering",()=>{
+  const ids=Array.from({length:10},(_,i)=>"DB-"+String(72+i).padStart(3,"0"));
+  const tasks=tailTracker().tasks.filter(x=>ids.includes(x.id));
+  assert.equal(tasks.length,10);
+  for(const task of tasks){
+    if(!task.done) continue;
+    assert.ok(task.acceptedAt||task.acceptanceEvidence?.length,
+      task.id+" cannot be closed without acceptance metadata");
+    assert.ok(task.acceptanceEvidence?.some(e=>e.result==="PASS"&&e.runUrl),
+      task.id+" requires executed acceptance evidence, not source-only assertions");
+  }
+});
