@@ -72,7 +72,7 @@ describe("Faculty profile account page closure",()=>{
  it("makes initial source failure recoverable without exposing the error",async()=>{
   fakes.identity.mockRejectedValue(new Error("sensitive runtime error"));
   const text=await html();
-  expect(text).toContain("Couldn't refresh profile");
+  expect(text).toContain("Couldn&#x27;t refresh profile");
   expect(text).toContain("Refresh profile");
   expect(text).not.toContain("sensitive runtime error");
  });
