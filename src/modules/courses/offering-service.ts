@@ -591,6 +591,10 @@ export async function updateCourseOffering(
       .update(courseOfferings)
       .set({
         ...input,
+        // DB02: an ELECTIVE offering is term-bound but must not retain a
+        // fixed CORE curriculum-row FK. Update both columns atomically so
+        // the registered check/trigger sees a valid final record.
+        ...(input.type === "ELECTIVE" ? { programTermCourseId: null } : {}),
         updatedAt: new Date(),
       })
       .where(and(
