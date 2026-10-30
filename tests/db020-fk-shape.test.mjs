@@ -1,6 +1,6 @@
 import {test} from "node:test";
 import assert from "node:assert/strict";
-import {compareForeignKeyShapes,foreignKeyShape} from "../scripts/db020-fk-shape.mjs";
+import {compareForeignKeyShapes,foreignKeyShape,partitionCatalogOnlyForeignKeys} from "../scripts/db020-fk-shape.mjs";
 
 const base={
  child:"activity_events",parent:"college_memberships",
@@ -81,4 +81,14 @@ test("DB020 duplicate typed relationship cannot reuse one catalog FK",()=>{
  assert.equal(result.exactSameShapeCount,1);
  assert.equal(result.missingTypedShape.length,1);
  assert.equal(result.catalogShapeWithoutTyped.length,0);
+});
+
+test("DB020 keeps SQL-only live FK constraints visible but separate from typed schema gaps",()=>{
+ const typed={...base,child:"typed_child",name:"typed_fk"};
+ const sourceOnly={...base,child:"sql_only_child",name:"sql_only_fk"};
+ const classified=partitionCatalogOnlyForeignKeys(
+   [sourceOnly,typed],["public.typed_child"]);
+ assert.deepEqual(classified.sqlOnlyTableEdges,[sourceOnly]);
+ assert.deepEqual(classified.typedTableEdges,[typed]);
+ assert.equal(classified.sqlOnlyTableEdges.length+classified.typedTableEdges.length,2);
 });

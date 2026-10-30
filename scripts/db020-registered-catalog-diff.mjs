@@ -5,7 +5,7 @@ import {readFileSync,readdirSync,mkdirSync,writeFileSync} from "node:fs";
 import {execFileSync} from "node:child_process";
 import pg from "pg";
 import {assertDb018DisposableTarget} from "../tests/support/db018-test-target.mjs";
-import {compareForeignKeyShapes} from "./db020-fk-shape.mjs";
+import {compareForeignKeyShapes,partitionCatalogOnlyForeignKeys} from "./db020-fk-shape.mjs";
 
 if(process.env.DB020_DISPOSABLE_PG!=="1")
   throw new Error("DB020 catalog inspection requires explicit disposable PostgreSQL");
@@ -126,6 +126,8 @@ try{
   onUpdate:actionLabel[x.confupdtype]??x.confupdtype,
  }));
  const fkShapes=compareForeignKeyShapes(canonicalTypedFks,canonicalCatalogFks);
+ const fkOnlyOwners=partitionCatalogOnlyForeignKeys(
+   fkShapes.catalogShapeWithoutTyped,snapTables);
  await client.query("COMMIT");
  const report={
   kind:"DB020_DISPOSABLE_PG17_REGISTERED_VS_GENERATED_DIAGNOSIS",
@@ -148,6 +150,8 @@ try{
    matchingNameDifferentShapeFks:fkShapes.sameNameDrift.length,
    typedFkShapesMissingFromCatalog:fkShapes.missingTypedShape.length,
    catalogFkShapesMissingFromTypedSnapshot:fkShapes.catalogShapeWithoutTyped.length,
+   catalogOnlyFkShapesOnSqlOnlyTables:fkOnlyOwners.sqlOnlyTableEdges.length,
+   catalogOnlyFkShapesOnTypedTables:fkOnlyOwners.typedTableEdges.length,
   },
   newlyTypedTables:lines(newlyTypedTables),
   absentFromRegisteredCatalog:lines(absentFromCatalog),
@@ -170,6 +174,8 @@ try{
   fkSameNameShapeConflicts:fkShapes.sameNameDrift.slice(0,80),
   fkTypedShapeMissing:fkShapes.missingTypedShape.slice(0,80),
   fkCatalogShapeMissing:fkShapes.catalogShapeWithoutTyped.slice(0,80),
+  fkCatalogSqlOnlyTableEdges:fkOnlyOwners.sqlOnlyTableEdges.slice(0,80),
+  fkCatalogTypedTableEdges:fkOnlyOwners.typedTableEdges.slice(0,80),
   requirements:["Review every structural difference against registered DDL and live catalog",
     "Do not apply the generated SQL as a migration or rewrite already applied SQL",
     "Do not accept DB020 or DB001 from a diagnostic report"],

@@ -41,3 +41,19 @@ export function compareForeignKeyShapes(typed,catalog) {
     missingTypedShape,catalogShapeWithoutTyped,
     exactSameShapeCount:sameNameSameShape.length+differentNameSameShape.length};
 }
+
+/**
+ * A registered FK attached to an intentionally SQL-only child table is not
+ * a missing Drizzle relationship. Preserve it in the diagnostic (do not
+ * silently call it verified), but only typed-table FKs are actionable as
+ * missing typed declarations.
+ */
+export function partitionCatalogOnlyForeignKeys(catalogOnly,typedTableNames) {
+  const typedTables=new Set([...typedTableNames].map(normalizedTable));
+  const sqlOnlyTableEdges=[],typedTableEdges=[];
+  for(const edge of catalogOnly) {
+    if(typedTables.has(normalizedTable(edge.child)))typedTableEdges.push(edge);
+    else sqlOnlyTableEdges.push(edge);
+  }
+  return {sqlOnlyTableEdges,typedTableEdges};
+}
