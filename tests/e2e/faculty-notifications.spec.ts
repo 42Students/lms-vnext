@@ -14,8 +14,13 @@ test.skip(
   "Isolated Faculty notification browser proof requires E2E auth and E2E_DATABASE_URL",
 );
 
-test("Faculty notifications stay within the selected college, including read actions", async ({ page, context }) => {
+for (const viewport of [
+  { name: "desktop", width: 1280, height: 800 },
+  { name: "mobile", width: 390, height: 844 },
+]) {
+test("Faculty notifications "+viewport.name+" stay within the selected college, including read actions", async ({ page, context }) => {
   test.setTimeout(90_000);
+  await page.setViewportSize({width:viewport.width,height:viewport.height});
   const pool = new Pool({ connectionString: databaseUrl!, max: 1 });
   const suffix = randomUUID();
   const userId = randomUUID();
@@ -82,6 +87,17 @@ test("Faculty notifications stay within the selected college, including read act
     await expect(page.getByText(noticeA2, { exact: true })).toBeVisible();
     await expect(page.getByText(noticeB, { exact: true })).toHaveCount(0);
     await expect(page.getByRole("link", { name: "Unread (2)" })).toBeVisible();
+    // The five legacy tabs remain navigable; Personal must not widen to
+    // foreign-college events, and returning to All must restore the feed.
+    await page.getByRole("navigation",{name:"Notification categories"})
+      .getByRole("link",{name:/Personal/}).click();
+    await expect(page).toHaveURL(/tab=personal/);
+    await expect(page.getByText(noticeA1,{exact:true})).toBeVisible();
+    await expect(page.getByText(noticeB,{exact:true})).toHaveCount(0);
+    await page.getByRole("navigation",{name:"Notification categories"})
+      .getByRole("link",{name:/All/}).click();
+    await expect(page).toHaveURL(/\/teacher\/notifications\?view=all$/);
+    await expect(page.getByText(noticeA1,{exact:true})).toBeVisible();
 
     const first = page.getByRole("article").filter({ hasText: noticeA1 });
     const marked = page.waitForResponse((response) =>
@@ -91,6 +107,14 @@ test("Faculty notifications stay within the selected college, including read act
     await first.getByRole("button", { name: "Mark read" }).click();
     expect((await marked).ok()).toBe(true);
     await expect(page.getByRole("link", { name: "Unread (1)" })).toBeVisible();
+    await page.getByRole("group",{name:"Notification filter"})
+      .getByRole("link",{name:/Unread/}).click();
+    await expect(page).toHaveURL(/view=unread/);
+    await expect(page.getByText(noticeA1,{exact:true})).toHaveCount(0);
+    await expect(page.getByText(noticeA2,{exact:true})).toBeVisible();
+    await page.getByRole("group",{name:"Notification filter"})
+      .getByRole("link",{name:"All",exact:true}).click();
+    await expect(page.getByText(noticeA1,{exact:true})).toBeVisible();
 
     const markAll = page.waitForResponse((response) =>
       response.request().method() === "POST" &&
@@ -127,3 +151,4 @@ test("Faculty notifications stay within the selected college, including read act
     await pool.end();
   }
 });
+}
