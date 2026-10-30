@@ -47,8 +47,15 @@ async function cleanup() {
  }
  if(templateId){
   await pool.query("delete from project_template_college_assignments where template_id=$1",[templateId]);
-  await pool.query("delete from project_template_versions where template_id=$1",[templateId]);
-  await pool.query("delete from project_templates where id=$1",[templateId]);
+  // Never erase a DB070 immutable revision or its DB071 parent header.
+  const retention=await pool.query<{retainHistory:boolean}>("select (exists (select 1 from pg_trigger where tgrelid='project_template_versions'::regclass " +
+      "and tgname='db07_project_template_versions_append_only' and tgenabled='O') " +
+      "or exists (select 1 from pg_constraint where conrelid='project_templates'::regclass " +
+      "and conname='project_templates_current_version_snapshot_fk')) as \"retainHistory\"");
+  if(!retention.rows[0]?.retainHistory){
+    await pool.query("delete from project_template_versions where template_id=$1",[templateId]);
+    await pool.query("delete from project_templates where id=$1",[templateId]);
+  }
  }
  await pool.query("delete from section_enrollments where section_id=$1",[ids.section]);
  await pool.query("delete from learner_program_enrollments where cohort_id=$1",[ids.cohort]);
