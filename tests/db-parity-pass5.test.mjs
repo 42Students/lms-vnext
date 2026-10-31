@@ -147,12 +147,16 @@ test("DB18 witness index remains honest about authored versus executed coverage"
   assert.equal(index.status, "FOCUSED_PG17_WITNESSES_VERIFIED_GLOBAL_GATE_PENDING");
   assert.equal(index.counts.directNegativeAuthored, 9);
   assert.equal(index.counts.existingConcurrencyAuthored, 4);
-  assert.equal(index.counts.pendingConcurrencyAuthored, 1);
-  assert.deepEqual(index.authoredPendingConcurrencyWitnesses.map(p => p.raceProbe), ["P5-R23"]);
-  const r23 = index.authoredPendingConcurrencyWitnesses[0];
-  assert.equal(r23.state, "AUTHORED_AWAITING_REGISTERED_PG17");
-  assert.equal(r23.execution, "NOT_RUN");
-  assert.match(fs.readFileSync(r23.file, "utf8"), /P5-R23 serializes active leave with waitlist promotion and concurrent join/);
+  assert.equal(index.counts.pendingConcurrencyAuthored, 2);
+  assert.deepEqual(
+    index.authoredPendingConcurrencyWitnesses.map(p => p.raceProbe),
+    ["P5-R23", "P5-R20"],
+  );
+  for (const witness of index.authoredPendingConcurrencyWitnesses) {
+    assert.equal(witness.state, "AUTHORED_AWAITING_REGISTERED_PG17");
+    assert.equal(witness.execution, "NOT_RUN");
+    assert.ok(fs.readFileSync(witness.file, "utf8").includes(witness.title));
+  }
   assert.equal(index.counts.additionalRegisteredConcurrencyRuntimeExecuted, 2);
   assert.equal(index.counts.additionalRegisteredConcurrencyRuntimePassed, 2);
   assert.deepEqual(index.registeredAdditionalConcurrencyWitnesses.map(p => p.raceProbe), ["P5-R11", "P5-R03"]);
