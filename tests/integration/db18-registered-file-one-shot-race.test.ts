@@ -17,6 +17,7 @@ import { createLearningPath, transitionLearningPath } from "@/modules/courses/le
 import { createCourseLesson } from "@/modules/courses/lesson-service";
 import { createCourseAssignment, transitionCourseAssignment } from "@/modules/courses/assignment-service";
 import { submitAssignmentWithFiles } from "@/modules/courses/assignment-submission-file-service";
+import { submitCourseAssignment } from "@/modules/courses/assignment-submission-service";
 import { SEED_IDS } from "../../scripts/db-seed-data";
 
 // Companion to the required staged DB053 receipt test; NOT a replacement.
@@ -159,7 +160,7 @@ afterAll(async()=>{
 });
 
 describe.skipIf(!enabled)("DB018 registered one-shot private file producer",()=>{
-  it("P5-R13 registered FILE path consumes two CLEAN files atomically despite reversed request order",async()=>{
+  it("P5-R13 registered modern and legacy FILE paths share one atomic one-shot writer",async()=>{
     expect(assignmentId).toMatch(/^[0-9a-f-]{36}$/);
     const holder=await pg().connect();
     let began=false;
@@ -174,10 +175,13 @@ describe.skipIf(!enabled)("DB018 registered one-shot private file producer",()=>
         "select id from assignment_submission_files where id=$1 for update",
         [[...forward].sort()[0]],
       );
-      const issue=(fileIds:string[])=>submitAssignmentWithFiles(learner,assignmentId,{
-        deliveryId,fileIds,
+      const legacy=submitCourseAssignment(learner,assignmentId,{
+        deliveryId,submissionType:"FILE",uploadReceiptIds:forward,
       });
-      const pending=[issue(forward),issue(reversed)].map(p=>p.then(
+      const modern=submitAssignmentWithFiles(learner,assignmentId,{
+        deliveryId,fileIds:reversed,
+      });
+      const pending=[legacy,modern].map(p=>p.then(
         value=>({ok:true as const,value}),
         (error:unknown)=>({ok:false as const,error}),
       ));
@@ -202,6 +206,17 @@ describe.skipIf(!enabled)("DB018 registered one-shot private file producer",()=>
       expect(outcomes.find(x=>!x.ok))
         .toMatchObject({ok:false,error:{code:"STORAGE_FILE_NOT_READY"}});
       const winnerOrder=outcomes[0]?.ok?forward:reversed;
+      if(outcomes[0]?.ok) {
+        // Legacy response preserves the old FILE summary shape, while the
+        // same DB016 transaction persists both ordered scoped file links.
+        expect(outcomes[0].value).toMatchObject({
+          id:expect.any(String),
+          files:[
+            {originalName:"race.pdf",mimeType:"application/pdf",sizeBytes:128},
+            {originalName:"race-second.pdf",mimeType:"application/pdf",sizeBytes:128},
+          ],
+        });
+      }
       const submissions=await pg().query<{id:string}>(
         "select id from assignment_submissions where assignment_id=$1 and membership_id=$2",
         [assignmentId,memberId],
