@@ -187,8 +187,8 @@ test("DB045 attendance history retains validated composite record and delivery i
   await withRollback(async db => {
     const {rows} = await db.query(`
       SELECT c.conname, c.convalidated, c.confdeltype,
-             array_agg(child_att.attname ORDER BY cols.ordinality) AS child_columns,
-             array_agg(parent_att.attname ORDER BY cols.ordinality) AS parent_columns
+             array_to_json(array_agg(child_att.attname ORDER BY cols.ordinality)) AS child_columns,
+             array_to_json(array_agg(parent_att.attname ORDER BY cols.ordinality)) AS parent_columns
       FROM pg_constraint c
       JOIN LATERAL unnest(c.conkey, c.confkey) WITH ORDINALITY
         AS cols(child_num,parent_num,ordinality) ON true
