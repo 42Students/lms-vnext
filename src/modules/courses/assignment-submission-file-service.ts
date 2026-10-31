@@ -471,6 +471,10 @@ export async function submitAssignmentWithFiles(
             eq(assignmentSubmissionFiles.deliveryId, input.deliveryId),
           ),
         )
+        // Two requests can list the same files in opposite UI order.
+        // Lock by canonical ID order, then preserve requested sequence below.
+        // Without ordering, concurrent row acquisition can deadlock.
+        .orderBy(asc(assignmentSubmissionFiles.id))
         .for("update");
       if (files.length !== input.fileIds.length) {
         throw new StorageFileError("STORAGE_NOT_FOUND");
