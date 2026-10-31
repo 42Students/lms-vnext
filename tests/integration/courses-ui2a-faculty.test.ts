@@ -57,16 +57,14 @@ import {
 import { getFacultyDeliveryRoster } from "@/modules/attendance/faculty-service";
 import { SEED_IDS } from "../../scripts/db-seed-data";
 import { releaseSeedLearnerPlacementEnrollment } from "../support/w04-placement-access-fixture";
+import { assertDb018DisposableTarget } from "../support/db018-test-target.mjs";
+import { deleteDisposableAttendanceEvents } from "../support/db045-attendance-fixture.mjs";
 
-const databaseUrl =
-  process.env.TEST_DATABASE_URL ??
-  process.env.DATABASE_URL;
-
-if (!databaseUrl) {
-  throw new Error(
-    "TEST_DATABASE_URL or DATABASE_URL is required for DB integration tests",
-  );
+if (!process.env.TEST_DATABASE_URL) {
+  throw new Error("Faculty course fixture requires disposable TEST_DATABASE_URL");
 }
+assertDb018DisposableTarget(process.env, { serviceBound: true });
+const databaseUrl = process.env.TEST_DATABASE_URL;
 
 const pool = new Pool({
   connectionString: databaseUrl,
@@ -157,6 +155,22 @@ async function cleanupUI2A() {
     await pool.query("delete from in_app_notifications where event_id = any($1::uuid[])",[eventIds]);
     await pool.query("delete from notification_delivery_outbox where event_id = any($1::uuid[])",[eventIds]);
     await pool.query("delete from activity_events where id = any($1::uuid[])",[eventIds]);
+  }
+  // DB045 keeps immutable MARK/CORRECT history with RESTRICT links to
+  // schedule deliveries. Teardown only this isolated PG17 fixture's history
+  // via its guarded helper; never relax the real retention constraints.
+  const { rows: schedules } = await pool.query<{ id: string }>(`
+    select e.id from section_schedule_events e
+    join sections s on s.id=e.section_id
+    join cohorts c on c.id=s.cohort_id
+    join programs p on p.id=c.program_id
+    where p.code like 'FUI2A-%'
+  `);
+  const scheduleIds = schedules.map(row => row.id);
+  if (scheduleIds.length) {
+    await deleteDisposableAttendanceEvents(pool, scheduleIds);
+    await pool.query("delete from attendance_records where schedule_event_id=any($1::uuid[])", [scheduleIds]);
+    await pool.query("delete from attendance_sessions where schedule_event_id=any($1::uuid[])", [scheduleIds]);
   }
   // Schedule link FKs must go before the Section and delivery fixtures.
   await pool.query(`delete from section_schedule_event_courses
@@ -256,6 +270,17 @@ async function cleanupUI2A() {
      where delivery_id in (
        select csd.id
        from course_section_deliveries csd
+       join course_offerings co on co.id = csd.offering_id
+       join courses c on c.id = co.course_id
+       where c.code like 'FUI2A-%'
+     )`,
+  );
+  // DB014 forbids removing a delivery with surviving discussion history.
+  // Remove only messages belonging to this disposable course fixture.
+  await pool.query(
+    `delete from course_discussion_messages
+     where delivery_id in (
+       select csd.id from course_section_deliveries csd
        join course_offerings co on co.id = csd.offering_id
        join courses c on c.id = co.course_id
        where c.code like 'FUI2A-%'
