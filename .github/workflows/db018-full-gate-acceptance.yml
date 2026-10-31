@@ -27,6 +27,7 @@ on:
       - "tests/integration/projects-p5-lifecycle.test.ts"
       - "tests/integration/placements-p8-offers.test.ts"
       - "tests/integration/placements-db08-batches.test.ts"
+      - "tests/integration/db18-assignment-receipt-race.test.ts"
       - "tests/db-parity-pass5.test.mjs"
       - "tests/integration/db18-witness-index.json"
       - "docs/planning/database-parity-pass5-probe-manifest.json"
@@ -116,6 +117,9 @@ jobs:
       - name: P5-R09 and P5-R21 registered real outbound producer and fake provider
         run: |
           npx vitest run --config vitest.db.registered.config.ts tests/integration/db18-outbound-service-race.test.ts
+      - name: P5-R13 scanned FILE receipt duplicate submission on registered PG17
+        run: |
+          npx vitest run --config vitest.db.registered.config.ts tests/integration/db18-assignment-receipt-race.test.ts -t P5-R13
       - name: P5-R14 competing sprint starts and reopen on registered PG17
         run: |
           npx vitest run --config vitest.db.registered.config.ts tests/integration/projects-p5-lifecycle.test.ts -t P5-R14
