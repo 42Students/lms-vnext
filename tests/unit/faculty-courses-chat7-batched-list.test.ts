@@ -32,7 +32,8 @@ describe("faculty course cards use bounded scoped summaries", () => {
     const batch = source("src/modules/courses/faculty-course-card-summary-service.ts");
     expect(list).toContain("listFacultyCourseCardSummaries(list.items)");
     expect(list).not.toContain("getFacultyCourseWorkspace(context,course.deliveryId)");
-    expect(batch).toContain("facultyCourseSummaryWindow(assigned,true).items");
+    expect(batch).toContain("const visible=assigned;");
+    expect(batch).not.toContain("facultyCourseSummaryWindow(assigned,true).items");
     expect(batch).toContain("if (!visible.length) return result");
     expect(batch).toContain("Promise.all([");
     expect(batch).toContain("inArray(courseLessons.learningPathId, pathIds)");
