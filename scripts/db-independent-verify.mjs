@@ -421,6 +421,12 @@ async function main() {
       W04_ISOLATED_TEST_DATABASE: "1",
       DB10_DISPOSABLE_TEST_DATABASE: "true",
       DB10_ISOLATED_TEST_DATABASE: "1",
+      // This is a synthetic readiness attestation ONLY for disposable
+      // service-backed integration fixtures. It is not a deployed scheduler,
+      // recipient-delivery proof, or permission to send production notices.
+      // The production tpoNoticeDeliveryVerified gate stays untouched.
+      TPO_NOTICE_DELIVERY_VERIFIED: "VERIFIED",
+      TPO_NOTICE_SCHEDULER_SECRET: "db001-disposable-pg17-tests-not-a-deployed-worker",
     };
     runStep(
       "PostgreSQL integration / negative witnesses",
