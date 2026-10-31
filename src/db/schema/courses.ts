@@ -203,9 +203,11 @@ export const courseOfferings = pgTable(
       table.courseId,
       table.status,
     ),
+    // Preserve registered DB02 historical zero-credit values; the create/update
+    // API still requires 1..30 for newly supplied credits.
     check(
-      "course_offerings_credits_ck",
-      sql`${table.credits} is null or (${table.credits} between 1 and 30)`,
+      "db02_course_offerings_credits_ck",
+      sql`${table.credits} is null or (${table.credits} between 0 and 30)`,
     ),
     check(
       "course_offerings_display_order_ck",
