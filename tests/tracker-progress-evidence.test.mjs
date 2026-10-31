@@ -31,7 +31,12 @@ test('missing or duplicate progress rows are rejected without changing done stat
 });
 test('fake PostgreSQL or task acceptance labels fail closed',()=>{
   const x=copy(),row=x.execution.databaseProgress.items.find(x=>x.id==='DB-019');
+  // DB019 now has a real scoped PostgreSQL receipt. A matching verified
+  // label is valid; a forged or absent receipt must still be rejected.
   row.verification='SCOPED_POSTGRES_PASS';
+  row.runs=[{url:'https://untrusted.example.invalid/fake-run',scope:'WORKFLOW_PASSED'}];
+  assert.ok(invalid(x,'UNSUPPORTED_POSTGRES_PROGRESS_CLAIM'));
+  row.runs=[];
   assert.ok(invalid(x,'UNSUPPORTED_POSTGRES_PROGRESS_CLAIM'));
   row.verification='NOT_RUN';row.implementation='ACCEPTED_BY_CANONICAL_DONE';
   assert.ok(invalid(x,'PROGRESS_MUST_NOT_DECLARE_ACCEPTANCE'));
