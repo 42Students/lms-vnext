@@ -34,7 +34,13 @@ async function mustReject23514(work) {
 }
 
 test("DB045 registered grade-ledger INSERT, row-mutation and TRUNCATE guards active", async () => {
-  assert.equal(journal.entries.at(-1)?.tag, "0324_db045_attendance_immutable_history");
+  for(const tag of [
+    "0320_db045_grade_event_guards",
+    "0321_db045_grade_event_completeness",
+    "0322_db045_grade_event_enum_cast",
+    "0324_db045_attendance_immutable_history",
+  ]) assert.ok(journal.entries.some(entry=>entry.tag===tag),
+    "Missing registered DB045 migration "+tag);
   await withRollback(async db => {
     const { rows } = await db.query(`
       SELECT tgname,tgenabled FROM pg_trigger
