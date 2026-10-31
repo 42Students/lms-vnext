@@ -151,6 +151,44 @@ afterEach(async () => {
 afterAll(async () => { await pool.end(); await closeDatabaseConnection(); });
 
 describe("DB03 group kernel on disposable PostgreSQL", () => {
+  it("P5-R03 serializes concurrent last-seat group admissions without counter or event drift", async () => {
+    const group = await createActiveGroup("BUS", 1);
+    const first = await createLearner();
+    const second = await createLearner();
+    const gate = await pool.connect();
+    try {
+      // Hold the admission row lock while launching both real service transactions:
+      // neither writer may consume the sole seat from a stale active_count.
+      await gate.query("BEGIN");
+      await gate.query("SELECT id FROM lms_groups WHERE id=$1 FOR UPDATE", [group]);
+      const admissions = Promise.allSettled([
+        joinGroup(first.ctx, group, first.membershipId),
+        joinGroup(second.ctx, group, second.membershipId),
+      ]);
+      await new Promise(resolve => setTimeout(resolve, 100));
+      await gate.query("COMMIT");
+      const results = await admissions;
+      expect(results.every(result => result.status === "fulfilled")).toBe(true);
+      const states = await pool.query<{state:string; n:number}>(
+        "SELECT state,count(*)::integer AS n FROM lms_group_members WHERE group_id=$1 GROUP BY state",
+        [group],
+      );
+      expect(Object.fromEntries(states.rows.map(row => [row.state, row.n])))
+        .toEqual({ACTIVE: 1, WAITLISTED: 1});
+      const [counter, events] = await Promise.all([
+        pool.query<{active_count:number}>("SELECT active_count FROM lms_groups WHERE id=$1", [group]),
+        pool.query<{to_state:string}>(
+          "SELECT to_state FROM lms_group_member_events WHERE group_id=$1", [group],
+        ),
+      ]);
+      expect(counter.rows[0].active_count).toBe(1);
+      expect(events.rows.map(row => row.to_state).sort()).toEqual(["ACTIVE", "WAITLISTED"]);
+    } finally {
+      await gate.query("ROLLBACK");
+      gate.release();
+    }
+  });
+
   it("serializes simultaneous choices from different offerings of the same max_pick=1 slot", async () => {
     const { groups, candidate } = await createElectiveFixture();
     const initialSections = await pool.query(
