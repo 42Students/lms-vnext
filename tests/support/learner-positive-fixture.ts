@@ -10,6 +10,7 @@ export function newLearnerPositiveFixture() {
   const ids = Object.fromEntries([
     "user","membership","enrollment","role","decision","company","relation",
     "job","jobRole","application","round","eventA","eventB","notificationA","notificationB",
+    "foreignUser","foreignMembership","foreignRole",
   ].map(name => [name, randomUUID()])) as Record<string,string>;
   const context: RequestContext = {
     user: { id: ids.user, identityUid: key("positive-"), platformStatus: "ACTIVE", systemRoles: [] },
@@ -38,6 +39,21 @@ export async function seedLearnerPositiveFixture(
   await pool.query(
     "INSERT INTO membership_roles(id,membership_id,role) VALUES($1,$2,'LEARNER')",
     [ids.role,ids.membership],
+  );
+  // DB014 notification scope forbids using a College A learner for a College B
+  // event. Create a real, independently active B recipient instead of relying
+  // on mutable shared seed memberships from earlier integration test files.
+  await pool.query(
+    "INSERT INTO users(id,identity_uid,display_name) VALUES($1,$2,'Positive foreign recipient')",
+    [ids.foreignUser,"positive-b-"+ids.foreignUser],
+  );
+  await pool.query(
+    "INSERT INTO college_memberships(id,user_id,college_id,status) VALUES($1,$2,$3,'ACTIVE')",
+    [ids.foreignMembership,ids.foreignUser,SEED_IDS.collegeB],
+  );
+  await pool.query(
+    "INSERT INTO membership_roles(id,membership_id,role) VALUES($1,$2,'FACULTY')",
+    [ids.foreignRole,ids.foreignMembership],
   );
   const parent = await pool.query<{program_id:string;cohort_id:string}>(
     "SELECT program_id,cohort_id FROM learner_program_enrollments WHERE membership_id=$1 AND status='ACTIVE'",
@@ -112,7 +128,7 @@ export async function seedLearnerPositiveFixture(
     // the foreign notification as valid data for a College B member, so
     // the learner's feed still has a real negative visibility witness.
     const recipientUserId = collegeId === SEED_IDS.collegeB
-      ? SEED_IDS.facultyUser
+      ? ids.foreignUser
       : ids.user;
     await pool.query(
       "INSERT INTO in_app_notifications(id,user_id,event_id,title,body) VALUES($1,$2,$3,'Fixture alert','Saved on test run')",
@@ -144,4 +160,7 @@ export async function cleanupLearnerPositiveFixture(
   await pool.query("DELETE FROM membership_roles WHERE id=$1",[ids.role]);
   await pool.query("DELETE FROM college_memberships WHERE id=$1",[ids.membership]);
   await pool.query("DELETE FROM users WHERE id=$1",[ids.user]);
+  await pool.query("DELETE FROM membership_roles WHERE id=$1",[ids.foreignRole]);
+  await pool.query("DELETE FROM college_memberships WHERE id=$1",[ids.foreignMembership]);
+  await pool.query("DELETE FROM users WHERE id=$1",[ids.foreignUser]);
 }

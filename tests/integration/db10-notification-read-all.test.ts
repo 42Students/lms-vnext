@@ -1,6 +1,7 @@
 import { randomUUID } from "node:crypto";
 import { afterAll, beforeAll, beforeEach, describe, expect, it } from "vitest";
 import { Pool } from "pg";
+import { assertDb018DisposableTarget } from "../support/db018-test-target.mjs";
 import { closeDatabaseConnection } from "@/db/client";
 import type { RequestContext } from "@/modules/identity/context";
 import {
@@ -10,10 +11,11 @@ import {
 } from "@/modules/activity/notification-service";
 import { SEED_IDS } from "../../scripts/db-seed-data";
 
-const connection = process.env.TEST_DATABASE_URL ?? process.env.DATABASE_URL;
+const connection = process.env.TEST_DATABASE_URL;
 if (!connection) {
-  throw new Error("DB10 integration tests require TEST_DATABASE_URL or DATABASE_URL");
+  throw new Error("DB10 requires an explicitly disposable TEST_DATABASE_URL");
 }
+assertDb018DisposableTarget(process.env, {serviceBound: true});
 const pool = new Pool({ connectionString: connection, max: 2 });
 const fixtureType = "w06_read_all_fixture";
 
@@ -79,17 +81,17 @@ async function seedNotifications(quantity: number) {
         organization_id, college_id, actor_user_id,
         module, event_type, importance, subject_type, subject_id, summary
       )
-      select $1, $2, $3, 'PLATFORM', 'platform.college.created',
-             'NORMAL', $4, gen_random_uuid()::text, 'W06 read-all integration fixture'
-      from generate_series(1, $5) returning id
+      select $1, NULL::uuid, $2, 'PLATFORM', 'platform.college.created',
+             'NORMAL', $3, gen_random_uuid()::text, 'W06 read-all integration fixture'
+      from generate_series(1, $4) returning id
     )
     insert into in_app_notifications(user_id, event_id, title, body)
     select recipient.user_id, e.id, 'W06 fixture', 'Read acknowledgment'
     from events e
-    cross join (values ($6::uuid), ($7::uuid)) as recipient(user_id)`,
+    cross join (values ($5::uuid), ($6::uuid)) as recipient(user_id)`,
     [
-      SEED_IDS.organization, SEED_IDS.collegeA,
-      SEED_IDS.collegeAdminUser, fixtureType,
+      // Organization-scoped event legitimately reaches members of both colleges.
+      SEED_IDS.organization, SEED_IDS.collegeAdminUser, fixtureType,
       quantity, learner.user.id, other.user.id,
     ],
   );
