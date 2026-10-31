@@ -46,10 +46,11 @@ export async function insertDisposableAttendanceMark(pool, args) {
         previous_marked_at,new_marked_at,
         record_version_before,record_version_after
        ) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,'MARK',
-         NULL,$9,NULL,$10,NULL,$6,NULL,$11,NULL,$12)`,
+         NULL,$9,NULL,$10,NULL,$6,NULL,
+         (SELECT marked_at FROM attendance_records WHERE id=$1::uuid),NULL,$11)`,
       [record.id,args.scheduleEventId,args.deliveryId,args.membershipId,
        args.collegeId,args.actorUserId,args.actorMembershipId,args.actorRole,
-       args.status,record.note,record.marked_at,record.version],
+       args.status,record.note,record.version],
     );
     await client.query("COMMIT");
     return record;
