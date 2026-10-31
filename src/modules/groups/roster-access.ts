@@ -14,7 +14,13 @@ import {
  * We keep both the course listing and the exact-delivery authorization on this
  * shared predicate so the navigation and API cannot disagree about eligibility.
  */
-function activeRosterQuery(membershipId: string | null, collegeId: string, deliveryId?: string) {
+type RosterReadDb = Pick<ReturnType<typeof getDb>, "select">;
+function activeRosterQuery(
+  membershipId: string | null,
+  collegeId: string,
+  deliveryId?: string,
+  db: RosterReadDb = getDb(),
+) {
   const conditions = [
     membershipId ? eq(lmsGroupMembers.membershipId, membershipId) : undefined,
     eq(lmsGroupMembers.state, "ACTIVE"),
@@ -92,7 +98,7 @@ function activeRosterQuery(membershipId: string | null, collegeId: string, deliv
     )`,
   ];
   if (deliveryId) conditions.push(eq(electiveOfferings.backedDeliveryId, deliveryId));
-  return getDb()
+  return db
     .select({
       deliveryId: electiveOfferings.backedDeliveryId,
       membershipId: lmsGroupMembers.membershipId,
@@ -125,8 +131,9 @@ function activeRosterQuery(membershipId: string | null, collegeId: string, deliv
  */
 export async function listActiveElectiveLearnersForDelivery(
   collegeId: string, deliveryId: string,
+  db: RosterReadDb = getDb(),
 ) {
-  const rows = await activeRosterQuery(null, collegeId, deliveryId);
+  const rows = await activeRosterQuery(null, collegeId, deliveryId, db);
   return [...new Map(rows.map(row => [row.membershipId, {
     membershipId: row.membershipId, displayName: row.displayName,
     email: row.email, phoneE164: row.phoneE164, rollNumber: row.rollNumber,

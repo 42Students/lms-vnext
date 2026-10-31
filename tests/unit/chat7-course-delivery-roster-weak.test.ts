@@ -52,6 +52,38 @@ describe("COURSES-WEAK-DELIVERY-ROSTER-01 exact College, Section and Elective en
   expect(await listActiveDeliveryLearners(scope)).toEqual([]);
   expect(state.select).toHaveBeenCalledTimes(1);
  });
+ it("uses the provided transaction reader for ordinary Section and backed-elective rosters",async()=>{
+  const tx={
+    select:vi.fn((...args:unknown[])=>state.select(...args)),
+  } as unknown as Parameters<typeof listActiveDeliveryLearners>[1];
+  state.learners=[result];
+  expect(await listActiveDeliveryLearners(scope,tx)).toEqual([result]);
+  expect(tx?.select).toHaveBeenCalledTimes(3);
+  expect(state.select).toHaveBeenCalledTimes(3);
+
+  state.select.mockClear();
+  (tx?.select as ReturnType<typeof vi.fn>).mockClear();
+  state.elective=[{groupId:"group-1",offeringStatus:"ACTIVE",offeringDeletedAt:null,
+    slotStatus:"ACTIVE",slotDeletedAt:null,groupStatus:"ACTIVE",groupDeletedAt:null}];
+  // The mock's select plan resets to an elective query for each independent
+  // invocation; recreating it via beforeEach semantics is not required here.
+  // Every elective access must use the transaction's select, including the
+  // nested group-roster helper, not a fresh pooled read.
+  let step=0;
+  state.select.mockImplementation(()=>{
+    const first=step++===0;
+    return {from(){return this;},innerJoin(){return this;},leftJoin(){return this;},
+      where(){return this;},orderBy(){return this;},
+      limit(){return Promise.resolve(state.elective);},
+      then(resolve:(rows:unknown[])=>unknown,reject?:(reason:unknown)=>unknown){
+        return Promise.resolve(first?state.elective:state.learners).then(resolve,reject);
+      },
+    };
+  });
+  state.learners=[{...result,membershipId:"elective-member"}];
+  expect(await listActiveDeliveryLearners(scope,tx)).toEqual(state.learners);
+  expect(tx?.select).toHaveBeenCalledTimes(2);
+ });
  it("COURSES-WEAK-DELIVERY-ROSTER-01 requires the same persisted delivery, cohort, Section and period",()=>{
   const source=readFileSync("src/modules/courses/delivery-roster.ts","utf8");
   for(const clause of [

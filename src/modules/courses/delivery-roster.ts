@@ -32,8 +32,10 @@ export type DeliveryRosterScope = {
  */
 export async function listActiveDeliveryLearners(
   scope: DeliveryRosterScope,
+  // A writer can supply its transaction so the eligibility read sees the
+  // same transaction boundary as the attendance mutation.
+  db: Pick<ReturnType<typeof getDb>, "select"> = getDb(),
 ) {
-  const db = getDb();
   const [elective] = await db
     .select({
       groupId: electiveOfferings.groupId,
@@ -104,7 +106,7 @@ export async function listActiveDeliveryLearners(
       elective.slotStatus !== "ACTIVE" || elective.slotDeletedAt !== null ||
       elective.groupStatus !== "ACTIVE" || elective.groupDeletedAt !== null
     ) return [];
-    return listActiveElectiveLearnersForDelivery(scope.collegeId, scope.deliveryId);
+    return listActiveElectiveLearnersForDelivery(scope.collegeId, scope.deliveryId, db);
   }
 
   return db
