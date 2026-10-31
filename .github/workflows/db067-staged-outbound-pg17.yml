@@ -1,6 +1,6 @@
-# Isolated DB067 CANDIDATE verification. Never count this as a registered
-# migration or DB-018 acceptance. No provider credentials or network sends.
-name: DB067 staged outbound claim and suppression PG17 diagnostics
+# Isolated DB067 registered migration/claim verification; no provider calls.
+# The production worker and DB-018 task acceptance remain separately gated.
+name: DB067 registered outbound claims and suppression PG17
 
 on:
   workflow_dispatch:
@@ -8,7 +8,8 @@ on:
     branches: [main]
     paths:
       - ".github/workflows/db067-staged-outbound-pg17.yml"
-      - "docs/planning/sql/db10-outbound-dispatch-lease-candidate.sql"
+      - "drizzle/0330_db067_outbound_fenced_worker_functions.sql"
+      - "drizzle/meta/_journal.json"
       - "tests/integration/db067-global-email-pre-send.test.ts"
 
 permissions:
@@ -52,17 +53,27 @@ jobs:
         env:
           DATABASE_URL: ""
         run: npm run db:test:prepare
-      - name: Assert dispatcher function is NOT registered
+      - name: Verify all four registered functions after zero-to-head journal replay
         run: |
-          test "$(psql "$TEST_DATABASE_URL" -tAc "select to_regprocedure('db10_claim_outbound_messages(text,integer,integer)') is null")" = "t"
-      - name: Apply DB067 candidate only to this throwaway database
-        run: psql "$TEST_DATABASE_URL" -v ON_ERROR_STOP=1 -f docs/planning/sql/db10-outbound-dispatch-lease-candidate.sql
-      - name: Exercise two-worker claims and late opt-out against PG17
+          psql "$TEST_DATABASE_URL" -v ON_ERROR_STOP=1 -c "
+            DO \$\$ BEGIN
+              IF to_regprocedure('db10_claim_outbound_messages(text,integer,integer)') IS NULL
+                OR to_regprocedure('db10_check_outbound_pre_send(uuid,text,integer,text)') IS NULL
+                OR to_regprocedure('db10_complete_outbound_claim(uuid,text,integer,text,text,text,timestamptz)') IS NULL
+                OR to_regprocedure('db10_expire_unclaimed_outbound(integer)') IS NULL THEN
+                RAISE EXCEPTION 'DB067 registered worker functions missing';
+              END IF;
+            END \$\$;"
+      - name: Prove registered migration replay idempotence
+        env:
+          DATABASE_URL: postgresql://postgres:postgres@127.0.0.1:5432/lms_vnext_test
+        run: npm run db:migrate
+      - name: Exercise registered two-worker claims, role denial, late opt-out against PG17
         env:
           DATABASE_URL: ""
         run: npx vitest run --config vitest.db.registered.config.ts tests/integration/db067-global-email-pre-send.test.ts
       - name: Explicit evidence limit
         if: always()
         run: |
-          echo "This is candidate SQL applied AFTER registered migration replay."
-          echo "No production DB067 migration, privileged-role grant, trusted provider or DB018 acceptance is asserted."
+          echo "DB067 SQL is now in the registered forward-only journal."
+          echo "No trusted dispatcher role/grants, provider, producer cutover or DB018 global acceptance is asserted."

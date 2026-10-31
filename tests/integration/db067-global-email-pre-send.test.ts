@@ -7,8 +7,8 @@ import { parseOutboundIntent } from "@/modules/operations/outbound-delivery-cont
 
 /**
  * DB067 negative PostgreSQL acceptance. Opt-in only, on a seeded, disposable
- * *_test database after Chat 1 registers DB050 + DB067 schema and functions.
- * This is authored coverage, NOT evidence of an executed migration or send.
+ * *_test database after registered journal replay including DB067 functions.
+ * Tests never contact external providers and still do NOT establish an active worker.
  * No network/provider calls. Every fixture operation rolls back.
  */
 const enabled = process.env.DB067_DISPATCH_ACCEPTANCE === "1";

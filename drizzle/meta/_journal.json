@@ -2311,6 +2311,13 @@
       "when": 1793258170954,
       "tag": "0329_db014_group_history_actor_grants",
       "breakpoints": true
+    },
+    {
+      "idx": 330,
+      "version": "7",
+      "when": 1793258230954,
+      "tag": "0330_db067_outbound_fenced_worker_functions",
+      "breakpoints": true
     }
   ]
 }
