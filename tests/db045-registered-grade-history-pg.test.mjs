@@ -122,27 +122,63 @@ test("DB045 attendance event ledger rejects TRUNCATE",async()=>{
  await withRollback(db=>mustReject23514(()=>db.query("TRUNCATE attendance_record_events")));
 });
 
-test("DB045 attendance ledger rejects forged actor role, action and version before orphan FK", async () => {
-  const cases = [
-    { label: "unapproved actor role", role: "RECRUITER", action: "MARK", version: 0 },
-    { label: "non-append history action", role: "SUPER_ADMIN", action: "DELETE", version: 0 },
-    { label: "skipped initial row version", role: "SUPER_ADMIN", action: "MARK", version: 5 },
-  ];
-  for (const probe of cases) {
-    await withRollback(db => mustReject23514(() => db.query(`
-      INSERT INTO attendance_record_events (
-        attendance_record_id,schedule_event_id,delivery_id,membership_id,college_id,
-        actor_user_id,actor_membership_id,actor_role,action,
-        previous_status,new_status,previous_note,new_note,
-        previous_marked_by_user_id,new_marked_by_user_id,
-        previous_marked_at,new_marked_at,record_version_before,record_version_after
-      ) VALUES (
-        $1,$2,$3,$4,$5,$6,null,$7,$8,
-        null,'PRESENT',null,null,null,$6,null,now(),null,$9
-      )
-    `, [
-      randomUUID(), randomUUID(), randomUUID(), randomUUID(), randomUUID(),
-      randomUUID(), probe.role, probe.action, probe.version,
-    ])), probe.label);
-  }
+test("DB045 orphan event FK denial precedes validated action and actor CHECKs", async () => {
+  await withRollback(async db => {
+    // A BEFORE INSERT tenant/delivery scope guard resolves the schedule parent
+    // before PostgreSQL runs CHECKs. Random orphan IDs MUST fail with 23503;
+    // claiming they exercised role/action/version CHECKs would be false proof.
+    const {rows}=await db.query(`
+      SELECT conname,convalidated
+      FROM pg_constraint
+      WHERE conrelid='public.attendance_record_events'::regclass
+        AND conname=ANY($1::text[])
+    `,[[
+      "attendance_record_events_actor_role_ck",
+      "attendance_record_events_action_ck",
+      "attendance_record_events_version_ck",
+    ]]);
+    assert.deepEqual(rows.map(row=>row.conname).sort(),[
+      "attendance_record_events_action_ck",
+      "attendance_record_events_actor_role_ck",
+      "attendance_record_events_version_ck",
+    ].sort());
+    assert.ok(rows.every(row=>row.convalidated),
+      "Registered attendance role/action/version CHECKs must be validated");
+
+    // Actual invalid role/action/version behavior on a POPULATED current row
+    // is exercised separately in college-admin-attendance.test.ts; no orphan
+    // fixture is allowed to masquerade as that behavioral evidence.
+    const cases=[
+      {label:"unapproved actor role",role:"RECRUITER",action:"MARK",version:0},
+      {label:"non-append history action",role:"SUPER_ADMIN",action:"DELETE",version:0},
+      {label:"skipped initial row version",role:"SUPER_ADMIN",action:"MARK",version:5},
+    ];
+    for(const probe of cases){
+      await db.query("SAVEPOINT db045_orphan_probe");
+      try{
+        await assert.rejects(db.query(`
+          INSERT INTO attendance_record_events (
+            attendance_record_id,schedule_event_id,delivery_id,membership_id,college_id,
+            actor_user_id,actor_membership_id,actor_role,action,
+            previous_status,new_status,previous_note,new_note,
+            previous_marked_by_user_id,new_marked_by_user_id,
+            previous_marked_at,new_marked_at,record_version_before,record_version_after
+          ) VALUES (
+            $1,$2,$3,$4,$5,$6,null,$7,$8,
+            null,'PRESENT',null,null,null,$6,null,now(),null,$9
+          )
+        `,[
+          randomUUID(),randomUUID(),randomUUID(),randomUUID(),randomUUID(),
+          randomUUID(),probe.role,probe.action,probe.version,
+        ]),error=>{
+          assert.equal(error.code,"23503",
+            probe.label+": orphan identity must fail before CHECK evaluation");
+          return true;
+        });
+      }finally{
+        await db.query("ROLLBACK TO SAVEPOINT db045_orphan_probe");
+        await db.query("RELEASE SAVEPOINT db045_orphan_probe");
+      }
+    }
+  });
 });
