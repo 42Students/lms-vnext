@@ -1042,7 +1042,7 @@
         "DB-025"
       ],
       "implementationCheckpoint": {
-        "status": "REGISTERED_PG17_320_CATALOG_DIFF_EXECUTED_TYPED_COLUMNS_COMPLETE_GLOBAL_SCHEMA_DRIFT_OPEN",
+        "status": "CANONICAL_NOOP_PG17_329_REGISTERED_STRUCTURAL_DEFAULTS_GREEN_GLOBAL_PHASE_GATES_OPEN",
         "recordedOn": "2026-10-31",
         "report": "docs/planning/db020-schema-snapshot-drift-diagnosis-2026-10-30.md",
         "evidenceRun": "https://github.com/42Students/lms-vnext/actions/runs/41032764607",
@@ -1085,9 +1085,10 @@
           "e6ba0f048730ec80766965acb5265b0f5c22c864"
         ],
         "pending": [
-          "Reconcile 44 typed-but-already-registered tables and 10 SQL-only tables without applying duplicated generated CREATE TABLE DDL",
-          "Disposition 22 registered columns missing from typed schema, generated type/default/unique/check/foreign-key semantics and naming/cascade differences",
-          "Execute clean Drizzle generation with no unexpected migration; run DB001 and DB018 exact-head gate; independently certify database phase"
+          "Preserve exact clean generated baseline after newer migrations; no generated duplicate CREATE/ALTER may be applied",
+          "Independently approve remaining SQL-owned CHECK/index/trigger semantics and their complete tenant/retention rules",
+          "Wait for exact executed DB001, DB014, DB018, DB019 and DB045 acceptance; do not mark DB020 done before all original phase gates",
+          "Complete exact-current-main global negative, user-job producer/consumer and cross-role final DB certification"
         ],
         "latestFkStructuralComparison": {
           "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/41130350910",
@@ -1204,6 +1205,46 @@
           "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/41148153178",
           "sourceMigration": "0324_db045_attendance_immutable_history",
           "reason": "DB020 PG17 cannot complete full schema diagnosis while new DB045 migration 0324 refuses existing attendance rows during registered journal replay. This does not invalidate previously GREEN 0323 DB020 migration evidence; exact-head re-run required after DB045 remediation.",
+          "notAcceptance": true
+        },
+        "latestVerifiedCanonicalNoop": {
+          "result": "PASS_CANONICAL_NOOP_AND_REGISTERED_PG17_DIAGNOSTIC_NOT_PHASE_ACCEPTANCE",
+          "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/41151964447",
+          "commitSha": "e2c651c75352310f4bb091d326d511e8ae72099a",
+          "registeredMigrationHead": "0328_db014_activity_identity_immutable",
+          "registeredMigrations": 329,
+          "evidence": "Exact SHA workflow success: journal integrity, zero-to-head disposable PostgreSQL17 seed and idempotent replay, 0326 CHECK validations, Drizzle generate clean no-op with no untracked or edited drizzle artifacts, read-only complete SQL catalog and typed schema diagnosis, default proof, 37 SQL-owned FK regression contracts, 15 CHECK/index alias probes.",
+          "catalog": {
+            "physicalTables": 277,
+            "typedTables": 267,
+            "sqlOnlyTables": 10,
+            "physicalColumns": 3598,
+            "foreignKeys": 742,
+            "unvalidatedForeignKeys": 0,
+            "unvalidatedConstraints": 0,
+            "typedMissingColumns": 0,
+            "catalogExtraTypedTableColumns": 0,
+            "typedFksAbsentFromCatalog": 0,
+            "typedCheckNamesAbsent": 0,
+            "typedIndexNamesAbsent": 0,
+            "typedIndexUniqueMismatches": 0,
+            "nullabilityMismatches": 0,
+            "invalidIndexes": 0,
+            "disabledTriggers": 0,
+            "verifiedTypedCheckNames": 849,
+            "verifiedTypedIndexNames": 715,
+            "typedDefaultColumnsChecked": 3492,
+            "unexplainedDefaults": 0
+          },
+          "scope": "Registered structural, default and typed-name parity on pinned SHA only. 13 SQL-only CHECKs and 28 SQL-only indexes remain physical SQL-owned contracts; names alone do not prove full CHECK/index predicates, unique order or FK tenant/race behavior. No original DB020 phase-gate signoff, release review or dependency certification.",
+          "remainsOpen": [
+            "DB-001 independent verifier",
+            "DB-014 cross-domain tenant/FK acceptance",
+            "DB-018 global negative/race suite",
+            "DB-019 global 2,829 field semantic disposition",
+            "DB-045 attendance event producer/race acceptance",
+            "Final exact-head DB020 phase-gate integrated security and downstream producer/consumer witnesses"
+          ],
           "notAcceptance": true
         }
       }
