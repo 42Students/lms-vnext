@@ -6,6 +6,7 @@ import path from "node:path";
 import { createHash } from "node:crypto";
 import { fileURLToPath } from "node:url";
 import {loadDb019SemanticDecisions} from "./db019-semantic-decision-quality.mjs";
+import {loadProjectRegisteredHistory} from "./db019-project-registered-history.mjs";
 
 export const CROSSWALKS = Object.freeze({
   DB01: ["db01_identity_and_tenancy", "db01-chat02-312-field-source-triage.json"],
@@ -102,11 +103,13 @@ export function reconcileCheckout(root) {
     domains.push(reconcileCrosswalk(domain,ledger,artifact,gitBlobSha(bytes)));
   }
   const semanticDecisionQuality = loadDb019SemanticDecisions(root);
+  const projectRegisteredHistory = loadProjectRegisteredHistory(root);
   return {kind:"DB019_SOURCE_CROSSWALKS_ONLY_NOT_POSTGRES_ACCEPTANCE",
     databaseVerified:false,domains,comparedFields:domains.reduce((s,d)=>s+(d.sourceFields||0),0),
-    semanticDecisionQuality,
+    semanticDecisionQuality,projectRegisteredHistory,
     errors:[...domains.flatMap(d=>d.errors.map(error=>({domain:d.domain,...error}))),
-      ...semanticDecisionQuality.errors.map(error=>({domain:"DB02_OR_DB09_QUALITY",...error}))]};
+      ...semanticDecisionQuality.errors.map(error=>({domain:"DB02_DB07_DB09_QUALITY",...error})),
+      ...projectRegisteredHistory.errors.map(error=>({domain:"DB07_REGISTERED_HISTORY",...error}))]};
 }
 if (process.argv[1] && path.resolve(process.argv[1])===fileURLToPath(import.meta.url)) {
   try {
