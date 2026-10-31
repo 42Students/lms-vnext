@@ -6,10 +6,13 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { reconcileDb00 } from './db19-db00-disposition-crosscheck.mjs';
+import { auditDb01FinalDisposition } from './db01-final-field-disposition-audit.mjs';
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 
-export function auditDb019(index, ledgers, decisions, {db00Disposition = null, db00Approval = null} = {}) {
+export function auditDb019(index, ledgers, decisions, {
+  db00Disposition = null, db00Approval = null, db01Triage = null, db01Final = null,
+} = {}) {
   const errors = [];
   const fail = (code, details = {}) => errors.push({ code, ...details });
   if (!index || !Array.isArray(index.artifacts) || !index.domainCounts ||
@@ -74,6 +77,27 @@ export function auditDb019(index, ledgers, decisions, {db00Disposition = null, d
   const db00Closed = db00?.valid ? db00.summary.sourceDispositionClosedFields : null;
   if (db00?.valid && db00.summary.fields !== index.domainCounts.DB00_HISTORICAL_AND_ENGINE?.fields)
     fail('DB00_DISPOSITION_SOURCE_INDEX_DRIFT');
+  // DB01's 312-field decision artifact resolves SOURCE ownership and routes
+  // handoffs, but explicitly attests zero runtime/postgres/provider mappings.
+  if ((db01Triage === null) !== (db01Final === null)) fail('PARTIAL_DB01_SOURCE_DECISION_INPUT');
+  const db01 = db01Triage === null || db01Final === null ? null :
+    auditDb01FinalDisposition(db01Final, db01Triage);
+  if (db01 && !db01.valid) for (const detail of db01.errors)
+    fail('DB01_DECISION_' + detail.code, {detail});
+  const db01SourceLedger = ledgers.find(ledger => ledger?.domain === 'DB01_IDENTITY_AND_TENANCY');
+  if (db01?.valid) {
+    if (db01Final?.source?.legacyBackendSha !== index.sourceLegacySha)
+      fail('DB01_DECISION_LEGACY_ORACLE_DRIFT');
+    const sourceKeys = new Set((db01SourceLedger?.tables || []).flatMap(table =>
+      (table.rows || []).map(row => table.table + '.' + row.legacyColumn)));
+    const decisionKeys = new Set(db01Final.rows.map(row => row.legacyField));
+    if (sourceKeys.size !== index.domainCounts.DB01_IDENTITY_AND_TENANCY?.fields ||
+        decisionKeys.size !== sourceKeys.size ||
+        [...sourceKeys].some(key => !decisionKeys.has(key)))
+      fail('DB01_DECISION_GLOBAL_SOURCE_IDENTITY_DRIFT');
+  }
+  const db01Closed = db01?.valid && !errors.some(x => x.code.startsWith('DB01_'))
+    ? db01.summary.explicitDecisionRows : null;
   const decisionOpen = decisions.decisions.filter(x =>
     !x || x.approvedRetirement !== true && !String(x.status).startsWith('ACCEPTED')).length;
   const verifiedDecisionFields = decisions.decisions.reduce((sum, x) => sum + (Number(x?.verifiedFields)||0),0);
@@ -85,6 +109,13 @@ export function auditDb019(index, ledgers, decisions, {db00Disposition = null, d
     progress: {verifiedMappingRows:mapped,sourceEvidenceRows:sourceEvidence,
       awaitingSourceEvidence:pending, sourceEvidenceComplete:sourceEvidence === totalFields,
       unresolvedReviewDecisions:decisionOpen, reviewDecisionVerifiedFields:verifiedDecisionFields,
+      db01SourceDecisionCoverage: db01Closed === null ? null : {
+        sourceFields: db01.summary.sourceFields,
+        explicitDecisionRows: db01Closed,
+        targetProposalsStillUnverified: db01.summary.byDecisionStatus.PROPOSED_TARGET_UNVERIFIED || 0,
+        crossDomainHandoffs: db01.summary.byDecisionStatus.CROSS_DOMAIN_HANDOFF || 0,
+        runtimeMappingsVerifiedByThisOverlay: 0,
+      },
       db00SourceDecisionCoverage: db00Closed === null ? null : {
         totalFields: db00.summary.fields,
         sourceDispositionClosedFields: db00Closed,
@@ -97,6 +128,7 @@ export function auditDb019(index, ledgers, decisions, {db00Disposition = null, d
       }},
     domains:perDomain,
     db00DispositionOverlay: db00,
+    db01DispositionOverlay: db01,
     remainingAcceptanceGates:[
       'Per-field active, redesigned, external and retired semantic decisions with producer/consumer evidence',
       'Current registered PostgreSQL catalog and source-to-target graph comparison',
@@ -113,7 +145,9 @@ export function loadDb019(rootDir = root) {
   const decisions = read('docs/planning/database-parity-pass4-review-decisions.json');
   const db00Disposition = read('docs/planning/db00-historical-engine-disposition.json');
   const db00Approval = read('docs/planning/db003-smrithi-vnext-scope-decision.json');
-  return auditDb019(index, ledgers, decisions, {db00Disposition,db00Approval});
+  const db01Triage = read('docs/planning/db01-chat02-312-field-source-triage.json');
+  const db01Final = read('docs/planning/db01-chat05-final-field-disposition.json');
+  return auditDb019(index, ledgers, decisions, {db00Disposition,db00Approval,db01Triage,db01Final});
 }
 
 if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
