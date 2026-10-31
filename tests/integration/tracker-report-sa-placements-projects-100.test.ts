@@ -1,4 +1,4 @@
-import { afterAll, describe, expect, it } from "vitest";
+import { afterAll, beforeAll, describe, expect, it } from "vitest";
 import { Pool } from "pg";
 import { closeDatabaseConnection } from "@/db/client";
 import type { RequestContext } from "@/modules/identity/context";
@@ -49,6 +49,18 @@ async function cleanup() {
 }
 
 describe.skipIf(!enabled)("SA-placements-projects-100 tracker reporting on isolated PostgreSQL", () => {
+  beforeAll(async () => {
+    if (!pool) throw new Error("Isolated PostgreSQL required");
+    // Submission name must match the active authenticated principal, not
+    // an unrelated historic hard-coded name. Never loosen identity binding.
+    const { rows } = await pool.query<{ display_name: string | null }>(
+      "select display_name from users where id=$1 and platform_status='ACTIVE'",
+      [SEED_IDS.superAdminUser],
+    );
+    const persistedName = rows[0]?.display_name?.trim();
+    if (!persistedName) throw new Error("Active seeded reporter display name missing");
+    input.reporterName = persistedName;
+  });
   afterAll(async () => {
     await cleanup();
     await pool?.end();
@@ -79,13 +91,13 @@ describe.skipIf(!enabled)("SA-placements-projects-100 tracker reporting on isola
       "select active, access_role from bug_tracker_access where id=$1",
       [detail.report.reporterAccessId],
     );
-    expect(access.rows[0]).toMatchObject({ active: false, access_role: "REPORTER" });
+    expect(access.rows[0]).toMatchObject({ active: true, access_role: "REPORTER" });
   });
 
-  it("rejects non-Super-Admin writers before touching the database", async () => {
+  it("rejects an inactive reporter before touching the database", async () => {
     await expect(createBugTrackerIssueForAdmin({
       ...context,
-      user: { ...context.user, systemRoles: [] },
+      user: { ...context.user, platformStatus: "SUSPENDED" },
     }, input)).rejects.toMatchObject({ code: "FORBIDDEN" });
   });
 
