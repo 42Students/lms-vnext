@@ -165,7 +165,23 @@ describe("DB03 group kernel on disposable PostgreSQL", () => {
         joinGroup(first.ctx, group, first.membershipId),
         joinGroup(second.ctx, group, second.membershipId),
       ]);
-      await new Promise(resolve => setTimeout(resolve, 100));
+      // Both independent admissions must reach the locked group row before
+      // releasing it. A sleep does not establish concurrent contention.
+      const deadline = Date.now() + 5_000;
+      let blockedWriters = 0;
+      while (Date.now() < deadline) {
+        const waiters = await pool.query<{n: number}>(
+          `SELECT count(*)::integer AS n FROM pg_stat_activity
+            WHERE datname=current_database()
+              AND pid <> pg_backend_pid()
+              AND wait_event_type='Lock'
+              AND query ILIKE '%lms_groups%'`,
+        );
+        blockedWriters = waiters.rows[0]?.n ?? 0;
+        if (blockedWriters >= 2) break;
+        await new Promise(resolve => setTimeout(resolve, 25));
+      }
+      expect(blockedWriters, "Both admission transactions must contend for the group row").toBeGreaterThanOrEqual(2);
       await gate.query("COMMIT");
       const results = await admissions;
       expect(results.every(result => result.status === "fulfilled")).toBe(true);
