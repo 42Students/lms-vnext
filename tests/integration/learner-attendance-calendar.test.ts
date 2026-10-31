@@ -6,6 +6,8 @@ import { AuthorizationError } from "@/modules/permissions/policy";
 import type { RequestContext } from "@/modules/identity/context";
 import { getOwnLearnerAttendanceCalendar } from "@/modules/attendance/learner-attendance-calendar-service";
 import { SEED_IDS } from "../../scripts/db-seed-data";
+import { assertDb018DisposableTarget } from "../support/db018-test-target.mjs";
+import { insertDisposableAttendanceMark, deleteDisposableAttendanceEvents } from "../support/db045-attendance-fixture.mjs";
 import {
   newLearnerPositiveFixture, seedLearnerPositiveFixture,
   cleanupLearnerPositiveFixture,
@@ -14,6 +16,7 @@ import {
 if (!process.env.TEST_DATABASE_URL) {
   throw new Error("Attendance calendar integration requires disposable TEST_DATABASE_URL");
 }
+assertDb018DisposableTarget(process.env, { serviceBound: true });
 
 const pool = new Pool({connectionString:process.env.TEST_DATABASE_URL,max:1});
 const fixture = newLearnerPositiveFixture();
@@ -91,13 +94,25 @@ async function setup() {
       [eventId,SEED_IDS.facultyUser],
     );
   }
-  await pool.query(
-    "INSERT INTO attendance_records(schedule_event_id,membership_id,status,marked_by_user_id,marked_at) VALUES($1,$2,'ABSENT',$3,now())",
-    [ids.absentEvent,fixture.ids.membership,SEED_IDS.facultyUser],
-  );
+  // DB045 requires a real course-linked immutable MARK event in the same
+  // transaction as the absent row. A persisted Super Admin can authorize
+  // the scoped fixture without forging a teaching assignment.
+  await insertDisposableAttendanceMark(pool, {
+    scheduleEventId: ids.absentEvent,
+    deliveryId: ids.delivery,
+    membershipId: fixture.ids.membership,
+    collegeId: SEED_IDS.collegeA,
+    actorUserId: SEED_IDS.superAdminUser,
+    actorMembershipId: null,
+    actorRole: "SUPER_ADMIN",
+    status: "ABSENT",
+  });
 }
 
 async function cleanup() {
+  // The guarded disposable helper removes only test-owned immutable events
+  // so registered RESTRICT FKs can remain enforced during teardown.
+  await deleteDisposableAttendanceEvents(pool, eventIds);
   await pool.query("DELETE FROM attendance_records WHERE schedule_event_id=ANY($1::uuid[])",[eventIds]);
   await pool.query("DELETE FROM attendance_sessions WHERE schedule_event_id=ANY($1::uuid[])",[eventIds]);
   await pool.query("DELETE FROM section_schedule_event_courses WHERE schedule_event_id=ANY($1::uuid[])",[eventIds]);
