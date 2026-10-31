@@ -76,7 +76,8 @@ test("DB014 numbered retention migration protects every designated parent-child 
  assert.match(sql,/TG_ARGV\[0\], TG_ARGV\[1\]/);
  assert.match(sql,/USING OLD\.id/);
  assert.match(sql,/ERRCODE='23514'/);
- assert.doesNotMatch(sql,/DISABLE TRIGGER|DROP CONSTRAINT|TRUNCATE TABLE|DELETE FROM/i);
+ const ddl=sql.split("\n").filter(line=>!line.trim().startsWith("--")).join("\n");
+ assert.doesNotMatch(ddl,/DISABLE TRIGGER|DROP CONSTRAINT|TRUNCATE TABLE|DELETE FROM/i);
 });
 
 test("DB014 retains exact 21 CASCADE edges without weakening existing constraints",()=>{
