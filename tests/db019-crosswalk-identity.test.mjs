@@ -1,6 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { CROSSWALKS, reconcileCrosswalk } from "../scripts/db019-crosswalk-identity.mjs";
+import { CROSSWALKS, reconcileCrosswalk, reconcileCheckout } from "../scripts/db019-crosswalk-identity.mjs";
 
 const ledger = (domain, names=["id","name"], other=[])=>({
   domain:CROSSWALKS[domain][0].toUpperCase(), sourceSha:"a".repeat(40),
@@ -87,4 +87,21 @@ test("DB01 triage uses immutable source inventory pin, not only field names",()=
   const match=reconcileCrosswalk("DB01",ledger("DB01"),a,"b".repeat(40));
   assert.deepEqual(match.errors,[]);
   assert.equal(match.pinChecked,true);
+});
+
+test("DB019 integrated gate accounts for 2829 independently checked source fields without runtime acceptance",()=>{
+  const report=reconcileCheckout(process.cwd());
+  assert.deepEqual(report.errors,[]);
+  assert.equal(report.comparedFields,1844);
+  assert.equal(report.sourceQualityFieldsChecked,2829);
+  assert.deepEqual(report.independentlyCheckedBaseSourceDecisions,{db00:732,db01:312});
+  assert.equal(report.semanticDecisionQuality.auditedSourceFields,762);
+  assert.equal(report.remainingSemanticQuality.sourceFields,1023);
+  assert.equal(report.projectRegisteredHistory.registeredColumnMatches,51);
+  assert.equal(report.projectRegisteredHistory.legacySnapshotFields,12);
+  assert.equal(report.sourceQualityOnly,true);
+  assert.equal(report.acceptanceReady,false);
+  assert.equal(report.databaseVerified,false);
+  assert.equal(report.semanticDecisionQuality.acceptanceReady,false);
+  assert.equal(report.remainingSemanticQuality.acceptanceReady,false);
 });
