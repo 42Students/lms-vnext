@@ -333,6 +333,40 @@ test("DB18 canonical denominator stays source-grounded", () => {
 });
 
 
+test("DB18 full registered gate reruns on migrations and production notification edits", () => {
+  const workflow = fs.readFileSync(
+    ".github/workflows/db018-full-gate-acceptance.yml",
+    "utf8",
+  );
+  for (const path of [
+    "drizzle/*.sql",
+    "drizzle/meta/_journal.json",
+    "src/db/schema/**",
+    "src/modules/activity/notification-service.ts",
+    "tests/integration/db18-notification-race.test.ts",
+    "tests/integration/groups-db03.test.ts",
+    "tests/integration/academics-a2.test.ts",
+  ]) {
+    assert.ok(workflow.includes('      - "' + path + '"'), path + ": must trigger full PG gate");
+  }
+  for (const executionPath of [
+    "tests/integration/db18-notification-race.test.ts",
+    "tests/integration/groups-db03.test.ts",
+    "tests/integration/academics-a2.test.ts",
+  ]) {
+    assert.ok(workflow.includes("npx vitest run"));
+    assert.ok(workflow.includes("            " + executionPath), executionPath + ": not executed by full gate");
+  }
+  const notificationWitness = fs.readFileSync(
+    "tests/integration/db18-notification-race.test.ts",
+    "utf8",
+  );
+  assert.match(notificationWitness, /assertDb018DisposableTarget\(process\.env, \{ serviceBound: true \}\)/);
+  assert.match(notificationWitness, /process\.env\.DATABASE_URL !== databaseUrl/);
+  assert.match(notificationWitness, /LOCK TABLE in_app_notifications IN SHARE MODE/);
+  assert.match(notificationWitness, /FOR UPDATE/);
+});
+
 test("DB18 mutation witnesses are fail-closed to an isolated database", () => {
   const directFiles = [
     "tests/integration/db18-registered-negative-witnesses.test.ts",
