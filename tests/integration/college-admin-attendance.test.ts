@@ -375,6 +375,107 @@ describe("College Admin attendance tenant isolation with PostgreSQL", () => {
   });
 
 
+  it("DB045 rejects version-only attendance rewrites without a real correction",async()=>{
+    const before=await pool.query<{id:string;version:number;status:string}>(
+      "select id,version,status from attendance_records where schedule_event_id=$1",
+      [foreign.event],
+    );
+    expect(before.rows).toHaveLength(1);
+    await expect(pool.query(
+      "update attendance_records set version=version+1 where id=$1",
+      [before.rows[0]!.id],
+    )).rejects.toMatchObject({code:"23514"});
+    const after=await pool.query<{id:string;version:number;status:string}>(
+      "select id,version,status from attendance_records where schedule_event_id=$1",
+      [foreign.event],
+    );
+    expect(after.rows).toEqual(before.rows);
+  });
+
+  it("DB045 rejects duplicate immutable event versions for one attendance record",async()=>{
+    const before=await pool.query<{n:number}>(
+      "select count(*)::int n from attendance_record_events where schedule_event_id=$1",
+      [foreign.event],
+    );
+    expect(before.rows[0]?.n).toBe(1);
+    await expect(pool.query(`
+      insert into attendance_record_events(
+        attendance_record_id,schedule_event_id,delivery_id,membership_id,
+        college_id,actor_user_id,actor_membership_id,actor_role,action,
+        previous_status,new_status,previous_note,new_note,
+        previous_marked_by_user_id,new_marked_by_user_id,
+        previous_marked_at,new_marked_at,record_version_before,record_version_after
+      )
+      select attendance_record_id,schedule_event_id,delivery_id,membership_id,
+        college_id,actor_user_id,actor_membership_id,actor_role,action,
+        previous_status,new_status,previous_note,new_note,
+        previous_marked_by_user_id,new_marked_by_user_id,
+        previous_marked_at,new_marked_at,record_version_before,record_version_after
+      from attendance_record_events where schedule_event_id=$1
+    `,[foreign.event])).rejects.toMatchObject({code:"23505"});
+    const after=await pool.query<{n:number}>(
+      "select count(*)::int n from attendance_record_events where schedule_event_id=$1",
+      [foreign.event],
+    );
+    expect(after.rows).toEqual(before.rows);
+  });
+
+  it("DB045 rejects an otherwise valid correction event with a forged previous snapshot at COMMIT",async()=>{
+    const db=await pool.connect();
+    let transactionOpen=false;
+    try {
+      await db.query("BEGIN");
+      transactionOpen=true;
+      const before=await db.query<{
+        id:string;status:string;note:string|null;marked_at:string;version:number
+      }>(
+        "select id,status,note,marked_at::text as marked_at,version " +
+        "from attendance_records where schedule_event_id=$1 for update",
+        [foreign.event],
+      );
+      expect(before.rows).toHaveLength(1);
+      expect(before.rows[0]!.status).toBe("ABSENT");
+      await db.query(
+        "update attendance_records set status='PRESENT',note='DB045 forged prior state', " +
+        "marked_at=marked_at+interval '1 second',version=version+1 where id=$1",
+        [before.rows[0]!.id],
+      );
+      // The event actor, delivery, tenant, current-row state and version all
+      // agree. ONLY previous_status is false: the row was ABSENT, not PRESENT.
+      // A deferred completeness guard must reject this false audit narrative.
+      await db.query(`
+        insert into attendance_record_events(
+          attendance_record_id,schedule_event_id,delivery_id,membership_id,
+          college_id,actor_user_id,actor_membership_id,actor_role,action,
+          previous_status,new_status,previous_note,new_note,
+          previous_marked_by_user_id,new_marked_by_user_id,
+          previous_marked_at,new_marked_at,record_version_before,record_version_after
+        )
+        select ar.id,ar.schedule_event_id,$2::uuid,ar.membership_id,
+          $3::uuid,$4::uuid,null,'SUPER_ADMIN','CORRECT',
+          'PRESENT',ar.status,$5::text,ar.note,
+          $4::uuid,ar.marked_by_user_id,$6::timestamptz,ar.marked_at,$7::integer,ar.version
+        from attendance_records ar where ar.id=$1
+      `,[
+        before.rows[0]!.id,foreign.delivery,SEED_IDS.collegeB,
+        SEED_IDS.superAdminUser,before.rows[0]!.note,
+        before.rows[0]!.marked_at,before.rows[0]!.version,
+      ]);
+      await expect(db.query("COMMIT")).rejects.toMatchObject({
+        code:"23514",
+        message:expect.stringContaining("missing immutable audit event"),
+      });
+    } finally {
+      if(transactionOpen)await db.query("ROLLBACK").catch(()=>{});
+      db.release();
+    }
+    const unchanged=await pool.query<{version:number;status:string}>(
+      "select version,status from attendance_records where schedule_event_id=$1",
+      [foreign.event],
+    );
+    expect(unchanged.rows).toMatchObject([{version:0,status:"ABSENT"}]);
+  });
+
   it("lists only own-college deliveries and catalogue entries", async () => {
     const shortTitle="Attendance formal "+nonce;
     await pool.query("update courses set short_title=$1 where id=$2",[shortTitle,own.course]);
