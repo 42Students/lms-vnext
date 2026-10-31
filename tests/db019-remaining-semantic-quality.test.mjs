@@ -71,7 +71,7 @@ test("DB08 280 placement fields cannot self-promote from candidates to exact map
 test("DB08 28 job_offer source-to-target proposals remain bounded and never claim runtime proof",()=>{
   const result=loadDb019Remaining();
   assert.equal(result.valid,true);
-  assert.equal(result.domains.DB08.sourceProposalsNotRuntimeVerified,74);
+  assert.equal(result.domains.DB08.sourceProposalsNotRuntimeVerified,98);
   assert.equal(result.domains.DB08.unresolvedExactDecisions,280);
   assert.equal(result.domains.DB08.runtimeVerified,0);
   assert.equal(artifacts.DB08.tables.find(t=>t.legacyTable==="job_offer").fields.length,28);
@@ -127,6 +127,40 @@ test("DB08 46 legacy job fields are individually source-reviewed but never false
       assert.equal(table,"placement_jobs");
       assert.ok(typed.includes('("'+col+'"'),field.legacyColumn+": missing source-typed "+ref);
     }
+  }
+  assert.equal(artifacts.DB08.counts.verifiedFields,0);
+  assert.equal(artifacts.DB08.gate.fieldsUnverified,280);
+});
+
+test("DB08 24 application fields preserve staff-private resume and assessment boundaries",()=>{
+  const app=artifacts.DB08.tables.find(t=>t.legacyTable==="job_application");
+  assert.equal(app.fields.length,24);
+  assert.equal(app.fields.filter(x=>x.reviewDecision.classification==="EXPLICIT_RUNTIME_GAP").length,2);
+  const schema=fs.readFileSync(new URL("../src/db/schema/placements.ts",import.meta.url),"utf8");
+  const boundaries={"placement_applications":["export const placementApplications = pgTable(","export const placementApplicationPrivateArtifacts = pgTable("],"placement_application_private_artifacts":["export const placementApplicationPrivateArtifacts = pgTable(","export const placementLegacyApplicationStatusEvents = pgTable("],"placement_application_status_history":["export const placementApplicationStatusHistory = pgTable(","export const placementApplicationScreenings = pgTable("],"placement_application_screenings":["export const placementApplicationScreenings = pgTable(","export const placementOffers = pgTable("],"placement_offers":["export const placementOffers = pgTable(","export const placementOfferStatusHistory = pgTable("]};
+  const blocks=Object.fromEntries(Object.entries(boundaries).map(([tn,[start,end]])=>{
+    const i=schema.indexOf(start),j=schema.indexOf(end,i+start.length);
+    assert.ok(i>=0&&j>i,"Missing table "+tn);return [tn,schema.slice(i,j)];
+  }));
+  for(const field of app.fields){
+    const d=field.reviewDecision;
+    assert.equal(field.status,"UNVERIFIED");
+    assert.equal(d.reviewStatus,"SOURCE_REVIEWED_PROPOSAL_NOT_VERIFIED");
+    assert.equal(d.runtimeVerified,false);
+    assert.equal(d.consumerVerified,false);
+    assert.equal(d.retirementApproved,false);
+    assert.ok(d.sourceRationale.length>25);
+    assert.ok(d.outstandingProof.length>25);
+    for(const ref of d.targetRefs){
+      const [tn,col]=ref.split(".");
+      assert.ok(blocks[tn]?.includes('("'+col+'"'),
+        field.legacyColumn+" absent typed candidate "+ref);
+    }
+  }
+  const byName=Object.fromEntries(app.fields.map(x=>[x.legacyColumn,x.reviewDecision]));
+  for(const col of ["resume_url","resume_history","internal_notes","assessment_url"]){
+    assert.ok(byName[col].targetRefs.every(ref=>ref.startsWith("placement_application_private_artifacts.")),
+      "Sensitive application data may never use broad public application columns: "+col);
   }
   assert.equal(artifacts.DB08.counts.verifiedFields,0);
   assert.equal(artifacts.DB08.gate.fieldsUnverified,280);

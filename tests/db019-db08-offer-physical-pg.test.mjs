@@ -54,6 +54,31 @@ test("DB019 28 frozen job_offer decisions have all proposed target columns in re
   assert.equal(physical.get("placement_joining_outcomes.joining_date")?.udt_name,"date");
 });
 
+
+test("DB019 proposed job and private-application columns exist after registered PG17 replay",async()=>{
+  const selected=ledger.tables.filter(x=>["job","job_application"].includes(x.legacyTable));
+  assert.deepEqual(selected.map(x=>x.legacyTable),["job","job_application"]);
+  assert.deepEqual(selected.map(x=>x.fields.length),[46,24]);
+  const candidates=[...new Set(selected.flatMap(t=>t.fields.flatMap(x=>x.reviewDecision?.targetRefs??[])))];
+  const tableNames=[...new Set(candidates.map(x=>x.split(".")[0]))];
+  const rows=await pool.query(`
+    select table_name,column_name,udt_name
+    from information_schema.columns
+    where table_schema='public' and table_name=any($1::text[])
+  `,[tableNames]);
+  const live=new Map(rows.rows.map(r=>[r.table_name+"."+r.column_name,r]));
+  for(const ref of candidates){
+    assert.ok(live.has(ref),"Source-reviewed candidate is missing in registered PostgreSQL: "+ref);
+  }
+  assert.equal(live.get("placement_jobs.id")?.udt_name,"uuid");
+  assert.equal(live.get("placement_jobs.legacy_job_id")?.udt_name,"int4");
+  assert.equal(live.get("placement_applications.id")?.udt_name,"uuid");
+  assert.equal(live.get("placement_applications.membership_id")?.udt_name,"uuid");
+  assert.equal(live.get("placement_application_private_artifacts.resume_history")?.udt_name,"jsonb");
+  assert.equal(live.has("placement_applications.internal_notes"),false);
+  assert.equal(live.has("placement_applications.resume_object_path"),false);
+  assert.equal(live.has("placement_applications.assessment_url"),false);
+});
 test("DB019 offer enum, immutable transition and active-application constraints survive journal replay",async()=>{
   const constraints=await pool.query(`
     select conrelid::regclass::text as on_table,conname,
