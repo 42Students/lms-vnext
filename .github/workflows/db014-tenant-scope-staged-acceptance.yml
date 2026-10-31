@@ -18,6 +18,8 @@ on:
       - "tests/db014-cascade-retention-source.test.mjs"
       - "tests/db014-cascade-retention-registered-pg.test.mjs"
       - "drizzle/0325_db014_cascade_retention_fences.sql"
+      - "drizzle/0328_db014_activity_identity_immutable.sql"
+      - "tests/db014-activity-identity-registered-pg.test.mjs"
       # Revalidate DB014 at every newly registered migration head, not only
       # when its original 0317/0318/0325 SQL files change.
       - "drizzle/meta/_journal.json"
@@ -91,6 +93,8 @@ jobs:
         run: node --test tests/db014-registered-tenant-catalog-pg.test.mjs
       - name: DB014 registered retained-history parent DELETE and TRUNCATE negatives
         run: node --test tests/db014-cascade-retention-registered-pg.test.mjs
+      - name: Registered immutable event identity after notification
+        run: node --test tests/db014-activity-identity-registered-pg.test.mjs
       - name: Registered 0318 event, notification and group-history tenant negatives
         run: node --test tests/db014-cross-domain-scope-staged-pg.test.mjs
       - name: DB014 activity dedupe cross-tenant isolation and actor/subject negatives
