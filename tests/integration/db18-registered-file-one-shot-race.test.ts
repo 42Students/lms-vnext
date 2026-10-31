@@ -181,10 +181,11 @@ describe.skipIf(!enabled)("DB018 registered one-shot private file producer",()=>
       const modern=submitAssignmentWithFiles(learner,assignmentId,{
         deliveryId,fileIds:reversed,
       });
-      const pending=[legacy,modern].map(p=>p.then(
+      const settle=<T>(promise:Promise<T>)=>promise.then(
         value=>({ok:true as const,value}),
         (error:unknown)=>({ok:false as const,error}),
-      ));
+      );
+      const pending=[settle(legacy),settle(modern)];
       let waiting=0;
       const deadline=Date.now()+15_000;
       while(Date.now()<deadline){
