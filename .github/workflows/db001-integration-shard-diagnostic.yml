@@ -11,6 +11,9 @@ on:
       - "tests/support/learner-positive-fixture.ts"
       - "tests/integration/college-notice-inbox.test.ts"
       - "tests/integration/db10-outbound-queue.test.ts"
+      - "tests/integration/tpo-self-profile-service.test.ts"
+      - "tests/integration/tracker-report-sa-placements-projects-100.test.ts"
+      - "tests/integration/college-department-insights-denial.test.ts"
       - "scripts/db-independent-verify.mjs"
       - "vitest.db.config.ts"
 permissions:
