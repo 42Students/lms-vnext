@@ -357,6 +357,7 @@ async function writeActivityEvent(
         existing.collegeId !== values.collegeId ||
         existing.organizationId !== values.organizationId ||
         existing.actorUserId !== values.actorUserId ||
+        existing.actorMembershipId !== values.actorMembershipId ||
         existing.eventType !== values.eventType ||
         existing.subjectType !== values.subjectType ||
         existing.subjectId !== values.subjectId

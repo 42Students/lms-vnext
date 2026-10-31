@@ -259,6 +259,13 @@ describe("Activity and notification foundation", () => {
       ...input,
     })).rejects.toMatchObject({code: "ACTIVITY_SCOPE_MISMATCH"});
 
+    // A single user may have an independent system-admin or college member
+    // actor scope. The event must not be silently replayed under another
+    // membership identity merely because actor_user_id and subject match.
+    await expect(recordActivityEvent({
+      ...collegeAdmin, membership: null,
+    }, input)).rejects.toMatchObject({code: "ACTIVITY_SCOPE_MISMATCH"});
+
     const {rows} = await pool.query(
       "select id,college_id,actor_user_id,subject_id from activity_events where dedupe_key=$1",
       [dedupeKey],
