@@ -8,6 +8,7 @@ import {
   it,
 } from "vitest";
 import { Pool } from "pg";
+import { assertDb018DisposableTarget } from "../support/db018-test-target.mjs";
 import { closeDatabaseConnection } from "@/db/client";
 import type { RequestContext } from "@/modules/identity/context";
 import { createProgram } from "@/modules/academics/program-service";
@@ -48,15 +49,10 @@ import {
 } from "@/modules/courses/discussion-service";
 import { SEED_IDS } from "../../scripts/db-seed-data";
 
-const databaseUrl =
-  process.env.TEST_DATABASE_URL ??
-  process.env.DATABASE_URL;
-
-if (!databaseUrl) {
-  throw new Error(
-    "TEST_DATABASE_URL or DATABASE_URL is required for DB integration tests",
-  );
-}
+// This fixture deletes its own course/section rows. Never allow it to
+// silently fall back to the application database, even in standalone runs.
+assertDb018DisposableTarget(process.env, { serviceBound: true });
+const databaseUrl = process.env.TEST_DATABASE_URL!;
 
 const pool = new Pool({
   connectionString: databaseUrl,
@@ -156,6 +152,18 @@ async function cleanupC3() {
        from course_section_deliveries csd
        join course_offerings co
          on co.id = csd.offering_id
+       join courses c on c.id = co.course_id
+       where c.code like 'C3-%'
+     )`,
+  );
+  // Registered DB014 retention prevents deleting a delivery while its
+  // classroom discussions survive. Delete only this disposable C3 fixture's
+  // messages before their parent; retain the production retention trigger.
+  await pool.query(
+    `delete from course_discussion_messages
+     where delivery_id in (
+       select csd.id from course_section_deliveries csd
+       join course_offerings co on co.id = csd.offering_id
        join courses c on c.id = co.course_id
        where c.code like 'C3-%'
      )`,
