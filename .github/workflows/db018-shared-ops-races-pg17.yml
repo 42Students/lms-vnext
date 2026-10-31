@@ -18,6 +18,7 @@ on:
       - "src/app/api/courses/assignment-submissions/[submissionId]/file/route.ts"
       - "src/modules/storage/file-attestation-policy.ts"
       - "tests/unit/db018-file-attestation-policy.test.ts"
+      - "tests/db018-recruiter-outbox-route-readiness.test.mjs"
       - "tests/integration/db18-recruiter-invite-transactional-outbox.test.ts"
       - "src/modules/placements/tpo-recruiter-invite-service.ts"
       - "src/app/api/placements/tpo/leads/[leadId]/invite/route.ts"
@@ -75,8 +76,8 @@ jobs:
         run: npm run db:test:prepare
       - name: Prove idempotent registered-journal replay
         run: npm run db:migrate
-      - name: Verify legacy FILE public-route cutover without changing original receipt gate
-        run: node --test tests/db018-canonical-file-route-cutover.test.mjs
+      - name: Verify canonical FILE cutover and recruiter outbox route readiness
+        run: node --test tests/db018-canonical-file-route-cutover.test.mjs tests/db018-recruiter-outbox-route-readiness.test.mjs
       - name: Validate fail-closed private file scanning and object attestation
         run: npx vitest run tests/unit/db018-file-attestation-policy.test.ts
       - name: Execute P5-R18 announcement and P5-R19 tracker real two-writer CAS witnesses
