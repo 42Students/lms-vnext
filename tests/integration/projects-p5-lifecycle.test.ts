@@ -52,7 +52,7 @@ assertDb018DisposableTarget(process.env,{serviceBound:true});
 
 const pool = new Pool({
   connectionString: databaseUrl,
-  max: 1,
+  max: 4,
 });
 
 const superAdmin: RequestContext = {
@@ -322,6 +322,115 @@ afterAll(async () => {
 });
 
 describe("Projects P5 lifecycle", () => {
+  it("P5-R14 serializes two starts and a reopen-versus-start across real PostgreSQL writers", async () => {
+    async function raceLifecycleWriters(
+      projectId: string,
+      writers: [() => Promise<{ status: string }>, () => Promise<{ status: string }>],
+    ) {
+      // An external row-lock holder is a deterministic barrier: both real
+      // lifecycle services must reach their shared project FOR UPDATE before
+      // either request is allowed to complete. Delays alone do not prove race.
+      const blocker = await pool.connect();
+      let transactionOpen = false;
+      try {
+        await blocker.query("BEGIN");
+        transactionOpen = true;
+        await blocker.query("select id from project_instances where id = $1 for update", [projectId]);
+        const pending = writers.map((run) =>
+          Promise.resolve().then(run).then(
+            (value) => ({ ok: true as const, status: value.status }),
+            (error: unknown) => ({ ok: false as const, error }),
+          ),
+        );
+        let waiting = 0;
+        const deadline = Date.now() + 12_000;
+        while (Date.now() < deadline) {
+          const observed = await pool.query<{ waiting: string }>(
+            "select count(*)::text as waiting from pg_stat_activity " +
+            "where datname = current_database() and pid <> pg_backend_pid() " +
+            "and wait_event_type = 'Lock' and query ilike '%project_instances%'",
+          );
+          waiting = Number(observed.rows[0]?.waiting ?? 0);
+          if (waiting >= 2) break;
+          await new Promise((resolve) => setTimeout(resolve, 25));
+        }
+        await blocker.query("COMMIT");
+        transactionOpen = false;
+        const outcomes = await Promise.all(pending);
+        expect(waiting, "Both service writers must block on the project row").toBeGreaterThanOrEqual(2);
+        expect(outcomes.filter((result) => result.ok)).toHaveLength(1);
+        const loser = outcomes.find((result) => !result.ok);
+        expect(loser).toMatchObject({
+          ok: false, error: { code: "PROJECT_SPRINT_ALREADY_ACTIVE" },
+        });
+      } finally {
+        if (transactionOpen) await blocker.query("ROLLBACK").catch(() => undefined);
+        blocker.release();
+      }
+    }
+
+    // Two distinct PLANNED sprints, not just two requests for the same row.
+    const firstProject = await createProject();
+    const firstWorkspace = await getProjectInstanceWorkspace(mentor, firstProject.id);
+    const [firstSprint, secondSprint] = firstWorkspace.sprints;
+    expect(firstSprint && secondSprint).toBeTruthy();
+    await raceLifecycleWriters(firstProject.id, [
+      () => startProjectSprint(mentor, firstProject.id, firstSprint!.id),
+      () => startProjectSprint(collegeAdmin, firstProject.id, secondSprint!.id),
+    ]);
+    const firstState = await pool.query<{
+      id: string; status: string; project_status: string; release_status: string;
+    }>(
+      "select s.id, s.status, p.status as project_status, r.status as release_status " +
+      "from project_sprints s join project_instances p on p.id = s.project_id " +
+      "join project_releases r on r.id = s.release_id where s.project_id = $1",
+      [firstProject.id],
+    );
+    expect(firstState.rows.filter((row) => row.status === "ACTIVE")).toHaveLength(1);
+    expect(firstState.rows.filter((row) => row.status === "PLANNED")).toHaveLength(1);
+    expect(firstState.rows.every((row) =>
+      row.project_status === "ACTIVE" && row.release_status === "IN_PROGRESS",
+    )).toBe(true);
+    const startEvents = await pool.query(
+      "select id from activity_events where subject_type = 'project_sprint' " +
+      "and subject_id in ($1, $2) and metadata ? 'sprintStartSnapshot'",
+      [firstSprint!.id, secondSprint!.id],
+    );
+    expect(startEvents.rows, "Exactly one committed start-time activity snapshot").toHaveLength(1);
+
+    // A completed sprint reopening races a different PLANNED sprint start.
+    const secondProject = await createProject();
+    const initial = await getProjectInstanceWorkspace(mentor, secondProject.id);
+    const [completedSprint, plannedSprint] = initial.sprints;
+    await startProjectSprint(mentor, secondProject.id, completedSprint!.id);
+    const started = await getProjectInstanceWorkspace(mentor, secondProject.id);
+    const unfinished = started.tasks.find((task) => task.sprintId === completedSprint!.id)!;
+    await completeProjectSprint(mentor, secondProject.id, completedSprint!.id, undefined, [{
+      taskId: unfinished.id, destination: "BACKLOG",
+      expectedUpdatedAt: unfinished.updatedAt.toISOString(),
+    }]);
+    await raceLifecycleWriters(secondProject.id, [
+      () => reopenProjectSprint(mentor, secondProject.id, completedSprint!.id),
+      () => startProjectSprint(collegeAdmin, secondProject.id, plannedSprint!.id),
+    ]);
+    const secondState = await pool.query<{
+      id: string; status: string; project_status: string; release_status: string;
+    }>(
+      "select s.id, s.status, p.status as project_status, r.status as release_status " +
+      "from project_sprints s join project_instances p on p.id = s.project_id " +
+      "join project_releases r on r.id = s.release_id where s.project_id = $1",
+      [secondProject.id],
+    );
+    expect(secondState.rows.filter((row) => row.status === "ACTIVE")).toHaveLength(1);
+    expect(secondState.rows.every((row) =>
+      row.project_status === "ACTIVE" && row.release_status === "IN_PROGRESS",
+    )).toBe(true);
+    expect(secondState.rows.find((row) => row.id === completedSprint!.id)?.status)
+      .toMatch(/^(COMPLETED|ACTIVE)$/);
+    expect(secondState.rows.find((row) => row.id === plannedSprint!.id)?.status)
+      .toMatch(/^(PLANNED|ACTIVE)$/);
+  });
+
   it("denies starting a Sprint within a shipped release even while the project is PLANNED",async()=>{
     const project=await createProject();
     const ws=await getProjectInstanceWorkspace(mentor,project.id);
