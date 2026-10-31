@@ -1,3 +1,4 @@
+import { assertDb018DisposableTarget } from "../support/db018-test-target.mjs";
 import { randomUUID } from "node:crypto";
 import { afterAll, afterEach, describe, expect, it } from "vitest";
 import { Pool } from "pg";
@@ -22,6 +23,7 @@ if (
       "DB018_ISOLATED_TEST_DATABASE=1 and identical DATABASE_URL",
   );
 }
+assertDb018DisposableTarget(process.env, { serviceBound: true });
 const pool = new Pool({ connectionString: databaseUrl, max: 3 });
 const ownedEvents: string[] = [];
 
