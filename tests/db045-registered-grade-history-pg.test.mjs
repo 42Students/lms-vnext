@@ -34,7 +34,7 @@ async function mustReject23514(work) {
 }
 
 test("DB045 registered grade-ledger INSERT, row-mutation and TRUNCATE guards active", async () => {
-  assert.equal(journal.entries.at(-1)?.tag, "0321_db045_grade_event_completeness");
+  assert.equal(journal.entries.at(-1)?.tag, "0322_db045_grade_event_enum_cast");
   await withRollback(async db => {
     const { rows } = await db.query(`
       SELECT tgname,tgenabled FROM pg_trigger
@@ -89,4 +89,10 @@ test("DB045 rejects forged orphan grade event before FK evaluation", async () =>
       'NOT_GRADED','GRADED',false,false,null,$6,null,now(),0,1
     )
   `, [random(),random(),random(),random(),random(),random()])));
+});
+
+test("DB045 status comparisons convert submission enums to ledger text", async () => {
+  const migration = readFileSync("drizzle/0322_db045_grade_event_enum_cast.sql", "utf8");
+  assert.match(migration, /e\.previous_grading_status = OLD\.grading_status::text/);
+  assert.match(migration, /e\.new_grading_status = NEW\.grading_status::text/);
 });
