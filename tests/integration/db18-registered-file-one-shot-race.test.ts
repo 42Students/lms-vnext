@@ -18,6 +18,7 @@ import { createCourseLesson } from "@/modules/courses/lesson-service";
 import { createCourseAssignment, transitionCourseAssignment } from "@/modules/courses/assignment-service";
 import { submitAssignmentWithFiles } from "@/modules/courses/assignment-submission-file-service";
 import { submitCourseAssignment } from "@/modules/courses/assignment-submission-service";
+import { issueSubmissionFileDownloadGrant } from "@/modules/courses/assignment-submission-file-service";
 import { SEED_IDS } from "../../scripts/db-seed-data";
 
 // Companion to the required staged DB053 receipt test; NOT a replacement.
@@ -31,8 +32,10 @@ if(enabled)assertDb018DisposableTarget(process.env,{serviceBound:true});
 const pool=enabled?new Pool({connectionString:databaseUrl!,max:4}):null;
 const tag=randomUUID().replaceAll("-","").slice(0,10);
 const userId=randomUUID(), memberId=randomUUID(), fileId=randomUUID(), secondFileId=randomUUID();
+const forgedFileId=randomUUID();
 const objectKey="private/"+SEED_IDS.collegeA+"/"+memberId+"/assignment-submission/"+fileId;
 const secondObjectKey="private/"+SEED_IDS.collegeA+"/"+memberId+"/assignment-submission/"+secondFileId;
+const forgedObjectKey="private/"+SEED_IDS.collegeA+"/"+memberId+"/assignment-submission/"+forgedFileId;
 const sha256="c".repeat(64), tokenHash="d".repeat(64);
 const admin:RequestContext={
   user:{id:SEED_IDS.collegeAdminUser,identityUid:"seed-college-admin",platformStatus:"ACTIVE",systemRoles:[]},
@@ -148,6 +151,22 @@ beforeAll(async()=>{
     [secondFileId,SEED_IDS.collegeA,assignmentId,deliveryId,memberId,
       secondObjectKey,tokenHash,sha256,userId],
   );
+  // Deliberately satisfies today's DB016 READY/CLEAN structural checks,
+  // but NOT the application-level privileged scanner identity policy.
+  // The registered producer and download ACL must reject this forged verdict.
+  await pg().query(
+    "insert into assignment_submission_files "+
+    "(id,college_id,assignment_id,delivery_id,owner_membership_id,object_key,"+
+    "upload_token_hash,upload_expires_at,original_name,declared_content_type,"+
+    "declared_size_bytes,status,object_generation,verified_content_type,"+
+    "verified_size_bytes,sha256_hex,scan_status,scan_attested_by,scan_attested_at,"+
+    "completed_at,created_by_user_id) "+
+    "values($1,$2,$3,$4,$5,$6,$7,now()+interval '10 minutes','forged.pdf',"+
+    "'application/pdf',128,'READY','1720000000000','application/pdf',128,$8,"+
+    "'CLEAN','untrusted-client-scanner',now(),now(),$9)",
+    [forgedFileId,SEED_IDS.collegeA,assignmentId,deliveryId,memberId,
+      forgedObjectKey,tokenHash,sha256,userId],
+  );
 },30_000);
 
 afterAll(async()=>{
@@ -160,6 +179,26 @@ afterAll(async()=>{
 });
 
 describe.skipIf(!enabled)("DB018 registered one-shot private file producer",()=>{
+  it("rejects forged CLEAN scanner before any FILE submission or signed private read",async()=>{
+    await expect(submitCourseAssignment(learner,assignmentId,{
+      deliveryId,submissionType:"FILE",uploadReceiptId:forgedFileId,
+    })).rejects.toMatchObject({code:"STORAGE_FILE_NOT_READY"});
+    await expect(issueSubmissionFileDownloadGrant(learner,forgedFileId))
+      .rejects.toMatchObject({code:"STORAGE_FILE_NOT_READY"});
+    const submissions=await pg().query<{n:string}>(
+      "select count(*)::text as n from assignment_submissions "+
+      "where assignment_id=$1 and membership_id=$2",
+      [assignmentId,memberId],
+    );
+    expect(submissions.rows[0]?.n).toBe("0");
+    const events=await pg().query<{n:string}>(
+      "select count(*)::text as n from storage_file_events "+
+      "where subject_id=$1 and event_type in ('SUBMITTED','DOWNLOAD_GRANTED')",
+      [forgedFileId],
+    );
+    expect(events.rows[0]?.n).toBe("0");
+  },20_000);
+
   it("P5-R13 registered modern and legacy FILE paths share one atomic one-shot writer",async()=>{
     expect(assignmentId).toMatch(/^[0-9a-f-]{36}$/);
     const holder=await pg().connect();
