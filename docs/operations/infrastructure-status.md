@@ -10,7 +10,7 @@ Last reviewed 2026-10-14. Everything below runs on existing shared infrastructur
 | Database | Cloud SQL Postgres 14 `forty-two-prod-1`, database `lms_vnext` | Shared with the legacy dev app. Private IP only. |
 | Sign-in retention | CronJob `vnext-auth-purge`, daily 02:47 IST | `deploy/k8s/dev/auth-purge-cronjob.yaml`; `npm run auth:purge`. Removes login challenges older than 1 day and dead sessions older than 30 days. |
 | Network | `deploy/k8s/dev/lms-vnext-networkpolicy.yaml` | Only Google's load balancer ranges can reach the pod on 8080; a direct call from another pod in the namespace times out (tested 2026-10-14). The cluster runs Dataplane V2 so policies are enforced. |
-| SMS / email | Exotel, ZeptoMail | Keys copied in-cluster from the legacy secrets; never in git. |
+| SMS / email | Exotel, ZeptoMail | Provider credentials must be injected via managed runtime secrets, never committed to Git. |
 | Private files | Cloudflare R2 (see `docs/architecture/private-object-storage.md`) | **Bucket not created yet.** |
 
 ## Database safety (read-only check, 2026-10-14)
@@ -35,7 +35,7 @@ Last reviewed 2026-10-14. Everything below runs on existing shared infrastructur
 
 1. **Private R2 bucket** — create `lms-vnext-private` (private, no public domain) or provide a token with bucket-create rights, then set `R2_PRIVATE_BUCKET`. The legacy bucket is public and is refused by the code.
 2. **Malware scanner** — nothing calls `recordPrivateObjectScanVerdict` yet, so uploaded files stay pending and are never served (safe default).
-3. **ZeptoMail token** — still the legacy token found in the old source; rotate it.
+3. **ZeptoMail credential** — independently verify key rotation and runtime-secret deployment before enabling production delivery.
 4. **Account enumeration** — sign-in tells callers whether a contact is registered, suspended or an administrator (matches the legacy product). Switch to uniform responses if the policy changes.
 5. **Send-cap lockout** — mitigated: a caller only exhausts their own per-requester budget. A coordinated attack from 2 or more addresses can still use the contact's overall 8 sends per 10 minutes.
 6. **Per-IP request throttle is per process** — fine for 1 replica. Sign-in send caps are already database-enforced (per contact+requester 5, per contact 8, per address 20 per 10 minutes); move the remaining per-IP counters to the database before scaling out.
