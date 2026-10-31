@@ -27,6 +27,14 @@ test('DB019 all 11 frozen source ledgers reconcile 199 tables and 2829 fields wi
     crossDomainHandoffs:95,
     runtimeMappingsVerifiedByThisOverlay:0,
   });
+  assert.deepEqual(result.progress.db004PriorTechnicalCoverage, {
+    ownerFields:195,
+    priorRegisteredPhysicalWitnessRows:137,
+    priorCompositeImplementationRows:24,
+    requesterApprovedRetirementRows:34,
+    otherDb01SourceDecisionsNotInDb004:117,
+    freshGlobalPostgresCertification:false,
+  });
   assert.equal(result.progress.awaitingSourceEvidence+result.progress.sourceEvidenceRows,2829);
   assert.equal(result.domains.reduce((s,d)=>s+d.fields,0),2829);
 });
@@ -100,4 +108,28 @@ test('DB019 DB01 source decisions are pinned to the global legacy field identiti
   const partial=auditDb019(index,ledgers,decisions,{db01Triage});
   assert(partial.errors.some(x=>x.code==='PARTIAL_DB01_SOURCE_DECISION_INPUT'));
   assert.equal(partial.progress.db01SourceDecisionCoverage,null);
+});
+
+test('DB019 rejects forged DB004 registered field receipts while retaining upstream source decisions',()=>{
+  const read=path=>JSON.parse(fs.readFileSync(new URL('../docs/planning/'+path,import.meta.url),'utf8'));
+  const index=read('database-parity-pass4-column-index.json');
+  const ledgers=index.artifacts.map(x=>JSON.parse(fs.readFileSync(new URL('../'+x.path,import.meta.url),'utf8')));
+  const decisions=read('database-parity-pass4-review-decisions.json');
+  const db01Triage=read('db01-chat02-312-field-source-triage.json');
+  const db01Final=read('db01-chat05-final-field-disposition.json');
+  const db004Evidence=read('db004-current-owner-evidence.json');
+  const tampered=structuredClone(db004Evidence);
+  const physical=tampered.rows.find(x=>x.physicalVerified);
+  physical.runtimeEvidence.passingRun='https://example.test/forged';
+  const bad=auditDb019(index,ledgers,decisions,{db01Triage,db01Final,db004Evidence:tampered});
+  assert.equal(bad.valid,false);
+  assert.equal(bad.progress.db004PriorTechnicalCoverage,null);
+  assert.equal(bad.progress.db01SourceDecisionCoverage.explicitDecisionRows,312);
+  assert(bad.errors.some(x=>x.code==='DB004_OWNER_EVIDENCE_UNSUPPORTED_PROOF'));
+  const duplicate=structuredClone(db004Evidence);
+  duplicate.rows[1].legacyField=duplicate.rows[0].legacyField;
+  const wrong=auditDb019(index,ledgers,decisions,{db01Triage,db01Final,db004Evidence:duplicate});
+  assert.equal(wrong.valid,false);
+  assert.equal(wrong.progress.db004PriorTechnicalCoverage,null);
+  assert(wrong.errors.some(x=>x.code==='DB004_OWNER_EVIDENCE_FIELD_DRIFT'));
 });
