@@ -179,7 +179,8 @@
     "focusedVitestTestsExecuted": 50,
     "focusedVitestTestsPassed": 50,
     "fullSuiteVitestTestsExecuted": 92,
-    "fullSuiteVitestTestsPassed": 92
+    "fullSuiteVitestTestsPassed": 92,
+    "pendingConcurrencyAuthored": 1
   },
   "knownRedRaceWitnesses": [
     {
@@ -374,5 +375,15 @@
     "fullSuiteVitestTestsExecuted": 92,
     "fullSuiteVitestTestsPassed": 92,
     "note": "Five new distinct constraint rejection witnesses passed (users_version_ck, sections_capacity_ck, sections_min_size_ck, registered db02_course_offerings_credits_ck, placement_companies_version_ck). All real registered PostgreSQL constraints, no disabled guards."
-  }
+  },
+  "authoredPendingConcurrencyWitnesses": [
+    {
+      "id": "DB18-C05",
+      "raceProbe": "P5-R03",
+      "file": "tests/integration/groups-db03.test.ts",
+      "title": "P5-R03 serializes concurrent last-seat group admissions without counter or event drift",
+      "state": "AUTHORED_AWAITING_REGISTERED_PG17",
+      "requiredEvidence": "Execute full registered DB018 PostgreSQL 17 workflow at exact commit; verify two real concurrent service joins, 1 ACTIVE, 1 WAITLISTED, active_count=1 and 2 immutable events; do not increase runtimeExecuted or runtimePassed from authored source alone."
+    }
+  ]
 }
