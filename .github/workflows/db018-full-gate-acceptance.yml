@@ -24,6 +24,11 @@ on:
       - "tests/integration/db18-notification-race.test.ts"
       - "tests/integration/db18-scheduled-lease-race.test.ts"
       - "tests/integration/db18-outbound-service-race.test.ts"
+      - "tests/integration/db18-recruiter-invite-transactional-outbox.test.ts"
+      - "src/modules/placements/tpo-recruiter-invite-service.ts"
+      - "src/app/api/placements/tpo/leads/[leadId]/invite/route.ts"
+      - "src/app/api/placements/tpo/jobs/[jobId]/recruiter-review-invite/route.ts"
+      - "src/modules/storage/file-attestation-policy.ts"
       - "tests/integration/projects-p5-lifecycle.test.ts"
       - "tests/integration/placements-p8-offers.test.ts"
       - "tests/integration/placements-db08-batches.test.ts"
@@ -121,6 +126,8 @@ jobs:
       - name: P5-R09 and P5-R21 registered real outbound producer and fake provider
         run: |
           npx vitest run --config vitest.db.registered.config.ts tests/integration/db18-outbound-service-race.test.ts
+      - name: Registered recruiter invite credential and encrypted outbox rollback/rotation witness
+        run: npx vitest run --config vitest.db.registered.config.ts tests/integration/db18-recruiter-invite-transactional-outbox.test.ts
       - name: P5-R18 announcement edit/delete/restore CAS and P5-R19 tracker event atomicity on registered PG17
         run: |
           npx vitest run --config vitest.db.registered.config.ts tests/integration/db18-shared-ops-race.test.ts
