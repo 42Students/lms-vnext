@@ -9,6 +9,8 @@ on:
       - "drizzle/0322_db045_grade_event_enum_cast.sql"
       - "drizzle/0324_db045_attendance_immutable_history.sql"
       - "drizzle/meta/0324_snapshot.json"
+      - "drizzle/meta/0325_snapshot.json"
+      - "tests/support/db045-attendance-fixture.mjs"
       - "src/modules/attendance/history-event.ts"
       - "src/modules/attendance/faculty-service.ts"
       - "src/modules/attendance/admin-service.ts"
