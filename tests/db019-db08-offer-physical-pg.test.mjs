@@ -387,8 +387,8 @@ test("DB019 external offer, debarment and screening proposals have registered PG
   // PostgreSQL renders numeric bounds as either 0 or (0)::numeric.
   // Keep the nonnegative and positive CHECK semantics, not a brittle text
   // literal that fails on valid pg_get_constraintdef canonicalization.
-  assert.match(constraints.get("placement_external_offers_ctc_ck"),/ctc_lpa[^\\n]*>=\\s*\\(?0/);
-  assert.match(constraints.get("placement_debarments_until_drives_ck"),/until_drives[^\\n]*>\\s*\\(?0/);
+  assert.match(constraints.get("placement_external_offers_ctc_ck"),/ctc_lpa[^\n]*>=\s*\(?0/);
+  assert.match(constraints.get("placement_debarments_until_drives_ck"),/until_drives[^\n]*>\s*\(?0/);
   const i=await pool.query(`
     select indexname,indexdef from pg_indexes
      where schemaname='public' and tablename='placement_debarments'
