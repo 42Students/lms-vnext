@@ -180,7 +180,7 @@
     "focusedVitestTestsPassed": 50,
     "fullSuiteVitestTestsExecuted": 92,
     "fullSuiteVitestTestsPassed": 92,
-    "pendingConcurrencyAuthored": 1
+    "pendingConcurrencyAuthored": 2
   },
   "knownRedRaceWitnesses": [
     {
@@ -384,6 +384,14 @@
       "title": "P5-R03 serializes concurrent last-seat group admissions without counter or event drift",
       "state": "AUTHORED_AWAITING_REGISTERED_PG17",
       "requiredEvidence": "Execute full registered DB018 PostgreSQL 17 workflow at exact commit; verify two real concurrent service joins, 1 ACTIVE, 1 WAITLISTED, active_count=1 and 2 immutable events; do not increase runtimeExecuted or runtimePassed from authored source alone."
+    },
+    {
+      "id": "DB18-C06",
+      "raceProbe": "P5-R11",
+      "file": "tests/integration/academics-a2.test.ts",
+      "title": "P5-R11 rejects schedule create and update after a concurrent period close",
+      "state": "AUTHORED_AWAITING_REGISTERED_PG17",
+      "requiredEvidence": "Execute registered PG17 A2 producer tests with actual uncommitted period close and concurrent schedule creation and update, verify both reject with ACADEMIC_PERIOD_CLOSED and original schedule title remains unchanged; only then change state to verified."
     }
   ]
 }
