@@ -9,7 +9,7 @@ import {newLearnerPlacementWriteFixture,seedLearnerPlacementWriteFixture,
   cleanupLearnerPlacementWriteFixture,type LearnerPlacementWriteFixture} from "../support/learner-placement-write-fixture";
 
 if (!process.env.TEST_DATABASE_URL) throw new Error("Disposable TEST_DATABASE_URL required");
-const pool=new Pool({connectionString:process.env.TEST_DATABASE_URL,max:1});
+const pool=new Pool({connectionString:process.env.TEST_DATABASE_URL,max:2});
 let fixture:LearnerPlacementWriteFixture;
 const initial={notifyMatchingJobs:true,notifyApplicationUpdates:true};
 const input={notifyMatchingJobs:false,notifyApplicationUpdates:true,confirmed:true,expected:initial} as const;
@@ -61,6 +61,48 @@ describe("own placement notification preferences with optimistic saved choices",
     expect(rows.rowCount).toBe(0);
     expect((await pool.query("SELECT id FROM activity_events WHERE subject_id=$1",[fixture.ids.membership])).rowCount).toBe(0);
   },30000);
+  it("blocks on the exact learner role lock, then denies a concurrently revoked actor",async()=>{
+    const blocker=await pool.connect();
+    let inTx=false;
+    try {
+      await blocker.query("BEGIN");inTx=true;
+      await blocker.query("DELETE FROM membership_roles WHERE id=$1",[fixture.ids.role]);
+      const pending=updateOwnPlacementNotificationPreferences(fixture.context,input);
+      // A plain joined role SELECT would return the pre-delete MVCC version
+      // and allow the preference write. Our separate FOR SHARE must instead
+      // wait on the revoker's tuple lock before any consent or audit write.
+      let waiting=false;
+      for(let i=0;i<120;i++){
+        const stats=await pool.query<{blocked:string}>(`
+          select count(*)::text as blocked
+            from pg_stat_activity
+           where datname=current_database() and pid<>pg_backend_pid()
+             and state='active' and wait_event_type='Lock'
+             and query ilike '%membership_roles%'
+             and query ilike '%for share%'
+        `);
+        if(Number(stats.rows[0]?.blocked)>0){waiting=true;break;}
+        await new Promise(resolve=>setTimeout(resolve,50));
+      }
+      expect(waiting).toBe(true);
+      await blocker.query("COMMIT");inTx=false;
+      await expect(pending).rejects.toBeDefined();
+      const prefs=await pool.query(
+        "SELECT membership_id FROM placement_candidate_preferences WHERE membership_id=$1",
+        [fixture.ids.membership],
+      );
+      expect(prefs.rowCount).toBe(0);
+      const audit=await pool.query(
+        "SELECT id FROM activity_events WHERE subject_id=$1",
+        [fixture.ids.membership],
+      );
+      expect(audit.rowCount).toBe(0);
+    } finally {
+      if(inTx)await blocker.query("ROLLBACK");
+      blocker.release();
+    }
+  },30000);
+
   it("requires expected saved choices and rejects caller scope selectors",async()=>{
     const {expected,...withoutExpected}=input;
     void expected;
