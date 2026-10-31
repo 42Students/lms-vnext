@@ -218,6 +218,24 @@ describe("DB-067 outbound worker cannot silently double-send", () => {
     expect(invalid.calls).toEqual(["load", "authorize", "send"]);
   });
 
+  it("quarantines malformed provider replies even at the final attempt", async () => {
+    // A malformed adapter result is not proof of non-send. A previous
+    // fifth-attempt shortcut incorrectly marked arbitrary replies FAILED.
+    for (const reply of [
+      { kind: "MALFORMED" },
+      { kind: "UNKNOWN" },
+      null,
+      { kind: "ACCEPTED", providerMessageId: "" },
+    ]) {
+      const { port, calls, completion } = fixture({ load: { ...opened, attempts: 5 } });
+      port.send = async () => reply as TrustedProviderResult;
+      expect(await executeClaimedOutbound(claim, "worker-01", port))
+        .toBe("RECONCILIATION_REQUIRED");
+      expect(calls).toEqual(["load", "authorize"]);
+      expect(completion).toEqual([]);
+    }
+  });
+
   it("does not retry a known permanently unsent provider rejection", async () => {
     const { port, completion } = fixture({
       result: { kind: "DEFINITELY_UNSENT_PERMANENT" },
