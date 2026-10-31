@@ -1,6 +1,6 @@
 import {deleteDisposableAttendanceEvents} from "../support/db045-attendance-fixture.mjs";
 import {randomUUID} from "node:crypto";
-import {afterAll,afterEach,describe,expect,it} from "vitest";
+import {afterAll,afterEach,describe,expect,it,vi} from "vitest";
 import {Pool} from "pg";
 import {closeDatabaseConnection} from "@/db/client";
 import type {RequestContext} from "@/modules/identity/context";
@@ -20,6 +20,7 @@ import {getFacultyReportsHub} from "@/modules/courses/faculty-reports-hub-servic
 import {getFacultyCourseWorkspace} from "@/modules/courses/faculty-course-service";
 import {getFacultyCourseHomeSignals} from "@/modules/courses/faculty-course-home-service";
 import {getFacultyDeliveryRoster,createFacultyAttendanceSession,markFacultyAttendance,getFacultyAttendanceWorkspace} from "@/modules/attendance/faculty-service";
+import {correctAdminAttendance} from "@/modules/attendance/admin-service";
 import {getFacultyStudentDetail} from "@/modules/courses/faculty-student-detail-service";
 import {getOwnFacultyContactAvailability} from "@/modules/people/faculty-contact-availability-service";
 import {SEED_IDS} from "../../scripts/db-seed-data";
@@ -334,6 +335,56 @@ describe("Faculty registered report/history positive and scope denials",()=>{
   expect(audit.rows.map(row=>row.summary).sort()).toEqual([
    "Class attendance corrected","Class attendance marked",
   ]);
+
+  // DB045 Faculty bulk correction must advance the Admin row token, even
+  // when the app wall clock is behind the preceding database writer.
+  await correctAdminAttendance(admin,event.id,{
+   collegeId:SEED_IDS.collegeA,deliveryId:f.deliveryId,
+   membershipId:f.learnerMembershipId,status:"PRESENT",
+   note:"Administrator reconciled absence",
+  });
+  const prior=await pool.query<{id:string;marked_at:Date;version:number}>(
+   "select id,marked_at,version from attendance_records where schedule_event_id=$1 and membership_id=$2",
+   [event.id,f.learnerMembershipId],
+  );
+  expect(prior.rows).toHaveLength(1);
+  const adminRecord=prior.rows[0]!;
+  const token=await pool.query<{marked_at:Date}>(
+   "select marked_at from attendance_sessions where schedule_event_id=$1",[event.id],
+  );
+  expect(token.rows).toHaveLength(1);
+  vi.useFakeTimers({toFake:["Date"]});
+  vi.setSystemTime(new Date(adminRecord.marked_at.getTime()-2_000));
+  try {
+   await markFacultyAttendance(sessionFaculty,event.id,{
+    deliveryId:f.deliveryId,absentMembershipIds:[f.learnerMembershipId],
+    presentMembershipIds:[],
+    expectedMarkedAt:token.rows[0]!.marked_at.toISOString(),
+    correctionReason:"Faculty verified absence after Admin review",
+   });
+  } finally {
+   vi.useRealTimers();
+  }
+  const after=await pool.query<{marked_at:Date;version:number;status:string}>(
+   "select marked_at,version,status from attendance_records where id=$1",[adminRecord.id],
+  );
+  expect(after.rows).toHaveLength(1);
+  expect(after.rows[0]!.status).toBe("ABSENT");
+  expect(after.rows[0]!.version).toBe(adminRecord.version+1);
+  expect(after.rows[0]!.marked_at.getTime())
+   .toBeGreaterThan(adminRecord.marked_at.getTime());
+  const immutable=await pool.query<{new_marked_at:Date}>(
+   "select new_marked_at from attendance_record_events where attendance_record_id=$1 and record_version_after=$2",
+   [adminRecord.id,after.rows[0]!.version],
+  );
+  expect(immutable.rows).toHaveLength(1);
+  expect(immutable.rows[0]!.new_marked_at.getTime())
+   .toBe(after.rows[0]!.marked_at.getTime());
+  await expect(correctAdminAttendance(admin,event.id,{
+   collegeId:SEED_IDS.collegeA,deliveryId:f.deliveryId,
+   membershipId:f.learnerMembershipId,status:"PRESENT",
+   expectedMarkedAt:adminRecord.marked_at.toISOString(),
+  })).rejects.toMatchObject({code:"ATTENDANCE_STALE_VERSION"});
  });
  it("keeps Faculty alternate contacts blocked even for a real authorized Faculty-only profile",async()=>{
   // Seeded College A Faculty ALSO has MENTOR: the self-profile permission
