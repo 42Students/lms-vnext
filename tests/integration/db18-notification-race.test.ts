@@ -120,12 +120,11 @@ describe("DB18 P5-R20 notification receipt races on disposable PostgreSQL", () =
 
       const outcomes = await deliveries;
       expect(outcomes.every(row => row.status === "fulfilled")).toBe(true);
-      const successes = outcomes.filter(
-        (row): row is PromiseFulfilledResult<{ delivered: number; skippedDuplicate: number }> =>
-          row.status === "fulfilled",
+      const successes = outcomes.flatMap(row =>
+        row.status === "fulfilled" ? [row.value] : [],
       );
-      expect(successes.map(row => row.value.delivered).sort()).toEqual([0, 1]);
-      expect(successes.map(row => row.value.skippedDuplicate).sort()).toEqual([0, 1]);
+      expect(successes.map(row => row.delivered).sort()).toEqual([0, 1]);
+      expect(successes.map(row => row.skippedDuplicate).sort()).toEqual([0, 1]);
     } finally {
       await deliveryGate.query("ROLLBACK");
       deliveryGate.release();
@@ -156,9 +155,8 @@ describe("DB18 P5-R20 notification receipt races on disposable PostgreSQL", () =
 
       const outcomes = await acknowledgements;
       expect(outcomes.every(row => row.status === "fulfilled")).toBe(true);
-      const success = outcomes.filter(
-        (row): row is PromiseFulfilledResult<{ readAt: Date | null }> =>
-          row.status === "fulfilled",
+      const success = outcomes.flatMap(row =>
+        row.status === "fulfilled" ? [row.value] : [],
       );
       const persisted = await pool.query<{ read_at: Date | null }>(
         "SELECT read_at FROM in_app_notifications WHERE id=$1",
@@ -166,8 +164,8 @@ describe("DB18 P5-R20 notification receipt races on disposable PostgreSQL", () =
       );
       const readAt = persisted.rows[0]?.read_at;
       expect(readAt).toBeInstanceOf(Date);
-      expect(success.every(row => row.value.readAt?.getTime() === readAt?.getTime())).toBe(true);
-      expect(success[0].value.readAt?.getTime()).toBe(success[1].value.readAt?.getTime());
+      expect(success.every(row => row.readAt?.getTime() === readAt?.getTime())).toBe(true);
+      expect(success[0].readAt?.getTime()).toBe(success[1].readAt?.getTime());
     } finally {
       await readGate.query("ROLLBACK");
       readGate.release();
