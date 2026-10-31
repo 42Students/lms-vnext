@@ -1,3 +1,4 @@
+import { assertDb018DisposableTarget } from "../support/db018-test-target.mjs";
 import { randomUUID } from "node:crypto";
 import { afterAll, afterEach, beforeEach, describe, expect, it } from "vitest";
 import { Pool } from "pg";
@@ -11,6 +12,9 @@ import { upsertGroupRule, refreshGroupRule } from "@/modules/groups/rules-servic
 const url = process.env.TEST_DATABASE_URL;
 if (!url || process.env.DB03_ISOLATED_TEST_DATABASE !== "1")
   throw new Error("DB03 requires TEST_DATABASE_URL AND DB03_ISOLATED_TEST_DATABASE=1; history cleanup uses TRUNCATE on an isolated disposable database");
+// Raw pg fixtures and the Drizzle service must never mutate different databases.
+// The independent verifier sets both aliases only for a disposable target.
+assertDb018DisposableTarget(process.env, { serviceBound: true });
 const pool = new Pool({ connectionString: url, max: 5 });
 const admin: RequestContext = {
   user: { id: SEED_IDS.collegeAdminUser, identityUid: "seed-college-admin", platformStatus: "ACTIVE", systemRoles: [] },
