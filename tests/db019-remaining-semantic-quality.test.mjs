@@ -71,7 +71,7 @@ test("DB08 280 placement fields cannot self-promote from candidates to exact map
 test("DB08 28 job_offer source-to-target proposals remain bounded and never claim runtime proof",()=>{
   const result=loadDb019Remaining();
   assert.equal(result.valid,true);
-  assert.equal(result.domains.DB08.sourceProposalsNotRuntimeVerified,150);
+  assert.equal(result.domains.DB08.sourceProposalsNotRuntimeVerified,189);
   assert.equal(result.domains.DB08.unresolvedExactDecisions,280);
   assert.equal(result.domains.DB08.runtimeVerified,0);
   assert.equal(artifacts.DB08.tables.find(t=>t.legacyTable==="job_offer").fields.length,28);
@@ -227,6 +227,66 @@ test("DB08 27 attendance, eligibility override, and season fields preserve real 
   assert.equal(bySeason["start_date"].classification,"EXPLICIT_RUNTIME_GAP");
   assert.equal(bySeason["end_date"].classification,"EXPLICIT_RUNTIME_GAP");
   assert.equal(bySeason["version"].classification,"EXPLICIT_RUNTIME_GAP");
+  assert.equal(artifacts.DB08.counts.verifiedFields,0);
+  assert.equal(artifacts.DB08.gate.fieldsUnverified,280);
+});
+
+test("DB08 39 private screening, external-placement and debarment fields retain explicit gaps",()=>{
+  const definitions=[
+    ["application_screening",19,2,16,1,["placement_application_screenings","placement_application_screening_history"]],
+    ["external_placement",10,7,3,0,["placement_external_offers"]],
+    ["placement_debarment",10,10,0,0,["placement_debarments"]],
+  ];
+  const sources={
+    application_screening:["src/db/schema/placements.ts",
+      "export const placementApplicationScreenings = pgTable(",
+      "export const placementJobRounds = pgTable("],
+    external_placement:["src/db/schema/placement-external.ts",
+      "export const placementExternalOffers = pgTable(",
+      "export const placementExternalOfferEvents = pgTable("],
+    placement_debarment:["src/db/schema/placement-debarments.ts",
+      "export const placementDebarments = pgTable(",
+      "export const placementDebarmentDriveEvents = pgTable("],
+  };
+  for(const [name,expected,proposed,gaps,enums,allowed] of definitions){
+    const table=artifacts.DB08.tables.find(t=>t.legacyTable===name);
+    assert.equal(table?.fields.length,expected);
+    const fields=table.fields.map(f=>f.reviewDecision?.classification);
+    assert.equal(fields.filter(x=>x==="PROPOSED_ACTIVE_FIELD_MAPPING").length,proposed);
+    assert.equal(fields.filter(x=>x==="EXPLICIT_RUNTIME_GAP").length,gaps);
+    assert.equal(fields.filter(x=>x==="NEEDS_ENUM_CROSSWALK").length,enums);
+    const [file,start,end]=sources[name];
+    const schema=fs.readFileSync(new URL("../"+file,import.meta.url),"utf8");
+    const i=schema.indexOf(start),j=schema.indexOf(end,i+10);
+    assert.ok(i>=0&&j>i,name+" registered schema anchor missing");
+    const block=schema.slice(i,j);
+    for(const field of table.fields){
+      const d=field.reviewDecision;
+      assert.equal(field.status,"UNVERIFIED");
+      assert.equal(d.reviewStatus,"SOURCE_REVIEWED_PROPOSAL_NOT_VERIFIED");
+      assert.equal(d.runtimeVerified,false);
+      assert.equal(d.consumerVerified,false);
+      assert.equal(d.retirementApproved,false);
+      assert.ok(d.sourceRationale.length>25);
+      assert.ok(d.outstandingProof.length>25);
+      for(const ref of d.targetRefs){
+        const [tableName,col]=ref.split(".");
+        assert.ok(allowed.includes(tableName),name+" cannot map to "+tableName);
+        assert.ok(block.includes('("'+col+'"'),
+          name+"."+field.legacyColumn+" candidate absent "+ref);
+      }
+    }
+  }
+  const screening=artifacts.DB08.tables.find(t=>t.legacyTable==="application_screening");
+  const source=Object.fromEntries(screening.fields.map(f=>[f.legacyColumn,f.reviewDecision]));
+  assert.deepEqual(source["overall_score"].targetRefs,[]);
+  assert.deepEqual(source["screening_metadata"].targetRefs,[]);
+  assert.equal(source["explanation"].classification,"EXPLICIT_RUNTIME_GAP");
+  assert.equal(source["screening_status"].classification,"NEEDS_ENUM_CROSSWALK");
+  const external=artifacts.DB08.tables.find(t=>t.legacyTable==="external_placement");
+  const externalMap=Object.fromEntries(external.fields.map(f=>[f.legacyColumn,f.reviewDecision]));
+  assert.equal(externalMap["letter_url"].classification,"EXPLICIT_RUNTIME_GAP");
+  assert.equal(externalMap["is_deleted"].retirementApproved,false);
   assert.equal(artifacts.DB08.counts.verifiedFields,0);
   assert.equal(artifacts.DB08.gate.fieldsUnverified,280);
 });
