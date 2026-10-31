@@ -2,6 +2,7 @@ import { randomUUID } from "node:crypto";
 import { afterAll, beforeAll, describe, expect, it, vi } from "vitest";
 import { Pool } from "pg";
 import { getDb, closeDatabaseConnection } from "@/db/client";
+import { closeOutboundDispatchDb, requireOutboundDispatchPrincipal } from "@/modules/operations/outbound-dispatch-principal";
 import type { RequestContext } from "@/modules/identity/context";
 import { SEED_IDS } from "../../scripts/db-seed-data";
 import { assertDb018DisposableTarget } from "../support/db018-test-target.mjs";
@@ -28,6 +29,14 @@ const enabled = process.env["DB018_ISOLATED_TEST_DATABASE"] === "1" &&
 const pool = enabled ? new Pool({
   connectionString: process.env["TEST_DATABASE_URL"], max: 4,
 }) : null;
+const dispatcherRole = "lms_db18_dispatch_test";
+const dispatchEnvKeys = [
+  "DB10_DISPATCH_DATABASE_URL", "DB10_DISPATCH_DB_ROLE", "DB10_APP_DB_ROLE",
+] as const;
+const savedDispatchEnv = Object.fromEntries(
+  dispatchEnvKeys.map(key => [key, process.env[key]]),
+);
+let dispatcherCreated = false;
 const encryptionKey = Buffer.alloc(32, 77).toString("base64");
 const globalKey = Buffer.alloc(32, 78).toString("base64");
 const flags = {
@@ -71,9 +80,31 @@ const enqueue=(id:string) => getDb().transaction(tx =>
 const claim=(worker:string) => claimOutboundDispatchBatch(worker,1,60);
 
 describe.skipIf(!enabled)("DB018 registered PG17 real outbound worker producer/consumer race",()=>{
-  beforeAll(()=>{
+  beforeAll(async()=>{
     assertDb018DisposableTarget(process.env,{serviceBound:true});
+    if(!pool)throw new Error("Disposable PG pool missing");
     for(const [key,value] of Object.entries(flags))process.env[key]=value;
+    // Disposable PostgreSQL-only worker login. Separate from the superuser
+    // app test pool and barred from all ordinary application business tables.
+    const secret=randomUUID();
+    await pool.query(`CREATE ROLE ${dispatcherRole} LOGIN PASSWORD '${secret}'`);
+    dispatcherCreated=true;
+    await pool.query(`GRANT USAGE ON SCHEMA public TO ${dispatcherRole}`);
+    await pool.query(`GRANT SELECT,UPDATE ON outbound_messages TO ${dispatcherRole}`);
+    await pool.query(`GRANT SELECT ON outbound_suppressions,
+      outbound_global_email_suppressions TO ${dispatcherRole}`);
+    await pool.query(`GRANT EXECUTE ON FUNCTION
+      db10_claim_outbound_messages(text,integer,integer),
+      db10_check_outbound_pre_send(uuid,text,integer,text),
+      db10_complete_outbound_claim(uuid,text,integer,text,text,text,timestamptz),
+      db10_expire_unclaimed_outbound(integer) TO ${dispatcherRole}`);
+    const url=new URL(process.env["TEST_DATABASE_URL"]!);
+    url.username=dispatcherRole;
+    url.password=secret;
+    process.env["DB10_DISPATCH_DATABASE_URL"]=url.toString();
+    process.env["DB10_DISPATCH_DB_ROLE"]=dispatcherRole;
+    process.env["DB10_APP_DB_ROLE"]="postgres";
+    await requireOutboundDispatchPrincipal();
   });
   afterAll(async()=>{
     if(pool){
@@ -83,9 +114,28 @@ describe.skipIf(!enabled)("DB018 registered PG17 real outbound worker producer/c
       if(suppressions.length)await pool.query(
         "delete from outbound_global_email_suppressions where recipient_hash=any($1::varchar[])",[suppressions],
       );
-      await pool.end();
+      // The worker role is revoked below; keep the disposable admin pool
+      // alive until all role cleanup statements have completed.
     }
     for(const [key,value] of Object.entries(saved)){
+      if(value===undefined)delete process.env[key];
+      else process.env[key]=value;
+    }
+    await closeOutboundDispatchDb();
+    if(pool&&dispatcherCreated) {
+      await pool.query(`REVOKE EXECUTE ON FUNCTION
+        db10_claim_outbound_messages(text,integer,integer),
+        db10_check_outbound_pre_send(uuid,text,integer,text),
+        db10_complete_outbound_claim(uuid,text,integer,text,text,text,timestamptz),
+        db10_expire_unclaimed_outbound(integer) FROM ${dispatcherRole}`);
+      await pool.query(`REVOKE SELECT,UPDATE ON outbound_messages FROM ${dispatcherRole}`);
+      await pool.query(`REVOKE SELECT ON outbound_suppressions,
+        outbound_global_email_suppressions FROM ${dispatcherRole}`);
+      await pool.query(`REVOKE USAGE ON SCHEMA public FROM ${dispatcherRole}`);
+      await pool.query(`DROP ROLE ${dispatcherRole}`);
+    }
+    await pool?.end();
+    for(const [key,value] of Object.entries(savedDispatchEnv)) {
       if(value===undefined)delete process.env[key];
       else process.env[key]=value;
     }
