@@ -121,3 +121,51 @@ test("DB019 offer enum, immutable transition and active-application constraints 
   assert.match(unique.indexdef,/ISSUED/);
   assert.match(unique.indexdef,/ACCEPTED/);
 });
+
+
+test("DB019 10 historic application status-history proposals are physically bounded on registered PG17",async()=>{
+  const history=ledger.tables.find(t=>t.legacyTable==="job_application_status_history");
+  assert.equal(history?.fields.length,10);
+  const rows=await pool.query(`
+    select column_name,udt_name,is_nullable
+      from information_schema.columns
+     where table_schema='public'
+       and table_name='placement_application_status_history'
+  `);
+  const columns=new Map(rows.rows.map(r=>[r.column_name,r]));
+  const known=[...new Set(history.fields.flatMap(f=>f.reviewDecision?.targetRefs??[]))];
+  for(const ref of known){
+    const [table,col]=ref.split(".");
+    assert.equal(table,"placement_application_status_history");
+    assert.ok(columns.has(col),"Missing history candidate "+ref);
+  }
+  assert.equal(columns.get("id")?.udt_name,"uuid");
+  assert.equal(columns.get("application_id")?.udt_name,"uuid");
+  assert.equal(columns.get("actor_user_id")?.udt_name,"uuid");
+  assert.equal(columns.get("actor_user_id")?.is_nullable,"NO");
+  assert.equal(columns.get("from_status")?.is_nullable,"YES");
+  assert.equal(columns.get("to_status")?.is_nullable,"NO");
+  assert.equal(columns.get("created_at")?.udt_name,"timestamptz");
+  assert.equal(columns.has("updated_at"),false);
+  assert.equal(columns.has("is_deleted"),false);
+  const checks=await pool.query(`
+    select conname,pg_get_constraintdef(oid) as definition
+      from pg_constraint
+     where conrelid='public.placement_application_status_history'::regclass
+  `);
+  const byName=new Map(checks.rows.map(x=>[x.conname,x.definition]));
+  for(const name of [
+    "placement_application_status_history_from_ck",
+    "placement_application_status_history_to_ck",
+    "placement_application_status_history_transition_ck",
+  ]){
+    assert.ok(byName.has(name),"No registered state check "+name);
+    assert.match(byName.get(name),/SUBMITTED/);
+    assert.match(byName.get(name),/WITHDRAWN/);
+  }
+  // Source-history enum and nullable actor/tombstone differences are gaps.
+  assert.equal(history.fields.every(f=>f.status==="UNVERIFIED"&&
+    f.reviewDecision.runtimeVerified===false&&
+    f.reviewDecision.consumerVerified===false&&
+    f.reviewDecision.retirementApproved===false),true);
+});
