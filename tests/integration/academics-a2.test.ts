@@ -1,3 +1,4 @@
+import { insertDisposableAttendanceMark, deleteDisposableAttendanceEvents } from "../support/db045-attendance-fixture.mjs";
 import {
   afterAll,
   beforeEach,
@@ -146,6 +147,13 @@ const secondLearner = {
 };
 
 async function cleanupA2() {
+  const attendanceEvents=await pool.query<{id:string}>(`
+    select e.id from section_schedule_events e
+    join sections s on s.id=e.section_id
+    join cohorts c on c.id=s.cohort_id
+    join programs p on p.id=c.program_id
+    where p.code like 'A2-%'`);
+  await deleteDisposableAttendanceEvents(pool,attendanceEvents.rows.map(r=>r.id));
   await pool.query(
     `delete from course_section_deliveries
      where offering_id in (
@@ -883,16 +891,14 @@ describe("academics A2 against PostgreSQL", () => {
         SEED_IDS.collegeAdminUser,
       ],
     );
-    await pool.query(
-      `insert into attendance_records
-        (schedule_event_id, membership_id, status, marked_by_user_id, note)
-       values ($1, $2, 'ABSENT', $3, 'A2 learner absence')`,
-      [
-        event.id,
-        primaryLearner.membershipId,
-        SEED_IDS.collegeAdminUser,
-      ],
-    );
+    await insertDisposableAttendanceMark(pool,{
+      scheduleEventId:event.id,deliveryId:delivery.id,
+      membershipId:primaryLearner.membershipId,collegeId:SEED_IDS.collegeA,
+      actorUserId:SEED_IDS.collegeAdminUser,
+      actorMembershipId:SEED_IDS.collegeAdminMembership,
+      actorRole:"COLLEGE_ADMIN",status:"ABSENT",
+      note:"A2 learner absence",
+    });
 
     const schedule =
       await getLearnerClassSchedule(learner);

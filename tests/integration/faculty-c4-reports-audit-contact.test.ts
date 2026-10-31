@@ -1,3 +1,4 @@
+import {deleteDisposableAttendanceEvents} from "../support/db045-attendance-fixture.mjs";
 import {randomUUID} from "node:crypto";
 import {afterAll,afterEach,describe,expect,it} from "vitest";
 import {Pool} from "pg";
@@ -53,6 +54,9 @@ async function cleanup(){
  await pool.query("delete from course_discussion_messages where delivery_id=$1",[f.deliveryId]);
  // Dispose only mutable Section attendance rows. Keep activity_events forever:
  // their subject references are text identifiers, their actors are retained.
+ const attendanceEventIds=await pool.query<{schedule_event_id:string}>(
+  "select schedule_event_id from section_schedule_event_courses where delivery_id=$1",[f.deliveryId]);
+ await deleteDisposableAttendanceEvents(pool,attendanceEventIds.rows.map(r=>r.schedule_event_id));
  await pool.query("delete from attendance_records where schedule_event_id in (select schedule_event_id from section_schedule_event_courses where delivery_id=$1)",[f.deliveryId]);
  await pool.query("delete from attendance_sessions where schedule_event_id in (select schedule_event_id from section_schedule_event_courses where delivery_id=$1)",[f.deliveryId]);
  await pool.query("delete from section_schedule_event_courses where delivery_id=$1",[f.deliveryId]);

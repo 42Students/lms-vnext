@@ -12,6 +12,7 @@ import { facultyAttendanceConfirmation } from "@/modules/attendance/faculty-corr
 import { facultyGradeEditorState } from "@/modules/courses/faculty-grade-editor-model";
 import { authoringDueInstant } from "@/modules/courses/faculty-authoring-datetime-model";
 import { afterAll, beforeEach, describe, expect, it } from "vitest";
+import { deleteDisposableAttendanceEvents } from "../support/db045-attendance-fixture.mjs";
 import { Pool } from "pg";
 import { randomUUID } from "node:crypto";
 import { closeDatabaseConnection } from "@/db/client";
@@ -109,6 +110,15 @@ const learner:RequestContext={
 };
 
 async function cleanup() {
+  // DB045 history RESTRICT protects current rows and schedules; only remove
+  // this disposable test's immutable events with a guarded scoped teardown.
+  const fixtureEvents=await pool.query<{id:string}>(`select e.id
+    from section_schedule_events e
+    join sections s on s.id=e.section_id
+    join cohorts ch on ch.id=s.cohort_id
+    join programs p on p.id=ch.program_id
+    where p.code like $1`,[codePattern]);
+  await deleteDisposableAttendanceEvents(pool,fixtureEvents.rows.map(r=>r.id));
   // Clean in reverse FK order, exclusively fixture rows identified by C4POS
   // course / program codes; do not modify shared seeded people or tenants.
   // Linked course rows cascade from the dedicated fixture schedule events.
@@ -681,14 +691,17 @@ describe("Chat4 Faculty SUCCESS paths against disposable PostgreSQL",()=>{
       sectionId:section.id,deliveryId:delivery.id,
       title:"Correction fixture "+runId,startsAt:start.toISOString(),endsAt:end.toISOString(),
     });
-    const inserted=await pool.query<{marked_at:Date}>(`insert into attendance_sessions
-      (schedule_event_id,status,marked_by_user_id,marked_at,updated_at)
-      values($1,'MARKED',$2,now(),now()) returning marked_at`,
-      [session.id,facultyOnlyUserId]);
-    await pool.query(`insert into attendance_records
-      (schedule_event_id,membership_id,status,marked_by_user_id)
-      values($1,$2,'ABSENT',$3)`,
-      [session.id,testLearnerMembershipId,facultyOnlyUserId]);
+    // Prepare the first immutable ABSENT mark through the production writer.
+    // Then advance the session token using SQL microseconds to preserve this
+    // test's non-millisecond CAS regression.
+    await markFacultyAttendance(facultyOnly,session.id,{
+      deliveryId:delivery.id,absentMembershipIds:[testLearnerMembershipId],
+      presentMembershipIds:[],
+    });
+    const inserted=await pool.query<{marked_at:Date}>(`
+      update attendance_sessions set marked_at=clock_timestamp(),
+        updated_at=clock_timestamp()
+      where schedule_event_id=$1 returning marked_at`,[session.id]);
     const request={deliveryId:delivery.id,presentMembershipIds:[testLearnerMembershipId],
       absentMembershipIds:[],expectedMarkedAt:inserted.rows[0]!.marked_at.toISOString(),
       correctionReason:"Corrected marked presence per official register"};

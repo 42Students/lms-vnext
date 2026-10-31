@@ -1,3 +1,4 @@
+import { insertDisposableAttendanceMark, deleteDisposableAttendanceEvents } from "../support/db045-attendance-fixture.mjs";
 import { randomUUID } from "node:crypto";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
 import { Pool } from "pg";
@@ -122,17 +123,22 @@ beforeAll(async () => {
   foreign = await fixture(SEED_IDS.collegeB, SEED_IDS.departmentB);
   await pool.query(
     "insert into attendance_sessions (schedule_event_id,status,marked_by_user_id,marked_at) values ($1,'MARKED',$2,now())",
-    [foreign.event, SEED_IDS.facultyUser],
+    [foreign.event, SEED_IDS.superAdminUser],
   );
-  await pool.query(
-    "insert into attendance_records (schedule_event_id,membership_id,status,marked_by_user_id,marked_at) values ($1,$2,'ABSENT',$3,now())",
-    [foreign.event, foreign.learner, SEED_IDS.facultyUser],
-  );
+  // Valid foreign-college fixture: immutable history must never rely on
+  // a Faculty marker from college A impersonating a college B teacher.
+  await insertDisposableAttendanceMark(pool,{
+    scheduleEventId:foreign.event,deliveryId:foreign.delivery,
+    membershipId:foreign.learner,collegeId:SEED_IDS.collegeB,
+    actorUserId:SEED_IDS.superAdminUser,actorMembershipId:null,
+    actorRole:"SUPER_ADMIN",status:"ABSENT",
+  });
 });
 
 afterAll(async () => {
   // Only remove records created by this test. No production/shared database.
   for (const f of [...fixtures].reverse()) {
+    await deleteDisposableAttendanceEvents(pool,[f.event]);
     const deletions = [
       ["attendance_records", "schedule_event_id", f.event],
       ["attendance_sessions", "schedule_event_id", f.event],

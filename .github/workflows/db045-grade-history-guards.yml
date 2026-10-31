@@ -22,6 +22,10 @@ on:
       - "tests/integration/courses-c4a-assignments.test.ts"
       - "tests/integration/courses-c4c-assessment-progress.test.ts"
       - "tests/integration/faculty-mentor-positive-courses.test.ts"
+      - "tests/integration/college-admin-attendance.test.ts"
+      - "tests/integration/academics-a2.test.ts"
+      - "tests/integration/faculty-c4-reports-audit-contact.test.ts"
+      - "tests/support/db045-attendance-fixture.mjs"
       - ".github/workflows/db045-grade-history-guards.yml"
 permissions:
   contents: read
@@ -70,3 +74,10 @@ jobs:
           tests/integration/courses-c4a-assignments.test.ts
           tests/integration/courses-c4c-assessment-progress.test.ts
           tests/integration/faculty-mentor-positive-courses.test.ts
+
+      - name: Attendance Faculty, Admin, learner schedule and report consumers
+        run: >
+          npx vitest run --config vitest.db.config.ts
+          tests/integration/college-admin-attendance.test.ts
+          tests/integration/academics-a2.test.ts
+          tests/integration/faculty-c4-reports-audit-contact.test.ts
