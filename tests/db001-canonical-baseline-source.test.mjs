@@ -3,7 +3,8 @@ import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 
 const journal = JSON.parse(readFileSync("drizzle/meta/_journal.json", "utf8"));
-const entry = journal.entries.at(-1);
+const entry = journal.entries.find(item => item.tag === "0327_db001_canonical_metadata_baseline");
+assert.ok(entry, "missing registered DB001 baseline");
 const number = String(entry.idx).padStart(4, "0");
 const snapshot = JSON.parse(readFileSync("drizzle/meta/" + number + "_snapshot.json", "utf8"));
 const sql = readFileSync("drizzle/" + entry.tag + ".sql", "utf8");
@@ -20,9 +21,9 @@ test("DB001 registered typed baseline is a provenance-only migration, never gene
     "project_templates_current_version_snapshot_fk",
     "project_templates_published_version_snapshot_fk",
   ]) {
-    const fk = snapshot.tables["public.project_templates"].foreignKeys[constraint];
-    assert.ok(fk, constraint);
-    assert.deepEqual(fk.columnsTo, ["template_id", "version"]);
-    assert.equal(fk.deferrable, undefined, "deferred semantics remain in registered SQL, not Drizzle v7 metadata");
+    assert.equal(snapshot.tables["public.project_templates"].foreignKeys[constraint], undefined,
+      "SQL-only DEFERRABLE constraints must be physical PG guards, not invented Drizzle v7 constraints");
+    assert.match(readFileSync("drizzle/0316_db07_template_version_integrity.sql", "utf8"),
+      new RegExp("ADD CONSTRAINT " + constraint + "[\\s\\S]*?DEFERRABLE INITIALLY DEFERRED"));
   }
 });

@@ -8,6 +8,7 @@ const tag = String(last.idx).padStart(4, "0");
 const snapshot = JSON.parse(readFileSync(`drizzle/meta/${tag}_snapshot.json`, "utf8"));
 const sql = readFileSync("drizzle/0316_db07_template_version_integrity.sql", "utf8");
 const keys = ["columnsFrom", "columnsTo", "name", "onDelete", "onUpdate", "tableFrom", "tableTo"].sort();
+const runtimeProof = readFileSync("tests/integration/db001-canonical-baseline-pg.test.ts", "utf8");
 
 test("DB001 canonical latest Drizzle v7 snapshot has representable FK shape", () => {
   assert.equal(snapshot.version, "7");
@@ -20,15 +21,14 @@ test("DB001 canonical latest Drizzle v7 snapshot has representable FK shape", ()
   }
 });
 test("DB001 preserves deferred SQL-only current/published pointer integrity", () => {
+  assert.match(runtimeProof, /row\.condeferrable/);
+  assert.match(runtimeProof, /row\.convalidated/);
   for (const constraint of [
     "project_templates_current_version_snapshot_fk",
     "project_templates_published_version_snapshot_fk",
   ]) {
     assert.match(sql, new RegExp("ADD CONSTRAINT " + constraint + "[\\s\\S]*?DEFERRABLE INITIALLY DEFERRED"));
-    const fk = snapshot.tables["public.project_templates"].foreignKeys[constraint];
-    assert.ok(fk);
-    assert.deepEqual(fk.columnsTo, ["template_id", "version"]);
-    assert.equal(fk.onDelete, "no action");
-    assert.equal(fk.deferrable, undefined, "SQL-only deferrability is not a v7 snapshot property");
+    assert.equal(snapshot.tables["public.project_templates"].foreignKeys[constraint], undefined,
+      "non-deferred Drizzle v7 metadata must not fabricate SQL-only deferred PostgreSQL FKs");
   }
 });
