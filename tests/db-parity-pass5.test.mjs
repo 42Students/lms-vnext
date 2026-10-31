@@ -147,7 +147,7 @@ test("DB18 witness index remains honest about authored versus executed coverage"
   assert.equal(index.status, "FOCUSED_PG17_WITNESSES_VERIFIED_GLOBAL_GATE_PENDING");
   assert.equal(index.counts.directNegativeAuthored, 9);
   assert.equal(index.counts.existingConcurrencyAuthored, 4);
-  assert.equal(index.counts.pendingConcurrencyAuthored, 1);
+  assert.equal(index.counts.pendingConcurrencyAuthored, 2);
   assert.equal(index.counts.explicitConcurrencyMissing, 0);
   assert.equal(index.counts.draftUnregisteredExcluded, 3);
   assert.equal(index.counts.knownRedRaceAuthored, 0);
@@ -190,7 +190,7 @@ test("DB18 witness index remains honest about authored versus executed coverage"
 
   // New race coverage is source-authored only until this exact witness executes
   // against disposable registered PostgreSQL. Historical 48/48 must not inflate.
-  assert.deepEqual(index.authoredPendingConcurrencyWitnesses.map(w => w.raceProbe), ["P5-R03"]);
+  assert.deepEqual(index.authoredPendingConcurrencyWitnesses.map(w => w.raceProbe), ["P5-R03", "P5-R11"]);
   for (const witness of index.authoredPendingConcurrencyWitnesses) {
     assert.equal(witness.state, "AUTHORED_AWAITING_REGISTERED_PG17");
     assert.ok(fs.existsSync(witness.file), witness.id + ": pending test file missing");
