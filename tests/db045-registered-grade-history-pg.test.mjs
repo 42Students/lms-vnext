@@ -121,3 +121,28 @@ test("DB045 attendance event scope, immutability and deferred requirements activ
 test("DB045 attendance event ledger rejects TRUNCATE",async()=>{
  await withRollback(db=>mustReject23514(()=>db.query("TRUNCATE attendance_record_events")));
 });
+
+test("DB045 attendance ledger rejects forged actor role, action and version before orphan FK", async () => {
+  const cases = [
+    { label: "unapproved actor role", role: "RECRUITER", action: "MARK", version: 0 },
+    { label: "non-append history action", role: "SUPER_ADMIN", action: "DELETE", version: 0 },
+    { label: "skipped initial row version", role: "SUPER_ADMIN", action: "MARK", version: 5 },
+  ];
+  for (const probe of cases) {
+    await withRollback(db => mustReject23514(() => db.query(`
+      INSERT INTO attendance_record_events (
+        attendance_record_id,schedule_event_id,delivery_id,membership_id,college_id,
+        actor_user_id,actor_membership_id,actor_role,action,
+        previous_status,new_status,previous_note,new_note,
+        previous_marked_by_user_id,new_marked_by_user_id,
+        previous_marked_at,new_marked_at,record_version_before,record_version_after
+      ) VALUES (
+        $1,$2,$3,$4,$5,$6,null,$7,$8,
+        null,'PRESENT',null,null,null,$6,null,now(),null,$9
+      )
+    `, [
+      randomUUID(), randomUUID(), randomUUID(), randomUUID(), randomUUID(),
+      randomUUID(), probe.role, probe.action, probe.version,
+    ])), probe.label);
+  }
+});
