@@ -22,6 +22,9 @@ on:
       - "drizzle/0329_db014_group_history_actor_grants.sql"
       - "tests/db014-group-history-actor-grants-source.test.mjs"
       - "tests/db014-group-history-actor-grants-registered-pg.test.mjs"
+      - "tests/integration/groups-db03.test.ts"
+      - "src/modules/groups/service.ts"
+      - "src/modules/groups/rules-service.ts"
       - "tests/db014-activity-identity-registered-pg.test.mjs"
       - "tests/db014-activity-identity-source.test.mjs"
       # Revalidate DB014 at every newly registered migration head, not only
@@ -103,6 +106,8 @@ jobs:
         run: node --test tests/db014-cascade-retention-registered-pg.test.mjs
       - name: Registered group history actor grants and revocation race
         run: node --test tests/db014-group-history-actor-grants-registered-pg.test.mjs
+      - name: Authorized group service producer-consumer and immutable history regression
+        run: npx vitest run --config vitest.db.config.ts tests/integration/groups-db03.test.ts
       - name: Registered immutable event identity after notification
         run: node --test tests/db014-activity-identity-registered-pg.test.mjs
       - name: Registered 0318 event, notification and group-history tenant negatives
