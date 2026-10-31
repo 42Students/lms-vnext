@@ -71,7 +71,7 @@ test("DB08 280 placement fields cannot self-promote from candidates to exact map
 test("DB08 28 job_offer source-to-target proposals remain bounded and never claim runtime proof",()=>{
   const result=loadDb019Remaining();
   assert.equal(result.valid,true);
-  assert.equal(result.domains.DB08.sourceProposalsNotRuntimeVerified,28);
+  assert.equal(result.domains.DB08.sourceProposalsNotRuntimeVerified,74);
   assert.equal(result.domains.DB08.unresolvedExactDecisions,280);
   assert.equal(result.domains.DB08.runtimeVerified,0);
   assert.equal(artifacts.DB08.tables.find(t=>t.legacyTable==="job_offer").fields.length,28);
@@ -101,6 +101,36 @@ test("DB08 28 job_offer source-to-target proposals remain bounded and never clai
   assert.equal(artifacts.DB08.counts.verifiedFields,0);
 });
 
+
+test("DB08 46 legacy job fields are individually source-reviewed but never falsely marked verified",()=>{
+  const source=artifacts.DB08.tables.find(t=>t.legacyTable==="job");
+  assert.equal(source.fields.length,46);
+  const decisions=source.fields.map(x=>x.reviewDecision);
+  assert.equal(decisions.filter(x=>x.classification==="PROPOSED_ACTIVE_FIELD_MAPPING").length,38);
+  assert.equal(decisions.filter(x=>x.classification==="EXPLICIT_RUNTIME_GAP").length,8);
+  const schema=fs.readFileSync(new URL("../src/db/schema/placements.ts",import.meta.url),"utf8");
+  const begin=schema.indexOf("export const placementJobs = pgTable(");
+  const end=schema.indexOf("export const placementJobRoleOptions = pgTable(",begin+10);
+  assert.ok(begin>=0&&end>begin);
+  const typed=schema.slice(begin,end);
+  for(const field of source.fields){
+    const d=field.reviewDecision;
+    assert.equal(field.status,"UNVERIFIED");
+    assert.equal(d.reviewStatus,"SOURCE_REVIEWED_PROPOSAL_NOT_VERIFIED");
+    assert.equal(d.runtimeVerified,false);
+    assert.equal(d.consumerVerified,false);
+    assert.equal(d.retirementApproved,false);
+    assert.ok(d.sourceRationale.length>25);
+    assert.ok(d.outstandingProof.length>25);
+    for(const ref of d.targetRefs){
+      const [table,col]=ref.split(".");
+      assert.equal(table,"placement_jobs");
+      assert.ok(typed.includes('("'+col+'"'),field.legacyColumn+": missing source-typed "+ref);
+    }
+  }
+  assert.equal(artifacts.DB08.counts.verifiedFields,0);
+  assert.equal(artifacts.DB08.gate.fieldsUnverified,280);
+});
 test("DB08 source proposals fail closed on forged target, false runtime proof, approval or oracle",()=>{
   const mutate=(fn)=>{
     const a=cp(artifacts);
