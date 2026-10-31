@@ -119,6 +119,9 @@ jobs:
       - name: P5-R14 competing sprint starts and reopen on registered PG17
         run: |
           npx vitest run --config vitest.db.registered.config.ts tests/integration/projects-p5-lifecycle.test.ts -t P5-R14
+      - name: P5-R15 competing application against close, coordinator and role state on registered PG17
+        run: |
+          npx vitest run --config vitest.db.registered.config.ts tests/integration/placements-p8-offers.test.ts -t P5-R15
       - name: P5-R17 concurrent offer issuance and learner response on registered PG17
         run: |
           npx vitest run --config vitest.db.registered.config.ts tests/integration/placements-p8-offers.test.ts -t P5-R17
