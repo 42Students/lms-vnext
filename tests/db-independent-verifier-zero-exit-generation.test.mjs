@@ -31,7 +31,8 @@ test("DB076 zero-exit BigInt generator aborts before DB reset with failing evide
   try {
     mkdirSync(path.join(checkout,"scripts"),{recursive:true});mkdirSync(bin);
     for(const filename of ["db-independent-verify.mjs","db01-test-database-guard.mjs",
-      "db-independent-verifier-redaction.mjs","db-independent-verifier-generation-guard.mjs"]){
+      "db-independent-verifier-redaction.mjs","db-independent-verifier-generation-guard.mjs",
+      "db-independent-postgres-version.mjs"]){
       copyFileSync(path.join("scripts",filename),path.join(checkout,"scripts",filename));
     }
     const git=(...args)=>execFileSync("git",args,{cwd:checkout,encoding:"utf8"});
