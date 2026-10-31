@@ -10,6 +10,7 @@ import {
   courseAssignments,
   collegeMemberships,
   membershipRoles,
+  users,
 } from "@/db/schema";
 import { recordActivityEventInTransaction } from "@/modules/activity/service";
 import { ACTIVITY_EVENT_TYPES } from "@/modules/activity/taxonomy";
@@ -421,7 +422,13 @@ export async function submitAssignmentWithFiles(
   try {
     return await getDb().transaction(async (tx) => {
       const [current] = await tx
-        .select({ status: courseAssignments.status, deliveryId: courseAssignments.deliveryId, dueAt: courseAssignments.dueAt })
+        .select({
+          status: courseAssignments.status,
+          deliveryId: courseAssignments.deliveryId,
+          dueAt: courseAssignments.dueAt,
+          maxPoints: courseAssignments.maxPoints,
+          title: courseAssignments.title,
+        })
         .from(courseAssignments)
         .where(eq(courseAssignments.id, assignmentId))
         .for("share")
@@ -494,12 +501,25 @@ export async function submitAssignmentWithFiles(
       }
       const byId = new Map(files.map((file) => [file.id, file]));
 
+      // Freeze the same grading ceiling and display provenance used by the
+      // TEXT/LINK producer. Faculty edits must not retroactively alter a
+      // learner's grading basis after either FILE endpoint commits.
+      const [learnerSnapshot] = await tx
+        .select({ displayName: users.displayName })
+        .from(users)
+        .where(eq(users.id, persistedMembership.userId))
+        .limit(1);
       const [submission] = await tx
         .insert(assignmentSubmissions)
         .values({
           assignmentId,
           deliveryId: input.deliveryId,
           membershipId: membership.id,
+          maxPointsAtSubmission: current.maxPoints,
+          legacySubmissionSnapshot: {
+            assignmentName: current.title,
+            learnerDisplayName: learnerSnapshot?.displayName ?? null,
+          },
           submissionType: "FILE",
           textContent:multipart?(input.textContent?.trim()||null):null,
           submissionUrl:multipart?(input.links[0]?.url??null):null,
