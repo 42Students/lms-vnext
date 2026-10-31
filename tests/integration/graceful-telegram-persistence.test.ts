@@ -117,4 +117,105 @@ describe.skipIf(!enabled)("GR-125 PostgreSQL Telegram alert delivery and counter
     expect(transport).not.toHaveBeenCalled();
   });
 
+  it("P5-R10 serializes two workers per signature and exactly one fixed-error regression", async () => {
+    const raceMessage = "DB18 P5-R10 registered concurrent incident";
+    const raceHash = errorSignatureHash({environment: "DEVELOPMENT", message: raceMessage, path});
+    const input = {event: "test.error", error: new Error(raceMessage), path};
+    const removeRace = () => pool!.query(
+      "delete from log_alert_signatures where environment='DEVELOPMENT' and signature_hash=$1",
+      [raceHash],
+    );
+    await removeRace();
+    // Hold the real provider callback while the first worker owns the
+    // persisted alert state lock. The second worker must block in PostgreSQL,
+    // rather than simply executing after a sequential await in JavaScript.
+    let startedSend: () => void = () => {};
+    let releaseSend: () => void = () => {};
+    const started = new Promise<void>((resolve) => { startedSend = resolve; });
+    const released = new Promise<void>((resolve) => { releaseSend = resolve; });
+    const transport = vi.fn(async () => {
+      if (transport.mock.calls.length === 1) {
+        startedSend();
+        await released;
+      }
+      return Response.json({ok: true});
+    });
+    vi.stubGlobal("fetch", transport);
+    const first = reportErrorForAlert(input);
+    let second: Promise<boolean> | null = null;
+    try {
+      await started;
+      second = reportErrorForAlert(input);
+      const deadline = Date.now() + 5_000;
+      let blocked = false;
+      while (Date.now() < deadline) {
+        const waiting = await pool!.query<{blocked: string}>(
+          `select count(*)::text as blocked from pg_stat_activity
+            where datname=current_database() and pid <> pg_backend_pid()
+              and wait_event_type='Lock' and query ilike '%log_alert_states%'`,
+        );
+        if (Number(waiting.rows[0]?.blocked ?? 0) > 0) {
+          blocked = true;
+          break;
+        }
+        await new Promise((resolve) => setTimeout(resolve, 25));
+      }
+      expect(blocked, "Second log-alert producer never reached the PostgreSQL state lock").toBe(true);
+    } finally {
+      releaseSend();
+    }
+    expect(await Promise.all([first, second!])).toEqual([true, true]);
+    const original = await pool!.query<{
+      occurrence_count: string; first_seen_at: Date; last_seen_at: Date; fix_status: string;
+    }>(
+      `select occurrence_count::text,first_seen_at,last_seen_at,fix_status
+       from log_alert_signatures where environment='DEVELOPMENT' and signature_hash=$1`,
+      [raceHash],
+    );
+    expect(original.rows).toHaveLength(1);
+    expect(original.rows[0]?.occurrence_count).toBe("2");
+    expect(original.rows[0]?.first_seen_at.getTime()).toBeLessThanOrEqual(
+      original.rows[0]!.last_seen_at.getTime(),
+    );
+    expect(transport).toHaveBeenCalledTimes(1);
+    // Two more simultaneous reports after a recorded FIXED resolution must
+    // count both occurrences but reopen the regression exactly once.
+    await pool!.query(
+      `update log_alert_signatures set fix_status='FIXED',
+         fixed_at=clock_timestamp()-interval '2 days',
+         acknowledged_at=clock_timestamp(),regressed_at=null
+       where environment='DEVELOPMENT' and signature_hash=$1`,
+      [raceHash],
+    );
+    const regressions = await Promise.all([reportErrorForAlert(input), reportErrorForAlert(input)]);
+    expect(regressions).toEqual([true, true]);
+    const final = await pool!.query<{
+      occurrence_count: string; fix_status: string; regressed_at: Date | null;
+      acknowledged_at: Date | null; first_seen_at: Date; last_seen_at: Date;
+    }>(
+      `select occurrence_count::text,fix_status,regressed_at,acknowledged_at,
+         first_seen_at,last_seen_at from log_alert_signatures
+       where environment='DEVELOPMENT' and signature_hash=$1`,
+      [raceHash],
+    );
+    expect(final.rows).toHaveLength(1);
+    expect(final.rows[0]).toMatchObject({
+      occurrence_count: "4", fix_status: "OPEN", acknowledged_at: null,
+    });
+    expect(final.rows[0]?.regressed_at).toBeInstanceOf(Date);
+    expect(final.rows[0]!.last_seen_at.getTime()).toBeGreaterThanOrEqual(
+      final.rows[0]!.first_seen_at.getTime(),
+    );
+    expect(transport).toHaveBeenCalledTimes(2);
+    const daily = await pool!.query<{occurrence_count: string}>(
+      `select d.occurrence_count::text from log_alert_daily_counts d
+         join log_alert_signatures s on s.id=d.signature_id
+       where s.environment='DEVELOPMENT' and s.signature_hash=$1`,
+      [raceHash],
+    );
+    expect(daily.rows).toHaveLength(1);
+    expect(daily.rows[0]?.occurrence_count).toBe("4");
+    await removeRace();
+  });
+
 });

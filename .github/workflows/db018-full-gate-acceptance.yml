@@ -26,6 +26,8 @@ on:
       - "docs/planning/database-parity-pass5-probe-manifest.json"
       - "tests/integration/groups-db03.test.ts"
       - "tests/integration/academics-a2.test.ts"
+      - "tests/integration/graceful-telegram-persistence.test.ts"
+      - "src/modules/log-alerts/reporter.ts"
       - "tests/integration/faculty-c4-reports-audit-contact.test.ts"
       - "tests/integration/college-admin-attendance.test.ts"
       - "src/modules/attendance/faculty-service.ts"
@@ -106,6 +108,11 @@ jobs:
       - name: P5-R11 schedule and period-close race with real A2 producer
         run: |
           npx vitest run --config vitest.db.registered.config.ts tests/integration/academics-a2.test.ts
+      - name: P5-R10 real log-alert producer and concurrent signature/regression witness
+        env:
+          DB10_DISPOSABLE_TEST_DATABASE: "true"
+        run: |
+          npx vitest run --config vitest.db.registered.config.ts tests/integration/graceful-telegram-persistence.test.ts
       - name: DB045 learner revocation race and immutable audit consumer witnesses
         run: |
           npx vitest run --config vitest.db.registered.config.ts \
