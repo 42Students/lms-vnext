@@ -9,6 +9,7 @@ on:
       - "tests/e2e/faculty-blueprint-publication-closure.spec.ts"
       - "src/components/courses/faculty-lesson-authoring.tsx"
       - "src/components/courses/faculty-course-workspace.tsx"
+      - "src/components/courses/faculty-prototype-blueprint.tsx"
       - "src/modules/courses/faculty-content-input-model.ts"
       - "src/modules/courses/lesson-content-service.ts"
 permissions:
