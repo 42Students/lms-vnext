@@ -71,7 +71,7 @@ test("DB08 280 placement fields cannot self-promote from candidates to exact map
 test("DB08 28 job_offer source-to-target proposals remain bounded and never claim runtime proof",()=>{
   const result=loadDb019Remaining();
   assert.equal(result.valid,true);
-  assert.equal(result.domains.DB08.sourceProposalsNotRuntimeVerified,123);
+  assert.equal(result.domains.DB08.sourceProposalsNotRuntimeVerified,150);
   assert.equal(result.domains.DB08.unresolvedExactDecisions,280);
   assert.equal(result.domains.DB08.runtimeVerified,0);
   assert.equal(artifacts.DB08.tables.find(t=>t.legacyTable==="job_offer").fields.length,28);
@@ -170,6 +170,65 @@ test("DB08 15 historic round-result fields are reviewed with actor, candidate-pr
   }
   assert.equal(artifacts.DB08.gate.fieldsUnverified,280);
   assert.equal(artifacts.DB08.counts.verifiedFields,0);
+});
+
+test("DB08 27 attendance, eligibility override, and season fields preserve real source semantics",()=>{
+  const expected={
+    round_attendance:{count:8,proposed:6,gap:1,enum:1,
+      typedFile:"src/db/schema/drive-day.ts",
+      start:"export const placementRoundAttendance = pgTable(",end:"export function legacyRoundAttendanceCommand"},
+    job_eligibility_override:{count:7,proposed:5,gap:1,enum:1,
+      typedFile:"src/db/schema/placements.ts",
+      start:"export const placementEligibilityOverrides = pgTable(",end:"export function legacyApplicationSourceChannel"},
+    placement_season:{count:12,proposed:6,gap:4,enum:2,
+      typedFile:"src/db/schema/placements.ts",
+      start:"export const placementSeasons = pgTable(",end:"export const placementJobs = pgTable("},
+  };
+  const allowed={
+    round_attendance:"placement_round_attendance",
+    job_eligibility_override:"placement_eligibility_overrides",
+    placement_season:"placement_seasons",
+  };
+  for(const [name,config] of Object.entries(expected)){
+    const table=artifacts.DB08.tables.find(t=>t.legacyTable===name);
+    assert.equal(table?.fields.length,config.count);
+    const classes=table.fields.map(f=>f.reviewDecision?.classification);
+    assert.equal(classes.filter(c=>c==="PROPOSED_ACTIVE_FIELD_MAPPING").length,config.proposed);
+    assert.equal(classes.filter(c=>c==="EXPLICIT_RUNTIME_GAP").length,config.gap);
+    assert.equal(classes.filter(c=>c==="NEEDS_ENUM_CROSSWALK").length,config.enum);
+    const content=fs.readFileSync(new URL("../"+config.typedFile,import.meta.url),"utf8");
+    const start=content.indexOf(config.start),end=content.indexOf(config.end,start+10);
+    assert.ok(start>=0&&end>start,"Missing current registered schema "+name);
+    const typed=content.slice(start,end);
+    for(const field of table.fields){
+      const d=field.reviewDecision;
+      assert.equal(field.status,"UNVERIFIED");
+      assert.equal(d.reviewStatus,"SOURCE_REVIEWED_PROPOSAL_NOT_VERIFIED");
+      assert.equal(d.runtimeVerified,false);
+      assert.equal(d.consumerVerified,false);
+      assert.equal(d.retirementApproved,false);
+      assert.ok(d.sourceRationale.length>25);
+      assert.ok(d.outstandingProof.length>25);
+      for(const ref of d.targetRefs){
+        const [tableName,col]=ref.split(".");
+        assert.equal(tableName,allowed[name]);
+        assert.ok(typed.includes('("'+col+'"'),name+"."+field.legacyColumn+" candidate missing "+ref);
+      }
+    }
+  }
+  const attendance=artifacts.DB08.tables.find(t=>t.legacyTable==="round_attendance");
+  const byAttendance=Object.fromEntries(attendance.fields.map(f=>[f.legacyColumn,f.reviewDecision]));
+  assert.deepEqual(byAttendance["status"].targetRefs,
+    ["placement_round_attendance.status","placement_round_attendance.legacy_reset_to_waiting"]);
+  assert.equal(byAttendance["marked_by"].classification,"EXPLICIT_RUNTIME_GAP");
+  const season=artifacts.DB08.tables.find(t=>t.legacyTable==="placement_season");
+  const bySeason=Object.fromEntries(season.fields.map(f=>[f.legacyColumn,f.reviewDecision]));
+  assert.deepEqual(bySeason["blocked_dates"].targetRefs,[]);
+  assert.equal(bySeason["start_date"].classification,"EXPLICIT_RUNTIME_GAP");
+  assert.equal(bySeason["end_date"].classification,"EXPLICIT_RUNTIME_GAP");
+  assert.equal(bySeason["version"].classification,"EXPLICIT_RUNTIME_GAP");
+  assert.equal(artifacts.DB08.counts.verifiedFields,0);
+  assert.equal(artifacts.DB08.gate.fieldsUnverified,280);
 });
 
 test("DB08 46 legacy job fields are individually source-reviewed but never falsely marked verified",()=>{
