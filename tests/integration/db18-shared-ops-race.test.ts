@@ -243,6 +243,69 @@ describe.skipIf(!enabled)("DB-018 P5-R18/R19 registered PG17 shared-ops races", 
     })).rejects.toMatchObject({ code: "STALE_VERSION" });
   });
 
+  it("P5-R18: restore and idempotent delete overlap on the same prior revision", async () => {
+    const notice = await createNotice();
+    const deleted = await deleteAnnouncement(collegeAdmin, notice.id, {
+      expectedVersion: 0,
+    });
+    expect(deleted.version).toBe(1);
+    const blocker = await pg().connect();
+    let inTransaction = false;
+    try {
+      await blocker.query("BEGIN");
+      inTransaction = true;
+      await blocker.query(
+        "select id from announcements where id=$1 for update", [notice.id],
+      );
+      const restoration = Promise.resolve().then(() =>
+        restoreAnnouncement(collegeAdmin, notice.id, { expectedVersion: 1 }),
+      ).then(
+        (value) => ({ ok: true as const, value }),
+        (error: unknown) => ({ ok: false as const, error }),
+      );
+      // The restoration is a real writer blocked at its row-level CAS,
+      // while a duplicate DELETE is intentionally an idempotent no-op on
+      // an already-deleted version. No second version increment is allowed.
+      const deadline = Date.now() + 8_000;
+      let waiting = 0;
+      while (Date.now() < deadline) {
+        const observed = await pg().query<{ waiting: string }>(
+          "select count(*)::text as waiting from pg_stat_activity " +
+          "where datname=current_database() and pid<>pg_backend_pid() " +
+          "and wait_event_type='Lock' and query ilike '%announcements%'",
+        );
+        waiting = Number(observed.rows[0]?.waiting ?? 0);
+        if (waiting >= 1) break;
+        await new Promise((resolve) => setTimeout(resolve, 25));
+      }
+      expect(waiting, "The restoration must reach the blocked PostgreSQL row").toBeGreaterThanOrEqual(1);
+      const duplicateDelete = await deleteAnnouncement(collegeAdmin, notice.id, {
+        expectedVersion: 1,
+      });
+      expect(duplicateDelete.version).toBe(1);
+      expect(duplicateDelete.deletedAt).toBeInstanceOf(Date);
+      await blocker.query("COMMIT");
+      inTransaction = false;
+      const outcome = await restoration;
+      expect(outcome.ok).toBe(true);
+      if (outcome.ok) {
+        expect(outcome.value.version).toBe(2);
+        expect(outcome.value.deletedAt).toBeNull();
+      }
+    } finally {
+      if (inTransaction) await blocker.query("ROLLBACK").catch(() => undefined);
+      blocker.release();
+    }
+    const final = await pg().query<{ version: number; deleted_at: Date | null }>(
+      "select version,deleted_at from announcements where id=$1", [notice.id],
+    );
+    expect(final.rows).toEqual([{ version: 2, deleted_at: null }]);
+    // The delete that was idempotent before restore is stale afterward.
+    await expect(deleteAnnouncement(collegeAdmin, notice.id, {
+      expectedVersion: 1,
+    })).rejects.toMatchObject({ code: "STALE_VERSION" });
+  }, 60_000);
+
   it("P5-R19: competing workflow transitions preserve exactly one immutable activity per committed CAS", async () => {
     const created = await createBugTrackerIssueForAdmin(superAdmin, {
       reporterName,
