@@ -902,7 +902,27 @@
           "All 2829 source candidates must receive justified active/mapped/redesigned/retired/external final disposition; independent source identity alone cannot classify semantics",
           "Remaining raw field statuses include unverified semantics; no unproven retirement or runtime mapping may be marked verified"
         ],
-        "evidenceIsNotAcceptance": true
+        "latestSourceReconciliation": {
+        "status": "SCOPED_NODE_SOURCE_AUDIT_STEP_PASSED_GLOBAL_TASK_OPEN",
+        "sourceCommit": "e02f9ebc4ee820e71457bd874f45d5a32cfdeb20",
+        "workflowCommit": "cc8c6c511b4ed81ac04e2100fbd64ff7bab04246",
+        "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/41149063245/job/124381020281",
+        "suite": "DB019 independent eleven-domain source inventory and crosswalk",
+        "result": "PASS_STEP_ONLY",
+        "counts": {
+          "legacyDomains": 11,
+          "legacyFields": 2829,
+          "sourceDecisionsDb00": 732,
+          "sourceDecisionsDb01": 312,
+          "db004PreviouslyEvidencedFields": 195,
+          "db004PriorPhysicalRuntimeWitnessRows": 137,
+          "db004PriorCompositeImplementationRows": 24,
+          "db004RequesterApprovedEngineeringRetirementRows": 34
+        },
+        "scope": "Conservative global preflight overlays now independently cross-check DB00 user-approved exclusion and source decisions, DB01 312 final source dispositions, and DB004 exact 195 accepted technical evidence identities. Negative tests fail on forged approval, field drift, bogus prior PG run URL, duplicates or source SHA mismatch. The 195 are a subset of DB01 312 and not additive.",
+        "limitation": "Source-only preflight and prior accepted domain receipts, not independently re-executed global PG17 producer/consumer/tenant/race checks; unresolved other 9 domain field semantics and global DB020/DB018 gates remain. DB019 stays done:false."
+      },
+      "evidenceIsNotAcceptance": true
       }
     },
     {
