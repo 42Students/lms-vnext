@@ -17,6 +17,33 @@ export const REMAINING_DOMAIN_FILES=Object.freeze({
   DB10:["db-pass4-columns-db10_shared_operations.json","database-parity-db10-field-ledger.json"],
 });
 const floor={DB03:79,DB04:103,DB05:92,DB06:248,DB08:280,DB10:221};
+
+/** Restrict even a SOURCE-ONLY proposal to the tables actually relevant to
+ * its frozen source family. A syntactically valid column in an unrelated
+ * placement domain must never pass the crosswalk audit as a candidate.
+ */
+export const DB08_SOURCE_TARGET_TABLES=Object.freeze({
+  application_screening:["placement_application_screenings","placement_application_screening_history"],
+  external_placement:["placement_external_offers"],
+  interview:["placement_job_rounds","placement_interview_private_events"],
+  job:["placement_jobs"],
+  job_application:["placement_applications","placement_application_status_history",
+    "placement_application_screenings","placement_application_private_artifacts","placement_offers"],
+  job_application_status_history:["placement_application_status_history"],
+  job_eligibility_override:["placement_eligibility_overrides"],
+  job_offer:["placement_offers","placement_joining_outcomes","placement_offer_status_history"],
+  job_preferences:["placement_candidate_preferences"],
+  learner_saved_job:["placement_saved_jobs"],
+  placement_batch:["placement_batch_lifecycles"],
+  placement_debarment:["placement_debarments"],
+  placement_eligibility:["placement_eligibility_decisions"],
+  placement_eligibility_event:["placement_eligibility_events"],
+  placement_registration:["placement_batch_registrations"],
+  placement_season:["placement_seasons"],
+  round_attendance:["placement_round_attendance"],
+  round_result:["placement_round_results"],
+});
+
 /* Frozen historical-source scope: a mutable ledger flag cannot turn an
    active assessment table into a retirement candidate and hide its fields. */
 export const DB06_FROZEN_HISTORICAL_CANDIDATES=Object.freeze({
@@ -144,14 +171,17 @@ export function auditDb019Remaining(ledgers,artifacts,db10Overlay=null) {
               "EXPLICIT_RUNTIME_GAP","NEEDS_ENUM_CROSSWALK",
               "PROPOSED_ACTIVE_FIELD_MAPPING",
             ];
-            if(!["job_offer","job","job_application","job_application_status_history","round_result","round_attendance","job_eligibility_override","placement_season","external_placement","placement_debarment","application_screening"].includes(table.legacyTable)||
+            if(!Object.hasOwn(DB08_SOURCE_TARGET_TABLES,table.legacyTable)||
                !decision||typeof decision!=="object"||
                decision.reviewStatus!=="SOURCE_REVIEWED_PROPOSAL_NOT_VERIFIED"||
                !classifications.includes(decision.classification)||
                !Array.isArray(decision.targetRefs)||
                (decision.classification==="PROPOSED_ACTIVE_FIELD_MAPPING" &&
                  decision.targetRefs.length===0)||
-               decision.targetRefs.some(x=>!/^placement_(?:offers|offer_status_history|joining_outcomes|jobs|applications|application_private_artifacts|application_status_history|application_screenings|round_results|round_attendance|eligibility_overrides|seasons|external_offers|debarments|application_screening_history)[.][a-z_]+$/.test(x))||
+               decision.targetRefs.some(ref=>{
+                 const parts=/^(placement_[a-z_]+)[.]([a-z_]+)$/.exec(ref);
+                 return !parts||!DB08_SOURCE_TARGET_TABLES[table.legacyTable].includes(parts[1]);
+               })||
                new Set(decision.targetRefs).size!==decision.targetRefs.length||
                !required(decision.sourceRationale)||
                !required(decision.outstandingProof)||
