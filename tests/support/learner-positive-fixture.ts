@@ -107,9 +107,16 @@ export async function seedLearnerPositiveFixture(
        'APPLICATION',$5,'Positive fixture')`,
       [eventId,SEED_IDS.organization,collegeId,SEED_IDS.collegeAdminUser,ids.application],
     );
+    // A cross-college event cannot notify the College A learner: the
+    // registered DB014 recipient guard correctly rejects that write. Keep
+    // the foreign notification as valid data for a College B member, so
+    // the learner's feed still has a real negative visibility witness.
+    const recipientUserId = collegeId === SEED_IDS.collegeB
+      ? SEED_IDS.facultyUser
+      : ids.user;
     await pool.query(
       "INSERT INTO in_app_notifications(id,user_id,event_id,title,body) VALUES($1,$2,$3,'Fixture alert','Saved on test run')",
-      [notificationId,ids.user,eventId],
+      [notificationId,recipientUserId,eventId],
     );
   }
 }

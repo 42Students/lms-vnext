@@ -8,6 +8,7 @@ on:
     paths:
       - ".github/workflows/db001-integration-shard-diagnostic.yml"
       - "tests/integration/db001-canonical-baseline-pg.test.ts"
+      - "tests/support/learner-positive-fixture.ts"
       - "vitest.db.config.ts"
 permissions:
   contents: read
