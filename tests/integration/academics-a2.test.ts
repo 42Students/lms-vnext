@@ -154,6 +154,11 @@ async function cleanupA2() {
     join programs p on p.id=c.program_id
     where p.code like 'A2-%'`);
   await deleteDisposableAttendanceEvents(pool,attendanceEvents.rows.map(r=>r.id));
+  // DB014 0325 forbids CASCADE deletion of still-marked attendance rows.
+  await pool.query("delete from attendance_records where schedule_event_id=any($1::uuid[])",
+    [attendanceEvents.rows.map(r=>r.id)]);
+  await pool.query("delete from attendance_sessions where schedule_event_id=any($1::uuid[])",
+    [attendanceEvents.rows.map(r=>r.id)]);
   await pool.query(
     `delete from course_section_deliveries
      where offering_id in (
