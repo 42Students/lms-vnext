@@ -9,8 +9,6 @@ on:
       - "scripts/db020-registered-catalog-diff.mjs"
       - "scripts/db020-schema-semantics-diff.mjs"
       - "scripts/db020-default-parity.mjs"
-      - "scripts/db020-upload-snapshot-blob.mjs"
-      - "tests/db020-upload-snapshot-blob.test.mjs"
       - "tests/db020-default-parity.test.mjs"
       - "tests/db020-schema-semantics-diff.test.mjs"
       - "scripts/db020-full-registered-catalog-export.mjs"
@@ -58,7 +56,7 @@ on:
       - "tests/db045-registered-grade-history-pg.test.mjs"
       - "tests/db020-registered-grade-event-provenance-pg.test.mjs"
 permissions:
-  contents: write
+  contents: read
 jobs:
   diagnosis:
     runs-on: ubuntu-latest
@@ -90,7 +88,7 @@ jobs:
           cache: npm
       - run: npm ci
       - name: Compare FK signatures in static adversarial fixtures
-        run: node --test tests/db020-fk-shape.test.mjs tests/db020-sql-type.test.mjs tests/db020-college-index-schema.test.mjs tests/db020-placement-request-schema.test.mjs tests/db020-schema-semantics-diff.test.mjs tests/db020-default-parity.test.mjs tests/db020-upload-snapshot-blob.test.mjs
+        run: node --test tests/db020-fk-shape.test.mjs tests/db020-sql-type.test.mjs tests/db020-college-index-schema.test.mjs tests/db020-placement-request-schema.test.mjs tests/db020-schema-semantics-diff.test.mjs tests/db020-default-parity.test.mjs
       - name: Pinned journal and clean registration
         run: |
           test "$(git rev-parse HEAD)" = "$GITHUB_SHA"
@@ -105,24 +103,23 @@ jobs:
         run: node --test tests/db020-check-validation-pg.test.mjs
       - name: DB020 exact registered constraint, default and index parity
         run: node --test tests/db020-registered-parity-delta-pg.test.mjs
-      - name: Generate diagnostic snapshot only (DO NOT apply SQL)
+      - name: Require canonical Drizzle generation to be a clean no-op
         run: |
           npm run db:generate > .db020-generation.log 2>&1
           cat .db020-generation.log
           if grep -E "data is malformed|TypeError:|Error:" .db020-generation.log; then
-            echo "Drizzle generation failed; refuse diagnostic" >&2
+            echo "Drizzle generation failed; refuse certification" >&2
             exit 1
           fi
-          test "$(git ls-files --others --exclude-standard 'drizzle/meta/*_snapshot.json' | wc -l)" -eq 1
-      - name: Preserve unapplied generated SQL and snapshot for review
+          grep -q "No schema changes, nothing to migrate" .db020-generation.log
+          test -z "$(git status --porcelain -- drizzle/)"
+          test "$(git rev-parse HEAD)" = "$GITHUB_SHA"
+      - name: Preserve exact canonical registered typed snapshot for PG17 audit
         run: |
           mkdir -p .verification
-          snapshot="$(git ls-files --others --exclude-standard 'drizzle/meta/*_snapshot.json')"
-          generated_sql="$(git ls-files --others --exclude-standard 'drizzle/*.sql')"
-          test "$(printf '%s\\n' "$snapshot" | grep -c .)" -eq 1
-          test "$(printf '%s\\n' "$generated_sql" | grep -c .)" -eq 1
-          cp "$snapshot" .verification/db020-unapplied-generated-snapshot.json
-          cp "$generated_sql" .verification/db020-unapplied-generated-migration.sql
+          index="$(node -p 'require("./drizzle/meta/_journal.json").entries.at(-1).idx.toString().padStart(4,"0")')"
+          test -f "drizzle/meta/${index}_snapshot.json"
+          cp "drizzle/meta/${index}_snapshot.json" .verification/db020-current-typed-snapshot.json
       - name: Compare the generated typed schema against registered PostgreSQL
         run: node scripts/db020-registered-catalog-diff.mjs
       - name: Export full registered SQL constraint and index definitions (read-only)
@@ -140,11 +137,6 @@ jobs:
           test -f .verification/db020-catalog-disposition.json
           test "$(git rev-parse HEAD)" = "$GITHUB_SHA"
           node -e 'const j=require("./.verification/db020-catalog-disposition.json"); if(j.passCertification!==false)process.exit(1)'
-      - name: Upload reviewed snapshot metadata blob without changing Git refs
-        env:
-          DB020_SNAPSHOT_BLOB_ONLY: "1"
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: node scripts/db020-upload-snapshot-blob.mjs
       - name: Store exact-source diagnostic artifact
         if: always()
         uses: actions/upload-artifact@v4
@@ -155,8 +147,6 @@ jobs:
             .verification/db020-registered-catalog-full.json
             .verification/db020-semantic-disposition.json
             .verification/db020-default-parity.json
-            .verification/db020-snapshot-blob-proposal.json
-            .verification/db020-unapplied-generated-snapshot.json
-            .verification/db020-unapplied-generated-migration.sql
+            .verification/db020-current-typed-snapshot.json
           retention-days: 7
           if-no-files-found: warn
