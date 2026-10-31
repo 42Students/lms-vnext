@@ -7,6 +7,7 @@ import { AuthorizationError } from "@/modules/permissions/policy";
 import { listCollegeDepartmentInsights } from "@/modules/admin-ui/college-department-insights-service";
 import { SEED_IDS } from "../../scripts/db-seed-data";
 import { assertDb018DisposableTarget } from "../support/db018-test-target.mjs";
+import { insertDisposableAttendanceMark, deleteDisposableAttendanceEvents } from "../support/db045-attendance-fixture.mjs";
 
 const enabled = Boolean(process.env.TEST_DATABASE_URL) &&
   process.env.DB03_ISOLATED_TEST_DATABASE === "1";
@@ -33,6 +34,7 @@ const ids = {
   user: randomUUID(), membership: randomUUID(), role: randomUUID(),
   program: randomUUID(), period: randomUUID(), cohort: randomUUID(),
   section: randomUUID(), enrollment: randomUUID(), sectionEnrollment: randomUUID(),
+  course: randomUUID(), offering: randomUUID(), delivery: randomUUID(),
   event: randomUUID(),
 };
 const suffix = ids.program.slice(0, 8);
@@ -64,6 +66,13 @@ describe.skipIf(!enabled)("College Admin department evidence scoped PostgreSQL",
       [ids.cohort, ids.program, code, code, ids.period]);
     await pool.query("INSERT INTO sections(id,cohort_id,academic_period_id,name,code) VALUES($1,$2,$3,$4,$5)",
       [ids.section, ids.cohort, ids.period, code, code]);
+    // DB045 immutable attendance history requires a real course-linked schedule.
+    await pool.query("INSERT INTO courses(id,department_id,name,code) VALUES($1,$2,$3,$4)",
+      [ids.course, SEED_IDS.departmentA, code+" course", code+"-COURSE"]);
+    await pool.query("INSERT INTO course_offerings(id,course_id,cohort_id,academic_period_id) VALUES($1,$2,$3,$4)",
+      [ids.offering, ids.course, ids.cohort, ids.period]);
+    await pool.query("INSERT INTO course_section_deliveries(id,offering_id,section_id) VALUES($1,$2,$3)",
+      [ids.delivery, ids.offering, ids.section]);
     await pool.query("INSERT INTO learner_program_enrollments(id,membership_id,program_id,cohort_id) VALUES($1,$2,$3,$4)",
       [ids.enrollment, ids.membership, ids.program, ids.cohort]);
     await pool.query("INSERT INTO section_enrollments(id,learner_enrollment_id,section_id,academic_period_id) VALUES($1,$2,$3,$4)",
@@ -71,12 +80,19 @@ describe.skipIf(!enabled)("College Admin department evidence scoped PostgreSQL",
     await pool.query(
       "INSERT INTO section_schedule_events(id,section_id,title,starts_at,ends_at) VALUES($1,$2,$3,now()-interval '2 hours',now()-interval '1 hour')",
       [ids.event, ids.section, code]);
+    await pool.query("INSERT INTO section_schedule_event_courses(schedule_event_id,delivery_id) VALUES($1,$2)",
+      [ids.event, ids.delivery]);
     await pool.query(
       "INSERT INTO attendance_sessions(schedule_event_id,status,marked_by_user_id,marked_at) VALUES($1,'MARKED',$2,now())",
-      [ids.event, SEED_IDS.collegeAdminUser]);
-    await pool.query(
-      "INSERT INTO attendance_records(schedule_event_id,membership_id,status,marked_by_user_id) VALUES($1,$2,'ABSENT',$3)",
-      [ids.event, ids.membership, SEED_IDS.collegeAdminUser]);
+      [ids.event, SEED_IDS.superAdminUser]);
+    // Insert the row and its immutable MARK evidence in one transaction.
+    // Do not bypass the deferred DB045 database guard in a positive fixture.
+    await insertDisposableAttendanceMark(pool, {
+      scheduleEventId: ids.event, deliveryId: ids.delivery,
+      membershipId: ids.membership, collegeId: SEED_IDS.collegeA,
+      actorUserId: SEED_IDS.superAdminUser, actorMembershipId: null,
+      actorRole: "SUPER_ADMIN", status: "ABSENT",
+    });
     await pool.query(
       "INSERT INTO placement_candidate_academic_evidence(membership_id,cgpa_hundredths) VALUES($1,800)",
       [ids.membership]);
@@ -87,16 +103,25 @@ describe.skipIf(!enabled)("College Admin department evidence scoped PostgreSQL",
   afterAll(async () => {
     try {
       if (pool) {
+        // This helper is scoped to a vetted disposable PG17 target; no
+        // production audit history or retention trigger is weakened.
+        await deleteDisposableAttendanceEvents(pool, [ids.event]);
         const deletes = [
           ["attendance_records", "schedule_event_id", ids.event],
           ["attendance_sessions", "schedule_event_id", ids.event],
+          ["section_schedule_event_courses", "schedule_event_id", ids.event],
           ["section_schedule_events", "id", ids.event],
           ["section_enrollments", "id", ids.sectionEnrollment],
+          ["course_section_deliveries", "id", ids.delivery],
+          ["course_offerings", "id", ids.offering],
+          ["program_term_courses", "course_id", ids.course],
+          ["courses", "id", ids.course],
           ["placement_candidate_preferences", "membership_id", ids.membership],
           ["placement_candidate_academic_evidence", "membership_id", ids.membership],
           ["learner_program_enrollments", "id", ids.enrollment],
           ["sections", "id", ids.section],
           ["cohorts", "id", ids.cohort],
+          ["program_terms", "program_id", ids.program],
           ["academic_periods", "id", ids.period],
           ["programs", "id", ids.program],
           ["membership_roles", "id", ids.role],
