@@ -399,3 +399,101 @@ test("DB019 external offer, debarment and screening proposals have registered PG
   assert.match(legacy.indexdef,/college_id/);
   assert.match(legacy.indexdef,/legacy_debarment_id/);
 });
+
+
+test("DB019 all 280 frozen DB08 source candidates resolve only to registered PG17 columns",async()=>{
+  const fields=ledger.tables.flatMap(t=>t.fields.map(f=>({table:t.legacyTable,field:f})));
+  assert.equal(fields.length,280);
+  assert.equal(fields.filter(x=>x.field.reviewDecision!==null).length,280);
+  const refs=[...new Set(fields.flatMap(x=>x.field.reviewDecision.targetRefs))];
+  const tables=[...new Set(refs.map(x=>x.split(".")[0]))];
+  const rows=await pool.query(`
+    select table_name,column_name,udt_name,is_nullable
+      from information_schema.columns
+     where table_schema='public' and table_name=any($1::text[])
+  `,[tables]);
+  const columns=new Map(rows.rows.map(x=>[x.table_name+"."+x.column_name,x]));
+  for(const {table,field} of fields){
+    const d=field.reviewDecision;
+    assert.equal(field.status,"UNVERIFIED");
+    assert.equal(d.runtimeVerified,false);
+    assert.equal(d.consumerVerified,false);
+    assert.equal(d.retirementApproved,false);
+    assert.ok(d.sourceRationale.length>25);
+    assert.ok(d.outstandingProof.length>25);
+    for(const ref of d.targetRefs){
+      assert.ok(columns.has(ref),"Unregistered candidate for "+table+"."+field.legacyColumn+": "+ref);
+    }
+  }
+  // A physical match is intentionally NOT an acceptance of a legacy semantic
+  // mapping, a source actor, tenant privacy or source-data migration.
+});
+
+test("DB019 interview privacy, cohort consent and immutable eligibility events survive registered PG17 replay",async()=>{
+  const fields=[
+    ["placement_interview_private_events.private_feedback","jsonb"],
+    ["placement_interview_private_events.actor_user_id","uuid"],
+    ["placement_interview_private_events.application_id","uuid"],
+    ["placement_job_rounds.scheduled_at","timestamptz"],
+    ["placement_saved_jobs.membership_id","uuid"],
+    ["placement_saved_jobs.job_id","uuid"],
+    ["placement_saved_jobs.legacy_saved_job_id","int4"],
+    ["placement_batch_registrations.membership_id","uuid"],
+    ["placement_batch_registrations.cohort_id","uuid"],
+    ["placement_batch_registrations.consent_at","timestamptz"],
+    ["placement_batch_lifecycles.cohort_id","uuid"],
+    ["placement_eligibility_decisions.scope_id","uuid"],
+    ["placement_eligibility_events.action_id","uuid"],
+    ["placement_eligibility_events.reverses_action_id","uuid"],
+    ["placement_eligibility_events.sequence","int8"],
+  ];
+  const targets=[...new Set(fields.map(x=>x[0].split(".")[0]))];
+  const rows=await pool.query(`
+    select table_name,column_name,udt_name from information_schema.columns
+      where table_schema='public' and table_name=any($1::text[])
+  `,[targets]);
+  const actual=new Map(rows.rows.map(x=>[x.table_name+"."+x.column_name,x.udt_name]));
+  for(const [key,type] of fields) assert.equal(actual.get(key),type,key+" unexpectedly changed its registered type");
+  const cs=await pool.query(`
+    select conname,pg_get_constraintdef(oid) as definition from pg_constraint
+     where conrelid::regclass::text=any($1::text[])
+  `,[targets]);
+  const guards=new Map(cs.rows.map(x=>[x.conname,x.definition]));
+  for(const [name,fragment] of [
+    ["placement_interview_private_events_type_ck","FEEDBACK_RECORDED"],
+    ["placement_interview_private_events_feedback_ck","jsonb_typeof"],
+    ["placement_batch_registrations_choice_ck","HIGHER_STUDIES"],
+    ["placement_batch_registrations_source_ck","BACKFILL"],
+    ["placement_batch_registrations_consent_ck","consent_at"],
+    ["placement_batch_lifecycles_rules_object_ck","jsonb_typeof"],
+    ["placement_eligibility_events_kind_ck","reverses_action_id"],
+    ["placement_eligibility_events_status_ck","INELIGIBLE"],
+    ["placement_eligibility_events_reason_ck","before_reason"],
+  ]){
+    assert.ok(guards.has(name),"Missing registered privacy/consent guard "+name);
+    assert.ok(guards.get(name).includes(fragment),"Registered privacy/consent guard drift "+name);
+  }
+  const fkNames=new Set(cs.rows.filter(x=>x.definition.startsWith("FOREIGN KEY")).map(x=>x.conname));
+  assert.ok(fkNames.has("placement_saved_jobs_member_college_fk"));
+  assert.ok(fkNames.has("placement_saved_jobs_job_college_fk"));
+  assert.ok(fkNames.has("placement_interview_events_round_job_fk"));
+  assert.ok(fkNames.has("placement_interview_events_app_job_fk"));
+  const indexes=await pool.query(`
+    select tablename,indexname,indexdef from pg_indexes
+     where schemaname='public' and tablename=any($1::text[])
+  `,[targets]);
+  for(const name of [
+    "placement_saved_jobs_member_job_uq",
+    "placement_batch_registrations_member_cohort_uq",
+    "placement_eligibility_events_action_scope_uq",
+    "placement_eligibility_events_sequence_uq",
+  ]){
+    const item=indexes.rows.find(x=>x.indexname===name);
+    assert.ok(item,"Missing registered uniqueness "+name);
+    assert.match(item.indexdef,/UNIQUE INDEX/);
+  }
+  assert.equal(ledger.tables.find(t=>t.legacyTable==="interview").fields
+    .find(f=>f.legacyColumn==="feedback_comments").reviewDecision.runtimeVerified,false);
+  assert.equal(ledger.tables.find(t=>t.legacyTable==="placement_registration").fields
+    .find(f=>f.legacyColumn==="season_id").reviewDecision.classification,"EXPLICIT_RUNTIME_GAP");
+});
