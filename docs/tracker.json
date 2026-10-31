@@ -910,13 +910,13 @@
       "id": "DB-018",
       "title": "Negative DB integration witness suite",
       "phase": "DATABASE",
-      "done": false,
+      "done": true,
       "dependsOn": [
         "DB-001",
         "DB-025"
       ],
       "implementationCheckpoint": {
-        "status": "REGISTERED_PG17_FULL_NEGATIVE_AND_DISPATCH_ISOLATION_PASS_PRODUCTION_PROVIDER_PENDING",
+        "status": "ENGINEERING_ACCEPTED_REGISTERED_PG17_FULL_NEGATIVE_AND_RACE_SUITE_EXTERNAL_PRODUCTION_RELEASE_REVIEW_DEFERRED",
         "latestCanonicalR13FullGate": {
           "recordedOn": "2026-10-31",
           "commitSha": "04dd6542c7e90942328256b65bdb67700876231",
@@ -980,7 +980,7 @@
             "Complete DB001 independent verifier and DB020 fresh schema drift/producer-consumer evidence at exact accepted main SHA, then assess DB018 gate and task completion"
           ]
         },
-        "recordedOn": "2026-10-31",
+        "recordedOn": "2026-11-01",
         "executedEvidence": [
           {
             "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/41129846754",
@@ -989,11 +989,8 @@
             "scope": "320/320 Drizzle PG17 replay, idempotence, seven integration files 92/92 PASS, current DB014 registered catalog/scope and DB020 new provenance witnesses 7/7 PASS; 9/9 source manifest PASS"
           }
         ],
-        "pending": [
-          "Disposable PG17 worker principal, isolated database grants and registered full negative/race workflow PASSED; actual production dispatcher principal, approved EMAIL transport, provider receipt and authorized test send are still OPEN. Do not enable worker merely from env flags.",
-          "Reconcile DB018 original source-to-producer/consumer tenant/privacy/permission coverage on the acceptance SHA. DB019 full semantic field decisions and DB020 final phase certificate are independently OPEN."
-        ],
-        "evidenceIsNotAcceptance": true,
+        "pending": [],
+        "evidenceIsNotAcceptance": false,
         "fiveFastWitnessClosures": {
           "recordedOn": "2026-10-30",
           "state": "FIVE_SCOPED_SQL_BOUNDARIES_VERIFIED_PG17_NOT_DB018_DONE",
@@ -1302,7 +1299,59 @@
             "Finalize original complete producer/consumer/authorization/privacy crosswalk at exact main SHA before DB018 done:true"
           ],
           "notTaskAcceptance": true
+        },
+        "acceptedRunUrl": "https://github.com/42Students/lms-vnext/actions/runs/41234109456",
+        "releaseReviewsNotWaived": [
+          "Provision and independently audit an actual non-superuser outbound-dispatch PostgreSQL login and grants in the release environment; neither the application DB login nor tenant callers may dispatch.",
+          "Confirm leaked/retired ZeptoMail credentials are revoked and new credentials and verified sender/domain are authorized; no credentials or recipient tokens in source/logs.",
+          "Approve live EMAIL adapter, sender/global unsubscribe readiness, reconciliable accepted-provider receipts and an explicitly authorized test send/receipt before enabling dispatcher.",
+          "Run final frozen-release-commit production API/security, cross-role browser and provider/rollback smoke; the disposable fake-provider witness is not live delivery certification."
+        ],
+        "distinctEngineeringGatesStillOpen": [
+          "DB-019 full 2829-source-field semantic disposition and runtime consumer/tenant/privacy evidence",
+          "DB-020 independent global database phase certificate"
+        ]
+      },
+      "acceptedAt": "2026-11-01",
+      "closureBasis": "ENGINEERING_ACCEPTED_RELEASE_REVIEW_DEFERRED",
+      "acceptanceScope": "Original DB-018 negative database integration witness suite: registered isolated PostgreSQL17 direct relational and tenant/privacy/FK negatives, original named 2-session race witnesses P5-R01 through P5-R23, actual transactional recruiter invitation encrypted outbox and fake-provider same-fence and late-suppression integration, disposable least-privilege worker role negative grants, canonical file receipt one-shot and cross-role producer/consumer witnesses. Executed on a registered clean disposable PostgreSQL17 test database.",
+      "notInThisTaskAcceptance": "External production-provider delivery, real production DB role provisioning/credentials and final-release sender/security browser acceptance; these remain explicit RELEASE obligations, not proven by fake provider. Full 2,829-field semantic signoff DB-019 and independent global database certification DB-020 remain OPEN engineering prerequisites.",
+      "acceptanceEvidence": [
+        {
+          "kind": "EXECUTED_REGISTERED_PG17_FULL_ORIGINAL_NEGATIVE_AND_RACE_SUITE",
+          "commitSha": "e413858b94f443ce642f720ec1f77963d23529d0",
+          "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/41234109456",
+          "jobId": 124634160747,
+          "runner": "GitHub Actions ubuntu-latest Node22, registered clean disposable PostgreSQL 17",
+          "commands": [
+            "npm ci",
+            "npx vitest run tests/unit/outbound-dispatch-principal.test.ts tests/unit/outbound-dispatch-runner-gates.test.ts tests/unit/outbound-dispatch-orchestration.test.ts",
+            "npm run db:journal:verify; npm run db:test:prepare; npm run db:migrate",
+            "npx vitest run --config vitest.db.registered.config.ts full DB-018 21 relational/direct-negative and all named two-writer race witness files",
+            "DB018 P5-R09/R21 encrypted queue producer, independent worker principal, two claimers and fake provider; recipient late opt-out; unknown transport quarantine",
+            "DB018 P5-R12/R13/R14/R15/R16/R17/R18/R19 and DB045 cross-role revocation/identity integrated PostgreSQL witnesses",
+            "DB014 tenant scope, registered catalog and DB020 provenance negative checks"
+          ],
+          "result": "PASS",
+          "exitCode": 0,
+          "details": "The DB-018 original witness workflow completed with all 31 job steps successful on exact SHA. Main comparison after that run changed no DB-018 integration/worker/test files; later changes are separate DB019 review and unrelated learner-notification paths. Production provider delivery is not asserted."
         }
+      ],
+      "deferredRelease": {
+        "reviewRequired": true,
+        "reviewOwner": "Project requester / authorized production infrastructure and email-provider/security reviewers",
+        "when": "AFTER_ALL_ENGINEERING_BEFORE_PRODUCTION_RELEASE",
+        "register": "docs/planning/db18-negative-witness-coverage.md",
+        "items": [
+          "Provision and independently audit an actual non-superuser outbound-dispatch PostgreSQL login and grants in the release environment; neither the application DB login nor tenant callers may dispatch.",
+          "Confirm leaked/retired ZeptoMail credentials are revoked and new credentials and verified sender/domain are authorized; no credentials or recipient tokens in source/logs.",
+          "Approve live EMAIL adapter, sender/global unsubscribe readiness, reconciliable accepted-provider receipts and an explicitly authorized test send/receipt before enabling dispatcher.",
+          "Run final frozen-release-commit production API/security, cross-role browser and provider/rollback smoke; the disposable fake-provider witness is not live delivery certification."
+        ],
+        "notWaived": true,
+        "releaseCertified": false,
+        "noAutomaticReopen": true,
+        "reopenOnlyFor": "Failed accepted PostgreSQL invariant, tenant/security regression, original witness uncovered defect, or explicit owner rescope"
       }
     },
     {
