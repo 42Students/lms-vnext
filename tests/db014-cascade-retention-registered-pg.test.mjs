@@ -92,6 +92,32 @@ test("DB014 registered retention fences, direct parent deletion and TRUNCATE are
      "ORDER BY t.tgname")).rows;
    assert.equal(rows.length,parentsAndChildren.length+parentTables.length);
    const byName=new Map(rows.map(x=>[x.tgname,x]));
+   // A matching trigger is not useful if its source list drifts away from
+   // the actual registered CASCADE columns. Read pg_catalog instead of
+   // treating historical snapshot 0040 as current.
+   const edgeRows=(await db.query(
+     "SELECT child.relname AS child_table, parent.relname AS parent_table,"+
+     " child_att.attname AS child_column, parent_att.attname AS parent_column,"+
+     " fk.convalidated AS validated, fk.confdeltype AS delete_action "+
+     "FROM pg_constraint fk "+
+     "JOIN pg_class child ON child.oid=fk.conrelid "+
+     "JOIN pg_class parent ON parent.oid=fk.confrelid "+
+     "JOIN pg_namespace n ON n.oid=child.relnamespace "+
+     "JOIN pg_attribute child_att ON child_att.attrelid=fk.conrelid "+
+     " AND child_att.attnum=fk.conkey[1] "+
+     "JOIN pg_attribute parent_att ON parent_att.attrelid=fk.confrelid "+
+     " AND parent_att.attnum=fk.confkey[1] "+
+     "WHERE fk.contype='f' AND n.nspname='public' "+
+     " AND cardinality(fk.conkey)=1"
+   )).rows;
+   for(const [parent,child,column] of parentsAndChildren){
+     const matched=edgeRows.filter(fk=>fk.child_table===child&&
+       fk.parent_table===parent&&fk.child_column===column&&
+       fk.parent_column==="id"&&fk.delete_action==="c"&&fk.validated===true);
+     assert.ok(matched.length>=1,
+       "registered FK shape must match protected relation "+child+"."+column+" -> "+parent+".id");
+   }
+
    for(const [i,[parent,child,fk]] of parentsAndChildren.entries()){
      const name="db14_cascade_retention_"+String(i+1).padStart(2,"0");
      const r=byName.get(name);
@@ -277,5 +303,66 @@ test("DB014 concurrent FK insert and retained-parent DELETE serialize in both or
    if(parentTx)await parent.query("ROLLBACK").catch(()=>{});
    await child.end().catch(()=>{});
    await parent.end().catch(()=>{});
+ }
+});
+
+
+// Live two-session FK race: a child INSERT must serialize against parent
+// DELETE; after insertion commits, the durable retention trigger rejects
+// the same deletion instead of silently erasing the newly written child.
+test("DB014 concurrent broadcast-target writer prevents parent cascade race",async()=>{
+ const url=process.env.TEST_DATABASE_URL;
+ const writer=new pg.Client({connectionString:url,connectionTimeoutMillis:10000,query_timeout:15000});
+ const remover=new pg.Client({connectionString:url,connectionTimeoutMillis:10000,query_timeout:15000});
+ const broadcastId=randomUUID();
+ const seededAdmin="30000000-0000-4000-8000-000000000002";
+ const seededCollege="20000000-0000-4000-8000-000000000001";
+ let inserted=false,writerTx=false,removerTx=false;
+ await writer.connect();
+ try{
+   await remover.connect();
+   await writer.query(
+     "INSERT INTO platform_broadcasts (id,title,message,show_until,audience_mode,status,author_user_id) "+
+     "VALUES ($1,'DB014 race','PG17 race',now()+interval '1 day','SELECTED_COLLEGES','PUBLISHED',$2)",
+     [broadcastId,seededAdmin]);
+   inserted=true;
+   await writer.query("BEGIN");writerTx=true;
+   await writer.query(
+     "INSERT INTO platform_broadcast_targets(broadcast_id,college_id) VALUES($1,$2)",
+     [broadcastId,seededCollege]);
+   await remover.query("BEGIN");removerTx=true;
+   await remover.query("SET LOCAL lock_timeout='350ms'");
+   await remover.query("SAVEPOINT db014_locked_parent");
+   await assert.rejects(remover.query(
+     "DELETE FROM platform_broadcasts WHERE id=$1",[broadcastId]),error=>{
+       assert.equal(error?.code,"55P03",
+         "concurrent parent delete must wait for uncommitted FK child writer");
+       return true;
+   });
+   await remover.query("ROLLBACK TO SAVEPOINT db014_locked_parent");
+   await writer.query("COMMIT");writerTx=false;
+   await remover.query("SAVEPOINT db014_visible_child");
+   await assert.rejects(remover.query(
+     "DELETE FROM platform_broadcasts WHERE id=$1",[broadcastId]),error=>{
+       assert.equal(error?.code,"23514",
+         "after child commit, retention trigger must reject parent deletion");
+       return true;
+   });
+   await remover.query("ROLLBACK TO SAVEPOINT db014_visible_child");
+   await remover.query("ROLLBACK");removerTx=false;
+   assert.equal((await writer.query(
+     "SELECT count(*)::integer AS n FROM platform_broadcast_targets WHERE broadcast_id=$1",
+     [broadcastId])).rows[0].n,1);
+   console.log(JSON.stringify({kind:"DB014_RETENTION_TWO_SESSION_FK_RACE",
+     blockedBeforeChildCommit:"55P03",rejectedAfterChildCommit:"23514"}));
+ }finally{
+   if(removerTx)await remover.query("ROLLBACK").catch(()=>{});
+   if(writerTx)await writer.query("ROLLBACK").catch(()=>{});
+   if(inserted){
+     await writer.query("DELETE FROM platform_broadcast_targets WHERE broadcast_id=$1",[broadcastId]).catch(()=>{});
+     await writer.query("DELETE FROM platform_broadcasts WHERE id=$1",[broadcastId]).catch(()=>{});
+   }
+   await remover.end().catch(()=>{});
+   await writer.end().catch(()=>{});
  }
 });
