@@ -1064,6 +1064,84 @@ describe("academics A2 against PostgreSQL", () => {
       code: "23514",
     });
   });
+
+  it("P5-R12 serializes concurrent COMPLETE versus WITHDRAW across parent and active section enrollments", async () => {
+    const structure=await createStructure();
+    const enrollment=await createLearnerProgramEnrollment(collegeAdmin,{
+      membershipId:primaryLearner.membershipId,
+      programId:structure.program.id,cohortId:structure.cohort.id,
+    });
+    const section=await assignLearnerToSection(collegeAdmin,{
+      learnerEnrollmentId:enrollment.id,sectionId:structure.sectionA.id,
+    });
+    expect(section.status).toBe("ACTIVE");
+
+    const blocker=await pool.connect();
+    let locked=false;
+    let attempts:Promise<Awaited<ReturnType<typeof transitionLearnerProgramEnrollment>>>[]=[];
+    try {
+      await blocker.query("BEGIN");
+      locked=true;
+      await blocker.query(
+        "select id from learner_program_enrollments where id=$1 for update",
+        [enrollment.id],
+      );
+      attempts=["COMPLETE","WITHDRAW"].map(action=>
+        transitionLearnerProgramEnrollment(collegeAdmin,enrollment.id,{
+          action:action as "COMPLETE"|"WITHDRAW",
+        }),
+      );
+      let blocked=0;
+      try{
+        const deadline=Date.now()+10_000;
+        while(Date.now()<deadline){
+          const state=await pool.query<{n:string}>(`
+            select count(*)::text as n from pg_stat_activity
+             where datname=current_database() and pid<>pg_backend_pid()
+               and wait_event_type='Lock'
+               and query ilike '%learner_program_enrollments%'`);
+          blocked=Number(state.rows[0]?.n??0);
+          if(blocked>=2)break;
+          await new Promise(resolve=>setTimeout(resolve,25));
+        }
+      } finally {
+        await blocker.query("COMMIT");
+        locked=false;
+      }
+      const results=await Promise.allSettled(attempts);
+      expect(blocked,"Both exit producers must reach the blocked PostgreSQL parent row").toBeGreaterThanOrEqual(2);
+      expect(results.filter(x=>x.status==="fulfilled")).toHaveLength(1);
+      expect(results.filter(x=>x.status==="rejected")).toHaveLength(1);
+      expect(results.find(x=>x.status==="rejected")).toMatchObject({
+        status:"rejected",reason:{code:"LEARNER_ENROLLMENT_NOT_ACTIVE"},
+      });
+      const winner=results.find(x=>x.status==="fulfilled");
+      if(!winner||winner.status!=="fulfilled")throw new Error("No committed program exit");
+      const terminal=winner.value.status;
+      expect(["COMPLETED","WITHDRAWN"]).toContain(terminal);
+      const parent=await pool.query<{
+        status:string;completed_at:Date|null;withdrawn_at:Date|null;
+      }>(
+        "select status,completed_at,withdrawn_at from learner_program_enrollments where id=$1",
+        [enrollment.id],
+      );
+      expect(parent.rows).toHaveLength(1);
+      expect(parent.rows[0]?.status).toBe(terminal);
+      expect(parent.rows[0]?.completed_at!==null).toBe(terminal==="COMPLETED");
+      expect(parent.rows[0]?.withdrawn_at!==null).toBe(terminal==="WITHDRAWN");
+      const history=await pool.query<{status:string;ended_at:Date|null}>(
+        "select status,ended_at from section_enrollments where learner_enrollment_id=$1",
+        [enrollment.id],
+      );
+      expect(history.rows).toHaveLength(1);
+      expect(history.rows[0]?.status).toBe(terminal);
+      expect(history.rows[0]?.ended_at).toBeInstanceOf(Date);
+    } finally {
+      if(locked)await blocker.query("ROLLBACK").catch(()=>{});
+      blocker.release();
+    }
+  });
+
   it("P5-R11 rejects schedule create and update after a concurrent period close", async () => {
     const structure = await createStructure();
     const closeDuring = async (operation: () => Promise<unknown>) => {
