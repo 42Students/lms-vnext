@@ -71,7 +71,7 @@ test("DB08 280 placement fields cannot self-promote from candidates to exact map
 test("DB08 28 job_offer source-to-target proposals remain bounded and never claim runtime proof",()=>{
   const result=loadDb019Remaining();
   assert.equal(result.valid,true);
-  assert.equal(result.domains.DB08.sourceProposalsNotRuntimeVerified,189);
+  assert.equal(result.domains.DB08.sourceProposalsNotRuntimeVerified,280);
   assert.equal(result.domains.DB08.unresolvedExactDecisions,280);
   assert.equal(result.domains.DB08.runtimeVerified,0);
   assert.equal(artifacts.DB08.tables.find(t=>t.legacyTable==="job_offer").fields.length,28);
@@ -289,6 +289,81 @@ test("DB08 39 private screening, external-placement and debarment fields retain 
   assert.equal(externalMap["is_deleted"].retirementApproved,false);
   assert.equal(artifacts.DB08.counts.verifiedFields,0);
   assert.equal(artifacts.DB08.gate.fieldsUnverified,280);
+});
+
+test("DB08 all 280 fields now have source review proposals but none are runtime verified",()=>{
+  const audit=loadDb019Remaining();
+  assert.equal(audit.valid,true);
+  assert.equal(audit.domains.DB08.sourceFields,280);
+  assert.equal(audit.domains.DB08.reviewed,280);
+  assert.equal(audit.domains.DB08.sourceProposalsNotRuntimeVerified,280);
+  assert.equal(audit.domains.DB08.unresolvedExactDecisions,280);
+  assert.equal(audit.domains.DB08.runtimeVerified,0);
+  const tableNames=new Set(artifacts.DB08.tables.map(t=>t.legacyTable));
+  assert.equal(tableNames.size,18);
+  for(const table of artifacts.DB08.tables){
+    for(const field of table.fields){
+      assert.equal(field.status,"UNVERIFIED");
+      assert.ok(field.reviewDecision,"Missing individual source review "+table.legacyTable+"."+field.legacyColumn);
+      assert.equal(field.reviewDecision.runtimeVerified,false);
+      assert.equal(field.reviewDecision.consumerVerified,false);
+      assert.equal(field.reviewDecision.retirementApproved,false);
+      assert.ok(field.reviewDecision.sourceRationale.length>25);
+      assert.ok(field.reviewDecision.outstandingProof.length>25);
+    }
+  }
+  assert.equal(artifacts.DB08.gate.fieldsUnverified,280);
+  assert.equal(artifacts.DB08.counts.verifiedFields,0);
+});
+
+test("DB08 remaining 91 source reviews bind to actual typed tables, with privacy and consent gaps explicit",()=>{
+  const targets={
+    placement_job_rounds:"src/db/schema/placements.ts",
+    placement_interview_private_events:"src/db/schema/placements.ts",
+    placement_candidate_preferences:"src/db/schema/placements.ts",
+    placement_saved_jobs:"src/db/schema/placement-external.ts",
+    placement_batch_lifecycles:"src/db/schema/placement-batches.ts",
+    placement_eligibility_decisions:"src/db/schema/placement-access.ts",
+    placement_eligibility_events:"src/db/schema/placement-batches.ts",
+    placement_batch_registrations:"src/db/schema/placement-registration.ts",
+  };
+  const recent=["interview","job_preferences","learner_saved_job",
+    "placement_batch","placement_eligibility","placement_eligibility_event","placement_registration"];
+  assert.equal(recent.reduce((n,name)=>n+
+    artifacts.DB08.tables.find(t=>t.legacyTable===name).fields.length,0),91);
+  const files=new Map();
+  for(const name of recent){
+    const table=artifacts.DB08.tables.find(t=>t.legacyTable===name);
+    for(const field of table.fields){
+      const d=field.reviewDecision;
+      assert.equal(d.reviewStatus,"SOURCE_REVIEWED_PROPOSAL_NOT_VERIFIED");
+      assert.equal(d.runtimeVerified,false);
+      assert.equal(d.consumerVerified,false);
+      assert.equal(d.retirementApproved,false);
+      for(const ref of d.targetRefs){
+        const [target,col]=ref.split(".");
+        const file=targets[target];
+        assert.ok(file,field.legacyColumn+" unapproved cross-domain target "+ref);
+        if(!files.has(file))files.set(file,fs.readFileSync(new URL("../"+file,import.meta.url),"utf8"));
+        const schema=files.get(file);
+        const index=schema.indexOf('  "'+target+'",');
+        assert.ok(index>=0,"Missing registered typed table "+target);
+        const end=schema.indexOf("\\n);",index);
+        assert.ok(end>index,"Missing typed table terminator "+target);
+        assert.ok(schema.slice(index,end).includes('("'+col+'"'),
+          name+"."+field.legacyColumn+" candidate absent "+ref);
+      }
+    }
+  }
+  const find=(table,col)=>artifacts.DB08.tables.find(t=>t.legacyTable===table)
+    .fields.find(f=>f.legacyColumn===col).reviewDecision;
+  assert.equal(find("placement_registration","season_id").classification,"EXPLICIT_RUNTIME_GAP");
+  assert.equal(find("placement_registration","outcome_detail").targetRefs.length,0);
+  assert.equal(find("job_preferences","is_deleted").classification,"EXPLICIT_RUNTIME_GAP");
+  assert.equal(find("interview","feedback_comments").classification,"EXPLICIT_RUNTIME_GAP");
+  assert.equal(find("interview","interviewer_name").targetRefs.length,0);
+  assert.equal(find("placement_eligibility_event","undone_at").classification,"EXPLICIT_RUNTIME_GAP");
+  assert.equal(find("placement_eligibility","decided_by_type").targetRefs.length,0);
 });
 
 test("DB08 46 legacy job fields are individually source-reviewed but never falsely marked verified",()=>{
