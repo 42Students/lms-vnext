@@ -1,3 +1,4 @@
+import { assertDb018DisposableTarget } from "../support/db018-test-target.mjs";
 import {
   afterAll,
   beforeEach,
@@ -21,15 +22,19 @@ import {
 import { ACTIVITY_EVENT_TYPES } from "@/modules/activity/taxonomy";
 import { SEED_IDS } from "../../scripts/db-seed-data";
 
-const databaseUrl =
-  process.env.TEST_DATABASE_URL ??
-  process.env.DATABASE_URL;
-
-if (!databaseUrl) {
+// This suite deletes activity and notification rows between cases. It must
+// never infer the fixture target from the normal application DATABASE_URL.
+const databaseUrl = process.env.TEST_DATABASE_URL;
+const explicitlyIsolated =
+  process.env.DB018_ISOLATED_TEST_DATABASE === "1" ||
+  process.env.DB03_ISOLATED_TEST_DATABASE === "1";
+if (!databaseUrl || !explicitlyIsolated || process.env.DATABASE_URL !== databaseUrl) {
   throw new Error(
-    "TEST_DATABASE_URL or DATABASE_URL is required for DB integration tests",
+    "Activity integration requires isolated TEST_DATABASE_URL, DB018/DB03 " +
+      "fixture flag and identical service DATABASE_URL",
   );
 }
+assertDb018DisposableTarget(process.env, { serviceBound: true });
 
 const pool = new Pool({
   connectionString: databaseUrl,
