@@ -108,5 +108,5 @@ test("DB020 15 typed aliases match actual PG17 CHECK/index constraints",()=>{
  const credits=cat.constraints.find(x=>x.table_name==="course_offerings" && x.name==="db02_course_offerings_credits_ck");
  assert.match(credits.definition,/credits >= 0 AND credits <= 30/);
  const validation=readFileSync("src/modules/courses/validation.ts","utf8");
- assert.match(validation,/credits:\\s*z\\s*\\.number\\(\\)\\s*\\.int\\(\\)\\s*\\.min\\(1\\)/);
+ assert.match(validation,/credits:\s*z\s*\.number\(\)\s*\.int\(\)\s*\.min\(1\)/);
 });
