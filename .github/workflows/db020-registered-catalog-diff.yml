@@ -11,6 +11,12 @@ on:
       - "drizzle/0323_db020_registered_column_and_index_parity.sql"
       - "src/db/schema/placement-public-page-content.ts"
       - "tests/db020-registered-parity-delta-pg.test.mjs"
+      - "src/db/schema/db10-log-alerts.draft.ts"
+      - "src/db/schema/db10-audit-findings.draft.ts"
+      - "src/db/schema/db04-profile-education-images.staged.ts"
+      - "src/db/schema/attendance-parent-sms.ts"
+      - "tests/db020-registered-alias-parity.test.mjs"
+      - "tests/db10-log-alerts-staging.test.mjs"
       - "scripts/db020-fk-shape.mjs"
       - "scripts/db020-sql-type.mjs"
       - "tests/db020-sql-type.test.mjs"
@@ -101,6 +107,8 @@ jobs:
         run: node scripts/db020-registered-catalog-diff.mjs
       - name: Export full registered SQL constraint and index definitions (read-only)
         run: node scripts/db020-full-registered-catalog-export.mjs
+      - name: Confirm 14 constraint and index aliases on actual PG17
+        run: node --test tests/db020-registered-alias-parity.test.mjs
       - name: Keep output as diagnostic only; never promote generated DDL
         run: |
           test -f .verification/db020-catalog-disposition.json
