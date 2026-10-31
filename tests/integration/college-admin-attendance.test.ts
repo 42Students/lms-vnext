@@ -884,6 +884,89 @@ describe("College Admin attendance tenant isolation with PostgreSQL", () => {
     expect(audit.rows).toHaveLength(1);
   });
 
+  it.each([
+    {revocation:"suspended membership"},
+    {revocation:"removed COLLEGE_ADMIN grant"},
+  ])("DB045 immutable CORRECT event rejects a $revocation from persisted actor state",async({revocation})=>{
+    // A cached request context is not authority. Direct SQL must check the
+    // actual active membership and role grant at event insertion time.
+    const db=await pool.connect();
+    let recordId="";
+    let beforeStatus="";
+    let beforeVersion=-1;
+    try{
+      await db.query("BEGIN");
+      const before=await db.query<{
+        id:string;status:string;note:string|null;version:number;
+        marked_by_user_id:string;marked_at:Date;
+      }>(
+        "select id,status,note,version,marked_by_user_id,marked_at " +
+        "from attendance_records where schedule_event_id=$1 for update",
+        [own.event],
+      );
+      expect(before.rows).toHaveLength(1);
+      const old=before.rows[0]!;
+      recordId=old.id;
+      beforeStatus=old.status;
+      beforeVersion=old.version;
+      if(revocation==="suspended membership") {
+        await db.query(
+          "update college_memberships set status='SUSPENDED',suspended_at=now() where id=$1",
+          [SEED_IDS.collegeAdminMembership],
+        );
+      }else{
+        await db.query(
+          "delete from membership_roles where membership_id=$1 and role='COLLEGE_ADMIN'",
+          [SEED_IDS.collegeAdminMembership],
+        );
+      }
+      await db.query(
+        "update attendance_records set note='DB045 invalid actor', " +
+        "marked_by_user_id=$2,marked_at=marked_at+interval '1 second',version=version+1 " +
+        "where id=$1",
+        [old.id,SEED_IDS.collegeAdminUser],
+      );
+      await expect(db.query(`
+        insert into attendance_record_events(
+          attendance_record_id,schedule_event_id,delivery_id,membership_id,
+          college_id,actor_user_id,actor_membership_id,actor_role,action,
+          previous_status,new_status,previous_note,new_note,
+          previous_marked_by_user_id,new_marked_by_user_id,
+          previous_marked_at,new_marked_at,record_version_before,record_version_after
+        ) select ar.id,ar.schedule_event_id,$2::uuid,ar.membership_id,
+          $3::uuid,$4::uuid,$5::uuid,'COLLEGE_ADMIN','CORRECT',
+          $6::text,ar.status,$7::text,ar.note,
+          $8::uuid,ar.marked_by_user_id,
+          $9::timestamptz,ar.marked_at,$10::integer,ar.version
+          from attendance_records ar where ar.id=$1
+      `,[
+        old.id,own.delivery,SEED_IDS.collegeA,SEED_IDS.collegeAdminUser,
+        SEED_IDS.collegeAdminMembership,old.status,old.note,
+        old.marked_by_user_id,old.marked_at,old.version,
+      ])).rejects.toMatchObject({
+        code:"23514",
+        message:expect.stringContaining(
+          revocation==="suspended membership"?"actor membership mismatch":"lacks COLLEGE_ADMIN grant",
+        ),
+      });
+    }finally{
+      await db.query("ROLLBACK").catch(()=>{});
+      db.release();
+    }
+    const [record,member,role]=await Promise.all([
+      pool.query<{status:string;version:number}>(
+        "select status,version from attendance_records where id=$1",[recordId]),
+      pool.query<{status:string}>(
+        "select status from college_memberships where id=$1",[SEED_IDS.collegeAdminMembership]),
+      pool.query(
+        "select 1 from membership_roles where membership_id=$1 and role='COLLEGE_ADMIN'",
+        [SEED_IDS.collegeAdminMembership]),
+    ]);
+    expect(record.rows).toMatchObject([{status:beforeStatus,version:beforeVersion}]);
+    expect(member.rows).toMatchObject([{status:"ACTIVE"}]);
+    expect(role.rowCount).toBe(1);
+  });
+
   it("DB045 learner and Admin readers count persisted PRESENT exactly like a marked no-exception session",async()=>{
     // The Faculty/Admin workflow earlier created this event's MARKED session.
     // Use the REAL authorized learner context and exact delivery; do not
