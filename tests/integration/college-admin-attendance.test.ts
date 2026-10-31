@@ -269,6 +269,61 @@ describe("College Admin attendance tenant isolation with PostgreSQL", () => {
     ]) expect(checks.get(name)).toBe(true);
   });
 
+  it("DB045 first explicit PRESENT mark has durable version-zero row and exact immutable MARK event",async()=>{
+    // Independent fresh schedule: an initially present learner must have a
+    // committed current row plus matching immutable evidence. Nothing here
+    // relies on previously mutated ABSENT/correction rows.
+    const scheduleEventId=randomUUID();
+    await pool.query(
+      "insert into section_schedule_events(id,section_id,title,starts_at,ends_at) " +
+      "values($1,$2,'DB045 initial PRESENT witness',now()-interval '2 hours',now()-interval '1 hour')",
+      [scheduleEventId,own.section],
+    );
+    try {
+      await pool.query(
+        "insert into section_schedule_event_courses(schedule_event_id,delivery_id) values($1,$2)",
+        [scheduleEventId,own.delivery],
+      );
+      await pool.query(
+        "insert into attendance_sessions(schedule_event_id,status,marked_by_user_id,marked_at) " +
+        "values($1,'MARKED',$2,now())",
+        [scheduleEventId,SEED_IDS.superAdminUser],
+      );
+      const record=await insertDisposableAttendanceMark(pool,{
+        scheduleEventId,deliveryId:own.delivery,membershipId:own.learner,
+        collegeId:SEED_IDS.collegeA,actorUserId:SEED_IDS.superAdminUser,
+        actorMembershipId:null,actorRole:"SUPER_ADMIN",status:"PRESENT",
+      });
+      expect(record.version).toBe(0);
+      const {rows}=await pool.query<{
+        id:string;status:string;version:number;action:string;new_status:string;
+        record_version_before:number|null;record_version_after:number;
+        actor_user_id:string;membership_id:string;
+      }>(`
+        select ar.id,ar.status,ar.version,e.action,e.new_status,
+          e.record_version_before,e.record_version_after,e.actor_user_id,ar.membership_id
+        from attendance_records ar
+        join attendance_record_events e on e.attendance_record_id=ar.id
+        where ar.schedule_event_id=$1 and ar.membership_id=$2
+      `,[scheduleEventId,own.learner]);
+      expect(rows).toMatchObject([{
+        id:record.id,status:"PRESENT",version:0,action:"MARK",
+        new_status:"PRESENT",record_version_before:null,
+        record_version_after:0,actor_user_id:SEED_IDS.superAdminUser,
+        membership_id:own.learner,
+      }]);
+      await expect(pool.query(
+        "delete from attendance_records where id=$1",[record.id],
+      )).rejects.toMatchObject({code:"23503"});
+    }finally{
+      await deleteDisposableAttendanceEvents(pool,[scheduleEventId]);
+      await pool.query("delete from attendance_records where schedule_event_id=$1",[scheduleEventId]);
+      await pool.query("delete from attendance_sessions where schedule_event_id=$1",[scheduleEventId]);
+      await pool.query("delete from section_schedule_event_courses where schedule_event_id=$1",[scheduleEventId]);
+      await pool.query("delete from section_schedule_events where id=$1",[scheduleEventId]);
+    }
+  });
+
   it.each(forgedCases)("DB045 rejects $name against a real attendance row",async witness=>{
     const fields = Object.keys(eventFields) as EventField[];
     const expressions=fields.map(col=>witness.overrides[col]??eventFields[col]);
