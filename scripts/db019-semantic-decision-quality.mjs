@@ -112,12 +112,70 @@ export function auditDb019SemanticDecisions(db02, db09Source, db09Review) {
     ]};
 }
 
+// DB07 project field reviews contain explicit historical source dispositions,
+// but 358/358 remain semantically and runtime unverified. Surface gaps without
+// mistaking generic normalized target hints for completed field mappings.
+export function auditDb019ProjectDecisions(source, review) {
+  const errors = [];
+  const fail = (code, field = null) => errors.push({code, ...(field === null ? {} : {field})});
+  if (!source || !Array.isArray(source.tables) || !review ||
+      !Array.isArray(review.tables))
+    return {valid:false, errors:[{code:'INVALID_PROJECT_INPUT'}], sourceOnly:true};
+  if (source.sourceSha !== ORACLE || review.legacyBackendSha !== ORACLE)
+    fail('DB07_LEGACY_ORACLE_DRIFT');
+  const sourceFields = new Map();
+  for (const table of source.tables) for (const row of table.rows || []) {
+    const field = key(row?.legacyTable,row?.legacyColumn);
+    if (!field || row.legacyTable !== table.table || sourceFields.has(field))
+      fail('DB07_INVALID_OR_DUPLICATE_SOURCE', field);
+    else sourceFields.set(field,row);
+  }
+  const seen = new Set();
+  let targetGapOrUndecided = 0;
+  for (const table of review.tables) for (const row of table.fields || []) {
+    const field = key(table.legacyTable,row.legacyField);
+    const original = sourceFields.get(field);
+    if (!field || seen.has(field) || !original ||
+        original.sourceType !== row.sourceType) {
+      fail('DB07_UNKNOWN_DUPLICATE_OR_TYPE_DRIFT', field); continue;
+    }
+    seen.add(field);
+    if (!required(row.decision) || !required(row.reason) ||
+        (!required(row.targetRef) && row.decision !== 'SECURITY_REDESIGN_REQUIRED'))
+      fail('DB07_MISSING_DECISION_RATIONALE_OR_TARGET',field);
+    if (row.runtimeVerified !== false || row.semanticVerified !== false ||
+        row.validationEvidence != null)
+      fail('DB07_FALSE_RUNTIME_VERIFICATION',field);
+    if (/^TARGET_GAP|DECISION_REQUIRED/.test(row.decision))
+      targetGapOrUndecided++;
+  }
+  for (const field of sourceFields.keys()) if (!seen.has(field))
+    fail('DB07_SOURCE_FIELD_UNREVIEWED',field);
+  if (source.tables.length !== 16 || review.tables.length !== 16 ||
+      sourceFields.size !== 358 || seen.size !== 358 ||
+      review.counts?.fieldDispositions !== 358 ||
+      review.counts?.semanticVerifiedFields !== 0 ||
+      review.counts?.runtimeVerifiedFields !== 0 ||
+      review.counts?.approvedRetirements !== 0)
+    fail('DB07_CENSUS_OR_VERIFICATION_DRIFT');
+  return {valid:errors.length===0,errors,sourceOnly:true,
+    sourceFields:sourceFields.size,sourceDispositionRows:seen.size,
+    targetGapsOrFieldDecisionsPending:targetGapOrUndecided,
+    runtimeMappingsVerified:0,approvedRetirements:0,acceptanceReady:false};
+}
+
 export function loadDb019SemanticDecisions(root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..')) {
   const read = name => JSON.parse(fs.readFileSync(path.join(root,'docs/planning',name),'utf8'));
-  return auditDb019SemanticDecisions(
+  const base = auditDb019SemanticDecisions(
     read('db-pass4-columns-db02_academics_and_timetable.json'),
     read('db-pass4-columns-db09_tpo_and_recruiter_operations.json'),
     read('database-parity-db09-field-ledger.json'));
+  const projects = auditDb019ProjectDecisions(
+    read('db-pass4-columns-db07_projects.json'),
+    read('database-parity-db07-field-reconciliation.json'));
+  return {...base,projects,valid:base.valid && projects.valid,
+    auditedSourceFields:base.reviewedSourceFields + projects.sourceFields,
+    errors:[...base.errors,...projects.errors]};
 }
 if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
   try {
