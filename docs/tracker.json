@@ -1146,7 +1146,7 @@
         "DB-025"
       ],
       "implementationCheckpoint": {
-        "status": "CANONICAL_NOOP_PG17_329_REGISTERED_STRUCTURAL_DEFAULTS_GREEN_GLOBAL_PHASE_GATES_OPEN",
+        "status": "CANONICAL_NOOP_PG17_330_FULL_SQL_OWNED_PHYSICAL_CATALOG_GREEN_GLOBAL_PHASE_CERT_OPEN",
         "recordedOn": "2026-10-31",
         "report": "docs/planning/db020-schema-snapshot-drift-diagnosis-2026-10-30.md",
         "evidenceRun": "https://github.com/42Students/lms-vnext/actions/runs/41032764607",
@@ -1348,6 +1348,31 @@
             "DB-019 global 2,829 field semantic disposition",
             "DB-045 attendance event producer/race acceptance",
             "Final exact-head DB020 phase-gate integrated security and downstream producer/consumer witnesses"
+          ],
+          "notAcceptance": true
+        },
+        "latestSqlOwnedPhysicalWitness": {
+          "kind": "EXECUTED_COMPLETE_SQL_OWNED_CATALOG_AND_CANONICAL_NOOP",
+          "result": "PASS_SCOPED_PG17_DIAGNOSTIC_NOT_PHASE_ACCEPTANCE",
+          "commitSha": "6c3c915bb9dd013a6f5183e292d2ac1086f2e967",
+          "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/41152372509",
+          "registeredHead": "0329_db014_group_history_actor_grants",
+          "registeredMigrations": 330,
+          "checks": [
+            "Registered PG17 journal clean replay, idempotence and Drizzle no-op generation",
+            "Five formerly NOT VALID checks validated; no invalid constraints/indexes or disabled triggers",
+            "All 267 typed tables match physical PG17 existence/column nullability and typed FK shapes",
+            "3492 typed defaults proven; 0 unexplained differences",
+            "All 37 SQL-owned foreign-key shapes pinned; all 13 SQL-owned CHECK definitions and 28 typed-table SQL-owned index definitions pinned by exact PG17 fingerprints",
+            "10 SQL-only tables' 106 columns, 68 constraints, 33 indexes, 3 triggers pinned by exact physical PG17 catalog fingerprints",
+            "PostgreSQL 17 catalog 277 tables, 3598 columns, 742 FKs, 1938 constraints, 1043 indexes, 221 noninternal triggers",
+            "No generated duplicate CREATE TABLE or ALTER statements applied"
+          ],
+          "remaining": [
+            "DB-001 independent verifier and DB-014 cross-domain safety acceptance",
+            "DB-018 full registered negative/race suite and DB-019 2829-field semantic disposition",
+            "DB-045 attendance producer/race acceptance",
+            "Final exact-current-main cross-domain/producer/consumer/tenant/privacy and release phase gate"
           ],
           "notAcceptance": true
         }
