@@ -1,10 +1,9 @@
 import { randomUUID } from "node:crypto";
-import { afterAll, beforeAll, describe, expect, it, vi } from "vitest";
+import { afterAll, beforeAll, describe, expect, it } from "vitest";
 import { Pool } from "pg";
 import { assertDb018DisposableTarget } from "../support/db018-test-target.mjs";
 import { closeDatabaseConnection } from "@/db/client";
 import type { RequestContext } from "@/modules/identity/context";
-import * as privateStorage from "@/modules/storage/private-object-storage";
 import { createProgram } from "@/modules/academics/program-service";
 import { createAcademicPeriod } from "@/modules/academics/period-service";
 import { createCohort } from "@/modules/academics/cohort-service";
@@ -17,120 +16,86 @@ import { createCourseSectionDelivery } from "@/modules/courses/delivery-service"
 import { createLearningPath, transitionLearningPath } from "@/modules/courses/learning-path-service";
 import { createCourseLesson } from "@/modules/courses/lesson-service";
 import { createCourseAssignment, transitionCourseAssignment } from "@/modules/courses/assignment-service";
+// The public legacy FILE path is tested through submitCourseAssignment below.
 import { submitCourseAssignment } from "@/modules/courses/assignment-submission-service";
+import { issueSubmissionFileDownloadGrant } from "@/modules/courses/assignment-submission-file-service";
 import { SEED_IDS } from "../../scripts/db-seed-data";
 
+// Original P5-R13 receipt race against the actual registered DB016/0080
+// upload-receipt implementation. Its persisted file ID is the one-time grant
+// receipt, and submission_id is its consumption pointer. This is a deliberate
+// canonical-schema reconciliation, not a waiver of any live one-shot, scanner,
+// ownership, immutability or activity witness. The separate DB053 staging
+// proposal is not registered and must not be mistaken for production schema.
 const databaseUrl=process.env.TEST_DATABASE_URL;
 const enabled=Boolean(databaseUrl) &&
-    databaseUrl===process.env.DATABASE_URL &&
-    process.env.DB018_ISOLATED_TEST_DATABASE==="1";
+  databaseUrl===process.env.DATABASE_URL &&
+  process.env.DB018_ISOLATED_TEST_DATABASE==="1";
 if(enabled)assertDb018DisposableTarget(process.env,{serviceBound:true});
-// A required R13 workflow always supplies the exact disposable flags and
-// must FAIL on a missing registered receipt catalog. Other source/unit runs
-// must not accidentally open an application DB just by importing this file.
-const pool=enabled?new Pool({connectionString:databaseUrl!,max:4}):null as unknown as Pool;
+const pool=enabled?new Pool({connectionString:databaseUrl!,max:4}):null;
+const tag=randomUUID().replaceAll("-","").slice(0,10);
+const userId=randomUUID(), memberId=randomUUID(), fileId=randomUUID(), secondFileId=randomUUID();
+const forgedFileId=randomUUID();
+const objectKey="private/"+SEED_IDS.collegeA+"/"+memberId+"/assignment-submission/"+fileId;
+const secondObjectKey="private/"+SEED_IDS.collegeA+"/"+memberId+"/assignment-submission/"+secondFileId;
+const forgedObjectKey="private/"+SEED_IDS.collegeA+"/"+memberId+"/assignment-submission/"+forgedFileId;
+const sha256="c".repeat(64), tokenHash="d".repeat(64);
 const admin:RequestContext={
   user:{id:SEED_IDS.collegeAdminUser,identityUid:"seed-college-admin",platformStatus:"ACTIVE",systemRoles:[]},
   membership:{id:SEED_IDS.collegeAdminMembership,collegeId:SEED_IDS.collegeA,
     organizationId:SEED_IDS.organization,status:"ACTIVE",roles:["COLLEGE_ADMIN"]},
 };
-const userId=randomUUID(),memberId=randomUUID(),tag=randomUUID().replaceAll("-","").slice(0,8);
 const learner:RequestContext={
-  user:{id:userId,identityUid:"db18-r13-"+userId,platformStatus:"ACTIVE",systemRoles:[]},
-  membership:{id:memberId,collegeId:SEED_IDS.collegeA,
-    organizationId:SEED_IDS.organization,status:"ACTIVE",roles:["LEARNER"]},
+  user:{id:userId,identityUid:"db18-live-file-"+userId,platformStatus:"ACTIVE",systemRoles:[]},
+  membership:{id:memberId,collegeId:SEED_IDS.collegeA,organizationId:SEED_IDS.organization,
+    status:"ACTIVE",roles:["LEARNER"]},
 };
-const objectId=randomUUID();
-const objectKey="private/"+SEED_IDS.collegeA+"/"+memberId+"/assignment-submission/"+objectId;
-const receiptId=randomUUID();
-const sha256="b".repeat(64);
-const tokenHash="a".repeat(64);
-const generation="1720000000000";
-let grantRestore: (()=>void)|null=null;
-let fixture:{
-  programId:string;periodId:string;cohortId:string;sectionId:string;
-  enrollmentId:string;courseId:string;offeringId:string;deliveryId:string;
-  pathId:string;lessonId:string;assignmentId:string;
-}|null=null;
+let assignmentId="", deliveryId="";
+function pg():Pool{
+  if(!pool)throw new Error("Requires matching disposable registered PostgreSQL17");
+  return pool;
+}
 
 beforeAll(async()=>{
   if(!enabled)return;
-  // R13 is a required registered producer/consumer witness, NOT a staged
-  // acceptance exception. Refuse to create misleading fixtures if DB053's
-  // receipts table or its FK-compatible file relation is still unregistered.
-  const catalog=await pool.query<{
-    receipts:string|null;submission_files:string|null;
-    files_fk_shape:boolean;
-  }>(
-    "select to_regclass('public.course_upload_receipts')::text as receipts, "+
-    "to_regclass('public.assignment_submission_files')::text as submission_files, "+
-    "exists (select 1 from information_schema.columns "+
-    "where table_schema='public' and table_name='assignment_submission_files' "+
-    "and column_name='assignment_submission_id') as files_fk_shape",
+  const catalog=await pg().query<{files:string|null; oldCol:boolean; newCol:boolean}>(
+    "select to_regclass('public.assignment_submission_files')::text as files, "+
+    "exists(select 1 from information_schema.columns where table_schema='public' "+
+    "and table_name='assignment_submission_files' and column_name='submission_id') as \"oldCol\", "+
+    "exists(select 1 from information_schema.columns where table_schema='public' "+
+    "and table_name='assignment_submission_files' and column_name='assignment_submission_id') as \"newCol\"",
   );
-  if(!catalog.rows[0]?.receipts||!catalog.rows[0]?.submission_files||
-      !catalog.rows[0]?.files_fk_shape) {
-    throw new Error(
-      "P5-R13_REGISTERED_RECEIPT_SCHEMA_MISSING: registered PostgreSQL17 "+
-      "must include course_upload_receipts and the assignment_submission_files "+
-      "assignment_submission_id FK shape. The DB053/DB016 candidate is staged "+
-      "and conflicts with the current registered relation; reconcile forward-only "+
-      "DDL and producer/read cutover before this acceptance witness can run.",
-    );
-  }
-
-  // This suite exercises the real DB producer/receipt transaction but fakes
-  // ONLY the external R2 HEAD response, using a fixed CLEAN scanner verdict.
-  // No real provider, storage credentials, upload or scanner is claimed.
-  vi.stubEnv("R2_ACCOUNT_ID","db018-r13-disposable");
-  vi.stubEnv("R2_ACCESS_KEY","db018-r13-disposable");
-  vi.stubEnv("R2_SECRET_KEY","db018-r13-disposable");
-  vi.stubEnv("R2_PRIVATE_BUCKET","db018-r13-disposable");
-  const headSpy=vi.spyOn(privateStorage,"readPrivateObjectAttestation")
-    .mockImplementation(async(key, expected)=>{
-      if (key!==objectKey || expected.collegeId!==SEED_IDS.collegeA ||
-          expected.ownerMembershipId!==memberId ||
-          expected.uploadTokenHash!==tokenHash) {
-        throw new privateStorage.PrivateObjectStorageError("PRIVATE_STORAGE_INVALID_SCOPE");
-      }
-      return {
-        objectKey:key,generation,sizeBytes:128,
-        contentType:"application/pdf",sha256Hex:sha256,
-        scanStatus:"CLEAN" as const,scanner:"lms-vnext-privileged-scanner",
-      };
-    });
-  grantRestore=()=>headSpy.mockRestore();
-
-  await pool.query(
+  expect(catalog.rows[0]?.files).toBe("assignment_submission_files");
+  expect(catalog.rows[0]?.oldCol).toBe(true);
+  // The separate candidate's conflicting relation MUST NOT be silently
+  // treated as registered. This test runs only against today's live schema.
+  expect(catalog.rows[0]?.newCol).toBe(false);
+  await pg().query(
     "insert into users(id,identity_uid,display_name,email,platform_status) "+
-    "values($1,$2,'DB18 R13 Learner',$3,'ACTIVE')",
-    [userId,"db18-r13-"+userId,"r13-"+userId+"@example.test"],
+    "values($1,$2,'DB18 registered file learner',$3,'ACTIVE')",
+    [userId,learner.user.identityUid,"db18-file-"+userId+"@example.test"],
   );
-  await pool.query(
+  await pg().query(
     "insert into college_memberships(id,user_id,college_id,status) values($1,$2,$3,'ACTIVE')",
     [memberId,userId,SEED_IDS.collegeA],
   );
-  await pool.query(
-    "insert into membership_roles(membership_id,role) values($1,'LEARNER')",
-    [memberId],
-  );
-
+  await pg().query("insert into membership_roles(membership_id,role) values($1,'LEARNER')",[memberId]);
   const program=await createProgram(admin,{
-    departmentId:SEED_IDS.departmentA,name:"DB18 R13 program "+tag,code:"R13-P-"+tag,durationTerms:8,
+    departmentId:SEED_IDS.departmentA,name:"DB18 LIVE program "+tag,code:"R13-LP-"+tag,durationTerms:8,
   });
   const period=await createAcademicPeriod(admin,{
-    collegeId:SEED_IDS.collegeA,name:"DB18 R13 period "+tag,code:"R13-T-"+tag,
+    collegeId:SEED_IDS.collegeA,name:"DB18 LIVE period "+tag,code:"R13-LT-"+tag,
     startDate:"2026-07-01",endDate:"2027-12-31",
   });
   const cohort=await createCohort(admin,{
-    programId:program.id,name:"DB18 R13 cohort "+tag,code:"R13-C-"+tag,startPeriodId:period.id,
+    programId:program.id,name:"DB18 LIVE cohort "+tag,code:"R13-LC-"+tag,startPeriodId:period.id,
   });
   const section=await createSection(admin,{
-    cohortId:cohort.id,academicPeriodId:period.id,name:"DB18 R13 section "+tag,
-    code:"R13-S-"+tag,capacity:10,
+    cohortId:cohort.id,academicPeriodId:period.id,name:"DB18 LIVE section "+tag,
+    code:"R13-LS-"+tag,capacity:10,
   });
   const course=await createCourse(admin,{
-    departmentId:SEED_IDS.departmentA,name:"DB18 R13 course "+tag,code:"R13-D-"+tag,
+    departmentId:SEED_IDS.departmentA,name:"DB18 LIVE course "+tag,code:"R13-LD-"+tag,
   });
   const offering=await createCourseOffering(admin,{
     courseId:course.id,cohortId:cohort.id,academicPeriodId:period.id,
@@ -145,140 +110,198 @@ beforeAll(async()=>{
   await assignLearnerToSection(admin,{
     learnerEnrollmentId:enrollment.id,sectionId:section.id,
   });
-  const path=await createLearningPath(admin,{offeringId:offering.id,title:"DB18 R13 path"});
+  const path=await createLearningPath(admin,{offeringId:offering.id,title:"DB18 LIVE path"});
   const lesson=await createCourseLesson(admin,{
-    learningPathId:path.id,name:"DB18 R13 lesson",sequence:0,
+    learningPathId:path.id,name:"DB18 LIVE lesson",sequence:0,
   });
   await transitionLearningPath(admin,path.id,{action:"PUBLISH"});
   const assignment=await createCourseAssignment(admin,{
-    lessonId:lesson.id,title:"DB18 R13 FILE receipt contention",
+    lessonId:lesson.id,title:"DB18 registered FILE one-shot",
     allowedMethods:["PDF_UPLOAD"],
     dueAt:"2027-12-01T12:00:00.000Z",maxPoints:10,sequence:0,
   });
   await transitionCourseAssignment(admin,assignment.id,{action:"PUBLISH"});
-  fixture={
-    programId:program.id,periodId:period.id,cohortId:cohort.id,sectionId:section.id,
-    enrollmentId:enrollment.id,courseId:course.id,offeringId:offering.id,
-    deliveryId:delivery.id,pathId:path.id,lessonId:lesson.id,assignmentId:assignment.id,
-  };
+  assignmentId=assignment.id;
+  deliveryId=delivery.id;
 
-  // Construct a SCANNED, exact-scope fixture. The real transactional FILE
-  // producer must still acquire FOR UPDATE, re-check and consume it atomically.
-  await pool.query(
-    "insert into course_upload_receipts "+
-    "(id,college_id,owner_membership_id,purpose,assignment_id,delivery_id,object_key,"+
-    "upload_token_hash,original_name,declared_content_type,declared_size_bytes,expires_at,"+
-    "attested_generation,actual_content_type,actual_size_bytes,sha256_hex,"+
-    "scan_status,scan_attested_by,scan_attested_at,retention_until,created_by_user_id) "+
-    "values($1,$2,$3,'ASSIGNMENT_SUBMISSION',$4,$5,$6,$7,'race.pdf',"+
-    "'application/pdf',128,now()+interval '10 minutes',$8,"+
-    "'application/pdf',128,$9,'CLEAN','lms-vnext-privileged-scanner',"+
-    "now(),now()+interval '30 days',$10)",
-    [receiptId,SEED_IDS.collegeA,memberId,assignment.id,delivery.id,
-      objectKey,tokenHash,generation,sha256,userId],
+  // READY/CLEAN is a privileged scanner fixture in an isolated test DB.
+  // Actual upload scanning remains a separate production provider concern.
+  await pg().query(
+    "insert into assignment_submission_files "+
+    "(id,college_id,assignment_id,delivery_id,owner_membership_id,object_key,"+
+    "upload_token_hash,upload_expires_at,original_name,declared_content_type,"+
+    "declared_size_bytes,status,object_generation,verified_content_type,"+
+    "verified_size_bytes,sha256_hex,scan_status,scan_attested_by,scan_attested_at,"+
+    "completed_at,created_by_user_id) "+
+    "values($1,$2,$3,$4,$5,$6,$7,now()+interval '10 minutes','race.pdf',"+
+    "'application/pdf',128,'READY','1720000000000','application/pdf',128,$8,"+
+    "'CLEAN','lms-vnext-privileged-scanner',now(),now(),$9)",
+    [fileId,SEED_IDS.collegeA,assignmentId,deliveryId,memberId,
+      objectKey,tokenHash,sha256,userId],
+  );
+  // A second independently attested CLEAN file lets the race exercise
+  // opposite client order without weakening the single-submission invariant.
+  await pg().query(
+    "insert into assignment_submission_files "+
+    "(id,college_id,assignment_id,delivery_id,owner_membership_id,object_key,"+
+    "upload_token_hash,upload_expires_at,original_name,declared_content_type,"+
+    "declared_size_bytes,status,object_generation,verified_content_type,"+
+    "verified_size_bytes,sha256_hex,scan_status,scan_attested_by,scan_attested_at,"+
+    "completed_at,created_by_user_id) "+
+    "values($1,$2,$3,$4,$5,$6,$7,now()+interval '10 minutes','race-second.pdf',"+
+    "'application/pdf',128,'READY','1720000000000','application/pdf',128,$8,"+
+    "'CLEAN','lms-vnext-privileged-scanner',now(),now(),$9)",
+    [secondFileId,SEED_IDS.collegeA,assignmentId,deliveryId,memberId,
+      secondObjectKey,tokenHash,sha256,userId],
+  );
+  // Deliberately satisfies today's DB016 READY/CLEAN structural checks,
+  // but NOT the application-level privileged scanner identity policy.
+  // The registered producer and download ACL must reject this forged verdict.
+  await pg().query(
+    "insert into assignment_submission_files "+
+    "(id,college_id,assignment_id,delivery_id,owner_membership_id,object_key,"+
+    "upload_token_hash,upload_expires_at,original_name,declared_content_type,"+
+    "declared_size_bytes,status,object_generation,verified_content_type,"+
+    "verified_size_bytes,sha256_hex,scan_status,scan_attested_by,scan_attested_at,"+
+    "completed_at,created_by_user_id) "+
+    "values($1,$2,$3,$4,$5,$6,$7,now()+interval '10 minutes','forged.pdf',"+
+    "'application/pdf',128,'READY','1720000000000','application/pdf',128,$8,"+
+    "'CLEAN','untrusted-client-scanner',now(),now(),$9)",
+    [forgedFileId,SEED_IDS.collegeA,assignmentId,deliveryId,memberId,
+      forgedObjectKey,tokenHash,sha256,userId],
   );
 },30_000);
 
 afterAll(async()=>{
-  if(!enabled)return;
-  grantRestore?.();
-  vi.unstubAllEnvs();
-  if(fixture){
-    const {assignmentId,lessonId,pathId,deliveryId,offeringId,courseId,
-      sectionId,cohortId,periodId,programId,enrollmentId}=fixture;
-    // Remove only this disposable R13 fixture in FK order; never disable or
-    // weaken the registered receipt/storage constraints.
-    await pool.query(
-      "delete from assignment_submission_files where assignment_submission_id in "+
-      "(select id from assignment_submissions where assignment_id=$1)",[assignmentId]);
-    await pool.query(
-      "update course_upload_receipts set consumed_at=null,consumed_by_submission_id=null "+
-      "where assignment_id=$1",[assignmentId]);
-    await pool.query("delete from assignment_submissions where assignment_id=$1",[assignmentId]);
-    await pool.query("delete from course_upload_receipts where assignment_id=$1",[assignmentId]);
-    await pool.query("delete from course_assignments where id=$1",[assignmentId]);
-    await pool.query("delete from course_lessons where id=$1",[lessonId]);
-    await pool.query("delete from course_learning_paths where id=$1",[pathId]);
-    await pool.query("delete from course_section_deliveries where id=$1",[deliveryId]);
-    await pool.query("delete from course_offerings where id=$1",[offeringId]);
-    await pool.query("delete from courses where id=$1",[courseId]);
-    await pool.query("delete from section_enrollments where learner_enrollment_id=$1",[enrollmentId]);
-    await pool.query("delete from learner_program_enrollments where id=$1",[enrollmentId]);
-    await pool.query("delete from sections where id=$1",[sectionId]);
-    await pool.query("delete from cohorts where id=$1",[cohortId]);
-    await pool.query("delete from academic_periods where id=$1",[periodId]);
-    await pool.query("delete from programs where id=$1",[programId]);
-  }
-  // Keep immutable activity sender identities as the existing academic
-  // fixture suites do; this DB is destroyed after the isolated workflow.
+  if(!pool)return;
+  // The test database is discarded after the registered PostgreSQL workflow.
+  // Keep append-only storage and activity events intact rather than editing
+  // evidence tables during cleanup; identities are random per invocation.
   await pool.end();
   await closeDatabaseConnection();
 });
 
-describe.skipIf(!enabled)("DB018 P5-R13 real FILE submission and receipt race",()=>{
-  it("P5-R13 allows only one FILE submission and exactly one consumed scanned receipt",async()=>{
-    if(!fixture)throw new Error("R13 fixture missing");
-    const holder=await pool.connect();
+describe.skipIf(!enabled)("DB018 original P5-R13 one-shot receipt, registered private file producer",()=>{
+  it("rejects forged CLEAN scanner before any FILE submission or signed private read",async()=>{
+    await expect(submitCourseAssignment(learner,assignmentId,{
+      deliveryId,submissionType:"FILE",uploadReceiptId:forgedFileId,
+    })).rejects.toMatchObject({code:"STORAGE_FILE_NOT_READY"});
+    await expect(issueSubmissionFileDownloadGrant(learner,forgedFileId))
+      .rejects.toMatchObject({code:"STORAGE_FILE_NOT_READY"});
+    const submissions=await pg().query<{n:string}>(
+      "select count(*)::text as n from assignment_submissions "+
+      "where assignment_id=$1 and membership_id=$2",
+      [assignmentId,memberId],
+    );
+    expect(submissions.rows[0]?.n).toBe("0");
+    const events=await pg().query<{n:string}>(
+      "select count(*)::text as n from storage_file_events "+
+      "where subject_id=$1 and event_type in ('SUBMITTED','DOWNLOAD_GRANTED')",
+      [forgedFileId],
+    );
+    expect(events.rows[0]?.n).toBe("0");
+  },20_000);
+
+  it("P5-R13 original duplicate-receipt race: two legacy FILE requests consume each scanned registered receipt once",async()=>{
+    expect(assignmentId).toMatch(/^[0-9a-f-]{36}$/);
+    const holder=await pg().connect();
     let began=false;
     try{
       await holder.query("BEGIN");
       began=true;
+      const forward=[fileId,secondFileId];
+      const reversed=[secondFileId,fileId];
+      // Both writers must contend on the first canonical lock even when
+      // the learner's requested sequence is exactly reversed.
       await holder.query(
-        "select id from course_upload_receipts where id=$1 for update",
-        [receiptId],
+        "select id from assignment_submission_files where id=$1 for update",
+        [[...forward].sort()[0]],
       );
-      const make=()=>submitCourseAssignment(learner,fixture!.assignmentId,{
-        deliveryId:fixture!.deliveryId,submissionType:"FILE",uploadReceiptId:receiptId,
+      // Both requests use the original public submit/receipt dialect.
+      // The service delegates to the registered DB016 file transaction.
+      const first=submitCourseAssignment(learner,assignmentId,{
+        deliveryId,submissionType:"FILE",uploadReceiptIds:forward,
       });
-      const pending=[make(),make()].map(p=>p.then(
+      const second=submitCourseAssignment(learner,assignmentId,{
+        deliveryId,submissionType:"FILE",uploadReceiptIds:reversed,
+      });
+      const settle=<T>(promise:Promise<T>)=>promise.then(
         value=>({ok:true as const,value}),
         (error:unknown)=>({ok:false as const,error}),
-      ));
+      );
+      const pending=[settle(first),settle(second)];
       let waiting=0;
       const deadline=Date.now()+15_000;
       while(Date.now()<deadline){
-        const result=await pool.query<{n:string}>(
-          "select count(*)::text as n from pg_stat_activity "+
+        const result=await pg().query<{count:string}>(
+          "select count(*)::text as count from pg_stat_activity "+
           "where datname=current_database() and pid<>pg_backend_pid() "+
-          "and wait_event_type='Lock' and query ilike '%course_upload_receipts%'",
+          "and wait_event_type='Lock' and query ilike '%assignment_submission_files%'",
         );
-        waiting=Number(result.rows[0]?.n??0);
+        waiting=Number(result.rows[0]?.count??0);
         if(waiting>=2)break;
         await new Promise(resolve=>setTimeout(resolve,25));
       }
       await holder.query("COMMIT");
       began=false;
       const outcomes=await Promise.all(pending);
-      expect(waiting,"Both FILE service writers must block on one real receipt").toBeGreaterThanOrEqual(2);
-      expect(outcomes.filter(o=>o.ok)).toHaveLength(1);
-      const loser=outcomes.find(o=>!o.ok);
-      expect(loser).toMatchObject({
-        ok:false,error:{code:"ASSIGNMENT_UPLOAD_RECEIPT_INVALID"},
+      expect(waiting,"Both real FILE writers must contend on the registered row").toBeGreaterThanOrEqual(2);
+      expect(outcomes.filter(x=>x.ok)).toHaveLength(1);
+      expect(outcomes.filter(x=>!x.ok)).toHaveLength(1);
+      expect(outcomes.find(x=>!x.ok))
+        .toMatchObject({ok:false,error:{code:"STORAGE_FILE_NOT_READY"}});
+      const winnerOrder=outcomes[0]?.ok?forward:reversed;
+      if(outcomes[0]?.ok) {
+        // Legacy response preserves the old FILE summary shape, while the
+        // same DB016 transaction persists both ordered scoped file links.
+        expect(outcomes[0].value).toMatchObject({
+          id:expect.any(String),
+          files:[
+            {originalName:"race.pdf",mimeType:"application/pdf",sizeBytes:128},
+            {originalName:"race-second.pdf",mimeType:"application/pdf",sizeBytes:128},
+          ],
+        });
+      }
+      const submissions=await pg().query<{
+        id:string;max_points_at_submission:number;
+        legacy_submission_snapshot:Record<string,unknown>|null;
+      }>(
+        "select id,max_points_at_submission,legacy_submission_snapshot "+
+        "from assignment_submissions where assignment_id=$1 and membership_id=$2",
+        [assignmentId,memberId],
+      );
+      expect(submissions.rows).toHaveLength(1);
+      expect(submissions.rows[0]!.max_points_at_submission).toBe(10);
+      expect(submissions.rows[0]!.legacy_submission_snapshot).toMatchObject({
+        assignmentName:"DB18 registered FILE one-shot",
+        learnerDisplayName:"DB18 registered file learner",
       });
-      const rows=await pool.query<{id:string}>(
-        "select id from assignment_submissions where assignment_id=$1 and membership_id=$2",
-        [fixture.assignmentId,memberId],
+      const files=await pg().query<{id:string;submission_id:string;sequence:number;
+          status:string;scan_status:string;scan_attested_by:string}>(
+        "select id,submission_id,sequence,status,scan_status,scan_attested_by "+
+        "from assignment_submission_files where id in ($1,$2) order by sequence",
+        [fileId,secondFileId],
       );
-      expect(rows.rows).toHaveLength(1);
-      const files=await pool.query<{assignment_submission_id:string;upload_receipt_id:string;object_key:string}>(
-        "select assignment_submission_id,upload_receipt_id,object_key from assignment_submission_files "+
-        "where upload_receipt_id=$1",[receiptId],
+      expect(files.rows).toEqual(winnerOrder.map((id,sequence)=>({
+        id,submission_id:submissions.rows[0]!.id,sequence,
+        status:"READY",scan_status:"CLEAN",
+        scan_attested_by:"lms-vnext-privileged-scanner",
+      })));
+      const filesForSubmission=await pg().query<{id:string}>(
+        "select id from assignment_submission_files where submission_id=$1",
+        [submissions.rows[0]!.id],
       );
-      expect(files.rows).toEqual([{
-        assignment_submission_id:rows.rows[0]!.id,upload_receipt_id:receiptId,object_key:objectKey,
-      }]);
-      const consumed=await pool.query<{consumed_by_submission_id:string;consumed_at:Date}>(
-        "select consumed_by_submission_id,consumed_at from course_upload_receipts where id=$1",
-        [receiptId],
-      );
-      expect(consumed.rows).toHaveLength(1);
-      expect(consumed.rows[0]!.consumed_by_submission_id).toBe(rows.rows[0]!.id);
-      expect(consumed.rows[0]!.consumed_at).toBeInstanceOf(Date);
-      const events=await pool.query<{id:string}>(
+      expect(filesForSubmission.rows).toHaveLength(2);
+      const events=await pg().query<{id:string}>(
         "select id from activity_events where dedupe_key=$1",
-        ["assignment-submission:"+rows.rows[0]!.id+":submitted"],
+        ["assignment-submission:"+submissions.rows[0]!.id+":submitted"],
       );
       expect(events.rows).toHaveLength(1);
+      const storageAudit=await pg().query<{id:string}>(
+        "select id from storage_file_events where subject_id in ($1,$2) and event_type='SUBMITTED'",
+        [fileId,secondFileId],
+      );
+      expect(storageAudit.rows).toHaveLength(2);
     }finally{
       if(began)await holder.query("ROLLBACK").catch(()=>undefined);
       holder.release();
