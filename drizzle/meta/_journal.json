@@ -2304,6 +2304,13 @@
       "when": 1793258110954,
       "tag": "0328_db014_activity_identity_immutable",
       "breakpoints": true
+    },
+    {
+      "idx": 329,
+      "version": "7",
+      "when": 1793258170954,
+      "tag": "0329_db014_group_history_actor_grants",
+      "breakpoints": true
     }
   ]
 }
