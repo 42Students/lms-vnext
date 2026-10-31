@@ -26,6 +26,10 @@ on:
       - "docs/planning/database-parity-pass5-probe-manifest.json"
       - "tests/integration/groups-db03.test.ts"
       - "tests/integration/academics-a2.test.ts"
+      - "tests/integration/faculty-c4-reports-audit-contact.test.ts"
+      - "tests/integration/college-admin-attendance.test.ts"
+      - "src/modules/attendance/faculty-service.ts"
+      - "src/modules/attendance/admin-service.ts"
       - "src/modules/academics/schedule-service.ts"
       - "src/modules/placements/application-service.ts"
       - "src/modules/groups/service.ts"
@@ -102,6 +106,11 @@ jobs:
       - name: P5-R11 schedule and period-close race with real A2 producer
         run: |
           npx vitest run --config vitest.db.registered.config.ts tests/integration/academics-a2.test.ts
+      - name: DB045 learner revocation race and immutable audit consumer witnesses
+        run: |
+          npx vitest run --config vitest.db.registered.config.ts \
+            tests/integration/faculty-c4-reports-audit-contact.test.ts \
+            tests/integration/college-admin-attendance.test.ts
       - name: Current registered DB014 tenant scope, catalog and DB020 provenance negatives
         run: |
           node --test tests/db014-registered-tenant-catalog-pg.test.mjs tests/db014-cross-domain-scope-staged-pg.test.mjs tests/db020-registered-grade-event-provenance-pg.test.mjs
