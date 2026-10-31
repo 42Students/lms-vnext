@@ -147,19 +147,27 @@ test("DB18 witness index remains honest about authored versus executed coverage"
   assert.equal(index.status, "FOCUSED_PG17_WITNESSES_VERIFIED_GLOBAL_GATE_PENDING");
   assert.equal(index.counts.directNegativeAuthored, 9);
   assert.equal(index.counts.existingConcurrencyAuthored, 4);
-  assert.equal(index.counts.pendingConcurrencyAuthored, 2);
+  assert.equal(index.counts.pendingConcurrencyAuthored, 0);
   assert.deepEqual(
     index.authoredPendingConcurrencyWitnesses.map(p => p.raceProbe),
     ["P5-R23", "P5-R20"],
   );
   for (const witness of index.authoredPendingConcurrencyWitnesses) {
-    assert.equal(witness.state, "AUTHORED_AWAITING_REGISTERED_PG17");
-    assert.equal(witness.execution, "NOT_RUN");
+    assert.equal(witness.state, "REGISTERED_PG17_VERIFIED");
+    assert.equal(witness.execution, "PASS");
+    assert.match(witness.runUrl, /^https:\/\/github\.com\/42Students\/lms-vnext\/actions\/runs\/\d+$/);
+    assert.match(witness.commitSha, /^[0-9a-f]{40}$/);
     assert.ok(fs.readFileSync(witness.file, "utf8").includes(witness.title));
   }
-  assert.equal(index.counts.additionalRegisteredConcurrencyRuntimeExecuted, 2);
-  assert.equal(index.counts.additionalRegisteredConcurrencyRuntimePassed, 2);
+  assert.equal(index.counts.additionalRegisteredConcurrencyRuntimeExecuted, 4);
+  assert.equal(index.counts.additionalRegisteredConcurrencyRuntimePassed, 4);
   assert.deepEqual(index.registeredAdditionalConcurrencyWitnesses.map(p => p.raceProbe), ["P5-R11", "P5-R03"]);
+  assert.equal(
+    index.authoredPendingConcurrencyWitnesses.filter(p => p.execution === "PASS").length
+      + index.registeredAdditionalConcurrencyWitnesses.filter(p => p.state === "REGISTERED_PG17_PASS").length,
+    4,
+    "All four registered additional races must have explicit passing witness entries",
+  );
   const r11 = index.registeredAdditionalConcurrencyWitnesses[0];
   assert.equal(r11.state, "REGISTERED_PG17_PASS");
   assert.equal(r11.commitSha, "4e6b9e97c38183a13da6cb7af9fe47281449cdcc");
