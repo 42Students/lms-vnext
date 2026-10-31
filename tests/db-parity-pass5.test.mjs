@@ -180,9 +180,9 @@ test("DB18 witness index remains honest about authored versus executed coverage"
   assert.equal(index.counts.draftUnregisteredExcluded, 0);
   assert.deepEqual(index.excludedUntilRegistered.map(w => w.raceProbe), []);
   const newlyExecuted = index.registeredOriginalScopeRaceEvidence;
-  assert.deepEqual(newlyExecuted.map(w => w.raceProbe), ["P5-R22", "P5-R10", "P5-R08", "P5-R09", "P5-R21"]);
-  assert.equal(index.counts.registeredOriginalScopeRaceExecuted, 5);
-  assert.equal(index.counts.registeredOriginalScopeRacePassed, 5);
+  assert.deepEqual(newlyExecuted.map(w => w.raceProbe), ["P5-R22", "P5-R10", "P5-R08", "P5-R09", "P5-R21", "P5-R12"]);
+  assert.equal(index.counts.registeredOriginalScopeRaceExecuted, 6);
+  assert.equal(index.counts.registeredOriginalScopeRacePassed, 6);
   for (const witness of newlyExecuted) {
     assert.equal(witness.state, "REGISTERED_PG17_VERIFIED");
     assert.equal(witness.execution, "PASS");
@@ -191,9 +191,9 @@ test("DB18 witness index remains honest about authored versus executed coverage"
     assert.ok(fs.readFileSync(witness.file, "utf8").includes(witness.title));
     assert.equal(Number.isSafeInteger(witness.jobId), true);
   }
-  assert.equal(index.counts.unwitnessedPass5Races, 8);
+  assert.equal(index.counts.unwitnessedPass5Races, 7);
   assert.deepEqual(index.unwitnessedPass5Probes,
-    Array.from({length:8},(_,i) => "P5-R" + String(i+12).padStart(2,"0")));
+    Array.from({length:7},(_,i) => "P5-R" + String(i+13).padStart(2,"0")));
   assert.equal(index.latestRegisteredPass5RaceExecution.actualProviderActivated,false);
   assert.equal(index.latestRegisteredPass5RaceExecution.result,"PASS_PARTIAL_FULL_MATRIX");
   const staged = index.outboundStagedDiagnostics;

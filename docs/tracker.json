@@ -916,7 +916,7 @@
         "DB-025"
       ],
       "implementationCheckpoint": {
-        "status": "REGISTERED_PG17_NEW_R08_R09_R21_SERVICE_RACES_PASS_8_PASS5_RACES_UNWITNESSED",
+        "status": "REGISTERED_PG17_R08_R09_R10_R11_R12_R21_R22_PASS_7_PASS5_GAPS_REMAIN",
         "additionalRegisteredRaceEvidence": {
           "result": "PASS_2_OF_2_REGISTERED_PG17_GLOBAL_ACCEPTANCE_OPEN",
           "recordedOn": "2026-10-31",
@@ -970,9 +970,9 @@
           }
         ],
         "pending": [
-          "Execute original Pass-5 P5-R12 through P5-R19 8 two-writer producer/consumer races or provide direct exact-SHA existing registered witness proof; do not treat migrated table presence as behavioral verification",
-          "Complete approved production recruiter-invite transactional outbox origin and trusted-identity/privileged dispatcher + external provider reconciliation; until then sender remains fail-closed, fake transport tests are not provider proof",
-          "Perform final original 23-race and 21 relational/source-tenant/authorization coverage crosswalk on exact-current-main PG17 before DB018 acceptance; DB019 and DB020 are distinct downstream phase gates"
+          "Execute original P5-R13 through P5-R19 seven remaining assignment, sprint, placement, offer, announcement and tracker races on clean registered disposable PostgreSQL 17, including actual domain producers and immutable event checks",
+          "Operational producer cutover from recruiter invitation route to encrypted outbox and approved sender adapter + least-privilege DB dispatcher principal are not verified; real provider delivery remains DISABLED/UNCONFIRMED",
+          "Perform final complete 23-race, 21 relational, direct-negative and tenant/permission/privacy witness crosswalk on fresh main; DB019/DB020 remain separate downstream gates"
         ],
         "evidenceIsNotAcceptance": true,
         "fiveFastWitnessClosures": {
@@ -1122,6 +1122,25 @@
             "P5-R09 encrypted producer+2 claimers+fake provider once",
             "P5-R21 global opt-out inserted postqueue before fake send",
             "Provider unknown outcome remains CLAIMED; no reclaim"
+          ],
+          "notAcceptance": true
+        },
+        "latestP5R12RegisteredEvidence": {
+          "result": "PASS",
+          "commitSha": "a8f0c050a563a27ae17f8db7abb7c14513933cae",
+          "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/41223700248",
+          "jobId": 124603546469,
+          "test": "tests/integration/academics-a2.test.ts",
+          "witness": "P5-R12 serializes concurrent COMPLETE versus WITHDRAW across parent and active section enrollments",
+          "scope": "Real two-service-writer row-lock conflict, one COMPLETE or WITHDRAW winner, loser LEARNER_ENROLLMENT_NOT_ACTIVE, parent terminal timestamps and all active section records coherent.",
+          "remainingUnwitnessed": [
+            "P5-R13",
+            "P5-R14",
+            "P5-R15",
+            "P5-R16",
+            "P5-R17",
+            "P5-R18",
+            "P5-R19"
           ],
           "notAcceptance": true
         }

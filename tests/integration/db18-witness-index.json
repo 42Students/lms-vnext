@@ -170,9 +170,9 @@
     "pendingConcurrencyAuthored": 0,
     "additionalRegisteredConcurrencyRuntimeExecuted": 4,
     "additionalRegisteredConcurrencyRuntimePassed": 4,
-    "registeredOriginalScopeRaceExecuted": 5,
-    "registeredOriginalScopeRacePassed": 5,
-    "unwitnessedPass5Races": 8
+    "registeredOriginalScopeRaceExecuted": 6,
+    "registeredOriginalScopeRacePassed": 6,
+    "unwitnessedPass5Races": 7
   },
   "knownRedRaceWitnesses": [
     {
@@ -476,6 +476,18 @@
       "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/41223296074",
       "jobId": 124602128023,
       "scope": "Actual encrypted business queue before global opt-out; dispatched claim refuses send via registered pre-send HMAC guard and ends SUPPRESSED. No real email transport."
+    },
+    {
+      "id": "DB18-C14",
+      "raceProbe": "P5-R12",
+      "file": "tests/integration/academics-a2.test.ts",
+      "title": "P5-R12 serializes concurrent COMPLETE versus WITHDRAW across parent and active section enrollments",
+      "state": "REGISTERED_PG17_VERIFIED",
+      "execution": "PASS",
+      "commitSha": "a8f0c050a563a27ae17f8db7abb7c14513933cae",
+      "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/41223700248",
+      "jobId": 124603546469,
+      "scope": "Real two-service-writer row-lock conflict, one COMPLETE or WITHDRAW winner, loser LEARNER_ENROLLMENT_NOT_ACTIVE, parent terminal timestamps and all active section records coherent."
     }
   ],
   "outboundStagedDiagnostics": {
@@ -534,7 +546,6 @@
     "notDb018Acceptance": true
   },
   "unwitnessedPass5Probes": [
-    "P5-R12",
     "P5-R13",
     "P5-R14",
     "P5-R15",
@@ -565,5 +576,19 @@
       "P5-R19"
     ],
     "caveat": "Full registered PostgreSQL17 workflow succeeds including new race tests, but eight named original manifest probes still need direct executable two-session evidence. No external provider/production dispatcher approval."
+  },
+  "latestP5R12RegisteredEvidence": {
+    "id": "DB18-C14",
+    "raceProbe": "P5-R12",
+    "file": "tests/integration/academics-a2.test.ts",
+    "title": "P5-R12 serializes concurrent COMPLETE versus WITHDRAW across parent and active section enrollments",
+    "state": "REGISTERED_PG17_VERIFIED",
+    "execution": "PASS",
+    "commitSha": "a8f0c050a563a27ae17f8db7abb7c14513933cae",
+    "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/41223700248",
+    "jobId": 124603546469,
+    "scope": "Real two-service-writer row-lock conflict, one COMPLETE or WITHDRAW winner, loser LEARNER_ENROLLMENT_NOT_ACTIVE, parent terminal timestamps and all active section records coherent.",
+    "fullGatePassed": true,
+    "externalProviderVerified": false
   }
 }
