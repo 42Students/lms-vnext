@@ -1,0 +1,68 @@
+# Isolated DB067 CANDIDATE verification. Never count this as a registered
+# migration or DB-018 acceptance. No provider credentials or network sends.
+name: DB067 staged outbound claim and suppression PG17 diagnostics
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/db067-staged-outbound-pg17.yml"
+      - "docs/planning/sql/db10-outbound-dispatch-lease-candidate.sql"
+      - "tests/integration/db067-global-email-pre-send.test.ts"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: db067-staging-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  staged-outbound-dispatch-pg17:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    services:
+      postgres:
+        image: postgres:17-alpine
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: lms_vnext_test
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres -d lms_vnext_test"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 20
+    env:
+      TEST_DATABASE_URL: postgresql://postgres:postgres@127.0.0.1:5432/lms_vnext_test
+      DB067_DISPATCH_ACCEPTANCE: "1"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Verify journal before diagnostic
+        run: npm run db:journal:verify
+      - name: Prepare clean disposable registered PG17 schema
+        env:
+          DATABASE_URL: ""
+        run: npm run db:test:prepare
+      - name: Assert dispatcher function is NOT registered
+        run: |
+          test "$(psql "$TEST_DATABASE_URL" -tAc "select to_regprocedure('db10_claim_outbound_messages(text,integer,integer)') is null")" = "t"
+      - name: Apply DB067 candidate only to this throwaway database
+        run: psql "$TEST_DATABASE_URL" -v ON_ERROR_STOP=1 -f docs/planning/sql/db10-outbound-dispatch-lease-candidate.sql
+      - name: Exercise two-worker claims and late opt-out against PG17
+        env:
+          DATABASE_URL: ""
+        run: npx vitest run --config vitest.db.registered.config.ts tests/integration/db067-global-email-pre-send.test.ts
+      - name: Explicit evidence limit
+        if: always()
+        run: |
+          echo "This is candidate SQL applied AFTER registered migration replay."
+          echo "No production DB067 migration, privileged-role grant, trusted provider or DB018 acceptance is asserted."

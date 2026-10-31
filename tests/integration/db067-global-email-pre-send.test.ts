@@ -1,7 +1,9 @@
 import { createHash, randomBytes, randomUUID } from "node:crypto";
-import { afterAll, beforeAll, describe, expect, it } from "vitest";
+import { afterAll, beforeAll, describe, expect, it, vi } from "vitest";
 import { Pool, type PoolClient } from "pg";
 import { SEED_IDS } from "../../scripts/db-seed-data";
+import { executeClaimedOutbound } from "@/modules/operations/outbound-dispatch-orchestration";
+import { parseOutboundIntent } from "@/modules/operations/outbound-delivery-contract";
 
 /**
  * DB067 negative PostgreSQL acceptance. Opt-in only, on a seeded, disposable
@@ -212,6 +214,65 @@ describe.skipIf(!enabled)("DB067 global EMAIL identity and pre-send fencing (dis
     });
   });
 
+
+  it("P5-R09 grants only one live claim to competing PostgreSQL workers and quarantines expired CLAIMED", async () => {
+    if (!pool) throw new Error("DB067 requires the disposable PG17 pool");
+    const setup = await pool.connect();
+    let id: string | null = null;
+    try {
+      const row = await pending(setup);
+      id = row.id;
+    } finally {
+      setup.release();
+    }
+    const first = await pool.connect();
+    const second = await pool.connect();
+    try {
+      await first.query("BEGIN");
+      const winner = await claim(first, id!, "p5-r09-first");
+      // The first sender owns an uncommitted row lock. SKIP LOCKED must
+      // return promptly and never issue the same logical message to another.
+      const competing = await second.query<{message_id: string}>(
+        "select message_id from db10_claim_outbound_messages($1, 100, 60)",
+        ["p5-r09-second"],
+      );
+      expect(competing.rows.filter((x) => x.message_id === id)).toHaveLength(0);
+      await first.query("COMMIT");
+      const persisted = await second.query<{
+        status:string; claimed_by:string; claim_fence:number; attempts:number;
+      }>(
+        "select status, claimed_by, claim_fence, attempts from outbound_messages where id=$1",
+        [id],
+      );
+      expect(persisted.rows[0]).toMatchObject({
+        status:"CLAIMED", claimed_by:"p5-r09-first",
+        claim_fence:winner.fence, attempts:1,
+      });
+      // Even an expired lease must not requeue an ambiguous provider outcome.
+      await second.query(
+        "update outbound_messages set claim_expires_at=clock_timestamp()-interval '1 second' where id=$1",
+        [id],
+      );
+      const later = await second.query<{message_id:string}>(
+        "select message_id from db10_claim_outbound_messages($1, 100, 60)",
+        ["p5-r09-reclaimer"],
+      );
+      expect(later.rows.filter((x) => x.message_id === id)).toHaveLength(0);
+      expect(await check(second, id!, "p5-r09-first", winner.fence, null)).toBe(false);
+      const quarantined = await second.query<{status:string; claim_fence:number; attempts:number}>(
+        "select status,claim_fence,attempts from outbound_messages where id=$1", [id],
+      );
+      expect(quarantined.rows[0]).toMatchObject({
+        status:"CLAIMED",claim_fence:winner.fence,attempts:1,
+      });
+    } finally {
+      await first.query("ROLLBACK");
+      first.release();
+      second.release();
+      if (id) await pool.query("delete from outbound_messages where id=$1", [id]);
+    }
+  });
+
   it("applies a global unsubscribe inserted after enqueue but before pre-send", async () => {
     await transaction(async (client) => {
       const row = await pending(client);
@@ -229,6 +290,29 @@ describe.skipIf(!enabled)("DB067 global EMAIL identity and pre-send fencing (dis
       expect(state.rows[0]).toMatchObject({
         status: "SUPPRESSED", pre_send_authorized_fence: null,
       });
+      const claimRecord = await client.query<{request_digest: string; attempts: number}>(
+        "select request_digest,attempts from outbound_messages where id=$1", [row.id],
+      );
+      const send = vi.fn(async () => ({kind:"ACCEPTED" as const,providerMessageId:"not-sent"}));
+      const intent = parseOutboundIntent({
+        organizationId:SEED_IDS.organization, collegeId:SEED_IDS.collegeA,
+        sourceEventId:randomUUID(),channel:"EMAIL",templateKey:"RECRUITER_INVITATION",
+        recipient:"recipient@example.test",
+        variables:{companyName:"Private Employer",collegeName:"College A",
+          invitationUrl:"https://invite.example.test/join?token=TEST_DISPOSABLE"},
+      });
+      const outcome = await executeClaimedOutbound(
+        {messageId:row.id,fence:c.fence,requestDigest:claimRecord.rows[0]!.request_digest},
+        c.worker,{
+          load:async()=>({intent,attempts:claimRecord.rows[0]!.attempts,globalEmailHash:row.hash}),
+          authorize:async data => Boolean(await check(client,data.messageId,data.worker,data.fence,data.globalEmailHash)),
+          send,
+          complete:async()=>{throw new Error("A suppressed intent must never settle as sent");},
+          now:()=>new Date(),
+        },
+      );
+      expect(outcome).toBe("NOT_AUTHORIZED");
+      expect(send).not.toHaveBeenCalled();
     });
   });
 
