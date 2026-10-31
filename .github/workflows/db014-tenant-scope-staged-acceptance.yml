@@ -16,6 +16,14 @@ on:
       - "tests/db014-cascade-retention-source.test.mjs"
       - "tests/db014-cascade-retention-registered-pg.test.mjs"
       - "drizzle/0325_db014_cascade_retention_fences.sql"
+      # Revalidate DB014 at every newly registered migration head, not only
+      # when its original 0317/0318/0325 SQL files change.
+      - "drizzle/meta/_journal.json"
+      - "src/db/schema/activity.ts"
+      - "src/db/schema/groups.ts"
+      - "src/db/schema/drive-day.ts"
+      - "src/db/schema/platform-broadcasts.ts"
+      - "src/db/schema/assignment-submission-links.ts"
       - "tests/db014-placement-fk-validation-staged-pg.test.mjs"
       - "docs/planning/sql/db014-placement-fk-validation-candidate.sql"
       - "docs/planning/sql/db14-cross-domain-event-scope-candidate.sql"
