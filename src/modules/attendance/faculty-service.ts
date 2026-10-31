@@ -35,8 +35,8 @@ import { AcademicsServiceError } from "@/modules/academics/errors";
 import { listFacultyCourseDeliveries } from "@/modules/courses/faculty-course-service";
 import { listActiveDeliveryLearners } from "@/modules/courses/delivery-roster";
 import { facultyAttendanceMarkingWindow } from "./faculty-marking-window";
-import {facultyAttendanceCorrectionTokenMatches,facultyAttendanceNextMarkedAt}
- from "./faculty-correction-token-model";
+import {facultyAttendanceCorrectionTokenMatches,facultyAttendanceNextMarkedAt,
+ facultyAttendanceNextRosterMarkedAt} from "./faculty-correction-token-model";
 import {facultyCorrectionDelta,facultyCorrectionReasonValid,
  facultyAttendanceChangedMemberships} from "./faculty-correction-audit-model";
 import {planAttendanceRecordTransitions} from "./attendance-record-transitions";
@@ -654,6 +654,9 @@ export async function markFacultyAttendance(
       oldAbsent,input.absentMembershipIds);
     if(isCorrection&&!delta.changed)throw new CoursesServiceError("ATTENDANCE_CORRECTION_NO_CHANGE");
     const writtenAt=facultyAttendanceNextMarkedAt(now,existingSession?.markedAt??null);
+    // A Faculty correction may follow an Admin edit in the same millisecond.
+    // Preserve the per-row CAS token contract for every changed membership.
+    const recordWrittenAt=facultyAttendanceNextRosterMarkedAt(now,existingRecords);
     const markReason = isCorrection
       ? input.correctionReason!.trim()
       : input.correctionReason?.trim() || "Attendance marked";
@@ -664,14 +667,14 @@ export async function markFacultyAttendance(
     if (changes.changeToPresentRecordIds.length > 0) {
       await tx.update(attendanceRecords).set({
         status: "PRESENT", note: markReason,
-        markedByUserId: context.user.id, markedAt: now, updatedAt: now,
+        markedByUserId: context.user.id, markedAt: recordWrittenAt, updatedAt: recordWrittenAt,
         version: sql`${attendanceRecords.version} + 1`,
       }).where(inArray(attendanceRecords.id, changes.changeToPresentRecordIds));
     }
     if (changes.changeToAbsentRecordIds.length > 0) {
       await tx.update(attendanceRecords).set({
         status: "ABSENT", note: markReason,
-        markedByUserId: context.user.id, markedAt: now, updatedAt: now,
+        markedByUserId: context.user.id, markedAt: recordWrittenAt, updatedAt: recordWrittenAt,
         version: sql`${attendanceRecords.version} + 1`,
       }).where(inArray(attendanceRecords.id, changes.changeToAbsentRecordIds));
     }
@@ -680,7 +683,7 @@ export async function markFacultyAttendance(
         changes.insertAbsentMembershipIds.map(membershipId => ({
           scheduleEventId, membershipId, status: "ABSENT",
           markedByUserId: context.user.id, note: markReason,
-          markedAt: now, updatedAt: now,
+          markedAt: recordWrittenAt, updatedAt: recordWrittenAt,
         })),
       );
     }
@@ -693,7 +696,7 @@ export async function markFacultyAttendance(
         changes.insertPresentMembershipIds.map(membershipId => ({
           scheduleEventId, membershipId, status: "PRESENT",
           markedByUserId: context.user.id, note: markReason,
-          markedAt: now, updatedAt: now,
+          markedAt: recordWrittenAt, updatedAt: recordWrittenAt,
         })),
       );
     }
