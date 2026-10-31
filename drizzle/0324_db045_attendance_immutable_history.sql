@@ -290,9 +290,6 @@ FOR EACH ROW EXECUTE FUNCTION db06_attendance_event_scope_guard();
 CREATE TRIGGER db06_attendance_events_no_mutation
 BEFORE UPDATE OR DELETE ON attendance_record_events
 FOR EACH ROW EXECUTE FUNCTION db06_reject_history_mutation();
-CREATE TRIGGER db06_grade_events_no_truncate
-BEFORE TRUNCATE ON assignment_grade_events
-FOR EACH STATEMENT EXECUTE FUNCTION db06_reject_history_mutation();
 CREATE TRIGGER db06_attendance_events_no_truncate
 BEFORE TRUNCATE ON attendance_record_events
 FOR EACH STATEMENT EXECUTE FUNCTION db06_reject_history_mutation();
