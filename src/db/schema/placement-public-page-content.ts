@@ -5,7 +5,8 @@ import type {PublicPlacementMetricKey} from "@/modules/placements/public-page/co
 export const placementPublicPageContent=pgTable("placement_public_page_content",{
  collegeId:uuid("college_id").primaryKey().references(()=>colleges.id,{onDelete:"restrict"}),
  about:text("about").notNull().default(""),
- metricKeys:jsonb("metric_keys").$type<PublicPlacementMetricKey[]>().notNull(),
+ metricKeys:jsonb("metric_keys").$type<PublicPlacementMetricKey[]>().notNull()
+  .default(sql`'["PLACED", "OFFERS", "HIRING_COMPANIES"]'::jsonb`),
  updatedAt:timestamp("updated_at",{withTimezone:true}).notNull().defaultNow(),
 },table=>[
  check("placement_public_about_length",sql`char_length(${table.about}) <= 4000`),
