@@ -1018,6 +1018,12 @@
             "DB014 tenant catalog and DB020 provenance negatives"
           ],
           "boundary": "Full committed DB018 workflow green at exact SHA; original DB018 broader 2-session/producer/consumer coverage, DB019 decisions and DB020 global phase certification remain OPEN. Do not mark task or global phase accepted."
+        },
+        "latestVerifiedWorkflow20261031": {
+          "result": "PASS_SCOPED_NOT_ACCEPTANCE",
+          "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/41185596185",
+          "commitSha": "ca8782214ed546b7273413d714bd1705368dc7c4",
+          "scope": "Full registered PostgreSQL negative/race acceptance passed at exact main SHA; not global task certification"
         }
       }
     },
@@ -1458,6 +1464,12 @@
             "Final exact-current-main cross-domain/producer/consumer/tenant/privacy and release phase gate"
           ],
           "notAcceptance": true
+        },
+        "latestVerifiedWorkflow20261031": {
+          "result": "PASS_SCOPED_NOT_ACCEPTANCE",
+          "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/41185415522",
+          "commitSha": "1588c48f1d04f722d38dc62a4fde5e054cd51557",
+          "scope": "Registered PostgreSQL schema diagnosis passed; global certification still open"
         }
       }
     },
@@ -2455,6 +2467,12 @@
             "fbf05be8156e275b8056447a7cfb39de26988250"
           ],
           "evidenceLimit": "Exact scoped race suite green, not whole original DB045 tenant/actor/retention and global DB018/DB019/DB020 certification; retain done:false."
+        },
+        "latestVerifiedWorkflow20261031": {
+          "result": "PASS_SCOPED_NOT_ACCEPTANCE",
+          "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/41185415325",
+          "commitSha": "1588c48f1d04f722d38dc62a4fde5e054cd51557",
+          "scope": "Registered grade/attendance history integrity workflow passed, including corrected composite FK witness; original full 30-witness matrix remains open"
         }
       }
     },
@@ -6045,6 +6063,19 @@
         "requestedAt": "2026-10-29T08:27:06.544Z",
         "reason": "Please independently run/review DB042 staged SQL and DB035 grade-hide negative witnesses on a disposable PG17; both now require canonical scripts/db01-test-database-guard.mjs, opt-in flags, and always ROLLBACK. These are NOT presently executed/certified, and final trigger migration is still blocked on atomic event producers; report SQLSTATE witness results and any unsafe target/fixture assumptions to L05/L01."
       }
-    ]
+    ],
+    "latestVerifiedMainGate20261031": {
+      "commitSha": "ca8782214ed546b7273413d714bd1705368dc7c4",
+      "ci": "https://github.com/42Students/lms-vnext/actions/runs/41185596183",
+      "db001": "https://github.com/42Students/lms-vnext/actions/runs/41185596216",
+      "db018": "https://github.com/42Students/lms-vnext/actions/runs/41185596185",
+      "result": "PASS_SCOPED_EXACT_HEAD_GLOBAL_DB_ACCEPTANCE_OPEN",
+      "remaining": [
+        "DB-018",
+        "DB-019",
+        "DB-020",
+        "DB-045"
+      ]
+    }
   }
 }
