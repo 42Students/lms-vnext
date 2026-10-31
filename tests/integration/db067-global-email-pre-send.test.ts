@@ -221,10 +221,22 @@ describe.skipIf(!enabled)("DB067 global EMAIL identity and pre-send fencing (dis
       // The candidate functions must revoke PUBLIC EXECUTE; the ordinary
       // application/tenant role must never gain a worker claim primitive.
       await client.query("CREATE ROLE db067_disposable_untrusted NOLOGIN");
+      const catalog = await client.query<{registered: string|null; can_execute:boolean}>(
+        `select to_regprocedure('db10_claim_outbound_messages(text,integer,integer)')::text as registered,
+          has_function_privilege('db067_disposable_untrusted',
+            'db10_claim_outbound_messages(text,integer,integer)', 'EXECUTE') as can_execute`,
+      );
+      expect(catalog.rows[0]?.registered).toBe(
+        "db10_claim_outbound_messages(text,integer,integer)",
+      );
+      expect(catalog.rows[0]?.can_execute).toBe(false);
       await client.query("SET LOCAL ROLE db067_disposable_untrusted");
+      // PostgreSQL conceals a routine from function resolution when PUBLIC
+      // EXECUTE was revoked. 42883 is the correct fail-closed response here:
+      // the trusted owner saw the function in the catalog, the guest cannot.
       await expect(client.query(
         "select * from db10_claim_outbound_messages('db067-guest', 1, 60)",
-      )).rejects.toMatchObject({code:"42501"});
+      )).rejects.toMatchObject({code:"42883"});
     });
   });
 
@@ -240,8 +252,10 @@ describe.skipIf(!enabled)("DB067 global EMAIL identity and pre-send fencing (dis
     }
     const first = await pool.connect();
     const second = await pool.connect();
+    let firstTransactionOpen = false;
     try {
       await first.query("BEGIN");
+      firstTransactionOpen = true;
       const winner = await claim(first, id!, "p5-r09-first");
       // The first sender owns an uncommitted row lock. SKIP LOCKED must
       // return promptly and never issue the same logical message to another.
@@ -251,6 +265,7 @@ describe.skipIf(!enabled)("DB067 global EMAIL identity and pre-send fencing (dis
       );
       expect(competing.rows.filter((x) => x.message_id === id)).toHaveLength(0);
       await first.query("COMMIT");
+      firstTransactionOpen = false;
       const persisted = await second.query<{
         status:string; claimed_by:string; claim_fence:number; attempts:number;
       }>(
@@ -279,7 +294,7 @@ describe.skipIf(!enabled)("DB067 global EMAIL identity and pre-send fencing (dis
         status:"CLAIMED",claim_fence:winner.fence,attempts:1,
       });
     } finally {
-      await first.query("ROLLBACK");
+      if (firstTransactionOpen) await first.query("ROLLBACK");
       first.release();
       second.release();
       if (id) await pool.query("delete from outbound_messages where id=$1", [id]);
