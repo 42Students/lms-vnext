@@ -131,3 +131,33 @@ test("both DB09 witnesses require an isolated database and rollback-only writes"
   }
 });
 import "./db-independent-verifier-zero-exit-generation.test.mjs";
+
+test("DB001 enables DB08/DB10 opt-in suites only after verified disposable PG replay", () => {
+  const replay = script.indexOf('"db:test:prepare"');
+  const catalog = script.indexOf('"scripts/db002-postgres-catalog-acceptance.mjs"');
+  const appFixture = script.indexOf('"Database parity source/static contracts"');
+  const integrationEnv = script.indexOf("const integrationEnv = {");
+  const integrationRun = script.indexOf('"PostgreSQL integration / negative witnesses"');
+  assert.ok(replay > 0 && catalog > replay && appFixture > catalog);
+  assert.ok(integrationEnv > appFixture && integrationRun > integrationEnv);
+  for (const token of [
+    'DB08_ISOLATED_TEST_DATABASE: "1"',
+    'DB08_MIGRATION_APPLIED: "1"',
+    'DB08_B_MIGRATION_APPLIED: "1"',
+    'DB08_C_MIGRATION_APPLIED: "1"',
+    'W04_ISOLATED_TEST_DATABASE: "1"',
+    'DB10_DISPOSABLE_TEST_DATABASE: "true"',
+    'DB10_ISOLATED_TEST_DATABASE: "1"',
+  ]) {
+    assert.ok(script.slice(integrationEnv, integrationRun).includes(token), token);
+    assert.equal(script.slice(0, replay).includes(token), false,
+      "opt-in flags cannot enter the destructive reset");
+  }
+  assert.match(script.slice(integrationRun, integrationRun + 180), /integrationEnv/);
+
+  const outbound = fs.readFileSync(path.join(root,
+    "tests/integration/db10-outbound-queue.test.ts"), "utf8");
+  assert.match(outbound, /assertDb018DisposableTarget\(process\.env, \{ serviceBound: true \}\)/);
+  assert.match(outbound, /process\.env\.DB03_ISOLATED_TEST_DATABASE !== "1"/);
+  assert.match(outbound, /process\.env\.DATABASE_URL !== url/);
+});
