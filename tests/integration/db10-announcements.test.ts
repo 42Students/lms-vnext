@@ -206,9 +206,16 @@ describe.skipIf(!enabled)("W06 DB10 announcements PostgreSQL integration", () =>
       title: "W06 announcement scope",
       message: "Private A",
     });
+    // The explicit publication consent gate runs before target authorization.
+    // Exercise both independent guards: consent cannot grant cross-tenant access.
     await expect(updateAnnouncement(superAdminB, created.id, {
       expectedVersion: 0,
       title: "Cross-scope edit",
+    })).rejects.toMatchObject({ code: "CONSENT_REQUIRED" });
+    await expect(updateAnnouncement(superAdminB, created.id, {
+      expectedVersion: 0,
+      title: "Cross-scope edit",
+      publishConsent: true,
     })).rejects.toBeInstanceOf(AuthorizationError);
   });
 });
