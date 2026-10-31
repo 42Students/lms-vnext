@@ -602,6 +602,32 @@ export async function markFacultyAttendance(
       );
     }
 
+    // DB045_ROSTER_REVOCATION_LOCK: the full delivery roster was reviewed
+    // before beginning this transaction. A learner can be suspended, a user
+    // disabled, or a LEARNER grant revoked while the schedule writer waits
+    // on its row lock. Revalidate and SHARE-lock the persisted principals
+    // before mutating current rows or appending immutable MARK/CORRECT events.
+    // Suspension, role removal and user deactivation must serialize after
+    // this lock; if they committed first, refuse the whole batch.
+    const activeMembers = await tx
+      .select({membershipId: collegeMemberships.id})
+      .from(collegeMemberships)
+      .innerJoin(users, eq(users.id, collegeMemberships.userId))
+      .innerJoin(membershipRoles, and(
+        eq(membershipRoles.membershipId, collegeMemberships.id),
+        eq(membershipRoles.role, "LEARNER"),
+      ))
+      .where(and(
+        inArray(collegeMemberships.id, [...submitted]),
+        eq(collegeMemberships.collegeId, context.membership!.collegeId),
+        eq(collegeMemberships.status, "ACTIVE"),
+        eq(users.platformStatus, "ACTIVE"),
+      ))
+      .for("share");
+    if (new Set(activeMembers.map(row => row.membershipId)).size !== submitted.size) {
+      throw new CoursesServiceError("ATTENDANCE_ROSTER_CONFLICT");
+    }
+
     const [policy] = await tx.select({
       correctionWindowHours: attendancePolicies.correctionWindowHours,
     }).from(attendancePolicies).where(
