@@ -916,7 +916,7 @@
         "DB-025"
       ],
       "implementationCheckpoint": {
-        "status": "REGISTERED_PG17_ORIGINAL_R13_CANONICAL_PASS_DISPATCH_AND_FINAL_CROSSWALK_PENDING",
+        "status": "REGISTERED_PG17_FULL_NEGATIVE_AND_DISPATCH_ISOLATION_PASS_PRODUCTION_PROVIDER_PENDING",
         "latestCanonicalR13FullGate": {
           "recordedOn": "2026-10-31",
           "commitSha": "04dd6542c7e90942328256b65bdb67700876231",
@@ -990,8 +990,8 @@
           }
         ],
         "pending": [
-          "Production dispatcher gate OPEN: verify least-privileged outbound worker principal, production recruiter invitation transactional producer and approved provider adapter with authorized test delivery; PG17 fake-provider race proof is not live dispatch acceptance.",
-          "Reconcile original 23-race, 21 relational, direct-negative and cross-role tenant/privacy/permission/producer-consumer coverage on fresh exact main. P5-R18/R19 are now independent registered PG17 accepted race receipts; DB019 and DB020 remain open."
+          "Disposable PG17 worker principal, isolated database grants and registered full negative/race workflow PASSED; actual production dispatcher principal, approved EMAIL transport, provider receipt and authorized test send are still OPEN. Do not enable worker merely from env flags.",
+          "Reconcile DB018 original source-to-producer/consumer tenant/privacy/permission coverage on the acceptance SHA. DB019 full semantic field decisions and DB020 final phase certificate are independently OPEN."
         ],
         "evidenceIsNotAcceptance": true,
         "fiveFastWitnessClosures": {
@@ -1277,6 +1277,31 @@
           "proof": "Exact-head registered PG17 zero-to-head journal and idempotent replay, two real announcement/tracker concurrency services and immutable activity, complete full-repo TypeScript noEmit gate. Only P5-R13 original race still missing.",
           "originalR13Accepted": false,
           "db018Accepted": false
+        },
+        "latestVerifiedIndependentWorkerPrincipal": {
+          "recordedOn": "2026-11-01",
+          "result": "PASS_EXACT_SHA_REGISTERED_PG17_RUNTIME_AND_NEGATIVE_UNITS_NOT_PRODUCTION_ACCEPTANCE",
+          "commitSha": "e413858b94f443ce642f720ec1f77963d23529d0",
+          "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/41234109456",
+          "job": "db018-full-negative-race",
+          "verified": [
+            "Registered zero-to-head PostgreSQL17 replay and idempotence",
+            "Dedicated non-superuser test worker login cannot query users, college_memberships, placement_tpo_leads, assignment_submissions or course_assignments",
+            "Actual worker role has only bounded outbound_messages SELECT/UPDATE, suppression SELECT and four registered DB067 function EXECUTE grants",
+            "Two real claimers serialize encrypted producer and fake provider; cross-college opt-out blocks send after queue; ambiguous transport claim stays quarantined",
+            "Original R13 scanned one-shot FILE receipts, placement/courses/groups negatives and two-session race witnesses pass",
+            "New negative unit gates refuse unsafe dispatch config, app/worker role reuse, wrong DB targets and malformed fifth-attempt provider results"
+          ],
+          "independentProductionProof": false,
+          "approvedProviderAdapterActivated": false,
+          "liveProviderSendExecuted": false,
+          "productionRoleProvisioned": false,
+          "remaining": [
+            "Authorize and independently validate actual production least-privilege PostgreSQL dispatcher login, grants, deployment secret and private worker process",
+            "Approve provider adapter with independently reconcilable provider acknowledgement, rotate/verify compromised email credentials and execute authorized test delivery/receipt",
+            "Finalize original complete producer/consumer/authorization/privacy crosswalk at exact main SHA before DB018 done:true"
+          ],
+          "notTaskAcceptance": true
         }
       }
     },
@@ -1299,7 +1324,7 @@
         "DB-013"
       ],
       "implementationCheckpoint": {
-        "status": "DB08_98_SOURCE_PROPOSALS_AND_REGISTERED_PG17_OFFER_JOB_APPLICATION_CONSUMERS_PASS_GLOBAL_2829_SEMANTICS_OPEN",
+        "status": "DB08_123_SOURCE_REVIEWED_PROPOSALS_NODE22_PASS_REGISTERED_PG17_108_VERIFIED_PHYSICAL_SCOPE_NOT_GLOBAL_SEMANTICS",
         "recordedOn": "2026-10-31",
         "executedEvidence": [
           {
@@ -1309,9 +1334,9 @@
           }
         ],
         "pending": [
-          "2829-source-field final justified dispositions remain open. DB08 98 individual field source proposals are now reviewed with registered PG17 catalog/selected user-job evidence, but none of the 98 is certified complete semantic parity; 182 DB08 fields still have no individual exact review proposal.",
-          "Other domains retain undecided historical retirement approvals and source-only mappings; do not infer or auto-approve retirements or mark runtimeVerified from a physical column match.",
-          "Complete real private-record, consent, role and producer/consumer crosswalk for every relevant field; DB018 and DB020 retain independent global release gates."
+          "DB08 123 of 280 individual source field proposals reviewed across offer, job, application, status history and round result, leaving 157 without a per-field exact review. All 123 are unverified source proposals; no retirement or full runtime equivalence certified.",
+          "Complete final justified active/mapped/redesigned/retired/external dispositions for all 2829 source fields. Remaining historical retirement approvals and DB07 project target gaps cannot be inferred from identical column names.",
+          "Run independent exact-head source-to-service consumer/permission/tenant/privacy semantic witnesses and original DB019 full gate, then DB020 final phase certificate. New round-result PG catalog witness is not yet accepted."
         ],
         "latestSourceReconciliation": {
           "status": "SCOPED_NODE_SOURCE_AUDIT_STEP_PASSED_GLOBAL_TASK_OPEN",
@@ -1503,6 +1528,36 @@
             "DB018 and DB020 global phase acceptance are separate OPEN gates."
           ],
           "notTaskAcceptance": true
+        },
+        "latestDb08HistoryAndRoundsSourceReview": {
+          "recordedOn": "2026-11-01",
+          "sourceCommitSha": "733e35565bff72d7520db4847e045b0623628ed9",
+          "sourceRunUrl": "https://github.com/42Students/lms-vnext/actions/runs/41234357232",
+          "sourceResult": "PASS_2829_GLOBAL_SOURCE_INVENTORY_123_DB08_PROPOSALS",
+          "priorPhysicalRunUrl": "https://github.com/42Students/lms-vnext/actions/runs/41234028865",
+          "priorPhysicalCommitSha": "4927bb03a788dc2274dd5329d91320d0af3dc227",
+          "priorPhysicalScope": "Registered PG17 catalog and chosen offer/IDOR/revoked-role consumer tests, including 10 legacy application status-history fields",
+          "addedRoundResultPhysicalRunUrl": "https://github.com/42Students/lms-vnext/actions/runs/41234357315",
+          "addedRoundResultPhysicalProof": "PENDING_AS_OF_RECORDING_NOT_ACCEPTED",
+          "reviewedSourceFieldsDb08": 123,
+          "breakdown": {
+            "job_offer": 28,
+            "job": 46,
+            "job_application": 24,
+            "job_application_status_history": 10,
+            "round_result": 15
+          },
+          "db08RemainingWithoutIndividualSourceProposal": 157,
+          "exactFieldSemanticsVerified": 0,
+          "retirementApprovedByThisPass": false,
+          "unclosedSemanticGaps": [
+            "legacy status enum translation",
+            "event actor nullability/time preservation",
+            "round result submitted_by_type and superseded_by identities",
+            "staff private versus learner-visible comment semantics",
+            "all 2829 field dispositions and actual producer/consumer parity"
+          ],
+          "notTaskAcceptance": true
         }
       }
     },
@@ -1564,7 +1619,7 @@
         "pending": [
           "Preserve exact clean generated baseline after newer migrations; no generated duplicate CREATE/ALTER may be applied",
           "Independently approve remaining SQL-owned CHECK/index/trigger semantics and their complete tenant/retention rules",
-          "Wait for exact executed DB001, DB014, DB018, DB019 and DB045 acceptance; do not mark DB020 done before all original phase gates",
+          "DB001, DB014 and DB045 already have scoped acceptance; DB018 production provider/consumer and DB019 2829-field semantic evidence remain OPEN before DB020 global certification.",
           "Complete exact-current-main global negative, user-job producer/consumer and cross-role final DB certification"
         ],
         "latestFkStructuralComparison": {
