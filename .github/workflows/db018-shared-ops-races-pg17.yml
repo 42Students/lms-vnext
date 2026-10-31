@@ -66,6 +66,10 @@ jobs:
       - name: Execute P5-R18 announcement and P5-R19 tracker real two-writer CAS witnesses
         run: npx vitest run --config vitest.db.registered.config.ts tests/integration/db18-shared-ops-race.test.ts
       - name: Static TypeScript gate
+        env:
+          # The full repo exceeds V8's default ~4 GB heap on CI. Keep the
+          # original tsc --noEmit gate; raise only its memory ceiling.
+          NODE_OPTIONS: --max-old-space-size=6144
         run: npm run typecheck
       - name: Preserve full DB-018 acceptance boundary
         if: always()
