@@ -1,6 +1,6 @@
 import "server-only";
 import { sql } from "drizzle-orm";
-import { getDb } from "@/db/client";
+import { getOutboundDispatchDb, requireOutboundDispatchPrincipal } from "./outbound-dispatch-principal";
 import {
   openOutboundDelivery,
   deriveGlobalEmailSuppressionHashForAddress,
@@ -57,7 +57,7 @@ async function openLiveOutboundClaim(
   claim: OutboundClaim,
   worker: string,
 ): Promise<OpenedOutboundClaim | null> {
-  const result = await getDb().execute<ClaimRow>(sql`
+  const result = await getOutboundDispatchDb().execute<ClaimRow>(sql`
     select id, organization_id, college_id, source_event_id,
       channel, template_key, recipient_hash, idempotency_key, request_digest,
       key_id, nonce_base64, ciphertext_base64, tag_base64,
@@ -127,6 +127,7 @@ export async function dispatchClaimedOutbound(
   provider: TrustedOutboundProvider,
 ): Promise<OutboundClaimResult> {
   if (!outboundDispatchRuntimeEnabled()) throw new OutboundDispatchNotReadyError();
+  await requireOutboundDispatchPrincipal();
   return executeClaimedOutbound(claim, worker, {
     load: openLiveOutboundClaim,
     authorize: authorizeOutboundProviderSend,
@@ -151,6 +152,7 @@ export async function dispatchDueOutboundBatch(
   maxMessages = 10,
 ) {
   if (!outboundDispatchRuntimeEnabled()) throw new OutboundDispatchNotReadyError();
+  await requireOutboundDispatchPrincipal();
   // Do not even acquire a lease while global EMAIL suppression or sender
   // readiness is unverified. Otherwise the first due row becomes CLAIMED
   // and must be quarantined despite zero provider calls.
