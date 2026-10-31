@@ -643,7 +643,11 @@ export async function issueSubmissionFileDownloadGrant(
   await authorizeOrNotFound(() => authorizeFileRead(context, row));
   // A DB row marked READY without verified scan identity, object digest or
   // exact declared bytes is still not a downloadable private document.
-  if (!assignmentFileAttestationUsable(row)) {
+  if (!assignmentFileAttestationUsable(row) ||
+      !row.objectGeneration || row.verifiedSizeBytes === null ||
+      !row.verifiedContentType) {
+    // The extra nonnull guards reflect the policy's runtime proof in TS;
+    // they cannot permit any file rejected by the attestation policy.
     throw new StorageFileError(row.status === "DELETED" ? "STORAGE_NOT_FOUND" : "STORAGE_FILE_NOT_READY");
   }
   const disposition =
