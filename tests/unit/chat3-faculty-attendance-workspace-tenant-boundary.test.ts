@@ -76,7 +76,7 @@ describe("FAC-attendance-grades-18 / FAC-WORKSPACE-TENANT-01",()=>{
   expect(result.records).toHaveLength(1);
   expect(result.records[0]?.membershipId).toBe(ownId);
   expect(state.queries).toEqual(["policy","sessions","records"]);
-  expect(state.roster).toHaveBeenCalledWith({deliveryId,sectionId,academicPeriodId:periodId,collegeId});
+  expect(state.roster).toHaveBeenCalledWith({deliveryId,sectionId,academicPeriodId:periodId,collegeId},expect.objectContaining({select:expect.any(Function)}));
   const recordWhere=state.conditions.find(c=>c.table==="records");
   expect(recordWhere).toBeDefined();
   expect(recordWhere?.sql).toContain('"attendance_records"."membership_id"');
