@@ -493,6 +493,46 @@ describe("College Admin attendance tenant isolation with PostgreSQL", () => {
     expect(cleared.rows).toMatchObject([{id:after.id,note:null}]);
   });
 
+  it("DB045 two concurrent admin corrections with one row token cannot both commit", async()=>{
+    const input={collegeId:SEED_IDS.collegeA,deliveryId:own.delivery,
+      membershipId:own.learner};
+    const before=await pool.query<{marked_at:Date,status:string,version:number}>(
+      "select marked_at,status,version from attendance_records where schedule_event_id=$1 and membership_id=$2",
+      [own.event,own.learner],
+    );
+    expect(before.rows).toHaveLength(1);
+    const expectedMarkedAt=before.rows[0]!.marked_at.toISOString();
+    const writes=await Promise.allSettled([
+      correctAdminAttendance(admin,own.event,{
+        ...input,status:"PRESENT",note:"Competing admin correction A",expectedMarkedAt,
+      }),
+      correctAdminAttendance(admin,own.event,{
+        ...input,status:"ABSENT",note:"Competing admin correction B",expectedMarkedAt,
+      }),
+    ]);
+    const accepted=writes.filter(w=>w.status==="fulfilled");
+    const rejected=writes.filter(w=>w.status==="rejected");
+    expect(accepted).toHaveLength(1);
+    expect(rejected).toHaveLength(1);
+    expect((rejected[0] as PromiseRejectedResult).reason)
+      .toMatchObject({code:"ATTENDANCE_STALE_VERSION"});
+    const after=await pool.query<{version:number,note:string}>(
+      "select version,note from attendance_records where schedule_event_id=$1 and membership_id=$2",
+      [own.event,own.learner],
+    );
+    expect(after.rows[0]!.version).toBe(before.rows[0]!.version+1);
+    expect(["Competing admin correction A","Competing admin correction B"])
+      .toContain(after.rows[0]!.note);
+    const audit=await pool.query<{version:number}>(
+      `select record_version_after version from attendance_record_events e
+       join attendance_records ar on ar.id=e.attendance_record_id
+       where ar.schedule_event_id=$1 and ar.membership_id=$2
+       and e.record_version_after=$3`,
+      [own.event,own.learner,after.rows[0]!.version],
+    );
+    expect(audit.rows).toHaveLength(1);
+  });
+
   it("keeps explicit PRESENT identity and prevents inactive-member corrections", async () => {
     const input = {
       collegeId: SEED_IDS.collegeA,
