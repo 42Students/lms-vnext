@@ -218,11 +218,20 @@ describe.skipIf(!enabled)("DB018 registered one-shot private file producer",()=>
           ],
         });
       }
-      const submissions=await pg().query<{id:string}>(
-        "select id from assignment_submissions where assignment_id=$1 and membership_id=$2",
+      const submissions=await pg().query<{
+        id:string;max_points_at_submission:number;
+        legacy_submission_snapshot:Record<string,unknown>|null;
+      }>(
+        "select id,max_points_at_submission,legacy_submission_snapshot "+
+        "from assignment_submissions where assignment_id=$1 and membership_id=$2",
         [assignmentId,memberId],
       );
       expect(submissions.rows).toHaveLength(1);
+      expect(submissions.rows[0]!.max_points_at_submission).toBe(10);
+      expect(submissions.rows[0]!.legacy_submission_snapshot).toMatchObject({
+        assignmentName:"DB18 registered FILE one-shot",
+        learnerDisplayName:"DB18 registered file learner",
+      });
       const files=await pg().query<{id:string;submission_id:string;sequence:number;
           status:string;scan_status:string;scan_attested_by:string}>(
         "select id,submission_id,sequence,status,scan_status,scan_attested_by "+
