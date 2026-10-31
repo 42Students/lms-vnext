@@ -13,6 +13,8 @@ on:
       - "drizzle/0319_db020_grade_event_source_action.sql"
       - "tests/db020-registered-grade-event-provenance-pg.test.mjs"
       - "tests/db014-registered-tenant-catalog-pg.test.mjs"
+      - "src/modules/activity/service.ts"
+      - "tests/integration/activity-foundation.test.ts"
       - "tests/db014-cascade-retention-source.test.mjs"
       - "tests/db014-cascade-retention-registered-pg.test.mjs"
       - "drizzle/0325_db014_cascade_retention_fences.sql"
@@ -91,6 +93,8 @@ jobs:
         run: node --test tests/db014-cascade-retention-registered-pg.test.mjs
       - name: Registered 0318 event, notification and group-history tenant negatives
         run: node --test tests/db014-cross-domain-scope-staged-pg.test.mjs
+      - name: DB014 activity dedupe cross-tenant isolation and actor/subject negatives
+        run: npx vitest run --config vitest.db.config.ts tests/integration/activity-foundation.test.ts
       # A focused registered-guard witness cannot itself close the global
       # DB014 tenant, retention, authorizations and phase certification gate.
       - name: Registered journal must not have been modified by the witness
