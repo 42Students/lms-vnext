@@ -2391,7 +2391,22 @@
             "058522b4ccb7c65df210e311cde76c2e74bee82c",
             "65ae23eebcec956d54423c0ed363edf60ac649b7"
           ],
-          "noFalseClosure": "Only focused timestamp/producer integration and registered suites passed; DB045 remains done:false pending complete 30-case tenant/actor/retention/race acceptance and downstream DB020 phase gate."
+          "noFalseClosure": "Only focused timestamp/producer integration and registered suites passed; DB045 remains done:false pending complete 30-case tenant/actor/retention/race acceptance and downstream DB020 phase gate.",
+          "latestWorkflow": {
+            "result": "PASS_EXACT_SHA_REGISTERED_PG17_SOURCE_AND_CONSUMER_REGRESSIONS_NOT_FULL_DB045_GATE",
+            "commitSha": "3d12e4877a2a1be22a85e92ec93dce2fb1805ccb",
+            "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/41172358300",
+            "jobId": 124452821115,
+            "runner": "GitHub Actions ubuntu-latest Node 22, disposable PostgreSQL 17-alpine",
+            "executedSteps": [
+              "Four focused monotonic attendance token Vitest regressions",
+              "Full registered PostgreSQL journal zero-to-head replay and idempotence",
+              "Grade-history direct SQL negatives",
+              "Grade/publish immutable consumer integrations",
+              "Attendance Faculty/Admin/learner schedule/report real PostgreSQL consumer suite, including backdated Faculty correction and stale Admin token denial"
+            ],
+            "resultScope": "All steps passed on pinned workflow SHA; does not certify entire DB045 30-case original race/tenant matrix, final DB018/DB019/DB020, or DATABASE phase."
+          }
         }
       }
     },
