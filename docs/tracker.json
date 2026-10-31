@@ -906,7 +906,7 @@
         "status": "SCOPED_NODE_SOURCE_AUDIT_STEP_PASSED_GLOBAL_TASK_OPEN",
         "sourceCommit": "e02f9ebc4ee820e71457bd874f45d5a32cfdeb20",
         "workflowCommit": "cc8c6c511b4ed81ac04e2100fbd64ff7bab04246",
-        "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/41149063245/job/124381020281",
+        "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/41149063245/job/124380964238",
         "suite": "DB019 independent eleven-domain source inventory and crosswalk",
         "result": "PASS_STEP_ONLY",
         "counts": {
