@@ -974,10 +974,31 @@ describe("courses C4A assignments against PostgreSQL", () => {
       deliveryId:structure.deliveryA.id,
       submissionType:"TEXT",textContent:"DB045 distinct publisher witness",
     });
-    const graded=await gradeAssignmentSubmission(faculty,submitted.id,{
-      pointsAwarded:7,feedback:"Graded privately",expectedVersion:0,
-    });
+    // DB045 two real concurrent grade submissions with the SAME CAS token:
+    // exactly one grade+immutable event may commit. A sequential retry is
+    // insufficient evidence for this required race boundary.
+    const [first,second]=await Promise.allSettled([
+      gradeAssignmentSubmission(faculty,submitted.id,{
+        pointsAwarded:7,feedback:"Graded privately",expectedVersion:0,
+      }),
+      gradeAssignmentSubmission(faculty,submitted.id,{
+        pointsAwarded:8,feedback:"Alternate simultaneous grade",expectedVersion:0,
+      }),
+    ]);
+    expect([first,second].filter(x=>x.status==="fulfilled")).toHaveLength(1);
+    expect([first,second].filter(x=>x.status==="rejected")).toHaveLength(1);
+    const graded=first.status==="fulfilled" ? first.value
+      : second.status==="fulfilled" ? second.value : null;
+    const loser=first.status==="rejected" ? first.reason
+      : second.status==="rejected" ? second.reason : null;
+    expect(loser).toMatchObject({code:"ASSIGNMENT_SUBMISSION_CONFLICT"});
     expect(graded).toMatchObject({version:1,gradePublished:false});
+    if(!graded)throw new Error("DB045 concurrent grade race produced no winning CAS writer");
+    const beforePublish=await pool.query<{n:number}>(
+      "select count(*)::int n from assignment_grade_events where assignment_submission_id=$1",
+      [submitted.id],
+    );
+    expect(beforePublish.rows[0]?.n).toBe(1);
     const published=await publishAssignmentGrade(collegeAdmin,submitted.id,{
       expectedVersion:graded.version,
     });
