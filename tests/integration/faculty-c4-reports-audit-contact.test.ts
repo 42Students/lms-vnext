@@ -386,7 +386,11 @@ describe("Faculty registered report/history positive and scope denials",()=>{
    expectedMarkedAt:adminRecord.marked_at.toISOString(),
   })).rejects.toMatchObject({code:"ATTENDANCE_STALE_VERSION"});
  });
- it("DB045 rejects a Faculty mark after the learner is suspended while waiting on the row lock",async()=>{
+ it.each([
+  ["learner membership suspension","membership"],
+  ["LEARNER role revocation","role"],
+  ["learner user deactivation","user"],
+ ] as const)("DB045 rejects Faculty mark after %s while waiting on locked eligibility",async(_label,kind)=>{
   const f=await fixture();
   const teacherUserId=randomUUID(),teacherMembershipId=randomUUID();
   const teacher:RequestContext={
@@ -422,9 +426,14 @@ describe("Faculty registered report/history positive and scope denials",()=>{
   try {
    await blocker.query("BEGIN");open=true;
    const {rows:[{pid}]}=await blocker.query<{pid:number}>("select pg_backend_pid() pid");
-   await blocker.query(
-    "select id from college_memberships where id=$1 for update",[f.learnerMembershipId],
-   );
+   const lockSql=kind==="membership"
+    ?"select id from college_memberships where id=$1 for update"
+    :kind==="role"
+      ?"select id from membership_roles where membership_id=$1 and role='LEARNER' for update"
+      :"select id from users where id=$1 for update";
+   const lockId=kind==="user"?f.learnerUserId:f.learnerMembershipId;
+   const locked=await blocker.query(lockSql,[lockId]);
+   expect(locked.rows).toHaveLength(1);
    // Initial roster SELECT remains readable at READ COMMITTED. The new
    // transaction-time FOR SHARE must wait on this exact principal lock.
    pending=markFacultyAttendance(teacher,session.id,{
@@ -443,10 +452,22 @@ describe("Faculty registered report/history positive and scope denials",()=>{
    }
    expect(waiting).toBe(true);
    // The suspension commits before the blocked Faculty lock is acquired.
-   await blocker.query(
-    "update college_memberships set status='SUSPENDED',suspended_at=now() where id=$1",
-    [f.learnerMembershipId],
-   );
+   if(kind==="membership"){
+    await blocker.query(
+     "update college_memberships set status='SUSPENDED',suspended_at=now() where id=$1",
+     [f.learnerMembershipId],
+    );
+   }else if(kind==="role"){
+    await blocker.query(
+     "delete from membership_roles where membership_id=$1 and role='LEARNER'",
+     [f.learnerMembershipId],
+    );
+   }else{
+    await blocker.query(
+     "update users set platform_status='DISABLED' where id=$1",
+     [f.learnerUserId],
+    );
+   }
    await blocker.query("COMMIT");open=false;
    const outcome=await pending;
    expect(outcome.ok).toBe(false);
