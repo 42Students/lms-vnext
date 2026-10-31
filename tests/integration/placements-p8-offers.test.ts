@@ -48,6 +48,7 @@ import {sweepExpiredPlacementOffers} from "@/modules/placements/placement-offer-
 import {escalatePendingWithdrawalRequests} from "@/modules/placements/tpo-withdrawal-escalation-service";
 import {getTpoWaitlistPreview,offerToNextWaitlisted} from "@/modules/placements/tpo-waitlist-promotion-service";
 import { SEED_IDS } from "../../scripts/db-seed-data";
+import { assignDriveDayCoordinator } from "@/modules/placements/drive-day-coordinator-service";
 import { enableSeedLearnerPlacementAccess } from "../support/w04-placement-access-fixture";
 
 const databaseUrl = process.env.TEST_DATABASE_URL;
@@ -316,6 +317,161 @@ afterAll(async () => {
 });
 
 describe("Placement P8 offers and joining", () => {
+  it("P5-R15 rejects applications after conflicting job, role and coordinator writers", async () => {
+    async function newUnappliedJob() {
+      const suffix=randomUUID().replaceAll("-","").slice(0,12);
+      const company=await createPlacementCompany(tpo,{
+        collegeId:SEED_IDS.collegeA,
+        name:"P5-R15 Employer "+suffix,
+        primaryDomain:"r15-"+suffix+".example",
+      });
+      const job=await createPlacementJob(tpo,{
+        ...publishableJobTerms,
+        collegeId:SEED_IDS.collegeA,
+        companyRelationshipId:company.relationship.id,
+        title:"P5-R15 Engineer "+suffix,
+        description:"DB018 competing application gate",
+        employmentType:"FULL_TIME",
+        workMode:"REMOTE",
+        applicationMode:"INTERNAL",
+      });
+      await publishPreparedPlacementJob(tpo,job.id);
+      return job;
+    }
+
+    async function waitForBlocked(fragment:string,expected:number) {
+      const deadline=Date.now()+15_000;
+      while(Date.now()<deadline){
+        const result=await pool.query<{waiting:string}>(
+          "select count(*)::text as waiting from pg_stat_activity " +
+          "where datname=current_database() and pid<>pg_backend_pid() " +
+          "and wait_event_type='Lock' and query ilike $1",
+          ["%"+fragment+"%"],
+        );
+        if(Number(result.rows[0]?.waiting??0)>=expected)return;
+        await new Promise(resolve=>setTimeout(resolve,25));
+      }
+      throw new Error("P5-R15: application or competing producer missed PostgreSQL "+fragment+" lock");
+    }
+
+    async function assertNoApplication(jobId:string) {
+      const rows=await pool.query<{n:number}>(
+        "select count(*)::int as n from placement_applications where job_id=$1",
+        [jobId],
+      );
+      expect(rows.rows[0]?.n).toBe(0);
+      const records=await pool.query<{n:number}>(
+        "select count(*)::int as n from activity_events " +
+        "where subject_type='placement_application' " +
+        "and (metadata->>'jobId'=$1 or group_key=$2)",
+        [jobId,"placement-job:"+jobId],
+      );
+      expect(records.rows[0]?.n).toBe(0);
+    }
+
+    async function orderedJobWriters(
+      jobId:string,
+      first:()=>Promise<unknown>,
+      second:()=>Promise<unknown>,
+    ) {
+      const blocker=await pool.connect();
+      let open=false;
+      try{
+        await blocker.query("BEGIN");
+        open=true;
+        await blocker.query("select id from placement_jobs where id=$1 for update",[jobId]);
+        // Each writer must enter PostgreSQL independently before the barrier
+        // is released; the first writer queues ahead of the second.
+        const a=Promise.resolve().then(first).then(
+          value=>({ok:true as const,value}),
+          (error:unknown)=>({ok:false as const,error}),
+        );
+        await waitForBlocked("placement_jobs",1);
+        const b=Promise.resolve().then(second).then(
+          value=>({ok:true as const,value}),
+          (error:unknown)=>({ok:false as const,error}),
+        );
+        await waitForBlocked("placement_jobs",2);
+        await blocker.query("COMMIT");
+        open=false;
+        return [await a,await b] as const;
+      }finally{
+        if(open)await blocker.query("ROLLBACK").catch(()=>undefined);
+        blocker.release();
+      }
+    }
+
+    // The real staff Close writer wins the job row before the real learner
+    // Apply writer reaches its in-transaction PUBLISHED recheck.
+    const closedJob=await newUnappliedJob();
+    const [close,afterClose]=await orderedJobWriters(
+      closedJob.id,
+      ()=>closePlacementJob(tpo,closedJob.id),
+      ()=>applyToPlacementJob(learner,closedJob.id,{}),
+    );
+    expect(close.ok).toBe(true);
+    expect(afterClose).toMatchObject({
+      ok:false,error:{code:"PLACEMENT_APPLICATION_JOB_NOT_OPEN"},
+    });
+    await assertNoApplication(closedJob.id);
+
+    // The real coordinator Assign and learner Apply services serialize on
+    // the same job, even though they write different tables.
+    const coordinatorJob=await newUnappliedJob();
+    const [assigned,afterAssignment]=await orderedJobWriters(
+      coordinatorJob.id,
+      ()=>assignDriveDayCoordinator(tpo,coordinatorJob.id,{
+        learnerMembershipId:SEED_IDS.learnerCollegeAMembership,
+        onDate:"2026-11-02",
+      }),
+      ()=>applyToPlacementJob(learner,coordinatorJob.id,{}),
+    );
+    expect(assigned.ok).toBe(true);
+    expect(afterAssignment).toMatchObject({
+      ok:false,error:{code:"PLACEMENT_COORDINATOR_APPLICANT_CONFLICT"},
+    });
+    await assertNoApplication(coordinatorJob.id);
+    const coordinator=await pool.query<{n:number}>(
+      "select count(*)::int as n from placement_drive_day_coordinator_assignments " +
+      "where job_id=$1 and learner_membership_id=$2",
+      [coordinatorJob.id,SEED_IDS.learnerCollegeAMembership],
+    );
+    expect(coordinator.rows[0]?.n).toBe(1);
+
+    // A conflicting role-option deactivation commits before Apply's locked
+    // role recheck. A stale preflight ACTIVE read cannot authorize insertion.
+    const roleJob=await newUnappliedJob();
+    const role=await pool.query<{id:string}>(
+      "select id from placement_job_role_options where job_id=$1 limit 1",
+      [roleJob.id],
+    );
+    expect(role.rows).toHaveLength(1);
+    const blocker=await pool.connect();
+    let open=false;
+    try{
+      await blocker.query("BEGIN");
+      open=true;
+      await blocker.query(
+        "update placement_job_role_options set status='INACTIVE' where id=$1",
+        [role.rows[0]!.id],
+      );
+      const pending=applyToPlacementJob(learner,roleJob.id,{}).then(
+        value=>({ok:true as const,value}),
+        (error:unknown)=>({ok:false as const,error}),
+      );
+      await waitForBlocked("placement_job_role_options",1);
+      await blocker.query("COMMIT");
+      open=false;
+      expect(await pending).toMatchObject({
+        ok:false,error:{code:"PLACEMENT_ROLE_OPTION_NOT_FOUND"},
+      });
+      await assertNoApplication(roleJob.id);
+    }finally{
+      if(open)await blocker.query("ROLLBACK").catch(()=>undefined);
+      blocker.release();
+    }
+  },60_000);
+
   it("P5-R17 serializes offer issuers and mutually exclusive learner responses", async () => {
     const { application, job } = await preparePassedApplication();
     async function raceBehindRowLock<T>(
