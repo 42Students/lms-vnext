@@ -368,7 +368,13 @@ describe("Faculty registered report/history positive and scope denials",()=>{
    await expect(getOwnFacultyContactAvailability(facultyOnly,{alternatePhone:"9999"})).rejects.toBeDefined();
    // The dual-role seeded principal must continue to be refused; do not
    // weaken the product's Faculty-only self-profile policy to pass a test.
-   await expect(getOwnFacultyContactAvailability(faculty,{})).rejects.toBeDefined();
+   // This seed actually carries both persisted FACULTY and MENTOR grants.
+   // The authenticated context must expose the same grants, not a fabricated
+   // FACULTY-only role list that would bypass the intended denial.
+   const dualRoleFaculty:RequestContext={
+    ...faculty,membership:{...faculty.membership!,roles:["FACULTY","MENTOR"]},
+   };
+   await expect(getOwnFacultyContactAvailability(dualRoleFaculty,{})).rejects.toBeDefined();
   }finally{
    await pool.query("delete from faculty_profiles where membership_id=$1",[membershipId]);
    await pool.query("delete from membership_roles where membership_id=$1",[membershipId]);
