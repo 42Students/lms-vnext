@@ -138,7 +138,8 @@ export async function executeClaimedOutbound(
     };
     successfulResult = "PROVIDER_ACCEPTED";
   } else if (response.kind === "DEFINITELY_UNSENT_PERMANENT" ||
-             opened.attempts >= MAX_OUTBOUND_ATTEMPTS) {
+             (response.kind === "DEFINITELY_UNSENT_RETRYABLE" &&
+              opened.attempts >= MAX_OUTBOUND_ATTEMPTS)) {
     completion = {
       messageId: claim.messageId, worker, fence: claim.fence,
       outcome: "FAILED", safeFailureCode: "CONFIRMED_NOT_SENT",
