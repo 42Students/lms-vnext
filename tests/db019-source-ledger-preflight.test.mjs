@@ -20,6 +20,13 @@ test('DB019 all 11 frozen source ledgers reconcile 199 tables and 2829 fields wi
     runtimeMappingsVerifiedByThisOverlay: 0,
     remainingGlobalFieldsNotDisposedByDb00: 2097,
   });
+  assert.deepEqual(result.progress.db01SourceDecisionCoverage, {
+    sourceFields:312,
+    explicitDecisionRows:312,
+    targetProposalsStillUnverified:175,
+    crossDomainHandoffs:95,
+    runtimeMappingsVerifiedByThisOverlay:0,
+  });
   assert.equal(result.progress.awaitingSourceEvidence+result.progress.sourceEvidenceRows,2829);
   assert.equal(result.domains.reduce((s,d)=>s+d.fields,0),2829);
 });
@@ -69,4 +76,28 @@ test('DB019 never assumes DB00 approved without a supplied independent review',(
   assert.equal(report.valid,true);
   assert.equal(report.progress.db00SourceDecisionCoverage,null);
   assert.equal(report.acceptanceReady,false);
+});
+
+test('DB019 DB01 source decisions are pinned to the global legacy field identities',()=>{
+  const read=path=>JSON.parse(fs.readFileSync(new URL('../docs/planning/'+path,import.meta.url),'utf8'));
+  const index=read('database-parity-pass4-column-index.json');
+  const ledgers=index.artifacts.map(x=>JSON.parse(fs.readFileSync(new URL('../'+x.path,import.meta.url),'utf8')));
+  const decisions=read('database-parity-pass4-review-decisions.json');
+  const db01Triage=read('db01-chat02-312-field-source-triage.json');
+  const db01Final=read('db01-chat05-final-field-disposition.json');
+  const changed=structuredClone(db01Final);
+  changed.source.legacyBackendSha='0'.repeat(40);
+  const drift=auditDb019(index,ledgers,decisions,{db01Triage,db01Final:changed});
+  assert.equal(drift.valid,false);
+  assert.equal(drift.progress.db01SourceDecisionCoverage,null);
+  assert(drift.errors.some(x=>x.code==='DB01_DECISION_LEGACY_ORACLE_DRIFT'));
+  const invented=structuredClone(db01Final);
+  invented.rows[0].legacyField='forged_table.id';
+  const falseIdentity=auditDb019(index,ledgers,decisions,{db01Triage,db01Final:invented});
+  assert.equal(falseIdentity.valid,false);
+  assert.equal(falseIdentity.progress.db01SourceDecisionCoverage,null);
+  assert(falseIdentity.errors.some(x=>x.code==='DB01_DECISION_UNKNOWN_SOURCE_FIELD'));
+  const partial=auditDb019(index,ledgers,decisions,{db01Triage});
+  assert(partial.errors.some(x=>x.code==='PARTIAL_DB01_SOURCE_DECISION_INPUT'));
+  assert.equal(partial.progress.db01SourceDecisionCoverage,null);
 });
