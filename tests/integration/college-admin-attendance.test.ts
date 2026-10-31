@@ -1042,6 +1042,79 @@ describe("College Admin attendance tenant isolation with PostgreSQL", () => {
     }]);
   });
 
+  it("DB045 admin write rechecks a learner moved out while its schedule lock is held",async()=>{
+    // The outer preflight sees an ACTIVE roster. Delay only the inner write
+    // with a real row lock, withdraw the Section enrolment, then release it.
+    // The mutation must reject at its transaction-local roster read.
+    const locker=await pool.connect();
+    let started:Promise<{ok:boolean;error?:unknown}>|null=null;
+    let moved=false;
+    let released=false;
+    const before=await pool.query<{status:string;version:number}>(
+      "select status,version from attendance_records where schedule_event_id=$1",
+      [own.event],
+    );
+    expect(before.rows).toHaveLength(1);
+    try{
+      await locker.query("BEGIN");
+      await locker.query(
+        "select id from section_schedule_events where id=$1 for update",[own.event],
+      );
+      let settled=false;
+      started=correctAdminAttendance(admin,own.event,{
+        collegeId:SEED_IDS.collegeA,deliveryId:own.delivery,
+        membershipId:own.learner,status:"ABSENT",
+        note:"DB045 must reject stale section roster",
+      }).then(
+        ()=>{settled=true;return {ok:true};},
+        error=>{settled=true;return {ok:false,error};},
+      );
+      let waitingForScheduleLock=false;
+      for(let probe=0;probe<100;probe++){
+        const locks=await pool.query<{n:number}>(`
+          select count(*)::int n from pg_stat_activity
+          where pid<>pg_backend_pid() and wait_event_type='Lock'
+            and query ilike '%section_schedule_events%'
+        `);
+        if((locks.rows[0]?.n??0)>0){waitingForScheduleLock=true;break;}
+        if(settled)break;
+        await new Promise(resolve=>setTimeout(resolve,40));
+      }
+      expect(waitingForScheduleLock).toBe(true);
+      await pool.query(
+        "update section_enrollments set status='MOVED',ended_at=now() where id=$1",
+        [own.sectionEnrollment],
+      );
+      moved=true;
+      await locker.query("COMMIT");
+      released=true;
+      const outcome=await started;
+      expect(outcome.ok).toBe(false);
+      expect(outcome.error).toMatchObject({code:"ATTENDANCE_ROSTER_CONFLICT"});
+      const after=await pool.query<{status:string;version:number}>(
+        "select status,version from attendance_records where schedule_event_id=$1",
+        [own.event],
+      );
+      expect(after.rows).toEqual(before.rows);
+    }finally{
+      // Even on a failed assertion, withdraw the roster while the schedule
+      // lock is held so any outstanding writer cannot mutate on stale scope.
+      if(!released && !moved){
+        await pool.query(
+          "update section_enrollments set status='MOVED',ended_at=now() where id=$1",
+          [own.sectionEnrollment],
+        ).then(()=>{moved=true;}).catch(()=>{});
+      }
+      if(!released)await locker.query("ROLLBACK").catch(()=>{});
+      locker.release();
+      if(started)await started.catch(()=>{});
+      if(moved)await pool.query(
+        "update section_enrollments set status='ACTIVE',ended_at=null where id=$1",
+        [own.sectionEnrollment],
+      );
+    }
+  });
+
   it("keeps explicit PRESENT identity and prevents inactive-member corrections", async () => {
     const input = {
       collegeId: SEED_IDS.collegeA,
