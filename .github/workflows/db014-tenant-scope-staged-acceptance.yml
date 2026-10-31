@@ -20,6 +20,7 @@ on:
       - "drizzle/0325_db014_cascade_retention_fences.sql"
       - "drizzle/0328_db014_activity_identity_immutable.sql"
       - "tests/db014-activity-identity-registered-pg.test.mjs"
+      - "tests/db014-activity-identity-source.test.mjs"
       # Revalidate DB014 at every newly registered migration head, not only
       # when its original 0317/0318/0325 SQL files change.
       - "drizzle/meta/_journal.json"
@@ -77,6 +78,8 @@ jobs:
         run: npm run db:journal:verify
       - name: Registered DB014 SQL source parser/guard regression
         run: node --test tests/db014-registered-guards-sql-source.test.mjs
+      - name: DB014 immutable event identity source contract
+        run: node --test tests/db014-activity-identity-source.test.mjs
       - name: DB014 cascade retention migration source contract
         run: node --test tests/db014-cascade-retention-source.test.mjs
       - name: Reset, migrate and seed strictly disposable PostgreSQL 17
