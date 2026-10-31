@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
-import {auditDb019SemanticDecisions, loadDb019SemanticDecisions} from '../scripts/db019-semantic-decision-quality.mjs';
+import {auditDb019SemanticDecisions, auditDb019ProjectDecisions, loadDb019SemanticDecisions} from '../scripts/db019-semantic-decision-quality.mjs';
 
 const read = name => JSON.parse(fs.readFileSync(new URL('../docs/planning/' + name, import.meta.url), 'utf8'));
 const db02 = read('db-pass4-columns-db02_academics_and_timetable.json');
@@ -16,6 +16,10 @@ test('actual 404 source fields have explicit DB02 and DB09 decision narratives, 
   const report = loadDb019SemanticDecisions();
   assert.equal(report.valid, true);
   assert.equal(report.reviewedSourceFields, 404);
+  assert.equal(report.auditedSourceFields, 762);
+  assert.equal(report.projects.valid, true);
+  assert.equal(report.projects.sourceDispositionRows, 358);
+  assert.equal(report.projects.targetGapsOrFieldDecisionsPending, 173);
   assert.deepEqual(report.db02, {
     sourceFields:125, explicitSourceDecisions:101,
     retirementCandidatesStillPendingApproval:24, runtimeMappingsVerified:0,
@@ -84,4 +88,36 @@ test('DB09 census drops fail rather than silently reducing denominator', () => {
   const changed = structuredClone(db09);
   changed.records.pop();
   detects(audit(db02,db09Source,changed), 'DB09_CENSUS_OR_VERIFICATION_DRIFT');
+});
+
+const db07Source = read('db-pass4-columns-db07_projects.json');
+const db07Review = read('database-parity-db07-field-reconciliation.json');
+
+test('DB07 all 358 field decisions have rationales, while 173 target gaps stay visible', () => {
+  const result = auditDb019ProjectDecisions(db07Source, db07Review);
+  assert.equal(result.valid, true);
+  assert.equal(result.sourceDispositionRows, 358);
+  assert.equal(result.targetGapsOrFieldDecisionsPending, 173);
+  assert.equal(result.runtimeMappingsVerified, 0);
+  assert.equal(result.acceptanceReady, false);
+});
+test('DB07 source field drift fails closed', () => {
+  const changed = structuredClone(db07Review);
+  changed.tables[0].fields[0].legacyField = 'invented';
+  detects(auditDb019ProjectDecisions(db07Source, changed), 'DB07_UNKNOWN_DUPLICATE_OR_TYPE_DRIFT');
+});
+test('DB07 source semantic rationale cannot vanish', () => {
+  const changed = structuredClone(db07Review);
+  changed.tables[0].fields[0].reason = '';
+  detects(auditDb019ProjectDecisions(db07Source, changed), 'DB07_MISSING_DECISION_RATIONALE_OR_TARGET');
+});
+test('DB07 staged decisions cannot fabricate runtime verification', () => {
+  const changed = structuredClone(db07Review);
+  changed.tables[0].fields[0].runtimeVerified = true;
+  detects(auditDb019ProjectDecisions(db07Source, changed), 'DB07_FALSE_RUNTIME_VERIFICATION');
+});
+test('DB07 missing field lowers coverage and fails', () => {
+  const changed = structuredClone(db07Review);
+  changed.tables[0].fields.pop();
+  detects(auditDb019ProjectDecisions(db07Source, changed), 'DB07_SOURCE_FIELD_UNREVIEWED');
 });
