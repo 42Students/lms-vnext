@@ -24,6 +24,7 @@ on:
       - "tests/db020-registered-alias-parity.test.mjs"
       - "tests/db020-sql-owned-fk-contract.test.mjs"
       - "tests/db020-sql-owned-constraint-index-parity.test.mjs"
+      - "tests/db020-sql-only-schema-fingerprint.test.mjs"
       - "tests/db10-log-alerts-staging.test.mjs"
       - "scripts/db020-fk-shape.mjs"
       - "scripts/db020-sql-type.mjs"
@@ -129,6 +130,8 @@ jobs:
         run: node scripts/db020-schema-semantics-diff.mjs
       - name: Prove registered typed defaults on physical PG17
         run: node scripts/db020-default-parity.mjs
+      - name: Guard complete SQL-only table catalogs on PG17
+        run: node --test tests/db020-sql-only-schema-fingerprint.test.mjs
       - name: Guard exact SQL-owned CHECK and index expressions on PG17
         run: node --test tests/db020-sql-owned-constraint-index-parity.test.mjs
       - name: Guard SQL-owned catalog FK edges on actual PG17
