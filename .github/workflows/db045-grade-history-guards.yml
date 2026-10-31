@@ -71,6 +71,8 @@ jobs:
           npx vitest run
           tests/unit/attendance-record-token-monotonic.test.ts
           tests/unit/chat7-course-delivery-roster-weak.test.ts
+      - name: Typecheck application DB045 producers
+        run: npm run typecheck
       - run: npm run db:journal:verify
       - name: Disposable full registered replay and seed
         env:
