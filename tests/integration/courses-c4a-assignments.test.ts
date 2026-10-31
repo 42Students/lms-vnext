@@ -956,6 +956,67 @@ describe("courses C4A assignments against PostgreSQL", () => {
       .toBe(true);
   });
 
+  it("DB045 attributes grade publication to its College Admin publisher, not the original Faculty grader",async()=>{
+    const structure=await createStructure();
+    const assignment=await createCourseAssignment(faculty,{
+      lessonId:structure.lesson.id,
+      deliveryId:structure.deliveryA.id,
+      title:"DB045 Distinct Publisher",
+      allowedMethods:["WRITTEN_RESPONSE"],
+      dueAt:"2027-12-01T12:00:00.000Z",
+      maxPoints:10,sequence:0,
+    });
+    await transitionCourseAssignment(faculty,assignment.id,{
+      ...await facultyAssessmentFixtureToken(pool,"ASSIGNMENT",assignment.id),
+      action:"PUBLISH",
+    });
+    const submitted=await submitCourseAssignment(learner,assignment.id,{
+      deliveryId:structure.deliveryA.id,
+      submissionType:"TEXT",textContent:"DB045 distinct publisher witness",
+    });
+    const graded=await gradeAssignmentSubmission(faculty,submitted.id,{
+      pointsAwarded:7,feedback:"Graded privately",expectedVersion:0,
+    });
+    expect(graded).toMatchObject({version:1,gradePublished:false});
+    const published=await publishAssignmentGrade(collegeAdmin,submitted.id,{
+      expectedVersion:graded.version,
+    });
+    expect(published).toMatchObject({version:2,gradePublished:true});
+    const ledger=await pool.query<{
+      action:string;actor_user_id:string;actor_membership_id:string;
+      actor_role:string;previous_graded_by_user_id:string|null;
+      new_graded_by_user_id:string|null;submission_version_after:number;
+    }>(`
+      select action,actor_user_id,actor_membership_id,actor_role,
+        previous_graded_by_user_id,new_graded_by_user_id,submission_version_after
+      from assignment_grade_events where assignment_submission_id=$1
+      order by submission_version_after
+    `,[submitted.id]);
+    expect(ledger.rows).toHaveLength(2);
+    expect(ledger.rows[0]).toMatchObject({
+      action:"GRADE",actor_user_id:faculty.user.id,
+      actor_membership_id:faculty.membership!.id,actor_role:"FACULTY",
+      submission_version_after:1,
+      new_graded_by_user_id:faculty.user.id,
+    });
+    expect(ledger.rows[1]).toMatchObject({
+      action:"PUBLISH_GRADE",actor_user_id:collegeAdmin.user.id,
+      actor_membership_id:collegeAdmin.membership!.id,actor_role:"COLLEGE_ADMIN",
+      submission_version_after:2,
+      previous_graded_by_user_id:faculty.user.id,
+      new_graded_by_user_id:faculty.user.id,
+    });
+    const repeated=await publishAssignmentGrade(collegeAdmin,submitted.id,{
+      expectedVersion:published.version,
+    });
+    expect(repeated.version).toBe(2);
+    const receiptCount=await pool.query<{n:number}>(
+      "select count(*)::int n from assignment_grade_events where assignment_submission_id=$1",
+      [submitted.id],
+    );
+    expect(receiptCount.rows[0]?.n).toBe(2);
+  });
+
   it("enforces grade bounds and database payload constraints", async () => {
     const structure = await createStructure();
     const assignment =
