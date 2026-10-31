@@ -8,6 +8,7 @@ import { fileURLToPath } from "node:url";
 import {loadDb019SemanticDecisions} from "./db019-semantic-decision-quality.mjs";
 import {loadProjectRegisteredHistory} from "./db019-project-registered-history.mjs";
 import {loadDb019Remaining} from "./db019-remaining-semantic-quality.mjs";
+import {loadDb019} from "./db019-source-ledger-preflight.mjs";
 
 export const CROSSWALKS = Object.freeze({
   DB01: ["db01_identity_and_tenancy", "db01-chat02-312-field-source-triage.json"],
@@ -106,12 +107,27 @@ export function reconcileCheckout(root) {
   const semanticDecisionQuality = loadDb019SemanticDecisions(root);
   const projectRegisteredHistory = loadProjectRegisteredHistory(root);
   const remainingSemanticQuality = loadDb019Remaining(root);
+  const independentlyCheckedBase = loadDb019(root);
+  const baseDecisions = independentlyCheckedBase.valid &&
+    independentlyCheckedBase.progress?.db00SourceDecisionCoverage?.sourceDispositionClosedFields === 732 &&
+    independentlyCheckedBase.progress?.db01SourceDecisionCoverage?.explicitDecisionRows === 312
+      ? independentlyCheckedBase.progress.db00SourceDecisionCoverage.sourceDispositionClosedFields +
+        independentlyCheckedBase.progress.db01SourceDecisionCoverage.explicitDecisionRows
+      : 0;
+  const sourceQualityFieldsChecked = baseDecisions + semanticDecisionQuality.auditedSourceFields +
+    remainingSemanticQuality.sourceFields;
   return {kind:"DB019_SOURCE_CROSSWALKS_ONLY_NOT_POSTGRES_ACCEPTANCE",
     databaseVerified:false,domains,comparedFields:domains.reduce((s,d)=>s+(d.sourceFields||0),0),
     semanticDecisionQuality,projectRegisteredHistory,remainingSemanticQuality,
-    sourceQualityFieldsChecked:1044 + semanticDecisionQuality.auditedSourceFields +
-      remainingSemanticQuality.sourceFields,
+    independentlyCheckedBaseSourceDecisions:{
+      db00:baseDecisions ? 732 : 0,db01:baseDecisions ? 312 : 0,
+    },
+    sourceQualityFieldsChecked,
+    sourceQualityOnly:true,acceptanceReady:false,
     errors:[...domains.flatMap(d=>d.errors.map(error=>({domain:d.domain,...error}))),
+      ...independentlyCheckedBase.errors.map(error=>({domain:"DB00_DB01_PREFLIGHT",...error})),
+      ...(sourceQualityFieldsChecked===2829?[]:[{code:"SOURCE_QUALITY_ACCOUNTING_INCOMPLETE",
+        checked:sourceQualityFieldsChecked,required:2829}]),
       ...semanticDecisionQuality.errors.map(error=>({domain:"DB02_DB07_DB09_QUALITY",...error})),
       ...projectRegisteredHistory.errors.map(error=>({domain:"DB07_REGISTERED_HISTORY",...error})),
       ...remainingSemanticQuality.errors.map(error=>({domain:"DB03_DB04_DB05_DB06_DB08_DB10_QUALITY",...error}))]};
