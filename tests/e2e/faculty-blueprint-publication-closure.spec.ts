@@ -22,6 +22,9 @@ test("Faculty published Section Resource becomes visible to enrolled learner and
  await authenticate(context,"FACULTY");
  await page.goto("/teacher/courses");
  await page.getByRole("link",{name:/E2E Browser Course/}).first().click();
+ // Playwright click completion does not guarantee Next.js route hydration has settled.
+ // Read the Section ID only after the canonical authorized course URL is current.
+ await expect(page).toHaveURL(/\/teacher\/courses\/[0-9a-f-]{36}\/home$/i);
  const deliveryId=new URL(page.url()).pathname.split("/")[3]!;
  await page.getByRole("navigation",{name:"Faculty course tabs"})
   .getByRole("link",{name:"Blueprint"}).click();
