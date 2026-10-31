@@ -40,9 +40,16 @@ test("legacy submitted-file redirect uses registered authorization and signed re
   assert.match(canonical, /issueObjectReadUrl/);
 });
 
-test("original DB053 race gate is retained, not silently replaced", () => {
+test("original P5-R13 receipt race is reconciled to registered DB016, not skipped", () => {
   const original = read("tests/integration/db18-assignment-receipt-race.test.ts");
   const gate = read(".github/workflows/db018-full-gate-acceptance.yml");
-  assert.match(original, /P5-R13_REGISTERED_RECEIPT_SCHEMA_MISSING/);
+  assert.match(original, /DB018 original P5-R13 one-shot receipt/);
+  assert.match(original, /uploadReceiptIds:forward/);
+  assert.match(original, /uploadReceiptIds:reversed/);
+  assert.match(original, /from assignment_submission_files/);
+  assert.match(original, /storage_file_events/);
+  assert.match(original, /scan_attested_by/);
+  assert.match(original, /STORAGE_FILE_NOT_READY/);
+  assert.match(original, /Both real FILE writers must contend/);
   assert.match(gate, /db18-assignment-receipt-race\.test\.ts -t P5-R13/);
 });
