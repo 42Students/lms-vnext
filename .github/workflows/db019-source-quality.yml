@@ -1,0 +1,71 @@
+# DB-019: exact-commit source accounting and adversarial decision quality only.
+# This job is NOT a PostgreSQL migration, runtime parity, privacy, tenant,
+# retirement approval, DB-019 full acceptance, or DB-020 global gate.
+name: DB-019 full source-accounting and decision-quality
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/db019-source-quality.yml"
+      - "scripts/db019-*"
+      - "scripts/db19-field-disposition-audit.mjs"
+      - "scripts/db19-db00-disposition-crosscheck.mjs"
+      - "scripts/db19-db01-triage-crosscheck.mjs"
+      - "tests/db019-*"
+      - "tests/db19-field-disposition-audit.test.mjs"
+      - "tests/db19-db00-disposition-crosscheck.test.mjs"
+      - "tests/db19-db01-triage-crosscheck.test.mjs"
+      - "docs/planning/db-pass4-columns-db*.json"
+      - "docs/planning/database-parity-db0*-field*.json"
+permissions:
+  contents: read
+concurrency:
+  group: db019-source-quality-main
+  cancel-in-progress: false
+jobs:
+  source-only:
+    name: Verify 2829 source decisions and 51 registered columns (NOT DB acceptance)
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Verify pinned exact source revision
+        run: |
+          test "$(git rev-parse HEAD)" = "$GITHUB_SHA"
+          node --version
+      - name: Execute baseline, crosswalk, mutation, and disposition suites
+        run: |
+          set -eu
+          node --test \
+            tests/db19-field-disposition-audit.test.mjs \
+            tests/db19-db00-disposition-crosscheck.test.mjs \
+            tests/db19-db01-triage-crosscheck.test.mjs \
+            tests/db019-source-ledger-preflight.test.mjs \
+            tests/db019-crosswalk-identity.test.mjs \
+            tests/db019-semantic-decision-quality.test.mjs \
+            tests/db019-project-registered-history.test.mjs \
+            tests/db019-remaining-semantic-quality.test.mjs
+      - name: Execute exact current source-coverage command
+        run: |
+          set -eu
+          node scripts/db019-crosswalk-identity.mjs > "$RUNNER_TEMP/db019-source-report.json"
+          node -e '
+            const fs=require("node:fs");
+            const r=JSON.parse(fs.readFileSync(process.argv[1],"utf8"));
+            if(r.errors.length || r.sourceQualityFieldsChecked!==2829 ||
+              r.projectRegisteredHistory.registeredColumnMatches!==51 ||
+              r.acceptanceReady!==false || r.databaseVerified!==false)process.exit(2);
+            console.log("SOURCE_ONLY_DB019_PASS",JSON.stringify({
+              checked:r.sourceQualityFieldsChecked,
+              registeredHistoryColumns:r.projectRegisteredHistory.registeredColumnMatches,
+              completeDatabaseAcceptance:false
+            }));
+          ' "$RUNNER_TEMP/db019-source-report.json"
+      - name: Evidence boundary
+        if: always()
+        run: |
+          echo "Source accounting only. No DB-019 task closure and no PostgreSQL/runtime proof."
