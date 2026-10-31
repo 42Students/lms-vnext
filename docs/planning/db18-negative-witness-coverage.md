@@ -3,7 +3,7 @@
 **Phase:** DATABASE  
 **Task:** DB-018 — Negative DB integration witness suite  
 **State:** focused disposable PostgreSQL 17 matrix PASSED; DB-018 global acceptance still OPEN  
-**Rule:** Only exact-run PostgreSQL results count as executed evidence. Passing this witness corpus does not waive DB-001, DB-014, DB-020 or five separate race-gap obligations.
+**Rule:** Only exact-run PostgreSQL results count as executed evidence. DB-018's declared upstream dependencies are DB-001 and DB-025; DB-014 and DB-020 remain independent global phase gates (DB-020 itself depends on DB-018, not the reverse). Passing the focused corpus does not waive those later gates or certify any unregistered race family.
 
 ## Executed focused witness denominator
 
@@ -76,6 +76,13 @@ These are deliberately direct SQL so an API/service bypass cannot hide a databas
 
 Both previously red regressions are green. Their successful execution does not settle unrelated race families.
 
+## Newly authored race coverage — not yet counted as executed
+
+- **P5-R03 (last group seat):** `groups-db03.test.ts` now launches two real group admission service transactions while the same group row is held by an independent PostgreSQL transaction. Acceptance requires exactly one ACTIVE and one WAITLISTED membership, stored `active_count=1`, and exactly two immutable membership events. The full DB-018 workflow includes this source, but the new case is **AUTHORED / PG17 NOT YET VERIFIED**.
+- **P5-R11 (period close vs schedule writes):** `schedule-service.ts` now acquires a SHARE lock on the scoped academic period within *both* create and update transactions and validates committed CLOSED state and date boundaries after the lock. `academics-a2.test.ts` exercises concurrent uncommitted period CLOSE against creation and editing, requiring both writes to fail closed with the original event unchanged. The DB-018 workflow runs that A2 suite separately. This is **CODE+TEST AUTHORED / PG17 NOT YET VERIFIED**.
+
+Neither case raises the historical 48/48 named witness count or 92/92 full-suite executed count. The machine-readable witness index records these as pending. Do not mark P5-R11 fixed-and-runtime-verified, or DB-018 accepted, without an exact-SHA green registered PostgreSQL result.
+
 ## Runtime safety
 
 The read-only Pass-5 runner requires `TEST_DATABASE_URL` and an explicit isolated-database flag. It never falls back to the normal application `DATABASE_URL`.
@@ -106,7 +113,7 @@ The dedicated `.github/workflows/db018-relational-witness-acceptance.yml` now in
 
 ## DB-018 completion interpretation
 
-DB-018 is **not** globally DONE, although its full registered witness matrix has passed. It must **not** become `DONE_VERIFIED` until independent global gates are accepted. Global DB-018 acceptance still depends on DB-001 independent verification, DB-014 tenant/FK sweep, DB-020 schema drift/phase-gate certification and outstanding source race-gap dispositions. The focused matrix established that:
+DB-018 is **not** globally DONE, although its full registered witness matrix has passed. It must **not** become `DONE_VERIFIED` until independent global gates are accepted. DB-018 cannot be accepted before its declared DB-001 and DB-025 dependencies and the appropriate registered negative/race corpus execute successfully. DB-014 tenant/FK catalog certification and DB-020 final schema drift/phase gate remain distinct requirements for DATABASE signoff, not circular prerequisites for DB-018 (DB-020 depends on DB-018). Outstanding race gaps must retain explicit non-verified status until their registered implementation/consumer tests pass. The focused matrix established that:
 
 - the registered migration journal is replayed on disposable PostgreSQL;
 - all 21 read-only probes execute with non-vacuous fixture coverage and zero mismatch rows;
