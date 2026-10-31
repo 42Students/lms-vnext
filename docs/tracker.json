@@ -1057,6 +1057,21 @@
             "Reconcile full original producer/consumer, tenant-authorization and lifecycle coverage before done:true"
           ],
           "notAcceptance": true
+        },
+        "latestOutboundCandidateDiagnostics": {
+          "recordedOn": "2026-10-31",
+          "result": "PASS_STAGING_ONLY_DB018_OPEN",
+          "commitSha": "c87c7ea67045f17870e54dd52436ed716d812014",
+          "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/41220706108",
+          "jobId": 124594465294,
+          "executedTests": "11/11 executable PG17 staged-dispatch tests passed: P5-R09 two claimers/expired claimed quarantine, P5-R21 late global suppression zero provider callback, revocation of untrusted DB principal EXECUTE, plus SQL HMAC/pre-send/lease negatives.",
+          "constraints": [
+            "Four DB067 claim/pre-send/completion/expiry functions are NOT registered in Drizzle journal; never confuse this disposable candidate SQL application with migration evidence.",
+            "No least-privilege trusted dispatcher database principal/grants or approved provider adapter/entrypoint has been verified.",
+            "Production recruiter-invitation delivery service has not been bound to queueOutboundDeliveryInTransaction; no active transactional outbox producer/worker cutover."
+          ],
+          "nextCheck": "Register only reviewed forward-only DB067 SQL with explicit privileged role and no PUBLIC or ordinary application EXECUTE; bind real recruiter producer and trusted dispatcher; run registered PG17 two-session claim/provider-unsent/retry and late opt-out tests, then audit original full source scope before DB018 done:true.",
+          "notAcceptance": true
         }
       }
     },

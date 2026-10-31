@@ -191,6 +191,22 @@ test("DB18 witness index remains honest about authored versus executed coverage"
     assert.ok(fs.readFileSync(witness.file, "utf8").includes(witness.title));
     assert.equal(Number.isSafeInteger(witness.jobId), true);
   }
+  const staged = index.outboundStagedDiagnostics;
+  assert.equal(staged.status, "STAGED_ONLY_PG17_CANDIDATE_VERIFIED_NOT_REGISTERED");
+  assert.equal(staged.registered, false);
+  assert.equal(staged.db018Accepted, false);
+  assert.equal(staged.execution.result, "PASS");
+  assert.equal(staged.execution.passed, 11);
+  assert.equal(staged.execution.total, 11);
+  assert.match(staged.execution.runUrl, /^https:\/\/github\.com\/42Students\/lms-vnext\/actions\/runs\/\d+$/);
+  assert.match(staged.execution.commitSha, /^[0-9a-f]{40}$/);
+  const stageFlow = fs.readFileSync(staged.workflow, "utf8");
+  assert.ok(stageFlow.includes("Assert dispatcher function is NOT registered"));
+  assert.ok(stageFlow.includes("Apply DB067 candidate only to this throwaway database"));
+  const stageTest = fs.readFileSync(staged.test, "utf8");
+  assert.ok(stageTest.includes("P5-R09 grants only one live claim"));
+  assert.ok(stageTest.includes("expect(send).not.toHaveBeenCalled()"));
+  assert.ok(stageTest.includes("has_function_privilege"));
   const pgWorkflow = fs.readFileSync(".github/workflows/db018-full-gate-acceptance.yml", "utf8");
   assert.ok(pgWorkflow.includes("tests/integration/academics-a2.test.ts"));
   assert.ok(pgWorkflow.includes("tests/integration/graceful-telegram-persistence.test.ts"));

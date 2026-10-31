@@ -449,5 +449,28 @@
       "jobId": 124591180538,
       "scope": "Real reportErrorForAlert producer with concurrent PG row-lock contention, single signature row, exact 2+2 occurrence count, one initial Telegram send, one later FIXED->OPEN regression and monotonic seen timestamps. Fake provider transport only."
     }
-  ]
+  ],
+  "outboundStagedDiagnostics": {
+    "status": "STAGED_ONLY_PG17_CANDIDATE_VERIFIED_NOT_REGISTERED",
+    "registered": false,
+    "db018Accepted": false,
+    "sqlCandidate": "docs/planning/sql/db10-outbound-dispatch-lease-candidate.sql",
+    "test": "tests/integration/db067-global-email-pre-send.test.ts",
+    "workflow": ".github/workflows/db067-staged-outbound-pg17.yml",
+    "execution": {
+      "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/41220706108",
+      "commitSha": "c87c7ea67045f17870e54dd52436ed716d812014",
+      "result": "PASS",
+      "passed": 11,
+      "total": 11,
+      "pgMajorVersion": 17,
+      "scope": "DB067 candidate functions installed AFTER registered journal replay on disposable PG17 only, 2-session claim, late suppression with zero fake-provider callbacks, guest role EXECUTE denied; the workflow asserts claim function absent before candidate installation."
+    },
+    "blockers": [
+      "Four DB067 claim/pre-send/completion/expiry functions are NOT registered in Drizzle journal; never confuse this disposable candidate SQL application with migration evidence.",
+      "No least-privilege trusted dispatcher database principal/grants or approved provider adapter/entrypoint has been verified.",
+      "Production recruiter-invitation delivery service has not been bound to queueOutboundDeliveryInTransaction; no active transactional outbox producer/worker cutover."
+    ],
+    "nextCheck": "Register only reviewed forward-only DB067 SQL with explicit privileged role and no PUBLIC or ordinary application EXECUTE; bind real recruiter producer and trusted dispatcher; run registered PG17 two-session claim/provider-unsent/retry and late opt-out tests, then audit original full source scope before DB018 done:true."
+  }
 }
