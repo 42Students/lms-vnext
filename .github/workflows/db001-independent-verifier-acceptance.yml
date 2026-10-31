@@ -10,6 +10,10 @@ on:
       - "scripts/db-independent-verifier-generation-guard.mjs"
       - "drizzle/meta/0316_snapshot.json"
       - "tests/db001-drizzle-deferred-fk-snapshot-contract.test.mjs"
+      - "drizzle/0327_db001_canonical_metadata_baseline.sql"
+      - "drizzle/meta/0327_snapshot.json"
+      - "tests/db001-canonical-baseline-source.test.mjs"
+      - "tests/integration/db001-canonical-baseline-pg.test.ts"
       - ".github/workflows/db001-independent-verifier-acceptance.yml"
 permissions:
   contents: read
@@ -53,7 +57,7 @@ jobs:
           test -z "$(git status --porcelain)"
           node --check scripts/db-independent-verify.mjs
       - name: Verify Drizzle v7 representability and deferred SQL integrity
-        run: node --test tests/db001-drizzle-deferred-fk-snapshot-contract.test.mjs tests/db-independent-postgres-version.test.mjs
+        run: node --test tests/db001-drizzle-deferred-fk-snapshot-contract.test.mjs tests/db-independent-postgres-version.test.mjs tests/db001-canonical-baseline-source.test.mjs
       - name: Execute all 12 independently invocable verification gates
         run: npm run db:verify:independent
       - name: Prove independent evidence really passed on pinned source
@@ -81,21 +85,6 @@ jobs:
           path: .verification/db001-generator-diagnostic/
           retention-days: 7
           if-no-files-found: ignore
-      - name: Expose minified generated snapshot for deterministic baseline review
-        if: always()
-        shell: bash
-        run: |
-          set -euo pipefail
-          mapfile -t snapshots < <(git ls-files --others --exclude-standard -- 'drizzle/meta/*_snapshot.json')
-          if [ "${#snapshots[@]}" -ne 1 ]; then
-            echo "Expected one generated schema snapshot; found ${#snapshots[@]}"
-            exit 0
-          fi
-          # Snapshot contains schema definitions only; do not echo SQL, data or DB URLs.
-          echo 'DB001_GENERATED_SNAPSHOT_BASE64_BEGIN'
-          node -e 'const f=require("fs");process.stdout.write(JSON.stringify(JSON.parse(f.readFileSync(process.argv[1],"utf8"))))' "${snapshots[0]}" | base64 -w76
-          echo
-          echo 'DB001_GENERATED_SNAPSHOT_BASE64_END'
       - name: Retain redacted acceptance or failure receipt
         if: always()
         uses: actions/upload-artifact@v4
