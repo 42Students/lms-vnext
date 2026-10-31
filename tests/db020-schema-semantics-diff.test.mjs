@@ -14,7 +14,10 @@ const catalog={kind:"DB020_EXACT_REGISTERED_PG17_CATALOG",registeredHead:"0326_d
  indexes:[{table_name:"sample",name:"sample_state_idx",unique:false,valid:true,primary:false,definition:"CREATE INDEX ..."}],
  triggers:[]};
 const diagnosis={kind:"DB020_DISPOSABLE_PG17_REGISTERED_VS_GENERATED_DIAGNOSIS",
- registeredHead:catalog.registeredHead,registeredMigrations:327,counts:{generatedTypedTables:1}};
+ registeredHead:catalog.registeredHead,registeredMigrations:327,counts:{
+ generatedTypedTables:1,generatedAbsentInRegisteredPg:0,generatedTypedMissingColumns:0,
+ registeredExtraColumnsOnTypedTables:0,unexplainedTypeDifferences:0,
+ typedFkShapesMissingFromCatalog:0,unvalidatedFks:0}};
 const inspect=(patch={})=>inspectDb020StructuralSemantics(
  patch.snapshot??snapshot,patch.catalog??catalog,patch.diagnosis??diagnosis);
 test("DB020 catalog matcher keeps diagnostic-only status even on exact fixture",()=>{
@@ -22,6 +25,8 @@ test("DB020 catalog matcher keeps diagnostic-only status even on exact fixture",
  assert.equal(result.counts.hardDifferences,0);
  assert.equal(result.counts.rawDefaultExpressionDifferences,0);
  assert.equal(result.passCertification,false);
+ assert.equal(result.structurallyConsistent,true);
+ assert.deepEqual(result.structuralFailures,[]);
  assert.equal(result.requiresHumanSqlReview,true);
 });
 test("DB020 refuses inconsistent artifact provenance",()=>{
@@ -50,6 +55,9 @@ test("DB020 classifies absent names and raw default differences without false ac
  assert.equal(r.counts.rawDefaultExpressionDifferences,1);
  assert.equal(r.counts.typedCheckNamesAbsentFromCatalog,1);
  assert.equal(r.counts.typedIndexNamesAbsentFromCatalog,1);
+ assert.equal(r.counts.hardDifferences,2,"missing typed CHECK/index both block");
+ assert.equal(r.structurallyConsistent,false);
+ assert.ok(r.structuralFailures.some(f=>f.reason.includes("CHECK/index")&&f.count===2));
  assert.equal(r.passCertification,false);
 });
 test("DB020 exposes unmodeled physical contracts and disabled triggers",()=>{
@@ -61,4 +69,17 @@ test("DB020 exposes unmodeled physical contracts and disabled triggers",()=>{
  assert.equal(r.counts.registeredChecksNotNamedByTypedSchema,1);
  assert.equal(r.counts.registeredIndexesNotNamedByTypedSchema,1);
  assert.equal(r.counts.disabledRegisteredTriggers,1);
+});
+
+test("DB020 refuses success when physical typed columns, FK shapes or type proof regress",()=>{
+ for(const key of ["generatedAbsentInRegisteredPg","generatedTypedMissingColumns",
+  "registeredExtraColumnsOnTypedTables","unexplainedTypeDifferences",
+  "typedFkShapesMissingFromCatalog","unvalidatedFks"]){
+  const changedDiagnosis={...diagnosis,counts:{...diagnosis.counts,[key]:1}};
+  const r=inspect({diagnosis:changedDiagnosis});
+  assert.equal(r.structurallyConsistent,false,key);
+  assert.equal(r.structuralFailures.length,1,key);
+  assert.equal(r.structuralFailures[0].count,1,key);
+  assert.equal(r.passCertification,false,key);
+ }
 });
