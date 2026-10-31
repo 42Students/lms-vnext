@@ -28,8 +28,6 @@ import java.util.*;
 @Slf4j
 public class ZeptoMailServiceImpl implements ZeptoMailService {
 
-    private static final String DEFAULT_ZEPTOMAIL_TOKEN = "Zoho-enczapikey PHtE6r1bSu26iTYo9kAIs/XrQ8agYYsu+r8yfQFPsdxFW6AFG01WqN8ulDSwqR4vUfATE/XKyI09uLKcsriCJj64MjsdWmqyqK3sx/VYSPOZsbq6x00euV4TcELbUYXvctBi0SLQv9rfNA==";
-
     @Value("${zeptomail.api.url:https://api.zeptomail.in/v1.1/email/template}")
     private String apiUrl;
 
@@ -109,8 +107,7 @@ public class ZeptoMailServiceImpl implements ZeptoMailService {
     public void sendEmailWithTemplateId(String zeptoTemplateId, String toEmail, Map<String, String> mergeInfo, String senderName, String replyTo, String fromAddressOverride) throws Exception {
         String effectiveApiKey = apiKey != null ? apiKey.trim() : "";
         if (effectiveApiKey.isEmpty()) {
-            effectiveApiKey = DEFAULT_ZEPTOMAIL_TOKEN;
-            log.warn("ZeptoMail token was blank at runtime; using default configured fallback token");
+            throw new IllegalStateException("ZeptoMail token is not configured");
         }
         if (zeptoTemplateId == null || zeptoTemplateId.trim().isEmpty()) {
             throw new IllegalArgumentException("ZeptoMail template ID is required");
