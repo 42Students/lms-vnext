@@ -2,6 +2,10 @@ import { and, eq, gt, isNull } from "drizzle-orm";
 import {recruiterInviteNotHiringReason} from "./recruiter-invite-not-hiring-note-model";
 import { getDb } from "@/db/client";
 import {
+  outboundQueueRuntimeEnabled,
+  queueOutboundDeliveryInTransaction,
+} from "@/modules/operations/outbound-delivery-queue";
+import {
   activityEvents, collegeMemberships, inAppNotifications, membershipRoles, users,
   colleges,
   placementTpoLeadActivities,
@@ -102,6 +106,20 @@ export async function issueTpoRecruiterInvite(
   const collegeId = tpoCrmCollegeIdSchema.parse(collegeIdInput);
   const leadId = tpoCrmLeadIdSchema.parse(leadIdInput);
   const college=await requirePlacementManageScope(context, collegeId);
+  const queueRequested = Boolean(delivery?.sendEmail) && outboundQueueRuntimeEnabled();
+  // Resolve the public origin before opening the invitation transaction.
+  // No token may be created if we cannot form an authenticated HTTPS link.
+  let inviteOrigin: string | null = null;
+  if (queueRequested) {
+    try {
+      const url = new URL(process.env["APP_PUBLIC_URL"] ?? "");
+      if (url.protocol !== "https:" || url.username || url.password ||
+          url.search || url.hash) throw new Error("UNSAFE_ORIGIN");
+      inviteOrigin = url.origin;
+    } catch {
+      throw new TpoRecruiterInviteServiceError("TPO_RECRUITER_INVITE_NOT_ALLOWED");
+    }
+  }
 
   const issued = await getDb().transaction(async (tx) => {
     const [lead] = await tx
@@ -167,7 +185,7 @@ export async function issueTpoRecruiterInvite(
       createdByUserId: context.user.id,
       createdAt: credential.issuedAt,
     });
-    await tx.insert(activityEvents).values({
+    const [event] = await tx.insert(activityEvents).values({
       organizationId:college.organizationId,collegeId,
       actorUserId:context.user.id,actorMembershipId:context.membership?.id??null,
       module:"PLACEMENTS",eventType:"RECRUITER_LEADS_INVITE_LINK_CREATED",
@@ -175,7 +193,36 @@ export async function issueTpoRecruiterInvite(
       summary:"Recruiter invite link created",
       // A generated link is not an emailed invitation; never claim delivery.
       metadata:{delivery:"NOT_SENT",hasVerifiedEmail:Boolean(updated?.emailNorm??lead.emailNorm)},
-    });
+    }).returning({id:activityEvents.id});
+
+    let queueStatus: "QUEUED" | "SUPPRESSED" | "ALREADY_QUEUED" | null = null;
+    if (queueRequested) {
+      // Transactional dispatch intent: if encryption, permission, consent or
+      // database insertion fails, the rotated bearer credential rolls back.
+      // Never call a remote provider within this transaction.
+      if (!inviteOrigin || !event || !lead.emailNorm ||
+          lead.unsubscribedAt || lead.recruiterUserId ||
+          !lead.companyName?.trim()) {
+        throw new TpoRecruiterInviteServiceError("TPO_RECRUITER_INVITE_NOT_ALLOWED");
+      }
+      const [parent] = await tx.select({name:colleges.name}).from(colleges)
+        .where(eq(colleges.id,collegeId)).limit(1);
+      if (!parent?.name?.trim()) {
+        throw new TpoRecruiterInviteServiceError("TPO_RECRUITER_INVITE_NOT_ALLOWED");
+      }
+      const queued = await queueOutboundDeliveryInTransaction(tx,context,{
+        organizationId:college.organizationId,collegeId,
+        sourceEventId:event.id,channel:"EMAIL",templateKey:"RECRUITER_INVITATION",
+        recipient:lead.emailNorm,
+        variables:{
+          companyName:lead.companyName.trim(),collegeName:parent.name.trim(),
+          contactName:lead.name.trim(),expiresDays:7,
+          invitationUrl:inviteOrigin+"/recruiter-invite/"+encodeURIComponent(credential.token),
+        },
+        expiresAt:credential.expiresAt.toISOString(),
+      });
+      queueStatus=queued.status;
+    }
 
     return {
       leadId: updated?.id ?? lead.id,
@@ -183,9 +230,11 @@ export async function issueTpoRecruiterInvite(
       expiresAt: credential.expiresAt,
       emailAvailable: Boolean(updated?.emailNorm ?? lead.emailNorm),
       emailed: false,
+      queued: queueStatus==="QUEUED" || queueStatus==="ALREADY_QUEUED",
+      queueHandled: queueStatus!==null,
     };
   });
-  if (!delivery?.sendEmail) return issued;
+  if (!delivery?.sendEmail || issued.queueHandled) return issued;
   if (!issued.emailAvailable) return { ...issued, emailed: false };
   // This call is after commit: provider failure must never claim delivery.
   // A retried email may use the still-valid issued credential, not an invented one.
