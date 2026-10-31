@@ -13,6 +13,8 @@ on:
       - "tests/support/db045-attendance-fixture.mjs"
       - "src/modules/attendance/history-event.ts"
       - "src/modules/attendance/faculty-service.ts"
+      - "src/modules/attendance/faculty-correction-token-model.ts"
+      - "tests/unit/attendance-record-token-monotonic.test.ts"
       - "src/modules/attendance/admin-service.ts"
       - "src/modules/people/e2e-fixture-seed-service.ts"
       - "drizzle/meta/0322_snapshot.json"
@@ -61,6 +63,8 @@ jobs:
           node-version: 22
           cache: npm
       - run: npm ci
+      - name: DB045 monotonic attendance token unit regressions
+        run: npx vitest run tests/unit/attendance-record-token-monotonic.test.ts
       - run: npm run db:journal:verify
       - name: Disposable full registered replay and seed
         env:
