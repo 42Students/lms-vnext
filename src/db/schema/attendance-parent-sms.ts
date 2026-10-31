@@ -21,7 +21,7 @@ export const attendanceParentContacts=pgTable("attendance_parent_contacts",{
 },t=>[
  foreignKey({name:"attendance_parent_contact_member_college_fk",columns:[t.membershipId,t.collegeId],
   foreignColumns:[collegeMemberships.id,collegeMemberships.collegeId]}).onDelete("restrict"),
- check("attendance_parent_contact_phone_ck",sql`${t.phoneE164} ~ '^\\+[1-9][0-9]{7,14}$'`),
+ check("attendance_parent_contacts_phone_e164_check",sql`${t.phoneE164} ~ '^\\+[1-9][0-9]{7,14}$'`),
  check("attendance_parent_contact_consent_ck",sql`(
   (${t.smsOptIn}=false) or
   (${t.consentAt} is not null and ${t.verifiedAt} is not null and
@@ -48,6 +48,6 @@ export const attendanceParentSmsOutbox=pgTable("attendance_parent_sms_outbox",{
   foreignColumns:[collegeMemberships.id,collegeMemberships.collegeId]}).onDelete("restrict"),
  uniqueIndex("attendance_parent_sms_event_unique").on(t.eventId),
  index("attendance_parent_sms_queue_idx").on(t.status,t.createdAt),
- check("attendance_parent_sms_kind_ck",sql`${t.kind} in ('ABSENT','CORRECTED')`),
- check("attendance_parent_sms_status_ck",sql`${t.status} in ('QUEUED','ATTEMPTED','ACCEPTED','SKIPPED')`),
+ check("attendance_parent_sms_outbox_kind_check",sql`${t.kind} in ('ABSENT','CORRECTED')`),
+ check("attendance_parent_sms_outbox_status_check",sql`${t.status} in ('QUEUED','ATTEMPTED','ACCEPTED','SKIPPED')`),
 ]);

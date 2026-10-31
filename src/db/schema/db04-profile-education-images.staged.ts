@@ -244,11 +244,11 @@ export const learnerProfileImages = pgTable(
       .on(table.learnerMembershipId, table.displayOrder)
       .where(sql`${table.isActive} = true`),
     check(
-      "learner_profile_images_receipt_purpose_ck",
+      "learner_profile_images_receipt_purpose_check",
       sql`${table.receiptPurpose} = 'PROFILE_IMAGE'`,
     ),
     check(
-      "learner_profile_images_order_ck",
+      "learner_profile_images_display_order_check",
       sql`${table.displayOrder} >= 0`,
     ),
     check(
