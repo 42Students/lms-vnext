@@ -12,6 +12,7 @@ const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 
 export function auditDb019(index, ledgers, decisions, {
   db00Disposition = null, db00Approval = null, db01Triage = null, db01Final = null,
+  db004Evidence = null,
 } = {}) {
   const errors = [];
   const fail = (code, details = {}) => errors.push({ code, ...details });
@@ -98,6 +99,54 @@ export function auditDb019(index, ledgers, decisions, {
   }
   const db01Closed = db01?.valid && !errors.some(x => x.code.startsWith('DB01_'))
     ? db01.summary.explicitDecisionRows : null;
+  // Independently cross-check the accepted DB004 task's *prior* physical,
+  // composite and approved retirement receipts against exact DB01 owner fields.
+  // This is evidence reuse, not a new execution of the historic PostgreSQL jobs.
+  let db004PriorTechnicalCoverage = null;
+  if (db004Evidence !== null) {
+    const db01Owner = new Map((db01Final?.rows || []).filter(r => r.ownerTask === 'DB-004')
+      .map(r => [r.legacyField, r]));
+    const witnesses = Array.isArray(db004Evidence?.rows) ? db004Evidence.rows : [];
+    const witnessIds = new Set();
+    const counts = {physical:0,composite:0,retired:0};
+    let db004Invalid = db01Closed === null ||
+      db004Evidence?.task !== 'DB-004' || witnesses.length !== 195 || db01Owner.size !== 195;
+    if (db004Invalid) fail('DB004_OWNER_EVIDENCE_DENOMINATOR_OR_UPSTREAM_DRIFT');
+    for (const row of witnesses) {
+      const id = row?.legacyField, owner = db01Owner.get(id);
+      if (!id || witnessIds.has(id) || !owner || owner.decisionStatus !== row.originalDisposition) {
+        fail('DB004_OWNER_EVIDENCE_FIELD_DRIFT', {field:id}); db004Invalid = true;
+      }
+      witnessIds.add(id);
+      const proof = row.physicalVerified ? row.runtimeEvidence :
+        row.compositeImplementationVerified ? row.compositeEvidence : row.retirementEvidence;
+      const kind = row.physicalVerified ? 'physical' :
+        row.compositeImplementationVerified ? 'composite' :
+        row.retirementImplementationVerified ? 'retired' : null;
+      if (kind) counts[kind]++;
+      if (!kind || !/^https:\/\/github\.com\/42Students\/lms-vnext\/actions\/runs\/\d+/.test(proof?.passingRun || '') ||
+          !/^[0-9a-f]{40}$/.test(proof?.testedCommit || '') ||
+          (kind === 'physical' && row.runtimeSemanticsVerified !== true) ||
+          (kind === 'retired' && row.retirementProductDisposition?.status !== 'APPROVED_BY_REQUESTER')) {
+        fail('DB004_OWNER_EVIDENCE_UNSUPPORTED_PROOF', {field:id}); db004Invalid = true;
+      }
+    }
+    const declared = db004Evidence?.summary;
+    if (counts.physical !== 137 || counts.composite !== 24 || counts.retired !== 34 ||
+        declared?.ownerFields !== 195 || declared?.registeredPhysicalWitnessTotal !== counts.physical ||
+        declared?.compositeImplementationVerified !== counts.composite ||
+        declared?.retirementProductApproved !== counts.retired) {
+      fail('DB004_OWNER_EVIDENCE_CATEGORY_COUNT_DRIFT'); db004Invalid = true;
+    }
+    if (!db004Invalid) db004PriorTechnicalCoverage = {
+      ownerFields: 195,
+      priorRegisteredPhysicalWitnessRows: counts.physical,
+      priorCompositeImplementationRows: counts.composite,
+      requesterApprovedRetirementRows: counts.retired,
+      otherDb01SourceDecisionsNotInDb004: db01Closed - 195,
+      freshGlobalPostgresCertification: false,
+    };
+  }
   const decisionOpen = decisions.decisions.filter(x =>
     !x || x.approvedRetirement !== true && !String(x.status).startsWith('ACCEPTED')).length;
   const verifiedDecisionFields = decisions.decisions.reduce((sum, x) => sum + (Number(x?.verifiedFields)||0),0);
@@ -109,6 +158,7 @@ export function auditDb019(index, ledgers, decisions, {
     progress: {verifiedMappingRows:mapped,sourceEvidenceRows:sourceEvidence,
       awaitingSourceEvidence:pending, sourceEvidenceComplete:sourceEvidence === totalFields,
       unresolvedReviewDecisions:decisionOpen, reviewDecisionVerifiedFields:verifiedDecisionFields,
+      db004PriorTechnicalCoverage,
       db01SourceDecisionCoverage: db01Closed === null ? null : {
         sourceFields: db01.summary.sourceFields,
         explicitDecisionRows: db01Closed,
@@ -147,7 +197,8 @@ export function loadDb019(rootDir = root) {
   const db00Approval = read('docs/planning/db003-smrithi-vnext-scope-decision.json');
   const db01Triage = read('docs/planning/db01-chat02-312-field-source-triage.json');
   const db01Final = read('docs/planning/db01-chat05-final-field-disposition.json');
-  return auditDb019(index, ledgers, decisions, {db00Disposition,db00Approval,db01Triage,db01Final});
+  const db004Evidence = read('docs/planning/db004-current-owner-evidence.json');
+  return auditDb019(index, ledgers, decisions, {db00Disposition,db00Approval,db01Triage,db01Final,db004Evidence});
 }
 
 if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
