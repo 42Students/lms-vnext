@@ -313,3 +313,84 @@ test("DB019 27 attendance, override and season source proposals retain registere
     assert.match(found.indexdef,/UNIQUE INDEX/);
   }
 });
+
+
+test("DB019 external offer, debarment and screening proposals have registered PG17 privacy/transition controls",async()=>{
+  const source=[
+    ["external_placement",10,["placement_external_offers"]],
+    ["placement_debarment",10,["placement_debarments"]],
+    ["application_screening",19,
+      ["placement_application_screenings","placement_application_screening_history"]],
+  ];
+  const names=[...new Set(source.flatMap(x=>x[2]))];
+  const rows=await pool.query(`
+    select table_name,column_name,udt_name,is_nullable
+      from information_schema.columns
+     where table_schema='public' and table_name=any($1::text[])
+  `,[names]);
+  const columns=new Map(rows.rows.map(x=>[x.table_name+"."+x.column_name,x]));
+  for(const [name,count,allowed] of source){
+    const table=ledger.tables.find(t=>t.legacyTable===name);
+    assert.equal(table?.fields.length,count);
+    for(const field of table.fields){
+      const d=field.reviewDecision;
+      assert.equal(field.status,"UNVERIFIED");
+      assert.equal(d.runtimeVerified,false);
+      assert.equal(d.consumerVerified,false);
+      assert.equal(d.retirementApproved,false);
+      for(const ref of d.targetRefs){
+        assert.ok(allowed.includes(ref.split(".")[0]),"Unapproved "+name+" target "+ref);
+        assert.ok(columns.has(ref),"Registered PG17 column absent "+ref);
+      }
+    }
+  }
+  for(const ref of [
+    "placement_external_offers.id","placement_external_offers.college_id",
+    "placement_external_offers.membership_id","placement_external_offers.reviewed_by_user_id",
+    "placement_debarments.id","placement_debarments.membership_id",
+    "placement_debarments.created_by_user_id",
+    "placement_application_screenings.application_id",
+    "placement_application_screening_history.id",
+    "placement_application_screening_history.application_id",
+  ]) assert.equal(columns.get(ref)?.udt_name,"uuid",ref+" UUID/FK required");
+  assert.equal(columns.get("placement_external_offers.ctc_lpa")?.udt_name,"numeric");
+  assert.equal(columns.get("placement_external_offers.private_letter_object_path")?.udt_name,"text");
+  assert.equal(columns.get("placement_external_offers.company_name")?.is_nullable,"NO");
+  assert.equal(columns.get("placement_debarments.reason")?.is_nullable,"NO");
+  assert.equal(columns.get("placement_debarments.legacy_debarment_id")?.udt_name,"int4");
+  assert.equal(columns.get("placement_application_screenings.status")?.is_nullable,"NO");
+  for(const name of ["education_score","overall_score","skill_score",
+      "matched_skills","screening_metadata","excluded_attributes"]){
+    assert.equal(columns.has("placement_application_screenings."+name),false,
+      "Source scoring must not be falsely claimed as registered: "+name);
+  }
+  assert.equal(columns.has("placement_external_offers.letter_url"),false);
+  const cs=await pool.query(`
+    select conname,pg_get_constraintdef(oid) as definition from pg_constraint
+     where conrelid::regclass::text=any($1::text[])
+  `,[names]);
+  const constraints=new Map(cs.rows.map(x=>[x.conname,x.definition]));
+  for(const [name,fragment] of [
+    ["placement_external_offers_status_ck","VERIFIED"],
+    ["placement_external_offers_verified_ck","reviewed_by_user_id"],
+    ["placement_external_offers_ctc_ck",">= 0"],
+    ["placement_debarments_until_drives_ck","> 0"],
+    ["placement_debarments_lift_ck","lifted_by_user_id"],
+    ["placement_application_screenings_status_ck","SHORTLISTED"],
+    ["placement_application_screenings_shape_ck","decided_by_user_id"],
+    ["placement_application_screening_history_transition_ck","REJECTED"],
+  ]){
+    assert.ok(constraints.has(name),"Missing registered guard "+name);
+    assert.ok(constraints.get(name).includes(fragment),
+      "Registered guard meaning drift "+name);
+  }
+  const i=await pool.query(`
+    select indexname,indexdef from pg_indexes
+     where schemaname='public' and tablename='placement_debarments'
+  `);
+  const legacy=i.rows.find(r=>r.indexname==="placement_debarments_college_legacy_id_uq");
+  assert.ok(legacy,"Per-college legacy debarment identity not constrained");
+  assert.match(legacy.indexdef,/UNIQUE INDEX/);
+  assert.match(legacy.indexdef,/college_id/);
+  assert.match(legacy.indexdef,/legacy_debarment_id/);
+});
