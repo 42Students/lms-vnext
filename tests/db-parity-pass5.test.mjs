@@ -208,9 +208,9 @@ test("DB18 witness index remains honest about authored versus executed coverage"
     assert.equal(witness.state, "FOCUSED_PG17_VERIFIED");
   }
 
-  // Both new race witnesses have separate exact-SHA PG17 passes. Historical
-  // 48/48 remains frozen and no global DB-018 acceptance is implied.
-  assert.deepEqual(index.authoredPendingConcurrencyWitnesses.map(w => w.raceProbe), []);
+  // These two races have source witnesses but no registered PG17 execution
+  // receipt. Keep them OPEN until the index is updated with real run proof.
+  assert.deepEqual(index.authoredPendingConcurrencyWitnesses.map(w => w.raceProbe), ["P5-R23", "P5-R20"]);
   for (const witness of index.authoredPendingConcurrencyWitnesses) {
     assert.equal(witness.state, "AUTHORED_AWAITING_REGISTERED_PG17");
     assert.ok(fs.existsSync(witness.file), witness.id + ": pending test file missing");
