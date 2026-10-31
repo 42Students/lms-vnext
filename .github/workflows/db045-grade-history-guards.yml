@@ -72,13 +72,6 @@ jobs:
           npx vitest run
           tests/unit/attendance-record-token-monotonic.test.ts
           tests/unit/chat7-course-delivery-roster-weak.test.ts
-      - name: Typecheck application DB045 producers
-        # The full application graph exceeds V8's default ~4 GiB old-space on
-        # this runner. Preserve the full tsc gate; give it available memory
-        # rather than skipping or narrowing the security-sensitive check.
-        env:
-          NODE_OPTIONS: --max-old-space-size=6144
-        run: npm run typecheck
       - run: npm run db:journal:verify
       - name: Disposable full registered replay and seed
         env:
@@ -103,3 +96,10 @@ jobs:
           tests/integration/college-admin-attendance.test.ts
           tests/integration/academics-a2.test.ts
           tests/integration/faculty-c4-reports-audit-contact.test.ts
+      - name: Typecheck application DB045 producers
+        # The full application graph exceeds V8's default ~4 GiB old-space on
+        # this runner. Preserve the full tsc gate; give it available memory
+        # rather than skipping or narrowing the security-sensitive check.
+        env:
+          NODE_OPTIONS: --max-old-space-size=6144
+        run: npm run typecheck

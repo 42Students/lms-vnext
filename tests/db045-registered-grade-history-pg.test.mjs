@@ -126,11 +126,11 @@ test("DB045 attendance event scope, immutability and deferred requirements activ
     "db06_attendance_event_required",
   ]]);
   const definitions=new Map(triggerDefinitions.map(row=>[row.tgname,row.definition]));
-  assert.match(definitions.get("db06_attendance_event_scope_guard"),/BEFORE INSERT ON public\\.attendance_record_events/);
-  assert.match(definitions.get("db06_attendance_events_no_mutation"),/BEFORE (?:UPDATE OR DELETE|DELETE OR UPDATE) ON public\\.attendance_record_events/);
-  assert.match(definitions.get("db06_attendance_events_no_truncate"),/BEFORE TRUNCATE ON public\\.attendance_record_events/);
-  assert.match(definitions.get("db06_attendance_record_version_guard"),/BEFORE UPDATE ON public\\.attendance_records/);
-  assert.match(definitions.get("db06_attendance_event_required"),/AFTER INSERT OR UPDATE ON public\\.attendance_records/);
+  assert.match(definitions.get("db06_attendance_event_scope_guard"),/BEFORE INSERT ON public\.attendance_record_events/);
+  assert.match(definitions.get("db06_attendance_events_no_mutation"),/BEFORE (?:UPDATE OR DELETE|DELETE OR UPDATE) ON public\.attendance_record_events/);
+  assert.match(definitions.get("db06_attendance_events_no_truncate"),/BEFORE TRUNCATE ON public\.attendance_record_events/);
+  assert.match(definitions.get("db06_attendance_record_version_guard"),/BEFORE UPDATE ON public\.attendance_records/);
+  assert.match(definitions.get("db06_attendance_event_required"),/AFTER INSERT OR UPDATE ON public\.attendance_records/);
   const required=rows.find(x=>x.tgname==="db06_attendance_event_required");
   assert.equal(required.table_name,"attendance_records");
   assert.equal(required.tgdeferrable,true);
