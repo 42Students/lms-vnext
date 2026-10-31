@@ -25,6 +25,7 @@ on:
       - "drizzle/meta/_journal.json"
       - "drizzle/meta/0320_snapshot.json"
       - "tests/db045-registered-grade-history-pg.test.mjs"
+      - "tests/db045-original-30-witnesses.test.mjs"
       - "tests/support/db045-immutable-grade-fixture-cleanup.mjs"
       - "tests/integration/courses-c4a-assignments.test.ts"
       - "tests/integration/courses-c4c-assessment-progress.test.ts"
@@ -85,6 +86,8 @@ jobs:
         run: npm run db:test:prepare
       - name: Registered migration idempotence
         run: npm run db:migrate
+      - name: Original 30-check DB045 witnessed-coverage contract
+        run: node --test tests/db045-original-30-witnesses.test.mjs
       - name: Grade-history protection and missing-submission negative witnesses
         run: node --test tests/db045-registered-grade-history-pg.test.mjs
       - name: Grade, publish and immutable test-fixture teardown integration

@@ -894,6 +894,38 @@ describe("courses C4A assignments against PostgreSQL", () => {
       version: 2,
     });
 
+
+    // DB045: a pure HIDE is an audited, independent publication transition.
+    // A direct publication reversal cannot silently erase visibility without
+    // an immutable HIDE_GRADE event, and a forged HIDE cannot alter scores.
+    await expect(pool.query(
+      `update assignment_submissions set grade_published=false,
+       version=version+1 where id=$1`,[submitted.id],
+    )).rejects.toMatchObject({code:"23514"});
+    await expect(pool.query(`
+      insert into assignment_grade_events(
+        assignment_submission_id,assignment_id,delivery_id,learner_membership_id,
+        college_id,actor_user_id,actor_membership_id,actor_role,action,
+        previous_points,new_points,previous_feedback,new_feedback,
+        previous_grading_status,new_grading_status,
+        previous_grade_published,new_grade_published,
+        previous_graded_by_user_id,new_graded_by_user_id,
+        previous_graded_at,new_graded_at,
+        submission_version_before,submission_version_after
+      )
+      select s.id,s.assignment_id,s.delivery_id,s.membership_id,
+        $2::uuid,$3::uuid,$4::uuid,'FACULTY','HIDE_GRADE',
+        s.points_awarded,s.points_awarded+1,s.feedback,s.feedback,
+        s.grading_status::text,s.grading_status::text,
+        true,false,s.graded_by_user_id,s.graded_by_user_id,
+        s.graded_at,s.graded_at,s.version,s.version+1
+      from assignment_submissions s where s.id=$1
+    `,[
+      submitted.id,SEED_IDS.collegeA,faculty.user.id,faculty.membership!.id,
+    ])).rejects.toMatchObject({
+      code:"23514",constraint:"assignment_grade_events_shape_ck",
+    });
+
     // Published idempotency is allowed only at the CURRENT version.
     // A stale browser token must not silently succeed or create an audit.
     await expect(publishAssignmentGrade(

@@ -451,6 +451,35 @@ describe("College Admin attendance tenant isolation with PostgreSQL", () => {
     expect(after.rows).toEqual(before.rows);
   });
 
+
+  it.each([
+    {label:"status", setClause:"status='PRESENT'"},
+    {label:"note", setClause:"note='DB045 unversioned note'"},
+    {label:"marker", setClause:"marked_by_user_id='30000000-0000-4000-8000-000000000002'::uuid"},
+    {label:"timestamp", setClause:"marked_at=marked_at+interval '1 second'"},
+  ])("DB045 rejects unversioned $label changes even before deferred audit checks",async({setClause})=>{
+    const baseline=await pool.query<{
+      status:string;note:string|null;marked_by_user_id:string;marked_at:Date;version:number;
+    }>(
+      "select status,note,marked_by_user_id,marked_at,version from attendance_records where schedule_event_id=$1",
+      [foreign.event],
+    );
+    expect(baseline.rows).toHaveLength(1);
+    await expect(pool.query(
+      `update attendance_records set ${setClause} where schedule_event_id=$1`,
+      [foreign.event],
+    )).rejects.toMatchObject({
+      code:"23514",message:expect.stringContaining("correction requires next version"),
+    });
+    const after=await pool.query<{
+      status:string;note:string|null;marked_by_user_id:string;marked_at:Date;version:number;
+    }>(
+      "select status,note,marked_by_user_id,marked_at,version from attendance_records where schedule_event_id=$1",
+      [foreign.event],
+    );
+    expect(after.rows).toEqual(baseline.rows);
+  });
+
   it.each([
     {label:"note-only",setClause:"note='DB045 unaudited note',version=version+1"},
     {label:"marker-time-only",setClause:"marked_at=marked_at+interval '1 second',version=version+1"},
