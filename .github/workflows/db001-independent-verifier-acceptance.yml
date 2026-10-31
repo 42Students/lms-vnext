@@ -40,6 +40,7 @@ on:
       - "tests/integration/placements-evaluation-config.test.ts"
       - "tests/integration/placements-role-options.test.ts"
       - "tests/integration/db10-global-email-suppression-service.test.ts"
+      - "tests/integration/college-department-insights-denial.test.ts"
       - ".github/workflows/db001-independent-verifier-acceptance.yml"
 permissions:
   contents: read
