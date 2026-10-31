@@ -60,7 +60,7 @@
       "done": false,
       "dependsOn": [],
       "implementationCheckpoint": {
-        "status": "DRIZZLE_V7_0316_PARSER_FIXED_DRIFT_GUARD_STILL_FAILS_CLOSED",
+        "status": "CANONICAL_BASELINE_GENERATOR_AND_REGISTERED_PG_REPLAY_GREEN_FULL_12_GATE_UNACCEPTED",
         "verifiedScope": "Verifier acceptance receipts now remove all PostgreSQL URL query and fragment data, and child-output redaction removes URL query/fragment secrets even when the printed URL differs from environment variables.",
         "sourceCommits": [
           "545481e79e275235f4ce6bb64b2b90314469e8da",
@@ -89,7 +89,25 @@
         "evidenceIsNotAcceptance": true,
         "scope": "Source snapshot parse repaired; standalone verifier runs on PG17 but correctly rejects generated untracked Drizzle schema drift before executing remaining 12 gates.",
         "sourceFixCommit": "e4b49fe10a7872666da08b9099c8566de6d0e0c6",
-        "latestFailedEvidenceRun": "https://github.com/42Students/lms-vnext/actions/runs/41128343067"
+        "latestFailedEvidenceRun": "https://github.com/42Students/lms-vnext/actions/runs/41128343067",
+        "latestProgress": {
+          "recordedOn": "2026-10-31",
+          "baselineMigration": "0327_db001_canonical_metadata_baseline",
+          "accepted": false,
+          "observedProvenSteps": "Journal verification, canonical Drizzle generation with 'No schema changes', tracked/untracked drift checks, disposable PG17 zero-to-head replay, migration idempotence, catalog, DB078, DB09 CRM and secure-share negative witnesses all passed at pinned source before static suite.",
+          "precedingRun": {
+            "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/41152108930",
+            "commitSha": "6d7e9fd85e1fa226f78e695f0575852a500afc0a",
+            "result": "FAIL_AT_DB_PARITY_SOURCE_TESTS_BEFORE_INTEGRATION",
+            "remainingStaticFailures": "DB41 parser assumed newline-plus-single-close, misread valid nested attendance CHECK. Fixed afterward."
+          },
+          "parserFixCommit": "36ddc89d460d31f04aa2d769571ae79ba782618b",
+          "parserRegressionCommit": "cc46fc68bf0c013f77015a5d1b15ab0e8a4f571f",
+          "sourceSafetyFixturesAligned": true,
+          "latestFullGateRunUrl": "https://github.com/42Students/lms-vnext/actions/runs/41152219029",
+          "latestFullGateResultAtRecording": "IN_PROGRESS_NOT_ACCEPTANCE",
+          "nextGate": "Require completed exact-SHA 12/12 PASS with PostgreSQL17 and final clean source; rerun at current journal head if subsequent migrations change baseline."
+        }
       }
     },
     {
