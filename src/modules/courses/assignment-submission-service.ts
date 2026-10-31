@@ -200,6 +200,49 @@ async function requireAssignmentGradeAccess(
   );
 }
 
+/**
+ * Route FILE submissions through the registered DB016 one-shot transaction.
+ * Keep this as a separate function rather than an early type-narrowing branch:
+ * the staged DB053 compatibility source remains checked until the final
+ * receipt reconciliation, while the public route never executes it.
+ */
+async function submitCanonicalFileIfRequested(
+  context: RequestContext,
+  assignmentId: string,
+  input: ReturnType<typeof submitAssignmentInputSchema.parse>,
+) {
+  if (input.submissionType !== "FILE") return null;
+  const fileIds = input.uploadReceiptIds ??
+    (input.uploadReceiptId ? [input.uploadReceiptId] : []);
+  if (!fileIds.length) {
+    throw new CoursesServiceError("ASSIGNMENT_UPLOAD_RECEIPT_INVALID");
+  }
+  const bound = await submitAssignmentWithFiles(context, assignmentId, {
+    deliveryId: input.deliveryId,
+    fileIds,
+    textContent: input.textContent ?? null,
+    links: input.links ?? [],
+  });
+  const [persisted] = await getDb()
+    .select()
+    .from(assignmentSubmissions)
+    .where(eq(assignmentSubmissions.id, bound.submission.id))
+    .limit(1);
+  if (!persisted) {
+    throw new CoursesServiceError("ASSIGNMENT_SUBMISSION_NOT_FOUND");
+  }
+  const files = bound.files.map(file => ({
+    originalName: file.originalName,
+    mimeType: file.contentType,
+    sizeBytes: file.sizeBytes,
+  }));
+  return toLearnerSubmission({
+    ...persisted,
+    file: files[0] ?? null,
+    files,
+  });
+}
+
 export async function submitCourseAssignment(
   context: RequestContext,
   assignmentIdInput: string,
@@ -214,41 +257,10 @@ export async function submitCourseAssignment(
       rawInput,
     );
 
-  // DB-018 compatibility cutover: the old uploadReceiptId input aliases
-  // the live DB016 verified storage file ID. Consume it through the same
-  // registered one-shot FILE producer used by the current learner UI.
-  // Never execute the unregistered DB053 duplicate file relation on this path.
-  if (input.submissionType === "FILE") {
-    const fileIds = input.uploadReceiptIds ??
-      (input.uploadReceiptId ? [input.uploadReceiptId] : []);
-    if (!fileIds.length) {
-      throw new CoursesServiceError("ASSIGNMENT_UPLOAD_RECEIPT_INVALID");
-    }
-    const bound = await submitAssignmentWithFiles(context, assignmentId, {
-      deliveryId: input.deliveryId,
-      fileIds,
-      textContent: input.textContent ?? null,
-      links: input.links ?? [],
-    });
-    const [persisted] = await getDb()
-      .select()
-      .from(assignmentSubmissions)
-      .where(eq(assignmentSubmissions.id, bound.submission.id))
-      .limit(1);
-    if (!persisted) {
-      throw new CoursesServiceError("ASSIGNMENT_SUBMISSION_NOT_FOUND");
-    }
-    const files = bound.files.map(file => ({
-      originalName: file.originalName,
-      mimeType: file.contentType,
-      sizeBytes: file.sizeBytes,
-    }));
-    return toLearnerSubmission({
-      ...persisted,
-      file: files[0] ?? null,
-      files,
-    });
-  }
+  // This returns null for TEXT/LINK, and a persisted DB016 FILE result
+  // otherwise. No runtime call reaches the unregistered DB053 tables.
+  const canonicalFile = await submitCanonicalFileIfRequested(context, assignmentId, input);
+  if (canonicalFile) return canonicalFile;
 
   const assignment =
     await loadCourseAssignmentScope(
