@@ -15,13 +15,18 @@ test("legacy upload route binds to registered DB016 private-file grants", () => 
 });
 
 test("legacy FILE submissions use the registered one-shot transaction", () => {
-  const branch = submit.indexOf('if (input.submissionType === "FILE") {');
-  const fallback = submit.indexOf("const assignment =\n    await loadCourseAssignmentScope(", branch);
-  assert.ok(branch > 0 && fallback > branch);
-  const compatibility = submit.slice(branch, fallback);
+  const helper = submit.indexOf("async function submitCanonicalFileIfRequested(");
+  const entry = submit.indexOf("export async function submitCourseAssignment(", helper);
+  const fallback = submit.indexOf("const assignment =\n    await loadCourseAssignmentScope(", entry);
+  assert.ok(helper > 0 && entry > helper && fallback > entry);
+  const compatibility = submit.slice(helper, entry);
+  assert.match(compatibility, /input\.submissionType !== "FILE"/);
   assert.match(compatibility, /submitAssignmentWithFiles\(context, assignmentId/);
   assert.match(compatibility, /uploadReceiptIds/);
   assert.match(compatibility, /return toLearnerSubmission/);
+  const publicRoute = submit.slice(entry, fallback);
+  assert.match(publicRoute, /await submitCanonicalFileIfRequested\(context, assignmentId, input\)/);
+  assert.match(publicRoute, /if \(canonicalFile\) return canonicalFile/);
   assert.match(canonical, /\.orderBy\(asc\(assignmentSubmissionFiles\.id\)\)/);
   assert.match(canonical, /\.for\("update"\)/);
   assert.match(canonical, /STORAGE_FILE_NOT_READY/);
