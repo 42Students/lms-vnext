@@ -24,6 +24,19 @@ on:
       - "docs/planning/sql/db06-assessment-attendance-history-candidate.sql"
       - "scripts/db-independent-postgres-version.mjs"
       - "tests/integration/db001-canonical-baseline-pg.test.ts"
+      # Full DB001 gate exercises these real PostgreSQL fixtures; rerun it
+      # when a regression is repaired instead of leaving only a stale receipt.
+      - "tests/integration/mentor-notification-acknowledgment.test.ts"
+      - "tests/integration/tpo-notification-acknowledgment.test.ts"
+      - "tests/integration/placements-p8-offers.test.ts"
+      - "tests/integration/placements-p7-recruiters.test.ts"
+      - "tests/integration/placements-requests.test.ts"
+      - "tests/integration/courses-c3-progress.test.ts"
+      - "tests/integration/courses-ui2a-faculty.test.ts"
+      - "tests/integration/college-notice-inbox.test.ts"
+      - "tests/integration/db06-assessment-parent-scope.test.ts"
+      - "tests/support/learner-positive-fixture.ts"
+      - "tests/integration/learner-positive-path-fixtures.test.ts"
       - ".github/workflows/db001-independent-verifier-acceptance.yml"
 permissions:
   contents: read
