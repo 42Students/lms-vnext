@@ -735,12 +735,18 @@ export async function updateSectionScheduleEvent(
       endsAt: sectionScheduleEvents.endsAt,
       facultyMembershipId: sectionScheduleEvents.facultyMembershipId,
       lectureHallId: sectionScheduleEvents.lectureHallId,
+      updatedAt: sectionScheduleEvents.updatedAt,
       status: sectionScheduleEvents.status,
     }).from(sectionScheduleEvents)
       .where(eq(sectionScheduleEvents.id, eventId))
       .for("update").limit(1);
     if (!current || current.status !== "SCHEDULED") {
       throw new AcademicsServiceError("SCHEDULE_EVENT_NOT_FOUND");
+    }
+    // P5-R22: the second editor must observe the first committed version
+    // after acquiring the row lock, then fail without touching any fields.
+    if (current.updatedAt.getTime() !== new Date(input.expectedUpdatedAt).getTime()) {
+      throw new AcademicsServiceError("SCHEDULE_EVENT_STALE_VERSION");
     }
     const startsAt = input.startsAt ? new Date(input.startsAt) : current.startsAt;
     const endsAt = input.endsAt ? new Date(input.endsAt) : current.endsAt;
@@ -784,7 +790,9 @@ export async function updateSectionScheduleEvent(
         ...(requestedRoom !== undefined
           ? { lectureHallId: requestedRoom }
           : {}),
-        updatedAt: new Date(),
+        // Clock time alone can tie the previous millisecond. Advance even
+        // for rapid edits so no two committed writes share a visible token.
+        updatedAt: sql<Date>`greatest(${sectionScheduleEvents.updatedAt} + interval '1 millisecond', clock_timestamp())`,
       })
       .where(
         and(
@@ -793,13 +801,14 @@ export async function updateSectionScheduleEvent(
             sectionScheduleEvents.status,
             "SCHEDULED",
           ),
+          sql`date_trunc('milliseconds', ${sectionScheduleEvents.updatedAt}) = ${new Date(input.expectedUpdatedAt).toISOString()}::timestamptz`,
         ),
       )
       .returning();
 
     if (!updated) {
       throw new AcademicsServiceError(
-        "SCHEDULE_EVENT_NOT_FOUND",
+        "SCHEDULE_EVENT_STALE_VERSION",
       );
     }
 

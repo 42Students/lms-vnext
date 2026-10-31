@@ -375,6 +375,9 @@ export function adaptLegacyClassScheduleCreate(
 export const updateSectionScheduleEventInputSchema =
   z
     .object({
+      // Mandatory last-seen version from the scoped schedule read. A missing
+      // token must not silently opt a client into last-write-wins.
+      expectedUpdatedAt: scheduleDateTimeSchema,
       facultyMembershipId:
         membershipIdSchema.nullable().optional(),
       deliveryId: z.string().uuid().nullable().optional(),
@@ -397,8 +400,8 @@ export const updateSectionScheduleEventInputSchema =
     })
     .refine(
       (value) =>
-        Object.values(value).some(
-          (item) => item !== undefined,
+        Object.entries(value).some(
+          ([field, item]) => field !== "expectedUpdatedAt" && item !== undefined,
         ),
       "At least one schedule field is required",
     );

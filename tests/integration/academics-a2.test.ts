@@ -1016,6 +1016,7 @@ describe("academics A2 against PostgreSQL", () => {
         collegeAdmin,
         event.id,
         {
+          expectedUpdatedAt: event.updatedAt.toISOString(),
           title: "A2 Orientation Updated",
           location: "Auditorium",
         },
@@ -1124,13 +1125,86 @@ describe("academics A2 against PostgreSQL", () => {
       endsAt: "2026-07-12T05:30:00.000Z",
     });
     await closeDuring(() => updateSectionScheduleEvent(
-      collegeAdmin, existing.id, {title: "P5-R11 forbidden stale edit"},
+      collegeAdmin, existing.id, {
+        expectedUpdatedAt: existing.updatedAt.toISOString(),
+        title: "P5-R11 forbidden stale edit",
+      },
     ));
     const persisted = await pool.query<{title: string}>(
       "SELECT title FROM section_schedule_events WHERE section_id=$1",
       [structure.sectionA.id],
     );
     expect(persisted.rows).toEqual([{title: "P5-R11 original session"}]);
+  });
+
+  it("P5-R22 rejects the losing schedule editor with two PostgreSQL writers", async () => {
+    const structure = await createStructure();
+    const event = await createSectionScheduleEvent(collegeAdmin, {
+      sectionId: structure.sectionA.id,
+      title: "P5-R22 initial",
+      startsAt: "2026-07-13T04:30:00.000Z",
+      endsAt: "2026-07-13T05:30:00.000Z",
+    });
+    const expectedUpdatedAt = event.updatedAt.toISOString();
+    const blocker = await pool.connect();
+    let attempts: Promise<Awaited<ReturnType<typeof updateSectionScheduleEvent>>>[] = [];
+    try {
+      await blocker.query("BEGIN");
+      await blocker.query(
+        "SELECT id FROM section_schedule_events WHERE id=$1 FOR UPDATE",
+        [event.id],
+      );
+      // Two independent requests carry the same last-seen timestamp.
+      // Hold an external row lock to prove both writers reach PostgreSQL
+      // before either is permitted to commit.
+      attempts = ["P5-R22 writer A", "P5-R22 writer B"].map((title) =>
+        updateSectionScheduleEvent(collegeAdmin, event.id, {
+          expectedUpdatedAt,
+          title,
+        }),
+      );
+      const deadline = Date.now() + 10_000;
+      let blocked = 0;
+      while (Date.now() < deadline) {
+        const activity = await pool.query<{ blocked: string }>(
+          `SELECT count(*)::text AS blocked FROM pg_stat_activity
+           WHERE datname=current_database()
+             AND pid <> pg_backend_pid()
+             AND wait_event_type='Lock'
+             AND query ILIKE '%section_schedule_events%'`,
+        );
+        blocked = Number(activity.rows[0]?.blocked ?? 0);
+        if (blocked >= 2) break;
+        await new Promise((resolve) => setTimeout(resolve, 25));
+      }
+      expect(blocked, "Both independent schedule writers must reach the held event row").toBeGreaterThanOrEqual(2);
+    } finally {
+      await blocker.query("ROLLBACK");
+      blocker.release();
+    }
+    const results = await Promise.allSettled(attempts);
+    const successes = results.filter((result) => result.status === "fulfilled");
+    const failures = results.filter((result) => result.status === "rejected");
+    expect(successes).toHaveLength(1);
+    expect(failures).toHaveLength(1);
+    expect(failures[0]).toMatchObject({
+      status: "rejected",
+      reason: { code: "SCHEDULE_EVENT_STALE_VERSION" },
+    });
+    const winner = successes[0];
+    expect(winner?.status).toBe("fulfilled");
+    if (winner?.status !== "fulfilled") throw new Error("Expected one committed writer");
+    expect(winner.value.updatedAt.getTime()).toBeGreaterThan(event.updatedAt.getTime());
+    const persisted = await pool.query<{title: string; updated_at: Date}>(
+      "SELECT title, updated_at FROM section_schedule_events WHERE id=$1",
+      [event.id],
+    );
+    expect(persisted.rows[0]?.title).toBe(winner.value.title);
+    expect(persisted.rows[0]?.updated_at.getTime()).toBe(winner.value.updatedAt.getTime());
+    await expect(updateSectionScheduleEvent(collegeAdmin, event.id, {
+      expectedUpdatedAt,
+      title: "P5-R22 stale replay",
+    })).rejects.toMatchObject({code:"SCHEDULE_EVENT_STALE_VERSION"});
   });
 
 });
