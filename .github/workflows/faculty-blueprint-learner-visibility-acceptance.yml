@@ -1,0 +1,106 @@
+name: Faculty Blueprint learner visibility acceptance
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/faculty-blueprint-learner-visibility-acceptance.yml"
+      - "tests/e2e/faculty-blueprint-publication-closure.spec.ts"
+      - "src/components/courses/faculty-lesson-authoring.tsx"
+      - "src/components/courses/faculty-course-workspace.tsx"
+      - "src/modules/courses/faculty-content-input-model.ts"
+      - "src/modules/courses/lesson-content-service.ts"
+permissions:
+  contents: read
+  statuses: write
+concurrency:
+  group: faculty-blueprint-learner-visibility-${{ github.sha }}
+  cancel-in-progress: false
+jobs:
+  pg-browser:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    services:
+      postgres:
+        image: postgres:17-alpine
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: lms_vnext_e2e
+        ports: ["5432:5432"]
+        options: >-
+          --health-cmd "pg_isready -U postgres -d lms_vnext_e2e"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+    env:
+      DATABASE_URL: postgresql://postgres:postgres@127.0.0.1:5432/lms_vnext_e2e
+      TEST_DATABASE_URL: postgresql://postgres:postgres@127.0.0.1:5432/lms_vnext_e2e
+      E2E_DATABASE_URL: postgresql://postgres:postgres@127.0.0.1:5432/lms_vnext_e2e
+      E2E_AUTH_ENABLED: "true"
+      DB03_ISOLATED_TEST_DATABASE: "1"
+      APP_ENV: development
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Verify exact revision and database migration journal
+        run: |
+          test "$(git rev-parse HEAD)" = "$GITHUB_SHA"
+          npm run db:journal:verify
+      - name: Unit-test Faculty Blueprint authoring and visibility models
+        run: >-
+          npx vitest run
+          tests/unit/faculty-blueprint-add-target.test.ts
+          tests/unit/faculty-blueprint-full-content-order.test.ts
+          tests/unit/faculty-blueprint-empty-states-closure.test.tsx
+      - run: npx playwright install --with-deps chromium
+      - name: Prepare strictly disposable PostgreSQL E2E database
+        run: npm run db:e2e:prepare
+      - name: Verify own-Section authoring and IST scheduling in PostgreSQL
+        run: >-
+          npx vitest run --config vitest.db.config.ts
+          tests/integration/faculty-mentor-positive-courses.test.ts
+          -t "authors Section quiz questions|writes a confirmed own-Section assignment draft|persists IST Faculty schedule inputs"
+      - name: Generate isolated authentication secrets
+        shell: bash
+        run: |
+          echo "E2E_AUTH_SECRET=$(openssl rand -hex 32)" >> "$GITHUB_ENV"
+          echo "AUTH_SECRET=$(openssl rand -hex 32)" >> "$GITHUB_ENV"
+          echo "PLATFORM_HOSTS=localhost,127.0.0.1" >> "$GITHUB_ENV"
+      - name: Verify Faculty-published Section Resource is learner-visible then archived
+        run: >-
+          npx playwright test
+          tests/e2e/faculty-blueprint-publication-closure.spec.ts
+          --workers=1
+      - name: Preserve focused browser failure evidence
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: faculty-blueprint-learner-visibility-${{ github.sha }}
+          path: |
+            test-results/
+            playwright-report/
+          retention-days: 3
+          if-no-files-found: ignore
+  record_result:
+    if: ${{ always() }}
+    needs: [pg-browser]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/github-script@v7
+        with:
+          script: |
+            const passed = "${{ needs.pg-browser.result }}" === "success";
+            await github.rest.repos.createCommitStatus({
+              owner:context.repo.owner,repo:context.repo.repo,sha:context.sha,
+              state:passed?"success":"failure",
+              context:"faculty-blueprint-learner-visibility-acceptance/pg-browser",
+              description:passed
+                ?"Faculty-to-Learner visibility and archive PG/browser passed"
+                :"Faculty learner visibility acceptance failed",
+              target_url:`${context.serverUrl}/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}`,
+            });
