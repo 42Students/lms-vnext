@@ -145,17 +145,18 @@ test("DB014 registered replay plus staged event/notification/group tenant bounda
     });
 
     await t.test("activity actor membership revocation serializes and denies stale writers", async () => {
-      // A fresh scoped actor makes this a real DB014 activity-guard witness,
-      // independent of the learner used by later group-history race tests.
-      const actorUser=randomUUID(), actorMembership=randomUUID();
-      await db.query(
-        "INSERT INTO users(id,identity_uid,display_name) VALUES ($1,$2,'DB014 activity lock actor')",
-        [actorUser,"db014-activity-actor-"+actorUser],
+      // The revoker runs in another PostgreSQL session. An uncommitted
+      // membership fixture in this test transaction is invisible there, so
+      // UPDATE 0 would falsely masquerade as a missing SHARE lock.
+      // Reuse a committed, active seed membership; all test writes roll back.
+      const actorMembership=SEED.learnerCollegeAMembership;
+      const actorRows=await db.query(
+        "SELECT user_id FROM college_memberships WHERE id=$1 AND college_id=$2 AND status='ACTIVE'",
+        [actorMembership,SEED.collegeA],
       );
-      await db.query(
-        "INSERT INTO college_memberships(id,user_id,college_id,status) VALUES($1,$2,$3,'ACTIVE')",
-        [actorMembership,actorUser,SEED.collegeA],
-      );
+      assert.equal(actorRows.rowCount,1,
+        "DB014 actor lock witness requires a committed active membership");
+      const actorUser=actorRows.rows[0].user_id;
       const accepted=await writeEvent(db,{
         actorUser,actorMembership,
       });
