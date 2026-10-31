@@ -122,6 +122,8 @@ export { db10AuditFindingFiles } from "./db10-audit-findings.draft";
 // migration are independently registered. This explicit named export exposes
 // the proposed grade-event model for parity review; it does not apply its SQL.
 export {assignmentGradeEventsStaged} from "./db06-history-staged";
+// DB045 now registers and enforces the canonical attendance event ledger.
+export {attendanceRecordEventsStaged as attendanceRecordEvents} from "./db06-history-staged";
 
 // DB10 log-alert tables exist in registered migration 0133; no poller,
 // digest sender or automatically trusted legacy-account marker is enabled.

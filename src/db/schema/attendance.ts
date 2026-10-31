@@ -155,6 +155,7 @@ export const attendanceRecords = pgTable(
     })
       .notNull()
       .defaultNow(),
+    version: integer("version").notNull().default(0),
     updatedAt: timestamp("updated_at", {
       withTimezone: true,
     })
@@ -180,6 +181,7 @@ export const attendanceRecords = pgTable(
       table.scheduleEventId,
       table.status,
     ),
+    check("attendance_records_version_ck", sql`${table.version} >= 0`),
     check(
       "attendance_records_status_ck",
       sql`${table.status} in ('PRESENT', 'ABSENT', 'EXCUSED', 'MEDICAL', 'LATE')`,

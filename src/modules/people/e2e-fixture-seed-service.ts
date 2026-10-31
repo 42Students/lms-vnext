@@ -18,11 +18,12 @@ import {
  placementJobRounds,placementJobs,placementRoundCandidateSlots,
  placementSeasons,programs,programTerms,programTermCourses,projectInstances,projectMembers,
  projectTemplates,projectTemplateVersions,sectionEnrollments,sections,
- sectionScheduleEvents,
+ sectionScheduleEvents,sectionScheduleEventCourses,
  systemRoles,users,
 } from "@/db/schema";
 import type {RequestContext} from "@/modules/identity/context";
 import {isSuperAdmin} from "@/modules/identity/context";
+import {appendAttendanceHistoryEvent} from "@/modules/attendance/history-event";
 import {projectTemplateBlueprintSchema} from "@/modules/projects/validation";
 import {learnerProfileDocumentSchema} from "@/modules/people/profile-validation";
 import {
@@ -441,15 +442,24 @@ export async function seedIsolatedE2EAcademicGraph(
    location:"E2E Hall "+namespace,
   }).onConflictDoNothing();
   seeded.add("classScheduleA");
+  await tx.insert(sectionScheduleEventCourses).values({
+   scheduleEventId:d.classScheduleA,deliveryId:lessonDeliveries.A,
+  }).onConflictDoNothing();
   await tx.insert(attendanceSessions).values({
    scheduleEventId:d.classScheduleA,status:"MARKED",
    markedByUserId:manifestUsers.facultyA,markedAt:sessionAt,
   }).onConflictDoNothing();
-  await tx.insert(attendanceRecords).values({
+  const [attendanceInserted]=await tx.insert(attendanceRecords).values({
    id:d.attendanceA,scheduleEventId:d.classScheduleA,
    membershipId:d.learnerA,status:"PRESENT",
    markedByUserId:manifestUsers.facultyA,markedAt:sessionAt,
-  }).onConflictDoNothing();
+  }).onConflictDoNothing().returning();
+  if(attendanceInserted)await appendAttendanceHistoryEvent(tx,{
+   scheduleEventId:d.classScheduleA,deliveryId:lessonDeliveries.A,
+   collegeId:d.collegeA,actorUserId:manifestUsers.facultyA,
+   actorMembershipId:d.facultyA,actorRole:"FACULTY",
+   before:null,after:attendanceInserted,
+  });
   seeded.add("attendanceA");
 
   await tx.insert(db10Announcements).values({

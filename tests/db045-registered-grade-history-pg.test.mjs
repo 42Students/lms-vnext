@@ -34,7 +34,7 @@ async function mustReject23514(work) {
 }
 
 test("DB045 registered grade-ledger INSERT, row-mutation and TRUNCATE guards active", async () => {
-  assert.equal(journal.entries.at(-1)?.tag, "0322_db045_grade_event_enum_cast");
+  assert.equal(journal.entries.at(-1)?.tag, "0324_db045_attendance_immutable_history");
   await withRollback(async db => {
     const { rows } = await db.query(`
       SELECT tgname,tgenabled FROM pg_trigger
@@ -95,4 +95,23 @@ test("DB045 status comparisons convert submission enums to ledger text", async (
   const migration = readFileSync("drizzle/0322_db045_grade_event_enum_cast.sql", "utf8");
   assert.match(migration, /e\.previous_grading_status = OLD\.grading_status::text/);
   assert.match(migration, /e\.new_grading_status = NEW\.grading_status::text/);
+});
+
+test("DB045 attendance event scope, immutability and deferred requirements active",async()=>{
+ await withRollback(async db=>{
+  const {rows}=await db.query(`select tgrelid::regclass::text table_name,tgname,tgenabled,tgdeferrable,tginitdeferred
+   from pg_trigger where not tgisinternal and tgname in (
+    'db06_attendance_event_scope_guard','db06_attendance_events_no_mutation',
+    'db06_attendance_events_no_truncate','db06_attendance_record_version_guard',
+    'db06_attendance_event_required') order by tgname`);
+  assert.equal(rows.length,5);
+  assert.ok(rows.every(x=>x.tgenabled==="O"||x.tgenabled==="A"));
+  const required=rows.find(x=>x.tgname==="db06_attendance_event_required");
+  assert.equal(required.table_name,"attendance_records");
+  assert.equal(required.tgdeferrable,true);
+  assert.equal(required.tginitdeferred,true);
+ });
+});
+test("DB045 attendance event ledger rejects TRUNCATE",async()=>{
+ await withRollback(db=>mustReject23514(()=>db.query("TRUNCATE attendance_record_events")));
 });

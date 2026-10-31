@@ -2269,6 +2269,13 @@
       "when": 1793257810954,
       "tag": "0323_db020_registered_column_and_index_parity",
       "breakpoints": true
+    },
+    {
+      "idx": 324,
+      "version": "7",
+      "when": 1793257870954,
+      "tag": "0324_db045_attendance_immutable_history",
+      "breakpoints": true
     }
   ]
 }

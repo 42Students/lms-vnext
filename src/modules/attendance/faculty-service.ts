@@ -40,6 +40,7 @@ import {facultyAttendanceCorrectionTokenMatches,facultyAttendanceNextMarkedAt}
 import {facultyCorrectionDelta,facultyCorrectionReasonValid,
  facultyAttendanceChangedMemberships} from "./faculty-correction-audit-model";
 import {planAttendanceRecordTransitions} from "./attendance-record-transitions";
+import {appendAttendanceHistoryEvent,attendanceHistoryHasChanged} from "./history-event";
 
 const uuid = z.string().uuid();
 const sessionInputSchema = z
@@ -636,6 +637,10 @@ export async function markFacultyAttendance(
       id: attendanceRecords.id,
       membershipId: attendanceRecords.membershipId,
       status: attendanceRecords.status,
+      note: attendanceRecords.note,
+      markedByUserId: attendanceRecords.markedByUserId,
+      markedAt: attendanceRecords.markedAt,
+      version: attendanceRecords.version,
     }).from(attendanceRecords).where(and(
       eq(attendanceRecords.scheduleEventId, scheduleEventId),
       inArray(attendanceRecords.membershipId, [...submitted]),
@@ -660,12 +665,14 @@ export async function markFacultyAttendance(
       await tx.update(attendanceRecords).set({
         status: "PRESENT", note: markReason,
         markedByUserId: context.user.id, markedAt: now, updatedAt: now,
+        version: sql`${attendanceRecords.version} + 1`,
       }).where(inArray(attendanceRecords.id, changes.changeToPresentRecordIds));
     }
     if (changes.changeToAbsentRecordIds.length > 0) {
       await tx.update(attendanceRecords).set({
         status: "ABSENT", note: markReason,
         markedByUserId: context.user.id, markedAt: now, updatedAt: now,
+        version: sql`${attendanceRecords.version} + 1`,
       }).where(inArray(attendanceRecords.id, changes.changeToAbsentRecordIds));
     }
     if (changes.insertAbsentMembershipIds.length > 0) {
@@ -691,6 +698,31 @@ export async function markFacultyAttendance(
       );
     }
 
+
+    // DB045 exact immutable event for each changed/new row; no event for a
+    // no-op. Roll back all rows and events together if the session CAS fails.
+    const currentRecords = await tx.select({
+      id: attendanceRecords.id, membershipId: attendanceRecords.membershipId,
+      status: attendanceRecords.status, note: attendanceRecords.note,
+      markedByUserId: attendanceRecords.markedByUserId,
+      markedAt: attendanceRecords.markedAt, version: attendanceRecords.version,
+    }).from(attendanceRecords).where(and(
+      eq(attendanceRecords.scheduleEventId, scheduleEventId),
+      inArray(attendanceRecords.membershipId, [...submitted]),
+    ));
+    if (currentRecords.length !== submitted.size)
+      throw new CoursesServiceError("ATTENDANCE_ROSTER_CONFLICT");
+    const beforeByMembership = new Map(existingRecords.map(row=>[row.membershipId,row]));
+    for (const next of currentRecords) {
+      const before=beforeByMembership.get(next.membershipId)??null;
+      if (!attendanceHistoryHasChanged(before,next)) continue;
+      await appendAttendanceHistoryEvent(tx,{
+        scheduleEventId,deliveryId:delivery.deliveryId,
+        collegeId:context.membership!.collegeId,
+        actorUserId:context.user.id,actorMembershipId:context.membership!.id,
+        actorRole:"FACULTY",before,after:next,
+      });
+    }
     if (existingSession) {
       const [changed]=await tx
         .update(attendanceSessions)

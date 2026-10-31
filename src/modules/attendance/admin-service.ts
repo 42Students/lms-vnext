@@ -45,6 +45,7 @@ import {enqueueAttendanceParentSms,dispatchQueuedAttendanceParentSms} from "./pa
 import {legacyFormalTitle} from "@/modules/courses/course-legacy-parity-model";
 import {facultyAttendanceNextMarkedAt} from "./faculty-correction-token-model";
 import {adminAttendanceCorrectionChange,adminAttendanceRecordTokenMatches,adminAttendanceAuditEventType} from "./admin-correction-change-model";
+import {appendAttendanceHistoryEvent} from "./history-event";
 
 
 /** Options are independent reads. A failed class-offering query must never
@@ -675,8 +676,10 @@ export async function correctAdminAttendance(
       }
 
       const [priorRecord]=await tx.select({
-        id:attendanceRecords.id,status:attendanceRecords.status,note:attendanceRecords.note,
-        markedAt:attendanceRecords.markedAt,
+        id:attendanceRecords.id,membershipId:attendanceRecords.membershipId,
+        status:attendanceRecords.status,note:attendanceRecords.note,
+        markedByUserId:attendanceRecords.markedByUserId,
+        markedAt:attendanceRecords.markedAt,version:attendanceRecords.version,
       }).from(attendanceRecords).where(and(
         eq(attendanceRecords.scheduleEventId,scheduleEventId),
         eq(attendanceRecords.membershipId,input.membershipId),
@@ -704,22 +707,35 @@ export async function correctAdminAttendance(
       const correctedMarkedAt=facultyAttendanceNextMarkedAt(
         now,priorRecord?.markedAt??null,
       );
+      let savedRecord: typeof attendanceRecords.$inferSelect;
       if(priorRecord){
-        await tx.update(attendanceRecords).set({
+        const [updated]=await tx.update(attendanceRecords).set({
           status:input.status,note:change.nextNote,
           markedByUserId:context.user.id,
           markedAt:correctedMarkedAt,updatedAt:correctedMarkedAt,
-        }).where(eq(attendanceRecords.id,priorRecord.id));
+          version:sql`${attendanceRecords.version} + 1`,
+        }).where(eq(attendanceRecords.id,priorRecord.id)).returning();
+        if(!updated)throw new CoursesServiceError("ATTENDANCE_STALE_VERSION");
+        savedRecord=updated;
       }else{
-        // An explicit PRESENT note also deserves a durable review record;
-        // the default implicit PRESENT with no note remains a no-op.
-        await tx.insert(attendanceRecords).values({
+        // First explicit PRESENT/ABSENT row is durable MARK version zero.
+        const [inserted]=await tx.insert(attendanceRecords).values({
           scheduleEventId,membershipId:input.membershipId,
           status:input.status,note:change.nextNote,
           markedByUserId:context.user.id,
           markedAt:correctedMarkedAt,updatedAt:correctedMarkedAt,
-        });
+        }).returning();
+        if(!inserted)throw new CoursesServiceError("ATTENDANCE_STALE_VERSION");
+        savedRecord=inserted;
       }
+      const superActor=isSuperAdmin(context);
+      await appendAttendanceHistoryEvent(tx,{
+        scheduleEventId,deliveryId:delivery.deliveryId,collegeId:college.id,
+        actorUserId:context.user.id,
+        actorMembershipId:superActor?null:context.membership?.id??null,
+        actorRole:superActor?"SUPER_ADMIN":"COLLEGE_ADMIN",
+        before:priorRecord??null,after:savedRecord,
+      });
 
       // College Admin must never create a MARKED session: that would
       // falsely count all other learners present. However, if Faculty has
