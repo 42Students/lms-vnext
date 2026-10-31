@@ -53,11 +53,11 @@ async function graph(db:Sql,department:string,college:string,label:string,offeri
  const section=keep("sections",randomUUID()),section2=keep("sections",randomUUID()),course=keep("courses",randomUUID());
  const offering=keep("offerings",randomUUID()),delivery=keep("deliveries",randomUUID()),delivery2=keep("deliveries",randomUUID());
  const path=keep("paths",randomUUID()),lesson=keep("lessons",randomUUID());
- await db.query("INSERT INTO programs(id,department_id,name,code,duration_terms,status) VALUES($1,$2,$3,$4,8,'ACTIVE')",[program,department,`DB06 ${label} program`,`DB06-${label}-P-${program}`]);
- await db.query("INSERT INTO academic_periods(id,college_id,name,code,start_date,end_date,status) VALUES($1,$2,$3,$4,'2026-07-01','2027-06-30','ACTIVE')",[period,college,`DB06 ${label} period`,`DB06-${label}-T-${period}`]);
- await db.query("INSERT INTO cohorts(id,program_id,name,code,start_period_id,status) VALUES($1,$2,$3,$4,$5,'ACTIVE')",[cohort,program,`DB06 ${label} cohort`,`DB06-${label}-C-${cohort}`,period]);
- for(const [id,suffix] of [[section,"A"],[section2,"B"]] as const) await db.query("INSERT INTO sections(id,cohort_id,academic_period_id,name,code,status) VALUES($1,$2,$3,$4,$5,'ACTIVE')",[id,cohort,period,`DB06 ${label} section ${suffix}`,`DB06-${label}-S-${suffix}-${id}`]);
- await db.query("INSERT INTO courses(id,department_id,name,code,status) VALUES($1,$2,$3,$4,'ACTIVE')",[course,department,`DB06 ${label} course`,`DB06-${label}-COURSE-${course}`]);
+ await db.query("INSERT INTO programs(id,department_id,name,code,duration_terms,status) VALUES($1,$2,$3,$4,8,'ACTIVE')",[program,department,`DB06 ${label} program ${program}`,`DB06-${label}-P-${program}`]);
+ await db.query("INSERT INTO academic_periods(id,college_id,name,code,start_date,end_date,status) VALUES($1,$2,$3,$4,'2026-07-01','2027-06-30','ACTIVE')",[period,college,`DB06 ${label} period ${period}`,`DB06-${label}-T-${period}`]);
+ await db.query("INSERT INTO cohorts(id,program_id,name,code,start_period_id,status) VALUES($1,$2,$3,$4,$5,'ACTIVE')",[cohort,program,`DB06 ${label} cohort ${cohort}`,`DB06-${label}-C-${cohort}`,period]);
+ for(const [id,suffix] of [[section,"A"],[section2,"B"]] as const) await db.query("INSERT INTO sections(id,cohort_id,academic_period_id,name,code,status) VALUES($1,$2,$3,$4,$5,'ACTIVE')",[id,cohort,period,`DB06 ${label} section ${suffix} ${id}`,`DB06-${label}-S-${suffix}-${id}`]);
+ await db.query("INSERT INTO courses(id,department_id,name,code,status) VALUES($1,$2,$3,$4,'ACTIVE')",[course,department,`DB06 ${label} course ${course}`,`DB06-${label}-COURSE-${course}`]);
  // DB-005 registered schema requires canonical program-term identity and a
  // materialized CORE curriculum row. Seed those *explicitly*, never bypass
  // database tenant checks or loosen the production offering constraints.
@@ -133,6 +133,21 @@ async function bindElective(db:Sql,g:Graph,delivery:string,membership?:string){
 
 async function cleanup(){
  if(!pool)return;
+ // Grade history is append-only and holds RESTRICT references to its submission.
+ // In this exclusively disposable PostgreSQL suite, preserve the complete
+ // fixture graph once a valid immutable grade event exists. The entire test
+ // database is destroyed after acceptance; never disable an audit trigger.
+ if(made.submissions.length) {
+  const gradeEvidence=await pool.query(
+   "SELECT 1 FROM assignment_grade_events WHERE assignment_submission_id=ANY($1::uuid[]) LIMIT 1",
+   [made.submissions],
+  );
+  if(gradeEvidence.rowCount){
+   learnerEnrollment="";sectionEnrollment="";ownedLearnerMembership="";
+   clearMade();
+   return;
+  }
+ }
  if(made.attempts.length){await pool.query("DELETE FROM quiz_attempt_answers WHERE attempt_id=ANY($1::uuid[])",[made.attempts]);await pool.query("DELETE FROM quiz_attempts WHERE id=ANY($1::uuid[])",[made.attempts])}
  if(made.submissions.length)await pool.query("DELETE FROM assignment_submissions WHERE id=ANY($1::uuid[])",[made.submissions]);
  if(made.questions.length){await pool.query("DELETE FROM quiz_options WHERE question_id=ANY($1::uuid[])",[made.questions]);await pool.query("DELETE FROM quiz_questions WHERE id=ANY($1::uuid[])",[made.questions])}
