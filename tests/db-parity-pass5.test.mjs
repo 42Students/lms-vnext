@@ -371,6 +371,12 @@ test("DB18 full registered gate reruns on migrations and production notification
     "utf8",
   );
   assert.match(groupWitness, /assertDb018DisposableTarget\(process\.env, \{ serviceBound: true \}\)/);
+  const activityWitness = fs.readFileSync(
+    "tests/integration/activity-foundation.test.ts",
+    "utf8",
+  );
+  assert.match(activityWitness, /assertDb018DisposableTarget\(process\.env, \{ serviceBound: true \}\)/);
+  assert.doesNotMatch(activityWitness, /process\.env\.TEST_DATABASE_URL\s*\?\?\s*process\.env\.DATABASE_URL/);
 });
 
 test("DB18 mutation witnesses are fail-closed to an isolated database", () => {
