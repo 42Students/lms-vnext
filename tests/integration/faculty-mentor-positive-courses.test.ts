@@ -119,6 +119,11 @@ async function cleanup() {
     join programs p on p.id=ch.program_id
     where p.code like $1`,[codePattern]);
   await deleteDisposableAttendanceEvents(pool,fixtureEvents.rows.map(r=>r.id));
+  // DB014 0325 disallows cascading away submitted attendance evidence.
+  await pool.query(`delete from attendance_records
+    where schedule_event_id = any($1::uuid[])`,[fixtureEvents.rows.map(r=>r.id)]);
+  await pool.query(`delete from attendance_sessions
+    where schedule_event_id = any($1::uuid[])`,[fixtureEvents.rows.map(r=>r.id)]);
   // Clean in reverse FK order, exclusively fixture rows identified by C4POS
   // course / program codes; do not modify shared seeded people or tenants.
   // Linked course rows cascade from the dedicated fixture schedule events.
