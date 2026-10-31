@@ -180,9 +180,9 @@
     "focusedVitestTestsPassed": 50,
     "fullSuiteVitestTestsExecuted": 92,
     "fullSuiteVitestTestsPassed": 92,
-    "pendingConcurrencyAuthored": 2,
-    "additionalRegisteredConcurrencyRuntimeExecuted": 2,
-    "additionalRegisteredConcurrencyRuntimePassed": 2
+    "pendingConcurrencyAuthored": 0,
+    "additionalRegisteredConcurrencyRuntimeExecuted": 4,
+    "additionalRegisteredConcurrencyRuntimePassed": 4
   },
   "knownRedRaceWitnesses": [
     {
@@ -384,18 +384,22 @@
       "raceProbe": "P5-R23",
       "file": "tests/integration/groups-db03.test.ts",
       "title": "P5-R23 serializes active leave with waitlist promotion and concurrent join",
-      "state": "AUTHORED_AWAITING_REGISTERED_PG17",
-      "execution": "NOT_RUN",
-      "evidence": "Real independent group-row contention; asserts REMOVED old member, oldest waitlisted member ACTIVE, new join WAITLISTED, exact active_count and 5 immutable events. Requires full registered PG17 replay and accepted run URL."
+      "state": "REGISTERED_PG17_VERIFIED",
+      "execution": "PASS",
+      "evidence": "Full registered PostgreSQL 17 DB018 gate ran the named integration file and passed; source test and workflow paths confirmed. This is focused witness proof, not global DB018 acceptance.",
+      "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/41173574327",
+      "commitSha": "8ae95b8981d008efa1b3465efa3e976f0c7f1fe6"
     },
     {
       "id": "DB18-C08",
       "raceProbe": "P5-R20",
       "file": "tests/integration/db18-notification-race.test.ts",
       "title": "P5-R20 deduplicates concurrent delivery and retains the first read timestamp",
-      "state": "AUTHORED_AWAITING_REGISTERED_PG17",
-      "execution": "NOT_RUN",
-      "evidence": "Two delivered requests block on PostgreSQL receipt table, exactly one wins unique user/event key; two mark-read calls then block on the same receipt, each returns the committed first read_at. Requires exact-SHA registered PG17 run proof."
+      "state": "REGISTERED_PG17_VERIFIED",
+      "execution": "PASS",
+      "evidence": "Full registered PostgreSQL 17 DB018 gate ran the named integration file and passed; source test and workflow paths confirmed. This is focused witness proof, not global DB018 acceptance.",
+      "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/41173574327",
+      "commitSha": "8ae95b8981d008efa1b3465efa3e976f0c7f1fe6"
     }
   ],
   "registeredAdditionalConcurrencyWitnesses": [
