@@ -56,6 +56,14 @@ jobs:
         run: npm run db:migrate
       - name: Verify 28 source offer decisions against real registered PG17 constraints
         run: node --test tests/db019-db08-offer-physical-pg.test.mjs
+      - name: Execute real offer, joining, IDOR and revoked-role consumer witnesses
+        env:
+          DATABASE_URL: postgresql://postgres:postgres@127.0.0.1:5432/lms_vnext_test
+          DB03_ISOLATED_TEST_DATABASE: "1"
+        run: |
+          npx vitest run --config vitest.db.registered.config.ts \
+            tests/integration/placements-p8-offers.test.ts \
+            -t "issues an idempotent offer|keeps declined offers durable|PLACEMENTS-IDOR-01|PLACEMENTS-TPO-REVOKED-DB-01|TPO-JOIN-TRACKER-DB-35"
       - name: Scope boundary
         if: always()
         run: |
