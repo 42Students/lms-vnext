@@ -84,7 +84,19 @@
           "verifiedMapping": null,
           "producerConsumerEvidence": null,
           "dbTestEvidence": null,
-          "reviewDecision": null
+          "reviewDecision": {
+            "reviewStatus": "SOURCE_REVIEWED_PROPOSAL_NOT_VERIFIED",
+            "classification": "EXPLICIT_RUNTIME_GAP",
+            "targetRefs": [
+              "placement_application_screening_history.id"
+            ],
+            "sourceRationale": "Legacy integer screening row identity is not retained by the registered UUID screening history events.",
+            "outstandingProof": "Resolve exact old scoring record provenance and avoid inventing source identities for new status transitions.",
+            "frozenLegacyOracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+            "runtimeVerified": false,
+            "consumerVerified": false,
+            "retirementApproved": false
+          }
         },
         {
           "legacyColumn": "created_at",
@@ -102,7 +114,19 @@
           "verifiedMapping": null,
           "producerConsumerEvidence": null,
           "dbTestEvidence": null,
-          "reviewDecision": null
+          "reviewDecision": {
+            "reviewStatus": "SOURCE_REVIEWED_PROPOSAL_NOT_VERIFIED",
+            "classification": "EXPLICIT_RUNTIME_GAP",
+            "targetRefs": [
+              "placement_application_screening_history.created_at"
+            ],
+            "sourceRationale": "Source screening create instant may represent a score calculation rather than a current status transition.",
+            "outstandingProof": "Verify source chronology and prevent replay timestamp from masquerading as screening computation time.",
+            "frozenLegacyOracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+            "runtimeVerified": false,
+            "consumerVerified": false,
+            "retirementApproved": false
+          }
         },
         {
           "legacyColumn": "is_deleted",
@@ -116,7 +140,17 @@
           "verifiedMapping": null,
           "producerConsumerEvidence": null,
           "dbTestEvidence": null,
-          "reviewDecision": null
+          "reviewDecision": {
+            "reviewStatus": "SOURCE_REVIEWED_PROPOSAL_NOT_VERIFIED",
+            "classification": "EXPLICIT_RUNTIME_GAP",
+            "targetRefs": [],
+            "sourceRationale": "There is no soft-delete marker on the current append-only screening status history or live screening state.",
+            "outstandingProof": "Define privacy-aware tombstone/retention semantics instead of dropping suppressed historic assessments.",
+            "frozenLegacyOracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+            "runtimeVerified": false,
+            "consumerVerified": false,
+            "retirementApproved": false
+          }
         },
         {
           "legacyColumn": "updated_at",
@@ -134,7 +168,19 @@
           "verifiedMapping": null,
           "producerConsumerEvidence": null,
           "dbTestEvidence": null,
-          "reviewDecision": null
+          "reviewDecision": {
+            "reviewStatus": "SOURCE_REVIEWED_PROPOSAL_NOT_VERIFIED",
+            "classification": "PROPOSED_ACTIVE_FIELD_MAPPING",
+            "targetRefs": [
+              "placement_application_screenings.updated_at"
+            ],
+            "sourceRationale": "The current screening status record tracks updates but does not carry the scoring engine version.",
+            "outstandingProof": "Verify created/updated distinction and concurrent staff decision optimistic ordering.",
+            "frozenLegacyOracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+            "runtimeVerified": false,
+            "consumerVerified": false,
+            "retirementApproved": false
+          }
         },
         {
           "legacyColumn": "education_score",
@@ -150,7 +196,17 @@
           "verifiedMapping": null,
           "producerConsumerEvidence": null,
           "dbTestEvidence": null,
-          "reviewDecision": null
+          "reviewDecision": {
+            "reviewStatus": "SOURCE_REVIEWED_PROPOSAL_NOT_VERIFIED",
+            "classification": "EXPLICIT_RUNTIME_GAP",
+            "targetRefs": [],
+            "sourceRationale": "Legacy education_score is a derived numeric screening component with no separately registered score field.",
+            "outstandingProof": "Specify a versioned educational-score evidence model, including precision and role permissions.",
+            "frozenLegacyOracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+            "runtimeVerified": false,
+            "consumerVerified": false,
+            "retirementApproved": false
+          }
         },
         {
           "legacyColumn": "excluded_attributes",
@@ -166,7 +222,17 @@
           "verifiedMapping": null,
           "producerConsumerEvidence": null,
           "dbTestEvidence": null,
-          "reviewDecision": null
+          "reviewDecision": {
+            "reviewStatus": "SOURCE_REVIEWED_PROPOSAL_NOT_VERIFIED",
+            "classification": "EXPLICIT_RUNTIME_GAP",
+            "targetRefs": [],
+            "sourceRationale": "Legacy excluded_attributes JSON encodes screening omissions, not a current status or free-text reason.",
+            "outstandingProof": "Approve a structured privacy-preserving ruleset with explicit data-minimization and retention policy.",
+            "frozenLegacyOracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+            "runtimeVerified": false,
+            "consumerVerified": false,
+            "retirementApproved": false
+          }
         },
         {
           "legacyColumn": "explanation",
@@ -180,7 +246,20 @@
           "verifiedMapping": null,
           "producerConsumerEvidence": null,
           "dbTestEvidence": null,
-          "reviewDecision": null
+          "reviewDecision": {
+            "reviewStatus": "SOURCE_REVIEWED_PROPOSAL_NOT_VERIFIED",
+            "classification": "EXPLICIT_RUNTIME_GAP",
+            "targetRefs": [
+              "placement_application_screenings.internal_reason",
+              "placement_application_screenings.candidate_message"
+            ],
+            "sourceRationale": "A legacy scoring explanation may contain private factors and cannot automatically be exposed as candidate_message.",
+            "outstandingProof": "Classify each legacy explanation as staff-private versus candidate-approved before any projection.",
+            "frozenLegacyOracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+            "runtimeVerified": false,
+            "consumerVerified": false,
+            "retirementApproved": false
+          }
         },
         {
           "legacyColumn": "is_partial_score",
@@ -194,7 +273,17 @@
           "verifiedMapping": null,
           "producerConsumerEvidence": null,
           "dbTestEvidence": null,
-          "reviewDecision": null
+          "reviewDecision": {
+            "reviewStatus": "SOURCE_REVIEWED_PROPOSAL_NOT_VERIFIED",
+            "classification": "EXPLICIT_RUNTIME_GAP",
+            "targetRefs": [],
+            "sourceRationale": "Legacy partial score indicator is not a registered live screening-status attribute.",
+            "outstandingProof": "Define how missing inputs and partial-score confidence are calculated and surfaced without altering eligibility decisions.",
+            "frozenLegacyOracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+            "runtimeVerified": false,
+            "consumerVerified": false,
+            "retirementApproved": false
+          }
         },
         {
           "legacyColumn": "matched_skills",
@@ -210,7 +299,17 @@
           "verifiedMapping": null,
           "producerConsumerEvidence": null,
           "dbTestEvidence": null,
-          "reviewDecision": null
+          "reviewDecision": {
+            "reviewStatus": "SOURCE_REVIEWED_PROPOSAL_NOT_VERIFIED",
+            "classification": "EXPLICIT_RUNTIME_GAP",
+            "targetRefs": [],
+            "sourceRationale": "Legacy matched_skills JSON is scored model evidence rather than a durable approved shortlist decision.",
+            "outstandingProof": "Version the matching skill schema and prevent exposing other learners' private attributes.",
+            "frozenLegacyOracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+            "runtimeVerified": false,
+            "consumerVerified": false,
+            "retirementApproved": false
+          }
         },
         {
           "legacyColumn": "missing_skills",
@@ -226,7 +325,17 @@
           "verifiedMapping": null,
           "producerConsumerEvidence": null,
           "dbTestEvidence": null,
-          "reviewDecision": null
+          "reviewDecision": {
+            "reviewStatus": "SOURCE_REVIEWED_PROPOSAL_NOT_VERIFIED",
+            "classification": "EXPLICIT_RUNTIME_GAP",
+            "targetRefs": [],
+            "sourceRationale": "Legacy missing_skills JSON requires model/version semantics and privacy review before reuse.",
+            "outstandingProof": "Verify skill-dictionary mapping, explicit consent and candidate-visible redaction.",
+            "frozenLegacyOracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+            "runtimeVerified": false,
+            "consumerVerified": false,
+            "retirementApproved": false
+          }
         },
         {
           "legacyColumn": "overall_score",
@@ -242,7 +351,17 @@
           "verifiedMapping": null,
           "producerConsumerEvidence": null,
           "dbTestEvidence": null,
-          "reviewDecision": null
+          "reviewDecision": {
+            "reviewStatus": "SOURCE_REVIEWED_PROPOSAL_NOT_VERIFIED",
+            "classification": "EXPLICIT_RUNTIME_GAP",
+            "targetRefs": [],
+            "sourceRationale": "Legacy overall_score floating-point calculation is not captured by the current PENDING/HOLD/SHORTLISTED/REJECTED status table.",
+            "outstandingProof": "Approve score normalization and a reproducible auditable scoring algorithm before storing any target metric.",
+            "frozenLegacyOracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+            "runtimeVerified": false,
+            "consumerVerified": false,
+            "retirementApproved": false
+          }
         },
         {
           "legacyColumn": "screened_at",
@@ -258,7 +377,19 @@
           "verifiedMapping": null,
           "producerConsumerEvidence": null,
           "dbTestEvidence": null,
-          "reviewDecision": null
+          "reviewDecision": {
+            "reviewStatus": "SOURCE_REVIEWED_PROPOSAL_NOT_VERIFIED",
+            "classification": "EXPLICIT_RUNTIME_GAP",
+            "targetRefs": [
+              "placement_application_screenings.decided_at"
+            ],
+            "sourceRationale": "Scoring timestamp and an authorized staff shortlist decision are different events; the target date only records the latter.",
+            "outstandingProof": "Verify chronology of automated screening versus human decision and avoid fabricated decision dates.",
+            "frozenLegacyOracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+            "runtimeVerified": false,
+            "consumerVerified": false,
+            "retirementApproved": false
+          }
         },
         {
           "legacyColumn": "screened_by",
@@ -272,7 +403,19 @@
           "verifiedMapping": null,
           "producerConsumerEvidence": null,
           "dbTestEvidence": null,
-          "reviewDecision": null
+          "reviewDecision": {
+            "reviewStatus": "SOURCE_REVIEWED_PROPOSAL_NOT_VERIFIED",
+            "classification": "EXPLICIT_RUNTIME_GAP",
+            "targetRefs": [
+              "placement_application_screenings.decided_by_user_id"
+            ],
+            "sourceRationale": "Legacy screened_by free-text principal cannot safely be promoted to a current UUID user grant.",
+            "outstandingProof": "Approve actor mapping including automated engine versions and independent verified staff actions.",
+            "frozenLegacyOracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+            "runtimeVerified": false,
+            "consumerVerified": false,
+            "retirementApproved": false
+          }
         },
         {
           "legacyColumn": "screening_metadata",
@@ -288,7 +431,17 @@
           "verifiedMapping": null,
           "producerConsumerEvidence": null,
           "dbTestEvidence": null,
-          "reviewDecision": null
+          "reviewDecision": {
+            "reviewStatus": "SOURCE_REVIEWED_PROPOSAL_NOT_VERIFIED",
+            "classification": "EXPLICIT_RUNTIME_GAP",
+            "targetRefs": [],
+            "sourceRationale": "Unstructured legacy screening metadata must not be placed into public application or candidate-visible reasons.",
+            "outstandingProof": "Define allowlisted schema, PII minimization, retention and private-reader permissions.",
+            "frozenLegacyOracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+            "runtimeVerified": false,
+            "consumerVerified": false,
+            "retirementApproved": false
+          }
         },
         {
           "legacyColumn": "screening_method",
@@ -302,7 +455,17 @@
           "verifiedMapping": null,
           "producerConsumerEvidence": null,
           "dbTestEvidence": null,
-          "reviewDecision": null
+          "reviewDecision": {
+            "reviewStatus": "SOURCE_REVIEWED_PROPOSAL_NOT_VERIFIED",
+            "classification": "EXPLICIT_RUNTIME_GAP",
+            "targetRefs": [],
+            "sourceRationale": "Legacy screening method labels can refer to automated evaluation distinct from current manually set screening status.",
+            "outstandingProof": "Reconcile source method vocabulary with actual current producer and audit identity.",
+            "frozenLegacyOracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+            "runtimeVerified": false,
+            "consumerVerified": false,
+            "retirementApproved": false
+          }
         },
         {
           "legacyColumn": "screening_status",
@@ -316,7 +479,19 @@
           "verifiedMapping": null,
           "producerConsumerEvidence": null,
           "dbTestEvidence": null,
-          "reviewDecision": null
+          "reviewDecision": {
+            "reviewStatus": "SOURCE_REVIEWED_PROPOSAL_NOT_VERIFIED",
+            "classification": "NEEDS_ENUM_CROSSWALK",
+            "targetRefs": [
+              "placement_application_screenings.status"
+            ],
+            "sourceRationale": "Current screening decision permits PENDING/HOLD/SHORTLISTED/REJECTED; legacy screening status may describe calculation completion.",
+            "outstandingProof": "Validate all source states and separate scoring execution from staff decision transitions.",
+            "frozenLegacyOracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+            "runtimeVerified": false,
+            "consumerVerified": false,
+            "retirementApproved": false
+          }
         },
         {
           "legacyColumn": "screening_version",
@@ -330,7 +505,17 @@
           "verifiedMapping": null,
           "producerConsumerEvidence": null,
           "dbTestEvidence": null,
-          "reviewDecision": null
+          "reviewDecision": {
+            "reviewStatus": "SOURCE_REVIEWED_PROPOSAL_NOT_VERIFIED",
+            "classification": "EXPLICIT_RUNTIME_GAP",
+            "targetRefs": [],
+            "sourceRationale": "Legacy screening_version is necessary scoring provenance and not represented in the registered status shape.",
+            "outstandingProof": "Specify immutable score-engine/template version and replay idempotence evidence.",
+            "frozenLegacyOracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+            "runtimeVerified": false,
+            "consumerVerified": false,
+            "retirementApproved": false
+          }
         },
         {
           "legacyColumn": "skill_score",
@@ -346,7 +531,17 @@
           "verifiedMapping": null,
           "producerConsumerEvidence": null,
           "dbTestEvidence": null,
-          "reviewDecision": null
+          "reviewDecision": {
+            "reviewStatus": "SOURCE_REVIEWED_PROPOSAL_NOT_VERIFIED",
+            "classification": "EXPLICIT_RUNTIME_GAP",
+            "targetRefs": [],
+            "sourceRationale": "Legacy skill_score floating component is not a stored approved assessment or staff screening decision.",
+            "outstandingProof": "Approve component scoring constraints, normalization and reproducible versioned inputs.",
+            "frozenLegacyOracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+            "runtimeVerified": false,
+            "consumerVerified": false,
+            "retirementApproved": false
+          }
         },
         {
           "legacyColumn": "application_id",
@@ -365,7 +560,20 @@
           "verifiedMapping": null,
           "producerConsumerEvidence": null,
           "dbTestEvidence": null,
-          "reviewDecision": null
+          "reviewDecision": {
+            "reviewStatus": "SOURCE_REVIEWED_PROPOSAL_NOT_VERIFIED",
+            "classification": "PROPOSED_ACTIVE_FIELD_MAPPING",
+            "targetRefs": [
+              "placement_application_screenings.application_id",
+              "placement_application_screening_history.application_id"
+            ],
+            "sourceRationale": "Both live screening state and append-only decisions reference a scoped registered application UUID.",
+            "outstandingProof": "Prove application and job/learner/college tenant consistency, staff-private scoring and learner-visible status access.",
+            "frozenLegacyOracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+            "runtimeVerified": false,
+            "consumerVerified": false,
+            "retirementApproved": false
+          }
         }
       ]
     },
@@ -395,7 +603,19 @@
           "verifiedMapping": null,
           "producerConsumerEvidence": null,
           "dbTestEvidence": null,
-          "reviewDecision": null
+          "reviewDecision": {
+            "reviewStatus": "SOURCE_REVIEWED_PROPOSAL_NOT_VERIFIED",
+            "classification": "PROPOSED_ACTIVE_FIELD_MAPPING",
+            "targetRefs": [
+              "placement_external_offers.id"
+            ],
+            "sourceRationale": "Historic external-placement row identity is not a current application or offer UUID.",
+            "outstandingProof": "Verify per-college historic locator mapping and prevent cross-college resolution by numeric ID.",
+            "frozenLegacyOracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+            "runtimeVerified": false,
+            "consumerVerified": false,
+            "retirementApproved": false
+          }
         },
         {
           "legacyColumn": "learner_id",
@@ -411,7 +631,19 @@
           "verifiedMapping": null,
           "producerConsumerEvidence": null,
           "dbTestEvidence": null,
-          "reviewDecision": null
+          "reviewDecision": {
+            "reviewStatus": "SOURCE_REVIEWED_PROPOSAL_NOT_VERIFIED",
+            "classification": "PROPOSED_ACTIVE_FIELD_MAPPING",
+            "targetRefs": [
+              "placement_external_offers.membership_id"
+            ],
+            "sourceRationale": "The external-offer owner must resolve to the learner's college membership UUID, not a global user ID.",
+            "outstandingProof": "Verify active learner membership and college scope for submissions and staff review.",
+            "frozenLegacyOracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+            "runtimeVerified": false,
+            "consumerVerified": false,
+            "retirementApproved": false
+          }
         },
         {
           "legacyColumn": "college_id",
@@ -427,7 +659,19 @@
           "verifiedMapping": null,
           "producerConsumerEvidence": null,
           "dbTestEvidence": null,
-          "reviewDecision": null
+          "reviewDecision": {
+            "reviewStatus": "SOURCE_REVIEWED_PROPOSAL_NOT_VERIFIED",
+            "classification": "PROPOSED_ACTIVE_FIELD_MAPPING",
+            "targetRefs": [
+              "placement_external_offers.college_id"
+            ],
+            "sourceRationale": "Source college ownership is retained as a registered foreign key, independent of membership.",
+            "outstandingProof": "Verify relationship between membership and college, including cross-tenant rejection and import constraints.",
+            "frozenLegacyOracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+            "runtimeVerified": false,
+            "consumerVerified": false,
+            "retirementApproved": false
+          }
         },
         {
           "legacyColumn": "request_id",
@@ -443,7 +687,17 @@
           "verifiedMapping": null,
           "producerConsumerEvidence": null,
           "dbTestEvidence": null,
-          "reviewDecision": null
+          "reviewDecision": {
+            "reviewStatus": "SOURCE_REVIEWED_PROPOSAL_NOT_VERIFIED",
+            "classification": "EXPLICIT_RUNTIME_GAP",
+            "targetRefs": [],
+            "sourceRationale": "Legacy external placement request_id is a separate request linkage not present as an external-offer foreign key.",
+            "outstandingProof": "Trace the approved general request and external-offer event chain or introduce audited provenance; do not guess an unrelated request ID.",
+            "frozenLegacyOracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+            "runtimeVerified": false,
+            "consumerVerified": false,
+            "retirementApproved": false
+          }
         },
         {
           "legacyColumn": "company_name",
@@ -457,7 +711,19 @@
           "verifiedMapping": null,
           "producerConsumerEvidence": null,
           "dbTestEvidence": null,
-          "reviewDecision": null
+          "reviewDecision": {
+            "reviewStatus": "SOURCE_REVIEWED_PROPOSAL_NOT_VERIFIED",
+            "classification": "PROPOSED_ACTIVE_FIELD_MAPPING",
+            "targetRefs": [
+              "placement_external_offers.company_name"
+            ],
+            "sourceRationale": "The registered external company label retains a 200-character varchar and does not automatically create a verified employer relationship.",
+            "outstandingProof": "Verify nonblank normalization, private submission rules and employer presentation without implied company verification.",
+            "frozenLegacyOracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+            "runtimeVerified": false,
+            "consumerVerified": false,
+            "retirementApproved": false
+          }
         },
         {
           "legacyColumn": "ctc_lpa",
@@ -473,7 +739,19 @@
           "verifiedMapping": null,
           "producerConsumerEvidence": null,
           "dbTestEvidence": null,
-          "reviewDecision": null
+          "reviewDecision": {
+            "reviewStatus": "SOURCE_REVIEWED_PROPOSAL_NOT_VERIFIED",
+            "classification": "PROPOSED_ACTIVE_FIELD_MAPPING",
+            "targetRefs": [
+              "placement_external_offers.ctc_lpa"
+            ],
+            "sourceRationale": "The registered CTC numeric field preserves decimal(10,2) LPA, separate from internal offer compensation.",
+            "outstandingProof": "Verify decimal scaling, rounding, verification eligibility and held-placement reporting.",
+            "frozenLegacyOracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+            "runtimeVerified": false,
+            "consumerVerified": false,
+            "retirementApproved": false
+          }
         },
         {
           "legacyColumn": "letter_url",
@@ -487,7 +765,19 @@
           "verifiedMapping": null,
           "producerConsumerEvidence": null,
           "dbTestEvidence": null,
-          "reviewDecision": null
+          "reviewDecision": {
+            "reviewStatus": "SOURCE_REVIEWED_PROPOSAL_NOT_VERIFIED",
+            "classification": "EXPLICIT_RUNTIME_GAP",
+            "targetRefs": [
+              "placement_external_offers.private_letter_object_path"
+            ],
+            "sourceRationale": "Legacy arbitrary letter URL is not equivalent to current scoped private object storage path.",
+            "outstandingProof": "Verify safe file ingest and ownership, retention and consent before exposing any historic document.",
+            "frozenLegacyOracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+            "runtimeVerified": false,
+            "consumerVerified": false,
+            "retirementApproved": false
+          }
         },
         {
           "legacyColumn": "verified_by",
@@ -501,7 +791,19 @@
           "verifiedMapping": null,
           "producerConsumerEvidence": null,
           "dbTestEvidence": null,
-          "reviewDecision": null
+          "reviewDecision": {
+            "reviewStatus": "SOURCE_REVIEWED_PROPOSAL_NOT_VERIFIED",
+            "classification": "PROPOSED_ACTIVE_FIELD_MAPPING",
+            "targetRefs": [
+              "placement_external_offers.reviewed_by_user_id"
+            ],
+            "sourceRationale": "The review principal is a UUID user rather than the old nullable integer verifier.",
+            "outstandingProof": "Prove reviewer role/college scope and distinguish rejected or revoked reviews from verified offers.",
+            "frozenLegacyOracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+            "runtimeVerified": false,
+            "consumerVerified": false,
+            "retirementApproved": false
+          }
         },
         {
           "legacyColumn": "verified_at",
@@ -517,7 +819,19 @@
           "verifiedMapping": null,
           "producerConsumerEvidence": null,
           "dbTestEvidence": null,
-          "reviewDecision": null
+          "reviewDecision": {
+            "reviewStatus": "SOURCE_REVIEWED_PROPOSAL_NOT_VERIFIED",
+            "classification": "PROPOSED_ACTIVE_FIELD_MAPPING",
+            "targetRefs": [
+              "placement_external_offers.reviewed_at"
+            ],
+            "sourceRationale": "Review timestamp is distinct from original offer submission and subsequent revocation events.",
+            "outstandingProof": "Verify historical timezone and whether reviewed_at denotes VERIFIED only or any decision.",
+            "frozenLegacyOracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+            "runtimeVerified": false,
+            "consumerVerified": false,
+            "retirementApproved": false
+          }
         },
         {
           "legacyColumn": "is_deleted",
@@ -531,7 +845,19 @@
           "verifiedMapping": null,
           "producerConsumerEvidence": null,
           "dbTestEvidence": null,
-          "reviewDecision": null
+          "reviewDecision": {
+            "reviewStatus": "SOURCE_REVIEWED_PROPOSAL_NOT_VERIFIED",
+            "classification": "EXPLICIT_RUNTIME_GAP",
+            "targetRefs": [
+              "placement_external_offers.status"
+            ],
+            "sourceRationale": "Soft-deleted source rows cannot be mapped to current VERIFIED/REJECTED/REVOKED statuses without an explicit lifecycle decision.",
+            "outstandingProof": "Define how deleted records affect private visibility and held-placement calculations without silently reactivating them.",
+            "frozenLegacyOracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+            "runtimeVerified": false,
+            "consumerVerified": false,
+            "retirementApproved": false
+          }
         }
       ]
     },
@@ -4671,7 +4997,20 @@
           "verifiedMapping": null,
           "producerConsumerEvidence": null,
           "dbTestEvidence": null,
-          "reviewDecision": null
+          "reviewDecision": {
+            "reviewStatus": "SOURCE_REVIEWED_PROPOSAL_NOT_VERIFIED",
+            "classification": "PROPOSED_ACTIVE_FIELD_MAPPING",
+            "targetRefs": [
+              "placement_debarments.id",
+              "placement_debarments.legacy_debarment_id"
+            ],
+            "sourceRationale": "Historic numeric debarment identity is preserved as an import locator separate from current scoped UUID.",
+            "outstandingProof": "Prove unique per-college provenance and reject cross-college legacy lookups.",
+            "frozenLegacyOracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+            "runtimeVerified": false,
+            "consumerVerified": false,
+            "retirementApproved": false
+          }
         },
         {
           "legacyColumn": "learner_id",
@@ -4687,7 +5026,20 @@
           "verifiedMapping": null,
           "producerConsumerEvidence": null,
           "dbTestEvidence": null,
-          "reviewDecision": null
+          "reviewDecision": {
+            "reviewStatus": "SOURCE_REVIEWED_PROPOSAL_NOT_VERIFIED",
+            "classification": "PROPOSED_ACTIVE_FIELD_MAPPING",
+            "targetRefs": [
+              "placement_debarments.legacy_student_id",
+              "placement_debarments.membership_id"
+            ],
+            "sourceRationale": "Source learner integer is preserved for provenance while the live policy uses college membership UUID.",
+            "outstandingProof": "Prove learner membership belongs to debarment college and blocks only the intended enrollee.",
+            "frozenLegacyOracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+            "runtimeVerified": false,
+            "consumerVerified": false,
+            "retirementApproved": false
+          }
         },
         {
           "legacyColumn": "reason",
@@ -4701,7 +5053,19 @@
           "verifiedMapping": null,
           "producerConsumerEvidence": null,
           "dbTestEvidence": null,
-          "reviewDecision": null
+          "reviewDecision": {
+            "reviewStatus": "SOURCE_REVIEWED_PROPOSAL_NOT_VERIFIED",
+            "classification": "PROPOSED_ACTIVE_FIELD_MAPPING",
+            "targetRefs": [
+              "placement_debarments.reason"
+            ],
+            "sourceRationale": "The original 500-character debarment reason retains a bounded staff-governed field.",
+            "outstandingProof": "Verify nonblank validation, staff privacy and learner-facing redaction/notification policy.",
+            "frozenLegacyOracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+            "runtimeVerified": false,
+            "consumerVerified": false,
+            "retirementApproved": false
+          }
         },
         {
           "legacyColumn": "until_date",
@@ -4715,7 +5079,19 @@
           "verifiedMapping": null,
           "producerConsumerEvidence": null,
           "dbTestEvidence": null,
-          "reviewDecision": null
+          "reviewDecision": {
+            "reviewStatus": "SOURCE_REVIEWED_PROPOSAL_NOT_VERIFIED",
+            "classification": "PROPOSED_ACTIVE_FIELD_MAPPING",
+            "targetRefs": [
+              "placement_debarments.until_date"
+            ],
+            "sourceRationale": "The end date is a civil date separate from the independent drive-count horizon.",
+            "outstandingProof": "Verify India-local inclusive/exclusive cutoff and expiry against drive publish events.",
+            "frozenLegacyOracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+            "runtimeVerified": false,
+            "consumerVerified": false,
+            "retirementApproved": false
+          }
         },
         {
           "legacyColumn": "until_drives",
@@ -4729,7 +5105,19 @@
           "verifiedMapping": null,
           "producerConsumerEvidence": null,
           "dbTestEvidence": null,
-          "reviewDecision": null
+          "reviewDecision": {
+            "reviewStatus": "SOURCE_REVIEWED_PROPOSAL_NOT_VERIFIED",
+            "classification": "PROPOSED_ACTIVE_FIELD_MAPPING",
+            "targetRefs": [
+              "placement_debarments.until_drives"
+            ],
+            "sourceRationale": "Drive-count duration remains an optional positive integer independent of date expiry.",
+            "outstandingProof": "Verify eligible drive-count events and deterministic expiry under concurrent releases.",
+            "frozenLegacyOracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+            "runtimeVerified": false,
+            "consumerVerified": false,
+            "retirementApproved": false
+          }
         },
         {
           "legacyColumn": "drives_counted",
@@ -4743,7 +5131,19 @@
           "verifiedMapping": null,
           "producerConsumerEvidence": null,
           "dbTestEvidence": null,
-          "reviewDecision": null
+          "reviewDecision": {
+            "reviewStatus": "SOURCE_REVIEWED_PROPOSAL_NOT_VERIFIED",
+            "classification": "PROPOSED_ACTIVE_FIELD_MAPPING",
+            "targetRefs": [
+              "placement_debarments.drives_counted"
+            ],
+            "sourceRationale": "The counter is backed by a distinct one-job-per-debarment event ledger in the registered model.",
+            "outstandingProof": "Verify duplicate drive events do not increment the count and that rollback restores consistency.",
+            "frozenLegacyOracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+            "runtimeVerified": false,
+            "consumerVerified": false,
+            "retirementApproved": false
+          }
         },
         {
           "legacyColumn": "created_by",
@@ -4757,7 +5157,20 @@
           "verifiedMapping": null,
           "producerConsumerEvidence": null,
           "dbTestEvidence": null,
-          "reviewDecision": null
+          "reviewDecision": {
+            "reviewStatus": "SOURCE_REVIEWED_PROPOSAL_NOT_VERIFIED",
+            "classification": "PROPOSED_ACTIVE_FIELD_MAPPING",
+            "targetRefs": [
+              "placement_debarments.legacy_creator_id",
+              "placement_debarments.created_by_user_id"
+            ],
+            "sourceRationale": "Source creator identity is preserved separately from the required current staff UUID actor.",
+            "outstandingProof": "Verify original user/role mapping and safe handling when historic creator no longer exists.",
+            "frozenLegacyOracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+            "runtimeVerified": false,
+            "consumerVerified": false,
+            "retirementApproved": false
+          }
         },
         {
           "legacyColumn": "created_at",
@@ -4773,7 +5186,19 @@
           "verifiedMapping": null,
           "producerConsumerEvidence": null,
           "dbTestEvidence": null,
-          "reviewDecision": null
+          "reviewDecision": {
+            "reviewStatus": "SOURCE_REVIEWED_PROPOSAL_NOT_VERIFIED",
+            "classification": "PROPOSED_ACTIVE_FIELD_MAPPING",
+            "targetRefs": [
+              "placement_debarments.created_at"
+            ],
+            "sourceRationale": "Debarment creation is a timezone-aware instant and must precede counted/lifted events.",
+            "outstandingProof": "Verify original MySQL date conversion and deterministic ordering.",
+            "frozenLegacyOracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+            "runtimeVerified": false,
+            "consumerVerified": false,
+            "retirementApproved": false
+          }
         },
         {
           "legacyColumn": "lifted_at",
@@ -4789,7 +5214,19 @@
           "verifiedMapping": null,
           "producerConsumerEvidence": null,
           "dbTestEvidence": null,
-          "reviewDecision": null
+          "reviewDecision": {
+            "reviewStatus": "SOURCE_REVIEWED_PROPOSAL_NOT_VERIFIED",
+            "classification": "PROPOSED_ACTIVE_FIELD_MAPPING",
+            "targetRefs": [
+              "placement_debarments.lifted_at"
+            ],
+            "sourceRationale": "Lift time is an optional immutable transition boundary tied to a separate lifting actor.",
+            "outstandingProof": "Prove no backdating, authorized lifting and rejected stale concurrent lift attempts.",
+            "frozenLegacyOracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+            "runtimeVerified": false,
+            "consumerVerified": false,
+            "retirementApproved": false
+          }
         },
         {
           "legacyColumn": "lifted_reason",
@@ -4803,7 +5240,19 @@
           "verifiedMapping": null,
           "producerConsumerEvidence": null,
           "dbTestEvidence": null,
-          "reviewDecision": null
+          "reviewDecision": {
+            "reviewStatus": "SOURCE_REVIEWED_PROPOSAL_NOT_VERIFIED",
+            "classification": "PROPOSED_ACTIVE_FIELD_MAPPING",
+            "targetRefs": [
+              "placement_debarments.lifted_reason"
+            ],
+            "sourceRationale": "Lift rationale retains a bounded field but is only valid when a lift actor and timestamp exist.",
+            "outstandingProof": "Verify required reason on lift, staff-only details and append-only lift audit.",
+            "frozenLegacyOracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+            "runtimeVerified": false,
+            "consumerVerified": false,
+            "retirementApproved": false
+          }
         }
       ]
     },
