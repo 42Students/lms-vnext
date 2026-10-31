@@ -787,7 +787,27 @@ describe("courses C4A assignments against PostgreSQL", () => {
       [submitted.id],
     );
     expect(gradeEventCountBefore.rows[0]?.n).toBe(1);
+    // A real ACTIVE Faculty principal with a valid FACULTY role, but no
+    // teaching assignment on this delivery, must not forge grade history.
+    // A LEARNER-role spoof alone cannot prove the teacher-scope boundary.
+    const detachedFacultyUser=randomUUID(),detachedFacultyMembership=randomUUID();
+    await pool.query(
+      "insert into users(id,identity_uid,display_name) values($1,$2,'DB045 unassigned Faculty')",
+      [detachedFacultyUser,"db045-unassigned-"+detachedFacultyUser],
+    );
+    await pool.query(
+      "insert into college_memberships(id,user_id,college_id) values($1,$2,$3)",
+      [detachedFacultyMembership,detachedFacultyUser,SEED_IDS.collegeA],
+    );
+    await pool.query(
+      "insert into membership_roles(membership_id,role) values($1,'FACULTY')",
+      [detachedFacultyMembership],
+    );
+    try {
     for(const forged of [
+      {name:"active Faculty without teaching assignment",college:SEED_IDS.collegeA,
+       actor:detachedFacultyUser,member:detachedFacultyMembership,
+       delivery:structure.deliveryA.id},
       {name:"foreign college",college:SEED_IDS.collegeB,actor:faculty.user.id,
        member:faculty.membership!.id,delivery:structure.deliveryA.id},
       {name:"learner impersonates Faculty",college:SEED_IDS.collegeA,actor:learner.user.id,
@@ -805,6 +825,15 @@ describe("courses C4A assignments against PostgreSQL", () => {
         submitted.id,forged.college,forged.actor,forged.member,forged.delivery,
         "role" in forged ? forged.role : "FACULTY",
       ]),forged.name).rejects.toMatchObject({code:"23514"});
+    }
+    } finally {
+      await pool.query(
+        "delete from membership_roles where membership_id=$1",[detachedFacultyMembership],
+      );
+      await pool.query(
+        "delete from college_memberships where id=$1",[detachedFacultyMembership],
+      );
+      await pool.query("delete from users where id=$1",[detachedFacultyUser]);
     }
     const gradeEventCountAfter = await pool.query<{n:number}>(
       "select count(*)::int n from assignment_grade_events where assignment_submission_id=$1",
