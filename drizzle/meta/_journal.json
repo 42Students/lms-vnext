@@ -2283,6 +2283,13 @@
       "when": 1793257930954,
       "tag": "0325_db014_cascade_retention_fences",
       "breakpoints": true
+    },
+    {
+      "idx": 326,
+      "version": "7",
+      "when": 1793257990954,
+      "tag": "0326_db020_validate_registered_checks",
+      "breakpoints": true
     }
   ]
 }

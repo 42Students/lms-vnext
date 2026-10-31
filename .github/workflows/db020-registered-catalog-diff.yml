@@ -9,6 +9,8 @@ on:
       - "scripts/db020-registered-catalog-diff.mjs"
       - "scripts/db020-full-registered-catalog-export.mjs"
       - "drizzle/0323_db020_registered_column_and_index_parity.sql"
+      - "drizzle/0326_db020_validate_registered_checks.sql"
+      - "tests/db020-check-validation-pg.test.mjs"
       - "src/db/schema/placement-public-page-content.ts"
       - "tests/db020-registered-parity-delta-pg.test.mjs"
       - "src/db/schema/db10-log-alerts.draft.ts"
@@ -93,6 +95,8 @@ jobs:
         run: npm run db:test:prepare
       - name: Idempotent registered replay
         run: npm run db:migrate
+      - name: Validate all registered PostgreSQL CHECK constraints on PG17
+        run: node --test tests/db020-check-validation-pg.test.mjs
       - name: DB020 exact registered constraint, default and index parity
         run: node --test tests/db020-registered-parity-delta-pg.test.mjs
       - name: Generate diagnostic snapshot only (DO NOT apply SQL)
