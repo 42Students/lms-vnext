@@ -28,6 +28,7 @@ on:
       - "tests/integration/placements-p8-offers.test.ts"
       - "tests/integration/placements-db08-batches.test.ts"
       - "tests/integration/db18-assignment-receipt-race.test.ts"
+      - "tests/integration/db18-registered-file-one-shot-race.test.ts"
       - "tests/integration/db18-shared-ops-race.test.ts"
       - "tests/integration/super-admin-db10-tracker-workflow.test.ts"
       - "tests/db-parity-pass5.test.mjs"
@@ -162,6 +163,9 @@ jobs:
       - name: Current registered DB014 tenant scope, catalog and DB020 provenance negatives
         run: |
           node --test tests/db014-registered-tenant-catalog-pg.test.mjs tests/db014-cross-domain-scope-staged-pg.test.mjs tests/db020-registered-grade-event-provenance-pg.test.mjs
+      - name: P5-R13 registered live FILE producer one-shot race (distinct from staged receipt)
+        run: |
+          npx vitest run --config vitest.db.registered.config.ts tests/integration/db18-registered-file-one-shot-race.test.ts
       - name: P5-R13 scanned FILE receipt duplicate submission on registered PG17
         run: |
           npx vitest run --config vitest.db.registered.config.ts tests/integration/db18-assignment-receipt-race.test.ts -t P5-R13
