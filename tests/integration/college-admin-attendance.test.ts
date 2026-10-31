@@ -276,7 +276,7 @@ describe("College Admin attendance tenant isolation with PostgreSQL", () => {
     const scheduleEventId=randomUUID();
     await pool.query(
       "insert into section_schedule_events(id,section_id,title,starts_at,ends_at) " +
-      "values($1,$2,'DB045 initial PRESENT witness',now()-interval '2 hours',now()-interval '1 hour')",
+      "values($1,$2,'DB045 initial PRESENT witness',now()-interval '3 days',now()-interval '3 days'+interval '1 hour')",
       [scheduleEventId,own.section],
     );
     try {
