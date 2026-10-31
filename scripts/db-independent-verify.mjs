@@ -406,11 +406,27 @@ async function main() {
       ["run", "test:db:parity"],
       env,
     );
+    // These opt-in integration suites refuse a shared/application DB and
+    // require their historical DB08/DB10 migrations to be present. At this
+    // point the verifier has already approved a dedicated test URL, replayed
+    // every registered migration and passed live catalog validation. Enable
+    // their isolated fixtures only for this non-destructive test subprocess.
+    // Never propagate these flags to a reset, an app process or before replay.
+    const integrationEnv = {
+      ...env,
+      DB08_ISOLATED_TEST_DATABASE: "1",
+      DB08_MIGRATION_APPLIED: "1",
+      DB08_B_MIGRATION_APPLIED: "1",
+      DB08_C_MIGRATION_APPLIED: "1",
+      W04_ISOLATED_TEST_DATABASE: "1",
+      DB10_DISPOSABLE_TEST_DATABASE: "true",
+      DB10_ISOLATED_TEST_DATABASE: "1",
+    };
     runStep(
       "PostgreSQL integration / negative witnesses",
       "npm",
       ["run", "test:db"],
-      env,
+      integrationEnv,
     );
     // Do not award a pinned-SHA certificate if another worker moved HEAD
     // or edited the source after the initial cleanliness preflight.
