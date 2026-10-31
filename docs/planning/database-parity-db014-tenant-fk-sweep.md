@@ -1,5 +1,54 @@
 # DB-014 — cross-domain tenant/FK integrity sweep
 
+## Registered 0325 parent-delete retention fences — 31 October 2026
+
+The registered `0325_db014_cascade_retention_fences.sql` closes an unsafe
+CASCADE parent-deletion path without changing existing foreign-key shape:
+an enabled `BEFORE DELETE` trigger refuses to hard-delete the parent while
+a protected operational/history child exists (SQLSTATE 23514). Ten parent
+tables also refuse `TRUNCATE` (which bypasses row-level DELETE triggers).
+Deletion of an empty draft parent still works. These guards do **not** permit
+direct deletion of history children or replace API permissions, privacy
+retention policies, producer authorization, or release-level audit evidence.
+
+The current registered catalog has **21** cascade FKs (not the historical
+snapshot-0040 count of nine). Every registered edge is explicitly classified:
+
+| Child → parent | FKs | DB014 retention disposition |
+| --- | ---: | --- |
+| `assignment_submission_links → assignment_submissions` | 1 | Protected: submission receipt/evidence must not disappear through parent deletion |
+| `attendance_records → section_schedule_events` | 1 | Protected: marked attendance; DB045 immutable ledger remains the definitive producer acceptance |
+| `attendance_sessions → section_schedule_events` | 1 | Protected: whole-roster marking status |
+| `course_discussion_messages → course_section_deliveries` | 1 | Protected: persisted classroom contribution including deleted/hidden message history |
+| `placement_cell_announcement_reads → announcements` | 1 | Protected: announcement delivery/read receipt |
+| `placement_cell_announcement_reads → colleges` | 1 | Protected: college-scoped read receipt |
+| `placement_drive_day_coordinator_assignments → placement_jobs` | 1 | Protected: coordinator/drive assignment |
+| `placement_drive_day_coordinator_assignments → college_memberships` | 1 | Protected: assignment tied to learner identity |
+| `placement_round_attendance → placement_applications` | 1 | Protected: interview/check-in status evidence |
+| `placement_round_attendance → placement_job_rounds` | 1 | Protected: round check-in status evidence |
+| `platform_broadcast_targets → platform_broadcasts` | 1 | Protected: persisted delivery-target evidence |
+| `cohort_progression_state → cohorts` | 1 | Derived current-state snapshot; keep cascade subject to cohort deletion authorization |
+| `lesson_content_delivery_sequences → lesson_contents` | 2 | Derived display-order mapping, including paired composite FK; cascade together |
+| `lesson_content_delivery_sequences → course_section_deliveries` | 2 | Derived display-order mapping, including paired composite FK; cascade together |
+| `lesson_content_materials → lesson_contents` | 1 | Owned lesson content material, not independently immutable audit; source cleanup only |
+| `log_alert_daily_counts → log_alert_signatures` | 1 | Derived log-signature aggregate; purge with signature |
+| `log_alert_signature_accounts → log_alert_signatures` | 1 | Derived signature/account summary; purge with signature |
+| `placement_job_role_options → placement_jobs` | 1 | Job-owned option; validated application role-option FKs RESTRICT deletion of referenced offers |
+| `section_schedule_event_courses → section_schedule_events` | 1 | Owned course schedule link; DB045 attendance history FK RESTRICT protects audited links |
+
+**Implementation/test surface:** `tests/db014-cascade-retention-source.test.mjs`,
+`tests/db014-cascade-retention-registered-pg.test.mjs`, and the DB014
+PostgreSQL 17 workflow. The generic DELETE guard is additionally exercised
+against a disposable synthetic parent/child FK that actually cascades, with
+the rejected DELETE retaining both rows, an accepted empty-parent DELETE,
+and a rejected TRUNCATE, all under ROLLBACK.
+
+**Acceptance remains open** until the new exact-main PostgreSQL job has
+executed successfully, target-domain parent hard-delete and actor/tenant
+negative paths have been checked, current uniqueness namespaces are
+reconciled, and dependent global phase gates are accepted. Source/test
+authorship alone is not CI evidence.
+
 ## Registered PostgreSQL 17 integration update — 31 October 2026
 
 The earlier snapshot-0040 findings below remain a historical baseline and **must
