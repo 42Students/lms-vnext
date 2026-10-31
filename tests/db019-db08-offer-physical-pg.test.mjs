@@ -373,8 +373,8 @@ test("DB019 external offer, debarment and screening proposals have registered PG
   for(const [name,fragment] of [
     ["placement_external_offers_status_ck","VERIFIED"],
     ["placement_external_offers_verified_ck","reviewed_by_user_id"],
-    ["placement_external_offers_ctc_ck",">= 0"],
-    ["placement_debarments_until_drives_ck","> 0"],
+    ["placement_external_offers_ctc_ck","ctc_lpa"],
+    ["placement_debarments_until_drives_ck","until_drives"],
     ["placement_debarments_lift_ck","lifted_by_user_id"],
     ["placement_application_screenings_status_ck","SHORTLISTED"],
     ["placement_application_screenings_shape_ck","decided_by_user_id"],
@@ -384,6 +384,11 @@ test("DB019 external offer, debarment and screening proposals have registered PG
     assert.ok(constraints.get(name).includes(fragment),
       "Registered guard meaning drift "+name);
   }
+  // PostgreSQL renders numeric bounds as either 0 or (0)::numeric.
+  // Keep the nonnegative and positive CHECK semantics, not a brittle text
+  // literal that fails on valid pg_get_constraintdef canonicalization.
+  assert.match(constraints.get("placement_external_offers_ctc_ck"),/ctc_lpa[^\\n]*>=\\s*\\(?0/);
+  assert.match(constraints.get("placement_debarments_until_drives_ck"),/until_drives[^\\n]*>\\s*\\(?0/);
   const i=await pool.query(`
     select indexname,indexdef from pg_indexes
      where schemaname='public' and tablename='placement_debarments'
