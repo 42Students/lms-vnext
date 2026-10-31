@@ -147,7 +147,14 @@ test("DB18 witness index remains honest about authored versus executed coverage"
   assert.equal(index.status, "FOCUSED_PG17_WITNESSES_VERIFIED_GLOBAL_GATE_PENDING");
   assert.equal(index.counts.directNegativeAuthored, 9);
   assert.equal(index.counts.existingConcurrencyAuthored, 4);
-  assert.equal(index.counts.pendingConcurrencyAuthored, 2);
+  assert.equal(index.counts.pendingConcurrencyAuthored, 1);
+  assert.equal(index.counts.additionalRegisteredConcurrencyRuntimeExecuted, 1);
+  assert.equal(index.counts.additionalRegisteredConcurrencyRuntimePassed, 1);
+  assert.deepEqual(index.registeredAdditionalConcurrencyWitnesses.map(p => p.raceProbe), ["P5-R11"]);
+  const r11 = index.registeredAdditionalConcurrencyWitnesses[0];
+  assert.equal(r11.state, "REGISTERED_PG17_PASS");
+  assert.equal(r11.commitSha, "4e6b9e97c38183a13da6cb7af9fe47281449cdcc");
+  assert.equal(r11.runUrl, "https://github.com/42Students/lms-vnext/actions/runs/41150659994");
   assert.equal(index.counts.explicitConcurrencyMissing, 0);
   assert.equal(index.counts.draftUnregisteredExcluded, 3);
   assert.equal(index.counts.knownRedRaceAuthored, 0);
@@ -188,9 +195,8 @@ test("DB18 witness index remains honest about authored versus executed coverage"
     assert.equal(witness.state, "FOCUSED_PG17_VERIFIED");
   }
 
-  // New race coverage is source-authored only until this exact witness executes
-  // against disposable registered PostgreSQL. Historical 48/48 must not inflate.
-  assert.deepEqual(index.authoredPendingConcurrencyWitnesses.map(w => w.raceProbe), ["P5-R03", "P5-R11"]);
+  // The unverified group race stays pending; the new academic-period race has\n  // separate exact-run PG17 evidence. Historical 48/48 remains unchanged.
+  assert.deepEqual(index.authoredPendingConcurrencyWitnesses.map(w => w.raceProbe), ["P5-R03"]);
   for (const witness of index.authoredPendingConcurrencyWitnesses) {
     assert.equal(witness.state, "AUTHORED_AWAITING_REGISTERED_PG17");
     assert.ok(fs.existsSync(witness.file), witness.id + ": pending test file missing");
