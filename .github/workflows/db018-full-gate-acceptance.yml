@@ -25,6 +25,13 @@ on:
       - "tests/integration/db18-scheduled-lease-race.test.ts"
       - "tests/integration/db18-outbound-service-race.test.ts"
       - "tests/integration/db18-recruiter-invite-transactional-outbox.test.ts"
+      - "src/modules/operations/outbound-dispatch-principal.ts"
+      - "src/modules/operations/outbound-dispatch-runner.ts"
+      - "src/modules/operations/outbound-dispatch-orchestration.ts"
+      - "src/modules/operations/outbound-delivery-queue.ts"
+      - "tests/unit/outbound-dispatch-principal.test.ts"
+      - "tests/unit/outbound-dispatch-runner-gates.test.ts"
+      - "tests/unit/outbound-dispatch-orchestration.test.ts"
       - "src/modules/placements/tpo-recruiter-invite-service.ts"
       - "src/app/api/placements/tpo/leads/[leadId]/invite/route.ts"
       - "src/app/api/placements/tpo/jobs/[jobId]/recruiter-review-invite/route.ts"
@@ -101,6 +108,12 @@ jobs:
           node-version: 22
           cache: npm
       - run: npm ci
+      - name: Outbound principal, provider-result, and runner negative unit gates
+        run: |
+          npx vitest run \
+            tests/unit/outbound-dispatch-principal.test.ts \
+            tests/unit/outbound-dispatch-runner-gates.test.ts \
+            tests/unit/outbound-dispatch-orchestration.test.ts
       - name: Source manifest and witness identity cross-check
         run: node --test tests/db-parity-pass5.test.mjs
       - name: Confirm registered migration journal and disposable target
