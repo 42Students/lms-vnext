@@ -108,6 +108,15 @@ jobs:
             exit 1
           fi
           test "$(git ls-files --others --exclude-standard 'drizzle/meta/*_snapshot.json' | wc -l)" -eq 1
+      - name: Preserve unapplied generated SQL and snapshot for review
+        run: |
+          mkdir -p .verification
+          snapshot="$(git ls-files --others --exclude-standard 'drizzle/meta/*_snapshot.json')"
+          generated_sql="$(git ls-files --others --exclude-standard 'drizzle/*.sql')"
+          test "$(printf '%s\\n' "$snapshot" | grep -c .)" -eq 1
+          test "$(printf '%s\\n' "$generated_sql" | grep -c .)" -eq 1
+          cp "$snapshot" .verification/db020-unapplied-generated-snapshot.json
+          cp "$generated_sql" .verification/db020-unapplied-generated-migration.sql
       - name: Compare the generated typed schema against registered PostgreSQL
         run: node scripts/db020-registered-catalog-diff.mjs
       - name: Export full registered SQL constraint and index definitions (read-only)
@@ -129,5 +138,7 @@ jobs:
           path: |
             .verification/db020-catalog-disposition.json
             .verification/db020-registered-catalog-full.json
+            .verification/db020-unapplied-generated-snapshot.json
+            .verification/db020-unapplied-generated-migration.sql
           retention-days: 7
           if-no-files-found: warn
