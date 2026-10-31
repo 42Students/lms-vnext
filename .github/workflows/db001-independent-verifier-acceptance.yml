@@ -9,6 +9,7 @@ on:
       - "scripts/db-independent-verifier-redaction.mjs"
       - "scripts/db-independent-verifier-generation-guard.mjs"
       - "drizzle/meta/0316_snapshot.json"
+      - "drizzle/meta/_journal.json"
       - "tests/db001-drizzle-deferred-fk-snapshot-contract.test.mjs"
       - "drizzle/0327_db001_canonical_metadata_baseline.sql"
       - "drizzle/meta/0327_snapshot.json"
