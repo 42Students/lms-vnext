@@ -4,7 +4,7 @@ import { parseFacultyInboxQuery } from "@/modules/courses/faculty-inbox-query-mo
 const uuid = "2f2cc95d-213f-4b70-8cd1-fdbd9cdb6f55";
 describe("Faculty notification URL selectors", () => {
   it("uses an all-inbox default and a safe unread selector", () => {
-    expect(parseFacultyInboxQuery({})).toEqual({ view:"all", cursor:null, invalid:false });
+    expect(parseFacultyInboxQuery({})).toEqual({ view:"all", cursor:null, noticeCursor:null, invalid:false });
     expect(parseFacultyInboxQuery({ view:"unread" }).view).toBe("unread");
   });
   it("accepts a validated older-page cursor", () => {
