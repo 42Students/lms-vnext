@@ -144,14 +144,14 @@ export function auditDb019Remaining(ledgers,artifacts,db10Overlay=null) {
               "EXPLICIT_RUNTIME_GAP","NEEDS_ENUM_CROSSWALK",
               "PROPOSED_ACTIVE_FIELD_MAPPING",
             ];
-            if(!["job_offer","job","job_application","job_application_status_history","round_result"].includes(table.legacyTable)||
+            if(!["job_offer","job","job_application","job_application_status_history","round_result","round_attendance","job_eligibility_override","placement_season"].includes(table.legacyTable)||
                !decision||typeof decision!=="object"||
                decision.reviewStatus!=="SOURCE_REVIEWED_PROPOSAL_NOT_VERIFIED"||
                !classifications.includes(decision.classification)||
                !Array.isArray(decision.targetRefs)||
                (decision.classification==="PROPOSED_ACTIVE_FIELD_MAPPING" &&
                  decision.targetRefs.length===0)||
-               decision.targetRefs.some(x=>!/^placement_(?:offers|offer_status_history|joining_outcomes|jobs|applications|application_private_artifacts|application_status_history|application_screenings|round_results)[.][a-z_]+$/.test(x))||
+               decision.targetRefs.some(x=>!/^placement_(?:offers|offer_status_history|joining_outcomes|jobs|applications|application_private_artifacts|application_status_history|application_screenings|round_results|round_attendance|eligibility_overrides|seasons)[.][a-z_]+$/.test(x))||
                new Set(decision.targetRefs).size!==decision.targetRefs.length||
                !required(decision.sourceRationale)||
                !required(decision.outstandingProof)||
