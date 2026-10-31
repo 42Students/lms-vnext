@@ -25,6 +25,7 @@ vi.mock("server-only",()=>({}));
 vi.mock("drizzle-orm",()=>({
  and:(...xs:unknown[])=>xs,eq:(...xs:unknown[])=>xs,
  asc:(x:unknown)=>x,desc:(x:unknown)=>x,
+ isNull:(x:unknown)=>["isNull",x],
 }));
 vi.mock("@/db/schema",()=>({
  projectInstances:{id:"project.id",collegeId:"project.college_id",status:"project.status"},
