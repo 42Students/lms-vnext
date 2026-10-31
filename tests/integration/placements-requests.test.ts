@@ -7,6 +7,7 @@ import {
   it,
 } from "vitest";
 import { Pool } from "pg";
+import { assertDb018DisposableTarget } from "../support/db018-test-target.mjs";
 import { closeDatabaseConnection } from "@/db/client";
 import type { RequestContext } from "@/modules/identity/context";
 import { applyToPlacementJob } from "@/modules/placements/application-service";
@@ -38,15 +39,16 @@ import { decidePlacementScreening } from "@/modules/placements/screening-service
 import { SEED_IDS } from "../../scripts/db-seed-data";
 import { enableSeedLearnerPlacementAccess } from "../support/w04-placement-access-fixture";
 
-const databaseUrl =
-  process.env.TEST_DATABASE_URL ??
-  process.env.DATABASE_URL;
+const databaseUrl = process.env.TEST_DATABASE_URL;
 
 if (!databaseUrl) {
   throw new Error(
-    "TEST_DATABASE_URL or DATABASE_URL is required for DB integration tests",
+    "Explicit disposable TEST_DATABASE_URL is required for this destructive integration fixture",
   );
 }
+
+// Fail closed before any destructive fixture cleanup; never use the application DB.
+assertDb018DisposableTarget(process.env, {serviceBound: true});
 
 const pool = new Pool({
   connectionString: databaseUrl,
@@ -135,6 +137,10 @@ async function cleanup() {
   await pool.query(
     "delete from placement_job_round_events",
   );
+  // The DB014 parent-retention trigger must remain active. On this explicitly
+  // disposable PG fixture, remove only test attendance evidence before deleting
+  // its referenced rounds; production retention rules are untouched.
+  await pool.query("delete from placement_round_attendance");
   await pool.query(
     "delete from placement_job_rounds",
   );
@@ -167,6 +173,7 @@ async function cleanup() {
   await pool.query(
     "delete from placement_candidate_academic_evidence",
   );
+  await pool.query("delete from placement_drive_day_coordinator_assignments");
   await pool.query("delete from placement_jobs");
   await pool.query(
     "delete from placement_recruiter_college_grants",
