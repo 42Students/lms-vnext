@@ -49,6 +49,17 @@ export async function updateOwnPlacementNotificationPreferences(
         eq(users.platformStatus,"ACTIVE"),
       )).for("update", {of: collegeMemberships}).limit(1);
     if (!principal) throw new AuthorizationError("placements.read");
+    // A joined role read is not a lock on membership_roles. A concurrent
+    // revocation could otherwise commit after authorization but before our
+    // preference mutation, allowing a revoked learner to write and audit.
+    // Hold a SHARE lock on the exact role tuple through transaction commit;
+    // if revocation won, the row is no longer visible and we fail closed.
+    const [liveRole]=await tx.select({id:membershipRoles.id})
+      .from(membershipRoles).where(and(
+        eq(membershipRoles.membershipId,memberId),
+        eq(membershipRoles.role,"LEARNER"),
+      )).for("share").limit(1);
+    if (!liveRole) throw new AuthorizationError("placements.read");
 
     const [previous] = await tx.select({
       notifyMatchingJobs:placementCandidatePreferences.notifyMatchingJobs,
