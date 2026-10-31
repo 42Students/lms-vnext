@@ -18,6 +18,7 @@ import type { RequestContext } from "@/modules/identity/context";
 import { can } from "@/modules/permissions/policy";
 import { authorizeOrNotFound } from "@/modules/storage/file-access";
 import { planCompletion } from "@/modules/storage/file-completion";
+import { assignmentFileAttestationUsable } from "@/modules/storage/file-attestation-policy";
 import { recordStorageFileEvent } from "@/modules/storage/file-events";
 import { StorageFileError } from "@/modules/storage/file-errors";
 import {
@@ -486,7 +487,9 @@ export async function submitAssignmentWithFiles(
       if (files.length !== input.fileIds.length) {
         throw new StorageFileError("STORAGE_NOT_FOUND");
       }
-      if (files.some((file) => file.status !== "READY" || file.submissionId !== null)) {
+      if (files.some((file) =>
+        file.submissionId !== null || !assignmentFileAttestationUsable(file)
+      )) {
         throw new StorageFileError("STORAGE_FILE_NOT_READY");
       }
       {
@@ -638,13 +641,9 @@ export async function issueSubmissionFileDownloadGrant(
     .limit(1);
   if (!row) throw new StorageFileError("STORAGE_NOT_FOUND");
   await authorizeOrNotFound(() => authorizeFileRead(context, row));
-  if (
-    row.status !== "READY" ||
-    row.scanStatus !== "CLEAN" ||
-    !row.objectGeneration ||
-    row.verifiedSizeBytes === null ||
-    !row.verifiedContentType
-  ) {
+  // A DB row marked READY without verified scan identity, object digest or
+  // exact declared bytes is still not a downloadable private document.
+  if (!assignmentFileAttestationUsable(row)) {
     throw new StorageFileError(row.status === "DELETED" ? "STORAGE_NOT_FOUND" : "STORAGE_FILE_NOT_READY");
   }
   const disposition =
