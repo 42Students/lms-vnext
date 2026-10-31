@@ -13,6 +13,7 @@ on:
       - "tests/integration/db18-concurrency-witnesses.test.ts"
       - "tests/integration/db18-known-race-gaps.test.ts"
       - "tests/integration/db18-placement-race-gap.test.ts"
+      - "tests/integration/groups-db03.test.ts"
       - "drizzle/0317_db014_placement_fk_validation.sql"
       - "drizzle/0318_db014_cross_domain_event_guards.sql"
       - "drizzle/0319_db020_grade_event_source_action.sql"
