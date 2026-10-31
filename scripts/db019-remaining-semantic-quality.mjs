@@ -144,7 +144,7 @@ export function auditDb019Remaining(ledgers,artifacts,db10Overlay=null) {
               "EXPLICIT_RUNTIME_GAP","NEEDS_ENUM_CROSSWALK",
               "PROPOSED_ACTIVE_FIELD_MAPPING",
             ];
-            if(!["job_offer","job","job_application"].includes(table.legacyTable)||
+            if(!["job_offer","job","job_application","job_application_status_history"].includes(table.legacyTable)||
                !decision||typeof decision!=="object"||
                decision.reviewStatus!=="SOURCE_REVIEWED_PROPOSAL_NOT_VERIFIED"||
                !classifications.includes(decision.classification)||
