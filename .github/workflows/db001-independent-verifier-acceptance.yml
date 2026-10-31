@@ -13,6 +13,10 @@ on:
       - "drizzle/0327_db001_canonical_metadata_baseline.sql"
       - "drizzle/meta/0327_snapshot.json"
       - "tests/db001-canonical-baseline-source.test.mjs"
+      - "tests/db-independent-verifier-target-preflight.test.mjs"
+      - "tests/db-independent-verifier-zero-exit-generation.test.mjs"
+      - "tests/db076-independent-verifier-drift.test.mjs"
+      - "scripts/db-independent-postgres-version.mjs"
       - "tests/integration/db001-canonical-baseline-pg.test.ts"
       - ".github/workflows/db001-independent-verifier-acceptance.yml"
 permissions:
