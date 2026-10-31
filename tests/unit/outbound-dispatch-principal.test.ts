@@ -19,6 +19,12 @@ describe("DB018 dedicated dispatch database identity", () => {
       url: valid.DB10_DISPATCH_DATABASE_URL,
     });
     for (const override of [
+      { DATABASE_URL:
+        "postgresql://app_user:other-secret@wrong.example.test:5432/lms_vnext_test" },
+      { DATABASE_URL:
+        "postgresql://app_user:other-secret@127.0.0.1:5432/different_test" },
+      { DATABASE_URL:valid.DB10_DISPATCH_DATABASE_URL,
+        DB10_APP_DB_ROLE:"app_user" },
       { DB10_DISPATCH_DATABASE_URL: undefined },
       { DB10_DISPATCH_DB_ROLE: undefined },
       { DB10_DISPATCH_DB_ROLE: "app_user" },
