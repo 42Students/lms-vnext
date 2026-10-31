@@ -152,17 +152,13 @@
     {
       "raceProbe": "P5-R08",
       "reason": "scheduled-job lease schema remains draft/unregistered"
-    },
-    {
-      "raceProbe": "P5-R09",
-      "reason": "outbound delivery schema remains draft/unregistered"
     }
   ],
   "counts": {
     "directNegativeAuthored": 9,
     "existingConcurrencyAuthored": 4,
     "explicitConcurrencyMissing": 0,
-    "draftUnregisteredExcluded": 2,
+    "draftUnregisteredExcluded": 1,
     "runtimeExecuted": 48,
     "runtimePassed": 48,
     "knownRedRaceAuthored": 0,
@@ -472,5 +468,37 @@
       "Production recruiter-invitation delivery service has not been bound to queueOutboundDeliveryInTransaction; no active transactional outbox producer/worker cutover."
     ],
     "nextCheck": "Register only reviewed forward-only DB067 SQL with explicit privileged role and no PUBLIC or ordinary application EXECUTE; bind real recruiter producer and trusted dispatcher; run registered PG17 two-session claim/provider-unsent/retry and late opt-out tests, then audit original full source scope before DB018 done:true."
+  },
+  "registeredOutboundFencedWorkerEvidence": {
+    "state": "REGISTERED_PG17_PASSED_PROVIDER_INTEGRATION_NOT_ACCEPTED",
+    "registered": true,
+    "migration": "drizzle/0330_db067_outbound_fenced_worker_functions.sql",
+    "snapshot": "drizzle/meta/0330_snapshot.json",
+    "commitSha": "7fdb36cc9835437e798b0caf093350f7970a2e7e",
+    "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/41221551155",
+    "jobId": 124596981166,
+    "execution": "PASS",
+    "passedTests": 11,
+    "totalTests": 11,
+    "races": [
+      "P5-R09",
+      "P5-R21"
+    ],
+    "verified": [
+      "Registered Drizzle journal 0330 replay on disposable PG17",
+      "Idempotent registered replay",
+      "Four functions visible after migration",
+      "Two competing claimers and expired CLAIMED quarantine",
+      "Global opt-out before send prevents fake provider callback",
+      "Unprivileged PostgreSQL principal cannot execute dispatcher claim functions"
+    ],
+    "stillOpen": [
+      "No separately provisioned least-privilege trusted dispatcher principal",
+      "No approved EMAIL provider adapter/worker deployment",
+      "Transactional recruiter invitation source producer not yet connected to encrypted outbound queue",
+      "Exact end-to-end integration and original DB018 coverage review before acceptance"
+    ],
+    "noProviderSend": true,
+    "notDb018Acceptance": true
   }
 }

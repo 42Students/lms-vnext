@@ -28,6 +28,7 @@ on:
       - "tests/integration/groups-db03.test.ts"
       - "tests/integration/academics-a2.test.ts"
       - "tests/integration/graceful-telegram-persistence.test.ts"
+      - "tests/integration/db067-global-email-pre-send.test.ts"
       - "src/modules/log-alerts/reporter.ts"
       - "tests/integration/faculty-c4-reports-audit-contact.test.ts"
       - "tests/integration/college-admin-attendance.test.ts"
@@ -114,6 +115,12 @@ jobs:
           DB10_DISPOSABLE_TEST_DATABASE: "true"
         run: |
           npx vitest run --config vitest.db.registered.config.ts tests/integration/graceful-telegram-persistence.test.ts
+      - name: P5-R09 and P5-R21 registered outbound worker claim and late suppression
+        env:
+          DATABASE_URL: ""
+          DB067_DISPATCH_ACCEPTANCE: "1"
+        run: |
+          npx vitest run --config vitest.db.registered.config.ts tests/integration/db067-global-email-pre-send.test.ts
       - name: DB045 learner revocation race and immutable audit consumer witnesses
         run: |
           npx vitest run --config vitest.db.registered.config.ts \
