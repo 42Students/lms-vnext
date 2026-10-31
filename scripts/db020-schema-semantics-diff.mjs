@@ -128,7 +128,7 @@ export function inspectDb020StructuralSemantics(snapshot,catalog,diagnosis){
 if(process.argv[1]&&process.argv[1].endsWith("db020-schema-semantics-diff.mjs")){
  const read=p=>JSON.parse(readFileSync(p,"utf8"));
  const report=inspectDb020StructuralSemantics(
-  read(".verification/db020-unapplied-generated-snapshot.json"),
+  read(".verification/db020-current-typed-snapshot.json"),
   read(".verification/db020-registered-catalog-full.json"),
   read(".verification/db020-catalog-disposition.json"));
  mkdirSync(".verification",{recursive:true});
