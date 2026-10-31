@@ -2378,6 +2378,20 @@
             }
           ],
           "proofBoundary": "Focused registered-PG17 and attendance-consumer evidence; original complete 30-witness coverage audit, all tenant/race/retention invariants and fresh main acceptance remain open. Do not set done:true."
+        },
+        "latestMonotonicRecordToken": {
+          "result": "PASS_SCOPED_PG17_FACULTY_ADMIN_CAS_AND_IMMUTABLE_EVENT_NOT_DB045_ACCEPTANCE",
+          "recordedOn": "2026-10-31",
+          "sourceCommit": "65ae23eebcec956d54423c0ed363edf60ac649b7",
+          "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/41172323064",
+          "verified": "Exact-SHA dedicated DB045 GitHub Actions job completed success on disposable PostgreSQL 17. Registered journal replay and idempotence, grade event guards and consumer suites, attendance Faculty/Admin/learner consumer suite including real Admin-to-Faculty backdated-app-clock row-version/CAS audit witness all passed.",
+          "codeCommits": [
+            "944c70ba09130e7452321150fe67f880769f6509",
+            "897b43c75e9f46ead2891c39a85263c06861042f",
+            "058522b4ccb7c65df210e311cde76c2e74bee82c",
+            "65ae23eebcec956d54423c0ed363edf60ac649b7"
+          ],
+          "noFalseClosure": "Only focused timestamp/producer integration and registered suites passed; DB045 remains done:false pending complete 30-case tenant/actor/retention/race acceptance and downstream DB020 phase gate."
         }
       }
     },
