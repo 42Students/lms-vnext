@@ -23,9 +23,12 @@ try{
  const journal=JSON.parse(readFileSync("drizzle/meta/_journal.json","utf8"));
  const diagnosis=JSON.parse(readFileSync(".verification/db020-catalog-disposition.json","utf8"));
  const applied=Number((await db.query("select count(*)::integer n from drizzle.__drizzle_migrations")).rows[0].n);
+ const cleanRegistered=journal.entries.length===applied &&
+   journal.entries.at(-1)?.tag===diagnosis.registeredHead;
+ const oneGenerated=journal.entries.length===applied+1 &&
+   journal.entries.at(-2)?.tag===diagnosis.registeredHead;
  if(applied!==diagnosis.registeredMigrations ||
-    journal.entries.length!==applied+1 ||
-    journal.entries.at(-2)?.tag!==diagnosis.registeredHead)
+    !(cleanRegistered||oneGenerated))
    throw new Error("DB020 export refuses unexpected registered/catalog/diagnostic journal divergence");
  const tables=(await db.query(`
    SELECT n.nspname AS schema,t.relname AS name,
