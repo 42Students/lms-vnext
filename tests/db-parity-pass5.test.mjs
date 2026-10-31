@@ -366,6 +366,11 @@ test("DB18 full registered gate reruns on migrations and production notification
   assert.match(notificationWitness, /process\.env\.DATABASE_URL !== databaseUrl/);
   assert.match(notificationWitness, /LOCK TABLE in_app_notifications IN SHARE MODE/);
   assert.match(notificationWitness, /FOR UPDATE/);
+  const groupWitness = fs.readFileSync(
+    "tests/integration/groups-db03.test.ts",
+    "utf8",
+  );
+  assert.match(groupWitness, /assertDb018DisposableTarget\(process\.env, \{ serviceBound: true \}\)/);
 });
 
 test("DB18 mutation witnesses are fail-closed to an isolated database", () => {
