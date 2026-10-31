@@ -89,6 +89,35 @@ test("DB014 actual registered PG17 FK, history, trigger and cascade catalog",asy
       "EXISTS (SELECT 1 FROM pg_attribute a "+
       "WHERE a.attrelid=t.oid AND a.attname='college_id') "+
       "ORDER BY t.relname,i.relname");
+    // These five globally keyed unique indexes omit college_id intentionally:
+    // domain hostnames are globally reserved; project group IDs and placement
+    // scope IDs are globally unique UUID identities; event dedupe keys are
+    // producer-scoped global idempotency tokens; job/membership/date is
+    // globally unambiguous because the job ID identifies its college.
+    const expectedGlobalKeys=[
+      ["tenant_domains","tenant_domains_host_uq",["lower("]],
+      ["project_instances","project_instances_team_group_uq",["team_group_id"]],
+      ["activity_events","activity_events_dedupe_uq",["dedupe_key"]],
+      ["placement_eligibility_decisions","placement_eligibility_decisions_scope_uq",
+        ["scope_type","scope_id"]],
+      ["placement_drive_day_coordinator_assignments",
+        "placement_drive_day_coordinator_assignment_uq",
+        ["job_id","learner_membership_id","on_date"]],
+    ];
+    const uniqueByName=new Map(uniqueResult.rows.map(row=>[row.index_name,row]));
+    for(const [table,name,columns] of expectedGlobalKeys){
+      const index=uniqueByName.get(name);
+      assert.ok(index&&index.table_name===table,
+        "missing global-keyed scoped unique index "+name);
+      for(const column of columns){
+        assert.ok(index.definition.toLowerCase().includes(column),
+          "global namespace index lost expected key "+name+"."+column);
+      }
+    }
+    const hostIndex=uniqueByName.get("tenant_domains_host_uq");
+    assert.ok(hostIndex&&!/\\bWHERE\\b/i.test(hostIndex.definition),
+      "tombstoned hosts must remain globally reserved, not reused between tenants");
+
     const cascade=fks.filter(x=>x.confdeltype==="c");
     // Snapshot-only reviews can silently miss destructive FK changes. This
     // multiset pins the 21 CURRENT registered CASCADE edges, including the
