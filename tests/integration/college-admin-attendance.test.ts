@@ -568,6 +568,76 @@ describe("College Admin attendance tenant isolation with PostgreSQL", () => {
     expect(unchanged.rows).toMatchObject([{version:0,status:"ABSENT"}]);
   });
 
+  it.each([
+    {label:"previous note",tamper:"note"},
+    {label:"previous marker",tamper:"marker"},
+    {label:"previous timestamp",tamper:"time"},
+  ])("DB045 rejects a CORRECT event with forged $label at COMMIT",async({tamper})=>{
+    // A forged event can have a perfectly valid tenant, authorized actor,
+    // current-row post-state and monotonic version yet lie about its history.
+    // Each independent transaction must roll back BOTH the correction and event.
+    const db=await pool.connect();
+    try{
+      await db.query("BEGIN");
+      const before=await db.query<{
+        id:string;status:string;note:string|null;marked_by_user_id:string;
+        marked_at:Date;version:number;
+      }>(
+        "select id,status,note,marked_by_user_id,marked_at,version " +
+        "from attendance_records where schedule_event_id=$1 for update",
+        [foreign.event],
+      );
+      expect(before.rows).toHaveLength(1);
+      const previous=before.rows[0]!;
+      const forgedNote=tamper==="note"?"forged prior note":previous.note;
+      const forgedMarker=tamper==="marker"
+        ?SEED_IDS.collegeAdminUser:previous.marked_by_user_id;
+      const forgedTime=tamper==="time"
+        ?new Date(previous.marked_at.getTime()-60_000):previous.marked_at;
+      await db.query(
+        "update attendance_records set status='PRESENT', " +
+        "note='DB045 audited correction',marked_at=marked_at+interval '2 minutes', " +
+        "version=version+1 where id=$1",
+        [previous.id],
+      );
+      await db.query(`
+        insert into attendance_record_events(
+          attendance_record_id,schedule_event_id,delivery_id,membership_id,
+          college_id,actor_user_id,actor_membership_id,actor_role,action,
+          previous_status,new_status,previous_note,new_note,
+          previous_marked_by_user_id,new_marked_by_user_id,
+          previous_marked_at,new_marked_at,record_version_before,record_version_after
+        ) select ar.id,ar.schedule_event_id,$2::uuid,ar.membership_id,
+          $3::uuid,$4::uuid,null,'SUPER_ADMIN','CORRECT',
+          $5::text,ar.status,$6::text,ar.note,
+          $7::uuid,ar.marked_by_user_id,
+          $8::timestamptz,ar.marked_at,$9::integer,ar.version
+          from attendance_records ar where ar.id=$1
+      `,[
+        previous.id,foreign.delivery,SEED_IDS.collegeB,
+        SEED_IDS.superAdminUser,previous.status,forgedNote,forgedMarker,
+        forgedTime,previous.version,
+      ]);
+      await expect(db.query("COMMIT")).rejects.toMatchObject({
+        code:"23514",
+        message:expect.stringContaining("missing immutable audit event"),
+      });
+    }finally{
+      await db.query("ROLLBACK").catch(()=>{});
+      db.release();
+    }
+    const unchanged=await pool.query<{version:number;status:string}>(
+      "select version,status from attendance_records where schedule_event_id=$1",
+      [foreign.event],
+    );
+    expect(unchanged.rows).toMatchObject([{version:0,status:"ABSENT"}]);
+    const events=await pool.query<{n:number}>(
+      "select count(*)::int n from attendance_record_events where schedule_event_id=$1",
+      [foreign.event],
+    );
+    expect(events.rows[0]?.n).toBe(1);
+  });
+
   it("lists only own-college deliveries and catalogue entries", async () => {
     const shortTitle="Attendance formal "+nonce;
     await pool.query("update courses set short_title=$1 where id=$2",[shortTitle,own.course]);
