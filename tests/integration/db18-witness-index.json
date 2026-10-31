@@ -170,9 +170,9 @@
     "pendingConcurrencyAuthored": 0,
     "additionalRegisteredConcurrencyRuntimeExecuted": 4,
     "additionalRegisteredConcurrencyRuntimePassed": 4,
-    "registeredOriginalScopeRaceExecuted": 10,
-    "registeredOriginalScopeRacePassed": 10,
-    "unwitnessedPass5Races": 3
+    "registeredOriginalScopeRaceExecuted": 12,
+    "registeredOriginalScopeRacePassed": 12,
+    "unwitnessedPass5Races": 1
   },
   "knownRedRaceWitnesses": [
     {
@@ -536,6 +536,30 @@
       "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/41226341851",
       "jobId": 124611551145,
       "scope": "Two live DB08 service decisions serialized on college lock preserving ordered audit events; newer scoped DECIDE wins race over stale bulk UNDO with no partial rollback. Isolated registered PG17 full gate PASS using non-excluding DB08 test config."
+    },
+    {
+      "id": "DB18-C19",
+      "raceProbe": "P5-R18",
+      "file": "tests/integration/db18-shared-ops-race.test.ts",
+      "title": "P5-R18: edit/edit and edit/delete each allow only one versioned announcement writer",
+      "state": "REGISTERED_PG17_VERIFIED",
+      "execution": "PASS",
+      "commitSha": "894bf23055a6312ef55d7dae6931b871c39cfc19",
+      "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/41228213651",
+      "jobId": 124616728570,
+      "scope": "Registered PG17 migration replay: two real service writers block on announcement CAS; edit/edit, edit/delete and restoration competition maintain single version increment, no stale resurrection; independent focused job plus full unchanged TypeScript gate succeeded."
+    },
+    {
+      "id": "DB18-C20",
+      "raceProbe": "P5-R19",
+      "file": "tests/integration/db18-shared-ops-race.test.ts",
+      "title": "P5-R19: competing workflow transitions preserve exactly one immutable activity per committed CAS",
+      "state": "REGISTERED_PG17_VERIFIED",
+      "execution": "PASS",
+      "commitSha": "894bf23055a6312ef55d7dae6931b871c39cfc19",
+      "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/41228213651",
+      "jobId": 124616728570,
+      "scope": "Registered PG17: competing bug-tracker workflow/status and metadata writers blocked on same row; exactly one CAS wins per version, loser STALE_VERSION, immutable activity count/transition matches committed state, foreign-college admin denied; independent job and full TypeScript gate succeeded."
     }
   ],
   "outboundStagedDiagnostics": {
@@ -594,9 +618,7 @@
     "notDb018Acceptance": true
   },
   "unwitnessedPass5Probes": [
-    "P5-R13",
-    "P5-R18",
-    "P5-R19"
+    "P5-R13"
   ],
   "latestRegisteredPass5RaceExecution": {
     "result": "PASS_PARTIAL_FULL_MATRIX",
@@ -711,5 +733,27 @@
     "remaining": "Original DB053 source-only course_upload_receipts contract and overlapping DB016 assignment_submission_files physical shape are not registered. Preserve original P5-R13 test failure; reconcile forward-only DDL and producer/read paths, then re-execute exact-head PostgreSQL and production boundaries.",
     "db018Accepted": false,
     "originalP5R13Accepted": false
+  },
+  "latestR18R19RegisteredEvidence": {
+    "state": "PASS_2_ORIGINAL_RACES_REGISTERED_PG17_DB018_OPEN",
+    "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/41228213651",
+    "jobId": 124616728570,
+    "implementationCommits": [
+      "fd1b80deac6fe85eccc040cdc49ed7bb1156c44f",
+      "c310d4c2e156435c571ea5a5a5c30a178306098c",
+      "be5dd88ed74d664f1bc4ca17b0800012a3301324"
+    ],
+    "registeredOriginalRaces": [
+      "P5-R18",
+      "P5-R19"
+    ],
+    "independentScopedJobResult": "SUCCESS",
+    "postgresqlMajorVersion": 17,
+    "remainingUnwitnessed": [
+      "P5-R13"
+    ],
+    "externalProviderActivated": false,
+    "db018Accepted": false,
+    "originalR13Blocker": "course_upload_receipts unregistered; assignment_submission_files physical schema differs; live registered FILE one-shot proof is separate and cannot waive original source-only receipt integration."
   }
 }
