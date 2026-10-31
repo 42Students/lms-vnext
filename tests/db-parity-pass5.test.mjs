@@ -63,8 +63,8 @@ test("DB15 race probes remain explicit and never masquerade as executed evidence
 
   const count = state =>
     manifest.raceProbes.filter(p => p.state === state).length;
-  assert.equal(count("SOURCE_CONFIRMED_GAP"), 2);
-  assert.equal(count("SOURCE_FIX_AUTHORED_NEEDS_EXECUTION"), 2);
+  assert.equal(count("SOURCE_CONFIRMED_GAP"), 1);
+  assert.equal(count("SOURCE_FIX_AUTHORED_NEEDS_EXECUTION"), 3);
   assert.equal(count("SOURCE_PROTECTED_NEEDS_EXECUTION"), 13);
   assert.equal(count("SOURCE_PROTECTED_DRAFT_UNMIGRATED"), 3);
   assert.equal(count("PARTIAL_SOURCE_PROTECTION_DISPATCHER_GAP"), 1);
@@ -74,13 +74,13 @@ test("DB15 race probes remain explicit and never masquerade as executed evidence
     manifest.raceProbes
       .filter(p => p.state === "SOURCE_CONFIRMED_GAP")
       .map(p => p.id),
-    ["P5-R11", "P5-R21"],
+    ["P5-R21"],
   );
   assert.deepEqual(
     manifest.raceProbes
       .filter(p => p.state === "SOURCE_FIX_AUTHORED_NEEDS_EXECUTION")
       .map(p => p.id),
-    ["P5-R01", "P5-R02"],
+    ["P5-R01", "P5-R02", "P5-R11"],
   );
   assert.equal(manifest.raceAudit.runtimeVerified, 0);
   assert.deepEqual(
