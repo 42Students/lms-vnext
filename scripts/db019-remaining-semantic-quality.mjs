@@ -19,7 +19,7 @@ export const REMAINING_DOMAIN_FILES=Object.freeze({
 const floor={DB03:79,DB04:103,DB05:92,DB06:248,DB08:280,DB10:221};
 const oracleOf=(domain,artifact)=>{
   if(domain==="DB03")return artifact.legacyOracleSha;
-  if(domain==="DB05")return artifact.legacyBackendSha;
+  if(domain==="DB05")return artifact.source?.legacyBackendSha;
   if(domain==="DB08")return artifact.capturedFrom?.legacyBackendSha;
   return artifact.legacyBackendSha || artifact.sourceSha;
 };
@@ -83,7 +83,7 @@ export function auditDb019Remaining(ledgers,artifacts,db10Overlay=null) {
           "REMODELED_NEEDS_PROOF","MISSING_OR_UNPROVEN"].includes(row.classification) ||
           !required(row.targetProposal)||row.semanticVerification!=="NOT_VERIFIED" ||
           row.runtimeDatabaseVerification!=="NOT_RUN" ||
-          row.producerConsumerVerification!=="NOT_VERIFIED")
+          !["NOT_VERIFIED","LEGACY_CONSUMER_SOURCE_CONFIRMED_VNEXT_SERVICE_NOT_ADAPTED"].includes(row.producerConsumerVerification))
           fail("DB05_MISSING_OR_FALSE_FIELD_REVIEW",row.source);
         if(row.classification==="MISSING_OR_UNPROVEN" ||
           row.classification==="REMODELED_NEEDS_PROOF")undecided++;
