@@ -173,3 +173,109 @@ test("DB014 registered retention fences, direct parent deletion and TRUNCATE are
    await db.end();
  }
 });
+
+/**
+ * DB014 concurrent FK child insert and parent deletion:
+ * - a child insert holds a KEY SHARE lock on the referenced parent;
+ * - a concurrent parent DELETE must wait, not race past the retention probe;
+ * - after the child commits, the retention guard must reject the DELETE;
+ * - if the DELETE obtains the parent row lock first, a racing child insert
+ *   cannot commit a dangling reference even if the parent DELETE rolls back.
+ *
+ * This is a REAL registered-table witness, not a synthetic trigger check.
+ * Use a seeded, disposable PG17 database only; every fixture is cleaned up.
+ */
+test("DB014 concurrent FK insert and retained-parent DELETE serialize in both orders",async()=>{
+ const parent=new pg.Client({connectionString:process.env.TEST_DATABASE_URL,
+   connectionTimeoutMillis:10000,query_timeout:15000});
+ const child=new pg.Client({connectionString:process.env.TEST_DATABASE_URL,
+   connectionTimeoutMillis:10000,query_timeout:15000});
+ await parent.connect();
+ await child.connect();
+ const seededAdmin="30000000-0000-4000-8000-000000000002";
+ const seededCollege="20000000-0000-4000-8000-000000000001";
+ const ids=[randomUUID(),randomUUID()];
+ let parentTx=false,childTx=false;
+ try{
+   for(const id of ids){
+     await parent.query(
+       "INSERT INTO platform_broadcasts (id,title,message,show_until,audience_mode,status,author_user_id) "+
+       "VALUES ($1,'DB014 retention race','PG17 two-session witness',now() + interval '1 day',"+
+       "'SELECTED_COLLEGES','PUBLISHED',$2)",[id,seededAdmin]);
+   }
+
+   // Child first: its FK KEY SHARE must prevent the parent from slipping past
+   // retention before an uncommitted target becomes visible.
+   await child.query("BEGIN");childTx=true;
+   await child.query(
+     "INSERT INTO platform_broadcast_targets(broadcast_id,college_id) VALUES ($1,$2)",
+     [ids[0],seededCollege]);
+   await parent.query("BEGIN");parentTx=true;
+   await parent.query("SET LOCAL lock_timeout='400ms'");
+   await assert.rejects(parent.query(
+     "DELETE FROM platform_broadcasts WHERE id=$1",[ids[0]]),error=>{
+     assert.equal(error?.code,"55P03","DELETE must wait for child FK transaction");
+     return true;
+   });
+   await parent.query("ROLLBACK");parentTx=false;
+   await child.query("COMMIT");childTx=false;
+   await parent.query("BEGIN");parentTx=true;
+   await parent.query("SAVEPOINT db014_retained_after_commit");
+   await assert.rejects(parent.query(
+     "DELETE FROM platform_broadcasts WHERE id=$1",[ids[0]]),error=>{
+     assert.equal(error?.code,"23514","committed target must be retained");
+     return true;
+   });
+   await parent.query("ROLLBACK TO SAVEPOINT db014_retained_after_commit");
+   assert.equal((await parent.query(
+     "SELECT count(*)::int AS n FROM platform_broadcast_targets WHERE broadcast_id=$1",
+     [ids[0]])).rows[0].n,1);
+   await parent.query("COMMIT");parentTx=false;
+
+   // Parent first: a DELETE of a target-free draft parent takes the row lock.
+   // A concurrent child insert must not bypass that in-flight deletion.
+   await parent.query("BEGIN");parentTx=true;
+   const deletion=await parent.query(
+     "DELETE FROM platform_broadcasts WHERE id=$1",[ids[1]]);
+   assert.equal(deletion.rowCount,1,"target-free parent is deletable");
+   await child.query("BEGIN");childTx=true;
+   await child.query("SET LOCAL lock_timeout='400ms'");
+   await assert.rejects(child.query(
+     "INSERT INTO platform_broadcast_targets(broadcast_id,college_id) VALUES ($1,$2)",
+     [ids[1],seededCollege]),error=>{
+     assert.equal(error?.code,"55P03","child FK must wait for parent deletion");
+     return true;
+   });
+   await child.query("ROLLBACK");childTx=false;
+   await parent.query("ROLLBACK");parentTx=false;
+
+   // Rollback restored the parent; it may now accept a child, which must
+   // again block deletion through the registered retention guard.
+   await child.query(
+     "INSERT INTO platform_broadcast_targets(broadcast_id,college_id) VALUES ($1,$2)",
+     [ids[1],seededCollege]);
+   await parent.query("BEGIN");parentTx=true;
+   await parent.query("SAVEPOINT db014_restored_parent");
+   await assert.rejects(parent.query(
+     "DELETE FROM platform_broadcasts WHERE id=$1",[ids[1]]),error=>{
+     assert.equal(error?.code,"23514");
+     return true;
+   });
+   await parent.query("ROLLBACK TO SAVEPOINT db014_restored_parent");
+   await parent.query("COMMIT");parentTx=false;
+   for(const id of ids){
+     await parent.query("DELETE FROM platform_broadcast_targets WHERE broadcast_id=$1",[id]);
+     assert.equal((await parent.query(
+       "DELETE FROM platform_broadcasts WHERE id=$1",[id])).rowCount,1);
+   }
+   console.log(JSON.stringify({kind:"DB014_CASCADE_RETENTION_RACES",
+     childFirstWait:"55P03",childCommittedDeleteRejected:"23514",
+     parentFirstWait:"55P03",restoredParentProtected:"23514",
+     allFixturesDeleted:true,registeredSchema:true}));
+ }finally{
+   if(childTx)await child.query("ROLLBACK").catch(()=>{});
+   if(parentTx)await parent.query("ROLLBACK").catch(()=>{});
+   await child.end().catch(()=>{});
+   await parent.end().catch(()=>{});
+ }
+});
