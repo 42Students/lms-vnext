@@ -925,6 +925,12 @@
             "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/41147412594",
             "result": "PASS_DIAGNOSTIC_NOT_CERTIFICATION",
             "scope": "Current PG17 registered 321 migration idempotent replay; full read-only catalog exported (276 tables, 3576 columns, 1916 constraints, 1032 indexes) and 266 typed table representation re-generated; source 0133 nullable application request reconciled; CHECK/index/default provenance and 44 duplicate DDL still pending."
+          },
+          {
+            "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/41147882133",
+            "result": "PASS_REGISTERED_PG17_PARTIAL",
+            "sourceSha": "e719538062551f1b01f70abefa8e52fb37543516",
+            "scope": "Forward-only registered 0323 after 0322, exact zero-to-head PG17 replay and idempotence passed, 2 missing named CHECK constraints, 2 previously missing indexes, 4-week workspace default registered. Type public metric default aligned to existing SQL JSONB default. Exact PG catalog semantic/index witness PASS (1/1), DB020 diagnostic suite pass (14/14). Global generator still produces duplicate CREATE TABLE/ALTER, DB020 remains open."
           }
         ],
         "sourceCommits": [
@@ -1039,6 +1045,13 @@
             "Project instance sprint_length_weeks and public page metric_keys default expressions differ between typed and catalog; classify before baseline",
             "SQL-only/circular FK and future snapshot generation baseline remain unresolved"
           ],
+          "notAcceptance": true
+        },
+        "registeredColumnIndexParity": {
+          "status": "VERIFIED_PARTIAL",
+          "migration": "drizzle/0323_db020_registered_column_and_index_parity.sql",
+          "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/41147882133",
+          "sourceSha": "e719538062551f1b01f70abefa8e52fb37543516",
           "notAcceptance": true
         }
       }
