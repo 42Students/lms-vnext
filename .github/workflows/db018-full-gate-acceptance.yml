@@ -29,6 +29,7 @@ on:
       - "tests/integration/placements-db08-batches.test.ts"
       - "tests/integration/db18-assignment-receipt-race.test.ts"
       - "tests/integration/db18-registered-file-one-shot-race.test.ts"
+      - "src/modules/courses/assignment-submission-file-service.ts"
       - "tests/integration/db18-shared-ops-race.test.ts"
       - "tests/integration/super-admin-db10-tracker-workflow.test.ts"
       - "tests/db-parity-pass5.test.mjs"
