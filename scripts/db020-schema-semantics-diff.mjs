@@ -73,9 +73,23 @@ export function inspectDb020StructuralSemantics(snapshot,catalog,diagnosis){
   .map(i=>identity(i.table_name,i.name));
  const disabledTriggers=catalog.triggers.filter(t=>t.enabled!=="O"&&t.enabled!=="A")
   .map(t=>identity(t.table_name,t.name)+":"+t.enabled);
+ // Missing typed CHECKs/indexes are blocking drift even if no same-name
+ // physical constraint exists. SQL-owned unnamed contracts are audited
+ // separately; they do not excuse absent typed schema contracts.
  const hardDifferences=missingColumns.length+nullabilityDifferences.length+
-  unvalidatedTypedChecks.length+invalidTypedIndexes.length+indexUniqueDifferences.length+
+  missingTypedChecks.length+unvalidatedTypedChecks.length+
+  missingTypedIndexes.length+invalidTypedIndexes.length+indexUniqueDifferences.length+
   invalidPhysicalConstraints.length+invalidPhysicalIndexes.length+disabledTriggers.length;
+ const structuralFailures=[
+  ["missing typed table in PG17",diagnosis.counts.generatedAbsentInRegisteredPg],
+  ["missing typed columns in PG17",diagnosis.counts.generatedTypedMissingColumns],
+  ["unmodeled columns on typed tables",diagnosis.counts.registeredExtraColumnsOnTypedTables],
+  ["unexplained PostgreSQL type mismatches",diagnosis.counts.unexplainedTypeDifferences],
+  ["missing typed FK shapes",diagnosis.counts.typedFkShapesMissingFromCatalog],
+  ["unvalidated PG17 FKs",diagnosis.counts.unvalidatedFks],
+  ["CHECK/index/nullability/trigger structural drift",hardDifferences],
+ ].filter(([,count])=>count!==0).map(([reason,count])=>({reason,count}));
+ const structurallyConsistent=structuralFailures.length===0;
  return {
   kind:"DB020_REGISTERED_PG17_SEMANTIC_DRIFT_DIAGNOSIS",
   source:"unapplied-generated-typed-snapshot-vs-readonly-pg17-catalog",
@@ -83,6 +97,9 @@ export function inspectDb020StructuralSemantics(snapshot,catalog,diagnosis){
   registeredMigrations:catalog.registeredMigrations,
   generatedSnapshotId:snapshot.id,
   passCertification:false,
+  // A green structural gate is deliberately NOT DB020 global certification.
+  structurallyConsistent,
+  structuralFailures,
   requiresHumanSqlReview:true,
   counts:{
    typedTables:typedTables.size,
@@ -134,5 +151,7 @@ if(process.argv[1]&&process.argv[1].endsWith("db020-schema-semantics-diff.mjs"))
  mkdirSync(".verification",{recursive:true});
  writeFileSync(".verification/db020-semantic-disposition.json",JSON.stringify(report,null,2)+"\n");
  console.log(JSON.stringify({kind:report.kind,registeredHead:report.registeredHead,
-  counts:report.counts,passCertification:report.passCertification},null,2));
+  counts:report.counts,structurallyConsistent:report.structurallyConsistent,
+  structuralFailures:report.structuralFailures,passCertification:report.passCertification},null,2));
+ if(!report.structurallyConsistent)process.exitCode=1;
 }
