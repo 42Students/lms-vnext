@@ -1056,4 +1056,57 @@ describe("academics A2 against PostgreSQL", () => {
       code: "23514",
     });
   });
+  it("P5-R11 rejects schedule create and update after a concurrent period close", async () => {
+    const structure = await createStructure();
+    const closeDuring = async (operation: () => Promise<unknown>) => {
+      const closer = await pool.connect();
+      try {
+        // The uncommitted CLOSE is invisible to preflight reads, but holds the
+        // period row lock until the schedule transaction reaches its recheck.
+        await closer.query("BEGIN");
+        await closer.query(
+          "UPDATE academic_periods SET status='CLOSED' WHERE id=$1",
+          [structure.period1.id],
+        );
+        const outcome = Promise.resolve().then(operation).then(
+          () => ({ok: true}),
+          (error: unknown) => ({ok: false, error}),
+        );
+        await new Promise(resolve => setTimeout(resolve, 150));
+        await closer.query("COMMIT");
+        expect(await outcome).toMatchObject({
+          ok: false, error: {code: "ACADEMIC_PERIOD_CLOSED"},
+        });
+      } finally {
+        await closer.query("ROLLBACK");
+        closer.release();
+      }
+    };
+
+    await closeDuring(() => createSectionScheduleEvent(collegeAdmin, {
+      sectionId: structure.sectionA.id,
+      title: "P5-R11 must not persist a session after period closure",
+      startsAt: "2026-07-11T04:30:00.000Z",
+      endsAt: "2026-07-11T05:30:00.000Z",
+    }));
+    await pool.query(
+      "UPDATE academic_periods SET status='ACTIVE' WHERE id=$1",
+      [structure.period1.id],
+    );
+    const existing = await createSectionScheduleEvent(collegeAdmin, {
+      sectionId: structure.sectionA.id,
+      title: "P5-R11 original session",
+      startsAt: "2026-07-12T04:30:00.000Z",
+      endsAt: "2026-07-12T05:30:00.000Z",
+    });
+    await closeDuring(() => updateSectionScheduleEvent(
+      collegeAdmin, existing.id, {title: "P5-R11 forbidden stale edit"},
+    ));
+    const persisted = await pool.query<{title: string}>(
+      "SELECT title FROM section_schedule_events WHERE section_id=$1",
+      [structure.sectionA.id],
+    );
+    expect(persisted.rows).toEqual([{title: "P5-R11 original session"}]);
+  });
+
 });
