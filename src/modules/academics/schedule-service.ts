@@ -16,6 +16,7 @@ import { getDb } from "@/db/client";
 import { alias } from "drizzle-orm/pg-core";
 import { z } from "zod";
 import {
+  academicPeriods,
   collegeMemberships,
   electiveOfferings,
   lmsGroupMembers,
@@ -140,6 +141,24 @@ export async function listFutureElectiveLearnerOverlaps(
 }
 
 type ScheduleTx = Parameters<Parameters<ReturnType<typeof getDb>["transaction"]>[0]>[0];
+
+/** P5-R11: period closure takes FOR UPDATE on this parent row. Every schedule
+ * writer must take a compatible parent lock inside its own write transaction
+ * and re-read the committed status/dates, never trust a preflight snapshot. */
+async function lockMutableSchedulePeriod(tx: ScheduleTx, periodId: string, collegeId: string) {
+  const [period] = await tx.select({
+    startDate: academicPeriods.startDate,
+    endDate: academicPeriods.endDate,
+    status: academicPeriods.status,
+  }).from(academicPeriods)
+    .where(and(eq(academicPeriods.id, periodId),
+      eq(academicPeriods.collegeId, collegeId)))
+    .for("share").limit(1);
+  if (!period || period.status === "CLOSED") {
+    throw new AcademicsServiceError("ACADEMIC_PERIOD_CLOSED");
+  }
+  return period;
+}
 
 /** Preflight checks alone can race a course offering closure. Hold SHARE locks
  * on both the delivery and offering until the schedule link commits. This
@@ -586,6 +605,10 @@ export async function createSectionScheduleEvent(
 
   const db = getDb();
   return db.transaction(async (tx) => {
+    const lockedPeriod = await lockMutableSchedulePeriod(
+      tx, section.academicPeriodId, section.collegeId,
+    );
+    eventWindowInsidePeriod(startsAt, endsAt, lockedPeriod);
     if (input.deliveryId)
       await assertScheduleDeliveryInsideTransaction(tx,input.deliveryId,input.sectionId);
     await assertScheduleResources(tx, {
@@ -701,6 +724,9 @@ export async function updateSectionScheduleEvent(
   const db = getDb();
 
   return db.transaction(async (tx) => {
+    const lockedPeriod = await lockMutableSchedulePeriod(
+      tx, scope.academicPeriodId, scope.collegeId,
+    );
     // Lock the event before deriving unchanged resource fields, preventing a
     // concurrent edit from silently reverting faculty/time/room changes.
     const [current] = await tx.select({
@@ -717,7 +743,7 @@ export async function updateSectionScheduleEvent(
     }
     const startsAt = input.startsAt ? new Date(input.startsAt) : current.startsAt;
     const endsAt = input.endsAt ? new Date(input.endsAt) : current.endsAt;
-    eventWindowInsidePeriod(startsAt, endsAt, period);
+    eventWindowInsidePeriod(startsAt, endsAt, lockedPeriod);
     if (input.deliveryId)
       await assertScheduleDeliveryInsideTransaction(tx,input.deliveryId,scope.sectionId);
     await assertScheduleResources(tx, {
