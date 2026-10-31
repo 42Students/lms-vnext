@@ -1,6 +1,7 @@
 import "server-only";
 import { and, count, desc, eq, sql } from "drizzle-orm";
 import { getDb } from "@/db/client";
+import { getOutboundDispatchDb, requireOutboundDispatchPrincipal } from "./outbound-dispatch-principal";
 import { isSuperAdmin, type RequestContext } from "@/modules/identity/context";
 import { messagingSmsDeliveryAttempts } from "@/db/schema/messaging-receipts";
 import { AuthorizationError, requirePermission } from "@/modules/permissions/policy";
@@ -243,12 +244,13 @@ export async function claimOutboundDispatchBatch(
   leaseSeconds = 60,
 ): Promise<OutboundDispatchClaim[]> {
   requireOutboundDispatchReady();
+  await requireOutboundDispatchPrincipal();
   const worker = validateDispatchWorker(workerRaw);
   if (!Number.isSafeInteger(batchSize) || batchSize < 1 || batchSize > 100 ||
       !Number.isSafeInteger(leaseSeconds) || leaseSeconds < 5 || leaseSeconds > 300) {
     throw new OutboundDispatchNotReadyError();
   }
-  const result = await getDb().execute<{
+  const result = await getOutboundDispatchDb().execute<{
     message_id: string; fence: number; request_digest: string;
   }>(sql`
     select message_id, fence, request_digest
@@ -273,6 +275,7 @@ export async function authorizeOutboundProviderSend(input: {
   globalEmailHash: string | null;
 }): Promise<boolean> {
   requireOutboundDispatchReady();
+  await requireOutboundDispatchPrincipal();
   validateDispatchWorker(input.worker);
   if (!/^[0-9a-f-]{36}$/i.test(input.messageId) ||
       !Number.isSafeInteger(input.fence) || input.fence < 1 ||
@@ -280,7 +283,7 @@ export async function authorizeOutboundProviderSend(input: {
        !/^[0-9a-f]{64}$/.test(input.globalEmailHash))) {
     throw new OutboundDispatchNotReadyError();
   }
-  const result = await getDb().execute<{ authorized: boolean }>(sql`
+  const result = await getOutboundDispatchDb().execute<{ authorized: boolean }>(sql`
     select db10_check_outbound_pre_send(
       ${input.messageId}::uuid, ${input.worker}, ${input.fence},
       ${input.globalEmailHash}
@@ -297,11 +300,12 @@ export async function completeOutboundDispatch(
   input: OutboundCompletionInput,
 ): Promise<boolean> {
   requireOutboundDispatchReady();
+  await requireOutboundDispatchPrincipal();
   if (!validOutboundCompletion(input)) {
     throw new OutboundDispatchNotReadyError();
   }
   const nextAttemptAt = input.nextAttemptAt ?? null;
-  const result = await getDb().execute<{ completed: boolean }>(sql`
+  const result = await getOutboundDispatchDb().execute<{ completed: boolean }>(sql`
     select db10_complete_outbound_claim(
       ${input.messageId}::uuid, ${input.worker}, ${input.fence},
       ${input.outcome}, ${input.providerMessageId ?? null},
@@ -359,10 +363,11 @@ export async function inspectOutboundDispatchBacklog(): Promise<{
  */
 export async function expireUnclaimedOutboundBatch(maxRows = 100): Promise<number> {
   requireOutboundDispatchReady();
+  await requireOutboundDispatchPrincipal();
   if (!Number.isSafeInteger(maxRows) || maxRows < 1 || maxRows > 1000) {
     throw new OutboundDispatchNotReadyError();
   }
-  const result = await getDb().execute<{ expired: number }>(sql`
+  const result = await getOutboundDispatchDb().execute<{ expired: number }>(sql`
     select db10_expire_unclaimed_outbound(${maxRows}) as expired
   `);
   return Number(result.rows[0]?.expired ?? 0);
