@@ -347,7 +347,24 @@ async function writeActivityEvent(
         ),
       )
       .limit(1);
-    if (existing) return existing;
+    if (existing) {
+      // The dedupe index is intentionally global. An unscoped collision must
+      // never return another college's private event (nor another actor's
+      // subject/audit metadata). Fail closed without exposing the old row.
+      // Callers own idempotency-key namespace construction; silently
+      // rewriting stored keys would break existing producer/consumer probes.
+      if (
+        existing.collegeId !== values.collegeId ||
+        existing.organizationId !== values.organizationId ||
+        existing.actorUserId !== values.actorUserId ||
+        existing.eventType !== values.eventType ||
+        existing.subjectType !== values.subjectType ||
+        existing.subjectId !== values.subjectId
+      ) {
+        throw new ActivityServiceError("ACTIVITY_SCOPE_MISMATCH");
+      }
+      return existing;
+    }
   }
 
   throw new ActivityServiceError(

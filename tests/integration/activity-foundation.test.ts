@@ -205,6 +205,72 @@ describe("Activity and notification foundation", () => {
     );
   });
 
+  it("DB014 rejects cross-college dedupe collisions without returning another tenant's activity event", async () => {
+    const dedupeKey = "db014-foreign-tenant-collision";
+    const first = await recordActivityEvent(collegeAdmin, {
+      eventType: ACTIVITY_EVENT_TYPES.PLACEMENTS_JOB_PUBLISHED,
+      collegeId: SEED_IDS.collegeA,
+      subjectType: "placement_job",
+      subjectId: "shared-collision-subject",
+      summary: "College A private event",
+      metadata: {privateCollege: "A"},
+      dedupeKey,
+    });
+
+    await expect(recordActivityEvent(facultyB, {
+      eventType: ACTIVITY_EVENT_TYPES.PLACEMENTS_JOB_PUBLISHED,
+      collegeId: SEED_IDS.collegeB,
+      subjectType: "placement_job",
+      subjectId: "shared-collision-subject",
+      summary: "College B must not receive college A metadata",
+      dedupeKey,
+    })).rejects.toMatchObject({code: "ACTIVITY_SCOPE_MISMATCH"});
+
+    const {rows} = await pool.query(
+      "select id,college_id,actor_user_id from activity_events where dedupe_key=$1",
+      [dedupeKey],
+    );
+    expect(rows).toHaveLength(1);
+    expect(rows[0]).toMatchObject({
+      id: first.id, college_id: SEED_IDS.collegeA,
+      actor_user_id: SEED_IDS.collegeAdminUser,
+    });
+  });
+
+  it("DB014 rejects same-college idempotency collisions across subjects and actors", async () => {
+    const dedupeKey = "db014-subject-actor-collision";
+    const input = {
+      eventType: ACTIVITY_EVENT_TYPES.PLACEMENTS_JOB_PUBLISHED,
+      collegeId: SEED_IDS.collegeA,
+      subjectType: "placement_job",
+      subjectId: "job-a",
+      summary: "Exact idempotency envelope",
+      dedupeKey,
+    } as const;
+    const first = await recordActivityEvent(collegeAdmin, input);
+    expect((await recordActivityEvent(collegeAdmin, {
+      ...input, summary: "Same actor, subject and event is a retry",
+    })).id).toBe(first.id);
+
+    await expect(recordActivityEvent(collegeAdmin, {
+      ...input, subjectId: "job-b",
+    })).rejects.toMatchObject({code: "ACTIVITY_SCOPE_MISMATCH"});
+    await expect(recordActivityEvent(learner, {
+      ...input,
+    })).rejects.toMatchObject({code: "ACTIVITY_SCOPE_MISMATCH"});
+
+    const {rows} = await pool.query(
+      "select id,college_id,actor_user_id,subject_id from activity_events where dedupe_key=$1",
+      [dedupeKey],
+    );
+    expect(rows).toHaveLength(1);
+    expect(rows[0]).toMatchObject({
+      id: first.id, college_id: SEED_IDS.collegeA,
+      actor_user_id: SEED_IDS.collegeAdminUser,
+      subject_id: "job-a",
+    });
+  });
+
   it("delivers self-scoped in-app notifications idempotently and enforces read ownership", async () => {
     const event =
       await recordActivityEvent(
