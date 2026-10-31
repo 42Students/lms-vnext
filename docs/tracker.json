@@ -57,58 +57,43 @@
       "id": "DB-001",
       "title": "Provide CI-independent disposable PostgreSQL verification",
       "phase": "DATABASE",
-      "done": false,
+      "done": true,
       "dependsOn": [],
       "implementationCheckpoint": {
-        "status": "CANONICAL_BASELINE_GENERATOR_AND_REGISTERED_PG_REPLAY_GREEN_FULL_12_GATE_UNACCEPTED",
-        "verifiedScope": "Verifier acceptance receipts now remove all PostgreSQL URL query and fragment data, and child-output redaction removes URL query/fragment secrets even when the printed URL differs from environment variables.",
-        "sourceCommits": [
-          "545481e79e275235f4ce6bb64b2b90314469e8da",
-          "dde71187cb6a4f40a834118c01f3eeb994583ba3",
-          "fcff8f77669c595c96ed37fe162dcab33ba121b0",
-          "a779b1865f46cca6e2ac7d9e425f9acfd0ed9b19",
-          "c213c482d8a94394d82947a86cbcb45444f9636b",
-          "370886d63fdc76d724c13deee359085775c0653f",
-          "19193559f6c48b361964ec681de7e8bf410751b7",
-          "31cdcbd3825472bb26755844009d6c63509c7e73",
-          "76778a0b6181bb8f448ffbd109959f96e94154df"
-        ],
-        "sourceChecks": {
-          "runner": "GitHub Actions Node22, standalone CLI with explicitly disposable PostgreSQL17 service, exact main SHA",
-          "result": "FAIL_CLOSED_AT_CANONICAL_GENERATION",
-          "note": "Isolated secret-redaction fixtures only; committed full Node test suite and PostgreSQL independent verifier not executed in this session.",
-          "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/41126990955",
-          "commitSha": "19193559f6c48b361964ec681de7e8bf410751b7",
-          "observation": "Drizzle-kit prints drizzle/meta/0316_snapshot.json data is malformed while exiting code 0; strengthened generation guard now correctly refuses 12/12 certification before resetting PostgreSQL."
-        },
-        "openEvidence": [
-          "Reconcile all generated snapshot-to-registered-PG structural gaps, not blindly apply 44 existing tables",
-          "Rerun exact clean-main npm run db:verify:independent and collect 12/12 PASS/PG17 evidence; until then DB001 remains OPEN"
-        ],
+        "status": "ACCEPTED_EXACT_SHA_REGISTERED_PG17_12_OF_12",
         "recordedOn": "2026-10-31",
-        "evidenceIsNotAcceptance": true,
-        "scope": "Source snapshot parse repaired; standalone verifier runs on PG17 but correctly rejects generated untracked Drizzle schema drift before executing remaining 12 gates.",
-        "sourceFixCommit": "e4b49fe10a7872666da08b9099c8566de6d0e0c6",
-        "latestFailedEvidenceRun": "https://github.com/42Students/lms-vnext/actions/runs/41128343067",
+        "baselineMigration": "0327_db001_canonical_metadata_baseline",
+        "verifiedSourceSha": "fb03eebdf39a9256270bd2d7edcb3ea125bffcb1",
+        "verifiedRunUrl": "https://github.com/42Students/lms-vnext/actions/runs/41168878963",
+        "verifiedJobId": 124442317383,
         "latestProgress": {
-          "recordedOn": "2026-10-31",
-          "baselineMigration": "0327_db001_canonical_metadata_baseline",
-          "accepted": false,
-          "observedProvenSteps": "Journal verification, canonical Drizzle generation with 'No schema changes', tracked/untracked drift checks, disposable PG17 zero-to-head replay, migration idempotence, catalog, DB078, DB09 CRM and secure-share negative witnesses all passed at pinned source before static suite.",
-          "precedingRun": {
-            "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/41152108930",
-            "commitSha": "6d7e9fd85e1fa226f78e695f0575852a500afc0a",
-            "result": "FAIL_AT_DB_PARITY_SOURCE_TESTS_BEFORE_INTEGRATION",
-            "remainingStaticFailures": "DB41 parser assumed newline-plus-single-close, misread valid nested attendance CHECK. Fixed afterward."
-          },
-          "parserFixCommit": "36ddc89d460d31f04aa2d769571ae79ba782618b",
-          "parserRegressionCommit": "cc46fc68bf0c013f77015a5d1b15ab0e8a4f571f",
-          "sourceSafetyFixturesAligned": true,
-          "latestFullGateRunUrl": "https://github.com/42Students/lms-vnext/actions/runs/41152219029",
-          "latestFullGateResultAtRecording": "IN_PROGRESS_NOT_ACCEPTANCE",
-          "nextGate": "Require completed exact-SHA 12/12 PASS with PostgreSQL17 and final clean source; rerun at current journal head if subsequent migrations change baseline."
+          "accepted": true,
+          "verifiedTwelveGates": true,
+          "independentReceipt": "DB001 12/12 PASS",
+          "postgresMajorVersion": 17,
+          "sourceTreeCleanAtEnd": true,
+          "gitHeadUnchanged": true,
+          "diagnosticShards": "4/4 PASS",
+          "remainingGate": "NONE for DB-001; global database phase still has other OPEN tasks"
         }
-      }
+      },
+      "acceptedAt": "2026-10-31T04:40:21.077Z",
+      "acceptanceEvidence": [
+        {
+          "kind": "EXECUTED_INDEPENDENT_POSTGRESQL_17_12_OF_12",
+          "result": "PASS",
+          "exitCode": 0,
+          "commitSha": "fb03eebdf39a9256270bd2d7edcb3ea125bffcb1",
+          "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/41168878963",
+          "jobId": 124442317383,
+          "runner": "GitHub Actions ubuntu-latest Node.js 22, disposable PostgreSQL 17-alpine; CI-independent standalone CLI",
+          "commands": [
+            "npm run db:verify:independent (all 12 independently invocable gates)",
+            "npx vitest run --config vitest.db.config.ts tests/integration/db001-canonical-baseline-pg.test.ts"
+          ],
+          "details": "Exact source SHA pinned with clean checkout and unchanged HEAD; redacted independent receipt verified sourceTreeCleanAtEnd, gitHeadUnchanged, passed=true and 12/12 exitCode=0. Registered PostgreSQL17 zero-to-head replay, Drizzle generation/drift, journal, idempotence, catalogs, DB078/DB09 negatives, parity source and integration witnesses all passed. 510 test files and 1,881 integration assertions passed (312 tests skipped by their existing opt-in conditions); separate DB001 catalog guard passed. Four isolated PostgreSQL17 diagnostic shards also passed at the same commit (run 41168878893)."
+        }
+      ]
     },
     {
       "id": "DB-002",
