@@ -96,13 +96,13 @@ jobs:
           npx playwright test tests/e2e/faculty-courses.spec.ts
           --grep "Faculty Blueprint creates, edits and archives an own-Section Resource without private storage"
           --workers=1
-      - name: Verify Faculty YouTube and live-class non-storage lifecycle on persisted Section
-        run: >-
-          npx playwright test tests/e2e/faculty-blueprint-external-content-closure.spec.ts
-          --workers=1
       - name: Verify Faculty publish and learner Section visibility through archive
         run: >-
           npx playwright test tests/e2e/faculty-blueprint-publication-closure.spec.ts
+          --workers=1
+      - name: Verify Faculty YouTube and live-class non-storage lifecycle on persisted Section
+        run: >-
+          npx playwright test tests/e2e/faculty-blueprint-external-content-closure.spec.ts
           --workers=1
       - name: Confirm real Section Assignment and Quiz create, edit and archive journeys
         run: >-
