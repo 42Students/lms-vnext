@@ -352,11 +352,12 @@ test("DB18 full registered gate reruns on migrations and production notification
   for (const executionPath of [
     "tests/integration/db18-notification-race.test.ts",
     "tests/integration/groups-db03.test.ts",
-    "tests/integration/academics-a2.test.ts",
   ]) {
-    assert.ok(workflow.includes("npx vitest run"));
     assert.ok(workflow.includes("            " + executionPath), executionPath + ": not executed by full gate");
   }
+  assert.ok(workflow.includes(
+    "npx vitest run --config vitest.db.registered.config.ts tests/integration/academics-a2.test.ts",
+  ), "academics-a2.test.ts: not executed by full gate");
   const notificationWitness = fs.readFileSync(
     "tests/integration/db18-notification-race.test.ts",
     "utf8",
