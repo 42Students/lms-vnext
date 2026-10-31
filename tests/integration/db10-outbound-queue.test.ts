@@ -1,6 +1,7 @@
 import { afterAll, beforeEach, describe, expect, it } from "vitest";
 import { randomUUID } from "node:crypto";
 import { Pool } from "pg";
+import { assertDb018DisposableTarget } from "../support/db018-test-target.mjs";
 import { drizzle } from "drizzle-orm/node-postgres";
 import type { RequestContext } from "@/modules/identity/context";
 import {
@@ -35,7 +36,15 @@ if (process.env.DATABASE_URL) {
   const canonical = (u: URL) =>
     `${u.hostname.toLowerCase()}:${u.port || "5432"}:${decodeURIComponent(u.pathname)}`;
   if (canonical(app) === canonical(target)) {
-    throw new Error("DB10 integration refuses the application database target");
+    // The independent verifier deliberately gives services and tests the
+    // same explicitly disposable PostgreSQL URL *after* safe reset/replay.
+    // All other aliases remain forbidden, including differing credentials
+    // pointing at an application database.
+    if (process.env.DB03_ISOLATED_TEST_DATABASE !== "1" ||
+        process.env.DATABASE_URL !== url) {
+      throw new Error("DB10 integration refuses the application database target");
+    }
+    assertDb018DisposableTarget(process.env, { serviceBound: true });
   }
 }
 const pool = new Pool({ connectionString: url, max: 2 });
