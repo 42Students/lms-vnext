@@ -180,7 +180,7 @@
     "focusedVitestTestsPassed": 50,
     "fullSuiteVitestTestsExecuted": 92,
     "fullSuiteVitestTestsPassed": 92,
-    "pendingConcurrencyAuthored": 0,
+    "pendingConcurrencyAuthored": 1,
     "additionalRegisteredConcurrencyRuntimeExecuted": 2,
     "additionalRegisteredConcurrencyRuntimePassed": 2
   },
@@ -378,7 +378,17 @@
     "fullSuiteVitestTestsPassed": 92,
     "note": "Five new distinct constraint rejection witnesses passed (users_version_ck, sections_capacity_ck, sections_min_size_ck, registered db02_course_offerings_credits_ck, placement_companies_version_ck). All real registered PostgreSQL constraints, no disabled guards."
   },
-  "authoredPendingConcurrencyWitnesses": [],
+  "authoredPendingConcurrencyWitnesses": [
+    {
+      "id": "DB18-C07",
+      "raceProbe": "P5-R23",
+      "file": "tests/integration/groups-db03.test.ts",
+      "title": "P5-R23 serializes active leave with waitlist promotion and concurrent join",
+      "state": "AUTHORED_AWAITING_REGISTERED_PG17",
+      "execution": "NOT_RUN",
+      "evidence": "Real independent group-row contention; asserts REMOVED old member, oldest waitlisted member ACTIVE, new join WAITLISTED, exact active_count and 5 immutable events. Requires full registered PG17 replay and accepted run URL."
+    }
+  ],
   "registeredAdditionalConcurrencyWitnesses": [
     {
       "id": "DB18-C06",
