@@ -1049,7 +1049,7 @@
           "evidenceIsNotAcceptance": true
         },
         "latestGlobalSourceQuality": {
-          "status": "INTEGRATED_FULL_2829_SOURCE_QUALITY_GUARDS_WORKFLOW_QUEUED_DB019_REMAINS_OPEN",
+          "status": "EXECUTED_EXACT_SHA_NODE22_SOURCE_AUDIT_PASS_GLOBAL_DB019_STILL_OPEN",
           "recordedOn": "2026-10-31",
           "scope": "Complete source inventory/accounting is independently partitioned DB00 732 + DB01 312 + DB02/07/09 762 + DB03/04/05/06/08/10 1023 = 2829, without promoting any field to runtime-verified.",
           "commits": [
@@ -1077,8 +1077,11 @@
           "sourceNode22Workflow": {
             "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/41152264318",
             "commitSha": "fa3ba088c48a1dede0c7a2481df917c97206a412",
-            "stateWhenObserved": "QUEUED_NOT_ACCEPTANCE_EVIDENCE",
-            "command": "node --test tests/db019-*.test.mjs and existing DB19 suites; node scripts/db019-crosswalk-identity.mjs"
+            "stateWhenObserved": "COMPLETED_SUCCESS",
+            "command": "node --test tests/db019-*.test.mjs and existing DB19 suites; node scripts/db019-crosswalk-identity.mjs",
+            "jobId": 124391245028,
+            "result": "PASS",
+            "scope": "Verified source baseline, all regression suites and exact 2829-field integrated command; physical SQL-source crosswalk 51/51. No PostgreSQL or runtime parity assertion."
           },
           "priorityOpenDecisions": {
             "DB02": {
@@ -1109,7 +1112,24 @@
             }
           },
           "remainingGate": "Actual 2829-field final semantic decisions and verified physical+producer/consumer behavior remain open. DB001/DB014/DB018/DB020 independently gate PostgreSQL global certification; no fake retirement approvals or runtime evidence.",
-          "evidenceIsNotAcceptance": true
+          "evidenceIsNotAcceptance": true,
+          "executedNode22Evidence": {
+            "kind": "EXECUTED_SCOPED_SOURCE_ONLY",
+            "commitSha": "fa3ba088c48a1dede0c7a2481df917c97206a412",
+            "runner": "GitHub Actions Ubuntu Node22 exact GITHUB_SHA checkout",
+            "result": "PASS",
+            "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/41152264318",
+            "jobId": 124391245028,
+            "stepsPassed": [
+              "Verify pinned exact source revision",
+              "Execute baseline, crosswalk, mutation, and disposition suites",
+              "Execute exact current source-coverage command"
+            ],
+            "sourceCoverageFields": 2829,
+            "registeredHistoryColumnSourceMatches": 51,
+            "noPostgreSQL": true,
+            "notGlobalAcceptance": true
+          }
         }
       }
     },
