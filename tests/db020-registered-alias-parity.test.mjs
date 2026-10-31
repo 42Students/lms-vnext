@@ -87,9 +87,10 @@ const aliases=[
     "attendance_parent_sms_outbox",
     "attendance_parent_sms_outbox_status_check",
     "check"
-  ]
+  ],
+  ["src/db/schema/courses.ts","course_offerings","db02_course_offerings_credits_ck","check"]
 ];
-test("DB020 14 typed aliases match actual PG17 CHECK/index constraints",()=>{
+test("DB020 15 typed aliases match actual PG17 CHECK/index constraints",()=>{
  const cat=JSON.parse(readFileSync(".verification/db020-registered-catalog-full.json","utf8"));
  assert.ok(cat.registeredMigrations>=323);
  const availableChecks=new Set(cat.constraints
@@ -103,5 +104,9 @@ test("DB020 14 typed aliases match actual PG17 CHECK/index constraints",()=>{
    assert.ok(catalog.has(table+":"+name),
      "PG17 missing active typed "+kind+" "+table+"."+name);
  }
- assert.equal(aliases.length,14);
+ assert.equal(aliases.length,15);
+ const credits=cat.constraints.find(x=>x.table_name==="course_offerings" && x.name==="db02_course_offerings_credits_ck");
+ assert.match(credits.definition,/credits >= 0 AND credits <= 30/);
+ const validation=readFileSync("src/modules/courses/validation.ts","utf8");
+ assert.match(validation,/credits:\\s*z\\s*\\.number\\(\\)\\s*\\.int\\(\\)\\s*\\.min\\(1\\)/);
 });
