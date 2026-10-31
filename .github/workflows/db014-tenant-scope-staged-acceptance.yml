@@ -81,10 +81,10 @@ jobs:
         run: node --test tests/db014-registered-tenant-catalog-pg.test.mjs
       - name: DB014 registered retained-history parent DELETE and TRUNCATE negatives
         run: node --test tests/db014-cascade-retention-registered-pg.test.mjs
-      - name: Staged-only event, notification, group history cross-tenant negatives
+      - name: Registered 0318 event, notification and group-history tenant negatives
         run: node --test tests/db014-cross-domain-scope-staged-pg.test.mjs
-      # This check must never mark DB-014 DONE. The candidate is deliberately
-      # unregistered and only applied inside a rollback-only PG transaction.
+      # A focused registered-guard witness cannot itself close the global
+      # DB014 tenant, retention, authorizations and phase certification gate.
       - name: Registered journal must not have been modified by the witness
         run: |
           npm run db:journal:verify
