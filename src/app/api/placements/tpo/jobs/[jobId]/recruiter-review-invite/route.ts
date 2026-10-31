@@ -136,7 +136,7 @@ export async function POST(request:Request,{params}:Ctx) {
   // The secure invite grants no unauthenticated/public job visibility. The
   // optional public-link request is surfaced as unavailable, not fabricated.
   return NextResponse.json({
-   issued:true,emailed:invite.emailed,leadId,
+   issued:true,emailed:invite.emailed,queued:invite.queued,leadId,
    email:body.email,name:body.name,expiresAt:invite.expiresAt,
    secureInvitePath:manualPath,manualSubject:"Review placement drive: "+job.title,
    manualLetter:letter,
