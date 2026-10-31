@@ -161,8 +161,10 @@ try{
  const typedFkIds=new Set(Object.entries(latest.tables).flatMap(([k,t])=>
    Object.keys(t.foreignKeys??{}).map(name=>tableName(k)+"."+name)));
  const catalogFkIds=new Set(allFks.map(x=>x.child+"."+x.conname));
- const metadataOnlyFks=lines([...catalogFkIds].filter(x=>!typedFkIds.has(x)));
- const typedFkMissing=lines([...typedFkIds].filter(x=>!catalogFkIds.has(x)));
+ // Count the FULL catalog instead of taking the first 120 names: the
+ // display cap is for readable receipts, never for acceptance denominators.
+ const metadataOnlyFks=[...catalogFkIds].filter(x=>!typedFkIds.has(x)).sort();
+ const typedFkMissing=[...typedFkIds].filter(x=>!catalogFkIds.has(x)).sort();
  const actionLabel={a:"no action",r:"restrict",c:"cascade",n:"set null",d:"set default"};
  const canonicalTypedFks=Object.entries(latest.tables).flatMap(([key,t])=>
   Object.entries(t.foreignKeys??{}).map(([name,fk])=>({
@@ -225,8 +227,8 @@ try{
   unexplainedTypeDifferences:remainingUnexplainedTypes.slice(0,120),
   verifiedBigserialSemantics:provenBigserialColumns,
   unvalidatedFks:lines(invalidFks),
-  registeredFksWithoutDrizzleRepresentation:metadataOnlyFks,
-  drizzleFksWithoutRegisteredCatalog:typedFkMissing,
+  registeredFksWithoutDrizzleRepresentation:lines(metadataOnlyFks),
+  drizzleFksWithoutRegisteredCatalog:lines(typedFkMissing),
   fkNameAliases:fkShapes.differentNameSameShape.slice(0,120),
   fkSameNameShapeConflicts:fkShapes.sameNameDrift.slice(0,80),
   fkTypedShapeMissing:fkShapes.missingTypedShape.slice(0,80),
