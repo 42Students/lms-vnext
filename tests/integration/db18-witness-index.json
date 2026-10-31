@@ -697,5 +697,19 @@
     "sourceCandidate": "src/db/schema/course-upload-receipts-staged.ts",
     "nextCheck": "Reconcile DB053 with DB016/live assignment_submission_files before reviewed forward-only migration, register receipt producer/read cutover, then run real 2-writer R13 receipt consumption with fake private-object attestation on clean registered PG17",
     "db018Accepted": false
+  },
+  "registeredLiveAssignmentFileOneShotEvidence": {
+    "state": "REGISTERED_PG17_STEP_PASSED_STAGED_RECEIPT_NOT_ACCEPTED",
+    "sourceCommitSha": "f80892e188d1d5c121dd4cc4869d603999e4e25e",
+    "workflowCommitSha": "db7ff4e13b02e4a583947b478f4c2c6ac7964a90",
+    "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/41227827316",
+    "jobId": 124615581218,
+    "test": "tests/integration/db18-registered-file-one-shot-race.test.ts",
+    "verified": "Live registered 0080 assignment_submission_files READY/CLEAN one-shot consumer: two independent submitAssignmentWithFiles calls reach PostgreSQL FOR UPDATE; one FILE submission and one bound file, one immutable assignment event and one storage SUBMITTED event.",
+    "scope": "Production service and registered file relation with a disposable test-only CLEAN scanner fixture; no real storage transport or scanner activation claimed.",
+    "fullGate": "FAIL_P5_R13_STAGED_RECEIPT_SCHEMA_ABSENT",
+    "remaining": "Original DB053 source-only course_upload_receipts contract and overlapping DB016 assignment_submission_files physical shape are not registered. Preserve original P5-R13 test failure; reconcile forward-only DDL and producer/read paths, then re-execute exact-head PostgreSQL and production boundaries.",
+    "db018Accepted": false,
+    "originalP5R13Accepted": false
   }
 }
