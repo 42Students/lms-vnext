@@ -1874,7 +1874,7 @@
       "done": false,
       "dependsOn": [],
       "implementationCheckpoint": {
-        "status": "REGISTERED_NULLABLE_GRADE_PROVENANCE_COLUMN_SOURCE_ALIGNMENT_PASS_ATOMIC_ATTENDANCE_PRODUCERS_OPEN",
+        "status": "REGISTERED_GRADE_HISTORY_DEFERRED_COMPLETENESS_PG17_GREEN_ATTENDANCE_CUTOVER_OPEN",
         "recordedOn": "2026-10-31",
         "executedEvidence": [
           {
@@ -1893,12 +1893,18 @@
             "commitSha": "1824c483ef7079311329cabd2ea9ff5fcf7f5dbb",
             "result": "PASS_PARTIAL_REGISTERED_PG17",
             "scope": "Disposable PG17 replay and migration idempotence passed after 0320; active triggers and 3/3 negative source/catalog tests passed; real grade/publish/regade consumer suites passed 33/33 across C4A, C4C and Faculty-Mentor including 23514 no UPDATE/DELETE and scoped superuser-only disposable-fixture cleanup. DB045 remains OPEN until full attendance history and 30 required race/tenant tests."
+          },
+          {
+            "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/41147731251",
+            "commitSha": "44ead6be3ebcc2c8ac238784fcf35ca8c04ce306",
+            "result": "PASS_SCOPED_REGISTERED_PG17",
+            "scope": "322 registered forward-only PostgreSQL 17 migrations, journal verification and replay idempotence PASS; 4/4 dedicated guard/status-cast negative/structural checks PASS; C4A+C4C+Faculty/Mentor grade and publication integrations 33/33 PASS. Deferred grade/feedback/publish completeness rejects direct unaudited edits (23514) and preserves CAS state. DB045 full attendance producer cutover and 30 race/tenant acceptance witnesses remain OPEN."
           }
         ],
         "pending": [
-          "Register attendance version/current-row/history SQL and preserve explicit PRESENT without duplicate creation of existing assignment_grade_events",
-          "Atomically cut over faculty and administrator attendance mark/correction writes with complete immutable events and transactionally guarded revision ordering; evaluate/defer grade event completeness only with real registered producer and runtime proof",
-          "Execute DB045 full 30 negative/race/tenant/consumer acceptance witnesses on disposable PG17 at exact current main SHA"
+          "Register attendance_record_events/version/current-row integrity with forward-only journal migration and preserve explicit PRESENT current rows",
+          "Atomically cut over Faculty/Admin attendance mark and correction writers, E2E fixtures and SQL witness fixtures to immutable MARK/CORRECT events; lock and compare prior row versions",
+          "Prove full 30 direct SQL tenant/actor/retention/race/consumer negative tests at exact clean-main PostgreSQL17 SHA, then accept DB045"
         ],
         "evidenceIsNotAcceptance": true,
         "registeredGradeGuards": {
@@ -1909,6 +1915,15 @@
           "negativeTests": 3,
           "integrations": 33,
           "notAcceptance": true
+        },
+        "registeredGradeCompleteness": {
+          "migration": "drizzle/0321_db045_grade_event_completeness.sql",
+          "enumFix": "drizzle/0322_db045_grade_event_enum_cast.sql",
+          "testRun": "https://github.com/42Students/lms-vnext/actions/runs/41147731251",
+          "result": "PASS_SCOPED_NOT_GLOBAL_DB045_DONE",
+          "migrations": 322,
+          "consumerTests": 33,
+          "sourceCommit": "44ead6be3ebcc2c8ac238784fcf35ca8c04ce306"
         }
       }
     },
