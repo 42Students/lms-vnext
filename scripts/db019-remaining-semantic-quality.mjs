@@ -151,7 +151,7 @@ export function auditDb019Remaining(ledgers,artifacts,db10Overlay=null) {
                !Array.isArray(decision.targetRefs)||
                (decision.classification==="PROPOSED_ACTIVE_FIELD_MAPPING" &&
                  decision.targetRefs.length===0)||
-               decision.targetRefs.some(x=>!/^placement_(?:offers|offer_status_history|joining_outcomes)\\.[a-z_]+$/.test(x))||
+               decision.targetRefs.some(x=>!/^placement_(?:offers|offer_status_history|joining_outcomes)[.][a-z_]+$/.test(x))||
                new Set(decision.targetRefs).size!==decision.targetRefs.length||
                !required(decision.sourceRationale)||
                !required(decision.outstandingProof)||
