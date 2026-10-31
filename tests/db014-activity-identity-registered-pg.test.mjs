@@ -27,10 +27,11 @@ test("DB014 event identity stays fixed after notification, but metadata remains 
    await db.query("BEGIN");tx=true;
    const event=(await db.query(
      "INSERT INTO activity_events(organization_id,college_id,actor_user_id,module,event_type,subject_type,subject_id,summary) "+
-     "VALUES($1,$2,$3,'IDENTITY','DB014_EVENT_IDENTITY_TEST','college',$2,'Retained identity') RETURNING id",
+     "VALUES($1,$2,$3,'IDENTITY','DB014_EVENT_IDENTITY_TEST','college',$4,'Retained identity') RETURNING id",
      ["10000000-0000-4000-8000-000000000001",
       "20000000-0000-4000-8000-000000000001",
-      "30000000-0000-4000-8000-000000000002"])).rows[0].id;
+      "30000000-0000-4000-8000-000000000002",
+      "20000000-0000-4000-8000-000000000001"])).rows[0].id;
    await db.query(
      "INSERT INTO in_app_notifications(user_id,event_id,title,body) VALUES($1,$2,'DB014','Receipt')",
      ["30000000-0000-4000-8000-000000000002",event]);
