@@ -10,6 +10,8 @@ on:
       - ".github/workflows/db018-full-gate-acceptance.yml"
       - "tests/support/db018-test-target.mjs"
       - "src/modules/activity/notification-service.ts"
+      - "tests/integration/activity-foundation.test.ts"
+      - "src/modules/activity/service.ts"
       - "src/db/schema/**"
       - "drizzle/meta/_journal.json"
       - "drizzle/*.sql"
