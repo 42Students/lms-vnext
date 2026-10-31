@@ -7,6 +7,25 @@ import { canonicalPgTypeLabel } from "../../scripts/db020-sql-type.mjs";
 const run = process.env.DB03_ISOLATED_TEST_DATABASE === "1" &&
   Boolean(process.env.TEST_DATABASE_URL) ? it : it.skip;
 const unqualify = (name: string) => name.startsWith("public.") ? name.slice(7) : name;
+type SnapshotColumn = {
+  name: string;
+  type: string;
+  notNull?: boolean;
+  default?: unknown;
+};
+type SnapshotForeignKey = {
+  tableTo: string;
+  columnsFrom: string[];
+  columnsTo: string[];
+  onDelete?: string;
+  onUpdate?: string;
+};
+type SnapshotTable = {
+  columns: Record<string, SnapshotColumn>;
+  checkConstraints?: Record<string, unknown>;
+  indexes?: Record<string, unknown>;
+  foreignKeys?: Record<string, SnapshotForeignKey>;
+};
 const fkKey = (fk: {
   child: string; parent: string; from: string[]; to: string[];
   onDelete: string; onUpdate: string;
@@ -40,7 +59,7 @@ run("DB001 metadata-only snapshot reflects registered PostgreSQL17 tables, typed
       "SELECT c.relname AS name FROM pg_class c JOIN pg_namespace n ON n.oid=c.relnamespace " +
       "WHERE n.nspname='public' AND c.relkind IN ('r','p')",
     )).rows.map(r => r.name as string));
-    const typed = Object.entries(snapshot.tables) as Array<[string, any]>;
+    const typed = Object.entries(snapshot.tables) as Array<[string, SnapshotTable]>;
     const missingTables = typed.map(([key]) => unqualify(key))
       .filter(name => !catalogTables.has(name));
     expect(missingTables).toEqual([]);
@@ -60,7 +79,7 @@ run("DB001 metadata-only snapshot reflects registered PostgreSQL17 tables, typed
     const typedColumnNames = new Set<string>();
     for (const [key, table] of typed) {
       const name = unqualify(key);
-      for (const column of Object.values(table.columns) as any[]) {
+      for (const column of Object.values(table.columns)) {
         const id = name + "." + column.name;
         typedColumnNames.add(id);
         const physical = liveColumns.get(id);
@@ -126,7 +145,7 @@ run("DB001 metadata-only snapshot reflects registered PostgreSQL17 tables, typed
       onUpdate: action[row.confupdtype] ?? row.confupdtype,
     })));
     const missingTypedFks = typed.flatMap(([key, table]) =>
-      Object.values(table.foreignKeys ?? {}).map((fk: any) => fkKey({
+      Object.values(table.foreignKeys ?? {}).map(fk => fkKey({
         child: unqualify(key), parent: unqualify(fk.tableTo),
         from: fk.columnsFrom, to: fk.columnsTo,
         onDelete: fk.onDelete ?? "no action", onUpdate: fk.onUpdate ?? "no action",
