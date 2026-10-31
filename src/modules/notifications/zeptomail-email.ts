@@ -90,7 +90,6 @@ export function readZeptoMailConfig(
 ): ZeptoMailConfig {
   return {
     apiUrl: env["ZEPTOMAIL_API_URL"] ?? "https://api.zeptomail.in/v1.1/email/template",
-    // Never restore the embedded credential from the old LMS, including in dev.
     token: pairedUnquote((env["ZEPTOMAIL_TOKEN"] ?? "").trim()),
     otpTemplateKey: (env["ZEPTOMAIL_OTP_TEMPLATE_KEY"] ??
       "2518b.4c361928d9526a75.k1.aea6cef0-4e4a-11f1-97e6-e256a66a52e4.19e1e1f015f").trim(),
@@ -360,9 +359,8 @@ export async function sendZeptoMailTemplate(
 ): Promise<ZeptoMailSendResult> {
   const purpose = message.purpose;
   if (!config.token.trim()) return notSent(purpose, "TOKEN_NOT_CONFIGURED");
-  // Legacy source contained an exposed provider token. Require an explicit
-  // operational attestation that the old key was REVOKED and a new one provisioned.
-  // No token values, hashes or leaked defaults may be stored in source or logs.
+  // Require operational confirmation that production credentials were rotated.
+  // Never store provider token values or defaults in source or logs.
   if ((env["APP_ENV"] === "production" || env["STAGE"] === "prod" || env["STAGE"] === "production") &&
       env["ZEPTOMAIL_LEGACY_KEY_REVOKED"] !== "confirmed") {
     return notSent(purpose, "CREDENTIAL_ROTATION_UNVERIFIED");
