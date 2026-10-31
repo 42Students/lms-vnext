@@ -2297,6 +2297,13 @@
       "when": 1793258050954,
       "tag": "0327_db001_canonical_metadata_baseline",
       "breakpoints": true
+    },
+    {
+      "idx": 328,
+      "version": "7",
+      "when": 1793258110954,
+      "tag": "0328_db014_activity_identity_immutable",
+      "breakpoints": true
     }
   ]
 }
