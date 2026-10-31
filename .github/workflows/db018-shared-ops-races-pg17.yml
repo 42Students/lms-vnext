@@ -18,6 +18,10 @@ on:
       - "src/app/api/courses/assignment-submissions/[submissionId]/file/route.ts"
       - "src/modules/storage/file-attestation-policy.ts"
       - "tests/unit/db018-file-attestation-policy.test.ts"
+      - "tests/integration/db18-recruiter-invite-transactional-outbox.test.ts"
+      - "src/modules/placements/tpo-recruiter-invite-service.ts"
+      - "src/app/api/placements/tpo/leads/[leadId]/invite/route.ts"
+      - "src/app/api/placements/tpo/jobs/[jobId]/recruiter-review-invite/route.ts"
       - "src/modules/announcements/**"
       - "src/modules/bug-tracker/**"
       - "src/db/schema/db10-announcements.ts"
@@ -77,6 +81,8 @@ jobs:
         run: npx vitest run tests/unit/db018-file-attestation-policy.test.ts
       - name: Execute P5-R18 announcement and P5-R19 tracker real two-writer CAS witnesses
         run: npx vitest run --config vitest.db.registered.config.ts tests/integration/db18-shared-ops-race.test.ts
+      - name: DB018 recruiter invitation and encrypted outbox commit as one transaction
+        run: npx vitest run --config vitest.db.registered.config.ts tests/integration/db18-recruiter-invite-transactional-outbox.test.ts
       - name: Execute registered live one-shot FILE producer race (original staged receipt still required)
         run: npx vitest run --config vitest.db.registered.config.ts tests/integration/db18-registered-file-one-shot-race.test.ts
       - name: Static TypeScript gate
