@@ -244,6 +244,10 @@ describe("College Admin attendance tenant isolation with PostgreSQL", () => {
       actor_user_id:"(select user_id from college_memberships where id=ar.membership_id)",
       new_marked_by_user_id:"(select user_id from college_memberships where id=ar.membership_id)"},
       code:"23514",message:"lacks teaching scope"},
+    {name:"Faculty without exact delivery teaching scope",overrides:{
+       actor_role:"'FACULTY'",actor_membership_id:"$9::uuid",
+       actor_user_id:"$10::uuid",new_marked_by_user_id:"$10::uuid"},
+       code:"23514",message:"lacks teaching scope"},
   ];
   it("DB045 registers validated independent event CHECK constraints",async()=>{
     // The scope trigger can reject a forged post-state before PostgreSQL
@@ -275,7 +279,8 @@ describe("College Admin attendance tenant isolation with PostgreSQL", () => {
     // of stopping on extraneous or untyped intermediary bind parameters.
     const fixtureIds=[foreign.delivery,SEED_IDS.collegeB,
       SEED_IDS.superAdminUser,SEED_IDS.collegeA,
-      SEED_IDS.collegeAdminUser,own.delivery,own.learner];
+      SEED_IDS.collegeAdminUser,own.delivery,own.learner,
+       SEED_IDS.facultyCollegeBMembership,SEED_IDS.facultyUser];
     const uuidPattern=/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
     expect(fixtureIds.every(id=>uuidPattern.test(id))).toBe(true);
     let boundQuery=query;

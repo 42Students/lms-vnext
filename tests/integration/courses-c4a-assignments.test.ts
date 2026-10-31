@@ -774,7 +774,7 @@ describe("courses C4A assignments against PostgreSQL", () => {
         submission_version_before,submission_version_after
       )
       select s.id,s.assignment_id,$5::uuid,s.membership_id,
-        $2::uuid,$3::uuid,$4::uuid,'FACULTY','REGRADE',
+        $2::uuid,$3::uuid,$4::uuid,$6::text,'REGRADE',
         s.points_awarded,s.points_awarded+1,s.feedback,s.feedback,
         s.grading_status::text,s.grading_status::text,
         s.grade_published,s.grade_published,
@@ -798,9 +798,12 @@ describe("courses C4A assignments against PostgreSQL", () => {
        member:null,delivery:structure.deliveryA.id},
       {name:"mismatched actor and membership",college:SEED_IDS.collegeA,actor:faculty.user.id,
        member:learner.membership!.id,delivery:structure.deliveryA.id},
+      {name:"SUPER_ADMIN with scoped membership",college:SEED_IDS.collegeA,actor:faculty.user.id,
+       member:faculty.membership!.id,delivery:structure.deliveryA.id,role:"SUPER_ADMIN"},
     ]) {
       await expect(pool.query(forgedGradeEventSql,[
         submitted.id,forged.college,forged.actor,forged.member,forged.delivery,
+        "role" in forged ? forged.role : "FACULTY",
       ]),forged.name).rejects.toMatchObject({code:"23514"});
     }
     const gradeEventCountAfter = await pool.query<{n:number}>(
