@@ -76,6 +76,8 @@ jobs:
           node-version: 22
           cache: npm
       - run: npm ci
+      - name: Source manifest and witness identity cross-check
+        run: node --test tests/db-parity-pass5.test.mjs
       - name: Confirm registered migration journal and disposable target
         run: npm run db:journal:verify
       - name: Prepare isolated PostgreSQL and full seed
@@ -101,8 +103,6 @@ jobs:
       - name: Current registered DB014 tenant scope, catalog and DB020 provenance negatives
         run: |
           node --test tests/db014-registered-tenant-catalog-pg.test.mjs tests/db014-cross-domain-scope-staged-pg.test.mjs tests/db020-registered-grade-event-provenance-pg.test.mjs
-      - name: Source manifest and witness identity cross-check
-        run: node --test tests/db-parity-pass5.test.mjs
       - name: Explicit evidence scope
         if: always()
         run: |
