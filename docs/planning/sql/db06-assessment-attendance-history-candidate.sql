@@ -228,7 +228,7 @@ CREATE TABLE attendance_record_events (
       )
     ),
   CONSTRAINT attendance_record_events_shape_ck
-    CHECK (
+    CHECK ((
       (
         action = 'MARK'
         AND previous_status IS NULL
