@@ -170,9 +170,9 @@
     "pendingConcurrencyAuthored": 0,
     "additionalRegisteredConcurrencyRuntimeExecuted": 4,
     "additionalRegisteredConcurrencyRuntimePassed": 4,
-    "registeredOriginalScopeRaceExecuted": 8,
-    "registeredOriginalScopeRacePassed": 8,
-    "unwitnessedPass5Races": 5
+    "registeredOriginalScopeRaceExecuted": 10,
+    "registeredOriginalScopeRacePassed": 10,
+    "unwitnessedPass5Races": 3
   },
   "knownRedRaceWitnesses": [
     {
@@ -512,6 +512,30 @@
       "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/41225747398",
       "jobId": 124609408190,
       "scope": "Registered PG17 full gate: two real issuers contend on placement job row and only one distinct version/ISSUED event persists; then ACCEPT versus DECLINE contend on persisted learner membership row, only one terminal state and history row."
+    },
+    {
+      "id": "DB18-C17",
+      "raceProbe": "P5-R15",
+      "file": "tests/integration/placements-p8-offers.test.ts",
+      "title": "P5-R15 rejects applications after conflicting job, role and coordinator writers",
+      "state": "REGISTERED_PG17_VERIFIED",
+      "execution": "PASS",
+      "commitSha": "ceb6a5ca7577a232eb17222a21788a624a1d6bdb",
+      "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/41226341851",
+      "jobId": 124611551145,
+      "scope": "Real service-writer job close beats learner apply; real coordinator assignment beats learner apply; concurrent role-option archive prevents apply; persisted zero applications, coordinator state coherent. Full registered PG17 workflow passed."
+    },
+    {
+      "id": "DB18-C18",
+      "raceProbe": "P5-R16",
+      "file": "tests/integration/placements-db08-batches.test.ts",
+      "title": "P5-R16 serializes DECIDE/DECIDE and DECIDE/UNDO with immutable ordered events",
+      "state": "REGISTERED_PG17_VERIFIED",
+      "execution": "PASS",
+      "commitSha": "0ab8bba52dde40b916934bd0162711cad937b4c2",
+      "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/41226341851",
+      "jobId": 124611551145,
+      "scope": "Two live DB08 service decisions serialized on college lock preserving ordered audit events; newer scoped DECIDE wins race over stale bulk UNDO with no partial rollback. Isolated registered PG17 full gate PASS using non-excluding DB08 test config."
     }
   ],
   "outboundStagedDiagnostics": {
@@ -571,8 +595,6 @@
   },
   "unwitnessedPass5Probes": [
     "P5-R13",
-    "P5-R15",
-    "P5-R16",
     "P5-R18",
     "P5-R19"
   ],
@@ -640,6 +662,40 @@
       "P5-R19"
     ],
     "externalProviderActivated": false,
+    "db018Accepted": false
+  },
+  "latestP5R15R16RegisteredEvidence": {
+    "result": "PASS_2_ORIGINAL_RACES_REGISTERED_PG17_DB018_OPEN",
+    "recordedOn": "2026-10-31",
+    "sourceCommits": [
+      "ceb6a5ca7577a232eb17222a21788a624a1d6bdb",
+      "0ab8bba52dde40b916934bd0162711cad937b4c2"
+    ],
+    "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/41226341851",
+    "jobId": 124611551145,
+    "verifiedRaces": [
+      "P5-R15",
+      "P5-R16"
+    ],
+    "remainingUnwitnessed": [
+      "P5-R13",
+      "P5-R18",
+      "P5-R19"
+    ],
+    "providerActivated": false,
+    "db018Accepted": false
+  },
+  "registrationBlockerR13": {
+    "status": "REGISTERED_SCHEMA_ABSENT_NOT_ACCEPTED",
+    "evidenceRunUrl": "https://github.com/42Students/lms-vnext/actions/runs/41226630699",
+    "jobId": 124612030496,
+    "sourceCommitSha": "c0ef0be0b429c6c58b1baadc3094367b5f0a18bf",
+    "errors": [
+      "42P01 public.course_upload_receipts missing after full zero-to-head registered replay",
+      "42703 public.assignment_submission_files.assignment_submission_id missing; legacy registered table differs from candidate"
+    ],
+    "sourceCandidate": "src/db/schema/course-upload-receipts-staged.ts",
+    "nextCheck": "Reconcile DB053 with DB016/live assignment_submission_files before reviewed forward-only migration, register receipt producer/read cutover, then run real 2-writer R13 receipt consumption with fake private-object attestation on clean registered PG17",
     "db018Accepted": false
   }
 }

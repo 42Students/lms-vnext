@@ -916,7 +916,7 @@
         "DB-025"
       ],
       "implementationCheckpoint": {
-        "status": "REGISTERED_PG17_R08_R09_R10_R11_R12_R14_R17_R21_R22_PASS_5_PASS5_GAPS_REMAIN",
+        "status": "REGISTERED_PG17_10_ORIGINAL_RACES_PASS_R13_R18_R19_AND_PRODUCTION_DISPATCH_PENDING",
         "additionalRegisteredRaceEvidence": {
           "result": "PASS_2_OF_2_REGISTERED_PG17_GLOBAL_ACCEPTANCE_OPEN",
           "recordedOn": "2026-10-31",
@@ -970,9 +970,10 @@
           }
         ],
         "pending": [
-          "Execute original P5-R13, P5-R15, P5-R16, P5-R18 and P5-R19 on exact-head clean registered PostgreSQL 17, including required upload receipt, role/coordinator, batch undo, announcement and tracker lifecycle two-session races.",
-          "Provision and verify approved privileged outbound worker principal, production recruiter invitation queue cutover, and provider adapter; mock-provider evidence is not production delivery evidence.",
-          "Complete original 23-race, 21 relational, direct-negative and tenant/permission/privacy producer-consumer crosswalk on fresh main; DB019 and DB020 remain separately OPEN."
+          "R13 BLOCKED: exact-head registered PG17 run 41226630699 failed 42P01: course_upload_receipts absent, and 42703: existing assignment_submission_files has no assignment_submission_id; source proposal DB053 is STAGED and overlaps DB016. Reconcile source/DDL forward-only, don't blindly register.",
+          "Execute independent original P5-R18 announcement edit/edit, edit/delete and restore/delete two-session races plus P5-R19 tracker workflow writes and immutable events; R13 separately requires registered receipt producer.",
+          "Provision and verify production outbound worker principal, recruiter invitation transactional queue producer and approved provider adapter; existing fake-provider success not a live delivery claim.",
+          "Reconcile full original 23-race, 21 relational, direct-negative, tenant/privacy/permission and producer/consumer crosswalk; downstream DB019 and DB020 remain open."
         ],
         "evidenceIsNotAcceptance": true,
         "fiveFastWitnessClosures": {
@@ -1171,6 +1172,45 @@
             "P5-R19"
           ],
           "providerActivated": false,
+          "db018Accepted": false
+        },
+        "latestP5R15R16RegisteredEvidence": {
+          "recordedOn": "2026-10-31",
+          "result": "PASS_REGISTERED_PG17_FULL_GATE_NOT_DB018_ACCEPTANCE",
+          "evidence": [
+            {
+              "raceProbe": "P5-R15",
+              "commitSha": "ceb6a5ca7577a232eb17222a21788a624a1d6bdb",
+              "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/41226341851",
+              "jobId": 124611551145,
+              "scope": "Real service-writer job close beats learner apply; real coordinator assignment beats learner apply; concurrent role-option archive prevents apply; persisted zero applications, coordinator state coherent. Full registered PG17 workflow passed."
+            },
+            {
+              "raceProbe": "P5-R16",
+              "commitSha": "0ab8bba52dde40b916934bd0162711cad937b4c2",
+              "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/41226341851",
+              "jobId": 124611551145,
+              "scope": "Two live DB08 service decisions serialized on college lock preserving ordered audit events; newer scoped DECIDE wins race over stale bulk UNDO with no partial rollback. Isolated registered PG17 full gate PASS using non-excluding DB08 test config."
+            }
+          ],
+          "remainingUnwitnessed": [
+            "P5-R13",
+            "P5-R18",
+            "P5-R19"
+          ],
+          "db018Accepted": false
+        },
+        "registeredR13Blocker": {
+          "status": "REGISTERED_SCHEMA_ABSENT_NOT_ACCEPTED",
+          "evidenceRunUrl": "https://github.com/42Students/lms-vnext/actions/runs/41226630699",
+          "jobId": 124612030496,
+          "sourceCommitSha": "c0ef0be0b429c6c58b1baadc3094367b5f0a18bf",
+          "errors": [
+            "42P01 public.course_upload_receipts missing after full zero-to-head registered replay",
+            "42703 public.assignment_submission_files.assignment_submission_id missing; legacy registered table differs from candidate"
+          ],
+          "sourceCandidate": "src/db/schema/course-upload-receipts-staged.ts",
+          "nextCheck": "Reconcile DB053 with DB016/live assignment_submission_files before reviewed forward-only migration, register receipt producer/read cutover, then run real 2-writer R13 receipt consumption with fake private-object attestation on clean registered PG17",
           "db018Accepted": false
         }
       }

@@ -180,9 +180,9 @@ test("DB18 witness index remains honest about authored versus executed coverage"
   assert.equal(index.counts.draftUnregisteredExcluded, 0);
   assert.deepEqual(index.excludedUntilRegistered.map(w => w.raceProbe), []);
   const newlyExecuted = index.registeredOriginalScopeRaceEvidence;
-  assert.deepEqual(newlyExecuted.map(w => w.raceProbe), ["P5-R22", "P5-R10", "P5-R08", "P5-R09", "P5-R21", "P5-R12", "P5-R14", "P5-R17"]);
-  assert.equal(index.counts.registeredOriginalScopeRaceExecuted, 8);
-  assert.equal(index.counts.registeredOriginalScopeRacePassed, 8);
+  assert.deepEqual(newlyExecuted.map(w => w.raceProbe), ["P5-R22", "P5-R10", "P5-R08", "P5-R09", "P5-R21", "P5-R12", "P5-R14", "P5-R17", "P5-R15", "P5-R16"]);
+  assert.equal(index.counts.registeredOriginalScopeRaceExecuted, 10);
+  assert.equal(index.counts.registeredOriginalScopeRacePassed, 10);
   for (const witness of newlyExecuted) {
     assert.equal(witness.state, "REGISTERED_PG17_VERIFIED");
     assert.equal(witness.execution, "PASS");
@@ -191,12 +191,15 @@ test("DB18 witness index remains honest about authored versus executed coverage"
     assert.ok(fs.readFileSync(witness.file, "utf8").includes(witness.title));
     assert.equal(Number.isSafeInteger(witness.jobId), true);
   }
-  assert.equal(index.counts.unwitnessedPass5Races, 5);
+  assert.equal(index.counts.unwitnessedPass5Races, 3);
   assert.deepEqual(index.unwitnessedPass5Probes,
-    ["P5-R13", "P5-R15", "P5-R16", "P5-R18", "P5-R19"]);
+    ["P5-R13", "P5-R18", "P5-R19"]);
   assert.deepEqual(index.latestP5R14R17RegisteredEvidence.verifiedRaces, ["P5-R14", "P5-R17"]);
   assert.equal(index.latestP5R14R17RegisteredEvidence.db018Accepted, false);
   assert.equal(index.latestP5R14R17RegisteredEvidence.externalProviderActivated, false);
+  assert.deepEqual(index.latestP5R15R16RegisteredEvidence.verifiedRaces, ["P5-R15", "P5-R16"]);
+  assert.equal(index.registrationBlockerR13.db018Accepted, false);
+  assert.equal(index.registrationBlockerR13.errors.length, 2);
   assert.equal(index.latestRegisteredPass5RaceExecution.actualProviderActivated,false);
   assert.equal(index.latestRegisteredPass5RaceExecution.result,"PASS_PARTIAL_FULL_MATRIX");
   const staged = index.outboundStagedDiagnostics;
