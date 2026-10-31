@@ -305,3 +305,60 @@ test("DB014 concurrent FK insert and retained-parent DELETE serialize in both or
    await parent.end().catch(()=>{});
  }
 });
+
+
+// DB014 real catalog policy: no other college may claim a host, including
+// a tombstoned host. Globally deduplicated events may not be cloned either.
+// Mutations are isolated to a disposable PostgreSQL 17 transaction.
+test("DB014 registered uniqueness namespace collisions stay tenant-safe",async()=>{
+ const db=new pg.Client({connectionString:process.env.TEST_DATABASE_URL,
+   connectionTimeoutMillis:10000,query_timeout:15000});
+ await db.connect();
+ let tx=false;
+ const A="20000000-0000-4000-8000-000000000001";
+ const B="20000000-0000-4000-8000-000000000002";
+ const org="10000000-0000-4000-8000-000000000001";
+ const host="db014-"+randomUUID().replaceAll("-","").slice(0,14)+".example.org";
+ const key="db014-scope-"+randomUUID();
+ try{
+   const version=Number((await db.query("SHOW server_version_num")).rows[0].server_version_num);
+   assert.ok(version>=170000&&version<180000);
+   const count=Number((await db.query(
+     "SELECT count(*)::int AS n FROM drizzle.__drizzle_migrations")).rows[0].n);
+   assert.equal(count,journal.entries.length,"registered PG17 replay required");
+   await db.query("BEGIN");tx=true;
+   const id=randomUUID();
+   await db.query("INSERT INTO tenant_domains(id,college_id,host) VALUES ($1,$2,$3)",
+     [id,A,host]);
+   await db.query("SAVEPOINT duplicate_host");
+   await assert.rejects(db.query(
+     "INSERT INTO tenant_domains(college_id,host) VALUES ($1,$2)",
+     [B,host.toUpperCase()]),e=>{assert.equal(e?.code,"23505");return true;});
+   await db.query("ROLLBACK TO SAVEPOINT duplicate_host");
+   await db.query("UPDATE tenant_domains SET deleted_at=now() WHERE id=$1",[id]);
+   await db.query("SAVEPOINT retired_host");
+   await assert.rejects(db.query(
+     "INSERT INTO tenant_domains(college_id,host) VALUES ($1,$2)",
+     [B,host]),e=>{assert.equal(e?.code,"23505");return true;});
+   await db.query("ROLLBACK TO SAVEPOINT retired_host");
+   const sql="INSERT INTO activity_events "+
+     "(organization_id,college_id,module,event_type,subject_type,subject_id,summary,dedupe_key) "+
+     "VALUES ($1,$2,'IDENTITY','DB014_SCOPE_INDEX','college',$3,'Unique event',$4)";
+   assert.equal((await db.query(sql,[org,A,randomUUID(),key])).rowCount,1);
+   await db.query("SAVEPOINT duplicate_dedupe");
+   await assert.rejects(db.query(sql,[org,B,randomUUID(),key]),e=>{
+     assert.equal(e?.code,"23505");return true;
+   });
+   await db.query("ROLLBACK TO SAVEPOINT duplicate_dedupe");
+   assert.equal((await db.query(
+     "SELECT count(*)::int AS n FROM activity_events WHERE dedupe_key=$1",
+     [key])).rows[0].n,1);
+   await db.query("ROLLBACK");tx=false;
+   console.log(JSON.stringify({kind:"DB014_UNIQUENESS_NEGATIVES",
+     otherCollegeHost:"23505",retiredHostReuse:"23505",globalDedupe:"23505",
+     registeredMigrations:count,rollback:true}));
+ }finally{
+   if(tx)await db.query("ROLLBACK").catch(()=>{});
+   await db.end();
+ }
+});
