@@ -126,8 +126,6 @@ jobs:
       - name: P5-R09 and P5-R21 registered real outbound producer and fake provider
         run: |
           npx vitest run --config vitest.db.registered.config.ts tests/integration/db18-outbound-service-race.test.ts
-      - name: Registered recruiter invite credential and encrypted outbox rollback/rotation witness
-        run: npx vitest run --config vitest.db.registered.config.ts tests/integration/db18-recruiter-invite-transactional-outbox.test.ts
       - name: P5-R18 announcement edit/delete/restore CAS and P5-R19 tracker event atomicity on registered PG17
         run: |
           npx vitest run --config vitest.db.registered.config.ts tests/integration/db18-shared-ops-race.test.ts
@@ -177,6 +175,11 @@ jobs:
       - name: P5-R13 scanned FILE receipt duplicate submission on registered PG17
         run: |
           npx vitest run --config vitest.db.registered.config.ts tests/integration/db18-assignment-receipt-race.test.ts -t P5-R13
+      # This fixture creates an immutable lead and a scoped company relationship.
+      # Run it LAST, after P8's global test teardown, so its append-only audit
+      # evidence cannot make unrelated placement cleanup fail with FK 23503.
+      - name: Registered recruiter invite credential and encrypted outbox rollback/rotation witness
+        run: npx vitest run --config vitest.db.registered.config.ts tests/integration/db18-recruiter-invite-transactional-outbox.test.ts
       - name: Explicit evidence scope
         if: always()
         run: |
