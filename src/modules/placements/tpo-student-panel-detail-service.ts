@@ -59,8 +59,8 @@ export async function getTpoStudentPanelDetail(ctx:RequestContext,raw:unknown){
   listTpoStudentNotes(ctx,id),
  ]);
  const jobs=new Map(applications.map(x=>[x.id,x.title]));
- return {student,applications,requests:requests.map(x=>({...x,job:jobs.get(x.applicationId)??"Drive"})),
-  notes:notes.map(x=>({...x,job:jobs.get(x.applicationId)??"Drive"})),
+ return {student,applications,requests:requests.map(x=>({...x,job:(x.applicationId?jobs.get(x.applicationId):undefined)??"Drive"})),
+  notes:notes.map(x=>({...x,job:(x.applicationId?jobs.get(x.applicationId):undefined)??"Drive"})),
   studentNotes:studentNotes??[],teamHistory,
   truncated:applications.length===1000||requests.length===100||notes.length===100||teamHistory.length===100};
 }

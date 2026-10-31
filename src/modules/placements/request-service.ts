@@ -720,6 +720,11 @@ async function applyApprovedEffect(
   job: typeof placementJobs.$inferSelect,
   now: Date,
 ) {
+  // General-support requests may not refer to an application; effectful
+  // application requests must fail closed before issuing an SQL lookup.
+  if (!request.applicationId) {
+    throw new PlacementsServiceError("PLACEMENT_REQUEST_EFFECT_INVALID");
+  }
   const [application] = await db
     .select()
     .from(placementApplications)

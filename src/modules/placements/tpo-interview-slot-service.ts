@@ -380,7 +380,8 @@ export async function mutateTpoInterviewSlots(context:RequestContext,rawJobId:un
     eq(placementLearnerRequests.roundId,info.round.id),
     eq(placementLearnerRequests.requestType,"ROUND_RESCHEDULE"),
     eq(placementLearnerRequests.status,"PENDING"))).for("update").limit(1);
-   if(!request)throw new PlacementsServiceError("PLACEMENT_REQUEST_INVALID_STATE");
+   if(!request||!request.applicationId)
+    throw new PlacementsServiceError("PLACEMENT_REQUEST_INVALID_STATE");
    const [application]=await tx.select({id:placementApplications.id})
     .from(placementApplications)
     .innerJoin(placementApplicationScreenings,

@@ -10,7 +10,7 @@ import {ConfirmDialog} from "@/components/ui/confirm-dialog";
 type Slot={id:string;startsAt:string;endsAt:string;room:string;panel:string|null;status:string;
  applicationId:string|null;version:number};
 type Learner={applicationId:string;name:string|null;roll:string|null};
-type Reschedule={id:string;applicationId:string;name:string|null;reason:string;requestedAt:string};
+type Reschedule={id:string;applicationId:string|null;name:string|null;reason:string;requestedAt:string};
 type Proposal={id:string;startsAt:string;endsAt:string;mode:string;meetingLocation:string|null;panelLabel:string|null;version:number};
 export function TpoInterviewSlotPlanner({jobId,roundId,slots,roster,recruiterProposals,reschedules}:{
  jobId:string;roundId:string;slots:Slot[];roster:Learner[];recruiterProposals:Proposal[];reschedules:Reschedule[];
