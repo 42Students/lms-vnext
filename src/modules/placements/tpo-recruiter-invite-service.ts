@@ -1,4 +1,4 @@
-import { and, eq, gt, isNull } from "drizzle-orm";
+import { and, eq, gt, isNull, sql } from "drizzle-orm";
 import {recruiterInviteNotHiringReason} from "./recruiter-invite-not-hiring-note-model";
 import { getDb } from "@/db/client";
 import {
@@ -142,6 +142,27 @@ export async function issueTpoRecruiterInvite(
     // A verified work email and linked employer are required before rotation.
     if(!lead.emailNorm||!lead.companyRelationshipId){
       throw new TpoRecruiterInviteServiceError("TPO_RECRUITER_INVITE_NOT_ALLOWED");
+    }
+
+    if (outboundQueueRuntimeEnabled()) {
+      // Never rotate a bearer token while a previous sealed invitation could
+      // still leave the queue. That would deliver a now-invalid link. The
+      // lead FOR UPDATE lock serializes concurrent issuers around this check.
+      const pending = await tx.execute<{exists:boolean}>(sql`
+        select exists(
+          select 1 from outbound_messages o
+          join activity_events e on e.id = o.source_event_id
+          where e.college_id = ${collegeId}
+            and e.subject_type = 'placement_tpo_lead'
+            and e.subject_id = ${leadId}
+            and o.channel = 'EMAIL'
+            and o.template_key = 'RECRUITER_INVITATION'
+            and o.status in ('PENDING','RETRY','CLAIMED')
+        ) as exists
+      `);
+      if (pending.rows[0]?.exists) {
+        throw new TpoRecruiterInviteServiceError("TPO_RECRUITER_INVITE_NOT_ALLOWED");
+      }
     }
 
     let credential;
