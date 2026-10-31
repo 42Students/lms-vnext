@@ -141,6 +141,29 @@ describe.skipIf(!enabled)("DB018 registered PG17 real outbound worker producer/c
     }
     await closeDatabaseConnection();
   });
+  it("database dispatcher can see only its outbound ledger, not tenant or identity tables",async()=>{
+    const uri=process.env["DB10_DISPATCH_DATABASE_URL"];
+    if(!uri)throw new Error("Missing disposable worker URI");
+    const workerPool=new Pool({connectionString:uri,max:1});
+    try {
+      const context=await workerPool.query<{login:string}>(
+        "select current_user::text as login",
+      );
+      expect(context.rows[0]?.login).toBe(dispatcherRole);
+      const ledger=await workerPool.query<{n:string}>(
+        "select count(*)::text as n from outbound_messages",
+      );
+      expect(Number(ledger.rows[0]?.n)).toBeGreaterThanOrEqual(0);
+      for(const table of ["users","college_memberships","placement_tpo_leads",
+        "assignment_submissions","course_assignments"]){
+        await expect(workerPool.query("select * from "+table+" limit 0"))
+          .rejects.toMatchObject({code:"42501"});
+      }
+    } finally {
+      await workerPool.end();
+    }
+  });
+
   it("two real claimers only deliver one encrypted logical invitation through fake provider",async()=>{
     if(!pool)throw new Error("Disposable PG pool missing");
     const id=sourceId();
