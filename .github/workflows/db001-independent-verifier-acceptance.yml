@@ -43,6 +43,7 @@ on:
       - "tests/integration/college-department-insights-denial.test.ts"
       - "tests/integration/tracker-report-sa-placements-projects-100.test.ts"
       - "tests/integration/tpo-self-profile-service.test.ts"
+      - "tests/integration/learner-attendance-calendar.test.ts"
       - ".github/workflows/db001-independent-verifier-acceptance.yml"
 permissions:
   contents: read
