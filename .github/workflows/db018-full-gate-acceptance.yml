@@ -13,6 +13,7 @@ on:
       - "tests/integration/db18-concurrency-witnesses.test.ts"
       - "tests/integration/db18-known-race-gaps.test.ts"
       - "tests/integration/db18-placement-race-gap.test.ts"
+      - "tests/integration/db18-notification-race.test.ts"
       - "tests/db-parity-pass5.test.mjs"
       - "tests/integration/db18-witness-index.json"
       - "docs/planning/database-parity-pass5-probe-manifest.json"
@@ -86,6 +87,7 @@ jobs:
             tests/integration/db18-concurrency-witnesses.test.ts \
             tests/integration/db18-known-race-gaps.test.ts \
             tests/integration/db18-placement-race-gap.test.ts \
+            tests/integration/db18-notification-race.test.ts \
             tests/integration/groups-db03.test.ts \
             tests/integration/courses-c4b-quizzes.test.ts
       - name: P5-R11 schedule and period-close race with real A2 producer
