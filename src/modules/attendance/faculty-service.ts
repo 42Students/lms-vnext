@@ -160,6 +160,7 @@ async function requireFacultyDelivery(
 async function currentDeliveryRoster(
   delivery: FacultyDelivery,
   collegeId: string,
+  db: Pick<ReturnType<typeof getDb>, "select"> = getDb(),
 ) {
   return listActiveDeliveryLearners({
     deliveryId: delivery.deliveryId,
@@ -167,7 +168,7 @@ async function currentDeliveryRoster(
     academicPeriodId:
       delivery.academicPeriodId,
     collegeId,
-  });
+  }, db);
 }
 
 async function assertPersistedFacultyScope(
@@ -657,6 +658,30 @@ export async function markFacultyAttendance(
     const isCorrection=existingSession?.status==="MARKED";
     if(isCorrection&&!facultyCorrectionReasonValid(input.correctionReason))
       throw new CoursesServiceError("ATTENDANCE_CORRECTION_REASON_REQUIRED");
+    // The earlier roster powered the browser's optimistic preflight only.
+    // Lock its ACTIVE same-college learner memberships and re-read the exact
+    // Section/elective audience on THIS write transaction after the schedule
+    // lock. A suspension, section transfer or elective-group change between
+    // preflight and write must not be marked from a stale audience.
+    const lockedLearners = submitted.size ? await tx
+      .select({id: collegeMemberships.id})
+      .from(collegeMemberships)
+      .where(and(
+        inArray(collegeMemberships.id, [...submitted]),
+        eq(collegeMemberships.collegeId, context.membership!.collegeId),
+        eq(collegeMemberships.status, "ACTIVE"),
+      ))
+      .for("share") : [];
+    if (lockedLearners.length !== submitted.size)
+      throw new CoursesServiceError("ATTENDANCE_ROSTER_CONFLICT");
+    const liveRoster = await currentDeliveryRoster(
+      delivery, context.membership!.collegeId, tx,
+    );
+    const liveIds = new Set(liveRoster.map(row=>row.membershipId));
+    if (liveIds.size !== submitted.size ||
+        [...submitted].some(id=>!liveIds.has(id)))
+      throw new CoursesServiceError("ATTENDANCE_ROSTER_CONFLICT");
+
     // Lock every current record in this exact authorized roster. Repeated
     // correction must retain row UUIDs for immutable audit/history FKs.
     const existingRecords = await tx.select({

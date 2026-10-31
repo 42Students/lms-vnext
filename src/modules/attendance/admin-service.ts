@@ -675,6 +675,17 @@ export async function correctAdminAttendance(
         throw new CoursesServiceError("ATTENDANCE_ROSTER_CONFLICT");
       }
 
+      // Do not trust only the outside-transaction roster preflight: a
+      // learner may lose their active Section or elective group enrolment
+      // while this writer waits for the schedule lock. Share this
+      // transaction's exact audience read with the committed mutation.
+      const liveRoster=await listActiveDeliveryLearners({
+        deliveryId:delivery.deliveryId,sectionId:delivery.sectionId,
+        academicPeriodId:delivery.academicPeriodId,collegeId:college.id,
+      },tx);
+      if(!liveRoster.some(row=>row.membershipId===input.membershipId))
+        throw new CoursesServiceError("ATTENDANCE_ROSTER_CONFLICT");
+
       const [priorRecord]=await tx.select({
         id:attendanceRecords.id,membershipId:attendanceRecords.membershipId,
         status:attendanceRecords.status,note:attendanceRecords.note,

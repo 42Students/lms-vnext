@@ -84,6 +84,16 @@ describe("COURSES-WEAK-DELIVERY-ROSTER-01 exact College, Section and Elective en
   expect(await listActiveDeliveryLearners(scope,tx)).toEqual(state.learners);
   expect(tx?.select).toHaveBeenCalledTimes(2);
  });
+ it("attendance writers revalidate the roster from the mutation transaction",()=>{
+  const faculty=readFileSync("src/modules/attendance/faculty-service.ts","utf8");
+  const admin=readFileSync("src/modules/attendance/admin-service.ts","utf8");
+  expect(faculty).toContain("const liveRoster = await currentDeliveryRoster(");
+  expect(faculty).toContain("delivery, context.membership!.collegeId, tx,");
+  expect(faculty).toContain("const lockedLearners = submitted.size ? await tx");
+  expect(admin).toContain("const liveRoster=await listActiveDeliveryLearners({");
+  expect(admin).toContain("academicPeriodId:delivery.academicPeriodId,collegeId:college.id,");
+  expect(admin).toContain("},tx);");
+ });
  it("COURSES-WEAK-DELIVERY-ROSTER-01 requires the same persisted delivery, cohort, Section and period",()=>{
   const source=readFileSync("src/modules/courses/delivery-roster.ts","utf8");
   for(const clause of [

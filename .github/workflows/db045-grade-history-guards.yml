@@ -12,6 +12,9 @@ on:
       - "drizzle/meta/0325_snapshot.json"
       - "tests/support/db045-attendance-fixture.mjs"
       - "src/modules/attendance/history-event.ts"
+      - "src/modules/courses/delivery-roster.ts"
+      - "src/modules/groups/roster-access.ts"
+      - "tests/unit/chat7-course-delivery-roster-weak.test.ts"
       - "src/modules/attendance/faculty-service.ts"
       - "src/modules/attendance/faculty-correction-token-model.ts"
       - "tests/unit/attendance-record-token-monotonic.test.ts"
@@ -63,8 +66,11 @@ jobs:
           node-version: 22
           cache: npm
       - run: npm ci
-      - name: DB045 monotonic attendance token unit regressions
-        run: npx vitest run tests/unit/attendance-record-token-monotonic.test.ts
+      - name: DB045 roster-reader and monotonic attendance token regressions
+        run: >
+          npx vitest run
+          tests/unit/attendance-record-token-monotonic.test.ts
+          tests/unit/chat7-course-delivery-roster-weak.test.ts
       - run: npm run db:journal:verify
       - name: Disposable full registered replay and seed
         env:
