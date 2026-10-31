@@ -2276,6 +2276,13 @@
       "when": 1793257870954,
       "tag": "0324_db045_attendance_immutable_history",
       "breakpoints": true
+    },
+    {
+      "idx": 325,
+      "version": "7",
+      "when": 1793257930954,
+      "tag": "0325_db014_cascade_retention_fences",
+      "breakpoints": true
     }
   ]
 }
