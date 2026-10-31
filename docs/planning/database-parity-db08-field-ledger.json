@@ -4584,7 +4584,19 @@
           "verifiedMapping": null,
           "producerConsumerEvidence": null,
           "dbTestEvidence": null,
-          "reviewDecision": null
+          "reviewDecision": {
+            "reviewStatus": "SOURCE_REVIEWED_PROPOSAL_NOT_VERIFIED",
+            "classification": "EXPLICIT_RUNTIME_GAP",
+            "targetRefs": [
+              "placement_candidate_preferences.membership_id"
+            ],
+            "sourceRationale": "Historic preference row had an independent numeric ID, whereas the current table is keyed by membership UUID.",
+            "outstandingProof": "Prove one active preference row per scoped member and retain source identity only if lawful import provenance requires it.",
+            "frozenLegacyOracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+            "runtimeVerified": false,
+            "consumerVerified": false,
+            "retirementApproved": false
+          }
         },
         {
           "legacyColumn": "created_at",
@@ -4602,7 +4614,19 @@
           "verifiedMapping": null,
           "producerConsumerEvidence": null,
           "dbTestEvidence": null,
-          "reviewDecision": null
+          "reviewDecision": {
+            "reviewStatus": "SOURCE_REVIEWED_PROPOSAL_NOT_VERIFIED",
+            "classification": "PROPOSED_ACTIVE_FIELD_MAPPING",
+            "targetRefs": [
+              "placement_candidate_preferences.created_at"
+            ],
+            "sourceRationale": "Creation time is stored independently from the first preference choice and notification status.",
+            "outstandingProof": "Verify original date zone and whether historic null means unknown, not current processing time.",
+            "frozenLegacyOracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+            "runtimeVerified": false,
+            "consumerVerified": false,
+            "retirementApproved": false
+          }
         },
         {
           "legacyColumn": "is_deleted",
@@ -4616,7 +4640,17 @@
           "verifiedMapping": null,
           "producerConsumerEvidence": null,
           "dbTestEvidence": null,
-          "reviewDecision": null
+          "reviewDecision": {
+            "reviewStatus": "SOURCE_REVIEWED_PROPOSAL_NOT_VERIFIED",
+            "classification": "EXPLICIT_RUNTIME_GAP",
+            "targetRefs": [],
+            "sourceRationale": "The current preference table has no historical soft-delete marker; dropping it would resurrect withdrawn preferences.",
+            "outstandingProof": "Define explicit opt-out/retention behavior for archived or deleted preferences without silent reactivation.",
+            "frozenLegacyOracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+            "runtimeVerified": false,
+            "consumerVerified": false,
+            "retirementApproved": false
+          }
         },
         {
           "legacyColumn": "updated_at",
@@ -4634,7 +4668,19 @@
           "verifiedMapping": null,
           "producerConsumerEvidence": null,
           "dbTestEvidence": null,
-          "reviewDecision": null
+          "reviewDecision": {
+            "reviewStatus": "SOURCE_REVIEWED_PROPOSAL_NOT_VERIFIED",
+            "classification": "PROPOSED_ACTIVE_FIELD_MAPPING",
+            "targetRefs": [
+              "placement_candidate_preferences.updated_at"
+            ],
+            "sourceRationale": "Current update timestamp is a durable event instant but lacks a numeric source row version.",
+            "outstandingProof": "Verify concurrent edits and no stale overwrite of visibility/notification consent.",
+            "frozenLegacyOracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+            "runtimeVerified": false,
+            "consumerVerified": false,
+            "retirementApproved": false
+          }
         },
         {
           "legacyColumn": "exam_slot_preference",
@@ -4648,7 +4694,17 @@
           "verifiedMapping": null,
           "producerConsumerEvidence": null,
           "dbTestEvidence": null,
-          "reviewDecision": null
+          "reviewDecision": {
+            "reviewStatus": "SOURCE_REVIEWED_PROPOSAL_NOT_VERIFIED",
+            "classification": "EXPLICIT_RUNTIME_GAP",
+            "targetRefs": [],
+            "sourceRationale": "Legacy exam-slot preference has no current placement candidate preference column.",
+            "outstandingProof": "Clarify the independent exam scheduling product surface before deciding redesign or retention.",
+            "frozenLegacyOracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+            "runtimeVerified": false,
+            "consumerVerified": false,
+            "retirementApproved": false
+          }
         },
         {
           "legacyColumn": "pap_interest",
@@ -4662,7 +4718,19 @@
           "verifiedMapping": null,
           "producerConsumerEvidence": null,
           "dbTestEvidence": null,
-          "reviewDecision": null
+          "reviewDecision": {
+            "reviewStatus": "SOURCE_REVIEWED_PROPOSAL_NOT_VERIFIED",
+            "classification": "NEEDS_ENUM_CROSSWALK",
+            "targetRefs": [
+              "placement_candidate_preferences.pap_interest"
+            ],
+            "sourceRationale": "Current private placement assistance interest accepts YES/NO/NEED_MORE_INFO, not arbitrary legacy labels.",
+            "outstandingProof": "Verify exact source string mapping, permission and learner-consent expectations.",
+            "frozenLegacyOracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+            "runtimeVerified": false,
+            "consumerVerified": false,
+            "retirementApproved": false
+          }
         },
         {
           "legacyColumn": "preferred_employment_city",
@@ -4676,7 +4744,19 @@
           "verifiedMapping": null,
           "producerConsumerEvidence": null,
           "dbTestEvidence": null,
-          "reviewDecision": null
+          "reviewDecision": {
+            "reviewStatus": "SOURCE_REVIEWED_PROPOSAL_NOT_VERIFIED",
+            "classification": "PROPOSED_ACTIVE_FIELD_MAPPING",
+            "targetRefs": [
+              "placement_candidate_preferences.preferred_locations"
+            ],
+            "sourceRationale": "Legacy single city can be considered a candidate for the current preferred locations array.",
+            "outstandingProof": "Approve normalization, multi-location representation and recruiter visibility policy.",
+            "frozenLegacyOracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+            "runtimeVerified": false,
+            "consumerVerified": false,
+            "retirementApproved": false
+          }
         },
         {
           "legacyColumn": "role_preference",
@@ -4690,7 +4770,19 @@
           "verifiedMapping": null,
           "producerConsumerEvidence": null,
           "dbTestEvidence": null,
-          "reviewDecision": null
+          "reviewDecision": {
+            "reviewStatus": "SOURCE_REVIEWED_PROPOSAL_NOT_VERIFIED",
+            "classification": "PROPOSED_ACTIVE_FIELD_MAPPING",
+            "targetRefs": [
+              "placement_candidate_preferences.preferred_role_titles"
+            ],
+            "sourceRationale": "Legacy role preference becomes a candidate among current text-array role titles.",
+            "outstandingProof": "Verify source canonicalization and interaction with specific-role preference.",
+            "frozenLegacyOracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+            "runtimeVerified": false,
+            "consumerVerified": false,
+            "retirementApproved": false
+          }
         },
         {
           "legacyColumn": "specific_role_preference",
@@ -4704,7 +4796,19 @@
           "verifiedMapping": null,
           "producerConsumerEvidence": null,
           "dbTestEvidence": null,
-          "reviewDecision": null
+          "reviewDecision": {
+            "reviewStatus": "SOURCE_REVIEWED_PROPOSAL_NOT_VERIFIED",
+            "classification": "NEEDS_ENUM_CROSSWALK",
+            "targetRefs": [
+              "placement_candidate_preferences.preferred_role_titles"
+            ],
+            "sourceRationale": "Legacy free-text specific role cannot be blindly merged into a possibly broader role-preference array.",
+            "outstandingProof": "Define precedence, ordering and safe parsing for source role preference values.",
+            "frozenLegacyOracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+            "runtimeVerified": false,
+            "consumerVerified": false,
+            "retirementApproved": false
+          }
         },
         {
           "legacyColumn": "work_shift_preference",
@@ -4718,7 +4822,19 @@
           "verifiedMapping": null,
           "producerConsumerEvidence": null,
           "dbTestEvidence": null,
-          "reviewDecision": null
+          "reviewDecision": {
+            "reviewStatus": "SOURCE_REVIEWED_PROPOSAL_NOT_VERIFIED",
+            "classification": "NEEDS_ENUM_CROSSWALK",
+            "targetRefs": [
+              "placement_candidate_preferences.shift_preference"
+            ],
+            "sourceRationale": "Current work shift CHECK limits DAY/NIGHT/FLEXIBLE/NO_PREFERENCE and source labels may differ.",
+            "outstandingProof": "Approve null/any/night-shift translations before allowing matching or recruiter filters.",
+            "frozenLegacyOracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+            "runtimeVerified": false,
+            "consumerVerified": false,
+            "retirementApproved": false
+          }
         },
         {
           "legacyColumn": "learner_id",
@@ -4734,7 +4850,19 @@
           "verifiedMapping": null,
           "producerConsumerEvidence": null,
           "dbTestEvidence": null,
-          "reviewDecision": null
+          "reviewDecision": {
+            "reviewStatus": "SOURCE_REVIEWED_PROPOSAL_NOT_VERIFIED",
+            "classification": "PROPOSED_ACTIVE_FIELD_MAPPING",
+            "targetRefs": [
+              "placement_candidate_preferences.membership_id"
+            ],
+            "sourceRationale": "Historic learner ID must map to a college-specific membership UUID rather than a global user principal.",
+            "outstandingProof": "Prove same-college ownership and learner-only preference mutation.",
+            "frozenLegacyOracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+            "runtimeVerified": false,
+            "consumerVerified": false,
+            "retirementApproved": false
+          }
         },
         {
           "legacyColumn": "job_notifications_enabled",
@@ -4748,7 +4876,19 @@
           "verifiedMapping": null,
           "producerConsumerEvidence": null,
           "dbTestEvidence": null,
-          "reviewDecision": null
+          "reviewDecision": {
+            "reviewStatus": "SOURCE_REVIEWED_PROPOSAL_NOT_VERIFIED",
+            "classification": "PROPOSED_ACTIVE_FIELD_MAPPING",
+            "targetRefs": [
+              "placement_candidate_preferences.notify_matching_jobs"
+            ],
+            "sourceRationale": "Source notifications toggle is closest to matching-job alerts, not the independent application-update setting.",
+            "outstandingProof": "Verify explicit consent, default and opt-out behavior across email and in-app senders.",
+            "frozenLegacyOracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+            "runtimeVerified": false,
+            "consumerVerified": false,
+            "retirementApproved": false
+          }
         }
       ]
     },
@@ -4777,7 +4917,20 @@
           "verifiedMapping": null,
           "producerConsumerEvidence": null,
           "dbTestEvidence": null,
-          "reviewDecision": null
+          "reviewDecision": {
+            "reviewStatus": "SOURCE_REVIEWED_PROPOSAL_NOT_VERIFIED",
+            "classification": "PROPOSED_ACTIVE_FIELD_MAPPING",
+            "targetRefs": [
+              "placement_saved_jobs.id",
+              "placement_saved_jobs.legacy_saved_job_id"
+            ],
+            "sourceRationale": "Historic saved-job row ID survives only as a numeric provenance locator beside a current UUID.",
+            "outstandingProof": "Verify uniqueness and strict tenant lookup before any source import.",
+            "frozenLegacyOracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+            "runtimeVerified": false,
+            "consumerVerified": false,
+            "retirementApproved": false
+          }
         },
         {
           "legacyColumn": "learner_id",
@@ -4793,7 +4946,20 @@
           "verifiedMapping": null,
           "producerConsumerEvidence": null,
           "dbTestEvidence": null,
-          "reviewDecision": null
+          "reviewDecision": {
+            "reviewStatus": "SOURCE_REVIEWED_PROPOSAL_NOT_VERIFIED",
+            "classification": "PROPOSED_ACTIVE_FIELD_MAPPING",
+            "targetRefs": [
+              "placement_saved_jobs.membership_id",
+              "placement_saved_jobs.legacy_learner_id"
+            ],
+            "sourceRationale": "Legacy learner integer is preserved as provenance, but authorization uses a member UUID with a composite college FK.",
+            "outstandingProof": "Prove learner and saved job belong to the same college and only the owner can list or remove.",
+            "frozenLegacyOracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+            "runtimeVerified": false,
+            "consumerVerified": false,
+            "retirementApproved": false
+          }
         },
         {
           "legacyColumn": "job_id",
@@ -4809,7 +4975,20 @@
           "verifiedMapping": null,
           "producerConsumerEvidence": null,
           "dbTestEvidence": null,
-          "reviewDecision": null
+          "reviewDecision": {
+            "reviewStatus": "SOURCE_REVIEWED_PROPOSAL_NOT_VERIFIED",
+            "classification": "PROPOSED_ACTIVE_FIELD_MAPPING",
+            "targetRefs": [
+              "placement_saved_jobs.job_id",
+              "placement_saved_jobs.legacy_job_id"
+            ],
+            "sourceRationale": "Historic job integer is a mapping hint; the registered job UUID and college FK remain mandatory.",
+            "outstandingProof": "Prove same-college job lookup, visibility and revoke save on removed job.",
+            "frozenLegacyOracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+            "runtimeVerified": false,
+            "consumerVerified": false,
+            "retirementApproved": false
+          }
         },
         {
           "legacyColumn": "created_at",
@@ -4825,7 +5004,20 @@
           "verifiedMapping": null,
           "producerConsumerEvidence": null,
           "dbTestEvidence": null,
-          "reviewDecision": null
+          "reviewDecision": {
+            "reviewStatus": "SOURCE_REVIEWED_PROPOSAL_NOT_VERIFIED",
+            "classification": "PROPOSED_ACTIVE_FIELD_MAPPING",
+            "targetRefs": [
+              "placement_saved_jobs.saved_at",
+              "placement_saved_jobs.legacy_saved_at_local"
+            ],
+            "sourceRationale": "The current savedAt instant can preserve source-local chronology separately from a raw local timestamp string.",
+            "outstandingProof": "Verify source timezone mapping and no duplicate insertion for the same membership and job.",
+            "frozenLegacyOracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+            "runtimeVerified": false,
+            "consumerVerified": false,
+            "retirementApproved": false
+          }
         }
       ]
     },
@@ -6121,7 +6313,19 @@
           "verifiedMapping": null,
           "producerConsumerEvidence": null,
           "dbTestEvidence": null,
-          "reviewDecision": null
+          "reviewDecision": {
+            "reviewStatus": "SOURCE_REVIEWED_PROPOSAL_NOT_VERIFIED",
+            "classification": "PROPOSED_ACTIVE_FIELD_MAPPING",
+            "targetRefs": [
+              "placement_batch_registrations.id"
+            ],
+            "sourceRationale": "Legacy registration BIGINT is not the current UUID, which identifies a per-cohort choice.",
+            "outstandingProof": "Verify historic choice provenance and duplicate lineage under the new member/cohort uniqueness rule.",
+            "frozenLegacyOracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+            "runtimeVerified": false,
+            "consumerVerified": false,
+            "retirementApproved": false
+          }
         },
         {
           "legacyColumn": "learner_id",
@@ -6137,7 +6341,19 @@
           "verifiedMapping": null,
           "producerConsumerEvidence": null,
           "dbTestEvidence": null,
-          "reviewDecision": null
+          "reviewDecision": {
+            "reviewStatus": "SOURCE_REVIEWED_PROPOSAL_NOT_VERIFIED",
+            "classification": "PROPOSED_ACTIVE_FIELD_MAPPING",
+            "targetRefs": [
+              "placement_batch_registrations.membership_id"
+            ],
+            "sourceRationale": "Old learner integer must be resolved to a scoped college membership UUID rather than a user-wide identity.",
+            "outstandingProof": "Verify enrollment in the selected academic cohort and learner authorization.",
+            "frozenLegacyOracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+            "runtimeVerified": false,
+            "consumerVerified": false,
+            "retirementApproved": false
+          }
         },
         {
           "legacyColumn": "season_id",
@@ -6153,7 +6369,19 @@
           "verifiedMapping": null,
           "producerConsumerEvidence": null,
           "dbTestEvidence": null,
-          "reviewDecision": null
+          "reviewDecision": {
+            "reviewStatus": "SOURCE_REVIEWED_PROPOSAL_NOT_VERIFIED",
+            "classification": "EXPLICIT_RUNTIME_GAP",
+            "targetRefs": [
+              "placement_batch_registrations.cohort_id"
+            ],
+            "sourceRationale": "Source placement season ID is not the current academic cohort UUID; the new registration is one choice per batch.",
+            "outstandingProof": "Approve a real source season-to-cohort and learner-enrollment mapping or quarantine ambiguous rows.",
+            "frozenLegacyOracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+            "runtimeVerified": false,
+            "consumerVerified": false,
+            "retirementApproved": false
+          }
         },
         {
           "legacyColumn": "choice",
@@ -6167,7 +6395,19 @@
           "verifiedMapping": null,
           "producerConsumerEvidence": null,
           "dbTestEvidence": null,
-          "reviewDecision": null
+          "reviewDecision": {
+            "reviewStatus": "SOURCE_REVIEWED_PROPOSAL_NOT_VERIFIED",
+            "classification": "NEEDS_ENUM_CROSSWALK",
+            "targetRefs": [
+              "placement_batch_registrations.choice"
+            ],
+            "sourceRationale": "The registered choice enum has five explicit options and is part of the versioned learner consent agreement.",
+            "outstandingProof": "Approve exact source options and prevent unrecognized values from silently becoming PLACEMENTS.",
+            "frozenLegacyOracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+            "runtimeVerified": false,
+            "consumerVerified": false,
+            "retirementApproved": false
+          }
         },
         {
           "legacyColumn": "consent_version",
@@ -6181,7 +6421,19 @@
           "verifiedMapping": null,
           "producerConsumerEvidence": null,
           "dbTestEvidence": null,
-          "reviewDecision": null
+          "reviewDecision": {
+            "reviewStatus": "SOURCE_REVIEWED_PROPOSAL_NOT_VERIFIED",
+            "classification": "PROPOSED_ACTIVE_FIELD_MAPPING",
+            "targetRefs": [
+              "placement_batch_registrations.consent_version"
+            ],
+            "sourceRationale": "Versioned consent applies only to PLACEMENTS; non-participation choices must not carry stale consent.",
+            "outstandingProof": "Validate source consent version shape and explicit latest terms acceptance.",
+            "frozenLegacyOracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+            "runtimeVerified": false,
+            "consumerVerified": false,
+            "retirementApproved": false
+          }
         },
         {
           "legacyColumn": "consent_at",
@@ -6197,7 +6449,19 @@
           "verifiedMapping": null,
           "producerConsumerEvidence": null,
           "dbTestEvidence": null,
-          "reviewDecision": null
+          "reviewDecision": {
+            "reviewStatus": "SOURCE_REVIEWED_PROPOSAL_NOT_VERIFIED",
+            "classification": "PROPOSED_ACTIVE_FIELD_MAPPING",
+            "targetRefs": [
+              "placement_batch_registrations.consent_at"
+            ],
+            "sourceRationale": "Placement consent timestamp is required with PLACEMENTS, absent for alternative choices.",
+            "outstandingProof": "Verify time zone, age of consent and explicit authenticated user acceptance.",
+            "frozenLegacyOracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+            "runtimeVerified": false,
+            "consumerVerified": false,
+            "retirementApproved": false
+          }
         },
         {
           "legacyColumn": "source",
@@ -6211,7 +6475,19 @@
           "verifiedMapping": null,
           "producerConsumerEvidence": null,
           "dbTestEvidence": null,
-          "reviewDecision": null
+          "reviewDecision": {
+            "reviewStatus": "SOURCE_REVIEWED_PROPOSAL_NOT_VERIFIED",
+            "classification": "NEEDS_ENUM_CROSSWALK",
+            "targetRefs": [
+              "placement_batch_registrations.source"
+            ],
+            "sourceRationale": "Current writer source is restricted to SELF/TPO/BACKFILL and not arbitrary source metadata.",
+            "outstandingProof": "Review all historic import actors and block any fabricated self-consent.",
+            "frozenLegacyOracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+            "runtimeVerified": false,
+            "consumerVerified": false,
+            "retirementApproved": false
+          }
         },
         {
           "legacyColumn": "created_at",
@@ -6227,7 +6503,19 @@
           "verifiedMapping": null,
           "producerConsumerEvidence": null,
           "dbTestEvidence": null,
-          "reviewDecision": null
+          "reviewDecision": {
+            "reviewStatus": "SOURCE_REVIEWED_PROPOSAL_NOT_VERIFIED",
+            "classification": "PROPOSED_ACTIVE_FIELD_MAPPING",
+            "targetRefs": [
+              "placement_batch_registrations.created_at"
+            ],
+            "sourceRationale": "Creation timestamp is distinct from the current mutable choice and consent event history.",
+            "outstandingProof": "Verify original source time and re-registration chronology.",
+            "frozenLegacyOracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+            "runtimeVerified": false,
+            "consumerVerified": false,
+            "retirementApproved": false
+          }
         },
         {
           "legacyColumn": "updated_at",
@@ -6243,7 +6531,19 @@
           "verifiedMapping": null,
           "producerConsumerEvidence": null,
           "dbTestEvidence": null,
-          "reviewDecision": null
+          "reviewDecision": {
+            "reviewStatus": "SOURCE_REVIEWED_PROPOSAL_NOT_VERIFIED",
+            "classification": "PROPOSED_ACTIVE_FIELD_MAPPING",
+            "targetRefs": [
+              "placement_batch_registrations.updated_at"
+            ],
+            "sourceRationale": "Updated time is the current registration write clock and cannot prove source version parity alone.",
+            "outstandingProof": "Verify optimistic registration updates and stale form submissions.",
+            "frozenLegacyOracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+            "runtimeVerified": false,
+            "consumerVerified": false,
+            "retirementApproved": false
+          }
         },
         {
           "legacyColumn": "outcome_label",
@@ -6257,7 +6557,17 @@
           "verifiedMapping": null,
           "producerConsumerEvidence": null,
           "dbTestEvidence": null,
-          "reviewDecision": null
+          "reviewDecision": {
+            "reviewStatus": "SOURCE_REVIEWED_PROPOSAL_NOT_VERIFIED",
+            "classification": "EXPLICIT_RUNTIME_GAP",
+            "targetRefs": [],
+            "sourceRationale": "Source registration outcome label is not part of the new consent/choice record.",
+            "outstandingProof": "Separate placement-outcome reporting from learner's private registration intent and define retention.",
+            "frozenLegacyOracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+            "runtimeVerified": false,
+            "consumerVerified": false,
+            "retirementApproved": false
+          }
         },
         {
           "legacyColumn": "outcome_detail",
@@ -6271,7 +6581,17 @@
           "verifiedMapping": null,
           "producerConsumerEvidence": null,
           "dbTestEvidence": null,
-          "reviewDecision": null
+          "reviewDecision": {
+            "reviewStatus": "SOURCE_REVIEWED_PROPOSAL_NOT_VERIFIED",
+            "classification": "EXPLICIT_RUNTIME_GAP",
+            "targetRefs": [],
+            "sourceRationale": "Legacy registration outcome details are not present in the registered private choice table.",
+            "outstandingProof": "Review the downstream outcome authority and private staff notes before redesigning this field.",
+            "frozenLegacyOracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+            "runtimeVerified": false,
+            "consumerVerified": false,
+            "retirementApproved": false
+          }
         }
       ]
     },
