@@ -180,7 +180,7 @@
     "focusedVitestTestsPassed": 50,
     "fullSuiteVitestTestsExecuted": 92,
     "fullSuiteVitestTestsPassed": 92,
-    "pendingConcurrencyAuthored": 1,
+    "pendingConcurrencyAuthored": 2,
     "additionalRegisteredConcurrencyRuntimeExecuted": 2,
     "additionalRegisteredConcurrencyRuntimePassed": 2
   },
@@ -387,6 +387,15 @@
       "state": "AUTHORED_AWAITING_REGISTERED_PG17",
       "execution": "NOT_RUN",
       "evidence": "Real independent group-row contention; asserts REMOVED old member, oldest waitlisted member ACTIVE, new join WAITLISTED, exact active_count and 5 immutable events. Requires full registered PG17 replay and accepted run URL."
+    },
+    {
+      "id": "DB18-C08",
+      "raceProbe": "P5-R20",
+      "file": "tests/integration/db18-notification-race.test.ts",
+      "title": "P5-R20 deduplicates concurrent delivery and retains the first read timestamp",
+      "state": "AUTHORED_AWAITING_REGISTERED_PG17",
+      "execution": "NOT_RUN",
+      "evidence": "Two delivered requests block on PostgreSQL receipt table, exactly one wins unique user/event key; two mark-read calls then block on the same receipt, each returns the committed first read_at. Requires exact-SHA registered PG17 run proof."
     }
   ],
   "registeredAdditionalConcurrencyWitnesses": [
