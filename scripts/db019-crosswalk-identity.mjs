@@ -73,22 +73,43 @@ export function reconcileCrosswalk(domain, ledger, artifact, inventoryBlobSha = 
   // Crosswalk formats store the frozen backend oracle and inventory pin in
   // different locations. Checking only a top-level sourceSha would silently
   // bypass DB01/DB03/DB08 source-drift detection.
-  const sourceSha = artifact.sourceSha || artifact.legacyBackendSha || artifact.legacyOracleSha ||
-    artifact.source?.legacyBackendSha || artifact.sourceInventory?.legacyBackendSha ||
-    artifact.capturedFrom?.legacyBackendSha || null;
-  if (!/^[a-f0-9]{40}$/i.test(sourceSha || ""))
-    errors.push({code:"MISSING_LEGACY_SOURCE_SHA", domain});
-  else if (sourceSha !== ledger.sourceSha)
-    errors.push({code:"LEGACY_SOURCE_SHA_DRIFT", expected:ledger.sourceSha, observed:sourceSha});
-  const pin = artifact.source?.inventoryBlobSha || artifact.sourceInventory?.blobSha || null;
-  if (pin && (!/^[a-f0-9]{40}$/i.test(inventoryBlobSha || "") || pin !== inventoryBlobSha))
-    errors.push({code:"INVENTORY_BLOB_SHA_DRIFT", pinned:pin, observed:inventoryBlobSha});
+  // Multiple artifact formats carry more than one legacy pin. Treat every
+  // supplied pin as authoritative: a valid top-level SHA must never mask a
+  // contradictory nested SHA (or inventory blob) when the artifact is edited.
+  const oraclePins = [
+    ["sourceSha", artifact.sourceSha],
+    ["legacyBackendSha", artifact.legacyBackendSha],
+    ["legacyOracleSha", artifact.legacyOracleSha],
+    ["source.legacyBackendSha", artifact.source?.legacyBackendSha],
+    ["sourceInventory.legacyBackendSha", artifact.sourceInventory?.legacyBackendSha],
+    ["capturedFrom.legacyBackendSha", artifact.capturedFrom?.legacyBackendSha],
+  ].filter(([,value]) => value !== undefined && value !== null);
+  if (!oraclePins.length) errors.push({code:"MISSING_LEGACY_SOURCE_SHA", domain});
+  for (const [location, sourceSha] of oraclePins) {
+    if (typeof sourceSha !== "string" || !/^[a-f0-9]{40}$/i.test(sourceSha)) {
+      errors.push({code:"INVALID_LEGACY_SOURCE_SHA", location});
+    } else if (sourceSha !== ledger.sourceSha) {
+      errors.push({code:"LEGACY_SOURCE_SHA_DRIFT", expected:ledger.sourceSha,
+        observed:sourceSha, location});
+    }
+  }
+  const inventoryPins = [
+    ["source.inventoryBlobSha", artifact.source?.inventoryBlobSha],
+    ["sourceInventory.blobSha", artifact.sourceInventory?.blobSha],
+  ].filter(([,value]) => value !== undefined && value !== null);
+  for (const [location, pin] of inventoryPins) {
+    if (typeof pin !== "string" || !/^[a-f0-9]{40}$/i.test(pin) ||
+        !/^[a-f0-9]{40}$/i.test(inventoryBlobSha || "") || pin !== inventoryBlobSha) {
+      errors.push({code:"INVENTORY_BLOB_SHA_DRIFT", pinned:pin,
+        observed:inventoryBlobSha, location});
+    }
+  }
   return {domain, sourceOnly:true, databaseVerified:false,
     sourceFields:sourceRows.length, crosswalkFields:targetRows.length,
     excludedHistoricalSourceFields:domain === "DB06" ? ledger.tables
       .filter(t => t.sourceDisposition !== "ACTIVE_SOURCE_CONTRACT")
       .reduce((sum,t) => sum + (t.rows?.length || 0),0) : 0,
-    pinChecked:Boolean(pin), missing, extra, duplicateSource:src.duplicate,
+    pinChecked:inventoryPins.length > 0, missing, extra, duplicateSource:src.duplicate,
     duplicateCrosswalk:dst.duplicate, errors};
 }
 export function gitBlobSha(bytes) {

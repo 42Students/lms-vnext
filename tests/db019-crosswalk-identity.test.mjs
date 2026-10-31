@@ -105,3 +105,24 @@ test("DB019 integrated gate accounts for 2829 independently checked source field
   assert.equal(report.semanticDecisionQuality.acceptanceReady,false);
   assert.equal(report.remainingSemanticQuality.acceptanceReady,false);
 });
+
+test("conflicting legacy source SHA cannot be hidden behind a valid top-level pin",()=>{
+  const a={...crosswalk("DB06"),sourceSha:"a".repeat(40),legacyBackendSha:"b".repeat(40)};
+  const result=reconcileCrosswalk("DB06",ledger("DB06"),a);
+  assert.ok(result.errors.some(e=>e.code==="LEGACY_SOURCE_SHA_DRIFT" &&
+    e.location==="legacyBackendSha"));
+});
+test("a blank secondary oracle SHA is a failing pin, not an absent pin",()=>{
+  const a={...crosswalk("DB07"),sourceSha:""};
+  const result=reconcileCrosswalk("DB07",ledger("DB07"),a);
+  assert.ok(result.errors.some(e=>e.code==="INVALID_LEGACY_SOURCE_SHA" &&
+    e.location==="sourceSha"));
+});
+test("conflicting inventory blob SHA cannot hide behind a matching first pin",()=>{
+  const a={...crosswalk("DB05"),source:{
+    legacyBackendSha:"a".repeat(40),inventoryBlobSha:"b".repeat(40)},
+    sourceInventory:{blobSha:"c".repeat(40)}};
+  const result=reconcileCrosswalk("DB05",ledger("DB05"),a,"b".repeat(40));
+  assert.ok(result.errors.some(e=>e.code==="INVENTORY_BLOB_SHA_DRIFT" &&
+    e.location==="sourceInventory.blobSha"));
+});
