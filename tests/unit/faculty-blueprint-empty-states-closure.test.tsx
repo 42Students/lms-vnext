@@ -44,6 +44,26 @@ describe("Faculty Blueprint honest empty and partial-source states",()=>{
   expect(output).toContain("/assignments/manage");
   expect(output).toContain("/quizzes/manage");
  });
+ it("shows a future Live Class as Draft until its own publication transition",()=>{
+  const future=new Date(Date.now()+14*86_400_000);
+  const contents=(status:"DRAFT"|"PUBLISHED")=>[{
+    id:"77777777-7777-4777-8777-777777777777",
+    deliveryId:course.deliveryId,contentType:"LIVE_CLASS",title:"Future Section live class",
+    status,sequence:1,startsAt:future,endsAt:new Date(future.getTime()+3_600_000),
+    externalUrl:"https://meet.google.com/abc-defg-hij",createdAt:new Date(),
+    notes:null,storageKey:null,durationSeconds:null,points:1,
+  }];
+  const lesson=(status:"DRAFT"|"PUBLISHED")=>[{
+    id:"66666666-6666-4666-8666-666666666666",name:"Matrices",
+    visibleToStudents:true,contents:contents(status),assignments:[],quizzes:[],
+  }];
+  const draft=html(lesson("DRAFT"));
+  expect(draft).toContain("Future Section live class");
+  expect(draft).toContain(">Draft</span>");
+  expect(draft).not.toContain(">Scheduled</span>");
+  const published=html(lesson("PUBLISHED"));
+  expect(published).toContain(">Scheduled</span>");
+ });
  it("never reports an unpublished lesson as live or fabricates learner activity",()=>{
   const lesson={id:"66666666-6666-4666-8666-666666666666",name:"Matrices",
    visibleToStudents:false,contents:[],assignments:[],quizzes:[]};
