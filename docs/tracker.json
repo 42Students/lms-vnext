@@ -2425,6 +2425,23 @@
             "resultScope": "All steps passed on pinned workflow SHA; does not certify entire DB045 30-case original race/tenant matrix, final DB018/DB019/DB020, or DATABASE phase."
           }
         },
+        "latest20261031CiRepairAndCompositeFkProbe": {
+          "status": "COMMITTED_EXACT_HEAD_PG17_AND_CI_RERUN_PENDING_NOT_ACCEPTED",
+          "recordedOn": "2026-10-31",
+          "sourceCommits": [
+            "2eae96217d9f0894d6751bc07db53a40b23e6adb",
+            "a78e6a7a6f3fa82bcf1f268d09cf42b38a885658",
+            "be436bd1a887c8f4a06ac0064342bafe557a23ca",
+            "19125d92ac5653a5c214771d9d767109f9fc2965",
+            "9d662a3ee75014ac71acfc35f769bc88eb0009e3",
+            "23cabef73fb29a74119917c421b5ad79f480b36b"
+          ],
+          "registeredPg17RunUrl": "https://github.com/42Students/lms-vnext/actions/runs/41181369828",
+          "ciRunUrl": "https://github.com/42Students/lms-vnext/actions/runs/41181369829",
+          "scope": "DB001 canonical catalog test no-explicit-any lint repair; four Faculty unit regression assertions reconciled with actual current UI, bounded caller pagination, explicit inbox notice cursor and injected roster DB dependency; new PG17 DB045 restrictive validated composite record/delivery identity FK probe.",
+          "verification": "Registered workflow and CI were queued when recorded. No exact-SHA pass, DB045 full 30-witness coverage or global phase certification claimed.",
+          "notAcceptance": true
+        },
         "latestPrincipalRevocationRace": {
           "result": "PASS_EXACT_SHA_REGISTERED_PG17_THREE_CONCURRENT_REVOCATION_CASES_NOT_FULL_DB045_ACCEPTANCE",
           "sourceSha": "fbf05be8156e275b8056447a7cfb39de26988250",
