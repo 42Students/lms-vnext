@@ -11,6 +11,9 @@ on:
       - "tests/integration/courses-c3-progress.test.ts"
       - "tests/integration/courses-ui2a-faculty.test.ts"
       - "tests/support/learner-positive-fixture.ts"
+      - "tests/integration/db10-notification-read-all.test.ts"
+      - "tests/integration/mentor-notification-acknowledgment.test.ts"
+      - "tests/integration/tpo-notification-acknowledgment.test.ts"
       - "tests/integration/db06-assessment-parent-scope.test.ts"
       - "drizzle/meta/_journal.json"
 permissions:
@@ -55,6 +58,19 @@ jobs:
             tests/integration/placements-p7-recruiters.test.ts \
             tests/integration/placements-p8-offers.test.ts \
             tests/integration/placements-requests.test.ts
+      - name: Scope-correct notification fixtures and atomic DB06 grade history
+        run: |
+          DATABASE_URL="$TEST_DATABASE_URL" npx vitest run --config vitest.db.config.ts \
+            tests/integration/db10-notification-read-all.test.ts \
+            tests/integration/learner-application-withdrawal.test.ts \
+            tests/integration/learner-assignment-detail.test.ts \
+            tests/integration/learner-drive-apply-guard.test.ts \
+            tests/integration/learner-profile-readiness.test.ts \
+            tests/integration/learner-quiz-history.test.ts \
+            tests/integration/learner-schedule-filters.test.ts \
+            tests/integration/mentor-notification-acknowledgment.test.ts \
+            tests/integration/tpo-notification-acknowledgment.test.ts \
+            tests/integration/db06-assessment-parent-scope.test.ts
       - name: Keep verified source unchanged
         if: success()
         run: test -z "$(git diff --name-only HEAD)"
