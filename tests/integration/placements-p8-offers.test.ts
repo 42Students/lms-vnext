@@ -452,7 +452,7 @@ describe("Placement P8 offers and joining", () => {
       await blocker.query("BEGIN");
       open=true;
       await blocker.query(
-        "update placement_job_role_options set status='INACTIVE' where id=$1",
+        "update placement_job_role_options set status='ARCHIVED', archived_at=now() where id=$1",
         [role.rows[0]!.id],
       );
       const pending=applyToPlacementJob(learner,roleJob.id,{}).then(
