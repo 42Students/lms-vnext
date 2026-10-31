@@ -10,6 +10,7 @@ on:
     paths:
       - ".github/workflows/db018-shared-ops-races-pg17.yml"
       - "tests/integration/db18-shared-ops-race.test.ts"
+      - "tests/integration/db18-registered-file-one-shot-race.test.ts"
       - "src/modules/announcements/**"
       - "src/modules/bug-tracker/**"
       - "src/db/schema/db10-announcements.ts"
@@ -65,6 +66,8 @@ jobs:
         run: npm run db:migrate
       - name: Execute P5-R18 announcement and P5-R19 tracker real two-writer CAS witnesses
         run: npx vitest run --config vitest.db.registered.config.ts tests/integration/db18-shared-ops-race.test.ts
+      - name: Execute registered live one-shot FILE producer race (original staged receipt still required)
+        run: npx vitest run --config vitest.db.registered.config.ts tests/integration/db18-registered-file-one-shot-race.test.ts
       - name: Static TypeScript gate
         env:
           # The full repo exceeds V8's default ~4 GB heap on CI. Keep the
@@ -74,5 +77,5 @@ jobs:
       - name: Preserve full DB-018 acceptance boundary
         if: always()
         run: |
-          echo "Only R18/R19 scoped registered PostgreSQL17 producer and activity races are in this receipt."
+          echo "Only R18/R19 and live registered FILE one-shot races are in this scoped receipt."
           echo "P5-R13 and the remaining DB-018/DB-019/DB-020 gates stay required."
