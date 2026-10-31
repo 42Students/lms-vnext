@@ -65,6 +65,21 @@ test("DB41 extra SQL-only field not present in staged schema is detected",()=>{
   assert.ok(r.tables.assignment_grade_events.missingStagedColumns.includes("injected_rogue_column"));
 });
 
+test("DB41 parses a final nested CHECK closure without swallowing the next statement",()=>{
+  assert.match(sql, /attendance_record_events_shape_ck[\s\S]*\)\);\s*\nCREATE UNIQUE INDEX attendance_record_events_record_version_uq/);
+  const aligned=original();
+  assert.ok(aligned.tables.attendance_record_events,
+    "a valid final CHECK closing as )); must be recognized as a complete SQL table");
+  const truncated=sql.replace(
+    /\)\);\s*\nCREATE UNIQUE INDEX attendance_record_events_record_version_uq/,
+    ")\nCREATE UNIQUE INDEX attendance_record_events_record_version_uq",
+  );
+  assert.notEqual(truncated,sql);
+  assert.match(auditDb41(staged,truncated).errors.join("\n"),
+    /attendance_record_events: missing SQL CREATE TABLE/,
+    "unterminated DDL must remain fail-closed");
+});
+
 test("DB41 fails closed on missing SQL history table",()=>{
   const modified=sql.replace("CREATE TABLE attendance_record_events (",
     "CREATE TABLE renamed_attendance_record_events (");
