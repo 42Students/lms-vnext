@@ -1,5 +1,6 @@
 import assert from 'node:assert/strict';
 import {test} from 'node:test';
+import fs from 'node:fs';
 import {auditDb019,loadDb019} from '../scripts/db019-source-ledger-preflight.mjs';
 
 test('DB019 all 11 frozen source ledgers reconcile 199 tables and 2829 fields without acceptance inflation',()=>{
@@ -9,6 +10,16 @@ test('DB019 all 11 frozen source ledgers reconcile 199 tables and 2829 fields wi
   assert.deepEqual(result.census,{tables:199,fields:2829,domains:11});
   assert.equal(result.sourceOnly,true);
   assert.equal(result.acceptanceReady,false);
+  assert.deepEqual(result.progress.db00SourceDecisionCoverage, {
+    totalFields: 732,
+    sourceDispositionClosedFields: 732,
+    greenfieldBackupExcludedFields: 631,
+    platformMetadataReplacedFields: 10,
+    userApprovedProductScopeExcludedFields: 91,
+    productDecisionPendingFields: 0,
+    runtimeMappingsVerifiedByThisOverlay: 0,
+    remainingGlobalFieldsNotDisposedByDb00: 2097,
+  });
   assert.equal(result.progress.awaitingSourceEvidence+result.progress.sourceEvidenceRows,2829);
   assert.equal(result.domains.reduce((s,d)=>s+d.fields,0),2829);
 });
@@ -27,5 +38,35 @@ test('DB019 detects mismatched oracle or malformed field ledger',()=>{
   const report=auditDb019(index,[ledger],{decisions:[]});
   assert.equal(report.valid,false);
   assert(report.errors.some(x=>x.code==='LEDGER_SOURCE_OR_DOMAIN_MISMATCH'));
+  assert.equal(report.acceptanceReady,false);
+});
+
+// DB00 decisions are independently pinned; a forged approval cannot reduce the backlog.
+test('DB019 refuses unapproved DB00 scope exclusions and source-decision count drift',()=>{
+  const read=path=>JSON.parse(fs.readFileSync(new URL('../docs/planning/'+path,import.meta.url),'utf8'));
+  const index=read('database-parity-pass4-column-index.json');
+  const ledgers=index.artifacts.map(x=>JSON.parse(fs.readFileSync(new URL('../'+x.path,import.meta.url),'utf8')));
+  const decisions=read('database-parity-pass4-review-decisions.json');
+  const db00Disposition=read('db00-historical-engine-disposition.json');
+  const db00Approval=read('db003-smrithi-vnext-scope-decision.json');
+  const unapproved=auditDb019(index,ledgers,decisions,{db00Disposition,db00Approval:{...db00Approval,authority:'UNKNOWN'}});
+  assert.equal(unapproved.valid,false);
+  assert.equal(unapproved.progress.db00SourceDecisionCoverage,null);
+  assert(unapproved.errors.some(x=>x.code==='DB00_DISPOSITION_INVALID_PRODUCT_APPROVAL_SCOPE_OR_EVIDENCE'));
+  const changed=structuredClone(db00Disposition);
+  changed.tables[0].sourceFieldCount++;
+  const mismatch=auditDb019(index,ledgers,decisions,{db00Disposition:changed,db00Approval});
+  assert.equal(mismatch.valid,false);
+  assert.equal(mismatch.progress.db00SourceDecisionCoverage,null);
+  assert(mismatch.errors.some(x=>x.code==='DB00_DISPOSITION_DISPOSITION_FIELD_COUNT_MISMATCH'));
+});
+
+test('DB019 never assumes DB00 approved without a supplied independent review',()=>{
+  const read=path=>JSON.parse(fs.readFileSync(new URL('../docs/planning/'+path,import.meta.url),'utf8'));
+  const index=read('database-parity-pass4-column-index.json');
+  const ledgers=index.artifacts.map(x=>JSON.parse(fs.readFileSync(new URL('../'+x.path,import.meta.url),'utf8')));
+  const report=auditDb019(index,ledgers,read('database-parity-pass4-review-decisions.json'));
+  assert.equal(report.valid,true);
+  assert.equal(report.progress.db00SourceDecisionCoverage,null);
   assert.equal(report.acceptanceReady,false);
 });
