@@ -5,10 +5,11 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { reconcileDb00 } from './db19-db00-disposition-crosscheck.mjs';
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 
-export function auditDb019(index, ledgers, decisions) {
+export function auditDb019(index, ledgers, decisions, {db00Disposition = null, db00Approval = null} = {}) {
   const errors = [];
   const fail = (code, details = {}) => errors.push({ code, ...details });
   if (!index || !Array.isArray(index.artifacts) || !index.domainCounts ||
@@ -63,6 +64,16 @@ export function auditDb019(index, ledgers, decisions) {
     fail('GLOBAL_DENOMINATOR_MISMATCH', {totalTables,totalFields});
   if (Object.keys(index.domainCounts).length !== seenDomains.size)
     fail('MISSING_SOURCE_DOMAIN');
+  // DB00's separate, user-approved domain ledger has 732 per-table dispositions.
+  // Those are legitimate greenfield scope decisions, NOT verified runtime mappings.
+  // Without the independently checked overlay, never claim these fields closed.
+  const db00Ledger = ledgers.find(ledger => ledger?.domain === 'DB00_HISTORICAL_AND_ENGINE');
+  const db00 = db00Disposition === null ? null : reconcileDb00(db00Ledger, db00Disposition, db00Approval);
+  if (db00 && !db00.valid) for (const detail of db00.errors)
+    fail('DB00_DISPOSITION_' + detail.code, {detail});
+  const db00Closed = db00?.valid ? db00.summary.sourceDispositionClosedFields : null;
+  if (db00?.valid && db00.summary.fields !== index.domainCounts.DB00_HISTORICAL_AND_ENGINE?.fields)
+    fail('DB00_DISPOSITION_SOURCE_INDEX_DRIFT');
   const decisionOpen = decisions.decisions.filter(x =>
     !x || x.approvedRetirement !== true && !String(x.status).startsWith('ACCEPTED')).length;
   const verifiedDecisionFields = decisions.decisions.reduce((sum, x) => sum + (Number(x?.verifiedFields)||0),0);
@@ -73,8 +84,19 @@ export function auditDb019(index, ledgers, decisions) {
     census: {tables:totalTables, fields:totalFields, domains:perDomain.length},
     progress: {verifiedMappingRows:mapped,sourceEvidenceRows:sourceEvidence,
       awaitingSourceEvidence:pending, sourceEvidenceComplete:sourceEvidence === totalFields,
-      unresolvedReviewDecisions:decisionOpen, reviewDecisionVerifiedFields:verifiedDecisionFields},
+      unresolvedReviewDecisions:decisionOpen, reviewDecisionVerifiedFields:verifiedDecisionFields,
+      db00SourceDecisionCoverage: db00Closed === null ? null : {
+        totalFields: db00.summary.fields,
+        sourceDispositionClosedFields: db00Closed,
+        greenfieldBackupExcludedFields: db00.summary.retiredBackupFields,
+        platformMetadataReplacedFields: db00.summary.replacedMetadataFields,
+        userApprovedProductScopeExcludedFields: db00.summary.approvedProductFields,
+        productDecisionPendingFields: db00.summary.pendingProductFields,
+        runtimeMappingsVerifiedByThisOverlay: 0,
+        remainingGlobalFieldsNotDisposedByDb00: totalFields - db00Closed,
+      }},
     domains:perDomain,
+    db00DispositionOverlay: db00,
     remainingAcceptanceGates:[
       'Per-field active, redesigned, external and retired semantic decisions with producer/consumer evidence',
       'Current registered PostgreSQL catalog and source-to-target graph comparison',
@@ -89,7 +111,9 @@ export function loadDb019(rootDir = root) {
   const index = read('docs/planning/database-parity-pass4-column-index.json');
   const ledgers = index.artifacts.map(({path: ledgerPath}) => read(ledgerPath));
   const decisions = read('docs/planning/database-parity-pass4-review-decisions.json');
-  return auditDb019(index, ledgers, decisions);
+  const db00Disposition = read('docs/planning/db00-historical-engine-disposition.json');
+  const db00Approval = read('docs/planning/db003-smrithi-vnext-scope-decision.json');
+  return auditDb019(index, ledgers, decisions, {db00Disposition,db00Approval});
 }
 
 if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
