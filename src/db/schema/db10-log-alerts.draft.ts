@@ -63,11 +63,11 @@ export const db10LogAlertSignatures = pgTable(
       .on(t.fixStatus, t.lastSeenAt),
     index("db10_log_alert_signature_muted_seen_idx")
       .on(t.muted, t.lastSeenAt),
-    check("db10_log_alert_signature_hash_ck",
+    check("log_alert_signatures_signature_hash_check",
       sql`${t.signatureHash} ~ '^[0-9a-f]{64}$'`),
-    check("db10_log_alert_signature_count_ck",
+    check("log_alert_signatures_occurrence_count_check",
       sql`${t.occurrenceCount} >= 1`),
-    check("db10_log_alert_signature_status_ck",
+    check("log_alert_signatures_fix_status_check",
       sql`${t.fixStatus} in ('OPEN','FIXED','EXPECTED')`),
     check("db10_log_alert_signature_seen_order_ck",
       sql`${t.lastSeenAt} >= ${t.firstSeenAt}`),
@@ -92,7 +92,7 @@ export const db10LogAlertSignatureAccounts = pgTable(
   (t) => [
     primaryKey({ columns: [t.signatureId, t.accountKeyHash] }),
     index("db10_log_alert_signature_accounts_hash_idx").on(t.accountKeyHash, t.firstSeenAt),
-    check("db10_log_alert_signature_accounts_hash_ck",
+    check("log_alert_signature_accounts_account_key_hash_check",
       sql`${t.accountKeyHash} ~ '^[0-9a-f]{64}$'`),
   ],
 );
@@ -113,8 +113,8 @@ export const db10LogAlertStates = pgTable(
     lastDigestDay: varchar("last_digest_day", { length: 10 }),
   },
   (t) => [
-    uniqueIndex("db10_log_alert_states_key_uq").on(t.stateKey),
-    check("db10_log_alert_states_key_ck", sql`length(trim(${t.stateKey})) > 0`),
+    uniqueIndex("log_alert_states_state_key_key").on(t.stateKey),
+    check("log_alert_states_state_key_check", sql`length(trim(${t.stateKey})) > 0`),
   ],
 );
 
@@ -130,7 +130,7 @@ export const db10LogAlertDailyCounts = pgTable(
   (t) => [
     primaryKey({ columns: [t.signatureId, t.dayKey] }),
     index("db10_log_alert_daily_day_idx").on(t.dayKey),
-    check("db10_log_alert_daily_count_ck", sql`${t.occurrenceCount} >= 1`),
+    check("log_alert_daily_counts_occurrence_count_check", sql`${t.occurrenceCount} >= 1`),
   ],
 );
 
@@ -143,7 +143,7 @@ export const db10LogAlertObservedEvents = pgTable(
   },
   (t) => [
     index("db10_log_alert_observed_at_idx").on(t.observedAt),
-    check("db10_log_alert_observed_hash_ck", sql`${t.eventHash} ~ '^[0-9a-f]{64}$'`),
+    check("log_alert_observed_events_event_hash_check", sql`${t.eventHash} ~ '^[0-9a-f]{64}$'`),
   ],
 );
 

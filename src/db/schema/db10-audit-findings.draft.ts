@@ -43,7 +43,7 @@ export const db10AuditFindings=pgTable("audit_findings",{
   // but must never point to a nonexistent historical audit finding.
   foreignKey({name:"db10_audit_findings_duplicate_fk",
     columns:[t.duplicateOf],foreignColumns:[t.id]}).onDelete("restrict"),
-  uniqueIndex("db10_audit_findings_external_id_uq").on(t.externalId),
+  uniqueIndex("audit_findings_external_id_key").on(t.externalId),
   index("db10_audit_findings_status_severity_idx").on(t.status,t.severity,t.foundAt),
   index("db10_audit_findings_area_kind_idx").on(t.area,t.kind),
   check("db10_audit_findings_status_ck",sql`${t.status} in ('NEW','CONFIRMED','IN_PROGRESS','FIXED_DEV','RELEASED_PROD','VERIFIED','DUPLICATE','WONT_FIX','NEEDS_INFO','CANT_REPRODUCE')`),

@@ -29,7 +29,11 @@ test("DB23 persistence includes the three legacy durable families", () => {
     "db10_log_alert_states_key_uq",
   ]) {
     assert.ok(sql.includes(index), index+" missing SQL");
-    assert.ok(schema.includes(index), index+" missing schema");
+    // Staged SQL retains historical names; registered PostgreSQL has a
+    // constraint-backed unique index, so the typed schema uses its real name.
+    const appliedName=index==="db10_log_alert_states_key_uq"
+      ? "log_alert_states_state_key_key" : index;
+    assert.ok(schema.includes(appliedName), appliedName+" missing registered schema");
   }
 });
 
@@ -97,7 +101,14 @@ test("DB23 signature state and durable cursors retain constraints", () => {
     "db10_log_alert_states_key_ck",
   ]) {
     assert.ok(sql.includes(key), key+" missing SQL");
-    assert.ok(schema.includes(key), key+" missing Drizzle");
+    const registeredNames={
+      db10_log_alert_signature_hash_ck:"log_alert_signatures_signature_hash_check",
+      db10_log_alert_signature_status_ck:"log_alert_signatures_fix_status_check",
+      db10_log_alert_states_key_ck:"log_alert_states_state_key_check",
+    };
+    // Keep staged SQL checks intact while testing actual applied names.
+    assert.ok(schema.includes(registeredNames[key]??key),
+      (registeredNames[key]??key)+" missing registered Drizzle");
   }
   assert.match(sql, /fix_status IN \('OPEN','FIXED','EXPECTED'\)/);
   assert.match(doc, /out-of-order/);
