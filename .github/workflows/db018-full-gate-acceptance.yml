@@ -14,6 +14,8 @@ on:
       - "tests/integration/db18-known-race-gaps.test.ts"
       - "tests/integration/db18-placement-race-gap.test.ts"
       - "tests/integration/groups-db03.test.ts"
+      - "tests/integration/academics-a2.test.ts"
+      - "src/modules/academics/schedule-service.ts"
       - "drizzle/0317_db014_placement_fk_validation.sql"
       - "drizzle/0318_db014_cross_domain_event_guards.sql"
       - "drizzle/0319_db020_grade_event_source_action.sql"
@@ -78,6 +80,9 @@ jobs:
             tests/integration/db18-placement-race-gap.test.ts \
             tests/integration/groups-db03.test.ts \
             tests/integration/courses-c4b-quizzes.test.ts
+      - name: P5-R11 schedule and period-close race with real A2 producer
+        run: |
+          npx vitest run --config vitest.db.registered.config.ts tests/integration/academics-a2.test.ts
       - name: Current registered DB014 tenant scope, catalog and DB020 provenance negatives
         run: |
           node --test tests/db014-registered-tenant-catalog-pg.test.mjs tests/db014-cross-domain-scope-staged-pg.test.mjs tests/db020-registered-grade-event-provenance-pg.test.mjs
