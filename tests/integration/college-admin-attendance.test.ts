@@ -392,6 +392,36 @@ describe("College Admin attendance tenant isolation with PostgreSQL", () => {
     expect(after.rows).toEqual(before.rows);
   });
 
+  it.each([
+    {label:"note-only",setClause:"note='DB045 unaudited note',version=version+1"},
+    {label:"marker-time-only",setClause:"marked_at=marked_at+interval '1 second',version=version+1"},
+  ])("DB045 rejects unaudited $label correction even when status is unchanged",async({setClause})=>{
+    // The deferred event-completeness guard must protect non-status edits too.
+    // Both are legitimate versioned corrections ONLY when the same transaction
+    // also appends an exact immutable CORRECT event.
+    const before=await pool.query<{
+      id:string;version:number;status:string;note:string|null;marked_at:Date;
+    }>(
+      "select id,version,status,note,marked_at from attendance_records where schedule_event_id=$1",
+      [foreign.event],
+    );
+    expect(before.rows).toHaveLength(1);
+    await expect(pool.query(
+      `update attendance_records set ${setClause} where id=$1`,
+      [before.rows[0]!.id],
+    )).rejects.toMatchObject({
+      code:"23514",
+      message:expect.stringContaining("missing immutable audit event"),
+    });
+    const after=await pool.query<{
+      id:string;version:number;status:string;note:string|null;marked_at:Date;
+    }>(
+      "select id,version,status,note,marked_at from attendance_records where schedule_event_id=$1",
+      [foreign.event],
+    );
+    expect(after.rows).toEqual(before.rows);
+  });
+
   it("DB045 rejects attendance identity rewrites even with an incremented version",async()=>{
     await expect(pool.query(
       "update attendance_records set membership_id=$2,version=version+1 where schedule_event_id=$1",
