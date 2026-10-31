@@ -204,23 +204,23 @@ describe("College Admin attendance tenant isolation with PostgreSQL", () => {
     code:string;message:string;
   }[] = [
     {name:"unrecognized action",overrides:{action:"'VOID'"},
-      code:"23514",message:"attendance_record_events_action_ck"},
+      code:"23514",message:"event does not match current row post-state"},
     {name:"unrecognized actor role",overrides:{actor_role:"'STUDENT'"},
-      code:"23514",message:"attendance_record_events_actor_role_ck"},
+      code:"23514",message:"actor without membership must be SUPER_ADMIN"},
     {name:"unrecognized new attendance status",overrides:{new_status:"'UNKNOWN'"},
-      code:"23514",message:"attendance_record_events_status_ck"},
+      code:"23514",message:"event does not match current row post-state"},
     {name:"unrecognized prior attendance status",overrides:{previous_status:"'UNKNOWN'"},
-      code:"23514",message:"attendance_record_events_status_ck"},
+      code:"23514",message:"event does not match current row post-state"},
     {name:"skipped version number",overrides:{record_version_after:"ar.version+3"},
-      code:"23514",message:"attendance_record_events_version_ck"},
+      code:"23514",message:"event does not match current row post-state"},
     {name:"negative previous version",overrides:{record_version_before:"-1"},
-      code:"23514",message:"attendance_record_events_version_ck"},
+      code:"23514",message:"event does not match current row post-state"},
     {name:"CORRECT with null previous version",overrides:{record_version_before:"NULL::integer"},
-      code:"23514",message:"attendance_record_events_shape_ck"},
+      code:"23514",message:"event does not match current row post-state"},
     {name:"CORRECT missing previous marker",overrides:{previous_marked_by_user_id:"NULL::uuid"},
-      code:"23514",message:"attendance_record_events_shape_ck"},
+      code:"23514",message:"event does not match current row post-state"},
     {name:"CORRECT missing previous timestamp",overrides:{previous_marked_at:"NULL::timestamptz"},
-      code:"23514",message:"attendance_record_events_shape_ck"},
+      code:"23514",message:"event does not match current row post-state"},
     {name:"tenant metadata from another college",overrides:{college_id:"$5::uuid"},
       code:"23514",message:"tenant mismatch"},
     {name:"actor differs from claimed marker",overrides:{actor_user_id:"$6::uuid"},
@@ -245,6 +245,24 @@ describe("College Admin attendance tenant isolation with PostgreSQL", () => {
       new_marked_by_user_id:"(select user_id from college_memberships where id=ar.membership_id)"},
       code:"23514",message:"lacks teaching scope"},
   ];
+  it("DB045 registers validated independent event CHECK constraints",async()=>{
+    // The scope trigger can reject a forged post-state before PostgreSQL
+    // evaluates its CHECK expressions. Inspect the catalog independently.
+    const {rows}=await pool.query<{conname:string,convalidated:boolean}>(`
+      select conname,convalidated from pg_constraint
+      where conrelid='public.attendance_record_events'::regclass and contype='c'
+    `);
+    const checks=new Map(rows.map(row=>[row.conname,row.convalidated]));
+    for (const name of [
+      "attendance_record_events_action_ck",
+      "attendance_record_events_actor_role_ck",
+      "attendance_record_events_actor_shape_ck",
+      "attendance_record_events_shape_ck",
+      "attendance_record_events_status_ck",
+      "attendance_record_events_version_ck",
+    ]) expect(checks.get(name)).toBe(true);
+  });
+
   it.each(forgedCases)("DB045 rejects $name against a real attendance row",async witness=>{
     const fields = Object.keys(eventFields) as EventField[];
     const expressions=fields.map(col=>witness.overrides[col]??eventFields[col]);
