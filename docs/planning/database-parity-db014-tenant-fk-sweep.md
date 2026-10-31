@@ -1,5 +1,33 @@
 # DB-014 — cross-domain tenant/FK integrity sweep
 
+## ACCEPTED — DB-014 scoped closure on registered PG17 (31 October 2026)
+
+**Canonical state:** `docs/tracker.json` has DB-014 `done:true`, accepted
+31 October 2026, with the original cross-domain tenant/FK protection fully
+tested. The exact [successful DB014 job
+41152532624](https://github.com/42Students/lms-vnext/actions/runs/41152532624)
+at commit `900b6c6f2b1a8bc8fcd9cb2fc913add09e9ca869` ran Ubuntu Node22
+with disposable PostgreSQL17: 330/330 registered zero-to-head migration
+replay, repeat migration idempotence, FK/trigger/uniqueness catalog,
+11 retained parent DELETE fences and 10 TRUNCATE fences, both two-session
+FK races, forged cross-college/role/event negatives, immutable activity
+event identity, globally reserved tenant hostname/dedupe namespaces, and
+live group, learner discussion, placement drive-day, and activity
+producer/consumer checks **53/53 PASS** (39 + 4 + 6 + 4).
+
+The journal ended at `0329_db014_group_history_actor_grants`. Both new
+0328/0329 source checks and registered PostgreSQL negative tests passed.
+This supersedes every earlier **open**, **candidate**, or **pending exact
+PostgreSQL** note in this DB014 document. Historical analysis below is
+retained only to explain original finding and migration design.
+
+**Distinct work not accepted here:** DB-001 independent verifier, DB-018
+full negative/race gate, DB-019 global source semantics, DB-020 global
+schema/phase certificate, DB-045 attendance-specific immutable record
+acceptance, and later release/privacy-purge/backup/browser-provider gates.
+DB-014's parent retention fences do not grant authorization for a direct
+historical child-row purge.
+
 ## DB014 0328–0329 identity and actor-grant hardening — 31 October 2026
 
 Registered forward-only migrations now additionally protect immutable
