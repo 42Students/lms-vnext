@@ -8,6 +8,7 @@ import {
 } from "drizzle-orm";
 import { getDb } from "@/db/client";
 import { assertAssignmentSubmissionDeadline } from "./assignment-submission-deadline-policy";
+import { submitAssignmentWithFiles } from "./assignment-submission-file-service";
 import {allowedAssignmentSubmissionPart, allowedAssignmentMixedParts} from "./assignment-method-policy";
 import { assignmentSubmissionLinks } from "@/db/schema/assignment-submission-links";
 import {facultyAssignmentGradingAllowed,facultyAssignmentGradePublicationAllowed} from "./faculty-assignment-grading-policy";
@@ -212,6 +213,43 @@ export async function submitCourseAssignment(
     submitAssignmentInputSchema.parse(
       rawInput,
     );
+
+  // DB-018 compatibility cutover: the old uploadReceiptId input aliases
+  // the live DB016 verified storage file ID. Consume it through the same
+  // registered one-shot FILE producer used by the current learner UI.
+  // Never execute the unregistered DB053 duplicate file relation on this path.
+  if (input.submissionType === "FILE") {
+    const fileIds = input.uploadReceiptIds ??
+      (input.uploadReceiptId ? [input.uploadReceiptId] : []);
+    if (!fileIds.length) {
+      throw new CoursesServiceError("ASSIGNMENT_UPLOAD_RECEIPT_INVALID");
+    }
+    const bound = await submitAssignmentWithFiles(context, assignmentId, {
+      deliveryId: input.deliveryId,
+      fileIds,
+      textContent: input.textContent ?? null,
+      links: input.links ?? [],
+    });
+    const [persisted] = await getDb()
+      .select()
+      .from(assignmentSubmissions)
+      .where(eq(assignmentSubmissions.id, bound.submission.id))
+      .limit(1);
+    if (!persisted) {
+      throw new CoursesServiceError("ASSIGNMENT_SUBMISSION_NOT_FOUND");
+    }
+    const files = bound.files.map(file => ({
+      originalName: file.originalName,
+      mimeType: file.contentType,
+      sizeBytes: file.sizeBytes,
+    }));
+    return toLearnerSubmission({
+      ...persisted,
+      file: files[0] ?? null,
+      files,
+    });
+  }
+
   const assignment =
     await loadCourseAssignmentScope(
       assignmentId,
