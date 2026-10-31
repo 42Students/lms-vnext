@@ -1053,6 +1053,12 @@
           "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/41147882133",
           "sourceSha": "e719538062551f1b01f70abefa8e52fb37543516",
           "notAcceptance": true
+        },
+        "latestCrossTaskBlocker": {
+          "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/41148153178",
+          "sourceMigration": "0324_db045_attendance_immutable_history",
+          "reason": "DB020 PG17 cannot complete full schema diagnosis while new DB045 migration 0324 refuses existing attendance rows during registered journal replay. This does not invalidate previously GREEN 0323 DB020 migration evidence; exact-head re-run required after DB045 remediation.",
+          "notAcceptance": true
         }
       }
     },
@@ -1937,6 +1943,17 @@
           "migrations": 322,
           "consumerTests": 33,
           "sourceCommit": "44ead6be3ebcc2c8ac238784fcf35ca8c04ce306"
+        },
+        "latestBlockedAcceptance": {
+          "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/41148153178",
+          "sourceMigration": "drizzle/0324_db045_attendance_immutable_history.sql",
+          "status": "P0_REGISTERED_REPLAY_FAILING",
+          "details": [
+            "Forward-only 0324 preflight explicitly raises 23514 if ANY attendance_records exist. Current registered zero-to-head replay has legacy attendance rows before 0324; disposable PG17 DB020 diagnostic fails during db:test:prepare.",
+            "Same 0324 SQL tries to CREATE TRIGGER db06_grade_events_no_truncate on assignment_grade_events even though registered 0320 already created this trigger. Once preflight is resolved, duplicate creation is a second deterministic replay failure.",
+            "Do not bypass existing-data backfill proof, weaken the preflight, rewrite an applied migration, or mark DB045 accepted. Coordinate safe migration remedy and run exact-head PG17 replay before acceptance."
+          ],
+          "notAcceptance": true
         }
       }
     },
