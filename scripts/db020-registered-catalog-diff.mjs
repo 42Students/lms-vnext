@@ -21,13 +21,24 @@ const generatedFiles=readdirSync("drizzle/meta")
   .filter(x=>/^\d{4}_snapshot\.json$/.test(x))
   .filter(x=>Number(x.slice(0,4))>head.idx)
   .sort();
-if(generatedFiles.length!==1)
- throw new Error("Require exactly one disposable generated snapshot after current registered head");
-const latest=JSON.parse(readFileSync("drizzle/meta/"+generatedFiles[0],"utf8"));
-const base=JSON.parse(readFileSync(
-  "drizzle/meta/"+String(head.idx).padStart(4,"0")+"_snapshot.json","utf8"));
-if(latest.prevId!==base.id)
+// A clean 0327+ metadata baseline is expected to produce NO generated
+// migration. Preserve diagnosis in that state, but fail closed if a future
+// schema change creates multiple unregistered migrations.
+if(generatedFiles.length>1)
+ throw new Error("Multiple unregistered Drizzle snapshots; refuse DB020 diagnosis");
+const registeredSnapshotName=String(head.idx).padStart(4,"0")+"_snapshot.json";
+const base=JSON.parse(readFileSync("drizzle/meta/"+registeredSnapshotName,"utf8"));
+const latest=generatedFiles.length
+ ? JSON.parse(readFileSync("drizzle/meta/"+generatedFiles[0],"utf8"))
+ : base;
+if(generatedFiles.length && latest.prevId!==base.id)
  throw new Error("Generated snapshot does not reference actual registered head");
+// Compare the canonical first metadata baseline against its predecessor,
+// not against itself, after a successful no-op Drizzle generation.
+const previous=journal.entries.at(-2);
+const priorSnapshot=previous && head.idx>=327
+ ? JSON.parse(readFileSync("drizzle/meta/"+String(previous.idx).padStart(4,"0")+"_snapshot.json","utf8"))
+ : base;
 
 const client=new pg.Client({
  connectionString:process.env.TEST_DATABASE_URL,connectionTimeoutMillis:10000,
@@ -52,7 +63,7 @@ try{
  const catalogSet=new Set(catalog);
  const snapTables=Object.keys(latest.tables).map(tableName);
  const snapSet=new Set(snapTables);
- const priorTables=new Set(Object.keys(base.tables).map(tableName));
+ const priorTables=new Set(Object.keys(priorSnapshot.tables).map(tableName));
  const absentFromCatalog=snapTables.filter(x=>!catalogSet.has(x));
  const sqlOnlyTables=catalog.filter(x=>!snapSet.has(x));
  const newlyTypedTables=snapTables.filter(x=>!priorTables.has(x));
@@ -172,7 +183,9 @@ try{
  const report={
   kind:"DB020_DISPOSABLE_PG17_REGISTERED_VS_GENERATED_DIAGNOSIS",
   registeredHead:head.tag,registeredMigrations:applied,
-  generatedSnapshot:generatedFiles[0],passCertification:false,
+  generatedSnapshot:generatedFiles[0]??registeredSnapshotName,
+  snapshotMode:generatedFiles.length?"UNAPPLIED_DIAGNOSTIC":"CLEAN_REGISTERED_CANONICAL",
+  passCertification:false,
   counts:{
    registeredTables:catalogSet.size,priorSnapshotTables:priorTables.size,
    generatedTypedTables:snapSet.size,newlyTypedTables:newlyTypedTables.length,
