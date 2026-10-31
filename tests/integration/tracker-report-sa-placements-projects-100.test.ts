@@ -37,14 +37,16 @@ async function cleanup() {
   if (!pool) return;
   for (const publicId of reported) {
     const found = await pool.query(
-      "select id, reporter_access_id from bug_reports where public_id = $1",
+      "select id from bug_reports where public_id = $1",
       [publicId],
     );
-    for (const row of found.rows as { id: string; reporter_access_id: string }[]) {
+    for (const row of found.rows as { id: string }[]) {
       await pool.query("delete from bug_report_activities where bug_report_id = $1", [row.id]);
       await pool.query("delete from bug_reports where id = $1", [row.id]);
-      await pool.query("delete from bug_tracker_access where id = $1", [row.reporter_access_id]);
     }
+    // Reporter access is an authenticated principal shared by multiple reports.
+    // Never delete it from a fixture teardown: other persisted reports may
+    // still reference the same access ID. This database is disposable.
   }
 }
 
