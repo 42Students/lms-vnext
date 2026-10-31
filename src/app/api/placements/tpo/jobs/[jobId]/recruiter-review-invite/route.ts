@@ -14,6 +14,7 @@ import {placementJobIdSchema} from "@/modules/placements/validation";
 import {tpoCrmTablesReady} from "@/modules/placements/tpo-crm-storage-readiness";
 import {issueTpoRecruiterInvite} from "@/modules/placements/tpo-recruiter-invite-service";
 import {deliverTpoRecruiterInviteEmail} from "@/modules/placements/tpo-recruiter-invite-email-delivery";
+import {outboundQueueRuntimeEnabled} from "@/modules/operations/outbound-delivery-queue";
 import {PlacementsServiceError} from "@/modules/placements/errors";
 
 export const runtime="nodejs";
@@ -121,8 +122,9 @@ export async function POST(request:Request,{params}:Ctx) {
   // Existing invite-issuance service owns credential hashing, audit and
   // provider delivery. Never duplicate or log a bearer token in this route.
   const mailReady=process.env["TPO_RECRUITER_INVITE_EMAIL_READY"]==="VERIFIED";
+  const outboxReady=outboundQueueRuntimeEnabled();
   const invite=await issueTpoRecruiterInvite(context,collegeId,leadId,new Date(),{
-   sendEmail:body.sendEmail&&mailReady,
+   sendEmail:body.sendEmail&&(outboxReady||mailReady),
    deliver:async (targetCollegeId,targetLeadId,token)=>{
     const result=await deliverTpoRecruiterInviteEmail(targetCollegeId,targetLeadId,token);
     return typeof result==="boolean"?result:result.status==="ACCEPTED";
@@ -142,7 +144,8 @@ export async function POST(request:Request,{params}:Ctx) {
    manualLetter:letter,
    publicLinkIncluded:false,
    publicLinkUnavailable:body.includePublicLink,
-   emailDeliveryAvailable:mailReady,
+   emailDeliveryAvailable:mailReady||outboxReady,
+   emailQueued:invite.queued,
   },{headers});
  }catch(error){return apiErrorResponse(error);}
 }
