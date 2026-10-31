@@ -64,6 +64,63 @@ test("DB08 280 placement fields cannot self-promote from candidates to exact map
   changed.DB08.tables[0].fields[0].reviewDecision="MAPPED";
   expects(audit(ledgers,changed),"DB08_UNSUPPORTED_EXACT_FIELD_MAPPING");
 });
+
+test("DB08 28 job_offer source-to-target proposals remain bounded and never claim runtime proof",()=>{
+  const result=loadDb019Remaining();
+  assert.equal(result.valid,true);
+  assert.equal(result.domains.DB08.sourceProposalsNotRuntimeVerified,28);
+  assert.equal(result.domains.DB08.unresolvedExactDecisions,280);
+  assert.equal(result.domains.DB08.runtimeVerified,0);
+  assert.equal(artifacts.DB08.tables.find(t=>t.legacyTable==="job_offer").fields.length,28);
+  const schema=fs.readFileSync(new URL("../src/db/schema/placements.ts",import.meta.url),"utf8");
+  const expected={
+    placement_offers:["export const placementOffers = pgTable(","export const placementOfferStatusHistory = pgTable("],
+    placement_offer_status_history:["export const placementOfferStatusHistory = pgTable(","export const placementInterviewPrivateEvents = pgTable("],
+    placement_joining_outcomes:["export const placementJoiningOutcomes = pgTable(","export const placementJoiningHistory = pgTable("],
+  };
+  const blocks=Object.fromEntries(Object.entries(expected).map(([table,[start,end]])=>{
+    const i=schema.indexOf(start),j=schema.indexOf(end,i+start.length);
+    assert.ok(i>=0&&j>i,table+" typed schema missing");
+    return [table,schema.slice(i,j)];
+  }));
+  for(const field of artifacts.DB08.tables.find(t=>t.legacyTable==="job_offer").fields){
+    const d=field.reviewDecision;
+    assert.equal(d.reviewStatus,"SOURCE_REVIEWED_PROPOSAL_NOT_VERIFIED");
+    assert.equal(d.runtimeVerified,false);
+    assert.equal(d.consumerVerified,false);
+    assert.equal(d.retirementApproved,false);
+    for(const target of d.targetRefs){
+      const [table,col]=target.split(".");
+      assert.ok(blocks[table]?.includes('("'+col+'"'),field.legacyColumn+": missing typed "+target);
+    }
+  }
+  assert.equal(artifacts.DB08.gate.fieldsUnverified,280);
+  assert.equal(artifacts.DB08.counts.verifiedFields,0);
+});
+
+test("DB08 source proposals fail closed on forged target, false runtime proof, approval or oracle",()=>{
+  const mutate=(fn)=>{
+    const a=cp(artifacts);
+    const offer=a.DB08.tables.find(t=>t.legacyTable==="job_offer").fields[0];
+    fn(offer.reviewDecision);
+    expects(audit(ledgers,a),"DB08_SOURCE_REVIEW_PROPOSAL_INVALID");
+  };
+  mutate(d=>{d.targetRefs=["hidden_admin.deleted_secret"];});
+  mutate(d=>{d.runtimeVerified=true;});
+  mutate(d=>{d.consumerVerified=true;});
+  mutate(d=>{d.retirementApproved=true;});
+  mutate(d=>{d.frozenLegacyOracleSha="wrong";});
+  mutate(d=>{d.sourceRationale="";});
+  mutate(d=>{d.outstandingProof="";});
+  const fake=cp(artifacts);fake.DB08.tables[0].fields[0].reviewDecision={
+    reviewStatus:"SOURCE_REVIEWED_PROPOSAL_NOT_VERIFIED",
+    classification:"PROPOSED_ACTIVE_FIELD_MAPPING",targetRefs:["placement_offers.id"],
+    sourceRationale:"fake",outstandingProof:"fake",
+    frozenLegacyOracleSha:"21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+    runtimeVerified:false,consumerVerified:false,retirementApproved:false,
+  };
+  expects(audit(ledgers,fake),"DB08_SOURCE_REVIEW_PROPOSAL_INVALID");
+});
 test("DB08 source type drift cannot be hidden by a plausible field name",()=>{
   const changed=cp(artifacts);
   changed.DB08.tables[0].fields[0].legacyType="wrong";

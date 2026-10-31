@@ -131,10 +131,37 @@ export function auditDb019Remaining(ledgers,artifacts,db10Overlay=null) {
       for(const table of artifact.tables||[])for(const row of table.fields||[]){
         const id=key(table.legacyTable,row.legacyColumn);
         add(id,row,row.legacyType,(original)=>{
-          if(row.status!=="UNVERIFIED"||row.reviewDecision!==null ||
+          if(row.status!=="UNVERIFIED"||
              row.verifiedMapping!==null||row.dbTestEvidence!==null||
+             row.producerConsumerEvidence!==null||
              !Array.isArray(row.exactNameCandidatesOnly))
             fail("DB08_UNSUPPORTED_EXACT_FIELD_MAPPING",id);
+          // A source-level proposal is NOT a runtime mapping or an approved
+          // retirement.  The real PG/provider/tenant gates remain mandatory.
+          if(row.reviewDecision!==null){
+            const decision=row.reviewDecision;
+            const classifications=[
+              "EXPLICIT_RUNTIME_GAP","NEEDS_ENUM_CROSSWALK",
+              "PROPOSED_ACTIVE_FIELD_MAPPING",
+            ];
+            if(table.legacyTable!=="job_offer"||
+               !decision||typeof decision!=="object"||
+               decision.reviewStatus!=="SOURCE_REVIEWED_PROPOSAL_NOT_VERIFIED"||
+               !classifications.includes(decision.classification)||
+               !Array.isArray(decision.targetRefs)||
+               (decision.classification==="PROPOSED_ACTIVE_FIELD_MAPPING" &&
+                 decision.targetRefs.length===0)||
+               decision.targetRefs.some(x=>!/^placement_(?:offers|offer_status_history|joining_outcomes)\\.[a-z_]+$/.test(x))||
+               new Set(decision.targetRefs).size!==decision.targetRefs.length||
+               !required(decision.sourceRationale)||
+               !required(decision.outstandingProof)||
+               decision.frozenLegacyOracleSha!==ORACLE||
+               decision.runtimeVerified!==false||
+               decision.consumerVerified!==false||
+               decision.retirementApproved!==false)
+              fail("DB08_SOURCE_REVIEW_PROPOSAL_INVALID",id);
+            else proposal++;
+          }
           if(row.legacyNullable!==original.nullable ||
              row.legacyDefault!==original.defaultValue ||
              row.sourceEvidence!==original.sourceEvidence ||
