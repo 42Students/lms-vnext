@@ -71,7 +71,7 @@ test("DB08 280 placement fields cannot self-promote from candidates to exact map
 test("DB08 28 job_offer source-to-target proposals remain bounded and never claim runtime proof",()=>{
   const result=loadDb019Remaining();
   assert.equal(result.valid,true);
-  assert.equal(result.domains.DB08.sourceProposalsNotRuntimeVerified,108);
+  assert.equal(result.domains.DB08.sourceProposalsNotRuntimeVerified,123);
   assert.equal(result.domains.DB08.unresolvedExactDecisions,280);
   assert.equal(result.domains.DB08.runtimeVerified,0);
   assert.equal(artifacts.DB08.tables.find(t=>t.legacyTable==="job_offer").fields.length,28);
@@ -135,6 +135,41 @@ test("DB08 10 historic application transition fields have bounded typed proposal
   assert.equal(decisionsBySource["updated_at"].targetRefs.length,0);
   assert.equal(artifacts.DB08.counts.verifiedFields,0);
   assert.equal(artifacts.DB08.gate.fieldsUnverified,280);
+});
+
+test("DB08 15 historic round-result fields are reviewed with actor, candidate-privacy and lifecycle gaps retained",()=>{
+  const table=artifacts.DB08.tables.find(t=>t.legacyTable==="round_result");
+  assert.equal(table?.fields.length,15);
+  const fieldMap=new Map(table.fields.map(x=>[x.legacyColumn,x]));
+  assert.equal(table.fields.filter(x=>x.reviewDecision?.classification==="PROPOSED_ACTIVE_FIELD_MAPPING").length,10);
+  assert.equal(table.fields.filter(x=>x.reviewDecision?.classification==="EXPLICIT_RUNTIME_GAP").length,2);
+  assert.equal(table.fields.filter(x=>x.reviewDecision?.classification==="NEEDS_ENUM_CROSSWALK").length,3);
+  assert.deepEqual(fieldMap.get("submitted_by_type")?.reviewDecision.targetRefs,[]);
+  assert.deepEqual(fieldMap.get("superseded_by")?.reviewDecision.targetRefs,["placement_round_results.superseded_at"]);
+  assert.ok(fieldMap.get("comment")?.reviewDecision.targetRefs.includes("placement_round_results.internal_comment"));
+  assert.ok(fieldMap.get("comment")?.reviewDecision.targetRefs.includes("placement_round_results.candidate_message"));
+  const schema=fs.readFileSync(new URL("../src/db/schema/placements.ts",import.meta.url),"utf8");
+  const i=schema.indexOf("export const placementRoundResults = pgTable(");
+  const j=schema.indexOf("export const placementOffers = pgTable(",i+10);
+  assert.ok(i>=0&&j>i,"Current round-result source table missing");
+  const block=schema.slice(i,j);
+  for(const field of table.fields){
+    const d=field.reviewDecision;
+    assert.equal(field.status,"UNVERIFIED");
+    assert.equal(d.reviewStatus,"SOURCE_REVIEWED_PROPOSAL_NOT_VERIFIED");
+    assert.equal(d.runtimeVerified,false);
+    assert.equal(d.consumerVerified,false);
+    assert.equal(d.retirementApproved,false);
+    assert.ok(d.sourceRationale.length>25);
+    assert.ok(d.outstandingProof.length>25);
+    for(const ref of d.targetRefs){
+      const [tableName,col]=ref.split(".");
+      assert.equal(tableName,"placement_round_results");
+      assert.ok(block.includes('("'+col+'"'),field.legacyColumn+" target absent "+ref);
+    }
+  }
+  assert.equal(artifacts.DB08.gate.fieldsUnverified,280);
+  assert.equal(artifacts.DB08.counts.verifiedFields,0);
 });
 
 test("DB08 46 legacy job fields are individually source-reviewed but never falsely marked verified",()=>{
