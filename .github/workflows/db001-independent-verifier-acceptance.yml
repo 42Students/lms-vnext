@@ -47,8 +47,11 @@ on:
       - ".github/workflows/db001-independent-verifier-acceptance.yml"
 permissions:
   contents: read
+# Each pinned run owns a distinct disposable PG17 service. Verify the newest
+# SHA without waiting behind obsolete source revisions; never cancel evidence
+# from an already executing revision.
 concurrency:
-  group: db001-independent-verify-${{ github.ref }}
+  group: db001-independent-verify-${{ github.sha }}
   cancel-in-progress: false
 jobs:
   stand-alone-command:
