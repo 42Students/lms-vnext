@@ -9,6 +9,9 @@ on:
       - ".github/workflows/db001-integration-shard-diagnostic.yml"
       - "tests/integration/db001-canonical-baseline-pg.test.ts"
       - "tests/support/learner-positive-fixture.ts"
+      - "tests/integration/college-notice-inbox.test.ts"
+      - "tests/integration/db10-outbound-queue.test.ts"
+      - "scripts/db-independent-verify.mjs"
       - "vitest.db.config.ts"
 permissions:
   contents: read
@@ -55,7 +58,16 @@ jobs:
         run: npm run db:test:prepare
       - name: Run all integration tests in four non-overlapping isolated shards
         env:
+          # Only after the registered replay above. Each job has its own
+          # independently disposed PG17 service, never an application DB.
           DATABASE_URL: ${{ env.TEST_DATABASE_URL }}
+          DB08_ISOLATED_TEST_DATABASE: "1"
+          DB08_MIGRATION_APPLIED: "1"
+          DB08_B_MIGRATION_APPLIED: "1"
+          DB08_C_MIGRATION_APPLIED: "1"
+          W04_ISOLATED_TEST_DATABASE: "1"
+          DB10_ISOLATED_TEST_DATABASE: "1"
+          DB10_DISPOSABLE_TEST_DATABASE: "true"
         run: npx vitest run --config vitest.db.config.ts --shard="${{ matrix.shard }}/4"
       - name: Require original pinned source revision
         if: always()
