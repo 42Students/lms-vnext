@@ -7,9 +7,10 @@ CASCADE parent-deletion path without changing existing foreign-key shape:
 an enabled `BEFORE DELETE` trigger refuses to hard-delete the parent while
 a protected operational/history child exists (SQLSTATE 23514). Ten parent
 tables also refuse `TRUNCATE` (which bypasses row-level DELETE triggers).
-Deletion of an empty draft parent still works. These guards do **not** permit
-direct deletion of history children or replace API permissions, privacy
-retention policies, producer authorization, or release-level audit evidence.
+Deletion of an empty draft parent still works. These guards prevent
+**parent-triggered erasure**, but do **not** block deliberate direct child
+DELETE/TRUNCATE or replace API permissions, privacy retention policies,
+producer authorization, or release-level audit evidence.
 
 The current registered catalog has **21** cascade FKs (not the historical
 snapshot-0040 count of nine). Every registered edge is explicitly classified:
