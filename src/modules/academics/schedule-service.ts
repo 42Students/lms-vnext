@@ -57,8 +57,9 @@ import {
 function eventWindowInsidePeriod(
   startsAt: Date,
   endsAt: Date,
-  period: Awaited<
-    ReturnType<typeof loadAcademicPeriodScope>
+  period: Pick<
+    Awaited<ReturnType<typeof loadAcademicPeriodScope>>,
+    "startDate" | "endDate"
   >,
 ) {
   if (endsAt.getTime() <= startsAt.getTime()) {
