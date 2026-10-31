@@ -250,7 +250,7 @@ CREATE TABLE attendance_record_events (
     )
     AND new_marked_by_user_id IS NOT NULL
     AND new_marked_at IS NOT NULL
-);
+));
 CREATE UNIQUE INDEX attendance_record_events_record_version_uq
   ON attendance_record_events(attendance_record_id, record_version_after);
 CREATE INDEX attendance_record_events_record_time_idx
