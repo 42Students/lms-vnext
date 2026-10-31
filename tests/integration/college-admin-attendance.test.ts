@@ -3,6 +3,8 @@ import { randomUUID } from "node:crypto";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
 import { Pool } from "pg";
 import { closeDatabaseConnection } from "@/db/client";
+import { getLearnerAttendanceWorkspace } from "@/modules/attendance/learner-service";
+import { summarizeLearnerAttendance } from "@/modules/attendance/model";
 import type { RequestContext } from "@/modules/identity/context";
 import {
   correctAdminAttendance,
@@ -666,6 +668,81 @@ describe("College Admin attendance tenant isolation with PostgreSQL", () => {
       [own.event,own.learner,after.rows[0]!.version],
     );
     expect(audit.rows).toHaveLength(1);
+  });
+
+  it("DB045 learner and Admin readers count persisted PRESENT exactly like a marked no-exception session",async()=>{
+    // The Faculty/Admin workflow earlier created this event's MARKED session.
+    // Use the REAL authorized learner context and exact delivery; do not
+    // substitute the helper's in-memory status for persisted PostgreSQL reads.
+    const {rows:learnerRows}=await pool.query<{
+      user_id:string;identity_uid:string;
+    }>(`select u.id as user_id,u.identity_uid from college_memberships cm
+         join users u on u.id=cm.user_id where cm.id=$1`,[own.learner]);
+    expect(learnerRows).toHaveLength(1);
+    const context:RequestContext={
+      user:{
+        id:learnerRows[0]!.user_id,
+        identityUid:learnerRows[0]!.identity_uid,
+        platformStatus:"ACTIVE",systemRoles:[],
+      },
+      membership:{
+        id:own.learner,collegeId:SEED_IDS.collegeA,
+        organizationId:SEED_IDS.organization,status:"ACTIVE",roles:["LEARNER"],
+      },
+    };
+    const correct={collegeId:SEED_IDS.collegeA,deliveryId:own.delivery,
+      membershipId:own.learner};
+    await correctAdminAttendance(admin,own.event,{
+      ...correct,status:"ABSENT",note:"DB045 before the correction",
+    });
+    const before=await getLearnerAttendanceWorkspace(context,{deliveryId:own.delivery});
+    expect(before.records).toHaveLength(1);
+    expect(before.records[0]).toMatchObject({
+      id:own.event,sessionStatus:"MARKED",recordStatus:"ABSENT",status:"ABSENT",
+    });
+    expect(before.overall).toMatchObject({
+      heldSessions:1,markedSessions:1,present:0,absent:1,percentage:0,
+    });
+    const initial=await pool.query<{id:string;version:number}>(
+      "select id,version from attendance_records where schedule_event_id=$1 and membership_id=$2",
+      [own.event,own.learner],
+    );
+    expect(initial.rows).toHaveLength(1);
+    await correctAdminAttendance(admin,own.event,{
+      ...correct,status:"PRESENT",note:"DB045 absence corrected to presence",
+    });
+    const after=await getLearnerAttendanceWorkspace(context,{deliveryId:own.delivery});
+    expect(after.records).toHaveLength(1);
+    expect(after.records[0]).toMatchObject({
+      id:own.event,sessionStatus:"MARKED",recordStatus:"PRESENT",status:"PRESENT",
+    });
+    expect(after.overall).toMatchObject({
+      heldSessions:1,markedSessions:1,present:1,absent:0,percentage:100,
+    });
+    expect(after.summaries).toHaveLength(1);
+    expect(after.summaries[0]).toMatchObject({
+      deliveryId:own.delivery,heldSessions:1,markedSessions:1,
+      present:1,absent:0,percentage:100,
+    });
+    // The old marked/no-exception representation is now normalized to an
+    // explicit PRESENT row, without changing the learner's denominator.
+    const implicitPresent=summarizeLearnerAttendance(
+      after.records.map(row=>({...row,recordStatus:null})),
+    );
+    expect(after.overall).toEqual(implicitPresent);
+    const grid=await getAdminAttendanceGrid(admin,{
+      collegeId:SEED_IDS.collegeA,deliveryId:own.delivery,
+      month:new Date(Date.now()+330*60_000).toISOString().slice(0,7),
+    });
+    expect(grid.records.filter(row=>row.scheduleEventId===own.event&&
+      row.membershipId===own.learner)).toHaveLength(1);
+    const persisted=await pool.query<{id:string;status:string;version:number}>(
+      "select id,status,version from attendance_records where schedule_event_id=$1 and membership_id=$2",
+      [own.event,own.learner],
+    );
+    expect(persisted.rows).toMatchObject([{
+      id:initial.rows[0]!.id,status:"PRESENT",version:initial.rows[0]!.version+1,
+    }]);
   });
 
   it("keeps explicit PRESENT identity and prevents inactive-member corrections", async () => {
