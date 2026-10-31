@@ -106,7 +106,7 @@ describe.skipIf(!enabled)("DB10 tracker persisted workflow and scoped issue hist
    expect(detail.report.rootCause).toBe("P5-R19 concurrent persisted root cause");
    expect(detail.report.frontendCommitSha).toBeNull();
    const audited=await pool.query<{event_type:string}>(
-     "select event_type from bug_report_activities where bug_report_id=$1 order by created_at,id",
+     "select activity_type as event_type from bug_report_activities where bug_report_id=$1 order by created_at,id",
      [reportId],
    );
    expect(audited.rows.length).toBeGreaterThanOrEqual(2);
