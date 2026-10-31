@@ -227,3 +227,89 @@ test("DB019 15 round-result proposals have registered typed PG17 candidates with
     f.reviewDecision?.consumerVerified===false &&
     f.reviewDecision?.retirementApproved===false),true);
 });
+
+
+test("DB019 27 attendance, override and season source proposals retain registered PG17 guardrails",async()=>{
+  const scopes=[
+    ["round_attendance","placement_round_attendance",8],
+    ["job_eligibility_override","placement_eligibility_overrides",7],
+    ["placement_season","placement_seasons",12],
+  ];
+  const names=scopes.map(x=>x[1]);
+  const rows=await pool.query(`
+    select table_name,column_name,udt_name,is_nullable
+      from information_schema.columns
+     where table_schema='public' and table_name=any($1::text[])
+  `,[names]);
+  const physical=new Map(rows.rows.map(x=>[x.table_name+"."+x.column_name,x]));
+  for(const [sourceTable,table,count] of scopes){
+    const source=ledger.tables.find(t=>t.legacyTable===sourceTable);
+    assert.equal(source?.fields.length,count);
+    for(const field of source.fields){
+      const d=field.reviewDecision;
+      assert.equal(field.status,"UNVERIFIED");
+      assert.equal(d.runtimeVerified,false);
+      assert.equal(d.consumerVerified,false);
+      assert.equal(d.retirementApproved,false);
+      for(const ref of d.targetRefs){
+        assert.equal(ref.split(".")[0],table);
+        assert.ok(physical.has(ref),"Missing registered PG17 source candidate "+ref);
+      }
+    }
+  }
+  for(const ref of [
+    "placement_round_attendance.id",
+    "placement_round_attendance.round_id",
+    "placement_round_attendance.application_id",
+    "placement_round_attendance.marked_by_user_id",
+    "placement_eligibility_overrides.id",
+    "placement_eligibility_overrides.job_id",
+    "placement_eligibility_overrides.membership_id",
+    "placement_eligibility_overrides.created_by_user_id",
+    "placement_seasons.id","placement_seasons.college_id",
+    "placement_seasons.created_by_user_id",
+  ])assert.equal(physical.get(ref)?.udt_name,"uuid",ref+" must use a scoped UUID");
+  for(const ref of [
+    "placement_round_attendance.marked_by_user_id",
+    "placement_eligibility_overrides.created_by_user_id",
+    "placement_seasons.start_date","placement_seasons.end_date",
+  ])assert.equal(physical.get(ref)?.is_nullable,"NO",ref+" must preserve live nullability");
+  assert.equal(physical.get("placement_round_attendance.legacy_reset_to_waiting")?.udt_name,"bool");
+  assert.equal(physical.get("placement_seasons.registration_deadline")?.udt_name,"timestamptz");
+  assert.equal(physical.has("placement_seasons.blocked_dates"),false);
+  assert.equal(physical.has("placement_seasons.version"),false);
+
+  const constraints=await pool.query(`
+    select conrelid::regclass::text as relation,conname,pg_get_constraintdef(oid) as definition
+      from pg_constraint
+     where conrelid::regclass::text=any($1::text[])
+  `,[names]);
+  const guards=new Map(constraints.rows.map(x=>[x.conname,x.definition]));
+  for(const [name,fragment] of [
+    ["placement_round_attendance_status_ck","IN_INTERVIEW"],
+    ["placement_eligibility_overrides_decision_ck","INCLUDE"],
+    ["placement_eligibility_overrides_reason_ck","length"],
+    ["placement_seasons_status_ck","ACTIVE"],
+    ["placement_seasons_dates_ck",">="],
+    ["placement_seasons_registration_control_ck","registration_controlled"],
+    ["placement_seasons_lifecycle_ck","closed_by_user_id"],
+  ]){
+    assert.ok(guards.has(name),"Missing registered check "+name);
+    assert.ok(guards.get(name).includes(fragment),"Registered check meaning drifted "+name);
+  }
+  const indexes=await pool.query(`
+    select tablename,indexname,indexdef from pg_indexes
+     where schemaname='public' and tablename=any($1::text[])
+  `,[names]);
+  const required=[
+    "placement_round_attendance_round_application_uq",
+    "placement_eligibility_overrides_active_uq",
+    "placement_seasons_college_code_uq",
+    "placement_seasons_active_college_uq",
+  ];
+  for(const index of required){
+    const found=indexes.rows.find(x=>x.indexname===index);
+    assert.ok(found,"Registered unique constraint missing "+index);
+    assert.match(found.indexdef,/UNIQUE INDEX/);
+  }
+});
