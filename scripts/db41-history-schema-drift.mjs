@@ -26,9 +26,35 @@ function sqlTable(source,name) {
   const pattern=new RegExp("\\bCREATE\\s+TABLE\\s+(?:IF\\s+NOT\\s+EXISTS\\s+)?"+name+"\\s*\\(","ig");
   const m=pattern.exec(source);
   if(!m)return null;
-  const block=source.slice(m.index);
-  const end=block.indexOf("\n);");
-  return end<0?null:block.slice(0,end+3);
+  // The closing TABLE parenthesis can share a line with a nested CHECK,
+  // e.g. "));". A literal "\n);" lookup incorrectly reports missing DDL.
+  // Balance parentheses, ignoring SQL string/identifier literals and comments.
+  let depth=1, single=false, double=false, lineComment=false, blockComment=false;
+  for(let i=m.index+m[0].length;i<source.length;i++){
+    const ch=source[i], next=source[i+1];
+    if(lineComment){if(ch==="\n")lineComment=false;continue;}
+    if(blockComment){if(ch==="*"&&next==="/"){blockComment=false;i++;}continue;}
+    if(single){
+      if(ch==="'"&&next==="'"){i++;continue;}
+      if(ch==="'")single=false;
+      continue;
+    }
+    if(double){
+      if(ch==='"'&&next==='"'){i++;continue;}
+      if(ch==='"')double=false;
+      continue;
+    }
+    if(ch==="-"&&next==="-"){lineComment=true;i++;continue;}
+    if(ch==="/"&&next==="*"){blockComment=true;i++;continue;}
+    if(ch==="'"){single=true;continue;}
+    if(ch==='"'){double=true;continue;}
+    if(ch==="(")depth++;
+    if(ch===")"&&--depth===0){
+      const tail=source.slice(i+1).match(/^\s*;/);
+      return tail?source.slice(m.index,i+1+tail[0].length):null;
+    }
+  }
+  return null;
 }
 function columnsFromDrizzle(s){
   return [...s.matchAll(/\b(?:uuid|varchar|integer|timestamp|text|boolean|bigint)\(\s*["']([a-z][a-z0-9_]*)["']/gi)].map(m=>m[1].toLowerCase());
