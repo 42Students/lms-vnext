@@ -2339,6 +2339,14 @@
           "fixedMigration": "fd48936768c4b551c8f1da540bf36c6cf119871a",
           "consumerTestFix": "30cc9463d2d71b6c76fad6dfce5443f46278a122",
           "partialRun": "https://github.com/42Students/lms-vnext/actions/runs/41149301434"
+        },
+        "latestAttendanceNonStatusCompleteness": {
+          "status": "AUTHORED_PENDING_REGISTERED_PG17_WORKFLOW",
+          "commitSha": "d8c7a39b4bee2aff8b824d573ad844222d64c6cc",
+          "test": "tests/integration/college-admin-attendance.test.ts",
+          "scope": "Two real-row PostgreSQL negative witnesses: note-only and marker-timestamp-only corrections each increment version but omit immutable CORRECT event; require 23514 at COMMIT and unchanged persisted row.",
+          "verification": "Registered DB045 grade-history workflow triggered by test change; do not count as passing until exact-SHA completed success.",
+          "notAcceptance": true
         }
       }
     },
