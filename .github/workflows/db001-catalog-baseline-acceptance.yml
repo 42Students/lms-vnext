@@ -1,0 +1,63 @@
+# DB-001 scoped witness; never replaces the 12-gate standalone verifier.
+name: DB-001 registered PG17 canonical baseline witness
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/db001-catalog-baseline-acceptance.yml"
+      - "tests/integration/db001-canonical-baseline-pg.test.ts"
+      - "tests/db001-canonical-baseline-source.test.mjs"
+      - "drizzle/meta/0327_snapshot.json"
+      - "drizzle/meta/_journal.json"
+permissions:
+  contents: read
+jobs:
+  registered-baseline:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    services:
+      postgres:
+        image: postgres:17-alpine
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: lms_vnext_test
+        ports: ["5432:5432"]
+        options: >-
+          --health-cmd "pg_isready -U postgres -d lms_vnext_test"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 20
+    env:
+      TEST_DATABASE_URL: postgresql://postgres:postgres@127.0.0.1:5432/lms_vnext_test
+      DATABASE_URL: ""
+      DB03_ISOLATED_TEST_DATABASE: "1"
+      DB018_ISOLATED_TEST_DATABASE: "1"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Verify exact registered journal and immutable baseline source
+        run: |
+          test "$(git rev-parse HEAD)" = "$GITHUB_SHA"
+          test -z "$(git status --porcelain)"
+          npm run db:journal:verify
+          node --test tests/db001-canonical-baseline-source.test.mjs tests/db001-drizzle-deferred-fk-snapshot-contract.test.mjs
+      - name: Clean disposable PostgreSQL 17 replay + seed
+        run: npm run db:test:prepare
+      - name: Repeat registered migration to prove idempotence
+        env:
+          DATABASE_URL: ${{ env.TEST_DATABASE_URL }}
+        run: npm run db:migrate
+      - name: Verify typed tables, columns, CHECKs, indexes and deferred FKs against live PG17
+        env:
+          DATABASE_URL: ${{ env.TEST_DATABASE_URL }}
+        run: npx vitest run --config vitest.db.config.ts tests/integration/db001-canonical-baseline-pg.test.ts
+      - name: Retain exact SHA and clean tracked files
+        run: |
+          test "$(git rev-parse HEAD)" = "$GITHUB_SHA"
+          test -z "$(git diff --name-only HEAD)"
