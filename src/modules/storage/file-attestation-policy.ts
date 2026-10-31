@@ -27,7 +27,7 @@ export const NON_PRODUCTION_FILE_ATTESTATION = "lms-vnext-dev-attestation";
 
 export function assignmentFileAttestationUsable(
   file: AssignmentFileAttestation,
-  env: Pick<NodeJS.ProcessEnv, "APP_ENV"> = process.env,
+  env: { readonly APP_ENV?: string } = process.env,
   now = new Date(),
 ): boolean {
   if (file.status !== "READY" || file.scanStatus !== "CLEAN") return false;
