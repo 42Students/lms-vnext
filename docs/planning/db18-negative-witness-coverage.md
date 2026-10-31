@@ -2,8 +2,15 @@
 
 **Phase:** DATABASE  
 **Task:** DB-018 — Negative DB integration witness suite  
-**State:** focused disposable PostgreSQL 17 matrix PASSED; DB-018 global acceptance still OPEN  
+**State:** complete negative/race witness engineering scope PASSED on registered PostgreSQL 17; external live-provider / production-DB-role signoff remains a separate deferred release review.  
 **Rule:** Only exact-run PostgreSQL results count as executed evidence. DB-018's declared upstream dependencies are DB-001 and DB-025; DB-014 and DB-020 remain independent global phase gates (DB-020 itself depends on DB-018, not the reverse). Passing the focused corpus does not waive those later gates or certify any unregistered race family.
+
+
+## November 1, 2026 — engineering witness signoff versus external release checks
+
+The full original registered DB-018 negative and race suite (including the newer R13 scanned file receipt path, recruiter encrypted transactional outbox, two-writer races, R18/R19 operations, role/privacy/FK guards and independently provisioned disposable least-privilege outbound worker principal) passed at commit `e413858b94f443ce642f720ec1f77963d23529d0`: [GitHub Actions run 41234109456](https://github.com/42Students/lms-vnext/actions/runs/41234109456), job `124634160747`. All steps, including the new unit preflight, the original relational/race corpus, fresh PG17 replay, and independently registered P5-R13 tests passed. A compare against main after that acceptance showed no changed DB-018 implementation/witness paths; later DB-019 changes remain separately scoped.
+
+**Release review deferred by the project requester, not waived, not tested, not production-ready:** provisioning a real production non-superuser dispatch DB login and reviewed grants; proving operational email sender readiness and revocation/rotation of exposed ZeptoMail credentials; approving a transport adapter, its ambiguous-acknowledgment handling and an authorized live test delivery/receipt; exact release-commit integrated security/browser and rollback signoff. The dispatcher remains fail-closed until independently activated. The executed DB-018 corpus establishes engineering *test-suite* acceptance only. It does not certify DB-019's 2,829-field semantics, DB-020's independent global database phase or final RELEASE.
 
 ## Executed focused witness denominator
 
