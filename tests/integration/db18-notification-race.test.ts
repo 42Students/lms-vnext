@@ -13,14 +13,13 @@ import { ACTIVITY_EVENT_TYPES } from "@/modules/activity/taxonomy";
 import { SEED_IDS } from "../../scripts/db-seed-data";
 
 const databaseUrl = process.env.TEST_DATABASE_URL;
-if (
-  !databaseUrl ||
-  process.env.DB018_ISOLATED_TEST_DATABASE !== "1" ||
-  process.env.DATABASE_URL !== databaseUrl
-) {
+const explicitlyIsolated =
+  process.env.DB018_ISOLATED_TEST_DATABASE === "1" ||
+  process.env.DB03_ISOLATED_TEST_DATABASE === "1";
+if (!databaseUrl || !explicitlyIsolated || process.env.DATABASE_URL !== databaseUrl) {
   throw new Error(
-    "DB18 notification races require explicitly isolated TEST_DATABASE_URL, " +
-      "DB018_ISOLATED_TEST_DATABASE=1 and identical DATABASE_URL",
+    "DB18 notification races require isolated TEST_DATABASE_URL, " +
+      "DB018/DB03 isolation flag and identical service DATABASE_URL",
   );
 }
 assertDb018DisposableTarget(process.env, { serviceBound: true });
