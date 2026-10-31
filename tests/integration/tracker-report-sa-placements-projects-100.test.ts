@@ -74,7 +74,7 @@ describe.skipIf(!enabled)("SA-placements-projects-100 tracker reporting on isola
     expect(created.publicId).toMatch(/^LMS-[0-9]{4,}$/);
     const detail = await getBugTrackerIssueForAdmin(context, created.publicId);
     expect(detail.report).toMatchObject({
-      reporterName: "Akhila",
+      reporterName: input.reporterName,
       page: "Projects",
       screen: "Workspaces",
       section: "Members",
