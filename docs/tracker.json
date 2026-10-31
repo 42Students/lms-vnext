@@ -2407,6 +2407,20 @@
             ],
             "resultScope": "All steps passed on pinned workflow SHA; does not certify entire DB045 30-case original race/tenant matrix, final DB018/DB019/DB020, or DATABASE phase."
           }
+        },
+        "latestPrincipalRevocationRace": {
+          "result": "PASS_EXACT_SHA_REGISTERED_PG17_THREE_CONCURRENT_REVOCATION_CASES_NOT_FULL_DB045_ACCEPTANCE",
+          "sourceSha": "fbf05be8156e275b8056447a7cfb39de26988250",
+          "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/41173436122",
+          "verifiedOn": "2026-10-31",
+          "runner": "GitHub Actions Node22 disposable PostgreSQL 17, registered migration replay and idempotence",
+          "scope": "Faculty mark transaction blocks behind learner membership/LEARNER role/user FOR UPDATE; suspension, role deletion and platform DISABLED committed before Faculty row lock each cause ATTENDANCE_ROSTER_CONFLICT. No attendance record, event or MARKED session persists. Grade-history and attendance consumer integration matrix also passed.",
+          "codeCommits": [
+            "e39eb85eb0d39aab6910f841a4b6852a9345efd8",
+            "890b4934d89be5c6c36fe630bd9d237cb890012e",
+            "fbf05be8156e275b8056447a7cfb39de26988250"
+          ],
+          "evidenceLimit": "Exact scoped race suite green, not whole original DB045 tenant/actor/retention and global DB018/DB019/DB020 certification; retain done:false."
         }
       }
     },
