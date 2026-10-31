@@ -173,6 +173,100 @@ afterAll(async () => {
 
 describe("College Admin attendance tenant isolation with PostgreSQL", () => {
 
+  // DB045 direct negative matrix: distinct CHECK, actor, tenant, schedule,
+  // learner, version and immutable-id attacks against a POPULATED event row.
+  // Every statement is repo-authored SQL; its parameters come only from the
+  // disposable test fixtures created above.
+  const eventFields = {
+    attendance_record_id:"ar.id",
+    schedule_event_id:"ar.schedule_event_id",
+    delivery_id:"$2::uuid",
+    membership_id:"ar.membership_id",
+    college_id:"$3::uuid",
+    actor_user_id:"$4::uuid",
+    actor_membership_id:"NULL::uuid",
+    actor_role:"'SUPER_ADMIN'",
+    action:"'CORRECT'",
+    previous_status:"ar.status",
+    new_status:"'PRESENT'",
+    previous_note:"ar.note",
+    new_note:"'DB045 negative'",
+    previous_marked_by_user_id:"ar.marked_by_user_id",
+    new_marked_by_user_id:"$4::uuid",
+    previous_marked_at:"ar.marked_at",
+    new_marked_at:"now()",
+    record_version_before:"ar.version",
+    record_version_after:"ar.version+1",
+  } as const;
+  type EventField = keyof typeof eventFields;
+  const forgedCases: {
+    name:string;overrides:Partial<Record<EventField,string>>;
+    code:string;message:string;
+  }[] = [
+    {name:"unrecognized action",overrides:{action:"'VOID'"},
+      code:"23514",message:"attendance_record_events_action_ck"},
+    {name:"unrecognized actor role",overrides:{actor_role:"'STUDENT'"},
+      code:"23514",message:"attendance_record_events_actor_role_ck"},
+    {name:"unrecognized new attendance status",overrides:{new_status:"'UNKNOWN'"},
+      code:"23514",message:"attendance_record_events_status_ck"},
+    {name:"unrecognized prior attendance status",overrides:{previous_status:"'UNKNOWN'"},
+      code:"23514",message:"attendance_record_events_status_ck"},
+    {name:"skipped version number",overrides:{record_version_after:"ar.version+3"},
+      code:"23514",message:"attendance_record_events_version_ck"},
+    {name:"negative previous version",overrides:{record_version_before:"-1"},
+      code:"23514",message:"attendance_record_events_version_ck"},
+    {name:"CORRECT with null previous version",overrides:{record_version_before:"NULL::integer"},
+      code:"23514",message:"attendance_record_events_shape_ck"},
+    {name:"CORRECT missing previous marker",overrides:{previous_marked_by_user_id:"NULL::uuid"},
+      code:"23514",message:"attendance_record_events_shape_ck"},
+    {name:"CORRECT missing previous timestamp",overrides:{previous_marked_at:"NULL::timestamptz"},
+      code:"23514",message:"attendance_record_events_shape_ck"},
+    {name:"tenant metadata from another college",overrides:{college_id:"$5::uuid"},
+      code:"23514",message:"tenant mismatch"},
+    {name:"actor differs from claimed marker",overrides:{actor_user_id:"$6::uuid"},
+      code:"23514",message:"actor must equal current marker"},
+    {name:"wrong course delivery",overrides:{delivery_id:"$7::uuid"},
+      code:"23514",message:"delivery does not match schedule link"},
+    {name:"wrong record identity",overrides:{attendance_record_id:"gen_random_uuid()"},
+      code:"23514",message:"post-state"},
+    {name:"wrong learner membership",overrides:{membership_id:"$8::uuid"},
+      code:"23514",message:"tenant mismatch"},
+    {name:"SUPER_ADMIN actor without persisted SUPER_ADMIN role",overrides:{
+      actor_user_id:"$6::uuid",new_marked_by_user_id:"$6::uuid"},
+      code:"23514",message:"SUPER_ADMIN role is missing"},
+    {name:"actor claims COLLEGE_ADMIN using learner membership",overrides:{
+      actor_role:"'COLLEGE_ADMIN'",actor_membership_id:"ar.membership_id",
+      actor_user_id:"(select user_id from college_memberships where id=ar.membership_id)",
+      new_marked_by_user_id:"(select user_id from college_memberships where id=ar.membership_id)"},
+      code:"23514",message:"lacks COLLEGE_ADMIN grant"},
+    {name:"actor claims FACULTY using learner membership",overrides:{
+      actor_role:"'FACULTY'",actor_membership_id:"ar.membership_id",
+      actor_user_id:"(select user_id from college_memberships where id=ar.membership_id)",
+      new_marked_by_user_id:"(select user_id from college_memberships where id=ar.membership_id)"},
+      code:"23514",message:"lacks teaching scope"},
+  ];
+  it.each(forgedCases)("DB045 rejects $name against a real attendance row",async witness=>{
+    const fields = Object.keys(eventFields) as EventField[];
+    const expressions=fields.map(col=>witness.overrides[col]??eventFields[col]);
+    const query=`insert into attendance_record_events
+      (${fields.join(",")}) select ${expressions.join(",")}
+      from attendance_records ar where ar.schedule_event_id=$1`;
+    const params=[foreign.event,foreign.delivery,SEED_IDS.collegeB,
+      SEED_IDS.superAdminUser,SEED_IDS.collegeA,
+      SEED_IDS.collegeAdminUser,own.delivery,own.learner];
+    let failure:unknown;
+    try {await pool.query(query,params);}catch(error){failure=error;}
+    expect(failure).toMatchObject({code:witness.code});
+    expect(String((failure as {message?:string})?.message??""))
+      .toContain(witness.message);
+    const unchanged=await pool.query<{version:number,status:string}>(
+      "select version,status from attendance_records where schedule_event_id=$1",
+      [foreign.event],
+    );
+    expect(unchanged.rows).toMatchObject([{version:0,status:"ABSENT"}]);
+  });
+
+
   // DB045 direct SQL negative witnesses target a genuine linked, immutably
   // audited foreign-college attendance row, not an empty-catalog success.
   it("DB045 prevents unaudited initial marks and retains exact current identity", async () => {
