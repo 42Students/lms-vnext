@@ -10,6 +10,7 @@ on:
       - ".github/workflows/db067-staged-outbound-pg17.yml"
       - "drizzle/0330_db067_outbound_fenced_worker_functions.sql"
       - "drizzle/meta/_journal.json"
+      - "drizzle/meta/0330_snapshot.json"
       - "tests/integration/db067-global-email-pre-send.test.ts"
 
 permissions:

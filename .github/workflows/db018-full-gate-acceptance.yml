@@ -14,6 +14,7 @@ on:
       - "src/modules/activity/service.ts"
       - "src/db/schema/**"
       - "drizzle/meta/_journal.json"
+      - "drizzle/meta/0330_snapshot.json"
       - "drizzle/*.sql"
       - "tests/integration/db018-relational-and-boundary-witnesses.test.ts"
       - "tests/integration/db18-registered-negative-witnesses.test.ts"
