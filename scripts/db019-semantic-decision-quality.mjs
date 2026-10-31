@@ -141,7 +141,8 @@ export function auditDb019ProjectDecisions(source, review) {
     }
     seen.add(field);
     if (!required(row.decision) || !required(row.reason) ||
-        (!required(row.targetRef) && row.decision !== 'SECURITY_REDESIGN_REQUIRED'))
+        (!required(row.targetRef) && !['SECURITY_REDESIGN_REQUIRED',
+          'REDESIGNED_IMMUTABLE_EVENT','REDESIGNED_IMMUTABLE_HISTORY'].includes(row.decision)))
       fail('DB07_MISSING_DECISION_RATIONALE_OR_TARGET',field);
     if (row.runtimeVerified !== false || row.semanticVerified !== false ||
         row.validationEvidence != null)
