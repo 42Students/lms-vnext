@@ -5,6 +5,7 @@ import fs from "node:fs";
 import path from "node:path";
 import { createHash } from "node:crypto";
 import { fileURLToPath } from "node:url";
+import {loadDb019SemanticDecisions} from "./db019-semantic-decision-quality.mjs";
 
 export const CROSSWALKS = Object.freeze({
   DB01: ["db01_identity_and_tenancy", "db01-chat02-312-field-source-triage.json"],
@@ -100,9 +101,12 @@ export function reconcileCheckout(root) {
     const artifact = JSON.parse(fs.readFileSync(path.join(root,"docs/planning",artifactName),"utf8"));
     domains.push(reconcileCrosswalk(domain,ledger,artifact,gitBlobSha(bytes)));
   }
+  const semanticDecisionQuality = loadDb019SemanticDecisions(root);
   return {kind:"DB019_SOURCE_CROSSWALKS_ONLY_NOT_POSTGRES_ACCEPTANCE",
     databaseVerified:false,domains,comparedFields:domains.reduce((s,d)=>s+(d.sourceFields||0),0),
-    errors:domains.flatMap(d=>d.errors.map(error=>({domain:d.domain,...error})))};
+    semanticDecisionQuality,
+    errors:[...domains.flatMap(d=>d.errors.map(error=>({domain:d.domain,...error}))),
+      ...semanticDecisionQuality.errors.map(error=>({domain:"DB02_OR_DB09_QUALITY",...error}))]};
 }
 if (process.argv[1] && path.resolve(process.argv[1])===fileURLToPath(import.meta.url)) {
   try {
