@@ -172,6 +172,86 @@ afterAll(async () => {
 });
 
 describe("College Admin attendance tenant isolation with PostgreSQL", () => {
+
+  // DB045 direct SQL negative witnesses target a genuine linked, immutably
+  // audited foreign-college attendance row, not an empty-catalog success.
+  it("DB045 prevents unaudited initial marks and retains exact current identity", async () => {
+    await expect(pool.query(
+      `insert into attendance_records
+        (schedule_event_id,membership_id,status,marked_by_user_id)
+       values($1,$2,'PRESENT',$3)`,
+      [own.event,own.learner,admin.user.id],
+    )).rejects.toMatchObject({code:"23514"});
+    const rows=await pool.query(
+      "select 1 from attendance_records where schedule_event_id=$1",
+      [own.event],
+    );
+    expect(rows.rowCount).toBe(0);
+  });
+
+  it("DB045 rejects direct attendance status and marker edits lacking a CORRECT event",async()=>{
+    const before=await pool.query<{id:string,version:number,status:string}>(
+      "select id,version,status from attendance_records where schedule_event_id=$1",
+      [foreign.event],
+    );
+    expect(before.rows).toHaveLength(1);
+    await expect(pool.query(
+      `update attendance_records set status='PRESENT',
+        version=version+1,marked_at=marked_at+interval '1 second'
+       where schedule_event_id=$1`,[foreign.event],
+    )).rejects.toMatchObject({code:"23514"});
+    const after=await pool.query<{id:string,version:number,status:string}>(
+      "select id,version,status from attendance_records where schedule_event_id=$1",
+      [foreign.event],
+    );
+    expect(after.rows).toEqual(before.rows);
+  });
+
+  it("DB045 rejects attendance identity rewrites even with an incremented version",async()=>{
+    await expect(pool.query(
+      "update attendance_records set membership_id=$2,version=version+1 where schedule_event_id=$1",
+      [foreign.event,own.learner],
+    )).rejects.toMatchObject({code:"23514"});
+  });
+
+  it("DB045 rejects in-place event changes, deletion and wholesale TRUNCATE",async()=>{
+    await expect(pool.query(
+      "update attendance_record_events set new_note='forged' where schedule_event_id=$1",
+      [foreign.event],
+    )).rejects.toMatchObject({code:"23514"});
+    await expect(pool.query(
+      "delete from attendance_record_events where schedule_event_id=$1",
+      [foreign.event],
+    )).rejects.toMatchObject({code:"23514"});
+    await expect(pool.query(
+      "truncate table attendance_record_events",
+    )).rejects.toMatchObject({code:"23514"});
+    await expect(pool.query(
+      "delete from attendance_records where schedule_event_id=$1",
+      [foreign.event],
+    )).rejects.toMatchObject({code:"23503"});
+  });
+
+  it("DB045 rejects forged cross-college CORRECT event even with a real record",async()=>{
+    await expect(pool.query(`
+      insert into attendance_record_events (
+        attendance_record_id,schedule_event_id,delivery_id,membership_id,
+        college_id,actor_user_id,actor_membership_id,actor_role,action,
+        previous_status,new_status,previous_note,new_note,
+        previous_marked_by_user_id,new_marked_by_user_id,
+        previous_marked_at,new_marked_at,
+        record_version_before,record_version_after
+      ) select ar.id,ar.schedule_event_id,$2::uuid,ar.membership_id,
+        $3::uuid,$4::uuid,null,'SUPER_ADMIN','CORRECT',
+        ar.status,'PRESENT',ar.note,'forged',
+        ar.marked_by_user_id,$4::uuid,ar.marked_at,now(),0,1
+      from attendance_records ar where ar.schedule_event_id=$1
+    `,[foreign.event,foreign.delivery,SEED_IDS.collegeA,
+      SEED_IDS.superAdminUser],
+    )).rejects.toMatchObject({code:"23514"});
+  });
+
+
   it("lists only own-college deliveries and catalogue entries", async () => {
     const shortTitle="Attendance formal "+nonce;
     await pool.query("update courses set short_title=$1 where id=$2",[shortTitle,own.course]);
