@@ -120,6 +120,22 @@ async function fixture(collegeId: string, departmentId: string): Promise<Fixture
 let own: Fixture;
 let foreign: Fixture;
 
+/** The fixture starts two hours before insertion. Close to IST midnight,
+ * its academic calendar month may differ from the test runner's current
+ * month; select exactly the persisted session's India-local month instead
+ * of assuming Date.now()+05:30 belongs to the same month. */
+async function ownEventMonth(): Promise<string> {
+  const {rows} = await pool.query<{month:string}>(`
+    select to_char(starts_at at time zone 'Asia/Kolkata','YYYY-MM') as month
+    from section_schedule_events where id=$1
+  `,[own.event]);
+  const month=rows[0]?.month;
+  if (!month || !/^\d{4}-\d{2}$/.test(month)) {
+    throw new Error("ATTENDANCE_TEST_SESSION_MONTH_UNAVAILABLE");
+  }
+  return month;
+}
+
 beforeAll(async () => {
   own = await fixture(SEED_IDS.collegeA, SEED_IDS.departmentA);
   foreign = await fixture(SEED_IDS.collegeB, SEED_IDS.departmentB);
@@ -743,7 +759,7 @@ describe("College Admin attendance tenant isolation with PostgreSQL", () => {
   });
 
   it("does not reveal foreign sessions, records or learner rosters", async () => {
-    const month = new Date(Date.now() + 330 * 60_000).toISOString().slice(0, 7);
+    const month = await ownEventMonth();
     const grid = await getAdminAttendanceGrid(admin, {
       collegeId: SEED_IDS.collegeA, deliveryId: own.delivery, month,
     });
@@ -1058,7 +1074,7 @@ describe("College Admin attendance tenant isolation with PostgreSQL", () => {
     expect(after.overall).toEqual(implicitPresent);
     const grid=await getAdminAttendanceGrid(admin,{
       collegeId:SEED_IDS.collegeA,deliveryId:own.delivery,
-      month:new Date(Date.now()+330*60_000).toISOString().slice(0,7),
+      month:await ownEventMonth(),
     });
     expect(grid.records.filter(row=>row.scheduleEventId===own.event&&
       row.membershipId===own.learner)).toHaveLength(1);
