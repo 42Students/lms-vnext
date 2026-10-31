@@ -805,6 +805,28 @@
       ],
       "implementationCheckpoint": {
         "status": "REGISTERED_PG17_320_MIGRATION_92_OF_92_FULL_WITNESS_PASS_GATE_DEPENDENCIES_OPEN",
+        "additionalRegisteredRaceEvidence": {
+          "result": "PASS_2_OF_2_REGISTERED_PG17_GLOBAL_ACCEPTANCE_OPEN",
+          "recordedOn": "2026-10-31",
+          "races": [
+            {
+              "probe": "P5-R11",
+              "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/41150659994",
+              "commitSha": "4e6b9e97c38183a13da6cb7af9fe47281449cdcc",
+              "result": "PASS",
+              "scope": "Two real schedule writers individually block on academic period CLOSE; both reject after commit, persisted title unchanged"
+            },
+            {
+              "probe": "P5-R03",
+              "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/41150736524",
+              "commitSha": "7af3312a279a0f5538421229d2e6793bdeeb1be8",
+              "result": "PASS",
+              "scope": "Two independent last-seat group joins await the same PostgreSQL group lock; one active, one waitlisted; counters and events exact"
+            }
+          ],
+          "notAcceptance": true,
+          "remainingPrerequisite": "DB-001 independent verifier still fails on unregistered canonical Drizzle generation output"
+        },
         "tailRelationalSourceCheckpoint": {
           "recordedOn": "2026-10-30",
           "state": "FOCUSED_PG17_MATRIX_PASSED_NOT_GLOBAL_DB018_DONE",
