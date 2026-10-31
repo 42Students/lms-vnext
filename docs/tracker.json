@@ -590,7 +590,7 @@
       "done": false,
       "dependsOn": [],
       "implementationCheckpoint": {
-        "status": "REGISTERED_0317_0318_PG17_INTEGRATION_VERIFIED_GLOBAL_CASCADE_AND_SCOPE_REVIEW_OPEN",
+        "status": "REGISTERED_0317_0318_0325_SOURCE_RETENTION_GUARDS_ADDED_PG17_REPLAY_AND_GLOBAL_SCOPE_OPEN",
         "recordedOn": "2026-10-31",
         "verifiedScope": "DB14 staged SQL candidate applies transactionally to clean registered PG17 without journal changes; tenant/actor, inbox recipient, group-history owner/role/SYSTEM checks and member status/role revocation SHARE-lock races executed PASS. All temporary SQL guards and test fixture rows were rolled back. This is a DB014 sub-scope witness, not global DB/FK/cascade gate acceptance.",
         "sourceCommits": [
@@ -618,9 +618,9 @@
           }
         ],
         "pending": [
-          "Disposition 21 current registered CASCADE FK retention/deletion semantics and domain-specific uniqueness contracts; avoid using stale snapshot 0040 counts",
-          "Review current registered tenant and actor cross-domain negative matrix beyond the three DB014 guards; producer and consumer authorization/retention proof",
-          "Prove independent DB001, complete DB018 and DB019 then DB020 global database phase certification at current head"
+          "Execute 0325 registered zero-to-head PostgreSQL 17 replay with 11 delete/10 truncate fences, direct DELETE/TRUNCATE negative, actor/tenant and concurrency witnesses; obtain exact-SHA job evidence.",
+          "Verify producer/consumer hard-delete behavior for retention-protected parents and accepted privacy policy; reconcile current tenant-scoped uniqueness namespaces.",
+          "Complete DB001 independent gate, DB018/DB019 dependencies and DB020 global database certification; no implicit DB014/global acceptance."
         ],
         "evidenceIsNotAcceptance": true,
         "catalogDiagnosis": {
@@ -678,6 +678,25 @@
           "commitSha": "d2f77f20dba7fcc1c97883a8881fb2f826662c39",
           "result": "PASS_SCOPED_PG17_NOT_GLOBAL_RETENTION",
           "findings": "All 21 registered CASCADE edges pinned against unreviewed drift and registered tenant triggers must be enabled; consumer hard-delete/retention proof remains open."
+        },
+        "retentionFences": {
+          "registeredMigration": "drizzle/0325_db014_cascade_retention_fences.sql",
+          "sourceCommits": [
+            "b8adc3a9519e04f5143d2baa3c9aa33a02270bd5",
+            "50ed6cf5a503d25443a350d818921d2a08264f7e",
+            "aee67529c2ad74b370ed5664e079dbde3879d439",
+            "d4953b7506422ec2366307ee50e6e568d1291ce1",
+            "06b0e554c8332a62ea72210343b907ad4512487d"
+          ],
+          "retainedCascadeEdges": 11,
+          "independentlyClassifiedCascadeEdges": 21,
+          "guardedParentTables": 10,
+          "sourceTest": "tests/db014-cascade-retention-source.test.mjs",
+          "pgTest": "tests/db014-cascade-retention-registered-pg.test.mjs",
+          "workflow": ".github/workflows/db014-tenant-scope-staged-acceptance.yml",
+          "sourceContractCheck": "PASS_2_OF_2_V8_ADAPTED_EXACT_REPO_CONTENT_2026_10_31",
+          "registeredPg17Run": "NOT_YET_OBSERVED",
+          "note": "Parent DELETE with retained operational/history child and TRUNCATE are denied without altering FK shape. Both runtime negative execution and global DB014 acceptance remain open; code/test presence is not production proof."
         }
       }
     },
