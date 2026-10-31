@@ -120,6 +120,30 @@ test("DB014 registered replay plus staged event/notification/group tenant bounda
       );
     });
 
+    await t.test("activity events reject a forged organization and same-college actor identity", async () => {
+      const otherOrg=randomUUID();
+      await db.query(
+        "INSERT INTO organizations(id,name,status) VALUES ($1,$2,'ACTIVE')",
+        [otherOrg,"DB014 foreign org "+otherOrg],
+      );
+      const statement=
+        "INSERT INTO activity_events "+
+        "(organization_id,college_id,actor_user_id,actor_membership_id,module,event_type,subject_type,subject_id,summary) "+
+        "VALUES ($1,$2,$3,$4,'IDENTITY','DB014_SCOPE_TEST','MEMBERSHIP',$5,'Forged DB014 source')";
+      await denied(db,statement,[
+        otherOrg,SEED.collegeA,SEED.collegeAdminUser,null,randomUUID(),
+      ]);
+      await denied(db,statement,[
+        SEED.organization,SEED.collegeA,SEED.facultyUser,
+        SEED.learnerCollegeAMembership,randomUUID(),
+      ]);
+      // Positive: a valid membership author may write under that actor identity.
+      const good=await writeEvent(db,{
+        actorUser:SEED.collegeAdminUser,actorMembership:null,
+      });
+      assert.equal(good.rowCount,1);
+    });
+
     await t.test("college inbox accepts same-college user and rejects unrelated college-only user", async () => {
       const event = (await writeEvent(db)).rows[0].id;
       const ok = await db.query(
@@ -167,6 +191,17 @@ test("DB014 registered replay plus staged event/notification/group tenant bounda
       await denied(db, sql, [
         group, SEED.learnerCollegeAMembership, "LEARNER", "SYSTEM", SEED.collegeAdminUser,
       ]);
+      // A fully valid member cannot confer actor privileges on someone whose
+      // active membership is in another college.
+      await denied(db,sql,[
+        group,SEED.learnerCollegeAMembership,"LEARNER","SUPER_ADMIN",SEED.facultyUser,
+      ]);
+      // The existing DB03 immutable-history trigger must reject an attempt
+      // to rewrite persisted actor/role history after the insert.
+      await denied(db,
+        "UPDATE lms_group_member_events SET actor_type='SYSTEM' WHERE group_id=$1",
+        [group],
+      );
     });
 
     await t.test("two-session revocation cannot overtake accepted membership and role history writes", async () => {
