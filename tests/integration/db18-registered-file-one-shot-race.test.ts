@@ -29,8 +29,9 @@ const enabled=Boolean(databaseUrl) &&
 if(enabled)assertDb018DisposableTarget(process.env,{serviceBound:true});
 const pool=enabled?new Pool({connectionString:databaseUrl!,max:4}):null;
 const tag=randomUUID().replaceAll("-","").slice(0,10);
-const userId=randomUUID(), memberId=randomUUID(), fileId=randomUUID();
+const userId=randomUUID(), memberId=randomUUID(), fileId=randomUUID(), secondFileId=randomUUID();
 const objectKey="private/"+SEED_IDS.collegeA+"/"+memberId+"/assignment-submission/"+fileId;
+const secondObjectKey="private/"+SEED_IDS.collegeA+"/"+memberId+"/assignment-submission/"+secondFileId;
 const sha256="c".repeat(64), tokenHash="d".repeat(64);
 const admin:RequestContext={
   user:{id:SEED_IDS.collegeAdminUser,identityUid:"seed-college-admin",platformStatus:"ACTIVE",systemRoles:[]},
@@ -131,6 +132,21 @@ beforeAll(async()=>{
     [fileId,SEED_IDS.collegeA,assignmentId,deliveryId,memberId,
       objectKey,tokenHash,sha256,userId],
   );
+  // A second independently attested CLEAN file lets the race exercise
+  // opposite client order without weakening the single-submission invariant.
+  await pg().query(
+    "insert into assignment_submission_files "+
+    "(id,college_id,assignment_id,delivery_id,owner_membership_id,object_key,"+
+    "upload_token_hash,upload_expires_at,original_name,declared_content_type,"+
+    "declared_size_bytes,status,object_generation,verified_content_type,"+
+    "verified_size_bytes,sha256_hex,scan_status,scan_attested_by,scan_attested_at,"+
+    "completed_at,created_by_user_id) "+
+    "values($1,$2,$3,$4,$5,$6,$7,now()+interval '10 minutes','race-second.pdf',"+
+    "'application/pdf',128,'READY','1720000000000','application/pdf',128,$8,"+
+    "'CLEAN','lms-vnext-privileged-scanner',now(),now(),$9)",
+    [secondFileId,SEED_IDS.collegeA,assignmentId,deliveryId,memberId,
+      secondObjectKey,tokenHash,sha256,userId],
+  );
 },30_000);
 
 afterAll(async()=>{
@@ -143,21 +159,25 @@ afterAll(async()=>{
 });
 
 describe.skipIf(!enabled)("DB018 registered one-shot private file producer",()=>{
-  it("P5-R13 registered live FILE path binds one CLEAN file once across two competing requests",async()=>{
+  it("P5-R13 registered FILE path consumes two CLEAN files atomically despite reversed request order",async()=>{
     expect(assignmentId).toMatch(/^[0-9a-f-]{36}$/);
     const holder=await pg().connect();
     let began=false;
     try{
       await holder.query("BEGIN");
       began=true;
+      const forward=[fileId,secondFileId];
+      const reversed=[secondFileId,fileId];
+      // Both writers must contend on the first canonical lock even when
+      // the learner's requested sequence is exactly reversed.
       await holder.query(
         "select id from assignment_submission_files where id=$1 for update",
-        [fileId],
+        [[...forward].sort()[0]],
       );
-      const issue=()=>submitAssignmentWithFiles(learner,assignmentId,{
-        deliveryId,fileIds:[fileId],
+      const issue=(fileIds:string[])=>submitAssignmentWithFiles(learner,assignmentId,{
+        deliveryId,fileIds,
       });
-      const pending=[issue(),issue()].map(p=>p.then(
+      const pending=[issue(forward),issue(reversed)].map(p=>p.then(
         value=>({ok:true as const,value}),
         (error:unknown)=>({ok:false as const,error}),
       ));
@@ -181,6 +201,7 @@ describe.skipIf(!enabled)("DB018 registered one-shot private file producer",()=>
       expect(outcomes.filter(x=>!x.ok)).toHaveLength(1);
       expect(outcomes.find(x=>!x.ok))
         .toMatchObject({ok:false,error:{code:"STORAGE_FILE_NOT_READY"}});
+      const winnerOrder=outcomes[0]?.ok?forward:reversed;
       const submissions=await pg().query<{id:string}>(
         "select id from assignment_submissions where assignment_id=$1 and membership_id=$2",
         [assignmentId,memberId],
@@ -189,28 +210,29 @@ describe.skipIf(!enabled)("DB018 registered one-shot private file producer",()=>
       const files=await pg().query<{id:string;submission_id:string;sequence:number;
           status:string;scan_status:string;scan_attested_by:string}>(
         "select id,submission_id,sequence,status,scan_status,scan_attested_by "+
-        "from assignment_submission_files where id=$1",[fileId],
+        "from assignment_submission_files where id in ($1,$2) order by sequence",
+        [fileId,secondFileId],
       );
-      expect(files.rows).toEqual([{
-        id:fileId,submission_id:submissions.rows[0]!.id,sequence:0,
+      expect(files.rows).toEqual(winnerOrder.map((id,sequence)=>({
+        id,submission_id:submissions.rows[0]!.id,sequence,
         status:"READY",scan_status:"CLEAN",
         scan_attested_by:"lms-vnext-privileged-scanner",
-      }]);
+      })));
       const filesForSubmission=await pg().query<{id:string}>(
         "select id from assignment_submission_files where submission_id=$1",
         [submissions.rows[0]!.id],
       );
-      expect(filesForSubmission.rows).toHaveLength(1);
+      expect(filesForSubmission.rows).toHaveLength(2);
       const events=await pg().query<{id:string}>(
         "select id from activity_events where dedupe_key=$1",
         ["assignment-submission:"+submissions.rows[0]!.id+":submitted"],
       );
       expect(events.rows).toHaveLength(1);
       const storageAudit=await pg().query<{id:string}>(
-        "select id from storage_file_events where subject_id=$1 and event_type='SUBMITTED'",
-        [fileId],
+        "select id from storage_file_events where subject_id in ($1,$2) and event_type='SUBMITTED'",
+        [fileId,secondFileId],
       );
-      expect(storageAudit.rows).toHaveLength(1);
+      expect(storageAudit.rows).toHaveLength(2);
     }finally{
       if(began)await holder.query("ROLLBACK").catch(()=>undefined);
       holder.release();
