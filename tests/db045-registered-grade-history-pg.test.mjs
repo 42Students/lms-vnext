@@ -182,3 +182,41 @@ test("DB045 orphan event FK denial precedes validated action and actor CHECKs", 
     }
   });
 });
+
+test("DB045 attendance history retains validated composite record and delivery identity FKs", async () => {
+  await withRollback(async db => {
+    const {rows} = await db.query(`
+      SELECT c.conname, c.convalidated, c.confdeltype,
+             array_agg(child_att.attname ORDER BY cols.ordinality) AS child_columns,
+             array_agg(parent_att.attname ORDER BY cols.ordinality) AS parent_columns
+      FROM pg_constraint c
+      JOIN LATERAL unnest(c.conkey, c.confkey) WITH ORDINALITY
+        AS cols(child_num,parent_num,ordinality) ON true
+      JOIN pg_attribute child_att
+        ON child_att.attrelid=c.conrelid AND child_att.attnum=cols.child_num
+      JOIN pg_attribute parent_att
+        ON parent_att.attrelid=c.confrelid AND parent_att.attnum=cols.parent_num
+      WHERE c.conrelid='public.attendance_record_events'::regclass
+        AND c.contype='f'
+        AND c.conname IN (
+          'attendance_record_events_record_identity_fk',
+          'attendance_record_events_delivery_identity_fk'
+        )
+      GROUP BY c.conname,c.convalidated,c.confdeltype
+    `);
+    assert.equal(rows.length, 2, "Both composite history identity FKs must exist");
+    const byName = new Map(rows.map(row => [row.conname,row]));
+    for(const row of rows) {
+      assert.equal(row.convalidated,true, row.conname+" must be validated");
+      assert.equal(row.confdeltype,"r", row.conname+" must restrict parent deletion");
+    }
+    assert.deepEqual(byName.get("attendance_record_events_record_identity_fk").child_columns,
+      ["attendance_record_id","schedule_event_id","membership_id"]);
+    assert.deepEqual(byName.get("attendance_record_events_record_identity_fk").parent_columns,
+      ["id","schedule_event_id","membership_id"]);
+    assert.deepEqual(byName.get("attendance_record_events_delivery_identity_fk").child_columns,
+      ["schedule_event_id","delivery_id"]);
+    assert.deepEqual(byName.get("attendance_record_events_delivery_identity_fk").parent_columns,
+      ["schedule_event_id","delivery_id"]);
+  });
+});
