@@ -552,10 +552,10 @@
     {
       "id": "P5-R11",
       "domain": "ACADEMICS",
-      "state": "SOURCE_CONFIRMED_GAP",
+      "state": "SOURCE_FIX_AUTHORED_NEEDS_EXECUTION",
       "purpose": "Schedule creation/update must not commit after its academic period is concurrently CLOSED",
       "source": "src/modules/academics/schedule-service.ts; src/modules/academics/period-service.ts",
-      "currentProtection": "createSectionScheduleEvent/updateSectionScheduleEvent load and validate period status before the write transaction. The schedule transaction does not lock/re-read academic_periods, while transitionAcademicPeriod can CAS ACTIVE->CLOSED independently.",
+      "currentProtection": "Create/update preflight still loads period status, but both write transactions now SELECT the scoped academic_periods row FOR SHARE and recheck its status/date bounds before writing. Concurrent CLOSED transitions serialize against that parent lock; runtime confirmation remains NOT_RUN.",
       "requiredWitness": "T1 validates an ACTIVE period and pauses; T2 CLOSES the period and commits; T1 resumes create/update. T1 must fail or serialize behind the period transition rather than commit a SCHEDULED event into a CLOSED period.",
       "executionEvidence": "NOT_RUN"
     },
