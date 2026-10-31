@@ -60,6 +60,27 @@ jobs:
         if: success()
         run: |
           node --input-type=module -e 'import fs from "node:fs"; const e=JSON.parse(fs.readFileSync(".verification/db001-pinned.json","utf8")); if(!e.passed || !e.gitHeadUnchanged || !e.sourceTreeCleanAtEnd || e.steps.length!==12 || e.steps.some(s=>s.exitCode!==0)) process.exit(1); console.log("DB001 12/12 PASS",e.gitSha,"runInActions=",e.githubActionsUsed);'
+      - name: Preserve generated unregistered schema delta for reconciliation
+        if: always()
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p .verification/db001-generator-diagnostic
+          # Diagnostic only. Never promote or execute generated DDL.
+          while IFS= read -r path; do
+            case "$path" in
+              drizzle/[0-9][0-9][0-9][0-9]_*.sql|drizzle/meta/[0-9][0-9][0-9][0-9]_snapshot.json)
+                cp -- "$path" ".verification/db001-generator-diagnostic/$(basename "$path")" ;;
+            esac
+          done < <(git ls-files --others --exclude-standard -- 'drizzle/')
+      - name: Upload generated schema diagnosis (NOT a migration)
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: db001-generated-drift-diagnostic
+          path: .verification/db001-generator-diagnostic/
+          retention-days: 7
+          if-no-files-found: ignore
       - name: Retain redacted acceptance or failure receipt
         if: always()
         uses: actions/upload-artifact@v4
