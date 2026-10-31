@@ -156,17 +156,13 @@
     {
       "raceProbe": "P5-R09",
       "reason": "outbound delivery schema remains draft/unregistered"
-    },
-    {
-      "raceProbe": "P5-R10",
-      "reason": "log-alert schema remains draft/unregistered"
     }
   ],
   "counts": {
     "directNegativeAuthored": 9,
     "existingConcurrencyAuthored": 4,
     "explicitConcurrencyMissing": 0,
-    "draftUnregisteredExcluded": 3,
+    "draftUnregisteredExcluded": 2,
     "runtimeExecuted": 48,
     "runtimePassed": 48,
     "knownRedRaceAuthored": 0,
@@ -182,7 +178,9 @@
     "fullSuiteVitestTestsPassed": 92,
     "pendingConcurrencyAuthored": 0,
     "additionalRegisteredConcurrencyRuntimeExecuted": 4,
-    "additionalRegisteredConcurrencyRuntimePassed": 4
+    "additionalRegisteredConcurrencyRuntimePassed": 4,
+    "registeredOriginalScopeRaceExecuted": 2,
+    "registeredOriginalScopeRacePassed": 2
   },
   "knownRedRaceWitnesses": [
     {
@@ -424,6 +422,32 @@
       "commitSha": "7af3312a279a0f5538421229d2e6793bdeeb1be8",
       "workflow": ".github/workflows/db018-full-gate-acceptance.yml",
       "evidence": "Real BUS group with capacity=1, two separate service joins blocked on parent row, one ACTIVE and one WAITLISTED result, active_count=1 and exactly two membership events; full registered PG17 workflow passed. Global DB018 still OPEN."
+    }
+  ],
+  "registeredOriginalScopeRaceEvidence": [
+    {
+      "id": "DB18-C09",
+      "raceProbe": "P5-R22",
+      "file": "tests/integration/academics-a2.test.ts",
+      "title": "P5-R22 rejects the losing schedule editor with two PostgreSQL writers",
+      "execution": "PASS",
+      "state": "REGISTERED_PG17_VERIFIED",
+      "commitSha": "e3cb0d8fee442e4c3cedbe912183182dfb161584",
+      "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/41219123501",
+      "jobId": 124589804854,
+      "scope": "Two PostgreSQL schedule-edit writers blocked on same event row, exactly one succeeds, loser gets SCHEDULE_EVENT_STALE_VERSION, persisted winner/title/version exact."
+    },
+    {
+      "id": "DB18-C10",
+      "raceProbe": "P5-R10",
+      "file": "tests/integration/graceful-telegram-persistence.test.ts",
+      "title": "P5-R10 serializes two workers per signature and exactly one fixed-error regression",
+      "execution": "PASS",
+      "state": "REGISTERED_PG17_VERIFIED",
+      "commitSha": "da3be22a74185a8d2b24d9ef6cb130c9d03fce1a",
+      "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/41219595096",
+      "jobId": 124591180538,
+      "scope": "Real reportErrorForAlert producer with concurrent PG row-lock contention, single signature row, exact 2+2 occurrence count, one initial Telegram send, one later FIXED->OPEN regression and monotonic seen timestamps. Fake provider transport only."
     }
   ]
 }

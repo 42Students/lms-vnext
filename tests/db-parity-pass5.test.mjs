@@ -177,7 +177,23 @@ test("DB18 witness index remains honest about authored versus executed coverage"
   assert.equal(r03.commitSha, "7af3312a279a0f5538421229d2e6793bdeeb1be8");
   assert.equal(r03.runUrl, "https://github.com/42Students/lms-vnext/actions/runs/41150736524");
   assert.equal(index.counts.explicitConcurrencyMissing, 0);
-  assert.equal(index.counts.draftUnregisteredExcluded, 3);
+  assert.equal(index.counts.draftUnregisteredExcluded, 2);
+  assert.deepEqual(index.excludedUntilRegistered.map(w => w.raceProbe), ["P5-R08", "P5-R09"]);
+  const newlyExecuted = index.registeredOriginalScopeRaceEvidence;
+  assert.deepEqual(newlyExecuted.map(w => w.raceProbe), ["P5-R22", "P5-R10"]);
+  assert.equal(index.counts.registeredOriginalScopeRaceExecuted, 2);
+  assert.equal(index.counts.registeredOriginalScopeRacePassed, 2);
+  for (const witness of newlyExecuted) {
+    assert.equal(witness.state, "REGISTERED_PG17_VERIFIED");
+    assert.equal(witness.execution, "PASS");
+    assert.match(witness.commitSha, /^[0-9a-f]{40}$/);
+    assert.match(witness.runUrl, /^https:\/\/github\.com\/42Students\/lms-vnext\/actions\/runs\/\d+$/);
+    assert.ok(fs.readFileSync(witness.file, "utf8").includes(witness.title));
+    assert.equal(Number.isSafeInteger(witness.jobId), true);
+  }
+  const pgWorkflow = fs.readFileSync(".github/workflows/db018-full-gate-acceptance.yml", "utf8");
+  assert.ok(pgWorkflow.includes("tests/integration/academics-a2.test.ts"));
+  assert.ok(pgWorkflow.includes("tests/integration/graceful-telegram-persistence.test.ts"));
   assert.equal(index.counts.knownRedRaceAuthored, 0);
   assert.equal(index.counts.fixAuthoredRaceRuntimePending, 0);
   assert.equal(index.counts.runtimeExecuted, 48);

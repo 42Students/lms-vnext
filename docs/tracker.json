@@ -1024,6 +1024,39 @@
           "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/41185596185",
           "commitSha": "ca8782214ed546b7273413d714bd1705368dc7c4",
           "scope": "Full registered PostgreSQL negative/race acceptance passed at exact main SHA; not global task certification"
+        },
+        "latestOriginalScopeRaceEvidence": {
+          "recordedOn": "2026-10-31",
+          "state": "TWO_NEW_ORIGINAL_SCOPE_RACES_PASSED_REGISTERED_PG17_GLOBAL_ACCEPTANCE_OPEN",
+          "evidence": [
+            {
+              "raceProbe": "P5-R22",
+              "commitSha": "e3cb0d8fee442e4c3cedbe912183182dfb161584",
+              "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/41219123501",
+              "jobId": 124589804854,
+              "result": "PASS"
+            },
+            {
+              "raceProbe": "P5-R10",
+              "commitSha": "da3be22a74185a8d2b24d9ef6cb130c9d03fce1a",
+              "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/41219595096",
+              "jobId": 124591180538,
+              "result": "PASS"
+            }
+          ],
+          "exactHeadRegisteredFullGate": {
+            "commitSha": "da3be22a74185a8d2b24d9ef6cb130c9d03fce1a",
+            "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/41219595096",
+            "result": "PASS",
+            "scope": "PG17 full witness matrix including 95/95 base suites, 7/7 Academics A2 including P5-R22, 4/4 log-alert producer including P5-R10, DB045 and DB014/DB020 consumers"
+          },
+          "DB001": "already accepted by its standalone 12/12 independently executed PG17 verifier, not an outstanding DB018 prerequisite",
+          "remaining": [
+            "P5-R09 two-clamer fenced dispatch and provider-crash/retry behavior: source routines remain unregistered, no independently verified privileged worker grants/provider adapter",
+            "P5-R21 late suppression after enqueue, immediately before provider send: source SQL not registered/worker not activated; no executed provider-zero-call integration on registered functions",
+            "Reconcile full original producer/consumer, tenant-authorization and lifecycle coverage before done:true"
+          ],
+          "notAcceptance": true
         }
       }
     },
