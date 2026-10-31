@@ -119,9 +119,6 @@ jobs:
       - name: P5-R09 and P5-R21 registered real outbound producer and fake provider
         run: |
           npx vitest run --config vitest.db.registered.config.ts tests/integration/db18-outbound-service-race.test.ts
-      - name: P5-R13 scanned FILE receipt duplicate submission on registered PG17
-        run: |
-          npx vitest run --config vitest.db.registered.config.ts tests/integration/db18-assignment-receipt-race.test.ts -t P5-R13
       - name: P5-R18 announcement edit/delete/restore CAS and P5-R19 tracker event atomicity on registered PG17
         run: |
           npx vitest run --config vitest.db.registered.config.ts tests/integration/db18-shared-ops-race.test.ts
@@ -165,6 +162,9 @@ jobs:
       - name: Current registered DB014 tenant scope, catalog and DB020 provenance negatives
         run: |
           node --test tests/db014-registered-tenant-catalog-pg.test.mjs tests/db014-cross-domain-scope-staged-pg.test.mjs tests/db020-registered-grade-event-provenance-pg.test.mjs
+      - name: P5-R13 scanned FILE receipt duplicate submission on registered PG17
+        run: |
+          npx vitest run --config vitest.db.registered.config.ts tests/integration/db18-assignment-receipt-race.test.ts -t P5-R13
       - name: Explicit evidence scope
         if: always()
         run: |
