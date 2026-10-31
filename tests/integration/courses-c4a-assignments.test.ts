@@ -759,6 +759,56 @@ describe("courses C4A assignments against PostgreSQL", () => {
       gradePublished: false,
       version: 1,
     });
+    // DB045 registered SQL negatives: the ledger must derive immutable
+    // submission/tenant/actor authority from persisted graph, never trust
+    // forged college, delivery or role snapshots supplied in an event.
+    const forgedGradeEventSql = `
+      insert into assignment_grade_events(
+        assignment_submission_id,assignment_id,delivery_id,learner_membership_id,
+        college_id,actor_user_id,actor_membership_id,actor_role,action,
+        previous_points,new_points,previous_feedback,new_feedback,
+        previous_grading_status,new_grading_status,
+        previous_grade_published,new_grade_published,
+        previous_graded_by_user_id,new_graded_by_user_id,
+        previous_graded_at,new_graded_at,
+        submission_version_before,submission_version_after
+      )
+      select s.id,s.assignment_id,$5::uuid,s.membership_id,
+        $2::uuid,$3::uuid,$4::uuid,'FACULTY','REGRADE',
+        s.points_awarded,s.points_awarded+1,s.feedback,s.feedback,
+        s.grading_status::text,s.grading_status::text,
+        s.grade_published,s.grade_published,
+        s.graded_by_user_id,s.graded_by_user_id,
+        s.graded_at,s.graded_at,s.version,s.version+1
+      from assignment_submissions s where s.id=$1
+    `;
+    const gradeEventCountBefore = await pool.query<{n:number}>(
+      "select count(*)::int n from assignment_grade_events where assignment_submission_id=$1",
+      [submitted.id],
+    );
+    expect(gradeEventCountBefore.rows[0]?.n).toBe(1);
+    for(const forged of [
+      {name:"foreign college",college:SEED_IDS.collegeB,actor:faculty.user.id,
+       member:faculty.membership!.id,delivery:structure.deliveryA.id},
+      {name:"learner impersonates Faculty",college:SEED_IDS.collegeA,actor:learner.user.id,
+       member:learner.membership!.id,delivery:structure.deliveryA.id},
+      {name:"unrelated delivery",college:SEED_IDS.collegeA,actor:faculty.user.id,
+       member:faculty.membership!.id,delivery:randomUUID()},
+      {name:"membership-less non-SUPER_ADMIN",college:SEED_IDS.collegeA,actor:faculty.user.id,
+       member:null,delivery:structure.deliveryA.id},
+      {name:"mismatched actor and membership",college:SEED_IDS.collegeA,actor:faculty.user.id,
+       member:learner.membership!.id,delivery:structure.deliveryA.id},
+    ]) {
+      await expect(pool.query(forgedGradeEventSql,[
+        submitted.id,forged.college,forged.actor,forged.member,forged.delivery,
+      ]),forged.name).rejects.toMatchObject({code:"23514"});
+    }
+    const gradeEventCountAfter = await pool.query<{n:number}>(
+      "select count(*)::int n from assignment_grade_events where assignment_submission_id=$1",
+      [submitted.id],
+    );
+    expect(gradeEventCountAfter.rows).toEqual(gradeEventCountBefore.rows);
+
     // DB045: real grading producer persists a row; unlike disposable
     // fixture cleanup, normal SQL cannot rewrite or erase its history.
     await expect(pool.query(
