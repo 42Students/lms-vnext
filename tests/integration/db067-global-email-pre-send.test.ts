@@ -215,6 +215,19 @@ describe.skipIf(!enabled)("DB067 global EMAIL identity and pre-send fencing (dis
   });
 
 
+  it("rejects an unprivileged database principal from executing the claim function", async () => {
+    await transaction(async (client) => {
+      // CI-only disposable role, created and discarded within this transaction.
+      // The candidate functions must revoke PUBLIC EXECUTE; the ordinary
+      // application/tenant role must never gain a worker claim primitive.
+      await client.query("CREATE ROLE db067_disposable_untrusted NOLOGIN");
+      await client.query("SET LOCAL ROLE db067_disposable_untrusted");
+      await expect(client.query(
+        "select * from db10_claim_outbound_messages('db067-guest', 1, 60)",
+      )).rejects.toMatchObject({code:"42501"});
+    });
+  });
+
   it("P5-R09 grants only one live claim to competing PostgreSQL workers and quarantines expired CLAIMED", async () => {
     if (!pool) throw new Error("DB067 requires the disposable PG17 pool");
     const setup = await pool.connect();
