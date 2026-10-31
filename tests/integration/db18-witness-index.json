@@ -170,9 +170,9 @@
     "pendingConcurrencyAuthored": 0,
     "additionalRegisteredConcurrencyRuntimeExecuted": 4,
     "additionalRegisteredConcurrencyRuntimePassed": 4,
-    "registeredOriginalScopeRaceExecuted": 6,
-    "registeredOriginalScopeRacePassed": 6,
-    "unwitnessedPass5Races": 7
+    "registeredOriginalScopeRaceExecuted": 8,
+    "registeredOriginalScopeRacePassed": 8,
+    "unwitnessedPass5Races": 5
   },
   "knownRedRaceWitnesses": [
     {
@@ -488,6 +488,30 @@
       "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/41223700248",
       "jobId": 124603546469,
       "scope": "Real two-service-writer row-lock conflict, one COMPLETE or WITHDRAW winner, loser LEARNER_ENROLLMENT_NOT_ACTIVE, parent terminal timestamps and all active section records coherent."
+    },
+    {
+      "id": "DB18-C15",
+      "raceProbe": "P5-R14",
+      "file": "tests/integration/projects-p5-lifecycle.test.ts",
+      "title": "P5-R14 serializes two starts and a reopen-versus-start across real PostgreSQL writers",
+      "state": "REGISTERED_PG17_VERIFIED",
+      "execution": "PASS",
+      "commitSha": "c17ebbd4b2625a09c495b21dfcc1c4c80cad4105",
+      "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/41225575548",
+      "jobId": 124608906117,
+      "scope": "Two real service writers each blocked on the project FOR UPDATE lock, exactly one PLANNED sprint starts; separately one COMPLETED reopen races a different PLANNED start. Winner unique, loser PROJECT_SPRINT_ALREADY_ACTIVE, project/release coherent and only one first-start immutable event."
+    },
+    {
+      "id": "DB18-C16",
+      "raceProbe": "P5-R17",
+      "file": "tests/integration/placements-p8-offers.test.ts",
+      "title": "P5-R17 serializes offer issuers and mutually exclusive learner responses",
+      "state": "REGISTERED_PG17_VERIFIED",
+      "execution": "PASS",
+      "commitSha": "1316e06211f40586fe3ac19dbe99b248a86c6f82",
+      "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/41225747398",
+      "jobId": 124609408190,
+      "scope": "Registered PG17 full gate: two real issuers contend on placement job row and only one distinct version/ISSUED event persists; then ACCEPT versus DECLINE contend on persisted learner membership row, only one terminal state and history row."
     }
   ],
   "outboundStagedDiagnostics": {
@@ -547,10 +571,8 @@
   },
   "unwitnessedPass5Probes": [
     "P5-R13",
-    "P5-R14",
     "P5-R15",
     "P5-R16",
-    "P5-R17",
     "P5-R18",
     "P5-R19"
   ],
@@ -590,5 +612,34 @@
     "scope": "Real two-service-writer row-lock conflict, one COMPLETE or WITHDRAW winner, loser LEARNER_ENROLLMENT_NOT_ACTIVE, parent terminal timestamps and all active section records coherent.",
     "fullGatePassed": true,
     "externalProviderVerified": false
+  },
+  "latestP5R14R17RegisteredEvidence": {
+    "result": "PASS_2_ORIGINAL_RACES_REGISTERED_PG17_DB018_OPEN",
+    "recordedOn": "2026-10-31",
+    "codeCommits": [
+      "c17ebbd4b2625a09c495b21dfcc1c4c80cad4105",
+      "1316e06211f40586fe3ac19dbe99b248a86c6f82"
+    ],
+    "runUrls": [
+      "https://github.com/42Students/lms-vnext/actions/runs/41225575548",
+      "https://github.com/42Students/lms-vnext/actions/runs/41225747398"
+    ],
+    "jobIds": [
+      124608906117,
+      124609408190
+    ],
+    "verifiedRaces": [
+      "P5-R14",
+      "P5-R17"
+    ],
+    "remainingUnwitnessed": [
+      "P5-R13",
+      "P5-R15",
+      "P5-R16",
+      "P5-R18",
+      "P5-R19"
+    ],
+    "externalProviderActivated": false,
+    "db018Accepted": false
   }
 }

@@ -916,7 +916,7 @@
         "DB-025"
       ],
       "implementationCheckpoint": {
-        "status": "REGISTERED_PG17_R08_R09_R10_R11_R12_R21_R22_PASS_7_PASS5_GAPS_REMAIN",
+        "status": "REGISTERED_PG17_R08_R09_R10_R11_R12_R14_R17_R21_R22_PASS_5_PASS5_GAPS_REMAIN",
         "additionalRegisteredRaceEvidence": {
           "result": "PASS_2_OF_2_REGISTERED_PG17_GLOBAL_ACCEPTANCE_OPEN",
           "recordedOn": "2026-10-31",
@@ -970,9 +970,9 @@
           }
         ],
         "pending": [
-          "Execute original P5-R13 through P5-R19 seven remaining assignment, sprint, placement, offer, announcement and tracker races on clean registered disposable PostgreSQL 17, including actual domain producers and immutable event checks",
-          "Operational producer cutover from recruiter invitation route to encrypted outbox and approved sender adapter + least-privilege DB dispatcher principal are not verified; real provider delivery remains DISABLED/UNCONFIRMED",
-          "Perform final complete 23-race, 21 relational, direct-negative and tenant/permission/privacy witness crosswalk on fresh main; DB019/DB020 remain separate downstream gates"
+          "Execute original P5-R13, P5-R15, P5-R16, P5-R18 and P5-R19 on exact-head clean registered PostgreSQL 17, including required upload receipt, role/coordinator, batch undo, announcement and tracker lifecycle two-session races.",
+          "Provision and verify approved privileged outbound worker principal, production recruiter invitation queue cutover, and provider adapter; mock-provider evidence is not production delivery evidence.",
+          "Complete original 23-race, 21 relational, direct-negative and tenant/permission/privacy producer-consumer crosswalk on fresh main; DB019 and DB020 remain separately OPEN."
         ],
         "evidenceIsNotAcceptance": true,
         "fiveFastWitnessClosures": {
@@ -1143,6 +1143,35 @@
             "P5-R19"
           ],
           "notAcceptance": true
+        },
+        "latestP5R14R17RegisteredEvidence": {
+          "state": "PASS_REGISTERED_PG17_FULL_GATE_NOT_DB018_ACCEPTANCE",
+          "recordedOn": "2026-10-31",
+          "evidence": [
+            {
+              "raceProbe": "P5-R14",
+              "sourceCommitSha": "c17ebbd4b2625a09c495b21dfcc1c4c80cad4105",
+              "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/41225575548",
+              "jobId": 124608906117,
+              "scope": "Two real service writers each blocked on the project FOR UPDATE lock, exactly one PLANNED sprint starts; separately one COMPLETED reopen races a different PLANNED start. Winner unique, loser PROJECT_SPRINT_ALREADY_ACTIVE, project/release coherent and only one first-start immutable event."
+            },
+            {
+              "raceProbe": "P5-R17",
+              "sourceCommitSha": "1316e06211f40586fe3ac19dbe99b248a86c6f82",
+              "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/41225747398",
+              "jobId": 124609408190,
+              "scope": "Registered PG17 full gate: two real issuers contend on placement job row and only one distinct version/ISSUED event persists; then ACCEPT versus DECLINE contend on persisted learner membership row, only one terminal state and history row."
+            }
+          ],
+          "remaining": [
+            "P5-R13",
+            "P5-R15",
+            "P5-R16",
+            "P5-R18",
+            "P5-R19"
+          ],
+          "providerActivated": false,
+          "db018Accepted": false
         }
       }
     },
