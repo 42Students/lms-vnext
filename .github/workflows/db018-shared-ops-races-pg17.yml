@@ -11,6 +11,7 @@ on:
       - ".github/workflows/db018-shared-ops-races-pg17.yml"
       - "tests/integration/db18-shared-ops-race.test.ts"
       - "tests/integration/db18-registered-file-one-shot-race.test.ts"
+      - "tests/integration/db18-assignment-receipt-race.test.ts"
       - "tests/db018-canonical-file-route-cutover.test.mjs"
       - "src/modules/courses/assignment-submission-service.ts"
       - "src/modules/courses/assignment-submission-file-service.ts"
@@ -86,6 +87,8 @@ jobs:
         run: npx vitest run --config vitest.db.registered.config.ts tests/integration/db18-recruiter-invite-transactional-outbox.test.ts
       - name: Execute registered live one-shot FILE producer race (original staged receipt still required)
         run: npx vitest run --config vitest.db.registered.config.ts tests/integration/db18-registered-file-one-shot-race.test.ts
+      - name: Original P5-R13 race through legacy FILE receipt API against registered PostgreSQL 17
+        run: npx vitest run --config vitest.db.registered.config.ts tests/integration/db18-assignment-receipt-race.test.ts -t P5-R13
       - name: Static TypeScript gate
         env:
           # The full repo exceeds V8's default ~4 GB heap on CI. Keep the
