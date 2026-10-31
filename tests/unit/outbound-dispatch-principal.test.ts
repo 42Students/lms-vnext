@@ -43,7 +43,10 @@ describe("DB018 dedicated dispatch database identity", () => {
   });
 
   it("accepts an explicit separate app login when Cloud SQL uses discrete env vars", () => {
-    const { DATABASE_URL: _ignored, ...withoutAppUrl } = valid;
+    const withoutAppUrl = {
+      DB10_DISPATCH_DATABASE_URL: valid.DB10_DISPATCH_DATABASE_URL,
+      DB10_DISPATCH_DB_ROLE: valid.DB10_DISPATCH_DB_ROLE,
+    };
     expect(validateOutboundDispatchDbConfig({
       ...withoutAppUrl,
       DB10_APP_DB_ROLE: "lms_app_api",
