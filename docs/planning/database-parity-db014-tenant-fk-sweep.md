@@ -1,5 +1,45 @@
 # DB-014 — cross-domain tenant/FK integrity sweep
 
+## DB014 0328–0329 identity and actor-grant hardening — 31 October 2026
+
+Registered forward-only migrations now additionally protect immutable
+`activity_events` identity and `lms_group_member_events` actor-role grants:
+
+- `0328_db014_activity_identity_immutable.sql` denies direct UPDATE to
+  persisted tenant/actor/subject/idempotency identity (23514), preventing
+  notification references from being re-scoped after delivery. The legal
+  metadata/delivery-status UPDATE remains unaffected.
+- `0329_db014_group_history_actor_grants.sql` locks the group and the actual
+  active user/college-membership/role grant (or the platform SUPER_ADMIN
+  grant) before accepting a non-SYSTEM history actor. The SYSTEM actor
+  remains NULL-user and the audited member-type/college checks from 0318
+  remain active. This prevents same-college actors from forging elevated
+  audit roles or revoking a grant concurrently with accepted attribution.
+- Both migrations have chained, no-structural-column-change Drizzle
+  snapshots 0328 and 0329; both are journal-registered.
+- Source witnesses: `tests/db014-activity-identity-source.test.mjs` and
+  `tests/db014-group-history-actor-grants-source.test.mjs`, alongside
+  registered PG17 negative suites with actor-change, metadata-positive,
+  role-impersonation and 55P03 grant-revocation cases.
+
+**Executed earlier retention acceptance:** [DB014 PG17 run 41151271993](https://github.com/42Students/lms-vnext/actions/runs/41151271993)
+was SUCCESS through the **0326** journal, with 11 parent DELETE fences,
+10 TRUNCATE fences, real 23514 negative deletes, two-session 55P03 races,
+registered tenant scope and activity dedupe negatives, and idempotent
+migration replay. Do not present this older exact-SHA run as acceptance
+for newly registered 0328 or 0329.
+
+**Latest migration replay evidence:** [DB020 PG17 run 41151964447](https://github.com/42Students/lms-vnext/actions/runs/41151964447)
+was SUCCESS through **0328**, including clean replay/idempotence and canonical
+generation/cat-alog checks. It does not execute DB014's new 0328 identity
+negative or 0329 actor-grant negative. A new exact-journal DB014 workflow
+run is needed to close those gates.
+
+**Still OPEN:** 0329 registered replay and new runtime negative tests,
+full producer/consumer retention and authorization acceptance, and the
+independent DB001/DB018/DB019/DB020/DB045/global database gates.
+The source-authored tests are not counted as executed PG17 success.
+
 ## Registered 0325 parent-delete retention fences — 31 October 2026
 
 The registered `0325_db014_cascade_retention_fences.sql` closes an unsafe
@@ -44,11 +84,10 @@ against a disposable synthetic parent/child FK that actually cascades, with
 the rejected DELETE retaining both rows, an accepted empty-parent DELETE,
 and a rejected TRUNCATE, all under ROLLBACK.
 
-**Acceptance remains open** until the new exact-main PostgreSQL job has
-executed successfully, target-domain parent hard-delete and actor/tenant
-negative paths have been checked, current uniqueness namespaces are
-reconciled, and dependent global phase gates are accepted. Source/test
-authorship alone is not CI evidence.
+**Acceptance remains open** for the newly registered 0328/0329 runtime
+negatives and full producer/consumer/authorization signoff. The earlier 0325
+retention and cascade race checks did pass on disposable PG17; do not claim
+latest-head acceptance from that earlier run.
 
 ## Registered PostgreSQL 17 integration update — 31 October 2026
 
