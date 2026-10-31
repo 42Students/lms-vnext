@@ -970,10 +970,10 @@
           }
         ],
         "pending": [
-          "R13 BLOCKED: exact-head registered PG17 run 41226630699 failed 42P01: course_upload_receipts absent, and 42703: existing assignment_submission_files has no assignment_submission_id; source proposal DB053 is STAGED and overlaps DB016. Reconcile source/DDL forward-only, don't blindly register.",
-          "Execute independent original P5-R18 announcement edit/edit, edit/delete and restore/delete two-session races plus P5-R19 tracker workflow writes and immutable events; R13 separately requires registered receipt producer.",
-          "Provision and verify production outbound worker principal, recruiter invitation transactional queue producer and approved provider adapter; existing fake-provider success not a live delivery claim.",
-          "Reconcile full original 23-race, 21 relational, direct-negative, tenant/privacy/permission and producer/consumer crosswalk; downstream DB019 and DB020 remain open."
+          "P5-R13 REGISTERED SCHEMA BLOCKER: run 41227827316 confirms live DB016 one-shot FILE producer PASS but original source-only DB053 course_upload_receipts absent and existing assignment_submission_files submission_id conflicts with staged assignment_submission_id. Reconcile forward-only DDL/producer/read cutover; keep original R13 FAIL required.",
+          "P5-R18/R19 real PostgreSQL17 concurrent writers and immutable activity PASS on run 41227827316; close race-specific receipts only after independent focused workflow + TypeScript gate and crosswalk are confirmed, without making full DB018 claim.",
+          "Provision and verify least-privileged production outbound worker, recruiter-invitation transactional queue producer and approved provider adapter; fake-provider race evidence is not live delivery proof.",
+          "Reconcile original 23 race, 21 relational, direct-negative, tenant/privacy/permission producer-consumer acceptance on current exact main. DB019 and DB020 remain OPEN."
         ],
         "evidenceIsNotAcceptance": true,
         "fiveFastWitnessClosures": {
@@ -1212,6 +1212,27 @@
           "sourceCandidate": "src/db/schema/course-upload-receipts-staged.ts",
           "nextCheck": "Reconcile DB053 with DB016/live assignment_submission_files before reviewed forward-only migration, register receipt producer/read cutover, then run real 2-writer R13 receipt consumption with fake private-object attestation on clean registered PG17",
           "db018Accepted": false
+        },
+        "latestRegisteredLiveFileOneShotEvidence": {
+          "status": "REGISTERED_PG17_STEP_PASS_ORIGINAL_R13_STILL_BLOCKED",
+          "codeCommitSha": "f80892e188d1d5c121dd4cc4869d603999e4e25e",
+          "workflowCommitSha": "db7ff4e13b02e4a583947b478f4c2c6ac7964a90",
+          "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/41227827316",
+          "jobId": 124615581218,
+          "test": "tests/integration/db18-registered-file-one-shot-race.test.ts",
+          "evidence": "Two real submitAssignmentWithFiles writers contend on the registered DB016/0080 READY/CLEAN assignment file row; only one bound file/submission and one storage/assignment event commit. Exact registered PostgreSQL 17 step PASS.",
+          "notOriginalAcceptance": "Original P5-R13 DB053 course_upload_receipts and incompatible DB016 assignment_submission_files schema remain unregistered; same full job fails original R13, not accepted."
+        },
+        "latestR18R19StepEvidence": {
+          "status": "REGISTERED_PG17_STEPS_PASS_IN_FULL_JOB_DB018_STILL_OPEN",
+          "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/41227827316",
+          "jobId": 124615581218,
+          "codeCommits": [
+            "fd1b80deac6fe85eccc040cdc49ed7bb1156c44f",
+            "be5dd88ed74d664f1bc4ca17b0800012a3301324"
+          ],
+          "execution": "P5-R18 real announcement edit/edit, edit/delete, restore/restore and stale restore/delete CAS; P5-R19 two real workflow writers with immutable activity row consistency; both independent steps passed clean registered PostgreSQL 17.",
+          "limitation": "Step-level green within a failed full job. Do not mark DB018 accepted until P5-R13 and production worker/provider plus original crosswalk pass; isolated shared-ops workflow TypeScript gate remains to be checked."
         }
       }
     },
