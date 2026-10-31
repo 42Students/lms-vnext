@@ -386,6 +386,89 @@ describe("Faculty registered report/history positive and scope denials",()=>{
    expectedMarkedAt:adminRecord.marked_at.toISOString(),
   })).rejects.toMatchObject({code:"ATTENDANCE_STALE_VERSION"});
  });
+ it("DB045 rejects a Faculty mark after the learner is suspended while waiting on the row lock",async()=>{
+  const f=await fixture();
+  const teacherUserId=randomUUID(),teacherMembershipId=randomUUID();
+  const teacher:RequestContext={
+   user:{...faculty.user,id:teacherUserId,identityUid:"db045-revocation-"+teacherUserId},
+   membership:{...faculty.membership!,id:teacherMembershipId,roles:["FACULTY"]},
+  };
+  await pool.query(
+   "insert into users (id,identity_uid,display_name,platform_status) values ($1,$2,$3,'ACTIVE')",
+   [teacherUserId,teacher.user.identityUid,"DB045 Race Faculty"],
+  );
+  await pool.query(
+   "insert into college_memberships (id,user_id,college_id,status) values ($1,$2,$3,'ACTIVE')",
+   [teacherMembershipId,teacherUserId,SEED_IDS.collegeA],
+  );
+  f.attendanceFacultyUserId=teacherUserId;
+  f.attendanceFacultyMembershipId=teacherMembershipId;
+  await pool.query(
+   "insert into membership_roles (id,membership_id,role) values ($1,$2,'FACULTY')",
+   [randomUUID(),teacherMembershipId],
+  );
+  await createCourseTeachingAssignment(admin,{
+   deliveryId:f.deliveryId,membershipId:teacherMembershipId,role:"CO_TEACHER",
+  });
+  const now=Date.now();
+  const session=await createFacultyAttendanceSession(teacher,{
+   deliveryId:f.deliveryId,title:"DB045 revoked roster race",
+   startsAt:new Date(now-3*60_000).toISOString(),
+   endsAt:new Date(now+20*60_000).toISOString(),
+  });
+  const blocker=await pool.connect();
+  let open=false;
+  let pending:Promise<{ok:true}|{ok:false,error:unknown}>|undefined;
+  try {
+   await blocker.query("BEGIN");open=true;
+   const {rows:[{pid}]}=await blocker.query<{pid:number}>("select pg_backend_pid() pid");
+   await blocker.query(
+    "select id from college_memberships where id=$1 for update",[f.learnerMembershipId],
+   );
+   // Initial roster SELECT remains readable at READ COMMITTED. The new
+   // transaction-time FOR SHARE must wait on this exact principal lock.
+   pending=markFacultyAttendance(teacher,session.id,{
+    deliveryId:f.deliveryId,absentMembershipIds:[f.learnerMembershipId],
+    presentMembershipIds:[],
+   }).then(()=>({ok:true as const}),error=>({ok:false as const,error}));
+   let waiting=false;
+   for(let attempt=0;attempt<80;attempt++){
+    const probe=await blocker.query<{blocked:boolean}>(
+     "select exists (select 1 from pg_stat_activity a " +
+     "where a.datname=current_database() and $1::int = any(pg_blocking_pids(a.pid))) blocked",
+     [pid],
+    );
+    if(probe.rows[0]?.blocked){waiting=true;break;}
+    await new Promise(resolve=>setTimeout(resolve,50));
+   }
+   expect(waiting).toBe(true);
+   // The suspension commits before the blocked Faculty lock is acquired.
+   await blocker.query(
+    "update college_memberships set status='SUSPENDED',suspended_at=now() where id=$1",
+    [f.learnerMembershipId],
+   );
+   await blocker.query("COMMIT");open=false;
+   const outcome=await pending;
+   expect(outcome.ok).toBe(false);
+   if(!outcome.ok)expect(outcome.error).toMatchObject({code:"ATTENDANCE_ROSTER_CONFLICT"});
+  } finally {
+   if(open)await blocker.query("ROLLBACK").catch(()=>{});
+   blocker.release();
+   if(pending)await pending;
+  }
+  const records=await pool.query(
+   "select id from attendance_records where schedule_event_id=$1",[session.id],
+  );
+  const events=await pool.query(
+   "select id from attendance_record_events where schedule_event_id=$1",[session.id],
+  );
+  const marked=await pool.query(
+   "select status from attendance_sessions where schedule_event_id=$1",[session.id],
+  );
+  expect(records.rows).toHaveLength(0);
+  expect(events.rows).toHaveLength(0);
+  expect(marked.rows).toHaveLength(0);
+ });
  it("keeps Faculty alternate contacts blocked even for a real authorized Faculty-only profile",async()=>{
   // Seeded College A Faculty ALSO has MENTOR: the self-profile permission
   // deliberately rejects mixed roles. Use the same isolated Faculty-only
