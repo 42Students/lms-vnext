@@ -80,8 +80,10 @@ for(const mode of ["YOUTUBE","LIVE_CLASS"] as const){
   // the mutation page's Next.js router.refresh navigation.
   const editorPage=await context.newPage();
   try{
-   await editorPage.goto(base);
+   const readback=await editorPage.goto(base);
+   expect(readback?.status()).toBe(200);
    const order=editorPage.getByRole("list",{name:"Lesson content order"});
+   await expect(order).toBeVisible({timeout:15_000});
    const row=order.locator("li").filter({has:editorPage.getByRole("link",{name:title,exact:true})});
    await expect(row).toBeVisible();
    await expect(row.getByText("Draft",{exact:true})).toBeVisible();
