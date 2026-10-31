@@ -17,6 +17,14 @@ export const REMAINING_DOMAIN_FILES=Object.freeze({
   DB10:["db-pass4-columns-db10_shared_operations.json","database-parity-db10-field-ledger.json"],
 });
 const floor={DB03:79,DB04:103,DB05:92,DB06:248,DB08:280,DB10:221};
+/* Frozen historical-source scope: a mutable ledger flag cannot turn an
+   active assessment table into a retirement candidate and hide its fields. */
+export const DB06_FROZEN_HISTORICAL_CANDIDATES=Object.freeze({
+  assigned_exam:19,attempted_question:13,exam:19,exam_faculty:9,
+  exam_faculty_mapping:2,exam_monitoring:12,examinee:11,
+  facial_recognition_result:7,question:10,question_option:10,
+  quiz_attempt:8,selected_option:8,
+});
 const oracleOf=(domain,artifact)=>{
   if(domain==="DB03")return artifact.legacyOracleSha;
   if(domain==="DB05")return artifact.source?.legacyBackendSha;
@@ -91,6 +99,17 @@ export function auditDb019Remaining(ledgers,artifacts,db10Overlay=null) {
       });
     } else if(domain==="DB06") {
       const tableStates=new Map(ledger.tables.map(t=>[t.table,t.sourceDisposition]));
+      for(const table of ledger.tables){
+        const historical=Object.hasOwn(DB06_FROZEN_HISTORICAL_CANDIDATES,table.table);
+        const expected=historical?"RETIREMENT_CANDIDATE_NOT_APPROVED":"ACTIVE_SOURCE_CONTRACT";
+        if(table.sourceDisposition!==expected ||
+           (historical && table.rows?.length!==DB06_FROZEN_HISTORICAL_CANDIDATES[table.table]))
+          fail("DB06_FROZEN_TABLE_DISPOSITION_DRIFT",table.table);
+      }
+      for(const [name,count] of Object.entries(DB06_FROZEN_HISTORICAL_CANDIDATES)){
+        const matching=ledger.tables.filter(t=>t.table===name && t.rows?.length===count);
+        if(matching.length!==1)fail("DB06_FROZEN_HISTORICAL_CENSUS_DRIFT",name);
+      }
       for(const table of artifact.tables||[])for(const row of table.fields||[]){
         const id=key(table.legacyTable,row.legacyField);
         add(id,row,row.sourceType,()=>{
@@ -111,18 +130,31 @@ export function auditDb019Remaining(ledgers,artifacts,db10Overlay=null) {
     } else if(domain==="DB08") {
       for(const table of artifact.tables||[])for(const row of table.fields||[]){
         const id=key(table.legacyTable,row.legacyColumn);
-        add(id,row,row.legacyType,()=>{
+        add(id,row,row.legacyType,(original)=>{
           if(row.status!=="UNVERIFIED"||row.reviewDecision!==null ||
              row.verifiedMapping!==null||row.dbTestEvidence!==null||
              !Array.isArray(row.exactNameCandidatesOnly))
             fail("DB08_UNSUPPORTED_EXACT_FIELD_MAPPING",id);
+          if(row.legacyNullable!==original.nullable ||
+             row.legacyDefault!==original.defaultValue ||
+             row.sourceEvidence!==original.sourceEvidence ||
+             JSON.stringify(row.riskFlags)!==JSON.stringify(original.riskFlags))
+            fail("DB08_SOURCE_LINEAGE_METADATA_DRIFT",id);
+          if(Array.isArray(row.exactNameCandidatesOnly) && (
+             row.exactNameCandidatesOnly.some(candidate=>
+               typeof candidate!=="string" ||
+               !/^[a-z_][a-z_0-9]*[.][a-z_][a-z_0-9]*$/i.test(candidate)) ||
+             new Set(row.exactNameCandidatesOnly).size!==row.exactNameCandidatesOnly.length))
+            fail("DB08_INVALID_EXACT_NAME_CANDIDATES",id);
           undecided++;
         });
       }
     } else if(domain==="DB10") {
       for(const row of artifact.records||[])add(
         key(row.legacyTable,row.legacyColumn),row,row.legacyType,()=>{
-        if(!required(row.familyDisposition) || row.status!=="UNMAPPED" ||
+        if(!required(row.familyDisposition) || !required(row.sourceDisposition) ||
+           !required(row.sourceDispositionState) || !required(row.familyReviewEvidence) ||
+           row.status!=="UNMAPPED" ||
            !Array.isArray(row.validationEvidence) ||
            row.validationEvidence.length!==0 ||
            row.verifiedLegacySha!==null)

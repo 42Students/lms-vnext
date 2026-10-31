@@ -84,3 +84,35 @@ test("missing domain is fail-closed rather than interpreted as zero field gaps",
   delete changed.DB06;
   expects(audit(ledgers,changed),"MISSING_DOMAIN_OR_ARTIFACT");
 });
+
+test("DB06 cannot hide an active table by changing its retirement tag",()=>{
+  const source=cp(ledgers),review=cp(artifacts);
+  source.DB06.tables.find(x=>x.table==="attend").sourceDisposition="RETIREMENT_CANDIDATE_NOT_APPROVED";
+  review.DB06.tables=review.DB06.tables.filter(x=>x.legacyTable!=="attend");
+  expects(audit(source,review),"DB06_FROZEN_TABLE_DISPOSITION_DRIFT");
+});
+test("DB06 historical retirement candidate census is immutable",()=>{
+  const source=cp(ledgers);
+  source.DB06.tables.find(x=>x.table==="assigned_exam").rows.pop();
+  expects(audit(source),"DB06_FROZEN_HISTORICAL_CENSUS_DRIFT");
+});
+test("DB08 lineage cannot lose risk, nullability or source origin",()=>{
+  const a=cp(artifacts);a.DB08.tables[0].fields[0].riskFlags=[];
+  expects(audit(ledgers,a),"DB08_SOURCE_LINEAGE_METADATA_DRIFT");
+  const b=cp(artifacts);b.DB08.tables[0].fields[0].legacyNullable="NULL_ALLOWED";
+  expects(audit(ledgers,b),"DB08_SOURCE_LINEAGE_METADATA_DRIFT");
+  const c=cp(artifacts);c.DB08.tables[0].fields[0].sourceEvidence="forged";
+  expects(audit(ledgers,c),"DB08_SOURCE_LINEAGE_METADATA_DRIFT");
+});
+test("DB08 exact name candidates must be well-formed and nonduplicate",()=>{
+  const a=cp(artifacts);a.DB08.tables[0].fields[0].exactNameCandidatesOnly.push("invented target");
+  expects(audit(ledgers,a),"DB08_INVALID_EXACT_NAME_CANDIDATES");
+  const b=cp(artifacts),c=b.DB08.tables[0].fields[0].exactNameCandidatesOnly;
+  c.push(c[0]);expects(audit(ledgers,b),"DB08_INVALID_EXACT_NAME_CANDIDATES");
+});
+test("DB10 source decision and review evidence cannot disappear",()=>{
+  const a=cp(artifacts);a.DB10.records[0].sourceDisposition="";
+  expects(audit(ledgers,a),"DB10_UNSUPPORTED_FIELD_COMPLETION");
+  const b=cp(artifacts);b.DB10.records[0].familyReviewEvidence="";
+  expects(audit(ledgers,b),"DB10_UNSUPPORTED_FIELD_COMPLETION");
+});
