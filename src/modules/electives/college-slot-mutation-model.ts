@@ -104,9 +104,12 @@ export function electiveSlotFormErrorsFromIssues(issues: unknown): Record<string
   for (const issue of issues) {
     if (!issue || typeof issue !== "object") continue;
     const { path, message } = issue as { path?: unknown; message?: unknown };
-    if (!Array.isArray(path) || typeof path[0] !== "string") continue;
+    if (!Array.isArray(path) || path.length !== 1 || typeof path[0] !== "string") continue;
+    // Object prototype names are not form fields. Never resolve untrusted
+    // issue paths through inherited properties (constructor, __proto__, etc).
+    if (!Object.hasOwn(slotApiIssueFields, path[0])) continue;
     const field = slotApiIssueFields[path[0] as keyof typeof slotApiIssueFields];
-    if (!field || errors[field]) continue;
+    if (Object.hasOwn(errors, field)) continue;
     errors[field] = typeof message === "string" && message.trim()
       ? message : "Please check this field";
   }
