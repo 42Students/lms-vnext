@@ -140,6 +140,30 @@ test("DB014 registered retention fences, direct parent deletion and TRUNCATE are
    assert.equal(removedChild.rowCount,1,"explicit child lifecycle is not changed");
    const removedParent=await db.query('DELETE FROM public."'+p+'" WHERE id=$1',[parentId]);
    assert.equal(removedParent.rowCount,1,"empty draft parent remains hard-deletable");
+
+   // Live-schema witness, not just a synthetic trigger: a legitimately targeted
+   // broadcast must never vanish through its configured CASCADE relationship.
+   const broadcastId=randomUUID();
+   const seededAdmin="30000000-0000-4000-8000-000000000002";
+   const seededCollege="20000000-0000-4000-8000-000000000001";
+   await db.query(
+     "INSERT INTO platform_broadcasts (id,title,message,show_until,audience_mode,status,author_user_id) "+
+     "VALUES ($1,'DB014 retention','PG17 negative',now() + interval '1 day',"+
+     "'SELECTED_COLLEGES','PUBLISHED',$2)",[broadcastId,seededAdmin]);
+   await db.query("INSERT INTO platform_broadcast_targets(broadcast_id,college_id) VALUES ($1,$2)",
+     [broadcastId,seededCollege]);
+   await db.query("SAVEPOINT db014_live_broadcast");
+   await assert.rejects(db.query("DELETE FROM platform_broadcasts WHERE id=$1",[broadcastId]),e=>{
+     assert.equal(e?.code,"23514");assert.match(e.message,/DB014 retention forbids deleting/);return true;
+   });
+   await db.query("ROLLBACK TO SAVEPOINT db014_live_broadcast");
+   assert.equal((await db.query(
+     "SELECT count(*)::int AS n FROM platform_broadcast_targets WHERE broadcast_id=$1",
+     [broadcastId])).rows[0].n,1,"real platform broadcast target must survive rejected parent DELETE");
+   await db.query("DELETE FROM platform_broadcast_targets WHERE broadcast_id=$1",[broadcastId]);
+   assert.equal((await db.query("DELETE FROM platform_broadcasts WHERE id=$1",[broadcastId])).rowCount,1,
+     "target-free broadcast parent remains deletable");
+
    await db.query("ROLLBACK");open=false;
    console.log(JSON.stringify({kind:"DB014_RETENTION_GATES",registered:parentsAndChildren.length,
      truncateFences:parentTables.length,negativeDelete:"23514",negativeTruncate:"23514",
