@@ -191,10 +191,19 @@ test("DB014 registered replay plus staged event/notification/group tenant bounda
       await denied(db, sql, [
         group, SEED.learnerCollegeAMembership, "LEARNER", "SYSTEM", SEED.collegeAdminUser,
       ]);
-      // A fully valid member cannot confer actor privileges on someone whose
-      // active membership is in another college.
+      // The seeded Faculty belongs to BOTH colleges, so it is not a valid
+      // outside-actor witness. Create a College-B-only actor deliberately.
+      const outsider=randomUUID(), outsiderMembership=randomUUID();
+      await db.query(
+        "INSERT INTO users(id,identity_uid,display_name) VALUES ($1,$2,'DB014 external actor')",
+        [outsider,"db014-foreign-"+outsider],
+      );
+      await db.query(
+        "INSERT INTO college_memberships(id,user_id,college_id) VALUES($1,$2,$3)",
+        [outsiderMembership,outsider,SEED.collegeB],
+      );
       await denied(db,sql,[
-        group,SEED.learnerCollegeAMembership,"LEARNER","SUPER_ADMIN",SEED.facultyUser,
+        group,SEED.learnerCollegeAMembership,"LEARNER","SUPER_ADMIN",outsider,
       ]);
       // The existing DB03 immutable-history trigger must reject an attempt
       // to rewrite persisted actor/role history after the insert.
