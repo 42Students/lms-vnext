@@ -618,7 +618,7 @@
           }
         ],
         "pending": [
-          "Execute 0325 registered zero-to-head PostgreSQL 17 replay with 11 delete/10 truncate fences, direct DELETE/TRUNCATE negative, actor/tenant and concurrency witnesses; obtain exact-SHA job evidence.",
+          "0325 registered PG17 327/327 replay, 11 DELETE/10 TRUNCATE fences, 21-edge cascade catalog, two-session parent/child FK races and original registered tenant negatives PASS in run 41151271993; obtain new exact-head rerun after newer actor/membership negatives and continue global service authorization proof.",
           "Verify producer/consumer hard-delete behavior for retention-protected parents and accepted privacy policy; reconcile current tenant-scoped uniqueness namespaces.",
           "Complete DB001 independent gate, DB018/DB019 dependencies and DB020 global database certification; no implicit DB014/global acceptance."
         ],
@@ -707,8 +707,17 @@
           "pgTest": "tests/db014-cascade-retention-registered-pg.test.mjs",
           "workflow": ".github/workflows/db014-tenant-scope-staged-acceptance.yml",
           "sourceContractCheck": "PASS_2_OF_2_V8_ADAPTED_EXACT_REPO_CONTENT_2026_10_31",
-          "registeredPg17Run": "NOT_YET_OBSERVED",
-          "note": "Parent DELETE with retained operational/history child and TRUNCATE are denied without altering FK shape. Both runtime negative execution and global DB014 acceptance remain open; code/test presence is not production proof."
+          "registeredPg17Run": "https://github.com/42Students/lms-vnext/actions/runs/41151271993",
+          "note": "Parent DELETE with retained operational/history child and TRUNCATE are denied without altering FK shape. Both runtime negative execution and global DB014 acceptance remain open; code/test presence is not production proof.",
+          "registeredPg17RunSha": "7d73eef8ebc4fcfca441cdd36571fb8b45feb0f2",
+          "registeredPg17Evidence": {
+            "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/41151271993",
+            "commitSha": "7d73eef8ebc4fcfca441cdd36571fb8b45feb0f2",
+            "result": "PASS_SCOPED_PG17_NOT_DB014_DONE",
+            "runner": "GitHub Actions disposable PostgreSQL 17.11",
+            "scope": "327/327 registered migrations and idempotence; 21 CASCADE edges catalog; 11 retained child parent DELETE fences, 10 TRUNCATE fences, two-session FK ordering race (55P03/23514 in both directions), DB014 registered tenant/group/notification negatives 6/6 and activity foundation 4/4 including tenant/actor/subject idempotency collision negatives.",
+            "additionalPending": "Later actorMembershipId idempotency scope and event-actor status/revocation witnesses must be rerun at their committed SHAs; producer/consumer authorization and final DB phase gates remain OPEN."
+          }
         },
         "additionalNegativeWitnesses": {
           "status": "AUTHORED_SOURCE_CHECKED_NOT_YET_EXACT_PG_ACCEPTED",
