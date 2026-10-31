@@ -1,0 +1,64 @@
+# DB019 bounded physical target check, not DB019/DB020 acceptance or
+# proof of semantic parity, employer authorization or live consumer workflows.
+name: DB-019 placement-offer registered physical source crosswalk PG17
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/db019-db08-offer-physical-pg17.yml"
+      - "tests/db019-db08-offer-physical-pg.test.mjs"
+      - "docs/planning/database-parity-db08-field-ledger.json"
+      - "drizzle/*.sql"
+      - "drizzle/meta/_journal.json"
+permissions:
+  contents: read
+concurrency:
+  group: db019-offer-physical-${{ github.ref }}
+  cancel-in-progress: false
+jobs:
+  offer-physical-pg17:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    services:
+      postgres:
+        image: postgres:17-alpine
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: lms_vnext_test
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres -d lms_vnext_test"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 20
+    env:
+      TEST_DATABASE_URL: postgresql://postgres:postgres@127.0.0.1:5432/lms_vnext_test
+      DB019_DISPOSABLE_TEST_DATABASE: "true"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Exact-head journal verification
+        run: npm run db:journal:verify
+      - name: Replay all registered schema from zero against disposable PostgreSQL 17
+        env:
+          DATABASE_URL: ""
+        run: npm run db:test:prepare
+      - name: Registered schema idempotence
+        env:
+          DATABASE_URL: postgresql://postgres:postgres@127.0.0.1:5432/lms_vnext_test
+        run: npm run db:migrate
+      - name: Verify 28 source offer decisions against real registered PG17 constraints
+        run: node --test tests/db019-db08-offer-physical-pg.test.mjs
+      - name: Scope boundary
+        if: always()
+        run: |
+          echo "Physical source-candidate evidence only."
+          echo "28 legacy offer rows remain UNVERIFIED until exact producer/consumer and legacy semantic approval."
+          echo "DB019 and DB020 task acceptance remain OPEN."
