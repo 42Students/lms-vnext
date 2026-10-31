@@ -2,8 +2,9 @@ import { NextResponse } from "next/server";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { apiErrorResponse } from "@/lib/api-error";
 import {
-  createAssignmentFileReadGrant,
-} from "@/modules/courses/assignment-file-service";
+  issueSubmissionFileDownloadGrant,
+  listSubmissionFiles,
+} from "@/modules/courses/assignment-submission-file-service";
 import {
   assignmentFilesRuntimeEnabled,
 } from "@/modules/courses/assignment-file-readiness";
@@ -35,15 +36,20 @@ export async function GET(
       await getCurrentRequestContext();
     const { submissionId } =
       await params;
-    const grant =
-      await createAssignmentFileReadGrant(
-        context,
-        submissionId,
+    // The legacy link redirects to the first file in the registered ordered
+    // submission. Modern clients request each file's individual signed URL.
+    const [firstFile] = await listSubmissionFiles(context, submissionId);
+    if (!firstFile) {
+      return NextResponse.json(
+        { error: "ASSIGNMENT_SUBMISSION_NOT_FOUND" },
+        { status: 404 },
       );
-    return NextResponse.redirect(
-      grant.readUrl,
-      307,
+    }
+    const grant = await issueSubmissionFileDownloadGrant(
+      context,
+      firstFile.id,
     );
+    return NextResponse.redirect(grant.url, 307);
   } catch (error) {
     return apiErrorResponse(error);
   }
