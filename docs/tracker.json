@@ -2371,10 +2371,10 @@
       "id": "DB-045",
       "title": "Reconcile DB06 attendance event-history identity and atomic producer cutover",
       "phase": "DATABASE",
-      "done": false,
+      "done": true,
       "dependsOn": [],
       "implementationCheckpoint": {
-        "status": "ATTENDANCE_REGISTERED_PG17_REPLAY_GREEN_CONSUMERS_PENDING_30_RACE_MATRIX_OPEN",
+        "status": "ACCEPTED_FULL_ORIGINAL_30_CHECK_PG17_PASS",
         "recordedOn": "2026-10-31",
         "executedEvidence": [
           {
@@ -2407,12 +2407,8 @@
             "scope": "Registered 0324 immutable attendance ledger, 0325 retention snapshot, full disposable PostgreSQL 17 journal replay and idempotence PASS; dedicated history guards PASS; 33/33 grading & publishing integrations PASS, 23/24 attendance consumers PASS, including new DB045 direct-SQL absence/event/tenant negatives. Remaining one consumer fail is prior fixture's synthetic Faculty-only role list conflicting with persisted FACULTY+MENTOR seed; test context corrected in 30cc9463, rerun awaited. This is NOT DB045 acceptance."
           }
         ],
-        "pending": [
-          "Register attendance_record_events/version/current-row integrity with forward-only journal migration and preserve explicit PRESENT current rows",
-          "Atomically cut over Faculty/Admin attendance mark and correction writers, E2E fixtures and SQL witness fixtures to immutable MARK/CORRECT events; lock and compare prior row versions",
-          "Prove full 30 direct SQL tenant/actor/retention/race/consumer negative tests at exact clean-main PostgreSQL17 SHA, then accept DB045"
-        ],
-        "evidenceIsNotAcceptance": true,
+        "pending": [],
+        "evidenceIsNotAcceptance": false,
         "registeredGradeGuards": {
           "migration": "drizzle/0320_db045_grade_event_guards.sql",
           "status": "REGISTERED_AND_EXECUTED_PARTIAL_WITH_REAL_GRADE_WRITERS",
@@ -2543,8 +2539,49 @@
           "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/41185415325",
           "commitSha": "1588c48f1d04f722d38dc62a4fde5e054cd51557",
           "scope": "Registered grade/attendance history integrity workflow passed, including corrected composite FK witness; original full 30-witness matrix remains open"
+        },
+        "finalAcceptance": {
+          "recordedOn": "2026-10-31",
+          "commitSha": "4b6883aba8d031beb2ae222898928fef556dda3e",
+          "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/41222590972",
+          "jobId": 124600058638,
+          "result": "PASS",
+          "originalRequirements": 30,
+          "sourceCrosswalk": "tests/db045-original-30-witnesses.test.mjs",
+          "previousPartialNotesAreHistorical": true,
+          "globalDatabasePhaseAccepted": false
         }
-      }
+      },
+      "acceptedAt": "2026-10-31",
+      "closureBasis": "FULL_ORIGINAL_30_REQUIREMENT_REGISTERED_POSTGRESQL_17_AND_APPLICATION_CONSUMER_ACCEPTANCE",
+      "acceptanceEvidence": [
+        {
+          "kind": "EXECUTED_REGISTERED_POSTGRESQL_17_ORIGINAL_30_WITNESS_AND_PRODUCER_ACCEPTANCE",
+          "result": "PASS",
+          "exitCode": 0,
+          "commitSha": "4b6883aba8d031beb2ae222898928fef556dda3e",
+          "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/41222590972",
+          "jobId": 124600058638,
+          "runner": "GitHub Actions Node.js 22 on Ubuntu, disposable PostgreSQL 17-alpine",
+          "witnessedRequirements": {
+            "originalTotal": 30,
+            "grade": 9,
+            "attendance": 16,
+            "integration": 5
+          },
+          "commands": [
+            "npm run db:journal:verify",
+            "npm run db:test:prepare with DATABASE_URL cleared",
+            "npm run db:migrate (registered replay idempotence)",
+            "node --test tests/db045-original-30-witnesses.test.mjs",
+            "node --test tests/db045-registered-grade-history-pg.test.mjs",
+            "npx vitest registered PostgreSQL grade/publish and immutable fixture integrations",
+            "npx vitest registered PostgreSQL Faculty/Admin/Learner attendance session/report integrations",
+            "npm run typecheck"
+          ],
+          "details": "Exact-SHA green 30-original-requirement crosswalk plus all registered PostgreSQL 17 guard, service producer, tenant/actor, immutable history, first-MARK, CAS race, wrong before/post-state, grade publisher attribution, HIDE_GRADE, explicit PRESENT and consumer evidence. The full dedicated run passed every named step. This accepts only DB-045; DB-018, DB-019 and DB-020 remain separate OPEN tasks."
+        }
+      ]
     },
     {
       "id": "DB-046",
