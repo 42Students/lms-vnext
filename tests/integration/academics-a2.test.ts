@@ -71,7 +71,9 @@ if (!databaseUrl) {
 
 const pool = new Pool({
   connectionString: databaseUrl,
-  max: 1,
+  // P5-R11 holds one connection while a second observes the service's
+  // blocked PostgreSQL lock, so a single-connection pool would deadlock.
+  max: 2,
 });
 
 const collegeAdmin: RequestContext = {
@@ -1077,7 +1079,24 @@ describe("academics A2 against PostgreSQL", () => {
           () => ({ok: true}),
           (error: unknown) => ({ok: false, error}),
         );
-        await new Promise(resolve => setTimeout(resolve, 150));
+        // Prove this is an actual two-session race: the schedule service has
+        // reached the locked academic-period row before committing CLOSE.
+        // A fixed delay can pass without ever exercising the TOCTOU window.
+        const deadline = Date.now() + 5_000;
+        let writerBlocked = false;
+        while (Date.now() < deadline) {
+          const waiting = await pool.query<{pid: number}>(
+            `SELECT pid FROM pg_stat_activity
+              WHERE datname=current_database()
+                AND pid <> pg_backend_pid()
+                AND wait_event_type='Lock'
+                AND query ILIKE '%academic_periods%'
+              LIMIT 1`,
+          );
+          if (waiting.rowCount) { writerBlocked = true; break; }
+          await new Promise(resolve => setTimeout(resolve, 25));
+        }
+        expect(writerBlocked, "The schedule writer never reached the period lock").toBe(true);
         await closer.query("COMMIT");
         expect(await outcome).toMatchObject({
           ok: false, error: {code: "ACADEMIC_PERIOD_CLOSED"},
