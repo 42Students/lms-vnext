@@ -175,6 +175,11 @@ async function cleanup() {
   await pool.query(`delete from course_teaching_assignments where delivery_id in (
     select d.id from course_section_deliveries d join course_offerings co on co.id=d.offering_id
     join courses c on c.id=co.course_id where c.code like $1)`, [codePattern]);
+  // DB014 0325 retains class discussion history; disposable fixture teardown
+  // must explicitly remove its own child messages before the delivery.
+  await pool.query(`delete from course_discussion_messages where delivery_id in (
+    select d.id from course_section_deliveries d join course_offerings co on co.id=d.offering_id
+    join courses c on c.id=co.course_id where c.code like $1)`,[codePattern]);
   await pool.query(`delete from course_section_deliveries where offering_id in (
     select co.id from course_offerings co join courses c on c.id=co.course_id
     where c.code like $1)`, [codePattern]);
