@@ -251,11 +251,22 @@ describe("College Admin attendance tenant isolation with PostgreSQL", () => {
     const query=`insert into attendance_record_events
       (${fields.join(",")}) select ${expressions.join(",")}
       from attendance_records ar where ar.schedule_event_id=$1`;
-    const params=[foreign.event,foreign.delivery,SEED_IDS.collegeB,
+    // All fixture IDs are locally generated or seeded UUIDs. Inline only
+    // these validated UUID literals; keep the foreign schedule ID bound as
+    // $1. PostgreSQL must reach the actual CHECK/tenant/actor guard instead
+    // of stopping on extraneous or untyped intermediary bind parameters.
+    const fixtureIds=[foreign.delivery,SEED_IDS.collegeB,
       SEED_IDS.superAdminUser,SEED_IDS.collegeA,
       SEED_IDS.collegeAdminUser,own.delivery,own.learner];
+    const uuidPattern=/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+    expect(fixtureIds.every(id=>uuidPattern.test(id))).toBe(true);
+    let boundQuery=query;
+    for (let i=0;i<fixtureIds.length;i++){
+      boundQuery=boundQuery.replaceAll("$"+(i+2)+"::uuid",
+        "'"+fixtureIds[i]+"'::uuid");
+    }
     let failure:unknown;
-    try {await pool.query(query,params);}catch(error){failure=error;}
+    try {await pool.query(boundQuery,[foreign.event]);}catch(error){failure=error;}
     expect(failure).toMatchObject({code:witness.code});
     expect(String((failure as {message?:string})?.message??""))
       .toContain(witness.message);
