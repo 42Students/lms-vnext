@@ -4854,7 +4854,19 @@
           "verifiedMapping": null,
           "producerConsumerEvidence": null,
           "dbTestEvidence": null,
-          "reviewDecision": null
+          "reviewDecision": {
+            "reviewStatus": "SOURCE_REVIEWED_PROPOSAL_NOT_VERIFIED",
+            "classification": "PROPOSED_ACTIVE_FIELD_MAPPING",
+            "targetRefs": [
+              "placement_batch_lifecycles.cohort_id"
+            ],
+            "sourceRationale": "Legacy batch numeric identity is not a stand-alone vNext ID: current lifecycle is keyed by an academic cohort UUID.",
+            "outstandingProof": "Verify academic cohort/source batch/college crosswalk and do not infer a cohort from the old integer.",
+            "frozenLegacyOracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+            "runtimeVerified": false,
+            "consumerVerified": false,
+            "retirementApproved": false
+          }
         },
         {
           "legacyColumn": "college_id",
@@ -4870,7 +4882,19 @@
           "verifiedMapping": null,
           "producerConsumerEvidence": null,
           "dbTestEvidence": null,
-          "reviewDecision": null
+          "reviewDecision": {
+            "reviewStatus": "SOURCE_REVIEWED_PROPOSAL_NOT_VERIFIED",
+            "classification": "PROPOSED_ACTIVE_FIELD_MAPPING",
+            "targetRefs": [
+              "placement_batch_lifecycles.college_id"
+            ],
+            "sourceRationale": "The placement participation lifecycle stores a college FK independently from the academic cohort.",
+            "outstandingProof": "Prove cohort program and department match the college through registered scope guards.",
+            "frozenLegacyOracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+            "runtimeVerified": false,
+            "consumerVerified": false,
+            "retirementApproved": false
+          }
         },
         {
           "legacyColumn": "registration_deadline",
@@ -4886,7 +4910,19 @@
           "verifiedMapping": null,
           "producerConsumerEvidence": null,
           "dbTestEvidence": null,
-          "reviewDecision": null
+          "reviewDecision": {
+            "reviewStatus": "SOURCE_REVIEWED_PROPOSAL_NOT_VERIFIED",
+            "classification": "PROPOSED_ACTIVE_FIELD_MAPPING",
+            "targetRefs": [
+              "placement_batch_lifecycles.registration_deadline"
+            ],
+            "sourceRationale": "Batch registration cutoff is a nullable timestamptz distinct from season end date.",
+            "outstandingProof": "Verify source time zone and race between learner consent and deadline closure.",
+            "frozenLegacyOracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+            "runtimeVerified": false,
+            "consumerVerified": false,
+            "retirementApproved": false
+          }
         },
         {
           "legacyColumn": "invited_at",
@@ -4902,7 +4938,19 @@
           "verifiedMapping": null,
           "producerConsumerEvidence": null,
           "dbTestEvidence": null,
-          "reviewDecision": null
+          "reviewDecision": {
+            "reviewStatus": "SOURCE_REVIEWED_PROPOSAL_NOT_VERIFIED",
+            "classification": "PROPOSED_ACTIVE_FIELD_MAPPING",
+            "targetRefs": [
+              "placement_batch_lifecycles.invited_at"
+            ],
+            "sourceRationale": "Cohort invitation instant is separately tracked from registration choices and finishing.",
+            "outstandingProof": "Prove authenticated invite writer, historical chronology and idempotent resend.",
+            "frozenLegacyOracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+            "runtimeVerified": false,
+            "consumerVerified": false,
+            "retirementApproved": false
+          }
         },
         {
           "legacyColumn": "finished_at",
@@ -4918,7 +4966,19 @@
           "verifiedMapping": null,
           "producerConsumerEvidence": null,
           "dbTestEvidence": null,
-          "reviewDecision": null
+          "reviewDecision": {
+            "reviewStatus": "SOURCE_REVIEWED_PROPOSAL_NOT_VERIFIED",
+            "classification": "PROPOSED_ACTIVE_FIELD_MAPPING",
+            "targetRefs": [
+              "placement_batch_lifecycles.finished_at"
+            ],
+            "sourceRationale": "Finished-batch state is a durable timestamp, not the same as season CLOSED.",
+            "outstandingProof": "Verify finished lifecycle prevents new participation and remains monotonic under competing operations.",
+            "frozenLegacyOracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+            "runtimeVerified": false,
+            "consumerVerified": false,
+            "retirementApproved": false
+          }
         },
         {
           "legacyColumn": "rules_json",
@@ -4934,7 +4994,19 @@
           "verifiedMapping": null,
           "producerConsumerEvidence": null,
           "dbTestEvidence": null,
-          "reviewDecision": null
+          "reviewDecision": {
+            "reviewStatus": "SOURCE_REVIEWED_PROPOSAL_NOT_VERIFIED",
+            "classification": "PROPOSED_ACTIVE_FIELD_MAPPING",
+            "targetRefs": [
+              "placement_batch_lifecycles.rules_override"
+            ],
+            "sourceRationale": "The registered JSONB rules override is constrained to an object rather than arbitrary legacy JSON.",
+            "outstandingProof": "Approve source-to-policy keys, allowlist and schema version before applying historic rules.",
+            "frozenLegacyOracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+            "runtimeVerified": false,
+            "consumerVerified": false,
+            "retirementApproved": false
+          }
         },
         {
           "legacyColumn": "created_at",
@@ -4950,7 +5022,19 @@
           "verifiedMapping": null,
           "producerConsumerEvidence": null,
           "dbTestEvidence": null,
-          "reviewDecision": null
+          "reviewDecision": {
+            "reviewStatus": "SOURCE_REVIEWED_PROPOSAL_NOT_VERIFIED",
+            "classification": "PROPOSED_ACTIVE_FIELD_MAPPING",
+            "targetRefs": [
+              "placement_batch_lifecycles.created_at"
+            ],
+            "sourceRationale": "Current create timestamp is independent of invitation and deadline times.",
+            "outstandingProof": "Verify original source zone and creation ordering in the new cohort lifecycle.",
+            "frozenLegacyOracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+            "runtimeVerified": false,
+            "consumerVerified": false,
+            "retirementApproved": false
+          }
         },
         {
           "legacyColumn": "updated_at",
@@ -4966,7 +5050,19 @@
           "verifiedMapping": null,
           "producerConsumerEvidence": null,
           "dbTestEvidence": null,
-          "reviewDecision": null
+          "reviewDecision": {
+            "reviewStatus": "SOURCE_REVIEWED_PROPOSAL_NOT_VERIFIED",
+            "classification": "PROPOSED_ACTIVE_FIELD_MAPPING",
+            "targetRefs": [
+              "placement_batch_lifecycles.updated_at"
+            ],
+            "sourceRationale": "Current batch update time records writes but does not substitute for a historical numeric version.",
+            "outstandingProof": "Prove concurrent lifecycle and rules updates cannot clobber newer decisions.",
+            "frozenLegacyOracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+            "runtimeVerified": false,
+            "consumerVerified": false,
+            "retirementApproved": false
+          }
         }
       ]
     },
@@ -5281,7 +5377,19 @@
           "verifiedMapping": null,
           "producerConsumerEvidence": null,
           "dbTestEvidence": null,
-          "reviewDecision": null
+          "reviewDecision": {
+            "reviewStatus": "SOURCE_REVIEWED_PROPOSAL_NOT_VERIFIED",
+            "classification": "PROPOSED_ACTIVE_FIELD_MAPPING",
+            "targetRefs": [
+              "placement_eligibility_decisions.id"
+            ],
+            "sourceRationale": "Historic numeric decision ID does not encode a valid current UUID or tenant authorization.",
+            "outstandingProof": "Verify original decision provenance and one scoped decision per subject.",
+            "frozenLegacyOracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+            "runtimeVerified": false,
+            "consumerVerified": false,
+            "retirementApproved": false
+          }
         },
         {
           "legacyColumn": "college_id",
@@ -5297,7 +5405,19 @@
           "verifiedMapping": null,
           "producerConsumerEvidence": null,
           "dbTestEvidence": null,
-          "reviewDecision": null
+          "reviewDecision": {
+            "reviewStatus": "SOURCE_REVIEWED_PROPOSAL_NOT_VERIFIED",
+            "classification": "PROPOSED_ACTIVE_FIELD_MAPPING",
+            "targetRefs": [
+              "placement_eligibility_decisions.college_id"
+            ],
+            "sourceRationale": "Eligibility status is explicitly college-scoped and cannot be linked by a legacy numeric college locator alone.",
+            "outstandingProof": "Verify scope+subject actually belongs to college before decision writes.",
+            "frozenLegacyOracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+            "runtimeVerified": false,
+            "consumerVerified": false,
+            "retirementApproved": false
+          }
         },
         {
           "legacyColumn": "scope_type",
@@ -5311,7 +5431,19 @@
           "verifiedMapping": null,
           "producerConsumerEvidence": null,
           "dbTestEvidence": null,
-          "reviewDecision": null
+          "reviewDecision": {
+            "reviewStatus": "SOURCE_REVIEWED_PROPOSAL_NOT_VERIFIED",
+            "classification": "NEEDS_ENUM_CROSSWALK",
+            "targetRefs": [
+              "placement_eligibility_decisions.scope_type"
+            ],
+            "sourceRationale": "Current scope-type CHECK accepts MEMBERSHIP/SECTION/COHORT and source may use different labels.",
+            "outstandingProof": "Approve every source scope enum translation and reject unknown types.",
+            "frozenLegacyOracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+            "runtimeVerified": false,
+            "consumerVerified": false,
+            "retirementApproved": false
+          }
         },
         {
           "legacyColumn": "scope_id",
@@ -5327,7 +5459,19 @@
           "verifiedMapping": null,
           "producerConsumerEvidence": null,
           "dbTestEvidence": null,
-          "reviewDecision": null
+          "reviewDecision": {
+            "reviewStatus": "SOURCE_REVIEWED_PROPOSAL_NOT_VERIFIED",
+            "classification": "PROPOSED_ACTIVE_FIELD_MAPPING",
+            "targetRefs": [
+              "placement_eligibility_decisions.scope_id"
+            ],
+            "sourceRationale": "The UUID scope target must be resolved by scope_type rather than guessing from an unrelated row ID.",
+            "outstandingProof": "Prove existence and same-college membership/section/cohort identity under registered scope trigger.",
+            "frozenLegacyOracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+            "runtimeVerified": false,
+            "consumerVerified": false,
+            "retirementApproved": false
+          }
         },
         {
           "legacyColumn": "status",
@@ -5341,7 +5485,19 @@
           "verifiedMapping": null,
           "producerConsumerEvidence": null,
           "dbTestEvidence": null,
-          "reviewDecision": null
+          "reviewDecision": {
+            "reviewStatus": "SOURCE_REVIEWED_PROPOSAL_NOT_VERIFIED",
+            "classification": "NEEDS_ENUM_CROSSWALK",
+            "targetRefs": [
+              "placement_eligibility_decisions.status"
+            ],
+            "sourceRationale": "Registered decision statuses are ELIGIBLE/INELIGIBLE while source eligibility may contain additional intermediate policy values.",
+            "outstandingProof": "Verify source enum projection, learner visibility and downstream published-drive gate.",
+            "frozenLegacyOracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+            "runtimeVerified": false,
+            "consumerVerified": false,
+            "retirementApproved": false
+          }
         },
         {
           "legacyColumn": "reason",
@@ -5355,7 +5511,19 @@
           "verifiedMapping": null,
           "producerConsumerEvidence": null,
           "dbTestEvidence": null,
-          "reviewDecision": null
+          "reviewDecision": {
+            "reviewStatus": "SOURCE_REVIEWED_PROPOSAL_NOT_VERIFIED",
+            "classification": "PROPOSED_ACTIVE_FIELD_MAPPING",
+            "targetRefs": [
+              "placement_eligibility_decisions.reason"
+            ],
+            "sourceRationale": "An ineligible decision requires a nonblank reason; source short text might contain staff-only policy notes.",
+            "outstandingProof": "Prove required-reason validation and staff/learner data minimization.",
+            "frozenLegacyOracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+            "runtimeVerified": false,
+            "consumerVerified": false,
+            "retirementApproved": false
+          }
         },
         {
           "legacyColumn": "note",
@@ -5369,7 +5537,19 @@
           "verifiedMapping": null,
           "producerConsumerEvidence": null,
           "dbTestEvidence": null,
-          "reviewDecision": null
+          "reviewDecision": {
+            "reviewStatus": "SOURCE_REVIEWED_PROPOSAL_NOT_VERIFIED",
+            "classification": "PROPOSED_ACTIVE_FIELD_MAPPING",
+            "targetRefs": [
+              "placement_eligibility_decisions.note"
+            ],
+            "sourceRationale": "Source free-text note is retained separately from the decision reason and may contain private staff comments.",
+            "outstandingProof": "Verify staff-only access, retention and no leakage through learner eligibility or notifications.",
+            "frozenLegacyOracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+            "runtimeVerified": false,
+            "consumerVerified": false,
+            "retirementApproved": false
+          }
         },
         {
           "legacyColumn": "decided_by_type",
@@ -5383,7 +5563,17 @@
           "verifiedMapping": null,
           "producerConsumerEvidence": null,
           "dbTestEvidence": null,
-          "reviewDecision": null
+          "reviewDecision": {
+            "reviewStatus": "SOURCE_REVIEWED_PROPOSAL_NOT_VERIFIED",
+            "classification": "EXPLICIT_RUNTIME_GAP",
+            "targetRefs": [],
+            "sourceRationale": "Historic actor type can identify a system process and has no dedicated registered decision actor-kind column.",
+            "outstandingProof": "Define system actor representation without impersonating a staff principal.",
+            "frozenLegacyOracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+            "runtimeVerified": false,
+            "consumerVerified": false,
+            "retirementApproved": false
+          }
         },
         {
           "legacyColumn": "decided_by_id",
@@ -5399,7 +5589,19 @@
           "verifiedMapping": null,
           "producerConsumerEvidence": null,
           "dbTestEvidence": null,
-          "reviewDecision": null
+          "reviewDecision": {
+            "reviewStatus": "SOURCE_REVIEWED_PROPOSAL_NOT_VERIFIED",
+            "classification": "PROPOSED_ACTIVE_FIELD_MAPPING",
+            "targetRefs": [
+              "placement_eligibility_decisions.decided_by_user_id"
+            ],
+            "sourceRationale": "Source numeric actor is mapped provisionally to a nullable current UUID user.",
+            "outstandingProof": "Verify original role and college authorization, including revoked and deleted accounts.",
+            "frozenLegacyOracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+            "runtimeVerified": false,
+            "consumerVerified": false,
+            "retirementApproved": false
+          }
         },
         {
           "legacyColumn": "decided_by_name",
@@ -5413,7 +5615,17 @@
           "verifiedMapping": null,
           "producerConsumerEvidence": null,
           "dbTestEvidence": null,
-          "reviewDecision": null
+          "reviewDecision": {
+            "reviewStatus": "SOURCE_REVIEWED_PROPOSAL_NOT_VERIFIED",
+            "classification": "EXPLICIT_RUNTIME_GAP",
+            "targetRefs": [],
+            "sourceRationale": "Historic decision actor display is not an authoritative credential and is not stored on the registered decision.",
+            "outstandingProof": "Define privacy-aware display fallback from immutable actor history, not guessed identities.",
+            "frozenLegacyOracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+            "runtimeVerified": false,
+            "consumerVerified": false,
+            "retirementApproved": false
+          }
         },
         {
           "legacyColumn": "decided_at",
@@ -5429,7 +5641,19 @@
           "verifiedMapping": null,
           "producerConsumerEvidence": null,
           "dbTestEvidence": null,
-          "reviewDecision": null
+          "reviewDecision": {
+            "reviewStatus": "SOURCE_REVIEWED_PROPOSAL_NOT_VERIFIED",
+            "classification": "PROPOSED_ACTIVE_FIELD_MAPPING",
+            "targetRefs": [
+              "placement_eligibility_decisions.decided_at"
+            ],
+            "sourceRationale": "The decision time is a timezone-aware instant distinct from record creation and update.",
+            "outstandingProof": "Prove original local time conversion and undo decision chronology.",
+            "frozenLegacyOracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+            "runtimeVerified": false,
+            "consumerVerified": false,
+            "retirementApproved": false
+          }
         }
       ]
     },
@@ -5458,7 +5682,19 @@
           "verifiedMapping": null,
           "producerConsumerEvidence": null,
           "dbTestEvidence": null,
-          "reviewDecision": null
+          "reviewDecision": {
+            "reviewStatus": "SOURCE_REVIEWED_PROPOSAL_NOT_VERIFIED",
+            "classification": "PROPOSED_ACTIVE_FIELD_MAPPING",
+            "targetRefs": [
+              "placement_eligibility_events.id"
+            ],
+            "sourceRationale": "Legacy BIGINT eligibility event identity becomes a registered UUID event independent of sequence order.",
+            "outstandingProof": "Verify source event provenance and deterministic ordered consumption.",
+            "frozenLegacyOracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+            "runtimeVerified": false,
+            "consumerVerified": false,
+            "retirementApproved": false
+          }
         },
         {
           "legacyColumn": "college_id",
@@ -5474,7 +5710,19 @@
           "verifiedMapping": null,
           "producerConsumerEvidence": null,
           "dbTestEvidence": null,
-          "reviewDecision": null
+          "reviewDecision": {
+            "reviewStatus": "SOURCE_REVIEWED_PROPOSAL_NOT_VERIFIED",
+            "classification": "PROPOSED_ACTIVE_FIELD_MAPPING",
+            "targetRefs": [
+              "placement_eligibility_events.college_id"
+            ],
+            "sourceRationale": "Historical eligibility actions have a persisted college owner separate from scope UUID.",
+            "outstandingProof": "Verify original college and scope target both resolve to the same tenant.",
+            "frozenLegacyOracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+            "runtimeVerified": false,
+            "consumerVerified": false,
+            "retirementApproved": false
+          }
         },
         {
           "legacyColumn": "action_id",
@@ -5488,7 +5736,19 @@
           "verifiedMapping": null,
           "producerConsumerEvidence": null,
           "dbTestEvidence": null,
-          "reviewDecision": null
+          "reviewDecision": {
+            "reviewStatus": "SOURCE_REVIEWED_PROPOSAL_NOT_VERIFIED",
+            "classification": "PROPOSED_ACTIVE_FIELD_MAPPING",
+            "targetRefs": [
+              "placement_eligibility_events.action_id"
+            ],
+            "sourceRationale": "The UUID action groups a bulk write and is unique per scope in the registered event ledger.",
+            "outstandingProof": "Verify source action UUID shape, idempotence and scoped duplicate rejection.",
+            "frozenLegacyOracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+            "runtimeVerified": false,
+            "consumerVerified": false,
+            "retirementApproved": false
+          }
         },
         {
           "legacyColumn": "scope_type",
@@ -5502,7 +5762,19 @@
           "verifiedMapping": null,
           "producerConsumerEvidence": null,
           "dbTestEvidence": null,
-          "reviewDecision": null
+          "reviewDecision": {
+            "reviewStatus": "SOURCE_REVIEWED_PROPOSAL_NOT_VERIFIED",
+            "classification": "NEEDS_ENUM_CROSSWALK",
+            "targetRefs": [
+              "placement_eligibility_events.scope_type"
+            ],
+            "sourceRationale": "Event scope enum is restricted to MEMBERSHIP/SECTION/COHORT in current SQL.",
+            "outstandingProof": "Approve historical scope labels and identical semantics across decision and event consumers.",
+            "frozenLegacyOracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+            "runtimeVerified": false,
+            "consumerVerified": false,
+            "retirementApproved": false
+          }
         },
         {
           "legacyColumn": "scope_id",
@@ -5518,7 +5790,19 @@
           "verifiedMapping": null,
           "producerConsumerEvidence": null,
           "dbTestEvidence": null,
-          "reviewDecision": null
+          "reviewDecision": {
+            "reviewStatus": "SOURCE_REVIEWED_PROPOSAL_NOT_VERIFIED",
+            "classification": "PROPOSED_ACTIVE_FIELD_MAPPING",
+            "targetRefs": [
+              "placement_eligibility_events.scope_id"
+            ],
+            "sourceRationale": "Action target UUID is polymorphic by scope and enforced by a registered trigger.",
+            "outstandingProof": "Prove scope-to-college and active membership/section/cohort existence.",
+            "frozenLegacyOracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+            "runtimeVerified": false,
+            "consumerVerified": false,
+            "retirementApproved": false
+          }
         },
         {
           "legacyColumn": "before_status",
@@ -5532,7 +5816,19 @@
           "verifiedMapping": null,
           "producerConsumerEvidence": null,
           "dbTestEvidence": null,
-          "reviewDecision": null
+          "reviewDecision": {
+            "reviewStatus": "SOURCE_REVIEWED_PROPOSAL_NOT_VERIFIED",
+            "classification": "NEEDS_ENUM_CROSSWALK",
+            "targetRefs": [
+              "placement_eligibility_events.before_status"
+            ],
+            "sourceRationale": "Nullable previous status has registered ELIGIBLE/INELIGIBLE constraints unlike arbitrary historic strings.",
+            "outstandingProof": "Verify no-status semantics and immutable previous/current transition consistency.",
+            "frozenLegacyOracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+            "runtimeVerified": false,
+            "consumerVerified": false,
+            "retirementApproved": false
+          }
         },
         {
           "legacyColumn": "before_reason",
@@ -5546,7 +5842,19 @@
           "verifiedMapping": null,
           "producerConsumerEvidence": null,
           "dbTestEvidence": null,
-          "reviewDecision": null
+          "reviewDecision": {
+            "reviewStatus": "SOURCE_REVIEWED_PROPOSAL_NOT_VERIFIED",
+            "classification": "PROPOSED_ACTIVE_FIELD_MAPPING",
+            "targetRefs": [
+              "placement_eligibility_events.before_reason"
+            ],
+            "sourceRationale": "Pre-decision explanation is independently stored for exact undo but must not contain public candidate messages.",
+            "outstandingProof": "Verify reason length, privacy and required value if preceding status was ineligible.",
+            "frozenLegacyOracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+            "runtimeVerified": false,
+            "consumerVerified": false,
+            "retirementApproved": false
+          }
         },
         {
           "legacyColumn": "before_note",
@@ -5560,7 +5868,19 @@
           "verifiedMapping": null,
           "producerConsumerEvidence": null,
           "dbTestEvidence": null,
-          "reviewDecision": null
+          "reviewDecision": {
+            "reviewStatus": "SOURCE_REVIEWED_PROPOSAL_NOT_VERIFIED",
+            "classification": "PROPOSED_ACTIVE_FIELD_MAPPING",
+            "targetRefs": [
+              "placement_eligibility_events.before_note"
+            ],
+            "sourceRationale": "Pre-decision staff note is retained separately from reason to support immutable reversal.",
+            "outstandingProof": "Verify staff-only read and that undo cannot overwrite historic notes.",
+            "frozenLegacyOracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+            "runtimeVerified": false,
+            "consumerVerified": false,
+            "retirementApproved": false
+          }
         },
         {
           "legacyColumn": "after_status",
@@ -5574,7 +5894,19 @@
           "verifiedMapping": null,
           "producerConsumerEvidence": null,
           "dbTestEvidence": null,
-          "reviewDecision": null
+          "reviewDecision": {
+            "reviewStatus": "SOURCE_REVIEWED_PROPOSAL_NOT_VERIFIED",
+            "classification": "NEEDS_ENUM_CROSSWALK",
+            "targetRefs": [
+              "placement_eligibility_events.after_status"
+            ],
+            "sourceRationale": "Nullable next status uses the registered eligibility enum and must describe an actual state change.",
+            "outstandingProof": "Verify DECIDE/UNDO transitions, conflict ordering and rejection of unknown source values.",
+            "frozenLegacyOracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+            "runtimeVerified": false,
+            "consumerVerified": false,
+            "retirementApproved": false
+          }
         },
         {
           "legacyColumn": "after_reason",
@@ -5588,7 +5920,19 @@
           "verifiedMapping": null,
           "producerConsumerEvidence": null,
           "dbTestEvidence": null,
-          "reviewDecision": null
+          "reviewDecision": {
+            "reviewStatus": "SOURCE_REVIEWED_PROPOSAL_NOT_VERIFIED",
+            "classification": "PROPOSED_ACTIVE_FIELD_MAPPING",
+            "targetRefs": [
+              "placement_eligibility_events.after_reason"
+            ],
+            "sourceRationale": "Event after-reason is distinct from current decision note and must be supplied for INELIGIBLE.",
+            "outstandingProof": "Verify source reason semantics and production service enforcement.",
+            "frozenLegacyOracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+            "runtimeVerified": false,
+            "consumerVerified": false,
+            "retirementApproved": false
+          }
         },
         {
           "legacyColumn": "after_note",
@@ -5602,7 +5946,19 @@
           "verifiedMapping": null,
           "producerConsumerEvidence": null,
           "dbTestEvidence": null,
-          "reviewDecision": null
+          "reviewDecision": {
+            "reviewStatus": "SOURCE_REVIEWED_PROPOSAL_NOT_VERIFIED",
+            "classification": "PROPOSED_ACTIVE_FIELD_MAPPING",
+            "targetRefs": [
+              "placement_eligibility_events.after_note"
+            ],
+            "sourceRationale": "After-note is a staff-private before/after snapshot, not an authorization or candidate-visible reason.",
+            "outstandingProof": "Verify private projection and immutable update restrictions.",
+            "frozenLegacyOracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+            "runtimeVerified": false,
+            "consumerVerified": false,
+            "retirementApproved": false
+          }
         },
         {
           "legacyColumn": "actor_type",
@@ -5616,7 +5972,17 @@
           "verifiedMapping": null,
           "producerConsumerEvidence": null,
           "dbTestEvidence": null,
-          "reviewDecision": null
+          "reviewDecision": {
+            "reviewStatus": "SOURCE_REVIEWED_PROPOSAL_NOT_VERIFIED",
+            "classification": "EXPLICIT_RUNTIME_GAP",
+            "targetRefs": [],
+            "sourceRationale": "Legacy event actor kind is not represented separately from current mandatory actorUserId.",
+            "outstandingProof": "Define auditable system-origin and restored actor provenance without guessing a staff role.",
+            "frozenLegacyOracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+            "runtimeVerified": false,
+            "consumerVerified": false,
+            "retirementApproved": false
+          }
         },
         {
           "legacyColumn": "actor_id",
@@ -5632,7 +5998,19 @@
           "verifiedMapping": null,
           "producerConsumerEvidence": null,
           "dbTestEvidence": null,
-          "reviewDecision": null
+          "reviewDecision": {
+            "reviewStatus": "SOURCE_REVIEWED_PROPOSAL_NOT_VERIFIED",
+            "classification": "PROPOSED_ACTIVE_FIELD_MAPPING",
+            "targetRefs": [
+              "placement_eligibility_events.actor_user_id"
+            ],
+            "sourceRationale": "Legacy actor integer is rekeyed to the verified user UUID for each immutable action.",
+            "outstandingProof": "Prove actor role and college authorization at event time and fail on missing identity.",
+            "frozenLegacyOracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+            "runtimeVerified": false,
+            "consumerVerified": false,
+            "retirementApproved": false
+          }
         },
         {
           "legacyColumn": "actor_name",
@@ -5646,7 +6024,17 @@
           "verifiedMapping": null,
           "producerConsumerEvidence": null,
           "dbTestEvidence": null,
-          "reviewDecision": null
+          "reviewDecision": {
+            "reviewStatus": "SOURCE_REVIEWED_PROPOSAL_NOT_VERIFIED",
+            "classification": "EXPLICIT_RUNTIME_GAP",
+            "targetRefs": [],
+            "sourceRationale": "Legacy actor display is a snapshot string, while the current event references only the immutable actor user ID.",
+            "outstandingProof": "Prove what the historical display should reveal after account deletion/redaction.",
+            "frozenLegacyOracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+            "runtimeVerified": false,
+            "consumerVerified": false,
+            "retirementApproved": false
+          }
         },
         {
           "legacyColumn": "undone_at",
@@ -5662,7 +6050,20 @@
           "verifiedMapping": null,
           "producerConsumerEvidence": null,
           "dbTestEvidence": null,
-          "reviewDecision": null
+          "reviewDecision": {
+            "reviewStatus": "SOURCE_REVIEWED_PROPOSAL_NOT_VERIFIED",
+            "classification": "EXPLICIT_RUNTIME_GAP",
+            "targetRefs": [
+              "placement_eligibility_events.reverses_action_id",
+              "placement_eligibility_events.occurred_at"
+            ],
+            "sourceRationale": "Legacy undone_at updates an earlier event, while vNext appends a new inverse event referencing the original action.",
+            "outstandingProof": "Prove exact undo event ordering and no mutation of original event contents; retain true source timestamps.",
+            "frozenLegacyOracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+            "runtimeVerified": false,
+            "consumerVerified": false,
+            "retirementApproved": false
+          }
         },
         {
           "legacyColumn": "created_at",
@@ -5678,7 +6079,19 @@
           "verifiedMapping": null,
           "producerConsumerEvidence": null,
           "dbTestEvidence": null,
-          "reviewDecision": null
+          "reviewDecision": {
+            "reviewStatus": "SOURCE_REVIEWED_PROPOSAL_NOT_VERIFIED",
+            "classification": "PROPOSED_ACTIVE_FIELD_MAPPING",
+            "targetRefs": [
+              "placement_eligibility_events.occurred_at"
+            ],
+            "sourceRationale": "Historical event creation maps to current occurrence instant, separate from bulk action ID and sequence.",
+            "outstandingProof": "Prove source timezone and monotonic order when simultaneous bulk decisions race.",
+            "frozenLegacyOracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+            "runtimeVerified": false,
+            "consumerVerified": false,
+            "retirementApproved": false
+          }
         }
       ]
     },
