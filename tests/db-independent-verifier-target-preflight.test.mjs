@@ -39,7 +39,7 @@ function rejectedBeforeConnecting(name, urls, refusal, secret) {
 
 test("DB001 supplied database is guarded before the read-only version probe", () => {
   const preflight = verifierSource.indexOf("assertSafeDb01TestTarget({");
-  const probe = verifierSource.indexOf("postgresVersion: providedPostgresVersion(env)");
+  const probe = verifierSource.indexOf("const actualServerVersion = providedPostgresVersion(env);");
   assert.ok(preflight >= 0 && probe > preflight,
     "verifier must preflight untrusted supplied URLs before any PG connection");
   assert.match(verifierSource, /import\s*\{\s*assertSafeDb01TestTarget\s*\}/);
