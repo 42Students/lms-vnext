@@ -62,7 +62,7 @@ permissions:
 
 concurrency:
   group: lms-db018-full-gate-${{ github.ref }}
-  cancel-in-progress: false
+  cancel-in-progress: true
 
 jobs:
   db018-full-negative-race:
