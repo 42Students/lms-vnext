@@ -180,9 +180,9 @@
     "focusedVitestTestsPassed": 50,
     "fullSuiteVitestTestsExecuted": 92,
     "fullSuiteVitestTestsPassed": 92,
-    "pendingConcurrencyAuthored": 1,
-    "additionalRegisteredConcurrencyRuntimeExecuted": 1,
-    "additionalRegisteredConcurrencyRuntimePassed": 1
+    "pendingConcurrencyAuthored": 0,
+    "additionalRegisteredConcurrencyRuntimeExecuted": 2,
+    "additionalRegisteredConcurrencyRuntimePassed": 2
   },
   "knownRedRaceWitnesses": [
     {
@@ -378,16 +378,7 @@
     "fullSuiteVitestTestsPassed": 92,
     "note": "Five new distinct constraint rejection witnesses passed (users_version_ck, sections_capacity_ck, sections_min_size_ck, registered db02_course_offerings_credits_ck, placement_companies_version_ck). All real registered PostgreSQL constraints, no disabled guards."
   },
-  "authoredPendingConcurrencyWitnesses": [
-    {
-      "id": "DB18-C05",
-      "raceProbe": "P5-R03",
-      "file": "tests/integration/groups-db03.test.ts",
-      "title": "P5-R03 serializes concurrent last-seat group admissions without counter or event drift",
-      "state": "AUTHORED_AWAITING_REGISTERED_PG17",
-      "requiredEvidence": "Execute full registered DB018 PostgreSQL 17 workflow at exact commit; verify two real concurrent service joins, 1 ACTIVE, 1 WAITLISTED, active_count=1 and 2 immutable events; do not increase runtimeExecuted or runtimePassed from authored source alone."
-    }
-  ],
+  "authoredPendingConcurrencyWitnesses": [],
   "registeredAdditionalConcurrencyWitnesses": [
     {
       "id": "DB18-C06",
@@ -399,6 +390,17 @@
       "commitSha": "4e6b9e97c38183a13da6cb7af9fe47281449cdcc",
       "workflow": ".github/workflows/db018-full-gate-acceptance.yml",
       "evidence": "Standalone A2 producer step passed: both create/update are blocked on the uncommitted period lock, reject after CLOSE commits, and leave the schedule unchanged. Overall DB-018 remains OPEN."
+    },
+    {
+      "id": "DB18-C05",
+      "raceProbe": "P5-R03",
+      "file": "tests/integration/groups-db03.test.ts",
+      "title": "P5-R03 serializes concurrent last-seat group admissions without counter or event drift",
+      "state": "REGISTERED_PG17_PASS",
+      "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/41150736524",
+      "commitSha": "7af3312a279a0f5538421229d2e6793bdeeb1be8",
+      "workflow": ".github/workflows/db018-full-gate-acceptance.yml",
+      "evidence": "Real BUS group with capacity=1, two separate service joins blocked on parent row, one ACTIVE and one WAITLISTED result, active_count=1 and exactly two membership events; full registered PG17 workflow passed. Global DB018 still OPEN."
     }
   ]
 }
