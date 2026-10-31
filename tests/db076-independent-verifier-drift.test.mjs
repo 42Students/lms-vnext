@@ -116,7 +116,7 @@ test("DB076 guards both staged and unstaged tracked migration drift relative to 
 
 test("DB076 source cleanliness gate precedes Docker and supplied PostgreSQL connections",()=>{
   const cleanAt=script.indexOf('const dirtyEntries = shellText("git"');
-  const probeAt=script.indexOf("postgresVersion: providedPostgresVersion(env)");
+  const probeAt=script.indexOf("const actualServerVersion = providedPostgresVersion(env);");
   const dockerAt=script.indexOf("provider = await startDockerPostgres()");
   assert.ok(cleanAt>0 && probeAt>cleanAt && dockerAt>cleanAt);
   assert.match(script,/sourceTreeClean:\s*false|let sourceTreeClean = false/);
