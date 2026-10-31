@@ -33,10 +33,15 @@ describe.skipIf(!enabled)("College notices: registered own-recipient PostgreSQL"
         "VALUES($1::uuid,$2,$3,$4,'ACADEMICS','academics.program.updated','NORMAL','college_notice_witness',$1::text,'Isolated notification')",
         [eventId, SEED_IDS.organization, collegeId, SEED_IDS.collegeAdminUser]);
     }
-    // A foreign event tied to the same recipient is deliberate negative test data.
-    for (const [noteId,eventId] of [[ids.notificationA,ids.eventA],[ids.notificationB,ids.eventB]]) {
+    // The registered recipient guard forbids manufacturing a College B
+    // notification for a College A-only principal. Preserve a real foreign
+    // negative read by delivering that notification to its College B member.
+    for (const [noteId,eventId,recipient] of [
+      [ids.notificationA,ids.eventA,SEED_IDS.collegeAdminUser],
+      [ids.notificationB,ids.eventB,SEED_IDS.facultyUser],
+    ]) {
       await pool.query("INSERT INTO in_app_notifications(id,user_id,event_id,title,body) VALUES($1,$2,$3,$4,$5)",
-        [noteId, SEED_IDS.collegeAdminUser, eventId, "College notice fixture", "Non-broadcast personal message"]);
+        [noteId,recipient,eventId,"College notice fixture","Non-broadcast personal message"]);
     }
   });
   afterAll(async () => {
