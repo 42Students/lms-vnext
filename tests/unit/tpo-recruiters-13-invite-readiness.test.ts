@@ -10,7 +10,19 @@ describe("TPO-recruiters-13 PUB-auth-public-40 cannot issue dead-end invitations
   expect(service).toContain("TPO_RECRUITER_INVITE_NOT_ALLOWED");
   // The invite link can be shared manually; emailing is a separate action.
   // No verified address means no provider attempt and no claimed delivery.
-  expect(service).toContain("if (!delivery?.sendEmail) return issued;");
+  // A queued invitation is persisted atomically with its token and MUST
+  // never also hit the direct provider adapter (double-send). The legacy
+  // delivery callback remains strictly after transaction commit.
+  const queue = service.indexOf("await queueOutboundDeliveryInTransaction(tx,context");
+  const committed = service.indexOf("if (!delivery?.sendEmail || issued.queueHandled) return issued;", queue);
+  const directDelivery = service.indexOf("await delivery.deliver(collegeId, issued.leadId, issued.token)", committed);
+  expect(queue).toBeGreaterThan(pivot);
+  expect(committed).toBeGreaterThan(queue);
+  expect(directDelivery).toBeGreaterThan(committed);
+  expect(service.slice(queue, committed)).not.toContain("delivery.deliver(");
+  expect(service).toContain("if (pending.rows[0]?.exists)");
+  expect(service).toContain("emailed: false,");
+  expect(service).toContain("queueHandled: queueStatus!==null");
   expect(service).toContain("if (!issued.emailAvailable) return { ...issued, emailed: false };");
   expect(service).toContain("emailed: accepted, deliveryAuditRecorded");
  });
