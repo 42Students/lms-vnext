@@ -1,6 +1,7 @@
 import { randomUUID } from "node:crypto";
 import { afterAll, describe, expect, it } from "vitest";
 import { Pool } from "pg";
+import { assertDb018DisposableTarget } from "../support/db018-test-target.mjs";
 import { closeDatabaseConnection } from "@/db/client";
 import type { RequestContext } from "@/modules/identity/context";
 import { getTpoPersonalInbox, markAllOwnTpoNotificationsRead, markOwnTpoNotificationRead } from "@/modules/activity/tpo-notifications-service";
@@ -9,12 +10,18 @@ import { SEED_IDS } from "../../scripts/db-seed-data";
 if (!process.env.TEST_DATABASE_URL) {
   throw new Error("TPO notification acknowledgment requires disposable TEST_DATABASE_URL");
 }
+assertDb018DisposableTarget(process.env,{serviceBound:true});
 const pool = new Pool({ connectionString: process.env.TEST_DATABASE_URL, max: 1 });
 const suffix = randomUUID().replaceAll("-", "");
 const userId = randomUUID();
 const otherUserId = randomUUID();
+const foreignUserId = randomUUID();
 const membershipId = randomUUID();
+const otherMembershipId = randomUUID();
+const foreignMembershipId = randomUUID();
 const roleId = randomUUID();
+const otherRoleId = randomUUID();
+const foreignRoleId = randomUUID();
 const eventIds = [randomUUID(), randomUUID(), randomUUID(), randomUUID()];
 const notificationIds = [randomUUID(), randomUUID(), randomUUID(), randomUUID()];
 const actor: RequestContext = {
@@ -32,9 +39,9 @@ async function cleanup() {
   await pool.query("delete from in_app_notifications where id = any($1::uuid[])", [notificationIds]);
   await pool.query("delete from activity_events where actor_user_id=$1 and event_type='identity.tpo_notification.acknowledged'", [userId]);
   await pool.query("delete from activity_events where id=any($1::uuid[])", [eventIds]);
-  await pool.query("delete from membership_roles where id=$1", [roleId]);
-  await pool.query("delete from college_memberships where id=$1", [membershipId]);
-  await pool.query("delete from users where id=any($1::uuid[])", [[userId, otherUserId]]);
+  await pool.query("delete from membership_roles where id=any($1::uuid[])", [[roleId, otherRoleId, foreignRoleId]]);
+  await pool.query("delete from college_memberships where id=any($1::uuid[])", [[membershipId, otherMembershipId, foreignMembershipId]]);
+  await pool.query("delete from users where id=any($1::uuid[])", [[userId, otherUserId, foreignUserId]]);
 }
 afterAll(async () => {
   try {
@@ -47,13 +54,27 @@ afterAll(async () => {
 
 async function fixture() {
   await cleanup();
-  for (const [id, uid] of [[userId, actor.user.identityUid], [otherUserId, "tpo-inbox-other-" + suffix]]) {
+  for (const [id, uid] of [
+    [userId, actor.user.identityUid],
+    [otherUserId, "tpo-inbox-other-" + suffix],
+    [foreignUserId, "tpo-inbox-foreign-" + suffix],
+  ]) {
     await pool.query("insert into users(id,identity_uid,email,display_name,platform_status) values ($1,$2,$3,$4,'ACTIVE')", [
       id, uid, "tpo-inbox-" + id + "@example.invalid", "TPO Inbox " + suffix,
     ]);
   }
   await pool.query("insert into college_memberships(id,user_id,college_id,status) values ($1,$2,$3,'ACTIVE')", [membershipId, userId, SEED_IDS.collegeA]);
   await pool.query("insert into membership_roles(id,membership_id,role) values ($1,$2,'TPO')", [roleId, membershipId]);
+  // Separate authorized recipients preserve both cross-college and other-user
+  // denial witnesses under DB014's strict database delivery guard.
+  await pool.query("insert into college_memberships(id,user_id,college_id,status) values($1,$2,$3,'ACTIVE')",
+    [otherMembershipId,otherUserId,SEED_IDS.collegeA]);
+  await pool.query("insert into membership_roles(id,membership_id,role) values($1,$2,'FACULTY')",
+    [otherRoleId,otherMembershipId]);
+  await pool.query("insert into college_memberships(id,user_id,college_id,status) values($1,$2,$3,'ACTIVE')",
+    [foreignMembershipId,foreignUserId,SEED_IDS.collegeB]);
+  await pool.query("insert into membership_roles(id,membership_id,role) values($1,$2,'FACULTY')",
+    [foreignRoleId,foreignMembershipId]);
   const collegeB = await pool.query<{ organization_id: string }>("select organization_id from colleges where id=$1", [SEED_IDS.collegeB]);
   const orgB = collegeB.rows[0]?.organization_id;
   if (!orgB) throw new Error("Seed College B missing");
@@ -65,7 +86,7 @@ async function fixture() {
       [eventIds[i], foreign ? orgB : SEED_IDS.organization, foreign ? SEED_IDS.collegeB : SEED_IDS.collegeA, SEED_IDS.collegeAdminUser, suffix + "-" + i, "TPO inbox fixture"],
     );
     await pool.query("insert into in_app_notifications (id,user_id,event_id,title,body) values ($1,$2,$3,$4,$5)", [
-      notificationIds[i], i === 3 ? otherUserId : userId, eventIds[i], "TPO notification " + suffix + "-" + i, "Fixture message",
+      notificationIds[i], i === 2 ? foreignUserId : i === 3 ? otherUserId : userId, eventIds[i], "TPO notification " + suffix + "-" + i, "Fixture message",
     ]);
   }
 }

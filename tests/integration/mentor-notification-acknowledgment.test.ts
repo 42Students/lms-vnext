@@ -1,6 +1,7 @@
 import { randomUUID } from "node:crypto";
 import { afterAll, describe, expect, it } from "vitest";
 import { Pool } from "pg";
+import { assertDb018DisposableTarget } from "../support/db018-test-target.mjs";
 import { closeDatabaseConnection } from "@/db/client";
 import type { RequestContext } from "@/modules/identity/context";
 import {
@@ -16,11 +17,15 @@ import { SEED_IDS } from "../../scripts/db-seed-data";
 if(!process.env.TEST_DATABASE_URL) {
   throw new Error("Mentor notification acknowledgment requires disposable TEST_DATABASE_URL");
 }
+assertDb018DisposableTarget(process.env,{serviceBound:true});
 const pool=new Pool({connectionString:process.env.TEST_DATABASE_URL,max:1});
 const suffix=randomUUID().replaceAll("-","");
 const userId=randomUUID();
 const membershipId=randomUUID();
 const roleId=randomUUID();
+const foreignUserId=randomUUID();
+const foreignMembershipId=randomUUID();
+const foreignRoleId=randomUUID();
 const eventIds=[randomUUID(),randomUUID(),randomUUID()];
 const notificationIds=[randomUUID(),randomUUID(),randomUUID()];
 const actor:RequestContext={
@@ -38,9 +43,9 @@ async function cleanup() {
   await pool.query(`delete from activity_events
     where actor_user_id=$1 and event_type='identity.mentor_notification.acknowledged'`,[userId]);
   await pool.query("delete from activity_events where id=any($1::uuid[])",[eventIds]);
-  await pool.query("delete from membership_roles where id=$1",[roleId]);
-  await pool.query("delete from college_memberships where id=$1",[membershipId]);
-  await pool.query("delete from users where id=$1",[userId]);
+  await pool.query("delete from membership_roles where id=any($1::uuid[])",[[roleId,foreignRoleId]]);
+  await pool.query("delete from college_memberships where id=any($1::uuid[])",[[membershipId,foreignMembershipId]]);
+  await pool.query("delete from users where id=any($1::uuid[])",[[userId,foreignUserId]]);
 }
 afterAll(async()=>{
   try{await cleanup();}finally{await pool.end();await closeDatabaseConnection();}
@@ -57,6 +62,17 @@ async function fixture() {
     values ($1,$2,$3,'ACTIVE')`,[membershipId,userId,SEED_IDS.collegeA]);
   await pool.query(`insert into membership_roles(id,membership_id,role)
     values ($1,$2,'MENTOR')`,[roleId,membershipId]);
+  // A cross-college notification must be delivered to an actual College B
+  // principal, not forged against this College A Mentor.
+  await pool.query(`insert into users(id,identity_uid,email,display_name,platform_status)
+    values ($1,$2,$3,$4,'ACTIVE')`,[
+      foreignUserId,"chat4-mentor-foreign-"+suffix,
+      "chat4-mentor-foreign-"+suffix+"@example.invalid","Foreign recipient "+suffix,
+    ]);
+  await pool.query("insert into college_memberships(id,user_id,college_id,status) values($1,$2,$3,'ACTIVE')",
+    [foreignMembershipId,foreignUserId,SEED_IDS.collegeB]);
+  await pool.query("insert into membership_roles(id,membership_id,role) values($1,$2,'FACULTY')",
+    [foreignRoleId,foreignMembershipId]);
   const collegeB=await pool.query<{organization_id:string}>(
     "select organization_id from colleges where id=$1",[SEED_IDS.collegeB],
   );
@@ -73,7 +89,7 @@ async function fixture() {
       ]);
     await pool.query(`insert into in_app_notifications
       (id,user_id,event_id,title,body) values ($1,$2,$3,$4,$5)`,[
-        notificationIds[i],userId,eventIds[i],
+        notificationIds[i],i===2?foreignUserId:userId,eventIds[i],
         "Chat4 Mentor notification "+suffix+"-"+i,"Fixture message",
       ]);
   }
