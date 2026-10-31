@@ -7,6 +7,7 @@ on:
       - ".github/workflows/faculty-blueprint-tail-acceptance.yml"
       - "tests/e2e/faculty-blueprint-external-content-closure.spec.ts"
       - "tests/e2e/faculty-blueprint-publication-closure.spec.ts"
+      - "tests/unit/faculty-blueprint-empty-states-closure.test.tsx"
       - "src/components/courses/faculty-lesson-authoring.tsx"
       - "src/components/courses/faculty-course-workspace.tsx"
       - "src/components/courses/faculty-prototype-blueprint.tsx"
