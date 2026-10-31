@@ -4,8 +4,8 @@ import { isSameOriginRequest } from "@/auth/origin";
 import { apiErrorResponse } from "@/lib/api-error";
 import {guessContentTypeFromName,isSafeSignedUrl} from "@/modules/storage/ui-models";
 import {
-  createAssignmentFileUploadGrant,
-} from "@/modules/courses/assignment-file-service";
+  issueSubmissionFileUploadGrant,
+} from "@/modules/courses/assignment-submission-file-service";
 import {
   assignmentFilesRuntimeEnabled,
 } from "@/modules/courses/assignment-file-readiness";
@@ -75,7 +75,7 @@ export async function POST(
       const type=file.type||guessContentTypeFromName("assignment-submission",file.name);
       if(!type)
         return NextResponse.json({error:"INVALID_REQUEST",message:"This file type is not supported."},{status:400});
-      const grant=await createAssignmentFileUploadGrant(context,assignmentId,{
+      const { grant }=await issueSubmissionFileUploadGrant(context,assignmentId,{
         deliveryId,originalName:file.name,contentType:type,sizeBytes:file.size,
       });
       if(!isSafeSignedUrl(grant.uploadUrl))throw Error("STORAGE_GRANT_INVALID");
@@ -114,7 +114,7 @@ export async function POST(
         error:"UNSUPPORTED_UPLOAD_FOLDER",
         message:"This folder requires its own authenticated upload grant.",
       },{status:400});
-    const grant=await createAssignmentFileUploadGrant(context,assignmentId,{
+    const { grant }=await issueSubmissionFileUploadGrant(context,assignmentId,{
       deliveryId:data["deliveryId"] as string,
       originalName:(data["originalName"]??data["fileName"]??data["filename"]) as string,
       contentType:(data["contentType"]??data["mimeType"]??data["content-type"]??data["type"]) as string,
