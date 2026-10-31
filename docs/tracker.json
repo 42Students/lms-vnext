@@ -1186,6 +1186,16 @@
             "noPostgreSQL": true,
             "notGlobalAcceptance": true
           }
+        },
+        "latestOraclePinAdversarialEvidence": {
+          "status": "EXACT_SHA_NODE22_SOURCE_ONLY_PASS_NOT_DB019_ACCEPTANCE",
+          "commitSha": "cad52db0f0247c927e5598d91a60b054ca2e1ff2",
+          "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/41172133962",
+          "jobId": 124452158939,
+          "result": "PASS",
+          "scope": "All source-only DB019 integrated commands passed after three adversarial regression cases: conflicting top-level/nested frozen oracle SHAs, blank shadow oracle pins, and conflicting inventory SHA pins cannot be masked by first-match precedence.",
+          "proofBoundary": "Source/identity/provenance only, not 2829-field semantic approval or PostgreSQL runtime proof. DB019 remains OPEN.",
+          "recordedOn": "2026-10-31"
         }
       }
     },
@@ -2347,6 +2357,27 @@
           "scope": "Two real-row PostgreSQL negative witnesses: note-only and marker-timestamp-only corrections each increment version but omit immutable CORRECT event; require 23514 at COMMIT and unchanged persisted row.",
           "verification": "Registered DB045 grade-history workflow triggered by test change; do not count as passing until exact-SHA completed success.",
           "notAcceptance": true
+        },
+        "latestExecutedAttendanceNegativeEvidence": {
+          "status": "REGISTERED_PG17_CONSUMER_GATES_PASS_NOT_DB045_ACCEPTANCE",
+          "recordedOn": "2026-10-31",
+          "runs": [
+            {
+              "commitSha": "4a1eac4c3da9f368422c296dd85c5bff56548c4b",
+              "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/41172198201",
+              "jobId": 124452349114,
+              "result": "PASS",
+              "scope": "Three real transaction rollback negatives for forged prior attendance note, marker and timestamp, despite valid current-row post-state, tenant and actor; full registered replay, journal, idempotence, grade-history and attendance consumer job passed."
+            },
+            {
+              "commitSha": "ab233b85767a6acbf4f217fa6176c0e58ddbd772",
+              "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/41172272352",
+              "jobId": 124452566996,
+              "result": "PASS",
+              "scope": "Two independent competing first MARK transactions for same event/learner: exactly one persisted current-row and immutable version-zero MARK event, loser rejected by PostgreSQL uniqueness; full registered replay, journal, idempotence, grade-history and attendance consumer job passed."
+            }
+          ],
+          "proofBoundary": "Focused registered-PG17 and attendance-consumer evidence; original complete 30-witness coverage audit, all tenant/race/retention invariants and fresh main acceptance remain open. Do not set done:true."
         }
       }
     },
