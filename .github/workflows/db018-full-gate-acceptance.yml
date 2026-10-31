@@ -23,6 +23,7 @@ on:
       - "tests/integration/db18-placement-race-gap.test.ts"
       - "tests/integration/db18-notification-race.test.ts"
       - "tests/integration/db18-scheduled-lease-race.test.ts"
+      - "tests/integration/db18-outbound-service-race.test.ts"
       - "tests/db-parity-pass5.test.mjs"
       - "tests/integration/db18-witness-index.json"
       - "docs/planning/database-parity-pass5-probe-manifest.json"
@@ -109,6 +110,9 @@ jobs:
             tests/integration/groups-db03.test.ts \
             tests/integration/courses-c4b-quizzes.test.ts \
             tests/integration/db18-scheduled-lease-race.test.ts
+      - name: P5-R09 and P5-R21 registered real outbound producer and fake provider
+        run: |
+          npx vitest run --config vitest.db.registered.config.ts tests/integration/db18-outbound-service-race.test.ts
       - name: P5-R11 schedule and period-close race with real A2 producer
         run: |
           npx vitest run --config vitest.db.registered.config.ts tests/integration/academics-a2.test.ts
