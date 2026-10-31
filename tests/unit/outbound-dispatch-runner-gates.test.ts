@@ -10,6 +10,7 @@ const mocks = vi.hoisted(() => ({
   open: vi.fn(),
   globalHash: vi.fn(),
   emailVerified: vi.fn(),
+  dispatchPrincipal: vi.fn(),
 }));
 
 vi.mock("server-only", () => ({}));
@@ -26,6 +27,10 @@ vi.mock("@/modules/operations/outbound-delivery-queue", () => ({
 vi.mock("@/modules/operations/outbound-delivery-envelope", () => ({
   openOutboundDelivery: mocks.open,
   deriveGlobalEmailSuppressionHashForAddress: mocks.globalHash,
+}));
+vi.mock("@/modules/operations/outbound-dispatch-principal", () => ({
+  getOutboundDispatchDb: () => ({ execute: mocks.execute }),
+  requireOutboundDispatchPrincipal: mocks.dispatchPrincipal,
 }));
 vi.mock("@/modules/operations/email-suppression-activation", () => ({
   requireVerifiedGlobalEmailSuppression: mocks.emailVerified,
@@ -76,9 +81,26 @@ describe("DB-050/DB-067 trusted outbound runner gate", () => {
     mocks.open.mockReturnValue(emailIntent);
     mocks.globalHash.mockReturnValue("d".repeat(64));
     mocks.emailVerified.mockResolvedValue({});
+    mocks.dispatchPrincipal.mockResolvedValue(undefined);
     mocks.authorize.mockResolvedValue(true);
     mocks.complete.mockResolvedValue(true);
     mocks.claim.mockResolvedValue([]);
+  });
+
+  it("rejects a normal application principal before claim or provider send", async () => {
+    mocks.dispatchPrincipal.mockRejectedValue(
+      new Error("OUTBOUND_DISPATCH_PRINCIPAL_NOT_VERIFIED"),
+    );
+    const send = vi.fn();
+    await expect(dispatchDueOutboundBatch("worker-1", { send }, 1))
+      .rejects.toThrow("OUTBOUND_DISPATCH_PRINCIPAL_NOT_VERIFIED");
+    expect(mocks.claim).not.toHaveBeenCalled();
+    expect(send).not.toHaveBeenCalled();
+    await expect(dispatchClaimedOutbound(claim, "worker-1", { send }))
+      .rejects.toThrow("OUTBOUND_DISPATCH_PRINCIPAL_NOT_VERIFIED");
+    expect(mocks.execute).not.toHaveBeenCalled();
+    expect(mocks.authorize).not.toHaveBeenCalled();
+    expect(send).not.toHaveBeenCalled();
   });
 
   it("never calls EMAIL provider if independent migration/sender gate fails", async () => {
