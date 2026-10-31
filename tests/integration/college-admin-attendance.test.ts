@@ -324,6 +324,65 @@ describe("College Admin attendance tenant isolation with PostgreSQL", () => {
     }
   });
 
+  it("DB045 concurrent first marks retain exactly one current row and MARK event",async()=>{
+    // Race independent transactions against the real registered unique index.
+    // Neither writer may invent a correction or create a second first-version
+    // history row after losing the initial (event,learner) insertion race.
+    const scheduleEventId=randomUUID();
+    const args={
+      scheduleEventId,deliveryId:own.delivery,membershipId:own.learner,
+      collegeId:SEED_IDS.collegeA,actorUserId:SEED_IDS.superAdminUser,
+      actorMembershipId:null,actorRole:"SUPER_ADMIN" as const,
+    };
+    try{
+      await pool.query(
+        "insert into section_schedule_events(id,section_id,title,starts_at,ends_at) " +
+        "values($1,$2,'DB045 concurrent mark',now()-interval '3 days', " +
+        "now()-interval '3 days'+interval '1 hour')",
+        [scheduleEventId,own.section],
+      );
+      await pool.query(
+        "insert into section_schedule_event_courses(schedule_event_id,delivery_id) values($1,$2)",
+        [scheduleEventId,own.delivery],
+      );
+      await pool.query(
+        "insert into attendance_sessions(schedule_event_id,status,marked_by_user_id,marked_at) " +
+        "values($1,'MARKED',$2,now())",
+        [scheduleEventId,SEED_IDS.superAdminUser],
+      );
+      const writers=await Promise.allSettled([
+        insertDisposableAttendanceMark(pool,{...args,status:"PRESENT"}),
+        insertDisposableAttendanceMark(pool,{...args,status:"ABSENT"}),
+      ]);
+      expect(writers.filter(w=>w.status==="fulfilled")).toHaveLength(1);
+      const failed=writers.filter(w=>w.status==="rejected") as PromiseRejectedResult[];
+      expect(failed).toHaveLength(1);
+      expect(failed[0]!.reason).toMatchObject({code:"23505"});
+      const persisted=await pool.query<{
+        id:string;status:string;version:number;action:string;
+        new_status:string;record_version_after:number;
+      }>(`
+        select ar.id,ar.status,ar.version,e.action,e.new_status,
+          e.record_version_after
+        from attendance_records ar
+        join attendance_record_events e on e.attendance_record_id=ar.id
+        where ar.schedule_event_id=$1 and ar.membership_id=$2
+      `,[scheduleEventId,own.learner]);
+      expect(persisted.rows).toHaveLength(1);
+      expect(["PRESENT","ABSENT"]).toContain(persisted.rows[0]!.status);
+      expect(persisted.rows[0]).toMatchObject({
+        version:0,action:"MARK",record_version_after:0,
+        new_status:persisted.rows[0]!.status,
+      });
+    }finally{
+      await deleteDisposableAttendanceEvents(pool,[scheduleEventId]);
+      await pool.query("delete from attendance_records where schedule_event_id=$1",[scheduleEventId]);
+      await pool.query("delete from attendance_sessions where schedule_event_id=$1",[scheduleEventId]);
+      await pool.query("delete from section_schedule_event_courses where schedule_event_id=$1",[scheduleEventId]);
+      await pool.query("delete from section_schedule_events where id=$1",[scheduleEventId]);
+    }
+  });
+
   it.each(forgedCases)("DB045 rejects $name against a real attendance row",async witness=>{
     const fields = Object.keys(eventFields) as EventField[];
     const expressions=fields.map(col=>witness.overrides[col]??eventFields[col]);
