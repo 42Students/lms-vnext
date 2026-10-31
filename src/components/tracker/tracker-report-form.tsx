@@ -17,7 +17,7 @@ import { useFormDraft } from "@/hooks/use-form-draft";
 import { apiFetch, FriendlyFetchError } from "@/lib/api-fetch";
 import {
   ACCOUNT_OPTIONS, ENVIRONMENT_OPTIONS, ISSUE_TYPE_OPTIONS,
-  LOCATION_OPTIONS, REPORTER_OPTIONS, SEVERITY_OPTIONS,
+  LOCATION_OPTIONS, SEVERITY_OPTIONS,
 } from "@/modules/bug-tracker/report-form-options";
 import { trackerReportSchema } from "@/modules/bug-tracker/report-input-model";
 
@@ -307,10 +307,11 @@ export function TrackerReportForm({contextPrefill="",canSearchSimilar=true,known
       {error ? <InlineNotice tone="error" message={error}/> : null}
       <div className="grid gap-4 min-[768px]:grid-cols-3">
         <label className={label}>Reporter
-          <Select className={field} name="reporterName" required value={draft.reporterName} onChange={event=>patch("reporterName",event.target.value)}>
-            <option value="" disabled>Select reporter</option>
-            {REPORTER_OPTIONS.map(option => <option key={option.value} value={option.value}>{option.label}</option>)}
-          </Select>
+          <Input className={field} name="reporterName" required maxLength={120}
+            placeholder="Your signed-in account display name"
+            autoComplete="name" value={draft.reporterName}
+            onChange={event=>patch("reporterName",event.target.value)}/>
+          <span className="mt-1 block text-xs font-normal text-muted-foreground">Must match your signed-in account. Other names cannot submit on your behalf.</span>
         {fieldErrors["reporterName"]?<span role="alert" className="mt-1 block text-xs text-error">{fieldErrors["reporterName"]}</span>:null}
         </label>
         <label className={label}>Account used

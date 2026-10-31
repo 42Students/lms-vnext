@@ -1,11 +1,13 @@
 import { z } from "zod";
 import { BUG_ACCOUNT_ROLES, BUG_ENVIRONMENTS, BUG_SEVERITIES } from "./admin-validation";
-import { LOCATION_OPTIONS, ISSUE_TYPE_OPTIONS, REPORTER_OPTIONS } from "./report-form-options";
+import { LOCATION_OPTIONS, ISSUE_TYPE_OPTIONS } from "./report-form-options";
 
 /** SA-placements-projects-100: exact legacy report intake; server revalidates all fields. */
 export const trackerReportSchema = z.object({
-  reporterName: z.string().trim().min(1, "Select your name.").max(120)
-    .refine(value => REPORTER_OPTIONS.some(item => item.label === value), "Select your name."),
+  // The authenticated actor is checked against users.display_name in the
+  // transactional service. A fixed five-person legacy picker cannot validate
+  // arbitrary signed-in reporters and must not act as an identity authority.
+  reporterName: z.string().trim().min(1, "Enter your account display name.").max(120),
   accountRole: z.enum(BUG_ACCOUNT_ROLES, { error: "Select the account you were testing." }),
   environment: z.enum(BUG_ENVIRONMENTS, { error: "Select where you saw the issue." }),
   page: z.string().trim().min(1, "Select the page and area.").max(120)

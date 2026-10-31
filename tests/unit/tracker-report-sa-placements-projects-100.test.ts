@@ -45,11 +45,18 @@ describe("SA-placements-projects-100 report intake contract", () => {
       { ...valid, screen: "Templates", section: "Members" },
       { ...valid, section: "Not a workspace section" },
       { ...valid, issueType: "User-supplied arbitrary type" },
-      { ...valid, reporterName: "Impersonator" },
       { ...valid, evidenceLink: "javascript:alert(1)" },
     ]) {
       expect(trackerReportSchema.safeParse(candidate).success).toBe(false);
     }
+  });
+
+  it("accepts any nonblank authenticated reporter display name at the shape boundary", () => {
+    // The transactional service checks equality to the ACTIVE persisted user;
+    // the legacy fixed-name picker is not a trusted authentication source.
+    expect(trackerReportSchema.safeParse({ ...valid, reporterName: "Seed Super Admin" }).success).toBe(true);
+    expect(trackerReportSchema.safeParse({ ...valid, reporterName: " " }).success).toBe(false);
+    expect(trackerReportSchema.safeParse({ ...valid, reporterName: "x".repeat(121) }).success).toBe(false);
   });
 
   it("preserves exact validation messages", () => {
