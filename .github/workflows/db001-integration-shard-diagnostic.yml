@@ -68,6 +68,10 @@ jobs:
           W04_ISOLATED_TEST_DATABASE: "1"
           DB10_ISOLATED_TEST_DATABASE: "1"
           DB10_DISPOSABLE_TEST_DATABASE: "true"
+          # Same disposable-only synthetic worker-readiness fixture as DB001.
+          # This is not a claim of production recipient delivery.
+          TPO_NOTICE_DELIVERY_VERIFIED: "VERIFIED"
+          TPO_NOTICE_SCHEDULER_SECRET: "db001-disposable-pg17-tests-not-a-deployed-worker"
         run: npx vitest run --config vitest.db.config.ts --shard="${{ matrix.shard }}/4"
       - name: Require original pinned source revision
         if: always()
