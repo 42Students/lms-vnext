@@ -28,6 +28,7 @@ on:
       - "tests/integration/placements-p8-offers.test.ts"
       - "tests/integration/placements-db08-batches.test.ts"
       - "tests/integration/db18-assignment-receipt-race.test.ts"
+      - "tests/integration/db18-shared-ops-race.test.ts"
       - "tests/integration/super-admin-db10-tracker-workflow.test.ts"
       - "tests/db-parity-pass5.test.mjs"
       - "tests/integration/db18-witness-index.json"
@@ -121,6 +122,9 @@ jobs:
       - name: P5-R13 scanned FILE receipt duplicate submission on registered PG17
         run: |
           npx vitest run --config vitest.db.registered.config.ts tests/integration/db18-assignment-receipt-race.test.ts -t P5-R13
+      - name: P5-R18 announcement edit/delete/restore CAS and P5-R19 tracker event atomicity on registered PG17
+        run: |
+          npx vitest run --config vitest.db.registered.config.ts tests/integration/db18-shared-ops-race.test.ts
       - name: P5-R19 competing tracker status and root-cause writers on registered PG17
         run: |
           npx vitest run --config vitest.db.registered.config.ts tests/integration/super-admin-db10-tracker-workflow.test.ts -t P5-R19
