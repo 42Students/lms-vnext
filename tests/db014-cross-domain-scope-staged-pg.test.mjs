@@ -144,6 +144,66 @@ test("DB014 registered replay plus staged event/notification/group tenant bounda
       assert.equal(good.rowCount,1);
     });
 
+    await t.test("activity actor membership revocation serializes and denies stale writers", async () => {
+      // A fresh scoped actor makes this a real DB014 activity-guard witness,
+      // independent of the learner used by later group-history race tests.
+      const actorUser=randomUUID(), actorMembership=randomUUID();
+      await db.query(
+        "INSERT INTO users(id,identity_uid,display_name) VALUES ($1,$2,'DB014 activity lock actor')",
+        [actorUser,"db014-activity-actor-"+actorUser],
+      );
+      await db.query(
+        "INSERT INTO college_memberships(id,user_id,college_id,status) VALUES($1,$2,$3,'ACTIVE')",
+        [actorMembership,actorUser,SEED.collegeA],
+      );
+      const accepted=await writeEvent(db,{
+        actorUser,actorMembership,
+      });
+      assert.equal(accepted.rowCount,1);
+
+      // A committed event writer's SHARE lock must prevent another session
+      // suspending its actor before the enclosing event transaction settles.
+      const revoker=new pg.Client({
+        connectionString:process.env.TEST_DATABASE_URL,
+        connectionTimeoutMillis:10000,query_timeout:5000,
+      });
+      await revoker.connect();
+      try {
+        await revoker.query("BEGIN");
+        await revoker.query("SET LOCAL lock_timeout='350ms'");
+        await assert.rejects(revoker.query(
+          "UPDATE college_memberships SET status='SUSPENDED' WHERE id=$1",
+          [actorMembership],
+        ),error=>{
+          assert.equal(error?.code,"55P03",
+            "DB014 activity actor status must stay locked through event transaction");
+          return true;
+        });
+      } finally {
+        await revoker.query("ROLLBACK").catch(()=>{});
+        await revoker.end();
+      }
+
+      // A revoked member may not author another event, even when caller
+      // continues presenting the same valid UUIDs from a stale session.
+      await db.query("SAVEPOINT db014_activity_actor_revoked");
+      try {
+        await db.query(
+          "UPDATE college_memberships SET status='SUSPENDED' WHERE id=$1",
+          [actorMembership],
+        );
+        await denied(db,
+          "INSERT INTO activity_events " +
+          "(organization_id,college_id,actor_user_id,actor_membership_id,module,event_type,subject_type,subject_id,summary) " +
+          "VALUES ($1,$2,$3,$4,'IDENTITY','DB014_SCOPE_TEST','MEMBERSHIP',$5,'Revoked actor')",
+          [SEED.organization,SEED.collegeA,actorUser,actorMembership,randomUUID()],
+        );
+      } finally {
+        await db.query("ROLLBACK TO SAVEPOINT db014_activity_actor_revoked");
+        await db.query("RELEASE SAVEPOINT db014_activity_actor_revoked");
+      }
+    });
+
     await t.test("college inbox accepts same-college user and rejects unrelated college-only user", async () => {
       const event = (await writeEvent(db)).rows[0].id;
       const ok = await db.query(
