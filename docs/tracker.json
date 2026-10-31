@@ -970,7 +970,7 @@
           }
         ],
         "pending": [
-          "P5-R13 BLOCKED: original DB053 course_upload_receipts remains absent after registered PG17 replay and DB016 assignment_submission_files live submission_id conflicts with staged assignment_submission_id. Live two-file producer is independently tested; reconcile forward-only storage contract, live producer/read cutover and exact original receipt witness, never waive R13.",
+          "P5-R13 original receipt gate BLOCKED: registered live FILE service two-file reversed-order race PASSED on run 41228430273 after deterministic lock hardening f14e1d7; however DB053 course_upload_receipts is still absent and existing DB016 assignment_submission_files physical shape conflicts with proposed assignment_submission_id. Preserve original failing witness until forward-only schema/producer/read reconciliation; no fake acceptance.",
           "Production dispatcher gate OPEN: verify least-privileged outbound worker principal, production recruiter invitation transactional producer and approved provider adapter with authorized test delivery; PG17 fake-provider race proof is not live dispatch acceptance.",
           "Reconcile original 23-race, 21 relational, direct-negative and cross-role tenant/privacy/permission/producer-consumer coverage on fresh exact main. P5-R18/R19 are now independent registered PG17 accepted race receipts; DB019 and DB020 remain open."
         ],
@@ -1220,7 +1220,18 @@
           "jobId": 124615581218,
           "test": "tests/integration/db18-registered-file-one-shot-race.test.ts",
           "evidence": "Two real submitAssignmentWithFiles writers contend on the registered DB016/0080 READY/CLEAN assignment file row; only one bound file/submission and one storage/assignment event commit. Exact registered PostgreSQL 17 step PASS.",
-          "notOriginalAcceptance": "Original P5-R13 DB053 course_upload_receipts and incompatible DB016 assignment_submission_files schema remain unregistered; same full job fails original R13, not accepted."
+          "notOriginalAcceptance": "Original P5-R13 DB053 course_upload_receipts and incompatible DB016 assignment_submission_files schema remain unregistered; same full job fails original R13, not accepted.",
+          "twoFileReversedOrder": {
+            "state": "REGISTERED_PG17_STEP_PASS_STAGED_R13_NOT_ACCEPTED",
+            "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/41228430273",
+            "jobId": 124617938930,
+            "productionLockCommit": "f14e1d758693b8e545b1a184513709039e468991",
+            "executableRaceCommit": "223dcc04cd4f63417db46d83fbab3505c5210e8c",
+            "summary": "Two real submitAssignmentWithFiles writers contend on the same two registered READY/CLEAN file rows in reversed request order, deterministic sorted row locks, exactly one FILE submission, both file bindings ordered to winner request, one submission activity, and two storage SUBMITTED audit rows.",
+            "proofBoundary": "Registered PG17 service-producer step PASS. Original staged course_upload_receipts producer and conflicting DB053/DB016 schema remain unregistered and required; full workflow fails deliberately on P5-R13.",
+            "originalP5R13Accepted": false,
+            "db018Accepted": false
+          }
         },
         "latestR18R19StepEvidence": {
           "status": "REGISTERED_PG17_STEPS_PASS_IN_FULL_JOB_DB018_STILL_OPEN",

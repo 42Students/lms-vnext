@@ -732,7 +732,18 @@
     "fullGate": "FAIL_P5_R13_STAGED_RECEIPT_SCHEMA_ABSENT",
     "remaining": "Original DB053 source-only course_upload_receipts contract and overlapping DB016 assignment_submission_files physical shape are not registered. Preserve original P5-R13 test failure; reconcile forward-only DDL and producer/read paths, then re-execute exact-head PostgreSQL and production boundaries.",
     "db018Accepted": false,
-    "originalP5R13Accepted": false
+    "originalP5R13Accepted": false,
+    "twoFileReversedOrder": {
+      "state": "REGISTERED_PG17_STEP_PASS_STAGED_R13_NOT_ACCEPTED",
+      "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/41228430273",
+      "jobId": 124617938930,
+      "productionLockCommit": "f14e1d758693b8e545b1a184513709039e468991",
+      "executableRaceCommit": "223dcc04cd4f63417db46d83fbab3505c5210e8c",
+      "summary": "Two real submitAssignmentWithFiles writers contend on the same two registered READY/CLEAN file rows in reversed request order, deterministic sorted row locks, exactly one FILE submission, both file bindings ordered to winner request, one submission activity, and two storage SUBMITTED audit rows.",
+      "proofBoundary": "Registered PG17 service-producer step PASS. Original staged course_upload_receipts producer and conflicting DB053/DB016 schema remain unregistered and required; full workflow fails deliberately on P5-R13.",
+      "originalP5R13Accepted": false,
+      "db018Accepted": false
+    }
   },
   "latestR18R19RegisteredEvidence": {
     "state": "PASS_2_ORIGINAL_RACES_REGISTERED_PG17_DB018_OPEN",
