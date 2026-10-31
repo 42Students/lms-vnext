@@ -83,6 +83,11 @@ jobs:
         run: node --test tests/db16-private-storage-safety.test.mjs
       - name: DB010 projects source reconciliation and tombstone regression
         run: node --test tests/db07-reconciliation-contract.test.mjs
+      - name: DB019 independent eleven-domain source inventory and crosswalk
+        run: |
+          node --test tests/db019-source-ledger-preflight.test.mjs tests/db019-crosswalk-identity.test.mjs tests/db19-field-disposition-audit.test.mjs
+          node scripts/db19-field-disposition-audit.mjs
+          node scripts/db019-crosswalk-identity.mjs
       - name: Install dependencies for DB001 native PG import safety fixtures
         run: npm ci --ignore-scripts
       - name: DB001 standalone verifier safety and malformed snapshot fail-closed contracts
@@ -109,10 +114,5 @@ jobs:
       - name: DB014 cross-tenant source integrity and DB045 history drift
         run: |
           node --test tests/db014-tenant-fk-sweep.test.mjs tests/db41-history-schema-drift.test.mjs
-      - name: DB019 independent eleven-domain source inventory and crosswalk
-        run: |
-          node --test tests/db019-source-ledger-preflight.test.mjs tests/db019-crosswalk-identity.test.mjs tests/db19-field-disposition-audit.test.mjs
-          node scripts/db19-field-disposition-audit.mjs
-          node scripts/db019-crosswalk-identity.mjs
       - name: Execute plan and task acceptance tests
         run: node --test tests/tracker.test.mjs tests/database-domain-packages.test.mjs tests/tracker-ten-lanes.test.mjs tests/tracker-progress-evidence.test.mjs tests/closure-first-protocol.test.mjs
