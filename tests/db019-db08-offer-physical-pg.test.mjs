@@ -169,3 +169,61 @@ test("DB019 10 historic application status-history proposals are physically boun
     f.reviewDecision.consumerVerified===false&&
     f.reviewDecision.retirementApproved===false),true);
 });
+
+test("DB019 15 round-result proposals have registered typed PG17 candidates without false semantic acceptance",async()=>{
+  const table=ledger.tables.find(x=>x.legacyTable==="round_result");
+  assert.equal(table?.fields.length,15);
+  const refs=[...new Set(table.fields.flatMap(f=>f.reviewDecision?.targetRefs??[]))];
+  const columns=await pool.query(`
+    select column_name,udt_name,is_nullable,numeric_precision,numeric_scale
+      from information_schema.columns
+     where table_schema='public' and table_name='placement_round_results'
+  `);
+  const live=new Map(columns.rows.map(r=>[r.column_name,r]));
+  for(const ref of refs){
+    const [tableName,col]=ref.split(".");
+    assert.equal(tableName,"placement_round_results");
+    assert.ok(live.has(col),"Registered PG17 candidate missing "+ref);
+  }
+  assert.equal(live.get("id")?.udt_name,"uuid");
+  assert.equal(live.get("round_id")?.udt_name,"uuid");
+  assert.equal(live.get("application_id")?.udt_name,"uuid");
+  assert.equal(live.get("submitted_by_user_id")?.udt_name,"uuid");
+  assert.equal(live.get("submitted_by_user_id")?.is_nullable,"NO");
+  assert.equal(live.get("applied_by_user_id")?.is_nullable,"YES");
+  assert.equal(live.get("score_percent")?.udt_name,"numeric");
+  assert.equal(live.get("score_percent")?.numeric_scale,10);
+  assert.equal(live.has("submitted_by_type"),false);
+  assert.equal(live.has("superseded_by"),false);
+  const constraints=await pool.query(`
+    select conname,pg_get_constraintdef(oid) as definition
+      from pg_constraint
+     where conrelid='public.placement_round_results'::regclass
+  `);
+  const byName=new Map(constraints.rows.map(x=>[x.conname,x.definition]));
+  for(const [name,word] of [
+    ["placement_round_results_outcome_ck","PASS"],
+    ["placement_round_results_waitlist_ck","HOLD"],
+    ["placement_round_results_score_ck","100"],
+    ["placement_round_results_source_ck","IMPORT"],
+    ["placement_round_results_status_ck","SUPERSEDED"],
+    ["placement_round_results_lifecycle_ck","APPLIED"],
+  ]){
+    assert.ok(byName.has(name),"Missing registered safety constraint "+name);
+    assert.ok(byName.get(name).includes(word),"Constraint meaning drifted "+name);
+  }
+  const indexes=await pool.query(`
+    select indexname,indexdef from pg_indexes
+     where schemaname='public' and tablename='placement_round_results'
+  `);
+  const current=indexes.rows.find(x=>x.indexname==="placement_round_results_current_uq");
+  assert.ok(current,"Current active round-result uniqueness missing");
+  assert.match(current.indexdef,/UNIQUE INDEX/);
+  assert.match(current.indexdef,/application_id/);
+  assert.match(current.indexdef,/round_id/);
+  assert.match(current.indexdef,/SUPERSEDED/);
+  assert.equal(table.fields.every(f=>f.status==="UNVERIFIED" &&
+    f.reviewDecision?.runtimeVerified===false &&
+    f.reviewDecision?.consumerVerified===false &&
+    f.reviewDecision?.retirementApproved===false),true);
+});
