@@ -7,6 +7,7 @@ import {
   it,
 } from "vitest";
 import { Pool } from "pg";
+import { assertDb018DisposableTarget } from "../support/db018-test-target.mjs";
 import { closeDatabaseConnection } from "@/db/client";
 import type { RequestContext } from "@/modules/identity/context";
 import {
@@ -29,15 +30,11 @@ import {
 import { SEED_IDS } from "../../scripts/db-seed-data";
 import { enableSeedLearnerPlacementAccess } from "../support/w04-placement-access-fixture";
 
-const databaseUrl =
-  process.env.TEST_DATABASE_URL ??
-  process.env.DATABASE_URL;
-
-if (!databaseUrl) {
-  throw new Error(
-    "TEST_DATABASE_URL or DATABASE_URL is required for DB integration tests",
-  );
+if (!process.env.TEST_DATABASE_URL) {
+  throw new Error("Placement integration cleanup requires disposable TEST_DATABASE_URL");
 }
+assertDb018DisposableTarget(process.env, { serviceBound: true });
+const databaseUrl = process.env.TEST_DATABASE_URL;
 
 const pool = new Pool({
   connectionString: databaseUrl,
@@ -99,6 +96,9 @@ async function cleanup() {
   await pool.query(
     "delete from placement_job_round_events",
   );
+  // Preserve registered round-retention/FK checks; clear disposable children.
+  await pool.query("delete from placement_round_candidate_slots");
+  await pool.query("delete from placement_round_attendance");
   await pool.query(
     "delete from placement_job_rounds",
   );
@@ -113,9 +113,9 @@ async function cleanup() {
   );
   // Application stages are children of the applicant row, and must be
   // cleaned first in the isolated test database.
-  await pool.query(
-    "delete from placement_college_application_stages",
-  );
+  // Immutable history references the stage row; delete test-only children first.
+  await pool.query("delete from placement_college_application_stage_history");
+  await pool.query("delete from placement_college_application_stages");
   await pool.query(
     "delete from placement_applications",
   );

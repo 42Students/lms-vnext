@@ -1,6 +1,7 @@
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
 import { randomUUID } from "node:crypto";
 import { Pool } from "pg";
+import { assertDb018DisposableTarget } from "../support/db018-test-target.mjs";
 import { drizzle } from "drizzle-orm/node-postgres";
 import { SEED_IDS } from "../../scripts/db-seed-data";
 import {
@@ -30,8 +31,15 @@ if (db050Enabled && process.env.DATABASE_URL) {
   const production = new URL(process.env.DATABASE_URL);
   const identity = (u: URL) =>
     `${u.hostname.toLowerCase()}:${u.port || "5432"}:${decodeURIComponent(u.pathname).toLowerCase()}`;
-  if (identity(production) === identity(target!))
-    throw new Error("DB050 refuses the application database");
+  if (identity(production) === identity(target!)) {
+    // DB001 aliases its already replayed disposable PostgreSQL for service
+    // tests. An application database remains forbidden outside this exact
+    // independent-verifier isolation contract.
+    if (process.env.DB03_ISOLATED_TEST_DATABASE !== "1" ||
+        process.env.DATABASE_URL !== rawUrl)
+      throw new Error("DB050 refuses the application database");
+    assertDb018DisposableTarget(process.env, { serviceBound: true });
+  }
 }
 
 const pool = new Pool({ connectionString: rawUrl, max: 2 });

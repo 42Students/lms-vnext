@@ -37,6 +37,9 @@ on:
       - "tests/integration/db06-assessment-parent-scope.test.ts"
       - "tests/support/learner-positive-fixture.ts"
       - "tests/integration/learner-positive-path-fixtures.test.ts"
+      - "tests/integration/placements-evaluation-config.test.ts"
+      - "tests/integration/placements-role-options.test.ts"
+      - "tests/integration/db10-global-email-suppression-service.test.ts"
       - ".github/workflows/db001-independent-verifier-acceptance.yml"
 permissions:
   contents: read

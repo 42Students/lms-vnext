@@ -6,6 +6,7 @@ import {
   it,
 } from "vitest";
 import { Pool } from "pg";
+import { assertDb018DisposableTarget } from "../support/db018-test-target.mjs";
 import { closeDatabaseConnection } from "@/db/client";
 import type { RequestContext } from "@/modules/identity/context";
 import { createPlacementCompany } from "@/modules/placements/company-service";
@@ -17,15 +18,11 @@ import { createPlacementJob } from "@/modules/placements/job-service";
 import { actOnPlacementRound } from "@/modules/placements/round-service";
 import { SEED_IDS } from "../../scripts/db-seed-data";
 
-const databaseUrl =
-  process.env.TEST_DATABASE_URL ??
-  process.env.DATABASE_URL;
-
-if (!databaseUrl) {
-  throw new Error(
-    "TEST_DATABASE_URL or DATABASE_URL is required for DB integration tests",
-  );
+if (!process.env.TEST_DATABASE_URL) {
+  throw new Error("Placement integration cleanup requires disposable TEST_DATABASE_URL");
 }
+assertDb018DisposableTarget(process.env, { serviceBound: true });
+const databaseUrl = process.env.TEST_DATABASE_URL;
 
 const pool = new Pool({
   connectionString: databaseUrl,
@@ -76,6 +73,9 @@ async function cleanup() {
   await pool.query(
     "delete from placement_job_round_events",
   );
+  // Preserve registered round-retention/FK checks; clear disposable children.
+  await pool.query("delete from placement_round_candidate_slots");
+  await pool.query("delete from placement_round_attendance");
   await pool.query(
     "delete from placement_job_rounds",
   );
@@ -90,6 +90,8 @@ async function cleanup() {
   );
   // This registered FK child is retained by the newer college pipeline;
   // clean it before applications without relaxing referential integrity.
+  // Immutable history references the stage row; delete test-only children first.
+  await pool.query("delete from placement_college_application_stage_history");
   await pool.query("delete from placement_college_application_stages");
   await pool.query(
     "delete from placement_applications",
