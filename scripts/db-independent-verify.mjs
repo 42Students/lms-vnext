@@ -6,6 +6,7 @@ import net from "node:net";
 import { assertSafeDb01TestTarget } from "./db01-test-database-guard.mjs";
 import { redactVerifierOutput } from "./db-independent-verifier-redaction.mjs";
 import { inspectCanonicalGenerationOutput } from "./db-independent-verifier-generation-guard.mjs";
+import { assertPostgres17Version } from "./db-independent-postgres-version.mjs";
 
 const postgresImage =
   process.env.DB_VERIFY_POSTGRES_IMAGE ?? "postgres:17-alpine";
@@ -298,16 +299,20 @@ async function main() {
         DATABASE_URL: databaseUrl,
         TEST_DATABASE_URL: databaseUrl,
       };
+      // Refuse unsupported PostgreSQL before any destructive preparation.
+      const actualServerVersion = providedPostgresVersion(env);
+      assertPostgres17Version(actualServerVersion);
       provider = {
         mode: "provided-url",
         host: new URL(databaseUrl).hostname,
         database: new URL(databaseUrl).pathname.replace(/^\//, ""),
-        postgresVersion: providedPostgresVersion(env),
+        postgresVersion: actualServerVersion,
         note:
           "TEST_DATABASE_URL supplied externally; destructive reset runs with TEST_DATABASE_URL only, while later non-destructive gates receive both DB URLs.",
       };
     } else {
       provider = await startDockerPostgres();
+      assertPostgres17Version(provider.postgresVersion);
     }
 
     if (!databaseUrl) {
