@@ -34,7 +34,7 @@ permissions:
 
 concurrency:
   group: lms-db018-shared-ops-main
-  cancel-in-progress: false
+  cancel-in-progress: true
 
 jobs:
   db018-shared-ops:
