@@ -689,7 +689,16 @@
             "06b0e554c8332a62ea72210343b907ad4512487d",
             "7ec2bdb9808fd728a9c4fb0ef4d29bdcc18ae807",
             "a91d4b30808f23e64388ca6e43f8519eef560de2",
-            "bb9ddec7711edb9a3ef7cfb7dd1be993ca368b09"
+            "bb9ddec7711edb9a3ef7cfb7dd1be993ca368b09",
+            "3b4b8f787f359bf05d3bb1d3bbc3296e31c731ac",
+            "10a3bdab564a0c05120407517e9f3fd8992b91fe",
+            "270eef9b1ad7b1493dcfaf909779267240619562",
+            "530f5e91fffab4d389ddf27bb838c986e1fad7be",
+            "dc52f041698e03548cd39701067ea7e1d896f1ac",
+            "542e8a76facfce312ccf4958f806a4303a5276c2",
+            "4a85818c351be074436991aeb98e687d177fe104",
+            "5088a1f061074d24900918e5469851119f47c22b",
+            "7d73eef8ebc4fcfca441cdd36571fb8b45feb0f2"
           ],
           "retainedCascadeEdges": 11,
           "independentlyClassifiedCascadeEdges": 21,
@@ -700,6 +709,23 @@
           "sourceContractCheck": "PASS_2_OF_2_V8_ADAPTED_EXACT_REPO_CONTENT_2026_10_31",
           "registeredPg17Run": "NOT_YET_OBSERVED",
           "note": "Parent DELETE with retained operational/history child and TRUNCATE are denied without altering FK shape. Both runtime negative execution and global DB014 acceptance remain open; code/test presence is not production proof."
+        },
+        "additionalNegativeWitnesses": {
+          "status": "AUTHORED_SOURCE_CHECKED_NOT_YET_EXACT_PG_ACCEPTED",
+          "sources": [
+            "tests/db014-cascade-retention-registered-pg.test.mjs",
+            "tests/db014-cross-domain-scope-staged-pg.test.mjs",
+            "tests/db014-registered-tenant-catalog-pg.test.mjs",
+            "tests/integration/activity-foundation.test.ts"
+          ],
+          "workItems": [
+            "11/11 retention triggers match live registered CASCADE FK child/parent columns, 10/10 TRUNCATE parents active",
+            "Two-session real broadcast FK parent-delete contention: child-first and parent-first, 55P03 vs 23514",
+            "Forged org/event actor-user identity, group event role/actor membership and immutable actor history direct SQL negatives",
+            "Five global-key uniqueness namespaces catalog checks including global tombstone host reservations",
+            "Application activity dedupe collision no longer leaks cross-tenant, cross-actor or cross-subject private event"
+          ],
+          "executedAtExactHead": false
         }
       }
     },
