@@ -970,7 +970,7 @@
           }
         ],
         "pending": [
-          "DB001 exact independent verifier unfinished; original DB018 dependency still OPEN",
+          "DB001 independent verifier is accepted on exact executed PostgreSQL17 evidence; DB018 still needs original full coverage review and exact-current-main downstream certification",
           "DB019 comprehensive field semantic disposition and DB020 final global catalog/drift certification OPEN; 92 tests are only the committed witness set",
           "Resolve additional untested producer/consumer authorization, two-session races and lifecycle invariants from DB014/DB020 before global acceptance"
         ],
@@ -1001,6 +1001,23 @@
           "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/41144711387",
           "commitSha": "d2f77f20dba7fcc1c97883a8881fb2f826662c39",
           "result": "PASS_SCOPED_PG17_NOT_FULL_DB018_CERTIFICATION"
+        },
+        "latestRegisteredFullGate": {
+          "result": "PASS_EXACT_SHA_REGISTERED_PG17_FULL_NEGATIVE_RACE_AND_DB045_CROSSROLE_WITNESSES_NOT_GLOBAL_DB018_ACCEPTANCE",
+          "recordedOn": "2026-10-31",
+          "commitSha": "1c1145a041420901f6f81e582c73b643277a05bd",
+          "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/41173462926",
+          "jobId": 124456084000,
+          "runner": "GitHub Actions Node22 isolated PostgreSQL 17",
+          "verified": [
+            "Source manifest and witness identity test",
+            "Full registered migration and seed replay plus idempotence",
+            "Relational SQL negatives and two-session races",
+            "Schedule/period-close active producer race",
+            "DB045 Faculty revocation and Admin immutable attendance tests",
+            "DB014 tenant catalog and DB020 provenance negatives"
+          ],
+          "boundary": "Full committed DB018 workflow green at exact SHA; original DB018 broader 2-session/producer/consumer coverage, DB019 decisions and DB020 global phase certification remain OPEN. Do not mark task or global phase accepted."
         }
       }
     },
