@@ -5,6 +5,7 @@ import { isSameOriginRequest } from "@/auth/origin";
 import { tpoRecruiterInviteApiErrorResponse } from "@/lib/tpo-recruiter-invite-api-error";
 import { issueTpoRecruiterInvite } from "@/modules/placements/tpo-recruiter-invite-service";
 import {deliverTpoRecruiterInviteEmail} from "@/modules/placements/tpo-recruiter-invite-email-delivery";
+import {outboundQueueRuntimeEnabled} from "@/modules/operations/outbound-delivery-queue";
 
 export const runtime = "nodejs";
 type RouteContext = { params: Promise<{ leadId: string }> };
@@ -19,7 +20,10 @@ export async function POST(request: Request, { params }: RouteContext) {
 
   try {
     const body = await request.json().catch(() => ({}));
+    // Registered queue readiness and direct-provider readiness are distinct.
+    // A verified outbox may accept encrypted intent before any provider sends.
     if(body.sendEmail===true &&
+       !outboundQueueRuntimeEnabled() &&
        process.env["TPO_RECRUITER_INVITE_EMAIL_READY"]!=="VERIFIED")
       return NextResponse.json({error:"TPO_RECRUITER_INVITE_DELIVERY_PENDING"},{status:503});
     const context = await getCurrentRequestContext();
