@@ -63,7 +63,7 @@ assertDb018DisposableTarget(process.env, {serviceBound: true});
 
 const pool = new Pool({
   connectionString: databaseUrl,
-  max: 1,
+  max: 4,
 });
 const testTpoRoleId=randomUUID();
 
@@ -316,6 +316,111 @@ afterAll(async () => {
 });
 
 describe("Placement P8 offers and joining", () => {
+  it("P5-R17 serializes offer issuers and mutually exclusive learner responses", async () => {
+    const { application, job } = await preparePassedApplication();
+    async function raceBehindRowLock<T>(
+      rowSql: string,
+      rowId: string,
+      tableFragment: string,
+      operations: [() => Promise<T>, () => Promise<T>],
+    ) {
+      const holder = await pool.connect();
+      let inTransaction = false;
+      try {
+        await holder.query("BEGIN");
+        inTransaction = true;
+        await holder.query(rowSql, [rowId]);
+        // Attach handlers before releasing the barrier. A losing service
+        // request may reject early, which must not escape as unhandled.
+        const pending = Promise.allSettled(operations.map((op) => Promise.resolve().then(op)));
+        let blocked = 0;
+        const deadline = Date.now() + 15_000;
+        while (Date.now() < deadline) {
+          const activity = await pool.query<{ blocked: string }>(
+            "select count(*)::text as blocked from pg_stat_activity " +
+            "where datname = current_database() and pid <> pg_backend_pid() " +
+            "and wait_event_type = 'Lock' and query ilike $1",
+            ["%" + tableFragment + "%"],
+          );
+          blocked = Number(activity.rows[0]?.blocked ?? 0);
+          if (blocked >= 2) break;
+          await new Promise((resolve) => setTimeout(resolve, 25));
+        }
+        await holder.query("COMMIT");
+        inTransaction = false;
+        const results = await pending;
+        expect(blocked, "Both producers must reach their competing PostgreSQL row lock").toBeGreaterThanOrEqual(2);
+        expect(results.filter((outcome) => outcome.status === "fulfilled")).toHaveLength(1);
+        expect(results.filter((outcome) => outcome.status === "rejected")).toHaveLength(1);
+        return results;
+      } finally {
+        if (inTransaction) await holder.query("ROLLBACK").catch(() => undefined);
+        holder.release();
+      }
+    }
+
+    // Different terms are intentional: an identical retry is allowed to
+    // return the original offer, but conflicting issuers may not both win.
+    const issuance = await raceBehindRowLock(
+      "select id from placement_jobs where id = $1 for update",
+      job.id,
+      "placement_jobs",
+      [
+        () => issuePlacementOffer(tpo, application.id, {
+          roleTitle: "P5-R17 Backend Engineer", annualCtcInr: 1_200_000,
+        }),
+        () => issuePlacementOffer(tpo, application.id, {
+          roleTitle: "P5-R17 Fullstack Engineer", annualCtcInr: 1_500_000,
+        }),
+      ],
+    );
+    const winner = issuance.find((outcome) => outcome.status === "fulfilled");
+    if (!winner || winner.status !== "fulfilled") throw new Error("Offer issuance winner missing");
+    const issued = winner.value;
+    const offers = await pool.query<{ id: string; status: string; version: number }>(
+      "select id, status, version from placement_offers where application_id = $1",
+      [application.id],
+    );
+    expect(offers.rows).toEqual([{ id: issued.id, status: "ISSUED", version: 1 }]);
+    const issuedHistory = await pool.query<{ to_status: string }>(
+      "select to_status from placement_offer_status_history where offer_id = $1",
+      [issued.id],
+    );
+    expect(issuedHistory.rows.filter((row) => row.to_status === "ISSUED")).toHaveLength(1);
+    const issuedActivity = await pool.query<{ id: string }>(
+      "select id from activity_events where dedupe_key = $1",
+      ["placement-offer:" + issued.id + ":issued"],
+    );
+    expect(issuedActivity.rows).toHaveLength(1);
+
+    // ACCEPT and DECLINE acquire the same persisted learner membership lock
+    // before the offer row, then their state CAS must admit only one outcome.
+    const responses = await raceBehindRowLock(
+      "select id from college_memberships where id = $1 for update",
+      SEED_IDS.learnerCollegeAMembership,
+      "college_memberships",
+      [
+        () => actOnPlacementOffer(learner, issued.id, { action: "ACCEPT" }),
+        () => actOnPlacementOffer(learner, issued.id, { action: "DECLINE", reason: "P5-R17 alternative" }),
+      ],
+    );
+    const winningResponse = responses.find((outcome) => outcome.status === "fulfilled");
+    if (!winningResponse || winningResponse.status !== "fulfilled") throw new Error("Offer response winner missing");
+    const terminal = winningResponse.value.status;
+    expect(["ACCEPTED", "DECLINED"]).toContain(terminal);
+    const finalState = await pool.query<{ status: string }>(
+      "select status from placement_offers where id = $1",
+      [issued.id],
+    );
+    expect(finalState.rows).toEqual([{ status: terminal }]);
+    const history = await pool.query<{ to_status: string }>(
+      "select to_status from placement_offer_status_history " +
+      "where offer_id = $1 and to_status in ('ACCEPTED', 'DECLINED')",
+      [issued.id],
+    );
+    expect(history.rows).toEqual([{ to_status: terminal }]);
+  }, 45_000);
+
   it("LEARNER-GENERAL-HISTORY-DB pages beyond 100 requests without leaking another member",async()=>{
     // Create entirely disposable request rows against the seeded authorized
     // learner. Each unique target avoids the real pending dedupe constraint.
