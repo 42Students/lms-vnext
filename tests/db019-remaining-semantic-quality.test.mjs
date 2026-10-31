@@ -348,7 +348,7 @@ test("DB08 remaining 91 source reviews bind to actual typed tables, with privacy
         const schema=files.get(file);
         const index=schema.indexOf('  "'+target+'",');
         assert.ok(index>=0,"Missing registered typed table "+target);
-        const end=schema.indexOf("\\n);",index);
+        const end=schema.indexOf("\n);",index);
         assert.ok(end>index,"Missing typed table terminator "+target);
         assert.ok(schema.slice(index,end).includes('("'+col+'"'),
           name+"."+field.legacyColumn+" candidate absent "+ref);
