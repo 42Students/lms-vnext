@@ -136,6 +136,126 @@ afterEach(async () => {
 afterAll(async () => { await pool.end(); await closeDatabaseConnection(); });
 
 describe("DB08: atomic placement batch and inherited eligibility", () => {
+  it("P5-R16 serializes DECIDE/DECIDE and DECIDE/UNDO with immutable ordered events", async () => {
+    const a = await makeAcademicFixture(SEED_IDS.collegeA);
+    const memberId = await makeLearner(SEED_IDS.collegeA, a);
+
+    async function waitForCollegeWriters(count: number) {
+      const deadline = Date.now() + 12_000;
+      while (Date.now() < deadline) {
+        const waits = await pool.query<{ blocked: string }>(
+          "select count(*)::text as blocked from pg_stat_activity " +
+          "where datname = current_database() and pid <> pg_backend_pid() " +
+          "and wait_event_type = 'Lock' and query ilike '%colleges%'",
+        );
+        if (Number(waits.rows[0]?.blocked ?? 0) >= count) return;
+        await new Promise((resolve) => setTimeout(resolve, 25));
+      }
+      throw new Error("P5-R16: not all domain writers reached the locked college row");
+    }
+
+    async function raceTwo<T, U>(first: () => Promise<T>, second: () => Promise<U>) {
+      const holder = await pool.connect();
+      let begun = false;
+      try {
+        await holder.query("BEGIN");
+        begun = true;
+        await holder.query("select id from colleges where id = $1 for update", [SEED_IDS.collegeA]);
+        const a = Promise.resolve().then(first);
+        const firstSettled = a.then(
+          (value) => ({ok:true as const,value}),
+          (error:unknown) => ({ok:false as const,error}),
+        );
+        await waitForCollegeWriters(1);
+        const b = Promise.resolve().then(second);
+        const secondSettled = b.then(
+          (value) => ({ok:true as const,value}),
+          (error:unknown) => ({ok:false as const,error}),
+        );
+        await waitForCollegeWriters(2);
+        await holder.query("COMMIT");
+        begun = false;
+        return [await firstSettled, await secondSettled] as const;
+      } finally {
+        if (begun) await holder.query("ROLLBACK").catch(() => undefined);
+        holder.release();
+      }
+    }
+
+    const decisionA = () => decidePlacementParticipation(admin,{
+      collegeId:SEED_IDS.collegeA,
+      changes:[{scopeType:"COHORT" as const,scopeId:a.cohortId,status:"ELIGIBLE" as const}],
+    });
+    const decisionB = () => decidePlacementParticipation(admin,{
+      collegeId:SEED_IDS.collegeA,
+      changes:[{scopeType:"COHORT" as const,scopeId:a.cohortId,
+        status:"INELIGIBLE" as const,reason:"P5-R16 different eligibility decision"}],
+    });
+    const [first,second] = await raceTwo(decisionA,decisionB);
+    expect(first.ok).toBe(true);
+    expect(second.ok).toBe(true);
+    if(!first.ok||!second.ok)throw new Error("Both ordered decisions must commit");
+    expect(first.value.changedCount).toBe(1);
+    expect(second.value.changedCount).toBe(1);
+    const ordered = await pool.query<{
+      event_kind:string;before_status:string|null;after_status:string|null;action_id:string;
+    }>(
+      "select event_kind,before_status,after_status,action_id from placement_eligibility_events " +
+      "where scope_type='COHORT' and scope_id=$1 order by sequence",
+      [a.cohortId],
+    );
+    expect(ordered.rows).toEqual([
+      {event_kind:"DECIDE",before_status:null,after_status:"ELIGIBLE",action_id:first.value.actionId},
+      {event_kind:"DECIDE",before_status:"ELIGIBLE",after_status:"INELIGIBLE",action_id:second.value.actionId},
+    ]);
+    const current = await pool.query<{status:string}>(
+      "select status from placement_eligibility_decisions where scope_type='COHORT' and scope_id=$1",
+      [a.cohortId],
+    );
+    expect(current.rows).toEqual([{status:"INELIGIBLE"}]);
+
+    // Undo of a bulk action MUST fail in full if a newer scoped decision
+    // committed before the undo acquired the same college lock.
+    const original = await decidePlacementParticipation(admin,{
+      collegeId:SEED_IDS.collegeA,changes:[
+        {scopeType:"COHORT",scopeId:a.cohortId,status:"ELIGIBLE"},
+        {scopeType:"MEMBERSHIP",scopeId:memberId,status:"ELIGIBLE"},
+      ],
+    });
+    expect(original.changedCount).toBe(2);
+    const [later,staleUndo] = await raceTwo(
+      () => decidePlacementParticipation(admin,{
+        collegeId:SEED_IDS.collegeA,
+        changes:[{scopeType:"COHORT" as const,scopeId:a.cohortId,
+          status:"INELIGIBLE" as const,reason:"P5-R16 concurrent newer decision"}],
+      }),
+      () => undoPlacementParticipation(admin,{
+        collegeId:SEED_IDS.collegeA,actionId:original.actionId!,
+      }),
+    );
+    expect(later.ok).toBe(true);
+    if(!later.ok)throw new Error("Later decision must commit before undo");
+    expect(later.value.changedCount).toBe(1);
+    expect(staleUndo).toMatchObject({ok:false,error:{code:"DB08_ACTION_STALE"}});
+    const unchanged = await pool.query<{scope_type:string;status:string}>(
+      "select scope_type,status from placement_eligibility_decisions " +
+      "where (scope_type='COHORT' and scope_id=$1) or (scope_type='MEMBERSHIP' and scope_id=$2) " +
+      "order by scope_type",
+      [a.cohortId,memberId],
+    );
+    expect(unchanged.rows).toEqual([
+      {scope_type:"COHORT",status:"INELIGIBLE"},
+      {scope_type:"MEMBERSHIP",status:"ELIGIBLE"},
+    ]);
+    const audit = await pool.query<{event_kind:string;reverses_action_id:string|null}>(
+      "select event_kind,reverses_action_id from placement_eligibility_events " +
+      "where reverses_action_id=$1 or action_id=$1",
+      [original.actionId],
+    );
+    expect(audit.rows).toHaveLength(2);
+    expect(audit.rows.every(row => row.event_kind==="DECIDE" && row.reverses_action_id===null)).toBe(true);
+  },45_000);
+
   it("retains before/after history and reverses whole bulk action atomically", async () => {
     const a = await makeAcademicFixture(SEED_IDS.collegeA);
     const learnerId = await makeLearner(SEED_IDS.collegeA, a);
