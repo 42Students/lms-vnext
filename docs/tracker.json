@@ -916,7 +916,7 @@
         "DB-025"
       ],
       "implementationCheckpoint": {
-        "status": "REGISTERED_PG17_10_ORIGINAL_RACES_PASS_R13_R18_R19_AND_PRODUCTION_DISPATCH_PENDING",
+        "status": "REGISTERED_PG17_12_ORIGINAL_RACES_PASS_R13_AND_PRODUCTION_DISPATCH_PENDING",
         "additionalRegisteredRaceEvidence": {
           "result": "PASS_2_OF_2_REGISTERED_PG17_GLOBAL_ACCEPTANCE_OPEN",
           "recordedOn": "2026-10-31",
@@ -970,10 +970,9 @@
           }
         ],
         "pending": [
-          "P5-R13 REGISTERED SCHEMA BLOCKER: run 41227827316 confirms live DB016 one-shot FILE producer PASS but original source-only DB053 course_upload_receipts absent and existing assignment_submission_files submission_id conflicts with staged assignment_submission_id. Reconcile forward-only DDL/producer/read cutover; keep original R13 FAIL required.",
-          "P5-R18/R19 real PostgreSQL17 concurrent writers and immutable activity PASS on run 41227827316; close race-specific receipts only after independent focused workflow + TypeScript gate and crosswalk are confirmed, without making full DB018 claim.",
-          "Provision and verify least-privileged production outbound worker, recruiter-invitation transactional queue producer and approved provider adapter; fake-provider race evidence is not live delivery proof.",
-          "Reconcile original 23 race, 21 relational, direct-negative, tenant/privacy/permission producer-consumer acceptance on current exact main. DB019 and DB020 remain OPEN."
+          "P5-R13 BLOCKED: original DB053 course_upload_receipts remains absent after registered PG17 replay and DB016 assignment_submission_files live submission_id conflicts with staged assignment_submission_id. Live two-file producer is independently tested; reconcile forward-only storage contract, live producer/read cutover and exact original receipt witness, never waive R13.",
+          "Production dispatcher gate OPEN: verify least-privileged outbound worker principal, production recruiter invitation transactional producer and approved provider adapter with authorized test delivery; PG17 fake-provider race proof is not live dispatch acceptance.",
+          "Reconcile original 23-race, 21 relational, direct-negative and cross-role tenant/privacy/permission/producer-consumer coverage on fresh exact main. P5-R18/R19 are now independent registered PG17 accepted race receipts; DB019 and DB020 remain open."
         ],
         "evidenceIsNotAcceptance": true,
         "fiveFastWitnessClosures": {
@@ -1233,6 +1232,21 @@
           ],
           "execution": "P5-R18 real announcement edit/edit, edit/delete, restore/restore and stale restore/delete CAS; P5-R19 two real workflow writers with immutable activity row consistency; both independent steps passed clean registered PostgreSQL 17.",
           "limitation": "Step-level green within a failed full job. Do not mark DB018 accepted until P5-R13 and production worker/provider plus original crosswalk pass; isolated shared-ops workflow TypeScript gate remains to be checked."
+        },
+        "latestR18R19RegisteredEvidence": {
+          "state": "REGISTERED_PG17_VERIFIED_ORIGINAL_P5_R18_R19",
+          "evidenceIndexCommitSha": "ae0ebf984f93df1677271b36a9260bf64949e4da",
+          "sourceCommitSha": "894bf23055a6312ef55d7dae6931b871c39cfc19",
+          "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/41228213651",
+          "jobId": 124616728570,
+          "result": "PASS",
+          "verifiedRaces": [
+            "P5-R18",
+            "P5-R19"
+          ],
+          "proof": "Exact-head registered PG17 zero-to-head journal and idempotent replay, two real announcement/tracker concurrency services and immutable activity, complete full-repo TypeScript noEmit gate. Only P5-R13 original race still missing.",
+          "originalR13Accepted": false,
+          "db018Accepted": false
         }
       }
     },
