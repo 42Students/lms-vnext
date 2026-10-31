@@ -107,7 +107,7 @@ run("DB001 metadata-only snapshot reflects registered PostgreSQL17 tables, typed
       a: "no action", r: "restrict", c: "cascade", n: "set null", d: "set default",
     };
     const rows = (await client.query(
-      "SELECT c.conname, c.convalidated, c.condeferrable, " +
+      "SELECT c.conname, c.convalidated, c.condeferrable, c.condeferred, " +
       "cl.relname AS child, parent.relname AS parent, c.confdeltype, c.confupdtype, " +
       "ARRAY(SELECT a.attname::text FROM unnest(c.conkey) WITH ORDINALITY k(attnum,ord) " +
       "JOIN pg_attribute a ON a.attrelid=c.conrelid AND a.attnum=k.attnum ORDER BY k.ord) AS columns_from, " +
@@ -138,7 +138,7 @@ run("DB001 metadata-only snapshot reflects registered PostgreSQL17 tables, typed
       "project_templates_published_version_snapshot_fk",
     ]) {
       expect(rows.some(row => row.child === "project_templates" &&
-        row.conname === name && row.convalidated && row.condeferrable)).toBe(true);
+        row.conname === name && row.convalidated && row.condeferrable && row.condeferred)).toBe(true);
     }
     await client.query("COMMIT");
   } finally {
