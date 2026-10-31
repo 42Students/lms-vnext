@@ -76,12 +76,12 @@ These are deliberately direct SQL so an API/service bypass cannot hide a databas
 
 Both previously red regressions are green. Their successful execution does not settle unrelated race families.
 
-## Newly authored race coverage — not yet counted as executed
+## Additional two-session races — registered PG17 green
 
-- **P5-R03 (last group seat):** `groups-db03.test.ts` now launches two real group admission service transactions while the same group row is held by an independent PostgreSQL transaction. Acceptance requires exactly one ACTIVE and one WAITLISTED membership, stored `active_count=1`, and exactly two immutable membership events. The full DB-018 workflow includes this source, but the new case is **AUTHORED / PG17 NOT YET VERIFIED**.
-- **P5-R11 (period close vs schedule writes):** `schedule-service.ts` now acquires a SHARE lock on the scoped academic period within *both* create and update transactions and validates committed CLOSED state and date boundaries after the lock. `academics-a2.test.ts` exercises concurrent uncommitted period CLOSE against creation and editing, requiring both writes to fail closed with the original event unchanged. The DB-018 workflow runs that A2 suite separately. This is **CODE+TEST AUTHORED / PG17 NOT YET VERIFIED**.
+- **P5-R03 (last group seat):** `groups-db03.test.ts` holds the capacity-one group's row lock with a separate PostgreSQL transaction. The test waits until **both** service transactions appear as lock waiters, then releases the lock. It checks exactly one ACTIVE and one WAITLISTED member, `active_count=1`, and exactly two immutable membership events. **PASS** at [run 41150736524](https://github.com/42Students/lms-vnext/actions/runs/41150736524), commit `7af3312a279a0f5538421229d2e6793bdeeb1be8`.
+- **P5-R11 (period close vs schedule writes):** `schedule-service.ts` locks the academic period `FOR SHARE` inside both schedule CREATE and UPDATE transactions. The A2 integration test holds an uncommitted CLOSE, waits for the schedule service to block on the period lock, then commits CLOSE. Both writes must reject as `ACADEMIC_PERIOD_CLOSED`, leaving the original schedule unchanged. **PASS** at [run 41150659994](https://github.com/42Students/lms-vnext/actions/runs/41150659994), commit `4e6b9e97c38183a13da6cb7af9fe47281449cdcc`.
 
-Neither case raises the historical 48/48 named witness count or 92/92 full-suite executed count. The machine-readable witness index records these as pending. Do not mark P5-R11 fixed-and-runtime-verified, or DB-018 accepted, without an exact-SHA green registered PostgreSQL result.
+The original **48/48 named witness** and **92/92 legacy full-suite** results remain historical denominators; these **two additional registered PG17 race passes** are tracked separately in `tests/integration/db18-witness-index.json`. They are not a claim that DB-001 independent schema drift or global DB-018 acceptance has passed. DB-001 still generated an unregistered Drizzle migration and failed the clean-diff gate at [run 41150776001](https://github.com/42Students/lms-vnext/actions/runs/41150776001); DB-018 acceptance remains OPEN.
 
 ## Runtime safety
 
