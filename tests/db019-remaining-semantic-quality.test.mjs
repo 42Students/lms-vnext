@@ -60,9 +60,12 @@ test("DB06 active source fields must retain individually reviewed decisions",()=
   expects(audit(ledgers,changed),"DB06_ACTIVE_FIELD_DISPOSITION_INVALID");
 });
 test("DB08 280 placement fields cannot self-promote from candidates to exact mappings",()=>{
-  const changed=cp(artifacts);
-  changed.DB08.tables[0].fields[0].reviewDecision="MAPPED";
-  expects(audit(ledgers,changed),"DB08_UNSUPPORTED_EXACT_FIELD_MAPPING");
+  const promoted=cp(artifacts);
+  promoted.DB08.tables[0].fields[0].status="MAPPED";
+  expects(audit(ledgers,promoted),"DB08_UNSUPPORTED_EXACT_FIELD_MAPPING");
+  const forged=cp(artifacts);
+  forged.DB08.tables[0].fields[0].reviewDecision="MAPPED";
+  expects(audit(ledgers,forged),"DB08_SOURCE_REVIEW_PROPOSAL_INVALID");
 });
 
 test("DB08 28 job_offer source-to-target proposals remain bounded and never claim runtime proof",()=>{
