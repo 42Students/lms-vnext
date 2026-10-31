@@ -26,6 +26,7 @@ on:
       - "tests/integration/db18-outbound-service-race.test.ts"
       - "tests/integration/projects-p5-lifecycle.test.ts"
       - "tests/integration/placements-p8-offers.test.ts"
+      - "tests/integration/placements-db08-batches.test.ts"
       - "tests/db-parity-pass5.test.mjs"
       - "tests/integration/db18-witness-index.json"
       - "docs/planning/database-parity-pass5-probe-manifest.json"
@@ -121,6 +122,12 @@ jobs:
       - name: P5-R17 concurrent offer issuance and learner response on registered PG17
         run: |
           npx vitest run --config vitest.db.registered.config.ts tests/integration/placements-p8-offers.test.ts -t P5-R17
+      - name: P5-R16 ordered bulk eligibility decisions and stale undo on registered PG17
+        env:
+          DB08_ISOLATED_TEST_DATABASE: "1"
+          DB08_MIGRATION_APPLIED: "1"
+        run: |
+          npx vitest run --config vitest.db.registered.config.ts tests/integration/placements-db08-batches.test.ts -t P5-R16
       - name: P5-R11 schedule and period-close race with real A2 producer
         run: |
           npx vitest run --config vitest.db.registered.config.ts tests/integration/academics-a2.test.ts
