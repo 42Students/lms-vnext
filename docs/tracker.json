@@ -903,26 +903,26 @@
           "Remaining raw field statuses include unverified semantics; no unproven retirement or runtime mapping may be marked verified"
         ],
         "latestSourceReconciliation": {
-        "status": "SCOPED_NODE_SOURCE_AUDIT_STEP_PASSED_GLOBAL_TASK_OPEN",
-        "sourceCommit": "e02f9ebc4ee820e71457bd874f45d5a32cfdeb20",
-        "workflowCommit": "cc8c6c511b4ed81ac04e2100fbd64ff7bab04246",
-        "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/41149063245/job/124380964238",
-        "suite": "DB019 independent eleven-domain source inventory and crosswalk",
-        "result": "PASS_STEP_ONLY",
-        "counts": {
-          "legacyDomains": 11,
-          "legacyFields": 2829,
-          "sourceDecisionsDb00": 732,
-          "sourceDecisionsDb01": 312,
-          "db004PreviouslyEvidencedFields": 195,
-          "db004PriorPhysicalRuntimeWitnessRows": 137,
-          "db004PriorCompositeImplementationRows": 24,
-          "db004RequesterApprovedEngineeringRetirementRows": 34
+          "status": "SCOPED_NODE_SOURCE_AUDIT_STEP_PASSED_GLOBAL_TASK_OPEN",
+          "sourceCommit": "e02f9ebc4ee820e71457bd874f45d5a32cfdeb20",
+          "workflowCommit": "cc8c6c511b4ed81ac04e2100fbd64ff7bab04246",
+          "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/41149063245/job/124380964238",
+          "suite": "DB019 independent eleven-domain source inventory and crosswalk",
+          "result": "PASS_STEP_ONLY",
+          "counts": {
+            "legacyDomains": 11,
+            "legacyFields": 2829,
+            "sourceDecisionsDb00": 732,
+            "sourceDecisionsDb01": 312,
+            "db004PreviouslyEvidencedFields": 195,
+            "db004PriorPhysicalRuntimeWitnessRows": 137,
+            "db004PriorCompositeImplementationRows": 24,
+            "db004RequesterApprovedEngineeringRetirementRows": 34
+          },
+          "scope": "Conservative global preflight overlays now independently cross-check DB00 user-approved exclusion and source decisions, DB01 312 final source dispositions, and DB004 exact 195 accepted technical evidence identities. Negative tests fail on forged approval, field drift, bogus prior PG run URL, duplicates or source SHA mismatch. The 195 are a subset of DB01 312 and not additive.",
+          "limitation": "Source-only preflight and prior accepted domain receipts, not independently re-executed global PG17 producer/consumer/tenant/race checks; unresolved other 9 domain field semantics and global DB020/DB018 gates remain. DB019 stays done:false."
         },
-        "scope": "Conservative global preflight overlays now independently cross-check DB00 user-approved exclusion and source decisions, DB01 312 final source dispositions, and DB004 exact 195 accepted technical evidence identities. Negative tests fail on forged approval, field drift, bogus prior PG run URL, duplicates or source SHA mismatch. The 195 are a subset of DB01 312 and not additive.",
-        "limitation": "Source-only preflight and prior accepted domain receipts, not independently re-executed global PG17 producer/consumer/tenant/race checks; unresolved other 9 domain field semantics and global DB020/DB018 gates remain. DB019 stays done:false."
-      },
-      "evidenceIsNotAcceptance": true
+        "evidenceIsNotAcceptance": true
       }
     },
     {
@@ -1935,7 +1935,7 @@
       "done": false,
       "dependsOn": [],
       "implementationCheckpoint": {
-        "status": "REGISTERED_GRADE_HISTORY_DEFERRED_COMPLETENESS_PG17_GREEN_ATTENDANCE_CUTOVER_OPEN",
+        "status": "ATTENDANCE_REGISTERED_PG17_REPLAY_GREEN_CONSUMERS_PENDING_30_RACE_MATRIX_OPEN",
         "recordedOn": "2026-10-31",
         "executedEvidence": [
           {
@@ -1960,6 +1960,12 @@
             "commitSha": "44ead6be3ebcc2c8ac238784fcf35ca8c04ce306",
             "result": "PASS_SCOPED_REGISTERED_PG17",
             "scope": "322 registered forward-only PostgreSQL 17 migrations, journal verification and replay idempotence PASS; 4/4 dedicated guard/status-cast negative/structural checks PASS; C4A+C4C+Faculty/Mentor grade and publication integrations 33/33 PASS. Deferred grade/feedback/publish completeness rejects direct unaudited edits (23514) and preserves CAS state. DB045 full attendance producer cutover and 30 race/tenant acceptance witnesses remain OPEN."
+          },
+          {
+            "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/41149301434",
+            "commitSha": "cd0dbfa5d9d75bb4a399f297dbb00b4a974a2b67",
+            "result": "PARTIAL_PG17_REGISTERED_REPLAY_GREEN_CONSUMER_MATRIX_RED",
+            "scope": "Registered 0324 immutable attendance ledger, 0325 retention snapshot, full disposable PostgreSQL 17 journal replay and idempotence PASS; dedicated history guards PASS; 33/33 grading & publishing integrations PASS, 23/24 attendance consumers PASS, including new DB045 direct-SQL absence/event/tenant negatives. Remaining one consumer fail is prior fixture's synthetic Faculty-only role list conflicting with persisted FACULTY+MENTOR seed; test context corrected in 30cc9463, rerun awaited. This is NOT DB045 acceptance."
           }
         ],
         "pending": [
@@ -1996,6 +2002,13 @@
             "Do not bypass existing-data backfill proof, weaken the preflight, rewrite an applied migration, or mark DB045 accepted. Coordinate safe migration remedy and run exact-head PG17 replay before acceptance."
           ],
           "notAcceptance": true
+        },
+        "latestAttendanceCutover": {
+          "status": "REGISTERED_PG17_REPLAY_AND_CORE_NEGATIVES_PASS_CONSUMER_RERUN_REQUIRED",
+          "sourceCommit": "0dd0f16491e6d45bf0520dd31d455e712d1788cf",
+          "fixedMigration": "fd48936768c4b551c8f1da540bf36c6cf119871a",
+          "consumerTestFix": "30cc9463d2d71b6c76fad6dfce5443f46278a122",
+          "partialRun": "https://github.com/42Students/lms-vnext/actions/runs/41149301434"
         }
       }
     },
