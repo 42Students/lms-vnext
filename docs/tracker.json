@@ -916,7 +916,27 @@
         "DB-025"
       ],
       "implementationCheckpoint": {
-        "status": "REGISTERED_PG17_12_ORIGINAL_RACES_PASS_R13_AND_PRODUCTION_DISPATCH_PENDING",
+        "status": "REGISTERED_PG17_ORIGINAL_R13_CANONICAL_PASS_DISPATCH_AND_FINAL_CROSSWALK_PENDING",
+        "latestCanonicalR13FullGate": {
+          "recordedOn": "2026-10-31",
+          "commitSha": "04dd6542c7e90942328256b65bdb67700876231",
+          "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/41230739312",
+          "jobId": 124624467356,
+          "result": "PASS_REGISTERED_POSTGRESQL17_TWO_WRITER_CANONICAL_FILE_RECEIPT_NOT_DB018_ACCEPTANCE",
+          "verified": [
+            "Registered migration replay and idempotence",
+            "Original P5-R13 two live public legacy FILE requests contending on the same two registered READY/CLEAN files",
+            "One-shot canonical DB016 assignment_submission_files consumption and activity/storage audit",
+            "Canonical registered file producer one-shot race and recruiter encrypted outbox rollback/rotation"
+          ],
+          "decision": "The original receipt path is reconciled to registered DB016 file identities, not to the unregistered and physically conflicting DB053 staged course_upload_receipts proposal. No DB053 migration or separate producer is assumed.",
+          "remaining": [
+            "Verify trusted least-privilege dispatcher database identity, approved provider adapter and authorized delivery",
+            "Exact-current-main original cross-domain witness and consumer audit",
+            "DB019 final semantic disposition and DB020 global phase gate"
+          ],
+          "db018Accepted": false
+        },
         "additionalRegisteredRaceEvidence": {
           "result": "PASS_2_OF_2_REGISTERED_PG17_GLOBAL_ACCEPTANCE_OPEN",
           "recordedOn": "2026-10-31",
@@ -970,7 +990,6 @@
           }
         ],
         "pending": [
-          "P5-R13 original receipt gate BLOCKED: registered live FILE service two-file reversed-order race PASSED on run 41228430273 after deterministic lock hardening f14e1d7; however DB053 course_upload_receipts is still absent and existing DB016 assignment_submission_files physical shape conflicts with proposed assignment_submission_id. Preserve original failing witness until forward-only schema/producer/read reconciliation; no fake acceptance.",
           "Production dispatcher gate OPEN: verify least-privileged outbound worker principal, production recruiter invitation transactional producer and approved provider adapter with authorized test delivery; PG17 fake-provider race proof is not live dispatch acceptance.",
           "Reconcile original 23-race, 21 relational, direct-negative and cross-role tenant/privacy/permission/producer-consumer coverage on fresh exact main. P5-R18/R19 are now independent registered PG17 accepted race receipts; DB019 and DB020 remain open."
         ],
