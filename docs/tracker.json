@@ -590,7 +590,7 @@
       "done": false,
       "dependsOn": [],
       "implementationCheckpoint": {
-        "status": "REGISTERED_0317_0318_0325_SOURCE_RETENTION_GUARDS_ADDED_PG17_REPLAY_AND_GLOBAL_SCOPE_OPEN",
+        "status": "REGISTERED_0317_0318_0325_0328_0329_RETENTION_PG17_PASS_NEW_IDENTITY_GRANTS_PG_OPEN",
         "recordedOn": "2026-10-31",
         "verifiedScope": "DB14 staged SQL candidate applies transactionally to clean registered PG17 without journal changes; tenant/actor, inbox recipient, group-history owner/role/SYSTEM checks and member status/role revocation SHARE-lock races executed PASS. All temporary SQL guards and test fixture rows were rolled back. This is a DB014 sub-scope witness, not global DB/FK/cascade gate acceptance.",
         "sourceCommits": [
@@ -618,9 +618,9 @@
           }
         ],
         "pending": [
-          "0325 registered PG17 327/327 replay, 11 DELETE/10 TRUNCATE fences, 21-edge cascade catalog, two-session parent/child FK races and original registered tenant negatives PASS in run 41151271993; obtain new exact-head rerun after newer actor/membership negatives and continue global service authorization proof.",
-          "Verify producer/consumer hard-delete behavior for retention-protected parents and accepted privacy policy; reconcile current tenant-scoped uniqueness namespaces.",
-          "Complete DB001 independent gate, DB018/DB019 dependencies and DB020 global database certification; no implicit DB014/global acceptance."
+          "Execute DB014 full workflow at exact registered 330/330 PostgreSQL17 journal head through 0329: two new actor-grant/immutable-event PG negatives plus cascade, tenant, dedupe and concurrency suites; inspect job logs and pin exact SHA.",
+          "Validate producer/consumer deletion, retention and authorization effects for guarded domains; reconcile legitimate audit metadata lifecycle and five global-key uniqueness namespaces.",
+          "Finish independent DB001, DB018, DB019, DB020 and DB045 global database certifications without inferring them from isolated DB014 passes."
         ],
         "evidenceIsNotAcceptance": true,
         "catalogDiagnosis": {
@@ -720,7 +720,7 @@
           }
         },
         "additionalNegativeWitnesses": {
-          "status": "AUTHORED_SOURCE_CHECKED_NOT_YET_EXACT_PG_ACCEPTED",
+          "status": "0325_PG17_GREEN_0328_0329_SOURCE_GREEN_RUNTIME_PENDING",
           "sources": [
             "tests/db014-cascade-retention-registered-pg.test.mjs",
             "tests/db014-cross-domain-scope-staged-pg.test.mjs",
@@ -735,6 +735,27 @@
             "Application activity dedupe collision no longer leaks cross-tenant, cross-actor or cross-subject private event"
           ],
           "executedAtExactHead": false
+        },
+        "hardenedHistoryIdentity": {
+          "eventMigration": "drizzle/0328_db014_activity_identity_immutable.sql",
+          "groupActorGrantMigration": "drizzle/0329_db014_group_history_actor_grants.sql",
+          "sourceTests": [
+            "tests/db014-activity-identity-source.test.mjs",
+            "tests/db014-group-history-actor-grants-source.test.mjs"
+          ],
+          "postgresTests": [
+            "tests/db014-activity-identity-registered-pg.test.mjs",
+            "tests/db014-group-history-actor-grants-registered-pg.test.mjs"
+          ],
+          "sourceContract": "PASS_2_OF_2_EXACT_MAIN_SOURCE_ADAPTED_NODE_ASSERTIONS_2026_10_31",
+          "pgReplayEvidenceThrough0328": {
+            "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/41151964447",
+            "scope": "DB020 clean PG17 registered replay and idempotence 329/329 through 0328; DB014 identity negatives not executed by this workflow"
+          },
+          "pendingPgThrough0329": true,
+          "actorGrantBehavior": "Accepted SYSTEM actor remains null; non-SYSTEM COLLEGE_ADMIN/FACULTY/LEARNER role backed by active locked same-college membership; SUPER_ADMIN backed by active platform system role; forged role negative and 55P03 revocation witness authored.",
+          "immutableEventBehavior": "Preserved organization, college, actor, event, subject, dedupe and sent-time attribution; delivery metadata UPDATE intentionally remains legal.",
+          "note": "Source checks and prior 0325 acceptance are not proof that new 0328/0329 runtime negatives passed."
         }
       }
     },
