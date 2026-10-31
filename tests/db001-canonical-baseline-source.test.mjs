@@ -15,7 +15,7 @@ test("DB001 registered typed baseline is a provenance-only migration, never gene
   assert.equal(snapshot.dialect, "postgresql");
   assert.ok(Object.keys(snapshot.tables).length >= 267);
   assert.equal(sql.replace(/--[^\n]*/g, "").trim(), "SELECT 1;");
-  assert.doesNotMatch(sql, /\b(?:CREATE|DROP|ALTER|TRUNCATE|INSERT|UPDATE|DELETE)\s+(?:TABLE|INDEX|CONSTRAINT|FROM|INTO)/i);
+  // Match only executable SQL: comments describing unsafe CREATE TABLE DDL\n  // must not trigger a false positive, but executable DDL still fails closed.\n  const executableSql = sql.replace(/--[^\\n]*/g, "").trim();\n  assert.doesNotMatch(executableSql, /\\b(?:CREATE|DROP|ALTER|TRUNCATE|INSERT|UPDATE|DELETE)\\s+(?:TABLE|INDEX|CONSTRAINT|FROM|INTO)/i);
   assert.equal(journal.entries.filter(x => x.tag === entry.tag).length, 1);
   for (const constraint of [
     "project_templates_current_version_snapshot_fk",
