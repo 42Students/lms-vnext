@@ -922,7 +922,54 @@
           "scope": "Conservative global preflight overlays now independently cross-check DB00 user-approved exclusion and source decisions, DB01 312 final source dispositions, and DB004 exact 195 accepted technical evidence identities. Negative tests fail on forged approval, field drift, bogus prior PG run URL, duplicates or source SHA mismatch. The 195 are a subset of DB01 312 and not additive.",
           "limitation": "Source-only preflight and prior accepted domain receipts, not independently re-executed global PG17 producer/consumer/tenant/race checks; unresolved other 9 domain field semantics and global DB020/DB018 gates remain. DB019 stays done:false."
         },
-        "evidenceIsNotAcceptance": true
+        "evidenceIsNotAcceptance": true,
+        "latestSemanticQuality": {
+          "status": "SCOPED_SOURCE_ONLY_V8_EXECUTED_762_FIELD_DECISION_QUALITY_PASS_GLOBAL_DB019_OPEN",
+          "recordedOn": "2026-10-31",
+          "implementationCommits": [
+            "065d66b6751ce58fc2284538badf4aab1787ec57",
+            "ca64086576979b8a9343807ae67f555b2724c9ce",
+            "6a4ab1aaac15c4484887c0a11263bf834557fbd8",
+            "11d62db7b1688c63d4c4a29668f9f5f1fd73ecdd",
+            "d438ac4d3411b82caf7d460511f459b903ea5d69",
+            "5171069717d15096e36ca32546fa733601a2d738"
+          ],
+          "script": "scripts/db019-semantic-decision-quality.mjs",
+          "test": "tests/db019-semantic-decision-quality.test.mjs",
+          "globalAuditIntegration": "scripts/db019-crosswalk-identity.mjs",
+          "executed": {
+            "runner": "GitHub-connector V8 in-process evaluator against exact fetched main source and review JSON (not Node CLI and not PostgreSQL)",
+            "result": "PASS",
+            "cases": 16,
+            "passed": 16,
+            "sourceOnly": true,
+            "nodeCliTests": "AUTHORED_NOT_EXECUTED",
+            "postgresql": "NOT_EXECUTED",
+            "domains": {
+              "DB02": {
+                "reviewed": 125,
+                "sourceDecisionRationales": 125,
+                "retirementCandidatesStillUnapproved": 24
+              },
+              "DB07": {
+                "reviewed": 358,
+                "sourceDecisionRationales": 358,
+                "targetGapOrUnresolvedDecisionFields": 173
+              },
+              "DB09": {
+                "reviewed": 279,
+                "mappedSourceDecisions": 195,
+                "redesignedSourceDecisions": 84
+              }
+            }
+          },
+          "remaining": [
+            "DB02 retirement-candidate approvals and DB07 173 target gaps remain distinct from source-level rationales.",
+            "All other DB019 domain fields still need globally justified final dispositions, including DB08 unresolved individual mapping decisions.",
+            "DB019 original full 2,829-field semantic and executable evidence gate remains open; no source-only execution is PostgreSQL or consumer parity."
+          ],
+          "evidenceIsNotAcceptance": true
+        }
       }
     },
     {
