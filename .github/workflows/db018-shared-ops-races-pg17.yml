@@ -1,0 +1,74 @@
+# Exact-SHA registered-journal PostgreSQL 17 evidence for DB-018 P5-R18/R19.
+# Scoped receipt only: the full DB-018 workflow retains all other original gates,
+# including the currently unregistered P5-R13 assignment receipt blocker.
+name: DB-018 registered shared-ops races PostgreSQL 17
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/db018-shared-ops-races-pg17.yml"
+      - "tests/integration/db18-shared-ops-race.test.ts"
+      - "src/modules/announcements/**"
+      - "src/modules/bug-tracker/**"
+      - "src/db/schema/db10-announcements.ts"
+      - "src/db/schema/db10-bug-tracker.ts"
+      - "drizzle/meta/_journal.json"
+      - "drizzle/*.sql"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: lms-db018-shared-ops-main
+  cancel-in-progress: false
+
+jobs:
+  db018-shared-ops:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    services:
+      postgres:
+        image: postgres:17-alpine
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: lms_vnext_test
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres -d lms_vnext_test"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 20
+    env:
+      DATABASE_URL: postgresql://postgres:postgres@127.0.0.1:5432/lms_vnext_test
+      TEST_DATABASE_URL: postgresql://postgres:postgres@127.0.0.1:5432/lms_vnext_test
+      DB018_ISOLATED_TEST_DATABASE: "1"
+      DB03_ISOLATED_TEST_DATABASE: "1"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - name: Install pinned dependencies
+        run: npm ci
+      - name: Validate registered migration journal
+        run: npm run db:journal:verify
+      - name: Prepare disposable PG17 and seed from registered migrations
+        env:
+          DATABASE_URL: ""
+        run: npm run db:test:prepare
+      - name: Prove idempotent registered-journal replay
+        run: npm run db:migrate
+      - name: Execute P5-R18 announcement and P5-R19 tracker real two-writer CAS witnesses
+        run: npx vitest run --config vitest.db.registered.config.ts tests/integration/db18-shared-ops-race.test.ts
+      - name: Static TypeScript gate
+        run: npm run typecheck
+      - name: Preserve full DB-018 acceptance boundary
+        if: always()
+        run: |
+          echo "Only R18/R19 scoped registered PostgreSQL17 producer and activity races are in this receipt."
+          echo "P5-R13 and the remaining DB-018/DB-019/DB-020 gates stay required."
