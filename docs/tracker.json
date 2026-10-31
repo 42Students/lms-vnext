@@ -916,7 +916,7 @@
         "DB-025"
       ],
       "implementationCheckpoint": {
-        "status": "REGISTERED_PG17_320_MIGRATION_92_OF_92_FULL_WITNESS_PASS_GATE_DEPENDENCIES_OPEN",
+        "status": "REGISTERED_PG17_NEW_R08_R09_R21_SERVICE_RACES_PASS_8_PASS5_RACES_UNWITNESSED",
         "additionalRegisteredRaceEvidence": {
           "result": "PASS_2_OF_2_REGISTERED_PG17_GLOBAL_ACCEPTANCE_OPEN",
           "recordedOn": "2026-10-31",
@@ -970,9 +970,9 @@
           }
         ],
         "pending": [
-          "DB001 independent verifier is accepted on exact executed PostgreSQL17 evidence; DB018 still needs original full coverage review and exact-current-main downstream certification",
-          "DB019 comprehensive field semantic disposition and DB020 final global catalog/drift certification OPEN; 92 tests are only the committed witness set",
-          "Resolve additional untested producer/consumer authorization, two-session races and lifecycle invariants from DB014/DB020 before global acceptance"
+          "Execute original Pass-5 P5-R12 through P5-R19 8 two-writer producer/consumer races or provide direct exact-SHA existing registered witness proof; do not treat migrated table presence as behavioral verification",
+          "Complete approved production recruiter-invite transactional outbox origin and trusted-identity/privileged dispatcher + external provider reconciliation; until then sender remains fail-closed, fake transport tests are not provider proof",
+          "Perform final original 23-race and 21 relational/source-tenant/authorization coverage crosswalk on exact-current-main PG17 before DB018 acceptance; DB019 and DB020 are distinct downstream phase gates"
         ],
         "evidenceIsNotAcceptance": true,
         "fiveFastWitnessClosures": {
@@ -1092,6 +1092,36 @@
             "No approved EMAIL provider adapter/worker deployment",
             "Transactional recruiter invitation source producer not yet connected to encrypted outbound queue",
             "Exact end-to-end integration and original DB018 coverage review before acceptance"
+          ],
+          "notAcceptance": true
+        },
+        "latestRegisteredPass5RaceExecution": {
+          "result": "PASS_PARTIAL_FULL_MATRIX",
+          "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/41223296074",
+          "commitSha": "2248afa2ab3cbfed8c2c26028e6efccfefc1e006",
+          "jobId": 124602128023,
+          "verifiedRaces": [
+            "P5-R08",
+            "P5-R09",
+            "P5-R21"
+          ],
+          "actualProviderActivated": false,
+          "independentOriginalRemaining": [
+            "P5-R12",
+            "P5-R13",
+            "P5-R14",
+            "P5-R15",
+            "P5-R16",
+            "P5-R17",
+            "P5-R18",
+            "P5-R19"
+          ],
+          "caveat": "Full registered PostgreSQL17 workflow succeeds including new race tests, but eight named original manifest probes still need direct executable two-session evidence. No external provider/production dispatcher approval.",
+          "executedTests": [
+            "P5-R08 one winner stale-fence denial",
+            "P5-R09 encrypted producer+2 claimers+fake provider once",
+            "P5-R21 global opt-out inserted postqueue before fake send",
+            "Provider unknown outcome remains CLAIMED; no reclaim"
           ],
           "notAcceptance": true
         }

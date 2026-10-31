@@ -148,17 +148,12 @@
     }
   ],
   "missingConcurrencyWitnesses": [],
-  "excludedUntilRegistered": [
-    {
-      "raceProbe": "P5-R08",
-      "reason": "scheduled-job lease schema remains draft/unregistered"
-    }
-  ],
+  "excludedUntilRegistered": [],
   "counts": {
     "directNegativeAuthored": 9,
     "existingConcurrencyAuthored": 4,
     "explicitConcurrencyMissing": 0,
-    "draftUnregisteredExcluded": 1,
+    "draftUnregisteredExcluded": 0,
     "runtimeExecuted": 48,
     "runtimePassed": 48,
     "knownRedRaceAuthored": 0,
@@ -175,8 +170,9 @@
     "pendingConcurrencyAuthored": 0,
     "additionalRegisteredConcurrencyRuntimeExecuted": 4,
     "additionalRegisteredConcurrencyRuntimePassed": 4,
-    "registeredOriginalScopeRaceExecuted": 2,
-    "registeredOriginalScopeRacePassed": 2
+    "registeredOriginalScopeRaceExecuted": 5,
+    "registeredOriginalScopeRacePassed": 5,
+    "unwitnessedPass5Races": 8
   },
   "knownRedRaceWitnesses": [
     {
@@ -444,6 +440,42 @@
       "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/41219595096",
       "jobId": 124591180538,
       "scope": "Real reportErrorForAlert producer with concurrent PG row-lock contention, single signature row, exact 2+2 occurrence count, one initial Telegram send, one later FIXED->OPEN regression and monotonic seen timestamps. Fake provider transport only."
+    },
+    {
+      "id": "DB18-C11",
+      "raceProbe": "P5-R08",
+      "file": "tests/integration/db18-scheduled-lease-race.test.ts",
+      "title": "only one of two competing takeovers can win, and the stale fence can never renew",
+      "state": "REGISTERED_PG17_VERIFIED",
+      "execution": "PASS",
+      "commitSha": "2248afa2ab3cbfed8c2c26028e6efccfefc1e006",
+      "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/41223296074",
+      "jobId": 124602128023,
+      "scope": "Real scheduled_job_leases service: two writers blocked on PG row, one takeover fence n+1, stale renew/current rejected, no third takeover, winner renews."
+    },
+    {
+      "id": "DB18-C12",
+      "raceProbe": "P5-R09",
+      "file": "tests/integration/db18-outbound-service-race.test.ts",
+      "title": "two real claimers only deliver one encrypted logical invitation through fake provider",
+      "state": "REGISTERED_PG17_VERIFIED",
+      "execution": "PASS",
+      "commitSha": "2248afa2ab3cbfed8c2c26028e6efccfefc1e006",
+      "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/41223296074",
+      "jobId": 124602128023,
+      "scope": "Real authenticated queueOutboundDeliveryInTransaction, duplicate protected by idempotency, two claimers race, exactly one fake provider call and provider-accepted DB receipt."
+    },
+    {
+      "id": "DB18-C13",
+      "raceProbe": "P5-R21",
+      "file": "tests/integration/db18-outbound-service-race.test.ts",
+      "title": "late cross-college email suppression denies actual dispatcher and never calls fake provider",
+      "state": "REGISTERED_PG17_VERIFIED",
+      "execution": "PASS",
+      "commitSha": "2248afa2ab3cbfed8c2c26028e6efccfefc1e006",
+      "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/41223296074",
+      "jobId": 124602128023,
+      "scope": "Actual encrypted business queue before global opt-out; dispatched claim refuses send via registered pre-send HMAC guard and ends SUPPRESSED. No real email transport."
     }
   ],
   "outboundStagedDiagnostics": {
@@ -500,5 +532,38 @@
     ],
     "noProviderSend": true,
     "notDb018Acceptance": true
+  },
+  "unwitnessedPass5Probes": [
+    "P5-R12",
+    "P5-R13",
+    "P5-R14",
+    "P5-R15",
+    "P5-R16",
+    "P5-R17",
+    "P5-R18",
+    "P5-R19"
+  ],
+  "latestRegisteredPass5RaceExecution": {
+    "result": "PASS_PARTIAL_FULL_MATRIX",
+    "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/41223296074",
+    "commitSha": "2248afa2ab3cbfed8c2c26028e6efccfefc1e006",
+    "jobId": 124602128023,
+    "verifiedRaces": [
+      "P5-R08",
+      "P5-R09",
+      "P5-R21"
+    ],
+    "actualProviderActivated": false,
+    "independentOriginalRemaining": [
+      "P5-R12",
+      "P5-R13",
+      "P5-R14",
+      "P5-R15",
+      "P5-R16",
+      "P5-R17",
+      "P5-R18",
+      "P5-R19"
+    ],
+    "caveat": "Full registered PostgreSQL17 workflow succeeds including new race tests, but eight named original manifest probes still need direct executable two-session evidence. No external provider/production dispatcher approval."
   }
 }

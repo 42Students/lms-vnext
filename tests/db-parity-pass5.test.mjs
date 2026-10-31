@@ -177,12 +177,12 @@ test("DB18 witness index remains honest about authored versus executed coverage"
   assert.equal(r03.commitSha, "7af3312a279a0f5538421229d2e6793bdeeb1be8");
   assert.equal(r03.runUrl, "https://github.com/42Students/lms-vnext/actions/runs/41150736524");
   assert.equal(index.counts.explicitConcurrencyMissing, 0);
-  assert.equal(index.counts.draftUnregisteredExcluded, 1);
-  assert.deepEqual(index.excludedUntilRegistered.map(w => w.raceProbe), ["P5-R08"]);
+  assert.equal(index.counts.draftUnregisteredExcluded, 0);
+  assert.deepEqual(index.excludedUntilRegistered.map(w => w.raceProbe), []);
   const newlyExecuted = index.registeredOriginalScopeRaceEvidence;
-  assert.deepEqual(newlyExecuted.map(w => w.raceProbe), ["P5-R22", "P5-R10"]);
-  assert.equal(index.counts.registeredOriginalScopeRaceExecuted, 2);
-  assert.equal(index.counts.registeredOriginalScopeRacePassed, 2);
+  assert.deepEqual(newlyExecuted.map(w => w.raceProbe), ["P5-R22", "P5-R10", "P5-R08", "P5-R09", "P5-R21"]);
+  assert.equal(index.counts.registeredOriginalScopeRaceExecuted, 5);
+  assert.equal(index.counts.registeredOriginalScopeRacePassed, 5);
   for (const witness of newlyExecuted) {
     assert.equal(witness.state, "REGISTERED_PG17_VERIFIED");
     assert.equal(witness.execution, "PASS");
@@ -191,6 +191,11 @@ test("DB18 witness index remains honest about authored versus executed coverage"
     assert.ok(fs.readFileSync(witness.file, "utf8").includes(witness.title));
     assert.equal(Number.isSafeInteger(witness.jobId), true);
   }
+  assert.equal(index.counts.unwitnessedPass5Races, 8);
+  assert.deepEqual(index.unwitnessedPass5Probes,
+    Array.from({length:8},(_,i) => "P5-R" + String(i+12).padStart(2,"0")));
+  assert.equal(index.latestRegisteredPass5RaceExecution.actualProviderActivated,false);
+  assert.equal(index.latestRegisteredPass5RaceExecution.result,"PASS_PARTIAL_FULL_MATRIX");
   const staged = index.outboundStagedDiagnostics;
   assert.equal(staged.status, "STAGED_ONLY_PG17_CANDIDATE_VERIFIED_NOT_REGISTERED");
   assert.equal(staged.registered, false);
