@@ -61,13 +61,29 @@ export function validateOutboundDispatchDbConfig(
   // The app can use a URL or separately configured Cloud SQL credentials.
   // Require explicit app-role identity if neither was supplied. Comparing
   // only raw URLs would miss the same login on a different hostname.
-  const applicationLogin =
-    env["DB10_APP_DB_ROLE"] ??
-    loginFromDatabaseUrl(env["DATABASE_URL"] ?? "") ??
-    env["DB_USER"] ??
-    env["PGUSER"] ??
-    null;
-  if (!applicationLogin || applicationLogin === login) return invalid();
+  const applicationUrlRaw = env["DATABASE_URL"];
+  if (applicationUrlRaw) {
+    // Distinct credentials must still target the SAME PostgreSQL database.
+    // Otherwise a worker can silently drain a different deployment's queue.
+    let applicationUrl: URL;
+    try {
+      applicationUrl = new URL(applicationUrlRaw);
+    } catch {
+      return invalid();
+    }
+    if (applicationUrl.hostname.toLowerCase() !== url.hostname.toLowerCase() ||
+        (applicationUrl.port || "5432") !== (url.port || "5432") ||
+        applicationUrl.pathname !== url.pathname) return invalid();
+  }
+  const applicationLogins = [
+    env["DB10_APP_DB_ROLE"],
+    loginFromDatabaseUrl(applicationUrlRaw ?? ""),
+    env["DB_USER"],
+    env["PGUSER"],
+  ].filter((name): name is string => Boolean(name));
+  // Every known app identity must differ: an incorrect optional override
+  // must not mask that DATABASE_URL really uses the worker's login.
+  if (!applicationLogins.length || applicationLogins.includes(login)) return invalid();
   return { url: raw, login };
 }
 
