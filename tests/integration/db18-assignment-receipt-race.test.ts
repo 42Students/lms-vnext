@@ -251,15 +251,18 @@ describe.skipIf(!enabled)("DB018 original P5-R13 one-shot receipt, registered pr
       expect(outcomes.find(x=>!x.ok))
         .toMatchObject({ok:false,error:{code:"STORAGE_FILE_NOT_READY"}});
       const winnerOrder=outcomes[0]?.ok?forward:reversed;
-      if(outcomes[0]?.ok) {
-        // Legacy response preserves the old FILE summary shape, while the
-        // same DB016 transaction persists both ordered scoped file links.
-        expect(outcomes[0].value).toMatchObject({
+      const winner=outcomes.find(x=>x.ok);
+      expect(winner?.ok).toBe(true);
+      if(winner?.ok) {
+        // Assert the actual winner's response in either lock acquisition
+        // order; a reversed-order winner must not evade the public API check.
+        expect(winner.value).toMatchObject({
           id:expect.any(String),
-          files:[
-            {originalName:"race.pdf",mimeType:"application/pdf",sizeBytes:128},
-            {originalName:"race-second.pdf",mimeType:"application/pdf",sizeBytes:128},
-          ],
+          files:winnerOrder.map(id=>({
+            originalName:id===fileId?"race.pdf":"race-second.pdf",
+            mimeType:"application/pdf",
+            sizeBytes:128,
+          })),
         });
       }
       const submissions=await pg().query<{
