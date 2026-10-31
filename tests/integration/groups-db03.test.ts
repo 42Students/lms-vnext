@@ -205,6 +205,69 @@ describe("DB03 group kernel on disposable PostgreSQL", () => {
     }
   });
 
+  it("P5-R23 serializes active leave with waitlist promotion and concurrent join", async () => {
+    const group = await createActiveGroup("BUS", 1);
+    const waiter = await createLearner();
+    const newcomer = await createLearner();
+    const active = await joinGroup(learner, group, SEED_IDS.learnerCollegeAMembership);
+    const waiting = await joinGroup(waiter.ctx, group, waiter.membershipId);
+    expect(active.state).toBe("ACTIVE");
+    expect(waiting.state).toBe("WAITLISTED");
+
+    const gate = await pool.connect();
+    let contention: Promise<PromiseSettledResult<unknown>[]> | undefined;
+    try {
+      await gate.query("BEGIN");
+      await gate.query("SELECT id FROM lms_groups WHERE id=$1 FOR UPDATE", [group]);
+      contention = Promise.allSettled([
+        leaveGroup(learner, group, SEED_IDS.learnerCollegeAMembership),
+        joinGroup(newcomer.ctx, group, newcomer.membershipId),
+      ]);
+
+      const deadline = Date.now() + 5_000;
+      let blockedWriters = 0;
+      while (Date.now() < deadline) {
+        const waiters = await pool.query<{n:number}>(
+          `SELECT count(*)::integer AS n FROM pg_stat_activity
+            WHERE datname=current_database() AND pid <> pg_backend_pid()
+              AND wait_event_type='Lock' AND query ILIKE '%lms_groups%'`,
+        );
+        blockedWriters = waiters.rows[0]?.n ?? 0;
+        if (blockedWriters >= 2) break;
+        await new Promise(resolve => setTimeout(resolve, 25));
+      }
+      expect(blockedWriters, "Both real writers must contend on the parent group").toBeGreaterThanOrEqual(2);
+      await gate.query("COMMIT");
+      const outcomes = await contention;
+      expect(outcomes.every(result => result.status === "fulfilled")).toBe(true);
+
+      const current = await pool.query<{membership_id:string;state:string}>(
+        "SELECT membership_id,state FROM lms_group_members WHERE group_id=$1", [group],
+      );
+      expect(Object.fromEntries(current.rows.map(row => [row.membership_id, row.state]))).toEqual({
+        [SEED_IDS.learnerCollegeAMembership]: "REMOVED",
+        [waiter.membershipId]: "ACTIVE",
+        [newcomer.membershipId]: "WAITLISTED",
+      });
+      const [counter, events] = await Promise.all([
+        pool.query<{active_count:number}>("SELECT active_count FROM lms_groups WHERE id=$1", [group]),
+        pool.query<{membership_id:string;from_state:string|null;to_state:string}>(
+          "SELECT membership_id,from_state,to_state FROM lms_group_member_events WHERE group_id=$1", [group],
+        ),
+      ]);
+      expect(counter.rows[0].active_count).toBe(1);
+      expect(events.rows).toHaveLength(5);
+      expect(events.rows.filter(row => row.from_state === "WAITLISTED" && row.to_state === "ACTIVE"))
+        .toEqual([expect.objectContaining({membership_id: waiter.membershipId})]);
+      expect(events.rows.filter(row => row.to_state === "ACTIVE")).toHaveLength(2);
+      expect(events.rows.filter(row => row.to_state === "REMOVED")).toHaveLength(1);
+    } finally {
+      await gate.query("ROLLBACK");
+      gate.release();
+      if (contention) await contention;
+    }
+  });
+
   it("serializes simultaneous choices from different offerings of the same max_pick=1 slot", async () => {
     const { groups, candidate } = await createElectiveFixture();
     const initialSections = await pool.query(
