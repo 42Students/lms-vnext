@@ -41,6 +41,13 @@ export async function POST(request: Request, { params }: RouteContext) {
         } },
     );
     if(body.sendEmail===true){
+      // A durable encrypted outbox row is not a provider acknowledgement.
+      // Return 202, never emailed:true, until the trusted worker confirms send.
+      if(invite.queued)
+        return NextResponse.json({invite:{
+          leadId:invite.leadId,expiresAt:invite.expiresAt,
+          emailAvailable:invite.emailAvailable,emailed:false,queued:true,
+        }},{status:202,headers:{"Cache-Control":"no-store"}});
       if(!invite.emailed)
         return NextResponse.json({
           error:"INVITE_EMAIL_NOT_ACCEPTED",emailAvailable:invite.emailAvailable,emailed:false,
