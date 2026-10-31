@@ -52,6 +52,30 @@ let fixture:{
 }|null=null;
 
 beforeAll(async()=>{
+  // R13 is a required registered producer/consumer witness, NOT a staged
+  // acceptance exception. Refuse to create misleading fixtures if DB053's
+  // receipts table or its FK-compatible file relation is still unregistered.
+  const catalog=await pool.query<{
+    receipts:string|null;submission_files:string|null;
+    files_fk_shape:boolean;
+  }>(
+    "select to_regclass('public.course_upload_receipts')::text as receipts, "+
+    "to_regclass('public.assignment_submission_files')::text as submission_files, "+
+    "exists (select 1 from information_schema.columns "+
+    "where table_schema='public' and table_name='assignment_submission_files' "+
+    "and column_name='assignment_submission_id') as files_fk_shape",
+  );
+  if(!catalog.rows[0]?.receipts||!catalog.rows[0]?.submission_files||
+      !catalog.rows[0]?.files_fk_shape) {
+    throw new Error(
+      "P5-R13_REGISTERED_RECEIPT_SCHEMA_MISSING: registered PostgreSQL17 "+
+      "must include course_upload_receipts and the assignment_submission_files "+
+      "assignment_submission_id FK shape. The DB053/DB016 candidate is staged "+
+      "and conflicts with the current registered relation; reconcile forward-only "+
+      "DDL and producer/read cutover before this acceptance witness can run.",
+    );
+  }
+
   // This suite exercises the real DB producer/receipt transaction but fakes
   // ONLY the external R2 HEAD response, using a fixed CLEAN scanner verdict.
   // No real provider, storage credentials, upload or scanner is claimed.
