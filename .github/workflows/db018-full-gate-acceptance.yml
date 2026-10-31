@@ -8,6 +8,11 @@ on:
     branches: [main]
     paths:
       - ".github/workflows/db018-full-gate-acceptance.yml"
+      - "tests/support/db018-test-target.mjs"
+      - "src/modules/activity/notification-service.ts"
+      - "src/db/schema/**"
+      - "drizzle/meta/_journal.json"
+      - "drizzle/*.sql"
       - "tests/integration/db018-relational-and-boundary-witnesses.test.ts"
       - "tests/integration/db18-registered-negative-witnesses.test.ts"
       - "tests/integration/db18-concurrency-witnesses.test.ts"
