@@ -7,6 +7,19 @@ import {readFileSync,writeFileSync,mkdirSync} from "node:fs";
 const nameFromKey=k=>k.startsWith("public.")?k.slice(7):k;
 const identity=(table,name)=>table+"."+name;
 const capped=a=>a.slice(0,100);
+// Catalog export is read-only, but the diagnostic artifact may be stale,
+// truncated or accidentally joined with a different registered revision.
+// Never let Map() silently overwrite duplicated physical identities.
+function uniqueBy(rows, key, label){
+ if(!Array.isArray(rows))throw new Error("DB020 missing "+label+" catalog entries");
+ const result=new Map();
+ for(const row of rows){
+  const id=key(row);
+  if(!id||result.has(id))throw new Error("DB020 duplicate or invalid "+label+" identity: "+id);
+  result.set(id,row);
+ }
+ return result;
+}
 export function inspectDb020StructuralSemantics(snapshot,catalog,diagnosis){
  if(snapshot?.dialect!=="postgresql" || !snapshot.tables)
   throw new Error("requires generated PostgreSQL typed snapshot");
@@ -20,10 +33,16 @@ export function inspectDb020StructuralSemantics(snapshot,catalog,diagnosis){
  if(snapshot.tables && Object.keys(snapshot.tables).length!==diagnosis.counts.generatedTypedTables)
   throw new Error("generated snapshot/table census does not match PG17 diagnosis");
 
- const columns=new Map(catalog.columns.map(c=>[identity(c.table_name,c.column_name),c]));
- const indexes=new Map(catalog.indexes.map(i=>[identity(i.table_name,i.name),i]));
- const constraints=new Map(catalog.constraints.map(c=>[identity(c.table_name,c.name),c]));
+ const physicalTables=uniqueBy(catalog.tables,t=>t.name,"table");
+ const columns=uniqueBy(catalog.columns,c=>identity(c.table_name,c.column_name),"column");
+ const indexes=uniqueBy(catalog.indexes,i=>identity(i.table_name,i.name),"index");
+ const constraints=uniqueBy(catalog.constraints,c=>identity(c.table_name,c.name),"constraint");
+ uniqueBy(catalog.triggers,t=>identity(t.table_name,t.name),"trigger");
  const typedTables=new Set(Object.keys(snapshot.tables).map(nameFromKey));
+ if(physicalTables.size!==diagnosis.counts.registeredTables ||
+    physicalTables.size-typedTables.size!==diagnosis.counts.registeredSqlOnlyTables)
+  throw new Error("DB020 physical table census differs from pinned PG17 diagnosis");
+ const missingTypedTables=[...typedTables].filter(t=>!physicalTables.has(t)).sort();
  const missingColumns=[],nullabilityDifferences=[],defaultTextDifferences=[];
  const missingTypedChecks=[],unvalidatedTypedChecks=[],namedChecksPresent=[];
  const missingTypedIndexes=[],invalidTypedIndexes=[],indexUniqueDifferences=[],namedIndexesPresent=[];
@@ -76,11 +95,12 @@ export function inspectDb020StructuralSemantics(snapshot,catalog,diagnosis){
  // Missing typed CHECKs/indexes are blocking drift even if no same-name
  // physical constraint exists. SQL-owned unnamed contracts are audited
  // separately; they do not excuse absent typed schema contracts.
- const hardDifferences=missingColumns.length+nullabilityDifferences.length+
+ const hardDifferences=missingTypedTables.length+missingColumns.length+nullabilityDifferences.length+
   missingTypedChecks.length+unvalidatedTypedChecks.length+
   missingTypedIndexes.length+invalidTypedIndexes.length+indexUniqueDifferences.length+
   invalidPhysicalConstraints.length+invalidPhysicalIndexes.length+disabledTriggers.length;
  const structuralFailures=[
+  ["typed table absent from independent PG17 catalog",missingTypedTables.length],
   ["missing typed table in PG17",diagnosis.counts.generatedAbsentInRegisteredPg],
   ["missing typed columns in PG17",diagnosis.counts.generatedTypedMissingColumns],
   ["unmodeled columns on typed tables",diagnosis.counts.registeredExtraColumnsOnTypedTables],
@@ -104,6 +124,7 @@ export function inspectDb020StructuralSemantics(snapshot,catalog,diagnosis){
   counts:{
    typedTables:typedTables.size,
    catalogTables:catalog.tables.length,
+   typedTablesMissingFromPhysicalCatalog:missingTypedTables.length,
    missingColumns:missingColumns.length,
    nullabilityDifferences:nullabilityDifferences.length,
    rawDefaultExpressionDifferences:defaultTextDifferences.length,
@@ -121,6 +142,7 @@ export function inspectDb020StructuralSemantics(snapshot,catalog,diagnosis){
    disabledRegisteredTriggers:disabledTriggers.length,
    hardDifferences,
   },
+  missingTypedTables:capped(missingTypedTables),
   missingColumns:capped(missingColumns),
   nullabilityDifferences:capped(nullabilityDifferences),
   defaultTextDifferences:capped(defaultTextDifferences),
