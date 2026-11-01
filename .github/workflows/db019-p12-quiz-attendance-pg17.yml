@@ -1,0 +1,75 @@
+# DB19-P12 scoped quiz/attendance producer and immutable history acceptance.
+# Source guard alone is not PostgreSQL proof; DB019 P31/P32 and DB020 stay separate.
+name: DB19 P12 quiz attendance registered PG17
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/db019-p12-quiz-attendance-pg17.yml"
+      - "docs/planning/database-parity-db06-field-reconciliation.json"
+      - "tests/db019-p12-registered-quiz-attendance-review.test.mjs"
+
+permissions:
+  contents: read
+
+jobs:
+  p12-registered-quiz-attendance:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    services:
+      postgres:
+        image: postgres:17-alpine
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: lms_vnext_test
+        ports: ["5432:5432"]
+        options: >-
+          --health-cmd "pg_isready -U postgres -d lms_vnext_test"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 20
+    env:
+      DATABASE_URL: postgresql://postgres:postgres@127.0.0.1:5432/lms_vnext_test
+      TEST_DATABASE_URL: postgresql://postgres:postgres@127.0.0.1:5432/lms_vnext_test
+      DB03_ISOLATED_TEST_DATABASE: "1"
+      DB041_REGISTERED_PG: "YES"
+      DB045_DISPOSABLE_PG: "1"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - name: Verify exact source commit
+        run: test "$(git rev-parse HEAD)" = "$GITHUB_SHA"
+      - run: npm ci
+      - name: P12 exact 65-field source and DB045 original witness guard
+        run: |
+          node --test tests/db019-p12-registered-quiz-attendance-review.test.mjs
+          node --test tests/db045-original-30-witnesses.test.mjs
+          npm run db:journal:verify
+      - name: Registered disposable PG17 zero-to-head replay and seed
+        env:
+          DATABASE_URL: ""
+        run: npm run db:test:prepare
+      - name: Registered replay idempotence
+        run: npm run db:migrate
+      - name: DB041 physical quiz shuffle defaults and negative SQL writes
+        run: node --test tests/db041-registered-quiz-shuffle-pg.test.mjs
+      - name: Quiz authoring, assessment attempts and concurrent close/submit
+        run: npx vitest run --config vitest.db.config.ts tests/integration/courses-c4b-quizzes.test.ts
+      - name: Learner progress consumes persisted quiz attempt results
+        run: npx vitest run --config vitest.db.config.ts tests/integration/courses-c4c-assessment-progress.test.ts
+      - name: Registered attendance actors, corrections, privacy and reports
+        run: >-
+          npx vitest run --config vitest.db.config.ts
+          tests/integration/college-admin-attendance.test.ts
+          tests/integration/academics-a2.test.ts
+          tests/integration/faculty-c4-reports-audit-contact.test.ts
+      - name: Full application TypeScript contract
+        env:
+          NODE_OPTIONS: --max-old-space-size=6144
+        run: npm run typecheck
