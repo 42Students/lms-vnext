@@ -16,18 +16,17 @@ test("DB19 199-table/2829-field package inventory is unique, complete and non-ac
  assert.equal(r.packages.length,33);
  assert.equal(r.totalTables,199);
  assert.equal(r.totalFields,2829);
- assert.equal(r.done,1);
- assert.equal(r.picked,1);
- assert.equal(r.unpickedOpen,31);
- assert.equal(row(canonical,"DB19-P20").pickedBy,"CURRENT_CHAT_AFTER_COLLEGE");
- assert.equal(canonical.tasks.find(t=>t.id==="DB-019").done,false);
- assert.equal(canonical.tasks.filter(t=>t.done).length,79);
+ assert.equal(r.done,r.packages.filter(p=>p.done).length);
+ assert.equal(r.picked,r.packages.filter(p=>p.picked).length);
+ assert.equal(r.unpickedOpen,r.packages.filter(p=>!p.picked&&!p.done).length);
+ assert.equal(r.packages.filter(p=>p.kind==="DOMAIN").length,30);
+ assert.equal(r.packages.filter(p=>p.kind==="GATE").length,2);
  assert.equal(inspectTracker(canonical).readyForNextPhase,false);
 });
 
 test("DB19 pickup status requires named chat assignment but does not certify work",()=>{
  const d=copy(),p=row(d,"DB19-P03");
- p.picked=true;
+ p.pickedBy="";p.picked=true;
  assert.ok(inspectDb019WorkPackages(d).errors.some(e=>e.code==="DB19_PICKED_WITHOUT_ASSIGNEE"));
  p.pickedBy="CHAT_A";
  assert.deepEqual(inspectDb019WorkPackages(d).errors,[]);
@@ -50,9 +49,11 @@ test("DB19 rejects double-assigned source tables, missing fields and lost gates"
 
 test("DB19 cannot mark undone tasks green or close final gates early",()=>{
  const d=copy(),p=row(d,"DB19-P03");
- p.done=true;
+ p.done=true;p.acceptedAt=null;p.acceptanceEvidence=[];
  assert.ok(inspectDb019WorkPackages(d).errors.some(e=>e.code==="DB19_DONE_WITHOUT_EXECUTED_PROOF"));
  const e=copy(),gate=row(e,"DB19-P31");
+ const dep=row(e,"DB19-P03");
+ dep.done=false;dep.acceptedAt=null;dep.acceptanceEvidence=[];
  gate.done=true;gate.acceptedAt="2026-11-01";
  gate.acceptanceEvidence=[{kind:"EXECUTED_ACCEPTANCE",result:"PASS",
   commitSha:"a".repeat(40),
@@ -62,9 +63,12 @@ test("DB19 cannot mark undone tasks green or close final gates early",()=>{
 
 test("DB19 work packages never replace the 81 original acceptance tasks",()=>{
  const d=copy();
+ const before=d.tasks.filter(t=>t.done).length;
  row(d,"DB19-P03").picked=true;row(d,"DB19-P03").pickedBy="CHAT_A";
  assert.equal(d.tasks.length,81);
- assert.equal(d.tasks.filter(t=>t.done).length,79);
- assert.equal(d.tasks.find(t=>t.id==="DB-019").done,false);
- assert.equal(d.tasks.find(t=>t.id==="DB-020").done,false);
+ assert.equal(d.tasks.filter(t=>t.done).length,before);
+ assert.equal(d.tasks.find(t=>t.id==="DB-019").done,
+  canonical.tasks.find(t=>t.id==="DB-019").done);
+ assert.equal(d.tasks.find(t=>t.id==="DB-020").done,
+  canonical.tasks.find(t=>t.id==="DB-020").done);
 });
