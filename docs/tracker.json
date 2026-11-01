@@ -1790,7 +1790,24 @@
             "done": false,
             "acceptedAt": null,
             "acceptanceEvidence": [],
-            "acceptance": "Final meeting field decisions and PG17 schedules/actor history, tenant/membership and conflict/attendance consumer tests."
+            "acceptance": "Final meeting field decisions and PG17 schedules/actor history, tenant/membership and conflict/attendance consumer tests.",
+            "implementationCheckpoint": {
+              "status": "SCHEDULE_CONFLICT_SOFT_DELETE_FIX_COMMITTED_NOT_ACCEPTED",
+              "recordedOn": "2026-11-01",
+              "codeCommits": [
+                "cf463a397868b65f5ff2bec1d28b423533d71aa5",
+                "8b6a79e65c04705492da9a94df49eba9fd7619da"
+              ],
+              "testCommit": "1a08737e468f32de48cee2b4560e7cc487a65055",
+              "ciWiringCommit": "5d55c061dc35dd942eaa8b0e22141177daaf18a3",
+              "checkedSourceScope": "42 project_meeting + 15 project_meeting_history=57 frozen DB07 source rows all matched to unverified W03 review; connector V8 checked three active conflict queries filter deleted_at; Google sync already had the guard.",
+              "pendingAcceptance": [
+                "Execute native Node22 scoped regression suite at exact main and preserve passing GitHub Actions result.",
+                "Run actual PG17 service and SQL negative tests for deleted-row scheduling, concurrent overlapping meeting requests/schedules/reschedules, tenant, revocation and actor history.",
+                "Finalize each of 57 individual source/target dispositions including registered project_meeting_history source-to-producer/consumer semantics; require independent actual PG replay and no unsupported retirement."
+              ],
+              "evidenceIsNotAcceptance": true
+            }
           },
           {
             "id": "DB19-P17",
