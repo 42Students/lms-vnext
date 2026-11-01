@@ -15,7 +15,7 @@ const catalog={kind:"DB020_EXACT_REGISTERED_PG17_CATALOG",registeredHead:"0326_d
  triggers:[]};
 const diagnosis={kind:"DB020_DISPOSABLE_PG17_REGISTERED_VS_GENERATED_DIAGNOSIS",
  registeredHead:catalog.registeredHead,registeredMigrations:327,counts:{
- generatedTypedTables:1,generatedAbsentInRegisteredPg:0,generatedTypedMissingColumns:0,
+ generatedTypedTables:1,registeredTables:1,registeredSqlOnlyTables:0,generatedAbsentInRegisteredPg:0,generatedTypedMissingColumns:0,
  registeredExtraColumnsOnTypedTables:0,unexplainedTypeDifferences:0,
  typedFkShapesMissingFromCatalog:0,unvalidatedFks:0}};
 const inspect=(patch={})=>inspectDb020StructuralSemantics(
@@ -82,4 +82,29 @@ test("DB020 refuses success when physical typed columns, FK shapes or type proof
   assert.equal(r.structuralFailures[0].count,1,key);
   assert.equal(r.passCertification,false,key);
  }
+});
+
+test("DB020 independently detects a missing physical table despite forged zero-drift diagnosis",()=>{
+ const altered={...snapshot,tables:{"public.absent":snapshot.tables["public.sample"]}};
+ const result=inspect({snapshot:altered});
+ assert.equal(result.structurallyConsistent,false);
+ assert.deepEqual(result.missingTypedTables,["absent"]);
+ assert.equal(result.counts.typedTablesMissingFromPhysicalCatalog,1);
+ assert.ok(result.structuralFailures.some(x=>x.reason.includes("independent PG17 catalog")));
+ assert.equal(result.passCertification,false);
+});
+test("DB020 rejects truncated or inconsistent physical table census even when typed counts agree",()=>{
+ assert.throws(()=>inspect({catalog:{...catalog,tables:[]}}),/physical table census/);
+ assert.throws(()=>inspect({diagnosis:{...diagnosis,counts:{
+  ...diagnosis.counts,registeredTables:2}}}),/physical table census/);
+ assert.throws(()=>inspect({diagnosis:{...diagnosis,counts:{
+  ...diagnosis.counts,registeredSqlOnlyTables:1}}}),/physical table census/);
+});
+test("DB020 never silently overwrites duplicated physical catalog identities",()=>{
+ for(const collection of ["tables","columns","indexes","constraints"]){
+  const changed={...catalog,[collection]:[...catalog[collection],catalog[collection][0]]};
+  assert.throws(()=>inspect({catalog:changed}),/duplicate or invalid/,collection);
+ }
+ const trigger={table_name:"sample",name:"scope_guard",enabled:"O"};
+ assert.throws(()=>inspect({catalog:{...catalog,triggers:[trigger,trigger]}}),/duplicate or invalid trigger/);
 });
