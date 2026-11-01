@@ -24,18 +24,22 @@ describe("chat-15 learner offers and internship truth",()=>{
   expect(card).toContain("View offer letter</a>");
  });
  it("LEARNER-placements-45 reflects internship and LOI cascade exceptions",()=>{
-  expect(learnerOfferCountsAsPlaced({kind:"OFFER",jobEmploymentType:"FULL_TIME",roleEmploymentType:"FULL_TIME"})).toBe(true);
-  expect(learnerOfferCountsAsPlaced({kind:"OFFER",jobEmploymentType:"INTERNSHIP",roleEmploymentType:"FULL_TIME"})).toBe(false);
-  expect(learnerOfferCountsAsPlaced({kind:"OFFER",jobEmploymentType:"FULL_TIME",roleEmploymentType:"INTERNSHIP"})).toBe(false);
-  expect(learnerOfferCountsAsPlaced({kind:"LOI",jobEmploymentType:"FULL_TIME",roleEmploymentType:"FULL_TIME"})).toBe(false);
+  // The college's persisted placed-count decision wins over employment type.
+  expect(learnerOfferCountsAsPlaced({kind:"OFFER",jobCountsAsPlaced:true})).toBe(true);
+  expect(learnerOfferCountsAsPlaced({kind:"OFFER",jobCountsAsPlaced:false})).toBe(false);
+  expect(learnerOfferCountsAsPlaced({kind:"OFFER",jobCountsAsPlaced:null})).toBeNull();
+  expect(learnerOfferCountsAsPlaced({kind:"LOI",jobCountsAsPlaced:true})).toBe(false);
+  expect(learnerOfferCountsAsPlaced({kind:"LOI",jobCountsAsPlaced:null})).toBe(false);
   const page=source("src/app/(authenticated)/learn/my-placements/offers/page.tsx");
   expect(page).toContain("countsAsPlaced: learnerOfferCountsAsPlaced");
-  expect(page).toContain("roleEmploymentType:row.role.employmentType");
+  expect(page).toContain("jobCountsAsPlaced:row.job.countsAsPlaced");
   const cascade=source("src/modules/placements/offer-service.ts");
   expect(cascade).toContain("const acceptedCountsAsPlaced");
   expect(cascade).toContain("isPlacementInternship");
   const card=source("src/components/placements/learner-placement-offers.tsx");
   expect(card).toContain("Counts as placed</dt>");
-  expect(card).toContain("No (internship)");
+  expect(card).toContain("No (college policy)");
+  expect(card).toContain("Not confirmed");
+  expect(card).toContain("No (letter of intent)");
  });
 });
