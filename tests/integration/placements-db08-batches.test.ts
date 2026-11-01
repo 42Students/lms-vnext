@@ -570,7 +570,7 @@ describe("DB08: atomic placement batch and inherited eligibility", () => {
     const initial = await upsertPlacementBatchSettings(admin, {
       collegeId: SEED_IDS.collegeA, cohortId: a.cohortId,
       registrationDeadline: "2026-12-10T18:29:59.999Z",
-      rulesOverride: { maxOffers: 1 }, expectedVersion: "none",
+      rulesOverride: { maxHeldOffers: 1 }, expectedVersion: "none",
     });
     await expect(upsertPlacementBatchSettings(admin, {
       collegeId: SEED_IDS.collegeA, cohortId: a.cohortId,
@@ -583,7 +583,7 @@ describe("DB08: atomic placement batch and inherited eligibility", () => {
       expectedVersion: initial.updatedAt.toISOString(),
     });
     expect(cleared.registrationDeadline).toBeNull();
-    expect(cleared.rulesOverride).toEqual({ maxOffers: 1 });
+    expect(cleared.rulesOverride).toEqual({ maxHeldOffers: 1 });
     await expect(markPlacementBatchInvited(admin, {
       collegeId: SEED_IDS.collegeA, cohortId: a.cohortId,
     })).rejects.toMatchObject({ code: "DB08_ACTION_INVALID" });
@@ -596,6 +596,25 @@ describe("DB08: atomic placement batch and inherited eligibility", () => {
     expect(reopened.registrationDeadline).not.toBeNull();
   });
 
+  it("rejects unknown or unsafe batch override keys before any lifecycle mutation",async()=>{
+    const a=await makeAcademicFixture(SEED_IDS.collegeA);
+    await expect(upsertPlacementBatchSettings(admin,{
+      collegeId:SEED_IDS.collegeA,cohortId:a.cohortId,
+      registrationDeadline:null,rulesOverride:{maxOffers:5},
+      expectedVersion:"none",
+    })).rejects.toThrow();
+    await expect(upsertPlacementBatchSettings(admin,{
+      collegeId:SEED_IDS.collegeA,cohortId:a.cohortId,
+      registrationDeadline:null,rulesOverride:{maxHeldOffers:999},
+      expectedVersion:"none",
+    })).rejects.toThrow();
+    const absent=await pool.query(
+      "SELECT cohort_id FROM placement_batch_lifecycles WHERE cohort_id=$1",
+      [a.cohortId],
+    );
+    expect(absent.rows).toHaveLength(0);
+  });
+
   it("keeps batch settings and finish state separate for each cohort", async () => {
     const a = await makeAcademicFixture(SEED_IDS.collegeA);
     const learner = await makeLearner(SEED_IDS.collegeA,a);
@@ -606,7 +625,7 @@ describe("DB08: atomic placement batch and inherited eligibility", () => {
     const b = await makeAcademicFixture(SEED_IDS.collegeA);
     await upsertPlacementBatchSettings(admin, {
       collegeId: SEED_IDS.collegeA, cohortId: a.cohortId,
-      registrationDeadline: "2026-12-05T18:30:00+05:30", rulesOverride: { maxOffers: 2 },
+      registrationDeadline: "2026-12-05T18:30:00+05:30", rulesOverride: { maxHeldOffers: 2 },
     });
     await upsertPlacementBatchSettings(admin, {
       collegeId: SEED_IDS.collegeA, cohortId: b.cohortId,
