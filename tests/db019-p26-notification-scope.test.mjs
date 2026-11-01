@@ -63,6 +63,7 @@ function releaseSections(input) {
 
 function safeExistingSentReceipt(text) {
   return /n\.delivery_status\s*=\s*'SENT'/.test(text) &&
+    /n\.delivered_at\s+is\s+not\s+null/i.test(text) &&
     /n\.deleted_at\s+is\s+null/i.test(text) &&
     /e\.college_id\s*=\s*\$\{entry\.college_id\}/.test(text) &&
     /e\.organization_id\s*=\s*\$\{entry\.organization_id\}/.test(text) &&
@@ -105,6 +106,7 @@ test("P26 contract fails when delivery, tenant or organization safety predicate 
   assert.ok(safeExistingSentReceipt(receipt));
   for (const [original, invalid] of [
     ["n.delivery_status = 'SENT'", "n.delivery_status = 'SCHEDULED'"],
+    ["n.delivered_at is not null", "n.delivered_at is null"],
     ["n.deleted_at is null", "n.deleted_at is not null"],
     ["c.organization_id = ${entry.organization_id}", "c.organization_id is not null"],
     ["o.status = 'ACTIVE'", "o.status <> 'ACTIVE'"],
@@ -155,4 +157,11 @@ test("P26 visibility mutation witness detects count and read path drift", () => 
     assert.ok(segment.includes("releasedNotificationReceipt"), begin);
     assert.equal(broken.includes("releasedNotificationReceipt"), false, begin);
   }
+});
+
+test("P26 SQL text cannot contain JavaScript-style comments or unsigned delivery receipts", () => {
+  const {receipt} = releaseSections(service);
+  assert.doesNotMatch(receipt, /^\s*\/\//m);
+  assert.match(receipt, /n\.delivered_at is not null/);
+  assert.match(receipt, /n\.delivery_status = 'SENT'/);
 });
