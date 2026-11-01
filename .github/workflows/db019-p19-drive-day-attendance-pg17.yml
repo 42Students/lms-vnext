@@ -38,6 +38,7 @@ jobs:
       DATABASE_URL: postgresql://postgres:postgres@127.0.0.1:5432/lms_vnext_test
       TEST_DATABASE_URL: postgresql://postgres:postgres@127.0.0.1:5432/lms_vnext_test
       DB09_ISOLATED_TEST_DATABASE: "1"
+      DB03_ISOLATED_TEST_DATABASE: "1"
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
