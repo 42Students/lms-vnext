@@ -34,9 +34,9 @@
           "riskFlags": [
             "INTEGER_KEY_TO_UUID_MAPPING"
           ],
-          "decision": "STAGED_TARGET_FIELD_RUNTIME_UNVERIFIED",
-          "targetRef": "course_upload_receipts.id",
-          "reason": "Legacy integer identity becomes UUID receipt identity.",
+          "decision": "REGISTERED_DB016_FIELD_REDESIGN_GLOBAL_VERIFY_PENDING",
+          "targetRef": "assignment_submission_files.id",
+          "reason": "Greenfield DB016 registered assignment_submission_files is the live one-shot upload/consumption/retention model; DB053 course_upload_receipts is only a separate unregistered candidate. Legacy integer identity becomes UUID receipt identity.",
           "runtimeVerified": false,
           "validationEvidence": "docs/planning/database-parity-db06-assignment-upload-receipt-contract.md + docs/planning/sql/db06-assignment-upload-receipt-hardening-candidate.sql + src/db/schema/course-upload-receipts-staged.ts + pinned AssignmentUploadReceipt/AssignmentServiceImpl@prod-2026"
         },
@@ -46,9 +46,9 @@
           "nullable": "NOT_NULL",
           "defaultValue": null,
           "riskFlags": [],
-          "decision": "STAGED_SECURITY_REDESIGN_RUNTIME_UNVERIFIED",
-          "targetRef": "course_upload_receipts.id",
-          "reason": "Legacy opaque receipt lookup ID is normalized to UUID receipt identity; upload grant secret is never persisted raw and uses upload_token_hash.",
+          "decision": "REGISTERED_DB016_FIELD_REDESIGN_GLOBAL_VERIFY_PENDING",
+          "targetRef": "assignment_submission_files.id (one-shot upload grant identity)",
+          "reason": "Greenfield DB016 registered assignment_submission_files is the live one-shot upload/consumption/retention model; DB053 course_upload_receipts is only a separate unregistered candidate. Legacy opaque receipt lookup ID is normalized to UUID receipt identity; upload grant secret is never persisted raw and uses upload_token_hash.",
           "runtimeVerified": false,
           "validationEvidence": "docs/planning/database-parity-db06-assignment-upload-receipt-contract.md + docs/planning/sql/db06-assignment-upload-receipt-hardening-candidate.sql + src/db/schema/course-upload-receipts-staged.ts + pinned AssignmentUploadReceipt/AssignmentServiceImpl@prod-2026"
         },
@@ -58,9 +58,9 @@
           "nullable": "NOT_NULL",
           "defaultValue": null,
           "riskFlags": [],
-          "decision": "STAGED_SECURITY_REDESIGN_RUNTIME_UNVERIFIED",
-          "targetRef": "course_upload_receipts.object_key",
-          "reason": "Private GCS object key is scoped to exact college/membership/purpose namespace and becomes immutable identity.",
+          "decision": "REGISTERED_DB016_FIELD_REDESIGN_GLOBAL_VERIFY_PENDING",
+          "targetRef": "assignment_submission_files.object_key",
+          "reason": "Greenfield DB016 registered assignment_submission_files is the live one-shot upload/consumption/retention model; DB053 course_upload_receipts is only a separate unregistered candidate. Private GCS object key is scoped to exact college/membership/purpose namespace and becomes immutable identity.",
           "runtimeVerified": false,
           "validationEvidence": "docs/planning/database-parity-db06-assignment-upload-receipt-contract.md + docs/planning/sql/db06-assignment-upload-receipt-hardening-candidate.sql + src/db/schema/course-upload-receipts-staged.ts + pinned AssignmentUploadReceipt/AssignmentServiceImpl@prod-2026"
         },
@@ -71,8 +71,8 @@
           "defaultValue": "NULL",
           "riskFlags": [],
           "decision": "RETIRE_SECURITY_ANTI_PATTERN",
-          "targetRef": "null",
-          "reason": "Public URL is not persisted as private-object identity; signed reads are generated only after authorization.",
+          "targetRef": "null (public URLs retired; authorized per-request private download only)",
+          "reason": "Legacy public URL storage is intentionally not reproduced: DB016 issues short-lived private signed download URLs only after an authorized consumer check. Runtime no-leakage tests are required.",
           "runtimeVerified": false,
           "validationEvidence": "docs/planning/database-parity-db06-assignment-upload-receipt-contract.md + docs/planning/sql/db06-assignment-upload-receipt-hardening-candidate.sql + src/db/schema/course-upload-receipts-staged.ts + pinned AssignmentUploadReceipt/AssignmentServiceImpl@prod-2026"
         },
@@ -82,9 +82,9 @@
           "nullable": "NULL_ALLOWED",
           "defaultValue": "NULL",
           "riskFlags": [],
-          "decision": "DERIVED_METADATA_NOT_PERSISTED",
-          "targetRef": "course_upload_receipts.purpose + object_key namespace",
-          "reason": "Folder/namespace is server-derived from purpose and private object key contract.",
+          "decision": "REGISTERED_DB016_FIELD_REDESIGN_GLOBAL_VERIFY_PENDING",
+          "targetRef": "assignment_submission_files.object_key (server-generated private namespace)",
+          "reason": "Greenfield DB016 registered assignment_submission_files is the live one-shot upload/consumption/retention model; DB053 course_upload_receipts is only a separate unregistered candidate. Folder/namespace is server-derived from purpose and private object key contract.",
           "runtimeVerified": false,
           "validationEvidence": "docs/planning/database-parity-db06-assignment-upload-receipt-contract.md + docs/planning/sql/db06-assignment-upload-receipt-hardening-candidate.sql + src/db/schema/course-upload-receipts-staged.ts + pinned AssignmentUploadReceipt/AssignmentServiceImpl@prod-2026"
         },
@@ -94,9 +94,9 @@
           "nullable": "NULL_ALLOWED",
           "defaultValue": "NULL",
           "riskFlags": [],
-          "decision": "STAGED_TARGET_FIELD_RUNTIME_UNVERIFIED",
-          "targetRef": "course_upload_receipts.purpose",
-          "reason": "Legacy upload type becomes constrained receipt purpose rather than free-form upload metadata.",
+          "decision": "REGISTERED_DB016_FIELD_REDESIGN_GLOBAL_VERIFY_PENDING",
+          "targetRef": "assignment_submission_files.object_key (assignment-submission namespace)",
+          "reason": "Greenfield DB016 registered assignment_submission_files is the live one-shot upload/consumption/retention model; DB053 course_upload_receipts is only a separate unregistered candidate. Legacy upload type becomes constrained receipt purpose rather than free-form upload metadata.",
           "runtimeVerified": false,
           "validationEvidence": "docs/planning/database-parity-db06-assignment-upload-receipt-contract.md + docs/planning/sql/db06-assignment-upload-receipt-hardening-candidate.sql + src/db/schema/course-upload-receipts-staged.ts + pinned AssignmentUploadReceipt/AssignmentServiceImpl@prod-2026"
         },
@@ -108,9 +108,9 @@
           "riskFlags": [
             "INTEGER_KEY_TO_UUID_MAPPING"
           ],
-          "decision": "NORMALIZED_RELATION_OR_DERIVED",
-          "targetRef": "course_upload_receipts.owner_membership_id + created_by_user_id",
-          "reason": "Tenant membership is the scope anchor while created_by_user_id proves the exact membership user.",
+          "decision": "REGISTERED_DB016_FIELD_REDESIGN_GLOBAL_VERIFY_PENDING",
+          "targetRef": "assignment_submission_files.owner_membership_id -> college_memberships.user_id",
+          "reason": "Greenfield DB016 registered assignment_submission_files is the live one-shot upload/consumption/retention model; DB053 course_upload_receipts is only a separate unregistered candidate. Tenant membership is the scope anchor while created_by_user_id proves the exact membership user.",
           "runtimeVerified": false,
           "validationEvidence": "docs/planning/database-parity-db06-assignment-upload-receipt-contract.md + docs/planning/sql/db06-assignment-upload-receipt-hardening-candidate.sql + src/db/schema/course-upload-receipts-staged.ts + pinned AssignmentUploadReceipt/AssignmentServiceImpl@prod-2026"
         },
@@ -120,9 +120,9 @@
           "nullable": "NULL_ALLOWED",
           "defaultValue": "NULL",
           "riskFlags": [],
-          "decision": "DERIVED_METADATA_NOT_PERSISTED",
-          "targetRef": "membership_roles",
-          "reason": "Owner role is canonical membership data; assignment receipt insert requires persisted LEARNER role.",
+          "decision": "REGISTERED_DB016_FIELD_REDESIGN_GLOBAL_VERIFY_PENDING",
+          "targetRef": "membership_roles.role (persisted LEARNER grant)",
+          "reason": "Greenfield DB016 registered assignment_submission_files is the live one-shot upload/consumption/retention model; DB053 course_upload_receipts is only a separate unregistered candidate. Owner role is canonical membership data; assignment receipt insert requires persisted LEARNER role.",
           "runtimeVerified": false,
           "validationEvidence": "docs/planning/database-parity-db06-assignment-upload-receipt-contract.md + docs/planning/sql/db06-assignment-upload-receipt-hardening-candidate.sql + src/db/schema/course-upload-receipts-staged.ts + pinned AssignmentUploadReceipt/AssignmentServiceImpl@prod-2026"
         },
@@ -134,9 +134,9 @@
           "riskFlags": [
             "INTEGER_KEY_TO_UUID_MAPPING"
           ],
-          "decision": "NORMALIZED_RELATION_OR_DERIVED",
-          "targetRef": "course_upload_receipts.assignment_id + delivery_id / lesson_content_id",
-          "reason": "Assignment receipts bind canonical assignment plus exact delivery; course-resource receipts bind lesson content.",
+          "decision": "REGISTERED_DB016_FIELD_REDESIGN_GLOBAL_VERIFY_PENDING",
+          "targetRef": "assignment_submission_files.assignment_id -> course_assignments.lesson_id",
+          "reason": "Greenfield DB016 registered assignment_submission_files is the live one-shot upload/consumption/retention model; DB053 course_upload_receipts is only a separate unregistered candidate. Assignment receipts bind canonical assignment plus exact delivery; course-resource receipts bind lesson content.",
           "runtimeVerified": false,
           "validationEvidence": "docs/planning/database-parity-db06-assignment-upload-receipt-contract.md + docs/planning/sql/db06-assignment-upload-receipt-hardening-candidate.sql + src/db/schema/course-upload-receipts-staged.ts + pinned AssignmentUploadReceipt/AssignmentServiceImpl@prod-2026"
         },
@@ -146,9 +146,9 @@
           "nullable": "NULL_ALLOWED",
           "defaultValue": "NULL",
           "riskFlags": [],
-          "decision": "STAGED_SECURITY_REDESIGN_RUNTIME_UNVERIFIED",
-          "targetRef": "course_upload_receipts.declared_content_type",
-          "reason": "Signed-upload expected MIME is persisted and assignment MIME allowlist is DB-guarded.",
+          "decision": "REGISTERED_DB016_FIELD_REDESIGN_GLOBAL_VERIFY_PENDING",
+          "targetRef": "assignment_submission_files.declared_content_type",
+          "reason": "Greenfield DB016 registered assignment_submission_files is the live one-shot upload/consumption/retention model; DB053 course_upload_receipts is only a separate unregistered candidate. Signed-upload expected MIME is persisted and assignment MIME allowlist is DB-guarded.",
           "runtimeVerified": false,
           "validationEvidence": "docs/planning/database-parity-db06-assignment-upload-receipt-contract.md + docs/planning/sql/db06-assignment-upload-receipt-hardening-candidate.sql + src/db/schema/course-upload-receipts-staged.ts + pinned AssignmentUploadReceipt/AssignmentServiceImpl@prod-2026"
         },
@@ -158,9 +158,9 @@
           "nullable": "NULL_ALLOWED",
           "defaultValue": "NULL",
           "riskFlags": [],
-          "decision": "STAGED_SECURITY_REDESIGN_RUNTIME_UNVERIFIED",
-          "targetRef": "course_upload_receipts.declared_size_bytes",
-          "reason": "Signed-upload expected size is persisted with 50 MiB bound.",
+          "decision": "REGISTERED_DB016_FIELD_REDESIGN_GLOBAL_VERIFY_PENDING",
+          "targetRef": "assignment_submission_files.declared_size_bytes",
+          "reason": "Greenfield DB016 registered assignment_submission_files is the live one-shot upload/consumption/retention model; DB053 course_upload_receipts is only a separate unregistered candidate. Signed-upload expected size is persisted with 50 MiB bound.",
           "runtimeVerified": false,
           "validationEvidence": "docs/planning/database-parity-db06-assignment-upload-receipt-contract.md + docs/planning/sql/db06-assignment-upload-receipt-hardening-candidate.sql + src/db/schema/course-upload-receipts-staged.ts + pinned AssignmentUploadReceipt/AssignmentServiceImpl@prod-2026"
         },
@@ -170,9 +170,9 @@
           "nullable": "NULL_ALLOWED",
           "defaultValue": "NULL",
           "riskFlags": [],
-          "decision": "STAGED_SECURITY_REDESIGN_RUNTIME_UNVERIFIED",
-          "targetRef": "course_upload_receipts.actual_content_type",
-          "reason": "Privileged object attestation supplies actual MIME and consumption requires equality with declared MIME.",
+          "decision": "REGISTERED_DB016_FIELD_REDESIGN_GLOBAL_VERIFY_PENDING",
+          "targetRef": "assignment_submission_files.verified_content_type",
+          "reason": "Greenfield DB016 registered assignment_submission_files is the live one-shot upload/consumption/retention model; DB053 course_upload_receipts is only a separate unregistered candidate. Privileged object attestation supplies actual MIME and consumption requires equality with declared MIME.",
           "runtimeVerified": false,
           "validationEvidence": "docs/planning/database-parity-db06-assignment-upload-receipt-contract.md + docs/planning/sql/db06-assignment-upload-receipt-hardening-candidate.sql + src/db/schema/course-upload-receipts-staged.ts + pinned AssignmentUploadReceipt/AssignmentServiceImpl@prod-2026"
         },
@@ -182,9 +182,9 @@
           "nullable": "NULL_ALLOWED",
           "defaultValue": "NULL",
           "riskFlags": [],
-          "decision": "STAGED_SECURITY_REDESIGN_RUNTIME_UNVERIFIED",
-          "targetRef": "course_upload_receipts.actual_size_bytes",
-          "reason": "Privileged object attestation supplies actual size and consumption requires equality with declared size.",
+          "decision": "REGISTERED_DB016_FIELD_REDESIGN_GLOBAL_VERIFY_PENDING",
+          "targetRef": "assignment_submission_files.verified_size_bytes",
+          "reason": "Greenfield DB016 registered assignment_submission_files is the live one-shot upload/consumption/retention model; DB053 course_upload_receipts is only a separate unregistered candidate. Privileged object attestation supplies actual size and consumption requires equality with declared size.",
           "runtimeVerified": false,
           "validationEvidence": "docs/planning/database-parity-db06-assignment-upload-receipt-contract.md + docs/planning/sql/db06-assignment-upload-receipt-hardening-candidate.sql + src/db/schema/course-upload-receipts-staged.ts + pinned AssignmentUploadReceipt/AssignmentServiceImpl@prod-2026"
         },
@@ -196,9 +196,9 @@
           "riskFlags": [
             "TIMEZONE_AND_DEADLINE_SEMANTICS"
           ],
-          "decision": "STAGED_TARGET_FIELD_RUNTIME_UNVERIFIED",
-          "targetRef": "course_upload_receipts.expires_at",
-          "reason": "One-time receipt expiry is persisted and bounded to at most 15 minutes after creation.",
+          "decision": "REGISTERED_DB016_FIELD_REDESIGN_GLOBAL_VERIFY_PENDING",
+          "targetRef": "assignment_submission_files.upload_expires_at",
+          "reason": "Greenfield DB016 registered assignment_submission_files is the live one-shot upload/consumption/retention model; DB053 course_upload_receipts is only a separate unregistered candidate. One-time receipt expiry is persisted and bounded to at most 15 minutes after creation.",
           "runtimeVerified": false,
           "validationEvidence": "docs/planning/database-parity-db06-assignment-upload-receipt-contract.md + docs/planning/sql/db06-assignment-upload-receipt-hardening-candidate.sql + src/db/schema/course-upload-receipts-staged.ts + pinned AssignmentUploadReceipt/AssignmentServiceImpl@prod-2026"
         },
@@ -210,9 +210,9 @@
           "riskFlags": [
             "TIMEZONE_AND_DEADLINE_SEMANTICS"
           ],
-          "decision": "STAGED_TARGET_FIELD_RUNTIME_UNVERIFIED",
-          "targetRef": "course_upload_receipts.consumed_at",
-          "reason": "One-time consumption marker is retained with CAS and immutable reassignment prevention.",
+          "decision": "REGISTERED_DB016_FIELD_REDESIGN_GLOBAL_VERIFY_PENDING",
+          "targetRef": "assignment_submission_files.submission_id + assignment_submissions.submitted_at + storage_file_events",
+          "reason": "Greenfield DB016 registered assignment_submission_files is the live one-shot upload/consumption/retention model; DB053 course_upload_receipts is only a separate unregistered candidate. One-time consumption marker is retained with CAS and immutable reassignment prevention.",
           "runtimeVerified": false,
           "validationEvidence": "docs/planning/database-parity-db06-assignment-upload-receipt-contract.md + docs/planning/sql/db06-assignment-upload-receipt-hardening-candidate.sql + src/db/schema/course-upload-receipts-staged.ts + pinned AssignmentUploadReceipt/AssignmentServiceImpl@prod-2026"
         },
@@ -224,9 +224,9 @@
           "riskFlags": [
             "INTEGER_KEY_TO_UUID_MAPPING"
           ],
-          "decision": "NORMALIZED_RELATION_OR_DERIVED",
-          "targetRef": "course_upload_receipts.consumed_by_submission_id",
-          "reason": "Consumed receipt links exact normalized submission; multiple unique receipts may link the same multi-file submission.",
+          "decision": "REGISTERED_DB016_FIELD_REDESIGN_GLOBAL_VERIFY_PENDING",
+          "targetRef": "assignment_submission_files.submission_id",
+          "reason": "Greenfield DB016 registered assignment_submission_files is the live one-shot upload/consumption/retention model; DB053 course_upload_receipts is only a separate unregistered candidate. Consumed receipt links exact normalized submission; multiple unique receipts may link the same multi-file submission.",
           "runtimeVerified": false,
           "validationEvidence": "docs/planning/database-parity-db06-assignment-upload-receipt-contract.md + docs/planning/sql/db06-assignment-upload-receipt-hardening-candidate.sql + src/db/schema/course-upload-receipts-staged.ts + pinned AssignmentUploadReceipt/AssignmentServiceImpl@prod-2026"
         },
@@ -238,9 +238,9 @@
           "riskFlags": [
             "TIMEZONE_AND_DEADLINE_SEMANTICS"
           ],
-          "decision": "STAGED_TARGET_FIELD_RUNTIME_UNVERIFIED",
-          "targetRef": "course_upload_receipts.created_at",
-          "reason": "Receipt creation timestamp.",
+          "decision": "REGISTERED_DB016_FIELD_REDESIGN_GLOBAL_VERIFY_PENDING",
+          "targetRef": "assignment_submission_files.created_at",
+          "reason": "Greenfield DB016 registered assignment_submission_files is the live one-shot upload/consumption/retention model; DB053 course_upload_receipts is only a separate unregistered candidate. Receipt creation timestamp.",
           "runtimeVerified": false,
           "validationEvidence": "docs/planning/database-parity-db06-assignment-upload-receipt-contract.md + docs/planning/sql/db06-assignment-upload-receipt-hardening-candidate.sql + src/db/schema/course-upload-receipts-staged.ts + pinned AssignmentUploadReceipt/AssignmentServiceImpl@prod-2026"
         },
@@ -252,9 +252,9 @@
           "riskFlags": [
             "TIMEZONE_AND_DEADLINE_SEMANTICS"
           ],
-          "decision": "STAGED_TARGET_FIELD_RUNTIME_UNVERIFIED",
-          "targetRef": "course_upload_receipts.updated_at",
-          "reason": "Receipt lifecycle update timestamp; identity/attestation fields remain one-way or immutable.",
+          "decision": "REGISTERED_DB016_FIELD_REDESIGN_GLOBAL_VERIFY_PENDING",
+          "targetRef": "assignment_submission_files.updated_at",
+          "reason": "Greenfield DB016 registered assignment_submission_files is the live one-shot upload/consumption/retention model; DB053 course_upload_receipts is only a separate unregistered candidate. Receipt lifecycle update timestamp; identity/attestation fields remain one-way or immutable.",
           "runtimeVerified": false,
           "validationEvidence": "docs/planning/database-parity-db06-assignment-upload-receipt-contract.md + docs/planning/sql/db06-assignment-upload-receipt-hardening-candidate.sql + src/db/schema/course-upload-receipts-staged.ts + pinned AssignmentUploadReceipt/AssignmentServiceImpl@prod-2026"
         },
@@ -264,9 +264,9 @@
           "nullable": "SOURCE_DEFAULT_NULLABILITY_REVIEW",
           "defaultValue": "'0'",
           "riskFlags": [],
-          "decision": "NORMALIZED_LIFECYCLE",
-          "targetRef": "course_upload_receipts.revoked/revoked_at + deletion_requested_at/deleted_at + retention_until",
-          "reason": "Generic soft delete becomes explicit irreversible revocation plus retention-aware physical deletion lifecycle; receipt evidence rows are retained.",
+          "decision": "REGISTERED_DB016_FIELD_REDESIGN_GLOBAL_VERIFY_PENDING",
+          "targetRef": "assignment_submission_files.status + assignment_submission_files.deleted_at",
+          "reason": "Greenfield DB016 registered assignment_submission_files is the live one-shot upload/consumption/retention model; DB053 course_upload_receipts is only a separate unregistered candidate. Generic soft delete becomes explicit irreversible revocation plus retention-aware physical deletion lifecycle; receipt evidence rows are retained.",
           "runtimeVerified": false,
           "validationEvidence": "docs/planning/database-parity-db06-assignment-upload-receipt-contract.md + docs/planning/sql/db06-assignment-upload-receipt-hardening-candidate.sql + src/db/schema/course-upload-receipts-staged.ts + pinned AssignmentUploadReceipt/AssignmentServiceImpl@prod-2026"
         }
@@ -418,9 +418,9 @@
           "riskFlags": [
             "INTEGER_KEY_TO_UUID_MAPPING"
           ],
-          "decision": "TARGET_GAP_REQUIRED",
+          "decision": "REGISTERED_DB045_IMMUTABLE_EVENT_GLOBAL_VERIFY_PENDING",
           "targetRef": "assignment_grade_events.id",
-          "reason": "UUID primary key in normalized target.",
+          "reason": "Registered DB045 assignment_grade_events immutable producer and versioned before/after transition; scoped PostgreSQL integration and negative history witnesses exist, but final P11 field-by-field certification remains open. UUID primary key in normalized target.",
           "runtimeVerified": false,
           "validationEvidence": null
         },
@@ -432,9 +432,9 @@
           "riskFlags": [
             "INTEGER_KEY_TO_UUID_MAPPING"
           ],
-          "decision": "TARGET_GAP_REQUIRED",
+          "decision": "REGISTERED_DB045_IMMUTABLE_EVENT_GLOBAL_VERIFY_PENDING",
           "targetRef": "assignment_grade_events.assignment_submission_id",
-          "reason": "Grade-history parent.",
+          "reason": "Registered DB045 assignment_grade_events immutable producer and versioned before/after transition; scoped PostgreSQL integration and negative history witnesses exist, but final P11 field-by-field certification remains open. Grade-history parent.",
           "runtimeVerified": false,
           "validationEvidence": null
         },
@@ -444,9 +444,9 @@
           "nullable": "NOT_NULL",
           "defaultValue": null,
           "riskFlags": [],
-          "decision": "TARGET_GAP_REQUIRED",
+          "decision": "REGISTERED_DB045_IMMUTABLE_EVENT_GLOBAL_VERIFY_PENDING",
           "targetRef": "assignment_grade_events.actor_user_id",
-          "reason": "Authenticated grading/publish actor.",
+          "reason": "Registered DB045 assignment_grade_events immutable producer and versioned before/after transition; scoped PostgreSQL integration and negative history witnesses exist, but final P11 field-by-field certification remains open. Authenticated grading/publish actor.",
           "runtimeVerified": false,
           "validationEvidence": null
         },
@@ -456,9 +456,9 @@
           "nullable": "NOT_NULL",
           "defaultValue": "'0'",
           "riskFlags": [],
-          "decision": "TARGET_GAP_REQUIRED",
+          "decision": "REGISTERED_DB045_IMMUTABLE_EVENT_GLOBAL_VERIFY_PENDING",
           "targetRef": "assignment_grade_events.previous_points",
-          "reason": "Immutable before value.",
+          "reason": "Registered DB045 assignment_grade_events immutable producer and versioned before/after transition; scoped PostgreSQL integration and negative history witnesses exist, but final P11 field-by-field certification remains open. Immutable before value.",
           "runtimeVerified": false,
           "validationEvidence": null
         },
@@ -468,9 +468,9 @@
           "nullable": "NOT_NULL",
           "defaultValue": "'0'",
           "riskFlags": [],
-          "decision": "TARGET_GAP_REQUIRED",
+          "decision": "REGISTERED_DB045_IMMUTABLE_EVENT_GLOBAL_VERIFY_PENDING",
           "targetRef": "assignment_grade_events.new_points",
-          "reason": "Immutable after value.",
+          "reason": "Registered DB045 assignment_grade_events immutable producer and versioned before/after transition; scoped PostgreSQL integration and negative history witnesses exist, but final P11 field-by-field certification remains open. Immutable after value.",
           "runtimeVerified": false,
           "validationEvidence": null
         },
@@ -480,9 +480,9 @@
           "nullable": "NULL_ALLOWED",
           "defaultValue": "NULL",
           "riskFlags": [],
-          "decision": "TARGET_GAP_REQUIRED",
+          "decision": "REGISTERED_DB045_IMMUTABLE_EVENT_GLOBAL_VERIFY_PENDING",
           "targetRef": "assignment_grade_events.previous_grading_status",
-          "reason": "Immutable before state.",
+          "reason": "Registered DB045 assignment_grade_events immutable producer and versioned before/after transition; scoped PostgreSQL integration and negative history witnesses exist, but final P11 field-by-field certification remains open. Immutable before state.",
           "runtimeVerified": false,
           "validationEvidence": null
         },
@@ -492,9 +492,9 @@
           "nullable": "NULL_ALLOWED",
           "defaultValue": "NULL",
           "riskFlags": [],
-          "decision": "TARGET_GAP_REQUIRED",
+          "decision": "REGISTERED_DB045_IMMUTABLE_EVENT_GLOBAL_VERIFY_PENDING",
           "targetRef": "assignment_grade_events.new_grading_status",
-          "reason": "Immutable after state.",
+          "reason": "Registered DB045 assignment_grade_events immutable producer and versioned before/after transition; scoped PostgreSQL integration and negative history witnesses exist, but final P11 field-by-field certification remains open. Immutable after state.",
           "runtimeVerified": false,
           "validationEvidence": null
         },
@@ -504,9 +504,9 @@
           "nullable": "NOT_NULL",
           "defaultValue": null,
           "riskFlags": [],
-          "decision": "TARGET_GAP_REQUIRED",
+          "decision": "REGISTERED_DB045_IMMUTABLE_EVENT_GLOBAL_VERIFY_PENDING",
           "targetRef": "assignment_grade_events.action",
-          "reason": "GRADE/REGRADE/PUBLISH lifecycle action.",
+          "reason": "Registered DB045 assignment_grade_events immutable producer and versioned before/after transition; scoped PostgreSQL integration and negative history witnesses exist, but final P11 field-by-field certification remains open. GRADE/REGRADE/PUBLISH lifecycle action.",
           "runtimeVerified": false,
           "validationEvidence": null
         },
@@ -518,9 +518,9 @@
           "riskFlags": [
             "TIMEZONE_AND_DEADLINE_SEMANTICS"
           ],
-          "decision": "TARGET_GAP_REQUIRED",
+          "decision": "REGISTERED_DB045_IMMUTABLE_EVENT_GLOBAL_VERIFY_PENDING",
           "targetRef": "assignment_grade_events.occurred_at",
-          "reason": "Immutable event time.",
+          "reason": "Registered DB045 assignment_grade_events immutable producer and versioned before/after transition; scoped PostgreSQL integration and negative history witnesses exist, but final P11 field-by-field certification remains open. Immutable event time.",
           "runtimeVerified": false,
           "validationEvidence": null
         }
@@ -1356,9 +1356,9 @@
           "nullable": "SOURCE_DEFAULT_NULLABILITY_REVIEW",
           "defaultValue": "'0'",
           "riskFlags": [],
-          "decision": "NORMALIZED_TO_IMMUTABLE_HISTORY",
-          "targetRef": "assignment_submissions retained row + DB038 DELETE/TRUNCATE prohibition",
-          "reason": "Pinned AssignmentServiceImpl/AssignmentController expose submit/read/grade/publish flows but no submission delete/restore producer; repository filters inherited BaseModel is_deleted. vNext keeps learner submission history retained while grading remains mutable.",
+          "decision": "NORMALIZED_TO_RETAINED_HISTORY",
+          "targetRef": "assignment_submissions.deleted_at + immutable assignment_grade_events history",
+          "reason": "Physical deleted_at compatibility exists; registered deletion/grade-event completeness guards prevent silently removing established grade evidence.",
           "runtimeVerified": false,
           "validationEvidence": "docs/planning/sql/db06-assessment-history-retention-candidate.sql + legacy AssignmentServiceImpl/AssignmentController/StudentAssignmentRepository@prod-2026 + vNext assignment-submission-service.ts"
         },
@@ -1410,9 +1410,9 @@
           "riskFlags": [
             "STRUCTURED_PAYLOAD_SEMANTIC_SCHEMA"
           ],
-          "decision": "STAGED_SECURITY_REDESIGN_RUNTIME_UNVERIFIED",
-          "targetRef": "assignment_submission_files + course_upload_receipts",
-          "reason": "Legacy file JSON is normalized to immutable receipt-backed private object evidence with generation/MIME/size/SHA/scanner/retention proof.",
+          "decision": "REGISTERED_DB016_NORMALIZED_PRIVATE_FILE_GLOBAL_VERIFY_PENDING",
+          "targetRef": "assignment_submission_files (registered DB016)",
+          "reason": "The live one-shot writer uses registered DB016 scanned private assignment_submission_files; DB053 course_upload_receipts is an unregistered candidate, not a production dependency.",
           "runtimeVerified": false,
           "validationEvidence": "docs/planning/database-parity-db06-assignment-upload-receipt-contract.md + docs/planning/sql/db06-assignment-upload-receipt-hardening-candidate.sql + src/db/schema/course-upload-receipts-staged.ts + pinned AssignmentUploadReceipt/AssignmentServiceImpl@prod-2026"
         },
@@ -1458,9 +1458,9 @@
           "nullable": "NULL_ALLOWED",
           "defaultValue": "NULL",
           "riskFlags": [],
-          "decision": "STAGED_TARGET_FIELD_RUNTIME_UNVERIFIED",
-          "targetRef": "assignment_submissions.submission_type + assignment_submission_files",
-          "reason": "Current vNext single TEXT/LINK/FILE discriminator is implemented, but pinned legacy MULTI_PART asset semantics require later API/type cutover while DB-053 stages plural file persistence.",
+          "decision": "REGISTERED_DB016_MIXED_CONTENT_GLOBAL_VERIFY_PENDING",
+          "targetRef": "assignment_submissions.submission_type + assignment_submission_files (registered DB016)",
+          "reason": "Live FILE submissions delegate to DB016's atomic multi-file writer; TEXT/LINK use assignment_submissions, and combined written/link/file parts are checked by server-side allowed-submission-method policy.",
           "runtimeVerified": false,
           "validationEvidence": "docs/planning/database-parity-db06-assignment-upload-receipt-contract.md + docs/planning/sql/db06-assignment-upload-receipt-hardening-candidate.sql + src/db/schema/course-upload-receipts-staged.ts + pinned AssignmentUploadReceipt/AssignmentServiceImpl@prod-2026"
         },
@@ -1484,9 +1484,9 @@
           "riskFlags": [
             "STRUCTURED_PAYLOAD_SEMANTIC_SCHEMA"
           ],
-          "decision": "STAGED_SECURITY_REDESIGN_RUNTIME_UNVERIFIED",
-          "targetRef": "assignment_submission_files (ordered many-row file assets) + course_upload_receipts",
-          "reason": "Pinned legacy submission_assets is an ordered list and may consume multiple unique file receipts. DB-053 replaces opaque JSON file evidence with ordered many-row receipt-backed files; mixed text/link MULTI_PART API cutover remains later-phase work.",
+          "decision": "REGISTERED_DB016_NORMALIZED_PRIVATE_FILE_GLOBAL_VERIFY_PENDING",
+          "targetRef": "assignment_submission_files (DB016 ordered multi-file sequence)",
+          "reason": "The registered one-shot writer preserves file ordering, scanner attestation, ownership and a unique submission link; do not cite DB053 staged receipts as a live target.",
           "runtimeVerified": false,
           "validationEvidence": "docs/planning/database-parity-db06-assignment-upload-receipt-contract.md + docs/planning/sql/db06-assignment-upload-receipt-hardening-candidate.sql + src/db/schema/course-upload-receipts-staged.ts + pinned AssignmentUploadReceipt/AssignmentServiceImpl@prod-2026"
         },
@@ -1623,8 +1623,8 @@
           "defaultValue": "'0'",
           "riskFlags": [],
           "decision": "NORMALIZED_TO_IMMUTABLE_HISTORY",
-          "targetRef": "assignment_grade_events.previous_points",
-          "reason": "Do not retain mutable previous_points if immutable grade events are authoritative.",
+          "targetRef": "assignment_submissions.previous_points + assignment_grade_events.previous_points",
+          "reason": "Mutable compatibility prior-point snapshot remains physically present; the registered append-only grade event is the audit authority for each grading transition.",
           "runtimeVerified": false,
           "validationEvidence": null
         },
@@ -1634,9 +1634,9 @@
           "nullable": "NOT_NULL",
           "defaultValue": "'1'",
           "riskFlags": [],
-          "decision": "DERIVED_METADATA_NOT_PERSISTED",
-          "targetRef": "assignment_submissions row existence under assignment_submissions_assignment_membership_uq",
-          "reason": "Current pinned prod enforces exactly one submission per student+assignment through V28 unique key and AssignmentServiceImpl duplicate rejection; accepted assignment submission is therefore effectively attempt 1. Re-attempt entity comment is dormant compatibility intent, not active behavior.",
+          "decision": "NORMALIZED_TARGET_FIELD",
+          "targetRef": "assignment_submissions.attempt_number",
+          "reason": "Physical registered column exists with default 1 and nonnegative validation; one active student+assignment row is enforced by a separate uniqueness rule. No unsupported multi-attempt history is inferred.",
           "runtimeVerified": false,
           "validationEvidence": "docs/planning/database-parity-db06-assignment-attempt-contract.md + V28__student_assignment_unique_submission.sql + V57__student_assignment_semester.sql + pinned AssignmentServiceImpl/StudentAssignmentRepository@prod-2026"
         },
@@ -1658,9 +1658,9 @@
           "nullable": "NULL_ALLOWED",
           "defaultValue": "NULL",
           "riskFlags": [],
-          "decision": "NORMALIZED_RELATION_OR_DERIVED",
-          "targetRef": "assignment_submissions.delivery_id → course_section_deliveries.offering_id → course_offerings.academic_period_id",
-          "reason": "V57 added semester_number for a proposed semester-scoped attempt reset, but current submit does not set/read it and one-submission V28 semantics remain active. vNext derives academic scope relationally without redundant submission scalar.",
+          "decision": "NORMALIZED_SOURCE_SNAPSHOT_AND_RELATION",
+          "targetRef": "assignment_submissions.semester_number + assignment_submissions.delivery_id -> course_section_deliveries.offering_id",
+          "reason": "Registered nullable semester_number is a compatibility snapshot; current active academic term scope is derived from delivery/offering relationships. Source V57 did not establish an active multi-attempt reset.",
           "runtimeVerified": false,
           "validationEvidence": "docs/planning/database-parity-db06-assignment-attempt-contract.md + V28__student_assignment_unique_submission.sql + V57__student_assignment_semester.sql + pinned AssignmentServiceImpl/StudentAssignmentRepository@prod-2026"
         }
