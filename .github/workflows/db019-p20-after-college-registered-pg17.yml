@@ -15,6 +15,11 @@ on:
       - "src/modules/placements/tpo-after-college-model.ts"
       - "src/modules/placements/season-service.ts"
       - "src/modules/placements/tpo-season-write-service.ts"
+      - "src/modules/placements/tpo-season-current-service.ts"
+      - "tests/integration/db019-p20-current-season-blackouts.test.ts"
+      - "tests/unit/db019-p20-current-season-blackouts.test.ts"
+      - "src/app/(authenticated)/learn/my-placements/offers/page.tsx"
+      - "src/modules/placements/offer-service.ts"
       - "tests/integration/db019-p20-season-authorization.test.ts"
       - "tests/integration/db09-tpo-season-settings-write.test.ts"
       - "src/components/tpo/tpo-outcome-labels-editor.tsx"
@@ -80,6 +85,7 @@ jobs:
           tests/unit/db019-p20-custom-label-choices.test.ts
           tests/unit/db019-p20-registration-race-contract.test.ts
           tests/unit/db019-p20-passing-year-options.test.ts
+          tests/unit/db019-p20-current-season-blackouts.test.ts
           tests/unit/chat11-tpo-outcome-labels-adversarial.test.ts
           tests/unit/chat11-tpo-settings-archived-college-safety.test.ts
       - name: Reset, replay registered migrations, and seed disposable PG17
@@ -97,6 +103,7 @@ jobs:
           npx vitest run --config vitest.db.registered.config.ts
           tests/integration/db019-after-college-outcome-details.test.ts
           tests/integration/db019-p20-season-authorization.test.ts
+          tests/integration/db019-p20-current-season-blackouts.test.ts
           tests/integration/db09-tpo-season-settings-write.test.ts
       - name: Typecheck exact revision with sufficient Node heap
         env:
