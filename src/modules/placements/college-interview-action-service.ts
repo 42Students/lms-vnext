@@ -1,12 +1,13 @@
 import "server-only";
 import {and,asc,eq,ne,or,sql} from "drizzle-orm";
 import {getDb} from "@/db/client";
-import {activityEvents,collegeMemberships,inAppNotifications,placementApplications,
+import {activityEvents,collegeMemberships,colleges,inAppNotifications,placementApplications,
  placementApplicationScreenings,placementJobRounds,placementJobs,placementLearnerRequests,users} from "@/db/schema";
 import {placementCollegeInterviews} from "@/db/schema/placement-college-interviews";
 import type {RequestContext} from "@/modules/identity/context";
 import {PlacementsServiceError} from "./errors";
 import {requireCollegePlacementAdmin} from "./college-drive-read-service";
+import {assertPersistedPlatformPermission} from "@/modules/permissions/persisted-actor";
 import {collegeDriveIdSchema} from "./college-drive-read-model";
 import {collegeInterviewActionSchema} from "./college-interview-action-model";
 
@@ -87,9 +88,20 @@ export async function mutateCollegeInterview(context:RequestContext,rawJobId:unk
  const input=collegeInterviewActionSchema.parse(raw);
  if(job.status!=="PUBLISHED")throw new PlacementsServiceError("PLACEMENT_JOB_READ_ONLY");
  return getDb().transaction(async tx=>{
-  const [lockedJob]=await tx.select({status:placementJobs.status}).from(placementJobs)
+  const [lockedJob]=await tx.select({
+   status:placementJobs.status,organizationId:colleges.organizationId,
+   collegeStatus:colleges.status,
+  }).from(placementJobs)
+   .innerJoin(colleges,eq(colleges.id,placementJobs.collegeId))
    .where(and(eq(placementJobs.id,job.id),eq(placementJobs.collegeId,collegeId))).for("share").limit(1);
-  if(lockedJob?.status!=="PUBLISHED")throw new PlacementsServiceError("PLACEMENT_JOB_READ_ONLY");
+  if(lockedJob?.status!=="PUBLISHED"||lockedJob.collegeStatus!=="ACTIVE")
+   throw new PlacementsServiceError("PLACEMENT_JOB_READ_ONLY");
+  // The read-time College Admin/Super Admin role and selected tenant can
+  // become stale before an appointment is written. Hold the real principal,
+  // membership and grant rows under SHARE locks in this write transaction.
+  await assertPersistedPlatformPermission(tx,context,"placements.manage",{
+   collegeId,organizationId:lockedJob.organizationId,
+  });
   let appointment:typeof placementCollegeInterviews.$inferSelect;
   let applicationId:string;
   let eventType:string;
@@ -233,8 +245,8 @@ export async function mutateCollegeInterview(context:RequestContext,rawJobId:unk
     eq(placementApplications.jobId,job.id),eq(collegeMemberships.collegeId,collegeId))).limit(1);
   if(!actor)throw new PlacementsServiceError("PLACEMENT_APPLICATION_NOT_FOUND");
   const [audit]=await tx.insert(activityEvents).values({
-   organizationId:context.membership!.organizationId,collegeId,
-   actorUserId:context.user.id,actorMembershipId:context.membership!.id,
+   organizationId:lockedJob.organizationId,collegeId,
+   actorUserId:context.user.id,actorMembershipId:context.membership?.id??null,
    module:"PLACEMENTS",eventType,subjectType:"placement_interview",subjectId:appointment.id,
    summary:message,metadata:{jobId:job.id,applicationId,roundId:appointment.roundId,
     status:appointment.status,interviewId:appointment.id},
