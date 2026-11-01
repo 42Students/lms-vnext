@@ -1500,7 +1500,7 @@
             "done": false,
             "acceptedAt": null,
             "implementationCheckpoint": {
-              "status": "79_OF_79_SOURCE_PROPOSALS_PLUS_REGISTERED_PG17_AUTH_SESSION_OTP_POSITIVE_NEGATIVE_PASS_P03_NOT_ACCEPTED",
+              "status": "79_OF_79_SOURCE_ONLY_PLUS_REGISTERED_PG17_SESSIONS_OTP_MEMBERSHIPS_EMAIL_LINK_PREUSER_PHYSICAL_GUARDS_PASS_P03_OPEN",
               "recordedOn": "2026-11-01",
               "sourceReviewLedger": "docs/planning/db019-p03-auth-field-review.json",
               "sourceFieldCount": 79,
@@ -1520,17 +1520,38 @@
                   "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/41314795957",
                   "result": "PASS_REGISTERED_PG17_AUTH_OTP_AND_RETIREMENT",
                   "scope": "Real scoped login challenge, atomic OTP consume, learner/faculty role proof, OTP expiry and delivery lifecycle, absence of retired plaintext credentials; source and current-session negatives"
+                },
+                {
+                  "commitSha": "38a22e41c86d0309cec0e33dc0d0e93930096d08",
+                  "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/41315112809",
+                  "result": "PASS_REGISTERED_PG17",
+                  "scope": "Session+OTP registered replay/idempotence, cross-role membership revocation, OTP source consumer/ownership and permission negatives; source 79 pinned proposals"
+                },
+                {
+                  "commitSha": "f43f708310914464ca16c1cb45fb81fdb92d9fbe",
+                  "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/41315183661",
+                  "result": "PASS_REGISTERED_PG17",
+                  "scope": "Seven auth PG17 integration suites including email ownership link, account preuser contact binding, scoped enrollment verification, revocation and source negatives"
+                },
+                {
+                  "commitSha": "b37489c33b5562ae36de220a0634a8e1da4f7b33",
+                  "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/41315378843",
+                  "result": "PASS_REGISTERED_PG17",
+                  "scope": "Registered replay+idempotence, 79 historical source candidate target physical column checks, HMAC/check/unique constraint catalog, live session+user-disable+membership-role races, OTP/role/credential/email/preuser consumer suites"
+                },
+                {
+                  "commitSha": "79aadc29031c4f11271f744cf269c53d2af77a54",
+                  "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/41315431627",
+                  "result": "PASS_SOURCE_ONLY_NODE22",
+                  "scope": "P03 79-field credential misuse/semantic acceptance-mutation suite integrated with full DB019 2829-source accounting workflow; does not replace registered PG17"
                 }
               ],
-              "additionalNotYetAccepted": [
-                "New selected-college membership IDOR and suspension tests executed as a registered PG17 step on bb2d7239 (check the exact workflow receipt before relying on it)",
-                "Latest pending expanded email ownership/preuser and membership-role revocation runs must be observed before treating those suites as PASS"
-              ],
+              "additionalNotYetAccepted": [],
               "remaining": [
-                "Source-level candidate target refs are not approved exact 79 historical semantic equivalences; especially local legacy time/actor, role source and untrusted numeric IDs",
-                "No historical JWT, refresh, handoff, plaintext password, OTP or token credential can be imported; 79 final active/redesigned/retired dispositions and retirement approvals remain open",
-                "Independently verify live source/consumer, tenant, role, permitted email ownership and preuser flow semantics including revoked user and cross-role negative paths on the exact current head",
-                "DB19-P31 final global 2829-field and P32 producer/consumer/security gate and DB020 certificate still outstanding"
+                "Exact 79 historic field target choices are source REVIEW PROPOSALS, not individually approved runtime semantics or data migration. Physical candidate existence is not equivalent to source actor, timezone, permission or lifecycle equivalence.",
+                "Historical JWT/refresh/handoff/password/OTP/role definition retirement/redesign decisions remain unapproved, even though the registered PG17 replacement credential, delivery and ownership guards passed.",
+                "Independent signoff on the exact 79 field-level active/redesigned/retired dispositions and any remaining producer/consumer or permission paths is still required before DB19-P03 DONE.",
+                "DB19-P31 and P32 exact 2829-field global final semantic/producers/consumers/security acceptance; DB020 final phase certificate remains open."
               ],
               "parentDb019Accepted": false
             },
