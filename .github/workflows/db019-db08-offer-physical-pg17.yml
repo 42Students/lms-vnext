@@ -8,6 +8,8 @@ on:
     paths:
       - ".github/workflows/db019-db08-offer-physical-pg17.yml"
       - "tests/db019-db08-offer-physical-pg.test.mjs"
+      - "tests/unit/placement-saved-jobs-main.test.ts"
+      - "src/modules/placements/saved-job-service.ts"
       - "docs/planning/database-parity-db08-field-ledger.json"
       - "drizzle/*.sql"
       - "drizzle/meta/_journal.json"
@@ -54,7 +56,9 @@ jobs:
         env:
           DATABASE_URL: postgresql://postgres:postgres@127.0.0.1:5432/lms_vnext_test
         run: npm run db:migrate
-      - name: Verify 28 source offer decisions against real registered PG17 constraints
+      - name: Verify P21 learner bookmark visibility and role regression policy
+        run: npx vitest run tests/unit/placement-saved-jobs-main.test.ts
+      - name: Verify 28 offer plus P21 saved-job/preferences physical source candidates
         run: node --test tests/db019-db08-offer-physical-pg.test.mjs
       - name: Execute real offer, joining, IDOR and revoked-role consumer witnesses
         env:
@@ -68,5 +72,5 @@ jobs:
         if: always()
         run: |
           echo "Physical source-candidate evidence only."
-          echo "28 legacy offer rows remain UNVERIFIED until exact producer/consumer and legacy semantic approval."
+          echo "28 legacy offer rows and P21 26 source fields remain UNVERIFIED until exact producer/consumer and legacy semantic approval."
           echo "DB019 and DB020 task acceptance remain OPEN."
