@@ -80,6 +80,7 @@ describe("DB10 screenshot validation without public object URLs", () => {
 
   it.each([
     "../escape.png", "x/y.png", "x\\y.png", "screenshot\n.png", " ",
+    "invoice\u202egnp.exe", "screen\u2066.png", "screen\u2069.png",
   ])("rejects filename path injection %s", (fileName) => {
     expect(() => validateBugScreenshotUpload({
       fileName, contentType: "image/png", contentLength: 10, currentCount: 0,
