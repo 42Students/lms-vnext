@@ -1,0 +1,1423 @@
+{
+  "id": "DB19-P28",
+  "recordType": "EXACT_FROZEN_SOURCE_DISPOSITION_PROPOSALS_NOT_ACCEPTED",
+  "sourceSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+  "sourceInventory": "docs/planning/db-pass4-columns-db10_shared_operations.json",
+  "originalFieldLedger": "docs/planning/database-parity-db10-field-ledger.json",
+  "sourceTables": [
+    "bug_report",
+    "bug_report_activity",
+    "bug_report_attachment",
+    "bug_tracker_access",
+    "bug_tracker_session"
+  ],
+  "sourceFieldCount": 58,
+  "reviewedProposals": 58,
+  "runtimeVerifiedCount": 0,
+  "fieldDispositionApproval": "PENDING",
+  "privacyBoundary": "Signed-in reporter owns their reports; Super Admin uses persisted acting-college scope. No legacy unauthenticated bearer-token issuance.",
+  "testEvidenceStatus": "PG17_PINNED_WORKFLOW_RUNNING_NOT_ACCEPTED",
+  "pendingAcceptance": [
+    "Obtain final explicit greenfield design disposition of five legacy bug_tracker_session fields (no runtime issuer or consumer) and bearer access behavior.",
+    "Execute scoped registered PG17 replay/immutable audit/CAS/race/tenant negatives and actual producer-to-DB-to-consumer tests on an exact SHA.",
+    "Verify real provider scanner and private object replay semantics; current tests fake object HEAD and cannot prove malware scanning.",
+    "Approve field-level outcomes with per-field evidence; leave all approval and runtime flags false before that verification."
+  ],
+  "fields": [
+    {
+      "sourceTable": "bug_report",
+      "sourceColumn": "id",
+      "sourceType": "bigint",
+      "sourceDefinition": "BIGINT NOT NULL AUTO_INCREMENT",
+      "sourceRiskFlags": [
+        "INTEGER_KEY_TO_UUID_MAPPING"
+      ],
+      "targetCandidate": "bug_reports.id",
+      "disposition": "PROPOSED_REGISTERED_REPORT_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/bug-tracker/report-service.ts",
+        "src/modules/bug-tracker/admin-service.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/bug-tracker/reporter-service.ts",
+        "src/modules/bug-tracker/admin-service.ts"
+      ],
+      "semanticRisk": "Legacy numeric ID is not a new auth identity. Registered target has a UUID id and optional separate legacy_report_id; greenfield does not import old rows.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "bug_report",
+      "sourceColumn": "public_id",
+      "sourceType": "varchar(24)",
+      "sourceDefinition": "VARCHAR(24) NULL",
+      "sourceRiskFlags": [],
+      "targetCandidate": "bug_reports.public_id",
+      "disposition": "PROPOSED_REGISTERED_REPORT_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/bug-tracker/report-service.ts",
+        "src/modules/bug-tracker/admin-service.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/bug-tracker/reporter-service.ts",
+        "src/modules/bug-tracker/admin-service.ts"
+      ],
+      "semanticRisk": "Public IDs are externally addressable; uniqueness is case-insensitive and idempotency is scoped to current signed-in actor/college/payload.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "bug_report",
+      "sourceColumn": "reporter_access_id",
+      "sourceType": "bigint",
+      "sourceDefinition": "BIGINT NOT NULL",
+      "sourceRiskFlags": [
+        "INTEGER_KEY_TO_UUID_MAPPING"
+      ],
+      "targetCandidate": "bug_reports.reporter_access_id",
+      "disposition": "PROPOSED_REGISTERED_REPORT_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/bug-tracker/report-service.ts",
+        "src/modules/bug-tracker/admin-service.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/bug-tracker/reporter-service.ts",
+        "src/modules/bug-tracker/admin-service.ts"
+      ],
+      "semanticRisk": "Legacy anonymous reporter-token grant is deliberately not trusted for auth; registered access row is linked to signed-in actor.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "bug_report",
+      "sourceColumn": "reporter_name",
+      "sourceType": "varchar(120)",
+      "sourceDefinition": "VARCHAR(120) NOT NULL",
+      "sourceRiskFlags": [],
+      "targetCandidate": "bug_reports.reporter_name",
+      "disposition": "PROPOSED_REGISTERED_REPORT_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/bug-tracker/report-service.ts",
+        "src/modules/bug-tracker/admin-service.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/bug-tracker/reporter-service.ts",
+        "src/modules/bug-tracker/admin-service.ts"
+      ],
+      "semanticRisk": "A display string is not proof of reporter identity; persisted users.display_name must match while current account is active.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "bug_report",
+      "sourceColumn": "account_role",
+      "sourceType": "varchar(32)",
+      "sourceDefinition": "VARCHAR(32) NOT NULL",
+      "sourceRiskFlags": [],
+      "targetCandidate": "bug_reports.account_role",
+      "disposition": "PROPOSED_REGISTERED_REPORT_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/bug-tracker/report-service.ts",
+        "src/modules/bug-tracker/admin-service.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/bug-tracker/reporter-service.ts",
+        "src/modules/bug-tracker/admin-service.ts"
+      ],
+      "semanticRisk": "Confirm source/target active-tenant, actor, status/version and full read/write fidelity on exact-head PostgreSQL.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "bug_report",
+      "sourceColumn": "environment",
+      "sourceType": "varchar(32)",
+      "sourceDefinition": "VARCHAR(32) NOT NULL",
+      "sourceRiskFlags": [],
+      "targetCandidate": "bug_reports.environment",
+      "disposition": "PROPOSED_REGISTERED_REPORT_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/bug-tracker/report-service.ts",
+        "src/modules/bug-tracker/admin-service.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/bug-tracker/reporter-service.ts",
+        "src/modules/bug-tracker/admin-service.ts"
+      ],
+      "semanticRisk": "Confirm source/target active-tenant, actor, status/version and full read/write fidelity on exact-head PostgreSQL.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "bug_report",
+      "sourceColumn": "page",
+      "sourceType": "varchar(120)",
+      "sourceDefinition": "VARCHAR(120) NOT NULL",
+      "sourceRiskFlags": [],
+      "targetCandidate": "bug_reports.page",
+      "disposition": "PROPOSED_REGISTERED_REPORT_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/bug-tracker/report-service.ts",
+        "src/modules/bug-tracker/admin-service.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/bug-tracker/reporter-service.ts",
+        "src/modules/bug-tracker/admin-service.ts"
+      ],
+      "semanticRisk": "Confirm source/target active-tenant, actor, status/version and full read/write fidelity on exact-head PostgreSQL.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "bug_report",
+      "sourceColumn": "screen",
+      "sourceType": "varchar(120)",
+      "sourceDefinition": "VARCHAR(120) NULL",
+      "sourceRiskFlags": [],
+      "targetCandidate": "bug_reports.screen",
+      "disposition": "PROPOSED_REGISTERED_REPORT_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/bug-tracker/report-service.ts",
+        "src/modules/bug-tracker/admin-service.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/bug-tracker/reporter-service.ts",
+        "src/modules/bug-tracker/admin-service.ts"
+      ],
+      "semanticRisk": "Confirm source/target active-tenant, actor, status/version and full read/write fidelity on exact-head PostgreSQL.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "bug_report",
+      "sourceColumn": "section",
+      "sourceType": "varchar(120)",
+      "sourceDefinition": "VARCHAR(120) NULL",
+      "sourceRiskFlags": [],
+      "targetCandidate": "bug_reports.section",
+      "disposition": "PROPOSED_REGISTERED_REPORT_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/bug-tracker/report-service.ts",
+        "src/modules/bug-tracker/admin-service.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/bug-tracker/reporter-service.ts",
+        "src/modules/bug-tracker/admin-service.ts"
+      ],
+      "semanticRisk": "Confirm source/target active-tenant, actor, status/version and full read/write fidelity on exact-head PostgreSQL.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "bug_report",
+      "sourceColumn": "issue_type",
+      "sourceType": "varchar(80)",
+      "sourceDefinition": "VARCHAR(80) NOT NULL",
+      "sourceRiskFlags": [],
+      "targetCandidate": "bug_reports.issue_type",
+      "disposition": "PROPOSED_REGISTERED_REPORT_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/bug-tracker/report-service.ts",
+        "src/modules/bug-tracker/admin-service.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/bug-tracker/reporter-service.ts",
+        "src/modules/bug-tracker/admin-service.ts"
+      ],
+      "semanticRisk": "Confirm source/target active-tenant, actor, status/version and full read/write fidelity on exact-head PostgreSQL.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "bug_report",
+      "sourceColumn": "description",
+      "sourceType": "text",
+      "sourceDefinition": "TEXT NOT NULL",
+      "sourceRiskFlags": [],
+      "targetCandidate": "bug_reports.description",
+      "disposition": "PROPOSED_REGISTERED_REPORT_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/bug-tracker/report-service.ts",
+        "src/modules/bug-tracker/admin-service.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/bug-tracker/reporter-service.ts",
+        "src/modules/bug-tracker/admin-service.ts"
+      ],
+      "semanticRisk": "Confirm source/target active-tenant, actor, status/version and full read/write fidelity on exact-head PostgreSQL.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "bug_report",
+      "sourceColumn": "severity",
+      "sourceType": "varchar(32)",
+      "sourceDefinition": "VARCHAR(32) NOT NULL",
+      "sourceRiskFlags": [],
+      "targetCandidate": "bug_reports.severity",
+      "disposition": "PROPOSED_REGISTERED_REPORT_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/bug-tracker/report-service.ts",
+        "src/modules/bug-tracker/admin-service.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/bug-tracker/reporter-service.ts",
+        "src/modules/bug-tracker/admin-service.ts"
+      ],
+      "semanticRisk": "Confirm source/target active-tenant, actor, status/version and full read/write fidelity on exact-head PostgreSQL.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "bug_report",
+      "sourceColumn": "evidence_link",
+      "sourceType": "varchar(1000)",
+      "sourceDefinition": "VARCHAR(1000) NULL",
+      "sourceRiskFlags": [],
+      "targetCandidate": "bug_reports.evidence_link",
+      "disposition": "PROPOSED_REGISTERED_REPORT_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/bug-tracker/report-service.ts",
+        "src/modules/bug-tracker/admin-service.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/bug-tracker/reporter-service.ts",
+        "src/modules/bug-tracker/admin-service.ts"
+      ],
+      "semanticRisk": "Confirm source/target active-tenant, actor, status/version and full read/write fidelity on exact-head PostgreSQL.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "bug_report",
+      "sourceColumn": "status",
+      "sourceType": "varchar(32)",
+      "sourceDefinition": "VARCHAR(32) NOT NULL DEFAULT 'NEW'",
+      "sourceRiskFlags": [],
+      "targetCandidate": "bug_reports.status",
+      "disposition": "PROPOSED_REGISTERED_REPORT_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/bug-tracker/report-service.ts",
+        "src/modules/bug-tracker/admin-service.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/bug-tracker/reporter-service.ts",
+        "src/modules/bug-tracker/admin-service.ts"
+      ],
+      "semanticRisk": "Confirm source/target active-tenant, actor, status/version and full read/write fidelity on exact-head PostgreSQL.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "bug_report",
+      "sourceColumn": "created_at",
+      "sourceType": "datetime(6)",
+      "sourceDefinition": "DATETIME(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6)",
+      "sourceRiskFlags": [
+        "TIMEZONE_AND_DEADLINE_SEMANTICS"
+      ],
+      "targetCandidate": "bug_reports.created_at",
+      "disposition": "PROPOSED_REGISTERED_REPORT_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/bug-tracker/report-service.ts",
+        "src/modules/bug-tracker/admin-service.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/bug-tracker/reporter-service.ts",
+        "src/modules/bug-tracker/admin-service.ts"
+      ],
+      "semanticRisk": "Confirm source/target active-tenant, actor, status/version and full read/write fidelity on exact-head PostgreSQL.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "bug_report",
+      "sourceColumn": "updated_at",
+      "sourceType": "datetime(6)",
+      "sourceDefinition": "DATETIME(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6)",
+      "sourceRiskFlags": [
+        "TIMEZONE_AND_DEADLINE_SEMANTICS"
+      ],
+      "targetCandidate": "bug_reports.updated_at",
+      "disposition": "PROPOSED_REGISTERED_REPORT_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/bug-tracker/report-service.ts",
+        "src/modules/bug-tracker/admin-service.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/bug-tracker/reporter-service.ts",
+        "src/modules/bug-tracker/admin-service.ts"
+      ],
+      "semanticRisk": "Confirm source/target active-tenant, actor, status/version and full read/write fidelity on exact-head PostgreSQL.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "bug_report",
+      "sourceColumn": "version",
+      "sourceType": "bigint",
+      "sourceDefinition": "BIGINT NOT NULL DEFAULT 0",
+      "sourceRiskFlags": [],
+      "targetCandidate": "bug_reports.version",
+      "disposition": "PROPOSED_REGISTERED_REPORT_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/bug-tracker/report-service.ts",
+        "src/modules/bug-tracker/admin-service.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/bug-tracker/reporter-service.ts",
+        "src/modules/bug-tracker/admin-service.ts"
+      ],
+      "semanticRisk": "Concurrent optimistic compare-and-swap plus immutable history must be transactionally proven.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "bug_report",
+      "sourceColumn": "resolution",
+      "sourceType": "varchar(32)",
+      "sourceDefinition": "VARCHAR(32) NULL AFTER status",
+      "sourceRiskFlags": [],
+      "targetCandidate": "bug_reports.resolution",
+      "disposition": "PROPOSED_REGISTERED_REPORT_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/bug-tracker/report-service.ts",
+        "src/modules/bug-tracker/admin-service.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/bug-tracker/reporter-service.ts",
+        "src/modules/bug-tracker/admin-service.ts"
+      ],
+      "semanticRisk": "Confirm source/target active-tenant, actor, status/version and full read/write fidelity on exact-head PostgreSQL.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "bug_report",
+      "sourceColumn": "affected_layer",
+      "sourceType": "varchar(24)",
+      "sourceDefinition": "VARCHAR(24) NULL AFTER resolution",
+      "sourceRiskFlags": [],
+      "targetCandidate": "bug_reports.affected_layer",
+      "disposition": "PROPOSED_REGISTERED_REPORT_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/bug-tracker/report-service.ts",
+        "src/modules/bug-tracker/admin-service.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/bug-tracker/reporter-service.ts",
+        "src/modules/bug-tracker/admin-service.ts"
+      ],
+      "semanticRisk": "Confirm source/target active-tenant, actor, status/version and full read/write fidelity on exact-head PostgreSQL.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "bug_report",
+      "sourceColumn": "root_cause",
+      "sourceType": "text",
+      "sourceDefinition": "TEXT NULL AFTER affected_layer",
+      "sourceRiskFlags": [],
+      "targetCandidate": "bug_reports.root_cause",
+      "disposition": "PROPOSED_REGISTERED_REPORT_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/bug-tracker/report-service.ts",
+        "src/modules/bug-tracker/admin-service.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/bug-tracker/reporter-service.ts",
+        "src/modules/bug-tracker/admin-service.ts"
+      ],
+      "semanticRisk": "Engineering-private notes must never leak into reporter responses.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "bug_report",
+      "sourceColumn": "fix_notes",
+      "sourceType": "text",
+      "sourceDefinition": "TEXT NULL AFTER root_cause",
+      "sourceRiskFlags": [],
+      "targetCandidate": "bug_reports.fix_notes",
+      "disposition": "PROPOSED_REGISTERED_REPORT_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/bug-tracker/report-service.ts",
+        "src/modules/bug-tracker/admin-service.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/bug-tracker/reporter-service.ts",
+        "src/modules/bug-tracker/admin-service.ts"
+      ],
+      "semanticRisk": "Engineering-private notes must never leak into reporter responses.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "bug_report",
+      "sourceColumn": "frontend_commit_sha",
+      "sourceType": "varchar(64)",
+      "sourceDefinition": "VARCHAR(64) NULL AFTER fix_notes",
+      "sourceRiskFlags": [],
+      "targetCandidate": "bug_reports.frontend_commit_sha",
+      "disposition": "PROPOSED_REGISTERED_REPORT_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/bug-tracker/report-service.ts",
+        "src/modules/bug-tracker/admin-service.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/bug-tracker/reporter-service.ts",
+        "src/modules/bug-tracker/admin-service.ts"
+      ],
+      "semanticRisk": "Confirm source/target active-tenant, actor, status/version and full read/write fidelity on exact-head PostgreSQL.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "bug_report",
+      "sourceColumn": "backend_commit_sha",
+      "sourceType": "varchar(64)",
+      "sourceDefinition": "VARCHAR(64) NULL AFTER frontend_commit_sha",
+      "sourceRiskFlags": [],
+      "targetCandidate": "bug_reports.backend_commit_sha",
+      "disposition": "PROPOSED_REGISTERED_REPORT_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/bug-tracker/report-service.ts",
+        "src/modules/bug-tracker/admin-service.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/bug-tracker/reporter-service.ts",
+        "src/modules/bug-tracker/admin-service.ts"
+      ],
+      "semanticRisk": "Confirm source/target active-tenant, actor, status/version and full read/write fidelity on exact-head PostgreSQL.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "bug_report",
+      "sourceColumn": "regression_test_status",
+      "sourceType": "varchar(24)",
+      "sourceDefinition": "VARCHAR(24) NOT NULL DEFAULT 'NOT_REVIEWED' AFTER backend_commit_sha",
+      "sourceRiskFlags": [],
+      "targetCandidate": "bug_reports.regression_test_status",
+      "disposition": "PROPOSED_REGISTERED_REPORT_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/bug-tracker/report-service.ts",
+        "src/modules/bug-tracker/admin-service.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/bug-tracker/reporter-service.ts",
+        "src/modules/bug-tracker/admin-service.ts"
+      ],
+      "semanticRisk": "Confirm source/target active-tenant, actor, status/version and full read/write fidelity on exact-head PostgreSQL.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "bug_report",
+      "sourceColumn": "production_verified",
+      "sourceType": "boolean",
+      "sourceDefinition": "BOOLEAN NOT NULL DEFAULT FALSE AFTER regression_test_status",
+      "sourceRiskFlags": [],
+      "targetCandidate": "bug_reports.production_verified",
+      "disposition": "PROPOSED_REGISTERED_REPORT_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/bug-tracker/report-service.ts",
+        "src/modules/bug-tracker/admin-service.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/bug-tracker/reporter-service.ts",
+        "src/modules/bug-tracker/admin-service.ts"
+      ],
+      "semanticRisk": "Confirm source/target active-tenant, actor, status/version and full read/write fidelity on exact-head PostgreSQL.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "bug_report",
+      "sourceColumn": "retest_status",
+      "sourceType": "varchar(24)",
+      "sourceDefinition": "VARCHAR(24) NOT NULL DEFAULT 'NOT_RETESTED' AFTER production_verified",
+      "sourceRiskFlags": [],
+      "targetCandidate": "bug_reports.retest_status",
+      "disposition": "PROPOSED_REGISTERED_REPORT_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/bug-tracker/report-service.ts",
+        "src/modules/bug-tracker/admin-service.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/bug-tracker/reporter-service.ts",
+        "src/modules/bug-tracker/admin-service.ts"
+      ],
+      "semanticRisk": "Confirm source/target active-tenant, actor, status/version and full read/write fidelity on exact-head PostgreSQL.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "bug_report",
+      "sourceColumn": "retested_at",
+      "sourceType": "datetime(6)",
+      "sourceDefinition": "DATETIME(6) NULL AFTER retest_status",
+      "sourceRiskFlags": [
+        "TIMEZONE_AND_DEADLINE_SEMANTICS"
+      ],
+      "targetCandidate": "bug_reports.retested_at",
+      "disposition": "PROPOSED_REGISTERED_REPORT_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/bug-tracker/report-service.ts",
+        "src/modules/bug-tracker/admin-service.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/bug-tracker/reporter-service.ts",
+        "src/modules/bug-tracker/admin-service.ts"
+      ],
+      "semanticRisk": "Confirm source/target active-tenant, actor, status/version and full read/write fidelity on exact-head PostgreSQL.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "bug_report",
+      "sourceColumn": "source_url",
+      "sourceType": "varchar(2000)",
+      "sourceDefinition": "VARCHAR(2000) NULL AFTER evidence_link",
+      "sourceRiskFlags": [],
+      "targetCandidate": "bug_reports.source_url",
+      "disposition": "PROPOSED_REGISTERED_REPORT_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/bug-tracker/report-service.ts",
+        "src/modules/bug-tracker/admin-service.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/bug-tracker/reporter-service.ts",
+        "src/modules/bug-tracker/admin-service.ts"
+      ],
+      "semanticRisk": "Strip credentials, query and fragment; do not persist signed private URL query secrets.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "bug_report",
+      "sourceColumn": "source_path",
+      "sourceType": "varchar(500)",
+      "sourceDefinition": "VARCHAR(500) NULL AFTER source_url",
+      "sourceRiskFlags": [],
+      "targetCandidate": "bug_reports.source_path",
+      "disposition": "PROPOSED_REGISTERED_REPORT_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/bug-tracker/report-service.ts",
+        "src/modules/bug-tracker/admin-service.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/bug-tracker/reporter-service.ts",
+        "src/modules/bug-tracker/admin-service.ts"
+      ],
+      "semanticRisk": "Confirm source/target active-tenant, actor, status/version and full read/write fidelity on exact-head PostgreSQL.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "bug_report",
+      "sourceColumn": "browser",
+      "sourceType": "varchar(500)",
+      "sourceDefinition": "VARCHAR(500) NULL AFTER source_path",
+      "sourceRiskFlags": [],
+      "targetCandidate": "bug_reports.browser",
+      "disposition": "PROPOSED_REGISTERED_REPORT_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/bug-tracker/report-service.ts",
+        "src/modules/bug-tracker/admin-service.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/bug-tracker/reporter-service.ts",
+        "src/modules/bug-tracker/admin-service.ts"
+      ],
+      "semanticRisk": "Confirm source/target active-tenant, actor, status/version and full read/write fidelity on exact-head PostgreSQL.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "bug_report",
+      "sourceColumn": "viewport",
+      "sourceType": "varchar(64)",
+      "sourceDefinition": "VARCHAR(64) NULL AFTER browser",
+      "sourceRiskFlags": [],
+      "targetCandidate": "bug_reports.viewport",
+      "disposition": "PROPOSED_REGISTERED_REPORT_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/bug-tracker/report-service.ts",
+        "src/modules/bug-tracker/admin-service.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/bug-tracker/reporter-service.ts",
+        "src/modules/bug-tracker/admin-service.ts"
+      ],
+      "semanticRisk": "Confirm source/target active-tenant, actor, status/version and full read/write fidelity on exact-head PostgreSQL.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "bug_report_activity",
+      "sourceColumn": "id",
+      "sourceType": "bigint",
+      "sourceDefinition": "BIGINT NOT NULL AUTO_INCREMENT",
+      "sourceRiskFlags": [
+        "INTEGER_KEY_TO_UUID_MAPPING"
+      ],
+      "targetCandidate": "bug_report_activities.id",
+      "disposition": "PROPOSED_IMMUTABLE_ACCOUNT_ATTRIBUTED_EVENT",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/bug-tracker/report-service.ts",
+        "src/modules/bug-tracker/admin-service.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/bug-tracker/reporter-service.ts",
+        "src/modules/bug-tracker/admin-service.ts"
+      ],
+      "semanticRisk": "Prove immutable event producer, actor identity, ordering, privacy redaction and CAS atomicity on registered PG17.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "bug_report_activity",
+      "sourceColumn": "bug_report_id",
+      "sourceType": "bigint",
+      "sourceDefinition": "BIGINT NOT NULL",
+      "sourceRiskFlags": [
+        "INTEGER_KEY_TO_UUID_MAPPING"
+      ],
+      "targetCandidate": "bug_report_activities.bug_report_id",
+      "disposition": "PROPOSED_IMMUTABLE_ACCOUNT_ATTRIBUTED_EVENT",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/bug-tracker/report-service.ts",
+        "src/modules/bug-tracker/admin-service.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/bug-tracker/reporter-service.ts",
+        "src/modules/bug-tracker/admin-service.ts"
+      ],
+      "semanticRisk": "Restrict deletion: provenance must not silently cascade away.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "bug_report_activity",
+      "sourceColumn": "activity_type",
+      "sourceType": "varchar(40)",
+      "sourceDefinition": "VARCHAR(40) NOT NULL",
+      "sourceRiskFlags": [],
+      "targetCandidate": "bug_report_activities.activity_type",
+      "disposition": "PROPOSED_IMMUTABLE_ACCOUNT_ATTRIBUTED_EVENT",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/bug-tracker/report-service.ts",
+        "src/modules/bug-tracker/admin-service.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/bug-tracker/reporter-service.ts",
+        "src/modules/bug-tracker/admin-service.ts"
+      ],
+      "semanticRisk": "Prove immutable event producer, actor identity, ordering, privacy redaction and CAS atomicity on registered PG17.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "bug_report_activity",
+      "sourceColumn": "actor_name",
+      "sourceType": "varchar(120)",
+      "sourceDefinition": "VARCHAR(120) NULL",
+      "sourceRiskFlags": [],
+      "targetCandidate": "bug_report_activities.actor_name",
+      "disposition": "PROPOSED_IMMUTABLE_ACCOUNT_ATTRIBUTED_EVENT",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/bug-tracker/report-service.ts",
+        "src/modules/bug-tracker/admin-service.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/bug-tracker/reporter-service.ts",
+        "src/modules/bug-tracker/admin-service.ts"
+      ],
+      "semanticRisk": "New rows have account-bound actor_user_id; historic actor-name-only exceptions require explicit source decision.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "bug_report_activity",
+      "sourceColumn": "from_value",
+      "sourceType": "varchar(255)",
+      "sourceDefinition": "VARCHAR(255) NULL",
+      "sourceRiskFlags": [],
+      "targetCandidate": "bug_report_activities.from_value",
+      "disposition": "PROPOSED_IMMUTABLE_ACCOUNT_ATTRIBUTED_EVENT",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/bug-tracker/report-service.ts",
+        "src/modules/bug-tracker/admin-service.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/bug-tracker/reporter-service.ts",
+        "src/modules/bug-tracker/admin-service.ts"
+      ],
+      "semanticRisk": "Prove immutable event producer, actor identity, ordering, privacy redaction and CAS atomicity on registered PG17.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "bug_report_activity",
+      "sourceColumn": "to_value",
+      "sourceType": "varchar(255)",
+      "sourceDefinition": "VARCHAR(255) NULL",
+      "sourceRiskFlags": [],
+      "targetCandidate": "bug_report_activities.to_value",
+      "disposition": "PROPOSED_IMMUTABLE_ACCOUNT_ATTRIBUTED_EVENT",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/bug-tracker/report-service.ts",
+        "src/modules/bug-tracker/admin-service.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/bug-tracker/reporter-service.ts",
+        "src/modules/bug-tracker/admin-service.ts"
+      ],
+      "semanticRisk": "Prove immutable event producer, actor identity, ordering, privacy redaction and CAS atomicity on registered PG17.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "bug_report_activity",
+      "sourceColumn": "note",
+      "sourceType": "varchar(1000)",
+      "sourceDefinition": "VARCHAR(1000) NULL",
+      "sourceRiskFlags": [],
+      "targetCandidate": "bug_report_activities.note",
+      "disposition": "PROPOSED_IMMUTABLE_ACCOUNT_ATTRIBUTED_EVENT",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/bug-tracker/report-service.ts",
+        "src/modules/bug-tracker/admin-service.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/bug-tracker/reporter-service.ts",
+        "src/modules/bug-tracker/admin-service.ts"
+      ],
+      "semanticRisk": "Prove immutable event producer, actor identity, ordering, privacy redaction and CAS atomicity on registered PG17.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "bug_report_activity",
+      "sourceColumn": "created_at",
+      "sourceType": "datetime(6)",
+      "sourceDefinition": "DATETIME(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6)",
+      "sourceRiskFlags": [
+        "TIMEZONE_AND_DEADLINE_SEMANTICS"
+      ],
+      "targetCandidate": "bug_report_activities.created_at",
+      "disposition": "PROPOSED_IMMUTABLE_ACCOUNT_ATTRIBUTED_EVENT",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/bug-tracker/report-service.ts",
+        "src/modules/bug-tracker/admin-service.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/bug-tracker/reporter-service.ts",
+        "src/modules/bug-tracker/admin-service.ts"
+      ],
+      "semanticRisk": "Prove immutable event producer, actor identity, ordering, privacy redaction and CAS atomicity on registered PG17.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "bug_report_attachment",
+      "sourceColumn": "id",
+      "sourceType": "bigint",
+      "sourceDefinition": "BIGINT NOT NULL AUTO_INCREMENT",
+      "sourceRiskFlags": [
+        "INTEGER_KEY_TO_UUID_MAPPING"
+      ],
+      "targetCandidate": "bug_report_attachments.id",
+      "disposition": "PROPOSED_PRIVATE_SCANNED_OBJECT_REDESIGN",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/bug-tracker/attachment-upload-service.ts",
+        "src/modules/bug-tracker/attachment-storage-service.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/bug-tracker/reporter-service.ts",
+        "src/modules/bug-tracker/admin-service.ts",
+        "src/app/api/tracker/issues/[publicId]/screenshots/[attachmentId]/view/route.ts"
+      ],
+      "semanticRisk": "Prove private key redaction, clean-scan attestation, scoped confirmation, signed GET, size/MIME integrity, 3-file race, storage retry.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "bug_report_attachment",
+      "sourceColumn": "bug_report_id",
+      "sourceType": "bigint",
+      "sourceDefinition": "BIGINT NOT NULL",
+      "sourceRiskFlags": [
+        "INTEGER_KEY_TO_UUID_MAPPING"
+      ],
+      "targetCandidate": "bug_report_attachments.bug_report_id",
+      "disposition": "PROPOSED_PRIVATE_SCANNED_OBJECT_REDESIGN",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/bug-tracker/attachment-upload-service.ts",
+        "src/modules/bug-tracker/attachment-storage-service.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/bug-tracker/reporter-service.ts",
+        "src/modules/bug-tracker/admin-service.ts",
+        "src/app/api/tracker/issues/[publicId]/screenshots/[attachmentId]/view/route.ts"
+      ],
+      "semanticRisk": "Prove private key redaction, clean-scan attestation, scoped confirmation, signed GET, size/MIME integrity, 3-file race, storage retry.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "bug_report_attachment",
+      "sourceColumn": "storage_key",
+      "sourceType": "varchar(700)",
+      "sourceDefinition": "VARCHAR(700) NOT NULL",
+      "sourceRiskFlags": [],
+      "targetCandidate": "bug_report_attachments.storage_key",
+      "disposition": "PROPOSED_PRIVATE_SCANNED_OBJECT_REDESIGN",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/bug-tracker/attachment-upload-service.ts",
+        "src/modules/bug-tracker/attachment-storage-service.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/bug-tracker/reporter-service.ts",
+        "src/modules/bug-tracker/admin-service.ts",
+        "src/app/api/tracker/issues/[publicId]/screenshots/[attachmentId]/view/route.ts"
+      ],
+      "semanticRisk": "Private object key is persisted internally but must be absent from user read DTOs and confirm/replay responses.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "bug_report_attachment",
+      "sourceColumn": "original_filename",
+      "sourceType": "varchar(255)",
+      "sourceDefinition": "VARCHAR(255) NOT NULL",
+      "sourceRiskFlags": [],
+      "targetCandidate": "bug_report_attachments.original_filename",
+      "disposition": "PROPOSED_PRIVATE_SCANNED_OBJECT_REDESIGN",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/bug-tracker/attachment-upload-service.ts",
+        "src/modules/bug-tracker/attachment-storage-service.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/bug-tracker/reporter-service.ts",
+        "src/modules/bug-tracker/admin-service.ts",
+        "src/app/api/tracker/issues/[publicId]/screenshots/[attachmentId]/view/route.ts"
+      ],
+      "semanticRisk": "Prove private key redaction, clean-scan attestation, scoped confirmation, signed GET, size/MIME integrity, 3-file race, storage retry.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "bug_report_attachment",
+      "sourceColumn": "content_type",
+      "sourceType": "varchar(100)",
+      "sourceDefinition": "VARCHAR(100) NOT NULL",
+      "sourceRiskFlags": [],
+      "targetCandidate": "bug_report_attachments.content_type",
+      "disposition": "PROPOSED_PRIVATE_SCANNED_OBJECT_REDESIGN",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/bug-tracker/attachment-upload-service.ts",
+        "src/modules/bug-tracker/attachment-storage-service.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/bug-tracker/reporter-service.ts",
+        "src/modules/bug-tracker/admin-service.ts",
+        "src/app/api/tracker/issues/[publicId]/screenshots/[attachmentId]/view/route.ts"
+      ],
+      "semanticRisk": "Allow PNG/JPEG/WebP only; scanner attestation must be trusted before GET grants.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "bug_report_attachment",
+      "sourceColumn": "size_bytes",
+      "sourceType": "bigint",
+      "sourceDefinition": "BIGINT NOT NULL",
+      "sourceRiskFlags": [],
+      "targetCandidate": "bug_report_attachments.size_bytes",
+      "disposition": "PROPOSED_PRIVATE_SCANNED_OBJECT_REDESIGN",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/bug-tracker/attachment-upload-service.ts",
+        "src/modules/bug-tracker/attachment-storage-service.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/bug-tracker/reporter-service.ts",
+        "src/modules/bug-tracker/admin-service.ts",
+        "src/app/api/tracker/issues/[publicId]/screenshots/[attachmentId]/view/route.ts"
+      ],
+      "semanticRisk": "Validate 1–8 MiB at upload/confirm and recheck physical HEAD against persisted value on signed download.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "bug_report_attachment",
+      "sourceColumn": "created_at",
+      "sourceType": "datetime(6)",
+      "sourceDefinition": "DATETIME(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6)",
+      "sourceRiskFlags": [
+        "TIMEZONE_AND_DEADLINE_SEMANTICS"
+      ],
+      "targetCandidate": "bug_report_attachments.created_at",
+      "disposition": "PROPOSED_PRIVATE_SCANNED_OBJECT_REDESIGN",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/bug-tracker/attachment-upload-service.ts",
+        "src/modules/bug-tracker/attachment-storage-service.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/bug-tracker/reporter-service.ts",
+        "src/modules/bug-tracker/admin-service.ts",
+        "src/app/api/tracker/issues/[publicId]/screenshots/[attachmentId]/view/route.ts"
+      ],
+      "semanticRisk": "Prove private key redaction, clean-scan attestation, scoped confirmation, signed GET, size/MIME integrity, 3-file race, storage retry.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "bug_tracker_access",
+      "sourceColumn": "id",
+      "sourceType": "bigint",
+      "sourceDefinition": "BIGINT NOT NULL AUTO_INCREMENT",
+      "sourceRiskFlags": [
+        "INTEGER_KEY_TO_UUID_MAPPING"
+      ],
+      "targetCandidate": "bug_tracker_access.id",
+      "disposition": "PROPOSED_SIGNED_IN_REPORTER_ACCOUNT_REDESIGN",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/bug-tracker/report-service.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/bug-tracker/report-service.ts"
+      ],
+      "semanticRisk": "Approve legacy independent reporter bearer-token retirement and verify persisted inactive/revoked reporter safety without bearer issuance.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "bug_tracker_access",
+      "sourceColumn": "display_name",
+      "sourceType": "varchar(120)",
+      "sourceDefinition": "VARCHAR(120) NOT NULL",
+      "sourceRiskFlags": [],
+      "targetCandidate": "bug_tracker_access.display_name",
+      "disposition": "PROPOSED_SIGNED_IN_REPORTER_ACCOUNT_REDESIGN",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/bug-tracker/report-service.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/bug-tracker/report-service.ts"
+      ],
+      "semanticRisk": "Approve legacy independent reporter bearer-token retirement and verify persisted inactive/revoked reporter safety without bearer issuance.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "bug_tracker_access",
+      "sourceColumn": "token_hash",
+      "sourceType": "char(64)",
+      "sourceDefinition": "CHAR(64) NOT NULL",
+      "sourceRiskFlags": [
+        "POTENTIAL_PERSONAL_OR_SECRET_DATA"
+      ],
+      "targetCandidate": "bug_tracker_access.token_hash",
+      "disposition": "PROPOSED_SIGNED_IN_REPORTER_ACCOUNT_REDESIGN",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/bug-tracker/report-service.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/bug-tracker/report-service.ts"
+      ],
+      "semanticRisk": "Random nonce hash is never issued as an authenticated legacy bearer token; historical public login semantics are not approved.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "bug_tracker_access",
+      "sourceColumn": "access_role",
+      "sourceType": "varchar(24)",
+      "sourceDefinition": "VARCHAR(24) NOT NULL",
+      "sourceRiskFlags": [],
+      "targetCandidate": "bug_tracker_access.access_role",
+      "disposition": "PROPOSED_SIGNED_IN_REPORTER_ACCOUNT_REDESIGN",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/bug-tracker/report-service.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/bug-tracker/report-service.ts"
+      ],
+      "semanticRisk": "Approve legacy independent reporter bearer-token retirement and verify persisted inactive/revoked reporter safety without bearer issuance.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "bug_tracker_access",
+      "sourceColumn": "active",
+      "sourceType": "boolean",
+      "sourceDefinition": "BOOLEAN NOT NULL DEFAULT TRUE",
+      "sourceRiskFlags": [],
+      "targetCandidate": "bug_tracker_access.active",
+      "disposition": "PROPOSED_SIGNED_IN_REPORTER_ACCOUNT_REDESIGN",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/bug-tracker/report-service.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/bug-tracker/report-service.ts"
+      ],
+      "semanticRisk": "Current active identity and persisted access revocation must be checked, including idempotency retry.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "bug_tracker_access",
+      "sourceColumn": "created_at",
+      "sourceType": "datetime(6)",
+      "sourceDefinition": "DATETIME(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6)",
+      "sourceRiskFlags": [
+        "TIMEZONE_AND_DEADLINE_SEMANTICS"
+      ],
+      "targetCandidate": "bug_tracker_access.created_at",
+      "disposition": "PROPOSED_SIGNED_IN_REPORTER_ACCOUNT_REDESIGN",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/bug-tracker/report-service.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/bug-tracker/report-service.ts"
+      ],
+      "semanticRisk": "Approve legacy independent reporter bearer-token retirement and verify persisted inactive/revoked reporter safety without bearer issuance.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "bug_tracker_access",
+      "sourceColumn": "updated_at",
+      "sourceType": "datetime(6)",
+      "sourceDefinition": "DATETIME(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6)",
+      "sourceRiskFlags": [
+        "TIMEZONE_AND_DEADLINE_SEMANTICS"
+      ],
+      "targetCandidate": "bug_tracker_access.updated_at",
+      "disposition": "PROPOSED_SIGNED_IN_REPORTER_ACCOUNT_REDESIGN",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/bug-tracker/report-service.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/bug-tracker/report-service.ts"
+      ],
+      "semanticRisk": "Approve legacy independent reporter bearer-token retirement and verify persisted inactive/revoked reporter safety without bearer issuance.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "bug_tracker_session",
+      "sourceColumn": "id",
+      "sourceType": "bigint",
+      "sourceDefinition": "BIGINT NOT NULL AUTO_INCREMENT",
+      "sourceRiskFlags": [
+        "INTEGER_KEY_TO_UUID_MAPPING"
+      ],
+      "targetCandidate": "bug_tracker_sessions.id",
+      "disposition": "UNRESOLVED_LEGACY_BEARER_SESSION_RETIREMENT",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [],
+      "exactRuntimeConsumerCandidates": [],
+      "semanticRisk": "No issuance/read consumer found. Obtain explicit product/security decision to retire independent legacy sessions, or implement token hashing, expiry, revocation and rate/role tests.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "bug_tracker_session",
+      "sourceColumn": "access_id",
+      "sourceType": "bigint",
+      "sourceDefinition": "BIGINT NOT NULL",
+      "sourceRiskFlags": [
+        "INTEGER_KEY_TO_UUID_MAPPING"
+      ],
+      "targetCandidate": "bug_tracker_sessions.access_id",
+      "disposition": "UNRESOLVED_LEGACY_BEARER_SESSION_RETIREMENT",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [],
+      "exactRuntimeConsumerCandidates": [],
+      "semanticRisk": "No issuance/read consumer found. Obtain explicit product/security decision to retire independent legacy sessions, or implement token hashing, expiry, revocation and rate/role tests.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "bug_tracker_session",
+      "sourceColumn": "token_hash",
+      "sourceType": "char(64)",
+      "sourceDefinition": "CHAR(64) NOT NULL",
+      "sourceRiskFlags": [
+        "POTENTIAL_PERSONAL_OR_SECRET_DATA"
+      ],
+      "targetCandidate": "bug_tracker_sessions.token_hash",
+      "disposition": "UNRESOLVED_LEGACY_BEARER_SESSION_RETIREMENT",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [],
+      "exactRuntimeConsumerCandidates": [],
+      "semanticRisk": "No issuer/consumer exists. Do not invent sessions, certify expiry or grant a new bearer channel.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "bug_tracker_session",
+      "sourceColumn": "expires_at",
+      "sourceType": "datetime(6)",
+      "sourceDefinition": "DATETIME(6) NOT NULL",
+      "sourceRiskFlags": [
+        "TIMEZONE_AND_DEADLINE_SEMANTICS"
+      ],
+      "targetCandidate": "bug_tracker_sessions.expires_at",
+      "disposition": "UNRESOLVED_LEGACY_BEARER_SESSION_RETIREMENT",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [],
+      "exactRuntimeConsumerCandidates": [],
+      "semanticRisk": "No active session reader exists; expiry/revocation semantics remain an explicit product decision.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "bug_tracker_session",
+      "sourceColumn": "created_at",
+      "sourceType": "datetime(6)",
+      "sourceDefinition": "DATETIME(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6)",
+      "sourceRiskFlags": [
+        "TIMEZONE_AND_DEADLINE_SEMANTICS"
+      ],
+      "targetCandidate": "bug_tracker_sessions.created_at",
+      "disposition": "UNRESOLVED_LEGACY_BEARER_SESSION_RETIREMENT",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [],
+      "exactRuntimeConsumerCandidates": [],
+      "semanticRisk": "No issuance/read consumer found. Obtain explicit product/security decision to retire independent legacy sessions, or implement token hashing, expiry, revocation and rate/role tests.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    }
+  ]
+}
