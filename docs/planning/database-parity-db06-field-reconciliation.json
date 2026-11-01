@@ -1356,7 +1356,7 @@
           "nullable": "SOURCE_DEFAULT_NULLABILITY_REVIEW",
           "defaultValue": "'0'",
           "riskFlags": [],
-          "decision": "NORMALIZED_TO_RETAINED_HISTORY",
+          "decision": "NORMALIZED_TO_IMMUTABLE_HISTORY",
           "targetRef": "assignment_submissions.deleted_at + immutable assignment_grade_events history",
           "reason": "Physical deleted_at compatibility exists; registered deletion/grade-event completeness guards prevent silently removing established grade evidence.",
           "runtimeVerified": false,
