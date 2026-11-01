@@ -1946,7 +1946,7 @@
             "done": false,
             "acceptedAt": null,
             "implementationCheckpoint": {
-              "status": "IMPLEMENTATION_PATCHES_PUSHED_TESTS_AUTHORED_PG17_NOT_EXECUTED",
+              "status": "SUBSTANTIAL_P20_RUNTIME_FIXES_PUSHED_TESTS_PENDING_EXECUTION",
               "recordedOn": "2026-11-01",
               "implementationCommits": [
                 "e810167aae1ab7f1988dbbd339c79f0ed7477d16",
@@ -1955,7 +1955,26 @@
                 "65a89e71a20af82900d2c53200fb15bf01c7ffb2",
                 "f1ed4ef0085562f02eddc541fa979c11d8d47e34",
                 "b6fc79d2bd1eed1b5dffd22d5050096d4e703d5a",
-                "ccc12c96da94487a22f348f09925edf7322d6fa9"
+                "ccc12c96da94487a22f348f09925edf7322d6fa9",
+                "9324ba38759133db3db163731521560e2d588f42",
+                "025516d6695822fcd37683b0c7cd9cc1d70ad450",
+                "94979677dc03e396c2d3fe192fe50b8e80bcb3de",
+                "640125d7f2e9861190fdddb6e7e0e25ff2afa42b",
+                "85d2c8dc76c930e01b8a83514c08b48595db0b7e",
+                "2d45c0a63db8dfd60f094a9ee1e808463228539d",
+                "27baa97ab8e7d1b1adfff863f41065211b6f16e1",
+                "29e312225a5619bc70a5f29e93708e99c170b1a5",
+                "501750c9b1737ca39be524da33954b30c6dcaaf1",
+                "98c99faa2344d995fca4303fb7dba1dd4add2897",
+                "0345d44833aabb7e0c6e6e1da8f507d2bce703cd",
+                "0db72e5ad905c192fc439a0e49355e8a1d38ad77",
+                "2b0b1e0bd3f21628134fcf3465bb8b33a9472eae",
+                "e8291b81f74ce2f705759217502833efc89bfa1a",
+                "0420f14f17db3dbaa44011c2122f5bcd340e3297",
+                "5d2936d90d2f8487cee8d42c6cc6929edc383c13",
+                "cdb2d2ef57cfae2b42b268c6fbfdfc9675b19795",
+                "c971a1b3e2f6519bd18756c6e107a1096906469c",
+                "c7885e9dda054c3f775f74936e1168049818b30e"
               ],
               "changed": [
                 "Atomic original-snapshot SQL CASE propagation for swapped/renamed/reclassified after-college custom labels, preserving private detail and consent tables",
@@ -1977,7 +1996,36 @@
                 "Confirm registration consent and eligibility under module-disable concurrency; do not infer data migration or product retirement",
                 "Retain DB19-P20 done:false until final package-specific acceptance and DB19 parent done:false until global P31/P32 gates"
               ],
-              "evidenceIsNotAcceptance": true
+              "evidenceIsNotAcceptance": true,
+              "latestP20Continuation": {
+                "recordedOn": "2026-11-01",
+                "implemented": [
+                  "Transactional placement module enablement recheck under shared college lock and persisted scope-rule locks",
+                  "Legacy four-choice custom-label server/UI matching with normalized names and fail-closed UUID identity validation",
+                  "Original-row-safe atomic custom-label rename/reclassification CAS, private detail preservation, active-college audit attribution",
+                  "Four-field strict batch rules JSON persistence; reject unknown keys and out-of-range constraints"
+                ],
+                "executableRegressions": [
+                  "tests/integration/placements-db08-registration.test.ts",
+                  "tests/integration/placements-db08-batches.test.ts",
+                  "tests/integration/db019-after-college-outcome-details.test.ts",
+                  "tests/unit/db019-p20-custom-label-choices.test.ts",
+                  "tests/unit/db019-p20-registration-race-contract.test.ts"
+                ],
+                "sourceOnlyChecks": "Exact fetched source V8 invariant checks 15/15 PASS before latest policy tests; NOT Node, PostgreSQL or acceptance",
+                "fieldDispositions": {
+                  "scope": 31,
+                  "proposedMappings": 22,
+                  "explicitRuntimeGaps": 5,
+                  "enumCrosswalks": 4,
+                  "producerConsumerGloballyVerified": 0
+                },
+                "outstanding": [
+                  "Execute latest Node22 typecheck, Vitest and exact SHA registered PG17 integration and adversarial races.",
+                  "Resolve five source runtime gaps, four enum crosswalks, and validate remaining source producers/consumers. No inferred history migration.",
+                  "Do not mark package/DB019 done before original exact-scope PG17/security/state acceptance."
+                ]
+              }
             },
             "acceptanceEvidence": [],
             "acceptance": "Finish after-college outcome field mapping, settings rename/removal, private detail, season semantics and batch choice with PG17 staff/admin/tenant/race tests."
