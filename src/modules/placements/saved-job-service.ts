@@ -21,6 +21,28 @@ export class SavedJobsStorageUnavailableError extends Error {
 
 const savedJobId = z.string().uuid();
 
+const historicalSavedJobStatuses = new Set(["CLOSED","CANCELLED","ARCHIVED","EXPIRED"]);
+
+/**
+ * An existing bookmark proves neither ongoing publication nor consent to
+ * reveal a soft-deleted or external-only record. Closed/archived jobs can be
+ * historical bookmarks; currently published ones require today's feed grant.
+ */
+export function isSavedPlacementJobVisible(
+  row: {
+    jobStatus: string;
+    legacyWasDeleted: boolean | null;
+    legacyVisibilityType: string | null;
+  },
+  currentlyVisible: boolean,
+): boolean {
+  if (row.legacyWasDeleted === true || row.legacyVisibilityType === "EXTERNAL_ONLY")
+    return false;
+  return row.jobStatus === "PUBLISHED"
+    ? currentlyVisible
+    : historicalSavedJobStatuses.has(row.jobStatus);
+}
+
 /**
  * Saved jobs are scoped by a persisted (college, membership, job) key.
  * Imported numeric IDs remain read-only migration attributes, never direct
@@ -45,7 +67,7 @@ export async function saveOwnPlacementJob(
 ) {
   const jobId = savedJobId.parse(rawJobId);
   const learner = await requireVisiblePlacements(context);
-  const visibleJobs = await listLearnerPlacementJobs(context);
+  const visibleJobs = await listLearnerPlacementJobs(context, new Date(), jobId);
   if (!visibleJobs.some((entry) => entry.job.id === jobId)) {
     throw new PlacementsServiceError("PLACEMENT_SAVED_JOB_UNAVAILABLE");
   }
@@ -93,6 +115,10 @@ export async function listOwnPlacementSavedJobs(context: RequestContext) {
       savedAt: placementSavedJobs.savedAt,
       title: placementJobs.title,
       jobStatus: placementJobs.status,
+      // Read these only to suppress deleted/non-learner legacy records;
+      // do not disclose internal visibility metadata through the API.
+      legacyWasDeleted: placementJobs.legacyWasDeleted,
+      legacyVisibilityType: placementJobs.legacyVisibilityType,
       applicationDeadline: placementJobs.applicationDeadline,
       employmentType: placementJobs.employmentType,
       workMode: placementJobs.workMode,
@@ -129,10 +155,10 @@ export async function listOwnPlacementSavedJobs(context: RequestContext) {
       publishedJobIds.slice(i,i+100));
     for(const entry of scoped)visibleIds.add(entry.job.id);
   }
-  // A historical bookmark may remain visible after closure, but an
-  // unpublished draft (which might never have been accessible) is never a
-  // permitted history record merely because a saved row exists.
-  const historicalJobStatuses=new Set(["CLOSED","CANCELLED","ARCHIVED","EXPIRED"]);
-  return rows.filter(row=>row.jobStatus==="PUBLISHED"
-    ?visibleIds.has(row.jobId):historicalJobStatuses.has(row.jobStatus));
+  // A historical bookmark may remain visible after closure, but a deleted,
+  // external-only or unpublished draft is not a permitted bookmark read.
+  // Strip the visibility flags from the response: they are internal policy
+  // inputs, never learner-facing saved-job details.
+  return rows.filter(row=>isSavedPlacementJobVisible(row,visibleIds.has(row.jobId)))
+    .map(({legacyWasDeleted: _deleted,legacyVisibilityType: _visibility,...job})=>job);
 }
