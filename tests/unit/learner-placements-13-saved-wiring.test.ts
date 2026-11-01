@@ -21,7 +21,9 @@ describe("LEARNER-placements-13 saved job request wiring",()=>{
   expect(service).toContain('eq(placementJobs.collegeId, learner.collegeId)');
   expect(service).toContain('row.jobStatus==="PUBLISHED"');
   expect(service).toContain("visibleIds.has(row.jobId)");
-  expect(service).toContain("historicalJobStatuses.has(row.jobStatus)");
+  expect(service).toContain("historicalSavedJobStatuses.has(row.jobStatus)");
+  expect(service).toContain('row.legacyWasDeleted === true');
+  expect(service).toContain('row.legacyVisibilityType === "EXTERNAL_ONLY"');
   expect(service).toContain("visibleIds.has(row.jobId)");
  });
 });
