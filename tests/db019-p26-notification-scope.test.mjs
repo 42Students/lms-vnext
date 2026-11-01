@@ -114,3 +114,45 @@ test("P26 contract fails when delivery, tenant or organization safety predicate 
     assert.equal(safeExistingSentReceipt(receipt.replace(original, invalid)), false, original);
   }
 });
+
+test("P26 TPO inbox counters and both acknowledgement paths share delivered-only visibility", () => {
+  const tpo = read("src/modules/activity/tpo-notifications-service.ts");
+  const shared = read("src/modules/activity/notification-service.ts");
+  const inbox = tpo.split("export async function getTpoPersonalInbox(")[1]
+    ?.split("export async function markOwnTpoNotificationRead(")[0] ?? "";
+  const readOne = tpo.split("export async function markOwnTpoNotificationRead(")[1]
+    ?.split("export async function markAllOwnTpoNotificationsRead(")[0] ?? "";
+  const readAll = tpo.split("export async function markAllOwnTpoNotificationsRead(")[1] ?? "";
+  for (const code of [inbox, readOne, readAll]) {
+    assert.match(code, /releasedNotificationEvent/);
+    assert.match(code, /releasedNotificationReceipt/);
+    assert.match(code, /eq\(inAppNotifications.userId, context.user.id\)/);
+  }
+  assert.match(shared, /export const releasedNotificationEvent = sql<boolean>/);
+  assert.match(shared, /export const releasedNotificationReceipt = sql<boolean>/);
+  const eventGate = shared.split("export const releasedNotificationEvent")[1]
+    ?.split("export const releasedNotificationReceipt")[0] ?? "";
+  const receiptGate = shared.split("export const releasedNotificationReceipt")[1]
+    ?.split("function parseStaffNotificationSchedule")[0] ?? "";
+  assert.match(eventGate, /'deletedAt' is null/);
+  assert.match(eventGate, /'deliveryStatus'.*?= 'SENT'/s);
+  assert.match(receiptGate, /inAppNotifications.deletedAt} is null/);
+  assert.match(receiptGate, /inAppNotifications.deliveryStatus} = 'SENT'/);
+  assert.match(receiptGate, /inAppNotifications.deliveredAt} is not null/);
+});
+
+test("P26 visibility mutation witness detects count and read path drift", () => {
+  const tpo = read("src/modules/activity/tpo-notifications-service.ts");
+  const counts = [
+    ["getTpoPersonalInbox", "markOwnTpoNotificationRead"],
+    ["markOwnTpoNotificationRead", "markAllOwnTpoNotificationsRead"],
+    ["markAllOwnTpoNotificationsRead", null],
+  ];
+  for (const [begin, end] of counts) {
+    const segment = tpo.split("export async function " + begin + "(")[1]
+      ?.split(end ? "export async function " + end + "(" : "\n__NO_NEXT_FUNCTION__")[0] ?? "";
+    const broken = segment.replace("releasedNotificationReceipt", "true");
+    assert.ok(segment.includes("releasedNotificationReceipt"), begin);
+    assert.equal(broken.includes("releasedNotificationReceipt"), false, begin);
+  }
+});
