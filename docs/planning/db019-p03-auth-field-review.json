@@ -1,0 +1,1740 @@
+{
+  "schemaVersion": 1,
+  "packageId": "DB19-P03",
+  "domain": "DB01",
+  "frozenLegacyBackendSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+  "sourceInventory": "docs/planning/db-pass4-columns-db01_identity_and_tenancy.json",
+  "scope": "Individual source-level dispositions; greenfield credentials never copied. NOT verified target semantics, 79 field runtime equivalence, historical retirement approval or DB19-P03 acceptance.",
+  "sourceTables": [
+    {
+      "name": "auth_handoff_token",
+      "fieldCount": 9
+    },
+    {
+      "name": "auth_token",
+      "fieldCount": 5
+    },
+    {
+      "name": "email_verification_token",
+      "fieldCount": 7
+    },
+    {
+      "name": "login_user",
+      "fieldCount": 6
+    },
+    {
+      "name": "mobile_login_attempt",
+      "fieldCount": 18
+    },
+    {
+      "name": "refresh_token_blocklist",
+      "fieldCount": 5
+    },
+    {
+      "name": "role",
+      "fieldCount": 6
+    },
+    {
+      "name": "user",
+      "fieldCount": 12
+    },
+    {
+      "name": "user_roles",
+      "fieldCount": 2
+    },
+    {
+      "name": "user_session",
+      "fieldCount": 9
+    }
+  ],
+  "sourceFields": 79,
+  "reviewedFieldProposals": 79,
+  "runtimeVerifiedFields": 0,
+  "approvedRetirements": 0,
+  "records": [
+    {
+      "legacyTable": "auth_handoff_token",
+      "legacyColumn": "id",
+      "sourceType": "int",
+      "sourceDefinition": "int NOT NULL AUTO_INCREMENT",
+      "sourceNullable": "NOT_NULL",
+      "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+      "reviewDecision": {
+        "disposition": "SOURCE_RETIREMENT_OR_UNMAPPED_REVIEW",
+        "targetRefs": [],
+        "sourceRationale": "Legacy numeric account identity or descriptive metadata is only a source candidate, not a vNext authenticated principal or proof of a current permission. Field: auth_handoff_token.id; source type int.",
+        "outstandingProof": "Independently execute exact registered PostgreSQL column/constraint and live producer -> persisted state -> authorized consumer, lifecycle, expiry, cross-role, tenant privacy and revocation tests; explicit retirement/semantic approval remains pending for auth_handoff_token.id.",
+        "legacyBackendSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+        "sourceReviewed": true,
+        "runtimeVerified": false,
+        "consumerVerified": false,
+        "retirementApproved": false,
+        "acceptanceScope": "SOURCE_ONLY_NOT_A_LIVE_HISTORIC_DATA_MIGRATION"
+      }
+    },
+    {
+      "legacyTable": "auth_handoff_token",
+      "legacyColumn": "created_at",
+      "sourceType": "datetime",
+      "sourceDefinition": "datetime DEFAULT CURRENT_TIMESTAMP",
+      "sourceNullable": "SOURCE_DEFAULT_NULLABILITY_REVIEW",
+      "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+      "reviewDecision": {
+        "disposition": "SOURCE_RETIREMENT_OR_UNMAPPED_REVIEW",
+        "targetRefs": [],
+        "sourceRationale": "MySQL local datetime and lifetime state cannot be copied as trusted PostgreSQL instants. Conversion needs source zone, UTC precision and expiry/revocation ordering review. Field: auth_handoff_token.created_at; source type datetime.",
+        "outstandingProof": "Independently execute exact registered PostgreSQL column/constraint and live producer -> persisted state -> authorized consumer, lifecycle, expiry, cross-role, tenant privacy and revocation tests; explicit retirement/semantic approval remains pending for auth_handoff_token.created_at.",
+        "legacyBackendSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+        "sourceReviewed": true,
+        "runtimeVerified": false,
+        "consumerVerified": false,
+        "retirementApproved": false,
+        "acceptanceScope": "SOURCE_ONLY_NOT_A_LIVE_HISTORIC_DATA_MIGRATION"
+      }
+    },
+    {
+      "legacyTable": "auth_handoff_token",
+      "legacyColumn": "updated_at",
+      "sourceType": "datetime",
+      "sourceDefinition": "datetime DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP",
+      "sourceNullable": "SOURCE_DEFAULT_NULLABILITY_REVIEW",
+      "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+      "reviewDecision": {
+        "disposition": "SOURCE_RETIREMENT_OR_UNMAPPED_REVIEW",
+        "targetRefs": [],
+        "sourceRationale": "MySQL local datetime and lifetime state cannot be copied as trusted PostgreSQL instants. Conversion needs source zone, UTC precision and expiry/revocation ordering review. Field: auth_handoff_token.updated_at; source type datetime.",
+        "outstandingProof": "Independently execute exact registered PostgreSQL column/constraint and live producer -> persisted state -> authorized consumer, lifecycle, expiry, cross-role, tenant privacy and revocation tests; explicit retirement/semantic approval remains pending for auth_handoff_token.updated_at.",
+        "legacyBackendSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+        "sourceReviewed": true,
+        "runtimeVerified": false,
+        "consumerVerified": false,
+        "retirementApproved": false,
+        "acceptanceScope": "SOURCE_ONLY_NOT_A_LIVE_HISTORIC_DATA_MIGRATION"
+      }
+    },
+    {
+      "legacyTable": "auth_handoff_token",
+      "legacyColumn": "is_deleted",
+      "sourceType": "tinyint(1)",
+      "sourceDefinition": "tinyint(1) DEFAULT '0'",
+      "sourceNullable": "SOURCE_DEFAULT_NULLABILITY_REVIEW",
+      "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+      "reviewDecision": {
+        "disposition": "SOURCE_RETIREMENT_OR_UNMAPPED_REVIEW",
+        "targetRefs": [],
+        "sourceRationale": "Historic role or deletion state cannot grant authority. Active membership, scoped role grants and platform suspension must be independently resolved for each request. Field: auth_handoff_token.is_deleted; source type tinyint(1).",
+        "outstandingProof": "Independently execute exact registered PostgreSQL column/constraint and live producer -> persisted state -> authorized consumer, lifecycle, expiry, cross-role, tenant privacy and revocation tests; explicit retirement/semantic approval remains pending for auth_handoff_token.is_deleted.",
+        "legacyBackendSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+        "sourceReviewed": true,
+        "runtimeVerified": false,
+        "consumerVerified": false,
+        "retirementApproved": false,
+        "acceptanceScope": "SOURCE_ONLY_NOT_A_LIVE_HISTORIC_DATA_MIGRATION"
+      }
+    },
+    {
+      "legacyTable": "auth_handoff_token",
+      "legacyColumn": "token",
+      "sourceType": "varchar(128)",
+      "sourceDefinition": "varchar(128) NOT NULL",
+      "sourceNullable": "NOT_NULL",
+      "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+      "reviewDecision": {
+        "disposition": "SOURCE_RETIREMENT_OR_UNMAPPED_REVIEW",
+        "targetRefs": [],
+        "sourceRationale": "Historic bearer/credential material is never copied, accepted or exposed as a working vNext credential. Any candidate HMAC column is populated only by a newly issued fresh challenge. Field: auth_handoff_token.token; source type varchar(128).",
+        "outstandingProof": "Independently execute exact registered PostgreSQL column/constraint and live producer -> persisted state -> authorized consumer, lifecycle, expiry, cross-role, tenant privacy and revocation tests; explicit retirement/semantic approval remains pending for auth_handoff_token.token.",
+        "legacyBackendSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+        "sourceReviewed": true,
+        "runtimeVerified": false,
+        "consumerVerified": false,
+        "retirementApproved": false,
+        "acceptanceScope": "SOURCE_ONLY_NOT_A_LIVE_HISTORIC_DATA_MIGRATION"
+      }
+    },
+    {
+      "legacyTable": "auth_handoff_token",
+      "legacyColumn": "access_token",
+      "sourceType": "text",
+      "sourceDefinition": "text NOT NULL",
+      "sourceNullable": "NOT_NULL",
+      "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+      "reviewDecision": {
+        "disposition": "SOURCE_RETIREMENT_OR_UNMAPPED_REVIEW",
+        "targetRefs": [],
+        "sourceRationale": "Historic bearer/credential material is never copied, accepted or exposed as a working vNext credential. Any candidate HMAC column is populated only by a newly issued fresh challenge. Field: auth_handoff_token.access_token; source type text.",
+        "outstandingProof": "Independently execute exact registered PostgreSQL column/constraint and live producer -> persisted state -> authorized consumer, lifecycle, expiry, cross-role, tenant privacy and revocation tests; explicit retirement/semantic approval remains pending for auth_handoff_token.access_token.",
+        "legacyBackendSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+        "sourceReviewed": true,
+        "runtimeVerified": false,
+        "consumerVerified": false,
+        "retirementApproved": false,
+        "acceptanceScope": "SOURCE_ONLY_NOT_A_LIVE_HISTORIC_DATA_MIGRATION"
+      }
+    },
+    {
+      "legacyTable": "auth_handoff_token",
+      "legacyColumn": "refresh_token",
+      "sourceType": "text",
+      "sourceDefinition": "text NOT NULL",
+      "sourceNullable": "NOT_NULL",
+      "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+      "reviewDecision": {
+        "disposition": "SOURCE_RETIREMENT_OR_UNMAPPED_REVIEW",
+        "targetRefs": [],
+        "sourceRationale": "Historic bearer/credential material is never copied, accepted or exposed as a working vNext credential. Any candidate HMAC column is populated only by a newly issued fresh challenge. Field: auth_handoff_token.refresh_token; source type text.",
+        "outstandingProof": "Independently execute exact registered PostgreSQL column/constraint and live producer -> persisted state -> authorized consumer, lifecycle, expiry, cross-role, tenant privacy and revocation tests; explicit retirement/semantic approval remains pending for auth_handoff_token.refresh_token.",
+        "legacyBackendSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+        "sourceReviewed": true,
+        "runtimeVerified": false,
+        "consumerVerified": false,
+        "retirementApproved": false,
+        "acceptanceScope": "SOURCE_ONLY_NOT_A_LIVE_HISTORIC_DATA_MIGRATION"
+      }
+    },
+    {
+      "legacyTable": "auth_handoff_token",
+      "legacyColumn": "expires_at",
+      "sourceType": "datetime",
+      "sourceDefinition": "datetime NOT NULL",
+      "sourceNullable": "NOT_NULL",
+      "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+      "reviewDecision": {
+        "disposition": "SOURCE_RETIREMENT_OR_UNMAPPED_REVIEW",
+        "targetRefs": [],
+        "sourceRationale": "MySQL local datetime and lifetime state cannot be copied as trusted PostgreSQL instants. Conversion needs source zone, UTC precision and expiry/revocation ordering review. Field: auth_handoff_token.expires_at; source type datetime.",
+        "outstandingProof": "Independently execute exact registered PostgreSQL column/constraint and live producer -> persisted state -> authorized consumer, lifecycle, expiry, cross-role, tenant privacy and revocation tests; explicit retirement/semantic approval remains pending for auth_handoff_token.expires_at.",
+        "legacyBackendSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+        "sourceReviewed": true,
+        "runtimeVerified": false,
+        "consumerVerified": false,
+        "retirementApproved": false,
+        "acceptanceScope": "SOURCE_ONLY_NOT_A_LIVE_HISTORIC_DATA_MIGRATION"
+      }
+    },
+    {
+      "legacyTable": "auth_handoff_token",
+      "legacyColumn": "used",
+      "sourceType": "tinyint(1)",
+      "sourceDefinition": "tinyint(1) DEFAULT '0'",
+      "sourceNullable": "SOURCE_DEFAULT_NULLABILITY_REVIEW",
+      "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+      "reviewDecision": {
+        "disposition": "SOURCE_RETIREMENT_OR_UNMAPPED_REVIEW",
+        "targetRefs": [],
+        "sourceRationale": "Legacy numeric account identity or descriptive metadata is only a source candidate, not a vNext authenticated principal or proof of a current permission. Field: auth_handoff_token.used; source type tinyint(1).",
+        "outstandingProof": "Independently execute exact registered PostgreSQL column/constraint and live producer -> persisted state -> authorized consumer, lifecycle, expiry, cross-role, tenant privacy and revocation tests; explicit retirement/semantic approval remains pending for auth_handoff_token.used.",
+        "legacyBackendSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+        "sourceReviewed": true,
+        "runtimeVerified": false,
+        "consumerVerified": false,
+        "retirementApproved": false,
+        "acceptanceScope": "SOURCE_ONLY_NOT_A_LIVE_HISTORIC_DATA_MIGRATION"
+      }
+    },
+    {
+      "legacyTable": "auth_token",
+      "legacyColumn": "id",
+      "sourceType": "int",
+      "sourceDefinition": "int NOT NULL AUTO_INCREMENT",
+      "sourceNullable": "NOT_NULL",
+      "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+      "reviewDecision": {
+        "disposition": "SOURCE_RETIREMENT_OR_UNMAPPED_REVIEW",
+        "targetRefs": [],
+        "sourceRationale": "Legacy numeric account identity or descriptive metadata is only a source candidate, not a vNext authenticated principal or proof of a current permission. Field: auth_token.id; source type int.",
+        "outstandingProof": "Independently execute exact registered PostgreSQL column/constraint and live producer -> persisted state -> authorized consumer, lifecycle, expiry, cross-role, tenant privacy and revocation tests; explicit retirement/semantic approval remains pending for auth_token.id.",
+        "legacyBackendSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+        "sourceReviewed": true,
+        "runtimeVerified": false,
+        "consumerVerified": false,
+        "retirementApproved": false,
+        "acceptanceScope": "SOURCE_ONLY_NOT_A_LIVE_HISTORIC_DATA_MIGRATION"
+      }
+    },
+    {
+      "legacyTable": "auth_token",
+      "legacyColumn": "created_at",
+      "sourceType": "datetime(6)",
+      "sourceDefinition": "datetime(6) DEFAULT NULL",
+      "sourceNullable": "NULL_ALLOWED",
+      "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+      "reviewDecision": {
+        "disposition": "SOURCE_RETIREMENT_OR_UNMAPPED_REVIEW",
+        "targetRefs": [],
+        "sourceRationale": "MySQL local datetime and lifetime state cannot be copied as trusted PostgreSQL instants. Conversion needs source zone, UTC precision and expiry/revocation ordering review. Field: auth_token.created_at; source type datetime(6).",
+        "outstandingProof": "Independently execute exact registered PostgreSQL column/constraint and live producer -> persisted state -> authorized consumer, lifecycle, expiry, cross-role, tenant privacy and revocation tests; explicit retirement/semantic approval remains pending for auth_token.created_at.",
+        "legacyBackendSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+        "sourceReviewed": true,
+        "runtimeVerified": false,
+        "consumerVerified": false,
+        "retirementApproved": false,
+        "acceptanceScope": "SOURCE_ONLY_NOT_A_LIVE_HISTORIC_DATA_MIGRATION"
+      }
+    },
+    {
+      "legacyTable": "auth_token",
+      "legacyColumn": "is_deleted",
+      "sourceType": "tinyint(1)",
+      "sourceDefinition": "tinyint(1) DEFAULT '0'",
+      "sourceNullable": "SOURCE_DEFAULT_NULLABILITY_REVIEW",
+      "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+      "reviewDecision": {
+        "disposition": "SOURCE_RETIREMENT_OR_UNMAPPED_REVIEW",
+        "targetRefs": [],
+        "sourceRationale": "Historic role or deletion state cannot grant authority. Active membership, scoped role grants and platform suspension must be independently resolved for each request. Field: auth_token.is_deleted; source type tinyint(1).",
+        "outstandingProof": "Independently execute exact registered PostgreSQL column/constraint and live producer -> persisted state -> authorized consumer, lifecycle, expiry, cross-role, tenant privacy and revocation tests; explicit retirement/semantic approval remains pending for auth_token.is_deleted.",
+        "legacyBackendSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+        "sourceReviewed": true,
+        "runtimeVerified": false,
+        "consumerVerified": false,
+        "retirementApproved": false,
+        "acceptanceScope": "SOURCE_ONLY_NOT_A_LIVE_HISTORIC_DATA_MIGRATION"
+      }
+    },
+    {
+      "legacyTable": "auth_token",
+      "legacyColumn": "updated_at",
+      "sourceType": "datetime(6)",
+      "sourceDefinition": "datetime(6) DEFAULT NULL",
+      "sourceNullable": "NULL_ALLOWED",
+      "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+      "reviewDecision": {
+        "disposition": "SOURCE_RETIREMENT_OR_UNMAPPED_REVIEW",
+        "targetRefs": [],
+        "sourceRationale": "MySQL local datetime and lifetime state cannot be copied as trusted PostgreSQL instants. Conversion needs source zone, UTC precision and expiry/revocation ordering review. Field: auth_token.updated_at; source type datetime(6).",
+        "outstandingProof": "Independently execute exact registered PostgreSQL column/constraint and live producer -> persisted state -> authorized consumer, lifecycle, expiry, cross-role, tenant privacy and revocation tests; explicit retirement/semantic approval remains pending for auth_token.updated_at.",
+        "legacyBackendSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+        "sourceReviewed": true,
+        "runtimeVerified": false,
+        "consumerVerified": false,
+        "retirementApproved": false,
+        "acceptanceScope": "SOURCE_ONLY_NOT_A_LIVE_HISTORIC_DATA_MIGRATION"
+      }
+    },
+    {
+      "legacyTable": "auth_token",
+      "legacyColumn": "token",
+      "sourceType": "varchar(255)",
+      "sourceDefinition": "varchar(255) DEFAULT NULL",
+      "sourceNullable": "NULL_ALLOWED",
+      "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+      "reviewDecision": {
+        "disposition": "SOURCE_RETIREMENT_OR_UNMAPPED_REVIEW",
+        "targetRefs": [],
+        "sourceRationale": "Historic bearer/credential material is never copied, accepted or exposed as a working vNext credential. Any candidate HMAC column is populated only by a newly issued fresh challenge. Field: auth_token.token; source type varchar(255).",
+        "outstandingProof": "Independently execute exact registered PostgreSQL column/constraint and live producer -> persisted state -> authorized consumer, lifecycle, expiry, cross-role, tenant privacy and revocation tests; explicit retirement/semantic approval remains pending for auth_token.token.",
+        "legacyBackendSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+        "sourceReviewed": true,
+        "runtimeVerified": false,
+        "consumerVerified": false,
+        "retirementApproved": false,
+        "acceptanceScope": "SOURCE_ONLY_NOT_A_LIVE_HISTORIC_DATA_MIGRATION"
+      }
+    },
+    {
+      "legacyTable": "email_verification_token",
+      "legacyColumn": "token",
+      "sourceType": "varchar(36)",
+      "sourceDefinition": "varchar(36) NOT NULL",
+      "sourceNullable": "NOT_NULL",
+      "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+      "reviewDecision": {
+        "disposition": "SECURE_BEHAVIORAL_REDESIGN_CANDIDATE",
+        "targetRefs": [
+          "identity_email_verification_links.token_digest"
+        ],
+        "sourceRationale": "Historic bearer/credential material is never copied, accepted or exposed as a working vNext credential. Any candidate HMAC column is populated only by a newly issued fresh challenge. Field: email_verification_token.token; source type varchar(36).",
+        "outstandingProof": "Independently execute exact registered PostgreSQL column/constraint and live producer -> persisted state -> authorized consumer, lifecycle, expiry, cross-role, tenant privacy and revocation tests; explicit retirement/semantic approval remains pending for email_verification_token.token.",
+        "legacyBackendSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+        "sourceReviewed": true,
+        "runtimeVerified": false,
+        "consumerVerified": false,
+        "retirementApproved": false,
+        "acceptanceScope": "SOURCE_ONLY_NOT_A_LIVE_HISTORIC_DATA_MIGRATION"
+      }
+    },
+    {
+      "legacyTable": "email_verification_token",
+      "legacyColumn": "application_id",
+      "sourceType": "varchar(36)",
+      "sourceDefinition": "varchar(36) DEFAULT NULL",
+      "sourceNullable": "NULL_ALLOWED",
+      "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+      "reviewDecision": {
+        "disposition": "SCOPED_FIELD_TARGET_CANDIDATE",
+        "targetRefs": [
+          "identity_email_verification_links.application_id"
+        ],
+        "sourceRationale": "Legacy application_id is a varchar, not a trusted placement UUID. Resolve same-college application ownership first; unresolvable old references stay quarantined. Field: email_verification_token.application_id; source type varchar(36).",
+        "outstandingProof": "Independently execute exact registered PostgreSQL column/constraint and live producer -> persisted state -> authorized consumer, lifecycle, expiry, cross-role, tenant privacy and revocation tests; explicit retirement/semantic approval remains pending for email_verification_token.application_id.",
+        "legacyBackendSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+        "sourceReviewed": true,
+        "runtimeVerified": false,
+        "consumerVerified": false,
+        "retirementApproved": false,
+        "acceptanceScope": "SOURCE_ONLY_NOT_A_LIVE_HISTORIC_DATA_MIGRATION"
+      }
+    },
+    {
+      "legacyTable": "email_verification_token",
+      "legacyColumn": "created_at",
+      "sourceType": "datetime(6)",
+      "sourceDefinition": "datetime(6) NOT NULL",
+      "sourceNullable": "NOT_NULL",
+      "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+      "reviewDecision": {
+        "disposition": "SCOPED_FIELD_TARGET_CANDIDATE",
+        "targetRefs": [
+          "identity_email_verification_links.created_at"
+        ],
+        "sourceRationale": "MySQL local datetime and lifetime state cannot be copied as trusted PostgreSQL instants. Conversion needs source zone, UTC precision and expiry/revocation ordering review. Field: email_verification_token.created_at; source type datetime(6).",
+        "outstandingProof": "Independently execute exact registered PostgreSQL column/constraint and live producer -> persisted state -> authorized consumer, lifecycle, expiry, cross-role, tenant privacy and revocation tests; explicit retirement/semantic approval remains pending for email_verification_token.created_at.",
+        "legacyBackendSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+        "sourceReviewed": true,
+        "runtimeVerified": false,
+        "consumerVerified": false,
+        "retirementApproved": false,
+        "acceptanceScope": "SOURCE_ONLY_NOT_A_LIVE_HISTORIC_DATA_MIGRATION"
+      }
+    },
+    {
+      "legacyTable": "email_verification_token",
+      "legacyColumn": "email",
+      "sourceType": "varchar(255)",
+      "sourceDefinition": "varchar(255) NOT NULL",
+      "sourceNullable": "NOT_NULL",
+      "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+      "reviewDecision": {
+        "disposition": "SCOPED_FIELD_TARGET_CANDIDATE",
+        "targetRefs": [
+          "identity_email_verification_links.email_fingerprint"
+        ],
+        "sourceRationale": "Legacy numeric account identity or descriptive metadata is only a source candidate, not a vNext authenticated principal or proof of a current permission. Field: email_verification_token.email; source type varchar(255).",
+        "outstandingProof": "Independently execute exact registered PostgreSQL column/constraint and live producer -> persisted state -> authorized consumer, lifecycle, expiry, cross-role, tenant privacy and revocation tests; explicit retirement/semantic approval remains pending for email_verification_token.email.",
+        "legacyBackendSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+        "sourceReviewed": true,
+        "runtimeVerified": false,
+        "consumerVerified": false,
+        "retirementApproved": false,
+        "acceptanceScope": "SOURCE_ONLY_NOT_A_LIVE_HISTORIC_DATA_MIGRATION"
+      }
+    },
+    {
+      "legacyTable": "email_verification_token",
+      "legacyColumn": "expires_at",
+      "sourceType": "datetime(6)",
+      "sourceDefinition": "datetime(6) NOT NULL",
+      "sourceNullable": "NOT_NULL",
+      "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+      "reviewDecision": {
+        "disposition": "SCOPED_FIELD_TARGET_CANDIDATE",
+        "targetRefs": [
+          "identity_email_verification_links.expires_at"
+        ],
+        "sourceRationale": "MySQL local datetime and lifetime state cannot be copied as trusted PostgreSQL instants. Conversion needs source zone, UTC precision and expiry/revocation ordering review. Field: email_verification_token.expires_at; source type datetime(6).",
+        "outstandingProof": "Independently execute exact registered PostgreSQL column/constraint and live producer -> persisted state -> authorized consumer, lifecycle, expiry, cross-role, tenant privacy and revocation tests; explicit retirement/semantic approval remains pending for email_verification_token.expires_at.",
+        "legacyBackendSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+        "sourceReviewed": true,
+        "runtimeVerified": false,
+        "consumerVerified": false,
+        "retirementApproved": false,
+        "acceptanceScope": "SOURCE_ONLY_NOT_A_LIVE_HISTORIC_DATA_MIGRATION"
+      }
+    },
+    {
+      "legacyTable": "email_verification_token",
+      "legacyColumn": "verified",
+      "sourceType": "bit(1)",
+      "sourceDefinition": "bit(1) NOT NULL",
+      "sourceNullable": "NOT_NULL",
+      "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+      "reviewDecision": {
+        "disposition": "SCOPED_FIELD_TARGET_CANDIDATE",
+        "targetRefs": [
+          "identity_email_ownership_proofs.verified_at"
+        ],
+        "sourceRationale": "A historic boolean does not establish current contact ownership. vNext stores a separate durable proof only after a valid fresh link is consumed. Field: email_verification_token.verified; source type bit(1).",
+        "outstandingProof": "Independently execute exact registered PostgreSQL column/constraint and live producer -> persisted state -> authorized consumer, lifecycle, expiry, cross-role, tenant privacy and revocation tests; explicit retirement/semantic approval remains pending for email_verification_token.verified.",
+        "legacyBackendSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+        "sourceReviewed": true,
+        "runtimeVerified": false,
+        "consumerVerified": false,
+        "retirementApproved": false,
+        "acceptanceScope": "SOURCE_ONLY_NOT_A_LIVE_HISTORIC_DATA_MIGRATION"
+      }
+    },
+    {
+      "legacyTable": "email_verification_token",
+      "legacyColumn": "verified_at",
+      "sourceType": "datetime(6)",
+      "sourceDefinition": "datetime(6) DEFAULT NULL",
+      "sourceNullable": "NULL_ALLOWED",
+      "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+      "reviewDecision": {
+        "disposition": "SCOPED_FIELD_TARGET_CANDIDATE",
+        "targetRefs": [
+          "identity_email_ownership_proofs.verified_at"
+        ],
+        "sourceRationale": "MySQL local datetime and lifetime state cannot be copied as trusted PostgreSQL instants. Conversion needs source zone, UTC precision and expiry/revocation ordering review. Field: email_verification_token.verified_at; source type datetime(6).",
+        "outstandingProof": "Independently execute exact registered PostgreSQL column/constraint and live producer -> persisted state -> authorized consumer, lifecycle, expiry, cross-role, tenant privacy and revocation tests; explicit retirement/semantic approval remains pending for email_verification_token.verified_at.",
+        "legacyBackendSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+        "sourceReviewed": true,
+        "runtimeVerified": false,
+        "consumerVerified": false,
+        "retirementApproved": false,
+        "acceptanceScope": "SOURCE_ONLY_NOT_A_LIVE_HISTORIC_DATA_MIGRATION"
+      }
+    },
+    {
+      "legacyTable": "login_user",
+      "legacyColumn": "id",
+      "sourceType": "int",
+      "sourceDefinition": "int NOT NULL AUTO_INCREMENT",
+      "sourceNullable": "NOT_NULL",
+      "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+      "reviewDecision": {
+        "disposition": "SECURE_BEHAVIORAL_REDESIGN_CANDIDATE",
+        "targetRefs": [
+          "users.id"
+        ],
+        "sourceRationale": "Legacy numeric account identity or descriptive metadata is only a source candidate, not a vNext authenticated principal or proof of a current permission. Field: login_user.id; source type int.",
+        "outstandingProof": "Independently execute exact registered PostgreSQL column/constraint and live producer -> persisted state -> authorized consumer, lifecycle, expiry, cross-role, tenant privacy and revocation tests; explicit retirement/semantic approval remains pending for login_user.id.",
+        "legacyBackendSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+        "sourceReviewed": true,
+        "runtimeVerified": false,
+        "consumerVerified": false,
+        "retirementApproved": false,
+        "acceptanceScope": "SOURCE_ONLY_NOT_A_LIVE_HISTORIC_DATA_MIGRATION"
+      }
+    },
+    {
+      "legacyTable": "login_user",
+      "legacyColumn": "created_at",
+      "sourceType": "datetime(6)",
+      "sourceDefinition": "datetime(6) DEFAULT NULL",
+      "sourceNullable": "NULL_ALLOWED",
+      "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+      "reviewDecision": {
+        "disposition": "SECURE_BEHAVIORAL_REDESIGN_CANDIDATE",
+        "targetRefs": [
+          "users.legacy_source_created_local"
+        ],
+        "sourceRationale": "MySQL local datetime and lifetime state cannot be copied as trusted PostgreSQL instants. Conversion needs source zone, UTC precision and expiry/revocation ordering review. Field: login_user.created_at; source type datetime(6).",
+        "outstandingProof": "Independently execute exact registered PostgreSQL column/constraint and live producer -> persisted state -> authorized consumer, lifecycle, expiry, cross-role, tenant privacy and revocation tests; explicit retirement/semantic approval remains pending for login_user.created_at.",
+        "legacyBackendSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+        "sourceReviewed": true,
+        "runtimeVerified": false,
+        "consumerVerified": false,
+        "retirementApproved": false,
+        "acceptanceScope": "SOURCE_ONLY_NOT_A_LIVE_HISTORIC_DATA_MIGRATION"
+      }
+    },
+    {
+      "legacyTable": "login_user",
+      "legacyColumn": "is_deleted",
+      "sourceType": "tinyint(1)",
+      "sourceDefinition": "tinyint(1) DEFAULT '0'",
+      "sourceNullable": "SOURCE_DEFAULT_NULLABILITY_REVIEW",
+      "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+      "reviewDecision": {
+        "disposition": "SECURE_BEHAVIORAL_REDESIGN_CANDIDATE",
+        "targetRefs": [
+          "users.platform_status"
+        ],
+        "sourceRationale": "Historic role or deletion state cannot grant authority. Active membership, scoped role grants and platform suspension must be independently resolved for each request. Field: login_user.is_deleted; source type tinyint(1).",
+        "outstandingProof": "Independently execute exact registered PostgreSQL column/constraint and live producer -> persisted state -> authorized consumer, lifecycle, expiry, cross-role, tenant privacy and revocation tests; explicit retirement/semantic approval remains pending for login_user.is_deleted.",
+        "legacyBackendSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+        "sourceReviewed": true,
+        "runtimeVerified": false,
+        "consumerVerified": false,
+        "retirementApproved": false,
+        "acceptanceScope": "SOURCE_ONLY_NOT_A_LIVE_HISTORIC_DATA_MIGRATION"
+      }
+    },
+    {
+      "legacyTable": "login_user",
+      "legacyColumn": "updated_at",
+      "sourceType": "datetime(6)",
+      "sourceDefinition": "datetime(6) DEFAULT NULL",
+      "sourceNullable": "NULL_ALLOWED",
+      "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+      "reviewDecision": {
+        "disposition": "SECURE_BEHAVIORAL_REDESIGN_CANDIDATE",
+        "targetRefs": [
+          "users.legacy_source_updated_local"
+        ],
+        "sourceRationale": "MySQL local datetime and lifetime state cannot be copied as trusted PostgreSQL instants. Conversion needs source zone, UTC precision and expiry/revocation ordering review. Field: login_user.updated_at; source type datetime(6).",
+        "outstandingProof": "Independently execute exact registered PostgreSQL column/constraint and live producer -> persisted state -> authorized consumer, lifecycle, expiry, cross-role, tenant privacy and revocation tests; explicit retirement/semantic approval remains pending for login_user.updated_at.",
+        "legacyBackendSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+        "sourceReviewed": true,
+        "runtimeVerified": false,
+        "consumerVerified": false,
+        "retirementApproved": false,
+        "acceptanceScope": "SOURCE_ONLY_NOT_A_LIVE_HISTORIC_DATA_MIGRATION"
+      }
+    },
+    {
+      "legacyTable": "login_user",
+      "legacyColumn": "password",
+      "sourceType": "varchar(255)",
+      "sourceDefinition": "varchar(255) DEFAULT NULL",
+      "sourceNullable": "NULL_ALLOWED",
+      "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+      "reviewDecision": {
+        "disposition": "SOURCE_RETIREMENT_OR_UNMAPPED_REVIEW",
+        "targetRefs": [],
+        "sourceRationale": "Historic bearer/credential material is never copied, accepted or exposed as a working vNext credential. Any candidate HMAC column is populated only by a newly issued fresh challenge. Field: login_user.password; source type varchar(255).",
+        "outstandingProof": "Independently execute exact registered PostgreSQL column/constraint and live producer -> persisted state -> authorized consumer, lifecycle, expiry, cross-role, tenant privacy and revocation tests; explicit retirement/semantic approval remains pending for login_user.password.",
+        "legacyBackendSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+        "sourceReviewed": true,
+        "runtimeVerified": false,
+        "consumerVerified": false,
+        "retirementApproved": false,
+        "acceptanceScope": "SOURCE_ONLY_NOT_A_LIVE_HISTORIC_DATA_MIGRATION"
+      }
+    },
+    {
+      "legacyTable": "login_user",
+      "legacyColumn": "user_name",
+      "sourceType": "varchar(255)",
+      "sourceDefinition": "varchar(255) DEFAULT NULL",
+      "sourceNullable": "NULL_ALLOWED",
+      "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+      "reviewDecision": {
+        "disposition": "SECURE_BEHAVIORAL_REDESIGN_CANDIDATE",
+        "targetRefs": [
+          "users.legacy_user_name"
+        ],
+        "sourceRationale": "Legacy numeric account identity or descriptive metadata is only a source candidate, not a vNext authenticated principal or proof of a current permission. Field: login_user.user_name; source type varchar(255).",
+        "outstandingProof": "Independently execute exact registered PostgreSQL column/constraint and live producer -> persisted state -> authorized consumer, lifecycle, expiry, cross-role, tenant privacy and revocation tests; explicit retirement/semantic approval remains pending for login_user.user_name.",
+        "legacyBackendSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+        "sourceReviewed": true,
+        "runtimeVerified": false,
+        "consumerVerified": false,
+        "retirementApproved": false,
+        "acceptanceScope": "SOURCE_ONLY_NOT_A_LIVE_HISTORIC_DATA_MIGRATION"
+      }
+    },
+    {
+      "legacyTable": "mobile_login_attempt",
+      "legacyColumn": "id",
+      "sourceType": "int",
+      "sourceDefinition": "int NOT NULL AUTO_INCREMENT",
+      "sourceNullable": "NOT_NULL",
+      "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+      "reviewDecision": {
+        "disposition": "SCOPED_FIELD_TARGET_CANDIDATE",
+        "targetRefs": [
+          "identity_auth_attempts.id"
+        ],
+        "sourceRationale": "Legacy numeric account identity or descriptive metadata is only a source candidate, not a vNext authenticated principal or proof of a current permission. Field: mobile_login_attempt.id; source type int.",
+        "outstandingProof": "Independently execute exact registered PostgreSQL column/constraint and live producer -> persisted state -> authorized consumer, lifecycle, expiry, cross-role, tenant privacy and revocation tests; explicit retirement/semantic approval remains pending for mobile_login_attempt.id.",
+        "legacyBackendSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+        "sourceReviewed": true,
+        "runtimeVerified": false,
+        "consumerVerified": false,
+        "retirementApproved": false,
+        "acceptanceScope": "SOURCE_ONLY_NOT_A_LIVE_HISTORIC_DATA_MIGRATION"
+      }
+    },
+    {
+      "legacyTable": "mobile_login_attempt",
+      "legacyColumn": "created_at",
+      "sourceType": "datetime(6)",
+      "sourceDefinition": "datetime(6) DEFAULT NULL",
+      "sourceNullable": "NULL_ALLOWED",
+      "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+      "reviewDecision": {
+        "disposition": "SCOPED_FIELD_TARGET_CANDIDATE",
+        "targetRefs": [
+          "identity_auth_attempts.created_at"
+        ],
+        "sourceRationale": "MySQL local datetime and lifetime state cannot be copied as trusted PostgreSQL instants. Conversion needs source zone, UTC precision and expiry/revocation ordering review. Field: mobile_login_attempt.created_at; source type datetime(6).",
+        "outstandingProof": "Independently execute exact registered PostgreSQL column/constraint and live producer -> persisted state -> authorized consumer, lifecycle, expiry, cross-role, tenant privacy and revocation tests; explicit retirement/semantic approval remains pending for mobile_login_attempt.created_at.",
+        "legacyBackendSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+        "sourceReviewed": true,
+        "runtimeVerified": false,
+        "consumerVerified": false,
+        "retirementApproved": false,
+        "acceptanceScope": "SOURCE_ONLY_NOT_A_LIVE_HISTORIC_DATA_MIGRATION"
+      }
+    },
+    {
+      "legacyTable": "mobile_login_attempt",
+      "legacyColumn": "is_deleted",
+      "sourceType": "tinyint(1)",
+      "sourceDefinition": "tinyint(1) DEFAULT '0'",
+      "sourceNullable": "SOURCE_DEFAULT_NULLABILITY_REVIEW",
+      "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+      "reviewDecision": {
+        "disposition": "SOURCE_RETIREMENT_OR_UNMAPPED_REVIEW",
+        "targetRefs": [],
+        "sourceRationale": "Historic role or deletion state cannot grant authority. Active membership, scoped role grants and platform suspension must be independently resolved for each request. Field: mobile_login_attempt.is_deleted; source type tinyint(1).",
+        "outstandingProof": "Independently execute exact registered PostgreSQL column/constraint and live producer -> persisted state -> authorized consumer, lifecycle, expiry, cross-role, tenant privacy and revocation tests; explicit retirement/semantic approval remains pending for mobile_login_attempt.is_deleted.",
+        "legacyBackendSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+        "sourceReviewed": true,
+        "runtimeVerified": false,
+        "consumerVerified": false,
+        "retirementApproved": false,
+        "acceptanceScope": "SOURCE_ONLY_NOT_A_LIVE_HISTORIC_DATA_MIGRATION"
+      }
+    },
+    {
+      "legacyTable": "mobile_login_attempt",
+      "legacyColumn": "updated_at",
+      "sourceType": "datetime(6)",
+      "sourceDefinition": "datetime(6) DEFAULT NULL",
+      "sourceNullable": "NULL_ALLOWED",
+      "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+      "reviewDecision": {
+        "disposition": "SOURCE_RETIREMENT_OR_UNMAPPED_REVIEW",
+        "targetRefs": [],
+        "sourceRationale": "MySQL local datetime and lifetime state cannot be copied as trusted PostgreSQL instants. Conversion needs source zone, UTC precision and expiry/revocation ordering review. Field: mobile_login_attempt.updated_at; source type datetime(6).",
+        "outstandingProof": "Independently execute exact registered PostgreSQL column/constraint and live producer -> persisted state -> authorized consumer, lifecycle, expiry, cross-role, tenant privacy and revocation tests; explicit retirement/semantic approval remains pending for mobile_login_attempt.updated_at.",
+        "legacyBackendSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+        "sourceReviewed": true,
+        "runtimeVerified": false,
+        "consumerVerified": false,
+        "retirementApproved": false,
+        "acceptanceScope": "SOURCE_ONLY_NOT_A_LIVE_HISTORIC_DATA_MIGRATION"
+      }
+    },
+    {
+      "legacyTable": "mobile_login_attempt",
+      "legacyColumn": "attempt_id",
+      "sourceType": "varchar(64)",
+      "sourceDefinition": "varchar(64) NOT NULL",
+      "sourceNullable": "NOT_NULL",
+      "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+      "reviewDecision": {
+        "disposition": "SCOPED_FIELD_TARGET_CANDIDATE",
+        "targetRefs": [
+          "identity_auth_attempts.id"
+        ],
+        "sourceRationale": "Legacy numeric account identity or descriptive metadata is only a source candidate, not a vNext authenticated principal or proof of a current permission. Field: mobile_login_attempt.attempt_id; source type varchar(64).",
+        "outstandingProof": "Independently execute exact registered PostgreSQL column/constraint and live producer -> persisted state -> authorized consumer, lifecycle, expiry, cross-role, tenant privacy and revocation tests; explicit retirement/semantic approval remains pending for mobile_login_attempt.attempt_id.",
+        "legacyBackendSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+        "sourceReviewed": true,
+        "runtimeVerified": false,
+        "consumerVerified": false,
+        "retirementApproved": false,
+        "acceptanceScope": "SOURCE_ONLY_NOT_A_LIVE_HISTORIC_DATA_MIGRATION"
+      }
+    },
+    {
+      "legacyTable": "mobile_login_attempt",
+      "legacyColumn": "college_id",
+      "sourceType": "int",
+      "sourceDefinition": "int DEFAULT NULL",
+      "sourceNullable": "NULL_ALLOWED",
+      "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+      "reviewDecision": {
+        "disposition": "SCOPED_FIELD_TARGET_CANDIDATE",
+        "targetRefs": [
+          "identity_auth_attempts.college_id"
+        ],
+        "sourceRationale": "Legacy numeric account identity or descriptive metadata is only a source candidate, not a vNext authenticated principal or proof of a current permission. Field: mobile_login_attempt.college_id; source type int.",
+        "outstandingProof": "Independently execute exact registered PostgreSQL column/constraint and live producer -> persisted state -> authorized consumer, lifecycle, expiry, cross-role, tenant privacy and revocation tests; explicit retirement/semantic approval remains pending for mobile_login_attempt.college_id.",
+        "legacyBackendSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+        "sourceReviewed": true,
+        "runtimeVerified": false,
+        "consumerVerified": false,
+        "retirementApproved": false,
+        "acceptanceScope": "SOURCE_ONLY_NOT_A_LIVE_HISTORIC_DATA_MIGRATION"
+      }
+    },
+    {
+      "legacyTable": "mobile_login_attempt",
+      "legacyColumn": "expires_at",
+      "sourceType": "datetime(6)",
+      "sourceDefinition": "datetime(6) NOT NULL",
+      "sourceNullable": "NOT_NULL",
+      "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+      "reviewDecision": {
+        "disposition": "SCOPED_FIELD_TARGET_CANDIDATE",
+        "targetRefs": [
+          "identity_auth_attempts.expires_at"
+        ],
+        "sourceRationale": "MySQL local datetime and lifetime state cannot be copied as trusted PostgreSQL instants. Conversion needs source zone, UTC precision and expiry/revocation ordering review. Field: mobile_login_attempt.expires_at; source type datetime(6).",
+        "outstandingProof": "Independently execute exact registered PostgreSQL column/constraint and live producer -> persisted state -> authorized consumer, lifecycle, expiry, cross-role, tenant privacy and revocation tests; explicit retirement/semantic approval remains pending for mobile_login_attempt.expires_at.",
+        "legacyBackendSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+        "sourceReviewed": true,
+        "runtimeVerified": false,
+        "consumerVerified": false,
+        "retirementApproved": false,
+        "acceptanceScope": "SOURCE_ONLY_NOT_A_LIVE_HISTORIC_DATA_MIGRATION"
+      }
+    },
+    {
+      "legacyTable": "mobile_login_attempt",
+      "legacyColumn": "email_otp_expires_at",
+      "sourceType": "datetime",
+      "sourceDefinition": "datetime DEFAULT NULL",
+      "sourceNullable": "NULL_ALLOWED",
+      "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+      "reviewDecision": {
+        "disposition": "SCOPED_FIELD_TARGET_CANDIDATE",
+        "targetRefs": [
+          "identity_auth_attempts.email_code_expires_at"
+        ],
+        "sourceRationale": "MySQL local datetime and lifetime state cannot be copied as trusted PostgreSQL instants. Conversion needs source zone, UTC precision and expiry/revocation ordering review. Field: mobile_login_attempt.email_otp_expires_at; source type datetime.",
+        "outstandingProof": "Independently execute exact registered PostgreSQL column/constraint and live producer -> persisted state -> authorized consumer, lifecycle, expiry, cross-role, tenant privacy and revocation tests; explicit retirement/semantic approval remains pending for mobile_login_attempt.email_otp_expires_at.",
+        "legacyBackendSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+        "sourceReviewed": true,
+        "runtimeVerified": false,
+        "consumerVerified": false,
+        "retirementApproved": false,
+        "acceptanceScope": "SOURCE_ONLY_NOT_A_LIVE_HISTORIC_DATA_MIGRATION"
+      }
+    },
+    {
+      "legacyTable": "mobile_login_attempt",
+      "legacyColumn": "email_otp_sent_at",
+      "sourceType": "datetime",
+      "sourceDefinition": "datetime DEFAULT NULL",
+      "sourceNullable": "NULL_ALLOWED",
+      "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+      "reviewDecision": {
+        "disposition": "SCOPED_FIELD_TARGET_CANDIDATE",
+        "targetRefs": [
+          "identity_auth_attempts.email_code_sent_at"
+        ],
+        "sourceRationale": "MySQL local datetime and lifetime state cannot be copied as trusted PostgreSQL instants. Conversion needs source zone, UTC precision and expiry/revocation ordering review. Field: mobile_login_attempt.email_otp_sent_at; source type datetime.",
+        "outstandingProof": "Independently execute exact registered PostgreSQL column/constraint and live producer -> persisted state -> authorized consumer, lifecycle, expiry, cross-role, tenant privacy and revocation tests; explicit retirement/semantic approval remains pending for mobile_login_attempt.email_otp_sent_at.",
+        "legacyBackendSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+        "sourceReviewed": true,
+        "runtimeVerified": false,
+        "consumerVerified": false,
+        "retirementApproved": false,
+        "acceptanceScope": "SOURCE_ONLY_NOT_A_LIVE_HISTORIC_DATA_MIGRATION"
+      }
+    },
+    {
+      "legacyTable": "mobile_login_attempt",
+      "legacyColumn": "organization_id",
+      "sourceType": "int",
+      "sourceDefinition": "int DEFAULT NULL",
+      "sourceNullable": "NULL_ALLOWED",
+      "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+      "reviewDecision": {
+        "disposition": "SOURCE_RETIREMENT_OR_UNMAPPED_REVIEW",
+        "targetRefs": [],
+        "sourceRationale": "Historic organization_id has no separate trusted auth-attempt column: its college must be validated through persisted college->organization ownership before login. Field: mobile_login_attempt.organization_id; source type int.",
+        "outstandingProof": "Independently execute exact registered PostgreSQL column/constraint and live producer -> persisted state -> authorized consumer, lifecycle, expiry, cross-role, tenant privacy and revocation tests; explicit retirement/semantic approval remains pending for mobile_login_attempt.organization_id.",
+        "legacyBackendSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+        "sourceReviewed": true,
+        "runtimeVerified": false,
+        "consumerVerified": false,
+        "retirementApproved": false,
+        "acceptanceScope": "SOURCE_ONLY_NOT_A_LIVE_HISTORIC_DATA_MIGRATION"
+      }
+    },
+    {
+      "legacyTable": "mobile_login_attempt",
+      "legacyColumn": "otp",
+      "sourceType": "varchar(12)",
+      "sourceDefinition": "varchar(12) NOT NULL",
+      "sourceNullable": "NOT_NULL",
+      "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+      "reviewDecision": {
+        "disposition": "SECURE_BEHAVIORAL_REDESIGN_CANDIDATE",
+        "targetRefs": [
+          "identity_auth_attempts.sms_code_mac"
+        ],
+        "sourceRationale": "Historic bearer/credential material is never copied, accepted or exposed as a working vNext credential. Any candidate HMAC column is populated only by a newly issued fresh challenge. Field: mobile_login_attempt.otp; source type varchar(12).",
+        "outstandingProof": "Independently execute exact registered PostgreSQL column/constraint and live producer -> persisted state -> authorized consumer, lifecycle, expiry, cross-role, tenant privacy and revocation tests; explicit retirement/semantic approval remains pending for mobile_login_attempt.otp.",
+        "legacyBackendSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+        "sourceReviewed": true,
+        "runtimeVerified": false,
+        "consumerVerified": false,
+        "retirementApproved": false,
+        "acceptanceScope": "SOURCE_ONLY_NOT_A_LIVE_HISTORIC_DATA_MIGRATION"
+      }
+    },
+    {
+      "legacyTable": "mobile_login_attempt",
+      "legacyColumn": "email_otp",
+      "sourceType": "varchar(12)",
+      "sourceDefinition": "varchar(12) DEFAULT NULL",
+      "sourceNullable": "NULL_ALLOWED",
+      "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+      "reviewDecision": {
+        "disposition": "SECURE_BEHAVIORAL_REDESIGN_CANDIDATE",
+        "targetRefs": [
+          "identity_auth_attempts.email_code_mac"
+        ],
+        "sourceRationale": "Historic bearer/credential material is never copied, accepted or exposed as a working vNext credential. Any candidate HMAC column is populated only by a newly issued fresh challenge. Field: mobile_login_attempt.email_otp; source type varchar(12).",
+        "outstandingProof": "Independently execute exact registered PostgreSQL column/constraint and live producer -> persisted state -> authorized consumer, lifecycle, expiry, cross-role, tenant privacy and revocation tests; explicit retirement/semantic approval remains pending for mobile_login_attempt.email_otp.",
+        "legacyBackendSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+        "sourceReviewed": true,
+        "runtimeVerified": false,
+        "consumerVerified": false,
+        "retirementApproved": false,
+        "acceptanceScope": "SOURCE_ONLY_NOT_A_LIVE_HISTORIC_DATA_MIGRATION"
+      }
+    },
+    {
+      "legacyTable": "mobile_login_attempt",
+      "legacyColumn": "phone",
+      "sourceType": "varchar(32)",
+      "sourceDefinition": "varchar(32) NOT NULL",
+      "sourceNullable": "NOT_NULL",
+      "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+      "reviewDecision": {
+        "disposition": "SECURE_BEHAVIORAL_REDESIGN_CANDIDATE",
+        "targetRefs": [
+          "identity_auth_attempts.contact_fingerprint"
+        ],
+        "sourceRationale": "Historic bearer/credential material is never copied, accepted or exposed as a working vNext credential. Any candidate HMAC column is populated only by a newly issued fresh challenge. Field: mobile_login_attempt.phone; source type varchar(32).",
+        "outstandingProof": "Independently execute exact registered PostgreSQL column/constraint and live producer -> persisted state -> authorized consumer, lifecycle, expiry, cross-role, tenant privacy and revocation tests; explicit retirement/semantic approval remains pending for mobile_login_attempt.phone.",
+        "legacyBackendSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+        "sourceReviewed": true,
+        "runtimeVerified": false,
+        "consumerVerified": false,
+        "retirementApproved": false,
+        "acceptanceScope": "SOURCE_ONLY_NOT_A_LIVE_HISTORIC_DATA_MIGRATION"
+      }
+    },
+    {
+      "legacyTable": "mobile_login_attempt",
+      "legacyColumn": "used",
+      "sourceType": "bit(1)",
+      "sourceDefinition": "bit(1) NOT NULL",
+      "sourceNullable": "NOT_NULL",
+      "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+      "reviewDecision": {
+        "disposition": "SCOPED_FIELD_TARGET_CANDIDATE",
+        "targetRefs": [
+          "identity_auth_attempts.used_at"
+        ],
+        "sourceRationale": "Legacy numeric account identity or descriptive metadata is only a source candidate, not a vNext authenticated principal or proof of a current permission. Field: mobile_login_attempt.used; source type bit(1).",
+        "outstandingProof": "Independently execute exact registered PostgreSQL column/constraint and live producer -> persisted state -> authorized consumer, lifecycle, expiry, cross-role, tenant privacy and revocation tests; explicit retirement/semantic approval remains pending for mobile_login_attempt.used.",
+        "legacyBackendSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+        "sourceReviewed": true,
+        "runtimeVerified": false,
+        "consumerVerified": false,
+        "retirementApproved": false,
+        "acceptanceScope": "SOURCE_ONLY_NOT_A_LIVE_HISTORIC_DATA_MIGRATION"
+      }
+    },
+    {
+      "legacyTable": "mobile_login_attempt",
+      "legacyColumn": "user_id",
+      "sourceType": "int",
+      "sourceDefinition": "int NOT NULL",
+      "sourceNullable": "NOT_NULL",
+      "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+      "reviewDecision": {
+        "disposition": "SCOPED_FIELD_TARGET_CANDIDATE",
+        "targetRefs": [
+          "identity_auth_attempts.user_id"
+        ],
+        "sourceRationale": "Legacy numeric account identity or descriptive metadata is only a source candidate, not a vNext authenticated principal or proof of a current permission. Field: mobile_login_attempt.user_id; source type int.",
+        "outstandingProof": "Independently execute exact registered PostgreSQL column/constraint and live producer -> persisted state -> authorized consumer, lifecycle, expiry, cross-role, tenant privacy and revocation tests; explicit retirement/semantic approval remains pending for mobile_login_attempt.user_id.",
+        "legacyBackendSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+        "sourceReviewed": true,
+        "runtimeVerified": false,
+        "consumerVerified": false,
+        "retirementApproved": false,
+        "acceptanceScope": "SOURCE_ONLY_NOT_A_LIVE_HISTORIC_DATA_MIGRATION"
+      }
+    },
+    {
+      "legacyTable": "mobile_login_attempt",
+      "legacyColumn": "user_type",
+      "sourceType": "varchar(16)",
+      "sourceDefinition": "varchar(16) NOT NULL",
+      "sourceNullable": "NOT_NULL",
+      "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+      "reviewDecision": {
+        "disposition": "SECURE_BEHAVIORAL_REDESIGN_CANDIDATE",
+        "targetRefs": [
+          "identity_auth_attempts.target_role"
+        ],
+        "sourceRationale": "Historic role or deletion state cannot grant authority. Active membership, scoped role grants and platform suspension must be independently resolved for each request. Field: mobile_login_attempt.user_type; source type varchar(16).",
+        "outstandingProof": "Independently execute exact registered PostgreSQL column/constraint and live producer -> persisted state -> authorized consumer, lifecycle, expiry, cross-role, tenant privacy and revocation tests; explicit retirement/semantic approval remains pending for mobile_login_attempt.user_type.",
+        "legacyBackendSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+        "sourceReviewed": true,
+        "runtimeVerified": false,
+        "consumerVerified": false,
+        "retirementApproved": false,
+        "acceptanceScope": "SOURCE_ONLY_NOT_A_LIVE_HISTORIC_DATA_MIGRATION"
+      }
+    },
+    {
+      "legacyTable": "mobile_login_attempt",
+      "legacyColumn": "verified_at",
+      "sourceType": "datetime",
+      "sourceDefinition": "datetime DEFAULT NULL",
+      "sourceNullable": "NULL_ALLOWED",
+      "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+      "reviewDecision": {
+        "disposition": "SCOPED_FIELD_TARGET_CANDIDATE",
+        "targetRefs": [
+          "identity_auth_attempts.verified_at"
+        ],
+        "sourceRationale": "MySQL local datetime and lifetime state cannot be copied as trusted PostgreSQL instants. Conversion needs source zone, UTC precision and expiry/revocation ordering review. Field: mobile_login_attempt.verified_at; source type datetime.",
+        "outstandingProof": "Independently execute exact registered PostgreSQL column/constraint and live producer -> persisted state -> authorized consumer, lifecycle, expiry, cross-role, tenant privacy and revocation tests; explicit retirement/semantic approval remains pending for mobile_login_attempt.verified_at.",
+        "legacyBackendSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+        "sourceReviewed": true,
+        "runtimeVerified": false,
+        "consumerVerified": false,
+        "retirementApproved": false,
+        "acceptanceScope": "SOURCE_ONLY_NOT_A_LIVE_HISTORIC_DATA_MIGRATION"
+      }
+    },
+    {
+      "legacyTable": "mobile_login_attempt",
+      "legacyColumn": "verification_attempts",
+      "sourceType": "int",
+      "sourceDefinition": "int NOT NULL DEFAULT '0'",
+      "sourceNullable": "NOT_NULL",
+      "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+      "reviewDecision": {
+        "disposition": "SCOPED_FIELD_TARGET_CANDIDATE",
+        "targetRefs": [
+          "identity_auth_attempts.verification_attempts"
+        ],
+        "sourceRationale": "Legacy numeric account identity or descriptive metadata is only a source candidate, not a vNext authenticated principal or proof of a current permission. Field: mobile_login_attempt.verification_attempts; source type int.",
+        "outstandingProof": "Independently execute exact registered PostgreSQL column/constraint and live producer -> persisted state -> authorized consumer, lifecycle, expiry, cross-role, tenant privacy and revocation tests; explicit retirement/semantic approval remains pending for mobile_login_attempt.verification_attempts.",
+        "legacyBackendSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+        "sourceReviewed": true,
+        "runtimeVerified": false,
+        "consumerVerified": false,
+        "retirementApproved": false,
+        "acceptanceScope": "SOURCE_ONLY_NOT_A_LIVE_HISTORIC_DATA_MIGRATION"
+      }
+    },
+    {
+      "legacyTable": "refresh_token_blocklist",
+      "legacyColumn": "jti",
+      "sourceType": "varchar(36)",
+      "sourceDefinition": "varchar(36) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'JWT ID (unique identifier for the token)'",
+      "sourceNullable": "NOT_NULL",
+      "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+      "reviewDecision": {
+        "disposition": "SOURCE_RETIREMENT_OR_UNMAPPED_REVIEW",
+        "targetRefs": [],
+        "sourceRationale": "Historic JWT identifiers must never be used as HMAC credential digests; a fresh opaque session and independent persisted revocation replace JWT refresh/blocklist semantics. Field: refresh_token_blocklist.jti; source type varchar(36).",
+        "outstandingProof": "Independently execute exact registered PostgreSQL column/constraint and live producer -> persisted state -> authorized consumer, lifecycle, expiry, cross-role, tenant privacy and revocation tests; explicit retirement/semantic approval remains pending for refresh_token_blocklist.jti.",
+        "legacyBackendSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+        "sourceReviewed": true,
+        "runtimeVerified": false,
+        "consumerVerified": false,
+        "retirementApproved": false,
+        "acceptanceScope": "SOURCE_ONLY_NOT_A_LIVE_HISTORIC_DATA_MIGRATION"
+      }
+    },
+    {
+      "legacyTable": "refresh_token_blocklist",
+      "legacyColumn": "user_id",
+      "sourceType": "int",
+      "sourceDefinition": "int NOT NULL COMMENT 'ID of the user who owned this token'",
+      "sourceNullable": "NOT_NULL",
+      "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+      "reviewDecision": {
+        "disposition": "SECURE_BEHAVIORAL_REDESIGN_CANDIDATE",
+        "targetRefs": [
+          "identity_device_sessions.user_id"
+        ],
+        "sourceRationale": "Legacy numeric account identity or descriptive metadata is only a source candidate, not a vNext authenticated principal or proof of a current permission. Field: refresh_token_blocklist.user_id; source type int.",
+        "outstandingProof": "Independently execute exact registered PostgreSQL column/constraint and live producer -> persisted state -> authorized consumer, lifecycle, expiry, cross-role, tenant privacy and revocation tests; explicit retirement/semantic approval remains pending for refresh_token_blocklist.user_id.",
+        "legacyBackendSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+        "sourceReviewed": true,
+        "runtimeVerified": false,
+        "consumerVerified": false,
+        "retirementApproved": false,
+        "acceptanceScope": "SOURCE_ONLY_NOT_A_LIVE_HISTORIC_DATA_MIGRATION"
+      }
+    },
+    {
+      "legacyTable": "refresh_token_blocklist",
+      "legacyColumn": "user_type",
+      "sourceType": "varchar(20)",
+      "sourceDefinition": "varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'LEARNER or FACULTY'",
+      "sourceNullable": "NOT_NULL",
+      "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+      "reviewDecision": {
+        "disposition": "SOURCE_RETIREMENT_OR_UNMAPPED_REVIEW",
+        "targetRefs": [],
+        "sourceRationale": "Historic role or deletion state cannot grant authority. Active membership, scoped role grants and platform suspension must be independently resolved for each request. Field: refresh_token_blocklist.user_type; source type varchar(20).",
+        "outstandingProof": "Independently execute exact registered PostgreSQL column/constraint and live producer -> persisted state -> authorized consumer, lifecycle, expiry, cross-role, tenant privacy and revocation tests; explicit retirement/semantic approval remains pending for refresh_token_blocklist.user_type.",
+        "legacyBackendSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+        "sourceReviewed": true,
+        "runtimeVerified": false,
+        "consumerVerified": false,
+        "retirementApproved": false,
+        "acceptanceScope": "SOURCE_ONLY_NOT_A_LIVE_HISTORIC_DATA_MIGRATION"
+      }
+    },
+    {
+      "legacyTable": "refresh_token_blocklist",
+      "legacyColumn": "blocked_at",
+      "sourceType": "timestamp",
+      "sourceDefinition": "timestamp NULL DEFAULT CURRENT_TIMESTAMP COMMENT 'When the token was blocklisted'",
+      "sourceNullable": "NULL_ALLOWED",
+      "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+      "reviewDecision": {
+        "disposition": "SECURE_BEHAVIORAL_REDESIGN_CANDIDATE",
+        "targetRefs": [
+          "identity_device_sessions.revoked_at"
+        ],
+        "sourceRationale": "MySQL local datetime and lifetime state cannot be copied as trusted PostgreSQL instants. Conversion needs source zone, UTC precision and expiry/revocation ordering review. Field: refresh_token_blocklist.blocked_at; source type timestamp.",
+        "outstandingProof": "Independently execute exact registered PostgreSQL column/constraint and live producer -> persisted state -> authorized consumer, lifecycle, expiry, cross-role, tenant privacy and revocation tests; explicit retirement/semantic approval remains pending for refresh_token_blocklist.blocked_at.",
+        "legacyBackendSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+        "sourceReviewed": true,
+        "runtimeVerified": false,
+        "consumerVerified": false,
+        "retirementApproved": false,
+        "acceptanceScope": "SOURCE_ONLY_NOT_A_LIVE_HISTORIC_DATA_MIGRATION"
+      }
+    },
+    {
+      "legacyTable": "refresh_token_blocklist",
+      "legacyColumn": "expires_at",
+      "sourceType": "timestamp",
+      "sourceDefinition": "timestamp NOT NULL COMMENT 'Original token expiry (for cleanup)'",
+      "sourceNullable": "NOT_NULL",
+      "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+      "reviewDecision": {
+        "disposition": "SECURE_BEHAVIORAL_REDESIGN_CANDIDATE",
+        "targetRefs": [
+          "identity_device_sessions.expires_at"
+        ],
+        "sourceRationale": "MySQL local datetime and lifetime state cannot be copied as trusted PostgreSQL instants. Conversion needs source zone, UTC precision and expiry/revocation ordering review. Field: refresh_token_blocklist.expires_at; source type timestamp.",
+        "outstandingProof": "Independently execute exact registered PostgreSQL column/constraint and live producer -> persisted state -> authorized consumer, lifecycle, expiry, cross-role, tenant privacy and revocation tests; explicit retirement/semantic approval remains pending for refresh_token_blocklist.expires_at.",
+        "legacyBackendSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+        "sourceReviewed": true,
+        "runtimeVerified": false,
+        "consumerVerified": false,
+        "retirementApproved": false,
+        "acceptanceScope": "SOURCE_ONLY_NOT_A_LIVE_HISTORIC_DATA_MIGRATION"
+      }
+    },
+    {
+      "legacyTable": "role",
+      "legacyColumn": "id",
+      "sourceType": "int",
+      "sourceDefinition": "int NOT NULL AUTO_INCREMENT",
+      "sourceNullable": "NOT_NULL",
+      "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+      "reviewDecision": {
+        "disposition": "SCOPED_FIELD_TARGET_CANDIDATE",
+        "targetRefs": [
+          "membership_roles.legacy_role_id"
+        ],
+        "sourceRationale": "Legacy numeric account identity or descriptive metadata is only a source candidate, not a vNext authenticated principal or proof of a current permission. Field: role.id; source type int.",
+        "outstandingProof": "Independently execute exact registered PostgreSQL column/constraint and live producer -> persisted state -> authorized consumer, lifecycle, expiry, cross-role, tenant privacy and revocation tests; explicit retirement/semantic approval remains pending for role.id.",
+        "legacyBackendSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+        "sourceReviewed": true,
+        "runtimeVerified": false,
+        "consumerVerified": false,
+        "retirementApproved": false,
+        "acceptanceScope": "SOURCE_ONLY_NOT_A_LIVE_HISTORIC_DATA_MIGRATION"
+      }
+    },
+    {
+      "legacyTable": "role",
+      "legacyColumn": "created_at",
+      "sourceType": "datetime(6)",
+      "sourceDefinition": "datetime(6) DEFAULT NULL",
+      "sourceNullable": "NULL_ALLOWED",
+      "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+      "reviewDecision": {
+        "disposition": "SOURCE_RETIREMENT_OR_UNMAPPED_REVIEW",
+        "targetRefs": [],
+        "sourceRationale": "MySQL local datetime and lifetime state cannot be copied as trusted PostgreSQL instants. Conversion needs source zone, UTC precision and expiry/revocation ordering review. Field: role.created_at; source type datetime(6).",
+        "outstandingProof": "Independently execute exact registered PostgreSQL column/constraint and live producer -> persisted state -> authorized consumer, lifecycle, expiry, cross-role, tenant privacy and revocation tests; explicit retirement/semantic approval remains pending for role.created_at.",
+        "legacyBackendSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+        "sourceReviewed": true,
+        "runtimeVerified": false,
+        "consumerVerified": false,
+        "retirementApproved": false,
+        "acceptanceScope": "SOURCE_ONLY_NOT_A_LIVE_HISTORIC_DATA_MIGRATION"
+      }
+    },
+    {
+      "legacyTable": "role",
+      "legacyColumn": "is_deleted",
+      "sourceType": "tinyint(1)",
+      "sourceDefinition": "tinyint(1) DEFAULT '0'",
+      "sourceNullable": "SOURCE_DEFAULT_NULLABILITY_REVIEW",
+      "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+      "reviewDecision": {
+        "disposition": "SOURCE_RETIREMENT_OR_UNMAPPED_REVIEW",
+        "targetRefs": [],
+        "sourceRationale": "Historic role or deletion state cannot grant authority. Active membership, scoped role grants and platform suspension must be independently resolved for each request. Field: role.is_deleted; source type tinyint(1).",
+        "outstandingProof": "Independently execute exact registered PostgreSQL column/constraint and live producer -> persisted state -> authorized consumer, lifecycle, expiry, cross-role, tenant privacy and revocation tests; explicit retirement/semantic approval remains pending for role.is_deleted.",
+        "legacyBackendSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+        "sourceReviewed": true,
+        "runtimeVerified": false,
+        "consumerVerified": false,
+        "retirementApproved": false,
+        "acceptanceScope": "SOURCE_ONLY_NOT_A_LIVE_HISTORIC_DATA_MIGRATION"
+      }
+    },
+    {
+      "legacyTable": "role",
+      "legacyColumn": "updated_at",
+      "sourceType": "datetime(6)",
+      "sourceDefinition": "datetime(6) DEFAULT NULL",
+      "sourceNullable": "NULL_ALLOWED",
+      "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+      "reviewDecision": {
+        "disposition": "SOURCE_RETIREMENT_OR_UNMAPPED_REVIEW",
+        "targetRefs": [],
+        "sourceRationale": "MySQL local datetime and lifetime state cannot be copied as trusted PostgreSQL instants. Conversion needs source zone, UTC precision and expiry/revocation ordering review. Field: role.updated_at; source type datetime(6).",
+        "outstandingProof": "Independently execute exact registered PostgreSQL column/constraint and live producer -> persisted state -> authorized consumer, lifecycle, expiry, cross-role, tenant privacy and revocation tests; explicit retirement/semantic approval remains pending for role.updated_at.",
+        "legacyBackendSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+        "sourceReviewed": true,
+        "runtimeVerified": false,
+        "consumerVerified": false,
+        "retirementApproved": false,
+        "acceptanceScope": "SOURCE_ONLY_NOT_A_LIVE_HISTORIC_DATA_MIGRATION"
+      }
+    },
+    {
+      "legacyTable": "role",
+      "legacyColumn": "description",
+      "sourceType": "varchar(255)",
+      "sourceDefinition": "varchar(255) DEFAULT NULL",
+      "sourceNullable": "NULL_ALLOWED",
+      "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+      "reviewDecision": {
+        "disposition": "SOURCE_RETIREMENT_OR_UNMAPPED_REVIEW",
+        "targetRefs": [],
+        "sourceRationale": "Historic role or deletion state cannot grant authority. Active membership, scoped role grants and platform suspension must be independently resolved for each request. Field: role.description; source type varchar(255).",
+        "outstandingProof": "Independently execute exact registered PostgreSQL column/constraint and live producer -> persisted state -> authorized consumer, lifecycle, expiry, cross-role, tenant privacy and revocation tests; explicit retirement/semantic approval remains pending for role.description.",
+        "legacyBackendSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+        "sourceReviewed": true,
+        "runtimeVerified": false,
+        "consumerVerified": false,
+        "retirementApproved": false,
+        "acceptanceScope": "SOURCE_ONLY_NOT_A_LIVE_HISTORIC_DATA_MIGRATION"
+      }
+    },
+    {
+      "legacyTable": "role",
+      "legacyColumn": "name",
+      "sourceType": "varchar(255)",
+      "sourceDefinition": "varchar(255) DEFAULT NULL",
+      "sourceNullable": "NULL_ALLOWED",
+      "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+      "reviewDecision": {
+        "disposition": "SECURE_BEHAVIORAL_REDESIGN_CANDIDATE",
+        "targetRefs": [
+          "membership_roles.role"
+        ],
+        "sourceRationale": "Legacy global free-form role names require an allowlisted role translation; recruiter access requires an independent verified company grant. Field: role.name; source type varchar(255).",
+        "outstandingProof": "Independently execute exact registered PostgreSQL column/constraint and live producer -> persisted state -> authorized consumer, lifecycle, expiry, cross-role, tenant privacy and revocation tests; explicit retirement/semantic approval remains pending for role.name.",
+        "legacyBackendSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+        "sourceReviewed": true,
+        "runtimeVerified": false,
+        "consumerVerified": false,
+        "retirementApproved": false,
+        "acceptanceScope": "SOURCE_ONLY_NOT_A_LIVE_HISTORIC_DATA_MIGRATION"
+      }
+    },
+    {
+      "legacyTable": "user",
+      "legacyColumn": "id",
+      "sourceType": "int",
+      "sourceDefinition": "int NOT NULL AUTO_INCREMENT",
+      "sourceNullable": "NOT_NULL",
+      "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+      "reviewDecision": {
+        "disposition": "SCOPED_FIELD_TARGET_CANDIDATE",
+        "targetRefs": [
+          "users.id"
+        ],
+        "sourceRationale": "Legacy numeric account identity or descriptive metadata is only a source candidate, not a vNext authenticated principal or proof of a current permission. Field: user.id; source type int.",
+        "outstandingProof": "Independently execute exact registered PostgreSQL column/constraint and live producer -> persisted state -> authorized consumer, lifecycle, expiry, cross-role, tenant privacy and revocation tests; explicit retirement/semantic approval remains pending for user.id.",
+        "legacyBackendSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+        "sourceReviewed": true,
+        "runtimeVerified": false,
+        "consumerVerified": false,
+        "retirementApproved": false,
+        "acceptanceScope": "SOURCE_ONLY_NOT_A_LIVE_HISTORIC_DATA_MIGRATION"
+      }
+    },
+    {
+      "legacyTable": "user",
+      "legacyColumn": "created_at",
+      "sourceType": "datetime(6)",
+      "sourceDefinition": "datetime(6) DEFAULT NULL",
+      "sourceNullable": "NULL_ALLOWED",
+      "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+      "reviewDecision": {
+        "disposition": "SCOPED_FIELD_TARGET_CANDIDATE",
+        "targetRefs": [
+          "users.legacy_source_created_local"
+        ],
+        "sourceRationale": "MySQL local datetime and lifetime state cannot be copied as trusted PostgreSQL instants. Conversion needs source zone, UTC precision and expiry/revocation ordering review. Field: user.created_at; source type datetime(6).",
+        "outstandingProof": "Independently execute exact registered PostgreSQL column/constraint and live producer -> persisted state -> authorized consumer, lifecycle, expiry, cross-role, tenant privacy and revocation tests; explicit retirement/semantic approval remains pending for user.created_at.",
+        "legacyBackendSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+        "sourceReviewed": true,
+        "runtimeVerified": false,
+        "consumerVerified": false,
+        "retirementApproved": false,
+        "acceptanceScope": "SOURCE_ONLY_NOT_A_LIVE_HISTORIC_DATA_MIGRATION"
+      }
+    },
+    {
+      "legacyTable": "user",
+      "legacyColumn": "is_deleted",
+      "sourceType": "tinyint(1)",
+      "sourceDefinition": "tinyint(1) DEFAULT '0'",
+      "sourceNullable": "SOURCE_DEFAULT_NULLABILITY_REVIEW",
+      "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+      "reviewDecision": {
+        "disposition": "SECURE_BEHAVIORAL_REDESIGN_CANDIDATE",
+        "targetRefs": [
+          "users.platform_status"
+        ],
+        "sourceRationale": "Historic role or deletion state cannot grant authority. Active membership, scoped role grants and platform suspension must be independently resolved for each request. Field: user.is_deleted; source type tinyint(1).",
+        "outstandingProof": "Independently execute exact registered PostgreSQL column/constraint and live producer -> persisted state -> authorized consumer, lifecycle, expiry, cross-role, tenant privacy and revocation tests; explicit retirement/semantic approval remains pending for user.is_deleted.",
+        "legacyBackendSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+        "sourceReviewed": true,
+        "runtimeVerified": false,
+        "consumerVerified": false,
+        "retirementApproved": false,
+        "acceptanceScope": "SOURCE_ONLY_NOT_A_LIVE_HISTORIC_DATA_MIGRATION"
+      }
+    },
+    {
+      "legacyTable": "user",
+      "legacyColumn": "updated_at",
+      "sourceType": "datetime(6)",
+      "sourceDefinition": "datetime(6) DEFAULT NULL",
+      "sourceNullable": "NULL_ALLOWED",
+      "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+      "reviewDecision": {
+        "disposition": "SCOPED_FIELD_TARGET_CANDIDATE",
+        "targetRefs": [
+          "users.legacy_source_updated_local"
+        ],
+        "sourceRationale": "MySQL local datetime and lifetime state cannot be copied as trusted PostgreSQL instants. Conversion needs source zone, UTC precision and expiry/revocation ordering review. Field: user.updated_at; source type datetime(6).",
+        "outstandingProof": "Independently execute exact registered PostgreSQL column/constraint and live producer -> persisted state -> authorized consumer, lifecycle, expiry, cross-role, tenant privacy and revocation tests; explicit retirement/semantic approval remains pending for user.updated_at.",
+        "legacyBackendSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+        "sourceReviewed": true,
+        "runtimeVerified": false,
+        "consumerVerified": false,
+        "retirementApproved": false,
+        "acceptanceScope": "SOURCE_ONLY_NOT_A_LIVE_HISTORIC_DATA_MIGRATION"
+      }
+    },
+    {
+      "legacyTable": "user",
+      "legacyColumn": "business_title",
+      "sourceType": "varchar(255)",
+      "sourceDefinition": "varchar(255) DEFAULT NULL",
+      "sourceNullable": "NULL_ALLOWED",
+      "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+      "reviewDecision": {
+        "disposition": "SCOPED_FIELD_TARGET_CANDIDATE",
+        "targetRefs": [
+          "users.legacy_business_title"
+        ],
+        "sourceRationale": "Legacy numeric account identity or descriptive metadata is only a source candidate, not a vNext authenticated principal or proof of a current permission. Field: user.business_title; source type varchar(255).",
+        "outstandingProof": "Independently execute exact registered PostgreSQL column/constraint and live producer -> persisted state -> authorized consumer, lifecycle, expiry, cross-role, tenant privacy and revocation tests; explicit retirement/semantic approval remains pending for user.business_title.",
+        "legacyBackendSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+        "sourceReviewed": true,
+        "runtimeVerified": false,
+        "consumerVerified": false,
+        "retirementApproved": false,
+        "acceptanceScope": "SOURCE_ONLY_NOT_A_LIVE_HISTORIC_DATA_MIGRATION"
+      }
+    },
+    {
+      "legacyTable": "user",
+      "legacyColumn": "email",
+      "sourceType": "varchar(255)",
+      "sourceDefinition": "varchar(255) DEFAULT NULL",
+      "sourceNullable": "NULL_ALLOWED",
+      "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+      "reviewDecision": {
+        "disposition": "SCOPED_FIELD_TARGET_CANDIDATE",
+        "targetRefs": [
+          "users.email"
+        ],
+        "sourceRationale": "Legacy numeric account identity or descriptive metadata is only a source candidate, not a vNext authenticated principal or proof of a current permission. Field: user.email; source type varchar(255).",
+        "outstandingProof": "Independently execute exact registered PostgreSQL column/constraint and live producer -> persisted state -> authorized consumer, lifecycle, expiry, cross-role, tenant privacy and revocation tests; explicit retirement/semantic approval remains pending for user.email.",
+        "legacyBackendSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+        "sourceReviewed": true,
+        "runtimeVerified": false,
+        "consumerVerified": false,
+        "retirementApproved": false,
+        "acceptanceScope": "SOURCE_ONLY_NOT_A_LIVE_HISTORIC_DATA_MIGRATION"
+      }
+    },
+    {
+      "legacyTable": "user",
+      "legacyColumn": "name",
+      "sourceType": "varchar(255)",
+      "sourceDefinition": "varchar(255) DEFAULT NULL",
+      "sourceNullable": "NULL_ALLOWED",
+      "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+      "reviewDecision": {
+        "disposition": "SCOPED_FIELD_TARGET_CANDIDATE",
+        "targetRefs": [
+          "users.display_name"
+        ],
+        "sourceRationale": "Legacy numeric account identity or descriptive metadata is only a source candidate, not a vNext authenticated principal or proof of a current permission. Field: user.name; source type varchar(255).",
+        "outstandingProof": "Independently execute exact registered PostgreSQL column/constraint and live producer -> persisted state -> authorized consumer, lifecycle, expiry, cross-role, tenant privacy and revocation tests; explicit retirement/semantic approval remains pending for user.name.",
+        "legacyBackendSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+        "sourceReviewed": true,
+        "runtimeVerified": false,
+        "consumerVerified": false,
+        "retirementApproved": false,
+        "acceptanceScope": "SOURCE_ONLY_NOT_A_LIVE_HISTORIC_DATA_MIGRATION"
+      }
+    },
+    {
+      "legacyTable": "user",
+      "legacyColumn": "password",
+      "sourceType": "varchar(255)",
+      "sourceDefinition": "varchar(255) DEFAULT NULL",
+      "sourceNullable": "NULL_ALLOWED",
+      "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+      "reviewDecision": {
+        "disposition": "SOURCE_RETIREMENT_OR_UNMAPPED_REVIEW",
+        "targetRefs": [],
+        "sourceRationale": "Historic bearer/credential material is never copied, accepted or exposed as a working vNext credential. Any candidate HMAC column is populated only by a newly issued fresh challenge. Field: user.password; source type varchar(255).",
+        "outstandingProof": "Independently execute exact registered PostgreSQL column/constraint and live producer -> persisted state -> authorized consumer, lifecycle, expiry, cross-role, tenant privacy and revocation tests; explicit retirement/semantic approval remains pending for user.password.",
+        "legacyBackendSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+        "sourceReviewed": true,
+        "runtimeVerified": false,
+        "consumerVerified": false,
+        "retirementApproved": false,
+        "acceptanceScope": "SOURCE_ONLY_NOT_A_LIVE_HISTORIC_DATA_MIGRATION"
+      }
+    },
+    {
+      "legacyTable": "user",
+      "legacyColumn": "phone",
+      "sourceType": "varchar(255)",
+      "sourceDefinition": "varchar(255) DEFAULT NULL",
+      "sourceNullable": "NULL_ALLOWED",
+      "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+      "reviewDecision": {
+        "disposition": "SCOPED_FIELD_TARGET_CANDIDATE",
+        "targetRefs": [
+          "users.phone_e164"
+        ],
+        "sourceRationale": "Legacy numeric account identity or descriptive metadata is only a source candidate, not a vNext authenticated principal or proof of a current permission. Field: user.phone; source type varchar(255).",
+        "outstandingProof": "Independently execute exact registered PostgreSQL column/constraint and live producer -> persisted state -> authorized consumer, lifecycle, expiry, cross-role, tenant privacy and revocation tests; explicit retirement/semantic approval remains pending for user.phone.",
+        "legacyBackendSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+        "sourceReviewed": true,
+        "runtimeVerified": false,
+        "consumerVerified": false,
+        "retirementApproved": false,
+        "acceptanceScope": "SOURCE_ONLY_NOT_A_LIVE_HISTORIC_DATA_MIGRATION"
+      }
+    },
+    {
+      "legacyTable": "user",
+      "legacyColumn": "unique_id",
+      "sourceType": "varchar(255)",
+      "sourceDefinition": "varchar(255) DEFAULT NULL",
+      "sourceNullable": "NULL_ALLOWED",
+      "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+      "reviewDecision": {
+        "disposition": "SCOPED_FIELD_TARGET_CANDIDATE",
+        "targetRefs": [
+          "users.legacy_unique_id"
+        ],
+        "sourceRationale": "Legacy numeric account identity or descriptive metadata is only a source candidate, not a vNext authenticated principal or proof of a current permission. Field: user.unique_id; source type varchar(255).",
+        "outstandingProof": "Independently execute exact registered PostgreSQL column/constraint and live producer -> persisted state -> authorized consumer, lifecycle, expiry, cross-role, tenant privacy and revocation tests; explicit retirement/semantic approval remains pending for user.unique_id.",
+        "legacyBackendSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+        "sourceReviewed": true,
+        "runtimeVerified": false,
+        "consumerVerified": false,
+        "retirementApproved": false,
+        "acceptanceScope": "SOURCE_ONLY_NOT_A_LIVE_HISTORIC_DATA_MIGRATION"
+      }
+    },
+    {
+      "legacyTable": "user",
+      "legacyColumn": "user_name",
+      "sourceType": "varchar(255)",
+      "sourceDefinition": "varchar(255) DEFAULT NULL",
+      "sourceNullable": "NULL_ALLOWED",
+      "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+      "reviewDecision": {
+        "disposition": "SCOPED_FIELD_TARGET_CANDIDATE",
+        "targetRefs": [
+          "users.legacy_user_name"
+        ],
+        "sourceRationale": "Legacy numeric account identity or descriptive metadata is only a source candidate, not a vNext authenticated principal or proof of a current permission. Field: user.user_name; source type varchar(255).",
+        "outstandingProof": "Independently execute exact registered PostgreSQL column/constraint and live producer -> persisted state -> authorized consumer, lifecycle, expiry, cross-role, tenant privacy and revocation tests; explicit retirement/semantic approval remains pending for user.user_name.",
+        "legacyBackendSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+        "sourceReviewed": true,
+        "runtimeVerified": false,
+        "consumerVerified": false,
+        "retirementApproved": false,
+        "acceptanceScope": "SOURCE_ONLY_NOT_A_LIVE_HISTORIC_DATA_MIGRATION"
+      }
+    },
+    {
+      "legacyTable": "user",
+      "legacyColumn": "user_type",
+      "sourceType": "varchar(255)",
+      "sourceDefinition": "varchar(255) DEFAULT NULL",
+      "sourceNullable": "NULL_ALLOWED",
+      "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+      "reviewDecision": {
+        "disposition": "SECURE_BEHAVIORAL_REDESIGN_CANDIDATE",
+        "targetRefs": [
+          "users.legacy_user_type"
+        ],
+        "sourceRationale": "Historic role or deletion state cannot grant authority. Active membership, scoped role grants and platform suspension must be independently resolved for each request. Field: user.user_type; source type varchar(255).",
+        "outstandingProof": "Independently execute exact registered PostgreSQL column/constraint and live producer -> persisted state -> authorized consumer, lifecycle, expiry, cross-role, tenant privacy and revocation tests; explicit retirement/semantic approval remains pending for user.user_type.",
+        "legacyBackendSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+        "sourceReviewed": true,
+        "runtimeVerified": false,
+        "consumerVerified": false,
+        "retirementApproved": false,
+        "acceptanceScope": "SOURCE_ONLY_NOT_A_LIVE_HISTORIC_DATA_MIGRATION"
+      }
+    },
+    {
+      "legacyTable": "user_roles",
+      "legacyColumn": "user_id",
+      "sourceType": "int",
+      "sourceDefinition": "int NOT NULL",
+      "sourceNullable": "NOT_NULL",
+      "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+      "reviewDecision": {
+        "disposition": "SECURE_BEHAVIORAL_REDESIGN_CANDIDATE",
+        "targetRefs": [
+          "college_memberships.user_id"
+        ],
+        "sourceRationale": "Legacy unscoped many-to-many role rows cannot be promoted to college authority. A live user, college membership and approved role are all required. Field: user_roles.user_id; source type int.",
+        "outstandingProof": "Independently execute exact registered PostgreSQL column/constraint and live producer -> persisted state -> authorized consumer, lifecycle, expiry, cross-role, tenant privacy and revocation tests; explicit retirement/semantic approval remains pending for user_roles.user_id.",
+        "legacyBackendSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+        "sourceReviewed": true,
+        "runtimeVerified": false,
+        "consumerVerified": false,
+        "retirementApproved": false,
+        "acceptanceScope": "SOURCE_ONLY_NOT_A_LIVE_HISTORIC_DATA_MIGRATION"
+      }
+    },
+    {
+      "legacyTable": "user_roles",
+      "legacyColumn": "role_id",
+      "sourceType": "int",
+      "sourceDefinition": "int NOT NULL",
+      "sourceNullable": "NOT_NULL",
+      "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+      "reviewDecision": {
+        "disposition": "SECURE_BEHAVIORAL_REDESIGN_CANDIDATE",
+        "targetRefs": [
+          "membership_roles.legacy_role_id"
+        ],
+        "sourceRationale": "Legacy unscoped many-to-many role rows cannot be promoted to college authority. A live user, college membership and approved role are all required. Field: user_roles.role_id; source type int.",
+        "outstandingProof": "Independently execute exact registered PostgreSQL column/constraint and live producer -> persisted state -> authorized consumer, lifecycle, expiry, cross-role, tenant privacy and revocation tests; explicit retirement/semantic approval remains pending for user_roles.role_id.",
+        "legacyBackendSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+        "sourceReviewed": true,
+        "runtimeVerified": false,
+        "consumerVerified": false,
+        "retirementApproved": false,
+        "acceptanceScope": "SOURCE_ONLY_NOT_A_LIVE_HISTORIC_DATA_MIGRATION"
+      }
+    },
+    {
+      "legacyTable": "user_session",
+      "legacyColumn": "jti",
+      "sourceType": "varchar(36)",
+      "sourceDefinition": "varchar(36) NOT NULL",
+      "sourceNullable": "NOT_NULL",
+      "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+      "reviewDecision": {
+        "disposition": "SOURCE_RETIREMENT_OR_UNMAPPED_REVIEW",
+        "targetRefs": [],
+        "sourceRationale": "Historic JWT identifiers must never be used as HMAC credential digests; a fresh opaque session and independent persisted revocation replace JWT refresh/blocklist semantics. Field: user_session.jti; source type varchar(36).",
+        "outstandingProof": "Independently execute exact registered PostgreSQL column/constraint and live producer -> persisted state -> authorized consumer, lifecycle, expiry, cross-role, tenant privacy and revocation tests; explicit retirement/semantic approval remains pending for user_session.jti.",
+        "legacyBackendSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+        "sourceReviewed": true,
+        "runtimeVerified": false,
+        "consumerVerified": false,
+        "retirementApproved": false,
+        "acceptanceScope": "SOURCE_ONLY_NOT_A_LIVE_HISTORIC_DATA_MIGRATION"
+      }
+    },
+    {
+      "legacyTable": "user_session",
+      "legacyColumn": "user_id",
+      "sourceType": "int",
+      "sourceDefinition": "int NOT NULL",
+      "sourceNullable": "NOT_NULL",
+      "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+      "reviewDecision": {
+        "disposition": "SECURE_BEHAVIORAL_REDESIGN_CANDIDATE",
+        "targetRefs": [
+          "identity_device_sessions.user_id"
+        ],
+        "sourceRationale": "Legacy numeric account identity or descriptive metadata is only a source candidate, not a vNext authenticated principal or proof of a current permission. Field: user_session.user_id; source type int.",
+        "outstandingProof": "Independently execute exact registered PostgreSQL column/constraint and live producer -> persisted state -> authorized consumer, lifecycle, expiry, cross-role, tenant privacy and revocation tests; explicit retirement/semantic approval remains pending for user_session.user_id.",
+        "legacyBackendSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+        "sourceReviewed": true,
+        "runtimeVerified": false,
+        "consumerVerified": false,
+        "retirementApproved": false,
+        "acceptanceScope": "SOURCE_ONLY_NOT_A_LIVE_HISTORIC_DATA_MIGRATION"
+      }
+    },
+    {
+      "legacyTable": "user_session",
+      "legacyColumn": "user_type",
+      "sourceType": "varchar(20)",
+      "sourceDefinition": "varchar(20) NOT NULL",
+      "sourceNullable": "NOT_NULL",
+      "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+      "reviewDecision": {
+        "disposition": "SOURCE_RETIREMENT_OR_UNMAPPED_REVIEW",
+        "targetRefs": [],
+        "sourceRationale": "A JWT-associated user_type is not device-session permission. Current role grants must be reloaded from active membership on every authorized request. Field: user_session.user_type; source type varchar(20).",
+        "outstandingProof": "Independently execute exact registered PostgreSQL column/constraint and live producer -> persisted state -> authorized consumer, lifecycle, expiry, cross-role, tenant privacy and revocation tests; explicit retirement/semantic approval remains pending for user_session.user_type.",
+        "legacyBackendSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+        "sourceReviewed": true,
+        "runtimeVerified": false,
+        "consumerVerified": false,
+        "retirementApproved": false,
+        "acceptanceScope": "SOURCE_ONLY_NOT_A_LIVE_HISTORIC_DATA_MIGRATION"
+      }
+    },
+    {
+      "legacyTable": "user_session",
+      "legacyColumn": "device_name",
+      "sourceType": "varchar(255)",
+      "sourceDefinition": "varchar(255) DEFAULT NULL",
+      "sourceNullable": "NULL_ALLOWED",
+      "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+      "reviewDecision": {
+        "disposition": "SECURE_BEHAVIORAL_REDESIGN_CANDIDATE",
+        "targetRefs": [
+          "identity_device_sessions.device_name"
+        ],
+        "sourceRationale": "Legacy numeric account identity or descriptive metadata is only a source candidate, not a vNext authenticated principal or proof of a current permission. Field: user_session.device_name; source type varchar(255).",
+        "outstandingProof": "Independently execute exact registered PostgreSQL column/constraint and live producer -> persisted state -> authorized consumer, lifecycle, expiry, cross-role, tenant privacy and revocation tests; explicit retirement/semantic approval remains pending for user_session.device_name.",
+        "legacyBackendSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+        "sourceReviewed": true,
+        "runtimeVerified": false,
+        "consumerVerified": false,
+        "retirementApproved": false,
+        "acceptanceScope": "SOURCE_ONLY_NOT_A_LIVE_HISTORIC_DATA_MIGRATION"
+      }
+    },
+    {
+      "legacyTable": "user_session",
+      "legacyColumn": "user_agent",
+      "sourceType": "varchar(512)",
+      "sourceDefinition": "varchar(512) DEFAULT NULL",
+      "sourceNullable": "NULL_ALLOWED",
+      "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+      "reviewDecision": {
+        "disposition": "SECURE_BEHAVIORAL_REDESIGN_CANDIDATE",
+        "targetRefs": [
+          "identity_device_sessions.user_agent"
+        ],
+        "sourceRationale": "Legacy numeric account identity or descriptive metadata is only a source candidate, not a vNext authenticated principal or proof of a current permission. Field: user_session.user_agent; source type varchar(512).",
+        "outstandingProof": "Independently execute exact registered PostgreSQL column/constraint and live producer -> persisted state -> authorized consumer, lifecycle, expiry, cross-role, tenant privacy and revocation tests; explicit retirement/semantic approval remains pending for user_session.user_agent.",
+        "legacyBackendSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+        "sourceReviewed": true,
+        "runtimeVerified": false,
+        "consumerVerified": false,
+        "retirementApproved": false,
+        "acceptanceScope": "SOURCE_ONLY_NOT_A_LIVE_HISTORIC_DATA_MIGRATION"
+      }
+    },
+    {
+      "legacyTable": "user_session",
+      "legacyColumn": "ip_address",
+      "sourceType": "varchar(64)",
+      "sourceDefinition": "varchar(64) DEFAULT NULL",
+      "sourceNullable": "NULL_ALLOWED",
+      "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+      "reviewDecision": {
+        "disposition": "SECURE_BEHAVIORAL_REDESIGN_CANDIDATE",
+        "targetRefs": [
+          "identity_device_sessions.ip_address"
+        ],
+        "sourceRationale": "Legacy numeric account identity or descriptive metadata is only a source candidate, not a vNext authenticated principal or proof of a current permission. Field: user_session.ip_address; source type varchar(64).",
+        "outstandingProof": "Independently execute exact registered PostgreSQL column/constraint and live producer -> persisted state -> authorized consumer, lifecycle, expiry, cross-role, tenant privacy and revocation tests; explicit retirement/semantic approval remains pending for user_session.ip_address.",
+        "legacyBackendSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+        "sourceReviewed": true,
+        "runtimeVerified": false,
+        "consumerVerified": false,
+        "retirementApproved": false,
+        "acceptanceScope": "SOURCE_ONLY_NOT_A_LIVE_HISTORIC_DATA_MIGRATION"
+      }
+    },
+    {
+      "legacyTable": "user_session",
+      "legacyColumn": "created_at",
+      "sourceType": "datetime",
+      "sourceDefinition": "datetime NOT NULL DEFAULT CURRENT_TIMESTAMP",
+      "sourceNullable": "NOT_NULL",
+      "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+      "reviewDecision": {
+        "disposition": "SECURE_BEHAVIORAL_REDESIGN_CANDIDATE",
+        "targetRefs": [
+          "identity_device_sessions.created_at"
+        ],
+        "sourceRationale": "MySQL local datetime and lifetime state cannot be copied as trusted PostgreSQL instants. Conversion needs source zone, UTC precision and expiry/revocation ordering review. Field: user_session.created_at; source type datetime.",
+        "outstandingProof": "Independently execute exact registered PostgreSQL column/constraint and live producer -> persisted state -> authorized consumer, lifecycle, expiry, cross-role, tenant privacy and revocation tests; explicit retirement/semantic approval remains pending for user_session.created_at.",
+        "legacyBackendSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+        "sourceReviewed": true,
+        "runtimeVerified": false,
+        "consumerVerified": false,
+        "retirementApproved": false,
+        "acceptanceScope": "SOURCE_ONLY_NOT_A_LIVE_HISTORIC_DATA_MIGRATION"
+      }
+    },
+    {
+      "legacyTable": "user_session",
+      "legacyColumn": "last_used_at",
+      "sourceType": "datetime",
+      "sourceDefinition": "datetime NOT NULL DEFAULT CURRENT_TIMESTAMP",
+      "sourceNullable": "NOT_NULL",
+      "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+      "reviewDecision": {
+        "disposition": "SECURE_BEHAVIORAL_REDESIGN_CANDIDATE",
+        "targetRefs": [
+          "identity_device_sessions.last_seen_at"
+        ],
+        "sourceRationale": "MySQL local datetime and lifetime state cannot be copied as trusted PostgreSQL instants. Conversion needs source zone, UTC precision and expiry/revocation ordering review. Field: user_session.last_used_at; source type datetime.",
+        "outstandingProof": "Independently execute exact registered PostgreSQL column/constraint and live producer -> persisted state -> authorized consumer, lifecycle, expiry, cross-role, tenant privacy and revocation tests; explicit retirement/semantic approval remains pending for user_session.last_used_at.",
+        "legacyBackendSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+        "sourceReviewed": true,
+        "runtimeVerified": false,
+        "consumerVerified": false,
+        "retirementApproved": false,
+        "acceptanceScope": "SOURCE_ONLY_NOT_A_LIVE_HISTORIC_DATA_MIGRATION"
+      }
+    },
+    {
+      "legacyTable": "user_session",
+      "legacyColumn": "expires_at",
+      "sourceType": "datetime",
+      "sourceDefinition": "datetime NOT NULL",
+      "sourceNullable": "NOT_NULL",
+      "sourceEvidence": "HISTORICAL_MYSQL_SNAPSHOT",
+      "reviewDecision": {
+        "disposition": "SECURE_BEHAVIORAL_REDESIGN_CANDIDATE",
+        "targetRefs": [
+          "identity_device_sessions.expires_at"
+        ],
+        "sourceRationale": "MySQL local datetime and lifetime state cannot be copied as trusted PostgreSQL instants. Conversion needs source zone, UTC precision and expiry/revocation ordering review. Field: user_session.expires_at; source type datetime.",
+        "outstandingProof": "Independently execute exact registered PostgreSQL column/constraint and live producer -> persisted state -> authorized consumer, lifecycle, expiry, cross-role, tenant privacy and revocation tests; explicit retirement/semantic approval remains pending for user_session.expires_at.",
+        "legacyBackendSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+        "sourceReviewed": true,
+        "runtimeVerified": false,
+        "consumerVerified": false,
+        "retirementApproved": false,
+        "acceptanceScope": "SOURCE_ONLY_NOT_A_LIVE_HISTORIC_DATA_MIGRATION"
+      }
+    }
+  ]
+}
