@@ -59,7 +59,7 @@ test("DB044 preserves vNext one-submission uniqueness", () => {
 
   assert.match(
     service,
-    /^assignment_submissions\\.attempt_number$/,
+    /assignment_submissions_assignment_membership_uq/,
   );
   assert.match(service, /ASSIGNMENT_ALREADY_SUBMITTED/);
 });
@@ -79,7 +79,7 @@ test("DB044 ledger records registered compatibility fields without inventing mul
   );
   assert.match(
     attempt.targetRef,
-    /assignment_submissions_assignment_membership_uq/,
+    /^assignment_submissions\\.attempt_number$/,
   );
 
   const semester = assignment.fields.find(
