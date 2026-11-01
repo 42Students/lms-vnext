@@ -126,6 +126,52 @@ describe.skipIf(!enabled)("DB19-P04 persisted department authority on PostgreSQL
     expect(brand).not.toHaveProperty("legacyLogoSourceUrl");
   });
 
+  it("does not archive a department when a concurrent FK child commits first", async () => {
+    const name = "p04-fk-race-" + randomUUID();
+    const created = await createDepartment(admin, {
+      collegeId: SEED_IDS.collegeA, name,
+    });
+    const writer = await pool!.connect();
+    let committed = false;
+    let programId: string | null = null;
+    try {
+      await writer.query("BEGIN");
+      const program = await writer.query<{id:string}>(
+        "insert into programs(department_id,name,code,duration_terms) values($1,$2,$3,8) returning id",
+        [created.id, name + "-program", "P04_" + randomUUID().replaceAll("-", "")],
+      );
+      programId = program.rows[0]!.id;
+      // FK INSERT retains a KEY SHARE lock on the referenced department.
+      // Archive must acquire UPDATE lock and see the committed dependency.
+      const attempt = archiveDepartment(admin, created.id).then(
+        () => ({ok:true as const}),
+        error => ({ok:false as const,error}),
+      );
+      await writer.query("COMMIT");
+      committed = true;
+      const result = await attempt;
+      expect(result.ok).toBe(false);
+      if (!result.ok) {
+        expect(result.error).toMatchObject({usage: expect.objectContaining({
+          programs: 1,
+        })});
+      }
+      const stored = await pool!.query<{archived_at:Date|null}>(
+        "select archived_at from departments where id=$1", [created.id],
+      );
+      expect(stored.rows[0]?.archived_at).toBeNull();
+      await pool!.query("delete from programs where id=$1", [programId]);
+      programId = null;
+      const archived = await archiveDepartment(admin, created.id);
+      expect(archived.archivedAt).toBeInstanceOf(Date);
+    } finally {
+      if (!committed) await writer.query("ROLLBACK");
+      writer.release();
+      if (programId) await pool!.query("delete from programs where id=$1", [programId]);
+      await removeDepartment(created.id);
+    }
+  });
+
   it("rejects stale actor rename and archive while retaining valid college-admin writes", async () => {
     const name = "p04-department-" + randomUUID();
     const created = await createDepartment(admin, {
