@@ -143,10 +143,44 @@ export const drizzleTenantDomainRepository: TenantDomainRepository = {
     return college ?? null;
   },
 
-  async listByCollege(collegeId) {
-    const db = getDb();
-    return db
-      .select({
+  async assertCurrentManagementAccess(context, college) {
+    await getDb().transaction(async tx => {
+      await assertPersistedPlatformPermission(tx, context, "college.manage", {
+        collegeId: college.id, organizationId: college.organizationId,
+      });
+      const [active] = await tx.select({id:colleges.id})
+        .from(colleges)
+        .innerJoin(organizations,eq(organizations.id,colleges.organizationId))
+        .where(and(eq(colleges.id,college.id),
+          eq(colleges.organizationId,college.organizationId),
+          eq(colleges.status,"ACTIVE"),eq(organizations.status,"ACTIVE")))
+        .for("share",{of:colleges}).limit(1);
+      if (!active) throw new TenantDomainServiceError("COLLEGE_NOT_FOUND");
+    });
+  },
+
+  async listByCollege(collegeId, context) {
+    return getDb().transaction(async tx => {
+      // Public canonical-host consumers omit context; the admin reader
+      // includes context and must not disclose outstanding DNS challenges
+      // when the current user/membership/role has been revoked.
+      const [active] = await tx.select({
+        id:colleges.id,organizationId:colleges.organizationId,
+      }).from(colleges)
+        .innerJoin(organizations,eq(organizations.id,colleges.organizationId))
+        .where(and(eq(colleges.id,collegeId),
+          eq(colleges.status,"ACTIVE"),eq(organizations.status,"ACTIVE")))
+        .for("share",{of:colleges}).limit(1);
+      if (!active) {
+        if (context) throw new TenantDomainServiceError("COLLEGE_NOT_FOUND");
+        return [];
+      }
+      if (context) {
+        await assertPersistedPlatformPermission(tx,context,"college.manage",{
+          collegeId:active.id,organizationId:active.organizationId,
+        });
+      }
+      return tx.select({
         id: tenantDomains.id,
         collegeId: tenantDomains.collegeId,
         organizationId: colleges.organizationId,
@@ -160,13 +194,12 @@ export const drizzleTenantDomainRepository: TenantDomainRepository = {
         createdAt: tenantDomains.createdAt,
         updatedAt: tenantDomains.updatedAt,
       })
-      .from(tenantDomains)
-      .innerJoin(colleges, eq(colleges.id, tenantDomains.collegeId))
-      .where(and(eq(tenantDomains.collegeId, collegeId),isNull(tenantDomains.deletedAt)))
-      .orderBy(
-        desc(tenantDomains.isPrimary),
-        asc(tenantDomains.host),
-      );
+        .from(tenantDomains)
+        .innerJoin(colleges, eq(colleges.id, tenantDomains.collegeId))
+        .where(and(eq(tenantDomains.collegeId, collegeId),
+          isNull(tenantDomains.deletedAt)))
+        .orderBy(desc(tenantDomains.isPrimary),asc(tenantDomains.host));
+    });
   },
 
   loadDomain(domainId) {
