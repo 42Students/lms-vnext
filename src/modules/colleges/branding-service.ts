@@ -152,16 +152,31 @@ export async function getCollegeBranding(
     organizationId: college.organizationId,
     collegeId: college.id,
   });
-  const [branding,signInMethod]=await Promise.all([
-    loadBranding(collegeId),
-    effectiveCollegeSignInMethod(college.id),
-  ]);
-  // Keep four sign-in choices sourced from college_signin_policies rather
-  // than accepting legacy loginMethods inside the branding payload.
-  return { collegeName: college.name, signInMethod, ...toView(branding),
-    uploadedLogoUrl:college.logoObjectPath?.startsWith("branding/"+college.id+"/")?
-     "/api/colleges/"+college.id+"/branding/logo":null,
-  };
+  return getDb().transaction(async tx => {
+    // Verify current user, system role and membership from locked persisted
+    // rows, rather than serving private college settings from a stale tab.
+    await assertPersistedPlatformPermission(tx, context, "college.read", {
+      collegeId: college.id, organizationId: college.organizationId,
+    });
+    const [active] = await tx.select({ id: colleges.id })
+      .from(colleges)
+      .innerJoin(organizations, eq(organizations.id, colleges.organizationId))
+      .where(and(eq(colleges.id, college.id), eq(colleges.status, "ACTIVE"),
+        eq(organizations.status, "ACTIVE")))
+      .for("share", { of: colleges }).limit(1);
+    if (!active) throw new CollegeBrandingNotFoundError();
+    const [branding,signInMethod]=await Promise.all([
+      tx.select().from(collegeBranding)
+        .where(eq(collegeBranding.collegeId,college.id)).limit(1)
+        .then(rows=>rows[0]??null),
+      effectiveCollegeSignInMethod(college.id),
+    ]);
+    // Keep sign-in choice on the audited college_signin_policies path.
+    return { collegeName: college.name, signInMethod, ...toView(branding),
+      uploadedLogoUrl:college.logoObjectPath?.startsWith("branding/"+college.id+"/")?
+       "/api/colleges/"+college.id+"/branding/logo":null,
+    };
+  });
 }
 
 export async function saveCollegeBranding(
