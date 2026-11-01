@@ -60,10 +60,10 @@ export function projectTpoSeasonRegistration(source:{
  * If storage is missing, retain an explicit unsupported status rather than
  * returning an apparently authoritative empty calendar.
  */
-export function withCurrentSeasonBlockedDates<T extends {
- blockedDates:readonly {date:string;label:string}[];
- blockedDatesSupported:boolean;
-}>(registration:T,read:{ready:boolean;rows:readonly {day:string;reason:string}[]}):T{
+export function withCurrentSeasonBlockedDates(
+ registration:ReturnType<typeof projectTpoSeasonRegistration>,
+ read:{ready:boolean;rows:readonly {day:string;reason:string}[]},
+){
  return {...registration,
   blockedDatesSupported:read.ready,
   blockedDates:read.ready?read.rows.map(row=>({date:row.day,label:row.reason})):[],
