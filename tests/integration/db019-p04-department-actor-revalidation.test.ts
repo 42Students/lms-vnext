@@ -3,6 +3,7 @@ import { afterAll, describe, expect, it } from "vitest";
 import { Pool } from "pg";
 import { closeDatabaseConnection } from "@/db/client";
 import { AuthorizationError } from "@/modules/permissions/policy";
+import { getCollegeBranding } from "@/modules/colleges/branding-service";
 import type { RequestContext } from "@/modules/identity/context";
 import {
   createDepartment, renameDepartment, archiveDepartment,
@@ -110,6 +111,19 @@ describe.skipIf(!enabled)("DB19-P04 persisted department authority on PostgreSQL
     expect(paged.content.every(row => row.collegeId === SEED_IDS.collegeA)).toBe(true);
     expect(paged.totalElements).toBeGreaterThanOrEqual(paged.content.length);
     expect(direct.every(row => row.collegeId === SEED_IDS.collegeA)).toBe(true);
+  });
+
+  it("does not return protected college branding using stale global or forged membership permissions", async () => {
+    await expect(getCollegeBranding(falseGlobal, SEED_IDS.collegeA))
+      .rejects.toBeInstanceOf(AuthorizationError);
+    await expect(getCollegeBranding(falseMembership, SEED_IDS.collegeA))
+      .rejects.toBeInstanceOf(AuthorizationError);
+    const brand = await getCollegeBranding(admin, SEED_IDS.collegeA);
+    expect(brand).toHaveProperty("collegeName");
+    expect(brand).toHaveProperty("signInMethod");
+    expect(brand).toHaveProperty("version");
+    expect(brand).not.toHaveProperty("legacyBrandingId");
+    expect(brand).not.toHaveProperty("legacyLogoSourceUrl");
   });
 
   it("rejects stale actor rename and archive while retaining valid college-admin writes", async () => {
