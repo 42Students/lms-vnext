@@ -2194,11 +2194,39 @@
               "round_result"
             ],
             "sourceFieldCount": 52,
-            "picked": false,
-            "pickedBy": "",
+            "picked": true,
+            "pickedBy": "CHAT_DB19_P19_20261102",
             "done": false,
             "acceptedAt": null,
             "acceptanceEvidence": [],
+      "latestProgress": {
+        "status": "SCOPED_P19_PERSISTED_ROLE_NEGATIVES_PG17_STEPS_PASSED_FULL_PACKAGE_OPEN",
+        "recordedOn": "2026-11-02",
+        "sourceSha": "62dd6d6fc9fbd1f4ba1e98121f9388b8bc3c1486",
+        "codeCommits": [
+          "ad64bd193abe167a992353b2172e3856773476c5",
+          "8d0f75fdc2d886d8dd7c86657530fbd255b01f27",
+          "74b4d57ecb943d755d982d5d7022294917889973",
+          "99080c5737b66a1ff87ad5716fff05119e444bc2"
+        ],
+        "testCommit": "62dd6d6fc9fbd1f4ba1e98121f9388b8bc3c1486",
+        "workflow": ".github/workflows/db019-p19-drive-day-attendance-pg17.yml",
+        "workflowRunUrl": "https://github.com/42Students/lms-vnext/actions/runs/41346012131",
+        "verifiedWorkflowSteps": [
+          "Exact checkout and registered journal PASS",
+          "Zero-to-head PostgreSQL 17 registered migration replay + seed PASS",
+          "Registered journal idempotence PASS",
+          "Scoped integration test step, including TPO and College Admin revocation negative cases, PASS"
+        ],
+        "workflowConclusionWhenRecorded": "TYPECHECK_IN_PROGRESS_NOT_ACCEPTED",
+        "originalSourceFields": 52,
+        "remaining": [
+          "Final 52 individual frozen source-field semantic decisions (interview/round attendance/results), actor-kind and status-history provenance, and review/approval of missing target semantics.",
+          "End-to-end all interview, attendance, round-result producers/consumers plus tenant/privacy, stale actor, concurrent revocation and supersession race matrices on exact final head.",
+          "Complete workflow TypeScript check and independent final P31/P32 global gates before DB-019 and DB-020 acceptance."
+        ],
+        "evidenceIsNotAcceptance": true
+      },
             "acceptance": "Reconcile actor-kind and supersession chain, interview provenance, result enum, private comments, real round workflows and race/tenant tests."
           },
           {
