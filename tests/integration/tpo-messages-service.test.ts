@@ -2,6 +2,7 @@ import { afterAll, describe, expect, it } from "vitest";
 import type { RequestContext } from "@/modules/identity/context";
 import { closeDatabaseConnection } from "@/db/client";
 import { getTpoMessagesInbox } from "@/modules/placements/tpo-messages-service";
+import { countTpoUnreadRecruiterMessages } from "@/modules/placements/tpo-recruiter-unread-count-service";
 import { SEED_IDS } from "../../scripts/db-seed-data";
 
 if (!process.env.TEST_DATABASE_URL) {
@@ -10,17 +11,17 @@ if (!process.env.TEST_DATABASE_URL) {
 
 const tpo: RequestContext = {
   user: {
-    id: SEED_IDS.collegeAdminUser,
+    id: SEED_IDS.facultyUser,
     identityUid: "seed-tpo",
     platformStatus: "ACTIVE",
     systemRoles: [],
   },
   membership: {
-    id: SEED_IDS.collegeAdminMembership,
+    id: SEED_IDS.facultyCollegeAMembership,
     collegeId: SEED_IDS.collegeA,
     organizationId: SEED_IDS.organization,
     status: "ACTIVE",
-    roles: ["TPO"],
+    roles: ["FACULTY", "TPO"],
   },
 };
 
@@ -44,6 +45,32 @@ describe("TPO messages against PostgreSQL", () => {
       q: "a",
     });
     expect(result.page).toBe(1);
+  });
+
+  it("rejects forged or revoked TPO session claims before reading private inbox or unread counts", async () => {
+    // Seed college admin has COLLEGE_ADMIN, but no persisted TPO role.
+    // A forged request context listing TPO must not grant inbox access.
+    const forged:RequestContext={
+      ...tpo,
+      user:{...tpo.user,id:SEED_IDS.collegeAdminUser},
+      membership:{
+        ...tpo.membership!,
+        id:SEED_IDS.collegeAdminMembership,
+        roles:["TPO"],
+      },
+    };
+    await expect(getTpoMessagesInbox(forged, {})).rejects.toThrow(
+      "Missing permission: placements.manage",
+    );
+    await expect(countTpoUnreadRecruiterMessages(forged)).rejects.toThrow(
+      "Missing permission: placements.manage",
+    );
+    const wrongUser:RequestContext={...tpo,user:{...tpo.user,id:SEED_IDS.collegeAdminUser}};
+    await expect(getTpoMessagesInbox(wrongUser, {})).rejects.toBeDefined();
+    const wrongCollege:RequestContext={
+      ...tpo,membership:{...tpo.membership!,collegeId:SEED_IDS.collegeB},
+    };
+    await expect(countTpoUnreadRecruiterMessages(wrongCollege)).rejects.toBeDefined();
   });
 
   it("rejects a non-TPO membership", async () => {
