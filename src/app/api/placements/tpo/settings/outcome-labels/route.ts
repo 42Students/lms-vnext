@@ -16,7 +16,9 @@ export async function PUT(request:Request){
    headers:{"Cache-Control":"private, no-store"},
   });
   if(error instanceof TpoOutcomeLabelError)return NextResponse.json({error:error.code},{
-   status:error.code==="TPO_SETTINGS_STALE"?409:error.code==="TPO_SETTINGS_PENDING"?503:404,
+   status:error.code==="TPO_SETTINGS_STALE"?409:
+     error.code==="TPO_SETTINGS_PENDING"?503:
+     error.code==="TPO_SETTINGS_INVALID_LABEL"?400:404,
   });
   return apiErrorResponse(error);
  }
