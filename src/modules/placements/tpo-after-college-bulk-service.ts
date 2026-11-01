@@ -41,7 +41,7 @@ export async function bulkUpdateTpoAfterCollege(
     }).from(colleges).where(and(eq(colleges.id, collegeId), eq(colleges.status, "ACTIVE")))
       .for("update").limit(1);
     if (!college) throw new BulkAfterCollegeError("AFTER_COLLEGE_NOT_FOUND");
-    await assertPersistedPlatformPermission(tx, context, "placements.manage", {
+    const verifiedActor = await assertPersistedPlatformPermission(tx, context, "placements.manage", {
       collegeId, organizationId: college.organizationId,
     });
     const learners = await tx.select({ id: collegeMemberships.id })
@@ -89,7 +89,9 @@ export async function bulkUpdateTpoAfterCollege(
       });
       await tx.insert(activityEvents).values({
         organizationId: college.organizationId, collegeId,
-        actorUserId: context.user.id, actorMembershipId: context.membership!.id,
+        actorUserId: context.user.id,
+        actorMembershipId: verifiedActor.membership?.collegeId === collegeId
+          ? verifiedActor.membership.id : null,
         module: "PLACEMENTS", eventType: "placements.student.after_college_updated",
         subjectType: "COLLEGE_MEMBERSHIP", subjectId: row.membershipId,
         summary: "TPO updated a learner after-college destination",
