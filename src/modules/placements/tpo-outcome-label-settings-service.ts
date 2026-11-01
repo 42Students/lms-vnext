@@ -21,16 +21,22 @@ const saveSchema=z.object({
  expectedVersion:z.iso.datetime({offset:true}).nullable(),
 }).strict().superRefine((data,ctx)=>{
  const used=new Set(Object.values(AFTER_COLLEGE_LABELS).map(label=>label.toLocaleLowerCase("en-IN")));
+ const ids=new Set<string>();
  data.labels.forEach((entry,index)=>{
   const key=entry.label.toLocaleLowerCase("en-IN");
   if(used.has(key))ctx.addIssue({code:"custom",path:["labels",index,"label"],
    message:"That is already one of the fixed choices or is listed twice"});
   used.add(key);
+  if(entry.id){
+   if(ids.has(entry.id))ctx.addIssue({code:"custom",path:["labels",index,"id"],
+    message:"The same saved label cannot be listed twice"});
+   ids.add(entry.id);
+  }
  });
 });
 export type TpoOutcomeLabel=z.infer<typeof entrySchema>;
 export class TpoOutcomeLabelError extends Error{
- constructor(public readonly code:"TPO_SETTINGS_PENDING"|"TPO_SETTINGS_STALE"|"TPO_SETTINGS_NOT_FOUND"){super(code);}
+ constructor(public readonly code:"TPO_SETTINGS_PENDING"|"TPO_SETTINGS_STALE"|"TPO_SETTINGS_NOT_FOUND"|"TPO_SETTINGS_INVALID_LABEL"){super(code);}
 }
 function decodeLabels(raw:unknown):TpoOutcomeLabel[]{
  const parsed=z.array(entrySchema).safeParse(raw);
@@ -84,6 +90,10 @@ export async function saveTpoOutcomeLabels(context:RequestContext,raw:unknown){
   }).from(placementTpoCollegeSettings)
    .where(eq(placementTpoCollegeSettings.collegeId,collegeId)).limit(1);
   const stored=current?z.array(entrySchema).safeParse(current.outcomeLabels):null;
+  // A corrupt persisted catalog cannot be silently overwritten. Preserve it
+  // for explicit recovery rather than destroying the identity crosswalk.
+  if(current&&!stored?.success)
+   throw new TpoOutcomeLabelError("TPO_SETTINGS_INVALID_LABEL");
   if(current&&stored?.success&&tpoOutcomeLabelsAlreadyApplied(
     stored.data.map(row=>({...row,id:row.id??null})),
     input.labels.map(row=>({...row,id:row.id??null})))){
@@ -92,6 +102,12 @@ export async function saveTpoOutcomeLabels(context:RequestContext,raw:unknown){
   }
   if((current?.updatedAt.toISOString()??null)!==input.expectedVersion)
    throw new TpoOutcomeLabelError("TPO_SETTINGS_STALE");
+  // Existing labels keep the immutable identity that ties them to students.
+  // Legacy rejected unknown stable label IDs instead of inventing them.
+  const knownIds=new Set(stored?.success?stored.data.map(row=>row.id).filter(
+   (id):id is string=>typeof id==="string"&&id.length>0):[]);
+  if(input.labels.some(row=>row.id&&!knownIds.has(row.id)))
+   throw new TpoOutcomeLabelError("TPO_SETTINGS_INVALID_LABEL");
   if(!current)await tx.insert(placementTpoCollegeSettings).values({collegeId});
   const labels=input.labels.map(row=>({...row,id:row.id??crypto.randomUUID()}));
   const [saved]=await tx.update(placementTpoCollegeSettings).set({
