@@ -1448,9 +1448,21 @@
             "sourceFieldCount": 641,
             "picked": true,
             "pickedBy": "CHAT_DB19_HISTORICAL_DISPOSITIONS_20261101",
-            "done": false,
-            "acceptedAt": null,
-            "acceptanceEvidence": [],
+            "done": true,
+            "acceptedAt": "2026-11-01",
+            "acceptanceEvidence": [
+              {
+                "kind": "EXECUTED_EXACT_SHA_SOURCE_DISPOSITION_AND_RUNTIME_DEPENDENCY_NEGATIVES",
+                "result": "PASS",
+                "commitSha": "79aadc29031c4f11271f744cf269c53d2af77a54",
+                "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/41315431627",
+                "jobId": 124874335743,
+                "runner": "GitHub Actions ubuntu-latest Node.js 22",
+                "command": "npm run db19:historical:verify",
+                "scope": "32 historical backup/Flyway tables and exactly 641 fields; frozen source SHA/class/count decisions, Drizzle PostgreSQL journal replacement, and exact live src/registered SQL negative reference scan.",
+                "qualification": "Scoped historical greenfield retirement/product decision, not runtime PostgreSQL acceptance, absence of external or old-LMS consumers, or DB019/DB020 global signoff. main compared to executed SHA at 05397aed: subsequent seven commits changed only P20 code/tests/workflow and tracker; no P01/P02 source, checks or src/drizzle dependency paths."
+              }
+            ],
             "acceptance": "Prove every archival/engine field has a justified approved greenfield disposition and no live vNext business dependency; execute independent source/consumer negatives. No legacy-data migration."
           },
           {
@@ -1471,9 +1483,21 @@
             "sourceFieldCount": 91,
             "picked": true,
             "pickedBy": "CHAT_DB19_HISTORICAL_DISPOSITIONS_20261101",
-            "done": false,
-            "acceptedAt": null,
-            "acceptanceEvidence": [],
+            "done": true,
+            "acceptedAt": "2026-11-01",
+            "acceptanceEvidence": [
+              {
+                "kind": "EXECUTED_EXACT_SHA_SOURCE_DISPOSITION_AND_RUNTIME_DEPENDENCY_NEGATIVES",
+                "result": "PASS",
+                "commitSha": "79aadc29031c4f11271f744cf269c53d2af77a54",
+                "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/41315431627",
+                "jobId": 124874335743,
+                "runner": "GitHub Actions ubuntu-latest Node.js 22",
+                "command": "npm run db19:historical:verify",
+                "scope": "Seven explicitly user-excluded Smrithi tables and exactly 91 fields; DB003 product-approval identity, frozen source/count decisions, prohibition on legacy production mutations, and exact live src/registered SQL negative reference scan.",
+                "qualification": "Scoped historical greenfield retirement/product decision, not runtime PostgreSQL acceptance, absence of external or old-LMS consumers, or DB019/DB020 global signoff. main compared to executed SHA at 05397aed: subsequent seven commits changed only P20 code/tests/workflow and tracker; no P01/P02 source, checks or src/drizzle dependency paths."
+              }
+            ],
             "acceptance": "Resolve 91 original Smrithi field dispositions with explicit product decisions; prove active behavior is mapped or approved retired, never silently dropped."
           },
           {
