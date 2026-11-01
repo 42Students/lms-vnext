@@ -50,7 +50,7 @@ export function fixedTpoOutcomeCatalog(context:RequestContext){
 export async function readTpoOutcomeLabels(context:RequestContext){
  const collegeId=await requireTpoBatchActor(context);
  if(!await placementTableExists("placement_tpo_college_settings"))
-  return {ready:false as const,labels:[] as TpoOutcomeLabel[],version:null};
+  return {ready:false as const,labels:[] as TpoOutcomeLabel[],version:null,collegeId};
  // A revoked TPO/College Admin must not receive saved after-college labels
  // using an obsolete request context, even if settings storage exists.
  return getDb().transaction(async tx=>{
@@ -64,7 +64,7 @@ export async function readTpoOutcomeLabels(context:RequestContext){
   const [row]=await tx.select({labels:placementTpoCollegeSettings.outcomeLabels,
    updatedAt:placementTpoCollegeSettings.updatedAt})
    .from(placementTpoCollegeSettings).where(eq(placementTpoCollegeSettings.collegeId,collegeId)).limit(1);
-  return {ready:true as const,labels:decodeLabels(row?.labels),version:row?.updatedAt.toISOString()??null};
+  return {ready:true as const,labels:decodeLabels(row?.labels),version:row?.updatedAt.toISOString()??null,collegeId};
  });
 }
 export async function saveTpoOutcomeLabels(context:RequestContext,raw:unknown){
@@ -168,7 +168,7 @@ export async function readTpoOutcomeChoiceCatalog(
  }));
  return {fixed:base.fixed,labels:college.labels,
   ready:base.ready&&college.ready,version:college.version,
-  scope:"SCOPED" as const,collegeId:context.membership?.collegeId??null,
+  scope:"SCOPED" as const,collegeId:college.collegeId,
   choices:[...fixed,...custom]};
 }
 
