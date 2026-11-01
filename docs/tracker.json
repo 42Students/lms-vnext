@@ -1523,7 +1523,7 @@
             "acceptanceEvidence": [],
             "acceptance": "Final field crosswalk and PG17 tenant-domain/branding/org boundary, uniqueness, access and active-state negatives.",
             "implementationCheckpoint": {
-              "status": "LIVE_READ_AND_TOKEN_PERMISSION_FIXES_PG17_PASS_ARCHIVE_RACE_CI_PENDING",
+              "status": "REGISTERED_PG17_PRIVACY_ROLE_ARCHIVE_RACE_PASS_SOURCE_DISPOSITION_STILL_OPEN",
               "recordedOn": "2026-11-01",
               "sourceReviewLedger": "docs/planning/db019-p04-college-tenant-field-review.json",
               "sourceFields": 58,
@@ -1596,21 +1596,21 @@
                   "sha": "4ff91f527278ff91d839ff8cbacb5d003e660e27",
                   "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/41314315794",
                   "result": "PASS_SOURCE_ONLY"
+                },
+                {
+                  "scope": "Registered PG17 journal/replay/idempotence, protected department reads, branding and DNS token consumers, plus transactional department FK dependency/archive witness",
+                  "sha": "296c6fcca892b4dbabfb11290710d72421c7d7c4",
+                  "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/41314240187",
+                  "result": "PASS"
                 }
               ],
               "remaining": [
                 "A source-confirmed backend-only active contract remains for department.dept_chair_id and department.dept_vice_chair_id; old FE no longer displays them, but retirement is not user-approved.",
-                "PG17 registered replay, role revocation, tenant-domain private DNS and archived-org negatives now PASS; archive FK race added, exact run pending.",
                 "Independently verify 58/58 source field semantics across current producers/consumers, including private branding, DNS routing and revocation race/tenant boundaries; source proposals are not signed field acceptance.",
-                "P31/P32 sequential DB019 global gates still open; DB19-P04 and DB019 remain done:false."
+                "P31/P32 sequential DB019 global gates still open; DB19-P04 and DB019 remain done:false.",
+                "Registered PG17 archive dependency FK witness PASS at 296c6fc; remaining same-SHA comprehensive field and consumer proof remains OPEN."
               ],
-              "evidenceIsNotAcceptance": true,
-              "pendingRun": {
-                "sha": "296c6fcca892b4dbabfb11290710d72421c7d7c4",
-                "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/41314240187",
-                "status": "IN_PROGRESS_NOT_ACCEPTED",
-                "scope": "Registered PG17 FK insert/archive concurrency witness"
-              }
+              "evidenceIsNotAcceptance": true
             }
           },
           {
