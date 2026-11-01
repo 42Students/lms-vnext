@@ -1,7 +1,9 @@
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
 import { Pool } from "pg";
 import { closeDatabaseConnection } from "@/db/client";
-import { readSkillCatalog } from "@/modules/skills/catalog-service";
+import { readSkillCatalog, recordSkillSelection } from "@/modules/skills/catalog-service";
+import { SEED_IDS } from "../../scripts/db-seed-data";
+import type { RequestContext } from "@/modules/identity/context";
 import { assertDb018DisposableTarget } from "../support/db018-test-target.mjs";
 
 const databaseUrl = process.env.TEST_DATABASE_URL;
@@ -166,4 +168,60 @@ describe("DB10 skills catalog source-backed PostgreSQL consumer", () => {
       await pool.query("delete from skill_usage where skill_name=$1",[key]);
     }
   });
+  it("binds the selected v1 canonical name to its UUID and preserves independent v2 usage", async () => {
+    const authorized: RequestContext = {
+      user: {
+        id: SEED_IDS.collegeAdminUser,
+        identityUid: "seed-college-admin",
+        platformStatus: "ACTIVE",
+        systemRoles: [],
+      },
+      membership: {
+        id: SEED_IDS.collegeAdminMembership,
+        collegeId: SEED_IDS.collegeA,
+        organizationId: SEED_IDS.organization,
+        status: "ACTIVE",
+        roles: ["COLLEGE_ADMIN"],
+      },
+    };
+    const count=async(table: "skills"|"skill_usage",id:string)=> {
+      const key=table==="skills"?"id":"skill_name";
+      const row=await pool.query<{usage_count:number}>(
+        `select usage_count from ${table} where ${key}=$1`,[id]);
+      return row.rows[0]?.usage_count ?? 0;
+    };
+    const before=await count("skills",ids[0]);
+    const beforeUsage=await count("skill_usage",names[1]);
+    const freeText="p30uncataloged"+suffix;
+    try {
+      // A forged name/UUID pair cannot inflate unrelated catalog popularity.
+      await expect(recordSkillSelection(authorized,{
+        source:"v1",skillId:ids[0]!,name:names[1]!,
+      })).rejects.toThrow("SKILL_NOT_FOUND");
+      expect(await count("skills",ids[0]!)).toBe(before);
+      await recordSkillSelection(authorized,{
+        source:"v1",skillId:ids[0]!,name:names[0]!.toUpperCase(),
+      });
+      expect(await count("skills",ids[0]!)).toBe(before+1);
+      await Promise.all(Array.from({length:8},()=>recordSkillSelection(authorized,{
+        source:"v2",name:freeText,
+      })));
+      expect(await count("skill_usage",freeText)).toBe(8);
+      expect(await count("skill_usage",names[1]!)).toBe(beforeUsage);
+      expect(await count("skills",ids[0]!)).toBe(before+1);
+
+      const denied:RequestContext={
+        ...authorized,
+        user:{...authorized.user,platformStatus:"DISABLED"},
+      };
+      await expect(recordSkillSelection(denied,{
+        source:"v1",skillId:ids[0]!,name:names[0]!,
+      })).rejects.toThrow("FORBIDDEN_SKILL_CATALOG");
+      expect(await count("skills",ids[0]!)).toBe(before+1);
+    } finally {
+      await pool.query("update skills set usage_count=$1 where id=$2",[before,ids[0]]);
+      await pool.query("delete from skill_usage where skill_name=$1",[freeText]);
+    }
+  });
+
 });
