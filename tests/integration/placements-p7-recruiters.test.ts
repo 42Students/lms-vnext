@@ -499,6 +499,50 @@ describe("Placement P7 recruiter identity and grants", () => {
       source: "HR",
     });
 
+    // The old guard only checked the HR/RECRUITER source tag. An
+    // authorized job recruiter could replay another submitter's identical
+    // staged result (or supersede it) despite a different persisted actor.
+    // This is a disposable DB fixture; no production actor is rewritten.
+    await pool.query(
+      "update placement_round_results set submitted_by_user_id=$1 where id=$2",
+      [tpo.user.id, hrStaged.id],
+    );
+    await expect(
+      stagePlacementRoundResult(recruiter, round.id, {
+        applicationId: application.id,
+        outcome: "PASS",
+        scorePercent: 90,
+      }),
+    ).rejects.toMatchObject({code:"PLACEMENT_RECRUITER_RESULT_CONFLICT"});
+    await expect(
+      stagePlacementRoundResult(recruiter, round.id, {
+        applicationId: application.id,
+        outcome: "FAIL",
+        candidateMessage: "Interview not passed",
+      }),
+    ).rejects.toMatchObject({code:"PLACEMENT_RECRUITER_RESULT_CONFLICT"});
+    const retained = await pool.query(
+      "select id,version,source,submitted_by_user_id from placement_round_results where round_id=$1 and application_id=$2",
+      [round.id, application.id],
+    );
+    expect(retained.rows).toHaveLength(1);
+    expect(retained.rows[0]).toMatchObject({
+      id:hrStaged.id,version:hrStaged.version,source:"HR",
+      submitted_by_user_id:tpo.user.id,
+    });
+    // Restore the legitimate actor to exercise the remaining TPO flow.
+    await pool.query(
+      "update placement_round_results set submitted_by_user_id=$1 where id=$2",
+      [recruiter.user.id, hrStaged.id],
+    );
+    await expect(
+      stagePlacementRoundResult(recruiter, round.id, {
+        applicationId: application.id,
+        outcome: "PASS",
+        scorePercent: 90,
+      }),
+    ).resolves.toMatchObject({id:hrStaged.id,status:"STAGED"});
+
     const staged =
       await stagePlacementRoundResult(
         tpo,
