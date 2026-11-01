@@ -251,8 +251,10 @@ export const drizzleTenantDomainRepository: TenantDomainRepository = {
       if (!domainOwner) throw new TenantDomainServiceError("DOMAIN_NOT_FOUND");
       const [activeParent] = await tx.select({ id: colleges.id, status: colleges.status })
         .from(colleges)
-        .where(eq(colleges.id, domainOwner.collegeId))
-        .for("update").limit(1);
+        .innerJoin(organizations, eq(organizations.id, colleges.organizationId))
+        .where(and(eq(colleges.id, domainOwner.collegeId),
+          eq(organizations.status, "ACTIVE")))
+        .for("update", { of: colleges }).limit(1);
       if (!activeParent || activeParent.status !== "ACTIVE")
         throw new TenantDomainServiceError("DOMAIN_NOT_FOUND");
 
@@ -298,8 +300,11 @@ export const drizzleTenantDomainRepository: TenantDomainRepository = {
         .limit(1);
       if(!owner)throw new TenantDomainServiceError("DOMAIN_NOT_FOUND");
       const [parent]=await tx.select({id:colleges.id,status:colleges.status})
-        .from(colleges).where(eq(colleges.id,owner.collegeId))
-        .for("update").limit(1);
+        .from(colleges)
+        .innerJoin(organizations,eq(organizations.id,colleges.organizationId))
+        .where(and(eq(colleges.id,owner.collegeId),
+          eq(organizations.status,"ACTIVE")))
+        .for("update",{of:colleges}).limit(1);
       if(!parent||parent.status!=="ACTIVE")
         throw new TenantDomainServiceError("DOMAIN_NOT_FOUND");
       const [row]=await tx.select({
@@ -352,8 +357,10 @@ export const drizzleTenantDomainRepository: TenantDomainRepository = {
       if (!domainOwner) throw new TenantDomainServiceError("DOMAIN_NOT_FOUND");
       const [activeParent] = await tx.select({ id: colleges.id, status: colleges.status })
         .from(colleges)
-        .where(eq(colleges.id, domainOwner.collegeId))
-        .for("update").limit(1);
+        .innerJoin(organizations, eq(organizations.id, colleges.organizationId))
+        .where(and(eq(colleges.id, domainOwner.collegeId),
+          eq(organizations.status, "ACTIVE")))
+        .for("update", { of: colleges }).limit(1);
       if (!activeParent || activeParent.status !== "ACTIVE")
         throw new TenantDomainServiceError("DOMAIN_NOT_FOUND");
 
@@ -424,8 +431,10 @@ export const drizzleTenantDomainRepository: TenantDomainRepository = {
       if (!domainOwner) throw new TenantDomainServiceError("DOMAIN_NOT_FOUND");
       const [activeParent] = await tx.select({ id: colleges.id, status: colleges.status })
         .from(colleges)
-        .where(eq(colleges.id, domainOwner.collegeId))
-        .for("update").limit(1);
+        .innerJoin(organizations, eq(organizations.id, colleges.organizationId))
+        .where(and(eq(colleges.id, domainOwner.collegeId),
+          eq(organizations.status, "ACTIVE")))
+        .for("update", { of: colleges }).limit(1);
       if (!activeParent || activeParent.status !== "ACTIVE")
         throw new TenantDomainServiceError("DOMAIN_NOT_FOUND");
 
@@ -530,8 +539,10 @@ export const drizzleTenantDomainRepository: TenantDomainRepository = {
       if (!domainOwner) throw new TenantDomainServiceError("DOMAIN_NOT_FOUND");
       const [activeParent] = await tx.select({ id: colleges.id, status: colleges.status })
         .from(colleges)
-        .where(eq(colleges.id, domainOwner.collegeId))
-        .for("update").limit(1);
+        .innerJoin(organizations, eq(organizations.id, colleges.organizationId))
+        .where(and(eq(colleges.id, domainOwner.collegeId),
+          eq(organizations.status, "ACTIVE")))
+        .for("update", { of: colleges }).limit(1);
       if (!activeParent || activeParent.status !== "ACTIVE")
         throw new TenantDomainServiceError("DOMAIN_NOT_FOUND");
 
@@ -620,8 +631,10 @@ export const drizzleTenantDomainRepository: TenantDomainRepository = {
       if (!domainOwner) throw new TenantDomainServiceError("DOMAIN_NOT_FOUND");
       const [activeParent] = await tx.select({ id: colleges.id, status: colleges.status })
         .from(colleges)
-        .where(eq(colleges.id, domainOwner.collegeId))
-        .for("update").limit(1);
+        .innerJoin(organizations, eq(organizations.id, colleges.organizationId))
+        .where(and(eq(colleges.id, domainOwner.collegeId),
+          eq(organizations.status, "ACTIVE")))
+        .for("update", { of: colleges }).limit(1);
       if (!activeParent || activeParent.status !== "ACTIVE")
         throw new TenantDomainServiceError("DOMAIN_NOT_FOUND");
       await tx.execute(sql`select pg_advisory_xact_lock(hashtext(${"tenant-domain-host:"+domainOwner.host}))`);
