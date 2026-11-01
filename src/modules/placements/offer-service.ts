@@ -1722,7 +1722,32 @@ export async function listOwnPlacementOffers(
 
   return getDb()
     .select({
-      offer: placementOffers,
+      // DB19-P17: learner reads must not return internal offer provenance,
+      // staff verification identities, raw private object storage keys, or
+      // persisted external letter URLs. Public terms and CAS tokens remain.
+      // Staff-only lifecycle/evidence readers retain their separate scope.
+      offer: {
+        id: placementOffers.id,
+        applicationId: placementOffers.applicationId,
+        version: placementOffers.version,
+        rowVersion: placementOffers.rowVersion,
+        kind: placementOffers.kind,
+        status: placementOffers.status,
+        roleTitle: placementOffers.roleTitle,
+        annualCtcInr: placementOffers.annualCtcInr,
+        legacyCtcLpa: placementOffers.legacyCtcLpa,
+        fixedLpa: placementOffers.fixedLpa,
+        variableLpa: placementOffers.variableLpa,
+        joiningBonusLpa: placementOffers.joiningBonusLpa,
+        bondMonths: placementOffers.bondMonths,
+        bondAmount: placementOffers.bondAmount,
+        acceptanceChannel: placementOffers.acceptanceChannel,
+        acceptedDisputableUntil: placementOffers.acceptedDisputableUntil,
+        joiningDate: placementOffers.joiningDate,
+        expiresAt: placementOffers.expiresAt,
+        issuedAt: placementOffers.issuedAt,
+        respondedAt: placementOffers.respondedAt,
+      },
       joining: placementJoiningOutcomes,
       job: {
         id: placementJobs.id,
