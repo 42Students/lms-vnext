@@ -17,7 +17,7 @@ describe("chat-15 learner offers and internship truth",()=>{
   expect(service).toContain("offer: placementOffers");
   expect(service).toContain("employmentType: placementJobRoleOptions.employmentType");
   const page=source("src/app/(authenticated)/learn/my-placements/offers/page.tsx");
-  expect(page).toContain("safeLearnerOfferLetterHref(row.offer.offerLetterUrl)");
+  // Sanitize the persisted URL before it crosses the server-to-client boundary.\n  // The page only forwards the already-safe projection to the offer card.\n  expect(service).toContain("letterHref:safeLearnerOfferLetterHref(row.offer.letterHref)");\n  expect(page).toContain("letterHref: row.offer.letterHref");
   const card=source("src/components/placements/learner-placement-offers.tsx");
   expect(card).toContain('<a href={item.letterHref} rel="noopener noreferrer"');
   expect(card).not.toContain('target="_blank"');
