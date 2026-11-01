@@ -1,5 +1,6 @@
 import {NextResponse} from "next/server";
 import {and,eq,sql} from "drizzle-orm";
+import {colleges} from "@/db/schema/colleges";
 import {z} from "zod";
 import {getDb} from "@/db/client";
 import {getCurrentRequestContext} from "@/auth/request-context";
@@ -11,6 +12,7 @@ import {trackerPublicIdSchema} from "@/modules/bug-tracker/admin-validation";
 import {getPrivateR2Config} from "@/modules/storage/r2-config";
 import {headObject,presignUrl} from "@/modules/storage/s3-client";
 import {apiErrorResponse} from "@/lib/api-error";
+import {canSignBugScreenshotDownload} from "@/modules/bug-tracker/access-and-attachments";
 export const runtime="nodejs";
 export const dynamic="force-dynamic";
 export async function GET(_request:Request,{params}:{
@@ -23,25 +25,36 @@ export async function GET(_request:Request,{params}:{
   const context=await getCurrentRequestContext();
   // SA acting-college scope is checked by the admin reader; non-admins may
   // view only screenshots attached to their own persisted reporterUserId.
-  if(isSuperAdmin(context))await getBugTrackerIssueForAdmin(context,publicId);
+  const superAdmin=isSuperAdmin(context);
+  if(superAdmin)await getBugTrackerIssueForAdmin(context,publicId);
   else await getMyTrackerReport(context,publicId);
+  // Bind private media lookup to the same persisted owner/acting-college
+  // scope as the preceding detail authorization, not merely a public ID.
+  const rowScope=superAdmin
+   ? context.adminScope?.collegeId
+     ? eq(db10BugReports.collegeId,context.adminScope.collegeId)
+     : context.adminScope?.organizationId
+       ? eq(colleges.organizationId,context.adminScope.organizationId)
+       : undefined
+   : eq(db10BugReports.reporterUserId,context.user.id);
   const [row]=await getDb().select({
    key:db10BugReportAttachments.storageKey,
    type:db10BugReportAttachments.contentType,
+   sizeBytes:db10BugReportAttachments.sizeBytes,
+   storedPublicId:db10BugReports.publicId,
   }).from(db10BugReportAttachments)
    .innerJoin(db10BugReports,eq(db10BugReports.id,db10BugReportAttachments.bugReportId))
+   .leftJoin(colleges,eq(colleges.id,db10BugReports.collegeId))
    .where(and(eq(db10BugReportAttachments.id,attachmentId),
-    sql`lower(${db10BugReports.publicId})=${publicId.toLowerCase()}`))
+    sql`lower(${db10BugReports.publicId})=${publicId.toLowerCase()}`,rowScope))
    .limit(1);
-  if(!row||!["image/png","image/jpeg","image/webp"].includes(row.type)||
-     !row.key.startsWith("bug-tracker/"+publicId+"/"))
+  if(!row)
    return NextResponse.json({error:"SCREENSHOT_NOT_FOUND"},{status:404});
   const head=await headObject(getPrivateR2Config(),row.key);
-  const trusted=head?.metadata["malware-scan-status"]==="CLEAN"&&(
-    head?.metadata["scan-attested-by"]==="lms-vnext-privileged-scanner"||
-    (process.env["APP_ENV"]==="development"&&
-     head?.metadata["scan-attested-by"]==="lms-vnext-dev-format-check"));
-  if(!head||!trusted||head.contentType!==row.type)
+  if(!canSignBugScreenshotDownload({
+    publicId:row.storedPublicId,storageKey:row.key,
+    contentType:row.type,sizeBytes:row.sizeBytes,
+   },head,process.env["APP_ENV"]))
    return NextResponse.json({error:"SCREENSHOT_NOT_AVAILABLE"},{status:404});
   const signed=presignUrl(getPrivateR2Config(),{
    method:"GET",key:row.key,expiresSeconds:120,
