@@ -1521,7 +1521,53 @@
             "done": false,
             "acceptedAt": null,
             "acceptanceEvidence": [],
-            "acceptance": "Final field crosswalk and PG17 tenant-domain/branding/org boundary, uniqueness, access and active-state negatives."
+            "acceptance": "Final field crosswalk and PG17 tenant-domain/branding/org boundary, uniqueness, access and active-state negatives.",
+            "implementationCheckpoint": {
+              "status": "GUARDED_MUTATION_PATHS_AND_SCOPED_PG17_PASS_EXACT_SOURCE_LEDGER_PROPOSED_NOT_ACCEPTED",
+              "recordedOn": "2026-11-01",
+              "sourceReviewLedger": "docs/planning/db019-p04-college-tenant-field-review.json",
+              "sourceFields": 58,
+              "sourceReviewDisposition": "58/58 original field identities accounted for; zero live field decisions certified",
+              "unresolvedLegacyFields": [
+                "department.dept_chair_id",
+                "department.dept_vice_chair_id"
+              ],
+              "implementationCommits": [
+                "785234e4b474856fae2fa6db7c65bce87a126978",
+                "b1c806e1d548fe3d77e147546407270ef8782f3e",
+                "869ccdc4d11c19daffac396ea07de3d975f773a2"
+              ],
+              "testCommits": [
+                "a2290a991d2cf2fdb378b2711896d3812ae8e949",
+                "936e60c18b2eec3c669f8f4aa04a93950e170ad0"
+              ],
+              "ciRegistrationCommits": [
+                "9c39ecdaab21d3f0b951206e8a709af79f28ce59",
+                "67d4f8b22c2cc2586b04cc035de3c10f621461e9"
+              ],
+              "sourceLedgerCommit": "df45e51846f83cd480c65084d379859f04018f90",
+              "executed": [
+                {
+                  "scope": "registered PG17 journal+clean replay+idempotence, DB004 integrated suite including DB19-P04 department forged/stale-role tests",
+                  "sha": "9c39ecdaab21d3f0b951206e8a709af79f28ce59",
+                  "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/41308664867",
+                  "result": "PASS"
+                },
+                {
+                  "scope": "registered PG17 suite after six domain-path active-organization guards",
+                  "sha": "869ccdc4d11c19daffac396ea07de3d975f773a2",
+                  "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/41308824553",
+                  "result": "PASS"
+                }
+              ],
+              "remaining": [
+                "Execute exact-head PG17 negatives specifically exercising archived-organization domain mutations, DNS verification/primary/host-delete races, branding privacy and current-source producer/consumer behavior.",
+                "Resolve live department chair and vice-chair role decisions; no blanket retired classification.",
+                "Validate all 58 individual source-to-target field dispositions with independent source and consumer proof and cross-role access.",
+                "Observe exact SHA DB019 source quality CI including P04 ledger, then full DB19 P31/P32 sequential gates. P04 and parent remain OPEN."
+              ],
+              "evidenceIsNotAcceptance": true
+            }
           },
           {
             "id": "DB19-P05",
