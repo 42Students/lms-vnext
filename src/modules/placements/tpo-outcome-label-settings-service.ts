@@ -8,13 +8,13 @@ import {requireTpoBatchActor} from "./tpo-batch-workspace-read-service";
 import {placementTableExists} from "./staged-tables";
 import {assertPersistedPlatformPermission} from "@/modules/permissions/persisted-actor";
 import {tpoOutcomeLabelsAlreadyApplied} from "./tpo-outcome-label-retry-model";
-import {AFTER_COLLEGE_LABELS,afterCollegeManualSchema} from "./tpo-after-college-model";
+import {AFTER_COLLEGE_LABELS,afterCollegeCustomLabelOutcomeSchema} from "./tpo-after-college-model";
 import {placementTpoAfterCollege} from "@/db/schema/tpo-configuration";
 
 const entrySchema=z.object({
  id:z.string().uuid().nullable().optional(),
  label:z.string().trim().min(2).max(60),
- outcome:afterCollegeManualSchema,
+ outcome:afterCollegeCustomLabelOutcomeSchema,
 }).strict();
 const saveSchema=z.object({
  labels:z.array(entrySchema).max(30),
@@ -177,7 +177,7 @@ export async function readTpoOutcomeChoiceCatalog(
  * Distinct labels are retained under their per-college scope and conflict
  * with fixed choices is rejected rather than silently relabeled. */
 export function mappedLegacyOutcomeLabel(
- row:{legacyId:number;label:string;outcome:z.infer<typeof afterCollegeManualSchema>},
+ row:{legacyId:number;label:string;outcome:z.infer<typeof afterCollegeCustomLabelOutcomeSchema>},
  canonicalId:string,
 ){
  if(!Number.isSafeInteger(row.legacyId)||row.legacyId<1)
