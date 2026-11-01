@@ -1875,18 +1875,23 @@
                 "e810167aae1ab7f1988dbbd339c79f0ed7477d16",
                 "361e2d78a15384b0aa91847299d6a6949e21a4b6",
                 "2ee9c1b3ab3de3aa3131c78d9538359a5d96bddf",
-                "65a89e71a20af82900d2c53200fb15bf01c7ffb2"
+                "65a89e71a20af82900d2c53200fb15bf01c7ffb2",
+                "f1ed4ef0085562f02eddc541fa979c11d8d47e34",
+                "b6fc79d2bd1eed1b5dffd22d5050096d4e703d5a"
               ],
               "changed": [
                 "Atomic original-snapshot SQL CASE propagation for swapped/renamed/reclassified after-college custom labels, preserving private detail and consent tables",
                 "Persisted acting membership attribution in outcome settings activity events",
                 "Scoped Super Admin catalog now exposes verified acting college ID",
-                "Authored disposable PG17 regressions for label swap, reclassification, stale versions, removal, no scope and scoped tenant identity"
+                "Authored disposable PG17 regressions for label swap, reclassification, stale versions, removal, no scope and scoped tenant identity",
+                "Fixed over-escaped passing-year selector so actual four-digit college years are returned in sorted unique order; authored positive/negative Vitest"
               ],
               "executed": {
                 "sourceCode": "PUSHED_TO_MAIN",
                 "databaseTests": "NOT_EXECUTED",
-                "nodeTypecheck": "NOT_EXECUTED"
+                "nodeTypecheck": "NOT_EXECUTED",
+                "sourceModelV8": "4_OF_4_PASS_EXACT_FETCHED_MAIN_FUNCTION",
+                "sourceInvariantsV8": "10_OF_10_PASS_EXACT_FETCHED_MAIN_CODE"
               },
               "remaining": [
                 "Execute Node/TS and exact-head isolated registered PG17 integration tests, including concurrency and rollback on failed cascades",
