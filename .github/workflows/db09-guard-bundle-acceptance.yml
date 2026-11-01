@@ -20,6 +20,8 @@ on:
       - "tests/integration/tpo-messages-service.test.ts"
       - "src/modules/placements/tpo-messages-service.ts"
       - "src/modules/placements/tpo-recruiter-unread-count-service.ts"
+      - "src/modules/placements/tpo-student-saved-views-service.ts"
+      - "tests/integration/tpo-student-saved-views-p24.test.ts"
       - "tests/db062-db079-private-review-canonical-and-revocation.test.mjs"
       - "drizzle/**"
 
@@ -88,5 +90,7 @@ jobs:
         run: node tests/db09-share-registered-pg-acceptance.mjs
       - name: DB19-P24 authenticated TPO inbox and unread privacy regression
         run: npx vitest run --config vitest.db.registered.config.ts tests/integration/tpo-messages-service.test.ts
+      - name: DB19-P24 private TPO saved-view deletion event and same-college ownership
+        run: npx vitest run --config vitest.db.registered.config.ts tests/integration/tpo-student-saved-views-p24.test.ts
       - name: DB062 and DB079 rollback-only private-note identity and grant-revocation negatives
         run: node tests/db09-recruiter-note-registered-pg-acceptance.mjs
