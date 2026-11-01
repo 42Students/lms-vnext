@@ -10,6 +10,8 @@ on:
       - "tests/db019-db08-offer-physical-pg.test.mjs"
       - "tests/unit/placement-saved-jobs-main.test.ts"
       - "src/modules/placements/saved-job-service.ts"
+      - "src/modules/placements/candidate-preferences-service.ts"
+      - "tests/integration/learner-preferences-write.test.ts"
       - "docs/planning/database-parity-db08-field-ledger.json"
       - "drizzle/*.sql"
       - "drizzle/meta/_journal.json"
@@ -60,6 +62,10 @@ jobs:
         run: npx vitest run tests/unit/placement-saved-jobs-main.test.ts
       - name: Verify 28 offer plus P21 saved-job/preferences physical source candidates
         run: node --test tests/db019-db08-offer-physical-pg.test.mjs
+      - name: Execute P21 notification consent regression on disposable PostgreSQL
+        env:
+          DATABASE_URL: postgresql://postgres:postgres@127.0.0.1:5432/lms_vnext_test
+        run: npx vitest run --config vitest.db.registered.config.ts tests/integration/learner-preferences-write.test.ts -t "does not silently opt"
       - name: Execute real offer, joining, IDOR and revoked-role consumer witnesses
         env:
           DATABASE_URL: postgresql://postgres:postgres@127.0.0.1:5432/lms_vnext_test
