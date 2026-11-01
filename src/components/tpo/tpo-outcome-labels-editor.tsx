@@ -10,7 +10,7 @@ import {AFTER_COLLEGE_LABELS,CHOICE_AFTER_COLLEGE_OUTCOMES,type CustomAfterColle
 
 type Label={id?:string|null;label:string;outcome:CustomAfterCollegeOutcome};
 function validate(label:string,labels:readonly Label[],index:number){
- const name=label.trim().replace(/\\s+/g," ").toLocaleLowerCase("en-IN");
+ const name=label.trim().replace(/\s+/g," ").toLocaleLowerCase("en-IN");
  if(name.length<2||name.length>60)return "2-60 characters";
  if(Object.values(AFTER_COLLEGE_LABELS).some(value=>value.toLocaleLowerCase("en-IN")===name))
   return "That is already one of the fixed choices";
@@ -38,7 +38,7 @@ export function TpoOutcomeLabelsEditor({initial,version}:{initial:readonly Label
   try{
    const data=await apiFetch<{version?:string;labels?:Label[]}>("/api/placements/tpo/settings/outcome-labels",{
     method:"PUT",credentials:"same-origin",headers:{"Content-Type":"application/json"},
-    body:JSON.stringify({labels:labels.map(row=>({...row,label:row.label.trim().replace(/\\s+/g," ")})),expectedVersion:currentVersion}),
+    body:JSON.stringify({labels:labels.map(row=>({...row,label:row.label.trim().replace(/\s+/g," ")})),expectedVersion:currentVersion}),
    });
    setLabels(data.labels??[]);setCurrentVersion(data.version??null);setNotice("After college labels saved");router.refresh();
   }catch(caught){setError(caught instanceof FriendlyFetchError&&caught.code==="TPO_SETTINGS_STALE"?
