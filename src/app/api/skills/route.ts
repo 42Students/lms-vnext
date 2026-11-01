@@ -16,6 +16,7 @@ import { canReadSkillCatalog } from "@/modules/skills/catalog-access";
 import { readSkillCatalog, recordSkillSelection, invalidateSkillCatalogSearchCache } from "@/modules/skills/catalog-service";
 import { skillsCatalogRuntimeEnabled, skillsCatalogSchemaReady, skillsCatalogReadiness } from "@/modules/skills/catalog-readiness";
 import { parseSkillCatalogQuery } from "@/modules/skills/catalog-validation";
+import { skillUsageNameSchema } from "@/modules/skills/usage-normalization";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -26,7 +27,7 @@ const selectionInput = z.discriminatedUnion("action",[
   z.strictObject({action:z.literal("SELECT_V1"),
     name:z.string().trim().min(1).max(200),skillId:z.string().uuid()}),
   z.strictObject({action:z.literal("SELECT_V2"),
-    name:z.string().trim().min(1).max(200)}),
+    name:skillUsageNameSchema}),
 ]);
 const importInput = z.strictObject({
   action:z.literal("IMPORT_SKILLS"),
@@ -76,6 +77,11 @@ export async function POST(request:Request) {
         remaining:0,sourceReconciled:false,verificationRequired:true,
       },{headers:{"Cache-Control":"private, no-store"}});
     }
+    // Schema replay permits a controlled import, not live selection traffic.
+    // Usage writers require the same complete seed/source readiness as reads.
+    if(!skillsCatalogRuntimeEnabled())
+      return NextResponse.json({error:"DB10_SKILLS_MIGRATIONS_PENDING"},
+        {status:503,headers:{"Cache-Control":"private, no-store"}});
     const selected=selectionInput.parse(payload);
     await recordSkillSelection(context,{
       name:selected.name,source:selected.action==="SELECT_V1"?"v1":"v2",
