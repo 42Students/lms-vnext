@@ -258,6 +258,28 @@ describe("DB019 registered PG17 after-college outcome fidelity",()=>{
   expect(unchanged.labels).toEqual(current.labels);
   expect(unchanged.version).toBe(current.version);
  });
+ it("normalizes internal label whitespace and refuses a duplicate normalized name",async()=>{
+  const initial=await readTpoOutcomeLabels(tpo);
+  const added=await saveTpoOutcomeLabels(tpo,{
+   labels:[...initial.labels,{label:"Career   accelerator",outcome:"HIGHER_STUDIES"}],
+   expectedVersion:initial.version,
+  });
+  expect(added.labels.at(-1)?.label).toBe("Career accelerator");
+  try{
+   await expect(saveTpoOutcomeLabels(tpo,{
+    labels:[
+     {label:"Another  destination",outcome:"HIGHER_STUDIES"},
+     {label:"Another destination",outcome:"ENTREPRENEURSHIP"},
+    ],
+    expectedVersion:added.version,
+   })).rejects.toThrow();
+   expect((await readTpoOutcomeLabels(tpo)).labels).toEqual(added.labels);
+  }finally{
+   await saveTpoOutcomeLabels(tpo,{
+    labels:initial.labels,expectedVersion:added.version,
+   });
+  }
+ });
  it("permits persisted College Admin and acting Super Admin without forging TPO membership",async()=>{
   const start=await getTpoAfterCollegeForRoster(collegeAdmin,[learnerId]);
   const initial=start.entries[learnerId]!;
