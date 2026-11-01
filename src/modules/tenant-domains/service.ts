@@ -50,7 +50,14 @@ export interface TenantDomainRepository {
   loadActiveCollege(
     collegeId: string,
   ): Promise<{ id: string; organizationId: string } | null>;
-  listByCollege(collegeId: string): Promise<TenantDomainView[]>;
+  /** With an actor, keep persisted authorization locked through the read.
+   * The optional actor preserves the internal canonical-host lookup caller. */
+  listByCollege(collegeId: string, context?: RequestContext): Promise<TenantDomainView[]>;
+  /** Revalidate private token reads and idempotent create responses. */
+  assertCurrentManagementAccess?(
+    context: RequestContext,
+    college: {id:string;organizationId:string},
+  ): Promise<void>;
   loadDomain(domainId: string): Promise<TenantDomainView | null>;
   findByHost(host: string): Promise<TenantDomainView | null>;
   createDomain(input: {
@@ -144,11 +151,12 @@ async function loadAuthorizedDomain(
     throw new TenantDomainServiceError("DOMAIN_NOT_FOUND");
   }
 
-  requireCollegeManage(context, {
-    id: domain.collegeId,
-    organizationId: domain.organizationId,
-  });
-
+  const college = {id:domain.collegeId,organizationId:domain.organizationId};
+  requireCollegeManage(context, college);
+  // A revoked system role must not read an outstanding DNS challenge from a
+  // previously authenticated admin tab. The production repository performs
+  // this verification using persisted user/role locks.
+  await repository.assertCurrentManagementAccess?.(context, college);
   return domain;
 }
 
@@ -200,7 +208,7 @@ export async function listTenantDomains(
   }
 
   requireCollegeManage(context, college);
-  return repository.listByCollege(college.id);
+  return repository.listByCollege(college.id, context);
 }
 
 export async function createTenantDomain(
@@ -217,6 +225,9 @@ export async function createTenantDomain(
   }
 
   requireCollegeManage(context, college);
+  // An idempotent repeated create may return an existing private challenge
+  // without performing the normal insert transaction, so recheck now.
+  await repository.assertCurrentManagementAccess?.(context, college);
 
   const existing = await repository.findByHost(input.host);
   if (existing) {
