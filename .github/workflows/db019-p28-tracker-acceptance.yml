@@ -1,0 +1,73 @@
+name: DB19-P28 tracker privacy, race and registered PostgreSQL acceptance
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'src/modules/bug-tracker/**'
+      - 'src/app/api/tracker/**'
+      - 'tests/integration/db19-p28-admin-attachment-redaction.test.ts'
+      - 'tests/integration/tracker-report-sa-placements-projects-100.test.ts'
+      - 'tests/integration/db10-tracker-admin.test.ts'
+      - 'tests/unit/bug-tracker-access-and-attachments.test.ts'
+      - '.github/workflows/db019-p28-tracker-acceptance.yml'
+
+permissions:
+  contents: read
+
+# Preserve exact-source evidence even while other chats push to main.
+concurrency:
+  group: db019-p28-${{ github.sha }}
+  cancel-in-progress: false
+
+jobs:
+  tracker-postgres:
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    services:
+      postgres:
+        image: postgres:17-alpine
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: lms_vnext_test
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres -d lms_vnext_test"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 12
+    env:
+      DATABASE_URL: postgresql://postgres:postgres@127.0.0.1:5432/lms_vnext_test
+      TEST_DATABASE_URL: postgresql://postgres:postgres@127.0.0.1:5432/lms_vnext_test
+      DB10_ISOLATED_TEST_DATABASE: "1"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Verify exact commit and registered migration journal
+        run: |
+          test "$(git rev-parse HEAD)" = "$GITHUB_SHA"
+          test -z "$(git status --porcelain)"
+          npm run db:journal:verify
+      - name: Zero-to-head registered migration replay and seed on isolated PG17
+        env:
+          DATABASE_URL: ""
+        run: npm run db:test:prepare
+      - name: Prove journal idempotence without altering applied versions
+        run: npm run db:migrate
+      - name: P28 actual PostgreSQL persistence, private attachment DTO and tenant negatives
+        run: >-
+          npx vitest run --config vitest.db.config.ts
+          tests/integration/db19-p28-admin-attachment-redaction.test.ts
+          tests/integration/tracker-report-sa-placements-projects-100.test.ts
+          tests/integration/db10-tracker-admin.test.ts
+      - name: P28 screenshot policy, MIME, scan and physical size negatives
+        run: npx vitest run tests/unit/bug-tracker-access-and-attachments.test.ts
+      - name: Ensure verifier did not create unregistered migration files
+        run: test -z "$(git status --porcelain -- drizzle/)"
