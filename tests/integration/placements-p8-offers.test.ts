@@ -2291,6 +2291,22 @@ describe("Placement P8 offers and joining", () => {
       status: "DEFERRED",
       joiningDate: "2027-02-01",
     });
+    // DB19-P17: staff is permanently recorded in the private joining
+    // history, but a learner-facing offer projection must not reveal that
+    // internal actor identifier or the full raw joined database row.
+    const persistedActor=await pool.query<{recorded_by_user_id:string}>(
+      "select recorded_by_user_id from placement_joining_outcomes where offer_id=$1",
+      [issued.id],
+    );
+    expect(persistedActor.rows).toEqual([{recorded_by_user_id:SEED_IDS.facultyUser}]);
+    const learnerDeferred=(await listOwnPlacementOffers(learner))
+      .find(row=>row.offer.id===issued.id);
+    expect(learnerDeferred?.joining).toMatchObject({
+      status:"DEFERRED",joiningDate:"2027-02-01",
+      reason:"University completion date moved",
+    });
+    expect(learnerDeferred?.joining).not.toHaveProperty("recordedByUserId");
+    expect(JSON.stringify(learnerDeferred?.joining)).not.toContain(SEED_IDS.facultyUser);
 
     await expect(
       recordPlacementJoiningOutcome(
