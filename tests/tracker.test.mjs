@@ -114,7 +114,9 @@ test('future phases cannot be silently unlocked from the tracker alone',()=>{
   x.tasks.forEach(t=>{t.done=true; t.acceptedAt='2026-10-12T00:00:00Z';
     t.acceptanceEvidence=accepted(t.id).acceptanceEvidence;});
   const report=inspectTracker(x);
-  assert.deepEqual(report.errors,[]);
+  // Closing the parent without closing all 33 scoped DB-019 packages is
+  // invalid even if every top-level task has fabricated acceptance receipts.
+  assert.ok(report.errors.some(e=>e.code==='DB19_PARENT_CLOSED_WITH_OPEN_PACKAGES'));
   assert.equal(report.readyForNextPhase,false);
 });
 test('the CLI reads one tracker and no legacy work queue or lane files',()=>{
