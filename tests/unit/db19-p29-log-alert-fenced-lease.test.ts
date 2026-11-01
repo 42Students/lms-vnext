@@ -13,14 +13,14 @@ const expiry = new Date("2099-11-01T00:03:00.000Z");
 
 function fakeStore(overrides: Partial<ScheduledJobLeaseStore> = {}): ScheduledJobLeaseStore {
   return {
-    acquire: vi.fn(async input => ({
+    acquire: vi.fn(async (input: { jobName: string; holderId: string; ttlMs: number }) => ({
       jobName: input.jobName,
       holderId: input.holderId,
       lockedUntil: expiry,
       fence: 2,
     } satisfies JobLease)),
     isCurrent: vi.fn(async () => true),
-    renew: vi.fn(async lease => ({ ...lease, lockedUntil: expiry })),
+    renew: vi.fn(async (lease: JobLease) => ({ ...lease, lockedUntil: expiry })),
     ...overrides,
   };
 }
@@ -29,7 +29,7 @@ describe("DB19-P29 log-alert scheduler uses the shared database-fenced lease", (
   it("checks stored ownership before AND after work; never releases a lease early", async () => {
     const order: string[] = [];
     const store = fakeStore({
-      acquire: vi.fn(async input => {
+      acquire: vi.fn(async (input: { jobName: string; holderId: string; ttlMs: number }) => {
         order.push("claim");
         return {
           jobName: input.jobName,
@@ -93,7 +93,7 @@ describe("DB19-P29 log-alert scheduler uses the shared database-fenced lease", (
   it("generates a fresh holder token for each invocation", async () => {
     const holders: string[] = [];
     const store = fakeStore({
-      acquire: vi.fn(async input => {
+      acquire: vi.fn(async (input: { jobName: string; holderId: string; ttlMs: number }) => {
         holders.push(input.holderId);
         return { ...input, lockedUntil: expiry, fence: 1 };
       }),
