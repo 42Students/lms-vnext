@@ -2077,8 +2077,8 @@
               "skills"
             ],
             "sourceFieldCount": 15,
-            "picked": false,
-            "pickedBy": "",
+            "picked": true,
+            "pickedBy": "CHAT_DB19_SKILLS_2026_11_01",
             "done": false,
             "acceptedAt": null,
             "acceptanceEvidence": [],
