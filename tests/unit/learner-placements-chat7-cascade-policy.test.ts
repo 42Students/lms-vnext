@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { isPlacementInternship, shouldKeepPlacementCascadeSibling } from "@/modules/placements/placement-cascade-policy";
 const base = {
-  acceptedCountsAsPlaced: true, siblingIsInternship: false, siblingIsDream: false,
+  acceptedCountsAsPlaced: true, siblingCountsAsPlaced:true, siblingIsDream: false,
   siblingAnnualCtcInr: 700000, acceptedAnnualCtcInr: 1000000,
   maxHeldOffers: 1, upliftPct: 40,
 };
@@ -10,7 +10,7 @@ describe("Learner placement offer cascade policy",()=>{
     expect(isPlacementInternship("INTERNSHIP")).toBe(true);
     expect(isPlacementInternship("FULL_TIME")).toBe(false);
     expect(shouldKeepPlacementCascadeSibling({...base,acceptedCountsAsPlaced:false})).toBe(true);
-    expect(shouldKeepPlacementCascadeSibling({...base,siblingIsInternship:true})).toBe(true);
+    expect(shouldKeepPlacementCascadeSibling({...base,siblingCountsAsPlaced:false})).toBe(true);
   });
   it("LEARNER-placements-R03 preserves Dream, held slots and salary-uplift eligibility",()=>{
     expect(shouldKeepPlacementCascadeSibling({...base,siblingIsDream:true})).toBe(true);
@@ -18,5 +18,6 @@ describe("Learner placement offer cascade policy",()=>{
     expect(shouldKeepPlacementCascadeSibling({...base,siblingAnnualCtcInr:1400000})).toBe(true);
     expect(shouldKeepPlacementCascadeSibling({...base,siblingAnnualCtcInr:null})).toBe(false);
     expect(shouldKeepPlacementCascadeSibling(base)).toBe(false);
+    expect(shouldKeepPlacementCascadeSibling({...base,siblingCountsAsPlaced:null})).toBe(false);
   });
 });

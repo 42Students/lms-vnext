@@ -100,7 +100,8 @@ describe("chat-5 placements core — offer state transition matrix",()=>{
   const helper=readFileSync("src/modules/placements/tpo-offer-acceptance-cascade.ts","utf8");
   const service=readFileSync("src/modules/placements/tpo-offer-lifecycle-service.ts","utf8");
   expect(helper).toContain("shouldKeepPlacementCascadeSibling({");
-  expect(helper).toContain("isPlacementInternship(");
+  expect(helper).toContain("accepted.countsAsPlaced!==false");
+  expect(helper).toContain("siblingCountsAsPlaced:sibling.countsAsPlaced");
   expect(helper).toContain("eq(placementApplications.membershipId,input.membershipId)");
   expect(helper).toContain("eq(placementJobs.collegeId,input.collegeId)");
   expect(helper).toContain('inArray(placementOffers.status,["ISSUED","ACCEPTED"])');

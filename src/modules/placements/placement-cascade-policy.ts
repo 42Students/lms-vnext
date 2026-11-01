@@ -10,22 +10,25 @@ export function parsePlacementCascadeId(reason: string | null | undefined): stri
 
 import { canReleaseAnotherHeldOffer } from "./offer-college-rules-policy";
 
-/** LEARNER-placements-R03: a qualifying offer keeps Dream, uplift and
- * internship applications alive rather than ending every sibling journey. */
+/** LEARNER-placements-R03: retain the internship type classifier for other
+ * domain rules. Cascade exemption uses the college's persisted per-drive policy,
+ * including custom job types, rather than inferring it from employment type. */
 export function isPlacementInternship(value: string | null | undefined): boolean {
   return value?.trim().toUpperCase() === "INTERNSHIP";
 }
 
 export function shouldKeepPlacementCascadeSibling(input: {
   acceptedCountsAsPlaced: boolean;
-  siblingIsInternship: boolean;
+  siblingCountsAsPlaced: boolean | null;
   siblingIsDream: boolean;
   siblingAnnualCtcInr: number | null;
   acceptedAnnualCtcInr: number | null;
   maxHeldOffers: number;
   upliftPct: number;
 }): boolean {
-  if (!input.acceptedCountsAsPlaced || input.siblingIsInternship) return true;
+  // An unaudited NULL never waives held-offer restrictions.
+  // Only an explicitly persisted FALSE preserves the sibling automatically.
+  if (!input.acceptedCountsAsPlaced || input.siblingCountsAsPlaced === false) return true;
   return canReleaseAnotherHeldOffer({
     maxHeldOffers: input.maxHeldOffers,
     upliftPct: input.upliftPct,

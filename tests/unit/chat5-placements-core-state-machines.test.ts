@@ -179,10 +179,10 @@ describe("chat-5 offers, waitlist eligibility, expiry and cascade invariants",()
   expect(parsePlacementCascadeId("not-a-cascade:"+cascadeId)).toBeNull();
  });
  it("PLACEMENTS-CASCADE-02 internship, dream and uplift siblings survive",()=>{
-  const base={acceptedCountsAsPlaced:true,siblingIsInternship:false,siblingIsDream:false,
+  const base={acceptedCountsAsPlaced:true,siblingCountsAsPlaced:true,siblingIsDream:false,
    siblingAnnualCtcInr:400_000,acceptedAnnualCtcInr:1_000_000,maxHeldOffers:1,upliftPct:20};
   expect(shouldKeepPlacementCascadeSibling(base)).toBe(false);
-  expect(shouldKeepPlacementCascadeSibling({...base,siblingIsInternship:true})).toBe(true);
+  expect(shouldKeepPlacementCascadeSibling({...base,siblingCountsAsPlaced:false})).toBe(true);
   expect(shouldKeepPlacementCascadeSibling({...base,siblingIsDream:true})).toBe(true);
   expect(shouldKeepPlacementCascadeSibling({...base,siblingAnnualCtcInr:1_200_000})).toBe(true);
   expect(shouldKeepPlacementCascadeSibling({...base,acceptedCountsAsPlaced:false})).toBe(true);

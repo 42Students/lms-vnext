@@ -5,7 +5,7 @@ import {
  placementJobRoleOptions,placementJobs,placementOffers,placementOfferStatusHistory,
 } from "@/db/schema";
 import {PlacementsServiceError} from "./errors";
-import {isPlacementInternship,shouldKeepPlacementCascadeSibling} from "./placement-cascade-policy";
+import {shouldKeepPlacementCascadeSibling} from "./placement-cascade-policy";
 import type {TpoJobTx} from "./tpo-job-write-base";
 
 /** Administrative acceptance must obey the SAME college-scoped sibling
@@ -21,6 +21,7 @@ export async function cascadeTpoRecordedAcceptance(tx:TpoJobTx,input:{
  const [accepted]=await tx.select({
   applicationId:placementApplications.id,
   jobEmploymentType:placementJobs.employmentType,
+  countsAsPlaced:placementJobs.countsAsPlaced,
   roleEmploymentType:placementJobRoleOptions.employmentType,
  }).from(placementApplications)
   .innerJoin(placementJobs,eq(placementJobs.id,placementApplications.jobId))
@@ -34,16 +35,15 @@ export async function cascadeTpoRecordedAcceptance(tx:TpoJobTx,input:{
   upliftPct:placementCollegeRules.upliftPct,
  }).from(placementCollegeRules).where(eq(placementCollegeRules.collegeId,input.collegeId))
   .for("share").limit(1);
+ // NULL is unaudited: do not allow it to waive the college held-offer cap.
  const acceptedCountsAsPlaced=input.offer.kind==="OFFER" &&
-  !isPlacementInternship(accepted.jobEmploymentType) &&
-  !isPlacementInternship(accepted.roleEmploymentType);
+  accepted.countsAsPlaced!==false;
  const wouldKeep=(sibling:{
   roleEmploymentType:string;jobEmploymentType:string;isDream:boolean;
-  annualCtcInr:number|null;
+  countsAsPlaced:boolean|null;annualCtcInr:number|null;
  })=>shouldKeepPlacementCascadeSibling({
   acceptedCountsAsPlaced,
-  siblingIsInternship:isPlacementInternship(sibling.roleEmploymentType)||
-   isPlacementInternship(sibling.jobEmploymentType),
+  siblingCountsAsPlaced:sibling.countsAsPlaced,
   siblingIsDream:sibling.isDream,
   siblingAnnualCtcInr:sibling.annualCtcInr,
   acceptedAnnualCtcInr:input.offer.annualCtcInr,
@@ -55,6 +55,7 @@ export async function cascadeTpoRecordedAcceptance(tx:TpoJobTx,input:{
   annualCtcInr:placementOffers.annualCtcInr,
   roleEmploymentType:placementJobRoleOptions.employmentType,
   jobEmploymentType:placementJobs.employmentType,
+  countsAsPlaced:placementJobs.countsAsPlaced,
   isDream:placementJobs.isDream,
  }).from(placementOffers)
   .innerJoin(placementApplications,eq(placementApplications.id,placementOffers.applicationId))
@@ -88,6 +89,7 @@ export async function cascadeTpoRecordedAcceptance(tx:TpoJobTx,input:{
   jobAnnualCtcInr:placementJobs.minimumAnnualCtcInr,
   roleEmploymentType:placementJobRoleOptions.employmentType,
   jobEmploymentType:placementJobs.employmentType,
+  countsAsPlaced:placementJobs.countsAsPlaced,
   isDream:placementJobs.isDream,
  }).from(placementApplications)
   .innerJoin(placementJobRoleOptions,eq(placementJobRoleOptions.id,placementApplications.roleOptionId))

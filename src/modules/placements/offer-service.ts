@@ -50,7 +50,7 @@ import { AuthorizationError, can } from "@/modules/permissions/policy";
 import {assertPersistedPlatformPermission} from "@/modules/permissions/persisted-actor";
 import { PlacementsServiceError } from "./errors";
 import { isDebarmentActive } from "./batch-registration-policy";
-import { parsePlacementCascadeId, isPlacementInternship, shouldKeepPlacementCascadeSibling } from "./placement-cascade-policy";
+import { parsePlacementCascadeId, shouldKeepPlacementCascadeSibling } from "./placement-cascade-policy";
 import { loadPlacementHeldOfferFacts } from "./held-offer-facts-service";
 import {
   canReleaseAnotherHeldOffer,
@@ -1063,16 +1063,15 @@ export async function actOnPlacementOffer(
       }).from(placementCollegeRules)
         .where(eq(placementCollegeRules.collegeId,current.job.collegeId))
         .for("share").limit(1);
+      // NULL is an unaudited drive and cannot silently waive the cap.
       const acceptedCountsAsPlaced = offer.kind === "OFFER" &&
-        !isPlacementInternship(acceptedRole?.employmentType) &&
-        !isPlacementInternship(current.job.employmentType);
+        current.job.countsAsPlaced !== false;
       const wouldKeep = (candidate: {
         roleEmploymentType: string; jobEmploymentType: string;
-        isDream: boolean; annualCtcInr: number | null;
+        countsAsPlaced:boolean|null;isDream: boolean; annualCtcInr: number | null;
       }) => shouldKeepPlacementCascadeSibling({
         acceptedCountsAsPlaced,
-        siblingIsInternship: isPlacementInternship(candidate.roleEmploymentType) ||
-          isPlacementInternship(candidate.jobEmploymentType),
+        siblingCountsAsPlaced: candidate.countsAsPlaced,
         siblingIsDream: candidate.isDream,
         siblingAnnualCtcInr: candidate.annualCtcInr,
         acceptedAnnualCtcInr: offer.annualCtcInr,
@@ -1084,6 +1083,7 @@ export async function actOnPlacementOffer(
         kind: placementOffers.kind, annualCtcInr: placementOffers.annualCtcInr,
         roleEmploymentType: placementJobRoleOptions.employmentType,
         jobEmploymentType: placementJobs.employmentType,
+        countsAsPlaced: placementJobs.countsAsPlaced,
         isDream: placementJobs.isDream,
       }).from(placementOffers)
         .innerJoin(placementApplications,
@@ -1134,6 +1134,7 @@ export async function actOnPlacementOffer(
         jobAnnualCtcInr:placementJobs.minimumAnnualCtcInr,
         roleEmploymentType:placementJobRoleOptions.employmentType,
         jobEmploymentType:placementJobs.employmentType,
+        countsAsPlaced:placementJobs.countsAsPlaced,
         isDream:placementJobs.isDream,
       }).from(placementApplications)
         .innerJoin(placementJobRoleOptions,
@@ -1441,7 +1442,8 @@ export async function previewOwnOfferAcceptanceImpact(
    id:placementOffers.id,status:placementOffers.status,kind:placementOffers.kind,
    title:placementJobs.title,annualCtcInr:placementOffers.annualCtcInr,
    roleEmploymentType:placementJobRoleOptions.employmentType,
-   jobEmploymentType:placementJobs.employmentType,isDream:placementJobs.isDream,
+   jobEmploymentType:placementJobs.employmentType,countsAsPlaced:placementJobs.countsAsPlaced,
+   isDream:placementJobs.isDream,
   }).from(placementOffers)
    .innerJoin(placementApplications,eq(placementApplications.id,placementOffers.applicationId))
    .innerJoin(placementJobRoleOptions,and(eq(placementJobRoleOptions.id,placementApplications.roleOptionId),
@@ -1458,6 +1460,7 @@ export async function previewOwnOfferAcceptanceImpact(
    jobAnnualCtcInr:placementJobs.minimumAnnualCtcInr,
    roleEmploymentType:placementJobRoleOptions.employmentType,
    jobEmploymentType:placementJobs.employmentType,
+   countsAsPlaced:placementJobs.countsAsPlaced,
    isDream:placementJobs.isDream,
   }).from(placementApplications)
    .innerJoin(placementJobRoleOptions,and(eq(placementJobRoleOptions.id,placementApplications.roleOptionId),
@@ -1466,16 +1469,15 @@ export async function previewOwnOfferAcceptanceImpact(
    .where(and(eq(placementApplications.membershipId,membership.id),
     eq(placementJobs.collegeId,membership.collegeId))),
  ]);
+ // Keep the preview aligned with committed acceptance and held-offer facts.
  const acceptedCountsAsPlaced=current.offer.kind==="OFFER" &&
-  !isPlacementInternship(acceptedRole?.employmentType) &&
-  !isPlacementInternship(current.job.employmentType);
+  current.job.countsAsPlaced!==false;
  const wouldKeep=(candidate:{
   roleEmploymentType:string;jobEmploymentType:string;
-  isDream:boolean;annualCtcInr:number|null;
+  countsAsPlaced:boolean|null;isDream:boolean;annualCtcInr:number|null;
  }):boolean=>shouldKeepPlacementCascadeSibling({
   acceptedCountsAsPlaced,
-  siblingIsInternship:isPlacementInternship(candidate.roleEmploymentType) ||
-   isPlacementInternship(candidate.jobEmploymentType),
+  siblingCountsAsPlaced:candidate.countsAsPlaced,
   siblingIsDream:candidate.isDream,
   siblingAnnualCtcInr:candidate.annualCtcInr,
   acceptedAnnualCtcInr:current.offer.annualCtcInr,

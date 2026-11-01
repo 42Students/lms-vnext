@@ -6,9 +6,9 @@ import { isPlacementCellApplied } from "@/components/placements/learner-placemen
 const source=(p:string)=>readFileSync(join(process.cwd(),p),"utf8");
 describe("chat-15 learner placement source parity",()=>{
  it("LEARNER-placements-R03 applies internship Dream uplift and held-offer policy to cascade",()=>{
-  const rule={acceptedCountsAsPlaced:true,siblingIsInternship:false,siblingIsDream:false,siblingAnnualCtcInr:800000,acceptedAnnualCtcInr:800000,maxHeldOffers:1,upliftPct:40};
+  const rule={acceptedCountsAsPlaced:true,siblingCountsAsPlaced:true,siblingIsDream:false,siblingAnnualCtcInr:800000,acceptedAnnualCtcInr:800000,maxHeldOffers:1,upliftPct:40};
   expect(shouldKeepPlacementCascadeSibling({...rule,acceptedCountsAsPlaced:false})).toBe(true);
-  expect(shouldKeepPlacementCascadeSibling({...rule,siblingIsInternship:true})).toBe(true);
+  expect(shouldKeepPlacementCascadeSibling({...rule,siblingCountsAsPlaced:false})).toBe(true);
   expect(shouldKeepPlacementCascadeSibling({...rule,siblingIsDream:true})).toBe(true);
   expect(shouldKeepPlacementCascadeSibling({...rule,siblingAnnualCtcInr:1120000})).toBe(true);
   expect(shouldKeepPlacementCascadeSibling(rule)).toBe(false);

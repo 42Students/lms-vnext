@@ -35,7 +35,9 @@ describe("chat-15 learner offers and internship truth",()=>{
   expect(page).toContain("jobCountsAsPlaced:row.job.countsAsPlaced");
   const cascade=source("src/modules/placements/offer-service.ts");
   expect(cascade).toContain("const acceptedCountsAsPlaced");
-  expect(cascade).toContain("isPlacementInternship");
+  expect(cascade).toContain("current.job.countsAsPlaced");
+  expect(cascade).toContain("siblingCountsAsPlaced");
+  expect(cascade).not.toContain("!isPlacementInternship(current.job.employmentType)");
   const card=source("src/components/placements/learner-placement-offers.tsx");
   expect(card).toContain("Counts as placed</dt>");
   expect(card).toContain("No (college policy)");
