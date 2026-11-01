@@ -62,7 +62,7 @@ type NotificationWriter = Pick<
  * This only guards event-backed receipts; campaign scheduling and recall
  * persistence require the separate authored-notice schema.
  */
-const releasedNotificationEvent = sql<boolean>`
+export const releasedNotificationEvent = sql<boolean>`
   coalesce(${activityEvents.metadata} ->> 'deliveryStatus', 'SENT') = 'SENT'
   and (
     ${activityEvents.metadata} ->> 'scheduledAt' is null
@@ -76,7 +76,7 @@ const releasedNotificationEvent = sql<boolean>`
  * be explicitly delivered before it can appear in an inbox or be marked read.
  * Immediate event-backed receipts have null deliveryStatus/scheduledAt.
  */
-const releasedNotificationReceipt = sql<boolean>`
+export const releasedNotificationReceipt = sql<boolean>`
   ${inAppNotifications.deletedAt} is null
   and coalesce(${inAppNotifications.deliveryStatus}, 'SENT') = 'SENT'
   and (
