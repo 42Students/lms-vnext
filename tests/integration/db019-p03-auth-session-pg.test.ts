@@ -168,6 +168,45 @@ describe.skipIf(!enabled)("DB19-P03 registered identity session and revocation b
     }
   });
 
+  it("a global platform disable races and defeats a pending session heartbeat",async()=>{
+    const session=await freshSession();
+    const old=await pool!.query<{last_seen_at:Date}>(`
+      update identity_device_sessions set
+         created_at=now()-interval '1 day',
+         last_seen_at=now()-interval '2 minutes'
+       where credential_digest=$1 returning last_seen_at
+    `,[session.digest]);
+    const blocker=await pool!.connect();
+    let transaction=false;
+    let pending:Promise<Awaited<ReturnType<typeof resolveSession>>>|undefined;
+    try {
+      await blocker.query("begin"); transaction=true;
+      const changed=await blocker.query(
+        "update users set platform_status='DISABLED' where id=$1 and platform_status='ACTIVE' returning id",
+        [owner],
+      );
+      expect(changed.rowCount).toBe(1);
+      pending=resolveSession(session.token);
+      expect(await waitForResolverBlockedBy(blocker)).toBe(true);
+      await blocker.query("commit");transaction=false;
+      // A disabled global user is a revoked credential even if the device
+      // itself has no revoked_at: no short-lived authorization grant escapes.
+      expect(await pending).toEqual({ok:false,reason:"SESSION_REVOKED"});
+      const after=await pool!.query<{last_seen_at:Date}>(
+        "select last_seen_at from identity_device_sessions where credential_digest=$1",
+        [session.digest],
+      );
+      expect(after.rows[0]!.last_seen_at.getTime()).toBe(old.rows[0]!.last_seen_at.getTime());
+    } finally {
+      if(transaction)await blocker.query("rollback");
+      if(pending)await pending.catch(()=>undefined);
+      blocker.release();
+      // Always restore seeded global identity state in this disposable gate,
+      // including when a race assertion fails before the commit.
+      await pool!.query("update users set platform_status='ACTIVE' where id=$1",[owner]);
+    }
+  });
+
   it("registered schema rejects non-hex session digests and revoker-without-revocation",async()=>{
     const session=await freshSession();
     await expect(pool!.query(
