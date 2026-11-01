@@ -18,7 +18,6 @@ const DISPOSITION_BY_CLASS = Object.freeze({
   LEGACY_SUBSYSTEM_NEEDS_PRODUCT_DECISION: "RETIRE_VNEXT_USER_APPROVED",
 });
 const SCAN_EXT = new Set([".ts", ".tsx", ".js", ".jsx", ".mjs", ".cjs", ".sql"]);
-const hasOwn = (obj, prop) => Object.prototype.hasOwnProperty.call(obj ?? {}, prop);
 const fieldId = (table, column) => table + "." + column;
 
 export function inspectHistoricalPackages({ source, disposition, approval, packages, journal, runtimeFiles }) {
