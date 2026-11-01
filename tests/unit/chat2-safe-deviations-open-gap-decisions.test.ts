@@ -26,7 +26,9 @@ describe("Safety justified deviations from legacy TPO UI",()=>{
  it("TPO-inbox-team-R02 requires explicit TPO permissions for recruiter messages and announcements rather than extending college-admin private-access by guess",()=>{
   const messages=src("src/modules/placements/tpo-messages-service.ts");
   const notices=src("src/app/(authenticated)/tpo/announcements/page.tsx");
-  expect(messages).toContain('hasMembershipRole(context, "TPO")');
+  expect(messages).toMatch(/hasMembershipRole\(context,\s*"TPO"\)/);
+  expect(messages).toContain('eq(membershipRoles.role,"TPO")');
+  expect(messages).toContain('eq(collegeMemberships.status,"ACTIVE")');
   expect(notices).toContain('hasMembershipRole(context,"TPO")');
   expect(messages).toContain("requirePlacementManageScope");
  });
