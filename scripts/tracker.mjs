@@ -114,7 +114,7 @@ export function inspectDb019WorkPackages(doc) {
   const packages=plan.packages;
   for(const row of packages){
     const id=row?.id;
-    if(!/^DB19-P\\d{2}$/.test(id??"")||ids.has(id))fail("DB19_INVALID_PACKAGE_ID",id);
+    if(!/^DB19-P\d{2}$/.test(id??"")||ids.has(id))fail("DB19_INVALID_PACKAGE_ID",id);
     ids.add(id);
     if(!validString(row?.title)||!validString(row?.acceptance))
       fail("DB19_PACKAGE_MISSING_SCOPE",id);
@@ -132,7 +132,7 @@ export function inspectDb019WorkPackages(doc) {
         !row.acceptanceEvidence.some(e=>SHA.test(e?.commitSha??"")&&
           ['PASS','PASSED'].includes(e?.result)&&
           typeof e?.kind==='string'&&e.kind.startsWith('EXECUTED')&&
-          /^https:\/\/github[.]com\/42Students\/lms-vnext\/actions\/runs\/\\d+/.test(e?.runUrl??"")))
+          /^https:\/\/github[.]com\/42Students\/lms-vnext\/actions\/runs\/\d+/.test(e?.runUrl??"")))
         fail("DB19_DONE_WITHOUT_EXECUTED_PROOF",id);
     } else if(row.acceptedAt!=null||(row.acceptanceEvidence?.length??0)>0){
       fail("DB19_OPEN_WITH_ACCEPTANCE_PROOF",id);
