@@ -1,0 +1,99 @@
+# Exact checked-out revision: scoped DB19-P20 runtime verification only.
+# A green result certifies the exercised after-college paths, not the whole
+# 31-field P20 source crosswalk and never the DB019/DB020 global gates.
+name: DB19 P20 registered PG17 after-college acceptance
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/db019-p20-after-college-registered-pg17.yml"
+      - "src/modules/placements/tpo-outcome-label-settings-service.ts"
+      - "src/modules/placements/tpo-after-college-write-service.ts"
+      - "src/modules/placements/tpo-after-college-bulk-service.ts"
+      - "src/modules/placements/tpo-after-college-details-model.ts"
+      - "src/modules/placements/tpo-after-college-model.ts"
+      - "src/components/tpo/tpo-outcome-labels-editor.tsx"
+      - "src/modules/placements/batch-registration-service.ts"
+      - "src/modules/placements/batch-participation-service.ts"
+      - "tests/integration/db019-after-college-outcome-details.test.ts"
+      - "tests/unit/db019-after-college-outcome-details.test.ts"
+      - "tests/unit/db019-p20-custom-label-choices.test.ts"
+      - "tests/unit/db019-p20-registration-race-contract.test.ts"
+      - "tests/unit/db019-p20-passing-year-options.test.ts"
+      - "tests/unit/chat11-tpo-outcome-labels-adversarial.test.ts"
+      - "drizzle/0331_db019_after_college_outcome_details.sql"
+      - "drizzle/meta/_journal.json"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: db019-p20-after-college-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  p20-registered-after-college:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    services:
+      postgres:
+        image: postgres:17-alpine
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: lms_vnext_test
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres -d lms_vnext_test"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 20
+    env:
+      TEST_DATABASE_URL: postgresql://postgres:postgres@127.0.0.1:5432/lms_vnext_test
+      DB03_ISOLATED_TEST_DATABASE: "1"
+      DB019_DISPOSABLE_TEST_DATABASE: "true"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - name: Install pinned dependencies
+        run: npm ci
+      - name: Verify checked-out revision and journal
+        run: |
+          test "$(git rev-parse HEAD)" = "$GITHUB_SHA"
+          npm run db:journal:verify
+      - name: Execute focused P20 unit and adversarial tests
+        run: >-
+          npx vitest run
+          tests/unit/db019-after-college-outcome-details.test.ts
+          tests/unit/db019-p20-custom-label-choices.test.ts
+          tests/unit/db019-p20-registration-race-contract.test.ts
+          tests/unit/db019-p20-passing-year-options.test.ts
+          tests/unit/chat11-tpo-outcome-labels-adversarial.test.ts
+          tests/unit/chat11-tpo-settings-archived-college-safety.test.ts
+      - name: Reset, replay registered migrations, and seed disposable PG17
+        env:
+          DATABASE_URL: ""
+        run: npm run db:test:prepare
+      - name: Prove registered replay is idempotent
+        env:
+          DATABASE_URL: postgresql://postgres:postgres@127.0.0.1:5432/lms_vnext_test
+        run: npm run db:migrate
+      - name: Execute P20 actual after-college writer, reader, privacy, rename, move, tenant and stale-version tests
+        env:
+          DATABASE_URL: postgresql://postgres:postgres@127.0.0.1:5432/lms_vnext_test
+        run: >-
+          npx vitest run --config vitest.db.registered.config.ts
+          tests/integration/db019-after-college-outcome-details.test.ts
+      - name: Typecheck exact revision
+        run: npm run typecheck
+      - name: State limited acceptance boundary
+        if: always()
+        run: |
+          echo "P20 after-college source/runtime subset only."
+          echo "P20 remains OPEN until 31-field batch/registration/season, enum, history and race acceptance."
+          echo "DB019 and DB020 remain OPEN."
