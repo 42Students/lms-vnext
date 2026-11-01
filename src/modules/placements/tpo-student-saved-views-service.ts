@@ -59,8 +59,25 @@ export async function mutateTpoStudentSavedView(ctx:RequestContext,raw:unknown){
   const existing="id" in input?all.find(row=>row.id===input.id):undefined;
   if("id" in input&&!existing)throw Error("Saved view not found.");
   if(input.action==="DELETE"){
-   await tx.delete(placementTpoSavedViews).where(eq(placementTpoSavedViews.id,input.id));
-   return{deleted:input.id};
+   const [deleted]=await tx.delete(placementTpoSavedViews)
+    .where(and(eq(placementTpoSavedViews.id,input.id),
+      eq(placementTpoSavedViews.collegeId,collegeId),
+      eq(placementTpoSavedViews.userId,ctx.user.id),
+      eq(placementTpoSavedViews.scope,"STUDENTS")))
+    .returning({id:placementTpoSavedViews.id});
+   if(!deleted)throw Error("Saved view not found.");
+   // Deleting a private saved view is a meaningful state transition, not
+   // silently disposable metadata. Keep the actor/tenant audit in the same
+   // transaction, even though the view itself is removed.
+   await tx.insert(activityEvents).values({
+    organizationId:college.organizationId,collegeId,
+    actorUserId:ctx.user.id,actorMembershipId:ctx.membership!.id,
+    module:"PLACEMENTS",eventType:"PLACEMENTS_TPO_STUDENT_SAVED_VIEW_CHANGED",
+    subjectType:"placement_tpo_saved_view",subjectId:deleted.id,
+    summary:"TPO student saved view deleted",
+    metadata:{scope:"STUDENTS",action:"DELETE"},
+   });
+   return{deleted:deleted.id};
   }
   const now=new Date().toISOString();
   if(input.action==="OPEN"){
