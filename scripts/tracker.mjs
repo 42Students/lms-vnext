@@ -89,6 +89,103 @@ const validString = x => typeof x === 'string' && x.trim().length > 0;
 const validDate = x => validString(x) && Number.isFinite(Date.parse(x));
 const add = (errors, code, data = {}) => errors.push({code, ...data});
 
+/**
+ * Advisory per-chat DB-019 allocation board, NOT a second task tracker and
+ * NOT a domain ownership/permission mechanism. The 81 parent tasks remain
+ * the sole measure of database acceptance.
+ */
+export function inspectDb019WorkPackages(doc) {
+  const errors=[];
+  const fail=(code,id=null)=>errors.push({code,...(id?{id}:{})});
+  const plan=doc?.tasks?.find(t=>t?.id==="DB-019")?.workPlan;
+  if(plan?.schemaVersion!==1||!Array.isArray(plan.packages)){
+    fail("DB19_WORK_PACKAGES_MISSING");
+    return {errors,packages:[],picked:0,unpickedOpen:0,done:0,open:0,
+      totalFields:0,totalTables:0,domainCoverage:{}};
+  }
+  const expectedDomainFields={DB00:732,DB01:312,DB02:125,DB03:79,
+    DB04:103,DB05:92,DB06:248,DB07:358,DB08:280,DB09:279,DB10:221};
+  const expectedDomainTables={DB00:39,DB01:22,DB02:13,DB03:6,
+    DB04:7,DB05:7,DB06:21,DB07:16,DB08:18,DB09:31,DB10:19};
+  const ids=new Set(),sources=new Set(),domainCoverage={};
+  for(const name of Object.keys(expectedDomainFields))
+    domainCoverage[name]={fields:0,tables:0};
+  let totalFields=0,totalTables=0,picked=0,unpickedOpen=0,done=0;
+  const packages=plan.packages;
+  for(const row of packages){
+    const id=row?.id;
+    if(!/^DB19-P\\d{2}$/.test(id??"")||ids.has(id))fail("DB19_INVALID_PACKAGE_ID",id);
+    ids.add(id);
+    if(!validString(row?.title)||!validString(row?.acceptance))
+      fail("DB19_PACKAGE_MISSING_SCOPE",id);
+    if(typeof row?.picked!=="boolean"||typeof row?.done!=="boolean")
+      fail("DB19_INVALID_STATUS",id);
+    if(row.picked===true&&!validString(row.pickedBy))
+      fail("DB19_PICKED_WITHOUT_ASSIGNEE",id);
+    if(row.picked===false&&validString(row.pickedBy))
+      fail("DB19_UNPICKED_WITH_ASSIGNEE",id);
+    if(row.picked===true)picked++;
+    if(row.picked===false&&row.done===false)unpickedOpen++;
+    if(row.done===true){
+      done++;
+      if(!validDate(row.acceptedAt)||!Array.isArray(row.acceptanceEvidence)||
+        !row.acceptanceEvidence.some(e=>SHA.test(e?.commitSha??"")&&
+          ['PASS','PASSED'].includes(e?.result)&&
+          typeof e?.kind==='string'&&e.kind.startsWith('EXECUTED')&&
+          /^https:\/\/github[.]com\/42Students\/lms-vnext\/actions\/runs\/\\d+/.test(e?.runUrl??"")))
+        fail("DB19_DONE_WITHOUT_EXECUTED_PROOF",id);
+    } else if(row.acceptedAt!=null||(row.acceptanceEvidence?.length??0)>0){
+      fail("DB19_OPEN_WITH_ACCEPTANCE_PROOF",id);
+    }
+    if(row.kind==="DOMAIN"){
+      if(!Object.hasOwn(expectedDomainFields,row.domain)||
+        !validString(row.sourceInventory)||!Array.isArray(row.sourceTables)||
+        !row.sourceTables.length||!Number.isInteger(row.sourceFieldCount)||
+        row.sourceFieldCount<=0){
+        fail("DB19_INVALID_DOMAIN_SCOPE",id);continue;
+      }
+      for(const table of row.sourceTables){
+        if(!validString(table)||sources.has(table))
+          fail("DB19_DUPLICATE_OR_INVALID_SOURCE_TABLE",id);
+        sources.add(table);
+      }
+      domainCoverage[row.domain].fields+=row.sourceFieldCount;
+      domainCoverage[row.domain].tables+=row.sourceTables.length;
+      totalFields+=row.sourceFieldCount;
+      totalTables+=row.sourceTables.length;
+    }else if(!["FOUNDATION","GATE"].includes(row.kind) ||
+       !Array.isArray(row.sourceTables)||row.sourceTables.length!==0||
+       row.sourceFieldCount!==0){
+      fail("DB19_INVALID_NON_DOMAIN_SCOPE",id);
+    }
+  }
+  for(const [domain,expected] of Object.entries(expectedDomainFields)){
+    if(domainCoverage[domain].fields!==expected||
+      domainCoverage[domain].tables!==expectedDomainTables[domain])
+      fail("DB19_DOMAIN_COVERAGE_DRIFT",domain);
+  }
+  if(packages.length!==33||totalFields!==2829||totalTables!==199)
+    fail("DB19_GLOBAL_COVERAGE_DRIFT");
+  const domainIds=Array.from({length:30},(_,i)=>'DB19-P'+String(i+1).padStart(2,'0'));
+  const reconciliation=packages.find(x=>x.id==='DB19-P31');
+  const certification=packages.find(x=>x.id==='DB19-P32');
+  if(!ids.has('DB19-P00')||!domainIds.every(id=>ids.has(id))||
+    !reconciliation||!certification||
+    reconciliation.kind!=='GATE'||certification.kind!=='GATE'||
+    JSON.stringify(reconciliation.dependsOn)!==JSON.stringify(domainIds)||
+    JSON.stringify(certification.dependsOn)!==JSON.stringify(['DB19-P31']))
+    fail("DB19_FINAL_GATES_INCOMPLETE");
+  for(const gate of [reconciliation,certification].filter(Boolean))
+    if(gate.done===true&&gate.dependsOn.some(id=>
+      packages.find(p=>p.id===id)?.done!==true))
+      fail("DB19_GATE_CLOSED_WITH_OPEN_DEPENDENCIES",gate.id);
+  if(doc.tasks.find(x=>x.id==='DB-019')?.done===true&&done!==packages.length)
+    fail("DB19_PARENT_CLOSED_WITH_OPEN_PACKAGES");
+  return {mode:"DB19_ADVISORY_PICKUP_NOT_GLOBAL_ACCEPTANCE",errors,
+    packages,picked,unpickedOpen,done,open:packages.length-done,
+    totalFields,totalTables,domainCoverage};
+}
+
 export function inspectTracker(doc) {
   const errors = [];
   if (!doc || doc.schemaVersion !== 1) add(errors, 'INVALID_TRACKER_VERSION');
@@ -153,6 +250,7 @@ export function inspectTracker(doc) {
   }
   // Stage labels are evidence-informed estimates, never proof of task acceptance.
   errors.push(...inspectDatabaseProgress(doc).errors);
+  errors.push(...inspectDb019WorkPackages(doc).errors);
   // Thematic domain groups remain exhaustive, but do not assign ownership.
   const coverage=inspectDomainPackages(doc);
   for(const id of coverage.unassigned)add(errors,'UNASSIGNED_DATABASE_PACKAGE',{id});
@@ -343,6 +441,20 @@ if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.me
       console.log('Other OPEN tasks: '+(queue.otherOpen.join(', ')||'none'));
       console.log('Two no-closure passes max: record exact blocker, switch to independent OPEN work.');
       console.log('No exclusive assignments; shared migrations need serialized registration and PostgreSQL proof.');
+      if(report.errors.length){console.error(JSON.stringify(report.errors));process.exitCode=2}
+    } else if(process.argv.includes('--db19')){
+      const doc=JSON.parse(fs.readFileSync(path.join(root??path.resolve(path.dirname(fileURLToPath(import.meta.url)),'..'),'docs/tracker.json'),'utf8'));
+      const board=inspectDb019WorkPackages(doc);
+      console.log('DB-019 | work packages '+board.done+'/'+board.packages.length+
+        ' done | '+board.picked+' picked | '+board.unpickedOpen+' unpicked/open');
+      console.log('199 original source tables / 2829 fields partitioned (not runtime accepted).');
+      for(const p of board.packages.filter(p=>!process.argv.includes('--unpicked')||
+        (p.picked===false&&p.done===false))){
+        console.log([p.id,p.domain??'GLOBAL',p.title,
+          p.picked?'PICKED ('+p.pickedBy+')':'NOT PICKED',
+          p.done?'DONE':'NOT DONE',
+          p.sourceFieldCount+' fields'].join(' | '));
+      }
       if(report.errors.length){console.error(JSON.stringify(report.errors));process.exitCode=2}
     } else if(process.argv.includes('--progress')){
       const doc=JSON.parse(fs.readFileSync(path.join(root??path.resolve(path.dirname(fileURLToPath(import.meta.url)),'..'),'docs/tracker.json'),'utf8'));
