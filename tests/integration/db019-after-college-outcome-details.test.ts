@@ -22,6 +22,19 @@ const tpo:RequestContext={
   organizationId:SEED_IDS.organization,status:"ACTIVE",roles:["TPO"],
  },
 };
+const collegeAdmin:RequestContext={
+ user:{id:SEED_IDS.collegeAdminUser,identityUid:"db019-admin-outcomes",platformStatus:"ACTIVE",systemRoles:[]},
+ membership:{
+  id:SEED_IDS.collegeAdminMembership,collegeId:SEED_IDS.collegeA,
+  organizationId:SEED_IDS.organization,status:"ACTIVE",roles:["COLLEGE_ADMIN"],
+ },
+};
+const scopedSuperAdmin:RequestContext={
+ user:{id:SEED_IDS.superAdminUser,identityUid:"db019-sa-outcomes",platformStatus:"ACTIVE",
+  systemRoles:["SUPER_ADMIN"]},
+ membership:null,
+ adminScope:{organizationId:SEED_IDS.organization,collegeId:SEED_IDS.collegeA},
+};
 const learnerId=SEED_IDS.learnerCollegeAMembership;
 let originalSettingsPresent=false,originalOutcomeLabels:unknown=null;
 describe("DB019 registered PG17 after-college outcome fidelity",()=>{
@@ -128,4 +141,71 @@ describe("DB019 registered PG17 after-college outcome fidelity",()=>{
    ["X".repeat(201),learnerId],
   )).rejects.toMatchObject({code:"22001"});
  });
+ it("permits persisted College Admin and acting Super Admin without forging TPO membership",async()=>{
+  const start=await getTpoAfterCollegeForRoster(collegeAdmin,[learnerId]);
+  const initial=start.entries[learnerId]!;
+  const adminWrite=await setTpoAfterCollegeOutcome(collegeAdmin,{
+   learnerMembershipId:learnerId,outcome:"COMPETITIVE_EXAMS",
+   outcomeLabel:null,outcomeDetail:"Administrator review",
+   expectedVersion:initial.expectedVersion,
+  });
+  expect(adminWrite.changed).toBe(true);
+  const adminEvent=await pool.query<{actor_user_id:string;actor_membership_id:string|null}>(
+   "SELECT actor_user_id,actor_membership_id FROM activity_events "+
+   "WHERE event_type='placements.student.after_college_updated' "+
+   "AND subject_id=$1 AND actor_user_id=$2 ORDER BY occurred_at DESC LIMIT 1",
+   [learnerId,SEED_IDS.collegeAdminUser],
+  );
+  expect(adminEvent.rows[0]).toEqual({
+   actor_user_id:SEED_IDS.collegeAdminUser,
+   actor_membership_id:SEED_IDS.collegeAdminMembership,
+  });
+  const superWrite=await setTpoAfterCollegeOutcome(scopedSuperAdmin,{
+   learnerMembershipId:learnerId,outcome:"HIGHER_STUDIES",
+   expectedVersion:adminWrite.version,
+  });
+  expect(superWrite.changed).toBe(true);
+  const superEvent=await pool.query<{actor_user_id:string;actor_membership_id:string|null}>(
+   "SELECT actor_user_id,actor_membership_id FROM activity_events "+
+   "WHERE event_type='placements.student.after_college_updated' "+
+   "AND subject_id=$1 AND actor_user_id=$2 ORDER BY occurred_at DESC LIMIT 1",
+   [learnerId,SEED_IDS.superAdminUser],
+  );
+  expect(superEvent.rows[0]).toEqual({
+   actor_user_id:SEED_IDS.superAdminUser,actor_membership_id:null,
+  });
+  const superBulk=await bulkUpdateTpoAfterCollege(scopedSuperAdmin,{changes:[{
+   membershipId:learnerId,outcome:"NOT_INTERESTED",
+   expectedVersion:superWrite.version,
+  }]});
+  expect(superBulk.updated).toBe(1);
+  const superBulkEvent=await pool.query<{actor_membership_id:string|null}>(
+   "SELECT actor_membership_id FROM activity_events "+
+   "WHERE event_type='placements.student.after_college_updated' "+
+   "AND subject_id=$1 AND actor_user_id=$2 "+
+   "AND metadata->>'mode'='BULK' ORDER BY occurred_at DESC LIMIT 1",
+   [learnerId,SEED_IDS.superAdminUser],
+  );
+  expect(superBulkEvent.rows[0]?.actor_membership_id).toBeNull();
+  const adminBulk=await bulkUpdateTpoAfterCollege(collegeAdmin,{changes:[{
+   membershipId:learnerId,outcome:"NOT_DECIDED",
+   expectedVersion:superBulk.results[0]!.version,
+  }]});
+  expect(adminBulk.updated).toBe(1);
+ });
+ it("keeps scoped Super Admin restricted to selected college",async()=>{
+  const otherCollege={...scopedSuperAdmin,adminScope:{
+   organizationId:SEED_IDS.organization,collegeId:SEED_IDS.collegeB,
+  }};
+  const start=await getTpoAfterCollegeForRoster(collegeAdmin,[learnerId]);
+  await expect(setTpoAfterCollegeOutcome(otherCollege,{
+   learnerMembershipId:learnerId,outcome:"HIGHER_STUDIES",
+   expectedVersion:start.entries[learnerId]!.expectedVersion,
+  })).rejects.toMatchObject({code:"AFTER_COLLEGE_NOT_FOUND"});
+  await expect(bulkUpdateTpoAfterCollege(otherCollege,{changes:[{
+   membershipId:learnerId,outcome:"HIGHER_STUDIES",
+   expectedVersion:start.entries[learnerId]!.expectedVersion,
+  }]})).rejects.toMatchObject({code:"AFTER_COLLEGE_NOT_FOUND"});
+ });
+
 });
