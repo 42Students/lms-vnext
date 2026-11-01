@@ -1,0 +1,70 @@
+name: DB19 P19 drive-day attendance persisted-role PostgreSQL 17
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/db019-p19-drive-day-attendance-pg17.yml"
+      - "src/modules/placements/tpo-drive-day-checkin-service.ts"
+      - "tests/integration/db09-tpo-drive-day-checkin.test.ts"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: db019-p19-attendance-${{ github.sha }}
+  cancel-in-progress: false
+
+jobs:
+  attendance-postgres:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    services:
+      postgres:
+        image: postgres:17-alpine
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: lms_vnext_test
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres -d lms_vnext_test"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 20
+    env:
+      DATABASE_URL: postgresql://postgres:postgres@127.0.0.1:5432/lms_vnext_test
+      TEST_DATABASE_URL: postgresql://postgres:postgres@127.0.0.1:5432/lms_vnext_test
+      DB09_ISOLATED_TEST_DATABASE: "1"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Assert exact checked-out source and journal
+        run: |
+          test "$(git rev-parse HEAD)" = "$GITHUB_SHA"
+          npm run db:journal:verify
+      - name: Replay and seed registered migrations from zero in PostgreSQL 17
+        env:
+          DATABASE_URL: ""
+        run: npm run db:test:prepare
+      - name: Assert registered-journal replay idempotence
+        run: npm run db:migrate
+      - name: Execute actor-revocation and drive-day attendance negatives
+        run: >-
+          npx vitest run --config vitest.db.config.ts
+          tests/integration/db09-tpo-drive-day-checkin.test.ts
+      - name: Check TypeScript contracts
+        env:
+          NODE_OPTIONS: --max-old-space-size=6144
+        run: npm run typecheck
+      - name: State proof boundary
+        if: always()
+        run: |
+          echo "This workflow covers only P19 TPO attendance persisted-role and recorded audit behavior."
+          echo "It does not certify all 52 P19 fields, all interview/results flows or DB019/DB020."
