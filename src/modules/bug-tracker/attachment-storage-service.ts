@@ -61,7 +61,15 @@ export async function confirmTrackerAttachment(
    const [locked]=await tx.select({id:db10BugReports.id}).from(db10BugReports)
      .where(eq(db10BugReports.id,issue.report.id)).for("update").limit(1);
    if(!locked)throw new Error("TRACKER_ISSUE_NOT_FOUND");
-   const [existing]=await tx.select().from(db10BugReportAttachments).where(and(
+   // Confirmation returns safe metadata, never the private object key.
+   // The key is used solely in the scoped WHERE predicate, not in the DTO.
+   const [existing]=await tx.select({
+     id:db10BugReportAttachments.id,
+     originalFilename:db10BugReportAttachments.originalFilename,
+     contentType:db10BugReportAttachments.contentType,
+     sizeBytes:db10BugReportAttachments.sizeBytes,
+     createdAt:db10BugReportAttachments.createdAt,
+   }).from(db10BugReportAttachments).where(and(
      eq(db10BugReportAttachments.bugReportId,locked.id),
      eq(db10BugReportAttachments.storageKey,input.storageKey))).limit(1);
    if(existing)return {attachment:existing,replayed:true};
@@ -74,7 +82,13 @@ export async function confirmTrackerAttachment(
    });
    const [row]=await tx.insert(db10BugReportAttachments).values({
      bugReportId:locked.id,...valid,
-   }).onConflictDoNothing().returning();
+   }).onConflictDoNothing().returning({
+     id:db10BugReportAttachments.id,
+     originalFilename:db10BugReportAttachments.originalFilename,
+     contentType:db10BugReportAttachments.contentType,
+     sizeBytes:db10BugReportAttachments.sizeBytes,
+     createdAt:db10BugReportAttachments.createdAt,
+   });
    if(!row)throw new Error("TRACKER_ATTACHMENT_STALE");
    return {attachment:row,replayed:false};
  });
