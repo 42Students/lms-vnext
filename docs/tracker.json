@@ -2473,7 +2473,34 @@
             "done": false,
             "acceptedAt": null,
             "acceptanceEvidence": [],
-            "acceptance": "Prove verified share TTL/download scope, event/read history, private message and note privacy, and permissions."
+            "acceptance": "Prove verified share TTL/download scope, event/read history, private message and note privacy, and permissions.",
+            "implementationCheckpoint": {
+              "status": "46_SOURCE_MAPPINGS_PRESENT_LIVE_SHARE_ISSUANCE_AND_CONSUMER_WITNESS_OPEN",
+              "recordedOn": "2026-11-02",
+              "frozenSourceFields": 46,
+              "sourceTables": [
+                "tpo_message",
+                "tpo_message_thread",
+                "tpo_share_event",
+                "tpo_share_link",
+                "tpo_student_note",
+                "tpo_saved_view"
+              ],
+              "sourceContract": "docs/planning/database-parity-db09-field-ledger.json",
+              "scopeNote": "Source ledger maps all 46 fields but mappingTarget statuses remain PROPOSED_SOURCE_REVIEWED_UNVERIFIED; physical schema alone is not share/OTP privacy or event chronology acceptance.",
+              "verifiedExistingSignals": [
+                "Registered migration 0075 declares placement_tpo_share_links and events",
+                "tests/integration/tpo-student-saved-views-p24.test.ts includes delete/college audit negatives",
+                "tests/integration/tpo-messages-service.test.ts includes revoked TPO inbox denial",
+                "tests/db09-share-registered-pg-acceptance.mjs has isolated direct-SQL share lifecycle witnesses"
+              ],
+              "preciseBlockers": [
+                "Search of live src references to placementTpoShareLinks and raw placement_tpo_share_links did not establish a complete authorized issuance/write, OTP verification, revoke and download producer chain; current hits are schema, read/projection, reminders and SQL tests",
+                "P24 46 source/target field-specific producer and consumer semantics need executed exact-current-head PG17 integrated share TTL, code hashing, recipient/college, private note and message history negative witnesses",
+                "Do not substitute placement_company_applicant_shares tests for the distinct legacy placement_tpo_share_links source contract or mark this package accepted from source names alone"
+              ],
+              "evidenceIsNotAcceptance": true
+            }
           },
           {
             "id": "DB19-P25",
