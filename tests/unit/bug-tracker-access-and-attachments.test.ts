@@ -6,6 +6,7 @@ import {
   bugScreenshotType,
   canMutateBugTrackerWorkflow,
   canReadBugTrackerIssue,
+  canSignBugScreenshotDownload,
   validateBugScreenshotUpload,
   validateBugScreenshotConfirmation,
 } from "@/modules/bug-tracker/access-and-attachments";
@@ -133,5 +134,78 @@ describe("DB10 screenshot validation without public object URLs", () => {
       storedContentType: "image/jpeg", storedLength: 123,
       currentCount: 0,
     })).toThrow("INVALID_STORAGE_KEY");
+  });
+});
+
+
+describe("DB19-P28 signed screenshot download integrity", () => {
+  const record = {
+    publicId: "LMS-0001",
+    storageKey: "bug-tracker/LMS-0001/550e8400-e29b-41d4-a716-446655440000.png",
+    contentType: "image/png",
+    sizeBytes: 128,
+  };
+  const head = {
+    contentType: "image/png",
+    sizeBytes: 128,
+    metadata: {
+      "malware-scan-status": "CLEAN",
+      "scan-attested-by": "lms-vnext-privileged-scanner",
+    },
+  };
+
+  it("allows the unchanged confirmed object only with a trusted scanner", () => {
+    expect(canSignBugScreenshotDownload(record, head, "production")).toBe(true);
+    expect(canSignBugScreenshotDownload(record, null, "production")).toBe(false);
+  });
+
+  it("rejects overwritten or mismatched physical object bytes and DB metadata", () => {
+    for (const size of [0, 127, 129, 8 * 1024 * 1024 + 1, Number.NaN, 1.2]) {
+      expect(canSignBugScreenshotDownload(record, { ...head, sizeBytes: size }, "production"))
+        .toBe(false);
+    }
+    for (const size of [0, 127, 129, 8 * 1024 * 1024 + 1, 1.2]) {
+      expect(canSignBugScreenshotDownload({ ...record, sizeBytes: size }, head, "production"))
+        .toBe(false);
+    }
+    expect(canSignBugScreenshotDownload(record, {
+      ...head, contentType: "image/jpeg",
+    }, "production")).toBe(false);
+    expect(canSignBugScreenshotDownload({
+      ...record, contentType: "image/svg+xml",
+    }, head, "production")).toBe(false);
+  });
+
+  it("refuses a swapped issue, malformed object key or filename extension", () => {
+    for (const storageKey of [
+      record.storageKey.replace("LMS-0001", "LMS-9999"),
+      record.storageKey.replace(".png", ".jpg"),
+      "bug-tracker/LMS-0001/unsafe.png",
+      record.storageKey + "/another",
+    ]) {
+      expect(canSignBugScreenshotDownload({ ...record, storageKey }, head, "production"))
+        .toBe(false);
+    }
+    expect(canSignBugScreenshotDownload({
+      ...record, publicId: "LMS-9999",
+    }, head, "production")).toBe(false);
+  });
+
+  it("never accepts user-provided scan status or development proof in production", () => {
+    expect(canSignBugScreenshotDownload(record, {
+      ...head, metadata: { ...head.metadata, "malware-scan-status": "PENDING" },
+    }, "production")).toBe(false);
+    expect(canSignBugScreenshotDownload(record, {
+      ...head, metadata: { ...head.metadata, "scan-attested-by": "client-supplied" },
+    }, "production")).toBe(false);
+
+    const devOnly = {
+      ...head,
+      metadata: { ...head.metadata, "scan-attested-by": "lms-vnext-dev-format-check" },
+    };
+    expect(canSignBugScreenshotDownload(record, devOnly, "development")).toBe(true);
+    expect(canSignBugScreenshotDownload(record, devOnly, "test")).toBe(false);
+    expect(canSignBugScreenshotDownload(record, devOnly, "production")).toBe(false);
+    expect(canSignBugScreenshotDownload(record, devOnly, undefined)).toBe(false);
   });
 });
