@@ -1,4 +1,4 @@
-import { and, eq, or } from "drizzle-orm";
+import { and, eq, inArray, isNull, or } from "drizzle-orm";
 import { z } from "zod";
 import { getDb } from "@/db/client";
 import {
@@ -8,6 +8,7 @@ import {
   departments,
   learnerProgramEnrollments,
   membershipRoles,
+  moduleAccessRules,
   programs,
   sectionEnrollments,
   sections,
@@ -18,7 +19,7 @@ import { placementEligibilityDecisions } from "@/db/schema/placement-access";
 import { placementBatchLifecycles } from "@/db/schema/placement-batches";
 import { placementBatchRegistrations } from "@/db/schema/placement-registration";
 import { hasMembershipRole, type RequestContext } from "@/modules/identity/context";
-import { resolveOptionalModuleAccess } from "@/modules/module-access/service";
+import { resolveModuleAccessFromRules, resolveOptionalModuleAccess } from "@/modules/module-access/service";
 import {
   createRegistrationWrite,
   resolveRegistrationWindow,
@@ -100,12 +101,38 @@ export async function registerOwnPlacementChoice(
   const membership = context.membership;
   const db = getDb();
   return db.transaction(async (tx) => {
-    const [college] = await tx.select({ id: colleges.id })
-      .from(colleges)
-      .where(eq(colleges.id, membership.collegeId))
-      .for("update")
-      .limit(1);
-    if (!college) throw new PlacementRegistrationError("DB08_REGISTRATION_FORBIDDEN");
+    const [college] = await tx.select({
+      id: colleges.id, organizationId: colleges.organizationId,
+      status: colleges.status,
+    }).from(colleges).where(eq(colleges.id, membership.collegeId))
+      .for("update").limit(1);
+    if (!college || college.status !== "ACTIVE")
+      throw new PlacementRegistrationError("DB08_REGISTRATION_FORBIDDEN");
+
+    // The earlier module check is a fast UI preflight only. College module
+    // writers take this same college UPDATE lock. Re-evaluate the persisted
+    // COLLEGE > ORGANIZATION > GLOBAL placement policy AFTER acquiring it,
+    // so a disable that committed first cannot leave a new registration.
+    // SHARE-lock the rules as well: ancestor policy toggles must not change
+    // while this transaction is inserting the registration and SQL event.
+    const liveModuleRules = await tx.select({
+      scopeType:moduleAccessRules.scopeType,
+      scopeId:moduleAccessRules.scopeId,
+      module:moduleAccessRules.module,
+      enabled:moduleAccessRules.enabled,
+      locked:moduleAccessRules.locked,
+    }).from(moduleAccessRules).where(and(
+      eq(moduleAccessRules.module,"placements"),
+      or(isNull(moduleAccessRules.scopeId),
+        inArray(moduleAccessRules.scopeId,[college.id,college.organizationId])),
+    )).for("share");
+    const liveModules = resolveModuleAccessFromRules([
+      {scopeType:"COLLEGE",scopeId:college.id},
+      {scopeType:"ORGANIZATION",scopeId:college.organizationId},
+      {scopeType:"GLOBAL",scopeId:null},
+    ],liveModuleRules);
+    if(!liveModules.placements.enabled)
+      throw new PlacementRegistrationError("DB08_REGISTRATION_MODULE_DISABLED");
 
     const [learner] = await tx.select({
       id: collegeMemberships.id,
