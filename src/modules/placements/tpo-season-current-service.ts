@@ -1,6 +1,7 @@
 import "server-only";
 import type {RequestContext} from "@/modules/identity/context";
 import {getTpoPlacementSeasonSettings} from "./tpo-settings-read-service";
+import {getTpoBlockedDates} from "./tpo-configuration-read-service";
 
 /** Current choice and registration are independent facts. Persisted vNext
  * ACTIVE/CLOSED is not the legacy 'isCurrent' flag: its unique index allows
@@ -53,12 +54,32 @@ export function projectTpoSeasonRegistration(source:{
  * The runtime fallback remains DERIVED_ACTIVE until the historical selection
  * is actually registered in the database.
  */
+/** The current season uses the college-wide calendar blackout registry in
+ * greenfield vNext. It is not the historical season JSON: a caller must not
+ * infer archived season-by-season blackout snapshots from this projection.
+ * If storage is missing, retain an explicit unsupported status rather than
+ * returning an apparently authoritative empty calendar.
+ */
+export function withCurrentSeasonBlockedDates<T extends {
+ blockedDates:readonly {date:string;label:string}[];
+ blockedDatesSupported:boolean;
+}>(registration:T,read:{ready:boolean;rows:readonly {day:string;reason:string}[]}):T{
+ return {...registration,
+  blockedDatesSupported:read.ready,
+  blockedDates:read.ready?read.rows.map(row=>({date:row.day,label:row.reason})):[],
+ };
+}
 export async function getCurrentTpoPlacementSeason(context:RequestContext){
  const {seasons}=await getTpoPlacementSeasonSettings(context);
  const selected=legacyCurrentSeasonSelection(seasons);
+ const registration=projectTpoSeasonRegistration(selected.current);
+ // Never query another college or imply that an absent season has a
+ // registered blackout calendar. The reader rechecks the persisted actor.
+ if(!selected.current)return {...selected,registration};
+ const dates=await getTpoBlockedDates(context);
  return {
   ...selected,
-  registration:projectTpoSeasonRegistration(selected.current),
+  registration:withCurrentSeasonBlockedDates(registration,dates),
  };
 }
 
