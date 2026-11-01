@@ -59,7 +59,7 @@ test("DB044 preserves vNext one-submission uniqueness", () => {
 
   assert.match(
     service,
-    /assignment_submissions_assignment_membership_uq/,
+    /^assignment_submissions\\.attempt_number$/,
   );
   assert.match(service, /ASSIGNMENT_ALREADY_SUBMITTED/);
 });
