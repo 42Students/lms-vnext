@@ -10,20 +10,21 @@ import { db10Skills, db10SkillUsage } from "@/db/schema/db10-skills-catalog.draf
 import { apiErrorResponse } from "@/lib/api-error";
 import { canReadSkillCatalog } from "@/modules/skills/catalog-access";
 import { skillsCatalogRuntimeEnabled } from "@/modules/skills/catalog-readiness";
+import { normalizeSkillUsageKey, skillUsageNameSchema } from "@/modules/skills/usage-normalization";
 
 export const runtime = "nodejs";
 
 const selectionSchema = z.strictObject({
   requestId: z.uuid(),
   skillIds: z.array(z.uuid()).max(20).default([]),
-  freeTextSkills: z.array(z.string().trim().min(1).max(200)).max(20).default([]),
+  freeTextSkills: z.array(skillUsageNameSchema).max(20).default([]),
 }).superRefine((value, context) => {
   if (value.skillIds.length + value.freeTextSkills.length === 0 ||
       value.skillIds.length + value.freeTextSkills.length > 20) {
     context.addIssue({ code: "custom", message: "Select between one and twenty skills" });
   }
   if (new Set(value.skillIds).size !== value.skillIds.length ||
-      new Set(value.freeTextSkills.map(name => name.toLocaleLowerCase("en-US"))).size !== value.freeTextSkills.length) {
+      new Set(value.freeTextSkills.map(normalizeSkillUsageKey)).size !== value.freeTextSkills.length) {
     context.addIssue({ code: "custom", message: "Each skill can appear only once" });
   }
 });
@@ -51,7 +52,7 @@ export async function POST(request: Request) {
     }
     const raw: unknown = await request.json();
     const input = selectionSchema.parse(raw);
-    const names = input.freeTextSkills.map(name => name.toLocaleLowerCase("en-US"));
+    const names = input.freeTextSkills.map(normalizeSkillUsageKey);
     const signature = createHash("sha256")
       .update(JSON.stringify({ ids: input.skillIds, names })).digest("hex");
     const dedupeKey = "skills.selection:" + context.user.id + ":" + input.requestId;
