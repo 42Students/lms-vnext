@@ -45,28 +45,38 @@ export async function listTpoTeamAssignableStaff(context:RequestContext){
 export async function addTpoTeamAssignment(context:RequestContext,raw:unknown){
  const actor=await requireScope(context);
  const {membershipId}=z.strictObject({membershipId:memberSchema}).parse(raw);
- const [candidate]=await getDb().select({
-  id:collegeMemberships.id,role:membershipRoles.role,
- }).from(collegeMemberships)
-  .innerJoin(users,eq(users.id,collegeMemberships.userId))
-  .innerJoin(membershipRoles,and(eq(membershipRoles.membershipId,collegeMemberships.id),
-   inArray(membershipRoles.role,["FACULTY","TPO"])))
-  .where(and(eq(collegeMemberships.id,membershipId),
-   eq(collegeMemberships.collegeId,actor.collegeId),
-   eq(collegeMemberships.status,"ACTIVE"),eq(users.platformStatus,"ACTIVE")))
-  .orderBy(asc(membershipRoles.role)).limit(1);
- if(!candidate)throw new Error("TEAM_MEMBER_INACTIVE_OR_UNAVAILABLE");
- // Faculty coordinators get a team assignment, not an implicit new TPO membership.
- const roles=await getDb().select({role:membershipRoles.role}).from(membershipRoles)
-  .where(eq(membershipRoles.membershipId,membershipId));
- const role=roles.some(row=>row.role==="TPO")?"TPO_ADMIN":"FACULTY_COORDINATOR";
- await getDb().insert(placementTpoTeamMembers).values({
-  collegeId:actor.collegeId,membershipId,role,
- }).onConflictDoUpdate({
-  target:[placementTpoTeamMembers.collegeId,placementTpoTeamMembers.membershipId],
-  set:{role},
+ // Revoked or moved administrators must never complete an assignment on
+ // a stale request context. Validate the live persisted grant in the same
+ // transaction that reads the candidate and inserts the delegation.
+ return getDb().transaction(async tx=>{
+  await assertPersistedPlatformPermission(tx,context,"placements.manage",{
+   collegeId:actor.collegeId,organizationId:actor.organizationId,
+  });
+  const [candidate]=await tx.select({
+   id:collegeMemberships.id,
+  }).from(collegeMemberships)
+   .innerJoin(users,eq(users.id,collegeMemberships.userId))
+   .innerJoin(membershipRoles,and(eq(membershipRoles.membershipId,collegeMemberships.id),
+    inArray(membershipRoles.role,["FACULTY","TPO"])))
+   .where(and(eq(collegeMemberships.id,membershipId),
+    eq(collegeMemberships.collegeId,actor.collegeId),
+    eq(collegeMemberships.status,"ACTIVE"),eq(users.platformStatus,"ACTIVE")))
+   .orderBy(asc(membershipRoles.role)).limit(1);
+  if(!candidate)throw new Error("TEAM_MEMBER_INACTIVE_OR_UNAVAILABLE");
+  // Existing vNext department-scoped coordinator behavior is not certified
+  // as legacy V201 parity. P22 must reconcile this separately; never treat
+  // a team-row coordinator as a college-wide placements.manage principal.
+  const roles=await tx.select({role:membershipRoles.role}).from(membershipRoles)
+   .where(eq(membershipRoles.membershipId,membershipId));
+  const role=roles.some(row=>row.role==="TPO")?"TPO_ADMIN":"FACULTY_COORDINATOR";
+  await tx.insert(placementTpoTeamMembers).values({
+   collegeId:actor.collegeId,membershipId,role,
+  }).onConflictDoUpdate({
+   target:[placementTpoTeamMembers.collegeId,placementTpoTeamMembers.membershipId],
+   set:{role},
+  });
+  return {ok:true};
  });
- return {ok:true};
 }
 /** Removal previews are advisory; deletion must recheck in its own transaction. */
 type RemovalImpact={drives:number;companies:number;recruiterLeads:number;followups:number};
