@@ -431,6 +431,7 @@ export async function issuePlacementOffer(
     const [liveJob] = await tx.select({
       status: placementJobs.status, archivedAt: placementJobs.archivedAt,
       openings: placementJobs.openings,
+      countsAsPlaced:placementJobs.countsAsPlaced,
       collegeId:placementJobs.collegeId,seasonId:placementJobs.seasonId,
     }).from(placementJobs).where(eq(placementJobs.id, current.job.id))
       .for("update").limit(1);
@@ -620,7 +621,10 @@ export async function issuePlacementOffer(
       throw new PlacementsServiceError("PLACEMENT_OFFER_NOT_READY");
     }
     const effectiveExpiresAt = input.expiresAt ?? earliestResponse;
-    if ((input.kind ?? "OFFER") === "OFFER") {
+    // Keep the issue gate aligned with application eligibility: explicit
+    // per-drive FALSE bypasses only the held-offer cap, not other checks.
+    if ((input.kind ?? "OFFER") === "OFFER" &&
+        liveJob.countsAsPlaced !== false) {
       const heldOffers = await loadPlacementHeldOfferFacts(
         current.job.collegeId, current.application.membershipId, tx,
       );

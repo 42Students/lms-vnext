@@ -19,9 +19,14 @@ export function canAddPlacementHeldOffer(input: {
   maxHeldOffers: number;
   upliftPct: number;
   nextAnnualCtcInr: number | null;
+  /** Only explicitly audited FALSE exempts a target drive from held-offer limits. */
+  nextCountsAsPlaced?: boolean | null;
   isDream: boolean;
   heldOffers: readonly HeldPlacementOffer[];
 }): boolean {
+  // An explicit non-counting college drive is outside the held-offer cap.
+  // NULL is unaudited: never infer an exemption from employment type.
+  if(input.nextCountsAsPlaced===false)return true;
   const activeOffers = input.heldOffers.filter(
     (offer) => offer.kind === "OFFER" &&
       (offer.status === "ISSUED" || offer.status === "ACCEPTED"),

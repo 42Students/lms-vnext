@@ -62,6 +62,15 @@ describe("P-S1-05 college held-offer uplift gate", () => {
     })).toBe(false);
   });
 
+  it("DB019 allows only an explicitly non-counting target to bypass held cap",()=>{
+    const cap={...defaults,nextAnnualCtcInr:600_000};
+    expect(canAddPlacementHeldOffer(cap)).toBe(false);
+    expect(canAddPlacementHeldOffer({...cap,nextCountsAsPlaced:true})).toBe(false);
+    expect(canAddPlacementHeldOffer({...cap,nextCountsAsPlaced:null})).toBe(false);
+    expect(canAddPlacementHeldOffer({...cap,nextCountsAsPlaced:false})).toBe(true);
+    expect(canAddPlacementHeldOffer({...cap,nextCountsAsPlaced:false,
+      nextAnnualCtcInr:null})).toBe(true);
+  });
   it("uses the dream exemption but rejects unknown CTC at capacity", () => {
     expect(canAddPlacementHeldOffer({
       ...defaults,

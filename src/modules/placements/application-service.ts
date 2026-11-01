@@ -778,6 +778,7 @@ export async function applyToPlacementJob(
         applicationDeadline: placementJobs.applicationDeadline,
         applicationMode: placementJobs.applicationMode,
         externalApplicationUrl: placementJobs.externalApplicationUrl,
+        countsAsPlaced: placementJobs.countsAsPlaced,
       }).from(placementJobs)
         .where(eq(placementJobs.id, job.id))
         .for("update").limit(1);
@@ -914,6 +915,7 @@ export async function applyToPlacementJob(
         nextAnnualCtcInr: liveRole.minimumAnnualCtcInr ??
           job.minimumAnnualCtcInr,
         isDream: job.isDream,
+        nextCountsAsPlaced: liveJob.countsAsPlaced,
         heldOffers,
       })) {
         throw new PlacementsServiceError("PLACEMENT_APPLICATION_INELIGIBLE");

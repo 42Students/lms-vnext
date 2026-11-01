@@ -373,6 +373,7 @@ export async function listLearnerPlacementJobs(
         nextAnnualCtcInr: row.roleOption.minimumAnnualCtcInr ??
           row.job.minimumAnnualCtcInr,
         isDream: row.job.isDream,
+        nextCountsAsPlaced: row.job.countsAsPlaced,
         heldOffers,
       });
       const applyContext = {

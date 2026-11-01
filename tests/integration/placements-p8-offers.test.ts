@@ -1941,6 +1941,62 @@ describe("Placement P8 offers and joining", () => {
     expect(releasedAudit.rows[0]?.n).toBe(0);
   });
 
+  it("DB019 PG17 per-drive FALSE bypasses held cap for apply and issue, unlike TRUE or NULL",async()=>{
+    const first=await preparePassedApplication();
+    const held=await issuePlacementOffer(tpo,first.application.id,{
+      kind:"OFFER",roleTitle:"Already-held official offer",annualCtcInr:900_000,
+    });
+    expect(held.status).toBe("ISSUED");
+    const target=await createPlacementJob(tpo,{
+      ...publishableJobTerms,collegeId:SEED_IDS.collegeA,
+      companyRelationshipId:first.company.relationship.id,
+      title:"Non-counting full-time placement",description:"Approved college policy exception",
+      employmentType:"FULL_TIME",workMode:"HYBRID",applicationMode:"INTERNAL",
+    });
+    const round=await createPlacementRound(tpo,target.id,{
+      kind:"INTERVIEW",name:"Final policy round",
+    });
+    await publishPreparedPlacementJob(tpo,target.id);
+    await expect(applyToPlacementJob(learner,target.id,{}))
+      .rejects.toMatchObject({code:"PLACEMENT_APPLICATION_INELIGIBLE"});
+    await pool.query("update placement_jobs set counts_as_placed=null where id=$1",[target.id]);
+    await expect(applyToPlacementJob(learner,target.id,{}))
+      .rejects.toMatchObject({code:"PLACEMENT_APPLICATION_INELIGIBLE"});
+    await pool.query("update placement_jobs set counts_as_placed=false where id=$1",[target.id]);
+    const application=await applyToPlacementJob(learner,target.id,{});
+    expect(application.jobId).toBe(target.id);
+    await decidePlacementScreening(tpo,application.id,{
+      decision:"SHORTLISTED",candidateMessage:"Eligible for the recorded policy",
+    });
+    await actOnPlacementRound(tpo,round.id,{
+      action:"SCHEDULE",scheduledAt:new Date("2099-11-04T04:30:00.000Z"),
+      timezone:"Asia/Kolkata",mode:"VIRTUAL",
+      meetingUrl:"https://meet.example/noncounting-final",
+    });
+    await actOnPlacementRound(tpo,round.id,{action:"COMPLETE"});
+    const staged=await stagePlacementRoundResult(tpo,round.id,{
+      applicationId:application.id,outcome:"PASS",scorePercent:94,
+    });
+    await applyPlacementRoundResult(tpo,staged.id);
+    await pool.query("update placement_jobs set counts_as_placed=true where id=$1",[target.id]);
+    await expect(issuePlacementOffer(tpo,application.id,{
+      kind:"OFFER",roleTitle:"Non-counting full-time offer",annualCtcInr:500_000,
+    })).rejects.toMatchObject({code:"PLACEMENT_OFFER_NOT_READY"});
+    await pool.query("update placement_jobs set counts_as_placed=null where id=$1",[target.id]);
+    await expect(issuePlacementOffer(tpo,application.id,{
+      kind:"OFFER",roleTitle:"Non-counting full-time offer",annualCtcInr:500_000,
+    })).rejects.toMatchObject({code:"PLACEMENT_OFFER_NOT_READY"});
+    await pool.query("update placement_jobs set counts_as_placed=false where id=$1",[target.id]);
+    const released=await issuePlacementOffer(tpo,application.id,{
+      kind:"OFFER",roleTitle:"Non-counting full-time offer",annualCtcInr:500_000,
+    });
+    expect(released.status).toBe("ISSUED");
+    const persisted=await pool.query<{status:string}>(`
+      select status from placement_offers where id=any($1::uuid[]) order by id`,
+      [[held.id,released.id]]);
+    expect(persisted.rows).toEqual([{status:"ISSUED"},{status:"ISSUED"}]);
+  });
+
   it("DB019 PG17 TPO Company Memory refuses to count a NULL job placed policy as verified",async()=>{
     const {job,application}=await preparePassedApplication();
     const issued=await issuePlacementOffer(tpo,application.id,{
