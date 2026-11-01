@@ -3,6 +3,7 @@ import { Pool } from "pg";
 import { closeDatabaseConnection } from "@/db/client";
 import { readSkillCatalog, recordSkillSelection } from "@/modules/skills/catalog-service";
 import { SEED_IDS } from "../../scripts/db-seed-data";
+import { importAdminSkillCatalog } from "@/modules/skills/catalog-import-service";
 import type { RequestContext } from "@/modules/identity/context";
 import { assertDb018DisposableTarget } from "../support/db018-test-target.mjs";
 
@@ -221,6 +222,63 @@ describe("DB10 skills catalog source-backed PostgreSQL consumer", () => {
     } finally {
       await pool.query("update skills set usage_count=$1 where id=$2",[before,ids[0]]);
       await pool.query("delete from skill_usage where skill_name=$1",[freeText]);
+    }
+  });
+
+  it("imports curated skills through the persisted Super Admin producer, idempotently and without privilege spoofing", async () => {
+    const admin: RequestContext = {
+      user: {
+        id: SEED_IDS.superAdminUser,
+        identityUid: "seed-super-admin",
+        platformStatus: "ACTIVE",
+        systemRoles: ["SUPER_ADMIN"],
+      },
+      membership: null,
+      adminScope: null,
+    };
+    const skillName="w06imported"+suffix;
+    const alias="w06alias"+suffix;
+    const csv=`name,category,synonyms\n${skillName},${category},${alias}`;
+    const previous=process.env.DB10_SKILLS_SCHEMA_READY;
+    process.env.DB10_SKILLS_SCHEMA_READY="DB10_REPLAY_VERIFIED";
+    try {
+      const preview=await importAdminSkillCatalog(admin,{
+        format:"CSV",content:csv,dryRun:true,
+      });
+      expect(preview).toMatchObject({ready:true,dryRun:true,sourceCount:1});
+
+      // An in-memory role forged for a different persisted account cannot
+      // insert even though the parsed request and schema are valid.
+      const forged:RequestContext={
+        ...admin,
+        user:{...admin.user,id:SEED_IDS.collegeAdminUser,systemRoles:["SUPER_ADMIN"]},
+      };
+      await expect(importAdminSkillCatalog(forged,{
+        format:"CSV",content:csv,dryRun:false,
+      })).rejects.toBeTruthy();
+      expect((await pool.query("select id from skills where name=$1",[skillName])).rows)
+        .toHaveLength(0);
+
+      const result=await importAdminSkillCatalog(admin,{
+        format:"CSV",content:csv,dryRun:false,
+      });
+      expect(result).toMatchObject({ready:true,committed:true,inserted:1,synonymsInserted:1});
+      const repeat=await importAdminSkillCatalog(admin,{
+        format:"CSV",content:csv,dryRun:false,
+      });
+      expect(repeat).toMatchObject({ready:true,committed:true,inserted:0,synonymsInserted:0});
+      const rows=await pool.query<{id:string;usage_count:number}>(
+        "select id,usage_count from skills where name=$1",[skillName]);
+      expect(rows.rows).toHaveLength(1);
+      expect(rows.rows[0]?.usage_count).toBe(0);
+      const aliases=await pool.query(
+        "select synonym from skill_synonyms where skill_id=$1",[rows.rows[0]!.id]);
+      expect(aliases.rows).toEqual([{synonym:alias}]);
+    } finally {
+      await pool.query("delete from skill_synonyms where skill_id in (select id from skills where name=$1)",[skillName]);
+      await pool.query("delete from skills where name=$1",[skillName]);
+      if(previous===undefined) delete process.env.DB10_SKILLS_SCHEMA_READY;
+      else process.env.DB10_SKILLS_SCHEMA_READY=previous;
     }
   });
 
