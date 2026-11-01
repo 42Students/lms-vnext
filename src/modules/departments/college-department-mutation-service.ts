@@ -9,6 +9,7 @@ import { recordActivityEventInTransaction } from "@/modules/activity/service";
 import { ACTIVITY_EVENT_TYPES } from "@/modules/activity/taxonomy";
 import type { RequestContext } from "@/modules/identity/context";
 import { resolveActingCollege } from "@/modules/permissions/acting-college";
+import { assertPersistedPlatformPermission } from "@/modules/permissions/persisted-actor";
 import { AuthorizationError } from "@/modules/permissions/policy";
 import {
   collegeDepartmentArchiveSchema, collegeDepartmentCreateSchema,
@@ -82,6 +83,11 @@ export async function createCollegeDepartment(context: RequestContext, raw: unkn
   try {
     return await getDb().transaction(async tx => {
       await liveCollege(tx, member.collegeId, member.organizationId);
+      // Rebuild actor roles and membership from locked persisted rows so a
+      // revoked/suspended administrator cannot write with a stale session.
+      await assertPersistedPlatformPermission(tx, context, "department.manage", {
+        collegeId: member.collegeId, organizationId: member.organizationId,
+      });
       await ensureUnique(tx, member.collegeId, input.name);
       const [created] = await tx.insert(departments).values({
         collegeId: member.collegeId, name: input.name,
@@ -108,6 +114,11 @@ export async function renameCollegeDepartment(
   try {
     return await getDb().transaction(async tx => {
       await liveCollege(tx, member.collegeId, member.organizationId);
+      // Rebuild actor roles and membership from locked persisted rows so a
+      // revoked/suspended administrator cannot write with a stale session.
+      await assertPersistedPlatformPermission(tx, context, "department.manage", {
+        collegeId: member.collegeId, organizationId: member.organizationId,
+      });
       const current = await lockDepartment(tx, id, member.collegeId);
       await ensureUnique(tx, member.collegeId, input.name, id);
       if (current.name === input.name) return current;
@@ -136,6 +147,11 @@ export async function archiveCollegeDepartment(
   const member = await own(context);
   try{return await getDb().transaction(async tx => {
     await liveCollege(tx, member.collegeId, member.organizationId);
+      // Rebuild actor roles and membership from locked persisted rows so a
+      // revoked/suspended administrator cannot write with a stale session.
+      await assertPersistedPlatformPermission(tx, context, "department.manage", {
+        collegeId: member.collegeId, organizationId: member.organizationId,
+      });
     const current = await lockDepartment(tx, id, member.collegeId);
     // All historical programs/courses and profile references block archival;
     // active-only checks can hide dependencies after a child is archived.
