@@ -1,0 +1,909 @@
+{
+  "id": "DB19-P04",
+  "recordType": "EXACT_SOURCE_PROPOSALS_NOT_ACCEPTED_FIELD_DISPOSITIONS",
+  "sourceSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+  "inventory": "docs/planning/db-pass4-columns-db01_identity_and_tenancy.json",
+  "sourceTables": [
+    "college",
+    "college_branding",
+    "department",
+    "organization",
+    "tenant_domain"
+  ],
+  "sourceFieldCount": 58,
+  "proposalCount": 58,
+  "runtimeVerifiedCount": 0,
+  "unresolvedActiveRoleFields": [
+    "department.dept_chair_id",
+    "department.dept_vice_chair_id"
+  ],
+  "evidence": [
+    "Source inventory is frozen at 21bad59d4dfaf2fa11fdeaf9353327ce105697d5. Inferred vNext targets are proposals only.",
+    "vNext is greenfield; these are behavioral crosswalks and historical security classifications, not authorization to migrate legacy production data.",
+    "Department chairs require an explicit role/permission and consumer decision. College chairs use separately guarded scoped faculty membership references.",
+    "Legacy logo URLs and DNS TXT verification payloads must never become public signed assets or raw diagnostics.",
+    "New department write paths have PG17 forged/stale actor regression coverage; this does not prove all 58 field semantics or the DB19 parent."
+  ],
+  "pendingGates": [
+    "Prove actual 58 source-to-consumer semantics, including department chair and vice-chair behavior.",
+    "Execute exact SHA registered PostgreSQL journal/replay and tenant/permission/privacy/FK/state/race tests across organization, college, branding, department and domain.",
+    "Verify public branding/authentication/login and domain resolver on archived college/organization, revoked actor and tenancy changes.",
+    "Keep DB19-P04 done:false until all original acceptance requirements have run and evidence is attached."
+  ],
+  "fields": [
+    {
+      "sourceTable": "college",
+      "sourceColumn": "id",
+      "sourceType": "int",
+      "sourceDefinition": "int NOT NULL AUTO_INCREMENT",
+      "sourceRiskFlags": [
+        "INTEGER_KEY_TO_UUID_MAPPING"
+      ],
+      "proposedTarget": "colleges.legacy_college_id / colleges.id (new UUID)",
+      "sourceDecision": "PROPOSED_ACTIVE_BEHAVIOR_MAPPING",
+      "reviewNeeded": "Review null/default, timezone, identity FK, active/archived state, actual producer/consumer and executable PG17 negatives before acceptance.",
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "college",
+      "sourceColumn": "created_at",
+      "sourceType": "datetime(6)",
+      "sourceDefinition": "datetime(6) DEFAULT NULL",
+      "sourceRiskFlags": [
+        "TIMEZONE_AND_DEADLINE_SEMANTICS"
+      ],
+      "proposedTarget": "colleges.created_at",
+      "sourceDecision": "PROPOSED_ACTIVE_BEHAVIOR_MAPPING",
+      "reviewNeeded": "Review null/default, timezone, identity FK, active/archived state, actual producer/consumer and executable PG17 negatives before acceptance.",
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "college",
+      "sourceColumn": "is_deleted",
+      "sourceType": "tinyint(1)",
+      "sourceDefinition": "tinyint(1) DEFAULT '0'",
+      "sourceRiskFlags": [],
+      "proposedTarget": "colleges.status=ARCHIVED",
+      "sourceDecision": "PROPOSED_ACTIVE_BEHAVIOR_MAPPING",
+      "reviewNeeded": "Review null/default, timezone, identity FK, active/archived state, actual producer/consumer and executable PG17 negatives before acceptance.",
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "college",
+      "sourceColumn": "updated_at",
+      "sourceType": "datetime(6)",
+      "sourceDefinition": "datetime(6) DEFAULT NULL",
+      "sourceRiskFlags": [
+        "TIMEZONE_AND_DEADLINE_SEMANTICS"
+      ],
+      "proposedTarget": "colleges.updated_at",
+      "sourceDecision": "PROPOSED_ACTIVE_BEHAVIOR_MAPPING",
+      "reviewNeeded": "Review null/default, timezone, identity FK, active/archived state, actual producer/consumer and executable PG17 negatives before acceptance.",
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "college",
+      "sourceColumn": "address_line1",
+      "sourceType": "varchar(255)",
+      "sourceDefinition": "varchar(255) DEFAULT NULL",
+      "sourceRiskFlags": [
+        "POTENTIAL_PERSONAL_OR_SECRET_DATA"
+      ],
+      "proposedTarget": "colleges.address_line1",
+      "sourceDecision": "PROPOSED_ACTIVE_BEHAVIOR_MAPPING",
+      "reviewNeeded": "Review null/default, timezone, identity FK, active/archived state, actual producer/consumer and executable PG17 negatives before acceptance.",
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "college",
+      "sourceColumn": "address_line2",
+      "sourceType": "varchar(255)",
+      "sourceDefinition": "varchar(255) DEFAULT NULL",
+      "sourceRiskFlags": [
+        "POTENTIAL_PERSONAL_OR_SECRET_DATA"
+      ],
+      "proposedTarget": "colleges.address_line2",
+      "sourceDecision": "PROPOSED_ACTIVE_BEHAVIOR_MAPPING",
+      "reviewNeeded": "Review null/default, timezone, identity FK, active/archived state, actual producer/consumer and executable PG17 negatives before acceptance.",
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "college",
+      "sourceColumn": "city",
+      "sourceType": "varchar(255)",
+      "sourceDefinition": "varchar(255) DEFAULT NULL",
+      "sourceRiskFlags": [],
+      "proposedTarget": "colleges.city",
+      "sourceDecision": "PROPOSED_ACTIVE_BEHAVIOR_MAPPING",
+      "reviewNeeded": "Review null/default, timezone, identity FK, active/archived state, actual producer/consumer and executable PG17 negatives before acceptance.",
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "college",
+      "sourceColumn": "college_chair_id",
+      "sourceType": "int",
+      "sourceDefinition": "int DEFAULT NULL",
+      "sourceRiskFlags": [
+        "INTEGER_KEY_TO_UUID_MAPPING"
+      ],
+      "proposedTarget": "colleges.legacy_chair_id / colleges.chair_membership_id (verified faculty)",
+      "sourceDecision": "PROPOSED_ACTIVE_BEHAVIOR_MAPPING",
+      "reviewNeeded": "Review null/default, timezone, identity FK, active/archived state, actual producer/consumer and executable PG17 negatives before acceptance.",
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "college",
+      "sourceColumn": "college_vice_chair_id",
+      "sourceType": "int",
+      "sourceDefinition": "int DEFAULT NULL",
+      "sourceRiskFlags": [
+        "INTEGER_KEY_TO_UUID_MAPPING"
+      ],
+      "proposedTarget": "colleges.legacy_vice_chair_id / colleges.vice_chair_membership_id (verified faculty)",
+      "sourceDecision": "PROPOSED_ACTIVE_BEHAVIOR_MAPPING",
+      "reviewNeeded": "Review null/default, timezone, identity FK, active/archived state, actual producer/consumer and executable PG17 negatives before acceptance.",
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "college",
+      "sourceColumn": "country",
+      "sourceType": "varchar(255)",
+      "sourceDefinition": "varchar(255) DEFAULT NULL",
+      "sourceRiskFlags": [],
+      "proposedTarget": "colleges.country",
+      "sourceDecision": "PROPOSED_ACTIVE_BEHAVIOR_MAPPING",
+      "reviewNeeded": "Review null/default, timezone, identity FK, active/archived state, actual producer/consumer and executable PG17 negatives before acceptance.",
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "college",
+      "sourceColumn": "landmark",
+      "sourceType": "varchar(255)",
+      "sourceDefinition": "varchar(255) DEFAULT NULL",
+      "sourceRiskFlags": [],
+      "proposedTarget": "colleges.landmark",
+      "sourceDecision": "PROPOSED_ACTIVE_BEHAVIOR_MAPPING",
+      "reviewNeeded": "Review null/default, timezone, identity FK, active/archived state, actual producer/consumer and executable PG17 negatives before acceptance.",
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "college",
+      "sourceColumn": "logo",
+      "sourceType": "varchar(255)",
+      "sourceDefinition": "varchar(255) DEFAULT NULL",
+      "sourceRiskFlags": [],
+      "proposedTarget": "colleges.legacy_logo_url (quarantined) / colleges.logo_object_path (scanned object)",
+      "sourceDecision": "PROPOSED_PRIVACY_SAFE_REDESIGN",
+      "reviewNeeded": "Prove private access, non-secret diagnostics or authorized scanned-object provenance at real producer/consumer boundaries; never copy raw legacy token or image URLs into public responses.",
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "college",
+      "sourceColumn": "name",
+      "sourceType": "varchar(255)",
+      "sourceDefinition": "varchar(255) DEFAULT NULL",
+      "sourceRiskFlags": [],
+      "proposedTarget": "colleges.name",
+      "sourceDecision": "PROPOSED_ACTIVE_BEHAVIOR_MAPPING",
+      "reviewNeeded": "Review null/default, timezone, identity FK, active/archived state, actual producer/consumer and executable PG17 negatives before acceptance.",
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "college",
+      "sourceColumn": "org_id",
+      "sourceType": "int",
+      "sourceDefinition": "int DEFAULT NULL",
+      "sourceRiskFlags": [
+        "INTEGER_KEY_TO_UUID_MAPPING"
+      ],
+      "proposedTarget": "colleges.legacy_organization_id / colleges.organization_id (active FK)",
+      "sourceDecision": "PROPOSED_ACTIVE_BEHAVIOR_MAPPING",
+      "reviewNeeded": "Review null/default, timezone, identity FK, active/archived state, actual producer/consumer and executable PG17 negatives before acceptance.",
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "college",
+      "sourceColumn": "pin_code",
+      "sourceType": "varchar(255)",
+      "sourceDefinition": "varchar(255) DEFAULT NULL",
+      "sourceRiskFlags": [],
+      "proposedTarget": "colleges.postal_code",
+      "sourceDecision": "PROPOSED_ACTIVE_BEHAVIOR_MAPPING",
+      "reviewNeeded": "Review null/default, timezone, identity FK, active/archived state, actual producer/consumer and executable PG17 negatives before acceptance.",
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "college",
+      "sourceColumn": "state",
+      "sourceType": "varchar(255)",
+      "sourceDefinition": "varchar(255) DEFAULT NULL",
+      "sourceRiskFlags": [],
+      "proposedTarget": "colleges.state",
+      "sourceDecision": "PROPOSED_ACTIVE_BEHAVIOR_MAPPING",
+      "reviewNeeded": "Review null/default, timezone, identity FK, active/archived state, actual producer/consumer and executable PG17 negatives before acceptance.",
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "college",
+      "sourceColumn": "unique_id",
+      "sourceType": "varchar(255)",
+      "sourceDefinition": "varchar(255) DEFAULT NULL",
+      "sourceRiskFlags": [],
+      "proposedTarget": "colleges.legacy_unique_id / colleges.code (explicit new code)",
+      "sourceDecision": "PROPOSED_ACTIVE_BEHAVIOR_MAPPING",
+      "reviewNeeded": "Review null/default, timezone, identity FK, active/archived state, actual producer/consumer and executable PG17 negatives before acceptance.",
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "college_branding",
+      "sourceColumn": "id",
+      "sourceType": "int",
+      "sourceDefinition": "int NOT NULL AUTO_INCREMENT",
+      "sourceRiskFlags": [
+        "INTEGER_KEY_TO_UUID_MAPPING"
+      ],
+      "proposedTarget": "college_branding.legacy_branding_id / college_branding.college_id (PK)",
+      "sourceDecision": "PROPOSED_ACTIVE_BEHAVIOR_MAPPING",
+      "reviewNeeded": "Review null/default, timezone, identity FK, active/archived state, actual producer/consumer and executable PG17 negatives before acceptance.",
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "college_branding",
+      "sourceColumn": "created_at",
+      "sourceType": "datetime",
+      "sourceDefinition": "datetime DEFAULT CURRENT_TIMESTAMP",
+      "sourceRiskFlags": [
+        "TIMEZONE_AND_DEADLINE_SEMANTICS"
+      ],
+      "proposedTarget": "college_branding.created_at",
+      "sourceDecision": "PROPOSED_ACTIVE_BEHAVIOR_MAPPING",
+      "reviewNeeded": "Review null/default, timezone, identity FK, active/archived state, actual producer/consumer and executable PG17 negatives before acceptance.",
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "college_branding",
+      "sourceColumn": "updated_at",
+      "sourceType": "datetime",
+      "sourceDefinition": "datetime DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP",
+      "sourceRiskFlags": [
+        "TIMEZONE_AND_DEADLINE_SEMANTICS"
+      ],
+      "proposedTarget": "college_branding.updated_at",
+      "sourceDecision": "PROPOSED_ACTIVE_BEHAVIOR_MAPPING",
+      "reviewNeeded": "Review null/default, timezone, identity FK, active/archived state, actual producer/consumer and executable PG17 negatives before acceptance.",
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "college_branding",
+      "sourceColumn": "is_deleted",
+      "sourceType": "tinyint(1)",
+      "sourceDefinition": "tinyint(1) DEFAULT '0'",
+      "sourceRiskFlags": [],
+      "proposedTarget": "college_branding.legacy_was_deleted / college_branding.legacy_branding_archived_at",
+      "sourceDecision": "PROPOSED_ACTIVE_BEHAVIOR_MAPPING",
+      "reviewNeeded": "Review null/default, timezone, identity FK, active/archived state, actual producer/consumer and executable PG17 negatives before acceptance.",
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "college_branding",
+      "sourceColumn": "college_id",
+      "sourceType": "int",
+      "sourceDefinition": "int NOT NULL",
+      "sourceRiskFlags": [
+        "INTEGER_KEY_TO_UUID_MAPPING"
+      ],
+      "proposedTarget": "college_branding.legacy_college_id / college_branding.college_id (UUID FK)",
+      "sourceDecision": "PROPOSED_ACTIVE_BEHAVIOR_MAPPING",
+      "reviewNeeded": "Review null/default, timezone, identity FK, active/archived state, actual producer/consumer and executable PG17 negatives before acceptance.",
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "college_branding",
+      "sourceColumn": "logo_url",
+      "sourceType": "varchar(1024)",
+      "sourceDefinition": "varchar(1024) DEFAULT NULL",
+      "sourceRiskFlags": [],
+      "proposedTarget": "college_branding.legacy_logo_source_url (quarantined) / college_branding.logo_url (HTTPS verified)",
+      "sourceDecision": "PROPOSED_PRIVACY_SAFE_REDESIGN",
+      "reviewNeeded": "Prove private access, non-secret diagnostics or authorized scanned-object provenance at real producer/consumer boundaries; never copy raw legacy token or image URLs into public responses.",
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "college_branding",
+      "sourceColumn": "favicon_url",
+      "sourceType": "varchar(1024)",
+      "sourceDefinition": "varchar(1024) DEFAULT NULL",
+      "sourceRiskFlags": [],
+      "proposedTarget": "college_branding.favicon_url",
+      "sourceDecision": "PROPOSED_ACTIVE_BEHAVIOR_MAPPING",
+      "reviewNeeded": "Review null/default, timezone, identity FK, active/archived state, actual producer/consumer and executable PG17 negatives before acceptance.",
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "college_branding",
+      "sourceColumn": "login_background_url",
+      "sourceType": "varchar(1024)",
+      "sourceDefinition": "varchar(1024) DEFAULT NULL",
+      "sourceRiskFlags": [],
+      "proposedTarget": "college_branding.login_background_url",
+      "sourceDecision": "PROPOSED_ACTIVE_BEHAVIOR_MAPPING",
+      "reviewNeeded": "Review null/default, timezone, identity FK, active/archived state, actual producer/consumer and executable PG17 negatives before acceptance.",
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "college_branding",
+      "sourceColumn": "login_background_url_mobile",
+      "sourceType": "varchar(1024)",
+      "sourceDefinition": "varchar(1024) DEFAULT NULL",
+      "sourceRiskFlags": [
+        "POTENTIAL_PERSONAL_OR_SECRET_DATA"
+      ],
+      "proposedTarget": "college_branding.login_background_url_mobile",
+      "sourceDecision": "PROPOSED_ACTIVE_BEHAVIOR_MAPPING",
+      "reviewNeeded": "Review null/default, timezone, identity FK, active/archived state, actual producer/consumer and executable PG17 negatives before acceptance.",
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "college_branding",
+      "sourceColumn": "primary_color",
+      "sourceType": "varchar(64)",
+      "sourceDefinition": "varchar(64) DEFAULT NULL",
+      "sourceRiskFlags": [],
+      "proposedTarget": "college_branding.primary_color",
+      "sourceDecision": "PROPOSED_ACTIVE_BEHAVIOR_MAPPING",
+      "reviewNeeded": "Review null/default, timezone, identity FK, active/archived state, actual producer/consumer and executable PG17 negatives before acceptance.",
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "college_branding",
+      "sourceColumn": "secondary_color",
+      "sourceType": "varchar(64)",
+      "sourceDefinition": "varchar(64) DEFAULT NULL",
+      "sourceRiskFlags": [],
+      "proposedTarget": "college_branding.secondary_color",
+      "sourceDecision": "PROPOSED_ACTIVE_BEHAVIOR_MAPPING",
+      "reviewNeeded": "Review null/default, timezone, identity FK, active/archived state, actual producer/consumer and executable PG17 negatives before acceptance.",
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "college_branding",
+      "sourceColumn": "support_email",
+      "sourceType": "varchar(255)",
+      "sourceDefinition": "varchar(255) DEFAULT NULL",
+      "sourceRiskFlags": [
+        "POTENTIAL_PERSONAL_OR_SECRET_DATA"
+      ],
+      "proposedTarget": "college_branding.support_email",
+      "sourceDecision": "PROPOSED_ACTIVE_BEHAVIOR_MAPPING",
+      "reviewNeeded": "Review null/default, timezone, identity FK, active/archived state, actual producer/consumer and executable PG17 negatives before acceptance.",
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "college_branding",
+      "sourceColumn": "support_phone",
+      "sourceType": "varchar(64)",
+      "sourceDefinition": "varchar(64) DEFAULT NULL",
+      "sourceRiskFlags": [
+        "POTENTIAL_PERSONAL_OR_SECRET_DATA"
+      ],
+      "proposedTarget": "college_branding.support_phone",
+      "sourceDecision": "PROPOSED_ACTIVE_BEHAVIOR_MAPPING",
+      "reviewNeeded": "Review null/default, timezone, identity FK, active/archived state, actual producer/consumer and executable PG17 negatives before acceptance.",
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "college_branding",
+      "sourceColumn": "terms_url",
+      "sourceType": "varchar(1024)",
+      "sourceDefinition": "varchar(1024) DEFAULT NULL",
+      "sourceRiskFlags": [],
+      "proposedTarget": "college_branding.terms_url",
+      "sourceDecision": "PROPOSED_ACTIVE_BEHAVIOR_MAPPING",
+      "reviewNeeded": "Review null/default, timezone, identity FK, active/archived state, actual producer/consumer and executable PG17 negatives before acceptance.",
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "college_branding",
+      "sourceColumn": "privacy_url",
+      "sourceType": "varchar(1024)",
+      "sourceDefinition": "varchar(1024) DEFAULT NULL",
+      "sourceRiskFlags": [],
+      "proposedTarget": "college_branding.privacy_url",
+      "sourceDecision": "PROPOSED_ACTIVE_BEHAVIOR_MAPPING",
+      "reviewNeeded": "Review null/default, timezone, identity FK, active/archived state, actual producer/consumer and executable PG17 negatives before acceptance.",
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "department",
+      "sourceColumn": "id",
+      "sourceType": "int",
+      "sourceDefinition": "int NOT NULL AUTO_INCREMENT",
+      "sourceRiskFlags": [
+        "INTEGER_KEY_TO_UUID_MAPPING"
+      ],
+      "proposedTarget": "departments.id (new UUID; legacy numeric ID import-only)",
+      "sourceDecision": "PROPOSED_ACTIVE_BEHAVIOR_MAPPING",
+      "reviewNeeded": "Review null/default, timezone, identity FK, active/archived state, actual producer/consumer and executable PG17 negatives before acceptance.",
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "department",
+      "sourceColumn": "created_at",
+      "sourceType": "datetime(6)",
+      "sourceDefinition": "datetime(6) DEFAULT NULL",
+      "sourceRiskFlags": [
+        "TIMEZONE_AND_DEADLINE_SEMANTICS"
+      ],
+      "proposedTarget": "departments.created_at",
+      "sourceDecision": "PROPOSED_ACTIVE_BEHAVIOR_MAPPING",
+      "reviewNeeded": "Review null/default, timezone, identity FK, active/archived state, actual producer/consumer and executable PG17 negatives before acceptance.",
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "department",
+      "sourceColumn": "is_deleted",
+      "sourceType": "tinyint(1)",
+      "sourceDefinition": "tinyint(1) DEFAULT '0'",
+      "sourceRiskFlags": [],
+      "proposedTarget": "departments.archived_at",
+      "sourceDecision": "PROPOSED_ACTIVE_BEHAVIOR_MAPPING",
+      "reviewNeeded": "Review null/default, timezone, identity FK, active/archived state, actual producer/consumer and executable PG17 negatives before acceptance.",
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "department",
+      "sourceColumn": "updated_at",
+      "sourceType": "datetime(6)",
+      "sourceDefinition": "datetime(6) DEFAULT NULL",
+      "sourceRiskFlags": [
+        "TIMEZONE_AND_DEADLINE_SEMANTICS"
+      ],
+      "proposedTarget": "departments.updated_at",
+      "sourceDecision": "PROPOSED_ACTIVE_BEHAVIOR_MAPPING",
+      "reviewNeeded": "Review null/default, timezone, identity FK, active/archived state, actual producer/consumer and executable PG17 negatives before acceptance.",
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "department",
+      "sourceColumn": "college_id",
+      "sourceType": "int",
+      "sourceDefinition": "int DEFAULT NULL",
+      "sourceRiskFlags": [
+        "INTEGER_KEY_TO_UUID_MAPPING"
+      ],
+      "proposedTarget": "departments.college_id (scoped UUID FK)",
+      "sourceDecision": "PROPOSED_ACTIVE_BEHAVIOR_MAPPING",
+      "reviewNeeded": "Review null/default, timezone, identity FK, active/archived state, actual producer/consumer and executable PG17 negatives before acceptance.",
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "department",
+      "sourceColumn": "dept_chair_id",
+      "sourceType": "int",
+      "sourceDefinition": "int DEFAULT NULL",
+      "sourceRiskFlags": [
+        "INTEGER_KEY_TO_UUID_MAPPING"
+      ],
+      "proposedTarget": null,
+      "sourceDecision": "UNRESOLVED_ACTIVE_ROLE_CONTRACT",
+      "reviewNeeded": "Legacy department chair/vice-chair role consumer and faculty membership relation have not been proven in vNext; do not retire or synthesize this authority.",
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "department",
+      "sourceColumn": "dept_vice_chair_id",
+      "sourceType": "int",
+      "sourceDefinition": "int DEFAULT NULL",
+      "sourceRiskFlags": [
+        "INTEGER_KEY_TO_UUID_MAPPING"
+      ],
+      "proposedTarget": null,
+      "sourceDecision": "UNRESOLVED_ACTIVE_ROLE_CONTRACT",
+      "reviewNeeded": "Legacy department chair/vice-chair role consumer and faculty membership relation have not been proven in vNext; do not retire or synthesize this authority.",
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "department",
+      "sourceColumn": "name",
+      "sourceType": "varchar(255)",
+      "sourceDefinition": "varchar(255) DEFAULT NULL",
+      "sourceRiskFlags": [],
+      "proposedTarget": "departments.name",
+      "sourceDecision": "PROPOSED_ACTIVE_BEHAVIOR_MAPPING",
+      "reviewNeeded": "Review null/default, timezone, identity FK, active/archived state, actual producer/consumer and executable PG17 negatives before acceptance.",
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "organization",
+      "sourceColumn": "id",
+      "sourceType": "int",
+      "sourceDefinition": "int NOT NULL AUTO_INCREMENT",
+      "sourceRiskFlags": [
+        "INTEGER_KEY_TO_UUID_MAPPING"
+      ],
+      "proposedTarget": "organizations.legacy_organization_id / organizations.id (new UUID)",
+      "sourceDecision": "PROPOSED_ACTIVE_BEHAVIOR_MAPPING",
+      "reviewNeeded": "Review null/default, timezone, identity FK, active/archived state, actual producer/consumer and executable PG17 negatives before acceptance.",
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "organization",
+      "sourceColumn": "created_at",
+      "sourceType": "datetime(6)",
+      "sourceDefinition": "datetime(6) DEFAULT NULL",
+      "sourceRiskFlags": [
+        "TIMEZONE_AND_DEADLINE_SEMANTICS"
+      ],
+      "proposedTarget": "organizations.created_at",
+      "sourceDecision": "PROPOSED_ACTIVE_BEHAVIOR_MAPPING",
+      "reviewNeeded": "Review null/default, timezone, identity FK, active/archived state, actual producer/consumer and executable PG17 negatives before acceptance.",
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "organization",
+      "sourceColumn": "is_deleted",
+      "sourceType": "tinyint(1)",
+      "sourceDefinition": "tinyint(1) DEFAULT '0'",
+      "sourceRiskFlags": [],
+      "proposedTarget": "organizations.status=ARCHIVED / organizations.legacy_was_deleted",
+      "sourceDecision": "PROPOSED_ACTIVE_BEHAVIOR_MAPPING",
+      "reviewNeeded": "Review null/default, timezone, identity FK, active/archived state, actual producer/consumer and executable PG17 negatives before acceptance.",
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "organization",
+      "sourceColumn": "updated_at",
+      "sourceType": "datetime(6)",
+      "sourceDefinition": "datetime(6) DEFAULT NULL",
+      "sourceRiskFlags": [
+        "TIMEZONE_AND_DEADLINE_SEMANTICS"
+      ],
+      "proposedTarget": "organizations.updated_at",
+      "sourceDecision": "PROPOSED_ACTIVE_BEHAVIOR_MAPPING",
+      "reviewNeeded": "Review null/default, timezone, identity FK, active/archived state, actual producer/consumer and executable PG17 negatives before acceptance.",
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "organization",
+      "sourceColumn": "name",
+      "sourceType": "varchar(255)",
+      "sourceDefinition": "varchar(255) DEFAULT NULL",
+      "sourceRiskFlags": [],
+      "proposedTarget": "organizations.name",
+      "sourceDecision": "PROPOSED_ACTIVE_BEHAVIOR_MAPPING",
+      "reviewNeeded": "Review null/default, timezone, identity FK, active/archived state, actual producer/consumer and executable PG17 negatives before acceptance.",
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "tenant_domain",
+      "sourceColumn": "id",
+      "sourceType": "int",
+      "sourceDefinition": "int NOT NULL AUTO_INCREMENT",
+      "sourceRiskFlags": [
+        "INTEGER_KEY_TO_UUID_MAPPING"
+      ],
+      "proposedTarget": "tenant_domains.id (new UUID; historical numeric ID import-only)",
+      "sourceDecision": "PROPOSED_ACTIVE_BEHAVIOR_MAPPING",
+      "reviewNeeded": "Review null/default, timezone, identity FK, active/archived state, actual producer/consumer and executable PG17 negatives before acceptance.",
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "tenant_domain",
+      "sourceColumn": "created_at",
+      "sourceType": "datetime",
+      "sourceDefinition": "datetime DEFAULT CURRENT_TIMESTAMP",
+      "sourceRiskFlags": [
+        "TIMEZONE_AND_DEADLINE_SEMANTICS"
+      ],
+      "proposedTarget": "tenant_domains.created_at",
+      "sourceDecision": "PROPOSED_ACTIVE_BEHAVIOR_MAPPING",
+      "reviewNeeded": "Review null/default, timezone, identity FK, active/archived state, actual producer/consumer and executable PG17 negatives before acceptance.",
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "tenant_domain",
+      "sourceColumn": "updated_at",
+      "sourceType": "datetime",
+      "sourceDefinition": "datetime DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP",
+      "sourceRiskFlags": [
+        "TIMEZONE_AND_DEADLINE_SEMANTICS"
+      ],
+      "proposedTarget": "tenant_domains.updated_at",
+      "sourceDecision": "PROPOSED_ACTIVE_BEHAVIOR_MAPPING",
+      "reviewNeeded": "Review null/default, timezone, identity FK, active/archived state, actual producer/consumer and executable PG17 negatives before acceptance.",
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "tenant_domain",
+      "sourceColumn": "is_deleted",
+      "sourceType": "tinyint(1)",
+      "sourceDefinition": "tinyint(1) DEFAULT '0'",
+      "sourceRiskFlags": [],
+      "proposedTarget": "tenant_domains.deleted_at (terminal tombstone)",
+      "sourceDecision": "PROPOSED_ACTIVE_BEHAVIOR_MAPPING",
+      "reviewNeeded": "Review null/default, timezone, identity FK, active/archived state, actual producer/consumer and executable PG17 negatives before acceptance.",
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "tenant_domain",
+      "sourceColumn": "college_id",
+      "sourceType": "int",
+      "sourceDefinition": "int NOT NULL",
+      "sourceRiskFlags": [
+        "INTEGER_KEY_TO_UUID_MAPPING"
+      ],
+      "proposedTarget": "tenant_domains.college_id (scoped UUID FK)",
+      "sourceDecision": "PROPOSED_ACTIVE_BEHAVIOR_MAPPING",
+      "reviewNeeded": "Review null/default, timezone, identity FK, active/archived state, actual producer/consumer and executable PG17 negatives before acceptance.",
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "tenant_domain",
+      "sourceColumn": "host",
+      "sourceType": "varchar(255)",
+      "sourceDefinition": "varchar(255) NOT NULL",
+      "sourceRiskFlags": [],
+      "proposedTarget": "tenant_domains.host (lowercase unique, tombstone reserved)",
+      "sourceDecision": "PROPOSED_ACTIVE_BEHAVIOR_MAPPING",
+      "reviewNeeded": "Review null/default, timezone, identity FK, active/archived state, actual producer/consumer and executable PG17 negatives before acceptance.",
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "tenant_domain",
+      "sourceColumn": "is_primary",
+      "sourceType": "tinyint(1)",
+      "sourceDefinition": "tinyint(1) DEFAULT '0'",
+      "sourceRiskFlags": [],
+      "proposedTarget": "tenant_domains.is_primary (verified-only uniqueness)",
+      "sourceDecision": "PROPOSED_ACTIVE_BEHAVIOR_MAPPING",
+      "reviewNeeded": "Review null/default, timezone, identity FK, active/archived state, actual producer/consumer and executable PG17 negatives before acceptance.",
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "tenant_domain",
+      "sourceColumn": "verification_token",
+      "sourceType": "varchar(64)",
+      "sourceDefinition": "varchar(64) DEFAULT NULL",
+      "sourceRiskFlags": [
+        "POTENTIAL_PERSONAL_OR_SECRET_DATA"
+      ],
+      "proposedTarget": "tenant_domains.verification_token (private)",
+      "sourceDecision": "PROPOSED_PRIVACY_SAFE_REDESIGN",
+      "reviewNeeded": "Prove private access, non-secret diagnostics or authorized scanned-object provenance at real producer/consumer boundaries; never copy raw legacy token or image URLs into public responses.",
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "tenant_domain",
+      "sourceColumn": "verified_at",
+      "sourceType": "datetime",
+      "sourceDefinition": "datetime DEFAULT NULL",
+      "sourceRiskFlags": [
+        "TIMEZONE_AND_DEADLINE_SEMANTICS"
+      ],
+      "proposedTarget": "tenant_domains.verified_at (verified UTC instant)",
+      "sourceDecision": "PROPOSED_ACTIVE_BEHAVIOR_MAPPING",
+      "reviewNeeded": "Review null/default, timezone, identity FK, active/archived state, actual producer/consumer and executable PG17 negatives before acceptance.",
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "tenant_domain",
+      "sourceColumn": "is_verified",
+      "sourceType": "tinyint(1)",
+      "sourceDefinition": "tinyint(1) NOT NULL DEFAULT '0'",
+      "sourceRiskFlags": [],
+      "proposedTarget": "tenant_domains.is_verified",
+      "sourceDecision": "PROPOSED_ACTIVE_BEHAVIOR_MAPPING",
+      "reviewNeeded": "Review null/default, timezone, identity FK, active/archived state, actual producer/consumer and executable PG17 negatives before acceptance.",
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "tenant_domain",
+      "sourceColumn": "last_checked_at",
+      "sourceType": "datetime",
+      "sourceDefinition": "datetime DEFAULT NULL",
+      "sourceRiskFlags": [
+        "TIMEZONE_AND_DEADLINE_SEMANTICS"
+      ],
+      "proposedTarget": "tenant_domains.last_checked_at",
+      "sourceDecision": "PROPOSED_ACTIVE_BEHAVIOR_MAPPING",
+      "reviewNeeded": "Review null/default, timezone, identity FK, active/archived state, actual producer/consumer and executable PG17 negatives before acceptance.",
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "tenant_domain",
+      "sourceColumn": "last_check_result",
+      "sourceType": "varchar(32)",
+      "sourceDefinition": "varchar(32) DEFAULT NULL",
+      "sourceRiskFlags": [],
+      "proposedTarget": "tenant_domains.last_check_result",
+      "sourceDecision": "PROPOSED_ACTIVE_BEHAVIOR_MAPPING",
+      "reviewNeeded": "Review null/default, timezone, identity FK, active/archived state, actual producer/consumer and executable PG17 negatives before acceptance.",
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "tenant_domain",
+      "sourceColumn": "last_found_values",
+      "sourceType": "varchar(512)",
+      "sourceDefinition": "varchar(512) DEFAULT NULL",
+      "sourceRiskFlags": [],
+      "proposedTarget": "tenant_domains.last_found_values (bounded redacted category; no raw DNS TXT)",
+      "sourceDecision": "PROPOSED_PRIVACY_SAFE_REDESIGN",
+      "reviewNeeded": "Prove private access, non-secret diagnostics or authorized scanned-object provenance at real producer/consumer boundaries; never copy raw legacy token or image URLs into public responses.",
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    }
+  ]
+}
