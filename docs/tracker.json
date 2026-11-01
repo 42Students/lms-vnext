@@ -1523,7 +1523,7 @@
             "acceptanceEvidence": [],
             "acceptance": "Final field crosswalk and PG17 tenant-domain/branding/org boundary, uniqueness, access and active-state negatives.",
             "implementationCheckpoint": {
-              "status": "SCOPED_PG17_REPLAY_AND_NEGATIVES_PASS_58_FIELD_CROSSWALK_PROPOSED_NOT_ACCEPTED",
+              "status": "LIVE_READ_AND_TOKEN_PERMISSION_FIXES_PG17_PASS_ARCHIVE_RACE_CI_PENDING",
               "recordedOn": "2026-11-01",
               "sourceReviewLedger": "docs/planning/db019-p04-college-tenant-field-review.json",
               "sourceFields": 58,
@@ -1535,19 +1535,31 @@
               "implementationCommits": [
                 "785234e4b474856fae2fa6db7c65bce87a126978",
                 "b1c806e1d548fe3d77e147546407270ef8782f3e",
-                "869ccdc4d11c19daffac396ea07de3d975f773a2"
+                "869ccdc4d11c19daffac396ea07de3d975f773a2",
+                "5a48483faefa0ea450d2807fa582ea16999dec39",
+                "79a82f037c576c61b9e74adee05054776e1bcaed",
+                "c555678bf082741bf78fcc041b87540b7e7d7da6",
+                "67c59d1f828d9a0d42e2798a65b144f5170b4215",
+                "71d8a088cad5a392363ff63ff313794f08edfb3a"
               ],
               "testCommits": [
                 "a2290a991d2cf2fdb378b2711896d3812ae8e949",
                 "936e60c18b2eec3c669f8f4aa04a93950e170ad0",
-                "a9c2e96a5c2a02637f8b895b1edbe7b8790fb8a4"
+                "a9c2e96a5c2a02637f8b895b1edbe7b8790fb8a4",
+                "76940839a453964edd5b0ffe8a73343ebddc7224",
+                "57368931c090b895597640c5bc34b2fb0a02f37d",
+                "2b9a6011d40726312b2c6cf4c25df4493ab09a06",
+                "296c6fcca892b4dbabfb11290710d72421c7d7c4",
+                "4ff91f527278ff91d839ff8cbacb5d003e660e27"
               ],
               "ciRegistrationCommits": [
                 "9c39ecdaab21d3f0b951206e8a709af79f28ce59",
                 "67d4f8b22c2cc2586b04cc035de3c10f621461e9",
-                "597d082a883bae4c9507b7e279b197fca72a2978"
+                "597d082a883bae4c9507b7e279b197fca72a2978",
+                "7b3b9d0f04a4ae66f7e3c5394e91fba0f563570e",
+                "e659cbb4f94740c78dfee5c0f754fb72330d10e9"
               ],
-              "sourceLedgerCommit": "df45e51846f83cd480c65084d379859f04018f90",
+              "sourceLedgerCommit": "12f40119f7da31c5b73ea2adbe64714883ab4f49",
               "executed": [
                 {
                   "scope": "registered PG17 journal+clean replay+idempotence, DB004 integrated suite including DB19-P04 department forged/stale-role tests",
@@ -1572,15 +1584,33 @@
                   "sha": "597d082a883bae4c9507b7e279b197fca72a2978",
                   "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/41309252477",
                   "result": "PASS"
+                },
+                {
+                  "scope": "DB004 exact registered PG17 replay/idempotence and tenant/department/branding/auth assertions including private DNS challenge and forged stale-admin negatives",
+                  "sha": "7b3b9d0f04a4ae66f7e3c5394e91fba0f563570e",
+                  "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/41314044848",
+                  "result": "PASS"
+                },
+                {
+                  "scope": "DB019 Node22 source-ledger and 2 backend-compat department leadership evidence assertions (source only, NOT database acceptance)",
+                  "sha": "4ff91f527278ff91d839ff8cbacb5d003e660e27",
+                  "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/41314315794",
+                  "result": "PASS_SOURCE_ONLY"
                 }
               ],
               "remaining": [
-                "Archived-organization mutation negatives executed on PG17; still independently verify concurrent archive/verification/primary/host-delete races, branding privacy and current-source producer/consumer behavior.",
-                "Resolve live department chair and vice-chair role decisions; no blanket retired classification.",
-                "Validate all 58 individual source-to-target field dispositions with independent source and consumer proof and cross-role access.",
-                "Observe exact SHA DB019 source quality CI including P04 ledger, then full DB19 P31/P32 sequential gates. P04 and parent remain OPEN."
+                "A source-confirmed backend-only active contract remains for department.dept_chair_id and department.dept_vice_chair_id; old FE no longer displays them, but retirement is not user-approved.",
+                "PG17 registered replay, role revocation, tenant-domain private DNS and archived-org negatives now PASS; archive FK race added, exact run pending.",
+                "Independently verify 58/58 source field semantics across current producers/consumers, including private branding, DNS routing and revocation race/tenant boundaries; source proposals are not signed field acceptance.",
+                "P31/P32 sequential DB019 global gates still open; DB19-P04 and DB019 remain done:false."
               ],
-              "evidenceIsNotAcceptance": true
+              "evidenceIsNotAcceptance": true,
+              "pendingRun": {
+                "sha": "296c6fcca892b4dbabfb11290710d72421c7d7c4",
+                "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/41314240187",
+                "status": "IN_PROGRESS_NOT_ACCEPTED",
+                "scope": "Registered PG17 FK insert/archive concurrency witness"
+              }
             }
           },
           {
