@@ -2135,12 +2135,30 @@
               "bug_tracker_session"
             ],
             "sourceFieldCount": 58,
-            "picked": false,
-            "pickedBy": "",
+            "picked": true,
+            "pickedBy": "CHAT_DB19_P28_TRACKER_2026_11_01",
             "done": false,
             "acceptedAt": null,
             "acceptanceEvidence": [],
-            "acceptance": "Verify status/events, reporter access, private attachments, session safety and cross-role read/write coverage."
+            "acceptance": "Verify status/events, reporter access, private attachments, session safety and cross-role read/write coverage.",
+            "implementationCheckpoint": {
+              "status": "IDEMPOTENCY_SCOPE_AND_PAYLOAD_GUARD_COMMITTED_PG17_NOT_EXECUTED",
+              "recordedOn": "2026-11-01",
+              "sourceCommit": "68f30b4864ea0e0d328fde910bc5a8cdb1b314b7",
+              "integrationTestCommit": "c638efea77e9ffd4700e4dae0d907176217f0755",
+              "changed": [
+                "Verify reporter's persisted active identity before deterministic-key replays",
+                "Reject replay of a source public ID when the acting college differs",
+                "Compare stored complete report evidence and browser provenance after URL secret stripping",
+                "Author concurrent same-key, cross-college, actor-spoof and evidence-mismatch PostgreSQL service tests"
+              ],
+              "pendingAcceptance": [
+                "Execute the registered DB-001 independent PG17 verifier and integration shard including tracker-report-sa-placements-projects-100 at an exact containing SHA; review passing results",
+                "Close all 58 original bug_report/activity/attachment/access/session field-level semantic dispositions, including account-bound retirement of unauthenticated legacy reporter sessions",
+                "Verify revocation, producer/consumer report/read/workflow/history and real attachment private object/scanner authorization paths under cross-role and tenant negatives"
+              ],
+              "evidenceIsNotAcceptance": true
+            }
           },
           {
             "id": "DB19-P29",
