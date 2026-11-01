@@ -45,6 +45,49 @@ import { courseSectionDeliveryIdSchema } from "./validation";
 
 type FileRow = typeof assignmentSubmissionFiles.$inferSelect;
 
+type FileTx = Parameters<Parameters<ReturnType<typeof getDb>["transaction"]>[0]>[0];
+
+/**
+ * An issued upload token is not an authorization snapshot. Recheck actual
+ * membership, learner grant and platform status under row locks immediately
+ * before recording a file or completing an already-issued upload.
+ * This serializes a concurrent role revocation with the file write.
+ */
+async function requirePersistedLearnerFileActor(
+  tx: FileTx,
+  context: RequestContext,
+  ownerMembershipId: string,
+  collegeId: string,
+) {
+  const [owner] = await tx.select({
+    userId: collegeMemberships.userId,
+    collegeId: collegeMemberships.collegeId,
+    status: collegeMemberships.status,
+  }).from(collegeMemberships)
+    .where(eq(collegeMemberships.id, ownerMembershipId)).for("share").limit(1);
+  const [role] = await tx.select({id: membershipRoles.id})
+    .from(membershipRoles)
+    .where(and(
+      eq(membershipRoles.membershipId, ownerMembershipId),
+      eq(membershipRoles.role, "LEARNER"),
+    )).for("share").limit(1);
+  const [user] = await tx.select({status: users.platformStatus})
+    .from(users).where(eq(users.id, context.user.id)).for("share").limit(1);
+  if (
+    !owner || !role || !user ||
+    owner.userId !== context.user.id ||
+    owner.collegeId !== collegeId ||
+    owner.status !== "ACTIVE" ||
+    user.status !== "ACTIVE" ||
+    context.user.platformStatus !== "ACTIVE" ||
+    context.membership?.id !== ownerMembershipId ||
+    context.membership.collegeId !== collegeId
+  ) {
+    throw new StorageFileError("STORAGE_NOT_FOUND");
+  }
+}
+
+
 const idSchema = z.string().uuid();
 
 export const submissionFileUploadInputSchema = z
@@ -167,6 +210,7 @@ export async function issueSubmissionFileUploadGrant(
   });
 
   const row = await getDb().transaction(async (tx) => {
+    await requirePersistedLearnerFileActor(tx, context, membership.id, assignment.collegeId);
     await tx.execute(
       sql`select pg_advisory_xact_lock(hashtextextended(${`asf:${membership.id}:${assignmentId}`}, 0))`,
     );
@@ -258,7 +302,11 @@ export async function completeSubmissionFileUpload(
 ) {
   const assignmentId = idSchema.parse(assignmentIdInput);
   const row = await loadOwnedFile(context, assignmentId, fileIdInput);
-  if (row.status === "READY") return toSubmissionFileDto(row);
+  if (row.status === "READY") {
+    await getDb().transaction((tx) =>
+      requirePersistedLearnerFileActor(tx, context, row.ownerMembershipId, row.collegeId));
+    return toSubmissionFileDto(row);
+  }
   if (row.status !== "UPLOADING" && row.status !== "VERIFYING") {
     throw new StorageFileError("STORAGE_INVALID_STATE");
   }
@@ -287,6 +335,7 @@ export async function completeSubmissionFileUpload(
   }
 
   const updated = await getDb().transaction(async (tx) => {
+    await requirePersistedLearnerFileActor(tx, context, row.ownerMembershipId, row.collegeId);
     const [next] = await tx
       .update(assignmentSubmissionFiles)
       .set({
