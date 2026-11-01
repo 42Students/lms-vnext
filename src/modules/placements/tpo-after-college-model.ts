@@ -56,7 +56,7 @@ export function afterCollegeCatalogScopeKey(collegeId:string,catalogVersion:stri
  * string order. Keep unknown/invalid years out of the options object.
  */
 export function legacyPassingYearOptions(years:readonly (number|string|null)[]){
- const values=[...new Set(years.map(year=>String(year??"").trim()).filter(year=>/^\\d{4}$/.test(year)))];
+ const values=[...new Set(years.map(year=>String(year??"").trim()).filter(year=>/^\d{4}$/.test(year)))];
  return values.sort().map(value=>({value,label:value}));
 }
 
