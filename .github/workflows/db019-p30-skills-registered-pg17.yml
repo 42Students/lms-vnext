@@ -1,0 +1,71 @@
+# DB19-P30 independent registered-journal producer and consumer proof.
+# Deliberately NO overlay of scripts/sql/db10-skills-catalog-staging.sql.
+# Global 2,829-field and DB020 acceptance remain separate gates.
+name: DB19 P30 canonical skill catalog PostgreSQL17
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/db019-p30-skills-registered-pg17.yml"
+      - "src/modules/skills/catalog-service.ts"
+      - "tests/integration/db10-skills-catalog.test.ts"
+      - "docs/planning/db019-p30-skills-field-review.json"
+      - "tests/db019-p30-skills-field-review.test.mjs"
+      - "tests/db019-p30-skills-writer-gates.test.mjs"
+
+permissions:
+  contents: read
+
+jobs:
+  registered-skills:
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    services:
+      postgres:
+        image: postgres:17-alpine
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: lms_vnext_test
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres -d lms_vnext_test"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 20
+    env:
+      DATABASE_URL: postgresql://postgres:postgres@127.0.0.1:5432/lms_vnext_test
+      TEST_DATABASE_URL: postgresql://postgres:postgres@127.0.0.1:5432/lms_vnext_test
+      DB03_ISOLATED_TEST_DATABASE: "1"
+      DB018_ISOLATED_TEST_DATABASE: "1"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - name: Exact commit check
+        run: test "$(git rev-parse HEAD)" = "$GITHUB_SHA"
+      - run: npm ci
+      - name: Frozen 15-field skills and writer source invariants
+        run: |
+          node --test tests/db019-p30-skills-field-review.test.mjs
+          node --test tests/db019-p30-skills-writer-gates.test.mjs
+          npm run db:journal:verify
+      - name: Fresh registered zero-to-head migration and seed (no staging overlay)
+        env:
+          DATABASE_URL: ""
+        run: npm run db:test:prepare
+      - name: Idempotent registered migration
+        run: npm run db:migrate
+      - name: Real catalog and producer SQL integration including forged selection
+        run: npx vitest run --config vitest.db.config.ts tests/integration/db10-skills-catalog.test.ts
+      - name: Skill normalization and consumer unit regressions
+        run: npx vitest run tests/unit/db10-skills-catalog.test.ts tests/unit/db19-skills-usage-normalization.test.ts
+      - name: TypeScript whole app
+        env:
+          NODE_OPTIONS: --max-old-space-size=6144
+        run: npm run typecheck
