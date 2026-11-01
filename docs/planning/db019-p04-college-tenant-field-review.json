@@ -22,7 +22,8 @@
     "vNext is greenfield; these are behavioral crosswalks and historical security classifications, not authorization to migrate legacy production data.",
     "Department chairs require an explicit role/permission and consumer decision. College chairs use separately guarded scoped faculty membership references.",
     "Legacy logo URLs and DNS TXT verification payloads must never become public signed assets or raw diagnostics.",
-    "New department write paths have PG17 forged/stale actor regression coverage; this does not prove all 58 field semantics or the DB19 parent."
+    "New department write paths have PG17 forged/stale actor regression coverage; this does not prove all 58 field semantics or the DB19 parent.",
+    "Legacy DepartmentServiceImpl validates same-college active faculty when optional chair IDs are supplied, but shared legacy Departments UI does not edit/render either field; source classification is BACKEND_COMPAT_ONLY_FRONTEND_PRODUCT_FIELD_RETIRED, not approved retirement."
   ],
   "pendingGates": [
     "Prove actual 58 source-to-consumer semantics, including department chair and vice-chair behavior.",
@@ -597,11 +598,17 @@
       ],
       "proposedTarget": null,
       "sourceDecision": "UNRESOLVED_ACTIVE_ROLE_CONTRACT",
-      "reviewNeeded": "Legacy department chair/vice-chair role consumer and faculty membership relation have not been proven in vNext; do not retire or synthesize this authority.",
+      "reviewNeeded": "Source confirms a backend compatibility writer but no current frontend edit/read. Explicit product/consumer signoff is necessary before retirement or replacing with tenant-scoped normalized leadership grants. Historical integer faculty IDs may not become vNext authority.",
       "producerVerified": false,
       "consumerVerified": false,
       "runtimeVerified": false,
-      "retirementApproved": false
+      "retirementApproved": false,
+      "sourceBehavior": "Legacy DepartmentServiceImpl.validateLeadershipFaculty requires an existing undeleted faculty record assigned to the same college on create/update. Current shared Departments UI has no chair field and does not consume this value. Candidate: explicit scoped role-assignment product feature, or user-approved retirement.",
+      "legacyBackendProof": "docs/legacy-source/backend/src/main/java/com/_42students/lms/service/impl/DepartmentServiceImpl.java",
+      "legacyFrontendProof": "docs/legacy-source/frontend/src/pages/superadmin/sections/Departments.js",
+      "priorAudit": "docs/planning/db004-312-source-target-disposition-proposals.json",
+      "sourceStatus": "BACKEND_COMPAT_ONLY_FRONTEND_PRODUCT_FIELD_RETIRED",
+      "productRetirementDecision": "UNAPPROVED"
     },
     {
       "sourceTable": "department",
@@ -613,11 +620,17 @@
       ],
       "proposedTarget": null,
       "sourceDecision": "UNRESOLVED_ACTIVE_ROLE_CONTRACT",
-      "reviewNeeded": "Legacy department chair/vice-chair role consumer and faculty membership relation have not been proven in vNext; do not retire or synthesize this authority.",
+      "reviewNeeded": "Source confirms a backend compatibility writer but no current frontend edit/read. Explicit product/consumer signoff is necessary before retirement or replacing with tenant-scoped normalized leadership grants. Historical integer faculty IDs may not become vNext authority.",
       "producerVerified": false,
       "consumerVerified": false,
       "runtimeVerified": false,
-      "retirementApproved": false
+      "retirementApproved": false,
+      "sourceBehavior": "Legacy DepartmentServiceImpl.validateLeadershipFaculty requires an existing undeleted faculty record assigned to the same college on create/update. Current shared Departments UI has no vice-chair field and does not consume this value. Candidate: explicit scoped role-assignment product feature, or user-approved retirement.",
+      "legacyBackendProof": "docs/legacy-source/backend/src/main/java/com/_42students/lms/service/impl/DepartmentServiceImpl.java",
+      "legacyFrontendProof": "docs/legacy-source/frontend/src/pages/superadmin/sections/Departments.js",
+      "priorAudit": "docs/planning/db004-312-source-target-disposition-proposals.json",
+      "sourceStatus": "BACKEND_COMPAT_ONLY_FRONTEND_PRODUCT_FIELD_RETIRED",
+      "productRetirementDecision": "UNAPPROVED"
     },
     {
       "sourceTable": "department",
