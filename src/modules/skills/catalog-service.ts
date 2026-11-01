@@ -357,7 +357,13 @@ export async function recordSkillSelection(
     const updated=await getDb().update(db10Skills).set({
       usageCount:sql`${db10Skills.usageCount}+1`,
       updatedAt:new Date(),
-    }).where(and(eq(db10Skills.id,data.skillId),eq(db10Skills.isActive,true)))
+    }).where(and(
+      eq(db10Skills.id,data.skillId),
+      eq(db10Skills.isActive,true),
+      // A client-supplied UUID must not increment a different skill's
+      // popularity counter under a forged or stale display/name binding.
+      sql`lower(${db10Skills.name}) = ${name}`,
+    ))
       .returning({id:db10Skills.id});
     if(!updated.length)throw new Error("SKILL_NOT_FOUND");
   }else{
