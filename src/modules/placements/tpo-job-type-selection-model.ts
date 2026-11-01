@@ -2,7 +2,7 @@
  * Configured rows must come from the authorized college inside the write
  * transaction; do not use a cross-tenant cached type directory here. */
 export type DriveJobTypeChoice = {
- label:string;countsAsPlaced:boolean;
+ label:string;countsAsPlaced:boolean|null;
 };
 type ConfiguredJobType = {label:string;active:boolean;countsAsPlaced:boolean|null};
 type BuiltinJobType = {label:string;countsAsPlaced:boolean};
@@ -19,12 +19,15 @@ export function resolveTpoDriveJobTypeChoice(
  const requested=input?.trim().replace(/\s+/g," ")??"";
  if(!requested)return null;
  if(current.label?.toLocaleLowerCase("en-IN")===requested.toLocaleLowerCase("en-IN")){
-  return {label:current.label,countsAsPlaced:current.countsAsPlaced??true};
+  return {label:current.label,countsAsPlaced:current.countsAsPlaced};
  }
  const normalized=requested.toLocaleLowerCase("en-IN");
  const builtin=builtins.find(row=>row.label.toLocaleLowerCase("en-IN")===normalized);
  const saved=configured.find(row=>row.label.toLocaleLowerCase("en-IN")===normalized);
  if((!builtin&&!saved)||saved?.active===false)return null;
- return {label:builtin?.label??saved!.label,
-  countsAsPlaced:saved?.countsAsPlaced??builtin?.countsAsPlaced??true};
+ // A college's configured answer overrides the virtual built-in default.
+ // A new custom type with no audited answer cannot inherit an arbitrary YES.
+ const countsAsPlaced=saved?.countsAsPlaced??builtin?.countsAsPlaced;
+ if(countsAsPlaced===undefined)return null;
+ return {label:builtin?.label??saved!.label,countsAsPlaced};
 }

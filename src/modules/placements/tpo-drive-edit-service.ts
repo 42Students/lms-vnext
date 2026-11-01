@@ -189,7 +189,7 @@ export async function editTpoDrive(context:RequestContext,rawJobId:unknown,raw:u
   // A hidden historical type is valid ONLY when the existing label stays
   // unchanged. Every changed value must resolve to an active type owned by
   // this college; never accept arbitrary labels or drop the saved type.
-  let selectedJobType: {label:string;countsAsPlaced:boolean} | undefined;
+  let selectedJobType: {label:string;countsAsPlaced:boolean|null} | undefined;
   if(input.jobTypeLabel!==undefined){
    const configured=await tx.select({
     label:placementTpoJobTypes.label,active:placementTpoJobTypes.active,

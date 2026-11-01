@@ -71,8 +71,15 @@ export async function editSuperAdminPublishedDrive(context:RequestContext,rawJob
   if((!builtin&&!configured||configured?.active===false) &&
    savedLabel.toLowerCase()!==requestedJobType.toLowerCase())
    throw new PlacementsServiceError("PLACEMENT_JOB_TYPE_INVALID");
-  const jobTypeLabel=builtin?.label??configured?.label??savedLabel;
-  const countsAsPlaced=builtin?.countsAsPlaced??configured?.countsAsPlaced??job.countsAsPlaced;
+  // A same-label edit keeps the existing drive's historical snapshot, even
+  // when its policy is NULL. Changing the type uses this college's audited
+  // configured answer in preference to any virtual built-in default.
+  const sameType=savedLabel.toLowerCase()===requestedJobType.toLowerCase();
+  const jobTypeLabel=sameType?savedLabel:builtin?.label??configured?.label??savedLabel;
+  const countsAsPlaced=sameType?job.countsAsPlaced:
+    configured?.countsAsPlaced??builtin?.countsAsPlaced;
+  if(countsAsPlaced===undefined)
+    throw new PlacementsServiceError("PLACEMENT_JOB_TYPE_INVALID");
   const [companyRelationship]=await tx.select({
     id:placementCompanyRelationships.id,
   }).from(placementCompanyRelationships).where(and(

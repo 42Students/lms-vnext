@@ -550,7 +550,9 @@ export async function createPlacementJob(
     if ((!builtin && !configured) || configured?.active === false)
       throw new PlacementsServiceError("PLACEMENT_JOB_TYPE_INVALID");
     const jobTypeLabel = builtin?.label ?? configured!.label;
-    const countsAsPlaced = builtin?.countsAsPlaced ?? configured?.countsAsPlaced ?? true;
+    const countsAsPlaced = configured?.countsAsPlaced ?? builtin?.countsAsPlaced;
+    if(countsAsPlaced===undefined)
+      throw new PlacementsServiceError("PLACEMENT_JOB_TYPE_INVALID");
     const [job] = await tx
       .insert(placementJobs)
       .values({
@@ -758,7 +760,9 @@ export async function updatePlacementJob(
         if ((!builtin && !configured) || configured?.active === false)
           throw new PlacementsServiceError("PLACEMENT_JOB_TYPE_INVALID");
         nextTypeLabel = builtin?.label ?? configured!.label;
-        nextCountsAsPlaced = builtin?.countsAsPlaced ?? configured?.countsAsPlaced ?? true;
+        nextCountsAsPlaced = configured?.countsAsPlaced ?? builtin?.countsAsPlaced;
+        if(nextCountsAsPlaced===undefined)
+          throw new PlacementsServiceError("PLACEMENT_JOB_TYPE_INVALID");
       }
     }
     const {categoryOverrideReason,...columnInput}=input;

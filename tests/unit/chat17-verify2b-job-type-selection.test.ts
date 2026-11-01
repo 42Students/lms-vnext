@@ -34,6 +34,34 @@ describe("college drive job-type selection", () => {
   expect(resolveTpoDriveJobTypeChoice("Internship",empty,configured,builtins))
    .toEqual({label:"Internship",countsAsPlaced:false});
  });
+ it("DB019 preserves nullable historic policy and never invents true on unchanged label",()=>{
+  expect(resolveTpoDriveJobTypeChoice(" Full-time ",
+    {label:"Full-time",countsAsPlaced:null},[],builtins))
+    .toEqual({label:"Full-time",countsAsPlaced:null});
+  expect(resolveTpoDriveJobTypeChoice("Hidden legacy",
+    {label:"Hidden legacy",countsAsPlaced:null},configured,builtins))
+    .toEqual({label:"Hidden legacy",countsAsPlaced:null});
+ });
+ it("DB019 college configured placed decision overrides builtin, missing custom policy fails closed",()=>{
+  const local=[
+    {label:"Full-time",active:true,countsAsPlaced:false},
+    {label:"Unaudited",active:true,countsAsPlaced:null},
+  ];
+  expect(resolveTpoDriveJobTypeChoice("Full-time",
+    {label:"Internship",countsAsPlaced:false},local,builtins))
+    .toEqual({label:"Full-time",countsAsPlaced:false});
+  expect(resolveTpoDriveJobTypeChoice("Unaudited",empty,local,builtins))
+    .toBeNull();
+ });
+ it("DB019 all drive writers preserve explicit college policy instead of defaulting to true",()=>{
+  const job=readFileSync(join(process.cwd(),"src/modules/placements/job-service.ts"),"utf8");
+  const admin=readFileSync(join(process.cwd(),
+    "src/modules/placements/super-admin-published-drive-edit-service.ts"),"utf8");
+  expect(job).toContain("configured?.countsAsPlaced ?? builtin?.countsAsPlaced");
+  expect(job).not.toContain("builtin?.countsAsPlaced ?? configured?.countsAsPlaced ?? true");
+  expect(admin).toContain("const countsAsPlaced=sameType?job.countsAsPlaced:");
+  expect(admin).toContain("configured?.countsAsPlaced??builtin?.countsAsPlaced");
+ });
  it("validates job types inside the college-scoped edit transaction", () => {
   const file=readFileSync(join(process.cwd(),
    "src/modules/placements/tpo-drive-edit-service.ts"),"utf8");
