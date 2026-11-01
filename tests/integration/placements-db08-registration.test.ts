@@ -233,6 +233,58 @@ describe("DB08-B per-cohort consented learner registration", () => {
     }
   });
 
+  it("denies registration when placements is disabled while the writer waits on the college lock", async () => {
+    const fixture=await createBatchFixture();
+    const selected=await pool.query<{id:string;enabled:boolean}>(
+      "SELECT id,enabled FROM module_access_rules WHERE scope_type='COLLEGE' "+
+      "AND scope_id=$1 AND module='placements'",[SEED_IDS.collegeA],
+    );
+    expect(selected.rows[0]?.enabled).toBe(true);
+    const holder=await pool.connect();
+    let held=false;
+    let outstanding:Promise<{ok:boolean;error?:unknown}>|null=null;
+    try{
+      await holder.query("BEGIN");held=true;
+      await holder.query("SELECT id FROM colleges WHERE id=$1 FOR UPDATE",[SEED_IDS.collegeA]);
+      // The registration's UI preflight sees enabled=true, then the service
+      // pauses at its college UPDATE lock. Disable before it can persist.
+      outstanding=registerOwnPlacementChoice(learner,{
+        choice:"PLACEMENTS",acceptedConsent:true,
+      }).then(()=>({ok:true}),error=>({ok:false,error}));
+      let waiting=false;
+      for(let tries=0;tries<160;tries++){
+        const locks=await pool.query<{blocked:string}>(
+          "SELECT count(*)::text AS blocked FROM pg_stat_activity "+
+          "WHERE datname=current_database() AND pid<>pg_backend_pid() "+
+          "AND wait_event_type='Lock' AND query ILIKE '%colleges%'",
+        );
+        if(Number(locks.rows[0]?.blocked??0)>=1){waiting=true;break;}
+        await new Promise(resolve=>setTimeout(resolve,25));
+      }
+      expect(waiting).toBe(true);
+      await holder.query(
+        "UPDATE module_access_rules SET enabled=false WHERE id=$1",
+        [selected.rows[0]!.id],
+      );
+      await holder.query("COMMIT");held=false;
+      const result=await outstanding;
+      expect(result).toMatchObject({
+        ok:false,error:{code:"DB08_REGISTRATION_MODULE_DISABLED"},
+      });
+      const rows=await pool.query(
+        "SELECT id FROM placement_batch_registrations WHERE membership_id=$1 AND cohort_id=$2",
+        [db08LearnerMembership,fixture.cohort],
+      );
+      expect(rows.rows).toHaveLength(0);
+    }finally{
+      if(held)await holder.query("ROLLBACK").catch(()=>undefined);
+      holder.release();
+      if(outstanding)await outstanding;
+      await pool.query("UPDATE module_access_rules SET enabled=true WHERE id=$1",
+        [selected.rows[0]!.id]);
+    }
+  },20_000);
+
   it("stores a single consent and event on repeated identical self registration", async () => {
     const ids = await createBatchFixture();
     const first = await registerOwnPlacementChoice(learner, {
