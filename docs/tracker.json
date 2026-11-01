@@ -1523,7 +1523,7 @@
             "acceptanceEvidence": [],
             "acceptance": "Final field crosswalk and PG17 tenant-domain/branding/org boundary, uniqueness, access and active-state negatives.",
             "implementationCheckpoint": {
-              "status": "GUARDED_MUTATION_PATHS_AND_SCOPED_PG17_PASS_EXACT_SOURCE_LEDGER_PROPOSED_NOT_ACCEPTED",
+              "status": "SCOPED_PG17_REPLAY_AND_NEGATIVES_PASS_58_FIELD_CROSSWALK_PROPOSED_NOT_ACCEPTED",
               "recordedOn": "2026-11-01",
               "sourceReviewLedger": "docs/planning/db019-p04-college-tenant-field-review.json",
               "sourceFields": 58,
@@ -1566,21 +1566,21 @@
                   "sha": "67d4f8b22c2cc2586b04cc035de3c10f621461e9",
                   "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/41309068684",
                   "result": "PASS_SOURCE_ONLY"
+                },
+                {
+                  "scope": "Registered PG17 replay, idempotence and all six archived-organization tenant-domain mutation negatives; full DB004 tenancy/auth tests and source checks",
+                  "sha": "597d082a883bae4c9507b7e279b197fca72a2978",
+                  "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/41309252477",
+                  "result": "PASS"
                 }
               ],
               "remaining": [
-                "Execute exact-head PG17 negatives specifically exercising archived-organization domain mutations, DNS verification/primary/host-delete races, branding privacy and current-source producer/consumer behavior.",
+                "Archived-organization mutation negatives executed on PG17; still independently verify concurrent archive/verification/primary/host-delete races, branding privacy and current-source producer/consumer behavior.",
                 "Resolve live department chair and vice-chair role decisions; no blanket retired classification.",
                 "Validate all 58 individual source-to-target field dispositions with independent source and consumer proof and cross-role access.",
                 "Observe exact SHA DB019 source quality CI including P04 ledger, then full DB19 P31/P32 sequential gates. P04 and parent remain OPEN."
               ],
-              "evidenceIsNotAcceptance": true,
-              "pendingRun": {
-                "scope": "PostgreSQL17 archived-organization six domain mutation negatives and registered replay",
-                "sha": "597d082a883bae4c9507b7e279b197fca72a2978",
-                "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/41309252477",
-                "status": "IN_PROGRESS_NOT_ACCEPTED"
-              }
+              "evidenceIsNotAcceptance": true
             }
           },
           {
