@@ -655,7 +655,7 @@ describe("DB08: atomic placement batch and inherited eligibility", () => {
     const active = rows.rows.find(x => x.cohort_id === b.cohortId);
     expect(finished.finished_at).toBeTruthy();
     expect(active.finished_at).toBeNull();
-    expect(finished.rules_override.maxOffers).toBe(2);
+    expect(finished.rules_override.maxHeldOffers).toBe(2);
     expect(active.rules_override).toBeNull();
     expect(finished.registration_deadline).not.toEqual(active.registration_deadline);
   });
