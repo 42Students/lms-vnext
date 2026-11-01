@@ -19,6 +19,8 @@ on:
       - "tests/integration/db09-tpo-season-settings-write.test.ts"
       - "src/components/tpo/tpo-outcome-labels-editor.tsx"
       - "src/modules/placements/batch-registration-service.ts"
+      - "tests/integration/placements-db08-registration.test.ts"
+      - "tests/integration/placements-db08-batches.test.ts"
       - "src/modules/placements/batch-participation-service.ts"
       - "tests/integration/db019-after-college-outcome-details.test.ts"
       - "tests/unit/db019-after-college-outcome-details.test.ts"
@@ -104,3 +106,62 @@ jobs:
           echo "P20 after-college source/runtime subset only."
           echo "P20 remains OPEN until all 31-field batch/registration/season, enum, history and race acceptance."
           echo "DB019 and DB020 remain OPEN."
+
+  p20-registered-batch-consent:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    services:
+      postgres:
+        image: postgres:17-alpine
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: lms_vnext_test
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres -d lms_vnext_test"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 20
+    env:
+      DATABASE_URL: postgresql://postgres:postgres@127.0.0.1:5432/lms_vnext_test
+      TEST_DATABASE_URL: postgresql://postgres:postgres@127.0.0.1:5432/lms_vnext_test
+      DB03_ISOLATED_TEST_DATABASE: "1"
+      DB08_ISOLATED_TEST_DATABASE: "1"
+      DB08_MIGRATION_APPLIED: "1"
+      DB08_B_MIGRATION_APPLIED: "1"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - name: Install pinned dependencies
+        run: npm ci
+      - name: Verify journal against exact checked-out revision
+        run: |
+          test "$(git rev-parse HEAD)" = "$GITHUB_SHA"
+          npm run db:journal:verify
+      - name: Reset and seed isolated registered PG17
+        env:
+          DATABASE_URL: ""
+        run: npm run db:test:prepare
+      - name: Prove registered replay is idempotent
+        run: npm run db:migrate
+      - name: Assert registration tables are actually present in journaled schema
+        run: |
+          test "$(psql "$TEST_DATABASE_URL" -X -Atc "SELECT
+            to_regclass('public.placement_batch_lifecycles') IS NOT NULL
+            AND to_regclass('public.placement_batch_registrations') IS NOT NULL
+            AND to_regclass('public.placement_batch_registration_events') IS NOT NULL")" = t
+      - name: Execute exact cohort, consent, role, batch and module-disable race integration
+        run: >-
+          npx vitest run --config vitest.db.config.ts
+          tests/integration/placements-db08-registration.test.ts
+          tests/integration/placements-db08-batches.test.ts
+      - name: State bounded acceptance
+        if: always()
+        run: |
+          echo "P20 isolated registered batch and consent service witnesses only."
+          echo "Historical season-to-cohort and 31-field source semantics remain open."
