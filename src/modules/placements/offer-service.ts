@@ -50,6 +50,7 @@ import { AuthorizationError, can } from "@/modules/permissions/policy";
 import {assertPersistedPlatformPermission} from "@/modules/permissions/persisted-actor";
 import { PlacementsServiceError } from "./errors";
 import { isDebarmentActive } from "./batch-registration-policy";
+import {safeLearnerOfferLetterHref} from "./learner-offer-letter-model";
 import { parsePlacementCascadeId, shouldKeepPlacementCascadeSibling } from "./placement-cascade-policy";
 import { loadPlacementHeldOfferFacts } from "./held-offer-facts-service";
 import {
@@ -1720,7 +1721,7 @@ export async function listOwnPlacementOffers(
   }
   await requireLearnerPlacementAccess(context);
 
-  return getDb()
+  const rows = await getDb()
     .select({
       // DB19-P17: learner reads must not return internal offer provenance,
       // staff verification identities, raw private object storage keys, or
@@ -1747,6 +1748,8 @@ export async function listOwnPlacementOffers(
         expiresAt: placementOffers.expiresAt,
         issuedAt: placementOffers.issuedAt,
         respondedAt: placementOffers.respondedAt,
+        // Sanitized below: raw legacy URLs never leave the service.
+        letterHref: placementOffers.offerLetterUrl,
       },
       // Joining outcomes shown to the learner must not include internal
       // staff actor UUIDs. The staff history reader remains separate.
@@ -1823,6 +1826,13 @@ export async function listOwnPlacementOffers(
     .orderBy(
       desc(placementOffers.issuedAt),desc(placementOffers.id),
     );
+  return rows.map(row=>({
+    ...row,
+    offer:{
+      ...row.offer,
+      letterHref:safeLearnerOfferLetterHref(row.offer.letterHref),
+    },
+  }));
 }
 
 export async function listPlacementJobOffers(
