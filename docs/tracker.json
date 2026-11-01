@@ -1607,6 +1607,35 @@
             "all 2829 field dispositions and actual producer/consumer parity"
           ],
           "notTaskAcceptance": true
+        },
+        "latestCompleteDb08ProposalReview": {
+          "status": "SOURCE_PROPOSAL_CENSUS_280_OF_280_NOT_RUNTIME_ACCEPTANCE",
+          "recordedOn": "2026-11-01",
+          "ledgerPath": "docs/planning/database-parity-db08-field-ledger.json",
+          "ledgerBlobSha": "9d03c484c0c3aee167e58d7db9e0be1492d7bda6",
+          "sourceFields": 280,
+          "individualSourceProposals": 280,
+          "classifications": {
+            "EXPLICIT_RUNTIME_GAP": 73,
+            "PROPOSED_ACTIVE_FIELD_MAPPING": 180,
+            "NEEDS_ENUM_CROSSWALK": 27
+          },
+          "noIndividualProposalRemaining": 0,
+          "runtimeVerified": 0,
+          "consumerVerified": 0,
+          "retirementApproved": 0,
+          "regressionGuardCommits": [
+            "340d1e1d25355e03261d20196f9c52353ca28e64",
+            "1ca92c30c3982e5f8936e5071f0e58e042120ef6"
+          ],
+          "regressionExecution": "NOT_YET_INDEPENDENTLY_VERIFIED_FOR_NEW_COMMITS",
+          "remaining": [
+            "280 source proposals are not approved per-field semantic disposition or PostgreSQL read/write proof",
+            "73 explicit runtime gaps and 27 enum crosswalks require source/target behavior reconciliation",
+            "Global 2829-field decisions plus DB019 registered PostgreSQL producer/consumer/tenant/privacy acceptance remain open",
+            "DB020 remains dependent on accepted DB019"
+          ],
+          "notTaskAcceptance": true
         }
       }
     },
