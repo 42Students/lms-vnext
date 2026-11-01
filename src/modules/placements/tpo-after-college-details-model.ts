@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { afterCollegeManualSchema, type AfterCollegeOutcome } from "./tpo-after-college-model";
+import { afterCollegeCustomLabelOutcomeSchema, type AfterCollegeOutcome } from "./tpo-after-college-model";
 
 /** The source's non-placement custom label is bound to the same college and
  * outcome, not arbitrary text or a learner-provided consent choice. */
@@ -8,7 +8,7 @@ export class AfterCollegeDetailValidationError extends Error {
 }
 const catalogSchema=z.array(z.object({
   label:z.string().trim().min(2).max(60),
-  outcome:afterCollegeManualSchema,
+  outcome:afterCollegeCustomLabelOutcomeSchema,
 }).passthrough());
 export type AfterCollegeOutcomeDetails={outcomeLabel:string|null;outcomeDetail:string|null};
 export function normalizeTpoAfterCollegeDetails(
