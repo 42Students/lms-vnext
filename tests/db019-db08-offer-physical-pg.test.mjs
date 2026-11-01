@@ -497,3 +497,71 @@ test("DB019 interview privacy, cohort consent and immutable eligibility events s
   assert.equal(ledger.tables.find(t=>t.legacyTable==="placement_registration").fields
     .find(f=>f.legacyColumn==="season_id").reviewDecision.classification,"EXPLICIT_RUNTIME_GAP");
 });
+
+
+test("DB19-P21 26 frozen saved-job, preference and external-placement fields have bounded registered PG17 targets",async()=>{
+  const sourceTables=["external_placement","job_preferences","learner_saved_job"];
+  const records=sourceTables.map(name=>ledger.tables.find(t=>t.legacyTable===name));
+  assert.deepEqual(records.map(t=>t?.fields?.length),[10,12,4]);
+  const refs=[...new Set(records.flatMap(t=>t.fields.flatMap(f=>
+    f.reviewDecision?.targetRefs??[])))];
+  const targetTables=[...new Set(refs.map(ref=>ref.split(".")[0]))];
+  assert.deepEqual(targetTables.sort(),[
+    "placement_candidate_preferences",
+    "placement_external_offers",
+    "placement_saved_jobs",
+  ]);
+  const physical=await pool.query(`
+    SELECT table_name,column_name,udt_name,column_default,is_nullable
+      FROM information_schema.columns
+     WHERE table_schema='public' AND table_name=ANY($1::text[])
+  `,[targetTables]);
+  const cols=new Map(physical.rows.map(col=>[
+    col.table_name+"."+col.column_name,col,
+  ]));
+  for(const table of records)for(const field of table.fields){
+    const proposed=field.reviewDecision;
+    assert.equal(field.status,"UNVERIFIED");
+    assert.equal(proposed?.runtimeVerified,false);
+    assert.equal(proposed?.consumerVerified,false);
+    assert.equal(proposed?.retirementApproved,false);
+    for(const ref of proposed.targetRefs){
+      assert.ok(cols.has(ref),`DB19-P21 source candidate ${table.legacyTable}.${field.legacyColumn} is missing: ${ref}`);
+    }
+  }
+  assert.equal(cols.get("placement_saved_jobs.id")?.udt_name,"uuid");
+  assert.equal(cols.get("placement_saved_jobs.legacy_saved_job_id")?.udt_name,"int4");
+  assert.equal(cols.get("placement_saved_jobs.saved_at")?.udt_name,"timestamptz");
+  assert.equal(cols.get("placement_external_offers.ctc_lpa")?.udt_name,"numeric");
+  assert.equal(cols.get("placement_external_offers.reviewed_at")?.udt_name,"timestamptz");
+  assert.equal(cols.get("placement_candidate_preferences.notify_matching_jobs")?.udt_name,"bool");
+  assert.equal(cols.get("placement_candidate_preferences.notify_matching_jobs")?.column_default,"true");
+
+  const constraints=await pool.query(`
+    SELECT conname,pg_get_constraintdef(oid) AS definition
+      FROM pg_constraint
+     WHERE conrelid=ANY($1::regclass[])
+  `,[targetTables.map(x=>"public."+x)]);
+  const byName=new Map(constraints.rows.map(x=>[x.conname,x.definition]));
+  for(const name of [
+    "placement_saved_jobs_member_college_fk",
+    "placement_saved_jobs_job_college_fk",
+    "placement_external_offers_verified_ck",
+    "placement_external_offers_status_ck",
+    "placement_candidate_preferences_pap_ck",
+  ])assert.ok(byName.has(name),"DB19-P21 missing registered security check "+name);
+  assert.match(byName.get("placement_saved_jobs_member_college_fk"),/college_id/);
+  assert.match(byName.get("placement_saved_jobs_job_college_fk"),/college_id/);
+  const indexes=await pool.query(`
+    SELECT indexname,indexdef
+      FROM pg_indexes
+     WHERE schemaname='public' AND tablename='placement_saved_jobs'
+  `);
+  const byIndex=new Map(indexes.rows.map(i=>[i.indexname,i.indexdef]));
+  for(const name of ["placement_saved_jobs_member_job_uq","placement_saved_jobs_legacy_id_uq"]){
+    assert.match(byIndex.get(name)??"",/UNIQUE INDEX/,
+      "DB19-P21 missing idempotent/deduplicated bookmark index "+name);
+  }
+  // Physical target proof is deliberately not historical enum, consent,
+  // private-file storage, producer/consumer or runtime semantic acceptance.
+});
