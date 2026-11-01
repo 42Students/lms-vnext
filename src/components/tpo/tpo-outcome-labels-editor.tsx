@@ -6,9 +6,9 @@ import {Input} from "@/components/ui/input";
 import {Select} from "@/components/ui/select";
 import {useRouter} from "next/navigation";
 import {useState} from "react";
-import {AFTER_COLLEGE_LABELS,MANUAL_AFTER_COLLEGE_OUTCOMES,type AfterCollegeOutcome} from "@/modules/placements/tpo-after-college-model";
+import {AFTER_COLLEGE_LABELS,CHOICE_AFTER_COLLEGE_OUTCOMES,type CustomAfterCollegeOutcome} from "@/modules/placements/tpo-after-college-model";
 
-type Label={id?:string|null;label:string;outcome:AfterCollegeOutcome};
+type Label={id?:string|null;label:string;outcome:CustomAfterCollegeOutcome};
 function validate(label:string,labels:readonly Label[],index:number){
  const name=label.trim().toLocaleLowerCase("en-IN");
  if(name.length<2||name.length>60)return "2-60 characters";
@@ -22,7 +22,7 @@ export function TpoOutcomeLabelsEditor({initial,version}:{initial:readonly Label
  const router=useRouter();
  const [labels,setLabels]=useState<Label[]>([...initial]);
  const [draft,setDraft]=useState("");
- const [outcome,setOutcome]=useState<AfterCollegeOutcome>("ENTREPRENEURSHIP");
+ const [outcome,setOutcome]=useState<CustomAfterCollegeOutcome>("ENTREPRENEURSHIP");
  const [busy,setBusy]=useState(false),[error,setError]=useState(""),[notice,setNotice]=useState("");
  const [currentVersion,setCurrentVersion]=useState(version);
  const dirty=JSON.stringify(labels)!==JSON.stringify(initial);
@@ -59,9 +59,9 @@ export function TpoOutcomeLabelsEditor({initial,version}:{initial:readonly Label
    </label>
    <label className="min-w-0 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Counts as
     <Select value={row.outcome} disabled={busy}
-     onChange={event=>setLabels(rows=>rows.map((item,i)=>i===index?{...item,outcome:event.target.value as AfterCollegeOutcome}:item))}
+     onChange={event=>setLabels(rows=>rows.map((item,i)=>i===index?{...item,outcome:event.target.value as CustomAfterCollegeOutcome}:item))}
      className="mt-1 min-h-11 min-[768px]:min-h-9 w-full">
-     {MANUAL_AFTER_COLLEGE_OUTCOMES.map(value=><option key={value} value={value}>{AFTER_COLLEGE_LABELS[value]}</option>)}
+     {CHOICE_AFTER_COLLEGE_OUTCOMES.map(value=><option key={value} value={value}>{AFTER_COLLEGE_LABELS[value]}</option>)}
     </Select>
    </label>
    <Button variant="secondary" type="button" disabled={busy} aria-label={"Remove "+row.label}
@@ -76,15 +76,15 @@ export function TpoOutcomeLabelsEditor({initial,version}:{initial:readonly Label
     {draft&&problem?<span className="block text-xs text-error">{problem}</span>:null}
    </label>
    <label className="min-w-0 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Counts as
-    <Select value={outcome} disabled={busy} onChange={e=>setOutcome(e.target.value as AfterCollegeOutcome)}
+    <Select value={outcome} disabled={busy} onChange={e=>setOutcome(e.target.value as CustomAfterCollegeOutcome)}
      className="mt-1 min-h-11 min-[768px]:min-h-9">
-     {MANUAL_AFTER_COLLEGE_OUTCOMES.map(value=><option key={value} value={value}>{AFTER_COLLEGE_LABELS[value]}</option>)}
+     {CHOICE_AFTER_COLLEGE_OUTCOMES.map(value=><option key={value} value={value}>{AFTER_COLLEGE_LABELS[value]}</option>)}
     </Select>
    </label>
    <Button variant="secondary" type="button" onClick={add} disabled={!draft.trim()||Boolean(problem)||busy||labels.length>=30}
     className="min-h-11 w-full min-[768px]:min-h-9 min-[768px]:w-auto text-sm">Add</Button>
   </div>
-  <p className="text-xs text-muted-foreground">{labels.length}/30 labels. Changing a mapping affects how future student choices are grouped; existing recorded outcomes are not silently rewritten.</p>
+  <p className="text-xs text-muted-foreground">{labels.length}/30 labels. Renaming a label updates students using it; moving it to a different choice also updates their recorded after-college outcome. Removing a label keeps each student's outcome.</p>
   <Button variant="primary" type="button" onClick={()=>void save()} disabled={busy||!dirty||invalid>=0}
    className="min-h-11 min-[768px]:min-h-9 text-sm">Save changes</Button>
   {error?<InlineNotice tone="error" message={error} onDismiss={()=>setError("")}/>:null}
