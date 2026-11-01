@@ -9,3 +9,15 @@
 export function isRecruiterRoundResultSource(source: string): boolean {
   return source === "HR" || source === "RECRUITER";
 }
+
+/** A matching provenance label is not permission to replace a colleague's
+ * staged result. Compare the persisted submitting identity before both the
+ * idempotent-return and supersede paths; role/grant checks remain separate. */
+export function isSameRoundResultSubmitter(
+  persistedSubmitterUserId: string | null | undefined,
+  requesterUserId: string,
+): boolean {
+  return typeof persistedSubmitterUserId === "string" &&
+    persistedSubmitterUserId.length > 0 && requesterUserId.length > 0 &&
+    persistedSubmitterUserId === requesterUserId;
+}
