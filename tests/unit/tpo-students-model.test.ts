@@ -10,6 +10,7 @@ import {
   filterTpoStudentRoster,
   summarizeTpoStudentBranches,
   summarizeTpoStudents,
+  verifiedSelectedPlacementMembers,
   type TpoStudentSource,
 } from "@/modules/placements/tpo-students-model";
 
@@ -69,6 +70,17 @@ function source(
 }
 
 describe("TPO Students journey derivation", () => {
+  it("DB019 SELECTED requires stored true: full-time, unknown and false cannot count",()=>{
+    const selectionRows=[
+      {membershipId:"explicit-yes",countsAsPlaced:true,employmentType:"INTERNSHIP"},
+      {membershipId:"unknown-full-time",countsAsPlaced:null,employmentType:"FULL_TIME"},
+      {membershipId:"excluded-full-time",countsAsPlaced:false,employmentType:"FULL_TIME"},
+      {membershipId:"explicit-yes",countsAsPlaced:true,employmentType:"FULL_TIME"},
+    ];
+    expect([...verifiedSelectedPlacementMembers(selectionRows)]).toEqual(["explicit-yes"]);
+    expect(verifiedSelectedPlacementMembers([]).size).toBe(0);
+  });
+
   it("TPO-students-31 does not infer missing resume or projects from absent learner-owned profile data",()=>{
     const unknown=deriveTpoStudent(source("missing-profile",{profileDocument:null}),NOW);
     const empty=deriveTpoStudent(source("empty-profile",{profileDocument:{}}),NOW);

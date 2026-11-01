@@ -74,6 +74,7 @@ import {
   summarizeTpoStudentBranches,
   summarizeTpoStudents,
   selectTpoStudentWorkingSet,
+  verifiedSelectedPlacementMembers,
   type TpoStudentApplicationSignal,
   type TpoStudentOfferSignal,
   type TpoStudentRoundSignal,
@@ -779,7 +780,6 @@ export async function getTpoStudentsIntelligence(
   // independently of whether an offer was released yet.
   const verifiedSelections=activeSeason?await db.select({
    membershipId:placementApplications.membershipId,
-   employmentType:placementJobs.employmentType,
    countsAsPlaced:placementJobs.countsAsPlaced,
   }).from(placementDriveSelections)
    .innerJoin(placementApplications,eq(placementApplications.id,placementDriveSelections.applicationId))
@@ -789,8 +789,7 @@ export async function getTpoStudentsIntelligence(
     eq(placementJobs.seasonId,activeSeason.id),
     inArray(placementDriveSelections.status,["VERIFIED","RELEASED"]),
     isNotNull(placementDriveSelections.verifiedAt))):[];
-  const selectedAndPlacedIds=new Set(verifiedSelections.filter(row=>
-    row.countsAsPlaced??row.employmentType==="FULL_TIME").map(row=>row.membershipId));
+  const selectedAndPlacedIds=verifiedSelectedPlacementMembers(verifiedSelections);
 
   const sectionsByEnrollment = new Map<
     string,

@@ -628,3 +628,13 @@ export function tpoStudentNeedsAttention(row:TpoStudentRow):boolean{
   row.offersAwaitingAnswer>0||row.ambiguousSection||
   row.readinessSignal==="ACADEMIC_EVIDENCE_MISSING";
 }
+
+/** College SELECTED rule: only an explicitly audited per-drive TRUE can
+ * certify a member as selected for placement. The legacy NULL policy stays
+ * unverified even if the job's employment type looks full-time. */
+export function verifiedSelectedPlacementMembers(
+  selections:readonly {membershipId:string;countsAsPlaced:boolean|null}[],
+):Set<string>{
+  return new Set(selections.filter(row=>row.countsAsPlaced===true)
+    .map(row=>row.membershipId));
+}
