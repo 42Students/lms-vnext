@@ -18,7 +18,7 @@
   "oracle": "docs/legacy-source/backend/src/main/resources/db/migration/V201__drop_tpo_coordinator_roles.sql",
   "clarifications": [
     "V201 dropped tpo_coordinator_assignment and tpo_team_member.department; this is source migration evidence, not requester-approved retirement for every production tenant.",
-    "V201 removed faculty/student coordinator roles, retaining TPO_ADMIN; current vNext still retains a FACULTY_COORDINATOR option and dated coordinator UI. No extra role may gain college-wide principal privileges without new approval.",
+    "V201 removed faculty/student coordinator roles, retaining TPO_ADMIN; current vNext schema and read model still recognize FACULTY_COORDINATOR and dated coordinator UI, although the team assignment writer is now TPO_ADMIN-only. No extra role may gain college-wide principal privileges without new approval.",
     "A successful 49/49 source ledger is not a database replay, a verified privacy projection, or production acceptance.",
     "P22 stays OPEN pending exact-SHA registered PostgreSQL / producer-consumer / revoke, IDOR, privacy and optimistic CAS checks."
   ],
@@ -635,7 +635,7 @@
       "sourceRiskFlags": [],
       "proposedTarget": "placement_tpo_team_members.role",
       "sourceDecision": "PROPOSED_ACTIVE_FIELD_MAPPING",
-      "unresolvedSemanticEvidence": "V201 retained only TPO_ADMIN. vNext currently creates FACULTY_COORDINATOR in team assignments; approval/reconciliation required before semantic certification.",
+      "unresolvedSemanticEvidence": "V201 retained only TPO_ADMIN; the team assignment writer now creates TPO_ADMIN, but existing schema/read-model retains FACULTY_COORDINATOR support. Pre-existing coordinator row behavior and the role-permission consumer still require reconciliation.",
       "runtimeVerified": false,
       "consumerVerified": false,
       "producerVerified": false,
