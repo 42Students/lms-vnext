@@ -1748,7 +1748,15 @@ export async function listOwnPlacementOffers(
         issuedAt: placementOffers.issuedAt,
         respondedAt: placementOffers.respondedAt,
       },
-      joining: placementJoiningOutcomes,
+      // Joining outcomes shown to the learner must not include internal
+      // staff actor UUIDs. The staff history reader remains separate.
+      joining: {
+        status: placementJoiningOutcomes.status,
+        joiningDate: placementJoiningOutcomes.joiningDate,
+        reason: placementJoiningOutcomes.reason,
+        recordedAt: placementJoiningOutcomes.recordedAt,
+        updatedAt: placementJoiningOutcomes.updatedAt,
+      },
       job: {
         id: placementJobs.id,
         title: placementJobs.title,
