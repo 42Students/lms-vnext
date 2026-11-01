@@ -324,7 +324,7 @@ describe("Placement P8 offers and joining", () => {
       roleTitle:"P17 offer privacy witness",annualCtcInr:1_200_000,
     });
     const privateKey="private/p17-letter-signed-location.pdf";
-    const legacyUrl="https://private.example.test/offer-letter?bearer=P17_SECRET_TOKEN";
+    const legacyUrl="https://p17-user:P17_SECRET_TOKEN@private.example.test/offer-letter";
     await pool.query(
       `update placement_offers
        set offer_letter_object_path=$1,
@@ -357,6 +357,18 @@ describe("Placement P8 offers and joining", () => {
     expect(raw).not.toContain(privateKey);
     expect(raw).not.toContain("P17_SECRET_TOKEN");
     expect(raw).not.toContain(SEED_IDS.facultyUser);
+    expect(own?.offer.letterHref).toBeNull();
+    // A legitimate external HTTPS offer letter must still be reachable;
+    // only unsafe embedded-credential links and private object keys are
+    // denied, without regressing the learner's letter download UI.
+    const approvedExternalUrl="https://private.example.test/p17-offer-letter.pdf";
+    await pool.query("update placement_offers set offer_letter_url=$1 where id=$2",[
+      approvedExternalUrl,offer.id,
+    ]);
+    const approved=(await listOwnPlacementOffers(learner))
+      .find(row=>row.offer.id===offer.id);
+    expect(approved?.offer.letterHref).toBe(approvedExternalUrl);
+    expect(JSON.stringify(approved?.offer)).not.toContain(privateKey);
     for(const privateField of [
       "offerLetterUrl","offerLetterObjectPath","offerLetterAttachedAt",
       "offerLetterAttachedByUserId","verifiedByUserId","createdByType",
@@ -368,7 +380,7 @@ describe("Placement P8 offers and joining", () => {
       "applicationId","version","rowVersion","status","kind","roleTitle",
       "annualCtcInr","legacyCtcLpa","joiningDate","expiresAt",
       "issuedAt","respondedAt","acceptanceChannel",
-      "acceptedDisputableUntil",
+      "acceptedDisputableUntil","letterHref",
     ])expect(own?.offer).toHaveProperty(consumerField);
   });
 
