@@ -19,6 +19,15 @@ export const MANUAL_AFTER_COLLEGE_OUTCOMES=AFTER_COLLEGE_OUTCOMES.filter(value=>
  !["PLACED_ON_CAMPUS","PLACED_OFF_CAMPUS","DEBARRED"].includes(value));
 export const afterCollegeManualSchema=afterCollegeOutcomeSchema.refine(value=>
  MANUAL_AFTER_COLLEGE_OUTCOMES.includes(value),"Use recorded offer or debarment evidence to mark placed or debarred.");
+/** A custom label is attached only to an explicit career-choice outcome.
+ * SEEKING/NOT_DECIDED and evidence-derived placement/debarment are never
+ * editable college-label categories (legacy PlacementOutcomeService.CHOICE_OUTCOMES).
+ */
+export const CHOICE_AFTER_COLLEGE_OUTCOMES=[
+ "HIGHER_STUDIES","ENTREPRENEURSHIP","COMPETITIVE_EXAMS","NOT_INTERESTED",
+] as const;
+export const afterCollegeCustomLabelOutcomeSchema=z.enum(CHOICE_AFTER_COLLEGE_OUTCOMES);
+export type CustomAfterCollegeOutcome=z.infer<typeof afterCollegeCustomLabelOutcomeSchema>;
 export function afterCollegeOptions(){
  return MANUAL_AFTER_COLLEGE_OUTCOMES.map(value=>({value,label:AFTER_COLLEGE_LABELS[value],settable:true as const}));
 }
