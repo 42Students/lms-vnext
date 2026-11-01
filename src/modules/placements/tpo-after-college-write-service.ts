@@ -26,14 +26,12 @@ export async function setTpoAfterCollegeOutcome(ctx:RequestContext,raw:unknown){
   const [college]=await tx.select({id:colleges.id,organizationId:colleges.organizationId})
    .from(colleges).where(and(eq(colleges.id,collegeId),eq(colleges.status,"ACTIVE"))).for("update").limit(1);
   if(!college)throw new AfterCollegeError("AFTER_COLLEGE_NOT_FOUND");
-  await assertPersistedPlatformPermission(tx,ctx,"placements.manage",{collegeId,organizationId:college.organizationId});
-  const [actor]=await tx.select({id:collegeMemberships.id}).from(collegeMemberships)
-   .innerJoin(users,eq(users.id,collegeMemberships.userId))
-   .innerJoin(membershipRoles,and(eq(membershipRoles.membershipId,collegeMemberships.id),eq(membershipRoles.role,"TPO")))
-   .where(and(eq(collegeMemberships.id,ctx.membership!.id),
-    eq(collegeMemberships.userId,ctx.user.id),eq(collegeMemberships.collegeId,collegeId),
-    eq(collegeMemberships.status,"ACTIVE"),eq(users.platformStatus,"ACTIVE"))).limit(1);
-  if(!actor)throw new AfterCollegeError("AFTER_COLLEGE_NOT_FOUND");
+  // Rebuild the actor and its roles under SHARE locks inside the write
+  // transaction. This authorizes TPO, College Admin and an explicitly
+  // scoped Super Admin without impersonating a TPO membership.
+  const verifiedActor=await assertPersistedPlatformPermission(tx,ctx,"placements.manage",{
+   collegeId,organizationId:college.organizationId,
+  });
   const [target]=await tx.select({id:collegeMemberships.id}).from(collegeMemberships)
    .innerJoin(users,eq(users.id,collegeMemberships.userId))
    .innerJoin(membershipRoles,and(eq(membershipRoles.membershipId,collegeMemberships.id),eq(membershipRoles.role,"LEARNER")))
@@ -69,7 +67,8 @@ export async function setTpoAfterCollegeOutcome(ctx:RequestContext,raw:unknown){
     set:{outcome:input.outcome,...details,updatedAt}});
   await tx.insert(activityEvents).values({
    organizationId:college.organizationId,collegeId,actorUserId:ctx.user.id,
-   actorMembershipId:ctx.membership!.id,module:"PLACEMENTS",
+   actorMembershipId:verifiedActor.membership?.collegeId===collegeId
+    ?verifiedActor.membership.id:null,module:"PLACEMENTS",
    eventType:"placements.student.after_college_updated",subjectType:"COLLEGE_MEMBERSHIP",
    subjectId:target.id,summary:"TPO updated a learner after-college destination",
    // Details may identify personal aspirations; never publish them through
