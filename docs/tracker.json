@@ -1785,8 +1785,8 @@
               "project_meeting_history"
             ],
             "sourceFieldCount": 57,
-            "picked": false,
-            "pickedBy": "",
+            "picked": true,
+            "pickedBy": "CHAT_DB19_PROJECT_MEETINGS_2026_11_01",
             "done": false,
             "acceptedAt": null,
             "acceptanceEvidence": [],
