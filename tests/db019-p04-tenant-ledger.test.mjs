@@ -69,6 +69,22 @@ test("P04 never disguises unmatched department chair fields as retired or accept
   }
 });
 
+test("P04 department leadership decisions preserve source-based unresolved product choice", () => {
+  const unresolved = ledger.fields.filter(row =>
+    row.sourceTable === "department" &&
+    ["dept_chair_id", "dept_vice_chair_id"].includes(row.sourceColumn));
+  assert.equal(unresolved.length, 2);
+  for (const row of unresolved) {
+    assert.equal(row.sourceStatus, "BACKEND_COMPAT_ONLY_FRONTEND_PRODUCT_FIELD_RETIRED");
+    assert.equal(row.productRetirementDecision, "UNAPPROVED");
+    assert.match(row.sourceBehavior, /same college/);
+    assert.match(row.legacyBackendProof, /DepartmentServiceImpl/);
+    assert.match(row.legacyFrontendProof, /Departments\.js/);
+    assert.equal(row.proposedTarget, null);
+    assert.equal(row.runtimeVerified, false);
+  }
+});
+
 test("P04 explicitly preserves private evidence and unresolved runtime verification", () => {
   const privateFields = [
     "college.logo", "college_branding.logo_url",
