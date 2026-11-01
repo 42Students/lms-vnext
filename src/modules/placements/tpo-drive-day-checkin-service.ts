@@ -8,6 +8,7 @@ import {
 import { hasMembershipRole, type RequestContext } from "@/modules/identity/context";
 import { AuthorizationError, can, requirePermission } from "@/modules/permissions/policy";
 import { requirePlacementManageScope } from "./scope";
+import { assertPersistedPlatformPermission } from "@/modules/permissions/persisted-actor";
 import { getTpoRoundDriveDay } from "./tpo-round-drive-day-service";
 import { dateInIndia } from "./drive-day-coordinator-service";
 import { placementRoundIdSchema } from "./validation";
@@ -54,6 +55,12 @@ export async function confirmTpoDriveDayCheckIn(
         dateInIndia(round.scheduledAt) !== dateInIndia(new Date())) {
       throw new PlacementsServiceError("PLACEMENT_ROUND_INVALID_TRANSITION");
     }
+    // The request-context TPO grant may have been revoked after the roster
+    // preview. Rebuild the actor from persisted membership and role rows under
+    // SHARE locks in this same transaction, before any attendance or audit write.
+    // A concurrent revocation therefore orders with this mutation, rather
+    // than permitting a stale browser session to mark a learner absent.
+    await assertPersistedPlatformPermission(tx, context, "placements.manage", { collegeId });
     const [candidate] = await tx.select({
       id: placementApplications.id,
       membershipId: placementApplications.membershipId,
