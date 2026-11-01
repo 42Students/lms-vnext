@@ -40,6 +40,10 @@ export function inspectDb020StructuralSemantics(snapshot,catalog,diagnosis){
  const indexes=uniqueBy(catalog.indexes,i=>identity(i.table_name,i.name),"index");
  const constraints=uniqueBy(catalog.constraints,c=>identity(c.table_name,c.name),"constraint");
  uniqueBy(catalog.triggers,t=>identity(t.table_name,t.name),"trigger");
+ const typedTables=new Set(Object.keys(snapshot.tables).map(nameFromKey));
+ if(physicalTables.size!==diagnosis.counts.registeredTables ||
+    physicalTables.size-typedTables.size!==diagnosis.counts.registeredSqlOnlyTables)
+  throw new Error("DB020 physical table census differs from pinned PG17 diagnosis");
  for(const [label,entries] of [["column",catalog.columns],["index",catalog.indexes],
   ["constraint",catalog.constraints],["trigger",catalog.triggers]]){
   for(const row of entries){
@@ -49,10 +53,6 @@ export function inspectDb020StructuralSemantics(snapshot,catalog,diagnosis){
  }
  if(catalog.constraints.filter(c=>c.type==="f").length!==diagnosis.counts.registeredFks)
   throw new Error("DB020 foreign-key census differs from pinned PG17 diagnosis");
- const typedTables=new Set(Object.keys(snapshot.tables).map(nameFromKey));
- if(physicalTables.size!==diagnosis.counts.registeredTables ||
-    physicalTables.size-typedTables.size!==diagnosis.counts.registeredSqlOnlyTables)
-  throw new Error("DB020 physical table census differs from pinned PG17 diagnosis");
  const missingTypedTables=[...typedTables].filter(t=>!physicalTables.has(t)).sort();
  const missingColumns=[],nullabilityDifferences=[],defaultTextDifferences=[];
  const missingTypedChecks=[],unvalidatedTypedChecks=[],namedChecksPresent=[];
