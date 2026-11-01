@@ -1499,6 +1499,41 @@
             "pickedBy": "CHAT_DB19_AUTH_SESSIONS_2026_11_01",
             "done": false,
             "acceptedAt": null,
+            "implementationCheckpoint": {
+              "status": "79_OF_79_SOURCE_PROPOSALS_PLUS_REGISTERED_PG17_AUTH_SESSION_OTP_POSITIVE_NEGATIVE_PASS_P03_NOT_ACCEPTED",
+              "recordedOn": "2026-11-01",
+              "sourceReviewLedger": "docs/planning/db019-p03-auth-field-review.json",
+              "sourceFieldCount": 79,
+              "sourceReviewedProposals": 79,
+              "sourceOnlyNotVerified": true,
+              "runtimeFieldEquivalenceCertified": 0,
+              "approvedRetirements": 0,
+              "executed": [
+                {
+                  "commitSha": "e490f03ce382b0cee84a3101063830d493ffaf9e",
+                  "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/41314635724",
+                  "result": "PASS_REGISTERED_PG17_AND_PINNED_SOURCE",
+                  "scope": "79 historical field source mutation gate and native user-scoped device token/owner IDOR, expiry, global-disable concurrency and double-client revoke race; fresh journal replay and idempotence; auth unit suites"
+                },
+                {
+                  "commitSha": "fdc833ef8bdbc177cf4e6addb00aff4621d70729",
+                  "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/41314795957",
+                  "result": "PASS_REGISTERED_PG17_AUTH_OTP_AND_RETIREMENT",
+                  "scope": "Real scoped login challenge, atomic OTP consume, learner/faculty role proof, OTP expiry and delivery lifecycle, absence of retired plaintext credentials; source and current-session negatives"
+                }
+              ],
+              "additionalNotYetAccepted": [
+                "New selected-college membership IDOR and suspension tests executed as a registered PG17 step on bb2d7239 (check the exact workflow receipt before relying on it)",
+                "Latest pending expanded email ownership/preuser and membership-role revocation runs must be observed before treating those suites as PASS"
+              ],
+              "remaining": [
+                "Source-level candidate target refs are not approved exact 79 historical semantic equivalences; especially local legacy time/actor, role source and untrusted numeric IDs",
+                "No historical JWT, refresh, handoff, plaintext password, OTP or token credential can be imported; 79 final active/redesigned/retired dispositions and retirement approvals remain open",
+                "Independently verify live source/consumer, tenant, role, permitted email ownership and preuser flow semantics including revoked user and cross-role negative paths on the exact current head",
+                "DB19-P31 final global 2829-field and P32 producer/consumer/security gate and DB020 certificate still outstanding"
+              ],
+              "parentDb019Accepted": false
+            },
             "acceptanceEvidence": [],
             "acceptance": "Final source/target decisions and exact PG17 auth token/session/permission, replay, expiry and revoked-user negative tests."
           },
