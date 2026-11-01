@@ -1,0 +1,60 @@
+# DB19-P11 scoped live-file producer security regression, not DB019/DB020 certification.
+name: DB19 P11 registered assignment file revocation PG17
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/db019-p11-assignment-file-revocation-pg17.yml"
+      - "src/modules/courses/assignment-submission-file-service.ts"
+      - "tests/integration/storage-files-courses-db.test.ts"
+
+permissions:
+  contents: read
+
+jobs:
+  p11-file-revocation:
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    services:
+      postgres:
+        image: postgres:17-alpine
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: lms_vnext_test
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres -d lms_vnext_test"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 20
+    env:
+      DATABASE_URL: postgresql://postgres:postgres@127.0.0.1:5432/lms_vnext_test
+      TEST_DATABASE_URL: postgresql://postgres:postgres@127.0.0.1:5432/lms_vnext_test
+      DB03_ISOLATED_TEST_DATABASE: "1"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - name: Enforce exact triggering SHA
+        run: test "$(git rev-parse HEAD)" = "$GITHUB_SHA"
+      - run: npm ci
+      - name: Verify registered journal
+        run: npm run db:journal:verify
+      - name: Seed disposable PostgreSQL17 with clean registered replay
+        env:
+          DATABASE_URL: ""
+        run: npm run db:test:prepare
+      - name: Verify migration idempotence
+        run: npm run db:migrate
+      - name: Execute real file upload, revoked-role and private-reader integrations
+        run: npx vitest run --config vitest.db.config.ts tests/integration/storage-files-courses-db.test.ts
+      - name: Typecheck unchanged authorization surfaces and new guard
+        env:
+          NODE_OPTIONS: --max-old-space-size=6144
+        run: npm run typecheck
