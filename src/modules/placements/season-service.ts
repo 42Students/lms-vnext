@@ -5,6 +5,7 @@ import {
   inArray,
 } from "drizzle-orm";
 import { getDb } from "@/db/client";
+import {assertPersistedPlatformPermission} from "@/modules/permissions/persisted-actor";
 import { recordActivityEventInTransaction } from "@/modules/activity/service";
 import { ACTIVITY_EVENT_TYPES } from "@/modules/activity/taxonomy";
 import {
@@ -82,19 +83,20 @@ export async function createPlacementSeason(
   const db = getDb();
   return db.transaction(async (tx) => {
     const [college] = await tx
-      .select({ id: colleges.id })
+      .select({id:colleges.id,organizationId:colleges.organizationId,status:colleges.status})
       .from(colleges)
-      .where(
-        eq(colleges.id, input.collegeId),
-      )
+      .where(eq(colleges.id,input.collegeId))
       .for("update")
       .limit(1);
 
-    if (!college) {
-      throw new PlacementsServiceError(
-        "COLLEGE_NOT_FOUND",
-      );
+    if (!college || college.status !== "ACTIVE") {
+      throw new PlacementsServiceError("COLLEGE_NOT_FOUND");
     }
+    // The outer scope check is a preflight. Live account, membership, role
+    // and tenant authority must still hold after the college write lock.
+    await assertPersistedPlatformPermission(tx,context,"placements.manage",{
+      collegeId:college.id,organizationId:college.organizationId,
+    });
 
     const [active] = await tx
       .select({ id: placementSeasons.id })
@@ -230,14 +232,23 @@ export async function closePlacementSeason(
 
   const db = getDb();
   return db.transaction(async (tx) => {
+    // Lock college before season (the same order as registration, season
+    // settings, and other placement lifecycle writers). Recheck the persisted
+    // actor; a stale request snapshot cannot close a season after role revoke.
+    const [college] = await tx.select({
+      id:colleges.id,organizationId:colleges.organizationId,status:colleges.status,
+    }).from(colleges).where(eq(colleges.id,current.collegeId)).for("update").limit(1);
+    if (!college || college.status !== "ACTIVE")
+      throw new PlacementsServiceError("COLLEGE_NOT_FOUND");
+    await assertPersistedPlatformPermission(tx,context,"placements.manage",{
+      collegeId:college.id,organizationId:college.organizationId,
+    });
     const [season] = await tx
       .select()
       .from(placementSeasons)
       .where(
-        eq(
-          placementSeasons.id,
-          current.id,
-        ),
+        and(eq(placementSeasons.id,current.id),
+          eq(placementSeasons.collegeId,college.id)),
       )
       .for("update")
       .limit(1);
