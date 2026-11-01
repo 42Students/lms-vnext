@@ -165,7 +165,9 @@ export function auditDb019Remaining(ledgers,artifacts,db10Overlay=null) {
             fail("DB08_UNSUPPORTED_EXACT_FIELD_MAPPING",id);
           // A source-level proposal is NOT a runtime mapping or an approved
           // retirement.  The real PG/provider/tenant gates remain mandatory.
-          if(row.reviewDecision!==null){
+          if(row.reviewDecision===null || row.reviewDecision===undefined){
+            fail("DB08_MISSING_INDIVIDUAL_SOURCE_REVIEW",id);
+          } else {
             const decision=row.reviewDecision;
             const classifications=[
               "EXPLICIT_RUNTIME_GAP","NEEDS_ENUM_CROSSWALK",
