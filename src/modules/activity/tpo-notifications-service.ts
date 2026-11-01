@@ -20,7 +20,7 @@ import { AuthorizationError, can, requirePermission } from "@/modules/permission
 import { recordActivityEventInTransaction } from "./service";
 import { ACTIVITY_EVENT_TYPES } from "./taxonomy";
 import { ActivityServiceError } from "./errors";
-import { listOwnNotificationPage } from "./notification-service";
+import { listOwnNotificationPage, releasedNotificationEvent, releasedNotificationReceipt } from "./notification-service";
 import { resolveTpoInboxQuery,tpoInboxPageHref } from "./tpo-notifications-model";
 
 /**
@@ -88,6 +88,8 @@ export async function getTpoPersonalInbox(context: RequestContext, rawQuery: unk
           eq(inAppNotifications.userId, context.user.id),
           eq(activityEvents.collegeId, membership.collegeId),
           isNull(inAppNotifications.readAt),
+          releasedNotificationEvent,
+          releasedNotificationReceipt,
         ),
       ),
   ]);
@@ -109,11 +111,15 @@ export async function markOwnTpoNotificationRead(context: RequestContext, rawId:
     const eventIds = tx
       .select({ id: activityEvents.id })
       .from(activityEvents)
-      .where(eq(activityEvents.collegeId, membership.collegeId));
+      .where(and(
+        eq(activityEvents.collegeId, membership.collegeId),
+        releasedNotificationEvent,
+      ));
     const filter = and(
       eq(inAppNotifications.id, id),
       eq(inAppNotifications.userId, context.user.id),
       inArray(inAppNotifications.eventId, eventIds),
+      releasedNotificationReceipt,
     );
     const [updated] = await tx
       .update(inAppNotifications)
@@ -151,7 +157,10 @@ export async function markAllOwnTpoNotificationsRead(context: RequestContext) {
     const eventIds = tx
       .select({ id: activityEvents.id })
       .from(activityEvents)
-      .where(eq(activityEvents.collegeId, membership.collegeId));
+      .where(and(
+        eq(activityEvents.collegeId, membership.collegeId),
+        releasedNotificationEvent,
+      ));
     const changed = await tx
       .update(inAppNotifications)
       .set({ readAt: new Date() })
@@ -160,6 +169,7 @@ export async function markAllOwnTpoNotificationsRead(context: RequestContext) {
           eq(inAppNotifications.userId, context.user.id),
           inArray(inAppNotifications.eventId, eventIds),
           isNull(inAppNotifications.readAt),
+          releasedNotificationReceipt,
         ),
       )
       .returning({ id: inAppNotifications.id });
