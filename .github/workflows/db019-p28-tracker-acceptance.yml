@@ -11,6 +11,8 @@ on:
       - 'tests/integration/tracker-report-sa-placements-projects-100.test.ts'
       - 'tests/integration/db10-tracker-admin.test.ts'
       - 'tests/unit/bug-tracker-access-and-attachments.test.ts'
+      - 'tests/db019-p28-tracker-field-review.test.mjs'
+      - 'docs/planning/db019-p28-tracker-field-review.json'
       - '.github/workflows/db019-p28-tracker-acceptance.yml'
 
 permissions:
@@ -69,5 +71,7 @@ jobs:
           tests/integration/db10-tracker-admin.test.ts
       - name: P28 screenshot policy, MIME, scan and physical size negatives
         run: npx vitest run tests/unit/bug-tracker-access-and-attachments.test.ts
+      - name: P28 exact frozen source-to-consumer field audit (NOT runtime acceptance)
+        run: node --test tests/db019-p28-tracker-field-review.test.mjs
       - name: Ensure verifier did not create unregistered migration files
         run: test -z "$(git status --porcelain -- drizzle/)"
