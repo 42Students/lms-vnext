@@ -1,0 +1,72 @@
+# DB19-P03: fresh-registered PostgreSQL 17 authentication/session semantics.
+# This is a bounded package gate, NOT all 79 historic field dispositions or
+# global DB019 / DB020 acceptance. No real OTP, email, or external token sends.
+name: DB-019 P03 auth session revocation PG17
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/db019-p03-auth-sessions-pg17.yml"
+      - "tests/integration/db019-p03-auth-session-pg.test.ts"
+      - "src/modules/auth/session-service.ts"
+      - "src/modules/auth/crypto.ts"
+      - "src/db/schema/identity-device-sessions.ts"
+      - "drizzle/*.sql"
+      - "drizzle/meta/_journal.json"
+permissions:
+  contents: read
+concurrency:
+  group: db019-p03-auth-main
+  cancel-in-progress: false
+jobs:
+  registered-auth-sessions:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    services:
+      postgres:
+        image: postgres:17-alpine
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: lms_vnext_test
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres -d lms_vnext_test"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 20
+    env:
+      TEST_DATABASE_URL: postgresql://postgres:postgres@127.0.0.1:5432/lms_vnext_test
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Verify exact registered migration journal
+        run: npm run db:journal:verify
+      - name: Replay registered journal and seed on disposable PostgreSQL
+        env:
+          DATABASE_URL: ""
+        run: npm run db:test:prepare
+      - name: Verify replay is idempotent
+        env:
+          DATABASE_URL: postgresql://postgres:postgres@127.0.0.1:5432/lms_vnext_test
+        run: npm run db:migrate
+      - name: Real session persistence, owner authorization and blocked revocation race
+        env:
+          DATABASE_URL: postgresql://postgres:postgres@127.0.0.1:5432/lms_vnext_test
+          DB03_ISOLATED_TEST_DATABASE: "1"
+          DB019_P03_ISOLATED_TEST_DATABASE: "1"
+        run: npx vitest run --config vitest.db.registered.config.ts tests/integration/db019-p03-auth-session-pg.test.ts
+      - name: P03 source-only authorization and session regression
+        run: npx vitest run tests/unit/chat6-auth-session-service-behaviour.test.ts tests/unit/chat6-auth-logout-revocation.test.ts
+      - name: Scope boundary
+        if: always()
+        run: |
+          echo "PG17 session producer/consumer, expiry, revoked row locking, and owner-scoped negatives only."
+          echo "P03 historical auth handoff, verification, login challenges, roles and 79 field semantic decisions remain separately gated."
+          echo "Do not mark DB19-P03 or DB-019 accepted solely from this workflow."
