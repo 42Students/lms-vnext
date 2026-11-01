@@ -1,6 +1,7 @@
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
 import { Pool, type PoolClient } from "pg";
 import { randomUUID } from "node:crypto";
+import { readFileSync } from "node:fs";
 import { sessionDigest } from "@/modules/auth/crypto";
 import { resetAuthConfigForTests } from "@/modules/auth/config";
 import {
@@ -302,6 +303,84 @@ describe.skipIf(!enabled)("DB19-P03 registered identity session and revocation b
       }
       if(userCreated)await pool!.query("delete from users where id=$1",[userId]);
     }
+  });
+
+  it("all 79 pinned auth candidate targets exist on registered PG17 with credential guards",async()=>{
+    const ledger=JSON.parse(readFileSync(
+      "docs/planning/db019-p03-auth-field-review.json","utf8",
+    )) as {records:Array<{
+      legacyTable:string;legacyColumn:string;
+      reviewDecision:{targetRefs:string[];runtimeVerified:boolean;
+        consumerVerified:boolean;retirementApproved:boolean};
+    }>};
+    expect(ledger.records).toHaveLength(79);
+    const proposals=[...new Set(ledger.records.flatMap(r=>r.reviewDecision.targetRefs))];
+    const tables=[...new Set(proposals.map(ref=>ref.split(".")[0]))];
+    const current=await pool!.query<{
+      table_name:string;column_name:string;udt_name:string;
+    }>(`
+      select table_name,column_name,udt_name from information_schema.columns
+       where table_schema='public' and table_name=any($1::text[])
+    `,[tables]);
+    const physical=new Map(current.rows.map(r=>[r.table_name+"."+r.column_name,r.udt_name]));
+    for(const field of ledger.records){
+      const d=field.reviewDecision;
+      expect(d.runtimeVerified).toBe(false);
+      expect(d.consumerVerified).toBe(false);
+      expect(d.retirementApproved).toBe(false);
+      for(const ref of d.targetRefs)
+        expect(physical.has(ref),"Unregistered historical candidate "+field.legacyTable+"."+field.legacyColumn+" -> "+ref).toBe(true);
+    }
+    for(const ref of [
+      "identity_device_sessions.credential_digest",
+      "identity_auth_attempts.sms_code_mac",
+      "identity_auth_attempts.email_code_mac",
+      "identity_auth_attempts.contact_fingerprint",
+      "identity_email_verification_links.token_digest",
+      "identity_email_verification_links.email_fingerprint",
+      "identity_email_ownership_proofs.email_fingerprint",
+    ])expect(physical.get(ref)).toBe("varchar");
+    for(const ref of [
+      "users.id","college_memberships.user_id","identity_device_sessions.user_id",
+      "identity_email_verification_links.user_id","identity_auth_attempts.user_id",
+    ])expect(physical.get(ref)).toBe("uuid");
+
+    const forbidden=await pool!.query<{name:string|null;table_name:string;column_name:string}>(`
+      select null::text as name,table_name,column_name from information_schema.columns
+       where table_schema='public' and table_name=any($1::text[])
+         and column_name=any($2::text[])
+    `,[tables,["password","password_hash","raw_otp","access_token",
+      "refresh_token","token_jti","jwt","role_description"]]);
+    expect(forbidden.rows).toEqual([]);
+    const checks=await pool!.query<{conname:string;definition:string}>(`
+      select conname,pg_get_constraintdef(oid) as definition
+      from pg_constraint
+      where conrelid::regclass::text=any($1::text[])
+    `,[tables]);
+    const byName=new Map(checks.rows.map(x=>[x.conname,x.definition]));
+    for(const [name,fragment] of [
+      ["identity_device_sessions_digest_format_ck","credential_digest"],
+      ["identity_device_sessions_revoker_shape_ck","revoked_by_user_id"],
+      ["identity_auth_attempts_mac_shape_ck","contact_fingerprint"],
+      ["identity_auth_attempts_consumed_shape_ck","used_at"],
+      ["identity_email_link_shape_ck","token_digest"],
+      ["identity_email_link_ttl_ck","expires_at"],
+    ]){
+      expect(byName.has(name),"Missing registered credential guard "+name).toBe(true);
+      expect(byName.get(name)).toContain(fragment);
+    }
+    const indexes=await pool!.query<{indexname:string;indexdef:string}>(`
+      select indexname,indexdef from pg_indexes
+       where schemaname='public'
+         and indexname=any($1::text[])
+    `,[["identity_device_sessions_digest_uq","identity_email_link_digest_uq",
+      "identity_email_proof_active_uq"]]);
+    expect(indexes.rows).toHaveLength(3);
+    for(const index of indexes.rows)
+      expect(index.indexdef).toContain("UNIQUE INDEX");
+    // Catalog existence and guard enforcement is a real PG17 witness only.
+    // It is NOT proof that old MySQL passwords, JWTs, role definitions,
+    // local timestamp semantics or historical identity IDs are equivalent.
   });
 
   it("registered schema rejects non-hex session digests and revoker-without-revocation",async()=>{
