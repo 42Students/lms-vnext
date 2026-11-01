@@ -74,7 +74,7 @@ function safeFileName(raw: string): string {
   if (
     typeof raw !== "string" ||
     raw.length > 255 ||
-    /[/\\\x00-\x1f\x7f]/.test(raw)
+    /[/\\\x00-\x1f\x7f\u202a-\u202e\u2066-\u2069]/.test(raw)
   ) {
     throw new BugTrackerAttachmentError("INVALID_FILE");
   }
