@@ -17,6 +17,7 @@ on:
       - "tests/db19-db00-disposition-crosscheck.test.mjs"
       - "tests/db19-db01-triage-crosscheck.test.mjs"
       - "docs/planning/db-pass4-columns-db*.json"
+      - "docs/planning/db019-p04-college-tenant-field-review.json"
       - "docs/planning/database-parity-db0*-field*.json"
 permissions:
   contents: read
