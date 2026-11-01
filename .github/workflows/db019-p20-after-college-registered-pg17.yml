@@ -98,7 +98,9 @@ jobs:
           tests/integration/db019-after-college-outcome-details.test.ts
           tests/integration/db019-p20-season-authorization.test.ts
           tests/integration/db09-tpo-season-settings-write.test.ts
-      - name: Typecheck exact revision
+      - name: Typecheck exact revision with sufficient Node heap
+        env:
+          NODE_OPTIONS: --max-old-space-size=6144
         run: npm run typecheck
       - name: State limited acceptance boundary
         if: always()
