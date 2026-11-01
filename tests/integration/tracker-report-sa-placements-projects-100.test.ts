@@ -113,4 +113,82 @@ describe.skipIf(!enabled)("SA-placements-projects-100 tracker reporting on isola
       },
     }, created.publicId)).rejects.toMatchObject({ code: "ISSUE_NOT_FOUND" });
   });
+  it("binds concurrent retries to the same scope and complete persisted payload", async () => {
+    if (!pool) throw new Error("Isolated PostgreSQL required");
+    const key = "DB19P28_replay_scope_20261101";
+    const payload = {
+      ...input,
+      sourceUrl: "https://example.org/tracker?private_token=never-store#draft",
+      sourcePath: "/tracker/mine",
+      browser: "Firefox",
+      viewport: "1440x900",
+    };
+    // The user-row lock must serialize two real service producers. A retry
+    // must create neither a second issue nor a second immutable audit event.
+    const [created, replayed] = await Promise.all([
+      createBugTrackerIssueForAdmin(context, payload, key),
+      createBugTrackerIssueForAdmin(context, payload, key),
+    ]);
+    reported.push(created.publicId);
+    expect(replayed).toEqual(created);
+    expect(await createBugTrackerIssueForAdmin(context, payload, key))
+      .toEqual(created);
+
+    const persisted = await pool.query<{
+      college_id: string | null;
+      evidence_link: string | null;
+      source_url: string | null;
+      source_path: string | null;
+      browser: string | null;
+      viewport: string | null;
+    }>(
+      "select college_id,evidence_link,source_url,source_path,browser,viewport " +
+        "from bug_reports where public_id=$1",
+      [created.publicId],
+    );
+    expect(persisted.rows).toHaveLength(1);
+    expect(persisted.rows[0]).toMatchObject({
+      college_id: SEED_IDS.collegeA,
+      evidence_link: payload.evidenceLink,
+      source_url: "https://example.org/tracker",
+      source_path: "/tracker/mine",
+      browser: "Firefox",
+      viewport: "1440x900",
+    });
+
+    // Reusing the same key for changed private evidence, browser context or
+    // actual issue details must fail closed, not return an unrelated report.
+    for (const altered of [
+      { ...payload, evidenceLink: "https://example.org/other" },
+      { ...payload, sourceUrl: "https://example.net/tracker" },
+      { ...payload, sourcePath: "/tracker/another" },
+      { ...payload, browser: "Chrome" },
+      { ...payload, viewport: "1920x1080" },
+      { ...payload, description: payload.description + " changed" },
+    ]) {
+      await expect(createBugTrackerIssueForAdmin(context, altered, key))
+        .rejects.toMatchObject({ code: "FORBIDDEN" });
+    }
+    await expect(createBugTrackerIssueForAdmin(context, {
+      ...payload, reporterName: "Impersonated reporter",
+    }, key)).rejects.toMatchObject({ code: "INVALID_INPUT" });
+
+    // The actor ID and idempotency key are identical, but a different acting
+    // college must not reveal or replay the first college's private issue.
+    await expect(createBugTrackerIssueForAdmin({
+      ...context,
+      adminScope: {
+        organizationId: SEED_IDS.organization,
+        collegeId: SEED_IDS.collegeB,
+      },
+    }, payload, key)).rejects.toMatchObject({ code: "FORBIDDEN" });
+
+    const events = await pool.query<{ total: number }>(
+      "select count(*)::int as total from bug_report_activities a " +
+        "join bug_reports r on r.id=a.bug_report_id where r.public_id=$1",
+      [created.publicId],
+    );
+    expect(events.rows[0]?.total).toBe(1);
+  });
+
 });
