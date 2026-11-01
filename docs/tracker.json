@@ -1973,7 +1973,50 @@
             "done": false,
             "acceptedAt": null,
             "acceptanceEvidence": [],
-            "acceptance": "Prove registered job/application/offer fields, status+enum crosswalks, letter privacy, expiry notifications, outcomes, tenant, grants and lifecycle races."
+            "acceptance": "Prove registered job/application/offer fields, status+enum crosswalks, letter privacy, expiry notifications, outcomes, tenant, grants and lifecycle races.",
+            "latestScopedEvidence": {
+              "recordedOn": "2026-11-01",
+              "status": "EXECUTED_FULL_REGISTERED_PG17_P17_SERVICE_AND_PRIVACY_MATRIX_PASS_PACKAGE_NOT_FINAL",
+              "testedCommitSha": "65e6d14bc49e17056f2d7b1053a0ac92d079718d",
+              "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/41315100803",
+              "jobId": 124873773567,
+              "result": "PASS",
+              "environment": "GitHub Actions Node 22, disposable PostgreSQL 17; exact SHA checkout, registered migrations and seed, idempotence",
+              "tests": {
+                "physicalCatalogPassed": 10,
+                "offerLifecyclePassed": 47,
+                "loiPassed": 2,
+                "fullApplicationTypecheck": "PASS"
+              },
+              "changedFiles": [
+                "src/modules/placements/offer-service.ts",
+                "src/app/(authenticated)/learn/my-placements/offers/page.tsx",
+                "tests/integration/placements-p8-offers.test.ts",
+                ".github/workflows/db019-p17-placement-lifecycle-pg17.yml"
+              ],
+              "verified": [
+                "Learner offer projection excludes persisted private offer letter object storage key, staff issuer/verifier identities and raw unsafe URLs",
+                "HTTPS offer letter link is preserved only after safe href validation; URLs containing username/password are rejected",
+                "Learner joining projection does not expose the persisted staff joining recorder UUID",
+                "Full placements P8 suite checks expiry notifications, offer state CAS, LOI separation, cross-college IDOR, revoked staff, concurrent offer responses, irreversible state/history and consumer behavior",
+                "10 registered PostgreSQL catalog checks verify typed offer/job/application/history target physical fields, constraints, indexes and idempotent migrations"
+              ],
+              "notAcceptance": true,
+              "blockers": [
+                "All 108 P17 legacy source candidate fields remain UNVERIFIED for final disposition/runtime semantic parity despite targeted PostgreSQL proof.",
+                "8 original job fields remain explicit source-to-target semantic gaps (logo/name snapshots, evaluation config, organization and drive grouping, deadline notification, request history and recruiter identity).",
+                "2 application fields and 6 historical status-event fields remain explicit unresolved source decisions; original application/offer/joining status enum crosswalks require owner-approved behavior parity.",
+                "Offer expiry notification marker and raw-private signed letter workflow still require exact source/consumer parity evidence beyond the authorized HTTPS link check.",
+                "DB019's 2829-field final acceptance and DB020 global certificate remain separate OPEN tasks."
+              ]
+            },
+            "pending": [
+              "All 108 P17 legacy source candidate fields remain UNVERIFIED for final disposition/runtime semantic parity despite targeted PostgreSQL proof.",
+              "8 original job fields remain explicit source-to-target semantic gaps (logo/name snapshots, evaluation config, organization and drive grouping, deadline notification, request history and recruiter identity).",
+              "2 application fields and 6 historical status-event fields remain explicit unresolved source decisions; original application/offer/joining status enum crosswalks require owner-approved behavior parity.",
+              "Offer expiry notification marker and raw-private signed letter workflow still require exact source/consumer parity evidence beyond the authorized HTTPS link check.",
+              "DB019's 2829-field final acceptance and DB020 global certificate remain separate OPEN tasks."
+            ]
           },
           {
             "id": "DB19-P18",
@@ -2929,6 +2972,42 @@
             "Continue other DB19 field semantic packages and global P31/P32 PostgreSQL acceptance; neither is certified by archived source decisions."
           ],
           "notTaskAcceptance": true
+        },
+        "latestP17FullRegisteredPg17": {
+          "recordedOn": "2026-11-01",
+          "status": "EXECUTED_FULL_REGISTERED_PG17_P17_SERVICE_AND_PRIVACY_MATRIX_PASS_PACKAGE_NOT_FINAL",
+          "testedCommitSha": "65e6d14bc49e17056f2d7b1053a0ac92d079718d",
+          "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/41315100803",
+          "jobId": 124873773567,
+          "result": "PASS",
+          "environment": "GitHub Actions Node 22, disposable PostgreSQL 17; exact SHA checkout, registered migrations and seed, idempotence",
+          "tests": {
+            "physicalCatalogPassed": 10,
+            "offerLifecyclePassed": 47,
+            "loiPassed": 2,
+            "fullApplicationTypecheck": "PASS"
+          },
+          "changedFiles": [
+            "src/modules/placements/offer-service.ts",
+            "src/app/(authenticated)/learn/my-placements/offers/page.tsx",
+            "tests/integration/placements-p8-offers.test.ts",
+            ".github/workflows/db019-p17-placement-lifecycle-pg17.yml"
+          ],
+          "verified": [
+            "Learner offer projection excludes persisted private offer letter object storage key, staff issuer/verifier identities and raw unsafe URLs",
+            "HTTPS offer letter link is preserved only after safe href validation; URLs containing username/password are rejected",
+            "Learner joining projection does not expose the persisted staff joining recorder UUID",
+            "Full placements P8 suite checks expiry notifications, offer state CAS, LOI separation, cross-college IDOR, revoked staff, concurrent offer responses, irreversible state/history and consumer behavior",
+            "10 registered PostgreSQL catalog checks verify typed offer/job/application/history target physical fields, constraints, indexes and idempotent migrations"
+          ],
+          "notAcceptance": true,
+          "blockers": [
+            "All 108 P17 legacy source candidate fields remain UNVERIFIED for final disposition/runtime semantic parity despite targeted PostgreSQL proof.",
+            "8 original job fields remain explicit source-to-target semantic gaps (logo/name snapshots, evaluation config, organization and drive grouping, deadline notification, request history and recruiter identity).",
+            "2 application fields and 6 historical status-event fields remain explicit unresolved source decisions; original application/offer/joining status enum crosswalks require owner-approved behavior parity.",
+            "Offer expiry notification marker and raw-private signed letter workflow still require exact source/consumer parity evidence beyond the authorized HTTPS link check.",
+            "DB019's 2829-field final acceptance and DB020 global certificate remain separate OPEN tasks."
+          ]
         }
       }
     },
