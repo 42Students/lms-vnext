@@ -1994,8 +1994,8 @@
               "tpo_bell_read"
             ],
             "sourceFieldCount": 37,
-            "picked": false,
-            "pickedBy": "",
+            "picked": true,
+            "pickedBy": "CHAT_DB19_TPO_AUDIT_2026_11_01",
             "done": false,
             "acceptedAt": null,
             "acceptanceEvidence": [],
