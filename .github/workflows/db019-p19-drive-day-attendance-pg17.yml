@@ -7,6 +7,7 @@ on:
     paths:
       - ".github/workflows/db019-p19-drive-day-attendance-pg17.yml"
       - "src/modules/placements/tpo-drive-day-checkin-service.ts"
+      - "src/modules/placements/college-interview-action-service.ts"
       - "tests/integration/db09-tpo-drive-day-checkin.test.ts"
 
 permissions:
