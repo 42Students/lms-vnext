@@ -1762,10 +1762,45 @@
             "sourceFieldCount": 79,
             "picked": false,
             "pickedBy": "",
-            "done": false,
-            "acceptedAt": null,
-            "acceptanceEvidence": [],
-            "acceptance": "Approve all 79 final decisions and execute group/elective writes, replay, event history, tenant/permission and race proofs."
+            "done": true,
+            "acceptedAt": "2026-11-02",
+            "acceptanceEvidence": [
+              {
+                "kind": "EXECUTED_EXACT_SHA_REGISTERED_PG17_P07_79_FIELD_GROUP_AND_ELECTIVE_ACCEPTANCE",
+                "result": "PASS",
+                "exitCode": 0,
+                "commitSha": "ae36569d73f120f51d42fd0f6d1e71bbe0b662ea",
+                "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/41340125669",
+                "jobId": 124948156600,
+                "runner": "GitHub Actions ubuntu-latest Node.js 22 and disposable PostgreSQL17-alpine",
+                "commands": [
+                  "node --test tests/db019-p07-field-decisions.test.mjs",
+                  "node scripts/db019-p07-field-decisions.mjs",
+                  "npm run db:journal:verify",
+                  "npm run db:test:prepare (DATABASE_URL cleared, registered PG17 zero-to-head)",
+                  "npm run db:migrate (registered replay idempotence)",
+                  "DB19_P07_REGISTERED_PG=YES node --test tests/db019-p07-registered-catalog-pg.test.mjs",
+                  "npx vitest run --config vitest.db.config.ts tests/integration/groups-db03.test.ts",
+                  "npx vitest run --config vitest.db.config.ts tests/integration/college-elective-slot-mutations.test.ts tests/integration/college-elective-lifecycle.test.ts",
+                  "npx vitest run --config vitest.db.config.ts tests/integration/groups-db03-roster.test.ts tests/integration/groups-db03-actor-freshness.test.ts",
+                  "NODE_OPTIONS=--max-old-space-size=6144 npm run typecheck"
+                ],
+                "scope": "79/79 frozen legacy group/elective fields across 6 source tables with individual active, UUID identity, historic actor snapshot, soft-delete, derived active unique and group-backed class decisions. Registered PG17 executed physical column coverage for all mapped target fields, active slot/course unique partial index and backed-class/group FK. Real group/elective producers/consumers passed enrollment/membership/tenant/role revocation, seat/waitlist race, slot max-pick races, status version, immutable membership events, archive/restore and stale actor negatives.",
+                "boundary": "P07 scoped original functionality and database evidence only. SourceReview.runtimeVerified=false remains the source audit's not-self-certifying convention; global P31 source certification, P32 full exact-head matrix and DB020 remain OPEN."
+              }
+            ],
+            "acceptance": "Approve all 79 final decisions and execute group/elective writes, replay, event history, tenant/permission and race proofs.",
+            "implementationCheckpoint": {
+              "status": "P07_SCOPED_REGISTERED_PG17_ACCEPTED_GLOBAL_P31_P32_OPEN",
+              "recordedOn": "2026-11-02",
+              "fullGateSha": "ae36569d73f120f51d42fd0f6d1e71bbe0b662ea",
+              "decisionsLedger": "docs/planning/db019-p07-group-elective-field-decisions.json",
+              "sourceAndNegativeTests": "tests/db019-p07-field-decisions.test.mjs",
+              "registeredCatalogTest": "tests/db019-p07-registered-catalog-pg.test.mjs",
+              "acceptedSourceFields": 79,
+              "acceptanceRun": "https://github.com/42Students/lms-vnext/actions/runs/41340125669",
+              "scopeNote": "Distinct DB19-P06 academics and global P31/P32 not in this acceptance."
+            }
           },
           {
             "id": "DB19-P08",
