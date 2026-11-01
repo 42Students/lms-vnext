@@ -11,7 +11,7 @@ import { assertDb018DisposableTarget } from "../support/db018-test-target.mjs";
 const enabled = process.env.DB09_ISOLATED_TEST_DATABASE === "1" && Boolean(process.env.TEST_DATABASE_URL);
 if (enabled) assertDb018DisposableTarget(process.env, { serviceBound: true });
 const pool = enabled ? new Pool({ connectionString: process.env.TEST_DATABASE_URL, max: 2 }) : null;
-const ids: { company?: string; relationship?: string; job?: string; role?: string; round?: string; application?: string } = {};
+const ids: { company?: string; relationship?: string; job?: string; role?: string; round?: string; application?: string; tpoRole?: string } = {};
 const tpo: RequestContext = {
   user: { id: SEED_IDS.facultyUser, identityUid: "db09-tpo-checkin", platformStatus: "ACTIVE", systemRoles: [] },
   membership: { id: SEED_IDS.facultyCollegeAMembership, collegeId: SEED_IDS.collegeA,
@@ -19,6 +19,14 @@ const tpo: RequestContext = {
 };
 async function fixture() {
   if (!pool) throw new Error("Disposable PostgreSQL required");
+  // Make the test permission real in PostgreSQL, not merely a cached role.
+  // Only delete a grant in cleanup if this fixture actually created it.
+  const [grant] = (await pool.query<{ id: string }>(
+    "INSERT INTO membership_roles (membership_id,role) VALUES ($1,'TPO') " +
+    "ON CONFLICT (membership_id,role) DO NOTHING RETURNING id",
+    [SEED_IDS.facultyCollegeAMembership],
+  )).rows;
+  ids.tpoRole = grant?.id;
   const token = randomUUID();
   const company = (await pool.query<{ id: string }>(
     "INSERT INTO placement_companies (name,created_by_user_id) VALUES ($1,$2) RETURNING id",
@@ -83,6 +91,7 @@ async function cleanup() {
   if (ids.job) await pool.query("DELETE FROM placement_jobs WHERE id=$1", [ids.job]);
   if (ids.relationship) await pool.query("DELETE FROM placement_company_relationships WHERE id=$1", [ids.relationship]);
   if (ids.company) await pool.query("DELETE FROM placement_companies WHERE id=$1", [ids.company]);
+  if (ids.tpoRole) await pool.query("DELETE FROM membership_roles WHERE id=$1", [ids.tpoRole]);
   for (const key of Object.keys(ids)) delete ids[key as keyof typeof ids];
   // Immutable activity_events are preserved, never deleted.
 }
@@ -105,6 +114,29 @@ describe.skipIf(!enabled)("DB09 TPO Drive Day check-in PostgreSQL", () => {
       "AND event_type='PLACEMENTS_DRIVE_DAY_ATTENDANCE_CONFIRMED'", [first.attendance.id],
     )).rows[0];
     expect(audited?.total).toBe(1);
+  });
+  it("rejects a stale request after the persisted TPO role is revoked", async () => {
+    if (!pool) throw new Error("DB required");
+    const { roundId, applicationId } = await fixture();
+    const revoked = (await pool.query<{ id: string }>(
+      "DELETE FROM membership_roles WHERE membership_id=$1 AND role='TPO' RETURNING id",
+      [SEED_IDS.facultyCollegeAMembership],
+    )).rows[0];
+    expect(revoked?.id).toBeTruthy();
+    await expect(confirmTpoDriveDayCheckIn(tpo, roundId, {
+      confirmed: true, applicationId, expectedAttendance: "WAITING", status: "ABSENT",
+    })).rejects.toBeInstanceOf(AuthorizationError);
+    const attendance = (await pool.query<{ total: number }>(
+      "SELECT count(*)::integer AS total FROM placement_round_attendance " +
+      "WHERE round_id=$1 AND application_id=$2",
+      [roundId, applicationId],
+    )).rows[0];
+    expect(attendance?.total).toBe(0);
+    // A preexisting seeded TPO role must survive this test unchanged.
+    if (!ids.tpoRole && revoked) await pool.query(
+      "INSERT INTO membership_roles (id,membership_id,role) VALUES ($1,$2,'TPO')",
+      [revoked.id, SEED_IDS.facultyCollegeAMembership],
+    );
   });
   it("denies wrong role, foreign college, forged candidate and unconfirmed writes", async () => {
     const { roundId } = await fixture();
