@@ -266,24 +266,31 @@ export async function listDepartments(
     collegeId: college.id,
   });
 
-  const db = getDb();
-
-  return db
-    .select({
+  return getDb().transaction(async tx => {
+    // A read using a previously authenticated context must fail after a
+    // membership/role/user revocation, just like the mutation paths do.
+    await assertPersistedPlatformPermission(tx, context, "department.read", {
+      organizationId: college.organizationId, collegeId: college.id,
+    });
+    const [activeCollege] = await tx.select({ id: colleges.id })
+      .from(colleges)
+      .innerJoin(organizations, eq(organizations.id, colleges.organizationId))
+      .where(and(eq(colleges.id, collegeId),
+        eq(colleges.status, "ACTIVE"), eq(organizations.status, "ACTIVE")))
+      .for("share", {of: colleges}).limit(1);
+    if (!activeCollege) throw new DepartmentServiceError("COLLEGE_NOT_FOUND");
+    return tx.select({
       id: departments.id,
       collegeId: departments.collegeId,
       name: departments.name,
       createdAt: departments.createdAt,
       updatedAt: departments.updatedAt,
     })
-    .from(departments)
-    .where(
-      and(
-        eq(departments.collegeId, collegeId),
-        isNull(departments.archivedAt),
-      ),
-    )
-    .orderBy(asc(departments.name));
+      .from(departments)
+      .where(and(eq(departments.collegeId, collegeId),
+        isNull(departments.archivedAt)))
+      .orderBy(asc(departments.name));
+  });
 }
 
 export async function createDepartment(
@@ -500,31 +507,39 @@ export async function fetchPagedDepartments(context:RequestContext,raw:unknown){
   ...(collegeId?[eq(departments.collegeId,collegeId)]:[]),
   ...(!collegeId&&organizationId?[eq(colleges.organizationId,organizationId)]:[]),
  ];
- const base=()=>getDb().select({
-  id:departments.id,collegeId:departments.collegeId,name:departments.name,
-  createdAt:departments.createdAt,updatedAt:departments.updatedAt,
-  collegeName:colleges.name,
- }).from(departments)
-  .innerJoin(colleges,eq(colleges.id,departments.collegeId))
-  .innerJoin(organizations,eq(organizations.id,colleges.organizationId))
-  .where(and(...scopeConditions));
- const [rows,totalRows]=await Promise.all([
-  base().orderBy(asc(colleges.name),asc(departments.name),asc(departments.id))
-    .limit(input.size).offset(input.page*input.size),
-  getDb().select({total:count()}).from(departments)
-   .innerJoin(colleges,eq(colleges.id,departments.collegeId))
-   .innerJoin(organizations,eq(organizations.id,colleges.organizationId))
-   .where(and(...scopeConditions)),
- ]);
- const total=Number(totalRows[0]?.total??0);
- return {
-  content:rows,page:input.page,size:input.size,totalElements:total,
-  totalPages:Math.ceil(total/input.size),numberOfElements:rows.length,
-  first:input.page===0,last:(input.page+1)*input.size>=total,
-  scope:{collegeId:collegeId??null,organizationId},
-  // Dependent UIs must resolve legacy chair/vice-chair integer actors through
-  // verified tenant-scoped membership mapping. This table has no chair FKs;
-  // do not fabricate or persist those roles until a migration is registered.
-  idKind:"UUID" as const,archival:"archivedAt" as const,
- };
+ return getDb().transaction(async tx => {
+  // The global directory must use a persisted SUPER_ADMIN role, while a
+  // college directory needs the caller's current persisted membership.
+  // An archived/foreign tenant never becomes a fallback global search.
+  await assertPersistedPlatformPermission(tx, context,
+    collegeId ? "department.read" : "admin-scope.select",
+    {
+      ...(collegeId ? {collegeId} : {}),
+      ...(organizationId ? {organizationId} : {}),
+    });
+  const base=()=>tx.select({
+    id:departments.id,collegeId:departments.collegeId,name:departments.name,
+    createdAt:departments.createdAt,updatedAt:departments.updatedAt,
+    collegeName:colleges.name,
+   }).from(departments)
+    .innerJoin(colleges,eq(colleges.id,departments.collegeId))
+    .innerJoin(organizations,eq(organizations.id,colleges.organizationId))
+    .where(and(...scopeConditions));
+  const rows=await base()
+    .orderBy(asc(colleges.name),asc(departments.name),asc(departments.id))
+    .limit(input.size).offset(input.page*input.size);
+  const totalRows=await tx.select({total:count()}).from(departments)
+    .innerJoin(colleges,eq(colleges.id,departments.collegeId))
+    .innerJoin(organizations,eq(organizations.id,colleges.organizationId))
+    .where(and(...scopeConditions));
+  const total=Number(totalRows[0]?.total??0);
+  return {
+    content:rows,page:input.page,size:input.size,totalElements:total,
+    totalPages:Math.ceil(total/input.size),numberOfElements:rows.length,
+    first:input.page===0,last:(input.page+1)*input.size>=total,
+    scope:{collegeId:collegeId??null,organizationId},
+    // Legacy integer leadership IDs are not permissions in the new system.
+    idKind:"UUID" as const,archival:"archivedAt" as const,
+  };
+ });
 }
