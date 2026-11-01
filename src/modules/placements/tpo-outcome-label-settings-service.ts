@@ -1,5 +1,5 @@
 import "server-only";
-import {and,eq,sql} from "drizzle-orm";
+import {and,eq,or,sql} from "drizzle-orm";
 import {z} from "zod";
 import {getDb} from "@/db/client";
 import {activityEvents,colleges,placementTpoCollegeSettings} from "@/db/schema";
@@ -75,7 +75,7 @@ export async function saveTpoOutcomeLabels(context:RequestContext,raw:unknown){
   const [college]=await tx.select({organizationId:colleges.organizationId,status:colleges.status})
    .from(colleges).where(eq(colleges.id,collegeId)).for("update").limit(1);
   if(!college||college.status!=="ACTIVE")throw new TpoOutcomeLabelError("TPO_SETTINGS_NOT_FOUND");
-  await assertPersistedPlatformPermission(tx,context,"placements.manage",{
+  const verifiedActor=await assertPersistedPlatformPermission(tx,context,"placements.manage",{
    collegeId,organizationId:college.organizationId,
   });
   const [current]=await tx.select({
@@ -99,23 +99,40 @@ export async function saveTpoOutcomeLabels(context:RequestContext,raw:unknown){
   }).where(eq(placementTpoCollegeSettings.collegeId,collegeId))
    .returning({updatedAt:placementTpoCollegeSettings.updatedAt});
   if(!saved)throw new TpoOutcomeLabelError("TPO_SETTINGS_NOT_FOUND");
-  // Legacy OutcomeLabels save cascaded label rename/removal to existing
-  // destinations. The college lock also serializes with individual TPO edits.
-  // Keep learner-supplied consent in its separate table untouched.
+  // Legacy OutcomeLabels save propagates both renamed labels and their
+  // outcome reclassifications to existing student destinations. Evaluate every
+  // old label against the ORIGINAL persisted row in ONE SQL UPDATE: a swap of
+  // A <-> B cannot be accidentally applied twice by sequential updates.
+  // The college UPDATE lock serializes this cascade with after-college writes.
+  // Preserve private outcome details, and NEVER mutate registration consent.
   const nextById=new Map(labels.filter(row=>row.id).map(row=>[row.id,row]));
-  for(const old of stored?.success?stored.data:[]){
+  const changes=(stored?.success?stored.data:[]).flatMap(old=>{
     const replacement=old.id?nextById.get(old.id):undefined;
-    const nextLabel=replacement?.outcome===old.outcome?replacement.label:null;
-    if(nextLabel===old.label)continue;
+    const nextLabel=replacement?.label??null;
+    const nextOutcome=replacement?.outcome??old.outcome;
+    if(nextLabel===old.label&&nextOutcome===old.outcome)return [];
+    return [{oldLabel:old.label,oldOutcome:old.outcome,nextLabel,nextOutcome}];
+  });
+  if(changes.length){
+    const oldRowMatches=changes.map(row=>and(
+      eq(placementTpoAfterCollege.outcome,row.oldOutcome),
+      eq(placementTpoAfterCollege.outcomeLabel,row.oldLabel),
+    ));
+    const whenOutcome=changes.map(row=>sql`when ${placementTpoAfterCollege.outcome} = ${row.oldOutcome}
+      and ${placementTpoAfterCollege.outcomeLabel} = ${row.oldLabel} then ${row.nextOutcome}`);
+    const whenLabel=changes.map(row=>sql`when ${placementTpoAfterCollege.outcome} = ${row.oldOutcome}
+      and ${placementTpoAfterCollege.outcomeLabel} = ${row.oldLabel} then ${row.nextLabel}`);
     await tx.update(placementTpoAfterCollege).set({
-      outcomeLabel:nextLabel,
+      outcome:sql`case ${sql.join(whenOutcome,sql` `)} else ${placementTpoAfterCollege.outcome} end`,
+      outcomeLabel:sql`case ${sql.join(whenLabel,sql` `)} else ${placementTpoAfterCollege.outcomeLabel} end`,
       updatedAt:sql`greatest(clock_timestamp(), ${placementTpoAfterCollege.updatedAt} + interval '1 millisecond')`,
     }).where(and(eq(placementTpoAfterCollege.collegeId,collegeId),
-      eq(placementTpoAfterCollege.outcome,old.outcome),
-      eq(placementTpoAfterCollege.outcomeLabel,old.label)));
+      or(...oldRowMatches)));
   }
   await tx.insert(activityEvents).values({organizationId:college.organizationId,collegeId,
-   actorUserId:context.user.id,actorMembershipId:context.membership?.id??null,
+   actorUserId:context.user.id,
+   actorMembershipId:verifiedActor.membership?.collegeId===collegeId
+    ?verifiedActor.membership.id:null,
    module:"PLACEMENTS",eventType:"placements.tpo_outcome_labels.updated",
    subjectType:"TPO_SETTINGS",subjectId:collegeId,
    summary:"TPO updated after-college labels",
