@@ -15,7 +15,7 @@ const catalog={kind:"DB020_EXACT_REGISTERED_PG17_CATALOG",registeredHead:"0326_d
  triggers:[]};
 const diagnosis={kind:"DB020_DISPOSABLE_PG17_REGISTERED_VS_GENERATED_DIAGNOSIS",
  registeredHead:catalog.registeredHead,registeredMigrations:327,counts:{
- generatedTypedTables:1,registeredTables:1,registeredSqlOnlyTables:0,generatedAbsentInRegisteredPg:0,generatedTypedMissingColumns:0,
+ generatedTypedTables:1,registeredTables:1,registeredSqlOnlyTables:0,registeredFks:0,generatedAbsentInRegisteredPg:0,generatedTypedMissingColumns:0,
  registeredExtraColumnsOnTypedTables:0,unexplainedTypeDifferences:0,
  typedFkShapesMissingFromCatalog:0,unvalidatedFks:0}};
 const inspect=(patch={})=>inspectDb020StructuralSemantics(
@@ -107,4 +107,25 @@ test("DB020 never silently overwrites duplicated physical catalog identities",()
  }
  const trigger={table_name:"sample",name:"scope_guard",enabled:"O"};
  assert.throws(()=>inspect({catalog:{...catalog,triggers:[trigger,trigger]}}),/duplicate or invalid trigger/);
+});
+
+test("DB020 verifies physical FK census instead of trusting a prior zero-drift summary",()=>{
+ const physicalFk={table_name:"sample",name:"sample_actor_fk",type:"f",validated:true};
+ const catalogWithFk={...catalog,constraints:[...catalog.constraints,physicalFk]};
+ assert.throws(()=>inspect({catalog:catalogWithFk}),/foreign-key census/);
+ assert.throws(()=>inspect({diagnosis:{...diagnosis,counts:{
+  ...diagnosis.counts,registeredFks:1}}}),/foreign-key census/);
+});
+test("DB020 fails closed when any catalog object is attached to an unknown table",()=>{
+ const rows=[
+  ["columns",{table_name:"missing",column_name:"id",not_null:true}],
+  ["constraints",{table_name:"missing",name:"bad_check",type:"c",validated:true}],
+  ["indexes",{table_name:"missing",name:"bad_idx",valid:true,unique:false}],
+  ["triggers",{table_name:"missing",name:"bad_trigger",enabled:"O"}],
+ ];
+ for(const [type,row] of rows)
+  assert.throws(()=>inspect({catalog:{...catalog,[type]:[...catalog[type],row]}}),
+   /orphan/,type);
+ assert.throws(()=>inspect({catalog:{...catalog,columns:[
+  ...catalog.columns,{table_name:null,column_name:"rogue"}]}}),/duplicate or invalid column/);
 });
