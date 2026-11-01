@@ -9,6 +9,10 @@ on:
     paths:
       - ".github/workflows/db019-p03-auth-sessions-pg17.yml"
       - "tests/integration/db019-p03-auth-session-pg.test.ts"
+      - "tests/db019-p03-auth-source-quality.test.mjs"
+      - "scripts/db019-p03-auth-source-quality.mjs"
+      - "docs/planning/db019-p03-auth-field-review.json"
+      - "docs/planning/db-pass4-columns-db01_identity_and_tenancy.json"
       - "src/modules/auth/session-service.ts"
       - "src/modules/auth/crypto.ts"
       - "src/db/schema/identity-device-sessions.ts"
@@ -46,6 +50,8 @@ jobs:
           node-version: 22
           cache: npm
       - run: npm ci
+      - name: Verify 79 pinned auth fields and credential-misuse mutation negatives
+        run: node --test tests/db019-p03-auth-source-quality.test.mjs
       - name: Verify exact registered migration journal
         run: npm run db:journal:verify
       - name: Replay registered journal and seed on disposable PostgreSQL
