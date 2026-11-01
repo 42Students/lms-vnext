@@ -163,21 +163,31 @@ test("DB06 source-backed target gaps cannot disappear without an explicit decisi
     ),
   );
 
-  assert.equal(
-    byKey.get("quizzes.shuffle_questions").decision,
-    "STAGED_TARGET_FIELD_RUNTIME_UNVERIFIED",
-  );
-  assert.equal(
-    byKey.get("quizzes.shuffle_options").decision,
-    "STAGED_TARGET_FIELD_RUNTIME_UNVERIFIED",
-  );
+  // DB041/DB045/DB016 were independently registered and exercised on PG17.
+  // The source ledger still cannot claim unexecuted global DB019 mapping proof.
+  for (const flag of ["shuffle_questions", "shuffle_options"]) {
+    assert.equal(
+      byKey.get("quizzes." + flag).decision,
+      "REGISTERED_DB041_FIELD_GLOBAL_VERIFY_PENDING",
+    );
+    assert.equal(byKey.get("quizzes." + flag).targetRef,
+      "course_quizzes." + flag);
+  }
   assert.equal(
     byKey.get("grade_audit_log.action").decision,
-    "TARGET_GAP_REQUIRED",
+    "REGISTERED_DB045_IMMUTABLE_EVENT_GLOBAL_VERIFY_PENDING",
+  );
+  assert.equal(
+    byKey.get("grade_audit_log.action").targetRef,
+    "assignment_grade_events.action",
   );
   assert.equal(
     byKey.get("student_assignment.attempt_number").decision,
-    "DERIVED_METADATA_NOT_PERSISTED",
+    "NORMALIZED_TARGET_FIELD",
+  );
+  assert.equal(
+    byKey.get("student_assignment.attempt_number").targetRef,
+    "assignment_submissions.attempt_number",
   );
   for (const name of ["quizzes.shuffle_questions", "quizzes.shuffle_options"]) {
     const entry=byKey.get(name);
@@ -187,7 +197,8 @@ test("DB06 source-backed target gaps cannot disappear without an explicit decisi
   }
   const attempt=byKey.get("student_assignment.attempt_number");
   assert.equal(attempt.runtimeVerified,false);
-  assert.match(attempt.reason,/exactly one submission/i);
+  assert.match(attempt.reason,/one active student\+assignment row/i);
+  assert.match(attempt.reason,/uniqueness rule/i);
   assert.match(attempt.validationEvidence,/V28__student_assignment_unique_submission/);
   assert.equal(
     byKey.get("assignment_upload_receipt.public_url").decision,
