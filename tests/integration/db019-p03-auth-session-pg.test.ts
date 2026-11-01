@@ -8,6 +8,7 @@ import {
   revokeAllOwnSessions, listActiveSessions,
 } from "@/modules/auth/session-service";
 import { closeDatabaseConnection } from "@/db/client";
+import { resolveRequestContext } from "@/modules/identity/context-service";
 import { SEED_IDS } from "../../scripts/db-seed-data";
 import { assertDb018DisposableTarget } from "../support/db018-test-target.mjs";
 
@@ -204,6 +205,47 @@ describe.skipIf(!enabled)("DB19-P03 registered identity session and revocation b
       // Always restore seeded global identity state in this disposable gate,
       // including when a race assertion fails before the commit.
       await pool!.query("update users set platform_status='ACTIVE' where id=$1",[owner]);
+    }
+  });
+
+  it("a live global session cannot reuse a foreign or suspended college membership",async()=>{
+    const session=await freshSession();
+    const resolved=await resolveSession(session.token);
+    expect(resolved.ok).toBe(true);
+    if(!resolved.ok)throw new Error("The isolated seeded faculty must be able to sign in");
+    const identityUid=resolved.session.identityUid;
+    const permitted=await resolveRequestContext({
+      identityUid,activeMembershipId:SEED_IDS.facultyCollegeAMembership,activeRole:"FACULTY",
+    });
+    expect(permitted.user.id).toBe(owner);
+    expect(permitted.membership?.collegeId).toBe(SEED_IDS.collegeA);
+    expect(permitted.membership?.roles).toContain("FACULTY");
+    // A UUID for another human's college membership must not be accepted
+    // simply because the caller has a currently valid device session.
+    await expect(resolveRequestContext({
+      identityUid,activeMembershipId:SEED_IDS.learnerCollegeAMembership,activeRole:"LEARNER",
+    })).rejects.toMatchObject({code:"MEMBERSHIP_NOT_FOUND"});
+    try {
+      const suspended=await pool!.query(
+        "update college_memberships set status='SUSPENDED',suspended_at=clock_timestamp() where id=$1 and status='ACTIVE' returning id",
+        [SEED_IDS.facultyCollegeAMembership],
+      );
+      expect(suspended.rowCount).toBe(1);
+      // The shared device session remains valid, but its selected college
+      // must fail closed. This is intentionally not a global account disable.
+      expect((await resolveSession(session.token)).ok).toBe(true);
+      await expect(resolveRequestContext({
+        identityUid,activeMembershipId:SEED_IDS.facultyCollegeAMembership,activeRole:"FACULTY",
+      })).rejects.toMatchObject({code:"MEMBERSHIP_NOT_ACTIVE"});
+      const otherCollege=await resolveRequestContext({
+        identityUid,activeMembershipId:SEED_IDS.facultyCollegeBMembership,activeRole:"FACULTY",
+      });
+      expect(otherCollege.membership?.collegeId).toBe(SEED_IDS.collegeB);
+    } finally {
+      await pool!.query(
+        "update college_memberships set status='ACTIVE',suspended_at=null where id=$1",
+        [SEED_IDS.facultyCollegeAMembership],
+      );
     }
   });
 
