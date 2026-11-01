@@ -318,6 +318,60 @@ afterAll(async () => {
 });
 
 describe("Placement P8 offers and joining", () => {
+  it("DB19-P17 learner offer list excludes persisted private letter locator and staff actor provenance",async()=>{
+    const {application}=await preparePassedApplication();
+    const offer=await issuePlacementOffer(tpo,application.id,{
+      roleTitle:"P17 offer privacy witness",annualCtcInr:1_200_000,
+    });
+    const privateKey="private/p17-letter-signed-location.pdf";
+    const legacyUrl="https://private.example.test/offer-letter?bearer=P17_SECRET_TOKEN";
+    await pool.query(
+      `update placement_offers
+       set offer_letter_object_path=$1,
+           offer_letter_url=$2,
+           verified_by_user_id=$3
+       where id=$4`,
+      [privateKey,legacyUrl,SEED_IDS.facultyUser,offer.id],
+    );
+    const persisted=await pool.query<{
+      offer_letter_object_path:string;offer_letter_url:string;
+      verified_by_user_id:string;
+    }>(
+      "select offer_letter_object_path,offer_letter_url,verified_by_user_id from placement_offers where id=$1",
+      [offer.id],
+    );
+    expect(persisted.rows).toEqual([{
+      offer_letter_object_path:privateKey,
+      offer_letter_url:legacyUrl,
+      verified_by_user_id:SEED_IDS.facultyUser,
+    }]);
+    const rows=await listOwnPlacementOffers(learner);
+    const own=rows.find(row=>row.offer.id===offer.id);
+    expect(own).toBeDefined();
+    expect(own?.offer).toMatchObject({
+      id:offer.id,applicationId:application.id,
+      kind:"OFFER",status:"ISSUED",roleTitle:"P17 offer privacy witness",
+      annualCtcInr:1_200_000,
+    });
+    const raw=JSON.stringify(own?.offer);
+    expect(raw).not.toContain(privateKey);
+    expect(raw).not.toContain("P17_SECRET_TOKEN");
+    expect(raw).not.toContain(SEED_IDS.facultyUser);
+    for(const privateField of [
+      "offerLetterUrl","offerLetterObjectPath","offerLetterAttachedAt",
+      "offerLetterAttachedByUserId","verifiedByUserId","createdByType",
+      "issuedByUserId","revokeReason","legacyOfferId","legacyCreatedAt",
+    ])expect(own?.offer).not.toHaveProperty(privateField);
+    // The rest of the learner projection still supplies the action/offer
+    // terms used by the actual my-placements pages.
+    for(const consumerField of [
+      "applicationId","version","rowVersion","status","kind","roleTitle",
+      "annualCtcInr","legacyCtcLpa","joiningDate","expiresAt",
+      "issuedAt","respondedAt","acceptanceChannel",
+      "acceptedDisputableUntil",
+    ])expect(own?.offer).toHaveProperty(consumerField);
+  });
+
   it("P5-R15 rejects applications after conflicting job, role and coordinator writers", async () => {
     async function newUnappliedJob() {
       const suffix=randomUUID().replaceAll("-","").slice(0,12);
