@@ -5,13 +5,14 @@ import { closeDatabaseConnection } from "@/db/client";
 import type { RequestContext } from "@/modules/identity/context";
 import { AuthorizationError } from "@/modules/permissions/policy";
 import { confirmTpoDriveDayCheckIn, TpoAttendanceStaleError } from "@/modules/placements/tpo-drive-day-checkin-service";
+import { mutateCollegeInterview } from "@/modules/placements/college-interview-action-service";
 import { SEED_IDS } from "../../scripts/db-seed-data";
 import { assertDb018DisposableTarget } from "../support/db018-test-target.mjs";
 
 const enabled = process.env.DB09_ISOLATED_TEST_DATABASE === "1" && Boolean(process.env.TEST_DATABASE_URL);
 if (enabled) assertDb018DisposableTarget(process.env, { serviceBound: true });
 const pool = enabled ? new Pool({ connectionString: process.env.TEST_DATABASE_URL, max: 2 }) : null;
-const ids: { company?: string; relationship?: string; job?: string; role?: string; round?: string; application?: string; tpoRole?: string } = {};
+const ids: { company?: string; relationship?: string; job?: string; role?: string; round?: string; application?: string; tpoRole?: string; adminRole?: string } = {};
 const tpo: RequestContext = {
   user: { id: SEED_IDS.facultyUser, identityUid: "db09-tpo-checkin", platformStatus: "ACTIVE", systemRoles: [] },
   membership: { id: SEED_IDS.facultyCollegeAMembership, collegeId: SEED_IDS.collegeA,
@@ -92,6 +93,7 @@ async function cleanup() {
   if (ids.relationship) await pool.query("DELETE FROM placement_company_relationships WHERE id=$1", [ids.relationship]);
   if (ids.company) await pool.query("DELETE FROM placement_companies WHERE id=$1", [ids.company]);
   if (ids.tpoRole) await pool.query("DELETE FROM membership_roles WHERE id=$1", [ids.tpoRole]);
+  if (ids.adminRole) await pool.query("DELETE FROM membership_roles WHERE id=$1", [ids.adminRole]);
   for (const key of Object.keys(ids)) delete ids[key as keyof typeof ids];
   // Immutable activity_events are preserved, never deleted.
 }
@@ -135,6 +137,44 @@ describe.skipIf(!enabled)("DB09 TPO Drive Day check-in PostgreSQL", () => {
     // A preexisting seeded TPO role must survive this test unchanged.
     if (!ids.tpoRole && revoked) await pool.query(
       "INSERT INTO membership_roles (id,membership_id,role) VALUES ($1,$2,'TPO')",
+      [revoked.id, SEED_IDS.facultyCollegeAMembership],
+    );
+  });
+  it("rejects college interview writes after a College Admin grant is revoked", async () => {
+    if (!pool) throw new Error("DB required");
+    const { roundId, applicationId } = await fixture();
+    const [newGrant] = (await pool.query<{ id: string }>(
+      "INSERT INTO membership_roles (membership_id,role) VALUES ($1,'COLLEGE_ADMIN') " +
+      "ON CONFLICT (membership_id,role) DO NOTHING RETURNING id",
+      [SEED_IDS.facultyCollegeAMembership],
+    )).rows;
+    ids.adminRole = newGrant?.id;
+    const actor: RequestContext = {
+      ...tpo, membership: { ...tpo.membership!, roles: ["COLLEGE_ADMIN"] },
+    };
+    const [revoked] = (await pool.query<{ id: string }>(
+      "DELETE FROM membership_roles WHERE membership_id=$1 AND role='COLLEGE_ADMIN' RETURNING id",
+      [SEED_IDS.facultyCollegeAMembership],
+    )).rows;
+    expect(revoked?.id).toBeTruthy();
+    const scheduledAt = new Date(Date.now() + 86_400_000).toISOString();
+    await expect(mutateCollegeInterview(actor, ids.job, {
+      action: "SCHEDULE", confirmed: true,
+      appointment: {
+        roundId, applicationId, scheduledAt, durationMinutes: 30,
+        interviewType: "TECHNICAL",
+        roundDescription: "Technical interview with placement panel",
+        mode: "ON_CAMPUS", venue: "Hall 1", meetingUrl: null,
+        interviewer: "Staff interviewer",
+      },
+    })).rejects.toBeInstanceOf(AuthorizationError);
+    const row = (await pool.query<{ total: number }>(
+      "SELECT count(*)::integer AS total FROM placement_college_interviews WHERE job_id=$1",
+      [ids.job],
+    )).rows[0];
+    expect(row?.total).toBe(0);
+    if (!ids.adminRole && revoked) await pool.query(
+      "INSERT INTO membership_roles (id,membership_id,role) VALUES ($1,$2,'COLLEGE_ADMIN')",
       [revoked.id, SEED_IDS.facultyCollegeAMembership],
     );
   });
