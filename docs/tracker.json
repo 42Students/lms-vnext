@@ -1938,8 +1938,8 @@
               "tpo_user_prefs"
             ],
             "sourceFieldCount": 49,
-            "picked": false,
-            "pickedBy": "",
+            "picked": true,
+            "pickedBy": "CHAT_DB19_P22_TPO_SETTINGS_2026_11_01",
             "done": false,
             "acceptedAt": null,
             "acceptanceEvidence": [],
