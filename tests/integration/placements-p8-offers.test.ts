@@ -41,6 +41,7 @@ import {createOwnTpoGeneralRequest,decideTpoGeneralRequest,listOwnTpoGeneralRequ
  from "@/modules/placements/tpo-general-request-service";
 import {getOwnUnifiedLearnerRequests} from "@/modules/placements/learner-support-request-service";
 import {getTpoJoiningTracker} from "@/modules/placements/tpo-joining-tracker-service";
+import {getTpoCompanyMemory,listTpoCompanies} from "@/modules/placements/tpo-company-memory-service";
 import {isoDateInIndia} from "@/modules/placements/tpo-offer-expiry-model";
 import {getTpoDriveOfferRegister,getTpoDriveOfferRegisterCsv} from "@/modules/placements/tpo-drive-offer-register-service";
 import {getTpoOfferEvidence} from "@/modules/placements/tpo-offer-evidence-service";
@@ -1938,6 +1939,29 @@ describe("Placement P8 offers and joining", () => {
       "select count(*)::integer as n from activity_events where subject_id=$1 and event_type=$2",
       [job.id,"PLACEMENTS_TPO_SELECTION_RELEASED"]);
     expect(releasedAudit.rows[0]?.n).toBe(0);
+  });
+
+  it("DB019 PG17 TPO Company Memory refuses to count a NULL job placed policy as verified",async()=>{
+    const {job,application}=await preparePassedApplication();
+    const issued=await issuePlacementOffer(tpo,application.id,{
+      kind:"OFFER",roleTitle:"Employer evidence engineer",annualCtcInr:900_000,
+    });
+    expect(issued.status).toBe("ISSUED");
+    const read=async()=>{
+      const detail=await getTpoCompanyMemory(tpo,SEED_IDS.collegeA,"Offer Systems");
+      const companies=await listTpoCompanies(tpo,SEED_IDS.collegeA);
+      const company=companies.find(row=>row.key==="offer systems");
+      expect(company).toBeDefined();
+      return {detail:detail.studentsHired,list:company!.studentsPlaced};
+    };
+    const initial=await read();
+    expect(initial).toEqual({detail:1,list:1});
+    await pool.query("update placement_jobs set counts_as_placed=false where id=$1",[job.id]);
+    expect(await read()).toEqual({detail:0,list:0});
+    await pool.query("update placement_jobs set counts_as_placed=null where id=$1",[job.id]);
+    expect(await read()).toEqual({detail:null,list:null});
+    await pool.query("update placement_jobs set counts_as_placed=true where id=$1",[job.id]);
+    expect(await read()).toEqual({detail:1,list:1});
   });
 
   it("issues an idempotent offer, lets the learner accept, and preserves corrected joining history", async () => {

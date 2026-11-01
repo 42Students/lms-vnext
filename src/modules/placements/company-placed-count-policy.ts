@@ -2,7 +2,7 @@
  * never from recruiter stage, lead notes or merely an application. */
 export type CompanyPlacementOfferFact={
  membershipId:string|null;offerStatus:string|null;offerKind:string|null;
- countsAsPlaced?:boolean;
+ countsAsPlaced?:boolean|null;
  joiningStatus:string|null;joiningDate:string|null;
 };
 export type CountsAsPlacedPolicy="OFFER_RELEASED"|"OFFER_ACCEPTED"|"SELECTED";
@@ -10,13 +10,18 @@ export function companyPlacedCount(facts:readonly CompanyPlacementOfferFact[],
  policy:CountsAsPlacedPolicy){
  if(policy==="SELECTED")return null; // needs separate selection ledger
  const members=new Set<string>();
+ let hasUnauditedPlacementPolicy=false;
  for(const fact of facts){
-  if(!fact.membershipId||fact.offerKind!=="OFFER"||fact.countsAsPlaced===false)continue;
+  if(!fact.membershipId||fact.offerKind!=="OFFER")continue;
   if(policy==="OFFER_ACCEPTED"&&fact.offerStatus!=="ACCEPTED")continue;
   if(policy==="OFFER_RELEASED"&&fact.offerStatus!=="ISSUED"&&fact.offerStatus!=="ACCEPTED")continue;
-  members.add(fact.membershipId);
+  // An absent historical job policy is neither YES nor NO. Report UNKNOWN
+  // instead of either inflating placed totals or presenting an undercount as
+  // certified. Other college reports use this same fail-closed distinction.
+  if(fact.countsAsPlaced==null){hasUnauditedPlacementPolicy=true;continue;}
+  if(fact.countsAsPlaced===true)members.add(fact.membershipId);
  }
- return members.size;
+ return hasUnauditedPlacementPolicy?null:members.size;
 }
 export function companyHiredByYear(facts:readonly CompanyPlacementOfferFact[]){
  const years=new Map<string,Set<string>>();

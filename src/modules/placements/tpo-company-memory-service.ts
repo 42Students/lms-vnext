@@ -182,7 +182,8 @@ async function selectDriveFactRows(jobIds:string[]){
   return db
     .select({
       jobId: placementJobs.id,
-      countsAsPlaced:sql<boolean>`coalesce(${placementJobs.countsAsPlaced}, true)`,
+      // Preserve NULL source policy as unknown; no automatic placed credit.
+      countsAsPlaced:placementJobs.countsAsPlaced,
       jobStatus: placementJobs.status,
       archivedAt: placementJobs.archivedAt,
       offerStatus: placementOffers.status,
