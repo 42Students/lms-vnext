@@ -34,6 +34,7 @@ on:
       - "src/auth/**"
       - "tests/integration/db01-*.test.ts"
       - "tests/integration/db019-p04-department-actor-revalidation.test.ts"
+      - "tests/integration/db019-p04-archived-org-domain-guards.test.ts"
       - "tests/unit/chat6-auth-*.test.ts"
       - "tests/db004-*.test.mjs"
       - ".github/workflows/db004-identity-acceptance.yml"
@@ -107,6 +108,7 @@ jobs:
           tests/integration/db01-recruiter-identity-field-semantics.test.ts
           tests/integration/db01-department-field-semantics.test.ts
           tests/integration/db019-p04-department-actor-revalidation.test.ts
+          tests/integration/db019-p04-archived-org-domain-guards.test.ts
           tests/integration/db01-college-leadership-field-semantics.test.ts
           tests/integration/db01-org-college-field-semantics.test.ts
           tests/integration/db01-user-identity-field-semantics.test.ts
