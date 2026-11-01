@@ -7,11 +7,13 @@ export function safeLearnerOfferLetterHref(raw:string|null|undefined):string|nul
   return link.href;
  }catch{return null;}
 }
-/** Must agree with the acceptance cascade's internship exemption. */
+/** Counts-as-placed is the audited per-drive college policy, not a guess
+ * from employment type. The offer-acceptance cascade has its own distinct
+ * internship exemption and must not be inferred from this presentation fact.
+ * A NULL legacy/uncertified policy stays unknown rather than becoming YES. */
 export function learnerOfferCountsAsPlaced(input:{
- kind:"OFFER"|"LOI"; jobEmploymentType:string; roleEmploymentType:string;
-}):boolean {
- return input.kind==="OFFER" &&
-  input.jobEmploymentType!=="INTERNSHIP" &&
-  input.roleEmploymentType!=="INTERNSHIP";
+ kind:"OFFER"|"LOI"; jobCountsAsPlaced:boolean|null;
+}):boolean|null {
+ if(input.kind==="LOI")return false;
+ return input.jobCountsAsPlaced;
 }
