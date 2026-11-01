@@ -42,6 +42,8 @@ on:
       - tests/db41-history-schema-drift.test.mjs
       - tests/db019-source-ledger-preflight.test.mjs
       - tests/db019-crosswalk-identity.test.mjs
+      - tests/db019-p26-notification-scope.test.mjs
+      - src/modules/operations/notification-scheduled-job-service.ts
       - tests/db19-field-disposition-audit.test.mjs
       - scripts/db19-field-disposition-audit.mjs
       - scripts/db019-crosswalk-identity.mjs
@@ -85,7 +87,7 @@ jobs:
         run: node --test tests/db07-reconciliation-contract.test.mjs
       - name: DB019 independent eleven-domain source inventory and crosswalk
         run: |
-          node --test tests/db019-source-ledger-preflight.test.mjs tests/db019-crosswalk-identity.test.mjs tests/db19-field-disposition-audit.test.mjs
+          node --test tests/db019-source-ledger-preflight.test.mjs tests/db019-crosswalk-identity.test.mjs tests/db019-p26-notification-scope.test.mjs tests/db19-field-disposition-audit.test.mjs
           node scripts/db19-field-disposition-audit.mjs
           node scripts/db019-crosswalk-identity.mjs
       - name: Install dependencies for DB001 native PG import safety fixtures
