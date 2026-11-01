@@ -1724,6 +1724,8 @@ export async function listOwnPlacementOffers(
         id: placementJobs.id,
         title: placementJobs.title,
         employmentType: placementJobs.employmentType,
+        // Preserve the college's persisted per-drive placed-count policy.
+        countsAsPlaced: placementJobs.countsAsPlaced,
       },
       role: {
         employmentType: placementJobRoleOptions.employmentType,
