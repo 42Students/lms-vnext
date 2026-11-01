@@ -66,7 +66,7 @@ export function inspectHistoricalPackages({ source, disposition, approval, packa
             field.legacyTable !== name || field.legacySnapshotTable !== name ||
             typeof field.sourceType !== "string" || !field.sourceType ||
             typeof field.sourceDefinition !== "string" || !field.sourceDefinition ||
-            !["NULL_ALLOWED", "NOT_NULL"].includes(field.nullable) ||
+            !["NULL_ALLOWED", "NOT_NULL", "SOURCE_DEFAULT_NULLABILITY_REVIEW"].includes(field.nullable) ||
             !Array.isArray(field.riskFlags) ||
             !["CLASSIFY_HISTORIC_RETIREMENT", "UNVERIFIED_FIELD_SEMANTICS"].includes(field.reviewStatus)) {
           fail("DB19_HISTORIC_INVALID_SOURCE_FIELD", fieldId(name, String(column))); continue;
