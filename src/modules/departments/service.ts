@@ -411,6 +411,28 @@ export async function renameDepartment(
   }
 }
 
+/** Archive dependency counts must be read on the same PostgreSQL
+ * connection that locks the department row. A separate pool read after the
+ * lock would not participate in the write's transaction/snapshot. */
+async function resolveDepartmentUsageForArchive(
+  tx: DepartmentTransaction,
+  departmentId: string,
+): Promise<DepartmentUsage> {
+  const p = await tx.select({total:sql<number>`count(*)::int`})
+    .from(programs).where(and(eq(programs.departmentId,departmentId),
+      eq(programs.status,"ACTIVE")));
+  const f = await tx.select({total:sql<number>`count(*)::int`})
+    .from(facultyProfiles)
+    .innerJoin(collegeMemberships,eq(collegeMemberships.id,facultyProfiles.membershipId))
+    .where(and(eq(facultyProfiles.primaryDepartmentId,departmentId),
+      ne(collegeMemberships.status,"ENDED")));
+  const c = await tx.select({total:sql<number>`count(*)::int`})
+    .from(courses).where(and(eq(courses.departmentId,departmentId),
+      eq(courses.status,"ACTIVE")));
+  return {programs:Number(p[0]?.total??0),faculty:Number(f[0]?.total??0),
+    courses:Number(c[0]?.total??0)};
+}
+
 export async function archiveDepartment(
   context: RequestContext,
   departmentIdInput: string,
@@ -434,7 +456,11 @@ export async function archiveDepartment(
       .where(and(eq(departments.id, departmentId), eq(departments.collegeId, scope.collegeId), isNull(departments.archivedAt)))
       .for("update").limit(1);
     if (!target) throw new DepartmentServiceError("DEPARTMENT_NOT_FOUND");
-    const usage = await resolveUsage(departmentId);
+    // Preserve injected test resolvers. Production computes dependency
+    // counts in the same locked transaction to avoid cross-connection drift.
+    const usage = resolveUsage === resolveDepartmentUsage
+      ? await resolveDepartmentUsageForArchive(tx,departmentId)
+      : await resolveUsage(departmentId);
     assertDepartmentCanArchive(usage);
     const [archived] = await tx
     .update(departments)
