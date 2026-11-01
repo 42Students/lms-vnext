@@ -2317,20 +2317,63 @@
             "acceptanceEvidence": [],
             "acceptance": "Verify status/events, reporter access, private attachments, session safety and cross-role read/write coverage.",
             "implementationCheckpoint": {
-              "status": "IDEMPOTENCY_SCOPE_AND_PAYLOAD_GUARD_COMMITTED_PG17_NOT_EXECUTED",
+              "status": "SCOPED_REGISTERED_PG17_PASS_58_SOURCE_FIELDS_AUDITED_FULL_SEMANTICS_OPEN",
               "recordedOn": "2026-11-01",
-              "sourceCommit": "68f30b4864ea0e0d328fde910bc5a8cdb1b314b7",
-              "integrationTestCommit": "c638efea77e9ffd4700e4dae0d907176217f0755",
-              "changed": [
-                "Verify reporter's persisted active identity before deterministic-key replays",
-                "Reject replay of a source public ID when the acting college differs",
-                "Compare stored complete report evidence and browser provenance after URL secret stripping",
-                "Author concurrent same-key, cross-college, actor-spoof and evidence-mismatch PostgreSQL service tests"
+              "sourceFieldReview": "docs/planning/db019-p28-tracker-field-review.json",
+              "frozenLegacyBackendSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+              "fieldAccounting": {
+                "sourceTables": 5,
+                "sourceFields": 58,
+                "uniqueSourceProposals": 58,
+                "finallyApproved": 0,
+                "fullFieldRuntimeVerified": 0,
+                "missingSessionProducerConsumers": 5
+              },
+              "codeCommits": [
+                "68f30b4864ea0e0d328fde910bc5a8cdb1b314b7",
+                "c638efea77e9ffd4700e4dae0d907176217f0755",
+                "3246898e190fee2ca46cb5f478d67468b24fcfa6",
+                "c8887a16c3cb988146adf362bc808857433c28aa",
+                "7964d3249b2ec118bdedca829d5ffa0fd414841e",
+                "8c6a10b94915e3f47147d9ec4d6200634a627587",
+                "d7680a2e7db9795ccc49042932d8cb04bc8acd78",
+                "f0795cfb1ce32cd7b064b3fd44eac884dd724dfa",
+                "19426fe0b357664a2b0a99cc3924d3c33d8f7f64",
+                "7890360893dc12165d8efe980f3e61a9d9a786fc"
               ],
-              "pendingAcceptance": [
-                "Execute the registered DB-001 independent PG17 verifier and integration shard including tracker-report-sa-placements-projects-100 at an exact containing SHA; review passing results",
-                "Close all 58 original bug_report/activity/attachment/access/session field-level semantic dispositions, including account-bound retirement of unauthenticated legacy reporter sessions",
-                "Verify revocation, producer/consumer report/read/workflow/history and real attachment private object/scanner authorization paths under cross-role and tenant negatives"
+              "workflow": ".github/workflows/db019-p28-tracker-acceptance.yml",
+              "executedEvidence": [
+                {
+                  "sourceSha": "eee22ff6e73b319a34393e17715f156246508efe",
+                  "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/41314190585",
+                  "result": "PASS_SCOPED_NOT_PACKAGE_ACCEPTANCE",
+                  "summary": "Registered PostgreSQL 17 journal preflight 332 migrations; zero-to-head migration replay + idempotence PASS; 12/12 real service PG integrations, 27/27 screenshot policy unit tests."
+                },
+                {
+                  "sourceSha": "cc907556348749b88f0061c57a5c4740d85c473c",
+                  "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/41314521799",
+                  "result": "PASS_SCOPED_NOT_PACKAGE_ACCEPTANCE",
+                  "summary": "Registered PostgreSQL 17 replay + idempotence PASS, 12/12 service PG integrations, 27/27 unit tests, 3/3 frozen 58-field source audit tests."
+                }
+              ],
+              "verificationPending": [
+                {
+                  "sourceSha": "7890360893dc12165d8efe980f3e61a9d9a786fc",
+                  "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/41314677497",
+                  "state": "IN_PROGRESS_WHEN_RECORDED",
+                  "scope": "Two contender third-screenshot parent-lock PG17 race; not acceptance until PASS."
+                }
+              ],
+              "remaining": [
+                "Approve exact final field-level source-to-target semantics for all 58 rows, preserving old/new identity and consumer behavior; proposed matches do not automatically count as accepted.",
+                "Resolve five legacy bug_tracker_session fields and account-versus-anonymous reporter grant/session feature decisions; no issuer or consumer exists and no unsupported retirement is approved.",
+                "Exercise current-head end-to-end report/workflow/revocation/session behavior, tenant membership/acting-college and cross-role negatives, true scan/blob private object lifecycle, and third-slot concurrent capacity.",
+                "Retain DB19-P28 done:false and DB-019/DB-020 OPEN until package-specific and global exact-head PG17 acceptance completes."
+              ],
+              "notVerified": [
+                "Real R2 malware scanning (object HEAD faked in scoped SQL test)",
+                "Every 58-field producer/consumer semantic path",
+                "Full current-head DB19-P32 and DB20 phase certification"
               ],
               "evidenceIsNotAcceptance": true
             }
