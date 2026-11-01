@@ -45,7 +45,7 @@ import {getTpoCompanyMemory,listTpoCompanies} from "@/modules/placements/tpo-com
 import {isoDateInIndia} from "@/modules/placements/tpo-offer-expiry-model";
 import {getTpoDriveOfferRegister,getTpoDriveOfferRegisterCsv} from "@/modules/placements/tpo-drive-offer-register-service";
 import {getTpoOfferEvidence} from "@/modules/placements/tpo-offer-evidence-service";
-import {sweepExpiredPlacementOffers} from "@/modules/placements/placement-offer-expiry-sweep-service";
+import {sweepExpiredPlacementOffers,remindExpiringPlacementOffers} from "@/modules/placements/placement-offer-expiry-sweep-service";
 import {escalatePendingWithdrawalRequests} from "@/modules/placements/tpo-withdrawal-escalation-service";
 import {getTpoWaitlistPreview,offerToNextWaitlisted} from "@/modules/placements/tpo-waitlist-promotion-service";
 import { SEED_IDS } from "../../scripts/db-seed-data";
@@ -1817,6 +1817,50 @@ describe("Placement P8 offers and joining", () => {
       expect(acceptedRow.rows).toEqual([{status:"ACCEPTED"}]);
     },
   );
+
+  it("DB019 offer expiring_notified_at is an atomic one-time event and learner receipt under competing PG17 workers",async()=>{
+    const {application}=await preparePassedApplication();
+    const offer=await issuePlacementOffer(tpo,application.id,{
+      kind:"OFFER",roleTitle:"Expiry reminder proof",annualCtcInr:900_000,
+    });
+    // Adjust only the disposable test fixture: a real-issued offer enters the
+    // 24-hour window without retroactively changing production history.
+    const now=new Date(),deadline=new Date(now.getTime()+12*60*60_000);
+    await pool.query("update placement_offers set expires_at=$1 where id=$2",
+      [deadline,offer.id]);
+    const contenders=await Promise.all([
+      remindExpiringPlacementOffers(SEED_IDS.facultyUser,now,100),
+      remindExpiringPlacementOffers(SEED_IDS.facultyUser,now,100),
+    ]);
+    expect(contenders.sort((a,b)=>a-b)).toEqual([0,1]);
+    expect(await remindExpiringPlacementOffers(SEED_IDS.facultyUser,now,100)).toBe(0);
+    const events=await pool.query<{id:string;dedupe_key:string;metadata:Record<string,unknown>}>(`
+      select id,dedupe_key,metadata from activity_events
+      where subject_id=$1 and event_type='PLACEMENTS_OFFER_EXPIRING'`,[offer.id]);
+    expect(events.rows).toHaveLength(1);
+    expect(events.rows[0]!.dedupe_key).toBe("placement-offer-expiring:"+offer.id);
+    expect(events.rows[0]!.metadata).toMatchObject({offerId:offer.id,expiryAt:deadline.toISOString()});
+    const receipts=await pool.query<{id:string}>(`
+      select id from in_app_notifications where event_id=$1 and user_id=$2`,
+      [events.rows[0]!.id,SEED_IDS.learnerUser]);
+    expect(receipts.rows).toHaveLength(1);
+  });
+
+  it("DB019 offer expiry reminder cannot target terminal declined offers",async()=>{
+    const {application}=await preparePassedApplication();
+    const offer=await issuePlacementOffer(tpo,application.id,{
+      kind:"OFFER",roleTitle:"Terminal offer reminder guard",annualCtcInr:900_000,
+    });
+    const now=new Date(),deadline=new Date(now.getTime()+12*60*60_000);
+    await pool.query("update placement_offers set expires_at=$1 where id=$2",
+      [deadline,offer.id]);
+    await actOnPlacementOffer(learner,offer.id,{action:"DECLINE",reason:"No longer interested"});
+    expect(await remindExpiringPlacementOffers(SEED_IDS.facultyUser,now,100)).toBe(0);
+    const events=await pool.query<{n:number}>(`
+      select count(*)::integer as n from activity_events
+      where subject_id=$1 and event_type='PLACEMENTS_OFFER_EXPIRING'`,[offer.id]);
+    expect(events.rows).toEqual([{n:0}]);
+  });
 
   it("PLACEMENTS-TPO-CASCADE-17 DB recorded acceptance withdraws ineligible sibling application with correlated history",async()=>{
     const {job,application}=await preparePassedApplication();
