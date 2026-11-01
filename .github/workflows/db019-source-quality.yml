@@ -17,6 +17,7 @@ on:
       - "tests/db19-db00-disposition-crosscheck.test.mjs"
       - "tests/db19-db01-triage-crosscheck.test.mjs"
       - "docs/planning/db-pass4-columns-db*.json"
+      - "docs/planning/db019-p03-auth-field-review.json"
       - "docs/planning/db019-p04-college-tenant-field-review.json"
       - "docs/planning/database-parity-db0*-field*.json"
 permissions:
@@ -50,6 +51,7 @@ jobs:
             tests/db019-semantic-decision-quality.test.mjs \
             tests/db019-project-registered-history.test.mjs \
             tests/db019-remaining-semantic-quality.test.mjs \
+            tests/db019-p03-auth-source-quality.test.mjs \
             tests/db019-p04-tenant-ledger.test.mjs
       - name: Verify DB19-P01/P02 archival and Smrithi source and live-code boundaries
         run: |
