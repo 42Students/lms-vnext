@@ -5,7 +5,9 @@
 import {readFileSync,writeFileSync,mkdirSync} from "node:fs";
 
 const nameFromKey=k=>k.startsWith("public.")?k.slice(7):k;
-const identity=(table,name)=>table+"."+name;
+const identity=(table,name)=>
+ typeof table==="string"&&table.trim()&&typeof name==="string"&&name.trim()
+  ?table+"."+name:"";
 const capped=a=>a.slice(0,100);
 // Catalog export is read-only, but the diagnostic artifact may be stale,
 // truncated or accidentally joined with a different registered revision.
@@ -38,6 +40,15 @@ export function inspectDb020StructuralSemantics(snapshot,catalog,diagnosis){
  const indexes=uniqueBy(catalog.indexes,i=>identity(i.table_name,i.name),"index");
  const constraints=uniqueBy(catalog.constraints,c=>identity(c.table_name,c.name),"constraint");
  uniqueBy(catalog.triggers,t=>identity(t.table_name,t.name),"trigger");
+ for(const [label,entries] of [["column",catalog.columns],["index",catalog.indexes],
+  ["constraint",catalog.constraints],["trigger",catalog.triggers]]){
+  for(const row of entries){
+   if(!physicalTables.has(row.table_name))
+    throw new Error("DB020 orphan "+label+" references absent physical table: "+row.table_name);
+  }
+ }
+ if(catalog.constraints.filter(c=>c.type==="f").length!==diagnosis.counts.registeredFks)
+  throw new Error("DB020 foreign-key census differs from pinned PG17 diagnosis");
  const typedTables=new Set(Object.keys(snapshot.tables).map(nameFromKey));
  if(physicalTables.size!==diagnosis.counts.registeredTables ||
     physicalTables.size-typedTables.size!==diagnosis.counts.registeredSqlOnlyTables)
