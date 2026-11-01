@@ -1858,7 +1858,22 @@
             "done": false,
             "acceptedAt": null,
             "acceptanceEvidence": [],
-            "acceptance": "Final field crosswalk and PG17 submission/grade/history, private evidence, repeat/race, FK and teacher/learner role tests."
+            "acceptance": "Final field crosswalk and PG17 submission/grade/history, private evidence, repeat/race, FK and teacher/learner role tests.",
+            "implementationCheckpoint": {
+              "status": "REGISTERED_PG17_REVOKED_ROLE_FILE_PRODUCER_PASS_55_FIELD_SEMANTIC_AND_GRADE_HISTORY_GATE_OPEN",
+              "recordedOn": "2026-11-02",
+              "latestExecuted": {
+                "commitSha": "5dca658d2c03d6e6b8ee82d0f0f3492ae9dbe79e",
+                "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/41337516846",
+                "result": "PASS_SCOPED_REGISTERED_PG17_NOT_PACKAGE_ACCEPTANCE",
+                "scope": "PG17 clean replay, idempotence, full storage-files-courses-db integration including stale-context learner role revocation, and typecheck; persisted membership/role/platform rechecked under share locks on upload grant and completion"
+              },
+              "remaining": [
+                "55 original source fields require approved exact semantic dispositions and producer/consumer coverage",
+                "Immutable grade history complete producer/consumer and negative/race acceptance not yet proven for P11",
+                "Global P31/P32 exact-head field and runtime gates remain open"
+              ]
+            }
           },
           {
             "id": "DB19-P12",
