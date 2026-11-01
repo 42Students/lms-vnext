@@ -8,7 +8,7 @@ import {SEED_IDS} from "../../scripts/db-seed-data";
 import {setTpoAfterCollegeOutcome} from "@/modules/placements/tpo-after-college-write-service";
 import {getTpoAfterCollegeForRoster} from "@/modules/placements/tpo-after-college-roster-service";
 import {bulkUpdateTpoAfterCollege} from "@/modules/placements/tpo-after-college-bulk-service";
-import {readTpoOutcomeLabels,saveTpoOutcomeLabels} from "@/modules/placements/tpo-outcome-label-settings-service";
+import {readTpoOutcomeLabels,readTpoOutcomeChoiceCatalog,saveTpoOutcomeLabels} from "@/modules/placements/tpo-outcome-label-settings-service";
 
 const databaseUrl=process.env.TEST_DATABASE_URL;
 if(!databaseUrl)throw new Error("DB019 requires explicitly isolated TEST_DATABASE_URL");
@@ -266,6 +266,18 @@ describe("DB019 registered PG17 after-college outcome fidelity",()=>{
    expectedVersion:superBulk.results[0]!.version,
   }]});
   expect(adminBulk.updated).toBe(1);
+ });
+ it("returns the actual scoped college for acting Super Admin and refuses an unscoped catalog",async()=>{
+  const catalog=await readTpoOutcomeChoiceCatalog(scopedSuperAdmin,"SCOPED");
+  expect(catalog).toMatchObject({
+   ready:true,scope:"SCOPED",collegeId:SEED_IDS.collegeA,
+  });
+  expect(catalog.choices.length).toBeGreaterThan(9);
+  const unscoped={...scopedSuperAdmin,adminScope:null};
+  await expect(readTpoOutcomeChoiceCatalog(unscoped,"SCOPED")).rejects.toThrow();
+  const universal=await readTpoOutcomeChoiceCatalog(unscoped,"UNIVERSAL");
+  expect(universal).toMatchObject({scope:"UNIVERSAL",collegeId:null});
+  expect(universal.labels).toEqual([]);
  });
  it("keeps scoped Super Admin restricted to selected college",async()=>{
   const otherCollege={...scopedSuperAdmin,adminScope:{
