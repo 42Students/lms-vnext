@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "project": "42Students/lms-vnext",
   "branch": "main",
-  "updatedOn": "2026-10-31",
+  "updatedOn": "2026-11-01",
   "policy": "SOLE ACTIVE TRACKER. done:true means scoped ENGINEERING acceptance passed with executed evidence, or (for a task with deferredRelease metadata) engineering acceptance passed and clearly enumerated independent final-release reviews are scheduled later. done:true does NOT certify security/retention signoff, browser/release, or the overall phase. Missing functionality, database migration, tenant/privacy invariants, or failed core tests are NOT deferrable. Agents skip done tasks unless a concrete regression or owner re-scope occurs. No other task status trackers; pending final attestations remain evidence in original registers and task metadata.",
   "currentPhase": "DATABASE",
   "phaseOrder": [
@@ -1944,7 +1944,32 @@
             "done": false,
             "acceptedAt": null,
             "acceptanceEvidence": [],
-            "acceptance": "Final TPO permissions/settings/team actor and visibility field decisions; verify tenant scope, revocation, settings edits and consumers."
+            "acceptance": "Final TPO permissions/settings/team actor and visibility field decisions; verify tenant scope, revocation, settings edits and consumers.",
+            "latestProgress": {
+              "status": "CODE_PATCHED_SOURCE_ONLY_NOT_ACCEPTED",
+              "fieldLedger": "docs/planning/db019-p22-tpo-settings-field-review.json",
+              "exactSourceFields": 49,
+              "historicalV201RetirementCandidates": 8,
+              "checks": {
+                "inProcessSource": "17/17 PASS",
+                "nodeTests": "AUTHORED_NOT_EXECUTED",
+                "postgresql": "NOT_EXECUTED"
+              },
+              "changes": [
+                "TPO team assignment now rechecks persisted placements.manage authority in the insertion transaction",
+                "New team assignments use V201 TPO_ADMIN only and clear legacy department assignment on upsert",
+                "All 49 source-field candidates explicitly audited; eight V201 removed historical fields remain unapproved retirement candidates",
+                "Coordinator-compatible old schema/read UI and actual delegation permission contracts still need signed-off decisions"
+              ],
+              "commits": [
+                "5189d5bf288e9e76d63dd5147f225dc07612f2fd",
+                "967f32dc159dfeee787c12b139c68e747a60c099",
+                "4ae2d70c225241c4031586628da44b673e100072",
+                "b1969370ebf4f5da8355b145616fdddbdf860ce8",
+                "75572a1e8a571a09fcf273ae7af4aa4d8cebc5a4"
+              ],
+              "remaining": "Global source-field dispositions, cleanup/approval of old coordinator rows, exact-head PG17 role/tenant/revocation and CAS tests, recruiter privacy consumer/export negative checks, normalized settings replay and final acceptance. Source-only checks do not complete P22."
+            }
           },
           {
             "id": "DB19-P23",
@@ -2139,7 +2164,33 @@
             "done": false,
             "acceptedAt": null,
             "acceptanceEvidence": [],
-            "acceptance": "Final 15 field dispositions and scoped skill creation/search/synonym/usage contract verification."
+            "acceptance": "Final 15 field dispositions and scoped skill creation/search/synonym/usage contract verification.",
+            "latestProgress": {
+              "status": "CODE_PATCHED_SOURCE_ONLY_NOT_ACCEPTED",
+              "fieldLedger": "docs/planning/db019-p30-skills-field-review.json",
+              "exactSourceFields": 15,
+              "checks": {
+                "inProcessSource": "12/12 PASS",
+                "updatedGuardSource": "21/21 PASS",
+                "nodeTests": "AUTHORED_NOT_EXECUTED",
+                "postgresql": "NOT_EXECUTED"
+              },
+              "changes": [
+                "Full catalog/source readiness now required before live usage selection POST",
+                "Free-text usage name lowercased without stripping meaningful leading/trailing whitespace",
+                "Atomic canonical catalog counter updates updatedAt",
+                "Obsolete no-POST guard replaced with explicit guarded writer tests"
+              ],
+              "commits": [
+                "69ca5287df667733ebbe08f78fa5ef62500f98b6",
+                "97c4c7dae83dbe3261801043f9a6fac977f0f4d0",
+                "38fe41be52db08f05bafd855092cc2e450c76266",
+                "0d368362043b194dd0affbf858ecadbdea9e6c46",
+                "08a85b4ae6acc83e65098332e7d850c007615a7e",
+                "35b0999551c5c63f8597852b950e7411ed183e85"
+              ],
+              "remaining": "Final field decisions, 0195 exact-head registered PG17/seed proof, active synonym/search behavior, v1/v2 counter concurrency and actual consumer permission tests. Source-only checks do not complete P30."
+            }
           },
           {
             "id": "DB19-P31",
