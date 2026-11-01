@@ -49,6 +49,25 @@ export async function createBugTrackerIssueForAdmin(
     if (!actor || actor.platformStatus !== "ACTIVE") {
       throw new TrackerAdminError("FORBIDDEN");
     }
+    // Verify persisted identity even on retries: a prior idempotency key is
+    // not a substitute for a currently active, authenticated reporter.
+    const reporterName = actor.displayName?.trim() ?? "";
+    if (!reporterName ||
+        input.reporterName.trim().toLocaleLowerCase("en-IN") !==
+          reporterName.toLocaleLowerCase("en-IN")) {
+      throw new TrackerAdminError("INVALID_INPUT");
+    }
+    const effectiveCollegeId = context.adminScope?.collegeId ?? null;
+    // The source URL is stripped before storage. Compare that same canonical
+    // value on retries so an ignored query token never re-enters persistence.
+    const safeSourceUrl = input.sourceUrl ? (() => {
+      const safe = new URL(input.sourceUrl);
+      safe.username = "";
+      safe.password = "";
+      safe.search = "";
+      safe.hash = "";
+      return safe.toString();
+    })() : null;
     // Persisted principal revocation takes priority over idempotent replay:
     // no stale user can re-enable a disabled reporter by submitting a report.
     const [existingAccess]=await tx.select({
@@ -65,6 +84,13 @@ export async function createBugTrackerIssueForAdmin(
       // the existing UNIQUE public_id index is the second defense.
       const [priorReport] = await tx.select({
         reporterUserId: db10BugReports.reporterUserId,
+        reporterName: db10BugReports.reporterName,
+        collegeId: db10BugReports.collegeId,
+        evidenceLink: db10BugReports.evidenceLink,
+        sourceUrl: db10BugReports.sourceUrl,
+        sourcePath: db10BugReports.sourcePath,
+        browser: db10BugReports.browser,
+        viewport: db10BugReports.viewport,
         accountRole: db10BugReports.accountRole,
         environment: db10BugReports.environment,
         page: db10BugReports.page,
@@ -78,6 +104,13 @@ export async function createBugTrackerIssueForAdmin(
         .where(eq(db10BugReports.publicId, publicId)).limit(1);
       if (priorReport) {
         if (priorReport.reporterUserId !== context.user.id ||
+            priorReport.collegeId !== effectiveCollegeId ||
+            priorReport.reporterName !== reporterName ||
+            priorReport.evidenceLink !== (input.evidenceLink || null) ||
+            priorReport.sourceUrl !== safeSourceUrl ||
+            priorReport.sourcePath !== (input.sourcePath || null) ||
+            priorReport.browser !== (input.browser || null) ||
+            priorReport.viewport !== (input.viewport || null) ||
             priorReport.accountRole !== input.accountRole ||
             priorReport.environment !== input.environment ||
             priorReport.page !== input.page ||
@@ -92,11 +125,6 @@ export async function createBugTrackerIssueForAdmin(
           reporterAccess: "ACCOUNT_ONLY" as const };
       }
     }
-    const reporterName=actor.displayName?.trim()??"";
-    // Names can collide. The immutable user ID is the sole identity key,
-    // and only the signed-in user may submit their own selected reporter name.
-    if(!reporterName||input.reporterName.trim().toLocaleLowerCase("en-IN")!==reporterName.toLocaleLowerCase("en-IN"))
-      throw new TrackerAdminError("INVALID_INPUT");
     // Historic display names are not identities. Only an ACTIVE access row
     // belonging to the signed-in user can be reused. Never claim an older
     // report's access ID; imported access may have been revoked.
@@ -115,7 +143,7 @@ export async function createBugTrackerIssueForAdmin(
       publicId,
       reporterAccessId: reporter.id,
       reporterUserId: context.user.id,
-      collegeId: context.adminScope?.collegeId ?? null,
+      collegeId: effectiveCollegeId,
       reporterName,
       accountRole: input.accountRole,
       environment: input.environment,
@@ -126,12 +154,7 @@ export async function createBugTrackerIssueForAdmin(
       description: input.description,
       severity: input.severity,
       evidenceLink: input.evidenceLink || null,
-      sourceUrl:input.sourceUrl?(()=>{
-        // Browser URLs may contain auth tokens or private query parameters.
-        const safe=new URL(input.sourceUrl);
-        safe.username="";safe.password="";safe.search="";safe.hash="";
-        return safe.toString();
-      })():null,
+      sourceUrl: safeSourceUrl,
       sourcePath: input.sourcePath || null,
       browser: input.browser || null,
       viewport: input.viewport || null,
