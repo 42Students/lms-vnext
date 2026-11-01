@@ -9,6 +9,13 @@ on:
     paths:
       - ".github/workflows/db019-p03-auth-sessions-pg17.yml"
       - "tests/integration/db019-p03-auth-session-pg.test.ts"
+      - "tests/integration/db01-login-consume-account-lock.test.ts"
+      - "tests/integration/db01-learner-faculty-otp-field-compat.test.ts"
+      - "tests/integration/db01-auth-attempt-field-semantics.test.ts"
+      - "tests/integration/db01-scoped-account-verification.test.ts"
+      - "tests/integration/db01-credential-retirement-absence.test.ts"
+      - "src/modules/auth/login-repository.ts"
+      - "src/modules/identity/scoped-account-verification-service.ts"
       - "tests/db019-p03-auth-source-quality.test.mjs"
       - "scripts/db019-p03-auth-source-quality.mjs"
       - "docs/planning/db019-p03-auth-field-review.json"
@@ -68,6 +75,18 @@ jobs:
           DB03_ISOLATED_TEST_DATABASE: "1"
           DB019_P03_ISOLATED_TEST_DATABASE: "1"
         run: npx vitest run --config vitest.db.registered.config.ts tests/integration/db019-p03-auth-session-pg.test.ts
+      - name: Live OTP consumption, same-college role, cooldown and retired credential negatives
+        env:
+          DATABASE_URL: postgresql://postgres:postgres@127.0.0.1:5432/lms_vnext_test
+          DB03_ISOLATED_TEST_DATABASE: "1"
+          DB019_P03_ISOLATED_TEST_DATABASE: "1"
+        run: |
+          npx vitest run --config vitest.db.registered.config.ts \
+            tests/integration/db01-login-consume-account-lock.test.ts \
+            tests/integration/db01-learner-faculty-otp-field-compat.test.ts \
+            tests/integration/db01-auth-attempt-field-semantics.test.ts \
+            tests/integration/db01-scoped-account-verification.test.ts \
+            tests/integration/db01-credential-retirement-absence.test.ts
       - name: P03 source-only authorization and session regression
         run: npx vitest run tests/unit/chat6-auth-session-service-behaviour.test.ts tests/unit/chat6-auth-logout-revocation.test.ts
       - name: Scope boundary
