@@ -1882,8 +1882,8 @@
               "job_offer"
             ],
             "sourceFieldCount": 108,
-            "picked": false,
-            "pickedBy": "",
+            "picked": true,
+            "pickedBy": "CHAT_DB19_P17_PLACEMENT_LIFECYCLE_20261101",
             "done": false,
             "acceptedAt": null,
             "acceptanceEvidence": [],
