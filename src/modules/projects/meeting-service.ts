@@ -327,6 +327,7 @@ export async function requestProjectMeeting(
     const [conflict] = await tx.select({id:projectMeetings.id}).from(projectMeetings)
       .where(and(eq(projectMeetings.projectId,scope.project.id),
         eq(projectMeetings.requestedByMembershipId,context.membership!.id),
+        isNull(projectMeetings.deletedAt),
         inArray(projectMeetings.status,["REQUESTED","SCHEDULED","RESCHEDULED"]),
         lt(projectMeetings.startsAt,endsAt),gt(projectMeetings.endsAt,startsAt)))
       .limit(1);
@@ -448,6 +449,7 @@ export async function scheduleProjectMeeting(
           eq(projectMeetings.scheduledByUserId,organiserId),
         ),
         inArray(projectMeetings.status,["SCHEDULED","RESCHEDULED"]),
+        isNull(projectMeetings.deletedAt),
         lt(projectMeetings.startsAt,endsAt),gt(projectMeetings.endsAt,startsAt),
         ...(existing ? [ne(projectMeetings.id,existing.id)] : [])))
       .limit(1);
