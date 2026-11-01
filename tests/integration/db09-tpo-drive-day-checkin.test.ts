@@ -121,6 +121,14 @@ describe.skipIf(!enabled)("DB09 TPO Drive Day check-in PostgreSQL", () => {
   it("rejects a stale request after the persisted TPO role is revoked", async () => {
     if (!pool) throw new Error("DB required");
     const { roundId, applicationId } = await fixture();
+    // Retain a valid College Admin role. A generic placements.manage check
+    // would incorrectly allow this TPO-only endpoint after its TPO grant is gone.
+    const [adminGrant] = (await pool.query<{ id: string }>(
+      "INSERT INTO membership_roles (membership_id,role) VALUES ($1,'COLLEGE_ADMIN') " +
+      "ON CONFLICT (membership_id,role) DO NOTHING RETURNING id",
+      [SEED_IDS.facultyCollegeAMembership],
+    )).rows;
+    ids.adminRole = adminGrant?.id;
     const revoked = (await pool.query<{ id: string }>(
       "DELETE FROM membership_roles WHERE membership_id=$1 AND role='TPO' RETURNING id",
       [SEED_IDS.facultyCollegeAMembership],
