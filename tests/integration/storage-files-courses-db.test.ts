@@ -272,6 +272,42 @@ afterAll(async () => {
 });
 
 describe("assignment submission files against PostgreSQL", () => {
+  it("rejects a revoked learner's upload completion despite a stale authenticated context", async () => {
+    const structure = await createStructure();
+    const assignment = await publishedAssignment(structure);
+    const bytes = pdfBytes("post-grant-role-revocation");
+    const { grant, file } = await issueSubmissionFileUploadGrant(learner, assignment.id, {
+      deliveryId: structure.deliveryA.id,
+      originalName: "role-revoked.pdf",
+      contentType: "application/pdf",
+      sizeBytes: bytes.length,
+    });
+    putFromGrant(grant, bytes);
+    await pool.query(
+      "delete from membership_roles where membership_id = $1 and role = 'LEARNER'",
+      [fileLearnerMembershipId],
+    );
+    try {
+      // Context still claims LEARNER; only the persisted membership role
+      // changed. Scanner confirmation must not write READY after revocation.
+      await expect(completeSubmissionFileUpload(learner, assignment.id, file.id))
+        .rejects.toMatchObject({ code: "STORAGE_NOT_FOUND" });
+      const persisted = await pool.query<{status:string}>(
+        "select status from assignment_submission_files where id = $1", [file.id]);
+      expect(persisted.rows[0]?.status).toBe("UPLOADING");
+    } finally {
+      await pool.query(
+        "insert into membership_roles(membership_id,role,assigned_by_user_id) " +
+        "values($1,'LEARNER',$2) on conflict do nothing",
+        [fileLearnerMembershipId, SEED_IDS.collegeAdminUser],
+      );
+    }
+    // A fresh persisted grant legitimately allows the original attested
+    // object to complete; the denied attempt did not consume its state.
+    const completed = await completeSubmissionFileUpload(learner, assignment.id, file.id);
+    expect(completed.status).toBe("READY");
+  });
+
   it("runs upload, verification, submit, grants and audit end to end", async () => {
     const structure = await createStructure();
     const assignment = await publishedAssignment(structure);
