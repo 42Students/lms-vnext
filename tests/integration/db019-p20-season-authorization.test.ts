@@ -40,7 +40,8 @@ describe("DB19-P20 registered PG17 season write authorization",()=>{
    "SELECT id,name,code,updated_at,start_date::text,end_date::text,status "+
    "FROM placement_seasons WHERE id=$1",[testSeason],
   )).rows;
-  expect(before?.status).toBe("ACTIVE");
+  if(!before)throw new Error("Seeded active season is required");
+  expect(before.status).toBe("ACTIVE");
   const auditBefore=(await pool.query<{count:number}>(
    "SELECT count(*)::int AS count FROM activity_events WHERE subject_id=$1 AND "+
    "event_type='PLACEMENTS_SEASON_DETAILS_UPDATED'",[testSeason],
@@ -78,6 +79,7 @@ describe("DB19-P20 registered PG17 season write authorization",()=>{
    "SELECT name,code,updated_at,start_date::text,end_date::text FROM placement_seasons WHERE id=$1",
    [testSeason],
   )).rows;
+  if(!before)throw new Error("Seeded active season is required");
   const holder=await pool.connect();
   let held=false,roleDeleted=false;
   let pending:Promise<unknown>|null=null;
