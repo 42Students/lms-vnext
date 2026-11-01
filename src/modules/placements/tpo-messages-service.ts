@@ -97,6 +97,35 @@ export type TpoMessagesQuery =
   z.infer<typeof tpoMessagesQuerySchema>;
 
 /**
+ * Recheck the TPO reader against persisted actor, tenant and role state.
+ * A remembered TPO role on an old session must not expose private recruiter
+ * conversations after revocation or membership/account suspension.
+ */
+export async function requirePersistedTpoInboxReader(context:RequestContext){
+  const member=context.membership;
+  if(!member||!hasMembershipRole(context,"TPO")||
+    member.status!=="ACTIVE"||context.user.platformStatus!=="ACTIVE")
+    throw new AuthorizationError("placements.manage");
+  const college=await requirePlacementManageScope(context,member.collegeId);
+  const [principal]=await getDb().select({id:collegeMemberships.id})
+    .from(collegeMemberships)
+    .innerJoin(users,eq(users.id,collegeMemberships.userId))
+    .innerJoin(membershipRoles,and(
+      eq(membershipRoles.membershipId,collegeMemberships.id),
+      eq(membershipRoles.role,"TPO"),
+    ))
+    .where(and(
+      eq(collegeMemberships.id,member.id),
+      eq(collegeMemberships.collegeId,college.id),
+      eq(collegeMemberships.userId,context.user.id),
+      eq(collegeMemberships.status,"ACTIVE"),
+      eq(users.platformStatus,"ACTIVE"),
+    )).limit(1);
+  if(!principal)throw new AuthorizationError("placements.manage");
+  return college.id;
+}
+
+/**
  * Honest fallback while recruiter conversation tables
  * remain unregistered.
  *
@@ -220,23 +249,8 @@ export async function getTpoMessagesInbox(
   context: RequestContext,
   rawQuery: unknown = {},
 ) {
-  if (
-    !context.membership ||
-    !hasMembershipRole(context, "TPO")
-  ) {
-    throw new AuthorizationError("placements.manage");
-  }
-
-  const query = tpoMessagesQuerySchema.parse(
-    rawQuery,
-  );
-
-  const collegeId = context.membership.collegeId;
-
-  await requirePlacementManageScope(
-    context,
-    collegeId,
-  );
+  const query = tpoMessagesQuerySchema.parse(rawQuery);
+  const collegeId = await requirePersistedTpoInboxReader(context);
 
   const [threadsAvailable, messagesAvailable] =
     await Promise.all([
