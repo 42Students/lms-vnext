@@ -1446,8 +1446,8 @@
               "lesson_contents_legacy_type_backup_v163"
             ],
             "sourceFieldCount": 641,
-            "picked": false,
-            "pickedBy": "",
+            "picked": true,
+            "pickedBy": "CHAT_DB19_HISTORICAL_DISPOSITIONS_20261101",
             "done": false,
             "acceptedAt": null,
             "acceptanceEvidence": [],
@@ -1469,8 +1469,8 @@
               "smrithi_specialization"
             ],
             "sourceFieldCount": 91,
-            "picked": false,
-            "pickedBy": "",
+            "picked": true,
+            "pickedBy": "CHAT_DB19_HISTORICAL_DISPOSITIONS_20261101",
             "done": false,
             "acceptedAt": null,
             "acceptanceEvidence": [],
