@@ -1,0 +1,83 @@
+# DB019-P17 exact-head registered PostgreSQL 17 placement lifecycle acceptance.
+# P17 is a scoped package, not the entire 2829-field DB019/DB020 gate.
+name: DB019-P17 placement jobs applications offers PG17 acceptance
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/db019-p17-placement-lifecycle-pg17.yml"
+      - "src/modules/placements/offer-service.ts"
+      - "tests/integration/placements-p8-offers.test.ts"
+      - "tests/integration/placements-loi-kind.test.ts"
+      - "tests/db019-db08-offer-physical-pg.test.mjs"
+      - "docs/planning/database-parity-db08-field-ledger.json"
+      - "drizzle/*.sql"
+      - "drizzle/meta/_journal.json"
+permissions:
+  contents: read
+concurrency:
+  group: db019-p17-${{ github.ref }}
+  cancel-in-progress: false
+jobs:
+  registered-placement-lifecycle:
+    name: P17 offer lifecycle and learner private read on registered PG17
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    services:
+      postgres:
+        image: postgres:17-alpine
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: lms_vnext_test
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres -d lms_vnext_test"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 20
+    env:
+      TEST_DATABASE_URL: postgresql://postgres:postgres@127.0.0.1:5432/lms_vnext_test
+      DB019_DISPOSABLE_TEST_DATABASE: "true"
+      DB03_ISOLATED_TEST_DATABASE: "1"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - name: Install locked packages
+        run: npm ci
+      - name: Pin exact SHA and journal integrity
+        run: |
+          test "$(git rev-parse HEAD)" = "$GITHUB_SHA"
+          npm run db:journal:verify
+      - name: Registered PostgreSQL 17 zero-to-head replay and fixture seed
+        env:
+          DATABASE_URL: ""
+        run: npm run db:test:prepare
+      - name: Registered replay must be idempotent
+        env:
+          DATABASE_URL: postgresql://postgres:postgres@127.0.0.1:5432/lms_vnext_test
+        run: npm run db:migrate
+      - name: Validate P17 typed field targets and registered offer/application state constraints
+        run: node --test tests/db019-db08-offer-physical-pg.test.mjs
+      - name: Exercise full P17 actual offer, expiry, tenant, race, learner and TPO consumers
+        env:
+          DATABASE_URL: postgresql://postgres:postgres@127.0.0.1:5432/lms_vnext_test
+        run: npx vitest run --config vitest.db.registered.config.ts tests/integration/placements-p8-offers.test.ts
+      - name: Exercise LOI kind persistence and private learner offer projection
+        env:
+          DATABASE_URL: postgresql://postgres:postgres@127.0.0.1:5432/lms_vnext_test
+        run: npx vitest run --config vitest.db.registered.config.ts tests/integration/placements-loi-kind.test.ts
+      - name: Full application typecheck for offer projection consumers
+        env:
+          NODE_OPTIONS: --max-old-space-size=6144
+        run: npm run typecheck
+      - name: Evidence boundary
+        if: always()
+        run: |
+          echo "P17 registered PG17 service/projection proof only."
+          echo "DB019 global 2829-field semantic approval and DB020 global phase certification remain independent OPEN tasks."
