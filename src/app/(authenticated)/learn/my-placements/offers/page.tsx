@@ -23,7 +23,7 @@ import { getCurrentRequestContext } from "@/auth/request-context";
 import { AuthorizationError } from "@/modules/permissions/policy";
 import { getOwnLearnerPlacementRulesView } from "@/modules/placements/learner-placement-rules-service";
 import { LearnerPlacementOffers } from "@/components/placements/learner-placement-offers";
-import {learnerOfferCountsAsPlaced,safeLearnerOfferLetterHref} from "@/modules/placements/learner-offer-letter-model";
+import {learnerOfferCountsAsPlaced} from "@/modules/placements/learner-offer-letter-model";
 import { getOwnLearnerOfferBrowse } from "@/modules/placements/learner-offers-browse-service";
 import {listOwnPlacementRequests} from "@/modules/placements/request-service";
 import {readOptionalLearnerAlertSource} from "@/modules/placements/learner-optional-alert-source-model";
@@ -160,7 +160,7 @@ export default async function LearnerOffersPage({
           companyLogoUrl:row.company.logoPublicUrl,
           legacyCtcLpa:row.offer.legacyCtcLpa,
           respondedAt:row.offer.respondedAt?.toISOString()??null,
-            letterHref: safeLearnerOfferLetterHref(row.offer.offerLetterUrl),
+            letterHref: row.offer.letterHref,
             countsAsPlaced: learnerOfferCountsAsPlaced({kind:row.offer.kind==="LOI"?"LOI":"OFFER",
               jobCountsAsPlaced:row.job.countsAsPlaced}),
             joiningDate: row.offer.joiningDate,
