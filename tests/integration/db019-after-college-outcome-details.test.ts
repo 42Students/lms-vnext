@@ -181,6 +181,23 @@ describe("DB019 registered PG17 after-college outcome fidelity",()=>{
    learnerMembershipId:learnerId,outcome:"ENTREPRENEURSHIP",
    expectedVersion:selection.version,
   })).rejects.toMatchObject({code:"AFTER_COLLEGE_STALE"});
+  // A stale settings version with a new proposed label must reject
+  // transactionally, leaving both the catalog and learner destination intact.
+  await expect(saveTpoOutcomeLabels(tpo,{
+   labels:[
+    {id:swapped.labels[0]!.id,label:"Stale taxonomy write",outcome:"ENTREPRENEURSHIP"},
+    {id:swapped.labels[1]!.id,label:"Career studio",outcome:"ENTREPRENEURSHIP"},
+   ],
+   expectedVersion:created.version,
+  })).rejects.toMatchObject({code:"TPO_SETTINGS_STALE"});
+  const afterRejected=await pool.query<{
+   outcome:string;outcome_label:string|null;outcome_detail:string|null
+  }>("SELECT outcome,outcome_label,outcome_detail "+
+   "FROM placement_tpo_after_college WHERE learner_membership_id=$1",[learnerId]);
+  expect(afterRejected.rows[0]).toEqual({
+   outcome:"ENTREPRENEURSHIP",outcome_label:"Graduate school",
+   outcome_detail:"Private plan remains private",
+  });
   // Reclassify an existing label: the student destination follows the stable
   // label ID, not the old outcome, and the sensitive detail remains private.
   const moved=await saveTpoOutcomeLabels(tpo,{
