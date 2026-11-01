@@ -6,6 +6,7 @@ import { AuthorizationError } from "@/modules/permissions/policy";
 import type { RequestContext } from "@/modules/identity/context";
 import {
   createDepartment, renameDepartment, archiveDepartment,
+  listDepartments, fetchPagedDepartments,
 } from "@/modules/departments/service";
 import {
   createCollegeDepartment, renameCollegeDepartment, archiveCollegeDepartment,
@@ -84,6 +85,31 @@ describe.skipIf(!enabled)("DB19-P04 persisted department authority on PostgreSQL
       "SELECT id FROM departments WHERE name LIKE $1", [prefix + "%"],
     );
     expect(rows.rows).toHaveLength(0);
+  });
+
+  it("fails closed on stale or forged roles during department directory reads", async () => {
+    // A snapshot with a forged SUPER_ADMIN role must not enumerate other
+    // tenants when its real persisted actor is only a college administrator.
+    await expect(fetchPagedDepartments(falseGlobal, {page: 0, size: 10}))
+      .rejects.toBeInstanceOf(AuthorizationError);
+    await expect(fetchPagedDepartments(falseGlobal, {
+      collegeId: SEED_IDS.collegeB, page: 0, size: 10,
+    })).rejects.toBeInstanceOf(AuthorizationError);
+    // Fabricating COLLEGE_ADMIN against a different persisted membership
+    // must not read either the direct or paged roster.
+    await expect(listDepartments(falseMembership, SEED_IDS.collegeA))
+      .rejects.toBeInstanceOf(AuthorizationError);
+    await expect(fetchPagedDepartments(falseMembership, {
+      collegeId: SEED_IDS.collegeA, page: 0, size: 10,
+    })).rejects.toBeInstanceOf(AuthorizationError);
+
+    const direct = await listDepartments(admin, SEED_IDS.collegeA);
+    const paged = await fetchPagedDepartments(admin, {
+      collegeId: SEED_IDS.collegeA, page: 0, size: 10,
+    });
+    expect(paged.content.every(row => row.collegeId === SEED_IDS.collegeA)).toBe(true);
+    expect(paged.totalElements).toBeGreaterThanOrEqual(paged.content.length);
+    expect(direct.every(row => row.collegeId === SEED_IDS.collegeA)).toBe(true);
   });
 
   it("rejects stale actor rename and archive while retaining valid college-admin writes", async () => {
