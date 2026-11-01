@@ -162,7 +162,7 @@ export default async function LearnerOffersPage({
           respondedAt:row.offer.respondedAt?.toISOString()??null,
             letterHref: safeLearnerOfferLetterHref(row.offer.offerLetterUrl),
             countsAsPlaced: learnerOfferCountsAsPlaced({kind:row.offer.kind==="LOI"?"LOI":"OFFER",
-              jobEmploymentType:row.job.employmentType,roleEmploymentType:row.role.employmentType}),
+              jobCountsAsPlaced:row.job.countsAsPlaced}),
             joiningDate: row.offer.joiningDate,
             expiresAt: row.offer.expiresAt?.toISOString() ?? null,
             issuedAt: row.offer.issuedAt.toISOString(),
