@@ -397,7 +397,7 @@ describe("Placement P7 recruiter identity and grants", () => {
         primaryDomain:
           "interview-systems.example",
       });
-    await grantPlacementRecruiter(tpo, {
+    const grant = await grantPlacementRecruiter(tpo, {
       companyRelationshipId:
         company.relationship.id,
       email: "recruiter@example.com",
@@ -598,5 +598,14 @@ describe("Placement P7 recruiter identity and grants", () => {
       status: "APPLIED",
       source: "TPO",
     });
+
+    // Revocation follows context hydration. Persisted grant recheck must
+    // deny staging, despite the caller retaining an old in-memory grant.
+    await revokePlacementRecruiterGrant(tpo,grant.grant.id);
+    await expect(
+      stagePlacementRoundResult(recruiter,round.id,{
+        applicationId:application.id,outcome:"PASS",scorePercent:90,
+      }),
+    ).rejects.toThrow("Missing permission: placements.recruiter.result.stage");
   });
 });
