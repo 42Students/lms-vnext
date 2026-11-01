@@ -1636,6 +1636,34 @@
             "DB020 remains dependent on accepted DB019"
           ],
           "notTaskAcceptance": true
+        },
+        "latestDb08RegisteredOutcomeDetailBatch": {
+          "commit": "51287f1007d0f9685789c57fb81e2fbea775e0f0",
+          "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/41280073555",
+          "jobId": 124770018999,
+          "result": "PASS_REGISTERED_PG17_SCOPED_NOT_DB019_ACCEPTANCE",
+          "registeredMigration": "0331_db019_after_college_outcome_details",
+          "scopedWitnesses": [
+            "staff-only optional outcome label/detail persisted and read by TPO roster",
+            "same-college matching label validated; unknown rejected",
+            "stale version rejected; same-outcome legacy retry preserves details",
+            "private detail never included in general activity event",
+            "PostgreSQL 200-char field overflow rejected; TPO bulk changing outcome clears detail"
+          ],
+          "db08Proposals": {
+            "total": 280,
+            "proposedMapping": 182,
+            "explicitRuntimeGap": 71,
+            "enumCrosswalk": 27,
+            "globalRuntimeVerified": 0
+          },
+          "pending": [
+            "A separate settings rename/removal PostgreSQL regression remains staged, not executed.",
+            "71 DB08 source field runtime gaps and 27 enum crosswalks remain; proposals are not final global field approval.",
+            "Other 10 domains and all 2829 final field disposition/producer/consumer/tenant/privacy gates remain open.",
+            "DB020 depends on DB019 and exact final phase-head certification."
+          ],
+          "notTaskAcceptance": true
         }
       }
     },

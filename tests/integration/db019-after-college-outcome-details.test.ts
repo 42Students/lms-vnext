@@ -8,6 +8,7 @@ import {SEED_IDS} from "../../scripts/db-seed-data";
 import {setTpoAfterCollegeOutcome} from "@/modules/placements/tpo-after-college-write-service";
 import {getTpoAfterCollegeForRoster} from "@/modules/placements/tpo-after-college-roster-service";
 import {bulkUpdateTpoAfterCollege} from "@/modules/placements/tpo-after-college-bulk-service";
+import {readTpoOutcomeLabels,saveTpoOutcomeLabels} from "@/modules/placements/tpo-outcome-label-settings-service";
 
 const databaseUrl=process.env.TEST_DATABASE_URL;
 if(!databaseUrl)throw new Error("DB019 requires explicitly isolated TEST_DATABASE_URL");
@@ -22,8 +23,14 @@ const tpo:RequestContext={
  },
 };
 const learnerId=SEED_IDS.learnerCollegeAMembership;
+let originalSettingsPresent=false,originalOutcomeLabels:unknown=null;
 describe("DB019 registered PG17 after-college outcome fidelity",()=>{
  beforeAll(async()=>{
+  const previous=await pool.query<{outcome_labels:unknown}>(
+   "SELECT outcome_labels FROM placement_tpo_college_settings WHERE college_id=$1",
+   [SEED_IDS.collegeA]);
+  originalSettingsPresent=previous.rows.length>0;
+  originalOutcomeLabels=previous.rows[0]?.outcome_labels??null;
   await pool.query(
    "INSERT INTO membership_roles(id,membership_id,role) VALUES($1,$2,'TPO') "+
    "ON CONFLICT(membership_id,role) DO NOTHING",
@@ -39,6 +46,13 @@ describe("DB019 registered PG17 after-college outcome fidelity",()=>{
  afterAll(async()=>{
   await pool.query("DELETE FROM placement_tpo_after_college WHERE learner_membership_id=$1",[learnerId]);
   await pool.query("DELETE FROM membership_roles WHERE id=$1",[roleId]);
+  // Restore only the settings column this fixture owns, never discard the
+  // college's other settings. PG fixture data must not pollute later suites.
+  if(originalSettingsPresent)await pool.query(
+   "UPDATE placement_tpo_college_settings SET outcome_labels=$2::jsonb WHERE college_id=$1",
+   [SEED_IDS.collegeA,originalOutcomeLabels===null?null:JSON.stringify(originalOutcomeLabels)]);
+  else await pool.query(
+   "DELETE FROM placement_tpo_college_settings WHERE college_id=$1",[SEED_IDS.collegeA]);
   await pool.end();await closeDatabaseConnection();
  });
  it("persists current detail and restricts read to the authorized college roster",async()=>{
@@ -78,8 +92,30 @@ describe("DB019 registered PG17 after-college outcome fidelity",()=>{
    learnerMembershipId:learnerId,outcome:"ENTREPRENEURSHIP",
    outcomeLabel:"Not this college label",expectedVersion:first.version,
   })).rejects.toMatchObject({code:"AFTER_COLLEGE_INVALID_LABEL"});
+  // The legacy settings writer propagates rename and removal transactionally.
+  // The selected custom label follows the college catalog, while private
+  // destination detail is preserved until the actual outcome changes.
+  const catalog=await readTpoOutcomeLabels(tpo);
+  const savedCatalog=await saveTpoOutcomeLabels(tpo,{
+   labels:[{id:catalog.labels[0]!.id,label:"Family enterprise",outcome:"ENTREPRENEURSHIP"}],
+   expectedVersion:catalog.version,
+  });
+  const renamed=await pool.query<{outcome_label:string|null;outcome_detail:string|null;updated_at:Date}>(
+   "SELECT outcome_label,outcome_detail,updated_at FROM placement_tpo_after_college "+
+   "WHERE learner_membership_id=$1",[learnerId]);
+  expect(renamed.rows[0]).toMatchObject({
+   outcome_label:"Family enterprise",outcome_detail:"Private destination detail",
+  });
+  await saveTpoOutcomeLabels(tpo,{labels:[],expectedVersion:savedCatalog.version});
+  const afterRemoval=await pool.query<{outcome_label:string|null;outcome_detail:string|null;updated_at:Date}>(
+   "SELECT outcome_label,outcome_detail,updated_at FROM placement_tpo_after_college "+
+   "WHERE learner_membership_id=$1",[learnerId]);
+  expect(afterRemoval.rows[0]).toMatchObject({
+   outcome_label:null,outcome_detail:"Private destination detail",
+  });
   const switched=await bulkUpdateTpoAfterCollege(tpo,{changes:[{
-   membershipId:learnerId,outcome:"HIGHER_STUDIES",expectedVersion:first.version,
+   membershipId:learnerId,outcome:"HIGHER_STUDIES",
+   expectedVersion:afterRemoval.rows[0]!.updated_at.toISOString(),
   }]});
   expect(switched.updated).toBe(1);
   const reset=await pool.query<{outcome_label:string|null;outcome_detail:string|null}>(

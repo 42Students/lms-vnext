@@ -335,6 +335,7 @@ test("DB08 remaining 91 source reviews bind to actual typed tables, with privacy
     placement_eligibility_decisions:"src/db/schema/placement-access.ts",
     placement_eligibility_events:"src/db/schema/placement-batches.ts",
     placement_batch_registrations:"src/db/schema/placement-registration.ts",
+    placement_tpo_after_college:"src/db/schema/tpo-configuration.ts",
   };
   const recent=["interview","job_preferences","learner_saved_job",
     "placement_batch","placement_eligibility","placement_eligibility_event","placement_registration"];
@@ -367,7 +368,11 @@ test("DB08 remaining 91 source reviews bind to actual typed tables, with privacy
   const find=(table,col)=>artifacts.DB08.tables.find(t=>t.legacyTable===table)
     .fields.find(f=>f.legacyColumn===col).reviewDecision;
   assert.equal(find("placement_registration","season_id").classification,"EXPLICIT_RUNTIME_GAP");
-  assert.equal(find("placement_registration","outcome_detail").targetRefs.length,0);
+  assert.deepEqual(find("placement_registration","outcome_label").targetRefs,
+    ["placement_tpo_after_college.outcome_label"]);
+  assert.deepEqual(find("placement_registration","outcome_detail").targetRefs,
+    ["placement_tpo_after_college.outcome_detail"]);
+  assert.equal(find("placement_registration","outcome_detail").runtimeVerified,false);
   assert.equal(find("job_preferences","is_deleted").classification,"EXPLICIT_RUNTIME_GAP");
   assert.equal(find("interview","feedback_comments").classification,"EXPLICIT_RUNTIME_GAP");
   assert.equal(find("interview","interviewer_name").targetRefs.length,0);

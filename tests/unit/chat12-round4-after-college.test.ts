@@ -10,7 +10,8 @@ describe("chat-12 after-college graceful outcomes",()=>{
  });
  it("GR-30 prevents duplicate submission and keeps chosen outcome",()=>{
   expect(source).toContain("runGuarded(async()=>");
-  expect(source).toContain("setConfirmation({outcome,reversing})");
+  expect(source).toContain("if(!available||pending||(equal(value,saved)&&!reversing))return;");
+  expect(source).toContain("setConfirmation({value,reversing})");
  });
  it("GR-35 shows the consequence of an outcome update before saving",()=>{
   expect(source).toContain('title={confirmation?.reversing?"Restore previous outcome":"Save after-college outcome"}');

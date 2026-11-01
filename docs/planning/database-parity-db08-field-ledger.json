@@ -6901,10 +6901,12 @@
           "dbTestEvidence": null,
           "reviewDecision": {
             "reviewStatus": "SOURCE_REVIEWED_PROPOSAL_NOT_VERIFIED",
-            "classification": "EXPLICIT_RUNTIME_GAP",
-            "targetRefs": [],
-            "sourceRationale": "Source registration outcome label is not part of the new consent/choice record.",
-            "outstandingProof": "Separate placement-outcome reporting from learner's private registration intent and define retention.",
+            "classification": "PROPOSED_ACTIVE_FIELD_MAPPING",
+            "targetRefs": [
+              "placement_tpo_after_college.outcome_label"
+            ],
+            "sourceRationale": "The TPO's optional college-specific destination label is staff-authored after-college evidence, not learner placement consent; registered 0331 stores it in placement_tpo_after_college.",
+            "outstandingProof": "Scoped PG17 writer, roster, label-validation and settings rename/removal producer witness passed at 51287f1 for initial writer only; final legacy 2829-field semantics, after-college catalog renames/removals and privacy read-boundary certification remain independent.",
             "frozenLegacyOracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
             "runtimeVerified": false,
             "consumerVerified": false,
@@ -6925,10 +6927,12 @@
           "dbTestEvidence": null,
           "reviewDecision": {
             "reviewStatus": "SOURCE_REVIEWED_PROPOSAL_NOT_VERIFIED",
-            "classification": "EXPLICIT_RUNTIME_GAP",
-            "targetRefs": [],
-            "sourceRationale": "Legacy registration outcome details are not present in the registered private choice table.",
-            "outstandingProof": "Review the downstream outcome authority and private staff notes before redesigning this field.",
+            "classification": "PROPOSED_ACTIVE_FIELD_MAPPING",
+            "targetRefs": [
+              "placement_tpo_after_college.outcome_detail"
+            ],
+            "sourceRationale": "Private optional staff destination detail is held on the scoped TPO after-college outcome record under registered 0331, separate from enrollment or placement registration consent.",
+            "outstandingProof": "Scoped PG17 write/read/length, stale-version and omission safety passed at 51287f1; complete all other legacy after-college reporting consumers and global privacy/race acceptance before promoting runtimeVerified.",
             "frozenLegacyOracleSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
             "runtimeVerified": false,
             "consumerVerified": false,
@@ -7963,5 +7967,21 @@
         }
       ]
     }
-  ]
+  ],
+  "latestScopedAfterCollegeOutcomeOverlay": {
+    "status": "REGISTERED_PG17_SCOPED_2_FIELD_PROPOSAL_RUNTIME_WITNESS_NOT_GLOBAL_DB019",
+    "registeredMigration": "drizzle/0331_db019_after_college_outcome_details.sql",
+    "implementationCommit": "51287f1007d0f9685789c57fb81e2fbea775e0f0",
+    "independentPg17Run": "https://github.com/42Students/lms-vnext/actions/runs/41280073555",
+    "independentPg17JobId": 124770018999,
+    "independentlyObservedIntegrationTest": "tests/integration/db019-after-college-outcome-details.test.ts",
+    "integrationTestCount": 1,
+    "scope": "Actual registered PG17 after-college current-row writer/reader, conditional idempotence, stale update, same-college catalog label check, private activity metadata and varchar length negative. Not global parity.",
+    "fieldSourceProposalCount": 280,
+    "fieldSourceMappingProposals": 182,
+    "fieldSourceRuntimeGaps": 71,
+    "fieldSourceEnumCrosswalks": 27,
+    "globallyVerifiedFieldDispositions": 0,
+    "taskAccepted": false
+  }
 }

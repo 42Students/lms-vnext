@@ -38,7 +38,7 @@ export const DB08_SOURCE_TARGET_TABLES=Object.freeze({
   placement_debarment:["placement_debarments"],
   placement_eligibility:["placement_eligibility_decisions"],
   placement_eligibility_event:["placement_eligibility_events"],
-  placement_registration:["placement_batch_registrations"],
+  placement_registration:["placement_batch_registrations","placement_tpo_after_college"],
   placement_season:["placement_seasons"],
   round_attendance:["placement_round_attendance"],
   round_result:["placement_round_results"],
