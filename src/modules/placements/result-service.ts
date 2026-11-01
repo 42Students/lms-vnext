@@ -5,6 +5,7 @@ import {
   eq,
   gt,
   lt,
+  isNull,
   max,
   ne,
   sql,
@@ -24,6 +25,13 @@ import {
   placementJobs,
   placementLearnerRequests,
   placementRoundResults,
+  placementRecruiterCollegeGrants,
+  placementRecruiterProfiles,
+  placementCompanyRelationships,
+  placementCompanies,
+  users,
+  colleges,
+  organizations,
 } from "@/db/schema";
 import {
   hasMembershipRole,
@@ -379,10 +387,64 @@ export async function stagePlacementRoundResult(
   return db.transaction(async (tx) => {
     // Serialize result staging with drive closure; a pre-transaction status
     // read alone can admit a result after another operator closes the drive.
-    const [lockedJob] = await tx.select({status: placementJobs.status})
-      .from(placementJobs).where(eq(placementJobs.id, job.id)).for("update").limit(1);
-    if (!lockedJob || lockedJob.status === "CLOSED" || lockedJob.status === "ARCHIVED") {
+    const [lockedJob] = await tx.select({
+      status: placementJobs.status,
+      collegeId: placementJobs.collegeId,
+      companyRelationshipId: placementJobs.companyRelationshipId,
+    }).from(placementJobs).where(eq(placementJobs.id, job.id)).for("update").limit(1);
+    if (!lockedJob || lockedJob.status === "CLOSED" || lockedJob.status === "ARCHIVED" ||
+        lockedJob.collegeId !== job.collegeId ||
+        lockedJob.companyRelationshipId !== job.companyRelationshipId) {
       throw new PlacementsServiceError("PLACEMENT_JOB_READ_ONLY");
+    }
+    if (recruiterCanStage) {
+      // Request-context grants and the earlier ownership read can go stale.
+      // Pin the actor, verified college grant and employer chain under SHARE
+      // locks until the result is committed, so a concurrent revocation or
+      // suspension cannot race an already-authorized staging request.
+      if (!context.recruiter || context.recruiter.userId !== context.user.id ||
+          context.recruiter.status !== "ACTIVE" || !lockedJob.companyRelationshipId)
+        throw new AuthorizationError("placements.recruiter.result.stage");
+      const [persistedGrant] = await tx.select({id:placementRecruiterCollegeGrants.id})
+        .from(placementRecruiterCollegeGrants)
+        .innerJoin(placementCompanyRelationships,and(
+          eq(placementCompanyRelationships.id,placementRecruiterCollegeGrants.companyRelationshipId),
+          eq(placementCompanyRelationships.collegeId,lockedJob.collegeId),
+          eq(placementCompanyRelationships.status,"ACTIVE"),
+        ))
+        .innerJoin(placementCompanies,and(
+          eq(placementCompanies.id,placementCompanyRelationships.companyId),
+          eq(placementCompanies.status,"ACTIVE"),
+          eq(placementCompanies.id,context.recruiter.companyId),
+        ))
+        .innerJoin(placementRecruiterProfiles,and(
+          eq(placementRecruiterProfiles.userId,context.user.id),
+          eq(placementRecruiterProfiles.companyId,placementCompanies.id),
+          eq(placementRecruiterProfiles.status,"ACTIVE"),
+        ))
+        .innerJoin(users,and(
+          eq(users.id,context.user.id),
+          eq(users.platformStatus,"ACTIVE"),
+        ))
+        .innerJoin(colleges,and(
+          eq(colleges.id,lockedJob.collegeId),
+          eq(colleges.status,"ACTIVE"),
+        ))
+        .innerJoin(organizations,and(
+          eq(organizations.id,colleges.organizationId),
+          eq(organizations.status,"ACTIVE"),
+        ))
+        .where(and(
+          eq(placementRecruiterCollegeGrants.recruiterUserId,context.user.id),
+          eq(placementRecruiterCollegeGrants.companyRelationshipId,lockedJob.companyRelationshipId),
+          eq(placementRecruiterCollegeGrants.status,"ACTIVE"),
+          eq(placementRecruiterCollegeGrants.verificationStatus,"VERIFIED"),
+          isNull(placementRecruiterCollegeGrants.revokedAt),
+          gt(placementRecruiterCollegeGrants.validUntil,sql`clock_timestamp()`),
+          sql<boolean>`'DRIVES' = ANY(${placementRecruiterCollegeGrants.capabilities})`,
+        )).for("share").limit(1);
+      if (!persistedGrant)
+        throw new AuthorizationError("placements.recruiter.result.stage");
     }
     const [lockedRound] = await tx
       .select({
