@@ -48,7 +48,8 @@ jobs:
             tests/db019-crosswalk-identity.test.mjs \
             tests/db019-semantic-decision-quality.test.mjs \
             tests/db019-project-registered-history.test.mjs \
-            tests/db019-remaining-semantic-quality.test.mjs
+            tests/db019-remaining-semantic-quality.test.mjs \
+            tests/db019-p04-tenant-ledger.test.mjs
       - name: Execute exact current source-coverage command
         run: |
           set -eu
