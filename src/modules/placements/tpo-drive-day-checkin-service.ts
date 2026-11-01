@@ -60,7 +60,14 @@ export async function confirmTpoDriveDayCheckIn(
     // SHARE locks in this same transaction, before any attendance or audit write.
     // A concurrent revocation therefore orders with this mutation, rather
     // than permitting a stale browser session to mark a learner absent.
-    await assertPersistedPlatformPermission(tx, context, "placements.manage", { collegeId });
+    const persistedActor = await assertPersistedPlatformPermission(
+      tx, context, "placements.manage", { collegeId },
+    );
+    // A College Admin grant does not replace the TPO-specific check-in role.
+    // This endpoint requires the actual persisted TPO role, not only general
+    // placements.manage permission inherited from another admin capability.
+    if (!hasMembershipRole(persistedActor, "TPO"))
+      throw new AuthorizationError("placements.manage");
     const [candidate] = await tx.select({
       id: placementApplications.id,
       membershipId: placementApplications.membershipId,
