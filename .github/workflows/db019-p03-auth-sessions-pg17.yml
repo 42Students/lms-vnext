@@ -14,6 +14,10 @@ on:
       - "tests/integration/db01-auth-attempt-field-semantics.test.ts"
       - "tests/integration/db01-scoped-account-verification.test.ts"
       - "tests/integration/db01-credential-retirement-absence.test.ts"
+      - "tests/integration/db01-email-link-ownership-semantics.test.ts"
+      - "tests/integration/db01-preuser-proof-contact-binding.test.ts"
+      - "src/modules/identity/email-link-verification-service.ts"
+      - "src/modules/identity/preuser-onboarding-service.ts"
       - "src/modules/auth/login-repository.ts"
       - "src/modules/identity/scoped-account-verification-service.ts"
       - "tests/db019-p03-auth-source-quality.test.mjs"
@@ -86,7 +90,9 @@ jobs:
             tests/integration/db01-learner-faculty-otp-field-compat.test.ts \
             tests/integration/db01-auth-attempt-field-semantics.test.ts \
             tests/integration/db01-scoped-account-verification.test.ts \
-            tests/integration/db01-credential-retirement-absence.test.ts
+            tests/integration/db01-credential-retirement-absence.test.ts \
+            tests/integration/db01-email-link-ownership-semantics.test.ts \
+            tests/integration/db01-preuser-proof-contact-binding.test.ts
       - name: P03 source-only authorization and session regression
         run: npx vitest run tests/unit/chat6-auth-session-service-behaviour.test.ts tests/unit/chat6-auth-logout-revocation.test.ts
       - name: Scope boundary
