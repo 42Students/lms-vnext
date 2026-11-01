@@ -2317,7 +2317,7 @@
             "acceptanceEvidence": [],
             "acceptance": "Verify status/events, reporter access, private attachments, session safety and cross-role read/write coverage.",
             "implementationCheckpoint": {
-              "status": "SCOPED_REGISTERED_PG17_PASS_58_SOURCE_FIELDS_AUDITED_FULL_SEMANTICS_OPEN",
+              "status": "REGISTERED_PG17_REPLAY_AND_CAPACITY_RACE_PASS_58_FIELD_SEMANTIC_GATE_OPEN",
               "recordedOn": "2026-11-01",
               "sourceFieldReview": "docs/planning/db019-p28-tracker-field-review.json",
               "frozenLegacyBackendSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
@@ -2354,16 +2354,15 @@
                   "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/41314521799",
                   "result": "PASS_SCOPED_NOT_PACKAGE_ACCEPTANCE",
                   "summary": "Registered PostgreSQL 17 replay + idempotence PASS, 12/12 service PG integrations, 27/27 unit tests, 3/3 frozen 58-field source audit tests."
-                }
-              ],
-              "verificationPending": [
+                },
                 {
                   "sourceSha": "7890360893dc12165d8efe980f3e61a9d9a786fc",
                   "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/41314677497",
-                  "state": "IN_PROGRESS_WHEN_RECORDED",
-                  "scope": "Two contender third-screenshot parent-lock PG17 race; not acceptance until PASS."
+                  "result": "PASS_SCOPED_NOT_PACKAGE_ACCEPTANCE",
+                  "summary": "Registered PG17 332 journal preflight, zero-to-head replay, idempotence all PASS; 13/13 real service PG integrations including two simultaneous contenders for final third screenshot; 27/27 screenshot policy unit tests; 3/3 frozen P28 source audit tests."
                 }
               ],
+              "verificationPending": [],
               "remaining": [
                 "Approve exact final field-level source-to-target semantics for all 58 rows, preserving old/new identity and consumer behavior; proposed matches do not automatically count as accepted.",
                 "Resolve five legacy bug_tracker_session fields and account-versus-anonymous reporter grant/session feature decisions; no issuer or consumer exists and no unsupported retirement is approved.",
