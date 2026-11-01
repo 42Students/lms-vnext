@@ -37,9 +37,9 @@ export async function changeTpoSeasonRegistration(context:RequestContext, raw:un
   if(opening&&deadline&&deadline.getTime()<=Date.now())
     throw new RangeError("Registration deadline must be in the future.");
   return getDb().transaction(async tx=>{
-    const [college]=await tx.select({id:colleges.id,organizationId:colleges.organizationId})
+    const [college]=await tx.select({id:colleges.id,organizationId:colleges.organizationId,status:colleges.status})
       .from(colleges).where(eq(colleges.id,auth.collegeId)).for("update").limit(1);
-    if(!college)throw new AuthorizationError("placements.manage");
+    if(!college||college.status!=="ACTIVE")throw new AuthorizationError("placements.manage");
     const actor=await assertPersistedPlatformPermission(tx,context,"placements.manage",{
       collegeId:college.id,organizationId:college.organizationId,
     });
@@ -108,6 +108,19 @@ export async function changeTpoSeason(context: RequestContext, raw: unknown) {
       name: input.name, code: input.code, startDate: input.startDate, endDate: input.endDate });
   }
   return getDb().transaction(async (tx) => {
+    // Rebuild the TPO actor from persisted account, membership and role rows
+    // under the college lock before editing season details. A revoked tab or
+    // suspended membership is not an authorization grant.
+    const [college] = await tx.select({
+      id:colleges.id,organizationId:colleges.organizationId,status:colleges.status,
+    }).from(colleges).where(eq(colleges.id,auth.collegeId)).for("update").limit(1);
+    if(!college||college.status!=="ACTIVE")
+      throw new AuthorizationError("placements.manage");
+    const liveActor=await assertPersistedPlatformPermission(tx,context,"placements.manage",{
+      collegeId:college.id,organizationId:college.organizationId,
+    });
+    if(!hasMembershipRole(liveActor,"TPO"))
+      throw new AuthorizationError("placements.manage");
     const [current] = await tx.select().from(placementSeasons)
       .where(and(eq(placementSeasons.id, input.seasonId), eq(placementSeasons.collegeId, auth.collegeId)))
       .for("update").limit(1);
