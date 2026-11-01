@@ -1,0 +1,718 @@
+{
+  "id": "DB19-P22",
+  "recordType": "EXACT_SOURCE_PROPOSALS_NOT_ACCEPTED_FIELD_DISPOSITIONS",
+  "sourceSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+  "inventory": "docs/planning/db-pass4-columns-db09_tpo_and_recruiter_operations.json",
+  "sourceTables": [
+    "college_placement_rules",
+    "college_what_companies_see",
+    "tpo_college_settings",
+    "tpo_coordinator_assignment",
+    "tpo_team_member",
+    "tpo_user_prefs"
+  ],
+  "sourceFieldCount": 49,
+  "proposalCount": 49,
+  "historicalRetirementCandidates": 8,
+  "runtimeVerifiedCount": 0,
+  "oracle": "docs/legacy-source/backend/src/main/resources/db/migration/V201__drop_tpo_coordinator_roles.sql",
+  "clarifications": [
+    "V201 dropped tpo_coordinator_assignment and tpo_team_member.department; this is source migration evidence, not requester-approved retirement for every production tenant.",
+    "V201 removed faculty/student coordinator roles, retaining TPO_ADMIN; current vNext still retains a FACULTY_COORDINATOR option and dated coordinator UI. No extra role may gain college-wide principal privileges without new approval.",
+    "A successful 49/49 source ledger is not a database replay, a verified privacy projection, or production acceptance.",
+    "P22 stays OPEN pending exact-SHA registered PostgreSQL / producer-consumer / revoke, IDOR, privacy and optimistic CAS checks."
+  ],
+  "fields": [
+    {
+      "sourceTable": "college_placement_rules",
+      "sourceColumn": "college_id",
+      "sourceDefinition": "INT NOT NULL PRIMARY KEY",
+      "sourceRiskFlags": [
+        "INTEGER_KEY_TO_UUID_MAPPING"
+      ],
+      "proposedTarget": "placement_college_rules.college_id",
+      "sourceDecision": "PROPOSED_ACTIVE_FIELD_MAPPING",
+      "unresolvedSemanticEvidence": "Source-to-target candidate only; verify original null/default semantics, tenant/actor ACL, SQL constraints, live read/write and release migration replay.",
+      "runtimeVerified": false,
+      "consumerVerified": false,
+      "producerVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "college_placement_rules",
+      "sourceColumn": "counts_as_placed_at",
+      "sourceDefinition": "VARCHAR(20) NOT NULL DEFAULT 'OFFER_RELEASED'",
+      "sourceRiskFlags": [],
+      "proposedTarget": "placement_college_rules.counts_as_placed_at",
+      "sourceDecision": "PROPOSED_ACTIVE_FIELD_MAPPING",
+      "unresolvedSemanticEvidence": "Source-to-target candidate only; verify original null/default semantics, tenant/actor ACL, SQL constraints, live read/write and release migration replay.",
+      "runtimeVerified": false,
+      "consumerVerified": false,
+      "producerVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "college_placement_rules",
+      "sourceColumn": "max_held_offers",
+      "sourceDefinition": "INT NOT NULL DEFAULT 1",
+      "sourceRiskFlags": [],
+      "proposedTarget": "placement_college_rules.max_held_offers",
+      "sourceDecision": "PROPOSED_ACTIVE_FIELD_MAPPING",
+      "unresolvedSemanticEvidence": "Source-to-target candidate only; verify original null/default semantics, tenant/actor ACL, SQL constraints, live read/write and release migration replay.",
+      "runtimeVerified": false,
+      "consumerVerified": false,
+      "producerVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "college_placement_rules",
+      "sourceColumn": "uplift_pct",
+      "sourceDefinition": "INT NOT NULL DEFAULT 40 COMMENT 'A placed student may still apply if CTC is at least this much higher, or the drive is tagged Dream'",
+      "sourceRiskFlags": [],
+      "proposedTarget": "placement_college_rules.uplift_pct",
+      "sourceDecision": "PROPOSED_ACTIVE_FIELD_MAPPING",
+      "unresolvedSemanticEvidence": "Source-to-target candidate only; verify original null/default semantics, tenant/actor ACL, SQL constraints, live read/write and release migration replay.",
+      "runtimeVerified": false,
+      "consumerVerified": false,
+      "producerVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "college_placement_rules",
+      "sourceColumn": "min_response_hours",
+      "sourceDefinition": "INT NOT NULL DEFAULT 48",
+      "sourceRiskFlags": [],
+      "proposedTarget": "placement_college_rules.min_response_hours",
+      "sourceDecision": "PROPOSED_ACTIVE_FIELD_MAPPING",
+      "unresolvedSemanticEvidence": "Source-to-target candidate only; verify original null/default semantics, tenant/actor ACL, SQL constraints, live read/write and release migration replay.",
+      "runtimeVerified": false,
+      "consumerVerified": false,
+      "producerVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "college_placement_rules",
+      "sourceColumn": "updated_at",
+      "sourceDefinition": "DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP",
+      "sourceRiskFlags": [
+        "TIMEZONE_AND_DEADLINE_SEMANTICS"
+      ],
+      "proposedTarget": "placement_college_rules.updated_at",
+      "sourceDecision": "PROPOSED_ACTIVE_FIELD_MAPPING",
+      "unresolvedSemanticEvidence": "Source-to-target candidate only; verify original null/default semantics, tenant/actor ACL, SQL constraints, live read/write and release migration replay.",
+      "runtimeVerified": false,
+      "consumerVerified": false,
+      "producerVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "college_placement_rules",
+      "sourceColumn": "version",
+      "sourceDefinition": "BIGINT NOT NULL DEFAULT 0",
+      "sourceRiskFlags": [],
+      "proposedTarget": "placement_college_rules.version",
+      "sourceDecision": "PROPOSED_ACTIVE_FIELD_MAPPING",
+      "unresolvedSemanticEvidence": "Legacy bigint optimistic lock vs vNext JS number mode; prove CAS race and safe integer limits.",
+      "runtimeVerified": false,
+      "consumerVerified": false,
+      "producerVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "college_what_companies_see",
+      "sourceColumn": "college_id",
+      "sourceDefinition": "INT NOT NULL PRIMARY KEY",
+      "sourceRiskFlags": [
+        "INTEGER_KEY_TO_UUID_MAPPING"
+      ],
+      "proposedTarget": "placement_company_visibility_settings.college_id",
+      "sourceDecision": "PROPOSED_ACTIVE_FIELD_MAPPING",
+      "unresolvedSemanticEvidence": "Source-to-target candidate only; verify original null/default semantics, tenant/actor ACL, SQL constraints, live read/write and release migration replay.",
+      "runtimeVerified": false,
+      "consumerVerified": false,
+      "producerVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "college_what_companies_see",
+      "sourceColumn": "show_cgpa_exact",
+      "sourceDefinition": "BOOLEAN NOT NULL DEFAULT FALSE COMMENT 'False = band only, e.g. \"7.5-8.0\"'",
+      "sourceRiskFlags": [],
+      "proposedTarget": "placement_company_visibility_settings.show_cgpa_exact",
+      "sourceDecision": "PROPOSED_ACTIVE_FIELD_MAPPING",
+      "unresolvedSemanticEvidence": "Disclosure defaults are false; require real recruiter read/export negative privacy witnesses and revocation tests.",
+      "runtimeVerified": false,
+      "consumerVerified": false,
+      "producerVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "college_what_companies_see",
+      "sourceColumn": "show_tenth_twelfth",
+      "sourceDefinition": "BOOLEAN NOT NULL DEFAULT TRUE",
+      "sourceRiskFlags": [],
+      "proposedTarget": "placement_company_visibility_settings.show_tenth_twelfth",
+      "sourceDecision": "PROPOSED_ACTIVE_FIELD_MAPPING",
+      "unresolvedSemanticEvidence": "Source-to-target candidate only; verify original null/default semantics, tenant/actor ACL, SQL constraints, live read/write and release migration replay.",
+      "runtimeVerified": false,
+      "consumerVerified": false,
+      "producerVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "college_what_companies_see",
+      "sourceColumn": "show_project_links",
+      "sourceDefinition": "BOOLEAN NOT NULL DEFAULT TRUE",
+      "sourceRiskFlags": [],
+      "proposedTarget": "placement_company_visibility_settings.show_project_links",
+      "sourceDecision": "PROPOSED_ACTIVE_FIELD_MAPPING",
+      "unresolvedSemanticEvidence": "Source-to-target candidate only; verify original null/default semantics, tenant/actor ACL, SQL constraints, live read/write and release migration replay.",
+      "runtimeVerified": false,
+      "consumerVerified": false,
+      "producerVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "college_what_companies_see",
+      "sourceColumn": "show_assessment_scores",
+      "sourceDefinition": "BOOLEAN NOT NULL DEFAULT FALSE",
+      "sourceRiskFlags": [],
+      "proposedTarget": "placement_company_visibility_settings.show_assessment_scores",
+      "sourceDecision": "PROPOSED_ACTIVE_FIELD_MAPPING",
+      "unresolvedSemanticEvidence": "Disclosure defaults are false; require real recruiter read/export negative privacy witnesses and revocation tests.",
+      "runtimeVerified": false,
+      "consumerVerified": false,
+      "producerVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "college_what_companies_see",
+      "sourceColumn": "show_attendance",
+      "sourceDefinition": "BOOLEAN NOT NULL DEFAULT FALSE",
+      "sourceRiskFlags": [],
+      "proposedTarget": "placement_company_visibility_settings.show_attendance",
+      "sourceDecision": "PROPOSED_ACTIVE_FIELD_MAPPING",
+      "unresolvedSemanticEvidence": "Disclosure defaults are false; require real recruiter read/export negative privacy witnesses and revocation tests.",
+      "runtimeVerified": false,
+      "consumerVerified": false,
+      "producerVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "college_what_companies_see",
+      "sourceColumn": "updated_at",
+      "sourceDefinition": "DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP",
+      "sourceRiskFlags": [
+        "TIMEZONE_AND_DEADLINE_SEMANTICS"
+      ],
+      "proposedTarget": "placement_company_visibility_settings.updated_at",
+      "sourceDecision": "PROPOSED_ACTIVE_FIELD_MAPPING",
+      "unresolvedSemanticEvidence": "Source-to-target candidate only; verify original null/default semantics, tenant/actor ACL, SQL constraints, live read/write and release migration replay.",
+      "runtimeVerified": false,
+      "consumerVerified": false,
+      "producerVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "tpo_college_settings",
+      "sourceColumn": "college_id",
+      "sourceDefinition": "INT NOT NULL PRIMARY KEY",
+      "sourceRiskFlags": [
+        "INTEGER_KEY_TO_UUID_MAPPING"
+      ],
+      "proposedTarget": "placement_tpo_college_settings.college_id",
+      "sourceDecision": "PROPOSED_ACTIVE_FIELD_MAPPING",
+      "unresolvedSemanticEvidence": "Source-to-target candidate only; verify original null/default semantics, tenant/actor ACL, SQL constraints, live read/write and release migration replay.",
+      "runtimeVerified": false,
+      "consumerVerified": false,
+      "producerVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "tpo_college_settings",
+      "sourceColumn": "invite_email_template",
+      "sourceDefinition": "VARCHAR(4000) NULL",
+      "sourceRiskFlags": [
+        "POTENTIAL_PERSONAL_OR_SECRET_DATA"
+      ],
+      "proposedTarget": "placement_tpo_college_settings.invite_email_template",
+      "sourceDecision": "PROPOSED_ACTIVE_FIELD_MAPPING",
+      "unresolvedSemanticEvidence": "Source-to-target candidate only; verify original null/default semantics, tenant/actor ACL, SQL constraints, live read/write and release migration replay.",
+      "runtimeVerified": false,
+      "consumerVerified": false,
+      "producerVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "tpo_college_settings",
+      "sourceColumn": "reminder_email_template",
+      "sourceDefinition": "VARCHAR(4000) NULL",
+      "sourceRiskFlags": [
+        "POTENTIAL_PERSONAL_OR_SECRET_DATA"
+      ],
+      "proposedTarget": "placement_tpo_college_settings.reminder_email_template",
+      "sourceDecision": "PROPOSED_ACTIVE_FIELD_MAPPING",
+      "unresolvedSemanticEvidence": "Source-to-target candidate only; verify original null/default semantics, tenant/actor ACL, SQL constraints, live read/write and release migration replay.",
+      "runtimeVerified": false,
+      "consumerVerified": false,
+      "producerVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "tpo_college_settings",
+      "sourceColumn": "whatsapp_template",
+      "sourceDefinition": "VARCHAR(2000) NULL",
+      "sourceRiskFlags": [],
+      "proposedTarget": "placement_tpo_college_settings.whatsapp_template",
+      "sourceDecision": "PROPOSED_ACTIVE_FIELD_MAPPING",
+      "unresolvedSemanticEvidence": "Source-to-target candidate only; verify original null/default semantics, tenant/actor ACL, SQL constraints, live read/write and release migration replay.",
+      "runtimeVerified": false,
+      "consumerVerified": false,
+      "producerVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "tpo_college_settings",
+      "sourceColumn": "student_email_wording",
+      "sourceDefinition": "VARCHAR(4000) NULL",
+      "sourceRiskFlags": [
+        "POTENTIAL_PERSONAL_OR_SECRET_DATA"
+      ],
+      "proposedTarget": "placement_tpo_college_settings.student_email_wording",
+      "sourceDecision": "PROPOSED_ACTIVE_FIELD_MAPPING",
+      "unresolvedSemanticEvidence": "Source-to-target candidate only; verify original null/default semantics, tenant/actor ACL, SQL constraints, live read/write and release migration replay.",
+      "runtimeVerified": false,
+      "consumerVerified": false,
+      "producerVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "tpo_college_settings",
+      "sourceColumn": "sms_monthly_cap",
+      "sourceDefinition": "INT NOT NULL DEFAULT 500",
+      "sourceRiskFlags": [],
+      "proposedTarget": "placement_tpo_college_settings.sms_monthly_cap",
+      "sourceDecision": "PROPOSED_ACTIVE_FIELD_MAPPING",
+      "unresolvedSemanticEvidence": "Source-to-target candidate only; verify original null/default semantics, tenant/actor ACL, SQL constraints, live read/write and release migration replay.",
+      "runtimeVerified": false,
+      "consumerVerified": false,
+      "producerVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "tpo_college_settings",
+      "sourceColumn": "email_signature",
+      "sourceDefinition": "VARCHAR(1000) NULL",
+      "sourceRiskFlags": [
+        "POTENTIAL_PERSONAL_OR_SECRET_DATA"
+      ],
+      "proposedTarget": "placement_tpo_college_settings.email_signature",
+      "sourceDecision": "PROPOSED_ACTIVE_FIELD_MAPPING",
+      "unresolvedSemanticEvidence": "Source-to-target candidate only; verify original null/default semantics, tenant/actor ACL, SQL constraints, live read/write and release migration replay.",
+      "runtimeVerified": false,
+      "consumerVerified": false,
+      "producerVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "tpo_college_settings",
+      "sourceColumn": "logo_url",
+      "sourceDefinition": "VARCHAR(500) NULL",
+      "sourceRiskFlags": [],
+      "proposedTarget": "placement_tpo_college_settings.logo_object_path",
+      "sourceDecision": "PROPOSED_ACTIVE_FIELD_MAPPING",
+      "unresolvedSemanticEvidence": "Legacy public URL is redesigned as private object path; ensure access, fallback and rendering verified.",
+      "runtimeVerified": false,
+      "consumerVerified": false,
+      "producerVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "tpo_college_settings",
+      "sourceColumn": "trusted_domains_json",
+      "sourceDefinition": "JSON NULL",
+      "sourceRiskFlags": [
+        "STRUCTURED_PAYLOAD_SEMANTIC_SCHEMA"
+      ],
+      "proposedTarget": "placement_tpo_trusted_domains.domain",
+      "sourceDecision": "PROPOSED_ACTIVE_FIELD_MAPPING",
+      "unresolvedSemanticEvidence": "Legacy JSON array normalized into scoped FK-backed rows; verify all selections and tenant-bound producer/consumer behavior.",
+      "runtimeVerified": false,
+      "consumerVerified": false,
+      "producerVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "tpo_college_settings",
+      "sourceColumn": "prep_course_ids_json",
+      "sourceDefinition": "JSON NULL COMMENT 'The LMS courses whose tests count toward readiness'",
+      "sourceRiskFlags": [
+        "STRUCTURED_PAYLOAD_SEMANTIC_SCHEMA"
+      ],
+      "proposedTarget": "placement_tpo_prep_courses.course_id",
+      "sourceDecision": "PROPOSED_ACTIVE_FIELD_MAPPING",
+      "unresolvedSemanticEvidence": "Legacy JSON array normalized into scoped FK-backed rows; verify all selections and tenant-bound producer/consumer behavior.",
+      "runtimeVerified": false,
+      "consumerVerified": false,
+      "producerVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "tpo_college_settings",
+      "sourceColumn": "prep_threshold_pct",
+      "sourceDefinition": "INT NOT NULL DEFAULT 60 COMMENT 'Average on those tests a student needs to count as prepared'",
+      "sourceRiskFlags": [],
+      "proposedTarget": "placement_tpo_college_settings.prep_threshold_pct",
+      "sourceDecision": "PROPOSED_ACTIVE_FIELD_MAPPING",
+      "unresolvedSemanticEvidence": "Source-to-target candidate only; verify original null/default semantics, tenant/actor ACL, SQL constraints, live read/write and release migration replay.",
+      "runtimeVerified": false,
+      "consumerVerified": false,
+      "producerVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "tpo_college_settings",
+      "sourceColumn": "notify_toggles_json",
+      "sourceDefinition": "JSON NULL COMMENT 'On/off for the optional student notices: driveOpenEmail, resultApplied, nudges, prepAssigned'",
+      "sourceRiskFlags": [
+        "STRUCTURED_PAYLOAD_SEMANTIC_SCHEMA"
+      ],
+      "proposedTarget": "placement_tpo_college_settings.notify_drive_open_email,notify_result_applied,notify_nudges,notify_prep_assigned",
+      "sourceDecision": "PROPOSED_ACTIVE_FIELD_MAPPING",
+      "unresolvedSemanticEvidence": "JSON object must map every recognized flag to typed booleans; preserve missing/false distinctions and actual notification consumer behavior.",
+      "runtimeVerified": false,
+      "consumerVerified": false,
+      "producerVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "tpo_college_settings",
+      "sourceColumn": "updated_at",
+      "sourceDefinition": "DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP",
+      "sourceRiskFlags": [
+        "TIMEZONE_AND_DEADLINE_SEMANTICS"
+      ],
+      "proposedTarget": "placement_tpo_college_settings.updated_at",
+      "sourceDecision": "PROPOSED_ACTIVE_FIELD_MAPPING",
+      "unresolvedSemanticEvidence": "Source-to-target candidate only; verify original null/default semantics, tenant/actor ACL, SQL constraints, live read/write and release migration replay.",
+      "runtimeVerified": false,
+      "consumerVerified": false,
+      "producerVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "tpo_college_settings",
+      "sourceColumn": "tpo_can_verify_profiles",
+      "sourceDefinition": "TINYINT(1) NOT NULL DEFAULT 1",
+      "sourceRiskFlags": [],
+      "proposedTarget": "profile_verification_settings.tpo_can_verify_profiles",
+      "sourceDecision": "PROPOSED_ACTIVE_FIELD_MAPPING",
+      "unresolvedSemanticEvidence": "Profile-verification permission moved to verification-specific settings; prove safe default and revoked TPO access.",
+      "runtimeVerified": false,
+      "consumerVerified": false,
+      "producerVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "tpo_college_settings",
+      "sourceColumn": "job_types_json",
+      "sourceDefinition": "JSON NULL COMMENT 'Hidden built-in job types and the college''s own types'",
+      "sourceRiskFlags": [
+        "STRUCTURED_PAYLOAD_SEMANTIC_SCHEMA"
+      ],
+      "proposedTarget": "placement_tpo_job_types / placement_tpo_college_settings.job_types",
+      "sourceDecision": "PROPOSED_ACTIVE_FIELD_MAPPING",
+      "unresolvedSemanticEvidence": "Source-to-target candidate only; verify original null/default semantics, tenant/actor ACL, SQL constraints, live read/write and release migration replay.",
+      "runtimeVerified": false,
+      "consumerVerified": false,
+      "producerVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "tpo_college_settings",
+      "sourceColumn": "outcome_labels_json",
+      "sourceDefinition": "JSON NULL COMMENT 'College labels, each mapped to one fixed placement outcome'",
+      "sourceRiskFlags": [
+        "STRUCTURED_PAYLOAD_SEMANTIC_SCHEMA"
+      ],
+      "proposedTarget": "placement_tpo_college_settings.outcome_labels",
+      "sourceDecision": "PROPOSED_ACTIVE_FIELD_MAPPING",
+      "unresolvedSemanticEvidence": "Source-to-target candidate only; verify original null/default semantics, tenant/actor ACL, SQL constraints, live read/write and release migration replay.",
+      "runtimeVerified": false,
+      "consumerVerified": false,
+      "producerVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "tpo_college_settings",
+      "sourceColumn": "cgpa_to_pct",
+      "sourceDefinition": "VARCHAR(20) NULL COMMENT 'X9_5 | MINUS_0_5_X10 | MINUS_0_75_X10 | X10'",
+      "sourceRiskFlags": [],
+      "proposedTarget": "profile_verification_settings.cgpa_to_pct",
+      "sourceDecision": "PROPOSED_ACTIVE_FIELD_MAPPING",
+      "unresolvedSemanticEvidence": "Source nullable conversion policy now defaulted within profile verification settings; verified raw-grade consumer and configuration ACL required.",
+      "runtimeVerified": false,
+      "consumerVerified": false,
+      "producerVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "tpo_college_settings",
+      "sourceColumn": "recruiter_access_months",
+      "sourceDefinition": "INT NOT NULL DEFAULT 6",
+      "sourceRiskFlags": [],
+      "proposedTarget": "placement_tpo_college_settings.recruiter_access_months",
+      "sourceDecision": "PROPOSED_ACTIVE_FIELD_MAPPING",
+      "unresolvedSemanticEvidence": "Source-to-target candidate only; verify original null/default semantics, tenant/actor ACL, SQL constraints, live read/write and release migration replay.",
+      "runtimeVerified": false,
+      "consumerVerified": false,
+      "producerVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "tpo_college_settings",
+      "sourceColumn": "recruiter_drive_needs_approval",
+      "sourceDefinition": "TINYINT(1) NOT NULL DEFAULT 1",
+      "sourceRiskFlags": [],
+      "proposedTarget": "placement_tpo_college_settings.recruiter_drive_needs_approval",
+      "sourceDecision": "PROPOSED_ACTIVE_FIELD_MAPPING",
+      "unresolvedSemanticEvidence": "Source-to-target candidate only; verify original null/default semantics, tenant/actor ACL, SQL constraints, live read/write and release migration replay.",
+      "runtimeVerified": false,
+      "consumerVerified": false,
+      "producerVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "tpo_coordinator_assignment",
+      "sourceColumn": "id",
+      "sourceDefinition": "BIGINT AUTO_INCREMENT PRIMARY KEY",
+      "sourceRiskFlags": [
+        "INTEGER_KEY_TO_UUID_MAPPING"
+      ],
+      "proposedTarget": null,
+      "sourceDecision": "HISTORICAL_RETIREMENT_CANDIDATE_V201_REQUIRES_APPROVAL",
+      "unresolvedSemanticEvidence": "Legacy V201 removed this historical source field/table; historical disposition needs explicit retirement sign-off and checking any current vNext consumers.",
+      "runtimeVerified": false,
+      "consumerVerified": false,
+      "producerVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "tpo_coordinator_assignment",
+      "sourceColumn": "college_id",
+      "sourceDefinition": "INT NOT NULL",
+      "sourceRiskFlags": [
+        "INTEGER_KEY_TO_UUID_MAPPING"
+      ],
+      "proposedTarget": null,
+      "sourceDecision": "HISTORICAL_RETIREMENT_CANDIDATE_V201_REQUIRES_APPROVAL",
+      "unresolvedSemanticEvidence": "Legacy V201 removed this historical source field/table; historical disposition needs explicit retirement sign-off and checking any current vNext consumers.",
+      "runtimeVerified": false,
+      "consumerVerified": false,
+      "producerVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "tpo_coordinator_assignment",
+      "sourceColumn": "job_id",
+      "sourceDefinition": "INT NOT NULL",
+      "sourceRiskFlags": [
+        "INTEGER_KEY_TO_UUID_MAPPING"
+      ],
+      "proposedTarget": null,
+      "sourceDecision": "HISTORICAL_RETIREMENT_CANDIDATE_V201_REQUIRES_APPROVAL",
+      "unresolvedSemanticEvidence": "Legacy V201 removed this historical source field/table; historical disposition needs explicit retirement sign-off and checking any current vNext consumers.",
+      "runtimeVerified": false,
+      "consumerVerified": false,
+      "producerVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "tpo_coordinator_assignment",
+      "sourceColumn": "learner_id",
+      "sourceDefinition": "INT NOT NULL COMMENT 'The student coordinator'",
+      "sourceRiskFlags": [
+        "INTEGER_KEY_TO_UUID_MAPPING"
+      ],
+      "proposedTarget": null,
+      "sourceDecision": "HISTORICAL_RETIREMENT_CANDIDATE_V201_REQUIRES_APPROVAL",
+      "unresolvedSemanticEvidence": "Legacy V201 removed this historical source field/table; historical disposition needs explicit retirement sign-off and checking any current vNext consumers.",
+      "runtimeVerified": false,
+      "consumerVerified": false,
+      "producerVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "tpo_coordinator_assignment",
+      "sourceColumn": "on_date",
+      "sourceDefinition": "DATE NOT NULL",
+      "sourceRiskFlags": [],
+      "proposedTarget": null,
+      "sourceDecision": "HISTORICAL_RETIREMENT_CANDIDATE_V201_REQUIRES_APPROVAL",
+      "unresolvedSemanticEvidence": "Legacy V201 removed this historical source field/table; historical disposition needs explicit retirement sign-off and checking any current vNext consumers.",
+      "runtimeVerified": false,
+      "consumerVerified": false,
+      "producerVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "tpo_coordinator_assignment",
+      "sourceColumn": "created_by",
+      "sourceDefinition": "INT NULL",
+      "sourceRiskFlags": [],
+      "proposedTarget": null,
+      "sourceDecision": "HISTORICAL_RETIREMENT_CANDIDATE_V201_REQUIRES_APPROVAL",
+      "unresolvedSemanticEvidence": "Legacy V201 removed this historical source field/table; historical disposition needs explicit retirement sign-off and checking any current vNext consumers.",
+      "runtimeVerified": false,
+      "consumerVerified": false,
+      "producerVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "tpo_coordinator_assignment",
+      "sourceColumn": "created_at",
+      "sourceDefinition": "DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP",
+      "sourceRiskFlags": [
+        "TIMEZONE_AND_DEADLINE_SEMANTICS"
+      ],
+      "proposedTarget": null,
+      "sourceDecision": "HISTORICAL_RETIREMENT_CANDIDATE_V201_REQUIRES_APPROVAL",
+      "unresolvedSemanticEvidence": "Legacy V201 removed this historical source field/table; historical disposition needs explicit retirement sign-off and checking any current vNext consumers.",
+      "runtimeVerified": false,
+      "consumerVerified": false,
+      "producerVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "tpo_team_member",
+      "sourceColumn": "id",
+      "sourceDefinition": "BIGINT AUTO_INCREMENT PRIMARY KEY",
+      "sourceRiskFlags": [
+        "INTEGER_KEY_TO_UUID_MAPPING"
+      ],
+      "proposedTarget": "placement_tpo_team_members.id",
+      "sourceDecision": "PROPOSED_ACTIVE_FIELD_MAPPING",
+      "unresolvedSemanticEvidence": "Source-to-target candidate only; verify original null/default semantics, tenant/actor ACL, SQL constraints, live read/write and release migration replay.",
+      "runtimeVerified": false,
+      "consumerVerified": false,
+      "producerVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "tpo_team_member",
+      "sourceColumn": "college_id",
+      "sourceDefinition": "INT NOT NULL",
+      "sourceRiskFlags": [
+        "INTEGER_KEY_TO_UUID_MAPPING"
+      ],
+      "proposedTarget": "placement_tpo_team_members.college_id",
+      "sourceDecision": "PROPOSED_ACTIVE_FIELD_MAPPING",
+      "unresolvedSemanticEvidence": "Source-to-target candidate only; verify original null/default semantics, tenant/actor ACL, SQL constraints, live read/write and release migration replay.",
+      "runtimeVerified": false,
+      "consumerVerified": false,
+      "producerVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "tpo_team_member",
+      "sourceColumn": "faculty_id",
+      "sourceDefinition": "INT NOT NULL",
+      "sourceRiskFlags": [
+        "INTEGER_KEY_TO_UUID_MAPPING"
+      ],
+      "proposedTarget": "placement_tpo_team_members.membership_id",
+      "sourceDecision": "PROPOSED_ACTIVE_FIELD_MAPPING",
+      "unresolvedSemanticEvidence": "Legacy faculty integer identity maps via active college membership/user UUID; must verify referential mapping, revocation, tenant isolation.",
+      "runtimeVerified": false,
+      "consumerVerified": false,
+      "producerVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "tpo_team_member",
+      "sourceColumn": "role",
+      "sourceDefinition": "VARCHAR(25) NOT NULL COMMENT 'TPO_ADMIN | FACULTY_COORDINATOR'",
+      "sourceRiskFlags": [],
+      "proposedTarget": "placement_tpo_team_members.role",
+      "sourceDecision": "PROPOSED_ACTIVE_FIELD_MAPPING",
+      "unresolvedSemanticEvidence": "V201 retained only TPO_ADMIN. vNext currently creates FACULTY_COORDINATOR in team assignments; approval/reconciliation required before semantic certification.",
+      "runtimeVerified": false,
+      "consumerVerified": false,
+      "producerVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "tpo_team_member",
+      "sourceColumn": "department",
+      "sourceDefinition": "VARCHAR(100) NULL COMMENT 'Faculty coordinators see only this department'",
+      "sourceRiskFlags": [],
+      "proposedTarget": null,
+      "sourceDecision": "HISTORICAL_RETIREMENT_CANDIDATE_V201_REQUIRES_APPROVAL",
+      "unresolvedSemanticEvidence": "Legacy V201 removed this historical source field/table; historical disposition needs explicit retirement sign-off and checking any current vNext consumers.",
+      "runtimeVerified": false,
+      "consumerVerified": false,
+      "producerVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "tpo_team_member",
+      "sourceColumn": "created_at",
+      "sourceDefinition": "DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP",
+      "sourceRiskFlags": [
+        "TIMEZONE_AND_DEADLINE_SEMANTICS"
+      ],
+      "proposedTarget": "placement_tpo_team_members.created_at",
+      "sourceDecision": "PROPOSED_ACTIVE_FIELD_MAPPING",
+      "unresolvedSemanticEvidence": "Source-to-target candidate only; verify original null/default semantics, tenant/actor ACL, SQL constraints, live read/write and release migration replay.",
+      "runtimeVerified": false,
+      "consumerVerified": false,
+      "producerVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "tpo_user_prefs",
+      "sourceColumn": "faculty_id",
+      "sourceDefinition": "INT NOT NULL PRIMARY KEY",
+      "sourceRiskFlags": [
+        "INTEGER_KEY_TO_UUID_MAPPING"
+      ],
+      "proposedTarget": "placement_tpo_user_preferences.user_id + college_id",
+      "sourceDecision": "PROPOSED_ACTIVE_FIELD_MAPPING",
+      "unresolvedSemanticEvidence": "Legacy faculty integer identity maps via active college membership/user UUID; must verify referential mapping, revocation, tenant isolation.",
+      "runtimeVerified": false,
+      "consumerVerified": false,
+      "producerVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "tpo_user_prefs",
+      "sourceColumn": "prefs_json",
+      "sourceDefinition": "JSON NULL COMMENT 'Which optional notifications this person receives'",
+      "sourceRiskFlags": [
+        "STRUCTURED_PAYLOAD_SEMANTIC_SCHEMA"
+      ],
+      "proposedTarget": "placement_tpo_user_preferences.morning_digest,recruiter_messages,requests,results_ready,follow_ups",
+      "sourceDecision": "PROPOSED_ACTIVE_FIELD_MAPPING",
+      "unresolvedSemanticEvidence": "JSON object must map every recognized flag to typed booleans; preserve missing/false distinctions and actual notification consumer behavior.",
+      "runtimeVerified": false,
+      "consumerVerified": false,
+      "producerVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "tpo_user_prefs",
+      "sourceColumn": "updated_at",
+      "sourceDefinition": "DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP",
+      "sourceRiskFlags": [
+        "TIMEZONE_AND_DEADLINE_SEMANTICS"
+      ],
+      "proposedTarget": "placement_tpo_user_preferences.updated_at",
+      "sourceDecision": "PROPOSED_ACTIVE_FIELD_MAPPING",
+      "unresolvedSemanticEvidence": "Source-to-target candidate only; verify original null/default semantics, tenant/actor ACL, SQL constraints, live read/write and release migration replay.",
+      "runtimeVerified": false,
+      "consumerVerified": false,
+      "producerVerified": false,
+      "retirementApproved": false
+    }
+  ]
+}
