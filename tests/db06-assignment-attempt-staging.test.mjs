@@ -41,7 +41,7 @@ test("DB044 is an explicit no-DDL retirement decision", () => {
 test("DB044 preserves vNext one-submission uniqueness", () => {
   assert.match(
     schema,
-    /assignment_submissions_assignment_membership_uq/,
+    /assignment_submissions\.attempt_number/,
   );
   assert.match(
     schema,
@@ -64,7 +64,7 @@ test("DB044 preserves vNext one-submission uniqueness", () => {
   assert.match(service, /ASSIGNMENT_ALREADY_SUBMITTED/);
 });
 
-test("DB044 ledger retires dormant attempt_number and derives semester scope", () => {
+test("DB044 ledger records registered compatibility fields without inventing multi-attempt history", () => {
   const assignment = ledger.tables.find(
     (table) => table.legacyTable === "student_assignment",
   );
@@ -75,7 +75,7 @@ test("DB044 ledger retires dormant attempt_number and derives semester scope", (
   );
   assert.equal(
     attempt.decision,
-    "DERIVED_METADATA_NOT_PERSISTED",
+    "NORMALIZED_TARGET_FIELD",
   );
   assert.match(
     attempt.targetRef,
@@ -87,11 +87,11 @@ test("DB044 ledger retires dormant attempt_number and derives semester scope", (
   );
   assert.equal(
     semester.decision,
-    "NORMALIZED_RELATION_OR_DERIVED",
+    "NORMALIZED_SOURCE_SNAPSHOT_AND_RELATION",
   );
   assert.match(
     semester.targetRef,
-    /course_offerings\.academic_period_id/,
+    /assignment_submissions\.semester_number.*course_section_deliveries\.offering_id/,
   );
 });
 
