@@ -62,6 +62,27 @@ test("P01/P02 reject missing fields, source-decision drift and package reclassif
   assert.ok(codes(run({ packages })).includes("DB19_HISTORIC_WRONG_TABLE_CLASS_OR_DISPOSITION"));
 });
 
+test("P01 cannot disguise a backup as Flyway metadata by changing two matching ledgers", () => {
+  const source = structuredClone(base.source);
+  const disposition = structuredClone(base.disposition);
+  const backup = source.tables.find(t => t.table !== "flyway_schema_history" &&
+    t.sourceTableClass === "HISTORICAL_BACKUP_VALIDATE_RETIREMENT");
+  backup.sourceTableClass = "SCHEMA_TOOL_METADATA";
+  const decision = disposition.tables.find(d => d.table === backup.table);
+  decision.sourceClass = "SCHEMA_TOOL_METADATA";
+  decision.disposition = "REPLACED_BY_PLATFORM_MIGRATION_METADATA";
+  assert.ok(codes(run({ source, disposition })).includes("DB19_HISTORIC_FLYWAY_CLASS_DRIFT"));
+});
+
+test("P01 preserves 93 uncertain source-default nullability values without upgrading them", () => {
+  const historicalUncertain = base.source.tables.flatMap(t => t.rows)
+    .filter(f => f.nullable === "SOURCE_DEFAULT_NULLABILITY_REVIEW");
+  assert.equal(historicalUncertain.length, 93);
+  const malformed = structuredClone(base.source);
+  malformed.tables[0].rows[0].nullable = "ASSUMED_NOT_NULL";
+  assert.ok(codes(run({ source: malformed })).includes("DB19_HISTORIC_INVALID_SOURCE_FIELD"));
+});
+
 test("P02 cannot infer product retirement approval from an unverified source search", () => {
   const approval = structuredClone(base.approval);
   approval.authority = "CODE_SEARCH";
