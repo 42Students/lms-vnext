@@ -17,6 +17,9 @@ on:
       - "tests/db09-recruiter-private-note-lifecycle.test.mjs"
       - "tests/db09-student-note-history.test.mjs"
       - "tests/db09-user-state-lifecycle.test.mjs"
+      - "tests/integration/tpo-messages-service.test.ts"
+      - "src/modules/placements/tpo-messages-service.ts"
+      - "src/modules/placements/tpo-recruiter-unread-count-service.ts"
       - "tests/db062-db079-private-review-canonical-and-revocation.test.mjs"
       - "drizzle/**"
 
@@ -83,5 +86,7 @@ jobs:
         run: node tests/db09-collaboration-registered-pg-acceptance.mjs
       - name: DB059 and DB060 rollback-only immutable disclosure and lifecycle negatives
         run: node tests/db09-share-registered-pg-acceptance.mjs
+      - name: DB19-P24 authenticated TPO inbox and unread privacy regression
+        run: npx vitest run --config vitest.db.registered.config.ts tests/integration/tpo-messages-service.test.ts
       - name: DB062 and DB079 rollback-only private-note identity and grant-revocation negatives
         run: node tests/db09-recruiter-note-registered-pg-acceptance.mjs
