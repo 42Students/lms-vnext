@@ -63,5 +63,5 @@ test("DB19-P30 fail-closed source mutation: no silent rename, duplicate or fabri
   assert.ok(audit(signed).includes("FALSE_GLOBAL_SIGNOFF"));
   const invented=structuredClone(actual);
   invented.fieldDecisions[0].targetRefs=["skills.private_import_password"];
-  assert.ok(audit(invented).includes("TARGET_CHANGED_WITHOUT_REVIEW"));
+  assert.ok(audit(invented).some(x=>x.startsWith("TARGET_CHANGED_WITHOUT_REVIEW:")));
 });
