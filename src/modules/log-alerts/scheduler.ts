@@ -4,6 +4,7 @@ import { reopenRegressedSignature } from "./policy";
 import { randomUUID } from "node:crypto";
 import { and, desc, eq, isNull, lt, sql } from "drizzle-orm";
 import { getDb } from "@/db/client";
+import { db10ScheduledJobLeases as leases } from "@/db/schema/db10-scheduled-job-leases.draft";
 import { executeScheduledJobWithLease, type ScheduledJobFence, type ScheduledJobLeaseStore } from "@/modules/operations/scheduled-job-runner";
 import { postgresScheduledJobLeaseStore } from "@/modules/operations/postgres-scheduled-job-lease-store";
 import { db10LogAlertSignatures as signatures, db10LogAlertStates as states, db10LogAlertDailyCounts as daily, db10LogAlertObservedEvents as observed } from "@/db/schema/db10-log-alerts.draft";
@@ -137,7 +138,7 @@ async function flushOverflow(now: Date): Promise<boolean> {
 export async function sweepUndeliveredRegressions(now: Date): Promise<number> {
   const environment = alertEnvironment();
   let delivered = 0;
-  await withScheduledLease("telegram-regression-sweep-" + environment, now, async () => {
+  await withScheduledLease("telegram-regression-sweep-" + environment, now, async (fence) => {
     const threshold = new Date(now.getTime() - 86_400_000);
     const candidates = await getDb().select({ id: signatures.id })
       .from(signatures)
@@ -163,6 +164,7 @@ export async function sweepUndeliveredRegressions(now: Date): Promise<number> {
         const spent = state.burstMinuteAt?.getTime() === minute.getTime()
           ? state.burstCount : 0;
         if (spent >= 5) return; // Leave pending for the next in-cluster tick.
+        await fence.assertCurrent();
         const ok = await sendTelegramAlert(
           "vNext regression detected after fix. Environment: " + environment +
           "\nSignature: " + current.signatureHash.slice(0, 12) +
@@ -239,7 +241,7 @@ export async function pollCloudLoggingErrors(now = new Date()): Promise<number> 
   if (!settings || !logAlertsRuntimeEnabled() || !telegramAlertsConfigured()) return 0;
   let handled = 0;
   const environment = alertEnvironment();
-  await withScheduledLease("telegram-cloud-log-poll-" + environment, now, async () => {
+  await withScheduledLease("telegram-cloud-log-poll-" + environment, now, async (fence) => {
     const db = getDb();
     const stateKey = environment + "_ERROR_POLL";
     await db.insert(states).values({ stateKey }).onConflictDoNothing();
@@ -266,6 +268,7 @@ export async function pollCloudLoggingErrors(now = new Date()): Promise<number> 
       } catch (error) {
         if (error instanceof Error && error.message === "LOG_PROVIDER_CURSOR_EXPIRED") {
           // Replay from the durable completed-window watermark, safely deduped.
+          await fence.assertCurrent();
           await db.update(states).set({
             pollPageToken: null, pollWindowStartAt: null, pollWindowEndAt: null,
           }).where(eq(states.stateKey, stateKey));
@@ -279,6 +282,7 @@ export async function pollCloudLoggingErrors(now = new Date()): Promise<number> 
       for (const record of result.errors) {
         limit--;
         if (record.timestamp <= window.start || record.timestamp > window.end) continue;
+        await fence.assertCurrent();
         const success = await reportErrorForAlert({
           event: record.event, error: record.message, path: record.path,
           ...(record.requestId !== undefined ? { requestId: record.requestId } : {}),
@@ -289,6 +293,7 @@ export async function pollCloudLoggingErrors(now = new Date()): Promise<number> 
         handled++;
       }
       if (!result.nextPageToken) {
+        await fence.assertCurrent();
         await db.update(states).set({
           pollCursorAt: window.end, pollPageToken: null,
           pollWindowStartAt: null, pollWindowEndAt: null,
@@ -297,6 +302,7 @@ export async function pollCloudLoggingErrors(now = new Date()): Promise<number> 
       }
       nextPageToken = result.nextPageToken;
       // The entire page has been acknowledged; store exact continuation.
+      await fence.assertCurrent();
       await db.update(states).set({
         pollPageToken: nextPageToken,
         pollWindowStartAt: window.start, pollWindowEndAt: window.end,
@@ -345,7 +351,7 @@ export async function runAlertTick(now = new Date()): Promise<{ acquired: boolea
     noteCloudPollingFailure();
   }
   let digest = false;
-  const acquired = await withScheduledLease("telegram-digest-" + environment, now, async () => {
+  const acquired = await withScheduledLease("telegram-digest-" + environment, now, async (fence) => {
     if (hour < 9) return;
     const db = getDb();
     const digestKey = "TELEGRAM_DIGEST_" + environment;
@@ -391,7 +397,9 @@ export async function runAlertTick(now = new Date()): Promise<{ acquired: boolea
       spikes: counts?.spikes ?? "0",
       top: top.map(row => ({ hash: row.hash, count: row.count })),
     });
+    await fence.assertCurrent();
     if (!await sendTelegramAlert(message)) return;
+    await fence.assertCurrent();
     await db.update(states).set({ lastDigestDay: day })
       .where(eq(states.stateKey, digestKey));
     digest = true;
