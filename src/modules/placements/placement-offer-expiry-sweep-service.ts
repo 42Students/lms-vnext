@@ -180,7 +180,7 @@ export async function remindExpiringPlacementOffers(
       .from(activityEvents)
       .where(and(
         eq(activityEvents.subjectType, "placement_offer"),
-        eq(activityEvents.subjectId, placementOffers.id),
+        sql<boolean>`${activityEvents.subjectId} = ${placementOffers.id}::text`,
         eq(activityEvents.eventType, "PLACEMENTS_OFFER_EXPIRING"),
       ));
     const rows = await tx.select({
@@ -265,7 +265,7 @@ export async function auditExpiredPlacementJobDeadlines(
    .where(and(
     eq(activityEvents.subjectType,"placement_job"),
     eq(activityEvents.eventType,"PLACEMENTS_JOB_DEADLINE_EXPIRED"),
-    eq(activityEvents.subjectId,placementJobs.id),
+    sql<boolean>`${activityEvents.subjectId} = ${placementJobs.id}::text`,
     eq(activityEvents.dedupeKey,sql<string>`'placement-job-deadline-expired:' ||
      ${placementJobs.id}::text || ':' ||
      floor(extract(epoch from ${placementJobs.applicationDeadline}) * 1000)::bigint::text`),

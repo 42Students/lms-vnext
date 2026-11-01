@@ -45,7 +45,7 @@ import {getTpoCompanyMemory,listTpoCompanies} from "@/modules/placements/tpo-com
 import {isoDateInIndia} from "@/modules/placements/tpo-offer-expiry-model";
 import {getTpoDriveOfferRegister,getTpoDriveOfferRegisterCsv} from "@/modules/placements/tpo-drive-offer-register-service";
 import {getTpoOfferEvidence} from "@/modules/placements/tpo-offer-evidence-service";
-import {sweepExpiredPlacementOffers,remindExpiringPlacementOffers} from "@/modules/placements/placement-offer-expiry-sweep-service";
+import {sweepExpiredPlacementOffers,remindExpiringPlacementOffers,auditExpiredPlacementJobDeadlines} from "@/modules/placements/placement-offer-expiry-sweep-service";
 import {escalatePendingWithdrawalRequests} from "@/modules/placements/tpo-withdrawal-escalation-service";
 import {getTpoWaitlistPreview,offerToNextWaitlisted} from "@/modules/placements/tpo-waitlist-promotion-service";
 import { SEED_IDS } from "../../scripts/db-seed-data";
@@ -1844,6 +1844,35 @@ describe("Placement P8 offers and joining", () => {
       select id from in_app_notifications where event_id=$1 and user_id=$2`,
       [events.rows[0]!.id,SEED_IDS.learnerUser]);
     expect(receipts.rows).toHaveLength(1);
+  });
+
+  it("DB019 job deadline expiry records immutable once-per-deadline audit under PG17",async()=>{
+    const {job}=await preparePassedApplication();
+    const now=new Date();
+    const deadline=new Date(now.getTime()-60_000);
+    // Fixture-only clock manipulation for a published job.
+    await pool.query("update placement_jobs set application_deadline=$1 where id=$2",
+      [deadline,job.id]);
+    expect(await auditExpiredPlacementJobDeadlines(SEED_IDS.facultyUser,now,100)).toBe(1);
+    expect(await auditExpiredPlacementJobDeadlines(SEED_IDS.facultyUser,now,100)).toBe(0);
+    const first=await pool.query<{dedupe_key:string;subject_id:string}>(`
+      select dedupe_key,subject_id from activity_events
+      where subject_id=$1 and event_type='PLACEMENTS_JOB_DEADLINE_EXPIRED'`,
+      [job.id]);
+    expect(first.rows).toHaveLength(1);
+    expect(first.rows[0]?.subject_id).toBe(job.id);
+    // A genuine extension and later second expiry is distinct evidence,
+    // never a duplicate event for the original deadline.
+    const extendedDeadline=new Date(now.getTime()-30_000);
+    await pool.query("update placement_jobs set application_deadline=$1 where id=$2",
+      [extendedDeadline,job.id]);
+    expect(await auditExpiredPlacementJobDeadlines(SEED_IDS.facultyUser,now,100)).toBe(1);
+    const second=await pool.query<{dedupe_key:string}>(`
+      select dedupe_key from activity_events
+      where subject_id=$1 and event_type='PLACEMENTS_JOB_DEADLINE_EXPIRED'`,
+      [job.id]);
+    expect(second.rows).toHaveLength(2);
+    expect(new Set(second.rows.map(row=>row.dedupe_key)).size).toBe(2);
   });
 
   it("DB019 offer expiry reminder cannot target terminal declined offers",async()=>{
