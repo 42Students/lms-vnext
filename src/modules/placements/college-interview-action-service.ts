@@ -4,7 +4,8 @@ import {getDb} from "@/db/client";
 import {activityEvents,collegeMemberships,colleges,inAppNotifications,placementApplications,
  placementApplicationScreenings,placementJobRounds,placementJobs,placementLearnerRequests,users} from "@/db/schema";
 import {placementCollegeInterviews} from "@/db/schema/placement-college-interviews";
-import type {RequestContext} from "@/modules/identity/context";
+import {hasMembershipRole,isSuperAdmin,type RequestContext} from "@/modules/identity/context";
+import {AuthorizationError} from "@/modules/permissions/policy";
 import {PlacementsServiceError} from "./errors";
 import {requireCollegePlacementAdmin} from "./college-drive-read-service";
 import {assertPersistedPlatformPermission} from "@/modules/permissions/persisted-actor";
@@ -99,9 +100,14 @@ export async function mutateCollegeInterview(context:RequestContext,rawJobId:unk
   // The read-time College Admin/Super Admin role and selected tenant can
   // become stale before an appointment is written. Hold the real principal,
   // membership and grant rows under SHARE locks in this write transaction.
-  await assertPersistedPlatformPermission(tx,context,"placements.manage",{
+  const persistedActor=await assertPersistedPlatformPermission(tx,context,"placements.manage",{
    collegeId,organizationId:lockedJob.organizationId,
   });
+  // A valid TPO placement manager is not automatically a College Admin.
+  // Recheck the exact persisted role required by this privileged endpoint;
+  // otherwise a revoked admin with a remaining TPO grant can still schedule.
+  if(!isSuperAdmin(persistedActor)&&!hasMembershipRole(persistedActor,"COLLEGE_ADMIN"))
+   throw new AuthorizationError("placements.manage");
   let appointment:typeof placementCollegeInterviews.$inferSelect;
   let applicationId:string;
   let eventType:string;
