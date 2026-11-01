@@ -68,6 +68,15 @@ test("DB08 280 placement fields cannot self-promote from candidates to exact map
   expects(audit(ledgers,forged),"DB08_SOURCE_REVIEW_PROPOSAL_INVALID");
 });
 
+test("DB08 280 individual source proposals are mandatory; deletion and null review fail closed",()=>{
+  const deleted=cp(artifacts);
+  delete deleted.DB08.tables[0].fields[0].reviewDecision;
+  expects(audit(ledgers,deleted),"DB08_MISSING_INDIVIDUAL_SOURCE_REVIEW");
+  const nulled=cp(artifacts);
+  nulled.DB08.tables[0].fields[0].reviewDecision=null;
+  expects(audit(ledgers,nulled),"DB08_MISSING_INDIVIDUAL_SOURCE_REVIEW");
+});
+
 test("DB08 28 job_offer source-to-target proposals remain bounded and never claim runtime proof",()=>{
   const result=loadDb019Remaining();
   assert.equal(result.valid,true);
