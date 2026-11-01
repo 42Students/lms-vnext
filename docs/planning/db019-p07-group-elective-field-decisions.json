@@ -1,0 +1,1514 @@
+{
+  "schemaVersion": 1,
+  "packageId": "DB19-P07",
+  "sourceSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+  "sourceInventory": "docs/planning/db-pass4-columns-db03_groups_and_electives.json",
+  "baseCrosswalk": "docs/planning/database-parity-db03-79-field-crosswalk.json",
+  "scope": "79 frozen source fields across six group/elective tables, each with a specific target decision, exact SQL catalog and service tests pending. Source decisions do not prove runtime, tenant or global semantic acceptance.",
+  "sourceFieldCount": 79,
+  "sourceTableCount": 6,
+  "fieldDecisions": [
+    {
+      "sourceField": "elective_offering.id",
+      "legacySqlType": "bigint",
+      "legacyMigrationSource": "V167__electives.sql",
+      "proposedKind": "DIRECT_SOURCE_NAME_MATCH",
+      "decision": "NORMALIZED_ACTIVE_SCHEMA_FIELD",
+      "targetRefs": [
+        "elective_offerings.id"
+      ],
+      "sourceRationale": "Active source behavior is represented by a typed registered target field. Field-level runtime proof is required; same spelling alone is insufficient. Field: elective_offering.id.",
+      "producerPath": "src/modules/electives/service.ts",
+      "consumerPath": "src/modules/electives/college-offering-choices-service.ts",
+      "tenantBoundary": "scoped slot/college/program plus current learner enrollment and original delivery",
+      "sourceReviewed": true,
+      "physicalTargetVerified": false,
+      "producerConsumerVerified": false,
+      "runtimeVerified": false,
+      "approvalScope": "GREENFIELD_ENGINEERING_TARGET_DECISION_GLOBAL_P31_SIGNOFF_OPEN"
+    },
+    {
+      "sourceField": "elective_offering.slot_id",
+      "legacySqlType": "bigint",
+      "legacyMigrationSource": "V167__electives.sql",
+      "proposedKind": "DIRECT_SOURCE_NAME_MATCH",
+      "decision": "NORMALIZED_ACTIVE_SCHEMA_FIELD",
+      "targetRefs": [
+        "elective_offerings.slot_id"
+      ],
+      "sourceRationale": "Active source behavior is represented by a typed registered target field. Field-level runtime proof is required; same spelling alone is insufficient. Field: elective_offering.slot_id.",
+      "producerPath": "src/modules/electives/service.ts",
+      "consumerPath": "src/modules/electives/college-offering-choices-service.ts",
+      "tenantBoundary": "scoped slot/college/program plus current learner enrollment and original delivery",
+      "sourceReviewed": true,
+      "physicalTargetVerified": false,
+      "producerConsumerVerified": false,
+      "runtimeVerified": false,
+      "approvalScope": "GREENFIELD_ENGINEERING_TARGET_DECISION_GLOBAL_P31_SIGNOFF_OPEN"
+    },
+    {
+      "sourceField": "elective_offering.course_id",
+      "legacySqlType": "int",
+      "legacyMigrationSource": "V167__electives.sql",
+      "proposedKind": "DIRECT_SOURCE_NAME_MATCH",
+      "decision": "NORMALIZED_ACTIVE_SCHEMA_FIELD",
+      "targetRefs": [
+        "elective_offerings.course_id"
+      ],
+      "sourceRationale": "Active source behavior is represented by a typed registered target field. Field-level runtime proof is required; same spelling alone is insufficient. Field: elective_offering.course_id.",
+      "producerPath": "src/modules/electives/service.ts",
+      "consumerPath": "src/modules/electives/college-offering-choices-service.ts",
+      "tenantBoundary": "scoped slot/college/program plus current learner enrollment and original delivery",
+      "sourceReviewed": true,
+      "physicalTargetVerified": false,
+      "producerConsumerVerified": false,
+      "runtimeVerified": false,
+      "approvalScope": "GREENFIELD_ENGINEERING_TARGET_DECISION_GLOBAL_P31_SIGNOFF_OPEN"
+    },
+    {
+      "sourceField": "elective_offering.group_id",
+      "legacySqlType": "bigint",
+      "legacyMigrationSource": "V167__electives.sql",
+      "proposedKind": "DIRECT_SOURCE_NAME_MATCH",
+      "decision": "NORMALIZED_ACTIVE_SCHEMA_FIELD",
+      "targetRefs": [
+        "elective_offerings.group_id"
+      ],
+      "sourceRationale": "Active source behavior is represented by a typed registered target field. Field-level runtime proof is required; same spelling alone is insufficient. Field: elective_offering.group_id.",
+      "producerPath": "src/modules/electives/service.ts",
+      "consumerPath": "src/modules/electives/college-offering-choices-service.ts",
+      "tenantBoundary": "scoped slot/college/program plus current learner enrollment and original delivery",
+      "sourceReviewed": true,
+      "physicalTargetVerified": false,
+      "producerConsumerVerified": false,
+      "runtimeVerified": false,
+      "approvalScope": "GREENFIELD_ENGINEERING_TARGET_DECISION_GLOBAL_P31_SIGNOFF_OPEN"
+    },
+    {
+      "sourceField": "elective_offering.backed_class_id",
+      "legacySqlType": "int",
+      "legacyMigrationSource": "V167__electives.sql",
+      "proposedKind": "SEMANTIC_REDESIGN",
+      "decision": "REDESIGNED_BACKED_CLASS_SCOPE",
+      "targetRefs": [
+        "elective_offerings.backed_delivery_id",
+        "elective_offerings.backed_class_offering_id"
+      ],
+      "sourceRationale": "Legacy backed class ID is not a direct UUID: active vNext requires both a scoped backed course delivery and, when applicable, a group-backed class offering with consistent roster-group FK. Field: elective_offering.backed_class_id.",
+      "producerPath": "src/modules/electives/service.ts",
+      "consumerPath": "src/modules/electives/college-offering-choices-service.ts",
+      "tenantBoundary": "scoped slot/college/program plus current learner enrollment and original delivery",
+      "sourceReviewed": true,
+      "physicalTargetVerified": false,
+      "producerConsumerVerified": false,
+      "runtimeVerified": false,
+      "approvalScope": "GREENFIELD_ENGINEERING_TARGET_DECISION_GLOBAL_P31_SIGNOFF_OPEN"
+    },
+    {
+      "sourceField": "elective_offering.capacity",
+      "legacySqlType": "int",
+      "legacyMigrationSource": "V167__electives.sql",
+      "proposedKind": "DIRECT_SOURCE_NAME_MATCH",
+      "decision": "NORMALIZED_ACTIVE_SCHEMA_FIELD",
+      "targetRefs": [
+        "elective_offerings.capacity"
+      ],
+      "sourceRationale": "Active source behavior is represented by a typed registered target field. Field-level runtime proof is required; same spelling alone is insufficient. Field: elective_offering.capacity.",
+      "producerPath": "src/modules/electives/service.ts",
+      "consumerPath": "src/modules/electives/college-offering-choices-service.ts",
+      "tenantBoundary": "scoped slot/college/program plus current learner enrollment and original delivery",
+      "sourceReviewed": true,
+      "physicalTargetVerified": false,
+      "producerConsumerVerified": false,
+      "runtimeVerified": false,
+      "approvalScope": "GREENFIELD_ENGINEERING_TARGET_DECISION_GLOBAL_P31_SIGNOFF_OPEN"
+    },
+    {
+      "sourceField": "elective_offering.status",
+      "legacySqlType": "varchar(20)",
+      "legacyMigrationSource": "V167__electives.sql",
+      "proposedKind": "DIRECT_SOURCE_NAME_MATCH",
+      "decision": "NORMALIZED_ACTIVE_SCHEMA_FIELD",
+      "targetRefs": [
+        "elective_offerings.status"
+      ],
+      "sourceRationale": "Active source behavior is represented by a typed registered target field. Field-level runtime proof is required; same spelling alone is insufficient. Field: elective_offering.status.",
+      "producerPath": "src/modules/electives/service.ts",
+      "consumerPath": "src/modules/electives/college-offering-choices-service.ts",
+      "tenantBoundary": "scoped slot/college/program plus current learner enrollment and original delivery",
+      "sourceReviewed": true,
+      "physicalTargetVerified": false,
+      "producerConsumerVerified": false,
+      "runtimeVerified": false,
+      "approvalScope": "GREENFIELD_ENGINEERING_TARGET_DECISION_GLOBAL_P31_SIGNOFF_OPEN"
+    },
+    {
+      "sourceField": "elective_offering.created_at",
+      "legacySqlType": "datetime",
+      "legacyMigrationSource": "V167__electives.sql",
+      "proposedKind": "DIRECT_SOURCE_NAME_MATCH",
+      "decision": "NORMALIZED_ACTIVE_SCHEMA_FIELD",
+      "targetRefs": [
+        "elective_offerings.created_at"
+      ],
+      "sourceRationale": "Active source behavior is represented by a typed registered target field. Field-level runtime proof is required; same spelling alone is insufficient. Field: elective_offering.created_at.",
+      "producerPath": "src/modules/electives/service.ts",
+      "consumerPath": "src/modules/electives/college-offering-choices-service.ts",
+      "tenantBoundary": "scoped slot/college/program plus current learner enrollment and original delivery",
+      "sourceReviewed": true,
+      "physicalTargetVerified": false,
+      "producerConsumerVerified": false,
+      "runtimeVerified": false,
+      "approvalScope": "GREENFIELD_ENGINEERING_TARGET_DECISION_GLOBAL_P31_SIGNOFF_OPEN"
+    },
+    {
+      "sourceField": "elective_offering.updated_at",
+      "legacySqlType": "datetime",
+      "legacyMigrationSource": "V167__electives.sql",
+      "proposedKind": "DIRECT_SOURCE_NAME_MATCH",
+      "decision": "NORMALIZED_ACTIVE_SCHEMA_FIELD",
+      "targetRefs": [
+        "elective_offerings.updated_at"
+      ],
+      "sourceRationale": "Active source behavior is represented by a typed registered target field. Field-level runtime proof is required; same spelling alone is insufficient. Field: elective_offering.updated_at.",
+      "producerPath": "src/modules/electives/service.ts",
+      "consumerPath": "src/modules/electives/college-offering-choices-service.ts",
+      "tenantBoundary": "scoped slot/college/program plus current learner enrollment and original delivery",
+      "sourceReviewed": true,
+      "physicalTargetVerified": false,
+      "producerConsumerVerified": false,
+      "runtimeVerified": false,
+      "approvalScope": "GREENFIELD_ENGINEERING_TARGET_DECISION_GLOBAL_P31_SIGNOFF_OPEN"
+    },
+    {
+      "sourceField": "elective_offering.is_deleted",
+      "legacySqlType": "boolean",
+      "legacyMigrationSource": "V167__electives.sql",
+      "proposedKind": "SOFT_DELETE_TIMESTAMP",
+      "decision": "REDESIGNED_SOFT_DELETE",
+      "targetRefs": [
+        "elective_offerings.deleted_at"
+      ],
+      "sourceRationale": "Legacy is_deleted uses explicit deleted_at while active lifecycle/authorization rules prevent hidden rows from accepting writes or being exposed to consumers. Field: elective_offering.is_deleted.",
+      "producerPath": "src/modules/electives/service.ts",
+      "consumerPath": "src/modules/electives/college-offering-choices-service.ts",
+      "tenantBoundary": "scoped slot/college/program plus current learner enrollment and original delivery",
+      "sourceReviewed": true,
+      "physicalTargetVerified": false,
+      "producerConsumerVerified": false,
+      "runtimeVerified": false,
+      "approvalScope": "GREENFIELD_ENGINEERING_TARGET_DECISION_GLOBAL_P31_SIGNOFF_OPEN"
+    },
+    {
+      "sourceField": "elective_offering.version",
+      "legacySqlType": "bigint",
+      "legacyMigrationSource": "V167__electives.sql",
+      "proposedKind": "DIRECT_SOURCE_NAME_MATCH",
+      "decision": "NORMALIZED_ACTIVE_SCHEMA_FIELD",
+      "targetRefs": [
+        "elective_offerings.version"
+      ],
+      "sourceRationale": "Active source behavior is represented by a typed registered target field. Field-level runtime proof is required; same spelling alone is insufficient. Field: elective_offering.version.",
+      "producerPath": "src/modules/electives/service.ts",
+      "consumerPath": "src/modules/electives/college-offering-choices-service.ts",
+      "tenantBoundary": "scoped slot/college/program plus current learner enrollment and original delivery",
+      "sourceReviewed": true,
+      "physicalTargetVerified": false,
+      "producerConsumerVerified": false,
+      "runtimeVerified": false,
+      "approvalScope": "GREENFIELD_ENGINEERING_TARGET_DECISION_GLOBAL_P31_SIGNOFF_OPEN"
+    },
+    {
+      "sourceField": "elective_offering.active_course_key",
+      "legacySqlType": "bigint",
+      "legacyMigrationSource": "V168__electives_offering_unique.sql",
+      "proposedKind": "DERIVED_UNIQUE_INDEX",
+      "decision": "DERIVED_UNIQUE_CONSTRAINT",
+      "targetRefs": [
+        "elective_offerings_slot_active_course_uq"
+      ],
+      "sourceRationale": "Legacy active_course_key is a uniqueness aid, not a business datum; an active slot/course combination is protected by a partial unique index with status and tombstone scope. Field: elective_offering.active_course_key.",
+      "producerPath": "src/modules/electives/service.ts",
+      "consumerPath": "src/modules/electives/college-offering-choices-service.ts",
+      "tenantBoundary": "scoped slot/college/program plus current learner enrollment and original delivery",
+      "sourceReviewed": true,
+      "physicalTargetVerified": false,
+      "producerConsumerVerified": false,
+      "runtimeVerified": false,
+      "approvalScope": "GREENFIELD_ENGINEERING_TARGET_DECISION_GLOBAL_P31_SIGNOFF_OPEN"
+    },
+    {
+      "sourceField": "elective_slot.id",
+      "legacySqlType": "bigint",
+      "legacyMigrationSource": "V167__electives.sql",
+      "proposedKind": "DIRECT_SOURCE_NAME_MATCH",
+      "decision": "NORMALIZED_ACTIVE_SCHEMA_FIELD",
+      "targetRefs": [
+        "elective_slots.id"
+      ],
+      "sourceRationale": "Active source behavior is represented by a typed registered target field. Field-level runtime proof is required; same spelling alone is insufficient. Field: elective_slot.id.",
+      "producerPath": "src/modules/electives/college-slot-mutation-service.ts",
+      "consumerPath": "src/modules/electives/service.ts",
+      "tenantBoundary": "scoped slot/college/program plus current learner enrollment and original delivery",
+      "sourceReviewed": true,
+      "physicalTargetVerified": false,
+      "producerConsumerVerified": false,
+      "runtimeVerified": false,
+      "approvalScope": "GREENFIELD_ENGINEERING_TARGET_DECISION_GLOBAL_P31_SIGNOFF_OPEN"
+    },
+    {
+      "sourceField": "elective_slot.college_id",
+      "legacySqlType": "int",
+      "legacyMigrationSource": "V167__electives.sql",
+      "proposedKind": "DIRECT_SOURCE_NAME_MATCH",
+      "decision": "NORMALIZED_ACTIVE_SCHEMA_FIELD",
+      "targetRefs": [
+        "elective_slots.college_id"
+      ],
+      "sourceRationale": "Active source behavior is represented by a typed registered target field. Field-level runtime proof is required; same spelling alone is insufficient. Field: elective_slot.college_id.",
+      "producerPath": "src/modules/electives/college-slot-mutation-service.ts",
+      "consumerPath": "src/modules/electives/service.ts",
+      "tenantBoundary": "scoped slot/college/program plus current learner enrollment and original delivery",
+      "sourceReviewed": true,
+      "physicalTargetVerified": false,
+      "producerConsumerVerified": false,
+      "runtimeVerified": false,
+      "approvalScope": "GREENFIELD_ENGINEERING_TARGET_DECISION_GLOBAL_P31_SIGNOFF_OPEN"
+    },
+    {
+      "sourceField": "elective_slot.program_id",
+      "legacySqlType": "int",
+      "legacyMigrationSource": "V167__electives.sql",
+      "proposedKind": "DIRECT_SOURCE_NAME_MATCH",
+      "decision": "NORMALIZED_ACTIVE_SCHEMA_FIELD",
+      "targetRefs": [
+        "elective_slots.program_id"
+      ],
+      "sourceRationale": "Active source behavior is represented by a typed registered target field. Field-level runtime proof is required; same spelling alone is insufficient. Field: elective_slot.program_id.",
+      "producerPath": "src/modules/electives/college-slot-mutation-service.ts",
+      "consumerPath": "src/modules/electives/service.ts",
+      "tenantBoundary": "scoped slot/college/program plus current learner enrollment and original delivery",
+      "sourceReviewed": true,
+      "physicalTargetVerified": false,
+      "producerConsumerVerified": false,
+      "runtimeVerified": false,
+      "approvalScope": "GREENFIELD_ENGINEERING_TARGET_DECISION_GLOBAL_P31_SIGNOFF_OPEN"
+    },
+    {
+      "sourceField": "elective_slot.semester_number",
+      "legacySqlType": "int",
+      "legacyMigrationSource": "V167__electives.sql",
+      "proposedKind": "DIRECT_SOURCE_NAME_MATCH",
+      "decision": "NORMALIZED_ACTIVE_SCHEMA_FIELD",
+      "targetRefs": [
+        "elective_slots.semester_number"
+      ],
+      "sourceRationale": "Active source behavior is represented by a typed registered target field. Field-level runtime proof is required; same spelling alone is insufficient. Field: elective_slot.semester_number.",
+      "producerPath": "src/modules/electives/college-slot-mutation-service.ts",
+      "consumerPath": "src/modules/electives/service.ts",
+      "tenantBoundary": "scoped slot/college/program plus current learner enrollment and original delivery",
+      "sourceReviewed": true,
+      "physicalTargetVerified": false,
+      "producerConsumerVerified": false,
+      "runtimeVerified": false,
+      "approvalScope": "GREENFIELD_ENGINEERING_TARGET_DECISION_GLOBAL_P31_SIGNOFF_OPEN"
+    },
+    {
+      "sourceField": "elective_slot.academic_year",
+      "legacySqlType": "varchar(20)",
+      "legacyMigrationSource": "V167__electives.sql",
+      "proposedKind": "DIRECT_SOURCE_NAME_MATCH",
+      "decision": "NORMALIZED_ACTIVE_SCHEMA_FIELD",
+      "targetRefs": [
+        "elective_slots.academic_year"
+      ],
+      "sourceRationale": "Active source behavior is represented by a typed registered target field. Field-level runtime proof is required; same spelling alone is insufficient. Field: elective_slot.academic_year.",
+      "producerPath": "src/modules/electives/college-slot-mutation-service.ts",
+      "consumerPath": "src/modules/electives/service.ts",
+      "tenantBoundary": "scoped slot/college/program plus current learner enrollment and original delivery",
+      "sourceReviewed": true,
+      "physicalTargetVerified": false,
+      "producerConsumerVerified": false,
+      "runtimeVerified": false,
+      "approvalScope": "GREENFIELD_ENGINEERING_TARGET_DECISION_GLOBAL_P31_SIGNOFF_OPEN"
+    },
+    {
+      "sourceField": "elective_slot.name",
+      "legacySqlType": "varchar(150)",
+      "legacyMigrationSource": "V167__electives.sql",
+      "proposedKind": "DIRECT_SOURCE_NAME_MATCH",
+      "decision": "NORMALIZED_ACTIVE_SCHEMA_FIELD",
+      "targetRefs": [
+        "elective_slots.name"
+      ],
+      "sourceRationale": "Active source behavior is represented by a typed registered target field. Field-level runtime proof is required; same spelling alone is insufficient. Field: elective_slot.name.",
+      "producerPath": "src/modules/electives/college-slot-mutation-service.ts",
+      "consumerPath": "src/modules/electives/service.ts",
+      "tenantBoundary": "scoped slot/college/program plus current learner enrollment and original delivery",
+      "sourceReviewed": true,
+      "physicalTargetVerified": false,
+      "producerConsumerVerified": false,
+      "runtimeVerified": false,
+      "approvalScope": "GREENFIELD_ENGINEERING_TARGET_DECISION_GLOBAL_P31_SIGNOFF_OPEN"
+    },
+    {
+      "sourceField": "elective_slot.description",
+      "legacySqlType": "varchar(1000)",
+      "legacyMigrationSource": "V167__electives.sql",
+      "proposedKind": "DIRECT_SOURCE_NAME_MATCH",
+      "decision": "NORMALIZED_ACTIVE_SCHEMA_FIELD",
+      "targetRefs": [
+        "elective_slots.description"
+      ],
+      "sourceRationale": "Active source behavior is represented by a typed registered target field. Field-level runtime proof is required; same spelling alone is insufficient. Field: elective_slot.description.",
+      "producerPath": "src/modules/electives/college-slot-mutation-service.ts",
+      "consumerPath": "src/modules/electives/service.ts",
+      "tenantBoundary": "scoped slot/college/program plus current learner enrollment and original delivery",
+      "sourceReviewed": true,
+      "physicalTargetVerified": false,
+      "producerConsumerVerified": false,
+      "runtimeVerified": false,
+      "approvalScope": "GREENFIELD_ENGINEERING_TARGET_DECISION_GLOBAL_P31_SIGNOFF_OPEN"
+    },
+    {
+      "sourceField": "elective_slot.credits",
+      "legacySqlType": "int",
+      "legacyMigrationSource": "V167__electives.sql",
+      "proposedKind": "DIRECT_SOURCE_NAME_MATCH",
+      "decision": "NORMALIZED_ACTIVE_SCHEMA_FIELD",
+      "targetRefs": [
+        "elective_slots.credits"
+      ],
+      "sourceRationale": "Active source behavior is represented by a typed registered target field. Field-level runtime proof is required; same spelling alone is insufficient. Field: elective_slot.credits.",
+      "producerPath": "src/modules/electives/college-slot-mutation-service.ts",
+      "consumerPath": "src/modules/electives/service.ts",
+      "tenantBoundary": "scoped slot/college/program plus current learner enrollment and original delivery",
+      "sourceReviewed": true,
+      "physicalTargetVerified": false,
+      "producerConsumerVerified": false,
+      "runtimeVerified": false,
+      "approvalScope": "GREENFIELD_ENGINEERING_TARGET_DECISION_GLOBAL_P31_SIGNOFF_OPEN"
+    },
+    {
+      "sourceField": "elective_slot.min_pick",
+      "legacySqlType": "int",
+      "legacyMigrationSource": "V167__electives.sql",
+      "proposedKind": "DIRECT_SOURCE_NAME_MATCH",
+      "decision": "NORMALIZED_ACTIVE_SCHEMA_FIELD",
+      "targetRefs": [
+        "elective_slots.min_pick"
+      ],
+      "sourceRationale": "Active source behavior is represented by a typed registered target field. Field-level runtime proof is required; same spelling alone is insufficient. Field: elective_slot.min_pick.",
+      "producerPath": "src/modules/electives/college-slot-mutation-service.ts",
+      "consumerPath": "src/modules/electives/service.ts",
+      "tenantBoundary": "scoped slot/college/program plus current learner enrollment and original delivery",
+      "sourceReviewed": true,
+      "physicalTargetVerified": false,
+      "producerConsumerVerified": false,
+      "runtimeVerified": false,
+      "approvalScope": "GREENFIELD_ENGINEERING_TARGET_DECISION_GLOBAL_P31_SIGNOFF_OPEN"
+    },
+    {
+      "sourceField": "elective_slot.max_pick",
+      "legacySqlType": "int",
+      "legacyMigrationSource": "V167__electives.sql",
+      "proposedKind": "DIRECT_SOURCE_NAME_MATCH",
+      "decision": "NORMALIZED_ACTIVE_SCHEMA_FIELD",
+      "targetRefs": [
+        "elective_slots.max_pick"
+      ],
+      "sourceRationale": "Active source behavior is represented by a typed registered target field. Field-level runtime proof is required; same spelling alone is insufficient. Field: elective_slot.max_pick.",
+      "producerPath": "src/modules/electives/college-slot-mutation-service.ts",
+      "consumerPath": "src/modules/electives/service.ts",
+      "tenantBoundary": "scoped slot/college/program plus current learner enrollment and original delivery",
+      "sourceReviewed": true,
+      "physicalTargetVerified": false,
+      "producerConsumerVerified": false,
+      "runtimeVerified": false,
+      "approvalScope": "GREENFIELD_ENGINEERING_TARGET_DECISION_GLOBAL_P31_SIGNOFF_OPEN"
+    },
+    {
+      "sourceField": "elective_slot.status",
+      "legacySqlType": "varchar(20)",
+      "legacyMigrationSource": "V167__electives.sql",
+      "proposedKind": "DIRECT_SOURCE_NAME_MATCH",
+      "decision": "NORMALIZED_ACTIVE_SCHEMA_FIELD",
+      "targetRefs": [
+        "elective_slots.status"
+      ],
+      "sourceRationale": "Active source behavior is represented by a typed registered target field. Field-level runtime proof is required; same spelling alone is insufficient. Field: elective_slot.status.",
+      "producerPath": "src/modules/electives/college-slot-mutation-service.ts",
+      "consumerPath": "src/modules/electives/service.ts",
+      "tenantBoundary": "scoped slot/college/program plus current learner enrollment and original delivery",
+      "sourceReviewed": true,
+      "physicalTargetVerified": false,
+      "producerConsumerVerified": false,
+      "runtimeVerified": false,
+      "approvalScope": "GREENFIELD_ENGINEERING_TARGET_DECISION_GLOBAL_P31_SIGNOFF_OPEN"
+    },
+    {
+      "sourceField": "elective_slot.created_at",
+      "legacySqlType": "datetime",
+      "legacyMigrationSource": "V167__electives.sql",
+      "proposedKind": "DIRECT_SOURCE_NAME_MATCH",
+      "decision": "NORMALIZED_ACTIVE_SCHEMA_FIELD",
+      "targetRefs": [
+        "elective_slots.created_at"
+      ],
+      "sourceRationale": "Active source behavior is represented by a typed registered target field. Field-level runtime proof is required; same spelling alone is insufficient. Field: elective_slot.created_at.",
+      "producerPath": "src/modules/electives/college-slot-mutation-service.ts",
+      "consumerPath": "src/modules/electives/service.ts",
+      "tenantBoundary": "scoped slot/college/program plus current learner enrollment and original delivery",
+      "sourceReviewed": true,
+      "physicalTargetVerified": false,
+      "producerConsumerVerified": false,
+      "runtimeVerified": false,
+      "approvalScope": "GREENFIELD_ENGINEERING_TARGET_DECISION_GLOBAL_P31_SIGNOFF_OPEN"
+    },
+    {
+      "sourceField": "elective_slot.updated_at",
+      "legacySqlType": "datetime",
+      "legacyMigrationSource": "V167__electives.sql",
+      "proposedKind": "DIRECT_SOURCE_NAME_MATCH",
+      "decision": "NORMALIZED_ACTIVE_SCHEMA_FIELD",
+      "targetRefs": [
+        "elective_slots.updated_at"
+      ],
+      "sourceRationale": "Active source behavior is represented by a typed registered target field. Field-level runtime proof is required; same spelling alone is insufficient. Field: elective_slot.updated_at.",
+      "producerPath": "src/modules/electives/college-slot-mutation-service.ts",
+      "consumerPath": "src/modules/electives/service.ts",
+      "tenantBoundary": "scoped slot/college/program plus current learner enrollment and original delivery",
+      "sourceReviewed": true,
+      "physicalTargetVerified": false,
+      "producerConsumerVerified": false,
+      "runtimeVerified": false,
+      "approvalScope": "GREENFIELD_ENGINEERING_TARGET_DECISION_GLOBAL_P31_SIGNOFF_OPEN"
+    },
+    {
+      "sourceField": "elective_slot.is_deleted",
+      "legacySqlType": "boolean",
+      "legacyMigrationSource": "V167__electives.sql",
+      "proposedKind": "SOFT_DELETE_TIMESTAMP",
+      "decision": "REDESIGNED_SOFT_DELETE",
+      "targetRefs": [
+        "elective_slots.deleted_at"
+      ],
+      "sourceRationale": "Legacy is_deleted uses explicit deleted_at while active lifecycle/authorization rules prevent hidden rows from accepting writes or being exposed to consumers. Field: elective_slot.is_deleted.",
+      "producerPath": "src/modules/electives/college-slot-mutation-service.ts",
+      "consumerPath": "src/modules/electives/service.ts",
+      "tenantBoundary": "scoped slot/college/program plus current learner enrollment and original delivery",
+      "sourceReviewed": true,
+      "physicalTargetVerified": false,
+      "producerConsumerVerified": false,
+      "runtimeVerified": false,
+      "approvalScope": "GREENFIELD_ENGINEERING_TARGET_DECISION_GLOBAL_P31_SIGNOFF_OPEN"
+    },
+    {
+      "sourceField": "elective_slot.version",
+      "legacySqlType": "bigint",
+      "legacyMigrationSource": "V167__electives.sql",
+      "proposedKind": "DIRECT_SOURCE_NAME_MATCH",
+      "decision": "NORMALIZED_ACTIVE_SCHEMA_FIELD",
+      "targetRefs": [
+        "elective_slots.version"
+      ],
+      "sourceRationale": "Active source behavior is represented by a typed registered target field. Field-level runtime proof is required; same spelling alone is insufficient. Field: elective_slot.version.",
+      "producerPath": "src/modules/electives/college-slot-mutation-service.ts",
+      "consumerPath": "src/modules/electives/service.ts",
+      "tenantBoundary": "scoped slot/college/program plus current learner enrollment and original delivery",
+      "sourceReviewed": true,
+      "physicalTargetVerified": false,
+      "producerConsumerVerified": false,
+      "runtimeVerified": false,
+      "approvalScope": "GREENFIELD_ENGINEERING_TARGET_DECISION_GLOBAL_P31_SIGNOFF_OPEN"
+    },
+    {
+      "sourceField": "lms_group.id",
+      "legacySqlType": "bigint",
+      "legacyMigrationSource": "V166__groups_kernel.sql",
+      "proposedKind": "DIRECT_SOURCE_NAME_MATCH",
+      "decision": "NORMALIZED_ACTIVE_SCHEMA_FIELD",
+      "targetRefs": [
+        "lms_groups.id"
+      ],
+      "sourceRationale": "Active source behavior is represented by a typed registered target field. Field-level runtime proof is required; same spelling alone is insufficient. Field: lms_group.id.",
+      "producerPath": "src/modules/groups/service.ts",
+      "consumerPath": "src/modules/groups/learner-group-detail-service.ts",
+      "tenantBoundary": "scoped owner group college, current membership and role",
+      "sourceReviewed": true,
+      "physicalTargetVerified": false,
+      "producerConsumerVerified": false,
+      "runtimeVerified": false,
+      "approvalScope": "GREENFIELD_ENGINEERING_TARGET_DECISION_GLOBAL_P31_SIGNOFF_OPEN"
+    },
+    {
+      "sourceField": "lms_group.kind",
+      "legacySqlType": "varchar(40)",
+      "legacyMigrationSource": "V166__groups_kernel.sql",
+      "proposedKind": "DIRECT_SOURCE_NAME_MATCH",
+      "decision": "NORMALIZED_ACTIVE_SCHEMA_FIELD",
+      "targetRefs": [
+        "lms_groups.kind"
+      ],
+      "sourceRationale": "Active source behavior is represented by a typed registered target field. Field-level runtime proof is required; same spelling alone is insufficient. Field: lms_group.kind.",
+      "producerPath": "src/modules/groups/service.ts",
+      "consumerPath": "src/modules/groups/learner-group-detail-service.ts",
+      "tenantBoundary": "scoped owner group college, current membership and role",
+      "sourceReviewed": true,
+      "physicalTargetVerified": false,
+      "producerConsumerVerified": false,
+      "runtimeVerified": false,
+      "approvalScope": "GREENFIELD_ENGINEERING_TARGET_DECISION_GLOBAL_P31_SIGNOFF_OPEN"
+    },
+    {
+      "sourceField": "lms_group.owner_scope",
+      "legacySqlType": "varchar(20)",
+      "legacyMigrationSource": "V166__groups_kernel.sql",
+      "proposedKind": "DIRECT_SOURCE_NAME_MATCH",
+      "decision": "NORMALIZED_ACTIVE_SCHEMA_FIELD",
+      "targetRefs": [
+        "lms_groups.owner_scope"
+      ],
+      "sourceRationale": "Active source behavior is represented by a typed registered target field. Field-level runtime proof is required; same spelling alone is insufficient. Field: lms_group.owner_scope.",
+      "producerPath": "src/modules/groups/service.ts",
+      "consumerPath": "src/modules/groups/learner-group-detail-service.ts",
+      "tenantBoundary": "scoped owner group college, current membership and role",
+      "sourceReviewed": true,
+      "physicalTargetVerified": false,
+      "producerConsumerVerified": false,
+      "runtimeVerified": false,
+      "approvalScope": "GREENFIELD_ENGINEERING_TARGET_DECISION_GLOBAL_P31_SIGNOFF_OPEN"
+    },
+    {
+      "sourceField": "lms_group.college_id",
+      "legacySqlType": "int",
+      "legacyMigrationSource": "V166__groups_kernel.sql",
+      "proposedKind": "DIRECT_SOURCE_NAME_MATCH",
+      "decision": "NORMALIZED_ACTIVE_SCHEMA_FIELD",
+      "targetRefs": [
+        "lms_groups.college_id"
+      ],
+      "sourceRationale": "Active source behavior is represented by a typed registered target field. Field-level runtime proof is required; same spelling alone is insufficient. Field: lms_group.college_id.",
+      "producerPath": "src/modules/groups/service.ts",
+      "consumerPath": "src/modules/groups/learner-group-detail-service.ts",
+      "tenantBoundary": "scoped owner group college, current membership and role",
+      "sourceReviewed": true,
+      "physicalTargetVerified": false,
+      "producerConsumerVerified": false,
+      "runtimeVerified": false,
+      "approvalScope": "GREENFIELD_ENGINEERING_TARGET_DECISION_GLOBAL_P31_SIGNOFF_OPEN"
+    },
+    {
+      "sourceField": "lms_group.name",
+      "legacySqlType": "varchar(150)",
+      "legacyMigrationSource": "V166__groups_kernel.sql",
+      "proposedKind": "DIRECT_SOURCE_NAME_MATCH",
+      "decision": "NORMALIZED_ACTIVE_SCHEMA_FIELD",
+      "targetRefs": [
+        "lms_groups.name"
+      ],
+      "sourceRationale": "Active source behavior is represented by a typed registered target field. Field-level runtime proof is required; same spelling alone is insufficient. Field: lms_group.name.",
+      "producerPath": "src/modules/groups/service.ts",
+      "consumerPath": "src/modules/groups/learner-group-detail-service.ts",
+      "tenantBoundary": "scoped owner group college, current membership and role",
+      "sourceReviewed": true,
+      "physicalTargetVerified": false,
+      "producerConsumerVerified": false,
+      "runtimeVerified": false,
+      "approvalScope": "GREENFIELD_ENGINEERING_TARGET_DECISION_GLOBAL_P31_SIGNOFF_OPEN"
+    },
+    {
+      "sourceField": "lms_group.description",
+      "legacySqlType": "varchar(1000)",
+      "legacyMigrationSource": "V166__groups_kernel.sql",
+      "proposedKind": "DIRECT_SOURCE_NAME_MATCH",
+      "decision": "NORMALIZED_ACTIVE_SCHEMA_FIELD",
+      "targetRefs": [
+        "lms_groups.description"
+      ],
+      "sourceRationale": "Active source behavior is represented by a typed registered target field. Field-level runtime proof is required; same spelling alone is insufficient. Field: lms_group.description.",
+      "producerPath": "src/modules/groups/service.ts",
+      "consumerPath": "src/modules/groups/learner-group-detail-service.ts",
+      "tenantBoundary": "scoped owner group college, current membership and role",
+      "sourceReviewed": true,
+      "physicalTargetVerified": false,
+      "producerConsumerVerified": false,
+      "runtimeVerified": false,
+      "approvalScope": "GREENFIELD_ENGINEERING_TARGET_DECISION_GLOBAL_P31_SIGNOFF_OPEN"
+    },
+    {
+      "sourceField": "lms_group.status",
+      "legacySqlType": "varchar(20)",
+      "legacyMigrationSource": "V166__groups_kernel.sql",
+      "proposedKind": "DIRECT_SOURCE_NAME_MATCH",
+      "decision": "NORMALIZED_ACTIVE_SCHEMA_FIELD",
+      "targetRefs": [
+        "lms_groups.status"
+      ],
+      "sourceRationale": "Active source behavior is represented by a typed registered target field. Field-level runtime proof is required; same spelling alone is insufficient. Field: lms_group.status.",
+      "producerPath": "src/modules/groups/service.ts",
+      "consumerPath": "src/modules/groups/learner-group-detail-service.ts",
+      "tenantBoundary": "scoped owner group college, current membership and role",
+      "sourceReviewed": true,
+      "physicalTargetVerified": false,
+      "producerConsumerVerified": false,
+      "runtimeVerified": false,
+      "approvalScope": "GREENFIELD_ENGINEERING_TARGET_DECISION_GLOBAL_P31_SIGNOFF_OPEN"
+    },
+    {
+      "sourceField": "lms_group.capacity",
+      "legacySqlType": "int",
+      "legacyMigrationSource": "V166__groups_kernel.sql",
+      "proposedKind": "DIRECT_SOURCE_NAME_MATCH",
+      "decision": "NORMALIZED_ACTIVE_SCHEMA_FIELD",
+      "targetRefs": [
+        "lms_groups.capacity"
+      ],
+      "sourceRationale": "Active source behavior is represented by a typed registered target field. Field-level runtime proof is required; same spelling alone is insufficient. Field: lms_group.capacity.",
+      "producerPath": "src/modules/groups/service.ts",
+      "consumerPath": "src/modules/groups/learner-group-detail-service.ts",
+      "tenantBoundary": "scoped owner group college, current membership and role",
+      "sourceReviewed": true,
+      "physicalTargetVerified": false,
+      "producerConsumerVerified": false,
+      "runtimeVerified": false,
+      "approvalScope": "GREENFIELD_ENGINEERING_TARGET_DECISION_GLOBAL_P31_SIGNOFF_OPEN"
+    },
+    {
+      "sourceField": "lms_group.active_count",
+      "legacySqlType": "int",
+      "legacyMigrationSource": "V166__groups_kernel.sql",
+      "proposedKind": "DIRECT_SOURCE_NAME_MATCH",
+      "decision": "NORMALIZED_ACTIVE_SCHEMA_FIELD",
+      "targetRefs": [
+        "lms_groups.active_count"
+      ],
+      "sourceRationale": "Active source behavior is represented by a typed registered target field. Field-level runtime proof is required; same spelling alone is insufficient. Field: lms_group.active_count.",
+      "producerPath": "src/modules/groups/service.ts",
+      "consumerPath": "src/modules/groups/learner-group-detail-service.ts",
+      "tenantBoundary": "scoped owner group college, current membership and role",
+      "sourceReviewed": true,
+      "physicalTargetVerified": false,
+      "producerConsumerVerified": false,
+      "runtimeVerified": false,
+      "approvalScope": "GREENFIELD_ENGINEERING_TARGET_DECISION_GLOBAL_P31_SIGNOFF_OPEN"
+    },
+    {
+      "sourceField": "lms_group.self_join_open_from",
+      "legacySqlType": "datetime",
+      "legacyMigrationSource": "V166__groups_kernel.sql",
+      "proposedKind": "DIRECT_SOURCE_NAME_MATCH",
+      "decision": "NORMALIZED_ACTIVE_SCHEMA_FIELD",
+      "targetRefs": [
+        "lms_groups.self_join_open_from"
+      ],
+      "sourceRationale": "Active source behavior is represented by a typed registered target field. Field-level runtime proof is required; same spelling alone is insufficient. Field: lms_group.self_join_open_from.",
+      "producerPath": "src/modules/groups/service.ts",
+      "consumerPath": "src/modules/groups/learner-group-detail-service.ts",
+      "tenantBoundary": "scoped owner group college, current membership and role",
+      "sourceReviewed": true,
+      "physicalTargetVerified": false,
+      "producerConsumerVerified": false,
+      "runtimeVerified": false,
+      "approvalScope": "GREENFIELD_ENGINEERING_TARGET_DECISION_GLOBAL_P31_SIGNOFF_OPEN"
+    },
+    {
+      "sourceField": "lms_group.self_join_open_until",
+      "legacySqlType": "datetime",
+      "legacyMigrationSource": "V166__groups_kernel.sql",
+      "proposedKind": "DIRECT_SOURCE_NAME_MATCH",
+      "decision": "NORMALIZED_ACTIVE_SCHEMA_FIELD",
+      "targetRefs": [
+        "lms_groups.self_join_open_until"
+      ],
+      "sourceRationale": "Active source behavior is represented by a typed registered target field. Field-level runtime proof is required; same spelling alone is insufficient. Field: lms_group.self_join_open_until.",
+      "producerPath": "src/modules/groups/service.ts",
+      "consumerPath": "src/modules/groups/learner-group-detail-service.ts",
+      "tenantBoundary": "scoped owner group college, current membership and role",
+      "sourceReviewed": true,
+      "physicalTargetVerified": false,
+      "producerConsumerVerified": false,
+      "runtimeVerified": false,
+      "approvalScope": "GREENFIELD_ENGINEERING_TARGET_DECISION_GLOBAL_P31_SIGNOFF_OPEN"
+    },
+    {
+      "sourceField": "lms_group.academic_year",
+      "legacySqlType": "varchar(20)",
+      "legacyMigrationSource": "V166__groups_kernel.sql",
+      "proposedKind": "DIRECT_SOURCE_NAME_MATCH",
+      "decision": "NORMALIZED_ACTIVE_SCHEMA_FIELD",
+      "targetRefs": [
+        "lms_groups.academic_year"
+      ],
+      "sourceRationale": "Active source behavior is represented by a typed registered target field. Field-level runtime proof is required; same spelling alone is insufficient. Field: lms_group.academic_year.",
+      "producerPath": "src/modules/groups/service.ts",
+      "consumerPath": "src/modules/groups/learner-group-detail-service.ts",
+      "tenantBoundary": "scoped owner group college, current membership and role",
+      "sourceReviewed": true,
+      "physicalTargetVerified": false,
+      "producerConsumerVerified": false,
+      "runtimeVerified": false,
+      "approvalScope": "GREENFIELD_ENGINEERING_TARGET_DECISION_GLOBAL_P31_SIGNOFF_OPEN"
+    },
+    {
+      "sourceField": "lms_group.semester_number",
+      "legacySqlType": "int",
+      "legacyMigrationSource": "V166__groups_kernel.sql",
+      "proposedKind": "DIRECT_SOURCE_NAME_MATCH",
+      "decision": "NORMALIZED_ACTIVE_SCHEMA_FIELD",
+      "targetRefs": [
+        "lms_groups.semester_number"
+      ],
+      "sourceRationale": "Active source behavior is represented by a typed registered target field. Field-level runtime proof is required; same spelling alone is insufficient. Field: lms_group.semester_number.",
+      "producerPath": "src/modules/groups/service.ts",
+      "consumerPath": "src/modules/groups/learner-group-detail-service.ts",
+      "tenantBoundary": "scoped owner group college, current membership and role",
+      "sourceReviewed": true,
+      "physicalTargetVerified": false,
+      "producerConsumerVerified": false,
+      "runtimeVerified": false,
+      "approvalScope": "GREENFIELD_ENGINEERING_TARGET_DECISION_GLOBAL_P31_SIGNOFF_OPEN"
+    },
+    {
+      "sourceField": "lms_group.config_json",
+      "legacySqlType": "json",
+      "legacyMigrationSource": "V166__groups_kernel.sql",
+      "proposedKind": "DIRECT_SOURCE_NAME_MATCH",
+      "decision": "NORMALIZED_ACTIVE_SCHEMA_FIELD",
+      "targetRefs": [
+        "lms_groups.config_json"
+      ],
+      "sourceRationale": "Active source behavior is represented by a typed registered target field. Field-level runtime proof is required; same spelling alone is insufficient. Field: lms_group.config_json.",
+      "producerPath": "src/modules/groups/service.ts",
+      "consumerPath": "src/modules/groups/learner-group-detail-service.ts",
+      "tenantBoundary": "scoped owner group college, current membership and role",
+      "sourceReviewed": true,
+      "physicalTargetVerified": false,
+      "producerConsumerVerified": false,
+      "runtimeVerified": false,
+      "approvalScope": "GREENFIELD_ENGINEERING_TARGET_DECISION_GLOBAL_P31_SIGNOFF_OPEN"
+    },
+    {
+      "sourceField": "lms_group.created_by_type",
+      "legacySqlType": "varchar(20)",
+      "legacyMigrationSource": "V166__groups_kernel.sql",
+      "proposedKind": "HISTORICAL_SNAPSHOT_PERSISTED",
+      "decision": "PERSISTED_UNTRUSTED_HISTORIC_ROLE_SNAPSHOT",
+      "targetRefs": [
+        "lms_groups.created_by_type"
+      ],
+      "sourceRationale": "Historic actor/member kind is a display and audit snapshot; authorization uses current persisted role grants and membership/tenant checks. Field: lms_group.created_by_type.",
+      "producerPath": "src/modules/groups/service.ts",
+      "consumerPath": "src/modules/groups/learner-group-detail-service.ts",
+      "tenantBoundary": "scoped owner group college, current membership and role",
+      "sourceReviewed": true,
+      "physicalTargetVerified": false,
+      "producerConsumerVerified": false,
+      "runtimeVerified": false,
+      "approvalScope": "GREENFIELD_ENGINEERING_TARGET_DECISION_GLOBAL_P31_SIGNOFF_OPEN"
+    },
+    {
+      "sourceField": "lms_group.created_by_id",
+      "legacySqlType": "int",
+      "legacyMigrationSource": "V166__groups_kernel.sql",
+      "proposedKind": "IDENTITY_REDESIGN",
+      "decision": "RESOLVED_AUTHENTICATED_UUID_IDENTITY",
+      "targetRefs": [
+        "lms_groups.created_by_user_id"
+      ],
+      "sourceRationale": "Legacy numeric actor/member ID cannot grant access: resolve current UUID user or membership with persisted same-college/role checks, never by mere source integer equality. Field: lms_group.created_by_id.",
+      "producerPath": "src/modules/groups/service.ts",
+      "consumerPath": "src/modules/groups/learner-group-detail-service.ts",
+      "tenantBoundary": "scoped owner group college, current membership and role",
+      "sourceReviewed": true,
+      "physicalTargetVerified": false,
+      "producerConsumerVerified": false,
+      "runtimeVerified": false,
+      "approvalScope": "GREENFIELD_ENGINEERING_TARGET_DECISION_GLOBAL_P31_SIGNOFF_OPEN"
+    },
+    {
+      "sourceField": "lms_group.created_at",
+      "legacySqlType": "datetime",
+      "legacyMigrationSource": "V166__groups_kernel.sql",
+      "proposedKind": "DIRECT_SOURCE_NAME_MATCH",
+      "decision": "NORMALIZED_ACTIVE_SCHEMA_FIELD",
+      "targetRefs": [
+        "lms_groups.created_at"
+      ],
+      "sourceRationale": "Active source behavior is represented by a typed registered target field. Field-level runtime proof is required; same spelling alone is insufficient. Field: lms_group.created_at.",
+      "producerPath": "src/modules/groups/service.ts",
+      "consumerPath": "src/modules/groups/learner-group-detail-service.ts",
+      "tenantBoundary": "scoped owner group college, current membership and role",
+      "sourceReviewed": true,
+      "physicalTargetVerified": false,
+      "producerConsumerVerified": false,
+      "runtimeVerified": false,
+      "approvalScope": "GREENFIELD_ENGINEERING_TARGET_DECISION_GLOBAL_P31_SIGNOFF_OPEN"
+    },
+    {
+      "sourceField": "lms_group.updated_at",
+      "legacySqlType": "datetime",
+      "legacyMigrationSource": "V166__groups_kernel.sql",
+      "proposedKind": "DIRECT_SOURCE_NAME_MATCH",
+      "decision": "NORMALIZED_ACTIVE_SCHEMA_FIELD",
+      "targetRefs": [
+        "lms_groups.updated_at"
+      ],
+      "sourceRationale": "Active source behavior is represented by a typed registered target field. Field-level runtime proof is required; same spelling alone is insufficient. Field: lms_group.updated_at.",
+      "producerPath": "src/modules/groups/service.ts",
+      "consumerPath": "src/modules/groups/learner-group-detail-service.ts",
+      "tenantBoundary": "scoped owner group college, current membership and role",
+      "sourceReviewed": true,
+      "physicalTargetVerified": false,
+      "producerConsumerVerified": false,
+      "runtimeVerified": false,
+      "approvalScope": "GREENFIELD_ENGINEERING_TARGET_DECISION_GLOBAL_P31_SIGNOFF_OPEN"
+    },
+    {
+      "sourceField": "lms_group.is_deleted",
+      "legacySqlType": "boolean",
+      "legacyMigrationSource": "V166__groups_kernel.sql",
+      "proposedKind": "SOFT_DELETE_TIMESTAMP",
+      "decision": "REDESIGNED_SOFT_DELETE",
+      "targetRefs": [
+        "lms_groups.deleted_at"
+      ],
+      "sourceRationale": "Legacy is_deleted uses explicit deleted_at while active lifecycle/authorization rules prevent hidden rows from accepting writes or being exposed to consumers. Field: lms_group.is_deleted.",
+      "producerPath": "src/modules/groups/service.ts",
+      "consumerPath": "src/modules/groups/learner-group-detail-service.ts",
+      "tenantBoundary": "scoped owner group college, current membership and role",
+      "sourceReviewed": true,
+      "physicalTargetVerified": false,
+      "producerConsumerVerified": false,
+      "runtimeVerified": false,
+      "approvalScope": "GREENFIELD_ENGINEERING_TARGET_DECISION_GLOBAL_P31_SIGNOFF_OPEN"
+    },
+    {
+      "sourceField": "lms_group.version",
+      "legacySqlType": "bigint",
+      "legacyMigrationSource": "V166__groups_kernel.sql",
+      "proposedKind": "DIRECT_SOURCE_NAME_MATCH",
+      "decision": "NORMALIZED_ACTIVE_SCHEMA_FIELD",
+      "targetRefs": [
+        "lms_groups.version"
+      ],
+      "sourceRationale": "Active source behavior is represented by a typed registered target field. Field-level runtime proof is required; same spelling alone is insufficient. Field: lms_group.version.",
+      "producerPath": "src/modules/groups/service.ts",
+      "consumerPath": "src/modules/groups/learner-group-detail-service.ts",
+      "tenantBoundary": "scoped owner group college, current membership and role",
+      "sourceReviewed": true,
+      "physicalTargetVerified": false,
+      "producerConsumerVerified": false,
+      "runtimeVerified": false,
+      "approvalScope": "GREENFIELD_ENGINEERING_TARGET_DECISION_GLOBAL_P31_SIGNOFF_OPEN"
+    },
+    {
+      "sourceField": "lms_group_member.id",
+      "legacySqlType": "bigint",
+      "legacyMigrationSource": "V166__groups_kernel.sql",
+      "proposedKind": "DIRECT_SOURCE_NAME_MATCH",
+      "decision": "NORMALIZED_ACTIVE_SCHEMA_FIELD",
+      "targetRefs": [
+        "lms_group_members.id"
+      ],
+      "sourceRationale": "Active source behavior is represented by a typed registered target field. Field-level runtime proof is required; same spelling alone is insufficient. Field: lms_group_member.id.",
+      "producerPath": "src/modules/groups/service.ts",
+      "consumerPath": "src/modules/groups/learner-group-detail-service.ts",
+      "tenantBoundary": "scoped owner group college, current membership and role",
+      "sourceReviewed": true,
+      "physicalTargetVerified": false,
+      "producerConsumerVerified": false,
+      "runtimeVerified": false,
+      "approvalScope": "GREENFIELD_ENGINEERING_TARGET_DECISION_GLOBAL_P31_SIGNOFF_OPEN"
+    },
+    {
+      "sourceField": "lms_group_member.group_id",
+      "legacySqlType": "bigint",
+      "legacyMigrationSource": "V166__groups_kernel.sql",
+      "proposedKind": "DIRECT_SOURCE_NAME_MATCH",
+      "decision": "NORMALIZED_ACTIVE_SCHEMA_FIELD",
+      "targetRefs": [
+        "lms_group_members.group_id"
+      ],
+      "sourceRationale": "Active source behavior is represented by a typed registered target field. Field-level runtime proof is required; same spelling alone is insufficient. Field: lms_group_member.group_id.",
+      "producerPath": "src/modules/groups/service.ts",
+      "consumerPath": "src/modules/groups/learner-group-detail-service.ts",
+      "tenantBoundary": "scoped owner group college, current membership and role",
+      "sourceReviewed": true,
+      "physicalTargetVerified": false,
+      "producerConsumerVerified": false,
+      "runtimeVerified": false,
+      "approvalScope": "GREENFIELD_ENGINEERING_TARGET_DECISION_GLOBAL_P31_SIGNOFF_OPEN"
+    },
+    {
+      "sourceField": "lms_group_member.member_type",
+      "legacySqlType": "varchar(20)",
+      "legacyMigrationSource": "V166__groups_kernel.sql",
+      "proposedKind": "DIRECT_SOURCE_NAME_MATCH",
+      "decision": "NORMALIZED_ACTIVE_SCHEMA_FIELD",
+      "targetRefs": [
+        "lms_group_members.member_type"
+      ],
+      "sourceRationale": "Active source behavior is represented by a typed registered target field. Field-level runtime proof is required; same spelling alone is insufficient. Field: lms_group_member.member_type.",
+      "producerPath": "src/modules/groups/service.ts",
+      "consumerPath": "src/modules/groups/learner-group-detail-service.ts",
+      "tenantBoundary": "scoped owner group college, current membership and role",
+      "sourceReviewed": true,
+      "physicalTargetVerified": false,
+      "producerConsumerVerified": false,
+      "runtimeVerified": false,
+      "approvalScope": "GREENFIELD_ENGINEERING_TARGET_DECISION_GLOBAL_P31_SIGNOFF_OPEN"
+    },
+    {
+      "sourceField": "lms_group_member.member_id",
+      "legacySqlType": "int",
+      "legacyMigrationSource": "V166__groups_kernel.sql",
+      "proposedKind": "IDENTITY_REDESIGN",
+      "decision": "RESOLVED_AUTHENTICATED_UUID_IDENTITY",
+      "targetRefs": [
+        "lms_group_members.membership_id"
+      ],
+      "sourceRationale": "Legacy numeric actor/member ID cannot grant access: resolve current UUID user or membership with persisted same-college/role checks, never by mere source integer equality. Field: lms_group_member.member_id.",
+      "producerPath": "src/modules/groups/service.ts",
+      "consumerPath": "src/modules/groups/learner-group-detail-service.ts",
+      "tenantBoundary": "scoped owner group college, current membership and role",
+      "sourceReviewed": true,
+      "physicalTargetVerified": false,
+      "producerConsumerVerified": false,
+      "runtimeVerified": false,
+      "approvalScope": "GREENFIELD_ENGINEERING_TARGET_DECISION_GLOBAL_P31_SIGNOFF_OPEN"
+    },
+    {
+      "sourceField": "lms_group_member.state",
+      "legacySqlType": "varchar(20)",
+      "legacyMigrationSource": "V166__groups_kernel.sql",
+      "proposedKind": "DIRECT_SOURCE_NAME_MATCH",
+      "decision": "NORMALIZED_ACTIVE_SCHEMA_FIELD",
+      "targetRefs": [
+        "lms_group_members.state"
+      ],
+      "sourceRationale": "Active source behavior is represented by a typed registered target field. Field-level runtime proof is required; same spelling alone is insufficient. Field: lms_group_member.state.",
+      "producerPath": "src/modules/groups/service.ts",
+      "consumerPath": "src/modules/groups/learner-group-detail-service.ts",
+      "tenantBoundary": "scoped owner group college, current membership and role",
+      "sourceReviewed": true,
+      "physicalTargetVerified": false,
+      "producerConsumerVerified": false,
+      "runtimeVerified": false,
+      "approvalScope": "GREENFIELD_ENGINEERING_TARGET_DECISION_GLOBAL_P31_SIGNOFF_OPEN"
+    },
+    {
+      "sourceField": "lms_group_member.source",
+      "legacySqlType": "varchar(20)",
+      "legacyMigrationSource": "V166__groups_kernel.sql",
+      "proposedKind": "DIRECT_SOURCE_NAME_MATCH",
+      "decision": "NORMALIZED_ACTIVE_SCHEMA_FIELD",
+      "targetRefs": [
+        "lms_group_members.source"
+      ],
+      "sourceRationale": "Active source behavior is represented by a typed registered target field. Field-level runtime proof is required; same spelling alone is insufficient. Field: lms_group_member.source.",
+      "producerPath": "src/modules/groups/service.ts",
+      "consumerPath": "src/modules/groups/learner-group-detail-service.ts",
+      "tenantBoundary": "scoped owner group college, current membership and role",
+      "sourceReviewed": true,
+      "physicalTargetVerified": false,
+      "producerConsumerVerified": false,
+      "runtimeVerified": false,
+      "approvalScope": "GREENFIELD_ENGINEERING_TARGET_DECISION_GLOBAL_P31_SIGNOFF_OPEN"
+    },
+    {
+      "sourceField": "lms_group_member.is_locked",
+      "legacySqlType": "boolean",
+      "legacyMigrationSource": "V166__groups_kernel.sql",
+      "proposedKind": "DIRECT_SOURCE_NAME_MATCH",
+      "decision": "NORMALIZED_ACTIVE_SCHEMA_FIELD",
+      "targetRefs": [
+        "lms_group_members.is_locked"
+      ],
+      "sourceRationale": "Active source behavior is represented by a typed registered target field. Field-level runtime proof is required; same spelling alone is insufficient. Field: lms_group_member.is_locked.",
+      "producerPath": "src/modules/groups/service.ts",
+      "consumerPath": "src/modules/groups/learner-group-detail-service.ts",
+      "tenantBoundary": "scoped owner group college, current membership and role",
+      "sourceReviewed": true,
+      "physicalTargetVerified": false,
+      "producerConsumerVerified": false,
+      "runtimeVerified": false,
+      "approvalScope": "GREENFIELD_ENGINEERING_TARGET_DECISION_GLOBAL_P31_SIGNOFF_OPEN"
+    },
+    {
+      "sourceField": "lms_group_member.waitlist_position",
+      "legacySqlType": "int",
+      "legacyMigrationSource": "V166__groups_kernel.sql",
+      "proposedKind": "DIRECT_SOURCE_NAME_MATCH",
+      "decision": "NORMALIZED_ACTIVE_SCHEMA_FIELD",
+      "targetRefs": [
+        "lms_group_members.waitlist_position"
+      ],
+      "sourceRationale": "Active source behavior is represented by a typed registered target field. Field-level runtime proof is required; same spelling alone is insufficient. Field: lms_group_member.waitlist_position.",
+      "producerPath": "src/modules/groups/service.ts",
+      "consumerPath": "src/modules/groups/learner-group-detail-service.ts",
+      "tenantBoundary": "scoped owner group college, current membership and role",
+      "sourceReviewed": true,
+      "physicalTargetVerified": false,
+      "producerConsumerVerified": false,
+      "runtimeVerified": false,
+      "approvalScope": "GREENFIELD_ENGINEERING_TARGET_DECISION_GLOBAL_P31_SIGNOFF_OPEN"
+    },
+    {
+      "sourceField": "lms_group_member.note",
+      "legacySqlType": "varchar(500)",
+      "legacyMigrationSource": "V166__groups_kernel.sql",
+      "proposedKind": "DIRECT_SOURCE_NAME_MATCH",
+      "decision": "NORMALIZED_ACTIVE_SCHEMA_FIELD",
+      "targetRefs": [
+        "lms_group_members.note"
+      ],
+      "sourceRationale": "Active source behavior is represented by a typed registered target field. Field-level runtime proof is required; same spelling alone is insufficient. Field: lms_group_member.note.",
+      "producerPath": "src/modules/groups/service.ts",
+      "consumerPath": "src/modules/groups/learner-group-detail-service.ts",
+      "tenantBoundary": "scoped owner group college, current membership and role",
+      "sourceReviewed": true,
+      "physicalTargetVerified": false,
+      "producerConsumerVerified": false,
+      "runtimeVerified": false,
+      "approvalScope": "GREENFIELD_ENGINEERING_TARGET_DECISION_GLOBAL_P31_SIGNOFF_OPEN"
+    },
+    {
+      "sourceField": "lms_group_member.joined_at",
+      "legacySqlType": "datetime",
+      "legacyMigrationSource": "V166__groups_kernel.sql",
+      "proposedKind": "DIRECT_SOURCE_NAME_MATCH",
+      "decision": "NORMALIZED_ACTIVE_SCHEMA_FIELD",
+      "targetRefs": [
+        "lms_group_members.joined_at"
+      ],
+      "sourceRationale": "Active source behavior is represented by a typed registered target field. Field-level runtime proof is required; same spelling alone is insufficient. Field: lms_group_member.joined_at.",
+      "producerPath": "src/modules/groups/service.ts",
+      "consumerPath": "src/modules/groups/learner-group-detail-service.ts",
+      "tenantBoundary": "scoped owner group college, current membership and role",
+      "sourceReviewed": true,
+      "physicalTargetVerified": false,
+      "producerConsumerVerified": false,
+      "runtimeVerified": false,
+      "approvalScope": "GREENFIELD_ENGINEERING_TARGET_DECISION_GLOBAL_P31_SIGNOFF_OPEN"
+    },
+    {
+      "sourceField": "lms_group_member.created_at",
+      "legacySqlType": "datetime",
+      "legacyMigrationSource": "V166__groups_kernel.sql",
+      "proposedKind": "DIRECT_SOURCE_NAME_MATCH",
+      "decision": "NORMALIZED_ACTIVE_SCHEMA_FIELD",
+      "targetRefs": [
+        "lms_group_members.created_at"
+      ],
+      "sourceRationale": "Active source behavior is represented by a typed registered target field. Field-level runtime proof is required; same spelling alone is insufficient. Field: lms_group_member.created_at.",
+      "producerPath": "src/modules/groups/service.ts",
+      "consumerPath": "src/modules/groups/learner-group-detail-service.ts",
+      "tenantBoundary": "scoped owner group college, current membership and role",
+      "sourceReviewed": true,
+      "physicalTargetVerified": false,
+      "producerConsumerVerified": false,
+      "runtimeVerified": false,
+      "approvalScope": "GREENFIELD_ENGINEERING_TARGET_DECISION_GLOBAL_P31_SIGNOFF_OPEN"
+    },
+    {
+      "sourceField": "lms_group_member.updated_at",
+      "legacySqlType": "datetime",
+      "legacyMigrationSource": "V166__groups_kernel.sql",
+      "proposedKind": "DIRECT_SOURCE_NAME_MATCH",
+      "decision": "NORMALIZED_ACTIVE_SCHEMA_FIELD",
+      "targetRefs": [
+        "lms_group_members.updated_at"
+      ],
+      "sourceRationale": "Active source behavior is represented by a typed registered target field. Field-level runtime proof is required; same spelling alone is insufficient. Field: lms_group_member.updated_at.",
+      "producerPath": "src/modules/groups/service.ts",
+      "consumerPath": "src/modules/groups/learner-group-detail-service.ts",
+      "tenantBoundary": "scoped owner group college, current membership and role",
+      "sourceReviewed": true,
+      "physicalTargetVerified": false,
+      "producerConsumerVerified": false,
+      "runtimeVerified": false,
+      "approvalScope": "GREENFIELD_ENGINEERING_TARGET_DECISION_GLOBAL_P31_SIGNOFF_OPEN"
+    },
+    {
+      "sourceField": "lms_group_member.version",
+      "legacySqlType": "bigint",
+      "legacyMigrationSource": "V166__groups_kernel.sql",
+      "proposedKind": "DIRECT_SOURCE_NAME_MATCH",
+      "decision": "NORMALIZED_ACTIVE_SCHEMA_FIELD",
+      "targetRefs": [
+        "lms_group_members.version"
+      ],
+      "sourceRationale": "Active source behavior is represented by a typed registered target field. Field-level runtime proof is required; same spelling alone is insufficient. Field: lms_group_member.version.",
+      "producerPath": "src/modules/groups/service.ts",
+      "consumerPath": "src/modules/groups/learner-group-detail-service.ts",
+      "tenantBoundary": "scoped owner group college, current membership and role",
+      "sourceReviewed": true,
+      "physicalTargetVerified": false,
+      "producerConsumerVerified": false,
+      "runtimeVerified": false,
+      "approvalScope": "GREENFIELD_ENGINEERING_TARGET_DECISION_GLOBAL_P31_SIGNOFF_OPEN"
+    },
+    {
+      "sourceField": "lms_group_member_event.id",
+      "legacySqlType": "bigint",
+      "legacyMigrationSource": "V166__groups_kernel.sql",
+      "proposedKind": "DIRECT_SOURCE_NAME_MATCH",
+      "decision": "NORMALIZED_ACTIVE_SCHEMA_FIELD",
+      "targetRefs": [
+        "lms_group_member_events.id"
+      ],
+      "sourceRationale": "Active source behavior is represented by a typed registered target field. Field-level runtime proof is required; same spelling alone is insufficient. Field: lms_group_member_event.id.",
+      "producerPath": "src/modules/groups/service.ts",
+      "consumerPath": "src/modules/groups/admin-read-service.ts",
+      "tenantBoundary": "scoped owner group college, current membership and role",
+      "sourceReviewed": true,
+      "physicalTargetVerified": false,
+      "producerConsumerVerified": false,
+      "runtimeVerified": false,
+      "approvalScope": "GREENFIELD_ENGINEERING_TARGET_DECISION_GLOBAL_P31_SIGNOFF_OPEN"
+    },
+    {
+      "sourceField": "lms_group_member_event.group_id",
+      "legacySqlType": "bigint",
+      "legacyMigrationSource": "V166__groups_kernel.sql",
+      "proposedKind": "DIRECT_SOURCE_NAME_MATCH",
+      "decision": "NORMALIZED_ACTIVE_SCHEMA_FIELD",
+      "targetRefs": [
+        "lms_group_member_events.group_id"
+      ],
+      "sourceRationale": "Active source behavior is represented by a typed registered target field. Field-level runtime proof is required; same spelling alone is insufficient. Field: lms_group_member_event.group_id.",
+      "producerPath": "src/modules/groups/service.ts",
+      "consumerPath": "src/modules/groups/admin-read-service.ts",
+      "tenantBoundary": "scoped owner group college, current membership and role",
+      "sourceReviewed": true,
+      "physicalTargetVerified": false,
+      "producerConsumerVerified": false,
+      "runtimeVerified": false,
+      "approvalScope": "GREENFIELD_ENGINEERING_TARGET_DECISION_GLOBAL_P31_SIGNOFF_OPEN"
+    },
+    {
+      "sourceField": "lms_group_member_event.member_type",
+      "legacySqlType": "varchar(20)",
+      "legacyMigrationSource": "V166__groups_kernel.sql",
+      "proposedKind": "HISTORICAL_SNAPSHOT_PERSISTED",
+      "decision": "PERSISTED_UNTRUSTED_HISTORIC_ROLE_SNAPSHOT",
+      "targetRefs": [
+        "lms_group_member_events.member_type"
+      ],
+      "sourceRationale": "Historic actor/member kind is a display and audit snapshot; authorization uses current persisted role grants and membership/tenant checks. Field: lms_group_member_event.member_type.",
+      "producerPath": "src/modules/groups/service.ts",
+      "consumerPath": "src/modules/groups/admin-read-service.ts",
+      "tenantBoundary": "scoped owner group college, current membership and role",
+      "sourceReviewed": true,
+      "physicalTargetVerified": false,
+      "producerConsumerVerified": false,
+      "runtimeVerified": false,
+      "approvalScope": "GREENFIELD_ENGINEERING_TARGET_DECISION_GLOBAL_P31_SIGNOFF_OPEN"
+    },
+    {
+      "sourceField": "lms_group_member_event.member_id",
+      "legacySqlType": "int",
+      "legacyMigrationSource": "V166__groups_kernel.sql",
+      "proposedKind": "IDENTITY_REDESIGN",
+      "decision": "RESOLVED_AUTHENTICATED_UUID_IDENTITY",
+      "targetRefs": [
+        "lms_group_member_events.membership_id"
+      ],
+      "sourceRationale": "Legacy numeric actor/member ID cannot grant access: resolve current UUID user or membership with persisted same-college/role checks, never by mere source integer equality. Field: lms_group_member_event.member_id.",
+      "producerPath": "src/modules/groups/service.ts",
+      "consumerPath": "src/modules/groups/admin-read-service.ts",
+      "tenantBoundary": "scoped owner group college, current membership and role",
+      "sourceReviewed": true,
+      "physicalTargetVerified": false,
+      "producerConsumerVerified": false,
+      "runtimeVerified": false,
+      "approvalScope": "GREENFIELD_ENGINEERING_TARGET_DECISION_GLOBAL_P31_SIGNOFF_OPEN"
+    },
+    {
+      "sourceField": "lms_group_member_event.from_state",
+      "legacySqlType": "varchar(20)",
+      "legacyMigrationSource": "V166__groups_kernel.sql",
+      "proposedKind": "DIRECT_SOURCE_NAME_MATCH",
+      "decision": "NORMALIZED_ACTIVE_SCHEMA_FIELD",
+      "targetRefs": [
+        "lms_group_member_events.from_state"
+      ],
+      "sourceRationale": "Active source behavior is represented by a typed registered target field. Field-level runtime proof is required; same spelling alone is insufficient. Field: lms_group_member_event.from_state.",
+      "producerPath": "src/modules/groups/service.ts",
+      "consumerPath": "src/modules/groups/admin-read-service.ts",
+      "tenantBoundary": "scoped owner group college, current membership and role",
+      "sourceReviewed": true,
+      "physicalTargetVerified": false,
+      "producerConsumerVerified": false,
+      "runtimeVerified": false,
+      "approvalScope": "GREENFIELD_ENGINEERING_TARGET_DECISION_GLOBAL_P31_SIGNOFF_OPEN"
+    },
+    {
+      "sourceField": "lms_group_member_event.to_state",
+      "legacySqlType": "varchar(20)",
+      "legacyMigrationSource": "V166__groups_kernel.sql",
+      "proposedKind": "DIRECT_SOURCE_NAME_MATCH",
+      "decision": "NORMALIZED_ACTIVE_SCHEMA_FIELD",
+      "targetRefs": [
+        "lms_group_member_events.to_state"
+      ],
+      "sourceRationale": "Active source behavior is represented by a typed registered target field. Field-level runtime proof is required; same spelling alone is insufficient. Field: lms_group_member_event.to_state.",
+      "producerPath": "src/modules/groups/service.ts",
+      "consumerPath": "src/modules/groups/admin-read-service.ts",
+      "tenantBoundary": "scoped owner group college, current membership and role",
+      "sourceReviewed": true,
+      "physicalTargetVerified": false,
+      "producerConsumerVerified": false,
+      "runtimeVerified": false,
+      "approvalScope": "GREENFIELD_ENGINEERING_TARGET_DECISION_GLOBAL_P31_SIGNOFF_OPEN"
+    },
+    {
+      "sourceField": "lms_group_member_event.source",
+      "legacySqlType": "varchar(20)",
+      "legacyMigrationSource": "V166__groups_kernel.sql",
+      "proposedKind": "DIRECT_SOURCE_NAME_MATCH",
+      "decision": "NORMALIZED_ACTIVE_SCHEMA_FIELD",
+      "targetRefs": [
+        "lms_group_member_events.source"
+      ],
+      "sourceRationale": "Active source behavior is represented by a typed registered target field. Field-level runtime proof is required; same spelling alone is insufficient. Field: lms_group_member_event.source.",
+      "producerPath": "src/modules/groups/service.ts",
+      "consumerPath": "src/modules/groups/admin-read-service.ts",
+      "tenantBoundary": "scoped owner group college, current membership and role",
+      "sourceReviewed": true,
+      "physicalTargetVerified": false,
+      "producerConsumerVerified": false,
+      "runtimeVerified": false,
+      "approvalScope": "GREENFIELD_ENGINEERING_TARGET_DECISION_GLOBAL_P31_SIGNOFF_OPEN"
+    },
+    {
+      "sourceField": "lms_group_member_event.actor_type",
+      "legacySqlType": "varchar(20)",
+      "legacyMigrationSource": "V166__groups_kernel.sql",
+      "proposedKind": "DIRECT_SOURCE_NAME_MATCH",
+      "decision": "NORMALIZED_ACTIVE_SCHEMA_FIELD",
+      "targetRefs": [
+        "lms_group_member_events.actor_type"
+      ],
+      "sourceRationale": "Active source behavior is represented by a typed registered target field. Field-level runtime proof is required; same spelling alone is insufficient. Field: lms_group_member_event.actor_type.",
+      "producerPath": "src/modules/groups/service.ts",
+      "consumerPath": "src/modules/groups/admin-read-service.ts",
+      "tenantBoundary": "scoped owner group college, current membership and role",
+      "sourceReviewed": true,
+      "physicalTargetVerified": false,
+      "producerConsumerVerified": false,
+      "runtimeVerified": false,
+      "approvalScope": "GREENFIELD_ENGINEERING_TARGET_DECISION_GLOBAL_P31_SIGNOFF_OPEN"
+    },
+    {
+      "sourceField": "lms_group_member_event.actor_id",
+      "legacySqlType": "int",
+      "legacyMigrationSource": "V166__groups_kernel.sql",
+      "proposedKind": "IDENTITY_REDESIGN",
+      "decision": "RESOLVED_AUTHENTICATED_UUID_IDENTITY",
+      "targetRefs": [
+        "lms_group_member_events.actor_user_id"
+      ],
+      "sourceRationale": "Legacy numeric actor/member ID cannot grant access: resolve current UUID user or membership with persisted same-college/role checks, never by mere source integer equality. Field: lms_group_member_event.actor_id.",
+      "producerPath": "src/modules/groups/service.ts",
+      "consumerPath": "src/modules/groups/admin-read-service.ts",
+      "tenantBoundary": "scoped owner group college, current membership and role",
+      "sourceReviewed": true,
+      "physicalTargetVerified": false,
+      "producerConsumerVerified": false,
+      "runtimeVerified": false,
+      "approvalScope": "GREENFIELD_ENGINEERING_TARGET_DECISION_GLOBAL_P31_SIGNOFF_OPEN"
+    },
+    {
+      "sourceField": "lms_group_member_event.reason",
+      "legacySqlType": "varchar(500)",
+      "legacyMigrationSource": "V166__groups_kernel.sql",
+      "proposedKind": "DIRECT_SOURCE_NAME_MATCH",
+      "decision": "NORMALIZED_ACTIVE_SCHEMA_FIELD",
+      "targetRefs": [
+        "lms_group_member_events.reason"
+      ],
+      "sourceRationale": "Active source behavior is represented by a typed registered target field. Field-level runtime proof is required; same spelling alone is insufficient. Field: lms_group_member_event.reason.",
+      "producerPath": "src/modules/groups/service.ts",
+      "consumerPath": "src/modules/groups/admin-read-service.ts",
+      "tenantBoundary": "scoped owner group college, current membership and role",
+      "sourceReviewed": true,
+      "physicalTargetVerified": false,
+      "producerConsumerVerified": false,
+      "runtimeVerified": false,
+      "approvalScope": "GREENFIELD_ENGINEERING_TARGET_DECISION_GLOBAL_P31_SIGNOFF_OPEN"
+    },
+    {
+      "sourceField": "lms_group_member_event.created_at",
+      "legacySqlType": "datetime",
+      "legacyMigrationSource": "V166__groups_kernel.sql",
+      "proposedKind": "DIRECT_SOURCE_NAME_MATCH",
+      "decision": "NORMALIZED_ACTIVE_SCHEMA_FIELD",
+      "targetRefs": [
+        "lms_group_member_events.created_at"
+      ],
+      "sourceRationale": "Active source behavior is represented by a typed registered target field. Field-level runtime proof is required; same spelling alone is insufficient. Field: lms_group_member_event.created_at.",
+      "producerPath": "src/modules/groups/service.ts",
+      "consumerPath": "src/modules/groups/admin-read-service.ts",
+      "tenantBoundary": "scoped owner group college, current membership and role",
+      "sourceReviewed": true,
+      "physicalTargetVerified": false,
+      "producerConsumerVerified": false,
+      "runtimeVerified": false,
+      "approvalScope": "GREENFIELD_ENGINEERING_TARGET_DECISION_GLOBAL_P31_SIGNOFF_OPEN"
+    },
+    {
+      "sourceField": "lms_group_rule.id",
+      "legacySqlType": "bigint",
+      "legacyMigrationSource": "V166__groups_kernel.sql",
+      "proposedKind": "DIRECT_SOURCE_NAME_MATCH",
+      "decision": "NORMALIZED_ACTIVE_SCHEMA_FIELD",
+      "targetRefs": [
+        "lms_group_rules.id"
+      ],
+      "sourceRationale": "Active source behavior is represented by a typed registered target field. Field-level runtime proof is required; same spelling alone is insufficient. Field: lms_group_rule.id.",
+      "producerPath": "src/modules/groups/rules-service.ts",
+      "consumerPath": "src/modules/groups/rules-service.ts",
+      "tenantBoundary": "scoped owner group college, current membership and role",
+      "sourceReviewed": true,
+      "physicalTargetVerified": false,
+      "producerConsumerVerified": false,
+      "runtimeVerified": false,
+      "approvalScope": "GREENFIELD_ENGINEERING_TARGET_DECISION_GLOBAL_P31_SIGNOFF_OPEN"
+    },
+    {
+      "sourceField": "lms_group_rule.group_id",
+      "legacySqlType": "bigint",
+      "legacyMigrationSource": "V166__groups_kernel.sql",
+      "proposedKind": "DIRECT_SOURCE_NAME_MATCH",
+      "decision": "NORMALIZED_ACTIVE_SCHEMA_FIELD",
+      "targetRefs": [
+        "lms_group_rules.group_id"
+      ],
+      "sourceRationale": "Active source behavior is represented by a typed registered target field. Field-level runtime proof is required; same spelling alone is insufficient. Field: lms_group_rule.group_id.",
+      "producerPath": "src/modules/groups/rules-service.ts",
+      "consumerPath": "src/modules/groups/rules-service.ts",
+      "tenantBoundary": "scoped owner group college, current membership and role",
+      "sourceReviewed": true,
+      "physicalTargetVerified": false,
+      "producerConsumerVerified": false,
+      "runtimeVerified": false,
+      "approvalScope": "GREENFIELD_ENGINEERING_TARGET_DECISION_GLOBAL_P31_SIGNOFF_OPEN"
+    },
+    {
+      "sourceField": "lms_group_rule.criteria_json",
+      "legacySqlType": "json",
+      "legacyMigrationSource": "V166__groups_kernel.sql",
+      "proposedKind": "DIRECT_SOURCE_NAME_MATCH",
+      "decision": "NORMALIZED_ACTIVE_SCHEMA_FIELD",
+      "targetRefs": [
+        "lms_group_rules.criteria_json"
+      ],
+      "sourceRationale": "Active source behavior is represented by a typed registered target field. Field-level runtime proof is required; same spelling alone is insufficient. Field: lms_group_rule.criteria_json.",
+      "producerPath": "src/modules/groups/rules-service.ts",
+      "consumerPath": "src/modules/groups/rules-service.ts",
+      "tenantBoundary": "scoped owner group college, current membership and role",
+      "sourceReviewed": true,
+      "physicalTargetVerified": false,
+      "producerConsumerVerified": false,
+      "runtimeVerified": false,
+      "approvalScope": "GREENFIELD_ENGINEERING_TARGET_DECISION_GLOBAL_P31_SIGNOFF_OPEN"
+    },
+    {
+      "sourceField": "lms_group_rule.auto_refresh",
+      "legacySqlType": "boolean",
+      "legacyMigrationSource": "V166__groups_kernel.sql",
+      "proposedKind": "DIRECT_SOURCE_NAME_MATCH",
+      "decision": "NORMALIZED_ACTIVE_SCHEMA_FIELD",
+      "targetRefs": [
+        "lms_group_rules.auto_refresh"
+      ],
+      "sourceRationale": "Active source behavior is represented by a typed registered target field. Field-level runtime proof is required; same spelling alone is insufficient. Field: lms_group_rule.auto_refresh.",
+      "producerPath": "src/modules/groups/rules-service.ts",
+      "consumerPath": "src/modules/groups/rules-service.ts",
+      "tenantBoundary": "scoped owner group college, current membership and role",
+      "sourceReviewed": true,
+      "physicalTargetVerified": false,
+      "producerConsumerVerified": false,
+      "runtimeVerified": false,
+      "approvalScope": "GREENFIELD_ENGINEERING_TARGET_DECISION_GLOBAL_P31_SIGNOFF_OPEN"
+    },
+    {
+      "sourceField": "lms_group_rule.last_run_at",
+      "legacySqlType": "datetime",
+      "legacyMigrationSource": "V166__groups_kernel.sql",
+      "proposedKind": "DIRECT_SOURCE_NAME_MATCH",
+      "decision": "NORMALIZED_ACTIVE_SCHEMA_FIELD",
+      "targetRefs": [
+        "lms_group_rules.last_run_at"
+      ],
+      "sourceRationale": "Active source behavior is represented by a typed registered target field. Field-level runtime proof is required; same spelling alone is insufficient. Field: lms_group_rule.last_run_at.",
+      "producerPath": "src/modules/groups/rules-service.ts",
+      "consumerPath": "src/modules/groups/rules-service.ts",
+      "tenantBoundary": "scoped owner group college, current membership and role",
+      "sourceReviewed": true,
+      "physicalTargetVerified": false,
+      "producerConsumerVerified": false,
+      "runtimeVerified": false,
+      "approvalScope": "GREENFIELD_ENGINEERING_TARGET_DECISION_GLOBAL_P31_SIGNOFF_OPEN"
+    },
+    {
+      "sourceField": "lms_group_rule.last_run_matched",
+      "legacySqlType": "int",
+      "legacyMigrationSource": "V166__groups_kernel.sql",
+      "proposedKind": "DIRECT_SOURCE_NAME_MATCH",
+      "decision": "NORMALIZED_ACTIVE_SCHEMA_FIELD",
+      "targetRefs": [
+        "lms_group_rules.last_run_matched"
+      ],
+      "sourceRationale": "Active source behavior is represented by a typed registered target field. Field-level runtime proof is required; same spelling alone is insufficient. Field: lms_group_rule.last_run_matched.",
+      "producerPath": "src/modules/groups/rules-service.ts",
+      "consumerPath": "src/modules/groups/rules-service.ts",
+      "tenantBoundary": "scoped owner group college, current membership and role",
+      "sourceReviewed": true,
+      "physicalTargetVerified": false,
+      "producerConsumerVerified": false,
+      "runtimeVerified": false,
+      "approvalScope": "GREENFIELD_ENGINEERING_TARGET_DECISION_GLOBAL_P31_SIGNOFF_OPEN"
+    },
+    {
+      "sourceField": "lms_group_rule.created_at",
+      "legacySqlType": "datetime",
+      "legacyMigrationSource": "V166__groups_kernel.sql",
+      "proposedKind": "DIRECT_SOURCE_NAME_MATCH",
+      "decision": "NORMALIZED_ACTIVE_SCHEMA_FIELD",
+      "targetRefs": [
+        "lms_group_rules.created_at"
+      ],
+      "sourceRationale": "Active source behavior is represented by a typed registered target field. Field-level runtime proof is required; same spelling alone is insufficient. Field: lms_group_rule.created_at.",
+      "producerPath": "src/modules/groups/rules-service.ts",
+      "consumerPath": "src/modules/groups/rules-service.ts",
+      "tenantBoundary": "scoped owner group college, current membership and role",
+      "sourceReviewed": true,
+      "physicalTargetVerified": false,
+      "producerConsumerVerified": false,
+      "runtimeVerified": false,
+      "approvalScope": "GREENFIELD_ENGINEERING_TARGET_DECISION_GLOBAL_P31_SIGNOFF_OPEN"
+    },
+    {
+      "sourceField": "lms_group_rule.updated_at",
+      "legacySqlType": "datetime",
+      "legacyMigrationSource": "V166__groups_kernel.sql",
+      "proposedKind": "DIRECT_SOURCE_NAME_MATCH",
+      "decision": "NORMALIZED_ACTIVE_SCHEMA_FIELD",
+      "targetRefs": [
+        "lms_group_rules.updated_at"
+      ],
+      "sourceRationale": "Active source behavior is represented by a typed registered target field. Field-level runtime proof is required; same spelling alone is insufficient. Field: lms_group_rule.updated_at.",
+      "producerPath": "src/modules/groups/rules-service.ts",
+      "consumerPath": "src/modules/groups/rules-service.ts",
+      "tenantBoundary": "scoped owner group college, current membership and role",
+      "sourceReviewed": true,
+      "physicalTargetVerified": false,
+      "producerConsumerVerified": false,
+      "runtimeVerified": false,
+      "approvalScope": "GREENFIELD_ENGINEERING_TARGET_DECISION_GLOBAL_P31_SIGNOFF_OPEN"
+    }
+  ]
+}
