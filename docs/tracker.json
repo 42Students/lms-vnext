@@ -2033,7 +2033,30 @@
             "done": false,
             "acceptedAt": null,
             "acceptanceEvidence": [],
-            "acceptance": "Verify notify-only-once/delivery safety, suppression, activity chronology and scoped TPO alert/read semantics."
+            "acceptance": "Verify notify-only-once/delivery safety, suppression, activity chronology and scoped TPO alert/read semantics.",
+            "implementationCheckpoint": {
+              "status": "SOURCE_AND_RUNTIME_BUGFIXES_COMMITTED_NOT_ACCEPTED",
+              "recordedOn": "2026-11-01",
+              "codeCommits": [
+                "99d8f48eaf83b8c3d9a8df252d9a0f41435bc96c",
+                "1553ab13abc751c6d2f41e8c55039791a2462930",
+                "d69c9de69f7dc3e4e9340a3e92bc16ca3b295524",
+                "46fb5e74fc4eea55e7e12142e592e46962521ed8"
+              ],
+              "regressionCommits": [
+                "15503955ce0199b4958908311b64fba7d0243ba5",
+                "be16db14768be3a81772c5df7a3ef5a54dbb3082",
+                "daf257297ad156625ec70663782c708ef0463690"
+              ],
+              "ciWiringCommit": "706bf1076fec723cd90255f40a1dbd3205933e42",
+              "checkedSourceScope": "Five frozen DB09 tables: 3+13+9+8+4=37 source fields and 37 source decision entries checked; source predicates checked against fresh main via connector V8, no Node or PostgreSQL execution certified.",
+              "pendingAcceptance": [
+                "Run native Node22 DB019-P26 source/mutation tests on exact current SHA and capture a passing GitHub Actions URL.",
+                "Execute registered PG17 replay/catalog drift plus tenant, soft-delete, user and organization revocation, idempotency, concurrent worker, notification history and TPO read/ack negatives.",
+                "Verify email suppression behavior and event/actor chronology at actual consumer/producer boundaries for all five source tables; do not infer semantic closure from ledger narratives."
+              ],
+              "evidenceIsNotAcceptance": true
+            }
           },
           {
             "id": "DB19-P27",
