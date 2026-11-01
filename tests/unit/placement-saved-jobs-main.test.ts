@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import type { RequestContext } from "@/modules/identity/context";
 import {
+  isSavedPlacementJobVisible,
   listOwnPlacementSavedJobs,
   saveOwnPlacementJob,
   unsaveOwnPlacementJob,
@@ -22,6 +23,38 @@ const nonLearner: RequestContext = {
     roles: ["TPO"],
   },
 };
+
+describe("DB19-P21 saved bookmark disclosure policy", () => {
+  const history = {
+    jobStatus: "CLOSED",
+    legacyWasDeleted: null,
+    legacyVisibilityType: null,
+  };
+  it("keeps legitimate closed, expired and archived bookmarks historical", () => {
+    for (const jobStatus of ["CLOSED", "CANCELLED", "ARCHIVED", "EXPIRED"]) {
+      expect(isSavedPlacementJobVisible({ ...history, jobStatus }, false))
+        .toBe(true);
+    }
+  });
+  it("does not reveal deleted or external-only bookmarks, even after closure", () => {
+    expect(isSavedPlacementJobVisible({
+      ...history, legacyWasDeleted: true,
+    }, true)).toBe(false);
+    expect(isSavedPlacementJobVisible({
+      ...history, legacyVisibilityType: "EXTERNAL_ONLY",
+    }, true)).toBe(false);
+    expect(isSavedPlacementJobVisible({
+      ...history, jobStatus: "PUBLISHED", legacyWasDeleted: true,
+    }, true)).toBe(false);
+  });
+  it("requires current authorization for a published bookmark", () => {
+    const published = {...history, jobStatus: "PUBLISHED"};
+    expect(isSavedPlacementJobVisible(published, false)).toBe(false);
+    expect(isSavedPlacementJobVisible(published, true)).toBe(true);
+    expect(isSavedPlacementJobVisible({...history, jobStatus: "DRAFT"}, true))
+      .toBe(false);
+  });
+});
 
 describe("DB08 main saved-job guardrails (no database required)", () => {
   it("denies manager or TPO impersonation before any database operation", async () => {
