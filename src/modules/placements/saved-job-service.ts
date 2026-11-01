@@ -160,5 +160,18 @@ export async function listOwnPlacementSavedJobs(context: RequestContext) {
   // Strip the visibility flags from the response: they are internal policy
   // inputs, never learner-facing saved-job details.
   return rows.filter(row=>isSavedPlacementJobVisible(row,visibleIds.has(row.jobId)))
-    .map(({legacyWasDeleted: _deleted,legacyVisibilityType: _visibility,...job})=>job);
+    .map(row=>({
+      id: row.id,
+      jobId: row.jobId,
+      savedAt: row.savedAt,
+      title: row.title,
+      jobStatus: row.jobStatus,
+      applicationDeadline: row.applicationDeadline,
+      employmentType: row.employmentType,
+      workMode: row.workMode,
+      locations: row.locations,
+      openings: row.openings,
+      minimumAnnualCtcInr: row.minimumAnnualCtcInr,
+      maximumAnnualCtcInr: row.maximumAnnualCtcInr,
+    }));
 }
