@@ -356,6 +356,7 @@ export async function recordSkillSelection(
     if(!data.skillId)throw new Error("CANONICAL_SKILL_REQUIRED");
     const updated=await getDb().update(db10Skills).set({
       usageCount:sql`${db10Skills.usageCount}+1`,
+      updatedAt:new Date(),
     }).where(and(eq(db10Skills.id,data.skillId),eq(db10Skills.isActive,true)))
       .returning({id:db10Skills.id});
     if(!updated.length)throw new Error("SKILL_NOT_FOUND");
