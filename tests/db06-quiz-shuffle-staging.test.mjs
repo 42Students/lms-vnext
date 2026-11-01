@@ -59,7 +59,7 @@ test("DB041 stages exact false-default non-null shuffle columns", () => {
   assert.match(contract, /Existing vNext rows backfill to `false\/false`/);
 });
 
-test("DB041 ledger resolves both active legacy gaps to staged fields", () => {
+test("DB041 ledger records registered shuffle fields with global verification pending", () => {
   const quizzes = ledger.tables.find(
     (table) => table.legacyTable === "quizzes",
   );
@@ -74,7 +74,7 @@ test("DB041 ledger resolves both active legacy gaps to staged fields", () => {
     );
     assert.equal(
       field.decision,
-      "STAGED_TARGET_FIELD_RUNTIME_UNVERIFIED",
+      "REGISTERED_DB041_FIELD_GLOBAL_VERIFY_PENDING",
     );
     assert.equal(
       field.targetRef,
