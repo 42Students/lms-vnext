@@ -1292,9 +1292,9 @@
           "nullable": "NOT_NULL",
           "defaultValue": "'0'",
           "riskFlags": [],
-          "decision": "STAGED_TARGET_FIELD_RUNTIME_UNVERIFIED",
+          "decision": "REGISTERED_DB041_FIELD_GLOBAL_VERIFY_PENDING",
           "targetRef": "course_quizzes.shuffle_questions",
-          "reason": "Active legacy quiz presentation flag; DB-041 stages a non-null boolean with false default. API learner-specific deterministic shuffle behavior remains later-phase cutover.",
+          "reason": "Actual registered PostgreSQL17 course_quizzes boolean NOT NULL false-default field; DB041 author/read/toggle and preserved question-order negatives executed (run 41087287900). DB19-P12 global 65-field and full quiz/attendance acceptance remains a separate gate. Active legacy quiz presentation flag; DB-041 stages a non-null boolean with false default. API learner-specific deterministic shuffle behavior remains later-phase cutover.",
           "runtimeVerified": false,
           "validationEvidence": "docs/planning/sql/db06-quiz-shuffle-parity-candidate.sql + docs/planning/database-parity-db06-quiz-shuffle-contract.md + pinned Quiz.java/QuizServiceImpl@prod-2026"
         },
@@ -1304,9 +1304,9 @@
           "nullable": "NOT_NULL",
           "defaultValue": "'0'",
           "riskFlags": [],
-          "decision": "STAGED_TARGET_FIELD_RUNTIME_UNVERIFIED",
+          "decision": "REGISTERED_DB041_FIELD_GLOBAL_VERIFY_PENDING",
           "targetRef": "course_quizzes.shuffle_options",
-          "reason": "Active legacy quiz presentation flag; DB-041 stages a non-null boolean with false default. API learner-specific deterministic shuffle behavior remains later-phase cutover.",
+          "reason": "Actual registered PostgreSQL17 course_quizzes boolean NOT NULL false-default field; DB041 author/read/toggle and preserved question-order negatives executed (run 41087287900). DB19-P12 global 65-field and full quiz/attendance acceptance remains a separate gate. Active legacy quiz presentation flag; DB-041 stages a non-null boolean with false default. API learner-specific deterministic shuffle behavior remains later-phase cutover.",
           "runtimeVerified": false,
           "validationEvidence": "docs/planning/sql/db06-quiz-shuffle-parity-candidate.sql + docs/planning/database-parity-db06-quiz-shuffle-contract.md + pinned Quiz.java/QuizServiceImpl@prod-2026"
         }
