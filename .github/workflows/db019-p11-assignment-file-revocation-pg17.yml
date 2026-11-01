@@ -9,6 +9,9 @@ on:
       - ".github/workflows/db019-p11-assignment-file-revocation-pg17.yml"
       - "src/modules/courses/assignment-submission-file-service.ts"
       - "tests/integration/storage-files-courses-db.test.ts"
+      - "docs/planning/database-parity-db06-field-reconciliation.json"
+      - "scripts/db019-p11-registered-target-review.mjs"
+      - "tests/db019-p11-registered-target-review.test.mjs"
 
 permissions:
   contents: read
@@ -44,6 +47,10 @@ jobs:
       - name: Enforce exact triggering SHA
         run: test "$(git rev-parse HEAD)" = "$GITHUB_SHA"
       - run: npm ci
+      - name: Verify exact 55-field source review and registered targets (source only)
+        run: |
+          node --test tests/db019-p11-registered-target-review.test.mjs
+          node scripts/db019-p11-registered-target-review.mjs
       - name: Verify registered journal
         run: npm run db:journal:verify
       - name: Seed disposable PostgreSQL17 with clean registered replay
@@ -54,6 +61,12 @@ jobs:
         run: npm run db:migrate
       - name: Execute real file upload, revoked-role and private-reader integrations
         run: npx vitest run --config vitest.db.config.ts tests/integration/storage-files-courses-db.test.ts
+      - name: Execute assignment grade and immutable-history producer integrations
+        run: npx vitest run --config vitest.db.config.ts tests/integration/courses-c4a-assignments.test.ts
+      - name: Execute DB016 file one-shot two-writer race on registered PostgreSQL
+        env:
+          DB018_ISOLATED_TEST_DATABASE: "1"
+        run: npx vitest run --config vitest.db.config.ts tests/integration/db18-registered-file-one-shot-race.test.ts
       - name: Typecheck unchanged authorization surfaces and new guard
         env:
           NODE_OPTIONS: --max-old-space-size=6144
