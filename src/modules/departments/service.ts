@@ -8,6 +8,7 @@ import {
   sql,
 } from "drizzle-orm";
 import { getDb } from "@/db/client";
+import { assertPersistedPlatformPermission } from "@/modules/permissions/persisted-actor";
 import {z} from "zod";
 import {isSuperAdmin} from "@/modules/identity/context";
 import {recordActivityEventInTransaction} from "@/modules/activity/service";
@@ -186,6 +187,36 @@ async function loadActiveDepartmentScope(departmentId: string) {
   return department;
 }
 
+type DepartmentTransaction = Parameters<Parameters<ReturnType<typeof getDb>["transaction"]>[0]>[0];
+
+async function assertWritableDepartmentScope(
+  tx: DepartmentTransaction,
+  context: RequestContext,
+  scope: { collegeId: string; organizationId: string },
+) {
+  // A stale session must not retain a revoked grant. Lock the current user,
+  // role and membership rows through the protected write transaction.
+  await assertPersistedPlatformPermission(tx, context, "department.manage", {
+    collegeId: scope.collegeId,
+    organizationId: scope.organizationId,
+  });
+
+  // An organization or college archived since the initial route lookup
+  // cannot receive new department mutations.
+  const [active] = await tx.select({ id: colleges.id })
+    .from(colleges)
+    .innerJoin(organizations, eq(organizations.id, colleges.organizationId))
+    .where(and(
+      eq(colleges.id, scope.collegeId),
+      eq(colleges.organizationId, scope.organizationId),
+      eq(colleges.status, "ACTIVE"),
+      eq(organizations.status, "ACTIVE"),
+    ))
+    .for("share", { of: colleges })
+    .limit(1);
+  if (!active) throw new DepartmentServiceError("COLLEGE_NOT_FOUND");
+}
+
 async function assertUniqueActiveName(
   collegeId: string,
   name: string,
@@ -273,6 +304,7 @@ export async function createDepartment(
 
   try {
     const [created] = await db.transaction(async tx=>{
+      await assertWritableDepartmentScope(tx, context, {collegeId: college.id, organizationId: college.organizationId});
       const [created] = await tx
       .insert(departments)
       .values({
@@ -325,6 +357,11 @@ export async function renameDepartment(
 
   try {
     const [updated] = await db.transaction(async tx=>{
+      await assertWritableDepartmentScope(tx, context, {collegeId: scope.collegeId, organizationId: scope.organizationId});
+      const [target] = await tx.select({id: departments.id}).from(departments)
+        .where(and(eq(departments.id, departmentId), eq(departments.collegeId, scope.collegeId), isNull(departments.archivedAt)))
+        .for("update").limit(1);
+      if (!target) throw new DepartmentServiceError("DEPARTMENT_NOT_FOUND");
       const [updated] = await tx
       .update(departments)
       .set({
@@ -381,13 +418,17 @@ export async function archiveDepartment(
     collegeId: scope.collegeId,
   });
 
-  const usage = await resolveUsage(departmentId);
-  assertDepartmentCanArchive(usage);
-
   const db = getDb();
   const archivedAt = new Date();
 
   const [archived] = await db.transaction(async tx=>{
+    await assertWritableDepartmentScope(tx, context, {collegeId: scope.collegeId, organizationId: scope.organizationId});
+    const [target] = await tx.select({id: departments.id}).from(departments)
+      .where(and(eq(departments.id, departmentId), eq(departments.collegeId, scope.collegeId), isNull(departments.archivedAt)))
+      .for("update").limit(1);
+    if (!target) throw new DepartmentServiceError("DEPARTMENT_NOT_FOUND");
+    const usage = await resolveUsage(departmentId);
+    assertDepartmentCanArchive(usage);
     const [archived] = await tx
     .update(departments)
     .set({
