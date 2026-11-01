@@ -14,6 +14,9 @@ on:
       - "docs/planning/db019-p30-skills-field-review.json"
       - "tests/db019-p30-skills-field-review.test.mjs"
       - "tests/db019-p30-skills-writer-gates.test.mjs"
+      - "docs/planning/db019-p30-skill-field-decisions.json"
+      - "tests/db019-p30-skill-field-decisions.test.mjs"
+      - "tests/db019-p30-registered-skill-targets-pg.test.mjs"
 
 permissions:
   contents: read
@@ -54,6 +57,7 @@ jobs:
         run: |
           node --test tests/db019-p30-skills-field-review.test.mjs
           node --test tests/db019-p30-skills-writer-gates.test.mjs
+          node --test tests/db019-p30-skill-field-decisions.test.mjs
           npm run db:journal:verify
       - name: Fresh registered zero-to-head migration and seed (no staging overlay)
         env:
@@ -61,6 +65,10 @@ jobs:
         run: npm run db:test:prepare
       - name: Idempotent registered migration
         run: npm run db:migrate
+      - name: Registered physical 15-field skill catalog and independent counters
+        env:
+          DB19_P30_REGISTERED_PG: "YES"
+        run: node --test tests/db019-p30-registered-skill-targets-pg.test.mjs
       - name: Real catalog and producer SQL integration including forged selection
         run: npx vitest run --config vitest.db.config.ts tests/integration/db10-skills-catalog.test.ts
       - name: Skill normalization and consumer unit regressions
