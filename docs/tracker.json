@@ -2058,8 +2058,8 @@
               "scheduled_job_lock"
             ],
             "sourceFieldCount": 50,
-            "picked": false,
-            "pickedBy": "",
+            "picked": true,
+            "pickedBy": "CHAT_DB19_P29_ADMIN_SETTINGS_20261101",
             "done": false,
             "acceptedAt": null,
             "acceptanceEvidence": [],
