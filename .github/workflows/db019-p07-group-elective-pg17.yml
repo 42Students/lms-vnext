@@ -1,0 +1,74 @@
+# DB19-P07 group/elective scoped source and actual registered PG17 service gate.
+# Not a global DB019 P31/P32 or DB020 certificate.
+name: DB19 P07 group elective registered PG17
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/db019-p07-group-elective-pg17.yml"
+      - "docs/planning/db019-p07-group-elective-field-decisions.json"
+      - "scripts/db019-p07-field-decisions.mjs"
+      - "tests/db019-p07-field-decisions.test.mjs"
+
+permissions:
+  contents: read
+
+jobs:
+  p07-group-elective-pg:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    services:
+      postgres:
+        image: postgres:17-alpine
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: lms_vnext_test
+        ports: ["5432:5432"]
+        options: >-
+          --health-cmd "pg_isready -U postgres -d lms_vnext_test"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 20
+    env:
+      DATABASE_URL: postgresql://postgres:postgres@127.0.0.1:5432/lms_vnext_test
+      TEST_DATABASE_URL: postgresql://postgres:postgres@127.0.0.1:5432/lms_vnext_test
+      DB03_ISOLATED_TEST_DATABASE: "1"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - name: Verify exact trigger SHA
+        run: test "$(git rev-parse HEAD)" = "$GITHUB_SHA"
+      - run: npm ci
+      - name: Execute strict 79-field frozen source and target decision mutations
+        run: |
+          node --test tests/db019-p07-field-decisions.test.mjs
+          node scripts/db019-p07-field-decisions.mjs
+          npm run db:journal:verify
+      - name: Registered disposable PG17 zero-to-head replay
+        env:
+          DATABASE_URL: ""
+        run: npm run db:test:prepare
+      - name: Registered replay idempotence
+        run: npm run db:migrate
+      - name: Run group and elective lifecycle, tenant and race service tests
+        run: npx vitest run --config vitest.db.config.ts tests/integration/groups-db03.test.ts
+      - name: Run elective slot mutation and archive/restore tenant/actor tests
+        run: >-
+          npx vitest run --config vitest.db.config.ts
+          tests/integration/college-elective-slot-mutations.test.ts
+          tests/integration/college-elective-lifecycle.test.ts
+      - name: Run group roster and actor freshness privacy tests
+        run: >-
+          npx vitest run --config vitest.db.config.ts
+          tests/integration/groups-db03-roster.test.ts
+          tests/integration/groups-db03-actor-freshness.test.ts
+      - name: Typecheck group and elective producers
+        env:
+          NODE_OPTIONS: --max-old-space-size=6144
+        run: npm run typecheck
