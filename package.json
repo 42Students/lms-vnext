@@ -60,7 +60,8 @@
     "test:parity:closure": "node --test tests/page-closure.test.mjs",
     "parity:legacy:census": "node scripts/audit/legacy-census-status.mjs",
     "parity:legacy:census:check": "node scripts/audit/legacy-census-status.mjs --check",
-    "test:parity:legacy:census": "node --test tests/legacy-census-status.test.mjs"
+    "test:parity:legacy:census": "node --test tests/legacy-census-status.test.mjs",
+    "db19:historical:verify": "node --test tests/db019-historical-scope-gate.test.mjs && node scripts/db019-historical-scope-gate.mjs"
   },
   "dependencies": {
     "ag-grid-community": "^36.2.0",
