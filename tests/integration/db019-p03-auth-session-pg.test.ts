@@ -249,6 +249,61 @@ describe.skipIf(!enabled)("DB19-P03 registered identity session and revocation b
     }
   });
 
+  it("rejected legacy role cookie cannot restore a revoked current membership role",async()=>{
+    const userId=randomUUID(),identityUid="db19-p03-role-"+userId;
+    const memberId=randomUUID();
+    let memberCreated=false,userCreated=false;
+    let token:string|null=null;
+    try {
+      await pool!.query(
+        "insert into users(id,identity_uid,platform_status) values($1,$2,'ACTIVE')",
+        [userId,identityUid],
+      );
+      userCreated=true;
+      await pool!.query(
+        "insert into college_memberships(id,user_id,college_id,status) values($1,$2,$3,'ACTIVE')",
+        [memberId,userId,SEED_IDS.collegeA],
+      );
+      memberCreated=true;
+      await pool!.query(
+        "insert into membership_roles(membership_id,role) values($1,'FACULTY')",
+        [memberId],
+      );
+      const session=await createSession(userId,{deviceName:"DB19 revoked-role test"});
+      token=session.token;
+      createdDigests.push(sessionDigest(testSecret,token));
+      const authenticated=await resolveSession(token);
+      expect(authenticated.ok).toBe(true);
+      const before=await resolveRequestContext({
+        identityUid,activeMembershipId:memberId,activeRole:"FACULTY",
+      });
+      expect(before.membership?.roles).toEqual(["FACULTY"]);
+      await pool!.query(
+        "delete from membership_roles where membership_id=$1 and role='FACULTY'",
+        [memberId],
+      );
+      // The device token remains user-scoped, but the old requested active
+      // role cannot magically survive a persisted membership-role revocation.
+      expect((await resolveSession(token)).ok).toBe(true);
+      const after=await resolveRequestContext({
+        identityUid,activeMembershipId:memberId,activeRole:"FACULTY",
+      });
+      expect(after.membership?.roles).not.toContain("FACULTY");
+      expect(after.membership?.roles).toEqual([]);
+    } finally {
+      // All isolated fixture parents are deleted after persisted role and
+      // session rows, regardless of whether the role-safety assertion fails.
+      if(userCreated)await pool!.query(
+        "delete from identity_device_sessions where user_id=$1",[userId],
+      );
+      if(memberCreated){
+        await pool!.query("delete from membership_roles where membership_id=$1",[memberId]);
+        await pool!.query("delete from college_memberships where id=$1",[memberId]);
+      }
+      if(userCreated)await pool!.query("delete from users where id=$1",[userId]);
+    }
+  });
+
   it("registered schema rejects non-hex session digests and revoker-without-revocation",async()=>{
     const session=await freshSession();
     await expect(pool!.query(
