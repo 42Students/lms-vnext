@@ -80,6 +80,10 @@ export const placementTpoAfterCollege = pgTable(
       .notNull()
       .references(() => colleges.id, { onDelete: "restrict" }),
     outcome: varchar("outcome", { length: 40 }).notNull(),
+    /** TPO-only optional college label and destination detail; learner consent
+     * remains a separate private placement registration record. */
+    outcomeLabel: varchar("outcome_label", { length: 60 }),
+    outcomeDetail: varchar("outcome_detail", { length: 200 }),
     updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
   },
   (table) => [

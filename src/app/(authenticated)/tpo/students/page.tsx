@@ -17,6 +17,7 @@ import {TpoStudentsSelectedNote} from "@/components/tpo/tpo-students-selected-no
 import {TpoRosterVerificationBulk} from "@/components/tpo/tpo-roster-verification-bulk";
 import {getTpoVerificationQueue} from "@/modules/placements/tpo-verification-queue-service";
 import {getTpoAfterCollegeForRoster} from "@/modules/placements/tpo-after-college-roster-service";
+import {readTpoOutcomeLabels} from "@/modules/placements/tpo-outcome-label-settings-service";
 import {AFTER_COLLEGE_OUTCOMES,AFTER_COLLEGE_LABELS} from "@/modules/placements/tpo-after-college-model";
 import { redirect } from "next/navigation";
 import {tpoStudentUrlError,tpoStudentFilterMessage} from "@/modules/placements/tpo-students-url-guard";
@@ -312,7 +313,10 @@ export default async function TpoStudentsPage({
   const summary = data.summary;
   const roster = data.roster;
   const verifiedCount=tpoStudentVerifiedSnapshotCount({expectedTotal:summary.activeLearners,rows:data.exportRows??null});
-  const afterCollege = await getTpoAfterCollegeForRoster(context, roster.items.map(row=>row.membershipId));
+  const [afterCollege,afterCollegeCatalog] = await Promise.all([
+   getTpoAfterCollegeForRoster(context, roster.items.map(row=>row.membershipId)),
+   manageAllowed?readTpoOutcomeLabels(context):Promise.resolve({labels:[]}),
+  ]);
   const rosterIds=roster.items.map(row=>row.membershipId);
   const rosterVerifications=manageAllowed&&rosterIds.length?await getTpoVerificationQueue(context,{
     tab:"WAITING",kind:"ALL",waitingState:"ALL",waitingSince:"ALL",search:"",page:1,pageSize:100,
@@ -899,6 +903,7 @@ export default async function TpoStudentsPage({
         <Suspense fallback={<Skeleton label="Loading spreadsheet grid…" variant="row" count={8}/>}>
           <TpoStudentsSpreadsheet rows={roster.items} programs={programChoices.map(([id,name])=>({id,name}))} classes={data.classChoices}
             afterCollege={afterCollege.entries} afterCollegeAvailable={afterCollege.available && manageAllowed}
+            afterCollegeLabels={afterCollegeCatalog.labels.map(row=>({label:row.label,outcome:row.outcome}))}
             canManageViews={manageAllowed}/>
         </Suspense>
         <TpoStudentsSelectionSummary visibleIds={roster.items.map(student=>student.membershipId)} totalCount={roster.total}/>

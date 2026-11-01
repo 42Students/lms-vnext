@@ -1,5 +1,5 @@
 import "server-only";
-import {eq,sql} from "drizzle-orm";
+import {and,eq,sql} from "drizzle-orm";
 import {z} from "zod";
 import {getDb} from "@/db/client";
 import {activityEvents,colleges,placementTpoCollegeSettings} from "@/db/schema";
@@ -9,6 +9,7 @@ import {placementTableExists} from "./staged-tables";
 import {assertPersistedPlatformPermission} from "@/modules/permissions/persisted-actor";
 import {tpoOutcomeLabelsAlreadyApplied} from "./tpo-outcome-label-retry-model";
 import {AFTER_COLLEGE_LABELS,afterCollegeManualSchema} from "./tpo-after-college-model";
+import {placementTpoAfterCollege} from "@/db/schema/tpo-configuration";
 
 const entrySchema=z.object({
  id:z.string().uuid().nullable().optional(),
@@ -98,6 +99,21 @@ export async function saveTpoOutcomeLabels(context:RequestContext,raw:unknown){
   }).where(eq(placementTpoCollegeSettings.collegeId,collegeId))
    .returning({updatedAt:placementTpoCollegeSettings.updatedAt});
   if(!saved)throw new TpoOutcomeLabelError("TPO_SETTINGS_NOT_FOUND");
+  // Legacy OutcomeLabels save cascaded label rename/removal to existing
+  // destinations. The college lock also serializes with individual TPO edits.
+  // Keep learner-supplied consent in its separate table untouched.
+  const nextById=new Map(labels.filter(row=>row.id).map(row=>[row.id,row]));
+  for(const old of stored?.success?stored.data:[]){
+    const replacement=old.id?nextById.get(old.id):undefined;
+    const nextLabel=replacement?.outcome===old.outcome?replacement.label:null;
+    if(nextLabel===old.label)continue;
+    await tx.update(placementTpoAfterCollege).set({
+      outcomeLabel:nextLabel,
+      updatedAt:sql`greatest(clock_timestamp(), ${placementTpoAfterCollege.updatedAt} + interval '1 millisecond')`,
+    }).where(and(eq(placementTpoAfterCollege.collegeId,collegeId),
+      eq(placementTpoAfterCollege.outcome,old.outcome),
+      eq(placementTpoAfterCollege.outcomeLabel,old.label)));
+  }
   await tx.insert(activityEvents).values({organizationId:college.organizationId,collegeId,
    actorUserId:context.user.id,actorMembershipId:context.membership?.id??null,
    module:"PLACEMENTS",eventType:"placements.tpo_outcome_labels.updated",

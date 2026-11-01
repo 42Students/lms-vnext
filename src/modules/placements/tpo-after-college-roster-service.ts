@@ -11,7 +11,7 @@ import { afterCollegeOutcomeSchema, type AfterCollegeOutcome } from "./tpo-after
 /** Only page-visible learner IDs supplied by the authenticated TPO roster. */
 export async function getTpoAfterCollegeForRoster(
   context: RequestContext, visibleMembershipIds: readonly string[],
-): Promise<{ available: boolean; entries: Record<string,{ outcome: AfterCollegeOutcome; expectedVersion: string }> }> {
+): Promise<{ available: boolean; entries: Record<string,{ outcome: AfterCollegeOutcome; expectedVersion: string;outcomeLabel:string|null;outcomeDetail:string|null }> }> {
   const collegeId = await requireTpoBatchActor(context);
   const available = await placementTableExists("placement_tpo_after_college");
   if (!available || !visibleMembershipIds.length) return { available, entries: {} };
@@ -19,6 +19,8 @@ export async function getTpoAfterCollegeForRoster(
   const rows = await getDb().select({
     membershipId: placementTpoAfterCollege.learnerMembershipId,
     outcome: placementTpoAfterCollege.outcome,
+    outcomeLabel:placementTpoAfterCollege.outcomeLabel,
+    outcomeDetail:placementTpoAfterCollege.outcomeDetail,
     updatedAt: placementTpoAfterCollege.updatedAt,
   }).from(placementTpoAfterCollege)
     .where(and(
@@ -31,6 +33,8 @@ export async function getTpoAfterCollegeForRoster(
     const parsed = saved ? afterCollegeOutcomeSchema.safeParse(saved.outcome) : null;
     return [id, {
       outcome: parsed?.success ? parsed.data : "NOT_DECIDED",
+      outcomeLabel:saved?.outcomeLabel??null,
+      outcomeDetail:saved?.outcomeDetail??null,
       expectedVersion: saved?.updatedAt.toISOString() ?? "none",
     }];
   })) };

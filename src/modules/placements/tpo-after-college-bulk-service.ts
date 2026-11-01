@@ -82,10 +82,10 @@ export async function bulkUpdateTpoAfterCollege(
       const now = new Date(Math.max(Date.now(), (previous?.updatedAt.getTime() ?? 0) + 1));
       await tx.insert(placementTpoAfterCollege).values({
         learnerMembershipId: row.membershipId, collegeId, outcome: row.outcome,
-        updatedAt: now,
+        outcomeLabel:null,outcomeDetail:null,updatedAt: now,
       }).onConflictDoUpdate({
         target: placementTpoAfterCollege.learnerMembershipId,
-        set: { outcome: row.outcome, updatedAt: now },
+        set: { outcome: row.outcome, outcomeLabel:null, outcomeDetail:null, updatedAt: now },
       });
       await tx.insert(activityEvents).values({
         organizationId: college.organizationId, collegeId,

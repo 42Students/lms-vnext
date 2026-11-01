@@ -96,8 +96,9 @@ const columns:readonly TpoGridColumn<TpoStudentRow>[]=[
  {key:"journey",label:"Journey",read:row=>tpoStudentDisplayLabel(row.journeyState)},
  {key:"email",label:"Email (export only)",read:row=>row.email,exportOnly:true},
 ];
-export function TpoStudentsSpreadsheet({rows,programs,classes,afterCollege,afterCollegeAvailable,canManageViews=false}:{rows:readonly TpoStudentRow[];programs:readonly {id:string;name:string}[];classes:readonly {id:string;name:string}[];canManageViews?:boolean;
- afterCollege:Record<string,{outcome:AfterCollegeOutcome;expectedVersion:string}>;afterCollegeAvailable:boolean}){
+export function TpoStudentsSpreadsheet({rows,programs,classes,afterCollege,afterCollegeAvailable,afterCollegeLabels,canManageViews=false}:{rows:readonly TpoStudentRow[];programs:readonly {id:string;name:string}[];classes:readonly {id:string;name:string}[];canManageViews?:boolean;
+ afterCollege:Record<string,{outcome:AfterCollegeOutcome;expectedVersion:string;outcomeLabel:string|null;outcomeDetail:string|null}>;afterCollegeAvailable:boolean;
+ afterCollegeLabels:readonly {label:string;outcome:AfterCollegeOutcome}[]}){
  const keyboardHintId=useId();
  const router=useRouter(),pathname=usePathname(),params=useSearchParams();
  const selected=params.get("student");
@@ -293,8 +294,8 @@ export function TpoStudentsSpreadsheet({rows,programs,classes,afterCollege,after
     <TpoStudentOutcomePill recorded={afterCollege[row.membershipId]?.outcome??null}
       placed={row.placed} registered={row.registeredForPlacements}/>
     <TpoAfterCollegeEditor membershipId={row.membershipId} learnerName={row.displayName}
-      initial={afterCollege[row.membershipId]??{outcome:"NOT_DECIDED",expectedVersion:"none"}}
-      available={afterCollegeAvailable} />
+      initial={afterCollege[row.membershipId]??{outcome:"NOT_DECIDED",expectedVersion:"none",outcomeLabel:null,outcomeDetail:null}}
+      available={afterCollegeAvailable} labels={afterCollegeLabels} />
     <Link href={"/tpo/students/"+encodeURIComponent(row.membershipId)+"/history"}
       aria-label={"Placement history for "+row.displayName} className="lms-inline-link inline-flex min-h-11 items-center text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary focus-visible:underline">Placement history</Link>
     <Link href={"/tpo/students/"+encodeURIComponent(row.membershipId)+"/participation"}
