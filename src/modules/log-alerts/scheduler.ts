@@ -4,7 +4,8 @@ import { reopenRegressedSignature } from "./policy";
 import { randomUUID } from "node:crypto";
 import { and, desc, eq, isNull, lt, sql } from "drizzle-orm";
 import { getDb } from "@/db/client";
-import { db10ScheduledJobLeases as leases } from "@/db/schema/db10-scheduled-job-leases.draft";
+import { executeScheduledJobWithLease, type ScheduledJobFence, type ScheduledJobLeaseStore } from "@/modules/operations/scheduled-job-runner";
+import { postgresScheduledJobLeaseStore } from "@/modules/operations/postgres-scheduled-job-lease-store";
 import { db10LogAlertSignatures as signatures, db10LogAlertStates as states, db10LogAlertDailyCounts as daily, db10LogAlertObservedEvents as observed } from "@/db/schema/db10-log-alerts.draft";
 import { logAlertsRuntimeEnabled } from "./readiness";
 import { sendTelegramAlert, telegramAlertsConfigured } from "./telegram-notifier";
@@ -70,27 +71,36 @@ export function healthWatchStatus(
   return "degraded";
 }
 
-export async function withScheduledLease(jobName: string, now: Date, task: () => Promise<void>): Promise<boolean> {
+/**
+ * Use the same PostgreSQL-clock, fenced lease as other scheduled workers.
+ * The legacy log-alert scheduler previously released its lease immediately
+ * after the callback, allowing another replica to repeat the same tick.
+ * A successful lease now expires naturally; failures fail closed.
+ *
+ * The callback receives a fence to check before each irreversible delivery
+ * or cursor checkpoint. The outer runner also verifies ownership both
+ * before and after the callback; the store's DB clock is authoritative.
+ */
+export async function runFencedLogAlertTask(
+  store: ScheduledJobLeaseStore,
+  jobName: string,
+  task: (fence: ScheduledJobFence) => Promise<void>,
+): Promise<boolean> {
+  const outcome = await executeScheduledJobWithLease(store, {
+    jobName,
+    holderId: randomUUID(),
+    ttlMs: 180_000,
+  }, task);
+  return outcome.ran;
+}
+
+export async function withScheduledLease(
+  jobName: string,
+  _now: Date,
+  task: (fence: ScheduledJobFence) => Promise<void>,
+): Promise<boolean> {
   if (!logAlertsRuntimeEnabled()) return false;
-  const db = getDb();
-  const lockedBy = randomUUID();
-  const lockedUntil = new Date(now.getTime() + 180_000);
-  const [acquired] = await db.insert(leases).values({
-    jobName, lockedBy, lockedUntil,
-  }).onConflictDoUpdate({
-    target: leases.jobName,
-    set: { lockedBy, lockedUntil, updatedAt: now,
-      fence: sql.raw("scheduled_job_leases.fence + 1") },
-    setWhere: lt(leases.lockedUntil, now),
-  }).returning({ lockedBy: leases.lockedBy });
-  if (!acquired || acquired.lockedBy !== lockedBy) return false;
-  try {
-    await task();
-  } finally {
-    await db.update(leases).set({ lockedUntil: now, updatedAt: new Date() })
-      .where(and(eq(leases.jobName, jobName), eq(leases.lockedBy, lockedBy)));
-  }
-  return true;
+  return runFencedLogAlertTask(postgresScheduledJobLeaseStore, jobName, task);
 }
 
 /** Subsequent burst errors are recorded in the state row and sent during the next tick. */
