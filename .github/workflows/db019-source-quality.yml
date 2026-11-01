@@ -50,6 +50,10 @@ jobs:
             tests/db019-project-registered-history.test.mjs \
             tests/db019-remaining-semantic-quality.test.mjs \
             tests/db019-p04-tenant-ledger.test.mjs
+      - name: Verify DB19-P01/P02 archival and Smrithi source and live-code boundaries
+        run: |
+          set -eu
+          npm run db19:historical:verify
       - name: Execute exact current source-coverage command
         run: |
           set -eu
