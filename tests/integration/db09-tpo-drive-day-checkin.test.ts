@@ -83,6 +83,7 @@ async function fixture() {
 async function cleanup() {
   if (!pool) return;
   if (ids.round) await pool.query("DELETE FROM placement_round_attendance WHERE round_id=$1", [ids.round]);
+  if (ids.job) await pool.query("DELETE FROM placement_college_interviews WHERE job_id=$1", [ids.job]);
   if (ids.application) {
     await pool.query("DELETE FROM placement_application_screenings WHERE application_id=$1", [ids.application]);
     await pool.query("DELETE FROM placement_applications WHERE id=$1", [ids.application]);
