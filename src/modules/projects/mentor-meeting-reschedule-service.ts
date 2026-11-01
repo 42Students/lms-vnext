@@ -1,5 +1,5 @@
 import "server-only";
-import {and,eq,gt,lt,ne,or,sql,inArray} from "drizzle-orm";
+import {and,eq,gt,lt,ne,or,sql,inArray,isNull} from "drizzle-orm";
 import {getDb} from "@/db/client";
 import {projectInstances,projectMeetings} from "@/db/schema";
 import {recordActivityEventInTransaction} from "@/modules/activity/service";
@@ -71,6 +71,7 @@ export async function rescheduleMentorMeeting(context:RequestContext,rawParams:u
           eq(projectMeetings.scheduledByUserId,organiserUserId),
         ),
         ne(projectMeetings.id,meeting.id),inArray(projectMeetings.status,["SCHEDULED","RESCHEDULED"]),
+        isNull(projectMeetings.deletedAt),
         lt(projectMeetings.startsAt,end),gt(projectMeetings.endsAt,start)))
       .limit(1);
     if(conflict)throw new ProjectsServiceError("PROJECT_MEETING_SCHEDULE_CONFLICT");
