@@ -11,6 +11,7 @@ on:
       - "docs/planning/db019-p07-group-elective-field-decisions.json"
       - "scripts/db019-p07-field-decisions.mjs"
       - "tests/db019-p07-field-decisions.test.mjs"
+      - "tests/db019-p07-registered-catalog-pg.test.mjs"
 
 permissions:
   contents: read
@@ -56,6 +57,10 @@ jobs:
         run: npm run db:test:prepare
       - name: Registered replay idempotence
         run: npm run db:migrate
+      - name: DB19-P07 physical catalog, 79 registered targets, active key index and backed-class FK
+        env:
+          DB19_P07_REGISTERED_PG: "YES"
+        run: node --test tests/db019-p07-registered-catalog-pg.test.mjs
       - name: Run group and elective lifecycle, tenant and race service tests
         run: npx vitest run --config vitest.db.config.ts tests/integration/groups-db03.test.ts
       - name: Run elective slot mutation and archive/restore tenant/actor tests
