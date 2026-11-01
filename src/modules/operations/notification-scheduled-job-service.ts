@@ -171,6 +171,7 @@ export async function releaseScheduledNotificationOutbox(
                  'SENT', clock_timestamp()
           from activity_events e
           join colleges c on c.id = e.college_id
+          join organizations o on o.id = c.organization_id
           join college_memberships m on m.college_id = c.id
           join users u on u.id = m.user_id
           where e.id = ${entry.event_id}::uuid
@@ -178,6 +179,7 @@ export async function releaseScheduledNotificationOutbox(
             and c.id = ${entry.college_id}::uuid
             and c.organization_id = ${entry.organization_id}::uuid
             and c.status = 'ACTIVE'
+            and o.status = 'ACTIVE'
             and m.user_id = ${userId}::uuid
             and m.status = 'ACTIVE'
             and u.platform_status = 'ACTIVE'
@@ -187,17 +189,25 @@ export async function releaseScheduledNotificationOutbox(
         eligible = Boolean(attempt.rows[0]);
         if (!eligible) {
           const existing = await tx.execute<{ present: boolean }>(sql`
+            // An existing row is a delivery receipt only if it was actually
+            // SENT and remains active. A cancelled, scheduled or deleted
+            // notice must never turn a retrying outbox row into SENT.
             select exists (
               select 1 from in_app_notifications n
               join activity_events e on e.id = n.event_id
               join colleges c on c.id = e.college_id
+              join organizations o on o.id = c.organization_id
               join college_memberships m on m.college_id = c.id
               join users u on u.id = m.user_id
               where n.user_id = ${userId}::uuid
                 and n.event_id = ${entry.event_id}::uuid
+                and n.delivery_status = 'SENT'
+                and n.deleted_at is null
                 and e.college_id = ${entry.college_id}::uuid
                 and e.organization_id = ${entry.organization_id}::uuid
+                and c.organization_id = ${entry.organization_id}::uuid
                 and c.status = 'ACTIVE'
+                and o.status = 'ACTIVE'
                 and m.user_id = ${userId}::uuid
                 and m.status = 'ACTIVE'
                 and u.platform_status = 'ACTIVE'
