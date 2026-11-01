@@ -63,17 +63,16 @@ export async function addTpoTeamAssignment(context:RequestContext,raw:unknown){
     eq(collegeMemberships.status,"ACTIVE"),eq(users.platformStatus,"ACTIVE")))
    .orderBy(asc(membershipRoles.role)).limit(1);
   if(!candidate)throw new Error("TEAM_MEMBER_INACTIVE_OR_UNAVAILABLE");
-  // Existing vNext department-scoped coordinator behavior is not certified
-  // as legacy V201 parity. P22 must reconcile this separately; never treat
-  // a team-row coordinator as a college-wide placements.manage principal.
-  const roles=await tx.select({role:membershipRoles.role}).from(membershipRoles)
-   .where(eq(membershipRoles.membershipId,membershipId));
-  const role=roles.some(row=>row.role==="TPO")?"TPO_ADMIN":"FACULTY_COORDINATOR";
+  // Legacy V201 removed all faculty/student coordinator grants. The team
+  // settings flow adds a faculty account as TPO_ADMIN only; it must not create
+  // a FACULTY_COORDINATOR row with a null department, which also violates the
+  // registered placement_tpo_team_members_department_ck constraint.
+  const role="TPO_ADMIN" as const;
   await tx.insert(placementTpoTeamMembers).values({
    collegeId:actor.collegeId,membershipId,role,
   }).onConflictDoUpdate({
    target:[placementTpoTeamMembers.collegeId,placementTpoTeamMembers.membershipId],
-   set:{role},
+   set:{role,departmentId:null},
   });
   return {ok:true};
  });
