@@ -1919,10 +1919,52 @@
             "sourceFieldCount": 65,
             "picked": false,
             "pickedBy": "",
-            "done": false,
-            "acceptedAt": null,
-            "acceptanceEvidence": [],
-            "acceptance": "Final mapping and executed quiz attempt lifecycle, immutable attendance history, grading, tenant, state-machine and concurrency checks."
+            "done": true,
+            "acceptedAt": "2026-11-02",
+            "acceptanceEvidence": [
+              {
+                "kind": "EXECUTED_EXACT_SHA_REGISTERED_PG17_P12_65_FIELD_QUIZ_AND_ATTENDANCE",
+                "result": "PASS",
+                "exitCode": 0,
+                "commitSha": "4717dadef524724c6aa2e3ffa85274b588697391",
+                "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/41338762808",
+                "jobId": 124944078437,
+                "runner": "GitHub Actions ubuntu-latest Node22, disposable PostgreSQL17-alpine",
+                "commands": [
+                  "node --test tests/db019-p12-registered-quiz-attendance-review.test.mjs",
+                  "node --test tests/db045-original-30-witnesses.test.mjs",
+                  "npm run db:journal:verify",
+                  "npm run db:test:prepare with DATABASE_URL cleared, disposable PG17 registered zero-to-head replay and seed",
+                  "npm run db:migrate (idempotence)",
+                  "node --test tests/db041-registered-quiz-shuffle-pg.test.mjs",
+                  "npx vitest run --config vitest.db.config.ts tests/integration/courses-c4b-quizzes.test.ts",
+                  "npx vitest run --config vitest.db.config.ts tests/integration/courses-c4c-assessment-progress.test.ts",
+                  "npx vitest run --config vitest.db.config.ts tests/integration/college-admin-attendance.test.ts tests/integration/academics-a2.test.ts tests/integration/faculty-c4-reports-audit-contact.test.ts",
+                  "NODE_OPTIONS=--max-old-space-size=6144 npm run typecheck"
+                ],
+                "scope": "Exact frozen P12 field inventory 65/65, including quizzes(19), attempts(11), answers(9), options(8), questions(9), attend(9). Registered PostgreSQL17 quiz shuffle true/false/default, authors/teacher/learner grading and attempt lifecycle; concurrent final attempts, close-versus-submit, immutable answer history and tenant bounds; persisted learner progress consumers; Faculty/Admin/learner attendance, corrections/events, grades, history, tenant/privacy, expected state and release actor behavior. All exact-trigger SHA job steps green.",
+                "boundary": "This is P12 scoped producer/consumer/security acceptance only. Historical exams DB19-P10, remaining DB19 domain packages, global P31/P32 and independent DB020 certificate stay open; source ledger retains its source-only boolean convention."
+              },
+              {
+                "kind": "EXECUTED_REGISTERED_PG17_DB045_ORIGINAL_IMMUTABLE_ATTENDANCE_HISTORY_WITNESSES",
+                "result": "PASS",
+                "commitSha": "4b6883aba8d031beb2ae222898928fef556dda3e",
+                "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/41222590972",
+                "jobId": 124600058638,
+                "scope": "Independent original DB045 30 grade+attendance immutable history, actor, tenant and CAS negative acceptance. Supporting historical evidence; not substitute for P12 current-head run."
+              }
+            ],
+            "acceptance": "Final mapping and executed quiz attempt lifecycle, immutable attendance history, grading, tenant, state-machine and concurrency checks.",
+            "implementationCheckpoint": {
+              "status": "P12_SCOPED_ACCEPTED_GLOBAL_DB019_P31_P32_OPEN",
+              "recordedOn": "2026-11-02",
+              "fullGateSha": "4717dadef524724c6aa2e3ffa85274b588697391",
+              "verifiedSourceFieldCount": 65,
+              "sourceQualityGuard": "tests/db019-p12-registered-quiz-attendance-review.test.mjs",
+              "review": "docs/planning/database-parity-db06-field-reconciliation.json",
+              "acceptanceRun": "https://github.com/42Students/lms-vnext/actions/runs/41338762808",
+              "scopeNote": "Quiz and attendance P12 only; DB19-P10 archival exam decisions remain open."
+            }
           },
           {
             "id": "DB19-P13",
