@@ -13,7 +13,7 @@ import {placementTpoAfterCollege} from "@/db/schema/tpo-configuration";
 
 const entrySchema=z.object({
  id:z.string().uuid().nullable().optional(),
- label:z.string().transform(value=>value.trim().replace(/\\s+/g," "))
+ label:z.string().transform(value=>value.trim().replace(/\s+/g," "))
   .pipe(z.string().min(2).max(60)),
  outcome:afterCollegeCustomLabelOutcomeSchema,
 }).strict();
