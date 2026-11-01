@@ -2011,7 +2011,7 @@
             "done": false,
             "acceptedAt": null,
             "implementationCheckpoint": {
-              "status": "P20_SEASON_REVOKE_GUARDS_AND_TWO_REGISTERED_PG17_JOBS_PUSHED_EXECUTION_NOT_CONFIRMED",
+              "status": "P20_REGISTERED_SCOPED_PG17_TESTS_PASSED_FULL_ACCEPTANCE_OPEN",
               "recordedOn": "2026-11-01",
               "implementationCommits": [
                 "e810167aae1ab7f1988dbbd339c79f0ed7477d16",
@@ -2127,6 +2127,32 @@
                   "Verify 22 proposed source mappings with real producers/consumers, permission, privacy and tenant/lineage tests",
                   "Keep DB19-P20 done:false and global DB019/DB020 open until original acceptance passes"
                 ]
+              },
+              "actualScopedPg17": {
+                "registeredAfterCollegeAndSeason": {
+                  "commitSha": "5d903055091cf050f483006b5a6a6a28eaaaf76a",
+                  "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/41314503837",
+                  "jobId": 124871644195,
+                  "passedUnit": 22,
+                  "passedIntegrationPg17": 11,
+                  "overallJob": "FAILED_ONLY_AT_WHOLE_REPO_TYPECHECK_NODE_HEAP_OOM",
+                  "notGlobalAcceptance": true
+                },
+                "registeredBatchAndConsent": {
+                  "commitSha": "5d443cfaed897e59df846f7c7ace48f5eb9c8a4b",
+                  "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/41314950813",
+                  "jobId": 124872899097,
+                  "passedIntegrationPg17": 23,
+                  "job": "SUCCESS",
+                  "notGlobalAcceptance": true
+                },
+                "pendingRecheck": {
+                  "commitSha": "37da606cf71ce0aa81452a7ecdc3c31d8857eab9",
+                  "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/41314970532",
+                  "status": "PENDING_AS_LAST_OBSERVED",
+                  "typecheckFix": "NODE_OPTIONS 6144MiB"
+                },
+                "remaining": "Original P20 31-field global semantic acceptance, including 5 explicit runtime gaps and 4 enum crosswalks, not satisfied by scoped passes."
               }
             },
             "acceptanceEvidence": [],
