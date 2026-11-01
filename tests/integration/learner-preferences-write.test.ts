@@ -69,6 +69,43 @@ describe("learner placement preferences with an independent ACTIVE enrollment", 
     expect(audit.rows[0]?.total).toBe("1");
   }, 30_000);
 
+  it("does not silently opt a learner back into notifications on a partial preferences PUT", async () => {
+    const { ids, context } = fixture!;
+    await upsertCandidatePreferences(context, {
+      preferredRoleTitles: ["Backend Engineer"],
+      notifyMatchingJobs: false,
+      notifyApplicationUpdates: false,
+    });
+    // The legacy full-form PUT omits both flags when changing other fields.
+    // Omission must be a no-op for already persisted consent choices.
+    await upsertCandidatePreferences(context, {
+      preferredRoleTitles: ["Data Engineer"],
+      preferredLocations: ["Hyderabad"],
+    });
+    expect(await getCandidatePreferences(context)).toMatchObject({
+      preferredRoleTitles: ["Data Engineer"],
+      notifyMatchingJobs: false,
+      notifyApplicationUpdates: false,
+    });
+    const persisted = await pool.query<{
+      notify_matching_jobs: boolean;
+      notify_application_updates: boolean;
+    }>(
+      "SELECT notify_matching_jobs,notify_application_updates FROM placement_candidate_preferences WHERE membership_id=$1",
+      [ids.membership],
+    );
+    expect(persisted.rows).toEqual([{
+      notify_matching_jobs: false,
+      notify_application_updates: false,
+    }]);
+    // Explicit opt-in is allowed, but must not alter a different flag.
+    await upsertCandidatePreferences(context, { notifyMatchingJobs: true });
+    expect(await getCandidatePreferences(context)).toMatchObject({
+      notifyMatchingJobs: true,
+      notifyApplicationUpdates: false,
+    });
+  }, 30_000);
+
   it("rejects forged college, suspended, wrong role and swapped principal without mutation", async () => {
     const {ids, context}=fixture!;
     const denied:RequestContext[] = [
