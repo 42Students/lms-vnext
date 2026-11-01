@@ -57,6 +57,12 @@ export function inspectHistoricalPackages({ source, disposition, approval, packa
       if (!CLASS_BY_PACKAGE[id].has(table.sourceTableClass) ||
           decision.disposition !== DISPOSITION_BY_CLASS[table.sourceTableClass])
         fail("DB19_HISTORIC_WRONG_TABLE_CLASS_OR_DISPOSITION", name);
+      // Only Flyway history is tooling metadata; backup data must not be
+      // silently reclassified into schema metadata to bypass source review.
+      if (id === "DB19-P01" &&
+          ((name === "flyway_schema_history") !==
+            (table.sourceTableClass === "SCHEMA_TOOL_METADATA")))
+        fail("DB19_HISTORIC_FLYWAY_CLASS_DRIFT", name);
       if (!Array.isArray(table.rows) || table.rows.length !== table.sourceFieldCount ||
           table.rows.length !== decision.sourceFieldCount)
         fail("DB19_HISTORIC_FIELD_COUNT_DRIFT", name);
