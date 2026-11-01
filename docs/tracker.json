@@ -2218,12 +2218,15 @@
           "Registered journal idempotence PASS",
           "Scoped integration test step, including TPO and College Admin revocation negative cases, PASS"
         ],
-        "workflowConclusionWhenRecorded": "TYPECHECK_IN_PROGRESS_NOT_ACCEPTED",
+        "workflowConclusionWhenRecorded": "SUCCESS_SCOPED_4_OF_4_NOT_PACKAGE_ACCEPTANCE",
+        "workflowJobId": 124965860443,
+        "executedTypecheck": "PASS",
+        "executedIntegrationTests": "4_OF_4_PASS",
         "originalSourceFields": 52,
         "remaining": [
           "Final 52 individual frozen source-field semantic decisions (interview/round attendance/results), actor-kind and status-history provenance, and review/approval of missing target semantics.",
           "End-to-end all interview, attendance, round-result producers/consumers plus tenant/privacy, stale actor, concurrent revocation and supersession race matrices on exact final head.",
-          "Complete workflow TypeScript check and independent final P31/P32 global gates before DB-019 and DB-020 acceptance."
+          "Independent final P31/P32 global gates and complete 52-field P19 semantics before DB-019 and DB-020 acceptance."
         ],
         "evidenceIsNotAcceptance": true
       },
