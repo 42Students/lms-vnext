@@ -1976,7 +1976,7 @@
             "done": false,
             "acceptedAt": null,
             "implementationCheckpoint": {
-              "status": "SUBSTANTIAL_P20_RUNTIME_FIXES_PUSHED_TESTS_PENDING_EXECUTION",
+              "status": "P20_SEASON_REVOKE_GUARDS_AND_TWO_REGISTERED_PG17_JOBS_PUSHED_EXECUTION_NOT_CONFIRMED",
               "recordedOn": "2026-11-01",
               "implementationCommits": [
                 "e810167aae1ab7f1988dbbd339c79f0ed7477d16",
@@ -2004,7 +2004,14 @@
                 "5d2936d90d2f8487cee8d42c6cc6929edc383c13",
                 "cdb2d2ef57cfae2b42b268c6fbfdfc9675b19795",
                 "c971a1b3e2f6519bd18756c6e107a1096906469c",
-                "c7885e9dda054c3f775f74936e1168049818b30e"
+                "c7885e9dda054c3f775f74936e1168049818b30e",
+                "0993a0b7325a7f2fe037301b2db2524158a901fb",
+                "e7a05c0f9a21172ae8265df95390d248bb9ea104",
+                "b92afe5e44725bdb184e530d287f4e73f01f1f9c",
+                "434b3b420cbb3ab7c1b04c2317cf7f118c1f1d59",
+                "3b3e1892505b84c50e4b2df59ee478126d69b2ab",
+                "55c89b3b81d16f6218a93465b785090b9caebda3",
+                "5d903055091cf050f483006b5a6a6a28eaaaf76a"
               ],
               "changed": [
                 "Atomic original-snapshot SQL CASE propagation for swapped/renamed/reclassified after-college custom labels, preserving private detail and consent tables",
@@ -2054,6 +2061,36 @@
                   "Execute latest Node22 typecheck, Vitest and exact SHA registered PG17 integration and adversarial races.",
                   "Resolve five source runtime gaps, four enum crosswalks, and validate remaining source producers/consumers. No inferred history migration.",
                   "Do not mark package/DB019 done before original exact-scope PG17/security/state acceptance."
+                ]
+              },
+              "latestFocusedExecutionGate": {
+                "recordedOn": "2026-11-01",
+                "workflow": ".github/workflows/db019-p20-after-college-registered-pg17.yml",
+                "workflowCommitSha": "5d903055091cf050f483006b5a6a6a28eaaaf76a",
+                "jobs": [
+                  "p20-registered-after-college",
+                  "p20-registered-batch-consent"
+                ],
+                "targets": [
+                  "Journal replay/idempotence and after-college tenant, privacy, label-swap, stale version, role-revocation integration on disposable PG17",
+                  "Live actor authorization for season create/edit/close with TPO revoke and a two-session college lock race",
+                  "Batch registration consent and module disable race, strict JSON rule shape, enrollment and batch lifecycle on separate disposable PG17"
+                ],
+                "implementation": [
+                  "Season create and close recheck persisted actor under college write lock; refuse archived college",
+                  "Season edit rechecks persisted active TPO under college lock, preserving college-before-season lock order",
+                  "Season registration control now rejects archived colleges before mutation"
+                ],
+                "newTest": "tests/integration/db019-p20-season-authorization.test.ts",
+                "executionState": "WORKFLOW_COMMITTED_NOT_OBSERVED_PASS_OR_FAIL",
+                "nodeTypecheck": "NOT_OBSERVED",
+                "postgres17": "NOT_OBSERVED",
+                "sourceCoverage": "31 legacy fields uniquely scoped, 22 proposed mappings, 5 runtime gaps and 4 enum crosswalks; acceptance remains pending",
+                "remaining": [
+                  "Observe exact SHA runner outcomes and fix all focused failing steps without weakening assertions",
+                  "Resolve original 5 runtime gaps and 4 source enum crosswalks or record actual approved greenfield redesign decisions",
+                  "Verify 22 proposed source mappings with real producers/consumers, permission, privacy and tenant/lineage tests",
+                  "Keep DB19-P20 done:false and global DB019/DB020 open until original acceptance passes"
                 ]
               }
             },
