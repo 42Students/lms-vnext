@@ -65,9 +65,9 @@ export function auditP07({inventory,crosswalk,decisions,groupsSchema,electivesSc
       fail("P07_MISSING_DECISION_OR_FORGED_PROOF",id);
     const tableName=id?.split(".")[0];
     const shape=TABLES[tableName];
-    const module=shape==="undefined"?null:shape?.module;
-    if(!module || !row.producerPath.startsWith("src/modules/"+(module==="electives"?"electives/":"groups/"))||
-       !row.consumerPath.startsWith("src/modules/"+(module==="electives"?"electives/":"groups/")))
+    const domainModule=shape?.module;
+    if(!domainModule || !row.producerPath.startsWith("src/modules/"+(domainModule==="electives"?"electives/":"groups/"))||
+       !row.consumerPath.startsWith("src/modules/"+(domainModule==="electives"?"electives/":"groups/")))
       fail("P07_PRODUCER_CONSUMER_SCOPE_DRIFT",id);
     const expected= {
       DIRECT_SOURCE_NAME_MATCH:"NORMALIZED_ACTIVE_SCHEMA_FIELD",
