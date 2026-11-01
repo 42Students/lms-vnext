@@ -2681,12 +2681,36 @@
             "sourceFieldCount": 15,
             "picked": true,
             "pickedBy": "CHAT_DB19_SKILLS_2026_11_01",
-            "done": false,
-            "acceptedAt": null,
-            "acceptanceEvidence": [],
+            "done": true,
+            "acceptedAt": "2026-11-02",
+            "acceptanceEvidence": [
+              {
+                "kind": "EXECUTED_EXACT_SHA_REGISTERED_PG17_P30_SKILL_FIELDS_IMPORT_SEARCH_USAGE",
+                "result": "PASS",
+                "exitCode": 0,
+                "commitSha": "18e063fb9b9d64f5a3ed0ceea98ebe073f787ee9",
+                "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/41341753690",
+                "jobId": 124953065667,
+                "runner": "GitHub Actions ubuntu-latest Node.js 22 and disposable PostgreSQL 17",
+                "commands": [
+                  "node --test tests/db019-p30-skills-field-review.test.mjs",
+                  "node --test tests/db019-p30-skills-writer-gates.test.mjs",
+                  "node --test tests/db019-p30-skill-field-decisions.test.mjs",
+                  "npm run db:journal:verify",
+                  "npm run db:test:prepare (DATABASE_URL unset; exact registered journal, no staging overlay)",
+                  "npm run db:migrate (idempotence)",
+                  "DB19_P30_REGISTERED_PG=YES node --test tests/db019-p30-registered-skill-targets-pg.test.mjs",
+                  "npx vitest run --config vitest.db.config.ts tests/integration/db10-skills-catalog.test.ts",
+                  "npx vitest run tests/unit/db10-skills-catalog.test.ts tests/unit/db19-skills-usage-normalization.test.ts",
+                  "NODE_OPTIONS=--max-old-space-size=6144 npm run typecheck"
+                ],
+                "scope": "Exact frozen 15/15 source field decisions covering skill_synonyms(3), skill_usage(3), skills(9). Registered PG17 physical catalog, source legacy-id keys, alias multiplicity, FK and case-folded uniqueness, two independent usage counters, search category/priorities and visibility, idempotent persisted Super Admin CSV import, forged elevated-actor denial, inactive and forged skill UUID/name negative selection, concurrent free-text usage increments and typecheck all passed. No staging SQL overlay was used.",
+                "boundary": "Greenfield new-data behavior only: no fabricated import of historical MySQL rows, legacy time zone provenance or raw credential data. Pre-review source runtimeVerified=false remains a non-self-certifying source audit; final 2,829-field P31 review, P32 global PG17 and DB020 remain OPEN."
+              }
+            ],
             "acceptance": "Final 15 field dispositions and scoped skill creation/search/synonym/usage contract verification.",
             "latestProgress": {
-              "status": "CODE_PATCHED_SOURCE_ONLY_NOT_ACCEPTED",
+              "status": "P30_SCOPED_ACCEPTED_REGISTERED_PG17",
               "fieldLedger": "docs/planning/db019-p30-skills-field-review.json",
               "exactSourceFields": 15,
               "checks": {
@@ -2709,7 +2733,21 @@
                 "08a85b4ae6acc83e65098332e7d850c007615a7e",
                 "35b0999551c5c63f8597852b950e7411ed183e85"
               ],
-              "remaining": "Final field decisions, 0195 exact-head registered PG17/seed proof, active synonym/search behavior, v1/v2 counter concurrency and actual consumer permission tests. Source-only checks do not complete P30."
+              "remaining": "Final field decisions, 0195 exact-head registered PG17/seed proof, active synonym/search behavior, v1/v2 counter concurrency and actual consumer permission tests. Source-only checks do not complete P30.",
+              "acceptedAt": "2026-11-02",
+              "scopeNote": "P30 source and registered PG17 acceptance only; P31/P32 global semantic and security acceptance remain OPEN.",
+              "exactHeadRun": "https://github.com/42Students/lms-vnext/actions/runs/41341753690"
+            },
+            "implementationCheckpoint": {
+              "status": "P30_SCOPED_ACCEPTED_GLOBAL_P31_P32_OPEN",
+              "recordedOn": "2026-11-02",
+              "fullGateSha": "18e063fb9b9d64f5a3ed0ceea98ebe073f787ee9",
+              "sourceDecisionLedger": "docs/planning/db019-p30-skill-field-decisions.json",
+              "sourceDecisionGuard": "tests/db019-p30-skill-field-decisions.test.mjs",
+              "registeredSchemaWitness": "tests/db019-p30-registered-skill-targets-pg.test.mjs",
+              "acceptedSourceFields": 15,
+              "workflow": ".github/workflows/db019-p30-skills-registered-pg17.yml",
+              "acceptanceRun": "https://github.com/42Students/lms-vnext/actions/runs/41341753690"
             }
           },
           {
