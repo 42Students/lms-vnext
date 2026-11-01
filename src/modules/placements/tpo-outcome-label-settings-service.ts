@@ -92,7 +92,9 @@ export async function saveTpoOutcomeLabels(context:RequestContext,raw:unknown){
   const stored=current?z.array(entrySchema).safeParse(current.outcomeLabels):null;
   // A corrupt persisted catalog cannot be silently overwritten. Preserve it
   // for explicit recovery rather than destroying the identity crosswalk.
-  if(current&&!stored?.success)
+  // NULL is a legitimate pristine catalog (no labels configured).
+  // Only malformed non-NULL JSON is a fail-closed data integrity issue.
+  if(current&&current.outcomeLabels!==null&&!stored?.success)
    throw new TpoOutcomeLabelError("TPO_SETTINGS_INVALID_LABEL");
   if(current&&stored?.success&&tpoOutcomeLabelsAlreadyApplied(
     stored.data.map(row=>({...row,id:row.id??null})),
