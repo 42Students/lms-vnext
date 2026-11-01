@@ -232,6 +232,32 @@ describe("DB019 registered PG17 after-college outcome fidelity",()=>{
   });
   expect(removed.labels).toHaveLength(1);
  });
+ it("refuses forged or duplicated custom-label identities and non-choice categories",async()=>{
+  const current=await readTpoOutcomeLabels(tpo);
+  const forged=randomUUID();
+  await expect(saveTpoOutcomeLabels(tpo,{
+   labels:[{id:forged,label:"Forged taxonomy entry",outcome:"HIGHER_STUDIES"}],
+   expectedVersion:current.version,
+  })).rejects.toMatchObject({code:"TPO_SETTINGS_INVALID_LABEL"});
+  await expect(saveTpoOutcomeLabels(tpo,{
+   labels:[
+    {id:forged,label:"Same identity one",outcome:"HIGHER_STUDIES"},
+    {id:forged,label:"Same identity two",outcome:"ENTREPRENEURSHIP"},
+   ],
+   expectedVersion:current.version,
+  })).rejects.toThrow();
+  await expect(saveTpoOutcomeLabels(tpo,{
+   labels:[{label:"Unsupported seeking label",outcome:"LOOKING_FOR_JOB"}],
+   expectedVersion:current.version,
+  })).rejects.toThrow();
+  await expect(saveTpoOutcomeLabels(tpo,{
+   labels:[{label:"Unsupported undecided label",outcome:"NOT_DECIDED"}],
+   expectedVersion:current.version,
+  })).rejects.toThrow();
+  const unchanged=await readTpoOutcomeLabels(tpo);
+  expect(unchanged.labels).toEqual(current.labels);
+  expect(unchanged.version).toBe(current.version);
+ });
  it("permits persisted College Admin and acting Super Admin without forging TPO membership",async()=>{
   const start=await getTpoAfterCollegeForRoster(collegeAdmin,[learnerId]);
   const initial=start.entries[learnerId]!;
