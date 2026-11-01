@@ -2,6 +2,7 @@ import "server-only";
 
 import { and, asc, desc, eq, sql } from "drizzle-orm";
 import { z } from "zod";
+import { normalizeSkillUsageKey, skillUsageNameSchema } from "./usage-normalization";
 import type { RequestContext } from "@/modules/identity/context";
 import { canReadSkillCatalog } from "./catalog-access";
 import { getDb } from "@/db/client";
@@ -346,11 +347,11 @@ export async function recordSkillSelection(
 ) {
   requireCatalogReader(context);
   const data=z.object({
-    name:z.string().trim().min(1).max(200),
+    name:skillUsageNameSchema,
     source:z.enum(["v1","v2"]),
     skillId:z.string().uuid().optional(),
   }).strict().parse(raw);
-  const name=data.name.toLocaleLowerCase("en-US");
+  const name=normalizeSkillUsageKey(data.name);
   if(data.source==="v1"){
     if(!data.skillId)throw new Error("CANONICAL_SKILL_REQUIRED");
     const updated=await getDb().update(db10Skills).set({
