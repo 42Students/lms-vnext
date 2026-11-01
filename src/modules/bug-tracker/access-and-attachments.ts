@@ -166,3 +166,50 @@ export function bugScreenshotErrorMessage(error:unknown):string{
  }
  return "Screenshot unavailable. Check the file and try again.";
 }
+
+/**
+ * DB19-P28: read-time object integrity and authorization boundary.
+ *
+ * Confirmation may be followed by an object overwrite; a later download
+ * must never rely on a database MIME label alone. The object must still
+ * match the confirmed private record and have a trusted scan attestation.
+ * This checks metadata consistency; it does not replace a privileged scan.
+ */
+export function canSignBugScreenshotDownload(
+  record: {
+    publicId: string;
+    storageKey: string;
+    contentType: string;
+    sizeBytes: number;
+  },
+  head: {
+    contentType: string;
+    sizeBytes: number;
+    metadata: Record<string, string>;
+  } | null,
+  environment: string | undefined,
+): boolean {
+  if (!head || !/^LMS-[0-9]{4,}$/.test(record.publicId)) return false;
+  const prefix = `bug-tracker/${record.publicId}/`;
+  const tail = record.storageKey.startsWith(prefix)
+    ? record.storageKey.slice(prefix.length)
+    : "";
+  const match = /^([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})\.(png|jpg|webp)$/i.exec(tail);
+  const allowedType = Object.prototype.hasOwnProperty.call(fileTypes, record.contentType);
+  if (!match || !allowedType ||
+      match[2]?.toLowerCase() !== fileTypes[record.contentType as keyof typeof fileTypes]) {
+    return false;
+  }
+  // Check both the physical object and confirmed DB metadata: stale signed
+  // objects and changed MIME/size must not be issued fresh download grants.
+  if (head.contentType !== record.contentType ||
+      !Number.isSafeInteger(head.sizeBytes) ||
+      !Number.isSafeInteger(record.sizeBytes) ||
+      record.sizeBytes < 1 || record.sizeBytes > BUG_SCREENSHOT_MAX_BYTES ||
+      head.sizeBytes !== record.sizeBytes) return false;
+  return head.metadata["malware-scan-status"] === "CLEAN" && (
+    head.metadata["scan-attested-by"] === "lms-vnext-privileged-scanner" ||
+    (environment === "development" &&
+     head.metadata["scan-attested-by"] === "lms-vnext-dev-format-check")
+  );
+}
