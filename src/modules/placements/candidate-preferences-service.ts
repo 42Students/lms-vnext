@@ -100,6 +100,12 @@ export async function upsertCandidatePreferences(
   rawInput: CandidatePreferencesInput,
 ) {
   const input = candidatePreferencesInputSchema.parse(rawInput);
+  // PUT accepts an older partial preference form. Schema defaults are editor
+  // conveniences, not affirmative consent: omitting a notification field
+  // must never reset a persisted false opt-out to true.
+  const writes: Partial<typeof input> = { ...input };
+  if (rawInput.notifyMatchingJobs === undefined) delete writes.notifyMatchingJobs;
+  if (rawInput.notifyApplicationUpdates === undefined) delete writes.notifyApplicationUpdates;
   const membership = requireLearnerMembership(context);
   await requireLearnerPlacementAccess(context);
   if (!can(context, "placements.read", {
@@ -127,10 +133,10 @@ export async function upsertCandidatePreferences(
     }
 
     const [preferences] = await tx.insert(placementCandidatePreferences)
-      .values({ membershipId: membership.id, ...input })
+      .values({ membershipId: membership.id, ...writes })
       .onConflictDoUpdate({
         target: placementCandidatePreferences.membershipId,
-        set: { ...input, updatedAt: new Date() },
+        set: { ...writes, updatedAt: new Date() },
       }).returning();
     if (!preferences) throw new Error("Candidate preferences upsert returned no row");
 
