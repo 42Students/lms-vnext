@@ -187,11 +187,10 @@ export async function releaseScheduledNotificationOutbox(
           returning id
         `);
         eligible = Boolean(attempt.rows[0]);
+        // An existing row is a delivery receipt only if it is actively SENT
+        // with a committed delivery time. Never count cancelled or deleted rows.
         if (!eligible) {
           const existing = await tx.execute<{ present: boolean }>(sql`
-            // An existing row is a delivery receipt only if it was actually
-            // SENT and remains active. A cancelled, scheduled or deleted
-            // notice must never turn a retrying outbox row into SENT.
             select exists (
               select 1 from in_app_notifications n
               join activity_events e on e.id = n.event_id
@@ -202,6 +201,7 @@ export async function releaseScheduledNotificationOutbox(
               where n.user_id = ${userId}::uuid
                 and n.event_id = ${entry.event_id}::uuid
                 and n.delivery_status = 'SENT'
+                and n.delivered_at is not null
                 and n.deleted_at is null
                 and e.college_id = ${entry.college_id}::uuid
                 and e.organization_id = ${entry.organization_id}::uuid
