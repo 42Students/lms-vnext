@@ -36,6 +36,7 @@ import {
   type RequestContext,
 } from "@/modules/identity/context";
 import { resolveOptionalModuleAccess } from "@/modules/module-access/service";
+import {tpoBatchRuleOverridesSchema} from "./tpo-batch-rules-model";
 import { requirePlacementManageScope } from "./scope";
 import {
   getLearnerPlacementAccess,
@@ -84,7 +85,10 @@ const inviteCohortInput = cohortInput.extend({
 const batchSettingsInput = cohortInput.extend({
   registrationDeadline: z.coerce.date().nullable(),
   // null means inherit the college's placement rules, never an empty override.
-  rulesOverride: z.record(z.string(), z.unknown()).nullable(),
+  // Source rules_json can carry unapproved keys, but the ACTIVE vNext
+  // business policy accepts only the four versioned placement overrides.
+  // Do not persist arbitrary JSON that downstream consumers silently ignore.
+  rulesOverride: tpoBatchRuleOverridesSchema.nullable(),
   expectedVersion: z.string().min(1).max(80).optional(),
 }).strict();
 
