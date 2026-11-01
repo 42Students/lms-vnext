@@ -2584,6 +2584,52 @@
             "DB020 depends on DB019 and exact final phase-head certification."
           ],
           "notTaskAcceptance": true
+        },
+        "latestP01P02ArchiveSmrithiGate": {
+          "recordedOn": "2026-11-01",
+          "status": "SCOPED_IN_PROCESS_SOURCE_GATE_PASS_NODE_AND_RUNTIME_SCAN_PENDING",
+          "pickedBy": "CHAT_DB19_HISTORICAL_DISPOSITIONS_20261101",
+          "packages": [
+            "DB19-P01",
+            "DB19-P02"
+          ],
+          "exactFieldPartition": {
+            "historicalBackupsAndFlyway": 641,
+            "smrithiUserApprovedExclusions": 91,
+            "total": 732,
+            "sourceTables": 39
+          },
+          "implementationCommits": [
+            "04e657fc0e4cf31a1cf5cd90d25385b5fe2f45ff",
+            "9cb5bb34b4218c1b70f3a569a088baa87164b6be",
+            "3a2aa609185dc54857e99f98e98ec76f6300d6d2",
+            "5e02fecbbbdc0d47bc56bd646f58579b6ad6dae5",
+            "3a44c3b9b50d0746859690706b3dd7caf1e3fa69",
+            "56c08df1223a9b5fcd43578374ce398f47818b8d",
+            "5e068c70c763347269756b2be4f7b9d42a8c1daa"
+          ],
+          "gate": "npm run db19:historical:verify",
+          "executed": {
+            "kind": "IN_PROCESS_GITHUB_CONNECTOR_V8_SOURCE_GATE",
+            "sourceFields": 732,
+            "sourceGateResult": "PASS_WITH_SYNTHETIC_NO_REFERENCE_RUNTIME_FILES",
+            "mutationProbesPassed": [
+              "duplicate field",
+              "forged product approval",
+              "injected live table references",
+              "incorrect migration-engine journal",
+              "cross-package misclassification"
+            ],
+            "hasRealRepoRuntimeTreeScan": false,
+            "hasNodeCliTestExecution": false,
+            "hasPostgresExecution": false
+          },
+          "remaining": [
+            "Run npm run db19:historical:verify against exact main checkout (includes full src/drizzle live-table static scan).",
+            "Record passing exact-SHA Node execution and scoped reviewer confirmation before done:true.",
+            "Continue other DB19 field semantic packages and global P31/P32 PostgreSQL acceptance; neither is certified by archived source decisions."
+          ],
+          "notTaskAcceptance": true
         }
       }
     },
