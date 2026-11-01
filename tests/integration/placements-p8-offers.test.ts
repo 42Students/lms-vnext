@@ -1765,6 +1765,58 @@ describe("Placement P8 offers and joining", () => {
     }
   });
 
+  it.each(["LEARNER","TPO"] as const)(
+    "DB019 per-drive FULL_TIME counts_as_placed=false preserves a sibling for %s acceptance",
+    async (actor)=>{
+      const {job,application}=await preparePassedApplication();
+      // The college may explicitly classify a FULL_TIME custom drive as
+      // non-counting. Employment type cannot overrule this persisted policy.
+      await pool.query("update placement_jobs set counts_as_placed=false where id=$1",[job.id]);
+      const stored=await pool.query<{counts_as_placed:boolean|null}>(
+        "select counts_as_placed from placement_jobs where id=$1",[job.id]);
+      expect(stored.rows).toEqual([{counts_as_placed:false}]);
+      const role=await pool.query<{role_option_id:string}>(
+        "select role_option_id from placement_applications where id=$1",[application.id]);
+      const siblingRole=await pool.query<{id:string}>(`
+        insert into placement_job_role_options(job_id,title,employment_type,work_mode)
+        select job_id,title||' not-counting sibling',employment_type,work_mode
+        from placement_job_role_options where id=$1 returning id`,
+        [role.rows[0]!.role_option_id]);
+      const sibling=await pool.query<{id:string}>(`
+        insert into placement_applications(
+          job_id,role_option_id,membership_id,channel,status,
+          eligibility_status,eligibility_snapshot,submitted_by_user_id
+        ) select job_id,$2,membership_id,channel,status,
+          eligibility_status,eligibility_snapshot,submitted_by_user_id
+        from placement_applications where id=$1 returning id`,
+        [application.id,siblingRole.rows[0]!.id]);
+      const offer=await issuePlacementOffer(tpo,application.id,{
+        kind:"OFFER",roleTitle:"Non-counting full-time offer",annualCtcInr:900_000,
+      });
+      if(actor==="LEARNER"){
+        const accepted=await actOnPlacementOffer(learner,offer.id,{action:"ACCEPT"});
+        expect(accepted.status).toBe("ACCEPTED");
+      }else{
+        const response=await recordTpoOfferLifecycle(tpo,job.id,{
+          confirmed:true,action:"RECORD_ACCEPTED",offerIds:[offer.id],
+          expectedStatus:"ISSUED",reason:"Employer confirmed the recorded accepted offer",
+        });
+        expect(response).toMatchObject({updated:1});
+        await matureRecordedAcceptance(offer.id);
+      }
+      const siblingState=await pool.query<{status:string}>(
+        "select status from placement_applications where id=$1",[sibling.rows[0]!.id]);
+      expect(siblingState.rows).toEqual([{status:"SUBMITTED"}]);
+      const history=await pool.query<{count:number}>(`
+        select count(*)::integer as count from placement_application_status_history
+        where application_id=$1 and to_status='WITHDRAWN'`,[sibling.rows[0]!.id]);
+      expect(history.rows).toEqual([{count:0}]);
+      const acceptedRow=await pool.query<{status:string}>(
+        "select status from placement_offers where id=$1",[offer.id]);
+      expect(acceptedRow.rows).toEqual([{status:"ACCEPTED"}]);
+    },
+  );
+
   it("PLACEMENTS-TPO-CASCADE-17 DB recorded acceptance withdraws ineligible sibling application with correlated history",async()=>{
     const {job,application}=await preparePassedApplication();
     const role=await pool.query<{role_option_id:string}>(
