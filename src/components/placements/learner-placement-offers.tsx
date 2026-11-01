@@ -47,7 +47,7 @@ export type LearnerPlacementOfferItem = {
     | "WITHDRAWN";
   annualCtcInr: number | null;
   letterHref?: string | null;
-  countsAsPlaced?: boolean;
+  countsAsPlaced?: boolean|null;
   joiningDate: string | null;
   expiresAt: string | null;
   issuedAt: string;
@@ -436,9 +436,13 @@ export function LearnerPlacementOffers({
                 <dt className="text-xs text-muted-foreground">{item.status==="ACCEPTED"?"Accepted":"Answered"}</dt>
                 <dd className="mt-1 font-semibold text-foreground">{formatWhen(item.respondedAt)??"Date unavailable"} (IST)</dd>
               </div>:null}
-              {item.countsAsPlaced===false ? <div>
+              {item.countsAsPlaced !== undefined ? <div>
                 <dt className="text-xs text-muted-foreground">Counts as placed</dt>
-                <dd className="mt-1 font-semibold text-foreground">No (internship)</dd>
+                <dd className="mt-1 font-semibold text-foreground">
+                  {item.countsAsPlaced===null?"Not confirmed":
+                    item.kind==="LOI"?"No (letter of intent)":
+                    item.countsAsPlaced?"Yes, if accepted":"No (college policy)"}
+                </dd>
               </div>:null}
             </dl>
 
