@@ -94,7 +94,10 @@ describe.skipIf(!enabled)("DB19-P28 admin attachment confirmation on registered 
     );
   });
 
-  beforeEach(() => {
+  beforeEach(async () => {
+    // Each test starts at zero confirmed screenshots; no success depends
+    // on test execution order or on an earlier confirmation.
+    await pool?.query("delete from bug_report_attachments where bug_report_id=$1", [reportId]);
     vi.mocked(headObject).mockReset();
     vi.mocked(headObject).mockResolvedValue({
       etag: "private-etag",
@@ -150,6 +153,41 @@ describe.skipIf(!enabled)("DB19-P28 admin attachment confirmation on registered 
       [reportId],
     );
     expect(rows.rows).toEqual([{ storage_key: key, total: 1 }]);
+  });
+
+  it("serializes two competing third-screenshot confirmations without exceeding the limit", async () => {
+    if (!pool) throw new Error("Disposable PG17 is required");
+    const nextKey = () => `bug-tracker/${publicId}/${randomUUID()}.png`;
+    for (let index = 0; index < 2; index += 1) {
+      const result = await confirmTrackerAttachment(scopedAdmin, publicId, {
+        storageKey: nextKey(), originalFilename: `existing-${index}.png`,
+      });
+      expect(result.replayed).toBe(false);
+      expect(result.attachment).not.toHaveProperty("storageKey");
+    }
+    const attempts = await Promise.allSettled([
+      confirmTrackerAttachment(scopedAdmin, publicId, {
+        storageKey: nextKey(), originalFilename: "contender-a.png",
+      }),
+      confirmTrackerAttachment(scopedAdmin, publicId, {
+        storageKey: nextKey(), originalFilename: "contender-b.png",
+      }),
+    ]);
+    const won = attempts.filter(item => item.status === "fulfilled");
+    const lost = attempts.filter(item => item.status === "rejected");
+    expect(won).toHaveLength(1);
+    expect(lost).toHaveLength(1);
+    if (lost[0]?.status === "rejected") {
+      expect(lost[0].reason).toMatchObject({ code: "TOO_MANY_ATTACHMENTS" });
+    }
+    if (won[0]?.status === "fulfilled") {
+      expect(won[0].value.attachment).not.toHaveProperty("storageKey");
+    }
+    const persisted = await pool.query<{ total: number }>(
+      "select count(*)::int as total from bug_report_attachments where bug_report_id=$1",
+      [reportId],
+    );
+    expect(persisted.rows[0]?.total).toBe(3);
   });
 
   it("rejects changed-tenant and non-super-admin access before a private object response", async () => {
