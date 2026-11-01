@@ -141,6 +141,80 @@ describe("DB019 registered PG17 after-college outcome fidelity",()=>{
    ["X".repeat(201),learnerId],
   )).rejects.toMatchObject({code:"22001"});
  });
+ it("atomically swaps custom label names, moves their outcome and preserves private detail",async()=>{
+  // Test against a self-contained catalog, regardless of other test order.
+  const old=await readTpoOutcomeLabels(tpo);
+  const emptied=await saveTpoOutcomeLabels(tpo,{
+   labels:[],expectedVersion:old.version,
+  });
+  const created=await saveTpoOutcomeLabels(tpo,{
+   labels:[
+    {label:"Career studio",outcome:"ENTREPRENEURSHIP"},
+    {label:"Graduate school",outcome:"ENTREPRENEURSHIP"},
+   ],
+   expectedVersion:emptied.version,
+  });
+  const before=await getTpoAfterCollegeForRoster(tpo,[learnerId]);
+  const selection=await setTpoAfterCollegeOutcome(tpo,{
+   learnerMembershipId:learnerId,outcome:"ENTREPRENEURSHIP",
+   outcomeLabel:"Career studio",outcomeDetail:"Private plan remains private",
+   expectedVersion:before.entries[learnerId]?.expectedVersion??"none",
+  });
+  const swapped=await saveTpoOutcomeLabels(tpo,{
+   labels:[
+    {id:created.labels[0]!.id,label:"Graduate school",outcome:"ENTREPRENEURSHIP"},
+    {id:created.labels[1]!.id,label:"Career studio",outcome:"ENTREPRENEURSHIP"},
+   ],
+   expectedVersion:created.version,
+  });
+  const row=await pool.query<{
+   outcome:string;outcome_label:string|null;outcome_detail:string|null;updated_at:Date
+  }>("SELECT outcome,outcome_label,outcome_detail,updated_at "+
+   "FROM placement_tpo_after_college WHERE learner_membership_id=$1",[learnerId]);
+  expect(row.rows[0]).toMatchObject({
+   outcome:"ENTREPRENEURSHIP",outcome_label:"Graduate school",
+   outcome_detail:"Private plan remains private",
+  });
+  expect(row.rows[0]!.updated_at.toISOString()).not.toBe(selection.version);
+  // Old client writers must refresh their version after the cascade.
+  await expect(setTpoAfterCollegeOutcome(tpo,{
+   learnerMembershipId:learnerId,outcome:"ENTREPRENEURSHIP",
+   expectedVersion:selection.version,
+  })).rejects.toMatchObject({code:"AFTER_COLLEGE_STALE"});
+  // Reclassify an existing label: the student destination follows the stable
+  // label ID, not the old outcome, and the sensitive detail remains private.
+  const moved=await saveTpoOutcomeLabels(tpo,{
+   labels:[
+    {id:swapped.labels[0]!.id,label:"Graduate school",outcome:"HIGHER_STUDIES"},
+    {id:swapped.labels[1]!.id,label:"Career studio",outcome:"ENTREPRENEURSHIP"},
+   ],
+   expectedVersion:swapped.version,
+  });
+  const afterMove=await pool.query<{
+   outcome:string;outcome_label:string|null;outcome_detail:string|null;updated_at:Date
+  }>("SELECT outcome,outcome_label,outcome_detail,updated_at "+
+   "FROM placement_tpo_after_college WHERE learner_membership_id=$1",[learnerId]);
+  expect(afterMove.rows[0]).toMatchObject({
+   outcome:"HIGHER_STUDIES",outcome_label:"Graduate school",
+   outcome_detail:"Private plan remains private",
+  });
+  expect(afterMove.rows[0]!.updated_at.toISOString())
+   .not.toBe(row.rows[0]!.updated_at.toISOString());
+  // Removing a custom label clears only its tag, never the recorded outcome
+  // or the learner's private information. Editing consent is out of scope.
+  const removed=await saveTpoOutcomeLabels(tpo,{
+   labels:[moved.labels[1]!],expectedVersion:moved.version,
+  });
+  const afterDelete=await pool.query<{
+   outcome:string;outcome_label:string|null;outcome_detail:string|null
+  }>("SELECT outcome,outcome_label,outcome_detail "+
+   "FROM placement_tpo_after_college WHERE learner_membership_id=$1",[learnerId]);
+  expect(afterDelete.rows[0]).toEqual({
+   outcome:"HIGHER_STUDIES",outcome_label:null,
+   outcome_detail:"Private plan remains private",
+  });
+  expect(removed.labels).toHaveLength(1);
+ });
  it("permits persisted College Admin and acting Super Admin without forging TPO membership",async()=>{
   const start=await getTpoAfterCollegeForRoster(collegeAdmin,[learnerId]);
   const initial=start.entries[learnerId]!;
