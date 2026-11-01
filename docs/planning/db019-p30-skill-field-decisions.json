@@ -1,0 +1,273 @@
+{
+  "schemaVersion": 1,
+  "packageId": "DB19-P30",
+  "sourceSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+  "originalReview": "docs/planning/db019-p30-skills-field-review.json",
+  "sourceFieldCount": 15,
+  "sourceTables": [
+    "skill_synonyms",
+    "skill_usage",
+    "skills"
+  ],
+  "decisionScope": "Greenfield engineered source-to-target behaviors for fifteen named skills fields; imported historical rows are out of scope because vNext is a fresh system. This sheet is not executable proof; package acceptance requires exact registered PG17 catalog, real producers/consumers and adversarial tests.",
+  "noLegacyDataImport": true,
+  "globalP31SignoffOpen": true,
+  "fieldDecisions": [
+    {
+      "sourceField": "skill_synonyms.id",
+      "sourceDefinition": "int NOT NULL AUTO_INCREMENT",
+      "sourceRisk": "INTEGER_TO_UUID",
+      "engineeringDecision": "NORMALIZED_UUID_WITH_PINNED_SOURCE_ID",
+      "targetRefs": [
+        "skill_synonyms.legacy_synonym_id"
+      ],
+      "sourceRationale": "Legacy integer identity retained separately from new UUID id; verify import identity resolution and duplicate protection.",
+      "productScope": "GREENFIELD_NEW_DATA_ONLY_NO_HISTORICAL_IMPORT_PROVENANCE",
+      "producerPath": "src/modules/skills/catalog-import-service.ts",
+      "consumerPath": "src/modules/skills/catalog-service.ts",
+      "scopeAcceptance": "REGISTERED_PG17_CATALOG_SCHEMA_AND_LIVE_SERVICE_GATES_REQUIRED",
+      "sourceReviewed": true,
+      "runtimeVerified": false,
+      "fieldGlobalSignoff": false
+    },
+    {
+      "sourceField": "skill_synonyms.synonym",
+      "sourceDefinition": "varchar(100) NOT NULL",
+      "sourceRisk": "ALIAS_MANY_TO_MANY",
+      "engineeringDecision": "PRESERVE_SOURCE_SYNONYM_MULTIPLICITY",
+      "targetRefs": [
+        "skill_synonyms.synonym"
+      ],
+      "sourceRationale": "Nonunique lowercased synonym lookup; same alias may reference multiple active skills and duplicate parent aliases may exist.",
+      "productScope": "GREENFIELD_NEW_DATA_ONLY_NO_HISTORICAL_IMPORT_PROVENANCE",
+      "producerPath": "src/modules/skills/catalog-import-service.ts",
+      "consumerPath": "src/modules/skills/catalog-service.ts",
+      "scopeAcceptance": "REGISTERED_PG17_CATALOG_SCHEMA_AND_LIVE_SERVICE_GATES_REQUIRED",
+      "sourceReviewed": true,
+      "runtimeVerified": false,
+      "fieldGlobalSignoff": false
+    },
+    {
+      "sourceField": "skill_synonyms.skill_id",
+      "sourceDefinition": "int NOT NULL",
+      "sourceRisk": "PARENT_KEY_REDESIGN",
+      "engineeringDecision": "NORMALIZED_UUID_PARENT_WITH_LEGACY_ID_REFERENCE",
+      "targetRefs": [
+        "skill_synonyms.legacy_skill_id",
+        "skill_synonyms.skill_id"
+      ],
+      "sourceRationale": "Legacy integer parent must resolve to canonical skills.id UUID; reject missing/mismatched parents; restrict deletion.",
+      "productScope": "GREENFIELD_NEW_DATA_ONLY_NO_HISTORICAL_IMPORT_PROVENANCE",
+      "producerPath": "src/modules/skills/catalog-import-service.ts",
+      "consumerPath": "src/modules/skills/catalog-service.ts",
+      "scopeAcceptance": "REGISTERED_PG17_CATALOG_SCHEMA_AND_LIVE_SERVICE_GATES_REQUIRED",
+      "sourceReviewed": true,
+      "runtimeVerified": false,
+      "fieldGlobalSignoff": false
+    },
+    {
+      "sourceField": "skill_usage.skill_name",
+      "sourceDefinition": "varchar(200) NOT NULL",
+      "sourceRisk": "KEY_NORMALIZATION",
+      "engineeringDecision": "LOWERCASE_FREE_TEXT_KEY_WITH_EXPLICIT_BLANK_REJECTION",
+      "targetRefs": [
+        "skill_usage.skill_name"
+      ],
+      "sourceRationale": "Raw name lowercased without trimming; leading/trailing spaces must not collapse. Whitespace-only source keys remain an unapproved tightening in PostgreSQL.",
+      "productScope": "GREENFIELD_NEW_DATA_ONLY_NO_HISTORICAL_IMPORT_PROVENANCE",
+      "producerPath": "src/modules/skills/catalog-service.ts",
+      "consumerPath": "src/modules/skills/catalog-service.ts",
+      "scopeAcceptance": "REGISTERED_PG17_CATALOG_SCHEMA_AND_LIVE_SERVICE_GATES_REQUIRED",
+      "sourceReviewed": true,
+      "runtimeVerified": false,
+      "fieldGlobalSignoff": false
+    },
+    {
+      "sourceField": "skill_usage.usage_count",
+      "sourceDefinition": "int DEFAULT '0'",
+      "sourceRisk": "NULLABILITY_AND_RACE",
+      "engineeringDecision": "ATOMIC_NON_NULL_USAGE_COUNTER",
+      "targetRefs": [
+        "skill_usage.usage_count"
+      ],
+      "sourceRationale": "Independent nullable-source counter; target enforces nonnull default 0. Verify legacy null/backfill, atomic upsert and concurrent increments.",
+      "productScope": "GREENFIELD_NEW_DATA_ONLY_NO_HISTORICAL_IMPORT_PROVENANCE",
+      "producerPath": "src/modules/skills/catalog-service.ts",
+      "consumerPath": "src/modules/skills/catalog-service.ts",
+      "scopeAcceptance": "REGISTERED_PG17_CATALOG_SCHEMA_AND_LIVE_SERVICE_GATES_REQUIRED",
+      "sourceReviewed": true,
+      "runtimeVerified": false,
+      "fieldGlobalSignoff": false
+    },
+    {
+      "sourceField": "skill_usage.last_used",
+      "sourceDefinition": "timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP",
+      "sourceRisk": "TIMESTAMP_NULLABILITY",
+      "engineeringDecision": "UTC_NORMALIZED_LIVE_TIMESTAMP",
+      "targetRefs": [
+        "skill_usage.last_used"
+      ],
+      "sourceRationale": "Legacy nullable TIMESTAMP default/update-on-change; target timestamp with timezone NOT NULL, update done by writers. Verify nulls/timezone precision.",
+      "productScope": "GREENFIELD_NEW_DATA_ONLY_NO_HISTORICAL_IMPORT_PROVENANCE",
+      "producerPath": "src/modules/skills/catalog-service.ts",
+      "consumerPath": "src/modules/skills/catalog-service.ts",
+      "scopeAcceptance": "REGISTERED_PG17_CATALOG_SCHEMA_AND_LIVE_SERVICE_GATES_REQUIRED",
+      "sourceReviewed": true,
+      "runtimeVerified": false,
+      "fieldGlobalSignoff": false
+    },
+    {
+      "sourceField": "skills.id",
+      "sourceDefinition": "int NOT NULL AUTO_INCREMENT",
+      "sourceRisk": "INTEGER_TO_UUID",
+      "engineeringDecision": "NORMALIZED_UUID_WITH_PINNED_SOURCE_ID",
+      "targetRefs": [
+        "skills.legacy_skill_id"
+      ],
+      "sourceRationale": "Source integer key retained separately from new UUID skills.id; verify importer and all source references.",
+      "productScope": "GREENFIELD_NEW_DATA_ONLY_NO_HISTORICAL_IMPORT_PROVENANCE",
+      "producerPath": "src/modules/skills/catalog-service.ts",
+      "consumerPath": "src/modules/skills/catalog-service.ts",
+      "scopeAcceptance": "REGISTERED_PG17_CATALOG_SCHEMA_AND_LIVE_SERVICE_GATES_REQUIRED",
+      "sourceReviewed": true,
+      "runtimeVerified": false,
+      "fieldGlobalSignoff": false
+    },
+    {
+      "sourceField": "skills.category",
+      "sourceDefinition": "varchar(50) DEFAULT NULL",
+      "sourceRisk": "CATEGORY_SEARCH",
+      "engineeringDecision": "ACTIVE_CATEGORY_QUERY",
+      "targetRefs": [
+        "skills.category"
+      ],
+      "sourceRationale": "Nullable category max 50; active/category lookup behavior must be tested.",
+      "productScope": "GREENFIELD_NEW_DATA_ONLY_NO_HISTORICAL_IMPORT_PROVENANCE",
+      "producerPath": "src/modules/skills/catalog-service.ts",
+      "consumerPath": "src/modules/skills/catalog-service.ts",
+      "scopeAcceptance": "REGISTERED_PG17_CATALOG_SCHEMA_AND_LIVE_SERVICE_GATES_REQUIRED",
+      "sourceReviewed": true,
+      "runtimeVerified": false,
+      "fieldGlobalSignoff": false
+    },
+    {
+      "sourceField": "skills.created_at",
+      "sourceDefinition": "datetime(6) DEFAULT NULL",
+      "sourceRisk": "TIMESTAMP_NULLABILITY",
+      "engineeringDecision": "UTC_NORMALIZED_LIVE_TIMESTAMP",
+      "targetRefs": [
+        "skills.created_at"
+      ],
+      "sourceRationale": "Legacy nullable datetime(6) versus target NOT NULL timestamptz default; historical nulls and timezone need explicit decision.",
+      "productScope": "GREENFIELD_NEW_DATA_ONLY_NO_HISTORICAL_IMPORT_PROVENANCE",
+      "producerPath": "src/modules/skills/catalog-service.ts",
+      "consumerPath": "src/modules/skills/catalog-service.ts",
+      "scopeAcceptance": "REGISTERED_PG17_CATALOG_SCHEMA_AND_LIVE_SERVICE_GATES_REQUIRED",
+      "sourceReviewed": true,
+      "runtimeVerified": false,
+      "fieldGlobalSignoff": false
+    },
+    {
+      "sourceField": "skills.display_name",
+      "sourceDefinition": "varchar(200) NOT NULL",
+      "sourceRisk": "SEARCH_PRESENTATION",
+      "engineeringDecision": "PRESERVE_CASE_DISPLAY_AND_SEARCH",
+      "targetRefs": [
+        "skills.display_name"
+      ],
+      "sourceRationale": "Display spelling and 200-char limit retained; API search and presentation must preserve case and relevance.",
+      "productScope": "GREENFIELD_NEW_DATA_ONLY_NO_HISTORICAL_IMPORT_PROVENANCE",
+      "producerPath": "src/modules/skills/catalog-service.ts",
+      "consumerPath": "src/modules/skills/catalog-service.ts",
+      "scopeAcceptance": "REGISTERED_PG17_CATALOG_SCHEMA_AND_LIVE_SERVICE_GATES_REQUIRED",
+      "sourceReviewed": true,
+      "runtimeVerified": false,
+      "fieldGlobalSignoff": false
+    },
+    {
+      "sourceField": "skills.is_active",
+      "sourceDefinition": "bit(1) NOT NULL",
+      "sourceRisk": "ACTIVE_VISIBILITY",
+      "engineeringDecision": "FILTER_INACTIVE_SKILLS",
+      "targetRefs": [
+        "skills.is_active"
+      ],
+      "sourceRationale": "Active-only filters must hold for direct, synonym, category and popularity searches.",
+      "productScope": "GREENFIELD_NEW_DATA_ONLY_NO_HISTORICAL_IMPORT_PROVENANCE",
+      "producerPath": "src/modules/skills/catalog-service.ts",
+      "consumerPath": "src/modules/skills/catalog-service.ts",
+      "scopeAcceptance": "REGISTERED_PG17_CATALOG_SCHEMA_AND_LIVE_SERVICE_GATES_REQUIRED",
+      "sourceReviewed": true,
+      "runtimeVerified": false,
+      "fieldGlobalSignoff": false
+    },
+    {
+      "sourceField": "skills.name",
+      "sourceDefinition": "varchar(200) NOT NULL",
+      "sourceRisk": "CASE_UNIQUENESS",
+      "engineeringDecision": "FOLDED_UNIQUE_CANONICAL_SKILL_NAME",
+      "targetRefs": [
+        "skills.name"
+      ],
+      "sourceRationale": "Global normalized name; target case-insensitive uniqueness and lowercasing need import conflict and Unicode proof.",
+      "productScope": "GREENFIELD_NEW_DATA_ONLY_NO_HISTORICAL_IMPORT_PROVENANCE",
+      "producerPath": "src/modules/skills/catalog-service.ts",
+      "consumerPath": "src/modules/skills/catalog-service.ts",
+      "scopeAcceptance": "REGISTERED_PG17_CATALOG_SCHEMA_AND_LIVE_SERVICE_GATES_REQUIRED",
+      "sourceReviewed": true,
+      "runtimeVerified": false,
+      "fieldGlobalSignoff": false
+    },
+    {
+      "sourceField": "skills.search_priority",
+      "sourceDefinition": "int NOT NULL",
+      "sourceRisk": "PRIORITY_RANGE",
+      "engineeringDecision": "BOUNDED_PRIORITY_WITH_RANKING",
+      "targetRefs": [
+        "skills.search_priority"
+      ],
+      "sourceRationale": "Target 0..100 check: compare historical values and source ranking/priority before approval.",
+      "productScope": "GREENFIELD_NEW_DATA_ONLY_NO_HISTORICAL_IMPORT_PROVENANCE",
+      "producerPath": "src/modules/skills/catalog-service.ts",
+      "consumerPath": "src/modules/skills/catalog-service.ts",
+      "scopeAcceptance": "REGISTERED_PG17_CATALOG_SCHEMA_AND_LIVE_SERVICE_GATES_REQUIRED",
+      "sourceReviewed": true,
+      "runtimeVerified": false,
+      "fieldGlobalSignoff": false
+    },
+    {
+      "sourceField": "skills.updated_at",
+      "sourceDefinition": "datetime(6) DEFAULT NULL",
+      "sourceRisk": "TIMESTAMP_UPDATE",
+      "engineeringDecision": "MUTATION_UPDATED_AT",
+      "targetRefs": [
+        "skills.updated_at"
+      ],
+      "sourceRationale": "Legacy nullable datetime(6) and update-on-mutation; target explicit update timestamp. Verify source nulls, timezone and all writers.",
+      "productScope": "GREENFIELD_NEW_DATA_ONLY_NO_HISTORICAL_IMPORT_PROVENANCE",
+      "producerPath": "src/modules/skills/catalog-service.ts",
+      "consumerPath": "src/modules/skills/catalog-service.ts",
+      "scopeAcceptance": "REGISTERED_PG17_CATALOG_SCHEMA_AND_LIVE_SERVICE_GATES_REQUIRED",
+      "sourceReviewed": true,
+      "runtimeVerified": false,
+      "fieldGlobalSignoff": false
+    },
+    {
+      "sourceField": "skills.usage_count",
+      "sourceDefinition": "int NOT NULL",
+      "sourceRisk": "COUNTER_INDEPENDENCE",
+      "engineeringDecision": "INDEPENDENT_CANONICAL_USAGE_COUNTER",
+      "targetRefs": [
+        "skills.usage_count"
+      ],
+      "sourceRationale": "Canonical catalog popularity counter; independent from skill_usage free-text count; atomic update and timestamp verification.",
+      "productScope": "GREENFIELD_NEW_DATA_ONLY_NO_HISTORICAL_IMPORT_PROVENANCE",
+      "producerPath": "src/modules/skills/catalog-service.ts",
+      "consumerPath": "src/modules/skills/catalog-service.ts",
+      "scopeAcceptance": "REGISTERED_PG17_CATALOG_SCHEMA_AND_LIVE_SERVICE_GATES_REQUIRED",
+      "sourceReviewed": true,
+      "runtimeVerified": false,
+      "fieldGlobalSignoff": false
+    }
+  ]
+}
