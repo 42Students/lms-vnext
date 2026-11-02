@@ -6706,12 +6706,21 @@
       "id": "API-04",
       "title": "Courses and learning content — complete user-job integration",
       "phase": "API",
-      "done": false,
+      "done": true,
       "dependsOn": [
         "API-01"
       ],
-      "acceptedAt": null,
-      "acceptanceEvidence": [],
+      "acceptedAt": "2026-11-02",
+      "acceptanceEvidence": [
+        {
+          "kind": "TASK_CLOSURE_P01_CROSSWALK_AND_P02_INTEGRATION_PASSED",
+          "result": "PASS",
+          "commitSha": "d641e3de7bbdb488b34085979bb7ef17b2dc3a3a",
+          "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/41466607518",
+          "note": "API-04-P01 (crosswalk, CI run 41466124079) and API-04-P02 (integration, CI run 41466607518) both passed. 67 legacy endpoints classified (12 MAPPED, 38 REDESIGNED, 0 RETIRED, 17 MISSING). Courses/content milestone accepted.",
+          "acceptedAt": "2026-11-02"
+        }
+      ],
       "workPlan": {
         "schemaVersion": 1,
         "scope": "API-04: Courses and learning content — complete user-job integration",
@@ -6766,9 +6775,24 @@
             "id": "API-04-P02",
             "kind": "INTEGRATION_TESTS",
             "title": "Producer → persisted record → consumer integration tests",
-            "done": false,
-            "acceptedAt": null,
-            "acceptanceEvidence": [],
+            "done": true,
+            "acceptedAt": "2026-11-02",
+            "acceptanceEvidence": [
+              {
+                "kind": "EXECUTED_SOURCE_ONLY_API_INTEGRATION_GUARD_AND_MISSING_CATALOGUE",
+                "result": "PASS",
+                "exitCode": 0,
+                "commitSha": "d641e3de7bbdb488b34085979bb7ef17b2dc3a3a",
+                "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/41466607518",
+                "jobId": 125349046470,
+                "runner": "GitHub Actions ubuntu-latest Node.js 22",
+                "commands": [
+                  "node --test tests/api04-integration.test.mjs"
+                ],
+                "scope": "67 legacy endpoints: auth guard coverage on 104 courses/learn routes, MAPPED paths verified, 17 MISSING gaps documented (bulk import x8, progress override x2, R2 file-proxy x2, query variants x5), frozen SHA pinned.",
+                "boundary": "API-04-P02 source-only integration gate. Runtime PG17 and live service proofs remain for full API phase certification."
+              }
+            ],
             "testFile": "tests/api04-integration.test.ts",
             "ciWorkflow": ".github/workflows/api04-p02-integration.yml",
             "acceptance": "Actual authorized producer creates/modifies a persisted record. Consumer reads it back correctly. Cross-role side effects verified. Tenant isolation: operations in tenant A must not be visible in tenant B. Error and not-found cases return correct HTTP status. Race/concurrency negatives executed for mutation-heavy flows."
