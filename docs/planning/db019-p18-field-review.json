@@ -1,0 +1,1723 @@
+{
+  "id": "DB19-P18",
+  "recordType": "DB19_PACKAGE_SOURCE_FIELD_REVIEW",
+  "sourceSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+  "sourceInventory": "docs/planning/db-pass4-columns-db08_placement_policy_and_outcomes.json",
+  "originalFieldLedger": "docs/planning/database-parity-db08_placement_policy_and_outcomes-field-ledger.json",
+  "sourceTables": [
+    "application_screening",
+    "job_eligibility_override",
+    "placement_eligibility",
+    "placement_eligibility_event",
+    "placement_debarment"
+  ],
+  "sourceFieldCount": 63,
+  "reviewedProposals": 63,
+  "runtimeVerifiedCount": 0,
+  "fieldDispositionApproval": "PENDING_PACKAGE_ACCEPTANCE",
+  "privacyBoundary": "DB19-P18 scoped source field disposition only. Global P31/P32 and DB020 remain open.",
+  "testEvidenceStatus": "SOURCE_QUALITY_GATE_ONLY_NOT_RUNTIME_CERTIFIED",
+  "pendingAcceptance": "Registered PG17 producer/consumer and runtime verification for all 63 fields.",
+  "fields": [
+    {
+      "sourceTable": "application_screening",
+      "sourceColumn": "id",
+      "sourceType": "int",
+      "sourceDefinition": "int NOT NULL AUTO_INCREMENT",
+      "sourceRiskFlags": [
+        "INTEGER_KEY_TO_UUID_MAPPING"
+      ],
+      "targetCandidate": "application_screening.id",
+      "disposition": "PROPOSED_NORMALIZED_UUID_PRIMARY_KEY",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/admin-ui/super-admin-placement-screenings-service.ts",
+        "src/modules/admin-ui/super-admin-screening-detail-service.ts",
+        "src/modules/placements/screening-service.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/admin-ui/super-admin-placement-screenings-service.ts",
+        "src/modules/admin-ui/super-admin-screening-detail-service.ts",
+        "src/modules/placements/screening-service.ts"
+      ],
+      "semanticRisk": "Legacy numeric ID maps to UUID in vNext; no old-row import needed for greenfield.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "application_screening",
+      "sourceColumn": "created_at",
+      "sourceType": "datetime(6)",
+      "sourceDefinition": "datetime(6) DEFAULT NULL",
+      "sourceRiskFlags": [
+        "TIMEZONE_AND_DEADLINE_SEMANTICS"
+      ],
+      "targetCandidate": "application_screening.created_at",
+      "disposition": "PROPOSED_NORMALIZED_AUDIT_TIMESTAMP",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/admin-ui/super-admin-placement-screenings-service.ts",
+        "src/modules/admin-ui/super-admin-screening-detail-service.ts",
+        "src/modules/placements/screening-service.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/admin-ui/super-admin-placement-screenings-service.ts",
+        "src/modules/admin-ui/super-admin-screening-detail-service.ts",
+        "src/modules/placements/screening-service.ts"
+      ],
+      "semanticRisk": "Datetime(6) semantics differ from timestamptz; vNext stores UTC.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "application_screening",
+      "sourceColumn": "is_deleted",
+      "sourceType": "tinyint(1)",
+      "sourceDefinition": "tinyint(1) DEFAULT '0'",
+      "sourceRiskFlags": [],
+      "targetCandidate": "application_screening.is_deleted",
+      "disposition": "PROPOSED_REDESIGNED_SOFT_DELETE_PATTERN",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/admin-ui/super-admin-placement-screenings-service.ts",
+        "src/modules/admin-ui/super-admin-screening-detail-service.ts",
+        "src/modules/placements/screening-service.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/admin-ui/super-admin-placement-screenings-service.ts",
+        "src/modules/admin-ui/super-admin-screening-detail-service.ts",
+        "src/modules/placements/screening-service.ts"
+      ],
+      "semanticRisk": "Soft-delete pattern replaced by status enum or archived_at timestamp in vNext.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "application_screening",
+      "sourceColumn": "updated_at",
+      "sourceType": "datetime(6)",
+      "sourceDefinition": "datetime(6) DEFAULT NULL",
+      "sourceRiskFlags": [
+        "TIMEZONE_AND_DEADLINE_SEMANTICS"
+      ],
+      "targetCandidate": "application_screening.updated_at",
+      "disposition": "PROPOSED_NORMALIZED_AUDIT_TIMESTAMP",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/admin-ui/super-admin-placement-screenings-service.ts",
+        "src/modules/admin-ui/super-admin-screening-detail-service.ts",
+        "src/modules/placements/screening-service.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/admin-ui/super-admin-placement-screenings-service.ts",
+        "src/modules/admin-ui/super-admin-screening-detail-service.ts",
+        "src/modules/placements/screening-service.ts"
+      ],
+      "semanticRisk": "Datetime(6) semantics differ from timestamptz; vNext stores UTC.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "application_screening",
+      "sourceColumn": "education_score",
+      "sourceType": "double",
+      "sourceDefinition": "double DEFAULT NULL",
+      "sourceRiskFlags": [
+        "PRECISION_ROUNDING"
+      ],
+      "targetCandidate": "application_screening.education_score",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/admin-ui/super-admin-placement-screenings-service.ts",
+        "src/modules/admin-ui/super-admin-screening-detail-service.ts",
+        "src/modules/placements/screening-service.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/admin-ui/super-admin-placement-screenings-service.ts",
+        "src/modules/admin-ui/super-admin-screening-detail-service.ts",
+        "src/modules/placements/screening-service.ts"
+      ],
+      "semanticRisk": "Floating-point precision: vNext uses numeric/decimal for financial values.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "application_screening",
+      "sourceColumn": "excluded_attributes",
+      "sourceType": "json",
+      "sourceDefinition": "json DEFAULT NULL",
+      "sourceRiskFlags": [
+        "STRUCTURED_PAYLOAD_SEMANTIC_SCHEMA"
+      ],
+      "targetCandidate": "application_screening.excluded_attributes",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/admin-ui/super-admin-placement-screenings-service.ts",
+        "src/modules/admin-ui/super-admin-screening-detail-service.ts",
+        "src/modules/placements/screening-service.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/admin-ui/super-admin-placement-screenings-service.ts",
+        "src/modules/admin-ui/super-admin-screening-detail-service.ts",
+        "src/modules/placements/screening-service.ts"
+      ],
+      "semanticRisk": "JSON payload: vNext uses typed JSONB or separate normalized columns.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "application_screening",
+      "sourceColumn": "explanation",
+      "sourceType": "text",
+      "sourceDefinition": "text",
+      "sourceRiskFlags": [],
+      "targetCandidate": "application_screening.explanation",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/admin-ui/super-admin-placement-screenings-service.ts",
+        "src/modules/admin-ui/super-admin-screening-detail-service.ts",
+        "src/modules/placements/screening-service.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/admin-ui/super-admin-placement-screenings-service.ts",
+        "src/modules/admin-ui/super-admin-screening-detail-service.ts",
+        "src/modules/placements/screening-service.ts"
+      ],
+      "semanticRisk": "Standard field mapping from legacy application_screening to application_screening.explanation.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "application_screening",
+      "sourceColumn": "is_partial_score",
+      "sourceType": "bit(1)",
+      "sourceDefinition": "bit(1) DEFAULT NULL",
+      "sourceRiskFlags": [],
+      "targetCandidate": "application_screening.is_partial_score",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/admin-ui/super-admin-placement-screenings-service.ts",
+        "src/modules/admin-ui/super-admin-screening-detail-service.ts",
+        "src/modules/placements/screening-service.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/admin-ui/super-admin-placement-screenings-service.ts",
+        "src/modules/admin-ui/super-admin-screening-detail-service.ts",
+        "src/modules/placements/screening-service.ts"
+      ],
+      "semanticRisk": "Standard field mapping from legacy application_screening to application_screening.is_partial_score.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "application_screening",
+      "sourceColumn": "matched_skills",
+      "sourceType": "json",
+      "sourceDefinition": "json DEFAULT NULL",
+      "sourceRiskFlags": [
+        "STRUCTURED_PAYLOAD_SEMANTIC_SCHEMA"
+      ],
+      "targetCandidate": "application_screening.matched_skills",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/admin-ui/super-admin-placement-screenings-service.ts",
+        "src/modules/admin-ui/super-admin-screening-detail-service.ts",
+        "src/modules/placements/screening-service.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/admin-ui/super-admin-placement-screenings-service.ts",
+        "src/modules/admin-ui/super-admin-screening-detail-service.ts",
+        "src/modules/placements/screening-service.ts"
+      ],
+      "semanticRisk": "JSON payload: vNext uses typed JSONB or separate normalized columns.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "application_screening",
+      "sourceColumn": "missing_skills",
+      "sourceType": "json",
+      "sourceDefinition": "json DEFAULT NULL",
+      "sourceRiskFlags": [
+        "STRUCTURED_PAYLOAD_SEMANTIC_SCHEMA"
+      ],
+      "targetCandidate": "application_screening.missing_skills",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/admin-ui/super-admin-placement-screenings-service.ts",
+        "src/modules/admin-ui/super-admin-screening-detail-service.ts",
+        "src/modules/placements/screening-service.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/admin-ui/super-admin-placement-screenings-service.ts",
+        "src/modules/admin-ui/super-admin-screening-detail-service.ts",
+        "src/modules/placements/screening-service.ts"
+      ],
+      "semanticRisk": "JSON payload: vNext uses typed JSONB or separate normalized columns.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "application_screening",
+      "sourceColumn": "overall_score",
+      "sourceType": "double",
+      "sourceDefinition": "double DEFAULT NULL",
+      "sourceRiskFlags": [
+        "PRECISION_ROUNDING"
+      ],
+      "targetCandidate": "application_screening.overall_score",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/admin-ui/super-admin-placement-screenings-service.ts",
+        "src/modules/admin-ui/super-admin-screening-detail-service.ts",
+        "src/modules/placements/screening-service.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/admin-ui/super-admin-placement-screenings-service.ts",
+        "src/modules/admin-ui/super-admin-screening-detail-service.ts",
+        "src/modules/placements/screening-service.ts"
+      ],
+      "semanticRisk": "Floating-point precision: vNext uses numeric/decimal for financial values.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "application_screening",
+      "sourceColumn": "screened_at",
+      "sourceType": "datetime(6)",
+      "sourceDefinition": "datetime(6) DEFAULT NULL",
+      "sourceRiskFlags": [
+        "TIMEZONE_AND_DEADLINE_SEMANTICS"
+      ],
+      "targetCandidate": "application_screening.screened_at",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/admin-ui/super-admin-placement-screenings-service.ts",
+        "src/modules/admin-ui/super-admin-screening-detail-service.ts",
+        "src/modules/placements/screening-service.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/admin-ui/super-admin-placement-screenings-service.ts",
+        "src/modules/admin-ui/super-admin-screening-detail-service.ts",
+        "src/modules/placements/screening-service.ts"
+      ],
+      "semanticRisk": "Datetime(6) semantics differ from timestamptz; vNext stores UTC.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "application_screening",
+      "sourceColumn": "screened_by",
+      "sourceType": "varchar(255)",
+      "sourceDefinition": "varchar(255) DEFAULT NULL",
+      "sourceRiskFlags": [],
+      "targetCandidate": "application_screening.screened_by",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/admin-ui/super-admin-placement-screenings-service.ts",
+        "src/modules/admin-ui/super-admin-screening-detail-service.ts",
+        "src/modules/placements/screening-service.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/admin-ui/super-admin-placement-screenings-service.ts",
+        "src/modules/admin-ui/super-admin-screening-detail-service.ts",
+        "src/modules/placements/screening-service.ts"
+      ],
+      "semanticRisk": "Standard field mapping from legacy application_screening to application_screening.screened_by.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "application_screening",
+      "sourceColumn": "screening_metadata",
+      "sourceType": "json",
+      "sourceDefinition": "json DEFAULT NULL",
+      "sourceRiskFlags": [
+        "STRUCTURED_PAYLOAD_SEMANTIC_SCHEMA"
+      ],
+      "targetCandidate": "application_screening.screening_metadata",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/admin-ui/super-admin-placement-screenings-service.ts",
+        "src/modules/admin-ui/super-admin-screening-detail-service.ts",
+        "src/modules/placements/screening-service.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/admin-ui/super-admin-placement-screenings-service.ts",
+        "src/modules/admin-ui/super-admin-screening-detail-service.ts",
+        "src/modules/placements/screening-service.ts"
+      ],
+      "semanticRisk": "JSON payload: vNext uses typed JSONB or separate normalized columns.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "application_screening",
+      "sourceColumn": "screening_method",
+      "sourceType": "varchar(255)",
+      "sourceDefinition": "varchar(255) DEFAULT NULL",
+      "sourceRiskFlags": [],
+      "targetCandidate": "application_screening.screening_method",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/admin-ui/super-admin-placement-screenings-service.ts",
+        "src/modules/admin-ui/super-admin-screening-detail-service.ts",
+        "src/modules/placements/screening-service.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/admin-ui/super-admin-placement-screenings-service.ts",
+        "src/modules/admin-ui/super-admin-screening-detail-service.ts",
+        "src/modules/placements/screening-service.ts"
+      ],
+      "semanticRisk": "Standard field mapping from legacy application_screening to application_screening.screening_method.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "application_screening",
+      "sourceColumn": "screening_status",
+      "sourceType": "varchar(255)",
+      "sourceDefinition": "varchar(255) NOT NULL",
+      "sourceRiskFlags": [],
+      "targetCandidate": "application_screening.screening_status",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/admin-ui/super-admin-placement-screenings-service.ts",
+        "src/modules/admin-ui/super-admin-screening-detail-service.ts",
+        "src/modules/placements/screening-service.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/admin-ui/super-admin-placement-screenings-service.ts",
+        "src/modules/admin-ui/super-admin-screening-detail-service.ts",
+        "src/modules/placements/screening-service.ts"
+      ],
+      "semanticRisk": "Standard field mapping from legacy application_screening to application_screening.screening_status.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "application_screening",
+      "sourceColumn": "screening_version",
+      "sourceType": "varchar(255)",
+      "sourceDefinition": "varchar(255) DEFAULT NULL",
+      "sourceRiskFlags": [],
+      "targetCandidate": "application_screening.screening_version",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/admin-ui/super-admin-placement-screenings-service.ts",
+        "src/modules/admin-ui/super-admin-screening-detail-service.ts",
+        "src/modules/placements/screening-service.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/admin-ui/super-admin-placement-screenings-service.ts",
+        "src/modules/admin-ui/super-admin-screening-detail-service.ts",
+        "src/modules/placements/screening-service.ts"
+      ],
+      "semanticRisk": "Standard field mapping from legacy application_screening to application_screening.screening_version.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "application_screening",
+      "sourceColumn": "skill_score",
+      "sourceType": "double",
+      "sourceDefinition": "double DEFAULT NULL",
+      "sourceRiskFlags": [
+        "PRECISION_ROUNDING"
+      ],
+      "targetCandidate": "application_screening.skill_score",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/admin-ui/super-admin-placement-screenings-service.ts",
+        "src/modules/admin-ui/super-admin-screening-detail-service.ts",
+        "src/modules/placements/screening-service.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/admin-ui/super-admin-placement-screenings-service.ts",
+        "src/modules/admin-ui/super-admin-screening-detail-service.ts",
+        "src/modules/placements/screening-service.ts"
+      ],
+      "semanticRisk": "Floating-point precision: vNext uses numeric/decimal for financial values.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "application_screening",
+      "sourceColumn": "application_id",
+      "sourceType": "int",
+      "sourceDefinition": "int NOT NULL",
+      "sourceRiskFlags": [
+        "INTEGER_KEY_TO_UUID_MAPPING"
+      ],
+      "targetCandidate": "application_screening.application_id",
+      "disposition": "PROPOSED_REGISTERED_WITH_UUID_NORMALIZATION",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/admin-ui/super-admin-placement-screenings-service.ts",
+        "src/modules/admin-ui/super-admin-screening-detail-service.ts",
+        "src/modules/placements/screening-service.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/admin-ui/super-admin-placement-screenings-service.ts",
+        "src/modules/admin-ui/super-admin-screening-detail-service.ts",
+        "src/modules/placements/screening-service.ts"
+      ],
+      "semanticRisk": "Legacy numeric ID maps to UUID in vNext; no old-row import needed for greenfield.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "job_eligibility_override",
+      "sourceColumn": "id",
+      "sourceType": "bigint",
+      "sourceDefinition": "BIGINT AUTO_INCREMENT PRIMARY KEY",
+      "sourceRiskFlags": [
+        "INTEGER_KEY_TO_UUID_MAPPING"
+      ],
+      "targetCandidate": "job_eligibility_override.id",
+      "disposition": "PROPOSED_NORMALIZED_UUID_PRIMARY_KEY",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/admin-ui/super-admin-placement-screenings-service.ts",
+        "src/modules/admin-ui/super-admin-screening-detail-service.ts",
+        "src/modules/placements/screening-service.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/admin-ui/super-admin-placement-screenings-service.ts",
+        "src/modules/admin-ui/super-admin-screening-detail-service.ts",
+        "src/modules/placements/screening-service.ts"
+      ],
+      "semanticRisk": "Legacy numeric ID maps to UUID in vNext; no old-row import needed for greenfield.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "job_eligibility_override",
+      "sourceColumn": "job_id",
+      "sourceType": "int",
+      "sourceDefinition": "INT NOT NULL",
+      "sourceRiskFlags": [
+        "INTEGER_KEY_TO_UUID_MAPPING"
+      ],
+      "targetCandidate": "job_eligibility_override.job_id",
+      "disposition": "PROPOSED_REGISTERED_WITH_UUID_NORMALIZATION",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/admin-ui/super-admin-placement-screenings-service.ts",
+        "src/modules/admin-ui/super-admin-screening-detail-service.ts",
+        "src/modules/placements/screening-service.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/admin-ui/super-admin-placement-screenings-service.ts",
+        "src/modules/admin-ui/super-admin-screening-detail-service.ts",
+        "src/modules/placements/screening-service.ts"
+      ],
+      "semanticRisk": "Legacy numeric ID maps to UUID in vNext; no old-row import needed for greenfield.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "job_eligibility_override",
+      "sourceColumn": "learner_id",
+      "sourceType": "int",
+      "sourceDefinition": "INT NOT NULL",
+      "sourceRiskFlags": [
+        "INTEGER_KEY_TO_UUID_MAPPING"
+      ],
+      "targetCandidate": "job_eligibility_override.learner_id",
+      "disposition": "PROPOSED_REGISTERED_WITH_UUID_NORMALIZATION",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/admin-ui/super-admin-placement-screenings-service.ts",
+        "src/modules/admin-ui/super-admin-screening-detail-service.ts",
+        "src/modules/placements/screening-service.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/admin-ui/super-admin-placement-screenings-service.ts",
+        "src/modules/admin-ui/super-admin-screening-detail-service.ts",
+        "src/modules/placements/screening-service.ts"
+      ],
+      "semanticRisk": "Legacy numeric ID maps to UUID in vNext; no old-row import needed for greenfield.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "job_eligibility_override",
+      "sourceColumn": "override_type",
+      "sourceType": "varchar(10)",
+      "sourceDefinition": "VARCHAR(10) NOT NULL COMMENT 'INCLUDE | EXCLUDE'",
+      "sourceRiskFlags": [],
+      "targetCandidate": "job_eligibility_override.override_type",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/admin-ui/super-admin-placement-screenings-service.ts",
+        "src/modules/admin-ui/super-admin-screening-detail-service.ts",
+        "src/modules/placements/screening-service.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/admin-ui/super-admin-placement-screenings-service.ts",
+        "src/modules/admin-ui/super-admin-screening-detail-service.ts",
+        "src/modules/placements/screening-service.ts"
+      ],
+      "semanticRisk": "Standard field mapping from legacy job_eligibility_override to job_eligibility_override.override_type.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "job_eligibility_override",
+      "sourceColumn": "reason",
+      "sourceType": "varchar(500)",
+      "sourceDefinition": "VARCHAR(500) NOT NULL",
+      "sourceRiskFlags": [],
+      "targetCandidate": "job_eligibility_override.reason",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/admin-ui/super-admin-placement-screenings-service.ts",
+        "src/modules/admin-ui/super-admin-screening-detail-service.ts",
+        "src/modules/placements/screening-service.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/admin-ui/super-admin-placement-screenings-service.ts",
+        "src/modules/admin-ui/super-admin-screening-detail-service.ts",
+        "src/modules/placements/screening-service.ts"
+      ],
+      "semanticRisk": "Standard field mapping from legacy job_eligibility_override to job_eligibility_override.reason.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "job_eligibility_override",
+      "sourceColumn": "created_by",
+      "sourceType": "int",
+      "sourceDefinition": "INT NULL",
+      "sourceRiskFlags": [],
+      "targetCandidate": "job_eligibility_override.created_by",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/admin-ui/super-admin-placement-screenings-service.ts",
+        "src/modules/admin-ui/super-admin-screening-detail-service.ts",
+        "src/modules/placements/screening-service.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/admin-ui/super-admin-placement-screenings-service.ts",
+        "src/modules/admin-ui/super-admin-screening-detail-service.ts",
+        "src/modules/placements/screening-service.ts"
+      ],
+      "semanticRisk": "Standard field mapping from legacy job_eligibility_override to job_eligibility_override.created_by.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "job_eligibility_override",
+      "sourceColumn": "created_at",
+      "sourceType": "datetime",
+      "sourceDefinition": "DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP",
+      "sourceRiskFlags": [
+        "TIMEZONE_AND_DEADLINE_SEMANTICS"
+      ],
+      "targetCandidate": "job_eligibility_override.created_at",
+      "disposition": "PROPOSED_NORMALIZED_AUDIT_TIMESTAMP",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/admin-ui/super-admin-placement-screenings-service.ts",
+        "src/modules/admin-ui/super-admin-screening-detail-service.ts",
+        "src/modules/placements/screening-service.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/admin-ui/super-admin-placement-screenings-service.ts",
+        "src/modules/admin-ui/super-admin-screening-detail-service.ts",
+        "src/modules/placements/screening-service.ts"
+      ],
+      "semanticRisk": "Datetime(6) semantics differ from timestamptz; vNext stores UTC.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "placement_debarment",
+      "sourceColumn": "id",
+      "sourceType": "bigint",
+      "sourceDefinition": "BIGINT AUTO_INCREMENT PRIMARY KEY",
+      "sourceRiskFlags": [
+        "INTEGER_KEY_TO_UUID_MAPPING"
+      ],
+      "targetCandidate": "placement_debarment.id",
+      "disposition": "PROPOSED_NORMALIZED_UUID_PRIMARY_KEY",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/admin-ui/super-admin-placement-screenings-service.ts",
+        "src/modules/admin-ui/super-admin-screening-detail-service.ts",
+        "src/modules/placements/screening-service.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/admin-ui/super-admin-placement-screenings-service.ts",
+        "src/modules/admin-ui/super-admin-screening-detail-service.ts",
+        "src/modules/placements/screening-service.ts"
+      ],
+      "semanticRisk": "Legacy numeric ID maps to UUID in vNext; no old-row import needed for greenfield.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "placement_debarment",
+      "sourceColumn": "learner_id",
+      "sourceType": "int",
+      "sourceDefinition": "INT NOT NULL",
+      "sourceRiskFlags": [
+        "INTEGER_KEY_TO_UUID_MAPPING"
+      ],
+      "targetCandidate": "placement_debarment.learner_id",
+      "disposition": "PROPOSED_REGISTERED_WITH_UUID_NORMALIZATION",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/admin-ui/super-admin-placement-screenings-service.ts",
+        "src/modules/admin-ui/super-admin-screening-detail-service.ts",
+        "src/modules/placements/screening-service.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/admin-ui/super-admin-placement-screenings-service.ts",
+        "src/modules/admin-ui/super-admin-screening-detail-service.ts",
+        "src/modules/placements/screening-service.ts"
+      ],
+      "semanticRisk": "Legacy numeric ID maps to UUID in vNext; no old-row import needed for greenfield.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "placement_debarment",
+      "sourceColumn": "reason",
+      "sourceType": "varchar(500)",
+      "sourceDefinition": "VARCHAR(500) NOT NULL",
+      "sourceRiskFlags": [],
+      "targetCandidate": "placement_debarment.reason",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/admin-ui/super-admin-placement-screenings-service.ts",
+        "src/modules/admin-ui/super-admin-screening-detail-service.ts",
+        "src/modules/placements/screening-service.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/admin-ui/super-admin-placement-screenings-service.ts",
+        "src/modules/admin-ui/super-admin-screening-detail-service.ts",
+        "src/modules/placements/screening-service.ts"
+      ],
+      "semanticRisk": "Standard field mapping from legacy placement_debarment to placement_debarment.reason.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "placement_debarment",
+      "sourceColumn": "until_date",
+      "sourceType": "date",
+      "sourceDefinition": "DATE NULL",
+      "sourceRiskFlags": [],
+      "targetCandidate": "placement_debarment.until_date",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/admin-ui/super-admin-placement-screenings-service.ts",
+        "src/modules/admin-ui/super-admin-screening-detail-service.ts",
+        "src/modules/placements/screening-service.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/admin-ui/super-admin-placement-screenings-service.ts",
+        "src/modules/admin-ui/super-admin-screening-detail-service.ts",
+        "src/modules/placements/screening-service.ts"
+      ],
+      "semanticRisk": "Standard field mapping from legacy placement_debarment to placement_debarment.until_date.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "placement_debarment",
+      "sourceColumn": "until_drives",
+      "sourceType": "int",
+      "sourceDefinition": "INT NULL COMMENT 'Alternative to a date: debarred for the next N drives'",
+      "sourceRiskFlags": [],
+      "targetCandidate": "placement_debarment.until_drives",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/admin-ui/super-admin-placement-screenings-service.ts",
+        "src/modules/admin-ui/super-admin-screening-detail-service.ts",
+        "src/modules/placements/screening-service.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/admin-ui/super-admin-placement-screenings-service.ts",
+        "src/modules/admin-ui/super-admin-screening-detail-service.ts",
+        "src/modules/placements/screening-service.ts"
+      ],
+      "semanticRisk": "Standard field mapping from legacy placement_debarment to placement_debarment.until_drives.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "placement_debarment",
+      "sourceColumn": "drives_counted",
+      "sourceType": "int",
+      "sourceDefinition": "INT NOT NULL DEFAULT 0",
+      "sourceRiskFlags": [],
+      "targetCandidate": "placement_debarment.drives_counted",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/admin-ui/super-admin-placement-screenings-service.ts",
+        "src/modules/admin-ui/super-admin-screening-detail-service.ts",
+        "src/modules/placements/screening-service.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/admin-ui/super-admin-placement-screenings-service.ts",
+        "src/modules/admin-ui/super-admin-screening-detail-service.ts",
+        "src/modules/placements/screening-service.ts"
+      ],
+      "semanticRisk": "Standard field mapping from legacy placement_debarment to placement_debarment.drives_counted.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "placement_debarment",
+      "sourceColumn": "created_by",
+      "sourceType": "int",
+      "sourceDefinition": "INT NULL",
+      "sourceRiskFlags": [],
+      "targetCandidate": "placement_debarment.created_by",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/admin-ui/super-admin-placement-screenings-service.ts",
+        "src/modules/admin-ui/super-admin-screening-detail-service.ts",
+        "src/modules/placements/screening-service.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/admin-ui/super-admin-placement-screenings-service.ts",
+        "src/modules/admin-ui/super-admin-screening-detail-service.ts",
+        "src/modules/placements/screening-service.ts"
+      ],
+      "semanticRisk": "Standard field mapping from legacy placement_debarment to placement_debarment.created_by.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "placement_debarment",
+      "sourceColumn": "created_at",
+      "sourceType": "datetime",
+      "sourceDefinition": "DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP",
+      "sourceRiskFlags": [
+        "TIMEZONE_AND_DEADLINE_SEMANTICS"
+      ],
+      "targetCandidate": "placement_debarment.created_at",
+      "disposition": "PROPOSED_NORMALIZED_AUDIT_TIMESTAMP",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/admin-ui/super-admin-placement-screenings-service.ts",
+        "src/modules/admin-ui/super-admin-screening-detail-service.ts",
+        "src/modules/placements/screening-service.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/admin-ui/super-admin-placement-screenings-service.ts",
+        "src/modules/admin-ui/super-admin-screening-detail-service.ts",
+        "src/modules/placements/screening-service.ts"
+      ],
+      "semanticRisk": "Datetime(6) semantics differ from timestamptz; vNext stores UTC.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "placement_debarment",
+      "sourceColumn": "lifted_at",
+      "sourceType": "datetime",
+      "sourceDefinition": "DATETIME NULL",
+      "sourceRiskFlags": [
+        "TIMEZONE_AND_DEADLINE_SEMANTICS"
+      ],
+      "targetCandidate": "placement_debarment.lifted_at",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/admin-ui/super-admin-placement-screenings-service.ts",
+        "src/modules/admin-ui/super-admin-screening-detail-service.ts",
+        "src/modules/placements/screening-service.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/admin-ui/super-admin-placement-screenings-service.ts",
+        "src/modules/admin-ui/super-admin-screening-detail-service.ts",
+        "src/modules/placements/screening-service.ts"
+      ],
+      "semanticRisk": "Datetime(6) semantics differ from timestamptz; vNext stores UTC.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "placement_debarment",
+      "sourceColumn": "lifted_reason",
+      "sourceType": "varchar(500)",
+      "sourceDefinition": "VARCHAR(500) NULL",
+      "sourceRiskFlags": [],
+      "targetCandidate": "placement_debarment.lifted_reason",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/admin-ui/super-admin-placement-screenings-service.ts",
+        "src/modules/admin-ui/super-admin-screening-detail-service.ts",
+        "src/modules/placements/screening-service.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/admin-ui/super-admin-placement-screenings-service.ts",
+        "src/modules/admin-ui/super-admin-screening-detail-service.ts",
+        "src/modules/placements/screening-service.ts"
+      ],
+      "semanticRisk": "Standard field mapping from legacy placement_debarment to placement_debarment.lifted_reason.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "placement_eligibility",
+      "sourceColumn": "id",
+      "sourceType": "bigint",
+      "sourceDefinition": "BIGINT AUTO_INCREMENT PRIMARY KEY",
+      "sourceRiskFlags": [
+        "INTEGER_KEY_TO_UUID_MAPPING"
+      ],
+      "targetCandidate": "placement_eligibility.id",
+      "disposition": "PROPOSED_NORMALIZED_UUID_PRIMARY_KEY",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/admin-ui/super-admin-placement-screenings-service.ts",
+        "src/modules/admin-ui/super-admin-screening-detail-service.ts",
+        "src/modules/placements/screening-service.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/admin-ui/super-admin-placement-screenings-service.ts",
+        "src/modules/admin-ui/super-admin-screening-detail-service.ts",
+        "src/modules/placements/screening-service.ts"
+      ],
+      "semanticRisk": "Legacy numeric ID maps to UUID in vNext; no old-row import needed for greenfield.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "placement_eligibility",
+      "sourceColumn": "college_id",
+      "sourceType": "int",
+      "sourceDefinition": "INT NOT NULL",
+      "sourceRiskFlags": [
+        "INTEGER_KEY_TO_UUID_MAPPING"
+      ],
+      "targetCandidate": "placement_eligibility.college_id",
+      "disposition": "PROPOSED_REGISTERED_WITH_UUID_NORMALIZATION",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/admin-ui/super-admin-placement-screenings-service.ts",
+        "src/modules/admin-ui/super-admin-screening-detail-service.ts",
+        "src/modules/placements/screening-service.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/admin-ui/super-admin-placement-screenings-service.ts",
+        "src/modules/admin-ui/super-admin-screening-detail-service.ts",
+        "src/modules/placements/screening-service.ts"
+      ],
+      "semanticRisk": "Legacy numeric ID maps to UUID in vNext; no old-row import needed for greenfield.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "placement_eligibility",
+      "sourceColumn": "scope_type",
+      "sourceType": "varchar(10)",
+      "sourceDefinition": "VARCHAR(10) NOT NULL COMMENT 'BATCH | CLASS | LEARNER'",
+      "sourceRiskFlags": [],
+      "targetCandidate": "placement_eligibility.scope_type",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/admin-ui/super-admin-placement-screenings-service.ts",
+        "src/modules/admin-ui/super-admin-screening-detail-service.ts",
+        "src/modules/placements/screening-service.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/admin-ui/super-admin-placement-screenings-service.ts",
+        "src/modules/admin-ui/super-admin-screening-detail-service.ts",
+        "src/modules/placements/screening-service.ts"
+      ],
+      "semanticRisk": "Standard field mapping from legacy placement_eligibility to placement_eligibility.scope_type.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "placement_eligibility",
+      "sourceColumn": "scope_id",
+      "sourceType": "bigint",
+      "sourceDefinition": "BIGINT NOT NULL",
+      "sourceRiskFlags": [
+        "INTEGER_KEY_TO_UUID_MAPPING"
+      ],
+      "targetCandidate": "placement_eligibility.scope_id",
+      "disposition": "PROPOSED_REGISTERED_WITH_UUID_NORMALIZATION",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/admin-ui/super-admin-placement-screenings-service.ts",
+        "src/modules/admin-ui/super-admin-screening-detail-service.ts",
+        "src/modules/placements/screening-service.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/admin-ui/super-admin-placement-screenings-service.ts",
+        "src/modules/admin-ui/super-admin-screening-detail-service.ts",
+        "src/modules/placements/screening-service.ts"
+      ],
+      "semanticRisk": "Legacy numeric ID maps to UUID in vNext; no old-row import needed for greenfield.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "placement_eligibility",
+      "sourceColumn": "status",
+      "sourceType": "varchar(12)",
+      "sourceDefinition": "VARCHAR(12) NOT NULL COMMENT 'ELIGIBLE | INELIGIBLE'",
+      "sourceRiskFlags": [],
+      "targetCandidate": "placement_eligibility.status",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/admin-ui/super-admin-placement-screenings-service.ts",
+        "src/modules/admin-ui/super-admin-screening-detail-service.ts",
+        "src/modules/placements/screening-service.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/admin-ui/super-admin-placement-screenings-service.ts",
+        "src/modules/admin-ui/super-admin-screening-detail-service.ts",
+        "src/modules/placements/screening-service.ts"
+      ],
+      "semanticRisk": "Standard field mapping from legacy placement_eligibility to placement_eligibility.status.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "placement_eligibility",
+      "sourceColumn": "reason",
+      "sourceType": "varchar(200)",
+      "sourceDefinition": "VARCHAR(200) NULL COMMENT 'Required when INELIGIBLE'",
+      "sourceRiskFlags": [],
+      "targetCandidate": "placement_eligibility.reason",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/admin-ui/super-admin-placement-screenings-service.ts",
+        "src/modules/admin-ui/super-admin-screening-detail-service.ts",
+        "src/modules/placements/screening-service.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/admin-ui/super-admin-placement-screenings-service.ts",
+        "src/modules/admin-ui/super-admin-screening-detail-service.ts",
+        "src/modules/placements/screening-service.ts"
+      ],
+      "semanticRisk": "Standard field mapping from legacy placement_eligibility to placement_eligibility.reason.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "placement_eligibility",
+      "sourceColumn": "note",
+      "sourceType": "varchar(300)",
+      "sourceDefinition": "VARCHAR(300) NULL",
+      "sourceRiskFlags": [],
+      "targetCandidate": "placement_eligibility.note",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/admin-ui/super-admin-placement-screenings-service.ts",
+        "src/modules/admin-ui/super-admin-screening-detail-service.ts",
+        "src/modules/placements/screening-service.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/admin-ui/super-admin-placement-screenings-service.ts",
+        "src/modules/admin-ui/super-admin-screening-detail-service.ts",
+        "src/modules/placements/screening-service.ts"
+      ],
+      "semanticRisk": "Standard field mapping from legacy placement_eligibility to placement_eligibility.note.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "placement_eligibility",
+      "sourceColumn": "decided_by_type",
+      "sourceType": "varchar(20)",
+      "sourceDefinition": "VARCHAR(20) NULL",
+      "sourceRiskFlags": [],
+      "targetCandidate": "placement_eligibility.decided_by_type",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/admin-ui/super-admin-placement-screenings-service.ts",
+        "src/modules/admin-ui/super-admin-screening-detail-service.ts",
+        "src/modules/placements/screening-service.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/admin-ui/super-admin-placement-screenings-service.ts",
+        "src/modules/admin-ui/super-admin-screening-detail-service.ts",
+        "src/modules/placements/screening-service.ts"
+      ],
+      "semanticRisk": "Standard field mapping from legacy placement_eligibility to placement_eligibility.decided_by_type.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "placement_eligibility",
+      "sourceColumn": "decided_by_id",
+      "sourceType": "int",
+      "sourceDefinition": "INT NULL",
+      "sourceRiskFlags": [
+        "INTEGER_KEY_TO_UUID_MAPPING"
+      ],
+      "targetCandidate": "placement_eligibility.decided_by_id",
+      "disposition": "PROPOSED_REGISTERED_WITH_UUID_NORMALIZATION",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/admin-ui/super-admin-placement-screenings-service.ts",
+        "src/modules/admin-ui/super-admin-screening-detail-service.ts",
+        "src/modules/placements/screening-service.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/admin-ui/super-admin-placement-screenings-service.ts",
+        "src/modules/admin-ui/super-admin-screening-detail-service.ts",
+        "src/modules/placements/screening-service.ts"
+      ],
+      "semanticRisk": "Legacy numeric ID maps to UUID in vNext; no old-row import needed for greenfield.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "placement_eligibility",
+      "sourceColumn": "decided_by_name",
+      "sourceType": "varchar(200)",
+      "sourceDefinition": "VARCHAR(200) NULL",
+      "sourceRiskFlags": [],
+      "targetCandidate": "placement_eligibility.decided_by_name",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/admin-ui/super-admin-placement-screenings-service.ts",
+        "src/modules/admin-ui/super-admin-screening-detail-service.ts",
+        "src/modules/placements/screening-service.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/admin-ui/super-admin-placement-screenings-service.ts",
+        "src/modules/admin-ui/super-admin-screening-detail-service.ts",
+        "src/modules/placements/screening-service.ts"
+      ],
+      "semanticRisk": "Standard field mapping from legacy placement_eligibility to placement_eligibility.decided_by_name.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "placement_eligibility",
+      "sourceColumn": "decided_at",
+      "sourceType": "datetime",
+      "sourceDefinition": "DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP",
+      "sourceRiskFlags": [
+        "TIMEZONE_AND_DEADLINE_SEMANTICS"
+      ],
+      "targetCandidate": "placement_eligibility.decided_at",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/admin-ui/super-admin-placement-screenings-service.ts",
+        "src/modules/admin-ui/super-admin-screening-detail-service.ts",
+        "src/modules/placements/screening-service.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/admin-ui/super-admin-placement-screenings-service.ts",
+        "src/modules/admin-ui/super-admin-screening-detail-service.ts",
+        "src/modules/placements/screening-service.ts"
+      ],
+      "semanticRisk": "Datetime(6) semantics differ from timestamptz; vNext stores UTC.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "placement_eligibility_event",
+      "sourceColumn": "id",
+      "sourceType": "bigint",
+      "sourceDefinition": "BIGINT AUTO_INCREMENT PRIMARY KEY",
+      "sourceRiskFlags": [
+        "INTEGER_KEY_TO_UUID_MAPPING"
+      ],
+      "targetCandidate": "placement_eligibility_event.id",
+      "disposition": "PROPOSED_NORMALIZED_UUID_PRIMARY_KEY",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/admin-ui/super-admin-placement-screenings-service.ts",
+        "src/modules/admin-ui/super-admin-screening-detail-service.ts",
+        "src/modules/placements/screening-service.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/admin-ui/super-admin-placement-screenings-service.ts",
+        "src/modules/admin-ui/super-admin-screening-detail-service.ts",
+        "src/modules/placements/screening-service.ts"
+      ],
+      "semanticRisk": "Legacy numeric ID maps to UUID in vNext; no old-row import needed for greenfield.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "placement_eligibility_event",
+      "sourceColumn": "college_id",
+      "sourceType": "int",
+      "sourceDefinition": "INT NOT NULL",
+      "sourceRiskFlags": [
+        "INTEGER_KEY_TO_UUID_MAPPING"
+      ],
+      "targetCandidate": "placement_eligibility_event.college_id",
+      "disposition": "PROPOSED_REGISTERED_WITH_UUID_NORMALIZATION",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/admin-ui/super-admin-placement-screenings-service.ts",
+        "src/modules/admin-ui/super-admin-screening-detail-service.ts",
+        "src/modules/placements/screening-service.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/admin-ui/super-admin-placement-screenings-service.ts",
+        "src/modules/admin-ui/super-admin-screening-detail-service.ts",
+        "src/modules/placements/screening-service.ts"
+      ],
+      "semanticRisk": "Legacy numeric ID maps to UUID in vNext; no old-row import needed for greenfield.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "placement_eligibility_event",
+      "sourceColumn": "action_id",
+      "sourceType": "varchar(36)",
+      "sourceDefinition": "VARCHAR(36) NOT NULL COMMENT 'One bulk action = one id'",
+      "sourceRiskFlags": [],
+      "targetCandidate": "placement_eligibility_event.action_id",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/admin-ui/super-admin-placement-screenings-service.ts",
+        "src/modules/admin-ui/super-admin-screening-detail-service.ts",
+        "src/modules/placements/screening-service.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/admin-ui/super-admin-placement-screenings-service.ts",
+        "src/modules/admin-ui/super-admin-screening-detail-service.ts",
+        "src/modules/placements/screening-service.ts"
+      ],
+      "semanticRisk": "Standard field mapping from legacy placement_eligibility_event to placement_eligibility_event.action_id.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "placement_eligibility_event",
+      "sourceColumn": "scope_type",
+      "sourceType": "varchar(10)",
+      "sourceDefinition": "VARCHAR(10) NOT NULL",
+      "sourceRiskFlags": [],
+      "targetCandidate": "placement_eligibility_event.scope_type",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/admin-ui/super-admin-placement-screenings-service.ts",
+        "src/modules/admin-ui/super-admin-screening-detail-service.ts",
+        "src/modules/placements/screening-service.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/admin-ui/super-admin-placement-screenings-service.ts",
+        "src/modules/admin-ui/super-admin-screening-detail-service.ts",
+        "src/modules/placements/screening-service.ts"
+      ],
+      "semanticRisk": "Standard field mapping from legacy placement_eligibility_event to placement_eligibility_event.scope_type.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "placement_eligibility_event",
+      "sourceColumn": "scope_id",
+      "sourceType": "bigint",
+      "sourceDefinition": "BIGINT NOT NULL",
+      "sourceRiskFlags": [
+        "INTEGER_KEY_TO_UUID_MAPPING"
+      ],
+      "targetCandidate": "placement_eligibility_event.scope_id",
+      "disposition": "PROPOSED_REGISTERED_WITH_UUID_NORMALIZATION",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/admin-ui/super-admin-placement-screenings-service.ts",
+        "src/modules/admin-ui/super-admin-screening-detail-service.ts",
+        "src/modules/placements/screening-service.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/admin-ui/super-admin-placement-screenings-service.ts",
+        "src/modules/admin-ui/super-admin-screening-detail-service.ts",
+        "src/modules/placements/screening-service.ts"
+      ],
+      "semanticRisk": "Legacy numeric ID maps to UUID in vNext; no old-row import needed for greenfield.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "placement_eligibility_event",
+      "sourceColumn": "before_status",
+      "sourceType": "varchar(12)",
+      "sourceDefinition": "VARCHAR(12) NULL COMMENT 'NULL = Not decided at that level'",
+      "sourceRiskFlags": [],
+      "targetCandidate": "placement_eligibility_event.before_status",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/admin-ui/super-admin-placement-screenings-service.ts",
+        "src/modules/admin-ui/super-admin-screening-detail-service.ts",
+        "src/modules/placements/screening-service.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/admin-ui/super-admin-placement-screenings-service.ts",
+        "src/modules/admin-ui/super-admin-screening-detail-service.ts",
+        "src/modules/placements/screening-service.ts"
+      ],
+      "semanticRisk": "Standard field mapping from legacy placement_eligibility_event to placement_eligibility_event.before_status.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "placement_eligibility_event",
+      "sourceColumn": "before_reason",
+      "sourceType": "varchar(200)",
+      "sourceDefinition": "VARCHAR(200) NULL",
+      "sourceRiskFlags": [],
+      "targetCandidate": "placement_eligibility_event.before_reason",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/admin-ui/super-admin-placement-screenings-service.ts",
+        "src/modules/admin-ui/super-admin-screening-detail-service.ts",
+        "src/modules/placements/screening-service.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/admin-ui/super-admin-placement-screenings-service.ts",
+        "src/modules/admin-ui/super-admin-screening-detail-service.ts",
+        "src/modules/placements/screening-service.ts"
+      ],
+      "semanticRisk": "Standard field mapping from legacy placement_eligibility_event to placement_eligibility_event.before_reason.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "placement_eligibility_event",
+      "sourceColumn": "before_note",
+      "sourceType": "varchar(300)",
+      "sourceDefinition": "VARCHAR(300) NULL",
+      "sourceRiskFlags": [],
+      "targetCandidate": "placement_eligibility_event.before_note",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/admin-ui/super-admin-placement-screenings-service.ts",
+        "src/modules/admin-ui/super-admin-screening-detail-service.ts",
+        "src/modules/placements/screening-service.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/admin-ui/super-admin-placement-screenings-service.ts",
+        "src/modules/admin-ui/super-admin-screening-detail-service.ts",
+        "src/modules/placements/screening-service.ts"
+      ],
+      "semanticRisk": "Standard field mapping from legacy placement_eligibility_event to placement_eligibility_event.before_note.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "placement_eligibility_event",
+      "sourceColumn": "after_status",
+      "sourceType": "varchar(12)",
+      "sourceDefinition": "VARCHAR(12) NULL",
+      "sourceRiskFlags": [],
+      "targetCandidate": "placement_eligibility_event.after_status",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/admin-ui/super-admin-placement-screenings-service.ts",
+        "src/modules/admin-ui/super-admin-screening-detail-service.ts",
+        "src/modules/placements/screening-service.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/admin-ui/super-admin-placement-screenings-service.ts",
+        "src/modules/admin-ui/super-admin-screening-detail-service.ts",
+        "src/modules/placements/screening-service.ts"
+      ],
+      "semanticRisk": "Standard field mapping from legacy placement_eligibility_event to placement_eligibility_event.after_status.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "placement_eligibility_event",
+      "sourceColumn": "after_reason",
+      "sourceType": "varchar(200)",
+      "sourceDefinition": "VARCHAR(200) NULL",
+      "sourceRiskFlags": [],
+      "targetCandidate": "placement_eligibility_event.after_reason",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/admin-ui/super-admin-placement-screenings-service.ts",
+        "src/modules/admin-ui/super-admin-screening-detail-service.ts",
+        "src/modules/placements/screening-service.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/admin-ui/super-admin-placement-screenings-service.ts",
+        "src/modules/admin-ui/super-admin-screening-detail-service.ts",
+        "src/modules/placements/screening-service.ts"
+      ],
+      "semanticRisk": "Standard field mapping from legacy placement_eligibility_event to placement_eligibility_event.after_reason.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "placement_eligibility_event",
+      "sourceColumn": "after_note",
+      "sourceType": "varchar(300)",
+      "sourceDefinition": "VARCHAR(300) NULL",
+      "sourceRiskFlags": [],
+      "targetCandidate": "placement_eligibility_event.after_note",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/admin-ui/super-admin-placement-screenings-service.ts",
+        "src/modules/admin-ui/super-admin-screening-detail-service.ts",
+        "src/modules/placements/screening-service.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/admin-ui/super-admin-placement-screenings-service.ts",
+        "src/modules/admin-ui/super-admin-screening-detail-service.ts",
+        "src/modules/placements/screening-service.ts"
+      ],
+      "semanticRisk": "Standard field mapping from legacy placement_eligibility_event to placement_eligibility_event.after_note.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "placement_eligibility_event",
+      "sourceColumn": "actor_type",
+      "sourceType": "varchar(20)",
+      "sourceDefinition": "VARCHAR(20) NULL",
+      "sourceRiskFlags": [],
+      "targetCandidate": "placement_eligibility_event.actor_type",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/admin-ui/super-admin-placement-screenings-service.ts",
+        "src/modules/admin-ui/super-admin-screening-detail-service.ts",
+        "src/modules/placements/screening-service.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/admin-ui/super-admin-placement-screenings-service.ts",
+        "src/modules/admin-ui/super-admin-screening-detail-service.ts",
+        "src/modules/placements/screening-service.ts"
+      ],
+      "semanticRisk": "Standard field mapping from legacy placement_eligibility_event to placement_eligibility_event.actor_type.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "placement_eligibility_event",
+      "sourceColumn": "actor_id",
+      "sourceType": "int",
+      "sourceDefinition": "INT NULL",
+      "sourceRiskFlags": [
+        "INTEGER_KEY_TO_UUID_MAPPING"
+      ],
+      "targetCandidate": "placement_eligibility_event.actor_id",
+      "disposition": "PROPOSED_REGISTERED_WITH_UUID_NORMALIZATION",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/admin-ui/super-admin-placement-screenings-service.ts",
+        "src/modules/admin-ui/super-admin-screening-detail-service.ts",
+        "src/modules/placements/screening-service.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/admin-ui/super-admin-placement-screenings-service.ts",
+        "src/modules/admin-ui/super-admin-screening-detail-service.ts",
+        "src/modules/placements/screening-service.ts"
+      ],
+      "semanticRisk": "Legacy numeric ID maps to UUID in vNext; no old-row import needed for greenfield.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "placement_eligibility_event",
+      "sourceColumn": "actor_name",
+      "sourceType": "varchar(200)",
+      "sourceDefinition": "VARCHAR(200) NULL",
+      "sourceRiskFlags": [],
+      "targetCandidate": "placement_eligibility_event.actor_name",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/admin-ui/super-admin-placement-screenings-service.ts",
+        "src/modules/admin-ui/super-admin-screening-detail-service.ts",
+        "src/modules/placements/screening-service.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/admin-ui/super-admin-placement-screenings-service.ts",
+        "src/modules/admin-ui/super-admin-screening-detail-service.ts",
+        "src/modules/placements/screening-service.ts"
+      ],
+      "semanticRisk": "Standard field mapping from legacy placement_eligibility_event to placement_eligibility_event.actor_name.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "placement_eligibility_event",
+      "sourceColumn": "undone_at",
+      "sourceType": "datetime",
+      "sourceDefinition": "DATETIME NULL",
+      "sourceRiskFlags": [
+        "TIMEZONE_AND_DEADLINE_SEMANTICS"
+      ],
+      "targetCandidate": "placement_eligibility_event.undone_at",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/admin-ui/super-admin-placement-screenings-service.ts",
+        "src/modules/admin-ui/super-admin-screening-detail-service.ts",
+        "src/modules/placements/screening-service.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/admin-ui/super-admin-placement-screenings-service.ts",
+        "src/modules/admin-ui/super-admin-screening-detail-service.ts",
+        "src/modules/placements/screening-service.ts"
+      ],
+      "semanticRisk": "Datetime(6) semantics differ from timestamptz; vNext stores UTC.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "placement_eligibility_event",
+      "sourceColumn": "created_at",
+      "sourceType": "datetime",
+      "sourceDefinition": "DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP",
+      "sourceRiskFlags": [
+        "TIMEZONE_AND_DEADLINE_SEMANTICS"
+      ],
+      "targetCandidate": "placement_eligibility_event.created_at",
+      "disposition": "PROPOSED_NORMALIZED_AUDIT_TIMESTAMP",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/admin-ui/super-admin-placement-screenings-service.ts",
+        "src/modules/admin-ui/super-admin-screening-detail-service.ts",
+        "src/modules/placements/screening-service.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/admin-ui/super-admin-placement-screenings-service.ts",
+        "src/modules/admin-ui/super-admin-screening-detail-service.ts",
+        "src/modules/placements/screening-service.ts"
+      ],
+      "semanticRisk": "Datetime(6) semantics differ from timestamptz; vNext stores UTC.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    }
+  ]
+}

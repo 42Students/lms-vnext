@@ -1,0 +1,2068 @@
+{
+  "id": "DB19-P25",
+  "recordType": "DB19_PACKAGE_SOURCE_FIELD_REVIEW",
+  "sourceSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+  "sourceInventory": "docs/planning/db-pass4-columns-db09_tpo_and_recruiter_operations.json",
+  "originalFieldLedger": "docs/planning/database-parity-db09_tpo_and_recruiter_operations-field-ledger.json",
+  "sourceTables": [
+    "drive_group",
+    "follow_up",
+    "job_round",
+    "prep_assignment",
+    "reschedule_request",
+    "round_assignment",
+    "round_slot",
+    "student_request"
+  ],
+  "sourceFieldCount": 75,
+  "reviewedProposals": 75,
+  "runtimeVerifiedCount": 0,
+  "fieldDispositionApproval": "PENDING_PACKAGE_ACCEPTANCE",
+  "privacyBoundary": "DB19-P25 scoped source field disposition only. Global P31/P32 and DB020 remain open.",
+  "testEvidenceStatus": "SOURCE_QUALITY_GATE_ONLY_NOT_RUNTIME_CERTIFIED",
+  "pendingAcceptance": "Registered PG17 producer/consumer and runtime verification for all 75 fields.",
+  "fields": [
+    {
+      "sourceTable": "drive_group",
+      "sourceColumn": "id",
+      "sourceType": "bigint",
+      "sourceDefinition": "BIGINT AUTO_INCREMENT PRIMARY KEY",
+      "sourceRiskFlags": [
+        "INTEGER_KEY_TO_UUID_MAPPING"
+      ],
+      "targetCandidate": "drive_group.id",
+      "disposition": "PROPOSED_NORMALIZED_UUID_PRIMARY_KEY",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/placements/admin-company-drive-history-model.ts",
+        "src/modules/placements/admin-company-drive-history-service.ts",
+        "src/modules/placements/admin-drive-directory-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/placements/admin-company-drive-history-model.ts",
+        "src/modules/placements/admin-company-drive-history-service.ts",
+        "src/modules/placements/admin-drive-directory-model.ts"
+      ],
+      "semanticRisk": "Legacy numeric ID maps to UUID in vNext; no old-row import needed for greenfield.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "drive_group",
+      "sourceColumn": "industry_company_id",
+      "sourceType": "bigint",
+      "sourceDefinition": "BIGINT NULL",
+      "sourceRiskFlags": [
+        "INTEGER_KEY_TO_UUID_MAPPING"
+      ],
+      "targetCandidate": "drive_group.industry_company_id",
+      "disposition": "PROPOSED_REGISTERED_WITH_UUID_NORMALIZATION",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/placements/admin-company-drive-history-model.ts",
+        "src/modules/placements/admin-company-drive-history-service.ts",
+        "src/modules/placements/admin-drive-directory-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/placements/admin-company-drive-history-model.ts",
+        "src/modules/placements/admin-company-drive-history-service.ts",
+        "src/modules/placements/admin-drive-directory-model.ts"
+      ],
+      "semanticRisk": "Legacy numeric ID maps to UUID in vNext; no old-row import needed for greenfield.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "drive_group",
+      "sourceColumn": "shared_form_json",
+      "sourceType": "json",
+      "sourceDefinition": "JSON NULL COMMENT 'The common job/pay/eligibility/rounds payload sent to every college in this group'",
+      "sourceRiskFlags": [
+        "STRUCTURED_PAYLOAD_SEMANTIC_SCHEMA"
+      ],
+      "targetCandidate": "drive_group.shared_form_json",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/placements/admin-company-drive-history-model.ts",
+        "src/modules/placements/admin-company-drive-history-service.ts",
+        "src/modules/placements/admin-drive-directory-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/placements/admin-company-drive-history-model.ts",
+        "src/modules/placements/admin-company-drive-history-service.ts",
+        "src/modules/placements/admin-drive-directory-model.ts"
+      ],
+      "semanticRisk": "JSON payload: vNext uses typed JSONB or separate normalized columns.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "drive_group",
+      "sourceColumn": "created_at",
+      "sourceType": "datetime",
+      "sourceDefinition": "DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP",
+      "sourceRiskFlags": [
+        "TIMEZONE_AND_DEADLINE_SEMANTICS"
+      ],
+      "targetCandidate": "drive_group.created_at",
+      "disposition": "PROPOSED_NORMALIZED_AUDIT_TIMESTAMP",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/placements/admin-company-drive-history-model.ts",
+        "src/modules/placements/admin-company-drive-history-service.ts",
+        "src/modules/placements/admin-drive-directory-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/placements/admin-company-drive-history-model.ts",
+        "src/modules/placements/admin-company-drive-history-service.ts",
+        "src/modules/placements/admin-drive-directory-model.ts"
+      ],
+      "semanticRisk": "Datetime(6) semantics differ from timestamptz; vNext stores UTC.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "drive_group",
+      "sourceColumn": "recruiter_id",
+      "sourceType": "bigint",
+      "sourceDefinition": "BIGINT NULL",
+      "sourceRiskFlags": [
+        "INTEGER_KEY_TO_UUID_MAPPING"
+      ],
+      "targetCandidate": "drive_group.recruiter_id",
+      "disposition": "PROPOSED_REGISTERED_WITH_UUID_NORMALIZATION",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/placements/admin-company-drive-history-model.ts",
+        "src/modules/placements/admin-company-drive-history-service.ts",
+        "src/modules/placements/admin-drive-directory-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/placements/admin-company-drive-history-model.ts",
+        "src/modules/placements/admin-company-drive-history-service.ts",
+        "src/modules/placements/admin-drive-directory-model.ts"
+      ],
+      "semanticRisk": "Legacy numeric ID maps to UUID in vNext; no old-row import needed for greenfield.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "follow_up",
+      "sourceColumn": "id",
+      "sourceType": "bigint",
+      "sourceDefinition": "BIGINT AUTO_INCREMENT PRIMARY KEY",
+      "sourceRiskFlags": [
+        "INTEGER_KEY_TO_UUID_MAPPING"
+      ],
+      "targetCandidate": "follow_up.id",
+      "disposition": "PROPOSED_NORMALIZED_UUID_PRIMARY_KEY",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/placements/admin-company-drive-history-model.ts",
+        "src/modules/placements/admin-company-drive-history-service.ts",
+        "src/modules/placements/admin-drive-directory-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/placements/admin-company-drive-history-model.ts",
+        "src/modules/placements/admin-company-drive-history-service.ts",
+        "src/modules/placements/admin-drive-directory-model.ts"
+      ],
+      "semanticRisk": "Legacy numeric ID maps to UUID in vNext; no old-row import needed for greenfield.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "follow_up",
+      "sourceColumn": "due_at",
+      "sourceType": "datetime",
+      "sourceDefinition": "DATETIME NOT NULL",
+      "sourceRiskFlags": [
+        "TIMEZONE_AND_DEADLINE_SEMANTICS"
+      ],
+      "targetCandidate": "follow_up.due_at",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/placements/admin-company-drive-history-model.ts",
+        "src/modules/placements/admin-company-drive-history-service.ts",
+        "src/modules/placements/admin-drive-directory-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/placements/admin-company-drive-history-model.ts",
+        "src/modules/placements/admin-company-drive-history-service.ts",
+        "src/modules/placements/admin-drive-directory-model.ts"
+      ],
+      "semanticRisk": "Datetime(6) semantics differ from timestamptz; vNext stores UTC.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "follow_up",
+      "sourceColumn": "owner_faculty_id",
+      "sourceType": "int",
+      "sourceDefinition": "INT NULL",
+      "sourceRiskFlags": [
+        "INTEGER_KEY_TO_UUID_MAPPING"
+      ],
+      "targetCandidate": "follow_up.owner_faculty_id",
+      "disposition": "PROPOSED_REGISTERED_WITH_UUID_NORMALIZATION",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/placements/admin-company-drive-history-model.ts",
+        "src/modules/placements/admin-company-drive-history-service.ts",
+        "src/modules/placements/admin-drive-directory-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/placements/admin-company-drive-history-model.ts",
+        "src/modules/placements/admin-company-drive-history-service.ts",
+        "src/modules/placements/admin-drive-directory-model.ts"
+      ],
+      "semanticRisk": "Legacy numeric ID maps to UUID in vNext; no old-row import needed for greenfield.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "follow_up",
+      "sourceColumn": "note",
+      "sourceType": "varchar(500)",
+      "sourceDefinition": "VARCHAR(500) NULL",
+      "sourceRiskFlags": [],
+      "targetCandidate": "follow_up.note",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/placements/admin-company-drive-history-model.ts",
+        "src/modules/placements/admin-company-drive-history-service.ts",
+        "src/modules/placements/admin-drive-directory-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/placements/admin-company-drive-history-model.ts",
+        "src/modules/placements/admin-company-drive-history-service.ts",
+        "src/modules/placements/admin-drive-directory-model.ts"
+      ],
+      "semanticRisk": "Standard field mapping from legacy follow_up to follow_up.note.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "follow_up",
+      "sourceColumn": "done_at",
+      "sourceType": "datetime",
+      "sourceDefinition": "DATETIME NULL",
+      "sourceRiskFlags": [
+        "TIMEZONE_AND_DEADLINE_SEMANTICS"
+      ],
+      "targetCandidate": "follow_up.done_at",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/placements/admin-company-drive-history-model.ts",
+        "src/modules/placements/admin-company-drive-history-service.ts",
+        "src/modules/placements/admin-drive-directory-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/placements/admin-company-drive-history-model.ts",
+        "src/modules/placements/admin-company-drive-history-service.ts",
+        "src/modules/placements/admin-drive-directory-model.ts"
+      ],
+      "semanticRisk": "Datetime(6) semantics differ from timestamptz; vNext stores UTC.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "follow_up",
+      "sourceColumn": "created_at",
+      "sourceType": "datetime",
+      "sourceDefinition": "DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP",
+      "sourceRiskFlags": [
+        "TIMEZONE_AND_DEADLINE_SEMANTICS"
+      ],
+      "targetCandidate": "follow_up.created_at",
+      "disposition": "PROPOSED_NORMALIZED_AUDIT_TIMESTAMP",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/placements/admin-company-drive-history-model.ts",
+        "src/modules/placements/admin-company-drive-history-service.ts",
+        "src/modules/placements/admin-drive-directory-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/placements/admin-company-drive-history-model.ts",
+        "src/modules/placements/admin-company-drive-history-service.ts",
+        "src/modules/placements/admin-drive-directory-model.ts"
+      ],
+      "semanticRisk": "Datetime(6) semantics differ from timestamptz; vNext stores UTC.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "follow_up",
+      "sourceColumn": "recruiter_lead_id",
+      "sourceType": "bigint",
+      "sourceDefinition": "BIGINT NOT NULL",
+      "sourceRiskFlags": [
+        "INTEGER_KEY_TO_UUID_MAPPING"
+      ],
+      "targetCandidate": "follow_up.recruiter_lead_id",
+      "disposition": "PROPOSED_REGISTERED_WITH_UUID_NORMALIZATION",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/placements/admin-company-drive-history-model.ts",
+        "src/modules/placements/admin-company-drive-history-service.ts",
+        "src/modules/placements/admin-drive-directory-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/placements/admin-company-drive-history-model.ts",
+        "src/modules/placements/admin-company-drive-history-service.ts",
+        "src/modules/placements/admin-drive-directory-model.ts"
+      ],
+      "semanticRisk": "Legacy numeric ID maps to UUID in vNext; no old-row import needed for greenfield.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "job_round",
+      "sourceColumn": "id",
+      "sourceType": "bigint",
+      "sourceDefinition": "BIGINT AUTO_INCREMENT PRIMARY KEY",
+      "sourceRiskFlags": [
+        "INTEGER_KEY_TO_UUID_MAPPING"
+      ],
+      "targetCandidate": "job_round.id",
+      "disposition": "PROPOSED_NORMALIZED_UUID_PRIMARY_KEY",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/placements/admin-company-drive-history-model.ts",
+        "src/modules/placements/admin-company-drive-history-service.ts",
+        "src/modules/placements/admin-drive-directory-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/placements/admin-company-drive-history-model.ts",
+        "src/modules/placements/admin-company-drive-history-service.ts",
+        "src/modules/placements/admin-drive-directory-model.ts"
+      ],
+      "semanticRisk": "Legacy numeric ID maps to UUID in vNext; no old-row import needed for greenfield.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "job_round",
+      "sourceColumn": "job_id",
+      "sourceType": "int",
+      "sourceDefinition": "INT NOT NULL",
+      "sourceRiskFlags": [
+        "INTEGER_KEY_TO_UUID_MAPPING"
+      ],
+      "targetCandidate": "job_round.job_id",
+      "disposition": "PROPOSED_REGISTERED_WITH_UUID_NORMALIZATION",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/placements/admin-company-drive-history-model.ts",
+        "src/modules/placements/admin-company-drive-history-service.ts",
+        "src/modules/placements/admin-drive-directory-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/placements/admin-company-drive-history-model.ts",
+        "src/modules/placements/admin-company-drive-history-service.ts",
+        "src/modules/placements/admin-drive-directory-model.ts"
+      ],
+      "semanticRisk": "Legacy numeric ID maps to UUID in vNext; no old-row import needed for greenfield.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "job_round",
+      "sourceColumn": "seq",
+      "sourceType": "int",
+      "sourceDefinition": "INT NOT NULL COMMENT 'Display and processing order'",
+      "sourceRiskFlags": [],
+      "targetCandidate": "job_round.seq",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/placements/admin-company-drive-history-model.ts",
+        "src/modules/placements/admin-company-drive-history-service.ts",
+        "src/modules/placements/admin-drive-directory-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/placements/admin-company-drive-history-model.ts",
+        "src/modules/placements/admin-company-drive-history-service.ts",
+        "src/modules/placements/admin-drive-directory-model.ts"
+      ],
+      "semanticRisk": "Standard field mapping from legacy job_round to job_round.seq.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "job_round",
+      "sourceColumn": "kind",
+      "sourceType": "varchar(20)",
+      "sourceDefinition": "VARCHAR(20) NOT NULL COMMENT 'TALK|TEST|VENDOR_TEST|GD|INTERVIEW'",
+      "sourceRiskFlags": [],
+      "targetCandidate": "job_round.kind",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/placements/admin-company-drive-history-model.ts",
+        "src/modules/placements/admin-company-drive-history-service.ts",
+        "src/modules/placements/admin-drive-directory-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/placements/admin-company-drive-history-model.ts",
+        "src/modules/placements/admin-company-drive-history-service.ts",
+        "src/modules/placements/admin-drive-directory-model.ts"
+      ],
+      "semanticRisk": "Standard field mapping from legacy job_round to job_round.kind.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "job_round",
+      "sourceColumn": "name",
+      "sourceType": "varchar(100)",
+      "sourceDefinition": "VARCHAR(100) NOT NULL",
+      "sourceRiskFlags": [],
+      "targetCandidate": "job_round.name",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/placements/admin-company-drive-history-model.ts",
+        "src/modules/placements/admin-company-drive-history-service.ts",
+        "src/modules/placements/admin-drive-directory-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/placements/admin-company-drive-history-model.ts",
+        "src/modules/placements/admin-company-drive-history-service.ts",
+        "src/modules/placements/admin-drive-directory-model.ts"
+      ],
+      "semanticRisk": "Standard field mapping from legacy job_round to job_round.name.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "job_round",
+      "sourceColumn": "mode",
+      "sourceType": "varchar(20)",
+      "sourceDefinition": "VARCHAR(20) NULL COMMENT 'ON_CAMPUS|VIRTUAL'",
+      "sourceRiskFlags": [],
+      "targetCandidate": "job_round.mode",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/placements/admin-company-drive-history-model.ts",
+        "src/modules/placements/admin-company-drive-history-service.ts",
+        "src/modules/placements/admin-drive-directory-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/placements/admin-company-drive-history-model.ts",
+        "src/modules/placements/admin-company-drive-history-service.ts",
+        "src/modules/placements/admin-drive-directory-model.ts"
+      ],
+      "semanticRisk": "Standard field mapping from legacy job_round to job_round.mode.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "job_round",
+      "sourceColumn": "scheduled_date",
+      "sourceType": "datetime",
+      "sourceDefinition": "DATETIME NULL COMMENT 'Null = \"to be decided\"'",
+      "sourceRiskFlags": [
+        "TIMEZONE_AND_DEADLINE_SEMANTICS"
+      ],
+      "targetCandidate": "job_round.scheduled_date",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/placements/admin-company-drive-history-model.ts",
+        "src/modules/placements/admin-company-drive-history-service.ts",
+        "src/modules/placements/admin-drive-directory-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/placements/admin-company-drive-history-model.ts",
+        "src/modules/placements/admin-company-drive-history-service.ts",
+        "src/modules/placements/admin-drive-directory-model.ts"
+      ],
+      "semanticRisk": "Datetime(6) semantics differ from timestamptz; vNext stores UTC.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "job_round",
+      "sourceColumn": "venue",
+      "sourceType": "varchar(255)",
+      "sourceDefinition": "VARCHAR(255) NULL",
+      "sourceRiskFlags": [],
+      "targetCandidate": "job_round.venue",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/placements/admin-company-drive-history-model.ts",
+        "src/modules/placements/admin-company-drive-history-service.ts",
+        "src/modules/placements/admin-drive-directory-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/placements/admin-company-drive-history-model.ts",
+        "src/modules/placements/admin-company-drive-history-service.ts",
+        "src/modules/placements/admin-drive-directory-model.ts"
+      ],
+      "semanticRisk": "Standard field mapping from legacy job_round to job_round.venue.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "job_round",
+      "sourceColumn": "meeting_url",
+      "sourceType": "varchar(500)",
+      "sourceDefinition": "VARCHAR(500) NULL",
+      "sourceRiskFlags": [],
+      "targetCandidate": "job_round.meeting_url",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/placements/admin-company-drive-history-model.ts",
+        "src/modules/placements/admin-company-drive-history-service.ts",
+        "src/modules/placements/admin-drive-directory-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/placements/admin-company-drive-history-model.ts",
+        "src/modules/placements/admin-company-drive-history-service.ts",
+        "src/modules/placements/admin-drive-directory-model.ts"
+      ],
+      "semanticRisk": "Standard field mapping from legacy job_round to job_round.meeting_url.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "job_round",
+      "sourceColumn": "what_to_bring",
+      "sourceType": "varchar(500)",
+      "sourceDefinition": "VARCHAR(500) NULL",
+      "sourceRiskFlags": [],
+      "targetCandidate": "job_round.what_to_bring",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/placements/admin-company-drive-history-model.ts",
+        "src/modules/placements/admin-company-drive-history-service.ts",
+        "src/modules/placements/admin-drive-directory-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/placements/admin-company-drive-history-model.ts",
+        "src/modules/placements/admin-company-drive-history-service.ts",
+        "src/modules/placements/admin-drive-directory-model.ts"
+      ],
+      "semanticRisk": "Standard field mapping from legacy job_round to job_round.what_to_bring.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "job_round",
+      "sourceColumn": "platform",
+      "sourceType": "varchar(100)",
+      "sourceDefinition": "VARCHAR(100) NULL COMMENT 'Test/vendor-test: Mettl, HackerRank, etc.'",
+      "sourceRiskFlags": [],
+      "targetCandidate": "job_round.platform",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/placements/admin-company-drive-history-model.ts",
+        "src/modules/placements/admin-company-drive-history-service.ts",
+        "src/modules/placements/admin-drive-directory-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/placements/admin-company-drive-history-model.ts",
+        "src/modules/placements/admin-company-drive-history-service.ts",
+        "src/modules/placements/admin-drive-directory-model.ts"
+      ],
+      "semanticRisk": "Standard field mapping from legacy job_round to job_round.platform.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "job_round",
+      "sourceColumn": "test_link",
+      "sourceType": "varchar(500)",
+      "sourceDefinition": "VARCHAR(500) NULL",
+      "sourceRiskFlags": [],
+      "targetCandidate": "job_round.test_link",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/placements/admin-company-drive-history-model.ts",
+        "src/modules/placements/admin-company-drive-history-service.ts",
+        "src/modules/placements/admin-drive-directory-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/placements/admin-company-drive-history-model.ts",
+        "src/modules/placements/admin-company-drive-history-service.ts",
+        "src/modules/placements/admin-drive-directory-model.ts"
+      ],
+      "semanticRisk": "Standard field mapping from legacy job_round to job_round.test_link.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "job_round",
+      "sourceColumn": "duration_minutes",
+      "sourceType": "int",
+      "sourceDefinition": "INT NULL",
+      "sourceRiskFlags": [],
+      "targetCandidate": "job_round.duration_minutes",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/placements/admin-company-drive-history-model.ts",
+        "src/modules/placements/admin-company-drive-history-service.ts",
+        "src/modules/placements/admin-drive-directory-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/placements/admin-company-drive-history-model.ts",
+        "src/modules/placements/admin-company-drive-history-service.ts",
+        "src/modules/placements/admin-drive-directory-model.ts"
+      ],
+      "semanticRisk": "Standard field mapping from legacy job_round to job_round.duration_minutes.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "job_round",
+      "sourceColumn": "results_due",
+      "sourceType": "datetime",
+      "sourceDefinition": "DATETIME NULL",
+      "sourceRiskFlags": [
+        "TIMEZONE_AND_DEADLINE_SEMANTICS"
+      ],
+      "targetCandidate": "job_round.results_due",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/placements/admin-company-drive-history-model.ts",
+        "src/modules/placements/admin-company-drive-history-service.ts",
+        "src/modules/placements/admin-drive-directory-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/placements/admin-company-drive-history-model.ts",
+        "src/modules/placements/admin-company-drive-history-service.ts",
+        "src/modules/placements/admin-drive-directory-model.ts"
+      ],
+      "semanticRisk": "Datetime(6) semantics differ from timestamptz; vNext stores UTC.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "job_round",
+      "sourceColumn": "status",
+      "sourceType": "varchar(20)",
+      "sourceDefinition": "VARCHAR(20) NOT NULL DEFAULT 'PENDING' COMMENT 'PENDING|SCHEDULED|COMPLETED'",
+      "sourceRiskFlags": [],
+      "targetCandidate": "job_round.status",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/placements/admin-company-drive-history-model.ts",
+        "src/modules/placements/admin-company-drive-history-service.ts",
+        "src/modules/placements/admin-drive-directory-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/placements/admin-company-drive-history-model.ts",
+        "src/modules/placements/admin-company-drive-history-service.ts",
+        "src/modules/placements/admin-drive-directory-model.ts"
+      ],
+      "semanticRisk": "Standard field mapping from legacy job_round to job_round.status.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "job_round",
+      "sourceColumn": "created_at",
+      "sourceType": "datetime",
+      "sourceDefinition": "DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP",
+      "sourceRiskFlags": [
+        "TIMEZONE_AND_DEADLINE_SEMANTICS"
+      ],
+      "targetCandidate": "job_round.created_at",
+      "disposition": "PROPOSED_NORMALIZED_AUDIT_TIMESTAMP",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/placements/admin-company-drive-history-model.ts",
+        "src/modules/placements/admin-company-drive-history-service.ts",
+        "src/modules/placements/admin-drive-directory-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/placements/admin-company-drive-history-model.ts",
+        "src/modules/placements/admin-company-drive-history-service.ts",
+        "src/modules/placements/admin-drive-directory-model.ts"
+      ],
+      "semanticRisk": "Datetime(6) semantics differ from timestamptz; vNext stores UTC.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "job_round",
+      "sourceColumn": "updated_at",
+      "sourceType": "datetime",
+      "sourceDefinition": "DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP",
+      "sourceRiskFlags": [
+        "TIMEZONE_AND_DEADLINE_SEMANTICS"
+      ],
+      "targetCandidate": "job_round.updated_at",
+      "disposition": "PROPOSED_NORMALIZED_AUDIT_TIMESTAMP",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/placements/admin-company-drive-history-model.ts",
+        "src/modules/placements/admin-company-drive-history-service.ts",
+        "src/modules/placements/admin-drive-directory-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/placements/admin-company-drive-history-model.ts",
+        "src/modules/placements/admin-company-drive-history-service.ts",
+        "src/modules/placements/admin-drive-directory-model.ts"
+      ],
+      "semanticRisk": "Datetime(6) semantics differ from timestamptz; vNext stores UTC.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "job_round",
+      "sourceColumn": "added_by_recruiter_id",
+      "sourceType": "bigint",
+      "sourceDefinition": "BIGINT NULL COMMENT 'Set when the recruiter added this round after the drive was requested",
+      "sourceRiskFlags": [
+        "INTEGER_KEY_TO_UUID_MAPPING"
+      ],
+      "targetCandidate": "job_round.added_by_recruiter_id",
+      "disposition": "PROPOSED_REGISTERED_WITH_UUID_NORMALIZATION",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/placements/admin-company-drive-history-model.ts",
+        "src/modules/placements/admin-company-drive-history-service.ts",
+        "src/modules/placements/admin-drive-directory-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/placements/admin-company-drive-history-model.ts",
+        "src/modules/placements/admin-company-drive-history-service.ts",
+        "src/modules/placements/admin-drive-directory-model.ts"
+      ],
+      "semanticRisk": "Legacy numeric ID maps to UUID in vNext; no old-row import needed for greenfield.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "prep_assignment",
+      "sourceColumn": "id",
+      "sourceType": "bigint",
+      "sourceDefinition": "BIGINT AUTO_INCREMENT PRIMARY KEY",
+      "sourceRiskFlags": [
+        "INTEGER_KEY_TO_UUID_MAPPING"
+      ],
+      "targetCandidate": "placement_tpo_prep_assignments.id",
+      "disposition": "PROPOSED_NORMALIZED_UUID_PRIMARY_KEY",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/placements/admin-company-drive-history-model.ts",
+        "src/modules/placements/admin-company-drive-history-service.ts",
+        "src/modules/placements/admin-drive-directory-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/placements/admin-company-drive-history-model.ts",
+        "src/modules/placements/admin-company-drive-history-service.ts",
+        "src/modules/placements/admin-drive-directory-model.ts"
+      ],
+      "semanticRisk": "Legacy numeric ID maps to UUID in vNext; no old-row import needed for greenfield.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "prep_assignment",
+      "sourceColumn": "learner_id",
+      "sourceType": "int",
+      "sourceDefinition": "INT NOT NULL",
+      "sourceRiskFlags": [
+        "INTEGER_KEY_TO_UUID_MAPPING"
+      ],
+      "targetCandidate": "placement_tpo_prep_assignments.learner_id",
+      "disposition": "PROPOSED_REGISTERED_WITH_UUID_NORMALIZATION",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/placements/admin-company-drive-history-model.ts",
+        "src/modules/placements/admin-company-drive-history-service.ts",
+        "src/modules/placements/admin-drive-directory-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/placements/admin-company-drive-history-model.ts",
+        "src/modules/placements/admin-company-drive-history-service.ts",
+        "src/modules/placements/admin-drive-directory-model.ts"
+      ],
+      "semanticRisk": "Legacy numeric ID maps to UUID in vNext; no old-row import needed for greenfield.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "prep_assignment",
+      "sourceColumn": "course_id",
+      "sourceType": "int",
+      "sourceDefinition": "INT NULL",
+      "sourceRiskFlags": [
+        "INTEGER_KEY_TO_UUID_MAPPING"
+      ],
+      "targetCandidate": "placement_tpo_prep_assignments.course_id",
+      "disposition": "PROPOSED_REGISTERED_WITH_UUID_NORMALIZATION",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/placements/admin-company-drive-history-model.ts",
+        "src/modules/placements/admin-company-drive-history-service.ts",
+        "src/modules/placements/admin-drive-directory-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/placements/admin-company-drive-history-model.ts",
+        "src/modules/placements/admin-company-drive-history-service.ts",
+        "src/modules/placements/admin-drive-directory-model.ts"
+      ],
+      "semanticRisk": "Legacy numeric ID maps to UUID in vNext; no old-row import needed for greenfield.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "prep_assignment",
+      "sourceColumn": "assessment_id",
+      "sourceType": "int",
+      "sourceDefinition": "INT NULL",
+      "sourceRiskFlags": [
+        "INTEGER_KEY_TO_UUID_MAPPING"
+      ],
+      "targetCandidate": "placement_tpo_prep_assignments.assessment_id",
+      "disposition": "PROPOSED_REGISTERED_WITH_UUID_NORMALIZATION",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/placements/admin-company-drive-history-model.ts",
+        "src/modules/placements/admin-company-drive-history-service.ts",
+        "src/modules/placements/admin-drive-directory-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/placements/admin-company-drive-history-model.ts",
+        "src/modules/placements/admin-company-drive-history-service.ts",
+        "src/modules/placements/admin-drive-directory-model.ts"
+      ],
+      "semanticRisk": "Legacy numeric ID maps to UUID in vNext; no old-row import needed for greenfield.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "prep_assignment",
+      "sourceColumn": "due_at",
+      "sourceType": "datetime",
+      "sourceDefinition": "DATETIME NULL",
+      "sourceRiskFlags": [
+        "TIMEZONE_AND_DEADLINE_SEMANTICS"
+      ],
+      "targetCandidate": "placement_tpo_prep_assignments.due_at",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/placements/admin-company-drive-history-model.ts",
+        "src/modules/placements/admin-company-drive-history-service.ts",
+        "src/modules/placements/admin-drive-directory-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/placements/admin-company-drive-history-model.ts",
+        "src/modules/placements/admin-company-drive-history-service.ts",
+        "src/modules/placements/admin-drive-directory-model.ts"
+      ],
+      "semanticRisk": "Datetime(6) semantics differ from timestamptz; vNext stores UTC.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "prep_assignment",
+      "sourceColumn": "assigned_by",
+      "sourceType": "int",
+      "sourceDefinition": "INT NULL",
+      "sourceRiskFlags": [],
+      "targetCandidate": "placement_tpo_prep_assignments.assigned_by_user_id",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/placements/admin-company-drive-history-model.ts",
+        "src/modules/placements/admin-company-drive-history-service.ts",
+        "src/modules/placements/admin-drive-directory-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/placements/admin-company-drive-history-model.ts",
+        "src/modules/placements/admin-company-drive-history-service.ts",
+        "src/modules/placements/admin-drive-directory-model.ts"
+      ],
+      "semanticRisk": "Standard field mapping from legacy prep_assignment to placement_tpo_prep_assignments.assigned_by_user_id.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "prep_assignment",
+      "sourceColumn": "created_at",
+      "sourceType": "datetime",
+      "sourceDefinition": "DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP",
+      "sourceRiskFlags": [
+        "TIMEZONE_AND_DEADLINE_SEMANTICS"
+      ],
+      "targetCandidate": "placement_tpo_prep_assignments.created_at",
+      "disposition": "PROPOSED_NORMALIZED_AUDIT_TIMESTAMP",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/placements/admin-company-drive-history-model.ts",
+        "src/modules/placements/admin-company-drive-history-service.ts",
+        "src/modules/placements/admin-drive-directory-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/placements/admin-company-drive-history-model.ts",
+        "src/modules/placements/admin-company-drive-history-service.ts",
+        "src/modules/placements/admin-drive-directory-model.ts"
+      ],
+      "semanticRisk": "Datetime(6) semantics differ from timestamptz; vNext stores UTC.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "reschedule_request",
+      "sourceColumn": "id",
+      "sourceType": "bigint",
+      "sourceDefinition": "BIGINT AUTO_INCREMENT PRIMARY KEY",
+      "sourceRiskFlags": [
+        "INTEGER_KEY_TO_UUID_MAPPING"
+      ],
+      "targetCandidate": "reschedule_request.id",
+      "disposition": "PROPOSED_NORMALIZED_UUID_PRIMARY_KEY",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/placements/admin-company-drive-history-model.ts",
+        "src/modules/placements/admin-company-drive-history-service.ts",
+        "src/modules/placements/admin-drive-directory-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/placements/admin-company-drive-history-model.ts",
+        "src/modules/placements/admin-company-drive-history-service.ts",
+        "src/modules/placements/admin-drive-directory-model.ts"
+      ],
+      "semanticRisk": "Legacy numeric ID maps to UUID in vNext; no old-row import needed for greenfield.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "reschedule_request",
+      "sourceColumn": "round_id",
+      "sourceType": "bigint",
+      "sourceDefinition": "BIGINT NOT NULL",
+      "sourceRiskFlags": [
+        "INTEGER_KEY_TO_UUID_MAPPING"
+      ],
+      "targetCandidate": "reschedule_request.round_id",
+      "disposition": "PROPOSED_REGISTERED_WITH_UUID_NORMALIZATION",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/placements/admin-company-drive-history-model.ts",
+        "src/modules/placements/admin-company-drive-history-service.ts",
+        "src/modules/placements/admin-drive-directory-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/placements/admin-company-drive-history-model.ts",
+        "src/modules/placements/admin-company-drive-history-service.ts",
+        "src/modules/placements/admin-drive-directory-model.ts"
+      ],
+      "semanticRisk": "Legacy numeric ID maps to UUID in vNext; no old-row import needed for greenfield.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "reschedule_request",
+      "sourceColumn": "application_id",
+      "sourceType": "int",
+      "sourceDefinition": "INT NOT NULL",
+      "sourceRiskFlags": [
+        "INTEGER_KEY_TO_UUID_MAPPING"
+      ],
+      "targetCandidate": "reschedule_request.application_id",
+      "disposition": "PROPOSED_REGISTERED_WITH_UUID_NORMALIZATION",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/placements/admin-company-drive-history-model.ts",
+        "src/modules/placements/admin-company-drive-history-service.ts",
+        "src/modules/placements/admin-drive-directory-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/placements/admin-company-drive-history-model.ts",
+        "src/modules/placements/admin-company-drive-history-service.ts",
+        "src/modules/placements/admin-drive-directory-model.ts"
+      ],
+      "semanticRisk": "Legacy numeric ID maps to UUID in vNext; no old-row import needed for greenfield.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "reschedule_request",
+      "sourceColumn": "reason",
+      "sourceType": "varchar(1000)",
+      "sourceDefinition": "VARCHAR(1000) NULL",
+      "sourceRiskFlags": [],
+      "targetCandidate": "reschedule_request.reason",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/placements/admin-company-drive-history-model.ts",
+        "src/modules/placements/admin-company-drive-history-service.ts",
+        "src/modules/placements/admin-drive-directory-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/placements/admin-company-drive-history-model.ts",
+        "src/modules/placements/admin-company-drive-history-service.ts",
+        "src/modules/placements/admin-drive-directory-model.ts"
+      ],
+      "semanticRisk": "Standard field mapping from legacy reschedule_request to reschedule_request.reason.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "reschedule_request",
+      "sourceColumn": "preferred_times",
+      "sourceType": "varchar(500)",
+      "sourceDefinition": "VARCHAR(500) NULL",
+      "sourceRiskFlags": [],
+      "targetCandidate": "reschedule_request.preferred_times",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/placements/admin-company-drive-history-model.ts",
+        "src/modules/placements/admin-company-drive-history-service.ts",
+        "src/modules/placements/admin-drive-directory-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/placements/admin-company-drive-history-model.ts",
+        "src/modules/placements/admin-company-drive-history-service.ts",
+        "src/modules/placements/admin-drive-directory-model.ts"
+      ],
+      "semanticRisk": "Standard field mapping from legacy reschedule_request to reschedule_request.preferred_times.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "reschedule_request",
+      "sourceColumn": "status",
+      "sourceType": "varchar(12)",
+      "sourceDefinition": "VARCHAR(12) NOT NULL DEFAULT 'PENDING' COMMENT 'PENDING|MOVED|KEPT'",
+      "sourceRiskFlags": [],
+      "targetCandidate": "reschedule_request.status",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/placements/admin-company-drive-history-model.ts",
+        "src/modules/placements/admin-company-drive-history-service.ts",
+        "src/modules/placements/admin-drive-directory-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/placements/admin-company-drive-history-model.ts",
+        "src/modules/placements/admin-company-drive-history-service.ts",
+        "src/modules/placements/admin-drive-directory-model.ts"
+      ],
+      "semanticRisk": "Standard field mapping from legacy reschedule_request to reschedule_request.status.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "reschedule_request",
+      "sourceColumn": "reply",
+      "sourceType": "varchar(1000)",
+      "sourceDefinition": "VARCHAR(1000) NULL",
+      "sourceRiskFlags": [],
+      "targetCandidate": "reschedule_request.reply",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/placements/admin-company-drive-history-model.ts",
+        "src/modules/placements/admin-company-drive-history-service.ts",
+        "src/modules/placements/admin-drive-directory-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/placements/admin-company-drive-history-model.ts",
+        "src/modules/placements/admin-company-drive-history-service.ts",
+        "src/modules/placements/admin-drive-directory-model.ts"
+      ],
+      "semanticRisk": "Standard field mapping from legacy reschedule_request to reschedule_request.reply.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "reschedule_request",
+      "sourceColumn": "decided_by",
+      "sourceType": "int",
+      "sourceDefinition": "INT NULL",
+      "sourceRiskFlags": [],
+      "targetCandidate": "reschedule_request.decided_by",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/placements/admin-company-drive-history-model.ts",
+        "src/modules/placements/admin-company-drive-history-service.ts",
+        "src/modules/placements/admin-drive-directory-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/placements/admin-company-drive-history-model.ts",
+        "src/modules/placements/admin-company-drive-history-service.ts",
+        "src/modules/placements/admin-drive-directory-model.ts"
+      ],
+      "semanticRisk": "Standard field mapping from legacy reschedule_request to reschedule_request.decided_by.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "reschedule_request",
+      "sourceColumn": "created_at",
+      "sourceType": "datetime",
+      "sourceDefinition": "DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP",
+      "sourceRiskFlags": [
+        "TIMEZONE_AND_DEADLINE_SEMANTICS"
+      ],
+      "targetCandidate": "reschedule_request.created_at",
+      "disposition": "PROPOSED_NORMALIZED_AUDIT_TIMESTAMP",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/placements/admin-company-drive-history-model.ts",
+        "src/modules/placements/admin-company-drive-history-service.ts",
+        "src/modules/placements/admin-drive-directory-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/placements/admin-company-drive-history-model.ts",
+        "src/modules/placements/admin-company-drive-history-service.ts",
+        "src/modules/placements/admin-drive-directory-model.ts"
+      ],
+      "semanticRisk": "Datetime(6) semantics differ from timestamptz; vNext stores UTC.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "round_assignment",
+      "sourceColumn": "id",
+      "sourceType": "bigint",
+      "sourceDefinition": "BIGINT AUTO_INCREMENT PRIMARY KEY",
+      "sourceRiskFlags": [
+        "INTEGER_KEY_TO_UUID_MAPPING"
+      ],
+      "targetCandidate": "round_assignment.id",
+      "disposition": "PROPOSED_NORMALIZED_UUID_PRIMARY_KEY",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/placements/admin-company-drive-history-model.ts",
+        "src/modules/placements/admin-company-drive-history-service.ts",
+        "src/modules/placements/admin-drive-directory-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/placements/admin-company-drive-history-model.ts",
+        "src/modules/placements/admin-company-drive-history-service.ts",
+        "src/modules/placements/admin-drive-directory-model.ts"
+      ],
+      "semanticRisk": "Legacy numeric ID maps to UUID in vNext; no old-row import needed for greenfield.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "round_assignment",
+      "sourceColumn": "round_id",
+      "sourceType": "bigint",
+      "sourceDefinition": "BIGINT NOT NULL",
+      "sourceRiskFlags": [
+        "INTEGER_KEY_TO_UUID_MAPPING"
+      ],
+      "targetCandidate": "round_assignment.round_id",
+      "disposition": "PROPOSED_REGISTERED_WITH_UUID_NORMALIZATION",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/placements/admin-company-drive-history-model.ts",
+        "src/modules/placements/admin-company-drive-history-service.ts",
+        "src/modules/placements/admin-drive-directory-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/placements/admin-company-drive-history-model.ts",
+        "src/modules/placements/admin-company-drive-history-service.ts",
+        "src/modules/placements/admin-drive-directory-model.ts"
+      ],
+      "semanticRisk": "Legacy numeric ID maps to UUID in vNext; no old-row import needed for greenfield.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "round_assignment",
+      "sourceColumn": "application_id",
+      "sourceType": "int",
+      "sourceDefinition": "INT NOT NULL",
+      "sourceRiskFlags": [
+        "INTEGER_KEY_TO_UUID_MAPPING"
+      ],
+      "targetCandidate": "round_assignment.application_id",
+      "disposition": "PROPOSED_REGISTERED_WITH_UUID_NORMALIZATION",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/placements/admin-company-drive-history-model.ts",
+        "src/modules/placements/admin-company-drive-history-service.ts",
+        "src/modules/placements/admin-drive-directory-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/placements/admin-company-drive-history-model.ts",
+        "src/modules/placements/admin-company-drive-history-service.ts",
+        "src/modules/placements/admin-drive-directory-model.ts"
+      ],
+      "semanticRisk": "Legacy numeric ID maps to UUID in vNext; no old-row import needed for greenfield.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "round_assignment",
+      "sourceColumn": "slot_id",
+      "sourceType": "bigint",
+      "sourceDefinition": "BIGINT NULL",
+      "sourceRiskFlags": [
+        "INTEGER_KEY_TO_UUID_MAPPING"
+      ],
+      "targetCandidate": "round_assignment.slot_id",
+      "disposition": "PROPOSED_REGISTERED_WITH_UUID_NORMALIZATION",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/placements/admin-company-drive-history-model.ts",
+        "src/modules/placements/admin-company-drive-history-service.ts",
+        "src/modules/placements/admin-drive-directory-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/placements/admin-company-drive-history-model.ts",
+        "src/modules/placements/admin-company-drive-history-service.ts",
+        "src/modules/placements/admin-drive-directory-model.ts"
+      ],
+      "semanticRisk": "Legacy numeric ID maps to UUID in vNext; no old-row import needed for greenfield.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "round_assignment",
+      "sourceColumn": "room",
+      "sourceType": "varchar(100)",
+      "sourceDefinition": "VARCHAR(100) NULL",
+      "sourceRiskFlags": [],
+      "targetCandidate": "round_assignment.room",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/placements/admin-company-drive-history-model.ts",
+        "src/modules/placements/admin-company-drive-history-service.ts",
+        "src/modules/placements/admin-drive-directory-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/placements/admin-company-drive-history-model.ts",
+        "src/modules/placements/admin-company-drive-history-service.ts",
+        "src/modules/placements/admin-drive-directory-model.ts"
+      ],
+      "semanticRisk": "Standard field mapping from legacy round_assignment to round_assignment.room.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "round_assignment",
+      "sourceColumn": "student_confirmed_at",
+      "sourceType": "datetime",
+      "sourceDefinition": "DATETIME NULL COMMENT 'Set when the student confirms a changed slot'",
+      "sourceRiskFlags": [
+        "TIMEZONE_AND_DEADLINE_SEMANTICS"
+      ],
+      "targetCandidate": "round_assignment.student_confirmed_at",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/placements/admin-company-drive-history-model.ts",
+        "src/modules/placements/admin-company-drive-history-service.ts",
+        "src/modules/placements/admin-drive-directory-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/placements/admin-company-drive-history-model.ts",
+        "src/modules/placements/admin-company-drive-history-service.ts",
+        "src/modules/placements/admin-drive-directory-model.ts"
+      ],
+      "semanticRisk": "Datetime(6) semantics differ from timestamptz; vNext stores UTC.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "round_assignment",
+      "sourceColumn": "notified_at",
+      "sourceType": "datetime",
+      "sourceDefinition": "DATETIME NULL",
+      "sourceRiskFlags": [
+        "TIMEZONE_AND_DEADLINE_SEMANTICS"
+      ],
+      "targetCandidate": "round_assignment.notified_at",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/placements/admin-company-drive-history-model.ts",
+        "src/modules/placements/admin-company-drive-history-service.ts",
+        "src/modules/placements/admin-drive-directory-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/placements/admin-company-drive-history-model.ts",
+        "src/modules/placements/admin-company-drive-history-service.ts",
+        "src/modules/placements/admin-drive-directory-model.ts"
+      ],
+      "semanticRisk": "Datetime(6) semantics differ from timestamptz; vNext stores UTC.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "round_slot",
+      "sourceColumn": "id",
+      "sourceType": "bigint",
+      "sourceDefinition": "BIGINT AUTO_INCREMENT PRIMARY KEY",
+      "sourceRiskFlags": [
+        "INTEGER_KEY_TO_UUID_MAPPING"
+      ],
+      "targetCandidate": "round_slot.id",
+      "disposition": "PROPOSED_NORMALIZED_UUID_PRIMARY_KEY",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/placements/admin-company-drive-history-model.ts",
+        "src/modules/placements/admin-company-drive-history-service.ts",
+        "src/modules/placements/admin-drive-directory-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/placements/admin-company-drive-history-model.ts",
+        "src/modules/placements/admin-company-drive-history-service.ts",
+        "src/modules/placements/admin-drive-directory-model.ts"
+      ],
+      "semanticRisk": "Legacy numeric ID maps to UUID in vNext; no old-row import needed for greenfield.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "round_slot",
+      "sourceColumn": "round_id",
+      "sourceType": "bigint",
+      "sourceDefinition": "BIGINT NOT NULL",
+      "sourceRiskFlags": [
+        "INTEGER_KEY_TO_UUID_MAPPING"
+      ],
+      "targetCandidate": "round_slot.round_id",
+      "disposition": "PROPOSED_REGISTERED_WITH_UUID_NORMALIZATION",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/placements/admin-company-drive-history-model.ts",
+        "src/modules/placements/admin-company-drive-history-service.ts",
+        "src/modules/placements/admin-drive-directory-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/placements/admin-company-drive-history-model.ts",
+        "src/modules/placements/admin-company-drive-history-service.ts",
+        "src/modules/placements/admin-drive-directory-model.ts"
+      ],
+      "semanticRisk": "Legacy numeric ID maps to UUID in vNext; no old-row import needed for greenfield.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "round_slot",
+      "sourceColumn": "starts_at",
+      "sourceType": "datetime",
+      "sourceDefinition": "DATETIME NOT NULL",
+      "sourceRiskFlags": [
+        "TIMEZONE_AND_DEADLINE_SEMANTICS"
+      ],
+      "targetCandidate": "round_slot.starts_at",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/placements/admin-company-drive-history-model.ts",
+        "src/modules/placements/admin-company-drive-history-service.ts",
+        "src/modules/placements/admin-drive-directory-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/placements/admin-company-drive-history-model.ts",
+        "src/modules/placements/admin-company-drive-history-service.ts",
+        "src/modules/placements/admin-drive-directory-model.ts"
+      ],
+      "semanticRisk": "Datetime(6) semantics differ from timestamptz; vNext stores UTC.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "round_slot",
+      "sourceColumn": "ends_at",
+      "sourceType": "datetime",
+      "sourceDefinition": "DATETIME NOT NULL",
+      "sourceRiskFlags": [
+        "TIMEZONE_AND_DEADLINE_SEMANTICS"
+      ],
+      "targetCandidate": "round_slot.ends_at",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/placements/admin-company-drive-history-model.ts",
+        "src/modules/placements/admin-company-drive-history-service.ts",
+        "src/modules/placements/admin-drive-directory-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/placements/admin-company-drive-history-model.ts",
+        "src/modules/placements/admin-company-drive-history-service.ts",
+        "src/modules/placements/admin-drive-directory-model.ts"
+      ],
+      "semanticRisk": "Datetime(6) semantics differ from timestamptz; vNext stores UTC.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "round_slot",
+      "sourceColumn": "room",
+      "sourceType": "varchar(100)",
+      "sourceDefinition": "VARCHAR(100) NULL",
+      "sourceRiskFlags": [],
+      "targetCandidate": "round_slot.room",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/placements/admin-company-drive-history-model.ts",
+        "src/modules/placements/admin-company-drive-history-service.ts",
+        "src/modules/placements/admin-drive-directory-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/placements/admin-company-drive-history-model.ts",
+        "src/modules/placements/admin-company-drive-history-service.ts",
+        "src/modules/placements/admin-drive-directory-model.ts"
+      ],
+      "semanticRisk": "Standard field mapping from legacy round_slot to round_slot.room.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "round_slot",
+      "sourceColumn": "panel",
+      "sourceType": "varchar(100)",
+      "sourceDefinition": "VARCHAR(100) NULL",
+      "sourceRiskFlags": [],
+      "targetCandidate": "round_slot.panel",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/placements/admin-company-drive-history-model.ts",
+        "src/modules/placements/admin-company-drive-history-service.ts",
+        "src/modules/placements/admin-drive-directory-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/placements/admin-company-drive-history-model.ts",
+        "src/modules/placements/admin-company-drive-history-service.ts",
+        "src/modules/placements/admin-drive-directory-model.ts"
+      ],
+      "semanticRisk": "Standard field mapping from legacy round_slot to round_slot.panel.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "round_slot",
+      "sourceColumn": "capacity",
+      "sourceType": "int",
+      "sourceDefinition": "INT NOT NULL DEFAULT 1",
+      "sourceRiskFlags": [],
+      "targetCandidate": "round_slot.capacity",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/placements/admin-company-drive-history-model.ts",
+        "src/modules/placements/admin-company-drive-history-service.ts",
+        "src/modules/placements/admin-drive-directory-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/placements/admin-company-drive-history-model.ts",
+        "src/modules/placements/admin-company-drive-history-service.ts",
+        "src/modules/placements/admin-drive-directory-model.ts"
+      ],
+      "semanticRisk": "Standard field mapping from legacy round_slot to round_slot.capacity.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "round_slot",
+      "sourceColumn": "proposed_by",
+      "sourceType": "varchar(20)",
+      "sourceDefinition": "VARCHAR(20) NOT NULL DEFAULT 'TPO' COMMENT 'TPO | RECRUITER'",
+      "sourceRiskFlags": [],
+      "targetCandidate": "round_slot.proposed_by",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/placements/admin-company-drive-history-model.ts",
+        "src/modules/placements/admin-company-drive-history-service.ts",
+        "src/modules/placements/admin-drive-directory-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/placements/admin-company-drive-history-model.ts",
+        "src/modules/placements/admin-company-drive-history-service.ts",
+        "src/modules/placements/admin-drive-directory-model.ts"
+      ],
+      "semanticRisk": "Standard field mapping from legacy round_slot to round_slot.proposed_by.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "round_slot",
+      "sourceColumn": "status",
+      "sourceType": "varchar(12)",
+      "sourceDefinition": "VARCHAR(12) NOT NULL DEFAULT 'PROPOSED' COMMENT 'PROPOSED|CONFIRMED'",
+      "sourceRiskFlags": [],
+      "targetCandidate": "round_slot.status",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/placements/admin-company-drive-history-model.ts",
+        "src/modules/placements/admin-company-drive-history-service.ts",
+        "src/modules/placements/admin-drive-directory-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/placements/admin-company-drive-history-model.ts",
+        "src/modules/placements/admin-company-drive-history-service.ts",
+        "src/modules/placements/admin-drive-directory-model.ts"
+      ],
+      "semanticRisk": "Standard field mapping from legacy round_slot to round_slot.status.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "student_request",
+      "sourceColumn": "id",
+      "sourceType": "bigint",
+      "sourceDefinition": "BIGINT AUTO_INCREMENT PRIMARY KEY",
+      "sourceRiskFlags": [
+        "INTEGER_KEY_TO_UUID_MAPPING"
+      ],
+      "targetCandidate": "student_request.id",
+      "disposition": "PROPOSED_NORMALIZED_UUID_PRIMARY_KEY",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/placements/admin-company-drive-history-model.ts",
+        "src/modules/placements/admin-company-drive-history-service.ts",
+        "src/modules/placements/admin-drive-directory-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/placements/admin-company-drive-history-model.ts",
+        "src/modules/placements/admin-company-drive-history-service.ts",
+        "src/modules/placements/admin-drive-directory-model.ts"
+      ],
+      "semanticRisk": "Legacy numeric ID maps to UUID in vNext; no old-row import needed for greenfield.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "student_request",
+      "sourceColumn": "learner_id",
+      "sourceType": "int",
+      "sourceDefinition": "INT NOT NULL",
+      "sourceRiskFlags": [
+        "INTEGER_KEY_TO_UUID_MAPPING"
+      ],
+      "targetCandidate": "student_request.learner_id",
+      "disposition": "PROPOSED_REGISTERED_WITH_UUID_NORMALIZATION",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/placements/admin-company-drive-history-model.ts",
+        "src/modules/placements/admin-company-drive-history-service.ts",
+        "src/modules/placements/admin-drive-directory-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/placements/admin-company-drive-history-model.ts",
+        "src/modules/placements/admin-company-drive-history-service.ts",
+        "src/modules/placements/admin-drive-directory-model.ts"
+      ],
+      "semanticRisk": "Legacy numeric ID maps to UUID in vNext; no old-row import needed for greenfield.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "student_request",
+      "sourceColumn": "type",
+      "sourceType": "varchar(30)",
+      "sourceDefinition": "VARCHAR(30) NOT NULL COMMENT 'WITHDRAWAL|OFFER_EXTENSION|REGISTRATION_CHANGE|ABSENCE_DISPUTE|CORRECTION|EXTERNAL_OFFER|PAP'",
+      "sourceRiskFlags": [],
+      "targetCandidate": "student_request.type",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/placements/admin-company-drive-history-model.ts",
+        "src/modules/placements/admin-company-drive-history-service.ts",
+        "src/modules/placements/admin-drive-directory-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/placements/admin-company-drive-history-model.ts",
+        "src/modules/placements/admin-company-drive-history-service.ts",
+        "src/modules/placements/admin-drive-directory-model.ts"
+      ],
+      "semanticRisk": "Standard field mapping from legacy student_request to student_request.type.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "student_request",
+      "sourceColumn": "job_id",
+      "sourceType": "int",
+      "sourceDefinition": "INT NULL",
+      "sourceRiskFlags": [
+        "INTEGER_KEY_TO_UUID_MAPPING"
+      ],
+      "targetCandidate": "student_request.job_id",
+      "disposition": "PROPOSED_REGISTERED_WITH_UUID_NORMALIZATION",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/placements/admin-company-drive-history-model.ts",
+        "src/modules/placements/admin-company-drive-history-service.ts",
+        "src/modules/placements/admin-drive-directory-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/placements/admin-company-drive-history-model.ts",
+        "src/modules/placements/admin-company-drive-history-service.ts",
+        "src/modules/placements/admin-drive-directory-model.ts"
+      ],
+      "semanticRisk": "Legacy numeric ID maps to UUID in vNext; no old-row import needed for greenfield.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "student_request",
+      "sourceColumn": "application_id",
+      "sourceType": "int",
+      "sourceDefinition": "INT NULL",
+      "sourceRiskFlags": [
+        "INTEGER_KEY_TO_UUID_MAPPING"
+      ],
+      "targetCandidate": "student_request.application_id",
+      "disposition": "PROPOSED_REGISTERED_WITH_UUID_NORMALIZATION",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/placements/admin-company-drive-history-model.ts",
+        "src/modules/placements/admin-company-drive-history-service.ts",
+        "src/modules/placements/admin-drive-directory-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/placements/admin-company-drive-history-model.ts",
+        "src/modules/placements/admin-company-drive-history-service.ts",
+        "src/modules/placements/admin-drive-directory-model.ts"
+      ],
+      "semanticRisk": "Legacy numeric ID maps to UUID in vNext; no old-row import needed for greenfield.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "student_request",
+      "sourceColumn": "payload_json",
+      "sourceType": "json",
+      "sourceDefinition": "JSON NULL",
+      "sourceRiskFlags": [
+        "STRUCTURED_PAYLOAD_SEMANTIC_SCHEMA"
+      ],
+      "targetCandidate": "student_request.payload_json",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/placements/admin-company-drive-history-model.ts",
+        "src/modules/placements/admin-company-drive-history-service.ts",
+        "src/modules/placements/admin-drive-directory-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/placements/admin-company-drive-history-model.ts",
+        "src/modules/placements/admin-company-drive-history-service.ts",
+        "src/modules/placements/admin-drive-directory-model.ts"
+      ],
+      "semanticRisk": "JSON payload: vNext uses typed JSONB or separate normalized columns.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "student_request",
+      "sourceColumn": "status",
+      "sourceType": "varchar(15)",
+      "sourceDefinition": "VARCHAR(15) NOT NULL DEFAULT 'PENDING' COMMENT 'PENDING|APPROVED|REJECTED|AUTO_APPROVED'",
+      "sourceRiskFlags": [],
+      "targetCandidate": "student_request.status",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/placements/admin-company-drive-history-model.ts",
+        "src/modules/placements/admin-company-drive-history-service.ts",
+        "src/modules/placements/admin-drive-directory-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/placements/admin-company-drive-history-model.ts",
+        "src/modules/placements/admin-company-drive-history-service.ts",
+        "src/modules/placements/admin-drive-directory-model.ts"
+      ],
+      "semanticRisk": "Standard field mapping from legacy student_request to student_request.status.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "student_request",
+      "sourceColumn": "reason",
+      "sourceType": "varchar(1000)",
+      "sourceDefinition": "VARCHAR(1000) NULL",
+      "sourceRiskFlags": [],
+      "targetCandidate": "student_request.reason",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/placements/admin-company-drive-history-model.ts",
+        "src/modules/placements/admin-company-drive-history-service.ts",
+        "src/modules/placements/admin-drive-directory-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/placements/admin-company-drive-history-model.ts",
+        "src/modules/placements/admin-company-drive-history-service.ts",
+        "src/modules/placements/admin-drive-directory-model.ts"
+      ],
+      "semanticRisk": "Standard field mapping from legacy student_request to student_request.reason.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "student_request",
+      "sourceColumn": "decided_by",
+      "sourceType": "int",
+      "sourceDefinition": "INT NULL",
+      "sourceRiskFlags": [],
+      "targetCandidate": "student_request.decided_by",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/placements/admin-company-drive-history-model.ts",
+        "src/modules/placements/admin-company-drive-history-service.ts",
+        "src/modules/placements/admin-drive-directory-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/placements/admin-company-drive-history-model.ts",
+        "src/modules/placements/admin-company-drive-history-service.ts",
+        "src/modules/placements/admin-drive-directory-model.ts"
+      ],
+      "semanticRisk": "Standard field mapping from legacy student_request to student_request.decided_by.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "student_request",
+      "sourceColumn": "decided_at",
+      "sourceType": "datetime",
+      "sourceDefinition": "DATETIME NULL",
+      "sourceRiskFlags": [
+        "TIMEZONE_AND_DEADLINE_SEMANTICS"
+      ],
+      "targetCandidate": "student_request.decided_at",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/placements/admin-company-drive-history-model.ts",
+        "src/modules/placements/admin-company-drive-history-service.ts",
+        "src/modules/placements/admin-drive-directory-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/placements/admin-company-drive-history-model.ts",
+        "src/modules/placements/admin-company-drive-history-service.ts",
+        "src/modules/placements/admin-drive-directory-model.ts"
+      ],
+      "semanticRisk": "Datetime(6) semantics differ from timestamptz; vNext stores UTC.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "student_request",
+      "sourceColumn": "decision_reason",
+      "sourceType": "varchar(500)",
+      "sourceDefinition": "VARCHAR(500) NULL",
+      "sourceRiskFlags": [],
+      "targetCandidate": "student_request.decision_reason",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/placements/admin-company-drive-history-model.ts",
+        "src/modules/placements/admin-company-drive-history-service.ts",
+        "src/modules/placements/admin-drive-directory-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/placements/admin-company-drive-history-model.ts",
+        "src/modules/placements/admin-company-drive-history-service.ts",
+        "src/modules/placements/admin-drive-directory-model.ts"
+      ],
+      "semanticRisk": "Standard field mapping from legacy student_request to student_request.decision_reason.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "student_request",
+      "sourceColumn": "escalate_at",
+      "sourceType": "datetime",
+      "sourceDefinition": "DATETIME NULL COMMENT 'When a pending request (e.g. a withdrawal 24h before a round) escalates to all TPO admins'",
+      "sourceRiskFlags": [
+        "TIMEZONE_AND_DEADLINE_SEMANTICS"
+      ],
+      "targetCandidate": "student_request.escalate_at",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/placements/admin-company-drive-history-model.ts",
+        "src/modules/placements/admin-company-drive-history-service.ts",
+        "src/modules/placements/admin-drive-directory-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/placements/admin-company-drive-history-model.ts",
+        "src/modules/placements/admin-company-drive-history-service.ts",
+        "src/modules/placements/admin-drive-directory-model.ts"
+      ],
+      "semanticRisk": "Datetime(6) semantics differ from timestamptz; vNext stores UTC.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "student_request",
+      "sourceColumn": "created_at",
+      "sourceType": "datetime",
+      "sourceDefinition": "DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP",
+      "sourceRiskFlags": [
+        "TIMEZONE_AND_DEADLINE_SEMANTICS"
+      ],
+      "targetCandidate": "student_request.created_at",
+      "disposition": "PROPOSED_NORMALIZED_AUDIT_TIMESTAMP",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/placements/admin-company-drive-history-model.ts",
+        "src/modules/placements/admin-company-drive-history-service.ts",
+        "src/modules/placements/admin-drive-directory-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/placements/admin-company-drive-history-model.ts",
+        "src/modules/placements/admin-company-drive-history-service.ts",
+        "src/modules/placements/admin-drive-directory-model.ts"
+      ],
+      "semanticRisk": "Datetime(6) semantics differ from timestamptz; vNext stores UTC.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    }
+  ]
+}

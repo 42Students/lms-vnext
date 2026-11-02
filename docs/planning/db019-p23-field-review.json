@@ -1,0 +1,1978 @@
+{
+  "id": "DB19-P23",
+  "recordType": "DB19_PACKAGE_SOURCE_FIELD_REVIEW",
+  "sourceSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+  "sourceInventory": "docs/planning/db-pass4-columns-db09_tpo_and_recruiter_operations.json",
+  "originalFieldLedger": "docs/planning/database-parity-db09_tpo_and_recruiter_operations-field-ledger.json",
+  "sourceTables": [
+    "company",
+    "industry_company",
+    "recruiter_lead",
+    "recruiter_lead_activity",
+    "recruiter_applicant_note",
+    "recruiter_notification_read"
+  ],
+  "sourceFieldCount": 72,
+  "reviewedProposals": 72,
+  "runtimeVerifiedCount": 0,
+  "fieldDispositionApproval": "PENDING_PACKAGE_ACCEPTANCE",
+  "privacyBoundary": "DB19-P23 scoped source field disposition only. Global P31/P32 and DB020 remain open.",
+  "testEvidenceStatus": "SOURCE_QUALITY_GATE_ONLY_NOT_RUNTIME_CERTIFIED",
+  "pendingAcceptance": "Registered PG17 producer/consumer and runtime verification for all 72 fields.",
+  "fields": [
+    {
+      "sourceTable": "company",
+      "sourceColumn": "id",
+      "sourceType": "int",
+      "sourceDefinition": "int NOT NULL AUTO_INCREMENT",
+      "sourceRiskFlags": [
+        "INTEGER_KEY_TO_UUID_MAPPING"
+      ],
+      "targetCandidate": "placement_company_domains.id",
+      "disposition": "PROPOSED_NORMALIZED_UUID_PRIMARY_KEY",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/placements/hr-recruiter-bell-model.ts",
+        "src/modules/placements/hr-recruiter-bell-service.ts",
+        "src/modules/placements/hr-recruiter-grant-navigation-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/placements/hr-recruiter-bell-model.ts",
+        "src/modules/placements/hr-recruiter-bell-service.ts",
+        "src/modules/placements/hr-recruiter-grant-navigation-model.ts"
+      ],
+      "semanticRisk": "Legacy numeric ID maps to UUID in vNext; no old-row import needed for greenfield.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "company",
+      "sourceColumn": "name",
+      "sourceType": "varchar(150)",
+      "sourceDefinition": "varchar(150) NOT NULL",
+      "sourceRiskFlags": [],
+      "targetCandidate": "placement_company_domains.name",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/placements/hr-recruiter-bell-model.ts",
+        "src/modules/placements/hr-recruiter-bell-service.ts",
+        "src/modules/placements/hr-recruiter-grant-navigation-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/placements/hr-recruiter-bell-model.ts",
+        "src/modules/placements/hr-recruiter-bell-service.ts",
+        "src/modules/placements/hr-recruiter-grant-navigation-model.ts"
+      ],
+      "semanticRisk": "Standard field mapping from legacy company to placement_company_domains.name.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "company",
+      "sourceColumn": "logo_url",
+      "sourceType": "varchar(500)",
+      "sourceDefinition": "varchar(500) DEFAULT NULL",
+      "sourceRiskFlags": [],
+      "targetCandidate": "placement_company_domains.logo_url",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/placements/hr-recruiter-bell-model.ts",
+        "src/modules/placements/hr-recruiter-bell-service.ts",
+        "src/modules/placements/hr-recruiter-grant-navigation-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/placements/hr-recruiter-bell-model.ts",
+        "src/modules/placements/hr-recruiter-bell-service.ts",
+        "src/modules/placements/hr-recruiter-grant-navigation-model.ts"
+      ],
+      "semanticRisk": "Standard field mapping from legacy company to placement_company_domains.logo_url.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "company",
+      "sourceColumn": "website",
+      "sourceType": "varchar(500)",
+      "sourceDefinition": "varchar(500) DEFAULT NULL",
+      "sourceRiskFlags": [],
+      "targetCandidate": "placement_company_domains.website",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/placements/hr-recruiter-bell-model.ts",
+        "src/modules/placements/hr-recruiter-bell-service.ts",
+        "src/modules/placements/hr-recruiter-grant-navigation-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/placements/hr-recruiter-bell-model.ts",
+        "src/modules/placements/hr-recruiter-bell-service.ts",
+        "src/modules/placements/hr-recruiter-grant-navigation-model.ts"
+      ],
+      "semanticRisk": "Standard field mapping from legacy company to placement_company_domains.website.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "company",
+      "sourceColumn": "industry",
+      "sourceType": "varchar(100)",
+      "sourceDefinition": "varchar(100) DEFAULT NULL",
+      "sourceRiskFlags": [],
+      "targetCandidate": "placement_company_domains.industry",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/placements/hr-recruiter-bell-model.ts",
+        "src/modules/placements/hr-recruiter-bell-service.ts",
+        "src/modules/placements/hr-recruiter-grant-navigation-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/placements/hr-recruiter-bell-model.ts",
+        "src/modules/placements/hr-recruiter-bell-service.ts",
+        "src/modules/placements/hr-recruiter-grant-navigation-model.ts"
+      ],
+      "semanticRisk": "Standard field mapping from legacy company to placement_company_domains.industry.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "company",
+      "sourceColumn": "description",
+      "sourceType": "text",
+      "sourceDefinition": "text",
+      "sourceRiskFlags": [],
+      "targetCandidate": "placement_company_domains.description",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/placements/hr-recruiter-bell-model.ts",
+        "src/modules/placements/hr-recruiter-bell-service.ts",
+        "src/modules/placements/hr-recruiter-grant-navigation-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/placements/hr-recruiter-bell-model.ts",
+        "src/modules/placements/hr-recruiter-bell-service.ts",
+        "src/modules/placements/hr-recruiter-grant-navigation-model.ts"
+      ],
+      "semanticRisk": "Standard field mapping from legacy company to placement_company_domains.description.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "company",
+      "sourceColumn": "contact_person_name",
+      "sourceType": "varchar(150)",
+      "sourceDefinition": "varchar(150) DEFAULT NULL",
+      "sourceRiskFlags": [
+        "POTENTIAL_PERSONAL_OR_SECRET_DATA"
+      ],
+      "targetCandidate": "placement_company_domains.contact_person_name",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/placements/hr-recruiter-bell-model.ts",
+        "src/modules/placements/hr-recruiter-bell-service.ts",
+        "src/modules/placements/hr-recruiter-grant-navigation-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/placements/hr-recruiter-bell-model.ts",
+        "src/modules/placements/hr-recruiter-bell-service.ts",
+        "src/modules/placements/hr-recruiter-grant-navigation-model.ts"
+      ],
+      "semanticRisk": "Standard field mapping from legacy company to placement_company_domains.contact_person_name.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "company",
+      "sourceColumn": "contact_email",
+      "sourceType": "varchar(150)",
+      "sourceDefinition": "varchar(150) DEFAULT NULL",
+      "sourceRiskFlags": [
+        "POTENTIAL_PERSONAL_OR_SECRET_DATA"
+      ],
+      "targetCandidate": "placement_company_domains.contact_email",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/placements/hr-recruiter-bell-model.ts",
+        "src/modules/placements/hr-recruiter-bell-service.ts",
+        "src/modules/placements/hr-recruiter-grant-navigation-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/placements/hr-recruiter-bell-model.ts",
+        "src/modules/placements/hr-recruiter-bell-service.ts",
+        "src/modules/placements/hr-recruiter-grant-navigation-model.ts"
+      ],
+      "semanticRisk": "Standard field mapping from legacy company to placement_company_domains.contact_email.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "company",
+      "sourceColumn": "contact_phone",
+      "sourceType": "varchar(30)",
+      "sourceDefinition": "varchar(30) DEFAULT NULL",
+      "sourceRiskFlags": [
+        "POTENTIAL_PERSONAL_OR_SECRET_DATA"
+      ],
+      "targetCandidate": "placement_company_domains.contact_phone",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/placements/hr-recruiter-bell-model.ts",
+        "src/modules/placements/hr-recruiter-bell-service.ts",
+        "src/modules/placements/hr-recruiter-grant-navigation-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/placements/hr-recruiter-bell-model.ts",
+        "src/modules/placements/hr-recruiter-bell-service.ts",
+        "src/modules/placements/hr-recruiter-grant-navigation-model.ts"
+      ],
+      "semanticRisk": "Standard field mapping from legacy company to placement_company_domains.contact_phone.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "company",
+      "sourceColumn": "internal_notes",
+      "sourceType": "text",
+      "sourceDefinition": "text",
+      "sourceRiskFlags": [],
+      "targetCandidate": "placement_company_domains.internal_notes",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/placements/hr-recruiter-bell-model.ts",
+        "src/modules/placements/hr-recruiter-bell-service.ts",
+        "src/modules/placements/hr-recruiter-grant-navigation-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/placements/hr-recruiter-bell-model.ts",
+        "src/modules/placements/hr-recruiter-bell-service.ts",
+        "src/modules/placements/hr-recruiter-grant-navigation-model.ts"
+      ],
+      "semanticRisk": "Standard field mapping from legacy company to placement_company_domains.internal_notes.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "company",
+      "sourceColumn": "college_id",
+      "sourceType": "int",
+      "sourceDefinition": "int DEFAULT NULL",
+      "sourceRiskFlags": [
+        "INTEGER_KEY_TO_UUID_MAPPING"
+      ],
+      "targetCandidate": "placement_company_domains.added_by_college_id",
+      "disposition": "PROPOSED_REGISTERED_WITH_UUID_NORMALIZATION",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/placements/hr-recruiter-bell-model.ts",
+        "src/modules/placements/hr-recruiter-bell-service.ts",
+        "src/modules/placements/hr-recruiter-grant-navigation-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/placements/hr-recruiter-bell-model.ts",
+        "src/modules/placements/hr-recruiter-bell-service.ts",
+        "src/modules/placements/hr-recruiter-grant-navigation-model.ts"
+      ],
+      "semanticRisk": "Legacy numeric ID maps to UUID in vNext; no old-row import needed for greenfield.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "company",
+      "sourceColumn": "organization_id",
+      "sourceType": "int",
+      "sourceDefinition": "int DEFAULT NULL",
+      "sourceRiskFlags": [
+        "INTEGER_KEY_TO_UUID_MAPPING"
+      ],
+      "targetCandidate": "placement_company_domains.organization_id",
+      "disposition": "PROPOSED_REGISTERED_WITH_UUID_NORMALIZATION",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/placements/hr-recruiter-bell-model.ts",
+        "src/modules/placements/hr-recruiter-bell-service.ts",
+        "src/modules/placements/hr-recruiter-grant-navigation-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/placements/hr-recruiter-bell-model.ts",
+        "src/modules/placements/hr-recruiter-bell-service.ts",
+        "src/modules/placements/hr-recruiter-grant-navigation-model.ts"
+      ],
+      "semanticRisk": "Legacy numeric ID maps to UUID in vNext; no old-row import needed for greenfield.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "company",
+      "sourceColumn": "created_at",
+      "sourceType": "datetime",
+      "sourceDefinition": "datetime DEFAULT CURRENT_TIMESTAMP",
+      "sourceRiskFlags": [
+        "TIMEZONE_AND_DEADLINE_SEMANTICS"
+      ],
+      "targetCandidate": "placement_company_domains.created_at",
+      "disposition": "PROPOSED_NORMALIZED_AUDIT_TIMESTAMP",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/placements/hr-recruiter-bell-model.ts",
+        "src/modules/placements/hr-recruiter-bell-service.ts",
+        "src/modules/placements/hr-recruiter-grant-navigation-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/placements/hr-recruiter-bell-model.ts",
+        "src/modules/placements/hr-recruiter-bell-service.ts",
+        "src/modules/placements/hr-recruiter-grant-navigation-model.ts"
+      ],
+      "semanticRisk": "Datetime(6) semantics differ from timestamptz; vNext stores UTC.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "company",
+      "sourceColumn": "updated_at",
+      "sourceType": "datetime",
+      "sourceDefinition": "datetime DEFAULT NULL",
+      "sourceRiskFlags": [
+        "TIMEZONE_AND_DEADLINE_SEMANTICS"
+      ],
+      "targetCandidate": "placement_company_domains.updated_at",
+      "disposition": "PROPOSED_NORMALIZED_AUDIT_TIMESTAMP",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/placements/hr-recruiter-bell-model.ts",
+        "src/modules/placements/hr-recruiter-bell-service.ts",
+        "src/modules/placements/hr-recruiter-grant-navigation-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/placements/hr-recruiter-bell-model.ts",
+        "src/modules/placements/hr-recruiter-bell-service.ts",
+        "src/modules/placements/hr-recruiter-grant-navigation-model.ts"
+      ],
+      "semanticRisk": "Datetime(6) semantics differ from timestamptz; vNext stores UTC.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "company",
+      "sourceColumn": "is_deleted",
+      "sourceType": "tinyint(1)",
+      "sourceDefinition": "tinyint(1) DEFAULT '0'",
+      "sourceRiskFlags": [],
+      "targetCandidate": "placement_company_domains.is_deleted",
+      "disposition": "PROPOSED_REDESIGNED_SOFT_DELETE_PATTERN",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/placements/hr-recruiter-bell-model.ts",
+        "src/modules/placements/hr-recruiter-bell-service.ts",
+        "src/modules/placements/hr-recruiter-grant-navigation-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/placements/hr-recruiter-bell-model.ts",
+        "src/modules/placements/hr-recruiter-bell-service.ts",
+        "src/modules/placements/hr-recruiter-grant-navigation-model.ts"
+      ],
+      "semanticRisk": "Soft-delete pattern replaced by status enum or archived_at timestamp in vNext.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "company",
+      "sourceColumn": "dedup_key",
+      "sourceType": "varchar(200)",
+      "sourceDefinition": "varchar(200) GENERATED ALWAYS AS (if((`college_id` is null),concat(_utf8mb4'org:',coalesce(`organization_id`,0),_utf8mb4':',lower(`name`)),concat(_utf8mb4'college:',`college_id`,_utf8mb4':',lower(`name`)))) STORED",
+      "sourceRiskFlags": [],
+      "targetCandidate": "placement_company_domains.dedup_key",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/placements/hr-recruiter-bell-model.ts",
+        "src/modules/placements/hr-recruiter-bell-service.ts",
+        "src/modules/placements/hr-recruiter-grant-navigation-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/placements/hr-recruiter-bell-model.ts",
+        "src/modules/placements/hr-recruiter-bell-service.ts",
+        "src/modules/placements/hr-recruiter-grant-navigation-model.ts"
+      ],
+      "semanticRisk": "Standard field mapping from legacy company to placement_company_domains.dedup_key.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "company",
+      "sourceColumn": "dedup_key_active",
+      "sourceType": "varchar(210)",
+      "sourceDefinition": "varchar(210) DEFAULT NULL",
+      "sourceRiskFlags": [],
+      "targetCandidate": "placement_company_domains.dedup_key_active",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/placements/hr-recruiter-bell-model.ts",
+        "src/modules/placements/hr-recruiter-bell-service.ts",
+        "src/modules/placements/hr-recruiter-grant-navigation-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/placements/hr-recruiter-bell-model.ts",
+        "src/modules/placements/hr-recruiter-bell-service.ts",
+        "src/modules/placements/hr-recruiter-grant-navigation-model.ts"
+      ],
+      "semanticRisk": "Standard field mapping from legacy company to placement_company_domains.dedup_key_active.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "industry_company",
+      "sourceColumn": "id",
+      "sourceType": "int",
+      "sourceDefinition": "INT NOT NULL AUTO_INCREMENT",
+      "sourceRiskFlags": [
+        "INTEGER_KEY_TO_UUID_MAPPING"
+      ],
+      "targetCandidate": "industry_company.id",
+      "disposition": "PROPOSED_NORMALIZED_UUID_PRIMARY_KEY",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/placements/hr-recruiter-bell-model.ts",
+        "src/modules/placements/hr-recruiter-bell-service.ts",
+        "src/modules/placements/hr-recruiter-grant-navigation-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/placements/hr-recruiter-bell-model.ts",
+        "src/modules/placements/hr-recruiter-bell-service.ts",
+        "src/modules/placements/hr-recruiter-grant-navigation-model.ts"
+      ],
+      "semanticRisk": "Legacy numeric ID maps to UUID in vNext; no old-row import needed for greenfield.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "industry_company",
+      "sourceColumn": "name",
+      "sourceType": "varchar(150)",
+      "sourceDefinition": "VARCHAR(150) NOT NULL",
+      "sourceRiskFlags": [],
+      "targetCandidate": "industry_company.name",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/placements/hr-recruiter-bell-model.ts",
+        "src/modules/placements/hr-recruiter-bell-service.ts",
+        "src/modules/placements/hr-recruiter-grant-navigation-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/placements/hr-recruiter-bell-model.ts",
+        "src/modules/placements/hr-recruiter-bell-service.ts",
+        "src/modules/placements/hr-recruiter-grant-navigation-model.ts"
+      ],
+      "semanticRisk": "Standard field mapping from legacy industry_company to industry_company.name.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "industry_company",
+      "sourceColumn": "website",
+      "sourceType": "varchar(500)",
+      "sourceDefinition": "VARCHAR(500) NULL",
+      "sourceRiskFlags": [],
+      "targetCandidate": "industry_company.website",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/placements/hr-recruiter-bell-model.ts",
+        "src/modules/placements/hr-recruiter-bell-service.ts",
+        "src/modules/placements/hr-recruiter-grant-navigation-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/placements/hr-recruiter-bell-model.ts",
+        "src/modules/placements/hr-recruiter-bell-service.ts",
+        "src/modules/placements/hr-recruiter-grant-navigation-model.ts"
+      ],
+      "semanticRisk": "Standard field mapping from legacy industry_company to industry_company.website.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "industry_company",
+      "sourceColumn": "industry",
+      "sourceType": "varchar(100)",
+      "sourceDefinition": "VARCHAR(100) NULL",
+      "sourceRiskFlags": [],
+      "targetCandidate": "industry_company.industry",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/placements/hr-recruiter-bell-model.ts",
+        "src/modules/placements/hr-recruiter-bell-service.ts",
+        "src/modules/placements/hr-recruiter-grant-navigation-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/placements/hr-recruiter-bell-model.ts",
+        "src/modules/placements/hr-recruiter-bell-service.ts",
+        "src/modules/placements/hr-recruiter-grant-navigation-model.ts"
+      ],
+      "semanticRisk": "Standard field mapping from legacy industry_company to industry_company.industry.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "industry_company",
+      "sourceColumn": "logo_url",
+      "sourceType": "varchar(500)",
+      "sourceDefinition": "VARCHAR(500) NULL",
+      "sourceRiskFlags": [],
+      "targetCandidate": "industry_company.logo_url",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/placements/hr-recruiter-bell-model.ts",
+        "src/modules/placements/hr-recruiter-bell-service.ts",
+        "src/modules/placements/hr-recruiter-grant-navigation-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/placements/hr-recruiter-bell-model.ts",
+        "src/modules/placements/hr-recruiter-bell-service.ts",
+        "src/modules/placements/hr-recruiter-grant-navigation-model.ts"
+      ],
+      "semanticRisk": "Standard field mapping from legacy industry_company to industry_company.logo_url.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "industry_company",
+      "sourceColumn": "created_by_user_id",
+      "sourceType": "int",
+      "sourceDefinition": "INT NULL",
+      "sourceRiskFlags": [
+        "INTEGER_KEY_TO_UUID_MAPPING"
+      ],
+      "targetCandidate": "industry_company.created_by_user_id",
+      "disposition": "PROPOSED_REGISTERED_WITH_UUID_NORMALIZATION",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/placements/hr-recruiter-bell-model.ts",
+        "src/modules/placements/hr-recruiter-bell-service.ts",
+        "src/modules/placements/hr-recruiter-grant-navigation-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/placements/hr-recruiter-bell-model.ts",
+        "src/modules/placements/hr-recruiter-bell-service.ts",
+        "src/modules/placements/hr-recruiter-grant-navigation-model.ts"
+      ],
+      "semanticRisk": "Legacy numeric ID maps to UUID in vNext; no old-row import needed for greenfield.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "industry_company",
+      "sourceColumn": "created_by_user_type",
+      "sourceType": "varchar(20)",
+      "sourceDefinition": "VARCHAR(20) NULL",
+      "sourceRiskFlags": [],
+      "targetCandidate": "industry_company.created_by_user_type",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/placements/hr-recruiter-bell-model.ts",
+        "src/modules/placements/hr-recruiter-bell-service.ts",
+        "src/modules/placements/hr-recruiter-grant-navigation-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/placements/hr-recruiter-bell-model.ts",
+        "src/modules/placements/hr-recruiter-bell-service.ts",
+        "src/modules/placements/hr-recruiter-grant-navigation-model.ts"
+      ],
+      "semanticRisk": "Standard field mapping from legacy industry_company to industry_company.created_by_user_type.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "industry_company",
+      "sourceColumn": "created_at",
+      "sourceType": "datetime(6)",
+      "sourceDefinition": "DATETIME(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6)",
+      "sourceRiskFlags": [
+        "TIMEZONE_AND_DEADLINE_SEMANTICS"
+      ],
+      "targetCandidate": "industry_company.created_at",
+      "disposition": "PROPOSED_NORMALIZED_AUDIT_TIMESTAMP",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/placements/hr-recruiter-bell-model.ts",
+        "src/modules/placements/hr-recruiter-bell-service.ts",
+        "src/modules/placements/hr-recruiter-grant-navigation-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/placements/hr-recruiter-bell-model.ts",
+        "src/modules/placements/hr-recruiter-bell-service.ts",
+        "src/modules/placements/hr-recruiter-grant-navigation-model.ts"
+      ],
+      "semanticRisk": "Datetime(6) semantics differ from timestamptz; vNext stores UTC.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "industry_company",
+      "sourceColumn": "updated_at",
+      "sourceType": "datetime(6)",
+      "sourceDefinition": "DATETIME(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6)",
+      "sourceRiskFlags": [
+        "TIMEZONE_AND_DEADLINE_SEMANTICS"
+      ],
+      "targetCandidate": "industry_company.updated_at",
+      "disposition": "PROPOSED_NORMALIZED_AUDIT_TIMESTAMP",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/placements/hr-recruiter-bell-model.ts",
+        "src/modules/placements/hr-recruiter-bell-service.ts",
+        "src/modules/placements/hr-recruiter-grant-navigation-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/placements/hr-recruiter-bell-model.ts",
+        "src/modules/placements/hr-recruiter-bell-service.ts",
+        "src/modules/placements/hr-recruiter-grant-navigation-model.ts"
+      ],
+      "semanticRisk": "Datetime(6) semantics differ from timestamptz; vNext stores UTC.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "industry_company",
+      "sourceColumn": "is_deleted",
+      "sourceType": "boolean",
+      "sourceDefinition": "BOOLEAN NOT NULL DEFAULT FALSE",
+      "sourceRiskFlags": [],
+      "targetCandidate": "industry_company.is_deleted",
+      "disposition": "PROPOSED_REDESIGNED_SOFT_DELETE_PATTERN",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/placements/hr-recruiter-bell-model.ts",
+        "src/modules/placements/hr-recruiter-bell-service.ts",
+        "src/modules/placements/hr-recruiter-grant-navigation-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/placements/hr-recruiter-bell-model.ts",
+        "src/modules/placements/hr-recruiter-bell-service.ts",
+        "src/modules/placements/hr-recruiter-grant-navigation-model.ts"
+      ],
+      "semanticRisk": "Soft-delete pattern replaced by status enum or archived_at timestamp in vNext.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "industry_company",
+      "sourceColumn": "version",
+      "sourceType": "bigint",
+      "sourceDefinition": "BIGINT NOT NULL DEFAULT 0",
+      "sourceRiskFlags": [],
+      "targetCandidate": "industry_company.version",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/placements/hr-recruiter-bell-model.ts",
+        "src/modules/placements/hr-recruiter-bell-service.ts",
+        "src/modules/placements/hr-recruiter-grant-navigation-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/placements/hr-recruiter-bell-model.ts",
+        "src/modules/placements/hr-recruiter-bell-service.ts",
+        "src/modules/placements/hr-recruiter-grant-navigation-model.ts"
+      ],
+      "semanticRisk": "Standard field mapping from legacy industry_company to industry_company.version.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "industry_company",
+      "sourceColumn": "export_columns_json",
+      "sourceType": "json",
+      "sourceDefinition": "JSON NULL COMMENT 'Saved per-company export column picker (TPO V1)'",
+      "sourceRiskFlags": [
+        "STRUCTURED_PAYLOAD_SEMANTIC_SCHEMA"
+      ],
+      "targetCandidate": "industry_company.export_columns_json",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/placements/hr-recruiter-bell-model.ts",
+        "src/modules/placements/hr-recruiter-bell-service.ts",
+        "src/modules/placements/hr-recruiter-grant-navigation-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/placements/hr-recruiter-bell-model.ts",
+        "src/modules/placements/hr-recruiter-bell-service.ts",
+        "src/modules/placements/hr-recruiter-grant-navigation-model.ts"
+      ],
+      "semanticRisk": "JSON payload: vNext uses typed JSONB or separate normalized columns.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "recruiter_applicant_note",
+      "sourceColumn": "id",
+      "sourceType": "bigint",
+      "sourceDefinition": "BIGINT AUTO_INCREMENT PRIMARY KEY",
+      "sourceRiskFlags": [
+        "INTEGER_KEY_TO_UUID_MAPPING"
+      ],
+      "targetCandidate": "recruiter_applicant_note.id",
+      "disposition": "PROPOSED_NORMALIZED_UUID_PRIMARY_KEY",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/placements/hr-recruiter-bell-model.ts",
+        "src/modules/placements/hr-recruiter-bell-service.ts",
+        "src/modules/placements/hr-recruiter-grant-navigation-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/placements/hr-recruiter-bell-model.ts",
+        "src/modules/placements/hr-recruiter-bell-service.ts",
+        "src/modules/placements/hr-recruiter-grant-navigation-model.ts"
+      ],
+      "semanticRisk": "Legacy numeric ID maps to UUID in vNext; no old-row import needed for greenfield.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "recruiter_applicant_note",
+      "sourceColumn": "college_id",
+      "sourceType": "int",
+      "sourceDefinition": "INT NOT NULL",
+      "sourceRiskFlags": [
+        "INTEGER_KEY_TO_UUID_MAPPING"
+      ],
+      "targetCandidate": "recruiter_applicant_note.college_id",
+      "disposition": "PROPOSED_REGISTERED_WITH_UUID_NORMALIZATION",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/placements/hr-recruiter-bell-model.ts",
+        "src/modules/placements/hr-recruiter-bell-service.ts",
+        "src/modules/placements/hr-recruiter-grant-navigation-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/placements/hr-recruiter-bell-model.ts",
+        "src/modules/placements/hr-recruiter-bell-service.ts",
+        "src/modules/placements/hr-recruiter-grant-navigation-model.ts"
+      ],
+      "semanticRisk": "Legacy numeric ID maps to UUID in vNext; no old-row import needed for greenfield.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "recruiter_applicant_note",
+      "sourceColumn": "job_id",
+      "sourceType": "int",
+      "sourceDefinition": "INT NOT NULL",
+      "sourceRiskFlags": [
+        "INTEGER_KEY_TO_UUID_MAPPING"
+      ],
+      "targetCandidate": "recruiter_applicant_note.job_id",
+      "disposition": "PROPOSED_REGISTERED_WITH_UUID_NORMALIZATION",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/placements/hr-recruiter-bell-model.ts",
+        "src/modules/placements/hr-recruiter-bell-service.ts",
+        "src/modules/placements/hr-recruiter-grant-navigation-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/placements/hr-recruiter-bell-model.ts",
+        "src/modules/placements/hr-recruiter-bell-service.ts",
+        "src/modules/placements/hr-recruiter-grant-navigation-model.ts"
+      ],
+      "semanticRisk": "Legacy numeric ID maps to UUID in vNext; no old-row import needed for greenfield.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "recruiter_applicant_note",
+      "sourceColumn": "application_id",
+      "sourceType": "int",
+      "sourceDefinition": "INT NOT NULL",
+      "sourceRiskFlags": [
+        "INTEGER_KEY_TO_UUID_MAPPING"
+      ],
+      "targetCandidate": "recruiter_applicant_note.application_id",
+      "disposition": "PROPOSED_REGISTERED_WITH_UUID_NORMALIZATION",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/placements/hr-recruiter-bell-model.ts",
+        "src/modules/placements/hr-recruiter-bell-service.ts",
+        "src/modules/placements/hr-recruiter-grant-navigation-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/placements/hr-recruiter-bell-model.ts",
+        "src/modules/placements/hr-recruiter-bell-service.ts",
+        "src/modules/placements/hr-recruiter-grant-navigation-model.ts"
+      ],
+      "semanticRisk": "Legacy numeric ID maps to UUID in vNext; no old-row import needed for greenfield.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "recruiter_applicant_note",
+      "sourceColumn": "rating",
+      "sourceType": "tinyint",
+      "sourceDefinition": "TINYINT NULL COMMENT '1 to 5'",
+      "sourceRiskFlags": [],
+      "targetCandidate": "recruiter_applicant_note.rating",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/placements/hr-recruiter-bell-model.ts",
+        "src/modules/placements/hr-recruiter-bell-service.ts",
+        "src/modules/placements/hr-recruiter-grant-navigation-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/placements/hr-recruiter-bell-model.ts",
+        "src/modules/placements/hr-recruiter-bell-service.ts",
+        "src/modules/placements/hr-recruiter-grant-navigation-model.ts"
+      ],
+      "semanticRisk": "Standard field mapping from legacy recruiter_applicant_note to recruiter_applicant_note.rating.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "recruiter_applicant_note",
+      "sourceColumn": "note",
+      "sourceType": "varchar(1000)",
+      "sourceDefinition": "VARCHAR(1000) NULL",
+      "sourceRiskFlags": [],
+      "targetCandidate": "recruiter_applicant_note.note",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/placements/hr-recruiter-bell-model.ts",
+        "src/modules/placements/hr-recruiter-bell-service.ts",
+        "src/modules/placements/hr-recruiter-grant-navigation-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/placements/hr-recruiter-bell-model.ts",
+        "src/modules/placements/hr-recruiter-bell-service.ts",
+        "src/modules/placements/hr-recruiter-grant-navigation-model.ts"
+      ],
+      "semanticRisk": "Standard field mapping from legacy recruiter_applicant_note to recruiter_applicant_note.note.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "recruiter_applicant_note",
+      "sourceColumn": "created_at",
+      "sourceType": "datetime",
+      "sourceDefinition": "DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP",
+      "sourceRiskFlags": [
+        "TIMEZONE_AND_DEADLINE_SEMANTICS"
+      ],
+      "targetCandidate": "recruiter_applicant_note.created_at",
+      "disposition": "PROPOSED_NORMALIZED_AUDIT_TIMESTAMP",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/placements/hr-recruiter-bell-model.ts",
+        "src/modules/placements/hr-recruiter-bell-service.ts",
+        "src/modules/placements/hr-recruiter-grant-navigation-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/placements/hr-recruiter-bell-model.ts",
+        "src/modules/placements/hr-recruiter-bell-service.ts",
+        "src/modules/placements/hr-recruiter-grant-navigation-model.ts"
+      ],
+      "semanticRisk": "Datetime(6) semantics differ from timestamptz; vNext stores UTC.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "recruiter_applicant_note",
+      "sourceColumn": "updated_at",
+      "sourceType": "datetime",
+      "sourceDefinition": "DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP",
+      "sourceRiskFlags": [
+        "TIMEZONE_AND_DEADLINE_SEMANTICS"
+      ],
+      "targetCandidate": "recruiter_applicant_note.updated_at",
+      "disposition": "PROPOSED_NORMALIZED_AUDIT_TIMESTAMP",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/placements/hr-recruiter-bell-model.ts",
+        "src/modules/placements/hr-recruiter-bell-service.ts",
+        "src/modules/placements/hr-recruiter-grant-navigation-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/placements/hr-recruiter-bell-model.ts",
+        "src/modules/placements/hr-recruiter-bell-service.ts",
+        "src/modules/placements/hr-recruiter-grant-navigation-model.ts"
+      ],
+      "semanticRisk": "Datetime(6) semantics differ from timestamptz; vNext stores UTC.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "recruiter_applicant_note",
+      "sourceColumn": "recruiter_id",
+      "sourceType": "bigint",
+      "sourceDefinition": "BIGINT NOT NULL",
+      "sourceRiskFlags": [
+        "INTEGER_KEY_TO_UUID_MAPPING"
+      ],
+      "targetCandidate": "recruiter_applicant_note.recruiter_id",
+      "disposition": "PROPOSED_REGISTERED_WITH_UUID_NORMALIZATION",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/placements/hr-recruiter-bell-model.ts",
+        "src/modules/placements/hr-recruiter-bell-service.ts",
+        "src/modules/placements/hr-recruiter-grant-navigation-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/placements/hr-recruiter-bell-model.ts",
+        "src/modules/placements/hr-recruiter-bell-service.ts",
+        "src/modules/placements/hr-recruiter-grant-navigation-model.ts"
+      ],
+      "semanticRisk": "Legacy numeric ID maps to UUID in vNext; no old-row import needed for greenfield.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "recruiter_lead",
+      "sourceColumn": "id",
+      "sourceType": "bigint",
+      "sourceDefinition": "BIGINT AUTO_INCREMENT PRIMARY KEY",
+      "sourceRiskFlags": [
+        "INTEGER_KEY_TO_UUID_MAPPING"
+      ],
+      "targetCandidate": "recruiter_lead.id",
+      "disposition": "PROPOSED_NORMALIZED_UUID_PRIMARY_KEY",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/placements/hr-recruiter-bell-model.ts",
+        "src/modules/placements/hr-recruiter-bell-service.ts",
+        "src/modules/placements/hr-recruiter-grant-navigation-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/placements/hr-recruiter-bell-model.ts",
+        "src/modules/placements/hr-recruiter-bell-service.ts",
+        "src/modules/placements/hr-recruiter-grant-navigation-model.ts"
+      ],
+      "semanticRisk": "Legacy numeric ID maps to UUID in vNext; no old-row import needed for greenfield.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "recruiter_lead",
+      "sourceColumn": "college_id",
+      "sourceType": "int",
+      "sourceDefinition": "INT NOT NULL",
+      "sourceRiskFlags": [
+        "INTEGER_KEY_TO_UUID_MAPPING"
+      ],
+      "targetCandidate": "recruiter_lead.college_id",
+      "disposition": "PROPOSED_REGISTERED_WITH_UUID_NORMALIZATION",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/placements/hr-recruiter-bell-model.ts",
+        "src/modules/placements/hr-recruiter-bell-service.ts",
+        "src/modules/placements/hr-recruiter-grant-navigation-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/placements/hr-recruiter-bell-model.ts",
+        "src/modules/placements/hr-recruiter-bell-service.ts",
+        "src/modules/placements/hr-recruiter-grant-navigation-model.ts"
+      ],
+      "semanticRisk": "Legacy numeric ID maps to UUID in vNext; no old-row import needed for greenfield.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "recruiter_lead",
+      "sourceColumn": "company_id",
+      "sourceType": "bigint",
+      "sourceDefinition": "BIGINT NULL",
+      "sourceRiskFlags": [
+        "INTEGER_KEY_TO_UUID_MAPPING"
+      ],
+      "targetCandidate": "recruiter_lead.company_id",
+      "disposition": "PROPOSED_REGISTERED_WITH_UUID_NORMALIZATION",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/placements/hr-recruiter-bell-model.ts",
+        "src/modules/placements/hr-recruiter-bell-service.ts",
+        "src/modules/placements/hr-recruiter-grant-navigation-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/placements/hr-recruiter-bell-model.ts",
+        "src/modules/placements/hr-recruiter-bell-service.ts",
+        "src/modules/placements/hr-recruiter-grant-navigation-model.ts"
+      ],
+      "semanticRisk": "Legacy numeric ID maps to UUID in vNext; no old-row import needed for greenfield.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "recruiter_lead",
+      "sourceColumn": "name",
+      "sourceType": "varchar(150)",
+      "sourceDefinition": "VARCHAR(150) NOT NULL",
+      "sourceRiskFlags": [],
+      "targetCandidate": "recruiter_lead.name",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/placements/hr-recruiter-bell-model.ts",
+        "src/modules/placements/hr-recruiter-bell-service.ts",
+        "src/modules/placements/hr-recruiter-grant-navigation-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/placements/hr-recruiter-bell-model.ts",
+        "src/modules/placements/hr-recruiter-bell-service.ts",
+        "src/modules/placements/hr-recruiter-grant-navigation-model.ts"
+      ],
+      "semanticRisk": "Standard field mapping from legacy recruiter_lead to recruiter_lead.name.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "recruiter_lead",
+      "sourceColumn": "designation",
+      "sourceType": "varchar(100)",
+      "sourceDefinition": "VARCHAR(100) NULL",
+      "sourceRiskFlags": [],
+      "targetCandidate": "recruiter_lead.designation",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/placements/hr-recruiter-bell-model.ts",
+        "src/modules/placements/hr-recruiter-bell-service.ts",
+        "src/modules/placements/hr-recruiter-grant-navigation-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/placements/hr-recruiter-bell-model.ts",
+        "src/modules/placements/hr-recruiter-bell-service.ts",
+        "src/modules/placements/hr-recruiter-grant-navigation-model.ts"
+      ],
+      "semanticRisk": "Standard field mapping from legacy recruiter_lead to recruiter_lead.designation.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "recruiter_lead",
+      "sourceColumn": "email_norm",
+      "sourceType": "varchar(150)",
+      "sourceDefinition": "VARCHAR(150) NULL",
+      "sourceRiskFlags": [
+        "POTENTIAL_PERSONAL_OR_SECRET_DATA"
+      ],
+      "targetCandidate": "recruiter_lead.email_norm",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/placements/hr-recruiter-bell-model.ts",
+        "src/modules/placements/hr-recruiter-bell-service.ts",
+        "src/modules/placements/hr-recruiter-grant-navigation-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/placements/hr-recruiter-bell-model.ts",
+        "src/modules/placements/hr-recruiter-bell-service.ts",
+        "src/modules/placements/hr-recruiter-grant-navigation-model.ts"
+      ],
+      "semanticRisk": "Standard field mapping from legacy recruiter_lead to recruiter_lead.email_norm.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "recruiter_lead",
+      "sourceColumn": "phone_norm",
+      "sourceType": "varchar(20)",
+      "sourceDefinition": "VARCHAR(20) NULL",
+      "sourceRiskFlags": [
+        "POTENTIAL_PERSONAL_OR_SECRET_DATA"
+      ],
+      "targetCandidate": "recruiter_lead.phone_norm",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/placements/hr-recruiter-bell-model.ts",
+        "src/modules/placements/hr-recruiter-bell-service.ts",
+        "src/modules/placements/hr-recruiter-grant-navigation-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/placements/hr-recruiter-bell-model.ts",
+        "src/modules/placements/hr-recruiter-bell-service.ts",
+        "src/modules/placements/hr-recruiter-grant-navigation-model.ts"
+      ],
+      "semanticRisk": "Standard field mapping from legacy recruiter_lead to recruiter_lead.phone_norm.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "recruiter_lead",
+      "sourceColumn": "company_name",
+      "sourceType": "varchar(150)",
+      "sourceDefinition": "VARCHAR(150) NULL",
+      "sourceRiskFlags": [],
+      "targetCandidate": "recruiter_lead.company_name",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/placements/hr-recruiter-bell-model.ts",
+        "src/modules/placements/hr-recruiter-bell-service.ts",
+        "src/modules/placements/hr-recruiter-grant-navigation-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/placements/hr-recruiter-bell-model.ts",
+        "src/modules/placements/hr-recruiter-bell-service.ts",
+        "src/modules/placements/hr-recruiter-grant-navigation-model.ts"
+      ],
+      "semanticRisk": "Standard field mapping from legacy recruiter_lead to recruiter_lead.company_name.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "recruiter_lead",
+      "sourceColumn": "company_logo",
+      "sourceType": "varchar(500)",
+      "sourceDefinition": "VARCHAR(500) NULL",
+      "sourceRiskFlags": [],
+      "targetCandidate": "recruiter_lead.company_logo",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/placements/hr-recruiter-bell-model.ts",
+        "src/modules/placements/hr-recruiter-bell-service.ts",
+        "src/modules/placements/hr-recruiter-grant-navigation-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/placements/hr-recruiter-bell-model.ts",
+        "src/modules/placements/hr-recruiter-bell-service.ts",
+        "src/modules/placements/hr-recruiter-grant-navigation-model.ts"
+      ],
+      "semanticRisk": "Standard field mapping from legacy recruiter_lead to recruiter_lead.company_logo.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "recruiter_lead",
+      "sourceColumn": "owner_faculty_id",
+      "sourceType": "int",
+      "sourceDefinition": "INT NULL",
+      "sourceRiskFlags": [
+        "INTEGER_KEY_TO_UUID_MAPPING"
+      ],
+      "targetCandidate": "recruiter_lead.owner_faculty_id",
+      "disposition": "PROPOSED_REGISTERED_WITH_UUID_NORMALIZATION",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/placements/hr-recruiter-bell-model.ts",
+        "src/modules/placements/hr-recruiter-bell-service.ts",
+        "src/modules/placements/hr-recruiter-grant-navigation-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/placements/hr-recruiter-bell-model.ts",
+        "src/modules/placements/hr-recruiter-bell-service.ts",
+        "src/modules/placements/hr-recruiter-grant-navigation-model.ts"
+      ],
+      "semanticRisk": "Legacy numeric ID maps to UUID in vNext; no old-row import needed for greenfield.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "recruiter_lead",
+      "sourceColumn": "manual_stage",
+      "sourceType": "varchar(15)",
+      "sourceDefinition": "VARCHAR(15) NOT NULL DEFAULT 'NEW' COMMENT 'NEW|CONTACTED|NOT_NOW \u00e2\u20ac\u201d derived stages (Invited/Joined/Drive planned/Recruited) are computed, never stored'",
+      "sourceRiskFlags": [],
+      "targetCandidate": "recruiter_lead.manual_stage",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/placements/hr-recruiter-bell-model.ts",
+        "src/modules/placements/hr-recruiter-bell-service.ts",
+        "src/modules/placements/hr-recruiter-grant-navigation-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/placements/hr-recruiter-bell-model.ts",
+        "src/modules/placements/hr-recruiter-bell-service.ts",
+        "src/modules/placements/hr-recruiter-grant-navigation-model.ts"
+      ],
+      "semanticRisk": "Standard field mapping from legacy recruiter_lead to recruiter_lead.manual_stage.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "recruiter_lead",
+      "sourceColumn": "not_now_reason",
+      "sourceType": "varchar(255)",
+      "sourceDefinition": "VARCHAR(255) NULL",
+      "sourceRiskFlags": [],
+      "targetCandidate": "recruiter_lead.not_now_reason",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/placements/hr-recruiter-bell-model.ts",
+        "src/modules/placements/hr-recruiter-bell-service.ts",
+        "src/modules/placements/hr-recruiter-grant-navigation-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/placements/hr-recruiter-bell-model.ts",
+        "src/modules/placements/hr-recruiter-bell-service.ts",
+        "src/modules/placements/hr-recruiter-grant-navigation-model.ts"
+      ],
+      "semanticRisk": "Standard field mapping from legacy recruiter_lead to recruiter_lead.not_now_reason.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "recruiter_lead",
+      "sourceColumn": "not_now_until",
+      "sourceType": "date",
+      "sourceDefinition": "DATE NULL",
+      "sourceRiskFlags": [],
+      "targetCandidate": "recruiter_lead.not_now_until",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/placements/hr-recruiter-bell-model.ts",
+        "src/modules/placements/hr-recruiter-bell-service.ts",
+        "src/modules/placements/hr-recruiter-grant-navigation-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/placements/hr-recruiter-bell-model.ts",
+        "src/modules/placements/hr-recruiter-bell-service.ts",
+        "src/modules/placements/hr-recruiter-grant-navigation-model.ts"
+      ],
+      "semanticRisk": "Standard field mapping from legacy recruiter_lead to recruiter_lead.not_now_until.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "recruiter_lead",
+      "sourceColumn": "source",
+      "sourceType": "varchar(30)",
+      "sourceDefinition": "VARCHAR(30) NULL",
+      "sourceRiskFlags": [],
+      "targetCandidate": "recruiter_lead.source",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/placements/hr-recruiter-bell-model.ts",
+        "src/modules/placements/hr-recruiter-bell-service.ts",
+        "src/modules/placements/hr-recruiter-grant-navigation-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/placements/hr-recruiter-bell-model.ts",
+        "src/modules/placements/hr-recruiter-bell-service.ts",
+        "src/modules/placements/hr-recruiter-grant-navigation-model.ts"
+      ],
+      "semanticRisk": "Standard field mapping from legacy recruiter_lead to recruiter_lead.source.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "recruiter_lead",
+      "sourceColumn": "invite_token_hash",
+      "sourceType": "varchar(128)",
+      "sourceDefinition": "VARCHAR(128) NULL",
+      "sourceRiskFlags": [
+        "POTENTIAL_PERSONAL_OR_SECRET_DATA"
+      ],
+      "targetCandidate": "recruiter_lead.invite_token_hash",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/placements/hr-recruiter-bell-model.ts",
+        "src/modules/placements/hr-recruiter-bell-service.ts",
+        "src/modules/placements/hr-recruiter-grant-navigation-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/placements/hr-recruiter-bell-model.ts",
+        "src/modules/placements/hr-recruiter-bell-service.ts",
+        "src/modules/placements/hr-recruiter-grant-navigation-model.ts"
+      ],
+      "semanticRisk": "Standard field mapping from legacy recruiter_lead to recruiter_lead.invite_token_hash.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "recruiter_lead",
+      "sourceColumn": "invite_sent_at",
+      "sourceType": "datetime",
+      "sourceDefinition": "DATETIME NULL",
+      "sourceRiskFlags": [
+        "TIMEZONE_AND_DEADLINE_SEMANTICS"
+      ],
+      "targetCandidate": "recruiter_lead.invite_sent_at",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/placements/hr-recruiter-bell-model.ts",
+        "src/modules/placements/hr-recruiter-bell-service.ts",
+        "src/modules/placements/hr-recruiter-grant-navigation-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/placements/hr-recruiter-bell-model.ts",
+        "src/modules/placements/hr-recruiter-bell-service.ts",
+        "src/modules/placements/hr-recruiter-grant-navigation-model.ts"
+      ],
+      "semanticRisk": "Datetime(6) semantics differ from timestamptz; vNext stores UTC.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "recruiter_lead",
+      "sourceColumn": "invite_clicked_at",
+      "sourceType": "datetime",
+      "sourceDefinition": "DATETIME NULL",
+      "sourceRiskFlags": [
+        "TIMEZONE_AND_DEADLINE_SEMANTICS"
+      ],
+      "targetCandidate": "recruiter_lead.invite_clicked_at",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/placements/hr-recruiter-bell-model.ts",
+        "src/modules/placements/hr-recruiter-bell-service.ts",
+        "src/modules/placements/hr-recruiter-grant-navigation-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/placements/hr-recruiter-bell-model.ts",
+        "src/modules/placements/hr-recruiter-bell-service.ts",
+        "src/modules/placements/hr-recruiter-grant-navigation-model.ts"
+      ],
+      "semanticRisk": "Datetime(6) semantics differ from timestamptz; vNext stores UTC.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "recruiter_lead",
+      "sourceColumn": "invite_reminder_sent_at",
+      "sourceType": "datetime",
+      "sourceDefinition": "DATETIME NULL",
+      "sourceRiskFlags": [
+        "TIMEZONE_AND_DEADLINE_SEMANTICS"
+      ],
+      "targetCandidate": "recruiter_lead.invite_reminder_sent_at",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/placements/hr-recruiter-bell-model.ts",
+        "src/modules/placements/hr-recruiter-bell-service.ts",
+        "src/modules/placements/hr-recruiter-grant-navigation-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/placements/hr-recruiter-bell-model.ts",
+        "src/modules/placements/hr-recruiter-bell-service.ts",
+        "src/modules/placements/hr-recruiter-grant-navigation-model.ts"
+      ],
+      "semanticRisk": "Datetime(6) semantics differ from timestamptz; vNext stores UTC.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "recruiter_lead",
+      "sourceColumn": "invite_bounced_at",
+      "sourceType": "datetime",
+      "sourceDefinition": "DATETIME NULL",
+      "sourceRiskFlags": [
+        "TIMEZONE_AND_DEADLINE_SEMANTICS"
+      ],
+      "targetCandidate": "recruiter_lead.invite_bounced_at",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/placements/hr-recruiter-bell-model.ts",
+        "src/modules/placements/hr-recruiter-bell-service.ts",
+        "src/modules/placements/hr-recruiter-grant-navigation-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/placements/hr-recruiter-bell-model.ts",
+        "src/modules/placements/hr-recruiter-bell-service.ts",
+        "src/modules/placements/hr-recruiter-grant-navigation-model.ts"
+      ],
+      "semanticRisk": "Datetime(6) semantics differ from timestamptz; vNext stores UTC.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "recruiter_lead",
+      "sourceColumn": "unsubscribed_at",
+      "sourceType": "datetime",
+      "sourceDefinition": "DATETIME NULL",
+      "sourceRiskFlags": [
+        "TIMEZONE_AND_DEADLINE_SEMANTICS"
+      ],
+      "targetCandidate": "recruiter_lead.unsubscribed_at",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/placements/hr-recruiter-bell-model.ts",
+        "src/modules/placements/hr-recruiter-bell-service.ts",
+        "src/modules/placements/hr-recruiter-grant-navigation-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/placements/hr-recruiter-bell-model.ts",
+        "src/modules/placements/hr-recruiter-bell-service.ts",
+        "src/modules/placements/hr-recruiter-grant-navigation-model.ts"
+      ],
+      "semanticRisk": "Datetime(6) semantics differ from timestamptz; vNext stores UTC.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "recruiter_lead",
+      "sourceColumn": "created_at",
+      "sourceType": "datetime",
+      "sourceDefinition": "DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP",
+      "sourceRiskFlags": [
+        "TIMEZONE_AND_DEADLINE_SEMANTICS"
+      ],
+      "targetCandidate": "recruiter_lead.created_at",
+      "disposition": "PROPOSED_NORMALIZED_AUDIT_TIMESTAMP",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/placements/hr-recruiter-bell-model.ts",
+        "src/modules/placements/hr-recruiter-bell-service.ts",
+        "src/modules/placements/hr-recruiter-grant-navigation-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/placements/hr-recruiter-bell-model.ts",
+        "src/modules/placements/hr-recruiter-bell-service.ts",
+        "src/modules/placements/hr-recruiter-grant-navigation-model.ts"
+      ],
+      "semanticRisk": "Datetime(6) semantics differ from timestamptz; vNext stores UTC.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "recruiter_lead",
+      "sourceColumn": "updated_at",
+      "sourceType": "datetime",
+      "sourceDefinition": "DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP",
+      "sourceRiskFlags": [
+        "TIMEZONE_AND_DEADLINE_SEMANTICS"
+      ],
+      "targetCandidate": "recruiter_lead.updated_at",
+      "disposition": "PROPOSED_NORMALIZED_AUDIT_TIMESTAMP",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/placements/hr-recruiter-bell-model.ts",
+        "src/modules/placements/hr-recruiter-bell-service.ts",
+        "src/modules/placements/hr-recruiter-grant-navigation-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/placements/hr-recruiter-bell-model.ts",
+        "src/modules/placements/hr-recruiter-bell-service.ts",
+        "src/modules/placements/hr-recruiter-grant-navigation-model.ts"
+      ],
+      "semanticRisk": "Datetime(6) semantics differ from timestamptz; vNext stores UTC.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "recruiter_lead",
+      "sourceColumn": "recruiter_id",
+      "sourceType": "bigint",
+      "sourceDefinition": "BIGINT NULL",
+      "sourceRiskFlags": [
+        "INTEGER_KEY_TO_UUID_MAPPING"
+      ],
+      "targetCandidate": "recruiter_lead.recruiter_id",
+      "disposition": "PROPOSED_REGISTERED_WITH_UUID_NORMALIZATION",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/placements/hr-recruiter-bell-model.ts",
+        "src/modules/placements/hr-recruiter-bell-service.ts",
+        "src/modules/placements/hr-recruiter-grant-navigation-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/placements/hr-recruiter-bell-model.ts",
+        "src/modules/placements/hr-recruiter-bell-service.ts",
+        "src/modules/placements/hr-recruiter-grant-navigation-model.ts"
+      ],
+      "semanticRisk": "Legacy numeric ID maps to UUID in vNext; no old-row import needed for greenfield.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "recruiter_lead_activity",
+      "sourceColumn": "id",
+      "sourceType": "bigint",
+      "sourceDefinition": "BIGINT AUTO_INCREMENT PRIMARY KEY",
+      "sourceRiskFlags": [
+        "INTEGER_KEY_TO_UUID_MAPPING"
+      ],
+      "targetCandidate": "recruiter_lead_activity.id",
+      "disposition": "PROPOSED_NORMALIZED_UUID_PRIMARY_KEY",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/placements/hr-recruiter-bell-model.ts",
+        "src/modules/placements/hr-recruiter-bell-service.ts",
+        "src/modules/placements/hr-recruiter-grant-navigation-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/placements/hr-recruiter-bell-model.ts",
+        "src/modules/placements/hr-recruiter-bell-service.ts",
+        "src/modules/placements/hr-recruiter-grant-navigation-model.ts"
+      ],
+      "semanticRisk": "Legacy numeric ID maps to UUID in vNext; no old-row import needed for greenfield.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "recruiter_lead_activity",
+      "sourceColumn": "type",
+      "sourceType": "varchar(20)",
+      "sourceDefinition": "VARCHAR(20) NOT NULL COMMENT 'CALL|WHATSAPP|EMAIL|MEETING|NOTE|SYSTEM'",
+      "sourceRiskFlags": [],
+      "targetCandidate": "recruiter_lead_activity.type",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/placements/hr-recruiter-bell-model.ts",
+        "src/modules/placements/hr-recruiter-bell-service.ts",
+        "src/modules/placements/hr-recruiter-grant-navigation-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/placements/hr-recruiter-bell-model.ts",
+        "src/modules/placements/hr-recruiter-bell-service.ts",
+        "src/modules/placements/hr-recruiter-grant-navigation-model.ts"
+      ],
+      "semanticRisk": "Standard field mapping from legacy recruiter_lead_activity to recruiter_lead_activity.type.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "recruiter_lead_activity",
+      "sourceColumn": "outcome",
+      "sourceType": "varchar(30)",
+      "sourceDefinition": "VARCHAR(30) NULL",
+      "sourceRiskFlags": [],
+      "targetCandidate": "recruiter_lead_activity.outcome",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/placements/hr-recruiter-bell-model.ts",
+        "src/modules/placements/hr-recruiter-bell-service.ts",
+        "src/modules/placements/hr-recruiter-grant-navigation-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/placements/hr-recruiter-bell-model.ts",
+        "src/modules/placements/hr-recruiter-bell-service.ts",
+        "src/modules/placements/hr-recruiter-grant-navigation-model.ts"
+      ],
+      "semanticRisk": "Standard field mapping from legacy recruiter_lead_activity to recruiter_lead_activity.outcome.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "recruiter_lead_activity",
+      "sourceColumn": "note",
+      "sourceType": "varchar(2000)",
+      "sourceDefinition": "VARCHAR(2000) NULL",
+      "sourceRiskFlags": [],
+      "targetCandidate": "recruiter_lead_activity.note",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/placements/hr-recruiter-bell-model.ts",
+        "src/modules/placements/hr-recruiter-bell-service.ts",
+        "src/modules/placements/hr-recruiter-grant-navigation-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/placements/hr-recruiter-bell-model.ts",
+        "src/modules/placements/hr-recruiter-bell-service.ts",
+        "src/modules/placements/hr-recruiter-grant-navigation-model.ts"
+      ],
+      "semanticRisk": "Standard field mapping from legacy recruiter_lead_activity to recruiter_lead_activity.note.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "recruiter_lead_activity",
+      "sourceColumn": "is_system",
+      "sourceType": "boolean",
+      "sourceDefinition": "BOOLEAN NOT NULL DEFAULT FALSE",
+      "sourceRiskFlags": [],
+      "targetCandidate": "recruiter_lead_activity.is_system",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/placements/hr-recruiter-bell-model.ts",
+        "src/modules/placements/hr-recruiter-bell-service.ts",
+        "src/modules/placements/hr-recruiter-grant-navigation-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/placements/hr-recruiter-bell-model.ts",
+        "src/modules/placements/hr-recruiter-bell-service.ts",
+        "src/modules/placements/hr-recruiter-grant-navigation-model.ts"
+      ],
+      "semanticRisk": "Standard field mapping from legacy recruiter_lead_activity to recruiter_lead_activity.is_system.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "recruiter_lead_activity",
+      "sourceColumn": "created_by",
+      "sourceType": "int",
+      "sourceDefinition": "INT NULL",
+      "sourceRiskFlags": [],
+      "targetCandidate": "recruiter_lead_activity.created_by",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/placements/hr-recruiter-bell-model.ts",
+        "src/modules/placements/hr-recruiter-bell-service.ts",
+        "src/modules/placements/hr-recruiter-grant-navigation-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/placements/hr-recruiter-bell-model.ts",
+        "src/modules/placements/hr-recruiter-bell-service.ts",
+        "src/modules/placements/hr-recruiter-grant-navigation-model.ts"
+      ],
+      "semanticRisk": "Standard field mapping from legacy recruiter_lead_activity to recruiter_lead_activity.created_by.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "recruiter_lead_activity",
+      "sourceColumn": "created_at",
+      "sourceType": "datetime",
+      "sourceDefinition": "DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP",
+      "sourceRiskFlags": [
+        "TIMEZONE_AND_DEADLINE_SEMANTICS"
+      ],
+      "targetCandidate": "recruiter_lead_activity.created_at",
+      "disposition": "PROPOSED_NORMALIZED_AUDIT_TIMESTAMP",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/placements/hr-recruiter-bell-model.ts",
+        "src/modules/placements/hr-recruiter-bell-service.ts",
+        "src/modules/placements/hr-recruiter-grant-navigation-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/placements/hr-recruiter-bell-model.ts",
+        "src/modules/placements/hr-recruiter-bell-service.ts",
+        "src/modules/placements/hr-recruiter-grant-navigation-model.ts"
+      ],
+      "semanticRisk": "Datetime(6) semantics differ from timestamptz; vNext stores UTC.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "recruiter_lead_activity",
+      "sourceColumn": "recruiter_lead_id",
+      "sourceType": "bigint",
+      "sourceDefinition": "BIGINT NOT NULL",
+      "sourceRiskFlags": [
+        "INTEGER_KEY_TO_UUID_MAPPING"
+      ],
+      "targetCandidate": "recruiter_lead_activity.recruiter_lead_id",
+      "disposition": "PROPOSED_REGISTERED_WITH_UUID_NORMALIZATION",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/placements/hr-recruiter-bell-model.ts",
+        "src/modules/placements/hr-recruiter-bell-service.ts",
+        "src/modules/placements/hr-recruiter-grant-navigation-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/placements/hr-recruiter-bell-model.ts",
+        "src/modules/placements/hr-recruiter-bell-service.ts",
+        "src/modules/placements/hr-recruiter-grant-navigation-model.ts"
+      ],
+      "semanticRisk": "Legacy numeric ID maps to UUID in vNext; no old-row import needed for greenfield.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "recruiter_notification_read",
+      "sourceColumn": "college_id",
+      "sourceType": "int",
+      "sourceDefinition": "INT NOT NULL",
+      "sourceRiskFlags": [
+        "INTEGER_KEY_TO_UUID_MAPPING"
+      ],
+      "targetCandidate": "recruiter_notification_read.college_id",
+      "disposition": "PROPOSED_REGISTERED_WITH_UUID_NORMALIZATION",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/placements/hr-recruiter-bell-model.ts",
+        "src/modules/placements/hr-recruiter-bell-service.ts",
+        "src/modules/placements/hr-recruiter-grant-navigation-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/placements/hr-recruiter-bell-model.ts",
+        "src/modules/placements/hr-recruiter-bell-service.ts",
+        "src/modules/placements/hr-recruiter-grant-navigation-model.ts"
+      ],
+      "semanticRisk": "Legacy numeric ID maps to UUID in vNext; no old-row import needed for greenfield.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "recruiter_notification_read",
+      "sourceColumn": "read_through",
+      "sourceType": "datetime",
+      "sourceDefinition": "DATETIME NOT NULL",
+      "sourceRiskFlags": [
+        "TIMEZONE_AND_DEADLINE_SEMANTICS"
+      ],
+      "targetCandidate": "recruiter_notification_read.read_through",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/placements/hr-recruiter-bell-model.ts",
+        "src/modules/placements/hr-recruiter-bell-service.ts",
+        "src/modules/placements/hr-recruiter-grant-navigation-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/placements/hr-recruiter-bell-model.ts",
+        "src/modules/placements/hr-recruiter-bell-service.ts",
+        "src/modules/placements/hr-recruiter-grant-navigation-model.ts"
+      ],
+      "semanticRisk": "Datetime(6) semantics differ from timestamptz; vNext stores UTC.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "recruiter_notification_read",
+      "sourceColumn": "recruiter_id",
+      "sourceType": "bigint",
+      "sourceDefinition": "BIGINT NOT NULL",
+      "sourceRiskFlags": [
+        "INTEGER_KEY_TO_UUID_MAPPING"
+      ],
+      "targetCandidate": "recruiter_notification_read.recruiter_id",
+      "disposition": "PROPOSED_REGISTERED_WITH_UUID_NORMALIZATION",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/placements/hr-recruiter-bell-model.ts",
+        "src/modules/placements/hr-recruiter-bell-service.ts",
+        "src/modules/placements/hr-recruiter-grant-navigation-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/placements/hr-recruiter-bell-model.ts",
+        "src/modules/placements/hr-recruiter-bell-service.ts",
+        "src/modules/placements/hr-recruiter-grant-navigation-model.ts"
+      ],
+      "semanticRisk": "Legacy numeric ID maps to UUID in vNext; no old-row import needed for greenfield.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    }
+  ]
+}

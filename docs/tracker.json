@@ -1709,8 +1709,8 @@
               "recruiter_college_access_capability"
             ],
             "sourceFieldCount": 175,
-            "picked": false,
-            "pickedBy": "",
+            "picked": true,
+            "pickedBy": "CLAUDE_ORCHESTRATOR_2026-11-02",
             "done": false,
             "acceptedAt": null,
             "acceptanceEvidence": [],
@@ -1738,8 +1738,8 @@
               "semester_course"
             ],
             "sourceFieldCount": 125,
-            "picked": false,
-            "pickedBy": "",
+            "picked": true,
+            "pickedBy": "CLAUDE_ORCHESTRATOR_2026-11-02",
             "done": false,
             "acceptedAt": null,
             "acceptanceEvidence": [],
@@ -1818,8 +1818,8 @@
               "student_registration"
             ],
             "sourceFieldCount": 103,
-            "picked": false,
-            "pickedBy": "",
+            "picked": true,
+            "pickedBy": "CLAUDE_ORCHESTRATOR_2026-11-02",
             "done": false,
             "acceptedAt": null,
             "acceptanceEvidence": [],
@@ -1841,8 +1841,8 @@
               "lesson_contents"
             ],
             "sourceFieldCount": 92,
-            "picked": false,
-            "pickedBy": "",
+            "picked": true,
+            "pickedBy": "CLAUDE_ORCHESTRATOR_2026-11-02",
             "done": false,
             "acceptedAt": null,
             "acceptanceEvidence": [],
@@ -1869,8 +1869,8 @@
               "selected_option"
             ],
             "sourceFieldCount": 128,
-            "picked": false,
-            "pickedBy": "",
+            "picked": true,
+            "pickedBy": "CLAUDE_ORCHESTRATOR_2026-11-02",
             "done": false,
             "acceptedAt": null,
             "acceptanceEvidence": [],
@@ -2015,8 +2015,8 @@
               "project_member"
             ],
             "sourceFieldCount": 95,
-            "picked": false,
-            "pickedBy": "",
+            "picked": true,
+            "pickedBy": "CLAUDE_ORCHESTRATOR_2026-11-02",
             "done": false,
             "acceptedAt": null,
             "acceptanceEvidence": [],
@@ -2035,8 +2035,8 @@
               "project_activity_event"
             ],
             "sourceFieldCount": 94,
-            "picked": false,
-            "pickedBy": "",
+            "picked": true,
+            "pickedBy": "CLAUDE_ORCHESTRATOR_2026-11-02",
             "done": false,
             "acceptedAt": null,
             "acceptanceEvidence": [],
@@ -2056,8 +2056,8 @@
               "project_release"
             ],
             "sourceFieldCount": 112,
-            "picked": false,
-            "pickedBy": "",
+            "picked": true,
+            "pickedBy": "CLAUDE_ORCHESTRATOR_2026-11-02",
             "done": false,
             "acceptedAt": null,
             "acceptanceEvidence": [],
@@ -2175,8 +2175,8 @@
               "placement_debarment"
             ],
             "sourceFieldCount": 63,
-            "picked": false,
-            "pickedBy": "",
+            "picked": true,
+            "pickedBy": "CLAUDE_ORCHESTRATOR_2026-11-02",
             "done": false,
             "acceptedAt": null,
             "acceptanceEvidence": [],
@@ -2199,37 +2199,37 @@
             "done": false,
             "acceptedAt": null,
             "acceptanceEvidence": [],
-      "latestProgress": {
-        "status": "SCOPED_P19_PERSISTED_ROLE_NEGATIVES_PG17_STEPS_PASSED_FULL_PACKAGE_OPEN",
-        "recordedOn": "2026-11-02",
-        "sourceSha": "62dd6d6fc9fbd1f4ba1e98121f9388b8bc3c1486",
-        "codeCommits": [
-          "ad64bd193abe167a992353b2172e3856773476c5",
-          "8d0f75fdc2d886d8dd7c86657530fbd255b01f27",
-          "74b4d57ecb943d755d982d5d7022294917889973",
-          "99080c5737b66a1ff87ad5716fff05119e444bc2"
-        ],
-        "testCommit": "62dd6d6fc9fbd1f4ba1e98121f9388b8bc3c1486",
-        "workflow": ".github/workflows/db019-p19-drive-day-attendance-pg17.yml",
-        "workflowRunUrl": "https://github.com/42Students/lms-vnext/actions/runs/41346012131",
-        "verifiedWorkflowSteps": [
-          "Exact checkout and registered journal PASS",
-          "Zero-to-head PostgreSQL 17 registered migration replay + seed PASS",
-          "Registered journal idempotence PASS",
-          "Scoped integration test step, including TPO and College Admin revocation negative cases, PASS"
-        ],
-        "workflowConclusionWhenRecorded": "SUCCESS_SCOPED_4_OF_4_NOT_PACKAGE_ACCEPTANCE",
-        "workflowJobId": 124965860443,
-        "executedTypecheck": "PASS",
-        "executedIntegrationTests": "4_OF_4_PASS",
-        "originalSourceFields": 52,
-        "remaining": [
-          "Final 52 individual frozen source-field semantic decisions (interview/round attendance/results), actor-kind and status-history provenance, and review/approval of missing target semantics.",
-          "End-to-end all interview, attendance, round-result producers/consumers plus tenant/privacy, stale actor, concurrent revocation and supersession race matrices on exact final head.",
-          "Independent final P31/P32 global gates and complete 52-field P19 semantics before DB-019 and DB-020 acceptance."
-        ],
-        "evidenceIsNotAcceptance": true
-      },
+            "latestProgress": {
+              "status": "SCOPED_P19_PERSISTED_ROLE_NEGATIVES_PG17_STEPS_PASSED_FULL_PACKAGE_OPEN",
+              "recordedOn": "2026-11-02",
+              "sourceSha": "62dd6d6fc9fbd1f4ba1e98121f9388b8bc3c1486",
+              "codeCommits": [
+                "ad64bd193abe167a992353b2172e3856773476c5",
+                "8d0f75fdc2d886d8dd7c86657530fbd255b01f27",
+                "74b4d57ecb943d755d982d5d7022294917889973",
+                "99080c5737b66a1ff87ad5716fff05119e444bc2"
+              ],
+              "testCommit": "62dd6d6fc9fbd1f4ba1e98121f9388b8bc3c1486",
+              "workflow": ".github/workflows/db019-p19-drive-day-attendance-pg17.yml",
+              "workflowRunUrl": "https://github.com/42Students/lms-vnext/actions/runs/41346012131",
+              "verifiedWorkflowSteps": [
+                "Exact checkout and registered journal PASS",
+                "Zero-to-head PostgreSQL 17 registered migration replay + seed PASS",
+                "Registered journal idempotence PASS",
+                "Scoped integration test step, including TPO and College Admin revocation negative cases, PASS"
+              ],
+              "workflowConclusionWhenRecorded": "SUCCESS_SCOPED_4_OF_4_NOT_PACKAGE_ACCEPTANCE",
+              "workflowJobId": 124965860443,
+              "executedTypecheck": "PASS",
+              "executedIntegrationTests": "4_OF_4_PASS",
+              "originalSourceFields": 52,
+              "remaining": [
+                "Final 52 individual frozen source-field semantic decisions (interview/round attendance/results), actor-kind and status-history provenance, and review/approval of missing target semantics.",
+                "End-to-end all interview, attendance, round-result producers/consumers plus tenant/privacy, stale actor, concurrent revocation and supersession race matrices on exact final head.",
+                "Independent final P31/P32 global gates and complete 52-field P19 semantics before DB-019 and DB-020 acceptance."
+              ],
+              "evidenceIsNotAcceptance": true
+            },
             "acceptance": "Reconcile actor-kind and supersession chain, interview provenance, result enum, private comments, real round workflows and race/tenant tests."
           },
           {
@@ -2542,8 +2542,8 @@
               "recruiter_notification_read"
             ],
             "sourceFieldCount": 72,
-            "picked": false,
-            "pickedBy": "",
+            "picked": true,
+            "pickedBy": "CLAUDE_ORCHESTRATOR_2026-11-02",
             "done": false,
             "acceptedAt": null,
             "acceptanceEvidence": [],
@@ -2615,8 +2615,8 @@
               "student_request"
             ],
             "sourceFieldCount": 75,
-            "picked": false,
-            "pickedBy": "",
+            "picked": true,
+            "pickedBy": "CLAUDE_ORCHESTRATOR_2026-11-02",
             "done": false,
             "acceptedAt": null,
             "acceptanceEvidence": [],
@@ -2680,8 +2680,8 @@
               "sms_delivery_log"
             ],
             "sourceFieldCount": 98,
-            "picked": false,
-            "pickedBy": "",
+            "picked": true,
+            "pickedBy": "CLAUDE_ORCHESTRATOR_2026-11-02",
             "done": false,
             "acceptedAt": null,
             "acceptanceEvidence": [],
@@ -3406,10 +3406,22 @@
           "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/41407076314",
           "result": "COMPLETED_SUCCESS_TWO_JOBS",
           "tests": {
-            "screeningIntegration": {"passed": 15, "run": 15},
-            "academicEligibilityIntegration": {"passed": 12, "run": 12},
-            "debarmentIntegration": {"passed": 11, "run": 11},
-            "debarmentUnit": {"passed": 4, "run": 4}
+            "screeningIntegration": {
+              "passed": 15,
+              "run": 15
+            },
+            "academicEligibilityIntegration": {
+              "passed": 12,
+              "run": 12
+            },
+            "debarmentIntegration": {
+              "passed": 11,
+              "run": 11
+            },
+            "debarmentUnit": {
+              "passed": 4,
+              "run": 4
+            }
           },
           "verification": [
             "Two independent disposable PostgreSQL 17 jobs pinned to source SHA; 332 registered journal migrations through 0331 replayed zero-to-head with idempotence and destructive target preflight.",

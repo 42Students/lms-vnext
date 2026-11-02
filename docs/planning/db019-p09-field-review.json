@@ -1,0 +1,2507 @@
+{
+  "id": "DB19-P09",
+  "recordType": "DB19_PACKAGE_SOURCE_FIELD_REVIEW",
+  "sourceSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+  "sourceInventory": "docs/planning/db-pass4-columns-db05_courses_and_content.json",
+  "originalFieldLedger": "docs/planning/database-parity-db05_courses_and_content-field-ledger.json",
+  "sourceTables": [
+    "classroom_messages",
+    "course",
+    "discussions",
+    "learner_content_progress",
+    "lesson",
+    "lesson_content_class_sequence",
+    "lesson_contents"
+  ],
+  "sourceFieldCount": 92,
+  "reviewedProposals": 92,
+  "runtimeVerifiedCount": 0,
+  "fieldDispositionApproval": "PENDING_PACKAGE_ACCEPTANCE",
+  "privacyBoundary": "DB19-P09 scoped source field disposition only. Global P31/P32 and DB020 remain open.",
+  "testEvidenceStatus": "SOURCE_QUALITY_GATE_ONLY_NOT_RUNTIME_CERTIFIED",
+  "pendingAcceptance": "Registered PG17 producer/consumer and runtime verification for all 92 fields.",
+  "fields": [
+    {
+      "sourceTable": "classroom_messages",
+      "sourceColumn": "id",
+      "sourceType": "int",
+      "sourceDefinition": "int NOT NULL AUTO_INCREMENT",
+      "sourceRiskFlags": [
+        "INTEGER_KEY_TO_UUID_MAPPING"
+      ],
+      "targetCandidate": "classroom_messages.id",
+      "disposition": "PROPOSED_NORMALIZED_UUID_PRIMARY_KEY",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/activity/learner-notification-course-action-model.ts",
+        "src/modules/admin-ui/super-admin-course-dependencies-service.ts",
+        "src/modules/admin-ui/super-admin-course-query-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/activity/learner-notification-course-action-model.ts",
+        "src/modules/admin-ui/super-admin-course-dependencies-service.ts",
+        "src/modules/admin-ui/super-admin-course-query-model.ts"
+      ],
+      "semanticRisk": "Legacy numeric ID maps to UUID in vNext; no old-row import needed for greenfield.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "classroom_messages",
+      "sourceColumn": "created_at",
+      "sourceType": "datetime",
+      "sourceDefinition": "datetime DEFAULT CURRENT_TIMESTAMP",
+      "sourceRiskFlags": [
+        "TIMEZONE_AND_DEADLINE_SEMANTICS"
+      ],
+      "targetCandidate": "classroom_messages.created_at",
+      "disposition": "PROPOSED_NORMALIZED_AUDIT_TIMESTAMP",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/activity/learner-notification-course-action-model.ts",
+        "src/modules/admin-ui/super-admin-course-dependencies-service.ts",
+        "src/modules/admin-ui/super-admin-course-query-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/activity/learner-notification-course-action-model.ts",
+        "src/modules/admin-ui/super-admin-course-dependencies-service.ts",
+        "src/modules/admin-ui/super-admin-course-query-model.ts"
+      ],
+      "semanticRisk": "Datetime(6) semantics differ from timestamptz; vNext stores UTC.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "classroom_messages",
+      "sourceColumn": "updated_at",
+      "sourceType": "datetime",
+      "sourceDefinition": "datetime DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP",
+      "sourceRiskFlags": [
+        "TIMEZONE_AND_DEADLINE_SEMANTICS"
+      ],
+      "targetCandidate": "classroom_messages.updated_at",
+      "disposition": "PROPOSED_NORMALIZED_AUDIT_TIMESTAMP",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/activity/learner-notification-course-action-model.ts",
+        "src/modules/admin-ui/super-admin-course-dependencies-service.ts",
+        "src/modules/admin-ui/super-admin-course-query-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/activity/learner-notification-course-action-model.ts",
+        "src/modules/admin-ui/super-admin-course-dependencies-service.ts",
+        "src/modules/admin-ui/super-admin-course-query-model.ts"
+      ],
+      "semanticRisk": "Datetime(6) semantics differ from timestamptz; vNext stores UTC.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "classroom_messages",
+      "sourceColumn": "is_deleted",
+      "sourceType": "tinyint(1)",
+      "sourceDefinition": "tinyint(1) DEFAULT '0'",
+      "sourceRiskFlags": [],
+      "targetCandidate": "classroom_messages.is_deleted",
+      "disposition": "PROPOSED_REDESIGNED_SOFT_DELETE_PATTERN",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/activity/learner-notification-course-action-model.ts",
+        "src/modules/admin-ui/super-admin-course-dependencies-service.ts",
+        "src/modules/admin-ui/super-admin-course-query-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/activity/learner-notification-course-action-model.ts",
+        "src/modules/admin-ui/super-admin-course-dependencies-service.ts",
+        "src/modules/admin-ui/super-admin-course-query-model.ts"
+      ],
+      "semanticRisk": "Soft-delete pattern replaced by status enum or archived_at timestamp in vNext.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "classroom_messages",
+      "sourceColumn": "course_id",
+      "sourceType": "int",
+      "sourceDefinition": "int NOT NULL",
+      "sourceRiskFlags": [
+        "INTEGER_KEY_TO_UUID_MAPPING"
+      ],
+      "targetCandidate": "classroom_messages.course_id",
+      "disposition": "PROPOSED_REGISTERED_WITH_UUID_NORMALIZATION",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/activity/learner-notification-course-action-model.ts",
+        "src/modules/admin-ui/super-admin-course-dependencies-service.ts",
+        "src/modules/admin-ui/super-admin-course-query-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/activity/learner-notification-course-action-model.ts",
+        "src/modules/admin-ui/super-admin-course-dependencies-service.ts",
+        "src/modules/admin-ui/super-admin-course-query-model.ts"
+      ],
+      "semanticRisk": "Legacy numeric ID maps to UUID in vNext; no old-row import needed for greenfield.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "classroom_messages",
+      "sourceColumn": "class_id",
+      "sourceType": "int",
+      "sourceDefinition": "int NOT NULL",
+      "sourceRiskFlags": [
+        "INTEGER_KEY_TO_UUID_MAPPING"
+      ],
+      "targetCandidate": "classroom_messages.class_id",
+      "disposition": "PROPOSED_REGISTERED_WITH_UUID_NORMALIZATION",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/activity/learner-notification-course-action-model.ts",
+        "src/modules/admin-ui/super-admin-course-dependencies-service.ts",
+        "src/modules/admin-ui/super-admin-course-query-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/activity/learner-notification-course-action-model.ts",
+        "src/modules/admin-ui/super-admin-course-dependencies-service.ts",
+        "src/modules/admin-ui/super-admin-course-query-model.ts"
+      ],
+      "semanticRisk": "Legacy numeric ID maps to UUID in vNext; no old-row import needed for greenfield.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "classroom_messages",
+      "sourceColumn": "sender_id",
+      "sourceType": "int",
+      "sourceDefinition": "int DEFAULT NULL",
+      "sourceRiskFlags": [
+        "INTEGER_KEY_TO_UUID_MAPPING"
+      ],
+      "targetCandidate": "classroom_messages.sender_id",
+      "disposition": "PROPOSED_REGISTERED_WITH_UUID_NORMALIZATION",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/activity/learner-notification-course-action-model.ts",
+        "src/modules/admin-ui/super-admin-course-dependencies-service.ts",
+        "src/modules/admin-ui/super-admin-course-query-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/activity/learner-notification-course-action-model.ts",
+        "src/modules/admin-ui/super-admin-course-dependencies-service.ts",
+        "src/modules/admin-ui/super-admin-course-query-model.ts"
+      ],
+      "semanticRisk": "Legacy numeric ID maps to UUID in vNext; no old-row import needed for greenfield.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "classroom_messages",
+      "sourceColumn": "sender_name",
+      "sourceType": "varchar(255)",
+      "sourceDefinition": "varchar(255) DEFAULT NULL",
+      "sourceRiskFlags": [],
+      "targetCandidate": "classroom_messages.sender_name",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/activity/learner-notification-course-action-model.ts",
+        "src/modules/admin-ui/super-admin-course-dependencies-service.ts",
+        "src/modules/admin-ui/super-admin-course-query-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/activity/learner-notification-course-action-model.ts",
+        "src/modules/admin-ui/super-admin-course-dependencies-service.ts",
+        "src/modules/admin-ui/super-admin-course-query-model.ts"
+      ],
+      "semanticRisk": "Standard field mapping from legacy classroom_messages to classroom_messages.sender_name.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "classroom_messages",
+      "sourceColumn": "sender_role",
+      "sourceType": "varchar(64)",
+      "sourceDefinition": "varchar(64) DEFAULT NULL",
+      "sourceRiskFlags": [],
+      "targetCandidate": "classroom_messages.sender_role",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/activity/learner-notification-course-action-model.ts",
+        "src/modules/admin-ui/super-admin-course-dependencies-service.ts",
+        "src/modules/admin-ui/super-admin-course-query-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/activity/learner-notification-course-action-model.ts",
+        "src/modules/admin-ui/super-admin-course-dependencies-service.ts",
+        "src/modules/admin-ui/super-admin-course-query-model.ts"
+      ],
+      "semanticRisk": "Standard field mapping from legacy classroom_messages to classroom_messages.sender_role.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "classroom_messages",
+      "sourceColumn": "message_text",
+      "sourceType": "text",
+      "sourceDefinition": "text NOT NULL",
+      "sourceRiskFlags": [],
+      "targetCandidate": "classroom_messages.message_text",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/activity/learner-notification-course-action-model.ts",
+        "src/modules/admin-ui/super-admin-course-dependencies-service.ts",
+        "src/modules/admin-ui/super-admin-course-query-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/activity/learner-notification-course-action-model.ts",
+        "src/modules/admin-ui/super-admin-course-dependencies-service.ts",
+        "src/modules/admin-ui/super-admin-course-query-model.ts"
+      ],
+      "semanticRisk": "Standard field mapping from legacy classroom_messages to classroom_messages.message_text.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "classroom_messages",
+      "sourceColumn": "is_pinned",
+      "sourceType": "tinyint(1)",
+      "sourceDefinition": "tinyint(1) DEFAULT '0'",
+      "sourceRiskFlags": [],
+      "targetCandidate": "classroom_messages.is_pinned",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/activity/learner-notification-course-action-model.ts",
+        "src/modules/admin-ui/super-admin-course-dependencies-service.ts",
+        "src/modules/admin-ui/super-admin-course-query-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/activity/learner-notification-course-action-model.ts",
+        "src/modules/admin-ui/super-admin-course-dependencies-service.ts",
+        "src/modules/admin-ui/super-admin-course-query-model.ts"
+      ],
+      "semanticRisk": "Standard field mapping from legacy classroom_messages to classroom_messages.is_pinned.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "course",
+      "sourceColumn": "id",
+      "sourceType": "int",
+      "sourceDefinition": "int NOT NULL AUTO_INCREMENT",
+      "sourceRiskFlags": [
+        "INTEGER_KEY_TO_UUID_MAPPING"
+      ],
+      "targetCandidate": "program_term_courses.id",
+      "disposition": "PROPOSED_NORMALIZED_UUID_PRIMARY_KEY",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/activity/learner-notification-course-action-model.ts",
+        "src/modules/admin-ui/super-admin-course-dependencies-service.ts",
+        "src/modules/admin-ui/super-admin-course-query-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/activity/learner-notification-course-action-model.ts",
+        "src/modules/admin-ui/super-admin-course-dependencies-service.ts",
+        "src/modules/admin-ui/super-admin-course-query-model.ts"
+      ],
+      "semanticRisk": "Legacy numeric ID maps to UUID in vNext; no old-row import needed for greenfield.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "course",
+      "sourceColumn": "created_at",
+      "sourceType": "datetime(6)",
+      "sourceDefinition": "datetime(6) DEFAULT NULL",
+      "sourceRiskFlags": [
+        "TIMEZONE_AND_DEADLINE_SEMANTICS"
+      ],
+      "targetCandidate": "program_term_courses.created_at",
+      "disposition": "PROPOSED_NORMALIZED_AUDIT_TIMESTAMP",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/activity/learner-notification-course-action-model.ts",
+        "src/modules/admin-ui/super-admin-course-dependencies-service.ts",
+        "src/modules/admin-ui/super-admin-course-query-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/activity/learner-notification-course-action-model.ts",
+        "src/modules/admin-ui/super-admin-course-dependencies-service.ts",
+        "src/modules/admin-ui/super-admin-course-query-model.ts"
+      ],
+      "semanticRisk": "Datetime(6) semantics differ from timestamptz; vNext stores UTC.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "course",
+      "sourceColumn": "is_deleted",
+      "sourceType": "tinyint(1)",
+      "sourceDefinition": "tinyint(1) DEFAULT '0'",
+      "sourceRiskFlags": [],
+      "targetCandidate": "program_term_courses.legacy_was_deleted",
+      "disposition": "PROPOSED_REDESIGNED_SOFT_DELETE_PATTERN",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/activity/learner-notification-course-action-model.ts",
+        "src/modules/admin-ui/super-admin-course-dependencies-service.ts",
+        "src/modules/admin-ui/super-admin-course-query-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/activity/learner-notification-course-action-model.ts",
+        "src/modules/admin-ui/super-admin-course-dependencies-service.ts",
+        "src/modules/admin-ui/super-admin-course-query-model.ts"
+      ],
+      "semanticRisk": "Soft-delete pattern replaced by status enum or archived_at timestamp in vNext.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "course",
+      "sourceColumn": "updated_at",
+      "sourceType": "datetime(6)",
+      "sourceDefinition": "datetime(6) DEFAULT NULL",
+      "sourceRiskFlags": [
+        "TIMEZONE_AND_DEADLINE_SEMANTICS"
+      ],
+      "targetCandidate": "program_term_courses.updated_at",
+      "disposition": "PROPOSED_NORMALIZED_AUDIT_TIMESTAMP",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/activity/learner-notification-course-action-model.ts",
+        "src/modules/admin-ui/super-admin-course-dependencies-service.ts",
+        "src/modules/admin-ui/super-admin-course-query-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/activity/learner-notification-course-action-model.ts",
+        "src/modules/admin-ui/super-admin-course-dependencies-service.ts",
+        "src/modules/admin-ui/super-admin-course-query-model.ts"
+      ],
+      "semanticRisk": "Datetime(6) semantics differ from timestamptz; vNext stores UTC.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "course",
+      "sourceColumn": "active",
+      "sourceType": "bit(1)",
+      "sourceDefinition": "bit(1) DEFAULT NULL",
+      "sourceRiskFlags": [],
+      "targetCandidate": "program_term_courses.is_active",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/activity/learner-notification-course-action-model.ts",
+        "src/modules/admin-ui/super-admin-course-dependencies-service.ts",
+        "src/modules/admin-ui/super-admin-course-query-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/activity/learner-notification-course-action-model.ts",
+        "src/modules/admin-ui/super-admin-course-dependencies-service.ts",
+        "src/modules/admin-ui/super-admin-course-query-model.ts"
+      ],
+      "semanticRisk": "Standard field mapping from legacy course to program_term_courses.is_active.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "course",
+      "sourceColumn": "allowed_for_display",
+      "sourceType": "int",
+      "sourceDefinition": "int DEFAULT NULL",
+      "sourceRiskFlags": [],
+      "targetCandidate": "program_term_courses.allowed_for_display",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/activity/learner-notification-course-action-model.ts",
+        "src/modules/admin-ui/super-admin-course-dependencies-service.ts",
+        "src/modules/admin-ui/super-admin-course-query-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/activity/learner-notification-course-action-model.ts",
+        "src/modules/admin-ui/super-admin-course-dependencies-service.ts",
+        "src/modules/admin-ui/super-admin-course-query-model.ts"
+      ],
+      "semanticRisk": "Standard field mapping from legacy course to program_term_courses.allowed_for_display.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "course",
+      "sourceColumn": "course_name",
+      "sourceType": "varchar(255)",
+      "sourceDefinition": "varchar(255) DEFAULT NULL",
+      "sourceRiskFlags": [],
+      "targetCandidate": "program_term_courses.course_name",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/activity/learner-notification-course-action-model.ts",
+        "src/modules/admin-ui/super-admin-course-dependencies-service.ts",
+        "src/modules/admin-ui/super-admin-course-query-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/activity/learner-notification-course-action-model.ts",
+        "src/modules/admin-ui/super-admin-course-dependencies-service.ts",
+        "src/modules/admin-ui/super-admin-course-query-model.ts"
+      ],
+      "semanticRisk": "Standard field mapping from legacy course to program_term_courses.course_name.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "course",
+      "sourceColumn": "created_by_org_id",
+      "sourceType": "int",
+      "sourceDefinition": "int DEFAULT NULL",
+      "sourceRiskFlags": [
+        "INTEGER_KEY_TO_UUID_MAPPING"
+      ],
+      "targetCandidate": "program_term_courses.created_by_org_id",
+      "disposition": "PROPOSED_REGISTERED_WITH_UUID_NORMALIZATION",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/activity/learner-notification-course-action-model.ts",
+        "src/modules/admin-ui/super-admin-course-dependencies-service.ts",
+        "src/modules/admin-ui/super-admin-course-query-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/activity/learner-notification-course-action-model.ts",
+        "src/modules/admin-ui/super-admin-course-dependencies-service.ts",
+        "src/modules/admin-ui/super-admin-course-query-model.ts"
+      ],
+      "semanticRisk": "Legacy numeric ID maps to UUID in vNext; no old-row import needed for greenfield.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "course",
+      "sourceColumn": "default_subscription_days",
+      "sourceType": "int",
+      "sourceDefinition": "int DEFAULT NULL",
+      "sourceRiskFlags": [],
+      "targetCandidate": "program_term_courses.default_subscription_days",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/activity/learner-notification-course-action-model.ts",
+        "src/modules/admin-ui/super-admin-course-dependencies-service.ts",
+        "src/modules/admin-ui/super-admin-course-query-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/activity/learner-notification-course-action-model.ts",
+        "src/modules/admin-ui/super-admin-course-dependencies-service.ts",
+        "src/modules/admin-ui/super-admin-course-query-model.ts"
+      ],
+      "semanticRisk": "Standard field mapping from legacy course to program_term_courses.default_subscription_days.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "course",
+      "sourceColumn": "dept_id",
+      "sourceType": "int",
+      "sourceDefinition": "int DEFAULT NULL",
+      "sourceRiskFlags": [
+        "INTEGER_KEY_TO_UUID_MAPPING"
+      ],
+      "targetCandidate": "program_term_courses.dept_id",
+      "disposition": "PROPOSED_REGISTERED_WITH_UUID_NORMALIZATION",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/activity/learner-notification-course-action-model.ts",
+        "src/modules/admin-ui/super-admin-course-dependencies-service.ts",
+        "src/modules/admin-ui/super-admin-course-query-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/activity/learner-notification-course-action-model.ts",
+        "src/modules/admin-ui/super-admin-course-dependencies-service.ts",
+        "src/modules/admin-ui/super-admin-course-query-model.ts"
+      ],
+      "semanticRisk": "Legacy numeric ID maps to UUID in vNext; no old-row import needed for greenfield.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "course",
+      "sourceColumn": "enabled",
+      "sourceType": "bit(1)",
+      "sourceDefinition": "bit(1) DEFAULT NULL",
+      "sourceRiskFlags": [],
+      "targetCandidate": "program_term_courses.enabled",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/activity/learner-notification-course-action-model.ts",
+        "src/modules/admin-ui/super-admin-course-dependencies-service.ts",
+        "src/modules/admin-ui/super-admin-course-query-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/activity/learner-notification-course-action-model.ts",
+        "src/modules/admin-ui/super-admin-course-dependencies-service.ts",
+        "src/modules/admin-ui/super-admin-course-query-model.ts"
+      ],
+      "semanticRisk": "Standard field mapping from legacy course to program_term_courses.enabled.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "course",
+      "sourceColumn": "formal_title",
+      "sourceType": "varchar(255)",
+      "sourceDefinition": "varchar(255) DEFAULT NULL",
+      "sourceRiskFlags": [],
+      "targetCandidate": "program_term_courses.formal_title",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/activity/learner-notification-course-action-model.ts",
+        "src/modules/admin-ui/super-admin-course-dependencies-service.ts",
+        "src/modules/admin-ui/super-admin-course-query-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/activity/learner-notification-course-action-model.ts",
+        "src/modules/admin-ui/super-admin-course-dependencies-service.ts",
+        "src/modules/admin-ui/super-admin-course-query-model.ts"
+      ],
+      "semanticRisk": "Standard field mapping from legacy course to program_term_courses.formal_title.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "course",
+      "sourceColumn": "contents",
+      "sourceType": "json",
+      "sourceDefinition": "json DEFAULT NULL",
+      "sourceRiskFlags": [
+        "STRUCTURED_PAYLOAD_SEMANTIC_SCHEMA"
+      ],
+      "targetCandidate": "program_term_courses.contents",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/activity/learner-notification-course-action-model.ts",
+        "src/modules/admin-ui/super-admin-course-dependencies-service.ts",
+        "src/modules/admin-ui/super-admin-course-query-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/activity/learner-notification-course-action-model.ts",
+        "src/modules/admin-ui/super-admin-course-dependencies-service.ts",
+        "src/modules/admin-ui/super-admin-course-query-model.ts"
+      ],
+      "semanticRisk": "JSON payload: vNext uses typed JSONB or separate normalized columns.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "course",
+      "sourceColumn": "parent_course_id",
+      "sourceType": "int",
+      "sourceDefinition": "int DEFAULT NULL",
+      "sourceRiskFlags": [
+        "INTEGER_KEY_TO_UUID_MAPPING"
+      ],
+      "targetCandidate": "program_term_courses.parent_course_id",
+      "disposition": "PROPOSED_REGISTERED_WITH_UUID_NORMALIZATION",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/activity/learner-notification-course-action-model.ts",
+        "src/modules/admin-ui/super-admin-course-dependencies-service.ts",
+        "src/modules/admin-ui/super-admin-course-query-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/activity/learner-notification-course-action-model.ts",
+        "src/modules/admin-ui/super-admin-course-dependencies-service.ts",
+        "src/modules/admin-ui/super-admin-course-query-model.ts"
+      ],
+      "semanticRisk": "Legacy numeric ID maps to UUID in vNext; no old-row import needed for greenfield.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "course",
+      "sourceColumn": "short_title",
+      "sourceType": "varchar(255)",
+      "sourceDefinition": "varchar(255) DEFAULT NULL",
+      "sourceRiskFlags": [],
+      "targetCandidate": "program_term_courses.short_title",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/activity/learner-notification-course-action-model.ts",
+        "src/modules/admin-ui/super-admin-course-dependencies-service.ts",
+        "src/modules/admin-ui/super-admin-course-query-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/activity/learner-notification-course-action-model.ts",
+        "src/modules/admin-ui/super-admin-course-dependencies-service.ts",
+        "src/modules/admin-ui/super-admin-course-query-model.ts"
+      ],
+      "semanticRisk": "Standard field mapping from legacy course to program_term_courses.short_title.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "course",
+      "sourceColumn": "slug",
+      "sourceType": "varchar(64)",
+      "sourceDefinition": "varchar(64) DEFAULT NULL",
+      "sourceRiskFlags": [],
+      "targetCandidate": "program_term_courses.slug",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/activity/learner-notification-course-action-model.ts",
+        "src/modules/admin-ui/super-admin-course-dependencies-service.ts",
+        "src/modules/admin-ui/super-admin-course-query-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/activity/learner-notification-course-action-model.ts",
+        "src/modules/admin-ui/super-admin-course-dependencies-service.ts",
+        "src/modules/admin-ui/super-admin-course-query-model.ts"
+      ],
+      "semanticRisk": "Standard field mapping from legacy course to program_term_courses.slug.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "course",
+      "sourceColumn": "version",
+      "sourceType": "bigint",
+      "sourceDefinition": "bigint NOT NULL DEFAULT '0'",
+      "sourceRiskFlags": [],
+      "targetCandidate": "program_term_courses.version",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/activity/learner-notification-course-action-model.ts",
+        "src/modules/admin-ui/super-admin-course-dependencies-service.ts",
+        "src/modules/admin-ui/super-admin-course-query-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/activity/learner-notification-course-action-model.ts",
+        "src/modules/admin-ui/super-admin-course-dependencies-service.ts",
+        "src/modules/admin-ui/super-admin-course-query-model.ts"
+      ],
+      "semanticRisk": "Standard field mapping from legacy course to program_term_courses.version.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "course",
+      "sourceColumn": "course_name_key",
+      "sourceType": "varchar(255)",
+      "sourceDefinition": "varchar(255) GENERATED ALWAYS AS ((case when (((`is_deleted` is null) or (`is_deleted` = 0)) and (`course_name` is not null) and (trim(`course_name`) <> _utf8mb4'')) then lower(trim(`course_name`)) else NULL end)) STORED",
+      "sourceRiskFlags": [],
+      "targetCandidate": "program_term_courses.course_name_key",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/activity/learner-notification-course-action-model.ts",
+        "src/modules/admin-ui/super-admin-course-dependencies-service.ts",
+        "src/modules/admin-ui/super-admin-course-query-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/activity/learner-notification-course-action-model.ts",
+        "src/modules/admin-ui/super-admin-course-dependencies-service.ts",
+        "src/modules/admin-ui/super-admin-course-query-model.ts"
+      ],
+      "semanticRisk": "Standard field mapping from legacy course to program_term_courses.course_name_key.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "course",
+      "sourceColumn": "short_title_key",
+      "sourceType": "varchar(255)",
+      "sourceDefinition": "varchar(255) GENERATED ALWAYS AS ((case when (((`is_deleted` is null) or (`is_deleted` = 0)) and (`short_title` is not null) and (trim(`short_title`) <> _utf8mb4'')) then lower(trim(`short_title`)) else NULL end)) STORED",
+      "sourceRiskFlags": [],
+      "targetCandidate": "program_term_courses.short_title_key",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/activity/learner-notification-course-action-model.ts",
+        "src/modules/admin-ui/super-admin-course-dependencies-service.ts",
+        "src/modules/admin-ui/super-admin-course-query-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/activity/learner-notification-course-action-model.ts",
+        "src/modules/admin-ui/super-admin-course-dependencies-service.ts",
+        "src/modules/admin-ui/super-admin-course-query-model.ts"
+      ],
+      "semanticRisk": "Standard field mapping from legacy course to program_term_courses.short_title_key.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "discussions",
+      "sourceColumn": "id",
+      "sourceType": "int",
+      "sourceDefinition": "int NOT NULL AUTO_INCREMENT",
+      "sourceRiskFlags": [
+        "INTEGER_KEY_TO_UUID_MAPPING"
+      ],
+      "targetCandidate": "discussions.id",
+      "disposition": "PROPOSED_NORMALIZED_UUID_PRIMARY_KEY",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/activity/learner-notification-course-action-model.ts",
+        "src/modules/admin-ui/super-admin-course-dependencies-service.ts",
+        "src/modules/admin-ui/super-admin-course-query-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/activity/learner-notification-course-action-model.ts",
+        "src/modules/admin-ui/super-admin-course-dependencies-service.ts",
+        "src/modules/admin-ui/super-admin-course-query-model.ts"
+      ],
+      "semanticRisk": "Legacy numeric ID maps to UUID in vNext; no old-row import needed for greenfield.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "discussions",
+      "sourceColumn": "created_at",
+      "sourceType": "datetime(6)",
+      "sourceDefinition": "datetime(6) DEFAULT NULL",
+      "sourceRiskFlags": [
+        "TIMEZONE_AND_DEADLINE_SEMANTICS"
+      ],
+      "targetCandidate": "discussions.created_at",
+      "disposition": "PROPOSED_NORMALIZED_AUDIT_TIMESTAMP",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/activity/learner-notification-course-action-model.ts",
+        "src/modules/admin-ui/super-admin-course-dependencies-service.ts",
+        "src/modules/admin-ui/super-admin-course-query-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/activity/learner-notification-course-action-model.ts",
+        "src/modules/admin-ui/super-admin-course-dependencies-service.ts",
+        "src/modules/admin-ui/super-admin-course-query-model.ts"
+      ],
+      "semanticRisk": "Datetime(6) semantics differ from timestamptz; vNext stores UTC.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "discussions",
+      "sourceColumn": "is_deleted",
+      "sourceType": "tinyint(1)",
+      "sourceDefinition": "tinyint(1) DEFAULT '0'",
+      "sourceRiskFlags": [],
+      "targetCandidate": "discussions.is_deleted",
+      "disposition": "PROPOSED_REDESIGNED_SOFT_DELETE_PATTERN",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/activity/learner-notification-course-action-model.ts",
+        "src/modules/admin-ui/super-admin-course-dependencies-service.ts",
+        "src/modules/admin-ui/super-admin-course-query-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/activity/learner-notification-course-action-model.ts",
+        "src/modules/admin-ui/super-admin-course-dependencies-service.ts",
+        "src/modules/admin-ui/super-admin-course-query-model.ts"
+      ],
+      "semanticRisk": "Soft-delete pattern replaced by status enum or archived_at timestamp in vNext.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "discussions",
+      "sourceColumn": "updated_at",
+      "sourceType": "datetime(6)",
+      "sourceDefinition": "datetime(6) DEFAULT NULL",
+      "sourceRiskFlags": [
+        "TIMEZONE_AND_DEADLINE_SEMANTICS"
+      ],
+      "targetCandidate": "discussions.updated_at",
+      "disposition": "PROPOSED_NORMALIZED_AUDIT_TIMESTAMP",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/activity/learner-notification-course-action-model.ts",
+        "src/modules/admin-ui/super-admin-course-dependencies-service.ts",
+        "src/modules/admin-ui/super-admin-course-query-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/activity/learner-notification-course-action-model.ts",
+        "src/modules/admin-ui/super-admin-course-dependencies-service.ts",
+        "src/modules/admin-ui/super-admin-course-query-model.ts"
+      ],
+      "semanticRisk": "Datetime(6) semantics differ from timestamptz; vNext stores UTC.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "discussions",
+      "sourceColumn": "content_text",
+      "sourceType": "varchar(255)",
+      "sourceDefinition": "varchar(255) DEFAULT NULL",
+      "sourceRiskFlags": [],
+      "targetCandidate": "discussions.content_text",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/activity/learner-notification-course-action-model.ts",
+        "src/modules/admin-ui/super-admin-course-dependencies-service.ts",
+        "src/modules/admin-ui/super-admin-course-query-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/activity/learner-notification-course-action-model.ts",
+        "src/modules/admin-ui/super-admin-course-dependencies-service.ts",
+        "src/modules/admin-ui/super-admin-course-query-model.ts"
+      ],
+      "semanticRisk": "Standard field mapping from legacy discussions to discussions.content_text.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "discussions",
+      "sourceColumn": "lesson_content_id",
+      "sourceType": "int",
+      "sourceDefinition": "int DEFAULT NULL",
+      "sourceRiskFlags": [
+        "INTEGER_KEY_TO_UUID_MAPPING"
+      ],
+      "targetCandidate": "discussions.lesson_content_id",
+      "disposition": "PROPOSED_REGISTERED_WITH_UUID_NORMALIZATION",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/activity/learner-notification-course-action-model.ts",
+        "src/modules/admin-ui/super-admin-course-dependencies-service.ts",
+        "src/modules/admin-ui/super-admin-course-query-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/activity/learner-notification-course-action-model.ts",
+        "src/modules/admin-ui/super-admin-course-dependencies-service.ts",
+        "src/modules/admin-ui/super-admin-course-query-model.ts"
+      ],
+      "semanticRisk": "Legacy numeric ID maps to UUID in vNext; no old-row import needed for greenfield.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "discussions",
+      "sourceColumn": "profile_name",
+      "sourceType": "varchar(255)",
+      "sourceDefinition": "varchar(255) DEFAULT NULL",
+      "sourceRiskFlags": [],
+      "targetCandidate": "discussions.profile_name",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/activity/learner-notification-course-action-model.ts",
+        "src/modules/admin-ui/super-admin-course-dependencies-service.ts",
+        "src/modules/admin-ui/super-admin-course-query-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/activity/learner-notification-course-action-model.ts",
+        "src/modules/admin-ui/super-admin-course-dependencies-service.ts",
+        "src/modules/admin-ui/super-admin-course-query-model.ts"
+      ],
+      "semanticRisk": "Standard field mapping from legacy discussions to discussions.profile_name.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "discussions",
+      "sourceColumn": "sequence",
+      "sourceType": "int",
+      "sourceDefinition": "int DEFAULT NULL",
+      "sourceRiskFlags": [],
+      "targetCandidate": "discussions.sequence",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/activity/learner-notification-course-action-model.ts",
+        "src/modules/admin-ui/super-admin-course-dependencies-service.ts",
+        "src/modules/admin-ui/super-admin-course-query-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/activity/learner-notification-course-action-model.ts",
+        "src/modules/admin-ui/super-admin-course-dependencies-service.ts",
+        "src/modules/admin-ui/super-admin-course-query-model.ts"
+      ],
+      "semanticRisk": "Standard field mapping from legacy discussions to discussions.sequence.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "discussions",
+      "sourceColumn": "user_id",
+      "sourceType": "int",
+      "sourceDefinition": "int DEFAULT NULL",
+      "sourceRiskFlags": [
+        "INTEGER_KEY_TO_UUID_MAPPING"
+      ],
+      "targetCandidate": "discussions.user_id",
+      "disposition": "PROPOSED_REGISTERED_WITH_UUID_NORMALIZATION",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/activity/learner-notification-course-action-model.ts",
+        "src/modules/admin-ui/super-admin-course-dependencies-service.ts",
+        "src/modules/admin-ui/super-admin-course-query-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/activity/learner-notification-course-action-model.ts",
+        "src/modules/admin-ui/super-admin-course-dependencies-service.ts",
+        "src/modules/admin-ui/super-admin-course-query-model.ts"
+      ],
+      "semanticRisk": "Legacy numeric ID maps to UUID in vNext; no old-row import needed for greenfield.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "discussions",
+      "sourceColumn": "user_name",
+      "sourceType": "varchar(255)",
+      "sourceDefinition": "varchar(255) DEFAULT NULL",
+      "sourceRiskFlags": [],
+      "targetCandidate": "discussions.user_name",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/activity/learner-notification-course-action-model.ts",
+        "src/modules/admin-ui/super-admin-course-dependencies-service.ts",
+        "src/modules/admin-ui/super-admin-course-query-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/activity/learner-notification-course-action-model.ts",
+        "src/modules/admin-ui/super-admin-course-dependencies-service.ts",
+        "src/modules/admin-ui/super-admin-course-query-model.ts"
+      ],
+      "semanticRisk": "Standard field mapping from legacy discussions to discussions.user_name.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "discussions",
+      "sourceColumn": "parent_discussion_id",
+      "sourceType": "bigint",
+      "sourceDefinition": "bigint DEFAULT NULL",
+      "sourceRiskFlags": [
+        "INTEGER_KEY_TO_UUID_MAPPING"
+      ],
+      "targetCandidate": "discussions.parent_discussion_id",
+      "disposition": "PROPOSED_REGISTERED_WITH_UUID_NORMALIZATION",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/activity/learner-notification-course-action-model.ts",
+        "src/modules/admin-ui/super-admin-course-dependencies-service.ts",
+        "src/modules/admin-ui/super-admin-course-query-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/activity/learner-notification-course-action-model.ts",
+        "src/modules/admin-ui/super-admin-course-dependencies-service.ts",
+        "src/modules/admin-ui/super-admin-course-query-model.ts"
+      ],
+      "semanticRisk": "Legacy numeric ID maps to UUID in vNext; no old-row import needed for greenfield.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "discussions",
+      "sourceColumn": "discussion_status",
+      "sourceType": "varchar(20)",
+      "sourceDefinition": "varchar(20) NOT NULL DEFAULT 'OPEN'",
+      "sourceRiskFlags": [],
+      "targetCandidate": "discussions.discussion_status",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/activity/learner-notification-course-action-model.ts",
+        "src/modules/admin-ui/super-admin-course-dependencies-service.ts",
+        "src/modules/admin-ui/super-admin-course-query-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/activity/learner-notification-course-action-model.ts",
+        "src/modules/admin-ui/super-admin-course-dependencies-service.ts",
+        "src/modules/admin-ui/super-admin-course-query-model.ts"
+      ],
+      "semanticRisk": "Standard field mapping from legacy discussions to discussions.discussion_status.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "discussions",
+      "sourceColumn": "is_faculty_answer",
+      "sourceType": "bit(1)",
+      "sourceDefinition": "bit(1) NOT NULL DEFAULT b'0'",
+      "sourceRiskFlags": [],
+      "targetCandidate": "discussions.is_faculty_answer",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/activity/learner-notification-course-action-model.ts",
+        "src/modules/admin-ui/super-admin-course-dependencies-service.ts",
+        "src/modules/admin-ui/super-admin-course-query-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/activity/learner-notification-course-action-model.ts",
+        "src/modules/admin-ui/super-admin-course-dependencies-service.ts",
+        "src/modules/admin-ui/super-admin-course-query-model.ts"
+      ],
+      "semanticRisk": "Standard field mapping from legacy discussions to discussions.is_faculty_answer.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "discussions",
+      "sourceColumn": "resolved_at",
+      "sourceType": "datetime(6)",
+      "sourceDefinition": "datetime(6) DEFAULT NULL",
+      "sourceRiskFlags": [
+        "TIMEZONE_AND_DEADLINE_SEMANTICS"
+      ],
+      "targetCandidate": "discussions.resolved_at",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/activity/learner-notification-course-action-model.ts",
+        "src/modules/admin-ui/super-admin-course-dependencies-service.ts",
+        "src/modules/admin-ui/super-admin-course-query-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/activity/learner-notification-course-action-model.ts",
+        "src/modules/admin-ui/super-admin-course-dependencies-service.ts",
+        "src/modules/admin-ui/super-admin-course-query-model.ts"
+      ],
+      "semanticRisk": "Datetime(6) semantics differ from timestamptz; vNext stores UTC.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "discussions",
+      "sourceColumn": "resolved_by",
+      "sourceType": "int",
+      "sourceDefinition": "int DEFAULT NULL",
+      "sourceRiskFlags": [],
+      "targetCandidate": "discussions.resolved_by",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/activity/learner-notification-course-action-model.ts",
+        "src/modules/admin-ui/super-admin-course-dependencies-service.ts",
+        "src/modules/admin-ui/super-admin-course-query-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/activity/learner-notification-course-action-model.ts",
+        "src/modules/admin-ui/super-admin-course-dependencies-service.ts",
+        "src/modules/admin-ui/super-admin-course-query-model.ts"
+      ],
+      "semanticRisk": "Standard field mapping from legacy discussions to discussions.resolved_by.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "discussions",
+      "sourceColumn": "attachment_url",
+      "sourceType": "text",
+      "sourceDefinition": "text",
+      "sourceRiskFlags": [],
+      "targetCandidate": "discussions.attachment_url",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/activity/learner-notification-course-action-model.ts",
+        "src/modules/admin-ui/super-admin-course-dependencies-service.ts",
+        "src/modules/admin-ui/super-admin-course-query-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/activity/learner-notification-course-action-model.ts",
+        "src/modules/admin-ui/super-admin-course-dependencies-service.ts",
+        "src/modules/admin-ui/super-admin-course-query-model.ts"
+      ],
+      "semanticRisk": "Standard field mapping from legacy discussions to discussions.attachment_url.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "learner_content_progress",
+      "sourceColumn": "id",
+      "sourceType": "int",
+      "sourceDefinition": "int NOT NULL AUTO_INCREMENT",
+      "sourceRiskFlags": [
+        "INTEGER_KEY_TO_UUID_MAPPING"
+      ],
+      "targetCandidate": "learner_content_progress.id",
+      "disposition": "PROPOSED_NORMALIZED_UUID_PRIMARY_KEY",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/activity/learner-notification-course-action-model.ts",
+        "src/modules/admin-ui/super-admin-course-dependencies-service.ts",
+        "src/modules/admin-ui/super-admin-course-query-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/activity/learner-notification-course-action-model.ts",
+        "src/modules/admin-ui/super-admin-course-dependencies-service.ts",
+        "src/modules/admin-ui/super-admin-course-query-model.ts"
+      ],
+      "semanticRisk": "Legacy numeric ID maps to UUID in vNext; no old-row import needed for greenfield.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "learner_content_progress",
+      "sourceColumn": "learner_id",
+      "sourceType": "int",
+      "sourceDefinition": "int NOT NULL",
+      "sourceRiskFlags": [
+        "INTEGER_KEY_TO_UUID_MAPPING"
+      ],
+      "targetCandidate": "learner_content_progress.learner_id",
+      "disposition": "PROPOSED_REGISTERED_WITH_UUID_NORMALIZATION",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/activity/learner-notification-course-action-model.ts",
+        "src/modules/admin-ui/super-admin-course-dependencies-service.ts",
+        "src/modules/admin-ui/super-admin-course-query-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/activity/learner-notification-course-action-model.ts",
+        "src/modules/admin-ui/super-admin-course-dependencies-service.ts",
+        "src/modules/admin-ui/super-admin-course-query-model.ts"
+      ],
+      "semanticRisk": "Legacy numeric ID maps to UUID in vNext; no old-row import needed for greenfield.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "learner_content_progress",
+      "sourceColumn": "lesson_content_id",
+      "sourceType": "int",
+      "sourceDefinition": "int NOT NULL",
+      "sourceRiskFlags": [
+        "INTEGER_KEY_TO_UUID_MAPPING"
+      ],
+      "targetCandidate": "learner_content_progress.lesson_content_id",
+      "disposition": "PROPOSED_REGISTERED_WITH_UUID_NORMALIZATION",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/activity/learner-notification-course-action-model.ts",
+        "src/modules/admin-ui/super-admin-course-dependencies-service.ts",
+        "src/modules/admin-ui/super-admin-course-query-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/activity/learner-notification-course-action-model.ts",
+        "src/modules/admin-ui/super-admin-course-dependencies-service.ts",
+        "src/modules/admin-ui/super-admin-course-query-model.ts"
+      ],
+      "semanticRisk": "Legacy numeric ID maps to UUID in vNext; no old-row import needed for greenfield.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "learner_content_progress",
+      "sourceColumn": "last_position_seconds",
+      "sourceType": "int",
+      "sourceDefinition": "int NOT NULL DEFAULT '0'",
+      "sourceRiskFlags": [],
+      "targetCandidate": "learner_content_progress.last_position_seconds",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/activity/learner-notification-course-action-model.ts",
+        "src/modules/admin-ui/super-admin-course-dependencies-service.ts",
+        "src/modules/admin-ui/super-admin-course-query-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/activity/learner-notification-course-action-model.ts",
+        "src/modules/admin-ui/super-admin-course-dependencies-service.ts",
+        "src/modules/admin-ui/super-admin-course-query-model.ts"
+      ],
+      "semanticRisk": "Standard field mapping from legacy learner_content_progress to learner_content_progress.last_position_seconds.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "learner_content_progress",
+      "sourceColumn": "duration_seconds",
+      "sourceType": "int",
+      "sourceDefinition": "int NOT NULL DEFAULT '0'",
+      "sourceRiskFlags": [],
+      "targetCandidate": "learner_content_progress.duration_seconds",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/activity/learner-notification-course-action-model.ts",
+        "src/modules/admin-ui/super-admin-course-dependencies-service.ts",
+        "src/modules/admin-ui/super-admin-course-query-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/activity/learner-notification-course-action-model.ts",
+        "src/modules/admin-ui/super-admin-course-dependencies-service.ts",
+        "src/modules/admin-ui/super-admin-course-query-model.ts"
+      ],
+      "semanticRisk": "Standard field mapping from legacy learner_content_progress to learner_content_progress.duration_seconds.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "learner_content_progress",
+      "sourceColumn": "completed_at",
+      "sourceType": "datetime(6)",
+      "sourceDefinition": "datetime(6) DEFAULT NULL",
+      "sourceRiskFlags": [
+        "TIMEZONE_AND_DEADLINE_SEMANTICS"
+      ],
+      "targetCandidate": "learner_content_progress.completed_at",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/activity/learner-notification-course-action-model.ts",
+        "src/modules/admin-ui/super-admin-course-dependencies-service.ts",
+        "src/modules/admin-ui/super-admin-course-query-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/activity/learner-notification-course-action-model.ts",
+        "src/modules/admin-ui/super-admin-course-dependencies-service.ts",
+        "src/modules/admin-ui/super-admin-course-query-model.ts"
+      ],
+      "semanticRisk": "Datetime(6) semantics differ from timestamptz; vNext stores UTC.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "learner_content_progress",
+      "sourceColumn": "created_at",
+      "sourceType": "datetime(6)",
+      "sourceDefinition": "datetime(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6)",
+      "sourceRiskFlags": [
+        "TIMEZONE_AND_DEADLINE_SEMANTICS"
+      ],
+      "targetCandidate": "learner_content_progress.created_at",
+      "disposition": "PROPOSED_NORMALIZED_AUDIT_TIMESTAMP",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/activity/learner-notification-course-action-model.ts",
+        "src/modules/admin-ui/super-admin-course-dependencies-service.ts",
+        "src/modules/admin-ui/super-admin-course-query-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/activity/learner-notification-course-action-model.ts",
+        "src/modules/admin-ui/super-admin-course-dependencies-service.ts",
+        "src/modules/admin-ui/super-admin-course-query-model.ts"
+      ],
+      "semanticRisk": "Datetime(6) semantics differ from timestamptz; vNext stores UTC.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "learner_content_progress",
+      "sourceColumn": "updated_at",
+      "sourceType": "datetime(6)",
+      "sourceDefinition": "datetime(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6)",
+      "sourceRiskFlags": [
+        "TIMEZONE_AND_DEADLINE_SEMANTICS"
+      ],
+      "targetCandidate": "learner_content_progress.updated_at",
+      "disposition": "PROPOSED_NORMALIZED_AUDIT_TIMESTAMP",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/activity/learner-notification-course-action-model.ts",
+        "src/modules/admin-ui/super-admin-course-dependencies-service.ts",
+        "src/modules/admin-ui/super-admin-course-query-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/activity/learner-notification-course-action-model.ts",
+        "src/modules/admin-ui/super-admin-course-dependencies-service.ts",
+        "src/modules/admin-ui/super-admin-course-query-model.ts"
+      ],
+      "semanticRisk": "Datetime(6) semantics differ from timestamptz; vNext stores UTC.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "learner_content_progress",
+      "sourceColumn": "is_deleted",
+      "sourceType": "tinyint(1)",
+      "sourceDefinition": "tinyint(1) NOT NULL DEFAULT '0'",
+      "sourceRiskFlags": [],
+      "targetCandidate": "learner_content_progress.is_deleted",
+      "disposition": "PROPOSED_REDESIGNED_SOFT_DELETE_PATTERN",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/activity/learner-notification-course-action-model.ts",
+        "src/modules/admin-ui/super-admin-course-dependencies-service.ts",
+        "src/modules/admin-ui/super-admin-course-query-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/activity/learner-notification-course-action-model.ts",
+        "src/modules/admin-ui/super-admin-course-dependencies-service.ts",
+        "src/modules/admin-ui/super-admin-course-query-model.ts"
+      ],
+      "semanticRisk": "Soft-delete pattern replaced by status enum or archived_at timestamp in vNext.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "learner_content_progress",
+      "sourceColumn": "first_completed_at",
+      "sourceType": "timestamp",
+      "sourceDefinition": "timestamp NULL DEFAULT NULL",
+      "sourceRiskFlags": [
+        "TIMEZONE_AND_DEADLINE_SEMANTICS"
+      ],
+      "targetCandidate": "learner_content_progress.first_completed_at",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/activity/learner-notification-course-action-model.ts",
+        "src/modules/admin-ui/super-admin-course-dependencies-service.ts",
+        "src/modules/admin-ui/super-admin-course-query-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/activity/learner-notification-course-action-model.ts",
+        "src/modules/admin-ui/super-admin-course-dependencies-service.ts",
+        "src/modules/admin-ui/super-admin-course-query-model.ts"
+      ],
+      "semanticRisk": "Datetime(6) semantics differ from timestamptz; vNext stores UTC.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "learner_content_progress",
+      "sourceColumn": "attempt",
+      "sourceType": "int",
+      "sourceDefinition": "int NOT NULL DEFAULT '1'",
+      "sourceRiskFlags": [],
+      "targetCandidate": "learner_content_progress.attempt",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/activity/learner-notification-course-action-model.ts",
+        "src/modules/admin-ui/super-admin-course-dependencies-service.ts",
+        "src/modules/admin-ui/super-admin-course-query-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/activity/learner-notification-course-action-model.ts",
+        "src/modules/admin-ui/super-admin-course-dependencies-service.ts",
+        "src/modules/admin-ui/super-admin-course-query-model.ts"
+      ],
+      "semanticRisk": "Standard field mapping from legacy learner_content_progress to learner_content_progress.attempt.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "lesson",
+      "sourceColumn": "id",
+      "sourceType": "int",
+      "sourceDefinition": "int NOT NULL AUTO_INCREMENT",
+      "sourceRiskFlags": [
+        "INTEGER_KEY_TO_UUID_MAPPING"
+      ],
+      "targetCandidate": "lesson.id",
+      "disposition": "PROPOSED_NORMALIZED_UUID_PRIMARY_KEY",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/activity/learner-notification-course-action-model.ts",
+        "src/modules/admin-ui/super-admin-course-dependencies-service.ts",
+        "src/modules/admin-ui/super-admin-course-query-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/activity/learner-notification-course-action-model.ts",
+        "src/modules/admin-ui/super-admin-course-dependencies-service.ts",
+        "src/modules/admin-ui/super-admin-course-query-model.ts"
+      ],
+      "semanticRisk": "Legacy numeric ID maps to UUID in vNext; no old-row import needed for greenfield.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "lesson",
+      "sourceColumn": "created_at",
+      "sourceType": "datetime(6)",
+      "sourceDefinition": "datetime(6) DEFAULT NULL",
+      "sourceRiskFlags": [
+        "TIMEZONE_AND_DEADLINE_SEMANTICS"
+      ],
+      "targetCandidate": "lesson.created_at",
+      "disposition": "PROPOSED_NORMALIZED_AUDIT_TIMESTAMP",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/activity/learner-notification-course-action-model.ts",
+        "src/modules/admin-ui/super-admin-course-dependencies-service.ts",
+        "src/modules/admin-ui/super-admin-course-query-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/activity/learner-notification-course-action-model.ts",
+        "src/modules/admin-ui/super-admin-course-dependencies-service.ts",
+        "src/modules/admin-ui/super-admin-course-query-model.ts"
+      ],
+      "semanticRisk": "Datetime(6) semantics differ from timestamptz; vNext stores UTC.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "lesson",
+      "sourceColumn": "is_deleted",
+      "sourceType": "tinyint(1)",
+      "sourceDefinition": "tinyint(1) DEFAULT '0'",
+      "sourceRiskFlags": [],
+      "targetCandidate": "lesson.is_deleted",
+      "disposition": "PROPOSED_REDESIGNED_SOFT_DELETE_PATTERN",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/activity/learner-notification-course-action-model.ts",
+        "src/modules/admin-ui/super-admin-course-dependencies-service.ts",
+        "src/modules/admin-ui/super-admin-course-query-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/activity/learner-notification-course-action-model.ts",
+        "src/modules/admin-ui/super-admin-course-dependencies-service.ts",
+        "src/modules/admin-ui/super-admin-course-query-model.ts"
+      ],
+      "semanticRisk": "Soft-delete pattern replaced by status enum or archived_at timestamp in vNext.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "lesson",
+      "sourceColumn": "updated_at",
+      "sourceType": "datetime(6)",
+      "sourceDefinition": "datetime(6) DEFAULT NULL",
+      "sourceRiskFlags": [
+        "TIMEZONE_AND_DEADLINE_SEMANTICS"
+      ],
+      "targetCandidate": "lesson.updated_at",
+      "disposition": "PROPOSED_NORMALIZED_AUDIT_TIMESTAMP",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/activity/learner-notification-course-action-model.ts",
+        "src/modules/admin-ui/super-admin-course-dependencies-service.ts",
+        "src/modules/admin-ui/super-admin-course-query-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/activity/learner-notification-course-action-model.ts",
+        "src/modules/admin-ui/super-admin-course-dependencies-service.ts",
+        "src/modules/admin-ui/super-admin-course-query-model.ts"
+      ],
+      "semanticRisk": "Datetime(6) semantics differ from timestamptz; vNext stores UTC.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "lesson",
+      "sourceColumn": "active",
+      "sourceType": "bit(1)",
+      "sourceDefinition": "bit(1) DEFAULT NULL",
+      "sourceRiskFlags": [],
+      "targetCandidate": "lesson.active",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/activity/learner-notification-course-action-model.ts",
+        "src/modules/admin-ui/super-admin-course-dependencies-service.ts",
+        "src/modules/admin-ui/super-admin-course-query-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/activity/learner-notification-course-action-model.ts",
+        "src/modules/admin-ui/super-admin-course-dependencies-service.ts",
+        "src/modules/admin-ui/super-admin-course-query-model.ts"
+      ],
+      "semanticRisk": "Standard field mapping from legacy lesson to lesson.active.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "lesson",
+      "sourceColumn": "course_id",
+      "sourceType": "int",
+      "sourceDefinition": "int DEFAULT NULL",
+      "sourceRiskFlags": [
+        "INTEGER_KEY_TO_UUID_MAPPING"
+      ],
+      "targetCandidate": "lesson.course_id",
+      "disposition": "PROPOSED_REGISTERED_WITH_UUID_NORMALIZATION",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/activity/learner-notification-course-action-model.ts",
+        "src/modules/admin-ui/super-admin-course-dependencies-service.ts",
+        "src/modules/admin-ui/super-admin-course-query-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/activity/learner-notification-course-action-model.ts",
+        "src/modules/admin-ui/super-admin-course-dependencies-service.ts",
+        "src/modules/admin-ui/super-admin-course-query-model.ts"
+      ],
+      "semanticRisk": "Legacy numeric ID maps to UUID in vNext; no old-row import needed for greenfield.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "lesson",
+      "sourceColumn": "enabled",
+      "sourceType": "bit(1)",
+      "sourceDefinition": "bit(1) DEFAULT NULL",
+      "sourceRiskFlags": [],
+      "targetCandidate": "lesson.enabled",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/activity/learner-notification-course-action-model.ts",
+        "src/modules/admin-ui/super-admin-course-dependencies-service.ts",
+        "src/modules/admin-ui/super-admin-course-query-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/activity/learner-notification-course-action-model.ts",
+        "src/modules/admin-ui/super-admin-course-dependencies-service.ts",
+        "src/modules/admin-ui/super-admin-course-query-model.ts"
+      ],
+      "semanticRisk": "Standard field mapping from legacy lesson to lesson.enabled.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "lesson",
+      "sourceColumn": "lesson_name",
+      "sourceType": "varchar(255)",
+      "sourceDefinition": "varchar(255) DEFAULT NULL",
+      "sourceRiskFlags": [],
+      "targetCandidate": "lesson.lesson_name",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/activity/learner-notification-course-action-model.ts",
+        "src/modules/admin-ui/super-admin-course-dependencies-service.ts",
+        "src/modules/admin-ui/super-admin-course-query-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/activity/learner-notification-course-action-model.ts",
+        "src/modules/admin-ui/super-admin-course-dependencies-service.ts",
+        "src/modules/admin-ui/super-admin-course-query-model.ts"
+      ],
+      "semanticRisk": "Standard field mapping from legacy lesson to lesson.lesson_name.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "lesson",
+      "sourceColumn": "sequence",
+      "sourceType": "bigint",
+      "sourceDefinition": "bigint DEFAULT NULL",
+      "sourceRiskFlags": [],
+      "targetCandidate": "lesson.sequence",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/activity/learner-notification-course-action-model.ts",
+        "src/modules/admin-ui/super-admin-course-dependencies-service.ts",
+        "src/modules/admin-ui/super-admin-course-query-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/activity/learner-notification-course-action-model.ts",
+        "src/modules/admin-ui/super-admin-course-dependencies-service.ts",
+        "src/modules/admin-ui/super-admin-course-query-model.ts"
+      ],
+      "semanticRisk": "Standard field mapping from legacy lesson to lesson.sequence.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "lesson",
+      "sourceColumn": "version",
+      "sourceType": "bigint",
+      "sourceDefinition": "bigint NOT NULL DEFAULT '0'",
+      "sourceRiskFlags": [],
+      "targetCandidate": "lesson.version",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/activity/learner-notification-course-action-model.ts",
+        "src/modules/admin-ui/super-admin-course-dependencies-service.ts",
+        "src/modules/admin-ui/super-admin-course-query-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/activity/learner-notification-course-action-model.ts",
+        "src/modules/admin-ui/super-admin-course-dependencies-service.ts",
+        "src/modules/admin-ui/super-admin-course-query-model.ts"
+      ],
+      "semanticRisk": "Standard field mapping from legacy lesson to lesson.version.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "lesson",
+      "sourceColumn": "lesson_name_key",
+      "sourceType": "varchar(255)",
+      "sourceDefinition": "varchar(255) GENERATED ALWAYS AS ((case when (((`is_deleted` is null) or (`is_deleted` = 0)) and (`lesson_name` is not null) and (trim(`lesson_name`) <> _utf8mb4'')) then lower(trim(`lesson_name`)) else NULL end)) STORED",
+      "sourceRiskFlags": [],
+      "targetCandidate": "lesson.lesson_name_key",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/activity/learner-notification-course-action-model.ts",
+        "src/modules/admin-ui/super-admin-course-dependencies-service.ts",
+        "src/modules/admin-ui/super-admin-course-query-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/activity/learner-notification-course-action-model.ts",
+        "src/modules/admin-ui/super-admin-course-dependencies-service.ts",
+        "src/modules/admin-ui/super-admin-course-query-model.ts"
+      ],
+      "semanticRisk": "Standard field mapping from legacy lesson to lesson.lesson_name_key.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "lesson_content_class_sequence",
+      "sourceColumn": "id",
+      "sourceType": "int",
+      "sourceDefinition": "int NOT NULL AUTO_INCREMENT",
+      "sourceRiskFlags": [
+        "INTEGER_KEY_TO_UUID_MAPPING"
+      ],
+      "targetCandidate": "lesson_content_class_sequence.id",
+      "disposition": "PROPOSED_NORMALIZED_UUID_PRIMARY_KEY",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/activity/learner-notification-course-action-model.ts",
+        "src/modules/admin-ui/super-admin-course-dependencies-service.ts",
+        "src/modules/admin-ui/super-admin-course-query-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/activity/learner-notification-course-action-model.ts",
+        "src/modules/admin-ui/super-admin-course-dependencies-service.ts",
+        "src/modules/admin-ui/super-admin-course-query-model.ts"
+      ],
+      "semanticRisk": "Legacy numeric ID maps to UUID in vNext; no old-row import needed for greenfield.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "lesson_content_class_sequence",
+      "sourceColumn": "lesson_content_id",
+      "sourceType": "int",
+      "sourceDefinition": "int NOT NULL",
+      "sourceRiskFlags": [
+        "INTEGER_KEY_TO_UUID_MAPPING"
+      ],
+      "targetCandidate": "lesson_content_class_sequence.lesson_content_id",
+      "disposition": "PROPOSED_REGISTERED_WITH_UUID_NORMALIZATION",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/activity/learner-notification-course-action-model.ts",
+        "src/modules/admin-ui/super-admin-course-dependencies-service.ts",
+        "src/modules/admin-ui/super-admin-course-query-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/activity/learner-notification-course-action-model.ts",
+        "src/modules/admin-ui/super-admin-course-dependencies-service.ts",
+        "src/modules/admin-ui/super-admin-course-query-model.ts"
+      ],
+      "semanticRisk": "Legacy numeric ID maps to UUID in vNext; no old-row import needed for greenfield.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "lesson_content_class_sequence",
+      "sourceColumn": "class_id",
+      "sourceType": "int",
+      "sourceDefinition": "int NOT NULL",
+      "sourceRiskFlags": [
+        "INTEGER_KEY_TO_UUID_MAPPING"
+      ],
+      "targetCandidate": "lesson_content_class_sequence.class_id",
+      "disposition": "PROPOSED_REGISTERED_WITH_UUID_NORMALIZATION",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/activity/learner-notification-course-action-model.ts",
+        "src/modules/admin-ui/super-admin-course-dependencies-service.ts",
+        "src/modules/admin-ui/super-admin-course-query-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/activity/learner-notification-course-action-model.ts",
+        "src/modules/admin-ui/super-admin-course-dependencies-service.ts",
+        "src/modules/admin-ui/super-admin-course-query-model.ts"
+      ],
+      "semanticRisk": "Legacy numeric ID maps to UUID in vNext; no old-row import needed for greenfield.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "lesson_content_class_sequence",
+      "sourceColumn": "sequence",
+      "sourceType": "bigint",
+      "sourceDefinition": "bigint NOT NULL DEFAULT '0'",
+      "sourceRiskFlags": [],
+      "targetCandidate": "lesson_content_class_sequence.sequence",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/activity/learner-notification-course-action-model.ts",
+        "src/modules/admin-ui/super-admin-course-dependencies-service.ts",
+        "src/modules/admin-ui/super-admin-course-query-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/activity/learner-notification-course-action-model.ts",
+        "src/modules/admin-ui/super-admin-course-dependencies-service.ts",
+        "src/modules/admin-ui/super-admin-course-query-model.ts"
+      ],
+      "semanticRisk": "Standard field mapping from legacy lesson_content_class_sequence to lesson_content_class_sequence.sequence.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "lesson_content_class_sequence",
+      "sourceColumn": "created_at",
+      "sourceType": "datetime(6)",
+      "sourceDefinition": "datetime(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6)",
+      "sourceRiskFlags": [
+        "TIMEZONE_AND_DEADLINE_SEMANTICS"
+      ],
+      "targetCandidate": "lesson_content_class_sequence.created_at",
+      "disposition": "PROPOSED_NORMALIZED_AUDIT_TIMESTAMP",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/activity/learner-notification-course-action-model.ts",
+        "src/modules/admin-ui/super-admin-course-dependencies-service.ts",
+        "src/modules/admin-ui/super-admin-course-query-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/activity/learner-notification-course-action-model.ts",
+        "src/modules/admin-ui/super-admin-course-dependencies-service.ts",
+        "src/modules/admin-ui/super-admin-course-query-model.ts"
+      ],
+      "semanticRisk": "Datetime(6) semantics differ from timestamptz; vNext stores UTC.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "lesson_content_class_sequence",
+      "sourceColumn": "updated_at",
+      "sourceType": "datetime(6)",
+      "sourceDefinition": "datetime(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6)",
+      "sourceRiskFlags": [
+        "TIMEZONE_AND_DEADLINE_SEMANTICS"
+      ],
+      "targetCandidate": "lesson_content_class_sequence.updated_at",
+      "disposition": "PROPOSED_NORMALIZED_AUDIT_TIMESTAMP",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/activity/learner-notification-course-action-model.ts",
+        "src/modules/admin-ui/super-admin-course-dependencies-service.ts",
+        "src/modules/admin-ui/super-admin-course-query-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/activity/learner-notification-course-action-model.ts",
+        "src/modules/admin-ui/super-admin-course-dependencies-service.ts",
+        "src/modules/admin-ui/super-admin-course-query-model.ts"
+      ],
+      "semanticRisk": "Datetime(6) semantics differ from timestamptz; vNext stores UTC.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "lesson_contents",
+      "sourceColumn": "id",
+      "sourceType": "int",
+      "sourceDefinition": "int NOT NULL AUTO_INCREMENT",
+      "sourceRiskFlags": [
+        "INTEGER_KEY_TO_UUID_MAPPING"
+      ],
+      "targetCandidate": "lesson_contents.id",
+      "disposition": "PROPOSED_NORMALIZED_UUID_PRIMARY_KEY",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/activity/learner-notification-course-action-model.ts",
+        "src/modules/admin-ui/super-admin-course-dependencies-service.ts",
+        "src/modules/admin-ui/super-admin-course-query-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/activity/learner-notification-course-action-model.ts",
+        "src/modules/admin-ui/super-admin-course-dependencies-service.ts",
+        "src/modules/admin-ui/super-admin-course-query-model.ts"
+      ],
+      "semanticRisk": "Legacy numeric ID maps to UUID in vNext; no old-row import needed for greenfield.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "lesson_contents",
+      "sourceColumn": "created_at",
+      "sourceType": "datetime(6)",
+      "sourceDefinition": "datetime(6) DEFAULT NULL",
+      "sourceRiskFlags": [
+        "TIMEZONE_AND_DEADLINE_SEMANTICS"
+      ],
+      "targetCandidate": "lesson_contents.created_at",
+      "disposition": "PROPOSED_NORMALIZED_AUDIT_TIMESTAMP",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/activity/learner-notification-course-action-model.ts",
+        "src/modules/admin-ui/super-admin-course-dependencies-service.ts",
+        "src/modules/admin-ui/super-admin-course-query-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/activity/learner-notification-course-action-model.ts",
+        "src/modules/admin-ui/super-admin-course-dependencies-service.ts",
+        "src/modules/admin-ui/super-admin-course-query-model.ts"
+      ],
+      "semanticRisk": "Datetime(6) semantics differ from timestamptz; vNext stores UTC.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "lesson_contents",
+      "sourceColumn": "is_deleted",
+      "sourceType": "tinyint(1)",
+      "sourceDefinition": "tinyint(1) DEFAULT '0'",
+      "sourceRiskFlags": [],
+      "targetCandidate": "lesson_contents.is_deleted",
+      "disposition": "PROPOSED_REDESIGNED_SOFT_DELETE_PATTERN",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/activity/learner-notification-course-action-model.ts",
+        "src/modules/admin-ui/super-admin-course-dependencies-service.ts",
+        "src/modules/admin-ui/super-admin-course-query-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/activity/learner-notification-course-action-model.ts",
+        "src/modules/admin-ui/super-admin-course-dependencies-service.ts",
+        "src/modules/admin-ui/super-admin-course-query-model.ts"
+      ],
+      "semanticRisk": "Soft-delete pattern replaced by status enum or archived_at timestamp in vNext.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "lesson_contents",
+      "sourceColumn": "updated_at",
+      "sourceType": "datetime(6)",
+      "sourceDefinition": "datetime(6) DEFAULT NULL",
+      "sourceRiskFlags": [
+        "TIMEZONE_AND_DEADLINE_SEMANTICS"
+      ],
+      "targetCandidate": "lesson_contents.updated_at",
+      "disposition": "PROPOSED_NORMALIZED_AUDIT_TIMESTAMP",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/activity/learner-notification-course-action-model.ts",
+        "src/modules/admin-ui/super-admin-course-dependencies-service.ts",
+        "src/modules/admin-ui/super-admin-course-query-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/activity/learner-notification-course-action-model.ts",
+        "src/modules/admin-ui/super-admin-course-dependencies-service.ts",
+        "src/modules/admin-ui/super-admin-course-query-model.ts"
+      ],
+      "semanticRisk": "Datetime(6) semantics differ from timestamptz; vNext stores UTC.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "lesson_contents",
+      "sourceColumn": "active",
+      "sourceType": "bit(1)",
+      "sourceDefinition": "bit(1) DEFAULT NULL",
+      "sourceRiskFlags": [],
+      "targetCandidate": "lesson_contents.active",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/activity/learner-notification-course-action-model.ts",
+        "src/modules/admin-ui/super-admin-course-dependencies-service.ts",
+        "src/modules/admin-ui/super-admin-course-query-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/activity/learner-notification-course-action-model.ts",
+        "src/modules/admin-ui/super-admin-course-dependencies-service.ts",
+        "src/modules/admin-ui/super-admin-course-query-model.ts"
+      ],
+      "semanticRisk": "Standard field mapping from legacy lesson_contents to lesson_contents.active.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "lesson_contents",
+      "sourceColumn": "class_id",
+      "sourceType": "int",
+      "sourceDefinition": "int DEFAULT NULL",
+      "sourceRiskFlags": [
+        "INTEGER_KEY_TO_UUID_MAPPING"
+      ],
+      "targetCandidate": "lesson_contents.class_id",
+      "disposition": "PROPOSED_REGISTERED_WITH_UUID_NORMALIZATION",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/activity/learner-notification-course-action-model.ts",
+        "src/modules/admin-ui/super-admin-course-dependencies-service.ts",
+        "src/modules/admin-ui/super-admin-course-query-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/activity/learner-notification-course-action-model.ts",
+        "src/modules/admin-ui/super-admin-course-dependencies-service.ts",
+        "src/modules/admin-ui/super-admin-course-query-model.ts"
+      ],
+      "semanticRisk": "Legacy numeric ID maps to UUID in vNext; no old-row import needed for greenfield.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "lesson_contents",
+      "sourceColumn": "content_data",
+      "sourceType": "json",
+      "sourceDefinition": "json DEFAULT NULL",
+      "sourceRiskFlags": [
+        "STRUCTURED_PAYLOAD_SEMANTIC_SCHEMA"
+      ],
+      "targetCandidate": "lesson_contents.content_data",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/activity/learner-notification-course-action-model.ts",
+        "src/modules/admin-ui/super-admin-course-dependencies-service.ts",
+        "src/modules/admin-ui/super-admin-course-query-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/activity/learner-notification-course-action-model.ts",
+        "src/modules/admin-ui/super-admin-course-dependencies-service.ts",
+        "src/modules/admin-ui/super-admin-course-query-model.ts"
+      ],
+      "semanticRisk": "JSON payload: vNext uses typed JSONB or separate normalized columns.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "lesson_contents",
+      "sourceColumn": "content_title",
+      "sourceType": "varchar(255)",
+      "sourceDefinition": "varchar(255) DEFAULT NULL",
+      "sourceRiskFlags": [],
+      "targetCandidate": "lesson_contents.content_title",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/activity/learner-notification-course-action-model.ts",
+        "src/modules/admin-ui/super-admin-course-dependencies-service.ts",
+        "src/modules/admin-ui/super-admin-course-query-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/activity/learner-notification-course-action-model.ts",
+        "src/modules/admin-ui/super-admin-course-dependencies-service.ts",
+        "src/modules/admin-ui/super-admin-course-query-model.ts"
+      ],
+      "semanticRisk": "Standard field mapping from legacy lesson_contents to lesson_contents.content_title.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "lesson_contents",
+      "sourceColumn": "content_type",
+      "sourceType": "varchar(255)",
+      "sourceDefinition": "varchar(255) DEFAULT NULL",
+      "sourceRiskFlags": [],
+      "targetCandidate": "lesson_contents.content_type",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/activity/learner-notification-course-action-model.ts",
+        "src/modules/admin-ui/super-admin-course-dependencies-service.ts",
+        "src/modules/admin-ui/super-admin-course-query-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/activity/learner-notification-course-action-model.ts",
+        "src/modules/admin-ui/super-admin-course-dependencies-service.ts",
+        "src/modules/admin-ui/super-admin-course-query-model.ts"
+      ],
+      "semanticRisk": "Standard field mapping from legacy lesson_contents to lesson_contents.content_type.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "lesson_contents",
+      "sourceColumn": "course_id",
+      "sourceType": "int",
+      "sourceDefinition": "int DEFAULT NULL",
+      "sourceRiskFlags": [
+        "INTEGER_KEY_TO_UUID_MAPPING"
+      ],
+      "targetCandidate": "lesson_contents.course_id",
+      "disposition": "PROPOSED_REGISTERED_WITH_UUID_NORMALIZATION",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/activity/learner-notification-course-action-model.ts",
+        "src/modules/admin-ui/super-admin-course-dependencies-service.ts",
+        "src/modules/admin-ui/super-admin-course-query-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/activity/learner-notification-course-action-model.ts",
+        "src/modules/admin-ui/super-admin-course-dependencies-service.ts",
+        "src/modules/admin-ui/super-admin-course-query-model.ts"
+      ],
+      "semanticRisk": "Legacy numeric ID maps to UUID in vNext; no old-row import needed for greenfield.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "lesson_contents",
+      "sourceColumn": "course_name",
+      "sourceType": "varchar(255)",
+      "sourceDefinition": "varchar(255) DEFAULT NULL",
+      "sourceRiskFlags": [],
+      "targetCandidate": "lesson_contents.course_name",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/activity/learner-notification-course-action-model.ts",
+        "src/modules/admin-ui/super-admin-course-dependencies-service.ts",
+        "src/modules/admin-ui/super-admin-course-query-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/activity/learner-notification-course-action-model.ts",
+        "src/modules/admin-ui/super-admin-course-dependencies-service.ts",
+        "src/modules/admin-ui/super-admin-course-query-model.ts"
+      ],
+      "semanticRisk": "Standard field mapping from legacy lesson_contents to lesson_contents.course_name.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "lesson_contents",
+      "sourceColumn": "enabled",
+      "sourceType": "bit(1)",
+      "sourceDefinition": "bit(1) DEFAULT NULL",
+      "sourceRiskFlags": [],
+      "targetCandidate": "lesson_contents.enabled",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/activity/learner-notification-course-action-model.ts",
+        "src/modules/admin-ui/super-admin-course-dependencies-service.ts",
+        "src/modules/admin-ui/super-admin-course-query-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/activity/learner-notification-course-action-model.ts",
+        "src/modules/admin-ui/super-admin-course-dependencies-service.ts",
+        "src/modules/admin-ui/super-admin-course-query-model.ts"
+      ],
+      "semanticRisk": "Standard field mapping from legacy lesson_contents to lesson_contents.enabled.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "lesson_contents",
+      "sourceColumn": "faculty_id",
+      "sourceType": "int",
+      "sourceDefinition": "int DEFAULT NULL",
+      "sourceRiskFlags": [
+        "INTEGER_KEY_TO_UUID_MAPPING"
+      ],
+      "targetCandidate": "lesson_contents.faculty_id",
+      "disposition": "PROPOSED_REGISTERED_WITH_UUID_NORMALIZATION",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/activity/learner-notification-course-action-model.ts",
+        "src/modules/admin-ui/super-admin-course-dependencies-service.ts",
+        "src/modules/admin-ui/super-admin-course-query-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/activity/learner-notification-course-action-model.ts",
+        "src/modules/admin-ui/super-admin-course-dependencies-service.ts",
+        "src/modules/admin-ui/super-admin-course-query-model.ts"
+      ],
+      "semanticRisk": "Legacy numeric ID maps to UUID in vNext; no old-row import needed for greenfield.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "lesson_contents",
+      "sourceColumn": "lesson_id",
+      "sourceType": "int",
+      "sourceDefinition": "int DEFAULT NULL",
+      "sourceRiskFlags": [
+        "INTEGER_KEY_TO_UUID_MAPPING"
+      ],
+      "targetCandidate": "lesson_contents.lesson_id",
+      "disposition": "PROPOSED_REGISTERED_WITH_UUID_NORMALIZATION",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/activity/learner-notification-course-action-model.ts",
+        "src/modules/admin-ui/super-admin-course-dependencies-service.ts",
+        "src/modules/admin-ui/super-admin-course-query-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/activity/learner-notification-course-action-model.ts",
+        "src/modules/admin-ui/super-admin-course-dependencies-service.ts",
+        "src/modules/admin-ui/super-admin-course-query-model.ts"
+      ],
+      "semanticRisk": "Legacy numeric ID maps to UUID in vNext; no old-row import needed for greenfield.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "lesson_contents",
+      "sourceColumn": "points",
+      "sourceType": "bigint",
+      "sourceDefinition": "bigint DEFAULT NULL",
+      "sourceRiskFlags": [],
+      "targetCandidate": "lesson_contents.points",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/activity/learner-notification-course-action-model.ts",
+        "src/modules/admin-ui/super-admin-course-dependencies-service.ts",
+        "src/modules/admin-ui/super-admin-course-query-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/activity/learner-notification-course-action-model.ts",
+        "src/modules/admin-ui/super-admin-course-dependencies-service.ts",
+        "src/modules/admin-ui/super-admin-course-query-model.ts"
+      ],
+      "semanticRisk": "Standard field mapping from legacy lesson_contents to lesson_contents.points.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "lesson_contents",
+      "sourceColumn": "sequence",
+      "sourceType": "bigint",
+      "sourceDefinition": "bigint DEFAULT NULL",
+      "sourceRiskFlags": [],
+      "targetCandidate": "lesson_contents.sequence",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/activity/learner-notification-course-action-model.ts",
+        "src/modules/admin-ui/super-admin-course-dependencies-service.ts",
+        "src/modules/admin-ui/super-admin-course-query-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/activity/learner-notification-course-action-model.ts",
+        "src/modules/admin-ui/super-admin-course-dependencies-service.ts",
+        "src/modules/admin-ui/super-admin-course-query-model.ts"
+      ],
+      "semanticRisk": "Standard field mapping from legacy lesson_contents to lesson_contents.sequence.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "lesson_contents",
+      "sourceColumn": "deadline",
+      "sourceType": "datetime",
+      "sourceDefinition": "datetime DEFAULT NULL",
+      "sourceRiskFlags": [
+        "TIMEZONE_AND_DEADLINE_SEMANTICS"
+      ],
+      "targetCandidate": "lesson_contents.deadline",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/activity/learner-notification-course-action-model.ts",
+        "src/modules/admin-ui/super-admin-course-dependencies-service.ts",
+        "src/modules/admin-ui/super-admin-course-query-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/activity/learner-notification-course-action-model.ts",
+        "src/modules/admin-ui/super-admin-course-dependencies-service.ts",
+        "src/modules/admin-ui/super-admin-course-query-model.ts"
+      ],
+      "semanticRisk": "Datetime(6) semantics differ from timestamptz; vNext stores UTC.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "lesson_contents",
+      "sourceColumn": "version",
+      "sourceType": "bigint",
+      "sourceDefinition": "bigint NOT NULL DEFAULT '0'",
+      "sourceRiskFlags": [],
+      "targetCandidate": "lesson_contents.version",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/activity/learner-notification-course-action-model.ts",
+        "src/modules/admin-ui/super-admin-course-dependencies-service.ts",
+        "src/modules/admin-ui/super-admin-course-query-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/activity/learner-notification-course-action-model.ts",
+        "src/modules/admin-ui/super-admin-course-dependencies-service.ts",
+        "src/modules/admin-ui/super-admin-course-query-model.ts"
+      ],
+      "semanticRisk": "Standard field mapping from legacy lesson_contents to lesson_contents.version.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    }
+  ]
+}

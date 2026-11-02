@@ -1,0 +1,3417 @@
+{
+  "id": "DB19-P06",
+  "recordType": "DB19_PACKAGE_SOURCE_FIELD_REVIEW",
+  "sourceSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+  "sourceInventory": "docs/planning/db-pass4-columns-db02_academics_and_timetable.json",
+  "originalFieldLedger": "docs/planning/database-parity-db02_academics_and_timetable-field-ledger.json",
+  "sourceTables": [
+    "batch",
+    "class",
+    "class_schedule",
+    "faculty_course_associations",
+    "faculty_course_mapping",
+    "faculty_teaching_assignment",
+    "lecture_hall",
+    "new_program",
+    "new_program_structure",
+    "program",
+    "program_structure",
+    "semester",
+    "semester_course"
+  ],
+  "sourceFieldCount": 125,
+  "reviewedProposals": 125,
+  "runtimeVerifiedCount": 0,
+  "fieldDispositionApproval": "PENDING_PACKAGE_ACCEPTANCE",
+  "privacyBoundary": "DB19-P06 scoped source field disposition only. Global P31/P32 and DB020 remain open.",
+  "testEvidenceStatus": "SOURCE_QUALITY_GATE_ONLY_NOT_RUNTIME_CERTIFIED",
+  "pendingAcceptance": "Registered PG17 producer/consumer and runtime verification for all 125 fields.",
+  "fields": [
+    {
+      "sourceTable": "batch",
+      "sourceColumn": "id",
+      "sourceType": "bigint",
+      "sourceDefinition": "bigint NOT NULL AUTO_INCREMENT",
+      "sourceRiskFlags": [
+        "INTEGER_KEY_TO_UUID_MAPPING"
+      ],
+      "targetCandidate": "batch.id",
+      "disposition": "PROPOSED_NORMALIZED_UUID_PRIMARY_KEY",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/academics/a2-scope.ts",
+        "src/modules/academics/academic-setup-error-copy.ts",
+        "src/modules/academics/admin-batch-promotion-read-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/academics/a2-scope.ts",
+        "src/modules/academics/academic-setup-error-copy.ts",
+        "src/modules/academics/admin-batch-promotion-read-model.ts"
+      ],
+      "semanticRisk": "Legacy numeric ID maps to UUID in vNext; no old-row import needed for greenfield.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "batch",
+      "sourceColumn": "academic_year",
+      "sourceType": "varchar(255)",
+      "sourceDefinition": "varchar(255) DEFAULT NULL",
+      "sourceRiskFlags": [],
+      "targetCandidate": "batch.academic_year",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/academics/a2-scope.ts",
+        "src/modules/academics/academic-setup-error-copy.ts",
+        "src/modules/academics/admin-batch-promotion-read-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/academics/a2-scope.ts",
+        "src/modules/academics/academic-setup-error-copy.ts",
+        "src/modules/academics/admin-batch-promotion-read-model.ts"
+      ],
+      "semanticRisk": "Standard field mapping from legacy batch to batch.academic_year.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "batch",
+      "sourceColumn": "batch_name",
+      "sourceType": "varchar(255)",
+      "sourceDefinition": "varchar(255) DEFAULT NULL",
+      "sourceRiskFlags": [],
+      "targetCandidate": "batch.batch_name",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/academics/a2-scope.ts",
+        "src/modules/academics/academic-setup-error-copy.ts",
+        "src/modules/academics/admin-batch-promotion-read-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/academics/a2-scope.ts",
+        "src/modules/academics/academic-setup-error-copy.ts",
+        "src/modules/academics/admin-batch-promotion-read-model.ts"
+      ],
+      "semanticRisk": "Standard field mapping from legacy batch to batch.batch_name.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "batch",
+      "sourceColumn": "created_at",
+      "sourceType": "datetime(6)",
+      "sourceDefinition": "datetime(6) DEFAULT NULL",
+      "sourceRiskFlags": [
+        "TIMEZONE_AND_DEADLINE_SEMANTICS"
+      ],
+      "targetCandidate": "batch.created_at",
+      "disposition": "PROPOSED_NORMALIZED_AUDIT_TIMESTAMP",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/academics/a2-scope.ts",
+        "src/modules/academics/academic-setup-error-copy.ts",
+        "src/modules/academics/admin-batch-promotion-read-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/academics/a2-scope.ts",
+        "src/modules/academics/academic-setup-error-copy.ts",
+        "src/modules/academics/admin-batch-promotion-read-model.ts"
+      ],
+      "semanticRisk": "Datetime(6) semantics differ from timestamptz; vNext stores UTC.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "batch",
+      "sourceColumn": "current_semester",
+      "sourceType": "int",
+      "sourceDefinition": "int DEFAULT NULL",
+      "sourceRiskFlags": [],
+      "targetCandidate": "batch.current_semester",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/academics/a2-scope.ts",
+        "src/modules/academics/academic-setup-error-copy.ts",
+        "src/modules/academics/admin-batch-promotion-read-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/academics/a2-scope.ts",
+        "src/modules/academics/academic-setup-error-copy.ts",
+        "src/modules/academics/admin-batch-promotion-read-model.ts"
+      ],
+      "semanticRisk": "Standard field mapping from legacy batch to batch.current_semester.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "batch",
+      "sourceColumn": "current_students",
+      "sourceType": "int",
+      "sourceDefinition": "int DEFAULT NULL",
+      "sourceRiskFlags": [],
+      "targetCandidate": "batch.current_students",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/academics/a2-scope.ts",
+        "src/modules/academics/academic-setup-error-copy.ts",
+        "src/modules/academics/admin-batch-promotion-read-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/academics/a2-scope.ts",
+        "src/modules/academics/academic-setup-error-copy.ts",
+        "src/modules/academics/admin-batch-promotion-read-model.ts"
+      ],
+      "semanticRisk": "Standard field mapping from legacy batch to batch.current_students.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "batch",
+      "sourceColumn": "end_date",
+      "sourceType": "datetime(6)",
+      "sourceDefinition": "datetime(6) DEFAULT NULL",
+      "sourceRiskFlags": [
+        "TIMEZONE_AND_DEADLINE_SEMANTICS"
+      ],
+      "targetCandidate": "batch.end_date",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/academics/a2-scope.ts",
+        "src/modules/academics/academic-setup-error-copy.ts",
+        "src/modules/academics/admin-batch-promotion-read-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/academics/a2-scope.ts",
+        "src/modules/academics/academic-setup-error-copy.ts",
+        "src/modules/academics/admin-batch-promotion-read-model.ts"
+      ],
+      "semanticRisk": "Datetime(6) semantics differ from timestamptz; vNext stores UTC.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "batch",
+      "sourceColumn": "program_id",
+      "sourceType": "bigint",
+      "sourceDefinition": "bigint DEFAULT NULL",
+      "sourceRiskFlags": [
+        "INTEGER_KEY_TO_UUID_MAPPING"
+      ],
+      "targetCandidate": "batch.program_id",
+      "disposition": "PROPOSED_REGISTERED_WITH_UUID_NORMALIZATION",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/academics/a2-scope.ts",
+        "src/modules/academics/academic-setup-error-copy.ts",
+        "src/modules/academics/admin-batch-promotion-read-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/academics/a2-scope.ts",
+        "src/modules/academics/academic-setup-error-copy.ts",
+        "src/modules/academics/admin-batch-promotion-read-model.ts"
+      ],
+      "semanticRisk": "Legacy numeric ID maps to UUID in vNext; no old-row import needed for greenfield.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "batch",
+      "sourceColumn": "start_date",
+      "sourceType": "datetime(6)",
+      "sourceDefinition": "datetime(6) DEFAULT NULL",
+      "sourceRiskFlags": [
+        "TIMEZONE_AND_DEADLINE_SEMANTICS"
+      ],
+      "targetCandidate": "batch.start_date",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/academics/a2-scope.ts",
+        "src/modules/academics/academic-setup-error-copy.ts",
+        "src/modules/academics/admin-batch-promotion-read-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/academics/a2-scope.ts",
+        "src/modules/academics/academic-setup-error-copy.ts",
+        "src/modules/academics/admin-batch-promotion-read-model.ts"
+      ],
+      "semanticRisk": "Datetime(6) semantics differ from timestamptz; vNext stores UTC.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "batch",
+      "sourceColumn": "status",
+      "sourceType": "varchar(255)",
+      "sourceDefinition": "varchar(255) DEFAULT NULL",
+      "sourceRiskFlags": [],
+      "targetCandidate": "batch.status",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/academics/a2-scope.ts",
+        "src/modules/academics/academic-setup-error-copy.ts",
+        "src/modules/academics/admin-batch-promotion-read-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/academics/a2-scope.ts",
+        "src/modules/academics/academic-setup-error-copy.ts",
+        "src/modules/academics/admin-batch-promotion-read-model.ts"
+      ],
+      "semanticRisk": "Standard field mapping from legacy batch to batch.status.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "batch",
+      "sourceColumn": "updated_at",
+      "sourceType": "datetime(6)",
+      "sourceDefinition": "datetime(6) DEFAULT NULL",
+      "sourceRiskFlags": [
+        "TIMEZONE_AND_DEADLINE_SEMANTICS"
+      ],
+      "targetCandidate": "batch.updated_at",
+      "disposition": "PROPOSED_NORMALIZED_AUDIT_TIMESTAMP",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/academics/a2-scope.ts",
+        "src/modules/academics/academic-setup-error-copy.ts",
+        "src/modules/academics/admin-batch-promotion-read-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/academics/a2-scope.ts",
+        "src/modules/academics/academic-setup-error-copy.ts",
+        "src/modules/academics/admin-batch-promotion-read-model.ts"
+      ],
+      "semanticRisk": "Datetime(6) semantics differ from timestamptz; vNext stores UTC.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "class",
+      "sourceColumn": "id",
+      "sourceType": "int",
+      "sourceDefinition": "int NOT NULL AUTO_INCREMENT",
+      "sourceRiskFlags": [
+        "INTEGER_KEY_TO_UUID_MAPPING"
+      ],
+      "targetCandidate": "class.id",
+      "disposition": "PROPOSED_NORMALIZED_UUID_PRIMARY_KEY",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/academics/a2-scope.ts",
+        "src/modules/academics/academic-setup-error-copy.ts",
+        "src/modules/academics/admin-batch-promotion-read-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/academics/a2-scope.ts",
+        "src/modules/academics/academic-setup-error-copy.ts",
+        "src/modules/academics/admin-batch-promotion-read-model.ts"
+      ],
+      "semanticRisk": "Legacy numeric ID maps to UUID in vNext; no old-row import needed for greenfield.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "class",
+      "sourceColumn": "created_at",
+      "sourceType": "datetime(6)",
+      "sourceDefinition": "datetime(6) DEFAULT NULL",
+      "sourceRiskFlags": [
+        "TIMEZONE_AND_DEADLINE_SEMANTICS"
+      ],
+      "targetCandidate": "class.created_at",
+      "disposition": "PROPOSED_NORMALIZED_AUDIT_TIMESTAMP",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/academics/a2-scope.ts",
+        "src/modules/academics/academic-setup-error-copy.ts",
+        "src/modules/academics/admin-batch-promotion-read-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/academics/a2-scope.ts",
+        "src/modules/academics/academic-setup-error-copy.ts",
+        "src/modules/academics/admin-batch-promotion-read-model.ts"
+      ],
+      "semanticRisk": "Datetime(6) semantics differ from timestamptz; vNext stores UTC.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "class",
+      "sourceColumn": "is_deleted",
+      "sourceType": "tinyint(1)",
+      "sourceDefinition": "tinyint(1) DEFAULT '0'",
+      "sourceRiskFlags": [],
+      "targetCandidate": "class.is_deleted",
+      "disposition": "PROPOSED_REDESIGNED_SOFT_DELETE_PATTERN",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/academics/a2-scope.ts",
+        "src/modules/academics/academic-setup-error-copy.ts",
+        "src/modules/academics/admin-batch-promotion-read-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/academics/a2-scope.ts",
+        "src/modules/academics/academic-setup-error-copy.ts",
+        "src/modules/academics/admin-batch-promotion-read-model.ts"
+      ],
+      "semanticRisk": "Soft-delete pattern replaced by status enum or archived_at timestamp in vNext.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "class",
+      "sourceColumn": "updated_at",
+      "sourceType": "datetime(6)",
+      "sourceDefinition": "datetime(6) DEFAULT NULL",
+      "sourceRiskFlags": [
+        "TIMEZONE_AND_DEADLINE_SEMANTICS"
+      ],
+      "targetCandidate": "class.updated_at",
+      "disposition": "PROPOSED_NORMALIZED_AUDIT_TIMESTAMP",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/academics/a2-scope.ts",
+        "src/modules/academics/academic-setup-error-copy.ts",
+        "src/modules/academics/admin-batch-promotion-read-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/academics/a2-scope.ts",
+        "src/modules/academics/academic-setup-error-copy.ts",
+        "src/modules/academics/admin-batch-promotion-read-model.ts"
+      ],
+      "semanticRisk": "Datetime(6) semantics differ from timestamptz; vNext stores UTC.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "class",
+      "sourceColumn": "batch_id",
+      "sourceType": "int",
+      "sourceDefinition": "int DEFAULT NULL",
+      "sourceRiskFlags": [
+        "INTEGER_KEY_TO_UUID_MAPPING"
+      ],
+      "targetCandidate": "class.batch_id",
+      "disposition": "PROPOSED_REGISTERED_WITH_UUID_NORMALIZATION",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/academics/a2-scope.ts",
+        "src/modules/academics/academic-setup-error-copy.ts",
+        "src/modules/academics/admin-batch-promotion-read-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/academics/a2-scope.ts",
+        "src/modules/academics/academic-setup-error-copy.ts",
+        "src/modules/academics/admin-batch-promotion-read-model.ts"
+      ],
+      "semanticRisk": "Legacy numeric ID maps to UUID in vNext; no old-row import needed for greenfield.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "class",
+      "sourceColumn": "description",
+      "sourceType": "varchar(255)",
+      "sourceDefinition": "varchar(255) DEFAULT NULL",
+      "sourceRiskFlags": [],
+      "targetCandidate": "class.description",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/academics/a2-scope.ts",
+        "src/modules/academics/academic-setup-error-copy.ts",
+        "src/modules/academics/admin-batch-promotion-read-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/academics/a2-scope.ts",
+        "src/modules/academics/academic-setup-error-copy.ts",
+        "src/modules/academics/admin-batch-promotion-read-model.ts"
+      ],
+      "semanticRisk": "Standard field mapping from legacy class to class.description.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "class",
+      "sourceColumn": "end_date",
+      "sourceType": "date",
+      "sourceDefinition": "date DEFAULT NULL",
+      "sourceRiskFlags": [],
+      "targetCandidate": "class.end_date",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/academics/a2-scope.ts",
+        "src/modules/academics/academic-setup-error-copy.ts",
+        "src/modules/academics/admin-batch-promotion-read-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/academics/a2-scope.ts",
+        "src/modules/academics/academic-setup-error-copy.ts",
+        "src/modules/academics/admin-batch-promotion-read-model.ts"
+      ],
+      "semanticRisk": "Standard field mapping from legacy class to class.end_date.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "class",
+      "sourceColumn": "lower_limit",
+      "sourceType": "int",
+      "sourceDefinition": "int DEFAULT NULL",
+      "sourceRiskFlags": [],
+      "targetCandidate": "class.lower_limit",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/academics/a2-scope.ts",
+        "src/modules/academics/academic-setup-error-copy.ts",
+        "src/modules/academics/admin-batch-promotion-read-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/academics/a2-scope.ts",
+        "src/modules/academics/academic-setup-error-copy.ts",
+        "src/modules/academics/admin-batch-promotion-read-model.ts"
+      ],
+      "semanticRisk": "Standard field mapping from legacy class to class.lower_limit.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "class",
+      "sourceColumn": "name",
+      "sourceType": "varchar(255)",
+      "sourceDefinition": "varchar(255) DEFAULT NULL",
+      "sourceRiskFlags": [],
+      "targetCandidate": "class.name",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/academics/a2-scope.ts",
+        "src/modules/academics/academic-setup-error-copy.ts",
+        "src/modules/academics/admin-batch-promotion-read-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/academics/a2-scope.ts",
+        "src/modules/academics/academic-setup-error-copy.ts",
+        "src/modules/academics/admin-batch-promotion-read-model.ts"
+      ],
+      "semanticRisk": "Standard field mapping from legacy class to class.name.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "class",
+      "sourceColumn": "program_id",
+      "sourceType": "int",
+      "sourceDefinition": "int DEFAULT NULL",
+      "sourceRiskFlags": [
+        "INTEGER_KEY_TO_UUID_MAPPING"
+      ],
+      "targetCandidate": "class.program_id",
+      "disposition": "PROPOSED_REGISTERED_WITH_UUID_NORMALIZATION",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/academics/a2-scope.ts",
+        "src/modules/academics/academic-setup-error-copy.ts",
+        "src/modules/academics/admin-batch-promotion-read-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/academics/a2-scope.ts",
+        "src/modules/academics/academic-setup-error-copy.ts",
+        "src/modules/academics/admin-batch-promotion-read-model.ts"
+      ],
+      "semanticRisk": "Legacy numeric ID maps to UUID in vNext; no old-row import needed for greenfield.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "class",
+      "sourceColumn": "start_date",
+      "sourceType": "date",
+      "sourceDefinition": "date DEFAULT NULL",
+      "sourceRiskFlags": [],
+      "targetCandidate": "class.start_date",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/academics/a2-scope.ts",
+        "src/modules/academics/academic-setup-error-copy.ts",
+        "src/modules/academics/admin-batch-promotion-read-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/academics/a2-scope.ts",
+        "src/modules/academics/academic-setup-error-copy.ts",
+        "src/modules/academics/admin-batch-promotion-read-model.ts"
+      ],
+      "semanticRisk": "Standard field mapping from legacy class to class.start_date.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "class",
+      "sourceColumn": "upper_limit",
+      "sourceType": "int",
+      "sourceDefinition": "int DEFAULT NULL",
+      "sourceRiskFlags": [],
+      "targetCandidate": "class.upper_limit",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/academics/a2-scope.ts",
+        "src/modules/academics/academic-setup-error-copy.ts",
+        "src/modules/academics/admin-batch-promotion-read-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/academics/a2-scope.ts",
+        "src/modules/academics/academic-setup-error-copy.ts",
+        "src/modules/academics/admin-batch-promotion-read-model.ts"
+      ],
+      "semanticRisk": "Standard field mapping from legacy class to class.upper_limit.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "class",
+      "sourceColumn": "class_type",
+      "sourceType": "varchar(20)",
+      "sourceDefinition": "VARCHAR(20) NOT NULL DEFAULT 'SECTION' COMMENT 'SECTION | GROUP_BACKED. GROUP_BACKED classes are hidden from the academic-setup lists'",
+      "sourceRiskFlags": [],
+      "targetCandidate": "class.class_type",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/academics/a2-scope.ts",
+        "src/modules/academics/academic-setup-error-copy.ts",
+        "src/modules/academics/admin-batch-promotion-read-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/academics/a2-scope.ts",
+        "src/modules/academics/academic-setup-error-copy.ts",
+        "src/modules/academics/admin-batch-promotion-read-model.ts"
+      ],
+      "semanticRisk": "Standard field mapping from legacy class to class.class_type.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "class",
+      "sourceColumn": "roster_group_id",
+      "sourceType": "bigint",
+      "sourceDefinition": "BIGINT NULL COMMENT 'GROUP_BACKED only: roster = ACTIVE members of this lms_group'",
+      "sourceRiskFlags": [
+        "INTEGER_KEY_TO_UUID_MAPPING"
+      ],
+      "targetCandidate": "class.roster_group_id",
+      "disposition": "PROPOSED_REGISTERED_WITH_UUID_NORMALIZATION",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/academics/a2-scope.ts",
+        "src/modules/academics/academic-setup-error-copy.ts",
+        "src/modules/academics/admin-batch-promotion-read-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/academics/a2-scope.ts",
+        "src/modules/academics/academic-setup-error-copy.ts",
+        "src/modules/academics/admin-batch-promotion-read-model.ts"
+      ],
+      "semanticRisk": "Legacy numeric ID maps to UUID in vNext; no old-row import needed for greenfield.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "class_schedule",
+      "sourceColumn": "id",
+      "sourceType": "int",
+      "sourceDefinition": "int NOT NULL AUTO_INCREMENT",
+      "sourceRiskFlags": [
+        "INTEGER_KEY_TO_UUID_MAPPING"
+      ],
+      "targetCandidate": "class_schedule.id",
+      "disposition": "PROPOSED_NORMALIZED_UUID_PRIMARY_KEY",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/academics/a2-scope.ts",
+        "src/modules/academics/academic-setup-error-copy.ts",
+        "src/modules/academics/admin-batch-promotion-read-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/academics/a2-scope.ts",
+        "src/modules/academics/academic-setup-error-copy.ts",
+        "src/modules/academics/admin-batch-promotion-read-model.ts"
+      ],
+      "semanticRisk": "Legacy numeric ID maps to UUID in vNext; no old-row import needed for greenfield.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "class_schedule",
+      "sourceColumn": "created_at",
+      "sourceType": "datetime(6)",
+      "sourceDefinition": "datetime(6) DEFAULT NULL",
+      "sourceRiskFlags": [
+        "TIMEZONE_AND_DEADLINE_SEMANTICS"
+      ],
+      "targetCandidate": "class_schedule.created_at",
+      "disposition": "PROPOSED_NORMALIZED_AUDIT_TIMESTAMP",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/academics/a2-scope.ts",
+        "src/modules/academics/academic-setup-error-copy.ts",
+        "src/modules/academics/admin-batch-promotion-read-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/academics/a2-scope.ts",
+        "src/modules/academics/academic-setup-error-copy.ts",
+        "src/modules/academics/admin-batch-promotion-read-model.ts"
+      ],
+      "semanticRisk": "Datetime(6) semantics differ from timestamptz; vNext stores UTC.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "class_schedule",
+      "sourceColumn": "is_deleted",
+      "sourceType": "tinyint(1)",
+      "sourceDefinition": "tinyint(1) DEFAULT '0'",
+      "sourceRiskFlags": [],
+      "targetCandidate": "class_schedule.is_deleted",
+      "disposition": "PROPOSED_REDESIGNED_SOFT_DELETE_PATTERN",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/academics/a2-scope.ts",
+        "src/modules/academics/academic-setup-error-copy.ts",
+        "src/modules/academics/admin-batch-promotion-read-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/academics/a2-scope.ts",
+        "src/modules/academics/academic-setup-error-copy.ts",
+        "src/modules/academics/admin-batch-promotion-read-model.ts"
+      ],
+      "semanticRisk": "Soft-delete pattern replaced by status enum or archived_at timestamp in vNext.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "class_schedule",
+      "sourceColumn": "updated_at",
+      "sourceType": "datetime(6)",
+      "sourceDefinition": "datetime(6) DEFAULT NULL",
+      "sourceRiskFlags": [
+        "TIMEZONE_AND_DEADLINE_SEMANTICS"
+      ],
+      "targetCandidate": "class_schedule.updated_at",
+      "disposition": "PROPOSED_NORMALIZED_AUDIT_TIMESTAMP",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/academics/a2-scope.ts",
+        "src/modules/academics/academic-setup-error-copy.ts",
+        "src/modules/academics/admin-batch-promotion-read-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/academics/a2-scope.ts",
+        "src/modules/academics/academic-setup-error-copy.ts",
+        "src/modules/academics/admin-batch-promotion-read-model.ts"
+      ],
+      "semanticRisk": "Datetime(6) semantics differ from timestamptz; vNext stores UTC.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "class_schedule",
+      "sourceColumn": "class_id",
+      "sourceType": "int",
+      "sourceDefinition": "int DEFAULT NULL",
+      "sourceRiskFlags": [
+        "INTEGER_KEY_TO_UUID_MAPPING"
+      ],
+      "targetCandidate": "class_schedule.class_id",
+      "disposition": "PROPOSED_REGISTERED_WITH_UUID_NORMALIZATION",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/academics/a2-scope.ts",
+        "src/modules/academics/academic-setup-error-copy.ts",
+        "src/modules/academics/admin-batch-promotion-read-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/academics/a2-scope.ts",
+        "src/modules/academics/academic-setup-error-copy.ts",
+        "src/modules/academics/admin-batch-promotion-read-model.ts"
+      ],
+      "semanticRisk": "Legacy numeric ID maps to UUID in vNext; no old-row import needed for greenfield.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "class_schedule",
+      "sourceColumn": "course_id",
+      "sourceType": "int",
+      "sourceDefinition": "int DEFAULT NULL",
+      "sourceRiskFlags": [
+        "INTEGER_KEY_TO_UUID_MAPPING"
+      ],
+      "targetCandidate": "class_schedule.course_id",
+      "disposition": "PROPOSED_REGISTERED_WITH_UUID_NORMALIZATION",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/academics/a2-scope.ts",
+        "src/modules/academics/academic-setup-error-copy.ts",
+        "src/modules/academics/admin-batch-promotion-read-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/academics/a2-scope.ts",
+        "src/modules/academics/academic-setup-error-copy.ts",
+        "src/modules/academics/admin-batch-promotion-read-model.ts"
+      ],
+      "semanticRisk": "Legacy numeric ID maps to UUID in vNext; no old-row import needed for greenfield.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "class_schedule",
+      "sourceColumn": "end_time",
+      "sourceType": "varchar(255)",
+      "sourceDefinition": "varchar(255) DEFAULT NULL",
+      "sourceRiskFlags": [],
+      "targetCandidate": "class_schedule.end_time",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/academics/a2-scope.ts",
+        "src/modules/academics/academic-setup-error-copy.ts",
+        "src/modules/academics/admin-batch-promotion-read-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/academics/a2-scope.ts",
+        "src/modules/academics/academic-setup-error-copy.ts",
+        "src/modules/academics/admin-batch-promotion-read-model.ts"
+      ],
+      "semanticRisk": "Standard field mapping from legacy class_schedule to class_schedule.end_time.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "class_schedule",
+      "sourceColumn": "faculty_id",
+      "sourceType": "int",
+      "sourceDefinition": "int DEFAULT NULL",
+      "sourceRiskFlags": [
+        "INTEGER_KEY_TO_UUID_MAPPING"
+      ],
+      "targetCandidate": "class_schedule.faculty_id",
+      "disposition": "PROPOSED_REGISTERED_WITH_UUID_NORMALIZATION",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/academics/a2-scope.ts",
+        "src/modules/academics/academic-setup-error-copy.ts",
+        "src/modules/academics/admin-batch-promotion-read-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/academics/a2-scope.ts",
+        "src/modules/academics/academic-setup-error-copy.ts",
+        "src/modules/academics/admin-batch-promotion-read-model.ts"
+      ],
+      "semanticRisk": "Legacy numeric ID maps to UUID in vNext; no old-row import needed for greenfield.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "class_schedule",
+      "sourceColumn": "lecture_hall_id",
+      "sourceType": "int",
+      "sourceDefinition": "int DEFAULT NULL",
+      "sourceRiskFlags": [
+        "INTEGER_KEY_TO_UUID_MAPPING"
+      ],
+      "targetCandidate": "class_schedule.lecture_hall_id",
+      "disposition": "PROPOSED_REGISTERED_WITH_UUID_NORMALIZATION",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/academics/a2-scope.ts",
+        "src/modules/academics/academic-setup-error-copy.ts",
+        "src/modules/academics/admin-batch-promotion-read-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/academics/a2-scope.ts",
+        "src/modules/academics/academic-setup-error-copy.ts",
+        "src/modules/academics/admin-batch-promotion-read-model.ts"
+      ],
+      "semanticRisk": "Legacy numeric ID maps to UUID in vNext; no old-row import needed for greenfield.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "class_schedule",
+      "sourceColumn": "start_time",
+      "sourceType": "varchar(255)",
+      "sourceDefinition": "varchar(255) DEFAULT NULL",
+      "sourceRiskFlags": [],
+      "targetCandidate": "class_schedule.start_time",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/academics/a2-scope.ts",
+        "src/modules/academics/academic-setup-error-copy.ts",
+        "src/modules/academics/admin-batch-promotion-read-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/academics/a2-scope.ts",
+        "src/modules/academics/academic-setup-error-copy.ts",
+        "src/modules/academics/admin-batch-promotion-read-model.ts"
+      ],
+      "semanticRisk": "Standard field mapping from legacy class_schedule to class_schedule.start_time.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "class_schedule",
+      "sourceColumn": "title",
+      "sourceType": "varchar(500)",
+      "sourceDefinition": "varchar(500) DEFAULT NULL",
+      "sourceRiskFlags": [],
+      "targetCandidate": "class_schedule.title",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/academics/a2-scope.ts",
+        "src/modules/academics/academic-setup-error-copy.ts",
+        "src/modules/academics/admin-batch-promotion-read-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/academics/a2-scope.ts",
+        "src/modules/academics/academic-setup-error-copy.ts",
+        "src/modules/academics/admin-batch-promotion-read-model.ts"
+      ],
+      "semanticRisk": "Standard field mapping from legacy class_schedule to class_schedule.title.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "class_schedule",
+      "sourceColumn": "attendance_marked_at",
+      "sourceType": "timestamp",
+      "sourceDefinition": "TIMESTAMP NULL",
+      "sourceRiskFlags": [
+        "TIMEZONE_AND_DEADLINE_SEMANTICS"
+      ],
+      "targetCandidate": "class_schedule.attendance_marked_at",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/academics/a2-scope.ts",
+        "src/modules/academics/academic-setup-error-copy.ts",
+        "src/modules/academics/admin-batch-promotion-read-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/academics/a2-scope.ts",
+        "src/modules/academics/academic-setup-error-copy.ts",
+        "src/modules/academics/admin-batch-promotion-read-model.ts"
+      ],
+      "semanticRisk": "Datetime(6) semantics differ from timestamptz; vNext stores UTC.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "faculty_course_associations",
+      "sourceColumn": "id",
+      "sourceType": "bigint",
+      "sourceDefinition": "bigint NOT NULL AUTO_INCREMENT",
+      "sourceRiskFlags": [
+        "INTEGER_KEY_TO_UUID_MAPPING"
+      ],
+      "targetCandidate": "faculty_course_associations.id",
+      "disposition": "PROPOSED_NORMALIZED_UUID_PRIMARY_KEY",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/academics/a2-scope.ts",
+        "src/modules/academics/academic-setup-error-copy.ts",
+        "src/modules/academics/admin-batch-promotion-read-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/academics/a2-scope.ts",
+        "src/modules/academics/academic-setup-error-copy.ts",
+        "src/modules/academics/admin-batch-promotion-read-model.ts"
+      ],
+      "semanticRisk": "Legacy numeric ID maps to UUID in vNext; no old-row import needed for greenfield.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "faculty_course_associations",
+      "sourceColumn": "active",
+      "sourceType": "int",
+      "sourceDefinition": "int DEFAULT '1'",
+      "sourceRiskFlags": [],
+      "targetCandidate": "faculty_course_associations.faculty_course_associations_active_uq",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/academics/a2-scope.ts",
+        "src/modules/academics/academic-setup-error-copy.ts",
+        "src/modules/academics/admin-batch-promotion-read-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/academics/a2-scope.ts",
+        "src/modules/academics/academic-setup-error-copy.ts",
+        "src/modules/academics/admin-batch-promotion-read-model.ts"
+      ],
+      "semanticRisk": "Standard field mapping from legacy faculty_course_associations to faculty_course_associations.faculty_course_associations_active_uq.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "faculty_course_associations",
+      "sourceColumn": "course_id",
+      "sourceType": "int",
+      "sourceDefinition": "int DEFAULT NULL",
+      "sourceRiskFlags": [
+        "INTEGER_KEY_TO_UUID_MAPPING"
+      ],
+      "targetCandidate": "faculty_course_associations.course_id",
+      "disposition": "PROPOSED_REGISTERED_WITH_UUID_NORMALIZATION",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/academics/a2-scope.ts",
+        "src/modules/academics/academic-setup-error-copy.ts",
+        "src/modules/academics/admin-batch-promotion-read-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/academics/a2-scope.ts",
+        "src/modules/academics/academic-setup-error-copy.ts",
+        "src/modules/academics/admin-batch-promotion-read-model.ts"
+      ],
+      "semanticRisk": "Legacy numeric ID maps to UUID in vNext; no old-row import needed for greenfield.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "faculty_course_associations",
+      "sourceColumn": "faculty_id",
+      "sourceType": "int",
+      "sourceDefinition": "int DEFAULT NULL",
+      "sourceRiskFlags": [
+        "INTEGER_KEY_TO_UUID_MAPPING"
+      ],
+      "targetCandidate": "faculty_course_associations.faculty_course_associations_active_uq",
+      "disposition": "PROPOSED_REGISTERED_WITH_UUID_NORMALIZATION",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/academics/a2-scope.ts",
+        "src/modules/academics/academic-setup-error-copy.ts",
+        "src/modules/academics/admin-batch-promotion-read-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/academics/a2-scope.ts",
+        "src/modules/academics/academic-setup-error-copy.ts",
+        "src/modules/academics/admin-batch-promotion-read-model.ts"
+      ],
+      "semanticRisk": "Legacy numeric ID maps to UUID in vNext; no old-row import needed for greenfield.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "faculty_course_mapping",
+      "sourceColumn": "id",
+      "sourceType": "int",
+      "sourceDefinition": "int NOT NULL AUTO_INCREMENT",
+      "sourceRiskFlags": [
+        "INTEGER_KEY_TO_UUID_MAPPING"
+      ],
+      "targetCandidate": "faculty_course_mapping.id",
+      "disposition": "PROPOSED_NORMALIZED_UUID_PRIMARY_KEY",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/academics/a2-scope.ts",
+        "src/modules/academics/academic-setup-error-copy.ts",
+        "src/modules/academics/admin-batch-promotion-read-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/academics/a2-scope.ts",
+        "src/modules/academics/academic-setup-error-copy.ts",
+        "src/modules/academics/admin-batch-promotion-read-model.ts"
+      ],
+      "semanticRisk": "Legacy numeric ID maps to UUID in vNext; no old-row import needed for greenfield.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "faculty_course_mapping",
+      "sourceColumn": "created_at",
+      "sourceType": "datetime(6)",
+      "sourceDefinition": "datetime(6) DEFAULT NULL",
+      "sourceRiskFlags": [
+        "TIMEZONE_AND_DEADLINE_SEMANTICS"
+      ],
+      "targetCandidate": "faculty_course_mapping.created_at",
+      "disposition": "PROPOSED_NORMALIZED_AUDIT_TIMESTAMP",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/academics/a2-scope.ts",
+        "src/modules/academics/academic-setup-error-copy.ts",
+        "src/modules/academics/admin-batch-promotion-read-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/academics/a2-scope.ts",
+        "src/modules/academics/academic-setup-error-copy.ts",
+        "src/modules/academics/admin-batch-promotion-read-model.ts"
+      ],
+      "semanticRisk": "Datetime(6) semantics differ from timestamptz; vNext stores UTC.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "faculty_course_mapping",
+      "sourceColumn": "is_deleted",
+      "sourceType": "tinyint(1)",
+      "sourceDefinition": "tinyint(1) DEFAULT '0'",
+      "sourceRiskFlags": [],
+      "targetCandidate": "faculty_course_mapping.is_deleted",
+      "disposition": "PROPOSED_REDESIGNED_SOFT_DELETE_PATTERN",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/academics/a2-scope.ts",
+        "src/modules/academics/academic-setup-error-copy.ts",
+        "src/modules/academics/admin-batch-promotion-read-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/academics/a2-scope.ts",
+        "src/modules/academics/academic-setup-error-copy.ts",
+        "src/modules/academics/admin-batch-promotion-read-model.ts"
+      ],
+      "semanticRisk": "Soft-delete pattern replaced by status enum or archived_at timestamp in vNext.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "faculty_course_mapping",
+      "sourceColumn": "updated_at",
+      "sourceType": "datetime(6)",
+      "sourceDefinition": "datetime(6) DEFAULT NULL",
+      "sourceRiskFlags": [
+        "TIMEZONE_AND_DEADLINE_SEMANTICS"
+      ],
+      "targetCandidate": "faculty_course_mapping.updated_at",
+      "disposition": "PROPOSED_NORMALIZED_AUDIT_TIMESTAMP",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/academics/a2-scope.ts",
+        "src/modules/academics/academic-setup-error-copy.ts",
+        "src/modules/academics/admin-batch-promotion-read-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/academics/a2-scope.ts",
+        "src/modules/academics/academic-setup-error-copy.ts",
+        "src/modules/academics/admin-batch-promotion-read-model.ts"
+      ],
+      "semanticRisk": "Datetime(6) semantics differ from timestamptz; vNext stores UTC.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "faculty_course_mapping",
+      "sourceColumn": "active",
+      "sourceType": "int",
+      "sourceDefinition": "int DEFAULT NULL",
+      "sourceRiskFlags": [],
+      "targetCandidate": "faculty_course_mapping.active",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/academics/a2-scope.ts",
+        "src/modules/academics/academic-setup-error-copy.ts",
+        "src/modules/academics/admin-batch-promotion-read-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/academics/a2-scope.ts",
+        "src/modules/academics/academic-setup-error-copy.ts",
+        "src/modules/academics/admin-batch-promotion-read-model.ts"
+      ],
+      "semanticRisk": "Standard field mapping from legacy faculty_course_mapping to faculty_course_mapping.active.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "faculty_course_mapping",
+      "sourceColumn": "class_id",
+      "sourceType": "int",
+      "sourceDefinition": "int DEFAULT NULL",
+      "sourceRiskFlags": [
+        "INTEGER_KEY_TO_UUID_MAPPING"
+      ],
+      "targetCandidate": "faculty_course_mapping.class_id",
+      "disposition": "PROPOSED_REGISTERED_WITH_UUID_NORMALIZATION",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/academics/a2-scope.ts",
+        "src/modules/academics/academic-setup-error-copy.ts",
+        "src/modules/academics/admin-batch-promotion-read-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/academics/a2-scope.ts",
+        "src/modules/academics/academic-setup-error-copy.ts",
+        "src/modules/academics/admin-batch-promotion-read-model.ts"
+      ],
+      "semanticRisk": "Legacy numeric ID maps to UUID in vNext; no old-row import needed for greenfield.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "faculty_course_mapping",
+      "sourceColumn": "course_id",
+      "sourceType": "int",
+      "sourceDefinition": "int DEFAULT NULL",
+      "sourceRiskFlags": [
+        "INTEGER_KEY_TO_UUID_MAPPING"
+      ],
+      "targetCandidate": "faculty_course_mapping.course_id",
+      "disposition": "PROPOSED_REGISTERED_WITH_UUID_NORMALIZATION",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/academics/a2-scope.ts",
+        "src/modules/academics/academic-setup-error-copy.ts",
+        "src/modules/academics/admin-batch-promotion-read-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/academics/a2-scope.ts",
+        "src/modules/academics/academic-setup-error-copy.ts",
+        "src/modules/academics/admin-batch-promotion-read-model.ts"
+      ],
+      "semanticRisk": "Legacy numeric ID maps to UUID in vNext; no old-row import needed for greenfield.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "faculty_course_mapping",
+      "sourceColumn": "faculty_id",
+      "sourceType": "int",
+      "sourceDefinition": "int DEFAULT NULL",
+      "sourceRiskFlags": [
+        "INTEGER_KEY_TO_UUID_MAPPING"
+      ],
+      "targetCandidate": "faculty_course_mapping.faculty_id",
+      "disposition": "PROPOSED_REGISTERED_WITH_UUID_NORMALIZATION",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/academics/a2-scope.ts",
+        "src/modules/academics/academic-setup-error-copy.ts",
+        "src/modules/academics/admin-batch-promotion-read-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/academics/a2-scope.ts",
+        "src/modules/academics/academic-setup-error-copy.ts",
+        "src/modules/academics/admin-batch-promotion-read-model.ts"
+      ],
+      "semanticRisk": "Legacy numeric ID maps to UUID in vNext; no old-row import needed for greenfield.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "faculty_teaching_assignment",
+      "sourceColumn": "id",
+      "sourceType": "int",
+      "sourceDefinition": "int NOT NULL AUTO_INCREMENT",
+      "sourceRiskFlags": [
+        "INTEGER_KEY_TO_UUID_MAPPING"
+      ],
+      "targetCandidate": "faculty_teaching_assignment.id",
+      "disposition": "PROPOSED_NORMALIZED_UUID_PRIMARY_KEY",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/academics/a2-scope.ts",
+        "src/modules/academics/academic-setup-error-copy.ts",
+        "src/modules/academics/admin-batch-promotion-read-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/academics/a2-scope.ts",
+        "src/modules/academics/academic-setup-error-copy.ts",
+        "src/modules/academics/admin-batch-promotion-read-model.ts"
+      ],
+      "semanticRisk": "Legacy numeric ID maps to UUID in vNext; no old-row import needed for greenfield.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "faculty_teaching_assignment",
+      "sourceColumn": "created_at",
+      "sourceType": "datetime(6)",
+      "sourceDefinition": "datetime(6) DEFAULT NULL",
+      "sourceRiskFlags": [
+        "TIMEZONE_AND_DEADLINE_SEMANTICS"
+      ],
+      "targetCandidate": "faculty_teaching_assignment.created_at",
+      "disposition": "PROPOSED_NORMALIZED_AUDIT_TIMESTAMP",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/academics/a2-scope.ts",
+        "src/modules/academics/academic-setup-error-copy.ts",
+        "src/modules/academics/admin-batch-promotion-read-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/academics/a2-scope.ts",
+        "src/modules/academics/academic-setup-error-copy.ts",
+        "src/modules/academics/admin-batch-promotion-read-model.ts"
+      ],
+      "semanticRisk": "Datetime(6) semantics differ from timestamptz; vNext stores UTC.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "faculty_teaching_assignment",
+      "sourceColumn": "is_deleted",
+      "sourceType": "tinyint(1)",
+      "sourceDefinition": "tinyint(1) DEFAULT '0'",
+      "sourceRiskFlags": [],
+      "targetCandidate": "faculty_teaching_assignment.is_deleted",
+      "disposition": "PROPOSED_REDESIGNED_SOFT_DELETE_PATTERN",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/academics/a2-scope.ts",
+        "src/modules/academics/academic-setup-error-copy.ts",
+        "src/modules/academics/admin-batch-promotion-read-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/academics/a2-scope.ts",
+        "src/modules/academics/academic-setup-error-copy.ts",
+        "src/modules/academics/admin-batch-promotion-read-model.ts"
+      ],
+      "semanticRisk": "Soft-delete pattern replaced by status enum or archived_at timestamp in vNext.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "faculty_teaching_assignment",
+      "sourceColumn": "updated_at",
+      "sourceType": "datetime(6)",
+      "sourceDefinition": "datetime(6) DEFAULT NULL",
+      "sourceRiskFlags": [
+        "TIMEZONE_AND_DEADLINE_SEMANTICS"
+      ],
+      "targetCandidate": "faculty_teaching_assignment.updated_at",
+      "disposition": "PROPOSED_NORMALIZED_AUDIT_TIMESTAMP",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/academics/a2-scope.ts",
+        "src/modules/academics/academic-setup-error-copy.ts",
+        "src/modules/academics/admin-batch-promotion-read-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/academics/a2-scope.ts",
+        "src/modules/academics/academic-setup-error-copy.ts",
+        "src/modules/academics/admin-batch-promotion-read-model.ts"
+      ],
+      "semanticRisk": "Datetime(6) semantics differ from timestamptz; vNext stores UTC.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "faculty_teaching_assignment",
+      "sourceColumn": "academic_year",
+      "sourceType": "varchar(255)",
+      "sourceDefinition": "varchar(255) DEFAULT NULL",
+      "sourceRiskFlags": [],
+      "targetCandidate": "faculty_teaching_assignment.academic_year",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/academics/a2-scope.ts",
+        "src/modules/academics/academic-setup-error-copy.ts",
+        "src/modules/academics/admin-batch-promotion-read-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/academics/a2-scope.ts",
+        "src/modules/academics/academic-setup-error-copy.ts",
+        "src/modules/academics/admin-batch-promotion-read-model.ts"
+      ],
+      "semanticRisk": "Standard field mapping from legacy faculty_teaching_assignment to faculty_teaching_assignment.academic_year.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "faculty_teaching_assignment",
+      "sourceColumn": "batch_id",
+      "sourceType": "int",
+      "sourceDefinition": "int DEFAULT NULL",
+      "sourceRiskFlags": [
+        "INTEGER_KEY_TO_UUID_MAPPING"
+      ],
+      "targetCandidate": "faculty_teaching_assignment.batch_id",
+      "disposition": "PROPOSED_REGISTERED_WITH_UUID_NORMALIZATION",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/academics/a2-scope.ts",
+        "src/modules/academics/academic-setup-error-copy.ts",
+        "src/modules/academics/admin-batch-promotion-read-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/academics/a2-scope.ts",
+        "src/modules/academics/academic-setup-error-copy.ts",
+        "src/modules/academics/admin-batch-promotion-read-model.ts"
+      ],
+      "semanticRisk": "Legacy numeric ID maps to UUID in vNext; no old-row import needed for greenfield.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "faculty_teaching_assignment",
+      "sourceColumn": "class_id",
+      "sourceType": "int",
+      "sourceDefinition": "int NOT NULL",
+      "sourceRiskFlags": [
+        "INTEGER_KEY_TO_UUID_MAPPING"
+      ],
+      "targetCandidate": "faculty_teaching_assignment.class_id",
+      "disposition": "PROPOSED_REGISTERED_WITH_UUID_NORMALIZATION",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/academics/a2-scope.ts",
+        "src/modules/academics/academic-setup-error-copy.ts",
+        "src/modules/academics/admin-batch-promotion-read-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/academics/a2-scope.ts",
+        "src/modules/academics/academic-setup-error-copy.ts",
+        "src/modules/academics/admin-batch-promotion-read-model.ts"
+      ],
+      "semanticRisk": "Legacy numeric ID maps to UUID in vNext; no old-row import needed for greenfield.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "faculty_teaching_assignment",
+      "sourceColumn": "course_id",
+      "sourceType": "int",
+      "sourceDefinition": "int NOT NULL",
+      "sourceRiskFlags": [
+        "INTEGER_KEY_TO_UUID_MAPPING"
+      ],
+      "targetCandidate": "faculty_teaching_assignment.course_id",
+      "disposition": "PROPOSED_REGISTERED_WITH_UUID_NORMALIZATION",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/academics/a2-scope.ts",
+        "src/modules/academics/academic-setup-error-copy.ts",
+        "src/modules/academics/admin-batch-promotion-read-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/academics/a2-scope.ts",
+        "src/modules/academics/academic-setup-error-copy.ts",
+        "src/modules/academics/admin-batch-promotion-read-model.ts"
+      ],
+      "semanticRisk": "Legacy numeric ID maps to UUID in vNext; no old-row import needed for greenfield.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "faculty_teaching_assignment",
+      "sourceColumn": "end_date",
+      "sourceType": "date",
+      "sourceDefinition": "date DEFAULT NULL",
+      "sourceRiskFlags": [],
+      "targetCandidate": "faculty_teaching_assignment.end_date",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/academics/a2-scope.ts",
+        "src/modules/academics/academic-setup-error-copy.ts",
+        "src/modules/academics/admin-batch-promotion-read-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/academics/a2-scope.ts",
+        "src/modules/academics/academic-setup-error-copy.ts",
+        "src/modules/academics/admin-batch-promotion-read-model.ts"
+      ],
+      "semanticRisk": "Standard field mapping from legacy faculty_teaching_assignment to faculty_teaching_assignment.end_date.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "faculty_teaching_assignment",
+      "sourceColumn": "faculty_id",
+      "sourceType": "int",
+      "sourceDefinition": "int NOT NULL",
+      "sourceRiskFlags": [
+        "INTEGER_KEY_TO_UUID_MAPPING"
+      ],
+      "targetCandidate": "faculty_teaching_assignment.faculty_id",
+      "disposition": "PROPOSED_REGISTERED_WITH_UUID_NORMALIZATION",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/academics/a2-scope.ts",
+        "src/modules/academics/academic-setup-error-copy.ts",
+        "src/modules/academics/admin-batch-promotion-read-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/academics/a2-scope.ts",
+        "src/modules/academics/academic-setup-error-copy.ts",
+        "src/modules/academics/admin-batch-promotion-read-model.ts"
+      ],
+      "semanticRisk": "Legacy numeric ID maps to UUID in vNext; no old-row import needed for greenfield.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "faculty_teaching_assignment",
+      "sourceColumn": "is_active",
+      "sourceType": "bit(1)",
+      "sourceDefinition": "bit(1) DEFAULT NULL",
+      "sourceRiskFlags": [],
+      "targetCandidate": "faculty_teaching_assignment.is_active",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/academics/a2-scope.ts",
+        "src/modules/academics/academic-setup-error-copy.ts",
+        "src/modules/academics/admin-batch-promotion-read-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/academics/a2-scope.ts",
+        "src/modules/academics/academic-setup-error-copy.ts",
+        "src/modules/academics/admin-batch-promotion-read-model.ts"
+      ],
+      "semanticRisk": "Standard field mapping from legacy faculty_teaching_assignment to faculty_teaching_assignment.is_active.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "faculty_teaching_assignment",
+      "sourceColumn": "role",
+      "sourceType": "varchar(255)",
+      "sourceDefinition": "varchar(255) DEFAULT NULL",
+      "sourceRiskFlags": [],
+      "targetCandidate": "faculty_teaching_assignment.role",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/academics/a2-scope.ts",
+        "src/modules/academics/academic-setup-error-copy.ts",
+        "src/modules/academics/admin-batch-promotion-read-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/academics/a2-scope.ts",
+        "src/modules/academics/academic-setup-error-copy.ts",
+        "src/modules/academics/admin-batch-promotion-read-model.ts"
+      ],
+      "semanticRisk": "Standard field mapping from legacy faculty_teaching_assignment to faculty_teaching_assignment.role.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "faculty_teaching_assignment",
+      "sourceColumn": "semester_number",
+      "sourceType": "int",
+      "sourceDefinition": "int NOT NULL",
+      "sourceRiskFlags": [],
+      "targetCandidate": "faculty_teaching_assignment.semester_number",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/academics/a2-scope.ts",
+        "src/modules/academics/academic-setup-error-copy.ts",
+        "src/modules/academics/admin-batch-promotion-read-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/academics/a2-scope.ts",
+        "src/modules/academics/academic-setup-error-copy.ts",
+        "src/modules/academics/admin-batch-promotion-read-model.ts"
+      ],
+      "semanticRisk": "Standard field mapping from legacy faculty_teaching_assignment to faculty_teaching_assignment.semester_number.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "faculty_teaching_assignment",
+      "sourceColumn": "start_date",
+      "sourceType": "date",
+      "sourceDefinition": "date DEFAULT NULL",
+      "sourceRiskFlags": [],
+      "targetCandidate": "faculty_teaching_assignment.start_date",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/academics/a2-scope.ts",
+        "src/modules/academics/academic-setup-error-copy.ts",
+        "src/modules/academics/admin-batch-promotion-read-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/academics/a2-scope.ts",
+        "src/modules/academics/academic-setup-error-copy.ts",
+        "src/modules/academics/admin-batch-promotion-read-model.ts"
+      ],
+      "semanticRisk": "Standard field mapping from legacy faculty_teaching_assignment to faculty_teaching_assignment.start_date.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "lecture_hall",
+      "sourceColumn": "id",
+      "sourceType": "int",
+      "sourceDefinition": "int NOT NULL AUTO_INCREMENT",
+      "sourceRiskFlags": [
+        "INTEGER_KEY_TO_UUID_MAPPING"
+      ],
+      "targetCandidate": "lecture_halls.id",
+      "disposition": "PROPOSED_NORMALIZED_UUID_PRIMARY_KEY",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/academics/a2-scope.ts",
+        "src/modules/academics/academic-setup-error-copy.ts",
+        "src/modules/academics/admin-batch-promotion-read-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/academics/a2-scope.ts",
+        "src/modules/academics/academic-setup-error-copy.ts",
+        "src/modules/academics/admin-batch-promotion-read-model.ts"
+      ],
+      "semanticRisk": "Legacy numeric ID maps to UUID in vNext; no old-row import needed for greenfield.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "lecture_hall",
+      "sourceColumn": "created_at",
+      "sourceType": "datetime(6)",
+      "sourceDefinition": "datetime(6) DEFAULT NULL",
+      "sourceRiskFlags": [
+        "TIMEZONE_AND_DEADLINE_SEMANTICS"
+      ],
+      "targetCandidate": "lecture_halls.created_at",
+      "disposition": "PROPOSED_NORMALIZED_AUDIT_TIMESTAMP",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/academics/a2-scope.ts",
+        "src/modules/academics/academic-setup-error-copy.ts",
+        "src/modules/academics/admin-batch-promotion-read-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/academics/a2-scope.ts",
+        "src/modules/academics/academic-setup-error-copy.ts",
+        "src/modules/academics/admin-batch-promotion-read-model.ts"
+      ],
+      "semanticRisk": "Datetime(6) semantics differ from timestamptz; vNext stores UTC.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "lecture_hall",
+      "sourceColumn": "is_deleted",
+      "sourceType": "tinyint(1)",
+      "sourceDefinition": "tinyint(1) DEFAULT '0'",
+      "sourceRiskFlags": [],
+      "targetCandidate": "lecture_halls.legacy_was_deleted",
+      "disposition": "PROPOSED_REDESIGNED_SOFT_DELETE_PATTERN",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/academics/a2-scope.ts",
+        "src/modules/academics/academic-setup-error-copy.ts",
+        "src/modules/academics/admin-batch-promotion-read-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/academics/a2-scope.ts",
+        "src/modules/academics/academic-setup-error-copy.ts",
+        "src/modules/academics/admin-batch-promotion-read-model.ts"
+      ],
+      "semanticRisk": "Soft-delete pattern replaced by status enum or archived_at timestamp in vNext.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "lecture_hall",
+      "sourceColumn": "updated_at",
+      "sourceType": "datetime(6)",
+      "sourceDefinition": "datetime(6) DEFAULT NULL",
+      "sourceRiskFlags": [
+        "TIMEZONE_AND_DEADLINE_SEMANTICS"
+      ],
+      "targetCandidate": "lecture_halls.updated_at",
+      "disposition": "PROPOSED_NORMALIZED_AUDIT_TIMESTAMP",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/academics/a2-scope.ts",
+        "src/modules/academics/academic-setup-error-copy.ts",
+        "src/modules/academics/admin-batch-promotion-read-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/academics/a2-scope.ts",
+        "src/modules/academics/academic-setup-error-copy.ts",
+        "src/modules/academics/admin-batch-promotion-read-model.ts"
+      ],
+      "semanticRisk": "Datetime(6) semantics differ from timestamptz; vNext stores UTC.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "lecture_hall",
+      "sourceColumn": "capacity",
+      "sourceType": "int",
+      "sourceDefinition": "int DEFAULT NULL",
+      "sourceRiskFlags": [],
+      "targetCandidate": "lecture_halls.capacity",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/academics/a2-scope.ts",
+        "src/modules/academics/academic-setup-error-copy.ts",
+        "src/modules/academics/admin-batch-promotion-read-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/academics/a2-scope.ts",
+        "src/modules/academics/academic-setup-error-copy.ts",
+        "src/modules/academics/admin-batch-promotion-read-model.ts"
+      ],
+      "semanticRisk": "Standard field mapping from legacy lecture_hall to lecture_halls.capacity.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "lecture_hall",
+      "sourceColumn": "college_id",
+      "sourceType": "int",
+      "sourceDefinition": "int DEFAULT NULL",
+      "sourceRiskFlags": [
+        "INTEGER_KEY_TO_UUID_MAPPING"
+      ],
+      "targetCandidate": "lecture_halls.college_id",
+      "disposition": "PROPOSED_REGISTERED_WITH_UUID_NORMALIZATION",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/academics/a2-scope.ts",
+        "src/modules/academics/academic-setup-error-copy.ts",
+        "src/modules/academics/admin-batch-promotion-read-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/academics/a2-scope.ts",
+        "src/modules/academics/academic-setup-error-copy.ts",
+        "src/modules/academics/admin-batch-promotion-read-model.ts"
+      ],
+      "semanticRisk": "Legacy numeric ID maps to UUID in vNext; no old-row import needed for greenfield.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "lecture_hall",
+      "sourceColumn": "dept_id",
+      "sourceType": "int",
+      "sourceDefinition": "int DEFAULT NULL",
+      "sourceRiskFlags": [
+        "INTEGER_KEY_TO_UUID_MAPPING"
+      ],
+      "targetCandidate": "lecture_halls.dept_id",
+      "disposition": "PROPOSED_REGISTERED_WITH_UUID_NORMALIZATION",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/academics/a2-scope.ts",
+        "src/modules/academics/academic-setup-error-copy.ts",
+        "src/modules/academics/admin-batch-promotion-read-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/academics/a2-scope.ts",
+        "src/modules/academics/academic-setup-error-copy.ts",
+        "src/modules/academics/admin-batch-promotion-read-model.ts"
+      ],
+      "semanticRisk": "Legacy numeric ID maps to UUID in vNext; no old-row import needed for greenfield.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "lecture_hall",
+      "sourceColumn": "description",
+      "sourceType": "varchar(255)",
+      "sourceDefinition": "varchar(255) DEFAULT NULL",
+      "sourceRiskFlags": [],
+      "targetCandidate": "lecture_halls.description",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/academics/a2-scope.ts",
+        "src/modules/academics/academic-setup-error-copy.ts",
+        "src/modules/academics/admin-batch-promotion-read-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/academics/a2-scope.ts",
+        "src/modules/academics/academic-setup-error-copy.ts",
+        "src/modules/academics/admin-batch-promotion-read-model.ts"
+      ],
+      "semanticRisk": "Standard field mapping from legacy lecture_hall to lecture_halls.description.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "lecture_hall",
+      "sourceColumn": "name",
+      "sourceType": "varchar(255)",
+      "sourceDefinition": "varchar(255) DEFAULT NULL",
+      "sourceRiskFlags": [],
+      "targetCandidate": "lecture_halls.legacy_name_was_null",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/academics/a2-scope.ts",
+        "src/modules/academics/academic-setup-error-copy.ts",
+        "src/modules/academics/admin-batch-promotion-read-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/academics/a2-scope.ts",
+        "src/modules/academics/academic-setup-error-copy.ts",
+        "src/modules/academics/admin-batch-promotion-read-model.ts"
+      ],
+      "semanticRisk": "Standard field mapping from legacy lecture_hall to lecture_halls.legacy_name_was_null.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "lecture_hall",
+      "sourceColumn": "room_type",
+      "sourceType": "int",
+      "sourceDefinition": "int DEFAULT NULL",
+      "sourceRiskFlags": [],
+      "targetCandidate": "lecture_halls.legacy_room_type_ordinal",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/academics/a2-scope.ts",
+        "src/modules/academics/academic-setup-error-copy.ts",
+        "src/modules/academics/admin-batch-promotion-read-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/academics/a2-scope.ts",
+        "src/modules/academics/academic-setup-error-copy.ts",
+        "src/modules/academics/admin-batch-promotion-read-model.ts"
+      ],
+      "semanticRisk": "Standard field mapping from legacy lecture_hall to lecture_halls.legacy_room_type_ordinal.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "new_program",
+      "sourceColumn": "id",
+      "sourceType": "int",
+      "sourceDefinition": "int NOT NULL AUTO_INCREMENT",
+      "sourceRiskFlags": [
+        "INTEGER_KEY_TO_UUID_MAPPING"
+      ],
+      "targetCandidate": "new_program.id",
+      "disposition": "PROPOSED_NORMALIZED_UUID_PRIMARY_KEY",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/academics/a2-scope.ts",
+        "src/modules/academics/academic-setup-error-copy.ts",
+        "src/modules/academics/admin-batch-promotion-read-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/academics/a2-scope.ts",
+        "src/modules/academics/academic-setup-error-copy.ts",
+        "src/modules/academics/admin-batch-promotion-read-model.ts"
+      ],
+      "semanticRisk": "Legacy numeric ID maps to UUID in vNext; no old-row import needed for greenfield.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "new_program",
+      "sourceColumn": "created_at",
+      "sourceType": "datetime(6)",
+      "sourceDefinition": "datetime(6) DEFAULT NULL",
+      "sourceRiskFlags": [
+        "TIMEZONE_AND_DEADLINE_SEMANTICS"
+      ],
+      "targetCandidate": "new_program.created_at",
+      "disposition": "PROPOSED_NORMALIZED_AUDIT_TIMESTAMP",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/academics/a2-scope.ts",
+        "src/modules/academics/academic-setup-error-copy.ts",
+        "src/modules/academics/admin-batch-promotion-read-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/academics/a2-scope.ts",
+        "src/modules/academics/academic-setup-error-copy.ts",
+        "src/modules/academics/admin-batch-promotion-read-model.ts"
+      ],
+      "semanticRisk": "Datetime(6) semantics differ from timestamptz; vNext stores UTC.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "new_program",
+      "sourceColumn": "is_deleted",
+      "sourceType": "tinyint(1)",
+      "sourceDefinition": "tinyint(1) DEFAULT '0'",
+      "sourceRiskFlags": [],
+      "targetCandidate": "new_program.is_deleted",
+      "disposition": "PROPOSED_REDESIGNED_SOFT_DELETE_PATTERN",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/academics/a2-scope.ts",
+        "src/modules/academics/academic-setup-error-copy.ts",
+        "src/modules/academics/admin-batch-promotion-read-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/academics/a2-scope.ts",
+        "src/modules/academics/academic-setup-error-copy.ts",
+        "src/modules/academics/admin-batch-promotion-read-model.ts"
+      ],
+      "semanticRisk": "Soft-delete pattern replaced by status enum or archived_at timestamp in vNext.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "new_program",
+      "sourceColumn": "updated_at",
+      "sourceType": "datetime(6)",
+      "sourceDefinition": "datetime(6) DEFAULT NULL",
+      "sourceRiskFlags": [
+        "TIMEZONE_AND_DEADLINE_SEMANTICS"
+      ],
+      "targetCandidate": "new_program.updated_at",
+      "disposition": "PROPOSED_NORMALIZED_AUDIT_TIMESTAMP",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/academics/a2-scope.ts",
+        "src/modules/academics/academic-setup-error-copy.ts",
+        "src/modules/academics/admin-batch-promotion-read-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/academics/a2-scope.ts",
+        "src/modules/academics/academic-setup-error-copy.ts",
+        "src/modules/academics/admin-batch-promotion-read-model.ts"
+      ],
+      "semanticRisk": "Datetime(6) semantics differ from timestamptz; vNext stores UTC.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "new_program",
+      "sourceColumn": "dept_id",
+      "sourceType": "int",
+      "sourceDefinition": "int DEFAULT NULL",
+      "sourceRiskFlags": [
+        "INTEGER_KEY_TO_UUID_MAPPING"
+      ],
+      "targetCandidate": "new_program.dept_id",
+      "disposition": "PROPOSED_REGISTERED_WITH_UUID_NORMALIZATION",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/academics/a2-scope.ts",
+        "src/modules/academics/academic-setup-error-copy.ts",
+        "src/modules/academics/admin-batch-promotion-read-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/academics/a2-scope.ts",
+        "src/modules/academics/academic-setup-error-copy.ts",
+        "src/modules/academics/admin-batch-promotion-read-model.ts"
+      ],
+      "semanticRisk": "Legacy numeric ID maps to UUID in vNext; no old-row import needed for greenfield.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "new_program",
+      "sourceColumn": "duration_years",
+      "sourceType": "int",
+      "sourceDefinition": "int DEFAULT NULL",
+      "sourceRiskFlags": [],
+      "targetCandidate": "new_program.duration_years",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/academics/a2-scope.ts",
+        "src/modules/academics/academic-setup-error-copy.ts",
+        "src/modules/academics/admin-batch-promotion-read-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/academics/a2-scope.ts",
+        "src/modules/academics/academic-setup-error-copy.ts",
+        "src/modules/academics/admin-batch-promotion-read-model.ts"
+      ],
+      "semanticRisk": "Standard field mapping from legacy new_program to new_program.duration_years.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "new_program",
+      "sourceColumn": "name",
+      "sourceType": "varchar(255)",
+      "sourceDefinition": "varchar(255) DEFAULT NULL",
+      "sourceRiskFlags": [],
+      "targetCandidate": "new_program.name",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/academics/a2-scope.ts",
+        "src/modules/academics/academic-setup-error-copy.ts",
+        "src/modules/academics/admin-batch-promotion-read-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/academics/a2-scope.ts",
+        "src/modules/academics/academic-setup-error-copy.ts",
+        "src/modules/academics/admin-batch-promotion-read-model.ts"
+      ],
+      "semanticRisk": "Standard field mapping from legacy new_program to new_program.name.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "new_program_structure",
+      "sourceColumn": "id",
+      "sourceType": "int",
+      "sourceDefinition": "int NOT NULL AUTO_INCREMENT",
+      "sourceRiskFlags": [
+        "INTEGER_KEY_TO_UUID_MAPPING"
+      ],
+      "targetCandidate": "new_program_structure.id",
+      "disposition": "PROPOSED_NORMALIZED_UUID_PRIMARY_KEY",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/academics/a2-scope.ts",
+        "src/modules/academics/academic-setup-error-copy.ts",
+        "src/modules/academics/admin-batch-promotion-read-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/academics/a2-scope.ts",
+        "src/modules/academics/academic-setup-error-copy.ts",
+        "src/modules/academics/admin-batch-promotion-read-model.ts"
+      ],
+      "semanticRisk": "Legacy numeric ID maps to UUID in vNext; no old-row import needed for greenfield.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "new_program_structure",
+      "sourceColumn": "created_at",
+      "sourceType": "datetime(6)",
+      "sourceDefinition": "datetime(6) DEFAULT NULL",
+      "sourceRiskFlags": [
+        "TIMEZONE_AND_DEADLINE_SEMANTICS"
+      ],
+      "targetCandidate": "new_program_structure.created_at",
+      "disposition": "PROPOSED_NORMALIZED_AUDIT_TIMESTAMP",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/academics/a2-scope.ts",
+        "src/modules/academics/academic-setup-error-copy.ts",
+        "src/modules/academics/admin-batch-promotion-read-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/academics/a2-scope.ts",
+        "src/modules/academics/academic-setup-error-copy.ts",
+        "src/modules/academics/admin-batch-promotion-read-model.ts"
+      ],
+      "semanticRisk": "Datetime(6) semantics differ from timestamptz; vNext stores UTC.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "new_program_structure",
+      "sourceColumn": "is_deleted",
+      "sourceType": "tinyint(1)",
+      "sourceDefinition": "tinyint(1) DEFAULT '0'",
+      "sourceRiskFlags": [],
+      "targetCandidate": "new_program_structure.is_deleted",
+      "disposition": "PROPOSED_REDESIGNED_SOFT_DELETE_PATTERN",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/academics/a2-scope.ts",
+        "src/modules/academics/academic-setup-error-copy.ts",
+        "src/modules/academics/admin-batch-promotion-read-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/academics/a2-scope.ts",
+        "src/modules/academics/academic-setup-error-copy.ts",
+        "src/modules/academics/admin-batch-promotion-read-model.ts"
+      ],
+      "semanticRisk": "Soft-delete pattern replaced by status enum or archived_at timestamp in vNext.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "new_program_structure",
+      "sourceColumn": "updated_at",
+      "sourceType": "datetime(6)",
+      "sourceDefinition": "datetime(6) DEFAULT NULL",
+      "sourceRiskFlags": [
+        "TIMEZONE_AND_DEADLINE_SEMANTICS"
+      ],
+      "targetCandidate": "new_program_structure.updated_at",
+      "disposition": "PROPOSED_NORMALIZED_AUDIT_TIMESTAMP",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/academics/a2-scope.ts",
+        "src/modules/academics/academic-setup-error-copy.ts",
+        "src/modules/academics/admin-batch-promotion-read-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/academics/a2-scope.ts",
+        "src/modules/academics/academic-setup-error-copy.ts",
+        "src/modules/academics/admin-batch-promotion-read-model.ts"
+      ],
+      "semanticRisk": "Datetime(6) semantics differ from timestamptz; vNext stores UTC.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "new_program_structure",
+      "sourceColumn": "course_ids",
+      "sourceType": "json",
+      "sourceDefinition": "json DEFAULT NULL",
+      "sourceRiskFlags": [
+        "STRUCTURED_PAYLOAD_SEMANTIC_SCHEMA"
+      ],
+      "targetCandidate": "new_program_structure.course_ids",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/academics/a2-scope.ts",
+        "src/modules/academics/academic-setup-error-copy.ts",
+        "src/modules/academics/admin-batch-promotion-read-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/academics/a2-scope.ts",
+        "src/modules/academics/academic-setup-error-copy.ts",
+        "src/modules/academics/admin-batch-promotion-read-model.ts"
+      ],
+      "semanticRisk": "JSON payload: vNext uses typed JSONB or separate normalized columns.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "new_program_structure",
+      "sourceColumn": "end_date",
+      "sourceType": "varchar(255)",
+      "sourceDefinition": "varchar(255) DEFAULT NULL",
+      "sourceRiskFlags": [],
+      "targetCandidate": "new_program_structure.end_date",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/academics/a2-scope.ts",
+        "src/modules/academics/academic-setup-error-copy.ts",
+        "src/modules/academics/admin-batch-promotion-read-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/academics/a2-scope.ts",
+        "src/modules/academics/academic-setup-error-copy.ts",
+        "src/modules/academics/admin-batch-promotion-read-model.ts"
+      ],
+      "semanticRisk": "Standard field mapping from legacy new_program_structure to new_program_structure.end_date.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "new_program_structure",
+      "sourceColumn": "name",
+      "sourceType": "varchar(255)",
+      "sourceDefinition": "varchar(255) DEFAULT NULL",
+      "sourceRiskFlags": [],
+      "targetCandidate": "new_program_structure.name",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/academics/a2-scope.ts",
+        "src/modules/academics/academic-setup-error-copy.ts",
+        "src/modules/academics/admin-batch-promotion-read-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/academics/a2-scope.ts",
+        "src/modules/academics/academic-setup-error-copy.ts",
+        "src/modules/academics/admin-batch-promotion-read-model.ts"
+      ],
+      "semanticRisk": "Standard field mapping from legacy new_program_structure to new_program_structure.name.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "new_program_structure",
+      "sourceColumn": "program_id",
+      "sourceType": "int",
+      "sourceDefinition": "int DEFAULT NULL",
+      "sourceRiskFlags": [
+        "INTEGER_KEY_TO_UUID_MAPPING"
+      ],
+      "targetCandidate": "new_program_structure.program_id",
+      "disposition": "PROPOSED_REGISTERED_WITH_UUID_NORMALIZATION",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/academics/a2-scope.ts",
+        "src/modules/academics/academic-setup-error-copy.ts",
+        "src/modules/academics/admin-batch-promotion-read-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/academics/a2-scope.ts",
+        "src/modules/academics/academic-setup-error-copy.ts",
+        "src/modules/academics/admin-batch-promotion-read-model.ts"
+      ],
+      "semanticRisk": "Legacy numeric ID maps to UUID in vNext; no old-row import needed for greenfield.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "new_program_structure",
+      "sourceColumn": "start_date",
+      "sourceType": "varchar(255)",
+      "sourceDefinition": "varchar(255) DEFAULT NULL",
+      "sourceRiskFlags": [],
+      "targetCandidate": "new_program_structure.start_date",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/academics/a2-scope.ts",
+        "src/modules/academics/academic-setup-error-copy.ts",
+        "src/modules/academics/admin-batch-promotion-read-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/academics/a2-scope.ts",
+        "src/modules/academics/academic-setup-error-copy.ts",
+        "src/modules/academics/admin-batch-promotion-read-model.ts"
+      ],
+      "semanticRisk": "Standard field mapping from legacy new_program_structure to new_program_structure.start_date.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "new_program_structure",
+      "sourceColumn": "status",
+      "sourceType": "varchar(255)",
+      "sourceDefinition": "varchar(255) DEFAULT NULL",
+      "sourceRiskFlags": [],
+      "targetCandidate": "new_program_structure.status",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/academics/a2-scope.ts",
+        "src/modules/academics/academic-setup-error-copy.ts",
+        "src/modules/academics/admin-batch-promotion-read-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/academics/a2-scope.ts",
+        "src/modules/academics/academic-setup-error-copy.ts",
+        "src/modules/academics/admin-batch-promotion-read-model.ts"
+      ],
+      "semanticRisk": "Standard field mapping from legacy new_program_structure to new_program_structure.status.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "program",
+      "sourceColumn": "id",
+      "sourceType": "int",
+      "sourceDefinition": "int NOT NULL AUTO_INCREMENT",
+      "sourceRiskFlags": [
+        "INTEGER_KEY_TO_UUID_MAPPING"
+      ],
+      "targetCandidate": "program_terms.id",
+      "disposition": "PROPOSED_NORMALIZED_UUID_PRIMARY_KEY",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/academics/a2-scope.ts",
+        "src/modules/academics/academic-setup-error-copy.ts",
+        "src/modules/academics/admin-batch-promotion-read-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/academics/a2-scope.ts",
+        "src/modules/academics/academic-setup-error-copy.ts",
+        "src/modules/academics/admin-batch-promotion-read-model.ts"
+      ],
+      "semanticRisk": "Legacy numeric ID maps to UUID in vNext; no old-row import needed for greenfield.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "program",
+      "sourceColumn": "created_at",
+      "sourceType": "datetime(6)",
+      "sourceDefinition": "datetime(6) DEFAULT NULL",
+      "sourceRiskFlags": [
+        "TIMEZONE_AND_DEADLINE_SEMANTICS"
+      ],
+      "targetCandidate": "program_terms.created_at",
+      "disposition": "PROPOSED_NORMALIZED_AUDIT_TIMESTAMP",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/academics/a2-scope.ts",
+        "src/modules/academics/academic-setup-error-copy.ts",
+        "src/modules/academics/admin-batch-promotion-read-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/academics/a2-scope.ts",
+        "src/modules/academics/academic-setup-error-copy.ts",
+        "src/modules/academics/admin-batch-promotion-read-model.ts"
+      ],
+      "semanticRisk": "Datetime(6) semantics differ from timestamptz; vNext stores UTC.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "program",
+      "sourceColumn": "is_deleted",
+      "sourceType": "tinyint(1)",
+      "sourceDefinition": "tinyint(1) DEFAULT '0'",
+      "sourceRiskFlags": [],
+      "targetCandidate": "program_terms.legacy_was_deleted",
+      "disposition": "PROPOSED_REDESIGNED_SOFT_DELETE_PATTERN",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/academics/a2-scope.ts",
+        "src/modules/academics/academic-setup-error-copy.ts",
+        "src/modules/academics/admin-batch-promotion-read-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/academics/a2-scope.ts",
+        "src/modules/academics/academic-setup-error-copy.ts",
+        "src/modules/academics/admin-batch-promotion-read-model.ts"
+      ],
+      "semanticRisk": "Soft-delete pattern replaced by status enum or archived_at timestamp in vNext.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "program",
+      "sourceColumn": "updated_at",
+      "sourceType": "datetime(6)",
+      "sourceDefinition": "datetime(6) DEFAULT NULL",
+      "sourceRiskFlags": [
+        "TIMEZONE_AND_DEADLINE_SEMANTICS"
+      ],
+      "targetCandidate": "program_terms.updated_at",
+      "disposition": "PROPOSED_NORMALIZED_AUDIT_TIMESTAMP",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/academics/a2-scope.ts",
+        "src/modules/academics/academic-setup-error-copy.ts",
+        "src/modules/academics/admin-batch-promotion-read-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/academics/a2-scope.ts",
+        "src/modules/academics/academic-setup-error-copy.ts",
+        "src/modules/academics/admin-batch-promotion-read-model.ts"
+      ],
+      "semanticRisk": "Datetime(6) semantics differ from timestamptz; vNext stores UTC.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "program",
+      "sourceColumn": "dept_id",
+      "sourceType": "int",
+      "sourceDefinition": "int DEFAULT NULL",
+      "sourceRiskFlags": [
+        "INTEGER_KEY_TO_UUID_MAPPING"
+      ],
+      "targetCandidate": "program_terms.dept_id",
+      "disposition": "PROPOSED_REGISTERED_WITH_UUID_NORMALIZATION",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/academics/a2-scope.ts",
+        "src/modules/academics/academic-setup-error-copy.ts",
+        "src/modules/academics/admin-batch-promotion-read-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/academics/a2-scope.ts",
+        "src/modules/academics/academic-setup-error-copy.ts",
+        "src/modules/academics/admin-batch-promotion-read-model.ts"
+      ],
+      "semanticRisk": "Legacy numeric ID maps to UUID in vNext; no old-row import needed for greenfield.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "program",
+      "sourceColumn": "end_year",
+      "sourceType": "varchar(255)",
+      "sourceDefinition": "varchar(255) DEFAULT NULL",
+      "sourceRiskFlags": [],
+      "targetCandidate": "program_terms.end_year",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/academics/a2-scope.ts",
+        "src/modules/academics/academic-setup-error-copy.ts",
+        "src/modules/academics/admin-batch-promotion-read-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/academics/a2-scope.ts",
+        "src/modules/academics/academic-setup-error-copy.ts",
+        "src/modules/academics/admin-batch-promotion-read-model.ts"
+      ],
+      "semanticRisk": "Standard field mapping from legacy program to program_terms.end_year.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "program",
+      "sourceColumn": "name",
+      "sourceType": "varchar(255)",
+      "sourceDefinition": "varchar(255) DEFAULT NULL",
+      "sourceRiskFlags": [],
+      "targetCandidate": "program_terms.name",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/academics/a2-scope.ts",
+        "src/modules/academics/academic-setup-error-copy.ts",
+        "src/modules/academics/admin-batch-promotion-read-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/academics/a2-scope.ts",
+        "src/modules/academics/academic-setup-error-copy.ts",
+        "src/modules/academics/admin-batch-promotion-read-model.ts"
+      ],
+      "semanticRisk": "Standard field mapping from legacy program to program_terms.name.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "program",
+      "sourceColumn": "start_year",
+      "sourceType": "varchar(255)",
+      "sourceDefinition": "varchar(255) DEFAULT NULL",
+      "sourceRiskFlags": [],
+      "targetCandidate": "program_terms.start_year",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/academics/a2-scope.ts",
+        "src/modules/academics/academic-setup-error-copy.ts",
+        "src/modules/academics/admin-batch-promotion-read-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/academics/a2-scope.ts",
+        "src/modules/academics/academic-setup-error-copy.ts",
+        "src/modules/academics/admin-batch-promotion-read-model.ts"
+      ],
+      "semanticRisk": "Standard field mapping from legacy program to program_terms.start_year.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "program_structure",
+      "sourceColumn": "id",
+      "sourceType": "int",
+      "sourceDefinition": "int NOT NULL AUTO_INCREMENT",
+      "sourceRiskFlags": [
+        "INTEGER_KEY_TO_UUID_MAPPING"
+      ],
+      "targetCandidate": "program_structure.id",
+      "disposition": "PROPOSED_NORMALIZED_UUID_PRIMARY_KEY",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/academics/a2-scope.ts",
+        "src/modules/academics/academic-setup-error-copy.ts",
+        "src/modules/academics/admin-batch-promotion-read-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/academics/a2-scope.ts",
+        "src/modules/academics/academic-setup-error-copy.ts",
+        "src/modules/academics/admin-batch-promotion-read-model.ts"
+      ],
+      "semanticRisk": "Legacy numeric ID maps to UUID in vNext; no old-row import needed for greenfield.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "program_structure",
+      "sourceColumn": "created_at",
+      "sourceType": "datetime(6)",
+      "sourceDefinition": "datetime(6) DEFAULT NULL",
+      "sourceRiskFlags": [
+        "TIMEZONE_AND_DEADLINE_SEMANTICS"
+      ],
+      "targetCandidate": "program_structure.created_at",
+      "disposition": "PROPOSED_NORMALIZED_AUDIT_TIMESTAMP",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/academics/a2-scope.ts",
+        "src/modules/academics/academic-setup-error-copy.ts",
+        "src/modules/academics/admin-batch-promotion-read-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/academics/a2-scope.ts",
+        "src/modules/academics/academic-setup-error-copy.ts",
+        "src/modules/academics/admin-batch-promotion-read-model.ts"
+      ],
+      "semanticRisk": "Datetime(6) semantics differ from timestamptz; vNext stores UTC.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "program_structure",
+      "sourceColumn": "is_deleted",
+      "sourceType": "tinyint(1)",
+      "sourceDefinition": "tinyint(1) DEFAULT '0'",
+      "sourceRiskFlags": [],
+      "targetCandidate": "program_structure.is_deleted",
+      "disposition": "PROPOSED_REDESIGNED_SOFT_DELETE_PATTERN",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/academics/a2-scope.ts",
+        "src/modules/academics/academic-setup-error-copy.ts",
+        "src/modules/academics/admin-batch-promotion-read-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/academics/a2-scope.ts",
+        "src/modules/academics/academic-setup-error-copy.ts",
+        "src/modules/academics/admin-batch-promotion-read-model.ts"
+      ],
+      "semanticRisk": "Soft-delete pattern replaced by status enum or archived_at timestamp in vNext.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "program_structure",
+      "sourceColumn": "updated_at",
+      "sourceType": "datetime(6)",
+      "sourceDefinition": "datetime(6) DEFAULT NULL",
+      "sourceRiskFlags": [
+        "TIMEZONE_AND_DEADLINE_SEMANTICS"
+      ],
+      "targetCandidate": "program_structure.updated_at",
+      "disposition": "PROPOSED_NORMALIZED_AUDIT_TIMESTAMP",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/academics/a2-scope.ts",
+        "src/modules/academics/academic-setup-error-copy.ts",
+        "src/modules/academics/admin-batch-promotion-read-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/academics/a2-scope.ts",
+        "src/modules/academics/academic-setup-error-copy.ts",
+        "src/modules/academics/admin-batch-promotion-read-model.ts"
+      ],
+      "semanticRisk": "Datetime(6) semantics differ from timestamptz; vNext stores UTC.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "program_structure",
+      "sourceColumn": "course_ids",
+      "sourceType": "json",
+      "sourceDefinition": "json DEFAULT NULL",
+      "sourceRiskFlags": [
+        "STRUCTURED_PAYLOAD_SEMANTIC_SCHEMA"
+      ],
+      "targetCandidate": "program_structure.course_ids",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/academics/a2-scope.ts",
+        "src/modules/academics/academic-setup-error-copy.ts",
+        "src/modules/academics/admin-batch-promotion-read-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/academics/a2-scope.ts",
+        "src/modules/academics/academic-setup-error-copy.ts",
+        "src/modules/academics/admin-batch-promotion-read-model.ts"
+      ],
+      "semanticRisk": "JSON payload: vNext uses typed JSONB or separate normalized columns.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "program_structure",
+      "sourceColumn": "end_date",
+      "sourceType": "varchar(255)",
+      "sourceDefinition": "varchar(255) DEFAULT NULL",
+      "sourceRiskFlags": [],
+      "targetCandidate": "program_structure.end_date",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/academics/a2-scope.ts",
+        "src/modules/academics/academic-setup-error-copy.ts",
+        "src/modules/academics/admin-batch-promotion-read-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/academics/a2-scope.ts",
+        "src/modules/academics/academic-setup-error-copy.ts",
+        "src/modules/academics/admin-batch-promotion-read-model.ts"
+      ],
+      "semanticRisk": "Standard field mapping from legacy program_structure to program_structure.end_date.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "program_structure",
+      "sourceColumn": "name",
+      "sourceType": "varchar(255)",
+      "sourceDefinition": "varchar(255) DEFAULT NULL",
+      "sourceRiskFlags": [],
+      "targetCandidate": "program_structure.name",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/academics/a2-scope.ts",
+        "src/modules/academics/academic-setup-error-copy.ts",
+        "src/modules/academics/admin-batch-promotion-read-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/academics/a2-scope.ts",
+        "src/modules/academics/academic-setup-error-copy.ts",
+        "src/modules/academics/admin-batch-promotion-read-model.ts"
+      ],
+      "semanticRisk": "Standard field mapping from legacy program_structure to program_structure.name.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "program_structure",
+      "sourceColumn": "program_id",
+      "sourceType": "int",
+      "sourceDefinition": "int DEFAULT NULL",
+      "sourceRiskFlags": [
+        "INTEGER_KEY_TO_UUID_MAPPING"
+      ],
+      "targetCandidate": "program_structure.program_id",
+      "disposition": "PROPOSED_REGISTERED_WITH_UUID_NORMALIZATION",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/academics/a2-scope.ts",
+        "src/modules/academics/academic-setup-error-copy.ts",
+        "src/modules/academics/admin-batch-promotion-read-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/academics/a2-scope.ts",
+        "src/modules/academics/academic-setup-error-copy.ts",
+        "src/modules/academics/admin-batch-promotion-read-model.ts"
+      ],
+      "semanticRisk": "Legacy numeric ID maps to UUID in vNext; no old-row import needed for greenfield.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "program_structure",
+      "sourceColumn": "start_date",
+      "sourceType": "varchar(255)",
+      "sourceDefinition": "varchar(255) DEFAULT NULL",
+      "sourceRiskFlags": [],
+      "targetCandidate": "program_structure.start_date",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/academics/a2-scope.ts",
+        "src/modules/academics/academic-setup-error-copy.ts",
+        "src/modules/academics/admin-batch-promotion-read-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/academics/a2-scope.ts",
+        "src/modules/academics/academic-setup-error-copy.ts",
+        "src/modules/academics/admin-batch-promotion-read-model.ts"
+      ],
+      "semanticRisk": "Standard field mapping from legacy program_structure to program_structure.start_date.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "semester",
+      "sourceColumn": "id",
+      "sourceType": "int",
+      "sourceDefinition": "int NOT NULL AUTO_INCREMENT",
+      "sourceRiskFlags": [
+        "INTEGER_KEY_TO_UUID_MAPPING"
+      ],
+      "targetCandidate": "semester.id",
+      "disposition": "PROPOSED_NORMALIZED_UUID_PRIMARY_KEY",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/academics/a2-scope.ts",
+        "src/modules/academics/academic-setup-error-copy.ts",
+        "src/modules/academics/admin-batch-promotion-read-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/academics/a2-scope.ts",
+        "src/modules/academics/academic-setup-error-copy.ts",
+        "src/modules/academics/admin-batch-promotion-read-model.ts"
+      ],
+      "semanticRisk": "Legacy numeric ID maps to UUID in vNext; no old-row import needed for greenfield.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "semester",
+      "sourceColumn": "created_at",
+      "sourceType": "datetime(6)",
+      "sourceDefinition": "datetime(6) DEFAULT NULL",
+      "sourceRiskFlags": [
+        "TIMEZONE_AND_DEADLINE_SEMANTICS"
+      ],
+      "targetCandidate": "semester.created_at",
+      "disposition": "PROPOSED_NORMALIZED_AUDIT_TIMESTAMP",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/academics/a2-scope.ts",
+        "src/modules/academics/academic-setup-error-copy.ts",
+        "src/modules/academics/admin-batch-promotion-read-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/academics/a2-scope.ts",
+        "src/modules/academics/academic-setup-error-copy.ts",
+        "src/modules/academics/admin-batch-promotion-read-model.ts"
+      ],
+      "semanticRisk": "Datetime(6) semantics differ from timestamptz; vNext stores UTC.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "semester",
+      "sourceColumn": "is_deleted",
+      "sourceType": "tinyint(1)",
+      "sourceDefinition": "tinyint(1) DEFAULT '0'",
+      "sourceRiskFlags": [],
+      "targetCandidate": "semester.is_deleted",
+      "disposition": "PROPOSED_REDESIGNED_SOFT_DELETE_PATTERN",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/academics/a2-scope.ts",
+        "src/modules/academics/academic-setup-error-copy.ts",
+        "src/modules/academics/admin-batch-promotion-read-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/academics/a2-scope.ts",
+        "src/modules/academics/academic-setup-error-copy.ts",
+        "src/modules/academics/admin-batch-promotion-read-model.ts"
+      ],
+      "semanticRisk": "Soft-delete pattern replaced by status enum or archived_at timestamp in vNext.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "semester",
+      "sourceColumn": "updated_at",
+      "sourceType": "datetime(6)",
+      "sourceDefinition": "datetime(6) DEFAULT NULL",
+      "sourceRiskFlags": [
+        "TIMEZONE_AND_DEADLINE_SEMANTICS"
+      ],
+      "targetCandidate": "semester.updated_at",
+      "disposition": "PROPOSED_NORMALIZED_AUDIT_TIMESTAMP",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/academics/a2-scope.ts",
+        "src/modules/academics/academic-setup-error-copy.ts",
+        "src/modules/academics/admin-batch-promotion-read-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/academics/a2-scope.ts",
+        "src/modules/academics/academic-setup-error-copy.ts",
+        "src/modules/academics/admin-batch-promotion-read-model.ts"
+      ],
+      "semanticRisk": "Datetime(6) semantics differ from timestamptz; vNext stores UTC.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "semester",
+      "sourceColumn": "is_active",
+      "sourceType": "bit(1)",
+      "sourceDefinition": "bit(1) DEFAULT NULL",
+      "sourceRiskFlags": [],
+      "targetCandidate": "semester.is_active",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/academics/a2-scope.ts",
+        "src/modules/academics/academic-setup-error-copy.ts",
+        "src/modules/academics/admin-batch-promotion-read-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/academics/a2-scope.ts",
+        "src/modules/academics/academic-setup-error-copy.ts",
+        "src/modules/academics/admin-batch-promotion-read-model.ts"
+      ],
+      "semanticRisk": "Standard field mapping from legacy semester to semester.is_active.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "semester",
+      "sourceColumn": "name",
+      "sourceType": "varchar(255)",
+      "sourceDefinition": "varchar(255) DEFAULT NULL",
+      "sourceRiskFlags": [],
+      "targetCandidate": "semester.name",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/academics/a2-scope.ts",
+        "src/modules/academics/academic-setup-error-copy.ts",
+        "src/modules/academics/admin-batch-promotion-read-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/academics/a2-scope.ts",
+        "src/modules/academics/academic-setup-error-copy.ts",
+        "src/modules/academics/admin-batch-promotion-read-model.ts"
+      ],
+      "semanticRisk": "Standard field mapping from legacy semester to semester.name.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "semester",
+      "sourceColumn": "program_id",
+      "sourceType": "int",
+      "sourceDefinition": "int NOT NULL",
+      "sourceRiskFlags": [
+        "INTEGER_KEY_TO_UUID_MAPPING"
+      ],
+      "targetCandidate": "semester.program_id",
+      "disposition": "PROPOSED_REGISTERED_WITH_UUID_NORMALIZATION",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/academics/a2-scope.ts",
+        "src/modules/academics/academic-setup-error-copy.ts",
+        "src/modules/academics/admin-batch-promotion-read-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/academics/a2-scope.ts",
+        "src/modules/academics/academic-setup-error-copy.ts",
+        "src/modules/academics/admin-batch-promotion-read-model.ts"
+      ],
+      "semanticRisk": "Legacy numeric ID maps to UUID in vNext; no old-row import needed for greenfield.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "semester",
+      "sourceColumn": "semester_number",
+      "sourceType": "int",
+      "sourceDefinition": "int NOT NULL",
+      "sourceRiskFlags": [],
+      "targetCandidate": "semester.semester_number",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/academics/a2-scope.ts",
+        "src/modules/academics/academic-setup-error-copy.ts",
+        "src/modules/academics/admin-batch-promotion-read-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/academics/a2-scope.ts",
+        "src/modules/academics/academic-setup-error-copy.ts",
+        "src/modules/academics/admin-batch-promotion-read-model.ts"
+      ],
+      "semanticRisk": "Standard field mapping from legacy semester to semester.semester_number.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "semester",
+      "sourceColumn": "total_credits",
+      "sourceType": "int",
+      "sourceDefinition": "int DEFAULT NULL",
+      "sourceRiskFlags": [],
+      "targetCandidate": "semester.total_credits",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/academics/a2-scope.ts",
+        "src/modules/academics/academic-setup-error-copy.ts",
+        "src/modules/academics/admin-batch-promotion-read-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/academics/a2-scope.ts",
+        "src/modules/academics/academic-setup-error-copy.ts",
+        "src/modules/academics/admin-batch-promotion-read-model.ts"
+      ],
+      "semanticRisk": "Standard field mapping from legacy semester to semester.total_credits.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "semester_course",
+      "sourceColumn": "id",
+      "sourceType": "int",
+      "sourceDefinition": "int NOT NULL AUTO_INCREMENT",
+      "sourceRiskFlags": [
+        "INTEGER_KEY_TO_UUID_MAPPING"
+      ],
+      "targetCandidate": "semester_course.id",
+      "disposition": "PROPOSED_NORMALIZED_UUID_PRIMARY_KEY",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/academics/a2-scope.ts",
+        "src/modules/academics/academic-setup-error-copy.ts",
+        "src/modules/academics/admin-batch-promotion-read-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/academics/a2-scope.ts",
+        "src/modules/academics/academic-setup-error-copy.ts",
+        "src/modules/academics/admin-batch-promotion-read-model.ts"
+      ],
+      "semanticRisk": "Legacy numeric ID maps to UUID in vNext; no old-row import needed for greenfield.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "semester_course",
+      "sourceColumn": "created_at",
+      "sourceType": "datetime(6)",
+      "sourceDefinition": "datetime(6) DEFAULT NULL",
+      "sourceRiskFlags": [
+        "TIMEZONE_AND_DEADLINE_SEMANTICS"
+      ],
+      "targetCandidate": "semester_course.created_at",
+      "disposition": "PROPOSED_NORMALIZED_AUDIT_TIMESTAMP",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/academics/a2-scope.ts",
+        "src/modules/academics/academic-setup-error-copy.ts",
+        "src/modules/academics/admin-batch-promotion-read-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/academics/a2-scope.ts",
+        "src/modules/academics/academic-setup-error-copy.ts",
+        "src/modules/academics/admin-batch-promotion-read-model.ts"
+      ],
+      "semanticRisk": "Datetime(6) semantics differ from timestamptz; vNext stores UTC.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "semester_course",
+      "sourceColumn": "is_deleted",
+      "sourceType": "tinyint(1)",
+      "sourceDefinition": "tinyint(1) DEFAULT '0'",
+      "sourceRiskFlags": [],
+      "targetCandidate": "semester_course.is_deleted",
+      "disposition": "PROPOSED_REDESIGNED_SOFT_DELETE_PATTERN",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/academics/a2-scope.ts",
+        "src/modules/academics/academic-setup-error-copy.ts",
+        "src/modules/academics/admin-batch-promotion-read-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/academics/a2-scope.ts",
+        "src/modules/academics/academic-setup-error-copy.ts",
+        "src/modules/academics/admin-batch-promotion-read-model.ts"
+      ],
+      "semanticRisk": "Soft-delete pattern replaced by status enum or archived_at timestamp in vNext.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "semester_course",
+      "sourceColumn": "updated_at",
+      "sourceType": "datetime(6)",
+      "sourceDefinition": "datetime(6) DEFAULT NULL",
+      "sourceRiskFlags": [
+        "TIMEZONE_AND_DEADLINE_SEMANTICS"
+      ],
+      "targetCandidate": "semester_course.updated_at",
+      "disposition": "PROPOSED_NORMALIZED_AUDIT_TIMESTAMP",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/academics/a2-scope.ts",
+        "src/modules/academics/academic-setup-error-copy.ts",
+        "src/modules/academics/admin-batch-promotion-read-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/academics/a2-scope.ts",
+        "src/modules/academics/academic-setup-error-copy.ts",
+        "src/modules/academics/admin-batch-promotion-read-model.ts"
+      ],
+      "semanticRisk": "Datetime(6) semantics differ from timestamptz; vNext stores UTC.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "semester_course",
+      "sourceColumn": "course_id",
+      "sourceType": "int",
+      "sourceDefinition": "int NOT NULL",
+      "sourceRiskFlags": [
+        "INTEGER_KEY_TO_UUID_MAPPING"
+      ],
+      "targetCandidate": "semester_course.course_id",
+      "disposition": "PROPOSED_REGISTERED_WITH_UUID_NORMALIZATION",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/academics/a2-scope.ts",
+        "src/modules/academics/academic-setup-error-copy.ts",
+        "src/modules/academics/admin-batch-promotion-read-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/academics/a2-scope.ts",
+        "src/modules/academics/academic-setup-error-copy.ts",
+        "src/modules/academics/admin-batch-promotion-read-model.ts"
+      ],
+      "semanticRisk": "Legacy numeric ID maps to UUID in vNext; no old-row import needed for greenfield.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "semester_course",
+      "sourceColumn": "course_order",
+      "sourceType": "int",
+      "sourceDefinition": "int DEFAULT NULL",
+      "sourceRiskFlags": [],
+      "targetCandidate": "semester_course.course_order",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/academics/a2-scope.ts",
+        "src/modules/academics/academic-setup-error-copy.ts",
+        "src/modules/academics/admin-batch-promotion-read-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/academics/a2-scope.ts",
+        "src/modules/academics/academic-setup-error-copy.ts",
+        "src/modules/academics/admin-batch-promotion-read-model.ts"
+      ],
+      "semanticRisk": "Standard field mapping from legacy semester_course to semester_course.course_order.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "semester_course",
+      "sourceColumn": "credits",
+      "sourceType": "int",
+      "sourceDefinition": "int DEFAULT NULL",
+      "sourceRiskFlags": [],
+      "targetCandidate": "semester_course.credits",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/academics/a2-scope.ts",
+        "src/modules/academics/academic-setup-error-copy.ts",
+        "src/modules/academics/admin-batch-promotion-read-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/academics/a2-scope.ts",
+        "src/modules/academics/academic-setup-error-copy.ts",
+        "src/modules/academics/admin-batch-promotion-read-model.ts"
+      ],
+      "semanticRisk": "Standard field mapping from legacy semester_course to semester_course.credits.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "semester_course",
+      "sourceColumn": "is_mandatory",
+      "sourceType": "bit(1)",
+      "sourceDefinition": "bit(1) DEFAULT NULL",
+      "sourceRiskFlags": [],
+      "targetCandidate": "semester_course.is_mandatory",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/academics/a2-scope.ts",
+        "src/modules/academics/academic-setup-error-copy.ts",
+        "src/modules/academics/admin-batch-promotion-read-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/academics/a2-scope.ts",
+        "src/modules/academics/academic-setup-error-copy.ts",
+        "src/modules/academics/admin-batch-promotion-read-model.ts"
+      ],
+      "semanticRisk": "Standard field mapping from legacy semester_course to semester_course.is_mandatory.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "semester_course",
+      "sourceColumn": "semester_id",
+      "sourceType": "int",
+      "sourceDefinition": "int NOT NULL",
+      "sourceRiskFlags": [
+        "INTEGER_KEY_TO_UUID_MAPPING"
+      ],
+      "targetCandidate": "semester_course.semester_id",
+      "disposition": "PROPOSED_REGISTERED_WITH_UUID_NORMALIZATION",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/academics/a2-scope.ts",
+        "src/modules/academics/academic-setup-error-copy.ts",
+        "src/modules/academics/admin-batch-promotion-read-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/academics/a2-scope.ts",
+        "src/modules/academics/academic-setup-error-copy.ts",
+        "src/modules/academics/admin-batch-promotion-read-model.ts"
+      ],
+      "semanticRisk": "Legacy numeric ID maps to UUID in vNext; no old-row import needed for greenfield.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    }
+  ]
+}

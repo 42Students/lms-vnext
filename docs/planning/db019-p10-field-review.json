@@ -1,0 +1,3472 @@
+{
+  "id": "DB19-P10",
+  "recordType": "DB19_PACKAGE_SOURCE_FIELD_REVIEW",
+  "sourceSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+  "sourceInventory": "docs/planning/db-pass4-columns-db06_assessments_and_attendance.json",
+  "originalFieldLedger": "docs/planning/database-parity-db06_assessments_and_attendance-field-ledger.json",
+  "sourceTables": [
+    "assigned_exam",
+    "attempted_question",
+    "exam",
+    "exam_faculty",
+    "exam_faculty_mapping",
+    "exam_monitoring",
+    "examinee",
+    "facial_recognition_result",
+    "question",
+    "question_option",
+    "quiz_attempt",
+    "selected_option"
+  ],
+  "sourceFieldCount": 128,
+  "reviewedProposals": 128,
+  "runtimeVerifiedCount": 0,
+  "fieldDispositionApproval": "PENDING_PACKAGE_ACCEPTANCE",
+  "privacyBoundary": "DB19-P10 scoped source field disposition only. Global P31/P32 and DB020 remain open.",
+  "testEvidenceStatus": "SOURCE_QUALITY_GATE_ONLY_NOT_RUNTIME_CERTIFIED",
+  "pendingAcceptance": "Registered PG17 producer/consumer and runtime verification for all 128 fields.",
+  "fields": [
+    {
+      "sourceTable": "assigned_exam",
+      "sourceColumn": "id",
+      "sourceType": "int",
+      "sourceDefinition": "int NOT NULL AUTO_INCREMENT",
+      "sourceRiskFlags": [
+        "INTEGER_KEY_TO_UUID_MAPPING"
+      ],
+      "targetCandidate": "assigned_exam.id",
+      "disposition": "PROPOSED_NORMALIZED_UUID_PRIMARY_KEY",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/courses/faculty-quiz-question-csv-service.ts",
+        "src/modules/courses/faculty-quiz-question-csv.ts",
+        "src/modules/courses/learner-quiz-empty-question-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/courses/faculty-quiz-question-csv-service.ts",
+        "src/modules/courses/faculty-quiz-question-csv.ts",
+        "src/modules/courses/learner-quiz-empty-question-model.ts"
+      ],
+      "semanticRisk": "Legacy numeric ID maps to UUID in vNext; no old-row import needed for greenfield.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "assigned_exam",
+      "sourceColumn": "created_at",
+      "sourceType": "datetime(6)",
+      "sourceDefinition": "datetime(6) DEFAULT NULL",
+      "sourceRiskFlags": [
+        "TIMEZONE_AND_DEADLINE_SEMANTICS"
+      ],
+      "targetCandidate": "assigned_exam.created_at",
+      "disposition": "PROPOSED_NORMALIZED_AUDIT_TIMESTAMP",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/courses/faculty-quiz-question-csv-service.ts",
+        "src/modules/courses/faculty-quiz-question-csv.ts",
+        "src/modules/courses/learner-quiz-empty-question-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/courses/faculty-quiz-question-csv-service.ts",
+        "src/modules/courses/faculty-quiz-question-csv.ts",
+        "src/modules/courses/learner-quiz-empty-question-model.ts"
+      ],
+      "semanticRisk": "Datetime(6) semantics differ from timestamptz; vNext stores UTC.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "assigned_exam",
+      "sourceColumn": "is_deleted",
+      "sourceType": "tinyint(1)",
+      "sourceDefinition": "tinyint(1) DEFAULT '0'",
+      "sourceRiskFlags": [],
+      "targetCandidate": "assigned_exam.is_deleted",
+      "disposition": "PROPOSED_REDESIGNED_SOFT_DELETE_PATTERN",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/courses/faculty-quiz-question-csv-service.ts",
+        "src/modules/courses/faculty-quiz-question-csv.ts",
+        "src/modules/courses/learner-quiz-empty-question-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/courses/faculty-quiz-question-csv-service.ts",
+        "src/modules/courses/faculty-quiz-question-csv.ts",
+        "src/modules/courses/learner-quiz-empty-question-model.ts"
+      ],
+      "semanticRisk": "Soft-delete pattern replaced by status enum or archived_at timestamp in vNext.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "assigned_exam",
+      "sourceColumn": "updated_at",
+      "sourceType": "datetime(6)",
+      "sourceDefinition": "datetime(6) DEFAULT NULL",
+      "sourceRiskFlags": [
+        "TIMEZONE_AND_DEADLINE_SEMANTICS"
+      ],
+      "targetCandidate": "assigned_exam.updated_at",
+      "disposition": "PROPOSED_NORMALIZED_AUDIT_TIMESTAMP",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/courses/faculty-quiz-question-csv-service.ts",
+        "src/modules/courses/faculty-quiz-question-csv.ts",
+        "src/modules/courses/learner-quiz-empty-question-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/courses/faculty-quiz-question-csv-service.ts",
+        "src/modules/courses/faculty-quiz-question-csv.ts",
+        "src/modules/courses/learner-quiz-empty-question-model.ts"
+      ],
+      "semanticRisk": "Datetime(6) semantics differ from timestamptz; vNext stores UTC.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "assigned_exam",
+      "sourceColumn": "atempd_ques_count",
+      "sourceType": "int",
+      "sourceDefinition": "int DEFAULT NULL",
+      "sourceRiskFlags": [],
+      "targetCandidate": "assigned_exam.atempd_ques_count",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/courses/faculty-quiz-question-csv-service.ts",
+        "src/modules/courses/faculty-quiz-question-csv.ts",
+        "src/modules/courses/learner-quiz-empty-question-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/courses/faculty-quiz-question-csv-service.ts",
+        "src/modules/courses/faculty-quiz-question-csv.ts",
+        "src/modules/courses/learner-quiz-empty-question-model.ts"
+      ],
+      "semanticRisk": "Standard field mapping from legacy assigned_exam to assigned_exam.atempd_ques_count.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "assigned_exam",
+      "sourceColumn": "chat",
+      "sourceType": "json",
+      "sourceDefinition": "json DEFAULT NULL",
+      "sourceRiskFlags": [
+        "STRUCTURED_PAYLOAD_SEMANTIC_SCHEMA"
+      ],
+      "targetCandidate": "assigned_exam.chat",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/courses/faculty-quiz-question-csv-service.ts",
+        "src/modules/courses/faculty-quiz-question-csv.ts",
+        "src/modules/courses/learner-quiz-empty-question-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/courses/faculty-quiz-question-csv-service.ts",
+        "src/modules/courses/faculty-quiz-question-csv.ts",
+        "src/modules/courses/learner-quiz-empty-question-model.ts"
+      ],
+      "semanticRisk": "JSON payload: vNext uses typed JSONB or separate normalized columns.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "assigned_exam",
+      "sourceColumn": "correct_attempt_count",
+      "sourceType": "int",
+      "sourceDefinition": "int DEFAULT NULL",
+      "sourceRiskFlags": [],
+      "targetCandidate": "assigned_exam.correct_attempt_count",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/courses/faculty-quiz-question-csv-service.ts",
+        "src/modules/courses/faculty-quiz-question-csv.ts",
+        "src/modules/courses/learner-quiz-empty-question-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/courses/faculty-quiz-question-csv-service.ts",
+        "src/modules/courses/faculty-quiz-question-csv.ts",
+        "src/modules/courses/learner-quiz-empty-question-model.ts"
+      ],
+      "semanticRisk": "Standard field mapping from legacy assigned_exam to assigned_exam.correct_attempt_count.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "assigned_exam",
+      "sourceColumn": "earned_score",
+      "sourceType": "int",
+      "sourceDefinition": "int DEFAULT NULL",
+      "sourceRiskFlags": [],
+      "targetCandidate": "assigned_exam.earned_score",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/courses/faculty-quiz-question-csv-service.ts",
+        "src/modules/courses/faculty-quiz-question-csv.ts",
+        "src/modules/courses/learner-quiz-empty-question-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/courses/faculty-quiz-question-csv-service.ts",
+        "src/modules/courses/faculty-quiz-question-csv.ts",
+        "src/modules/courses/learner-quiz-empty-question-model.ts"
+      ],
+      "semanticRisk": "Standard field mapping from legacy assigned_exam to assigned_exam.earned_score.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "assigned_exam",
+      "sourceColumn": "end_time",
+      "sourceType": "varchar(255)",
+      "sourceDefinition": "varchar(255) DEFAULT NULL",
+      "sourceRiskFlags": [],
+      "targetCandidate": "assigned_exam.end_time",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/courses/faculty-quiz-question-csv-service.ts",
+        "src/modules/courses/faculty-quiz-question-csv.ts",
+        "src/modules/courses/learner-quiz-empty-question-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/courses/faculty-quiz-question-csv-service.ts",
+        "src/modules/courses/faculty-quiz-question-csv.ts",
+        "src/modules/courses/learner-quiz-empty-question-model.ts"
+      ],
+      "semanticRisk": "Standard field mapping from legacy assigned_exam to assigned_exam.end_time.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "assigned_exam",
+      "sourceColumn": "evaluator_id",
+      "sourceType": "varchar(255)",
+      "sourceDefinition": "varchar(255) DEFAULT NULL",
+      "sourceRiskFlags": [],
+      "targetCandidate": "assigned_exam.evaluator_id",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/courses/faculty-quiz-question-csv-service.ts",
+        "src/modules/courses/faculty-quiz-question-csv.ts",
+        "src/modules/courses/learner-quiz-empty-question-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/courses/faculty-quiz-question-csv-service.ts",
+        "src/modules/courses/faculty-quiz-question-csv.ts",
+        "src/modules/courses/learner-quiz-empty-question-model.ts"
+      ],
+      "semanticRisk": "Standard field mapping from legacy assigned_exam to assigned_exam.evaluator_id.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "assigned_exam",
+      "sourceColumn": "result_status",
+      "sourceType": "varchar(255)",
+      "sourceDefinition": "varchar(255) DEFAULT NULL",
+      "sourceRiskFlags": [],
+      "targetCandidate": "assigned_exam.result_status",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/courses/faculty-quiz-question-csv-service.ts",
+        "src/modules/courses/faculty-quiz-question-csv.ts",
+        "src/modules/courses/learner-quiz-empty-question-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/courses/faculty-quiz-question-csv-service.ts",
+        "src/modules/courses/faculty-quiz-question-csv.ts",
+        "src/modules/courses/learner-quiz-empty-question-model.ts"
+      ],
+      "semanticRisk": "Standard field mapping from legacy assigned_exam to assigned_exam.result_status.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "assigned_exam",
+      "sourceColumn": "start_time",
+      "sourceType": "varchar(255)",
+      "sourceDefinition": "varchar(255) DEFAULT NULL",
+      "sourceRiskFlags": [],
+      "targetCandidate": "assigned_exam.start_time",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/courses/faculty-quiz-question-csv-service.ts",
+        "src/modules/courses/faculty-quiz-question-csv.ts",
+        "src/modules/courses/learner-quiz-empty-question-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/courses/faculty-quiz-question-csv-service.ts",
+        "src/modules/courses/faculty-quiz-question-csv.ts",
+        "src/modules/courses/learner-quiz-empty-question-model.ts"
+      ],
+      "semanticRisk": "Standard field mapping from legacy assigned_exam to assigned_exam.start_time.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "assigned_exam",
+      "sourceColumn": "started_screen_sharing",
+      "sourceType": "bit(1)",
+      "sourceDefinition": "bit(1) DEFAULT NULL",
+      "sourceRiskFlags": [],
+      "targetCandidate": "assigned_exam.started_screen_sharing",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/courses/faculty-quiz-question-csv-service.ts",
+        "src/modules/courses/faculty-quiz-question-csv.ts",
+        "src/modules/courses/learner-quiz-empty-question-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/courses/faculty-quiz-question-csv-service.ts",
+        "src/modules/courses/faculty-quiz-question-csv.ts",
+        "src/modules/courses/learner-quiz-empty-question-model.ts"
+      ],
+      "semanticRisk": "Standard field mapping from legacy assigned_exam to assigned_exam.started_screen_sharing.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "assigned_exam",
+      "sourceColumn": "started_video_sharing",
+      "sourceType": "bit(1)",
+      "sourceDefinition": "bit(1) DEFAULT NULL",
+      "sourceRiskFlags": [],
+      "targetCandidate": "assigned_exam.started_video_sharing",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/courses/faculty-quiz-question-csv-service.ts",
+        "src/modules/courses/faculty-quiz-question-csv.ts",
+        "src/modules/courses/learner-quiz-empty-question-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/courses/faculty-quiz-question-csv-service.ts",
+        "src/modules/courses/faculty-quiz-question-csv.ts",
+        "src/modules/courses/learner-quiz-empty-question-model.ts"
+      ],
+      "semanticRisk": "Standard field mapping from legacy assigned_exam to assigned_exam.started_video_sharing.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "assigned_exam",
+      "sourceColumn": "status",
+      "sourceType": "int",
+      "sourceDefinition": "int DEFAULT NULL",
+      "sourceRiskFlags": [],
+      "targetCandidate": "assigned_exam.status",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/courses/faculty-quiz-question-csv-service.ts",
+        "src/modules/courses/faculty-quiz-question-csv.ts",
+        "src/modules/courses/learner-quiz-empty-question-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/courses/faculty-quiz-question-csv-service.ts",
+        "src/modules/courses/faculty-quiz-question-csv.ts",
+        "src/modules/courses/learner-quiz-empty-question-model.ts"
+      ],
+      "semanticRisk": "Standard field mapping from legacy assigned_exam to assigned_exam.status.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "assigned_exam",
+      "sourceColumn": "total_ques_count",
+      "sourceType": "int",
+      "sourceDefinition": "int DEFAULT NULL",
+      "sourceRiskFlags": [],
+      "targetCandidate": "assigned_exam.total_ques_count",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/courses/faculty-quiz-question-csv-service.ts",
+        "src/modules/courses/faculty-quiz-question-csv.ts",
+        "src/modules/courses/learner-quiz-empty-question-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/courses/faculty-quiz-question-csv-service.ts",
+        "src/modules/courses/faculty-quiz-question-csv.ts",
+        "src/modules/courses/learner-quiz-empty-question-model.ts"
+      ],
+      "semanticRisk": "Standard field mapping from legacy assigned_exam to assigned_exam.total_ques_count.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "assigned_exam",
+      "sourceColumn": "warnings",
+      "sourceType": "json",
+      "sourceDefinition": "json DEFAULT NULL",
+      "sourceRiskFlags": [
+        "STRUCTURED_PAYLOAD_SEMANTIC_SCHEMA"
+      ],
+      "targetCandidate": "assigned_exam.warnings",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/courses/faculty-quiz-question-csv-service.ts",
+        "src/modules/courses/faculty-quiz-question-csv.ts",
+        "src/modules/courses/learner-quiz-empty-question-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/courses/faculty-quiz-question-csv-service.ts",
+        "src/modules/courses/faculty-quiz-question-csv.ts",
+        "src/modules/courses/learner-quiz-empty-question-model.ts"
+      ],
+      "semanticRisk": "JSON payload: vNext uses typed JSONB or separate normalized columns.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "assigned_exam",
+      "sourceColumn": "examinee_id",
+      "sourceType": "int",
+      "sourceDefinition": "int DEFAULT NULL",
+      "sourceRiskFlags": [
+        "INTEGER_KEY_TO_UUID_MAPPING"
+      ],
+      "targetCandidate": "assigned_exam.examinee_id",
+      "disposition": "PROPOSED_REGISTERED_WITH_UUID_NORMALIZATION",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/courses/faculty-quiz-question-csv-service.ts",
+        "src/modules/courses/faculty-quiz-question-csv.ts",
+        "src/modules/courses/learner-quiz-empty-question-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/courses/faculty-quiz-question-csv-service.ts",
+        "src/modules/courses/faculty-quiz-question-csv.ts",
+        "src/modules/courses/learner-quiz-empty-question-model.ts"
+      ],
+      "semanticRisk": "Legacy numeric ID maps to UUID in vNext; no old-row import needed for greenfield.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "assigned_exam",
+      "sourceColumn": "version",
+      "sourceType": "int",
+      "sourceDefinition": "int NOT NULL DEFAULT '0'",
+      "sourceRiskFlags": [],
+      "targetCandidate": "assigned_exam.version",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/courses/faculty-quiz-question-csv-service.ts",
+        "src/modules/courses/faculty-quiz-question-csv.ts",
+        "src/modules/courses/learner-quiz-empty-question-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/courses/faculty-quiz-question-csv-service.ts",
+        "src/modules/courses/faculty-quiz-question-csv.ts",
+        "src/modules/courses/learner-quiz-empty-question-model.ts"
+      ],
+      "semanticRisk": "Standard field mapping from legacy assigned_exam to assigned_exam.version.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "attempted_question",
+      "sourceColumn": "attendee_answers",
+      "sourceType": "json",
+      "sourceDefinition": "json DEFAULT NULL",
+      "sourceRiskFlags": [
+        "STRUCTURED_PAYLOAD_SEMANTIC_SCHEMA"
+      ],
+      "targetCandidate": "attempted_question.attendee_answers",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/courses/faculty-quiz-question-csv-service.ts",
+        "src/modules/courses/faculty-quiz-question-csv.ts",
+        "src/modules/courses/learner-quiz-empty-question-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/courses/faculty-quiz-question-csv-service.ts",
+        "src/modules/courses/faculty-quiz-question-csv.ts",
+        "src/modules/courses/learner-quiz-empty-question-model.ts"
+      ],
+      "semanticRisk": "JSON payload: vNext uses typed JSONB or separate normalized columns.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "attempted_question",
+      "sourceColumn": "awarded_score",
+      "sourceType": "int",
+      "sourceDefinition": "int DEFAULT NULL",
+      "sourceRiskFlags": [],
+      "targetCandidate": "attempted_question.awarded_score",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/courses/faculty-quiz-question-csv-service.ts",
+        "src/modules/courses/faculty-quiz-question-csv.ts",
+        "src/modules/courses/learner-quiz-empty-question-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/courses/faculty-quiz-question-csv-service.ts",
+        "src/modules/courses/faculty-quiz-question-csv.ts",
+        "src/modules/courses/learner-quiz-empty-question-model.ts"
+      ],
+      "semanticRisk": "Standard field mapping from legacy attempted_question to attempted_question.awarded_score.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "attempted_question",
+      "sourceColumn": "correct",
+      "sourceType": "bit(1)",
+      "sourceDefinition": "bit(1) DEFAULT NULL",
+      "sourceRiskFlags": [],
+      "targetCandidate": "attempted_question.correct",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/courses/faculty-quiz-question-csv-service.ts",
+        "src/modules/courses/faculty-quiz-question-csv.ts",
+        "src/modules/courses/learner-quiz-empty-question-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/courses/faculty-quiz-question-csv-service.ts",
+        "src/modules/courses/faculty-quiz-question-csv.ts",
+        "src/modules/courses/learner-quiz-empty-question-model.ts"
+      ],
+      "semanticRisk": "Standard field mapping from legacy attempted_question to attempted_question.correct.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "attempted_question",
+      "sourceColumn": "created_at",
+      "sourceType": "datetime(6)",
+      "sourceDefinition": "datetime(6) DEFAULT NULL",
+      "sourceRiskFlags": [
+        "TIMEZONE_AND_DEADLINE_SEMANTICS"
+      ],
+      "targetCandidate": "attempted_question.created_at",
+      "disposition": "PROPOSED_NORMALIZED_AUDIT_TIMESTAMP",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/courses/faculty-quiz-question-csv-service.ts",
+        "src/modules/courses/faculty-quiz-question-csv.ts",
+        "src/modules/courses/learner-quiz-empty-question-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/courses/faculty-quiz-question-csv-service.ts",
+        "src/modules/courses/faculty-quiz-question-csv.ts",
+        "src/modules/courses/learner-quiz-empty-question-model.ts"
+      ],
+      "semanticRisk": "Datetime(6) semantics differ from timestamptz; vNext stores UTC.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "attempted_question",
+      "sourceColumn": "deleted",
+      "sourceType": "tinyint(1)",
+      "sourceDefinition": "tinyint(1) DEFAULT '0'",
+      "sourceRiskFlags": [],
+      "targetCandidate": "attempted_question.deleted",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/courses/faculty-quiz-question-csv-service.ts",
+        "src/modules/courses/faculty-quiz-question-csv.ts",
+        "src/modules/courses/learner-quiz-empty-question-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/courses/faculty-quiz-question-csv-service.ts",
+        "src/modules/courses/faculty-quiz-question-csv.ts",
+        "src/modules/courses/learner-quiz-empty-question-model.ts"
+      ],
+      "semanticRisk": "Standard field mapping from legacy attempted_question to attempted_question.deleted.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "attempted_question",
+      "sourceColumn": "evaluation_completed",
+      "sourceType": "bit(1)",
+      "sourceDefinition": "bit(1) DEFAULT NULL",
+      "sourceRiskFlags": [],
+      "targetCandidate": "attempted_question.evaluation_completed",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/courses/faculty-quiz-question-csv-service.ts",
+        "src/modules/courses/faculty-quiz-question-csv.ts",
+        "src/modules/courses/learner-quiz-empty-question-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/courses/faculty-quiz-question-csv-service.ts",
+        "src/modules/courses/faculty-quiz-question-csv.ts",
+        "src/modules/courses/learner-quiz-empty-question-model.ts"
+      ],
+      "semanticRisk": "Standard field mapping from legacy attempted_question to attempted_question.evaluation_completed.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "attempted_question",
+      "sourceColumn": "evaluator_id",
+      "sourceType": "varchar(255)",
+      "sourceDefinition": "varchar(255) DEFAULT NULL",
+      "sourceRiskFlags": [],
+      "targetCandidate": "attempted_question.evaluator_id",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/courses/faculty-quiz-question-csv-service.ts",
+        "src/modules/courses/faculty-quiz-question-csv.ts",
+        "src/modules/courses/learner-quiz-empty-question-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/courses/faculty-quiz-question-csv-service.ts",
+        "src/modules/courses/faculty-quiz-question-csv.ts",
+        "src/modules/courses/learner-quiz-empty-question-model.ts"
+      ],
+      "semanticRisk": "Standard field mapping from legacy attempted_question to attempted_question.evaluator_id.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "attempted_question",
+      "sourceColumn": "question_type",
+      "sourceType": "int",
+      "sourceDefinition": "int DEFAULT NULL",
+      "sourceRiskFlags": [],
+      "targetCandidate": "attempted_question.question_type",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/courses/faculty-quiz-question-csv-service.ts",
+        "src/modules/courses/faculty-quiz-question-csv.ts",
+        "src/modules/courses/learner-quiz-empty-question-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/courses/faculty-quiz-question-csv-service.ts",
+        "src/modules/courses/faculty-quiz-question-csv.ts",
+        "src/modules/courses/learner-quiz-empty-question-model.ts"
+      ],
+      "semanticRisk": "Standard field mapping from legacy attempted_question to attempted_question.question_type.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "attempted_question",
+      "sourceColumn": "saved",
+      "sourceType": "bit(1)",
+      "sourceDefinition": "bit(1) DEFAULT NULL",
+      "sourceRiskFlags": [],
+      "targetCandidate": "attempted_question.saved",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/courses/faculty-quiz-question-csv-service.ts",
+        "src/modules/courses/faculty-quiz-question-csv.ts",
+        "src/modules/courses/learner-quiz-empty-question-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/courses/faculty-quiz-question-csv-service.ts",
+        "src/modules/courses/faculty-quiz-question-csv.ts",
+        "src/modules/courses/learner-quiz-empty-question-model.ts"
+      ],
+      "semanticRisk": "Standard field mapping from legacy attempted_question to attempted_question.saved.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "attempted_question",
+      "sourceColumn": "submitted",
+      "sourceType": "bit(1)",
+      "sourceDefinition": "bit(1) DEFAULT NULL",
+      "sourceRiskFlags": [],
+      "targetCandidate": "attempted_question.submitted",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/courses/faculty-quiz-question-csv-service.ts",
+        "src/modules/courses/faculty-quiz-question-csv.ts",
+        "src/modules/courses/learner-quiz-empty-question-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/courses/faculty-quiz-question-csv-service.ts",
+        "src/modules/courses/faculty-quiz-question-csv.ts",
+        "src/modules/courses/learner-quiz-empty-question-model.ts"
+      ],
+      "semanticRisk": "Standard field mapping from legacy attempted_question to attempted_question.submitted.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "attempted_question",
+      "sourceColumn": "updated_at",
+      "sourceType": "datetime(6)",
+      "sourceDefinition": "datetime(6) DEFAULT NULL",
+      "sourceRiskFlags": [
+        "TIMEZONE_AND_DEADLINE_SEMANTICS"
+      ],
+      "targetCandidate": "attempted_question.updated_at",
+      "disposition": "PROPOSED_NORMALIZED_AUDIT_TIMESTAMP",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/courses/faculty-quiz-question-csv-service.ts",
+        "src/modules/courses/faculty-quiz-question-csv.ts",
+        "src/modules/courses/learner-quiz-empty-question-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/courses/faculty-quiz-question-csv-service.ts",
+        "src/modules/courses/faculty-quiz-question-csv.ts",
+        "src/modules/courses/learner-quiz-empty-question-model.ts"
+      ],
+      "semanticRisk": "Datetime(6) semantics differ from timestamptz; vNext stores UTC.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "attempted_question",
+      "sourceColumn": "assgined_exam_id",
+      "sourceType": "int",
+      "sourceDefinition": "int NOT NULL",
+      "sourceRiskFlags": [
+        "INTEGER_KEY_TO_UUID_MAPPING"
+      ],
+      "targetCandidate": "attempted_question.assgined_exam_id",
+      "disposition": "PROPOSED_REGISTERED_WITH_UUID_NORMALIZATION",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/courses/faculty-quiz-question-csv-service.ts",
+        "src/modules/courses/faculty-quiz-question-csv.ts",
+        "src/modules/courses/learner-quiz-empty-question-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/courses/faculty-quiz-question-csv-service.ts",
+        "src/modules/courses/faculty-quiz-question-csv.ts",
+        "src/modules/courses/learner-quiz-empty-question-model.ts"
+      ],
+      "semanticRisk": "Legacy numeric ID maps to UUID in vNext; no old-row import needed for greenfield.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "attempted_question",
+      "sourceColumn": "question_id",
+      "sourceType": "int",
+      "sourceDefinition": "int NOT NULL",
+      "sourceRiskFlags": [
+        "INTEGER_KEY_TO_UUID_MAPPING"
+      ],
+      "targetCandidate": "attempted_question.question_id",
+      "disposition": "PROPOSED_REGISTERED_WITH_UUID_NORMALIZATION",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/courses/faculty-quiz-question-csv-service.ts",
+        "src/modules/courses/faculty-quiz-question-csv.ts",
+        "src/modules/courses/learner-quiz-empty-question-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/courses/faculty-quiz-question-csv-service.ts",
+        "src/modules/courses/faculty-quiz-question-csv.ts",
+        "src/modules/courses/learner-quiz-empty-question-model.ts"
+      ],
+      "semanticRisk": "Legacy numeric ID maps to UUID in vNext; no old-row import needed for greenfield.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "exam",
+      "sourceColumn": "id",
+      "sourceType": "int",
+      "sourceDefinition": "int NOT NULL AUTO_INCREMENT",
+      "sourceRiskFlags": [
+        "INTEGER_KEY_TO_UUID_MAPPING"
+      ],
+      "targetCandidate": "exam.id",
+      "disposition": "PROPOSED_NORMALIZED_UUID_PRIMARY_KEY",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/courses/faculty-quiz-question-csv-service.ts",
+        "src/modules/courses/faculty-quiz-question-csv.ts",
+        "src/modules/courses/learner-quiz-empty-question-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/courses/faculty-quiz-question-csv-service.ts",
+        "src/modules/courses/faculty-quiz-question-csv.ts",
+        "src/modules/courses/learner-quiz-empty-question-model.ts"
+      ],
+      "semanticRisk": "Legacy numeric ID maps to UUID in vNext; no old-row import needed for greenfield.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "exam",
+      "sourceColumn": "created_at",
+      "sourceType": "datetime(6)",
+      "sourceDefinition": "datetime(6) DEFAULT NULL",
+      "sourceRiskFlags": [
+        "TIMEZONE_AND_DEADLINE_SEMANTICS"
+      ],
+      "targetCandidate": "exam.created_at",
+      "disposition": "PROPOSED_NORMALIZED_AUDIT_TIMESTAMP",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/courses/faculty-quiz-question-csv-service.ts",
+        "src/modules/courses/faculty-quiz-question-csv.ts",
+        "src/modules/courses/learner-quiz-empty-question-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/courses/faculty-quiz-question-csv-service.ts",
+        "src/modules/courses/faculty-quiz-question-csv.ts",
+        "src/modules/courses/learner-quiz-empty-question-model.ts"
+      ],
+      "semanticRisk": "Datetime(6) semantics differ from timestamptz; vNext stores UTC.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "exam",
+      "sourceColumn": "is_deleted",
+      "sourceType": "tinyint(1)",
+      "sourceDefinition": "tinyint(1) DEFAULT '0'",
+      "sourceRiskFlags": [],
+      "targetCandidate": "exam.is_deleted",
+      "disposition": "PROPOSED_REDESIGNED_SOFT_DELETE_PATTERN",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/courses/faculty-quiz-question-csv-service.ts",
+        "src/modules/courses/faculty-quiz-question-csv.ts",
+        "src/modules/courses/learner-quiz-empty-question-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/courses/faculty-quiz-question-csv-service.ts",
+        "src/modules/courses/faculty-quiz-question-csv.ts",
+        "src/modules/courses/learner-quiz-empty-question-model.ts"
+      ],
+      "semanticRisk": "Soft-delete pattern replaced by status enum or archived_at timestamp in vNext.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "exam",
+      "sourceColumn": "updated_at",
+      "sourceType": "datetime(6)",
+      "sourceDefinition": "datetime(6) DEFAULT NULL",
+      "sourceRiskFlags": [
+        "TIMEZONE_AND_DEADLINE_SEMANTICS"
+      ],
+      "targetCandidate": "exam.updated_at",
+      "disposition": "PROPOSED_NORMALIZED_AUDIT_TIMESTAMP",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/courses/faculty-quiz-question-csv-service.ts",
+        "src/modules/courses/faculty-quiz-question-csv.ts",
+        "src/modules/courses/learner-quiz-empty-question-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/courses/faculty-quiz-question-csv-service.ts",
+        "src/modules/courses/faculty-quiz-question-csv.ts",
+        "src/modules/courses/learner-quiz-empty-question-model.ts"
+      ],
+      "semanticRisk": "Datetime(6) semantics differ from timestamptz; vNext stores UTC.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "exam",
+      "sourceColumn": "course_code",
+      "sourceType": "varchar(255)",
+      "sourceDefinition": "varchar(255) DEFAULT NULL",
+      "sourceRiskFlags": [],
+      "targetCandidate": "exam.course_code",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/courses/faculty-quiz-question-csv-service.ts",
+        "src/modules/courses/faculty-quiz-question-csv.ts",
+        "src/modules/courses/learner-quiz-empty-question-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/courses/faculty-quiz-question-csv-service.ts",
+        "src/modules/courses/faculty-quiz-question-csv.ts",
+        "src/modules/courses/learner-quiz-empty-question-model.ts"
+      ],
+      "semanticRisk": "Standard field mapping from legacy exam to exam.course_code.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "exam",
+      "sourceColumn": "course_name",
+      "sourceType": "varchar(255)",
+      "sourceDefinition": "varchar(255) DEFAULT NULL",
+      "sourceRiskFlags": [],
+      "targetCandidate": "exam.course_name",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/courses/faculty-quiz-question-csv-service.ts",
+        "src/modules/courses/faculty-quiz-question-csv.ts",
+        "src/modules/courses/learner-quiz-empty-question-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/courses/faculty-quiz-question-csv-service.ts",
+        "src/modules/courses/faculty-quiz-question-csv.ts",
+        "src/modules/courses/learner-quiz-empty-question-model.ts"
+      ],
+      "semanticRisk": "Standard field mapping from legacy exam to exam.course_name.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "exam",
+      "sourceColumn": "description",
+      "sourceType": "varchar(255)",
+      "sourceDefinition": "varchar(255) DEFAULT NULL",
+      "sourceRiskFlags": [],
+      "targetCandidate": "exam.description",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/courses/faculty-quiz-question-csv-service.ts",
+        "src/modules/courses/faculty-quiz-question-csv.ts",
+        "src/modules/courses/learner-quiz-empty-question-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/courses/faculty-quiz-question-csv-service.ts",
+        "src/modules/courses/faculty-quiz-question-csv.ts",
+        "src/modules/courses/learner-quiz-empty-question-model.ts"
+      ],
+      "semanticRisk": "Standard field mapping from legacy exam to exam.description.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "exam",
+      "sourceColumn": "end_time",
+      "sourceType": "datetime(6)",
+      "sourceDefinition": "datetime(6) DEFAULT NULL",
+      "sourceRiskFlags": [
+        "TIMEZONE_AND_DEADLINE_SEMANTICS"
+      ],
+      "targetCandidate": "exam.end_time",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/courses/faculty-quiz-question-csv-service.ts",
+        "src/modules/courses/faculty-quiz-question-csv.ts",
+        "src/modules/courses/learner-quiz-empty-question-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/courses/faculty-quiz-question-csv-service.ts",
+        "src/modules/courses/faculty-quiz-question-csv.ts",
+        "src/modules/courses/learner-quiz-empty-question-model.ts"
+      ],
+      "semanticRisk": "Datetime(6) semantics differ from timestamptz; vNext stores UTC.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "exam",
+      "sourceColumn": "exam_code",
+      "sourceType": "varchar(255)",
+      "sourceDefinition": "varchar(255) DEFAULT NULL",
+      "sourceRiskFlags": [],
+      "targetCandidate": "exam.exam_code",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/courses/faculty-quiz-question-csv-service.ts",
+        "src/modules/courses/faculty-quiz-question-csv.ts",
+        "src/modules/courses/learner-quiz-empty-question-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/courses/faculty-quiz-question-csv-service.ts",
+        "src/modules/courses/faculty-quiz-question-csv.ts",
+        "src/modules/courses/learner-quiz-empty-question-model.ts"
+      ],
+      "semanticRisk": "Standard field mapping from legacy exam to exam.exam_code.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "exam",
+      "sourceColumn": "exam_date",
+      "sourceType": "varchar(255)",
+      "sourceDefinition": "varchar(255) DEFAULT NULL",
+      "sourceRiskFlags": [],
+      "targetCandidate": "exam.exam_date",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/courses/faculty-quiz-question-csv-service.ts",
+        "src/modules/courses/faculty-quiz-question-csv.ts",
+        "src/modules/courses/learner-quiz-empty-question-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/courses/faculty-quiz-question-csv-service.ts",
+        "src/modules/courses/faculty-quiz-question-csv.ts",
+        "src/modules/courses/learner-quiz-empty-question-model.ts"
+      ],
+      "semanticRisk": "Standard field mapping from legacy exam to exam.exam_date.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "exam",
+      "sourceColumn": "exam_title",
+      "sourceType": "varchar(255)",
+      "sourceDefinition": "varchar(255) DEFAULT NULL",
+      "sourceRiskFlags": [],
+      "targetCandidate": "exam.exam_title",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/courses/faculty-quiz-question-csv-service.ts",
+        "src/modules/courses/faculty-quiz-question-csv.ts",
+        "src/modules/courses/learner-quiz-empty-question-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/courses/faculty-quiz-question-csv-service.ts",
+        "src/modules/courses/faculty-quiz-question-csv.ts",
+        "src/modules/courses/learner-quiz-empty-question-model.ts"
+      ],
+      "semanticRisk": "Standard field mapping from legacy exam to exam.exam_title.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "exam",
+      "sourceColumn": "org_id",
+      "sourceType": "varchar(255)",
+      "sourceDefinition": "varchar(255) DEFAULT NULL",
+      "sourceRiskFlags": [],
+      "targetCandidate": "exam.org_id",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/courses/faculty-quiz-question-csv-service.ts",
+        "src/modules/courses/faculty-quiz-question-csv.ts",
+        "src/modules/courses/learner-quiz-empty-question-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/courses/faculty-quiz-question-csv-service.ts",
+        "src/modules/courses/faculty-quiz-question-csv.ts",
+        "src/modules/courses/learner-quiz-empty-question-model.ts"
+      ],
+      "semanticRisk": "Standard field mapping from legacy exam to exam.org_id.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "exam",
+      "sourceColumn": "pass_score",
+      "sourceType": "int",
+      "sourceDefinition": "int DEFAULT NULL",
+      "sourceRiskFlags": [],
+      "targetCandidate": "exam.pass_score",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/courses/faculty-quiz-question-csv-service.ts",
+        "src/modules/courses/faculty-quiz-question-csv.ts",
+        "src/modules/courses/learner-quiz-empty-question-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/courses/faculty-quiz-question-csv-service.ts",
+        "src/modules/courses/faculty-quiz-question-csv.ts",
+        "src/modules/courses/learner-quiz-empty-question-model.ts"
+      ],
+      "semanticRisk": "Standard field mapping from legacy exam to exam.pass_score.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "exam",
+      "sourceColumn": "published",
+      "sourceType": "bit(1)",
+      "sourceDefinition": "bit(1) NOT NULL",
+      "sourceRiskFlags": [],
+      "targetCandidate": "exam.published",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/courses/faculty-quiz-question-csv-service.ts",
+        "src/modules/courses/faculty-quiz-question-csv.ts",
+        "src/modules/courses/learner-quiz-empty-question-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/courses/faculty-quiz-question-csv-service.ts",
+        "src/modules/courses/faculty-quiz-question-csv.ts",
+        "src/modules/courses/learner-quiz-empty-question-model.ts"
+      ],
+      "semanticRisk": "Standard field mapping from legacy exam to exam.published.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "exam",
+      "sourceColumn": "result_option",
+      "sourceType": "int",
+      "sourceDefinition": "int DEFAULT NULL",
+      "sourceRiskFlags": [],
+      "targetCandidate": "exam.result_option",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/courses/faculty-quiz-question-csv-service.ts",
+        "src/modules/courses/faculty-quiz-question-csv.ts",
+        "src/modules/courses/learner-quiz-empty-question-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/courses/faculty-quiz-question-csv-service.ts",
+        "src/modules/courses/faculty-quiz-question-csv.ts",
+        "src/modules/courses/learner-quiz-empty-question-model.ts"
+      ],
+      "semanticRisk": "Standard field mapping from legacy exam to exam.result_option.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "exam",
+      "sourceColumn": "start_time",
+      "sourceType": "datetime(6)",
+      "sourceDefinition": "datetime(6) DEFAULT NULL",
+      "sourceRiskFlags": [
+        "TIMEZONE_AND_DEADLINE_SEMANTICS"
+      ],
+      "targetCandidate": "exam.start_time",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/courses/faculty-quiz-question-csv-service.ts",
+        "src/modules/courses/faculty-quiz-question-csv.ts",
+        "src/modules/courses/learner-quiz-empty-question-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/courses/faculty-quiz-question-csv-service.ts",
+        "src/modules/courses/faculty-quiz-question-csv.ts",
+        "src/modules/courses/learner-quiz-empty-question-model.ts"
+      ],
+      "semanticRisk": "Datetime(6) semantics differ from timestamptz; vNext stores UTC.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "exam",
+      "sourceColumn": "status",
+      "sourceType": "int",
+      "sourceDefinition": "int NOT NULL",
+      "sourceRiskFlags": [],
+      "targetCandidate": "exam.status",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/courses/faculty-quiz-question-csv-service.ts",
+        "src/modules/courses/faculty-quiz-question-csv.ts",
+        "src/modules/courses/learner-quiz-empty-question-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/courses/faculty-quiz-question-csv-service.ts",
+        "src/modules/courses/faculty-quiz-question-csv.ts",
+        "src/modules/courses/learner-quiz-empty-question-model.ts"
+      ],
+      "semanticRisk": "Standard field mapping from legacy exam to exam.status.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "exam",
+      "sourceColumn": "teacher_id",
+      "sourceType": "varchar(255)",
+      "sourceDefinition": "varchar(255) DEFAULT NULL",
+      "sourceRiskFlags": [],
+      "targetCandidate": "exam.teacher_id",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/courses/faculty-quiz-question-csv-service.ts",
+        "src/modules/courses/faculty-quiz-question-csv.ts",
+        "src/modules/courses/learner-quiz-empty-question-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/courses/faculty-quiz-question-csv-service.ts",
+        "src/modules/courses/faculty-quiz-question-csv.ts",
+        "src/modules/courses/learner-quiz-empty-question-model.ts"
+      ],
+      "semanticRisk": "Standard field mapping from legacy exam to exam.teacher_id.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "exam",
+      "sourceColumn": "time_restriction_type",
+      "sourceType": "int",
+      "sourceDefinition": "int NOT NULL",
+      "sourceRiskFlags": [],
+      "targetCandidate": "exam.time_restriction_type",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/courses/faculty-quiz-question-csv-service.ts",
+        "src/modules/courses/faculty-quiz-question-csv.ts",
+        "src/modules/courses/learner-quiz-empty-question-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/courses/faculty-quiz-question-csv-service.ts",
+        "src/modules/courses/faculty-quiz-question-csv.ts",
+        "src/modules/courses/learner-quiz-empty-question-model.ts"
+      ],
+      "semanticRisk": "Standard field mapping from legacy exam to exam.time_restriction_type.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "exam_faculty",
+      "sourceColumn": "id",
+      "sourceType": "int",
+      "sourceDefinition": "int NOT NULL AUTO_INCREMENT",
+      "sourceRiskFlags": [
+        "INTEGER_KEY_TO_UUID_MAPPING"
+      ],
+      "targetCandidate": "exam_faculty.id",
+      "disposition": "PROPOSED_NORMALIZED_UUID_PRIMARY_KEY",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/courses/faculty-quiz-question-csv-service.ts",
+        "src/modules/courses/faculty-quiz-question-csv.ts",
+        "src/modules/courses/learner-quiz-empty-question-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/courses/faculty-quiz-question-csv-service.ts",
+        "src/modules/courses/faculty-quiz-question-csv.ts",
+        "src/modules/courses/learner-quiz-empty-question-model.ts"
+      ],
+      "semanticRisk": "Legacy numeric ID maps to UUID in vNext; no old-row import needed for greenfield.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "exam_faculty",
+      "sourceColumn": "created_at",
+      "sourceType": "datetime(6)",
+      "sourceDefinition": "datetime(6) DEFAULT NULL",
+      "sourceRiskFlags": [
+        "TIMEZONE_AND_DEADLINE_SEMANTICS"
+      ],
+      "targetCandidate": "exam_faculty.created_at",
+      "disposition": "PROPOSED_NORMALIZED_AUDIT_TIMESTAMP",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/courses/faculty-quiz-question-csv-service.ts",
+        "src/modules/courses/faculty-quiz-question-csv.ts",
+        "src/modules/courses/learner-quiz-empty-question-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/courses/faculty-quiz-question-csv-service.ts",
+        "src/modules/courses/faculty-quiz-question-csv.ts",
+        "src/modules/courses/learner-quiz-empty-question-model.ts"
+      ],
+      "semanticRisk": "Datetime(6) semantics differ from timestamptz; vNext stores UTC.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "exam_faculty",
+      "sourceColumn": "is_deleted",
+      "sourceType": "tinyint(1)",
+      "sourceDefinition": "tinyint(1) DEFAULT '0'",
+      "sourceRiskFlags": [],
+      "targetCandidate": "exam_faculty.is_deleted",
+      "disposition": "PROPOSED_REDESIGNED_SOFT_DELETE_PATTERN",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/courses/faculty-quiz-question-csv-service.ts",
+        "src/modules/courses/faculty-quiz-question-csv.ts",
+        "src/modules/courses/learner-quiz-empty-question-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/courses/faculty-quiz-question-csv-service.ts",
+        "src/modules/courses/faculty-quiz-question-csv.ts",
+        "src/modules/courses/learner-quiz-empty-question-model.ts"
+      ],
+      "semanticRisk": "Soft-delete pattern replaced by status enum or archived_at timestamp in vNext.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "exam_faculty",
+      "sourceColumn": "updated_at",
+      "sourceType": "datetime(6)",
+      "sourceDefinition": "datetime(6) DEFAULT NULL",
+      "sourceRiskFlags": [
+        "TIMEZONE_AND_DEADLINE_SEMANTICS"
+      ],
+      "targetCandidate": "exam_faculty.updated_at",
+      "disposition": "PROPOSED_NORMALIZED_AUDIT_TIMESTAMP",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/courses/faculty-quiz-question-csv-service.ts",
+        "src/modules/courses/faculty-quiz-question-csv.ts",
+        "src/modules/courses/learner-quiz-empty-question-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/courses/faculty-quiz-question-csv-service.ts",
+        "src/modules/courses/faculty-quiz-question-csv.ts",
+        "src/modules/courses/learner-quiz-empty-question-model.ts"
+      ],
+      "semanticRisk": "Datetime(6) semantics differ from timestamptz; vNext stores UTC.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "exam_faculty",
+      "sourceColumn": "dept_name",
+      "sourceType": "varchar(255)",
+      "sourceDefinition": "varchar(255) NOT NULL",
+      "sourceRiskFlags": [],
+      "targetCandidate": "exam_faculty.dept_name",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/courses/faculty-quiz-question-csv-service.ts",
+        "src/modules/courses/faculty-quiz-question-csv.ts",
+        "src/modules/courses/learner-quiz-empty-question-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/courses/faculty-quiz-question-csv-service.ts",
+        "src/modules/courses/faculty-quiz-question-csv.ts",
+        "src/modules/courses/learner-quiz-empty-question-model.ts"
+      ],
+      "semanticRisk": "Standard field mapping from legacy exam_faculty to exam_faculty.dept_name.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "exam_faculty",
+      "sourceColumn": "added_by",
+      "sourceType": "varchar(255)",
+      "sourceDefinition": "varchar(255) NOT NULL",
+      "sourceRiskFlags": [],
+      "targetCandidate": "exam_faculty.added_by",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/courses/faculty-quiz-question-csv-service.ts",
+        "src/modules/courses/faculty-quiz-question-csv.ts",
+        "src/modules/courses/learner-quiz-empty-question-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/courses/faculty-quiz-question-csv-service.ts",
+        "src/modules/courses/faculty-quiz-question-csv.ts",
+        "src/modules/courses/learner-quiz-empty-question-model.ts"
+      ],
+      "semanticRisk": "Standard field mapping from legacy exam_faculty to exam_faculty.added_by.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "exam_faculty",
+      "sourceColumn": "mobile",
+      "sourceType": "varchar(255)",
+      "sourceDefinition": "varchar(255) NOT NULL",
+      "sourceRiskFlags": [
+        "POTENTIAL_PERSONAL_OR_SECRET_DATA"
+      ],
+      "targetCandidate": "exam_faculty.mobile",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/courses/faculty-quiz-question-csv-service.ts",
+        "src/modules/courses/faculty-quiz-question-csv.ts",
+        "src/modules/courses/learner-quiz-empty-question-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/courses/faculty-quiz-question-csv-service.ts",
+        "src/modules/courses/faculty-quiz-question-csv.ts",
+        "src/modules/courses/learner-quiz-empty-question-model.ts"
+      ],
+      "semanticRisk": "Standard field mapping from legacy exam_faculty to exam_faculty.mobile.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "exam_faculty",
+      "sourceColumn": "staff_code",
+      "sourceType": "varchar(255)",
+      "sourceDefinition": "varchar(255) NOT NULL",
+      "sourceRiskFlags": [],
+      "targetCandidate": "exam_faculty.staff_code",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/courses/faculty-quiz-question-csv-service.ts",
+        "src/modules/courses/faculty-quiz-question-csv.ts",
+        "src/modules/courses/learner-quiz-empty-question-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/courses/faculty-quiz-question-csv-service.ts",
+        "src/modules/courses/faculty-quiz-question-csv.ts",
+        "src/modules/courses/learner-quiz-empty-question-model.ts"
+      ],
+      "semanticRisk": "Standard field mapping from legacy exam_faculty to exam_faculty.staff_code.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "exam_faculty",
+      "sourceColumn": "staff_name",
+      "sourceType": "varchar(255)",
+      "sourceDefinition": "varchar(255) NOT NULL",
+      "sourceRiskFlags": [],
+      "targetCandidate": "exam_faculty.staff_name",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/courses/faculty-quiz-question-csv-service.ts",
+        "src/modules/courses/faculty-quiz-question-csv.ts",
+        "src/modules/courses/learner-quiz-empty-question-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/courses/faculty-quiz-question-csv-service.ts",
+        "src/modules/courses/faculty-quiz-question-csv.ts",
+        "src/modules/courses/learner-quiz-empty-question-model.ts"
+      ],
+      "semanticRisk": "Standard field mapping from legacy exam_faculty to exam_faculty.staff_name.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "exam_faculty_mapping",
+      "sourceColumn": "exam_id",
+      "sourceType": "int",
+      "sourceDefinition": "int NOT NULL",
+      "sourceRiskFlags": [
+        "INTEGER_KEY_TO_UUID_MAPPING"
+      ],
+      "targetCandidate": "exam_faculty_mapping.exam_id",
+      "disposition": "PROPOSED_REGISTERED_WITH_UUID_NORMALIZATION",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/courses/faculty-quiz-question-csv-service.ts",
+        "src/modules/courses/faculty-quiz-question-csv.ts",
+        "src/modules/courses/learner-quiz-empty-question-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/courses/faculty-quiz-question-csv-service.ts",
+        "src/modules/courses/faculty-quiz-question-csv.ts",
+        "src/modules/courses/learner-quiz-empty-question-model.ts"
+      ],
+      "semanticRisk": "Legacy numeric ID maps to UUID in vNext; no old-row import needed for greenfield.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "exam_faculty_mapping",
+      "sourceColumn": "faculty_id",
+      "sourceType": "int",
+      "sourceDefinition": "int NOT NULL",
+      "sourceRiskFlags": [
+        "INTEGER_KEY_TO_UUID_MAPPING"
+      ],
+      "targetCandidate": "exam_faculty_mapping.faculty_id",
+      "disposition": "PROPOSED_REGISTERED_WITH_UUID_NORMALIZATION",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/courses/faculty-quiz-question-csv-service.ts",
+        "src/modules/courses/faculty-quiz-question-csv.ts",
+        "src/modules/courses/learner-quiz-empty-question-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/courses/faculty-quiz-question-csv-service.ts",
+        "src/modules/courses/faculty-quiz-question-csv.ts",
+        "src/modules/courses/learner-quiz-empty-question-model.ts"
+      ],
+      "semanticRisk": "Legacy numeric ID maps to UUID in vNext; no old-row import needed for greenfield.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "exam_monitoring",
+      "sourceColumn": "id",
+      "sourceType": "int",
+      "sourceDefinition": "int NOT NULL AUTO_INCREMENT",
+      "sourceRiskFlags": [
+        "INTEGER_KEY_TO_UUID_MAPPING"
+      ],
+      "targetCandidate": "exam_monitoring.id",
+      "disposition": "PROPOSED_NORMALIZED_UUID_PRIMARY_KEY",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/courses/faculty-quiz-question-csv-service.ts",
+        "src/modules/courses/faculty-quiz-question-csv.ts",
+        "src/modules/courses/learner-quiz-empty-question-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/courses/faculty-quiz-question-csv-service.ts",
+        "src/modules/courses/faculty-quiz-question-csv.ts",
+        "src/modules/courses/learner-quiz-empty-question-model.ts"
+      ],
+      "semanticRisk": "Legacy numeric ID maps to UUID in vNext; no old-row import needed for greenfield.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "exam_monitoring",
+      "sourceColumn": "created_at",
+      "sourceType": "datetime(6)",
+      "sourceDefinition": "datetime(6) DEFAULT NULL",
+      "sourceRiskFlags": [
+        "TIMEZONE_AND_DEADLINE_SEMANTICS"
+      ],
+      "targetCandidate": "exam_monitoring.created_at",
+      "disposition": "PROPOSED_NORMALIZED_AUDIT_TIMESTAMP",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/courses/faculty-quiz-question-csv-service.ts",
+        "src/modules/courses/faculty-quiz-question-csv.ts",
+        "src/modules/courses/learner-quiz-empty-question-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/courses/faculty-quiz-question-csv-service.ts",
+        "src/modules/courses/faculty-quiz-question-csv.ts",
+        "src/modules/courses/learner-quiz-empty-question-model.ts"
+      ],
+      "semanticRisk": "Datetime(6) semantics differ from timestamptz; vNext stores UTC.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "exam_monitoring",
+      "sourceColumn": "is_deleted",
+      "sourceType": "tinyint(1)",
+      "sourceDefinition": "tinyint(1) DEFAULT '0'",
+      "sourceRiskFlags": [],
+      "targetCandidate": "exam_monitoring.is_deleted",
+      "disposition": "PROPOSED_REDESIGNED_SOFT_DELETE_PATTERN",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/courses/faculty-quiz-question-csv-service.ts",
+        "src/modules/courses/faculty-quiz-question-csv.ts",
+        "src/modules/courses/learner-quiz-empty-question-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/courses/faculty-quiz-question-csv-service.ts",
+        "src/modules/courses/faculty-quiz-question-csv.ts",
+        "src/modules/courses/learner-quiz-empty-question-model.ts"
+      ],
+      "semanticRisk": "Soft-delete pattern replaced by status enum or archived_at timestamp in vNext.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "exam_monitoring",
+      "sourceColumn": "updated_at",
+      "sourceType": "datetime(6)",
+      "sourceDefinition": "datetime(6) DEFAULT NULL",
+      "sourceRiskFlags": [
+        "TIMEZONE_AND_DEADLINE_SEMANTICS"
+      ],
+      "targetCandidate": "exam_monitoring.updated_at",
+      "disposition": "PROPOSED_NORMALIZED_AUDIT_TIMESTAMP",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/courses/faculty-quiz-question-csv-service.ts",
+        "src/modules/courses/faculty-quiz-question-csv.ts",
+        "src/modules/courses/learner-quiz-empty-question-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/courses/faculty-quiz-question-csv-service.ts",
+        "src/modules/courses/faculty-quiz-question-csv.ts",
+        "src/modules/courses/learner-quiz-empty-question-model.ts"
+      ],
+      "semanticRisk": "Datetime(6) semantics differ from timestamptz; vNext stores UTC.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "exam_monitoring",
+      "sourceColumn": "cloud_storage_object",
+      "sourceType": "varchar(255)",
+      "sourceDefinition": "varchar(255) DEFAULT NULL",
+      "sourceRiskFlags": [],
+      "targetCandidate": "exam_monitoring.cloud_storage_object",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/courses/faculty-quiz-question-csv-service.ts",
+        "src/modules/courses/faculty-quiz-question-csv.ts",
+        "src/modules/courses/learner-quiz-empty-question-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/courses/faculty-quiz-question-csv-service.ts",
+        "src/modules/courses/faculty-quiz-question-csv.ts",
+        "src/modules/courses/learner-quiz-empty-question-model.ts"
+      ],
+      "semanticRisk": "Standard field mapping from legacy exam_monitoring to exam_monitoring.cloud_storage_object.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "exam_monitoring",
+      "sourceColumn": "encoding",
+      "sourceType": "varchar(255)",
+      "sourceDefinition": "varchar(255) DEFAULT NULL",
+      "sourceRiskFlags": [],
+      "targetCandidate": "exam_monitoring.encoding",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/courses/faculty-quiz-question-csv-service.ts",
+        "src/modules/courses/faculty-quiz-question-csv.ts",
+        "src/modules/courses/learner-quiz-empty-question-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/courses/faculty-quiz-question-csv-service.ts",
+        "src/modules/courses/faculty-quiz-question-csv.ts",
+        "src/modules/courses/learner-quiz-empty-question-model.ts"
+      ],
+      "semanticRisk": "Standard field mapping from legacy exam_monitoring to exam_monitoring.encoding.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "exam_monitoring",
+      "sourceColumn": "media_code",
+      "sourceType": "varchar(255)",
+      "sourceDefinition": "varchar(255) DEFAULT NULL",
+      "sourceRiskFlags": [],
+      "targetCandidate": "exam_monitoring.media_code",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/courses/faculty-quiz-question-csv-service.ts",
+        "src/modules/courses/faculty-quiz-question-csv.ts",
+        "src/modules/courses/learner-quiz-empty-question-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/courses/faculty-quiz-question-csv-service.ts",
+        "src/modules/courses/faculty-quiz-question-csv.ts",
+        "src/modules/courses/learner-quiz-empty-question-model.ts"
+      ],
+      "semanticRisk": "Standard field mapping from legacy exam_monitoring to exam_monitoring.media_code.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "exam_monitoring",
+      "sourceColumn": "mimetype",
+      "sourceType": "varchar(255)",
+      "sourceDefinition": "varchar(255) DEFAULT NULL",
+      "sourceRiskFlags": [],
+      "targetCandidate": "exam_monitoring.mimetype",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/courses/faculty-quiz-question-csv-service.ts",
+        "src/modules/courses/faculty-quiz-question-csv.ts",
+        "src/modules/courses/learner-quiz-empty-question-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/courses/faculty-quiz-question-csv-service.ts",
+        "src/modules/courses/faculty-quiz-question-csv.ts",
+        "src/modules/courses/learner-quiz-empty-question-model.ts"
+      ],
+      "semanticRisk": "Standard field mapping from legacy exam_monitoring to exam_monitoring.mimetype.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "exam_monitoring",
+      "sourceColumn": "original_name",
+      "sourceType": "varchar(255)",
+      "sourceDefinition": "varchar(255) DEFAULT NULL",
+      "sourceRiskFlags": [],
+      "targetCandidate": "exam_monitoring.original_name",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/courses/faculty-quiz-question-csv-service.ts",
+        "src/modules/courses/faculty-quiz-question-csv.ts",
+        "src/modules/courses/learner-quiz-empty-question-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/courses/faculty-quiz-question-csv-service.ts",
+        "src/modules/courses/faculty-quiz-question-csv.ts",
+        "src/modules/courses/learner-quiz-empty-question-model.ts"
+      ],
+      "semanticRisk": "Standard field mapping from legacy exam_monitoring to exam_monitoring.original_name.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "exam_monitoring",
+      "sourceColumn": "url",
+      "sourceType": "varchar(255)",
+      "sourceDefinition": "varchar(255) DEFAULT NULL",
+      "sourceRiskFlags": [],
+      "targetCandidate": "exam_monitoring.url",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/courses/faculty-quiz-question-csv-service.ts",
+        "src/modules/courses/faculty-quiz-question-csv.ts",
+        "src/modules/courses/learner-quiz-empty-question-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/courses/faculty-quiz-question-csv-service.ts",
+        "src/modules/courses/faculty-quiz-question-csv.ts",
+        "src/modules/courses/learner-quiz-empty-question-model.ts"
+      ],
+      "semanticRisk": "Standard field mapping from legacy exam_monitoring to exam_monitoring.url.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "exam_monitoring",
+      "sourceColumn": "sequence",
+      "sourceType": "int",
+      "sourceDefinition": "int NOT NULL",
+      "sourceRiskFlags": [],
+      "targetCandidate": "exam_monitoring.sequence",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/courses/faculty-quiz-question-csv-service.ts",
+        "src/modules/courses/faculty-quiz-question-csv.ts",
+        "src/modules/courses/learner-quiz-empty-question-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/courses/faculty-quiz-question-csv-service.ts",
+        "src/modules/courses/faculty-quiz-question-csv.ts",
+        "src/modules/courses/learner-quiz-empty-question-model.ts"
+      ],
+      "semanticRisk": "Standard field mapping from legacy exam_monitoring to exam_monitoring.sequence.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "exam_monitoring",
+      "sourceColumn": "assgined_exam_id",
+      "sourceType": "int",
+      "sourceDefinition": "int DEFAULT NULL",
+      "sourceRiskFlags": [
+        "INTEGER_KEY_TO_UUID_MAPPING"
+      ],
+      "targetCandidate": "exam_monitoring.assgined_exam_id",
+      "disposition": "PROPOSED_REGISTERED_WITH_UUID_NORMALIZATION",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/courses/faculty-quiz-question-csv-service.ts",
+        "src/modules/courses/faculty-quiz-question-csv.ts",
+        "src/modules/courses/learner-quiz-empty-question-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/courses/faculty-quiz-question-csv-service.ts",
+        "src/modules/courses/faculty-quiz-question-csv.ts",
+        "src/modules/courses/learner-quiz-empty-question-model.ts"
+      ],
+      "semanticRisk": "Legacy numeric ID maps to UUID in vNext; no old-row import needed for greenfield.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "examinee",
+      "sourceColumn": "id",
+      "sourceType": "int",
+      "sourceDefinition": "int NOT NULL AUTO_INCREMENT",
+      "sourceRiskFlags": [
+        "INTEGER_KEY_TO_UUID_MAPPING"
+      ],
+      "targetCandidate": "examinee.id",
+      "disposition": "PROPOSED_NORMALIZED_UUID_PRIMARY_KEY",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/courses/faculty-quiz-question-csv-service.ts",
+        "src/modules/courses/faculty-quiz-question-csv.ts",
+        "src/modules/courses/learner-quiz-empty-question-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/courses/faculty-quiz-question-csv-service.ts",
+        "src/modules/courses/faculty-quiz-question-csv.ts",
+        "src/modules/courses/learner-quiz-empty-question-model.ts"
+      ],
+      "semanticRisk": "Legacy numeric ID maps to UUID in vNext; no old-row import needed for greenfield.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "examinee",
+      "sourceColumn": "created_at",
+      "sourceType": "datetime(6)",
+      "sourceDefinition": "datetime(6) DEFAULT NULL",
+      "sourceRiskFlags": [
+        "TIMEZONE_AND_DEADLINE_SEMANTICS"
+      ],
+      "targetCandidate": "examinee.created_at",
+      "disposition": "PROPOSED_NORMALIZED_AUDIT_TIMESTAMP",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/courses/faculty-quiz-question-csv-service.ts",
+        "src/modules/courses/faculty-quiz-question-csv.ts",
+        "src/modules/courses/learner-quiz-empty-question-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/courses/faculty-quiz-question-csv-service.ts",
+        "src/modules/courses/faculty-quiz-question-csv.ts",
+        "src/modules/courses/learner-quiz-empty-question-model.ts"
+      ],
+      "semanticRisk": "Datetime(6) semantics differ from timestamptz; vNext stores UTC.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "examinee",
+      "sourceColumn": "is_deleted",
+      "sourceType": "tinyint(1)",
+      "sourceDefinition": "tinyint(1) DEFAULT '0'",
+      "sourceRiskFlags": [],
+      "targetCandidate": "examinee.is_deleted",
+      "disposition": "PROPOSED_REDESIGNED_SOFT_DELETE_PATTERN",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/courses/faculty-quiz-question-csv-service.ts",
+        "src/modules/courses/faculty-quiz-question-csv.ts",
+        "src/modules/courses/learner-quiz-empty-question-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/courses/faculty-quiz-question-csv-service.ts",
+        "src/modules/courses/faculty-quiz-question-csv.ts",
+        "src/modules/courses/learner-quiz-empty-question-model.ts"
+      ],
+      "semanticRisk": "Soft-delete pattern replaced by status enum or archived_at timestamp in vNext.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "examinee",
+      "sourceColumn": "updated_at",
+      "sourceType": "datetime(6)",
+      "sourceDefinition": "datetime(6) DEFAULT NULL",
+      "sourceRiskFlags": [
+        "TIMEZONE_AND_DEADLINE_SEMANTICS"
+      ],
+      "targetCandidate": "examinee.updated_at",
+      "disposition": "PROPOSED_NORMALIZED_AUDIT_TIMESTAMP",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/courses/faculty-quiz-question-csv-service.ts",
+        "src/modules/courses/faculty-quiz-question-csv.ts",
+        "src/modules/courses/learner-quiz-empty-question-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/courses/faculty-quiz-question-csv-service.ts",
+        "src/modules/courses/faculty-quiz-question-csv.ts",
+        "src/modules/courses/learner-quiz-empty-question-model.ts"
+      ],
+      "semanticRisk": "Datetime(6) semantics differ from timestamptz; vNext stores UTC.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "examinee",
+      "sourceColumn": "exam_id",
+      "sourceType": "int",
+      "sourceDefinition": "int NOT NULL",
+      "sourceRiskFlags": [
+        "INTEGER_KEY_TO_UUID_MAPPING"
+      ],
+      "targetCandidate": "examinee.exam_id",
+      "disposition": "PROPOSED_REGISTERED_WITH_UUID_NORMALIZATION",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/courses/faculty-quiz-question-csv-service.ts",
+        "src/modules/courses/faculty-quiz-question-csv.ts",
+        "src/modules/courses/learner-quiz-empty-question-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/courses/faculty-quiz-question-csv-service.ts",
+        "src/modules/courses/faculty-quiz-question-csv.ts",
+        "src/modules/courses/learner-quiz-empty-question-model.ts"
+      ],
+      "semanticRisk": "Legacy numeric ID maps to UUID in vNext; no old-row import needed for greenfield.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "examinee",
+      "sourceColumn": "invited_by",
+      "sourceType": "varchar(255)",
+      "sourceDefinition": "varchar(255) DEFAULT NULL",
+      "sourceRiskFlags": [],
+      "targetCandidate": "examinee.invited_by",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/courses/faculty-quiz-question-csv-service.ts",
+        "src/modules/courses/faculty-quiz-question-csv.ts",
+        "src/modules/courses/learner-quiz-empty-question-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/courses/faculty-quiz-question-csv-service.ts",
+        "src/modules/courses/faculty-quiz-question-csv.ts",
+        "src/modules/courses/learner-quiz-empty-question-model.ts"
+      ],
+      "semanticRisk": "Standard field mapping from legacy examinee to examinee.invited_by.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "examinee",
+      "sourceColumn": "mobile",
+      "sourceType": "varchar(255)",
+      "sourceDefinition": "varchar(255) DEFAULT NULL",
+      "sourceRiskFlags": [
+        "POTENTIAL_PERSONAL_OR_SECRET_DATA"
+      ],
+      "targetCandidate": "examinee.mobile",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/courses/faculty-quiz-question-csv-service.ts",
+        "src/modules/courses/faculty-quiz-question-csv.ts",
+        "src/modules/courses/learner-quiz-empty-question-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/courses/faculty-quiz-question-csv-service.ts",
+        "src/modules/courses/faculty-quiz-question-csv.ts",
+        "src/modules/courses/learner-quiz-empty-question-model.ts"
+      ],
+      "semanticRisk": "Standard field mapping from legacy examinee to examinee.mobile.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "examinee",
+      "sourceColumn": "name",
+      "sourceType": "varchar(255)",
+      "sourceDefinition": "varchar(255) DEFAULT NULL",
+      "sourceRiskFlags": [],
+      "targetCandidate": "examinee.name",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/courses/faculty-quiz-question-csv-service.ts",
+        "src/modules/courses/faculty-quiz-question-csv.ts",
+        "src/modules/courses/learner-quiz-empty-question-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/courses/faculty-quiz-question-csv-service.ts",
+        "src/modules/courses/faculty-quiz-question-csv.ts",
+        "src/modules/courses/learner-quiz-empty-question-model.ts"
+      ],
+      "semanticRisk": "Standard field mapping from legacy examinee to examinee.name.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "examinee",
+      "sourceColumn": "proctor_id",
+      "sourceType": "varchar(255)",
+      "sourceDefinition": "varchar(255) DEFAULT NULL",
+      "sourceRiskFlags": [],
+      "targetCandidate": "examinee.proctor_id",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/courses/faculty-quiz-question-csv-service.ts",
+        "src/modules/courses/faculty-quiz-question-csv.ts",
+        "src/modules/courses/learner-quiz-empty-question-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/courses/faculty-quiz-question-csv-service.ts",
+        "src/modules/courses/faculty-quiz-question-csv.ts",
+        "src/modules/courses/learner-quiz-empty-question-model.ts"
+      ],
+      "semanticRisk": "Standard field mapping from legacy examinee to examinee.proctor_id.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "examinee",
+      "sourceColumn": "reg_no",
+      "sourceType": "varchar(255)",
+      "sourceDefinition": "varchar(255) DEFAULT NULL",
+      "sourceRiskFlags": [],
+      "targetCandidate": "examinee.reg_no",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/courses/faculty-quiz-question-csv-service.ts",
+        "src/modules/courses/faculty-quiz-question-csv.ts",
+        "src/modules/courses/learner-quiz-empty-question-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/courses/faculty-quiz-question-csv-service.ts",
+        "src/modules/courses/faculty-quiz-question-csv.ts",
+        "src/modules/courses/learner-quiz-empty-question-model.ts"
+      ],
+      "semanticRisk": "Standard field mapping from legacy examinee to examinee.reg_no.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "examinee",
+      "sourceColumn": "status",
+      "sourceType": "varchar(255)",
+      "sourceDefinition": "varchar(255) DEFAULT NULL",
+      "sourceRiskFlags": [],
+      "targetCandidate": "examinee.status",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/courses/faculty-quiz-question-csv-service.ts",
+        "src/modules/courses/faculty-quiz-question-csv.ts",
+        "src/modules/courses/learner-quiz-empty-question-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/courses/faculty-quiz-question-csv-service.ts",
+        "src/modules/courses/faculty-quiz-question-csv.ts",
+        "src/modules/courses/learner-quiz-empty-question-model.ts"
+      ],
+      "semanticRisk": "Standard field mapping from legacy examinee to examinee.status.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "facial_recognition_result",
+      "sourceColumn": "id",
+      "sourceType": "int",
+      "sourceDefinition": "int NOT NULL AUTO_INCREMENT",
+      "sourceRiskFlags": [
+        "INTEGER_KEY_TO_UUID_MAPPING"
+      ],
+      "targetCandidate": "facial_recognition_result.id",
+      "disposition": "PROPOSED_NORMALIZED_UUID_PRIMARY_KEY",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/courses/faculty-quiz-question-csv-service.ts",
+        "src/modules/courses/faculty-quiz-question-csv.ts",
+        "src/modules/courses/learner-quiz-empty-question-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/courses/faculty-quiz-question-csv-service.ts",
+        "src/modules/courses/faculty-quiz-question-csv.ts",
+        "src/modules/courses/learner-quiz-empty-question-model.ts"
+      ],
+      "semanticRisk": "Legacy numeric ID maps to UUID in vNext; no old-row import needed for greenfield.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "facial_recognition_result",
+      "sourceColumn": "created_at",
+      "sourceType": "datetime(6)",
+      "sourceDefinition": "datetime(6) DEFAULT NULL",
+      "sourceRiskFlags": [
+        "TIMEZONE_AND_DEADLINE_SEMANTICS"
+      ],
+      "targetCandidate": "facial_recognition_result.created_at",
+      "disposition": "PROPOSED_NORMALIZED_AUDIT_TIMESTAMP",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/courses/faculty-quiz-question-csv-service.ts",
+        "src/modules/courses/faculty-quiz-question-csv.ts",
+        "src/modules/courses/learner-quiz-empty-question-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/courses/faculty-quiz-question-csv-service.ts",
+        "src/modules/courses/faculty-quiz-question-csv.ts",
+        "src/modules/courses/learner-quiz-empty-question-model.ts"
+      ],
+      "semanticRisk": "Datetime(6) semantics differ from timestamptz; vNext stores UTC.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "facial_recognition_result",
+      "sourceColumn": "is_deleted",
+      "sourceType": "tinyint(1)",
+      "sourceDefinition": "tinyint(1) DEFAULT '0'",
+      "sourceRiskFlags": [],
+      "targetCandidate": "facial_recognition_result.is_deleted",
+      "disposition": "PROPOSED_REDESIGNED_SOFT_DELETE_PATTERN",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/courses/faculty-quiz-question-csv-service.ts",
+        "src/modules/courses/faculty-quiz-question-csv.ts",
+        "src/modules/courses/learner-quiz-empty-question-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/courses/faculty-quiz-question-csv-service.ts",
+        "src/modules/courses/faculty-quiz-question-csv.ts",
+        "src/modules/courses/learner-quiz-empty-question-model.ts"
+      ],
+      "semanticRisk": "Soft-delete pattern replaced by status enum or archived_at timestamp in vNext.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "facial_recognition_result",
+      "sourceColumn": "updated_at",
+      "sourceType": "datetime(6)",
+      "sourceDefinition": "datetime(6) DEFAULT NULL",
+      "sourceRiskFlags": [
+        "TIMEZONE_AND_DEADLINE_SEMANTICS"
+      ],
+      "targetCandidate": "facial_recognition_result.updated_at",
+      "disposition": "PROPOSED_NORMALIZED_AUDIT_TIMESTAMP",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/courses/faculty-quiz-question-csv-service.ts",
+        "src/modules/courses/faculty-quiz-question-csv.ts",
+        "src/modules/courses/learner-quiz-empty-question-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/courses/faculty-quiz-question-csv-service.ts",
+        "src/modules/courses/faculty-quiz-question-csv.ts",
+        "src/modules/courses/learner-quiz-empty-question-model.ts"
+      ],
+      "semanticRisk": "Datetime(6) semantics differ from timestamptz; vNext stores UTC.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "facial_recognition_result",
+      "sourceColumn": "face_image_url",
+      "sourceType": "varchar(255)",
+      "sourceDefinition": "varchar(255) DEFAULT NULL",
+      "sourceRiskFlags": [
+        "POTENTIAL_PERSONAL_OR_SECRET_DATA"
+      ],
+      "targetCandidate": "facial_recognition_result.face_image_url",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/courses/faculty-quiz-question-csv-service.ts",
+        "src/modules/courses/faculty-quiz-question-csv.ts",
+        "src/modules/courses/learner-quiz-empty-question-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/courses/faculty-quiz-question-csv-service.ts",
+        "src/modules/courses/faculty-quiz-question-csv.ts",
+        "src/modules/courses/learner-quiz-empty-question-model.ts"
+      ],
+      "semanticRisk": "Standard field mapping from legacy facial_recognition_result to facial_recognition_result.face_image_url.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "facial_recognition_result",
+      "sourceColumn": "original_url",
+      "sourceType": "varchar(255)",
+      "sourceDefinition": "varchar(255) DEFAULT NULL",
+      "sourceRiskFlags": [],
+      "targetCandidate": "facial_recognition_result.original_url",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/courses/faculty-quiz-question-csv-service.ts",
+        "src/modules/courses/faculty-quiz-question-csv.ts",
+        "src/modules/courses/learner-quiz-empty-question-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/courses/faculty-quiz-question-csv-service.ts",
+        "src/modules/courses/faculty-quiz-question-csv.ts",
+        "src/modules/courses/learner-quiz-empty-question-model.ts"
+      ],
+      "semanticRisk": "Standard field mapping from legacy facial_recognition_result to facial_recognition_result.original_url.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "facial_recognition_result",
+      "sourceColumn": "subject_name",
+      "sourceType": "varchar(255)",
+      "sourceDefinition": "varchar(255) DEFAULT NULL",
+      "sourceRiskFlags": [],
+      "targetCandidate": "facial_recognition_result.subject_name",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/courses/faculty-quiz-question-csv-service.ts",
+        "src/modules/courses/faculty-quiz-question-csv.ts",
+        "src/modules/courses/learner-quiz-empty-question-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/courses/faculty-quiz-question-csv-service.ts",
+        "src/modules/courses/faculty-quiz-question-csv.ts",
+        "src/modules/courses/learner-quiz-empty-question-model.ts"
+      ],
+      "semanticRisk": "Standard field mapping from legacy facial_recognition_result to facial_recognition_result.subject_name.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "question",
+      "sourceColumn": "id",
+      "sourceType": "int",
+      "sourceDefinition": "int NOT NULL AUTO_INCREMENT",
+      "sourceRiskFlags": [
+        "INTEGER_KEY_TO_UUID_MAPPING"
+      ],
+      "targetCandidate": "question.id",
+      "disposition": "PROPOSED_NORMALIZED_UUID_PRIMARY_KEY",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/courses/faculty-quiz-question-csv-service.ts",
+        "src/modules/courses/faculty-quiz-question-csv.ts",
+        "src/modules/courses/learner-quiz-empty-question-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/courses/faculty-quiz-question-csv-service.ts",
+        "src/modules/courses/faculty-quiz-question-csv.ts",
+        "src/modules/courses/learner-quiz-empty-question-model.ts"
+      ],
+      "semanticRisk": "Legacy numeric ID maps to UUID in vNext; no old-row import needed for greenfield.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "question",
+      "sourceColumn": "created_at",
+      "sourceType": "datetime(6)",
+      "sourceDefinition": "datetime(6) DEFAULT NULL",
+      "sourceRiskFlags": [
+        "TIMEZONE_AND_DEADLINE_SEMANTICS"
+      ],
+      "targetCandidate": "question.created_at",
+      "disposition": "PROPOSED_NORMALIZED_AUDIT_TIMESTAMP",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/courses/faculty-quiz-question-csv-service.ts",
+        "src/modules/courses/faculty-quiz-question-csv.ts",
+        "src/modules/courses/learner-quiz-empty-question-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/courses/faculty-quiz-question-csv-service.ts",
+        "src/modules/courses/faculty-quiz-question-csv.ts",
+        "src/modules/courses/learner-quiz-empty-question-model.ts"
+      ],
+      "semanticRisk": "Datetime(6) semantics differ from timestamptz; vNext stores UTC.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "question",
+      "sourceColumn": "is_deleted",
+      "sourceType": "tinyint(1)",
+      "sourceDefinition": "tinyint(1) DEFAULT '0'",
+      "sourceRiskFlags": [],
+      "targetCandidate": "question.is_deleted",
+      "disposition": "PROPOSED_REDESIGNED_SOFT_DELETE_PATTERN",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/courses/faculty-quiz-question-csv-service.ts",
+        "src/modules/courses/faculty-quiz-question-csv.ts",
+        "src/modules/courses/learner-quiz-empty-question-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/courses/faculty-quiz-question-csv-service.ts",
+        "src/modules/courses/faculty-quiz-question-csv.ts",
+        "src/modules/courses/learner-quiz-empty-question-model.ts"
+      ],
+      "semanticRisk": "Soft-delete pattern replaced by status enum or archived_at timestamp in vNext.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "question",
+      "sourceColumn": "updated_at",
+      "sourceType": "datetime(6)",
+      "sourceDefinition": "datetime(6) DEFAULT NULL",
+      "sourceRiskFlags": [
+        "TIMEZONE_AND_DEADLINE_SEMANTICS"
+      ],
+      "targetCandidate": "question.updated_at",
+      "disposition": "PROPOSED_NORMALIZED_AUDIT_TIMESTAMP",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/courses/faculty-quiz-question-csv-service.ts",
+        "src/modules/courses/faculty-quiz-question-csv.ts",
+        "src/modules/courses/learner-quiz-empty-question-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/courses/faculty-quiz-question-csv-service.ts",
+        "src/modules/courses/faculty-quiz-question-csv.ts",
+        "src/modules/courses/learner-quiz-empty-question-model.ts"
+      ],
+      "semanticRisk": "Datetime(6) semantics differ from timestamptz; vNext stores UTC.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "question",
+      "sourceColumn": "correct_answer",
+      "sourceType": "varchar(255)",
+      "sourceDefinition": "varchar(255) DEFAULT NULL",
+      "sourceRiskFlags": [],
+      "targetCandidate": "question.correct_answer",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/courses/faculty-quiz-question-csv-service.ts",
+        "src/modules/courses/faculty-quiz-question-csv.ts",
+        "src/modules/courses/learner-quiz-empty-question-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/courses/faculty-quiz-question-csv-service.ts",
+        "src/modules/courses/faculty-quiz-question-csv.ts",
+        "src/modules/courses/learner-quiz-empty-question-model.ts"
+      ],
+      "semanticRisk": "Standard field mapping from legacy question to question.correct_answer.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "question",
+      "sourceColumn": "exam_id",
+      "sourceType": "int",
+      "sourceDefinition": "int DEFAULT NULL",
+      "sourceRiskFlags": [
+        "INTEGER_KEY_TO_UUID_MAPPING"
+      ],
+      "targetCandidate": "question.exam_id",
+      "disposition": "PROPOSED_REGISTERED_WITH_UUID_NORMALIZATION",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/courses/faculty-quiz-question-csv-service.ts",
+        "src/modules/courses/faculty-quiz-question-csv.ts",
+        "src/modules/courses/learner-quiz-empty-question-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/courses/faculty-quiz-question-csv-service.ts",
+        "src/modules/courses/faculty-quiz-question-csv.ts",
+        "src/modules/courses/learner-quiz-empty-question-model.ts"
+      ],
+      "semanticRisk": "Legacy numeric ID maps to UUID in vNext; no old-row import needed for greenfield.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "question",
+      "sourceColumn": "points",
+      "sourceType": "int",
+      "sourceDefinition": "int DEFAULT NULL",
+      "sourceRiskFlags": [],
+      "targetCandidate": "question.points",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/courses/faculty-quiz-question-csv-service.ts",
+        "src/modules/courses/faculty-quiz-question-csv.ts",
+        "src/modules/courses/learner-quiz-empty-question-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/courses/faculty-quiz-question-csv-service.ts",
+        "src/modules/courses/faculty-quiz-question-csv.ts",
+        "src/modules/courses/learner-quiz-empty-question-model.ts"
+      ],
+      "semanticRisk": "Standard field mapping from legacy question to question.points.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "question",
+      "sourceColumn": "question",
+      "sourceType": "varchar(255)",
+      "sourceDefinition": "varchar(255) DEFAULT NULL",
+      "sourceRiskFlags": [],
+      "targetCandidate": "question.question",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/courses/faculty-quiz-question-csv-service.ts",
+        "src/modules/courses/faculty-quiz-question-csv.ts",
+        "src/modules/courses/learner-quiz-empty-question-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/courses/faculty-quiz-question-csv-service.ts",
+        "src/modules/courses/faculty-quiz-question-csv.ts",
+        "src/modules/courses/learner-quiz-empty-question-model.ts"
+      ],
+      "semanticRisk": "Standard field mapping from legacy question to question.question.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "question",
+      "sourceColumn": "question_type",
+      "sourceType": "int",
+      "sourceDefinition": "int DEFAULT NULL",
+      "sourceRiskFlags": [],
+      "targetCandidate": "question.question_type",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/courses/faculty-quiz-question-csv-service.ts",
+        "src/modules/courses/faculty-quiz-question-csv.ts",
+        "src/modules/courses/learner-quiz-empty-question-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/courses/faculty-quiz-question-csv-service.ts",
+        "src/modules/courses/faculty-quiz-question-csv.ts",
+        "src/modules/courses/learner-quiz-empty-question-model.ts"
+      ],
+      "semanticRisk": "Standard field mapping from legacy question to question.question_type.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "question",
+      "sourceColumn": "sequence",
+      "sourceType": "int",
+      "sourceDefinition": "int DEFAULT NULL",
+      "sourceRiskFlags": [],
+      "targetCandidate": "question.sequence",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/courses/faculty-quiz-question-csv-service.ts",
+        "src/modules/courses/faculty-quiz-question-csv.ts",
+        "src/modules/courses/learner-quiz-empty-question-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/courses/faculty-quiz-question-csv-service.ts",
+        "src/modules/courses/faculty-quiz-question-csv.ts",
+        "src/modules/courses/learner-quiz-empty-question-model.ts"
+      ],
+      "semanticRisk": "Standard field mapping from legacy question to question.sequence.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "question_option",
+      "sourceColumn": "id",
+      "sourceType": "int",
+      "sourceDefinition": "int NOT NULL AUTO_INCREMENT",
+      "sourceRiskFlags": [
+        "INTEGER_KEY_TO_UUID_MAPPING"
+      ],
+      "targetCandidate": "question_option.id",
+      "disposition": "PROPOSED_NORMALIZED_UUID_PRIMARY_KEY",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/courses/faculty-quiz-question-csv-service.ts",
+        "src/modules/courses/faculty-quiz-question-csv.ts",
+        "src/modules/courses/learner-quiz-empty-question-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/courses/faculty-quiz-question-csv-service.ts",
+        "src/modules/courses/faculty-quiz-question-csv.ts",
+        "src/modules/courses/learner-quiz-empty-question-model.ts"
+      ],
+      "semanticRisk": "Legacy numeric ID maps to UUID in vNext; no old-row import needed for greenfield.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "question_option",
+      "sourceColumn": "created_at",
+      "sourceType": "datetime(6)",
+      "sourceDefinition": "datetime(6) DEFAULT NULL",
+      "sourceRiskFlags": [
+        "TIMEZONE_AND_DEADLINE_SEMANTICS"
+      ],
+      "targetCandidate": "question_option.created_at",
+      "disposition": "PROPOSED_NORMALIZED_AUDIT_TIMESTAMP",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/courses/faculty-quiz-question-csv-service.ts",
+        "src/modules/courses/faculty-quiz-question-csv.ts",
+        "src/modules/courses/learner-quiz-empty-question-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/courses/faculty-quiz-question-csv-service.ts",
+        "src/modules/courses/faculty-quiz-question-csv.ts",
+        "src/modules/courses/learner-quiz-empty-question-model.ts"
+      ],
+      "semanticRisk": "Datetime(6) semantics differ from timestamptz; vNext stores UTC.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "question_option",
+      "sourceColumn": "is_deleted",
+      "sourceType": "tinyint(1)",
+      "sourceDefinition": "tinyint(1) DEFAULT '0'",
+      "sourceRiskFlags": [],
+      "targetCandidate": "question_option.is_deleted",
+      "disposition": "PROPOSED_REDESIGNED_SOFT_DELETE_PATTERN",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/courses/faculty-quiz-question-csv-service.ts",
+        "src/modules/courses/faculty-quiz-question-csv.ts",
+        "src/modules/courses/learner-quiz-empty-question-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/courses/faculty-quiz-question-csv-service.ts",
+        "src/modules/courses/faculty-quiz-question-csv.ts",
+        "src/modules/courses/learner-quiz-empty-question-model.ts"
+      ],
+      "semanticRisk": "Soft-delete pattern replaced by status enum or archived_at timestamp in vNext.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "question_option",
+      "sourceColumn": "updated_at",
+      "sourceType": "datetime(6)",
+      "sourceDefinition": "datetime(6) DEFAULT NULL",
+      "sourceRiskFlags": [
+        "TIMEZONE_AND_DEADLINE_SEMANTICS"
+      ],
+      "targetCandidate": "question_option.updated_at",
+      "disposition": "PROPOSED_NORMALIZED_AUDIT_TIMESTAMP",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/courses/faculty-quiz-question-csv-service.ts",
+        "src/modules/courses/faculty-quiz-question-csv.ts",
+        "src/modules/courses/learner-quiz-empty-question-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/courses/faculty-quiz-question-csv-service.ts",
+        "src/modules/courses/faculty-quiz-question-csv.ts",
+        "src/modules/courses/learner-quiz-empty-question-model.ts"
+      ],
+      "semanticRisk": "Datetime(6) semantics differ from timestamptz; vNext stores UTC.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "question_option",
+      "sourceColumn": "an_image",
+      "sourceType": "bit(1)",
+      "sourceDefinition": "bit(1) NOT NULL",
+      "sourceRiskFlags": [
+        "POTENTIAL_PERSONAL_OR_SECRET_DATA"
+      ],
+      "targetCandidate": "question_option.an_image",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/courses/faculty-quiz-question-csv-service.ts",
+        "src/modules/courses/faculty-quiz-question-csv.ts",
+        "src/modules/courses/learner-quiz-empty-question-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/courses/faculty-quiz-question-csv-service.ts",
+        "src/modules/courses/faculty-quiz-question-csv.ts",
+        "src/modules/courses/learner-quiz-empty-question-model.ts"
+      ],
+      "semanticRisk": "Standard field mapping from legacy question_option to question_option.an_image.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "question_option",
+      "sourceColumn": "code",
+      "sourceType": "varchar(255)",
+      "sourceDefinition": "varchar(255) DEFAULT NULL",
+      "sourceRiskFlags": [],
+      "targetCandidate": "question_option.code",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/courses/faculty-quiz-question-csv-service.ts",
+        "src/modules/courses/faculty-quiz-question-csv.ts",
+        "src/modules/courses/learner-quiz-empty-question-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/courses/faculty-quiz-question-csv-service.ts",
+        "src/modules/courses/faculty-quiz-question-csv.ts",
+        "src/modules/courses/learner-quiz-empty-question-model.ts"
+      ],
+      "semanticRisk": "Standard field mapping from legacy question_option to question_option.code.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "question_option",
+      "sourceColumn": "content",
+      "sourceType": "varchar(255)",
+      "sourceDefinition": "varchar(255) DEFAULT NULL",
+      "sourceRiskFlags": [],
+      "targetCandidate": "question_option.content",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/courses/faculty-quiz-question-csv-service.ts",
+        "src/modules/courses/faculty-quiz-question-csv.ts",
+        "src/modules/courses/learner-quiz-empty-question-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/courses/faculty-quiz-question-csv-service.ts",
+        "src/modules/courses/faculty-quiz-question-csv.ts",
+        "src/modules/courses/learner-quiz-empty-question-model.ts"
+      ],
+      "semanticRisk": "Standard field mapping from legacy question_option to question_option.content.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "question_option",
+      "sourceColumn": "correct",
+      "sourceType": "bit(1)",
+      "sourceDefinition": "bit(1) DEFAULT NULL",
+      "sourceRiskFlags": [],
+      "targetCandidate": "question_option.correct",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/courses/faculty-quiz-question-csv-service.ts",
+        "src/modules/courses/faculty-quiz-question-csv.ts",
+        "src/modules/courses/learner-quiz-empty-question-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/courses/faculty-quiz-question-csv-service.ts",
+        "src/modules/courses/faculty-quiz-question-csv.ts",
+        "src/modules/courses/learner-quiz-empty-question-model.ts"
+      ],
+      "semanticRisk": "Standard field mapping from legacy question_option to question_option.correct.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "question_option",
+      "sourceColumn": "sequence",
+      "sourceType": "int",
+      "sourceDefinition": "int DEFAULT NULL",
+      "sourceRiskFlags": [],
+      "targetCandidate": "question_option.sequence",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/courses/faculty-quiz-question-csv-service.ts",
+        "src/modules/courses/faculty-quiz-question-csv.ts",
+        "src/modules/courses/learner-quiz-empty-question-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/courses/faculty-quiz-question-csv-service.ts",
+        "src/modules/courses/faculty-quiz-question-csv.ts",
+        "src/modules/courses/learner-quiz-empty-question-model.ts"
+      ],
+      "semanticRisk": "Standard field mapping from legacy question_option to question_option.sequence.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "question_option",
+      "sourceColumn": "question_id",
+      "sourceType": "int",
+      "sourceDefinition": "int DEFAULT NULL",
+      "sourceRiskFlags": [
+        "INTEGER_KEY_TO_UUID_MAPPING"
+      ],
+      "targetCandidate": "question_option.question_id",
+      "disposition": "PROPOSED_REGISTERED_WITH_UUID_NORMALIZATION",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/courses/faculty-quiz-question-csv-service.ts",
+        "src/modules/courses/faculty-quiz-question-csv.ts",
+        "src/modules/courses/learner-quiz-empty-question-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/courses/faculty-quiz-question-csv-service.ts",
+        "src/modules/courses/faculty-quiz-question-csv.ts",
+        "src/modules/courses/learner-quiz-empty-question-model.ts"
+      ],
+      "semanticRisk": "Legacy numeric ID maps to UUID in vNext; no old-row import needed for greenfield.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "quiz_attempt",
+      "sourceColumn": "id",
+      "sourceType": "bigint",
+      "sourceDefinition": "bigint NOT NULL AUTO_INCREMENT",
+      "sourceRiskFlags": [
+        "INTEGER_KEY_TO_UUID_MAPPING"
+      ],
+      "targetCandidate": "quiz_attempt.id",
+      "disposition": "PROPOSED_NORMALIZED_UUID_PRIMARY_KEY",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/courses/faculty-quiz-question-csv-service.ts",
+        "src/modules/courses/faculty-quiz-question-csv.ts",
+        "src/modules/courses/learner-quiz-empty-question-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/courses/faculty-quiz-question-csv-service.ts",
+        "src/modules/courses/faculty-quiz-question-csv.ts",
+        "src/modules/courses/learner-quiz-empty-question-model.ts"
+      ],
+      "semanticRisk": "Legacy numeric ID maps to UUID in vNext; no old-row import needed for greenfield.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "quiz_attempt",
+      "sourceColumn": "attempt_id",
+      "sourceType": "varchar(64)",
+      "sourceDefinition": "varchar(64) NOT NULL",
+      "sourceRiskFlags": [],
+      "targetCandidate": "quiz_attempt.attempt_id",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/courses/faculty-quiz-question-csv-service.ts",
+        "src/modules/courses/faculty-quiz-question-csv.ts",
+        "src/modules/courses/learner-quiz-empty-question-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/courses/faculty-quiz-question-csv-service.ts",
+        "src/modules/courses/faculty-quiz-question-csv.ts",
+        "src/modules/courses/learner-quiz-empty-question-model.ts"
+      ],
+      "semanticRisk": "Standard field mapping from legacy quiz_attempt to quiz_attempt.attempt_id.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "quiz_attempt",
+      "sourceColumn": "student_id",
+      "sourceType": "int",
+      "sourceDefinition": "int NOT NULL",
+      "sourceRiskFlags": [
+        "INTEGER_KEY_TO_UUID_MAPPING"
+      ],
+      "targetCandidate": "quiz_attempt.student_id",
+      "disposition": "PROPOSED_REGISTERED_WITH_UUID_NORMALIZATION",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/courses/faculty-quiz-question-csv-service.ts",
+        "src/modules/courses/faculty-quiz-question-csv.ts",
+        "src/modules/courses/learner-quiz-empty-question-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/courses/faculty-quiz-question-csv-service.ts",
+        "src/modules/courses/faculty-quiz-question-csv.ts",
+        "src/modules/courses/learner-quiz-empty-question-model.ts"
+      ],
+      "semanticRisk": "Legacy numeric ID maps to UUID in vNext; no old-row import needed for greenfield.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "quiz_attempt",
+      "sourceColumn": "lesson_content_id",
+      "sourceType": "int",
+      "sourceDefinition": "int NOT NULL",
+      "sourceRiskFlags": [
+        "INTEGER_KEY_TO_UUID_MAPPING"
+      ],
+      "targetCandidate": "quiz_attempt.lesson_content_id",
+      "disposition": "PROPOSED_REGISTERED_WITH_UUID_NORMALIZATION",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/courses/faculty-quiz-question-csv-service.ts",
+        "src/modules/courses/faculty-quiz-question-csv.ts",
+        "src/modules/courses/learner-quiz-empty-question-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/courses/faculty-quiz-question-csv-service.ts",
+        "src/modules/courses/faculty-quiz-question-csv.ts",
+        "src/modules/courses/learner-quiz-empty-question-model.ts"
+      ],
+      "semanticRisk": "Legacy numeric ID maps to UUID in vNext; no old-row import needed for greenfield.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "quiz_attempt",
+      "sourceColumn": "started_at",
+      "sourceType": "datetime",
+      "sourceDefinition": "datetime NOT NULL",
+      "sourceRiskFlags": [
+        "TIMEZONE_AND_DEADLINE_SEMANTICS"
+      ],
+      "targetCandidate": "quiz_attempt.started_at",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/courses/faculty-quiz-question-csv-service.ts",
+        "src/modules/courses/faculty-quiz-question-csv.ts",
+        "src/modules/courses/learner-quiz-empty-question-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/courses/faculty-quiz-question-csv-service.ts",
+        "src/modules/courses/faculty-quiz-question-csv.ts",
+        "src/modules/courses/learner-quiz-empty-question-model.ts"
+      ],
+      "semanticRisk": "Datetime(6) semantics differ from timestamptz; vNext stores UTC.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "quiz_attempt",
+      "sourceColumn": "expires_at",
+      "sourceType": "datetime",
+      "sourceDefinition": "datetime NOT NULL",
+      "sourceRiskFlags": [
+        "TIMEZONE_AND_DEADLINE_SEMANTICS"
+      ],
+      "targetCandidate": "quiz_attempt.expires_at",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/courses/faculty-quiz-question-csv-service.ts",
+        "src/modules/courses/faculty-quiz-question-csv.ts",
+        "src/modules/courses/learner-quiz-empty-question-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/courses/faculty-quiz-question-csv-service.ts",
+        "src/modules/courses/faculty-quiz-question-csv.ts",
+        "src/modules/courses/learner-quiz-empty-question-model.ts"
+      ],
+      "semanticRisk": "Datetime(6) semantics differ from timestamptz; vNext stores UTC.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "quiz_attempt",
+      "sourceColumn": "submitted_at",
+      "sourceType": "datetime",
+      "sourceDefinition": "datetime DEFAULT NULL",
+      "sourceRiskFlags": [
+        "TIMEZONE_AND_DEADLINE_SEMANTICS"
+      ],
+      "targetCandidate": "quiz_attempt.submitted_at",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/courses/faculty-quiz-question-csv-service.ts",
+        "src/modules/courses/faculty-quiz-question-csv.ts",
+        "src/modules/courses/learner-quiz-empty-question-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/courses/faculty-quiz-question-csv-service.ts",
+        "src/modules/courses/faculty-quiz-question-csv.ts",
+        "src/modules/courses/learner-quiz-empty-question-model.ts"
+      ],
+      "semanticRisk": "Datetime(6) semantics differ from timestamptz; vNext stores UTC.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "quiz_attempt",
+      "sourceColumn": "created_at",
+      "sourceType": "datetime",
+      "sourceDefinition": "datetime NOT NULL DEFAULT CURRENT_TIMESTAMP",
+      "sourceRiskFlags": [
+        "TIMEZONE_AND_DEADLINE_SEMANTICS"
+      ],
+      "targetCandidate": "quiz_attempt.created_at",
+      "disposition": "PROPOSED_NORMALIZED_AUDIT_TIMESTAMP",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/courses/faculty-quiz-question-csv-service.ts",
+        "src/modules/courses/faculty-quiz-question-csv.ts",
+        "src/modules/courses/learner-quiz-empty-question-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/courses/faculty-quiz-question-csv-service.ts",
+        "src/modules/courses/faculty-quiz-question-csv.ts",
+        "src/modules/courses/learner-quiz-empty-question-model.ts"
+      ],
+      "semanticRisk": "Datetime(6) semantics differ from timestamptz; vNext stores UTC.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "selected_option",
+      "sourceColumn": "id",
+      "sourceType": "int",
+      "sourceDefinition": "int NOT NULL AUTO_INCREMENT",
+      "sourceRiskFlags": [
+        "INTEGER_KEY_TO_UUID_MAPPING"
+      ],
+      "targetCandidate": "selected_option.id",
+      "disposition": "PROPOSED_NORMALIZED_UUID_PRIMARY_KEY",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/courses/faculty-quiz-question-csv-service.ts",
+        "src/modules/courses/faculty-quiz-question-csv.ts",
+        "src/modules/courses/learner-quiz-empty-question-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/courses/faculty-quiz-question-csv-service.ts",
+        "src/modules/courses/faculty-quiz-question-csv.ts",
+        "src/modules/courses/learner-quiz-empty-question-model.ts"
+      ],
+      "semanticRisk": "Legacy numeric ID maps to UUID in vNext; no old-row import needed for greenfield.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "selected_option",
+      "sourceColumn": "created_at",
+      "sourceType": "datetime(6)",
+      "sourceDefinition": "datetime(6) DEFAULT NULL",
+      "sourceRiskFlags": [
+        "TIMEZONE_AND_DEADLINE_SEMANTICS"
+      ],
+      "targetCandidate": "selected_option.created_at",
+      "disposition": "PROPOSED_NORMALIZED_AUDIT_TIMESTAMP",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/courses/faculty-quiz-question-csv-service.ts",
+        "src/modules/courses/faculty-quiz-question-csv.ts",
+        "src/modules/courses/learner-quiz-empty-question-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/courses/faculty-quiz-question-csv-service.ts",
+        "src/modules/courses/faculty-quiz-question-csv.ts",
+        "src/modules/courses/learner-quiz-empty-question-model.ts"
+      ],
+      "semanticRisk": "Datetime(6) semantics differ from timestamptz; vNext stores UTC.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "selected_option",
+      "sourceColumn": "is_deleted",
+      "sourceType": "tinyint(1)",
+      "sourceDefinition": "tinyint(1) DEFAULT '0'",
+      "sourceRiskFlags": [],
+      "targetCandidate": "selected_option.is_deleted",
+      "disposition": "PROPOSED_REDESIGNED_SOFT_DELETE_PATTERN",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/courses/faculty-quiz-question-csv-service.ts",
+        "src/modules/courses/faculty-quiz-question-csv.ts",
+        "src/modules/courses/learner-quiz-empty-question-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/courses/faculty-quiz-question-csv-service.ts",
+        "src/modules/courses/faculty-quiz-question-csv.ts",
+        "src/modules/courses/learner-quiz-empty-question-model.ts"
+      ],
+      "semanticRisk": "Soft-delete pattern replaced by status enum or archived_at timestamp in vNext.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "selected_option",
+      "sourceColumn": "updated_at",
+      "sourceType": "datetime(6)",
+      "sourceDefinition": "datetime(6) DEFAULT NULL",
+      "sourceRiskFlags": [
+        "TIMEZONE_AND_DEADLINE_SEMANTICS"
+      ],
+      "targetCandidate": "selected_option.updated_at",
+      "disposition": "PROPOSED_NORMALIZED_AUDIT_TIMESTAMP",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/courses/faculty-quiz-question-csv-service.ts",
+        "src/modules/courses/faculty-quiz-question-csv.ts",
+        "src/modules/courses/learner-quiz-empty-question-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/courses/faculty-quiz-question-csv-service.ts",
+        "src/modules/courses/faculty-quiz-question-csv.ts",
+        "src/modules/courses/learner-quiz-empty-question-model.ts"
+      ],
+      "semanticRisk": "Datetime(6) semantics differ from timestamptz; vNext stores UTC.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "selected_option",
+      "sourceColumn": "attendee_answer",
+      "sourceType": "varchar(255)",
+      "sourceDefinition": "varchar(255) DEFAULT NULL",
+      "sourceRiskFlags": [],
+      "targetCandidate": "selected_option.attendee_answer",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/courses/faculty-quiz-question-csv-service.ts",
+        "src/modules/courses/faculty-quiz-question-csv.ts",
+        "src/modules/courses/learner-quiz-empty-question-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/courses/faculty-quiz-question-csv-service.ts",
+        "src/modules/courses/faculty-quiz-question-csv.ts",
+        "src/modules/courses/learner-quiz-empty-question-model.ts"
+      ],
+      "semanticRisk": "Standard field mapping from legacy selected_option to selected_option.attendee_answer.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "selected_option",
+      "sourceColumn": "question_option_id",
+      "sourceType": "int",
+      "sourceDefinition": "int DEFAULT NULL",
+      "sourceRiskFlags": [
+        "INTEGER_KEY_TO_UUID_MAPPING"
+      ],
+      "targetCandidate": "selected_option.question_option_id",
+      "disposition": "PROPOSED_REGISTERED_WITH_UUID_NORMALIZATION",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/courses/faculty-quiz-question-csv-service.ts",
+        "src/modules/courses/faculty-quiz-question-csv.ts",
+        "src/modules/courses/learner-quiz-empty-question-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/courses/faculty-quiz-question-csv-service.ts",
+        "src/modules/courses/faculty-quiz-question-csv.ts",
+        "src/modules/courses/learner-quiz-empty-question-model.ts"
+      ],
+      "semanticRisk": "Legacy numeric ID maps to UUID in vNext; no old-row import needed for greenfield.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "selected_option",
+      "sourceColumn": "assgined_exam_id",
+      "sourceType": "int",
+      "sourceDefinition": "int DEFAULT NULL",
+      "sourceRiskFlags": [
+        "INTEGER_KEY_TO_UUID_MAPPING"
+      ],
+      "targetCandidate": "selected_option.assgined_exam_id",
+      "disposition": "PROPOSED_REGISTERED_WITH_UUID_NORMALIZATION",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/courses/faculty-quiz-question-csv-service.ts",
+        "src/modules/courses/faculty-quiz-question-csv.ts",
+        "src/modules/courses/learner-quiz-empty-question-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/courses/faculty-quiz-question-csv-service.ts",
+        "src/modules/courses/faculty-quiz-question-csv.ts",
+        "src/modules/courses/learner-quiz-empty-question-model.ts"
+      ],
+      "semanticRisk": "Legacy numeric ID maps to UUID in vNext; no old-row import needed for greenfield.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "selected_option",
+      "sourceColumn": "question_id",
+      "sourceType": "int",
+      "sourceDefinition": "int DEFAULT NULL",
+      "sourceRiskFlags": [
+        "INTEGER_KEY_TO_UUID_MAPPING"
+      ],
+      "targetCandidate": "selected_option.question_id",
+      "disposition": "PROPOSED_REGISTERED_WITH_UUID_NORMALIZATION",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/courses/faculty-quiz-question-csv-service.ts",
+        "src/modules/courses/faculty-quiz-question-csv.ts",
+        "src/modules/courses/learner-quiz-empty-question-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/courses/faculty-quiz-question-csv-service.ts",
+        "src/modules/courses/faculty-quiz-question-csv.ts",
+        "src/modules/courses/learner-quiz-empty-question-model.ts"
+      ],
+      "semanticRisk": "Legacy numeric ID maps to UUID in vNext; no old-row import needed for greenfield.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    }
+  ]
+}

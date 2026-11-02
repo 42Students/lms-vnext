@@ -1,0 +1,2589 @@
+{
+  "id": "DB19-P13",
+  "recordType": "DB19_PACKAGE_SOURCE_FIELD_REVIEW",
+  "sourceSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+  "sourceInventory": "docs/planning/db-pass4-columns-db07_projects.json",
+  "originalFieldLedger": "docs/planning/database-parity-db07_projects-field-ledger.json",
+  "sourceTables": [
+    "project_workspace",
+    "project_template",
+    "project_template_college",
+    "project_template_version",
+    "project_member"
+  ],
+  "sourceFieldCount": 95,
+  "reviewedProposals": 95,
+  "runtimeVerifiedCount": 0,
+  "fieldDispositionApproval": "PENDING_PACKAGE_ACCEPTANCE",
+  "privacyBoundary": "DB19-P13 scoped source field disposition only. Global P31/P32 and DB020 remain open.",
+  "testEvidenceStatus": "SOURCE_QUALITY_GATE_ONLY_NOT_RUNTIME_CERTIFIED",
+  "pendingAcceptance": "Registered PG17 producer/consumer and runtime verification for all 95 fields.",
+  "fields": [
+    {
+      "sourceTable": "project_member",
+      "sourceColumn": "id",
+      "sourceType": "int",
+      "sourceDefinition": "int NOT NULL AUTO_INCREMENT",
+      "sourceRiskFlags": [
+        "INTEGER_KEY_TO_UUID_MAPPING"
+      ],
+      "targetCandidate": "project_member.id",
+      "disposition": "PROPOSED_NORMALIZED_UUID_PRIMARY_KEY",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/activity/learner-notification-project-action-model.ts",
+        "src/modules/activity/mentor-personal-project-scope.ts",
+        "src/modules/courses/legacy-course-public-projection.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/activity/learner-notification-project-action-model.ts",
+        "src/modules/activity/mentor-personal-project-scope.ts",
+        "src/modules/courses/legacy-course-public-projection.ts"
+      ],
+      "semanticRisk": "Legacy numeric ID maps to UUID in vNext; no old-row import needed for greenfield.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "project_member",
+      "sourceColumn": "created_at",
+      "sourceType": "datetime",
+      "sourceDefinition": "datetime DEFAULT NULL",
+      "sourceRiskFlags": [
+        "TIMEZONE_AND_DEADLINE_SEMANTICS"
+      ],
+      "targetCandidate": "project_member.created_at",
+      "disposition": "PROPOSED_NORMALIZED_AUDIT_TIMESTAMP",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/activity/learner-notification-project-action-model.ts",
+        "src/modules/activity/mentor-personal-project-scope.ts",
+        "src/modules/courses/legacy-course-public-projection.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/activity/learner-notification-project-action-model.ts",
+        "src/modules/activity/mentor-personal-project-scope.ts",
+        "src/modules/courses/legacy-course-public-projection.ts"
+      ],
+      "semanticRisk": "Datetime(6) semantics differ from timestamptz; vNext stores UTC.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "project_member",
+      "sourceColumn": "updated_at",
+      "sourceType": "datetime",
+      "sourceDefinition": "datetime DEFAULT NULL",
+      "sourceRiskFlags": [
+        "TIMEZONE_AND_DEADLINE_SEMANTICS"
+      ],
+      "targetCandidate": "project_member.updated_at",
+      "disposition": "PROPOSED_NORMALIZED_AUDIT_TIMESTAMP",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/activity/learner-notification-project-action-model.ts",
+        "src/modules/activity/mentor-personal-project-scope.ts",
+        "src/modules/courses/legacy-course-public-projection.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/activity/learner-notification-project-action-model.ts",
+        "src/modules/activity/mentor-personal-project-scope.ts",
+        "src/modules/courses/legacy-course-public-projection.ts"
+      ],
+      "semanticRisk": "Datetime(6) semantics differ from timestamptz; vNext stores UTC.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "project_member",
+      "sourceColumn": "is_deleted",
+      "sourceType": "tinyint(1)",
+      "sourceDefinition": "tinyint(1) DEFAULT '0'",
+      "sourceRiskFlags": [],
+      "targetCandidate": "project_member.is_deleted",
+      "disposition": "PROPOSED_REDESIGNED_SOFT_DELETE_PATTERN",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/activity/learner-notification-project-action-model.ts",
+        "src/modules/activity/mentor-personal-project-scope.ts",
+        "src/modules/courses/legacy-course-public-projection.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/activity/learner-notification-project-action-model.ts",
+        "src/modules/activity/mentor-personal-project-scope.ts",
+        "src/modules/courses/legacy-course-public-projection.ts"
+      ],
+      "semanticRisk": "Soft-delete pattern replaced by status enum or archived_at timestamp in vNext.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "project_member",
+      "sourceColumn": "project_id",
+      "sourceType": "int",
+      "sourceDefinition": "int NOT NULL",
+      "sourceRiskFlags": [
+        "INTEGER_KEY_TO_UUID_MAPPING"
+      ],
+      "targetCandidate": "project_member.project_id",
+      "disposition": "PROPOSED_REGISTERED_WITH_UUID_NORMALIZATION",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/activity/learner-notification-project-action-model.ts",
+        "src/modules/activity/mentor-personal-project-scope.ts",
+        "src/modules/courses/legacy-course-public-projection.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/activity/learner-notification-project-action-model.ts",
+        "src/modules/activity/mentor-personal-project-scope.ts",
+        "src/modules/courses/legacy-course-public-projection.ts"
+      ],
+      "semanticRisk": "Legacy numeric ID maps to UUID in vNext; no old-row import needed for greenfield.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "project_member",
+      "sourceColumn": "user_id",
+      "sourceType": "int",
+      "sourceDefinition": "int NOT NULL",
+      "sourceRiskFlags": [
+        "INTEGER_KEY_TO_UUID_MAPPING"
+      ],
+      "targetCandidate": "project_member.user_id",
+      "disposition": "PROPOSED_REGISTERED_WITH_UUID_NORMALIZATION",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/activity/learner-notification-project-action-model.ts",
+        "src/modules/activity/mentor-personal-project-scope.ts",
+        "src/modules/courses/legacy-course-public-projection.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/activity/learner-notification-project-action-model.ts",
+        "src/modules/activity/mentor-personal-project-scope.ts",
+        "src/modules/courses/legacy-course-public-projection.ts"
+      ],
+      "semanticRisk": "Legacy numeric ID maps to UUID in vNext; no old-row import needed for greenfield.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "project_member",
+      "sourceColumn": "user_type",
+      "sourceType": "varchar(20)",
+      "sourceDefinition": "varchar(20) NOT NULL",
+      "sourceRiskFlags": [],
+      "targetCandidate": "project_member.user_type",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/activity/learner-notification-project-action-model.ts",
+        "src/modules/activity/mentor-personal-project-scope.ts",
+        "src/modules/courses/legacy-course-public-projection.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/activity/learner-notification-project-action-model.ts",
+        "src/modules/activity/mentor-personal-project-scope.ts",
+        "src/modules/courses/legacy-course-public-projection.ts"
+      ],
+      "semanticRisk": "Standard field mapping from legacy project_member to project_member.user_type.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "project_member",
+      "sourceColumn": "display_name",
+      "sourceType": "varchar(160)",
+      "sourceDefinition": "varchar(160) DEFAULT NULL",
+      "sourceRiskFlags": [],
+      "targetCandidate": "project_member.display_name",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/activity/learner-notification-project-action-model.ts",
+        "src/modules/activity/mentor-personal-project-scope.ts",
+        "src/modules/courses/legacy-course-public-projection.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/activity/learner-notification-project-action-model.ts",
+        "src/modules/activity/mentor-personal-project-scope.ts",
+        "src/modules/courses/legacy-course-public-projection.ts"
+      ],
+      "semanticRisk": "Standard field mapping from legacy project_member to project_member.display_name.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "project_member",
+      "sourceColumn": "role_label",
+      "sourceType": "varchar(80)",
+      "sourceDefinition": "varchar(80) DEFAULT NULL",
+      "sourceRiskFlags": [],
+      "targetCandidate": "project_member.role_label",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/activity/learner-notification-project-action-model.ts",
+        "src/modules/activity/mentor-personal-project-scope.ts",
+        "src/modules/courses/legacy-course-public-projection.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/activity/learner-notification-project-action-model.ts",
+        "src/modules/activity/mentor-personal-project-scope.ts",
+        "src/modules/courses/legacy-course-public-projection.ts"
+      ],
+      "semanticRisk": "Standard field mapping from legacy project_member to project_member.role_label.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "project_member",
+      "sourceColumn": "member_status",
+      "sourceType": "varchar(40)",
+      "sourceDefinition": "varchar(40) DEFAULT 'ACTIVE'",
+      "sourceRiskFlags": [],
+      "targetCandidate": "project_member.member_status",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/activity/learner-notification-project-action-model.ts",
+        "src/modules/activity/mentor-personal-project-scope.ts",
+        "src/modules/courses/legacy-course-public-projection.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/activity/learner-notification-project-action-model.ts",
+        "src/modules/activity/mentor-personal-project-scope.ts",
+        "src/modules/courses/legacy-course-public-projection.ts"
+      ],
+      "semanticRisk": "Standard field mapping from legacy project_member to project_member.member_status.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "project_member",
+      "sourceColumn": "version",
+      "sourceType": "bigint",
+      "sourceDefinition": "bigint NOT NULL DEFAULT '0'",
+      "sourceRiskFlags": [],
+      "targetCandidate": "project_member.version",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/activity/learner-notification-project-action-model.ts",
+        "src/modules/activity/mentor-personal-project-scope.ts",
+        "src/modules/courses/legacy-course-public-projection.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/activity/learner-notification-project-action-model.ts",
+        "src/modules/activity/mentor-personal-project-scope.ts",
+        "src/modules/courses/legacy-course-public-projection.ts"
+      ],
+      "semanticRisk": "Standard field mapping from legacy project_member to project_member.version.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "project_member",
+      "sourceColumn": "deleted_by_workspace",
+      "sourceType": "tinyint(1)",
+      "sourceDefinition": "tinyint(1) NOT NULL DEFAULT '0'",
+      "sourceRiskFlags": [],
+      "targetCandidate": "project_member.deleted_by_workspace",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/activity/learner-notification-project-action-model.ts",
+        "src/modules/activity/mentor-personal-project-scope.ts",
+        "src/modules/courses/legacy-course-public-projection.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/activity/learner-notification-project-action-model.ts",
+        "src/modules/activity/mentor-personal-project-scope.ts",
+        "src/modules/courses/legacy-course-public-projection.ts"
+      ],
+      "semanticRisk": "Standard field mapping from legacy project_member to project_member.deleted_by_workspace.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "project_template",
+      "sourceColumn": "id",
+      "sourceType": "int",
+      "sourceDefinition": "int NOT NULL AUTO_INCREMENT",
+      "sourceRiskFlags": [
+        "INTEGER_KEY_TO_UUID_MAPPING"
+      ],
+      "targetCandidate": "project_template.id",
+      "disposition": "PROPOSED_NORMALIZED_UUID_PRIMARY_KEY",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/activity/learner-notification-project-action-model.ts",
+        "src/modules/activity/mentor-personal-project-scope.ts",
+        "src/modules/courses/legacy-course-public-projection.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/activity/learner-notification-project-action-model.ts",
+        "src/modules/activity/mentor-personal-project-scope.ts",
+        "src/modules/courses/legacy-course-public-projection.ts"
+      ],
+      "semanticRisk": "Legacy numeric ID maps to UUID in vNext; no old-row import needed for greenfield.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "project_template",
+      "sourceColumn": "created_at",
+      "sourceType": "datetime",
+      "sourceDefinition": "datetime DEFAULT NULL",
+      "sourceRiskFlags": [
+        "TIMEZONE_AND_DEADLINE_SEMANTICS"
+      ],
+      "targetCandidate": "project_template.created_at",
+      "disposition": "PROPOSED_NORMALIZED_AUDIT_TIMESTAMP",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/activity/learner-notification-project-action-model.ts",
+        "src/modules/activity/mentor-personal-project-scope.ts",
+        "src/modules/courses/legacy-course-public-projection.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/activity/learner-notification-project-action-model.ts",
+        "src/modules/activity/mentor-personal-project-scope.ts",
+        "src/modules/courses/legacy-course-public-projection.ts"
+      ],
+      "semanticRisk": "Datetime(6) semantics differ from timestamptz; vNext stores UTC.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "project_template",
+      "sourceColumn": "updated_at",
+      "sourceType": "datetime",
+      "sourceDefinition": "datetime DEFAULT NULL",
+      "sourceRiskFlags": [
+        "TIMEZONE_AND_DEADLINE_SEMANTICS"
+      ],
+      "targetCandidate": "project_template.updated_at",
+      "disposition": "PROPOSED_NORMALIZED_AUDIT_TIMESTAMP",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/activity/learner-notification-project-action-model.ts",
+        "src/modules/activity/mentor-personal-project-scope.ts",
+        "src/modules/courses/legacy-course-public-projection.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/activity/learner-notification-project-action-model.ts",
+        "src/modules/activity/mentor-personal-project-scope.ts",
+        "src/modules/courses/legacy-course-public-projection.ts"
+      ],
+      "semanticRisk": "Datetime(6) semantics differ from timestamptz; vNext stores UTC.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "project_template",
+      "sourceColumn": "is_deleted",
+      "sourceType": "tinyint(1)",
+      "sourceDefinition": "tinyint(1) DEFAULT '0'",
+      "sourceRiskFlags": [],
+      "targetCandidate": "project_template.is_deleted",
+      "disposition": "PROPOSED_REDESIGNED_SOFT_DELETE_PATTERN",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/activity/learner-notification-project-action-model.ts",
+        "src/modules/activity/mentor-personal-project-scope.ts",
+        "src/modules/courses/legacy-course-public-projection.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/activity/learner-notification-project-action-model.ts",
+        "src/modules/activity/mentor-personal-project-scope.ts",
+        "src/modules/courses/legacy-course-public-projection.ts"
+      ],
+      "semanticRisk": "Soft-delete pattern replaced by status enum or archived_at timestamp in vNext.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "project_template",
+      "sourceColumn": "slug",
+      "sourceType": "varchar(80)",
+      "sourceDefinition": "varchar(80) NOT NULL",
+      "sourceRiskFlags": [],
+      "targetCandidate": "project_template.slug",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/activity/learner-notification-project-action-model.ts",
+        "src/modules/activity/mentor-personal-project-scope.ts",
+        "src/modules/courses/legacy-course-public-projection.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/activity/learner-notification-project-action-model.ts",
+        "src/modules/activity/mentor-personal-project-scope.ts",
+        "src/modules/courses/legacy-course-public-projection.ts"
+      ],
+      "semanticRisk": "Standard field mapping from legacy project_template to project_template.slug.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "project_template",
+      "sourceColumn": "title",
+      "sourceType": "varchar(160)",
+      "sourceDefinition": "varchar(160) NOT NULL",
+      "sourceRiskFlags": [],
+      "targetCandidate": "project_template.title",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/activity/learner-notification-project-action-model.ts",
+        "src/modules/activity/mentor-personal-project-scope.ts",
+        "src/modules/courses/legacy-course-public-projection.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/activity/learner-notification-project-action-model.ts",
+        "src/modules/activity/mentor-personal-project-scope.ts",
+        "src/modules/courses/legacy-course-public-projection.ts"
+      ],
+      "semanticRisk": "Standard field mapping from legacy project_template to project_template.title.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "project_template",
+      "sourceColumn": "summary",
+      "sourceType": "text",
+      "sourceDefinition": "text",
+      "sourceRiskFlags": [],
+      "targetCandidate": "project_template.summary",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/activity/learner-notification-project-action-model.ts",
+        "src/modules/activity/mentor-personal-project-scope.ts",
+        "src/modules/courses/legacy-course-public-projection.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/activity/learner-notification-project-action-model.ts",
+        "src/modules/activity/mentor-personal-project-scope.ts",
+        "src/modules/courses/legacy-course-public-projection.ts"
+      ],
+      "semanticRisk": "Standard field mapping from legacy project_template to project_template.summary.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "project_template",
+      "sourceColumn": "course_label",
+      "sourceType": "varchar(160)",
+      "sourceDefinition": "varchar(160) DEFAULT NULL",
+      "sourceRiskFlags": [],
+      "targetCandidate": "project_template.course_label",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/activity/learner-notification-project-action-model.ts",
+        "src/modules/activity/mentor-personal-project-scope.ts",
+        "src/modules/courses/legacy-course-public-projection.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/activity/learner-notification-project-action-model.ts",
+        "src/modules/activity/mentor-personal-project-scope.ts",
+        "src/modules/courses/legacy-course-public-projection.ts"
+      ],
+      "semanticRisk": "Standard field mapping from legacy project_template to project_template.course_label.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "project_template",
+      "sourceColumn": "status",
+      "sourceType": "varchar(40)",
+      "sourceDefinition": "varchar(40) DEFAULT 'IN_PROGRESS'",
+      "sourceRiskFlags": [],
+      "targetCandidate": "project_template.status",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/activity/learner-notification-project-action-model.ts",
+        "src/modules/activity/mentor-personal-project-scope.ts",
+        "src/modules/courses/legacy-course-public-projection.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/activity/learner-notification-project-action-model.ts",
+        "src/modules/activity/mentor-personal-project-scope.ts",
+        "src/modules/courses/legacy-course-public-projection.ts"
+      ],
+      "semanticRisk": "Standard field mapping from legacy project_template to project_template.status.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "project_template",
+      "sourceColumn": "phase",
+      "sourceType": "varchar(80)",
+      "sourceDefinition": "varchar(80) DEFAULT NULL",
+      "sourceRiskFlags": [],
+      "targetCandidate": "project_template.phase",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/activity/learner-notification-project-action-model.ts",
+        "src/modules/activity/mentor-personal-project-scope.ts",
+        "src/modules/courses/legacy-course-public-projection.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/activity/learner-notification-project-action-model.ts",
+        "src/modules/activity/mentor-personal-project-scope.ts",
+        "src/modules/courses/legacy-course-public-projection.ts"
+      ],
+      "semanticRisk": "Standard field mapping from legacy project_template to project_template.phase.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "project_template",
+      "sourceColumn": "organization_id",
+      "sourceType": "int",
+      "sourceDefinition": "int DEFAULT NULL",
+      "sourceRiskFlags": [
+        "INTEGER_KEY_TO_UUID_MAPPING"
+      ],
+      "targetCandidate": "project_template.organization_id",
+      "disposition": "PROPOSED_REGISTERED_WITH_UUID_NORMALIZATION",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/activity/learner-notification-project-action-model.ts",
+        "src/modules/activity/mentor-personal-project-scope.ts",
+        "src/modules/courses/legacy-course-public-projection.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/activity/learner-notification-project-action-model.ts",
+        "src/modules/activity/mentor-personal-project-scope.ts",
+        "src/modules/courses/legacy-course-public-projection.ts"
+      ],
+      "semanticRisk": "Legacy numeric ID maps to UUID in vNext; no old-row import needed for greenfield.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "project_template",
+      "sourceColumn": "college_id",
+      "sourceType": "int",
+      "sourceDefinition": "int DEFAULT NULL",
+      "sourceRiskFlags": [
+        "INTEGER_KEY_TO_UUID_MAPPING"
+      ],
+      "targetCandidate": "project_template.college_id",
+      "disposition": "PROPOSED_REGISTERED_WITH_UUID_NORMALIZATION",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/activity/learner-notification-project-action-model.ts",
+        "src/modules/activity/mentor-personal-project-scope.ts",
+        "src/modules/courses/legacy-course-public-projection.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/activity/learner-notification-project-action-model.ts",
+        "src/modules/activity/mentor-personal-project-scope.ts",
+        "src/modules/courses/legacy-course-public-projection.ts"
+      ],
+      "semanticRisk": "Legacy numeric ID maps to UUID in vNext; no old-row import needed for greenfield.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "project_template",
+      "sourceColumn": "created_by",
+      "sourceType": "int",
+      "sourceDefinition": "int DEFAULT NULL",
+      "sourceRiskFlags": [],
+      "targetCandidate": "project_template.created_by",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/activity/learner-notification-project-action-model.ts",
+        "src/modules/activity/mentor-personal-project-scope.ts",
+        "src/modules/courses/legacy-course-public-projection.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/activity/learner-notification-project-action-model.ts",
+        "src/modules/activity/mentor-personal-project-scope.ts",
+        "src/modules/courses/legacy-course-public-projection.ts"
+      ],
+      "semanticRisk": "Standard field mapping from legacy project_template to project_template.created_by.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "project_template",
+      "sourceColumn": "overview",
+      "sourceType": "json",
+      "sourceDefinition": "json DEFAULT NULL",
+      "sourceRiskFlags": [
+        "STRUCTURED_PAYLOAD_SEMANTIC_SCHEMA"
+      ],
+      "targetCandidate": "project_template.overview",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/activity/learner-notification-project-action-model.ts",
+        "src/modules/activity/mentor-personal-project-scope.ts",
+        "src/modules/courses/legacy-course-public-projection.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/activity/learner-notification-project-action-model.ts",
+        "src/modules/activity/mentor-personal-project-scope.ts",
+        "src/modules/courses/legacy-course-public-projection.ts"
+      ],
+      "semanticRisk": "JSON payload: vNext uses typed JSONB or separate normalized columns.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "project_template",
+      "sourceColumn": "sprints",
+      "sourceType": "json",
+      "sourceDefinition": "json DEFAULT NULL",
+      "sourceRiskFlags": [
+        "STRUCTURED_PAYLOAD_SEMANTIC_SCHEMA"
+      ],
+      "targetCandidate": "project_template.sprints",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/activity/learner-notification-project-action-model.ts",
+        "src/modules/activity/mentor-personal-project-scope.ts",
+        "src/modules/courses/legacy-course-public-projection.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/activity/learner-notification-project-action-model.ts",
+        "src/modules/activity/mentor-personal-project-scope.ts",
+        "src/modules/courses/legacy-course-public-projection.ts"
+      ],
+      "semanticRisk": "JSON payload: vNext uses typed JSONB or separate normalized columns.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "project_template",
+      "sourceColumn": "tasks",
+      "sourceType": "json",
+      "sourceDefinition": "json DEFAULT NULL",
+      "sourceRiskFlags": [
+        "STRUCTURED_PAYLOAD_SEMANTIC_SCHEMA"
+      ],
+      "targetCandidate": "project_template.tasks",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/activity/learner-notification-project-action-model.ts",
+        "src/modules/activity/mentor-personal-project-scope.ts",
+        "src/modules/courses/legacy-course-public-projection.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/activity/learner-notification-project-action-model.ts",
+        "src/modules/activity/mentor-personal-project-scope.ts",
+        "src/modules/courses/legacy-course-public-projection.ts"
+      ],
+      "semanticRisk": "JSON payload: vNext uses typed JSONB or separate normalized columns.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "project_template",
+      "sourceColumn": "resources",
+      "sourceType": "json",
+      "sourceDefinition": "json DEFAULT NULL",
+      "sourceRiskFlags": [
+        "STRUCTURED_PAYLOAD_SEMANTIC_SCHEMA"
+      ],
+      "targetCandidate": "project_template.resources",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/activity/learner-notification-project-action-model.ts",
+        "src/modules/activity/mentor-personal-project-scope.ts",
+        "src/modules/courses/legacy-course-public-projection.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/activity/learner-notification-project-action-model.ts",
+        "src/modules/activity/mentor-personal-project-scope.ts",
+        "src/modules/courses/legacy-course-public-projection.ts"
+      ],
+      "semanticRisk": "JSON payload: vNext uses typed JSONB or separate normalized columns.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "project_template",
+      "sourceColumn": "delivery",
+      "sourceType": "json",
+      "sourceDefinition": "json DEFAULT NULL",
+      "sourceRiskFlags": [
+        "STRUCTURED_PAYLOAD_SEMANTIC_SCHEMA"
+      ],
+      "targetCandidate": "project_template.delivery",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/activity/learner-notification-project-action-model.ts",
+        "src/modules/activity/mentor-personal-project-scope.ts",
+        "src/modules/courses/legacy-course-public-projection.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/activity/learner-notification-project-action-model.ts",
+        "src/modules/activity/mentor-personal-project-scope.ts",
+        "src/modules/courses/legacy-course-public-projection.ts"
+      ],
+      "semanticRisk": "JSON payload: vNext uses typed JSONB or separate normalized columns.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "project_template",
+      "sourceColumn": "meetings",
+      "sourceType": "json",
+      "sourceDefinition": "json DEFAULT NULL",
+      "sourceRiskFlags": [
+        "STRUCTURED_PAYLOAD_SEMANTIC_SCHEMA"
+      ],
+      "targetCandidate": "project_template.meetings",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/activity/learner-notification-project-action-model.ts",
+        "src/modules/activity/mentor-personal-project-scope.ts",
+        "src/modules/courses/legacy-course-public-projection.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/activity/learner-notification-project-action-model.ts",
+        "src/modules/activity/mentor-personal-project-scope.ts",
+        "src/modules/courses/legacy-course-public-projection.ts"
+      ],
+      "semanticRisk": "JSON payload: vNext uses typed JSONB or separate normalized columns.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "project_template",
+      "sourceColumn": "activity",
+      "sourceType": "json",
+      "sourceDefinition": "json DEFAULT NULL",
+      "sourceRiskFlags": [
+        "STRUCTURED_PAYLOAD_SEMANTIC_SCHEMA"
+      ],
+      "targetCandidate": "project_template.activity",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/activity/learner-notification-project-action-model.ts",
+        "src/modules/activity/mentor-personal-project-scope.ts",
+        "src/modules/courses/legacy-course-public-projection.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/activity/learner-notification-project-action-model.ts",
+        "src/modules/activity/mentor-personal-project-scope.ts",
+        "src/modules/courses/legacy-course-public-projection.ts"
+      ],
+      "semanticRisk": "JSON payload: vNext uses typed JSONB or separate normalized columns.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "project_template",
+      "sourceColumn": "template_version",
+      "sourceType": "int",
+      "sourceDefinition": "int NOT NULL DEFAULT '1'",
+      "sourceRiskFlags": [],
+      "targetCandidate": "project_template.template_version",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/activity/learner-notification-project-action-model.ts",
+        "src/modules/activity/mentor-personal-project-scope.ts",
+        "src/modules/courses/legacy-course-public-projection.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/activity/learner-notification-project-action-model.ts",
+        "src/modules/activity/mentor-personal-project-scope.ts",
+        "src/modules/courses/legacy-course-public-projection.ts"
+      ],
+      "semanticRisk": "Standard field mapping from legacy project_template to project_template.template_version.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "project_template",
+      "sourceColumn": "lifecycle_status",
+      "sourceType": "varchar(20)",
+      "sourceDefinition": "varchar(20) NOT NULL DEFAULT 'DRAFT'",
+      "sourceRiskFlags": [],
+      "targetCandidate": "project_template.lifecycle_status",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/activity/learner-notification-project-action-model.ts",
+        "src/modules/activity/mentor-personal-project-scope.ts",
+        "src/modules/courses/legacy-course-public-projection.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/activity/learner-notification-project-action-model.ts",
+        "src/modules/activity/mentor-personal-project-scope.ts",
+        "src/modules/courses/legacy-course-public-projection.ts"
+      ],
+      "semanticRisk": "Standard field mapping from legacy project_template to project_template.lifecycle_status.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "project_template",
+      "sourceColumn": "published_at",
+      "sourceType": "datetime",
+      "sourceDefinition": "datetime DEFAULT NULL",
+      "sourceRiskFlags": [
+        "TIMEZONE_AND_DEADLINE_SEMANTICS"
+      ],
+      "targetCandidate": "project_template.published_at",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/activity/learner-notification-project-action-model.ts",
+        "src/modules/activity/mentor-personal-project-scope.ts",
+        "src/modules/courses/legacy-course-public-projection.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/activity/learner-notification-project-action-model.ts",
+        "src/modules/activity/mentor-personal-project-scope.ts",
+        "src/modules/courses/legacy-course-public-projection.ts"
+      ],
+      "semanticRisk": "Datetime(6) semantics differ from timestamptz; vNext stores UTC.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "project_template",
+      "sourceColumn": "archived_at",
+      "sourceType": "datetime",
+      "sourceDefinition": "datetime DEFAULT NULL",
+      "sourceRiskFlags": [
+        "TIMEZONE_AND_DEADLINE_SEMANTICS"
+      ],
+      "targetCandidate": "project_template.archived_at",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/activity/learner-notification-project-action-model.ts",
+        "src/modules/activity/mentor-personal-project-scope.ts",
+        "src/modules/courses/legacy-course-public-projection.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/activity/learner-notification-project-action-model.ts",
+        "src/modules/activity/mentor-personal-project-scope.ts",
+        "src/modules/courses/legacy-course-public-projection.ts"
+      ],
+      "semanticRisk": "Datetime(6) semantics differ from timestamptz; vNext stores UTC.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "project_template",
+      "sourceColumn": "version",
+      "sourceType": "bigint",
+      "sourceDefinition": "bigint NOT NULL DEFAULT '0'",
+      "sourceRiskFlags": [],
+      "targetCandidate": "project_template.version",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/activity/learner-notification-project-action-model.ts",
+        "src/modules/activity/mentor-personal-project-scope.ts",
+        "src/modules/courses/legacy-course-public-projection.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/activity/learner-notification-project-action-model.ts",
+        "src/modules/activity/mentor-personal-project-scope.ts",
+        "src/modules/courses/legacy-course-public-projection.ts"
+      ],
+      "semanticRisk": "Standard field mapping from legacy project_template to project_template.version.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "project_template_college",
+      "sourceColumn": "id",
+      "sourceType": "int",
+      "sourceDefinition": "int NOT NULL AUTO_INCREMENT",
+      "sourceRiskFlags": [
+        "INTEGER_KEY_TO_UUID_MAPPING"
+      ],
+      "targetCandidate": "project_template_college.id",
+      "disposition": "PROPOSED_NORMALIZED_UUID_PRIMARY_KEY",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/activity/learner-notification-project-action-model.ts",
+        "src/modules/activity/mentor-personal-project-scope.ts",
+        "src/modules/courses/legacy-course-public-projection.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/activity/learner-notification-project-action-model.ts",
+        "src/modules/activity/mentor-personal-project-scope.ts",
+        "src/modules/courses/legacy-course-public-projection.ts"
+      ],
+      "semanticRisk": "Legacy numeric ID maps to UUID in vNext; no old-row import needed for greenfield.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "project_template_college",
+      "sourceColumn": "created_at",
+      "sourceType": "datetime",
+      "sourceDefinition": "datetime DEFAULT NULL",
+      "sourceRiskFlags": [
+        "TIMEZONE_AND_DEADLINE_SEMANTICS"
+      ],
+      "targetCandidate": "project_template_college.created_at",
+      "disposition": "PROPOSED_NORMALIZED_AUDIT_TIMESTAMP",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/activity/learner-notification-project-action-model.ts",
+        "src/modules/activity/mentor-personal-project-scope.ts",
+        "src/modules/courses/legacy-course-public-projection.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/activity/learner-notification-project-action-model.ts",
+        "src/modules/activity/mentor-personal-project-scope.ts",
+        "src/modules/courses/legacy-course-public-projection.ts"
+      ],
+      "semanticRisk": "Datetime(6) semantics differ from timestamptz; vNext stores UTC.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "project_template_college",
+      "sourceColumn": "updated_at",
+      "sourceType": "datetime",
+      "sourceDefinition": "datetime DEFAULT NULL",
+      "sourceRiskFlags": [
+        "TIMEZONE_AND_DEADLINE_SEMANTICS"
+      ],
+      "targetCandidate": "project_template_college.updated_at",
+      "disposition": "PROPOSED_NORMALIZED_AUDIT_TIMESTAMP",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/activity/learner-notification-project-action-model.ts",
+        "src/modules/activity/mentor-personal-project-scope.ts",
+        "src/modules/courses/legacy-course-public-projection.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/activity/learner-notification-project-action-model.ts",
+        "src/modules/activity/mentor-personal-project-scope.ts",
+        "src/modules/courses/legacy-course-public-projection.ts"
+      ],
+      "semanticRisk": "Datetime(6) semantics differ from timestamptz; vNext stores UTC.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "project_template_college",
+      "sourceColumn": "is_deleted",
+      "sourceType": "tinyint(1)",
+      "sourceDefinition": "tinyint(1) DEFAULT '0'",
+      "sourceRiskFlags": [],
+      "targetCandidate": "project_template_college.is_deleted",
+      "disposition": "PROPOSED_REDESIGNED_SOFT_DELETE_PATTERN",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/activity/learner-notification-project-action-model.ts",
+        "src/modules/activity/mentor-personal-project-scope.ts",
+        "src/modules/courses/legacy-course-public-projection.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/activity/learner-notification-project-action-model.ts",
+        "src/modules/activity/mentor-personal-project-scope.ts",
+        "src/modules/courses/legacy-course-public-projection.ts"
+      ],
+      "semanticRisk": "Soft-delete pattern replaced by status enum or archived_at timestamp in vNext.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "project_template_college",
+      "sourceColumn": "template_id",
+      "sourceType": "int",
+      "sourceDefinition": "int NOT NULL",
+      "sourceRiskFlags": [
+        "INTEGER_KEY_TO_UUID_MAPPING"
+      ],
+      "targetCandidate": "project_template_college.template_id",
+      "disposition": "PROPOSED_REGISTERED_WITH_UUID_NORMALIZATION",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/activity/learner-notification-project-action-model.ts",
+        "src/modules/activity/mentor-personal-project-scope.ts",
+        "src/modules/courses/legacy-course-public-projection.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/activity/learner-notification-project-action-model.ts",
+        "src/modules/activity/mentor-personal-project-scope.ts",
+        "src/modules/courses/legacy-course-public-projection.ts"
+      ],
+      "semanticRisk": "Legacy numeric ID maps to UUID in vNext; no old-row import needed for greenfield.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "project_template_college",
+      "sourceColumn": "college_id",
+      "sourceType": "int",
+      "sourceDefinition": "int NOT NULL",
+      "sourceRiskFlags": [
+        "INTEGER_KEY_TO_UUID_MAPPING"
+      ],
+      "targetCandidate": "project_template_college.college_id",
+      "disposition": "PROPOSED_REGISTERED_WITH_UUID_NORMALIZATION",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/activity/learner-notification-project-action-model.ts",
+        "src/modules/activity/mentor-personal-project-scope.ts",
+        "src/modules/courses/legacy-course-public-projection.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/activity/learner-notification-project-action-model.ts",
+        "src/modules/activity/mentor-personal-project-scope.ts",
+        "src/modules/courses/legacy-course-public-projection.ts"
+      ],
+      "semanticRisk": "Legacy numeric ID maps to UUID in vNext; no old-row import needed for greenfield.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "project_template_college",
+      "sourceColumn": "assigned_by",
+      "sourceType": "int",
+      "sourceDefinition": "int DEFAULT NULL",
+      "sourceRiskFlags": [],
+      "targetCandidate": "project_template_college.assigned_by",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/activity/learner-notification-project-action-model.ts",
+        "src/modules/activity/mentor-personal-project-scope.ts",
+        "src/modules/courses/legacy-course-public-projection.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/activity/learner-notification-project-action-model.ts",
+        "src/modules/activity/mentor-personal-project-scope.ts",
+        "src/modules/courses/legacy-course-public-projection.ts"
+      ],
+      "semanticRisk": "Standard field mapping from legacy project_template_college to project_template_college.assigned_by.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "project_template_version",
+      "sourceColumn": "id",
+      "sourceType": "int",
+      "sourceDefinition": "int NOT NULL AUTO_INCREMENT",
+      "sourceRiskFlags": [
+        "INTEGER_KEY_TO_UUID_MAPPING"
+      ],
+      "targetCandidate": "project_template_version.id",
+      "disposition": "PROPOSED_NORMALIZED_UUID_PRIMARY_KEY",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/activity/learner-notification-project-action-model.ts",
+        "src/modules/activity/mentor-personal-project-scope.ts",
+        "src/modules/courses/legacy-course-public-projection.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/activity/learner-notification-project-action-model.ts",
+        "src/modules/activity/mentor-personal-project-scope.ts",
+        "src/modules/courses/legacy-course-public-projection.ts"
+      ],
+      "semanticRisk": "Legacy numeric ID maps to UUID in vNext; no old-row import needed for greenfield.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "project_template_version",
+      "sourceColumn": "created_at",
+      "sourceType": "datetime",
+      "sourceDefinition": "datetime DEFAULT NULL",
+      "sourceRiskFlags": [
+        "TIMEZONE_AND_DEADLINE_SEMANTICS"
+      ],
+      "targetCandidate": "project_template_version.created_at",
+      "disposition": "PROPOSED_NORMALIZED_AUDIT_TIMESTAMP",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/activity/learner-notification-project-action-model.ts",
+        "src/modules/activity/mentor-personal-project-scope.ts",
+        "src/modules/courses/legacy-course-public-projection.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/activity/learner-notification-project-action-model.ts",
+        "src/modules/activity/mentor-personal-project-scope.ts",
+        "src/modules/courses/legacy-course-public-projection.ts"
+      ],
+      "semanticRisk": "Datetime(6) semantics differ from timestamptz; vNext stores UTC.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "project_template_version",
+      "sourceColumn": "updated_at",
+      "sourceType": "datetime",
+      "sourceDefinition": "datetime DEFAULT NULL",
+      "sourceRiskFlags": [
+        "TIMEZONE_AND_DEADLINE_SEMANTICS"
+      ],
+      "targetCandidate": "project_template_version.updated_at",
+      "disposition": "PROPOSED_NORMALIZED_AUDIT_TIMESTAMP",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/activity/learner-notification-project-action-model.ts",
+        "src/modules/activity/mentor-personal-project-scope.ts",
+        "src/modules/courses/legacy-course-public-projection.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/activity/learner-notification-project-action-model.ts",
+        "src/modules/activity/mentor-personal-project-scope.ts",
+        "src/modules/courses/legacy-course-public-projection.ts"
+      ],
+      "semanticRisk": "Datetime(6) semantics differ from timestamptz; vNext stores UTC.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "project_template_version",
+      "sourceColumn": "is_deleted",
+      "sourceType": "tinyint(1)",
+      "sourceDefinition": "tinyint(1) DEFAULT '0'",
+      "sourceRiskFlags": [],
+      "targetCandidate": "project_template_version.is_deleted",
+      "disposition": "PROPOSED_REDESIGNED_SOFT_DELETE_PATTERN",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/activity/learner-notification-project-action-model.ts",
+        "src/modules/activity/mentor-personal-project-scope.ts",
+        "src/modules/courses/legacy-course-public-projection.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/activity/learner-notification-project-action-model.ts",
+        "src/modules/activity/mentor-personal-project-scope.ts",
+        "src/modules/courses/legacy-course-public-projection.ts"
+      ],
+      "semanticRisk": "Soft-delete pattern replaced by status enum or archived_at timestamp in vNext.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "project_template_version",
+      "sourceColumn": "template_id",
+      "sourceType": "int",
+      "sourceDefinition": "int NOT NULL",
+      "sourceRiskFlags": [
+        "INTEGER_KEY_TO_UUID_MAPPING"
+      ],
+      "targetCandidate": "project_template_version.template_id",
+      "disposition": "PROPOSED_REGISTERED_WITH_UUID_NORMALIZATION",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/activity/learner-notification-project-action-model.ts",
+        "src/modules/activity/mentor-personal-project-scope.ts",
+        "src/modules/courses/legacy-course-public-projection.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/activity/learner-notification-project-action-model.ts",
+        "src/modules/activity/mentor-personal-project-scope.ts",
+        "src/modules/courses/legacy-course-public-projection.ts"
+      ],
+      "semanticRisk": "Legacy numeric ID maps to UUID in vNext; no old-row import needed for greenfield.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "project_template_version",
+      "sourceColumn": "template_version",
+      "sourceType": "int",
+      "sourceDefinition": "int NOT NULL",
+      "sourceRiskFlags": [],
+      "targetCandidate": "project_template_version.template_version",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/activity/learner-notification-project-action-model.ts",
+        "src/modules/activity/mentor-personal-project-scope.ts",
+        "src/modules/courses/legacy-course-public-projection.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/activity/learner-notification-project-action-model.ts",
+        "src/modules/activity/mentor-personal-project-scope.ts",
+        "src/modules/courses/legacy-course-public-projection.ts"
+      ],
+      "semanticRisk": "Standard field mapping from legacy project_template_version to project_template_version.template_version.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "project_template_version",
+      "sourceColumn": "action_type",
+      "sourceType": "varchar(40)",
+      "sourceDefinition": "varchar(40) NOT NULL",
+      "sourceRiskFlags": [],
+      "targetCandidate": "project_template_version.action_type",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/activity/learner-notification-project-action-model.ts",
+        "src/modules/activity/mentor-personal-project-scope.ts",
+        "src/modules/courses/legacy-course-public-projection.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/activity/learner-notification-project-action-model.ts",
+        "src/modules/activity/mentor-personal-project-scope.ts",
+        "src/modules/courses/legacy-course-public-projection.ts"
+      ],
+      "semanticRisk": "Standard field mapping from legacy project_template_version to project_template_version.action_type.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "project_template_version",
+      "sourceColumn": "lifecycle_status",
+      "sourceType": "varchar(20)",
+      "sourceDefinition": "varchar(20) DEFAULT NULL",
+      "sourceRiskFlags": [],
+      "targetCandidate": "project_template_version.lifecycle_status",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/activity/learner-notification-project-action-model.ts",
+        "src/modules/activity/mentor-personal-project-scope.ts",
+        "src/modules/courses/legacy-course-public-projection.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/activity/learner-notification-project-action-model.ts",
+        "src/modules/activity/mentor-personal-project-scope.ts",
+        "src/modules/courses/legacy-course-public-projection.ts"
+      ],
+      "semanticRisk": "Standard field mapping from legacy project_template_version to project_template_version.lifecycle_status.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "project_template_version",
+      "sourceColumn": "changed_by",
+      "sourceType": "int",
+      "sourceDefinition": "int DEFAULT NULL",
+      "sourceRiskFlags": [],
+      "targetCandidate": "project_template_version.changed_by",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/activity/learner-notification-project-action-model.ts",
+        "src/modules/activity/mentor-personal-project-scope.ts",
+        "src/modules/courses/legacy-course-public-projection.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/activity/learner-notification-project-action-model.ts",
+        "src/modules/activity/mentor-personal-project-scope.ts",
+        "src/modules/courses/legacy-course-public-projection.ts"
+      ],
+      "semanticRisk": "Standard field mapping from legacy project_template_version to project_template_version.changed_by.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "project_template_version",
+      "sourceColumn": "changed_at",
+      "sourceType": "datetime",
+      "sourceDefinition": "datetime DEFAULT NULL",
+      "sourceRiskFlags": [
+        "TIMEZONE_AND_DEADLINE_SEMANTICS"
+      ],
+      "targetCandidate": "project_template_version.changed_at",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/activity/learner-notification-project-action-model.ts",
+        "src/modules/activity/mentor-personal-project-scope.ts",
+        "src/modules/courses/legacy-course-public-projection.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/activity/learner-notification-project-action-model.ts",
+        "src/modules/activity/mentor-personal-project-scope.ts",
+        "src/modules/courses/legacy-course-public-projection.ts"
+      ],
+      "semanticRisk": "Datetime(6) semantics differ from timestamptz; vNext stores UTC.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "project_template_version",
+      "sourceColumn": "notes",
+      "sourceType": "text",
+      "sourceDefinition": "text",
+      "sourceRiskFlags": [],
+      "targetCandidate": "project_template_version.notes",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/activity/learner-notification-project-action-model.ts",
+        "src/modules/activity/mentor-personal-project-scope.ts",
+        "src/modules/courses/legacy-course-public-projection.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/activity/learner-notification-project-action-model.ts",
+        "src/modules/activity/mentor-personal-project-scope.ts",
+        "src/modules/courses/legacy-course-public-projection.ts"
+      ],
+      "semanticRisk": "Standard field mapping from legacy project_template_version to project_template_version.notes.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "project_template_version",
+      "sourceColumn": "snapshot_json",
+      "sourceType": "json",
+      "sourceDefinition": "json DEFAULT NULL",
+      "sourceRiskFlags": [
+        "STRUCTURED_PAYLOAD_SEMANTIC_SCHEMA"
+      ],
+      "targetCandidate": "project_template_version.snapshot_json",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/activity/learner-notification-project-action-model.ts",
+        "src/modules/activity/mentor-personal-project-scope.ts",
+        "src/modules/courses/legacy-course-public-projection.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/activity/learner-notification-project-action-model.ts",
+        "src/modules/activity/mentor-personal-project-scope.ts",
+        "src/modules/courses/legacy-course-public-projection.ts"
+      ],
+      "semanticRisk": "JSON payload: vNext uses typed JSONB or separate normalized columns.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "project_workspace",
+      "sourceColumn": "id",
+      "sourceType": "int",
+      "sourceDefinition": "int NOT NULL AUTO_INCREMENT",
+      "sourceRiskFlags": [
+        "INTEGER_KEY_TO_UUID_MAPPING"
+      ],
+      "targetCandidate": "project_workspace.id",
+      "disposition": "PROPOSED_NORMALIZED_UUID_PRIMARY_KEY",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/activity/learner-notification-project-action-model.ts",
+        "src/modules/activity/mentor-personal-project-scope.ts",
+        "src/modules/courses/legacy-course-public-projection.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/activity/learner-notification-project-action-model.ts",
+        "src/modules/activity/mentor-personal-project-scope.ts",
+        "src/modules/courses/legacy-course-public-projection.ts"
+      ],
+      "semanticRisk": "Legacy numeric ID maps to UUID in vNext; no old-row import needed for greenfield.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "project_workspace",
+      "sourceColumn": "created_at",
+      "sourceType": "datetime",
+      "sourceDefinition": "datetime DEFAULT NULL",
+      "sourceRiskFlags": [
+        "TIMEZONE_AND_DEADLINE_SEMANTICS"
+      ],
+      "targetCandidate": "project_workspace.created_at",
+      "disposition": "PROPOSED_NORMALIZED_AUDIT_TIMESTAMP",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/activity/learner-notification-project-action-model.ts",
+        "src/modules/activity/mentor-personal-project-scope.ts",
+        "src/modules/courses/legacy-course-public-projection.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/activity/learner-notification-project-action-model.ts",
+        "src/modules/activity/mentor-personal-project-scope.ts",
+        "src/modules/courses/legacy-course-public-projection.ts"
+      ],
+      "semanticRisk": "Datetime(6) semantics differ from timestamptz; vNext stores UTC.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "project_workspace",
+      "sourceColumn": "updated_at",
+      "sourceType": "datetime",
+      "sourceDefinition": "datetime DEFAULT NULL",
+      "sourceRiskFlags": [
+        "TIMEZONE_AND_DEADLINE_SEMANTICS"
+      ],
+      "targetCandidate": "project_workspace.updated_at",
+      "disposition": "PROPOSED_NORMALIZED_AUDIT_TIMESTAMP",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/activity/learner-notification-project-action-model.ts",
+        "src/modules/activity/mentor-personal-project-scope.ts",
+        "src/modules/courses/legacy-course-public-projection.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/activity/learner-notification-project-action-model.ts",
+        "src/modules/activity/mentor-personal-project-scope.ts",
+        "src/modules/courses/legacy-course-public-projection.ts"
+      ],
+      "semanticRisk": "Datetime(6) semantics differ from timestamptz; vNext stores UTC.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "project_workspace",
+      "sourceColumn": "is_deleted",
+      "sourceType": "tinyint(1)",
+      "sourceDefinition": "tinyint(1) DEFAULT '0'",
+      "sourceRiskFlags": [],
+      "targetCandidate": "project_workspace.is_deleted",
+      "disposition": "PROPOSED_REDESIGNED_SOFT_DELETE_PATTERN",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/activity/learner-notification-project-action-model.ts",
+        "src/modules/activity/mentor-personal-project-scope.ts",
+        "src/modules/courses/legacy-course-public-projection.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/activity/learner-notification-project-action-model.ts",
+        "src/modules/activity/mentor-personal-project-scope.ts",
+        "src/modules/courses/legacy-course-public-projection.ts"
+      ],
+      "semanticRisk": "Soft-delete pattern replaced by status enum or archived_at timestamp in vNext.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "project_workspace",
+      "sourceColumn": "slug",
+      "sourceType": "varchar(80)",
+      "sourceDefinition": "varchar(80) NOT NULL",
+      "sourceRiskFlags": [],
+      "targetCandidate": "project_workspace.slug",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/activity/learner-notification-project-action-model.ts",
+        "src/modules/activity/mentor-personal-project-scope.ts",
+        "src/modules/courses/legacy-course-public-projection.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/activity/learner-notification-project-action-model.ts",
+        "src/modules/activity/mentor-personal-project-scope.ts",
+        "src/modules/courses/legacy-course-public-projection.ts"
+      ],
+      "semanticRisk": "Standard field mapping from legacy project_workspace to project_workspace.slug.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "project_workspace",
+      "sourceColumn": "title",
+      "sourceType": "varchar(160)",
+      "sourceDefinition": "varchar(160) NOT NULL",
+      "sourceRiskFlags": [],
+      "targetCandidate": "project_workspace.title",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/activity/learner-notification-project-action-model.ts",
+        "src/modules/activity/mentor-personal-project-scope.ts",
+        "src/modules/courses/legacy-course-public-projection.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/activity/learner-notification-project-action-model.ts",
+        "src/modules/activity/mentor-personal-project-scope.ts",
+        "src/modules/courses/legacy-course-public-projection.ts"
+      ],
+      "semanticRisk": "Standard field mapping from legacy project_workspace to project_workspace.title.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "project_workspace",
+      "sourceColumn": "summary",
+      "sourceType": "text",
+      "sourceDefinition": "text",
+      "sourceRiskFlags": [],
+      "targetCandidate": "project_workspace.summary",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/activity/learner-notification-project-action-model.ts",
+        "src/modules/activity/mentor-personal-project-scope.ts",
+        "src/modules/courses/legacy-course-public-projection.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/activity/learner-notification-project-action-model.ts",
+        "src/modules/activity/mentor-personal-project-scope.ts",
+        "src/modules/courses/legacy-course-public-projection.ts"
+      ],
+      "semanticRisk": "Standard field mapping from legacy project_workspace to project_workspace.summary.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "project_workspace",
+      "sourceColumn": "course_label",
+      "sourceType": "varchar(160)",
+      "sourceDefinition": "varchar(160) DEFAULT NULL",
+      "sourceRiskFlags": [],
+      "targetCandidate": "project_workspace.course_label",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/activity/learner-notification-project-action-model.ts",
+        "src/modules/activity/mentor-personal-project-scope.ts",
+        "src/modules/courses/legacy-course-public-projection.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/activity/learner-notification-project-action-model.ts",
+        "src/modules/activity/mentor-personal-project-scope.ts",
+        "src/modules/courses/legacy-course-public-projection.ts"
+      ],
+      "semanticRisk": "Standard field mapping from legacy project_workspace to project_workspace.course_label.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "project_workspace",
+      "sourceColumn": "status",
+      "sourceType": "varchar(40)",
+      "sourceDefinition": "varchar(40) DEFAULT 'IN_PROGRESS'",
+      "sourceRiskFlags": [],
+      "targetCandidate": "project_workspace.status",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/activity/learner-notification-project-action-model.ts",
+        "src/modules/activity/mentor-personal-project-scope.ts",
+        "src/modules/courses/legacy-course-public-projection.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/activity/learner-notification-project-action-model.ts",
+        "src/modules/activity/mentor-personal-project-scope.ts",
+        "src/modules/courses/legacy-course-public-projection.ts"
+      ],
+      "semanticRisk": "Standard field mapping from legacy project_workspace to project_workspace.status.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "project_workspace",
+      "sourceColumn": "phase",
+      "sourceType": "varchar(80)",
+      "sourceDefinition": "varchar(80) DEFAULT NULL",
+      "sourceRiskFlags": [],
+      "targetCandidate": "project_workspace.phase",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/activity/learner-notification-project-action-model.ts",
+        "src/modules/activity/mentor-personal-project-scope.ts",
+        "src/modules/courses/legacy-course-public-projection.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/activity/learner-notification-project-action-model.ts",
+        "src/modules/activity/mentor-personal-project-scope.ts",
+        "src/modules/courses/legacy-course-public-projection.ts"
+      ],
+      "semanticRisk": "Standard field mapping from legacy project_workspace to project_workspace.phase.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "project_workspace",
+      "sourceColumn": "progress",
+      "sourceType": "int",
+      "sourceDefinition": "int DEFAULT '0'",
+      "sourceRiskFlags": [],
+      "targetCandidate": "project_workspace.progress",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/activity/learner-notification-project-action-model.ts",
+        "src/modules/activity/mentor-personal-project-scope.ts",
+        "src/modules/courses/legacy-course-public-projection.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/activity/learner-notification-project-action-model.ts",
+        "src/modules/activity/mentor-personal-project-scope.ts",
+        "src/modules/courses/legacy-course-public-projection.ts"
+      ],
+      "semanticRisk": "Standard field mapping from legacy project_workspace to project_workspace.progress.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "project_workspace",
+      "sourceColumn": "blocker",
+      "sourceType": "text",
+      "sourceDefinition": "text",
+      "sourceRiskFlags": [],
+      "targetCandidate": "project_workspace.blocker",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/activity/learner-notification-project-action-model.ts",
+        "src/modules/activity/mentor-personal-project-scope.ts",
+        "src/modules/courses/legacy-course-public-projection.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/activity/learner-notification-project-action-model.ts",
+        "src/modules/activity/mentor-personal-project-scope.ts",
+        "src/modules/courses/legacy-course-public-projection.ts"
+      ],
+      "semanticRisk": "Standard field mapping from legacy project_workspace to project_workspace.blocker.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "project_workspace",
+      "sourceColumn": "next_action",
+      "sourceType": "text",
+      "sourceDefinition": "text",
+      "sourceRiskFlags": [],
+      "targetCandidate": "project_workspace.next_action",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/activity/learner-notification-project-action-model.ts",
+        "src/modules/activity/mentor-personal-project-scope.ts",
+        "src/modules/courses/legacy-course-public-projection.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/activity/learner-notification-project-action-model.ts",
+        "src/modules/activity/mentor-personal-project-scope.ts",
+        "src/modules/courses/legacy-course-public-projection.ts"
+      ],
+      "semanticRisk": "Standard field mapping from legacy project_workspace to project_workspace.next_action.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "project_workspace",
+      "sourceColumn": "due_label",
+      "sourceType": "varchar(80)",
+      "sourceDefinition": "varchar(80) DEFAULT NULL",
+      "sourceRiskFlags": [],
+      "targetCandidate": "project_workspace.due_label",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/activity/learner-notification-project-action-model.ts",
+        "src/modules/activity/mentor-personal-project-scope.ts",
+        "src/modules/courses/legacy-course-public-projection.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/activity/learner-notification-project-action-model.ts",
+        "src/modules/activity/mentor-personal-project-scope.ts",
+        "src/modules/courses/legacy-course-public-projection.ts"
+      ],
+      "semanticRisk": "Standard field mapping from legacy project_workspace to project_workspace.due_label.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "project_workspace",
+      "sourceColumn": "organization_id",
+      "sourceType": "int",
+      "sourceDefinition": "int NOT NULL",
+      "sourceRiskFlags": [
+        "INTEGER_KEY_TO_UUID_MAPPING"
+      ],
+      "targetCandidate": "project_workspace.organization_id",
+      "disposition": "PROPOSED_REGISTERED_WITH_UUID_NORMALIZATION",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/activity/learner-notification-project-action-model.ts",
+        "src/modules/activity/mentor-personal-project-scope.ts",
+        "src/modules/courses/legacy-course-public-projection.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/activity/learner-notification-project-action-model.ts",
+        "src/modules/activity/mentor-personal-project-scope.ts",
+        "src/modules/courses/legacy-course-public-projection.ts"
+      ],
+      "semanticRisk": "Legacy numeric ID maps to UUID in vNext; no old-row import needed for greenfield.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "project_workspace",
+      "sourceColumn": "college_id",
+      "sourceType": "int",
+      "sourceDefinition": "int NOT NULL",
+      "sourceRiskFlags": [
+        "INTEGER_KEY_TO_UUID_MAPPING"
+      ],
+      "targetCandidate": "project_workspace.college_id",
+      "disposition": "PROPOSED_REGISTERED_WITH_UUID_NORMALIZATION",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/activity/learner-notification-project-action-model.ts",
+        "src/modules/activity/mentor-personal-project-scope.ts",
+        "src/modules/courses/legacy-course-public-projection.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/activity/learner-notification-project-action-model.ts",
+        "src/modules/activity/mentor-personal-project-scope.ts",
+        "src/modules/courses/legacy-course-public-projection.ts"
+      ],
+      "semanticRisk": "Legacy numeric ID maps to UUID in vNext; no old-row import needed for greenfield.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "project_workspace",
+      "sourceColumn": "class_id",
+      "sourceType": "int",
+      "sourceDefinition": "int DEFAULT NULL",
+      "sourceRiskFlags": [
+        "INTEGER_KEY_TO_UUID_MAPPING"
+      ],
+      "targetCandidate": "project_workspace.class_id",
+      "disposition": "PROPOSED_REGISTERED_WITH_UUID_NORMALIZATION",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/activity/learner-notification-project-action-model.ts",
+        "src/modules/activity/mentor-personal-project-scope.ts",
+        "src/modules/courses/legacy-course-public-projection.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/activity/learner-notification-project-action-model.ts",
+        "src/modules/activity/mentor-personal-project-scope.ts",
+        "src/modules/courses/legacy-course-public-projection.ts"
+      ],
+      "semanticRisk": "Legacy numeric ID maps to UUID in vNext; no old-row import needed for greenfield.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "project_workspace",
+      "sourceColumn": "created_by",
+      "sourceType": "int",
+      "sourceDefinition": "int DEFAULT NULL",
+      "sourceRiskFlags": [],
+      "targetCandidate": "project_workspace.created_by",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/activity/learner-notification-project-action-model.ts",
+        "src/modules/activity/mentor-personal-project-scope.ts",
+        "src/modules/courses/legacy-course-public-projection.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/activity/learner-notification-project-action-model.ts",
+        "src/modules/activity/mentor-personal-project-scope.ts",
+        "src/modules/courses/legacy-course-public-projection.ts"
+      ],
+      "semanticRisk": "Standard field mapping from legacy project_workspace to project_workspace.created_by.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "project_workspace",
+      "sourceColumn": "overview",
+      "sourceType": "json",
+      "sourceDefinition": "json DEFAULT NULL",
+      "sourceRiskFlags": [
+        "STRUCTURED_PAYLOAD_SEMANTIC_SCHEMA"
+      ],
+      "targetCandidate": "project_workspace.overview",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/activity/learner-notification-project-action-model.ts",
+        "src/modules/activity/mentor-personal-project-scope.ts",
+        "src/modules/courses/legacy-course-public-projection.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/activity/learner-notification-project-action-model.ts",
+        "src/modules/activity/mentor-personal-project-scope.ts",
+        "src/modules/courses/legacy-course-public-projection.ts"
+      ],
+      "semanticRisk": "JSON payload: vNext uses typed JSONB or separate normalized columns.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "project_workspace",
+      "sourceColumn": "sprints",
+      "sourceType": "json",
+      "sourceDefinition": "json DEFAULT NULL",
+      "sourceRiskFlags": [
+        "STRUCTURED_PAYLOAD_SEMANTIC_SCHEMA"
+      ],
+      "targetCandidate": "project_workspace.sprints",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/activity/learner-notification-project-action-model.ts",
+        "src/modules/activity/mentor-personal-project-scope.ts",
+        "src/modules/courses/legacy-course-public-projection.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/activity/learner-notification-project-action-model.ts",
+        "src/modules/activity/mentor-personal-project-scope.ts",
+        "src/modules/courses/legacy-course-public-projection.ts"
+      ],
+      "semanticRisk": "JSON payload: vNext uses typed JSONB or separate normalized columns.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "project_workspace",
+      "sourceColumn": "tasks",
+      "sourceType": "json",
+      "sourceDefinition": "json DEFAULT NULL",
+      "sourceRiskFlags": [
+        "STRUCTURED_PAYLOAD_SEMANTIC_SCHEMA"
+      ],
+      "targetCandidate": "project_workspace.tasks",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/activity/learner-notification-project-action-model.ts",
+        "src/modules/activity/mentor-personal-project-scope.ts",
+        "src/modules/courses/legacy-course-public-projection.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/activity/learner-notification-project-action-model.ts",
+        "src/modules/activity/mentor-personal-project-scope.ts",
+        "src/modules/courses/legacy-course-public-projection.ts"
+      ],
+      "semanticRisk": "JSON payload: vNext uses typed JSONB or separate normalized columns.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "project_workspace",
+      "sourceColumn": "resources",
+      "sourceType": "json",
+      "sourceDefinition": "json DEFAULT NULL",
+      "sourceRiskFlags": [
+        "STRUCTURED_PAYLOAD_SEMANTIC_SCHEMA"
+      ],
+      "targetCandidate": "project_workspace.resources",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/activity/learner-notification-project-action-model.ts",
+        "src/modules/activity/mentor-personal-project-scope.ts",
+        "src/modules/courses/legacy-course-public-projection.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/activity/learner-notification-project-action-model.ts",
+        "src/modules/activity/mentor-personal-project-scope.ts",
+        "src/modules/courses/legacy-course-public-projection.ts"
+      ],
+      "semanticRisk": "JSON payload: vNext uses typed JSONB or separate normalized columns.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "project_workspace",
+      "sourceColumn": "delivery",
+      "sourceType": "json",
+      "sourceDefinition": "json DEFAULT NULL",
+      "sourceRiskFlags": [
+        "STRUCTURED_PAYLOAD_SEMANTIC_SCHEMA"
+      ],
+      "targetCandidate": "project_workspace.delivery",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/activity/learner-notification-project-action-model.ts",
+        "src/modules/activity/mentor-personal-project-scope.ts",
+        "src/modules/courses/legacy-course-public-projection.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/activity/learner-notification-project-action-model.ts",
+        "src/modules/activity/mentor-personal-project-scope.ts",
+        "src/modules/courses/legacy-course-public-projection.ts"
+      ],
+      "semanticRisk": "JSON payload: vNext uses typed JSONB or separate normalized columns.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "project_workspace",
+      "sourceColumn": "meetings",
+      "sourceType": "json",
+      "sourceDefinition": "json DEFAULT NULL",
+      "sourceRiskFlags": [
+        "STRUCTURED_PAYLOAD_SEMANTIC_SCHEMA"
+      ],
+      "targetCandidate": "project_workspace.meetings",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/activity/learner-notification-project-action-model.ts",
+        "src/modules/activity/mentor-personal-project-scope.ts",
+        "src/modules/courses/legacy-course-public-projection.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/activity/learner-notification-project-action-model.ts",
+        "src/modules/activity/mentor-personal-project-scope.ts",
+        "src/modules/courses/legacy-course-public-projection.ts"
+      ],
+      "semanticRisk": "JSON payload: vNext uses typed JSONB or separate normalized columns.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "project_workspace",
+      "sourceColumn": "activity",
+      "sourceType": "json",
+      "sourceDefinition": "json DEFAULT NULL",
+      "sourceRiskFlags": [
+        "STRUCTURED_PAYLOAD_SEMANTIC_SCHEMA"
+      ],
+      "targetCandidate": "project_workspace.activity",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/activity/learner-notification-project-action-model.ts",
+        "src/modules/activity/mentor-personal-project-scope.ts",
+        "src/modules/courses/legacy-course-public-projection.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/activity/learner-notification-project-action-model.ts",
+        "src/modules/activity/mentor-personal-project-scope.ts",
+        "src/modules/courses/legacy-course-public-projection.ts"
+      ],
+      "semanticRisk": "JSON payload: vNext uses typed JSONB or separate normalized columns.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "project_workspace",
+      "sourceColumn": "template_id",
+      "sourceType": "int",
+      "sourceDefinition": "int DEFAULT NULL",
+      "sourceRiskFlags": [
+        "INTEGER_KEY_TO_UUID_MAPPING"
+      ],
+      "targetCandidate": "project_workspace.template_id",
+      "disposition": "PROPOSED_REGISTERED_WITH_UUID_NORMALIZATION",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/activity/learner-notification-project-action-model.ts",
+        "src/modules/activity/mentor-personal-project-scope.ts",
+        "src/modules/courses/legacy-course-public-projection.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/activity/learner-notification-project-action-model.ts",
+        "src/modules/activity/mentor-personal-project-scope.ts",
+        "src/modules/courses/legacy-course-public-projection.ts"
+      ],
+      "semanticRisk": "Legacy numeric ID maps to UUID in vNext; no old-row import needed for greenfield.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "project_workspace",
+      "sourceColumn": "template_snapshot",
+      "sourceType": "json",
+      "sourceDefinition": "json DEFAULT NULL",
+      "sourceRiskFlags": [
+        "STRUCTURED_PAYLOAD_SEMANTIC_SCHEMA"
+      ],
+      "targetCandidate": "project_workspace.template_snapshot",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/activity/learner-notification-project-action-model.ts",
+        "src/modules/activity/mentor-personal-project-scope.ts",
+        "src/modules/courses/legacy-course-public-projection.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/activity/learner-notification-project-action-model.ts",
+        "src/modules/activity/mentor-personal-project-scope.ts",
+        "src/modules/courses/legacy-course-public-projection.ts"
+      ],
+      "semanticRisk": "JSON payload: vNext uses typed JSONB or separate normalized columns.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "project_workspace",
+      "sourceColumn": "bulk_learner_id",
+      "sourceType": "int",
+      "sourceDefinition": "int DEFAULT NULL",
+      "sourceRiskFlags": [
+        "INTEGER_KEY_TO_UUID_MAPPING"
+      ],
+      "targetCandidate": "project_workspace.bulk_learner_id",
+      "disposition": "PROPOSED_REGISTERED_WITH_UUID_NORMALIZATION",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/activity/learner-notification-project-action-model.ts",
+        "src/modules/activity/mentor-personal-project-scope.ts",
+        "src/modules/courses/legacy-course-public-projection.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/activity/learner-notification-project-action-model.ts",
+        "src/modules/activity/mentor-personal-project-scope.ts",
+        "src/modules/courses/legacy-course-public-projection.ts"
+      ],
+      "semanticRisk": "Legacy numeric ID maps to UUID in vNext; no old-row import needed for greenfield.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "project_workspace",
+      "sourceColumn": "version",
+      "sourceType": "bigint",
+      "sourceDefinition": "bigint NOT NULL DEFAULT '0'",
+      "sourceRiskFlags": [],
+      "targetCandidate": "project_workspace.version",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/activity/learner-notification-project-action-model.ts",
+        "src/modules/activity/mentor-personal-project-scope.ts",
+        "src/modules/courses/legacy-course-public-projection.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/activity/learner-notification-project-action-model.ts",
+        "src/modules/activity/mentor-personal-project-scope.ts",
+        "src/modules/courses/legacy-course-public-projection.ts"
+      ],
+      "semanticRisk": "Standard field mapping from legacy project_workspace to project_workspace.version.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "project_workspace",
+      "sourceColumn": "readiness_override",
+      "sourceType": "tinyint(1)",
+      "sourceDefinition": "tinyint(1) DEFAULT NULL",
+      "sourceRiskFlags": [],
+      "targetCandidate": "project_workspace.readiness_override",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/activity/learner-notification-project-action-model.ts",
+        "src/modules/activity/mentor-personal-project-scope.ts",
+        "src/modules/courses/legacy-course-public-projection.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/activity/learner-notification-project-action-model.ts",
+        "src/modules/activity/mentor-personal-project-scope.ts",
+        "src/modules/courses/legacy-course-public-projection.ts"
+      ],
+      "semanticRisk": "Standard field mapping from legacy project_workspace to project_workspace.readiness_override.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "project_workspace",
+      "sourceColumn": "readiness_override_note",
+      "sourceType": "text",
+      "sourceDefinition": "text",
+      "sourceRiskFlags": [],
+      "targetCandidate": "project_workspace.readiness_override_note",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/activity/learner-notification-project-action-model.ts",
+        "src/modules/activity/mentor-personal-project-scope.ts",
+        "src/modules/courses/legacy-course-public-projection.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/activity/learner-notification-project-action-model.ts",
+        "src/modules/activity/mentor-personal-project-scope.ts",
+        "src/modules/courses/legacy-course-public-projection.ts"
+      ],
+      "semanticRisk": "Standard field mapping from legacy project_workspace to project_workspace.readiness_override_note.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "project_workspace",
+      "sourceColumn": "readiness_override_by",
+      "sourceType": "int",
+      "sourceDefinition": "int DEFAULT NULL",
+      "sourceRiskFlags": [],
+      "targetCandidate": "project_workspace.readiness_override_by",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/activity/learner-notification-project-action-model.ts",
+        "src/modules/activity/mentor-personal-project-scope.ts",
+        "src/modules/courses/legacy-course-public-projection.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/activity/learner-notification-project-action-model.ts",
+        "src/modules/activity/mentor-personal-project-scope.ts",
+        "src/modules/courses/legacy-course-public-projection.ts"
+      ],
+      "semanticRisk": "Standard field mapping from legacy project_workspace to project_workspace.readiness_override_by.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "project_workspace",
+      "sourceColumn": "readiness_override_at",
+      "sourceType": "datetime",
+      "sourceDefinition": "datetime DEFAULT NULL",
+      "sourceRiskFlags": [
+        "TIMEZONE_AND_DEADLINE_SEMANTICS"
+      ],
+      "targetCandidate": "project_workspace.readiness_override_at",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/activity/learner-notification-project-action-model.ts",
+        "src/modules/activity/mentor-personal-project-scope.ts",
+        "src/modules/courses/legacy-course-public-projection.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/activity/learner-notification-project-action-model.ts",
+        "src/modules/activity/mentor-personal-project-scope.ts",
+        "src/modules/courses/legacy-course-public-projection.ts"
+      ],
+      "semanticRisk": "Datetime(6) semantics differ from timestamptz; vNext stores UTC.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "project_workspace",
+      "sourceColumn": "start_date",
+      "sourceType": "date",
+      "sourceDefinition": "date DEFAULT NULL",
+      "sourceRiskFlags": [],
+      "targetCandidate": "project_workspace.start_date",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/activity/learner-notification-project-action-model.ts",
+        "src/modules/activity/mentor-personal-project-scope.ts",
+        "src/modules/courses/legacy-course-public-projection.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/activity/learner-notification-project-action-model.ts",
+        "src/modules/activity/mentor-personal-project-scope.ts",
+        "src/modules/courses/legacy-course-public-projection.ts"
+      ],
+      "semanticRisk": "Standard field mapping from legacy project_workspace to project_workspace.start_date.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "project_workspace",
+      "sourceColumn": "end_date",
+      "sourceType": "date",
+      "sourceDefinition": "date DEFAULT NULL",
+      "sourceRiskFlags": [],
+      "targetCandidate": "project_workspace.end_date",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/activity/learner-notification-project-action-model.ts",
+        "src/modules/activity/mentor-personal-project-scope.ts",
+        "src/modules/courses/legacy-course-public-projection.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/activity/learner-notification-project-action-model.ts",
+        "src/modules/activity/mentor-personal-project-scope.ts",
+        "src/modules/courses/legacy-course-public-projection.ts"
+      ],
+      "semanticRisk": "Standard field mapping from legacy project_workspace to project_workspace.end_date.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "project_workspace",
+      "sourceColumn": "sprint_length_weeks",
+      "sourceType": "int",
+      "sourceDefinition": "int DEFAULT '4'",
+      "sourceRiskFlags": [],
+      "targetCandidate": "project_workspace.sprint_length_weeks",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/activity/learner-notification-project-action-model.ts",
+        "src/modules/activity/mentor-personal-project-scope.ts",
+        "src/modules/courses/legacy-course-public-projection.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/activity/learner-notification-project-action-model.ts",
+        "src/modules/activity/mentor-personal-project-scope.ts",
+        "src/modules/courses/legacy-course-public-projection.ts"
+      ],
+      "semanticRisk": "Standard field mapping from legacy project_workspace to project_workspace.sprint_length_weeks.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "project_workspace",
+      "sourceColumn": "estimation_unit",
+      "sourceType": "varchar(20)",
+      "sourceDefinition": "varchar(20) DEFAULT 'POINTS'",
+      "sourceRiskFlags": [],
+      "targetCandidate": "project_workspace.estimation_unit",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/activity/learner-notification-project-action-model.ts",
+        "src/modules/activity/mentor-personal-project-scope.ts",
+        "src/modules/courses/legacy-course-public-projection.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/activity/learner-notification-project-action-model.ts",
+        "src/modules/activity/mentor-personal-project-scope.ts",
+        "src/modules/courses/legacy-course-public-projection.ts"
+      ],
+      "semanticRisk": "Standard field mapping from legacy project_workspace to project_workspace.estimation_unit.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "project_workspace",
+      "sourceColumn": "recoverable_content",
+      "sourceType": "tinyint(1)",
+      "sourceDefinition": "tinyint(1) NOT NULL DEFAULT '0'",
+      "sourceRiskFlags": [],
+      "targetCandidate": "project_workspace.recoverable_content",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/activity/learner-notification-project-action-model.ts",
+        "src/modules/activity/mentor-personal-project-scope.ts",
+        "src/modules/courses/legacy-course-public-projection.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/activity/learner-notification-project-action-model.ts",
+        "src/modules/activity/mentor-personal-project-scope.ts",
+        "src/modules/courses/legacy-course-public-projection.ts"
+      ],
+      "semanticRisk": "Standard field mapping from legacy project_workspace to project_workspace.recoverable_content.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "project_workspace",
+      "sourceColumn": "team_group_id",
+      "sourceType": "bigint",
+      "sourceDefinition": "BIGINT NULL AFTER template_id",
+      "sourceRiskFlags": [
+        "INTEGER_KEY_TO_UUID_MAPPING"
+      ],
+      "targetCandidate": "project_workspace.team_group_id",
+      "disposition": "PROPOSED_REGISTERED_WITH_UUID_NORMALIZATION",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/activity/learner-notification-project-action-model.ts",
+        "src/modules/activity/mentor-personal-project-scope.ts",
+        "src/modules/courses/legacy-course-public-projection.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/activity/learner-notification-project-action-model.ts",
+        "src/modules/activity/mentor-personal-project-scope.ts",
+        "src/modules/courses/legacy-course-public-projection.ts"
+      ],
+      "semanticRisk": "Legacy numeric ID maps to UUID in vNext; no old-row import needed for greenfield.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    }
+  ]
+}

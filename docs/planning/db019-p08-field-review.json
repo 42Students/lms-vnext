@@ -1,0 +1,2800 @@
+{
+  "id": "DB19-P08",
+  "recordType": "DB19_PACKAGE_SOURCE_FIELD_REVIEW",
+  "sourceSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+  "sourceInventory": "docs/planning/db-pass4-columns-db04_profiles_and_verification.json",
+  "originalFieldLedger": "docs/planning/database-parity-db04_profiles_and_verification-field-ledger.json",
+  "sourceTables": [
+    "approver_id_card",
+    "learner_academic_record",
+    "profile_verification",
+    "profile_verification_event",
+    "qualification",
+    "student_image",
+    "student_registration"
+  ],
+  "sourceFieldCount": 103,
+  "reviewedProposals": 103,
+  "runtimeVerifiedCount": 0,
+  "fieldDispositionApproval": "PENDING_PACKAGE_ACCEPTANCE",
+  "privacyBoundary": "DB19-P08 scoped source field disposition only. Global P31/P32 and DB020 remain open.",
+  "testEvidenceStatus": "SOURCE_QUALITY_GATE_ONLY_NOT_RUNTIME_CERTIFIED",
+  "pendingAcceptance": "Registered PG17 producer/consumer and runtime verification for all 103 fields.",
+  "fields": [
+    {
+      "sourceTable": "approver_id_card",
+      "sourceColumn": "id",
+      "sourceType": "int",
+      "sourceDefinition": "int NOT NULL AUTO_INCREMENT",
+      "sourceRiskFlags": [
+        "INTEGER_KEY_TO_UUID_MAPPING"
+      ],
+      "targetCandidate": "approver_id_card.id",
+      "disposition": "PROPOSED_NORMALIZED_UUID_PRIMARY_KEY",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/colleges/college-contact-profile-model.ts",
+        "src/modules/colleges/college-contact-profile-service.ts",
+        "src/modules/courses/faculty-profile-teaching-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/colleges/college-contact-profile-model.ts",
+        "src/modules/colleges/college-contact-profile-service.ts",
+        "src/modules/courses/faculty-profile-teaching-model.ts"
+      ],
+      "semanticRisk": "Legacy numeric ID maps to UUID in vNext; no old-row import needed for greenfield.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "approver_id_card",
+      "sourceColumn": "created_at",
+      "sourceType": "datetime(6)",
+      "sourceDefinition": "datetime(6) DEFAULT NULL",
+      "sourceRiskFlags": [
+        "TIMEZONE_AND_DEADLINE_SEMANTICS"
+      ],
+      "targetCandidate": "approver_id_card.created_at",
+      "disposition": "PROPOSED_NORMALIZED_AUDIT_TIMESTAMP",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/colleges/college-contact-profile-model.ts",
+        "src/modules/colleges/college-contact-profile-service.ts",
+        "src/modules/courses/faculty-profile-teaching-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/colleges/college-contact-profile-model.ts",
+        "src/modules/colleges/college-contact-profile-service.ts",
+        "src/modules/courses/faculty-profile-teaching-model.ts"
+      ],
+      "semanticRisk": "Datetime(6) semantics differ from timestamptz; vNext stores UTC.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "approver_id_card",
+      "sourceColumn": "is_deleted",
+      "sourceType": "tinyint(1)",
+      "sourceDefinition": "tinyint(1) DEFAULT '0'",
+      "sourceRiskFlags": [],
+      "targetCandidate": "approver_id_card.is_deleted",
+      "disposition": "PROPOSED_REDESIGNED_SOFT_DELETE_PATTERN",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/colleges/college-contact-profile-model.ts",
+        "src/modules/colleges/college-contact-profile-service.ts",
+        "src/modules/courses/faculty-profile-teaching-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/colleges/college-contact-profile-model.ts",
+        "src/modules/colleges/college-contact-profile-service.ts",
+        "src/modules/courses/faculty-profile-teaching-model.ts"
+      ],
+      "semanticRisk": "Soft-delete pattern replaced by status enum or archived_at timestamp in vNext.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "approver_id_card",
+      "sourceColumn": "updated_at",
+      "sourceType": "datetime(6)",
+      "sourceDefinition": "datetime(6) DEFAULT NULL",
+      "sourceRiskFlags": [
+        "TIMEZONE_AND_DEADLINE_SEMANTICS"
+      ],
+      "targetCandidate": "approver_id_card.updated_at",
+      "disposition": "PROPOSED_NORMALIZED_AUDIT_TIMESTAMP",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/colleges/college-contact-profile-model.ts",
+        "src/modules/colleges/college-contact-profile-service.ts",
+        "src/modules/courses/faculty-profile-teaching-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/colleges/college-contact-profile-model.ts",
+        "src/modules/colleges/college-contact-profile-service.ts",
+        "src/modules/courses/faculty-profile-teaching-model.ts"
+      ],
+      "semanticRisk": "Datetime(6) semantics differ from timestamptz; vNext stores UTC.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "approver_id_card",
+      "sourceColumn": "cloud_storage_object",
+      "sourceType": "varchar(255)",
+      "sourceDefinition": "varchar(255) DEFAULT NULL",
+      "sourceRiskFlags": [],
+      "targetCandidate": "approver_id_card.cloud_storage_object",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/colleges/college-contact-profile-model.ts",
+        "src/modules/colleges/college-contact-profile-service.ts",
+        "src/modules/courses/faculty-profile-teaching-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/colleges/college-contact-profile-model.ts",
+        "src/modules/colleges/college-contact-profile-service.ts",
+        "src/modules/courses/faculty-profile-teaching-model.ts"
+      ],
+      "semanticRisk": "Standard field mapping from legacy approver_id_card to approver_id_card.cloud_storage_object.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "approver_id_card",
+      "sourceColumn": "encoding",
+      "sourceType": "varchar(255)",
+      "sourceDefinition": "varchar(255) DEFAULT NULL",
+      "sourceRiskFlags": [],
+      "targetCandidate": "approver_id_card.encoding",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/colleges/college-contact-profile-model.ts",
+        "src/modules/colleges/college-contact-profile-service.ts",
+        "src/modules/courses/faculty-profile-teaching-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/colleges/college-contact-profile-model.ts",
+        "src/modules/colleges/college-contact-profile-service.ts",
+        "src/modules/courses/faculty-profile-teaching-model.ts"
+      ],
+      "semanticRisk": "Standard field mapping from legacy approver_id_card to approver_id_card.encoding.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "approver_id_card",
+      "sourceColumn": "media_code",
+      "sourceType": "varchar(255)",
+      "sourceDefinition": "varchar(255) DEFAULT NULL",
+      "sourceRiskFlags": [],
+      "targetCandidate": "approver_id_card.media_code",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/colleges/college-contact-profile-model.ts",
+        "src/modules/colleges/college-contact-profile-service.ts",
+        "src/modules/courses/faculty-profile-teaching-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/colleges/college-contact-profile-model.ts",
+        "src/modules/colleges/college-contact-profile-service.ts",
+        "src/modules/courses/faculty-profile-teaching-model.ts"
+      ],
+      "semanticRisk": "Standard field mapping from legacy approver_id_card to approver_id_card.media_code.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "approver_id_card",
+      "sourceColumn": "mimetype",
+      "sourceType": "varchar(255)",
+      "sourceDefinition": "varchar(255) DEFAULT NULL",
+      "sourceRiskFlags": [],
+      "targetCandidate": "approver_id_card.mimetype",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/colleges/college-contact-profile-model.ts",
+        "src/modules/colleges/college-contact-profile-service.ts",
+        "src/modules/courses/faculty-profile-teaching-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/colleges/college-contact-profile-model.ts",
+        "src/modules/colleges/college-contact-profile-service.ts",
+        "src/modules/courses/faculty-profile-teaching-model.ts"
+      ],
+      "semanticRisk": "Standard field mapping from legacy approver_id_card to approver_id_card.mimetype.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "approver_id_card",
+      "sourceColumn": "original_name",
+      "sourceType": "varchar(255)",
+      "sourceDefinition": "varchar(255) DEFAULT NULL",
+      "sourceRiskFlags": [],
+      "targetCandidate": "approver_id_card.original_name",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/colleges/college-contact-profile-model.ts",
+        "src/modules/colleges/college-contact-profile-service.ts",
+        "src/modules/courses/faculty-profile-teaching-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/colleges/college-contact-profile-model.ts",
+        "src/modules/colleges/college-contact-profile-service.ts",
+        "src/modules/courses/faculty-profile-teaching-model.ts"
+      ],
+      "semanticRisk": "Standard field mapping from legacy approver_id_card to approver_id_card.original_name.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "approver_id_card",
+      "sourceColumn": "url",
+      "sourceType": "varchar(255)",
+      "sourceDefinition": "varchar(255) DEFAULT NULL",
+      "sourceRiskFlags": [],
+      "targetCandidate": "approver_id_card.url",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/colleges/college-contact-profile-model.ts",
+        "src/modules/colleges/college-contact-profile-service.ts",
+        "src/modules/courses/faculty-profile-teaching-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/colleges/college-contact-profile-model.ts",
+        "src/modules/colleges/college-contact-profile-service.ts",
+        "src/modules/courses/faculty-profile-teaching-model.ts"
+      ],
+      "semanticRisk": "Standard field mapping from legacy approver_id_card to approver_id_card.url.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "approver_id_card",
+      "sourceColumn": "assigned_exam_id",
+      "sourceType": "int",
+      "sourceDefinition": "int DEFAULT NULL",
+      "sourceRiskFlags": [
+        "INTEGER_KEY_TO_UUID_MAPPING"
+      ],
+      "targetCandidate": "approver_id_card.assigned_exam_id",
+      "disposition": "PROPOSED_REGISTERED_WITH_UUID_NORMALIZATION",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/colleges/college-contact-profile-model.ts",
+        "src/modules/colleges/college-contact-profile-service.ts",
+        "src/modules/courses/faculty-profile-teaching-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/colleges/college-contact-profile-model.ts",
+        "src/modules/colleges/college-contact-profile-service.ts",
+        "src/modules/courses/faculty-profile-teaching-model.ts"
+      ],
+      "semanticRisk": "Legacy numeric ID maps to UUID in vNext; no old-row import needed for greenfield.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "learner_academic_record",
+      "sourceColumn": "learner_id",
+      "sourceType": "int",
+      "sourceDefinition": "INT NOT NULL PRIMARY KEY",
+      "sourceRiskFlags": [
+        "INTEGER_KEY_TO_UUID_MAPPING"
+      ],
+      "targetCandidate": "learner_academic_record.learner_id",
+      "disposition": "PROPOSED_REGISTERED_WITH_UUID_NORMALIZATION",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/colleges/college-contact-profile-model.ts",
+        "src/modules/colleges/college-contact-profile-service.ts",
+        "src/modules/courses/faculty-profile-teaching-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/colleges/college-contact-profile-model.ts",
+        "src/modules/colleges/college-contact-profile-service.ts",
+        "src/modules/courses/faculty-profile-teaching-model.ts"
+      ],
+      "semanticRisk": "Legacy numeric ID maps to UUID in vNext; no old-row import needed for greenfield.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "learner_academic_record",
+      "sourceColumn": "cgpa",
+      "sourceType": "decimal(4,2)",
+      "sourceDefinition": "DECIMAL(4,2) NULL",
+      "sourceRiskFlags": [
+        "PRECISION_ROUNDING"
+      ],
+      "targetCandidate": "learner_academic_record.cgpa",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/colleges/college-contact-profile-model.ts",
+        "src/modules/colleges/college-contact-profile-service.ts",
+        "src/modules/courses/faculty-profile-teaching-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/colleges/college-contact-profile-model.ts",
+        "src/modules/colleges/college-contact-profile-service.ts",
+        "src/modules/courses/faculty-profile-teaching-model.ts"
+      ],
+      "semanticRisk": "Floating-point precision: vNext uses numeric/decimal for financial values.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "learner_academic_record",
+      "sourceColumn": "active_backlogs",
+      "sourceType": "int",
+      "sourceDefinition": "INT NULL",
+      "sourceRiskFlags": [],
+      "targetCandidate": "learner_academic_record.active_backlogs",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/colleges/college-contact-profile-model.ts",
+        "src/modules/colleges/college-contact-profile-service.ts",
+        "src/modules/courses/faculty-profile-teaching-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/colleges/college-contact-profile-model.ts",
+        "src/modules/colleges/college-contact-profile-service.ts",
+        "src/modules/courses/faculty-profile-teaching-model.ts"
+      ],
+      "semanticRisk": "Standard field mapping from legacy learner_academic_record to learner_academic_record.active_backlogs.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "learner_academic_record",
+      "sourceColumn": "past_backlogs",
+      "sourceType": "int",
+      "sourceDefinition": "INT NULL",
+      "sourceRiskFlags": [],
+      "targetCandidate": "learner_academic_record.past_backlogs",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/colleges/college-contact-profile-model.ts",
+        "src/modules/colleges/college-contact-profile-service.ts",
+        "src/modules/courses/faculty-profile-teaching-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/colleges/college-contact-profile-model.ts",
+        "src/modules/colleges/college-contact-profile-service.ts",
+        "src/modules/courses/faculty-profile-teaching-model.ts"
+      ],
+      "semanticRisk": "Standard field mapping from legacy learner_academic_record to learner_academic_record.past_backlogs.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "learner_academic_record",
+      "sourceColumn": "tenth_pct",
+      "sourceType": "decimal(5,2)",
+      "sourceDefinition": "DECIMAL(5,2) NULL",
+      "sourceRiskFlags": [
+        "PRECISION_ROUNDING"
+      ],
+      "targetCandidate": "learner_academic_record.tenth_pct",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/colleges/college-contact-profile-model.ts",
+        "src/modules/colleges/college-contact-profile-service.ts",
+        "src/modules/courses/faculty-profile-teaching-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/colleges/college-contact-profile-model.ts",
+        "src/modules/colleges/college-contact-profile-service.ts",
+        "src/modules/courses/faculty-profile-teaching-model.ts"
+      ],
+      "semanticRisk": "Floating-point precision: vNext uses numeric/decimal for financial values.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "learner_academic_record",
+      "sourceColumn": "twelfth_pct",
+      "sourceType": "decimal(5,2)",
+      "sourceDefinition": "DECIMAL(5,2) NULL",
+      "sourceRiskFlags": [
+        "PRECISION_ROUNDING"
+      ],
+      "targetCandidate": "learner_academic_record.twelfth_pct",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/colleges/college-contact-profile-model.ts",
+        "src/modules/colleges/college-contact-profile-service.ts",
+        "src/modules/courses/faculty-profile-teaching-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/colleges/college-contact-profile-model.ts",
+        "src/modules/colleges/college-contact-profile-service.ts",
+        "src/modules/courses/faculty-profile-teaching-model.ts"
+      ],
+      "semanticRisk": "Floating-point precision: vNext uses numeric/decimal for financial values.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "learner_academic_record",
+      "sourceColumn": "diploma_pct",
+      "sourceType": "decimal(5,2)",
+      "sourceDefinition": "DECIMAL(5,2) NULL",
+      "sourceRiskFlags": [
+        "PRECISION_ROUNDING"
+      ],
+      "targetCandidate": "learner_academic_record.diploma_pct",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/colleges/college-contact-profile-model.ts",
+        "src/modules/colleges/college-contact-profile-service.ts",
+        "src/modules/courses/faculty-profile-teaching-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/colleges/college-contact-profile-model.ts",
+        "src/modules/colleges/college-contact-profile-service.ts",
+        "src/modules/courses/faculty-profile-teaching-model.ts"
+      ],
+      "semanticRisk": "Floating-point precision: vNext uses numeric/decimal for financial values.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "learner_academic_record",
+      "sourceColumn": "ug_pct",
+      "sourceType": "decimal(5,2)",
+      "sourceDefinition": "DECIMAL(5,2) NULL",
+      "sourceRiskFlags": [
+        "PRECISION_ROUNDING"
+      ],
+      "targetCandidate": "learner_academic_record.ug_pct",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/colleges/college-contact-profile-model.ts",
+        "src/modules/colleges/college-contact-profile-service.ts",
+        "src/modules/courses/faculty-profile-teaching-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/colleges/college-contact-profile-model.ts",
+        "src/modules/colleges/college-contact-profile-service.ts",
+        "src/modules/courses/faculty-profile-teaching-model.ts"
+      ],
+      "semanticRisk": "Floating-point precision: vNext uses numeric/decimal for financial values.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "learner_academic_record",
+      "sourceColumn": "gap_years",
+      "sourceType": "int",
+      "sourceDefinition": "INT NULL DEFAULT 0",
+      "sourceRiskFlags": [],
+      "targetCandidate": "learner_academic_record.gap_years",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/colleges/college-contact-profile-model.ts",
+        "src/modules/colleges/college-contact-profile-service.ts",
+        "src/modules/courses/faculty-profile-teaching-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/colleges/college-contact-profile-model.ts",
+        "src/modules/colleges/college-contact-profile-service.ts",
+        "src/modules/courses/faculty-profile-teaching-model.ts"
+      ],
+      "semanticRisk": "Standard field mapping from legacy learner_academic_record to learner_academic_record.gap_years.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "learner_academic_record",
+      "sourceColumn": "is_lateral_entry",
+      "sourceType": "boolean",
+      "sourceDefinition": "BOOLEAN NOT NULL DEFAULT FALSE",
+      "sourceRiskFlags": [],
+      "targetCandidate": "learner_academic_record.is_lateral_entry",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/colleges/college-contact-profile-model.ts",
+        "src/modules/colleges/college-contact-profile-service.ts",
+        "src/modules/courses/faculty-profile-teaching-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/colleges/college-contact-profile-model.ts",
+        "src/modules/colleges/college-contact-profile-service.ts",
+        "src/modules/courses/faculty-profile-teaching-model.ts"
+      ],
+      "semanticRisk": "Standard field mapping from legacy learner_academic_record to learner_academic_record.is_lateral_entry.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "learner_academic_record",
+      "sourceColumn": "passing_year",
+      "sourceType": "int",
+      "sourceDefinition": "INT NULL",
+      "sourceRiskFlags": [],
+      "targetCandidate": "learner_academic_record.passing_year",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/colleges/college-contact-profile-model.ts",
+        "src/modules/colleges/college-contact-profile-service.ts",
+        "src/modules/courses/faculty-profile-teaching-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/colleges/college-contact-profile-model.ts",
+        "src/modules/colleges/college-contact-profile-service.ts",
+        "src/modules/courses/faculty-profile-teaching-model.ts"
+      ],
+      "semanticRisk": "Standard field mapping from legacy learner_academic_record to learner_academic_record.passing_year.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "learner_academic_record",
+      "sourceColumn": "gender",
+      "sourceType": "varchar(20)",
+      "sourceDefinition": "VARCHAR(20) NULL",
+      "sourceRiskFlags": [
+        "POTENTIAL_PERSONAL_OR_SECRET_DATA"
+      ],
+      "targetCandidate": "learner_academic_record.gender",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/colleges/college-contact-profile-model.ts",
+        "src/modules/colleges/college-contact-profile-service.ts",
+        "src/modules/courses/faculty-profile-teaching-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/colleges/college-contact-profile-model.ts",
+        "src/modules/colleges/college-contact-profile-service.ts",
+        "src/modules/courses/faculty-profile-teaching-model.ts"
+      ],
+      "semanticRisk": "Standard field mapping from legacy learner_academic_record to learner_academic_record.gender.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "learner_academic_record",
+      "sourceColumn": "source",
+      "sourceType": "varchar(15)",
+      "sourceDefinition": "VARCHAR(15) NOT NULL DEFAULT 'SELF' COMMENT 'VERIFIED | SELF'",
+      "sourceRiskFlags": [],
+      "targetCandidate": "learner_academic_record.source",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/colleges/college-contact-profile-model.ts",
+        "src/modules/colleges/college-contact-profile-service.ts",
+        "src/modules/courses/faculty-profile-teaching-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/colleges/college-contact-profile-model.ts",
+        "src/modules/colleges/college-contact-profile-service.ts",
+        "src/modules/courses/faculty-profile-teaching-model.ts"
+      ],
+      "semanticRisk": "Standard field mapping from legacy learner_academic_record to learner_academic_record.source.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "learner_academic_record",
+      "sourceColumn": "import_batch_id",
+      "sourceType": "varchar(36)",
+      "sourceDefinition": "VARCHAR(36) NULL",
+      "sourceRiskFlags": [],
+      "targetCandidate": "learner_academic_record.import_batch_id",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/colleges/college-contact-profile-model.ts",
+        "src/modules/colleges/college-contact-profile-service.ts",
+        "src/modules/courses/faculty-profile-teaching-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/colleges/college-contact-profile-model.ts",
+        "src/modules/colleges/college-contact-profile-service.ts",
+        "src/modules/courses/faculty-profile-teaching-model.ts"
+      ],
+      "semanticRisk": "Standard field mapping from legacy learner_academic_record to learner_academic_record.import_batch_id.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "learner_academic_record",
+      "sourceColumn": "imported_at",
+      "sourceType": "datetime",
+      "sourceDefinition": "DATETIME NULL",
+      "sourceRiskFlags": [
+        "TIMEZONE_AND_DEADLINE_SEMANTICS"
+      ],
+      "targetCandidate": "learner_academic_record.imported_at",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/colleges/college-contact-profile-model.ts",
+        "src/modules/colleges/college-contact-profile-service.ts",
+        "src/modules/courses/faculty-profile-teaching-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/colleges/college-contact-profile-model.ts",
+        "src/modules/colleges/college-contact-profile-service.ts",
+        "src/modules/courses/faculty-profile-teaching-model.ts"
+      ],
+      "semanticRisk": "Datetime(6) semantics differ from timestamptz; vNext stores UTC.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "learner_academic_record",
+      "sourceColumn": "updated_at",
+      "sourceType": "datetime",
+      "sourceDefinition": "DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP",
+      "sourceRiskFlags": [
+        "TIMEZONE_AND_DEADLINE_SEMANTICS"
+      ],
+      "targetCandidate": "learner_academic_record.updated_at",
+      "disposition": "PROPOSED_NORMALIZED_AUDIT_TIMESTAMP",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/colleges/college-contact-profile-model.ts",
+        "src/modules/colleges/college-contact-profile-service.ts",
+        "src/modules/courses/faculty-profile-teaching-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/colleges/college-contact-profile-model.ts",
+        "src/modules/colleges/college-contact-profile-service.ts",
+        "src/modules/courses/faculty-profile-teaching-model.ts"
+      ],
+      "semanticRisk": "Datetime(6) semantics differ from timestamptz; vNext stores UTC.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "learner_academic_record",
+      "sourceColumn": "batch",
+      "sourceType": "varchar(20)",
+      "sourceDefinition": "VARCHAR(20) NULL COMMENT 'Batch / passing-out year label used by Students and Reports filters'",
+      "sourceRiskFlags": [],
+      "targetCandidate": "learner_academic_record.batch",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/colleges/college-contact-profile-model.ts",
+        "src/modules/colleges/college-contact-profile-service.ts",
+        "src/modules/courses/faculty-profile-teaching-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/colleges/college-contact-profile-model.ts",
+        "src/modules/colleges/college-contact-profile-service.ts",
+        "src/modules/courses/faculty-profile-teaching-model.ts"
+      ],
+      "semanticRisk": "Standard field mapping from legacy learner_academic_record to learner_academic_record.batch.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "learner_academic_record",
+      "sourceColumn": "marks_json",
+      "sourceType": "json",
+      "sourceDefinition": "JSON NULL COMMENT 'Each level''s mark as earned (grade, scale, max)",
+      "sourceRiskFlags": [
+        "STRUCTURED_PAYLOAD_SEMANTIC_SCHEMA"
+      ],
+      "targetCandidate": "learner_academic_record.marks_json",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/colleges/college-contact-profile-model.ts",
+        "src/modules/colleges/college-contact-profile-service.ts",
+        "src/modules/courses/faculty-profile-teaching-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/colleges/college-contact-profile-model.ts",
+        "src/modules/colleges/college-contact-profile-service.ts",
+        "src/modules/courses/faculty-profile-teaching-model.ts"
+      ],
+      "semanticRisk": "JSON payload: vNext uses typed JSONB or separate normalized columns.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "profile_verification",
+      "sourceColumn": "id",
+      "sourceType": "bigint",
+      "sourceDefinition": "BIGINT AUTO_INCREMENT PRIMARY KEY",
+      "sourceRiskFlags": [
+        "INTEGER_KEY_TO_UUID_MAPPING"
+      ],
+      "targetCandidate": "profile_verifications.id",
+      "disposition": "PROPOSED_NORMALIZED_UUID_PRIMARY_KEY",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/colleges/college-contact-profile-model.ts",
+        "src/modules/colleges/college-contact-profile-service.ts",
+        "src/modules/courses/faculty-profile-teaching-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/colleges/college-contact-profile-model.ts",
+        "src/modules/colleges/college-contact-profile-service.ts",
+        "src/modules/courses/faculty-profile-teaching-model.ts"
+      ],
+      "semanticRisk": "Legacy numeric ID maps to UUID in vNext; no old-row import needed for greenfield.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "profile_verification",
+      "sourceColumn": "learner_id",
+      "sourceType": "int",
+      "sourceDefinition": "INT NOT NULL",
+      "sourceRiskFlags": [
+        "INTEGER_KEY_TO_UUID_MAPPING"
+      ],
+      "targetCandidate": "profile_verifications.learner_membership_id",
+      "disposition": "PROPOSED_REGISTERED_WITH_UUID_NORMALIZATION",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/colleges/college-contact-profile-model.ts",
+        "src/modules/colleges/college-contact-profile-service.ts",
+        "src/modules/courses/faculty-profile-teaching-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/colleges/college-contact-profile-model.ts",
+        "src/modules/colleges/college-contact-profile-service.ts",
+        "src/modules/courses/faculty-profile-teaching-model.ts"
+      ],
+      "semanticRisk": "Legacy numeric ID maps to UUID in vNext; no old-row import needed for greenfield.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "profile_verification",
+      "sourceColumn": "section",
+      "sourceType": "varchar(20)",
+      "sourceDefinition": "VARCHAR(20) NOT NULL COMMENT 'EDUCATION | IDENTITY'",
+      "sourceRiskFlags": [],
+      "targetCandidate": "profile_verifications.profile_verifications_learner_section_uq",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/colleges/college-contact-profile-model.ts",
+        "src/modules/colleges/college-contact-profile-service.ts",
+        "src/modules/courses/faculty-profile-teaching-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/colleges/college-contact-profile-model.ts",
+        "src/modules/colleges/college-contact-profile-service.ts",
+        "src/modules/courses/faculty-profile-teaching-model.ts"
+      ],
+      "semanticRisk": "Standard field mapping from legacy profile_verification to profile_verifications.profile_verifications_learner_section_uq.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "profile_verification",
+      "sourceColumn": "status",
+      "sourceType": "varchar(20)",
+      "sourceDefinition": "VARCHAR(20) NOT NULL COMMENT 'SUBMITTED | SENT_BACK | VERIFIED | UPDATE_PENDING'",
+      "sourceRiskFlags": [],
+      "targetCandidate": "profile_verifications.profile_verifications_status_section_idx",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/colleges/college-contact-profile-model.ts",
+        "src/modules/colleges/college-contact-profile-service.ts",
+        "src/modules/courses/faculty-profile-teaching-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/colleges/college-contact-profile-model.ts",
+        "src/modules/colleges/college-contact-profile-service.ts",
+        "src/modules/courses/faculty-profile-teaching-model.ts"
+      ],
+      "semanticRisk": "Standard field mapping from legacy profile_verification to profile_verifications.profile_verifications_status_section_idx.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "profile_verification",
+      "sourceColumn": "submitted_snapshot",
+      "sourceType": "json",
+      "sourceDefinition": "JSON NULL COMMENT 'What the student sent (identity numbers masked)'",
+      "sourceRiskFlags": [
+        "STRUCTURED_PAYLOAD_SEMANTIC_SCHEMA"
+      ],
+      "targetCandidate": "profile_verifications.submitted_snapshot",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/colleges/college-contact-profile-model.ts",
+        "src/modules/colleges/college-contact-profile-service.ts",
+        "src/modules/courses/faculty-profile-teaching-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/colleges/college-contact-profile-model.ts",
+        "src/modules/colleges/college-contact-profile-service.ts",
+        "src/modules/courses/faculty-profile-teaching-model.ts"
+      ],
+      "semanticRisk": "JSON payload: vNext uses typed JSONB or separate normalized columns.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "profile_verification",
+      "sourceColumn": "verified_snapshot",
+      "sourceType": "json",
+      "sourceDefinition": "JSON NULL COMMENT 'What was verified; stays in force while an update is pending'",
+      "sourceRiskFlags": [
+        "STRUCTURED_PAYLOAD_SEMANTIC_SCHEMA"
+      ],
+      "targetCandidate": "profile_verifications.verified_snapshot",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/colleges/college-contact-profile-model.ts",
+        "src/modules/colleges/college-contact-profile-service.ts",
+        "src/modules/courses/faculty-profile-teaching-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/colleges/college-contact-profile-model.ts",
+        "src/modules/colleges/college-contact-profile-service.ts",
+        "src/modules/courses/faculty-profile-teaching-model.ts"
+      ],
+      "semanticRisk": "JSON payload: vNext uses typed JSONB or separate normalized columns.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "profile_verification",
+      "sourceColumn": "submitted_at",
+      "sourceType": "datetime",
+      "sourceDefinition": "DATETIME NULL",
+      "sourceRiskFlags": [
+        "TIMEZONE_AND_DEADLINE_SEMANTICS"
+      ],
+      "targetCandidate": "profile_verifications.submitted_at",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/colleges/college-contact-profile-model.ts",
+        "src/modules/colleges/college-contact-profile-service.ts",
+        "src/modules/courses/faculty-profile-teaching-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/colleges/college-contact-profile-model.ts",
+        "src/modules/colleges/college-contact-profile-service.ts",
+        "src/modules/courses/faculty-profile-teaching-model.ts"
+      ],
+      "semanticRisk": "Datetime(6) semantics differ from timestamptz; vNext stores UTC.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "profile_verification",
+      "sourceColumn": "decided_at",
+      "sourceType": "datetime",
+      "sourceDefinition": "DATETIME NULL",
+      "sourceRiskFlags": [
+        "TIMEZONE_AND_DEADLINE_SEMANTICS"
+      ],
+      "targetCandidate": "profile_verifications.decided_at",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/colleges/college-contact-profile-model.ts",
+        "src/modules/colleges/college-contact-profile-service.ts",
+        "src/modules/courses/faculty-profile-teaching-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/colleges/college-contact-profile-model.ts",
+        "src/modules/colleges/college-contact-profile-service.ts",
+        "src/modules/courses/faculty-profile-teaching-model.ts"
+      ],
+      "semanticRisk": "Datetime(6) semantics differ from timestamptz; vNext stores UTC.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "profile_verification",
+      "sourceColumn": "decided_by_type",
+      "sourceType": "varchar(20)",
+      "sourceDefinition": "VARCHAR(20) NULL COMMENT 'ADMIN | SUPER_ADMIN | TPO'",
+      "sourceRiskFlags": [],
+      "targetCandidate": "profile_verifications.decided_by_type",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/colleges/college-contact-profile-model.ts",
+        "src/modules/colleges/college-contact-profile-service.ts",
+        "src/modules/courses/faculty-profile-teaching-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/colleges/college-contact-profile-model.ts",
+        "src/modules/colleges/college-contact-profile-service.ts",
+        "src/modules/courses/faculty-profile-teaching-model.ts"
+      ],
+      "semanticRisk": "Standard field mapping from legacy profile_verification to profile_verifications.decided_by_type.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "profile_verification",
+      "sourceColumn": "decided_by_id",
+      "sourceType": "int",
+      "sourceDefinition": "INT NULL",
+      "sourceRiskFlags": [
+        "INTEGER_KEY_TO_UUID_MAPPING"
+      ],
+      "targetCandidate": "profile_verifications.decided_by_user_id",
+      "disposition": "PROPOSED_REGISTERED_WITH_UUID_NORMALIZATION",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/colleges/college-contact-profile-model.ts",
+        "src/modules/colleges/college-contact-profile-service.ts",
+        "src/modules/courses/faculty-profile-teaching-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/colleges/college-contact-profile-model.ts",
+        "src/modules/colleges/college-contact-profile-service.ts",
+        "src/modules/courses/faculty-profile-teaching-model.ts"
+      ],
+      "semanticRisk": "Legacy numeric ID maps to UUID in vNext; no old-row import needed for greenfield.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "profile_verification",
+      "sourceColumn": "decided_by_name",
+      "sourceType": "varchar(200)",
+      "sourceDefinition": "VARCHAR(200) NULL",
+      "sourceRiskFlags": [],
+      "targetCandidate": "profile_verifications.decided_by_name",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/colleges/college-contact-profile-model.ts",
+        "src/modules/colleges/college-contact-profile-service.ts",
+        "src/modules/courses/faculty-profile-teaching-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/colleges/college-contact-profile-model.ts",
+        "src/modules/colleges/college-contact-profile-service.ts",
+        "src/modules/courses/faculty-profile-teaching-model.ts"
+      ],
+      "semanticRisk": "Standard field mapping from legacy profile_verification to profile_verifications.decided_by_name.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "profile_verification",
+      "sourceColumn": "note",
+      "sourceType": "varchar(500)",
+      "sourceDefinition": "VARCHAR(500) NULL COMMENT 'Why it was sent back'",
+      "sourceRiskFlags": [],
+      "targetCandidate": "profile_verifications.note",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/colleges/college-contact-profile-model.ts",
+        "src/modules/colleges/college-contact-profile-service.ts",
+        "src/modules/courses/faculty-profile-teaching-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/colleges/college-contact-profile-model.ts",
+        "src/modules/colleges/college-contact-profile-service.ts",
+        "src/modules/courses/faculty-profile-teaching-model.ts"
+      ],
+      "semanticRisk": "Standard field mapping from legacy profile_verification to profile_verifications.note.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "profile_verification",
+      "sourceColumn": "verified_at",
+      "sourceType": "datetime",
+      "sourceDefinition": "DATETIME NULL",
+      "sourceRiskFlags": [
+        "TIMEZONE_AND_DEADLINE_SEMANTICS"
+      ],
+      "targetCandidate": "profile_verifications.verified_at",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/colleges/college-contact-profile-model.ts",
+        "src/modules/colleges/college-contact-profile-service.ts",
+        "src/modules/courses/faculty-profile-teaching-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/colleges/college-contact-profile-model.ts",
+        "src/modules/colleges/college-contact-profile-service.ts",
+        "src/modules/courses/faculty-profile-teaching-model.ts"
+      ],
+      "semanticRisk": "Datetime(6) semantics differ from timestamptz; vNext stores UTC.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "profile_verification",
+      "sourceColumn": "verified_by_name",
+      "sourceType": "varchar(200)",
+      "sourceDefinition": "VARCHAR(200) NULL",
+      "sourceRiskFlags": [],
+      "targetCandidate": "profile_verifications.verified_by_name",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/colleges/college-contact-profile-model.ts",
+        "src/modules/colleges/college-contact-profile-service.ts",
+        "src/modules/courses/faculty-profile-teaching-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/colleges/college-contact-profile-model.ts",
+        "src/modules/colleges/college-contact-profile-service.ts",
+        "src/modules/courses/faculty-profile-teaching-model.ts"
+      ],
+      "semanticRisk": "Standard field mapping from legacy profile_verification to profile_verifications.verified_by_name.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "profile_verification",
+      "sourceColumn": "updated_at",
+      "sourceType": "datetime",
+      "sourceDefinition": "DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP",
+      "sourceRiskFlags": [
+        "TIMEZONE_AND_DEADLINE_SEMANTICS"
+      ],
+      "targetCandidate": "profile_verifications.updated_at",
+      "disposition": "PROPOSED_NORMALIZED_AUDIT_TIMESTAMP",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/colleges/college-contact-profile-model.ts",
+        "src/modules/colleges/college-contact-profile-service.ts",
+        "src/modules/courses/faculty-profile-teaching-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/colleges/college-contact-profile-model.ts",
+        "src/modules/colleges/college-contact-profile-service.ts",
+        "src/modules/courses/faculty-profile-teaching-model.ts"
+      ],
+      "semanticRisk": "Datetime(6) semantics differ from timestamptz; vNext stores UTC.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "profile_verification_event",
+      "sourceColumn": "id",
+      "sourceType": "bigint",
+      "sourceDefinition": "BIGINT AUTO_INCREMENT PRIMARY KEY",
+      "sourceRiskFlags": [
+        "INTEGER_KEY_TO_UUID_MAPPING"
+      ],
+      "targetCandidate": "profile_verification_events.id",
+      "disposition": "PROPOSED_NORMALIZED_UUID_PRIMARY_KEY",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/colleges/college-contact-profile-model.ts",
+        "src/modules/colleges/college-contact-profile-service.ts",
+        "src/modules/courses/faculty-profile-teaching-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/colleges/college-contact-profile-model.ts",
+        "src/modules/colleges/college-contact-profile-service.ts",
+        "src/modules/courses/faculty-profile-teaching-model.ts"
+      ],
+      "semanticRisk": "Legacy numeric ID maps to UUID in vNext; no old-row import needed for greenfield.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "profile_verification_event",
+      "sourceColumn": "learner_id",
+      "sourceType": "int",
+      "sourceDefinition": "INT NOT NULL",
+      "sourceRiskFlags": [
+        "INTEGER_KEY_TO_UUID_MAPPING"
+      ],
+      "targetCandidate": "profile_verification_events.learner_membership_id",
+      "disposition": "PROPOSED_REGISTERED_WITH_UUID_NORMALIZATION",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/colleges/college-contact-profile-model.ts",
+        "src/modules/colleges/college-contact-profile-service.ts",
+        "src/modules/courses/faculty-profile-teaching-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/colleges/college-contact-profile-model.ts",
+        "src/modules/colleges/college-contact-profile-service.ts",
+        "src/modules/courses/faculty-profile-teaching-model.ts"
+      ],
+      "semanticRisk": "Legacy numeric ID maps to UUID in vNext; no old-row import needed for greenfield.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "profile_verification_event",
+      "sourceColumn": "section",
+      "sourceType": "varchar(20)",
+      "sourceDefinition": "VARCHAR(20) NOT NULL",
+      "sourceRiskFlags": [],
+      "targetCandidate": "profile_verification_events.profile_verifications_learner_section_uq",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/colleges/college-contact-profile-model.ts",
+        "src/modules/colleges/college-contact-profile-service.ts",
+        "src/modules/courses/faculty-profile-teaching-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/colleges/college-contact-profile-model.ts",
+        "src/modules/colleges/college-contact-profile-service.ts",
+        "src/modules/courses/faculty-profile-teaching-model.ts"
+      ],
+      "semanticRisk": "Standard field mapping from legacy profile_verification_event to profile_verification_events.profile_verifications_learner_section_uq.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "profile_verification_event",
+      "sourceColumn": "action",
+      "sourceType": "varchar(20)",
+      "sourceDefinition": "VARCHAR(20) NOT NULL COMMENT 'SUBMITTED | UPDATE_SUBMITTED | VERIFIED | SENT_BACK'",
+      "sourceRiskFlags": [],
+      "targetCandidate": "profile_verification_events.action",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/colleges/college-contact-profile-model.ts",
+        "src/modules/colleges/college-contact-profile-service.ts",
+        "src/modules/courses/faculty-profile-teaching-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/colleges/college-contact-profile-model.ts",
+        "src/modules/colleges/college-contact-profile-service.ts",
+        "src/modules/courses/faculty-profile-teaching-model.ts"
+      ],
+      "semanticRisk": "Standard field mapping from legacy profile_verification_event to profile_verification_events.action.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "profile_verification_event",
+      "sourceColumn": "actor_type",
+      "sourceType": "varchar(20)",
+      "sourceDefinition": "VARCHAR(20) NOT NULL",
+      "sourceRiskFlags": [],
+      "targetCandidate": "profile_verification_events.actor_type",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/colleges/college-contact-profile-model.ts",
+        "src/modules/colleges/college-contact-profile-service.ts",
+        "src/modules/courses/faculty-profile-teaching-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/colleges/college-contact-profile-model.ts",
+        "src/modules/colleges/college-contact-profile-service.ts",
+        "src/modules/courses/faculty-profile-teaching-model.ts"
+      ],
+      "semanticRisk": "Standard field mapping from legacy profile_verification_event to profile_verification_events.actor_type.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "profile_verification_event",
+      "sourceColumn": "actor_id",
+      "sourceType": "int",
+      "sourceDefinition": "INT NULL",
+      "sourceRiskFlags": [
+        "INTEGER_KEY_TO_UUID_MAPPING"
+      ],
+      "targetCandidate": "profile_verification_events.legacy_actor_id",
+      "disposition": "PROPOSED_REGISTERED_WITH_UUID_NORMALIZATION",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/colleges/college-contact-profile-model.ts",
+        "src/modules/colleges/college-contact-profile-service.ts",
+        "src/modules/courses/faculty-profile-teaching-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/colleges/college-contact-profile-model.ts",
+        "src/modules/colleges/college-contact-profile-service.ts",
+        "src/modules/courses/faculty-profile-teaching-model.ts"
+      ],
+      "semanticRisk": "Legacy numeric ID maps to UUID in vNext; no old-row import needed for greenfield.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "profile_verification_event",
+      "sourceColumn": "actor_name",
+      "sourceType": "varchar(200)",
+      "sourceDefinition": "VARCHAR(200) NULL",
+      "sourceRiskFlags": [],
+      "targetCandidate": "profile_verification_events.actor_name",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/colleges/college-contact-profile-model.ts",
+        "src/modules/colleges/college-contact-profile-service.ts",
+        "src/modules/courses/faculty-profile-teaching-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/colleges/college-contact-profile-model.ts",
+        "src/modules/colleges/college-contact-profile-service.ts",
+        "src/modules/courses/faculty-profile-teaching-model.ts"
+      ],
+      "semanticRisk": "Standard field mapping from legacy profile_verification_event to profile_verification_events.actor_name.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "profile_verification_event",
+      "sourceColumn": "note",
+      "sourceType": "varchar(500)",
+      "sourceDefinition": "VARCHAR(500) NULL",
+      "sourceRiskFlags": [],
+      "targetCandidate": "profile_verification_events.note",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/colleges/college-contact-profile-model.ts",
+        "src/modules/colleges/college-contact-profile-service.ts",
+        "src/modules/courses/faculty-profile-teaching-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/colleges/college-contact-profile-model.ts",
+        "src/modules/colleges/college-contact-profile-service.ts",
+        "src/modules/courses/faculty-profile-teaching-model.ts"
+      ],
+      "semanticRisk": "Standard field mapping from legacy profile_verification_event to profile_verification_events.note.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "profile_verification_event",
+      "sourceColumn": "snapshot",
+      "sourceType": "json",
+      "sourceDefinition": "JSON NULL",
+      "sourceRiskFlags": [
+        "STRUCTURED_PAYLOAD_SEMANTIC_SCHEMA"
+      ],
+      "targetCandidate": "profile_verification_events.snapshot",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/colleges/college-contact-profile-model.ts",
+        "src/modules/colleges/college-contact-profile-service.ts",
+        "src/modules/courses/faculty-profile-teaching-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/colleges/college-contact-profile-model.ts",
+        "src/modules/colleges/college-contact-profile-service.ts",
+        "src/modules/courses/faculty-profile-teaching-model.ts"
+      ],
+      "semanticRisk": "JSON payload: vNext uses typed JSONB or separate normalized columns.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "profile_verification_event",
+      "sourceColumn": "created_at",
+      "sourceType": "datetime",
+      "sourceDefinition": "DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP",
+      "sourceRiskFlags": [
+        "TIMEZONE_AND_DEADLINE_SEMANTICS"
+      ],
+      "targetCandidate": "profile_verification_events.created_at",
+      "disposition": "PROPOSED_NORMALIZED_AUDIT_TIMESTAMP",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/colleges/college-contact-profile-model.ts",
+        "src/modules/colleges/college-contact-profile-service.ts",
+        "src/modules/courses/faculty-profile-teaching-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/colleges/college-contact-profile-model.ts",
+        "src/modules/colleges/college-contact-profile-service.ts",
+        "src/modules/courses/faculty-profile-teaching-model.ts"
+      ],
+      "semanticRisk": "Datetime(6) semantics differ from timestamptz; vNext stores UTC.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "qualification",
+      "sourceColumn": "id",
+      "sourceType": "int",
+      "sourceDefinition": "int NOT NULL AUTO_INCREMENT",
+      "sourceRiskFlags": [
+        "INTEGER_KEY_TO_UUID_MAPPING"
+      ],
+      "targetCandidate": "qualification.id",
+      "disposition": "PROPOSED_NORMALIZED_UUID_PRIMARY_KEY",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/colleges/college-contact-profile-model.ts",
+        "src/modules/colleges/college-contact-profile-service.ts",
+        "src/modules/courses/faculty-profile-teaching-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/colleges/college-contact-profile-model.ts",
+        "src/modules/colleges/college-contact-profile-service.ts",
+        "src/modules/courses/faculty-profile-teaching-model.ts"
+      ],
+      "semanticRisk": "Legacy numeric ID maps to UUID in vNext; no old-row import needed for greenfield.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "qualification",
+      "sourceColumn": "created_at",
+      "sourceType": "datetime(6)",
+      "sourceDefinition": "datetime(6) DEFAULT NULL",
+      "sourceRiskFlags": [
+        "TIMEZONE_AND_DEADLINE_SEMANTICS"
+      ],
+      "targetCandidate": "qualification.created_at",
+      "disposition": "PROPOSED_NORMALIZED_AUDIT_TIMESTAMP",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/colleges/college-contact-profile-model.ts",
+        "src/modules/colleges/college-contact-profile-service.ts",
+        "src/modules/courses/faculty-profile-teaching-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/colleges/college-contact-profile-model.ts",
+        "src/modules/colleges/college-contact-profile-service.ts",
+        "src/modules/courses/faculty-profile-teaching-model.ts"
+      ],
+      "semanticRisk": "Datetime(6) semantics differ from timestamptz; vNext stores UTC.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "qualification",
+      "sourceColumn": "is_deleted",
+      "sourceType": "tinyint(1)",
+      "sourceDefinition": "tinyint(1) DEFAULT '0'",
+      "sourceRiskFlags": [],
+      "targetCandidate": "qualification.is_deleted",
+      "disposition": "PROPOSED_REDESIGNED_SOFT_DELETE_PATTERN",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/colleges/college-contact-profile-model.ts",
+        "src/modules/colleges/college-contact-profile-service.ts",
+        "src/modules/courses/faculty-profile-teaching-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/colleges/college-contact-profile-model.ts",
+        "src/modules/colleges/college-contact-profile-service.ts",
+        "src/modules/courses/faculty-profile-teaching-model.ts"
+      ],
+      "semanticRisk": "Soft-delete pattern replaced by status enum or archived_at timestamp in vNext.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "qualification",
+      "sourceColumn": "updated_at",
+      "sourceType": "datetime(6)",
+      "sourceDefinition": "datetime(6) DEFAULT NULL",
+      "sourceRiskFlags": [
+        "TIMEZONE_AND_DEADLINE_SEMANTICS"
+      ],
+      "targetCandidate": "qualification.updated_at",
+      "disposition": "PROPOSED_NORMALIZED_AUDIT_TIMESTAMP",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/colleges/college-contact-profile-model.ts",
+        "src/modules/colleges/college-contact-profile-service.ts",
+        "src/modules/courses/faculty-profile-teaching-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/colleges/college-contact-profile-model.ts",
+        "src/modules/colleges/college-contact-profile-service.ts",
+        "src/modules/courses/faculty-profile-teaching-model.ts"
+      ],
+      "semanticRisk": "Datetime(6) semantics differ from timestamptz; vNext stores UTC.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "qualification",
+      "sourceColumn": "certificate_upload",
+      "sourceType": "text",
+      "sourceDefinition": "text",
+      "sourceRiskFlags": [],
+      "targetCandidate": "qualification.certificate_upload",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/colleges/college-contact-profile-model.ts",
+        "src/modules/colleges/college-contact-profile-service.ts",
+        "src/modules/courses/faculty-profile-teaching-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/colleges/college-contact-profile-model.ts",
+        "src/modules/colleges/college-contact-profile-service.ts",
+        "src/modules/courses/faculty-profile-teaching-model.ts"
+      ],
+      "semanticRisk": "Standard field mapping from legacy qualification to qualification.certificate_upload.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "qualification",
+      "sourceColumn": "degree",
+      "sourceType": "varchar(255)",
+      "sourceDefinition": "varchar(255) DEFAULT NULL",
+      "sourceRiskFlags": [],
+      "targetCandidate": "qualification.degree",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/colleges/college-contact-profile-model.ts",
+        "src/modules/colleges/college-contact-profile-service.ts",
+        "src/modules/courses/faculty-profile-teaching-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/colleges/college-contact-profile-model.ts",
+        "src/modules/colleges/college-contact-profile-service.ts",
+        "src/modules/courses/faculty-profile-teaching-model.ts"
+      ],
+      "semanticRisk": "Standard field mapping from legacy qualification to qualification.degree.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "qualification",
+      "sourceColumn": "description",
+      "sourceType": "text",
+      "sourceDefinition": "text",
+      "sourceRiskFlags": [],
+      "targetCandidate": "qualification.description",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/colleges/college-contact-profile-model.ts",
+        "src/modules/colleges/college-contact-profile-service.ts",
+        "src/modules/courses/faculty-profile-teaching-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/colleges/college-contact-profile-model.ts",
+        "src/modules/colleges/college-contact-profile-service.ts",
+        "src/modules/courses/faculty-profile-teaching-model.ts"
+      ],
+      "semanticRisk": "Standard field mapping from legacy qualification to qualification.description.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "qualification",
+      "sourceColumn": "education_type",
+      "sourceType": "varchar(255)",
+      "sourceDefinition": "varchar(255) NOT NULL",
+      "sourceRiskFlags": [],
+      "targetCandidate": "qualification.education_type",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/colleges/college-contact-profile-model.ts",
+        "src/modules/colleges/college-contact-profile-service.ts",
+        "src/modules/courses/faculty-profile-teaching-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/colleges/college-contact-profile-model.ts",
+        "src/modules/colleges/college-contact-profile-service.ts",
+        "src/modules/courses/faculty-profile-teaching-model.ts"
+      ],
+      "semanticRisk": "Standard field mapping from legacy qualification to qualification.education_type.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "qualification",
+      "sourceColumn": "end_year",
+      "sourceType": "varchar(255)",
+      "sourceDefinition": "varchar(255) DEFAULT NULL",
+      "sourceRiskFlags": [],
+      "targetCandidate": "qualification.end_year",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/colleges/college-contact-profile-model.ts",
+        "src/modules/colleges/college-contact-profile-service.ts",
+        "src/modules/courses/faculty-profile-teaching-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/colleges/college-contact-profile-model.ts",
+        "src/modules/colleges/college-contact-profile-service.ts",
+        "src/modules/courses/faculty-profile-teaching-model.ts"
+      ],
+      "semanticRisk": "Standard field mapping from legacy qualification to qualification.end_year.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "qualification",
+      "sourceColumn": "exam_details",
+      "sourceType": "json",
+      "sourceDefinition": "json DEFAULT NULL",
+      "sourceRiskFlags": [
+        "STRUCTURED_PAYLOAD_SEMANTIC_SCHEMA"
+      ],
+      "targetCandidate": "qualification.exam_details",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/colleges/college-contact-profile-model.ts",
+        "src/modules/colleges/college-contact-profile-service.ts",
+        "src/modules/courses/faculty-profile-teaching-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/colleges/college-contact-profile-model.ts",
+        "src/modules/colleges/college-contact-profile-service.ts",
+        "src/modules/courses/faculty-profile-teaching-model.ts"
+      ],
+      "semanticRisk": "JSON payload: vNext uses typed JSONB or separate normalized columns.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "qualification",
+      "sourceColumn": "exam_rank",
+      "sourceType": "varchar(255)",
+      "sourceDefinition": "varchar(255) DEFAULT NULL",
+      "sourceRiskFlags": [],
+      "targetCandidate": "qualification.exam_rank",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/colleges/college-contact-profile-model.ts",
+        "src/modules/colleges/college-contact-profile-service.ts",
+        "src/modules/courses/faculty-profile-teaching-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/colleges/college-contact-profile-model.ts",
+        "src/modules/colleges/college-contact-profile-service.ts",
+        "src/modules/courses/faculty-profile-teaching-model.ts"
+      ],
+      "semanticRisk": "Standard field mapping from legacy qualification to qualification.exam_rank.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "qualification",
+      "sourceColumn": "field",
+      "sourceType": "varchar(255)",
+      "sourceDefinition": "varchar(255) DEFAULT NULL",
+      "sourceRiskFlags": [],
+      "targetCandidate": "qualification.field",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/colleges/college-contact-profile-model.ts",
+        "src/modules/colleges/college-contact-profile-service.ts",
+        "src/modules/courses/faculty-profile-teaching-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/colleges/college-contact-profile-model.ts",
+        "src/modules/colleges/college-contact-profile-service.ts",
+        "src/modules/courses/faculty-profile-teaching-model.ts"
+      ],
+      "semanticRisk": "Standard field mapping from legacy qualification to qualification.field.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "qualification",
+      "sourceColumn": "grade",
+      "sourceType": "varchar(255)",
+      "sourceDefinition": "varchar(255) DEFAULT NULL",
+      "sourceRiskFlags": [],
+      "targetCandidate": "qualification.grade",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/colleges/college-contact-profile-model.ts",
+        "src/modules/colleges/college-contact-profile-service.ts",
+        "src/modules/courses/faculty-profile-teaching-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/colleges/college-contact-profile-model.ts",
+        "src/modules/colleges/college-contact-profile-service.ts",
+        "src/modules/courses/faculty-profile-teaching-model.ts"
+      ],
+      "semanticRisk": "Standard field mapping from legacy qualification to qualification.grade.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "qualification",
+      "sourceColumn": "max_grade",
+      "sourceType": "varchar(20)",
+      "sourceDefinition": "varchar(20) DEFAULT NULL",
+      "sourceRiskFlags": [],
+      "targetCandidate": "qualification.max_grade",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/colleges/college-contact-profile-model.ts",
+        "src/modules/colleges/college-contact-profile-service.ts",
+        "src/modules/courses/faculty-profile-teaching-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/colleges/college-contact-profile-model.ts",
+        "src/modules/colleges/college-contact-profile-service.ts",
+        "src/modules/courses/faculty-profile-teaching-model.ts"
+      ],
+      "semanticRisk": "Standard field mapping from legacy qualification to qualification.max_grade.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "qualification",
+      "sourceColumn": "grading_type",
+      "sourceType": "varchar(255)",
+      "sourceDefinition": "varchar(255) DEFAULT NULL",
+      "sourceRiskFlags": [],
+      "targetCandidate": "qualification.grading_type",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/colleges/college-contact-profile-model.ts",
+        "src/modules/colleges/college-contact-profile-service.ts",
+        "src/modules/courses/faculty-profile-teaching-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/colleges/college-contact-profile-model.ts",
+        "src/modules/colleges/college-contact-profile-service.ts",
+        "src/modules/courses/faculty-profile-teaching-model.ts"
+      ],
+      "semanticRisk": "Standard field mapping from legacy qualification to qualification.grading_type.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "qualification",
+      "sourceColumn": "institution_name",
+      "sourceType": "varchar(255)",
+      "sourceDefinition": "varchar(255) NOT NULL",
+      "sourceRiskFlags": [],
+      "targetCandidate": "qualification.institution_name",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/colleges/college-contact-profile-model.ts",
+        "src/modules/colleges/college-contact-profile-service.ts",
+        "src/modules/courses/faculty-profile-teaching-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/colleges/college-contact-profile-model.ts",
+        "src/modules/colleges/college-contact-profile-service.ts",
+        "src/modules/courses/faculty-profile-teaching-model.ts"
+      ],
+      "semanticRisk": "Standard field mapping from legacy qualification to qualification.institution_name.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "qualification",
+      "sourceColumn": "is_currently_pursuing",
+      "sourceType": "tinyint(1)",
+      "sourceDefinition": "tinyint(1) DEFAULT '0'",
+      "sourceRiskFlags": [],
+      "targetCandidate": "qualification.is_currently_pursuing",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/colleges/college-contact-profile-model.ts",
+        "src/modules/colleges/college-contact-profile-service.ts",
+        "src/modules/courses/faculty-profile-teaching-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/colleges/college-contact-profile-model.ts",
+        "src/modules/colleges/college-contact-profile-service.ts",
+        "src/modules/courses/faculty-profile-teaching-model.ts"
+      ],
+      "semanticRisk": "Standard field mapping from legacy qualification to qualification.is_currently_pursuing.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "qualification",
+      "sourceColumn": "is_recent_education",
+      "sourceType": "tinyint(1)",
+      "sourceDefinition": "tinyint(1) DEFAULT '0'",
+      "sourceRiskFlags": [],
+      "targetCandidate": "qualification.is_recent_education",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/colleges/college-contact-profile-model.ts",
+        "src/modules/colleges/college-contact-profile-service.ts",
+        "src/modules/courses/faculty-profile-teaching-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/colleges/college-contact-profile-model.ts",
+        "src/modules/colleges/college-contact-profile-service.ts",
+        "src/modules/courses/faculty-profile-teaching-model.ts"
+      ],
+      "semanticRisk": "Standard field mapping from legacy qualification to qualification.is_recent_education.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "qualification",
+      "sourceColumn": "program",
+      "sourceType": "varchar(255)",
+      "sourceDefinition": "varchar(255) DEFAULT NULL",
+      "sourceRiskFlags": [],
+      "targetCandidate": "qualification.program",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/colleges/college-contact-profile-model.ts",
+        "src/modules/colleges/college-contact-profile-service.ts",
+        "src/modules/courses/faculty-profile-teaching-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/colleges/college-contact-profile-model.ts",
+        "src/modules/colleges/college-contact-profile-service.ts",
+        "src/modules/courses/faculty-profile-teaching-model.ts"
+      ],
+      "semanticRisk": "Standard field mapping from legacy qualification to qualification.program.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "qualification",
+      "sourceColumn": "qualifying_exam",
+      "sourceType": "varchar(255)",
+      "sourceDefinition": "varchar(255) DEFAULT NULL",
+      "sourceRiskFlags": [],
+      "targetCandidate": "qualification.qualifying_exam",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/colleges/college-contact-profile-model.ts",
+        "src/modules/colleges/college-contact-profile-service.ts",
+        "src/modules/courses/faculty-profile-teaching-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/colleges/college-contact-profile-model.ts",
+        "src/modules/colleges/college-contact-profile-service.ts",
+        "src/modules/courses/faculty-profile-teaching-model.ts"
+      ],
+      "semanticRisk": "Standard field mapping from legacy qualification to qualification.qualifying_exam.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "qualification",
+      "sourceColumn": "score",
+      "sourceType": "varchar(255)",
+      "sourceDefinition": "varchar(255) DEFAULT NULL",
+      "sourceRiskFlags": [],
+      "targetCandidate": "qualification.score",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/colleges/college-contact-profile-model.ts",
+        "src/modules/colleges/college-contact-profile-service.ts",
+        "src/modules/courses/faculty-profile-teaching-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/colleges/college-contact-profile-model.ts",
+        "src/modules/colleges/college-contact-profile-service.ts",
+        "src/modules/courses/faculty-profile-teaching-model.ts"
+      ],
+      "semanticRisk": "Standard field mapping from legacy qualification to qualification.score.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "qualification",
+      "sourceColumn": "specialization",
+      "sourceType": "varchar(255)",
+      "sourceDefinition": "varchar(255) DEFAULT NULL",
+      "sourceRiskFlags": [],
+      "targetCandidate": "qualification.specialization",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/colleges/college-contact-profile-model.ts",
+        "src/modules/colleges/college-contact-profile-service.ts",
+        "src/modules/courses/faculty-profile-teaching-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/colleges/college-contact-profile-model.ts",
+        "src/modules/colleges/college-contact-profile-service.ts",
+        "src/modules/courses/faculty-profile-teaching-model.ts"
+      ],
+      "semanticRisk": "Standard field mapping from legacy qualification to qualification.specialization.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "qualification",
+      "sourceColumn": "start_year",
+      "sourceType": "varchar(255)",
+      "sourceDefinition": "varchar(255) DEFAULT NULL",
+      "sourceRiskFlags": [],
+      "targetCandidate": "qualification.start_year",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/colleges/college-contact-profile-model.ts",
+        "src/modules/colleges/college-contact-profile-service.ts",
+        "src/modules/courses/faculty-profile-teaching-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/colleges/college-contact-profile-model.ts",
+        "src/modules/colleges/college-contact-profile-service.ts",
+        "src/modules/courses/faculty-profile-teaching-model.ts"
+      ],
+      "semanticRisk": "Standard field mapping from legacy qualification to qualification.start_year.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "qualification",
+      "sourceColumn": "learner_id",
+      "sourceType": "int",
+      "sourceDefinition": "int NOT NULL",
+      "sourceRiskFlags": [
+        "INTEGER_KEY_TO_UUID_MAPPING"
+      ],
+      "targetCandidate": "qualification.learner_id",
+      "disposition": "PROPOSED_REGISTERED_WITH_UUID_NORMALIZATION",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/colleges/college-contact-profile-model.ts",
+        "src/modules/colleges/college-contact-profile-service.ts",
+        "src/modules/courses/faculty-profile-teaching-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/colleges/college-contact-profile-model.ts",
+        "src/modules/colleges/college-contact-profile-service.ts",
+        "src/modules/courses/faculty-profile-teaching-model.ts"
+      ],
+      "semanticRisk": "Legacy numeric ID maps to UUID in vNext; no old-row import needed for greenfield.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "student_image",
+      "sourceColumn": "id",
+      "sourceType": "bigint",
+      "sourceDefinition": "bigint NOT NULL AUTO_INCREMENT",
+      "sourceRiskFlags": [
+        "INTEGER_KEY_TO_UUID_MAPPING"
+      ],
+      "targetCandidate": "student_image.id",
+      "disposition": "PROPOSED_NORMALIZED_UUID_PRIMARY_KEY",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/colleges/college-contact-profile-model.ts",
+        "src/modules/colleges/college-contact-profile-service.ts",
+        "src/modules/courses/faculty-profile-teaching-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/colleges/college-contact-profile-model.ts",
+        "src/modules/colleges/college-contact-profile-service.ts",
+        "src/modules/courses/faculty-profile-teaching-model.ts"
+      ],
+      "semanticRisk": "Legacy numeric ID maps to UUID in vNext; no old-row import needed for greenfield.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "student_image",
+      "sourceColumn": "image_data",
+      "sourceType": "mediumtext",
+      "sourceDefinition": "mediumtext",
+      "sourceRiskFlags": [
+        "POTENTIAL_PERSONAL_OR_SECRET_DATA",
+        "STRUCTURED_PAYLOAD_SEMANTIC_SCHEMA"
+      ],
+      "targetCandidate": "student_image.image_data",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/colleges/college-contact-profile-model.ts",
+        "src/modules/colleges/college-contact-profile-service.ts",
+        "src/modules/courses/faculty-profile-teaching-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/colleges/college-contact-profile-model.ts",
+        "src/modules/colleges/college-contact-profile-service.ts",
+        "src/modules/courses/faculty-profile-teaching-model.ts"
+      ],
+      "semanticRisk": "JSON payload: vNext uses typed JSONB or separate normalized columns.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "student_image",
+      "sourceColumn": "learner_id",
+      "sourceType": "varchar(255)",
+      "sourceDefinition": "varchar(255) DEFAULT NULL",
+      "sourceRiskFlags": [],
+      "targetCandidate": "student_image.learner_id",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/colleges/college-contact-profile-model.ts",
+        "src/modules/colleges/college-contact-profile-service.ts",
+        "src/modules/courses/faculty-profile-teaching-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/colleges/college-contact-profile-model.ts",
+        "src/modules/colleges/college-contact-profile-service.ts",
+        "src/modules/courses/faculty-profile-teaching-model.ts"
+      ],
+      "semanticRisk": "Standard field mapping from legacy student_image to student_image.learner_id.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "student_registration",
+      "sourceColumn": "id",
+      "sourceType": "bigint",
+      "sourceDefinition": "bigint NOT NULL AUTO_INCREMENT",
+      "sourceRiskFlags": [
+        "INTEGER_KEY_TO_UUID_MAPPING"
+      ],
+      "targetCandidate": "student_registration.id",
+      "disposition": "PROPOSED_NORMALIZED_UUID_PRIMARY_KEY",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/colleges/college-contact-profile-model.ts",
+        "src/modules/colleges/college-contact-profile-service.ts",
+        "src/modules/courses/faculty-profile-teaching-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/colleges/college-contact-profile-model.ts",
+        "src/modules/colleges/college-contact-profile-service.ts",
+        "src/modules/courses/faculty-profile-teaching-model.ts"
+      ],
+      "semanticRisk": "Legacy numeric ID maps to UUID in vNext; no old-row import needed for greenfield.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "student_registration",
+      "sourceColumn": "tenant_id",
+      "sourceType": "int",
+      "sourceDefinition": "int NOT NULL",
+      "sourceRiskFlags": [
+        "INTEGER_KEY_TO_UUID_MAPPING"
+      ],
+      "targetCandidate": "student_registration.tenant_id",
+      "disposition": "PROPOSED_REGISTERED_WITH_UUID_NORMALIZATION",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/colleges/college-contact-profile-model.ts",
+        "src/modules/colleges/college-contact-profile-service.ts",
+        "src/modules/courses/faculty-profile-teaching-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/colleges/college-contact-profile-model.ts",
+        "src/modules/colleges/college-contact-profile-service.ts",
+        "src/modules/courses/faculty-profile-teaching-model.ts"
+      ],
+      "semanticRisk": "Legacy numeric ID maps to UUID in vNext; no old-row import needed for greenfield.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "student_registration",
+      "sourceColumn": "organization_id",
+      "sourceType": "int",
+      "sourceDefinition": "int DEFAULT NULL",
+      "sourceRiskFlags": [
+        "INTEGER_KEY_TO_UUID_MAPPING"
+      ],
+      "targetCandidate": "student_registration.organization_id",
+      "disposition": "PROPOSED_REGISTERED_WITH_UUID_NORMALIZATION",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/colleges/college-contact-profile-model.ts",
+        "src/modules/colleges/college-contact-profile-service.ts",
+        "src/modules/courses/faculty-profile-teaching-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/colleges/college-contact-profile-model.ts",
+        "src/modules/colleges/college-contact-profile-service.ts",
+        "src/modules/courses/faculty-profile-teaching-model.ts"
+      ],
+      "semanticRisk": "Legacy numeric ID maps to UUID in vNext; no old-row import needed for greenfield.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "student_registration",
+      "sourceColumn": "college_id",
+      "sourceType": "int",
+      "sourceDefinition": "int DEFAULT NULL",
+      "sourceRiskFlags": [
+        "INTEGER_KEY_TO_UUID_MAPPING"
+      ],
+      "targetCandidate": "student_registration.college_id",
+      "disposition": "PROPOSED_REGISTERED_WITH_UUID_NORMALIZATION",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/colleges/college-contact-profile-model.ts",
+        "src/modules/colleges/college-contact-profile-service.ts",
+        "src/modules/courses/faculty-profile-teaching-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/colleges/college-contact-profile-model.ts",
+        "src/modules/colleges/college-contact-profile-service.ts",
+        "src/modules/courses/faculty-profile-teaching-model.ts"
+      ],
+      "semanticRisk": "Legacy numeric ID maps to UUID in vNext; no old-row import needed for greenfield.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "student_registration",
+      "sourceColumn": "learner_id",
+      "sourceType": "int",
+      "sourceDefinition": "int DEFAULT NULL",
+      "sourceRiskFlags": [
+        "INTEGER_KEY_TO_UUID_MAPPING"
+      ],
+      "targetCandidate": "student_registration.learner_id",
+      "disposition": "PROPOSED_REGISTERED_WITH_UUID_NORMALIZATION",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/colleges/college-contact-profile-model.ts",
+        "src/modules/colleges/college-contact-profile-service.ts",
+        "src/modules/courses/faculty-profile-teaching-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/colleges/college-contact-profile-model.ts",
+        "src/modules/colleges/college-contact-profile-service.ts",
+        "src/modules/courses/faculty-profile-teaching-model.ts"
+      ],
+      "semanticRisk": "Legacy numeric ID maps to UUID in vNext; no old-row import needed for greenfield.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "student_registration",
+      "sourceColumn": "external_ref",
+      "sourceType": "varchar(255)",
+      "sourceDefinition": "varchar(255) DEFAULT NULL",
+      "sourceRiskFlags": [],
+      "targetCandidate": "student_registration.external_ref",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/colleges/college-contact-profile-model.ts",
+        "src/modules/colleges/college-contact-profile-service.ts",
+        "src/modules/courses/faculty-profile-teaching-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/colleges/college-contact-profile-model.ts",
+        "src/modules/colleges/college-contact-profile-service.ts",
+        "src/modules/courses/faculty-profile-teaching-model.ts"
+      ],
+      "semanticRisk": "Standard field mapping from legacy student_registration to student_registration.external_ref.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "student_registration",
+      "sourceColumn": "registration_number",
+      "sourceType": "varchar(120)",
+      "sourceDefinition": "varchar(120) DEFAULT NULL",
+      "sourceRiskFlags": [],
+      "targetCandidate": "student_registration.registration_number",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/colleges/college-contact-profile-model.ts",
+        "src/modules/colleges/college-contact-profile-service.ts",
+        "src/modules/courses/faculty-profile-teaching-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/colleges/college-contact-profile-model.ts",
+        "src/modules/colleges/college-contact-profile-service.ts",
+        "src/modules/courses/faculty-profile-teaching-model.ts"
+      ],
+      "semanticRisk": "Standard field mapping from legacy student_registration to student_registration.registration_number.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "student_registration",
+      "sourceColumn": "student_name",
+      "sourceType": "varchar(255)",
+      "sourceDefinition": "varchar(255) DEFAULT NULL",
+      "sourceRiskFlags": [],
+      "targetCandidate": "student_registration.student_name",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/colleges/college-contact-profile-model.ts",
+        "src/modules/colleges/college-contact-profile-service.ts",
+        "src/modules/courses/faculty-profile-teaching-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/colleges/college-contact-profile-model.ts",
+        "src/modules/colleges/college-contact-profile-service.ts",
+        "src/modules/courses/faculty-profile-teaching-model.ts"
+      ],
+      "semanticRisk": "Standard field mapping from legacy student_registration to student_registration.student_name.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "student_registration",
+      "sourceColumn": "phone",
+      "sourceType": "varchar(30)",
+      "sourceDefinition": "varchar(30) DEFAULT NULL",
+      "sourceRiskFlags": [
+        "POTENTIAL_PERSONAL_OR_SECRET_DATA"
+      ],
+      "targetCandidate": "student_registration.phone",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/colleges/college-contact-profile-model.ts",
+        "src/modules/colleges/college-contact-profile-service.ts",
+        "src/modules/courses/faculty-profile-teaching-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/colleges/college-contact-profile-model.ts",
+        "src/modules/colleges/college-contact-profile-service.ts",
+        "src/modules/courses/faculty-profile-teaching-model.ts"
+      ],
+      "semanticRisk": "Standard field mapping from legacy student_registration to student_registration.phone.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "student_registration",
+      "sourceColumn": "email",
+      "sourceType": "varchar(255)",
+      "sourceDefinition": "varchar(255) DEFAULT NULL",
+      "sourceRiskFlags": [
+        "POTENTIAL_PERSONAL_OR_SECRET_DATA"
+      ],
+      "targetCandidate": "student_registration.email",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/colleges/college-contact-profile-model.ts",
+        "src/modules/colleges/college-contact-profile-service.ts",
+        "src/modules/courses/faculty-profile-teaching-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/colleges/college-contact-profile-model.ts",
+        "src/modules/colleges/college-contact-profile-service.ts",
+        "src/modules/courses/faculty-profile-teaching-model.ts"
+      ],
+      "semanticRisk": "Standard field mapping from legacy student_registration to student_registration.email.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "student_registration",
+      "sourceColumn": "program_id",
+      "sourceType": "int",
+      "sourceDefinition": "int DEFAULT NULL",
+      "sourceRiskFlags": [
+        "INTEGER_KEY_TO_UUID_MAPPING"
+      ],
+      "targetCandidate": "student_registration.program_id",
+      "disposition": "PROPOSED_REGISTERED_WITH_UUID_NORMALIZATION",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/colleges/college-contact-profile-model.ts",
+        "src/modules/colleges/college-contact-profile-service.ts",
+        "src/modules/courses/faculty-profile-teaching-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/colleges/college-contact-profile-model.ts",
+        "src/modules/colleges/college-contact-profile-service.ts",
+        "src/modules/courses/faculty-profile-teaching-model.ts"
+      ],
+      "semanticRisk": "Legacy numeric ID maps to UUID in vNext; no old-row import needed for greenfield.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "student_registration",
+      "sourceColumn": "class_id",
+      "sourceType": "int",
+      "sourceDefinition": "int DEFAULT NULL",
+      "sourceRiskFlags": [
+        "INTEGER_KEY_TO_UUID_MAPPING"
+      ],
+      "targetCandidate": "student_registration.class_id",
+      "disposition": "PROPOSED_REGISTERED_WITH_UUID_NORMALIZATION",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/colleges/college-contact-profile-model.ts",
+        "src/modules/colleges/college-contact-profile-service.ts",
+        "src/modules/courses/faculty-profile-teaching-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/colleges/college-contact-profile-model.ts",
+        "src/modules/colleges/college-contact-profile-service.ts",
+        "src/modules/courses/faculty-profile-teaching-model.ts"
+      ],
+      "semanticRisk": "Legacy numeric ID maps to UUID in vNext; no old-row import needed for greenfield.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "student_registration",
+      "sourceColumn": "batch_year",
+      "sourceType": "int",
+      "sourceDefinition": "int DEFAULT NULL",
+      "sourceRiskFlags": [],
+      "targetCandidate": "student_registration.batch_year",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/colleges/college-contact-profile-model.ts",
+        "src/modules/colleges/college-contact-profile-service.ts",
+        "src/modules/courses/faculty-profile-teaching-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/colleges/college-contact-profile-model.ts",
+        "src/modules/colleges/college-contact-profile-service.ts",
+        "src/modules/courses/faculty-profile-teaching-model.ts"
+      ],
+      "semanticRisk": "Standard field mapping from legacy student_registration to student_registration.batch_year.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "student_registration",
+      "sourceColumn": "semester_number",
+      "sourceType": "int",
+      "sourceDefinition": "int DEFAULT NULL",
+      "sourceRiskFlags": [],
+      "targetCandidate": "student_registration.semester_number",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/colleges/college-contact-profile-model.ts",
+        "src/modules/colleges/college-contact-profile-service.ts",
+        "src/modules/courses/faculty-profile-teaching-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/colleges/college-contact-profile-model.ts",
+        "src/modules/colleges/college-contact-profile-service.ts",
+        "src/modules/courses/faculty-profile-teaching-model.ts"
+      ],
+      "semanticRisk": "Standard field mapping from legacy student_registration to student_registration.semester_number.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "student_registration",
+      "sourceColumn": "registration_status",
+      "sourceType": "varchar(40)",
+      "sourceDefinition": "varchar(40) NOT NULL DEFAULT 'ACTIVE'",
+      "sourceRiskFlags": [],
+      "targetCandidate": "student_registration.registration_status",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/colleges/college-contact-profile-model.ts",
+        "src/modules/colleges/college-contact-profile-service.ts",
+        "src/modules/courses/faculty-profile-teaching-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/colleges/college-contact-profile-model.ts",
+        "src/modules/colleges/college-contact-profile-service.ts",
+        "src/modules/courses/faculty-profile-teaching-model.ts"
+      ],
+      "semanticRisk": "Standard field mapping from legacy student_registration to student_registration.registration_status.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "student_registration",
+      "sourceColumn": "source",
+      "sourceType": "varchar(60)",
+      "sourceDefinition": "varchar(60) NOT NULL DEFAULT 'crm_sync'",
+      "sourceRiskFlags": [],
+      "targetCandidate": "student_registration.source",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/colleges/college-contact-profile-model.ts",
+        "src/modules/colleges/college-contact-profile-service.ts",
+        "src/modules/courses/faculty-profile-teaching-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/colleges/college-contact-profile-model.ts",
+        "src/modules/colleges/college-contact-profile-service.ts",
+        "src/modules/courses/faculty-profile-teaching-model.ts"
+      ],
+      "semanticRisk": "Standard field mapping from legacy student_registration to student_registration.source.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "student_registration",
+      "sourceColumn": "synced_at",
+      "sourceType": "datetime",
+      "sourceDefinition": "datetime DEFAULT NULL",
+      "sourceRiskFlags": [
+        "TIMEZONE_AND_DEADLINE_SEMANTICS"
+      ],
+      "targetCandidate": "student_registration.synced_at",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/colleges/college-contact-profile-model.ts",
+        "src/modules/colleges/college-contact-profile-service.ts",
+        "src/modules/courses/faculty-profile-teaching-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/colleges/college-contact-profile-model.ts",
+        "src/modules/colleges/college-contact-profile-service.ts",
+        "src/modules/courses/faculty-profile-teaching-model.ts"
+      ],
+      "semanticRisk": "Datetime(6) semantics differ from timestamptz; vNext stores UTC.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "student_registration",
+      "sourceColumn": "metadata",
+      "sourceType": "json",
+      "sourceDefinition": "json DEFAULT NULL",
+      "sourceRiskFlags": [
+        "STRUCTURED_PAYLOAD_SEMANTIC_SCHEMA"
+      ],
+      "targetCandidate": "student_registration.metadata",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/colleges/college-contact-profile-model.ts",
+        "src/modules/colleges/college-contact-profile-service.ts",
+        "src/modules/courses/faculty-profile-teaching-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/colleges/college-contact-profile-model.ts",
+        "src/modules/colleges/college-contact-profile-service.ts",
+        "src/modules/courses/faculty-profile-teaching-model.ts"
+      ],
+      "semanticRisk": "JSON payload: vNext uses typed JSONB or separate normalized columns.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "student_registration",
+      "sourceColumn": "version",
+      "sourceType": "bigint",
+      "sourceDefinition": "bigint NOT NULL DEFAULT '0'",
+      "sourceRiskFlags": [],
+      "targetCandidate": "student_registration.version",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/colleges/college-contact-profile-model.ts",
+        "src/modules/colleges/college-contact-profile-service.ts",
+        "src/modules/courses/faculty-profile-teaching-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/colleges/college-contact-profile-model.ts",
+        "src/modules/colleges/college-contact-profile-service.ts",
+        "src/modules/courses/faculty-profile-teaching-model.ts"
+      ],
+      "semanticRisk": "Standard field mapping from legacy student_registration to student_registration.version.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "student_registration",
+      "sourceColumn": "created_at",
+      "sourceType": "datetime(6)",
+      "sourceDefinition": "datetime(6) DEFAULT NULL",
+      "sourceRiskFlags": [
+        "TIMEZONE_AND_DEADLINE_SEMANTICS"
+      ],
+      "targetCandidate": "student_registration.created_at",
+      "disposition": "PROPOSED_NORMALIZED_AUDIT_TIMESTAMP",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/colleges/college-contact-profile-model.ts",
+        "src/modules/colleges/college-contact-profile-service.ts",
+        "src/modules/courses/faculty-profile-teaching-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/colleges/college-contact-profile-model.ts",
+        "src/modules/colleges/college-contact-profile-service.ts",
+        "src/modules/courses/faculty-profile-teaching-model.ts"
+      ],
+      "semanticRisk": "Datetime(6) semantics differ from timestamptz; vNext stores UTC.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "student_registration",
+      "sourceColumn": "updated_at",
+      "sourceType": "datetime(6)",
+      "sourceDefinition": "datetime(6) DEFAULT NULL",
+      "sourceRiskFlags": [
+        "TIMEZONE_AND_DEADLINE_SEMANTICS"
+      ],
+      "targetCandidate": "student_registration.updated_at",
+      "disposition": "PROPOSED_NORMALIZED_AUDIT_TIMESTAMP",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/colleges/college-contact-profile-model.ts",
+        "src/modules/colleges/college-contact-profile-service.ts",
+        "src/modules/courses/faculty-profile-teaching-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/colleges/college-contact-profile-model.ts",
+        "src/modules/colleges/college-contact-profile-service.ts",
+        "src/modules/courses/faculty-profile-teaching-model.ts"
+      ],
+      "semanticRisk": "Datetime(6) semantics differ from timestamptz; vNext stores UTC.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "student_registration",
+      "sourceColumn": "is_deleted",
+      "sourceType": "bit(1)",
+      "sourceDefinition": "bit(1) NOT NULL DEFAULT b'0'",
+      "sourceRiskFlags": [],
+      "targetCandidate": "student_registration.is_deleted",
+      "disposition": "PROPOSED_REDESIGNED_SOFT_DELETE_PATTERN",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/colleges/college-contact-profile-model.ts",
+        "src/modules/colleges/college-contact-profile-service.ts",
+        "src/modules/courses/faculty-profile-teaching-model.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/colleges/college-contact-profile-model.ts",
+        "src/modules/colleges/college-contact-profile-service.ts",
+        "src/modules/courses/faculty-profile-teaching-model.ts"
+      ],
+      "semanticRisk": "Soft-delete pattern replaced by status enum or archived_at timestamp in vNext.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    }
+  ]
+}

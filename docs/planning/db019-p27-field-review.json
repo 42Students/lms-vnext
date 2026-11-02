@@ -1,0 +1,2637 @@
+{
+  "id": "DB19-P27",
+  "recordType": "DB19_PACKAGE_SOURCE_FIELD_REVIEW",
+  "sourceSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+  "sourceInventory": "docs/planning/db-pass4-columns-db10_shared_operations.json",
+  "originalFieldLedger": "docs/planning/database-parity-db10_shared_operations-field-ledger.json",
+  "sourceTables": [
+    "announcements",
+    "lms_notification_template",
+    "notification",
+    "notification_template",
+    "sms_delivery_log"
+  ],
+  "sourceFieldCount": 98,
+  "reviewedProposals": 98,
+  "runtimeVerifiedCount": 0,
+  "fieldDispositionApproval": "PENDING_PACKAGE_ACCEPTANCE",
+  "privacyBoundary": "DB19-P27 scoped source field disposition only. Global P31/P32 and DB020 remain open.",
+  "testEvidenceStatus": "SOURCE_QUALITY_GATE_ONLY_NOT_RUNTIME_CERTIFIED",
+  "pendingAcceptance": "Registered PG17 producer/consumer and runtime verification for all 98 fields.",
+  "fields": [
+    {
+      "sourceTable": "announcements",
+      "sourceColumn": "id",
+      "sourceType": "bigint",
+      "sourceDefinition": "bigint NOT NULL AUTO_INCREMENT",
+      "sourceRiskFlags": [
+        "INTEGER_KEY_TO_UUID_MAPPING"
+      ],
+      "targetCandidate": "announcements.id",
+      "disposition": "PROPOSED_NORMALIZED_UUID_PRIMARY_KEY",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/activity/learner-pinned-announcements-model.ts",
+        "src/modules/announcements/actor-status-model.ts",
+        "src/modules/announcements/admin-api-query.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/activity/learner-pinned-announcements-model.ts",
+        "src/modules/announcements/actor-status-model.ts",
+        "src/modules/announcements/admin-api-query.ts"
+      ],
+      "semanticRisk": "Legacy numeric ID maps to UUID in vNext; no old-row import needed for greenfield.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "announcements",
+      "sourceColumn": "created_at",
+      "sourceType": "datetime(6)",
+      "sourceDefinition": "datetime(6) DEFAULT NULL",
+      "sourceRiskFlags": [
+        "TIMEZONE_AND_DEADLINE_SEMANTICS"
+      ],
+      "targetCandidate": "announcements.created_at",
+      "disposition": "PROPOSED_NORMALIZED_AUDIT_TIMESTAMP",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/activity/learner-pinned-announcements-model.ts",
+        "src/modules/announcements/actor-status-model.ts",
+        "src/modules/announcements/admin-api-query.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/activity/learner-pinned-announcements-model.ts",
+        "src/modules/announcements/actor-status-model.ts",
+        "src/modules/announcements/admin-api-query.ts"
+      ],
+      "semanticRisk": "Datetime(6) semantics differ from timestamptz; vNext stores UTC.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "announcements",
+      "sourceColumn": "is_deleted",
+      "sourceType": "bit(1)",
+      "sourceDefinition": "bit(1) DEFAULT NULL",
+      "sourceRiskFlags": [],
+      "targetCandidate": "announcements.is_deleted",
+      "disposition": "PROPOSED_REDESIGNED_SOFT_DELETE_PATTERN",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/activity/learner-pinned-announcements-model.ts",
+        "src/modules/announcements/actor-status-model.ts",
+        "src/modules/announcements/admin-api-query.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/activity/learner-pinned-announcements-model.ts",
+        "src/modules/announcements/actor-status-model.ts",
+        "src/modules/announcements/admin-api-query.ts"
+      ],
+      "semanticRisk": "Soft-delete pattern replaced by status enum or archived_at timestamp in vNext.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "announcements",
+      "sourceColumn": "message",
+      "sourceType": "varchar(255)",
+      "sourceDefinition": "varchar(255) DEFAULT NULL",
+      "sourceRiskFlags": [],
+      "targetCandidate": "announcements.message",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/activity/learner-pinned-announcements-model.ts",
+        "src/modules/announcements/actor-status-model.ts",
+        "src/modules/announcements/admin-api-query.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/activity/learner-pinned-announcements-model.ts",
+        "src/modules/announcements/actor-status-model.ts",
+        "src/modules/announcements/admin-api-query.ts"
+      ],
+      "semanticRisk": "Standard field mapping from legacy announcements to announcements.message.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "announcements",
+      "sourceColumn": "receiver_type",
+      "sourceType": "varchar(255)",
+      "sourceDefinition": "varchar(255) DEFAULT NULL",
+      "sourceRiskFlags": [],
+      "targetCandidate": "announcements.receiver_type",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/activity/learner-pinned-announcements-model.ts",
+        "src/modules/announcements/actor-status-model.ts",
+        "src/modules/announcements/admin-api-query.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/activity/learner-pinned-announcements-model.ts",
+        "src/modules/announcements/actor-status-model.ts",
+        "src/modules/announcements/admin-api-query.ts"
+      ],
+      "semanticRisk": "Standard field mapping from legacy announcements to announcements.receiver_type.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "announcements",
+      "sourceColumn": "receiver_value",
+      "sourceType": "bigint",
+      "sourceDefinition": "bigint DEFAULT NULL",
+      "sourceRiskFlags": [],
+      "targetCandidate": "announcements.receiver_value",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/activity/learner-pinned-announcements-model.ts",
+        "src/modules/announcements/actor-status-model.ts",
+        "src/modules/announcements/admin-api-query.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/activity/learner-pinned-announcements-model.ts",
+        "src/modules/announcements/actor-status-model.ts",
+        "src/modules/announcements/admin-api-query.ts"
+      ],
+      "semanticRisk": "Standard field mapping from legacy announcements to announcements.receiver_value.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "announcements",
+      "sourceColumn": "sender_id",
+      "sourceType": "bigint",
+      "sourceDefinition": "bigint DEFAULT NULL",
+      "sourceRiskFlags": [
+        "INTEGER_KEY_TO_UUID_MAPPING"
+      ],
+      "targetCandidate": "announcements.sender_id",
+      "disposition": "PROPOSED_REGISTERED_WITH_UUID_NORMALIZATION",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/activity/learner-pinned-announcements-model.ts",
+        "src/modules/announcements/actor-status-model.ts",
+        "src/modules/announcements/admin-api-query.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/activity/learner-pinned-announcements-model.ts",
+        "src/modules/announcements/actor-status-model.ts",
+        "src/modules/announcements/admin-api-query.ts"
+      ],
+      "semanticRisk": "Legacy numeric ID maps to UUID in vNext; no old-row import needed for greenfield.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "announcements",
+      "sourceColumn": "sender_type",
+      "sourceType": "varchar(255)",
+      "sourceDefinition": "varchar(255) DEFAULT NULL",
+      "sourceRiskFlags": [],
+      "targetCandidate": "announcements.sender_type",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/activity/learner-pinned-announcements-model.ts",
+        "src/modules/announcements/actor-status-model.ts",
+        "src/modules/announcements/admin-api-query.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/activity/learner-pinned-announcements-model.ts",
+        "src/modules/announcements/actor-status-model.ts",
+        "src/modules/announcements/admin-api-query.ts"
+      ],
+      "semanticRisk": "Standard field mapping from legacy announcements to announcements.sender_type.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "announcements",
+      "sourceColumn": "title",
+      "sourceType": "varchar(255)",
+      "sourceDefinition": "varchar(255) DEFAULT NULL",
+      "sourceRiskFlags": [],
+      "targetCandidate": "announcements.title",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/activity/learner-pinned-announcements-model.ts",
+        "src/modules/announcements/actor-status-model.ts",
+        "src/modules/announcements/admin-api-query.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/activity/learner-pinned-announcements-model.ts",
+        "src/modules/announcements/actor-status-model.ts",
+        "src/modules/announcements/admin-api-query.ts"
+      ],
+      "semanticRisk": "Standard field mapping from legacy announcements to announcements.title.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "announcements",
+      "sourceColumn": "updated_at",
+      "sourceType": "datetime(6)",
+      "sourceDefinition": "datetime(6) DEFAULT NULL",
+      "sourceRiskFlags": [
+        "TIMEZONE_AND_DEADLINE_SEMANTICS"
+      ],
+      "targetCandidate": "announcements.updated_at",
+      "disposition": "PROPOSED_NORMALIZED_AUDIT_TIMESTAMP",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/activity/learner-pinned-announcements-model.ts",
+        "src/modules/announcements/actor-status-model.ts",
+        "src/modules/announcements/admin-api-query.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/activity/learner-pinned-announcements-model.ts",
+        "src/modules/announcements/actor-status-model.ts",
+        "src/modules/announcements/admin-api-query.ts"
+      ],
+      "semanticRisk": "Datetime(6) semantics differ from timestamptz; vNext stores UTC.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "announcements",
+      "sourceColumn": "scheduled_at",
+      "sourceType": "datetime",
+      "sourceDefinition": "datetime DEFAULT NULL",
+      "sourceRiskFlags": [
+        "TIMEZONE_AND_DEADLINE_SEMANTICS"
+      ],
+      "targetCandidate": "announcements.scheduled_at",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/activity/learner-pinned-announcements-model.ts",
+        "src/modules/announcements/actor-status-model.ts",
+        "src/modules/announcements/admin-api-query.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/activity/learner-pinned-announcements-model.ts",
+        "src/modules/announcements/actor-status-model.ts",
+        "src/modules/announcements/admin-api-query.ts"
+      ],
+      "semanticRisk": "Datetime(6) semantics differ from timestamptz; vNext stores UTC.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "announcements",
+      "sourceColumn": "expires_at",
+      "sourceType": "datetime",
+      "sourceDefinition": "datetime DEFAULT NULL",
+      "sourceRiskFlags": [
+        "TIMEZONE_AND_DEADLINE_SEMANTICS"
+      ],
+      "targetCandidate": "announcements.expires_at",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/activity/learner-pinned-announcements-model.ts",
+        "src/modules/announcements/actor-status-model.ts",
+        "src/modules/announcements/admin-api-query.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/activity/learner-pinned-announcements-model.ts",
+        "src/modules/announcements/actor-status-model.ts",
+        "src/modules/announcements/admin-api-query.ts"
+      ],
+      "semanticRisk": "Datetime(6) semantics differ from timestamptz; vNext stores UTC.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "announcements",
+      "sourceColumn": "is_pinned",
+      "sourceType": "tinyint(1)",
+      "sourceDefinition": "tinyint(1) NOT NULL DEFAULT '0'",
+      "sourceRiskFlags": [],
+      "targetCandidate": "announcements.is_pinned",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/activity/learner-pinned-announcements-model.ts",
+        "src/modules/announcements/actor-status-model.ts",
+        "src/modules/announcements/admin-api-query.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/activity/learner-pinned-announcements-model.ts",
+        "src/modules/announcements/actor-status-model.ts",
+        "src/modules/announcements/admin-api-query.ts"
+      ],
+      "semanticRisk": "Standard field mapping from legacy announcements to announcements.is_pinned.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "lms_notification_template",
+      "sourceColumn": "id",
+      "sourceType": "int",
+      "sourceDefinition": "int NOT NULL AUTO_INCREMENT",
+      "sourceRiskFlags": [
+        "INTEGER_KEY_TO_UUID_MAPPING"
+      ],
+      "targetCandidate": "lms_notification_template.id",
+      "disposition": "PROPOSED_NORMALIZED_UUID_PRIMARY_KEY",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/activity/learner-pinned-announcements-model.ts",
+        "src/modules/announcements/actor-status-model.ts",
+        "src/modules/announcements/admin-api-query.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/activity/learner-pinned-announcements-model.ts",
+        "src/modules/announcements/actor-status-model.ts",
+        "src/modules/announcements/admin-api-query.ts"
+      ],
+      "semanticRisk": "Legacy numeric ID maps to UUID in vNext; no old-row import needed for greenfield.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "lms_notification_template",
+      "sourceColumn": "created_at",
+      "sourceType": "datetime(6)",
+      "sourceDefinition": "datetime(6) DEFAULT NULL",
+      "sourceRiskFlags": [
+        "TIMEZONE_AND_DEADLINE_SEMANTICS"
+      ],
+      "targetCandidate": "lms_notification_template.created_at",
+      "disposition": "PROPOSED_NORMALIZED_AUDIT_TIMESTAMP",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/activity/learner-pinned-announcements-model.ts",
+        "src/modules/announcements/actor-status-model.ts",
+        "src/modules/announcements/admin-api-query.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/activity/learner-pinned-announcements-model.ts",
+        "src/modules/announcements/actor-status-model.ts",
+        "src/modules/announcements/admin-api-query.ts"
+      ],
+      "semanticRisk": "Datetime(6) semantics differ from timestamptz; vNext stores UTC.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "lms_notification_template",
+      "sourceColumn": "is_deleted",
+      "sourceType": "tinyint(1)",
+      "sourceDefinition": "tinyint(1) DEFAULT '0'",
+      "sourceRiskFlags": [],
+      "targetCandidate": "lms_notification_template.is_deleted",
+      "disposition": "PROPOSED_REDESIGNED_SOFT_DELETE_PATTERN",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/activity/learner-pinned-announcements-model.ts",
+        "src/modules/announcements/actor-status-model.ts",
+        "src/modules/announcements/admin-api-query.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/activity/learner-pinned-announcements-model.ts",
+        "src/modules/announcements/actor-status-model.ts",
+        "src/modules/announcements/admin-api-query.ts"
+      ],
+      "semanticRisk": "Soft-delete pattern replaced by status enum or archived_at timestamp in vNext.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "lms_notification_template",
+      "sourceColumn": "updated_at",
+      "sourceType": "datetime(6)",
+      "sourceDefinition": "datetime(6) DEFAULT NULL",
+      "sourceRiskFlags": [
+        "TIMEZONE_AND_DEADLINE_SEMANTICS"
+      ],
+      "targetCandidate": "lms_notification_template.updated_at",
+      "disposition": "PROPOSED_NORMALIZED_AUDIT_TIMESTAMP",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/activity/learner-pinned-announcements-model.ts",
+        "src/modules/announcements/actor-status-model.ts",
+        "src/modules/announcements/admin-api-query.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/activity/learner-pinned-announcements-model.ts",
+        "src/modules/announcements/actor-status-model.ts",
+        "src/modules/announcements/admin-api-query.ts"
+      ],
+      "semanticRisk": "Datetime(6) semantics differ from timestamptz; vNext stores UTC.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "lms_notification_template",
+      "sourceColumn": "action_url",
+      "sourceType": "varchar(500)",
+      "sourceDefinition": "varchar(500) DEFAULT NULL",
+      "sourceRiskFlags": [],
+      "targetCandidate": "lms_notification_template.action_url",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/activity/learner-pinned-announcements-model.ts",
+        "src/modules/announcements/actor-status-model.ts",
+        "src/modules/announcements/admin-api-query.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/activity/learner-pinned-announcements-model.ts",
+        "src/modules/announcements/actor-status-model.ts",
+        "src/modules/announcements/admin-api-query.ts"
+      ],
+      "semanticRisk": "Standard field mapping from legacy lms_notification_template to lms_notification_template.action_url.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "lms_notification_template",
+      "sourceColumn": "body",
+      "sourceType": "text",
+      "sourceDefinition": "text NOT NULL",
+      "sourceRiskFlags": [],
+      "targetCandidate": "lms_notification_template.body",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/activity/learner-pinned-announcements-model.ts",
+        "src/modules/announcements/actor-status-model.ts",
+        "src/modules/announcements/admin-api-query.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/activity/learner-pinned-announcements-model.ts",
+        "src/modules/announcements/actor-status-model.ts",
+        "src/modules/announcements/admin-api-query.ts"
+      ],
+      "semanticRisk": "Standard field mapping from legacy lms_notification_template to lms_notification_template.body.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "lms_notification_template",
+      "sourceColumn": "channel",
+      "sourceType": "varchar(20)",
+      "sourceDefinition": "varchar(20) NOT NULL",
+      "sourceRiskFlags": [],
+      "targetCandidate": "lms_notification_template.channel",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/activity/learner-pinned-announcements-model.ts",
+        "src/modules/announcements/actor-status-model.ts",
+        "src/modules/announcements/admin-api-query.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/activity/learner-pinned-announcements-model.ts",
+        "src/modules/announcements/actor-status-model.ts",
+        "src/modules/announcements/admin-api-query.ts"
+      ],
+      "semanticRisk": "Standard field mapping from legacy lms_notification_template to lms_notification_template.channel.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "lms_notification_template",
+      "sourceColumn": "created_by",
+      "sourceType": "int",
+      "sourceDefinition": "int DEFAULT NULL",
+      "sourceRiskFlags": [],
+      "targetCandidate": "lms_notification_template.created_by",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/activity/learner-pinned-announcements-model.ts",
+        "src/modules/announcements/actor-status-model.ts",
+        "src/modules/announcements/admin-api-query.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/activity/learner-pinned-announcements-model.ts",
+        "src/modules/announcements/actor-status-model.ts",
+        "src/modules/announcements/admin-api-query.ts"
+      ],
+      "semanticRisk": "Standard field mapping from legacy lms_notification_template to lms_notification_template.created_by.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "lms_notification_template",
+      "sourceColumn": "description",
+      "sourceType": "varchar(500)",
+      "sourceDefinition": "varchar(500) DEFAULT NULL",
+      "sourceRiskFlags": [],
+      "targetCandidate": "lms_notification_template.description",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/activity/learner-pinned-announcements-model.ts",
+        "src/modules/announcements/actor-status-model.ts",
+        "src/modules/announcements/admin-api-query.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/activity/learner-pinned-announcements-model.ts",
+        "src/modules/announcements/actor-status-model.ts",
+        "src/modules/announcements/admin-api-query.ts"
+      ],
+      "semanticRisk": "Standard field mapping from legacy lms_notification_template to lms_notification_template.description.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "lms_notification_template",
+      "sourceColumn": "dlt_entity_id",
+      "sourceType": "varchar(100)",
+      "sourceDefinition": "varchar(100) DEFAULT NULL",
+      "sourceRiskFlags": [],
+      "targetCandidate": "lms_notification_template.dlt_entity_id",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/activity/learner-pinned-announcements-model.ts",
+        "src/modules/announcements/actor-status-model.ts",
+        "src/modules/announcements/admin-api-query.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/activity/learner-pinned-announcements-model.ts",
+        "src/modules/announcements/actor-status-model.ts",
+        "src/modules/announcements/admin-api-query.ts"
+      ],
+      "semanticRisk": "Standard field mapping from legacy lms_notification_template to lms_notification_template.dlt_entity_id.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "lms_notification_template",
+      "sourceColumn": "dlt_template_id",
+      "sourceType": "varchar(100)",
+      "sourceDefinition": "varchar(100) DEFAULT NULL",
+      "sourceRiskFlags": [],
+      "targetCandidate": "lms_notification_template.dlt_template_id",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/activity/learner-pinned-announcements-model.ts",
+        "src/modules/announcements/actor-status-model.ts",
+        "src/modules/announcements/admin-api-query.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/activity/learner-pinned-announcements-model.ts",
+        "src/modules/announcements/actor-status-model.ts",
+        "src/modules/announcements/admin-api-query.ts"
+      ],
+      "semanticRisk": "Standard field mapping from legacy lms_notification_template to lms_notification_template.dlt_template_id.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "lms_notification_template",
+      "sourceColumn": "example_data",
+      "sourceType": "json",
+      "sourceDefinition": "json DEFAULT NULL",
+      "sourceRiskFlags": [
+        "STRUCTURED_PAYLOAD_SEMANTIC_SCHEMA"
+      ],
+      "targetCandidate": "lms_notification_template.example_data",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/activity/learner-pinned-announcements-model.ts",
+        "src/modules/announcements/actor-status-model.ts",
+        "src/modules/announcements/admin-api-query.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/activity/learner-pinned-announcements-model.ts",
+        "src/modules/announcements/actor-status-model.ts",
+        "src/modules/announcements/admin-api-query.ts"
+      ],
+      "semanticRisk": "JSON payload: vNext uses typed JSONB or separate normalized columns.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "lms_notification_template",
+      "sourceColumn": "external_template_id",
+      "sourceType": "varchar(200)",
+      "sourceDefinition": "varchar(200) DEFAULT NULL",
+      "sourceRiskFlags": [],
+      "targetCandidate": "lms_notification_template.external_template_id",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/activity/learner-pinned-announcements-model.ts",
+        "src/modules/announcements/actor-status-model.ts",
+        "src/modules/announcements/admin-api-query.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/activity/learner-pinned-announcements-model.ts",
+        "src/modules/announcements/actor-status-model.ts",
+        "src/modules/announcements/admin-api-query.ts"
+      ],
+      "semanticRisk": "Standard field mapping from legacy lms_notification_template to lms_notification_template.external_template_id.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "lms_notification_template",
+      "sourceColumn": "html_body",
+      "sourceType": "text",
+      "sourceDefinition": "text",
+      "sourceRiskFlags": [],
+      "targetCandidate": "lms_notification_template.html_body",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/activity/learner-pinned-announcements-model.ts",
+        "src/modules/announcements/actor-status-model.ts",
+        "src/modules/announcements/admin-api-query.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/activity/learner-pinned-announcements-model.ts",
+        "src/modules/announcements/actor-status-model.ts",
+        "src/modules/announcements/admin-api-query.ts"
+      ],
+      "semanticRisk": "Standard field mapping from legacy lms_notification_template to lms_notification_template.html_body.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "lms_notification_template",
+      "sourceColumn": "icon",
+      "sourceType": "varchar(50)",
+      "sourceDefinition": "varchar(50) DEFAULT NULL",
+      "sourceRiskFlags": [],
+      "targetCandidate": "lms_notification_template.icon",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/activity/learner-pinned-announcements-model.ts",
+        "src/modules/announcements/actor-status-model.ts",
+        "src/modules/announcements/admin-api-query.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/activity/learner-pinned-announcements-model.ts",
+        "src/modules/announcements/actor-status-model.ts",
+        "src/modules/announcements/admin-api-query.ts"
+      ],
+      "semanticRisk": "Standard field mapping from legacy lms_notification_template to lms_notification_template.icon.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "lms_notification_template",
+      "sourceColumn": "is_active",
+      "sourceType": "bit(1)",
+      "sourceDefinition": "bit(1) DEFAULT NULL",
+      "sourceRiskFlags": [],
+      "targetCandidate": "lms_notification_template.is_active",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/activity/learner-pinned-announcements-model.ts",
+        "src/modules/announcements/actor-status-model.ts",
+        "src/modules/announcements/admin-api-query.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/activity/learner-pinned-announcements-model.ts",
+        "src/modules/announcements/actor-status-model.ts",
+        "src/modules/announcements/admin-api-query.ts"
+      ],
+      "semanticRisk": "Standard field mapping from legacy lms_notification_template to lms_notification_template.is_active.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "lms_notification_template",
+      "sourceColumn": "is_default",
+      "sourceType": "bit(1)",
+      "sourceDefinition": "bit(1) DEFAULT NULL",
+      "sourceRiskFlags": [],
+      "targetCandidate": "lms_notification_template.is_default",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/activity/learner-pinned-announcements-model.ts",
+        "src/modules/announcements/actor-status-model.ts",
+        "src/modules/announcements/admin-api-query.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/activity/learner-pinned-announcements-model.ts",
+        "src/modules/announcements/actor-status-model.ts",
+        "src/modules/announcements/admin-api-query.ts"
+      ],
+      "semanticRisk": "Standard field mapping from legacy lms_notification_template to lms_notification_template.is_default.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "lms_notification_template",
+      "sourceColumn": "is_dlt_compliant",
+      "sourceType": "bit(1)",
+      "sourceDefinition": "bit(1) DEFAULT NULL",
+      "sourceRiskFlags": [],
+      "targetCandidate": "lms_notification_template.is_dlt_compliant",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/activity/learner-pinned-announcements-model.ts",
+        "src/modules/announcements/actor-status-model.ts",
+        "src/modules/announcements/admin-api-query.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/activity/learner-pinned-announcements-model.ts",
+        "src/modules/announcements/actor-status-model.ts",
+        "src/modules/announcements/admin-api-query.ts"
+      ],
+      "semanticRisk": "Standard field mapping from legacy lms_notification_template to lms_notification_template.is_dlt_compliant.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "lms_notification_template",
+      "sourceColumn": "is_sample",
+      "sourceType": "bit(1)",
+      "sourceDefinition": "bit(1) DEFAULT NULL",
+      "sourceRiskFlags": [],
+      "targetCandidate": "lms_notification_template.is_sample",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/activity/learner-pinned-announcements-model.ts",
+        "src/modules/announcements/actor-status-model.ts",
+        "src/modules/announcements/admin-api-query.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/activity/learner-pinned-announcements-model.ts",
+        "src/modules/announcements/actor-status-model.ts",
+        "src/modules/announcements/admin-api-query.ts"
+      ],
+      "semanticRisk": "Standard field mapping from legacy lms_notification_template to lms_notification_template.is_sample.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "lms_notification_template",
+      "sourceColumn": "language",
+      "sourceType": "varchar(10)",
+      "sourceDefinition": "varchar(10) DEFAULT NULL",
+      "sourceRiskFlags": [],
+      "targetCandidate": "lms_notification_template.language",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/activity/learner-pinned-announcements-model.ts",
+        "src/modules/announcements/actor-status-model.ts",
+        "src/modules/announcements/admin-api-query.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/activity/learner-pinned-announcements-model.ts",
+        "src/modules/announcements/actor-status-model.ts",
+        "src/modules/announcements/admin-api-query.ts"
+      ],
+      "semanticRisk": "Standard field mapping from legacy lms_notification_template to lms_notification_template.language.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "lms_notification_template",
+      "sourceColumn": "merge_variable_mapping",
+      "sourceType": "json",
+      "sourceDefinition": "json DEFAULT NULL",
+      "sourceRiskFlags": [
+        "STRUCTURED_PAYLOAD_SEMANTIC_SCHEMA"
+      ],
+      "targetCandidate": "lms_notification_template.merge_variable_mapping",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/activity/learner-pinned-announcements-model.ts",
+        "src/modules/announcements/actor-status-model.ts",
+        "src/modules/announcements/admin-api-query.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/activity/learner-pinned-announcements-model.ts",
+        "src/modules/announcements/actor-status-model.ts",
+        "src/modules/announcements/admin-api-query.ts"
+      ],
+      "semanticRisk": "JSON payload: vNext uses typed JSONB or separate normalized columns.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "lms_notification_template",
+      "sourceColumn": "notification_type",
+      "sourceType": "varchar(50)",
+      "sourceDefinition": "varchar(50) DEFAULT NULL",
+      "sourceRiskFlags": [],
+      "targetCandidate": "lms_notification_template.notification_type",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/activity/learner-pinned-announcements-model.ts",
+        "src/modules/announcements/actor-status-model.ts",
+        "src/modules/announcements/admin-api-query.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/activity/learner-pinned-announcements-model.ts",
+        "src/modules/announcements/actor-status-model.ts",
+        "src/modules/announcements/admin-api-query.ts"
+      ],
+      "semanticRisk": "Standard field mapping from legacy lms_notification_template to lms_notification_template.notification_type.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "lms_notification_template",
+      "sourceColumn": "sms_variable_format",
+      "sourceType": "varchar(50)",
+      "sourceDefinition": "varchar(50) DEFAULT NULL",
+      "sourceRiskFlags": [],
+      "targetCandidate": "lms_notification_template.sms_variable_format",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/activity/learner-pinned-announcements-model.ts",
+        "src/modules/announcements/actor-status-model.ts",
+        "src/modules/announcements/admin-api-query.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/activity/learner-pinned-announcements-model.ts",
+        "src/modules/announcements/actor-status-model.ts",
+        "src/modules/announcements/admin-api-query.ts"
+      ],
+      "semanticRisk": "Standard field mapping from legacy lms_notification_template to lms_notification_template.sms_variable_format.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "lms_notification_template",
+      "sourceColumn": "subject",
+      "sourceType": "varchar(500)",
+      "sourceDefinition": "varchar(500) DEFAULT NULL",
+      "sourceRiskFlags": [],
+      "targetCandidate": "lms_notification_template.subject",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/activity/learner-pinned-announcements-model.ts",
+        "src/modules/announcements/actor-status-model.ts",
+        "src/modules/announcements/admin-api-query.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/activity/learner-pinned-announcements-model.ts",
+        "src/modules/announcements/actor-status-model.ts",
+        "src/modules/announcements/admin-api-query.ts"
+      ],
+      "semanticRisk": "Standard field mapping from legacy lms_notification_template to lms_notification_template.subject.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "lms_notification_template",
+      "sourceColumn": "template_key",
+      "sourceType": "varchar(100)",
+      "sourceDefinition": "varchar(100) NOT NULL",
+      "sourceRiskFlags": [],
+      "targetCandidate": "lms_notification_template.template_key",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/activity/learner-pinned-announcements-model.ts",
+        "src/modules/announcements/actor-status-model.ts",
+        "src/modules/announcements/admin-api-query.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/activity/learner-pinned-announcements-model.ts",
+        "src/modules/announcements/actor-status-model.ts",
+        "src/modules/announcements/admin-api-query.ts"
+      ],
+      "semanticRisk": "Standard field mapping from legacy lms_notification_template to lms_notification_template.template_key.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "lms_notification_template",
+      "sourceColumn": "updated_by",
+      "sourceType": "int",
+      "sourceDefinition": "int DEFAULT NULL",
+      "sourceRiskFlags": [],
+      "targetCandidate": "lms_notification_template.updated_by",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/activity/learner-pinned-announcements-model.ts",
+        "src/modules/announcements/actor-status-model.ts",
+        "src/modules/announcements/admin-api-query.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/activity/learner-pinned-announcements-model.ts",
+        "src/modules/announcements/actor-status-model.ts",
+        "src/modules/announcements/admin-api-query.ts"
+      ],
+      "semanticRisk": "Standard field mapping from legacy lms_notification_template to lms_notification_template.updated_by.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "lms_notification_template",
+      "sourceColumn": "variable_schema",
+      "sourceType": "json",
+      "sourceDefinition": "json DEFAULT NULL",
+      "sourceRiskFlags": [
+        "STRUCTURED_PAYLOAD_SEMANTIC_SCHEMA"
+      ],
+      "targetCandidate": "lms_notification_template.variable_schema",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/activity/learner-pinned-announcements-model.ts",
+        "src/modules/announcements/actor-status-model.ts",
+        "src/modules/announcements/admin-api-query.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/activity/learner-pinned-announcements-model.ts",
+        "src/modules/announcements/actor-status-model.ts",
+        "src/modules/announcements/admin-api-query.ts"
+      ],
+      "semanticRisk": "JSON payload: vNext uses typed JSONB or separate normalized columns.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "lms_notification_template",
+      "sourceColumn": "version",
+      "sourceType": "int",
+      "sourceDefinition": "int DEFAULT NULL",
+      "sourceRiskFlags": [],
+      "targetCandidate": "lms_notification_template.version",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/activity/learner-pinned-announcements-model.ts",
+        "src/modules/announcements/actor-status-model.ts",
+        "src/modules/announcements/admin-api-query.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/activity/learner-pinned-announcements-model.ts",
+        "src/modules/announcements/actor-status-model.ts",
+        "src/modules/announcements/admin-api-query.ts"
+      ],
+      "semanticRisk": "Standard field mapping from legacy lms_notification_template to lms_notification_template.version.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "notification",
+      "sourceColumn": "id",
+      "sourceType": "int",
+      "sourceDefinition": "int NOT NULL AUTO_INCREMENT",
+      "sourceRiskFlags": [
+        "INTEGER_KEY_TO_UUID_MAPPING"
+      ],
+      "targetCandidate": "notification.id",
+      "disposition": "PROPOSED_NORMALIZED_UUID_PRIMARY_KEY",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/activity/learner-pinned-announcements-model.ts",
+        "src/modules/announcements/actor-status-model.ts",
+        "src/modules/announcements/admin-api-query.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/activity/learner-pinned-announcements-model.ts",
+        "src/modules/announcements/actor-status-model.ts",
+        "src/modules/announcements/admin-api-query.ts"
+      ],
+      "semanticRisk": "Legacy numeric ID maps to UUID in vNext; no old-row import needed for greenfield.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "notification",
+      "sourceColumn": "created_at",
+      "sourceType": "datetime(6)",
+      "sourceDefinition": "datetime(6) DEFAULT NULL",
+      "sourceRiskFlags": [
+        "TIMEZONE_AND_DEADLINE_SEMANTICS"
+      ],
+      "targetCandidate": "notification.created_at",
+      "disposition": "PROPOSED_NORMALIZED_AUDIT_TIMESTAMP",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/activity/learner-pinned-announcements-model.ts",
+        "src/modules/announcements/actor-status-model.ts",
+        "src/modules/announcements/admin-api-query.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/activity/learner-pinned-announcements-model.ts",
+        "src/modules/announcements/actor-status-model.ts",
+        "src/modules/announcements/admin-api-query.ts"
+      ],
+      "semanticRisk": "Datetime(6) semantics differ from timestamptz; vNext stores UTC.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "notification",
+      "sourceColumn": "is_deleted",
+      "sourceType": "tinyint(1)",
+      "sourceDefinition": "tinyint(1) DEFAULT '0'",
+      "sourceRiskFlags": [],
+      "targetCandidate": "notification.is_deleted",
+      "disposition": "PROPOSED_REDESIGNED_SOFT_DELETE_PATTERN",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/activity/learner-pinned-announcements-model.ts",
+        "src/modules/announcements/actor-status-model.ts",
+        "src/modules/announcements/admin-api-query.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/activity/learner-pinned-announcements-model.ts",
+        "src/modules/announcements/actor-status-model.ts",
+        "src/modules/announcements/admin-api-query.ts"
+      ],
+      "semanticRisk": "Soft-delete pattern replaced by status enum or archived_at timestamp in vNext.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "notification",
+      "sourceColumn": "updated_at",
+      "sourceType": "datetime(6)",
+      "sourceDefinition": "datetime(6) DEFAULT NULL",
+      "sourceRiskFlags": [
+        "TIMEZONE_AND_DEADLINE_SEMANTICS"
+      ],
+      "targetCandidate": "notification.updated_at",
+      "disposition": "PROPOSED_NORMALIZED_AUDIT_TIMESTAMP",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/activity/learner-pinned-announcements-model.ts",
+        "src/modules/announcements/actor-status-model.ts",
+        "src/modules/announcements/admin-api-query.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/activity/learner-pinned-announcements-model.ts",
+        "src/modules/announcements/actor-status-model.ts",
+        "src/modules/announcements/admin-api-query.ts"
+      ],
+      "semanticRisk": "Datetime(6) semantics differ from timestamptz; vNext stores UTC.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "notification",
+      "sourceColumn": "class_id",
+      "sourceType": "int",
+      "sourceDefinition": "int DEFAULT NULL",
+      "sourceRiskFlags": [
+        "INTEGER_KEY_TO_UUID_MAPPING"
+      ],
+      "targetCandidate": "notification.class_id",
+      "disposition": "PROPOSED_REGISTERED_WITH_UUID_NORMALIZATION",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/activity/learner-pinned-announcements-model.ts",
+        "src/modules/announcements/actor-status-model.ts",
+        "src/modules/announcements/admin-api-query.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/activity/learner-pinned-announcements-model.ts",
+        "src/modules/announcements/actor-status-model.ts",
+        "src/modules/announcements/admin-api-query.ts"
+      ],
+      "semanticRisk": "Legacy numeric ID maps to UUID in vNext; no old-row import needed for greenfield.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "notification",
+      "sourceColumn": "course_id",
+      "sourceType": "int",
+      "sourceDefinition": "int DEFAULT NULL",
+      "sourceRiskFlags": [
+        "INTEGER_KEY_TO_UUID_MAPPING"
+      ],
+      "targetCandidate": "notification.course_id",
+      "disposition": "PROPOSED_REGISTERED_WITH_UUID_NORMALIZATION",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/activity/learner-pinned-announcements-model.ts",
+        "src/modules/announcements/actor-status-model.ts",
+        "src/modules/announcements/admin-api-query.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/activity/learner-pinned-announcements-model.ts",
+        "src/modules/announcements/actor-status-model.ts",
+        "src/modules/announcements/admin-api-query.ts"
+      ],
+      "semanticRisk": "Legacy numeric ID maps to UUID in vNext; no old-row import needed for greenfield.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "notification",
+      "sourceColumn": "learner_id",
+      "sourceType": "int",
+      "sourceDefinition": "int DEFAULT NULL",
+      "sourceRiskFlags": [
+        "INTEGER_KEY_TO_UUID_MAPPING"
+      ],
+      "targetCandidate": "notification.learner_id",
+      "disposition": "PROPOSED_REGISTERED_WITH_UUID_NORMALIZATION",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/activity/learner-pinned-announcements-model.ts",
+        "src/modules/announcements/actor-status-model.ts",
+        "src/modules/announcements/admin-api-query.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/activity/learner-pinned-announcements-model.ts",
+        "src/modules/announcements/actor-status-model.ts",
+        "src/modules/announcements/admin-api-query.ts"
+      ],
+      "semanticRisk": "Legacy numeric ID maps to UUID in vNext; no old-row import needed for greenfield.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "notification",
+      "sourceColumn": "is_read",
+      "sourceType": "bit(1)",
+      "sourceDefinition": "bit(1) DEFAULT NULL",
+      "sourceRiskFlags": [],
+      "targetCandidate": "notification.is_read",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/activity/learner-pinned-announcements-model.ts",
+        "src/modules/announcements/actor-status-model.ts",
+        "src/modules/announcements/admin-api-query.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/activity/learner-pinned-announcements-model.ts",
+        "src/modules/announcements/actor-status-model.ts",
+        "src/modules/announcements/admin-api-query.ts"
+      ],
+      "semanticRisk": "Standard field mapping from legacy notification to notification.is_read.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "notification",
+      "sourceColumn": "message",
+      "sourceType": "varchar(255)",
+      "sourceDefinition": "varchar(255) DEFAULT NULL",
+      "sourceRiskFlags": [],
+      "targetCandidate": "notification.message",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/activity/learner-pinned-announcements-model.ts",
+        "src/modules/announcements/actor-status-model.ts",
+        "src/modules/announcements/admin-api-query.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/activity/learner-pinned-announcements-model.ts",
+        "src/modules/announcements/actor-status-model.ts",
+        "src/modules/announcements/admin-api-query.ts"
+      ],
+      "semanticRisk": "Standard field mapping from legacy notification to notification.message.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "notification",
+      "sourceColumn": "title",
+      "sourceType": "varchar(255)",
+      "sourceDefinition": "varchar(255) DEFAULT NULL",
+      "sourceRiskFlags": [],
+      "targetCandidate": "notification.title",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/activity/learner-pinned-announcements-model.ts",
+        "src/modules/announcements/actor-status-model.ts",
+        "src/modules/announcements/admin-api-query.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/activity/learner-pinned-announcements-model.ts",
+        "src/modules/announcements/actor-status-model.ts",
+        "src/modules/announcements/admin-api-query.ts"
+      ],
+      "semanticRisk": "Standard field mapping from legacy notification to notification.title.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "notification",
+      "sourceColumn": "context_label",
+      "sourceType": "varchar(255)",
+      "sourceDefinition": "varchar(255) DEFAULT NULL",
+      "sourceRiskFlags": [],
+      "targetCandidate": "notification.context_label",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/activity/learner-pinned-announcements-model.ts",
+        "src/modules/announcements/actor-status-model.ts",
+        "src/modules/announcements/admin-api-query.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/activity/learner-pinned-announcements-model.ts",
+        "src/modules/announcements/actor-status-model.ts",
+        "src/modules/announcements/admin-api-query.ts"
+      ],
+      "semanticRisk": "Standard field mapping from legacy notification to notification.context_label.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "notification",
+      "sourceColumn": "notification_type",
+      "sourceType": "varchar(20)",
+      "sourceDefinition": "varchar(20) DEFAULT NULL",
+      "sourceRiskFlags": [],
+      "targetCandidate": "notification.notification_type",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/activity/learner-pinned-announcements-model.ts",
+        "src/modules/announcements/actor-status-model.ts",
+        "src/modules/announcements/admin-api-query.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/activity/learner-pinned-announcements-model.ts",
+        "src/modules/announcements/actor-status-model.ts",
+        "src/modules/announcements/admin-api-query.ts"
+      ],
+      "semanticRisk": "Standard field mapping from legacy notification to notification.notification_type.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "notification",
+      "sourceColumn": "application_id",
+      "sourceType": "int",
+      "sourceDefinition": "int DEFAULT NULL",
+      "sourceRiskFlags": [
+        "INTEGER_KEY_TO_UUID_MAPPING"
+      ],
+      "targetCandidate": "notification.application_id",
+      "disposition": "PROPOSED_REGISTERED_WITH_UUID_NORMALIZATION",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/activity/learner-pinned-announcements-model.ts",
+        "src/modules/announcements/actor-status-model.ts",
+        "src/modules/announcements/admin-api-query.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/activity/learner-pinned-announcements-model.ts",
+        "src/modules/announcements/actor-status-model.ts",
+        "src/modules/announcements/admin-api-query.ts"
+      ],
+      "semanticRisk": "Legacy numeric ID maps to UUID in vNext; no old-row import needed for greenfield.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "notification",
+      "sourceColumn": "job_id",
+      "sourceType": "int",
+      "sourceDefinition": "int DEFAULT NULL",
+      "sourceRiskFlags": [
+        "INTEGER_KEY_TO_UUID_MAPPING"
+      ],
+      "targetCandidate": "notification.job_id",
+      "disposition": "PROPOSED_REGISTERED_WITH_UUID_NORMALIZATION",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/activity/learner-pinned-announcements-model.ts",
+        "src/modules/announcements/actor-status-model.ts",
+        "src/modules/announcements/admin-api-query.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/activity/learner-pinned-announcements-model.ts",
+        "src/modules/announcements/actor-status-model.ts",
+        "src/modules/announcements/admin-api-query.ts"
+      ],
+      "semanticRisk": "Legacy numeric ID maps to UUID in vNext; no old-row import needed for greenfield.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "notification",
+      "sourceColumn": "assessment_url",
+      "sourceType": "varchar(2048)",
+      "sourceDefinition": "varchar(2048) DEFAULT NULL",
+      "sourceRiskFlags": [],
+      "targetCandidate": "notification.assessment_url",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/activity/learner-pinned-announcements-model.ts",
+        "src/modules/announcements/actor-status-model.ts",
+        "src/modules/announcements/admin-api-query.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/activity/learner-pinned-announcements-model.ts",
+        "src/modules/announcements/actor-status-model.ts",
+        "src/modules/announcements/admin-api-query.ts"
+      ],
+      "semanticRisk": "Standard field mapping from legacy notification to notification.assessment_url.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "notification",
+      "sourceColumn": "interview_id",
+      "sourceType": "int",
+      "sourceDefinition": "int DEFAULT NULL",
+      "sourceRiskFlags": [
+        "INTEGER_KEY_TO_UUID_MAPPING"
+      ],
+      "targetCandidate": "notification.interview_id",
+      "disposition": "PROPOSED_REGISTERED_WITH_UUID_NORMALIZATION",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/activity/learner-pinned-announcements-model.ts",
+        "src/modules/announcements/actor-status-model.ts",
+        "src/modules/announcements/admin-api-query.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/activity/learner-pinned-announcements-model.ts",
+        "src/modules/announcements/actor-status-model.ts",
+        "src/modules/announcements/admin-api-query.ts"
+      ],
+      "semanticRisk": "Legacy numeric ID maps to UUID in vNext; no old-row import needed for greenfield.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "notification",
+      "sourceColumn": "creator_faculty_id",
+      "sourceType": "int",
+      "sourceDefinition": "int DEFAULT NULL",
+      "sourceRiskFlags": [
+        "INTEGER_KEY_TO_UUID_MAPPING"
+      ],
+      "targetCandidate": "notification.creator_faculty_id",
+      "disposition": "PROPOSED_REGISTERED_WITH_UUID_NORMALIZATION",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/activity/learner-pinned-announcements-model.ts",
+        "src/modules/announcements/actor-status-model.ts",
+        "src/modules/announcements/admin-api-query.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/activity/learner-pinned-announcements-model.ts",
+        "src/modules/announcements/actor-status-model.ts",
+        "src/modules/announcements/admin-api-query.ts"
+      ],
+      "semanticRisk": "Legacy numeric ID maps to UUID in vNext; no old-row import needed for greenfield.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "notification",
+      "sourceColumn": "scheduled_at",
+      "sourceType": "datetime",
+      "sourceDefinition": "datetime DEFAULT NULL",
+      "sourceRiskFlags": [
+        "TIMEZONE_AND_DEADLINE_SEMANTICS"
+      ],
+      "targetCandidate": "notification.scheduled_at",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/activity/learner-pinned-announcements-model.ts",
+        "src/modules/announcements/actor-status-model.ts",
+        "src/modules/announcements/admin-api-query.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/activity/learner-pinned-announcements-model.ts",
+        "src/modules/announcements/actor-status-model.ts",
+        "src/modules/announcements/admin-api-query.ts"
+      ],
+      "semanticRisk": "Datetime(6) semantics differ from timestamptz; vNext stores UTC.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "notification",
+      "sourceColumn": "delivery_status",
+      "sourceType": "varchar(20)",
+      "sourceDefinition": "varchar(20) DEFAULT NULL",
+      "sourceRiskFlags": [],
+      "targetCandidate": "notification.delivery_status",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/activity/learner-pinned-announcements-model.ts",
+        "src/modules/announcements/actor-status-model.ts",
+        "src/modules/announcements/admin-api-query.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/activity/learner-pinned-announcements-model.ts",
+        "src/modules/announcements/actor-status-model.ts",
+        "src/modules/announcements/admin-api-query.ts"
+      ],
+      "semanticRisk": "Standard field mapping from legacy notification to notification.delivery_status.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "notification",
+      "sourceColumn": "delivery_error",
+      "sourceType": "varchar(500)",
+      "sourceDefinition": "varchar(500) DEFAULT NULL",
+      "sourceRiskFlags": [],
+      "targetCandidate": "notification.delivery_error",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/activity/learner-pinned-announcements-model.ts",
+        "src/modules/announcements/actor-status-model.ts",
+        "src/modules/announcements/admin-api-query.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/activity/learner-pinned-announcements-model.ts",
+        "src/modules/announcements/actor-status-model.ts",
+        "src/modules/announcements/admin-api-query.ts"
+      ],
+      "semanticRisk": "Standard field mapping from legacy notification to notification.delivery_error.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "notification",
+      "sourceColumn": "delivered_at",
+      "sourceType": "datetime",
+      "sourceDefinition": "datetime DEFAULT NULL",
+      "sourceRiskFlags": [
+        "TIMEZONE_AND_DEADLINE_SEMANTICS"
+      ],
+      "targetCandidate": "notification.delivered_at",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/activity/learner-pinned-announcements-model.ts",
+        "src/modules/announcements/actor-status-model.ts",
+        "src/modules/announcements/admin-api-query.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/activity/learner-pinned-announcements-model.ts",
+        "src/modules/announcements/actor-status-model.ts",
+        "src/modules/announcements/admin-api-query.ts"
+      ],
+      "semanticRisk": "Datetime(6) semantics differ from timestamptz; vNext stores UTC.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "notification_template",
+      "sourceColumn": "id",
+      "sourceType": "int",
+      "sourceDefinition": "int NOT NULL AUTO_INCREMENT",
+      "sourceRiskFlags": [
+        "INTEGER_KEY_TO_UUID_MAPPING"
+      ],
+      "targetCandidate": "notification_template.id",
+      "disposition": "PROPOSED_NORMALIZED_UUID_PRIMARY_KEY",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/activity/learner-pinned-announcements-model.ts",
+        "src/modules/announcements/actor-status-model.ts",
+        "src/modules/announcements/admin-api-query.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/activity/learner-pinned-announcements-model.ts",
+        "src/modules/announcements/actor-status-model.ts",
+        "src/modules/announcements/admin-api-query.ts"
+      ],
+      "semanticRisk": "Legacy numeric ID maps to UUID in vNext; no old-row import needed for greenfield.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "notification_template",
+      "sourceColumn": "created_at",
+      "sourceType": "datetime(6)",
+      "sourceDefinition": "datetime(6) DEFAULT NULL",
+      "sourceRiskFlags": [
+        "TIMEZONE_AND_DEADLINE_SEMANTICS"
+      ],
+      "targetCandidate": "notification_template.created_at",
+      "disposition": "PROPOSED_NORMALIZED_AUDIT_TIMESTAMP",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/activity/learner-pinned-announcements-model.ts",
+        "src/modules/announcements/actor-status-model.ts",
+        "src/modules/announcements/admin-api-query.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/activity/learner-pinned-announcements-model.ts",
+        "src/modules/announcements/actor-status-model.ts",
+        "src/modules/announcements/admin-api-query.ts"
+      ],
+      "semanticRisk": "Datetime(6) semantics differ from timestamptz; vNext stores UTC.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "notification_template",
+      "sourceColumn": "is_deleted",
+      "sourceType": "tinyint(1)",
+      "sourceDefinition": "tinyint(1) DEFAULT '0'",
+      "sourceRiskFlags": [],
+      "targetCandidate": "notification_template.is_deleted",
+      "disposition": "PROPOSED_REDESIGNED_SOFT_DELETE_PATTERN",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/activity/learner-pinned-announcements-model.ts",
+        "src/modules/announcements/actor-status-model.ts",
+        "src/modules/announcements/admin-api-query.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/activity/learner-pinned-announcements-model.ts",
+        "src/modules/announcements/actor-status-model.ts",
+        "src/modules/announcements/admin-api-query.ts"
+      ],
+      "semanticRisk": "Soft-delete pattern replaced by status enum or archived_at timestamp in vNext.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "notification_template",
+      "sourceColumn": "updated_at",
+      "sourceType": "datetime(6)",
+      "sourceDefinition": "datetime(6) DEFAULT NULL",
+      "sourceRiskFlags": [
+        "TIMEZONE_AND_DEADLINE_SEMANTICS"
+      ],
+      "targetCandidate": "notification_template.updated_at",
+      "disposition": "PROPOSED_NORMALIZED_AUDIT_TIMESTAMP",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/activity/learner-pinned-announcements-model.ts",
+        "src/modules/announcements/actor-status-model.ts",
+        "src/modules/announcements/admin-api-query.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/activity/learner-pinned-announcements-model.ts",
+        "src/modules/announcements/actor-status-model.ts",
+        "src/modules/announcements/admin-api-query.ts"
+      ],
+      "semanticRisk": "Datetime(6) semantics differ from timestamptz; vNext stores UTC.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "notification_template",
+      "sourceColumn": "action_url",
+      "sourceType": "varchar(500)",
+      "sourceDefinition": "varchar(500) DEFAULT NULL",
+      "sourceRiskFlags": [],
+      "targetCandidate": "notification_template.action_url",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/activity/learner-pinned-announcements-model.ts",
+        "src/modules/announcements/actor-status-model.ts",
+        "src/modules/announcements/admin-api-query.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/activity/learner-pinned-announcements-model.ts",
+        "src/modules/announcements/actor-status-model.ts",
+        "src/modules/announcements/admin-api-query.ts"
+      ],
+      "semanticRisk": "Standard field mapping from legacy notification_template to notification_template.action_url.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "notification_template",
+      "sourceColumn": "body",
+      "sourceType": "text",
+      "sourceDefinition": "text NOT NULL",
+      "sourceRiskFlags": [],
+      "targetCandidate": "notification_template.body",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/activity/learner-pinned-announcements-model.ts",
+        "src/modules/announcements/actor-status-model.ts",
+        "src/modules/announcements/admin-api-query.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/activity/learner-pinned-announcements-model.ts",
+        "src/modules/announcements/actor-status-model.ts",
+        "src/modules/announcements/admin-api-query.ts"
+      ],
+      "semanticRisk": "Standard field mapping from legacy notification_template to notification_template.body.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "notification_template",
+      "sourceColumn": "channel",
+      "sourceType": "varchar(20)",
+      "sourceDefinition": "varchar(20) NOT NULL",
+      "sourceRiskFlags": [],
+      "targetCandidate": "notification_template.channel",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/activity/learner-pinned-announcements-model.ts",
+        "src/modules/announcements/actor-status-model.ts",
+        "src/modules/announcements/admin-api-query.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/activity/learner-pinned-announcements-model.ts",
+        "src/modules/announcements/actor-status-model.ts",
+        "src/modules/announcements/admin-api-query.ts"
+      ],
+      "semanticRisk": "Standard field mapping from legacy notification_template to notification_template.channel.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "notification_template",
+      "sourceColumn": "created_by",
+      "sourceType": "int",
+      "sourceDefinition": "int DEFAULT NULL",
+      "sourceRiskFlags": [],
+      "targetCandidate": "notification_template.created_by",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/activity/learner-pinned-announcements-model.ts",
+        "src/modules/announcements/actor-status-model.ts",
+        "src/modules/announcements/admin-api-query.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/activity/learner-pinned-announcements-model.ts",
+        "src/modules/announcements/actor-status-model.ts",
+        "src/modules/announcements/admin-api-query.ts"
+      ],
+      "semanticRisk": "Standard field mapping from legacy notification_template to notification_template.created_by.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "notification_template",
+      "sourceColumn": "description",
+      "sourceType": "varchar(500)",
+      "sourceDefinition": "varchar(500) DEFAULT NULL",
+      "sourceRiskFlags": [],
+      "targetCandidate": "notification_template.description",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/activity/learner-pinned-announcements-model.ts",
+        "src/modules/announcements/actor-status-model.ts",
+        "src/modules/announcements/admin-api-query.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/activity/learner-pinned-announcements-model.ts",
+        "src/modules/announcements/actor-status-model.ts",
+        "src/modules/announcements/admin-api-query.ts"
+      ],
+      "semanticRisk": "Standard field mapping from legacy notification_template to notification_template.description.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "notification_template",
+      "sourceColumn": "dlt_entity_id",
+      "sourceType": "varchar(100)",
+      "sourceDefinition": "varchar(100) DEFAULT NULL",
+      "sourceRiskFlags": [],
+      "targetCandidate": "notification_template.dlt_entity_id",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/activity/learner-pinned-announcements-model.ts",
+        "src/modules/announcements/actor-status-model.ts",
+        "src/modules/announcements/admin-api-query.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/activity/learner-pinned-announcements-model.ts",
+        "src/modules/announcements/actor-status-model.ts",
+        "src/modules/announcements/admin-api-query.ts"
+      ],
+      "semanticRisk": "Standard field mapping from legacy notification_template to notification_template.dlt_entity_id.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "notification_template",
+      "sourceColumn": "dlt_template_id",
+      "sourceType": "varchar(100)",
+      "sourceDefinition": "varchar(100) DEFAULT NULL",
+      "sourceRiskFlags": [],
+      "targetCandidate": "notification_template.dlt_template_id",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/activity/learner-pinned-announcements-model.ts",
+        "src/modules/announcements/actor-status-model.ts",
+        "src/modules/announcements/admin-api-query.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/activity/learner-pinned-announcements-model.ts",
+        "src/modules/announcements/actor-status-model.ts",
+        "src/modules/announcements/admin-api-query.ts"
+      ],
+      "semanticRisk": "Standard field mapping from legacy notification_template to notification_template.dlt_template_id.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "notification_template",
+      "sourceColumn": "example_data",
+      "sourceType": "json",
+      "sourceDefinition": "json DEFAULT NULL",
+      "sourceRiskFlags": [
+        "STRUCTURED_PAYLOAD_SEMANTIC_SCHEMA"
+      ],
+      "targetCandidate": "notification_template.example_data",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/activity/learner-pinned-announcements-model.ts",
+        "src/modules/announcements/actor-status-model.ts",
+        "src/modules/announcements/admin-api-query.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/activity/learner-pinned-announcements-model.ts",
+        "src/modules/announcements/actor-status-model.ts",
+        "src/modules/announcements/admin-api-query.ts"
+      ],
+      "semanticRisk": "JSON payload: vNext uses typed JSONB or separate normalized columns.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "notification_template",
+      "sourceColumn": "external_template_id",
+      "sourceType": "varchar(200)",
+      "sourceDefinition": "varchar(200) DEFAULT NULL",
+      "sourceRiskFlags": [],
+      "targetCandidate": "notification_template.external_template_id",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/activity/learner-pinned-announcements-model.ts",
+        "src/modules/announcements/actor-status-model.ts",
+        "src/modules/announcements/admin-api-query.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/activity/learner-pinned-announcements-model.ts",
+        "src/modules/announcements/actor-status-model.ts",
+        "src/modules/announcements/admin-api-query.ts"
+      ],
+      "semanticRisk": "Standard field mapping from legacy notification_template to notification_template.external_template_id.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "notification_template",
+      "sourceColumn": "html_body",
+      "sourceType": "text",
+      "sourceDefinition": "text",
+      "sourceRiskFlags": [],
+      "targetCandidate": "notification_template.html_body",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/activity/learner-pinned-announcements-model.ts",
+        "src/modules/announcements/actor-status-model.ts",
+        "src/modules/announcements/admin-api-query.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/activity/learner-pinned-announcements-model.ts",
+        "src/modules/announcements/actor-status-model.ts",
+        "src/modules/announcements/admin-api-query.ts"
+      ],
+      "semanticRisk": "Standard field mapping from legacy notification_template to notification_template.html_body.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "notification_template",
+      "sourceColumn": "icon",
+      "sourceType": "varchar(50)",
+      "sourceDefinition": "varchar(50) DEFAULT NULL",
+      "sourceRiskFlags": [],
+      "targetCandidate": "notification_template.icon",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/activity/learner-pinned-announcements-model.ts",
+        "src/modules/announcements/actor-status-model.ts",
+        "src/modules/announcements/admin-api-query.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/activity/learner-pinned-announcements-model.ts",
+        "src/modules/announcements/actor-status-model.ts",
+        "src/modules/announcements/admin-api-query.ts"
+      ],
+      "semanticRisk": "Standard field mapping from legacy notification_template to notification_template.icon.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "notification_template",
+      "sourceColumn": "is_active",
+      "sourceType": "bit(1)",
+      "sourceDefinition": "bit(1) DEFAULT NULL",
+      "sourceRiskFlags": [],
+      "targetCandidate": "notification_template.is_active",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/activity/learner-pinned-announcements-model.ts",
+        "src/modules/announcements/actor-status-model.ts",
+        "src/modules/announcements/admin-api-query.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/activity/learner-pinned-announcements-model.ts",
+        "src/modules/announcements/actor-status-model.ts",
+        "src/modules/announcements/admin-api-query.ts"
+      ],
+      "semanticRisk": "Standard field mapping from legacy notification_template to notification_template.is_active.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "notification_template",
+      "sourceColumn": "is_default",
+      "sourceType": "bit(1)",
+      "sourceDefinition": "bit(1) DEFAULT NULL",
+      "sourceRiskFlags": [],
+      "targetCandidate": "notification_template.is_default",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/activity/learner-pinned-announcements-model.ts",
+        "src/modules/announcements/actor-status-model.ts",
+        "src/modules/announcements/admin-api-query.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/activity/learner-pinned-announcements-model.ts",
+        "src/modules/announcements/actor-status-model.ts",
+        "src/modules/announcements/admin-api-query.ts"
+      ],
+      "semanticRisk": "Standard field mapping from legacy notification_template to notification_template.is_default.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "notification_template",
+      "sourceColumn": "is_dlt_compliant",
+      "sourceType": "bit(1)",
+      "sourceDefinition": "bit(1) DEFAULT NULL",
+      "sourceRiskFlags": [],
+      "targetCandidate": "notification_template.is_dlt_compliant",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/activity/learner-pinned-announcements-model.ts",
+        "src/modules/announcements/actor-status-model.ts",
+        "src/modules/announcements/admin-api-query.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/activity/learner-pinned-announcements-model.ts",
+        "src/modules/announcements/actor-status-model.ts",
+        "src/modules/announcements/admin-api-query.ts"
+      ],
+      "semanticRisk": "Standard field mapping from legacy notification_template to notification_template.is_dlt_compliant.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "notification_template",
+      "sourceColumn": "is_sample",
+      "sourceType": "bit(1)",
+      "sourceDefinition": "bit(1) DEFAULT NULL",
+      "sourceRiskFlags": [],
+      "targetCandidate": "notification_template.is_sample",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/activity/learner-pinned-announcements-model.ts",
+        "src/modules/announcements/actor-status-model.ts",
+        "src/modules/announcements/admin-api-query.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/activity/learner-pinned-announcements-model.ts",
+        "src/modules/announcements/actor-status-model.ts",
+        "src/modules/announcements/admin-api-query.ts"
+      ],
+      "semanticRisk": "Standard field mapping from legacy notification_template to notification_template.is_sample.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "notification_template",
+      "sourceColumn": "language",
+      "sourceType": "varchar(10)",
+      "sourceDefinition": "varchar(10) DEFAULT NULL",
+      "sourceRiskFlags": [],
+      "targetCandidate": "notification_template.language",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/activity/learner-pinned-announcements-model.ts",
+        "src/modules/announcements/actor-status-model.ts",
+        "src/modules/announcements/admin-api-query.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/activity/learner-pinned-announcements-model.ts",
+        "src/modules/announcements/actor-status-model.ts",
+        "src/modules/announcements/admin-api-query.ts"
+      ],
+      "semanticRisk": "Standard field mapping from legacy notification_template to notification_template.language.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "notification_template",
+      "sourceColumn": "merge_variable_mapping",
+      "sourceType": "json",
+      "sourceDefinition": "json DEFAULT NULL",
+      "sourceRiskFlags": [
+        "STRUCTURED_PAYLOAD_SEMANTIC_SCHEMA"
+      ],
+      "targetCandidate": "notification_template.merge_variable_mapping",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/activity/learner-pinned-announcements-model.ts",
+        "src/modules/announcements/actor-status-model.ts",
+        "src/modules/announcements/admin-api-query.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/activity/learner-pinned-announcements-model.ts",
+        "src/modules/announcements/actor-status-model.ts",
+        "src/modules/announcements/admin-api-query.ts"
+      ],
+      "semanticRisk": "JSON payload: vNext uses typed JSONB or separate normalized columns.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "notification_template",
+      "sourceColumn": "notification_type",
+      "sourceType": "varchar(50)",
+      "sourceDefinition": "varchar(50) DEFAULT NULL",
+      "sourceRiskFlags": [],
+      "targetCandidate": "notification_template.notification_type",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/activity/learner-pinned-announcements-model.ts",
+        "src/modules/announcements/actor-status-model.ts",
+        "src/modules/announcements/admin-api-query.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/activity/learner-pinned-announcements-model.ts",
+        "src/modules/announcements/actor-status-model.ts",
+        "src/modules/announcements/admin-api-query.ts"
+      ],
+      "semanticRisk": "Standard field mapping from legacy notification_template to notification_template.notification_type.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "notification_template",
+      "sourceColumn": "sms_variable_format",
+      "sourceType": "varchar(50)",
+      "sourceDefinition": "varchar(50) DEFAULT NULL",
+      "sourceRiskFlags": [],
+      "targetCandidate": "notification_template.sms_variable_format",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/activity/learner-pinned-announcements-model.ts",
+        "src/modules/announcements/actor-status-model.ts",
+        "src/modules/announcements/admin-api-query.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/activity/learner-pinned-announcements-model.ts",
+        "src/modules/announcements/actor-status-model.ts",
+        "src/modules/announcements/admin-api-query.ts"
+      ],
+      "semanticRisk": "Standard field mapping from legacy notification_template to notification_template.sms_variable_format.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "notification_template",
+      "sourceColumn": "subject",
+      "sourceType": "varchar(500)",
+      "sourceDefinition": "varchar(500) DEFAULT NULL",
+      "sourceRiskFlags": [],
+      "targetCandidate": "notification_template.subject",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/activity/learner-pinned-announcements-model.ts",
+        "src/modules/announcements/actor-status-model.ts",
+        "src/modules/announcements/admin-api-query.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/activity/learner-pinned-announcements-model.ts",
+        "src/modules/announcements/actor-status-model.ts",
+        "src/modules/announcements/admin-api-query.ts"
+      ],
+      "semanticRisk": "Standard field mapping from legacy notification_template to notification_template.subject.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "notification_template",
+      "sourceColumn": "template_key",
+      "sourceType": "varchar(100)",
+      "sourceDefinition": "varchar(100) NOT NULL",
+      "sourceRiskFlags": [],
+      "targetCandidate": "notification_template.template_key",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/activity/learner-pinned-announcements-model.ts",
+        "src/modules/announcements/actor-status-model.ts",
+        "src/modules/announcements/admin-api-query.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/activity/learner-pinned-announcements-model.ts",
+        "src/modules/announcements/actor-status-model.ts",
+        "src/modules/announcements/admin-api-query.ts"
+      ],
+      "semanticRisk": "Standard field mapping from legacy notification_template to notification_template.template_key.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "notification_template",
+      "sourceColumn": "updated_by",
+      "sourceType": "int",
+      "sourceDefinition": "int DEFAULT NULL",
+      "sourceRiskFlags": [],
+      "targetCandidate": "notification_template.updated_by",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/activity/learner-pinned-announcements-model.ts",
+        "src/modules/announcements/actor-status-model.ts",
+        "src/modules/announcements/admin-api-query.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/activity/learner-pinned-announcements-model.ts",
+        "src/modules/announcements/actor-status-model.ts",
+        "src/modules/announcements/admin-api-query.ts"
+      ],
+      "semanticRisk": "Standard field mapping from legacy notification_template to notification_template.updated_by.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "notification_template",
+      "sourceColumn": "variable_schema",
+      "sourceType": "json",
+      "sourceDefinition": "json DEFAULT NULL",
+      "sourceRiskFlags": [
+        "STRUCTURED_PAYLOAD_SEMANTIC_SCHEMA"
+      ],
+      "targetCandidate": "notification_template.variable_schema",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/activity/learner-pinned-announcements-model.ts",
+        "src/modules/announcements/actor-status-model.ts",
+        "src/modules/announcements/admin-api-query.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/activity/learner-pinned-announcements-model.ts",
+        "src/modules/announcements/actor-status-model.ts",
+        "src/modules/announcements/admin-api-query.ts"
+      ],
+      "semanticRisk": "JSON payload: vNext uses typed JSONB or separate normalized columns.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "notification_template",
+      "sourceColumn": "version",
+      "sourceType": "int",
+      "sourceDefinition": "int DEFAULT NULL",
+      "sourceRiskFlags": [],
+      "targetCandidate": "notification_template.version",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/activity/learner-pinned-announcements-model.ts",
+        "src/modules/announcements/actor-status-model.ts",
+        "src/modules/announcements/admin-api-query.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/activity/learner-pinned-announcements-model.ts",
+        "src/modules/announcements/actor-status-model.ts",
+        "src/modules/announcements/admin-api-query.ts"
+      ],
+      "semanticRisk": "Standard field mapping from legacy notification_template to notification_template.version.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "sms_delivery_log",
+      "sourceColumn": "id",
+      "sourceType": "int",
+      "sourceDefinition": "int NOT NULL AUTO_INCREMENT",
+      "sourceRiskFlags": [
+        "INTEGER_KEY_TO_UUID_MAPPING"
+      ],
+      "targetCandidate": "general_sms_delivery_logs.id",
+      "disposition": "PROPOSED_NORMALIZED_UUID_PRIMARY_KEY",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/activity/learner-pinned-announcements-model.ts",
+        "src/modules/announcements/actor-status-model.ts",
+        "src/modules/announcements/admin-api-query.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/activity/learner-pinned-announcements-model.ts",
+        "src/modules/announcements/actor-status-model.ts",
+        "src/modules/announcements/admin-api-query.ts"
+      ],
+      "semanticRisk": "Legacy numeric ID maps to UUID in vNext; no old-row import needed for greenfield.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "sms_delivery_log",
+      "sourceColumn": "purpose",
+      "sourceType": "varchar(64)",
+      "sourceDefinition": "varchar(64) NOT NULL",
+      "sourceRiskFlags": [],
+      "targetCandidate": "general_sms_delivery_logs.db10_sms_delivery_logs_suffix_purpose_idx",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/activity/learner-pinned-announcements-model.ts",
+        "src/modules/announcements/actor-status-model.ts",
+        "src/modules/announcements/admin-api-query.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/activity/learner-pinned-announcements-model.ts",
+        "src/modules/announcements/actor-status-model.ts",
+        "src/modules/announcements/admin-api-query.ts"
+      ],
+      "semanticRisk": "Standard field mapping from legacy sms_delivery_log to general_sms_delivery_logs.db10_sms_delivery_logs_suffix_purpose_idx.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "sms_delivery_log",
+      "sourceColumn": "recipient_suffix",
+      "sourceType": "varchar(8)",
+      "sourceDefinition": "varchar(8) DEFAULT NULL",
+      "sourceRiskFlags": [],
+      "targetCandidate": "general_sms_delivery_logs.recipient_suffix",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/activity/learner-pinned-announcements-model.ts",
+        "src/modules/announcements/actor-status-model.ts",
+        "src/modules/announcements/admin-api-query.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/activity/learner-pinned-announcements-model.ts",
+        "src/modules/announcements/actor-status-model.ts",
+        "src/modules/announcements/admin-api-query.ts"
+      ],
+      "semanticRisk": "Standard field mapping from legacy sms_delivery_log to general_sms_delivery_logs.recipient_suffix.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "sms_delivery_log",
+      "sourceColumn": "status",
+      "sourceType": "varchar(16)",
+      "sourceDefinition": "varchar(16) NOT NULL",
+      "sourceRiskFlags": [],
+      "targetCandidate": "general_sms_delivery_logs.db10_sms_delivery_logs_college_status_time_idx",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/activity/learner-pinned-announcements-model.ts",
+        "src/modules/announcements/actor-status-model.ts",
+        "src/modules/announcements/admin-api-query.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/activity/learner-pinned-announcements-model.ts",
+        "src/modules/announcements/actor-status-model.ts",
+        "src/modules/announcements/admin-api-query.ts"
+      ],
+      "semanticRisk": "Standard field mapping from legacy sms_delivery_log to general_sms_delivery_logs.db10_sms_delivery_logs_college_status_time_idx.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "sms_delivery_log",
+      "sourceColumn": "provider_message_id",
+      "sourceType": "varchar(64)",
+      "sourceDefinition": "varchar(64) DEFAULT NULL",
+      "sourceRiskFlags": [],
+      "targetCandidate": "general_sms_delivery_logs.provider_message_id",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/activity/learner-pinned-announcements-model.ts",
+        "src/modules/announcements/actor-status-model.ts",
+        "src/modules/announcements/admin-api-query.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/activity/learner-pinned-announcements-model.ts",
+        "src/modules/announcements/actor-status-model.ts",
+        "src/modules/announcements/admin-api-query.ts"
+      ],
+      "semanticRisk": "Standard field mapping from legacy sms_delivery_log to general_sms_delivery_logs.provider_message_id.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "sms_delivery_log",
+      "sourceColumn": "error_summary",
+      "sourceType": "varchar(500)",
+      "sourceDefinition": "varchar(500) DEFAULT NULL",
+      "sourceRiskFlags": [],
+      "targetCandidate": "general_sms_delivery_logs.error_summary",
+      "disposition": "PROPOSED_REGISTERED_ACTIVE_FIELD_BEHAVIOR",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/activity/learner-pinned-announcements-model.ts",
+        "src/modules/announcements/actor-status-model.ts",
+        "src/modules/announcements/admin-api-query.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/activity/learner-pinned-announcements-model.ts",
+        "src/modules/announcements/actor-status-model.ts",
+        "src/modules/announcements/admin-api-query.ts"
+      ],
+      "semanticRisk": "Standard field mapping from legacy sms_delivery_log to general_sms_delivery_logs.error_summary.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "sms_delivery_log",
+      "sourceColumn": "college_id",
+      "sourceType": "int",
+      "sourceDefinition": "int DEFAULT NULL",
+      "sourceRiskFlags": [
+        "INTEGER_KEY_TO_UUID_MAPPING"
+      ],
+      "targetCandidate": "general_sms_delivery_logs.college_id",
+      "disposition": "PROPOSED_REGISTERED_WITH_UUID_NORMALIZATION",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/activity/learner-pinned-announcements-model.ts",
+        "src/modules/announcements/actor-status-model.ts",
+        "src/modules/announcements/admin-api-query.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/activity/learner-pinned-announcements-model.ts",
+        "src/modules/announcements/actor-status-model.ts",
+        "src/modules/announcements/admin-api-query.ts"
+      ],
+      "semanticRisk": "Legacy numeric ID maps to UUID in vNext; no old-row import needed for greenfield.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    },
+    {
+      "sourceTable": "sms_delivery_log",
+      "sourceColumn": "created_at",
+      "sourceType": "datetime(6)",
+      "sourceDefinition": "datetime(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6)",
+      "sourceRiskFlags": [
+        "TIMEZONE_AND_DEADLINE_SEMANTICS"
+      ],
+      "targetCandidate": "general_sms_delivery_logs.created_at",
+      "disposition": "PROPOSED_NORMALIZED_AUDIT_TIMESTAMP",
+      "sourceVerifiedAtSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+      "exactRuntimeProducerCandidates": [
+        "src/modules/activity/learner-pinned-announcements-model.ts",
+        "src/modules/announcements/actor-status-model.ts",
+        "src/modules/announcements/admin-api-query.ts"
+      ],
+      "exactRuntimeConsumerCandidates": [
+        "src/modules/activity/learner-pinned-announcements-model.ts",
+        "src/modules/announcements/actor-status-model.ts",
+        "src/modules/announcements/admin-api-query.ts"
+      ],
+      "semanticRisk": "Datetime(6) semantics differ from timestamptz; vNext stores UTC.",
+      "approvedFinalDisposition": false,
+      "producerVerified": false,
+      "consumerVerified": false,
+      "runtimeVerified": false,
+      "retirementApproved": false
+    }
+  ]
+}
