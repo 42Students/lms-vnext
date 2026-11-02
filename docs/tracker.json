@@ -3334,6 +3334,34 @@
           ],
           "evidenceIsNotAcceptance": true
         },
+        "latestP18AcademicEvidenceAndOverridePg17": {
+          "recordedOn": "2026-11-02",
+          "status": "PASS_EXACT_SHA_PG17_SCOPED_P18_SECURITY_NOT_FULL_FIELD_OR_PARENT_ACCEPTANCE",
+          "sourceSha": "f8f2296fd1a5adfb5f3259c395c6a93663d20d33",
+          "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/41407076314",
+          "result": "COMPLETED_SUCCESS_TWO_JOBS",
+          "tests": {
+            "screeningIntegration": {"passed": 15, "run": 15},
+            "academicEligibilityIntegration": {"passed": 12, "run": 12},
+            "debarmentIntegration": {"passed": 11, "run": 11},
+            "debarmentUnit": {"passed": 4, "run": 4}
+          },
+          "verification": [
+            "Two independent disposable PostgreSQL 17 jobs pinned to source SHA; 332 registered journal migrations through 0331 replayed zero-to-head with idempotence and destructive target preflight.",
+            "DB020 registered/staged CI matrix source gate PASS and full TypeScript typecheck PASS.",
+            "Academic evidence SELF writes now revalidate current persisted user, member and LEARNER grant under transactional locks, not only cached request context.",
+            "Staff VERIFIED evidence writes rebuild persisted placements.manage permission before stamping staff provenance, require current learner role, and reject stale TPO role, disabled manager and in-flight revocation.",
+            "Private managed academic-evidence reads rebuild persisted manager permission and hold SHARE locks through read; revoked or disabled staff cannot retrieve candidate evidence.",
+            "New eligibility INCLUDE/EXCLUDE override writes hold live learner membership/account/LEARNER role locks through insert and audit; disabled learner and role-removal race leave no override.",
+            "Revoked-role race uses separate disposable learner; registered academic lifecycle triggers and historical withdrawal preflight remain enforced."
+          ],
+          "currentScopeLimit": [
+            "DB19-P18 original 63-field screening scores/algorithm provenance, eligibility decisions/events actor/time and enum crosswalk still need legacy-source approvals; do not infer migrated numeric scores or actors.",
+            "The scoped 42 tests plus typecheck are not DB19-P31/P32 all-domain evidence and do not certify DB019 or DB020 parent.",
+            "All source fields remain under their original reviewer classification until independently reconciled. No numbered migration or applied journal history was modified."
+          ],
+          "evidenceIsNotAcceptance": true
+        },
         "latestP17FullRegisteredPg17": {
           "recordedOn": "2026-11-01",
           "status": "EXECUTED_FULL_REGISTERED_PG17_P17_SERVICE_AND_PRIVACY_MATRIX_PASS_PACKAGE_NOT_FINAL",
@@ -3644,6 +3672,19 @@
           "remaining": [
             "DB19 P18 original 63-field legacy dispositions, P31 2829-field reconciliation and P32 whole-domain exact-head PostgreSQL service/security proofs are not closed.",
             "DB020 complete cross-domain/tenant/retention/state/consumer certification and any required release signoff remain independent."
+          ],
+          "evidenceIsNotAcceptance": true
+        },
+        "latestP18AcademicEvidenceAndOverridePg17": {
+          "recordedOn": "2026-11-02",
+          "status": "SCOPED_REGISTERED_PG17_SECURITY_AND_TYPECHECK_PASS_DB020_GLOBAL_GATE_OPEN",
+          "sourceSha": "f8f2296fd1a5adfb5f3259c395c6a93663d20d33",
+          "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/41407076314",
+          "result": "COMPLETED_SUCCESS_SCOPED_NOT_PHASE_CERTIFICATE",
+          "evidence": "Fresh disposable PG17 332-migration zero-to-head/idempotence; 15 screening, 12 eligibility, 11 debarment integration and 4 unit cases PASS; full TS typecheck and registered/staged matrix source gate PASS.",
+          "remaining": [
+            "DB19-P18 original 63-field semantic and source-to-consumer completion, including automatic screening provenance and eligibility event actors/timestamps, still open.",
+            "DB19 P31 all 2829 field dispositions, P32 independent whole-domain acceptance, and DB020 exact-current-head integrated release-phase certificate remain open."
           ],
           "evidenceIsNotAcceptance": true
         },
