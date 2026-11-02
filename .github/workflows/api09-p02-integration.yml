@@ -1,0 +1,48 @@
+# API09-P02: Operations, notifications and outbound integration gate.
+# Source-only — no database needed.
+# Verifies crosswalk completeness, MAPPED file existence, auth guard coverage,
+# and MISSING gap catalogue integrity for the 45 API-09 legacy endpoints.
+name: API09-P02 Operations notifications outbound integration gate
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - "tests/api09-integration.test.mjs"
+      - "docs/planning/api-crosswalk-api09.json"
+      - "src/app/api/notifications/**"
+      - "src/app/api/announcements/**"
+      - "src/app/api/skills/**"
+      - "src/app/api/webhooks/**"
+      - ".github/workflows/api09-p02-integration.yml"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: api09-p02-${{ github.sha }}
+  cancel-in-progress: false
+
+jobs:
+  integration:
+    name: "API09-P02 notifications/operations integration gate"
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Verify exact commit SHA
+        run: test "$(git rev-parse HEAD)" = "$GITHUB_SHA"
+      - name: API09-P02 notifications/operations integration gate
+        run: node --test tests/api09-integration.test.mjs
+      - name: Scope boundary
+        if: always()
+        run: |
+          echo "API09-P02: Operations/notifications/outbound source-only integration gate."
+          echo "45 legacy endpoints crosswalked: 10 MAPPED, 16 REDESIGNED, 0 RETIRED, 19 MISSING (documented gaps)."
+          echo "API-10 global security regression gate remains OPEN."
