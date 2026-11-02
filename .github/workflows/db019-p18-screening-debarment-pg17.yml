@@ -8,8 +8,10 @@ on:
     paths:
       - ".github/workflows/db019-p18-screening-debarment-pg17.yml"
       - "src/modules/placements/screening-service.ts"
+      - "src/modules/placements/eligibility-service.ts"
       - "src/modules/placements/debarment-service.ts"
       - "tests/integration/placements-p6a-screening.test.ts"
+      - "tests/integration/placements-p4-eligibility.test.ts"
       - "tests/integration/placements-db08-registration.test.ts"
       - "tests/support/w04-placement-access-fixture.ts"
       - "tests/unit/chat12-tpo-debar-persisted-actor.test.ts"
@@ -71,6 +73,10 @@ jobs:
         run: >-
           npx vitest run --config vitest.db.registered.config.ts
           tests/integration/placements-p6a-screening.test.ts
+      - name: Academic evidence verified-manager revocation, disabled account, and concurrent role removal
+        run: >-
+          npx vitest run --config vitest.db.registered.config.ts
+          tests/integration/placements-p4-eligibility.test.ts
       - name: State bounded evidence scope
         if: always()
         run: |
