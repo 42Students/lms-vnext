@@ -1,0 +1,47 @@
+# API04-P02: Courses and learning content integration gate.
+# Source-only — no database needed.
+# Verifies crosswalk completeness, MAPPED file existence, auth guard coverage,
+# and MISSING gap catalogue integrity for the 67 API-04 legacy endpoints.
+name: API04-P02 Courses content integration gate
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - "tests/api04-integration.test.mjs"
+      - "docs/planning/api-crosswalk-api04.json"
+      - "src/app/api/courses/**"
+      - "src/app/api/learn/**"
+      - ".github/workflows/api04-p02-integration.yml"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: api04-p02-${{ github.sha }}
+  cancel-in-progress: false
+
+jobs:
+  integration:
+    name: "API04-P02 courses/content integration gate"
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Verify exact commit SHA
+        run: test "$(git rev-parse HEAD)" = "$GITHUB_SHA"
+      - name: API04-P02 courses/content integration gate
+        run: node --test tests/api04-integration.test.mjs
+      - name: Scope boundary
+        if: always()
+        run: |
+          echo "API04-P02: Courses/learning content source-only integration gate."
+          echo "67 legacy endpoints: 12 MAPPED, 38 REDESIGNED, 0 RETIRED, 17 MISSING (documented gaps)."
+          echo "Gaps: bulk import (8), admin progress override (2), R2 file-proxy (2), programId/semesterId query variants (5)."
+          echo "API-01 through API-03 and API-05 through API-10 are separate milestones."
