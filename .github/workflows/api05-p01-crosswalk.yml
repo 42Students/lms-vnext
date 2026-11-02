@@ -1,0 +1,48 @@
+name: API-05-P01 Assignments quizzes attendance endpoint crosswalk gate
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'docs/planning/api-crosswalk-api05.json'
+      - 'docs/planning/api-inventory-api05.json'
+      - 'tests/api05-endpoint-crosswalk.test.mjs'
+      - '.github/workflows/api05-p01-crosswalk.yml'
+  workflow_dispatch:
+
+jobs:
+  crosswalk:
+    name: "API05-P01 assignments/quizzes/attendance crosswalk gate"
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Verify exact commit SHA
+        run: test "$(git rev-parse HEAD)" = "$GITHUB_SHA"
+
+      - name: Verify crosswalk and inventory files exist
+        run: |
+          test -f docs/planning/api-crosswalk-api05.json || (echo "FAIL: crosswalk missing" && exit 1)
+          test -f docs/planning/api-inventory-api05.json || (echo "FAIL: inventory missing" && exit 1)
+
+      - name: Run API-05-P01 crosswalk completeness tests
+        run: node --test tests/api05-endpoint-crosswalk.test.mjs
+
+      - name: Scope boundary
+        if: always()
+        run: |
+          node -e "
+            const c = JSON.parse(require('fs').readFileSync('docs/planning/api-crosswalk-api05.json','utf8'));
+            const s = c.summary;
+            console.log('=== API-05-P01 CROSSWALK SUMMARY ===');
+            console.log('Total: ' + s.total + ' | MAPPED: ' + s.mapped + ' | REDESIGNED: ' + s.redesigned + ' | RETIRED: ' + s.retired + ' | MISSING: ' + s.missing);
+            console.log('Coverage: ' + Math.round((s.mapped+s.redesigned+s.retired)/s.total*100) + '%');
+          "
+          echo "API05-P01: Assignments/quizzes/attendance crosswalk only."
+          echo "Integration tests (API05-P02) and subsequent milestones remain OPEN."
