@@ -39,9 +39,11 @@ test("DB19-P32 total source field coverage is exactly 2,829 across all packages"
   assert.equal(total, 2829, `Expected 2829 total source fields, got ${total}`);
 });
 
-test("DB19-P32 DB-020 task exists and is not yet done (P32 is the unlock)", () => {
+test("DB19-P32 DB-020 task exists and, once done, carries an acceptance date", () => {
   assert.ok(db020, "DB-020 task must exist in tracker");
-  assert.equal(db020.done, false, "DB-020 must be open — it unlocks after P32");
+  if (db020.done) {
+    assert.match(String(db020.acceptedAt || ""), /^\d{4}-\d{2}-\d{2}/, "DB-020 is done so it must record acceptedAt");
+  }
 });
 
 test("DB19-P32 registered journal can be verified (no unregistered migrations)", () => {
