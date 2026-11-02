@@ -110,7 +110,7 @@ export function GracefulErrorBoundary({ error, reset, homeHref = "/dashboard", l
       </p>
       <div className="flex min-w-0 flex-wrap justify-center gap-3">
         <button type="button" onClick={safeBack}
-          className="inline-flex min-h-11 items-center justify-center rounded-full border border-[#1e9aa8] bg-white px-6 py-3 text-sm font-semibold text-[#1e9aa8] hover:bg-[#e8f7f8] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[#1e9aa8]">
+          className="inline-flex min-h-11 items-center justify-center rounded-full border border-[#1e9aa8] bg-surface px-6 py-3 text-sm font-semibold text-[#1e9aa8] hover:bg-[#e8f7f8] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[#1e9aa8]">
           Go back
         </button>
         <Link href="/" className="inline-flex min-h-11 items-center justify-center rounded-full border border-[#1e9aa8] bg-[#1e9aa8] px-6 py-3 text-sm font-semibold text-white no-underline hover:bg-[#178a96] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[#1e9aa8]">

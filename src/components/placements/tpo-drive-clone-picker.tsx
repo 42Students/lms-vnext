@@ -38,7 +38,7 @@ export function TpoDriveClonePicker({drives,collegeAdmin=false}:{drives:readonly
      No completed drives match your search. Change the search or create a new draft below.
    </p>:<ul className="grid min-w-0 gap-3 md:grid-cols-2">
     {filtered.map(drive=><li key={drive.id}
-      className="flex min-w-0 flex-col justify-between gap-3 rounded-[var(--lms-control-radius)] border border-border bg-white p-4 sm:flex-row sm:items-center">
+      className="flex min-w-0 flex-col justify-between gap-3 rounded-[var(--lms-control-radius)] border border-border bg-surface p-4 sm:flex-row sm:items-center">
       <div className="min-w-0">
        <p className="break-words text-sm font-semibold text-foreground">{drive.title}</p>
        <p className="mt-1 text-xs text-muted-foreground">

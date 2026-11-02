@@ -165,7 +165,7 @@ export function CollegeHiringFunnel({data,selectedSeasonId,selectedJobId}:{
    </div>}
    <p className="text-xs text-muted-foreground leading-5">The status tiles above count one current stage per application. This chart counts an application once in each stage recorded in its current state or saved stage history. Missing imported transitions are not guessed; skipped stages and rejected/withdrawn paths may not form a continuous conversion chain.</p>
   </section>
-  <section className="min-w-0 space-y-4 rounded-[var(--lms-radius-card)] border border-border bg-white p-4 md:p-5">
+  <section className="min-w-0 space-y-4 rounded-[var(--lms-radius-card)] border border-border bg-surface p-4 md:p-5">
    <div className="flex flex-wrap items-center justify-between gap-3">
      <h2 className="text-lg font-semibold">Company-wise Hiring Report</h2>
      <Button type="button" variant="secondary" onClick={()=>{setShowExtraStatuses(v=>!v);setReportPage(1);}}

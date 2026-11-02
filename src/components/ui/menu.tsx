@@ -32,7 +32,7 @@ export function Menu({ className, onKeyDown, children, ...props }: MenuProps) {
     items[target]?.focus();
   }
   return <div {...props} data-slot="menu" role="menu" onKeyDown={handleKeyDown}
-    className={cx("min-w-0 max-w-full rounded-[var(--lms-control-radius)] bg-white p-[var(--lms-space-1)] shadow-none text-[14px] leading-5 text-[var(--lms-body-text)]", className)}>{children}</div>;
+    className={cx("min-w-0 max-w-full rounded-[var(--lms-control-radius)] bg-surface p-[var(--lms-space-1)] shadow-none text-[14px] leading-5 text-[var(--lms-body-text)]", className)}>{children}</div>;
 }
 
 const menuItemBaseClass = "flex min-h-11 min-w-0 w-full items-center break-words rounded-[var(--lms-control-radius)] md:min-h-9 px-[var(--lms-space-3)] py-[var(--lms-space-2)] text-left text-[14px] leading-5 transition-[background-color,border-color,box-shadow] duration-[200ms] ease-[ease] hover:bg-[rgba(0,0,0,0.035)] hover:text-[var(--lms-neutral-900)] active:bg-[rgba(0,0,0,0.06)] motion-reduce:transition-none focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:bg-transparent disabled:active:bg-transparent aria-[checked=true]:bg-[var(--lms-primary)] aria-[checked=true]:text-white aria-[selected=true]:bg-[var(--lms-primary)] aria-[selected=true]:text-white";

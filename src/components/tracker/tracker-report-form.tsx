@@ -263,7 +263,7 @@ export function TrackerReportForm({contextPrefill="",canSearchSimilar=true,known
   }
 
   if (created) return (
-    <section className="space-y-4 rounded-[var(--lms-canvas-radius)] border border-border bg-white p-6" aria-live="polite">
+    <section className="space-y-4 rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-6" aria-live="polite">
       <div className="flex items-center gap-2">
         <span aria-hidden="true" className="text-2xl font-semibold text-success">✓</span>
         <span className="text-xs uppercase tracking-wide text-muted-foreground">Issue reported</span>
@@ -289,7 +289,7 @@ export function TrackerReportForm({contextPrefill="",canSearchSimilar=true,known
         onClick={()=>void linkCreatedIssue(created)}>Retry linking Known Error</Button>:null}
 
       <div className="flex flex-wrap gap-3">
-        <Link className="inline-flex min-h-11 min-[768px]:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] bg-white px-4 text-[14px] font-[650] text-[var(--lms-body-text)] transition-colors duration-[150ms] hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-white focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] motion-reduce:transition-none" href={(canSearchSimilar?"/tracker/issues/":"/tracker/mine/") + encodeURIComponent(created)}>View issue</Link>
+        <Link className="inline-flex min-h-11 min-[768px]:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] bg-surface px-4 text-[14px] font-[650] text-[var(--lms-body-text)] transition-colors duration-[150ms] hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-white focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] motion-reduce:transition-none" href={(canSearchSimilar?"/tracker/issues/":"/tracker/mine/") + encodeURIComponent(created)}>View issue</Link>
         <Button disabled={uploading}
           onClick={() => {setCreated("");setDraft({...initial,...recentContext});clearDraft();setError("");clearScreenshots();}}
           type="button" className="min-h-11 md:min-h-9">Report another</Button>
@@ -299,7 +299,7 @@ export function TrackerReportForm({contextPrefill="",canSearchSimilar=true,known
 
   return (
     <form onSubmit={submit} onKeyDown={onFormKeyDown}
-      className="space-y-5 rounded-[var(--lms-canvas-radius)] border border-[var(--lms-canvas-border)] bg-white p-4 md:p-6">
+      className="space-y-5 rounded-[var(--lms-canvas-radius)] border border-[var(--lms-canvas-border)] bg-surface p-4 md:p-6">
       {restored?<Banner tone="info" action={<Button type="button" variant="secondary" onClick={()=>{setDraft(initial);clearDraft();}}>Discard draft</Button>}>
         Unsaved report restored.
       </Banner>:null}
@@ -403,7 +403,7 @@ export function TrackerReportForm({contextPrefill="",canSearchSimilar=true,known
             <span>Drag, paste or choose up to 3 screenshots (PNG/JPEG/WebP, 8 MB each).</span>
           </div>
           {screenshots.length?<ul className="mt-3 grid gap-3 sm:grid-cols-2" aria-label="Selected screenshots">
-            {screenshots.map(row=><li key={row.id} className="min-w-0 space-y-2 rounded border border-border bg-white p-2">
+            {screenshots.map(row=><li key={row.id} className="min-w-0 space-y-2 rounded border border-border bg-surface p-2">
               <img src={row.preview} alt={"Screenshot preview: "+row.file.name}
                 className="h-28 w-full rounded object-contain"/>
               <p className="truncate text-xs" title={row.file.name}>{row.file.name}</p>

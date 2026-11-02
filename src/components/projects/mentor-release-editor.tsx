@@ -129,7 +129,7 @@ export function MentorReleaseEditor({
     <Input type="date" className="mt-1 min-h-11 w-full md:min-h-9"
      value={targetDate} onChange={e=>setTargetDate(e.target.value)}/>
    </label>
-   <div className="sticky bottom-0 z-10 flex flex-wrap gap-2 border-t border-[var(--lms-canvas-border)] bg-white py-3">
+   <div className="sticky bottom-0 z-10 flex flex-wrap gap-2 border-t border-[var(--lms-canvas-border)] bg-surface py-3">
     <Button variant="primary" type="submit" disabled={pending||!title.trim()}
      className="min-h-11 w-auto px-3 py-2 md:min-h-9">
      {pending?"Saving…":"Save release"}</Button>

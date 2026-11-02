@@ -85,7 +85,7 @@ export function CollegeDriveAttentionCards({data}:{data:Attention}){
            </li>)}
          </ul>:null}
         </div>
-        <Link href={row.href} className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-white px-3 text-sm font-semibold text-link md:min-h-9">
+        <Link href={row.href} className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-link md:min-h-9">
          Review applications
         </Link>
        </li>)}
@@ -128,7 +128,7 @@ export function CollegeDriveAttentionCards({data}:{data:Attention}){
       const href="/college/placements/jobs/"+encodeURIComponent(job.id)+
         "/overview?returnTo=%2Fcollege%2Fplacements";
       return <article key={job.id}
-        className="group relative min-h-[152px] min-w-0 rounded-[13px] border border-[#e5e9f0] bg-white p-4 transition-[border-color,box-shadow,transform] duration-150 hover:-translate-y-[2px] hover:border-[#a8dfe5] hover:shadow-md focus-within:border-primary focus-within:shadow-md">
+        className="group relative min-h-[152px] min-w-0 rounded-[13px] border border-[#e5e9f0] bg-surface p-4 transition-[border-color,box-shadow,transform] duration-150 hover:-translate-y-[2px] hover:border-[#a8dfe5] hover:shadow-md focus-within:border-primary focus-within:shadow-md">
         <Link href={href} aria-label={"Open drive overview: "+job.title}
           className="absolute inset-0 rounded-[13px] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"/>
         <div className="pointer-events-none relative flex min-w-0 gap-3">
@@ -158,7 +158,7 @@ export function CollegeDriveAttentionCards({data}:{data:Attention}){
           <summary className="inline-flex min-h-11 cursor-pointer items-center gap-1 rounded-[var(--lms-control-radius)] border border-border px-3 text-xs font-semibold text-link md:min-h-9">
             More <span aria-hidden="true">⋯</span>
           </summary>
-          <div className="mt-2 flex min-w-0 flex-col gap-2 border-t border-border bg-white pt-3">
+          <div className="mt-2 flex min-w-0 flex-col gap-2 border-t border-border bg-surface pt-3">
             <Link href={"/college/placements/jobs/"+encodeURIComponent(job.id)+"/applications"}
               className="inline-flex min-h-11 items-center text-xs font-semibold text-link underline md:min-h-9">
               Applications

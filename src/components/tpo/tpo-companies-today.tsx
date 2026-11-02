@@ -336,7 +336,7 @@ export function TpoCompaniesToday({
        {nextPlan==="CUSTOM"?<label className={styles.noteLabel}>Follow up at (IST)
           <input type="datetime-local" value={customLocal} disabled={pending}
            onChange={event=>setCustomLocal(event.target.value)}
-           className="min-h-11 rounded-lg border border-[#d6e1ee] bg-white p-2 text-[14px]"/>
+           className="min-h-11 rounded-lg border border-[#d6e1ee] bg-surface p-2 text-[14px]"/>
          </label>:null}
        {!current.canContact?<p className={styles.sub}>Further outreach to this contact is unavailable under current CRM rules.</p>:null}
      </fieldset>

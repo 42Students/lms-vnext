@@ -180,7 +180,7 @@ export function RecruiterProfileDetailsEditor({initialName,initialFirstName,init
       {busy?"Saving…":"Save changes"}</Button>
   </div>
   {feedback==="Profile saved"
-    ? <div role="status" className="fixed right-6 top-20 z-50 rounded-lg border border-[var(--lms-success)] bg-white px-4 py-3 text-sm font-semibold text-success shadow-md">✓ Profile saved</div>
+    ? <div role="status" className="fixed right-6 top-20 z-50 rounded-lg border border-[var(--lms-success)] bg-surface px-4 py-3 text-sm font-semibold text-success shadow-md">✓ Profile saved</div>
     : feedback ? <Alert tone="error" title="Profile was not saved"><span aria-hidden="true">!</span> {feedback}</Alert> : null}
   <ConfirmActionDialog open={leaveHref!==null} title="Discard your unsaved profile changes?"
    consequence="Your changes have not been saved." confirmLabel="Discard"

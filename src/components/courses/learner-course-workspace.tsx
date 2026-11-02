@@ -339,7 +339,7 @@ function ContentCard({
       {content.type==="LIVE_CLASS"?<section aria-label="Live session details"
         className="mt-4 flex min-w-0 flex-wrap items-stretch gap-4 rounded-[var(--lms-control-radius)] border border-[var(--lms-info-border)] bg-[var(--lms-info-subtle)] p-4">
         {liveStart&&Number.isFinite(liveStart.getTime())?
-          <div className="flex w-[72px] shrink-0 flex-col items-center justify-center rounded-lg border border-border bg-white p-2 text-primary-text">
+          <div className="flex w-[72px] shrink-0 flex-col items-center justify-center rounded-lg border border-border bg-surface p-2 text-primary-text">
             <span className="text-xs font-semibold uppercase">
               {new Intl.DateTimeFormat("en-GB",{month:"short",timeZone:"Asia/Kolkata"}).format(liveStart)}
             </span>

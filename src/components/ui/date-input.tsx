@@ -291,7 +291,7 @@ export function DateInput({
             onDismiss={() => { setOpen(false); inputRef.current?.focus(); }}
             onKeyDown={handleCalendarKey}
             data-slot={mode === "time" ? "legacy-time-picker" : mode === "datetime-local" ? "legacy-datetime-picker" : mode === "month" ? "legacy-month-picker" : mode === "week" ? "legacy-week-picker" : "legacy-date-calendar"}
-            className="absolute right-0 top-[calc(100%_+_5px)] z-50 w-[min(19rem,calc(100vw_-_2rem))] !rounded-[var(--lms-canvas-radius)] border border-[var(--lms-neutral-200)] bg-white p-3 !shadow-[var(--lms-search-dropdown-shadow)] max-[767px]:fixed max-[767px]:inset-x-4 max-[767px]:bottom-[max(1rem,env(safe-area-inset-bottom))] max-[767px]:top-auto max-[767px]:max-h-[min(70dvh,30rem)] max-[767px]:!w-auto max-[767px]:overflow-y-auto max-[767px]:!p-2">
+            className="absolute right-0 top-[calc(100%_+_5px)] z-50 w-[min(19rem,calc(100vw_-_2rem))] !rounded-[var(--lms-canvas-radius)] border border-[var(--lms-neutral-200)] bg-surface p-3 !shadow-[var(--lms-search-dropdown-shadow)] max-[767px]:fixed max-[767px]:inset-x-4 max-[767px]:bottom-[max(1rem,env(safe-area-inset-bottom))] max-[767px]:top-auto max-[767px]:max-h-[min(70dvh,30rem)] max-[767px]:!w-auto max-[767px]:overflow-y-auto max-[767px]:!p-2">
             {mode !== "time"
               ? <div className="mb-3 flex items-center justify-between gap-2">
                   <Button type="button" variant="ghost" size="icon-sm"

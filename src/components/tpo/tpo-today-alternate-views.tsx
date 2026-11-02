@@ -30,7 +30,7 @@ function ReplyRow({reply,mode="brief"}:{reply:TpoTodayReply;mode?:"brief"|"agend
    {reply.preview?<p className="mt-2 break-words rounded-lg bg-[#fff7ed] px-3 py-2 text-[13px] text-[#26354a]">{reply.preview}</p>:null}
   </div>
   <Link className={"inline-flex min-h-11 items-center rounded-lg border px-4 text-[13px] font-bold "+(mode==="agenda"?
-    "border-[#d6e1ee] bg-white text-[#172033]":"border-[#087f8b] bg-[#087f8b] text-white")}
+    "border-[#d6e1ee] bg-surface text-[#172033]":"border-[#087f8b] bg-[#087f8b] text-white")}
    href={messageHref(reply.id)}>{reply.accessEnded?"Open history":"Answer"}</Link>
  </li>;
 }
@@ -43,7 +43,7 @@ function FollowupRow({row,scope,now,mode="brief"}:{row:TpoCompaniesTodayRow;scop
    <p className="mt-1 text-[13px] text-[#26354a]">{row.note?.trim()||"Recorded recruiter follow-up."}</p>
   </div>
   <Link className={"inline-flex min-h-11 items-center rounded-lg border px-4 text-[13px] font-bold "+(mode==="agenda"?
-    "border-[#d6e1ee] bg-white text-[#172033]":"border-[#087f8b] bg-[#087f8b] text-white")}
+    "border-[#d6e1ee] bg-surface text-[#172033]":"border-[#087f8b] bg-[#087f8b] text-white")}
    href={tpoTodayFocusHref(scope,row.id)}>Review follow-up</Link>
  </li>;
 }

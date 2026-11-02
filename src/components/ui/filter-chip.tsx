@@ -15,7 +15,7 @@ export type FilterChipProps=Omit<ButtonProps,"variant"|"size"> & {
  tone?:"neutral"|"info"|"success"|"warning"|"error";
 };
 const tones={
- neutral:"border-[var(--lms-canvas-border)] bg-white text-[var(--lms-body-text)]",
+ neutral:"border-[var(--lms-canvas-border)] bg-surface text-[var(--lms-body-text)]",
  info:"border-[var(--lms-canvas-border)] bg-[var(--lms-info-subtle)] text-[var(--lms-info)]",
  success:"border-[var(--lms-canvas-border)] bg-[var(--lms-success-subtle)] text-[var(--lms-success)]",
  warning:"border-[var(--lms-canvas-border)] bg-[var(--lms-warning-subtle)] text-[var(--lms-warning)]",
