@@ -23,7 +23,7 @@ export function tpoOfferLegacyStatusCopy(status:string,actor:"COMPANY"|"STAFF"){
   ISSUED:"Offer sent",ACCEPTED:"Accepted",DECLINED:"Declined",
   WITHDRAWN:"Withdrawn",REVOKED:"Revoked",JOINED:"Joined",
  };
- return (statusLabel[status]??status.replaceAll("_"," "))+
+ return ((Object.hasOwn(statusLabel,status)?statusLabel[status]:undefined)??status.replaceAll("_"," "))+
   (actor==="STAFF"?" · Recorded by placement cell":" · Company");
 }
 export function tpoOfferDistinctSelection(ids:readonly string[]){
