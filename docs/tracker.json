@@ -7484,9 +7484,19 @@
             "id": "UI-01-P03",
             "kind": "SOURCE_PARITY_TEST",
             "title": "Source parity test — all surfaces exist on disk, strings match",
-            "done": false,
-            "acceptedAt": null,
-            "acceptanceEvidence": [],
+            "done": true,
+            "acceptedAt": "2026-11-02",
+            "acceptanceEvidence": [
+              {
+                "kind": "EXECUTED_SOURCE_PARITY_TEST_UI_01",
+                "result": "PASS",
+                "commitSha": "e162b6877f",
+                "testCount": 88,
+                "testFile": "tests/ui01-source-parity.test.mjs",
+                "ciWorkflow": ".github/workflows/ui01-p03-source-parity.yml",
+                "note": "88 tests pass locally — auth, superadmin shell, tenant pages"
+              }
+            ],
             "testFile": "tests/ui01-source-parity.test.mjs",
             "ciWorkflow": ".github/workflows/ui01-p03-source-parity.yml",
             "acceptance": "Every MATCHED surface has vNextPath on disk (fs.existsSync). Every string in catalogue has usage in vNext component. Role gates enforced. No MISSING surfaces tolerated — must be built first."
@@ -8340,6 +8350,12 @@
                 "missingNote": "13 MISSING are all vNext-new (no legacy equivalent) — DiscussionController pages, notification preferences pages, HR notifications page. 0 real legacy surfaces are absent from vNext.",
                 "note": "Every legacy notification/announcement page and component catalogued: NotifivationDropdown, NotificationsContent, superadmin/announcements, tpo/announcements, learn/notifications x4 roles, learn/my-placements/announcements, AnnouncementList, AnnouncementComposer.",
                 "acceptedAt": "2026-11-02"
+              },
+              {
+                "kind": "MISSING_SURFACES_VERIFIED",
+                "result": "PASS",
+                "verifiedAt": "2026-11-02",
+                "note": "All 10 surfaces with disposition MISSING in ui-inventory-ui09.json verified as fully implemented on disk. Surfaces: hr/notifications/page.tsx (122 lines), learn/my-placements/notification-preferences/page.tsx (37 lines), college/announcements/page.tsx (197 lines), admin/notification-delivery/page.tsx (123 lines), admin/notification-templates/page.tsx (52 lines), tpo/settings/notifications/page.tsx (358 lines), teacher/courses/[deliveryId]/discussions/page.tsx (44 lines), teacher/courses/[deliveryId]/discussion-history/page.tsx (70 lines), teacher/courses/[deliveryId]/discussion-participation/page.tsx (52 lines), tpo/placements/jobs/[jobId]/discussion/page.tsx (87 lines). All are vNext-new features with no legacy counterpart. 0 surfaces needed to be created. Inventory summary count discrepancy: JSON summary says 13 MISSING / 16 MATCHED but actual count in surfaces array is 10 MISSING / 19 MATCHED (31 total confirmed). TypeScript check: 0 errors."
               }
             ],
             "inventoryFile": "docs/planning/ui-inventory-ui09.json",
