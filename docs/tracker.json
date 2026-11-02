@@ -3300,6 +3300,40 @@
           ],
           "notTaskAcceptance": true
         },
+        "latestP18StaffReadRegisteredPg17Scope": {
+          "recordedOn": "2026-11-02",
+          "status": "EXACT_SHA_PG17_MATRIX_TYPECHECK_AND_SCOPED_SECURITY_PASS_P18_PARENT_OPEN",
+          "sourceCommitSha": "6ad42add5a517b120b37192810a062e8c9da2676",
+          "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/41404505353",
+          "result": "COMPLETED_SUCCESS_BOTH_JOBS",
+          "environment": "GitHub Actions Node 22 and two independent disposable PostgreSQL 17.11 instances at exact GITHUB_SHA; registered-journal preflight, zero-to-head replay across 332 migrations through 0331, idempotence and original destructive test-target preflight passed.",
+          "checks": {
+            "db020MatrixGuard": "PASS_EXACT_SHA_NODE22",
+            "fullTypecheck": "PASS_EXACT_SHA",
+            "screeningJobId": 125143379371,
+            "screeningIntegrationPassed": 15,
+            "screeningIntegrationRun": 15,
+            "debarmentJobId": 125143379548,
+            "debarmentIntegrationPassed": 11,
+            "debarmentIntegrationRun": 11,
+            "debarmentUnitPassed": 4,
+            "debarmentUnitRun": 4
+          },
+          "verifiedBehavior": [
+            "Stale learner screening read denied after role revoke and account disable; legitimate candidate projection excludes private staff screening notes.",
+            "Staff screening decisions revalidate persisted grants inside history-write transaction, including competing TPO grant revocation; no decision or history after denial.",
+            "Screening row repair serializes with application withdrawal and staff revocation; cannot recreate withdrawn row or let a revoked actor repair records.",
+            "Staff screening list, paged contact list and private screening history now hold persisted staff permission SHARE locks through the actual database read, with revoked/disabled actor and competing role-delete negatives.",
+            "Debarment creation serializes against learner grant removal and rejects inactive learner user; associated durable SQL history tests pass.",
+            "Destructive learner role test uses a distinct disposable learner and verifies true WITHDRAWN academic history rather than reactivating or fabricating provenance."
+          ],
+          "remainingGate": [
+            "Complete all original 63 DB19-P18 final semantic field dispositions: screening score, version, actor/method provenance, eligibility event/override actor-time histories, enum mappings and intended consumer semantics.",
+            "Verify full cross-domain permission/tenant/race matrices and source-to-consumer parity beyond this scoped run. P18 stays done:false.",
+            "DB19-P31 and P32 global 2829-field and exact-current-head producer/consumer gates, plus independent DB020 global phase certificate, remain open."
+          ],
+          "evidenceIsNotAcceptance": true
+        },
         "latestP17FullRegisteredPg17": {
           "recordedOn": "2026-11-01",
           "status": "EXECUTED_FULL_REGISTERED_PG17_P17_SERVICE_AND_PRIVACY_MATRIX_PASS_PACKAGE_NOT_FINAL",
@@ -3599,6 +3633,19 @@
             "DB020's independent exact-current-head structural, migration, security, negative and multi-domain phase gate is still required."
           ],
           "notTaskAcceptance": true
+        },
+        "latestP18StaffReadRegisteredPg17Dependency": {
+          "recordedOn": "2026-11-02",
+          "status": "EXACT_SHA_SCOPED_SECURITY_AND_DB020_MATRIX_PASS_PHASE_CERTIFICATE_OPEN",
+          "commitSha": "6ad42add5a517b120b37192810a062e8c9da2676",
+          "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/41404505353",
+          "result": "PASS_SCOPED_NOT_DB020_ACCEPTANCE",
+          "scope": "PostgreSQL 17 journal replay/idempotence across 332 migrations, Node22 source CI matrix guard, full TypeScript typecheck, 15 screening integration, 11 debarment integration and 4 unit negatives pass at pinned SHA.",
+          "remaining": [
+            "DB19 P18 original 63-field legacy dispositions, P31 2829-field reconciliation and P32 whole-domain exact-head PostgreSQL service/security proofs are not closed.",
+            "DB020 complete cross-domain/tenant/retention/state/consumer certification and any required release signoff remain independent."
+          ],
+          "evidenceIsNotAcceptance": true
         },
         "latestFailClosedStructuralGate": {
           "result": "PASS_SCOPED_REGISTERED_PG17_NOT_DB020_ACCEPTANCE",
