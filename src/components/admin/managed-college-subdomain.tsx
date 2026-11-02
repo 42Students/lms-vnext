@@ -126,7 +126,7 @@ export function ManagedCollegeSubdomain({collegeId,initial}:{collegeId:string;in
   {!state.ready?<Alert tone="warning">
     One-click allotment requires an operator-confirmed wildcard DNS and HTTPS configuration; it is not enabled on this deployment.
    </Alert>:<>
-   {state.currentHost?<div role="status" className="flex flex-wrap items-center gap-2 rounded-md border border-[#b7eb8f] bg-[#f6ffed] p-3 text-sm text-[#237804]">
+   {state.currentHost?<div role="status" className="flex flex-wrap items-center gap-2 rounded-md border border-[rgba(5,150,105,0.3)] bg-[var(--lms-success-subtle)] p-3 text-sm text-[var(--lms-success)]">
     <svg width={16} height={16} viewBox="0 0 24 24" fill="none"
       stroke="currentColor" strokeWidth={2} aria-hidden="true">
       <circle cx={12} cy={12} r={9}/><path d="m8 12 3 3 5-6"/>

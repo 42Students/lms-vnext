@@ -50,7 +50,7 @@ function AttentionCard({item,loading,failed}:{item:Metric;loading:boolean;failed
     <span className="block h-4 w-[55%] rounded bg-[var(--lms-neutral-100)]"/>
    </div>:failed?<p role="status" className="text-sm text-muted-foreground">
      Couldn't load this. Refresh to try again.
-   </p>:clear?<p className="flex items-start gap-2 text-sm text-[#237804]"><CheckIcon/>{item.empty}</p>:
+   </p>:clear?<p className="flex items-start gap-2 text-sm text-[var(--lms-success)]"><CheckIcon/>{item.empty}</p>:
     <><p className="text-sm text-body leading-5">{item.detail}</p>
       {item.rows?.length?<ul className="divide-y divide-border border-y border-border text-sm" aria-label={item.title+" preview"}>
        {item.rows.map((row,index)=><li key={index} className="min-w-0 py-2">

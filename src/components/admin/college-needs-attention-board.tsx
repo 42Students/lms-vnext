@@ -35,10 +35,10 @@ function AttentionCard({title,icon,count,href,empty,children,shown,pending}:Atte
   return <article className="flex min-h-[220px] min-w-0 flex-col rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-white">
     <header className="flex flex-wrap items-center justify-between gap-2 border-b border-[var(--lms-canvas-border)] px-4 py-3">
       <h3 className="flex items-center gap-2 text-[15px] font-semibold text-[var(--lms-heading)]">
-        <span aria-hidden="true" className="inline-flex h-7 w-7 items-center justify-center rounded-lg bg-[#eff8fa] text-[#1a95a1]">{icon}</span>
+        <span aria-hidden="true" className="inline-flex h-7 w-7 items-center justify-center rounded-lg bg-[var(--lms-primary-subtle)] text-[var(--lms-primary-text)]">{icon}</span>
         {title}
       </h3>
-      {count !== null ? <span aria-label={count+" needing attention"} className="rounded-full bg-[#eff8fa] px-2 py-0.5 text-[12px] font-semibold tabular-nums text-[#1a95a1]">{count}</span> : null}
+      {count !== null ? <span aria-label={count+" needing attention"} className="rounded-full bg-[var(--lms-primary-subtle)] px-2 py-0.5 text-[12px] font-semibold tabular-nums text-[var(--lms-primary-text)]">{count}</span> : null}
     </header>
     <div className="min-w-0 flex-1 px-4 py-3 text-[13px] leading-5 text-[var(--lms-body-text)]">
       {count === null
@@ -46,13 +46,13 @@ function AttentionCard({title,icon,count,href,empty,children,shown,pending}:Atte
         : count === 0
           ? <p role="status" className="flex gap-2 text-emerald-700"><span aria-hidden="true">✓</span>{empty}</p>
           : <>{children}{count > shown ? <Link href={href}
-              className="mt-3 block font-semibold text-[#1a95a1] underline">
+              className="mt-3 block font-semibold text-[var(--lms-primary-text)] underline">
               and {count - shown} more
             </Link> : null}</>}
       {pending ? <p role="status" className="mt-2 text-xs text-muted-foreground">Refreshing… showing last available results.</p> : null}
     </div>
     <footer className="border-t border-[var(--lms-canvas-border)] px-4 py-2.5">
-      <Link href={href} className="inline-flex min-h-9 items-center text-[13px] font-semibold text-[#1a95a1] hover:underline">
+      <Link href={href} className="inline-flex min-h-9 items-center text-[13px] font-semibold text-[var(--lms-primary-text)] hover:underline">
         View all <span aria-hidden="true" className="ml-1">→</span>
       </Link>
     </footer>
