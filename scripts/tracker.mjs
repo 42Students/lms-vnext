@@ -199,7 +199,24 @@ export function inspectTracker(doc) {
     return {mode:'TRACKER_STRUCTURE_ONLY_NOT_DATABASE_ACCEPTANCE',errors,readyForNextPhase:false};
   }
   const tasks = new Map();
+  // API-NN / UI-NN entries are phase work packages. Their executed-proof gate is the
+  // matching execution.milestones entry, so they stay out of the DB task map.
+  const phaseTaskIds = new Set();
   for (const t of doc.tasks) {
+    if (validString(t?.id) && /^(API|UI)-[0-9]{2}$/.test(t.id) && t.phase === t.id.split('-')[0] &&
+        !phaseTaskIds.has(t.id) && !tasks.has(t.id)) {
+      phaseTaskIds.add(t.id);
+      if (!validString(t.title)) add(errors, 'MISSING_TASK_TITLE', {id:t.id});
+      if (typeof t.done !== 'boolean') add(errors, 'NON_BOOLEAN_STATUS', {id:t.id});
+      if (!Array.isArray(t.dependsOn) || new Set(t.dependsOn).size !== t.dependsOn.length)
+        add(errors, 'INVALID_DEPENDENCIES', {id:t.id});
+      if (t.done === true && (!validDate(t.acceptedAt) ||
+          !Array.isArray(t.acceptanceEvidence) || t.acceptanceEvidence.length === 0))
+        add(errors, 'DONE_WITHOUT_EVIDENCE', {id:t.id});
+      if (!(doc.execution?.milestones ?? []).some(m => m?.id === t.id))
+        add(errors, 'PHASE_TASK_WITHOUT_MILESTONE', {id:t.id});
+      continue;
+    }
     if (!validString(t?.id) || !/^DB-[0-9]{3}$/.test(t.id) || tasks.has(t.id)) {
       add(errors, 'DUPLICATE_OR_INVALID_TASK_ID', {id:t?.id ?? null});
       continue;

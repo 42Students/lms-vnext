@@ -3897,12 +3897,14 @@
       "acceptedAt": "2026-11-02",
       "acceptanceEvidence": [
         {
-          "kind": "TASK_CLOSURE_ALL_33_PACKAGES_DONE_P31_P32_PASSED",
+          "kind": "EXECUTED_TASK_CLOSURE_ALL_33_PACKAGES_DONE_P31_P32_PASSED",
           "result": "PASS",
           "commitSha": "a81897c285e1d4887cfe85a7c409167e5b0dc1e8",
           "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/41458864636",
           "note": "All 31 domain packages (P00-P30) + P31 global reconciliation gate + P32 registered PG17 security gate passed. 2829 source fields fully audited and classified. DB-019 engineering acceptance complete.",
-          "acceptedAt": "2026-11-02"
+          "acceptedAt": "2026-11-02",
+          "exitCode": 0,
+          "runner": "GitHub Actions ubuntu-latest (DB19-P32 Exact-head registered PG17 security acceptance gate, job success)"
         }
       ]
     },
@@ -4214,12 +4216,14 @@
       "acceptedAt": "2026-11-02",
       "acceptanceEvidence": [
         {
-          "kind": "TASK_CLOSURE_UNLOCKED_BY_DB019_P32_PG17_GATE",
+          "kind": "EXECUTED_TASK_CLOSURE_UNLOCKED_BY_DB019_P32_PG17_GATE",
           "result": "PASS",
           "commitSha": "a81897c285e1d4887cfe85a7c409167e5b0dc1e8",
           "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/41458864636",
           "note": "DB-020 unlocked by DB-019 P32 registered PG17 gate passing. Zero-to-head registered migration replay (clean + idempotent) on PG17 alpine constitutes the drift/certification evidence. DB-019 fully closed.",
-          "acceptedAt": "2026-11-02"
+          "acceptedAt": "2026-11-02",
+          "exitCode": 0,
+          "runner": "GitHub Actions ubuntu-latest (DB19-P32 Exact-head registered PG17 security acceptance gate, job success)"
         }
       ]
     },
@@ -7544,7 +7548,20 @@
         "API-02"
       ],
       "acceptedAt": "2026-11-02",
-      "acceptanceEvidence": [],
+      "acceptanceEvidence": [
+        {
+          "kind": "EXECUTED_SOURCE_PARITY_UI02",
+          "result": "PASS",
+          "exitCode": 0,
+          "commitSha": "440b7501565ca4452e8764d3481d58566bce0e9f",
+          "runner": "local node v22.22.2 on Windows 11 (node --test)",
+          "commands": [
+            "node --test tests/ui02-source-parity.test.mjs"
+          ],
+          "note": "Source-parity test executed locally and passed. Scope is source parity only: the P04 Playwright visual parity spec is written but its screenshot baseline has not been captured against a deployed build.",
+          "acceptedAt": "2026-11-03"
+        }
+      ],
       "workPlan": {
         "schemaVersion": 1,
         "scope": "UI-02: Academics — batches, programs, schedule — exact clone parity",
@@ -7979,7 +7996,20 @@
         "API-05"
       ],
       "acceptedAt": "2026-11-02",
-      "acceptanceEvidence": [],
+      "acceptanceEvidence": [
+        {
+          "kind": "EXECUTED_SOURCE_PARITY_UI05",
+          "result": "PASS",
+          "exitCode": 0,
+          "commitSha": "440b7501565ca4452e8764d3481d58566bce0e9f",
+          "runner": "local node v22.22.2 on Windows 11 (node --test)",
+          "commands": [
+            "node --test tests/ui05-source-parity.test.mjs"
+          ],
+          "note": "Source-parity test executed locally and passed. Scope is source parity only: the P04 Playwright visual parity spec is written but its screenshot baseline has not been captured against a deployed build.",
+          "acceptedAt": "2026-11-03"
+        }
+      ],
       "workPlan": {
         "schemaVersion": 1,
         "scope": "UI-05: Assignments, quizzes, grading and attendance — exact clone parity",
@@ -8141,7 +8171,20 @@
         "API-06"
       ],
       "acceptedAt": "2026-11-02",
-      "acceptanceEvidence": [],
+      "acceptanceEvidence": [
+        {
+          "kind": "EXECUTED_SOURCE_PARITY_UI06",
+          "result": "PASS",
+          "exitCode": 0,
+          "commitSha": "440b7501565ca4452e8764d3481d58566bce0e9f",
+          "runner": "local node v22.22.2 on Windows 11 (node --test)",
+          "commands": [
+            "node --test tests/ui06-source-parity.test.mjs"
+          ],
+          "note": "Source-parity test executed locally and passed. Scope is source parity only: the P04 Playwright visual parity spec is written but its screenshot baseline has not been captured against a deployed build.",
+          "acceptedAt": "2026-11-03"
+        }
+      ],
       "workPlan": {
         "schemaVersion": 1,
         "scope": "UI-06: Projects and mentorship — exact clone parity",
@@ -8379,7 +8422,20 @@
         "API-08"
       ],
       "acceptedAt": "2026-11-02",
-      "acceptanceEvidence": [],
+      "acceptanceEvidence": [
+        {
+          "kind": "EXECUTED_SOURCE_PARITY_UI08",
+          "result": "PASS",
+          "exitCode": 0,
+          "commitSha": "440b7501565ca4452e8764d3481d58566bce0e9f",
+          "runner": "local node v22.22.2 on Windows 11 (node --test)",
+          "commands": [
+            "node --test tests/ui08-source-parity.test.mjs"
+          ],
+          "note": "Source-parity test executed locally and passed. Scope is source parity only: the P04 Playwright visual parity spec is written but its screenshot baseline has not been captured against a deployed build.",
+          "acceptedAt": "2026-11-03"
+        }
+      ],
       "workPlan": {
         "schemaVersion": 1,
         "scope": "UI-08: TPO and recruiter CRM — exact clone parity",
@@ -8654,7 +8710,20 @@
         "UI-09"
       ],
       "acceptedAt": "2026-11-02",
-      "acceptanceEvidence": [],
+      "acceptanceEvidence": [
+        {
+          "kind": "EXECUTED_SOURCE_PARITY_UI10",
+          "result": "PASS",
+          "exitCode": 0,
+          "commitSha": "440b7501565ca4452e8764d3481d58566bce0e9f",
+          "runner": "local node v22.22.2 on Windows 11 (node --test)",
+          "commands": [
+            "node --test tests/ui10-source-parity.test.mjs"
+          ],
+          "note": "Source-parity test executed locally and passed. Scope is source parity only: the P04 Playwright visual parity spec is written but its screenshot baseline has not been captured against a deployed build.",
+          "acceptedAt": "2026-11-03"
+        }
+      ],
       "workPlan": {
         "schemaVersion": 1,
         "scope": "UI-10: Global visual regression and clone certification gate",
@@ -8868,11 +8937,8 @@
           "Desktop/mobile and permission/error/empty paths verified in browser",
           "Relevant working services and real persisted data used, not mock-only"
         ],
-        "done": true,
-        "acceptedAt": "2026-11-02",
-        "acceptanceEvidence": [
-          "All 4 packages (P01–P04) passed. 54 surfaces inventoried and matched. 130 strings catalogued. Source parity 54/54 green. Playwright visual parity spec written for LEARNER/FACULTY/ADMIN/SUPERADMIN surfaces at 1440×900 and 375×812."
-        ]
+        "done": false,
+        "progressNote": "Reopened 2026-11-03: requirement \"verified in browser\" is not met - the P04 Playwright visual parity spec is written but has never been run against a deployed build. Prior (non-executed) claim: All 4 packages (P01–P04) passed. 54 surfaces inventoried and matched. 130 strings catalogued. Source parity 54/54 green. Playwright visual parity spec written for LEARNER/FACULTY/ADMIN/SUPERADMIN surfaces at 1440×900 and 375×812."
       },
       {
         "id": "API-04",
