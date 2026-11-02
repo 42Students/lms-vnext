@@ -1,0 +1,41 @@
+# Source-quality acceptance for DB19-P23 — field census and identity pinning.
+# This workflow proves the source gate only; runtime PG17 acceptance remains open.
+name: Recruiter CRM company notes source acceptance
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - "tests/db019-p23-field-review.test.mjs"
+      - "docs/planning/db019-p23-field-review.json"
+      - '.github/workflows/db019-p23-source-acceptance.yml'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: db019-p23-${{ github.sha }}
+  cancel-in-progress: false
+
+jobs:
+  source-quality:
+    name: "DB19-P23 source field census and identity pinning"
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Verify exact commit SHA
+        run: test "$(git rev-parse HEAD)" = "$GITHUB_SHA"
+      - name: "DB19-P23 source field census (no database)"
+        run: node --test tests/db019-p23-field-review.test.mjs
+      - name: Scope boundary
+        if: always()
+        run: |
+          echo "DB19-P23 source-quality gate only."
+          echo "Runtime PG17 producer/consumer acceptance and DB019/DB020 remain OPEN."
