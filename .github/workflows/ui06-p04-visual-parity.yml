@@ -1,0 +1,68 @@
+name: UI-06 P04 Visual Parity — Projects & Mentorship
+
+on:
+  workflow_dispatch:
+  schedule:
+    # Run nightly at 02:30 UTC
+    - cron: '30 2 * * *'
+
+jobs:
+  visual-parity:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+
+      - name: Install dependencies
+        run: bun install --frozen-lockfile
+
+      - name: Install Playwright browsers (Chromium only)
+        run: bunx playwright install --with-deps chromium
+
+      - name: Create snapshot output directory
+        run: mkdir -p tests/ui-snapshots/ui06
+
+      - name: UI-06 visual parity — superadmin template library
+        run: bunx playwright test tests/ui06-visual-parity.spec.ts --grep "SuperAdmin Template Library"
+        env:
+          TEST_BASE_URL: https://testa.development.42lms.com
+          PLAYWRIGHT_BASE_URL: https://testa.development.42lms.com
+
+      - name: UI-06 visual parity — superadmin project workspaces
+        run: bunx playwright test tests/ui06-visual-parity.spec.ts --grep "SuperAdmin Project Workspaces"
+        env:
+          TEST_BASE_URL: https://testa.development.42lms.com
+          PLAYWRIGHT_BASE_URL: https://testa.development.42lms.com
+
+      - name: UI-06 visual parity — college admin projects
+        run: bunx playwright test tests/ui06-visual-parity.spec.ts --grep "CollegeAdmin Projects"
+        env:
+          TEST_BASE_URL: https://testa.development.42lms.com
+          PLAYWRIGHT_BASE_URL: https://testa.development.42lms.com
+
+      - name: UI-06 visual parity — learner projects
+        run: bunx playwright test tests/ui06-visual-parity.spec.ts --grep "Learner Projects"
+        env:
+          TEST_BASE_URL: https://testa.development.42lms.com
+          PLAYWRIGHT_BASE_URL: https://testa.development.42lms.com
+
+      - name: Upload screenshots on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ui06-visual-parity-screenshots
+          path: tests/ui-snapshots/ui06/
+          retention-days: 14
+
+      - name: Upload Playwright report on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ui06-playwright-report
+          path: playwright-report/
+          retention-days: 14
