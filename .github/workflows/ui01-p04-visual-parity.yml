@@ -1,0 +1,68 @@
+name: UI-01 P04 Visual Parity — Auth / Admin Shell / Tenant Setup
+
+on:
+  workflow_dispatch:
+  schedule:
+    # Run nightly at 01:00 UTC
+    - cron: '0 1 * * *'
+
+jobs:
+  visual-parity:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+
+      - name: Install dependencies
+        run: bun install --frozen-lockfile
+
+      - name: Install Playwright browsers (Chromium only)
+        run: bunx playwright install --with-deps chromium
+
+      - name: Create snapshot output directory
+        run: mkdir -p tests/ui-snapshots/ui01
+
+      - name: UI-01 visual parity — public / auth surfaces
+        run: bunx playwright test tests/ui01-visual-parity.spec.ts --grep "Public / Auth"
+        env:
+          TEST_BASE_URL: https://testa.development.42lms.com
+          PLAYWRIGHT_BASE_URL: https://testa.development.42lms.com
+
+      - name: UI-01 visual parity — login page mobile
+        run: bunx playwright test tests/ui01-visual-parity.spec.ts --grep "Login page .mobile"
+        env:
+          TEST_BASE_URL: https://testa.development.42lms.com
+          PLAYWRIGHT_BASE_URL: https://testa.development.42lms.com
+
+      - name: UI-01 visual parity — superadmin surfaces
+        run: bunx playwright test tests/ui01-visual-parity.spec.ts --grep "SuperAdmin"
+        env:
+          TEST_BASE_URL: https://testa.development.42lms.com
+          PLAYWRIGHT_BASE_URL: https://testa.development.42lms.com
+
+      - name: UI-01 visual parity — college admin surfaces
+        run: bunx playwright test tests/ui01-visual-parity.spec.ts --grep "College Admin"
+        env:
+          TEST_BASE_URL: https://testa.development.42lms.com
+          PLAYWRIGHT_BASE_URL: https://testa.development.42lms.com
+
+      - name: Upload screenshots on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ui01-visual-parity-screenshots
+          path: tests/ui-snapshots/ui01/
+          retention-days: 14
+
+      - name: Upload Playwright report on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ui01-playwright-report
+          path: playwright-report/
+          retention-days: 14
