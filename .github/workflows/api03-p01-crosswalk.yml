@@ -1,0 +1,64 @@
+name: API-03-P01 Endpoint Crosswalk Gate
+
+on:
+  push:
+    paths:
+      - "docs/planning/api-crosswalk-api03.json"
+      - "docs/planning/api-inventory-api03.json"
+      - "tests/api03-endpoint-crosswalk.test.mjs"
+      - ".github/workflows/api03-p01-crosswalk.yml"
+  workflow_dispatch:
+
+jobs:
+  crosswalk-gate:
+    runs-on: ubuntu-latest
+    env:
+      NODE_VERSION: "22"
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: "npm"
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Verify crosswalk JSON exists
+        run: |
+          test -f docs/planning/api-crosswalk-api03.json || (echo "MISSING: api-crosswalk-api03.json" && exit 1)
+          echo "Crosswalk file found."
+          node -e "
+            const c = JSON.parse(require('fs').readFileSync('docs/planning/api-crosswalk-api03.json','utf8'));
+            console.log('milestoneId:', c.milestoneId);
+            console.log('summary:', JSON.stringify(c.summary));
+            console.log('frozenLegacySha:', c.frozenLegacySha);
+            if (c.frozenLegacySha !== '21bad59d4dfaf2fa11fdeaf9353327ce105697d5') {
+              console.error('FAIL: frozenLegacySha mismatch');
+              process.exit(1);
+            }
+            const { mapped, redesigned, retired, missing, total } = c.summary;
+            if (mapped + redesigned + retired + missing !== total) {
+              console.error('FAIL: summary counts do not add up');
+              process.exit(1);
+            }
+            console.log('Crosswalk JSON valid.');
+          "
+
+      - name: Run API-03 crosswalk tests
+        run: node --test tests/api03-endpoint-crosswalk.test.mjs
+
+      - name: Print crosswalk summary
+        run: |
+          node -e "
+            const c = JSON.parse(require('fs').readFileSync('docs/planning/api-crosswalk-api03.json','utf8'));
+            console.log('=== API-03 Crosswalk Summary ===');
+            console.log('Total endpoints:', c.summary.total);
+            console.log('  MAPPED     :', c.summary.mapped);
+            console.log('  REDESIGNED :', c.summary.redesigned);
+            console.log('  RETIRED    :', c.summary.retired);
+            console.log('  MISSING    :', c.summary.missing);
+            console.log('Missing gap notes:', c.missingGapNotes.length);
+          "
