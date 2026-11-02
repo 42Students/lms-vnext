@@ -291,6 +291,99 @@ describe("Placement P4 eligibility", () => {
     );
   });
 
+  it("refuses verified evidence after the manager TPO grant is revoked", async () => {
+    await pool.query(
+      "DELETE FROM membership_roles WHERE membership_id=$1 AND role='TPO'",
+      [SEED_IDS.facultyCollegeAMembership],
+    );
+    try {
+      await expect(upsertVerifiedAcademicEvidence(tpo,
+        SEED_IDS.learnerCollegeAMembership,{cgpa:8.25}))
+        .rejects.toThrow("Missing permission: placements.manage");
+      const evidence=await pool.query(
+        "SELECT membership_id FROM placement_candidate_academic_evidence WHERE membership_id=$1",
+        [SEED_IDS.learnerCollegeAMembership],
+      );
+      expect(evidence.rows).toHaveLength(0);
+    } finally {
+      await pool.query(
+        "INSERT INTO membership_roles(membership_id,role) VALUES($1,'TPO') ON CONFLICT DO NOTHING",
+        [SEED_IDS.facultyCollegeAMembership],
+      );
+    }
+  });
+
+  it("refuses staff verification after account disablement without stamping evidence", async () => {
+    await pool.query("UPDATE users SET platform_status='DISABLED' WHERE id=$1",
+      [SEED_IDS.facultyUser]);
+    try {
+      await expect(upsertVerifiedAcademicEvidence(tpo,
+        SEED_IDS.learnerCollegeAMembership,{cgpa:8.25}))
+        .rejects.toThrow("Missing permission: placements.manage");
+      const evidence=await pool.query(
+        "SELECT membership_id FROM placement_candidate_academic_evidence WHERE membership_id=$1",
+        [SEED_IDS.learnerCollegeAMembership],
+      );
+      expect(evidence.rows).toHaveLength(0);
+    } finally {
+      await pool.query("UPDATE users SET platform_status='ACTIVE' WHERE id=$1",
+        [SEED_IDS.facultyUser]);
+    }
+  });
+
+  it("serializes staff academic verification with TPO role removal", async () => {
+    const lockPool = new Pool({connectionString:databaseUrl,max:1});
+    const holder=await lockPool.connect();
+    let held=false;
+    let pending:Promise<{ok:boolean;error?:unknown}>|null=null;
+    try {
+      await holder.query("BEGIN");
+      held=true;
+      const role=await holder.query(
+        "SELECT membership_id FROM membership_roles WHERE membership_id=$1 AND role='TPO' FOR UPDATE",
+        [SEED_IDS.facultyCollegeAMembership],
+      );
+      expect(role.rows).toHaveLength(1);
+      pending=upsertVerifiedAcademicEvidence(tpo,SEED_IDS.learnerCollegeAMembership,
+        {cgpa:8.25}).then(()=>({ok:true}),error=>({ok:false,error}));
+      let blocked=false;
+      for(let attempt=0;attempt<160;attempt++){
+        const result=await pool.query<{blocked:string}>(
+          "SELECT count(*)::text AS blocked FROM pg_stat_activity " +
+          "WHERE datname=current_database() AND pid<>pg_backend_pid() " +
+          "AND wait_event_type='Lock' AND query ILIKE '%membership_roles%'",
+        );
+        if(Number(result.rows[0]?.blocked??0)>0){blocked=true;break;}
+        await new Promise(resolve=>setTimeout(resolve,25));
+      }
+      expect(blocked).toBe(true);
+      await holder.query(
+        "DELETE FROM membership_roles WHERE membership_id=$1 AND role='TPO'",
+        [SEED_IDS.facultyCollegeAMembership],
+      );
+      await holder.query("COMMIT");
+      held=false;
+      const outcome=await pending;
+      expect(outcome.ok).toBe(false);
+      expect(String((outcome.error as Error)?.message??""))
+        .toContain("Missing permission: placements.manage");
+      const evidence=await pool.query(
+        "SELECT membership_id FROM placement_candidate_academic_evidence WHERE membership_id=$1",
+        [SEED_IDS.learnerCollegeAMembership],
+      );
+      expect(evidence.rows).toHaveLength(0);
+    } finally {
+      if(held)await holder.query("ROLLBACK").catch(()=>undefined);
+      holder.release();
+      if(pending)await pending;
+      await lockPool.end();
+      await pool.query(
+        "INSERT INTO membership_roles(membership_id,role) VALUES($1,'TPO') ON CONFLICT DO NOTHING",
+        [SEED_IDS.facultyCollegeAMembership],
+      );
+    }
+  },20_000);
+
   it("supports explicit reasoned overrides without deleting underlying evidence", async () => {
     const job = await createJob();
     await upsertJobEligibilityPolicy(
