@@ -1,17 +1,26 @@
-name: UI-09 P03 Source Parity (notifications/announcements)
+name: UI-09 P03 Source Parity (notifications/announcements/discussions)
 
 on:
   push:
     paths:
       - "src/components/activity/**"
-      - "src/app/(authenticated)/notifications/**"
       - "src/app/(authenticated)/learn/notifications/**"
+      - "src/app/(authenticated)/learn/my-placements/announcements/**"
+      - "src/app/(authenticated)/learn/my-placements/notification-preferences/**"
       - "src/app/(authenticated)/teacher/notifications/**"
+      - "src/app/(authenticated)/teacher/courses/*/discussions/**"
+      - "src/app/(authenticated)/teacher/courses/*/discussion-history/**"
+      - "src/app/(authenticated)/teacher/courses/*/discussion-participation/**"
       - "src/app/(authenticated)/mentor/notifications/**"
       - "src/app/(authenticated)/tpo/notifications/**"
-      - "src/app/(authenticated)/admin/announcements/**"
       - "src/app/(authenticated)/tpo/announcements/**"
-      - "src/app/(authenticated)/learn/my-placements/announcements/**"
+      - "src/app/(authenticated)/tpo/settings/notifications/**"
+      - "src/app/(authenticated)/tpo/placements/jobs/*/discussion/**"
+      - "src/app/(authenticated)/hr/notifications/**"
+      - "src/app/(authenticated)/admin/announcements/**"
+      - "src/app/(authenticated)/admin/notification-delivery/**"
+      - "src/app/(authenticated)/admin/notification-templates/**"
+      - "src/app/(authenticated)/college/announcements/**"
       - "docs/planning/ui-inventory-ui09.json"
       - "docs/planning/ui-strings-ui09.json"
       - "tests/ui09-source-parity.test.mjs"
