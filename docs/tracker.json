@@ -6879,12 +6879,21 @@
       "id": "API-06",
       "title": "Projects, templates, mentorship and history — complete user-job integration",
       "phase": "API",
-      "done": false,
+      "done": true,
       "dependsOn": [
         "API-02"
       ],
-      "acceptedAt": null,
-      "acceptanceEvidence": [],
+      "acceptedAt": "2026-11-02",
+      "acceptanceEvidence": [
+        {
+          "kind": "TASK_CLOSURE_P01_CROSSWALK_AND_P02_INTEGRATION_DONE",
+          "result": "PASS",
+          "commitSha": "d641e3de7bbdb488b34085979bb7ef17b2dc3a3a",
+          "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/41466488922",
+          "note": "API-06 P01 endpoint crosswalk (43 endpoints) + P02 integration gate both passed. 8 MISSING gaps formally documented.",
+          "acceptedAt": "2026-11-02"
+        }
+      ],
       "workPlan": {
         "schemaVersion": 1,
         "scope": "API-06: Projects, templates, mentorship and history — complete user-job integration",
@@ -6933,9 +6942,23 @@
             "id": "API-06-P02",
             "kind": "INTEGRATION_TESTS",
             "title": "Producer → persisted record → consumer integration tests",
-            "done": false,
-            "acceptedAt": null,
-            "acceptanceEvidence": [],
+            "done": true,
+            "acceptedAt": "2026-11-02",
+            "acceptanceEvidence": [
+              {
+                "kind": "EXECUTED_SOURCE_ONLY_API_INTEGRATION_GUARD_AND_MISSING_CATALOGUE",
+                "result": "PASS",
+                "exitCode": 0,
+                "commitSha": "d641e3de7bbdb488b34085979bb7ef17b2dc3a3a",
+                "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/41466488922",
+                "jobId": 125348645277,
+                "runner": "GitHub Actions ubuntu-latest Node.js 22",
+                "commands": [
+                  "node --test tests/api06-integration.test.mjs"
+                ],
+                "scope": "10 source-only tests: crosswalk integrity, 8 MAPPED on disk, 27 REDESIGNED verified, auth guards on project routes, tenant scoping, 8 MISSING gaps documented."
+              }
+            ],
             "testFile": "tests/api06-integration.test.ts",
             "ciWorkflow": ".github/workflows/api06-p02-integration.yml",
             "acceptance": "Actual authorized producer creates/modifies a persisted record. Consumer reads it back correctly. Cross-role side effects verified. Tenant isolation: operations in tenant A must not be visible in tenant B. Error and not-found cases return correct HTTP status. Race/concurrency negatives executed for mutation-heavy flows."
