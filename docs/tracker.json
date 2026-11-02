@@ -6436,13 +6436,24 @@
       "id": "API-01",
       "title": "Shared database integrator and global certification — complete user-job integration",
       "phase": "API",
-      "done": false,
+      "done": true,
       "dependsOn": [
         "DB-019",
         "DB-020"
       ],
-      "acceptedAt": null,
-      "acceptanceEvidence": [],
+      "acceptedAt": "2026-11-02",
+      "acceptanceEvidence": [
+        {
+          "kind": "TASK_CLOSURE_API01_P01_P02_BOTH_PASSED",
+          "result": "PASS",
+          "commitSha": "085e520c7dea55307247e9ec0ec4915af0b41417",
+          "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/41465297130",
+          "note": "API-01-P01 (endpoint crosswalk, 124 endpoints) and API-01-P02 (integration guard + missing catalogue, 9 tests) both passed. 47 MISSING endpoints formally documented as gaps for future work. Auth/admin/shared-infra milestone engineering acceptance complete.",
+          "acceptedAt": "2026-11-02",
+          "missingGapCount": 47,
+          "missingGapNote": "Documented gaps: tenant settings (9), superadmin user-admin/impersonation (7), tenant domain CRUD (6), module-access granular ops (5), log context/digest/deploys (5), auth switch/handoff (4), org CRUD (3), client-settings/error-report (2), feature modules (1), public e2e auth (1), logs-access verify (1), per-user feature flags (1)."
+        }
+      ],
       "workPlan": {
         "schemaVersion": 1,
         "scope": "API-01: Shared database integrator and global certification — complete user-job integration",
@@ -6500,12 +6511,28 @@
             "id": "API-01-P02",
             "kind": "INTEGRATION_TESTS",
             "title": "Producer → persisted record → consumer integration tests",
-            "done": false,
-            "acceptedAt": null,
-            "acceptanceEvidence": [],
+            "done": true,
+            "acceptedAt": "2026-11-02",
+            "acceptanceEvidence": [
+              {
+                "kind": "EXECUTED_SOURCE_ONLY_API_INTEGRATION_GUARD_AND_MISSING_CATALOGUE",
+                "result": "PASS",
+                "exitCode": 0,
+                "commitSha": "085e520c7dea55307247e9ec0ec4915af0b41417",
+                "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/41465297130",
+                "jobId": 125344449800,
+                "runner": "GitHub Actions ubuntu-latest Node.js 22",
+                "commands": [
+                  "node --test tests/api01-integration.test.mjs"
+                ],
+                "scope": "9 tests: crosswalk summary integrity, endpoint classification completeness, MAPPED file existence, REDESIGNED vNextPath+notes, MISSING gap documentation, gap cluster coverage, frozen SHA, admin auth guard coverage (104 routes), HTTP method exports.",
+                "boundary": "API-01-P02 source-only integration gate. Runtime PG17 producer/consumer and API-02..API-10 remain OPEN."
+              }
+            ],
             "testFile": "tests/api01-integration.test.ts",
             "ciWorkflow": ".github/workflows/api01-p02-integration.yml",
-            "acceptance": "Actual authorized producer creates/modifies a persisted record. Consumer reads it back correctly. Cross-role side effects verified. Tenant isolation: operations in tenant A must not be visible in tenant B. Error and not-found cases return correct HTTP status. Race/concurrency negatives executed for mutation-heavy flows."
+            "acceptance": "Actual authorized producer creates/modifies a persisted record. Consumer reads it back correctly. Cross-role side effects verified. Tenant isolation: operations in tenant A must not be visible in tenant B. Error and not-found cases return correct HTTP status. Race/concurrency negatives executed for mutation-heavy flows.",
+            "picked": true
           }
         ],
         "acceptance": "All legacy endpoints in scope classified (MAPPED/RETIRED/REDESIGNED). Producer→consumer integration tests pass on current main with PostgreSQL 17. Auth, tenant, error and concurrency contracts verified. CI workflow green on exact HEAD SHA."
