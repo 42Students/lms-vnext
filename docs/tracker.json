@@ -6775,9 +6775,24 @@
             "id": "API-05-P01",
             "kind": "ENDPOINT_CROSSWALK",
             "title": "Legacy endpoint → vNext crosswalk",
-            "done": false,
-            "acceptedAt": null,
-            "acceptanceEvidence": [],
+            "done": true,
+            "acceptedAt": "2026-11-02",
+            "acceptanceEvidence": [
+              {
+                "kind": "EXECUTED_SOURCE_ONLY_API_ENDPOINT_CROSSWALK",
+                "result": "PASS",
+                "exitCode": 0,
+                "commitSha": "e3105750d65663b0bb1ea9326c9e9492568f139f",
+                "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/41466148352",
+                "jobId": 125347452570,
+                "runner": "GitHub Actions ubuntu-latest Node.js 22",
+                "commands": [
+                  "node --test tests/api05-endpoint-crosswalk.test.mjs"
+                ],
+                "scope": "37 legacy endpoints across 9 controllers (assignments, quizzes, attendance). 3 MAPPED, 26 REDESIGNED, 0 RETIRED, 8 MISSING. Gap clusters: attendance bulk import/validate/undo (4 endpoints), admin submissions listing, attendance delete/summary, policy defaults.",
+                "boundary": "API-05-P01 source crosswalk only. Integration tests (P02) and global gates remain OPEN."
+              }
+            ],
             "crosswalkFile": "docs/planning/api-crosswalk-api05.json",
             "testFile": "tests/api05-endpoint-crosswalk.test.mjs",
             "ciWorkflow": ".github/workflows/api05-p01-crosswalk.yml",
