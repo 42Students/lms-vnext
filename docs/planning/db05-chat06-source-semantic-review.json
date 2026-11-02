@@ -8,7 +8,7 @@
     "legacyBackendSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
     "legacyFrontendSha": "e6b09e6dd14ac7b6a0dae1697a7c08ddb27cdde2",
     "inventoryFile": "docs/planning/db-pass4-columns-db05_courses_and_content.json",
-    "inventoryBlobSha": "0c2dfd7e0a6f8ca1fbb6dd61664c6699d819ec54",
+    "inventoryBlobSha": "769cc92e6771150e1022bc15fc55d746760e5e29",
     "versioningFlyway": [
       "V120",
       "V121",

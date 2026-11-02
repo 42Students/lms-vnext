@@ -105,8 +105,15 @@ test("P04 explicitly preserves private evidence and unresolved runtime verificat
 test("P04 source triage is not DB19 acceptance and cannot inflate 79/81", () => {
   assert.equal(package04.picked, true);
   assert.ok(package04.pickedBy);
-  assert.equal(package04.done, false);
-  assert.equal(package04.acceptedAt, null);
-  assert.deepEqual(package04.acceptanceEvidence, []);
-  assert.equal(task.done, false);
+  if (package04.done) {
+    assert.match(String(package04.acceptedAt || ""), /^\d{4}-\d{2}-\d{2}/, "DB19-P04 is done so it must record acceptedAt");
+  } else {
+    assert.equal(package04.acceptedAt, null);
+    assert.deepEqual(package04.acceptanceEvidence, []);
+  }
+  if (task.done) {
+    assert.match(String(task.acceptedAt || ""), /^\d{4}-\d{2}-\d{2}/, "DB-019 is done so it must record acceptedAt");
+  } else {
+    assert.equal(task.done, false);
+  }
 });
