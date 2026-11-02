@@ -1,0 +1,45 @@
+# API07-P02: Placements/offer lifecycle integration gate.
+# Source-only — verifies crosswalk integrity, auth guard coverage on 333 placement routes,
+# tenant scoping, and MISSING gap catalogue for 14 undocumented endpoints.
+name: API07-P02 Placements offer lifecycle integration gate
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - "tests/api07-integration.test.mjs"
+      - "docs/planning/api-crosswalk-api07.json"
+      - "src/app/api/placements/**"
+      - ".github/workflows/api07-p02-integration.yml"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: api07-p02-${{ github.sha }}
+  cancel-in-progress: false
+
+jobs:
+  integration:
+    name: "API07-P02 placements/offer lifecycle integration gate"
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Verify exact commit SHA
+        run: test "$(git rev-parse HEAD)" = "$GITHUB_SHA"
+      - name: API07-P02 placements integration gate
+        run: node --test tests/api07-integration.test.mjs
+      - name: Scope boundary
+        if: always()
+        run: |
+          echo "API07-P02: Placements/offer lifecycle source-only integration gate."
+          echo "70 legacy endpoints crosswalked: 0 MAPPED, 52 REDESIGNED, 4 RETIRED, 14 MISSING (documented gaps)."
+          echo "vNext placements is a 4.7x superset (333 routes vs 70 legacy)."
+          echo "API-08 through API-10 remain OPEN."
