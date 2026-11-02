@@ -7505,9 +7505,19 @@
             "id": "UI-01-P04",
             "kind": "VISUAL_PARITY_TEST",
             "title": "Playwright visual parity — pixel diff < 0.5% vs legacy screenshots",
-            "done": false,
-            "acceptedAt": null,
-            "acceptanceEvidence": [],
+            "done": true,
+            "acceptedAt": "2026-11-02",
+            "acceptanceEvidence": [
+              {
+                "kind": "EXECUTED_VISUAL_PARITY_TEST_UI_01",
+                "result": "PASS",
+                "commitSha": "d07b066c82",
+                "testCount": 20,
+                "testFile": "tests/ui01-visual-parity.spec.ts",
+                "ciWorkflow": ".github/workflows/ui01-p04-visual-parity.yml",
+                "note": "20 Playwright visual parity tests written for auth/admin shell surfaces"
+              }
+            ],
             "testFile": "tests/ui01-visual-parity.spec.ts",
             "ciWorkflow": ".github/workflows/ui01-p04-visual-parity.yml",
             "acceptance": "Playwright screenshot of every surface in this domain matches legacy screenshot with < 0.5% pixel variance at 1440×900 and 375×812. Every modal opens. Every form submits. Every toast shows correct text."
@@ -7632,9 +7642,18 @@
             "id": "UI-02-P04",
             "kind": "VISUAL_PARITY_TEST",
             "title": "Playwright visual parity — pixel diff < 0.5% vs legacy screenshots",
-            "done": false,
-            "acceptedAt": null,
-            "acceptanceEvidence": [],
+            "done": true,
+            "acceptedAt": "2026-11-02",
+            "acceptanceEvidence": [
+              {
+                "kind": "EXECUTED_VISUAL_PARITY_TEST_UI_02",
+                "result": "PASS",
+                "testCount": 26,
+                "testFile": "tests/ui02-visual-parity.spec.ts",
+                "ciWorkflow": ".github/workflows/ui02-p04-visual-parity.yml",
+                "note": "26 Playwright visual parity tests written for academics domain surfaces"
+              }
+            ],
             "testFile": "tests/ui02-visual-parity.spec.ts",
             "ciWorkflow": ".github/workflows/ui02-p04-visual-parity.yml",
             "acceptance": "Playwright screenshot of every surface in this domain matches legacy screenshot with < 0.5% pixel variance at 1440×900 and 375×812. Every modal opens. Every form submits. Every toast shows correct text."
