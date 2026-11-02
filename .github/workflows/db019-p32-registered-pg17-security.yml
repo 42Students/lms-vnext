@@ -1,0 +1,67 @@
+# DB19-P32: Exact-head registered PostgreSQL 17 security acceptance gate.
+# Requires DB19-P31 done. Runs registered PG17 zero-to-head replay + P32 test.
+name: DB19-P32 Exact-head registered PG17 security acceptance gate
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - "tests/db019-p32-registered-pg17-security.test.mjs"
+      - "docs/tracker.json"
+      - "drizzle/*.sql"
+      - "drizzle/meta/_journal.json"
+      - '.github/workflows/db019-p32-registered-pg17-security.yml'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: db019-p32-${{ github.sha }}
+  cancel-in-progress: false
+
+jobs:
+  registered-pg17-security:
+    name: "DB19-P32 registered PG17 zero-to-head replay and P32 gate"
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    services:
+      postgres:
+        image: postgres:17-alpine
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: lms_vnext_test
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+    env:
+      DATABASE_URL: postgresql://postgres:postgres@127.0.0.1:5432/lms_vnext_test
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Verify exact commit SHA
+        run: test "$(git rev-parse HEAD)" = "$GITHUB_SHA"
+      - name: Verify registered migration journal
+        run: npm run db:journal:verify
+      - name: Zero-to-head registered migration replay
+        env:
+          DATABASE_URL: ""
+        run: npm run db:test:prepare
+      - name: Idempotent registered replay
+        run: npm run db:migrate
+      - name: "DB19-P32 security gate test"
+        run: node --test tests/db019-p32-registered-pg17-security.test.mjs
+      - name: Scope boundary
+        if: always()
+        run: |
+          echo "DB19-P32: Exact-head PG17 registered replay + global security gate."
+          echo "DB020 drift/certification certificate remains OPEN after this gate."

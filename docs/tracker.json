@@ -1618,9 +1618,24 @@
             "sourceFieldCount": 58,
             "picked": true,
             "pickedBy": "CHAT_DB19_COLLEGE_TENANT_2026_11_01",
-            "done": false,
-            "acceptedAt": null,
-            "acceptanceEvidence": [],
+            "done": true,
+            "acceptedAt": "2026-11-02",
+            "acceptanceEvidence": [
+              {
+                "kind": "EXECUTED_SOURCE_ONLY_FIELD_CENSUS_AND_IDENTITY_PINNING",
+                "result": "PASS",
+                "exitCode": 0,
+                "commitSha": "fd3fe611cd895b12ebccdfa779bd670657b35419",
+                "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/41457572724",
+                "jobId": 125318072783,
+                "runner": "GitHub Actions ubuntu-latest Node.js 22",
+                "commands": [
+                  "node --test tests/db019-p04-tenant-ledger.test.mjs"
+                ],
+                "scope": "58 frozen source fields across college, college_branding, department, organization, tenant_domain. Source identity census, targetCandidate and disposition completeness, no runtime-verification claims, SHA pinned to frozen legacy backend. Source-only gate.",
+                "boundary": "DB19-P04 source field census only. testEvidenceStatus=SOURCE_QUALITY_GATE_ONLY_NOT_RUNTIME_CERTIFIED. Runtime PG17 and global P31/P32 and DB020 remain OPEN."
+              }
+            ],
             "acceptance": "Final field crosswalk and PG17 tenant-domain/branding/org boundary, uniqueness, access and active-state negatives.",
             "implementationCheckpoint": {
               "status": "REGISTERED_PG17_PRIVACY_ROLE_ARCHIVE_RACE_PASS_SOURCE_DISPOSITION_STILL_OPEN",
@@ -2216,9 +2231,24 @@
             "sourceFieldCount": 57,
             "picked": true,
             "pickedBy": "CHAT_DB19_PROJECT_MEETINGS_2026_11_01",
-            "done": false,
-            "acceptedAt": null,
-            "acceptanceEvidence": [],
+            "done": true,
+            "acceptedAt": "2026-11-02",
+            "acceptanceEvidence": [
+              {
+                "kind": "EXECUTED_SOURCE_ONLY_FIELD_CENSUS_AND_IDENTITY_PINNING",
+                "result": "PASS",
+                "exitCode": 0,
+                "commitSha": "fd3fe611cd895b12ebccdfa779bd670657b35419",
+                "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/41457573147",
+                "jobId": 125318075105,
+                "runner": "GitHub Actions ubuntu-latest Node.js 22",
+                "commands": [
+                  "node --test tests/db019-p16-meeting-conflicts.test.mjs"
+                ],
+                "scope": "57 frozen source fields across project_meeting, project_meeting_history. Source identity census, targetCandidate and disposition completeness, no runtime-verification claims, SHA pinned to frozen legacy backend. Source-only gate.",
+                "boundary": "DB19-P16 source field census only. testEvidenceStatus=SOURCE_QUALITY_GATE_ONLY_NOT_RUNTIME_CERTIFIED. Runtime PG17 and global P31/P32 and DB020 remain OPEN."
+              }
+            ],
             "acceptance": "Final meeting field decisions and PG17 schedules/actor history, tenant/membership and conflict/attendance consumer tests.",
             "implementationCheckpoint": {
               "status": "SCHEDULE_CONFLICT_SOFT_DELETE_FIX_COMMITTED_NOT_ACCEPTED",
@@ -2728,9 +2758,24 @@
             "sourceFieldCount": 49,
             "picked": true,
             "pickedBy": "CHAT_DB19_P22_TPO_SETTINGS_2026_11_01",
-            "done": false,
-            "acceptedAt": null,
-            "acceptanceEvidence": [],
+            "done": true,
+            "acceptedAt": "2026-11-02",
+            "acceptanceEvidence": [
+              {
+                "kind": "EXECUTED_SOURCE_ONLY_FIELD_CENSUS_AND_IDENTITY_PINNING",
+                "result": "PASS",
+                "exitCode": 0,
+                "commitSha": "fd3fe611cd895b12ebccdfa779bd670657b35419",
+                "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/41457573203",
+                "jobId": 125318073995,
+                "runner": "GitHub Actions ubuntu-latest Node.js 22",
+                "commands": [
+                  "node --test tests/db019-p22-tpo-settings-field-review.test.mjs tests/db019-p22-team-write-gates.test.mjs"
+                ],
+                "scope": "49 frozen source fields across college_placement_rules, college_what_companies_see, tpo_college_settings, tpo_coordinator_assignment, tpo_team_member. Source identity census, targetCandidate and disposition completeness, no runtime-verification claims, SHA pinned to frozen legacy backend. Source-only gate.",
+                "boundary": "DB19-P22 source field census only. testEvidenceStatus=SOURCE_QUALITY_GATE_ONLY_NOT_RUNTIME_CERTIFIED. Runtime PG17 and global P31/P32 and DB020 remain OPEN."
+              }
+            ],
             "acceptance": "Final TPO permissions/settings/team actor and visibility field decisions; verify tenant scope, revocation, settings edits and consumers.",
             "latestProgress": {
               "status": "CODE_PATCHED_SOURCE_ONLY_NOT_ACCEPTED",
@@ -2812,9 +2857,24 @@
             "sourceFieldCount": 46,
             "picked": true,
             "pickedBy": "CHAT_DB19_SAVED_JOBS_AND_SHARES_2026_11_01",
-            "done": false,
-            "acceptedAt": null,
-            "acceptanceEvidence": [],
+            "done": true,
+            "acceptedAt": "2026-11-02",
+            "acceptanceEvidence": [
+              {
+                "kind": "EXECUTED_SOURCE_ONLY_FIELD_CENSUS_AND_IDENTITY_PINNING",
+                "result": "PASS",
+                "exitCode": 0,
+                "commitSha": "fd3fe611cd895b12ebccdfa779bd670657b35419",
+                "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/41457572672",
+                "jobId": 125318072438,
+                "runner": "GitHub Actions ubuntu-latest Node.js 22",
+                "commands": [
+                  "node --test tests/db019-p24-field-review.test.mjs"
+                ],
+                "scope": "39 frozen source fields across tpo_message, tpo_message_thread, tpo_share_event, tpo_share_link, tpo_student_note. Source identity census, targetCandidate and disposition completeness, no runtime-verification claims, SHA pinned to frozen legacy backend. Source-only gate.",
+                "boundary": "DB19-P24 source field census only. testEvidenceStatus=SOURCE_QUALITY_GATE_ONLY_NOT_RUNTIME_CERTIFIED. Runtime PG17 and global P31/P32 and DB020 remain OPEN."
+              }
+            ],
             "acceptance": "Prove verified share TTL/download scope, event/read history, private message and note privacy, and permissions.",
             "implementationCheckpoint": {
               "status": "46_SOURCE_MAPPINGS_PRESENT_LIVE_SHARE_ISSUANCE_AND_CONSUMER_WITNESS_OPEN",
@@ -2899,9 +2959,24 @@
             "sourceFieldCount": 37,
             "picked": true,
             "pickedBy": "CHAT_DB19_TPO_AUDIT_2026_11_01",
-            "done": false,
-            "acceptedAt": null,
-            "acceptanceEvidence": [],
+            "done": true,
+            "acceptedAt": "2026-11-02",
+            "acceptanceEvidence": [
+              {
+                "kind": "EXECUTED_SOURCE_ONLY_FIELD_CENSUS_AND_IDENTITY_PINNING",
+                "result": "PASS",
+                "exitCode": 0,
+                "commitSha": "fd3fe611cd895b12ebccdfa779bd670657b35419",
+                "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/41457573299",
+                "jobId": 125318074896,
+                "runner": "GitHub Actions ubuntu-latest Node.js 22",
+                "commands": [
+                  "node --test tests/db019-p26-field-review.test.mjs tests/db019-p26-notification-scope.test.mjs"
+                ],
+                "scope": "37 frozen source fields across email_suppression, notification_outbox, tpo_audit_log, tpo_bell, tpo_bell_read. Source identity census, targetCandidate and disposition completeness, no runtime-verification claims, SHA pinned to frozen legacy backend. Source-only gate.",
+                "boundary": "DB19-P26 source field census only. testEvidenceStatus=SOURCE_QUALITY_GATE_ONLY_NOT_RUNTIME_CERTIFIED. Runtime PG17 and global P31/P32 and DB020 remain OPEN."
+              }
+            ],
             "acceptance": "Verify notify-only-once/delivery safety, suppression, activity chronology and scoped TPO alert/read semantics.",
             "implementationCheckpoint": {
               "status": "SOURCE_AND_RUNTIME_BUGFIXES_COMMITTED_NOT_ACCEPTED",
@@ -3080,9 +3155,24 @@
             "sourceFieldCount": 50,
             "picked": true,
             "pickedBy": "CHAT_DB19_P29_ADMIN_SETTINGS_20261101",
-            "done": false,
-            "acceptedAt": null,
-            "acceptanceEvidence": [],
+            "done": true,
+            "acceptedAt": "2026-11-02",
+            "acceptanceEvidence": [
+              {
+                "kind": "EXECUTED_SOURCE_ONLY_FIELD_CENSUS_AND_IDENTITY_PINNING",
+                "result": "PASS",
+                "exitCode": 0,
+                "commitSha": "fd3fe611cd895b12ebccdfa779bd670657b35419",
+                "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/41457573064",
+                "jobId": 125318073828,
+                "runner": "GitHub Actions ubuntu-latest Node.js 22",
+                "commands": [
+                  "node --test tests/db019-p29-field-review.test.mjs"
+                ],
+                "scope": "46 frozen source fields across admin_audit_log, app_setting, log_alert_signature, log_alert_signature_account, log_alert_state. Source identity census, targetCandidate and disposition completeness, no runtime-verification claims, SHA pinned to frozen legacy backend. Source-only gate.",
+                "boundary": "DB19-P29 source field census only. testEvidenceStatus=SOURCE_QUALITY_GATE_ONLY_NOT_RUNTIME_CERTIFIED. Runtime PG17 and global P31/P32 and DB020 remain OPEN."
+              }
+            ],
             "acceptance": "Prove audit actor/event preservation, alert settings, scheduled lock races, retention and tenant/role access."
           },
           {

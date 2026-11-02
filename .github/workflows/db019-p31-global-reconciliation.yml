@@ -1,0 +1,42 @@
+# DB19-P31: Global 2,829-field semantic disposition reconciliation gate.
+# All 31 domain packages must be done=true in tracker before this gate fires.
+# Source-quality only — runtime PG17 acceptance is DB19-P32.
+name: DB19-P31 Global 2829 field semantic reconciliation gate
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - "tests/db019-p31-global-reconciliation.test.mjs"
+      - "docs/tracker.json"
+      - '.github/workflows/db019-p31-global-reconciliation.yml'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: db019-p31-${{ github.sha }}
+  cancel-in-progress: false
+
+jobs:
+  global-reconciliation:
+    name: "DB19-P31 global 2829-field semantic disposition reconciliation"
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Verify exact commit SHA
+        run: test "$(git rev-parse HEAD)" = "$GITHUB_SHA"
+      - name: "DB19-P31 global 2829-field semantic reconciliation (no database)"
+        run: node --test tests/db019-p31-global-reconciliation.test.mjs
+      - name: Scope boundary
+        if: always()
+        run: |
+          echo "DB19-P31 global source reconciliation gate only."
+          echo "Runtime PG17 exact-head acceptance is DB19-P32. DB020 remains OPEN."
