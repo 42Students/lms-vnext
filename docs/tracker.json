@@ -7405,6 +7405,827 @@
         ],
         "acceptance": "All legacy endpoints in scope classified (MAPPED/RETIRED/REDESIGNED). Producer→consumer integration tests pass on current main with PostgreSQL 17. Auth, tenant, error and concurrency contracts verified. CI workflow green on exact HEAD SHA."
       }
+    },
+    {
+      "id": "UI-01",
+      "title": "Auth, admin shell and tenant setup — exact clone parity",
+      "phase": "UI",
+      "done": false,
+      "dependsOn": [
+        "API-01"
+      ],
+      "acceptedAt": null,
+      "acceptanceEvidence": [],
+      "workPlan": {
+        "schemaVersion": 1,
+        "scope": "UI-01: Auth, admin shell and tenant setup — exact clone parity",
+        "frozenLegacyFrontendSha": "83347e29b1f5c66d497dc5d99060e098338b382f",
+        "legacyFrontendPath": "../42LMS/lms-dev-2026-frontend",
+        "masterPlan": "docs/planning/ui-phase-master-plan.md",
+        "legacyPages": [
+          "pages/index (login)",
+          "pages/otp",
+          "pages/forgot-password",
+          "superadmin/* (113 pages)",
+          "shared auth flows"
+        ],
+        "vNextDirs": [
+          "src/app/(auth)",
+          "src/app/(authenticated)/(superadmin)",
+          "src/app/(authenticated)/admin"
+        ],
+        "roles": [
+          "PUBLIC",
+          "SUPERADMIN"
+        ],
+        "estimatedSurfaces": 60,
+        "legacyAuditDocs": [
+          "DESIGN-SYSTEM-BLUEPRINT.md"
+        ],
+        "packages": [
+          {
+            "id": "UI-01-P01",
+            "kind": "SURFACE_INVENTORY",
+            "title": "Surface inventory — every page, modal, form, drawer catalogued",
+            "done": false,
+            "acceptedAt": null,
+            "acceptanceEvidence": [],
+            "inventoryFile": "docs/planning/ui-inventory-ui01.json",
+            "acceptance": "Every legacy page/modal/form/drawer/empty-state/error-state for this domain catalogued with role, surface type, legacy path, vNext path, disposition (MATCHED/MISSING/REDESIGNED). Zero surfaces undocumented."
+          },
+          {
+            "id": "UI-01-P02",
+            "kind": "STRING_CATALOGUE",
+            "title": "String catalogue — every UI string extracted from legacy",
+            "done": false,
+            "acceptedAt": null,
+            "acceptanceEvidence": [],
+            "catalogueFile": "docs/planning/ui-strings-ui01.json",
+            "acceptance": "Every button label, modal title, form field label, placeholder, validation message, success toast, error toast, empty state text extracted from legacy source verbatim. Zero strings invented."
+          },
+          {
+            "id": "UI-01-P03",
+            "kind": "SOURCE_PARITY_TEST",
+            "title": "Source parity test — all surfaces exist on disk, strings match",
+            "done": false,
+            "acceptedAt": null,
+            "acceptanceEvidence": [],
+            "testFile": "tests/ui01-source-parity.test.mjs",
+            "ciWorkflow": ".github/workflows/ui01-p03-source-parity.yml",
+            "acceptance": "Every MATCHED surface has vNextPath on disk (fs.existsSync). Every string in catalogue has usage in vNext component. Role gates enforced. No MISSING surfaces tolerated — must be built first."
+          },
+          {
+            "id": "UI-01-P04",
+            "kind": "VISUAL_PARITY_TEST",
+            "title": "Playwright visual parity — pixel diff < 0.5% vs legacy screenshots",
+            "done": false,
+            "acceptedAt": null,
+            "acceptanceEvidence": [],
+            "testFile": "tests/ui01-visual-parity.spec.ts",
+            "ciWorkflow": ".github/workflows/ui01-p04-visual-parity.yml",
+            "acceptance": "Playwright screenshot of every surface in this domain matches legacy screenshot with < 0.5% pixel variance at 1440×900 and 375×812. Every modal opens. Every form submits. Every toast shows correct text."
+          }
+        ],
+        "acceptance": "ALL surfaces exist. ALL strings match legacy verbatim. Source parity test green. Playwright visual parity green (< 0.5% diff). Every modal, form, empty state, error state verified. Zero invented UI."
+      }
+    },
+    {
+      "id": "UI-02",
+      "title": "Academics — batches, programs, schedule — exact clone parity",
+      "phase": "UI",
+      "done": false,
+      "dependsOn": [
+        "UI-01",
+        "API-02"
+      ],
+      "acceptedAt": null,
+      "acceptanceEvidence": [],
+      "workPlan": {
+        "schemaVersion": 1,
+        "scope": "UI-02: Academics — batches, programs, schedule — exact clone parity",
+        "frozenLegacyFrontendSha": "83347e29b1f5c66d497dc5d99060e098338b382f",
+        "legacyFrontendPath": "../42LMS/lms-dev-2026-frontend",
+        "masterPlan": "docs/planning/ui-phase-master-plan.md",
+        "legacyPages": [
+          "superadmin/batches",
+          "superadmin/programs",
+          "superadmin/semester",
+          "superadmin/schedule",
+          "superadmin/groups",
+          "superadmin/electives",
+          "superadmin/departments",
+          "college-admin/batches (59 pages overlap)"
+        ],
+        "vNextDirs": [
+          "src/app/(authenticated)/(admin)/academics",
+          "src/app/(authenticated)/(admin)/college"
+        ],
+        "roles": [
+          "ADMIN",
+          "LEARNER"
+        ],
+        "estimatedSurfaces": 80,
+        "legacyAuditDocs": [],
+        "packages": [
+          {
+            "id": "UI-02-P01",
+            "kind": "SURFACE_INVENTORY",
+            "title": "Surface inventory — every page, modal, form, drawer catalogued",
+            "done": false,
+            "acceptedAt": null,
+            "acceptanceEvidence": [],
+            "inventoryFile": "docs/planning/ui-inventory-ui02.json",
+            "acceptance": "Every legacy page/modal/form/drawer/empty-state/error-state for this domain catalogued with role, surface type, legacy path, vNext path, disposition (MATCHED/MISSING/REDESIGNED). Zero surfaces undocumented."
+          },
+          {
+            "id": "UI-02-P02",
+            "kind": "STRING_CATALOGUE",
+            "title": "String catalogue — every UI string extracted from legacy",
+            "done": false,
+            "acceptedAt": null,
+            "acceptanceEvidence": [],
+            "catalogueFile": "docs/planning/ui-strings-ui02.json",
+            "acceptance": "Every button label, modal title, form field label, placeholder, validation message, success toast, error toast, empty state text extracted from legacy source verbatim. Zero strings invented."
+          },
+          {
+            "id": "UI-02-P03",
+            "kind": "SOURCE_PARITY_TEST",
+            "title": "Source parity test — all surfaces exist on disk, strings match",
+            "done": false,
+            "acceptedAt": null,
+            "acceptanceEvidence": [],
+            "testFile": "tests/ui02-source-parity.test.mjs",
+            "ciWorkflow": ".github/workflows/ui02-p03-source-parity.yml",
+            "acceptance": "Every MATCHED surface has vNextPath on disk (fs.existsSync). Every string in catalogue has usage in vNext component. Role gates enforced. No MISSING surfaces tolerated — must be built first."
+          },
+          {
+            "id": "UI-02-P04",
+            "kind": "VISUAL_PARITY_TEST",
+            "title": "Playwright visual parity — pixel diff < 0.5% vs legacy screenshots",
+            "done": false,
+            "acceptedAt": null,
+            "acceptanceEvidence": [],
+            "testFile": "tests/ui02-visual-parity.spec.ts",
+            "ciWorkflow": ".github/workflows/ui02-p04-visual-parity.yml",
+            "acceptance": "Playwright screenshot of every surface in this domain matches legacy screenshot with < 0.5% pixel variance at 1440×900 and 375×812. Every modal opens. Every form submits. Every toast shows correct text."
+          }
+        ],
+        "acceptance": "ALL surfaces exist. ALL strings match legacy verbatim. Source parity test green. Playwright visual parity green (< 0.5% diff). Every modal, form, empty state, error state verified. Zero invented UI."
+      }
+    },
+    {
+      "id": "UI-03",
+      "title": "Learner and faculty profiles — exact clone parity",
+      "phase": "UI",
+      "done": false,
+      "dependsOn": [
+        "UI-01",
+        "API-03"
+      ],
+      "acceptedAt": null,
+      "acceptanceEvidence": [],
+      "workPlan": {
+        "schemaVersion": 1,
+        "scope": "UI-03: Learner and faculty profiles — exact clone parity",
+        "frozenLegacyFrontendSha": "83347e29b1f5c66d497dc5d99060e098338b382f",
+        "legacyFrontendPath": "../42LMS/lms-dev-2026-frontend",
+        "masterPlan": "docs/planning/ui-phase-master-plan.md",
+        "legacyPages": [
+          "learn/profile",
+          "learn/documents",
+          "superadmin/people",
+          "faculty/profile"
+        ],
+        "vNextDirs": [
+          "src/app/(authenticated)/(learner)/profile",
+          "src/app/(authenticated)/people"
+        ],
+        "roles": [
+          "LEARNER",
+          "FACULTY",
+          "ADMIN"
+        ],
+        "estimatedSurfaces": 50,
+        "legacyAuditDocs": [
+          "LEARNER_MODULE_AUDIT_REPORT.md"
+        ],
+        "packages": [
+          {
+            "id": "UI-03-P01",
+            "kind": "SURFACE_INVENTORY",
+            "title": "Surface inventory — every page, modal, form, drawer catalogued",
+            "done": false,
+            "acceptedAt": null,
+            "acceptanceEvidence": [],
+            "inventoryFile": "docs/planning/ui-inventory-ui03.json",
+            "acceptance": "Every legacy page/modal/form/drawer/empty-state/error-state for this domain catalogued with role, surface type, legacy path, vNext path, disposition (MATCHED/MISSING/REDESIGNED). Zero surfaces undocumented."
+          },
+          {
+            "id": "UI-03-P02",
+            "kind": "STRING_CATALOGUE",
+            "title": "String catalogue — every UI string extracted from legacy",
+            "done": false,
+            "acceptedAt": null,
+            "acceptanceEvidence": [],
+            "catalogueFile": "docs/planning/ui-strings-ui03.json",
+            "acceptance": "Every button label, modal title, form field label, placeholder, validation message, success toast, error toast, empty state text extracted from legacy source verbatim. Zero strings invented."
+          },
+          {
+            "id": "UI-03-P03",
+            "kind": "SOURCE_PARITY_TEST",
+            "title": "Source parity test — all surfaces exist on disk, strings match",
+            "done": false,
+            "acceptedAt": null,
+            "acceptanceEvidence": [],
+            "testFile": "tests/ui03-source-parity.test.mjs",
+            "ciWorkflow": ".github/workflows/ui03-p03-source-parity.yml",
+            "acceptance": "Every MATCHED surface has vNextPath on disk (fs.existsSync). Every string in catalogue has usage in vNext component. Role gates enforced. No MISSING surfaces tolerated — must be built first."
+          },
+          {
+            "id": "UI-03-P04",
+            "kind": "VISUAL_PARITY_TEST",
+            "title": "Playwright visual parity — pixel diff < 0.5% vs legacy screenshots",
+            "done": false,
+            "acceptedAt": null,
+            "acceptanceEvidence": [],
+            "testFile": "tests/ui03-visual-parity.spec.ts",
+            "ciWorkflow": ".github/workflows/ui03-p04-visual-parity.yml",
+            "acceptance": "Playwright screenshot of every surface in this domain matches legacy screenshot with < 0.5% pixel variance at 1440×900 and 375×812. Every modal opens. Every form submits. Every toast shows correct text."
+          }
+        ],
+        "acceptance": "ALL surfaces exist. ALL strings match legacy verbatim. Source parity test green. Playwright visual parity green (< 0.5% diff). Every modal, form, empty state, error state verified. Zero invented UI."
+      }
+    },
+    {
+      "id": "UI-04",
+      "title": "Courses and learning content — exact clone parity",
+      "phase": "UI",
+      "done": false,
+      "dependsOn": [
+        "UI-02",
+        "API-04"
+      ],
+      "acceptedAt": null,
+      "acceptanceEvidence": [],
+      "workPlan": {
+        "schemaVersion": 1,
+        "scope": "UI-04: Courses and learning content — exact clone parity",
+        "frozenLegacyFrontendSha": "83347e29b1f5c66d497dc5d99060e098338b382f",
+        "legacyFrontendPath": "../42LMS/lms-dev-2026-frontend",
+        "masterPlan": "docs/planning/ui-phase-master-plan.md",
+        "legacyPages": [
+          "superadmin/courses",
+          "learn/courses",
+          "faculty courses"
+        ],
+        "vNextDirs": [
+          "src/app/(authenticated)/(admin)/courses",
+          "src/app/(authenticated)/(learner)/learn"
+        ],
+        "roles": [
+          "ADMIN",
+          "FACULTY",
+          "LEARNER"
+        ],
+        "estimatedSurfaces": 70,
+        "legacyAuditDocs": [
+          "COURSE_UI_AUDIT_FINDINGS.md"
+        ],
+        "packages": [
+          {
+            "id": "UI-04-P01",
+            "kind": "SURFACE_INVENTORY",
+            "title": "Surface inventory — every page, modal, form, drawer catalogued",
+            "done": false,
+            "acceptedAt": null,
+            "acceptanceEvidence": [],
+            "inventoryFile": "docs/planning/ui-inventory-ui04.json",
+            "acceptance": "Every legacy page/modal/form/drawer/empty-state/error-state for this domain catalogued with role, surface type, legacy path, vNext path, disposition (MATCHED/MISSING/REDESIGNED). Zero surfaces undocumented."
+          },
+          {
+            "id": "UI-04-P02",
+            "kind": "STRING_CATALOGUE",
+            "title": "String catalogue — every UI string extracted from legacy",
+            "done": false,
+            "acceptedAt": null,
+            "acceptanceEvidence": [],
+            "catalogueFile": "docs/planning/ui-strings-ui04.json",
+            "acceptance": "Every button label, modal title, form field label, placeholder, validation message, success toast, error toast, empty state text extracted from legacy source verbatim. Zero strings invented."
+          },
+          {
+            "id": "UI-04-P03",
+            "kind": "SOURCE_PARITY_TEST",
+            "title": "Source parity test — all surfaces exist on disk, strings match",
+            "done": false,
+            "acceptedAt": null,
+            "acceptanceEvidence": [],
+            "testFile": "tests/ui04-source-parity.test.mjs",
+            "ciWorkflow": ".github/workflows/ui04-p03-source-parity.yml",
+            "acceptance": "Every MATCHED surface has vNextPath on disk (fs.existsSync). Every string in catalogue has usage in vNext component. Role gates enforced. No MISSING surfaces tolerated — must be built first."
+          },
+          {
+            "id": "UI-04-P04",
+            "kind": "VISUAL_PARITY_TEST",
+            "title": "Playwright visual parity — pixel diff < 0.5% vs legacy screenshots",
+            "done": false,
+            "acceptedAt": null,
+            "acceptanceEvidence": [],
+            "testFile": "tests/ui04-visual-parity.spec.ts",
+            "ciWorkflow": ".github/workflows/ui04-p04-visual-parity.yml",
+            "acceptance": "Playwright screenshot of every surface in this domain matches legacy screenshot with < 0.5% pixel variance at 1440×900 and 375×812. Every modal opens. Every form submits. Every toast shows correct text."
+          }
+        ],
+        "acceptance": "ALL surfaces exist. ALL strings match legacy verbatim. Source parity test green. Playwright visual parity green (< 0.5% diff). Every modal, form, empty state, error state verified. Zero invented UI."
+      }
+    },
+    {
+      "id": "UI-05",
+      "title": "Assignments, quizzes, grading and attendance — exact clone parity",
+      "phase": "UI",
+      "done": false,
+      "dependsOn": [
+        "UI-02",
+        "API-05"
+      ],
+      "acceptedAt": null,
+      "acceptanceEvidence": [],
+      "workPlan": {
+        "schemaVersion": 1,
+        "scope": "UI-05: Assignments, quizzes, grading and attendance — exact clone parity",
+        "frozenLegacyFrontendSha": "83347e29b1f5c66d497dc5d99060e098338b382f",
+        "legacyFrontendPath": "../42LMS/lms-dev-2026-frontend",
+        "masterPlan": "docs/planning/ui-phase-master-plan.md",
+        "legacyPages": [
+          "superadmin/assignments",
+          "superadmin/quiz",
+          "superadmin/attendance",
+          "learn/assignments",
+          "learn/attendance"
+        ],
+        "vNextDirs": [
+          "src/app/(authenticated)/(admin)/attendance",
+          "src/app/(authenticated)/(learner)"
+        ],
+        "roles": [
+          "ADMIN",
+          "FACULTY",
+          "LEARNER"
+        ],
+        "estimatedSurfaces": 60,
+        "legacyAuditDocs": [],
+        "packages": [
+          {
+            "id": "UI-05-P01",
+            "kind": "SURFACE_INVENTORY",
+            "title": "Surface inventory — every page, modal, form, drawer catalogued",
+            "done": false,
+            "acceptedAt": null,
+            "acceptanceEvidence": [],
+            "inventoryFile": "docs/planning/ui-inventory-ui05.json",
+            "acceptance": "Every legacy page/modal/form/drawer/empty-state/error-state for this domain catalogued with role, surface type, legacy path, vNext path, disposition (MATCHED/MISSING/REDESIGNED). Zero surfaces undocumented."
+          },
+          {
+            "id": "UI-05-P02",
+            "kind": "STRING_CATALOGUE",
+            "title": "String catalogue — every UI string extracted from legacy",
+            "done": false,
+            "acceptedAt": null,
+            "acceptanceEvidence": [],
+            "catalogueFile": "docs/planning/ui-strings-ui05.json",
+            "acceptance": "Every button label, modal title, form field label, placeholder, validation message, success toast, error toast, empty state text extracted from legacy source verbatim. Zero strings invented."
+          },
+          {
+            "id": "UI-05-P03",
+            "kind": "SOURCE_PARITY_TEST",
+            "title": "Source parity test — all surfaces exist on disk, strings match",
+            "done": false,
+            "acceptedAt": null,
+            "acceptanceEvidence": [],
+            "testFile": "tests/ui05-source-parity.test.mjs",
+            "ciWorkflow": ".github/workflows/ui05-p03-source-parity.yml",
+            "acceptance": "Every MATCHED surface has vNextPath on disk (fs.existsSync). Every string in catalogue has usage in vNext component. Role gates enforced. No MISSING surfaces tolerated — must be built first."
+          },
+          {
+            "id": "UI-05-P04",
+            "kind": "VISUAL_PARITY_TEST",
+            "title": "Playwright visual parity — pixel diff < 0.5% vs legacy screenshots",
+            "done": false,
+            "acceptedAt": null,
+            "acceptanceEvidence": [],
+            "testFile": "tests/ui05-visual-parity.spec.ts",
+            "ciWorkflow": ".github/workflows/ui05-p04-visual-parity.yml",
+            "acceptance": "Playwright screenshot of every surface in this domain matches legacy screenshot with < 0.5% pixel variance at 1440×900 and 375×812. Every modal opens. Every form submits. Every toast shows correct text."
+          }
+        ],
+        "acceptance": "ALL surfaces exist. ALL strings match legacy verbatim. Source parity test green. Playwright visual parity green (< 0.5% diff). Every modal, form, empty state, error state verified. Zero invented UI."
+      }
+    },
+    {
+      "id": "UI-06",
+      "title": "Projects and mentorship — exact clone parity",
+      "phase": "UI",
+      "done": false,
+      "dependsOn": [
+        "UI-02",
+        "API-06"
+      ],
+      "acceptedAt": null,
+      "acceptanceEvidence": [],
+      "workPlan": {
+        "schemaVersion": 1,
+        "scope": "UI-06: Projects and mentorship — exact clone parity",
+        "frozenLegacyFrontendSha": "83347e29b1f5c66d497dc5d99060e098338b382f",
+        "legacyFrontendPath": "../42LMS/lms-dev-2026-frontend",
+        "masterPlan": "docs/planning/ui-phase-master-plan.md",
+        "legacyPages": [
+          "superadmin/projects",
+          "learn/projects",
+          "mentor pages"
+        ],
+        "vNextDirs": [
+          "src/app/(authenticated)/(admin)/projects",
+          "src/app/(authenticated)/(learner)/projects"
+        ],
+        "roles": [
+          "ADMIN",
+          "FACULTY",
+          "LEARNER"
+        ],
+        "estimatedSurfaces": 40,
+        "legacyAuditDocs": [],
+        "packages": [
+          {
+            "id": "UI-06-P01",
+            "kind": "SURFACE_INVENTORY",
+            "title": "Surface inventory — every page, modal, form, drawer catalogued",
+            "done": false,
+            "acceptedAt": null,
+            "acceptanceEvidence": [],
+            "inventoryFile": "docs/planning/ui-inventory-ui06.json",
+            "acceptance": "Every legacy page/modal/form/drawer/empty-state/error-state for this domain catalogued with role, surface type, legacy path, vNext path, disposition (MATCHED/MISSING/REDESIGNED). Zero surfaces undocumented."
+          },
+          {
+            "id": "UI-06-P02",
+            "kind": "STRING_CATALOGUE",
+            "title": "String catalogue — every UI string extracted from legacy",
+            "done": false,
+            "acceptedAt": null,
+            "acceptanceEvidence": [],
+            "catalogueFile": "docs/planning/ui-strings-ui06.json",
+            "acceptance": "Every button label, modal title, form field label, placeholder, validation message, success toast, error toast, empty state text extracted from legacy source verbatim. Zero strings invented."
+          },
+          {
+            "id": "UI-06-P03",
+            "kind": "SOURCE_PARITY_TEST",
+            "title": "Source parity test — all surfaces exist on disk, strings match",
+            "done": false,
+            "acceptedAt": null,
+            "acceptanceEvidence": [],
+            "testFile": "tests/ui06-source-parity.test.mjs",
+            "ciWorkflow": ".github/workflows/ui06-p03-source-parity.yml",
+            "acceptance": "Every MATCHED surface has vNextPath on disk (fs.existsSync). Every string in catalogue has usage in vNext component. Role gates enforced. No MISSING surfaces tolerated — must be built first."
+          },
+          {
+            "id": "UI-06-P04",
+            "kind": "VISUAL_PARITY_TEST",
+            "title": "Playwright visual parity — pixel diff < 0.5% vs legacy screenshots",
+            "done": false,
+            "acceptedAt": null,
+            "acceptanceEvidence": [],
+            "testFile": "tests/ui06-visual-parity.spec.ts",
+            "ciWorkflow": ".github/workflows/ui06-p04-visual-parity.yml",
+            "acceptance": "Playwright screenshot of every surface in this domain matches legacy screenshot with < 0.5% pixel variance at 1440×900 and 375×812. Every modal opens. Every form submits. Every toast shows correct text."
+          }
+        ],
+        "acceptance": "ALL surfaces exist. ALL strings match legacy verbatim. Source parity test green. Playwright visual parity green (< 0.5% diff). Every modal, form, empty state, error state verified. Zero invented UI."
+      }
+    },
+    {
+      "id": "UI-07",
+      "title": "Placements — learner and admin — exact clone parity",
+      "phase": "UI",
+      "done": false,
+      "dependsOn": [
+        "UI-03",
+        "API-07"
+      ],
+      "acceptedAt": null,
+      "acceptanceEvidence": [],
+      "workPlan": {
+        "schemaVersion": 1,
+        "scope": "UI-07: Placements — learner and admin — exact clone parity",
+        "frozenLegacyFrontendSha": "83347e29b1f5c66d497dc5d99060e098338b382f",
+        "legacyFrontendPath": "../42LMS/lms-dev-2026-frontend",
+        "masterPlan": "docs/planning/ui-phase-master-plan.md",
+        "legacyPages": [
+          "learn/placements",
+          "superadmin/placements",
+          "placement drive flows"
+        ],
+        "vNextDirs": [
+          "src/app/(authenticated)/(learner)/placements",
+          "src/app/(authenticated)/(admin)/placements"
+        ],
+        "roles": [
+          "LEARNER",
+          "ADMIN",
+          "TPO"
+        ],
+        "estimatedSurfaces": 70,
+        "legacyAuditDocs": [
+          "MY-PLACEMENTS-CSS-AUDIT.md"
+        ],
+        "packages": [
+          {
+            "id": "UI-07-P01",
+            "kind": "SURFACE_INVENTORY",
+            "title": "Surface inventory — every page, modal, form, drawer catalogued",
+            "done": false,
+            "acceptedAt": null,
+            "acceptanceEvidence": [],
+            "inventoryFile": "docs/planning/ui-inventory-ui07.json",
+            "acceptance": "Every legacy page/modal/form/drawer/empty-state/error-state for this domain catalogued with role, surface type, legacy path, vNext path, disposition (MATCHED/MISSING/REDESIGNED). Zero surfaces undocumented."
+          },
+          {
+            "id": "UI-07-P02",
+            "kind": "STRING_CATALOGUE",
+            "title": "String catalogue — every UI string extracted from legacy",
+            "done": false,
+            "acceptedAt": null,
+            "acceptanceEvidence": [],
+            "catalogueFile": "docs/planning/ui-strings-ui07.json",
+            "acceptance": "Every button label, modal title, form field label, placeholder, validation message, success toast, error toast, empty state text extracted from legacy source verbatim. Zero strings invented."
+          },
+          {
+            "id": "UI-07-P03",
+            "kind": "SOURCE_PARITY_TEST",
+            "title": "Source parity test — all surfaces exist on disk, strings match",
+            "done": false,
+            "acceptedAt": null,
+            "acceptanceEvidence": [],
+            "testFile": "tests/ui07-source-parity.test.mjs",
+            "ciWorkflow": ".github/workflows/ui07-p03-source-parity.yml",
+            "acceptance": "Every MATCHED surface has vNextPath on disk (fs.existsSync). Every string in catalogue has usage in vNext component. Role gates enforced. No MISSING surfaces tolerated — must be built first."
+          },
+          {
+            "id": "UI-07-P04",
+            "kind": "VISUAL_PARITY_TEST",
+            "title": "Playwright visual parity — pixel diff < 0.5% vs legacy screenshots",
+            "done": false,
+            "acceptedAt": null,
+            "acceptanceEvidence": [],
+            "testFile": "tests/ui07-visual-parity.spec.ts",
+            "ciWorkflow": ".github/workflows/ui07-p04-visual-parity.yml",
+            "acceptance": "Playwright screenshot of every surface in this domain matches legacy screenshot with < 0.5% pixel variance at 1440×900 and 375×812. Every modal opens. Every form submits. Every toast shows correct text."
+          }
+        ],
+        "acceptance": "ALL surfaces exist. ALL strings match legacy verbatim. Source parity test green. Playwright visual parity green (< 0.5% diff). Every modal, form, empty state, error state verified. Zero invented UI."
+      }
+    },
+    {
+      "id": "UI-08",
+      "title": "TPO and recruiter CRM — exact clone parity",
+      "phase": "UI",
+      "done": false,
+      "dependsOn": [
+        "UI-07",
+        "API-08"
+      ],
+      "acceptedAt": null,
+      "acceptanceEvidence": [],
+      "workPlan": {
+        "schemaVersion": 1,
+        "scope": "UI-08: TPO and recruiter CRM — exact clone parity",
+        "frozenLegacyFrontendSha": "83347e29b1f5c66d497dc5d99060e098338b382f",
+        "legacyFrontendPath": "../42LMS/lms-dev-2026-frontend",
+        "masterPlan": "docs/planning/ui-phase-master-plan.md",
+        "legacyPages": [
+          "tpo/home",
+          "tpo/drives",
+          "tpo/students",
+          "tpo/leads",
+          "tpo/settings",
+          "hr/home",
+          "hr/profile"
+        ],
+        "vNextDirs": [
+          "src/app/(authenticated)/(tpo)",
+          "src/app/(authenticated)/(hr)"
+        ],
+        "roles": [
+          "TPO",
+          "HR"
+        ],
+        "estimatedSurfaces": 50,
+        "legacyAuditDocs": [],
+        "packages": [
+          {
+            "id": "UI-08-P01",
+            "kind": "SURFACE_INVENTORY",
+            "title": "Surface inventory — every page, modal, form, drawer catalogued",
+            "done": false,
+            "acceptedAt": null,
+            "acceptanceEvidence": [],
+            "inventoryFile": "docs/planning/ui-inventory-ui08.json",
+            "acceptance": "Every legacy page/modal/form/drawer/empty-state/error-state for this domain catalogued with role, surface type, legacy path, vNext path, disposition (MATCHED/MISSING/REDESIGNED). Zero surfaces undocumented."
+          },
+          {
+            "id": "UI-08-P02",
+            "kind": "STRING_CATALOGUE",
+            "title": "String catalogue — every UI string extracted from legacy",
+            "done": false,
+            "acceptedAt": null,
+            "acceptanceEvidence": [],
+            "catalogueFile": "docs/planning/ui-strings-ui08.json",
+            "acceptance": "Every button label, modal title, form field label, placeholder, validation message, success toast, error toast, empty state text extracted from legacy source verbatim. Zero strings invented."
+          },
+          {
+            "id": "UI-08-P03",
+            "kind": "SOURCE_PARITY_TEST",
+            "title": "Source parity test — all surfaces exist on disk, strings match",
+            "done": false,
+            "acceptedAt": null,
+            "acceptanceEvidence": [],
+            "testFile": "tests/ui08-source-parity.test.mjs",
+            "ciWorkflow": ".github/workflows/ui08-p03-source-parity.yml",
+            "acceptance": "Every MATCHED surface has vNextPath on disk (fs.existsSync). Every string in catalogue has usage in vNext component. Role gates enforced. No MISSING surfaces tolerated — must be built first."
+          },
+          {
+            "id": "UI-08-P04",
+            "kind": "VISUAL_PARITY_TEST",
+            "title": "Playwright visual parity — pixel diff < 0.5% vs legacy screenshots",
+            "done": false,
+            "acceptedAt": null,
+            "acceptanceEvidence": [],
+            "testFile": "tests/ui08-visual-parity.spec.ts",
+            "ciWorkflow": ".github/workflows/ui08-p04-visual-parity.yml",
+            "acceptance": "Playwright screenshot of every surface in this domain matches legacy screenshot with < 0.5% pixel variance at 1440×900 and 375×812. Every modal opens. Every form submits. Every toast shows correct text."
+          }
+        ],
+        "acceptance": "ALL surfaces exist. ALL strings match legacy verbatim. Source parity test green. Playwright visual parity green (< 0.5% diff). Every modal, form, empty state, error state verified. Zero invented UI."
+      }
+    },
+    {
+      "id": "UI-09",
+      "title": "Notifications, announcements and operations — exact clone parity",
+      "phase": "UI",
+      "done": false,
+      "dependsOn": [
+        "UI-01",
+        "API-09"
+      ],
+      "acceptedAt": null,
+      "acceptanceEvidence": [],
+      "workPlan": {
+        "schemaVersion": 1,
+        "scope": "UI-09: Notifications, announcements and operations — exact clone parity",
+        "frozenLegacyFrontendSha": "83347e29b1f5c66d497dc5d99060e098338b382f",
+        "legacyFrontendPath": "../42LMS/lms-dev-2026-frontend",
+        "masterPlan": "docs/planning/ui-phase-master-plan.md",
+        "legacyPages": [
+          "tpo/notifications",
+          "notification drawer (all roles)",
+          "announcements",
+          "discussions"
+        ],
+        "vNextDirs": [
+          "src/app/(authenticated)/notifications"
+        ],
+        "roles": [
+          "ALL"
+        ],
+        "estimatedSurfaces": 30,
+        "legacyAuditDocs": [
+          "NOTIFICATION_DRAWER_AUDIT.md"
+        ],
+        "packages": [
+          {
+            "id": "UI-09-P01",
+            "kind": "SURFACE_INVENTORY",
+            "title": "Surface inventory — every page, modal, form, drawer catalogued",
+            "done": false,
+            "acceptedAt": null,
+            "acceptanceEvidence": [],
+            "inventoryFile": "docs/planning/ui-inventory-ui09.json",
+            "acceptance": "Every legacy page/modal/form/drawer/empty-state/error-state for this domain catalogued with role, surface type, legacy path, vNext path, disposition (MATCHED/MISSING/REDESIGNED). Zero surfaces undocumented."
+          },
+          {
+            "id": "UI-09-P02",
+            "kind": "STRING_CATALOGUE",
+            "title": "String catalogue — every UI string extracted from legacy",
+            "done": false,
+            "acceptedAt": null,
+            "acceptanceEvidence": [],
+            "catalogueFile": "docs/planning/ui-strings-ui09.json",
+            "acceptance": "Every button label, modal title, form field label, placeholder, validation message, success toast, error toast, empty state text extracted from legacy source verbatim. Zero strings invented."
+          },
+          {
+            "id": "UI-09-P03",
+            "kind": "SOURCE_PARITY_TEST",
+            "title": "Source parity test — all surfaces exist on disk, strings match",
+            "done": false,
+            "acceptedAt": null,
+            "acceptanceEvidence": [],
+            "testFile": "tests/ui09-source-parity.test.mjs",
+            "ciWorkflow": ".github/workflows/ui09-p03-source-parity.yml",
+            "acceptance": "Every MATCHED surface has vNextPath on disk (fs.existsSync). Every string in catalogue has usage in vNext component. Role gates enforced. No MISSING surfaces tolerated — must be built first."
+          },
+          {
+            "id": "UI-09-P04",
+            "kind": "VISUAL_PARITY_TEST",
+            "title": "Playwright visual parity — pixel diff < 0.5% vs legacy screenshots",
+            "done": false,
+            "acceptedAt": null,
+            "acceptanceEvidence": [],
+            "testFile": "tests/ui09-visual-parity.spec.ts",
+            "ciWorkflow": ".github/workflows/ui09-p04-visual-parity.yml",
+            "acceptance": "Playwright screenshot of every surface in this domain matches legacy screenshot with < 0.5% pixel variance at 1440×900 and 375×812. Every modal opens. Every form submits. Every toast shows correct text."
+          }
+        ],
+        "acceptance": "ALL surfaces exist. ALL strings match legacy verbatim. Source parity test green. Playwright visual parity green (< 0.5% diff). Every modal, form, empty state, error state verified. Zero invented UI."
+      }
+    },
+    {
+      "id": "UI-10",
+      "title": "Global visual regression and clone certification gate",
+      "phase": "UI",
+      "done": false,
+      "dependsOn": [
+        "UI-01",
+        "UI-02",
+        "UI-03",
+        "UI-04",
+        "UI-05",
+        "UI-06",
+        "UI-07",
+        "UI-08",
+        "UI-09"
+      ],
+      "acceptedAt": null,
+      "acceptanceEvidence": [],
+      "workPlan": {
+        "schemaVersion": 1,
+        "scope": "UI-10: Global visual regression and clone certification gate",
+        "frozenLegacyFrontendSha": "83347e29b1f5c66d497dc5d99060e098338b382f",
+        "legacyFrontendPath": "../42LMS/lms-dev-2026-frontend",
+        "masterPlan": "docs/planning/ui-phase-master-plan.md",
+        "legacyPages": [
+          "ALL — cross-cutting regression"
+        ],
+        "vNextDirs": [
+          "src/app (all)"
+        ],
+        "roles": [
+          "ALL"
+        ],
+        "estimatedSurfaces": 0,
+        "legacyAuditDocs": [],
+        "packages": [
+          {
+            "id": "UI-10-P01",
+            "kind": "SURFACE_INVENTORY",
+            "title": "Surface inventory — every page, modal, form, drawer catalogued",
+            "done": false,
+            "acceptedAt": null,
+            "acceptanceEvidence": [],
+            "inventoryFile": "docs/planning/ui-inventory-ui10.json",
+            "acceptance": "Every legacy page/modal/form/drawer/empty-state/error-state for this domain catalogued with role, surface type, legacy path, vNext path, disposition (MATCHED/MISSING/REDESIGNED). Zero surfaces undocumented."
+          },
+          {
+            "id": "UI-10-P02",
+            "kind": "STRING_CATALOGUE",
+            "title": "String catalogue — every UI string extracted from legacy",
+            "done": false,
+            "acceptedAt": null,
+            "acceptanceEvidence": [],
+            "catalogueFile": "docs/planning/ui-strings-ui10.json",
+            "acceptance": "Every button label, modal title, form field label, placeholder, validation message, success toast, error toast, empty state text extracted from legacy source verbatim. Zero strings invented."
+          },
+          {
+            "id": "UI-10-P03",
+            "kind": "SOURCE_PARITY_TEST",
+            "title": "Source parity test — all surfaces exist on disk, strings match",
+            "done": false,
+            "acceptedAt": null,
+            "acceptanceEvidence": [],
+            "testFile": "tests/ui10-source-parity.test.mjs",
+            "ciWorkflow": ".github/workflows/ui10-p03-source-parity.yml",
+            "acceptance": "Every MATCHED surface has vNextPath on disk (fs.existsSync). Every string in catalogue has usage in vNext component. Role gates enforced. No MISSING surfaces tolerated — must be built first."
+          },
+          {
+            "id": "UI-10-P04",
+            "kind": "VISUAL_PARITY_TEST",
+            "title": "Playwright visual parity — pixel diff < 0.5% vs legacy screenshots",
+            "done": false,
+            "acceptedAt": null,
+            "acceptanceEvidence": [],
+            "testFile": "tests/ui10-visual-parity.spec.ts",
+            "ciWorkflow": ".github/workflows/ui10-p04-visual-parity.yml",
+            "acceptance": "Playwright screenshot of every surface in this domain matches legacy screenshot with < 0.5% pixel variance at 1440×900 and 375×812. Every modal opens. Every form submits. Every toast shows correct text."
+          }
+        ],
+        "acceptance": "ALL surfaces exist. ALL strings match legacy verbatim. Source parity test green. Playwright visual parity green (< 0.5% diff). Every modal, form, empty state, error state verified. Zero invented UI."
+      }
     }
   ],
   "execution": {
