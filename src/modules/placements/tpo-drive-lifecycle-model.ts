@@ -51,7 +51,7 @@ export function canTransitionPlacementJobStatus(from:string,to:string):boolean{
  * Historical DRAFT/ACTIVE flags project from one stored enum status. */
 export function legacyTpoDriveFlags(status:string){
  return {isDraft:status==="DRAFT",isActive:status==="PUBLISHED",
-  activeLabel:legacyTpoDriveLifecycleLabels[status as keyof typeof legacyTpoDriveLifecycleLabels]??"Unknown"};
+  activeLabel:(Object.hasOwn(legacyTpoDriveLifecycleLabels,status)?legacyTpoDriveLifecycleLabels[status as keyof typeof legacyTpoDriveLifecycleLabels]:undefined)??"Unknown"};
 }
 export const tpoDriveLifecycleSchema = z.object({
   action: z.enum(["PUBLISH", "CLOSE", "REOPEN"]),

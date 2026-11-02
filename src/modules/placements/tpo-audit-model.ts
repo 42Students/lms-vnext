@@ -203,7 +203,7 @@ export function formatTpoAuditEventType(
    "placements.tpo_blocked_date.created":"Blocked dates changed",
    "placements.tpo_blocked_date.deleted":"Blocked dates changed",
   };
-  const legacyLabel=legacy[value];
+  const legacyLabel=Object.hasOwn(legacy,value)?legacy[value]:undefined;
   if(legacyLabel!==undefined)return legacyLabel;
   return value
     .replaceAll(/[._]/g, " ")
@@ -224,5 +224,6 @@ export function tpoAuditActorLabel(
   TPO:"Placement team",RECRUITER:"Recruiter",STUDENT:"Student",
   SYSTEM:"System",COLLEGE_ADMIN:"College admin",
  };
- return labels[actorType??"SYSTEM"]??"System";
+ const actorKey=actorType??"SYSTEM";
+ return (Object.hasOwn(labels,actorKey)?labels[actorKey]:undefined)??"System";
 }

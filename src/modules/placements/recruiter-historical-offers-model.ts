@@ -14,8 +14,9 @@ export type RecruiterHistoricalOfferRow={
  joiningDate:string|null;
 };
 export function recruiterHistoricalOfferStatus(value:string){
- return {ISSUED:"Awaiting reply",ACCEPTED:"Accepted",DECLINED:"Declined",
-  EXPIRED:"Expired",WITHDRAWN:"Withdrawn"}[value]??"Unavailable";
+ const labels:Record<string,string>={ISSUED:"Awaiting reply",ACCEPTED:"Accepted",DECLINED:"Declined",
+  EXPIRED:"Expired",WITHDRAWN:"Withdrawn"};
+ return (Object.hasOwn(labels,value)?labels[value]:undefined)??"Unavailable";
 }
 export function recruiterHistoricalJoiningLabel(
  status:string|null,joiningDate:string|null,

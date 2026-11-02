@@ -57,12 +57,14 @@ export function buildAccreditationStudentRows(offers:readonly AccreditationStude
   (a.rollNumber??"").localeCompare(b.rollNumber??"")||a.membershipId.localeCompare(b.membershipId));
 }
 export function accreditationOfferStatusLabel(status:string):string{
- return ({SELECTED:"Selected (not released yet)",ISSUED:"Released",ACCEPTED:"Accepted",DECLINED:"Declined",
-  WITHDRAWN:"Withdrawn",EXPIRED:"Expired"} as Record<string,string>)[status]??"Not recorded";
+ const labels:Record<string,string>={SELECTED:"Selected (not released yet)",ISSUED:"Released",ACCEPTED:"Accepted",DECLINED:"Declined",
+  WITHDRAWN:"Withdrawn",EXPIRED:"Expired"};
+ return (Object.hasOwn(labels,status)?labels[status]:undefined)??"Not recorded";
 }
 export function accreditationJoiningLabel(joining:string|null):string{
  if(!joining)return "Not recorded";
- return ({JOINED:"Joined",DEFERRED:"Deferred",DID_NOT_JOIN:"Did not join"} as Record<string,string>)[joining]??"Not recorded";
+ const labels:Record<string,string>={JOINED:"Joined",DEFERRED:"Deferred",DID_NOT_JOIN:"Did not join"};
+ return (Object.hasOwn(labels,joining)?labels[joining]:undefined)??"Not recorded";
 }
 export function accreditationPackageLpa(amount:number|null):string{
  if(amount===null||!Number.isFinite(amount))return "Not recorded";

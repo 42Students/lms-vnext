@@ -46,14 +46,14 @@ export function offerRegisterStatusLabel(status:string):string{
   ACCEPTED:"Accepted",DECLINED:"Declined",WITHDRAWN:"Withdrawn",
   REVOKED:"Revoked",EXPIRED:"Expired",
  };
- return labels[status]??"Status unavailable";
+ return (Object.hasOwn(labels,status)?labels[status]:undefined)??"Status unavailable";
 }
 export function offerRegisterJoiningLabel(status:string|null|undefined):string{
  const labels:Record<string,string>={
   PENDING:"Pending",JOINED:"Joined",DEFERRED:"Deferred",
   DID_NOT_JOIN:"Not joined",NOT_JOINED:"Not joined",
  };
- return status?labels[status]??"Status unavailable":"Not recorded";
+ return status?(Object.hasOwn(labels,status)?labels[status]:undefined)??"Status unavailable":"Not recorded";
 }
 export function offerRegisterAcceptanceChannelLabel(channel:string|null|undefined):string{
  if(channel==="IN_APP")return "In app";

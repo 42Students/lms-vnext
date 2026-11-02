@@ -32,7 +32,7 @@ export function afterCollegeOptions(){
  return MANUAL_AFTER_COLLEGE_OUTCOMES.map(value=>({value,label:AFTER_COLLEGE_LABELS[value],settable:true as const}));
 }
 export function afterCollegeDisplay(outcome:AfterCollegeOutcome|null|undefined){
- return outcome?AFTER_COLLEGE_LABELS[outcome]:AFTER_COLLEGE_LABELS.NOT_DECIDED;
+ return outcome&&Object.hasOwn(AFTER_COLLEGE_LABELS,outcome)?AFTER_COLLEGE_LABELS[outcome]:AFTER_COLLEGE_LABELS.NOT_DECIDED;
 }
 
 /** Include evidence-derived placed and debarred outcomes in read-only settings. */

@@ -47,5 +47,5 @@ export function tpoDriveTabHref(jobId:string,tab:string){
   offers:root+"/offers","drive-day":root+"/drive-day",
   about:root+"/about",discussion:root+"/discussion",
  };
- return routes[tab]??root;
+ return (Object.hasOwn(routes,tab)?routes[tab]:undefined)??root;
 }
