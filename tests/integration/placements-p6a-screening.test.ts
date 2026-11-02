@@ -22,6 +22,7 @@ import {
 } from "@/modules/placements/job-service";
 import {
   decidePlacementScreening,
+  ensurePlacementScreeningPending,
   getPlacementScreening,
   listPlacementScreeningQueue,
 } from "@/modules/placements/screening-service";
@@ -397,6 +398,89 @@ describe("Placement P6A screening", () => {
       code:
         "PLACEMENT_SCREENING_APPLICATION_INACTIVE",
     });
+  });
+
+  it("blocks a decision when the persisted TPO role is revoked after authentication", async () => {
+    const { application } = await createApplication();
+    await pool.query(
+      "DELETE FROM membership_roles WHERE membership_id=$1 AND role='TPO'",
+      [SEED_IDS.facultyCollegeAMembership],
+    );
+    try {
+      await expect(decidePlacementScreening(tpo, application.id, {
+        decision: "SHORTLISTED", candidateMessage: "Should never be visible",
+      })).rejects.toThrow("Missing permission: placements.manage");
+      const [screening, history] = await Promise.all([
+        pool.query("SELECT status FROM placement_application_screenings WHERE application_id=$1",
+          [application.id]),
+        pool.query("SELECT id FROM placement_application_screening_history WHERE application_id=$1",
+          [application.id]),
+      ]);
+      expect(screening.rows[0]?.status).toBe("PENDING");
+      expect(history.rows).toHaveLength(0);
+    } finally {
+      await pool.query(
+        "INSERT INTO membership_roles(membership_id,role) VALUES($1,'TPO') ON CONFLICT DO NOTHING",
+        [SEED_IDS.facultyCollegeAMembership],
+      );
+    }
+  });
+
+  it("blocks a decision when the persisted screening manager account is disabled", async () => {
+    const { application } = await createApplication();
+    await pool.query("UPDATE users SET platform_status='DISABLED' WHERE id=$1",
+      [SEED_IDS.facultyUser]);
+    try {
+      await expect(decidePlacementScreening(tpo, application.id, {
+        decision: "REJECTED", internalReason: "Stale actor",
+      })).rejects.toThrow("Missing permission: placements.manage");
+      const history = await pool.query(
+        "SELECT id FROM placement_application_screening_history WHERE application_id=$1",
+        [application.id],
+      );
+      expect(history.rows).toHaveLength(0);
+    } finally {
+      await pool.query("UPDATE users SET platform_status='ACTIVE' WHERE id=$1",
+        [SEED_IDS.facultyUser]);
+    }
+  });
+
+  it("cannot recreate a missing screening row after staff grant revocation", async () => {
+    const { application } = await createApplication();
+    await pool.query("DELETE FROM placement_application_screenings WHERE application_id=$1",
+      [application.id]);
+    await pool.query(
+      "DELETE FROM membership_roles WHERE membership_id=$1 AND role='TPO'",
+      [SEED_IDS.facultyCollegeAMembership],
+    );
+    try {
+      await expect(ensurePlacementScreeningPending(tpo, application.id))
+        .rejects.toThrow("Missing permission: placements.manage");
+      const rows = await pool.query(
+        "SELECT id FROM placement_application_screenings WHERE application_id=$1",
+        [application.id],
+      );
+      expect(rows.rows).toHaveLength(0);
+    } finally {
+      await pool.query(
+        "INSERT INTO membership_roles(membership_id,role) VALUES($1,'TPO') ON CONFLICT DO NOTHING",
+        [SEED_IDS.facultyCollegeAMembership],
+      );
+    }
+  });
+
+  it("cannot repair a screening row for a withdrawn application", async () => {
+    const { application } = await createApplication();
+    await pool.query("DELETE FROM placement_application_screenings WHERE application_id=$1",
+      [application.id]);
+    await withdrawPlacementApplication(learner, application.id);
+    await expect(ensurePlacementScreeningPending(tpo, application.id))
+      .rejects.toMatchObject({code:"PLACEMENT_SCREENING_APPLICATION_INACTIVE"});
+    const rows = await pool.query(
+      "SELECT id FROM placement_application_screenings WHERE application_id=$1",
+      [application.id],
+    );
+    expect(rows.rows).toHaveLength(0);
   });
 
   it("rejects a screening manager from another college", async () => {
