@@ -2413,6 +2413,45 @@
             "done": false,
             "acceptedAt": null,
             "implementationCheckpoint": {
+              "latestP21LiveLearnerSavedJobsAndPreferencesPg17": {
+                "recordedOn": "2026-11-02",
+                "status": "EXACT_SHA_REGISTERED_PG17_18_OF_18_PLUS_FULL_TYPECHECK_PASS_P21_NOT_ACCEPTED",
+                "sourceSha": "177db3b847b0152aed01b90c515cc3eb368a5b6a",
+                "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/41410468080",
+                "jobId": 125162492502,
+                "result": "COMPLETED_SUCCESS_SCOPED_INTEGRATION_NOT_26_FIELD_APPROVAL",
+                "environment": "Disposable PostgreSQL17.11, 332 registered migrations through 0331, journal source preflight, zero-to-head replay and idempotence, exact SHA checkout, native TypeScript typecheck",
+                "passed": {
+                  "externalOfferIntegration": "9/9",
+                  "savedJobIntegration": "4/4",
+                  "candidatePreferenceIntegration": "5/5",
+                  "typescriptTypecheck": "PASS",
+                  "postgresql17ReplayAndIdempotence": "PASS"
+                },
+                "implementationCommits": [
+                  "3e10f5a185668228abb1536a98d05d491b6d3806",
+                  "93411df48eab1831234996ff953c0d15a0095eb2",
+                  "f40f920b09d1d8c4fbb38336d06821c4d5a945be",
+                  "3bb35fd3dab93cf2c09ca83b352c9c5be8a341db",
+                  "54db269db3708dc96e08ae6572d3c7a3b6c3f4a3",
+                  "42ac3b4041f384a25f6142ce87c031bbd158667c",
+                  "2328d28ea79650658890865a04989047aa79004d",
+                  "177db3b847b0152aed01b90c515cc3eb368a5b6a"
+                ],
+                "verifiedScope": [
+                  "Off-campus external offers owner submission/list and staff review/list require persisted live grants through the actual database transaction; account disablement or role revocation cannot race an insert, private read or immutable event.",
+                  "Saved-job save, unsave and private list require persisted live learner account and role; published bookmark insert rechecks and locks the job's current status, archived/deleted flag and college.",
+                  "Actual SQL tenant guard rejects forged cross-college saved jobs with 23514 and the expected error text; unique membership/job bookmark survives idempotent retries.",
+                  "Preference self-read, historical profile projection and write hold live learner role, member and account locks. Existing false email/app notification consent is preserved by partial writes.",
+                  "No numbered migration, journal provenance, registered CHECK/FK or permission assertion was disabled or rewritten."
+                ],
+                "remainingBeforeAcceptance": [
+                  "26 legacy field-level final mapping/redesign/retirement decisions, including request linkage, private external letters and source is_deleted behavior, are not approved by these runtime tests.",
+                  "Historical job_preferences exam slot/PAP, specific-role, city and shift enum precedence, notifications/opt-out and deletion semantics require explicit exact oracle/consumer review; do not synthesize values.",
+                  "Global DB19-P31 2829-field final dispositions, DB19-P32 cross-domain producer/consumer and DB020 phase certification are independent open gates."
+                ],
+                "notTaskAcceptance": true
+              },
               "status": "EXACT_SHA_REGISTERED_PG17_7_OF_7_EXTERNAL_OFFER_SECURITY_PASS_P21_STILL_OPEN",
               "recordedOn": "2026-11-02",
               "sourceSha": "a8323f9a192c03c7fe77c48a94a0ad0115ac9b4a",
