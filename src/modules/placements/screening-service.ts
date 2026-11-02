@@ -25,6 +25,7 @@ import {
 import { PlacementsServiceError } from "./errors";
 import { requirePlacementManageScope } from "./scope";
 import { requireLearnerPlacementAccess } from "./learner-participation-guard";
+import { assertPersistedPlatformPermission } from "@/modules/permissions/persisted-actor";
 import {
   placementApplicationIdSchema,
   placementJobIdSchema,
@@ -412,7 +413,7 @@ export async function decidePlacementScreening(
     );
   const current =
     await loadScreeningDetails(applicationId);
-  await requirePlacementManageScope(
+  const managedCollege = await requirePlacementManageScope(
     context,
     current.job.collegeId,
   );
@@ -475,6 +476,14 @@ export async function decidePlacementScreening(
         "PLACEMENT_SCREENING_APPLICATION_INACTIVE",
       );
     }
+
+    // The initial permission check is a preflight only. Rebuild the live
+    // staff grants under SHARE locks before mutating status or audit history.
+    // Revocation/disablement cannot slip between this gate and commit.
+    await assertPersistedPlatformPermission(
+      tx, context, "placements.manage",
+      { organizationId: managedCollege.organizationId, collegeId: managedCollege.id },
+    );
 
     const now = new Date();
     const [updated] = await tx
