@@ -7,6 +7,7 @@ import {
   activityEvents,
   inAppNotifications,
   membershipRoles,
+  users,
   placementApplications,
   placementJobs,
 } from "@/db/schema";
@@ -118,7 +119,9 @@ async function requireLearner(tx: Tx, collegeId: string, membershipId: string) {
     userId:collegeMemberships.userId,
     status: collegeMemberships.status,
     collegeId: collegeMemberships.collegeId,
-  }).from(collegeMemberships).innerJoin(membershipRoles,
+    platformStatus: users.platformStatus,
+  }).from(collegeMemberships).innerJoin(users,
+    eq(users.id, collegeMemberships.userId)).innerJoin(membershipRoles,
     and(eq(membershipRoles.membershipId, collegeMemberships.id),
       eq(membershipRoles.role, "LEARNER")))
     .where(eq(collegeMemberships.id, membershipId))
@@ -127,7 +130,7 @@ async function requireLearner(tx: Tx, collegeId: string, membershipId: string) {
     // before this check or wait until after the write, never slip between.
     .for("share").limit(1);
   if (!member || member.collegeId !== collegeId ||
-      member.status !== "ACTIVE") {
+      member.status !== "ACTIVE" || member.platformStatus !== "ACTIVE") {
     throw new PlacementDebarmentError("DB08_DEBARMENT_MEMBER_INVALID");
   }
   return member;
