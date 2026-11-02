@@ -617,11 +617,25 @@ export async function ensurePlacementScreeningPending(
     .innerJoin(placementJobs, eq(placementJobs.id, placementApplications.jobId))
     .where(eq(placementApplications.id, applicationId)).limit(1);
   if (!application) throw new PlacementsServiceError("PLACEMENT_SCREENING_NOT_FOUND");
-  await requirePlacementManageScope(context, application.collegeId);
+  const managedCollege = await requirePlacementManageScope(context, application.collegeId);
   if (application.status !== "SUBMITTED")
     throw new PlacementsServiceError("PLACEMENT_SCREENING_APPLICATION_INACTIVE");
-  await getDb().insert(placementApplicationScreenings)
-    .values({applicationId, status: "PENDING"})
-    .onConflictDoNothing({target: placementApplicationScreenings.applicationId});
+  await getDb().transaction(async tx => {
+    // Repair must not resurrect a screening after a concurrent withdrawal,
+    // or let a staff role revoke race between preflight and persistence.
+    const [locked] = await tx.select({status: placementApplications.status})
+      .from(placementApplications)
+      .where(eq(placementApplications.id, applicationId))
+      .for("update").limit(1);
+    if (!locked || locked.status !== "SUBMITTED")
+      throw new PlacementsServiceError("PLACEMENT_SCREENING_APPLICATION_INACTIVE");
+    await assertPersistedPlatformPermission(
+      tx, context, "placements.manage",
+      {organizationId: managedCollege.organizationId, collegeId: managedCollege.id},
+    );
+    await tx.insert(placementApplicationScreenings)
+      .values({applicationId, status: "PENDING"})
+      .onConflictDoNothing({target: placementApplicationScreenings.applicationId});
+  });
   return loadScreeningDetails(applicationId);
 }
