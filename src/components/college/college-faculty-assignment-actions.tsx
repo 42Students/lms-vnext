@@ -154,7 +154,7 @@ export function CollegeFacultyAssignmentCreate({
   }
   const fieldClass = "min-w-0";
   return <>{confirmation}<section aria-label="Create teaching assignment"
-    className="min-w-0 rounded-[var(--lms-canvas-radius)] border border-[var(--lms-canvas-border)] bg-white p-4">
+    className="min-w-0 rounded-[var(--lms-canvas-radius)] border border-[var(--lms-canvas-border)] bg-surface p-4">
     <h2 className="text-lg font-semibold text-[var(--lms-heading)]">{FACULTY_ASSIGNMENT_COPY.createTitle}</h2>
     <form onSubmit={event => void submit(event)} className="mt-[var(--lms-space-3)] grid min-w-0 max-w-[1100px] gap-[var(--lms-space-3)] md:grid-cols-2 xl:grid-cols-4">
       <label className="grid min-w-0 gap-2 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Program

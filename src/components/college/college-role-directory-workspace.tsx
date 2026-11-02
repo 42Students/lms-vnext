@@ -585,7 +585,7 @@ export async function CollegeRoleDirectoryWorkspace({
           {result.filter.page > 1 ? (
             <Link
               href={collegeRoleDirectoryHref(kind, { ...result.filter, page: result.filter.page - 1 })}
-              className="inline-flex min-h-11 min-w-11 items-center justify-center rounded-[8px] border border-[var(--lms-canvas-border)] bg-white px-[var(--lms-space-3)] text-[14px] font-semibold leading-[42px] text-[var(--lms-body-text)] hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary-subtle)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9 md:min-w-9 md:rounded-[var(--lms-control-radius)] md:leading-5"
+              className="inline-flex min-h-11 min-w-11 items-center justify-center rounded-[8px] border border-[var(--lms-canvas-border)] bg-surface px-[var(--lms-space-3)] text-[14px] font-semibold leading-[42px] text-[var(--lms-body-text)] hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary-subtle)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9 md:min-w-9 md:rounded-[var(--lms-control-radius)] md:leading-5"
             >
               Previous
             </Link>
@@ -593,7 +593,7 @@ export async function CollegeRoleDirectoryWorkspace({
           {result.filter.page < result.totalPages ? (
             <Link
               href={collegeRoleDirectoryHref(kind, { ...result.filter, page: result.filter.page + 1 })}
-              className="inline-flex min-h-11 min-w-11 items-center justify-center rounded-[8px] border border-[var(--lms-canvas-border)] bg-white px-[var(--lms-space-3)] text-[14px] font-semibold leading-[42px] text-[var(--lms-body-text)] hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary-subtle)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9 md:min-w-9 md:rounded-[var(--lms-control-radius)] md:leading-5"
+              className="inline-flex min-h-11 min-w-11 items-center justify-center rounded-[8px] border border-[var(--lms-canvas-border)] bg-surface px-[var(--lms-space-3)] text-[14px] font-semibold leading-[42px] text-[var(--lms-body-text)] hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary-subtle)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9 md:min-w-9 md:rounded-[var(--lms-control-radius)] md:leading-5"
             >
               Next
             </Link>

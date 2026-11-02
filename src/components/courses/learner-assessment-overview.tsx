@@ -484,7 +484,7 @@ export function LearnerAssessmentOverview({
             return (
               <article
                 key={`${item.deliveryId}-${item.id}`}
-                className="min-w-0 rounded-[12px] border border-border bg-white px-4 py-4 md:px-5"
+                className="min-w-0 rounded-[12px] border border-border bg-surface px-4 py-4 md:px-5"
               >
                 <div className="flex min-w-0 flex-col gap-3 md:flex-row md:items-start md:justify-between md:gap-6">
                   <div className="min-w-0">

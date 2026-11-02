@@ -562,7 +562,7 @@ export function LearnerCourseDiscussion({
           if(destination)router.push(destination);
         }}/>
       {moderationError?<Alert tone="error">{moderationError}</Alert>:null}
-      <section className={"relative min-w-0 overflow-hidden bg-white "+(moderate?"":"border border-[var(--lms-canvas-border)]")} >
+      <section className={"relative min-w-0 overflow-hidden bg-surface "+(moderate?"":"border border-[var(--lms-canvas-border)]")} >
         {loadError && messages.length > 0 && loadedOnce.current && !refreshDismissed ? (
           <div role="alert" className="flex flex-wrap items-center gap-3 border-b border-[#f2e3b9] bg-[#fffbea] px-3 py-2 text-sm">
             <div className="min-w-0 flex-1">
