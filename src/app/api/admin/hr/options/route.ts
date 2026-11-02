@@ -25,7 +25,7 @@ export async function GET(request: Request) {
       );
 
     const colleges=await listSuperAdminHrColleges(context);
-    return NextResponse.json({relationships,colleges});
+    return NextResponse.json({relationships,colleges},{headers:{"Cache-Control":"private, no-store"}});
   } catch (error) {
     return apiErrorResponse(error);
   }

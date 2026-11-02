@@ -37,9 +37,9 @@ Every scanner HIGH candidate was traced and cleared:
 
 | # | Finding | Evidence | Status |
 |---|---|---|---|
-| M1 | 36 of 36 body-reading admin routes use unbounded `request.json()`; 206 of 487 routes API-wide. | scanner `--md` | Frozen for Phase 1 by `phase1-unbounded-json-routes.json`. Decision: add a shared bounded-JSON reader. |
-| M2 | Destructive-looking admin routes without a server-enforced confirmation or version token: HR `terminate-sessions`, HR grant revoke (`DELETE`), college `subdomain` (`PUT`/`DELETE`), `colleges/bulk-import`, `courses/legacy-bulk-flags`, `verification/bulk-review` (client sends `confirm:true`, server enforcement not seen within two hops). | `p3stats` in this audit | Origin check and role guard apply, and audit events exist for HR actions. Decision: require `confirmed: true` server-side (needs client change). |
-| M3 | 11 mutating admin routes show no audit-event signal within one hop: `colleges/bulk-import`, `colleges/[id]/subdomain`, `companies/restore`, `course-progress/retake`, `faculty/search` (selection record), `features/[id]/descendants`, `placements/applications/refresh`, `placements/organization-applications`, `skills/curated-seed`, `skills/import`, `verification/settings`. | `p3stats` | Several likely record events deeper than two hops. Each needs a manual trace before a test can assert it. |
+| M1 | 33 of 38 body-reading admin routes still call raw `request.json()` with no size bound; 5 admin routes (10 API-wide) already use the shared `readBoundedJsonRequest` (SA-ADMIN-BODY-19). | `git grep readBoundedJsonRequest`, scanner `--md` | Frozen for Phase 1 by `phase1-unbounded-json-routes.json`. Decision: migrate the remaining 33 to the shared reader. |
+| M2 | RESOLVED by stricter tracing. All 17 destructive-looking admin routes reach a `z.literal(true)` acknowledgement, typed confirmation or `expectedUpdatedAt`/`expectedVersion`/`expectedStatus` token within three import hops, except `colleges/bulk-import` (create-only, skips existing codes). | `phase3-destructive-admin-routes-need-confirmation.test.ts` | Locked by test. Residual risk: the signal is a token match, not proof the handler enforces it on every path. |
+| M3 | RESOLVED. All 50 mutating admin routes reach a real `recordActivityEvent`/`recordActivityEventInTransaction` call within three hops (`announcements/broadcast` needs the third). | `phase3-admin-mutations-emit-audit-events.test.ts` | Locked by test. An import or comment alone does not satisfy the detector. |
 | M4 | `/admin` pages without their own context call (10 delegating pages) rely on the layout plus a guarded component. | pages inventory test | Frozen list; a new data-reading page with no guard now fails the test. |
 
 ### LOW
@@ -54,6 +54,19 @@ Every scanner HIGH candidate was traced and cleared:
 - Bulk course visibility (`admin/courses/bulk-status`): strict schema with `confirmed: z.literal(true)`, max 100 ids, per-row tenant re-check inside the transaction, activity events.
 - Recruiter HR actions: audit events for create, suspend, grant, revoke and session termination.
 
+## Fixed in Phase 3
+
+- `GET /api/admin/hr/options`, `GET`/`PATCH /api/admin/hr/[userId]` and `GET /api/admin/onboarding/resolve-preview` returned account, grant or tenant data with no cache header. They now send `Cache-Control: private, no-store` (14 admin routes lacked the header; the other 11 are mutation-only, which browsers and proxies do not cache). Locked by `phase3-admin-get-responses-private-no-store.test.ts`.
+
+## Runtime permission matrix
+
+`phase3-superadmin-routes-deny-non-super-admin.test.ts` calls every `/api/admin`, `organizations`, `tenant-domains` and `features` route handler with a stubbed database that answers every query with no rows, so an unguarded route can only return a success status by letting the caller in. Identities: LEARNER, FACULTY, COLLEGE_ADMIN, MENTOR, TPO, RECRUITER, a SUSPENDED Super Admin, and an unauthenticated caller. Result: no identity receives a 2xx or 3xx from any route except these reasoned, identity-specific exceptions:
+
+- `features/me` returns the caller's own module flags to any authenticated member.
+- `admin/batches|classes|semesters|semester-courses/export` answer a College Admin only for their own college (`resolveActingCollege(context,'academics.read')`).
+
+This test is slow (about 2.5 minutes on a busy laptop) and belongs in CI, not in a watch loop.
+
 ## Test coverage added in Phase 3 (static, no database)
 
 | File | What it locks |
@@ -63,14 +76,19 @@ Every scanner HIGH candidate was traced and cleared:
 | `phase3-no-mutating-get-handlers.test.ts` | No API `GET` handler contains a write. |
 | `phase3-internal-routes-authenticate-callers.test.ts` | Every internal route authenticates its caller before doing work, with constant-time comparison. |
 | `phase3-superadmin-pages-guard-inventory.test.ts` | Every admin page guards itself, redirects without data, or is a reviewed delegating page. |
+| `phase3-superadmin-routes-deny-non-super-admin.test.ts` | Runtime matrix: eight non-Super-Admin identities never get a success response from any admin or platform route. |
+| `phase3-admin-mutations-emit-audit-events.test.ts` | Every mutating admin route reaches a real activity-event write within three hops. |
+| `phase3-destructive-admin-routes-need-confirmation.test.ts` | Destructive admin routes carry a confirmation or version token. |
+| `phase3-admin-mutations-strict-input.test.ts` | Mutating admin routes reach strict schemas and parse every JSON body. |
+| `phase3-admin-get-responses-private-no-store.test.ts` | Admin GET responses carry `no-store`; no admin route opts into caching. |
 
 Existing related coverage: `api-origin-guard.test.ts` (origin check on every mutating route), `PROJ-BREAK-SA-admin-pages-and-scope.test.ts` (Super Admin Projects/Placements pages), `chat6-auth-admin-scope-guards-17.test.ts`.
 
 ## Decisions needed
 
-1. Server-side confirmation for the M2 routes (changes the client contract).
-2. A shared bounded JSON reader for admin routes (M1).
-3. Which M3 routes must emit audit events (and which are exempt, such as search-selection records).
+1. Migrate the remaining 33 admin routes from raw `request.json()` to `readBoundedJsonRequest` (M1).
+2. Decide whether the confirmation token match (M2) should be replaced by a per-route handler test that proves enforcement.
+3. Run the runtime matrix in CI with an authorised Super Admin positive control (needs a disposable PG17; not run locally).
 
 Regenerate the appendix with:
 

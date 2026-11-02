@@ -16,7 +16,7 @@ export async function GET(request:Request){
    return NextResponse.json({error:"INVALID_HOST"},{status:400});
   const context=await getCurrentRequestContext();
   const preview=await previewTenantHostResolutionWithRuntime(context,host);
-  return NextResponse.json(preview);
+  return NextResponse.json(preview,{headers:{"Cache-Control":"private, no-store"}});
  }catch(error){
   return apiErrorResponse(error);
  }

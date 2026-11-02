@@ -3,7 +3,14 @@ import path from "node:path";
 
 export const root = process.cwd();
 export const rel = (p: string) => path.relative(root, p).replaceAll("\\", "/");
-export const read = (p: string) => fs.readFileSync(p, "utf8");
+const readCache = new Map<string, string>();
+export const read = (p: string) => {
+  const hit = readCache.get(p);
+  if (hit !== undefined) return hit;
+  const text = fs.readFileSync(p, "utf8");
+  readCache.set(p, text);
+  return text;
+};
 
 export function walk(dir: string, out: string[] = []): string[] {
   const abs = path.join(root, dir);
@@ -51,6 +58,49 @@ export function oneHopSources(file: string): string[] {
   }
   return out;
 }
+
+const importsCache = new Map<string, string[]>();
+function importsOf(file: string): string[] {
+  const hit = importsCache.get(file);
+  if (hit) return hit;
+  const out: string[] = [];
+  for (const m of read(file).matchAll(/from\s+["']((?:@\/|\.\.?\/)[^"']+)["']/g)) {
+    const target = resolveImport(m[1]!, file);
+    if (target) out.push(target);
+  }
+  importsCache.set(file, out);
+  return out;
+}
+
+const hopCache = new Map<string, string>();
+/** Concatenated source of the file and everything it imports within `hops` import levels. */
+export function hopSources(file: string, hops: number): string {
+  const key = `${hops}|${file}`;
+  const hit = hopCache.get(key);
+  if (hit !== undefined) return hit;
+  const seen = new Set<string>([file]);
+  let frontier = [file];
+  for (let depth = 0; depth < hops; depth++) {
+    const next: string[] = [];
+    for (const f of frontier) {
+      for (const target of importsOf(f)) {
+        if (!seen.has(target)) {
+          seen.add(target);
+          next.push(target);
+        }
+      }
+    }
+    frontier = next;
+  }
+  const text = [...seen].map(read).join("\n");
+  hopCache.set(key, text);
+  return text;
+}
+
+export const AUDIT_CALL = /recordActivityEvent(?:InTransaction)?\(|recordSecurityEvent\(|appendAudit\(|writeAudit\(/;
+export const CONFIRM_TOKEN =
+  /z\.literal\(true\)|expectedUpdatedAt|expectedVersion|expectedStatus|typedConfirm|confirmationText/;
+export const DESTRUCTIVE_NAME = /delete|restore|terminate|merge|bulk|retake|revoke|remove|purge|reset|archive|suspend|disable/i;
 
 export const hasGuardWithinOneHop = (file: string) => oneHopSources(file).some((s) => GUARD.test(s));
 export const hasRequestContext = (src: string) => /getCurrentRequestContext/.test(src);
