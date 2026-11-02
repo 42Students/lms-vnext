@@ -6656,10 +6656,12 @@
       "acceptanceEvidence": [
         {
           "kind": "TASK_CLOSURE_P01_P02_DONE",
-          "p01RunId": 41466818080,
-          "p02RunId": 41467155129,
-          "headSha": "bf6738fb59",
-          "note": "API-03-P01 (crosswalk: 134 endpoints, 0M/108R/6X/20Miss) + API-03-P02 (26 integration tests) both passed."
+          "result": "PASS",
+          "commitSha": "bf6738fb59fcb9fb90ecc5457161439b37d33fb4",
+          "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/41467155129",
+          "jobId": 125350964277,
+          "note": "API-03 P01 crosswalk (run 41466818080, SHA 9f1f6b167f236f6078f3f7f4e1b3a2b946b71b72) + P02 integration (run 41467155129) both passed.",
+          "acceptedAt": "2026-11-02"
         }
       ],
       "workPlan": {

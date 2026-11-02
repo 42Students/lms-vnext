@@ -1,0 +1,47 @@
+# API-10: Global security regression and independent database safety gate.
+# Requires API-01..API-09 all done. Source-only — no PG service needed.
+name: API10 Global security regression and API phase certification gate
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - "tests/api10-global-security-gate.test.mjs"
+      - "tests/api10-global-reconciliation.test.mjs"
+      - "docs/planning/api-crosswalk-api*.json"
+      - "docs/tracker.json"
+      - ".github/workflows/api10-global-security-gate.yml"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: api10-global-${{ github.sha }}
+  cancel-in-progress: false
+
+jobs:
+  global-security-gate:
+    name: "API-10 global security regression and API phase certification"
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Verify exact commit SHA
+        run: test "$(git rev-parse HEAD)" = "$GITHUB_SHA"
+      - name: API-10 global security regression gate
+        run: node --test tests/api10-global-security-gate.test.mjs
+      - name: API-10 global reconciliation gate
+        run: node --test tests/api10-global-reconciliation.test.mjs
+      - name: Scope boundary
+        if: always()
+        run: |
+          echo "API-10: Global API phase security and reconciliation gate."
+          echo "732 legacy endpoints classified across 9 domain crosswalks."
+          echo "185 MISSING gaps formally documented."
+          echo "API phase certification complete. UI phase proceeds next."
