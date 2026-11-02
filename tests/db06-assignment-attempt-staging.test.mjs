@@ -41,7 +41,7 @@ test("DB044 is an explicit no-DDL retirement decision", () => {
 test("DB044 preserves vNext one-submission uniqueness", () => {
   assert.match(
     schema,
-    /assignment_submissions\.attempt_number/,
+    /attemptNumber:\s*integer\("attempt_number"\)\.notNull\(\)\.default\(1\)/,
   );
   assert.match(
     schema,
