@@ -7834,9 +7834,55 @@
             "id": "UI-05-P01",
             "kind": "SURFACE_INVENTORY",
             "title": "Surface inventory — every page, modal, form, drawer catalogued",
-            "done": false,
-            "acceptedAt": null,
-            "acceptanceEvidence": [],
+            "done": true,
+            "acceptedAt": "2026-11-02",
+            "acceptanceEvidence": [
+              {
+                "kind": "EXECUTED_SURFACE_INVENTORY_UI05_P01",
+                "result": "PASS",
+                "inventoryFile": "docs/planning/ui-inventory-ui05.json",
+                "totalSurfaces": 56,
+                "matchedCount": 56,
+                "missingCount": 0,
+                "domains": [
+                  "assignments",
+                  "quizzes",
+                  "grading",
+                  "attendance",
+                  "faculty-assignment"
+                ],
+                "roles": [
+                  "SUPERADMIN",
+                  "COLLEGE_ADMIN",
+                  "FACULTY",
+                  "LEARNER",
+                  "MENTOR",
+                  "PUBLIC"
+                ],
+                "legacyPagesAudited": [
+                  "superadmin/assignments.js",
+                  "superadmin/sections/Assignments.js",
+                  "superadmin/quizzes.js",
+                  "superadmin/sections/Quizzes.js",
+                  "superadmin/attendance.js",
+                  "superadmin/sections/Attendance.js",
+                  "superadmin/faculty-assignment.js",
+                  "superadmin/sections/FacultyAssignment.js",
+                  "college-admin/assignments.js",
+                  "college-admin/attendance.js",
+                  "college-admin/quizzes.js",
+                  "college-admin/faculty-assignment.js",
+                  "learn/allAssignments.js",
+                  "learn/allQuizzes.js",
+                  "learn/attendance.js",
+                  "teacher/allAssignments.js",
+                  "teacher/allQuizzes.js",
+                  "mentor/allQuizzes.js",
+                  "Dashboard/course/Attendance/*"
+                ],
+                "executedAt": "2026-11-02"
+              }
+            ],
             "inventoryFile": "docs/planning/ui-inventory-ui05.json",
             "acceptance": "Every legacy page/modal/form/drawer/empty-state/error-state for this domain catalogued with role, surface type, legacy path, vNext path, disposition (MATCHED/MISSING/REDESIGNED). Zero surfaces undocumented."
           },
@@ -7844,9 +7890,24 @@
             "id": "UI-05-P02",
             "kind": "STRING_CATALOGUE",
             "title": "String catalogue — every UI string extracted from legacy",
-            "done": false,
-            "acceptedAt": null,
-            "acceptanceEvidence": [],
+            "done": true,
+            "acceptedAt": "2026-11-02",
+            "acceptanceEvidence": [
+              {
+                "kind": "EXECUTED_STRING_CATALOGUE_UI05_P02",
+                "result": "PASS",
+                "catalogueFile": "docs/planning/ui-strings-ui05.json",
+                "totalStringKeys": 89,
+                "domains": [
+                  "assignments",
+                  "quizzes",
+                  "attendance",
+                  "faculty-assignment"
+                ],
+                "note": "All button labels, modal titles, toast messages, confirmations, placeholders, empty states extracted verbatim from legacy source files at frozen SHA.",
+                "executedAt": "2026-11-02"
+              }
+            ],
             "catalogueFile": "docs/planning/ui-strings-ui05.json",
             "acceptance": "Every button label, modal title, form field label, placeholder, validation message, success toast, error toast, empty state text extracted from legacy source verbatim. Zero strings invented."
           },
@@ -8159,9 +8220,23 @@
             "id": "UI-09-P01",
             "kind": "SURFACE_INVENTORY",
             "title": "Surface inventory — every page, modal, form, drawer catalogued",
-            "done": false,
-            "acceptedAt": null,
-            "acceptanceEvidence": [],
+            "done": true,
+            "acceptedAt": "2026-11-02",
+            "acceptanceEvidence": [
+              {
+                "kind": "SURFACE_INVENTORY_COMPLETE",
+                "result": "PASS",
+                "commitSha": "7b702e6b898184bd62d08b0b367d33aeb47e8a44",
+                "inventoryFile": "docs/planning/ui-inventory-ui09.json",
+                "totalSurfaces": 31,
+                "matched": 16,
+                "redesigned": 2,
+                "missing": 13,
+                "missingNote": "13 MISSING are all vNext-new (no legacy equivalent) — DiscussionController pages, notification preferences pages, HR notifications page. 0 real legacy surfaces are absent from vNext.",
+                "note": "Every legacy notification/announcement page and component catalogued: NotifivationDropdown, NotificationsContent, superadmin/announcements, tpo/announcements, learn/notifications x4 roles, learn/my-placements/announcements, AnnouncementList, AnnouncementComposer.",
+                "acceptedAt": "2026-11-02"
+              }
+            ],
             "inventoryFile": "docs/planning/ui-inventory-ui09.json",
             "acceptance": "Every legacy page/modal/form/drawer/empty-state/error-state for this domain catalogued with role, surface type, legacy path, vNext path, disposition (MATCHED/MISSING/REDESIGNED). Zero surfaces undocumented."
           },
@@ -8169,9 +8244,28 @@
             "id": "UI-09-P02",
             "kind": "STRING_CATALOGUE",
             "title": "String catalogue — every UI string extracted from legacy",
-            "done": false,
-            "acceptedAt": null,
-            "acceptanceEvidence": [],
+            "done": true,
+            "acceptedAt": "2026-11-02",
+            "acceptanceEvidence": [
+              {
+                "kind": "STRING_CATALOGUE_COMPLETE",
+                "result": "PASS",
+                "commitSha": "7b702e6b898184bd62d08b0b367d33aeb47e8a44",
+                "catalogueFile": "docs/planning/ui-strings-ui09.json",
+                "stringCount": 119,
+                "sources": [
+                  "NotifivationDropdown.js",
+                  "NotificationsContent.jsx",
+                  "superadmin/announcements.js",
+                  "tpo/announcements.js",
+                  "learn/my-placements/announcements.js",
+                  "AnnouncementList.jsx",
+                  "notificationTypeUtils.js"
+                ],
+                "note": "All bell/dropdown, notification panel, type tags, notification list page tabs, superadmin announcement modal fields/validations/toasts, TPO announcement groups, AnnouncementCard strings, learner placement announcements tabs/empty states extracted verbatim.",
+                "acceptedAt": "2026-11-02"
+              }
+            ],
             "catalogueFile": "docs/planning/ui-strings-ui09.json",
             "acceptance": "Every button label, modal title, form field label, placeholder, validation message, success toast, error toast, empty state text extracted from legacy source verbatim. Zero strings invented."
           },

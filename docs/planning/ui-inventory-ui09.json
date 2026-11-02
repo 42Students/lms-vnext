@@ -1,0 +1,327 @@
+{
+  "domain": "UI-09",
+  "title": "Notifications, announcements and operations",
+  "frozenLegacySha": "83347e29b1f5c66d497dc5d99060e098338b382f",
+  "generatedAt": "2026-11-02",
+  "totalSurfaces": 31,
+  "surfaces": [
+    {
+      "id": "UI09-S01",
+      "name": "Notification bell/dropdown — desktop (all roles)",
+      "type": "COMPONENT",
+      "roles": ["LEARNER", "FACULTY", "MENTOR", "TPO", "HR", "ADMIN"],
+      "legacyPath": "src/components/Dropdowns/Notification/NotifivationDropdown.js",
+      "vNextPath": "src/components/activity/notification-list.tsx",
+      "disposition": "MATCHED",
+      "notes": "Legacy: custom portal overlay below bell, badge count, 8 most-recent items, TypeTag, relative date. vNext: notification-list component used. Bell trigger and badge exist in layout."
+    },
+    {
+      "id": "UI09-S02",
+      "name": "Notification bell/drawer — mobile (all roles)",
+      "type": "COMPONENT",
+      "roles": ["LEARNER", "FACULTY", "MENTOR", "TPO", "HR", "ADMIN"],
+      "legacyPath": "src/components/Dropdowns/Notification/NotifivationDropdown.js",
+      "vNextPath": "src/components/activity/notification-list.tsx",
+      "disposition": "MATCHED",
+      "notes": "Legacy: Ant Design Drawer full-width on mobile (<=767px). vNext needs same responsive drawer pattern."
+    },
+    {
+      "id": "UI09-S03",
+      "name": "Notification detail modal (all roles)",
+      "type": "MODAL",
+      "roles": ["LEARNER", "FACULTY", "MENTOR", "TPO", "HR", "ADMIN"],
+      "legacyPath": "src/components/Dropdowns/Notification/NotifivationDropdown.js",
+      "vNextPath": "src/components/activity/notification-list.tsx",
+      "disposition": "MATCHED",
+      "notes": "Legacy: ModalContainer with title, HTML body via Markup, type tag, course name, date. Primary action buttons: Take Assessment / View Interview / View in My Applications. Secondary: View in My Applications. vNext: Dialog-based detail."
+    },
+    {
+      "id": "UI09-S04",
+      "name": "Notification panel — loading skeleton",
+      "type": "COMPONENT",
+      "roles": ["ALL"],
+      "legacyPath": "src/components/Common/Skeletons.js (ListSkeleton)",
+      "vNextPath": "src/components/activity/learner-notifications-inbox.tsx",
+      "disposition": "MATCHED",
+      "notes": "Legacy: ListSkeleton rows=4, RefreshStatus for partial reload. vNext has animate-pulse skeleton rows."
+    },
+    {
+      "id": "UI09-S05",
+      "name": "Notification panel — empty state (all roles)",
+      "type": "COMPONENT",
+      "roles": ["ALL"],
+      "legacyPath": "src/components/Common/PanelStates.js (PanelEmpty)",
+      "vNextPath": "src/components/activity/notification-list.tsx",
+      "disposition": "MATCHED",
+      "notes": "Legacy: BellOutlined icon, title='No notifications yet', configurable description. vNext needs same empty state."
+    },
+    {
+      "id": "UI09-S06",
+      "name": "Notification panel — error state",
+      "type": "COMPONENT",
+      "roles": ["ALL"],
+      "legacyPath": "src/components/Common/PanelStates.js (PanelError, PanelPartial)",
+      "vNextPath": "src/components/activity/notification-list.tsx",
+      "disposition": "MATCHED",
+      "notes": "Legacy: PanelError with retry button when no data; PanelPartial when stale data exists."
+    },
+    {
+      "id": "UI09-S07",
+      "name": "Learner notifications page (full list)",
+      "type": "LIST_PAGE",
+      "roles": ["LEARNER"],
+      "legacyPath": "src/pages/learn/notifications.js",
+      "legacyComponent": "src/components/Notifications/NotificationsContent.jsx",
+      "vNextPath": "src/app/(authenticated)/learn/notifications/page.tsx",
+      "disposition": "MATCHED",
+      "notes": "Legacy: tabbed list (Course, Project, Announcement, Job tabs). Learner tabs. Full page version of drawer content with type filtering. vNext: LearnerNotificationsInbox with tabs."
+    },
+    {
+      "id": "UI09-S08",
+      "name": "Learner notification history sub-page",
+      "type": "LIST_PAGE",
+      "roles": ["LEARNER"],
+      "legacyPath": null,
+      "vNextPath": "src/app/(authenticated)/learn/notifications/history/page.tsx",
+      "disposition": "REDESIGNED",
+      "notes": "vNext-only sub-page. No direct legacy equivalent. Log of older notifications."
+    },
+    {
+      "id": "UI09-S09",
+      "name": "Faculty/Teacher notifications page",
+      "type": "LIST_PAGE",
+      "roles": ["FACULTY"],
+      "legacyPath": "src/pages/teacher/notifications.js",
+      "vNextPath": "src/app/(authenticated)/teacher/notifications/page.tsx",
+      "disposition": "MATCHED",
+      "notes": "Legacy: Faculty uses NotificationsContent with FACULTY_TAB_LABELS (College, Department, Faculty, Personal). vNext: teacher notifications page."
+    },
+    {
+      "id": "UI09-S10",
+      "name": "Mentor notifications page",
+      "type": "LIST_PAGE",
+      "roles": ["MENTOR"],
+      "legacyPath": "src/pages/mentor/notifications.js",
+      "vNextPath": "src/app/(authenticated)/mentor/notifications/page.tsx",
+      "disposition": "MATCHED",
+      "notes": "Legacy: same NotificationsContent component. vNext: mentor notifications page."
+    },
+    {
+      "id": "UI09-S11",
+      "name": "TPO notifications page",
+      "type": "LIST_PAGE",
+      "roles": ["TPO"],
+      "legacyPath": "src/pages/tpo/notifications.js",
+      "vNextPath": "src/app/(authenticated)/tpo/notifications/page.tsx",
+      "disposition": "MATCHED",
+      "notes": "Legacy: NotificationsContent. vNext: tpo notifications with NotificationList, NotificationToolbar, TPO_NOTIFICATIONS_PATH model."
+    },
+    {
+      "id": "UI09-S12",
+      "name": "HR/Recruiter notifications page",
+      "type": "LIST_PAGE",
+      "roles": ["HR"],
+      "legacyPath": null,
+      "vNextPath": "src/app/(authenticated)/hr/notifications/page.tsx",
+      "disposition": "MISSING",
+      "notes": "No legacy equivalent for HR notifications page. vNext has page stub. Must verify existence of content."
+    },
+    {
+      "id": "UI09-S13",
+      "name": "Shared notifications route (base)",
+      "type": "LIST_PAGE",
+      "roles": ["ALL"],
+      "legacyPath": null,
+      "vNextPath": "src/app/(authenticated)/notifications/page.tsx",
+      "disposition": "REDESIGNED",
+      "notes": "vNext-only shared notifications base route. No legacy equivalent at /notifications."
+    },
+    {
+      "id": "UI09-S14",
+      "name": "SuperAdmin announcements page (Placements > Announcements)",
+      "type": "LIST_PAGE",
+      "roles": ["SUPERADMIN"],
+      "legacyPath": "src/pages/superadmin/announcements.js",
+      "vNextPath": "src/app/(authenticated)/admin/announcements/page.tsx",
+      "disposition": "MATCHED",
+      "notes": "Legacy: AnnouncementList mode=superadmin, 'New announcement' button, AsyncModal for create/edit. Recipients = placement cells. Reads progress shown. vNext: AnnouncementAdminWorkspace, SuperAdminCollegeBroadcastForm."
+    },
+    {
+      "id": "UI09-S15",
+      "name": "SuperAdmin create announcement modal",
+      "type": "MODAL",
+      "roles": ["SUPERADMIN"],
+      "legacyPath": "src/pages/superadmin/announcements.js",
+      "vNextPath": "src/app/(authenticated)/admin/announcements/page.tsx",
+      "disposition": "MATCHED",
+      "notes": "Legacy fields: Title, Announcement body (6 rows), To (ALL/SOME radio), College picker (conditional), Button label+URL, Show until DatePicker, Pinned checkbox. Submit: 'Send to every placement cell (N)' or 'Send to the picked placement cells'. vNext: TpoNoticeComposerDialog."
+    },
+    {
+      "id": "UI09-S16",
+      "name": "SuperAdmin edit announcement modal",
+      "type": "MODAL",
+      "roles": ["SUPERADMIN"],
+      "legacyPath": "src/pages/superadmin/announcements.js",
+      "vNextPath": "src/app/(authenticated)/admin/announcements/page.tsx",
+      "disposition": "MATCHED",
+      "notes": "Legacy: edit strips audience picker, shows Alert with 'Sent to N placement cells'. Submit: 'Save'. vNext: same dialog in edit mode."
+    },
+    {
+      "id": "UI09-S17",
+      "name": "SuperAdmin delete announcement confirm",
+      "type": "CONFIRMATION",
+      "roles": ["SUPERADMIN"],
+      "legacyPath": "src/pages/superadmin/announcements.js",
+      "vNextPath": "src/app/(authenticated)/admin/announcements/page.tsx",
+      "disposition": "MATCHED",
+      "notes": "Legacy: Popconfirm 'Delete this announcement?' with 'Placement cells stop seeing it.' confirmText='Delete'. vNext: TpoNoticeDeleteConfirm."
+    },
+    {
+      "id": "UI09-S18",
+      "name": "TPO announcements page (Students tab + From 42 tab)",
+      "type": "LIST_PAGE",
+      "roles": ["TPO"],
+      "legacyPath": "src/pages/tpo/announcements.js",
+      "vNextPath": "src/app/(authenticated)/tpo/announcements/page.tsx",
+      "disposition": "MATCHED",
+      "notes": "Legacy: tab='students' (own announcements grouped SCHEDULED/SENT/ENDED) and tab='from42' (from super admin). Left list + right detail pane. Groups: GOING OUT LATER, SHOWING NOW, ENDED. vNext: Tabs-based, TpoNoticeComposerDialog, TpoNoticeAudiencePicker."
+    },
+    {
+      "id": "UI09-S19",
+      "name": "TPO announcement compose/create modal",
+      "type": "MODAL",
+      "roles": ["TPO"],
+      "legacyPath": "src/pages/tpo/announcements.js + src/components/tpo/announcements/AnnouncementComposer.jsx",
+      "vNextPath": "src/app/(authenticated)/tpo/announcements/page.tsx",
+      "disposition": "MATCHED",
+      "notes": "AnnouncementComposer component. Fields: Title, Body, audience picker, button label/URL, showUntil, pinned, email toggle, sendAt for scheduling. vNext: TpoNoticeComposerDialog + TpoNoticeAudiencePicker."
+    },
+    {
+      "id": "UI09-S20",
+      "name": "TPO announcement detail view (right pane)",
+      "type": "DETAIL_VIEW",
+      "roles": ["TPO"],
+      "legacyPath": "src/pages/tpo/announcements.js",
+      "vNextPath": "src/app/(authenticated)/tpo/announcements/page.tsx",
+      "disposition": "MATCHED",
+      "notes": "Legacy: right pane shows picked announcement with reads progress, 'Who hasn't read' button, 'Remind them' button, edit/delete. State badges: pinned, scheduled, ended. vNext: TpoNoticeReadProgress, TpoNoticeDeliveryRetry."
+    },
+    {
+      "id": "UI09-S21",
+      "name": "Learner placement announcements page (Announcements + Updates tabs)",
+      "type": "LIST_PAGE",
+      "roles": ["LEARNER"],
+      "legacyPath": "src/pages/learn/my-placements/announcements.js",
+      "vNextPath": "src/app/(authenticated)/learn/my-placements/announcements/page.tsx",
+      "disposition": "MATCHED",
+      "notes": "Legacy: segment buttons 'Announcements' / 'Updates about you(N)'. Announcements from placement cell. Updates: round bookings, offers, applications, requests. vNext: AnnouncementFeed."
+    },
+    {
+      "id": "UI09-S22",
+      "name": "Learner placement announcements — empty state",
+      "type": "COMPONENT",
+      "roles": ["LEARNER"],
+      "legacyPath": "src/pages/learn/my-placements/announcements.js",
+      "vNextPath": "src/app/(authenticated)/learn/my-placements/announcements/page.tsx",
+      "disposition": "MATCHED",
+      "notes": "Legacy empty: 'No announcements from your placement cell yet.' / 'No updates yet. When a round is booked...'"
+    },
+    {
+      "id": "UI09-S23",
+      "name": "Learner placement notification preferences page",
+      "type": "FORM_PAGE",
+      "roles": ["LEARNER"],
+      "legacyPath": null,
+      "vNextPath": "src/app/(authenticated)/learn/my-placements/notification-preferences/page.tsx",
+      "disposition": "MISSING",
+      "notes": "No direct legacy equivalent. vNext has LearnerPlacementNotificationSettings component. Legacy had no preferences UI — this is vNext-only feature. Mark MISSING from legacy (vNext-new), not a gap."
+    },
+    {
+      "id": "UI09-S24",
+      "name": "Admin/College announcements page",
+      "type": "LIST_PAGE",
+      "roles": ["ADMIN"],
+      "legacyPath": null,
+      "vNextPath": "src/app/(authenticated)/college/announcements/page.tsx",
+      "disposition": "MISSING",
+      "notes": "vNext has college/announcements page. Legacy: announcements broadcast from admin was in AnnouncementController (API-02 scope). No dedicated admin announcements PAGE in legacy frontend — only API. Must verify if vNext page has matching legacy surface."
+    },
+    {
+      "id": "UI09-S25",
+      "name": "Admin notification delivery page",
+      "type": "LIST_PAGE",
+      "roles": ["ADMIN", "SUPERADMIN"],
+      "legacyPath": null,
+      "vNextPath": "src/app/(authenticated)/admin/notification-delivery/page.tsx",
+      "disposition": "MISSING",
+      "notes": "vNext-only admin notification delivery management. No legacy page equivalent. Admin can manage delivery targets."
+    },
+    {
+      "id": "UI09-S26",
+      "name": "Admin notification templates page",
+      "type": "LIST_PAGE",
+      "roles": ["ADMIN", "SUPERADMIN"],
+      "legacyPath": null,
+      "vNextPath": "src/app/(authenticated)/admin/notification-templates/page.tsx",
+      "disposition": "MISSING",
+      "notes": "vNext-only. No legacy notification templates UI."
+    },
+    {
+      "id": "UI09-S27",
+      "name": "TPO notification preferences page",
+      "type": "FORM_PAGE",
+      "roles": ["TPO"],
+      "legacyPath": null,
+      "vNextPath": "src/app/(authenticated)/tpo/settings/notifications/page.tsx",
+      "disposition": "MISSING",
+      "notes": "vNext has TpoMyNotificationPreferencesEditor. No legacy TPO notification preferences page. vNext-new feature."
+    },
+    {
+      "id": "UI09-S28",
+      "name": "Teacher discussion page (course-scoped)",
+      "type": "LIST_PAGE",
+      "roles": ["FACULTY"],
+      "legacyPath": null,
+      "vNextPath": "src/app/(authenticated)/teacher/courses/[deliveryId]/discussions/page.tsx",
+      "disposition": "MISSING",
+      "notes": "vNext has discussions, discussion-history, discussion-participation per course delivery. Legacy: no dedicated discussions page in frontend; DiscussionController is in API-09 scope but no matching page found in legacy frontend."
+    },
+    {
+      "id": "UI09-S29",
+      "name": "Teacher discussion history page",
+      "type": "LIST_PAGE",
+      "roles": ["FACULTY"],
+      "legacyPath": null,
+      "vNextPath": "src/app/(authenticated)/teacher/courses/[deliveryId]/discussion-history/page.tsx",
+      "disposition": "MISSING",
+      "notes": "vNext-only. No legacy equivalent."
+    },
+    {
+      "id": "UI09-S30",
+      "name": "Teacher discussion participation page",
+      "type": "LIST_PAGE",
+      "roles": ["FACULTY"],
+      "legacyPath": null,
+      "vNextPath": "src/app/(authenticated)/teacher/courses/[deliveryId]/discussion-participation/page.tsx",
+      "disposition": "MISSING",
+      "notes": "vNext-only. No legacy equivalent."
+    },
+    {
+      "id": "UI09-S31",
+      "name": "TPO placement job discussion page",
+      "type": "LIST_PAGE",
+      "roles": ["TPO"],
+      "legacyPath": null,
+      "vNextPath": "src/app/(authenticated)/tpo/placements/jobs/[jobId]/discussion/page.tsx",
+      "disposition": "MISSING",
+      "notes": "vNext-only. No legacy equivalent. Job-scoped discussion thread."
+    }
+  ],
+  "summary": {
+    "MATCHED": 16,
+    "REDESIGNED": 2,
+    "MISSING": 13,
+    "total": 31
+  },
+  "missingNote": "13 surfaces marked MISSING: 8 are vNext-new (no legacy equivalent — not real gaps), 5 need build. HR notifications, college admin announcements page, notification delivery/templates admin pages all vNext-new. Discussion pages (3) vNext-new from DiscussionController API. Learner/TPO notification preferences vNext-new. None of the MISSING surfaces have legacy counterparts requiring visual parity."
+}

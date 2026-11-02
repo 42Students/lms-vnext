@@ -1,0 +1,695 @@
+{
+  "milestone": "UI-02",
+  "title": "Academics — batches, programs, schedule — exact clone parity",
+  "generatedAt": "2026-11-02",
+  "frozenLegacySha": "83347e29b1f5c66d497dc5d99060e098338b382f",
+  "legacyFrontendRoot": "../42LMS/lms-dev-2026-frontend/src",
+  "summary": {
+    "totalSurfaces": 68,
+    "matched": 52,
+    "missing": 8,
+    "redesigned": 8
+  },
+  "surfaces": [
+    {
+      "id": "UI02-S01",
+      "name": "Superadmin Batches List",
+      "type": "LIST",
+      "role": ["SUPERADMIN"],
+      "legacyPath": "src/pages/superadmin/batches.js → sections/Batches.js",
+      "vNextPath": "src/app/(authenticated)/admin/batches/page.tsx",
+      "disposition": "MATCHED",
+      "notes": "SuperAdmin shell with college-scope gate; delegates to Batches section component"
+    },
+    {
+      "id": "UI02-S02",
+      "name": "Create Batch (inline form in list)",
+      "type": "FORM",
+      "role": ["SUPERADMIN", "ADMIN"],
+      "legacyPath": "src/pages/superadmin/sections/Batches.js (Create New Batch card)",
+      "vNextPath": "src/app/(authenticated)/admin/batches/page.tsx",
+      "disposition": "MATCHED",
+      "notes": "Form fields: Program (select), Batch Name (input), Start Date (datepicker), End Date (datepicker), Academic Year (auto-derived), Academic year starts in (month selector)"
+    },
+    {
+      "id": "UI02-S03",
+      "name": "Edit Batch (modal)",
+      "type": "MODAL",
+      "role": ["SUPERADMIN", "ADMIN"],
+      "legacyPath": "src/pages/superadmin/sections/Batches.js (Edit batch modal)",
+      "vNextPath": "src/app/(authenticated)/admin/batches/page.tsx",
+      "disposition": "MATCHED",
+      "notes": "Modal title: Edit batch \"<name>\". Fields same as create plus Status (ACTIVE/INACTIVE/COMPLETED). okText: Save Changes"
+    },
+    {
+      "id": "UI02-S04",
+      "name": "Delete Batch (confirmation)",
+      "type": "CONFIRM",
+      "role": ["SUPERADMIN", "ADMIN"],
+      "legacyPath": "src/pages/superadmin/sections/Batches.js (Popconfirm Delete)",
+      "vNextPath": "src/app/(authenticated)/admin/batches/page.tsx",
+      "disposition": "MATCHED",
+      "notes": "Inline Popconfirm. okText: Delete, cancelText: Cancel"
+    },
+    {
+      "id": "UI02-S05",
+      "name": "Set Semester for Batch (modal)",
+      "type": "MODAL",
+      "role": ["SUPERADMIN", "ADMIN"],
+      "legacyPath": "src/pages/superadmin/sections/Batches.js (Set current semester modal)",
+      "vNextPath": "src/app/(authenticated)/admin/batches/page.tsx",
+      "disposition": "MATCHED",
+      "notes": "Modal title: Set current semester — <batchName>. okText: Set semester"
+    },
+    {
+      "id": "UI02-S06",
+      "name": "Batch Students Viewer (modal)",
+      "type": "MODAL",
+      "role": ["SUPERADMIN", "ADMIN"],
+      "legacyPath": "src/pages/superadmin/sections/Batches.js (Students modal)",
+      "vNextPath": "src/app/(authenticated)/admin/batches/[batchId]/students/page.tsx",
+      "disposition": "REDESIGNED",
+      "notes": "Legacy: modal with class selector + student list. vNext: dedicated page /admin/batches/[batchId]/students. Functionally equivalent but surface type changed."
+    },
+    {
+      "id": "UI02-S07",
+      "name": "Batch Promotion List",
+      "type": "LIST",
+      "role": ["SUPERADMIN", "ADMIN"],
+      "legacyPath": "src/pages/superadmin/batch-promotion.js → sections/BatchPromotion.js",
+      "vNextPath": "src/app/(authenticated)/admin/batch-promotion/page.tsx",
+      "disposition": "MATCHED",
+      "notes": "Columns: Batch Name, Program, Current Semester, Academic Year, Students, Status, Action"
+    },
+    {
+      "id": "UI02-S08",
+      "name": "Promote Batch (modal)",
+      "type": "MODAL",
+      "role": ["SUPERADMIN", "ADMIN"],
+      "legacyPath": "src/pages/superadmin/sections/BatchPromotion.js (Promote modal)",
+      "vNextPath": "src/app/(authenticated)/admin/batch-promotion/page.tsx",
+      "disposition": "MATCHED",
+      "notes": "Modal title: Promote \"<batchName>\". okText: Yes, Promote. Has preview/verification step."
+    },
+    {
+      "id": "UI02-S09",
+      "name": "Programs List",
+      "type": "LIST",
+      "role": ["SUPERADMIN", "ADMIN"],
+      "legacyPath": "src/pages/superadmin/programs.js → sections/Programs.js",
+      "vNextPath": "src/app/(authenticated)/admin/programs/page.tsx",
+      "disposition": "MATCHED",
+      "notes": "Columns: Program Name, Duration, Department, Contents, Actions. Search: programs or departments"
+    },
+    {
+      "id": "UI02-S10",
+      "name": "Create Program (inline form)",
+      "type": "FORM",
+      "role": ["SUPERADMIN", "ADMIN"],
+      "legacyPath": "src/pages/superadmin/sections/Programs.js (Create New Program card)",
+      "vNextPath": "src/app/(authenticated)/admin/programs/page.tsx",
+      "disposition": "MATCHED",
+      "notes": "Fields: Department (select), Program Name (input), Duration Years (number 1-10)"
+    },
+    {
+      "id": "UI02-S11",
+      "name": "Edit Program (modal)",
+      "type": "MODAL",
+      "role": ["SUPERADMIN", "ADMIN"],
+      "legacyPath": "src/pages/superadmin/sections/Programs.js (Edit modal)",
+      "vNextPath": "src/app/(authenticated)/admin/programs/page.tsx",
+      "disposition": "MATCHED",
+      "notes": "Modal title: Edit \"<name>\". okText: Save Changes, cancelText: Cancel"
+    },
+    {
+      "id": "UI02-S12",
+      "name": "Delete Program (confirmation)",
+      "type": "CONFIRM",
+      "role": ["SUPERADMIN", "ADMIN"],
+      "legacyPath": "src/pages/superadmin/sections/Programs.js (Popconfirm Delete)",
+      "vNextPath": "src/app/(authenticated)/admin/programs/page.tsx",
+      "disposition": "MATCHED",
+      "notes": "okText: Delete, cancelText: Cancel"
+    },
+    {
+      "id": "UI02-S13",
+      "name": "Departments List",
+      "type": "LIST",
+      "role": ["SUPERADMIN", "ADMIN"],
+      "legacyPath": "src/pages/superadmin/departments.js → sections/Departments.js",
+      "vNextPath": "src/app/(authenticated)/admin/departments/page.tsx",
+      "disposition": "MATCHED",
+      "notes": "Columns: Department Name, Chair, Vice Chair, Contents, Actions. Search: departments"
+    },
+    {
+      "id": "UI02-S14",
+      "name": "Create Department (inline form)",
+      "type": "FORM",
+      "role": ["SUPERADMIN", "ADMIN"],
+      "legacyPath": "src/pages/superadmin/sections/Departments.js (Create New Department card)",
+      "vNextPath": "src/app/(authenticated)/admin/departments/page.tsx",
+      "disposition": "MATCHED",
+      "notes": "Fields: College (select, superadmin only), Department Name (input), Department Chair (select, optional), Vice Chair (select, optional)"
+    },
+    {
+      "id": "UI02-S15",
+      "name": "Edit Department (modal)",
+      "type": "MODAL",
+      "role": ["SUPERADMIN", "ADMIN"],
+      "legacyPath": "src/pages/superadmin/sections/Departments.js (Edit Department modal)",
+      "vNextPath": "src/app/(authenticated)/admin/departments/page.tsx",
+      "disposition": "MATCHED",
+      "notes": "Modal title: Edit Department. okText: Save Changes, cancelText: Cancel"
+    },
+    {
+      "id": "UI02-S16",
+      "name": "Delete Department (confirmation)",
+      "type": "CONFIRM",
+      "role": ["SUPERADMIN", "ADMIN"],
+      "legacyPath": "src/pages/superadmin/sections/Departments.js (Delete Popconfirm)",
+      "vNextPath": "src/app/(authenticated)/admin/departments/page.tsx",
+      "disposition": "MATCHED",
+      "notes": "okText: Yes, Delete. cancelText: Cancel"
+    },
+    {
+      "id": "UI02-S17",
+      "name": "Departments All View",
+      "type": "LIST",
+      "role": ["SUPERADMIN"],
+      "legacyPath": "src/pages/superadmin/departments.js (all colleges)",
+      "vNextPath": "src/app/(authenticated)/admin/departments/all/page.tsx",
+      "disposition": "MATCHED",
+      "notes": "Superadmin-only cross-college view"
+    },
+    {
+      "id": "UI02-S18",
+      "name": "Semesters List",
+      "type": "LIST",
+      "role": ["SUPERADMIN", "ADMIN"],
+      "legacyPath": "src/pages/superadmin/semesters.js → sections/SemesterManagement.js",
+      "vNextPath": "src/app/(authenticated)/admin/semesters/page.tsx",
+      "disposition": "MATCHED",
+      "notes": "Columns: Program, Semester #, Name, Credits, Courses, Status, Actions. Filter by program."
+    },
+    {
+      "id": "UI02-S19",
+      "name": "Create Semester (inline form)",
+      "type": "FORM",
+      "role": ["SUPERADMIN", "ADMIN"],
+      "legacyPath": "src/pages/superadmin/sections/SemesterManagement.js (Create New Semester card)",
+      "vNextPath": "src/app/(authenticated)/admin/semesters/page.tsx",
+      "disposition": "MATCHED",
+      "notes": "Fields: Program (select), Semester Number (number), Name (input, optional), Total Credits (number, optional)"
+    },
+    {
+      "id": "UI02-S20",
+      "name": "Edit Semester (modal)",
+      "type": "MODAL",
+      "role": ["SUPERADMIN", "ADMIN"],
+      "legacyPath": "src/pages/superadmin/sections/SemesterManagement.js (Edit Semester modal)",
+      "vNextPath": "src/app/(authenticated)/admin/semesters/page.tsx",
+      "disposition": "MATCHED",
+      "notes": "Modal title: Edit Semester. okText: Save Changes"
+    },
+    {
+      "id": "UI02-S21",
+      "name": "Delete Semester (confirmation)",
+      "type": "CONFIRM",
+      "role": ["SUPERADMIN", "ADMIN"],
+      "legacyPath": "src/pages/superadmin/sections/SemesterManagement.js (Delete Popconfirm)",
+      "vNextPath": "src/app/(authenticated)/admin/semesters/page.tsx",
+      "disposition": "MATCHED",
+      "notes": "okText: Yes, cancelText: No"
+    },
+    {
+      "id": "UI02-S22",
+      "name": "Semester Course Mapping",
+      "type": "LIST",
+      "role": ["SUPERADMIN", "ADMIN"],
+      "legacyPath": "src/pages/superadmin/semester-courses.js → sections/SemesterCourseMapping.js",
+      "vNextPath": "src/app/(authenticated)/admin/semester-courses/page.tsx",
+      "disposition": "MATCHED",
+      "notes": "Program + semester selector. Table: Course Name, Course Code, Credits, Type (mandatory/elective), Order, Actions. Drag-to-reorder."
+    },
+    {
+      "id": "UI02-S23",
+      "name": "Add Courses to Semester (modal)",
+      "type": "MODAL",
+      "role": ["SUPERADMIN", "ADMIN"],
+      "legacyPath": "src/pages/superadmin/sections/SemesterCourseMapping.js (Add courses form)",
+      "vNextPath": "src/app/(authenticated)/admin/semester-courses/page.tsx",
+      "disposition": "MATCHED",
+      "notes": "Course multi-select. okText: Add course(s)"
+    },
+    {
+      "id": "UI02-S24",
+      "name": "Edit Semester Course Mapping (modal)",
+      "type": "MODAL",
+      "role": ["SUPERADMIN", "ADMIN"],
+      "legacyPath": "src/pages/superadmin/sections/SemesterCourseMapping.js (Edit mapping modal)",
+      "vNextPath": "src/app/(authenticated)/admin/semester-courses/page.tsx",
+      "disposition": "MATCHED",
+      "notes": "okText: Save Changes, cancelText: Cancel"
+    },
+    {
+      "id": "UI02-S25",
+      "name": "Remove Course from Semester (confirmation)",
+      "type": "CONFIRM",
+      "role": ["SUPERADMIN", "ADMIN"],
+      "legacyPath": "src/pages/superadmin/sections/SemesterCourseMapping.js (Remove Popconfirm)",
+      "vNextPath": "src/app/(authenticated)/admin/semester-courses/page.tsx",
+      "disposition": "MATCHED",
+      "notes": "okText: Remove, cancelText: Cancel"
+    },
+    {
+      "id": "UI02-S26",
+      "name": "Classes/Sections List",
+      "type": "LIST",
+      "role": ["SUPERADMIN", "ADMIN"],
+      "legacyPath": "src/pages/superadmin/classes.js → sections/Classes.js",
+      "vNextPath": "src/app/(authenticated)/admin/classes/page.tsx",
+      "disposition": "MATCHED",
+      "notes": "Columns: Class/Section Name, Program, Batch, plus capacity, dates, Actions. Filter by program+batch."
+    },
+    {
+      "id": "UI02-S27",
+      "name": "Create Class (inline form)",
+      "type": "FORM",
+      "role": ["SUPERADMIN", "ADMIN"],
+      "legacyPath": "src/pages/superadmin/sections/Classes.js (Create class form)",
+      "vNextPath": "src/app/(authenticated)/admin/classes/page.tsx",
+      "disposition": "MATCHED",
+      "notes": "Fields: Program, Batch, Class/Section Name, Description (optional), Start Date, End Date, Max students, Min students"
+    },
+    {
+      "id": "UI02-S28",
+      "name": "Edit Class (modal)",
+      "type": "MODAL",
+      "role": ["SUPERADMIN", "ADMIN"],
+      "legacyPath": "src/pages/superadmin/sections/Classes.js (Edit class modal)",
+      "vNextPath": "src/app/(authenticated)/admin/classes/page.tsx",
+      "disposition": "MATCHED",
+      "notes": "Same fields as create. okText: Discard edits (cancel discard), Save Changes (save)"
+    },
+    {
+      "id": "UI02-S29",
+      "name": "Delete Class (confirmation)",
+      "type": "CONFIRM",
+      "role": ["SUPERADMIN", "ADMIN"],
+      "legacyPath": "src/pages/superadmin/sections/Classes.js (Delete Popconfirm)",
+      "vNextPath": "src/app/(authenticated)/admin/classes/page.tsx",
+      "disposition": "MATCHED",
+      "notes": "Standard Popconfirm"
+    },
+    {
+      "id": "UI02-S30",
+      "name": "Create Recurring Sessions (modal)",
+      "type": "MODAL",
+      "role": ["SUPERADMIN", "ADMIN"],
+      "legacyPath": "src/pages/superadmin/sections/Classes.js (recurring sessions form in modal)",
+      "vNextPath": "src/app/(authenticated)/admin/classes/page.tsx",
+      "disposition": "MATCHED",
+      "notes": "Fields: lecture hall, title, recurring dates/days. Multi-session creation."
+    },
+    {
+      "id": "UI02-S31",
+      "name": "Lecture Halls List",
+      "type": "LIST",
+      "role": ["SUPERADMIN", "ADMIN"],
+      "legacyPath": "src/pages/superadmin/lecture-halls.js → sections/LectureHalls.js",
+      "vNextPath": "src/app/(authenticated)/admin/lecture-halls/page.tsx",
+      "disposition": "MATCHED",
+      "notes": "Columns: Name, Room Type, Capacity, College, Department, Description, Actions. Types: Classroom, Lecture Hall, Laboratory, Seminar Hall, Auditorium, Conference Room"
+    },
+    {
+      "id": "UI02-S32",
+      "name": "Create Lecture Hall (form/modal)",
+      "type": "FORM",
+      "role": ["SUPERADMIN", "ADMIN"],
+      "legacyPath": "src/pages/superadmin/sections/LectureHalls.js",
+      "vNextPath": "src/app/(authenticated)/admin/lecture-halls/page.tsx",
+      "disposition": "MATCHED",
+      "notes": "Fields: Name, Room Type (select), Capacity (number), College, Department, Description (optional)"
+    },
+    {
+      "id": "UI02-S33",
+      "name": "Edit Lecture Hall (modal)",
+      "type": "MODAL",
+      "role": ["SUPERADMIN", "ADMIN"],
+      "legacyPath": "src/pages/superadmin/sections/LectureHalls.js",
+      "vNextPath": "src/app/(authenticated)/admin/lecture-halls/[hallId]/page.tsx",
+      "disposition": "MATCHED",
+      "notes": "Same fields as create"
+    },
+    {
+      "id": "UI02-S34",
+      "name": "Delete Lecture Hall (confirmation)",
+      "type": "CONFIRM",
+      "role": ["SUPERADMIN", "ADMIN"],
+      "legacyPath": "src/pages/superadmin/sections/LectureHalls.js (Popconfirm)",
+      "vNextPath": "src/app/(authenticated)/admin/lecture-halls/page.tsx",
+      "disposition": "MATCHED",
+      "notes": "okText: Yes, cancelText: No"
+    },
+    {
+      "id": "UI02-S35",
+      "name": "Faculty Assignment List",
+      "type": "LIST",
+      "role": ["SUPERADMIN", "ADMIN"],
+      "legacyPath": "src/pages/superadmin/faculty-assignment.js → sections/FacultyAssignment.js",
+      "vNextPath": "src/app/(authenticated)/admin/faculty-assignment/page.tsx",
+      "disposition": "MATCHED",
+      "notes": "Columns: Faculty, Course, Class, Semester, Year, Role (PRIMARY/CO_TEACHER), Active, Actions. Filter: class, course, faculty."
+    },
+    {
+      "id": "UI02-S36",
+      "name": "Create Faculty Assignment (form)",
+      "type": "FORM",
+      "role": ["SUPERADMIN", "ADMIN"],
+      "legacyPath": "src/pages/superadmin/sections/FacultyAssignment.js (create form)",
+      "vNextPath": "src/app/(authenticated)/admin/faculty-assignment/page.tsx",
+      "disposition": "MATCHED",
+      "notes": "Fields: Program, Batch, Semester, Class, Course(s), Faculty, Role, Academic Year, Active"
+    },
+    {
+      "id": "UI02-S37",
+      "name": "Edit Faculty Assignment (modal)",
+      "type": "MODAL",
+      "role": ["SUPERADMIN", "ADMIN"],
+      "legacyPath": "src/pages/superadmin/sections/FacultyAssignment.js (edit modal)",
+      "vNextPath": "src/app/(authenticated)/admin/faculty-assignment/page.tsx",
+      "disposition": "MATCHED",
+      "notes": "okText: Save Changes. Discard confirm modal on cancel with unsaved changes."
+    },
+    {
+      "id": "UI02-S38",
+      "name": "Delete Faculty Assignment (confirmation)",
+      "type": "CONFIRM",
+      "role": ["SUPERADMIN", "ADMIN"],
+      "legacyPath": "src/pages/superadmin/sections/FacultyAssignment.js (Popconfirm)",
+      "vNextPath": "src/app/(authenticated)/admin/faculty-assignment/page.tsx",
+      "disposition": "MATCHED",
+      "notes": "Title: Delete teaching assignment? Description: This removes the faculty from teaching the listed course. okText: Delete"
+    },
+    {
+      "id": "UI02-S39",
+      "name": "Electives Admin Console",
+      "type": "LIST",
+      "role": ["ADMIN"],
+      "legacyPath": "src/pages/college-admin/electives.js → components/admin/electives/ElectivesConsole",
+      "vNextPath": "src/app/(authenticated)/college/electives/page.tsx",
+      "disposition": "MATCHED",
+      "notes": "Feature-flagged. Shows slots → offerings → allocation workflow. Role: ADMIN (college-admin) only."
+    },
+    {
+      "id": "UI02-S40",
+      "name": "Elective Slot Detail",
+      "type": "DETAIL",
+      "role": ["ADMIN"],
+      "legacyPath": "src/pages/college-admin/electives.js (slot detail within console)",
+      "vNextPath": "src/app/(authenticated)/college/electives/[slotId]/page.tsx",
+      "disposition": "MATCHED",
+      "notes": "Shows offerings for the slot"
+    },
+    {
+      "id": "UI02-S41",
+      "name": "Elective Slot Allocation",
+      "type": "FORM",
+      "role": ["ADMIN"],
+      "legacyPath": "src/pages/college-admin/electives.js (allocation view)",
+      "vNextPath": "src/app/(authenticated)/college/electives/[slotId]/allocate/page.tsx",
+      "disposition": "MATCHED",
+      "notes": "Student → offering allocation interface"
+    },
+    {
+      "id": "UI02-S42",
+      "name": "Elective Offering Roster",
+      "type": "LIST",
+      "role": ["ADMIN"],
+      "legacyPath": "src/pages/college-admin/electives.js (offering roster)",
+      "vNextPath": "src/app/(authenticated)/college/electives/[slotId]/offerings/[offeringId]/roster/page.tsx",
+      "disposition": "MATCHED",
+      "notes": "Student roster for a specific offering"
+    },
+    {
+      "id": "UI02-S43",
+      "name": "Superadmin Electives Admin",
+      "type": "LIST",
+      "role": ["SUPERADMIN"],
+      "legacyPath": "src/pages/superadmin/electives.js",
+      "vNextPath": "src/app/(authenticated)/admin/electives/page.tsx",
+      "disposition": "MATCHED",
+      "notes": "Superadmin version of electives management, college-scoped"
+    },
+    {
+      "id": "UI02-S44",
+      "name": "Student Groups List (Admin)",
+      "type": "LIST",
+      "role": ["ADMIN"],
+      "legacyPath": "src/pages/college-admin/student-groups.js → components/admin/studentGroups/StudentGroupsList",
+      "vNextPath": "src/app/(authenticated)/college/groups/page.tsx",
+      "disposition": "MATCHED",
+      "notes": "Named groups of students. groupKey: people. Source labels: Added by admin, Imported, Matched rule, Joined"
+    },
+    {
+      "id": "UI02-S45",
+      "name": "Student Group Detail",
+      "type": "DETAIL",
+      "role": ["ADMIN"],
+      "legacyPath": "src/pages/college-admin/student-groups/[id].js",
+      "vNextPath": "src/app/(authenticated)/college/groups/[groupId]/page.tsx",
+      "disposition": "MATCHED",
+      "notes": "Group member list, rules, metadata"
+    },
+    {
+      "id": "UI02-S46",
+      "name": "Student Group Import Preview",
+      "type": "DETAIL",
+      "role": ["ADMIN"],
+      "legacyPath": "src/pages/college-admin/student-groups/[id].js (import tab)",
+      "vNextPath": "src/app/(authenticated)/college/groups/[groupId]/import-preview/page.tsx",
+      "disposition": "MATCHED",
+      "notes": "CSV import preview before committing"
+    },
+    {
+      "id": "UI02-S47",
+      "name": "Student Group Rule Preview",
+      "type": "DETAIL",
+      "role": ["ADMIN"],
+      "legacyPath": "src/pages/college-admin/student-groups/[id].js (rule tab)",
+      "vNextPath": "src/app/(authenticated)/college/groups/[groupId]/rule-preview/page.tsx",
+      "disposition": "MATCHED",
+      "notes": "Preview of which students match a rule before applying"
+    },
+    {
+      "id": "UI02-S48",
+      "name": "Learner Group List",
+      "type": "LIST",
+      "role": ["LEARNER"],
+      "legacyPath": "src/pages/learn/* (learner groups view, likely index or separate page)",
+      "vNextPath": "src/app/(authenticated)/learn/groups/page.tsx",
+      "disposition": "MATCHED",
+      "notes": "Learner's view of groups they belong to"
+    },
+    {
+      "id": "UI02-S49",
+      "name": "Learner Group Detail",
+      "type": "DETAIL",
+      "role": ["LEARNER"],
+      "legacyPath": "src/pages/learn/* (group detail)",
+      "vNextPath": "src/app/(authenticated)/learn/groups/[groupId]/page.tsx",
+      "disposition": "MATCHED",
+      "notes": "Learner view of a specific group"
+    },
+    {
+      "id": "UI02-S50",
+      "name": "College-Admin Batches (mirror of admin/batches)",
+      "type": "LIST",
+      "role": ["ADMIN"],
+      "legacyPath": "src/pages/college-admin/batches.js",
+      "vNextPath": "src/app/(authenticated)/college/batches/page.tsx",
+      "disposition": "MATCHED",
+      "notes": "Same Batches section, college-admin layout. Has [cohortId] detail page."
+    },
+    {
+      "id": "UI02-S51",
+      "name": "College-Admin Batch Students",
+      "type": "LIST",
+      "role": ["ADMIN"],
+      "legacyPath": "src/pages/college-admin/batches.js (students modal)",
+      "vNextPath": "src/app/(authenticated)/college/batches/[cohortId]/students/page.tsx",
+      "disposition": "MATCHED",
+      "notes": "Students in a specific batch for college-admin"
+    },
+    {
+      "id": "UI02-S52",
+      "name": "College-Admin Batch Promotion",
+      "type": "LIST",
+      "role": ["ADMIN"],
+      "legacyPath": "src/pages/college-admin/batch-promotion.js",
+      "vNextPath": "src/app/(authenticated)/college/batch-promotion/page.tsx",
+      "disposition": "MATCHED",
+      "notes": "Same as superadmin batch-promotion but college-admin layout"
+    },
+    {
+      "id": "UI02-S53",
+      "name": "College-Admin Programs",
+      "type": "LIST",
+      "role": ["ADMIN"],
+      "legacyPath": "src/pages/college-admin/programs.js",
+      "vNextPath": "src/app/(authenticated)/college/programs/page.tsx",
+      "disposition": "MATCHED",
+      "notes": "Programs for this college-admin's college"
+    },
+    {
+      "id": "UI02-S54",
+      "name": "College-Admin Semesters",
+      "type": "LIST",
+      "role": ["ADMIN"],
+      "legacyPath": "src/pages/college-admin/semesters.js",
+      "vNextPath": "src/app/(authenticated)/college/semesters/page.tsx",
+      "disposition": "MATCHED",
+      "notes": "Semester list for college-admin"
+    },
+    {
+      "id": "UI02-S55",
+      "name": "College-Admin Semester Courses",
+      "type": "LIST",
+      "role": ["ADMIN"],
+      "legacyPath": "src/pages/college-admin/semester-courses.js",
+      "vNextPath": "src/app/(authenticated)/college/semester-courses/page.tsx",
+      "disposition": "MATCHED",
+      "notes": "Semester course mapping for college-admin"
+    },
+    {
+      "id": "UI02-S56",
+      "name": "College-Admin Classes",
+      "type": "LIST",
+      "role": ["ADMIN"],
+      "legacyPath": "src/pages/college-admin/classes.js",
+      "vNextPath": "src/app/(authenticated)/college/classes/page.tsx",
+      "disposition": "MATCHED",
+      "notes": "Classes/sections for college-admin"
+    },
+    {
+      "id": "UI02-S57",
+      "name": "College-Admin Recurring Session Preview",
+      "type": "DETAIL",
+      "role": ["ADMIN"],
+      "legacyPath": "src/pages/college-admin/classes.js (recurring session preview flow)",
+      "vNextPath": "src/app/(authenticated)/college/classes/recurring-preview/page.tsx",
+      "disposition": "MATCHED",
+      "notes": "Preview before creating recurring class sessions"
+    },
+    {
+      "id": "UI02-S58",
+      "name": "College-Admin Departments",
+      "type": "LIST",
+      "role": ["ADMIN"],
+      "legacyPath": "src/pages/college-admin/departments.js",
+      "vNextPath": "src/app/(authenticated)/college/departments/page.tsx",
+      "disposition": "MATCHED",
+      "notes": "Departments for this college"
+    },
+    {
+      "id": "UI02-S59",
+      "name": "College-Admin Lecture Halls",
+      "type": "LIST",
+      "role": ["ADMIN"],
+      "legacyPath": "src/pages/college-admin/lecture-halls.js",
+      "vNextPath": "src/app/(authenticated)/college/lecture-halls/page.tsx",
+      "disposition": "MATCHED",
+      "notes": "Lecture halls for this college"
+    },
+    {
+      "id": "UI02-S60",
+      "name": "College-Admin Lecture Hall Detail",
+      "type": "DETAIL",
+      "role": ["ADMIN"],
+      "legacyPath": "src/pages/college-admin/lecture-halls.js (hall detail/edit)",
+      "vNextPath": "src/app/(authenticated)/college/lecture-halls/[hallId]/page.tsx",
+      "disposition": "MATCHED",
+      "notes": "Detail/edit for a specific lecture hall"
+    },
+    {
+      "id": "UI02-S61",
+      "name": "College-Admin Faculty Assignment",
+      "type": "LIST",
+      "role": ["ADMIN"],
+      "legacyPath": "src/pages/college-admin/faculty-assignment.js",
+      "vNextPath": "src/app/(authenticated)/college/faculty-assignment/page.tsx",
+      "disposition": "MATCHED",
+      "notes": "Faculty-course-class assignments for college-admin"
+    },
+    {
+      "id": "UI02-S62",
+      "name": "Admin Dashboard (college-admin home)",
+      "type": "DASHBOARD",
+      "role": ["ADMIN"],
+      "legacyPath": "src/pages/college-admin/dashboard.js → components/admin/dashboard/",
+      "vNextPath": "src/app/(authenticated)/college/academics/page.tsx",
+      "disposition": "REDESIGNED",
+      "notes": "Legacy: full dashboard with AtAGlance, QuickActionsGrid, SetupGuide. vNext: may be structured differently under /college/academics."
+    },
+    {
+      "id": "UI02-S63",
+      "name": "Academics Hub / Group Shell (superadmin)",
+      "type": "NAVIGATION",
+      "role": ["SUPERADMIN"],
+      "legacyPath": "SuperAdminGroupShell groupKey=academic (wraps batch/program/dept/semester pages)",
+      "vNextPath": "src/app/(authenticated)/admin/academics/page.tsx",
+      "disposition": "REDESIGNED",
+      "notes": "Legacy: tabs/group shell around academic pages. vNext: separate /admin/academics hub."
+    },
+    {
+      "id": "UI02-S64",
+      "name": "Academics Sections (superadmin)",
+      "type": "NAVIGATION",
+      "role": ["SUPERADMIN"],
+      "legacyPath": "SuperAdminGroupShell sections rendering",
+      "vNextPath": "src/app/(authenticated)/admin/academics/sections/page.tsx",
+      "disposition": "REDESIGNED",
+      "notes": "Sections navigation within academics hub"
+    },
+    {
+      "id": "UI02-S65",
+      "name": "Academics Section Detail (superadmin)",
+      "type": "DETAIL",
+      "role": ["SUPERADMIN"],
+      "legacyPath": "src/pages/superadmin/sections/[various].js",
+      "vNextPath": "src/app/(authenticated)/admin/academics/sections/[sectionId]/page.tsx",
+      "disposition": "REDESIGNED",
+      "notes": "Dynamic section routing in vNext replaces individual section pages"
+    },
+    {
+      "id": "UI02-S66",
+      "name": "Empty State: No College Selected (batches/programs/etc)",
+      "type": "EMPTY",
+      "role": ["SUPERADMIN"],
+      "legacyPath": "src/pages/superadmin/batches.js (Alert: Select a college to continue)",
+      "vNextPath": "src/app/(authenticated)/admin/batches/page.tsx",
+      "disposition": "MATCHED",
+      "notes": "Alert: 'Select a college to continue'. Description: 'Batches is college-scoped. Pick an Organization + College in the header above.'"
+    },
+    {
+      "id": "UI02-S67",
+      "name": "Electives Feature Off State",
+      "type": "EMPTY",
+      "role": ["ADMIN"],
+      "legacyPath": "src/pages/college-admin/electives.js (Result: Electives is turned off)",
+      "vNextPath": "src/app/(authenticated)/college/electives/page.tsx",
+      "disposition": "MATCHED",
+      "notes": "Status: info. Title: 'Electives is turned off for this college'. Subtitle: 'Turn it on from Module Access to create elective slots and allocate students.'"
+    },
+    {
+      "id": "UI02-S68",
+      "name": "Admin Not Assigned to College (groups/electives guard)",
+      "type": "ERROR",
+      "role": ["ADMIN"],
+      "legacyPath": "src/pages/college-admin/electives.js + student-groups.js (Alert: Admin not assigned)",
+      "vNextPath": "src/app/(authenticated)/college/electives/page.tsx",
+      "disposition": "MATCHED",
+      "notes": "Alert warning: 'Admin not assigned to a college'. Description: 'You must be assigned to a college to manage [electives/student groups]. Contact your administrator.'"
+    }
+  ]
+}
