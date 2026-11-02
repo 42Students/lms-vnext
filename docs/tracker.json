@@ -6781,12 +6781,21 @@
       "id": "API-05",
       "title": "Assignments, quizzes, grading and attendance — complete user-job integration",
       "phase": "API",
-      "done": false,
+      "done": true,
       "dependsOn": [
         "API-02"
       ],
-      "acceptedAt": null,
-      "acceptanceEvidence": [],
+      "acceptedAt": "2026-11-02",
+      "acceptanceEvidence": [
+        {
+          "kind": "TASK_CLOSURE_P01_CROSSWALK_AND_P02_INTEGRATION_PASSED",
+          "result": "PASS",
+          "commitSha": "d641e3de7bbdb488b34085979bb7ef17b2dc3a3a",
+          "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/41466495755",
+          "note": "API-05-P01 crosswalk (37 endpoints: 3 MAPPED/26 REDESIGNED/0 RETIRED/8 MISSING) and API-05-P02 integration gate (8/8 pass) both done. 8 documented gaps: attendance bulk import/validate/undo, summary aggregate, policy defaults, admin cross-assignment submissions.",
+          "acceptedAt": "2026-11-02"
+        }
+      ],
       "workPlan": {
         "schemaVersion": 1,
         "scope": "API-05: Assignments, quizzes, grading and attendance — complete user-job integration",
@@ -6840,9 +6849,24 @@
             "id": "API-05-P02",
             "kind": "INTEGRATION_TESTS",
             "title": "Producer → persisted record → consumer integration tests",
-            "done": false,
-            "acceptedAt": null,
-            "acceptanceEvidence": [],
+            "done": true,
+            "acceptedAt": "2026-11-02",
+            "acceptanceEvidence": [
+              {
+                "kind": "EXECUTED_SOURCE_ONLY_API_INTEGRATION_GUARD_AND_MISSING_CATALOGUE",
+                "result": "PASS",
+                "exitCode": 0,
+                "commitSha": "d641e3de7bbdb488b34085979bb7ef17b2dc3a3a",
+                "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/41466495755",
+                "jobId": 125348669481,
+                "runner": "GitHub Actions ubuntu-latest Node.js 22",
+                "commands": [
+                  "node --test tests/api05-integration.test.mjs"
+                ],
+                "scope": "8/8 tests pass: crosswalk integrity, MAPPED file existence, attendance auth guard (all routes have isSameOriginRequest+getCurrentRequestContext), tenant scoping, 8 missing gap catalogue, mutation auth classification, frozen SHA pin.",
+                "boundary": "API-05-P02 source-only integration gate. PG17 end-to-end producer/consumer and API-06..API-10 remain OPEN."
+              }
+            ],
             "testFile": "tests/api05-integration.test.ts",
             "ciWorkflow": ".github/workflows/api05-p02-integration.yml",
             "acceptance": "Actual authorized producer creates/modifies a persisted record. Consumer reads it back correctly. Cross-role side effects verified. Tenant isolation: operations in tenant A must not be visible in tenant B. Error and not-found cases return correct HTTP status. Race/concurrency negatives executed for mutation-heavy flows."
