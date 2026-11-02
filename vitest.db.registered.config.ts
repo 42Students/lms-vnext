@@ -17,6 +17,9 @@ export default mergeConfig(base, defineConfig({
       "tests/integration/placements-db08-batches.test.ts",
       "tests/integration/placements-db08-registration.test.ts",
       "tests/integration/placements-db08-external-offers.test.ts",
+      // DB19-P21 saved jobs requires DB08_C and both isolation guards; the
+      // independent db019-p21-external-offers-pg17 workflow runs it on PG17.
+      "tests/integration/placements-p21-saved-jobs.test.ts",
       "tests/integration/placements-w04-company-drive-facts.test.ts",
       // Both throw at import unless DB08_ISOLATED_TEST_DATABASE=1, and the
       // phase 2 suite wipes placement tables globally: DB08 job only.
