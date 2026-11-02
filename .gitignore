@@ -20,3 +20,4 @@
 /scripts/migrate/nsrit/reports/
 /scripts/migrate/nsrit/*.ndjson
 /scripts/migrate/nsrit/manifest.json
+sticky-notes/
