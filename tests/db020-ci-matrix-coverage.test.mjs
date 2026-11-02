@@ -5,6 +5,7 @@ import { readFileSync } from "node:fs";
 const workflow = readFileSync(new URL("../.github/workflows/ci.yml", import.meta.url), "utf8");
 const registeredConfig = readFileSync(new URL("../vitest.db.registered.config.ts", import.meta.url), "utf8");
 const db19P18Pg17 = readFileSync(new URL("../tests/integration/placements-db08-registration.test.ts", import.meta.url), "utf8");
+const db19P18ScreeningPg17 = readFileSync(new URL("../tests/integration/placements-p6a-screening.test.ts", import.meta.url), "utf8");
 
 const expectedSuites = {
   "db08-staged-acceptance": [
@@ -70,4 +71,25 @@ test("DB19-P18 learner revocation race stays in the registered disposable PG17 m
   assert.match(db19P18Pg17, /SELECT membership_id FROM membership_roles[^\n]+FOR UPDATE/);
   assert.match(db19P18Pg17, /DB08_DEBARMENT_MEMBER_INVALID/);
   assert.match(db19P18Pg17, /restrictions\.rows\)\.toHaveLength\(0\)/);
+});
+
+test("DB19-P18 screening actor revocation and repair race use registered PG17", () => {
+  // Unlike DB08 registration, screening is a journalled table and must run
+  // against the registered zero-to-head PostgreSQL fixture, not a staged one.
+  assert.doesNotMatch(registeredConfig, /"tests\/integration\/placements-p6a-screening\.test\.ts"/);
+  const start = workflow.indexOf("  database:\n");
+  assert.ok(start >= 0, "missing registered database job");
+  const nextJob = workflow.slice(start + 1).search(/^  [a-z][\w-]*:\s*$/m);
+  const job = nextJob === -1
+    ? workflow.slice(start)
+    : workflow.slice(start, start + 1 + nextJob);
+  assert.match(job, /postgres:17-alpine/);
+  assert.match(job, /npx vitest run --config vitest\.db\.registered\.config\.ts/);
+  assert.match(db19P18ScreeningPg17, /rejects learner screening reads after a persisted LEARNER role revoke/);
+  assert.match(db19P18ScreeningPg17, /rejects a stale screening read when the persisted learner account is disabled/);
+  assert.match(db19P18ScreeningPg17, /blocks a decision when the persisted TPO role is revoked after authentication/);
+  assert.match(db19P18ScreeningPg17, /blocks a decision when the persisted screening manager account is disabled/);
+  assert.match(db19P18ScreeningPg17, /cannot recreate a missing screening row after staff grant revocation/);
+  assert.match(db19P18ScreeningPg17, /cannot repair a screening row for a withdrawn application/);
+  assert.match(db19P18ScreeningPg17, /history\.rows\)\.toHaveLength\(0\)/);
 });
