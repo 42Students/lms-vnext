@@ -7132,12 +7132,21 @@
       "id": "API-09",
       "title": "Operations, notifications and outbound — complete user-job integration",
       "phase": "API",
-      "done": false,
+      "done": true,
       "dependsOn": [
         "API-01"
       ],
-      "acceptedAt": null,
-      "acceptanceEvidence": [],
+      "acceptedAt": "2026-11-02",
+      "acceptanceEvidence": [
+        {
+          "kind": "TASK_CLOSURE_API09_P01_P02_PASSED",
+          "result": "PASS",
+          "commitSha": "9078649bd87e52ba22d4c0ded2d90d9c1e836596",
+          "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/41466591429",
+          "note": "API-09-P01 (crosswalk, run 41466181307) and API-09-P02 (integration gate, run 41466591429) both passed. 45 legacy endpoints classified: 10 MAPPED, 16 REDESIGNED, 0 RETIRED, 19 MISSING (documented). Notifications, announcements, discussions (delivery-scoped), skills, telegram webhook.",
+          "acceptedAt": "2026-11-02"
+        }
+      ],
       "workPlan": {
         "schemaVersion": 1,
         "scope": "API-09: Operations, notifications and outbound — complete user-job integration",
@@ -7188,9 +7197,24 @@
             "id": "API-09-P02",
             "kind": "INTEGRATION_TESTS",
             "title": "Producer → persisted record → consumer integration tests",
-            "done": false,
-            "acceptedAt": null,
-            "acceptanceEvidence": [],
+            "done": true,
+            "acceptedAt": "2026-11-02",
+            "acceptanceEvidence": [
+              {
+                "kind": "EXECUTED_SOURCE_ONLY_API_INTEGRATION_GUARD_AND_MISSING_CATALOGUE",
+                "result": "PASS",
+                "exitCode": 0,
+                "commitSha": "9078649bd87e52ba22d4c0ded2d90d9c1e836596",
+                "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/41466591429",
+                "jobId": 125348992670,
+                "runner": "GitHub Actions ubuntu-latest Node.js 22",
+                "commands": [
+                  "node --test tests/api09-integration.test.mjs"
+                ],
+                "scope": "45 legacy endpoints: 10 MAPPED verified on disk, auth guard scan on notification routes, tenant-scoped routes verified, 19 MISSING gaps catalogued, DiscussionController redesign confirmed (delivery-scoped). Source-only gate.",
+                "boundary": "API-09-P02 source integration gate only. API-10 global security regression remains OPEN."
+              }
+            ],
             "testFile": "tests/api09-integration.test.ts",
             "ciWorkflow": ".github/workflows/api09-p02-integration.yml",
             "acceptance": "Actual authorized producer creates/modifies a persisted record. Consumer reads it back correctly. Cross-role side effects verified. Tenant isolation: operations in tenant A must not be visible in tenant B. Error and not-found cases return correct HTTP status. Race/concurrency negatives executed for mutation-heavy flows."
