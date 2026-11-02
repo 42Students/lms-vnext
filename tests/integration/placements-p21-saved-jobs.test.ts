@@ -164,7 +164,12 @@ describe("DB19-P21 learner saved jobs, actual registered PostgreSQL",()=>{
     await expect(pool.query(
       "INSERT INTO placement_saved_jobs(college_id,membership_id,job_id) VALUES($1,$2,$3)",
       [SEED_IDS.collegeB,SEED_IDS.learnerCollegeAMembership,job.id],
-    )).rejects.toMatchObject({code:"23503"});
+    // The registered DB08 college guard rejects this before the composite
+    // FK, preserving the stricter learner/job tenant boundary.
+    )).rejects.toMatchObject({
+      code:"23514",
+      message:expect.stringContaining("Saved job does not share learner college"),
+    });
     const rows=await pool.query("SELECT id FROM placement_saved_jobs WHERE job_id=$1",
       [job.id]);
     expect(rows.rows).toHaveLength(0);
