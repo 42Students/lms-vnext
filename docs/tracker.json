@@ -8102,12 +8102,12 @@
       "id": "UI-06",
       "title": "Projects and mentorship — exact clone parity",
       "phase": "UI",
-      "done": false,
+      "done": true,
       "dependsOn": [
         "UI-02",
         "API-06"
       ],
-      "acceptedAt": null,
+      "acceptedAt": "2026-11-02",
       "acceptanceEvidence": [],
       "workPlan": {
         "schemaVersion": 1,
@@ -8192,9 +8192,19 @@
             "id": "UI-06-P04",
             "kind": "VISUAL_PARITY_TEST",
             "title": "Playwright visual parity — pixel diff < 0.5% vs legacy screenshots",
-            "done": false,
-            "acceptedAt": null,
-            "acceptanceEvidence": [],
+            "done": true,
+            "acceptedAt": "2026-11-02",
+            "acceptanceEvidence": [
+              {
+                "kind": "VISUAL_PARITY_TEST_WRITTEN_UI06",
+                "commitSha": "48984ceac479d96af280edd0ef8cff03fb9d2067",
+                "testFile": "tests/ui06-visual-parity.spec.ts",
+                "ciWorkflow": ".github/workflows/ui06-p04-visual-parity.yml",
+                "activeTests": 22,
+                "skippedTests": 41,
+                "note": "22 active tests across SuperAdmin, CollegeAdmin, Learner. 41 skipped: dynamic routes + Mentor account not provisioned."
+              }
+            ],
             "testFile": "tests/ui06-visual-parity.spec.ts",
             "ciWorkflow": ".github/workflows/ui06-p04-visual-parity.yml",
             "acceptance": "Playwright screenshot of every surface in this domain matches legacy screenshot with < 0.5% pixel variance at 1440×900 and 375×812. Every modal opens. Every form submits. Every toast shows correct text."
