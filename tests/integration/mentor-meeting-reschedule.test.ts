@@ -129,11 +129,11 @@ describe("Mentor meeting reschedule PostgreSQL audit and CAS",()=>{
       "select updated_at from project_meetings where id=$1",[meetingId])).rows;
     expect(original).toBeDefined();
     const params={projectId:project.id,meetingId};
-    const input={startsAt:"2026-11-02T12:00:00+05:30",
-      endsAt:"2026-11-02T13:00:00+05:30",
+    const input={startsAt:"2099-11-02T12:00:00+05:30",
+      endsAt:"2099-11-02T13:00:00+05:30",
       expectedUpdatedAt:original!.updated_at.toISOString(),confirmed:true as const};
     const updated=await rescheduleMentorMeeting(mentor,params,input);
-    expect(updated.startsAt.toISOString()).toBe("2026-11-02T06:30:00.000Z");
+    expect(updated.startsAt.toISOString()).toBe("2099-11-02T06:30:00.000Z");
     expect(updated.timeZone).toBe("Asia/Kolkata");
     const event=await pool.query<{actor_user_id:string;college_id:string;
       metadata:Record<string,unknown>}>(`select actor_user_id,college_id,metadata
@@ -150,13 +150,13 @@ describe("Mentor meeting reschedule PostgreSQL audit and CAS",()=>{
        requested_by_membership_id,created_by_user_id,scheduled_by_user_id,
        scheduled_by_membership_id,meeting_url)
       values ($1,$2,'SCHEDULED','GENERAL','Conflict fixture',
-        '2026-11-03T08:00:00Z','2026-11-03T09:00:00Z','Asia/Kolkata',
+        '2099-11-03T08:00:00Z','2099-11-03T09:00:00Z','Asia/Kolkata',
         $3,$4,$5,$6,'https://meet.example.org/conflict')`,[
         otherId,project.id,SEED_IDS.learnerCollegeAMembership,
         SEED_IDS.learnerUser,SEED_IDS.facultyUser,SEED_IDS.facultyCollegeAMembership,
       ]);
-    const newInput={...input,startsAt:"2026-11-03T13:45:00+05:30",
-      endsAt:"2026-11-03T14:15:00+05:30",
+    const newInput={...input,startsAt:"2099-11-03T13:45:00+05:30",
+      endsAt:"2099-11-03T14:15:00+05:30",
       expectedUpdatedAt:updated.updatedAt.toISOString()};
     await expect(rescheduleMentorMeeting(mentor,params,newInput))
       .rejects.toMatchObject({code:"PROJECT_MEETING_SCHEDULE_CONFLICT"});
