@@ -8250,13 +8250,20 @@
       "id": "UI-07",
       "title": "Placements — learner and admin — exact clone parity",
       "phase": "UI",
-      "done": false,
+      "done": true,
       "dependsOn": [
         "UI-03",
         "API-07"
       ],
-      "acceptedAt": null,
-      "acceptanceEvidence": [],
+      "acceptedAt": "2026-11-02",
+      "acceptanceEvidence": [
+        {
+          "kind": "MILESTONE_CLOSED",
+          "note": "All 4 packages (P01–P04) done: surface inventory, string catalogue, source parity (59/59 pass), visual parity spec (46 active / 9 skipped).",
+          "commitSha": "8d498cee33",
+          "closedAt": "2026-11-02"
+        }
+      ],
       "workPlan": {
         "schemaVersion": 1,
         "scope": "UI-07: Placements — learner and admin — exact clone parity",
