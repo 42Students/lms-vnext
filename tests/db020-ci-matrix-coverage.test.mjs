@@ -89,6 +89,7 @@ test("DB19-P18 screening actor revocation and repair race use registered PG17", 
   assert.match(db19P18ScreeningPg17, /rejects a stale screening read when the persisted learner account is disabled/);
   assert.match(db19P18ScreeningPg17, /blocks a decision when the persisted TPO role is revoked after authentication/);
   assert.match(db19P18ScreeningPg17, /blocks a decision when the persisted screening manager account is disabled/);
+  assert.match(db19P18ScreeningPg17, /serializes screening decisions with an in-flight TPO grant revoke/);
   assert.match(db19P18ScreeningPg17, /cannot recreate a missing screening row after staff grant revocation/);
   assert.match(db19P18ScreeningPg17, /cannot repair a screening row for a withdrawn application/);
   assert.match(db19P18ScreeningPg17, /history\.rows\)\.toHaveLength\(0\)/);
