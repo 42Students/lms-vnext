@@ -3228,6 +3228,44 @@
           ],
           "notTaskAcceptance": true
         },
+        "latestP18ScreeningPersistedActorBatch": {
+          "recordedOn": "2026-11-02",
+          "status": "SCREENING_READ_AND_MUTATION_SECURITY_FIXES_COMMITTED_PG17_EXECUTION_PENDING",
+          "codeCommits": [
+            "c962512869a9f940c17e49a497ac772ee274ffb6",
+            "3791453c34495bdd94ea6b4f123581fe33059ac6",
+            "d2ad3d20f6f5fa0444c018798cc9dfedb281f971",
+            "95dc42109c1a7b4d75a902958d09538168101c7c"
+          ],
+          "regressionCommits": [
+            "d1f7ba88901024acf362b26546a9de408e805598",
+            "fbc1920518235dac0364313e7abffa5d3c3afca9",
+            "ae3a4a0903d16f22dc35df61ef5977f7c0ed46f5",
+            "3f45dfc36755c7c37282433af766ab0c72a61b7d",
+            "5d0cc68333405b1f614321d4eb246498f34a65ba",
+            "23bc195b0e26ab649f65cc171b3f11d9a35c6887"
+          ],
+          "changes": [
+            "Learner-owned screening reads revalidate the persisted active learner account, role and placement access rather than stale request-context claims.",
+            "Manual screening decisions reconstruct persisted staff scope with transaction-held SHARE locks before updating screening status and append-only history.",
+            "Missing-screening-row repair checks persisted staff permission and rechecks SUBMITTED under application FOR UPDATE lock, rejecting concurrent withdrawal.",
+            "New negative integration tests include revoked/disabled learner and staff roles, absent history after denial, and an in-flight TPO-role-revocation race.",
+            "DB020 source matrix guards ensure both staged DB08 and registered PostgreSQL 17 screening suites remain independently covered."
+          ],
+          "localEvidence": {
+            "kind": "GITHUB_CONNECTOR_V8_IN_PROCESS_SOURCE_ASSERTIONS_ONLY",
+            "cases": 16,
+            "passed": 16,
+            "nodeVitestExecuted": false,
+            "postgresql17ExecutedForNewCommits": false
+          },
+          "remaining": [
+            "Execute exact-SHA registered PostgreSQL 17 P6A screening and DB08 debarment suites, including all new tenant, role and concurrency negatives; fix actual failures if any.",
+            "Reconcile all 63 DB19-P18 legacy fields including score/provenance actors and event chronology; source-side security fixes alone do not approve dispositions.",
+            "Run DB19-P31/P32 and DB020 exact-head global certification only after required packages and producer/consumer/tenant/security gates pass."
+          ],
+          "notTaskAcceptance": true
+        },
         "latestP17FullRegisteredPg17": {
           "recordedOn": "2026-11-01",
           "status": "EXECUTED_FULL_REGISTERED_PG17_P17_SERVICE_AND_PRIVACY_MATRIX_PASS_PACKAGE_NOT_FINAL",
