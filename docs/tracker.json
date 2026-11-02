@@ -6476,9 +6476,21 @@
             "id": "API-01-P01",
             "kind": "ENDPOINT_CROSSWALK",
             "title": "Legacy endpoint → vNext crosswalk",
-            "done": false,
-            "acceptedAt": null,
-            "acceptanceEvidence": [],
+            "done": true,
+            "acceptedAt": "2026-11-02",
+            "acceptanceEvidence": [
+              {
+                "kind": "CI_PASS_SOURCE_ONLY_CROSSWALK_16_ASSERTIONS",
+                "result": "PASS",
+                "exitCode": 0,
+                "commitSha": "7e75de93afd87a6f4fca6bfae7c81bcc1d51694d",
+                "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/41464740906",
+                "jobId": 125342549504,
+                "runner": "GitHub Actions ubuntu-latest Node.js 22",
+                "scope": "16-assertion source-only test: JSON validity, summary counts, disposition completeness, vNextPath file existence for all 75 MAPPED+REDESIGNED endpoints, no duplicates, inventory coverage. 124 total endpoints: 7 MAPPED, 68 REDESIGNED, 2 RETIRED, 47 MISSING (all documented).",
+                "durationMs": 15000
+              }
+            ],
             "crosswalkFile": "docs/planning/api-crosswalk-api01.json",
             "testFile": "tests/api01-endpoint-crosswalk.test.mjs",
             "ciWorkflow": ".github/workflows/api01-p01-crosswalk.yml",
