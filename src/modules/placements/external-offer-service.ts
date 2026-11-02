@@ -1,14 +1,14 @@
 import { and, desc, eq, sql } from "drizzle-orm";
 import { z } from "zod";
 import { getDb } from "@/db/client";
-import { colleges } from "@/db/schema";
+import { collegeMemberships, colleges, membershipRoles, users } from "@/db/schema";
 import {
   placementExternalOfferEvents,
   placementExternalOffers,
 } from "@/db/schema/placement-external";
 import type { RequestContext } from "@/modules/identity/context";
 import { AuthorizationError } from "@/modules/permissions/policy";
-import { assertPersistedPlatformPermission } from "@/modules/permissions/persisted-actor";
+import { assertPersistedPlatformPermission, type PermissionTransaction } from "@/modules/permissions/persisted-actor";
 import { requireLearnerPlacementAccess } from "./learner-participation-guard";
 import { requirePlacementManageScope } from "./scope";
 import {
@@ -47,6 +47,37 @@ export class ExternalOfferError extends Error {
   }
 }
 
+/** The learner's initial participation check is only a preflight.
+ * Its request snapshot can outlive a role revocation or account disablement.
+ * Hold persisted user, membership and LEARNER grant through the actual read or
+ * write transaction; never use a TPO grant to authorize a learner submission.
+ */
+async function assertLiveExternalOfferLearner(
+  tx: PermissionTransaction,
+  context: RequestContext,
+  membership: NonNullable<RequestContext["membership"]>,
+): Promise<void> {
+  const [live] = await tx.select({
+    userId: collegeMemberships.userId,
+    collegeId: collegeMemberships.collegeId,
+    status: collegeMemberships.status,
+    platformStatus: users.platformStatus,
+    grantId: membershipRoles.id,
+  }).from(collegeMemberships)
+    .innerJoin(users, eq(users.id,collegeMemberships.userId))
+    .innerJoin(membershipRoles, and(
+      eq(membershipRoles.membershipId,collegeMemberships.id),
+      eq(membershipRoles.role,"LEARNER"),
+    ))
+    .where(eq(collegeMemberships.id,membership.id))
+    .for("share").limit(1);
+  if (!live || live.userId !== context.user.id ||
+      live.collegeId !== membership.collegeId ||
+      live.status !== "ACTIVE" || live.platformStatus !== "ACTIVE") {
+    throw new AuthorizationError("placements.read");
+  }
+}
+
 // Never return the private offer letter storage path through a normal JSON API.
 const publicOfferFields = {
   id: placementExternalOffers.id,
@@ -82,6 +113,7 @@ export async function submitOwnExternalOffer(
     const [college] = await tx.select({ id: colleges.id }).from(colleges)
       .where(eq(colleges.id, membership.collegeId)).for("update").limit(1);
     if (!college) throw new AuthorizationError("placements.read");
+    await assertLiveExternalOfferLearner(tx, context, membership);
 
     const normalizedCompany = input.companyName.trim();
     const [existing] = await tx.select(publicOfferFields)
@@ -122,11 +154,14 @@ export async function submitOwnExternalOffer(
 
 export async function listOwnExternalOffers(context: RequestContext) {
   const membership = await requireLearnerPlacementAccess(context);
-  return getDb().select(publicOfferFields).from(placementExternalOffers)
-    .where(and(
-      eq(placementExternalOffers.collegeId, membership.collegeId),
-      eq(placementExternalOffers.membershipId, membership.id),
-    )).orderBy(desc(placementExternalOffers.createdAt));
+  return getDb().transaction(async tx => {
+    await assertLiveExternalOfferLearner(tx, context, membership);
+    return tx.select(publicOfferFields).from(placementExternalOffers)
+      .where(and(
+        eq(placementExternalOffers.collegeId, membership.collegeId),
+        eq(placementExternalOffers.membershipId, membership.id),
+      )).orderBy(desc(placementExternalOffers.createdAt));
+  });
 }
 
 export async function listManagedExternalOffers(
