@@ -83,6 +83,7 @@ const stubs = pageRows.filter((p) => p.stub);
 md += `## Summary\n\n- Exported functions in scope: ${fnRows.length}; never referenced by a test: ${uncoveredFns.length}; mutating-looking: ${uncoveredMutFns.length}\n- API routes in scope: ${routeRows.length}; no test mentions: ${uncoveredRoutes.length}; mutating: ${uncoveredMutRoutes.length}\n- Pages in scope: ${pageRows.length}; stub pages: ${stubs.length}; pages without a guard call in the file itself: ${pageRows.filter((p) => !p.hasGuardInFile).length} (a layout may guard them)\n\n`;
 md += `## Stub pages (verify auth and content)\n\n` + (stubs.map((p) => `- ${p.file}`).join("\n") || "- none") + `\n\n`;
 md += `## Uncovered mutating functions\n\n` + uncoveredMutFns.map((r) => `- \`${r.name}\` (${r.file})`).join("\n") + `\n\n`;
+md += `## Other uncovered functions\n\n` + uncoveredFns.filter((r) => !r.mutating).map((r) => `- \`${r.name}\` (${r.file})`).join("\n") + `\n\n`;
 md += `## Uncovered mutating routes\n\n` + uncoveredMutRoutes.map((r) => `- ${r.methods.join("/")} ${r.route}`).join("\n") + `\n\n`;
 md += `## Other uncovered routes\n\n` + uncoveredRoutes.filter((r) => !r.mutating).map((r) => `- ${r.route}`).join("\n") + `\n\n`;
 md += `## Pages without a guard call in the file\n\n` + pageRows.filter((p) => !p.hasGuardInFile).map((p) => `- ${p.file} (${p.lines} lines${p.stub ? ", STUB" : ""})`).join("\n") + `\n`;
