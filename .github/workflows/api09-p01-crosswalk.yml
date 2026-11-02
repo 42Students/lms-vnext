@@ -1,0 +1,61 @@
+name: API-09-P01 Endpoint Crosswalk
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'docs/planning/api-crosswalk-api09.json'
+      - 'docs/planning/api-inventory-api09.json'
+      - 'tests/api09-endpoint-crosswalk.test.mjs'
+      - '.github/workflows/api09-p01-crosswalk.yml'
+  workflow_dispatch:
+
+jobs:
+  crosswalk:
+    name: API-09-P01 notifications/operations/outbound crosswalk
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Verify crosswalk JSON exists
+        run: |
+          test -f docs/planning/api-crosswalk-api09.json || (echo "FAIL: crosswalk file missing" && exit 1)
+          test -f docs/planning/api-inventory-api09.json || (echo "FAIL: inventory file missing" && exit 1)
+
+      - name: Validate crosswalk JSON structure
+        run: |
+          node -e "
+            const c = JSON.parse(require('fs').readFileSync('docs/planning/api-crosswalk-api09.json','utf8'));
+            if (c.milestoneId !== 'API-09') throw new Error('wrong milestoneId');
+            if (!Array.isArray(c.endpoints)) throw new Error('no endpoints array');
+            console.log('crosswalk valid: ' + c.endpoints.length + ' endpoints');
+          "
+
+      - name: Run crosswalk completeness tests
+        run: node --test tests/api09-endpoint-crosswalk.test.mjs
+
+      - name: Print summary
+        if: always()
+        run: |
+          node -e "
+            const c = JSON.parse(require('fs').readFileSync('docs/planning/api-crosswalk-api09.json','utf8'));
+            const s = c.summary;
+            console.log('=== API-09-P01 CROSSWALK SUMMARY ===');
+            console.log('Total endpoints : ' + s.total);
+            console.log('MAPPED          : ' + s.mapped);
+            console.log('REDESIGNED      : ' + s.redesigned);
+            console.log('RETIRED         : ' + s.retired);
+            console.log('MISSING (gaps)  : ' + s.missing);
+            console.log('Coverage        : ' + Math.round((s.mapped+s.redesigned+s.retired)/s.total*100) + '%');
+            if (s.missing > 0) {
+              console.log('');
+              console.log('GAP NOTES:');
+              const c2 = JSON.parse(require('fs').readFileSync('docs/planning/api-crosswalk-api09.json','utf8'));
+              (c2.missingGapNotes||[]).forEach(n => console.log('  - ' + n));
+            }
+          "
