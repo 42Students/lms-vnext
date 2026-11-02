@@ -426,6 +426,71 @@ describe("Placement P6A screening", () => {
     }
   });
 
+  it("serializes screening decisions with an in-flight TPO grant revoke", async () => {
+    const { application } = await createApplication();
+    // This suite's pool has max=1. A separate holder connection allows the
+    // observer to query pg_stat_activity while the screening writer waits.
+    const blockerPool = new Pool({ connectionString: databaseUrl, max: 1 });
+    const holder = await blockerPool.connect();
+    let held = false;
+    let pending: Promise<{ok:boolean;error?:unknown}> | null = null;
+    try {
+      await holder.query("BEGIN");
+      held = true;
+      const grants = await holder.query(
+        "SELECT membership_id FROM membership_roles WHERE membership_id=$1 AND role='TPO' FOR UPDATE",
+        [SEED_IDS.facultyCollegeAMembership],
+      );
+      expect(grants.rows).toHaveLength(1);
+      pending = decidePlacementScreening(tpo, application.id, {
+        decision: "SHORTLISTED",
+        candidateMessage: "A revoked actor cannot submit this decision",
+      }).then(() => ({ok:true}), error => ({ok:false,error}));
+
+      let blocked = false;
+      for (let attempt = 0; attempt < 160; attempt++) {
+        const activity = await pool.query<{blocked:string}>(
+          "SELECT count(*)::text AS blocked FROM pg_stat_activity " +
+          "WHERE datname=current_database() AND pid<>pg_backend_pid() " +
+          "AND wait_event_type='Lock' AND query ILIKE '%membership_roles%'",
+        );
+        if (Number(activity.rows[0]?.blocked ?? 0) > 0) {
+          blocked = true;
+          break;
+        }
+        await new Promise(resolve => setTimeout(resolve, 25));
+      }
+      expect(blocked).toBe(true);
+      await holder.query(
+        "DELETE FROM membership_roles WHERE membership_id=$1 AND role='TPO'",
+        [SEED_IDS.facultyCollegeAMembership],
+      );
+      await holder.query("COMMIT");
+      held = false;
+      const outcome = await pending;
+      expect(outcome).toMatchObject({ok:false});
+      expect(String((outcome.error as Error)?.message ?? ""))
+        .toContain("Missing permission: placements.manage");
+      const [rows, history] = await Promise.all([
+        pool.query("SELECT status FROM placement_application_screenings WHERE application_id=$1",
+          [application.id]),
+        pool.query("SELECT id FROM placement_application_screening_history WHERE application_id=$1",
+          [application.id]),
+      ]);
+      expect(rows.rows[0]?.status).toBe("PENDING");
+      expect(history.rows).toHaveLength(0);
+    } finally {
+      if (held) await holder.query("ROLLBACK").catch(() => undefined);
+      holder.release();
+      if (pending) await pending;
+      await blockerPool.end();
+      await pool.query(
+        "INSERT INTO membership_roles(membership_id,role) VALUES($1,'TPO') ON CONFLICT DO NOTHING",
+        [SEED_IDS.facultyCollegeAMembership],
+      );
+    }
+  }, 20_000);
+
   it("blocks a decision when the persisted screening manager account is disabled", async () => {
     const { application } = await createApplication();
     await pool.query("UPDATE users SET platform_status='DISABLED' WHERE id=$1",
