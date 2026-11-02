@@ -251,12 +251,12 @@ export default async function TpoReportsPage({
 
       <section aria-label="Prototype reports overview" data-testid="tpo.reports.prototype-overview" className="space-y-4">
        <div className="flex flex-wrap items-center justify-between gap-2 text-sm text-[#5b6b82]">
-        <p>For <strong className="text-[#0a7c88]">{workspace.seasons.find(item=>item.id===workspace.selectedSeasonId)?.name??"All placement seasons"}</strong>
+        <p>For <strong className="text-[var(--lms-primary-text)]">{workspace.seasons.find(item=>item.id===workspace.selectedSeasonId)?.name??"All placement seasons"}</strong>
          {workspace.selectedJobId?" · Selected drive":" · All drives"} · Your college</p>
         <Link href={reportHref("/tpo/reports/accreditation",workspace)}
-         className="inline-flex min-h-11 items-center rounded-lg border border-[#e1e6ed] bg-surface px-4 font-semibold text-[#172033]">Export for accreditation</Link>
+         className="inline-flex min-h-11 items-center rounded-lg border border-border bg-surface px-4 font-semibold text-heading">Export for accreditation</Link>
        </div>
-       <div className="grid overflow-hidden rounded-xl border border-[#e7ecf2] bg-surface sm:grid-cols-2 xl:grid-cols-4">
+       <div className="grid overflow-hidden rounded-xl border border-border bg-surface sm:grid-cols-2 xl:grid-cols-4">
         {([
          {label:"Placed",value:placed.toLocaleString("en-IN"),detail:"of "+looking.toLocaleString("en-IN")+" registered · "+percent(placed)+"%",href:"/tpo/reports/placement-summary"},
          {label:"Offers",value:workspace.report.metrics.offers.toLocaleString("en-IN"),detail:workspace.report.metrics.acceptedOffers+" accepted offers",href:"/tpo/reports/offers-acceptance"},
@@ -264,9 +264,9 @@ export default async function TpoReportsPage({
            (workspace.report.metrics.averagePackageInr/100000).toFixed(1)+" LPA":"—",detail:"Accepted full-time packages only",href:"/tpo/reports/ctc"},
          {label:"Not placed yet",value:Math.max(0,looking-placed).toLocaleString("en-IN"),detail:"Of the registered placement pool",href:"/tpo/reports/unplaced"},
         ] as const).map(card=><Link key={card.label} href={reportHref(card.href,workspace)}
-         className="min-w-0 border-b border-[#e7ecf2] p-4 last:border-0 hover:bg-[#eff8fa] sm:odd:border-r xl:border-b-0 xl:border-r xl:last:border-r-0">
-         <strong className="block text-2xl font-bold tabular-nums text-[#172033]">{card.value}</strong>
-         <span className="mt-1 block text-sm font-semibold text-[#172033]">{card.label}</span>
+         className="min-w-0 border-b border-border p-4 last:border-0 hover:bg-[#eff8fa] sm:odd:border-r xl:border-b-0 xl:border-r xl:last:border-r-0">
+         <strong className="block text-2xl font-bold tabular-nums text-heading">{card.value}</strong>
+         <span className="mt-1 block text-sm font-semibold text-heading">{card.label}</span>
          <span className="mt-1 block text-xs text-[#5b6b82]">{card.detail}</span>
         </Link>)}
        </div>
@@ -290,20 +290,20 @@ export default async function TpoReportsPage({
           ["Accreditation export","/tpo/reports/accreditation","Verified college data"]]},
          {heading:"YOUR SAVED VIEWS",links:[
           ["Manage report filters","/tpo/reports","Saved report scopes below"]]},
-        ] as const).map(group=><section key={group.heading} className="min-w-0 rounded-xl border border-[#e7ecf2] bg-surface px-4 py-4">
+        ] as const).map(group=><section key={group.heading} className="min-w-0 rounded-xl border border-border bg-surface px-4 py-4">
          <h2 className="mb-2 text-[11px] font-bold tracking-[.07em] text-[#5b6b82]">{group.heading}</h2>
          <ul className="divide-y divide-[#edf0f3]">{group.links.map(([label,path,detail])=>
           <li key={path+label}><Link href={reportHref(path,workspace)}
-           className="flex min-h-11 min-w-0 items-center justify-between gap-3 py-2 hover:text-[#0a7c88]">
-           <span className="text-sm font-medium text-[#172033]">{label}</span>
+           className="flex min-h-11 min-w-0 items-center justify-between gap-3 py-2 hover:text-[var(--lms-primary-text)]">
+           <span className="text-sm font-medium text-heading">{label}</span>
            <span className="text-right text-xs text-[#5b6b82]">{detail}</span>
           </Link></li>)}</ul>
         </section>)}
        </div>
       </section>
-      <details id="advanced-report-workspace" className="rounded-xl border border-[#e7ecf2] bg-white">
-       <summary className="min-h-11 cursor-pointer px-4 py-3 text-sm font-semibold text-[#172033]">Advanced reporting, filters and full report catalogue</summary>
-       <div className="space-y-6 border-t border-[#e7ecf2] p-4">
+      <details id="advanced-report-workspace" className="rounded-xl border border-border bg-surface">
+       <summary className="min-h-11 cursor-pointer px-4 py-3 text-sm font-semibold text-heading">Advanced reporting, filters and full report catalogue</summary>
+       <div className="space-y-6 border-t border-border p-4">
       <nav aria-label="Placement journey" className="space-y-3 border-y border-border py-4">
        <h2 className="text-lg font-semibold">Placement journey</h2>
        <p className="text-sm text-body">The college&apos;s placement journey: {workspace.report.metrics.offers} {workspace.report.metrics.offers===1?"offer":"offers"} made. Click any number for its report.</p>

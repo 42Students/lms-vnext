@@ -168,7 +168,7 @@ export default async function DriveDayPage({searchParams}:{searchParams:Promise<
           {rounds.map((round) => (
             <article
               key={round.roundId}
-              className="flex min-h-[132px] min-w-0 flex-col justify-between gap-4 rounded-[13px] border border-[#e5e9f0] bg-surface p-4 shadow-none transition-[border-color,box-shadow,transform] duration-150 hover:-translate-y-[2px] hover:border-[#a8dfe5] hover:shadow-md sm:flex-row sm:items-center"
+              className="flex min-h-[132px] min-w-0 flex-col justify-between gap-4 rounded-[13px] border border-border bg-surface p-4 shadow-none transition-[border-color,box-shadow,transform] duration-150 hover:-translate-y-[2px] hover:border-[#a8dfe5] hover:shadow-md sm:flex-row sm:items-center"
             >
               <div className="min-w-0">
                   <p className="m-0 text-xs font-semibold uppercase tracking-[0.08em] text-link leading-5">

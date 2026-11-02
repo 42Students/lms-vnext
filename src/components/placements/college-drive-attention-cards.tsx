@@ -133,7 +133,7 @@ export function CollegeDriveAttentionCards({data}:{data:Attention}){
           className="absolute inset-0 rounded-[13px] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"/>
         <div className="pointer-events-none relative flex min-w-0 gap-3">
           <span aria-label={job.companyName+" avatar"}
-            className="flex size-10 shrink-0 items-center justify-center rounded-full border border-border bg-[#e6f6f8] text-sm font-bold text-[#0a7c88]">
+            className="flex size-10 shrink-0 items-center justify-center rounded-full border border-border bg-[#e6f6f8] text-sm font-bold text-[var(--lms-primary-text)]">
             {job.companyName.trim().slice(0,2).toUpperCase()||"CO"}
           </span>
           <div className="min-w-0 flex-1">

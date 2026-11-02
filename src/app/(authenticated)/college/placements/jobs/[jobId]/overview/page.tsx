@@ -139,7 +139,7 @@ export default async function CollegeDriveOverviewPage({ params }: {
           funnel?.cumulativeTotals.HIRED??null;
          return <div key={stage} className="min-w-0 rounded-[var(--lms-control-radius)] border border-border p-3">
           <p className="text-xs text-muted-foreground">{stage[0]+stage.slice(1).toLowerCase()}</p>
-          <strong className={"mt-1 block text-2xl font-semibold tabular-nums "+(index===0?"text-[#0a7c88]":index===5?"text-[#3f8600]":"text-[var(--lms-heading)]")}>{value===null?"—":value.toLocaleString("en-IN")}</strong>
+          <strong className={"mt-1 block text-2xl font-semibold tabular-nums "+(index===0?"text-[var(--lms-primary-text)]":index===5?"text-[#3f8600]":"text-[var(--lms-heading)]")}>{value===null?"—":value.toLocaleString("en-IN")}</strong>
          </div>;
         })}
       </div>

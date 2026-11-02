@@ -15,7 +15,7 @@ export const dynamic = "force-dynamic";
 function ProfileField({label,value,empty="Not set"}:{
   label:string;value:string|null|undefined;empty?:string;
 }) {
-  return <div className="grid min-w-0 grid-cols-1 gap-2 border-b border-[#edf0f0] py-3 sm:grid-cols-[160px_minmax(0,1fr)] sm:items-start">
+  return <div className="grid min-w-0 grid-cols-1 gap-2 border-b border-border py-3 sm:grid-cols-[160px_minmax(0,1fr)] sm:items-start">
     <dt className="text-[13px] font-medium text-[var(--lms-neutral-400)]">{label}</dt>
     <dd className="m-0 break-words text-sm font-medium leading-5 text-[var(--lms-heading)]">{value?.trim()||<span className="font-normal text-muted-foreground">{empty}</span>}</dd>
   </div>;
@@ -74,7 +74,7 @@ export default async function TpoProfilePage() {
         <dl className="mt-3 min-w-0">
           <ProfileField label="College" value={profile.collegeName} />
           <ProfileField label="College code" value={profile.collegeCode} />
-          <div className="grid grid-cols-1 gap-2 border-b border-[#edf0f0] py-3 sm:grid-cols-[160px_minmax(0,1fr)]">
+          <div className="grid grid-cols-1 gap-2 border-b border-border py-3 sm:grid-cols-[160px_minmax(0,1fr)]">
             <dt className="text-[13px] font-medium text-[var(--lms-neutral-400)]">Membership status</dt>
             <dd className="m-0"><StatusBadge tone={profile.membershipStatus === "ACTIVE" ? "success" : "warning"}>{profile.membershipStatus}</StatusBadge></dd>
           </div>

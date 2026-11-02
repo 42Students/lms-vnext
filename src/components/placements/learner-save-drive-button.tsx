@@ -61,7 +61,7 @@ export function LearnerSaveDriveButton({
    aria-label={accessibleName} title={tooltip} disabled={busy||!known}
    onClick={()=>void toggle()}
    className={"inline-flex size-11 shrink-0 items-center justify-center rounded-[var(--lms-control-radius)] border border-transparent bg-transparent transition-colors hover:border-border hover:bg-[#e6f6f8] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] disabled:cursor-not-allowed disabled:opacity-50 md:size-9 "+
-     (saved?"text-[#0a7c88]":"text-[#61727d]")}
+     (saved?"text-[var(--lms-primary-text)]":"text-[#61727d]")}
   >
    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20"
     viewBox="0 0 24 24" fill={saved?"currentColor":"none"}

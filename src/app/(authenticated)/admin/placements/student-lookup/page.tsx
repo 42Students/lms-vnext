@@ -115,7 +115,7 @@ export default async function SuperAdminPlacementStudentLookup({ searchParams }:
         Student not found in this college’s current search results. Choose a matching student.
       </p> : null}
     </section>
-    {selectedStudent ? <section className="min-w-0 space-y-3 rounded-[8px] border border-[#f0f0f0] bg-[#fafafa] p-4"
+    {selectedStudent ? <section className="min-w-0 space-y-3 rounded-[8px] border border-border bg-surface p-4"
       aria-label={`Placement history for ${studentLabel}`}>
       <div className="flex min-w-0 flex-wrap items-center justify-between gap-3">
         <strong className="break-words text-sm text-[var(--lms-heading)]">{studentLabel}</strong>

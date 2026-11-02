@@ -78,7 +78,7 @@ export default async function PublicPlacementsPage() {
   return (
     <div className="min-h-screen bg-[#f5f7f9] px-4 py-8">
       <main data-testid="placements.public" className="mx-auto flex w-full max-w-[760px] flex-col gap-6">
-        <section className="min-w-0 rounded-[8px] border border-[#e5e9f0] bg-surface p-5 shadow-none sm:p-6"
+        <section className="min-w-0 rounded-[8px] border border-border bg-surface p-5 shadow-none sm:p-6"
           aria-labelledby="placements-public-heading">
           <h1 id="placements-public-heading" className="m-0 break-words text-[26px] font-semibold leading-tight text-[#172033] sm:text-[30px]">
             {college?.collegeName??"College placements"}
@@ -114,7 +114,7 @@ export default async function PublicPlacementsPage() {
             </>
           ) : null}
         </section>
-        <section aria-label="Recruit from us" className="min-w-0 rounded-[8px] border border-[#e5e9f0] bg-surface p-5 shadow-none sm:p-6 [&>section]:mt-0 [&>section]:border-t-0 [&>section]:pt-0">
+        <section aria-label="Recruit from us" className="min-w-0 rounded-[8px] border border-border bg-surface p-5 shadow-none sm:p-6 [&>section]:mt-0 [&>section]:border-t-0 [&>section]:pt-0">
           <PublicRecruitFromUs collegeName={college?.collegeName ?? ""}
             enabled={Boolean(published) && process.env["DB09_TPO_API_READY"] === "DB09_VERIFIED" &&
               process.env["PUBLIC_JOIN_TRUSTED_PROXY_READY"] === "VERIFIED"}/>
