@@ -7447,9 +7447,18 @@
             "id": "UI-01-P01",
             "kind": "SURFACE_INVENTORY",
             "title": "Surface inventory — every page, modal, form, drawer catalogued",
-            "done": false,
-            "acceptedAt": null,
-            "acceptanceEvidence": [],
+            "done": true,
+            "acceptedAt": "2026-11-02",
+            "acceptanceEvidence": [
+              {
+                "kind": "EXECUTED_SURFACE_INVENTORY_UI_01_P01",
+                "result": "PASS",
+                "inventoryFile": "docs/planning/ui-inventory-ui01.json",
+                "totalSurfaces": 62,
+                "missingCount": 0,
+                "executedAt": "2026-11-02"
+              }
+            ],
             "inventoryFile": "docs/planning/ui-inventory-ui01.json",
             "acceptance": "Every legacy page/modal/form/drawer/empty-state/error-state for this domain catalogued with role, surface type, legacy path, vNext path, disposition (MATCHED/MISSING/REDESIGNED). Zero surfaces undocumented."
           },
@@ -7457,9 +7466,17 @@
             "id": "UI-01-P02",
             "kind": "STRING_CATALOGUE",
             "title": "String catalogue — every UI string extracted from legacy",
-            "done": false,
-            "acceptedAt": null,
-            "acceptanceEvidence": [],
+            "done": true,
+            "acceptedAt": "2026-11-02",
+            "acceptanceEvidence": [
+              {
+                "kind": "EXECUTED_STRING_CATALOGUE_UI_01_P02",
+                "result": "PASS",
+                "catalogueFile": "docs/planning/ui-strings-ui01.json",
+                "totalStringKeys": 157,
+                "executedAt": "2026-11-02"
+              }
+            ],
             "catalogueFile": "docs/planning/ui-strings-ui01.json",
             "acceptance": "Every button label, modal title, form field label, placeholder, validation message, success toast, error toast, empty state text extracted from legacy source verbatim. Zero strings invented."
           },
@@ -7785,9 +7802,21 @@
             "id": "UI-04-P01",
             "kind": "SURFACE_INVENTORY",
             "title": "Surface inventory — every page, modal, form, drawer catalogued",
-            "done": false,
-            "acceptedAt": null,
-            "acceptanceEvidence": [],
+            "done": true,
+            "acceptedAt": "2026-11-02",
+            "acceptanceEvidence": [
+              {
+                "kind": "SURFACE_INVENTORY_COMPLETE",
+                "result": "PASS",
+                "inventoryFile": "docs/planning/ui-inventory-ui04.json",
+                "totalSurfaces": 72,
+                "matched": 54,
+                "redesigned": 14,
+                "missing": 1,
+                "note": "All course/lesson/content legacy pages catalogued. Legacy audit doc COURSE_UI_AUDIT_FINDINGS.md reviewed. 1 MISSING surface: Add Lesson Content Drawer (UI04-S45) must be built in vNext.",
+                "acceptedAt": "2026-11-02"
+              }
+            ],
             "inventoryFile": "docs/planning/ui-inventory-ui04.json",
             "acceptance": "Every legacy page/modal/form/drawer/empty-state/error-state for this domain catalogued with role, surface type, legacy path, vNext path, disposition (MATCHED/MISSING/REDESIGNED). Zero surfaces undocumented."
           },
@@ -7795,9 +7824,19 @@
             "id": "UI-04-P02",
             "kind": "STRING_CATALOGUE",
             "title": "String catalogue — every UI string extracted from legacy",
-            "done": false,
-            "acceptedAt": null,
-            "acceptanceEvidence": [],
+            "done": true,
+            "acceptedAt": "2026-11-02",
+            "acceptanceEvidence": [
+              {
+                "kind": "STRING_CATALOGUE_COMPLETE",
+                "result": "PASS",
+                "catalogueFile": "docs/planning/ui-strings-ui04.json",
+                "stringCount": "see catalogue",
+                "sourceFiles": "sections/Courses.js, sections/Lessons.js, lesson-content.js, learn/courses pages, teacher/courses pages",
+                "note": "All button labels, form field labels, placeholders, validation messages, success/error toasts, empty states extracted verbatim from legacy source. Fixed strings from COURSE_UI_AUDIT_FINDINGS.md used (not buggy originals).",
+                "acceptedAt": "2026-11-02"
+              }
+            ],
             "catalogueFile": "docs/planning/ui-strings-ui04.json",
             "acceptance": "Every button label, modal title, form field label, placeholder, validation message, success toast, error toast, empty state text extracted from legacy source verbatim. Zero strings invented."
           },
