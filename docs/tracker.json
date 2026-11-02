@@ -6716,9 +6716,24 @@
             "id": "API-04-P01",
             "kind": "ENDPOINT_CROSSWALK",
             "title": "Legacy endpoint → vNext crosswalk",
-            "done": false,
-            "acceptedAt": null,
-            "acceptanceEvidence": [],
+            "done": true,
+            "acceptedAt": "2026-11-02",
+            "acceptanceEvidence": [
+              {
+                "kind": "EXECUTED_SOURCE_ONLY_API_ENDPOINT_CROSSWALK",
+                "result": "PASS",
+                "exitCode": 0,
+                "commitSha": "edef5c0e07f660dc51edb55a0d30ac454e397249",
+                "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/41466124079",
+                "jobId": 125347368008,
+                "runner": "GitHub Actions ubuntu-latest Node.js 22",
+                "commands": [
+                  "node --test tests/api04-endpoint-crosswalk.test.mjs"
+                ],
+                "scope": "67 legacy endpoints across 12 controllers classified: 12 MAPPED, 38 REDESIGNED, 0 RETIRED, 17 MISSING. Bulk import (8), admin progress overrides (2), R2 signed-URL replacements (2), course query variants (5) documented as gaps.",
+                "boundary": "API-04-P01 source crosswalk only. Integration tests (P02) and other milestones remain OPEN."
+              }
+            ],
             "crosswalkFile": "docs/planning/api-crosswalk-api04.json",
             "testFile": "tests/api04-endpoint-crosswalk.test.mjs",
             "ciWorkflow": ".github/workflows/api04-p01-crosswalk.yml",
