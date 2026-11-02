@@ -106,6 +106,68 @@ describe("learner placement preferences with an independent ACTIVE enrollment", 
     });
   }, 30_000);
 
+  it("rejects stale private preference reads after persisted learner disablement", async () => {
+    const {ids,context}=fixture!;
+    await upsertCandidatePreferences(context,{
+      preferredRoleTitles:["Private opt-out"],notifyMatchingJobs:false,
+    });
+    await pool.query("UPDATE users SET platform_status='DISABLED' WHERE id=$1",[ids.user]);
+    try {
+      await expect(getCandidatePreferences(context))
+        .rejects.toThrow("Missing permission: placements.read");
+      const stored=await pool.query(
+        "SELECT notify_matching_jobs FROM placement_candidate_preferences WHERE membership_id=$1",
+        [ids.membership],
+      );
+      expect(stored.rows).toMatchObject([{notify_matching_jobs:false}]);
+    } finally {
+      await pool.query("UPDATE users SET platform_status='ACTIVE' WHERE id=$1",[ids.user]);
+    }
+  },30_000);
+
+  it("serializes private preference reads after an in-flight learner disablement", async () => {
+    const {ids,context}=fixture!;
+    await upsertCandidatePreferences(context,{
+      preferredRoleTitles:["Do not disclose after revoke"],notifyMatchingJobs:false,
+    });
+    const blockerPool=new Pool({connectionString:process.env.TEST_DATABASE_URL,max:1});
+    const holder=await blockerPool.connect();
+    let held=false;
+    let pending:Promise<{ok:boolean;error?:unknown}>|null=null;
+    try {
+      await holder.query("BEGIN");
+      held=true;
+      const lock=await holder.query("SELECT id FROM users WHERE id=$1 FOR UPDATE",[ids.user]);
+      expect(lock.rows).toHaveLength(1);
+      pending=getCandidatePreferences(context)
+        .then(()=>({ok:true}),error=>({ok:false,error}));
+      let blocked=false;
+      for(let attempt=0;attempt<160;attempt++){
+        const waiting=await pool.query<{blocked:string}>(
+          "SELECT count(*)::text AS blocked FROM pg_stat_activity " +
+          "WHERE datname=current_database() AND pid<>pg_backend_pid() " +
+          "AND wait_event_type='Lock' AND query ILIKE '%users%'",
+        );
+        if(Number(waiting.rows[0]?.blocked??0)>0){blocked=true;break;}
+        await new Promise(resolve=>setTimeout(resolve,25));
+      }
+      expect(blocked).toBe(true);
+      await holder.query("UPDATE users SET platform_status='DISABLED' WHERE id=$1",[ids.user]);
+      await holder.query("COMMIT");
+      held=false;
+      const outcome=await pending;
+      expect(outcome.ok).toBe(false);
+      expect(String((outcome.error as Error)?.message??""))
+        .toContain("Missing permission: placements.read");
+    } finally {
+      if(held)await holder.query("ROLLBACK").catch(()=>undefined);
+      holder.release();
+      if(pending)await pending;
+      await blockerPool.end();
+      await pool.query("UPDATE users SET platform_status='ACTIVE' WHERE id=$1",[ids.user]);
+    }
+  },30_000);
+
   it("rejects forged college, suspended, wrong role and swapped principal without mutation", async () => {
     const {ids, context}=fixture!;
     const denied:RequestContext[] = [
