@@ -1,0 +1,11 @@
+{
+  "collegeId": "20000000-0000-4000-8000-000000000001",
+  "deliveryId": null,
+  "jobId": null,
+  "workspaceId": null,
+  "membershipId": "40000000-0000-4000-8000-000000000004",
+  "applicationId": null,
+  "_source": "seed-fallback",
+  "_generatedAt": "2026-11-02T00:00:00.000Z",
+  "_note": "Seed-fallback IDs. Run `bun tests/fixtures/dev-ids.ts` to populate with real IDs from the deployed dev DB or API."
+}
