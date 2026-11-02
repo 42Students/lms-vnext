@@ -1,0 +1,124 @@
+# Exact-commit, scoped DB19-P18 security witnesses only. This cannot approve
+# the original 63 legacy fields or the global DB019/DB020 phase gate.
+name: DB19 P18 screening and debarment registered PG17
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/db019-p18-screening-debarment-pg17.yml"
+      - "src/modules/placements/screening-service.ts"
+      - "src/modules/placements/debarment-service.ts"
+      - "tests/integration/placements-p6a-screening.test.ts"
+      - "tests/integration/placements-db08-registration.test.ts"
+      - "tests/unit/chat12-tpo-debar-persisted-actor.test.ts"
+      - "drizzle/*.sql"
+      - "drizzle/meta/_journal.json"
+permissions:
+  contents: read
+concurrency:
+  group: db019-p18-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  p18-screening-registered:
+    name: Screening live actor, private view, history and revocation races
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    services:
+      postgres:
+        image: postgres:17-alpine
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: lms_vnext_test
+        ports: 
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres -d lms_vnext_test"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 20
+    env:
+      DATABASE_URL: postgresql://postgres:postgres@127.0.0.1:5432/lms_vnext_test
+      TEST_DATABASE_URL: postgresql://postgres:postgres@127.0.0.1:5432/lms_vnext_test
+      DB03_ISOLATED_TEST_DATABASE: "1"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Pin exact SHA and validate registered journal
+        run: |
+          test "$(git rev-parse HEAD)" = "$GITHUB_SHA"
+          npm run db:journal:verify
+      - name: Fresh disposable PG17 zero-to-head replay and fixture seed
+        env:
+          DATABASE_URL: ""
+        run: npm run db:test:prepare
+      - name: Require journal replay idempotence
+        run: npm run db:migrate
+      - name: Persisted screening grants, learner privacy, decisions and races
+        run: >-
+          npx vitest run --config vitest.db.registered.config.ts
+          tests/integration/placements-p6a-screening.test.ts
+      - name: State bounded evidence scope
+        if: always()
+        run: |
+          echo "Screening private read and staff decision/repair security only."
+          echo "DB19-P18 63-field disposition and DB019/DB020 remain OPEN."
+
+  p18-debarment-registered:
+    name: Debarment learner grant and account revocation PG17
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    services:
+      postgres:
+        image: postgres:17-alpine
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: lms_vnext_test
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres -d lms_vnext_test"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 20
+    env:
+      DATABASE_URL: postgresql://postgres:postgres@127.0.0.1:5432/lms_vnext_test
+      TEST_DATABASE_URL: postgresql://postgres:postgres@127.0.0.1:5432/lms_vnext_test
+      DB03_ISOLATED_TEST_DATABASE: "1"
+      DB08_ISOLATED_TEST_DATABASE: "1"
+      DB08_B_MIGRATION_APPLIED: "1"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Exact SHA and registered migration journal
+        run: |
+          test "$(git rev-parse HEAD)" = "$GITHUB_SHA"
+          npm run db:journal:verify
+      - name: Fresh disposable PG17 registered replay and seed
+        env:
+          DATABASE_URL: ""
+        run: npm run db:test:prepare
+      - name: Registered idempotent replay
+        run: npm run db:migrate
+      - name: Validate source lock and denied-path unit tests
+        run: npx vitest run tests/unit/chat12-tpo-debar-persisted-actor.test.ts
+      - name: Actual registered debarment persistence, immutable history and revocation races
+        run: >-
+          npx vitest run --config vitest.db.config.ts
+          tests/integration/placements-db08-registration.test.ts
+      - name: State bounded evidence scope
+        if: always()
+        run: |
+          echo "Debarment learner grant and disabled account on registered PG17 only."
+          echo "Remaining P18 screening scores, enum crosswalk and provenance are not certified."
