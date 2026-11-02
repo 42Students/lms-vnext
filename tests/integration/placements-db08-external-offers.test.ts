@@ -259,6 +259,83 @@ describe("W04 external placement submission and review", () => {
     }
   },20_000);
 
+  it("denies owner offer submission and private list after persisted account disablement", async () => {
+    await pool.query("UPDATE users SET platform_status='DISABLED' WHERE id=$1", [
+      SEED_IDS.learnerUser,
+    ]);
+    try {
+      await expect(submitOwnExternalOffer(learner, {
+        companyName: "Stale disabled learner", ctcLpa: "10.25",
+      })).rejects.toThrow("Missing permission: placements.read");
+      await expect(listOwnExternalOffers(learner))
+        .rejects.toThrow("Missing permission: placements.read");
+      const forbidden = await pool.query(
+        "SELECT id FROM placement_external_offers WHERE submitted_by_user_id=$1",
+        [SEED_IDS.learnerUser],
+      );
+      expect(forbidden.rows).toHaveLength(0);
+    } finally {
+      await pool.query("UPDATE users SET platform_status='ACTIVE' WHERE id=$1", [
+        SEED_IDS.learnerUser,
+      ]);
+    }
+  });
+
+  it("serializes offer submission against concurrent learner-account disablement", async () => {
+    const blockerPool = new Pool({connectionString: url, max: 1});
+    const holder = await blockerPool.connect();
+    let transactionOpen = false;
+    let pending: Promise<{ok:boolean;error?:unknown}> | null = null;
+    try {
+      await holder.query("BEGIN");
+      transactionOpen = true;
+      const locked = await holder.query(
+        "SELECT id FROM users WHERE id=$1 FOR UPDATE",
+        [SEED_IDS.learnerUser],
+      );
+      expect(locked.rows).toHaveLength(1);
+      // The preflight reads ACTIVE without a lock. The transaction's SHARE
+      // identity grant must wait for this concurrent account disablement.
+      pending = submitOwnExternalOffer(learner, {
+        companyName: "Offer blocked by concurrent disable",
+        ctcLpa: "7.50",
+      }).then(() => ({ok:true}),error => ({ok:false,error}));
+      let blocked = false;
+      for(let attempt=0;attempt<160;attempt++){
+        const activity=await pool.query<{blocked:string}>(
+          "SELECT count(*)::text AS blocked FROM pg_stat_activity " +
+          "WHERE datname=current_database() AND pid<>pg_backend_pid() " +
+          "AND wait_event_type='Lock' AND query ILIKE '%college_memberships%'",
+        );
+        if(Number(activity.rows[0]?.blocked??0)>0){blocked=true;break;}
+        await new Promise(resolve=>setTimeout(resolve,25));
+      }
+      expect(blocked).toBe(true);
+      await holder.query("UPDATE users SET platform_status='DISABLED' WHERE id=$1",[
+        SEED_IDS.learnerUser,
+      ]);
+      await holder.query("COMMIT");
+      transactionOpen = false;
+      const outcome = await pending;
+      expect(outcome.ok).toBe(false);
+      expect(String((outcome.error as Error)?.message??""))
+        .toContain("Missing permission: placements.read");
+      const offers = await pool.query(
+        "SELECT id FROM placement_external_offers WHERE submitted_by_user_id=$1",
+        [SEED_IDS.learnerUser],
+      );
+      expect(offers.rows).toHaveLength(0);
+    } finally {
+      if(transactionOpen) await holder.query("ROLLBACK").catch(()=>undefined);
+      holder.release();
+      if(pending) await pending;
+      await blockerPool.end();
+      await pool.query("UPDATE users SET platform_status='ACTIVE' WHERE id=$1",[
+        SEED_IDS.learnerUser,
+      ]);
+    }
+  }, 20_000);
+
   it("rejects a forged learner context and cross-college direct-SQL offer", async () => {
     await expect(submitOwnExternalOffer(forgedUser, {
       companyName: "Forged Offer", ctcLpa: "14.00",
