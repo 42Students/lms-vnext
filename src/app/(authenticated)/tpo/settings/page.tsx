@@ -14,7 +14,7 @@ export default async function TpoSettingsIndex({searchParams}:{
  return <div className="min-w-0 space-y-4" data-testid="tpo.settings.prototype-rules">
   <TpoSettingsHashRedirect/>
   <TpoPlacementRulesSettingsPage searchParams={Promise.resolve({})}/>
-  <details className="rounded-xl border border-border bg-white">
+  <details className="rounded-xl border border-border bg-surface">
    <summary className="min-h-11 cursor-pointer px-4 py-3 text-sm font-semibold text-foreground">Other placement settings</summary>
    <nav aria-label="Other placement settings" className="flex flex-wrap gap-4 border-t border-border p-4 text-sm">
     <Link href="/tpo/settings/season" className="font-semibold text-link underline">Placement season</Link>
