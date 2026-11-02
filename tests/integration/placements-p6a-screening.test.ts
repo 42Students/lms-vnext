@@ -1,3 +1,4 @@
+import { randomUUID } from "node:crypto";
 import { publishableJobTerms } from "../support/publishable-job-terms";
 import {
   afterAll,
@@ -164,6 +165,55 @@ async function createApplication() {
   return { job, application };
 }
 
+/**
+ * An actual independent learner for destructive role-revocation negatives.
+ * DB02 permanently WITHDRAWNs academic enrollment on LEARNER role deletion;
+ * NEVER revoke and re-add the shared seed learner role just to fake a test
+ * rollback. Unique fixtures remain on the disposable PG17 test database only.
+ */
+async function createRevocableLearnerApplication() {
+  const userId=randomUUID(), membershipId=randomUUID();
+  const identityUid="p18-revocation-"+userId;
+  await pool.query(
+    "INSERT INTO users(id,identity_uid,display_name) VALUES($1,$2,'P18 revocation witness')",
+    [userId,identityUid],
+  );
+  await pool.query(
+    "INSERT INTO college_memberships(id,user_id,college_id) VALUES($1,$2,$3)",
+    [membershipId,userId,SEED_IDS.collegeA],
+  );
+  await pool.query(
+    "INSERT INTO membership_roles(membership_id,role) VALUES($1,'LEARNER')",
+    [membershipId],
+  );
+  const enrolled=await pool.query<{program_id:string;cohort_id:string}>(
+    "SELECT program_id,cohort_id FROM learner_program_enrollments WHERE membership_id=$1 AND status='ACTIVE' LIMIT 1",
+    [SEED_IDS.learnerCollegeAMembership],
+  );
+  const current=enrolled.rows[0];
+  if(!current)throw new Error("Expected a registered W04 placement cohort for independent learner");
+  await pool.query(
+    "INSERT INTO learner_program_enrollments(membership_id,program_id,cohort_id,status) VALUES($1,$2,$3,'ACTIVE')",
+    [membershipId,current.program_id,current.cohort_id],
+  );
+  await pool.query(
+    "INSERT INTO placement_eligibility_decisions(college_id,scope_type,scope_id,status,decided_by_user_id) VALUES($1,'MEMBERSHIP',$2,'ELIGIBLE',$3)",
+    [SEED_IDS.collegeA,membershipId,SEED_IDS.collegeAdminUser],
+  );
+  await pool.query(
+    "INSERT INTO placement_batch_registrations(college_id,cohort_id,membership_id,choice,consent_version,consent_at,source,recorded_by_user_id) VALUES($1,$2,$3,'PLACEMENTS','fixture',now(),'BACKFILL',$4)",
+    [SEED_IDS.collegeA,current.cohort_id,membershipId,SEED_IDS.collegeAdminUser],
+  );
+  const ownContext:RequestContext={
+    user:{id:userId,identityUid,platformStatus:"ACTIVE",systemRoles:[]},
+    membership:{id:membershipId,collegeId:SEED_IDS.collegeA,
+      organizationId:SEED_IDS.organization,status:"ACTIVE",roles:["LEARNER"]},
+  };
+  const job=await createPublishedJob();
+  const application=await applyToPlacementJob(ownContext,job.id,{});
+  return {ownContext,application,membershipId};
+}
+
 beforeEach(async () => {
   await cleanup();
   await enableSeedLearnerPlacementAccess(pool);
@@ -207,21 +257,21 @@ describe("Placement P6A screening", () => {
   });
 
   it("rejects learner screening reads after a persisted LEARNER role revoke", async () => {
-    const { application } = await createApplication();
+    const {ownContext,application,membershipId}=await createRevocableLearnerApplication();
     await pool.query(
       "DELETE FROM membership_roles WHERE membership_id=$1 AND role='LEARNER'",
-      [SEED_IDS.learnerCollegeAMembership],
+      [membershipId],
     );
-    try {
-      // This request context still claims the old role. Persisted grants win.
-      await expect(getPlacementScreening(learner, application.id))
-        .rejects.toThrow("Missing permission: placements.read");
-    } finally {
-      await pool.query(
-        "INSERT INTO membership_roles(membership_id,role) VALUES($1,'LEARNER') ON CONFLICT DO NOTHING",
-        [SEED_IDS.learnerCollegeAMembership],
-      );
-    }
+    // Revocation correctly creates durable WITHDRAWN academic history.
+    // The stale context must not expose a screening or private manager notes.
+    await expect(getPlacementScreening(ownContext, application.id))
+      .rejects.toThrow("Missing permission: placements.read");
+    const historical=await pool.query(
+      "SELECT status,withdrawn_at FROM learner_program_enrollments WHERE membership_id=$1",
+      [membershipId],
+    );
+    expect(historical.rows[0]?.status).toBe("WITHDRAWN");
+    expect(historical.rows[0]?.withdrawn_at).toBeTruthy();
   });
 
   it("rejects a stale screening read when the persisted learner account is disabled", async () => {
