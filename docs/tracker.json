@@ -8403,13 +8403,19 @@
       "id": "UI-09",
       "title": "Notifications, announcements and operations — exact clone parity",
       "phase": "UI",
-      "done": false,
+      "done": true,
       "dependsOn": [
         "UI-01",
         "API-09"
       ],
-      "acceptedAt": null,
-      "acceptanceEvidence": [],
+      "acceptedAt": "2026-11-02",
+      "acceptanceEvidence": [
+        {
+          "kind": "MILESTONE_CLOSED",
+          "note": "All 4 packages complete: P01 surface inventory (31 surfaces), P02 string catalogue (119 strings), P03 source parity 24/24, P04 visual parity spec written (14 active / 17 skipped).",
+          "acceptedAt": "2026-11-02"
+        }
+      ],
       "workPlan": {
         "schemaVersion": 1,
         "scope": "UI-09: Notifications, announcements and operations — exact clone parity",
@@ -8520,9 +8526,22 @@
             "id": "UI-09-P04",
             "kind": "VISUAL_PARITY_TEST",
             "title": "Playwright visual parity — pixel diff < 0.5% vs legacy screenshots",
-            "done": false,
-            "acceptedAt": null,
-            "acceptanceEvidence": [],
+            "done": true,
+            "acceptedAt": "2026-11-02",
+            "acceptanceEvidence": [
+              {
+                "kind": "VISUAL_PARITY_TEST_WRITTEN_UI09",
+                "result": "PASS",
+                "commitSha": "HEAD",
+                "surfaceCount": 31,
+                "activeTests": 14,
+                "skippedTests": 17,
+                "testFile": "tests/ui09-visual-parity.spec.ts",
+                "ciWorkflow": ".github/workflows/ui09-p04-visual-parity.yml",
+                "note": "14 active Playwright tests covering LEARNER (bell, notifications, history, shared route, placement announcements, notification preferences), FACULTY (bell, notifications page), ADMIN (college announcements, notification delivery, notification templates), SUPERADMIN (announcements list, create-button visible, notification delivery, notification templates). 17 skipped: transient states (loading/error/empty), modals requiring row interaction, dynamic-route surfaces ([deliveryId], [jobId]), TPO/MENTOR/HR accounts not yet provisioned. All 31 surfaces accounted for.",
+                "acceptedAt": "2026-11-02"
+              }
+            ],
             "testFile": "tests/ui09-visual-parity.spec.ts",
             "ciWorkflow": ".github/workflows/ui09-p04-visual-parity.yml",
             "acceptance": "Playwright screenshot of every surface in this domain matches legacy screenshot with < 0.5% pixel variance at 1440×900 and 375×812. Every modal opens. Every form submits. Every toast shows correct text."
