@@ -5,7 +5,6 @@ on:
 
 permissions:
   contents: read
-  packages: write
 
 jobs:
   build:
@@ -15,16 +14,22 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Log in to ghcr.io
-        run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u "${{ github.actor }}" --password-stdin
-
-      - name: Build and push images
+      - name: Build images and save as tarballs
         run: |
           set -euo pipefail
           SHORT="${GITHUB_SHA::8}"
-          BASE="ghcr.io/42students/lms-vnext"
+          BASE="asia-south1-docker.pkg.dev/students-384817/lms-vnext"
+          mkdir -p out
           docker build --target migrator -t "${BASE}/migrator:${SHORT}" .
           docker build --target runner -t "${BASE}/web:${SHORT}" .
-          docker push "${BASE}/migrator:${SHORT}"
-          docker push "${BASE}/web:${SHORT}"
-          echo "Pushed ${BASE}/web:${SHORT} and ${BASE}/migrator:${SHORT}" >> "$GITHUB_STEP_SUMMARY"
+          docker save "${BASE}/migrator:${SHORT}" -o out/migrator.tar
+          docker save "${BASE}/web:${SHORT}" -o out/web.tar
+          ls -lh out >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Upload image tarballs
+        uses: actions/upload-artifact@v4
+        with:
+          name: vnext-images-${{ github.sha }}
+          path: out/*.tar
+          retention-days: 1
+          compression-level: 6
