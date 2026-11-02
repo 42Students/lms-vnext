@@ -8,7 +8,9 @@ on:
     paths:
       - ".github/workflows/db019-p21-external-offers-pg17.yml"
       - "src/modules/placements/external-offer-service.ts"
+      - "src/modules/placements/saved-job-service.ts"
       - "tests/integration/placements-db08-external-offers.test.ts"
+      - "tests/integration/placements-p21-saved-jobs.test.ts"
       - "drizzle/*.sql"
       - "drizzle/meta/_journal.json"
 permissions:
@@ -61,6 +63,10 @@ jobs:
         run: >-
           npx vitest run --config vitest.db.config.ts
           tests/integration/placements-db08-external-offers.test.ts
+      - name: Actual learner bookmark grant, persistence and concurrent disablement tests
+        run: >-
+          npx vitest run --config vitest.db.config.ts
+          tests/integration/placements-p21-saved-jobs.test.ts
       - name: Source and static compatibility
         env:
           NODE_OPTIONS: --max-old-space-size=6144
@@ -68,5 +74,5 @@ jobs:
       - name: Document bounded verification
         if: always()
         run: |
-          echo "External-offer reviewer and private staff read security only."
+          echo "External offers and saved-job private read/write, tenant and account-race security only."
           echo "P21 26-field semantic acceptance and DB019/DB020 remain OPEN."
