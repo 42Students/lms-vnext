@@ -20,6 +20,7 @@ import {
   programs,
   sections,
   sectionEnrollments,
+  users,
 } from "@/db/schema";
 import {
   hasMembershipRole,
@@ -447,7 +448,29 @@ export async function upsertOwnAcademicEvidence(
   const db = getDb();
 
   return db.transaction(async (tx) => {
-    await lockEvidenceMembership(tx, membership.id);
+    const lockedMembership = await lockEvidenceMembership(tx, membership.id);
+    // An earlier learner access check cannot authorize a later write if the
+    // membership was transferred, the account disabled, or LEARNER revoked.
+    // Keep the persisted identity/role SHARE locks through the evidence write.
+    const [liveActor] = await tx.select({platformStatus: users.platformStatus})
+      .from(users)
+      .where(eq(users.id, context.user.id))
+      .for("share").limit(1);
+    const [liveGrant] = await tx.select({id: membershipRoles.id})
+      .from(membershipRoles)
+      .where(and(eq(membershipRoles.membershipId, membership.id),
+        eq(membershipRoles.role, "LEARNER")))
+      .for("share").limit(1);
+    const [persistedMember] = await tx.select({userId:collegeMemberships.userId})
+      .from(collegeMemberships)
+      .where(and(eq(collegeMemberships.id, membership.id),
+        eq(collegeMemberships.collegeId, membership.collegeId)))
+      .limit(1);
+    if (lockedMembership.collegeId !== membership.collegeId ||
+      persistedMember?.userId !== context.user.id ||
+      liveActor?.platformStatus !== "ACTIVE" || !liveGrant) {
+      throw new AuthorizationError("placements.read");
+    }
     const [current] = await tx
       .select()
       .from(placementCandidateAcademicEvidence)
@@ -527,6 +550,19 @@ export async function upsertVerifiedAcademicEvidence(
   return db.transaction(async (tx) => {
     const lockedMembership = await lockEvidenceMembership(tx, membershipId);
     if (lockedMembership.collegeId !== membership.collegeId) {
+      throw new PlacementsServiceError("PLACEMENT_LEARNER_MEMBERSHIP_NOT_FOUND");
+    }
+    // A stale staff RequestContext is never an authority to stamp VERIFIED
+    // source or verified_by_user_id. Reconstruct grants inside this write.
+    await assertPersistedPlatformPermission(tx, context, "placements.manage", {
+      collegeId: lockedMembership.collegeId,
+    });
+    const [liveLearner] = await tx.select({id:membershipRoles.id})
+      .from(membershipRoles)
+      .where(and(eq(membershipRoles.membershipId, membershipId),
+        eq(membershipRoles.role,"LEARNER")))
+      .for("share").limit(1);
+    if (!liveLearner) {
       throw new PlacementsServiceError("PLACEMENT_LEARNER_MEMBERSHIP_NOT_FOUND");
     }
     const [row] = await tx
