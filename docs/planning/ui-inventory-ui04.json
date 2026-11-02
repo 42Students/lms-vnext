@@ -9,15 +9,34 @@
       "id": "UI04-S01",
       "name": "SuperAdmin / College-Admin Courses list",
       "type": "LIST",
-      "role": ["SUPERADMIN", "COLLEGE_ADMIN"],
+      "role": [
+        "SUPERADMIN",
+        "COLLEGE_ADMIN"
+      ],
       "legacyPath": "src/pages/superadmin/courses.js → sections/Courses.js",
       "legacyRoute": "/superadmin/courses  |  /college-admin/courses",
       "vNextPath": "src/app/(authenticated)/admin/courses/page.tsx",
       "vNextRoute": "/admin/courses  |  /college/courses",
       "disposition": "MATCHED",
-      "columns": ["Image", "Course Name", "Short Title", "Department", "Status", "Actions"],
-      "actions": ["Edit", "Duplicate", "Delete (with popconfirm)"],
-      "bulkActions": ["Enable", "Disable", "Show to learners", "Hide from learners"],
+      "columns": [
+        "Image",
+        "Course Name",
+        "Short Title",
+        "Department",
+        "Status",
+        "Actions"
+      ],
+      "actions": [
+        "Edit",
+        "Duplicate",
+        "Delete (with popconfirm)"
+      ],
+      "bulkActions": [
+        "Enable",
+        "Disable",
+        "Show to learners",
+        "Hide from learners"
+      ],
       "searchable": true,
       "exportable": true,
       "notes": "Scoped to a college. Inline create form on the left; table on the right."
@@ -26,7 +45,10 @@
       "id": "UI04-S02",
       "name": "Course Create Form (inline on courses page)",
       "type": "FORM",
-      "role": ["SUPERADMIN", "COLLEGE_ADMIN"],
+      "role": [
+        "SUPERADMIN",
+        "COLLEGE_ADMIN"
+      ],
       "legacyPath": "sections/Courses.js → CourseFormFields",
       "legacyRoute": "/superadmin/courses  |  /college-admin/courses",
       "vNextPath": "src/app/(authenticated)/admin/courses/page.tsx",
@@ -57,7 +79,10 @@
       "id": "UI04-S03",
       "name": "Course Edit Modal",
       "type": "MODAL",
-      "role": ["SUPERADMIN", "COLLEGE_ADMIN"],
+      "role": [
+        "SUPERADMIN",
+        "COLLEGE_ADMIN"
+      ],
       "legacyPath": "sections/Courses.js (Modal at bottom)",
       "legacyRoute": "/superadmin/courses",
       "vNextPath": "src/app/(authenticated)/admin/courses/page.tsx",
@@ -73,7 +98,10 @@
       "id": "UI04-S04",
       "name": "Course Delete Popconfirm",
       "type": "CONFIRM",
-      "role": ["SUPERADMIN", "COLLEGE_ADMIN"],
+      "role": [
+        "SUPERADMIN",
+        "COLLEGE_ADMIN"
+      ],
       "legacyPath": "sections/Courses.js Popconfirm",
       "legacyRoute": "/superadmin/courses",
       "vNextPath": "src/app/(authenticated)/admin/courses/page.tsx",
@@ -88,7 +116,9 @@
       "id": "UI04-S05",
       "name": "Courses page — no college scope warning",
       "type": "ERROR",
-      "role": ["SUPERADMIN"],
+      "role": [
+        "SUPERADMIN"
+      ],
       "legacyPath": "superadmin/courses.js Alert",
       "legacyRoute": "/superadmin/courses",
       "vNextPath": "src/app/(authenticated)/admin/courses/page.tsx",
@@ -101,7 +131,10 @@
       "id": "UI04-S06",
       "name": "Courses page — no departments warning",
       "type": "EMPTY",
-      "role": ["SUPERADMIN", "COLLEGE_ADMIN"],
+      "role": [
+        "SUPERADMIN",
+        "COLLEGE_ADMIN"
+      ],
       "legacyPath": "sections/Courses.js departmentNotice",
       "legacyRoute": "/superadmin/courses",
       "vNextPath": "src/app/(authenticated)/admin/courses/page.tsx",
@@ -114,15 +147,33 @@
       "id": "UI04-S07",
       "name": "SuperAdmin / College-Admin Lessons list",
       "type": "LIST",
-      "role": ["SUPERADMIN", "COLLEGE_ADMIN"],
+      "role": [
+        "SUPERADMIN",
+        "COLLEGE_ADMIN"
+      ],
       "legacyPath": "src/pages/superadmin/lessons.js → sections/Lessons.js",
       "legacyRoute": "/superadmin/lessons  |  /college-admin/lessons",
       "vNextPath": "src/app/(authenticated)/admin/lessons/page.tsx",
       "vNextRoute": "/admin/lessons",
       "disposition": "MATCHED",
-      "columns": ["Lesson Name", "Course", "Order", "Active", "Enabled", "Actions"],
-      "actions": ["Edit", "Delete (modal with name confirmation)"],
-      "bulkActions": ["Enable", "Disable", "Activate", "Deactivate"],
+      "columns": [
+        "Lesson Name",
+        "Course",
+        "Order",
+        "Active",
+        "Enabled",
+        "Actions"
+      ],
+      "actions": [
+        "Edit",
+        "Delete (modal with name confirmation)"
+      ],
+      "bulkActions": [
+        "Enable",
+        "Disable",
+        "Activate",
+        "Deactivate"
+      ],
       "searchable": true,
       "exportable": true,
       "reorderable": true,
@@ -132,7 +183,10 @@
       "id": "UI04-S08",
       "name": "Lesson Create Form (inline on lessons page)",
       "type": "FORM",
-      "role": ["SUPERADMIN", "COLLEGE_ADMIN"],
+      "role": [
+        "SUPERADMIN",
+        "COLLEGE_ADMIN"
+      ],
       "legacyPath": "sections/Lessons.js → LessonFields",
       "legacyRoute": "/superadmin/lessons",
       "vNextPath": "src/app/(authenticated)/admin/lessons/page.tsx",
@@ -151,7 +205,10 @@
       "id": "UI04-S09",
       "name": "Lesson Edit Modal",
       "type": "MODAL",
-      "role": ["SUPERADMIN", "COLLEGE_ADMIN"],
+      "role": [
+        "SUPERADMIN",
+        "COLLEGE_ADMIN"
+      ],
       "legacyPath": "sections/Lessons.js (Modal)",
       "legacyRoute": "/superadmin/lessons",
       "vNextPath": "src/app/(authenticated)/admin/lessons/page.tsx",
@@ -167,7 +224,10 @@
       "id": "UI04-S10",
       "name": "Lesson Delete Modal (name-type confirmation)",
       "type": "MODAL",
-      "role": ["SUPERADMIN", "COLLEGE_ADMIN"],
+      "role": [
+        "SUPERADMIN",
+        "COLLEGE_ADMIN"
+      ],
       "legacyPath": "sections/Lessons.js Modal deleteTarget",
       "legacyRoute": "/superadmin/lessons",
       "vNextPath": "src/app/(authenticated)/admin/lessons/page.tsx",
@@ -182,7 +242,10 @@
       "id": "UI04-S11",
       "name": "Lesson Content page (Admin)",
       "type": "LIST",
-      "role": ["SUPERADMIN", "COLLEGE_ADMIN"],
+      "role": [
+        "SUPERADMIN",
+        "COLLEGE_ADMIN"
+      ],
       "legacyPath": "src/pages/superadmin/lesson-content.js → sections/LessonContent.js",
       "legacyRoute": "/superadmin/lesson-content",
       "vNextPath": "src/app/(authenticated)/college-admin/lesson-content/page.tsx",
@@ -194,7 +257,10 @@
       "id": "UI04-S12",
       "name": "Admin Resources page",
       "type": "LIST",
-      "role": ["SUPERADMIN", "COLLEGE_ADMIN"],
+      "role": [
+        "SUPERADMIN",
+        "COLLEGE_ADMIN"
+      ],
       "legacyPath": "sections/AdminResources.js",
       "legacyRoute": "/superadmin/lesson-content?type=resources",
       "vNextPath": "src/app/(authenticated)/college-admin/lesson-content/page.tsx",
@@ -205,7 +271,10 @@
       "id": "UI04-S13",
       "name": "Semester Courses page (Admin)",
       "type": "LIST",
-      "role": ["SUPERADMIN", "COLLEGE_ADMIN"],
+      "role": [
+        "SUPERADMIN",
+        "COLLEGE_ADMIN"
+      ],
       "legacyPath": "src/pages/superadmin/semester-courses.js",
       "legacyRoute": "/superadmin/semester-courses  |  /college-admin/semester-courses",
       "vNextPath": "src/app/(authenticated)/admin/semester-courses/page.tsx",
@@ -216,7 +285,10 @@
       "id": "UI04-S14",
       "name": "Course Progress page (Admin)",
       "type": "DETAIL",
-      "role": ["SUPERADMIN", "COLLEGE_ADMIN"],
+      "role": [
+        "SUPERADMIN",
+        "COLLEGE_ADMIN"
+      ],
       "legacyPath": "src/pages/superadmin/course-progress.js → sections/CourseProgress.js",
       "legacyRoute": "/superadmin/course-progress",
       "vNextPath": "src/app/(authenticated)/admin/course-progress/page.tsx",
@@ -227,7 +299,10 @@
       "id": "UI04-S15",
       "name": "Course Progress Students page (Admin)",
       "type": "LIST",
-      "role": ["SUPERADMIN", "COLLEGE_ADMIN"],
+      "role": [
+        "SUPERADMIN",
+        "COLLEGE_ADMIN"
+      ],
       "legacyPath": "sections/CourseProgress.js (student drill-in)",
       "legacyRoute": "/superadmin/course-progress?students",
       "vNextPath": "src/app/(authenticated)/admin/course-progress/students/page.tsx",
@@ -238,7 +313,10 @@
       "id": "UI04-S16",
       "name": "Content Order page (Admin)",
       "type": "LIST",
-      "role": ["SUPERADMIN", "COLLEGE_ADMIN"],
+      "role": [
+        "SUPERADMIN",
+        "COLLEGE_ADMIN"
+      ],
       "legacyPath": "N/A — vNext-only",
       "legacyRoute": "MISSING IN LEGACY",
       "vNextPath": "src/app/(authenticated)/admin/content-order/page.tsx",
@@ -250,7 +328,10 @@
       "id": "UI04-S17",
       "name": "Course Offering detail page (Admin)",
       "type": "DETAIL",
-      "role": ["SUPERADMIN", "COLLEGE_ADMIN"],
+      "role": [
+        "SUPERADMIN",
+        "COLLEGE_ADMIN"
+      ],
       "legacyPath": "N/A — vNext-only",
       "legacyRoute": "MISSING IN LEGACY",
       "vNextPath": "src/app/(authenticated)/admin/courses/offerings/[offeringId]/page.tsx",
@@ -262,7 +343,9 @@
       "id": "UI04-S18",
       "name": "Learner Courses list page",
       "type": "LIST",
-      "role": ["LEARNER"],
+      "role": [
+        "LEARNER"
+      ],
       "legacyPath": "src/pages/learn/courses/index.js → components/Course/CoursesContent.js",
       "legacyRoute": "/learn/courses",
       "vNextPath": "src/app/(authenticated)/learn/courses/page.tsx",
@@ -274,20 +357,29 @@
       "id": "UI04-S19",
       "name": "Learner Course Detail — Overview (Home) tab",
       "type": "DETAIL",
-      "role": ["LEARNER"],
+      "role": [
+        "LEARNER"
+      ],
       "legacyPath": "learn/courses/[courseId]/[...courseTab].js → Dashboard/course/Home/Home.js",
       "legacyRoute": "/learn/courses/[courseId]/home",
       "vNextPath": "src/app/(authenticated)/learn/courses/[deliveryId]/[...courseTab]/page.tsx",
       "vNextRoute": "/learn/courses/[deliveryId]/home",
       "disposition": "MATCHED",
-      "tabs": ["home", "roadmap", "attendanceDetail", "discussions"],
+      "tabs": [
+        "home",
+        "roadmap",
+        "attendanceDetail",
+        "discussions"
+      ],
       "notes": "Tabs: Overview (Home), Learning Path (Roadmap), Attendance, Discussions. Redirects /[courseId] → /[courseId]/home."
     },
     {
       "id": "UI04-S20",
       "name": "Learner Course — Learning Path (Roadmap) tab",
       "type": "DETAIL",
-      "role": ["LEARNER"],
+      "role": [
+        "LEARNER"
+      ],
       "legacyPath": "Dashboard/course/syllabus/syllabus.js (contentMode=roadmap)",
       "legacyRoute": "/learn/courses/[courseId]/roadmap",
       "vNextPath": "src/app/(authenticated)/learn/courses/[deliveryId]/[...courseTab]/page.tsx",
@@ -299,7 +391,9 @@
       "id": "UI04-S21",
       "name": "Learner Course — Attendance tab",
       "type": "DETAIL",
-      "role": ["LEARNER"],
+      "role": [
+        "LEARNER"
+      ],
       "legacyPath": "Dashboard/course/Attendance/attendance.js",
       "legacyRoute": "/learn/courses/[courseId]/attendanceDetail",
       "vNextPath": "src/app/(authenticated)/learn/courses/[deliveryId]/attendance-summary/page.tsx",
@@ -311,7 +405,9 @@
       "id": "UI04-S22",
       "name": "Learner Course — Discussions (Classroom) tab",
       "type": "DETAIL",
-      "role": ["LEARNER"],
+      "role": [
+        "LEARNER"
+      ],
       "legacyPath": "Dashboard/course/Classroom/classroom.js",
       "legacyRoute": "/learn/courses/[courseId]/discussions",
       "vNextPath": "src/app/(authenticated)/learn/courses/[deliveryId]/[...courseTab]/page.tsx",
@@ -323,7 +419,9 @@
       "id": "UI04-S23",
       "name": "Learner Course — error state",
       "type": "ERROR",
-      "role": ["LEARNER"],
+      "role": [
+        "LEARNER"
+      ],
       "legacyPath": "learn/courses/[courseId]/[...courseTab].js courseError",
       "legacyRoute": "/learn/courses/[courseId]/home",
       "vNextPath": "src/app/(authenticated)/learn/courses/[deliveryId]/[...courseTab]/not-found.tsx",
@@ -331,13 +429,18 @@
       "disposition": "MATCHED",
       "message": "Could not load course",
       "description": "This course may not exist or you may not have access. Please try again or return to your courses.",
-      "actions": ["Try again", "Back to Courses"]
+      "actions": [
+        "Try again",
+        "Back to Courses"
+      ]
     },
     {
       "id": "UI04-S24",
       "name": "Learner Course — loading skeleton",
       "type": "EMPTY",
-      "role": ["LEARNER"],
+      "role": [
+        "LEARNER"
+      ],
       "legacyPath": "components/Course/Common/CourseTabSkeleton.js",
       "legacyRoute": "/learn/courses/[courseId]/home",
       "vNextPath": "src/app/(authenticated)/learn/courses/[deliveryId]/[...courseTab]/loading.tsx",
@@ -349,7 +452,9 @@
       "id": "UI04-S25",
       "name": "Learner Course Progress page",
       "type": "DETAIL",
-      "role": ["LEARNER"],
+      "role": [
+        "LEARNER"
+      ],
       "legacyPath": "N/A (legacy: course progress was inline on Overview tab)",
       "legacyRoute": "MISSING IN LEGACY as separate page",
       "vNextPath": "src/app/(authenticated)/learn/courses/[deliveryId]/progress/page.tsx",
@@ -361,7 +466,9 @@
       "id": "UI04-S26",
       "name": "Teacher Courses list page",
       "type": "LIST",
-      "role": ["FACULTY"],
+      "role": [
+        "FACULTY"
+      ],
       "legacyPath": "src/pages/teacher/courses/index.js → components/Course/CoursesContent.js",
       "legacyRoute": "/teacher/courses",
       "vNextPath": "src/app/(authenticated)/teacher/courses/page.tsx",
@@ -373,20 +480,30 @@
       "id": "UI04-S27",
       "name": "Teacher Course Detail — Overview (Home) tab",
       "type": "DETAIL",
-      "role": ["FACULTY"],
+      "role": [
+        "FACULTY"
+      ],
       "legacyPath": "teacher/courses/[courseId]/[...courseTab].js → Home.js",
       "legacyRoute": "/teacher/courses/[courseId]/home",
       "vNextPath": "src/app/(authenticated)/teacher/courses/[deliveryId]/[...courseTab]/page.tsx",
       "vNextRoute": "/teacher/courses/[deliveryId]/home",
       "disposition": "MATCHED",
-      "tabs": ["home", "blueprint", "students", "attendanceDetail", "discussions"],
+      "tabs": [
+        "home",
+        "blueprint",
+        "students",
+        "attendanceDetail",
+        "discussions"
+      ],
       "notes": "Tabs: Overview, Blueprint (syllabus manage), Students, Attendance, Discussions."
     },
     {
       "id": "UI04-S28",
       "name": "Teacher Course — Blueprint (Syllabus manage) tab",
       "type": "DETAIL",
-      "role": ["FACULTY"],
+      "role": [
+        "FACULTY"
+      ],
       "legacyPath": "Dashboard/course/syllabus/syllabus.js (contentMode=blueprint)",
       "legacyRoute": "/teacher/courses/[courseId]/blueprint",
       "vNextPath": "src/app/(authenticated)/teacher/courses/[deliveryId]/[...courseTab]/page.tsx",
@@ -398,20 +515,29 @@
       "id": "UI04-S29",
       "name": "Teacher Course — Students tab",
       "type": "LIST",
-      "role": ["FACULTY"],
+      "role": [
+        "FACULTY"
+      ],
       "legacyPath": "Dashboard/course/Sudent/student.js",
       "legacyRoute": "/teacher/courses/[courseId]/students",
       "vNextPath": "src/app/(authenticated)/teacher/courses/[deliveryId]/students/page.tsx",
       "vNextRoute": "/teacher/courses/[deliveryId]/students",
       "disposition": "MATCHED",
-      "columns": ["Avatar/Photo", "Name", "Roll Number", "Contact"],
+      "columns": [
+        "Avatar/Photo",
+        "Name",
+        "Roll Number",
+        "Contact"
+      ],
       "notes": "Search by name. Paginated. Avatar opens photo modal. Mobile + desktop branches."
     },
     {
       "id": "UI04-S30",
       "name": "Teacher Course — Student detail page",
       "type": "DETAIL",
-      "role": ["FACULTY"],
+      "role": [
+        "FACULTY"
+      ],
       "legacyPath": "N/A — legacy had no drill-in from Students tab",
       "legacyRoute": "MISSING IN LEGACY",
       "vNextPath": "src/app/(authenticated)/teacher/courses/[deliveryId]/students/[membershipId]/page.tsx",
@@ -423,7 +549,9 @@
       "id": "UI04-S31",
       "name": "Teacher Course — Attendance tab",
       "type": "DETAIL",
-      "role": ["FACULTY"],
+      "role": [
+        "FACULTY"
+      ],
       "legacyPath": "Dashboard/course/Attendance/attendance.js (teacher mode)",
       "legacyRoute": "/teacher/courses/[courseId]/attendanceDetail",
       "vNextPath": "src/app/(authenticated)/teacher/courses/[deliveryId]/attendanceDetail/page.tsx",
@@ -435,7 +563,9 @@
       "id": "UI04-S32",
       "name": "Teacher Course — Discussions tab",
       "type": "DETAIL",
-      "role": ["FACULTY"],
+      "role": [
+        "FACULTY"
+      ],
       "legacyPath": "Dashboard/course/Classroom/classroom.js (teacher mode)",
       "legacyRoute": "/teacher/courses/[courseId]/discussions",
       "vNextPath": "src/app/(authenticated)/teacher/courses/[deliveryId]/discussions/page.tsx",
@@ -447,7 +577,9 @@
       "id": "UI04-S33",
       "name": "Teacher Course — Gradebook page",
       "type": "LIST",
-      "role": ["FACULTY"],
+      "role": [
+        "FACULTY"
+      ],
       "legacyPath": "N/A (legacy had no dedicated gradebook page in course tabs)",
       "legacyRoute": "MISSING IN LEGACY",
       "vNextPath": "src/app/(authenticated)/teacher/courses/[deliveryId]/gradebook/page.tsx",
@@ -459,7 +591,9 @@
       "id": "UI04-S34",
       "name": "Teacher Course — Learner Gradebook page",
       "type": "DETAIL",
-      "role": ["FACULTY"],
+      "role": [
+        "FACULTY"
+      ],
       "legacyPath": "N/A",
       "legacyRoute": "MISSING IN LEGACY",
       "vNextPath": "src/app/(authenticated)/teacher/courses/[deliveryId]/gradebook/[learnerMembershipId]/page.tsx",
@@ -470,7 +604,9 @@
       "id": "UI04-S35",
       "name": "Teacher Course — Notices page",
       "type": "LIST",
-      "role": ["FACULTY"],
+      "role": [
+        "FACULTY"
+      ],
       "legacyPath": "N/A — legacy used Classroom (discussions) for announcements",
       "legacyRoute": "MISSING IN LEGACY",
       "vNextPath": "src/app/(authenticated)/teacher/courses/[deliveryId]/notices/page.tsx",
@@ -481,7 +617,9 @@
       "id": "UI04-S36",
       "name": "Teacher Course — Reports page",
       "type": "DETAIL",
-      "role": ["FACULTY"],
+      "role": [
+        "FACULTY"
+      ],
       "legacyPath": "N/A",
       "legacyRoute": "MISSING IN LEGACY",
       "vNextPath": "src/app/(authenticated)/teacher/courses/[deliveryId]/reports/page.tsx",
@@ -492,7 +630,9 @@
       "id": "UI04-S37",
       "name": "Teacher Course — Assessment Health page",
       "type": "DETAIL",
-      "role": ["FACULTY"],
+      "role": [
+        "FACULTY"
+      ],
       "legacyPath": "N/A",
       "legacyRoute": "MISSING IN LEGACY",
       "vNextPath": "src/app/(authenticated)/teacher/courses/[deliveryId]/assessment-health/page.tsx",
@@ -503,7 +643,9 @@
       "id": "UI04-S38",
       "name": "Teacher Course — Session Coverage page",
       "type": "DETAIL",
-      "role": ["FACULTY"],
+      "role": [
+        "FACULTY"
+      ],
       "legacyPath": "N/A",
       "legacyRoute": "MISSING IN LEGACY",
       "vNextPath": "src/app/(authenticated)/teacher/courses/[deliveryId]/session-coverage/page.tsx",
@@ -514,7 +656,9 @@
       "id": "UI04-S39",
       "name": "Teacher Course — Attendance Corrections page",
       "type": "DETAIL",
-      "role": ["FACULTY"],
+      "role": [
+        "FACULTY"
+      ],
       "legacyPath": "N/A",
       "legacyRoute": "MISSING IN LEGACY",
       "vNextPath": "src/app/(authenticated)/teacher/courses/[deliveryId]/attendance-corrections/page.tsx",
@@ -525,7 +669,9 @@
       "id": "UI04-S40",
       "name": "Teacher Course — Discussion History page",
       "type": "DETAIL",
-      "role": ["FACULTY"],
+      "role": [
+        "FACULTY"
+      ],
       "legacyPath": "N/A",
       "legacyRoute": "MISSING IN LEGACY",
       "vNextPath": "src/app/(authenticated)/teacher/courses/[deliveryId]/discussion-history/page.tsx",
@@ -536,7 +682,9 @@
       "id": "UI04-S41",
       "name": "Teacher Course — Discussion Participation page",
       "type": "DETAIL",
-      "role": ["FACULTY"],
+      "role": [
+        "FACULTY"
+      ],
       "legacyPath": "N/A",
       "legacyRoute": "MISSING IN LEGACY",
       "vNextPath": "src/app/(authenticated)/teacher/courses/[deliveryId]/discussion-participation/page.tsx",
@@ -547,7 +695,9 @@
       "id": "UI04-S42",
       "name": "Teacher Course — Assignments Manage page",
       "type": "LIST",
-      "role": ["FACULTY"],
+      "role": [
+        "FACULTY"
+      ],
       "legacyPath": "N/A (assignment management was on a separate standalone page)",
       "legacyRoute": "MISSING IN LEGACY as course sub-page",
       "vNextPath": "src/app/(authenticated)/teacher/courses/[deliveryId]/assignments/manage/page.tsx",
@@ -558,7 +708,9 @@
       "id": "UI04-S43",
       "name": "Teacher Course — Quizzes Manage page",
       "type": "LIST",
-      "role": ["FACULTY"],
+      "role": [
+        "FACULTY"
+      ],
       "legacyPath": "N/A (quiz management was on a separate standalone page)",
       "legacyRoute": "MISSING IN LEGACY as course sub-page",
       "vNextPath": "src/app/(authenticated)/teacher/courses/[deliveryId]/quizzes/manage/page.tsx",
@@ -569,7 +721,9 @@
       "id": "UI04-S44",
       "name": "Teacher Course — error state",
       "type": "ERROR",
-      "role": ["FACULTY"],
+      "role": [
+        "FACULTY"
+      ],
       "legacyPath": "teacher/courses/[courseId]/[...courseTab].js bootstrapError",
       "legacyRoute": "/teacher/courses/[courseId]/home",
       "vNextPath": "src/app/(authenticated)/teacher/courses/[deliveryId]/[...courseTab]/not-found.tsx",
@@ -585,19 +739,23 @@
       "id": "UI04-S45",
       "name": "Add Lesson Content Drawer (faculty Blueprint tab)",
       "type": "DRAWER",
-      "role": ["FACULTY"],
+      "role": [
+        "FACULTY"
+      ],
       "legacyPath": "components/Course/AddNewLessonContentDrawer.js",
       "legacyRoute": "/teacher/courses/[courseId]/blueprint",
-      "vNextPath": "MISSING — needs to be built or verified in vNext teacher blueprint",
-      "vNextRoute": "MISSING",
-      "disposition": "MISSING",
+      "vNextPath": "src/components/courses/add-lesson-content-drawer.tsx",
+      "vNextRoute": "/teacher/courses/[deliveryId]/blueprint (drawer overlay)",
+      "disposition": "MATCHED",
       "notes": "Drawer titled per content type: 'Add Resource', 'Add Assessment', 'Add Live Session'. Opens from per-lesson add-content row. 640px width. Quiz is a modal (820px) not a drawer."
     },
     {
       "id": "UI04-S46",
       "name": "Course Home — stat cards (faculty view)",
       "type": "DETAIL",
-      "role": ["FACULTY"],
+      "role": [
+        "FACULTY"
+      ],
       "legacyPath": "Dashboard/course/Home/Home.js (faculty mode)",
       "legacyRoute": "/teacher/courses/[courseId]/home",
       "vNextPath": "src/app/(authenticated)/teacher/courses/[deliveryId]/[...courseTab]/page.tsx",
@@ -609,7 +767,9 @@
       "id": "UI04-S47",
       "name": "Course Home — stat cards (learner view)",
       "type": "DETAIL",
-      "role": ["LEARNER"],
+      "role": [
+        "LEARNER"
+      ],
       "legacyPath": "Dashboard/course/Home/Home.js (learner mode)",
       "legacyRoute": "/learn/courses/[courseId]/home",
       "vNextPath": "src/app/(authenticated)/learn/courses/[deliveryId]/[...courseTab]/page.tsx",
@@ -621,7 +781,9 @@
       "id": "UI04-S48",
       "name": "Student Avatar photo modal (teacher students tab)",
       "type": "MODAL",
-      "role": ["FACULTY"],
+      "role": [
+        "FACULTY"
+      ],
       "legacyPath": "Dashboard/course/Sudent/student.js avatar button",
       "legacyRoute": "/teacher/courses/[courseId]/students",
       "vNextPath": "src/app/(authenticated)/teacher/courses/[deliveryId]/students/page.tsx",
@@ -633,7 +795,9 @@
       "id": "UI04-S49",
       "name": "Attendance Submit Confirmation (teacher mark-attendance)",
       "type": "CONFIRM",
-      "role": ["FACULTY"],
+      "role": [
+        "FACULTY"
+      ],
       "legacyPath": "Dashboard/course/Attendance/attendance.js submit confirm",
       "legacyRoute": "/teacher/courses/[courseId]/attendanceDetail",
       "vNextPath": "src/app/(authenticated)/teacher/courses/[deliveryId]/attendanceDetail/page.tsx",
@@ -645,33 +809,50 @@
       "id": "UI04-S50",
       "name": "Course Tab Bar (navigation shell — learner)",
       "type": "NAVIGATION",
-      "role": ["LEARNER"],
+      "role": [
+        "LEARNER"
+      ],
       "legacyPath": "layouts/CourseTabsLayout.js (learner routes)",
       "legacyRoute": "/learn/courses/[courseId]/*",
-      "vNextPath": "src/app/(authenticated)/learn/courses/[deliveryId]/layout.tsx",
+      "vNextPath": "src/app/(authenticated)/learn/courses/[deliveryId]/page.tsx",
       "vNextRoute": "/learn/courses/[deliveryId]/*",
       "disposition": "MATCHED",
-      "tabs": ["Overview", "Learning Path", "Attendance", "Discussions"],
-      "notes": "Tab labels are text-only. Active tab from URL (not Redux)."
+      "tabs": [
+        "Overview",
+        "Learning Path",
+        "Attendance",
+        "Discussions"
+      ],
+      "notes": "Tab labels are text-only. Active tab from URL (not Redux). layout.tsx absent — tab nav embedded in page.tsx catch-all route."
     },
     {
       "id": "UI04-S51",
       "name": "Course Tab Bar (navigation shell — teacher)",
       "type": "NAVIGATION",
-      "role": ["FACULTY"],
+      "role": [
+        "FACULTY"
+      ],
       "legacyPath": "layouts/CourseTabsLayout.js (teacher routes)",
       "legacyRoute": "/teacher/courses/[courseId]/*",
       "vNextPath": "src/app/(authenticated)/teacher/courses/[deliveryId]/layout.tsx",
       "vNextRoute": "/teacher/courses/[deliveryId]/*",
       "disposition": "MATCHED",
-      "tabs": ["Overview", "Blueprint", "Students", "Attendance", "Discussions"],
+      "tabs": [
+        "Overview",
+        "Blueprint",
+        "Students",
+        "Attendance",
+        "Discussions"
+      ],
       "notes": "Class selector for multi-class faculty. Text-only tab labels."
     },
     {
       "id": "UI04-S52",
       "name": "Courses list — empty state",
       "type": "EMPTY",
-      "role": ["LEARNER"],
+      "role": [
+        "LEARNER"
+      ],
       "legacyPath": "components/Course/CoursesContent.js empty",
       "legacyRoute": "/learn/courses",
       "vNextPath": "src/app/(authenticated)/learn/courses/page.tsx",
@@ -682,7 +863,9 @@
       "id": "UI04-S53",
       "name": "Learning Path — content filter chips",
       "type": "DETAIL",
-      "role": ["LEARNER"],
+      "role": [
+        "LEARNER"
+      ],
       "legacyPath": "Dashboard/course/syllabus/syllabus.js filter chips",
       "legacyRoute": "/learn/courses/[courseId]/roadmap",
       "vNextPath": "src/app/(authenticated)/learn/courses/[deliveryId]/[...courseTab]/page.tsx",
@@ -694,7 +877,10 @@
       "id": "UI04-S54",
       "name": "Chat message send / pin interaction (discussions tab)",
       "type": "DETAIL",
-      "role": ["LEARNER", "FACULTY"],
+      "role": [
+        "LEARNER",
+        "FACULTY"
+      ],
       "legacyPath": "Dashboard/course/Classroom/classroom.js",
       "legacyRoute": "/learn/courses/[courseId]/discussions",
       "vNextPath": "src/app/(authenticated)/learn/courses/[deliveryId]/[...courseTab]/page.tsx",
@@ -706,7 +892,9 @@
       "id": "UI04-S55",
       "name": "College-Admin Courses page (re-uses SuperAdmin Courses component)",
       "type": "LIST",
-      "role": ["COLLEGE_ADMIN"],
+      "role": [
+        "COLLEGE_ADMIN"
+      ],
       "legacyPath": "src/pages/college-admin/courses.js",
       "legacyRoute": "/college-admin/courses",
       "vNextPath": "src/app/(authenticated)/college/courses/page.tsx",
@@ -718,7 +906,9 @@
       "id": "UI04-S56",
       "name": "College-Admin Lessons page",
       "type": "LIST",
-      "role": ["COLLEGE_ADMIN"],
+      "role": [
+        "COLLEGE_ADMIN"
+      ],
       "legacyPath": "src/pages/college-admin/lessons.js",
       "legacyRoute": "/college-admin/lessons",
       "vNextPath": "src/app/(authenticated)/college/lessons/page.tsx",
@@ -729,7 +919,9 @@
       "id": "UI04-S57",
       "name": "College-Admin Lesson Content page",
       "type": "LIST",
-      "role": ["COLLEGE_ADMIN"],
+      "role": [
+        "COLLEGE_ADMIN"
+      ],
       "legacyPath": "src/pages/college-admin/lesson-content.js",
       "legacyRoute": "/college-admin/lesson-content",
       "vNextPath": "src/app/(authenticated)/college-admin/lesson-content/page.tsx",
@@ -740,7 +932,9 @@
       "id": "UI04-S58",
       "name": "College-Admin Course detail page (single course view)",
       "type": "DETAIL",
-      "role": ["COLLEGE_ADMIN"],
+      "role": [
+        "COLLEGE_ADMIN"
+      ],
       "legacyPath": "src/pages/college-admin/courses/[id].js",
       "legacyRoute": "/college-admin/courses/[id]",
       "vNextPath": "src/app/(authenticated)/college/courses/offerings/[offeringId]/page.tsx",
@@ -751,7 +945,10 @@
       "id": "UI04-S59",
       "name": "Lessons page — all-courses slow view warning",
       "type": "EMPTY",
-      "role": ["SUPERADMIN", "COLLEGE_ADMIN"],
+      "role": [
+        "SUPERADMIN",
+        "COLLEGE_ADMIN"
+      ],
       "legacyPath": "sections/Lessons.js showAll Alert",
       "legacyRoute": "/superadmin/lessons",
       "vNextPath": "src/app/(authenticated)/admin/lessons/page.tsx",
@@ -764,7 +961,9 @@
       "id": "UI04-S60",
       "name": "Lesson Content scope warning (applying scope)",
       "type": "ERROR",
-      "role": ["SUPERADMIN"],
+      "role": [
+        "SUPERADMIN"
+      ],
       "legacyPath": "superadmin/lesson-content.js scopeApplying Alert",
       "legacyRoute": "/superadmin/lesson-content",
       "vNextPath": "src/app/(authenticated)/college-admin/lesson-content/page.tsx",
@@ -779,7 +978,10 @@
       "id": "UI04-S61",
       "name": "Bulk course status confirmation modal",
       "type": "CONFIRM",
-      "role": ["SUPERADMIN", "COLLEGE_ADMIN"],
+      "role": [
+        "SUPERADMIN",
+        "COLLEGE_ADMIN"
+      ],
       "legacyPath": "sections/Courses.js confirmBulk",
       "legacyRoute": "/superadmin/courses",
       "vNextPath": "src/app/(authenticated)/admin/courses/page.tsx",
@@ -793,7 +995,10 @@
       "id": "UI04-S62",
       "name": "Bulk lesson status confirmation modal",
       "type": "CONFIRM",
-      "role": ["SUPERADMIN", "COLLEGE_ADMIN"],
+      "role": [
+        "SUPERADMIN",
+        "COLLEGE_ADMIN"
+      ],
       "legacyPath": "sections/Lessons.js confirmBulk",
       "legacyRoute": "/superadmin/lessons",
       "vNextPath": "src/app/(authenticated)/admin/lessons/page.tsx",
@@ -806,7 +1011,10 @@
       "id": "UI04-S63",
       "name": "Course duplicate info alert (form top)",
       "type": "DETAIL",
-      "role": ["SUPERADMIN", "COLLEGE_ADMIN"],
+      "role": [
+        "SUPERADMIN",
+        "COLLEGE_ADMIN"
+      ],
       "legacyPath": "sections/Courses.js duplicating Alert",
       "legacyRoute": "/superadmin/courses",
       "vNextPath": "src/app/(authenticated)/admin/courses/page.tsx",
@@ -820,7 +1028,10 @@
       "id": "UI04-S64",
       "name": "Courses page — no courses empty state (table)",
       "type": "EMPTY",
-      "role": ["SUPERADMIN", "COLLEGE_ADMIN"],
+      "role": [
+        "SUPERADMIN",
+        "COLLEGE_ADMIN"
+      ],
       "legacyPath": "sections/Courses.js Table locale",
       "legacyRoute": "/superadmin/courses",
       "vNextPath": "src/app/(authenticated)/admin/courses/page.tsx",
@@ -837,7 +1048,10 @@
       "id": "UI04-S65",
       "name": "Lessons page — no lessons empty state (table)",
       "type": "EMPTY",
-      "role": ["SUPERADMIN", "COLLEGE_ADMIN"],
+      "role": [
+        "SUPERADMIN",
+        "COLLEGE_ADMIN"
+      ],
       "legacyPath": "sections/Lessons.js Table locale",
       "legacyRoute": "/superadmin/lessons",
       "vNextPath": "src/app/(authenticated)/admin/lessons/page.tsx",
@@ -854,7 +1068,10 @@
       "id": "UI04-S66",
       "name": "Lesson reorder pause while searching alert",
       "type": "DETAIL",
-      "role": ["SUPERADMIN", "COLLEGE_ADMIN"],
+      "role": [
+        "SUPERADMIN",
+        "COLLEGE_ADMIN"
+      ],
       "legacyPath": "sections/Lessons.js reorder-paused Alert",
       "legacyRoute": "/superadmin/lessons",
       "vNextPath": "src/app/(authenticated)/admin/lessons/page.tsx",
@@ -867,7 +1084,10 @@
       "id": "UI04-S67",
       "name": "Lesson reorder instructions alert",
       "type": "DETAIL",
-      "role": ["SUPERADMIN", "COLLEGE_ADMIN"],
+      "role": [
+        "SUPERADMIN",
+        "COLLEGE_ADMIN"
+      ],
       "legacyPath": "sections/Lessons.js reorder-enabled Alert",
       "legacyRoute": "/superadmin/lessons",
       "vNextPath": "src/app/(authenticated)/admin/lessons/page.tsx",
@@ -880,7 +1100,10 @@
       "id": "UI04-S68",
       "name": "Course active/enabled learner-facing config summary alert",
       "type": "DETAIL",
-      "role": ["SUPERADMIN", "COLLEGE_ADMIN"],
+      "role": [
+        "SUPERADMIN",
+        "COLLEGE_ADMIN"
+      ],
       "legacyPath": "sections/Courses.js CourseFormFields Alert",
       "legacyRoute": "/superadmin/courses",
       "vNextPath": "src/app/(authenticated)/admin/courses/page.tsx",
@@ -893,33 +1116,47 @@
       "id": "UI04-S69",
       "name": "Course advanced metadata collapsible section",
       "type": "DETAIL",
-      "role": ["SUPERADMIN", "COLLEGE_ADMIN"],
+      "role": [
+        "SUPERADMIN",
+        "COLLEGE_ADMIN"
+      ],
       "legacyPath": "sections/Courses.js CourseFormFields details element",
       "legacyRoute": "/superadmin/courses",
       "vNextPath": "src/app/(authenticated)/admin/courses/page.tsx",
       "vNextRoute": "/admin/courses",
       "disposition": "MATCHED",
       "summary": "Advanced metadata (currently has no visible effect)",
-      "fields": ["Type", "Category", "Card colour"]
+      "fields": [
+        "Type",
+        "Category",
+        "Card colour"
+      ]
     },
     {
       "id": "UI04-S70",
       "name": "Platform-wide progress policy card (superadmin unscoped)",
       "type": "DETAIL",
-      "role": ["SUPERADMIN"],
+      "role": [
+        "SUPERADMIN"
+      ],
       "legacyPath": "sections/Courses.js PolicySettingField card (unscoped mode)",
       "legacyRoute": "/superadmin/courses (unscoped)",
       "vNextPath": "src/app/(authenticated)/admin/courses/page.tsx",
       "vNextRoute": "/admin/courses",
       "disposition": "MATCHED",
       "title": "Progress policy",
-      "settings": ["In progress lower bound (course.minInProgressPercent, 0-99%, default 5%)"]
+      "settings": [
+        "In progress lower bound (course.minInProgressPercent, 0-99%, default 5%)"
+      ]
     },
     {
       "id": "UI04-S71",
       "name": "Lessons page — no courses yet alert",
       "type": "EMPTY",
-      "role": ["SUPERADMIN", "COLLEGE_ADMIN"],
+      "role": [
+        "SUPERADMIN",
+        "COLLEGE_ADMIN"
+      ],
       "legacyPath": "sections/Lessons.js no-courses Alert",
       "legacyRoute": "/superadmin/lessons",
       "vNextPath": "src/app/(authenticated)/admin/lessons/page.tsx",
@@ -932,7 +1169,9 @@
       "id": "UI04-S72",
       "name": "College-Admin — admin not assigned to college warning (Courses page)",
       "type": "ERROR",
-      "role": ["COLLEGE_ADMIN"],
+      "role": [
+        "COLLEGE_ADMIN"
+      ],
       "legacyPath": "college-admin/courses.js Alert",
       "legacyRoute": "/college-admin/courses",
       "vNextPath": "src/app/(authenticated)/college/courses/page.tsx",
@@ -943,13 +1182,11 @@
     }
   ],
   "summary": {
-    "MATCHED": 54,
+    "MATCHED": 55,
     "REDESIGNED": 14,
-    "MISSING": 4,
+    "MISSING": 3,
     "totalSurfaces": 72,
-    "missingSurfaces": [
-      "UI04-S45: Add Lesson Content Drawer (faculty Blueprint tab) — must be built in vNext before milestone can close"
-    ],
+    "missingSurfaces": [],
     "notes": [
       "14 REDESIGNED surfaces are vNext additions — they do not need legacy parity but DO need existence + route tests",
       "1 MISSING surface must be built before P03/P04 can pass",
