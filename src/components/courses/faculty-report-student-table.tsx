@@ -91,7 +91,7 @@ export function FacultyReportStudentTable({rows,title,emptyMessage="No learners 
      {key:"submitted",header:"Submitted",mobilePriority:"secondary" as const,
       cell:student=><div className="min-w-0 space-y-1">
        <span className="block tabular-nums" title="Displayed in India Standard Time">{submittedText(student.submittedAt)}</span>
-       {/late/i.test(student.note)?<span className="inline-flex rounded-full bg-[#fff7e6] px-2 py-0.5 text-xs font-semibold text-[#ad6800]">Late</span>:null}
+       {/late/i.test(student.note)?<span className="inline-flex rounded-full bg-[var(--lms-warning-subtle)] px-2 py-0.5 text-xs font-semibold text-[var(--lms-warning-text)]">Late</span>:null}
        {student.note&& !/^late$/i.test(student.note.trim())?
         <span className="block break-words text-xs text-muted-foreground">{student.note}</span>:null}
       </div>},

@@ -164,7 +164,7 @@ export function CollegeClassCreate({ cohorts, periods,
            <option value="">Select program</option>
            {uniquePrograms.map(program=><option key={program.id} value={program.id}>{program.name}</option>)}
           </Select>
-          {fieldErrors["programId"] ? <span role="alert" className="text-xs text-red-700">{fieldErrors["programId"]}</span> : null}
+          {fieldErrors["programId"] ? <span role="alert" className="text-xs text-error">{fieldErrors["programId"]}</span> : null}
         </label>
         <label className="grid gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Batch
           <Select required name="cohortId" disabled={!programId} aria-invalid={Boolean(fieldErrors["cohortId"])} value={cohortId} onChange={event => setCohortId(event.target.value)}
@@ -174,7 +174,7 @@ export function CollegeClassCreate({ cohorts, periods,
               {c.programName} · {c.name} ({c.code})
             </option>)}
           </Select>
-          {fieldErrors["cohortId"] ? <span role="alert" className="text-xs text-red-700">{fieldErrors["cohortId"]}</span> : null}
+          {fieldErrors["cohortId"] ? <span role="alert" className="text-xs text-error">{fieldErrors["cohortId"]}</span> : null}
         </label>
         <label className="grid gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Academic period
           <Select required name="academicPeriodId" aria-invalid={Boolean(fieldErrors["academicPeriodId"])} value={academicPeriodId}
@@ -185,13 +185,13 @@ export function CollegeClassCreate({ cohorts, periods,
               {p.name} ({p.code})
             </option>)}
           </Select>
-          {fieldErrors["academicPeriodId"] ? <span role="alert" className="text-xs text-red-700">{fieldErrors["academicPeriodId"]}</span> : null}
+          {fieldErrors["academicPeriodId"] ? <span role="alert" className="text-xs text-error">{fieldErrors["academicPeriodId"]}</span> : null}
         </label>
         <label className="grid gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Class Name
           <Input required name="className" placeholder="e.g., CSE-A or Section 1" maxLength={255} value={name}
            aria-invalid={Boolean(fieldErrors["name"])} onChange={event => setName(event.target.value)}
             className="min-h-11 w-full md:min-h-9" />
-          {fieldErrors["name"] ? <span role="alert" className="text-xs text-red-700">{fieldErrors["name"]}</span> : null}
+          {fieldErrors["name"] ? <span role="alert" className="text-xs text-error">{fieldErrors["name"]}</span> : null}
         </label>
         <label className="grid gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Class code (optional; generated from name)
           <Input name="code" maxLength={64} value={code} onChange={event => setCode(event.target.value)}
@@ -201,12 +201,12 @@ export function CollegeClassCreate({ cohorts, periods,
           <Input required name="capacity" aria-invalid={Boolean(fieldErrors["capacity"])} type="number" min={1} max={200} step={1} value={capacity}
             onChange={event => setCapacity(event.target.value)}
             className="min-h-11 w-full md:min-h-9" />
-          {fieldErrors["capacity"] ? <span role="alert" className="text-xs text-red-700">{fieldErrors["capacity"]}</span> : null}
+          {fieldErrors["capacity"] ? <span role="alert" className="text-xs text-error">{fieldErrors["capacity"]}</span> : null}
         </label>
         <label className="grid gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Minimum students (0–200)
           <Input name="minSize" aria-invalid={Boolean(fieldErrors["minSize"])} type="number" min={0} max={200} step={1} value={minSize}
             onChange={event => setMinSize(event.target.value)} className="min-h-11 w-full md:min-h-9" />
-          {fieldErrors["minSize"] ? <span role="alert" className="text-xs text-red-700">{fieldErrors["minSize"]}</span> : null}
+          {fieldErrors["minSize"] ? <span role="alert" className="text-xs text-error">{fieldErrors["minSize"]}</span> : null}
         </label>
         <label className="grid min-w-0 gap-[var(--lms-space-2)] md:col-span-2 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Description (optional)
           <Textarea maxLength={2000} rows={2} placeholder="Optional description" value={description} onChange={e => setDescription(e.target.value)}

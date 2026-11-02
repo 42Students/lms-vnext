@@ -215,7 +215,7 @@ export default async function CollegeDriveShortlistedPage({
       {filters ? <CollegeApplicationDependentFilters
         initial={{...(query.departmentId!==undefined?{departmentId:query.departmentId}:{}),...(query.programId!==undefined?{programId:query.programId}:{}),...(query.cohortId!==undefined?{cohortId:query.cohortId}:{})}}
         departments={filters.departments} programs={filters.programs} cohorts={filters.cohorts}/> :
-        <p role="alert" className="text-sm text-amber-700 lg:col-span-2">Department, program and batch options could not be loaded. <Link className="underline" href={href({...query,page:1})}>Retry options</Link></p>}
+        <p role="alert" className="text-sm text-warning-text lg:col-span-2">Department, program and batch options could not be loaded. <Link className="underline" href={href({...query,page:1})}>Retry options</Link></p>}
       <Button type="submit" className="min-h-11 w-full sm:w-auto md:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Filters</Button>
       {filtered
         ? <Link href={href({ ...query, q: "", source: "ALL", departmentId:undefined, programId:undefined,cohortId:undefined, page: 1 })}

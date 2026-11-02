@@ -432,7 +432,7 @@ export function CollegeStructureDirectory({ data, electiveOptions, classOptions,
                 {key:"description",header:"Description",mobilePriority:"secondary",cell:item=>
                   <span title={item.description ?? ""} className="block max-w-[180px] truncate">{item.description || "—"}</span>},
                 {key:"enrollment",header:"Students",mobilePriority:"secondary",cell:item=>item.activeLearners === null
-                  ? <span role="status" className="text-amber-700">Unavailable</span> : item.activeLearners},
+                  ? <span role="status" className="text-warning-text">Unavailable</span> : item.activeLearners},
                 {key:"manage",header:"Actions",mobilePriority:"action",className:"min-w-[250px]",cell:item=>
                   <div className="flex min-w-[250px] flex-wrap items-center gap-[var(--lms-space-2)]">
                     <Link href={"/college/classes/recurring-preview?classId="+encodeURIComponent(item.id)}

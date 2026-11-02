@@ -345,7 +345,7 @@ export function CollegeBrandingForm({
               <div className="h-3 rounded-sm bg-[#0a7c88]"/>
             </div>
           </div>
-          <p className="text-xs text-[#8c8c8c]">
+          <p className="text-xs text-muted-foreground">
             Approximation — the real page also shows the floating symbols and the full sign-in form.
           </p>
         </div>

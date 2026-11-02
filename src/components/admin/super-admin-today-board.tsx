@@ -162,7 +162,7 @@ export function SuperAdminTodayBoard({data}:{data:SuperAdminTodayMetrics|null}){
    {metrics.map(item=><AttentionCard key={item.title} item={item}
     loading={refreshing} failed={!data||item.count===null}/>)}
   </div>
-  {allClear?<p role="status" className="flex items-center gap-2 rounded-md border border-[#b7eb8f] bg-[#f6ffed] p-3 text-sm text-[#237804]">
+  {allClear?<p role="status" className="flex items-center gap-2 rounded-md border border-[rgba(5,150,105,0.3)] bg-[var(--lms-success-subtle)] p-3 text-sm text-[var(--lms-success)]">
    <CheckIcon/> Nothing needs you right now.
   </p>:null}
   <p className="text-xs text-muted-foreground">
