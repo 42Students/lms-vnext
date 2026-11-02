@@ -135,7 +135,7 @@ export default async function RecruiterRequestDrivePage({
   const requestResult=requestId?await listOwnRecruiterDriveRequests(context,collegeId)
    .then(value=>({ok:true as const,value})).catch(()=>({ok:false as const})):null;
   if(requestResult&&!requestResult.ok)return <div className="min-w-0 space-y-4">
-    <PageHeader title="Request a drive" actions={<Link href="/hr/drives" className="font-semibold text-primary-text underline">All drives</Link>}/>
+    <PageHeader title="Request a drive" actions={<Link href="/hr/drives" className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">All drives</Link>}/>
     <ErrorState title="Couldn't load your requests"
      description="Your existing request is temporarily unavailable. Your unsent draft has not changed."
      action={<Link href={"/hr/drives/new?collegeId="+encodeURIComponent(collegeId)+"&"+(query.fix?"fix":query.edit?"edit":"copy")+"="+encodeURIComponent(requestId!)}

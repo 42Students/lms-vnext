@@ -84,7 +84,7 @@ export default async function ElectiveRoster({
     return {ok:false as const,value:null};
   });
   if(!read.ok)return <div className="mx-auto w-full max-w-[1000px] space-y-4">
-    <PageHeader title="Offering roster" actions={<Link href="/college/electives" className="font-semibold text-link underline">Back to Electives</Link>}/>
+    <PageHeader title="Offering roster" actions={<Link href="/college/electives" className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Back to Electives</Link>}/>
     <ErrorState title="Couldn't load the offering roster"
       description="The roster or teaching assignments are temporarily unavailable. No student or faculty changes were made."
       action={<Link href={href(slotId,offeringId)} className="inline-flex min-h-11 items-center font-semibold text-link underline">Retry loading roster</Link>}/>
