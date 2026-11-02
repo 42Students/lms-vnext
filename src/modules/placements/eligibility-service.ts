@@ -827,6 +827,27 @@ export async function setEligibilityOverride(
   const db = getDb();
 
   return db.transaction(async (tx) => {
+    // Never create an INCLUDE/EXCLUDE decision for a learner whose active
+    // membership, account or LEARNER grant disappeared after preflight.
+    // Lock target identity before the job, matching learner application writes.
+    const [liveTarget] = await tx.select({
+      collegeId:collegeMemberships.collegeId,
+      status:collegeMemberships.status,
+      platformStatus:users.platformStatus,
+    }).from(collegeMemberships)
+      .innerJoin(users,eq(users.id,collegeMemberships.userId))
+      .where(eq(collegeMemberships.id,membershipId))
+      .for("share").limit(1);
+    const [liveLearnerRole] = await tx.select({id:membershipRoles.id})
+      .from(membershipRoles)
+      .where(and(eq(membershipRoles.membershipId,membershipId),
+        eq(membershipRoles.role,"LEARNER")))
+      .for("share").limit(1);
+    if (!liveTarget || liveTarget.collegeId !== job.collegeId ||
+        liveTarget.status !== "ACTIVE" ||
+        liveTarget.platformStatus !== "ACTIVE" || !liveLearnerRole) {
+      throw new PlacementsServiceError("PLACEMENT_LEARNER_MEMBERSHIP_NOT_FOUND");
+    }
     const liveJob = await lockEligibilityJob(tx, jobId);
     await assertPersistedPlatformPermission(tx,context,"placements.manage",{
       collegeId:liveJob.collegeId,
