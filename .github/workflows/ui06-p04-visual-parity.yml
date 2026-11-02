@@ -1,15 +1,14 @@
-name: UI-06 P04 Visual Parity — Projects & Mentorship
+name: UI-06 P04 Visual Parity — Projects and Mentorship
 
 on:
   workflow_dispatch:
   schedule:
-    # Run nightly at 02:30 UTC
-    - cron: '30 2 * * *'
+    - cron: '0 3 * * *'
 
 jobs:
   visual-parity:
     runs-on: ubuntu-latest
-    timeout-minutes: 20
+    timeout-minutes: 25
 
     steps:
       - uses: actions/checkout@v4
@@ -27,26 +26,20 @@ jobs:
       - name: Create snapshot output directory
         run: mkdir -p tests/ui-snapshots/ui06
 
-      - name: UI-06 visual parity — superadmin template library
-        run: bunx playwright test tests/ui06-visual-parity.spec.ts --grep "SuperAdmin Template Library"
+      - name: UI-06 visual parity — admin project surfaces
+        run: bunx playwright test tests/ui06-visual-parity.spec.ts --grep "Admin projects"
         env:
           TEST_BASE_URL: https://testa.development.42lms.com
           PLAYWRIGHT_BASE_URL: https://testa.development.42lms.com
 
-      - name: UI-06 visual parity — superadmin project workspaces
-        run: bunx playwright test tests/ui06-visual-parity.spec.ts --grep "SuperAdmin Project Workspaces"
+      - name: UI-06 visual parity — college admin project surfaces
+        run: bunx playwright test tests/ui06-visual-parity.spec.ts --grep "College Admin"
         env:
           TEST_BASE_URL: https://testa.development.42lms.com
           PLAYWRIGHT_BASE_URL: https://testa.development.42lms.com
 
-      - name: UI-06 visual parity — college admin projects
-        run: bunx playwright test tests/ui06-visual-parity.spec.ts --grep "CollegeAdmin Projects"
-        env:
-          TEST_BASE_URL: https://testa.development.42lms.com
-          PLAYWRIGHT_BASE_URL: https://testa.development.42lms.com
-
-      - name: UI-06 visual parity — learner projects
-        run: bunx playwright test tests/ui06-visual-parity.spec.ts --grep "Learner Projects"
+      - name: UI-06 visual parity — learner project surfaces
+        run: bunx playwright test tests/ui06-visual-parity.spec.ts --grep "Learner"
         env:
           TEST_BASE_URL: https://testa.development.42lms.com
           PLAYWRIGHT_BASE_URL: https://testa.development.42lms.com

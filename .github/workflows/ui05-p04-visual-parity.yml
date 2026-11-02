@@ -1,0 +1,61 @@
+name: UI-05 P04 Visual Parity — Assignments, Quizzes, Grading, Attendance
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '0 2 * * *'
+
+jobs:
+  visual-parity:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+
+      - name: Install dependencies
+        run: bun install --frozen-lockfile
+
+      - name: Install Playwright browsers (Chromium only)
+        run: bunx playwright install --with-deps chromium
+
+      - name: Create snapshot output directory
+        run: mkdir -p tests/ui-snapshots/ui05
+
+      - name: UI-05 visual parity — admin assignment surfaces
+        run: bunx playwright test tests/ui05-visual-parity.spec.ts --grep "Admin assignments"
+        env:
+          TEST_BASE_URL: https://testa.development.42lms.com
+          PLAYWRIGHT_BASE_URL: https://testa.development.42lms.com
+
+      - name: UI-05 visual parity — faculty surfaces
+        run: bunx playwright test tests/ui05-visual-parity.spec.ts --grep "Faculty"
+        env:
+          TEST_BASE_URL: https://testa.development.42lms.com
+          PLAYWRIGHT_BASE_URL: https://testa.development.42lms.com
+
+      - name: UI-05 visual parity — learner surfaces
+        run: bunx playwright test tests/ui05-visual-parity.spec.ts --grep "Learner"
+        env:
+          TEST_BASE_URL: https://testa.development.42lms.com
+          PLAYWRIGHT_BASE_URL: https://testa.development.42lms.com
+
+      - name: Upload screenshots on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ui05-visual-parity-screenshots
+          path: tests/ui-snapshots/ui05/
+          retention-days: 14
+
+      - name: Upload Playwright report on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ui05-playwright-report
+          path: playwright-report/
+          retention-days: 14

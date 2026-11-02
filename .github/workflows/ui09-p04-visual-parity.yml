@@ -1,10 +1,9 @@
-name: UI-09 P04 Visual Parity — Notifications/Announcements/Discussions
+name: UI-09 P04 Visual Parity — Notifications, Announcements, Discussions
 
 on:
   workflow_dispatch:
   schedule:
-    # Run nightly at 02:30 UTC
-    - cron: '30 2 * * *'
+    - cron: '30 4 * * *'
 
 jobs:
   visual-parity:
@@ -28,25 +27,13 @@ jobs:
         run: mkdir -p tests/ui-snapshots/ui09
 
       - name: UI-09 visual parity — learner notification surfaces
-        run: bunx playwright test tests/ui09-visual-parity.spec.ts --grep "Learner Notification"
+        run: bunx playwright test tests/ui09-visual-parity.spec.ts --grep "Learner"
         env:
           TEST_BASE_URL: https://testa.development.42lms.com
           PLAYWRIGHT_BASE_URL: https://testa.development.42lms.com
 
-      - name: UI-09 visual parity — faculty notification surfaces
-        run: bunx playwright test tests/ui09-visual-parity.spec.ts --grep "Faculty Notification"
-        env:
-          TEST_BASE_URL: https://testa.development.42lms.com
-          PLAYWRIGHT_BASE_URL: https://testa.development.42lms.com
-
-      - name: UI-09 visual parity — college admin notification surfaces
-        run: bunx playwright test tests/ui09-visual-parity.spec.ts --grep "College Admin Notification"
-        env:
-          TEST_BASE_URL: https://testa.development.42lms.com
-          PLAYWRIGHT_BASE_URL: https://testa.development.42lms.com
-
-      - name: UI-09 visual parity — superadmin announcement surfaces
-        run: bunx playwright test tests/ui09-visual-parity.spec.ts --grep "SuperAdmin Announcement"
+      - name: UI-09 visual parity — admin notification surfaces
+        run: bunx playwright test tests/ui09-visual-parity.spec.ts --grep "Admin"
         env:
           TEST_BASE_URL: https://testa.development.42lms.com
           PLAYWRIGHT_BASE_URL: https://testa.development.42lms.com

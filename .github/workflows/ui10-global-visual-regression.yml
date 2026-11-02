@@ -1,0 +1,80 @@
+name: UI-10 Global Visual Regression Gate
+
+on:
+  workflow_dispatch:
+  schedule:
+    # Run nightly at 05:00 UTC — after all per-domain P04 workflows complete
+    - cron: '0 5 * * *'
+
+jobs:
+  global-visual-regression:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+
+      - name: Install dependencies
+        run: bun install --frozen-lockfile
+
+      - name: Install Playwright browsers (Chromium only)
+        run: bunx playwright install --with-deps chromium
+
+      - name: Create snapshot output directory
+        run: mkdir -p tests/ui-snapshots/ui10
+
+      - name: UI-10 global gate — public auth surface
+        run: bunx playwright test tests/ui10-global-visual-regression.spec.ts --grep "Auth domain"
+        env:
+          TEST_BASE_URL: https://testa.development.42lms.com
+          PLAYWRIGHT_BASE_URL: https://testa.development.42lms.com
+
+      - name: UI-10 global gate — superadmin shell cross-domain
+        run: bunx playwright test tests/ui10-global-visual-regression.spec.ts --grep "SuperAdmin shell"
+        env:
+          TEST_BASE_URL: https://testa.development.42lms.com
+          PLAYWRIGHT_BASE_URL: https://testa.development.42lms.com
+
+      - name: UI-10 global gate — college admin shell cross-domain
+        run: bunx playwright test tests/ui10-global-visual-regression.spec.ts --grep "College Admin shell"
+        env:
+          TEST_BASE_URL: https://testa.development.42lms.com
+          PLAYWRIGHT_BASE_URL: https://testa.development.42lms.com
+
+      - name: UI-10 global gate — learner shell cross-domain
+        run: bunx playwright test tests/ui10-global-visual-regression.spec.ts --grep "Learner shell"
+        env:
+          TEST_BASE_URL: https://testa.development.42lms.com
+          PLAYWRIGHT_BASE_URL: https://testa.development.42lms.com
+
+      - name: UI-10 global gate — faculty shell cross-domain
+        run: bunx playwright test tests/ui10-global-visual-regression.spec.ts --grep "Faculty shell"
+        env:
+          TEST_BASE_URL: https://testa.development.42lms.com
+          PLAYWRIGHT_BASE_URL: https://testa.development.42lms.com
+
+      - name: UI-10 global gate — mobile regression
+        run: bunx playwright test tests/ui10-global-visual-regression.spec.ts --grep "Mobile regression"
+        env:
+          TEST_BASE_URL: https://testa.development.42lms.com
+          PLAYWRIGHT_BASE_URL: https://testa.development.42lms.com
+
+      - name: Upload screenshots on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ui10-global-regression-screenshots
+          path: tests/ui-snapshots/ui10/
+          retention-days: 14
+
+      - name: Upload Playwright report on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ui10-playwright-report
+          path: playwright-report/
+          retention-days: 14

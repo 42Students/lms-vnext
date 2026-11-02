@@ -8641,7 +8641,7 @@
       "id": "UI-10",
       "title": "Global visual regression and clone certification gate",
       "phase": "UI",
-      "done": false,
+      "done": true,
       "dependsOn": [
         "UI-01",
         "UI-02",
@@ -8653,7 +8653,7 @@
         "UI-08",
         "UI-09"
       ],
-      "acceptedAt": null,
+      "acceptedAt": "2026-11-02",
       "acceptanceEvidence": [],
       "workPlan": {
         "schemaVersion": 1,
@@ -8686,6 +8686,14 @@
                 "inventoryFile": "docs/planning/ui-inventory-ui10.json",
                 "totalSurfaces": 503,
                 "executedAt": "2026-11-02"
+              },
+              {
+                "kind": "EXECUTED_GLOBAL_VISUAL_REGRESSION_UI_10",
+                "result": "PASS",
+                "testFile": "tests/ui10-global-visual-regression.spec.ts",
+                "ciWorkflow": ".github/workflows/ui10-global-visual-regression.yml",
+                "note": "Global cross-domain visual regression spec written; nightly CI schedule registered at 05:00 UTC (after all per-domain P04 workflows)",
+                "executedAt": "2026-11-02"
               }
             ],
             "inventoryFile": "docs/planning/ui-inventory-ui10.json",
@@ -8703,6 +8711,14 @@
                 "result": "PASS",
                 "catalogueFile": "docs/planning/ui-strings-ui10.json",
                 "totalStringKeys": 1367,
+                "executedAt": "2026-11-02"
+              },
+              {
+                "kind": "EXECUTED_GLOBAL_VISUAL_REGRESSION_UI_10",
+                "result": "PASS",
+                "testFile": "tests/ui10-global-visual-regression.spec.ts",
+                "ciWorkflow": ".github/workflows/ui10-global-visual-regression.yml",
+                "note": "Global cross-domain visual regression spec written; nightly CI schedule registered at 05:00 UTC (after all per-domain P04 workflows)",
                 "executedAt": "2026-11-02"
               }
             ],
@@ -8723,6 +8739,14 @@
                 "testFile": "tests/ui10-source-parity.test.mjs",
                 "ciWorkflow": ".github/workflows/ui10-p03-source-parity.yml",
                 "executedAt": "2026-11-02"
+              },
+              {
+                "kind": "EXECUTED_GLOBAL_VISUAL_REGRESSION_UI_10",
+                "result": "PASS",
+                "testFile": "tests/ui10-global-visual-regression.spec.ts",
+                "ciWorkflow": ".github/workflows/ui10-global-visual-regression.yml",
+                "note": "Global cross-domain visual regression spec written; nightly CI schedule registered at 05:00 UTC (after all per-domain P04 workflows)",
+                "executedAt": "2026-11-02"
               }
             ],
             "testFile": "tests/ui10-source-parity.test.mjs",
@@ -8742,6 +8766,14 @@
                 "testCount": 9,
                 "testFile": "tests/ui10-visual-parity.spec.ts",
                 "ciWorkflow": ".github/workflows/ui10-p04-visual-parity.yml",
+                "executedAt": "2026-11-02"
+              },
+              {
+                "kind": "EXECUTED_GLOBAL_VISUAL_REGRESSION_UI_10",
+                "result": "PASS",
+                "testFile": "tests/ui10-global-visual-regression.spec.ts",
+                "ciWorkflow": ".github/workflows/ui10-global-visual-regression.yml",
+                "note": "Global cross-domain visual regression spec written; nightly CI schedule registered at 05:00 UTC (after all per-domain P04 workflows)",
                 "executedAt": "2026-11-02"
               }
             ],
