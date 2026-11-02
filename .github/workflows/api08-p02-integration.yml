@@ -1,0 +1,46 @@
+# API08-P02: TPO and recruiter CRM integration gate.
+# Source-only — no database needed.
+# Verifies crosswalk completeness, MAPPED file existence, TPO auth guard coverage,
+# and 28 documented gap catalogue integrity.
+name: API08-P02 TPO recruiter CRM integration gate
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - "tests/api08-integration.test.mjs"
+      - "docs/planning/api-crosswalk-api08.json"
+      - "src/app/api/tpo/**"
+      - "src/app/api/placements/tpo/**"
+      - ".github/workflows/api08-p02-integration.yml"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: api08-p02-${{ github.sha }}
+  cancel-in-progress: false
+
+jobs:
+  integration:
+    name: "API08-P02 TPO/recruiter CRM integration gate"
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Verify exact commit SHA
+        run: test "$(git rev-parse HEAD)" = "$GITHUB_SHA"
+      - name: API08-P02 TPO/recruiter CRM integration gate
+        run: node --test tests/api08-integration.test.mjs
+      - name: Scope boundary
+        if: always()
+        run: |
+          echo "API08-P02: TPO/recruiter CRM source-only integration gate."
+          echo "118 legacy endpoints crosswalked: 14 MAPPED, 76 REDESIGNED, 0 RETIRED, 28 MISSING (documented gaps)."
+          echo "API-09 and API-10 remain OPEN."
