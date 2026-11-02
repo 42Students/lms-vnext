@@ -145,6 +145,120 @@ describe("W04 external placement submission and review", () => {
     })).rejects.toMatchObject({ code: "DB08_EXTERNAL_OFFER_INVALID_TRANSITION" });
   });
 
+  it("denies private manager list and review after persisted TPO revocation", async () => {
+    const pending = await submitOwnExternalOffer(learner, {
+      companyName: "Revoked manager must not verify", ctcLpa: "7.25",
+    });
+    created.push(pending.id);
+    await pool.query(
+      "DELETE FROM membership_roles WHERE membership_id=$1 AND role='TPO'",
+      [SEED_IDS.facultyCollegeAMembership],
+    );
+    try {
+      await expect(listManagedExternalOffers(tpo, SEED_IDS.collegeA))
+        .rejects.toThrow("Missing permission: placements.manage");
+      await expect(reviewExternalOffer(tpo, {offerId:pending.id,action:"VERIFY"}))
+        .rejects.toThrow("Missing permission: placements.manage");
+      const status = await pool.query(
+        "SELECT status,reviewed_by_user_id FROM placement_external_offers WHERE id=$1",
+        [pending.id],
+      );
+      expect(status.rows[0]).toMatchObject({
+        status:"SUBMITTED", reviewed_by_user_id:null,
+      });
+      const history = await pool.query(
+        "SELECT next_status FROM placement_external_offer_events WHERE offer_id=$1",
+        [pending.id],
+      );
+      expect(history.rows.map(row=>row.next_status)).toEqual(["SUBMITTED"]);
+    } finally {
+      await pool.query(
+        "INSERT INTO membership_roles(membership_id,role) VALUES($1,'TPO') ON CONFLICT DO NOTHING",
+        [SEED_IDS.facultyCollegeAMembership],
+      );
+    }
+  });
+
+  it("denies staff private offer reads and review after manager account disablement", async () => {
+    const pending = await submitOwnExternalOffer(learner,{
+      companyName:"Disabled manager should not review",ctcLpa:"9.00",
+    });
+    created.push(pending.id);
+    await pool.query("UPDATE users SET platform_status='DISABLED' WHERE id=$1",
+      [SEED_IDS.facultyUser]);
+    try {
+      await expect(listManagedExternalOffers(tpo,SEED_IDS.collegeA))
+        .rejects.toThrow("Missing permission: placements.manage");
+      await expect(reviewExternalOffer(tpo,{offerId:pending.id,action:"REJECT",reason:"Not approved"}))
+        .rejects.toThrow("Missing permission: placements.manage");
+      const status=await pool.query(
+        "SELECT status FROM placement_external_offers WHERE id=$1",[pending.id],
+      );
+      expect(status.rows[0]?.status).toBe("SUBMITTED");
+    } finally {
+      await pool.query("UPDATE users SET platform_status='ACTIVE' WHERE id=$1",
+        [SEED_IDS.facultyUser]);
+    }
+  });
+
+  it("serializes outside-offer verification against an in-flight TPO grant revoke", async () => {
+    const pending=await submitOwnExternalOffer(learner,{
+      companyName:"Race against revoke",ctcLpa:"10.50",
+    });
+    created.push(pending.id);
+    const blockerPool = new Pool({connectionString:url,max:1});
+    const holder=await blockerPool.connect();
+    let inTransaction=false;
+    let operation:Promise<{ok:boolean;error?:unknown}>|null=null;
+    try {
+      await holder.query("BEGIN");
+      inTransaction=true;
+      const held=await holder.query(
+        "SELECT membership_id FROM membership_roles WHERE membership_id=$1 AND role='TPO' FOR UPDATE",
+        [SEED_IDS.facultyCollegeAMembership],
+      );
+      expect(held.rows).toHaveLength(1);
+      operation=reviewExternalOffer(tpo,{offerId:pending.id,action:"VERIFY"})
+        .then(()=>({ok:true}),error=>({ok:false,error}));
+      let waited=false;
+      for(let attempt=0;attempt<160;attempt++){
+        const activity=await pool.query<{blocked:string}>(
+          "SELECT count(*)::text AS blocked FROM pg_stat_activity " +
+          "WHERE datname=current_database() AND pid<>pg_backend_pid() " +
+          "AND wait_event_type='Lock' AND query ILIKE '%membership_roles%'",
+        );
+        if(Number(activity.rows[0]?.blocked??0)>0){waited=true;break;}
+        await new Promise(resolve=>setTimeout(resolve,25));
+      }
+      expect(waited).toBe(true);
+      await holder.query(
+        "DELETE FROM membership_roles WHERE membership_id=$1 AND role='TPO'",
+        [SEED_IDS.facultyCollegeAMembership],
+      );
+      await holder.query("COMMIT");
+      inTransaction=false;
+      const outcome=await operation;
+      expect(outcome.ok).toBe(false);
+      expect(String((outcome.error as Error)?.message??""))
+        .toContain("Missing permission: placements.manage");
+      const [status,history]=await Promise.all([
+        pool.query("SELECT status FROM placement_external_offers WHERE id=$1",[pending.id]),
+        pool.query("SELECT next_status FROM placement_external_offer_events WHERE offer_id=$1",[pending.id]),
+      ]);
+      expect(status.rows[0]?.status).toBe("SUBMITTED");
+      expect(history.rows.map(x=>x.next_status)).toEqual(["SUBMITTED"]);
+    } finally {
+      if(inTransaction)await holder.query("ROLLBACK").catch(()=>undefined);
+      holder.release();
+      if(operation)await operation;
+      await blockerPool.end();
+      await pool.query(
+        "INSERT INTO membership_roles(membership_id,role) VALUES($1,'TPO') ON CONFLICT DO NOTHING",
+        [SEED_IDS.facultyCollegeAMembership],
+      );
+    }
+  },20_000);
+
   it("rejects a forged learner context and cross-college direct-SQL offer", async () => {
     await expect(submitOwnExternalOffer(forgedUser, {
       companyName: "Forged Offer", ctcLpa: "14.00",
