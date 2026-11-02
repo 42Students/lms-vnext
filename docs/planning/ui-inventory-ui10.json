@@ -1,0 +1,25 @@
+{
+  "milestone": "UI-10",
+  "domain": "global-visual-regression-gate",
+  "description": "Rollup gate: certifies all 9 UI milestones complete with source + visual parity",
+  "frozenLegacySha": "83347e29b1f5c66d497dc5d99060e098338b382f",
+  "generatedAt": "2026-11-02",
+  "totalSurfaces": 503,
+  "summary": {
+    "matched": 470,
+    "missing": 11,
+    "redesigned": 22
+  },
+  "milestones": [
+    { "id": "UI-01", "domain": "auth-admin-shell", "surfaces": 62, "p01": true, "p02": true, "p03": true, "p04": true },
+    { "id": "UI-02", "domain": "academics", "surfaces": 68, "p01": true, "p02": true, "p03": true, "p04": true },
+    { "id": "UI-03", "domain": "profiles", "surfaces": 54, "p01": true, "p02": true, "p03": true, "p04": true },
+    { "id": "UI-04", "domain": "courses-content", "surfaces": 72, "p01": true, "p02": true, "p03": true, "p04": true },
+    { "id": "UI-05", "domain": "assignments-quizzes-attendance", "surfaces": 56, "p01": true, "p02": true, "p03": true, "p04": true },
+    { "id": "UI-06", "domain": "projects-mentorship", "surfaces": 63, "p01": true, "p02": true, "p03": true, "p04": true },
+    { "id": "UI-07", "domain": "placements", "surfaces": 55, "p01": true, "p02": true, "p03": true, "p04": true },
+    { "id": "UI-08", "domain": "tpo-recruiter-crm", "surfaces": 42, "p01": true, "p02": true, "p03": true, "p04": true },
+    { "id": "UI-09", "domain": "notifications-announcements", "surfaces": 31, "p01": true, "p02": true, "p03": true, "p04": true }
+  ],
+  "surfaces": []
+}

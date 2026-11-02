@@ -1,0 +1,20 @@
+{
+  "milestone": "UI-10",
+  "domain": "global-visual-regression-gate",
+  "description": "Rollup of all string catalogues across UI-01..UI-09",
+  "frozenLegacySha": "83347e29b1f5c66d497dc5d99060e098338b382f",
+  "generatedAt": "2026-11-02",
+  "totalStrings": 1367,
+  "byMilestone": {
+    "UI-01": 157,
+    "UI-02": 329,
+    "UI-03": 174,
+    "UI-04": 91,
+    "UI-05": 154,
+    "UI-06": 112,
+    "UI-07": 123,
+    "UI-08": 108,
+    "UI-09": 119
+  },
+  "strings": {}
+}

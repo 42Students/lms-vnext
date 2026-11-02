@@ -1,0 +1,22 @@
+name: UI-10 P03 Source Parity (global gate)
+
+on:
+  push:
+    paths:
+      - "docs/tracker.json"
+      - "docs/planning/ui-inventory-ui*.json"
+      - "docs/planning/ui-strings-ui*.json"
+      - "tests/ui*-source-parity.test.mjs"
+      - "tests/ui10-source-parity.test.mjs"
+  workflow_dispatch:
+
+jobs:
+  ui10-global-gate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Run UI-10 global gate test
+        run: node --test tests/ui10-source-parity.test.mjs

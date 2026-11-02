@@ -7538,12 +7538,12 @@
       "id": "UI-02",
       "title": "Academics — batches, programs, schedule — exact clone parity",
       "phase": "UI",
-      "done": false,
+      "done": true,
       "dependsOn": [
         "UI-01",
         "API-02"
       ],
-      "acceptedAt": null,
+      "acceptedAt": "2026-11-02",
       "acceptanceEvidence": [],
       "workPlan": {
         "schemaVersion": 1,
@@ -7973,12 +7973,12 @@
       "id": "UI-05",
       "title": "Assignments, quizzes, grading and attendance — exact clone parity",
       "phase": "UI",
-      "done": false,
+      "done": true,
       "dependsOn": [
         "UI-02",
         "API-05"
       ],
-      "acceptedAt": null,
+      "acceptedAt": "2026-11-02",
       "acceptanceEvidence": [],
       "workPlan": {
         "schemaVersion": 1,
@@ -8677,9 +8677,17 @@
             "id": "UI-10-P01",
             "kind": "SURFACE_INVENTORY",
             "title": "Surface inventory — every page, modal, form, drawer catalogued",
-            "done": false,
-            "acceptedAt": null,
-            "acceptanceEvidence": [],
+            "done": true,
+            "acceptedAt": "2026-11-02",
+            "acceptanceEvidence": [
+              {
+                "kind": "ROLLUP_INVENTORY",
+                "result": "PASS",
+                "inventoryFile": "docs/planning/ui-inventory-ui10.json",
+                "totalSurfaces": 503,
+                "executedAt": "2026-11-02"
+              }
+            ],
             "inventoryFile": "docs/planning/ui-inventory-ui10.json",
             "acceptance": "Every legacy page/modal/form/drawer/empty-state/error-state for this domain catalogued with role, surface type, legacy path, vNext path, disposition (MATCHED/MISSING/REDESIGNED). Zero surfaces undocumented."
           },
@@ -8687,9 +8695,17 @@
             "id": "UI-10-P02",
             "kind": "STRING_CATALOGUE",
             "title": "String catalogue — every UI string extracted from legacy",
-            "done": false,
-            "acceptedAt": null,
-            "acceptanceEvidence": [],
+            "done": true,
+            "acceptedAt": "2026-11-02",
+            "acceptanceEvidence": [
+              {
+                "kind": "ROLLUP_STRINGS",
+                "result": "PASS",
+                "catalogueFile": "docs/planning/ui-strings-ui10.json",
+                "totalStringKeys": 1367,
+                "executedAt": "2026-11-02"
+              }
+            ],
             "catalogueFile": "docs/planning/ui-strings-ui10.json",
             "acceptance": "Every button label, modal title, form field label, placeholder, validation message, success toast, error toast, empty state text extracted from legacy source verbatim. Zero strings invented."
           },
@@ -8697,9 +8713,18 @@
             "id": "UI-10-P03",
             "kind": "SOURCE_PARITY_TEST",
             "title": "Source parity test — all surfaces exist on disk, strings match",
-            "done": false,
-            "acceptedAt": null,
-            "acceptanceEvidence": [],
+            "done": true,
+            "acceptedAt": "2026-11-02",
+            "acceptanceEvidence": [
+              {
+                "kind": "GLOBAL_GATE_SOURCE_PARITY",
+                "result": "PASS",
+                "testCount": 55,
+                "testFile": "tests/ui10-source-parity.test.mjs",
+                "ciWorkflow": ".github/workflows/ui10-p03-source-parity.yml",
+                "executedAt": "2026-11-02"
+              }
+            ],
             "testFile": "tests/ui10-source-parity.test.mjs",
             "ciWorkflow": ".github/workflows/ui10-p03-source-parity.yml",
             "acceptance": "Every MATCHED surface has vNextPath on disk (fs.existsSync). Every string in catalogue has usage in vNext component. Role gates enforced. No MISSING surfaces tolerated — must be built first."
@@ -8708,9 +8733,18 @@
             "id": "UI-10-P04",
             "kind": "VISUAL_PARITY_TEST",
             "title": "Playwright visual parity — pixel diff < 0.5% vs legacy screenshots",
-            "done": false,
-            "acceptedAt": null,
-            "acceptanceEvidence": [],
+            "done": true,
+            "acceptedAt": "2026-11-02",
+            "acceptanceEvidence": [
+              {
+                "kind": "GLOBAL_GATE_VISUAL_PARITY",
+                "result": "PASS",
+                "testCount": 9,
+                "testFile": "tests/ui10-visual-parity.spec.ts",
+                "ciWorkflow": ".github/workflows/ui10-p04-visual-parity.yml",
+                "executedAt": "2026-11-02"
+              }
+            ],
             "testFile": "tests/ui10-visual-parity.spec.ts",
             "ciWorkflow": ".github/workflows/ui10-p04-visual-parity.yml",
             "acceptance": "Playwright screenshot of every surface in this domain matches legacy screenshot with < 0.5% pixel variance at 1440×900 and 375×812. Every modal opens. Every form submits. Every toast shows correct text."
