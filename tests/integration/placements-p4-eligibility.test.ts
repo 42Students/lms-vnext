@@ -1,3 +1,4 @@
+import { randomUUID } from "node:crypto";
 import {
   afterAll,
   beforeEach,
@@ -411,6 +412,95 @@ describe("Placement P4 eligibility", () => {
         "INSERT INTO membership_roles(membership_id,role) VALUES($1,'TPO') ON CONFLICT DO NOTHING",
         [SEED_IDS.facultyCollegeAMembership],
       );
+    }
+  },20_000);
+
+  it("rejects a new override for a disabled learner without persisting it", async () => {
+    const job=await createJob();
+    await pool.query("UPDATE users SET platform_status='DISABLED' WHERE id=$1",
+      [SEED_IDS.learnerUser]);
+    try {
+      await expect(setEligibilityOverride(tpo,job.id,SEED_IDS.learnerCollegeAMembership,{
+        decision:"INCLUDE",reason:"Must not override a disabled learner account",
+      })).rejects.toMatchObject({code:"PLACEMENT_LEARNER_MEMBERSHIP_NOT_FOUND"});
+      const overrides=await pool.query(
+        "SELECT id FROM placement_eligibility_overrides WHERE job_id=$1",
+        [job.id],
+      );
+      expect(overrides.rows).toHaveLength(0);
+    } finally {
+      await pool.query("UPDATE users SET platform_status='ACTIVE' WHERE id=$1",
+        [SEED_IDS.learnerUser]);
+    }
+  });
+
+  it("serializes override creation after a real learner role removal", async () => {
+    // Unlike the shared seed learner, this one has no academic enrollment:
+    // DB02's irreversible withdrawal trigger stays enabled and untouched.
+    const userId=randomUUID(),membershipId=randomUUID();
+    const lockPool=new Pool({connectionString:databaseUrl,max:1});
+    let holder:Awaited<ReturnType<typeof lockPool.connect>>|null=null;
+    let held=false;
+    let pending:Promise<{ok:boolean;error?:unknown}>|null=null;
+    await pool.query(
+      "INSERT INTO users(id,identity_uid,display_name) VALUES($1,$2,'P18 eligibility race witness')",
+      [userId,"p18-eligibility-"+userId],
+    );
+    await pool.query(
+      "INSERT INTO college_memberships(id,user_id,college_id,status) VALUES($1,$2,$3,'ACTIVE')",
+      [membershipId,userId,SEED_IDS.collegeA],
+    );
+    await pool.query(
+      "INSERT INTO membership_roles(membership_id,role) VALUES($1,'LEARNER')",
+      [membershipId],
+    );
+    try {
+      const job=await createJob();
+      holder=await lockPool.connect();
+      await holder.query("BEGIN");
+      held=true;
+      const grant=await holder.query(
+        "SELECT membership_id FROM membership_roles WHERE membership_id=$1 AND role='LEARNER' FOR UPDATE",
+        [membershipId],
+      );
+      expect(grant.rows).toHaveLength(1);
+      pending=setEligibilityOverride(tpo,job.id,membershipId,{
+        decision:"INCLUDE",reason:"Must not authorize after learner role deletion",
+      }).then(()=>({ok:true}),error=>({ok:false,error}));
+      let blocked=false;
+      for(let attempt=0;attempt<160;attempt++){
+        const activity=await pool.query<{blocked:string}>(
+          "SELECT count(*)::text AS blocked FROM pg_stat_activity " +
+          "WHERE datname=current_database() AND pid<>pg_backend_pid() " +
+          "AND wait_event_type='Lock' AND query ILIKE '%membership_roles%'",
+        );
+        if(Number(activity.rows[0]?.blocked??0)>0){blocked=true;break;}
+        await new Promise(resolve=>setTimeout(resolve,25));
+      }
+      expect(blocked).toBe(true);
+      await holder.query(
+        "DELETE FROM membership_roles WHERE membership_id=$1 AND role='LEARNER'",
+        [membershipId],
+      );
+      await holder.query("COMMIT");
+      held=false;
+      const outcome=await pending;
+      expect(outcome.ok).toBe(false);
+      expect((outcome.error as {code?:string})?.code)
+        .toBe("PLACEMENT_LEARNER_MEMBERSHIP_NOT_FOUND");
+      const overrides=await pool.query(
+        "SELECT id FROM placement_eligibility_overrides WHERE job_id=$1 AND membership_id=$2",
+        [job.id,membershipId],
+      );
+      expect(overrides.rows).toHaveLength(0);
+    } finally {
+      if(held&&holder)await holder.query("ROLLBACK").catch(()=>undefined);
+      if(holder)holder.release();
+      if(pending)await pending;
+      await lockPool.end();
+      await pool.query("DELETE FROM membership_roles WHERE membership_id=$1",[membershipId]);
+      await pool.query("DELETE FROM college_memberships WHERE id=$1",[membershipId]);
+      await pool.query("DELETE FROM users WHERE id=$1",[userId]);
     }
   },20_000);
 
