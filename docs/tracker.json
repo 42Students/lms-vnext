@@ -3266,6 +3266,40 @@
           ],
           "notTaskAcceptance": true
         },
+        "latestP18VerifiedExactHeadPg17Security": {
+          "recordedOn": "2026-11-02",
+          "status": "PASS_SCOPED_EXACT_SHA_REGISTERED_PG17_NOT_63_FIELD_OR_PARENT_ACCEPTANCE",
+          "commitSha": "8a88e5bcd25f2e6129adb213b70507e0bc1f18fb",
+          "workflow": ".github/workflows/db019-p18-screening-debarment-pg17.yml",
+          "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/41403418141",
+          "result": "COMPLETED_SUCCESS",
+          "environment": "Two independent disposable PostgreSQL 17.11 service jobs; exact GITHUB_SHA checkout, 332 registered migrations through 0331, preflight, zero-to-head replay and idempotence",
+          "jobs": [
+            {
+              "jobId": 125140442222,
+              "scope": "Live learner screening privacy and persisted manager permissions; status/immutable history; manager-revocation race; withdrawn-application repair",
+              "result": "PASS",
+              "integrationTestsPassed": 12,
+              "integrationTestsRun": 12
+            },
+            {
+              "jobId": 125140441968,
+              "scope": "Debarment live learner membership/grant/account checks, concurrent revocation, immutable SQL history",
+              "result": "PASS",
+              "unitTestsPassed": 4,
+              "unitTestsRun": 4,
+              "integrationTestsPassed": 11,
+              "integrationTestsRun": 11
+            }
+          ],
+          "nonFabrication": "Revoked LEARNER role creates permanently WITHDRAWN academic history in registered DB02. Negative test uses a separate disposable learner; no history resurrection, migration edit, relaxed CHECK/unique/permission assertion or invented scoring provenance.",
+          "originalGateStillOpen": [
+            "Only the exercised 23 scoped PostgreSQL integration tests and 4 unit cases are proven, not all 63 P18 source-field dispositions.",
+            "Legacy screening education/skill/overall scores, model version, algorithm actor, metadata and timestamp/enum crosswalks remain unresolved; do not invent automatic scoring or claim source parity.",
+            "Eligibility override and event actor/time reconstruction, TPO private read access, tenant-wide producer-consumer behavior and global P31/P32 and DB020 signoff remain independent."
+          ],
+          "notTaskAcceptance": true
+        },
         "latestP17FullRegisteredPg17": {
           "recordedOn": "2026-11-01",
           "status": "EXECUTED_FULL_REGISTERED_PG17_P17_SERVICE_AND_PRIVACY_MATRIX_PASS_PACKAGE_NOT_FINAL",
@@ -3552,6 +3586,19 @@
           "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/41185415522",
           "commitSha": "1588c48f1d04f722d38dc62a4fde5e054cd51557",
           "scope": "Registered PostgreSQL schema diagnosis passed; global certification still open"
+        },
+        "latestP18Pg17ScopedDependencyEvidence": {
+          "recordedOn": "2026-11-02",
+          "status": "SCOPED_P18_REGISTERED_PG17_PASS_DB020_GLOBAL_CERTIFICATION_OPEN",
+          "commitSha": "8a88e5bcd25f2e6129adb213b70507e0bc1f18fb",
+          "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/41403418141",
+          "result": "PASS_SCOPED_NOT_GLOBAL_ACCEPTANCE",
+          "evidence": "332 registered migrations replay/idempotence, 12 screening PG17 integration cases, 11 debarment PG17 integration cases and 4 unit negatives succeeded in isolated jobs.",
+          "remaining": [
+            "DB19-P18 complete 63-field source-to-target semantic proof, DB19-P31 all 2829 decisions and DB19-P32 exact-head cross-domain/tenant/permission/race producer-to-consumer verification.",
+            "DB020's independent exact-current-head structural, migration, security, negative and multi-domain phase gate is still required."
+          ],
+          "notTaskAcceptance": true
         },
         "latestFailClosedStructuralGate": {
           "result": "PASS_SCOPED_REGISTERED_PG17_NOT_DB020_ACCEPTANCE",
