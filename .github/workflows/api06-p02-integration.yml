@@ -1,0 +1,46 @@
+# API06-P02: Projects, templates, mentorship and history integration gate.
+# Source-only — no database needed.
+# Verifies crosswalk completeness, auth guard coverage, MISSING gap catalogue.
+name: API06-P02 Projects mentorship integration gate
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - "tests/api06-integration.test.mjs"
+      - "docs/planning/api-crosswalk-api06.json"
+      - "src/app/api/projects/**"
+      - "src/app/api/mentor/**"
+      - ".github/workflows/api06-p02-integration.yml"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: api06-p02-${{ github.sha }}
+  cancel-in-progress: false
+
+jobs:
+  integration:
+    name: "API06-P02 projects/mentorship integration gate"
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Verify exact commit SHA
+        run: test "$(git rev-parse HEAD)" = "$GITHUB_SHA"
+      - name: API06-P02 projects/mentorship integration gate
+        run: node --test tests/api06-integration.test.mjs
+      - name: Scope boundary
+        if: always()
+        run: |
+          echo "API06-P02: Projects/mentorship source-only integration gate."
+          echo "43 legacy endpoints crosswalked: 8 MAPPED, 27 REDESIGNED, 0 RETIRED, 8 MISSING (documented gaps)."
+          echo "Gaps: project-level comment thread (4), flat /files (3), global admin submissions list (1)."
+          echo "API-07 through API-10 remain OPEN."
