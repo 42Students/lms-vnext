@@ -1,38 +1,52 @@
-name: UI-09 P03 Source Parity (notifications/announcements/discussions)
+name: UI-09 P03 — Source Parity (notifications, announcements, operations)
 
 on:
   push:
     paths:
-      - "src/components/activity/**"
-      - "src/app/(authenticated)/learn/notifications/**"
-      - "src/app/(authenticated)/learn/my-placements/announcements/**"
-      - "src/app/(authenticated)/learn/my-placements/notification-preferences/**"
-      - "src/app/(authenticated)/teacher/notifications/**"
-      - "src/app/(authenticated)/teacher/courses/*/discussions/**"
-      - "src/app/(authenticated)/teacher/courses/*/discussion-history/**"
-      - "src/app/(authenticated)/teacher/courses/*/discussion-participation/**"
-      - "src/app/(authenticated)/mentor/notifications/**"
-      - "src/app/(authenticated)/tpo/notifications/**"
-      - "src/app/(authenticated)/tpo/announcements/**"
-      - "src/app/(authenticated)/tpo/settings/notifications/**"
-      - "src/app/(authenticated)/tpo/placements/jobs/*/discussion/**"
-      - "src/app/(authenticated)/hr/notifications/**"
-      - "src/app/(authenticated)/admin/announcements/**"
-      - "src/app/(authenticated)/admin/notification-delivery/**"
-      - "src/app/(authenticated)/admin/notification-templates/**"
-      - "src/app/(authenticated)/college/announcements/**"
+      - "src/app/(authenticated)/notifications/**"
+      - "src/app/(authenticated)/announcements/**"
+      - "src/app/(authenticated)/discussions/**"
+      - "src/app/(authenticated)/admin/notifications/**"
+      - "src/app/(authenticated)/admin/skills/**"
+      - "src/components/notification*/**"
       - "docs/planning/ui-inventory-ui09.json"
       - "docs/planning/ui-strings-ui09.json"
+      - "tests/ui09-source-parity.test.mjs"
+  pull_request:
+    paths:
+      - "src/app/(authenticated)/notifications/**"
+      - "src/app/(authenticated)/announcements/**"
       - "tests/ui09-source-parity.test.mjs"
   workflow_dispatch:
 
 jobs:
-  ui09-source-parity:
+  ui09-p03-source-parity:
+    name: UI-09 P03 source parity (no browser)
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+
+      - uses: oven-sh/setup-bun@v2
         with:
-          node-version: "22"
+          bun-version: latest
+
+      - name: Install dependencies
+        run: bun install --frozen-lockfile
+
       - name: Run UI-09 source parity test
         run: node --test tests/ui09-source-parity.test.mjs
+
+      - name: Verify inventory and catalogue files exist
+        run: |
+          test -f docs/planning/ui-inventory-ui09.json && echo "inventory OK" || (echo "MISSING: ui-inventory-ui09.json" && exit 1)
+          test -f docs/planning/ui-strings-ui09.json && echo "strings OK" || (echo "MISSING: ui-strings-ui09.json" && exit 1)
+
+      - name: Print surface count
+        run: |
+          node -e "
+            const inv = JSON.parse(require('fs').readFileSync('docs/planning/ui-inventory-ui09.json','utf8'));
+            const cat = JSON.parse(require('fs').readFileSync('docs/planning/ui-strings-ui09.json','utf8'));
+            console.log('Surfaces:', inv.surfaces?.length || inv.totalSurfaces);
+            console.log('Missing:', (inv.surfaces||[]).filter(s => s.disposition === 'MISSING').length);
+            console.log('Strings:', Object.keys(cat.strings||{}).length);
+          "

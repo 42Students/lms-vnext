@@ -816,14 +816,14 @@
       "legacyRoute": "/learn/courses/[courseId]/*",
       "vNextPath": "src/app/(authenticated)/learn/courses/[deliveryId]/page.tsx",
       "vNextRoute": "/learn/courses/[deliveryId]/*",
-      "disposition": "MATCHED",
+      "disposition": "MISSING",
       "tabs": [
         "Overview",
         "Learning Path",
         "Attendance",
         "Discussions"
       ],
-      "notes": "Tab labels are text-only. Active tab from URL (not Redux). layout.tsx absent — tab nav embedded in page.tsx catch-all route."
+      "notes": "Tab labels are text-only. Active tab from URL (not Redux). layout.tsx absent — tab nav embedded in page.tsx catch-all route. NEEDS BUILD: layout.tsx does not exist yet at src/app/(authenticated)/learn/courses/[deliveryId]/layout.tsx"
     },
     {
       "id": "UI04-S51",
@@ -1194,6 +1194,9 @@
       "Key legacy bugs that must NOT be replicated in vNext: P0-1 attendance silent discard, P0-5 all cards navigate to same tab, P0-7 current lesson hardcoded to first, P0-11 learning path has no progress data",
       "Learner course tabs: Overview / Learning Path / Attendance / Discussions",
       "Faculty course tabs: Overview / Blueprint / Students / Attendance / Discussions"
-    ]
+    ],
+    "missing": 1,
+    "matched": 56,
+    "redesigned": 15
   }
 }
