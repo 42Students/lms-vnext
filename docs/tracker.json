@@ -8154,9 +8154,18 @@
             "id": "UI-06-P03",
             "kind": "SOURCE_PARITY_TEST",
             "title": "Source parity test — all surfaces exist on disk, strings match",
-            "done": false,
-            "acceptedAt": null,
-            "acceptanceEvidence": [],
+            "done": true,
+            "acceptedAt": "2026-11-02",
+            "acceptanceEvidence": [
+              {
+                "kind": "EXECUTED_EXACT_CLONE_SOURCE_PARITY_UI_06_P03",
+                "result": "PASS",
+                "commitSha": "2eeb345921",
+                "testFile": "tests/ui06-source-parity.test.mjs",
+                "passCount": 71,
+                "failCount": 0
+              }
+            ],
             "testFile": "tests/ui06-source-parity.test.mjs",
             "ciWorkflow": ".github/workflows/ui06-p03-source-parity.yml",
             "acceptance": "Every MATCHED surface has vNextPath on disk (fs.existsSync). Every string in catalogue has usage in vNext component. Role gates enforced. No MISSING surfaces tolerated — must be built first."
@@ -8253,9 +8262,18 @@
             "id": "UI-07-P03",
             "kind": "SOURCE_PARITY_TEST",
             "title": "Source parity test — all surfaces exist on disk, strings match",
-            "done": false,
-            "acceptedAt": null,
-            "acceptanceEvidence": [],
+            "done": true,
+            "acceptedAt": "2026-11-02",
+            "acceptanceEvidence": [
+              {
+                "kind": "EXECUTED_EXACT_CLONE_SOURCE_PARITY_UI_07_P03",
+                "result": "PASS",
+                "commitSha": "2eeb345921",
+                "testFile": "tests/ui07-source-parity.test.mjs",
+                "passCount": 59,
+                "failCount": 0
+              }
+            ],
             "testFile": "tests/ui07-source-parity.test.mjs",
             "ciWorkflow": ".github/workflows/ui07-p03-source-parity.yml",
             "acceptance": "Every MATCHED surface has vNextPath on disk (fs.existsSync). Every string in catalogue has usage in vNext component. Role gates enforced. No MISSING surfaces tolerated — must be built first."
@@ -8353,9 +8371,18 @@
             "id": "UI-08-P03",
             "kind": "SOURCE_PARITY_TEST",
             "title": "Source parity test — all surfaces exist on disk, strings match",
-            "done": false,
-            "acceptedAt": null,
-            "acceptanceEvidence": [],
+            "done": true,
+            "acceptedAt": "2026-11-02",
+            "acceptanceEvidence": [
+              {
+                "kind": "EXECUTED_EXACT_CLONE_SOURCE_PARITY_UI_08_P03",
+                "result": "PASS",
+                "commitSha": "2eeb345921",
+                "testFile": "tests/ui08-source-parity.test.mjs",
+                "passCount": 29,
+                "failCount": 0
+              }
+            ],
             "testFile": "tests/ui08-source-parity.test.mjs",
             "ciWorkflow": ".github/workflows/ui08-p03-source-parity.yml",
             "acceptance": "Every MATCHED surface has vNextPath on disk (fs.existsSync). Every string in catalogue has usage in vNext component. Role gates enforced. No MISSING surfaces tolerated — must be built first."
