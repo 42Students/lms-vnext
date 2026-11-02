@@ -8,6 +8,7 @@ import {
   type RequestContext,
 } from "@/modules/identity/context";
 import { AuthorizationError, can } from "@/modules/permissions/policy";
+import type { PermissionTransaction } from "@/modules/permissions/persisted-actor";
 import { requireLearnerPlacementAccess } from "./learner-participation-guard";
 import { getOwnLearnerProfileWithRuntime } from "@/modules/people/runtime";
 import {
@@ -40,31 +41,54 @@ function requireLearnerMembership(
   return context.membership;
 }
 
+/** Keep the persisted owner and LEARNER grant locked until a private
+ * preference read, profile projection or consent write has completed.
+ * A request-context role claim is only the preflight, never live authority.
+ */
+async function assertLiveCandidatePreferenceOwner(
+  tx: PermissionTransaction,
+  context: RequestContext,
+  membership: NonNullable<RequestContext["membership"]>,
+) {
+  const [owner] = await tx.select({
+    userId: collegeMemberships.userId,
+    collegeId: collegeMemberships.collegeId,
+    status: collegeMemberships.status,
+  }).from(collegeMemberships)
+    .where(eq(collegeMemberships.id, membership.id)).for("share").limit(1);
+  const [actor] = await tx.select({status: users.platformStatus})
+    .from(users).where(eq(users.id, context.user.id)).for("share").limit(1);
+  const [role] = await tx.select({id: membershipRoles.id})
+    .from(membershipRoles)
+    .where(and(eq(membershipRoles.membershipId, membership.id), eq(membershipRoles.role, "LEARNER")))
+    .for("share").limit(1);
+  if (!owner || owner.userId !== context.user.id ||
+      owner.collegeId !== membership.collegeId || owner.status !== "ACTIVE" ||
+      !actor || actor.status !== "ACTIVE" || !role) {
+    throw new AuthorizationError("placements.read");
+  }
+}
+
 export async function getCandidatePreferences(
   context: RequestContext,
 ) {
   const membership = requireLearnerMembership(context);
   await requireLearnerPlacementAccess(context);
-  const [preferences] = await getDb()
-    .select()
-    .from(placementCandidatePreferences)
-    .where(
-      eq(
-        placementCandidatePreferences.membershipId,
-        membership.id,
-      ),
-    )
-    .limit(1);
-
-  // Missing rows are defaults for the editor, not saved user choices.
-  // Keep the state explicit even when a saved record contains empty arrays.
-  if(preferences)return {...preferences,sourceState:"SAVED" as const};
-  return {
-    membershipId:membership.id,
-    ...DEFAULT_PREFERENCES,
-    createdAt:null,updatedAt:null,
-    sourceState:"DEFAULT_NOT_SAVED" as const,
-  };
+  return getDb().transaction(async tx => {
+    await assertLiveCandidatePreferenceOwner(tx, context, membership);
+    const [preferences] = await tx.select()
+      .from(placementCandidatePreferences)
+      .where(eq(placementCandidatePreferences.membershipId,membership.id))
+      .limit(1);
+    // Missing rows are editor defaults, not fresh notification consent.
+    if(preferences)return {...preferences,sourceState:"SAVED" as const};
+    return {
+      membershipId:membership.id,
+      ...DEFAULT_PREFERENCES,
+      createdAt:null,updatedAt:null,
+      sourceState:"DEFAULT_NOT_SAVED" as const,
+    };
+  });
 }
 
 /** Legacy JobPreferencesDTO read, using the single existing owner for its
@@ -75,10 +99,12 @@ export async function getCandidatePreferences(
 export async function getLegacyJobPreferencesForSelf(context: RequestContext) {
   const member = requireLearnerMembership(context);
   await requireLearnerPlacementAccess(context);
-  const own = await getOwnLearnerProfileWithRuntime(context);
-  if (own.profile.membershipId !== member.id) throw new AuthorizationError("placements.read");
-  const pref = own.profile.profileDocument.jobPreferences;
-  return {
+  return getDb().transaction(async tx => {
+    await assertLiveCandidatePreferenceOwner(tx, context, member);
+    const own = await getOwnLearnerProfileWithRuntime(context);
+    if (own.profile.membershipId !== member.id) throw new AuthorizationError("placements.read");
+    const pref = own.profile.profileDocument.jobPreferences;
+    return {
     rolePreference: pref.rolePreference || null,
     specificRolePreference: pref.specificRolePreference || null,
     workShiftPreference: pref.workShiftPreference || null,
@@ -92,7 +118,8 @@ export async function getLegacyJobPreferencesForSelf(context: RequestContext) {
          "preferredEmploymentCity","examSlotPreference"] as const)
          .filter(key=>!pref[key]),
     ],
-  };
+    };
+  });
 }
 
 export async function upsertCandidatePreferences(
@@ -114,23 +141,7 @@ export async function upsertCandidatePreferences(
   })) throw new AuthorizationError("placements.read");
 
   return getDb().transaction(async (tx) => {
-    const [owner] = await tx.select({
-      userId: collegeMemberships.userId,
-      collegeId: collegeMemberships.collegeId,
-      status: collegeMemberships.status,
-    }).from(collegeMemberships)
-      .where(eq(collegeMemberships.id, membership.id)).for("share").limit(1);
-    const [actor] = await tx.select({status: users.platformStatus})
-      .from(users).where(eq(users.id, context.user.id)).for("share").limit(1);
-    const [role] = await tx.select({id: membershipRoles.id})
-      .from(membershipRoles)
-      .where(and(eq(membershipRoles.membershipId, membership.id), eq(membershipRoles.role, "LEARNER")))
-      .for("share").limit(1);
-    if (!owner || owner.userId !== context.user.id ||
-        owner.collegeId !== membership.collegeId || owner.status !== "ACTIVE" ||
-        !actor || actor.status !== "ACTIVE" || !role) {
-      throw new AuthorizationError("placements.read");
-    }
+    await assertLiveCandidatePreferenceOwner(tx, context, membership);
 
     const [preferences] = await tx.insert(placementCandidatePreferences)
       .values({ membershipId: membership.id, ...writes })
