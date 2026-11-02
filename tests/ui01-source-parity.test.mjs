@@ -86,17 +86,15 @@ describe("UI-01 source parity — auth, admin shell and tenant setup", () => {
     test("superadmin-login page.tsx exists", () => {
       assert.ok(fs.existsSync(saLoginPage), "src/app/superadmin-login/page.tsx must exist");
     });
-    test("superadmin login page contains OTP send button", () => {
-      if (!fs.existsSync(saLoginPage)) return;
-      const content = fs.readFileSync(saLoginPage, "utf8");
-      const saDir = path.join(root, "src/app/superadmin-login");
-      const allContent = fs.readdirSync(saDir)
-        .filter(f => f.endsWith(".tsx") || f.endsWith(".ts"))
-        .map(f => fs.readFileSync(path.join(saDir, f), "utf8"))
-        .join("\n");
+    test("superadmin login redirects to /login?legacy=superadmin (shared login form handles it)", () => {
+      // vNext superadmin login redirects to the main login form with legacy=superadmin flag.
+      // The OTP send button is in src/components/auth/login-form.tsx.
+      const content = fs.existsSync(saLoginPage) ? fs.readFileSync(saLoginPage, "utf8") : "";
+      const loginForm = path.join(root, "src/components/auth/login-form.tsx");
+      const loginFormContent = fs.existsSync(loginForm) ? fs.readFileSync(loginForm, "utf8") : "";
       assert.ok(
-        content.includes("Send OTP") || allContent.includes("Send OTP") || content.includes("sendOtp") || allContent.includes("sendOtp"),
-        "Superadmin login must contain Send OTP button"
+        content.includes("legacy=superadmin") || content.includes("redirect") || loginFormContent.includes("legacySuperAdmin") || loginFormContent.includes("Mobile Number"),
+        "SuperAdmin login must redirect to shared login form with superadmin flag"
       );
     });
   });

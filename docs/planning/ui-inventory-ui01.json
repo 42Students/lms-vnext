@@ -698,7 +698,7 @@
       "roles": ["ALL"],
       "legacyPath": "src/pages/home.js",
       "legacyRoute": "/home OR /",
-      "vNextPath": "src/app/home/page.tsx OR src/app/page.tsx",
+      "vNextPath": "src/app/page.tsx",
       "vNextRoute": "/home OR /",
       "disposition": "MATCHED",
       "notes": "Root redirect to correct portal based on auth state and role."
