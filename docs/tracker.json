@@ -6844,9 +6844,24 @@
             "id": "API-06-P01",
             "kind": "ENDPOINT_CROSSWALK",
             "title": "Legacy endpoint → vNext crosswalk",
-            "done": false,
-            "acceptedAt": null,
-            "acceptanceEvidence": [],
+            "done": true,
+            "acceptedAt": "2026-11-02",
+            "acceptanceEvidence": [
+              {
+                "kind": "EXECUTED_SOURCE_ONLY_API_ENDPOINT_CROSSWALK",
+                "result": "PASS",
+                "exitCode": 0,
+                "commitSha": "e46a19072b4c9059c434cbef4dcc75507d915d5c",
+                "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/41466062076",
+                "jobId": 125347152670,
+                "runner": "GitHub Actions ubuntu-latest Node.js 22",
+                "commands": [
+                  "node --test tests/api06-endpoint-crosswalk.test.mjs"
+                ],
+                "scope": "43 legacy endpoints across 4 controllers (ProjectWorkspaceController, AdminProjectController, AdminProjectTemplateController, AdminRecycleBinController). 8 MAPPED, 27 REDESIGNED, 0 RETIRED, 8 MISSING. 9/9 tests pass.",
+                "boundary": "API-06-P01 source crosswalk only. Integration tests (API-06-P02) and milestone closure remain OPEN."
+              }
+            ],
             "crosswalkFile": "docs/planning/api-crosswalk-api06.json",
             "testFile": "tests/api06-endpoint-crosswalk.test.mjs",
             "ciWorkflow": ".github/workflows/api06-p01-crosswalk.yml",
@@ -7007,9 +7022,24 @@
             "id": "API-09-P01",
             "kind": "ENDPOINT_CROSSWALK",
             "title": "Legacy endpoint → vNext crosswalk",
-            "done": false,
-            "acceptedAt": null,
-            "acceptanceEvidence": [],
+            "done": true,
+            "acceptedAt": "2026-11-02",
+            "acceptanceEvidence": [
+              {
+                "kind": "EXECUTED_SOURCE_ONLY_API_ENDPOINT_CROSSWALK",
+                "result": "PASS",
+                "exitCode": 0,
+                "commitSha": "e3105750d65663b0bb1ea9326c9e9492568f139f",
+                "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/41466181307",
+                "jobId": 125347570636,
+                "runner": "GitHub Actions ubuntu-latest Node.js 22",
+                "commands": [
+                  "node --test tests/api09-endpoint-crosswalk.test.mjs"
+                ],
+                "scope": "45 legacy endpoints classified: 10 MAPPED, 16 REDESIGNED, 0 RETIRED, 19 MISSING. Notifications, announcements, discussions, skills, telegram webhook, SMS logs, admin delivery.",
+                "boundary": "API-09-P01 source-only endpoint crosswalk. Integration tests (P02) and all other milestones remain OPEN."
+              }
+            ],
             "crosswalkFile": "docs/planning/api-crosswalk-api09.json",
             "testFile": "tests/api09-endpoint-crosswalk.test.mjs",
             "ciWorkflow": ".github/workflows/api09-p01-crosswalk.yml",
