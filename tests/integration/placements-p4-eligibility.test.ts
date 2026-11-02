@@ -291,6 +291,36 @@ describe("Placement P4 eligibility", () => {
     );
   });
 
+  it("denies private academic evidence reads with stale manager TPO grant", async () => {
+    await upsertOwnAcademicEvidence(learner,{cgpa:7.7});
+    await pool.query(
+      "DELETE FROM membership_roles WHERE membership_id=$1 AND role='TPO'",
+      [SEED_IDS.facultyCollegeAMembership],
+    );
+    try {
+      await expect(getManagedAcademicEvidence(tpo,SEED_IDS.learnerCollegeAMembership))
+        .rejects.toThrow("Missing permission: placements.manage");
+    } finally {
+      await pool.query(
+        "INSERT INTO membership_roles(membership_id,role) VALUES($1,'TPO') ON CONFLICT DO NOTHING",
+        [SEED_IDS.facultyCollegeAMembership],
+      );
+    }
+  });
+
+  it("denies private academic evidence reads when persisted manager is disabled", async () => {
+    await upsertOwnAcademicEvidence(learner,{cgpa:7.7});
+    await pool.query("UPDATE users SET platform_status='DISABLED' WHERE id=$1",
+      [SEED_IDS.facultyUser]);
+    try {
+      await expect(getManagedAcademicEvidence(tpo,SEED_IDS.learnerCollegeAMembership))
+        .rejects.toThrow("Missing permission: placements.manage");
+    } finally {
+      await pool.query("UPDATE users SET platform_status='ACTIVE' WHERE id=$1",
+        [SEED_IDS.facultyUser]);
+    }
+  });
+
   it("refuses verified evidence after the manager TPO grant is revoked", async () => {
     await pool.query(
       "DELETE FROM membership_roles WHERE membership_id=$1 AND role='TPO'",
