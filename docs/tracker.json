@@ -6583,9 +6583,24 @@
             "id": "API-02-P01",
             "kind": "ENDPOINT_CROSSWALK",
             "title": "Legacy endpoint → vNext crosswalk",
-            "done": false,
-            "acceptedAt": null,
-            "acceptanceEvidence": [],
+            "done": true,
+            "acceptedAt": "2026-11-02",
+            "acceptanceEvidence": [
+              {
+                "kind": "EXECUTED_SOURCE_ONLY_API_ENDPOINT_CROSSWALK",
+                "result": "PASS",
+                "exitCode": 0,
+                "commitSha": "dbd24f3321e2972c0bb21cf93925fe5013d557f7",
+                "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/41465659441",
+                "jobId": 125345729233,
+                "runner": "GitHub Actions ubuntu-latest Node.js 22",
+                "commands": [
+                  "node --test tests/api02-endpoint-crosswalk.test.mjs"
+                ],
+                "scope": "94 legacy endpoints across academics/groups/electives domain. 6 MAPPED, 64 REDESIGNED, 0 RETIRED, 24 MISSING. All vNextPaths verified on disk with fs.existsSync.",
+                "boundary": "API-02-P01 source crosswalk only. Integration tests (API-02-P02) and API-01 remain open."
+              }
+            ],
             "crosswalkFile": "docs/planning/api-crosswalk-api02.json",
             "testFile": "tests/api02-endpoint-crosswalk.test.mjs",
             "ciWorkflow": ".github/workflows/api02-p01-crosswalk.yml",
