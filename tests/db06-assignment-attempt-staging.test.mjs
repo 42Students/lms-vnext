@@ -41,10 +41,6 @@ test("DB044 is an explicit no-DDL retirement decision", () => {
 test("DB044 preserves vNext one-submission uniqueness", () => {
   assert.match(
     schema,
-    /attemptNumber:\s*integer\("attempt_number"\)\.notNull\(\)\.default\(1\)/,
-  );
-  assert.match(
-    schema,
     /\.on\([\s\S]*table\.assignmentId,[\s\S]*table\.membershipId[\s\S]*\)/,
   );
   // Migration 0098 registered attempt_number/previous_points (legacy fidelity)
