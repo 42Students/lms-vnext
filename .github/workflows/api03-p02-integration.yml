@@ -1,0 +1,27 @@
+name: API-03-P02 Integration Gate
+
+on:
+  push:
+    paths:
+      - "tests/api03-integration.test.mjs"
+      - "docs/planning/api-crosswalk-api03.json"
+      - ".github/workflows/api03-p02-integration.yml"
+  workflow_dispatch:
+
+jobs:
+  integration-gate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: "npm"
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run API-03 integration tests
+        run: node --test tests/api03-integration.test.mjs
