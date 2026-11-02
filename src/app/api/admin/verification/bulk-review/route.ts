@@ -3,15 +3,19 @@ import {z} from "zod";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {isSameOriginRequest} from "@/auth/origin";
 import {apiErrorResponse} from "@/lib/api-error";
+import {readBoundedJsonRequest} from "@/lib/bounded-json-request";
 import {VerificationUnavailableError} from "@/modules/verification/staff-auth";
 import {reviewSuperAdminVerificationBulk} from "@/modules/verification/super-admin-bulk-review-service";
 export const runtime="nodejs";
 export async function POST(request:Request){
  if(!isSameOriginRequest(request))return NextResponse.json({error:"INVALID_ORIGIN"},{status:403});
  try{
-  const payload=await request.json();
-  const collegeId=z.uuid().parse(payload?.collegeId);
-  const {collegeId:_,...body}=payload;
+  const _p=await readBoundedJsonRequest(request,16384);
+  if(!_p.ok)return NextResponse.json({error:"INVALID_REQUEST"},{status:400});
+  const payload=_p.value;
+  const payloadObj=payload as Record<string,unknown>;
+  const collegeId=z.uuid().parse(payloadObj.collegeId);
+  const {collegeId:_,...body}=payloadObj;
   const result=await reviewSuperAdminVerificationBulk(await getCurrentRequestContext(),collegeId,body);
   // Every selected learner/section has one explicit persisted result or a
   // specific retry reason. A partial batch never reports unconditional success.

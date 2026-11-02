@@ -15,6 +15,7 @@ import {announcementsRuntimeEnabled} from "@/modules/announcements/readiness";
 import {listSuperAdminBroadcastColleges,publishSuperAdminCollegeBroadcast} from "@/modules/announcements/super-admin-college-broadcast-service";
 import {listAnnouncementsForAdmin} from "@/modules/announcements/service";
 import {parseAnnouncementAdminApiQuery} from "@/modules/announcements/admin-api-query";
+import {readBoundedJsonRequest} from "@/lib/bounded-json-request";
 export const runtime="nodejs";
 
 /** Source broadcast IDs are distinct from individual recipient copies.
@@ -47,8 +48,9 @@ async function scopedBroadcastCopies(context:RequestContext,groupId:string){
  return copies;
 }
 async function groupMutationInput(request:Request){
- let body:unknown;
- try{body=await request.json();}catch{return null;}
+ const _r=await readBoundedJsonRequest(request,16384);
+ if(!_r.ok)return null;
+ const body:unknown=_r.value;
  if(!body||typeof body!=="object"||Array.isArray(body))return null;
  const {broadcastGroupId,...payload}=body as Record<string,unknown>;
  const id=broadcastGroupIdSchema.safeParse(broadcastGroupId);
@@ -121,8 +123,9 @@ export async function POST(request:Request){
  if(!announcementsRuntimeEnabled())return NextResponse.json({error:"DB10_ANNOUNCEMENTS_MIGRATIONS_PENDING"},{status:503});
  if(!isSameOriginRequest(request))return NextResponse.json({error:"INVALID_ORIGIN"},{status:403});
  try{
-  let raw:unknown;
-  try{raw=await request.json();}catch{return NextResponse.json({error:"INVALID_REQUEST"},{status:400});}
+  const _rp=await readBoundedJsonRequest(request,16384);
+  if(!_rp.ok)return NextResponse.json({error:"INVALID_REQUEST"},{status:400});
+  const raw:unknown=_rp.value;
   const result=await publishSuperAdminCollegeBroadcast(
    await getCurrentRequestContext(),normalizeBroadcastComposer(raw));
   return NextResponse.json({status:"CREATED",result,

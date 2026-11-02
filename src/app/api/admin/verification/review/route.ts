@@ -3,6 +3,7 @@ import {z} from "zod";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {isSameOriginRequest} from "@/auth/origin";
 import {apiErrorResponse} from "@/lib/api-error";
+import {readBoundedJsonRequest} from "@/lib/bounded-json-request";
 import {VerificationStateError} from "@/modules/profile-verification/domain";
 import {reviewProfileVerification} from "@/modules/profile-verification/service";
 import {createProfileVerificationRepository} from "@/modules/profile-verification/repository";
@@ -15,7 +16,9 @@ export const runtime="nodejs";
 export async function POST(request:Request){
  if(!isSameOriginRequest(request))return NextResponse.json({error:"INVALID_ORIGIN"},{status:403});
  try{
-  const body=await request.json();
+  const _p=await readBoundedJsonRequest(request,8192);
+  if(!_p.ok)return NextResponse.json({error:"INVALID_REQUEST"},{status:400});
+  const body=_p.value;
   const candidate=z.object({collegeId:z.uuid()}).parse(body);
   const context=await getCurrentRequestContext();
   await requireSuperAdminVerificationCollege(context,candidate.collegeId);

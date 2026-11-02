@@ -1,6 +1,7 @@
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { isSameOriginRequest } from "@/auth/origin";
 import { apiErrorResponse } from "@/lib/api-error";
+import { readBoundedJsonRequest } from "@/lib/bounded-json-request";
 import { CompanyMergeError, mergeSuperAdminCompanies } from "@/modules/placements/admin-company-merge-service";
 
 export const runtime = "nodejs";
@@ -8,9 +9,10 @@ export const runtime = "nodejs";
 export async function POST(request: Request) {
   if (!isSameOriginRequest(request)) return Response.json({error:"INVALID_ORIGIN"},{status:403});
   try {
+    const parsed = await readBoundedJsonRequest(request, 16384);
+    if (!parsed.ok) return Response.json({error:"INVALID_REQUEST"},{status:400});
     const context = await getCurrentRequestContext();
-    const input: unknown = await request.json();
-    const merged = await mergeSuperAdminCompanies(context,input);
+    const merged = await mergeSuperAdminCompanies(context, parsed.value);
     return Response.json({merged});
   } catch (error) {
     if (error instanceof CompanyMergeError) {

@@ -2,6 +2,7 @@ import {NextResponse} from "next/server";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {isSameOriginRequest} from "@/auth/origin";
 import {apiErrorResponse} from "@/lib/api-error";
+import {readBoundedJsonRequest} from "@/lib/bounded-json-request";
 import {createCourseTeachingAssignmentsBatch} from "@/modules/courses/teaching-assignment-batch-service";
 
 export const runtime="nodejs";
@@ -15,9 +16,9 @@ export async function POST(request:Request){
   return NextResponse.json({error:"INVALID_ORIGIN"},{status:403});
  try{
   const context=await getCurrentRequestContext();
-  let body:unknown;
-  try{body=await request.json();}
-  catch{return NextResponse.json({error:"INVALID_REQUEST"},{status:400});}
+  const _p=await readBoundedJsonRequest(request,16384);
+  if(!_p.ok)return NextResponse.json({error:"INVALID_REQUEST"},{status:400});
+  const body:unknown=_p.value;
   if(body&&typeof body==="object"&&!Array.isArray(body)){
     const fields=body as Record<string,unknown>;
     if(fields.courseId!==undefined||fields.courseIds!==undefined)

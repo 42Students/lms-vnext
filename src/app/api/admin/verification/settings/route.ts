@@ -5,6 +5,7 @@ import {getDb} from "@/db/client";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {isSameOriginRequest} from "@/auth/origin";
 import {apiErrorResponse} from "@/lib/api-error";
+import {readBoundedJsonRequest} from "@/lib/bounded-json-request";
 import {profileVerificationSettings} from "@/db/schema/profile-verification";
 import {requireSuperAdminVerificationCollege} from "@/modules/verification/super-admin-scope";
 import {requireVerificationTables,VerificationUnavailableError} from "@/modules/verification/staff-auth";
@@ -14,7 +15,9 @@ export const runtime="nodejs";
 export async function PATCH(request:Request){
  if(!isSameOriginRequest(request))return NextResponse.json({error:"INVALID_ORIGIN"},{status:403});
  try{
-  const input=schema.parse(await request.json());
+  const _p=await readBoundedJsonRequest(request,8192);
+  if(!_p.ok)return NextResponse.json({error:"INVALID_REQUEST"},{status:400});
+  const input=schema.parse(_p.value);
   const context=await getCurrentRequestContext();
   await requireSuperAdminVerificationCollege(context,input.collegeId);
   await requireVerificationTables();
