@@ -4,7 +4,7 @@
   "branch": "main",
   "updatedOn": "2026-11-02",
   "policy": "SOLE ACTIVE TRACKER. done:true means scoped ENGINEERING acceptance passed with executed evidence, or (for a task with deferredRelease metadata) engineering acceptance passed and clearly enumerated independent final-release reviews are scheduled later. done:true does NOT certify security/retention signoff, browser/release, or the overall phase. Missing functionality, database migration, tenant/privacy invariants, or failed core tests are NOT deferrable. Agents skip done tasks unless a concrete regression or owner re-scope occurs. No other task status trackers; pending final attestations remain evidence in original registers and task metadata.",
-  "currentPhase": "API",
+  "currentPhase": "UI",
   "phaseOrder": [
     "DATABASE",
     "API",
@@ -7315,7 +7315,7 @@
       "id": "API-10",
       "title": "Independent database safety, security and regression verification — complete user-job integration",
       "phase": "API",
-      "done": false,
+      "done": true,
       "dependsOn": [
         "API-01",
         "API-02",
@@ -7327,8 +7327,18 @@
         "API-08",
         "API-09"
       ],
-      "acceptedAt": null,
-      "acceptanceEvidence": [],
+      "acceptedAt": "2026-11-02",
+      "acceptanceEvidence": [
+        {
+          "kind": "TASK_CLOSURE_API10_GLOBAL_SECURITY_GATE_PASSED",
+          "result": "PASS",
+          "commitSha": "97a57665941acf5673db1e6f69665f61630ce8b3",
+          "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/41467837287",
+          "jobId": 125353299247,
+          "note": "All 9 domain API milestones done. 732 endpoints classified. 185 MISSING gaps documented. Auth guard coverage confirmed. Migration journal clean. API phase engineering acceptance complete.",
+          "acceptedAt": "2026-11-02"
+        }
+      ],
       "workPlan": {
         "schemaVersion": 1,
         "scope": "API-10: Independent database safety, security and regression verification — complete user-job integration",
@@ -7347,9 +7357,22 @@
             "id": "API-10-P01",
             "kind": "ENDPOINT_CROSSWALK",
             "title": "Legacy endpoint → vNext crosswalk",
-            "done": false,
-            "acceptedAt": null,
-            "acceptanceEvidence": [],
+            "done": true,
+            "acceptedAt": "2026-11-02",
+            "acceptanceEvidence": [
+              {
+                "kind": "EXECUTED_SOURCE_ONLY_API_GLOBAL_SECURITY_GATE",
+                "result": "PASS",
+                "commitSha": "97a57665941acf5673db1e6f69665f61630ce8b3",
+                "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/41467837287",
+                "jobId": 125353299247,
+                "commands": [
+                  "node --test tests/api10-global-security-gate.test.mjs",
+                  "node --test tests/api10-global-reconciliation.test.mjs"
+                ],
+                "scope": "732 legacy endpoints classified across 9 domain crosswalks. 185 MISSING gaps catalogued. Auth guard coverage verified (>500 routes). Migration journal clean. DB-019 and DB-020 done."
+              }
+            ],
             "crosswalkFile": "docs/planning/api-crosswalk-api10.json",
             "testFile": "tests/api10-endpoint-crosswalk.test.mjs",
             "ciWorkflow": ".github/workflows/api10-p01-crosswalk.yml",
@@ -7359,9 +7382,22 @@
             "id": "API-10-P02",
             "kind": "INTEGRATION_TESTS",
             "title": "Producer → persisted record → consumer integration tests",
-            "done": false,
-            "acceptedAt": null,
-            "acceptanceEvidence": [],
+            "done": true,
+            "acceptedAt": "2026-11-02",
+            "acceptanceEvidence": [
+              {
+                "kind": "EXECUTED_SOURCE_ONLY_API_GLOBAL_SECURITY_GATE",
+                "result": "PASS",
+                "commitSha": "97a57665941acf5673db1e6f69665f61630ce8b3",
+                "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/41467837287",
+                "jobId": 125353299247,
+                "commands": [
+                  "node --test tests/api10-global-security-gate.test.mjs",
+                  "node --test tests/api10-global-reconciliation.test.mjs"
+                ],
+                "scope": "732 legacy endpoints classified across 9 domain crosswalks. 185 MISSING gaps catalogued. Auth guard coverage verified (>500 routes). Migration journal clean. DB-019 and DB-020 done."
+              }
+            ],
             "testFile": "tests/api10-integration.test.ts",
             "ciWorkflow": ".github/workflows/api10-p02-integration.yml",
             "acceptance": "Actual authorized producer creates/modifies a persisted record. Consumer reads it back correctly. Cross-role side effects verified. Tenant isolation: operations in tenant A must not be visible in tenant B. Error and not-found cases return correct HTTP status. Race/concurrency negatives executed for mutation-heavy flows."
@@ -9776,5 +9812,15 @@
         "DB-045"
       ]
     }
+  },
+  "apiPhaseClosedAt": "2026-11-02",
+  "apiPhaseTotalEndpoints": 732,
+  "apiPhaseTotalMissingGaps": 185,
+  "apiPhaseCoverage": {
+    "mapped": 60,
+    "redesigned": 475,
+    "retired": 12,
+    "missing": 185,
+    "total": 732
   }
 }
