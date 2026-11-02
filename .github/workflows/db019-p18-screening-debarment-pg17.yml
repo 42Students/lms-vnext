@@ -51,6 +51,12 @@ jobs:
           node-version: 22
           cache: npm
       - run: npm ci
+      - name: DB020 registered vs staged acceptance matrix guard
+        run: node --test tests/db020-ci-matrix-coverage.test.mjs
+      - name: Typecheck screening producers and private read consumers
+        env:
+          NODE_OPTIONS: --max-old-space-size=6144
+        run: npm run typecheck
       - name: Pin exact SHA and validate registered journal
         run: |
           test "$(git rev-parse HEAD)" = "$GITHUB_SHA"
