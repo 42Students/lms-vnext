@@ -3,6 +3,7 @@ import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 
 const workflow = readFileSync(new URL("../.github/workflows/ci.yml", import.meta.url), "utf8");
+const db19P21Workflow = readFileSync(new URL("../.github/workflows/db019-p21-external-offers-pg17.yml", import.meta.url), "utf8");
 const registeredConfig = readFileSync(new URL("../vitest.db.registered.config.ts", import.meta.url), "utf8");
 const db19P18Pg17 = readFileSync(new URL("../tests/integration/placements-db08-registration.test.ts", import.meta.url), "utf8");
 const db19P18ScreeningPg17 = readFileSync(new URL("../tests/integration/placements-p6a-screening.test.ts", import.meta.url), "utf8");
@@ -17,6 +18,9 @@ const expectedSuites = {
     // neither may be replayed in the registered-only PG job.
     "placements-phase2-learner-gates.test.ts",
     "tpo-batch-workspace-db08.test.ts",
+  ],
+  "db019-p21-external-offers-pg17": [
+    "placements-p21-saved-jobs.test.ts",
   ],
   "db10-skills-acceptance": [
     "db10-skills-catalog.test.ts",
@@ -40,6 +44,18 @@ test("registered PG replay excludes exactly the independently exercised staged s
 test("each staged PG suite has an independently running, real SQL-backed job", () => {
   assert.doesNotMatch(workflow, /continue-on-error:\s*true/);
   for (const [name, files] of Object.entries(expectedSuites)) {
+    if (name === "db019-p21-external-offers-pg17") {
+      assert.match(db19P21Workflow, /postgres:17-alpine/, "P21 requires PostgreSQL 17");
+      assert.match(db19P21Workflow, /db:test:prepare/, "P21 requires destructive-test preflight");
+      assert.match(db19P21Workflow, /npm run db:migrate/, "P21 requires registered replay");
+      assert.match(db19P21Workflow, /DB08_ISOLATED_TEST_DATABASE: "1"/);
+      assert.match(db19P21Workflow, /DB03_ISOLATED_TEST_DATABASE: "1"/);
+      for (const suite of files) {
+        assert.ok(db19P21Workflow.includes("tests/integration/" + suite),
+          "excluded from registered replay without independent P21 PG17 witness: " + suite);
+      }
+      continue;
+    }
     const start = workflow.indexOf("  " + name + ":\n");
     assert.ok(start >= 0, "missing CI job: " + name);
     const nextJob = workflow.slice(start + 1).search(/^  [a-z][\w-]*:\s*$/m);
