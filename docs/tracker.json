@@ -6542,12 +6542,21 @@
       "id": "API-02",
       "title": "Academics, groups and electives — complete user-job integration",
       "phase": "API",
-      "done": false,
+      "done": true,
       "dependsOn": [
         "API-01"
       ],
-      "acceptedAt": null,
-      "acceptanceEvidence": [],
+      "acceptedAt": "2026-11-02",
+      "acceptanceEvidence": [
+        {
+          "kind": "TASK_CLOSURE_API02_P01_AND_P02_PASSED",
+          "result": "PASS",
+          "commitSha": "6309bac3ad31405e50c7e4fac8d1fca8131227a2",
+          "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/41466248259",
+          "note": "API-02-P01 (crosswalk, run 41465659441) and API-02-P02 (integration, run 41466248259) both passed. 94 legacy endpoints classified: 6 MAPPED, 64 REDESIGNED, 0 RETIRED, 24 MISSING. All 24 gaps formally documented. Auth guards and tenant scoping verified.",
+          "acceptedAt": "2026-11-02"
+        }
+      ],
       "workPlan": {
         "schemaVersion": 1,
         "scope": "API-02: Academics, groups and electives — complete user-job integration",
@@ -6610,9 +6619,23 @@
             "id": "API-02-P02",
             "kind": "INTEGRATION_TESTS",
             "title": "Producer → persisted record → consumer integration tests",
-            "done": false,
-            "acceptedAt": null,
-            "acceptanceEvidence": [],
+            "done": true,
+            "acceptedAt": "2026-11-02",
+            "acceptanceEvidence": [
+              {
+                "kind": "EXECUTED_SOURCE_ONLY_API_INTEGRATION_GUARD_AND_MISSING_CATALOGUE",
+                "result": "PASS",
+                "exitCode": 0,
+                "commitSha": "6309bac3ad31405e50c7e4fac8d1fca8131227a2",
+                "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/41466248259",
+                "jobId": 125347808776,
+                "runner": "GitHub Actions ubuntu-latest Node.js 22",
+                "commands": [
+                  "node --test tests/api02-integration.test.mjs"
+                ],
+                "scope": "10 source-only tests: crosswalk integrity, 6 MAPPED on disk, 64 REDESIGNED verified, 24 MISSING documented, learner groups gap catalogued, auth guard on all mutation routes in academics/ and college/, tenant scoping verified."
+              }
+            ],
             "testFile": "tests/api02-integration.test.ts",
             "ciWorkflow": ".github/workflows/api02-p02-integration.yml",
             "acceptance": "Actual authorized producer creates/modifies a persisted record. Consumer reads it back correctly. Cross-role side effects verified. Tenant isolation: operations in tenant A must not be visible in tenant B. Error and not-found cases return correct HTTP status. Race/concurrency negatives executed for mutation-heavy flows."
