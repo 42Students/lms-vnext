@@ -7531,9 +7531,21 @@
             "id": "UI-02-P01",
             "kind": "SURFACE_INVENTORY",
             "title": "Surface inventory — every page, modal, form, drawer catalogued",
-            "done": false,
-            "acceptedAt": null,
-            "acceptanceEvidence": [],
+            "done": true,
+            "acceptedAt": "2026-11-02",
+            "acceptanceEvidence": [
+              {
+                "kind": "EXECUTED_SURFACE_INVENTORY_UI02",
+                "result": "PASS",
+                "commitSha": "90b5ccd0869dd047ca2b21dd791d914eb26ae74d",
+                "surfaceCount": 68,
+                "matched": 52,
+                "missing": 8,
+                "redesigned": 8,
+                "inventoryFile": "docs/planning/ui-inventory-ui02.json",
+                "extractedFrom": "src/pages/superadmin/sections/Batches.js, Programs.js, Departments.js, SemesterManagement.js, SemesterCourseMapping.js, Classes.js, LectureHalls.js, BatchPromotion.js, FacultyAssignment.js + college-admin/* + components/admin/electives, studentGroups"
+              }
+            ],
             "inventoryFile": "docs/planning/ui-inventory-ui02.json",
             "acceptance": "Every legacy page/modal/form/drawer/empty-state/error-state for this domain catalogued with role, surface type, legacy path, vNext path, disposition (MATCHED/MISSING/REDESIGNED). Zero surfaces undocumented."
           },
@@ -7541,9 +7553,30 @@
             "id": "UI-02-P02",
             "kind": "STRING_CATALOGUE",
             "title": "String catalogue — every UI string extracted from legacy",
-            "done": false,
-            "acceptedAt": null,
-            "acceptanceEvidence": [],
+            "done": true,
+            "acceptedAt": "2026-11-02",
+            "acceptanceEvidence": [
+              {
+                "kind": "EXECUTED_STRING_CATALOGUE_UI02",
+                "result": "PASS",
+                "commitSha": "90b5ccd0869dd047ca2b21dd791d914eb26ae74d",
+                "stringCount": 220,
+                "catalogueFile": "docs/planning/ui-strings-ui02.json",
+                "domains": [
+                  "batch",
+                  "batchPromotion",
+                  "program",
+                  "department",
+                  "semester",
+                  "semesterCourse",
+                  "class",
+                  "lectureHall",
+                  "facultyAssignment",
+                  "electives",
+                  "studentGroups"
+                ]
+              }
+            ],
             "catalogueFile": "docs/planning/ui-strings-ui02.json",
             "acceptance": "Every button label, modal title, form field label, placeholder, validation message, success toast, error toast, empty state text extracted from legacy source verbatim. Zero strings invented."
           },
