@@ -25,8 +25,8 @@ const DEV_HOST =
   process.env.PLAYWRIGHT_BASE_URL ??
   "https://testa.development.42lms.com";
 
-/** Hardcoded in .env.local; accepted for listed test emails when APP_ENV=development */
-const TEST_OTP = process.env.AUTH_TEST_OTP ?? "135790";
+/** Must be set via AUTH_TEST_OTP env var — matches the value in the cluster vnext-auth secret. */
+const TEST_OTP = process.env.AUTH_TEST_OTP ?? "";
 
 const AUTH_DIR = path.join(__dirname, ".auth");
 
