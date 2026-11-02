@@ -1,0 +1,51 @@
+name: API-07-P01 Placements endpoint crosswalk gate
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'docs/planning/api-crosswalk-api07.json'
+      - 'docs/planning/api-inventory-api07.json'
+      - 'tests/api07-endpoint-crosswalk.test.mjs'
+      - '.github/workflows/api07-p01-crosswalk.yml'
+  workflow_dispatch:
+
+jobs:
+  crosswalk:
+    name: "API07-P01 placements endpoint crosswalk"
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Verify exact commit SHA
+        run: test "$(git rev-parse HEAD)" = "$GITHUB_SHA"
+      - name: Verify crosswalk and inventory files exist
+        run: |
+          test -f docs/planning/api-crosswalk-api07.json || (echo "FAIL: crosswalk file missing" && exit 1)
+          test -f docs/planning/api-inventory-api07.json || (echo "FAIL: inventory file missing" && exit 1)
+      - name: API07-P01 endpoint crosswalk gate
+        run: node --test tests/api07-endpoint-crosswalk.test.mjs
+      - name: Print summary
+        if: always()
+        run: |
+          node -e "
+            const c = JSON.parse(require('fs').readFileSync('docs/planning/api-crosswalk-api07.json','utf8'));
+            const s = c.summary;
+            console.log('=== API-07-P01 CROSSWALK SUMMARY ===');
+            console.log('Total endpoints : ' + s.total);
+            console.log('MAPPED          : ' + s.mapped);
+            console.log('REDESIGNED      : ' + s.redesigned);
+            console.log('RETIRED         : ' + s.retired);
+            console.log('MISSING (gaps)  : ' + s.missing);
+            console.log('Coverage        : ' + Math.round((s.mapped+s.redesigned+s.retired)/s.total*100) + '%');
+          "
+      - name: Scope boundary
+        if: always()
+        run: |
+          echo "API07-P01: Placements endpoint crosswalk only."
+          echo "Integration tests (API07-P02) and other milestones remain OPEN."
