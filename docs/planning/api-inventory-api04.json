@@ -1,0 +1,171 @@
+{
+  "milestoneId": "API-04",
+  "title": "Courses, content, resources and learner progress",
+  "frozenLegacySha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+  "controllers": [
+    {
+      "className": "CourseController",
+      "file": "controller/CourseController.java",
+      "basePath": "/api/v1/course",
+      "endpointCount": 12,
+      "endpoints": [
+        { "method": "POST",   "path": "/create",                     "fullPath": "/api/v1/course/create",                     "handler": "createCourse",              "roles": ["ADMIN"],   "params": ["@RequestBody CourseDTO"], "disposition": "OPEN" },
+        { "method": "GET",    "path": "/getAllCourses",               "fullPath": "/api/v1/course/getAllCourses",               "handler": "getAllCourses",              "roles": ["AUTHENTICATED"], "params": [], "disposition": "OPEN" },
+        { "method": "GET",    "path": "/getById",                    "fullPath": "/api/v1/course/getById",                    "handler": "getCourseById",             "roles": ["AUTHENTICATED"], "params": ["@RequestParam courseId"], "disposition": "OPEN" },
+        { "method": "GET",    "path": "/getByProgramId",             "fullPath": "/api/v1/course/getByProgramId",             "handler": "getCoursesByProgramId",     "roles": ["AUTHENTICATED"], "params": ["@RequestParam programId"], "disposition": "OPEN" },
+        { "method": "GET",    "path": "/getBySemesterId",            "fullPath": "/api/v1/course/getBySemesterId",            "handler": "getCoursesBySemesterId",    "roles": ["AUTHENTICATED"], "params": ["@RequestParam semesterId"], "disposition": "OPEN" },
+        { "method": "PUT",    "path": "/update/{id}",                "fullPath": "/api/v1/course/update/{id}",                "handler": "updateCourse",              "roles": ["ADMIN"],   "params": ["@PathVariable id"], "disposition": "OPEN" },
+        { "method": "DELETE", "path": "/delete/{id}",                "fullPath": "/api/v1/course/delete/{id}",                "handler": "deleteCourse",              "roles": ["ADMIN"],   "params": ["@PathVariable id"], "disposition": "OPEN" },
+        { "method": "GET",    "path": "/getCoursesForClassBySemester","fullPath": "/api/v1/course/getCoursesForClassBySemester","handler": "getCoursesForClassBySemester","roles": ["ADMIN"], "params": ["@RequestParam classId", "@RequestParam semesterNumber"], "disposition": "OPEN" },
+        { "method": "GET",    "path": "/getCoursesByDeptId",         "fullPath": "/api/v1/course/getCoursesByDeptId",         "handler": "getCoursesByDeptId",        "roles": ["ADMIN"],   "params": ["@RequestParam deptId"], "disposition": "OPEN" },
+        { "method": "GET",    "path": "/getCoursesWithDetails",      "fullPath": "/api/v1/course/getCoursesWithDetails",      "handler": "getCoursesWithDetails",     "roles": ["ADMIN"],   "params": [], "disposition": "OPEN" },
+        { "method": "GET",    "path": "/getCoursesByCollegeId",      "fullPath": "/api/v1/course/getCoursesByCollegeId",      "handler": "getCoursesByCollegeId",     "roles": ["ADMIN"],   "params": ["@RequestParam collegeId"], "disposition": "OPEN" },
+        { "method": "GET",    "path": "/getCourseWithContent",       "fullPath": "/api/v1/course/getCourseWithContent",       "handler": "getCourseWithContent",      "roles": ["AUTHENTICATED"], "params": ["@RequestParam courseId"], "disposition": "OPEN" }
+      ]
+    },
+    {
+      "className": "LessonController",
+      "file": "controller/LessonController.java",
+      "basePath": "/api/v1/lesson",
+      "endpointCount": 8,
+      "endpoints": [
+        { "method": "POST",   "path": "/create",          "fullPath": "/api/v1/lesson/create",          "handler": "createLesson",        "roles": ["ADMIN"],   "params": ["@RequestBody LessonDTO"], "disposition": "OPEN" },
+        { "method": "GET",    "path": "/getAllLessons",    "fullPath": "/api/v1/lesson/getAllLessons",    "handler": "getAllLessons",        "roles": ["AUTHENTICATED"], "params": [], "disposition": "OPEN" },
+        { "method": "GET",    "path": "/getById",         "fullPath": "/api/v1/lesson/getById",         "handler": "getLessonById",       "roles": ["AUTHENTICATED"], "params": ["@RequestParam lessonId"], "disposition": "OPEN" },
+        { "method": "GET",    "path": "/getByCourseId",   "fullPath": "/api/v1/lesson/getByCourseId",   "handler": "getLessonsByCourseId","roles": ["AUTHENTICATED"], "params": ["@RequestParam courseId"], "disposition": "OPEN" },
+        { "method": "PUT",    "path": "/update/{id}",     "fullPath": "/api/v1/lesson/update/{id}",     "handler": "updateLesson",        "roles": ["ADMIN"],   "params": ["@PathVariable id"], "disposition": "OPEN" },
+        { "method": "DELETE", "path": "/delete/{id}",     "fullPath": "/api/v1/lesson/delete/{id}",     "handler": "deleteLesson",        "roles": ["ADMIN"],   "params": ["@PathVariable id"], "disposition": "OPEN" },
+        { "method": "POST",   "path": "/reorder",         "fullPath": "/api/v1/lesson/reorder",         "handler": "reorderLessons",      "roles": ["ADMIN"],   "params": ["@RequestBody ReorderDTO"], "disposition": "OPEN" },
+        { "method": "GET",    "path": "/getLessonWithContent","fullPath": "/api/v1/lesson/getLessonWithContent","handler": "getLessonWithContent","roles": ["AUTHENTICATED"], "params": ["@RequestParam lessonId"], "disposition": "OPEN" }
+      ]
+    },
+    {
+      "className": "LessonContentController",
+      "file": "controller/LessonContentController.java",
+      "basePath": "/api/v1/lesson-content",
+      "endpointCount": 7,
+      "endpoints": [
+        { "method": "POST",   "path": "/create",          "fullPath": "/api/v1/lesson-content/create",          "handler": "createContent",   "roles": ["ADMIN"],   "params": [], "disposition": "OPEN" },
+        { "method": "GET",    "path": "/getByLessonId",   "fullPath": "/api/v1/lesson-content/getByLessonId",   "handler": "getByLesson",     "roles": ["AUTHENTICATED"], "params": ["@RequestParam lessonId"], "disposition": "OPEN" },
+        { "method": "GET",    "path": "/getById",         "fullPath": "/api/v1/lesson-content/getById",         "handler": "getById",         "roles": ["AUTHENTICATED"], "params": ["@RequestParam id"], "disposition": "OPEN" },
+        { "method": "PUT",    "path": "/update/{id}",     "fullPath": "/api/v1/lesson-content/update/{id}",     "handler": "updateContent",   "roles": ["ADMIN"],   "params": ["@PathVariable id"], "disposition": "OPEN" },
+        { "method": "DELETE", "path": "/delete/{id}",     "fullPath": "/api/v1/lesson-content/delete/{id}",     "handler": "deleteContent",   "roles": ["ADMIN"],   "params": ["@PathVariable id"], "disposition": "OPEN" },
+        { "method": "POST",   "path": "/reorder",         "fullPath": "/api/v1/lesson-content/reorder",         "handler": "reorder",         "roles": ["ADMIN"],   "params": [], "disposition": "OPEN" },
+        { "method": "POST",   "path": "/bulk-create",     "fullPath": "/api/v1/lesson-content/bulk-create",     "handler": "bulkCreate",      "roles": ["ADMIN"],   "params": [], "disposition": "OPEN" }
+      ]
+    },
+    {
+      "className": "FacultyLessonContentController",
+      "file": "controller/FacultyLessonContentController.java",
+      "basePath": "/api/v1/faculty/lesson-content",
+      "endpointCount": 5,
+      "endpoints": [
+        { "method": "POST",   "path": "/create",          "fullPath": "/api/v1/faculty/lesson-content/create",        "handler": "createContent",      "roles": ["FACULTY"], "params": [], "disposition": "OPEN" },
+        { "method": "GET",    "path": "/getByLessonId",   "fullPath": "/api/v1/faculty/lesson-content/getByLessonId",  "handler": "getByLesson",        "roles": ["FACULTY"], "params": ["@RequestParam lessonId"], "disposition": "OPEN" },
+        { "method": "PUT",    "path": "/update/{id}",     "fullPath": "/api/v1/faculty/lesson-content/update/{id}",    "handler": "updateContent",      "roles": ["FACULTY"], "params": ["@PathVariable id"], "disposition": "OPEN" },
+        { "method": "DELETE", "path": "/delete/{id}",     "fullPath": "/api/v1/faculty/lesson-content/delete/{id}",    "handler": "deleteContent",      "roles": ["FACULTY"], "params": ["@PathVariable id"], "disposition": "OPEN" },
+        { "method": "POST",   "path": "/reorder",         "fullPath": "/api/v1/faculty/lesson-content/reorder",        "handler": "reorder",            "roles": ["FACULTY"], "params": [], "disposition": "OPEN" }
+      ]
+    },
+    {
+      "className": "AdminCourseBulkController",
+      "file": "controller/AdminCourseBulkController.java",
+      "basePath": "/api/v1/admin/courses/bulk",
+      "endpointCount": 4,
+      "endpoints": [
+        { "method": "POST", "path": "/validate",  "fullPath": "/api/v1/admin/courses/bulk/validate",  "handler": "validateBulk",  "roles": ["ADMIN"], "params": [], "disposition": "OPEN" },
+        { "method": "POST", "path": "/import",    "fullPath": "/api/v1/admin/courses/bulk/import",    "handler": "importBulk",    "roles": ["ADMIN"], "params": [], "disposition": "OPEN" },
+        { "method": "GET",  "path": "/batches",   "fullPath": "/api/v1/admin/courses/bulk/batches",   "handler": "listBatches",   "roles": ["ADMIN"], "params": [], "disposition": "OPEN" },
+        { "method": "POST", "path": "/batches/{batchId}/undo","fullPath": "/api/v1/admin/courses/bulk/batches/{batchId}/undo","handler": "undoBatch","roles": ["ADMIN"], "params": ["@PathVariable batchId"], "disposition": "OPEN" }
+      ]
+    },
+    {
+      "className": "AdminLessonBulkController",
+      "file": "controller/AdminLessonBulkController.java",
+      "basePath": "/api/v1/admin/lessons/bulk",
+      "endpointCount": 4,
+      "endpoints": [
+        { "method": "POST", "path": "/validate",  "fullPath": "/api/v1/admin/lessons/bulk/validate",  "handler": "validateBulk",  "roles": ["ADMIN"], "params": [], "disposition": "OPEN" },
+        { "method": "POST", "path": "/import",    "fullPath": "/api/v1/admin/lessons/bulk/import",    "handler": "importBulk",    "roles": ["ADMIN"], "params": [], "disposition": "OPEN" },
+        { "method": "GET",  "path": "/batches",   "fullPath": "/api/v1/admin/lessons/bulk/batches",   "handler": "listBatches",   "roles": ["ADMIN"], "params": [], "disposition": "OPEN" },
+        { "method": "POST", "path": "/batches/{batchId}/undo","fullPath": "/api/v1/admin/lessons/bulk/batches/{batchId}/undo","handler": "undoBatch","roles": ["ADMIN"], "params": ["@PathVariable batchId"], "disposition": "OPEN" }
+      ]
+    },
+    {
+      "className": "AdminLearnerProgressController",
+      "file": "controller/AdminLearnerProgressController.java",
+      "basePath": "/api/v1/admin/learner-progress",
+      "endpointCount": 5,
+      "endpoints": [
+        { "method": "GET",  "path": "/by-course",    "fullPath": "/api/v1/admin/learner-progress/by-course",    "handler": "getByCourse",        "roles": ["ADMIN"], "params": ["@RequestParam courseId"], "disposition": "OPEN" },
+        { "method": "GET",  "path": "/by-learner",   "fullPath": "/api/v1/admin/learner-progress/by-learner",   "handler": "getByLearner",       "roles": ["ADMIN"], "params": ["@RequestParam learnerId"], "disposition": "OPEN" },
+        { "method": "GET",  "path": "/by-batch",     "fullPath": "/api/v1/admin/learner-progress/by-batch",     "handler": "getByBatch",         "roles": ["ADMIN"], "params": ["@RequestParam batchId"], "disposition": "OPEN" },
+        { "method": "POST", "path": "/mark-complete","fullPath": "/api/v1/admin/learner-progress/mark-complete","handler": "markComplete",       "roles": ["ADMIN"], "params": [], "disposition": "OPEN" },
+        { "method": "POST", "path": "/reset",        "fullPath": "/api/v1/admin/learner-progress/reset",        "handler": "resetProgress",      "roles": ["ADMIN"], "params": [], "disposition": "OPEN" }
+      ]
+    },
+    {
+      "className": "AdminCourseProgressController",
+      "file": "controller/AdminCourseProgressController.java",
+      "basePath": "/api/v1/admin/course-progress",
+      "endpointCount": 4,
+      "endpoints": [
+        { "method": "GET",  "path": "/summary",        "fullPath": "/api/v1/admin/course-progress/summary",        "handler": "getSummary",       "roles": ["ADMIN"], "params": [], "disposition": "OPEN" },
+        { "method": "GET",  "path": "/by-course",      "fullPath": "/api/v1/admin/course-progress/by-course",      "handler": "getByCourse",      "roles": ["ADMIN"], "params": ["@RequestParam courseId"], "disposition": "OPEN" },
+        { "method": "GET",  "path": "/by-batch",       "fullPath": "/api/v1/admin/course-progress/by-batch",       "handler": "getByBatch",       "roles": ["ADMIN"], "params": ["@RequestParam batchId"], "disposition": "OPEN" },
+        { "method": "GET",  "path": "/completion-rate","fullPath": "/api/v1/admin/course-progress/completion-rate","handler": "getCompletionRate","roles": ["ADMIN"], "params": [], "disposition": "OPEN" }
+      ]
+    },
+    {
+      "className": "StudentCourseController",
+      "file": "controller/StudentCourseController.java",
+      "basePath": "/api/v1/student/courses",
+      "endpointCount": 6,
+      "endpoints": [
+        { "method": "GET",  "path": "/my-courses",         "fullPath": "/api/v1/student/courses/my-courses",         "handler": "getMyCourses",        "roles": ["LEARNER"], "params": [], "disposition": "OPEN" },
+        { "method": "GET",  "path": "/{courseId}",          "fullPath": "/api/v1/student/courses/{courseId}",          "handler": "getCourse",           "roles": ["LEARNER"], "params": ["@PathVariable courseId"], "disposition": "OPEN" },
+        { "method": "GET",  "path": "/{courseId}/lessons",  "fullPath": "/api/v1/student/courses/{courseId}/lessons",  "handler": "getCourseLessons",    "roles": ["LEARNER"], "params": ["@PathVariable courseId"], "disposition": "OPEN" },
+        { "method": "POST", "path": "/{courseId}/progress", "fullPath": "/api/v1/student/courses/{courseId}/progress", "handler": "updateProgress",      "roles": ["LEARNER"], "params": ["@PathVariable courseId"], "disposition": "OPEN" },
+        { "method": "GET",  "path": "/{courseId}/progress", "fullPath": "/api/v1/student/courses/{courseId}/progress", "handler": "getProgress",         "roles": ["LEARNER"], "params": ["@PathVariable courseId"], "disposition": "OPEN" },
+        { "method": "GET",  "path": "/dashboard",           "fullPath": "/api/v1/student/courses/dashboard",           "handler": "getDashboard",        "roles": ["LEARNER"], "params": [], "disposition": "OPEN" }
+      ]
+    },
+    {
+      "className": "ResourceUploadController",
+      "file": "controller/ResourceUploadController.java",
+      "basePath": "/api/v1/resources",
+      "endpointCount": 5,
+      "endpoints": [
+        { "method": "POST", "path": "/upload",        "fullPath": "/api/v1/resources/upload",        "handler": "upload",       "roles": ["AUTHENTICATED"], "params": ["@RequestParam file"], "disposition": "OPEN" },
+        { "method": "GET",  "path": "/{id}",          "fullPath": "/api/v1/resources/{id}",          "handler": "getById",      "roles": ["AUTHENTICATED"], "params": ["@PathVariable id"], "disposition": "OPEN" },
+        { "method": "GET",  "path": "/by-lesson",     "fullPath": "/api/v1/resources/by-lesson",     "handler": "getByLesson",  "roles": ["AUTHENTICATED"], "params": ["@RequestParam lessonId"], "disposition": "OPEN" },
+        { "method": "DELETE","path": "/{id}",          "fullPath": "/api/v1/resources/{id}",          "handler": "delete",       "roles": ["ADMIN"],         "params": ["@PathVariable id"], "disposition": "OPEN" },
+        { "method": "GET",  "path": "/download/{id}", "fullPath": "/api/v1/resources/download/{id}", "handler": "download",     "roles": ["AUTHENTICATED"], "params": ["@PathVariable id"], "disposition": "OPEN" }
+      ]
+    },
+    {
+      "className": "ResourceFileController",
+      "file": "controller/ResourceFileController.java",
+      "basePath": "/api/v1/resource-files",
+      "endpointCount": 4,
+      "endpoints": [
+        { "method": "POST", "path": "/create",    "fullPath": "/api/v1/resource-files/create",    "handler": "create",   "roles": ["ADMIN"], "params": [], "disposition": "OPEN" },
+        { "method": "GET",  "path": "/{id}",      "fullPath": "/api/v1/resource-files/{id}",      "handler": "getById",  "roles": ["AUTHENTICATED"], "params": ["@PathVariable id"], "disposition": "OPEN" },
+        { "method": "PUT",  "path": "/{id}",      "fullPath": "/api/v1/resource-files/{id}",      "handler": "update",   "roles": ["ADMIN"], "params": ["@PathVariable id"], "disposition": "OPEN" },
+        { "method": "DELETE","path": "/{id}",     "fullPath": "/api/v1/resource-files/{id}",      "handler": "delete",   "roles": ["ADMIN"], "params": ["@PathVariable id"], "disposition": "OPEN" }
+      ]
+    },
+    {
+      "className": "FileUploadController",
+      "file": "controller/FileUploadController.java",
+      "basePath": "/api/v1/files",
+      "endpointCount": 3,
+      "endpoints": [
+        { "method": "POST", "path": "/upload",    "fullPath": "/api/v1/files/upload",    "handler": "upload",    "roles": ["AUTHENTICATED"], "params": ["@RequestParam file"], "disposition": "OPEN" },
+        { "method": "GET",  "path": "/{key}",     "fullPath": "/api/v1/files/{key}",     "handler": "getFile",   "roles": ["AUTHENTICATED"], "params": ["@PathVariable key"], "disposition": "OPEN" },
+        { "method": "DELETE","path": "/{key}",    "fullPath": "/api/v1/files/{key}",     "handler": "delete",    "roles": ["ADMIN"],         "params": ["@PathVariable key"], "disposition": "OPEN" }
+      ]
+    }
+  ],
+  "totalEndpoints": 67
+}

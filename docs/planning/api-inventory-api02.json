@@ -1,0 +1,182 @@
+{
+  "milestoneId": "API-02",
+  "title": "Academics, groups and electives — complete user-job integration",
+  "frozenLegacySha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+  "controllers": [
+    {
+      "className": "BatchController",
+      "file": "controller/BatchController.java",
+      "basePath": "/api/v1/batch",
+      "endpointCount": 10,
+      "endpoints": [
+        { "method": "POST",   "path": "/create",                  "fullPath": "/api/v1/batch/create",                  "handler": "createBatch",           "roles": ["ADMIN"], "params": ["@RequestBody BatchRequestDTO"], "disposition": "OPEN" },
+        { "method": "GET",    "path": "/getBranchDetailsById",    "fullPath": "/api/v1/batch/getBranchDetailsById",    "handler": "getBranchDetailsById",  "roles": ["AUTHENTICATED"], "params": ["@RequestParam batchId"], "disposition": "OPEN" },
+        { "method": "GET",    "path": "/fetch",                   "fullPath": "/api/v1/batch/fetch",                   "handler": "fetchAllBatches",       "roles": ["AUTHENTICATED"], "params": [], "disposition": "OPEN" },
+        { "method": "GET",    "path": "/fetchByProgram",          "fullPath": "/api/v1/batch/fetchByProgram",          "handler": "fetchBatchesByProgram", "roles": ["AUTHENTICATED"], "params": ["@RequestParam programId"], "disposition": "OPEN" },
+        { "method": "GET",    "path": "/fetchByCollege",          "fullPath": "/api/v1/batch/fetchByCollege",          "handler": "fetchBatchesByCollege", "roles": ["ADMIN"], "params": ["@RequestParam collegeId"], "disposition": "OPEN" },
+        { "method": "POST",   "path": "/{batchId}/promote",       "fullPath": "/api/v1/batch/{batchId}/promote",       "handler": "promoteBatch",          "roles": ["ADMIN"], "params": ["@PathVariable batchId"], "disposition": "OPEN" },
+        { "method": "GET",    "path": "/{batchId}/promote/preview","fullPath": "/api/v1/batch/{batchId}/promote/preview","handler": "previewPromotion",     "roles": ["ADMIN"], "params": ["@PathVariable batchId"], "disposition": "OPEN" },
+        { "method": "PUT",    "path": "/{batchId}/semester",      "fullPath": "/api/v1/batch/{batchId}/semester",      "handler": "updateCurrentSemester", "roles": ["ADMIN"], "params": ["@PathVariable batchId"], "disposition": "OPEN" },
+        { "method": "PUT",    "path": "/update/{id}",             "fullPath": "/api/v1/batch/update/{id}",             "handler": "updateBatch",           "roles": ["ADMIN"], "params": ["@PathVariable id"], "disposition": "OPEN" },
+        { "method": "DELETE", "path": "/delete/{id}",             "fullPath": "/api/v1/batch/delete/{id}",             "handler": "deleteBatch",           "roles": ["ADMIN"], "params": ["@PathVariable id"], "disposition": "OPEN" }
+      ]
+    },
+    {
+      "className": "ClassController",
+      "file": "controller/ClassController.java",
+      "basePath": "/api/v1/class",
+      "endpointCount": 7,
+      "endpoints": [
+        { "method": "POST",   "path": "/create",                    "fullPath": "/api/v1/class/create",                    "handler": "registerClass",          "roles": ["ADMIN"], "params": ["@RequestBody ClassDTO"], "disposition": "OPEN" },
+        { "method": "GET",    "path": "/getClass",                  "fullPath": "/api/v1/class/getClass",                  "handler": "getClass",               "roles": ["AUTHENTICATED"], "params": ["classId"], "disposition": "OPEN" },
+        { "method": "GET",    "path": "/getClassesByProgram",       "fullPath": "/api/v1/class/getClassesByProgram",       "handler": "getClassesByProgram",    "roles": ["AUTHENTICATED"], "params": ["@RequestParam programId"], "disposition": "OPEN" },
+        { "method": "GET",    "path": "/getClassesByCollege",       "fullPath": "/api/v1/class/getClassesByCollege",       "handler": "getClassesByCollege",    "roles": ["ADMIN"], "params": ["@RequestParam collegeId"], "disposition": "OPEN" },
+        { "method": "PUT",    "path": "/update/{id}",               "fullPath": "/api/v1/class/update/{id}",               "handler": "updateClass",            "roles": ["ADMIN"], "params": ["@PathVariable id", "@RequestBody ClassDTO"], "disposition": "OPEN" },
+        { "method": "DELETE", "path": "/delete/{id}",               "fullPath": "/api/v1/class/delete/{id}",               "handler": "deleteClass",            "roles": ["ADMIN"], "params": ["@PathVariable id"], "disposition": "OPEN" },
+        { "method": "GET",    "path": "/getClassesByCollegePaged",  "fullPath": "/api/v1/class/getClassesByCollegePaged",  "handler": "getClassesByCollegePaged","roles": ["ADMIN"], "params": ["@RequestParam collegeId"], "disposition": "OPEN" }
+      ]
+    },
+    {
+      "className": "SemesterController",
+      "file": "controller/SemesterController.java",
+      "basePath": "/api/v1/semester",
+      "endpointCount": 14,
+      "endpoints": [
+        { "method": "POST",   "path": "/create",                      "fullPath": "/api/v1/semester/create",                      "handler": "createSemester",         "roles": ["ADMIN"], "params": ["@RequestBody SemesterDTO"], "disposition": "OPEN" },
+        { "method": "PUT",    "path": "/update/{id}",                 "fullPath": "/api/v1/semester/update/{id}",                 "handler": "updateSemester",         "roles": ["ADMIN"], "params": ["@PathVariable id", "@RequestBody SemesterDTO"], "disposition": "OPEN" },
+        { "method": "DELETE", "path": "/delete/{id}",                 "fullPath": "/api/v1/semester/delete/{id}",                 "handler": "deleteSemester",         "roles": ["ADMIN"], "params": ["@PathVariable id"], "disposition": "OPEN" },
+        { "method": "GET",    "path": "/fetch/{id}",                  "fullPath": "/api/v1/semester/fetch/{id}",                  "handler": "getSemesterById",        "roles": ["AUTHENTICATED"], "params": ["@PathVariable id"], "disposition": "OPEN" },
+        { "method": "GET",    "path": "/fetchByProgram",              "fullPath": "/api/v1/semester/fetchByProgram",              "handler": "getSemestersByProgram",  "roles": ["AUTHENTICATED"], "params": ["@RequestParam programId"], "disposition": "OPEN" },
+        { "method": "GET",    "path": "/fetchAll",                    "fullPath": "/api/v1/semester/fetchAll",                    "handler": "getAllSemesters",         "roles": ["AUTHENTICATED"], "params": [], "disposition": "OPEN" },
+        { "method": "POST",   "path": "/{semesterId}/courses",        "fullPath": "/api/v1/semester/{semesterId}/courses",        "handler": "addCourseToSemester",    "roles": ["ADMIN"], "params": ["@PathVariable semesterId"], "disposition": "OPEN" },
+        { "method": "POST",   "path": "/{semesterId}/courses/bulk",   "fullPath": "/api/v1/semester/{semesterId}/courses/bulk",   "handler": "addCoursesToSemester",   "roles": ["ADMIN"], "params": ["@PathVariable semesterId"], "disposition": "OPEN" },
+        { "method": "DELETE", "path": "/{semesterId}/courses/{courseId}","fullPath": "/api/v1/semester/{semesterId}/courses/{courseId}","handler": "removeCourseFromSemester","roles": ["ADMIN"], "params": ["@PathVariable semesterId", "@PathVariable courseId"], "disposition": "OPEN" },
+        { "method": "GET",    "path": "/{semesterId}/courses",        "fullPath": "/api/v1/semester/{semesterId}/courses",        "handler": "getCoursesInSemester",   "roles": ["AUTHENTICATED"], "params": ["@PathVariable semesterId"], "disposition": "OPEN" },
+        { "method": "GET",    "path": "/{semesterId}/staffing",       "fullPath": "/api/v1/semester/{semesterId}/staffing",       "handler": "getSemesterStaffing",    "roles": ["ADMIN"], "params": ["@PathVariable semesterId"], "disposition": "OPEN" },
+        { "method": "PUT",    "path": "/{semesterId}/courses/reorder","fullPath": "/api/v1/semester/{semesterId}/courses/reorder","handler": "reorderSemesterCourses", "roles": ["ADMIN"], "params": ["@PathVariable semesterId"], "disposition": "OPEN" },
+        { "method": "PUT",    "path": "/courses/{id}",                "fullPath": "/api/v1/semester/courses/{id}",                "handler": "updateSemesterCourse",   "roles": ["ADMIN"], "params": ["@PathVariable id"], "disposition": "OPEN" },
+        { "method": "GET",    "path": "/fetchAllPaged",               "fullPath": "/api/v1/semester/fetchAllPaged",               "handler": "getAllSemestersPaged",   "roles": ["ADMIN"], "params": [], "disposition": "OPEN" }
+      ]
+    },
+    {
+      "className": "ProgramController",
+      "file": "controller/ProgramController.java",
+      "basePath": "/api/v1/program",
+      "endpointCount": 4,
+      "endpoints": [
+        { "method": "POST", "path": "/create",              "fullPath": "/api/v1/program/create",              "handler": "createProgram",        "roles": ["ADMIN"], "params": ["@RequestBody ProgramDTO"], "disposition": "OPEN" },
+        { "method": "GET",  "path": "/fetchAllPrograms",    "fullPath": "/api/v1/program/fetchAllPrograms",    "handler": "fetchAllPrograms",     "roles": ["AUTHENTICATED"], "params": ["@RequestParam deptId"], "disposition": "OPEN" },
+        { "method": "GET",  "path": "/fetchProgramDetails", "fullPath": "/api/v1/program/fetchProgramDetails", "handler": "fetchProgramDetails",  "roles": ["AUTHENTICATED"], "params": ["@RequestParam programId"], "disposition": "OPEN" },
+        { "method": "GET",  "path": "/getProgramsByCollege","fullPath": "/api/v1/program/getProgramsByCollege", "handler": "getProgramsByCollege", "roles": ["ADMIN"], "params": ["@RequestParam collegeId"], "disposition": "OPEN" }
+      ]
+    },
+    {
+      "className": "ProgramStructureController",
+      "file": "controller/ProgramStructureController.java",
+      "basePath": "/api/v1/program-structure",
+      "endpointCount": 7,
+      "endpoints": [
+        { "method": "POST",   "path": "/create",            "fullPath": "/api/v1/program-structure/create",            "handler": "createProgramStructure", "roles": ["ADMIN"], "params": ["@RequestBody NewProgramStructureDTO"], "disposition": "OPEN" },
+        { "method": "PUT",    "path": "/update/{id}",       "fullPath": "/api/v1/program-structure/update/{id}",       "handler": "updateProgramStructure", "roles": ["ADMIN"], "params": ["@PathVariable id", "@RequestBody NewProgramStructureDTO"], "disposition": "OPEN" },
+        { "method": "DELETE", "path": "/delete/{id}",       "fullPath": "/api/v1/program-structure/delete/{id}",       "handler": "deleteProgramStructure", "roles": ["ADMIN"], "params": ["@PathVariable id"], "disposition": "OPEN" },
+        { "method": "GET",    "path": "/fetchAll",           "fullPath": "/api/v1/program-structure/fetchAll",           "handler": "fetchAll",               "roles": ["AUTHENTICATED"], "params": [], "disposition": "OPEN" },
+        { "method": "GET",    "path": "/fetchAllSemesters",  "fullPath": "/api/v1/program-structure/fetchAllSemesters",  "handler": "fetchAllSemesters",      "roles": ["AUTHENTICATED"], "params": ["@RequestParam programId"], "disposition": "OPEN" },
+        { "method": "PUT",    "path": "/updateStatus",       "fullPath": "/api/v1/program-structure/updateStatus",       "handler": "updateStatus",           "roles": ["ADMIN"], "params": [], "disposition": "OPEN" },
+        { "method": "GET",    "path": "/fetchActiveSemesters","fullPath": "/api/v1/program-structure/fetchActiveSemesters","handler": "fetchActiveSemesters",  "roles": ["AUTHENTICATED"], "params": [], "disposition": "OPEN" }
+      ]
+    },
+    {
+      "className": "NewProgramController",
+      "file": "controller/NewProgramController.java",
+      "basePath": "/api/v1/new-program",
+      "endpointCount": 9,
+      "endpoints": [
+        { "method": "POST",   "path": "/create",              "fullPath": "/api/v1/new-program/create",              "handler": "createProgram",       "roles": ["ADMIN"], "params": ["@RequestBody NewProgramDTO"], "disposition": "OPEN" },
+        { "method": "GET",    "path": "/fetchAll",             "fullPath": "/api/v1/new-program/fetchAll",             "handler": "fetchAllPrograms",    "roles": ["AUTHENTICATED"], "params": [], "disposition": "OPEN" },
+        { "method": "GET",    "path": "/fetchByDept",          "fullPath": "/api/v1/new-program/fetchByDept",          "handler": "fetchByDepartment",   "roles": ["AUTHENTICATED"], "params": ["@RequestParam deptId"], "disposition": "OPEN" },
+        { "method": "GET",    "path": "/fetchByCollege",       "fullPath": "/api/v1/new-program/fetchByCollege",       "handler": "fetchByCollege",      "roles": ["ADMIN"], "params": ["@RequestParam collegeId"], "disposition": "OPEN" },
+        { "method": "GET",    "path": "/fetch/{id}",           "fullPath": "/api/v1/new-program/fetch/{id}",           "handler": "fetchById",           "roles": ["AUTHENTICATED"], "params": ["@PathVariable id"], "disposition": "OPEN" },
+        { "method": "PUT",    "path": "/update/{id}",          "fullPath": "/api/v1/new-program/update/{id}",          "handler": "updateProgram",       "roles": ["ADMIN"], "params": ["@PathVariable id", "@RequestBody NewProgramDTO"], "disposition": "OPEN" },
+        { "method": "DELETE", "path": "/delete/{id}",          "fullPath": "/api/v1/new-program/delete/{id}",          "handler": "deleteProgram",       "roles": ["ADMIN"], "params": ["@PathVariable id"], "disposition": "OPEN" },
+        { "method": "GET",    "path": "/fetchProgramDetails",  "fullPath": "/api/v1/new-program/fetchProgramDetails",  "handler": "fetchProgramDetails", "roles": ["AUTHENTICATED"], "params": ["@RequestParam programId"], "disposition": "OPEN" },
+        { "method": "GET",    "path": "/fetchByCollegePaged",  "fullPath": "/api/v1/new-program/fetchByCollegePaged",  "handler": "fetchProgramsByCollegePaged","roles": ["ADMIN"], "params": ["@RequestParam collegeId"], "disposition": "OPEN" }
+      ]
+    },
+    {
+      "className": "DepartmentController",
+      "file": "controller/DepartmentController.java",
+      "basePath": "/api/v1/department",
+      "endpointCount": 6,
+      "endpoints": [
+        { "method": "POST",   "path": "/create",      "fullPath": "/api/v1/department/create",      "handler": "createDepartment",     "roles": ["ADMIN"], "params": ["@RequestBody DepartmentDTO"], "disposition": "OPEN" },
+        { "method": "GET",    "path": "/fetch",        "fullPath": "/api/v1/department/fetch",        "handler": "fetchAllDepartments",  "roles": ["ADMIN"], "params": ["@RequestParam collegeId"], "disposition": "OPEN" },
+        { "method": "GET",    "path": "/fetchAll",     "fullPath": "/api/v1/department/fetchAll",     "handler": "fetchAll",             "roles": ["AUTHENTICATED"], "params": [], "disposition": "OPEN" },
+        { "method": "PUT",    "path": "/update/{id}",  "fullPath": "/api/v1/department/update/{id}",  "handler": "updateDepartment",     "roles": ["ADMIN"], "params": ["@PathVariable id", "@RequestBody DepartmentDTO"], "disposition": "OPEN" },
+        { "method": "DELETE", "path": "/delete/{id}",  "fullPath": "/api/v1/department/delete/{id}",  "handler": "deleteDepartment",     "roles": ["ADMIN"], "params": ["@PathVariable id"], "disposition": "OPEN" },
+        { "method": "GET",    "path": "/fetchPaged",   "fullPath": "/api/v1/department/fetchPaged",   "handler": "fetchDepartmentsPaged","roles": ["ADMIN"], "params": ["@RequestParam collegeId"], "disposition": "OPEN" }
+      ]
+    },
+    {
+      "className": "AdminGroupController",
+      "file": "controller/groups/AdminGroupController.java",
+      "basePath": "/api/v1/admin/groups",
+      "endpointCount": 17,
+      "endpoints": [
+        { "method": "GET",    "path": "",                          "fullPath": "/api/v1/admin/groups",                          "handler": "list",        "roles": ["ADMIN"], "params": ["@RequestParam kind"], "disposition": "OPEN" },
+        { "method": "POST",   "path": "",                          "fullPath": "/api/v1/admin/groups",                          "handler": "create",      "roles": ["ADMIN"], "params": ["@RequestBody GroupUpsertRequest"], "disposition": "OPEN" },
+        { "method": "GET",    "path": "/{id}",                     "fullPath": "/api/v1/admin/groups/{id}",                     "handler": "get",         "roles": ["ADMIN"], "params": ["@PathVariable id"], "disposition": "OPEN" },
+        { "method": "PUT",    "path": "/{id}",                     "fullPath": "/api/v1/admin/groups/{id}",                     "handler": "update",      "roles": ["ADMIN"], "params": ["@PathVariable id", "@RequestBody GroupUpsertRequest"], "disposition": "OPEN" },
+        { "method": "POST",   "path": "/{id}/status",              "fullPath": "/api/v1/admin/groups/{id}/status",              "handler": "status",      "roles": ["ADMIN"], "params": ["@PathVariable id", "@RequestParam to"], "disposition": "OPEN" },
+        { "method": "DELETE", "path": "/{id}",                     "fullPath": "/api/v1/admin/groups/{id}",                     "handler": "delete",      "roles": ["ADMIN"], "params": ["@PathVariable id"], "disposition": "OPEN" },
+        { "method": "POST",   "path": "/{id}/reconcile",           "fullPath": "/api/v1/admin/groups/{id}/reconcile",           "handler": "reconcile",   "roles": ["ADMIN"], "params": ["@PathVariable id"], "disposition": "OPEN" },
+        { "method": "GET",    "path": "/{id}/members",             "fullPath": "/api/v1/admin/groups/{id}/members",             "handler": "members",     "roles": ["ADMIN"], "params": ["@PathVariable id", "@RequestParam state"], "disposition": "OPEN" },
+        { "method": "POST",   "path": "/{id}/members",             "fullPath": "/api/v1/admin/groups/{id}/members",             "handler": "addMembers",  "roles": ["ADMIN"], "params": ["@PathVariable id", "@RequestBody GroupMemberBulkRequest"], "disposition": "OPEN" },
+        { "method": "DELETE", "path": "/{id}/members/{learnerId}", "fullPath": "/api/v1/admin/groups/{id}/members/{learnerId}", "handler": "removeMember","roles": ["ADMIN"], "params": ["@PathVariable id", "@PathVariable learnerId"], "disposition": "OPEN" },
+        { "method": "POST",   "path": "/{id}/members/{learnerId}/lock","fullPath": "/api/v1/admin/groups/{id}/members/{learnerId}/lock","handler": "lock", "roles": ["ADMIN"], "params": ["@PathVariable id", "@PathVariable learnerId"], "disposition": "OPEN" },
+        { "method": "GET",    "path": "/{id}/events",              "fullPath": "/api/v1/admin/groups/{id}/events",              "handler": "events",      "roles": ["ADMIN"], "params": ["@PathVariable id"], "disposition": "OPEN" },
+        { "method": "GET",    "path": "/{id}/rule",                "fullPath": "/api/v1/admin/groups/{id}/rule",                "handler": "rule",        "roles": ["ADMIN"], "params": ["@PathVariable id"], "disposition": "OPEN" },
+        { "method": "PUT",    "path": "/{id}/rule",                "fullPath": "/api/v1/admin/groups/{id}/rule",                "handler": "setRule",     "roles": ["ADMIN"], "params": ["@PathVariable id", "@RequestBody GroupRuleRequest"], "disposition": "OPEN" },
+        { "method": "DELETE", "path": "/{id}/rule",                "fullPath": "/api/v1/admin/groups/{id}/rule",                "handler": "clearRule",   "roles": ["ADMIN"], "params": ["@PathVariable id"], "disposition": "OPEN" },
+        { "method": "GET",    "path": "/{id}/rule/preview",        "fullPath": "/api/v1/admin/groups/{id}/rule/preview",        "handler": "previewRule", "roles": ["ADMIN"], "params": ["@PathVariable id"], "disposition": "OPEN" },
+        { "method": "POST",   "path": "/{id}/rule/apply",          "fullPath": "/api/v1/admin/groups/{id}/rule/apply",          "handler": "applyRule",   "roles": ["ADMIN"], "params": ["@PathVariable id"], "disposition": "OPEN" }
+      ]
+    },
+    {
+      "className": "LearnerGroupController",
+      "file": "controller/groups/LearnerGroupController.java",
+      "basePath": "/api/v1/learner/groups",
+      "endpointCount": 5,
+      "endpoints": [
+        { "method": "GET",  "path": "/mine",     "fullPath": "/api/v1/learner/groups/mine",     "handler": "mine", "roles": ["LEARNER"], "params": ["@RequestParam kind"], "disposition": "OPEN" },
+        { "method": "GET",  "path": "/open",     "fullPath": "/api/v1/learner/groups/open",     "handler": "open", "roles": ["LEARNER"], "params": ["@RequestParam kind"], "disposition": "OPEN" },
+        { "method": "GET",  "path": "/{id}",     "fullPath": "/api/v1/learner/groups/{id}",     "handler": "get",  "roles": ["LEARNER"], "params": ["@PathVariable id"], "disposition": "OPEN" },
+        { "method": "POST", "path": "/{id}/join","fullPath": "/api/v1/learner/groups/{id}/join","handler": "join", "roles": ["LEARNER"], "params": ["@PathVariable id"], "disposition": "OPEN" },
+        { "method": "POST", "path": "/{id}/leave","fullPath": "/api/v1/learner/groups/{id}/leave","handler": "leave","roles": ["LEARNER"], "params": ["@PathVariable id"], "disposition": "OPEN" }
+      ]
+    },
+    {
+      "className": "ElectiveAdminController",
+      "file": "controller/electives/ElectiveAdminController.java",
+      "basePath": "/api/v1/electives/admin",
+      "endpointCount": 15,
+      "endpoints": [
+        { "method": "GET",    "path": "/slots",                              "fullPath": "/api/v1/electives/admin/slots",                              "handler": "slots",           "roles": ["ADMIN"], "params": ["@RequestParam programId"], "disposition": "OPEN" },
+        { "method": "POST",   "path": "/slots",                              "fullPath": "/api/v1/electives/admin/slots",                              "handler": "createSlot",      "roles": ["ADMIN"], "params": ["@RequestBody SlotRequest"], "disposition": "OPEN" },
+        { "method": "GET",    "path": "/slots/{slotId}",                     "fullPath": "/api/v1/electives/admin/slots/{slotId}",                     "handler": "slot",            "roles": ["ADMIN"], "params": ["@PathVariable slotId"], "disposition": "OPEN" },
+        { "method": "PUT",    "path": "/slots/{slotId}",                     "fullPath": "/api/v1/electives/admin/slots/{slotId}",                     "handler": "updateSlot",      "roles": ["ADMIN"], "params": ["@PathVariable slotId", "@RequestBody SlotRequest"], "disposition": "OPEN" },
+        { "method": "POST",   "path": "/slots/{slotId}/archive",             "fullPath": "/api/v1/electives/admin/slots/{slotId}/archive",             "handler": "archiveSlot",     "roles": ["ADMIN"], "params": ["@PathVariable slotId"], "disposition": "OPEN" },
+        { "method": "GET",    "path": "/slots/{slotId}/unallocated",         "fullPath": "/api/v1/electives/admin/slots/{slotId}/unallocated",         "handler": "unallocated",     "roles": ["ADMIN"], "params": ["@PathVariable slotId"], "disposition": "OPEN" },
+        { "method": "POST",   "path": "/slots/{slotId}/offerings",           "fullPath": "/api/v1/electives/admin/slots/{slotId}/offerings",           "handler": "createOffering",  "roles": ["ADMIN"], "params": ["@PathVariable slotId", "@RequestBody OfferingRequest"], "disposition": "OPEN" },
+        { "method": "GET",    "path": "/offerings/{offeringId}",             "fullPath": "/api/v1/electives/admin/offerings/{offeringId}",             "handler": "offering",        "roles": ["ADMIN"], "params": ["@PathVariable offeringId"], "disposition": "OPEN" },
+        { "method": "PUT",    "path": "/offerings/{offeringId}",             "fullPath": "/api/v1/electives/admin/offerings/{offeringId}",             "handler": "updateOffering",  "roles": ["ADMIN"], "params": ["@PathVariable offeringId", "@RequestBody OfferingRequest"], "disposition": "OPEN" },
+        { "method": "POST",   "path": "/offerings/{offeringId}/archive",     "fullPath": "/api/v1/electives/admin/offerings/{offeringId}/archive",     "handler": "archiveOffering", "roles": ["ADMIN"], "params": ["@PathVariable offeringId"], "disposition": "OPEN" },
+        { "method": "PUT",    "path": "/offerings/{offeringId}/faculty",     "fullPath": "/api/v1/electives/admin/offerings/{offeringId}/faculty",     "handler": "setFaculty",      "roles": ["ADMIN"], "params": ["@PathVariable offeringId", "@RequestBody FacultyRequest"], "disposition": "OPEN" },
+        { "method": "GET",    "path": "/offerings/{offeringId}/roster",      "fullPath": "/api/v1/electives/admin/offerings/{offeringId}/roster",      "handler": "roster",          "roles": ["ADMIN"], "params": ["@PathVariable offeringId", "@RequestParam state"], "disposition": "OPEN" },
+        { "method": "POST",   "path": "/offerings/{offeringId}/allocate",    "fullPath": "/api/v1/electives/admin/offerings/{offeringId}/allocate",    "handler": "allocate",        "roles": ["ADMIN"], "params": ["@PathVariable offeringId", "@RequestBody AllocateRequest"], "disposition": "OPEN" },
+        { "method": "DELETE", "path": "/offerings/{offeringId}/roster/{learnerId}","fullPath": "/api/v1/electives/admin/offerings/{offeringId}/roster/{learnerId}","handler": "remove","roles": ["ADMIN"], "params": ["@PathVariable offeringId", "@PathVariable learnerId"], "disposition": "OPEN" },
+        { "method": "POST",   "path": "/offerings/{offeringId}/roster/{learnerId}/move","fullPath": "/api/v1/electives/admin/offerings/{offeringId}/roster/{learnerId}/move","handler": "move","roles": ["ADMIN"], "params": ["@PathVariable offeringId", "@PathVariable learnerId"], "disposition": "OPEN" }
+      ]
+    }
+  ],
+  "totalEndpoints": 94
+}

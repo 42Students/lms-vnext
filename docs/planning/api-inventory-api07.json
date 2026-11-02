@@ -1,0 +1,142 @@
+{
+  "milestoneId": "API-07",
+  "title": "Placement policies, job postings and candidate applications",
+  "frozenLegacySha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+  "controllers": [
+    {
+      "className": "JobController",
+      "file": "controller/JobController.java",
+      "basePath": "/api/v1/jobs",
+      "endpointCount": 10,
+      "endpoints": [
+        { "method": "GET",  "path": "/",                  "fullPath": "/api/v1/jobs/",                  "handler": "listJobs",           "roles": ["AUTHENTICATED"], "params": [], "disposition": "OPEN" },
+        { "method": "GET",  "path": "/{id}",              "fullPath": "/api/v1/jobs/{id}",              "handler": "getJob",             "roles": ["AUTHENTICATED"], "params": ["@PathVariable id"], "disposition": "OPEN" },
+        { "method": "POST", "path": "/",                  "fullPath": "/api/v1/jobs/",                  "handler": "createJob",          "roles": ["HR"],            "params": [], "disposition": "OPEN" },
+        { "method": "PUT",  "path": "/{id}",              "fullPath": "/api/v1/jobs/{id}",              "handler": "updateJob",          "roles": ["HR"],            "params": ["@PathVariable id"], "disposition": "OPEN" },
+        { "method": "DELETE","path": "/{id}",             "fullPath": "/api/v1/jobs/{id}",              "handler": "deleteJob",          "roles": ["HR"],            "params": ["@PathVariable id"], "disposition": "OPEN" },
+        { "method": "POST", "path": "/{id}/apply",        "fullPath": "/api/v1/jobs/{id}/apply",        "handler": "applyForJob",        "roles": ["LEARNER"],       "params": ["@PathVariable id"], "disposition": "OPEN" },
+        { "method": "GET",  "path": "/{id}/applicants",   "fullPath": "/api/v1/jobs/{id}/applicants",   "handler": "getApplicants",      "roles": ["HR"],            "params": ["@PathVariable id"], "disposition": "OPEN" },
+        { "method": "GET",  "path": "/my-applications",   "fullPath": "/api/v1/jobs/my-applications",   "handler": "getMyApplications",  "roles": ["LEARNER"],       "params": [], "disposition": "OPEN" },
+        { "method": "GET",  "path": "/open",              "fullPath": "/api/v1/jobs/open",              "handler": "getOpenJobs",        "roles": ["LEARNER"],       "params": [], "disposition": "OPEN" },
+        { "method": "GET",  "path": "/stats",             "fullPath": "/api/v1/jobs/stats",             "handler": "getStats",           "roles": ["ADMIN"],         "params": [], "disposition": "OPEN" }
+      ]
+    },
+    {
+      "className": "PlacementJobController",
+      "file": "controller/PlacementJobController.java",
+      "basePath": "/api/v1/placement/jobs",
+      "endpointCount": 8,
+      "endpoints": [
+        { "method": "GET",  "path": "/",                  "fullPath": "/api/v1/placement/jobs/",                  "handler": "listAll",            "roles": ["ADMIN"],   "params": [], "disposition": "OPEN" },
+        { "method": "GET",  "path": "/{id}",              "fullPath": "/api/v1/placement/jobs/{id}",              "handler": "getById",            "roles": ["ADMIN"],   "params": ["@PathVariable id"], "disposition": "OPEN" },
+        { "method": "POST", "path": "/",                  "fullPath": "/api/v1/placement/jobs/",                  "handler": "create",             "roles": ["ADMIN"],   "params": [], "disposition": "OPEN" },
+        { "method": "PUT",  "path": "/{id}",              "fullPath": "/api/v1/placement/jobs/{id}",              "handler": "update",             "roles": ["ADMIN"],   "params": ["@PathVariable id"], "disposition": "OPEN" },
+        { "method": "DELETE","path": "/{id}",             "fullPath": "/api/v1/placement/jobs/{id}",              "handler": "delete",             "roles": ["ADMIN"],   "params": ["@PathVariable id"], "disposition": "OPEN" },
+        { "method": "GET",  "path": "/{id}/eligible",     "fullPath": "/api/v1/placement/jobs/{id}/eligible",     "handler": "getEligibleStudents","roles": ["ADMIN"],   "params": ["@PathVariable id"], "disposition": "OPEN" },
+        { "method": "POST", "path": "/{id}/shortlist",    "fullPath": "/api/v1/placement/jobs/{id}/shortlist",    "handler": "shortlistStudents",  "roles": ["ADMIN"],   "params": ["@PathVariable id"], "disposition": "OPEN" },
+        { "method": "GET",  "path": "/active",            "fullPath": "/api/v1/placement/jobs/active",            "handler": "getActiveJobs",      "roles": ["ADMIN"],   "params": [], "disposition": "OPEN" }
+      ]
+    },
+    {
+      "className": "InterviewController",
+      "file": "controller/InterviewController.java",
+      "basePath": "/api/v1/interviews",
+      "endpointCount": 12,
+      "endpoints": [
+        { "method": "GET",  "path": "/",                      "fullPath": "/api/v1/interviews/",                      "handler": "listAll",             "roles": ["ADMIN"],   "params": [], "disposition": "OPEN" },
+        { "method": "GET",  "path": "/{id}",                  "fullPath": "/api/v1/interviews/{id}",                  "handler": "getById",             "roles": ["AUTHENTICATED"], "params": ["@PathVariable id"], "disposition": "OPEN" },
+        { "method": "POST", "path": "/",                      "fullPath": "/api/v1/interviews/",                      "handler": "schedule",            "roles": ["ADMIN"],   "params": [], "disposition": "OPEN" },
+        { "method": "PUT",  "path": "/{id}",                  "fullPath": "/api/v1/interviews/{id}",                  "handler": "update",              "roles": ["ADMIN"],   "params": ["@PathVariable id"], "disposition": "OPEN" },
+        { "method": "DELETE","path": "/{id}",                 "fullPath": "/api/v1/interviews/{id}",                  "handler": "cancel",              "roles": ["ADMIN"],   "params": ["@PathVariable id"], "disposition": "OPEN" },
+        { "method": "POST", "path": "/{id}/feedback",         "fullPath": "/api/v1/interviews/{id}/feedback",         "handler": "submitFeedback",      "roles": ["HR"],      "params": ["@PathVariable id"], "disposition": "OPEN" },
+        { "method": "GET",  "path": "/{id}/feedback",         "fullPath": "/api/v1/interviews/{id}/feedback",         "handler": "getFeedback",         "roles": ["ADMIN"],   "params": ["@PathVariable id"], "disposition": "OPEN" },
+        { "method": "POST", "path": "/{id}/result",           "fullPath": "/api/v1/interviews/{id}/result",           "handler": "recordResult",        "roles": ["ADMIN"],   "params": ["@PathVariable id"], "disposition": "OPEN" },
+        { "method": "GET",  "path": "/by-applicant/{id}",     "fullPath": "/api/v1/interviews/by-applicant/{id}",     "handler": "getByApplicant",      "roles": ["ADMIN"],   "params": ["@PathVariable id"], "disposition": "OPEN" },
+        { "method": "GET",  "path": "/my-interviews",         "fullPath": "/api/v1/interviews/my-interviews",         "handler": "getMyInterviews",     "roles": ["LEARNER"], "params": [], "disposition": "OPEN" },
+        { "method": "GET",  "path": "/upcoming",              "fullPath": "/api/v1/interviews/upcoming",              "handler": "getUpcoming",         "roles": ["ADMIN"],   "params": [], "disposition": "OPEN" },
+        { "method": "GET",  "path": "/stats",                 "fullPath": "/api/v1/interviews/stats",                 "handler": "getStats",            "roles": ["ADMIN"],   "params": [], "disposition": "OPEN" }
+      ]
+    },
+    {
+      "className": "CompanyController",
+      "file": "controller/CompanyController.java",
+      "basePath": "/api/v1/companies",
+      "endpointCount": 7,
+      "endpoints": [
+        { "method": "GET",    "path": "/",          "fullPath": "/api/v1/companies/",          "handler": "listAll",  "roles": ["ADMIN"],         "params": [], "disposition": "OPEN" },
+        { "method": "GET",    "path": "/{id}",      "fullPath": "/api/v1/companies/{id}",      "handler": "getById",  "roles": ["AUTHENTICATED"], "params": ["@PathVariable id"], "disposition": "OPEN" },
+        { "method": "POST",   "path": "/",          "fullPath": "/api/v1/companies/",          "handler": "create",   "roles": ["ADMIN"],         "params": [], "disposition": "OPEN" },
+        { "method": "PUT",    "path": "/{id}",      "fullPath": "/api/v1/companies/{id}",      "handler": "update",   "roles": ["ADMIN"],         "params": ["@PathVariable id"], "disposition": "OPEN" },
+        { "method": "DELETE", "path": "/{id}",      "fullPath": "/api/v1/companies/{id}",      "handler": "delete",   "roles": ["ADMIN"],         "params": ["@PathVariable id"], "disposition": "OPEN" },
+        { "method": "GET",    "path": "/{id}/jobs", "fullPath": "/api/v1/companies/{id}/jobs", "handler": "getJobs",  "roles": ["ADMIN"],         "params": ["@PathVariable id"], "disposition": "OPEN" },
+        { "method": "GET",    "path": "/search",    "fullPath": "/api/v1/companies/search",    "handler": "search",   "roles": ["ADMIN"],         "params": ["@RequestParam q"], "disposition": "OPEN" }
+      ]
+    },
+    {
+      "className": "AdminJobController",
+      "file": "controller/AdminJobController.java",
+      "basePath": "/api/v1/admin/jobs",
+      "endpointCount": 10,
+      "endpoints": [
+        { "method": "GET",  "path": "/",                     "fullPath": "/api/v1/admin/jobs/",                     "handler": "listAll",          "roles": ["ADMIN"], "params": [], "disposition": "OPEN" },
+        { "method": "GET",  "path": "/{id}",                 "fullPath": "/api/v1/admin/jobs/{id}",                 "handler": "getById",          "roles": ["ADMIN"], "params": ["@PathVariable id"], "disposition": "OPEN" },
+        { "method": "POST", "path": "/",                     "fullPath": "/api/v1/admin/jobs/",                     "handler": "create",           "roles": ["ADMIN"], "params": [], "disposition": "OPEN" },
+        { "method": "PUT",  "path": "/{id}",                 "fullPath": "/api/v1/admin/jobs/{id}",                 "handler": "update",           "roles": ["ADMIN"], "params": ["@PathVariable id"], "disposition": "OPEN" },
+        { "method": "DELETE","path": "/{id}",                "fullPath": "/api/v1/admin/jobs/{id}",                 "handler": "delete",           "roles": ["ADMIN"], "params": ["@PathVariable id"], "disposition": "OPEN" },
+        { "method": "POST", "path": "/{id}/publish",         "fullPath": "/api/v1/admin/jobs/{id}/publish",         "handler": "publish",          "roles": ["ADMIN"], "params": ["@PathVariable id"], "disposition": "OPEN" },
+        { "method": "POST", "path": "/{id}/close",           "fullPath": "/api/v1/admin/jobs/{id}/close",           "handler": "close",            "roles": ["ADMIN"], "params": ["@PathVariable id"], "disposition": "OPEN" },
+        { "method": "GET",  "path": "/{id}/applications",    "fullPath": "/api/v1/admin/jobs/{id}/applications",    "handler": "getApplications",  "roles": ["ADMIN"], "params": ["@PathVariable id"], "disposition": "OPEN" },
+        { "method": "POST", "path": "/bulk-import",          "fullPath": "/api/v1/admin/jobs/bulk-import",          "handler": "bulkImport",       "roles": ["ADMIN"], "params": [], "disposition": "OPEN" },
+        { "method": "GET",  "path": "/stats",                "fullPath": "/api/v1/admin/jobs/stats",                "handler": "getStats",         "roles": ["ADMIN"], "params": [], "disposition": "OPEN" }
+      ]
+    },
+    {
+      "className": "HrCollegeController",
+      "file": "controller/HrCollegeController.java",
+      "basePath": "/api/v1/hr/colleges",
+      "endpointCount": 8,
+      "endpoints": [
+        { "method": "GET",  "path": "/",                   "fullPath": "/api/v1/hr/colleges/",                   "handler": "listAll",          "roles": ["HR"],   "params": [], "disposition": "OPEN" },
+        { "method": "GET",  "path": "/{id}",               "fullPath": "/api/v1/hr/colleges/{id}",               "handler": "getById",          "roles": ["HR"],   "params": ["@PathVariable id"], "disposition": "OPEN" },
+        { "method": "GET",  "path": "/{id}/students",      "fullPath": "/api/v1/hr/colleges/{id}/students",      "handler": "getStudents",      "roles": ["HR"],   "params": ["@PathVariable id"], "disposition": "OPEN" },
+        { "method": "GET",  "path": "/{id}/eligible",      "fullPath": "/api/v1/hr/colleges/{id}/eligible",      "handler": "getEligible",      "roles": ["HR"],   "params": ["@PathVariable id"], "disposition": "OPEN" },
+        { "method": "POST", "path": "/{id}/invite",        "fullPath": "/api/v1/hr/colleges/{id}/invite",        "handler": "sendInvite",       "roles": ["HR"],   "params": ["@PathVariable id"], "disposition": "OPEN" },
+        { "method": "GET",  "path": "/{id}/drives",        "fullPath": "/api/v1/hr/colleges/{id}/drives",        "handler": "getDrives",        "roles": ["HR"],   "params": ["@PathVariable id"], "disposition": "OPEN" },
+        { "method": "GET",  "path": "/{id}/tpos",          "fullPath": "/api/v1/hr/colleges/{id}/tpos",          "handler": "getTpos",          "roles": ["HR"],   "params": ["@PathVariable id"], "disposition": "OPEN" },
+        { "method": "GET",  "path": "/search",             "fullPath": "/api/v1/hr/colleges/search",             "handler": "search",           "roles": ["HR"],   "params": ["@RequestParam q"], "disposition": "OPEN" }
+      ]
+    },
+    {
+      "className": "HrDriveController",
+      "file": "controller/HrDriveController.java",
+      "basePath": "/api/v1/hr/drives",
+      "endpointCount": 10,
+      "endpoints": [
+        { "method": "GET",  "path": "/",                      "fullPath": "/api/v1/hr/drives/",                      "handler": "listAll",         "roles": ["HR"], "params": [], "disposition": "OPEN" },
+        { "method": "GET",  "path": "/{id}",                  "fullPath": "/api/v1/hr/drives/{id}",                  "handler": "getById",         "roles": ["HR"], "params": ["@PathVariable id"], "disposition": "OPEN" },
+        { "method": "POST", "path": "/",                      "fullPath": "/api/v1/hr/drives/",                      "handler": "create",          "roles": ["HR"], "params": [], "disposition": "OPEN" },
+        { "method": "PUT",  "path": "/{id}",                  "fullPath": "/api/v1/hr/drives/{id}",                  "handler": "update",          "roles": ["HR"], "params": ["@PathVariable id"], "disposition": "OPEN" },
+        { "method": "DELETE","path": "/{id}",                 "fullPath": "/api/v1/hr/drives/{id}",                  "handler": "delete",          "roles": ["HR"], "params": ["@PathVariable id"], "disposition": "OPEN" },
+        { "method": "GET",  "path": "/{id}/applicants",       "fullPath": "/api/v1/hr/drives/{id}/applicants",       "handler": "getApplicants",   "roles": ["HR"], "params": ["@PathVariable id"], "disposition": "OPEN" },
+        { "method": "POST", "path": "/{id}/publish",          "fullPath": "/api/v1/hr/drives/{id}/publish",          "handler": "publish",         "roles": ["HR"], "params": ["@PathVariable id"], "disposition": "OPEN" },
+        { "method": "POST", "path": "/{id}/close",            "fullPath": "/api/v1/hr/drives/{id}/close",            "handler": "close",           "roles": ["HR"], "params": ["@PathVariable id"], "disposition": "OPEN" },
+        { "method": "GET",  "path": "/{id}/rounds",           "fullPath": "/api/v1/hr/drives/{id}/rounds",           "handler": "getRounds",       "roles": ["HR"], "params": ["@PathVariable id"], "disposition": "OPEN" },
+        { "method": "POST", "path": "/{id}/rounds",           "fullPath": "/api/v1/hr/drives/{id}/rounds",           "handler": "addRound",        "roles": ["HR"], "params": ["@PathVariable id"], "disposition": "OPEN" }
+      ]
+    },
+    {
+      "className": "HrPendingInviteController",
+      "file": "controller/HrPendingInviteController.java",
+      "basePath": "/api/v1/hr/pending-invites",
+      "endpointCount": 5,
+      "endpoints": [
+        { "method": "GET",    "path": "/",           "fullPath": "/api/v1/hr/pending-invites/",           "handler": "listAll",    "roles": ["HR"],   "params": [], "disposition": "OPEN" },
+        { "method": "GET",    "path": "/{id}",       "fullPath": "/api/v1/hr/pending-invites/{id}",       "handler": "getById",    "roles": ["HR"],   "params": ["@PathVariable id"], "disposition": "OPEN" },
+        { "method": "POST",   "path": "/{id}/resend","fullPath": "/api/v1/hr/pending-invites/{id}/resend","handler": "resend",     "roles": ["HR"],   "params": ["@PathVariable id"], "disposition": "OPEN" },
+        { "method": "DELETE", "path": "/{id}",       "fullPath": "/api/v1/hr/pending-invites/{id}",       "handler": "cancel",     "roles": ["HR"],   "params": ["@PathVariable id"], "disposition": "OPEN" },
+        { "method": "GET",    "path": "/stats",       "fullPath": "/api/v1/hr/pending-invites/stats",      "handler": "getStats",   "roles": ["HR"],   "params": [], "disposition": "OPEN" }
+      ]
+    }
+  ],
+  "totalEndpoints": 70
+}

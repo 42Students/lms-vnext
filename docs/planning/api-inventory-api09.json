@@ -1,0 +1,109 @@
+{
+  "milestoneId": "API-09",
+  "title": "Notifications, announcements, discussions and skills",
+  "frozenLegacySha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+  "controllers": [
+    {
+      "className": "NotificationController",
+      "file": "controller/NotificationController.java",
+      "basePath": "/api/v1/notifications",
+      "endpointCount": 8,
+      "endpoints": [
+        { "method": "GET",  "path": "/",                  "fullPath": "/api/v1/notifications/",                  "handler": "getMyNotifications",  "roles": ["AUTHENTICATED"], "params": [], "disposition": "OPEN" },
+        { "method": "GET",  "path": "/unread",            "fullPath": "/api/v1/notifications/unread",            "handler": "getUnread",           "roles": ["AUTHENTICATED"], "params": [], "disposition": "OPEN" },
+        { "method": "GET",  "path": "/unread-count",      "fullPath": "/api/v1/notifications/unread-count",      "handler": "getUnreadCount",      "roles": ["AUTHENTICATED"], "params": [], "disposition": "OPEN" },
+        { "method": "POST", "path": "/{id}/read",         "fullPath": "/api/v1/notifications/{id}/read",         "handler": "markRead",            "roles": ["AUTHENTICATED"], "params": ["@PathVariable id"], "disposition": "OPEN" },
+        { "method": "POST", "path": "/read-all",          "fullPath": "/api/v1/notifications/read-all",          "handler": "markAllRead",         "roles": ["AUTHENTICATED"], "params": [], "disposition": "OPEN" },
+        { "method": "DELETE","path": "/{id}",             "fullPath": "/api/v1/notifications/{id}",              "handler": "delete",              "roles": ["AUTHENTICATED"], "params": ["@PathVariable id"], "disposition": "OPEN" },
+        { "method": "DELETE","path": "/clear-all",        "fullPath": "/api/v1/notifications/clear-all",         "handler": "clearAll",            "roles": ["AUTHENTICATED"], "params": [], "disposition": "OPEN" },
+        { "method": "GET",  "path": "/preferences",       "fullPath": "/api/v1/notifications/preferences",       "handler": "getPreferences",      "roles": ["AUTHENTICATED"], "params": [], "disposition": "OPEN" }
+      ]
+    },
+    {
+      "className": "AdminNotificationDeliveryController",
+      "file": "controller/AdminNotificationDeliveryController.java",
+      "basePath": "/api/v1/admin/notification-delivery",
+      "endpointCount": 6,
+      "endpoints": [
+        { "method": "POST", "path": "/send",         "fullPath": "/api/v1/admin/notification-delivery/send",         "handler": "sendNotification",    "roles": ["ADMIN"], "params": [], "disposition": "OPEN" },
+        { "method": "POST", "path": "/broadcast",    "fullPath": "/api/v1/admin/notification-delivery/broadcast",    "handler": "broadcast",           "roles": ["ADMIN"], "params": [], "disposition": "OPEN" },
+        { "method": "GET",  "path": "/logs",         "fullPath": "/api/v1/admin/notification-delivery/logs",         "handler": "getLogs",             "roles": ["ADMIN"], "params": [], "disposition": "OPEN" },
+        { "method": "GET",  "path": "/stats",        "fullPath": "/api/v1/admin/notification-delivery/stats",        "handler": "getStats",            "roles": ["ADMIN"], "params": [], "disposition": "OPEN" },
+        { "method": "POST", "path": "/retry/{id}",   "fullPath": "/api/v1/admin/notification-delivery/retry/{id}",   "handler": "retry",               "roles": ["ADMIN"], "params": ["@PathVariable id"], "disposition": "OPEN" },
+        { "method": "GET",  "path": "/failed",       "fullPath": "/api/v1/admin/notification-delivery/failed",       "handler": "getFailed",           "roles": ["ADMIN"], "params": [], "disposition": "OPEN" }
+      ]
+    },
+    {
+      "className": "AdminSmsLogController",
+      "file": "controller/AdminSmsLogController.java",
+      "basePath": "/api/v1/admin/sms-logs",
+      "endpointCount": 4,
+      "endpoints": [
+        { "method": "GET",  "path": "/",           "fullPath": "/api/v1/admin/sms-logs/",           "handler": "getLogs",     "roles": ["ADMIN"], "params": [], "disposition": "OPEN" },
+        { "method": "GET",  "path": "/{id}",       "fullPath": "/api/v1/admin/sms-logs/{id}",       "handler": "getById",     "roles": ["ADMIN"], "params": ["@PathVariable id"], "disposition": "OPEN" },
+        { "method": "GET",  "path": "/stats",      "fullPath": "/api/v1/admin/sms-logs/stats",      "handler": "getStats",    "roles": ["ADMIN"], "params": [], "disposition": "OPEN" },
+        { "method": "GET",  "path": "/failed",     "fullPath": "/api/v1/admin/sms-logs/failed",     "handler": "getFailed",   "roles": ["ADMIN"], "params": [], "disposition": "OPEN" }
+      ]
+    },
+    {
+      "className": "AnnouncementController",
+      "file": "controller/AnnouncementController.java",
+      "basePath": "/api/v1/announcements",
+      "endpointCount": 8,
+      "endpoints": [
+        { "method": "GET",    "path": "/",                "fullPath": "/api/v1/announcements/",                "handler": "listAll",      "roles": ["AUTHENTICATED"], "params": [], "disposition": "OPEN" },
+        { "method": "GET",    "path": "/{id}",            "fullPath": "/api/v1/announcements/{id}",            "handler": "getById",      "roles": ["AUTHENTICATED"], "params": ["@PathVariable id"], "disposition": "OPEN" },
+        { "method": "POST",   "path": "/",                "fullPath": "/api/v1/announcements/",                "handler": "create",       "roles": ["ADMIN"],         "params": [], "disposition": "OPEN" },
+        { "method": "PUT",    "path": "/{id}",            "fullPath": "/api/v1/announcements/{id}",            "handler": "update",       "roles": ["ADMIN"],         "params": ["@PathVariable id"], "disposition": "OPEN" },
+        { "method": "DELETE", "path": "/{id}",            "fullPath": "/api/v1/announcements/{id}",            "handler": "delete",       "roles": ["ADMIN"],         "params": ["@PathVariable id"], "disposition": "OPEN" },
+        { "method": "POST",   "path": "/{id}/pin",        "fullPath": "/api/v1/announcements/{id}/pin",        "handler": "pin",          "roles": ["ADMIN"],         "params": ["@PathVariable id"], "disposition": "OPEN" },
+        { "method": "POST",   "path": "/{id}/unpin",      "fullPath": "/api/v1/announcements/{id}/unpin",      "handler": "unpin",        "roles": ["ADMIN"],         "params": ["@PathVariable id"], "disposition": "OPEN" },
+        { "method": "GET",    "path": "/pinned",          "fullPath": "/api/v1/announcements/pinned",          "handler": "getPinned",    "roles": ["AUTHENTICATED"], "params": [], "disposition": "OPEN" }
+      ]
+    },
+    {
+      "className": "TelegramWebhookController",
+      "file": "controller/TelegramWebhookController.java",
+      "basePath": "/api/v1/webhooks/telegram",
+      "endpointCount": 2,
+      "endpoints": [
+        { "method": "POST", "path": "/",       "fullPath": "/api/v1/webhooks/telegram/",       "handler": "handleWebhook",  "roles": ["PUBLIC"], "params": [], "disposition": "OPEN" },
+        { "method": "GET",  "path": "/status", "fullPath": "/api/v1/webhooks/telegram/status", "handler": "getStatus",      "roles": ["ADMIN"],  "params": [], "disposition": "OPEN" }
+      ]
+    },
+    {
+      "className": "DiscussionController",
+      "file": "controller/DiscussionController.java",
+      "basePath": "/api/v1/discussions",
+      "endpointCount": 10,
+      "endpoints": [
+        { "method": "GET",    "path": "/",                          "fullPath": "/api/v1/discussions/",                          "handler": "listAll",      "roles": ["AUTHENTICATED"], "params": [], "disposition": "OPEN" },
+        { "method": "GET",    "path": "/{id}",                      "fullPath": "/api/v1/discussions/{id}",                      "handler": "getById",      "roles": ["AUTHENTICATED"], "params": ["@PathVariable id"], "disposition": "OPEN" },
+        { "method": "POST",   "path": "/",                          "fullPath": "/api/v1/discussions/",                          "handler": "create",       "roles": ["AUTHENTICATED"], "params": [], "disposition": "OPEN" },
+        { "method": "PUT",    "path": "/{id}",                      "fullPath": "/api/v1/discussions/{id}",                      "handler": "update",       "roles": ["AUTHENTICATED"], "params": ["@PathVariable id"], "disposition": "OPEN" },
+        { "method": "DELETE", "path": "/{id}",                      "fullPath": "/api/v1/discussions/{id}",                      "handler": "delete",       "roles": ["AUTHENTICATED"], "params": ["@PathVariable id"], "disposition": "OPEN" },
+        { "method": "GET",    "path": "/{id}/replies",              "fullPath": "/api/v1/discussions/{id}/replies",              "handler": "getReplies",   "roles": ["AUTHENTICATED"], "params": ["@PathVariable id"], "disposition": "OPEN" },
+        { "method": "POST",   "path": "/{id}/replies",              "fullPath": "/api/v1/discussions/{id}/replies",              "handler": "addReply",     "roles": ["AUTHENTICATED"], "params": ["@PathVariable id"], "disposition": "OPEN" },
+        { "method": "DELETE", "path": "/{id}/replies/{replyId}",    "fullPath": "/api/v1/discussions/{id}/replies/{replyId}",    "handler": "deleteReply",  "roles": ["AUTHENTICATED"], "params": ["@PathVariable id", "@PathVariable replyId"], "disposition": "OPEN" },
+        { "method": "POST",   "path": "/{id}/like",                 "fullPath": "/api/v1/discussions/{id}/like",                 "handler": "like",         "roles": ["AUTHENTICATED"], "params": ["@PathVariable id"], "disposition": "OPEN" },
+        { "method": "GET",    "path": "/by-course/{courseId}",      "fullPath": "/api/v1/discussions/by-course/{courseId}",      "handler": "getByCourse",  "roles": ["AUTHENTICATED"], "params": ["@PathVariable courseId"], "disposition": "OPEN" }
+      ]
+    },
+    {
+      "className": "SkillController",
+      "file": "controller/SkillController.java",
+      "basePath": "/api/v1/skills",
+      "endpointCount": 7,
+      "endpoints": [
+        { "method": "GET",    "path": "/",          "fullPath": "/api/v1/skills/",          "handler": "listAll",  "roles": ["AUTHENTICATED"], "params": [], "disposition": "OPEN" },
+        { "method": "GET",    "path": "/{id}",      "fullPath": "/api/v1/skills/{id}",      "handler": "getById",  "roles": ["AUTHENTICATED"], "params": ["@PathVariable id"], "disposition": "OPEN" },
+        { "method": "POST",   "path": "/",          "fullPath": "/api/v1/skills/",          "handler": "create",   "roles": ["ADMIN"],         "params": [], "disposition": "OPEN" },
+        { "method": "PUT",    "path": "/{id}",      "fullPath": "/api/v1/skills/{id}",      "handler": "update",   "roles": ["ADMIN"],         "params": ["@PathVariable id"], "disposition": "OPEN" },
+        { "method": "DELETE", "path": "/{id}",      "fullPath": "/api/v1/skills/{id}",      "handler": "delete",   "roles": ["ADMIN"],         "params": ["@PathVariable id"], "disposition": "OPEN" },
+        { "method": "GET",    "path": "/categories","fullPath": "/api/v1/skills/categories","handler": "getCategories","roles": ["AUTHENTICATED"], "params": [], "disposition": "OPEN" },
+        { "method": "GET",    "path": "/search",    "fullPath": "/api/v1/skills/search",    "handler": "search",   "roles": ["AUTHENTICATED"], "params": ["@RequestParam q"], "disposition": "OPEN" }
+      ]
+    }
+  ],
+  "totalEndpoints": 45
+}

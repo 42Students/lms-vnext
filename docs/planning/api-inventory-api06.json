@@ -1,0 +1,83 @@
+{
+  "milestoneId": "API-06",
+  "title": "Projects, mentorship workspace and recycle bin",
+  "frozenLegacySha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+  "controllers": [
+    {
+      "className": "ProjectWorkspaceController",
+      "file": "controller/ProjectWorkspaceController.java",
+      "basePath": "/api/v1/projects",
+      "endpointCount": 22,
+      "endpoints": [
+        { "method": "GET",    "path": "/",                                   "fullPath": "/api/v1/projects/",                                   "handler": "listProjects",                   "roles": ["AUTHENTICATED"], "params": [], "disposition": "OPEN" },
+        { "method": "GET",    "path": "/{projectId}",                        "fullPath": "/api/v1/projects/{projectId}",                        "handler": "getProject",                     "roles": ["AUTHENTICATED"], "params": ["@PathVariable projectId"], "disposition": "OPEN" },
+        { "method": "POST",   "path": "/",                                   "fullPath": "/api/v1/projects/",                                   "handler": "createProject",                  "roles": ["LEARNER"],       "params": [], "disposition": "OPEN" },
+        { "method": "PUT",    "path": "/{projectId}",                        "fullPath": "/api/v1/projects/{projectId}",                        "handler": "updateProject",                  "roles": ["LEARNER"],       "params": ["@PathVariable projectId"], "disposition": "OPEN" },
+        { "method": "DELETE", "path": "/{projectId}",                        "fullPath": "/api/v1/projects/{projectId}",                        "handler": "deleteProject",                  "roles": ["LEARNER"],       "params": ["@PathVariable projectId"], "disposition": "OPEN" },
+        { "method": "POST",   "path": "/{projectId}/submit",                 "fullPath": "/api/v1/projects/{projectId}/submit",                 "handler": "submitProject",                  "roles": ["LEARNER"],       "params": ["@PathVariable projectId"], "disposition": "OPEN" },
+        { "method": "GET",    "path": "/{projectId}/members",                "fullPath": "/api/v1/projects/{projectId}/members",                "handler": "getMembers",                     "roles": ["AUTHENTICATED"], "params": ["@PathVariable projectId"], "disposition": "OPEN" },
+        { "method": "POST",   "path": "/{projectId}/members",                "fullPath": "/api/v1/projects/{projectId}/members",                "handler": "addMember",                      "roles": ["LEARNER"],       "params": ["@PathVariable projectId"], "disposition": "OPEN" },
+        { "method": "DELETE", "path": "/{projectId}/members/{memberId}",     "fullPath": "/api/v1/projects/{projectId}/members/{memberId}",     "handler": "removeMember",                   "roles": ["LEARNER"],       "params": ["@PathVariable projectId", "@PathVariable memberId"], "disposition": "OPEN" },
+        { "method": "GET",    "path": "/{projectId}/files",                  "fullPath": "/api/v1/projects/{projectId}/files",                  "handler": "getFiles",                       "roles": ["AUTHENTICATED"], "params": ["@PathVariable projectId"], "disposition": "OPEN" },
+        { "method": "POST",   "path": "/{projectId}/files",                  "fullPath": "/api/v1/projects/{projectId}/files",                  "handler": "uploadFile",                     "roles": ["LEARNER"],       "params": ["@PathVariable projectId"], "disposition": "OPEN" },
+        { "method": "DELETE", "path": "/{projectId}/files/{fileId}",         "fullPath": "/api/v1/projects/{projectId}/files/{fileId}",         "handler": "deleteFile",                     "roles": ["LEARNER"],       "params": ["@PathVariable projectId", "@PathVariable fileId"], "disposition": "OPEN" },
+        { "method": "GET",    "path": "/{projectId}/comments",               "fullPath": "/api/v1/projects/{projectId}/comments",               "handler": "getComments",                    "roles": ["AUTHENTICATED"], "params": ["@PathVariable projectId"], "disposition": "OPEN" },
+        { "method": "POST",   "path": "/{projectId}/comments",               "fullPath": "/api/v1/projects/{projectId}/comments",               "handler": "addComment",                     "roles": ["AUTHENTICATED"], "params": ["@PathVariable projectId"], "disposition": "OPEN" },
+        { "method": "PUT",    "path": "/{projectId}/comments/{commentId}",   "fullPath": "/api/v1/projects/{projectId}/comments/{commentId}",   "handler": "updateComment",                  "roles": ["AUTHENTICATED"], "params": ["@PathVariable projectId", "@PathVariable commentId"], "disposition": "OPEN" },
+        { "method": "DELETE", "path": "/{projectId}/comments/{commentId}",   "fullPath": "/api/v1/projects/{projectId}/comments/{commentId}",   "handler": "deleteComment",                  "roles": ["AUTHENTICATED"], "params": ["@PathVariable projectId", "@PathVariable commentId"], "disposition": "OPEN" },
+        { "method": "GET",    "path": "/{projectId}/reviews",                "fullPath": "/api/v1/projects/{projectId}/reviews",                "handler": "getReviews",                     "roles": ["FACULTY"],       "params": ["@PathVariable projectId"], "disposition": "OPEN" },
+        { "method": "POST",   "path": "/{projectId}/reviews",                "fullPath": "/api/v1/projects/{projectId}/reviews",                "handler": "addReview",                      "roles": ["FACULTY"],       "params": ["@PathVariable projectId"], "disposition": "OPEN" },
+        { "method": "GET",    "path": "/my-projects",                        "fullPath": "/api/v1/projects/my-projects",                        "handler": "getMyProjects",                  "roles": ["LEARNER"],       "params": [], "disposition": "OPEN" },
+        { "method": "GET",    "path": "/pending-review",                     "fullPath": "/api/v1/projects/pending-review",                     "handler": "getPendingReview",               "roles": ["FACULTY"],       "params": [], "disposition": "OPEN" },
+        { "method": "GET",    "path": "/by-template/{templateId}",           "fullPath": "/api/v1/projects/by-template/{templateId}",           "handler": "getByTemplate",                  "roles": ["AUTHENTICATED"], "params": ["@PathVariable templateId"], "disposition": "OPEN" },
+        { "method": "GET",    "path": "/stats",                              "fullPath": "/api/v1/projects/stats",                              "handler": "getStats",                       "roles": ["ADMIN"],         "params": [], "disposition": "OPEN" }
+      ]
+    },
+    {
+      "className": "AdminProjectController",
+      "file": "controller/AdminProjectController.java",
+      "basePath": "/api/v1/admin/projects",
+      "endpointCount": 10,
+      "endpoints": [
+        { "method": "GET",    "path": "/",                      "fullPath": "/api/v1/admin/projects/",                      "handler": "listAll",         "roles": ["ADMIN"], "params": [], "disposition": "OPEN" },
+        { "method": "GET",    "path": "/{id}",                  "fullPath": "/api/v1/admin/projects/{id}",                  "handler": "getById",         "roles": ["ADMIN"], "params": ["@PathVariable id"], "disposition": "OPEN" },
+        { "method": "POST",   "path": "/",                      "fullPath": "/api/v1/admin/projects/",                      "handler": "create",          "roles": ["ADMIN"], "params": [], "disposition": "OPEN" },
+        { "method": "PUT",    "path": "/{id}",                  "fullPath": "/api/v1/admin/projects/{id}",                  "handler": "update",          "roles": ["ADMIN"], "params": ["@PathVariable id"], "disposition": "OPEN" },
+        { "method": "DELETE", "path": "/{id}",                  "fullPath": "/api/v1/admin/projects/{id}",                  "handler": "delete",          "roles": ["ADMIN"], "params": ["@PathVariable id"], "disposition": "OPEN" },
+        { "method": "POST",   "path": "/{id}/assign",           "fullPath": "/api/v1/admin/projects/{id}/assign",           "handler": "assignToClass",   "roles": ["ADMIN"], "params": ["@PathVariable id"], "disposition": "OPEN" },
+        { "method": "GET",    "path": "/by-class/{classId}",    "fullPath": "/api/v1/admin/projects/by-class/{classId}",    "handler": "getByClass",      "roles": ["ADMIN"], "params": ["@PathVariable classId"], "disposition": "OPEN" },
+        { "method": "GET",    "path": "/submissions",           "fullPath": "/api/v1/admin/projects/submissions",           "handler": "allSubmissions",  "roles": ["ADMIN"], "params": [], "disposition": "OPEN" },
+        { "method": "POST",   "path": "/{id}/grade",            "fullPath": "/api/v1/admin/projects/{id}/grade",            "handler": "grade",           "roles": ["ADMIN"], "params": ["@PathVariable id"], "disposition": "OPEN" },
+        { "method": "GET",    "path": "/stats",                 "fullPath": "/api/v1/admin/projects/stats",                 "handler": "getStats",        "roles": ["ADMIN"], "params": [], "disposition": "OPEN" }
+      ]
+    },
+    {
+      "className": "AdminProjectTemplateController",
+      "file": "controller/AdminProjectTemplateController.java",
+      "basePath": "/api/v1/admin/project-templates",
+      "endpointCount": 6,
+      "endpoints": [
+        { "method": "GET",    "path": "/",      "fullPath": "/api/v1/admin/project-templates/",      "handler": "listAll",  "roles": ["ADMIN"], "params": [], "disposition": "OPEN" },
+        { "method": "GET",    "path": "/{id}",  "fullPath": "/api/v1/admin/project-templates/{id}",  "handler": "getById",  "roles": ["ADMIN"], "params": ["@PathVariable id"], "disposition": "OPEN" },
+        { "method": "POST",   "path": "/",      "fullPath": "/api/v1/admin/project-templates/",      "handler": "create",   "roles": ["ADMIN"], "params": [], "disposition": "OPEN" },
+        { "method": "PUT",    "path": "/{id}",  "fullPath": "/api/v1/admin/project-templates/{id}",  "handler": "update",   "roles": ["ADMIN"], "params": ["@PathVariable id"], "disposition": "OPEN" },
+        { "method": "DELETE", "path": "/{id}",  "fullPath": "/api/v1/admin/project-templates/{id}",  "handler": "delete",   "roles": ["ADMIN"], "params": ["@PathVariable id"], "disposition": "OPEN" },
+        { "method": "POST",   "path": "/{id}/duplicate","fullPath": "/api/v1/admin/project-templates/{id}/duplicate","handler": "duplicate","roles": ["ADMIN"], "params": ["@PathVariable id"], "disposition": "OPEN" }
+      ]
+    },
+    {
+      "className": "AdminRecycleBinController",
+      "file": "controller/AdminRecycleBinController.java",
+      "basePath": "/api/v1/admin/recycle-bin",
+      "endpointCount": 5,
+      "endpoints": [
+        { "method": "GET",    "path": "/",             "fullPath": "/api/v1/admin/recycle-bin/",             "handler": "listDeleted",  "roles": ["ADMIN"], "params": [], "disposition": "OPEN" },
+        { "method": "POST",   "path": "/{id}/restore", "fullPath": "/api/v1/admin/recycle-bin/{id}/restore", "handler": "restore",      "roles": ["ADMIN"], "params": ["@PathVariable id"], "disposition": "OPEN" },
+        { "method": "DELETE", "path": "/{id}",         "fullPath": "/api/v1/admin/recycle-bin/{id}",         "handler": "permanentDelete","roles": ["ADMIN"], "params": ["@PathVariable id"], "disposition": "OPEN" },
+        { "method": "POST",   "path": "/empty",        "fullPath": "/api/v1/admin/recycle-bin/empty",        "handler": "emptyBin",     "roles": ["ADMIN"], "params": [], "disposition": "OPEN" },
+        { "method": "GET",    "path": "/stats",        "fullPath": "/api/v1/admin/recycle-bin/stats",        "handler": "getStats",     "roles": ["ADMIN"], "params": [], "disposition": "OPEN" }
+      ]
+    }
+  ],
+  "totalEndpoints": 43
+}

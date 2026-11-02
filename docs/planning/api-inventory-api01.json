@@ -1,0 +1,316 @@
+{
+  "milestoneId": "API-01",
+  "title": "Auth, tenant, shared infrastructure and superadmin",
+  "frozenLegacySha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+  "controllers": [
+    {
+      "className": "AuthController",
+      "file": "controller/AuthController.java",
+      "basePath": "/api/v1/auth",
+      "endpointCount": 12,
+      "endpoints": [
+        { "method": "GET",    "path": "/memberships",         "fullPath": "/api/v1/auth/memberships",         "handler": "memberships",       "roles": ["AUTHENTICATED"], "params": [], "disposition": "OPEN" },
+        { "method": "POST",   "path": "/switch",              "fullPath": "/api/v1/auth/switch",              "handler": "switchOrg",         "roles": ["AUTHENTICATED"], "params": ["@RequestBody SwitchOrgRequest"], "disposition": "OPEN" },
+        { "method": "POST",   "path": "/switch-token",        "fullPath": "/api/v1/auth/switch-token",        "handler": "switchToken",       "roles": ["AUTHENTICATED"], "params": ["@RequestBody SwitchOrgRequest"], "disposition": "OPEN" },
+        { "method": "POST",   "path": "/handoff/consume",     "fullPath": "/api/v1/auth/handoff/consume",     "handler": "consumeHandoff",    "roles": ["PUBLIC"],        "params": ["@RequestBody Map"], "disposition": "OPEN" },
+        { "method": "POST",   "path": "/superadmin/scope",    "fullPath": "/api/v1/auth/superadmin/scope",    "handler": "superAdminScope",   "roles": ["SUPER_ADMIN"],   "params": ["@RequestBody Map"], "disposition": "OPEN" },
+        { "method": "POST",   "path": "/refresh-cookie",      "fullPath": "/api/v1/auth/refresh-cookie",      "handler": "refreshCookie",     "roles": ["PUBLIC"],        "params": [], "disposition": "OPEN" },
+        { "method": "POST",   "path": "/logout-cookie",       "fullPath": "/api/v1/auth/logout-cookie",       "handler": "logoutCookie",      "roles": ["PUBLIC"],        "params": [], "disposition": "OPEN" },
+        { "method": "POST",   "path": "/refresh",             "fullPath": "/api/v1/auth/refresh",             "handler": "refresh",           "roles": ["PUBLIC"],        "params": ["@RequestBody RefreshRequest"], "disposition": "OPEN" },
+        { "method": "POST",   "path": "/logout",              "fullPath": "/api/v1/auth/logout",              "handler": "logout",            "roles": ["PUBLIC"],        "params": ["@RequestBody RefreshRequest"], "disposition": "OPEN" },
+        { "method": "POST",   "path": "/revoke-sessions",     "fullPath": "/api/v1/auth/revoke-sessions",     "handler": "revokeSessions",    "roles": ["ADMIN"],         "params": ["@RequestParam userId", "@RequestParam userType"], "disposition": "OPEN" },
+        { "method": "GET",    "path": "/sessions",            "fullPath": "/api/v1/auth/sessions",            "handler": "listSessions",      "roles": ["AUTHENTICATED"], "params": [], "disposition": "OPEN" },
+        { "method": "DELETE", "path": "/sessions/{jti}",      "fullPath": "/api/v1/auth/sessions/{jti}",      "handler": "revokeSession",     "roles": ["AUTHENTICATED"], "params": ["@PathVariable jti"], "disposition": "OPEN" }
+      ]
+    },
+    {
+      "className": "UserController",
+      "file": "controller/UserController.java",
+      "basePath": "/api/v1/users",
+      "endpointCount": 9,
+      "endpoints": [
+        { "method": "POST", "path": "/admin/clear-otp-lockout",        "fullPath": "/api/v1/users/admin/clear-otp-lockout",        "handler": "clearOtpLockout",            "roles": ["ADMIN"],         "params": ["@RequestParam phoneNumber"], "disposition": "OPEN" },
+        { "method": "GET",  "path": "/login",                          "fullPath": "/api/v1/users/login",                          "handler": "login",                      "roles": ["PUBLIC"],        "params": ["phoneNumber", "@RequestParam superAdmin", "@RequestParam collegeId"], "disposition": "OPEN" },
+        { "method": "GET",  "path": "/verifyOTP",                      "fullPath": "/api/v1/users/verifyOTP",                      "handler": "verifyOTP",                  "roles": ["PUBLIC"],        "params": ["phoneNumber", "otp"], "disposition": "OPEN" },
+        { "method": "GET",  "path": "/contacts",                       "fullPath": "/api/v1/users/contacts",                       "handler": "getContacts",                "roles": ["AUTHENTICATED"], "params": ["@RequestParam pageNumber", "@RequestParam pageSize", "@RequestParam userType", "@RequestParam collegeId"], "disposition": "OPEN" },
+        { "method": "POST", "path": "/register",                       "fullPath": "/api/v1/users/register",                       "handler": "saveUser",                   "roles": ["ADMIN"],         "params": ["@RequestBody UserDto"], "disposition": "OPEN" },
+        { "method": "GET",  "path": "/adminping",                      "fullPath": "/api/v1/users/adminping",                      "handler": "adminPing",                  "roles": ["ADMIN"],         "params": [], "disposition": "OPEN" },
+        { "method": "GET",  "path": "/userping",                       "fullPath": "/api/v1/users/userping",                       "handler": "userPing",                   "roles": ["AUTHENTICATED"], "params": [], "disposition": "OPEN" },
+        { "method": "GET",  "path": "/learnerContactsByProgramId",     "fullPath": "/api/v1/users/learnerContactsByProgramId",     "handler": "getLearnerContactsByProgramId","roles": ["AUTHENTICATED"], "params": ["@RequestParam programId"], "disposition": "OPEN" },
+        { "method": "GET",  "path": "/facultyContactsByDeptId",        "fullPath": "/api/v1/users/facultyContactsByDeptId",        "handler": "getFacultyContactsByDeptId", "roles": ["AUTHENTICATED"], "params": ["@RequestParam deptId"], "disposition": "OPEN" }
+      ]
+    },
+    {
+      "className": "CollegeController",
+      "file": "controller/CollegeController.java",
+      "basePath": "/api/v1/college",
+      "endpointCount": 7,
+      "endpoints": [
+        { "method": "POST",   "path": "/create",          "fullPath": "/api/v1/college/create",         "handler": "createCollege",    "roles": ["SUPER_ADMIN"], "params": ["@RequestBody CollegeDTO"], "disposition": "OPEN" },
+        { "method": "GET",    "path": "/fetch",           "fullPath": "/api/v1/college/fetch",          "handler": "fetchColleges",    "roles": ["ADMIN"],       "params": ["@RequestParam orgId"], "disposition": "OPEN" },
+        { "method": "GET",    "path": "/fetchOnlyNames",  "fullPath": "/api/v1/college/fetchOnlyNames", "handler": "fetchOnlyNames",   "roles": ["ADMIN"],       "params": ["@RequestParam orgId"], "disposition": "OPEN" },
+        { "method": "GET",    "path": "/fetchCollegeList","fullPath": "/api/v1/college/fetchCollegeList","handler": "fetchCollegeList", "roles": ["ADMIN"],       "params": ["@RequestParam all"], "disposition": "OPEN" },
+        { "method": "GET",    "path": "/fetchCollege",    "fullPath": "/api/v1/college/fetchCollege",   "handler": "fetchCollege",     "roles": ["ADMIN"],       "params": ["@RequestParam collegeId"], "disposition": "OPEN" },
+        { "method": "PUT",    "path": "/update/{id}",     "fullPath": "/api/v1/college/update/{id}",    "handler": "updateCollege",    "roles": ["SUPER_ADMIN"], "params": ["@PathVariable id", "@RequestBody CollegeDTO"], "disposition": "OPEN" },
+        { "method": "DELETE", "path": "/delete/{id}",     "fullPath": "/api/v1/college/delete/{id}",    "handler": "deleteCollege",    "roles": ["SUPER_ADMIN"], "params": ["@PathVariable id"], "disposition": "OPEN" }
+      ]
+    },
+    {
+      "className": "OrganizationController",
+      "file": "controller/OrganizationController.java",
+      "basePath": "/api/v1/organization",
+      "endpointCount": 5,
+      "endpoints": [
+        { "method": "POST",   "path": "/create",     "fullPath": "/api/v1/organization/create",     "handler": "createOrganisation",  "roles": ["SUPER_ADMIN"], "params": ["@RequestBody OrganizationDTO"], "disposition": "OPEN" },
+        { "method": "GET",    "path": "/fetch",      "fullPath": "/api/v1/organization/fetch",      "handler": "fetchOrganizations",  "roles": ["SUPER_ADMIN"], "params": [], "disposition": "OPEN" },
+        { "method": "GET",    "path": "/fetch/{id}", "fullPath": "/api/v1/organization/fetch/{id}", "handler": "getOrganizationById", "roles": ["SUPER_ADMIN"], "params": ["@PathVariable id"], "disposition": "OPEN" },
+        { "method": "PUT",    "path": "/update/{id}","fullPath": "/api/v1/organization/update/{id}","handler": "updateOrganization",  "roles": ["SUPER_ADMIN"], "params": ["@PathVariable id", "@RequestBody OrganizationDTO"], "disposition": "OPEN" },
+        { "method": "DELETE", "path": "/delete/{id}","fullPath": "/api/v1/organization/delete/{id}","handler": "deleteOrganization",  "roles": ["SUPER_ADMIN"], "params": ["@PathVariable id"], "disposition": "OPEN" }
+      ]
+    },
+    {
+      "className": "TenantAdminController",
+      "file": "controller/TenantAdminController.java",
+      "basePath": "/api/v1/superadmin/tenant",
+      "endpointCount": 19,
+      "endpoints": [
+        { "method": "GET",    "path": "/domains",                         "fullPath": "/api/v1/superadmin/tenant/domains",                         "handler": "listDomains",           "roles": ["SUPER_ADMIN"], "params": ["@RequestParam collegeId"], "disposition": "OPEN" },
+        { "method": "GET",    "path": "/onboarding/readiness/{collegeId}","fullPath": "/api/v1/superadmin/tenant/onboarding/readiness/{collegeId}","handler": "onboardingReadiness",   "roles": ["SUPER_ADMIN"], "params": ["@PathVariable collegeId"], "disposition": "OPEN" },
+        { "method": "GET",    "path": "/onboarding/resolve-preview",      "fullPath": "/api/v1/superadmin/tenant/onboarding/resolve-preview",      "handler": "resolvePreview",        "roles": ["SUPER_ADMIN"], "params": ["@RequestParam host"], "disposition": "OPEN" },
+        { "method": "POST",   "path": "/domains",                         "fullPath": "/api/v1/superadmin/tenant/domains",                         "handler": "createDomain",          "roles": ["SUPER_ADMIN"], "params": ["@RequestBody TenantDomainRequest"], "disposition": "OPEN" },
+        { "method": "PUT",    "path": "/domains/{id}",                    "fullPath": "/api/v1/superadmin/tenant/domains/{id}",                    "handler": "updateDomain",          "roles": ["SUPER_ADMIN"], "params": ["@PathVariable id", "@RequestBody TenantDomainRequest"], "disposition": "OPEN" },
+        { "method": "DELETE", "path": "/domains/{id}",                    "fullPath": "/api/v1/superadmin/tenant/domains/{id}",                    "handler": "deleteDomain",          "roles": ["SUPER_ADMIN"], "params": ["@PathVariable id"], "disposition": "OPEN" },
+        { "method": "POST",   "path": "/domains/{id}/verification-token", "fullPath": "/api/v1/superadmin/tenant/domains/{id}/verification-token", "handler": "ensureVerificationToken","roles": ["SUPER_ADMIN"], "params": ["@PathVariable id"], "disposition": "OPEN" },
+        { "method": "POST",   "path": "/domains/{id}/verify",             "fullPath": "/api/v1/superadmin/tenant/domains/{id}/verify",             "handler": "verifyDomain",          "roles": ["SUPER_ADMIN"], "params": ["@PathVariable id"], "disposition": "OPEN" },
+        { "method": "GET",    "path": "/branding/{collegeId}",            "fullPath": "/api/v1/superadmin/tenant/branding/{collegeId}",            "handler": "getBranding",           "roles": ["SUPER_ADMIN"], "params": ["@PathVariable collegeId"], "disposition": "OPEN" },
+        { "method": "PUT",    "path": "/branding/{collegeId}",            "fullPath": "/api/v1/superadmin/tenant/branding/{collegeId}",            "handler": "upsertBranding",        "roles": ["SUPER_ADMIN"], "params": ["@PathVariable collegeId", "@RequestBody CollegeBrandingRequest"], "disposition": "OPEN" },
+        { "method": "GET",    "path": "/settings/global",                 "fullPath": "/api/v1/superadmin/tenant/settings/global",                 "handler": "getGlobalSettings",     "roles": ["SUPER_ADMIN"], "params": [], "disposition": "OPEN" },
+        { "method": "PUT",    "path": "/settings/global",                 "fullPath": "/api/v1/superadmin/tenant/settings/global",                 "handler": "putGlobalSettings",     "roles": ["SUPER_ADMIN"], "params": ["@RequestBody Map"], "disposition": "OPEN" },
+        { "method": "DELETE", "path": "/settings/global/{key}",           "fullPath": "/api/v1/superadmin/tenant/settings/global/{key}",           "handler": "deleteGlobalSetting",   "roles": ["SUPER_ADMIN"], "params": ["@PathVariable key"], "disposition": "OPEN" },
+        { "method": "GET",    "path": "/settings/org/{orgId}",            "fullPath": "/api/v1/superadmin/tenant/settings/org/{orgId}",            "handler": "getOrgSettings",        "roles": ["SUPER_ADMIN"], "params": ["@PathVariable orgId"], "disposition": "OPEN" },
+        { "method": "PUT",    "path": "/settings/org/{orgId}",            "fullPath": "/api/v1/superadmin/tenant/settings/org/{orgId}",            "handler": "putOrgSettings",        "roles": ["SUPER_ADMIN"], "params": ["@PathVariable orgId", "@RequestBody Map"], "disposition": "OPEN" },
+        { "method": "GET",    "path": "/settings/college/{collegeId}",    "fullPath": "/api/v1/superadmin/tenant/settings/college/{collegeId}",    "handler": "getCollegeSettings",    "roles": ["SUPER_ADMIN"], "params": ["@PathVariable collegeId"], "disposition": "OPEN" },
+        { "method": "PUT",    "path": "/settings/college/{collegeId}",    "fullPath": "/api/v1/superadmin/tenant/settings/college/{collegeId}",    "handler": "putCollegeSettings",    "roles": ["SUPER_ADMIN"], "params": ["@PathVariable collegeId", "@RequestBody Map"], "disposition": "OPEN" },
+        { "method": "DELETE", "path": "/settings/org/{orgId}/{key}",      "fullPath": "/api/v1/superadmin/tenant/settings/org/{orgId}/{key}",      "handler": "deleteOrgSetting",      "roles": ["SUPER_ADMIN"], "params": ["@PathVariable orgId", "@PathVariable key"], "disposition": "OPEN" },
+        { "method": "DELETE", "path": "/settings/college/{collegeId}/{key}","fullPath": "/api/v1/superadmin/tenant/settings/college/{collegeId}/{key}","handler": "deleteCollegeSetting","roles": ["SUPER_ADMIN"], "params": ["@PathVariable collegeId", "@PathVariable key"], "disposition": "OPEN" }
+      ]
+    },
+    {
+      "className": "FeatureFlagController",
+      "file": "controller/FeatureFlagController.java",
+      "basePath": "/api/v1/features",
+      "endpointCount": 1,
+      "endpoints": [
+        { "method": "GET", "path": "/mine", "fullPath": "/api/v1/features/mine", "handler": "mine", "roles": ["AUTHENTICATED"], "params": [], "disposition": "OPEN" }
+      ]
+    },
+    {
+      "className": "SuperAdminAuditController",
+      "file": "controller/SuperAdminAuditController.java",
+      "basePath": "/api/v1/superadmin/audit",
+      "endpointCount": 1,
+      "endpoints": [
+        { "method": "GET", "path": "", "fullPath": "/api/v1/superadmin/audit", "handler": "search", "roles": ["SUPER_ADMIN"], "params": ["@RequestParam actionKey", "@RequestParam actorUserId", "@RequestParam organizationId", "@RequestParam collegeId", "@RequestParam entityId", "@RequestParam entityType", "@RequestParam page", "@RequestParam size"], "disposition": "OPEN" }
+      ]
+    },
+    {
+      "className": "SuperAdminBugTrackerController",
+      "file": "controller/SuperAdminBugTrackerController.java",
+      "basePath": "/api/v1/superadmin/bug-tracker",
+      "endpointCount": 3,
+      "endpoints": [
+        { "method": "PATCH", "path": "/issues/{publicId}/status",   "fullPath": "/api/v1/superadmin/bug-tracker/issues/{publicId}/status",   "handler": "updateStatus",   "roles": ["SUPER_ADMIN"], "params": ["@PathVariable publicId", "@RequestBody BugReportStatusRequest"], "disposition": "OPEN" },
+        { "method": "PATCH", "path": "/issues/{publicId}/workflow",  "fullPath": "/api/v1/superadmin/bug-tracker/issues/{publicId}/workflow",  "handler": "updateWorkflow", "roles": ["SUPER_ADMIN"], "params": ["@PathVariable publicId", "@RequestBody BugReportWorkflowRequest"], "disposition": "OPEN" },
+        { "method": "POST",  "path": "/issues/{publicId}/retest",    "fullPath": "/api/v1/superadmin/bug-tracker/issues/{publicId}/retest",    "handler": "retestIssue",    "roles": ["SUPER_ADMIN"], "params": ["@PathVariable publicId", "@RequestBody BugReportRetestRequest"], "disposition": "OPEN" }
+      ]
+    },
+    {
+      "className": "SuperAdminE2eController",
+      "file": "controller/SuperAdminE2eController.java",
+      "basePath": "/api/v1/superadmin/e2e",
+      "endpointCount": 1,
+      "endpoints": [
+        { "method": "POST", "path": "/seed", "fullPath": "/api/v1/superadmin/e2e/seed", "handler": "seed", "roles": ["SUPER_ADMIN"], "params": [], "disposition": "OPEN" }
+      ]
+    },
+    {
+      "className": "SuperAdminFeatureController",
+      "file": "controller/SuperAdminFeatureController.java",
+      "basePath": "/api/v1/superadmin/features",
+      "endpointCount": 5,
+      "endpoints": [
+        { "method": "GET", "path": "",                            "fullPath": "/api/v1/superadmin/features",                            "handler": "list",             "roles": ["SUPER_ADMIN"], "params": [], "disposition": "OPEN" },
+        { "method": "PUT", "path": "/{collegeId}",               "fullPath": "/api/v1/superadmin/features/{collegeId}",               "handler": "update",           "roles": ["SUPER_ADMIN"], "params": ["@PathVariable collegeId", "@RequestBody FeatureFlagUpdateRequest"], "disposition": "OPEN" },
+        { "method": "GET", "path": "/{collegeId}/placements-impact","fullPath": "/api/v1/superadmin/features/{collegeId}/placements-impact","handler": "placementsImpact","roles": ["SUPER_ADMIN"], "params": ["@PathVariable collegeId"], "disposition": "OPEN" },
+        { "method": "GET", "path": "/{collegeId}/mentor-count",  "fullPath": "/api/v1/superadmin/features/{collegeId}/mentor-count",  "handler": "mentorCount",      "roles": ["SUPER_ADMIN"], "params": ["@PathVariable collegeId"], "disposition": "OPEN" },
+        { "method": "GET", "path": "/modules",                   "fullPath": "/api/v1/superadmin/features/modules",                   "handler": "modules",          "roles": ["SUPER_ADMIN"], "params": [], "disposition": "OPEN" }
+      ]
+    },
+    {
+      "className": "SuperAdminHrController",
+      "file": "controller/SuperAdminHrController.java",
+      "basePath": "/api/v1/superadmin/hr",
+      "endpointCount": 11,
+      "endpoints": [
+        { "method": "GET",    "path": "",                        "fullPath": "/api/v1/superadmin/hr",                        "handler": "list",           "roles": ["SUPER_ADMIN"], "params": ["@RequestParam q", "@RequestParam page", "@RequestParam size"], "disposition": "OPEN" },
+        { "method": "GET",    "path": "/companies",             "fullPath": "/api/v1/superadmin/hr/companies",             "handler": "companies",      "roles": ["SUPER_ADMIN"], "params": [], "disposition": "OPEN" },
+        { "method": "GET",    "path": "/{id}",                  "fullPath": "/api/v1/superadmin/hr/{id}",                  "handler": "get",            "roles": ["SUPER_ADMIN"], "params": ["@PathVariable id"], "disposition": "OPEN" },
+        { "method": "POST",   "path": "",                        "fullPath": "/api/v1/superadmin/hr",                        "handler": "create",         "roles": ["SUPER_ADMIN"], "params": ["@RequestBody HrRequest"], "disposition": "OPEN" },
+        { "method": "PUT",    "path": "/{id}",                  "fullPath": "/api/v1/superadmin/hr/{id}",                  "handler": "update",         "roles": ["SUPER_ADMIN"], "params": ["@PathVariable id", "@RequestBody HrRequest"], "disposition": "OPEN" },
+        { "method": "POST",   "path": "/{id}/suspend",          "fullPath": "/api/v1/superadmin/hr/{id}/suspend",          "handler": "suspend",        "roles": ["SUPER_ADMIN"], "params": ["@PathVariable id", "@RequestBody ReasonRequest"], "disposition": "OPEN" },
+        { "method": "POST",   "path": "/{id}/reactivate",       "fullPath": "/api/v1/superadmin/hr/{id}/reactivate",       "handler": "reactivate",     "roles": ["SUPER_ADMIN"], "params": ["@PathVariable id"], "disposition": "OPEN" },
+        { "method": "POST",   "path": "/{id}/revoke-sessions",  "fullPath": "/api/v1/superadmin/hr/{id}/revoke-sessions",  "handler": "revokeSessions", "roles": ["SUPER_ADMIN"], "params": ["@PathVariable id"], "disposition": "OPEN" },
+        { "method": "DELETE", "path": "/{id}",                  "fullPath": "/api/v1/superadmin/hr/{id}",                  "handler": "delete",         "roles": ["SUPER_ADMIN"], "params": ["@PathVariable id"], "disposition": "OPEN" },
+        { "method": "POST",   "path": "/{id}/colleges",         "fullPath": "/api/v1/superadmin/hr/{id}/colleges",         "handler": "grant",          "roles": ["SUPER_ADMIN"], "params": ["@PathVariable id", "@RequestBody GrantRequest"], "disposition": "OPEN" },
+        { "method": "DELETE", "path": "/{id}/colleges/{collegeId}","fullPath": "/api/v1/superadmin/hr/{id}/colleges/{collegeId}","handler": "revoke",    "roles": ["SUPER_ADMIN"], "params": ["@PathVariable id", "@PathVariable collegeId", "@RequestBody ReasonRequest"], "disposition": "OPEN" }
+      ]
+    },
+    {
+      "className": "SuperAdminLogsController",
+      "file": "controller/SuperAdminLogsController.java",
+      "basePath": "/api/v1/superadmin/logs",
+      "endpointCount": 16,
+      "endpoints": [
+        { "method": "POST", "path": "/query",                  "fullPath": "/api/v1/superadmin/logs/query",                  "handler": "query",        "roles": ["SUPER_ADMIN"], "params": ["@RequestBody GcpLogQueryRequest"], "disposition": "OPEN" },
+        { "method": "POST", "path": "/detail",                 "fullPath": "/api/v1/superadmin/logs/detail",                 "handler": "detail",       "roles": ["SUPER_ADMIN"], "params": ["@RequestBody GcpLogDetailRequest"], "disposition": "OPEN" },
+        { "method": "GET",  "path": "/status",                 "fullPath": "/api/v1/superadmin/logs/status",                 "handler": "status",       "roles": ["SUPER_ADMIN"], "params": [], "disposition": "OPEN" },
+        { "method": "POST", "path": "/mark-viewed",            "fullPath": "/api/v1/superadmin/logs/mark-viewed",            "handler": "markViewed",   "roles": ["SUPER_ADMIN"], "params": [], "disposition": "OPEN" },
+        { "method": "POST", "path": "/test-alert",             "fullPath": "/api/v1/superadmin/logs/test-alert",             "handler": "testAlert",    "roles": ["SUPER_ADMIN"], "params": [], "disposition": "OPEN" },
+        { "method": "GET",  "path": "/known-errors",           "fullPath": "/api/v1/superadmin/logs/known-errors",           "handler": "knownErrors",  "roles": ["SUPER_ADMIN"], "params": ["@RequestParam environment"], "disposition": "OPEN" },
+        { "method": "POST", "path": "/mute",                   "fullPath": "/api/v1/superadmin/logs/mute",                   "handler": "mute",         "roles": ["SUPER_ADMIN"], "params": ["@RequestBody LogMuteRequest"], "disposition": "OPEN" },
+        { "method": "POST", "path": "/export",                 "fullPath": "/api/v1/superadmin/logs/export",                 "handler": "export",       "roles": ["SUPER_ADMIN"], "params": ["@RequestBody GcpLogExportRequest"], "disposition": "OPEN" },
+        { "method": "POST", "path": "/known-errors/{id}/mute", "fullPath": "/api/v1/superadmin/logs/known-errors/{id}/mute", "handler": "muteById",     "roles": ["SUPER_ADMIN"], "params": ["@PathVariable id", "@RequestBody Map"], "disposition": "OPEN" },
+        { "method": "POST", "path": "/known-errors/{id}/status","fullPath": "/api/v1/superadmin/logs/known-errors/{id}/status","handler": "setStatus",  "roles": ["SUPER_ADMIN"], "params": ["@PathVariable id", "@RequestBody LogStatusRequest"], "disposition": "OPEN" },
+        { "method": "POST", "path": "/known-errors/{id}/issue","fullPath": "/api/v1/superadmin/logs/known-errors/{id}/issue","handler": "linkIssue",    "roles": ["SUPER_ADMIN"], "params": ["@PathVariable id", "@RequestBody Map"], "disposition": "OPEN" },
+        { "method": "POST", "path": "/context",                "fullPath": "/api/v1/superadmin/logs/context",                "handler": "context",      "roles": ["SUPER_ADMIN"], "params": ["@RequestBody LogContextRequest"], "disposition": "OPEN" },
+        { "method": "GET",  "path": "/deploys",                "fullPath": "/api/v1/superadmin/logs/deploys",                "handler": "deploys",      "roles": ["SUPER_ADMIN"], "params": ["@RequestParam environment", "@RequestParam days"], "disposition": "OPEN" },
+        { "method": "POST", "path": "/deploys/health",         "fullPath": "/api/v1/superadmin/logs/deploys/health",         "handler": "deployHealth", "roles": ["SUPER_ADMIN"], "params": ["@RequestBody Map"], "disposition": "OPEN" },
+        { "method": "GET",  "path": "/digest",                 "fullPath": "/api/v1/superadmin/logs/digest",                 "handler": "digest",       "roles": ["SUPER_ADMIN"], "params": ["@RequestParam hours"], "disposition": "OPEN" },
+        { "method": "POST", "path": "/digest/send",            "fullPath": "/api/v1/superadmin/logs/digest/send",            "handler": "sendDigest",   "roles": ["SUPER_ADMIN"], "params": [], "disposition": "OPEN" }
+      ]
+    },
+    {
+      "className": "SuperAdminUserAdminController",
+      "file": "controller/SuperAdminUserAdminController.java",
+      "basePath": "/api/v1/superadmin/users",
+      "endpointCount": 7,
+      "endpoints": [
+        { "method": "GET",  "path": "/faculty-admins",                        "fullPath": "/api/v1/superadmin/users/faculty-admins",                        "handler": "listFacultyAdmins",    "roles": ["SUPER_ADMIN"], "params": ["@RequestParam organizationId", "@RequestParam collegeId", "@RequestParam role"], "disposition": "OPEN" },
+        { "method": "POST", "path": "/faculty-admins",                        "fullPath": "/api/v1/superadmin/users/faculty-admins",                        "handler": "createFacultyAdmin",   "roles": ["SUPER_ADMIN"], "params": ["@RequestBody CreateFacultyAdminRequest"], "disposition": "OPEN" },
+        { "method": "PUT",  "path": "/faculty-admins/{id}/status",            "fullPath": "/api/v1/superadmin/users/faculty-admins/{id}/status",            "handler": "setFacultyAdminStatus","roles": ["SUPER_ADMIN"], "params": ["@PathVariable id", "@RequestBody Map"], "disposition": "OPEN" },
+        { "method": "GET",  "path": "/{userType}/{userId}/sessions",          "fullPath": "/api/v1/superadmin/users/{userType}/{userId}/sessions",          "handler": "listSessions",         "roles": ["SUPER_ADMIN"], "params": ["@PathVariable userType", "@PathVariable userId"], "disposition": "OPEN" },
+        { "method": "POST", "path": "/{userType}/{userId}/sessions/revoke-all","fullPath": "/api/v1/superadmin/users/{userType}/{userId}/sessions/revoke-all","handler": "revokeAllSessions",   "roles": ["SUPER_ADMIN"], "params": ["@PathVariable userType", "@PathVariable userId"], "disposition": "OPEN" },
+        { "method": "POST", "path": "/{userType}/{userId}/impersonate",       "fullPath": "/api/v1/superadmin/users/{userType}/{userId}/impersonate",       "handler": "impersonate",          "roles": ["SUPER_ADMIN"], "params": ["@PathVariable userType", "@PathVariable userId"], "disposition": "OPEN" },
+        { "method": "POST", "path": "/impersonate/end",                       "fullPath": "/api/v1/superadmin/users/impersonate/end",                       "handler": "endImpersonation",     "roles": ["SUPER_ADMIN"], "params": [], "disposition": "OPEN" }
+      ]
+    },
+    {
+      "className": "AdminCollegeSummaryController",
+      "file": "controller/AdminCollegeSummaryController.java",
+      "basePath": "/api/v1/admin/college-summary",
+      "endpointCount": 1,
+      "endpoints": [
+        { "method": "GET", "path": "", "fullPath": "/api/v1/admin/college-summary", "handler": "summary", "roles": ["ADMIN"], "params": ["@RequestParam collegeId"], "disposition": "OPEN" }
+      ]
+    },
+    {
+      "className": "AdminUserLifecycleController",
+      "file": "controller/AdminUserLifecycleController.java",
+      "basePath": "/api/v1/admin/users",
+      "endpointCount": 2,
+      "endpoints": [
+        { "method": "PUT", "path": "/{userType}/{userId}/suspend",    "fullPath": "/api/v1/admin/users/{userType}/{userId}/suspend",    "handler": "suspend",    "roles": ["ADMIN"], "params": ["@PathVariable userType", "@PathVariable userId", "@RequestBody Map"], "disposition": "OPEN" },
+        { "method": "PUT", "path": "/{userType}/{userId}/reactivate", "fullPath": "/api/v1/admin/users/{userType}/{userId}/reactivate", "handler": "reactivate", "roles": ["ADMIN"], "params": ["@PathVariable userType", "@PathVariable userId"], "disposition": "OPEN" }
+      ]
+    },
+    {
+      "className": "ModuleAccessController",
+      "file": "controller/ModuleAccessController.java",
+      "basePath": "/api/v1/admin/module-access",
+      "endpointCount": 7,
+      "endpoints": [
+        { "method": "GET", "path": "/tree",               "fullPath": "/api/v1/admin/module-access/tree",               "handler": "getTree",             "roles": ["ADMIN"], "params": ["@RequestParam collegeId"], "disposition": "OPEN" },
+        { "method": "GET", "path": "",                    "fullPath": "/api/v1/admin/module-access",                    "handler": "getNode",             "roles": ["ADMIN"], "params": ["@RequestParam scopeType", "@RequestParam scopeId"], "disposition": "OPEN" },
+        { "method": "PUT", "path": "",                    "fullPath": "/api/v1/admin/module-access",                    "handler": "setValue",            "roles": ["ADMIN"], "params": ["@RequestBody ModuleAccessUpdateRequest"], "disposition": "OPEN" },
+        { "method": "PUT", "path": "/bulk",               "fullPath": "/api/v1/admin/module-access/bulk",               "handler": "setBulk",             "roles": ["ADMIN"], "params": ["@RequestBody ModuleAccessBulkRequest"], "disposition": "OPEN" },
+        { "method": "GET", "path": "/learner-overrides",  "fullPath": "/api/v1/admin/module-access/learner-overrides",  "handler": "listLearnerOverrides","roles": ["ADMIN"], "params": ["@RequestParam collegeId"], "disposition": "OPEN" },
+        { "method": "GET", "path": "/history",            "fullPath": "/api/v1/admin/module-access/history",            "handler": "history",             "roles": ["ADMIN"], "params": ["@RequestParam collegeId", "@RequestParam limit"], "disposition": "OPEN" },
+        { "method": "GET", "path": "/explain",            "fullPath": "/api/v1/admin/module-access/explain",            "handler": "explain",             "roles": ["ADMIN"], "params": ["@RequestParam learnerId"], "disposition": "OPEN" }
+      ]
+    },
+    {
+      "className": "ClientSettingsController",
+      "file": "controller/ClientSettingsController.java",
+      "basePath": "/api/v1/client-settings",
+      "endpointCount": 1,
+      "endpoints": [
+        { "method": "GET", "path": "", "fullPath": "/api/v1/client-settings", "handler": "getClientSettings", "roles": ["AUTHENTICATED"], "params": [], "disposition": "OPEN" }
+      ]
+    },
+    {
+      "className": "ClientErrorReportController",
+      "file": "controller/ClientErrorReportController.java",
+      "basePath": "/api/v1/client-errors",
+      "endpointCount": 1,
+      "endpoints": [
+        { "method": "POST", "path": "/report", "fullPath": "/api/v1/client-errors/report", "handler": "report", "roles": ["AUTHENTICATED"], "params": ["@RequestBody ClientErrorReportRequest"], "disposition": "OPEN" }
+      ]
+    },
+    {
+      "className": "PublicTenantController",
+      "file": "controller/PublicTenantController.java",
+      "basePath": "/api/v1/public",
+      "endpointCount": 1,
+      "endpoints": [
+        { "method": "GET", "path": "/tenant-bootstrap", "fullPath": "/api/v1/public/tenant-bootstrap", "handler": "bootstrap", "roles": ["PUBLIC"], "params": [], "disposition": "OPEN" }
+      ]
+    },
+    {
+      "className": "PublicE2eAuthController",
+      "file": "controller/PublicE2eAuthController.java",
+      "basePath": "/api/v1/public/e2e/auth",
+      "endpointCount": 1,
+      "endpoints": [
+        { "method": "POST", "path": "/superadmin", "fullPath": "/api/v1/public/e2e/auth/superadmin", "handler": "loginSuperAdmin", "roles": ["PUBLIC_E2E_ONLY"], "params": ["@RequestBody Map"], "disposition": "OPEN" }
+      ]
+    },
+    {
+      "className": "PublicBugTrackerController",
+      "file": "controller/PublicBugTrackerController.java",
+      "basePath": "/api/v1/public/bug-tracker",
+      "endpointCount": 7,
+      "endpoints": [
+        { "method": "POST", "path": "/issues",                          "fullPath": "/api/v1/public/bug-tracker/issues",                          "handler": "createIssue",        "roles": ["PUBLIC"], "params": ["@RequestBody BugReportCreateRequest"], "disposition": "OPEN" },
+        { "method": "GET",  "path": "/issues",                          "fullPath": "/api/v1/public/bug-tracker/issues",                          "handler": "listIssues",         "roles": ["PUBLIC"], "params": ["@RequestParam status", "@RequestParam environment", "@RequestParam search", "@RequestParam page", "@RequestParam size"], "disposition": "OPEN" },
+        { "method": "GET",  "path": "/issues/{publicId}",               "fullPath": "/api/v1/public/bug-tracker/issues/{publicId}",               "handler": "getIssue",           "roles": ["PUBLIC"], "params": ["@PathVariable publicId"], "disposition": "OPEN" },
+        { "method": "GET",  "path": "/issues/{publicId}/activity",      "fullPath": "/api/v1/public/bug-tracker/issues/{publicId}/activity",      "handler": "listActivity",       "roles": ["PUBLIC"], "params": ["@PathVariable publicId"], "disposition": "OPEN" },
+        { "method": "POST", "path": "/issues/{publicId}/attachments/presign","fullPath": "/api/v1/public/bug-tracker/issues/{publicId}/attachments/presign","handler": "presignAttachment", "roles": ["PUBLIC"], "params": ["@PathVariable publicId", "@RequestBody BugTrackerAttachmentPresignRequest"], "disposition": "OPEN" },
+        { "method": "POST", "path": "/issues/{publicId}/attachments/confirm","fullPath": "/api/v1/public/bug-tracker/issues/{publicId}/attachments/confirm","handler": "confirmAttachment","roles": ["PUBLIC"], "params": ["@PathVariable publicId", "@RequestBody BugTrackerAttachmentConfirmRequest"], "disposition": "OPEN" },
+        { "method": "GET",  "path": "/issues/{publicId}/attachments",   "fullPath": "/api/v1/public/bug-tracker/issues/{publicId}/attachments",   "handler": "listAttachments",    "roles": ["PUBLIC"], "params": ["@PathVariable publicId"], "disposition": "OPEN" }
+      ]
+    },
+    {
+      "className": "PublicTrackerLogsAccessController",
+      "file": "controller/PublicTrackerLogsAccessController.java",
+      "basePath": "/api/v1/public/bug-tracker/logs-access",
+      "endpointCount": 1,
+      "endpoints": [
+        { "method": "POST", "path": "/verify", "fullPath": "/api/v1/public/bug-tracker/logs-access/verify", "handler": "verify", "roles": ["PUBLIC"], "params": ["@RequestBody TrackerLogsAccessRequest"], "disposition": "OPEN" }
+      ]
+    },
+    {
+      "className": "PublicMobileAuthController",
+      "file": "controller/PublicMobileAuthController.java",
+      "basePath": "/api/v1/public/mobile-auth",
+      "endpointCount": 5,
+      "endpoints": [
+        { "method": "POST", "path": "/start",                 "fullPath": "/api/v1/public/mobile-auth/start",                 "handler": "start",             "roles": ["PUBLIC"], "params": ["@RequestBody MobileAuthStartRequest"], "disposition": "OPEN" },
+        { "method": "POST", "path": "/send",                  "fullPath": "/api/v1/public/mobile-auth/send",                  "handler": "send",              "roles": ["PUBLIC"], "params": ["@RequestBody MobileAuthSendRequest"], "disposition": "OPEN" },
+        { "method": "POST", "path": "/email-fallback/send",   "fullPath": "/api/v1/public/mobile-auth/email-fallback/send",   "handler": "sendEmailFallback", "roles": ["PUBLIC"], "params": ["@RequestBody MobileAuthEmailFallbackSendRequest"], "disposition": "OPEN" },
+        { "method": "POST", "path": "/email-fallback/verify", "fullPath": "/api/v1/public/mobile-auth/email-fallback/verify", "handler": "verifyEmailFallback","roles": ["PUBLIC"], "params": ["@RequestBody MobileAuthVerifyRequest"], "disposition": "OPEN" },
+        { "method": "POST", "path": "/verify",                "fullPath": "/api/v1/public/mobile-auth/verify",                "handler": "verify",            "roles": ["PUBLIC"], "params": ["@RequestBody MobileAuthVerifyRequest"], "disposition": "OPEN" }
+      ]
+    }
+  ],
+  "totalEndpoints": 124
+}

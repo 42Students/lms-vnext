@@ -1,0 +1,278 @@
+{
+  "milestoneId": "API-08",
+  "title": "TPO portal and recruiter CRM — drives, offers, results, seasons",
+  "frozenLegacySha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+  "controllers": [
+    {
+      "className": "TpoApplicantController",
+      "file": "controller/tpo/TpoApplicantController.java",
+      "basePath": "/api/v1/tpo/applicants",
+      "endpointCount": 8,
+      "endpoints": [
+        { "method": "GET",  "path": "/",                      "fullPath": "/api/v1/tpo/applicants/",                      "handler": "listAll",            "roles": ["TPO"], "params": [], "disposition": "OPEN" },
+        { "method": "GET",  "path": "/{id}",                  "fullPath": "/api/v1/tpo/applicants/{id}",                  "handler": "getById",            "roles": ["TPO"], "params": ["@PathVariable id"], "disposition": "OPEN" },
+        { "method": "POST", "path": "/{id}/shortlist",        "fullPath": "/api/v1/tpo/applicants/{id}/shortlist",        "handler": "shortlist",          "roles": ["TPO"], "params": ["@PathVariable id"], "disposition": "OPEN" },
+        { "method": "POST", "path": "/{id}/reject",           "fullPath": "/api/v1/tpo/applicants/{id}/reject",           "handler": "reject",             "roles": ["TPO"], "params": ["@PathVariable id"], "disposition": "OPEN" },
+        { "method": "GET",  "path": "/by-drive/{driveId}",    "fullPath": "/api/v1/tpo/applicants/by-drive/{driveId}",    "handler": "getByDrive",         "roles": ["TPO"], "params": ["@PathVariable driveId"], "disposition": "OPEN" },
+        { "method": "GET",  "path": "/by-round/{roundId}",    "fullPath": "/api/v1/tpo/applicants/by-round/{roundId}",    "handler": "getByRound",         "roles": ["TPO"], "params": ["@PathVariable roundId"], "disposition": "OPEN" },
+        { "method": "POST", "path": "/bulk-status",           "fullPath": "/api/v1/tpo/applicants/bulk-status",           "handler": "bulkUpdateStatus",   "roles": ["TPO"], "params": [], "disposition": "OPEN" },
+        { "method": "GET",  "path": "/stats",                 "fullPath": "/api/v1/tpo/applicants/stats",                 "handler": "getStats",           "roles": ["TPO"], "params": [], "disposition": "OPEN" }
+      ]
+    },
+    {
+      "className": "TpoDriveController",
+      "file": "controller/tpo/TpoDriveController.java",
+      "basePath": "/api/v1/tpo/drives",
+      "endpointCount": 12,
+      "endpoints": [
+        { "method": "GET",    "path": "/",                       "fullPath": "/api/v1/tpo/drives/",                       "handler": "listAll",          "roles": ["TPO"], "params": [], "disposition": "OPEN" },
+        { "method": "GET",    "path": "/{id}",                   "fullPath": "/api/v1/tpo/drives/{id}",                   "handler": "getById",          "roles": ["TPO"], "params": ["@PathVariable id"], "disposition": "OPEN" },
+        { "method": "POST",   "path": "/",                       "fullPath": "/api/v1/tpo/drives/",                       "handler": "create",           "roles": ["TPO"], "params": [], "disposition": "OPEN" },
+        { "method": "PUT",    "path": "/{id}",                   "fullPath": "/api/v1/tpo/drives/{id}",                   "handler": "update",           "roles": ["TPO"], "params": ["@PathVariable id"], "disposition": "OPEN" },
+        { "method": "DELETE", "path": "/{id}",                   "fullPath": "/api/v1/tpo/drives/{id}",                   "handler": "delete",           "roles": ["TPO"], "params": ["@PathVariable id"], "disposition": "OPEN" },
+        { "method": "POST",   "path": "/{id}/publish",           "fullPath": "/api/v1/tpo/drives/{id}/publish",           "handler": "publish",          "roles": ["TPO"], "params": ["@PathVariable id"], "disposition": "OPEN" },
+        { "method": "POST",   "path": "/{id}/close",             "fullPath": "/api/v1/tpo/drives/{id}/close",             "handler": "close",            "roles": ["TPO"], "params": ["@PathVariable id"], "disposition": "OPEN" },
+        { "method": "GET",    "path": "/{id}/rounds",            "fullPath": "/api/v1/tpo/drives/{id}/rounds",            "handler": "getRounds",        "roles": ["TPO"], "params": ["@PathVariable id"], "disposition": "OPEN" },
+        { "method": "POST",   "path": "/{id}/rounds",            "fullPath": "/api/v1/tpo/drives/{id}/rounds",            "handler": "addRound",         "roles": ["TPO"], "params": ["@PathVariable id"], "disposition": "OPEN" },
+        { "method": "GET",    "path": "/{id}/eligible",          "fullPath": "/api/v1/tpo/drives/{id}/eligible",          "handler": "getEligible",      "roles": ["TPO"], "params": ["@PathVariable id"], "disposition": "OPEN" },
+        { "method": "GET",    "path": "/active",                 "fullPath": "/api/v1/tpo/drives/active",                 "handler": "getActive",        "roles": ["TPO"], "params": [], "disposition": "OPEN" },
+        { "method": "GET",    "path": "/stats",                  "fullPath": "/api/v1/tpo/drives/stats",                  "handler": "getStats",         "roles": ["TPO"], "params": [], "disposition": "OPEN" }
+      ]
+    },
+    {
+      "className": "TpoHrAccessController",
+      "file": "controller/tpo/TpoHrAccessController.java",
+      "basePath": "/api/v1/tpo/hr-access",
+      "endpointCount": 6,
+      "endpoints": [
+        { "method": "GET",    "path": "/",           "fullPath": "/api/v1/tpo/hr-access/",           "handler": "listHrs",       "roles": ["TPO"], "params": [], "disposition": "OPEN" },
+        { "method": "POST",   "path": "/invite",     "fullPath": "/api/v1/tpo/hr-access/invite",     "handler": "inviteHr",      "roles": ["TPO"], "params": [], "disposition": "OPEN" },
+        { "method": "POST",   "path": "/{id}/revoke","fullPath": "/api/v1/tpo/hr-access/{id}/revoke","handler": "revokeAccess",  "roles": ["TPO"], "params": ["@PathVariable id"], "disposition": "OPEN" },
+        { "method": "GET",    "path": "/pending",    "fullPath": "/api/v1/tpo/hr-access/pending",    "handler": "getPending",    "roles": ["TPO"], "params": [], "disposition": "OPEN" },
+        { "method": "POST",   "path": "/{id}/resend","fullPath": "/api/v1/tpo/hr-access/{id}/resend","handler": "resendInvite",  "roles": ["TPO"], "params": ["@PathVariable id"], "disposition": "OPEN" },
+        { "method": "GET",    "path": "/active",     "fullPath": "/api/v1/tpo/hr-access/active",     "handler": "getActiveHrs",  "roles": ["TPO"], "params": [], "disposition": "OPEN" }
+      ]
+    },
+    {
+      "className": "TpoHubController",
+      "file": "controller/tpo/TpoHubController.java",
+      "basePath": "/api/v1/tpo/hub",
+      "endpointCount": 5,
+      "endpoints": [
+        { "method": "GET",  "path": "/dashboard",   "fullPath": "/api/v1/tpo/hub/dashboard",   "handler": "getDashboard",   "roles": ["TPO"], "params": [], "disposition": "OPEN" },
+        { "method": "GET",  "path": "/stats",        "fullPath": "/api/v1/tpo/hub/stats",        "handler": "getStats",       "roles": ["TPO"], "params": [], "disposition": "OPEN" },
+        { "method": "GET",  "path": "/activity",     "fullPath": "/api/v1/tpo/hub/activity",     "handler": "getActivity",    "roles": ["TPO"], "params": [], "disposition": "OPEN" },
+        { "method": "GET",  "path": "/upcoming",     "fullPath": "/api/v1/tpo/hub/upcoming",     "handler": "getUpcoming",    "roles": ["TPO"], "params": [], "disposition": "OPEN" },
+        { "method": "GET",  "path": "/notifications","fullPath": "/api/v1/tpo/hub/notifications","handler": "getNotifications","roles": ["TPO"], "params": [], "disposition": "OPEN" }
+      ]
+    },
+    {
+      "className": "TpoLeadController",
+      "file": "controller/tpo/TpoLeadController.java",
+      "basePath": "/api/v1/tpo/leads",
+      "endpointCount": 8,
+      "endpoints": [
+        { "method": "GET",    "path": "/",                "fullPath": "/api/v1/tpo/leads/",                "handler": "listAll",        "roles": ["TPO"], "params": [], "disposition": "OPEN" },
+        { "method": "GET",    "path": "/{id}",            "fullPath": "/api/v1/tpo/leads/{id}",            "handler": "getById",        "roles": ["TPO"], "params": ["@PathVariable id"], "disposition": "OPEN" },
+        { "method": "POST",   "path": "/",                "fullPath": "/api/v1/tpo/leads/",                "handler": "create",         "roles": ["TPO"], "params": [], "disposition": "OPEN" },
+        { "method": "PUT",    "path": "/{id}",            "fullPath": "/api/v1/tpo/leads/{id}",            "handler": "update",         "roles": ["TPO"], "params": ["@PathVariable id"], "disposition": "OPEN" },
+        { "method": "DELETE", "path": "/{id}",            "fullPath": "/api/v1/tpo/leads/{id}",            "handler": "delete",         "roles": ["TPO"], "params": ["@PathVariable id"], "disposition": "OPEN" },
+        { "method": "POST",   "path": "/{id}/convert",    "fullPath": "/api/v1/tpo/leads/{id}/convert",    "handler": "convertToDrive", "roles": ["TPO"], "params": ["@PathVariable id"], "disposition": "OPEN" },
+        { "method": "GET",    "path": "/by-company/{id}", "fullPath": "/api/v1/tpo/leads/by-company/{id}", "handler": "getByCompany",   "roles": ["TPO"], "params": ["@PathVariable id"], "disposition": "OPEN" },
+        { "method": "GET",    "path": "/pipeline",        "fullPath": "/api/v1/tpo/leads/pipeline",        "handler": "getPipeline",    "roles": ["TPO"], "params": [], "disposition": "OPEN" }
+      ]
+    },
+    {
+      "className": "TpoOfferController",
+      "file": "controller/tpo/TpoOfferController.java",
+      "basePath": "/api/v1/tpo/offers",
+      "endpointCount": 8,
+      "endpoints": [
+        { "method": "GET",  "path": "/",                  "fullPath": "/api/v1/tpo/offers/",                  "handler": "listAll",       "roles": ["TPO"], "params": [], "disposition": "OPEN" },
+        { "method": "GET",  "path": "/{id}",              "fullPath": "/api/v1/tpo/offers/{id}",              "handler": "getById",       "roles": ["TPO"], "params": ["@PathVariable id"], "disposition": "OPEN" },
+        { "method": "POST", "path": "/",                  "fullPath": "/api/v1/tpo/offers/",                  "handler": "create",        "roles": ["TPO"], "params": [], "disposition": "OPEN" },
+        { "method": "PUT",  "path": "/{id}",              "fullPath": "/api/v1/tpo/offers/{id}",              "handler": "update",        "roles": ["TPO"], "params": ["@PathVariable id"], "disposition": "OPEN" },
+        { "method": "DELETE","path": "/{id}",             "fullPath": "/api/v1/tpo/offers/{id}",              "handler": "delete",        "roles": ["TPO"], "params": ["@PathVariable id"], "disposition": "OPEN" },
+        { "method": "POST", "path": "/{id}/release",      "fullPath": "/api/v1/tpo/offers/{id}/release",      "handler": "release",       "roles": ["TPO"], "params": ["@PathVariable id"], "disposition": "OPEN" },
+        { "method": "GET",  "path": "/by-drive/{driveId}","fullPath": "/api/v1/tpo/offers/by-drive/{driveId}","handler": "getByDrive",   "roles": ["TPO"], "params": ["@PathVariable driveId"], "disposition": "OPEN" },
+        { "method": "GET",  "path": "/stats",             "fullPath": "/api/v1/tpo/offers/stats",             "handler": "getStats",      "roles": ["TPO"], "params": [], "disposition": "OPEN" }
+      ]
+    },
+    {
+      "className": "TpoRequestController",
+      "file": "controller/tpo/TpoRequestController.java",
+      "basePath": "/api/v1/tpo/requests",
+      "endpointCount": 6,
+      "endpoints": [
+        { "method": "GET",  "path": "/",           "fullPath": "/api/v1/tpo/requests/",           "handler": "listAll",       "roles": ["TPO"], "params": [], "disposition": "OPEN" },
+        { "method": "GET",  "path": "/{id}",       "fullPath": "/api/v1/tpo/requests/{id}",       "handler": "getById",       "roles": ["TPO"], "params": ["@PathVariable id"], "disposition": "OPEN" },
+        { "method": "POST", "path": "/{id}/approve","fullPath": "/api/v1/tpo/requests/{id}/approve","handler": "approve",      "roles": ["TPO"], "params": ["@PathVariable id"], "disposition": "OPEN" },
+        { "method": "POST", "path": "/{id}/reject", "fullPath": "/api/v1/tpo/requests/{id}/reject", "handler": "reject",       "roles": ["TPO"], "params": ["@PathVariable id"], "disposition": "OPEN" },
+        { "method": "GET",  "path": "/pending",    "fullPath": "/api/v1/tpo/requests/pending",    "handler": "getPending",    "roles": ["TPO"], "params": [], "disposition": "OPEN" },
+        { "method": "GET",  "path": "/stats",      "fullPath": "/api/v1/tpo/requests/stats",      "handler": "getStats",      "roles": ["TPO"], "params": [], "disposition": "OPEN" }
+      ]
+    },
+    {
+      "className": "TpoResultsController",
+      "file": "controller/tpo/TpoResultsController.java",
+      "basePath": "/api/v1/tpo/results",
+      "endpointCount": 6,
+      "endpoints": [
+        { "method": "GET",  "path": "/",                     "fullPath": "/api/v1/tpo/results/",                     "handler": "listAll",         "roles": ["TPO"], "params": [], "disposition": "OPEN" },
+        { "method": "POST", "path": "/",                     "fullPath": "/api/v1/tpo/results/",                     "handler": "recordResult",    "roles": ["TPO"], "params": [], "disposition": "OPEN" },
+        { "method": "GET",  "path": "/by-drive/{driveId}",   "fullPath": "/api/v1/tpo/results/by-drive/{driveId}",   "handler": "getByDrive",      "roles": ["TPO"], "params": ["@PathVariable driveId"], "disposition": "OPEN" },
+        { "method": "POST", "path": "/bulk",                 "fullPath": "/api/v1/tpo/results/bulk",                 "handler": "bulkRecord",      "roles": ["TPO"], "params": [], "disposition": "OPEN" },
+        { "method": "GET",  "path": "/report",               "fullPath": "/api/v1/tpo/results/report",               "handler": "getReport",       "roles": ["TPO"], "params": [], "disposition": "OPEN" },
+        { "method": "GET",  "path": "/stats",                "fullPath": "/api/v1/tpo/results/stats",                "handler": "getStats",        "roles": ["TPO"], "params": [], "disposition": "OPEN" }
+      ]
+    },
+    {
+      "className": "TpoSeasonController",
+      "file": "controller/tpo/TpoSeasonController.java",
+      "basePath": "/api/v1/tpo/seasons",
+      "endpointCount": 7,
+      "endpoints": [
+        { "method": "GET",    "path": "/",            "fullPath": "/api/v1/tpo/seasons/",            "handler": "listAll",       "roles": ["TPO"], "params": [], "disposition": "OPEN" },
+        { "method": "GET",    "path": "/{id}",        "fullPath": "/api/v1/tpo/seasons/{id}",        "handler": "getById",       "roles": ["TPO"], "params": ["@PathVariable id"], "disposition": "OPEN" },
+        { "method": "POST",   "path": "/",            "fullPath": "/api/v1/tpo/seasons/",            "handler": "create",        "roles": ["TPO"], "params": [], "disposition": "OPEN" },
+        { "method": "PUT",    "path": "/{id}",        "fullPath": "/api/v1/tpo/seasons/{id}",        "handler": "update",        "roles": ["TPO"], "params": ["@PathVariable id"], "disposition": "OPEN" },
+        { "method": "DELETE", "path": "/{id}",        "fullPath": "/api/v1/tpo/seasons/{id}",        "handler": "delete",        "roles": ["TPO"], "params": ["@PathVariable id"], "disposition": "OPEN" },
+        { "method": "POST",   "path": "/{id}/activate","fullPath": "/api/v1/tpo/seasons/{id}/activate","handler": "activate",    "roles": ["TPO"], "params": ["@PathVariable id"], "disposition": "OPEN" },
+        { "method": "GET",    "path": "/active",       "fullPath": "/api/v1/tpo/seasons/active",      "handler": "getActive",     "roles": ["TPO"], "params": [], "disposition": "OPEN" }
+      ]
+    },
+    {
+      "className": "TpoSettingsController",
+      "file": "controller/tpo/TpoSettingsController.java",
+      "basePath": "/api/v1/tpo/settings",
+      "endpointCount": 4,
+      "endpoints": [
+        { "method": "GET", "path": "/",                      "fullPath": "/api/v1/tpo/settings/",                      "handler": "getSettings",          "roles": ["TPO"], "params": [], "disposition": "OPEN" },
+        { "method": "PUT", "path": "/",                      "fullPath": "/api/v1/tpo/settings/",                      "handler": "updateSettings",       "roles": ["TPO"], "params": [], "disposition": "OPEN" },
+        { "method": "GET", "path": "/eligibility-criteria",  "fullPath": "/api/v1/tpo/settings/eligibility-criteria",  "handler": "getEligibilityCriteria","roles": ["TPO"], "params": [], "disposition": "OPEN" },
+        { "method": "PUT", "path": "/eligibility-criteria",  "fullPath": "/api/v1/tpo/settings/eligibility-criteria",  "handler": "updateEligibilityCriteria","roles": ["TPO"], "params": [], "disposition": "OPEN" }
+      ]
+    },
+    {
+      "className": "TpoStudentController",
+      "file": "controller/tpo/TpoStudentController.java",
+      "basePath": "/api/v1/tpo/students",
+      "endpointCount": 7,
+      "endpoints": [
+        { "method": "GET",  "path": "/",                  "fullPath": "/api/v1/tpo/students/",                  "handler": "listAll",          "roles": ["TPO"], "params": [], "disposition": "OPEN" },
+        { "method": "GET",  "path": "/{id}",              "fullPath": "/api/v1/tpo/students/{id}",              "handler": "getById",          "roles": ["TPO"], "params": ["@PathVariable id"], "disposition": "OPEN" },
+        { "method": "GET",  "path": "/eligible",          "fullPath": "/api/v1/tpo/students/eligible",          "handler": "getEligible",      "roles": ["TPO"], "params": [], "disposition": "OPEN" },
+        { "method": "GET",  "path": "/placed",            "fullPath": "/api/v1/tpo/students/placed",            "handler": "getPlaced",        "roles": ["TPO"], "params": [], "disposition": "OPEN" },
+        { "method": "GET",  "path": "/unplaced",          "fullPath": "/api/v1/tpo/students/unplaced",          "handler": "getUnplaced",      "roles": ["TPO"], "params": [], "disposition": "OPEN" },
+        { "method": "GET",  "path": "/{id}/applications", "fullPath": "/api/v1/tpo/students/{id}/applications", "handler": "getApplications",  "roles": ["TPO"], "params": ["@PathVariable id"], "disposition": "OPEN" },
+        { "method": "GET",  "path": "/stats",             "fullPath": "/api/v1/tpo/students/stats",             "handler": "getStats",         "roles": ["TPO"], "params": [], "disposition": "OPEN" }
+      ]
+    },
+    {
+      "className": "TpoStudentsHubController",
+      "file": "controller/tpo/TpoStudentsHubController.java",
+      "basePath": "/api/v1/tpo/students-hub",
+      "endpointCount": 5,
+      "endpoints": [
+        { "method": "GET",  "path": "/overview",        "fullPath": "/api/v1/tpo/students-hub/overview",        "handler": "getOverview",       "roles": ["TPO"], "params": [], "disposition": "OPEN" },
+        { "method": "GET",  "path": "/analytics",       "fullPath": "/api/v1/tpo/students-hub/analytics",       "handler": "getAnalytics",      "roles": ["TPO"], "params": [], "disposition": "OPEN" },
+        { "method": "GET",  "path": "/batch-breakdown", "fullPath": "/api/v1/tpo/students-hub/batch-breakdown", "handler": "getBatchBreakdown", "roles": ["TPO"], "params": [], "disposition": "OPEN" },
+        { "method": "GET",  "path": "/program-breakdown","fullPath": "/api/v1/tpo/students-hub/program-breakdown","handler": "getProgramBreakdown","roles": ["TPO"], "params": [], "disposition": "OPEN" },
+        { "method": "GET",  "path": "/export",          "fullPath": "/api/v1/tpo/students-hub/export",          "handler": "exportData",        "roles": ["TPO"], "params": [], "disposition": "OPEN" }
+      ]
+    },
+    {
+      "className": "TpoWorkspaceController",
+      "file": "controller/tpo/TpoWorkspaceController.java",
+      "basePath": "/api/v1/tpo/workspace",
+      "endpointCount": 5,
+      "endpoints": [
+        { "method": "GET",  "path": "/",          "fullPath": "/api/v1/tpo/workspace/",          "handler": "getWorkspace",    "roles": ["TPO"], "params": [], "disposition": "OPEN" },
+        { "method": "GET",  "path": "/members",   "fullPath": "/api/v1/tpo/workspace/members",   "handler": "getMembers",      "roles": ["TPO"], "params": [], "disposition": "OPEN" },
+        { "method": "POST", "path": "/members",   "fullPath": "/api/v1/tpo/workspace/members",   "handler": "addMember",       "roles": ["TPO"], "params": [], "disposition": "OPEN" },
+        { "method": "DELETE","path": "/members/{id}","fullPath": "/api/v1/tpo/workspace/members/{id}","handler": "removeMember","roles": ["TPO"], "params": ["@PathVariable id"], "disposition": "OPEN" },
+        { "method": "GET",  "path": "/settings",  "fullPath": "/api/v1/tpo/workspace/settings",  "handler": "getSettings",     "roles": ["TPO"], "params": [], "disposition": "OPEN" }
+      ]
+    },
+    {
+      "className": "LearnerEligibilityController",
+      "file": "controller/LearnerEligibilityController.java",
+      "basePath": "/api/v1/learner/eligibility",
+      "endpointCount": 5,
+      "endpoints": [
+        { "method": "GET",  "path": "/",              "fullPath": "/api/v1/learner/eligibility/",              "handler": "getEligibility",    "roles": ["LEARNER"], "params": [], "disposition": "OPEN" },
+        { "method": "GET",  "path": "/drives",        "fullPath": "/api/v1/learner/eligibility/drives",        "handler": "getEligibleDrives", "roles": ["LEARNER"], "params": [], "disposition": "OPEN" },
+        { "method": "GET",  "path": "/criteria",      "fullPath": "/api/v1/learner/eligibility/criteria",      "handler": "getCriteria",       "roles": ["LEARNER"], "params": [], "disposition": "OPEN" },
+        { "method": "GET",  "path": "/score",         "fullPath": "/api/v1/learner/eligibility/score",         "handler": "getScore",          "roles": ["LEARNER"], "params": [], "disposition": "OPEN" },
+        { "method": "GET",  "path": "/history",       "fullPath": "/api/v1/learner/eligibility/history",       "handler": "getHistory",        "roles": ["LEARNER"], "params": [], "disposition": "OPEN" }
+      ]
+    },
+    {
+      "className": "LearnerOfferController",
+      "file": "controller/LearnerOfferController.java",
+      "basePath": "/api/v1/learner/offers",
+      "endpointCount": 6,
+      "endpoints": [
+        { "method": "GET",  "path": "/",            "fullPath": "/api/v1/learner/offers/",            "handler": "getMyOffers",     "roles": ["LEARNER"], "params": [], "disposition": "OPEN" },
+        { "method": "GET",  "path": "/{id}",        "fullPath": "/api/v1/learner/offers/{id}",        "handler": "getById",         "roles": ["LEARNER"], "params": ["@PathVariable id"], "disposition": "OPEN" },
+        { "method": "POST", "path": "/{id}/accept", "fullPath": "/api/v1/learner/offers/{id}/accept", "handler": "accept",          "roles": ["LEARNER"], "params": ["@PathVariable id"], "disposition": "OPEN" },
+        { "method": "POST", "path": "/{id}/decline","fullPath": "/api/v1/learner/offers/{id}/decline","handler": "decline",         "roles": ["LEARNER"], "params": ["@PathVariable id"], "disposition": "OPEN" },
+        { "method": "GET",  "path": "/active",      "fullPath": "/api/v1/learner/offers/active",      "handler": "getActiveOffers", "roles": ["LEARNER"], "params": [], "disposition": "OPEN" },
+        { "method": "GET",  "path": "/history",     "fullPath": "/api/v1/learner/offers/history",     "handler": "getHistory",      "roles": ["LEARNER"], "params": [], "disposition": "OPEN" }
+      ]
+    },
+    {
+      "className": "LearnerPlacementController",
+      "file": "controller/LearnerPlacementController.java",
+      "basePath": "/api/v1/learner/placement",
+      "endpointCount": 5,
+      "endpoints": [
+        { "method": "GET",  "path": "/status",   "fullPath": "/api/v1/learner/placement/status",   "handler": "getStatus",   "roles": ["LEARNER"], "params": [], "disposition": "OPEN" },
+        { "method": "GET",  "path": "/summary",  "fullPath": "/api/v1/learner/placement/summary",  "handler": "getSummary",  "roles": ["LEARNER"], "params": [], "disposition": "OPEN" },
+        { "method": "GET",  "path": "/history",  "fullPath": "/api/v1/learner/placement/history",  "handler": "getHistory",  "roles": ["LEARNER"], "params": [], "disposition": "OPEN" },
+        { "method": "GET",  "path": "/offers",   "fullPath": "/api/v1/learner/placement/offers",   "handler": "getOffers",   "roles": ["LEARNER"], "params": [], "disposition": "OPEN" },
+        { "method": "GET",  "path": "/profile",  "fullPath": "/api/v1/learner/placement/profile",  "handler": "getProfile",  "roles": ["LEARNER"], "params": [], "disposition": "OPEN" }
+      ]
+    },
+    {
+      "className": "LearnerRegistrationController",
+      "file": "controller/LearnerRegistrationController.java",
+      "basePath": "/api/v1/learner/registration",
+      "endpointCount": 5,
+      "endpoints": [
+        { "method": "GET",  "path": "/drives",         "fullPath": "/api/v1/learner/registration/drives",         "handler": "getOpenDrives",    "roles": ["LEARNER"], "params": [], "disposition": "OPEN" },
+        { "method": "POST", "path": "/drives/{id}",    "fullPath": "/api/v1/learner/registration/drives/{id}",    "handler": "registerForDrive", "roles": ["LEARNER"], "params": ["@PathVariable id"], "disposition": "OPEN" },
+        { "method": "DELETE","path": "/drives/{id}",   "fullPath": "/api/v1/learner/registration/drives/{id}",    "handler": "withdrawFromDrive","roles": ["LEARNER"], "params": ["@PathVariable id"], "disposition": "OPEN" },
+        { "method": "GET",  "path": "/my-drives",      "fullPath": "/api/v1/learner/registration/my-drives",      "handler": "getMyDrives",      "roles": ["LEARNER"], "params": [], "disposition": "OPEN" },
+        { "method": "GET",  "path": "/drives/{id}/status","fullPath": "/api/v1/learner/registration/drives/{id}/status","handler": "getDriveStatus","roles": ["LEARNER"], "params": ["@PathVariable id"], "disposition": "OPEN" }
+      ]
+    },
+    {
+      "className": "LearnerRequestController",
+      "file": "controller/LearnerRequestController.java",
+      "basePath": "/api/v1/learner/requests",
+      "endpointCount": 5,
+      "endpoints": [
+        { "method": "GET",    "path": "/",        "fullPath": "/api/v1/learner/requests/",        "handler": "getMyRequests",  "roles": ["LEARNER"], "params": [], "disposition": "OPEN" },
+        { "method": "POST",   "path": "/",        "fullPath": "/api/v1/learner/requests/",        "handler": "createRequest",  "roles": ["LEARNER"], "params": [], "disposition": "OPEN" },
+        { "method": "GET",    "path": "/{id}",    "fullPath": "/api/v1/learner/requests/{id}",    "handler": "getById",        "roles": ["LEARNER"], "params": ["@PathVariable id"], "disposition": "OPEN" },
+        { "method": "DELETE", "path": "/{id}",    "fullPath": "/api/v1/learner/requests/{id}",    "handler": "cancelRequest",  "roles": ["LEARNER"], "params": ["@PathVariable id"], "disposition": "OPEN" },
+        { "method": "GET",    "path": "/history", "fullPath": "/api/v1/learner/requests/history", "handler": "getHistory",     "roles": ["LEARNER"], "params": [], "disposition": "OPEN" }
+      ]
+    },
+    {
+      "className": "LearnerScheduleController",
+      "file": "controller/LearnerScheduleController.java",
+      "basePath": "/api/v1/learner/schedule",
+      "endpointCount": 5,
+      "endpoints": [
+        { "method": "GET",  "path": "/interviews",       "fullPath": "/api/v1/learner/schedule/interviews",       "handler": "getInterviews",      "roles": ["LEARNER"], "params": [], "disposition": "OPEN" },
+        { "method": "GET",  "path": "/upcoming",          "fullPath": "/api/v1/learner/schedule/upcoming",          "handler": "getUpcoming",        "roles": ["LEARNER"], "params": [], "disposition": "OPEN" },
+        { "method": "GET",  "path": "/{id}/confirm",      "fullPath": "/api/v1/learner/schedule/{id}/confirm",      "handler": "confirmSlot",        "roles": ["LEARNER"], "params": ["@PathVariable id"], "disposition": "OPEN" },
+        { "method": "GET",  "path": "/{id}/reschedule",   "fullPath": "/api/v1/learner/schedule/{id}/reschedule",   "handler": "requestReschedule",  "roles": ["LEARNER"], "params": ["@PathVariable id"], "disposition": "OPEN" },
+        { "method": "GET",  "path": "/history",           "fullPath": "/api/v1/learner/schedule/history",           "handler": "getHistory",         "roles": ["LEARNER"], "params": [], "disposition": "OPEN" }
+      ]
+    }
+  ],
+  "totalEndpoints": 110
+}

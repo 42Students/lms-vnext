@@ -1,0 +1,117 @@
+{
+  "milestoneId": "API-05",
+  "title": "Assignments, quizzes and attendance",
+  "frozenLegacySha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+  "controllers": [
+    {
+      "className": "AssignmentController",
+      "file": "controller/AssignmentController.java",
+      "basePath": "/api/v1/assignment",
+      "endpointCount": 6,
+      "endpoints": [
+        { "method": "GET",  "path": "/getByLessonId",         "fullPath": "/api/v1/assignment/getByLessonId",         "handler": "getAssignmentByLesson",    "roles": ["AUTHENTICATED"], "params": ["@RequestParam lessonId"], "disposition": "OPEN" },
+        { "method": "GET",  "path": "/getById",               "fullPath": "/api/v1/assignment/getById",               "handler": "getAssignmentById",        "roles": ["AUTHENTICATED"], "params": ["@RequestParam assignmentId"], "disposition": "OPEN" },
+        { "method": "GET",  "path": "/getSubmissionByAssignmentIdAndLearnerId","fullPath": "/api/v1/assignment/getSubmissionByAssignmentIdAndLearnerId","handler": "getSubmission","roles": ["LEARNER"], "params": ["@RequestParam assignmentId", "@RequestParam learnerId"], "disposition": "OPEN" },
+        { "method": "POST", "path": "/submit",                "fullPath": "/api/v1/assignment/submit",                "handler": "submitAssignment",         "roles": ["LEARNER"], "params": ["@RequestBody AssignmentSubmitDTO"], "disposition": "OPEN" },
+        { "method": "GET",  "path": "/getSubmissions",        "fullPath": "/api/v1/assignment/getSubmissions",        "handler": "getSubmissions",           "roles": ["FACULTY"], "params": ["@RequestParam assignmentId"], "disposition": "OPEN" },
+        { "method": "POST", "path": "/grade",                 "fullPath": "/api/v1/assignment/grade",                 "handler": "gradeAssignment",          "roles": ["FACULTY"], "params": ["@RequestBody GradeDTO"], "disposition": "OPEN" }
+      ]
+    },
+    {
+      "className": "AdminAssignmentController",
+      "file": "controller/AdminAssignmentController.java",
+      "basePath": "/api/v1/admin/assignments",
+      "endpointCount": 4,
+      "endpoints": [
+        { "method": "GET",    "path": "/",           "fullPath": "/api/v1/admin/assignments/",           "handler": "listAll",           "roles": ["ADMIN"], "params": [], "disposition": "OPEN" },
+        { "method": "GET",    "path": "/{id}",       "fullPath": "/api/v1/admin/assignments/{id}",       "handler": "getById",           "roles": ["ADMIN"], "params": ["@PathVariable id"], "disposition": "OPEN" },
+        { "method": "DELETE", "path": "/{id}",       "fullPath": "/api/v1/admin/assignments/{id}",       "handler": "delete",            "roles": ["ADMIN"], "params": ["@PathVariable id"], "disposition": "OPEN" },
+        { "method": "GET",    "path": "/submissions","fullPath": "/api/v1/admin/assignments/submissions","handler": "allSubmissions",    "roles": ["ADMIN"], "params": [], "disposition": "OPEN" }
+      ]
+    },
+    {
+      "className": "AdminAssignmentContentWriteController",
+      "file": "controller/AdminAssignmentContentWriteController.java",
+      "basePath": "/api/v1/admin/assignments/content",
+      "endpointCount": 4,
+      "endpoints": [
+        { "method": "POST", "path": "/create",      "fullPath": "/api/v1/admin/assignments/content/create",      "handler": "create",      "roles": ["ADMIN"], "params": [], "disposition": "OPEN" },
+        { "method": "PUT",  "path": "/{id}",        "fullPath": "/api/v1/admin/assignments/content/{id}",        "handler": "update",      "roles": ["ADMIN"], "params": ["@PathVariable id"], "disposition": "OPEN" },
+        { "method": "DELETE","path": "/{id}",       "fullPath": "/api/v1/admin/assignments/content/{id}",        "handler": "delete",      "roles": ["ADMIN"], "params": ["@PathVariable id"], "disposition": "OPEN" },
+        { "method": "POST", "path": "/reorder",     "fullPath": "/api/v1/admin/assignments/content/reorder",     "handler": "reorder",     "roles": ["ADMIN"], "params": [], "disposition": "OPEN" }
+      ]
+    },
+    {
+      "className": "AdminAssignmentPublishController",
+      "file": "controller/AdminAssignmentPublishController.java",
+      "basePath": "/api/v1/admin/assignments/publish",
+      "endpointCount": 3,
+      "endpoints": [
+        { "method": "POST", "path": "/{id}/publish",   "fullPath": "/api/v1/admin/assignments/publish/{id}/publish",   "handler": "publish",   "roles": ["ADMIN"], "params": ["@PathVariable id"], "disposition": "OPEN" },
+        { "method": "POST", "path": "/{id}/unpublish", "fullPath": "/api/v1/admin/assignments/publish/{id}/unpublish", "handler": "unpublish", "roles": ["ADMIN"], "params": ["@PathVariable id"], "disposition": "OPEN" },
+        { "method": "GET",  "path": "/status/{id}",    "fullPath": "/api/v1/admin/assignments/publish/status/{id}",    "handler": "getStatus", "roles": ["ADMIN"], "params": ["@PathVariable id"], "disposition": "OPEN" }
+      ]
+    },
+    {
+      "className": "QuizController",
+      "file": "controller/QuizController.java",
+      "basePath": "/api/v1/quiz",
+      "endpointCount": 5,
+      "endpoints": [
+        { "method": "GET",  "path": "/getByLessonId",  "fullPath": "/api/v1/quiz/getByLessonId",  "handler": "getQuizByLesson", "roles": ["AUTHENTICATED"], "params": ["@RequestParam lessonId"], "disposition": "OPEN" },
+        { "method": "GET",  "path": "/getById",        "fullPath": "/api/v1/quiz/getById",        "handler": "getQuizById",     "roles": ["AUTHENTICATED"], "params": ["@RequestParam quizId"], "disposition": "OPEN" },
+        { "method": "POST", "path": "/attempt",        "fullPath": "/api/v1/quiz/attempt",        "handler": "attemptQuiz",     "roles": ["LEARNER"], "params": ["@RequestBody QuizAttemptDTO"], "disposition": "OPEN" },
+        { "method": "GET",  "path": "/getAttempt",     "fullPath": "/api/v1/quiz/getAttempt",     "handler": "getAttempt",      "roles": ["AUTHENTICATED"], "params": ["@RequestParam quizId", "@RequestParam learnerId"], "disposition": "OPEN" },
+        { "method": "GET",  "path": "/leaderboard",    "fullPath": "/api/v1/quiz/leaderboard",    "handler": "getLeaderboard",  "roles": ["AUTHENTICATED"], "params": ["@RequestParam quizId"], "disposition": "OPEN" }
+      ]
+    },
+    {
+      "className": "AdminQuizController",
+      "file": "controller/AdminQuizController.java",
+      "basePath": "/api/v1/admin/quizzes",
+      "endpointCount": 4,
+      "endpoints": [
+        { "method": "POST", "path": "/create",     "fullPath": "/api/v1/admin/quizzes/create",     "handler": "create",     "roles": ["ADMIN"], "params": [], "disposition": "OPEN" },
+        { "method": "PUT",  "path": "/{id}",       "fullPath": "/api/v1/admin/quizzes/{id}",       "handler": "update",     "roles": ["ADMIN"], "params": ["@PathVariable id"], "disposition": "OPEN" },
+        { "method": "DELETE","path": "/{id}",      "fullPath": "/api/v1/admin/quizzes/{id}",       "handler": "delete",     "roles": ["ADMIN"], "params": ["@PathVariable id"], "disposition": "OPEN" },
+        { "method": "GET",  "path": "/",           "fullPath": "/api/v1/admin/quizzes/",           "handler": "listAll",    "roles": ["ADMIN"], "params": [], "disposition": "OPEN" }
+      ]
+    },
+    {
+      "className": "AdminAttendanceController",
+      "file": "controller/AdminAttendanceController.java",
+      "basePath": "/api/v1/admin/attendance",
+      "endpointCount": 4,
+      "endpoints": [
+        { "method": "GET",  "path": "/records",      "fullPath": "/api/v1/admin/attendance/records",      "handler": "getRecords",      "roles": ["ADMIN"], "params": [], "disposition": "OPEN" },
+        { "method": "POST", "path": "/mark",          "fullPath": "/api/v1/admin/attendance/mark",          "handler": "mark",            "roles": ["ADMIN"], "params": [], "disposition": "OPEN" },
+        { "method": "DELETE","path": "/{id}",         "fullPath": "/api/v1/admin/attendance/{id}",          "handler": "delete",          "roles": ["ADMIN"], "params": ["@PathVariable id"], "disposition": "OPEN" },
+        { "method": "GET",  "path": "/summary",       "fullPath": "/api/v1/admin/attendance/summary",       "handler": "getSummary",      "roles": ["ADMIN"], "params": [], "disposition": "OPEN" }
+      ]
+    },
+    {
+      "className": "AdminAttendancePolicyController",
+      "file": "controller/AdminAttendancePolicyController.java",
+      "basePath": "/api/v1/admin/attendance-policy",
+      "endpointCount": 3,
+      "endpoints": [
+        { "method": "GET", "path": "/",       "fullPath": "/api/v1/admin/attendance-policy/",       "handler": "getPolicy",    "roles": ["ADMIN"], "params": [], "disposition": "OPEN" },
+        { "method": "PUT", "path": "/",       "fullPath": "/api/v1/admin/attendance-policy/",       "handler": "updatePolicy", "roles": ["ADMIN"], "params": [], "disposition": "OPEN" },
+        { "method": "GET", "path": "/defaults","fullPath": "/api/v1/admin/attendance-policy/defaults","handler": "getDefaults", "roles": ["ADMIN"], "params": [], "disposition": "OPEN" }
+      ]
+    },
+    {
+      "className": "AttendanceBulkController",
+      "file": "controller/AttendanceBulkController.java",
+      "basePath": "/api/v1/attendance/bulk",
+      "endpointCount": 4,
+      "endpoints": [
+        { "method": "POST", "path": "/validate", "fullPath": "/api/v1/attendance/bulk/validate", "handler": "validate", "roles": ["ADMIN"], "params": [], "disposition": "OPEN" },
+        { "method": "POST", "path": "/import",   "fullPath": "/api/v1/attendance/bulk/import",   "handler": "import",   "roles": ["ADMIN"], "params": [], "disposition": "OPEN" },
+        { "method": "GET",  "path": "/batches",  "fullPath": "/api/v1/attendance/bulk/batches",  "handler": "batches",  "roles": ["ADMIN"], "params": [], "disposition": "OPEN" },
+        { "method": "POST", "path": "/batches/{batchId}/undo","fullPath": "/api/v1/attendance/bulk/batches/{batchId}/undo","handler": "undo","roles": ["ADMIN"], "params": ["@PathVariable batchId"], "disposition": "OPEN" }
+      ]
+    }
+  ],
+  "totalEndpoints": 37
+}

@@ -1,0 +1,105 @@
+{
+  "milestoneId": "API-10",
+  "title": "Class schedules, lecture halls, classrooms and public share",
+  "frozenLegacySha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
+  "controllers": [
+    {
+      "className": "ClassScheduleController",
+      "file": "controller/ClassScheduleController.java",
+      "basePath": "/api/v1/class-schedule",
+      "endpointCount": 8,
+      "endpoints": [
+        { "method": "POST",   "path": "/create",                   "fullPath": "/api/v1/class-schedule/create",                   "handler": "createClassSchedule",     "roles": ["ADMIN"],         "params": ["@RequestBody ClassScheduleDTO"], "disposition": "OPEN" },
+        { "method": "GET",    "path": "/getAllClassSchedule",       "fullPath": "/api/v1/class-schedule/getAllClassSchedule",       "handler": "getAllClassSchedule",      "roles": ["AUTHENTICATED"], "params": [], "disposition": "OPEN" },
+        { "method": "GET",    "path": "/getByClassId",             "fullPath": "/api/v1/class-schedule/getByClassId",             "handler": "getScheduleByClassId",    "roles": ["AUTHENTICATED"], "params": ["@RequestParam classId"], "disposition": "OPEN" },
+        { "method": "GET",    "path": "/getByFacultyId",           "fullPath": "/api/v1/class-schedule/getByFacultyId",           "handler": "getScheduleByFacultyId",  "roles": ["FACULTY"],       "params": ["@RequestParam facultyId"], "disposition": "OPEN" },
+        { "method": "PUT",    "path": "/update/{id}",              "fullPath": "/api/v1/class-schedule/update/{id}",              "handler": "updateClassSchedule",     "roles": ["ADMIN"],         "params": ["@PathVariable id"], "disposition": "OPEN" },
+        { "method": "DELETE", "path": "/delete/{id}",              "fullPath": "/api/v1/class-schedule/delete/{id}",              "handler": "deleteClassSchedule",     "roles": ["ADMIN"],         "params": ["@PathVariable id"], "disposition": "OPEN" },
+        { "method": "GET",    "path": "/getStudentSchedule",       "fullPath": "/api/v1/class-schedule/getStudentSchedule",       "handler": "getStudentSchedule",      "roles": ["LEARNER"],       "params": ["@RequestParam studentId"], "disposition": "OPEN" },
+        { "method": "GET",    "path": "/getScheduleByDateRange",   "fullPath": "/api/v1/class-schedule/getScheduleByDateRange",   "handler": "getScheduleByDateRange",  "roles": ["AUTHENTICATED"], "params": ["@RequestParam from", "@RequestParam to"], "disposition": "OPEN" }
+      ]
+    },
+    {
+      "className": "AdminClassScheduleController",
+      "file": "controller/AdminClassScheduleController.java",
+      "basePath": "/api/v1/admin/class-schedules",
+      "endpointCount": 8,
+      "endpoints": [
+        { "method": "GET",    "path": "/",                    "fullPath": "/api/v1/admin/class-schedules/",                    "handler": "listAll",              "roles": ["ADMIN"], "params": [], "disposition": "OPEN" },
+        { "method": "GET",    "path": "/{id}",                "fullPath": "/api/v1/admin/class-schedules/{id}",                "handler": "getById",              "roles": ["ADMIN"], "params": ["@PathVariable id"], "disposition": "OPEN" },
+        { "method": "POST",   "path": "/",                    "fullPath": "/api/v1/admin/class-schedules/",                    "handler": "create",               "roles": ["ADMIN"], "params": [], "disposition": "OPEN" },
+        { "method": "PUT",    "path": "/{id}",                "fullPath": "/api/v1/admin/class-schedules/{id}",                "handler": "update",               "roles": ["ADMIN"], "params": ["@PathVariable id"], "disposition": "OPEN" },
+        { "method": "DELETE", "path": "/{id}",                "fullPath": "/api/v1/admin/class-schedules/{id}",                "handler": "delete",               "roles": ["ADMIN"], "params": ["@PathVariable id"], "disposition": "OPEN" },
+        { "method": "POST",   "path": "/bulk",                "fullPath": "/api/v1/admin/class-schedules/bulk",                "handler": "bulkCreate",           "roles": ["ADMIN"], "params": [], "disposition": "OPEN" },
+        { "method": "GET",    "path": "/conflicts",           "fullPath": "/api/v1/admin/class-schedules/conflicts",           "handler": "getConflicts",         "roles": ["ADMIN"], "params": [], "disposition": "OPEN" },
+        { "method": "POST",   "path": "/resolve-conflicts",   "fullPath": "/api/v1/admin/class-schedules/resolve-conflicts",   "handler": "resolveConflicts",     "roles": ["ADMIN"], "params": [], "disposition": "OPEN" }
+      ]
+    },
+    {
+      "className": "FacultyClassScheduleController",
+      "file": "controller/FacultyClassScheduleController.java",
+      "basePath": "/api/v1/faculty/class-schedules",
+      "endpointCount": 5,
+      "endpoints": [
+        { "method": "GET",  "path": "/my-schedule",            "fullPath": "/api/v1/faculty/class-schedules/my-schedule",            "handler": "getMySchedule",      "roles": ["FACULTY"], "params": [], "disposition": "OPEN" },
+        { "method": "GET",  "path": "/today",                  "fullPath": "/api/v1/faculty/class-schedules/today",                  "handler": "getTodaySchedule",   "roles": ["FACULTY"], "params": [], "disposition": "OPEN" },
+        { "method": "GET",  "path": "/upcoming",               "fullPath": "/api/v1/faculty/class-schedules/upcoming",               "handler": "getUpcoming",        "roles": ["FACULTY"], "params": [], "disposition": "OPEN" },
+        { "method": "GET",  "path": "/{id}",                   "fullPath": "/api/v1/faculty/class-schedules/{id}",                   "handler": "getById",            "roles": ["FACULTY"], "params": ["@PathVariable id"], "disposition": "OPEN" },
+        { "method": "GET",  "path": "/by-course/{courseId}",   "fullPath": "/api/v1/faculty/class-schedules/by-course/{courseId}",   "handler": "getByCourse",        "roles": ["FACULTY"], "params": ["@PathVariable courseId"], "disposition": "OPEN" }
+      ]
+    },
+    {
+      "className": "LectureHallController",
+      "file": "controller/LectureHallController.java",
+      "basePath": "/api/v1/lecture-halls",
+      "endpointCount": 7,
+      "endpoints": [
+        { "method": "GET",    "path": "/",              "fullPath": "/api/v1/lecture-halls/",              "handler": "listAll",        "roles": ["AUTHENTICATED"], "params": [], "disposition": "OPEN" },
+        { "method": "GET",    "path": "/{id}",          "fullPath": "/api/v1/lecture-halls/{id}",          "handler": "getById",        "roles": ["AUTHENTICATED"], "params": ["@PathVariable id"], "disposition": "OPEN" },
+        { "method": "POST",   "path": "/",              "fullPath": "/api/v1/lecture-halls/",              "handler": "create",         "roles": ["ADMIN"],         "params": [], "disposition": "OPEN" },
+        { "method": "PUT",    "path": "/{id}",          "fullPath": "/api/v1/lecture-halls/{id}",          "handler": "update",         "roles": ["ADMIN"],         "params": ["@PathVariable id"], "disposition": "OPEN" },
+        { "method": "DELETE", "path": "/{id}",          "fullPath": "/api/v1/lecture-halls/{id}",          "handler": "delete",         "roles": ["ADMIN"],         "params": ["@PathVariable id"], "disposition": "OPEN" },
+        { "method": "GET",    "path": "/available",     "fullPath": "/api/v1/lecture-halls/available",     "handler": "getAvailable",   "roles": ["ADMIN"],         "params": ["@RequestParam date", "@RequestParam from", "@RequestParam to"], "disposition": "OPEN" },
+        { "method": "GET",    "path": "/{id}/schedule", "fullPath": "/api/v1/lecture-halls/{id}/schedule", "handler": "getSchedule",    "roles": ["ADMIN"],         "params": ["@PathVariable id"], "disposition": "OPEN" }
+      ]
+    },
+    {
+      "className": "ClassroomController",
+      "file": "controller/ClassroomController.java",
+      "basePath": "/api/v1/classrooms",
+      "endpointCount": 7,
+      "endpoints": [
+        { "method": "GET",    "path": "/",              "fullPath": "/api/v1/classrooms/",              "handler": "listAll",        "roles": ["AUTHENTICATED"], "params": [], "disposition": "OPEN" },
+        { "method": "GET",    "path": "/{id}",          "fullPath": "/api/v1/classrooms/{id}",          "handler": "getById",        "roles": ["AUTHENTICATED"], "params": ["@PathVariable id"], "disposition": "OPEN" },
+        { "method": "POST",   "path": "/",              "fullPath": "/api/v1/classrooms/",              "handler": "create",         "roles": ["ADMIN"],         "params": [], "disposition": "OPEN" },
+        { "method": "PUT",    "path": "/{id}",          "fullPath": "/api/v1/classrooms/{id}",          "handler": "update",         "roles": ["ADMIN"],         "params": ["@PathVariable id"], "disposition": "OPEN" },
+        { "method": "DELETE", "path": "/{id}",          "fullPath": "/api/v1/classrooms/{id}",          "handler": "delete",         "roles": ["ADMIN"],         "params": ["@PathVariable id"], "disposition": "OPEN" },
+        { "method": "GET",    "path": "/by-hall/{hallId}","fullPath": "/api/v1/classrooms/by-hall/{hallId}","handler": "getByHall",  "roles": ["ADMIN"],         "params": ["@PathVariable hallId"], "disposition": "OPEN" },
+        { "method": "GET",    "path": "/{id}/schedule", "fullPath": "/api/v1/classrooms/{id}/schedule", "handler": "getSchedule",    "roles": ["ADMIN"],         "params": ["@PathVariable id"], "disposition": "OPEN" }
+      ]
+    },
+    {
+      "className": "PublicShareController",
+      "file": "controller/PublicShareController.java",
+      "basePath": "/api/v1/public/share",
+      "endpointCount": 3,
+      "endpoints": [
+        { "method": "GET",  "path": "/{token}",         "fullPath": "/api/v1/public/share/{token}",         "handler": "getSharedContent",  "roles": ["PUBLIC"], "params": ["@PathVariable token"], "disposition": "OPEN" },
+        { "method": "POST", "path": "/generate",        "fullPath": "/api/v1/public/share/generate",        "handler": "generateShareLink", "roles": ["AUTHENTICATED"], "params": [], "disposition": "OPEN" },
+        { "method": "DELETE","path": "/{token}",        "fullPath": "/api/v1/public/share/{token}",         "handler": "revokeShareLink",   "roles": ["AUTHENTICATED"], "params": ["@PathVariable token"], "disposition": "OPEN" }
+      ]
+    },
+    {
+      "className": "PublicHrInviteController",
+      "file": "controller/PublicHrInviteController.java",
+      "basePath": "/api/v1/public/hr-invite",
+      "endpointCount": 3,
+      "endpoints": [
+        { "method": "GET",  "path": "/{token}",          "fullPath": "/api/v1/public/hr-invite/{token}",          "handler": "getInviteDetails",  "roles": ["PUBLIC"], "params": ["@PathVariable token"], "disposition": "OPEN" },
+        { "method": "POST", "path": "/{token}/accept",   "fullPath": "/api/v1/public/hr-invite/{token}/accept",   "handler": "acceptInvite",      "roles": ["PUBLIC"], "params": ["@PathVariable token"], "disposition": "OPEN" },
+        { "method": "POST", "path": "/{token}/decline",  "fullPath": "/api/v1/public/hr-invite/{token}/decline",  "handler": "declineInvite",     "roles": ["PUBLIC"], "params": ["@PathVariable token"], "disposition": "OPEN" }
+      ]
+    }
+  ],
+  "totalEndpoints": 41
+}
