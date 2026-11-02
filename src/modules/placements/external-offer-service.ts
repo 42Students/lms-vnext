@@ -8,6 +8,7 @@ import {
 } from "@/db/schema/placement-external";
 import type { RequestContext } from "@/modules/identity/context";
 import { AuthorizationError } from "@/modules/permissions/policy";
+import { assertPersistedPlatformPermission } from "@/modules/permissions/persisted-actor";
 import { requireLearnerPlacementAccess } from "./learner-participation-guard";
 import { requirePlacementManageScope } from "./scope";
 import {
@@ -133,10 +134,17 @@ export async function listManagedExternalOffers(
   collegeIdInput: unknown,
 ) {
   const collegeId = uuid.parse(collegeIdInput);
-  await requirePlacementManageScope(context, collegeId);
-  return getDb().select(publicOfferFields).from(placementExternalOffers)
-    .where(eq(placementExternalOffers.collegeId, collegeId))
-    .orderBy(desc(placementExternalOffers.createdAt));
+  const scope = await requirePlacementManageScope(context, collegeId);
+  return getDb().transaction(async tx => {
+    // Private offer submissions are college-scoped, but request-context role
+    // claims may be stale. Hold the persisted staff grant until the read ends.
+    await assertPersistedPlatformPermission(tx, context, "placements.manage", {
+      organizationId: scope.organizationId, collegeId: scope.id,
+    });
+    return tx.select(publicOfferFields).from(placementExternalOffers)
+      .where(eq(placementExternalOffers.collegeId, collegeId))
+      .orderBy(desc(placementExternalOffers.createdAt));
+  });
 }
 
 /**
@@ -161,6 +169,11 @@ export async function reviewExternalOffer(
     const [college] = await tx.select({ id: colleges.id }).from(colleges)
       .where(eq(colleges.id, target.collegeId)).for("update").limit(1);
     if (!college) throw new ExternalOfferError("DB08_EXTERNAL_OFFER_NOT_FOUND");
+    // The outside-offer reviewer must still hold a live, persisted staff
+    // grant. SHARE locks serialize revocation with both state and event writes.
+    await assertPersistedPlatformPermission(tx, context, "placements.manage", {
+      collegeId: target.collegeId,
+    });
 
     const [row] = await tx.select().from(placementExternalOffers)
       .where(and(
