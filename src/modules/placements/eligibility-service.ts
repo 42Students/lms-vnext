@@ -422,18 +422,35 @@ export async function getManagedAcademicEvidence(
     membership.id,
   );
 
-  const [row] = await getDb()
-    .select()
-    .from(placementCandidateAcademicEvidence)
-    .where(
-      eq(
-        placementCandidateAcademicEvidence.membershipId,
-        membership.id,
-      ),
-    )
-    .limit(1);
-
-  return academicEvidenceView(row);
+  return getDb().transaction(async tx => {
+    // A private academic record must not leak when a once-valid manager
+    // loses their TPO/college grant while the request is in flight.
+    // Hold actual persisted authorization locks through the entire read.
+    await assertPersistedPlatformPermission(tx, context, "placements.manage", {
+      collegeId: membership.collegeId,
+    });
+    const [liveMembership] = await tx.select({
+      id: collegeMemberships.id,
+      collegeId: collegeMemberships.collegeId,
+      status: collegeMemberships.status,
+    }).from(collegeMemberships)
+      .where(eq(collegeMemberships.id, membership.id))
+      .for("share").limit(1);
+    const [liveLearnerRole] = await tx.select({id: membershipRoles.id})
+      .from(membershipRoles)
+      .where(and(eq(membershipRoles.membershipId,membership.id),
+        eq(membershipRoles.role,"LEARNER")))
+      .for("share").limit(1);
+    if (!liveMembership || liveMembership.status !== "ACTIVE" ||
+        liveMembership.collegeId !== membership.collegeId || !liveLearnerRole) {
+      throw new PlacementsServiceError("PLACEMENT_LEARNER_MEMBERSHIP_NOT_FOUND");
+    }
+    const [row] = await tx.select()
+      .from(placementCandidateAcademicEvidence)
+      .where(eq(placementCandidateAcademicEvidence.membershipId, membership.id))
+      .limit(1);
+    return academicEvidenceView(row);
+  });
 }
 
 export async function upsertOwnAcademicEvidence(
