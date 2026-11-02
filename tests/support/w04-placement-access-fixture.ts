@@ -68,10 +68,17 @@ export async function enableSeedLearnerPlacementAccess(pool: Pool) {
     throw new Error("W04 test learner has ambiguous active academic enrollments");
   }
   if (active.rows.length === 0) {
+    // A prior test may have revoked the LEARNER grant, triggering the
+    // registered enrollment lifecycle to mark this exact fixture row INACTIVE.
+    // Reuse that row rather than inventing a duplicate key or disabling the
+    // real one-active-enrollment uniqueness constraint.
     await pool.query(
       `INSERT INTO learner_program_enrollments
         (membership_id,program_id,cohort_id,status)
-       VALUES($1,$2,$3,'ACTIVE')`,
+       VALUES($1,$2,$3,'ACTIVE')
+       ON CONFLICT (membership_id,program_id,cohort_id)
+       DO UPDATE SET status='ACTIVE'
+         WHERE learner_program_enrollments.status <> 'ACTIVE'`,
       [SEED_IDS.learnerCollegeAMembership, programId, cohortId],
     );
   }
