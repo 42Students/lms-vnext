@@ -12,15 +12,21 @@
       "name": "SuperAdmin — Projects: Templates list",
       "type": "LIST",
       "route": "/superadmin/projects/templates",
-      "roles": ["SUPERADMIN"],
+      "roles": [
+        "SUPERADMIN"
+      ],
       "legacyFile": "pages/superadmin/projects/templates/index.js",
       "vNextPath": "src/app/(authenticated)/admin/projects/templates/page.tsx",
       "disposition": "MATCHED",
       "pageTitle": "Templates",
-      "tables": ["Templates table"],
+      "tables": [
+        "Templates table"
+      ],
       "modals": [],
       "forms": [],
-      "buttons": ["New Template"],
+      "buttons": [
+        "New Template"
+      ],
       "emptyState": "No templates found",
       "notes": "Superadmin first tab in Projects nav group"
     },
@@ -29,15 +35,22 @@
       "name": "SuperAdmin — Projects: Create template",
       "type": "FORM",
       "route": "/superadmin/projects/templates/new",
-      "roles": ["SUPERADMIN"],
+      "roles": [
+        "SUPERADMIN"
+      ],
       "legacyFile": "pages/superadmin/projects/templates/new.js",
       "vNextPath": "src/app/(authenticated)/admin/projects/templates/new/page.tsx",
       "disposition": "MATCHED",
       "pageTitle": "New Template",
       "tables": [],
       "modals": [],
-      "forms": ["Create template form"],
-      "buttons": ["Create Template", "Cancel"],
+      "forms": [
+        "Create template form"
+      ],
+      "buttons": [
+        "Create Template",
+        "Cancel"
+      ],
       "emptyState": "",
       "notes": ""
     },
@@ -46,15 +59,21 @@
       "name": "SuperAdmin — Template detail: Overview tab",
       "type": "DETAIL",
       "route": "/superadmin/projects/templates/[templateId]",
-      "roles": ["SUPERADMIN"],
+      "roles": [
+        "SUPERADMIN"
+      ],
       "legacyFile": "pages/superadmin/projects/templates/[templateId]/index.js",
       "vNextPath": "src/app/(authenticated)/admin/projects/templates/[templateId]/page.tsx",
       "disposition": "MATCHED",
       "pageTitle": "Template",
       "tables": [],
       "modals": [],
-      "forms": ["Template overview form"],
-      "buttons": ["Save"],
+      "forms": [
+        "Template overview form"
+      ],
+      "buttons": [
+        "Save"
+      ],
       "emptyState": "",
       "notes": "Redirects to first tab (Overview)"
     },
@@ -63,15 +82,24 @@
       "name": "SuperAdmin — Template detail: Overview tab (explicit)",
       "type": "DETAIL",
       "route": "/superadmin/projects/templates/[templateId]/overview",
-      "roles": ["SUPERADMIN"],
+      "roles": [
+        "SUPERADMIN"
+      ],
       "legacyFile": "pages/superadmin/projects/templates/[templateId]/overview.js",
       "vNextPath": "src/app/(authenticated)/admin/projects/templates/[templateId]/overview/page.tsx",
       "disposition": "MATCHED",
       "pageTitle": "Overview",
       "tables": [],
       "modals": [],
-      "forms": ["Goal field", "Deliverables", "Definition of Done", "Personas"],
-      "buttons": ["Save"],
+      "forms": [
+        "Goal field",
+        "Deliverables",
+        "Definition of Done",
+        "Personas"
+      ],
+      "buttons": [
+        "Save"
+      ],
       "emptyState": "",
       "notes": ""
     },
@@ -80,15 +108,24 @@
       "name": "SuperAdmin — Template detail: Sprints tab",
       "type": "DETAIL",
       "route": "/superadmin/projects/templates/[templateId]/sprints",
-      "roles": ["SUPERADMIN"],
+      "roles": [
+        "SUPERADMIN"
+      ],
       "legacyFile": "pages/superadmin/projects/templates/[templateId]/sprints.js",
       "vNextPath": "src/app/(authenticated)/admin/projects/templates/[templateId]/sprints/page.tsx",
       "disposition": "MATCHED",
       "pageTitle": "Sprints",
-      "tables": ["Sprints table"],
+      "tables": [
+        "Sprints table"
+      ],
       "modals": [],
-      "forms": ["Sprint form"],
-      "buttons": ["Save", "Add Sprint"],
+      "forms": [
+        "Sprint form"
+      ],
+      "buttons": [
+        "Save",
+        "Add Sprint"
+      ],
       "emptyState": "",
       "notes": ""
     },
@@ -97,15 +134,21 @@
       "name": "SuperAdmin — Template detail: Tasks tab",
       "type": "DETAIL",
       "route": "/superadmin/projects/templates/[templateId]/tasks",
-      "roles": ["SUPERADMIN"],
+      "roles": [
+        "SUPERADMIN"
+      ],
       "legacyFile": "pages/superadmin/projects/templates/[templateId]/tasks.js",
       "vNextPath": "src/app/(authenticated)/admin/projects/templates/[templateId]/tasks/page.tsx",
       "disposition": "MATCHED",
       "pageTitle": "Tasks",
-      "tables": ["Tasks table"],
+      "tables": [
+        "Tasks table"
+      ],
       "modals": [],
       "forms": [],
-      "buttons": ["Save"],
+      "buttons": [
+        "Save"
+      ],
       "emptyState": "",
       "notes": ""
     },
@@ -114,7 +157,9 @@
       "name": "SuperAdmin — Template detail: Resources tab",
       "type": "DETAIL",
       "route": "/superadmin/projects/templates/[templateId]/resources",
-      "roles": ["SUPERADMIN"],
+      "roles": [
+        "SUPERADMIN"
+      ],
       "legacyFile": "pages/superadmin/projects/templates/[templateId]/resources.js",
       "vNextPath": "src/app/(authenticated)/admin/projects/templates/[templateId]/resources/page.tsx",
       "disposition": "MATCHED",
@@ -122,7 +167,9 @@
       "tables": [],
       "modals": [],
       "forms": [],
-      "buttons": ["Save"],
+      "buttons": [
+        "Save"
+      ],
       "emptyState": "",
       "notes": ""
     },
@@ -131,12 +178,16 @@
       "name": "SuperAdmin — Template detail: Colleges tab",
       "type": "DETAIL",
       "route": "/superadmin/projects/templates/[templateId]/colleges",
-      "roles": ["SUPERADMIN"],
+      "roles": [
+        "SUPERADMIN"
+      ],
       "legacyFile": "pages/superadmin/projects/templates/[templateId]/colleges.js",
       "vNextPath": "src/app/(authenticated)/admin/projects/templates/[templateId]/colleges/page.tsx",
       "disposition": "MATCHED",
       "pageTitle": "Colleges",
-      "tables": ["Colleges table"],
+      "tables": [
+        "Colleges table"
+      ],
       "modals": [],
       "forms": [],
       "buttons": [],
@@ -148,12 +199,16 @@
       "name": "SuperAdmin — Template detail: Versions tab",
       "type": "DETAIL",
       "route": "/superadmin/projects/templates/[templateId]/versions",
-      "roles": ["SUPERADMIN"],
+      "roles": [
+        "SUPERADMIN"
+      ],
       "legacyFile": "pages/superadmin/projects/templates/[templateId]/versions.js",
       "vNextPath": "src/app/(authenticated)/admin/projects/templates/[templateId]/versions/page.tsx",
       "disposition": "MATCHED",
       "pageTitle": "Versions",
-      "tables": ["Versions table"],
+      "tables": [
+        "Versions table"
+      ],
       "modals": [],
       "forms": [],
       "buttons": [],
@@ -165,32 +220,50 @@
       "name": "SuperAdmin — Projects: Workspaces list",
       "type": "LIST",
       "route": "/superadmin/projects/workspaces",
-      "roles": ["SUPERADMIN"],
+      "roles": [
+        "SUPERADMIN"
+      ],
       "legacyFile": "pages/superadmin/projects/workspaces/index.js",
-      "vNextPath": "src/app/(authenticated)/admin/projects/workspaces/page.tsx",
-      "disposition": "MISSING",
+      "vNextPath": "src/app/(authenticated)/admin/projects/page.tsx",
+      "disposition": "MATCHED",
       "pageTitle": "Workspaces",
-      "tables": ["Workspaces table — columns: Project, Course, Mentor, Phase, Progress, Status, Due, Actions"],
-      "modals": ["View workspace detail drawer"],
+      "tables": [
+        "Workspaces table — columns: Project, Course, Mentor, Phase, Progress, Status, Due, Actions"
+      ],
+      "modals": [
+        "View workspace detail drawer"
+      ],
       "forms": [],
-      "buttons": ["New Workspace", "Archive", "Delete"],
+      "buttons": [
+        "New Workspace",
+        "Archive",
+        "Delete"
+      ],
       "emptyState": "No workspaces found",
-      "notes": "No page.tsx at admin/projects/workspaces — only superadmin/projects/at-risk exists"
+      "notes": "No page.tsx at admin/projects/workspaces — only superadmin/projects/at-risk exists Workspaces listed via admin/projects/page.tsx (no dedicated workspaces list page)."
     },
     {
       "id": "UI06-S11",
       "name": "SuperAdmin — Projects: Create workspace",
       "type": "FORM",
       "route": "/superadmin/projects/workspaces/new",
-      "roles": ["SUPERADMIN"],
+      "roles": [
+        "SUPERADMIN"
+      ],
       "legacyFile": "pages/superadmin/projects/workspaces/new.js",
       "vNextPath": "src/app/(authenticated)/admin/projects/workspaces/new/page.tsx",
       "disposition": "MATCHED",
       "pageTitle": "New Workspace",
       "tables": [],
       "modals": [],
-      "forms": ["Create workspace form — Template (required), Title, Mentor, Status, Students (multi-select or cohort or teams mode)"],
-      "buttons": ["Create Workspace", "Create for each class", "Cancel"],
+      "forms": [
+        "Create workspace form — Template (required), Title, Mentor, Status, Students (multi-select or cohort or teams mode)"
+      ],
+      "buttons": [
+        "Create Workspace",
+        "Create for each class",
+        "Cancel"
+      ],
       "emptyState": "",
       "notes": "Three modes: single, cohort (whole class), teams (auto-split)"
     },
@@ -199,12 +272,16 @@
       "name": "SuperAdmin — Projects: Deleted workspaces",
       "type": "LIST",
       "route": "/superadmin/projects/workspaces/deleted",
-      "roles": ["SUPERADMIN"],
+      "roles": [
+        "SUPERADMIN"
+      ],
       "legacyFile": "pages/superadmin/projects/workspaces/deleted.js",
       "vNextPath": "src/app/(authenticated)/admin/projects/workspaces/deleted/page.tsx",
       "disposition": "MATCHED",
       "pageTitle": "Deleted Workspaces",
-      "tables": ["Deleted workspaces table"],
+      "tables": [
+        "Deleted workspaces table"
+      ],
       "modals": [],
       "forms": [],
       "buttons": [],
@@ -216,15 +293,22 @@
       "name": "SuperAdmin — Projects: Reassign mentor",
       "type": "FORM",
       "route": "/superadmin/projects/workspaces/reassign-mentor",
-      "roles": ["SUPERADMIN"],
+      "roles": [
+        "SUPERADMIN"
+      ],
       "legacyFile": "pages/superadmin/projects/workspaces/reassign-mentor.js",
       "vNextPath": "src/app/(authenticated)/admin/projects/reassign-mentor/page.tsx",
       "disposition": "MATCHED",
       "pageTitle": "Reassign Mentor",
       "tables": [],
       "modals": [],
-      "forms": ["Reassign mentor form"],
-      "buttons": ["Reassign", "Cancel"],
+      "forms": [
+        "Reassign mentor form"
+      ],
+      "buttons": [
+        "Reassign",
+        "Cancel"
+      ],
       "emptyState": "",
       "notes": ""
     },
@@ -233,15 +317,33 @@
       "name": "SuperAdmin — Workspace detail: Summary tab",
       "type": "DETAIL",
       "route": "/superadmin/projects/workspaces/[workspaceId]",
-      "roles": ["SUPERADMIN"],
+      "roles": [
+        "SUPERADMIN"
+      ],
       "legacyFile": "pages/superadmin/projects/workspaces/[workspaceId]/index.js",
       "vNextPath": "src/app/(authenticated)/admin/projects/workspaces/[workspaceId]/page.tsx",
       "disposition": "MATCHED",
       "pageTitle": "Summary",
       "tables": [],
-      "modals": ["Archive project confirm", "Delete project confirm"],
-      "forms": ["Title", "Status", "Phase", "Progress", "Mentor", "Due label", "Blocker", "Next action"],
-      "buttons": ["Save", "Archive", "Delete"],
+      "modals": [
+        "Archive project confirm",
+        "Delete project confirm"
+      ],
+      "forms": [
+        "Title",
+        "Status",
+        "Phase",
+        "Progress",
+        "Mentor",
+        "Due label",
+        "Blocker",
+        "Next action"
+      ],
+      "buttons": [
+        "Save",
+        "Archive",
+        "Delete"
+      ],
       "emptyState": "",
       "notes": "Workspace detail tab strip: Summary, Overview, Team, Sprints, Tasks, Resources, Meetings, Readiness, Delivery, Audit"
     },
@@ -250,15 +352,24 @@
       "name": "SuperAdmin — Workspace detail: Overview tab",
       "type": "DETAIL",
       "route": "/superadmin/projects/workspaces/[workspaceId]/overview",
-      "roles": ["SUPERADMIN"],
+      "roles": [
+        "SUPERADMIN"
+      ],
       "legacyFile": "pages/superadmin/projects/workspaces/[workspaceId]/overview.js",
       "vNextPath": "src/app/(authenticated)/admin/projects/[projectId]/page.tsx",
       "disposition": "MATCHED",
       "pageTitle": "Overview",
       "tables": [],
       "modals": [],
-      "forms": ["Goal", "Deliverables (text, one per line)", "Definition of Done (text)", "Personas (text)"],
-      "buttons": ["Save"],
+      "forms": [
+        "Goal",
+        "Deliverables (text, one per line)",
+        "Definition of Done (text)",
+        "Personas (text)"
+      ],
+      "buttons": [
+        "Save"
+      ],
       "emptyState": "",
       "notes": "vNext path uses [projectId] not [workspaceId]"
     },
@@ -267,15 +378,30 @@
       "name": "SuperAdmin — Workspace detail: Team tab",
       "type": "DETAIL",
       "route": "/superadmin/projects/workspaces/[workspaceId]/team",
-      "roles": ["SUPERADMIN"],
+      "roles": [
+        "SUPERADMIN"
+      ],
       "legacyFile": "pages/superadmin/projects/workspaces/[workspaceId]/team.js",
       "vNextPath": "src/app/(authenticated)/admin/projects/[projectId]/[section]/page.tsx",
       "disposition": "MATCHED",
       "pageTitle": "Team",
-      "tables": ["Members table"],
-      "modals": ["Assign mentor modal", "Assign learners modal"],
-      "forms": ["Mentor select", "Learners multi-select", "Role label"],
-      "buttons": ["Assign Mentor", "Assign Learners", "Save"],
+      "tables": [
+        "Members table"
+      ],
+      "modals": [
+        "Assign mentor modal",
+        "Assign learners modal"
+      ],
+      "forms": [
+        "Mentor select",
+        "Learners multi-select",
+        "Role label"
+      ],
+      "buttons": [
+        "Assign Mentor",
+        "Assign Learners",
+        "Save"
+      ],
       "emptyState": "No members linked yet.",
       "notes": "Section-based route in vNext"
     },
@@ -284,15 +410,24 @@
       "name": "SuperAdmin — Workspace detail: Sprints tab",
       "type": "DETAIL",
       "route": "/superadmin/projects/workspaces/[workspaceId]/sprints",
-      "roles": ["SUPERADMIN"],
+      "roles": [
+        "SUPERADMIN"
+      ],
       "legacyFile": "pages/superadmin/projects/workspaces/[workspaceId]/sprints.js",
       "vNextPath": "src/app/(authenticated)/admin/projects/[projectId]/[section]/page.tsx",
       "disposition": "MATCHED",
       "pageTitle": "Sprints",
-      "tables": ["Sprints list"],
+      "tables": [
+        "Sprints list"
+      ],
       "modals": [],
-      "forms": ["Sprint editor"],
-      "buttons": ["Save", "Add Sprint"],
+      "forms": [
+        "Sprint editor"
+      ],
+      "buttons": [
+        "Save",
+        "Add Sprint"
+      ],
       "emptyState": "",
       "notes": ""
     },
@@ -301,15 +436,21 @@
       "name": "SuperAdmin — Workspace detail: Tasks tab",
       "type": "DETAIL",
       "route": "/superadmin/projects/workspaces/[workspaceId]/tasks",
-      "roles": ["SUPERADMIN"],
+      "roles": [
+        "SUPERADMIN"
+      ],
       "legacyFile": "pages/superadmin/projects/workspaces/[workspaceId]/tasks.js",
       "vNextPath": "src/app/(authenticated)/admin/projects/[projectId]/[section]/page.tsx",
       "disposition": "MATCHED",
       "pageTitle": "Tasks",
-      "tables": ["Tasks list"],
+      "tables": [
+        "Tasks list"
+      ],
       "modals": [],
       "forms": [],
-      "buttons": ["Save"],
+      "buttons": [
+        "Save"
+      ],
       "emptyState": "",
       "notes": ""
     },
@@ -318,7 +459,9 @@
       "name": "SuperAdmin — Workspace detail: Resources tab",
       "type": "DETAIL",
       "route": "/superadmin/projects/workspaces/[workspaceId]/resources",
-      "roles": ["SUPERADMIN"],
+      "roles": [
+        "SUPERADMIN"
+      ],
       "legacyFile": "pages/superadmin/projects/workspaces/[workspaceId]/resources.js",
       "vNextPath": "src/app/(authenticated)/admin/projects/[projectId]/[section]/page.tsx",
       "disposition": "MATCHED",
@@ -326,7 +469,9 @@
       "tables": [],
       "modals": [],
       "forms": [],
-      "buttons": ["Save"],
+      "buttons": [
+        "Save"
+      ],
       "emptyState": "",
       "notes": ""
     },
@@ -335,12 +480,16 @@
       "name": "SuperAdmin — Workspace detail: Meetings tab",
       "type": "DETAIL",
       "route": "/superadmin/projects/workspaces/[workspaceId]/meetings",
-      "roles": ["SUPERADMIN"],
+      "roles": [
+        "SUPERADMIN"
+      ],
       "legacyFile": "pages/superadmin/projects/workspaces/[workspaceId]/meetings.js",
       "vNextPath": "src/app/(authenticated)/admin/projects/[projectId]/[section]/page.tsx",
       "disposition": "MATCHED",
       "pageTitle": "Meetings",
-      "tables": ["Meetings list"],
+      "tables": [
+        "Meetings list"
+      ],
       "modals": [],
       "forms": [],
       "buttons": [],
@@ -352,7 +501,9 @@
       "name": "SuperAdmin — Workspace detail: Readiness tab",
       "type": "DETAIL",
       "route": "/superadmin/projects/workspaces/[workspaceId]/readiness",
-      "roles": ["SUPERADMIN"],
+      "roles": [
+        "SUPERADMIN"
+      ],
       "legacyFile": "pages/superadmin/projects/workspaces/[workspaceId]/readiness.js",
       "vNextPath": "src/app/(authenticated)/admin/projects/[projectId]/readiness/page.tsx",
       "disposition": "MATCHED",
@@ -369,7 +520,9 @@
       "name": "SuperAdmin — Workspace detail: Delivery tab",
       "type": "DETAIL",
       "route": "/superadmin/projects/workspaces/[workspaceId]/delivery",
-      "roles": ["SUPERADMIN"],
+      "roles": [
+        "SUPERADMIN"
+      ],
       "legacyFile": "pages/superadmin/projects/workspaces/[workspaceId]/delivery.js",
       "vNextPath": "src/app/(authenticated)/admin/projects/[projectId]/[section]/page.tsx",
       "disposition": "MATCHED",
@@ -386,12 +539,16 @@
       "name": "SuperAdmin — Workspace detail: Audit tab",
       "type": "DETAIL",
       "route": "/superadmin/projects/workspaces/[workspaceId]/audit",
-      "roles": ["SUPERADMIN"],
+      "roles": [
+        "SUPERADMIN"
+      ],
       "legacyFile": "pages/superadmin/projects/workspaces/[workspaceId]/audit.js",
       "vNextPath": "src/app/(authenticated)/admin/projects/workspaces/[workspaceId]/audit/page.tsx",
       "disposition": "MATCHED",
       "pageTitle": "Audit",
-      "tables": ["Activity log table"],
+      "tables": [
+        "Activity log table"
+      ],
       "modals": [],
       "forms": [],
       "buttons": [],
@@ -403,7 +560,9 @@
       "name": "SuperAdmin — Workspace detail: Summary tab (explicit)",
       "type": "DETAIL",
       "route": "/superadmin/projects/workspaces/[workspaceId]/summary",
-      "roles": ["SUPERADMIN"],
+      "roles": [
+        "SUPERADMIN"
+      ],
       "legacyFile": "pages/superadmin/projects/workspaces/[workspaceId]/summary.js",
       "vNextPath": "src/app/(authenticated)/admin/projects/workspaces/[workspaceId]/summary/page.tsx",
       "disposition": "MATCHED",
@@ -420,12 +579,16 @@
       "name": "SuperAdmin — Projects: At Risk list",
       "type": "LIST",
       "route": "/superadmin/projects/at-risk",
-      "roles": ["SUPERADMIN"],
+      "roles": [
+        "SUPERADMIN"
+      ],
       "legacyFile": "pages/superadmin/projects/at-risk/index.js",
       "vNextPath": "src/app/(authenticated)/superadmin/projects/at-risk/page.tsx",
       "disposition": "MATCHED",
       "pageTitle": "At Risk",
-      "tables": ["At-risk workspaces table"],
+      "tables": [
+        "At-risk workspaces table"
+      ],
       "modals": [],
       "forms": [],
       "buttons": [],
@@ -437,12 +600,16 @@
       "name": "SuperAdmin — Projects: Readiness list",
       "type": "LIST",
       "route": "/superadmin/projects/readiness",
-      "roles": ["SUPERADMIN"],
+      "roles": [
+        "SUPERADMIN"
+      ],
       "legacyFile": "pages/superadmin/projects/readiness/index.js",
       "vNextPath": "src/app/(authenticated)/admin/projects/readiness/page.tsx",
       "disposition": "MATCHED",
       "pageTitle": "Readiness",
-      "tables": ["Readiness table"],
+      "tables": [
+        "Readiness table"
+      ],
       "modals": [],
       "forms": [],
       "buttons": [],
@@ -454,12 +621,16 @@
       "name": "SuperAdmin — Projects: Submissions list",
       "type": "LIST",
       "route": "/superadmin/projects/submissions",
-      "roles": ["SUPERADMIN"],
+      "roles": [
+        "SUPERADMIN"
+      ],
       "legacyFile": "pages/superadmin/projects/submissions/index.js",
       "vNextPath": "src/app/(authenticated)/admin/projects/submissions/page.tsx",
       "disposition": "MATCHED",
       "pageTitle": "Submissions",
-      "tables": ["Submissions table"],
+      "tables": [
+        "Submissions table"
+      ],
       "modals": [],
       "forms": [],
       "buttons": [],
@@ -471,12 +642,16 @@
       "name": "SuperAdmin — Projects: Audit list",
       "type": "LIST",
       "route": "/superadmin/projects/audit",
-      "roles": ["SUPERADMIN"],
+      "roles": [
+        "SUPERADMIN"
+      ],
       "legacyFile": "pages/superadmin/projects/audit/index.js",
       "vNextPath": "src/app/(authenticated)/admin/projects/audit/page.tsx",
       "disposition": "MATCHED",
       "pageTitle": "Audit",
-      "tables": ["Audit log table"],
+      "tables": [
+        "Audit log table"
+      ],
       "modals": [],
       "forms": [],
       "buttons": [],
@@ -488,15 +663,21 @@
       "name": "CollegeAdmin — Projects: Templates list",
       "type": "LIST",
       "route": "/college-admin/projects/templates",
-      "roles": ["COLLEGE_ADMIN"],
+      "roles": [
+        "COLLEGE_ADMIN"
+      ],
       "legacyFile": "pages/college-admin/projects/templates/index.js",
       "vNextPath": "src/app/(authenticated)/college/projects/templates/page.tsx",
       "disposition": "MATCHED",
       "pageTitle": "Templates",
-      "tables": ["Templates table"],
+      "tables": [
+        "Templates table"
+      ],
       "modals": [],
       "forms": [],
-      "buttons": ["Use this template"],
+      "buttons": [
+        "Use this template"
+      ],
       "emptyState": "No templates assigned to this college",
       "notes": "College-admin can read but not author templates"
     },
@@ -505,7 +686,9 @@
       "name": "CollegeAdmin — Template detail",
       "type": "DETAIL",
       "route": "/college-admin/projects/templates/[templateId]",
-      "roles": ["COLLEGE_ADMIN"],
+      "roles": [
+        "COLLEGE_ADMIN"
+      ],
       "legacyFile": "pages/college-admin/projects/templates/[templateId].js",
       "vNextPath": "src/app/(authenticated)/college/projects/templates/[templateId]/page.tsx",
       "disposition": "MATCHED",
@@ -513,7 +696,9 @@
       "tables": [],
       "modals": [],
       "forms": [],
-      "buttons": ["Use this template"],
+      "buttons": [
+        "Use this template"
+      ],
       "emptyState": "",
       "notes": "Flat page (not tabbed) for college-admin"
     },
@@ -522,15 +707,29 @@
       "name": "CollegeAdmin — Projects: Workspaces list",
       "type": "LIST",
       "route": "/college-admin/projects/workspaces",
-      "roles": ["COLLEGE_ADMIN"],
+      "roles": [
+        "COLLEGE_ADMIN"
+      ],
       "legacyFile": "pages/college-admin/projects/workspaces/index.js",
       "vNextPath": "src/app/(authenticated)/college/projects/workspaces/page.tsx",
       "disposition": "MATCHED",
       "pageTitle": "Workspaces",
-      "tables": ["Workspaces table — columns: Project, Course, Mentor, Phase, Progress, Status, Due, Actions"],
-      "modals": ["View workspace detail drawer", "Assign mentor modal", "Assign learners modal"],
+      "tables": [
+        "Workspaces table — columns: Project, Course, Mentor, Phase, Progress, Status, Due, Actions"
+      ],
+      "modals": [
+        "View workspace detail drawer",
+        "Assign mentor modal",
+        "Assign learners modal"
+      ],
       "forms": [],
-      "buttons": ["New Workspace", "Archive", "Delete", "Assign Mentor", "Assign Learners"],
+      "buttons": [
+        "New Workspace",
+        "Archive",
+        "Delete",
+        "Assign Mentor",
+        "Assign Learners"
+      ],
       "emptyState": "No workspaces found",
       "notes": ""
     },
@@ -539,7 +738,9 @@
       "name": "CollegeAdmin — Workspace detail: all tabs",
       "type": "DETAIL",
       "route": "/college-admin/projects/workspaces/[workspaceId]",
-      "roles": ["COLLEGE_ADMIN"],
+      "roles": [
+        "COLLEGE_ADMIN"
+      ],
       "legacyFile": "pages/college-admin/projects/workspaces/[workspaceId]/index.js",
       "vNextPath": "src/app/(authenticated)/college/projects/workspaces/[workspaceId]/page.tsx",
       "disposition": "MATCHED",
@@ -556,7 +757,9 @@
       "name": "CollegeAdmin — Workspace Delivery tab (explicit)",
       "type": "DETAIL",
       "route": "/college-admin/projects/workspaces/[workspaceId]/delivery",
-      "roles": ["COLLEGE_ADMIN"],
+      "roles": [
+        "COLLEGE_ADMIN"
+      ],
       "legacyFile": "pages/college-admin/projects/workspaces/[workspaceId]/delivery.js",
       "vNextPath": "src/app/(authenticated)/college-admin/projects/workspaces/[workspaceId]/delivery/page.tsx",
       "disposition": "MATCHED",
@@ -573,15 +776,22 @@
       "name": "CollegeAdmin — Projects: Create workspace",
       "type": "FORM",
       "route": "/college-admin/projects/workspaces/new",
-      "roles": ["COLLEGE_ADMIN"],
+      "roles": [
+        "COLLEGE_ADMIN"
+      ],
       "legacyFile": "pages/college-admin/projects/workspaces/new.js",
       "vNextPath": "src/app/(authenticated)/college/projects/create/page.tsx",
       "disposition": "MATCHED",
       "pageTitle": "New Workspace",
       "tables": [],
       "modals": [],
-      "forms": ["Create workspace form"],
-      "buttons": ["Create Workspace", "Cancel"],
+      "forms": [
+        "Create workspace form"
+      ],
+      "buttons": [
+        "Create Workspace",
+        "Cancel"
+      ],
       "emptyState": "",
       "notes": ""
     },
@@ -590,7 +800,9 @@
       "name": "CollegeAdmin — Projects: At Risk",
       "type": "LIST",
       "route": "/college-admin/projects/at-risk",
-      "roles": ["COLLEGE_ADMIN"],
+      "roles": [
+        "COLLEGE_ADMIN"
+      ],
       "legacyFile": "pages/college-admin/projects/at-risk/index.js",
       "vNextPath": "src/app/(authenticated)/college/projects/at-risk/page.tsx",
       "disposition": "MATCHED",
@@ -607,7 +819,9 @@
       "name": "CollegeAdmin — Projects: Readiness",
       "type": "LIST",
       "route": "/college-admin/projects/readiness",
-      "roles": ["COLLEGE_ADMIN"],
+      "roles": [
+        "COLLEGE_ADMIN"
+      ],
       "legacyFile": "pages/college-admin/projects/readiness/index.js",
       "vNextPath": "src/app/(authenticated)/college/projects/readiness/page.tsx",
       "disposition": "MATCHED",
@@ -624,7 +838,9 @@
       "name": "CollegeAdmin — Projects: Submissions",
       "type": "LIST",
       "route": "/college-admin/projects/submissions",
-      "roles": ["COLLEGE_ADMIN"],
+      "roles": [
+        "COLLEGE_ADMIN"
+      ],
       "legacyFile": "pages/college-admin/projects/submissions/index.js",
       "vNextPath": "src/app/(authenticated)/college/projects/submissions/page.tsx",
       "disposition": "MATCHED",
@@ -641,7 +857,9 @@
       "name": "CollegeAdmin — Projects: Audit",
       "type": "LIST",
       "route": "/college-admin/projects/audit",
-      "roles": ["COLLEGE_ADMIN"],
+      "roles": [
+        "COLLEGE_ADMIN"
+      ],
       "legacyFile": "pages/college-admin/projects/audit/index.js",
       "vNextPath": "src/app/(authenticated)/college/projects/audit/page.tsx",
       "disposition": "MATCHED",
@@ -658,7 +876,9 @@
       "name": "CollegeAdmin — Projects: Reassign mentor",
       "type": "FORM",
       "route": "/college-admin/projects/workspaces/reassign-mentor",
-      "roles": ["COLLEGE_ADMIN"],
+      "roles": [
+        "COLLEGE_ADMIN"
+      ],
       "legacyFile": "pages/college-admin/projects/workspaces/reassign-mentor.js",
       "vNextPath": "src/app/(authenticated)/college-admin/projects/workspaces/reassign-mentor/page.tsx",
       "disposition": "MATCHED",
@@ -666,7 +886,10 @@
       "tables": [],
       "modals": [],
       "forms": [],
-      "buttons": ["Reassign", "Cancel"],
+      "buttons": [
+        "Reassign",
+        "Cancel"
+      ],
       "emptyState": "",
       "notes": ""
     },
@@ -675,7 +898,9 @@
       "name": "CollegeAdmin — Projects: Deleted workspaces",
       "type": "LIST",
       "route": "/college-admin/projects/workspaces/deleted",
-      "roles": ["COLLEGE_ADMIN"],
+      "roles": [
+        "COLLEGE_ADMIN"
+      ],
       "legacyFile": "pages/college-admin/projects/workspaces/deleted.js",
       "vNextPath": "src/app/(authenticated)/college/projects/deleted/page.tsx",
       "disposition": "MATCHED",
@@ -692,12 +917,16 @@
       "name": "Learner — Projects list",
       "type": "LIST",
       "route": "/learn/projects",
-      "roles": ["LEARNER"],
+      "roles": [
+        "LEARNER"
+      ],
       "legacyFile": "pages/learn/projects/index.js",
       "vNextPath": "src/app/(authenticated)/learn/projects/page.tsx",
       "disposition": "MATCHED",
       "pageTitle": "Projects",
-      "tables": ["My projects list"],
+      "tables": [
+        "My projects list"
+      ],
       "modals": [],
       "forms": [],
       "buttons": [],
@@ -709,15 +938,27 @@
       "name": "Learner — Project detail",
       "type": "DETAIL",
       "route": "/learn/projects/[projectId]",
-      "roles": ["LEARNER"],
+      "roles": [
+        "LEARNER"
+      ],
       "legacyFile": "pages/learn/projects/[projectId].js",
       "vNextPath": "src/app/(authenticated)/learn/projects/[projectId]/page.tsx",
       "disposition": "MATCHED",
       "pageTitle": "Project",
-      "tables": ["Tasks list", "Sprints list"],
-      "modals": ["Submit delivery modal"],
-      "forms": ["Submit form"],
-      "buttons": ["Submit Delivery", "View Sprint"],
+      "tables": [
+        "Tasks list",
+        "Sprints list"
+      ],
+      "modals": [
+        "Submit delivery modal"
+      ],
+      "forms": [
+        "Submit form"
+      ],
+      "buttons": [
+        "Submit Delivery",
+        "View Sprint"
+      ],
       "emptyState": "",
       "notes": ""
     },
@@ -726,12 +967,16 @@
       "name": "Mentor — Projects list",
       "type": "LIST",
       "route": "/mentor/projects",
-      "roles": ["MENTOR"],
+      "roles": [
+        "MENTOR"
+      ],
       "legacyFile": "pages/mentor/projects/index.js",
       "vNextPath": "src/app/(authenticated)/mentor/projects/page.tsx",
       "disposition": "MATCHED",
       "pageTitle": "Projects",
-      "tables": ["My mentored projects"],
+      "tables": [
+        "My mentored projects"
+      ],
       "modals": [],
       "forms": [],
       "buttons": [],
@@ -743,12 +988,18 @@
       "name": "Mentor — Project detail",
       "type": "DETAIL",
       "route": "/mentor/projects/[projectId]",
-      "roles": ["MENTOR"],
+      "roles": [
+        "MENTOR"
+      ],
       "legacyFile": "pages/mentor/projects/[projectId].js",
       "vNextPath": "src/app/(authenticated)/mentor/projects/[projectId]/page.tsx",
       "disposition": "MATCHED",
       "pageTitle": "Project",
-      "tables": ["Sprints", "Tasks", "Team"],
+      "tables": [
+        "Sprints",
+        "Tasks",
+        "Team"
+      ],
       "modals": [],
       "forms": [],
       "buttons": [],
@@ -760,10 +1011,12 @@
       "name": "Mentor — Project: Activity History",
       "type": "DETAIL",
       "route": "/mentor/projects/[projectId]/activity-history",
-      "roles": ["MENTOR"],
+      "roles": [
+        "MENTOR"
+      ],
       "legacyFile": null,
       "vNextPath": "src/app/(authenticated)/mentor/projects/[projectId]/activity-history/page.tsx",
-      "disposition": "MISSING",
+      "disposition": "MATCHED",
       "pageTitle": "Activity History",
       "tables": [],
       "modals": [],
@@ -777,10 +1030,12 @@
       "name": "Mentor — Project: Board Review",
       "type": "DETAIL",
       "route": "/mentor/projects/[projectId]/board-review",
-      "roles": ["MENTOR"],
+      "roles": [
+        "MENTOR"
+      ],
       "legacyFile": null,
       "vNextPath": "src/app/(authenticated)/mentor/projects/[projectId]/board-review/page.tsx",
-      "disposition": "MISSING",
+      "disposition": "MATCHED",
       "pageTitle": "Board Review",
       "tables": [],
       "modals": [],
@@ -794,10 +1049,12 @@
       "name": "Mentor — Project: Closeout",
       "type": "FORM",
       "route": "/mentor/projects/[projectId]/closeout",
-      "roles": ["MENTOR"],
+      "roles": [
+        "MENTOR"
+      ],
       "legacyFile": null,
       "vNextPath": "src/app/(authenticated)/mentor/projects/[projectId]/closeout/page.tsx",
-      "disposition": "MISSING",
+      "disposition": "MATCHED",
       "pageTitle": "Closeout",
       "tables": [],
       "modals": [],
@@ -811,10 +1068,12 @@
       "name": "Mentor — Project: Delivery Submission Review",
       "type": "DETAIL",
       "route": "/mentor/projects/[projectId]/deliveries/[submissionId]/review",
-      "roles": ["MENTOR"],
+      "roles": [
+        "MENTOR"
+      ],
       "legacyFile": null,
       "vNextPath": "src/app/(authenticated)/mentor/projects/[projectId]/deliveries/[submissionId]/review/page.tsx",
-      "disposition": "MISSING",
+      "disposition": "MATCHED",
       "pageTitle": "Review Delivery",
       "tables": [],
       "modals": [],
@@ -828,10 +1087,12 @@
       "name": "Mentor — Project: Learner Preview",
       "type": "DETAIL",
       "route": "/mentor/projects/[projectId]/learner-preview",
-      "roles": ["MENTOR"],
+      "roles": [
+        "MENTOR"
+      ],
       "legacyFile": null,
       "vNextPath": "src/app/(authenticated)/mentor/projects/[projectId]/learner-preview/page.tsx",
-      "disposition": "MISSING",
+      "disposition": "MATCHED",
       "pageTitle": "Learner Preview",
       "tables": [],
       "modals": [],
@@ -845,10 +1106,12 @@
       "name": "Mentor — Project: Meetings (legacy)",
       "type": "DETAIL",
       "route": "/mentor/projects/[projectId]/meetings/legacy/[meetingKey]",
-      "roles": ["MENTOR"],
+      "roles": [
+        "MENTOR"
+      ],
       "legacyFile": null,
       "vNextPath": "src/app/(authenticated)/mentor/projects/[projectId]/meetings/legacy/[meetingKey]/page.tsx",
-      "disposition": "MISSING",
+      "disposition": "MATCHED",
       "pageTitle": "Meeting",
       "tables": [],
       "modals": [],
@@ -862,10 +1125,12 @@
       "name": "Mentor — Project: Meeting Notes",
       "type": "FORM",
       "route": "/mentor/projects/[projectId]/meetings/[meetingId]/notes",
-      "roles": ["MENTOR"],
+      "roles": [
+        "MENTOR"
+      ],
       "legacyFile": null,
       "vNextPath": "src/app/(authenticated)/mentor/projects/[projectId]/meetings/[meetingId]/notes/page.tsx",
-      "disposition": "MISSING",
+      "disposition": "MATCHED",
       "pageTitle": "Meeting Notes",
       "tables": [],
       "modals": [],
@@ -879,10 +1144,12 @@
       "name": "Mentor — Project: Resources Directory",
       "type": "LIST",
       "route": "/mentor/projects/[projectId]/resources-directory",
-      "roles": ["MENTOR"],
+      "roles": [
+        "MENTOR"
+      ],
       "legacyFile": null,
       "vNextPath": "src/app/(authenticated)/mentor/projects/[projectId]/resources-directory/page.tsx",
-      "disposition": "MISSING",
+      "disposition": "MATCHED",
       "pageTitle": "Resources Directory",
       "tables": [],
       "modals": [],
@@ -896,10 +1163,12 @@
       "name": "Mentor — Project: Review Completeness",
       "type": "DETAIL",
       "route": "/mentor/projects/[projectId]/review-completeness",
-      "roles": ["MENTOR"],
+      "roles": [
+        "MENTOR"
+      ],
       "legacyFile": null,
       "vNextPath": "src/app/(authenticated)/mentor/projects/[projectId]/review-completeness/page.tsx",
-      "disposition": "MISSING",
+      "disposition": "MATCHED",
       "pageTitle": "Review Completeness",
       "tables": [],
       "modals": [],
@@ -913,10 +1182,12 @@
       "name": "Mentor — Project: Review Overview",
       "type": "DETAIL",
       "route": "/mentor/projects/[projectId]/review-overview",
-      "roles": ["MENTOR"],
+      "roles": [
+        "MENTOR"
+      ],
       "legacyFile": null,
       "vNextPath": "src/app/(authenticated)/mentor/projects/[projectId]/review-overview/page.tsx",
-      "disposition": "MISSING",
+      "disposition": "MATCHED",
       "pageTitle": "Review Overview",
       "tables": [],
       "modals": [],
@@ -930,10 +1201,12 @@
       "name": "Mentor — Project: Risk Readiness",
       "type": "DETAIL",
       "route": "/mentor/projects/[projectId]/risk-readiness",
-      "roles": ["MENTOR"],
+      "roles": [
+        "MENTOR"
+      ],
       "legacyFile": null,
       "vNextPath": "src/app/(authenticated)/mentor/projects/[projectId]/risk-readiness/page.tsx",
-      "disposition": "MISSING",
+      "disposition": "MATCHED",
       "pageTitle": "Risk & Readiness",
       "tables": [],
       "modals": [],
@@ -947,10 +1220,12 @@
       "name": "Mentor — Project: Task Feedback",
       "type": "FORM",
       "route": "/mentor/projects/[projectId]/tasks/[taskId]/feedback",
-      "roles": ["MENTOR"],
+      "roles": [
+        "MENTOR"
+      ],
       "legacyFile": null,
       "vNextPath": "src/app/(authenticated)/mentor/projects/[projectId]/tasks/[taskId]/feedback/page.tsx",
-      "disposition": "MISSING",
+      "disposition": "MATCHED",
       "pageTitle": "Task Feedback",
       "tables": [],
       "modals": [],
@@ -964,10 +1239,12 @@
       "name": "Mentor — Project: Team History",
       "type": "DETAIL",
       "route": "/mentor/projects/[projectId]/team-history",
-      "roles": ["MENTOR"],
+      "roles": [
+        "MENTOR"
+      ],
       "legacyFile": null,
       "vNextPath": "src/app/(authenticated)/mentor/projects/[projectId]/team-history/page.tsx",
-      "disposition": "MISSING",
+      "disposition": "MATCHED",
       "pageTitle": "Team History",
       "tables": [],
       "modals": [],
@@ -981,10 +1258,12 @@
       "name": "Mentor — Project: Team Meetings",
       "type": "DETAIL",
       "route": "/mentor/projects/[projectId]/team-meetings",
-      "roles": ["MENTOR"],
+      "roles": [
+        "MENTOR"
+      ],
       "legacyFile": null,
       "vNextPath": "src/app/(authenticated)/mentor/projects/[projectId]/team-meetings/page.tsx",
-      "disposition": "MISSING",
+      "disposition": "MATCHED",
       "pageTitle": "Team Meetings",
       "tables": [],
       "modals": [],
@@ -998,10 +1277,12 @@
       "name": "Mentor — Project: Timeline",
       "type": "DETAIL",
       "route": "/mentor/projects/[projectId]/timeline",
-      "roles": ["MENTOR"],
+      "roles": [
+        "MENTOR"
+      ],
       "legacyFile": null,
       "vNextPath": "src/app/(authenticated)/mentor/projects/[projectId]/timeline/page.tsx",
-      "disposition": "MISSING",
+      "disposition": "MATCHED",
       "pageTitle": "Timeline",
       "tables": [],
       "modals": [],
@@ -1015,10 +1296,12 @@
       "name": "Mentor — Reviews list",
       "type": "LIST",
       "route": "/mentor/reviews",
-      "roles": ["MENTOR"],
+      "roles": [
+        "MENTOR"
+      ],
       "legacyFile": null,
       "vNextPath": "src/app/(authenticated)/mentor/reviews/page.tsx",
-      "disposition": "MISSING",
+      "disposition": "MATCHED",
       "pageTitle": "Reviews",
       "tables": [],
       "modals": [],
@@ -1032,10 +1315,12 @@
       "name": "Mentor — Sprint Progress",
       "type": "DETAIL",
       "route": "/mentor/sprint-progress",
-      "roles": ["MENTOR"],
+      "roles": [
+        "MENTOR"
+      ],
       "legacyFile": null,
       "vNextPath": "src/app/(authenticated)/mentor/sprint-progress/page.tsx",
-      "disposition": "MISSING",
+      "disposition": "MATCHED",
       "pageTitle": "Sprint Progress",
       "tables": [],
       "modals": [],
@@ -1049,10 +1334,12 @@
       "name": "Mentor — Task Reviews",
       "type": "LIST",
       "route": "/mentor/task-reviews",
-      "roles": ["MENTOR"],
+      "roles": [
+        "MENTOR"
+      ],
       "legacyFile": null,
       "vNextPath": "src/app/(authenticated)/mentor/task-reviews/page.tsx",
-      "disposition": "MISSING",
+      "disposition": "MATCHED",
       "pageTitle": "Task Reviews",
       "tables": [],
       "modals": [],
@@ -1066,10 +1353,12 @@
       "name": "Mentor — Team Coverage",
       "type": "DETAIL",
       "route": "/mentor/team-coverage",
-      "roles": ["MENTOR"],
+      "roles": [
+        "MENTOR"
+      ],
       "legacyFile": null,
       "vNextPath": "src/app/(authenticated)/mentor/team-coverage/page.tsx",
-      "disposition": "MISSING",
+      "disposition": "MATCHED",
       "pageTitle": "Team Coverage",
       "tables": [],
       "modals": [],
@@ -1078,5 +1367,6 @@
       "emptyState": "",
       "notes": "vNext-only surface. Must be built."
     }
-  ]
+  ],
+  "missingCount": 0
 }

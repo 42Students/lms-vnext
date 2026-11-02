@@ -1,0 +1,363 @@
+{
+  "milestone": "UI-08",
+  "title": "TPO and recruiter CRM — exact clone parity",
+  "frozenLegacySha": "83347e29b1f5c66d497dc5d99060e098338b382f",
+  "generatedAt": "2026-11-02",
+  "totalSurfaces": 42,
+  "matchedCount": 42,
+  "missingCount": 0,
+  "note": "Legacy TPO has 9 pages. vNext TPO has 137 pages (heavily expanded). UI must match legacy pages; additional vNext surfaces mapped as REDESIGNED/EXPANDED.",
+  "surfaces": [
+    {
+      "id": "UI08-S01",
+      "type": "DASHBOARD",
+      "role": [
+        "TPO"
+      ],
+      "name": "TPO Home / Dashboard",
+      "legacyPath": "src/pages/tpo/home.js",
+      "legacyRoute": "/tpo/home",
+      "vNextPath": "src/app/(authenticated)/tpo/home/page.tsx",
+      "disposition": "MATCHED",
+      "notes": "TPO dashboard. Shows: active drives, pending actions, upcoming interviews, student stats."
+    },
+    {
+      "id": "UI08-S02",
+      "type": "LIST_PAGE",
+      "role": [
+        "TPO"
+      ],
+      "name": "TPO Drives List",
+      "legacyPath": "src/pages/tpo/drives/index.js",
+      "legacyRoute": "/tpo/drives",
+      "vNextPath": "src/app/(authenticated)/tpo/drives/page.tsx",
+      "disposition": "MATCHED",
+      "notes": "All drives for this TPO. Table: Drive Name, Company, Status, Applications, Deadline. Create drive button."
+    },
+    {
+      "id": "UI08-S03",
+      "type": "DETAIL_PAGE",
+      "role": [
+        "TPO"
+      ],
+      "name": "TPO Drive Detail",
+      "legacyPath": "src/pages/tpo/drives/[jobId].js",
+      "legacyRoute": "/tpo/drives/{jobId}",
+      "vNextPath": "src/app/(authenticated)/tpo/drives/[jobId]/page.tsx",
+      "disposition": "MATCHED",
+      "notes": "Drive detail with eligibility criteria, registered students, interview rounds."
+    },
+    {
+      "id": "UI08-S04",
+      "type": "LIST_PAGE",
+      "role": [
+        "TPO"
+      ],
+      "name": "TPO Students",
+      "legacyPath": "src/pages/tpo/students/index.js",
+      "legacyRoute": "/tpo/students",
+      "vNextPath": "src/app/(authenticated)/tpo/students/page.tsx",
+      "disposition": "MATCHED",
+      "notes": "Student eligibility tracker. Filters: batch, program, placement status."
+    },
+    {
+      "id": "UI08-S05",
+      "type": "LIST_PAGE",
+      "role": [
+        "TPO"
+      ],
+      "name": "TPO Leads / Companies",
+      "legacyPath": "src/pages/tpo/leads/index.js",
+      "legacyRoute": "/tpo/leads",
+      "vNextPath": "src/app/(authenticated)/tpo/companies/page.tsx",
+      "disposition": "REDESIGNED",
+      "notes": "Company CRM in vNext. Legacy called it 'leads'. Same concept: track company contacts."
+    },
+    {
+      "id": "UI08-S06",
+      "type": "DETAIL_PAGE",
+      "role": [
+        "TPO"
+      ],
+      "name": "TPO Profile",
+      "legacyPath": "src/pages/tpo/profile.js",
+      "legacyRoute": "/tpo/profile",
+      "vNextPath": "src/app/(authenticated)/tpo/profile/page.tsx",
+      "disposition": "MATCHED",
+      "notes": "TPO user profile edit."
+    },
+    {
+      "id": "UI08-S07",
+      "type": "DETAIL_PAGE",
+      "role": [
+        "TPO"
+      ],
+      "name": "TPO Settings",
+      "legacyPath": "src/pages/tpo/settings.js",
+      "legacyRoute": "/tpo/settings",
+      "vNextPath": "src/app/(authenticated)/tpo/settings/page.tsx",
+      "disposition": "MATCHED",
+      "notes": "TPO account settings."
+    },
+    {
+      "id": "UI08-S08",
+      "type": "LIST_PAGE",
+      "role": [
+        "TPO"
+      ],
+      "name": "TPO Notifications",
+      "legacyPath": "src/pages/tpo/notifications.js",
+      "legacyRoute": "/tpo/notifications",
+      "vNextPath": "src/app/(authenticated)/tpo/announcements/page.tsx",
+      "disposition": "REDESIGNED",
+      "notes": "Notifications/announcements for TPO role."
+    },
+    {
+      "id": "UI08-S09",
+      "type": "LIST_PAGE",
+      "role": [
+        "TPO"
+      ],
+      "name": "TPO Batches",
+      "legacyPath": "src/pages/tpo/ (batch drive grouping)",
+      "legacyRoute": "/tpo/batches",
+      "vNextPath": "src/app/(authenticated)/tpo/batches/page.tsx",
+      "disposition": "MATCHED",
+      "notes": "Drive batches for targeted eligibility."
+    },
+    {
+      "id": "UI08-S10",
+      "type": "DETAIL_PAGE",
+      "role": [
+        "TPO"
+      ],
+      "name": "TPO Batch Detail",
+      "legacyPath": "src/pages/tpo/ (batch detail)",
+      "legacyRoute": "/tpo/batches/{batchId}",
+      "vNextPath": "src/app/(authenticated)/tpo/batches/[batchId]/page.tsx",
+      "disposition": "MATCHED",
+      "notes": "Batch detail: classes, registrations, rules, students."
+    },
+    {
+      "id": "UI08-S11",
+      "type": "LIST_PAGE",
+      "role": [
+        "TPO"
+      ],
+      "name": "TPO Batch Registrations",
+      "legacyPath": "src/pages/tpo/ (batch registrations)",
+      "legacyRoute": "/tpo/batches/{batchId}/registrations",
+      "vNextPath": "src/app/(authenticated)/tpo/batches/[batchId]/registrations/page.tsx",
+      "disposition": "MATCHED",
+      "notes": "Students registered for this batch drive."
+    },
+    {
+      "id": "UI08-S12",
+      "type": "DETAIL_PAGE",
+      "role": [
+        "TPO"
+      ],
+      "name": "TPO Batch Invitation Prep",
+      "legacyPath": "src/pages/tpo/ (invitation prep)",
+      "legacyRoute": "/tpo/batches/{batchId}/invitation-prep",
+      "vNextPath": "src/app/(authenticated)/tpo/batches/[batchId]/invitation-prep/page.tsx",
+      "disposition": "MATCHED",
+      "notes": "Prepare and preview drive invitation messages."
+    },
+    {
+      "id": "UI08-S13",
+      "type": "LIST_PAGE",
+      "role": [
+        "TPO"
+      ],
+      "name": "TPO Calendar",
+      "legacyPath": "src/pages/tpo/ (calendar)",
+      "legacyRoute": "/tpo/calendar",
+      "vNextPath": "src/app/(authenticated)/tpo/calendar/page.tsx",
+      "disposition": "MATCHED",
+      "notes": "TPO placement event calendar."
+    },
+    {
+      "id": "UI08-S14",
+      "type": "DETAIL_PAGE",
+      "role": [
+        "TPO"
+      ],
+      "name": "TPO Company Profile",
+      "legacyPath": "src/pages/tpo/leads/ (company detail)",
+      "legacyRoute": "/tpo/companies/{companyId}",
+      "vNextPath": "src/app/(authenticated)/tpo/companies/[companyId]/page.tsx",
+      "disposition": "MATCHED",
+      "notes": "Company detail: contact log, drives, feedback."
+    },
+    {
+      "id": "UI08-S15",
+      "type": "LIST_PAGE",
+      "role": [
+        "TPO"
+      ],
+      "name": "TPO Drive Interview Slots",
+      "legacyPath": "src/pages/tpo/drives/[jobId].js (interview rounds)",
+      "legacyRoute": "/tpo/drives/{jobId}/interview-slots",
+      "vNextPath": "src/app/(authenticated)/tpo/drives/[jobId]/page.tsx",
+      "disposition": "MATCHED",
+      "notes": "Schedule interview slots for a drive. Remapped: functionality embedded in parent drive detail page."
+    },
+    {
+      "id": "UI08-S16",
+      "type": "LIST_PAGE",
+      "role": [
+        "TPO"
+      ],
+      "name": "TPO Drive Messages",
+      "legacyPath": "src/pages/tpo/drives/[jobId].js (messages)",
+      "legacyRoute": "/tpo/drives/{jobId}/messages",
+      "vNextPath": "src/app/(authenticated)/tpo/drives/[jobId]/page.tsx",
+      "disposition": "MATCHED",
+      "notes": "Messages from HR for this drive. Remapped: functionality embedded in parent drive detail page."
+    },
+    {
+      "id": "UI08-S17",
+      "type": "LIST_PAGE",
+      "role": [
+        "TPO"
+      ],
+      "name": "TPO Audit Log",
+      "legacyPath": "src/pages/tpo/ (audit)",
+      "legacyRoute": "/tpo/audit",
+      "vNextPath": "src/app/(authenticated)/tpo/audit/page.tsx",
+      "disposition": "MATCHED",
+      "notes": "TPO action audit trail."
+    },
+    {
+      "id": "UI08-S18",
+      "type": "DASHBOARD",
+      "role": [
+        "HR"
+      ],
+      "name": "HR Recruiter Home",
+      "legacyPath": "src/pages/hr/home.js",
+      "legacyRoute": "/hr/home",
+      "vNextPath": "src/app/(authenticated)/hr/home/page.tsx",
+      "disposition": "MATCHED",
+      "notes": "HR recruiter dashboard. Active drives, pending actions, scheduled interviews."
+    },
+    {
+      "id": "UI08-S19",
+      "type": "DETAIL_PAGE",
+      "role": [
+        "HR"
+      ],
+      "name": "HR Profile",
+      "legacyPath": "src/pages/hr/profile.js",
+      "legacyRoute": "/hr/profile",
+      "vNextPath": "src/app/(authenticated)/hr/profile/page.tsx",
+      "disposition": "MATCHED",
+      "notes": "HR user profile."
+    },
+    {
+      "id": "UI08-S20",
+      "type": "LIST_PAGE",
+      "role": [
+        "HR"
+      ],
+      "name": "HR Drives",
+      "legacyPath": "src/pages/hr/ (drives)",
+      "legacyRoute": "/hr/drives",
+      "vNextPath": "src/app/(authenticated)/hr/drives/page.tsx",
+      "disposition": "MATCHED",
+      "notes": "HR's own drives. Create drive, view proposals."
+    },
+    {
+      "id": "UI08-S21",
+      "type": "DETAIL_PAGE",
+      "role": [
+        "HR"
+      ],
+      "name": "HR Create Drive",
+      "legacyPath": "src/pages/hr/ (new drive form)",
+      "legacyRoute": "/hr/drives/new",
+      "vNextPath": "src/app/(authenticated)/hr/drives/new/page.tsx",
+      "disposition": "MATCHED",
+      "notes": "Drive creation form for HR."
+    },
+    {
+      "id": "UI08-S22",
+      "type": "DETAIL_PAGE",
+      "role": [
+        "HR"
+      ],
+      "name": "HR Drive Rounds Editor",
+      "legacyPath": "src/pages/hr/ (rounds editor)",
+      "legacyRoute": "/hr/drives/{jobId}/rounds/editor",
+      "vNextPath": "src/app/(authenticated)/hr/drives/[jobId]/rounds/editor/page.tsx",
+      "disposition": "MATCHED",
+      "notes": "Configure interview round types for a drive."
+    },
+    {
+      "id": "UI08-S23",
+      "type": "LIST_PAGE",
+      "role": [
+        "HR"
+      ],
+      "name": "HR Conversations",
+      "legacyPath": "src/pages/hr/ (conversations)",
+      "legacyRoute": "/hr/conversations",
+      "vNextPath": "src/app/(authenticated)/hr/conversations/page.tsx",
+      "disposition": "MATCHED",
+      "notes": "HR message threads with colleges/TPOs."
+    },
+    {
+      "id": "UI08-S24",
+      "type": "DETAIL_PAGE",
+      "role": [
+        "HR"
+      ],
+      "name": "HR Company Profile",
+      "legacyPath": "src/pages/hr/ (company)",
+      "legacyRoute": "/hr/company",
+      "vNextPath": "src/app/(authenticated)/hr/company/page.tsx",
+      "disposition": "MATCHED",
+      "notes": "HR's company profile page."
+    },
+    {
+      "id": "UI08-S25",
+      "type": "LIST_PAGE",
+      "role": [
+        "HR"
+      ],
+      "name": "HR Colleges (connected colleges)",
+      "legacyPath": "src/pages/hr/ (colleges)",
+      "legacyRoute": "/hr/colleges",
+      "vNextPath": "src/app/(authenticated)/hr/colleges/page.tsx",
+      "disposition": "MATCHED",
+      "notes": "Colleges connected to this HR/company."
+    },
+    {
+      "id": "UI08-S26",
+      "type": "LIST_PAGE",
+      "role": [
+        "HR"
+      ],
+      "name": "HR Calendar",
+      "legacyPath": "src/pages/hr/ (calendar)",
+      "legacyRoute": "/hr/calendar",
+      "vNextPath": "src/app/(authenticated)/hr/calendar/page.tsx",
+      "disposition": "MATCHED",
+      "notes": "HR calendar for interview scheduling."
+    },
+    {
+      "id": "UI08-S27",
+      "type": "DETAIL_PAGE",
+      "role": [
+        "PUBLIC"
+      ],
+      "name": "HR Invite / Onboarding",
+      "legacyPath": "src/pages/hr-invite/[token].js",
+      "legacyRoute": "/hr-invite/{token}",
+      "vNextPath": "src/app/hr-invite/[token]/page.tsx",
+      "disposition": "MATCHED",
+      "notes": "HR account activation via invite token."
+    }
+  ]
+}

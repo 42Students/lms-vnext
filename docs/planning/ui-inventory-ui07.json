@@ -1,0 +1,1176 @@
+{
+  "milestone": "UI-07",
+  "domain": "placements-learner-admin",
+  "frozenLegacySha": "83347e29b1f5c66d497dc5d99060e098338b382f",
+  "generatedOn": "2026-11-02",
+  "totalSurfaces": 55,
+  "matchedSurfaces": 55,
+  "missingSurfaces": 0,
+  "surfaces": [
+    {
+      "id": "UI07-S01",
+      "name": "Learner — My Placements: Home",
+      "type": "DASHBOARD",
+      "route": "/learn/my-placements",
+      "roles": [
+        "LEARNER"
+      ],
+      "legacyFile": "pages/learn/my-placements/index.js",
+      "vNextPath": "src/app/(authenticated)/learn/my-placements/page.tsx",
+      "disposition": "MATCHED",
+      "pageTitle": "My Placements",
+      "tables": [],
+      "modals": [],
+      "forms": [],
+      "buttons": [
+        "Reply",
+        "Register",
+        "Confirm",
+        "View drive",
+        "Fix profile",
+        "Accept or decline",
+        "Register now",
+        "See drives",
+        "Placement cell"
+      ],
+      "emptyState": "Nothing else is waiting on you.",
+      "notes": "Redesigned home with sections: Waiting on you, Next 7 days, Where your applications stand, Latest from the placement cell"
+    },
+    {
+      "id": "UI07-S02",
+      "name": "Learner — My Placements: All Applications",
+      "type": "LIST",
+      "route": "/learn/my-placements/applications",
+      "roles": [
+        "LEARNER"
+      ],
+      "legacyFile": "pages/learn/my-placements/applications/index.js",
+      "vNextPath": "src/app/(authenticated)/learn/my-placements/applications/page.tsx",
+      "disposition": "MATCHED",
+      "pageTitle": "Applications",
+      "tables": [
+        "Applications table"
+      ],
+      "modals": [],
+      "forms": [],
+      "buttons": [],
+      "emptyState": "You haven't applied to a drive yet.",
+      "notes": ""
+    },
+    {
+      "id": "UI07-S03",
+      "name": "Learner — My Placements: Application detail",
+      "type": "DETAIL",
+      "route": "/learn/my-placements/applications/[applicationId]",
+      "roles": [
+        "LEARNER"
+      ],
+      "legacyFile": "pages/learn/my-placements/applications/[applicationId].js",
+      "vNextPath": "src/app/(authenticated)/learn/my-placements/applications/[applicationId]/page.tsx",
+      "disposition": "MATCHED",
+      "pageTitle": "Application",
+      "tables": [],
+      "modals": [],
+      "forms": [],
+      "buttons": [],
+      "emptyState": "",
+      "notes": ""
+    },
+    {
+      "id": "UI07-S04",
+      "name": "Learner — My Placements: Announcements",
+      "type": "LIST",
+      "route": "/learn/my-placements/announcements",
+      "roles": [
+        "LEARNER"
+      ],
+      "legacyFile": "pages/learn/my-placements/announcements/index.js",
+      "vNextPath": "src/app/(authenticated)/learn/my-placements/announcements/page.tsx",
+      "disposition": "MATCHED",
+      "pageTitle": "Announcements",
+      "tables": [],
+      "modals": [],
+      "forms": [],
+      "buttons": [],
+      "emptyState": "No notices yet.",
+      "notes": ""
+    },
+    {
+      "id": "UI07-S05",
+      "name": "Learner — My Placements: Assessments",
+      "type": "LIST",
+      "route": "/learn/my-placements/assessments",
+      "roles": [
+        "LEARNER"
+      ],
+      "legacyFile": "pages/learn/my-placements/assessments/index.js",
+      "vNextPath": "src/app/(authenticated)/learn/my-placements/assessments/page.tsx",
+      "disposition": "MATCHED",
+      "pageTitle": "Assessments",
+      "tables": [],
+      "modals": [],
+      "forms": [],
+      "buttons": [],
+      "emptyState": "",
+      "notes": ""
+    },
+    {
+      "id": "UI07-S06",
+      "name": "Learner — My Placements: Calendar",
+      "type": "DASHBOARD",
+      "route": "/learn/my-placements/calendar",
+      "roles": [
+        "LEARNER"
+      ],
+      "legacyFile": "pages/learn/my-placements/calendar/index.js",
+      "vNextPath": "src/app/(authenticated)/learn/my-placements/calendar/page.tsx",
+      "disposition": "MATCHED",
+      "pageTitle": "Calendar",
+      "tables": [],
+      "modals": [],
+      "forms": [],
+      "buttons": [],
+      "emptyState": "No tests or interviews in the next 7 days.",
+      "notes": ""
+    },
+    {
+      "id": "UI07-S07",
+      "name": "Learner — My Placements: Interview slots",
+      "type": "LIST",
+      "route": "/learn/my-placements/interviews",
+      "roles": [
+        "LEARNER"
+      ],
+      "legacyFile": "pages/learn/my-placements/interviews/index.js",
+      "vNextPath": "src/app/(authenticated)/learn/my-placements/interviews/page.tsx",
+      "disposition": "MATCHED",
+      "pageTitle": "Interviews",
+      "tables": [],
+      "modals": [],
+      "forms": [],
+      "buttons": [],
+      "emptyState": "",
+      "notes": ""
+    },
+    {
+      "id": "UI07-S08",
+      "name": "Learner — My Placements: Drives list",
+      "type": "LIST",
+      "route": "/learn/my-placements/jobs",
+      "roles": [
+        "LEARNER"
+      ],
+      "legacyFile": "pages/learn/my-placements/jobs/index.js",
+      "vNextPath": "src/app/(authenticated)/learn/my-placements/jobs/page.tsx",
+      "disposition": "MATCHED",
+      "pageTitle": "Drives",
+      "tables": [
+        "Drives list"
+      ],
+      "modals": [],
+      "forms": [],
+      "buttons": [
+        "See drives"
+      ],
+      "emptyState": "",
+      "notes": ""
+    },
+    {
+      "id": "UI07-S09",
+      "name": "Learner — My Placements: Drive detail",
+      "type": "DETAIL",
+      "route": "/learn/my-placements/jobs/[jobId]",
+      "roles": [
+        "LEARNER"
+      ],
+      "legacyFile": "pages/learn/my-placements/jobs/[jobId].js",
+      "vNextPath": "src/app/(authenticated)/learn/my-placements/jobs/[jobId]/page.tsx",
+      "disposition": "MATCHED",
+      "pageTitle": "Drive",
+      "tables": [],
+      "modals": [],
+      "forms": [],
+      "buttons": [
+        "Apply",
+        "View drive"
+      ],
+      "emptyState": "",
+      "notes": ""
+    },
+    {
+      "id": "UI07-S10",
+      "name": "Learner — My Placements: Notification preferences",
+      "type": "FORM",
+      "route": "/learn/my-placements/notification-preferences",
+      "roles": [
+        "LEARNER"
+      ],
+      "legacyFile": "pages/learn/my-placements/notification-preferences.js",
+      "vNextPath": "src/app/(authenticated)/learn/my-placements/notification-preferences/page.tsx",
+      "disposition": "MATCHED",
+      "pageTitle": "Notification Preferences",
+      "tables": [],
+      "modals": [],
+      "forms": [
+        "Notification preferences form"
+      ],
+      "buttons": [
+        "Save"
+      ],
+      "emptyState": "",
+      "notes": ""
+    },
+    {
+      "id": "UI07-S11",
+      "name": "Learner — My Placements: Offers",
+      "type": "LIST",
+      "route": "/learn/my-placements/offers",
+      "roles": [
+        "LEARNER"
+      ],
+      "legacyFile": "pages/learn/my-placements/offers/index.js",
+      "vNextPath": "src/app/(authenticated)/learn/my-placements/offers/page.tsx",
+      "disposition": "MATCHED",
+      "pageTitle": "Offers",
+      "tables": [],
+      "modals": [
+        "Accept or decline offer modal"
+      ],
+      "forms": [],
+      "buttons": [
+        "Accept or decline"
+      ],
+      "emptyState": "",
+      "notes": ""
+    },
+    {
+      "id": "UI07-S12",
+      "name": "Learner — My Placements: Preparation",
+      "type": "DETAIL",
+      "route": "/learn/my-placements/preparation",
+      "roles": [
+        "LEARNER"
+      ],
+      "legacyFile": "pages/learn/my-placements/preparation.js",
+      "vNextPath": "src/app/(authenticated)/learn/my-placements/preparation/page.tsx",
+      "disposition": "MATCHED",
+      "pageTitle": "Preparation",
+      "tables": [],
+      "modals": [],
+      "forms": [],
+      "buttons": [
+        "Fix profile",
+        "Update profile"
+      ],
+      "emptyState": "",
+      "notes": ""
+    },
+    {
+      "id": "UI07-S13",
+      "name": "Learner — My Placements: Placement rules",
+      "type": "DETAIL",
+      "route": "/learn/my-placements/rules",
+      "roles": [
+        "LEARNER"
+      ],
+      "legacyFile": "pages/learn/my-placements/rules.js",
+      "vNextPath": "src/app/(authenticated)/learn/my-placements/rules/page.tsx",
+      "disposition": "MATCHED",
+      "pageTitle": "Placement Rules",
+      "tables": [],
+      "modals": [],
+      "forms": [],
+      "buttons": [],
+      "emptyState": "",
+      "notes": ""
+    },
+    {
+      "id": "UI07-S14",
+      "name": "Learner — My Placements: Schedule",
+      "type": "LIST",
+      "route": "/learn/my-placements/schedule",
+      "roles": [
+        "LEARNER"
+      ],
+      "legacyFile": "pages/learn/my-placements/schedule/index.js",
+      "vNextPath": "src/app/(authenticated)/learn/my-placements/schedule/page.tsx",
+      "disposition": "MATCHED",
+      "pageTitle": "Schedule",
+      "tables": [],
+      "modals": [],
+      "forms": [],
+      "buttons": [],
+      "emptyState": "",
+      "notes": ""
+    },
+    {
+      "id": "UI07-S15",
+      "name": "Learner — My Placements: Support",
+      "type": "DETAIL",
+      "route": "/learn/my-placements/support",
+      "roles": [
+        "LEARNER"
+      ],
+      "legacyFile": "pages/learn/my-placements/support.js",
+      "vNextPath": "src/app/(authenticated)/learn/my-placements/support/page.tsx",
+      "disposition": "MATCHED",
+      "pageTitle": "Support",
+      "tables": [],
+      "modals": [],
+      "forms": [],
+      "buttons": [
+        "Placement cell"
+      ],
+      "emptyState": "",
+      "notes": ""
+    },
+    {
+      "id": "UI07-S16",
+      "name": "Learner — Placements overview (public listing)",
+      "type": "LIST",
+      "route": "/learn/placements",
+      "roles": [
+        "LEARNER"
+      ],
+      "legacyFile": "pages/learn/placements/index.js",
+      "vNextPath": "src/app/(authenticated)/learn/placements/page.tsx",
+      "disposition": "MATCHED",
+      "pageTitle": "Placements",
+      "tables": [],
+      "modals": [],
+      "forms": [],
+      "buttons": [],
+      "emptyState": "",
+      "notes": "Different from my-placements — this is the college-scoped browse view"
+    },
+    {
+      "id": "UI07-S17",
+      "name": "Admin — Placements: Home/Dashboard",
+      "type": "DASHBOARD",
+      "route": "/admin/placements",
+      "roles": [
+        "ADMIN",
+        "COLLEGE_ADMIN"
+      ],
+      "legacyFile": "pages/superadmin/sections/Placements.js",
+      "vNextPath": "src/app/(authenticated)/admin/placements/page.tsx",
+      "disposition": "MATCHED",
+      "pageTitle": "Placements",
+      "tables": [],
+      "modals": [],
+      "forms": [],
+      "buttons": [],
+      "emptyState": "",
+      "notes": "Admin placement dashboard. Nav tabs: Drives, Companies, Interviews, Analytics"
+    },
+    {
+      "id": "UI07-S18",
+      "name": "Admin — Placements: Analytics",
+      "type": "DASHBOARD",
+      "route": "/admin/placements/analytics",
+      "roles": [
+        "ADMIN",
+        "COLLEGE_ADMIN"
+      ],
+      "legacyFile": "pages/superadmin/placements/analytics/index.js",
+      "vNextPath": "src/app/(authenticated)/admin/placements/analytics/page.tsx",
+      "disposition": "MATCHED",
+      "pageTitle": "Analytics",
+      "tables": [],
+      "modals": [],
+      "forms": [],
+      "buttons": [],
+      "emptyState": "",
+      "notes": ""
+    },
+    {
+      "id": "UI07-S19",
+      "name": "Admin — Placements: Applications list",
+      "type": "LIST",
+      "route": "/admin/placements/applications",
+      "roles": [
+        "ADMIN",
+        "COLLEGE_ADMIN"
+      ],
+      "legacyFile": "pages/superadmin/placements/applications/index.js",
+      "vNextPath": "src/app/(authenticated)/admin/placements/applications/page.tsx",
+      "disposition": "MATCHED",
+      "pageTitle": "Applications",
+      "tables": [
+        "Applications table"
+      ],
+      "modals": [],
+      "forms": [],
+      "buttons": [],
+      "emptyState": "",
+      "notes": ""
+    },
+    {
+      "id": "UI07-S20",
+      "name": "Admin — Placements: Calendar",
+      "type": "DASHBOARD",
+      "route": "/admin/placements/calendar",
+      "roles": [
+        "ADMIN",
+        "COLLEGE_ADMIN"
+      ],
+      "legacyFile": "pages/superadmin/placements/calendar/index.js",
+      "vNextPath": "src/app/(authenticated)/admin/placements/calendar/page.tsx",
+      "disposition": "MATCHED",
+      "pageTitle": "Calendar",
+      "tables": [],
+      "modals": [],
+      "forms": [],
+      "buttons": [],
+      "emptyState": "",
+      "notes": ""
+    },
+    {
+      "id": "UI07-S21",
+      "name": "Admin — Placements: Drives list",
+      "type": "LIST",
+      "route": "/admin/placements/drives",
+      "roles": [
+        "ADMIN",
+        "COLLEGE_ADMIN"
+      ],
+      "legacyFile": "pages/superadmin/placements/drives/index.js",
+      "vNextPath": "src/app/(authenticated)/admin/placements/drives/page.tsx",
+      "disposition": "MATCHED",
+      "pageTitle": "Drives",
+      "tables": [
+        "Drives table"
+      ],
+      "modals": [],
+      "forms": [],
+      "buttons": [
+        "New Drive"
+      ],
+      "emptyState": "",
+      "notes": ""
+    },
+    {
+      "id": "UI07-S22",
+      "name": "Admin — Placements: Hiring dashboard",
+      "type": "DASHBOARD",
+      "route": "/admin/placements/hiring",
+      "roles": [
+        "ADMIN",
+        "COLLEGE_ADMIN"
+      ],
+      "legacyFile": "pages/superadmin/hiring-dashboard.js",
+      "vNextPath": "src/app/(authenticated)/admin/placements/hiring/page.tsx",
+      "disposition": "MATCHED",
+      "pageTitle": "Hiring Dashboard",
+      "tables": [],
+      "modals": [],
+      "forms": [],
+      "buttons": [],
+      "emptyState": "",
+      "notes": ""
+    },
+    {
+      "id": "UI07-S23",
+      "name": "Admin — Placements: Interviews list",
+      "type": "LIST",
+      "route": "/admin/placements/interviews",
+      "roles": [
+        "ADMIN",
+        "COLLEGE_ADMIN"
+      ],
+      "legacyFile": "pages/superadmin/placements/interviews/index.js",
+      "vNextPath": "src/app/(authenticated)/admin/placements/interviews/page.tsx",
+      "disposition": "MATCHED",
+      "pageTitle": "Interviews",
+      "tables": [
+        "Interviews table"
+      ],
+      "modals": [],
+      "forms": [],
+      "buttons": [],
+      "emptyState": "",
+      "notes": ""
+    },
+    {
+      "id": "UI07-S24",
+      "name": "Admin — Placements: Job settings",
+      "type": "FORM",
+      "route": "/admin/placements/job-settings",
+      "roles": [
+        "ADMIN",
+        "COLLEGE_ADMIN"
+      ],
+      "legacyFile": "pages/superadmin/placements/job-settings/index.js",
+      "vNextPath": "src/app/(authenticated)/admin/placements/job-settings/page.tsx",
+      "disposition": "MATCHED",
+      "pageTitle": "Job Settings",
+      "tables": [],
+      "modals": [],
+      "forms": [
+        "Job settings form"
+      ],
+      "buttons": [
+        "Save"
+      ],
+      "emptyState": "",
+      "notes": ""
+    },
+    {
+      "id": "UI07-S25",
+      "name": "Admin — Placements: Drive detail",
+      "type": "DETAIL",
+      "route": "/admin/placements/jobs/[jobId]",
+      "roles": [
+        "ADMIN",
+        "COLLEGE_ADMIN"
+      ],
+      "legacyFile": "pages/superadmin/placements/jobs/[jobId]/index.js",
+      "vNextPath": "src/app/(authenticated)/admin/placements/jobs/[jobId]/page.tsx",
+      "disposition": "MATCHED",
+      "pageTitle": "Drive",
+      "tables": [],
+      "modals": [],
+      "forms": [],
+      "buttons": [],
+      "emptyState": "",
+      "notes": ""
+    },
+    {
+      "id": "UI07-S26",
+      "name": "Admin — Placements: Drive applicants tab",
+      "type": "LIST",
+      "route": "/admin/placements/jobs/[jobId]/applicants",
+      "roles": [
+        "ADMIN",
+        "COLLEGE_ADMIN"
+      ],
+      "legacyFile": "pages/superadmin/placements/jobs/[jobId]/applicants/index.js",
+      "vNextPath": "src/app/(authenticated)/admin/placements/jobs/[jobId]/applications/page.tsx",
+      "disposition": "MATCHED",
+      "pageTitle": "Applicants",
+      "tables": [
+        "Applicants table"
+      ],
+      "modals": [],
+      "forms": [],
+      "buttons": [],
+      "emptyState": "",
+      "notes": " Remapped: legacy tab embedded in different vNext page."
+    },
+    {
+      "id": "UI07-S27",
+      "name": "Admin — Placements: Drive rounds tab",
+      "type": "DETAIL",
+      "route": "/admin/placements/jobs/[jobId]/rounds",
+      "roles": [
+        "ADMIN",
+        "COLLEGE_ADMIN"
+      ],
+      "legacyFile": "pages/superadmin/placements/jobs/[jobId]/rounds/index.js",
+      "vNextPath": "src/app/(authenticated)/admin/placements/jobs/[jobId]/page.tsx",
+      "disposition": "MATCHED",
+      "pageTitle": "Rounds",
+      "tables": [
+        "Rounds list"
+      ],
+      "modals": [],
+      "forms": [],
+      "buttons": [],
+      "emptyState": "",
+      "notes": " Remapped: legacy tab embedded in different vNext page."
+    },
+    {
+      "id": "UI07-S28",
+      "name": "Admin — Placements: Drive offers tab",
+      "type": "LIST",
+      "route": "/admin/placements/jobs/[jobId]/offers",
+      "roles": [
+        "ADMIN",
+        "COLLEGE_ADMIN"
+      ],
+      "legacyFile": "pages/superadmin/placements/jobs/[jobId]/offers/index.js",
+      "vNextPath": "src/app/(authenticated)/admin/placements/jobs/[jobId]/shortlisted/page.tsx",
+      "disposition": "MATCHED",
+      "pageTitle": "Offers",
+      "tables": [
+        "Offers table"
+      ],
+      "modals": [],
+      "forms": [],
+      "buttons": [],
+      "emptyState": "",
+      "notes": " Remapped: legacy tab embedded in different vNext page."
+    },
+    {
+      "id": "UI07-S29",
+      "name": "Admin — Placements: Drive discussion tab",
+      "type": "DETAIL",
+      "route": "/admin/placements/jobs/[jobId]/discussion",
+      "roles": [
+        "ADMIN",
+        "COLLEGE_ADMIN"
+      ],
+      "legacyFile": "pages/superadmin/placements/jobs/[jobId]/discussion/index.js",
+      "vNextPath": "src/app/(authenticated)/admin/placements/jobs/[jobId]/page.tsx",
+      "disposition": "MATCHED",
+      "pageTitle": "Discussion",
+      "tables": [],
+      "modals": [],
+      "forms": [
+        "Reply form"
+      ],
+      "buttons": [
+        "Reply"
+      ],
+      "emptyState": "",
+      "notes": " Remapped: legacy tab embedded in different vNext page."
+    },
+    {
+      "id": "UI07-S30",
+      "name": "Admin — Placements: Drive about tab",
+      "type": "DETAIL",
+      "route": "/admin/placements/jobs/[jobId]/about",
+      "roles": [
+        "ADMIN",
+        "COLLEGE_ADMIN"
+      ],
+      "legacyFile": "pages/superadmin/placements/jobs/[jobId]/about/index.js",
+      "vNextPath": "src/app/(authenticated)/admin/placements/jobs/[jobId]/settings/page.tsx",
+      "disposition": "MATCHED",
+      "pageTitle": "About",
+      "tables": [],
+      "modals": [],
+      "forms": [],
+      "buttons": [],
+      "emptyState": "",
+      "notes": " Remapped: legacy tab embedded in different vNext page."
+    },
+    {
+      "id": "UI07-S31",
+      "name": "Admin — Placements: Joining / onboarding",
+      "type": "DETAIL",
+      "route": "/admin/placements/joining",
+      "roles": [
+        "ADMIN",
+        "COLLEGE_ADMIN"
+      ],
+      "legacyFile": "pages/superadmin/placements/joining/index.js",
+      "vNextPath": "src/app/(authenticated)/admin/placements/joining/page.tsx",
+      "disposition": "MATCHED",
+      "pageTitle": "Joining",
+      "tables": [],
+      "modals": [],
+      "forms": [],
+      "buttons": [],
+      "emptyState": "",
+      "notes": ""
+    },
+    {
+      "id": "UI07-S32",
+      "name": "Admin — Placements: New drive",
+      "type": "FORM",
+      "route": "/admin/placements/new",
+      "roles": [
+        "ADMIN",
+        "COLLEGE_ADMIN"
+      ],
+      "legacyFile": "pages/superadmin/placements/new/index.js",
+      "vNextPath": "src/app/(authenticated)/admin/placements/new/page.tsx",
+      "disposition": "MATCHED",
+      "pageTitle": "New Drive",
+      "tables": [],
+      "modals": [],
+      "forms": [
+        "Drive creation form"
+      ],
+      "buttons": [
+        "Create Drive",
+        "Cancel"
+      ],
+      "emptyState": "",
+      "notes": ""
+    },
+    {
+      "id": "UI07-S33",
+      "name": "Admin — Placements: Offers list",
+      "type": "LIST",
+      "route": "/admin/placements/offers",
+      "roles": [
+        "ADMIN",
+        "COLLEGE_ADMIN"
+      ],
+      "legacyFile": "pages/superadmin/placements/offers/index.js",
+      "vNextPath": "src/app/(authenticated)/admin/placements/offers/page.tsx",
+      "disposition": "MATCHED",
+      "pageTitle": "Offers",
+      "tables": [
+        "Offers table"
+      ],
+      "modals": [],
+      "forms": [],
+      "buttons": [],
+      "emptyState": "",
+      "notes": ""
+    },
+    {
+      "id": "UI07-S34",
+      "name": "Admin — Placements: Organisation applications",
+      "type": "LIST",
+      "route": "/admin/placements/organization-applications",
+      "roles": [
+        "ADMIN",
+        "COLLEGE_ADMIN"
+      ],
+      "legacyFile": "pages/superadmin/placements/organization-applications/index.js",
+      "vNextPath": "src/app/(authenticated)/admin/placements/organization-applications/page.tsx",
+      "disposition": "MATCHED",
+      "pageTitle": "Organisation Applications",
+      "tables": [],
+      "modals": [],
+      "forms": [],
+      "buttons": [],
+      "emptyState": "",
+      "notes": ""
+    },
+    {
+      "id": "UI07-S35",
+      "name": "Admin — Placements: Organisation jobs",
+      "type": "LIST",
+      "route": "/admin/placements/organization-jobs",
+      "roles": [
+        "ADMIN",
+        "COLLEGE_ADMIN"
+      ],
+      "legacyFile": "pages/superadmin/placements/organization-jobs/index.js",
+      "vNextPath": "src/app/(authenticated)/admin/placements/organization-jobs/page.tsx",
+      "disposition": "MATCHED",
+      "pageTitle": "Organisation Jobs",
+      "tables": [],
+      "modals": [],
+      "forms": [],
+      "buttons": [],
+      "emptyState": "",
+      "notes": ""
+    },
+    {
+      "id": "UI07-S36",
+      "name": "Admin — Placements: Retention",
+      "type": "DETAIL",
+      "route": "/admin/placements/retention",
+      "roles": [
+        "ADMIN",
+        "COLLEGE_ADMIN"
+      ],
+      "legacyFile": "pages/superadmin/placements/retention/index.js",
+      "vNextPath": "src/app/(authenticated)/admin/placements/retention/page.tsx",
+      "disposition": "MATCHED",
+      "pageTitle": "Retention",
+      "tables": [],
+      "modals": [],
+      "forms": [],
+      "buttons": [],
+      "emptyState": "",
+      "notes": ""
+    },
+    {
+      "id": "UI07-S37",
+      "name": "Admin — Placements: Screenings",
+      "type": "LIST",
+      "route": "/admin/placements/screenings",
+      "roles": [
+        "ADMIN",
+        "COLLEGE_ADMIN"
+      ],
+      "legacyFile": "pages/superadmin/placements/screenings/index.js",
+      "vNextPath": "src/app/(authenticated)/admin/placements/screenings/page.tsx",
+      "disposition": "MATCHED",
+      "pageTitle": "Screenings",
+      "tables": [],
+      "modals": [],
+      "forms": [],
+      "buttons": [],
+      "emptyState": "",
+      "notes": ""
+    },
+    {
+      "id": "UI07-S38",
+      "name": "Admin — Placements: Seasons",
+      "type": "LIST",
+      "route": "/admin/placements/seasons",
+      "roles": [
+        "ADMIN",
+        "COLLEGE_ADMIN"
+      ],
+      "legacyFile": "pages/superadmin/placements/seasons/index.js",
+      "vNextPath": "src/app/(authenticated)/admin/placements/seasons/page.tsx",
+      "disposition": "MATCHED",
+      "pageTitle": "Seasons",
+      "tables": [],
+      "modals": [],
+      "forms": [],
+      "buttons": [],
+      "emptyState": "",
+      "notes": ""
+    },
+    {
+      "id": "UI07-S39",
+      "name": "Admin — Placements: Shortlisted",
+      "type": "LIST",
+      "route": "/admin/placements/shortlisted",
+      "roles": [
+        "ADMIN",
+        "COLLEGE_ADMIN"
+      ],
+      "legacyFile": "pages/superadmin/placements/shortlisted/index.js",
+      "vNextPath": "src/app/(authenticated)/admin/placements/shortlisted/page.tsx",
+      "disposition": "MATCHED",
+      "pageTitle": "Shortlisted",
+      "tables": [],
+      "modals": [],
+      "forms": [],
+      "buttons": [],
+      "emptyState": "",
+      "notes": ""
+    },
+    {
+      "id": "UI07-S40",
+      "name": "Admin — Placements: Student lookup",
+      "type": "LIST",
+      "route": "/admin/placements/student-lookup",
+      "roles": [
+        "ADMIN",
+        "COLLEGE_ADMIN"
+      ],
+      "legacyFile": "pages/superadmin/placements/student-lookup/index.js",
+      "vNextPath": "src/app/(authenticated)/admin/placements/student-lookup/page.tsx",
+      "disposition": "MATCHED",
+      "pageTitle": "Student Lookup",
+      "tables": [],
+      "modals": [],
+      "forms": [],
+      "buttons": [],
+      "emptyState": "",
+      "notes": ""
+    },
+    {
+      "id": "UI07-S41",
+      "name": "Admin — Placements: Recruiter accounts",
+      "type": "LIST",
+      "route": "/admin/placements/recruiters",
+      "roles": [
+        "ADMIN"
+      ],
+      "legacyFile": "pages/superadmin/recruiters.js",
+      "vNextPath": "src/app/(authenticated)/admin/recruiters/page.tsx",
+      "disposition": "MATCHED",
+      "pageTitle": "Recruiter Accounts",
+      "tables": [
+        "Recruiter accounts table"
+      ],
+      "modals": [
+        "Invite recruiter modal"
+      ],
+      "forms": [],
+      "buttons": [
+        "Invite Recruiter"
+      ],
+      "emptyState": "",
+      "notes": "SuperAdmin only — manages recruiter accounts Admin recruiters at /admin/recruiters, not /admin/placements/recruiters."
+    },
+    {
+      "id": "UI07-S42",
+      "name": "College — Placements: Home",
+      "type": "DASHBOARD",
+      "route": "/college/placements",
+      "roles": [
+        "COLLEGE_ADMIN"
+      ],
+      "legacyFile": "pages/college-admin/sections/Placements.js",
+      "vNextPath": "src/app/(authenticated)/college/placements/page.tsx",
+      "disposition": "MATCHED",
+      "pageTitle": "Placements",
+      "tables": [],
+      "modals": [],
+      "forms": [],
+      "buttons": [],
+      "emptyState": "",
+      "notes": "College-admin placement nav: Drives, Companies, Interviews, Analytics"
+    },
+    {
+      "id": "UI07-S43",
+      "name": "College — Placements: Calendar",
+      "type": "DASHBOARD",
+      "route": "/college/placements/calendar",
+      "roles": [
+        "COLLEGE_ADMIN"
+      ],
+      "legacyFile": "pages/college-admin/placements/calendar/index.js",
+      "vNextPath": "src/app/(authenticated)/college/placements/calendar/page.tsx",
+      "disposition": "MATCHED",
+      "pageTitle": "Calendar",
+      "tables": [],
+      "modals": [],
+      "forms": [],
+      "buttons": [],
+      "emptyState": "",
+      "notes": ""
+    },
+    {
+      "id": "UI07-S44",
+      "name": "College — Placements: Drives",
+      "type": "LIST",
+      "route": "/college/placements/drives",
+      "roles": [
+        "COLLEGE_ADMIN"
+      ],
+      "legacyFile": "pages/college-admin/placements/drives/index.js",
+      "vNextPath": "src/app/(authenticated)/college/placements/drives/page.tsx",
+      "disposition": "MATCHED",
+      "pageTitle": "Drives",
+      "tables": [],
+      "modals": [],
+      "forms": [],
+      "buttons": [],
+      "emptyState": "",
+      "notes": ""
+    },
+    {
+      "id": "UI07-S45",
+      "name": "College — Placements: Interviews",
+      "type": "LIST",
+      "route": "/college/placements/interviews",
+      "roles": [
+        "COLLEGE_ADMIN"
+      ],
+      "legacyFile": "pages/college-admin/placements/interviews/index.js",
+      "vNextPath": "src/app/(authenticated)/college/placements/interviews/page.tsx",
+      "disposition": "MATCHED",
+      "pageTitle": "Interviews",
+      "tables": [],
+      "modals": [],
+      "forms": [],
+      "buttons": [],
+      "emptyState": "",
+      "notes": ""
+    },
+    {
+      "id": "UI07-S46",
+      "name": "College — Placements: Drive detail",
+      "type": "DETAIL",
+      "route": "/college/placements/jobs/[jobId]",
+      "roles": [
+        "COLLEGE_ADMIN"
+      ],
+      "legacyFile": "pages/college-admin/placements/jobs/[jobId]/index.js",
+      "vNextPath": "src/app/(authenticated)/college/placements/jobs/[jobId]/page.tsx",
+      "disposition": "MATCHED",
+      "pageTitle": "Drive",
+      "tables": [],
+      "modals": [],
+      "forms": [],
+      "buttons": [],
+      "emptyState": "",
+      "notes": "Same tabs as admin: applicants, rounds, offers, discussion, about"
+    },
+    {
+      "id": "UI07-S47",
+      "name": "College — Placements: New drive",
+      "type": "FORM",
+      "route": "/college/placements/new",
+      "roles": [
+        "COLLEGE_ADMIN"
+      ],
+      "legacyFile": "pages/college-admin/placements/new/index.js",
+      "vNextPath": "src/app/(authenticated)/college/placements/new/page.tsx",
+      "disposition": "MATCHED",
+      "pageTitle": "New Drive",
+      "tables": [],
+      "modals": [],
+      "forms": [
+        "Drive creation form"
+      ],
+      "buttons": [
+        "Create Drive",
+        "Cancel"
+      ],
+      "emptyState": "",
+      "notes": ""
+    },
+    {
+      "id": "UI07-S48",
+      "name": "College — Placements: Readiness by department",
+      "type": "DASHBOARD",
+      "route": "/college/placements/readiness-by-department",
+      "roles": [
+        "COLLEGE_ADMIN"
+      ],
+      "legacyFile": "pages/college-admin/placements/readiness-by-department/index.js",
+      "vNextPath": "src/app/(authenticated)/college/placements/readiness-by-department/page.tsx",
+      "disposition": "MATCHED",
+      "pageTitle": "Readiness by Department",
+      "tables": [],
+      "modals": [],
+      "forms": [],
+      "buttons": [],
+      "emptyState": "",
+      "notes": ""
+    },
+    {
+      "id": "UI07-S49",
+      "name": "College — Placements: Retention",
+      "type": "DETAIL",
+      "route": "/college/placements/retention",
+      "roles": [
+        "COLLEGE_ADMIN"
+      ],
+      "legacyFile": "pages/college-admin/placements/retention/index.js",
+      "vNextPath": "src/app/(authenticated)/college/placements/retention/page.tsx",
+      "disposition": "MATCHED",
+      "pageTitle": "Retention",
+      "tables": [],
+      "modals": [],
+      "forms": [],
+      "buttons": [],
+      "emptyState": "",
+      "notes": ""
+    },
+    {
+      "id": "UI07-S50",
+      "name": "College — Placements: Student lookup",
+      "type": "LIST",
+      "route": "/college/placements/student-lookup",
+      "roles": [
+        "COLLEGE_ADMIN"
+      ],
+      "legacyFile": "pages/college-admin/placements/student-lookup/index.js",
+      "vNextPath": "src/app/(authenticated)/college/placements/student-lookup/page.tsx",
+      "disposition": "MATCHED",
+      "pageTitle": "Student Lookup",
+      "tables": [],
+      "modals": [],
+      "forms": [],
+      "buttons": [],
+      "emptyState": "",
+      "notes": ""
+    },
+    {
+      "id": "UI07-S51",
+      "name": "College — Placements: Hiring dashboard",
+      "type": "DASHBOARD",
+      "route": "/college/hiring-dashboard",
+      "roles": [
+        "COLLEGE_ADMIN"
+      ],
+      "legacyFile": "pages/college-admin/hiring-dashboard.js",
+      "vNextPath": "src/app/(authenticated)/college/hiring-dashboard/page.tsx",
+      "disposition": "MATCHED",
+      "pageTitle": "Hiring Dashboard",
+      "tables": [],
+      "modals": [],
+      "forms": [],
+      "buttons": [],
+      "emptyState": "",
+      "notes": ""
+    },
+    {
+      "id": "UI07-S52",
+      "name": "Placements: My Placements tab nav",
+      "type": "NAVIGATION",
+      "route": "/learn/my-placements/*",
+      "roles": [
+        "LEARNER"
+      ],
+      "legacyFile": "common/lists.js (placementsTabList)",
+      "vNextPath": "src/app/(authenticated)/learn/my-placements/layout.tsx",
+      "disposition": "MATCHED",
+      "pageTitle": "",
+      "tabs": [
+        "Home",
+        "Drives",
+        "Applications",
+        "Schedule",
+        "Offers",
+        "Notices",
+        "Placement cell"
+      ],
+      "modals": [],
+      "forms": [],
+      "buttons": [],
+      "emptyState": "",
+      "notes": "Tab navigation strip for learner placements"
+    },
+    {
+      "id": "UI07-S53",
+      "name": "Placements: Admin nav tabs",
+      "type": "NAVIGATION",
+      "route": "/admin/placements/*",
+      "roles": [
+        "ADMIN",
+        "COLLEGE_ADMIN"
+      ],
+      "legacyFile": "common/navGroupDefinitions.js",
+      "vNextPath": "src/app/(authenticated)/admin/layout.tsx",
+      "disposition": "MATCHED",
+      "pageTitle": "",
+      "tabs": [
+        "Drives",
+        "Companies",
+        "Interviews",
+        "Analytics"
+      ],
+      "modals": [],
+      "forms": [],
+      "buttons": [],
+      "emptyState": "",
+      "notes": "Admin placements nav strip. Shared between college-admin and superadmin. Placements nav embedded in admin layout.tsx, no separate layout."
+    },
+    {
+      "id": "UI07-S54",
+      "name": "Placements: Drive detail tabs",
+      "type": "NAVIGATION",
+      "route": "/*/placements/jobs/[jobId]/*",
+      "roles": [
+        "ADMIN",
+        "COLLEGE_ADMIN"
+      ],
+      "legacyFile": "pages/tpo/drives/[jobId].js (TAB_KEYS)",
+      "vNextPath": "src/app/(authenticated)/admin/placements/jobs/[jobId]/layout.tsx",
+      "disposition": "MATCHED",
+      "pageTitle": "",
+      "tabs": [
+        "Applicants",
+        "Rounds",
+        "Offers",
+        "Discussion",
+        "About"
+      ],
+      "modals": [],
+      "forms": [],
+      "buttons": [],
+      "emptyState": "",
+      "notes": "Tab keys: applicants, rounds, offers, discussion, about"
+    },
+    {
+      "id": "UI07-S55",
+      "name": "Placement: Debarment notice",
+      "type": "ALERT",
+      "route": "/learn/my-placements (inline)",
+      "roles": [
+        "LEARNER"
+      ],
+      "legacyFile": "pages/learn/my-placements/index.js",
+      "vNextPath": "src/app/(authenticated)/learn/my-placements/page.tsx",
+      "disposition": "MATCHED",
+      "pageTitle": "",
+      "tables": [],
+      "modals": [],
+      "forms": [],
+      "buttons": [
+        "Think this is wrong? Tell the placement cell"
+      ],
+      "emptyState": "",
+      "notes": "Shown when learner is barred: 'You are barred from drives for now'"
+    }
+  ],
+  "missingCount": 0
+}
