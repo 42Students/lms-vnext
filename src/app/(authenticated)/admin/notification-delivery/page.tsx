@@ -71,9 +71,7 @@ export default async function NotificationDeliveryPage({
   return (
     <main className="min-w-0 space-y-6">
       <PageHeader title="Notification delivery" description="Review delivery states separately from announcement visibility and read receipts." />
-      <p className="text-sm text-muted-foreground">
-        <Link href="/admin/announcements" className="underline">Back to announcements</Link>
-      </p>
+      <Link href="/admin/announcements" className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Back to announcements</Link>
       <section aria-label="Delivery status filters" className="space-y-2">
         <h2 className="text-lg font-semibold">Delivery history</h2>
         <nav aria-label="Filter delivery status" className="flex flex-wrap gap-2">
@@ -105,7 +103,7 @@ export default async function NotificationDeliveryPage({
               <p className="text-xs text-muted-foreground">Scheduled for: {formatIst(metaText(item.metadata, "scheduledAt") ?? "")}</p>
             ) : null}
             {metaText(item.metadata, "deliveryError") ? (
-              <p className="text-xs text-red-700" role="alert">Delivery error: {metaText(item.metadata, "deliveryError")}</p>
+              <p className="text-xs text-[var(--lms-error-text)]" role="alert">Delivery error: {metaText(item.metadata, "deliveryError")}</p>
             ) : null}
             <p className="break-all text-xs text-muted-foreground">Event: {item.id}</p>
             <p className="text-xs text-muted-foreground">
