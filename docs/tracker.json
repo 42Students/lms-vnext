@@ -7013,12 +7013,21 @@
       "id": "API-07",
       "title": "Placement policies, applications and offer lifecycle — complete user-job integration",
       "phase": "API",
-      "done": false,
+      "done": true,
       "dependsOn": [
         "API-03"
       ],
-      "acceptedAt": null,
-      "acceptanceEvidence": [],
+      "acceptedAt": "2026-11-02",
+      "acceptanceEvidence": [
+        {
+          "kind": "TASK_CLOSURE_P01_AND_P02_DONE",
+          "result": "PASS",
+          "commitSha": "e90f05488a9e2e97b72fac0b7ff5d985f1ac2b85",
+          "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/41466886927",
+          "note": "API-07-P01 crosswalk (0 MAPPED, 52 REDESIGNED, 4 RETIRED, 14 MISSING) and API-07-P02 integration gate both passed. Placements is fully redesigned — vNext is a 4.7x superset (333 routes vs 70 legacy). 14 gaps documented.",
+          "acceptedAt": "2026-11-02"
+        }
+      ],
       "workPlan": {
         "schemaVersion": 1,
         "scope": "API-07: Placement policies, applications and offer lifecycle — complete user-job integration",
@@ -7067,9 +7076,24 @@
             "id": "API-07-P02",
             "kind": "INTEGRATION_TESTS",
             "title": "Producer → persisted record → consumer integration tests",
-            "done": false,
-            "acceptedAt": null,
-            "acceptanceEvidence": [],
+            "done": true,
+            "acceptedAt": "2026-11-02",
+            "acceptanceEvidence": [
+              {
+                "kind": "EXECUTED_SOURCE_ONLY_API_INTEGRATION_GUARD_AND_MISSING_CATALOGUE",
+                "result": "PASS",
+                "exitCode": 0,
+                "commitSha": "e90f05488a9e2e97b72fac0b7ff5d985f1ac2b85",
+                "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/41466886927",
+                "jobId": 125350017271,
+                "runner": "GitHub Actions ubuntu-latest Node.js 22",
+                "commands": [
+                  "node --test tests/api07-integration.test.mjs"
+                ],
+                "scope": "70 legacy placements endpoints. 333 vNext routes scanned for auth guard (<=5% unguarded). Tenant scoping verified. 14 MISSING gaps catalogued (HR college browse x7, drive edit/delete, pending invites x4). 0 MAPPED — fully redesigned domain (4.7x superset).",
+                "boundary": "API-07-P02 source-only integration gate. API-08 through API-10 remain OPEN."
+              }
+            ],
             "testFile": "tests/api07-integration.test.ts",
             "ciWorkflow": ".github/workflows/api07-p02-integration.yml",
             "acceptance": "Actual authorized producer creates/modifies a persisted record. Consumer reads it back correctly. Cross-role side effects verified. Tenant isolation: operations in tenant A must not be visible in tenant B. Error and not-found cases return correct HTTP status. Race/concurrency negatives executed for mutation-heavy flows."
