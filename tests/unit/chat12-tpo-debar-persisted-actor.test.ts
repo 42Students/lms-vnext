@@ -70,6 +70,9 @@ describe("TPO-students-06/07 debarment role revocation and tenant isolation",()=
  });
  it("checks persisted role inside every write transaction after the initial actor check",()=>{
   const src=readFileSync(new URL("../../src/modules/placements/debarment-service.ts",import.meta.url),"utf8");
+  const learnerRead=src.split("async function requireLearner(")[1]?.split("/** Learner notice")[0] ?? "";
+  expect(learnerRead).toContain('.for("share").limit(1)');
+  expect(learnerRead).toContain('eq(membershipRoles.role, "LEARNER")');
   expect(src.match(/await requireTpoJobActor\(tx,context\)/g)).toHaveLength(3);
   expect(src).toContain("eq(placementDebarments.collegeId,collegeId)");
   expect(src).toContain("await recordDebarmentNotice(tx,college,learner.userId,context.user.id,row.id,\"DEBARRED\")");
