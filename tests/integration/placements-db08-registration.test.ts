@@ -353,6 +353,93 @@ describe("DB08-B per-cohort consented learner registration", () => {
 });
 
 describe("DB08-B manager debarment with SQL-generated immutable audit", () => {
+  it("rejects a revoked learner role before writing restriction or history", async () => {
+    await pool.query(
+      "DELETE FROM membership_roles WHERE membership_id=$1 AND role='LEARNER'",
+      [db08LearnerMembership],
+    );
+    try {
+      await expect(createPlacementDebarment(admin, {
+        collegeId: SEED_IDS.collegeA,
+        membershipId: db08LearnerMembership,
+        reason: "Must not write against a revoked learner grant",
+        untilDrives: 2,
+      })).rejects.toMatchObject({ code: "DB08_DEBARMENT_MEMBER_INVALID" });
+      const rows = await pool.query(
+        "SELECT id FROM placement_debarments WHERE membership_id=$1",
+        [db08LearnerMembership],
+      );
+      expect(rows.rows).toHaveLength(0);
+    } finally {
+      await pool.query(
+        "INSERT INTO membership_roles(membership_id,role) VALUES($1,'LEARNER') ON CONFLICT DO NOTHING",
+        [db08LearnerMembership],
+      );
+    }
+  });
+
+  it("serializes a concurrent learner role revoke before debarment creation", async () => {
+    const holder = await pool.connect();
+    let inTransaction = false;
+    let pending: Promise<{ ok: boolean; error?: unknown }> | null = null;
+    try {
+      await holder.query("BEGIN");
+      inTransaction = true;
+      const rows = await holder.query(
+        "SELECT membership_id FROM membership_roles WHERE membership_id=$1 AND role='LEARNER' FOR UPDATE",
+        [db08LearnerMembership],
+      );
+      expect(rows.rows).toHaveLength(1);
+      pending = createPlacementDebarment(admin, {
+        collegeId: SEED_IDS.collegeA,
+        membershipId: db08LearnerMembership,
+        reason: "Concurrent revoke must win",
+        untilDrives: 2,
+      }).then(() => ({ ok: true }), error => ({ ok: false, error }));
+
+      // Wait for the live write to block specifically on the learner grant.
+      // A query that does not SHARE-lock that grant fails this witness.
+      let waiting = false;
+      for (let attempt = 0; attempt < 160; attempt++) {
+        const activity = await pool.query<{ blocked: string }>(
+          "SELECT count(*)::text AS blocked FROM pg_stat_activity "+
+          "WHERE datname=current_database() AND pid<>pg_backend_pid() "+
+          "AND wait_event_type='Lock' AND query ILIKE '%membership_roles%'",
+        );
+        if (Number(activity.rows[0]?.blocked ?? 0) > 0) {
+          waiting = true;
+          break;
+        }
+        await new Promise(resolve => setTimeout(resolve, 25));
+      }
+      expect(waiting).toBe(true);
+      await holder.query(
+        "DELETE FROM membership_roles WHERE membership_id=$1 AND role='LEARNER'",
+        [db08LearnerMembership],
+      );
+      await holder.query("COMMIT");
+      inTransaction = false;
+      const result = await pending;
+      expect(result).toMatchObject({
+        ok: false,
+        error: { code: "DB08_DEBARMENT_MEMBER_INVALID" },
+      });
+      const restrictions = await pool.query(
+        "SELECT id FROM placement_debarments WHERE membership_id=$1",
+        [db08LearnerMembership],
+      );
+      expect(restrictions.rows).toHaveLength(0);
+    } finally {
+      if (inTransaction) await holder.query("ROLLBACK").catch(() => undefined);
+      holder.release();
+      if (pending) await pending;
+      await pool.query(
+        "INSERT INTO membership_roles(membership_id,role) VALUES($1,'LEARNER') ON CONFLICT DO NOTHING",
+        [db08LearnerMembership],
+      );
+    }
+  }, 20_000);
+
   it("creates and lifts a manual debarment, idempotently", async () => {
     const created = await createPlacementDebarment(admin, {
       collegeId: SEED_IDS.collegeA,
