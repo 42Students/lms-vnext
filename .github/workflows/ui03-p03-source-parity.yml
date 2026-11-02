@@ -1,35 +1,31 @@
-name: UI-03 P03 Source Parity — Learner/Faculty Profiles
+name: UI-03 P03 Source Parity (profiles)
+
 on:
   push:
     paths:
-      - 'src/app/(authenticated)/(learner)/profile/**'
-      - 'src/app/(authenticated)/learn/profile/**'
-      - 'src/app/(authenticated)/teacher/profile/**'
-      - 'src/app/(authenticated)/college/profile/**'
-      - 'src/app/(authenticated)/hr/profile/**'
-      - 'src/app/(authenticated)/mentor/profile/**'
-      - 'src/app/(authenticated)/tpo/profile/**'
-      - 'src/app/(authenticated)/admin/people/**'
-      - 'src/app/(authenticated)/college/people/**'
-      - 'src/app/(authenticated)/admin/students/**'
-      - 'src/app/(authenticated)/college/students/**'
-      - 'src/app/(authenticated)/college/faculty/**'
-      - 'src/app/(authenticated)/admin/faculty-assignment/**'
-      - 'src/app/(authenticated)/tpo/students/**'
-      - 'docs/planning/ui-inventory-ui03.json'
-      - 'docs/planning/ui-strings-ui03.json'
-      - 'tests/ui03-source-parity.test.mjs'
+      - "src/app/(authenticated)/learn/profile/**"
+      - "src/app/(authenticated)/teacher/profile/**"
+      - "src/app/(authenticated)/college/profile/**"
+      - "src/app/(authenticated)/college/students/**"
+      - "src/app/(authenticated)/college/faculty/**"
+      - "src/app/(authenticated)/admin/students/**"
+      - "src/app/(authenticated)/admin/people/**"
+      - "src/app/(authenticated)/tpo/students/**"
+      - "src/app/(authenticated)/hr/profile/**"
+      - "src/app/(authenticated)/mentor/profile/**"
+      - "src/app/(authenticated)/tpo/profile/**"
+      - "docs/planning/ui-inventory-ui03.json"
+      - "docs/planning/ui-strings-ui03.json"
+      - "tests/ui03-source-parity.test.mjs"
   workflow_dispatch:
 
 jobs:
-  source-parity:
+  ui03-source-parity:
     runs-on: ubuntu-latest
-    timeout-minutes: 5
     steps:
       - uses: actions/checkout@v4
-      - uses: oven-sh/setup-bun@v2
+      - uses: actions/setup-node@v4
         with:
-          bun-version: latest
-      - run: bun install --frozen-lockfile
-      - name: UI-03 source parity test
+          node-version: "22"
+      - name: Run UI-03 source parity test
         run: node --test tests/ui03-source-parity.test.mjs

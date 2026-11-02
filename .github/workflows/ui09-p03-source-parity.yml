@@ -1,0 +1,29 @@
+name: UI-09 P03 Source Parity (notifications/announcements)
+
+on:
+  push:
+    paths:
+      - "src/components/activity/**"
+      - "src/app/(authenticated)/notifications/**"
+      - "src/app/(authenticated)/learn/notifications/**"
+      - "src/app/(authenticated)/teacher/notifications/**"
+      - "src/app/(authenticated)/mentor/notifications/**"
+      - "src/app/(authenticated)/tpo/notifications/**"
+      - "src/app/(authenticated)/admin/announcements/**"
+      - "src/app/(authenticated)/tpo/announcements/**"
+      - "src/app/(authenticated)/learn/my-placements/announcements/**"
+      - "docs/planning/ui-inventory-ui09.json"
+      - "docs/planning/ui-strings-ui09.json"
+      - "tests/ui09-source-parity.test.mjs"
+  workflow_dispatch:
+
+jobs:
+  ui09-source-parity:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Run UI-09 source parity test
+        run: node --test tests/ui09-source-parity.test.mjs

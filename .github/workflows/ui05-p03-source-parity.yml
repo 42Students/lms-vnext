@@ -1,0 +1,36 @@
+name: UI-05 P03 Source Parity (assignments/quizzes/attendance)
+
+on:
+  push:
+    paths:
+      - "src/app/(authenticated)/admin/assignments/**"
+      - "src/app/(authenticated)/admin/quizzes/**"
+      - "src/app/(authenticated)/admin/attendance/**"
+      - "src/app/(authenticated)/college/assignments/**"
+      - "src/app/(authenticated)/college/quizzes/**"
+      - "src/app/(authenticated)/college/attendance/**"
+      - "src/app/(authenticated)/learn/allAssignments/**"
+      - "src/app/(authenticated)/learn/allQuizzes/**"
+      - "src/app/(authenticated)/learn/attendance/**"
+      - "src/app/(authenticated)/learn/assignments/**"
+      - "src/app/(authenticated)/learn/quizzes/**"
+      - "src/app/(authenticated)/teacher/allAssignments/**"
+      - "src/app/(authenticated)/teacher/allQuizzes/**"
+      - "src/app/(authenticated)/teacher/courses/**"
+      - "src/app/(authenticated)/teacher/report/**"
+      - "src/app/quiz/**"
+      - "docs/planning/ui-inventory-ui05.json"
+      - "docs/planning/ui-strings-ui05.json"
+      - "tests/ui05-source-parity.test.mjs"
+  workflow_dispatch:
+
+jobs:
+  ui05-source-parity:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Run UI-05 source parity test
+        run: node --test tests/ui05-source-parity.test.mjs

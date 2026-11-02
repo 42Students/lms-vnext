@@ -1,0 +1,42 @@
+name: UI-02 P03 Source Parity (academics)
+
+on:
+  push:
+    paths:
+      - "src/app/(authenticated)/admin/batches/**"
+      - "src/app/(authenticated)/admin/programs/**"
+      - "src/app/(authenticated)/admin/semesters/**"
+      - "src/app/(authenticated)/admin/semester-courses/**"
+      - "src/app/(authenticated)/admin/classes/**"
+      - "src/app/(authenticated)/admin/departments/**"
+      - "src/app/(authenticated)/admin/lecture-halls/**"
+      - "src/app/(authenticated)/admin/faculty-assignment/**"
+      - "src/app/(authenticated)/admin/batch-promotion/**"
+      - "src/app/(authenticated)/admin/electives/**"
+      - "src/app/(authenticated)/college/batches/**"
+      - "src/app/(authenticated)/college/programs/**"
+      - "src/app/(authenticated)/college/semesters/**"
+      - "src/app/(authenticated)/college/semester-courses/**"
+      - "src/app/(authenticated)/college/classes/**"
+      - "src/app/(authenticated)/college/departments/**"
+      - "src/app/(authenticated)/college/lecture-halls/**"
+      - "src/app/(authenticated)/college/faculty-assignment/**"
+      - "src/app/(authenticated)/college/batch-promotion/**"
+      - "src/app/(authenticated)/college/electives/**"
+      - "src/app/(authenticated)/college/groups/**"
+      - "src/app/(authenticated)/learn/groups/**"
+      - "docs/planning/ui-inventory-ui02.json"
+      - "docs/planning/ui-strings-ui02.json"
+      - "tests/ui02-source-parity.test.mjs"
+  workflow_dispatch:
+
+jobs:
+  ui02-source-parity:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Run UI-02 source parity test
+        run: node --test tests/ui02-source-parity.test.mjs
