@@ -378,6 +378,31 @@ describe("DB08-B manager debarment with SQL-generated immutable audit", () => {
     }
   });
 
+  it("rejects a disabled learner account without creating a restriction or audit", async () => {
+    await pool.query(
+      "UPDATE users SET platform_status='DISABLED' WHERE id=$1",
+      [db08LearnerUser],
+    );
+    try {
+      await expect(createPlacementDebarment(admin, {
+        collegeId: SEED_IDS.collegeA,
+        membershipId: db08LearnerMembership,
+        reason: "Must not debar a disabled learner account",
+        untilDrives: 2,
+      })).rejects.toMatchObject({ code: "DB08_DEBARMENT_MEMBER_INVALID" });
+      const rows = await pool.query(
+        "SELECT id FROM placement_debarments WHERE membership_id=$1",
+        [db08LearnerMembership],
+      );
+      expect(rows.rows).toHaveLength(0);
+    } finally {
+      await pool.query(
+        "UPDATE users SET platform_status='ACTIVE' WHERE id=$1",
+        [db08LearnerUser],
+      );
+    }
+  });
+
   it("serializes a concurrent learner role revoke before debarment creation", async () => {
     const holder = await pool.connect();
     let inTransaction = false;
