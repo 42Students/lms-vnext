@@ -121,7 +121,11 @@ async function requireLearner(tx: Tx, collegeId: string, membershipId: string) {
   }).from(collegeMemberships).innerJoin(membershipRoles,
     and(eq(membershipRoles.membershipId, collegeMemberships.id),
       eq(membershipRoles.role, "LEARNER")))
-    .where(eq(collegeMemberships.id, membershipId)).limit(1);
+    .where(eq(collegeMemberships.id, membershipId))
+    // Hold the learner membership and LEARNER grant until the debarment and
+    // its immutable history commit. A concurrent role revoke must serialize
+    // before this check or wait until after the write, never slip between.
+    .for("share").limit(1);
   if (!member || member.collegeId !== collegeId ||
       member.status !== "ACTIVE") {
     throw new PlacementDebarmentError("DB08_DEBARMENT_MEMBER_INVALID");
