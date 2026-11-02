@@ -1,6 +1,7 @@
 import {NextResponse} from "next/server";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {apiErrorResponse} from "@/lib/api-error";
+import {readBoundedJsonRequest} from "@/lib/bounded-json-request";
 import {getSuperAdminCollegeFeatureSnapshot} from "@/modules/module-access/admin-college-rule-read";
 import {isSameOriginRequest} from "@/auth/origin";
 import {writeSuperAdminCollegeRule} from "@/modules/module-access/admin-college-rule-write";
@@ -20,8 +21,9 @@ export async function GET(_request:Request,{params}:{params:Promise<{collegeId:s
 export async function PUT(request:Request,{params}:{params:Promise<{collegeId:string}>}){
  if(!isSameOriginRequest(request))return NextResponse.json({error:"INVALID_ORIGIN"},{status:403});
  try{
-  let input:unknown;
-  try{input=await request.json();}catch{return NextResponse.json({error:"INVALID_REQUEST"},{status:400});}
+  const _p=await readBoundedJsonRequest(request,8192);
+  if(!_p.ok)return NextResponse.json({error:"INVALID_REQUEST"},{status:400});
+  const input:unknown=_p.value;
   const {collegeId}=await params;
   const context=await getCurrentRequestContext();
   // vNext rule writes are versioned: SET/INHERIT plus the expected persisted

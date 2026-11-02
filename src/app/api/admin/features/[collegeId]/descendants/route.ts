@@ -3,6 +3,7 @@ import {z} from "zod";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {isSameOriginRequest} from "@/auth/origin";
 import {apiErrorResponse} from "@/lib/api-error";
+import {readBoundedJsonRequest} from "@/lib/bounded-json-request";
 import {readDescendantRule,writeDescendantRule} from "@/modules/module-access/admin-descendant-rule-write";
 const query=z.strictObject({scopeType:z.enum(["DEPARTMENT","PROGRAM","COHORT","SECTION"]),scopeId:z.uuid(),module:z.enum(["projects","placements","electives"])});
 export async function GET(request:Request,{params}:{params:Promise<{collegeId:string}>}){
@@ -17,7 +18,10 @@ export async function GET(request:Request,{params}:{params:Promise<{collegeId:st
 export async function PUT(request:Request,{params}:{params:Promise<{collegeId:string}>}){
  if(!isSameOriginRequest(request))return NextResponse.json({error:"INVALID_ORIGIN"},{status:403});
  try{
-  const {collegeId}=await params,raw=await request.json();
+  const {collegeId}=await params;
+  const _p=await readBoundedJsonRequest(request,8192);
+  if(!_p.ok)return NextResponse.json({error:"INVALID_REQUEST"},{status:400});
+  const raw=_p.value;
   const result=await writeDescendantRule(await getCurrentRequestContext(),collegeId,raw);
   return result?NextResponse.json(result,{headers:{"Cache-Control":"private, no-store"}}):NextResponse.json({error:"NOT_FOUND"},{status:404});
  }catch(error){return apiErrorResponse(error);}

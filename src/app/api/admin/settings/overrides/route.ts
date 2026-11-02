@@ -2,6 +2,7 @@ import {NextResponse} from "next/server";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {isSameOriginRequest} from "@/auth/origin";
 import {apiErrorResponse} from "@/lib/api-error";
+import {readBoundedJsonRequest} from "@/lib/bounded-json-request";
 import {listAdminTenantSettings,saveAdminTenantSettings,addUnlistedTenantSetting,removeUnlistedTenantSetting,TenantSettingEditorError}
  from "@/modules/platform-settings/admin-editor-service";
 import {listOrganizationTenantSettings,saveOrganizationTenantSettings,removeOrganizationTenantSetting,OrganizationSettingsError}
@@ -24,7 +25,9 @@ export async function GET(request:Request){
 export async function PATCH(request:Request){
  if(!isSameOriginRequest(request))return NextResponse.json({error:"INVALID_ORIGIN"},{status:403});
  try{
-  const body:unknown=await request.json();
+  const _pp=await readBoundedJsonRequest(request,8192);
+  if(!_pp.ok)return NextResponse.json({error:"INVALID_REQUEST"},{status:400});
+  const body:unknown=_pp.value;
   if(!body||typeof body!=="object"||Array.isArray(body)||
      !("changes" in body)||!Array.isArray(body.changes)||body.changes.length===0)
    return NextResponse.json({error:"EMPTY_BODY",message:"Select at least one setting to save.",
@@ -56,7 +59,9 @@ export async function PATCH(request:Request){
 export async function PUT(request:Request){
  if(!isSameOriginRequest(request))return NextResponse.json({error:"INVALID_ORIGIN"},{status:403});
  try{
-  const raw:unknown=await request.json();
+  const _pr=await readBoundedJsonRequest(request,8192);
+  if(!_pr.ok)return NextResponse.json({error:"INVALID_REQUEST",message:"Supply a versioned settings map."},{status:400});
+  const raw:unknown=_pr.value;
   if(!raw||typeof raw!=="object"||Array.isArray(raw))
    return NextResponse.json({error:"INVALID_REQUEST",message:"Supply a versioned settings map."},{status:400});
   const body=raw as Record<string,unknown>;
@@ -88,7 +93,9 @@ export async function PUT(request:Request){
 export async function POST(request:Request){
  if(!isSameOriginRequest(request))return NextResponse.json({error:"INVALID_ORIGIN"},{status:403});
  try{
-  const result=await addUnlistedTenantSetting(await getCurrentRequestContext(),await request.json());
+  const _ps=await readBoundedJsonRequest(request,8192);
+  if(!_ps.ok)return NextResponse.json({error:"INVALID_REQUEST"},{status:400});
+  const result=await addUnlistedTenantSetting(await getCurrentRequestContext(),_ps.value);
   return NextResponse.json({...result,message:"Tenant setting added successfully"},
    {status:201,headers:{"Cache-Control":"private, no-store"}});
  }catch(error){
@@ -100,7 +107,9 @@ export async function POST(request:Request){
 export async function DELETE(request:Request){
  if(!isSameOriginRequest(request))return NextResponse.json({error:"INVALID_ORIGIN"},{status:403});
  try{
-  const body:unknown=await request.json();
+  const _pd=await readBoundedJsonRequest(request,8192);
+  if(!_pd.ok)return NextResponse.json({error:"INVALID_REQUEST"},{status:400});
+  const body:unknown=_pd.value;
   const result=body&&typeof body==="object"&&!Array.isArray(body)&&
    (body as {scopeType?:unknown}).scopeType==="ORG"
    ?await removeOrganizationTenantSetting(await getCurrentRequestContext(),body)

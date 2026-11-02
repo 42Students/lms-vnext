@@ -1,6 +1,7 @@
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { isSameOriginRequest } from "@/auth/origin";
 import { apiErrorResponse } from "@/lib/api-error";
+import { readBoundedJsonRequest } from "@/lib/bounded-json-request";
 import {
   adminScopedFacultyStats,
   existsAdminScopedFacultyName,
@@ -66,7 +67,9 @@ export async function POST(request: Request) {
     return Response.json({ error: "INVALID_ORIGIN" }, { status: 403 });
   }
   try {
-    const body: unknown = await request.json();
+    const _p = await readBoundedJsonRequest(request, 8192);
+    if (!_p.ok) return Response.json({ error: "INVALID_BODY" }, { status: 400 });
+    const body: unknown = _p.value;
     if (!body || typeof body !== "object" || Array.isArray(body)) {
       return Response.json({ error: "INVALID_BODY" }, { status: 400 });
     }

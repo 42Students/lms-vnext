@@ -3,6 +3,7 @@ import { z } from "zod";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { isSameOriginRequest } from "@/auth/origin";
 import { apiErrorResponse } from "@/lib/api-error";
+import { readBoundedJsonRequest } from "@/lib/bounded-json-request";
 import { isSuperAdmin } from "@/modules/identity/context";
 import { reconcileCuratedSkillSynonyms } from "@/modules/skills/curated-synonym-seed-service";
 import { skillsCatalogReadiness } from "@/modules/skills/catalog-readiness";
@@ -27,7 +28,9 @@ export async function POST(request: Request) {
       return NextResponse.json({error:"DB10_SKILLS_MIGRATIONS_PENDING",
         message:"Verify the DB10 PostgreSQL migration replay before importing."},
         {status:503,headers:{"Cache-Control":"private, no-store"}});
-    const raw:unknown=await request.json().catch(()=>null);
+    const _p=await readBoundedJsonRequest(request,8192);
+    if(!_p.ok)return NextResponse.json({error:"INVALID_REQUEST"},{status:400,headers:{"Cache-Control":"private, no-store"}});
+    const raw:unknown=_p.value;
     const input=inputSchema.parse(raw);
     const report=await reconcileCuratedSkillSynonyms(context,input.dryRun);
     return NextResponse.json({report,requiresVerification:true,
