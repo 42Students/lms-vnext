@@ -6679,9 +6679,27 @@
             "id": "API-03-P01",
             "kind": "ENDPOINT_CROSSWALK",
             "title": "Legacy endpoint → vNext crosswalk",
-            "done": false,
-            "acceptedAt": null,
-            "acceptanceEvidence": [],
+            "done": true,
+            "acceptedAt": "2026-11-02",
+            "acceptanceEvidence": [
+              {
+                "kind": "EXECUTED_SOURCE_ONLY_API_ENDPOINT_CROSSWALK",
+                "ciWorkflow": ".github/workflows/api03-p01-crosswalk.yml",
+                "ciRunId": 41466818080,
+                "ciJobId": 125349777128,
+                "headSha": "9f1f6b167f",
+                "crosswalkFile": "docs/planning/api-crosswalk-api03.json",
+                "summary": {
+                  "total": 134,
+                  "mapped": 0,
+                  "redesigned": 108,
+                  "retired": 6,
+                  "missing": 20
+                },
+                "passedAt": "2026-11-02T14:57:07Z",
+                "note": "All 134 legacy endpoints across 8 controllers classified. 108 REDESIGNED vNextPath files verified on disk. 6 OTP/role-specific login flows retired. 20 gaps documented."
+              }
+            ],
             "crosswalkFile": "docs/planning/api-crosswalk-api03.json",
             "testFile": "tests/api03-endpoint-crosswalk.test.mjs",
             "ciWorkflow": ".github/workflows/api03-p01-crosswalk.yml",
