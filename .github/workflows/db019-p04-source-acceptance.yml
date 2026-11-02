@@ -1,0 +1,40 @@
+# Source-quality acceptance for DB19-P04 — college/tenant config field census.
+name: Organizations college tenant config source acceptance
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - "tests/db019-p04-tenant-ledger.test.mjs"
+      - "docs/planning/db019-p04-college-tenant-field-review.json"
+      - '.github/workflows/db019-p04-source-acceptance.yml'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: db019-p04-${{ github.sha }}
+  cancel-in-progress: false
+
+jobs:
+  source-quality:
+    name: "DB19-P04 college/tenant config field census"
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Verify exact commit SHA
+        run: test "$(git rev-parse HEAD)" = "$GITHUB_SHA"
+      - name: "DB19-P04 source field census (no database)"
+        run: node --test tests/db019-p04-tenant-ledger.test.mjs
+      - name: Scope boundary
+        if: always()
+        run: |
+          echo "DB19-P04 source-quality gate only."
+          echo "Runtime PG17 producer/consumer acceptance and DB019/DB020 remain OPEN."

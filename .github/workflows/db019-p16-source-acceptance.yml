@@ -1,0 +1,40 @@
+# Source-quality acceptance for DB19-P16 — project meetings field census.
+name: Project meetings meeting history source acceptance
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - "tests/db019-p16-meeting-conflicts.test.mjs"
+      - "docs/planning/db07-w03-field-review.json"
+      - '.github/workflows/db019-p16-source-acceptance.yml'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: db019-p16-${{ github.sha }}
+  cancel-in-progress: false
+
+jobs:
+  source-quality:
+    name: "DB19-P16 project meetings field census"
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Verify exact commit SHA
+        run: test "$(git rev-parse HEAD)" = "$GITHUB_SHA"
+      - name: "DB19-P16 source field census (no database)"
+        run: node --test tests/db019-p16-meeting-conflicts.test.mjs
+      - name: Scope boundary
+        if: always()
+        run: |
+          echo "DB19-P16 source-quality gate only."
+          echo "Runtime PG17 producer/consumer acceptance and DB019/DB020 remain OPEN."

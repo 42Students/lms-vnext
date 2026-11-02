@@ -1,0 +1,41 @@
+# Source-quality acceptance for DB19-P22 — TPO team and college-wide placement settings.
+name: TPO team college placement settings source acceptance
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - "tests/db019-p22-tpo-settings-field-review.test.mjs"
+      - "tests/db019-p22-team-write-gates.test.mjs"
+      - "docs/planning/db019-p22-tpo-settings-field-review.json"
+      - '.github/workflows/db019-p22-source-acceptance.yml'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: db019-p22-${{ github.sha }}
+  cancel-in-progress: false
+
+jobs:
+  source-quality:
+    name: "DB19-P22 TPO settings field census"
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Verify exact commit SHA
+        run: test "$(git rev-parse HEAD)" = "$GITHUB_SHA"
+      - name: "DB19-P22 TPO settings field census (no database)"
+        run: node --test tests/db019-p22-tpo-settings-field-review.test.mjs tests/db019-p22-team-write-gates.test.mjs
+      - name: Scope boundary
+        if: always()
+        run: |
+          echo "DB19-P22 source-quality gate only."
+          echo "Runtime PG17 producer/consumer acceptance and DB019/DB020 remain OPEN."
