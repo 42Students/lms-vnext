@@ -25,7 +25,7 @@ import {
 import { PlacementsServiceError } from "./errors";
 import { requirePlacementManageScope } from "./scope";
 import { requireLearnerPlacementAccess } from "./learner-participation-guard";
-import { assertPersistedPlatformPermission } from "@/modules/permissions/persisted-actor";
+import { assertPersistedPlatformPermission, type PermissionTransaction } from "@/modules/permissions/persisted-actor";
 import {
   placementApplicationIdSchema,
   placementJobIdSchema,
@@ -140,8 +140,9 @@ async function loadScreeningDetails(
 
 async function loadScreeningHistory(
   applicationId: string,
+  tx: PermissionTransaction,
 ) {
-  return getDb()
+  return tx
     .select()
     .from(placementApplicationScreeningHistory)
     .where(
@@ -189,6 +190,24 @@ function learnerScreeningView(
   };
 }
 
+/** Screening queue rows expose learner contact details and staff-only notes.
+ * Hold current persisted staff user, membership and role grants through the
+ * actual read, not merely an earlier RequestContext preflight. */
+async function withLiveScreeningManagerRead<T>(
+  context: RequestContext,
+  collegeId: string,
+  read: (tx: PermissionTransaction) => Promise<T>,
+): Promise<T> {
+  const scope = await requirePlacementManageScope(context, collegeId);
+  return getDb().transaction(async tx => {
+    await assertPersistedPlatformPermission(
+      tx, context, "placements.manage",
+      { organizationId: scope.organizationId, collegeId: scope.id },
+    );
+    return read(tx);
+  });
+}
+
 export async function listPlacementScreeningQueue(
   context: RequestContext,
   jobIdInput: string,
@@ -205,13 +224,8 @@ export async function listPlacementScreeningQueue(
       "PLACEMENT_JOB_NOT_FOUND",
     );
   }
-  await requirePlacementManageScope(
-    context,
-    job.collegeId,
-  );
-
-  return getDb()
-    .select({
+  return withLiveScreeningManagerRead(context, job.collegeId, async tx =>
+    tx.select({
       screening: placementApplicationScreenings,
       application: placementApplications,
       roleOption: placementJobRoleOptions,
@@ -261,7 +275,7 @@ export async function listPlacementScreeningQueue(
     .orderBy(
       asc(placementApplicationScreenings.status),
       desc(placementApplications.submittedAt),
-    );
+    ));
 }
 
 /** Legacy job+organization+version screening page adapter. vNext has no
@@ -283,15 +297,14 @@ export async function listPlacementScreeningQueuePage(
   legacyScreeningVersion:placementJobs.legacyScreeningVersion,
  }).from(placementJobs).where(eq(placementJobs.id,jobId)).limit(1);
  if(!job)throw new PlacementsServiceError("PLACEMENT_JOB_NOT_FOUND");
- await requirePlacementManageScope(context,job.collegeId);
  if(raw.legacyScreeningVersion!==undefined&&
     (!Number.isInteger(raw.legacyScreeningVersion)||
      raw.legacyScreeningVersion!==job.legacyScreeningVersion))
    throw new RangeError("No persisted screening results for this algorithm version");
  const scope=and(eq(placementApplications.jobId,jobId),
   eq(placementApplications.status,"SUBMITTED"));
- const [items,totalRows]=await Promise.all([
-  getDb().select({
+ return withLiveScreeningManagerRead(context, job.collegeId, async tx => {
+ const items=await tx.select({
    screening:placementApplicationScreenings,
    application:placementApplications,
    roleOption:placementJobRoleOptions,
@@ -308,12 +321,11 @@ export async function listPlacementScreeningQueuePage(
    .where(scope)
    .orderBy(asc(placementApplicationScreenings.status),
      desc(placementApplications.submittedAt),asc(placementApplications.id))
-   .limit(size).offset((page-1)*size),
-  getDb().select({total:count()}).from(placementApplicationScreenings)
+   .limit(size).offset((page-1)*size);
+ const totalRows=await tx.select({total:count()}).from(placementApplicationScreenings)
    .innerJoin(placementApplications,
      eq(placementApplications.id,placementApplicationScreenings.applicationId))
-   .where(scope),
- ]);
+   .where(scope);
  return {
   items:items.map(row=>({
    ...row,overallScore:null,rank:null,scoreAvailable:false as const,
@@ -326,6 +338,7 @@ export async function listPlacementScreeningQueuePage(
   scoreSortAvailable:false as const,
   provenance:PLACEMENT_SCREENING_PROVENANCE,
  };
+ });
 }
 
 export async function getPlacementScreening(
@@ -351,11 +364,7 @@ export async function getPlacementScreening(
     return learnerScreeningView(row);
   }
 
-  await requirePlacementManageScope(
-    context,
-    row.job.collegeId,
-  );
-  return {
+  return withLiveScreeningManagerRead(context, row.job.collegeId, async tx => ({
     ...row,
     screeningMode: PLACEMENT_SCREENING_PROVENANCE.mode,
     screeningVersion: PLACEMENT_SCREENING_PROVENANCE.version,
@@ -373,8 +382,8 @@ export async function getPlacementScreening(
       decisionActor:row.screening.decidedByUserId,
     },
     history:
-      await loadScreeningHistory(applicationId),
-  };
+      await loadScreeningHistory(applicationId, tx),
+  }));
 }
 
 function canTransition(
