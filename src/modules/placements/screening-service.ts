@@ -24,6 +24,7 @@ import {
 } from "@/modules/identity/context";
 import { PlacementsServiceError } from "./errors";
 import { requirePlacementManageScope } from "./scope";
+import { requireLearnerPlacementAccess } from "./learner-participation-guard";
 import {
   placementApplicationIdSchema,
   placementJobIdSchema,
@@ -342,6 +343,10 @@ export async function getPlacementScreening(
       row.application.membershipId &&
     hasMembershipRole(context, "LEARNER")
   ) {
+    // A once-valid request context is not sufficient to read learner results:
+    // revalidate the persisted learner grant, account status, tenant and
+    // placement-module eligibility before returning candidate-visible data.
+    await requireLearnerPlacementAccess(context);
     return learnerScreeningView(row);
   }
 
