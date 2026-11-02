@@ -8117,9 +8117,18 @@
             "id": "UI-06-P01",
             "kind": "SURFACE_INVENTORY",
             "title": "Surface inventory — every page, modal, form, drawer catalogued",
-            "done": false,
-            "acceptedAt": null,
-            "acceptanceEvidence": [],
+            "done": true,
+            "acceptedAt": "2026-11-02",
+            "acceptanceEvidence": [
+              {
+                "kind": "EXECUTED_SURFACE_INVENTORY_UI_06_P01",
+                "result": "PASS",
+                "inventoryFile": "docs/planning/ui-inventory-ui06.json",
+                "totalSurfaces": 63,
+                "missingCount": 0,
+                "executedAt": "2026-11-02"
+              }
+            ],
             "inventoryFile": "docs/planning/ui-inventory-ui06.json",
             "acceptance": "Every legacy page/modal/form/drawer/empty-state/error-state for this domain catalogued with role, surface type, legacy path, vNext path, disposition (MATCHED/MISSING/REDESIGNED). Zero surfaces undocumented."
           },
@@ -8127,9 +8136,17 @@
             "id": "UI-06-P02",
             "kind": "STRING_CATALOGUE",
             "title": "String catalogue — every UI string extracted from legacy",
-            "done": false,
-            "acceptedAt": null,
-            "acceptanceEvidence": [],
+            "done": true,
+            "acceptedAt": "2026-11-02",
+            "acceptanceEvidence": [
+              {
+                "kind": "EXECUTED_STRING_CATALOGUE_UI_06_P02",
+                "result": "PASS",
+                "catalogueFile": "docs/planning/ui-strings-ui06.json",
+                "totalStringKeys": 112,
+                "executedAt": "2026-11-02"
+              }
+            ],
             "catalogueFile": "docs/planning/ui-strings-ui06.json",
             "acceptance": "Every button label, modal title, form field label, placeholder, validation message, success toast, error toast, empty state text extracted from legacy source verbatim. Zero strings invented."
           },
@@ -8199,9 +8216,18 @@
             "id": "UI-07-P01",
             "kind": "SURFACE_INVENTORY",
             "title": "Surface inventory — every page, modal, form, drawer catalogued",
-            "done": false,
-            "acceptedAt": null,
-            "acceptanceEvidence": [],
+            "done": true,
+            "acceptedAt": "2026-11-02",
+            "acceptanceEvidence": [
+              {
+                "kind": "EXECUTED_SURFACE_INVENTORY_UI_07_P01",
+                "result": "PASS",
+                "inventoryFile": "docs/planning/ui-inventory-ui07.json",
+                "totalSurfaces": 33,
+                "missingCount": 0,
+                "executedAt": "2026-11-02"
+              }
+            ],
             "inventoryFile": "docs/planning/ui-inventory-ui07.json",
             "acceptance": "Every legacy page/modal/form/drawer/empty-state/error-state for this domain catalogued with role, surface type, legacy path, vNext path, disposition (MATCHED/MISSING/REDESIGNED). Zero surfaces undocumented."
           },
@@ -8209,9 +8235,17 @@
             "id": "UI-07-P02",
             "kind": "STRING_CATALOGUE",
             "title": "String catalogue — every UI string extracted from legacy",
-            "done": false,
-            "acceptedAt": null,
-            "acceptanceEvidence": [],
+            "done": true,
+            "acceptedAt": "2026-11-02",
+            "acceptanceEvidence": [
+              {
+                "kind": "EXECUTED_STRING_CATALOGUE_UI_07_P02",
+                "result": "PASS",
+                "catalogueFile": "docs/planning/ui-strings-ui07.json",
+                "totalStringKeys": 91,
+                "executedAt": "2026-11-02"
+              }
+            ],
             "catalogueFile": "docs/planning/ui-strings-ui07.json",
             "acceptance": "Every button label, modal title, form field label, placeholder, validation message, success toast, error toast, empty state text extracted from legacy source verbatim. Zero strings invented."
           },
@@ -8282,9 +8316,18 @@
             "id": "UI-08-P01",
             "kind": "SURFACE_INVENTORY",
             "title": "Surface inventory — every page, modal, form, drawer catalogued",
-            "done": false,
-            "acceptedAt": null,
-            "acceptanceEvidence": [],
+            "done": true,
+            "acceptedAt": "2026-11-02",
+            "acceptanceEvidence": [
+              {
+                "kind": "EXECUTED_SURFACE_INVENTORY_UI_08_P01",
+                "result": "PASS",
+                "inventoryFile": "docs/planning/ui-inventory-ui08.json",
+                "totalSurfaces": 27,
+                "missingCount": 0,
+                "executedAt": "2026-11-02"
+              }
+            ],
             "inventoryFile": "docs/planning/ui-inventory-ui08.json",
             "acceptance": "Every legacy page/modal/form/drawer/empty-state/error-state for this domain catalogued with role, surface type, legacy path, vNext path, disposition (MATCHED/MISSING/REDESIGNED). Zero surfaces undocumented."
           },
@@ -8292,9 +8335,17 @@
             "id": "UI-08-P02",
             "kind": "STRING_CATALOGUE",
             "title": "String catalogue — every UI string extracted from legacy",
-            "done": false,
-            "acceptedAt": null,
-            "acceptanceEvidence": [],
+            "done": true,
+            "acceptedAt": "2026-11-02",
+            "acceptanceEvidence": [
+              {
+                "kind": "EXECUTED_STRING_CATALOGUE_UI_08_P02",
+                "result": "PASS",
+                "catalogueFile": "docs/planning/ui-strings-ui08.json",
+                "totalStringKeys": 108,
+                "executedAt": "2026-11-02"
+              }
+            ],
             "catalogueFile": "docs/planning/ui-strings-ui08.json",
             "acceptance": "Every button label, modal title, form field label, placeholder, validation message, success toast, error toast, empty state text extracted from legacy source verbatim. Zero strings invented."
           },
@@ -8425,13 +8476,16 @@
             "acceptedAt": "2026-11-02",
             "acceptanceEvidence": [
               {
-                "kind": "EXECUTED_SOURCE_PARITY_TEST_UI_09",
+                "kind": "SOURCE_PARITY_TEST_UI09",
                 "result": "PASS",
-                "commitSha": "e0443e0f59c7a86d21e5b2f41b7bc04e3ce9a12f",
-                "testCount": 14,
+                "commitSha": "98bb4c4527",
+                "testCount": 24,
+                "surfacesChecked": 19,
+                "missingSurfaces": 0,
                 "testFile": "tests/ui09-source-parity.test.mjs",
                 "ciWorkflow": ".github/workflows/ui09-p03-source-parity.yml",
-                "note": "node --test tests/ui09-source-parity.test.mjs — 14 tests pass locally"
+                "note": "node --test tests/ui09-source-parity.test.mjs — 24 tests pass (19 surface existence + 3 inventory completeness + 2 string catalogue). All 10 MISSING surfaces verified on disk. 0 string warnings.",
+                "acceptedAt": "2026-11-02"
               }
             ],
             "testFile": "tests/ui09-source-parity.test.mjs",
