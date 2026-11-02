@@ -6469,6 +6469,8 @@
           "src/app/api/internal",
           "src/app/api/public"
         ],
+        "legacyEndpointCount": 124,
+        "legacyControllerCount": 23,
         "packages": [
           {
             "id": "API-01-P01",
@@ -6535,6 +6537,8 @@
           "src/app/api/colleges"
         ],
         "relatedPlanningDoc": "docs/planning/db02-api-followup-after-database.md",
+        "legacyEndpointCount": 94,
+        "legacyControllerCount": 10,
         "packages": [
           {
             "id": "API-02-P01",
@@ -6591,6 +6595,8 @@
           "src/app/api/people",
           "src/app/api/profile"
         ],
+        "legacyEndpointCount": 134,
+        "legacyControllerCount": 8,
         "packages": [
           {
             "id": "API-03-P01",
@@ -6649,6 +6655,8 @@
           "src/app/api/courses",
           "src/app/api/learn"
         ],
+        "legacyEndpointCount": 67,
+        "legacyControllerCount": 12,
         "packages": [
           {
             "id": "API-04-P01",
@@ -6706,6 +6714,8 @@
         "vNextRouteDirs": [
           "src/app/api/attendance"
         ],
+        "legacyEndpointCount": 37,
+        "legacyControllerCount": 9,
         "packages": [
           {
             "id": "API-05-P01",
@@ -6758,6 +6768,8 @@
           "src/app/api/projects",
           "src/app/api/mentor"
         ],
+        "legacyEndpointCount": 43,
+        "legacyControllerCount": 4,
         "packages": [
           {
             "id": "API-06-P01",
@@ -6810,6 +6822,8 @@
         "vNextRouteDirs": [
           "src/app/api/placements"
         ],
+        "legacyEndpointCount": 70,
+        "legacyControllerCount": 8,
         "packages": [
           {
             "id": "API-07-P01",
@@ -6861,6 +6875,8 @@
           "src/app/api/tpo",
           "src/app/api/placements/tpo"
         ],
+        "legacyEndpointCount": 110,
+        "legacyControllerCount": 19,
         "packages": [
           {
             "id": "API-08-P01",
@@ -6915,6 +6931,8 @@
           "src/app/api/notifications",
           "src/app/api/tracker"
         ],
+        "legacyEndpointCount": 45,
+        "legacyControllerCount": 7,
         "packages": [
           {
             "id": "API-09-P01",
@@ -6972,6 +6990,8 @@
         "vNextRouteDirs": [
           "src/app/api (all)"
         ],
+        "legacyEndpointCount": 41,
+        "legacyControllerCount": 7,
         "packages": [
           {
             "id": "API-10-P01",
