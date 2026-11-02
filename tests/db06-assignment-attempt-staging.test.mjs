@@ -75,7 +75,7 @@ test("DB044 ledger records registered compatibility fields without inventing mul
   );
   assert.match(
     attempt.targetRef,
-    /^assignment_submissions\\.attempt_number$/,
+    /^assignment_submissions\.attempt_number$/,
   );
 
   const semester = assignment.fields.find(
