@@ -58,10 +58,8 @@ describe("UI-01 source parity — auth, admin shell and tenant setup", () => {
 
   describe("key login strings present in vNext login page", () => {
     const loginPage = path.join(root, "src/app/login/page.tsx");
-    let loginContent = "";
     test("login page.tsx exists", () => {
       assert.ok(fs.existsSync(loginPage), "src/app/login/page.tsx must exist");
-      loginContent = fs.readFileSync(loginPage, "utf8");
     });
 
     const requiredStrings = [
@@ -72,22 +70,12 @@ describe("UI-01 source parity — auth, admin shell and tenant setup", () => {
       "Resend code",
     ];
     for (const s of requiredStrings) {
-      test(`login page contains: "${s}"`, () => {
-        // Read fresh each time to avoid dependency on order
-        const content = fs.existsSync(loginPage) ? fs.readFileSync(loginPage, "utf8") : "";
-        // Check in the page or its sibling component files
-        const loginDir = path.join(root, "src/app/login");
-        const files = fs.readdirSync(loginDir).map(f => path.join(loginDir, f));
-        const allContent = files
-          .filter(f => f.endsWith(".tsx") || f.endsWith(".ts"))
-          .map(f => fs.readFileSync(f, "utf8"))
-          .join("\n");
-        // Also check components that login page likely imports
-        const loginComponents = findComponentsForLogin(root);
-        const combined = allContent + "\n" + loginComponents;
+      test(`login page + auth components contains: "${s}"`, () => {
+        // Login page re-exports from src/app/page.tsx; actual strings are in src/components/auth/
+        const combined = getLoginAndAuthComponentsContent(root);
         assert.ok(
           combined.includes(s),
-          `String "${s}" not found in login page or its components`
+          `String "${s}" not found in login page, root page, or auth components`
         );
       });
     }
@@ -185,16 +173,20 @@ describe("UI-01 source parity — auth, admin shell and tenant setup", () => {
   });
 });
 
-function findComponentsForLogin(root) {
-  const loginComponentDirs = [
-    path.join(root, "src/components"),
+function getLoginAndAuthComponentsContent(root) {
+  const dirs = [
+    path.join(root, "src/app/login"),
+    path.join(root, "src/app"),
+    path.join(root, "src/components/auth"),
   ];
   let content = "";
-  for (const dir of loginComponentDirs) {
+  for (const dir of dirs) {
     if (!fs.existsSync(dir)) continue;
     try {
-      const files = findFilesRecursive(dir, [".tsx", ".ts"], 2);
-      for (const f of files.slice(0, 20)) {
+      // Only read direct children for src/app (not recursive)
+      const depth = dir.endsWith("src/app") ? 0 : 2;
+      const files = findFilesRecursive(dir, [".tsx", ".ts"], depth);
+      for (const f of files.slice(0, 30)) {
         try { content += fs.readFileSync(f, "utf8"); } catch (_) {}
       }
     } catch (_) {}

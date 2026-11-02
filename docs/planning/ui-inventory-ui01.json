@@ -218,7 +218,7 @@
       "roles": ["SUPERADMIN"],
       "legacyPath": "src/pages/superadmin/dashboard.js + sections/Dashboard.js",
       "legacyRoute": "/superadmin/dashboard",
-      "vNextPath": "src/app/(authenticated)/admin/page.tsx OR src/app/(authenticated)/admin/dashboard/page.tsx",
+      "vNextPath": "src/app/(authenticated)/admin/layout.tsx",
       "vNextRoute": "/admin",
       "disposition": "MATCHED",
       "notes": "SuperAdmin home. Shows navigation cards to Tenant setup, Feature controls, Activity log, Recruiter accounts. Level selector."
@@ -566,7 +566,7 @@
       "roles": ["SUPERADMIN"],
       "legacyPath": "src/layouts/SuperAdminLayout.js (header select)",
       "legacyRoute": "all /superadmin/* routes (header)",
-      "vNextPath": "src/app/(authenticated)/admin/layout.tsx (header)",
+      "vNextPath": "src/app/(authenticated)/admin/layout.tsx",
       "vNextRoute": "all /admin/* routes (header)",
       "disposition": "MATCHED",
       "notes": "Dropdown in header for selecting which college/org to operate in. Affects which data is shown."
@@ -578,7 +578,7 @@
       "roles": ["SUPERADMIN"],
       "legacyPath": "sections/TenantsHub.js → Create New College card",
       "legacyRoute": "/superadmin/tenants (embedded form)",
-      "vNextPath": "src/app/(authenticated)/admin/colleges/page.tsx (modal/form)",
+      "vNextPath": "src/app/(authenticated)/admin/colleges/page.tsx",
       "vNextRoute": "/admin/colleges (modal)",
       "disposition": "MATCHED",
       "notes": "Form: Organization (select), Name (required), Unique ID/Code, City, State, Address. Submit: 'Create College'. Cancel: 'Discard'."
@@ -590,7 +590,7 @@
       "roles": ["SUPERADMIN"],
       "legacyPath": "sections/TenantsHub.js → edit college form",
       "legacyRoute": "/superadmin/tenants (embedded form)",
-      "vNextPath": "src/app/(authenticated)/admin/colleges/[collegeId]/page.tsx (edit modal)",
+      "vNextPath": "src/app/(authenticated)/admin/colleges/[collegeId]/page.tsx",
       "vNextRoute": "/admin/colleges/[collegeId] (modal)",
       "disposition": "MATCHED",
       "notes": "Same fields as create. Submit: 'Update College'. Cancel: 'Discard'."
@@ -602,7 +602,7 @@
       "roles": ["SUPERADMIN"],
       "legacyPath": "sections/TenantsHub.js → Popconfirm",
       "legacyRoute": "/superadmin/tenants (confirm dialog)",
-      "vNextPath": "src/app/(authenticated)/admin/colleges/page.tsx (confirm dialog)",
+      "vNextPath": "src/app/(authenticated)/admin/colleges/page.tsx",
       "vNextRoute": "/admin/colleges (confirm)",
       "disposition": "MATCHED",
       "notes": "Title: 'Delete College'. Confirm: 'Delete'. Cancel: 'Cancel'."
@@ -614,7 +614,7 @@
       "roles": ["SUPERADMIN"],
       "legacyPath": "sections/TenantsHub.js → Create organization form",
       "legacyRoute": "/superadmin/tenants (embedded form)",
-      "vNextPath": "src/app/(authenticated)/admin/organizations/page.tsx (modal)",
+      "vNextPath": "src/app/(authenticated)/admin/organizations/page.tsx",
       "vNextRoute": "/admin/organizations (modal)",
       "disposition": "MATCHED",
       "notes": "Form: Organization name (required). Create org before colleges."
@@ -626,7 +626,7 @@
       "roles": ["SUPERADMIN"],
       "legacyPath": "sections/FeatureControlsHub.js → Switch confirm",
       "legacyRoute": "/superadmin/features (inline confirm)",
-      "vNextPath": "src/app/(authenticated)/admin/features/[collegeId]/page.tsx (confirm)",
+      "vNextPath": "src/app/(authenticated)/admin/features/[collegeId]/page.tsx",
       "vNextRoute": "/admin/features/[collegeId] (confirm)",
       "disposition": "MATCHED",
       "notes": "Confirmation before toggling a module on or off for a college."
