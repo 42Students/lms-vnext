@@ -547,7 +547,7 @@ describe("Placement P6A screening", () => {
       [SEED_IDS.facultyUser]);
     try {
       await expect(decidePlacementScreening(tpo, application.id, {
-        decision: "REJECTED", internalReason: "Stale actor",
+        decision: "REJECTED", candidateMessage: "Not selected", internalReason: "Stale actor",
       })).rejects.toThrow("Missing permission: placements.manage");
       const history = await pool.query(
         "SELECT id FROM placement_application_screening_history WHERE application_id=$1",
@@ -572,7 +572,7 @@ describe("Placement P6A screening", () => {
       await expect(ensurePlacementScreeningPending(tpo, application.id))
         .rejects.toThrow("Missing permission: placements.manage");
       const rows = await pool.query(
-        "SELECT id FROM placement_application_screenings WHERE application_id=$1",
+        "SELECT application_id FROM placement_application_screenings WHERE application_id=$1",
         [application.id],
       );
       expect(rows.rows).toHaveLength(0);
@@ -592,7 +592,7 @@ describe("Placement P6A screening", () => {
     await expect(ensurePlacementScreeningPending(tpo, application.id))
       .rejects.toMatchObject({code:"PLACEMENT_SCREENING_APPLICATION_INACTIVE"});
     const rows = await pool.query(
-      "SELECT id FROM placement_application_screenings WHERE application_id=$1",
+      "SELECT application_id FROM placement_application_screenings WHERE application_id=$1",
       [application.id],
     );
     expect(rows.rows).toHaveLength(0);
