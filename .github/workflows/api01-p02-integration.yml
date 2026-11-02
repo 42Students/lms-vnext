@@ -1,0 +1,46 @@
+# API01-P02: Auth/admin/shared-infra integration gate.
+# Source-only — no database needed.
+# Verifies crosswalk completeness, MAPPED file existence, admin auth guard coverage,
+# and MISSING gap catalogue integrity for the 124 API-01 legacy endpoints.
+name: API01-P02 Auth shared infra integration gate
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - "tests/api01-integration.test.mjs"
+      - "docs/planning/api-crosswalk-api01.json"
+      - "src/app/api/auth/**"
+      - "src/app/api/admin/**"
+      - ".github/workflows/api01-p02-integration.yml"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: api01-p02-${{ github.sha }}
+  cancel-in-progress: false
+
+jobs:
+  integration:
+    name: "API01-P02 auth/admin integration gate"
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Verify exact commit SHA
+        run: test "$(git rev-parse HEAD)" = "$GITHUB_SHA"
+      - name: API01-P02 auth/admin integration gate
+        run: node --test tests/api01-integration.test.mjs
+      - name: Scope boundary
+        if: always()
+        run: |
+          echo "API01-P02: Auth/admin/shared-infra source-only integration gate."
+          echo "124 legacy endpoints crosswalked: 7 MAPPED, 68 REDESIGNED, 2 RETIRED, 47 MISSING (documented gaps)."
+          echo "API-02 through API-10 remain OPEN."
