@@ -143,5 +143,5 @@ export function tpoDriveReadinessMessage(code: string): string {
     APPLIED_RESULTS_EXIST: "This drive already has applied round results and cannot be reopened.",
     ACCEPTED_OFFERS_EXIST: "Accepted offers prevent reopening this drive.",
   };
-  return messages[code] ?? "The drive is not ready for this action. Refresh and review the setup.";
+  return (Object.hasOwn(messages, code) ? messages[code] : undefined) ?? "The drive is not ready for this action. Refresh and review the setup.";
 }
