@@ -1,0 +1,43 @@
+# API05-P02: Assignments, quizzes, grading and attendance integration gate.
+# Source-only — no database needed.
+name: API05-P02 Assignments quizzes attendance integration gate
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - "tests/api05-integration.test.mjs"
+      - "docs/planning/api-crosswalk-api05.json"
+      - "src/app/api/attendance/**"
+      - ".github/workflows/api05-p02-integration.yml"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: api05-p02-${{ github.sha }}
+  cancel-in-progress: false
+
+jobs:
+  integration:
+    name: "API05-P02 assignments/attendance integration gate"
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Verify exact commit SHA
+        run: test "$(git rev-parse HEAD)" = "$GITHUB_SHA"
+      - name: API05-P02 assignments/attendance integration gate
+        run: node --test tests/api05-integration.test.mjs
+      - name: Scope boundary
+        if: always()
+        run: |
+          echo "API05-P02: Assignments/quizzes/attendance source-only integration gate."
+          echo "37 legacy endpoints: 3 MAPPED, 26 REDESIGNED, 0 RETIRED, 8 MISSING (documented)."
+          echo "API-06 through API-10 remain OPEN."
