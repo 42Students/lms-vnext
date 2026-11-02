@@ -254,9 +254,9 @@ export default async function DriveSettingsPage({params}:{params:Promise<{jobId:
    <SuperAdminDriveDuplicate jobId={jobId} title={job.title}/>
   </section>
   {job.status!=="ARCHIVED"?<section aria-label="Danger zone"
-   className="min-w-0 space-y-4 rounded-[var(--lms-canvas-radius)] border border-[#ffccc7] bg-[#fff1f0] p-4">
-   <h2 className="text-lg font-semibold text-[#cf1322]">Danger zone</h2>
-   <p className="text-sm text-[#7f1d1d]">Deleting archives this drive; existing application and decision records remain retained. Review the impact and reason before confirming.</p>
+   className="min-w-0 space-y-4 rounded-[var(--lms-canvas-radius)] border border-[rgba(239,68,68,0.25)] bg-[var(--lms-error-subtle)] p-4">
+   <h2 className="text-lg font-semibold text-[var(--lms-error-text)]">Danger zone</h2>
+   <p className="text-sm text-[var(--lms-error-text)]">Deleting archives this drive; existing application and decision records remain retained. Review the impact and reason before confirming.</p>
    <SuperAdminDriveArchive jobId={jobId} title={job.title}/>
   </section>:null}
   <div className="flex flex-wrap gap-4">

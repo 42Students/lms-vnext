@@ -167,7 +167,7 @@ export default async function SuperAdminStudentCourseProgressPage({searchParams}
     </div>
     <div className="min-w-0 rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-surface p-4">
       <dt className="text-xs font-semibold text-muted-foreground">Not started</dt>
-      <dd className={"mt-2 text-[24px] font-semibold leading-[1.3] tabular-nums "+(notStarted>0?"text-[#cf1322]":"text-[var(--lms-heading)]")}>{notStarted}</dd>
+      <dd className={"mt-2 text-[24px] font-semibold leading-[1.3] tabular-nums "+(notStarted>0?"text-[var(--lms-error-text)]":"text-[var(--lms-heading)]")}>{notStarted}</dd>
     </div>
     <div className="min-w-0 rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-surface p-4">
       <dt className="text-xs font-semibold text-muted-foreground">Items measured</dt>
