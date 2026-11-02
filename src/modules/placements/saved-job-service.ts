@@ -1,7 +1,9 @@
 import { and, desc, eq } from "drizzle-orm";
 import { z } from "zod";
 import { getDb } from "@/db/client";
-import { placementJobs } from "@/db/schema";
+import { placementJobs, collegeMemberships, membershipRoles, users } from "@/db/schema";
+import { AuthorizationError } from "@/modules/permissions/policy";
+import type { PermissionTransaction } from "@/modules/permissions/persisted-actor";
 import { placementSavedJobs } from "@/db/schema/placement-external";
 import type { RequestContext } from "@/modules/identity/context";
 import { requireLearnerPlacementAccess } from "./learner-participation-guard";
@@ -58,6 +60,36 @@ async function requireVisiblePlacements(context: RequestContext) {
 
 
 /**
+ * A visible-placement feed preflight may become stale before the bookmark
+ * write or private read. Recheck user ownership and LEARNER grant while
+ * holding SHARE locks to serialize account suspension or role revocation.
+ */
+async function assertLiveSavedJobLearner(
+  tx: PermissionTransaction,
+  context: RequestContext,
+  learner: NonNullable<RequestContext["membership"]>,
+) {
+  const [current] = await tx.select({
+    userId: collegeMemberships.userId,
+    collegeId: collegeMemberships.collegeId,
+    status: collegeMemberships.status,
+    platformStatus: users.platformStatus,
+  }).from(collegeMemberships)
+    .innerJoin(users, eq(users.id, collegeMemberships.userId))
+    .innerJoin(membershipRoles, and(
+      eq(membershipRoles.membershipId, collegeMemberships.id),
+      eq(membershipRoles.role, "LEARNER"),
+    ))
+    .where(eq(collegeMemberships.id, learner.id))
+    .for("share").limit(1);
+  if (!current || current.userId !== context.user.id ||
+      current.collegeId !== learner.collegeId ||
+      current.status !== "ACTIVE" || current.platformStatus !== "ACTIVE") {
+    throw new AuthorizationError("placements.read");
+  }
+}
+
+/**
  * Save only an actual published job in the learner's authorized job feed.
  * The unique (membership_id,job_id) index makes concurrent retries safe.
  */
@@ -72,20 +104,38 @@ export async function saveOwnPlacementJob(
     throw new PlacementsServiceError("PLACEMENT_SAVED_JOB_UNAVAILABLE");
   }
 
-  const db = getDb();
-  await db.insert(placementSavedJobs).values({
-    collegeId: learner.collegeId,
-    membershipId: learner.id,
-    jobId,
-  }).onConflictDoNothing();
-
-  const [row] = await db.select().from(placementSavedJobs)
-    .where(and(
-      eq(placementSavedJobs.collegeId, learner.collegeId),
-      eq(placementSavedJobs.membershipId, learner.id),
-      eq(placementSavedJobs.jobId, jobId),
-    )).limit(1);
-  return row;
+  return getDb().transaction(async tx => {
+    await assertLiveSavedJobLearner(tx, context, learner);
+    // The feed check is necessary but not sufficient: publication and legacy
+    // visibility may change while the learner's request is in flight.
+    const [liveJob] = await tx.select({
+      status: placementJobs.status,
+      collegeId: placementJobs.collegeId,
+      archivedAt: placementJobs.archivedAt,
+      legacyWasDeleted: placementJobs.legacyWasDeleted,
+      legacyVisibilityType: placementJobs.legacyVisibilityType,
+    }).from(placementJobs)
+      .where(eq(placementJobs.id, jobId))
+      .for("share").limit(1);
+    if (!liveJob || liveJob.collegeId !== learner.collegeId ||
+        liveJob.status !== "PUBLISHED" || liveJob.archivedAt !== null ||
+        liveJob.legacyWasDeleted === true ||
+        liveJob.legacyVisibilityType === "EXTERNAL_ONLY") {
+      throw new PlacementsServiceError("PLACEMENT_SAVED_JOB_UNAVAILABLE");
+    }
+    await tx.insert(placementSavedJobs).values({
+      collegeId: learner.collegeId,
+      membershipId: learner.id,
+      jobId,
+    }).onConflictDoNothing();
+    const [row] = await tx.select().from(placementSavedJobs)
+      .where(and(
+        eq(placementSavedJobs.collegeId, learner.collegeId),
+        eq(placementSavedJobs.membershipId, learner.id),
+        eq(placementSavedJobs.jobId, jobId),
+      )).limit(1);
+    return row;
+  });
 }
 
 export async function unsaveOwnPlacementJob(
@@ -94,22 +144,26 @@ export async function unsaveOwnPlacementJob(
 ) {
   const jobId = savedJobId.parse(rawJobId);
   const learner = await requireVisiblePlacements(context);
-  const deleted = await getDb().delete(placementSavedJobs)
-    .where(and(
-      eq(placementSavedJobs.collegeId, learner.collegeId),
-      eq(placementSavedJobs.membershipId, learner.id),
-      eq(placementSavedJobs.jobId, jobId),
-    ))
-    .returning({ id: placementSavedJobs.id });
-  return { removed: deleted.length > 0, saved:false as const,
-    message:"Job removed from saved" as const };
+  return getDb().transaction(async tx => {
+    await assertLiveSavedJobLearner(tx, context, learner);
+    const deleted = await tx.delete(placementSavedJobs)
+      .where(and(
+        eq(placementSavedJobs.collegeId, learner.collegeId),
+        eq(placementSavedJobs.membershipId, learner.id),
+        eq(placementSavedJobs.jobId, jobId),
+      ))
+      .returning({ id: placementSavedJobs.id });
+    return { removed: deleted.length > 0, saved:false as const,
+      message:"Job removed from saved" as const };
+  });
 }
 
 /** Never return another tenant's job data or unpublished/archived job info. */
 export async function listOwnPlacementSavedJobs(context: RequestContext) {
   const learner = await requireVisiblePlacements(context);
-  const rows = await getDb()
-    .select({
+  return getDb().transaction(async tx => {
+    await assertLiveSavedJobLearner(tx, context, learner);
+    const rows = await tx.select({
       id: placementSavedJobs.id,
       jobId: placementSavedJobs.jobId,
       savedAt: placementSavedJobs.savedAt,
@@ -174,4 +228,5 @@ export async function listOwnPlacementSavedJobs(context: RequestContext) {
       minimumAnnualCtcInr: row.minimumAnnualCtcInr,
       maximumAnnualCtcInr: row.maximumAnnualCtcInr,
     }));
+  });
 }
