@@ -55,7 +55,7 @@ export function apiErrorResponse(error: unknown) {
         fieldErrors: Object.fromEntries(error.issues
           .filter((issue) => issue.path.length > 0)
           .map((issue) => [issue.path.join("."), "Please check this field."])),
-        issues: error.issues,
+        issues: error.issues.map((i) => ({ path: i.path, message: i.message })),
       },
       { status: 400 },
     );
