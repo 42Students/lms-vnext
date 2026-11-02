@@ -3297,11 +3297,26 @@
               "DB19-P29",
               "DB19-P30"
             ],
-            "picked": false,
-            "pickedBy": "",
-            "done": false,
-            "acceptedAt": null,
-            "acceptanceEvidence": [],
+            "picked": true,
+            "pickedBy": "CLAUDE_ORCHESTRATOR_2026-11-02",
+            "done": true,
+            "acceptedAt": "2026-11-02",
+            "acceptanceEvidence": [
+              {
+                "kind": "EXECUTED_SOURCE_ONLY_GLOBAL_2829_FIELD_RECONCILIATION_GATE",
+                "result": "PASS",
+                "exitCode": 0,
+                "commitSha": "cae6f12723bee8de8b5b2eff72d1ea1df98d7ada",
+                "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/41458253235",
+                "jobId": 125320386233,
+                "runner": "GitHub Actions ubuntu-latest Node.js 22",
+                "commands": [
+                  "node --test tests/db019-p31-global-reconciliation.test.mjs"
+                ],
+                "scope": "All 31 domain packages done=true, 2829 source fields verified (no gaps/duplicates), frozen legacy SHA pinned, no runtime-verification claims, gate dependencies satisfied (P01-P30).",
+                "boundary": "P31 source-only global reconciliation. Runtime PG17 exact-head security acceptance is P32. DB020 remains OPEN."
+              }
+            ],
             "acceptance": "Reconcile every source field to approved mapped/redesigned/retired/external decisions; verify no gaps/duplicates, historical approval, exact source SHA and real registered target/producer/consumer references. No source-only claim of runtime."
           },
           {
