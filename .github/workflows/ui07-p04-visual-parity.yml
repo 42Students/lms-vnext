@@ -1,27 +1,61 @@
-name: UI-07 P04 Visual Parity (placements learner and admin)
+name: UI-07 P04 Visual Parity — Placements (learner and admin)
 
 on:
-  push:
-    paths:
-      - "src/app/(authenticated)/learn/my-placements/**"
-      - "src/app/(authenticated)/tpo/**"
-      - "src/app/(authenticated)/admin/placements/**"
-      - "tests/ui07-visual-parity.spec.ts"
   workflow_dispatch:
+  schedule:
+    - cron: '30 3 * * *'
 
 jobs:
-  ui07-visual-parity:
+  visual-parity:
     runs-on: ubuntu-latest
+    timeout-minutes: 25
+
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+
+      - uses: oven-sh/setup-bun@v2
         with:
-          node-version: "22"
+          bun-version: latest
+
       - name: Install dependencies
-        run: npm ci
-      - name: Install Playwright browsers
-        run: npx playwright install --with-deps chromium
-      - name: Run UI-07 visual parity tests
-        run: npx playwright test tests/ui07-visual-parity.spec.ts
+        run: bun install --frozen-lockfile
+
+      - name: Install Playwright browsers (Chromium only)
+        run: bunx playwright install --with-deps chromium
+
+      - name: Create snapshot output directory
+        run: mkdir -p tests/ui-snapshots/ui07
+
+      - name: UI-07 visual parity — learner placement surfaces
+        run: bunx playwright test tests/ui07-visual-parity.spec.ts --grep "Learner"
         env:
-          TEST_BASE_URL: ${{ secrets.PLAYWRIGHT_BASE_URL || 'https://testa.development.42lms.com' }}
+          TEST_BASE_URL: https://testa.development.42lms.com
+          PLAYWRIGHT_BASE_URL: https://testa.development.42lms.com
+
+      - name: UI-07 visual parity — admin placement surfaces
+        run: bunx playwright test tests/ui07-visual-parity.spec.ts --grep "Admin placements"
+        env:
+          TEST_BASE_URL: https://testa.development.42lms.com
+          PLAYWRIGHT_BASE_URL: https://testa.development.42lms.com
+
+      - name: UI-07 visual parity — college admin placement surfaces
+        run: bunx playwright test tests/ui07-visual-parity.spec.ts --grep "College Admin"
+        env:
+          TEST_BASE_URL: https://testa.development.42lms.com
+          PLAYWRIGHT_BASE_URL: https://testa.development.42lms.com
+
+      - name: Upload screenshots on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ui07-visual-parity-screenshots
+          path: tests/ui-snapshots/ui07/
+          retention-days: 14
+
+      - name: Upload Playwright report on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ui07-playwright-report
+          path: playwright-report/
+          retention-days: 14
