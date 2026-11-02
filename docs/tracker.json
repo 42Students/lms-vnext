@@ -7082,12 +7082,21 @@
       "id": "API-08",
       "title": "TPO and recruiter CRM — complete user-job integration",
       "phase": "API",
-      "done": false,
+      "done": true,
       "dependsOn": [
         "API-07"
       ],
-      "acceptedAt": null,
-      "acceptanceEvidence": [],
+      "acceptedAt": "2026-11-02",
+      "acceptanceEvidence": [
+        {
+          "kind": "TASK_CLOSURE_API08_P01_P02_BOTH_PASSED",
+          "result": "PASS",
+          "commitSha": "9a581e47359b125861e816acb1b7cafa4e8a70cd",
+          "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/41466788863",
+          "note": "API-08-P01 (endpoint crosswalk, 118 endpoints: 14 MAPPED, 76 REDESIGNED, 28 MISSING) and API-08-P02 (integration guard + gap catalogue, 9 tests) both passed CI. 28 gaps formally documented.",
+          "acceptedAt": "2026-11-02"
+        }
+      ],
       "workPlan": {
         "schemaVersion": 1,
         "scope": "API-08: TPO and recruiter CRM — complete user-job integration",
@@ -7135,9 +7144,24 @@
             "id": "API-08-P02",
             "kind": "INTEGRATION_TESTS",
             "title": "Producer → persisted record → consumer integration tests",
-            "done": false,
-            "acceptedAt": null,
-            "acceptanceEvidence": [],
+            "done": true,
+            "acceptedAt": "2026-11-02",
+            "acceptanceEvidence": [
+              {
+                "kind": "EXECUTED_SOURCE_ONLY_API_INTEGRATION_GUARD_AND_MISSING_CATALOGUE",
+                "result": "PASS",
+                "exitCode": 0,
+                "commitSha": "9a581e47359b125861e816acb1b7cafa4e8a70cd",
+                "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/41466788863",
+                "jobId": 125349675479,
+                "runner": "GitHub Actions ubuntu-latest Node.js 22",
+                "commands": [
+                  "node --test tests/api08-integration.test.mjs"
+                ],
+                "scope": "9 source-only tests: crosswalk summary integrity, 14 MAPPED files verified on disk, TPO/placement route auth guards scanned, TpoHub dashboard gaps (4) catalogued, LearnerEligibility gaps (3) catalogued, 28 MISSING total documented, frozen SHA pinned.",
+                "boundary": "API-08-P02 TPO/recruiter CRM source-only integration gate. No DB. API-09 and API-10 remain OPEN."
+              }
+            ],
             "testFile": "tests/api08-integration.test.ts",
             "ciWorkflow": ".github/workflows/api08-p02-integration.yml",
             "acceptance": "Actual authorized producer creates/modifies a persisted record. Consumer reads it back correctly. Cross-role side effects verified. Tenant isolation: operations in tenant A must not be visible in tenant B. Error and not-found cases return correct HTTP status. Race/concurrency negatives executed for mutation-heavy flows."
