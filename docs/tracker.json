@@ -6951,9 +6951,24 @@
             "id": "API-07-P01",
             "kind": "ENDPOINT_CROSSWALK",
             "title": "Legacy endpoint → vNext crosswalk",
-            "done": false,
-            "acceptedAt": null,
-            "acceptanceEvidence": [],
+            "done": true,
+            "acceptedAt": "2026-11-02",
+            "acceptanceEvidence": [
+              {
+                "kind": "EXECUTED_SOURCE_ONLY_API_ENDPOINT_CROSSWALK",
+                "result": "PASS",
+                "exitCode": 0,
+                "commitSha": "edef5c0e07f660dc51edb55a0d30ac454e397249",
+                "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/41466298887",
+                "jobId": 125347980560,
+                "runner": "GitHub Actions ubuntu-latest Node.js 22",
+                "commands": [
+                  "node --test tests/api07-endpoint-crosswalk.test.mjs"
+                ],
+                "scope": "70 legacy placement endpoints classified: 0 MAPPED, 52 REDESIGNED, 4 RETIRED, 14 MISSING. JobController, PlacementJobController, InterviewController, CompanyController, AdminJobController, HrCollegeController, HrDriveController, HrPendingInviteController. All REDESIGNED vNextPaths verified on disk.",
+                "boundary": "API-07-P01 endpoint crosswalk only. Integration tests (API-07-P02) and milestones API-08..API-10 remain OPEN."
+              }
+            ],
             "crosswalkFile": "docs/planning/api-crosswalk-api07.json",
             "testFile": "tests/api07-endpoint-crosswalk.test.mjs",
             "ciWorkflow": ".github/workflows/api07-p01-crosswalk.yml",
@@ -7004,9 +7019,24 @@
             "id": "API-08-P01",
             "kind": "ENDPOINT_CROSSWALK",
             "title": "Legacy endpoint → vNext crosswalk",
-            "done": false,
-            "acceptedAt": null,
-            "acceptanceEvidence": [],
+            "done": true,
+            "acceptedAt": "2026-11-02",
+            "acceptanceEvidence": [
+              {
+                "kind": "EXECUTED_SOURCE_ONLY_API_ENDPOINT_CROSSWALK",
+                "result": "PASS",
+                "exitCode": 0,
+                "commitSha": "6309bac3ad31405e50c7e4fac8d1fca8131227a2",
+                "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/41466431572",
+                "jobId": 125348445752,
+                "runner": "GitHub Actions ubuntu-latest Node.js 22",
+                "commands": [
+                  "node --test tests/api08-endpoint-crosswalk.test.mjs"
+                ],
+                "scope": "118 legacy TPO/CRM endpoints across 18 controllers classified. 14 MAPPED, 76 REDESIGNED, 0 RETIRED, 28 MISSING (hub dashboards, workspace mgmt, eligibility details, stats). Source-only crosswalk gate.",
+                "boundary": "API-08-P01 source crosswalk only. Integration tests (API-08-P02) and global security gate remain OPEN."
+              }
+            ],
             "crosswalkFile": "docs/planning/api-crosswalk-api08.json",
             "testFile": "tests/api08-endpoint-crosswalk.test.mjs",
             "ciWorkflow": ".github/workflows/api08-p01-crosswalk.yml",
