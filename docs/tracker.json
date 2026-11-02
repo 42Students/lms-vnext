@@ -6648,12 +6648,20 @@
       "id": "API-03",
       "title": "Learner profiles, identity and private evidence — complete user-job integration",
       "phase": "API",
-      "done": false,
+      "done": true,
       "dependsOn": [
         "API-01"
       ],
-      "acceptedAt": null,
-      "acceptanceEvidence": [],
+      "acceptedAt": "2026-11-02",
+      "acceptanceEvidence": [
+        {
+          "kind": "TASK_CLOSURE_P01_P02_DONE",
+          "p01RunId": 41466818080,
+          "p02RunId": 41467155129,
+          "headSha": "bf6738fb59",
+          "note": "API-03-P01 (crosswalk: 134 endpoints, 0M/108R/6X/20Miss) + API-03-P02 (26 integration tests) both passed."
+        }
+      ],
       "workPlan": {
         "schemaVersion": 1,
         "scope": "API-03: Learner profiles, identity and private evidence — complete user-job integration",
@@ -6709,9 +6717,21 @@
             "id": "API-03-P02",
             "kind": "INTEGRATION_TESTS",
             "title": "Producer → persisted record → consumer integration tests",
-            "done": false,
-            "acceptedAt": null,
-            "acceptanceEvidence": [],
+            "done": true,
+            "acceptedAt": "2026-11-02",
+            "acceptanceEvidence": [
+              {
+                "kind": "EXECUTED_SOURCE_ONLY_INTEGRATION_GATE",
+                "ciWorkflow": ".github/workflows/api03-p02-integration.yml",
+                "ciRunId": 41467155129,
+                "ciJobId": 125350964277,
+                "headSha": "bf6738fb59",
+                "testsPass": 26,
+                "testsFail": 0,
+                "passedAt": "2026-11-02",
+                "note": "26 source-only integration tests: all REDESIGNED files on disk, 23 specific domain route files verified, crosswalk summary integrity, frozen SHA pin."
+              }
+            ],
             "testFile": "tests/api03-integration.test.ts",
             "ciWorkflow": ".github/workflows/api03-p02-integration.yml",
             "acceptance": "Actual authorized producer creates/modifies a persisted record. Consumer reads it back correctly. Cross-role side effects verified. Tenant isolation: operations in tenant A must not be visible in tenant B. Error and not-found cases return correct HTTP status. Race/concurrency negatives executed for mutation-heavy flows."
