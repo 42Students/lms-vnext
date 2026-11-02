@@ -1,0 +1,72 @@
+# Scoped DB19-P21 external offer actor/security witnesses only.
+# Never promote all 26 source fields or DB019/DB020 from this one suite.
+name: DB19 P21 external offer authorization PG17
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/db019-p21-external-offers-pg17.yml"
+      - "src/modules/placements/external-offer-service.ts"
+      - "tests/integration/placements-db08-external-offers.test.ts"
+      - "drizzle/*.sql"
+      - "drizzle/meta/_journal.json"
+permissions:
+  contents: read
+concurrency:
+  group: db019-p21-${{ github.ref }}
+  cancel-in-progress: false
+jobs:
+  external-offers:
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    services:
+      postgres:
+        image: postgres:17-alpine
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: lms_vnext_test
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres -d lms_vnext_test"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 20
+    env:
+      DATABASE_URL: postgresql://postgres:postgres@127.0.0.1:5432/lms_vnext_test
+      TEST_DATABASE_URL: postgresql://postgres:postgres@127.0.0.1:5432/lms_vnext_test
+      DB03_ISOLATED_TEST_DATABASE: "1"
+      DB08_ISOLATED_TEST_DATABASE: "1"
+      DB08_C_MIGRATION_APPLIED: "1"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Pin source SHA and preserve registered journal
+        run: |
+          test "$(git rev-parse HEAD)" = "$GITHUB_SHA"
+          npm run db:journal:verify
+      - name: Replay registered migrations and seed disposable PG17
+        env:
+          DATABASE_URL: ""
+        run: npm run db:test:prepare
+      - name: Idempotent registered PG17 replay
+        run: npm run db:migrate
+      - name: Real outside-offer persistence, immutable audit and reviewer revocation
+        run: >-
+          npx vitest run --config vitest.db.config.ts
+          tests/integration/placements-db08-external-offers.test.ts
+      - name: Source and static compatibility
+        env:
+          NODE_OPTIONS: --max-old-space-size=6144
+        run: npm run typecheck
+      - name: Document bounded verification
+        if: always()
+        run: |
+          echo "External-offer reviewer and private staff read security only."
+          echo "P21 26-field semantic acceptance and DB019/DB020 remain OPEN."
