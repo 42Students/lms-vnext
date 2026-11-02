@@ -90,6 +90,9 @@ test("DB19-P18 screening actor revocation and repair race use registered PG17", 
   assert.match(db19P18ScreeningPg17, /blocks a decision when the persisted TPO role is revoked after authentication/);
   assert.match(db19P18ScreeningPg17, /blocks a decision when the persisted screening manager account is disabled/);
   assert.match(db19P18ScreeningPg17, /serializes screening decisions with an in-flight TPO grant revoke/);
+  assert.match(db19P18ScreeningPg17, /denies candidate-contact queue, paged queue and private history after persisted staff role revoke/);
+  assert.match(db19P18ScreeningPg17, /denies staff-only queue and history while persisted manager account is disabled/);
+  assert.match(db19P18ScreeningPg17, /does not reveal the staff screening queue when a grant revoke wins the read race/);
   assert.match(db19P18ScreeningPg17, /cannot recreate a missing screening row after staff grant revocation/);
   assert.match(db19P18ScreeningPg17, /cannot repair a screening row for a withdrawn application/);
   assert.match(db19P18ScreeningPg17, /history\.rows\)\.toHaveLength\(0\)/);
