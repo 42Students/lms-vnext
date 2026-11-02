@@ -3212,6 +3212,22 @@
           ],
           "notTaskAcceptance": true
         },
+        "latestP18LearnerRoleRevocationGuard": {
+          "recordedOn": "2026-11-02",
+          "status": "SOURCE_FIX_AND_NEGATIVE_PG17_TESTS_COMMITTED_NOT_EXECUTED",
+          "codeCommit": "11b80a13cdcdc31a32ee70a6a17b474659ced426",
+          "pg17TestCommit": "43b2995d2c8bd96b7287d2637993f83a3874a2a0",
+          "unitSourceGuardCommit": "7aa78b69965a486a360e0cb67556221ee28b0c45",
+          "db020CiMatrixGuardCommit": "845a004b17e83040381832216018d614196f007b",
+          "scope": "DB19-P18 debarment create now SHARE-locks persisted learner membership and LEARNER grant until its write, immutable history and in-app notice commit. Revoked-grant and concurrent delete-versus-create PostgreSQL negative tests were added to the existing staged DB08 PG17 suite and pinned in the DB020 matrix source guard.",
+          "executedEvidence": "NONE_FOR_NEW_COMMITS",
+          "outstanding": [
+            "Execute exact-SHA staged PostgreSQL 17 DB08 suite with the new role-revocation race negative and observe no persisted debarment or history when revocation wins.",
+            "Resolve all 63 DB19-P18 source-field decisions, screening scores, eligibility actor/timing and actual producer-consumer parity; this scoped fix does not accept P18.",
+            "Keep DB19-P31/P32 and DB020 full exact-head PostgreSQL phase certificate open until independently executed."
+          ],
+          "notTaskAcceptance": true
+        },
         "latestP17FullRegisteredPg17": {
           "recordedOn": "2026-11-01",
           "status": "EXECUTED_FULL_REGISTERED_PG17_P17_SERVICE_AND_PRIVACY_MATRIX_PASS_PACKAGE_NOT_FINAL",
