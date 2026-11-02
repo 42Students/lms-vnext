@@ -1,0 +1,54 @@
+name: API-02-P01 Academics groups electives endpoint crosswalk gate
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - "tests/api02-endpoint-crosswalk.test.mjs"
+      - "docs/planning/api-crosswalk-api02.json"
+      - "docs/planning/api-inventory-api02.json"
+      - ".github/workflows/api02-p01-crosswalk.yml"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: api02-p01-${{ github.sha }}
+  cancel-in-progress: false
+
+jobs:
+  crosswalk:
+    name: "API02-P01 academics/groups/electives endpoint crosswalk"
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Verify exact commit SHA
+        run: test "$(git rev-parse HEAD)" = "$GITHUB_SHA"
+      - name: API02-P01 endpoint crosswalk gate
+        run: node --test tests/api02-endpoint-crosswalk.test.mjs
+      - name: Print crosswalk summary
+        if: always()
+        run: |
+          node -e "
+            const c = JSON.parse(require('fs').readFileSync('docs/planning/api-crosswalk-api02.json','utf8'));
+            const s = c.summary;
+            console.log('=== API-02-P01 CROSSWALK SUMMARY ===');
+            console.log('Total endpoints : ' + s.total);
+            console.log('MAPPED          : ' + s.mapped);
+            console.log('REDESIGNED      : ' + s.redesigned);
+            console.log('RETIRED         : ' + (s.retired||0));
+            console.log('MISSING (gaps)  : ' + s.missing);
+            console.log('Coverage        : ' + Math.round((s.mapped+s.redesigned+(s.retired||0))/s.total*100) + '%');
+          "
+      - name: Scope boundary
+        if: always()
+        run: |
+          echo "API02-P01: Academics/groups/electives endpoint crosswalk only."
+          echo "Integration tests (API02-P02) and subsequent milestones remain OPEN."
