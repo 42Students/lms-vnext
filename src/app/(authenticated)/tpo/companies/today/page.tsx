@@ -11,6 +11,8 @@ import {getTpoMessagesInbox} from "@/modules/placements/tpo-messages-service";
 import {TpoCompaniesToday} from "@/components/tpo/tpo-companies-today";
 import {TpoTodayAlternateViews} from "@/components/tpo/tpo-today-alternate-views";
 import {Alert} from "@/components/ui/alert";
+import {PageHeader} from "@/components/ui/page-header";
+import {ErrorState} from "@/components/ui/error-state";
 import Link from "next/link";
 export const dynamic="force-dynamic";
 
@@ -22,11 +24,11 @@ export default async function TpoCompaniesTodayPage({searchParams}:{
  const context=await getCurrentRequestContext();
  if(!hasMembershipRole(context,"TPO")||!context.membership)redirect("/dashboard");
  const ready=await tpoCrmTablesReady().catch(()=>false);
- if(!ready)return <section aria-label="Companies Today" className="space-y-4">
-  <h1 className="text-2xl font-bold">Companies · Today</h1>
+ if(!ready)return <div className="min-w-0 space-y-[var(--lms-space-4)]">
+  <PageHeader title="Companies · Today"/>
   <Alert tone="warning">Recruiter CRM is unavailable until its registered database migration is verified. No follow-ups have been treated as zero.</Alert>
-  <Link href="/tpo/recruiters" className="font-semibold text-link underline">Open recruiter contacts</Link>
- </section>;
+  <Link href="/tpo/recruiters" className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Open recruiter contacts</Link>
+ </div>;
  const params=await searchParams;
  const scope=tpoCompaniesTodayScope(params.scope);
  const view=params.view??"focus";
@@ -36,11 +38,11 @@ export default async function TpoCompaniesTodayPage({searchParams}:{
   (typeof params.lead!=="string"||!/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(params.lead));
  if(!scope||invalidView||invalidLead||selectedDay===null||
   (params.day!==undefined&&view!=="agenda")||
-  (params.lead!==undefined&&view!=="focus"))return <section className="space-y-4">
-  <h1 className="text-2xl font-bold">Companies · Today</h1>
-  <Alert tone="error">Invalid Today view, ownership or follow-up selection. Nothing was loaded.</Alert>
-  <Link href="/tpo/companies/today" className="font-semibold text-link underline">Open My Work</Link>
- </section>;
+  (params.lead!==undefined&&view!=="focus"))return <div className="min-w-0 space-y-[var(--lms-space-4)]">
+  <PageHeader title="Companies · Today"/>
+  <ErrorState title="Invalid view parameters" description="Invalid Today view, ownership or follow-up selection. Nothing was loaded."
+   action={<Link href="/tpo/companies/today" className="font-semibold text-link underline">Open My Work</Link>}/>
+ </div>;
  const now=new Date();
  const [due,next,unread,replyResult,leadsResult,verificationResult]=await Promise.allSettled([
   getTpoDueFollowupQueue(context,now,{scope,window:"DUE",page:1}),
@@ -50,11 +52,12 @@ export default async function TpoCompaniesTodayPage({searchParams}:{
   listTpoLeads(context,context.membership.collegeId),
   getTpoTodayCompanyVerificationAttention(context,scope),
  ]);
- if(due.status==="rejected"||next.status==="rejected")return <section className="space-y-4">
-  <h1 className="text-2xl font-bold">Companies · Today</h1>
-  <Alert tone="error">Could not load the follow-up queue. Existing records are unchanged. Refresh to retry.</Alert>
-  <Link href="/tpo/follow-ups" className="font-semibold text-link underline">Open the full follow-up queue</Link>
- </section>;
+ if(due.status==="rejected"||next.status==="rejected")return <div className="min-w-0 space-y-[var(--lms-space-4)]">
+  <PageHeader title="Companies · Today"/>
+  <ErrorState title="Could not load follow-up queue" description="Could not load the follow-up queue. Existing records are unchanged. Refresh to retry."
+   retryHref="/tpo/companies/today"
+   action={<Link href="/tpo/follow-ups" className="font-semibold text-link underline">Open the full follow-up queue</Link>}/>
+ </div>;
  const rows=rankTpoCompaniesToday(due.value.rows,next.value.rows);
  // This feed is persisted recruiter-to-placement-cell conversation activity.
  // It is not evidence of replies to bulk email campaigns or of email delivery.
@@ -69,14 +72,14 @@ export default async function TpoCompaniesTodayPage({searchParams}:{
  // A valid UUID is not evidence that the task belongs to the visible
  // authorized page. Never silently substitute its first recruiter.
  if(view==="focus"&&typeof params.lead==="string"&&
-  !rows.some(row=>row.id===params.lead))return <section className="space-y-4">
-   <h1 className="text-2xl font-bold">Companies · Today</h1>
-   <Alert tone="warning">That follow-up is not available in the current Today preview. It may have changed or be outside the loaded queue. No other recruiter was selected.</Alert>
-   <div className="flex flex-wrap gap-4 text-sm">
-    <Link href="/tpo/follow-ups" className="min-h-11 font-semibold text-link underline">Open all follow-ups</Link>
-    <Link href="/tpo/companies/today" className="min-h-11 font-semibold text-link underline">Return to Today</Link>
-   </div>
-  </section>;
+  !rows.some(row=>row.id===params.lead))return <div className="min-w-0 space-y-[var(--lms-space-4)]">
+   <PageHeader title="Companies · Today"/>
+   <ErrorState title="Follow-up not available" description="That follow-up is not available in the current Today preview. It may have changed or be outside the loaded queue. No other recruiter was selected."
+    action={<div className="flex flex-wrap gap-3">
+     <Link href="/tpo/follow-ups" className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Open all follow-ups</Link>
+     <Link href="/tpo/companies/today" className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Return to Today</Link>
+    </div>}/>
+  </div>;
  const notContacted=leadsResult.status==="fulfilled"&&leadsResult.value!==null?
   summarizeTpoTodayNotContacted(leadsResult.value,scope,context.membership.id):null;
  const outsideWeek=leadsResult.status==="fulfilled"&&leadsResult.value!==null?
