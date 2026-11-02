@@ -47,6 +47,7 @@ Every scanner HIGH candidate was traced and cleared:
 - The layout is the single page-level fence for 10 delegating pages; a layout bug would expose them (their components still call the request context).
 - `internal/*` routes have no same-origin check by design; each is listed in `api-origin-guard.test.ts` with a reason.
 - Two read-only `GET` handlers open a transaction purely for `assertPersistedPlatformPermission`.
+- `apiErrorResponse` returns the raw Zod `issues` array alongside the sanitized `fieldErrors` on a validation failure (`src/lib/api-error.ts`). It exposes schema internals such as allowed enum values to any caller who sends bad input. Not Super Admin specific, so it was left unchanged; a decision is needed on whether the UI depends on `issues`.
 
 ## Destructive-action design that already holds
 
@@ -81,6 +82,11 @@ This test is slow (about 2.5 minutes on a busy laptop) and belongs in CI, not in
 | `phase3-destructive-admin-routes-need-confirmation.test.ts` | Destructive admin routes carry a confirmation or version token. |
 | `phase3-admin-mutations-strict-input.test.ts` | Mutating admin routes reach strict schemas and parse every JSON body. |
 | `phase3-admin-get-responses-private-no-store.test.ts` | Admin GET responses carry `no-store`; no admin route opts into caching. |
+| `phase3-permission-policy-super-admin-matrix.test.ts` | Real `can()`/`requirePermission`: unscoped, college-scoped, org-scoped and suspended Super Admin; every other role; forged scope cookie; forged membership role. |
+| `phase3-admin-scope-cookie-tamper.test.ts` | `lms_admin_scope` decode rejects 20 tampered shapes; a stale cookie cannot widen the verified scope. |
+| `phase3-tenant-host-validation-and-confirmation.test.ts` | Tenant host normalisation (URLs, ports, IPs, localhost, bad labels), reserved subdomains, exact-hostname delete confirmation, strict subdomain move. |
+| `phase3-bulk-and-hr-input-schemas.test.ts` | Bulk course visibility (literal confirmation, 100 cap, no injected scope) and HR create/update/list schemas (strict, no role injection). |
+| `phase3-api-error-response-private-refusals.test.ts` | A refusal is a generic 403 with no permission name; unexpected errors never echo messages, stacks or connection strings. |
 
 Existing related coverage: `api-origin-guard.test.ts` (origin check on every mutating route), `PROJ-BREAK-SA-admin-pages-and-scope.test.ts` (Super Admin Projects/Placements pages), `chat6-auth-admin-scope-guards-17.test.ts`.
 
