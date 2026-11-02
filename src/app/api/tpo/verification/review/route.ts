@@ -2,6 +2,7 @@ import {NextResponse} from "next/server";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {isSameOriginRequest} from "@/auth/origin";
 import {apiErrorResponse} from "@/lib/api-error";
+import {readBoundedJsonRequest} from "@/lib/bounded-json-request";
 import {verificationReviewInput} from "@/modules/verification/review-input";
 import {requireVerificationTables,VerificationUnavailableError} from "@/modules/verification/staff-auth";
 import {requireTpoVerificationActor} from "@/modules/verification/tpo-staff-auth";
@@ -19,7 +20,9 @@ export async function POST(request:Request){
   // Legacy review paths carried a learner ID and section in the URL.
   // UUID membership, section, action and expectedVersion are now one
   // validated JSON body, with the reviewer derived from the TPO session.
-  const input=verificationReviewInput.parse(await request.json());
+  const _body=await readBoundedJsonRequest(request,8192);
+  if(!_body.ok)return NextResponse.json({error:"INVALID_REQUEST"},{status:400});
+  const input=verificationReviewInput.parse(_body.value);
   const record=await reviewProfileVerification(context,{learnerMembershipId:input.learnerMembershipId,section:input.section,expectedVersion:input.expectedVersion,action:input.action,...(input.reason===undefined?{}:{reason:input.reason})},
    createProfileVerificationRepository(verifyPrivateDocumentReceipt));
   // The locked writer persists an immutable activity event AND an in-app notification

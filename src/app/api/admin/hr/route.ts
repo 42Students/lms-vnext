@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { isSameOriginRequest } from "@/auth/origin";
 import { apiErrorResponse } from "@/lib/api-error";
+import { readBoundedJsonRequest } from "@/lib/bounded-json-request";
 import {
   createSuperAdminHrAccount,
   listSuperAdminHrAccounts,
@@ -59,11 +60,8 @@ export async function POST(request: Request) {
     const context =
       await getCurrentRequestContext();
 
-    let body: unknown;
-
-    try {
-      body = await request.json();
-    } catch {
+    const parsed = await readBoundedJsonRequest(request, 8192);
+    if (!parsed.ok) {
       return NextResponse.json(
         { error: "INVALID_REQUEST" },
         { status: 400 },
@@ -72,7 +70,7 @@ export async function POST(request: Request) {
 
     const input =
       createSuperAdminHrInputSchema.parse(
-        body,
+        parsed.value,
       );
 
     const account =

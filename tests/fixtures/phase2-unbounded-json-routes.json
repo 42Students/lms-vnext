@@ -1,11 +1,4 @@
 {
  "description": "TPO/HR/recruiter API routes outside the Phase 1 path filter that still parse bodies with an unbounded request.json(). Ratchet: no route may be added; remove an entry when the route moves to readBoundedJsonRequest or another bounded reader.",
- "routes": [
-  "src/app/api/admin/hr/[userId]/grants/route.ts",
-  "src/app/api/admin/hr/[userId]/route.ts",
-  "src/app/api/admin/hr/route.ts",
-  "src/app/api/tpo/verification/bulk-review/route.ts",
-  "src/app/api/tpo/verification/review/route.ts",
-  "src/app/api/v1/tpo/requests/[requestId]/decide/route.ts"
- ]
+ "routes": []
 }

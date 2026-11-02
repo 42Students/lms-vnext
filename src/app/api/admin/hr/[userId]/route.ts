@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { isSameOriginRequest } from "@/auth/origin";
 import { apiErrorResponse } from "@/lib/api-error";
+import { readBoundedJsonRequest } from "@/lib/bounded-json-request";
 import {
   getSuperAdminHrAccount,
   updateSuperAdminHrAccount,
@@ -34,7 +35,7 @@ export async function GET(
         userId,
       );
 
-    return NextResponse.json({ account });
+    return NextResponse.json({ account }, { headers: { "Cache-Control": "private, no-store" } });
   } catch (error) {
     return apiErrorResponse(error);
   }
@@ -57,11 +58,8 @@ export async function PATCH(
 
     const { userId } = await params;
 
-    let body: unknown;
-
-    try {
-      body = await request.json();
-    } catch {
+    const parsed = await readBoundedJsonRequest(request, 8192);
+    if (!parsed.ok) {
       return NextResponse.json(
         { error: "INVALID_REQUEST" },
         { status: 400 },
@@ -70,7 +68,7 @@ export async function PATCH(
 
     const input =
       updateSuperAdminHrInputSchema.parse(
-        body,
+        parsed.value,
       );
 
     const account =
@@ -80,7 +78,7 @@ export async function PATCH(
         input,
       );
 
-    return NextResponse.json({ account });
+    return NextResponse.json({ account }, { headers: { "Cache-Control": "private, no-store" } });
   } catch (error) {
     return apiErrorResponse(error);
   }
