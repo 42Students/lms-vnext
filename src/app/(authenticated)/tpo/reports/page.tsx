@@ -250,7 +250,7 @@ export default async function TpoReportsPage({
       />
 
       <section aria-label="Prototype reports overview" data-testid="tpo.reports.prototype-overview" className="space-y-4">
-       <div className="flex flex-wrap items-center justify-between gap-2 text-sm text-[#5b6b82]">
+       <div className="flex flex-wrap items-center justify-between gap-2 text-sm text-body">
         <p>For <strong className="text-[var(--lms-primary-text)]">{workspace.seasons.find(item=>item.id===workspace.selectedSeasonId)?.name??"All placement seasons"}</strong>
          {workspace.selectedJobId?" · Selected drive":" · All drives"} · Your college</p>
         <Link href={reportHref("/tpo/reports/accreditation",workspace)}
@@ -267,7 +267,7 @@ export default async function TpoReportsPage({
          className="min-w-0 border-b border-border p-4 last:border-0 hover:bg-[#eff8fa] sm:odd:border-r xl:border-b-0 xl:border-r xl:last:border-r-0">
          <strong className="block text-2xl font-bold tabular-nums text-heading">{card.value}</strong>
          <span className="mt-1 block text-sm font-semibold text-heading">{card.label}</span>
-         <span className="mt-1 block text-xs text-[#5b6b82]">{card.detail}</span>
+         <span className="mt-1 block text-xs text-body">{card.detail}</span>
         </Link>)}
        </div>
        <div className="grid min-w-0 gap-4 md:grid-cols-2 xl:grid-cols-3">
@@ -291,12 +291,12 @@ export default async function TpoReportsPage({
          {heading:"YOUR SAVED VIEWS",links:[
           ["Manage report filters","/tpo/reports","Saved report scopes below"]]},
         ] as const).map(group=><section key={group.heading} className="min-w-0 rounded-xl border border-border bg-surface px-4 py-4">
-         <h2 className="mb-2 text-[11px] font-bold tracking-[.07em] text-[#5b6b82]">{group.heading}</h2>
+         <h2 className="mb-2 text-[11px] font-bold tracking-[.07em] text-body">{group.heading}</h2>
          <ul className="divide-y divide-[#edf0f3]">{group.links.map(([label,path,detail])=>
           <li key={path+label}><Link href={reportHref(path,workspace)}
            className="flex min-h-11 min-w-0 items-center justify-between gap-3 py-2 hover:text-[var(--lms-primary-text)]">
            <span className="text-sm font-medium text-heading">{label}</span>
-           <span className="text-right text-xs text-[#5b6b82]">{detail}</span>
+           <span className="text-right text-xs text-body">{detail}</span>
           </Link></li>)}</ul>
         </section>)}
        </div>

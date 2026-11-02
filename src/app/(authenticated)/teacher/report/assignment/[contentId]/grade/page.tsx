@@ -63,7 +63,7 @@ export default async function FacultyAssignmentGradePage({params,searchParams}:{
        <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[#e1f1f4] text-xs font-bold text-[#007f8e]">
         {(row.learnerDisplayName?.trim().split(/\s+/).map(part=>part[0]??"").slice(0,2).join("")??"ST").toUpperCase()}
        </span>
-       <span className="min-w-0 flex-1"><strong className="block truncate text-sm text-[#1d293f]">{row.learnerDisplayName??row.learnerEmail??"Student"}</strong>
+       <span className="min-w-0 flex-1"><strong className="block truncate text-sm text-heading">{row.learnerDisplayName??row.learnerEmail??"Student"}</strong>
         <span className="faculty-proto-subtitle">{stamp(row.submittedAt)} IST</span></span>
        <span className={"shrink-0 rounded-full px-2 py-1 text-xs font-bold "+
         (row.gradingStatus==="GRADED"?"bg-emerald-50 text-emerald-700":"bg-red-50 text-red-700")}>
@@ -79,7 +79,7 @@ export default async function FacultyAssignmentGradePage({params,searchParams}:{
    <div className="min-w-0 overflow-hidden rounded-xl border border-[#e5ebf2]">
     {selected&&filter!=="missing"?<>
      <header className="flex flex-wrap items-start justify-between gap-3 border-b border-[#e5ebf2] px-5 py-5">
-      <div><h2 className="text-lg font-bold text-[#1d293f]">{selected.learnerDisplayName??"Student"}</h2>
+      <div><h2 className="text-lg font-bold text-heading">{selected.learnerDisplayName??"Student"}</h2>
        <p className="faculty-proto-subtitle">Handed in {stamp(selected.submittedAt)} IST · {selected.gradingStatus==="GRADED"?"Graded":"To grade"}</p></div>
       <nav aria-label="Submission navigation" className="flex shrink-0 gap-2">
        {previous?<Link className="faculty-proto-secondary !min-h-9 !px-3 !py-1.5 !text-xs"
@@ -93,13 +93,13 @@ export default async function FacultyAssignmentGradePage({params,searchParams}:{
      <div className="min-h-56 border-b border-[#e5ebf2] px-5 py-5">
       {selected.submissionType==="FILE"&&assignmentFilesRuntimeEnabled()?
        <FacultySubmissionFileReview submissionId={selected.id}/>:
-       selected.textContent?<article className="rounded-xl bg-[#f7f9fc] p-6 text-sm whitespace-pre-wrap text-[#40516a]">{selected.textContent}</article>:
+       selected.textContent?<article className="rounded-xl bg-surface p-6 text-sm whitespace-pre-wrap text-body">{selected.textContent}</article>:
        selected.submissionUrl&&/^https:\/\//i.test(selected.submissionUrl)?
         <Link className="faculty-proto-link" href={selected.submissionUrl} rel="noopener noreferrer">Open student submission</Link>:
         <p className="faculty-proto-subtitle">No preview is available for this submission. Use the grading editor to see supported submission details.</p>}
      </div>
      <div className="px-5 py-5">
-      <h3 className="text-sm font-bold text-[#1d293f]">Grade and student feedback</h3>
+      <h3 className="text-sm font-bold text-heading">Grade and student feedback</h3>
       <p className="faculty-proto-subtitle mt-1">Open the verified grading editor to enter a score, save privately, or publish it to the learner.</p>
       <FacultyPrototypeInlineGrader key={selected.id+":"+selected.version}
        submission={{

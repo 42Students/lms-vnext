@@ -118,7 +118,7 @@ export default async function CollegePlacementsPage({searchParams}:{
       </Alert>:null}
       <section aria-label="Needs attention" className="min-w-0 space-y-2">
        <h2 className="text-[18px] font-semibold text-[var(--lms-heading)]">Needs attention</h2>
-       {attention?<div className="min-w-0 rounded-[var(--lms-canvas-radius)] border border-[#eadca2] bg-[#fffaf0] p-3">
+       {attention?<div className="min-w-0 rounded-[var(--lms-canvas-radius)] border border-[var(--lms-warning-border)] bg-[var(--lms-warning-subtle)] p-3">
         <CollegeDriveAttentionCards data={attention}/>
        </div>:null}
       </section>

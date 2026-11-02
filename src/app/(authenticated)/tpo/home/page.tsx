@@ -237,7 +237,7 @@ export default async function TpoHome({searchParams}:{searchParams:Promise<{seas
    pool={studentStats?.summary.placementPool??null}
    now={calendarNow}/>
  <details className="min-w-0 rounded-xl border border-[#e7ecf2] bg-white" data-testid="tpo.home.other-tools">
-  <summary className="min-h-11 cursor-pointer px-4 py-3 text-sm font-semibold text-[#172033]">Other placement tools and indicators</summary>
+  <summary className="min-h-11 cursor-pointer px-4 py-3 text-sm font-semibold text-heading">Other placement tools and indicators</summary>
   <div className="space-y-4 border-t border-[#edf0f3] p-4">
  <div className="grid min-w-0 gap-4 min-[992px]:grid-cols-[minmax(0,5fr)_minmax(0,7fr)] min-[992px]:items-start md:gap-6">
  <section aria-label="Next up" data-testid="home.next-up" className="min-w-0 rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-4 min-[768px]:p-6">
