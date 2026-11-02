@@ -78,7 +78,7 @@ export default async function TpoLearnerPlacementHistoryPage({
           ["Accepted offer versions (this page)", history.pageFacts.acceptedOfferVersions],
           ["Confirmed joins (this page)", history.pageFacts.confirmedJoins],
         ].map(([label, value]) => (
-          <div key={label} className="min-w-0 border-b border-[var(--lms-canvas-border)] bg-white px-4 py-3">
+          <div key={label} className="min-w-0 border-b border-[var(--lms-canvas-border)] bg-surface px-4 py-3">
             <p className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">{label}</p>
             <p className="mt-2 text-2xl font-bold tabular-nums text-foreground">{value}</p>
           </div>

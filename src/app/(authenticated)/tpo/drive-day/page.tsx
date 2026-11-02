@@ -76,7 +76,7 @@ export default async function DriveDayPage({searchParams}:{searchParams:Promise<
           failed={todayError}
           cacheKey={context.user.id + ":" + context.membership.collegeId + ":" + window.start.toISOString().slice(0, 10)}
         />
-        <details className="min-w-0 rounded-[var(--lms-control-radius)] border border-border bg-white p-4">
+        <details className="min-w-0 rounded-[var(--lms-control-radius)] border border-border bg-surface p-4">
           <summary className="flex min-h-11 cursor-pointer items-center font-semibold text-link">
             Live attendance and on-site monitoring
           </summary>
@@ -159,7 +159,7 @@ export default async function DriveDayPage({searchParams}:{searchParams:Promise<
         <section className="rounded-[13px] border border-border bg-surface p-6 text-center">
           <EmptyState title="There is no drive day for you today."
             action={<Link href="/tpo/calendar"
-              className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-white px-4 font-semibold text-link">
+              className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 font-semibold text-link">
               See upcoming rounds
             </Link>}/>
         </section>
@@ -168,7 +168,7 @@ export default async function DriveDayPage({searchParams}:{searchParams:Promise<
           {rounds.map((round) => (
             <article
               key={round.roundId}
-              className="flex min-h-[132px] min-w-0 flex-col justify-between gap-4 rounded-[13px] border border-[#e5e9f0] bg-white p-4 shadow-none transition-[border-color,box-shadow,transform] duration-150 hover:-translate-y-[2px] hover:border-[#a8dfe5] hover:shadow-md sm:flex-row sm:items-center"
+              className="flex min-h-[132px] min-w-0 flex-col justify-between gap-4 rounded-[13px] border border-[#e5e9f0] bg-surface p-4 shadow-none transition-[border-color,box-shadow,transform] duration-150 hover:-translate-y-[2px] hover:border-[#a8dfe5] hover:shadow-md sm:flex-row sm:items-center"
             >
               <div className="min-w-0">
                   <p className="m-0 text-xs font-semibold uppercase tracking-[0.08em] text-link leading-5">

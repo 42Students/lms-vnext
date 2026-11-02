@@ -309,9 +309,9 @@ export default async function CollegeContactsPage({searchParams}:{searchParams:P
      <span aria-disabled="true" className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-muted-foreground opacity-60">Next</span>}
    </nav>
    <div className="flex flex-wrap gap-2">
-    {filter.page>2?<Link href={collegeContactsHref({...filter,page:1})} className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-[650] text-primary-text md:min-h-9 bg-white hover:border-[var(--lms-primary)] hover:bg-[var(--lms-button-primary)] hover:text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">First</Link>:null}
+    {filter.page>2?<Link href={collegeContactsHref({...filter,page:1})} className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-[650] text-primary-text md:min-h-9 bg-surface hover:border-[var(--lms-primary)] hover:bg-[var(--lms-button-primary)] hover:text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">First</Link>:null}
     <Pagination page={filter.page} pageCount={pageCount} hrefForPage={page=>collegeContactsHref({...filter,page})} label="Contact directory pages"/>
-    {filter.page<pageCount-1?<Link href={collegeContactsHref({...filter,page:pageCount})} className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-[650] text-primary-text md:min-h-9 bg-white hover:border-[var(--lms-primary)] hover:bg-[var(--lms-button-primary)] hover:text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Last</Link>:null}
+    {filter.page<pageCount-1?<Link href={collegeContactsHref({...filter,page:pageCount})} className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-[650] text-primary-text md:min-h-9 bg-surface hover:border-[var(--lms-primary)] hover:bg-[var(--lms-button-primary)] hover:text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Last</Link>:null}
    </div>
   </div>
  </div>;

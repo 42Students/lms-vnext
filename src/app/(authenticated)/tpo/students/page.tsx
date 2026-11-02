@@ -694,7 +694,7 @@ export default async function TpoStudentsPage({
               scopedHref({...currentFilters,legacyStage:undefined,
                 journeyState:step.key==="APPLYING"||step.key==="PLACED"?step.key:undefined,page:1});
             return <Link role="button" aria-pressed={selected} key={step.key} href={href}
-              className={"relative flex min-h-24 min-w-0 flex-col justify-center rounded-[9px] border px-3 py-3 "+(selected?"border-primary bg-primary-subtle":"border-border bg-white hover:bg-primary-subtle")}>
+              className={"relative flex min-h-24 min-w-0 flex-col justify-center rounded-[9px] border px-3 py-3 "+(selected?"border-primary bg-primary-subtle":"border-border bg-surface hover:bg-primary-subtle")}>
               <span className="text-xs font-semibold text-muted-foreground">{step.label}{index<4?" →":""}</span>
               <strong className="mt-1 text-xl tabular-nums">{step.count??"—"}</strong>
               <span className="text-xs text-muted-foreground">{step.percent===null?"Verification total unavailable":step.percent+"% of all students"}</span>

@@ -290,7 +290,7 @@ export default async function TpoAuditPage({
       <p className="text-xs text-muted-foreground leading-5">About and What happened: use the category tabs. Who and When: use the actor/entity view and date filters. The actor view contains additional scoped audit filters.</p>
       <TpoAuditSavedViews
        filters={{kind:query.kind,...(query.from===undefined?{}:{from:query.from}),...(query.to===undefined?{}:{to:query.to}),q:query.q,who:query.who}}/>
-      <section className="min-w-0 overflow-hidden rounded-[14px] border border-[var(--lms-canvas-border)] bg-white shadow-[0_5px_20px_rgba(26,45,72,0.05)]">
+      <section className="min-w-0 overflow-hidden rounded-[14px] border border-[var(--lms-canvas-border)] bg-surface shadow-[0_5px_20px_rgba(26,45,72,0.05)]">
        <div className="flex flex-wrap items-center justify-between gap-4 border-b border-[var(--lms-canvas-border)] bg-[var(--lms-neutral-50)] px-[13px] py-3 md:px-[18px] md:py-[17px]">
         <div className="min-w-0">
          <p className="text-xs text-muted-foreground">

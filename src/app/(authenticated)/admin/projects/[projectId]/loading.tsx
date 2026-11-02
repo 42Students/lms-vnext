@@ -7,7 +7,7 @@ export default function Loading(){
  return <main role="status" aria-label="Loading project workspace"
    className="min-w-0 space-y-5 p-4 md:p-6" aria-busy="true">
   <PageHeader title="Project workspace" description="Loading project workspace…"/>
-  <section className="min-w-0 rounded-[var(--lms-radius-card)] border border-border bg-white p-4">
+  <section className="min-w-0 rounded-[var(--lms-radius-card)] border border-border bg-surface p-4">
     <Skeleton variant="row" count={6} label="Loading workspace summary"/>
   </section>
  </main>;

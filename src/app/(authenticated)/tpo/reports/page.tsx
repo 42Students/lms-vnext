@@ -254,9 +254,9 @@ export default async function TpoReportsPage({
         <p>For <strong className="text-[#0a7c88]">{workspace.seasons.find(item=>item.id===workspace.selectedSeasonId)?.name??"All placement seasons"}</strong>
          {workspace.selectedJobId?" · Selected drive":" · All drives"} · Your college</p>
         <Link href={reportHref("/tpo/reports/accreditation",workspace)}
-         className="inline-flex min-h-11 items-center rounded-lg border border-[#e1e6ed] bg-white px-4 font-semibold text-[#172033]">Export for accreditation</Link>
+         className="inline-flex min-h-11 items-center rounded-lg border border-[#e1e6ed] bg-surface px-4 font-semibold text-[#172033]">Export for accreditation</Link>
        </div>
-       <div className="grid overflow-hidden rounded-xl border border-[#e7ecf2] bg-white sm:grid-cols-2 xl:grid-cols-4">
+       <div className="grid overflow-hidden rounded-xl border border-[#e7ecf2] bg-surface sm:grid-cols-2 xl:grid-cols-4">
         {([
          {label:"Placed",value:placed.toLocaleString("en-IN"),detail:"of "+looking.toLocaleString("en-IN")+" registered · "+percent(placed)+"%",href:"/tpo/reports/placement-summary"},
          {label:"Offers",value:workspace.report.metrics.offers.toLocaleString("en-IN"),detail:workspace.report.metrics.acceptedOffers+" accepted offers",href:"/tpo/reports/offers-acceptance"},
@@ -290,7 +290,7 @@ export default async function TpoReportsPage({
           ["Accreditation export","/tpo/reports/accreditation","Verified college data"]]},
          {heading:"YOUR SAVED VIEWS",links:[
           ["Manage report filters","/tpo/reports","Saved report scopes below"]]},
-        ] as const).map(group=><section key={group.heading} className="min-w-0 rounded-xl border border-[#e7ecf2] bg-white px-4 py-4">
+        ] as const).map(group=><section key={group.heading} className="min-w-0 rounded-xl border border-[#e7ecf2] bg-surface px-4 py-4">
          <h2 className="mb-2 text-[11px] font-bold tracking-[.07em] text-[#5b6b82]">{group.heading}</h2>
          <ul className="divide-y divide-[#edf0f3]">{group.links.map(([label,path,detail])=>
           <li key={path+label}><Link href={reportHref(path,workspace)}

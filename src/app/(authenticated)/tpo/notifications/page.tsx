@@ -111,7 +111,7 @@ export default async function TpoNotificationsPage({
           {firstPage&&olderUnread>0?<Alert tone="info">
             {olderUnread} unread {olderUnread===1?"is":"are"} older than what is shown. Show older to view the history; Mark all as read clears older ones too.
           </Alert>:null}
-          <section aria-label="Notification feed" className="min-w-0 overflow-hidden rounded-[14px] border border-[var(--lms-canvas-border)] bg-white shadow-[0_5px_20px_rgba(26,45,72,0.05)]">
+          <section aria-label="Notification feed" className="min-w-0 overflow-hidden rounded-[14px] border border-[var(--lms-canvas-border)] bg-surface shadow-[0_5px_20px_rgba(26,45,72,0.05)]">
             <div className="border-b border-border px-3 py-3 md:px-5">
               <NotificationToolbar display="filters" segmented view={inbox.query.view}
                 unreadCount={inbox.unreadCount}

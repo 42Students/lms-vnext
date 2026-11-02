@@ -7,7 +7,7 @@ export default async function ExternalJobPage({params}:{
  const {slug}=await params;
  const job=await readPublicExternalJob(slug);
  if(!job)notFound();
- return <main className="mx-auto my-6 max-w-3xl space-y-5 border border-border bg-white p-6">
+ return <main className="mx-auto my-6 max-w-3xl space-y-5 border border-border bg-surface p-6">
   <header>
    <h1 className="text-2xl font-semibold">{job.title}</h1>
    <p className="mt-2 text-sm text-body">{job.companyName}</p>

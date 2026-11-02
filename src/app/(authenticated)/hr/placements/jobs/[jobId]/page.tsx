@@ -429,7 +429,7 @@ export default async function HrPlacementJobPage({
             </Link>
           </div>
       </section>
-      <div className="min-w-0 rounded-[var(--lms-radius-card)] border border-[var(--lms-canvas-border)] bg-white p-4 shadow-none md:p-[var(--lms-canvas-padding)]">
+      <div className="min-w-0 rounded-[var(--lms-radius-card)] border border-[var(--lms-canvas-border)] bg-surface p-4 shadow-none md:p-[var(--lms-canvas-padding)]">
       <Tabs renderPanel={false} ariaLabel="Hiring workspace tabs" value={requestsTab ? "requests" : discussionTab ? "discussion" : filters.tab}
         items={[{value:"overview",label:"Overview",href:"/recruiter/drives/"+workspace.job.id+"?tab=overview"+returnQuery},
           {value:"applicants",label:"Applicants ("+applicants.counts.all+")",
@@ -725,7 +725,7 @@ export default async function HrPlacementJobPage({
                     <Link key={round.id} href={"/recruiter/drives/"+workspace.job.id+
                       "?tab=applicants&stage="+filters.stage+"&page="+filters.page+
                       "&review=1&applicant="+selectedApplicant.id+"&roundId="+round.id+returnQuery}
-                      className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-white px-3 text-sm font-semibold text-link md:min-h-9">
+                      className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-link md:min-h-9">
                       Review for {round.sequence}. {round.name}
                     </Link>)}
                 </div>

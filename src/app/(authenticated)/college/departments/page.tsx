@@ -59,11 +59,11 @@ export default async function CollegeDepartmentsPage() {
         {value:"attendance",label:"Attendance",href:"/college/attendance"},
       ]} />
       <div className="grid min-w-0 grid-cols-1 items-start gap-6 lg:grid-cols-12">
-        <section className="min-w-0 rounded-[var(--lms-canvas-radius)] border border-[var(--lms-canvas-border)] bg-white p-4 lg:col-span-5"
+        <section className="min-w-0 rounded-[var(--lms-canvas-radius)] border border-[var(--lms-canvas-border)] bg-surface p-4 lg:col-span-5"
           aria-label="Create New Department">
           <DepartmentCreateForm collegeId={collegeId} />
         </section>
-        <section className="min-w-0 rounded-[var(--lms-canvas-radius)] border border-[var(--lms-canvas-border)] bg-white p-4 lg:col-span-7"
+        <section className="min-w-0 rounded-[var(--lms-canvas-radius)] border border-[var(--lms-canvas-border)] bg-surface p-4 lg:col-span-7"
           aria-label="Existing Departments">
           <DepartmentDirectory rows={rows} />
         </section>
