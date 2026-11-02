@@ -205,6 +205,37 @@ describe("Placement P6A screening", () => {
     );
   });
 
+  it("rejects learner screening reads after a persisted LEARNER role revoke", async () => {
+    const { application } = await createApplication();
+    await pool.query(
+      "DELETE FROM membership_roles WHERE membership_id=$1 AND role='LEARNER'",
+      [SEED_IDS.learnerCollegeAMembership],
+    );
+    try {
+      // This request context still claims the old role. Persisted grants win.
+      await expect(getPlacementScreening(learner, application.id))
+        .rejects.toThrow("Missing permission: placements.read");
+    } finally {
+      await pool.query(
+        "INSERT INTO membership_roles(membership_id,role) VALUES($1,'LEARNER') ON CONFLICT DO NOTHING",
+        [SEED_IDS.learnerCollegeAMembership],
+      );
+    }
+  });
+
+  it("rejects a stale screening read when the persisted learner account is disabled", async () => {
+    const { application } = await createApplication();
+    await pool.query("UPDATE users SET platform_status='DISABLED' WHERE id=$1",
+      [SEED_IDS.learnerUser]);
+    try {
+      await expect(getPlacementScreening(learner, application.id))
+        .rejects.toThrow("Missing permission: placements.read");
+    } finally {
+      await pool.query("UPDATE users SET platform_status='ACTIVE' WHERE id=$1",
+        [SEED_IDS.learnerUser]);
+    }
+  });
+
   it("audits hold-to-shortlist transitions without leaking internal notes", async () => {
     const { application } =
       await createApplication();
