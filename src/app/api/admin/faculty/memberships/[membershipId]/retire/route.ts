@@ -9,6 +9,7 @@ import {resolveActingCollege} from "@/modules/permissions/acting-college";
 import {requirePermission,AuthorizationError} from "@/modules/permissions/policy";
 import {isSuperAdmin} from "@/modules/identity/context";
 import {getPersonMembershipDetailWithRuntime,updateMembershipLifecycleWithRuntime} from "@/modules/people/runtime";
+import {readBoundedJsonRequest} from "@/lib/bounded-json-request";
 
 export const runtime="nodejs";
 export const dynamic="force-dynamic";
@@ -62,7 +63,9 @@ export async function POST(request:Request,{params}:Props){
  if(!isSameOriginRequest(request))
   return NextResponse.json({error:"INVALID_ORIGIN"},{status:403,headers:noStore});
  try{
-  const raw:unknown=await request.json();
+  const _b=await readBoundedJsonRequest(request,8192);
+  if(!_b.ok)return NextResponse.json({error:"INVALID_REQUEST"},{status:400,headers:noStore});
+  const raw:unknown=_b.value;
   if(!raw||typeof raw!=="object"||!("confirmed" in raw)||raw.confirmed!==true)
    return NextResponse.json({error:"CONFIRMATION_REQUIRED"},{status:400,headers:noStore});
   const checked=await impact(await params);

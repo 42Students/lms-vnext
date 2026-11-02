@@ -4,6 +4,7 @@ import { getCurrentRequestContext } from "@/auth/request-context";
 import { isSameOriginRequest } from "@/auth/origin";
 import { apiErrorResponse } from "@/lib/api-error";
 import { collegeAdminSessionDisplay, listCollegeAdminSessions, revokeCollegeAdminSessions } from "@/modules/colleges/admin-session-service";
+import { readBoundedJsonRequest } from "@/lib/bounded-json-request";
 export const runtime = "nodejs";
 type RouteContext = {params:Promise<{collegeId:string}>};
 export async function GET(request:Request,{params}:RouteContext){
@@ -40,7 +41,9 @@ export async function GET(request:Request,{params}:RouteContext){
 export async function POST(request:Request,{params}:RouteContext){
  if(!isSameOriginRequest(request))return NextResponse.json({error:"INVALID_ORIGIN"},{status:403});
  try{
-  const input=z.strictObject({userId:z.uuid(),confirm:z.literal(true)}).parse(await request.json());
+  const _parsed=await readBoundedJsonRequest(request,8192);
+  if(!_parsed.ok)return NextResponse.json({error:"INVALID_REQUEST"},{status:400});
+  const input=z.strictObject({userId:z.uuid(),confirm:z.literal(true)}).parse(_parsed.value);
   // Unlike the legacy bodyless revoke endpoint, explicit target UUID and
   // confirmation guard against cross-college or accidental sign-outs.
   const result=await revokeCollegeAdminSessions(await getCurrentRequestContext(),(await params).collegeId,input.userId);

@@ -3,6 +3,7 @@ import {getCurrentRequestContext} from "@/auth/request-context";
 import {isSameOriginRequest} from "@/auth/origin";
 import {apiErrorResponse} from "@/lib/api-error";
 import {changeManagedCollegeSubdomain,getManagedCollegeSubdomain,ManagedSubdomainError} from "@/modules/tenant-domains/managed-subdomain-service";
+import {readBoundedJsonRequest} from "@/lib/bounded-json-request";
 export const runtime="nodejs";
 type Params={params:Promise<{collegeId:string}>};
 export async function GET(_request:Request,{params}:Params){
@@ -25,10 +26,9 @@ async function mutate(request:Request,{params}:Params,legacyVerb?:"PUT"|"DELETE"
  if(!isSameOriginRequest(request))
   return NextResponse.json({error:"INVALID_ORIGIN"},{status:403});
  try{
-  let raw:unknown;
-  try{raw=await request.json();}catch{
-   return NextResponse.json({error:"INVALID_REQUEST"},{status:400});
-  }
+  const _b=await readBoundedJsonRequest(request,8192);
+  if(!_b.ok)return NextResponse.json({error:"INVALID_REQUEST"},{status:400});
+  let raw:unknown=_b.value;
   const {collegeId}=await params;
   const context=await getCurrentRequestContext();
   if(legacyVerb){

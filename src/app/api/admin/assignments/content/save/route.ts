@@ -10,6 +10,7 @@ import {z} from "zod";
 import {eq} from "drizzle-orm";
 import {getDb} from "@/db/client";
 import {courseOfferings} from "@/db/schema";
+import {readBoundedJsonRequest} from "@/lib/bounded-json-request";
 export const runtime="nodejs";
 /** Compatibility adapter for retired /api/v1/admin/assignments/content/save.
  * Uses the one registered vNext authoring transaction; no opaque historical
@@ -19,7 +20,9 @@ export async function POST(request:Request){
   return NextResponse.json({error:"INVALID_ORIGIN"},{status:403});
  try{
   const ctx=await getCurrentRequestContext();
-  const raw:unknown=await request.json();
+  const parsed=await readBoundedJsonRequest(request,8192);
+  if(!parsed.ok)return NextResponse.json({error:"INVALID_REQUEST"},{status:400});
+  const raw:unknown=parsed.value;
   const input=toModernAssignmentWrite(raw);
   const lesson=await loadCourseLessonScope(input.lessonId);
   requirePermission(ctx,"courses.manage",{
