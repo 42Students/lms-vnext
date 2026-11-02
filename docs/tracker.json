@@ -2412,6 +2412,32 @@
             "pickedBy": "CHAT_DB19_SAVED_JOBS_2026_11_01",
             "done": false,
             "acceptedAt": null,
+            "implementationCheckpoint": {
+              "status": "EXACT_SHA_REGISTERED_PG17_7_OF_7_EXTERNAL_OFFER_SECURITY_PASS_P21_STILL_OPEN",
+              "recordedOn": "2026-11-02",
+              "sourceSha": "a8323f9a192c03c7fe77c48a94a0ad0115ac9b4a",
+              "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/41408936294",
+              "result": "COMPLETED_SUCCESS_SCOPED_NOT_PACKAGE_ACCEPTANCE",
+              "implementationCommits": [
+                "26ed207c782c8f0f061425a90910dbb0519a816b",
+                "965201aa6ec8507a60ce0f9872eed0cc7cbcd8ba",
+                "a8323f9a192c03c7fe77c48a94a0ad0115ac9b4a"
+              ],
+              "evidence": [
+                "Disposable PostgreSQL 17 exact-SHA journal verification, 332 registered migrations through 0331, zero-to-head replay, idempotent migration and original database-target preflight passed.",
+                "Seven of seven registered external-offer integration tests passed, including private staff list denied after persisted TPO revoke/disable, manager review denied after revoke/disable, no extra immutable audit event and concurrent TPO grant DELETE versus VERIFIED review.",
+                "Full TypeScript typecheck passed in the same GitHub Actions job.",
+                "External-offer staff reads/decisions revalidate persisted placements.manage grants inside their actual read/write transactions, including role-revocation race."
+              ],
+              "remainingBeforeP21Acceptance": [
+                "The original 26 fields still require exact source decisions; source-only proposals are not final approved mappings.",
+                "Prove external_placement.request_id linkage to authorized general request, private historic letter artifact custody, and source is_deleted versus vNext review/revocation/held placement semantics.",
+                "Resolve job_preferences exam_slot_preference, pap_interest, role, specific-role, shift and opt-out/deletion semantics and actual preference producers/consumers.",
+                "Verify saved-job and external-offer complete same-tenant privacy, deleted/archived access, notification opt-out and consent lifecycle beyond the seven scoped external-offer cases.",
+                "DB19-P31/P32 and DB020 global source-field/cross-domain/registered-PG17 certificates remain independent."
+              ],
+              "notTaskAcceptance": true
+            },
             "acceptanceEvidence": [],
             "acceptance": "Resolve request linkage, soft-delete/opt-out, exam preferences, private external-offer artifacts and saved-job behavior with PG17 access tests."
           },
