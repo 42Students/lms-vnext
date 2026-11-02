@@ -59,15 +59,15 @@ test("each staged PG suite has an independently running, real SQL-backed job", (
 test("DB19-P18 learner revocation race stays in the registered disposable PG17 matrix", () => {
   const start = workflow.indexOf("  db08-staged-acceptance:\n");
   assert.ok(start >= 0, "DB08 PostgreSQL acceptance job is missing");
-  const nextJob = workflow.slice(start + 1).search(/^  [a-z][\\w-]*:\\s*$/m);
+  const nextJob = workflow.slice(start + 1).search(/^  [a-z][\w-]*:\s*$/m);
   const job = nextJob === -1
     ? workflow.slice(start)
     : workflow.slice(start, start + 1 + nextJob);
   assert.match(job, /postgres:17-alpine/);
-  assert.match(job, /tests\\/integration\\/placements-db08-registration\\.test\\.ts/);
+  assert.match(job, /tests\/integration\/placements-db08-registration\.test\.ts/);
   assert.match(db19P18Pg17, /rejects a revoked learner role before writing restriction or history/);
   assert.match(db19P18Pg17, /serializes a concurrent learner role revoke before debarment creation/);
-  assert.match(db19P18Pg17, /SELECT membership_id FROM membership_roles[^\\n]+FOR UPDATE/);
+  assert.match(db19P18Pg17, /SELECT membership_id FROM membership_roles[^\n]+FOR UPDATE/);
   assert.match(db19P18Pg17, /DB08_DEBARMENT_MEMBER_INVALID/);
-  assert.match(db19P18Pg17, /restrictions\\.rows\\)\\.toHaveLength\\(0\\)/);
+  assert.match(db19P18Pg17, /restrictions\.rows\)\.toHaveLength\(0\)/);
 });
