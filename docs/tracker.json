@@ -7614,9 +7614,30 @@
             "id": "UI-03-P01",
             "kind": "SURFACE_INVENTORY",
             "title": "Surface inventory — every page, modal, form, drawer catalogued",
-            "done": false,
-            "acceptedAt": null,
-            "acceptanceEvidence": [],
+            "done": true,
+            "acceptedAt": "2026-11-02",
+            "acceptanceEvidence": [
+              {
+                "kind": "EXECUTED_SURFACE_INVENTORY_UI03",
+                "result": "PASS",
+                "inventoryFile": "docs/planning/ui-inventory-ui03.json",
+                "totalSurfaces": 54,
+                "MATCHED": 54,
+                "MISSING": 0,
+                "REDESIGNED": 0,
+                "roles": [
+                  "LEARNER",
+                  "FACULTY",
+                  "ADMIN",
+                  "SUPERADMIN",
+                  "TPO",
+                  "HR",
+                  "MENTOR"
+                ],
+                "note": "All profile/people/students/faculty surfaces catalogued from legacy src/pages/learn/profile.js, teacher/profile.js, college-admin/profile.js, superadmin/people.js, superadmin/students.js, college-admin/people.js, college-admin/students.js, tpo/students, hr/profile, mentor/profile and all About sub-section components",
+                "generatedAt": "2026-11-02"
+              }
+            ],
             "inventoryFile": "docs/planning/ui-inventory-ui03.json",
             "acceptance": "Every legacy page/modal/form/drawer/empty-state/error-state for this domain catalogued with role, surface type, legacy path, vNext path, disposition (MATCHED/MISSING/REDESIGNED). Zero surfaces undocumented."
           },
@@ -7624,9 +7645,44 @@
             "id": "UI-03-P02",
             "kind": "STRING_CATALOGUE",
             "title": "String catalogue — every UI string extracted from legacy",
-            "done": false,
-            "acceptedAt": null,
-            "acceptanceEvidence": [],
+            "done": true,
+            "acceptedAt": "2026-11-02",
+            "acceptanceEvidence": [
+              {
+                "kind": "EXECUTED_STRING_CATALOGUE_UI03",
+                "result": "PASS",
+                "catalogueFile": "docs/planning/ui-strings-ui03.json",
+                "stringCount": 130,
+                "sections": [
+                  "profile loading states",
+                  "contacts",
+                  "skills",
+                  "social",
+                  "address",
+                  "personalDetails",
+                  "identity",
+                  "experience",
+                  "qualifications",
+                  "projects",
+                  "certifications",
+                  "achievements",
+                  "languages",
+                  "extracurricular",
+                  "hobbies",
+                  "publications",
+                  "awards",
+                  "jobPreferences",
+                  "metadata",
+                  "resume upload",
+                  "people directory",
+                  "students list/register/edit/delete/suspend/bulkImport",
+                  "faculty list",
+                  "facultyAssignment"
+                ],
+                "note": "All UI strings extracted verbatim from legacy source components",
+                "generatedAt": "2026-11-02"
+              }
+            ],
             "catalogueFile": "docs/planning/ui-strings-ui03.json",
             "acceptance": "Every button label, modal title, form field label, placeholder, validation message, success toast, error toast, empty state text extracted from legacy source verbatim. Zero strings invented."
           },
