@@ -1,0 +1,68 @@
+name: UI-03 P04 Visual Parity — Learner/Faculty Profiles
+
+on:
+  workflow_dispatch:
+  schedule:
+    # Run nightly at 02:00 UTC
+    - cron: '0 2 * * *'
+
+jobs:
+  visual-parity:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+
+      - name: Install dependencies
+        run: bun install --frozen-lockfile
+
+      - name: Install Playwright browsers (Chromium only)
+        run: bunx playwright install --with-deps chromium
+
+      - name: Create snapshot output directory
+        run: mkdir -p tests/ui-snapshots/ui03
+
+      - name: UI-03 visual parity — learner profile surfaces
+        run: bunx playwright test tests/ui03-visual-parity.spec.ts --grep "Learner Profile"
+        env:
+          TEST_BASE_URL: https://testa.development.42lms.com
+          PLAYWRIGHT_BASE_URL: https://testa.development.42lms.com
+
+      - name: UI-03 visual parity — faculty profile surfaces
+        run: bunx playwright test tests/ui03-visual-parity.spec.ts --grep "Faculty Profile"
+        env:
+          TEST_BASE_URL: https://testa.development.42lms.com
+          PLAYWRIGHT_BASE_URL: https://testa.development.42lms.com
+
+      - name: UI-03 visual parity — college admin surfaces
+        run: bunx playwright test tests/ui03-visual-parity.spec.ts --grep "College Admin"
+        env:
+          TEST_BASE_URL: https://testa.development.42lms.com
+          PLAYWRIGHT_BASE_URL: https://testa.development.42lms.com
+
+      - name: UI-03 visual parity — superadmin people/students surfaces
+        run: bunx playwright test tests/ui03-visual-parity.spec.ts --grep "SuperAdmin"
+        env:
+          TEST_BASE_URL: https://testa.development.42lms.com
+          PLAYWRIGHT_BASE_URL: https://testa.development.42lms.com
+
+      - name: Upload screenshots on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ui03-visual-parity-screenshots
+          path: tests/ui-snapshots/ui03/
+          retention-days: 14
+
+      - name: Upload Playwright report on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ui03-playwright-report
+          path: playwright-report/
+          retention-days: 14
