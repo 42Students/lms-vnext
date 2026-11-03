@@ -48,15 +48,36 @@ test.describe("Old LMS Mentor Meetings visual candidate",()=>{
         await document.fonts.ready;
         await new Promise<void>(resolve=>requestAnimationFrame(()=>resolve()));
         const rect=document.documentElement.getBoundingClientRect();
+        const box=(selector:string)=>{
+          const element=document.querySelector(selector);
+          if(!element)return null;
+          const r=element.getBoundingClientRect();
+          return {x:r.x,y:r.y,width:r.width,height:r.height};
+        };
         return {
           viewportWidth:innerWidth,contentWidth:document.documentElement.scrollWidth,
           scrollHeight:document.documentElement.scrollHeight,
           documentWidth:rect.width,
+          sidebar:box('[data-slot="legacy-sidebar"]'),
+          topbar:box('header[aria-label="Application top bar"]'),
+          canvas:box('[data-slot="page-canvas"]'),
           rowCount:document.querySelectorAll("[aria-label='Meetings list'] article").length,
         };
       });
       expect(observed.viewportWidth).toBe(1280);
       expect(observed.contentWidth).toBeLessThanOrEqual(1281);
+      expect(observed.sidebar).not.toBeNull();
+      expect(observed.topbar).not.toBeNull();
+      expect(observed.canvas).not.toBeNull();
+      expect(observed.sidebar!.width).toBeGreaterThanOrEqual(95);
+      expect(observed.sidebar!.width).toBeLessThanOrEqual(97);
+      expect(observed.topbar!.height).toBeGreaterThanOrEqual(84);
+      expect(observed.topbar!.height).toBeLessThanOrEqual(86);
+      expect(observed.canvas!.x).toBeGreaterThanOrEqual(118);
+      expect(observed.canvas!.x).toBeLessThanOrEqual(122);
+      expect(observed.canvas!.y).toBeGreaterThanOrEqual(99);
+      expect(observed.canvas!.y).toBeLessThanOrEqual(104);
+
       expect(observed.scrollHeight).toBeLessThan(20000);
       const png=await page.screenshot({
         fullPage:false,animations:"disabled",caret:"hide",
