@@ -53,6 +53,10 @@ export function isSuperAdmin(context: RequestContext | null | undefined) {
   return Boolean(
     context &&
       context.user.platformStatus === "ACTIVE" &&
+      // Selecting a college membership is entering that membership workspace;
+      // platform Super Admin must not override its selected role permissions.
+      // Admin scope (with membership null) remains the platform admin path.
+      context.membership === null &&
       context.user.systemRoles.includes("SUPER_ADMIN"),
   );
 }
