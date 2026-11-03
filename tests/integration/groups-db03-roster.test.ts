@@ -273,24 +273,24 @@ describe("DB03 elective group-backed course access (PostgreSQL)", () => {
     await expect(requireLearningReadAccess(host.ctx, f.offeringId, f.deliveryId))
       .resolves.toBe("LEARNER");
 
-    // A privileged SQL change can leave a nonconsecutive academic-year label.
-    // The admission parser rejects it; the roster/content/schedule paths must
-    // also reject it even if the *start* year still matches the cohort.
+    // Registered DB03 hardening now forbids even privileged direct SQL from
+    // creating a nonconsecutive academic year. A failed write cannot revoke
+    // previously valid authorized content, schedule or group membership.
     const impossibleEnd = String((Number(start) + 3) % 100).padStart(2, "0");
-    await pool.query("UPDATE elective_slots SET academic_year=$2 WHERE id=$1", [
+    await expect(pool.query("UPDATE elective_slots SET academic_year=$2 WHERE id=$1", [
       f.slotId, `${start}-${impossibleEnd}`,
-    ]);
+    ])).rejects.toMatchObject({ code: "23514" });
+    await expect(pool.query("UPDATE elective_slots SET academic_year='invalid' WHERE id=$1", [f.slotId]))
+      .rejects.toMatchObject({ code: "23514" });
+    const currentSlot = await pool.query(
+      "SELECT academic_year FROM elective_slots WHERE id=$1", [f.slotId]);
+    expect(currentSlot.rows[0].academic_year).toBeNull();
     await expect(requireLearningReadAccess(host.ctx, f.offeringId, f.deliveryId))
-      .rejects.toMatchObject({ code: "LEARNER_ENROLLMENT_SCOPE_REQUIRED" });
+      .resolves.toBe("LEARNER");
     expect((await listLearnerCourseDeliveries(host.ctx))
-      .some(row => row.deliveryId === f.deliveryId)).toBe(false);
+      .some(row => row.deliveryId === f.deliveryId)).toBe(true);
     expect((await getLearnerClassSchedule(host.ctx)).events
-      .some(row => row.id === f.scheduleEventId)).toBe(false);
-    await expect(joinGroup(host.ctx, f.groupId, host.membershipId))
-      .rejects.toMatchObject({ code: "ELECTIVE_PRIMARY_SECTION_REQUIRED" });
-    await pool.query("UPDATE elective_slots SET academic_year='invalid' WHERE id=$1", [f.slotId]);
-    await expect(requireLearningReadAccess(host.ctx, f.offeringId, f.deliveryId))
-      .rejects.toMatchObject({ code: "LEARNER_ENROLLMENT_SCOPE_REQUIRED" });
+      .some(row => row.id === f.scheduleEventId)).toBe(true);
   });
 
   it("denies archived elective offerings rather than silently using host-section membership", async () => {
