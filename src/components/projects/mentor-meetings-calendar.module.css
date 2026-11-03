@@ -35,7 +35,11 @@
 .row {
   position: relative;
   display: grid;
-  grid-template-columns: minmax(0, 1fr) auto;
+  /* Each meeting detail can contain a request form, provider state, agenda,
+   * notes and follow-up text. A second implicit auto column squeezed those
+   * sections to a few pixels and rendered content one character per line.
+   * Keep the full meeting details on a single, min-width-safe track. */
+  grid-template-columns: minmax(0, 1fr);
   align-items: center;
   column-gap: 20px;
   row-gap: 12px;
