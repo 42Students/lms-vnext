@@ -122,3 +122,14 @@ node --test tests/security-pg-rls-catalog.test.mjs tests/security-api-method-inv
 ```
 
 The user-facing security status must only claim *code committed*, *CI proven by a completed exact-SHA runner*, or *runtime DB proven by an authorized live catalog + adversarial test*. Do not conflate those evidence levels.
+
+
+### Additional high-impact closure evidence (same date)
+
+- Fresh privileged step-up: `src/auth/recent-device-auth.ts` requires a live, OTP-backed first-party device session created less than 10 minutes earlier; expired, future, invalid and missing timestamps deny access. It is invoked before **College Admin/TPO role assignment and removal** in `src/app/api/people/[membershipId]/roles/route.ts` and before **protected new-person onboarding** in `src/app/api/people/onboard/route.ts`. No reliance on browser-supplied timestamps or role labels.
+- `tests/unit/recent-device-privileged-role-security.test.ts`: freshness bounds and protected-role route contracts. Pending exact-SHA authentication workflow after this update.
+- **PostgreSQL acceptance PASS**: GitHub Actions run https://github.com/42Students/lms-vnext/actions/runs/41705887635 for `bf330bdac3d6b0b2e29785bdcaa74c7a5ab4c33a`; TypeScript, registered migration verification, disposable PG17 setup, lock/revocation/no-side-effect integration suite, selected-role persisted permission suite, end-to-end people membership suite, and migration immutability all passed. This establishes these particular boundaries on that exact SHA; it is not RLS certification or full app penetration certification.
+- **API census PASS**: GitHub Actions run https://github.com/42Students/lms-vnext/actions/runs/41705701801 for `6aec2c3e73707244c0217add85d5467409e45c3a`; 1,001 API route files, **1,322 exported HTTP methods**, 1,179 methods with direct session-call evidence, **143** without direct session-call evidence, **36** unsafe methods without a direct origin-check call; **all 1,322 are still UNREVIEWED for full resource/tenant object-level authorization**. These are method-level prioritization signals, not confirmed security holes.
+- Focused auth workflow PASS: https://github.com/42Students/lms-vnext/actions/runs/41704973409 (`69c1b2af809097dd55fc928788dc7f8716a1506b`). Exact-SHA tests for the more recent step-up integrations still require verification.
+
+**Remaining release-blockers:** actual production DB role inspection and tenant-table lineage -> tested RLS `USING`/`WITH CHECK` policies -> nonowner/nonbypass application user -> complete API 1,322-method object-permission review -> revoked-role and foreign-ID 403/404 runtime matrix -> step-up for remaining high-impact actions -> external penetration test -> enforced PR review/required status checks and secret-hygiene operational evidence.
