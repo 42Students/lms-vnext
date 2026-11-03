@@ -1,10 +1,11 @@
-name: Faculty roster capability recheck
+name: Faculty + Super Admin S4 capability recheck
 
 on:
   pull_request:
     paths:
       - ".github/workflows/faculty-roster-capability.yml"
       - "tests/unit/fac-courses-28-capability-recheck.test.ts"
+      - "tests/unit/sa-academics-people-92-capability-recheck.test.ts"
       - "src/components/courses/faculty-course-roster.tsx"
       - "src/modules/courses/faculty-roster-display-model.ts"
       - "src/components/courses/faculty-course-tab-navigation.tsx"
@@ -25,6 +26,9 @@ jobs:
           cache: npm
       - run: npm ci
       - name: Execute real roster metrics and safe-photo contract cases
-        run: npx vitest run tests/unit/fac-courses-28-capability-recheck.test.ts
+        run: |
+          npx vitest run tests/unit/fac-courses-28-capability-recheck.test.ts \
+            tests/unit/sa-academics-people-92-capability-recheck.test.ts \
+            tests/unit/chat13-final-sprint-sa-92.test.ts
       - name: Lint new checks
-        run: npx eslint tests/unit/fac-courses-28-capability-recheck.test.ts
+        run: npx eslint tests/unit/fac-courses-28-capability-recheck.test.ts tests/unit/sa-academics-people-92-capability-recheck.test.ts
