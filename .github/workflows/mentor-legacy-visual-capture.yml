@@ -47,6 +47,8 @@ jobs:
       - run: npx playwright install --with-deps chromium
       - name: Prepare disposable Mentor browser fixture
         run: npm run db:e2e:prepare
+      - name: Seed the exact two legacy meeting states in disposable DB
+        run: npx tsx scripts/audit/seed-mentor-visual-fixture.ts
       - name: Generate isolated browser authentication keys
         shell: bash
         run: |
