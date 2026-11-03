@@ -491,118 +491,37 @@ export function LearnerAssessmentOverview({
           </div>
         ) : null}
         {kind==="ASSIGNMENT" ? (
-        <div role="region" className="space-y-3" aria-label="Assignment list">
-          {paged.map((item) => {
-            const state =
-              item.kind === "ASSIGNMENT"
-                ? { ...assignmentOverviewState(item, currentNowMs), review: false }
-                : quizOverviewActionState(item, currentNowMs);
-            const href =
-              item.kind === "QUIZ"
-                ? `/quiz?quizId=${encodeURIComponent(item.id)}&deliveryId=${encodeURIComponent(item.deliveryId)}${state.review ? "&review=true" : ""}`
-                : `/learn/courses/${item.deliveryId}/roadmap?filter=assessments&lesson=${encodeURIComponent(item.lessonId)}&content=${encodeURIComponent(item.id)}`;
-
-            return (
-              <article
-                key={`${item.deliveryId}-${item.id}`}
-                className="min-w-0 rounded-[12px] border border-border bg-surface px-4 py-4 md:px-5"
-              >
-                <div className="flex min-w-0 flex-col gap-3 md:flex-row md:items-start md:justify-between md:gap-6">
-                  <div className="min-w-0">
-                    <div className="flex flex-wrap items-center gap-2">
-                      <StatusBadge
-                        tone={
-                          item.kind ===
-                          "ASSIGNMENT"
-                            ? "warning"
-                            : "info"
-                        }
-                      >
-                        {item.kind ===
-                        "ASSIGNMENT"
-                          ? "Assignment"
-                          : "Quiz"}
-                      </StatusBadge>
-                      <StatusBadge
-                        tone={state.tone}
-                      >
-                        {state.label}
-                      </StatusBadge>
-                    </div>
-                    <h2 className="mt-2 break-words text-base font-semibold text-foreground">
-                      {item.title}
-                    </h2>
-                    <p className="mt-1 text-sm text-body">
-                      {item.courseName} ·{" "}
-                      {item.lessonName}
-                    </p>
-                    <p className="mt-2 text-xs text-muted-foreground">
-                      {item.kind==="ASSIGNMENT"&&!item.dueAt
-                        ? `Created: ${formatDate(item.createdAt)}`
-                        : item.dueAt
-                          ? `Due ${formatDate(item.dueAt)}`
-                          : "No deadline"}
-                    </p>
-                    {item.kind === "ASSIGNMENT" ? (
-                      <p className="mt-2 break-words text-xs font-semibold text-body md:hidden"
-                        role="status">
-                        {learnerAssignmentMobileState(item,currentNowMs).label}
-                        {" · "}{learnerAssignmentMobileState(item,currentNowMs).detail}
-                      </p>
-                    ) : null}
-                    {item.kind === "QUIZ" ? (
-                      <p role="status"
-                        className="mt-2 break-words text-xs font-semibold text-body md:hidden">
-                        {learnerQuizMobileState(item,currentNowMs).label}
-                        {" · "}{learnerQuizMobileState(item,currentNowMs).detail}
-                      </p>
-                    ) : null}
-                    {item.description ? (
-                      <p className="mt-2 max-w-prose line-clamp-2 text-sm leading-[22px] text-body">
-                        {item.description}
-                      </p>
-                    ) : null}
-                  </div>
-
-                  <div className="flex w-full min-w-0 flex-col items-stretch gap-2 md:w-auto md:shrink-0 md:items-end">
-                    <span className="text-xs font-semibold text-muted-foreground">
-                      {item.kind ===
-                      "ASSIGNMENT"
-                        ? `${item.maxPoints} points`
-                        : `${item.totalPoints} points · ${item.attemptsUsed}/${item.maxAttempts} attempts`}
-                    </span>
-                    {item.kind === "ASSIGNMENT" ? (
-                      <Button
-                        type="button"
-                        onClick={() =>
-                          setSelectedAssignmentKey(
-                            `${item.deliveryId}:${item.id}`,
-                          )
-                        }
-                        className="min-h-11 w-full md:w-auto"
-                      >
-                        {state.action}
-                      </Button>
-                    ) : (
-                      <Link
-                        href={href}
-                        className="inline-flex min-h-11 md:min-h-9 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-button-primary)] bg-[var(--lms-button-primary)] px-4 text-sm font-[650] text-[var(--lms-on-primary)] transition-colors hover:border-[var(--lms-button-primary-hover)] hover:bg-[var(--lms-button-primary-hover)] focus-visible:outline-[3px] focus-visible:outline-offset-[3px] focus-visible:outline-[rgba(38,186,199,0.35)] md:w-auto"
-                      >
-                        {state.action}
-                      </Link>
-                    )}
-                    {item.kind === "QUIZ" ? (
-                      <Link
-                        href={"/learn/allQuizzes/" + encodeURIComponent(item.id) + "?deliveryId=" + encodeURIComponent(item.deliveryId)}
-                        className="inline-flex min-h-11 w-full items-center justify-center text-xs font-semibold text-primary-text underline hover:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary)] md:min-h-9 md:w-auto"
-                      >
-                        Attempt history
-                      </Link>
-                    ) : null}
-                  </div>
+        <div role="region" className={legacyStyles.list} aria-label="Assignment list">
+          {paged.map(item=>{
+            if(item.kind!=="ASSIGNMENT")return null;
+            const state=assignmentOverviewState(item,currentNowMs);
+            return <article key={item.deliveryId+":"+item.id} className={legacyStyles.row}>
+              <button type="button" className={legacyStyles.hitTarget}
+                aria-label={"View assignment: "+(item.title.trim()||"Untitled")}
+                onClick={()=>setSelectedAssignmentKey(item.deliveryId+":"+item.id)}/>
+              <div className={legacyStyles.iconWrap} aria-hidden="true">
+                <svg width="22" height="22" viewBox="0 0 24 24"
+                  fill="none" stroke="currentColor" strokeWidth="1.65"
+                  strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M7 2h8l5 5v14H4V2h3Zm8 0v5h5M8 11h8M8 15h8M8 19h5"/>
+                </svg>
+              </div>
+              <div className={legacyStyles.content}>
+                <h2 className={legacyStyles.title}>{item.title.trim()||"Untitled"}</h2>
+                <div className={legacyStyles.meta}>
+                  <span>{item.courseName}</span>
+                  <span aria-hidden="true">·</span>
+                  <span>{item.dueAt?"Due "+formatDate(item.dueAt):
+                    "Created: "+formatDate(item.createdAt)}</span>
                 </div>
-              </article>
-            );
+                <span className={legacyStyles.state} data-tone={state.tone}>
+                  {state.label}
+                </span>
+              </div>
+              <span className={legacyStyles.cta} aria-hidden="true">
+                {state.action} →
+              </span>
+            </article>;
           })}
         </div>
         ) : null}
