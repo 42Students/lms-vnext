@@ -6,12 +6,11 @@
   "summary": {
     "total": 45,
     "mapped": 10,
-    "redesigned": 16,
+    "redesigned": 18,
     "retired": 0,
-    "missing": 19
+    "missing": 17
   },
   "missingGapNotes": [
-    "NotificationController unread/unread-count (2): no dedicated /unread or /unread-count endpoint in vNext; read state tracked differently via stream/SSE",
     "NotificationController clear-all/delete/{id} (2): vNext has [notificationId]/delete but no clear-all bulk endpoint",
     "NotificationController preferences (1): no notification preferences endpoint in vNext",
     "AdminNotificationDeliveryController full (6): /api/v1/admin/notification-delivery/* — no vNext admin delivery management panel (send, broadcast, logs, stats, retry, failed)",
@@ -38,23 +37,23 @@
       "legacyController": "NotificationController",
       "legacyMethod": "GET",
       "legacyPath": "/api/v1/notifications/unread",
-      "disposition": "MISSING",
-      "vNextPath": null,
-      "vNextMethod": null,
-      "authGuard": "isSameOriginRequest",
+      "disposition": "REDESIGNED",
+      "vNextPath": "src/app/api/notifications/route.ts",
+      "vNextMethod": "GET",
+      "authGuard": "getCurrentRequestContext",
       "tenantScoped": true,
-      "notes": "No dedicated unread list endpoint; vNext uses stream/SSE for real-time unread state"
+      "notes": "Authenticated recipient-scoped GET /api/notifications?unreadOnly=true; listOwnNotifications(context) validates the current identity and returns bounded unread items with private no-store response."
     },
     {
       "legacyController": "NotificationController",
       "legacyMethod": "GET",
       "legacyPath": "/api/v1/notifications/unread-count",
-      "disposition": "MISSING",
-      "vNextPath": null,
-      "vNextMethod": null,
-      "authGuard": "isSameOriginRequest",
+      "disposition": "REDESIGNED",
+      "vNextPath": "src/app/api/notifications/route.ts",
+      "vNextMethod": "GET",
+      "authGuard": "getCurrentRequestContext",
       "tenantScoped": true,
-      "notes": "No unread-count endpoint; count derived client-side from stream events"
+      "notes": "Authenticated GET /api/notifications?view=stats; countOwnUnreadNotifications(context) returns data.unread from persisted notifications, private no-store; never infers from SSE events."
     },
     {
       "legacyController": "NotificationController",

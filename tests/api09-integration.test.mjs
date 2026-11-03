@@ -15,7 +15,7 @@ const { summary, endpoints, missingGapNotes } = crosswalk;
 
 const FROZEN_SHA = "21bad59d4dfaf2fa11fdeaf9353327ce105697d5";
 const EXPECTED_TOTAL = 45;
-const EXPECTED_MISSING = 19;
+const EXPECTED_MISSING = 17;
 
 test("API-09 crosswalk summary integrity", () => {
   assert.equal(crosswalk.milestoneId, "API-09");
@@ -90,7 +90,7 @@ test("API-09 tenant-scoped notification routes use college context", () => {
   }
 });
 
-test("API-09 19 missing endpoints documented with gap reasons", () => {
+test("API-09 remaining 17 missing endpoints documented with gap reasons", () => {
   const missing = endpoints.filter(e => e.disposition === "MISSING");
   assert.equal(missing.length, EXPECTED_MISSING,
     `Expected ${EXPECTED_MISSING} MISSING entries, got ${missing.length}`);
@@ -137,4 +137,30 @@ test("API-09 discussions redesign note present (scoped to course deliveries)", (
 test("API-09 frozen legacy SHA matches expected", () => {
   assert.equal(crosswalk.frozenLegacySha, FROZEN_SHA,
     "frozenLegacySha must match canonical value");
+});
+
+test("API-09 unread list and stats are authenticated persisted-query redesigns", () => {
+  const routePath = "src/app/api/notifications/route.ts";
+  const src = fs.readFileSync(path.join(root,routePath),"utf8");
+  const lookup = suffix => endpoints.find(e =>
+    e.legacyMethod==="GET" && e.legacyPath==="/api/v1/notifications/"+suffix);
+  for(const suffix of ["unread","unread-count"]){
+    const row=lookup(suffix);
+    assert.ok(row,"missing legacy notification "+suffix);
+    assert.equal(row.disposition,"REDESIGNED");
+    assert.equal(row.vNextPath,routePath);
+    assert.equal(row.vNextMethod,"GET");
+    assert.equal(row.authGuard,"getCurrentRequestContext");
+    assert.equal(row.tenantScoped,true);
+    assert.ok(row.notes.includes("no-store"));
+  }
+  // The query-backed contracts are real, not cosmetic aliases or SSE guesses.
+  for(const fragment of [
+    "await getCurrentRequestContext()",
+    'params.get("unreadOnly")==="true"',
+    'if(view==="stats")',
+    "await countOwnUnreadNotifications(context)",
+    "await listOwnNotifications(",
+    '"Cache-Control":"private, no-store"',
+  ])assert.ok(src.includes(fragment),"Missing notification auth/data contract: "+fragment);
 });
