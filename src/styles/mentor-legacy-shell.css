@@ -156,6 +156,9 @@
   .lms-shell-frame[data-prototype-portal="mentor"] .lms-shell-page-main {
     max-width: none;
     padding: 16px 24px 28px;
+    /* Tailwind responsive py-[--lms-space-6] otherwise adds an extra 16px
+       above the old screenshot's canvas. Constrain only Mentor desktop. */
+    padding-top: 16px !important;
   }
   .lms-shell-frame[data-prototype-portal="mentor"] header[aria-label="Application top bar"] {
     position: sticky;
