@@ -112,6 +112,55 @@ export async function capture(opts) {
     const status = response?.status() ?? null;
     const content = await page.locator("body").innerText().catch(() => "");
     const badStatus = status === null || status >= 400 || /\/(?:login|forbidden)(?:\/|$)/.test(new URL(actual).pathname);
+    // Per-element geometry proof to diagnose location, density and wrapping,
+    // independently of pixel differences (which can include anti-aliasing noise).
+    const geometry = await page.evaluate(() => {
+      const landmarks = {
+        sidebar: 'aside[data-slot="legacy-sidebar"]',
+        topbar: 'header',
+        shellMain: 'main#lms-main-content',
+        canvas: '[data-slot="page-canvas"]',
+        pageHeading: 'h1',
+        table: 'table',
+        overlay: '[role="dialog"]',
+      };
+      const measured = {};
+      for (const [name, selector] of Object.entries(landmarks)) {
+        const el = document.querySelector(selector);
+        if (!el) continue;
+        const box = el.getBoundingClientRect();
+        const css = getComputedStyle(el);
+        measured[name] = {
+          x: box.x, y: box.y, width: box.width, height: box.height,
+          fontFamily: css.fontFamily, fontSize: css.fontSize,
+          fontWeight: css.fontWeight, lineHeight: css.lineHeight,
+          borderRadius: css.borderTopLeftRadius, background: css.backgroundColor,
+        };
+      }
+      const suspects = [...document.querySelectorAll(
+        "section,article,p,li,h2,h3,td,th"
+      )].filter(el => {
+        const rect = el.getBoundingClientRect();
+        const css = getComputedStyle(el);
+        const text = (el.textContent || "").trim();
+        return rect.width > 0 && rect.width < 48 &&
+          rect.height > 80 && text.length > 30 &&
+          css.visibility !== "hidden" && css.display !== "none";
+      }).slice(0, 15).map(el => {
+        const box = el.getBoundingClientRect();
+        return { element: el.tagName.toLowerCase(),
+          width: box.width, height: box.height,
+          textSample: (el.textContent || "").trim().slice(0, 60) };
+      });
+      return {
+        landmarks: measured,
+        documentWidth: document.documentElement.scrollWidth,
+        viewportWidth: innerWidth,
+        horizontalOverflow: Math.max(0, document.documentElement.scrollWidth - innerWidth),
+        documentHeight: document.documentElement.scrollHeight,
+        narrowTextSuspects: suspects,
+      };
+    });
     const captureBuffer = await page.screenshot({
       fullPage: opts["full-page"] === true,
       animations: "disabled",
@@ -137,6 +186,7 @@ export async function capture(opts) {
         reducedMotion: "reduce",
       },
       statePathProvided: Boolean(opts.state),
+      geometry,
       pageErrors: consoleErrors,
       failedRequests: requestFailures,
       apparentErrorText: /(?:failed to load|something went wrong|internal server error)/i.test(content.slice(0, 2000)),
