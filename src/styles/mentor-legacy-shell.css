@@ -27,6 +27,12 @@
   border-radius: 12px;
   box-shadow: none;
 }
+/* Legacy Meetings begins immediately after the header divider; the
+ * inherited space-y-6 introduced an extra 24px before the first section. */
+.lms-shell-frame[data-prototype-portal="mentor"]
+  .prototype-mentor-calendar-heading + .prototype-mentor-meetings-surface {
+  margin-top: 0;
+}
 .lms-shell-frame[data-prototype-portal="mentor"] [data-slot="page-header"] {
   width: 100%;
   margin: 0 0 16px;
