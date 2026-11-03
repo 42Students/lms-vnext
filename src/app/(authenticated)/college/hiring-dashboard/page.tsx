@@ -1,6 +1,6 @@
 import { Alert } from "@/components/ui/alert";
 import { AuthorizationError } from "@/modules/permissions/policy";
-import { logError } from "@/observability/logger";
+import { reportPageReadFailure } from "@/observability/page-read-failure";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { hasMembershipRole } from "@/modules/identity/context";
 import { PageHeader } from "@/components/ui/page-header";
@@ -71,9 +71,14 @@ export default async function CollegeHiringDashboardPage({
     throw funnelResult.reason;
   // Static route tags make operational failures attributable without logging
   // search filters, student/company identifiers or other request data.
-  const pageLogFields={component:"page",route:"/college/hiring-dashboard"};
-  if(workspaceResult.status==="rejected")logError("college.hiring_report_failed",workspaceResult.reason,pageLogFields);
-  if(funnelResult.status==="rejected")logError("college.hiring_funnel_failed",funnelResult.reason,pageLogFields);
+  if(workspaceResult.status==="rejected")
+    reportPageReadFailure({
+      event:"college.hiring_report_failed",route:"/college/hiring-dashboard",stage:"report_workspace",
+    },workspaceResult.reason);
+  if(funnelResult.status==="rejected")
+    reportPageReadFailure({
+      event:"college.hiring_funnel_failed",route:"/college/hiring-dashboard",stage:"hiring_funnel",
+    },funnelResult.reason);
   const workspace=workspaceResult.status==="fulfilled"?workspaceResult.value:null;
   const funnel=funnelResult.status==="fulfilled"?funnelResult.value:null;
   return <div className="min-w-0 overflow-x-clip space-y-[var(--lms-space-4)]">
