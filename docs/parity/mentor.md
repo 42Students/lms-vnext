@@ -1684,3 +1684,25 @@ The learner final-draft form now preserves existing validated 0091 FILE entries 
 - Still required to close `mentor-001`: authenticated 1280×800 candidate capture with matched fixture data; old-vNext overlay and pixel-region evaluation; compare shell/sidebar/topbar/canvas and the exact alternate overlay states; mobile and keyboard disclosure checks; validate authorized meeting action workflows; record tested SHA and evidence links. Until this happens, leave the package and Mentor account parity open.
 - Current captured baseline is not the current live candidate: the vNext reference screenshots were taken at `7acef7ec`, and later commits have changed the UI.
 
+
+
+## 2026-11-03 Mentor Meetings source-backed capability audit — current strategy
+
+**Governing rule:** [Legacy Capability & UI-Surface Parity Standard](../planning/legacy-capability-parity-standard.md). Pixel matching, old shell CSS and card geometry are **not** acceptance criteria. Use screenshots to discover actions, then old FE/BE source and vNext executed behavior to prove them. The separate historical screenshot difference (26.06% for a prior Mentor candidate) is **not a missing-functionality score**.
+
+**Pinned historical screenshot evidence:** `parity-baseline/packages/mentor-001.md`, screenshot reference root `b4f9bdd5767f484169d6da14f615aa9b65a5f265`. This screenshot is not an exhaustive state inventory; FE/BE oracle SHAs must be refreshed before final family VERIFICATION.
+
+| Required user job / state | Old source evidence | vNext mapping | Proof / remaining gate |
+| --- | --- | --- | --- |
+| Show meetings across assigned Mentor projects | `docs/legacy-source/frontend/src/pages/mentor/calendar.js` getProjects / flatten meetingsList | `src/app/(authenticated)/mentor/calendar/page.tsx` service + `MentorMeetingsCalendar` | Current role-scoped listing present; exact authorized cross-project producer test still required |
+| Keep overdue REQUESTED items actionable in Upcoming | old `REQUESTED` special case | `splitMentorMeetings` | `tests/unit/w03-mentor-calendar.test.ts` source contract; executed regression required at new PR SHA |
+| Show historical/cancelled items separately and expand beyond preview | old `PAST_MEETINGS_PREVIEW_COUNT=20` | `splitMentorMeetings` plus show-all in vNext list | Source mapped; large-populated browser state remains open |
+| Deep-link each meeting to its assigned project | old `/mentor/projects/{id}?tab=team` | vNext `Open project` link | PR #221 adds a real seeded browser click/navigate assertion; not VERIFIED until executed |
+| Do not show unsafe or cancelled join links | old `meetingStatus !== CANCELLED` and HTTPS scheme | `safeMentorMeetingJoinUrl` + scoped link; source/positive-negative tests | `tests/unit/w03-mentor-calendar.test.ts`; PR #221 adds negative browser visibility on REQUESTED/COMPLETED |
+| Display instants in **viewer browser timezone** | old `dayjs.tz.guess()`, organizer timezone → viewer timezone | PR #221 adds `mentor-calendar-viewer-time-model.ts` with post-hydration viewer zone | New tests for IST/UTC/NY DST/midnight + browser New York. This was a **real behavior difference** from vNext's previously fixed IST labels |
+| Keyboard-accessible meeting details/scheduling | old links + page semantics; vNext adds richer controls | visible Upcoming/Past and advanced disclosures + request actions | PR #221 browser keyboard checks and action retention; old-state behavior still reviewed separately |
+| Desktop/mobile and loading/error/empty | old skeleton, retry and empty states | vNext role page, empty/error UI and responsive list | E2E desktop/mobile; error/retry and cross-role negative cases still require coverage |
+
+**Current disposition:** *PARTIAL / implementation and tests in PR #221, no final family closure asserted.* Do not re-open old visual-clone tasks merely because screenshots differ. Do not call the Mentor account VERIFIED until all required source states, module/role/tenant negative behavior, real meeting authoring/decision producer→consumer flows and exact-SHA evidence are complete. The existing checkboxes above remain open unless their own gates are actually proven.
+
+**Parallel execution instruction:** Prefer another genuine missing action with an executable acceptance test over CSS pixel polishing. Keep original screenshot archive immutable and update existing account/feature ledgers rather than creating a second tracker.

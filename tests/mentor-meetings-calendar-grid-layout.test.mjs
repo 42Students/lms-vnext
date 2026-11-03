@@ -32,23 +32,19 @@ const pageSource = readFileSync(
   "utf8",
 );
 
-test("default meeting page restores old LMS Upcoming and Past & Cancelled lists", () => {
-  assert.match(component, /className=\{styles\.legacyCalendar\}/);
+test("Mentor meeting source keeps distinct upcoming, historical and deep-link user jobs", () => {
   assert.match(component, /Upcoming \(\{upcoming\.length\}\)/);
   assert.match(component, /Past &amp; Cancelled \(\{past\.length\}\)/);
   assert.match(component, /No upcoming meetings\./);
   assert.match(component, /No past meetings yet\./);
   assert.match(component, /Open project/);
-  assert.match(component, /className=\{styles\.legacyMeetingRow\}/);
-  assert.match(css, /\.legacyMeetingRow\s*\{[^}]*flex-direction:\s*column/);
+  assert.match(component, /setExpanded\(value=>!value\)/);
 });
 
-test("new meeting controls remain reachable through native details disclosures", () => {
-  assert.match(component, /<details className=\{styles\.advancedCalendarTools\}>/);
+test("advanced meeting functions remain accessible instead of disappearing in a redesign", () => {
   assert.match(component, /Meeting filters and calendar tools/);
   assert.match(component, /Add to my calendar \(\.ics\)/);
   assert.match(component, /Meeting details/);
-  assert.match(pageSource, /<details className="min-w-0 text-sm">/);
   assert.match(pageSource, /Scheduling and Google Calendar/);
   assert.match(pageSource, /<MentorCalendarQuickSchedule projects=\{choices\}/);
   assert.match(pageSource, /<MentorGoogleCalendarAccount \{\.\.\.googleConnection\}/);
