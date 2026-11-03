@@ -1,6 +1,6 @@
 # Old LMS vs vNext screenshots
 
-**Execution plan:** [PIXEL_PARITY_MASTER_PLAN.md](PIXEL_PARITY_MASTER_PLAN.md) — detailed, triple-audited visual matching strategy and strict evidence-based acceptance gates. The owner requested that the plan itself be documented here; the screenshot images and original package reference files remain read-only.
+**Execution plan:** [PIXEL_PARITY_MASTER_PLAN.md](PIXEL_PARITY_MASTER_PLAN.md) — detailed, triple-audited visual matching strategy and strict evidence-based acceptance gates.\n\n**First execution audit:** [INITIAL_BASELINE_AUDIT_2026-11-03.md](INITIAL_BASELINE_AUDIT_2026-11-03.md) — verified image/package counts, coverage gaps, first pilot findings, and draft implementation links. The owner requested that the plan itself be documented here; the screenshot images and original package reference files remain read-only.
 
 Reference images for matching vNext to the old LMS. Captured 2026-11-03 at 1280x800. Do not merge this branch into `main`.
 
