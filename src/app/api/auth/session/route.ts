@@ -8,6 +8,7 @@ import {
 } from "@/auth/e2e-identity";
 import {
   MEMBERSHIP_COOKIE_NAME,
+  ROLE_COOKIE_NAME,
   SESSION_COOKIE_NAME,
 } from "@/auth/session";
 import { logError } from "@/observability/logger";
@@ -57,6 +58,7 @@ export async function DELETE(request: Request) {
   for (const name of [
     SESSION_COOKIE_NAME,
     MEMBERSHIP_COOKIE_NAME,
+    ROLE_COOKIE_NAME,
     ADMIN_SCOPE_COOKIE_NAME,
     E2E_IDENTITY_COOKIE_NAME,
     E2E_SECRET_COOKIE_NAME,
