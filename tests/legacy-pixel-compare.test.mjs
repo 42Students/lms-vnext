@@ -5,7 +5,7 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { spawnSync } from "node:child_process";
 import { fileURLToPath } from "node:url";
-import { compareImages, decodePng, encodePng } from "../scripts/audit/legacy-pixel-compare.mjs";
+import { compareImages, decodePng, encodePng, sideBySideImages } from "../scripts/audit/legacy-pixel-compare.mjs";
 
 const CLI = fileURLToPath(new URL("../scripts/audit/legacy-pixel-compare.mjs", import.meta.url));
 const pixel = (width, height, rgba = [255, 255, 255, 255]) => ({
@@ -89,6 +89,13 @@ test("a small justified dynamic mask is allowed, but large masks and missing rea
   );
 });
 
+test("side-by-side diagnostic preserves both widths without resizing", () => {
+  const panel = sideBySideImages(pixel(3, 2), pixel(5, 4));
+  assert.equal(panel.width, 20);
+  assert.equal(panel.height, 4);
+  assert.equal(decodePng(encodePng(panel)).width, 20);
+});
+
 test("bad CRC or unsupported PNG input fails rather than silently reporting parity", () => {
   const valid = encodePng(pixel(2, 2));
   const corrupted = Buffer.from(valid);
@@ -115,6 +122,7 @@ test("CLI writes overlay/diff/report and uses exit code 1 for a visual mismatch"
     assert.equal(report.pass, false);
     assert.equal(existsSync(join(out, "overlay.png")), true);
     assert.equal(existsSync(join(out, "diff.png")), true);
+    assert.equal(existsSync(join(out, "side-by-side.png")), true);
     assert.equal(decodePng(readFileSync(join(out, "overlay.png"))).width, 16);
     const second = spawnSync(process.execPath, [CLI, "--old", oldFile,
       "--new", oldFile, "--out", join(dir, "same")], { encoding: "utf8" });
