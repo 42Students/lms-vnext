@@ -37,7 +37,10 @@ test.describe("Old LMS Mentor Meetings visual candidate",()=>{
       expect(response?.status()).toBe(200);
       await expect(page.getByRole("heading",{level:1,name:"Meetings"})).toBeVisible();
       await expect(page.getByRole("heading",{level:2,name:/^Upcoming \(\d+\)$/})).toBeVisible();
-      await expect(page.getByRole("heading",{level:2,name:/^Past & Cancelled \(\d+\)$/})).toBeVisible();
+      await expect(page.getByRole("heading",{level:2,name:"Upcoming (1)"})).toBeVisible();
+      await expect(page.getByRole("heading",{level:2,name:"Past & Cancelled (1)"})).toBeVisible();
+      await expect(page.getByText("87g",{exact:true})).toBeVisible();
+      await expect(page.getByText("Sprint 46 Review & Retrospective",{exact:true})).toBeVisible();
       const primary=page.getByLabel("Meetings list");
       await expect(primary).toBeVisible();
       // Old reference was captured with the icon rail collapsed. Do not
@@ -71,6 +74,7 @@ test.describe("Old LMS Mentor Meetings visual candidate",()=>{
           rowCount:document.querySelectorAll("[aria-label='Meetings list'] article").length,
         };
       });
+      expect(observed.rowCount).toBe(2);
       expect(observed.viewportWidth).toBe(1280);
       expect(observed.contentWidth).toBeLessThanOrEqual(1281);
       expect(observed.sidebar).not.toBeNull();
