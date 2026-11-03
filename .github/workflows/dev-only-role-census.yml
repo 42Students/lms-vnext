@@ -1,0 +1,30 @@
+name: Legacy dev-only role census and tracker gate
+
+on:
+  pull_request:
+    paths:
+      - ".github/workflows/dev-only-role-census.yml"
+      - "docs/tracker.json"
+      - "docs/planning/account-surface-parity.md"
+      - "docs/audit/legacy-dev-census/2026-11-03-role-delta.json"
+      - "tests/dev-only-role-source-census.test.mjs"
+      - "tests/tracker.test.mjs"
+      - "tests/closure-first-protocol.test.mjs"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  role-census:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Validate canonical task dependency and acceptance contracts
+        run: |
+          node scripts/tracker.mjs --check
+          node --test tests/tracker.test.mjs tests/closure-first-protocol.test.mjs tests/dev-only-role-source-census.test.mjs

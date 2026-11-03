@@ -19,7 +19,7 @@ const accepted = (id, extras={}) => ({
   ...extras,
 });
 
-test('sole tracker validates all 101 tasks, database 81 and the original core 11',()=>{
+test('sole tracker validates 104 tasks with dev-only UI roles while preserving original database 81 and core 11',()=>{
   const x=inspectTracker(actual);
   assert.deepEqual(x.errors,[]);
   const done = actual.tasks.filter(t => t.phase==='DATABASE'&&t.done).length;
@@ -27,10 +27,12 @@ test('sole tracker validates all 101 tasks, database 81 and the original core 11
   // inspectTracker deliberately reports DB task counts; API/UI package flags
   // are tracked separately and cannot certify these database-only gates.
   assert.deepEqual(x.counts,{total:81,done,notDone:81-done});
-  assert.equal(actual.tasks.length,101);
+  assert.equal(actual.tasks.length,104);
+  assert.deepEqual(actual.tasks.filter(t=>!t.done).map(t=>t.id),['UI-11','UI-12','UI-13']);
   assert.equal(actual.tasks.filter(t=>t.phase==='DATABASE').length,81);
   assert.equal(actual.tasks.filter(t=>t.phase==='API').length,10);
-  assert.equal(actual.tasks.filter(t=>t.phase==='UI').length,10);
+  assert.equal(actual.tasks.filter(t=>t.phase==='UI').length,13);
+  assert.equal(actual.execution.milestones.filter(m=>m.stage==='UI').length,13);
   assert.deepEqual(x.core,{total:11,done:coreDone,notDone:11-coreDone});
   assert.deepEqual(x.coreRemaining.map(t => t.id),
     CORE_ELEVEN.filter(id => !actual.tasks.find(t => t.id === id)?.done));
