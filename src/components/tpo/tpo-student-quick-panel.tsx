@@ -48,7 +48,7 @@ export function TpoStudentQuickPanel({student,rows,onNavigate,onClose,recordedOu
    if(controller.signal.aborted||activeLoad.current!==controller)return;
    if(!body?.student)throw Error("We couldn\'t open this student");
    setStoredDetail({studentId:student.membershipId,value:body as PanelDetail});
-  }catch(e){
+  }catch{
    if(!controller.signal.aborted&&activeLoad.current===controller)
     setError("We couldn\'t open this student");
   }finally{

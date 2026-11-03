@@ -91,7 +91,7 @@ export function FacultySubmissionFileReview({ submissionId }: { submissionId: st
       document.body.append(link);
       link.click();
       link.remove();
-    } catch (cause) {
+    } catch {
       if (!controller.signal.aborted) setError("Unable to load this submitted file");
     } finally {
       downloadRef.current = false;

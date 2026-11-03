@@ -464,7 +464,7 @@ export function LearnerCourseDiscussion({
       setHighlightedPinned((current) => current?.id === messageId ? null : current);
       setDeleteTarget(null);
       await load(true);
-    } catch(e) {
+    } catch {
       showOperationError("Failed to delete message.");
     } finally {
       setDeletingId(null);
@@ -505,7 +505,7 @@ export function LearnerCourseDiscussion({
         );
       }
       await load(true);
-    } catch(e) {
+    } catch {
       showOperationError("Failed to update pin state.");
     } finally {
       setPinningId(null);

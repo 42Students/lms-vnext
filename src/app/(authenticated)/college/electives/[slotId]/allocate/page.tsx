@@ -209,7 +209,7 @@ export default async function CollegeElectiveAllocatePage({
         if(membership.state==="ACTIVE")added++;
         else if(membership.state==="WAITLISTED")waitlisted++;
         else skipped++;
-      } catch (error) {
+      } catch {
         failed++;
         if (!reason) reason = "Some students could not be allocated. Review their eligibility and the available seats.";
       }

@@ -499,7 +499,7 @@ export function ScheduleProjectMeetingControl({
         title:"Meetings updated",
       });
       router.refresh();
-    } catch(reason) {
+    } catch {
       // Never surface provider/DB exception text; the draft remains editable.
       setError("Could not schedule this meeting. Review its latest details and try again.");
     } finally {

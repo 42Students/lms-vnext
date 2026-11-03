@@ -68,7 +68,7 @@ export async function outboundFetch(url: string, options: OutboundOptions = {}):
       await response.body?.cancel();
       logInfo("outbound.retry", { requestId, attempt, status: response.status,
         circuitBreaker: "bounded retries; configure provider-specific breaker on persistent outage" });
-    } catch (error: unknown) {
+    } catch {
       if (init.signal?.aborted) throw new OutboundUnavailableError(requestId);
       if (attempt === attempts) {
         /** GR-50: never record raw provider exceptions (which may embed OTPs, credentials, or recipients). */

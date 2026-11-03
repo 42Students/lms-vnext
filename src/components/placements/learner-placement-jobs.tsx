@@ -345,7 +345,7 @@ function JobActions({
             : "Your application is now with the placement team.",
       });
       router.refresh();
-    } catch (error) {
+    } catch {
       // POST failure, timeout or dropped response does not prove no write.
       // Reconcile the learner's own persisted application before permitting retry.
       const checkedState=await checkOwnPlacementApplication(job.id,roleOption.id);

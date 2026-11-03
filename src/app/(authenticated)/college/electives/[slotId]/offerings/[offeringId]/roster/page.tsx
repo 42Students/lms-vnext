@@ -179,7 +179,7 @@ export default async function ElectiveRoster({
         await leaveGroup(context, offering.groupId, membershipId, "MANUAL");
         outcome = "REMOVED";
       } else error = "Unsupported action";
-    } catch (cause) {
+    } catch {
       error = "Could not update this student. Check eligibility and capacity, then try again.";
     }
     redirect(back + (error ? "?error=" + encodeURIComponent(error) : "?updated=" + encodeURIComponent(outcome)));
@@ -216,7 +216,7 @@ export default async function ElectiveRoster({
       } else if (form.get("action") === "END") {
         await endCourseTeachingAssignment(context, uuid.parse(String(form.get("assignmentId") ?? "")));
       } else throw new Error("Unsupported teaching action");
-    } catch (cause) {
+    } catch {
       error = "Could not update all faculty assignments. Refresh the roster to check which changes saved before trying again.";
     }
     redirect(back + (error ? "?error=" + encodeURIComponent(error) : "?updated=faculty"));

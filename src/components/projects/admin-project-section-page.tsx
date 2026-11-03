@@ -123,7 +123,7 @@ export async function AdminProjectSectionPage({
   let workspace: Awaited<ReturnType<typeof getProjectWorkspaceView>>;
   try {
     workspace = await getProjectWorkspaceView(context, projectId);
-  } catch (error) {
+  } catch {
     // A summary/snapshot outage must not take away the entire Audit workspace.
     // The project management permission and tenant scope were checked above.
     if(section!=="audit"){
