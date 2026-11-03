@@ -29,7 +29,7 @@ import {Alert} from "@/components/ui/alert";
 import {InlineNotice} from "@/components/ui/inline-notice";
 import {EmptyState} from "@/components/ui/empty-state";
 import {hasMembershipRole} from "@/modules/identity/context";
-import {AuthorizationError} from "@/modules/permissions/policy";
+
 import {requirePersistedTpoMembership} from "@/modules/placements/tpo-persisted-actor-service";
 import {placementTableExists} from "@/modules/placements/staged-tables";
 import {listTpoPlacementAnnouncements,countUnreadTpo42Announcements} from "@/modules/announcements/tpo-placement-read-service";
@@ -177,8 +177,7 @@ export default async function TpoAnnouncements({searchParams}:Props){
   {result.status==="FAILED"?<Alert tone="error">
    <h2 className="font-semibold text-foreground">Couldn't load announcements</h2>
    <p className="mt-2 text-sm text-body">Announcements could not be loaded. Your filters are unchanged.</p>
-   <Link href={"/tpo/announcements?"+new URLSearchParams({tab:tab.data,page:String(page),...(showTeam?{mine:"0"}:{})}).toString()}
-    className="mt-2 inline-flex min-h-11 items-center font-semibold text-[var(--lms-link-text)] underline md:min-h-9">Retry</Link>
+   <div className="mt-2"><CurrentPageRetry label="Retry loading announcements" /></div>
   </Alert>:result.status==="NOT_REGISTERED"?<Alert tone="warning">
    <h2 className="font-semibold text-foreground">Announcement storage pending</h2>
    <p className="mt-2 text-sm text-body">The announcements table has not been registered. No notices or audience counts are inferred from unrelated notifications.</p>
