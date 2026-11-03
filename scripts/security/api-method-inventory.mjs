@@ -188,6 +188,21 @@ if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.me
     fs.writeFileSync(out, JSON.stringify(report, null, 2) + "\n");
   }
   console.log(JSON.stringify(report.summary, null, 2));
+  // A triage list is not a declaration of exploitable routes: helper calls
+  // may enforce origin, worker signatures or session policy transitively.
+  if (process.argv.includes("--triage")) {
+    const candidates = report.methods.filter(m =>
+      (MUTATIONS.has(m.method) && !m.has_direct_origin_evidence) ||
+      !m.has_direct_session_evidence,
+    ).map(m => ({
+      route: m.route,
+      method: m.method,
+      direct_origin_evidence: m.has_direct_origin_evidence,
+      direct_session_evidence: m.has_direct_session_evidence,
+      implementation: m.implementation,
+    }));
+    console.log(JSON.stringify({ review_candidates: candidates }, null, 2));
+  }
   if (process.argv.includes("--enforce-new")) {
     const gaps = findNewMethodReviewGaps(report);
     for (const gap of gaps) console.error(JSON.stringify(gap));
