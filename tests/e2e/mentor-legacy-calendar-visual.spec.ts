@@ -39,8 +39,8 @@ test.describe("Old LMS Mentor Meetings visual candidate",()=>{
       await expect(page.getByRole("heading",{level:2,name:/^Upcoming \(\d+\)$/})).toBeVisible();
       await expect(page.getByRole("heading",{level:2,name:"Upcoming (1)"})).toBeVisible();
       await expect(page.getByRole("heading",{level:2,name:"Past & Cancelled (1)"})).toBeVisible();
-      await expect(page.getByText("87g",{exact:true})).toBeVisible();
-      await expect(page.getByText("Sprint 46 Review & Retrospective",{exact:true})).toBeVisible();
+      await expect(page.getByLabel("Upcoming meetings").getByText("87g",{exact:true})).toBeVisible();
+      await expect(page.getByLabel("Past and cancelled meetings").getByText("Sprint 46 Review & Retrospective",{exact:true})).toBeVisible();
       const primary=page.getByLabel("Meetings list");
       await expect(primary).toBeVisible();
       // Old reference was captured with the icon rail collapsed. Do not
