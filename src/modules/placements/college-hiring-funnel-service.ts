@@ -131,7 +131,7 @@ export async function getCollegeHiringFunnel(context:RequestContext,raw:unknown)
     select 1 from placement_college_application_stages stage_fact
     inner join placement_college_application_stage_history stage_event
       on stage_event.stage_id=stage_fact.id
-    where stage_fact.application_id=${base.applicationId}
+    where stage_fact.application_id="college_hiring_funnel_base"."id"
       and (stage_event.to_stage=${stage} or stage_event.from_stage=${stage})
    )
   )::integer`.mapWith(Number);
