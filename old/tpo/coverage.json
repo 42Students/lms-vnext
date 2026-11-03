@@ -1,0 +1,18 @@
+{
+  "role": "tpo",
+  "routesInSource": 27,
+  "reached": 24,
+  "notReached": [
+    "/tpo/companies",
+    "/tpo/drive-day/[roundId]",
+    "/tpo"
+  ],
+  "unlistedReached": [],
+  "blankPages": [],
+  "signedOutShots": [],
+  "loadFailedShots": [],
+  "skeletonShots": [],
+  "screenshots": 441,
+  "blockedWrites": 65,
+  "seconds": 349
+}

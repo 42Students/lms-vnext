@@ -1,0 +1,50 @@
+[
+  {
+    "role": "learner",
+    "images": 339,
+    "packages": 71,
+    "pagesOnBoth": 19,
+    "oldOnly": 0,
+    "vnextOnly": 17
+  },
+  {
+    "role": "faculty",
+    "images": 206,
+    "packages": 55,
+    "pagesOnBoth": 11,
+    "oldOnly": 0,
+    "vnextOnly": 20
+  },
+  {
+    "role": "mentor",
+    "images": 50,
+    "packages": 22,
+    "pagesOnBoth": 4,
+    "oldOnly": 0,
+    "vnextOnly": 17
+  },
+  {
+    "role": "tpo",
+    "images": 696,
+    "packages": 200,
+    "pagesOnBoth": 20,
+    "oldOnly": 4,
+    "vnextOnly": 91
+  },
+  {
+    "role": "admin",
+    "images": 1670,
+    "packages": 384,
+    "pagesOnBoth": 34,
+    "oldOnly": 45,
+    "vnextOnly": 63
+  },
+  {
+    "role": "coordinator",
+    "images": 208,
+    "packages": 51,
+    "pagesOnBoth": 0,
+    "oldOnly": 19,
+    "vnextOnly": 0
+  }
+]

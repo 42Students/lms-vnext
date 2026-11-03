@@ -1,0 +1,21 @@
+{
+  "role": "faculty",
+  "routesInSource": 14,
+  "reached": 10,
+  "notReached": [
+    "/teacher/contacts",
+    "/teacher/courses/[courseId]",
+    "/teacher/fileExplorer",
+    "/teacher"
+  ],
+  "unlistedReached": [],
+  "blankPages": [
+    "/quiz"
+  ],
+  "signedOutShots": [],
+  "loadFailedShots": [],
+  "skeletonShots": [],
+  "screenshots": 79,
+  "blockedWrites": 2,
+  "seconds": 84
+}

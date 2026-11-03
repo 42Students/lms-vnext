@@ -1,0 +1,32 @@
+{
+  "role": "faculty",
+  "routesInSource": 40,
+  "reached": 27,
+  "notReached": [
+    "/teacher/contacts",
+    "/teacher/courses/[deliveryId]/assessment-health",
+    "/teacher/courses/[deliveryId]/attendance-corrections",
+    "/teacher/courses/[deliveryId]/discussion-history",
+    "/teacher/courses/[deliveryId]/discussion-participation",
+    "/teacher/courses/[deliveryId]/gradebook",
+    "/teacher/courses/[deliveryId]/gradebook/[learnerMembershipId]",
+    "/teacher/courses/[deliveryId]/notices",
+    "/teacher/courses/[deliveryId]",
+    "/teacher/courses/[deliveryId]/reports",
+    "/teacher/fileExplorer",
+    "/teacher/report/assignment/[contentId]/grade",
+    "/teacher/report/quiz/[quizId]/attempts"
+  ],
+  "unlistedReached": [],
+  "httpErrors": [],
+  "blankPages": [],
+  "signedOutShots": [],
+  "loadFailedShots": [
+    "/quiz :: base",
+    "/quiz :: base__expand-1-Refresh-page"
+  ],
+  "skeletonShots": [],
+  "screenshots": 152,
+  "blockedWrites": 6,
+  "seconds": 199
+}

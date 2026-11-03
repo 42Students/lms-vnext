@@ -1,0 +1,37 @@
+{
+  "role": "mentor",
+  "routesInSource": 36,
+  "reached": 18,
+  "notReached": [
+    "/mentor/allQuizzes",
+    "/mentor/contacts/[[...contactsTab]]",
+    "/mentor/courses",
+    "/mentor/courses/[courseId]/[[...courseTab]]",
+    "/mentor/fileExplorer",
+    "/mentor",
+    "/mentor/profile",
+    "/mentor/projects/[projectId]/activity-history",
+    "/mentor/projects/[projectId]/board-review",
+    "/mentor/projects/[projectId]/closeout",
+    "/mentor/projects/[projectId]/deliveries/[submissionId]/review",
+    "/mentor/projects/[projectId]/learner-preview",
+    "/mentor/projects/[projectId]/meetings/legacy/[meetingKey]",
+    "/mentor/projects/[projectId]/resources-directory",
+    "/mentor/projects/[projectId]/review-completeness",
+    "/mentor/projects/[projectId]/review-overview",
+    "/mentor/projects/[projectId]/tasks/[taskId]/feedback",
+    "/mentor/projects/[projectId]/timeline"
+  ],
+  "unlistedReached": [],
+  "httpErrors": [],
+  "blankPages": [],
+  "signedOutShots": [],
+  "loadFailedShots": [
+    "/mentor/projects/proj-6-alternative-data-underwriting-f2237c37 :: base",
+    "/mentor/projects/proj-6-stage1-6-verification-project-f57ddf4a :: base"
+  ],
+  "skeletonShots": [],
+  "screenshots": 36,
+  "blockedWrites": 11,
+  "seconds": 92
+}

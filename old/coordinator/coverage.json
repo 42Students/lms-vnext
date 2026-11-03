@@ -1,0 +1,19 @@
+{
+  "role": "coordinator",
+  "routesInSource": 23,
+  "reached": 19,
+  "notReached": [
+    "/course-coordinator/courses/[courseId]/lessons/[lessonId]/live-classes",
+    "/course-coordinator/courses/[courseId]/lessons/[lessonId]/resources",
+    "/course-coordinator/courses/[courseId]/lessons/[lessonId]/videos",
+    "/course-coordinator"
+  ],
+  "unlistedReached": [],
+  "blankPages": [],
+  "signedOutShots": [],
+  "loadFailedShots": [],
+  "skeletonShots": [],
+  "screenshots": 231,
+  "blockedWrites": 0,
+  "seconds": 149
+}

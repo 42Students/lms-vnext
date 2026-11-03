@@ -1,0 +1,24 @@
+{
+  "role": "mentor",
+  "routesInSource": 13,
+  "reached": 4,
+  "notReached": [
+    "/mentor/allQuizzes",
+    "/mentor/contacts",
+    "/mentor/contacts/[contactsTab]",
+    "/mentor/courses",
+    "/mentor/courses/[courseId]",
+    "/mentor/courses/[courseId]/[...courseTab]",
+    "/mentor/fileExplorer",
+    "/mentor",
+    "/mentor/profile"
+  ],
+  "unlistedReached": [],
+  "blankPages": [],
+  "signedOutShots": [],
+  "loadFailedShots": [],
+  "skeletonShots": [],
+  "screenshots": 20,
+  "blockedWrites": 0,
+  "seconds": 30
+}

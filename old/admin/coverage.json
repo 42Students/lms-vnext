@@ -1,0 +1,20 @@
+{
+  "role": "admin",
+  "routesInSource": 60,
+  "reached": 55,
+  "notReached": [
+    "/college-admin",
+    "/college-admin/projects",
+    "/college-admin/projects/workspaces/[workspaceId]",
+    "/college-admin/student-groups/[id]",
+    "/college-admin/student-groups"
+  ],
+  "unlistedReached": [],
+  "blankPages": [],
+  "signedOutShots": [],
+  "loadFailedShots": [],
+  "skeletonShots": [],
+  "screenshots": 1567,
+  "blockedWrites": 79,
+  "seconds": 1423
+}

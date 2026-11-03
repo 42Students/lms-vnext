@@ -1,0 +1,36 @@
+{
+  "role": "learner",
+  "routesInSource": 48,
+  "reached": 33,
+  "notReached": [
+    "/learn/allAssignments/[assignmentId]",
+    "/learn/assignments",
+    "/learn/courses/[deliveryId]",
+    "/learn/courses/[deliveryId]/progress",
+    "/learn/groups/[groupId]",
+    "/learn/my-placements/applications/[applicationId]/company",
+    "/learn/my-placements/applications/[applicationId]/history",
+    "/learn/my-placements/applications/[applicationId]",
+    "/learn/my-placements/assessments",
+    "/learn/my-placements/calendar",
+    "/learn/my-placements/interviews",
+    "/learn/my-placements/rules",
+    "/learn",
+    "/learn/placements",
+    "/learn/quizzes"
+  ],
+  "unlistedReached": [],
+  "httpErrors": [],
+  "blankPages": [],
+  "signedOutShots": [],
+  "loadFailedShots": [
+    "/learn/my-placements/offers :: base",
+    "/learn/my-placements/offers :: base__expand-0-Search",
+    "/learn/my-placements/offers :: base__expand-2-Apply-sort",
+    "/quiz :: base"
+  ],
+  "skeletonShots": [],
+  "screenshots": 180,
+  "blockedWrites": 31,
+  "seconds": 215
+}

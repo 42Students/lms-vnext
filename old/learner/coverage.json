@@ -1,0 +1,23 @@
+{
+  "role": "learner",
+  "routesInSource": 24,
+  "reached": 18,
+  "notReached": [
+    "/learn/courses/[courseId]",
+    "/learn",
+    "/learn/my-placements/assessments",
+    "/learn/my-placements/calendar",
+    "/learn/my-placements/interviews",
+    "/learn/my-placements/rules"
+  ],
+  "unlistedReached": [],
+  "blankPages": [
+    "/quiz"
+  ],
+  "signedOutShots": [],
+  "loadFailedShots": [],
+  "skeletonShots": [],
+  "screenshots": 173,
+  "blockedWrites": 2,
+  "seconds": 166
+}
