@@ -4,6 +4,7 @@ import {privateAuthResponse} from "@/modules/auth/private-response";
 import { ADMIN_SCOPE_COOKIE_NAME } from "@/auth/admin-scope";
 import {
   MEMBERSHIP_COOKIE_NAME,
+  ROLE_COOKIE_NAME,
   SESSION_COOKIE_NAME,
 } from "@/auth/session";
 import {
@@ -131,6 +132,10 @@ export async function POST(request: Request) {
     });
     // Never carry a previous person's college or admin scope forward.
     response.cookies.set(ADMIN_SCOPE_COOKIE_NAME, "", {
+      ...base,
+      maxAge: 0,
+    });
+    response.cookies.set(ROLE_COOKIE_NAME, "", {
       ...base,
       maxAge: 0,
     });
