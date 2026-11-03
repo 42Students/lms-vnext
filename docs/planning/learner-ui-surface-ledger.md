@@ -1,3 +1,5 @@
+> **OWNER STRATEGY UPDATE — 2026-11-03:** Use [Legacy Capability & UI-Surface Parity Standard](legacy-capability-parity-standard.md). Every required Learner user job, action, modal, filter, state, permission and cross-role outcome needs functional evidence, but **exact old screenshot appearance is not a closure requirement**. A redesigned/consolidated vNext experience may pass if the required action is discoverable, correctly authorized and works. Keep historical pixel captures only to find missing behavior; do not downgrade better vNext UX to imitate old cards. Existing ledger CLOSED and family VERIFIED standards, exact-SHA evidence and runtime/browser gates still apply.
+
 # Learner UI Surface Parity Ledger
 
 > **Freshness warning — 2026-10-05:** the original Learner ledger baseline is now stale for final release. Current observed legacy heads are FE `1d563f75f10ede5dcc0a7b17ad65b75ea03dd07d` and BE `94af997f8f9529ffbe7da317fff47f86c16bcebf`. Historical `CLOSED` rows remain useful evidence, but no family is final-release valid until `docs/planning/learner-family-verification.md` is `VERIFIED` for that family against the current/frozen oracle.
