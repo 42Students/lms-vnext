@@ -13,8 +13,8 @@
  * SECURITY DEFINER routines and tenant-context isolation require live tests.
  */
 import { pathToFileURL } from "node:url";
-import { fileURLToPath } from "node:url";
-import { Pool } from "pg";
+import pg from "pg";
+const { Pool } = pg;
 
 export function classifySecurityCatalog(principal, tables) {
   const findings = [];
