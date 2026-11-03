@@ -8,6 +8,12 @@ import {publicNetworkNotice} from "@/modules/auth/public-network-notice-model";
 import { friendlyApiError } from "@/lib/friendly-error";
 import { isRequestId } from "@/lib/request-id";
 
+let pageIsUnloading=false;
+if(typeof window!=="undefined"){
+  window.addEventListener?.("pagehide",()=>{pageIsUnloading=true;});
+  window.addEventListener?.("pageshow",()=>{pageIsUnloading=false;});
+}
+
 export type ApiFetchOptions = RequestInit & { timeoutMs?: number };
 
 export class FriendlyFetchError extends Error {
@@ -114,14 +120,17 @@ export async function apiFetch<T = unknown>(
       throw new ApiFetchCancelledError();
     }
     const status=reason instanceof FriendlyFetchError?reason.status:didTimeout?504:0;
-    if(typeof window!=="undefined"){
+    // Leaving a page cancels its in-flight requests; that is not a network failure.
+    if(typeof window!=="undefined"&&!(status===0&&pageIsUnloading)){
       const path=typeof input==="string"?input:input instanceof URL?input.pathname:input instanceof Request?input.url:"";
       const notice=publicNetworkNotice({status,isSessionChange:/\/api\/auth\/session(?:\?|$)/.test(path)});
       if(notice)window.dispatchEvent(new CustomEvent("lms:network-notice",{detail:notice}));
       // The persistent monitor receives a status category only: no request
       // path, body, token, response text or user-entered field values.
       // Never report failure of the telemetry endpoint itself.
-      if(!/\/api\/client-errors(?:\?|$)/.test(path))
+      // Signed-out visitors on the sign-in page get an expected 401 from session checks.
+      const expectedSignedOut=status===401&&window.location.pathname==="/login";
+      if(!expectedSignedOut&&!/\/api\/client-errors(?:\?|$)/.test(path))
         window.dispatchEvent(new CustomEvent("lms:api-failure",{detail:{status}}));
     }
     if (reason instanceof FriendlyFetchError) throw reason;

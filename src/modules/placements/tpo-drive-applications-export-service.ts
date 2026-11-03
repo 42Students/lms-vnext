@@ -14,7 +14,7 @@ export async function getTpoDriveApplicationsExport(context:RequestContext,raw:u
  const {jobId,stage,search,channel,eligibility,sort,submittedWithin,flag}=tpoDriveApplicationsExportQuerySchema.parse(raw);
  const since=tpoApplicantSubmittedSince(submittedWithin,new Date());
  const db=getDb();
- await db.transaction(async(tx)=>{await requireTpoJobActor(tx,context);},{accessMode:"read only"});
+ await db.transaction(async(tx)=>{await requireTpoJobActor(tx,context);});
  const [job]=await db.select({id:placementJobs.id,title:placementJobs.title})
   .from(placementJobs).where(and(eq(placementJobs.id,jobId),
    eq(placementJobs.collegeId,collegeId))).limit(1);

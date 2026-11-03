@@ -2,7 +2,8 @@ import { StackedMetricBar } from "@/components/ui/stacked-metric-bar";
 import batchStyles from "@/components/tpo/legacy-batch-eligibility.module.css";
 import Link from "next/link";
 import {tpoBatchReturnHref} from "@/modules/placements/tpo-batch-return-model";
-import { redirect } from "next/navigation";
+import { redirect, notFound } from "next/navigation";
+import { z } from "zod";
 import { TpoBatchWorkspaceTabs } from "@/components/tpo/tpo-batch-workspace-tabs";
 import {TpoBatchLifecycleControl} from "@/components/tpo/tpo-batch-lifecycle-control";
 import {TpoBatchInvitationControl} from "@/components/tpo/tpo-batch-invitation-control";
@@ -24,6 +25,7 @@ import {getTpoBatchOwnDecisionSummary} from "@/modules/placements/tpo-batch-own-
 export const dynamic="force-dynamic";
 export default async function BatchPage({params,searchParams}:{params:Promise<{batchId:string}>;searchParams:Promise<Record<string,string|string[]|undefined>>}){
  const {batchId}=await params;
+ if(!z.uuid().safeParse(batchId).success)notFound();
  const query=await searchParams;
  const rawTab=query["tab"];
  const backHref=tpoBatchReturnHref(query["returnTo"]);

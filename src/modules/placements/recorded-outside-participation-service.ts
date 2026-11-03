@@ -13,7 +13,7 @@ import {recordedOutsideParticipantSchema} from "./recorded-outside-participation
 
 export async function listTpoOutsideDriveRecords(context:RequestContext){
  const collegeId=await requireTpoJobCollege(context);
- await getDb().transaction(tx=>requireTpoJobActor(tx,context),{accessMode:"read only"});
+ await getDb().transaction(tx=>requireTpoJobActor(tx,context));
  return getDb().select({
   id:placementOutsideDriveRecords.id,title:placementOutsideDriveRecords.title,
   company:placementCompanies.name,occurredAt:placementOutsideDriveRecords.occurredAt,
@@ -31,7 +31,7 @@ export async function getTpoOutsideDriveParticipants(
 ){
  const collegeId=await requireTpoJobCollege(context);
  const recordId=z.string().uuid().parse(rawRecordId);
- await getDb().transaction(tx=>requireTpoJobActor(tx,context),{accessMode:"read only"});
+ await getDb().transaction(tx=>requireTpoJobActor(tx,context));
  const [record]=await getDb().select({
   id:placementOutsideDriveRecords.id,title:placementOutsideDriveRecords.title,
   occurredAt:placementOutsideDriveRecords.occurredAt,
