@@ -41,7 +41,7 @@ Business logic lives in domain modules rather than React components. Infrastruct
 
 The legacy-source feature skeleton is substantial, but database completion is determined by the strict binary tracker—not historical checklists or counts of drafted SQL. Consult `npm run progress` for current acceptance counts; historical authored-code statistics do not certify engineering acceptance.
 
-The immediate execution goal is **registered, cleanly replayable, acceptance-tested database integration**, beginning with upstream original-core requirements. No new production/API/UI phase readiness is implied by a preview or isolated staging test.
+The current execution focus is the first **unaccepted closure gate in `docs/tracker.json`**. The owner-approved UI direction is **complete every required old-LMS control, modal, state, role permission and real user job**, while keeping improved vNext UI/UX; no pixel-clone gate applies. Prior DB/API work still needs its exact-SHA acceptance proof and cannot be waived to declare UI or release green. Re-check the live phase and counters instead of treating this README as a status snapshot.
 
 ## Local database
 
