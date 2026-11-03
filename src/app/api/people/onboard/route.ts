@@ -1,6 +1,9 @@
 import { NextResponse } from "next/server";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { isSameOriginRequest } from "@/auth/origin";
+import { requireRecentDeviceAuthentication } from "@/auth/recent-device-auth";
+import { requirePermission } from "@/modules/permissions/policy";
+import { onboardPersonInputSchema } from "@/modules/people/validation";
 import { apiErrorResponse } from "@/lib/api-error";
 import { onboardPersonWithRuntime } from "@/modules/people/runtime";
 
@@ -50,6 +53,15 @@ export async function POST(request: Request) {
     const facultyProfile=parsed.data.facultyProfile;
     if(facultyProfile&&(!Array.isArray(parsed.data["roles"])||!parsed.data["roles"].includes("FACULTY")))
       return NextResponse.json({error:"FACULTY_ROLE_REQUIRED"},{status:400});
+    // Protected College Admin/TPO roles cannot be indirectly minted by
+    // onboarding without the same recent privileged sign-in required by
+    // the explicit role-grant route.
+    const validatedPerson = onboardPersonInputSchema.parse(body);
+    if (validatedPerson.roles.some(role =>
+      role === "COLLEGE_ADMIN" || role === "TPO")) {
+      requirePermission(context, "admin-scope.select");
+      await requireRecentDeviceAuthentication();
+    }
     // Membership, role grant and optional faculty department/profile now
     // commit together. Never return an active partially registered teacher.
     const person = await onboardPersonWithRuntime(context, body, facultyProfile);
