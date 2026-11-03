@@ -30,6 +30,18 @@ export function routeForNextPage(relativeFile){
  return "/"+clean.join("/");
 }
 
+/** A Next route parameter's spelling is not part of its public URL.
+ * Compare /[leadId] and /[recruiterLeadId] as the same route shape.
+ */
+export function routeShape(route){
+ return route.split("/").map(part=>{
+  if(/^\[\[\.\.\.[^\]]+\]\]$/.test(part))return "[[...]]";
+  if(/^\[\.\.\.[^\]]+\]$/.test(part))return "[...]";
+  if(/^\[[^\]]+\]$/.test(part))return "[]";
+  return part;
+ }).join("/");
+}
+
 export function indexAppRoutes(appRoot){
  const routes=new Set();
  function walk(dir,relative=""){
@@ -72,6 +84,7 @@ export function buildScreenshotCapabilityCensus({
   .map(line=>/^\s*-\s+([a-z][a-z0-9-]*-\d{3})\s*$/.exec(line)?.[1]??null)
   .filter(Boolean);
  const routeIndex=indexAppRoutes(appRoot);
+ const routeShapes=new Set([...routeIndex].map(routeShape));
  const packages=[];
  const issues=[];
  const seen=new Set();
@@ -82,7 +95,7 @@ export function buildScreenshotCapabilityCensus({
   if(!fs.existsSync(file)){issues.push({id,reason:"PACKAGE_FILE_MISSING"});continue;}
   try{
    const pkg=parsePackageManifest(fs.readFileSync(file,"utf8"),id);
-   const directRoute=pkg.vnextRoute!=="-"&&routeIndex.has(pkg.vnextRoute);
+   const directRoute=pkg.vnextRoute!=="-"&&routeShapes.has(routeShape(pkg.vnextRoute));
    const captureStatus=pkg.oldRoute==="-"
     ?"VNEXT_ONLY_CAPTURE"
     :pkg.vnextRoute==="-"
