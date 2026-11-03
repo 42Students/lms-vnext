@@ -47,3 +47,30 @@ jobs:
         run: npm run test:parity:visual
       - name: Confirm runbook exists
         run: test -f docs/audit/visual-parity-execution-runbook.md
+
+  full-reference-inventory:
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    steps:
+      - name: Checkout implementation branch
+        uses: actions/checkout@v4
+      - name: Checkout independent legacy reference branch without merging histories
+        uses: actions/checkout@v4
+        with:
+          ref: parity-baseline
+          path: .reference
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Audit every packaged screenshot and capture coverage entry
+        run: |
+          node scripts/audit/visual-baseline-inventory.mjs \
+            --root .reference \
+            --json "$RUNNER_TEMP/legacy-visual-inventory.json"
+      - name: Preserve structural audit report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: legacy-visual-reference-inventory
+          path: ${{ runner.temp }}/legacy-visual-inventory.json
+          if-no-files-found: ignore
