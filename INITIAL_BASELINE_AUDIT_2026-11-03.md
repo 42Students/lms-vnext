@@ -1,3 +1,5 @@
+> **HISTORICAL AUDIT — STRATEGY UPDATED 2026-11-03.** The image counts, capture defects and measurements below remain valid as source evidence, but pixel-diff percentages are **not** functional completeness scores and no package requires pixel certification. The active acceptance framework is the [Capability & UI-Surface Parity Standard](https://github.com/42Students/lms-vnext/blob/main/docs/planning/legacy-capability-parity-standard.md). Use the archived screenshot package references to audit controls, interactions, roles, hidden states and API outcomes.
+
 # Pixel parity — baseline verification and first execution audit (2026-11-03)
 
 **Authority:** `PIXEL_PARITY_MASTER_PLAN.md`.  
