@@ -24,6 +24,17 @@ describe("recent first-party OTP authentication for privileged role grants", () 
     expect(isRecentDeviceAuthentication(now, now, 3600)).toBe(false);
   });
 
+  it("also guards privileged role grants hidden in new-person onboarding", () => {
+    const source = readFileSync("src/app/api/people/onboard/route.ts", "utf8");
+    const call = source.indexOf("onboardPersonWithRuntime(context, body");
+    expect(call).toBeGreaterThan(0);
+    const guards = source.slice(Math.max(0, call - 900), call);
+    expect(guards).toContain("onboardPersonInputSchema.parse(body)");
+    expect(guards).toContain('role === "COLLEGE_ADMIN" || role === "TPO"');
+    expect(guards).toContain('requirePermission(context, "admin-scope.select")');
+    expect(guards).toContain("await requireRecentDeviceAuthentication()");
+  });
+
   it("guards both granting and removal of college admin or TPO role", () => {
     const source = readFileSync("src/app/api/people/[membershipId]/roles/route.ts", "utf8");
     for (const method of ["addMembershipRoleWithRuntime", "removeMembershipRoleWithRuntime"]) {
