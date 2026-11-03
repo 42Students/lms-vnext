@@ -43,7 +43,7 @@ jobs:
       - name: AST census regression
         run: node --test tests/security-api-method-inventory.test.mjs
       - name: Full method census and fail-closed new-handler review
-        run: node scripts/security/api-method-inventory.mjs --json /tmp/vnext-api-method-security-census.json --enforce-new
+        run: node scripts/security/api-method-inventory.mjs --json /tmp/vnext-api-method-security-census.json --enforce-new --triage
       - name: Archive method inventory (unreviewed is NOT a pass)
         if: always()
         uses: actions/upload-artifact@v4
