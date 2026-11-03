@@ -23,7 +23,7 @@ describe("FAC-courses-28 legacy Faculty roster user jobs",()=>{
     expect(page).toContain('id="faculty-course-section"');
     expect(page).toContain("Select class for ");
     expect(page).toContain("facultyCourseTabHref(event.target.value, activeTab)");
-    expect(page).toContain("target.legacyClassId");
+    expect(page).toContain("section.legacyClassId");
   });
   it("exposes the legacy contacts, roll-missing and visible-filter count affordances",()=>{
     expect(facultyRosterMetrics(students)).toEqual({
