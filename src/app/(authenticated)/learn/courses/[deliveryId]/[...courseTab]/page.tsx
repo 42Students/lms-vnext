@@ -313,6 +313,21 @@ export default async function LearnerCourseTabPage({
         tabName={learnerCourseTabs.find(tab=>tab.path===activeTab)?.label??"Overview"}/>
       <LearnerCourseTabs deliveryId={deliveryId} activeTab={activeTab}
         persistentQuery={learnerCourseTabPersistentQuery(query)}/>
+      <details className="rounded-lg border border-border px-3 py-2">
+        <summary className="min-h-9 cursor-pointer text-sm font-semibold text-primary-text">
+          Course options
+        </summary>
+        <nav aria-label="Additional course views" className="mt-2 flex flex-wrap gap-3 text-sm">
+          <Link href={`/learn/courses/${encodeURIComponent(deliveryId)}/progress`}
+            className="inline-flex min-h-9 items-center font-semibold text-primary-text underline">
+            Detailed progress
+          </Link>
+          <Link href={`/learn/courses/${encodeURIComponent(deliveryId)}/attendance-summary`}
+            className="inline-flex min-h-9 items-center font-semibold text-primary-text underline">
+            Attendance history
+          </Link>
+        </nav>
+      </details>
       <div key={deliveryId + ":" + activeTab} className="learn-course-tab-page min-w-0">
         {content}
       </div>

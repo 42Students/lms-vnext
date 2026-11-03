@@ -74,6 +74,7 @@ describe("LEARNER-COURSE-NOTICES-01 active Section announcement visibility",()=>
    'isNull(db10Announcements.deletedAt)',
    'gt(db10Announcements.expiresAt,now)',
   ])expect(src).toContain(part);
-  expect(src).toContain(".limit(2)");
+  expect(src).toContain("now:Date=new Date(),limit=2,");
+  expect(src).toContain(".limit(limit)");
  });
 });

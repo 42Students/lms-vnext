@@ -2,10 +2,6 @@
  "description": "Project and placement API routes that still parse bodies with an unbounded request.json(). Ratchet: no route may be added; remove an entry when the route moves to readBoundedJsonRequest or another bounded reader.",
  "generatedFrom": "node scripts/audit/phase1-ledger.mjs era, commit 440b7501",
  "routes": [
-  "src/app/api/admin/placements/drives/bulk/route.ts",
-  "src/app/api/admin/placements/jobs/[jobId]/delete/route.ts",
-  "src/app/api/admin/placements/jobs/[jobId]/duplicate/route.ts",
-  "src/app/api/admin/placements/organization-applications/route.ts",
   "src/app/api/college/placements/interviews/[interviewId]/status/route.ts",
   "src/app/api/placements/academic-evidence/[membershipId]/route.ts",
   "src/app/api/placements/academic-evidence/me/route.ts",

@@ -29,7 +29,7 @@ describe("chat-13 Super Admin mutation route CSRF and error boundary contracts",
    expect(mutation).toBeDefined();
    const body=source.slice(source.indexOf("export async function "+mutation+"("));
    const origin=body.indexOf("isSameOriginRequest(request)");
-   const readers=["request.json()","readAdminPlacementJson(request","readLimitedProjectLockInput(request"];
+   const readers=["request.json()","readAdminPlacementJson(request","readLimitedProjectLockInput(request","readBoundedJsonRequest(request"];
    const firstRead=Math.min(...readers.map(token=>body.indexOf(token))
      .filter(index=>index>=0));
    expect(origin).toBeGreaterThan(0);

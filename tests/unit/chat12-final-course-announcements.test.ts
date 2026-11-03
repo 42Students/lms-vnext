@@ -36,7 +36,8 @@ describe("LEARNER-home-courses-14 official class announcements",()=>{
  it("LEARNER-home-courses-14 shows exactly the latest two official class notices",()=>{
   const service=read("src/modules/courses/learner-course-announcements-service.ts");
   expect(service).toContain("desc(db10Announcements.createdAt)");
-  expect(service).toContain(".limit(2)");
+  expect(service).toContain("now:Date=new Date(),limit=2,");
+  expect(service).toContain(".limit(limit)");
   const overview=read("src/components/courses/learner-course-overview.tsx");
   expect(overview).toContain("courseUpdates.slice(0,2).map");
   expect(overview).toContain("key:`announcement-${update.id}`");
