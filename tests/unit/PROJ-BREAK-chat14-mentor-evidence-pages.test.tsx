@@ -86,14 +86,14 @@ describe("Mentor evidence view privacy and empty-state boundaries",()=>{
   expect(html).not.toContain("secret-storage-key");
   expect(html).toContain("Uploaded file recorded");
  });
- it("PROJ-BREAK-MENTOR-270 safe HTTPS evidence links use noopener and explicit new-tab semantics",async()=>{
+ it("PROJ-BREAK-MENTOR-270 safe HTTPS evidence links retain noopener and predictable same-tab navigation",async()=>{
   state.sourceUrl="https://example.edu/project";
   state.attachments=[{kind:"LINK",name:"Demo recording",url:"https://example.edu/demo"}];
   const html=await renderDelivery();
   expect(html).toContain("Open source link");
   expect(html).toContain("Open link");
   expect(html).toContain('rel="noopener noreferrer"');
-  expect(html).toContain('target="_blank"');
+  expect(html).not.toContain('target="_blank"');
   expect(html).toContain("https://example.edu/project");
   expect(html).toContain("https://example.edu/demo");
  });

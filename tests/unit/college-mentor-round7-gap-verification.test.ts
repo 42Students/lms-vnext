@@ -20,14 +20,16 @@ describe("chat-11 college and mentor interaction contracts",()=>{
   expect(action).toContain("Department was not archived. Move or remove its programs, courses or faculty assignments, then retry.");
   expect(action).toContain("Retry archive");
  });
- it("MEN-projects-meetings-57 shows Open link and guards invalid or blocked resource windows",()=>{
+ it("MEN-projects-meetings-57 shows safe resource links without popup dependencies",()=>{
   const open=src("src/components/projects/project-resource-open-link.tsx");
   expect(open).toContain('linkText="Open resource ↗"');
-  expect(open).toContain("Your browser blocked the new tab. Allow pop-ups for this site to open resources, or use the safe link below.");
+  expect(open).toContain("safeProjectExternalHref(url)");
+  expect(open).not.toContain("window.open(");
+  expect(open).not.toContain('target="_blank"');
    expect(open).toContain("href={safe}");
   expect(open).toContain("This resource has an invalid address.");
   expect(open).toContain('rel="noopener noreferrer"');
-  expect(open).toContain("popup.opener=null");
+  expect(open).toContain("<a href={safe}");
   expect(src("src/components/projects/project-workspace.tsx")).toContain("<ProjectResourceList projectId=");
   expect(src("src/components/projects/project-resource-list.tsx")).toContain('linkText={mode==="LEARNER"?"Open resource ↗":"Open link"}');
   expect(src("src/components/projects/project-resource-controls.tsx")).toContain('"Resource added."');

@@ -50,11 +50,13 @@ describe("learner/projects round-two gap verification",()=>{
   expect(s).toContain('mode==="LEARNER"?workspace.members.map');
   expect(s).toContain('workspace.members.length + " member"');
  });
- it("LEARNER-projects-34 distinguishes no resource, malformed address and popup failures",()=>{
+ it("LEARNER-projects-34 distinguishes absent and malformed resource links without popups",()=>{
   const s=source("src/components/projects/project-resource-open-link.tsx");
   expect(s).toContain("This resource has no link or file attached yet.");
   expect(s).toContain("This resource has an invalid address.");
-  expect(s).toContain("Your browser blocked the new tab. Allow pop-ups for this site to open resources, or use the safe link below.");
+  expect(s).toContain("<a href={safe}");
+  expect(s).not.toContain("window.open(");
+  expect(s).not.toContain('target="_blank"');
   expect(s).toContain('rel="noopener noreferrer"');
   expect(s).toContain("safeProjectExternalHref");
   expect(workspace()).toContain('aria-label="Resource counts"');
