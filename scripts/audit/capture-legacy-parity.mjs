@@ -46,7 +46,17 @@ export function parseOptions(argv) {
   if (!local && !(result["allow-readonly-remote"] && url.protocol === "https:")) {
     throw Error("Remote capture requires --allow-readonly-remote and HTTPS");
   }
-  if (url.search) throw Error("Query strings may contain secrets; use a query-free fixture URL");
+  // Deep links and filter states are part of the legacy contract. Only known
+  // non-credential state keys are permitted; never persist their values in logs.
+  const allowedStateKeys = new Set([
+    "tab", "status", "filter", "sort", "page", "view", "scope",
+    "attention", "projectId", "sprint", "join", "type", "projectState",
+  ]);
+  for (const key of url.searchParams.keys()) {
+    if (!allowedStateKeys.has(key)) {
+      throw Error("Query key is not on the non-secret visual state allowlist: " + key);
+    }
+  }
   if (result["scroll-y"] != null &&
       (!Number.isInteger(Number(result["scroll-y"])) || Number(result["scroll-y"]) < 0)) {
     throw Error("--scroll-y must be a nonnegative integer");
@@ -174,6 +184,7 @@ export async function capture(opts) {
       capture: "candidate",
       url: safeUrl(actual),
       requestUrl: safeUrl(target.toString()),
+      stateQueryKeys: [...new Set(target.searchParams.keys())],
       httpStatus: status,
       blockedByAuthOrHttp: badStatus,
       viewport: { width: 1280, height: 800 },
