@@ -2,6 +2,7 @@
 import {Checkbox} from "@/components/ui/checkbox";
 import { Disclosure } from "@/components/ui/disclosure";
 import { Dialog } from "@/components/ui/dialog";
+import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 
 import {useRouter,usePathname,useSearchParams} from "next/navigation";
 import {ScrollCue} from "@/components/ui/scroll-cue";
@@ -23,9 +24,10 @@ export function CollegeLessonVisibilityControl({lesson}: {lesson:Item}){
  const [error,setError]=useState("");
  const [visible,setVisible]=useState(lesson.visibleToStudents);
  const [version,setVersion]=useState(lesson.updatedAt);
+ const [confirmChange,setConfirmChange]=useState(false);
  const label=visible?"Hide from students":"Show to students";
  function change(){
-  if(!window.confirm(label+"?"))return;
+  if(pending)return;
   setError("");
   start(async()=>{
    try{
@@ -41,10 +43,13 @@ export function CollegeLessonVisibilityControl({lesson}: {lesson:Item}){
   });
  }
  return <div className="space-y-1">
-  <FilterChip type="button" className="min-h-11 md:min-h-9" disabled={pending} onClick={change}
+  <FilterChip type="button" className="min-h-11 md:min-h-9" disabled={pending} onClick={()=>setConfirmChange(true)}
    aria-pressed={visible}>
    {pending?"Saving…":label}
   </FilterChip>
+  <ConfirmDialog open={confirmChange} onOpenChange={setConfirmChange}
+   title={label+"?"} description={visible?"This lesson will be hidden from students.":"This lesson will become visible to students."}
+   confirmLabel={label} pending={pending} onConfirm={()=>{setConfirmChange(false);change();}}/>
   {error?<Alert tone="error">{error}</Alert>:null}
  </div>;
 }

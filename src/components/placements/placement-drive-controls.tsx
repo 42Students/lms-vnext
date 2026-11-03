@@ -1225,7 +1225,7 @@ export function PlacementDriveControls({
                 key={round.id}
                 className="grid min-w-0 grid-cols-1 gap-3 border-b border-border py-3 sm:grid-cols-2 lg:grid-cols-[5rem_10rem_minmax(12rem,1fr)_8rem_auto] lg:items-center"
               >
-                <div className="flex min-h-10 items-center text-sm font-semibold text-muted-foreground">
+                <div className="flex min-h-11 items-center text-sm font-semibold text-muted-foreground">
                   Round {index + 1}
                 </div>
                 <Select

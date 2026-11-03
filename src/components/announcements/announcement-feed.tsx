@@ -152,7 +152,7 @@ export function AnnouncementFeed({
               {trustedAnnouncementAction(item.buttonUrl,item.buttonLabel) ?
                 <a href={trustedAnnouncementAction(item.buttonUrl,item.buttonLabel)!.href}
                   target="_blank" rel="noopener noreferrer"
-                  className="mt-3 inline-flex min-h-10 items-center rounded-md border border-border px-3 text-sm font-semibold text-primary-text">
+                  className="mt-3 inline-flex min-h-11 items-center rounded-md border border-border px-3 text-sm font-semibold text-primary-text">
                   {trustedAnnouncementAction(item.buttonUrl,item.buttonLabel)!.label} ↗
                 </a>:null}
             </article>

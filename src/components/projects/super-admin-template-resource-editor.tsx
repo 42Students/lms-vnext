@@ -188,7 +188,7 @@ export function SuperAdminTemplateResourceEditor({templateId,title,summary,curre
       placeholder="https://example.com/resource" className={cls}/></label>
     <label className="text-[var(--lms-font-sm)] font-semibold md:col-span-2 text-[13px] leading-4 text-[var(--lms-neutral-400)]">Description
      <Textarea value={row.description??""} onChange={e=>changeOptional(i,"description",e.target.value)}
-      placeholder="What this resource is for" className={cls+" min-h-20"}/></label>
+      placeholder="What this resource is for" className="mt-1 w-full min-h-20"/></label>
     <label className="text-[var(--lms-font-sm)] font-semibold md:col-span-2 text-[13px] leading-4 text-[var(--lms-neutral-400)]">Access notes (optional)
      <Input maxLength={2000} value={row.accessNotes??""}
       onChange={e=>changeOptional(i,"accessNotes",e.target.value)}

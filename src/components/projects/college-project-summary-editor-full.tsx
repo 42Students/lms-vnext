@@ -246,7 +246,7 @@ export function CollegeProjectSummaryEditorFull({
    <h3 className="border-t border-border pt-3 font-semibold text-foreground">Content</h3>
    {(["summary","blocker","nextAction"] as const).map(k=><label key={k} className="block text-[length:var(--lms-font-sm)] font-semibold leading-4 text-[13px] text-[var(--lms-neutral-400)]">
     {k==="summary"?"Summary":k==="blocker"?"Blocker":"Next action"}
-    <Textarea className={style+" min-h-24"} maxLength={Math.max(4000,form[k].length)}
+    <Textarea className="mt-1 w-full min-h-24" maxLength={Math.max(4000,form[k].length)}
      rows={k==="summary"?3:4} placeholder={k==="summary"?"Short live workspace summary":undefined}
      value={form[k]} onChange={e=>change(k,e.target.value)}/>
     {form[k].length>4000?<span className="mt-1 block text-xs text-warning-text" role="status">

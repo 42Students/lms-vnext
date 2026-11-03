@@ -1,5 +1,6 @@
 "use client";
 import { Button } from "@/components/ui/button";
+import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import {useRef,useState} from "react";
 import {apiFetch} from "@/lib/api-fetch";
 import {attendanceParentContactInputSchema} from "@/modules/attendance/parent-sms-model";
@@ -9,6 +10,7 @@ export function AdminAttendanceParentContactEditor({collegeId,learners}:{college
  learners:readonly {membershipId:string;displayName:string|null}[]}){
  const [open,setOpen]=useState(false);
  const [membershipId,setMembershipId]=useState("");
+ const [confirmRevoke,setConfirmRevoke]=useState(false);
  const [phoneE164,setPhoneE164]=useState("");
  const [evidence,setEvidence]=useState("");
  const [consent,setConsent]=useState(false),[verified,setVerified]=useState(false);
@@ -19,7 +21,7 @@ export function AdminAttendanceParentContactEditor({collegeId,learners}:{college
  const valid=attendanceParentContactInputSchema.safeParse(input).success;
  async function revoke(){
   if(pending||retrying||!membershipId)return;
-  if(!window.confirm("Disable guardian attendance SMS for this learner and cancel any queued texts?"))return;
+  
   setPending(true);setError("");setSuccess("");
   try{
    const result=await apiFetch<{revoked:boolean;ready:boolean}>(
@@ -96,8 +98,12 @@ export function AdminAttendanceParentContactEditor({collegeId,learners}:{college
     className="min-h-11 w-full px-3 md:min-h-9">Save verified contact</Button>
    <Button variant="secondary" type="button" disabled={pending||retrying} onClick={()=>void retry()}
     className="min-h-11 w-full px-3 md:min-h-9">Retry queued guardian SMS (up to 25)</Button>
-   <Button variant="secondary" type="button" disabled={pending||retrying||!membershipId} onClick={()=>void revoke()}
+   <Button variant="secondary" type="button" disabled={pending||retrying||!membershipId} onClick={()=>setConfirmRevoke(true)}
     className="min-h-11 w-full px-3 md:min-h-9">Disable guardian SMS for selected learner</Button>
+   <ConfirmDialog open={confirmRevoke} onOpenChange={setConfirmRevoke}
+    title="Disable guardian attendance SMS?" description="Disable this learner’s guardian attendance SMS and cancel queued texts?"
+    confirmLabel="Disable guardian SMS" pending={pending} confirmDisabled={!membershipId||retrying}
+    onConfirm={()=>{setConfirmRevoke(false);void revoke();}}/>
    {success?<p role="status" className="sm:col-span-2">{success}</p>:null}
    {error?<p role="alert" className="sm:col-span-2">{error}</p>:null}
   </div>:null}

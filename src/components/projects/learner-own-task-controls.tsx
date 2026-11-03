@@ -3,6 +3,7 @@ import { Input } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
+import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import {useState,type FormEvent} from "react";
 import {useRouter} from "next/navigation";
 import {projectMutation} from "./project-api";
@@ -113,18 +114,22 @@ export function LearnerAddOwnTask({projectId,sprints}:{projectId:string;sprints:
 }
 export function LearnerDeleteOwnTask({projectId,taskId}:{projectId:string;taskId:string}){
  const router=useRouter(),[busy,setBusy]=useState(false),[error,setError]=useState("");
+ const [confirmDelete,setConfirmDelete]=useState(false);
  async function remove(){
-  if(!window.confirm("Delete your task? This cannot be undone."))return;
+  if(busy)return;
   setBusy(true);setError("");
   try{
    await projectMutation("/api/projects/"+encodeURIComponent(projectId)+"/tasks/"+
-    encodeURIComponent(taskId)+"/learner-own","DELETE");router.refresh();
+    encodeURIComponent(taskId)+"/learner-own","DELETE");setConfirmDelete(false);router.refresh();
   }catch(e){setError(e instanceof Error?e.message:"Task cannot be deleted.");}
   finally{setBusy(false);}
  }
- return <div><Button type="button" disabled={busy} onClick={()=>void remove()}
-  variant="ghost" className="mt-2 min-h-9 text-xs !text-[var(--lms-error)] underline">
+ return <div><Button type="button" disabled={busy} onClick={()=>setConfirmDelete(true)}
+  variant="ghost" className="mt-2 min-h-11 md:min-h-9 text-xs !text-[var(--lms-error)] underline">
   {busy?"Deleting…":"Delete my task"}</Button>
+  <ConfirmDialog open={confirmDelete} onOpenChange={setConfirmDelete}
+   title="Delete your task?" description="This cannot be undone."
+   confirmLabel="Delete my task" pending={busy} onConfirm={()=>void remove()}/>
   {error?<p role="alert" className="text-xs text-error">{error}</p>:null}
  </div>;
 }
