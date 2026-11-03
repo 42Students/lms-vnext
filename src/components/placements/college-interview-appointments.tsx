@@ -553,7 +553,7 @@ export function CollegeInterviewAppointments({jobId,rounds,candidates,appointmen
     <label className="grid min-w-0 gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)] text-[13px]">{mode==="VIRTUAL"?"Meeting Link":"Venue Address"}
      <Input value={mode==="VIRTUAL"?meetingUrl:venue} maxLength={500} disabled={busy}
       placeholder={mode==="VIRTUAL"?"https://meet.example.com/...":"Enter interview venue address"}
-      onChange={e=>{mode==="VIRTUAL"?setMeetingUrl(e.target.value):setVenue(e.target.value);setDirty(true);}}
+      onChange={e=>{if(mode==="VIRTUAL")setMeetingUrl(e.target.value);else setVenue(e.target.value);setDirty(true);}}
       className="w-full"/>
      {fieldErrors[mode==="VIRTUAL"?"meetingUrl":"venue"]?<span role="alert" className="text-xs text-error">{fieldErrors[mode==="VIRTUAL"?"meetingUrl":"venue"]}</span>:null}
      </label>

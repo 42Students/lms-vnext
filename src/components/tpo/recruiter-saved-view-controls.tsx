@@ -72,7 +72,7 @@ export function RecruiterSavedViewControls({columns}:{columns:readonly EngageCol
   catch{}
   const url=new URLSearchParams(view.query_json);
   url.set("view","table");
-  window.location.assign("/tpo/recruiters?"+url.toString());
+  window.location.assign(new URL("/tpo/recruiters?"+url.toString(),window.location.origin).href);
  }
  function download(view:SavedView){
   const blob=new Blob([JSON.stringify({

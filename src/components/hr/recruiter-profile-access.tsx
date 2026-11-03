@@ -40,7 +40,7 @@ export function RecruiterProfileAccess({ grants, hideHeading = false }: { grants
         throw new Error("ACCESS_NOT_CONFIRMED");
       setItems(current=>current.filter(item=>item.id!==grant.id));
       setConfirmGrant(null);
-      window.location.assign("/hr/home");
+      window.location.assign(new URL("/hr/home",window.location.origin).href);
     } catch {
       setError("Could not confirm that your college access was removed. Refresh and try again.");
     } finally {

@@ -59,7 +59,7 @@ for (const [label, phone] of PERSONAS) {
   const dash = await call("GET", "/dashboard", { cookie });
   const ok = dash.status === 200 && /NSRIT/i.test(dash.text);
   console.log(`${ok ? "PASS" : "FAIL"}  ${label}: dashboard ${dash.status}${ok ? "" : " " + (dash.location ?? "")}`);
-  ok ? pass++ : fail++;
+  if (ok) pass++; else fail++;
   await call("DELETE", "/api/auth/session", { cookie });
 }
 console.log(`\n${pass} passed, ${fail} failed`);

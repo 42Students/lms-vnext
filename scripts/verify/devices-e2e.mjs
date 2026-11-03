@@ -17,7 +17,7 @@ function call(method, path, { body, cookie, ua } = {}) {
   });
 }
 const jar = (sc) => sc.map(c => c.split(";")[0]).filter(c => !c.endsWith("=")).join("; ");
-let pass = 0, fail = 0; const check = (n, ok, d = "") => { console.log(`${ok ? "PASS" : "FAIL"}  ${n}${ok ? "" : "  -> " + d}`); ok ? pass++ : fail++; };
+let pass = 0, fail = 0; const check = (n, ok, d = "") => { console.log(`${ok ? "PASS" : "FAIL"}  ${n}${ok ? "" : "  -> " + d}`); if (ok) pass++; else fail++; };
 async function login(phone, ua) {
   await sleep(PACE);
   const s = await call("POST", "/api/auth/login/start", { ua, body: { channel: "PHONE", contact: phone } });

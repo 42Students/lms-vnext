@@ -71,7 +71,7 @@ export function AdminScopedLiveSearch({initial,path,placeholder,recentSuggestion
  const all=[...recent,...popular,...results].slice(0,15);
  function navigate(next:string){
   const params=new URLSearchParams(window.location.search);
-  next.trim()?params.set("q",next.trim()):params.delete("q");
+  if(next.trim())params.set("q",next.trim());else params.delete("q");
   params.delete("page");
   startTransition(()=>router.replace(path+(params.size?"?"+params.toString():""),{scroll:false}));
  }

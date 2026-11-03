@@ -819,7 +819,7 @@ export function RecruiterLeadsWorkspace({
               {view==="board"?<RecruiterSavedViewControls columns={visibleColumns}/>:null}
               {visible.some(row=>selectedIds.includes(row.id))?<Button variant="secondary" type="button" className={buttonStyle}
                 disabled={visible.filter(row=>selectedIds.includes(row.id)).length>100}
-                onClick={()=>window.location.assign("/tpo/recruiters/campaigns/new?selected="+encodeURIComponent(visible.filter(row=>selectedIds.includes(row.id)).map(row=>row.id).join(",")))}>
+                onClick={()=>window.location.assign(new URL("/tpo/recruiters/campaigns/new?selected="+encodeURIComponent(visible.filter(row=>selectedIds.includes(row.id)).map(row=>row.id).join(",")),window.location.origin).href)}>
                 Send an email to selected ({visible.filter(row=>selectedIds.includes(row.id)).length})
               </Button>:null}
               {visible.filter(row=>selectedIds.includes(row.id)).length>100?<p role="alert" className="text-sm text-warning leading-[22px]">Select at most 100 recruiters for an email campaign. No one has been contacted.</p>:null}
@@ -897,7 +897,7 @@ export function RecruiterLeadsWorkspace({
               onValueChange={next=>{
                 const params=new URLSearchParams(window.location.search);
                 if(next==="campaigns"){params.set("view","campaigns");
-                  window.location.assign("/tpo/recruiters?"+params.toString());return;}
+                  window.location.assign(new URL("/tpo/recruiters?"+params.toString(),window.location.origin).href);return;}
                 if(next==="table")params.delete("view");else params.set("view",next);
                 window.history.replaceState(null,"",window.location.pathname+(params.size?"?"+params.toString():""));
                 setView(next as "table"|"board"|"companies");
@@ -1188,7 +1188,7 @@ export function RecruiterLeadsWorkspace({
               items={[{value:"table",label:"Table"},{value:"board",label:"Board"},{value:"companies",label:"Companies",count:companies.length},{value:"campaigns",label:"Emails"}]}
               onValueChange={next=>{
                const params=new URLSearchParams(window.location.search);
-               if(next==="campaigns"){params.set("view","campaigns");window.location.assign("/tpo/recruiters?"+params.toString());return;}
+               if(next==="campaigns"){params.set("view","campaigns");window.location.assign(new URL("/tpo/recruiters?"+params.toString(),window.location.origin).href);return;}
                if(next==="table")params.delete("view");else params.set("view",next);
                window.history.replaceState(null,"",window.location.pathname+(params.size?"?"+params.toString():""));
                setView(next as "table"|"board"|"companies");

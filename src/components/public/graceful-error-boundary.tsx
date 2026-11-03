@@ -100,7 +100,7 @@ export function GracefulErrorBoundary({ error, reset, homeHref = "/dashboard", l
           window.history.back();return;
         }
       }catch{/* The fallback must not trust a malformed referrer. */}
-      window.location.assign("/");
+      window.location.assign(new URL("/",window.location.origin).href);
     };
     return <main role="alert" className="flex min-h-dvh w-full min-w-0 flex-col items-center justify-center bg-[#fafbfc] p-8 text-center">
       <h1 className="m-0 text-[64px] font-extrabold leading-none text-[#1e9aa8]">500</h1>

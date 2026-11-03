@@ -42,7 +42,7 @@ const jar = (setCookie) =>
 let pass = 0, fail = 0;
 function check(name, ok, detail = "") {
   console.log(`${ok ? "PASS" : "FAIL"}  ${name}${ok ? "" : "  -> " + detail}`);
-  ok ? pass++ : fail++;
+  if (ok) pass++; else fail++;
 }
 
 async function login(contact, { host, channel = "PHONE", code = CODE } = {}) {

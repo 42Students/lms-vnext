@@ -426,7 +426,7 @@ const totals = {};
 for (const account of ACCOUNTS) {
   const ag = gaps.filter((g) => g.account === account).sort((a, b) => a.page.localeCompare(b.page) || gapNum(a.id) - gapNum(b.id));
   const t = { total: ag.length, S1: 0, S2: 0, S3: 0, S4: 0, "S?": 0, ...Object.fromEntries(STATUSES.map((x) => [x, 0])), openLive: 0, openBySev: { S1: 0, S2: 0, S3: 0, S4: 0, "S?": 0 }, roundA: 0, missed: 0 };
-  for (const g of ag) { t[g.severity]++; t[g.status]++; if (isLive(g)) { t.openLive++; t.openBySev[g.severity]++; } g.source === "A" ? t.roundA++ : t.missed++; }
+  for (const g of ag) { t[g.severity]++; t[g.status]++; if (isLive(g)) { t.openLive++; t.openBySev[g.severity]++; } if (g.source === "A") t.roundA++; else t.missed++; }
   totals[account] = t;
   reg += `## ${account} (${t.total} rows: ${t.roundA} Round A + ${t.missed} MISSED; ${t.openLive} open or unconfirmed)\n\n`;
   reg += "| ID | Page | Gap | Type | Severity | Status | Proposed lane | Source file | Fixed by |\n|---|---|---|---|---|---|---|---|---|\n";

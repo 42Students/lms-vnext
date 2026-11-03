@@ -38,7 +38,7 @@ function call(method, path, { body, cookie } = {}) {
 
 const jar = (sc) => sc.map((c) => c.split(";")[0]).filter((c) => !c.endsWith("=")).join("; ");
 let pass = 0, fail = 0;
-const check = (n, ok, d = "") => { console.log(`${ok ? "PASS" : "FAIL"}  ${n}${ok ? "" : "  -> " + d}`); ok ? pass++ : fail++; };
+const check = (n, ok, d = "") => { console.log(`${ok ? "PASS" : "FAIL"}  ${n}${ok ? "" : "  -> " + d}`); if (ok) pass++; else fail++; };
 
 async function login(phone) {
   await sleep(PACE_MS);
