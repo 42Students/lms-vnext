@@ -130,6 +130,36 @@ type Item =
   | LearnerAssignmentOverviewItem
   | LearnerQuizOverviewItem;
 
+function LegacyAssignmentEmpty() {
+  return <section className={legacyStyles.empty} aria-label="Assignment list">
+    <svg viewBox="0 0 120 80" className={legacyStyles.emptyIllustration} aria-hidden="true">
+      <defs>
+        <linearGradient id="legacyAssignmentEmptyGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" stopColor="#26bac7" stopOpacity="0.2"/>
+          <stop offset="50%" stopColor="#d97706" stopOpacity="0.1"/>
+          <stop offset="100%" stopColor="#059669" stopOpacity="0.08"/>
+        </linearGradient>
+      </defs>
+      <rect x="22" y="14" width="76" height="52" rx="10"
+        fill="url(#legacyAssignmentEmptyGradient)" stroke="#26bac7"
+        strokeWidth="1.5" strokeOpacity="0.35"/>
+      <rect x="34" y="26" width="52" height="6" rx="3" fill="#26bac7" fillOpacity="0.4"/>
+      <rect x="34" y="40" width="30" height="4" rx="2" fill="#26bac7" fillOpacity="0.25"/>
+      <rect x="34" y="50" width="24" height="4" rx="2" fill="#059669" fillOpacity="0.35"/>
+      <path d="M38 64 L42 68 L52 58" fill="none" stroke="#26bac7"
+        strokeWidth="2" strokeOpacity="0.6" strokeLinecap="round" strokeLinejoin="round"/>
+    </svg>
+    <svg viewBox="0 0 24 24" width="32" height="32" className={legacyStyles.emptyIcon}
+      fill="none" stroke="currentColor" strokeWidth="1.5" aria-hidden="true">
+      <path d="M6 2h9l5 5v15H6z M15 2v5h5 M9 12h8 M9 16h8"/>
+    </svg>
+    <h2 className={legacyStyles.emptyTitle}>No assignments yet</h2>
+    <p className={legacyStyles.emptyDescription}>
+      Your assignments will appear here once your teachers add them.
+    </p>
+  </section>;
+}
+
 function formatDate(value:string|null) {
   return learnerAssessmentDateLabel(value);
 }
@@ -365,20 +395,12 @@ export function LearnerAssessmentOverview({
     </Alert>;
   }
   if (visibleItems.length === 0) {
-    return (
-      <EmptyState
-        title={
-          kind === "ASSIGNMENT"
-            ? "No assignments yet"
-            : "No quizzes yet"
-        }
-        description={
-          kind === "ASSIGNMENT"
-            ? "Your assignments will appear here once your teachers add them."
-            : "Quizzes assigned to you by your teachers will appear here."
-        }
-      />
-    );
+    if (kind === "ASSIGNMENT") return <div className="min-w-0 space-y-4">
+      <div className={legacyStyles.coursePicker}>{courseSelector}</div>
+      <LegacyAssignmentEmpty/>
+    </div>;
+    return <EmptyState title="No quizzes yet"
+      description="Quizzes assigned to you by your teachers will appear here."/>;
   }
 
   return (
