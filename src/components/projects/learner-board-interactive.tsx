@@ -47,7 +47,7 @@ export function LearnerBoardInteractive({projectId,initialTasks,filters,sprints,
   if(!task||busy||readOnly||!membershipId||task.assigneeMembershipId!==membershipId||
     !task.sprintId||sprintState.get(task.sprintId)!=="ACTIVE"||
     !canLearnerMoveOwnTask(task.status,next))return;
-  let note=restoreNote??null;
+  const note=restoreNote??null;
   if(next==="BLOCKED"&&!note){
    setBlockerDraft(task.blockerReason??"");
    setBlockedTarget({taskId,title:task.title});
