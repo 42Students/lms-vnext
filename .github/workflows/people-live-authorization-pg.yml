@@ -1,0 +1,91 @@
+# Live PostgreSQL acceptance for stale-role, cross-tenant and lifecycle writes.
+# Disposable database only; never execute these fixture mutations against production.
+name: Security - persisted people authorization (PostgreSQL 17)
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - "src/modules/people/repository.ts"
+      - "src/modules/people/membership-service.ts"
+      - "src/modules/permissions/**"
+      - "src/modules/identity/**"
+      - "src/db/schema/**"
+      - "tests/integration/db01-membership-role-parent-lock.test.ts"
+      - "tests/integration/persisted-permission.test.ts"
+      - "tests/integration/people-memberships.test.ts"
+      - "drizzle/**"
+      - "scripts/db-test-prepare.ts"
+      - ".github/workflows/people-live-authorization-pg.yml"
+  push:
+    branches: [main]
+    paths:
+      - "src/modules/people/repository.ts"
+      - "src/modules/people/membership-service.ts"
+      - "src/modules/permissions/**"
+      - "src/modules/identity/**"
+      - "src/db/schema/**"
+      - "tests/integration/db01-membership-role-parent-lock.test.ts"
+      - "tests/integration/persisted-permission.test.ts"
+      - "tests/integration/people-memberships.test.ts"
+      - "drizzle/**"
+      - "scripts/db-test-prepare.ts"
+      - ".github/workflows/people-live-authorization-pg.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: security-people-db-${{ github.sha }}
+  cancel-in-progress: false
+
+jobs:
+  persisted-authority:
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    services:
+      postgres:
+        image: postgres:17-alpine
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: lms_vnext_test
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres -d lms_vnext_test"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 20
+    env:
+      DATABASE_URL: postgresql://postgres:postgres@127.0.0.1:5432/lms_vnext_test
+      TEST_DATABASE_URL: postgresql://postgres:postgres@127.0.0.1:5432/lms_vnext_test
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Verify exact source SHA and registered migration journal
+        run: |
+          test "$(git rev-parse HEAD)" = "$GITHUB_SHA"
+          npm run db:journal:verify
+      - name: Typecheck privileged mutation boundary
+        run: npm run typecheck
+      - name: Prepare seeded disposable PostgreSQL 17
+        env:
+          DATABASE_URL: ""
+        run: npm run db:test:prepare
+      - name: Parent lock, role-revocation and no-side-effects witnesses
+        run: npx vitest run --config vitest.db.config.ts tests/integration/db01-membership-role-parent-lock.test.ts
+      - name: Persisted selected-role, session authority and active scope
+        run: npx vitest run --config vitest.db.config.ts tests/integration/persisted-permission.test.ts
+      - name: End-to-end membership role and tenant lifecycle behavior
+        run: npx vitest run --config vitest.db.config.ts tests/integration/people-memberships.test.ts
+      - name: Migration source must remain unchanged by the witnesses
+        if: always()
+        run: |
+          npm run db:journal:verify
+          test -z "$(git status --porcelain -- drizzle/)"
