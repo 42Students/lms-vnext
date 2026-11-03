@@ -256,6 +256,25 @@ const permissions =
   ) as PlatformPermission[];
 
 describe("platform permission matrix", () => {
+  it("does not apply Super Admin privileges inside a selected learner membership", () => {
+    const systemWorkspace = contexts.superadmin;
+    const learnerWorkspace: RequestContext = {
+      ...systemWorkspace,
+      membership: {
+        id: "membership-1",
+        organizationId: "org-1",
+        collegeId: "college-1",
+        status: "ACTIVE",
+        roles: ["LEARNER"],
+      },
+    };
+    expect(can(systemWorkspace, "system-role.manage")).toBe(true);
+    expect(can(learnerWorkspace, "system-role.manage")).toBe(false);
+    expect(can(learnerWorkspace, "people.manage", ownResource)).toBe(false);
+    expect(can(learnerWorkspace, "courses.read", ownResource)).toBe(true);
+    expect(can(learnerWorkspace, "courses.read", otherResource)).toBe(false);
+  });
+
   it("fails closed instead of combining held roles in a single active request", () => {
     const invalidMultiRole = memberContext(["LEARNER", "COLLEGE_ADMIN"]);
     expect(hasActiveMembership(invalidMultiRole)).toBe(false);
