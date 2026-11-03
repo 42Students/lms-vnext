@@ -67,6 +67,10 @@ async function main(){
       endsAt:new Date("2026-08-25T05:15:00.000Z"),
       timeZone:"Asia/Kolkata",
       linkedSprintId,createdByUserId:SEED_IDS.collegeAdminUser,
+      // COMPLETED is a scheduled state: retain the production DB constraint
+      // requiring a scheduling actor and meeting URL or explicit Venue agenda.
+      scheduledByUserId:SEED_IDS.collegeAdminUser,
+      agenda:"Venue: E2E retrospective room",
     },
   ];
   await db.insert(projectMeetings).values(rows).onConflictDoNothing();
