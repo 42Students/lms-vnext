@@ -1,3 +1,5 @@
+> **Current strategy — 2026-11-03:** These screenshots are a **feature/UI-surface discovery archive**, not a pixel-exact acceptance target. The owner approved the [Capability & UI-Surface Parity Standard](https://github.com/42Students/lms-vnext/blob/main/docs/planning/legacy-capability-parity-standard.md). Keep all original PNGs, package inventory and capture coverage intact. Old screenshots reveal controls, sections and states; the legacy FE/BE source and tested vNext workflows determine completeness. Historical pixel matching plans below are superseded.
+
 # Old LMS vs vNext screenshots
 
 **Execution plan:** [PIXEL_PARITY_MASTER_PLAN.md](PIXEL_PARITY_MASTER_PLAN.md) — detailed, triple-audited visual matching strategy and strict evidence-based acceptance gates.\n\n**First execution audit:** [INITIAL_BASELINE_AUDIT_2026-11-03.md](INITIAL_BASELINE_AUDIT_2026-11-03.md) — verified image/package counts, coverage gaps, first pilot findings, and draft implementation links. The owner requested that the plan itself be documented here; the screenshot images and original package reference files remain read-only.
