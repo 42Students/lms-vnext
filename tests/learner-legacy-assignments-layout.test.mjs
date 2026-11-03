@@ -32,7 +32,7 @@ test("assignment cards retain guarded, accessible drawer open action",()=>{
 });
 
 test("legacy default is quiet but advanced vNext controls remain accessible",()=>{
-  assert.match(overview,/<details className=\{legacyStyles\.advancedTools\}>/);
+  assert.match(overview,/<details className=\{legacyStyles\.advancedTools\} aria-describedby="assignment-filter-help">/);
   assert.match(overview,/<summary>More assignment filters<\/summary>/);
   assert.match(overview,/\{metricsDisclosure\}/);
   assert.match(overview,/\{advancedControls\}/);
