@@ -133,7 +133,6 @@ async function LearnerAssignmentsContent({searchParams}:{searchParams:Promise<As
       }),
     );
 
-  const coursesCount = new Set(items.map(item => item.courseId)).size;
   const totalAssignments=overview.pagination?.totals.assignments??items.length;
   const totalPages=Math.max(1,Math.ceil(totalAssignments/20));
   const thisMonth = new Intl.DateTimeFormat("en-CA", {timeZone:"Asia/Kolkata",year:"numeric",month:"2-digit"});
@@ -145,20 +144,17 @@ async function LearnerAssignmentsContent({searchParams}:{searchParams:Promise<As
       <PageHeader
         title="All Assignments"
         actions={
-          <div className="flex flex-wrap gap-2 text-sm" aria-label="Assignment summary">
-            <span className="rounded-lg border border-border px-3 py-1.5 font-medium">
-              {totalAssignments} {totalAssignments === 1 ? "Assignment" : "Assignments"}
+          <div className="flex flex-wrap items-center gap-2 text-sm" aria-label="Assignment summary">
+            <span className="inline-flex min-h-8 items-center gap-1.5 rounded-full border border-[#b0e8ec] bg-[#e8fafb] px-3 text-xs font-semibold text-[#087583]">
+              <span aria-hidden="true">▤</span>
+              {totalAssignments} {totalAssignments===1?"Assignment":"Assignments"}
             </span>
-            {coursesCount > 0 ? (
-              <span className="rounded-lg border border-border px-3 py-1.5 font-medium">
-                {coursesCount} {coursesCount === 1 ? "Course" : "Courses"} (this page)
+            {createdThisMonth>0?(
+              <span className="inline-flex min-h-8 items-center gap-1.5 rounded-full border border-[#f6ddb2] bg-[#fff6e8] px-3 text-xs font-semibold text-[#a96709]">
+                <span aria-hidden="true">◷</span>
+                {createdThisMonth} this month{totalPages>1?" (this page)":""}
               </span>
-            ) : null}
-            {createdThisMonth > 0 ? (
-              <span className="rounded-lg border border-border px-3 py-1.5 font-medium">
-                {createdThisMonth} this month (this page)
-              </span>
-            ) : null}
+            ):null}
           </div>
         }
       />
@@ -172,6 +168,7 @@ async function LearnerAssignmentsContent({searchParams}:{searchParams:Promise<As
         kind="ASSIGNMENT"
         snapshotNowMs={overview.snapshotNowMs}
       />
+      {totalPages>1?(
       <nav aria-label="Assignment list pages" className="flex min-w-0 flex-wrap items-center gap-4 border-t border-border pt-3 text-sm">
         <span role="status">Page {page} of {totalPages} · {totalAssignments} matching assignments</span>
         {page>1?<Link href={learnerAssignmentListHref(page-1,overview.selectedCourseId)}
@@ -179,7 +176,7 @@ async function LearnerAssignmentsContent({searchParams}:{searchParams:Promise<As
         {page<totalPages?<Link href={learnerAssignmentListHref(page+1,overview.selectedCourseId)}
           className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">Next assignments</Link>:null}
       </nav>
-      <p className="text-xs text-muted-foreground">Search, state and sort controls apply to the assignments on this page. Choose a course to load its authorized assignments before searching.</p>
+      ):null}
     </div>
   );
 }
