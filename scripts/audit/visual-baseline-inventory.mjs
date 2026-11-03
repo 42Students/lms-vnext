@@ -13,9 +13,9 @@
  */
 import {
   existsSync, readFileSync, readdirSync, openSync, readSync, closeSync,
-  statSync, writeFileSync,
+  writeFileSync,
 } from "node:fs";
-import { resolve, relative, dirname, join, sep, extname } from "node:path";
+import { resolve, relative, join, sep, extname } from "node:path";
 import { fileURLToPath } from "node:url";
 
 export const ROLES = ["learner", "faculty", "mentor", "tpo", "admin", "coordinator"];
