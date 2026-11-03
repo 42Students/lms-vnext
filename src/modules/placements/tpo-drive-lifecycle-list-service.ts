@@ -39,7 +39,7 @@ export async function getTpoDriveLifecycleList(context: RequestContext, raw: unk
   const db = getDb();
   const lookupWarnings:string[]=[];
   let countsAvailable=true;
-  await db.transaction(async(tx)=>{await requireTpoJobActor(tx,context);},{accessMode:"read only"});
+  await db.transaction(async(tx)=>{await requireTpoJobActor(tx,context);});
   const seasons = await db.select({ id: placementSeasons.id, name: placementSeasons.name,
     status: placementSeasons.status, startDate: placementSeasons.startDate })
     .from(placementSeasons).where(eq(placementSeasons.collegeId, collegeId))
