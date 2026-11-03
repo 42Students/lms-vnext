@@ -4,11 +4,14 @@ The next-generation 42Students LMS, rebuilt as a GCP-native TypeScript modular m
 
 ## How development works now
 
-**Closure-first is mandatory for every coding chat, direct to `main`.** Read `AGENTS.md` and `docs/tracker.json.execution.closureFirstProtocol` before taking work. No exclusive worker lanes or claims are active; preserve evidence-based engineering acceptance. The old six-chat system, archived work queues and historical checkbox counts are not live progress.
+**Closure-first is mandatory for every coding chat, direct to `main`.**
+
+**Current legacy parity objective (owner update, 2026-11-03):** [100% required UI-surface and functional-capability parity, NOT pixel copying](docs/planning/legacy-capability-parity-standard.md). Old screenshots are discovery evidence; preserve better vNext UX. Use legacy FE/BE code to catch every missing action/modal/state and verify end-to-end outcomes. Existing DB/API/security/browser/family gates remain mandatory.
+ Read `AGENTS.md` and `docs/tracker.json.execution.closureFirstProtocol` before taking work. No exclusive worker lanes or claims are active; preserve evidence-based engineering acceptance. The old six-chat system, archived work queues and historical checkbox counts are not live progress.
 
 - **One execution plan and live tracker:** [docs/tracker.json](docs/tracker.json) (`execution`, `tasks`, `phaseGates`) — five stages, open task selection and informational domain groups
 - **Only live tracker:** [docs/tracker.json](docs/tracker.json) — DONE/NOT DONE only
-- **Current global phase:** DATABASE; API/UI/RELEASE require independent phase gates
+- **Current global phase:** read `docs/tracker.json.currentPhase` (moving, not hard-coded in README); all independent phase gates remain required
 - **Mandatory next-closure selection:** `npm run progress -- --closure-next` (all OPEN tasks, no worker assignment); then `npm run progress -- --check` to validate the tracker.
 - **Progress and domain visibility:** `npm run progress`, `npm run progress -- --domains`, `npm run progress -- --roadmap`. Accepted task counts come only from `done:true` with executed evidence.
 - **Continuation instructions:** `docs/tracker.json.execution.startupProcedure` and `.coordination`
