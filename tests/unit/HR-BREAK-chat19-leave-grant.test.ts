@@ -30,7 +30,7 @@ describe("HR-BREAK-LEAVE-GRANT-43 safely revoke own college access",()=>{
   const source=readFileSync("src/components/hr/recruiter-profile-access.tsx","utf8");
   const verifyAt=source.indexOf("if(!isConfirmedRecruiterLeaveResponse(payload,grant.id))");
   const removeAt=source.indexOf("setItems(current=>current.filter");
-  const navigateAt=source.indexOf('window.location.assign("/hr/home")');
+  const navigateAt=source.indexOf('window.location.assign(new URL("/hr/home",window.location.origin).href)');
   expect(verifyAt).toBeGreaterThan(0);
   expect(removeAt).toBeGreaterThan(verifyAt);
   expect(navigateAt).toBeGreaterThan(removeAt);

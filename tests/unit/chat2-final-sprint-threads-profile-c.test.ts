@@ -43,6 +43,6 @@ describe("Final sprint recruiter threads and profile — group C",()=>{
   expect(access).toContain("immediately lose recruiter access to this college");
   expect(access).toContain('method:"DELETE"');
   expect(access).toContain("encodeURIComponent(grant.id)");
-  expect(access).toContain('window.location.assign("/hr/home")');
+  expect(access).toContain('window.location.assign(new URL("/hr/home",window.location.origin).href)');
  });
 });

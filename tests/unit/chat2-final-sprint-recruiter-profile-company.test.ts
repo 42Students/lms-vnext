@@ -92,7 +92,7 @@ describe("Final sprint recruiter profile/company verification",()=>{
  it("REC-calendar-messages-profile-30 independent final-sprint acceptance regression",()=>{
   expect(src("src/components/hr/recruiter-profile-access.tsx")).toContain("<ConfirmActionDialog");
   expect(src("src/components/hr/recruiter-profile-access.tsx")).toMatch(/method:\s*"DELETE",\s*credentials:\s*"same-origin"/);
-  expect(src("src/components/hr/recruiter-profile-access.tsx")).toContain("window.location.assign(\"/hr/home\")");
+  expect(src("src/components/hr/recruiter-profile-access.tsx")).toContain("window.location.assign(new URL(\"/hr/home\",window.location.origin).href)");
   expect(src("docs/audit/acceptance/recruiter-calendar-messages-profile-verification.md")).toContain("| REC-calendar-messages-profile-30 |");
  });
 
