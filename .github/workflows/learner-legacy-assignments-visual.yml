@@ -46,6 +46,8 @@ jobs:
       - run: npx playwright install --with-deps chromium
       - name: Prepare disposable Learner browser fixtures
         run: npm run db:e2e:prepare
+      - name: Seed actual old LMS Java assignment only in disposable DB
+        run: npx tsx scripts/audit/seed-learner-assignments-visual-fixture.ts
       - name: Generate isolated browser authentication keys
         shell: bash
         run: |
@@ -54,6 +56,32 @@ jobs:
           echo "PLATFORM_HOSTS=localhost,127.0.0.1" >> "$GITHUB_ENV"
       - name: Capture real Learner assignment candidate and test desktop/mobile
         run: npx playwright test --project=chromium tests/e2e/learner-legacy-assignments-visual.spec.ts
+      - name: Checkout merged comparator into isolated directory
+        uses: actions/checkout@v4
+        with:
+          ref: main
+          path: .compare-tools
+      - name: Checkout detached old LMS screenshots
+        uses: actions/checkout@v4
+        with:
+          ref: parity-baseline
+          path: .reference
+      - name: Produce actual baseline-versus-candidate Learner screenshot diff
+        shell: bash
+        run: |
+          candidate=$(find test-results -name learner-all-assignments-1280x800.png -print -quit)
+          test -n "$candidate" || { echo "Candidate screenshot missing"; exit 2; }
+          mkdir -p test-results/learner-legacy-pixel-comparison
+          result=0
+          node .compare-tools/scripts/audit/legacy-pixel-compare.mjs \
+            --old .reference/old/learner/_learn_allAssignments__base__67d5d6264c.png \
+            --new "$candidate" \
+            --out test-results/learner-legacy-pixel-comparison || result=$?
+          if [ "$result" -gt 1 ]; then
+            echo "Unexpected comparator failure: $result"
+            exit "$result"
+          fi
+          echo "Learner pixel comparison diagnostic code: $result (1 means differences remain)."
       - name: Archive candidate screenshots and browser evidence
         if: always()
         uses: actions/upload-artifact@v4
