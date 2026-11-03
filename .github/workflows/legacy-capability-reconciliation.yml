@@ -1,0 +1,39 @@
+name: Legacy capability source reconciliation
+
+on:
+  pull_request:
+    paths:
+      - ".github/workflows/legacy-capability-reconciliation.yml"
+      - "docs/planning/account-surface-parity.md"
+      - "tests/unit/capability-parity-share-outside-reconciliation.test.ts"
+      - "src/app/company-share/**"
+      - "src/modules/placements/company-share/**"
+      - "src/modules/placements/recorded-outside*"
+      - "src/app/(authenticated)/tpo/placements/recorded-outside/**"
+      - "src/app/api/placements/recorded-outside/**"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  source-and-policy-tests:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+      - run: npm ci
+      - name: Execute legacy user-job models and scope guards
+        run: |
+          npx vitest run \
+            tests/unit/capability-parity-share-outside-reconciliation.test.ts \
+            tests/unit/recorded-outside-drive-model.test.ts \
+            tests/unit/tpo-remind-not-applied-eligibility.test.ts \
+            tests/unit/chat13-final-sprint-public-share.test.ts \
+            tests/unit/company-share-audit-columns-safety.test.ts
+      - name: Check new source test lint
+        run: npx eslint tests/unit/capability-parity-share-outside-reconciliation.test.ts
