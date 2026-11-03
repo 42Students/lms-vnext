@@ -11,9 +11,7 @@ import {
 import type {
   MembershipRole,
 } from "@/modules/identity/constants";
-import type {
-  RequestContext,
-} from "@/modules/identity/context";
+import { hasActiveMembership, hasMembershipRole, type RequestContext } from "@/modules/identity/context";
 
 type Actor =
   | "superadmin"
@@ -258,6 +256,21 @@ const permissions =
   ) as PlatformPermission[];
 
 describe("platform permission matrix", () => {
+  it("fails closed instead of combining held roles in a single active request", () => {
+    const invalidMultiRole = memberContext(["LEARNER", "COLLEGE_ADMIN"]);
+    expect(hasActiveMembership(invalidMultiRole)).toBe(false);
+    expect(hasMembershipRole(invalidMultiRole, "COLLEGE_ADMIN")).toBe(false);
+    expect(hasMembershipRole(invalidMultiRole, "LEARNER")).toBe(false);
+    for (const permission of permissions) {
+      if (permission === "identity.self.manage") continue;
+      expect(can(invalidMultiRole, permission, ownResource), permission).toBe(false);
+    }
+    // A single selected role is still permitted for its own resources.
+    expect(can(memberContext(["COLLEGE_ADMIN"]), "people.manage", ownResource)).toBe(true);
+    expect(can(memberContext(["LEARNER"]), "courses.read", ownResource)).toBe(true);
+    expect(can(memberContext(["LEARNER"]), "people.manage", ownResource)).toBe(false);
+  });
+
   it("grants TPO profile review only when verification is enabled and admin delegated", () => {
     expect(can(contexts.tpo,"profile-verification.review",ownResource)).toBe(false);
     expect(can(contexts.tpo,"profile-verification.review",{
