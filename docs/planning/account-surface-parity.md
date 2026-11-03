@@ -856,3 +856,16 @@ Surfaces built on main by builder lanes (recorded in docs/parity/*.md) that had 
 | Learner profile completeness | profile | `/learn/profile/completeness` | Completeness view. | DONE  |
 | Learner course attendance summary | course tabs | `/learn/courses/[deliveryId]/attendance-summary` | Per-course attendance summary. | DONE  |
 | Admin reassign project mentor | projects | `/admin/projects/reassign-mentor` | Mentor reassignment page. | DONE  |
+
+
+## Current legacy DEV-only account obligations (48-hour source freshness sweep, 2026-11-03)
+
+These are newly observed account/role areas in the current `lms-dev-2026` code, **not missing pixels or 37 independently absent user jobs**. The older matrix concentrated on `prod-2026` plus seven accounts; it cannot alone certify this newly added dev role scope. Immutable file paths and source SHA evidence: `docs/audit/legacy-dev-census/2026-11-03-role-delta.json`. Canonical OPEN execution tasks: `UI-11`, `UI-12` and `UI-13` in `docs/tracker.json`.
+
+| Legacy surface / account | Legacy dev FE source | vNext equivalent (current inspected SHA) | Required capability disposition | Status |
+| --- | --- | --- | --- | --- |
+| Course Coordinator: authorized per-course learning delivery and administration | `src/pages/course-coordinator/*` (24 new page files in `lms2-fe@d2d8d454`), `CourseCoordinator*Controller.java` (27 dev-only backend controllers) | No `/course-coordinator` role page route at inspected vNext main SHA; some generic Faculty/Admin course features may be reusable | **REQUIRED-SCOPE GAP:** exact course assignment grants, lessons/materials, assignments, quizzes/reviews, learners, team, sessions, attendance, announcements, progress, file/private upload, permission and mobile states. Map *individual jobs* before implementation; do not grant college-wide admin rights to course coordinators. | MISSING |
+| Global TPO: cross-college placements-enabled network operations | `src/pages/global-tpo/*` (13 new page files in `lms2-fe@d2d8d454`), 18 Global TPO / Super Admin Global TPO Staff dev-only backend controllers | No `/global-tpo` role page route at inspected vNext main SHA; generic college TPO functions may be reusable but cannot by themselves authorize multi-college scope | **REQUIRED-SCOPE GAP:** placements-enabled college selection, students, eligibility, drives/rounds/offers, recruiter follow-up, companies, team, reports, calendar, settings, full read/write actor/tenant audits. Every request must independently reauthorize target college; never trust selected college UI state as access proof. | MISSING |
+
+**Acceptance:** Existing API and DB tasks remain engineering-accepted for their original scopes; these newly discovered dev-only roles require additional runtime implementation and validation. Avoid claiming `101/101` means complete migration. Do not declare these MISSING account families VERIFIED solely from source or screenshots. Owner may explicitly exclude or retire a legacy dev feature only with a documented decision, never by quietly deleting it from this table.
+
