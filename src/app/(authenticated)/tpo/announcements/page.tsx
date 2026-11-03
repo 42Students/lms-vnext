@@ -6,6 +6,8 @@ import {Button} from "@/components/ui/button";
 import {Textarea} from "@/components/ui/textarea";
 import {Input} from "@/components/ui/input";
 import Link from "next/link";
+import {CurrentPageRetry} from "@/components/ui/current-page-retry";
+import {reportPageReadFailure} from "@/observability/page-read-failure";
 import { Checkbox } from "@/components/ui/checkbox";
 import {tpoNoticeTextParts} from "@/modules/announcements/tpo-notice-safe-links";
 import {TpoPlacementCellReadAction} from "@/components/tpo/tpo-placement-cell-read-action";
@@ -67,10 +69,15 @@ export default async function TpoAnnouncements({searchParams}:Props){
   return <div className="min-w-0 space-y-4"><PageHeader title="Announcements"/><Alert tone="error">Invalid announcement selection. <Link href="/tpo/announcements">Reset</Link></Alert></div>;
  const result=await listTpoPlacementAnnouncements(context,tab.data,new Date(),page,showTeam?"COLLEGE":"MINE")
   .catch((error:unknown)=>{
-   if(error instanceof AuthorizationError)throw error;
+   reportPageReadFailure({event:"tpo.announcements_load_failed",
+    route:"/tpo/announcements",stage:"notice_list"},error);
    return {status:"FAILED" as const,items:[]};
   });
- const from42Unread=await countUnreadTpo42Announcements(context).catch(()=>null);
+ const from42Unread=await countUnreadTpo42Announcements(context).catch((error:unknown)=>{
+  reportPageReadFailure({event:"tpo.announcements_unread_failed",
+   route:"/tpo/announcements",stage:"unread_count"},error);
+  return null;
+ });
  const targetedReady=await placementTableExists("placement_tpo_notice_audiences")&&
   await placementTableExists("placement_tpo_notice_recipients");
  const deliveryReady=tpoNoticeDeliveryVerified();
@@ -89,7 +96,11 @@ export default async function TpoAnnouncements({searchParams}:Props){
  });
  const formMinDateTime=new Date(new Date().getTime()+330*60_000).toISOString().slice(0,16);
  const targetOptions=result.status==="READY"&&tab.data==="yours"?
-  await listTpoNoticeTargetOptions(context).catch(()=>null):null;
+  await listTpoNoticeTargetOptions(context).catch((error:unknown)=>{
+   reportPageReadFailure({event:"tpo.announcements_targets_failed",
+    route:"/tpo/announcements",stage:"audience_targets"},error);
+   return null;
+  }):null;
  return <div className="min-w-0 space-y-4">
   <PageHeader title="Announcements"
    description={tab.data==="from-42"?"What 42 tells placement cells.":
