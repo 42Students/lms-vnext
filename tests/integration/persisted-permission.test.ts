@@ -171,6 +171,50 @@ describe(
       });
     });
 
+    it("does not elevate a selected Learner role from another persisted College Admin role", async () => {
+      // A user can hold multiple roles at one college, but an API mutation
+      // must honor exactly the role selected for this request.
+      const inserted = await pool.query(
+        `INSERT INTO membership_roles (membership_id, role)
+         VALUES ($1, 'LEARNER')
+         ON CONFLICT (membership_id, role) DO NOTHING
+         RETURNING membership_id`,
+        [SEED_IDS.collegeAdminMembership],
+      );
+      try {
+        const learnerWorkspace: RequestContext = {
+          ...collegeAdmin,
+          membership: {
+            ...collegeAdmin.membership!,
+            roles: ["LEARNER"],
+          },
+        };
+        await expect(assertManage(learnerWorkspace))
+          .rejects.toBeInstanceOf(AuthorizationError);
+        await expect(
+          getDb().transaction(tx => assertPersistedPlatformPermission(
+            tx,
+            learnerWorkspace,
+            "courses.read",
+            {
+              organizationId: SEED_IDS.organization,
+              collegeId: SEED_IDS.collegeA,
+            },
+          )),
+        ).resolves.toMatchObject({
+          membership: { roles: ["LEARNER"] },
+        });
+      } finally {
+        if (inserted.rowCount) {
+          await pool.query(
+            `DELETE FROM membership_roles
+             WHERE membership_id = $1 AND role = 'LEARNER'`,
+            [SEED_IDS.collegeAdminMembership],
+          );
+        }
+      }
+    });
+
     it("denies a stale context after membership suspension", async () => {
       await pool.query(
         `update college_memberships
