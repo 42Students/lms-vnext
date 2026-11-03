@@ -145,10 +145,11 @@ export function encodePng({ width, height, data }) {
   header.writeUInt32BE(width, 0); header.writeUInt32BE(height, 4);
   header[8] = 8; header[9] = 6;
   const stride = width * 4, raw = Buffer.alloc(height * (stride + 1));
+  const pixels = Buffer.from(data);
   for (let y = 0; y < height; y++) {
     const dst = y * (stride + 1);
     raw[dst] = 0;
-    Buffer.from(data).copy(raw, dst + 1, y * stride, (y + 1) * stride);
+    pixels.copy(raw, dst + 1, y * stride, (y + 1) * stride);
   }
   return Buffer.concat([MAGIC, pngChunk("IHDR", header),
     pngChunk("IDAT", deflateSync(raw, { level: 6 })), pngChunk("IEND", Buffer.alloc(0))]);
