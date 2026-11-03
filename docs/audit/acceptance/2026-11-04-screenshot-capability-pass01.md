@@ -25,18 +25,43 @@
 | `admin-001..003` (3) | College Assignments Export CSV (page), Create, Edit, Submissions, All courses | **VERIFY**: `college/assignments/page.tsx`, `college-assessment-aggregate.tsx`, `college-assignment-create.tsx` and `college-assignment-actions.tsx` provide export, create draft, edit and submission review. | Authorized course/section options, create→publish→learner→submit→admin review, filtered CSV and foreign college negative |
 | `admin-004..005` (2) | Attendance previous/next month and Select class | **VERIFY**: `college/attendance/page.tsx` and `admin-attendance-workspace.tsx` contain URL-backed month shift, class/course selection, attendance grid and export. | Actual month boundary/back-forward, timezone, role/college denial, edit window and CSV/print browser |
 
+## Additional unmatched-route spot checks (16 more manifests)
+
+These are **route-mapping spot checks** prompted by the screenshot archive, not detailed modal/permission acceptance. In particular, old-only or vNext-only *images* cannot establish a missing or extra feature. Each row below was read from the package manifest; the indicated vNext route or alias source was separately checked. This raises the number of distinct **manifests inspected** in pass 01 to **40/783** (5.11%), while retaining only 24 in the initial interaction-level triage.
+
+| Package | Screenshot route mismatch or capture state | Current code mapping / next decision |
+| --- | --- | --- |
+| `admin-020` | Old `/college-admin/companies`, new `/college/companies` | Same everyday company directory at `college/companies/page.tsx`; **VERIFY** actions/tenant |
+| `admin-040` | Old lecture halls to `/college/lecture-halls`; new only base in part | `college/lecture-halls/page.tsx` exists; **VERIFY** editor and legacy form state |
+| `admin-060` | Old project submissions to `/college/projects/submissions` | `college/projects/submissions/page.tsx` exists; **VERIFY** submission review |
+| `admin-080` | Old students to `/college/students` | `college/students/page.tsx` exists; **VERIFY** role directory controls |
+| `admin-100` | Old and new TPO batch detail, no new images in this package part | `tpo/batches/[batchId]/page.tsx` exists; **CAPTURE GAP**, not absent batch detail |
+| `admin-125` | Old and new TPO verification | `tpo/verification/page.tsx` exists; **VERIFY** record-level actions |
+| `admin-150` | Old `/college-admin/courses/[id]`, no paired vNext route | Multiple vNext course/offer routes exist; exact old course-ID→offering/deep-link resolution **NOT YET VERIFIED**; do not equate by name |
+| `admin-175` | Old `/college-admin/jobs/[jobId]/settings`, no screenshot pair | `college/placements/jobs/[jobId]/settings/page.tsx` has guarded edit, close/reopen/archive; **VERIFY** persisted outcomes |
+| `admin-200` | No old match, vNext `/college/placements/applications` | vNext-only capture. **Reconcile** whether a consolidated/improved application workspace, not automatically an extra feature |
+| `admin-225` | No old match, vNext `/college/placements/retention` | vNext-only capture; read-only college retention report exists; **reconcile enhancement/privacy** |
+| `admin-250` | Old `/college-admin/projects/workspaces/[workspaceId]/readiness` lacks paired vNext capture | Compatibility `college/projects/workspaces/[workspaceId]/[section]/page.tsx` redirects to `college/projects/[projectId]/readiness/page.tsx`; **VERIFY** deep-link state |
+| `admin-275` | Old `/college-admin/projects/workspaces/deleted` no vNext capture | `college/projects/workspaces/deleted/page.tsx` redirects to real `college/projects/deleted` preserving bounded pagination; **VERIFY** restore action |
+| `admin-300` | Old `/tpo/calendar` has no paired vNext capture | `tpo/calendar/page.tsx` exists; **CAPTURE GAP** |
+| `admin-325` | Old `/tpo/drives/new` has no paired vNext capture | `tpo/drives/new/page.tsx` redirects via `legacyTpoNewDriveHref` to authorized `/tpo/placements/new`; **VERIFY** create/save |
+| `admin-350` | Old `/tpo/recruiters/[recruiterLeadId]` lacks vNext screenshot pair | `tpo/recruiters/[leadId]/page.tsx` resolves legacy numeric lead IDs within persisted same-college TPO membership; **VERIFY** legacy-ID and cross-college negatives |
+| `admin-375` | Old `/tpo/students` lacks paired new capture | `tpo/students/page.tsx` exists; **CAPTURE GAP**, not absent student list |
+
+Do **not** create 16 new tasks based on the unpaired files. Add a missing feature to the existing account/page spec only after the legacy FE/BE handler and vNext behavior have been compared. The two vNext-only routes need intended-enhancement classification, not deletion.
+
 ### What changed in code in this pass
 
 1. `src/app/(authenticated)/learn/allAssignments/page.tsx`: replace the fixed `?retry=1` link, which could become inert once already on that URL, with `CurrentPageRetry` (`router.refresh`) without altering selected route filters; log backend load failure but **never** swallow authorization/service errors.
 2. `src/app/(authenticated)/tpo/announcements/page.tsx`: attribute failed notice list, unread and audience-target reads using the shared route-safe logger; keep permission denials fail-closed; replace link-based retry with real refresh.
 3. `src/app/(authenticated)/tpo/audit/page.tsx`: add route-tagged read failure logging while preserving the existing scoped stale-snapshot/Retry and authorization exception behavior.
-4. `tests/unit/screenshot-capability-pilot-20261104.test.ts`: 12 tests, including actual pure-model logic for bounded pagination, status filter vocabulary, safe link parsing and error-code allowlisting, alongside source-only discovery guards for the other candidate controls. Authored tests are **not executed tests**, and source checks cannot validate UI/API mutations.
+4. `tests/unit/screenshot-capability-pilot-20261104.test.ts`: 15 tests, including actual pure-model logic for bounded pagination, status filter vocabulary, safe link parsing and error-code allowlisting, alongside source-only discovery guards for the other candidate controls. Authored tests are **not executed tests**, and source checks cannot validate UI/API mutations.
 
 ### Numbers and confidence
 
 - Reference archive: **3,169 image files** / **783 packages**; already inventory-verified in historical report.
-- **24 of 783 package manifests triaged by named interaction and current source** = **3.07% of manifests**; this is **not** a 3.07% product-completion metric.
-- **12 page families mapped** to current source.
+- **24 package manifests triaged by named interaction and current source; plus 16 additional unmatched-route samples mapped to candidate routes/aliases (40/783 manifests inspected)** = **5.11% of manifests inspected overall**; this is **not** a 3.07% product-completion metric.
+- **12 initial page families mapped** to current source; 16 additional route/capture samples checked.
 - **0 of these 24 newly certified as fully browser/API/security closed** in this pass. Existing accepted evidence elsewhere is not invalidated; no statuses are flipped.
 - At least **one misleading capture-role assignment** identified (`faculty-001` uses old learner `/quiz`).
 - Recruiting/HR and Super Admin screenshot captures remain incomplete, Course Coordinator is old-only, and an image package may include many duplicate/invalid states. An unmatched route is not by itself a missing feature.
