@@ -42,6 +42,7 @@ export function CollegeQuizCreate({lessons,deliveries}:{
  const [questions,setQuestions]=useState<Question[]>([empty()]);
  const [busy,setBusy]=useState(false),[error,setError]=useState(""),[notice,setNotice]=useState("");
  const lock=useRef(false),lesson=lessons.find(x=>x.id===lessonId);
+ const allowConfirmedNavigation=useRef(false);
  const [nextOverride,setNextOverride]=useState<Record<string,number>>({});
  const sections=deliveries.filter(x=>x.offeringId===lesson?.offeringId);
  const dirty=Boolean(title.trim()||description.trim()||dueAt||deliveryId||
@@ -50,7 +51,10 @@ export function CollegeQuizCreate({lessons,deliveries}:{
    q.options.length!==2||q.options.some(option=>option.text.trim())));
  useEffect(()=>{
   if(!opened||!dirty)return;
-  function warn(event:BeforeUnloadEvent){event.preventDefault();event.returnValue="";}
+  function warn(event:BeforeUnloadEvent){
+   if(allowConfirmedNavigation.current)return;
+   event.preventDefault();event.returnValue="";
+  }
   window.addEventListener("beforeunload",warn);
   return()=>window.removeEventListener("beforeunload",warn);
  },[opened,dirty]);
@@ -70,10 +74,16 @@ export function CollegeQuizCreate({lessons,deliveries}:{
    if(destination.origin!==window.location.origin)return;
    if(destination.pathname===window.location.pathname&&
       destination.search===window.location.search)return;
-   if(!window.confirm("Discard unsaved quiz changes?")){
-    event.preventDefault();
-    event.stopImmediatePropagation();
-   }
+   // Stop Next.js navigation synchronously. The dialog resolves later;
+   // cancel keeps every edited quiz question intact.
+   event.preventDefault();
+   event.stopImmediatePropagation();
+   void (async()=>{
+    if(await askConfirm("Discard unsaved quiz changes?")){
+     allowConfirmedNavigation.current=true;
+     window.location.assign(destination.href);
+    }
+   })();
   }
   document.addEventListener("click",guardNavigation,true);
   return()=>document.removeEventListener("click",guardNavigation,true);

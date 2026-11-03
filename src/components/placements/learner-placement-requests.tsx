@@ -1,6 +1,7 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
+import {useConfirmFlow} from "@/components/ui/use-confirm-flow";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -134,6 +135,8 @@ export function LearnerPlacementRequests({
   initialRoundId?: string | null;
 }) {
   const router = useRouter();
+  const {askConfirm,dialog}=useConfirmFlow();
+  const allowConfirmedNavigation=useRef(false);
   const { showToast } = useToast();
   const [pendingKey, setPendingKey] =
     useState<string | null>(null);
@@ -197,17 +200,29 @@ export function LearnerPlacementRequests({
   // their own history and are not affected by leaving this screen.
   useEffect(()=>{
     if(!roundReason.trim()&&!offerReason.trim())return;
-    const guard=(event:BeforeUnloadEvent)=>{event.preventDefault();event.returnValue="";};
+    const guard=(event:BeforeUnloadEvent)=>{
+      if(allowConfirmedNavigation.current)return;
+      event.preventDefault();event.returnValue="";
+    };
     const links=(event:MouseEvent)=>{
       const link=event.target instanceof Element?event.target.closest("a[href]"):null;
-      if(!link||event.defaultPrevented||event.ctrlKey||event.metaKey||event.shiftKey||event.altKey)return;
+      if(!link||event.defaultPrevented||event.button!==0||event.ctrlKey||event.metaKey||event.shiftKey||event.altKey||link.hasAttribute("download"))return;
       const href=link.getAttribute("href");
       if(!href||href.startsWith("#"))return;
       try{
         const url=new URL(href,window.location.href);
-        if(url.origin===window.location.origin&&
-           (url.pathname!==window.location.pathname||url.search!==window.location.search)&&
-           !window.confirm("Discard this unsent placement request?"))event.preventDefault();
+        if(url.origin!==window.location.origin||
+           url.pathname===window.location.pathname&&url.search===window.location.search)return;
+        event.preventDefault();
+        event.stopImmediatePropagation();
+        // Preserve the in-progress request unless the learner explicitly opts
+        // to discard it; bypass only the beforeunload guard on that choice.
+        void (async()=>{
+          if(await askConfirm("Discard this unsent placement request?")){
+            allowConfirmedNavigation.current=true;
+            window.location.assign(url.href);
+          }
+        })();
       }catch{/* The browser handles malformed links. */}
     };
     window.addEventListener("beforeunload",guard);
@@ -713,6 +728,7 @@ export function LearnerPlacementRequests({
           </div>
         </div>
       ) : null}
+      {dialog}
     </section>
   );
 }
