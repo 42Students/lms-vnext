@@ -4,7 +4,7 @@ import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
 import {
- buildScreenshotCapabilityCensus,indexAppRoutes,parsePackageManifest,routeForNextPage,
+ buildScreenshotCapabilityCensus,indexAppRoutes,parsePackageManifest,routeForNextPage,routeShape,
 } from "../scripts/audit/screenshot-capability-census.mjs";
 
 function tempFixture(run){
@@ -33,6 +33,10 @@ test("route index ignores Next route groups but retains nested dynamic segments"
  assert.equal(routeForNextPage("(public)/quiz/page.tsx"),"/quiz");
  assert.equal(routeForNextPage("page.tsx"),"/");
  assert.equal(routeForNextPage("(authenticated)/mentor/projects/loading.tsx"),null);
+ assert.equal(routeShape("/tpo/recruiters/[recruiterLeadId]"),"/tpo/recruiters/[]");
+ assert.equal(routeShape("/tpo/recruiters/[leadId]"),"/tpo/recruiters/[]");
+ assert.equal(routeShape("/docs/[...path]"),"/docs/[...]");
+ assert.equal(routeShape("/docs/[[...path]]"),"/docs/[[...]]");
  tempFixture(({appRoot,page})=>{
   page(["(authenticated)","mentor","projects","[projectId]"].join("/"));
   page("quiz");
@@ -60,6 +64,7 @@ test("census classifies screenshots as capture evidence, not missing product fea
   page("quiz");
   page("(authenticated)/college/assignments");
   page("(authenticated)/mentor/projects");
+  page("(authenticated)/tpo/recruiters/[leadId]");
   pkg("learner-001","/learn/allAssignments","/learn/allAssignments",["base"],["base"]);
   pkg("learner-002","/learn/allAssignments","/learn/allAssignments",["control"],[]);
   pkg("faculty-001","/quiz","/quiz",["base"],["load-failed"]);
@@ -89,6 +94,18 @@ test("census classifies screenshots as capture evidence, not missing product fea
   assert.equal(learner.reviewReason,"TRACE_ACTIONS_AND_VERIFY");
   const coordinator=r.families.find(g=>g.role==="coordinator");
   assert.equal(coordinator.reviewReason,"OLD_ONLY_RECONCILE");
+ });
+});
+
+test("different dynamic placeholder names resolve to the same Next route shape",()=>{
+ tempFixture(({baselineRoot,appRoot,page,pkg})=>{
+  fs.writeFileSync(path.join(baselineRoot,"packages","QUEUE.md"),"- tpo-001\n");
+  page("(authenticated)/tpo/recruiters/[leadId]");
+  pkg("tpo-001","/tpo/recruiters/[recruiterLeadId]",
+      "/tpo/recruiters/[recruiterLeadId]",["base"],["base"]);
+  const r=buildScreenshotCapabilityCensus({baselineRoot,appRoot});
+  assert.equal(r.families[0].directRoute,true);
+  assert.equal(r.families[0].reviewReason,"TRACE_ACTIONS_AND_VERIFY");
  });
 });
 
