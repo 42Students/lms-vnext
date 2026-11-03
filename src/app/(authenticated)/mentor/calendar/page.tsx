@@ -77,6 +77,14 @@ export default async function MentorCalendarPage({searchParams}:{
     <div className="prototype-mentor-calendar-heading">
       <PageHeader title="Meetings"
         description="Every scheduled meeting across your assigned projects, in one place."/>
+
+    </div>
+    <section className="prototype-mentor-meetings-surface min-w-0"
+      aria-label="Meeting dates and history">
+      <MentorMeetingsCalendar meetings={displayed}
+      // eslint-disable-next-line react-hooks/purity -- Current instant is supplied by server for hydration, refreshed on the client.
+      initialNow={now.toISOString()}/>
+    </section>
       <details className="min-w-0 text-sm">
         <summary className="cursor-pointer text-[var(--lms-link-text)]">
           Scheduling and Google Calendar
@@ -87,13 +95,6 @@ export default async function MentorCalendarPage({searchParams}:{
           <MentorGoogleCalendarAccount {...googleConnection}/>
         </div>
       </details>
-    </div>
-    <section className="prototype-mentor-meetings-surface min-w-0"
-      aria-label="Meeting dates and history">
-      <MentorMeetingsCalendar meetings={displayed}
-      // eslint-disable-next-line react-hooks/purity -- Current instant is supplied by server for hydration, refreshed on the client.
-      initialNow={now.toISOString()}/>
-    </section>
     <Disclosure title={"Search & filters"+(activeCount?" ("+activeCount+" active)":"")}
       defaultOpen={activeCount>0} className="min-w-0 border-t border-border pt-3"
       contentClassName="pt-3">
