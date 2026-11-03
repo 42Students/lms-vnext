@@ -352,7 +352,67 @@ export function LearnerAssessmentOverview({
 
   return (
     <div className="min-w-0 space-y-[16px]">
-      {loadError ? <Alert tone="warni      {kind==="ASSIGNMENT" ? (
+      {loadError ? <Alert tone="warning" role="status"
+        title={kind === "ASSIGNMENT" ? "Couldn't refresh assignments" : "Couldn't refresh quizzes"}>
+        <span>Showing the last loaded list. Submission actions are unavailable until a successful refresh.</span>
+        <Button type="button" variant="secondary" className="mt-2 w-fit"
+          onClick={() => router.refresh()}>Retry</Button>
+      </Alert> : null}
+      {kind==="QUIZ" ? (
+        <section aria-label="Quiz summary" className="flex min-w-0 flex-wrap items-center gap-2 border-b border-border pb-3 text-sm font-semibold text-body">
+          <Badge tone="neutral">{scopedAttentionItems.length} {scopedAttentionItems.length===1?"Quiz":"Quizzes"}</Badge>
+          <Badge tone="neutral">{scopedAttentionItems.filter(item=>{
+            const due=item.dueAt?new Date(item.dueAt):new Date(item.createdAt);
+            const today=new Date(currentNowMs);
+            if(!Number.isFinite(due.getTime()))return false;
+            const month=new Intl.DateTimeFormat("en-CA",{timeZone:"Asia/Kolkata",year:"numeric",month:"2-digit"});
+            return month.format(due)===month.format(today);
+          }).length} This month</Badge>
+          <Disclosure title={`${submittedQuizzes.length} Submitted`} className="min-w-0">
+            {submittedQuizzes.length>0 ? (
+              <>
+                <ul role="region" aria-label="Submitted quizzes, scroll for more" tabIndex={0}
+                  className="mt-2 max-h-48 space-y-1 overflow-y-auto overscroll-contain pr-2 text-xs font-normal focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">
+                  {submittedQuizzes.map(item=><li key={item.deliveryId+":"+item.id}>{item.title}</li>)}
+                </ul>
+                {submittedQuizzes.length>5?<p className="mt-1 text-xs font-normal text-muted-foreground">
+                  Scroll to see more submitted quizzes.
+                </p>:null}
+              </>
+            ) : <p className="mt-2 text-xs font-normal">No quizzes submitted yet.</p>}
+          </Disclosure>
+        </section>
+      ) : (<Disclosure title="Assessment totals" className="border-b border-border" contentClassName="pb-4"><div role="group" className={styles["metricGrid"]} aria-label="Assessment totals">
+        <StatTile {...(styles["tile"] === undefined ? {} : {className:styles["tile"]})}
+          label={
+            kind === "ASSIGNMENT"
+              ? "Assignments"
+              : "Quizzes"
+          }
+          value={scopedAttentionItems.length}
+        ><span className={styles["icon"]}><AssessmentMetricGlyph kind="assignment" /></span></StatTile>
+        <StatTile {...(styles["tile"] === undefined ? {} : {className:styles["tile"]})}
+          label="Courses"
+          value={learnerAssessmentCourseScopeCount(courses,activeCourseId)}
+        ><span className={styles["icon"]}><AssessmentMetricGlyph kind="courses" /></span></StatTile>
+        <StatTile {...(styles["tile"] === undefined ? {} : {className:styles["tile"]})} label="Needs action" value={actionCounts.pending}>
+          <span className={styles["icon"]}><AssessmentMetricGlyph kind="pending" /></span>
+        </StatTile>
+        <StatTile {...(styles["tile"] === undefined ? {} : {className:styles["tile"]})} label="Overdue / missed" value={actionCounts.overdue}>
+          <span className={styles["icon"]}><AssessmentMetricGlyph kind="overdue" /></span>
+        </StatTile>
+        <StatTile {...(styles["tile"] === undefined ? {} : {className:styles["tile"]})}
+          label={
+            kind === "ASSIGNMENT"
+              ? "Submitted"
+              : "Attempted"
+          }
+          value={completed}
+        ><span className={styles["icon"]}><AssessmentMetricGlyph kind="submitted" /></span></StatTile>
+      </div></Disclosure>
+      )}
+
+      {kind==="ASSIGNMENT" ? (
         <>
           <div className={legacyStyles.coursePicker}>{courseSelector}</div>
           <details className={legacyStyles.advancedTools}>
@@ -361,87 +421,6 @@ export function LearnerAssessmentOverview({
           </details>
         </>
       ) : advancedControls}
-itted"
-              : "Attempted"
-          }
-          value={completed}
-        ><span className={styles["icon"]}><AssessmentMetricGlyph kind="submitted" /></span></StatTile>
-      </div></Disclosure>
-      )}
-
-      <NeedsDoingChips
-        label={kind === "ASSIGNMENT" ? "Assignment quick views:" : "Quiz quick views:"}
-        items={quickCounts.map(quick => ({
-          key: quick.value,
-          label: LEARNER_ASSESSMENT_STATE_OPTIONS.find(option => option.value === quick.value)?.label ?? quick.value,
-          count: quick.count,
-          tone: "neutral",
-        }))}
-        selectedKey={stateFilter}
-        onSelect={(key) => {
-          setStateFilter(value => value === key ? "ALL" : key as LearnerAssessmentStateFilter);
-          setPage(1);
-        }}
-      />
-      <div className="grid min-w-0 gap-[var(--lms-space-3)] md:grid-cols-2">
-        <label className="w-full text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
-          <span className="mb-1.5 block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Search {kind === "ASSIGNMENT" ? "assignments" : "quizzes"}</span>
-          <Input type="search" value={search} maxLength={100}
-            onChange={event => {setSearch(event.target.value);setPage(1);}}
-            placeholder="Title, lesson or course"
-            className="min-h-11 md:min-h-9" />
-        </label>
-        <label className="w-full text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
-          <span className="mb-1.5 block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
-            Course
-          </span>
-          <Select className="min-h-11 md:min-h-9"
-            value={activeCourseId}
-            onChange={(event) => {
-              setCourseId(event.target.value);
-              setPage(1);
-              router.push(learnerAssessmentCourseHref(kind,event.target.value||null));
-            }}
-          >
-            <option value="">
-              All courses
-            </option>
-            {courses.map((course) => (
-              <option
-                key={course.id}
-                value={course.id}
-              >
-                {course.name} · {course.code}{initialCourseId&&initialCourseId!==course.id?"":` (${countsByCourse.get(course.id)??0})`}
-              </option>
-            ))}
-          </Select>
-        </label>
-      </div>
-      <Disclosure title="State · Sort" className="border-b border-border" contentClassName="grid min-w-0 gap-[var(--lms-space-3)] pb-4 md:grid-cols-2">
-        <label className="min-w-0 w-full text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
-          <span className="mb-1.5 block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">State</span>
-          <Select className="min-h-11 md:min-h-9" value={stateFilter}
-            onChange={event => {
-              setStateFilter(event.target.value as LearnerAssessmentStateFilter);
-              setPage(1);
-            }}>
-            {LEARNER_ASSESSMENT_STATE_OPTIONS.map(option => (
-              <option key={option.value} value={option.value}>{option.label}</option>
-            ))}
-          </Select>
-        </label>
-        <label className="w-full text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
-          <span className="mb-1.5 block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Sort</span>
-          <Select className="min-h-11 md:min-h-9" value={sort} onChange={event => {
-            setSort(event.target.value as LearnerAssessmentSort);setPage(1);
-          }}>
-            {LEARNER_ASSESSMENT_SORT_OPTIONS.map(option => (
-              <option key={option.value} value={option.value}>{option.label}</option>
-            ))}
-          </Select>
-        </label>
-      </Disclosure>
-
       <div className="flex min-w-0 flex-col items-stretch gap-2 sm:flex-row sm:items-center sm:justify-between">
         <p role="status" className="min-w-0 text-sm text-muted-foreground">
           {learnerAssessmentPageSummary({
