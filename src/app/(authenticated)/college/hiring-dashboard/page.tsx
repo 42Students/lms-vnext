@@ -1,5 +1,6 @@
 import { Alert } from "@/components/ui/alert";
 import { AuthorizationError } from "@/modules/permissions/policy";
+import { logError } from "@/observability/logger";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { hasMembershipRole } from "@/modules/identity/context";
 import { PageHeader } from "@/components/ui/page-header";
@@ -68,6 +69,8 @@ export default async function CollegeHiringDashboardPage({
     throw workspaceResult.reason;
   if(funnelResult.status==="rejected"&&funnelResult.reason instanceof AuthorizationError)
     throw funnelResult.reason;
+  if(workspaceResult.status==="rejected")logError("college.hiring_report_failed",workspaceResult.reason);
+  if(funnelResult.status==="rejected")logError("college.hiring_funnel_failed",funnelResult.reason);
   const workspace=workspaceResult.status==="fulfilled"?workspaceResult.value:null;
   const funnel=funnelResult.status==="fulfilled"?funnelResult.value:null;
   return <div className="min-w-0 overflow-x-clip space-y-[var(--lms-space-4)]">

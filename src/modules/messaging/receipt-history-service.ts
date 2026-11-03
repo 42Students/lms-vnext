@@ -1,5 +1,6 @@
 import "server-only";
 import { and, desc, eq, sql } from "drizzle-orm";
+import { ZodError } from "zod";
 import { getDb } from "@/db/client";
 import { messagingDeliveryBatches } from "@/db/schema/messaging-receipts";
 import { hasMembershipRole, isSuperAdmin, type RequestContext } from "@/modules/identity/context";
@@ -104,8 +105,8 @@ export async function listSupportSmsDeliveryHistory(
  const {listSmsDeliveryAttemptsForSupport}=await import("@/modules/notifications/exotel-sms");
  const suffix=typeof raw.recipientSuffix==="string"
   ?raw.recipientSuffix.replace(/[^0-9]/g,"").slice(-4):"";
- if(raw.recipientSuffix!==undefined&&raw.recipientSuffix!==null&&suffix.length<4)
-  throw new Error("Enter at least four digits for the recipient suffix");
+ if(typeof raw.recipientSuffix==="string"&&raw.recipientSuffix.trim()!==""&&suffix.length<4)
+  throw new ZodError([{code:"custom",path:["recipientSuffix"],message:"Enter at least four digits for the recipient suffix",input:raw.recipientSuffix}]);
  const {page,size}=legacyMessagingHistoryPaging(raw.page,raw.size);
  try{
   const result=await listSmsDeliveryAttemptsForSupport(context,{

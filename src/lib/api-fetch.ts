@@ -10,6 +10,7 @@ import { isRequestId } from "@/lib/request-id";
 
 let pageIsUnloading=false;
 if(typeof window!=="undefined"){
+  window.addEventListener?.("beforeunload",()=>{pageIsUnloading=true;window.setTimeout?.(()=>{pageIsUnloading=false;},10000);});
   window.addEventListener?.("pagehide",()=>{pageIsUnloading=true;});
   window.addEventListener?.("pageshow",()=>{pageIsUnloading=false;});
 }
@@ -128,9 +129,8 @@ export async function apiFetch<T = unknown>(
       // The persistent monitor receives a status category only: no request
       // path, body, token, response text or user-entered field values.
       // Never report failure of the telemetry endpoint itself.
-      // Signed-out visitors on the sign-in page get an expected 401 from session checks.
-      const expectedSignedOut=status===401&&window.location.pathname==="/login";
-      if(!expectedSignedOut&&!/\/api\/client-errors(?:\?|$)/.test(path))
+      // 401 and 403 are expected access outcomes, not application failures.
+      if(status!==401&&status!==403&&!/\/api\/client-errors(?:\?|$)/.test(path))
         window.dispatchEvent(new CustomEvent("lms:api-failure",{detail:{status}}));
     }
     if (reason instanceof FriendlyFetchError) throw reason;
