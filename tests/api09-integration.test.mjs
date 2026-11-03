@@ -15,7 +15,7 @@ const { summary, endpoints, missingGapNotes } = crosswalk;
 
 const FROZEN_SHA = "21bad59d4dfaf2fa11fdeaf9353327ce105697d5";
 const EXPECTED_TOTAL = 45;
-const EXPECTED_MISSING = 17;
+const EXPECTED_MISSING = 15;
 
 test("API-09 crosswalk summary integrity", () => {
   assert.equal(crosswalk.milestoneId, "API-09");
@@ -90,7 +90,7 @@ test("API-09 tenant-scoped notification routes use college context", () => {
   }
 });
 
-test("API-09 remaining 17 missing endpoints documented with gap reasons", () => {
+test("API-09 remaining 15 missing endpoints documented with gap reasons", () => {
   const missing = endpoints.filter(e => e.disposition === "MISSING");
   assert.equal(missing.length, EXPECTED_MISSING,
     `Expected ${EXPECTED_MISSING} MISSING entries, got ${missing.length}`);
@@ -163,4 +163,35 @@ test("API-09 unread list and stats are authenticated persisted-query redesigns",
     "await listOwnNotifications(",
     '"Cache-Control":"private, no-store"',
   ])assert.ok(src.includes(fragment),"Missing notification auth/data contract: "+fragment);
+});
+
+test("API-09 skill categories and search are bounded, authorized DB10-gated redesigns",()=>{
+  const route="src/app/api/skills/route.ts";
+  const skillSrc=fs.readFileSync(path.join(root,route),"utf8");
+  const parserSrc=fs.readFileSync(path.join(root,"src/modules/skills/catalog-validation.ts"),"utf8");
+  for(const [suffix,mode] of [["categories","categories"],["search","search"]]){
+    const record=endpoints.find(e=>e.legacyMethod==="GET"&&
+      e.legacyPath==="/api/v1/skills/"+suffix);
+    assert.ok(record,"Absent legacy skills "+suffix);
+    assert.equal(record.disposition,"REDESIGNED");
+    assert.equal(record.vNextPath,route);
+    assert.equal(record.vNextMethod,"GET");
+    assert.equal(record.authGuard,"getCurrentRequestContext");
+    assert.ok(record.notes.includes("mode="+mode));
+    assert.ok(record.notes.includes("503"),"Schema-ready gating must remain explicit");
+    assert.ok(record.notes.includes("no direct legacy URL alias"));
+  }
+  for(const fragment of [
+    'mode: z.enum(["search", "popular", "categories", "category"])',
+    'query: z.string().trim().max(80)',
+    'limit: z.coerce.number().int().min(1).max(50)',
+  ])assert.ok(parserSrc.includes(fragment),"Missing bounded catalog input: "+fragment);
+  for(const fragment of [
+    "skillsCatalogRuntimeEnabled()",
+    "await getCurrentRequestContext()",
+    "canReadSkillCatalog(context)",
+    "const input = parseSkillCatalogQuery(normalizedParams)",
+    "const result = await readSkillCatalog(input)",
+    'input.mode === "categories"',
+  ])assert.ok(skillSrc.includes(fragment),"Missing authenticated skill catalog contract: "+fragment);
 });

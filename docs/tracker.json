@@ -11263,12 +11263,12 @@
   },
   "apiPhaseClosedAt": "2026-11-02",
   "apiPhaseTotalEndpoints": 732,
-  "apiPhaseTotalMissingGaps": 183,
+  "apiPhaseTotalMissingGaps": 181,
   "apiPhaseCoverage": {
     "mapped": 60,
-    "redesigned": 477,
+    "redesigned": 479,
     "retired": 12,
-    "missing": 183,
+    "missing": 181,
     "total": 732
   }
 }

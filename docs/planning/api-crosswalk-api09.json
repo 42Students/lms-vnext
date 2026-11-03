@@ -6,9 +6,9 @@
   "summary": {
     "total": 45,
     "mapped": 10,
-    "redesigned": 18,
+    "redesigned": 20,
     "retired": 0,
-    "missing": 17
+    "missing": 15
   },
   "missingGapNotes": [
     "NotificationController clear-all/delete/{id} (2): vNext has [notificationId]/delete but no clear-all bulk endpoint",
@@ -18,8 +18,7 @@
     "AnnouncementController pin/unpin (2): /announcements/{id}/pin and /unpin — no pin/unpin in vNext announcements",
     "AnnouncementController pinned list (1): /announcements/pinned — no dedicated pinned list endpoint",
     "TelegramWebhookController status (1): /api/v1/webhooks/telegram/status — only POST handler exists in vNext webhooks/telegram/route.ts",
-    "DiscussionController full (10): /api/v1/discussions/* — discussions are scoped to course deliveries/lesson content in vNext (not a top-level resource), no general discussion CRUD",
-    "SkillController categories/search (2): /skills/categories and /skills/search — vNext skills/route.ts is list/create only; no categories or search endpoints"
+    "DiscussionController full (10): /api/v1/discussions/* — discussions are scoped to course deliveries/lesson content in vNext (not a top-level resource), no general discussion CRUD"
   ],
   "endpoints": [
     {
@@ -499,23 +498,23 @@
       "legacyController": "SkillController",
       "legacyMethod": "GET",
       "legacyPath": "/api/v1/skills/categories",
-      "disposition": "MISSING",
-      "vNextPath": null,
-      "vNextMethod": null,
-      "authGuard": "isSameOriginRequest",
+      "disposition": "REDESIGNED",
+      "vNextPath": "src/app/api/skills/route.ts",
+      "vNextMethod": "GET",
+      "authGuard": "getCurrentRequestContext",
       "tenantScoped": true,
-      "notes": "No skill categories endpoint in vNext"
+      "notes": "Authenticated GET /api/skills?mode=categories (optional compat=v1): parseSkillCatalogQuery validates the categories mode, readSkillCatalog returns distinct persisted skill categories; 503 until verified DB10 runtime readiness, no direct legacy URL alias."
     },
     {
       "legacyController": "SkillController",
       "legacyMethod": "GET",
       "legacyPath": "/api/v1/skills/search",
-      "disposition": "MISSING",
-      "vNextPath": null,
-      "vNextMethod": null,
-      "authGuard": "isSameOriginRequest",
+      "disposition": "REDESIGNED",
+      "vNextPath": "src/app/api/skills/route.ts",
+      "vNextMethod": "GET",
+      "authGuard": "getCurrentRequestContext",
       "tenantScoped": true,
-      "notes": "No dedicated skill search endpoint; admin/skills/import and synonyms serve partial use cases"
+      "notes": "Authenticated GET /api/skills?mode=search&query=<term> (optional compat=v1): bounded parseSkillCatalogQuery validates query and limit, readSkillCatalog returns persisted ranked results; 503 until verified DB10 runtime readiness, no direct legacy URL alias."
     }
   ]
 }
