@@ -8,6 +8,7 @@ import {
   users,
 } from "@/db/schema";
 import type { RequestContext } from "@/modules/identity/context";
+import type { MembershipRole } from "@/modules/identity/constants";
 import {
   AuthorizationError,
   requirePermission,
@@ -21,9 +22,28 @@ export type PermissionTransaction =
 
 const recruiterOnlyPermissions = new Set<PlatformPermission>([
   "placements.recruiter.read",
+  "placements.recruiter.round.manage",
+  "placements.recruiter.slot.manage",
+  "placements.recruiter.outside.record",
   "placements.recruiter.result.stage",
   "placements.recruiter.note",
 ]);
+
+/**
+ * Preserve the one-role-at-a-time authorization boundary when refreshing actor
+ * permissions inside a transaction. The database is the authority for whether
+ * the selected role is still held; it must not silently grant a different,
+ * more privileged role merely because that role also belongs to the account.
+ */
+export function retainSelectedMembershipRole(
+  selectedRoles: readonly MembershipRole[],
+  persistedRoles: readonly MembershipRole[],
+): MembershipRole[] {
+  if (selectedRoles.length !== 1 || !persistedRoles.includes(selectedRoles[0]!)) {
+    throw new AuthorizationError("membership.role.manage");
+  }
+  return [selectedRoles[0]!];
+}
 
 /**
  * Rebuilds the authorization-relevant RequestContext from persisted rows while
@@ -121,8 +141,9 @@ export async function assertPersistedPlatformPermission(
       organizationId:
         persistedMembership.organizationId,
       status: persistedMembership.status,
-      roles: persistedMembershipRoles.map(
-        ({ role }) => role,
+      roles: retainSelectedMembershipRole(
+        context.membership.roles,
+        persistedMembershipRoles.map(({ role }) => role),
       ),
     };
   }
