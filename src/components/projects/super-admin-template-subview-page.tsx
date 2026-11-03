@@ -525,7 +525,7 @@ export async function SuperAdminTemplateSubviewPage({
                   {resource.url ? (
                     <a
                       href={resource.url}
-                      target="_blank"
+                     
                       rel="noopener noreferrer"
                       className="mt-4 inline-flex min-h-11 md:min-h-9 items-center break-all text-sm font-semibold text-primary-text hover:underline"
                     >

@@ -140,7 +140,7 @@ export function VerificationReviewDrawer({row,onClose,onSaved,apiBase="/api/coll
      {detail.review.documents.length===0?<p className="text-sm text-muted-foreground">Not uploaded</p>:
       <ul className="mt-2 space-y-2">{detail.review.documents.map(doc=>
        <li key={doc.receiptId} className="break-words">
-        <a target="_blank" rel="noopener noreferrer" className="inline-flex min-h-11 max-w-full items-center break-words [overflow-wrap:anywhere] text-[var(--lms-link-text)] underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]"
+        <a rel="noopener noreferrer" className="inline-flex min-h-11 max-w-full items-center break-words [overflow-wrap:anywhere] text-[var(--lms-link-text)] underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]"
          href={`${apiBase}/${encodeURIComponent(row.learnerMembershipId)}/${row.section}/documents/${encodeURIComponent(doc.receiptId)}${collegeId?`?collegeId=${encodeURIComponent(collegeId)}`:""}`}>Open {doc.purpose==="RESUME"?"resume":doc.purpose==="MARKSHEET"?"marksheet":"document"} (private signed link)</a>
        </li>)}</ul>}
     </section>

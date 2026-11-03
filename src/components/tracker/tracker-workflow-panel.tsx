@@ -176,7 +176,7 @@ export function TrackerWorkflowPanel({ issue, canManage = true }: { issue: Track
           {frontendCommitSha.trim().length >= 7 && !/^[a-f0-9]{7,40}$/i.test(frontendCommitSha.trim()) ?
             <p role="status" className="mt-1 text-xs font-normal text-muted-foreground">Enter 7–40 hexadecimal SHA characters to enable the commit link.</p> : null}
           {/^[a-f0-9]{7,40}$/i.test(frontendCommitSha.trim())?<a href={"https://github.com/42Students/lms2-fe/commit/"+frontendCommitSha.trim()}
-            target="_blank" rel="noopener noreferrer" className="mt-2 inline-flex min-h-11 items-center font-semibold text-primary-text underline md:min-h-9 focus-visible:underline">View on GitHub ↗</a>:null}
+            rel="noopener noreferrer" className="mt-2 inline-flex min-h-11 items-center font-semibold text-primary-text underline md:min-h-9 focus-visible:underline">View on GitHub ↗</a>:null}
         </div>
         <div className="min-w-0 text-sm font-semibold text-body">
           <label htmlFor="tracker-workflow-backend-sha">Backend commit SHA</label>
@@ -184,7 +184,7 @@ export function TrackerWorkflowPanel({ issue, canManage = true }: { issue: Track
           {backendCommitSha.trim().length >= 7 && !/^[a-f0-9]{7,40}$/i.test(backendCommitSha.trim()) ?
             <p role="status" className="mt-1 text-xs font-normal text-muted-foreground">Enter 7–40 hexadecimal SHA characters to enable the commit link.</p> : null}
           {/^[a-f0-9]{7,40}$/i.test(backendCommitSha.trim())?<a href={"https://github.com/42Students/lms/commit/"+backendCommitSha.trim()}
-            target="_blank" rel="noopener noreferrer" className="mt-2 inline-flex min-h-11 items-center font-semibold text-primary-text underline md:min-h-9 focus-visible:underline">View on GitHub ↗</a>:null}
+            rel="noopener noreferrer" className="mt-2 inline-flex min-h-11 items-center font-semibold text-primary-text underline md:min-h-9 focus-visible:underline">View on GitHub ↗</a>:null}
         </div>
           </div>
         </details>
