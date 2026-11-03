@@ -156,7 +156,7 @@ export function LearnerPlacementJobDetail({
             {summary.appliedCount ? "View roles & applications" : "See roles & application"} ↓
           </a>
           {website ? (
-            <a href={website} target="_blank" rel="noopener noreferrer"
+            <a href={website} rel="noopener noreferrer"
               className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-5 text-sm font-semibold text-primary-text transition-colors duration-150 hover:border-[var(--lms-primary)] hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] motion-reduce:transition-none md:min-h-9">
               Company website ↗
             </a>

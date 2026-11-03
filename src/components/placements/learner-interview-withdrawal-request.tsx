@@ -5,7 +5,7 @@ import {useRouter} from "next/navigation";
 import {Button} from "@/components/ui/button";
 import {learnerInterviewWithdrawalInputSchema,type LearnerInterviewWithdrawalTarget} from "@/modules/placements/learner-interview-withdrawal-model";
 import {Textarea} from "@/components/ui/textarea";
-export function LearnerInterviewWithdrawalRequest({target}:{target:LearnerInterviewWithdrawalTarget}){
+export function LearnerInterviewWithdrawalRequest({withdrawalRequest:target}:{withdrawalRequest:LearnerInterviewWithdrawalTarget}){
   const router=useRouter();
   const [review,setReview]=useState(false),[reason,setReason]=useState("");
   const [pending,setPending]=useState(false),[submitted,setSubmitted]=useState(false);

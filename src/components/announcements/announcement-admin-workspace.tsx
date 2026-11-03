@@ -90,7 +90,7 @@ function LinkifiedAnnouncement({ body }: { body: string }) {
   return <>{body.split(expression).map((part, index) => {
     if (index % 2 === 0) return <Fragment key={index}>{part}</Fragment>;
     const safe = safeAnnouncementLink(part);
-    return safe ? <a key={index} href={safe} target="_blank" rel="noopener noreferrer"
+    return safe ? <a key={index} href={safe} rel="noopener noreferrer"
       className="break-all text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">{part}</a>
       : <Fragment key={index}>{part}</Fragment>;
   })}</>;
@@ -392,7 +392,7 @@ export function AnnouncementAdminWorkspace({
                 </header>
                 <p className="min-w-0 whitespace-pre-wrap break-words text-sm leading-[1.6] text-body"><LinkifiedAnnouncement body={item.message}/></p>
                 {item.buttonUrl&&/^https:\/\/[^\s]+$/i.test(item.buttonUrl)?
-                  <div className="flex flex-wrap"><a href={item.buttonUrl} target="_blank" rel="noopener noreferrer"
+                  <div className="flex flex-wrap"><a href={item.buttonUrl} rel="noopener noreferrer"
                    className="inline-flex min-h-11 items-center gap-2 rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-link hover:border-[var(--lms-primary)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">
                     <svg aria-hidden="true" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="1.8">
                      <path d="M10 13a5 5 0 0 0 7.1 0l2.1-2.1a5 5 0 0 0-7.1-7.1L11 5"/>

@@ -591,13 +591,13 @@ export function LearnerCareerRoundsWorkspace({
                 </Button>
               ) : null}
               {meeting ? (
-                <a href={meeting} target="_blank" rel="noopener noreferrer"
+                <a href={meeting} rel="noopener noreferrer"
                   className="inline-flex min-h-[var(--lms-control-height)] max-md:min-h-11 items-center text-sm font-semibold text-primary-text hover:underline focus-visible:underline">
                   Open meeting ↗
                 </a>
               ) : null}
             </div>
-            {withdrawalTarget ? <LearnerInterviewWithdrawalRequest key={withdrawalTarget.applicationId+":"+withdrawalTarget.roundId+":"+withdrawalTarget.expectedUpdatedAt} target={withdrawalTarget} />:null}
+            {withdrawalTarget ? <LearnerInterviewWithdrawalRequest key={withdrawalTarget.applicationId+":"+withdrawalTarget.roundId+":"+withdrawalTarget.expectedUpdatedAt} withdrawalRequest={withdrawalTarget} />:null}
             {kind === "INTERVIEW" ? (
               <section className="min-w-0 border-t border-border pt-4">
                 <h3 className="text-sm font-semibold text-foreground">Save to your calendar</h3>
@@ -613,7 +613,7 @@ export function LearnerCareerRoundsWorkspace({
                     className="inline-flex min-h-[var(--lms-control-height)] max-md:min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border px-4 text-center text-sm font-[650] text-primary-text md:w-auto">
                     Download .ics
                   </a>
-                  <a href={interviewCalendar.googleUrl} target="_blank" rel="noopener noreferrer"
+                  <a href={interviewCalendar.googleUrl} rel="noopener noreferrer"
                     className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-[650] text-primary-text sm:w-auto md:min-h-[var(--lms-control-height)]">
                     Add to Google Calendar ↗
                   </a>
@@ -660,7 +660,7 @@ export function LearnerCareerRoundsWorkspace({
         description="This opens an external provider in a new tab. Leaving the LMS does not submit or confirm an assessment."
         footer={<div className="flex min-w-0 w-full flex-col-reverse items-stretch gap-2 sm:flex-row sm:justify-end">
           <Button variant="secondary" className="min-h-11 w-full sm:w-auto md:min-h-9" onClick={()=>setConfirmExternalTest(null)}>Stay here</Button>
-          {confirmExternalTest ? <a href={confirmExternalTest} target="_blank" rel="noopener noreferrer"
+          {confirmExternalTest ? <a href={confirmExternalTest} rel="noopener noreferrer"
             onClick={()=>setConfirmExternalTest(null)}
             className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] bg-[var(--lms-button-primary)] px-4 text-sm font-[650] text-on-primary sm:w-auto md:min-h-[var(--lms-control-height)]">
             Open external assessment ↗

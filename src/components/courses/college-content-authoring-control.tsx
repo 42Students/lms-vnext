@@ -693,7 +693,7 @@ export function CollegeContentAuthoringControl({kind,lessons,deliveries,existing
        </div>},
       {key:"students",header:"Students",cell:item=>item.visibleToStudents?"Visible":"Hidden"},
       {key:"content",header:"Content",cell:item=>item.externalUrl?
-       <a className="text-link underline" href={item.externalUrl} target="_blank" rel="noopener noreferrer">
+       <a className="text-link underline" href={item.externalUrl} rel="noopener noreferrer">
         {kind==="YOUTUBE"?"View":kind==="RESOURCE"?"Open link":"Join"}
        </a>:"—"},
       {key:"actions",header:"Action",mobilePriority:"action",cell:item=>

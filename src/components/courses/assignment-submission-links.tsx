@@ -43,7 +43,7 @@ export function AssignmentSubmissionLinks({submissionId}:{submissionId:string}){
   <h4 className="text-sm font-semibold text-foreground">Submitted links</h4>
   <ul className="space-y-1">
    {links.map(link=><li key={link.id} className="text-sm">
-    {safeHref(link.url)?<a href={safeHref(link.url)!} target="_blank"
+    {safeHref(link.url)?<a href={safeHref(link.url)!}
       rel="noopener noreferrer" className="inline-flex min-h-11 max-w-full items-center break-all text-primary-text underline hover:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">
       {link.caption||link.url}
     </a>:<span>Link unavailable</span>}

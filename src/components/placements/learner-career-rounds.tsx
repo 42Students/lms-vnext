@@ -143,8 +143,8 @@ export function LearnerCareerRounds({
                   Round details
                 </Button>
               ) : null}
-              {meetingUrl ? <a href={meetingUrl} target="_blank" rel="noopener noreferrer" className="inline-flex min-h-11 items-center break-words text-sm font-semibold text-primary-text underline-offset-2 hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9">Open meeting ↗</a> : null}
-              {assessmentLink ? <a href={assessmentLink} target="_blank" rel="noopener noreferrer" className="inline-flex min-h-11 items-center break-words text-sm font-semibold text-primary-text underline-offset-2 hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9">Open employer assessment ↗</a> : null}
+              {meetingUrl ? <a href={meetingUrl} rel="noopener noreferrer" className="inline-flex min-h-11 items-center break-words text-sm font-semibold text-primary-text underline-offset-2 hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9">Open meeting ↗</a> : null}
+              {assessmentLink ? <a href={assessmentLink} rel="noopener noreferrer" className="inline-flex min-h-11 items-center break-words text-sm font-semibold text-primary-text underline-offset-2 hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9">Open employer assessment ↗</a> : null}
               <Link href={"/learn/my-placements/applications?applicationId=" + encodeURIComponent(round.applicationId)} className="inline-flex min-h-11 items-center break-words text-sm font-semibold text-primary-text underline-offset-2 hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9">View application</Link>
             </div>
             {kind === "ASSESSMENT" ? (
