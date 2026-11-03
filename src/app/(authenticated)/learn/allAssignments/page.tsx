@@ -145,12 +145,12 @@ async function LearnerAssignmentsContent({searchParams}:{searchParams:Promise<As
         title="All Assignments"
         actions={
           <div className="flex flex-wrap items-center gap-2 text-sm" aria-label="Assignment summary">
-            <span className="inline-flex min-h-8 items-center gap-1.5 rounded-full border border-[#b0e8ec] bg-[#e8fafb] px-3 text-xs font-semibold text-[#087583]">
+            <span className="inline-flex min-h-8 items-center gap-1.5 rounded-full border border-[#b0e8ec] bg-[#e8fafb] px-3 text-xs font-semibold text-[color:var(--lms-primary-text,#087583)]">
               <span aria-hidden="true">▤</span>
               {totalAssignments} {totalAssignments===1?"Assignment":"Assignments"}
             </span>
             {createdThisMonth>0?(
-              <span className="inline-flex min-h-8 items-center gap-1.5 rounded-full border border-[#f6ddb2] bg-[#fff6e8] px-3 text-xs font-semibold text-[#a96709]">
+              <span className="inline-flex min-h-8 items-center gap-1.5 rounded-full border border-[#f6ddb2] bg-[#fff6e8] px-3 text-xs font-semibold text-[color:var(--lms-warning-text,#a96709)]">
                 <span aria-hidden="true">◷</span>
                 {createdThisMonth} this month{totalPages>1?" (this page)":""}
               </span>
@@ -158,6 +158,9 @@ async function LearnerAssignmentsContent({searchParams}:{searchParams:Promise<As
           </div>
         }
       />
+      <p id="assignment-filter-help" className="sr-only">
+        Search, state and sort controls apply to the assignments on this page. Choose a course to load its authorized assignments before searching.
+      </p>
       <LearnerAssessmentOverview
         key={overview.selectedCourseId??"all"}
         initialCourseId={overview.selectedCourseId??""}
