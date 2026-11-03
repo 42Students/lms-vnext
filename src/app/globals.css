@@ -10,6 +10,8 @@
 @import "../styles/micro-details.css";
 /* Exact 42LMS prototype shell, enabled only for TPO / Recruiter / Mentor. */
 @import "../styles/prototype-portals.css";
+/* Old-LMS Mentor visual reference takes precedence over Mentor prototypes. */
+@import "../styles/mentor-legacy-shell.css";
 
 /*
  * LMS vNext color source of truth.
