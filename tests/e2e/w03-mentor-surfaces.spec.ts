@@ -29,8 +29,14 @@ test.describe("W03 Mentor Meetings and Notifications browser parity",()=>{
     await expect(page.locator(".prototype-mentor-home-heading h1")).toBeVisible();
     await page.getByRole("link",{name:"Meetings"}).last().click();
     await expect(page.getByRole("heading",{level:1,name:"Meetings"})).toBeVisible();
-    await expect(page.getByRole("heading",{name:"Upcoming",exact:true})).toBeVisible();
-    await expect(page.getByRole("heading",{name:"Past and cancelled",exact:true})).toBeVisible();
+    await expect(page.getByRole("heading",{level:2,name:/^Upcoming \(\d+\)$/})).toBeVisible();
+    await expect(page.getByRole("heading",{level:2,name:/^Past & Cancelled \(\d+\)$/})).toBeVisible();
+    const advanced=page.locator("details").filter({has:page.locator("summary").getByText("Meeting filters and calendar tools")});
+    await expect(advanced).not.toHaveAttribute("open");
+    await advanced.locator("summary").click();
+    await expect(advanced).toHaveAttribute("open");
+    await advanced.locator("summary").click();
+    await expect(advanced).not.toHaveAttribute("open");
     await page.goto("/mentor/notifications");
     await expect(page.getByRole("heading",{level:1,name:"Notifications"})).toBeVisible();
     await expect(page.getByRole("heading",{name:/Your notifications · \d+ loaded/})).toBeVisible();
