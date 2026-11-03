@@ -2,7 +2,7 @@ import Link from "next/link";
 import {ErrorState} from "@/components/ui/error-state";
 import {Tabs} from "@/components/ui/tabs";
 import {AuthorizationError} from "@/modules/permissions/policy";
-import {logError} from "@/observability/logger";
+import {reportPageReadFailure} from "@/observability/page-read-failure";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {hasMembershipRole} from "@/modules/identity/context";
 import {resolveOptionalModuleAccess} from "@/modules/module-access/service";
@@ -28,10 +28,11 @@ import {CollegeDraftCompanyPicker} from "@/components/placements/college-draft-c
 // structured error metadata. Authorization failures must reach the role fence
 // instead of being misreported as a transient data-loading problem.
 function reportSettingsReadFailure(stage:string,error:unknown):void {
-  if(error instanceof AuthorizationError)throw error;
-  logError("college.drive_settings_read_failed",error,{
-    component:"page",route:"/college/placements/jobs/[jobId]/settings",stage,
-  });
+  reportPageReadFailure({
+    event:"college.drive_settings_read_failed",
+    route:"/college/placements/jobs/[jobId]/settings",
+    stage,
+  },error);
 }
 
 export default async function CollegeDriveSettingsPage({
