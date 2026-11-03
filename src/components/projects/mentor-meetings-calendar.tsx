@@ -11,6 +11,7 @@ import { safeProjectExternalHref } from "@/modules/projects/mentor-workspace-evi
 import {mentorCalendarWeekWorkload} from "@/modules/projects/mentor-calendar-week-workload-model";
 import {mentorMeetingListKinds,mentorMeetingListScopes,mentorMeetingListMatch,type MentorMeetingListKind,type MentorMeetingListScope} from "@/modules/projects/mentor-meeting-list-filter-model";
 import {buildMentorMeetingIcs} from "@/modules/projects/mentor-calendar-ics-model";
+import {MENTOR_INITIAL_VIEWER_ZONE,mentorViewerDateLabel,mentorViewerClockLabel,mentorViewerMeetingTimeLabel,safeMentorViewerZone} from "@/modules/projects/mentor-calendar-viewer-time-model";
 import {Button} from "@/components/ui/button";
 import {MentorMeetingRequestActions} from "./mentor-meeting-request-actions";
 import {MentorMeetingReschedule} from "./mentor-meeting-reschedule";
@@ -23,25 +24,9 @@ import styles from "./mentor-meetings-calendar.module.css";
 
 const PAST_PREVIEW = 20;
 const validTime=(raw:string)=>raw.trim().length>0&&Number.isFinite(Date.parse(raw));
-function dateLabel(raw:string){
- if(!validTime(raw))return "Date TBD";
- const parts=new Intl.DateTimeFormat("en-US",{weekday:"short",month:"short",day:"numeric",year:"numeric",timeZone:"Asia/Kolkata"}).formatToParts(new Date(raw));
- const pick=(kind:Intl.DateTimeFormatPartTypes)=>parts.find(p=>p.type===kind)?.value??"";
- return `${pick("weekday")}, ${pick("month")} ${pick("day")} ${pick("year")}`;
-}
-function clockLabel(raw:string):string|null{
- if(!validTime(raw))return null;
- const parts=new Intl.DateTimeFormat("en-US",{hour:"2-digit",minute:"2-digit",hour12:true,timeZone:"Asia/Kolkata"}).formatToParts(new Date(raw));
- const pick=(kind:Intl.DateTimeFormatPartTypes)=>parts.find(p=>p.type===kind)?.value??"";
- return `${pick("hour")}:${pick("minute")} ${pick("dayPeriod").toUpperCase()}`;
-}
-function meetingTimeLabel(meeting:MentorMeetingCalendarItem){
- const start=clockLabel(meeting.startsAt);
- if(!start)return (meeting.legacyStartTime?.trim()||"--")+
-    (meeting.legacyEndTime?.trim()?" – "+meeting.legacyEndTime.trim():"");
- const end=clockLabel(meeting.endsAt);
- return start+(end&&meeting.endsAt!==meeting.startsAt?" – "+end:"")+" (GMT+05:30)";
-}
+const dateLabel=mentorViewerDateLabel;
+const clockLabel=mentorViewerClockLabel;
+const meetingTimeLabel=mentorViewerMeetingTimeLabel;
 /** Export a real RFC 5545-compatible calendar invitation on explicit
  * interaction. Never export a pending/invalid meeting as a confirmed event. */
 /** Download only an explicitly requested local ICS export. This does not
@@ -65,8 +50,8 @@ function downloadAllMentorMeetings(meetings:readonly MentorMeetingCalendarItem[]
  downloadIcs(meetings,"42lms-mentor-meetings.ics");
 }
 function MeetingRow({
-  meeting, now,
-}: {meeting: MentorMeetingCalendarItem; now: Date;}) {
+  meeting, now, viewerTimeZone,
+}: {meeting: MentorMeetingCalendarItem; now: Date; viewerTimeZone:string;}) {
   const status = mentorMeetingDisplayStatus(meeting, now);
   const editable=meeting.canMutate===true&&meeting.projectStatus==="ACTIVE";
   // A recorded safe join link must be reachable before a scheduled meeting
@@ -87,7 +72,7 @@ function MeetingRow({
         }>{status}</StatusBadge>
       </div>
       <p className={styles.meta}>
-        {dateLabel(meeting.startsAt)} · {meetingTimeLabel(meeting)}
+        {dateLabel(meeting.startsAt,viewerTimeZone)} · {meetingTimeLabel(meeting,viewerTimeZone)}
         {(meeting.linkedSprintTitle||meeting.legacySprintLabel)
           ? " · Sprint: " + (meeting.linkedSprintTitle||meeting.legacySprintLabel) : ""}
       </p>
@@ -95,8 +80,8 @@ function MeetingRow({
         aria-label="Recorded meeting request details">
         <h3>Asked to meet</h3>
         <p>Requested by: {meeting.requestedByName??"Requester name unavailable"}</p>
-        <p>Suggested slot: {dateLabel(meeting.startsAt)} ·
-          {" "}{meetingTimeLabel(meeting)}</p>
+        <p>Suggested slot: {dateLabel(meeting.startsAt,viewerTimeZone)} ·
+          {" "}{meetingTimeLabel(meeting,viewerTimeZone)}</p>
         {meeting.linkedTaskId&&meeting.linkedTaskTitle?<p>
           Related task: <Link href={"/mentor/projects/"+
             encodeURIComponent(meeting.projectId)+
@@ -221,8 +206,8 @@ function MeetingRow({
 /** The old LMS calendar displayed two quiet lists, not a dashboard.
  * Keep this faithful primary view while the richer vNext scheduling tools
  * remain available in the optional advanced disclosure below. */
-function LegacyMeetingRow({meeting,now}:{
-  meeting:MentorMeetingCalendarItem;now:Date;
+function LegacyMeetingRow({meeting,now,viewerTimeZone}:{
+  meeting:MentorMeetingCalendarItem;now:Date;viewerTimeZone:string;
 }){
   const status=mentorMeetingDisplayStatus(meeting,now);
   const join=Date.parse(meeting.endsAt)>now.getTime()
@@ -242,8 +227,8 @@ function LegacyMeetingRow({meeting,now}:{
       }>{status}</StatusBadge>
     </div>
     <div className={styles.legacyMeetingMeta}>
-      <span>{dateLabel(meeting.startsAt)}</span>
-      <span>{meetingTimeLabel(meeting)}</span>
+      <span>{dateLabel(meeting.startsAt,viewerTimeZone)}</span>
+      <span>{meetingTimeLabel(meeting,viewerTimeZone)}</span>
       {(meeting.linkedSprintTitle||meeting.legacySprintLabel)?
         <span>{"Sprint: "+(meeting.linkedSprintTitle||meeting.legacySprintLabel)}</span>:null}
     </div>
@@ -261,6 +246,7 @@ export function MentorMeetingsCalendar({
   meetings, initialNow,
 }: {meetings: readonly MentorMeetingCalendarItem[]; initialNow: string}) {
   const [now, setNow] = useState(initialNow);
+  const [viewerTimeZone,setViewerTimeZone]=useState(MENTOR_INITIAL_VIEWER_ZONE);
   const [expanded, setExpanded] = useState(false);
   const [listKind,setListKind]=useState<MentorMeetingListKind>("ALL");
   const [listScope,setListScope]=useState<MentorMeetingListScope>("ALL");
@@ -269,6 +255,8 @@ export function MentorMeetingsCalendar({
     // A queued callback avoids synchronous state updates in an effect.
     const frame = window.requestAnimationFrame(() => {
       setNow(new Date().toISOString());
+      // Browser-only: hydrate the viewer-local timezone without a server/CSR mismatch.
+      setViewerTimeZone(safeMentorViewerZone(Intl.DateTimeFormat().resolvedOptions().timeZone));
     });
     const tick = window.setInterval(() => setNow(new Date().toISOString()), 60_000);
     return () => {
@@ -310,6 +298,7 @@ export function MentorMeetingsCalendar({
 
   return <div className="prototype-mentor-meetings" aria-label="Mentor meetings calendar">
     <div className={styles.legacyCalendar} aria-label="Meetings list">
+      <p className="text-xs text-muted-foreground" aria-live="polite">Meeting times are shown in {viewerTimeZone}.</p>
       <section className={styles.legacySection} aria-label="Upcoming meetings">
         <h2 className={styles.legacySectionHeading}>
           <svg aria-hidden="true" viewBox="0 0 24 24" width="18" height="18"
@@ -321,13 +310,13 @@ export function MentorMeetingsCalendar({
           Upcoming ({upcoming.length})
         </h2>
         {upcoming.length?upcoming.map(item=>
-          <LegacyMeetingRow key={item.id} meeting={item} now={instant}/>):
+          <LegacyMeetingRow key={item.id} meeting={item} now={instant} viewerTimeZone={viewerTimeZone}/>):
           <p className={styles.legacyEmpty}>No upcoming meetings.</p>}
       </section>
       <section className={styles.legacySection} aria-label="Past and cancelled meetings">
         <h2 className={styles.legacySectionHeading}>Past &amp; Cancelled ({past.length})</h2>
         {past.length?past.slice(0,expanded?past.length:PAST_PREVIEW).map(item=>
-          <LegacyMeetingRow key={item.id} meeting={item} now={instant}/>):
+          <LegacyMeetingRow key={item.id} meeting={item} now={instant} viewerTimeZone={viewerTimeZone}/>):
           <p className={styles.legacyEmpty}>No past meetings yet.</p>}
         {past.length>PAST_PREVIEW?<button type="button"
           className={styles.legacyShowMore}
@@ -390,7 +379,7 @@ export function MentorMeetingsCalendar({
           type="button" className="prototype-mentor-meeting-option"
           aria-pressed={selected?.id===item.id}
           onClick={()=>setSelectedId(item.id)}>
-          <span>{dateLabel(item.startsAt)}<small>{clockLabel(item.startsAt)??"Time pending"}</small></span>
+          <span>{dateLabel(item.startsAt,viewerTimeZone)}<small>{clockLabel(item.startsAt,viewerTimeZone)??"Time pending"}</small></span>
           <span><strong>{item.projectTitle}</strong> · {item.title}
             <small>{mentorMeetingDisplayStatus(item,instant)}</small>
           </span>
@@ -400,7 +389,7 @@ export function MentorMeetingsCalendar({
           type="button" className="prototype-mentor-meeting-option"
           aria-pressed={selected?.id===item.id}
           onClick={()=>setSelectedId(item.id)}>
-          <span>{dateLabel(item.startsAt)}</span>
+          <span>{dateLabel(item.startsAt,viewerTimeZone)}</span>
           <span><strong>{item.projectTitle}</strong> · {item.title}
             <small>{mentorMeetingDisplayStatus(item,instant)}</small>
           </span>
@@ -414,7 +403,7 @@ export function MentorMeetingsCalendar({
       <section aria-label="Selected meeting details" className="prototype-mentor-meeting-detail">
         {selected ? <>
           <span className="prototype-mentor-meeting-detail-label">Meeting details</span>
-          <MeetingRow key={selected.id} meeting={selected} now={instant}/>
+          <MeetingRow key={selected.id} meeting={selected} now={instant} viewerTimeZone={viewerTimeZone}/>
         </> : <p className={styles.empty}>Select a meeting to see its details.</p>}
       </section>
     </div>
