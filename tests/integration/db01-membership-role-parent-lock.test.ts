@@ -362,4 +362,82 @@ describe("DB01 parent-lock role mutation against membership END", () => {
       expect(rows.rows).toHaveLength(1);
     });
   });
+  it("denies all people writes after the initiating administrator loses their role", async () => {
+    await withFixture(async (target) => {
+      const actorUserId = randomUUID();
+      const actorMembershipId = randomUUID();
+      const rejectedIdentityUid = `db01-revoked-actor-onboard-${randomUUID()}`;
+      await pool.query(
+        "insert into users (id, identity_uid, display_name) values ($1, $2, $3)",
+        [actorUserId, `db01-revoked-actor-${randomUUID()}`, "Revoked role fixture"],
+      );
+      try {
+        await pool.query(
+          "insert into college_memberships (id, user_id, college_id, status) values ($1, $2, $3, 'ACTIVE')",
+          [actorMembershipId, actorUserId, SEED_IDS.collegeA],
+        );
+        await pool.query(
+          "insert into membership_roles (membership_id, role) values ($1, 'COLLEGE_ADMIN')",
+          [actorMembershipId],
+        );
+        const staleActor: RequestContext = {
+          user: { id: actorUserId, identityUid: "revoked-admin-fixture", platformStatus: "ACTIVE", systemRoles: [] },
+          membership: {
+            id: actorMembershipId,
+            collegeId: SEED_IDS.collegeA,
+            organizationId: SEED_IDS.organization,
+            status: "ACTIVE",
+            roles: ["COLLEGE_ADMIN"],
+          },
+        };
+        const mutation: MembershipMutationContext = {
+          ...mutationFor(target),
+          context: staleActor,
+        };
+
+        // These snapshots were authorized before the role was removed.
+        // A repository must not trust them across a write transaction.
+        await pool.query(
+          "delete from membership_roles where membership_id=$1 and role='COLLEGE_ADMIN'",
+          [actorMembershipId],
+        );
+
+        await expect(drizzlePeopleRepository.addMembershipRole(
+          target.membershipId, "MENTOR", mutation,
+        )).rejects.toMatchObject({ name: "AuthorizationError" });
+        await expect(drizzlePeopleRepository.removeMembershipRole(
+          target.membershipId, "FACULTY", mutation,
+        )).rejects.toMatchObject({ name: "AuthorizationError" });
+        await expect(drizzlePeopleRepository.transitionMembershipLifecycle(
+          target.membershipId,
+          { action: "SUSPEND", reason: "Unauthorized request" },
+          mutation,
+        )).rejects.toMatchObject({ name: "AuthorizationError" });
+        await expect(drizzlePeopleRepository.persistPersonMembership({
+          identityUid: rejectedIdentityUid,
+          phoneE164: `+1${randomInt(2_000_000_000, 9_000_000_000)}`,
+          displayName: "Must not be created",
+          collegeId: SEED_IDS.collegeA,
+          roles: ["FACULTY"],
+        }, { context: staleActor, organizationId: SEED_IDS.organization }))
+          .rejects.toMatchObject({ name: "AuthorizationError" });
+
+        expect(await countRole(target.membershipId, "MENTOR")).toBe(0);
+        expect(await countRole(target.membershipId, "FACULTY")).toBe(1);
+        const status = await pool.query<{ status: string }>(
+          "select status from college_memberships where id=$1", [target.membershipId],
+        );
+        expect(status.rows[0]?.status).toBe("ACTIVE");
+        const created = await pool.query(
+          "select id from users where identity_uid=$1", [rejectedIdentityUid],
+        );
+        expect(created.rowCount).toBe(0);
+      } finally {
+        await pool.query("delete from membership_roles where membership_id=$1", [actorMembershipId]);
+        await pool.query("delete from college_memberships where id=$1", [actorMembershipId]);
+        await pool.query("delete from users where id=$1", [actorUserId]);
+      }
+    });
+  });
+
 });
