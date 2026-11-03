@@ -68,10 +68,11 @@ export async function getCollegeHiringFunnel(context:RequestContext,raw:unknown)
  const chosenProgramId=scope.programId;
  const chosenDepartmentId=scope.departmentId;
  const base=db.select({
-  applicationId:placementApplications.id,
+  // Subquery columns must have unique names, and these three are all "id".
+  applicationId:sql<string>`${placementApplications.id}`.as("application_id"),
   previousStage:placementCollegeApplicationStages.previousStage,
-  jobId:placementJobs.id,jobTitle:placementJobs.title,
-  companyId:placementCompanies.id,companyName:placementCompanies.name,
+  jobId:sql<string>`${placementJobs.id}`.as("job_id"),jobTitle:placementJobs.title,
+  companyId:sql<string>`${placementCompanies.id}`.as("company_id"),companyName:placementCompanies.name,
   status:placementApplications.status,
   stage:sql<string>`case when ${placementApplications.status}='WITHDRAWN' then 'WITHDRAWN'
     else coalesce(${placementCollegeApplicationStages.stage},
@@ -131,7 +132,7 @@ export async function getCollegeHiringFunnel(context:RequestContext,raw:unknown)
     select 1 from placement_college_application_stages stage_fact
     inner join placement_college_application_stage_history stage_event
       on stage_event.stage_id=stage_fact.id
-    where stage_fact.application_id="college_hiring_funnel_base"."id"
+    where stage_fact.application_id="college_hiring_funnel_base"."application_id"
       and (stage_event.to_stage=${stage} or stage_event.from_stage=${stage})
    )
   )::integer`.mapWith(Number);
