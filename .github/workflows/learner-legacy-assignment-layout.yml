@@ -1,0 +1,38 @@
+name: Learner legacy assignment layout
+
+on:
+  pull_request:
+    paths:
+      - ".github/workflows/learner-legacy-assignment-layout.yml"
+      - "src/app/(authenticated)/learn/allAssignments/page.tsx"
+      - "src/components/courses/learner-assessment-overview.tsx"
+      - "src/components/courses/learner-legacy-assignment-list.module.css"
+      - "tests/learner-legacy-assignments-layout.test.mjs"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  learner-assignment-layout:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+      - name: Install exact lockfile dependencies
+        run: npm ci
+      - name: Source layout regression tests
+        run: node --test tests/learner-legacy-assignments-layout.test.mjs
+      - name: Strict TSX typecheck with repository supported heap
+        env:
+          NODE_OPTIONS: --max-old-space-size=6144
+        run: npm run typecheck
+      - name: Focused component lint
+        run: |
+          npx eslint "src/components/courses/learner-assessment-overview.tsx" \
+            "src/app/(authenticated)/learn/allAssignments/page.tsx" \
+            tests/learner-legacy-assignments-layout.test.mjs
