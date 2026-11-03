@@ -1,3 +1,7 @@
+> **HISTORICAL VISUAL SNAPSHOT — SUPERSEDED 2026-11-03.** The observations and measurements below describe an October 2026 snapshot, not required migration tasks or a current acceptance score. The owner changed the north star to **100% required old-LMS capabilities and UI-surface completeness**, not pixel-exact visual cloning. Preserve old screenshots to discover missing controls and workflow states, but fix functional/action/permission/tenant gaps first and retain better vNext UI. See [active capability parity standard](../planning/legacy-capability-parity-standard.md). The “build order” and visual-fix instructions below are archival and do not govern current work.
+
+---
+
 # vNext versus old LMS: UI gap (measured 2026-10-19, both run locally, TPO portal, 1280x800)
 
 North star (owner): vNext must look the same as the old LMS so stakeholders do not feel it is a new app. References: `old-lms-shell-spec.md`, `old-lms-shell.css` (exact rules), `old-lms-pages.md` (page anatomy). Build order below is by visual impact.
