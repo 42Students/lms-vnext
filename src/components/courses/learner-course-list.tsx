@@ -480,11 +480,15 @@ export function LearnerCourseList({
                             ? row.instructorNames.join(", ")
                             : "Not assigned"}
                         </p>
-                        <div className="mt-auto flex flex-wrap items-center justify-between gap-2 pt-2 text-xs font-semibold text-[var(--lms-muted-text)]">
+                        <div className="mt-auto flex flex-wrap items-center justify-between gap-2 pt-2">
                           {row.course.credits !== null ? (
-                            <span>{Number.isFinite(row.course.credits) && row.course.credits >= 0
-                              ? `${row.course.credits} Credits`
-                              : "Credits unavailable"}</span>
+                            <span className={Number.isFinite(row.course.credits) && row.course.credits >= 0
+                              ? "inline-flex items-center rounded-[var(--lms-control-radius)] bg-[var(--lms-info-subtle)] px-2 py-0.5 text-xs font-semibold text-[var(--lms-info)]"
+                              : "text-xs font-semibold text-[var(--lms-muted-text)]"}>
+                              {Number.isFinite(row.course.credits) && row.course.credits >= 0
+                                ? `${row.course.credits} Credits`
+                                : "Credits unavailable"}
+                            </span>
                           ) : null}
                         </div>
                         {blockedReason ? (
