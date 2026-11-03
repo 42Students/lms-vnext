@@ -58,3 +58,14 @@ test("header shows legacy count/month metrics, without extra course summary pill
   assert.match(page,/\{totalPages>1\?\(/);
   assert.match(page,/assignmentFilesRuntimeEnabled\(\)/);
 });
+
+
+test("legacy empty assignment state includes the original illustration and visible course selection",()=>{
+  assert.match(overview,/function LegacyAssignmentEmpty\(\)/);
+  assert.match(overview,/legacyAssignmentEmptyGradient/);
+  assert.match(overview,/<LegacyAssignmentEmpty\/>/);
+  assert.match(overview,/if \(kind === "ASSIGNMENT"\) return <div/);
+  assert.match(overview,/title="No quizzes yet"/);
+  assert.match(css,/\.empty\s*\{[^}]*min-height:\s*240px/);
+  assert.match(css,/\.emptyIllustration\s*\{[^}]*width:\s*120px/);
+});
