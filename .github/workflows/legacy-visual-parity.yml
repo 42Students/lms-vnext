@@ -1,0 +1,49 @@
+name: Legacy visual parity tooling
+
+on:
+  pull_request:
+    paths:
+      - ".github/workflows/legacy-visual-parity.yml"
+      - "scripts/audit/visual-baseline-inventory.mjs"
+      - "scripts/audit/legacy-pixel-compare.mjs"
+      - "scripts/audit/capture-legacy-parity.mjs"
+      - "tests/visual-baseline-inventory.test.mjs"
+      - "tests/legacy-pixel-compare.test.mjs"
+      - "tests/capture-legacy-parity-options.test.mjs"
+      - "package.json"
+      - "package-lock.json"
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/legacy-visual-parity.yml"
+      - "scripts/audit/visual-baseline-inventory.mjs"
+      - "scripts/audit/legacy-pixel-compare.mjs"
+      - "scripts/audit/capture-legacy-parity.mjs"
+      - "tests/visual-baseline-inventory.test.mjs"
+      - "tests/legacy-pixel-compare.test.mjs"
+      - "tests/capture-legacy-parity-options.test.mjs"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  visual-reference-tools:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+      - run: npm ci
+      - name: Verify Node source syntax
+        run: |
+          node --check scripts/audit/visual-baseline-inventory.mjs
+          node --check scripts/audit/legacy-pixel-compare.mjs
+          node --check scripts/audit/capture-legacy-parity.mjs
+      - name: Execute screenshot inventory and native pixel comparator unit tests
+        run: npm run test:parity:visual
+      - name: Confirm runbook exists
+        run: test -f docs/audit/visual-parity-execution-runbook.md
