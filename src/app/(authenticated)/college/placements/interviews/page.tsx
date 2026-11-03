@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Select } from "@/components/ui/select";
 import Link from "next/link";
 import {redirect} from "next/navigation";
-import {AuthorizationError} from "@/modules/permissions/policy";
+import {reportPageReadFailure} from "@/observability/page-read-failure";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {PageHeader} from "@/components/ui/page-header";
 import {ErrorState} from "@/components/ui/error-state";
@@ -35,7 +35,11 @@ export default async function CollegeInterviewsPage({searchParams}:{searchParams
  const valid=collegeInterviewFilters.safeParse(input);
  if(!valid.success)return <div className="min-w-0 space-y-4"><PageHeader title="Interviews"/><ErrorState title="Invalid interview filters" description="Review the interview search and filters." action={<Link href="/college/placements/interviews" className="inline-flex min-h-11 items-center text-primary-text underline md:min-h-9 hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Clear filters</Link>}/></div>;
  const data=await listCollegeInterviewDirectory(context,valid.data).catch(error=>{
-  if(error instanceof AuthorizationError)throw error;
+  reportPageReadFailure({
+    event:"college.interview_directory_failed",
+    route:"/college/placements/interviews",
+    stage:"interview_directory",
+  },error);
   return null;
  });
  if(!data)return <div className="min-w-0 space-y-4"><PageHeader title="Interviews"/>
