@@ -31,7 +31,10 @@ jobs:
         run: |
           npx vitest run tests/integration/learner-mobile-assignment-card.test.ts \
             tests/integration/learner-mobile-quiz-list.test.ts \
-            tests/unit/chat7-legacy-learner-assessments-copy.test.ts
+            tests/unit/chat7-legacy-learner-assessments-copy.test.ts \
+            tests/unit/ux-learn-chat7-batch-01.test.ts \
+            tests/unit/chat9-verify2-learner-assignment-server-pages.test.ts \
+            tests/unit/chat15-assessment-legacy-copy.test.ts
       - name: Strict TSX typecheck with repository supported heap
         env:
           NODE_OPTIONS: --max-old-space-size=6144
