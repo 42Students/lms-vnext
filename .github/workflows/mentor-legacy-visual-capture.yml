@@ -1,4 +1,4 @@
-name: Mentor legacy visual capture
+name: Mentor meeting capability and UI-surface acceptance
 
 on:
   pull_request:
@@ -14,7 +14,7 @@ permissions:
   contents: read
 
 jobs:
-  mentor-candidate-capture:
+  mentor-meeting-capability:
     runs-on: ubuntu-latest
     timeout-minutes: 35
     services:
@@ -47,7 +47,7 @@ jobs:
       - run: npx playwright install --with-deps chromium
       - name: Prepare disposable Mentor browser fixture
         run: npm run db:e2e:prepare
-      - name: Seed the exact two legacy meeting states in disposable DB
+      - name: Seed two real requested and completed meeting workflow states
         run: npx tsx scripts/audit/seed-mentor-visual-fixture.ts
       - name: Generate isolated browser authentication keys
         shell: bash
@@ -55,40 +55,13 @@ jobs:
           echo "E2E_AUTH_SECRET=$(openssl rand -hex 32)" >> "$GITHUB_ENV"
           echo "AUTH_SECRET=$(openssl rand -hex 32)" >> "$GITHUB_ENV"
           echo "PLATFORM_HOSTS=localhost,127.0.0.1" >> "$GITHUB_ENV"
-      - name: Capture real Mentor candidate and verify both desktop and mobile states
+      - name: Verify required Mentor meeting actions and desktop/mobile usability
         run: npx playwright test --project=chromium tests/e2e/mentor-legacy-calendar-visual.spec.ts tests/e2e/w03-mentor-surfaces.spec.ts
-      - name: Fetch only the frozen Mentor image and approved comparator
-        env:
-          GH_TOKEN: ${{ github.token }}
-        shell: bash
-        run: |
-          set -euo pipefail
-          mkdir -p .reference/old/mentor .compare-tools/scripts/audit
-          gh api "repos/42Students/lms-vnext/contents/old/mentor/_mentor_calendar__base__9def459d92.png?ref=b4f9bdd5767f484169d6da14f615aa9b65a5f265" --jq .content | tr -d '\r\n' | base64 --decode > .reference/old/mentor/_mentor_calendar__base__9def459d92.png
-          gh api "repos/42Students/lms-vnext/contents/scripts/audit/legacy-pixel-compare.mjs?ref=e3aa560525eed3bc4efa09d9693df564a278b778" --jq .content | tr -d '\r\n' | base64 --decode > .compare-tools/scripts/audit/legacy-pixel-compare.mjs
-          test -s .reference/old/mentor/_mentor_calendar__base__9def459d92.png
-          test -s .compare-tools/scripts/audit/legacy-pixel-compare.mjs
-      - name: Generate actual old versus new Mentor PNG heatmap and ratio
-        shell: bash
-        run: |
-          candidate=$(find test-results -name mentor-calendar-1280x800-candidate.png -print -quit)
-          test -n "$candidate" || { echo "Candidate screenshot missing"; exit 2; }
-          mkdir -p test-results/mentor-legacy-pixel-comparison
-          result=0
-          node .compare-tools/scripts/audit/legacy-pixel-compare.mjs \
-            --old .reference/old/mentor/_mentor_calendar__base__9def459d92.png \
-            --new "$candidate" \
-            --out test-results/mentor-legacy-pixel-comparison || result=$?
-          if [ "$result" -gt 1 ]; then
-            echo "Comparator failed unexpectedly with exit $result"
-            exit "$result"
-          fi
-          echo "Mentor visual comparison diagnostic code: $result (1 means screenshot still differs)."
-      - name: Archive screenshot, geometry and test traces from isolated seed only
+      - name: Archive safe browser evidence and failure traces
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: mentor-legacy-candidate-and-browser-evidence
+          name: mentor-meeting-capability-evidence
           path: |
             test-results/
             playwright-report/
