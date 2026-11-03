@@ -12,6 +12,8 @@ on:
       - "src/modules/permissions/**"
       - "src/app/api/auth/**"
       - "tests/unit/persisted-workspace-role-and-account-cookie-security.test.ts"
+      - "src/app/api/people/[[]membershipId[]]/roles/route.ts"
+      - "tests/unit/recent-device-privileged-role-security.test.ts"
       - "scripts/security/pg-rls-readonly-audit.mjs"
       - "tests/security-pg-rls-catalog.test.mjs"
       - ".github/workflows/authz-critical-boundary.yml"
@@ -24,6 +26,8 @@ on:
       - "src/modules/permissions/**"
       - "src/app/api/auth/**"
       - "tests/unit/persisted-workspace-role-and-account-cookie-security.test.ts"
+      - "src/app/api/people/[[]membershipId[]]/roles/route.ts"
+      - "tests/unit/recent-device-privileged-role-security.test.ts"
       - "scripts/security/pg-rls-readonly-audit.mjs"
       - "tests/security-pg-rls-catalog.test.mjs"
       - ".github/workflows/authz-critical-boundary.yml"
@@ -55,3 +59,5 @@ jobs:
         run: npx vitest run tests/unit/auth-login-service.test.ts tests/unit/auth-ip-rate-limit.test.ts
       - name: RLS catalog and least-privilege classifier contracts
         run: node --test tests/security-pg-rls-catalog.test.mjs
+      - name: Recent OTP authentication for privileged role mutations
+        run: npx vitest run tests/unit/recent-device-privileged-role-security.test.ts
