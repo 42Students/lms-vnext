@@ -311,7 +311,15 @@ export function MentorMeetingsCalendar({
   return <div className="prototype-mentor-meetings" aria-label="Mentor meetings calendar">
     <div className={styles.legacyCalendar} aria-label="Meetings list">
       <section className={styles.legacySection} aria-label="Upcoming meetings">
-        <h2 className={styles.legacySectionHeading}>Upcoming ({upcoming.length})</h2>
+        <h2 className={styles.legacySectionHeading}>
+          <svg aria-hidden="true" viewBox="0 0 24 24" width="18" height="18"
+            fill="none" stroke="currentColor" strokeWidth="1.8"
+            strokeLinecap="round" strokeLinejoin="round">
+            <rect x="3" y="5" width="18" height="16" rx="1"/>
+            <path d="M7 3v4M17 3v4M3 10h18"/>
+          </svg>
+          Upcoming ({upcoming.length})
+        </h2>
         {upcoming.length?upcoming.map(item=>
           <LegacyMeetingRow key={item.id} meeting={item} now={instant}/>):
           <p className={styles.legacyEmpty}>No upcoming meetings.</p>}
