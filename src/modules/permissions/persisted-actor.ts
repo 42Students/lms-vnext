@@ -4,6 +4,7 @@ import {
   collegeMemberships,
   colleges,
   membershipRoles,
+  organizations,
   systemRoles,
   users,
 } from "@/db/schema";
@@ -102,11 +103,18 @@ export async function assertPersistedPlatformPermission(
         collegeId: collegeMemberships.collegeId,
         organizationId: colleges.organizationId,
         status: collegeMemberships.status,
+        suspendedAt: collegeMemberships.suspendedAt,
+        collegeStatus: colleges.status,
+        organizationStatus: organizations.status,
       })
       .from(collegeMemberships)
       .innerJoin(
         colleges,
         eq(colleges.id, collegeMemberships.collegeId),
+      )
+      .innerJoin(
+        organizations,
+        eq(organizations.id, colleges.organizationId),
       )
       .where(
         eq(
@@ -119,7 +127,11 @@ export async function assertPersistedPlatformPermission(
 
     if (
       !persistedMembership ||
-      persistedMembership.userId !== context.user.id
+      persistedMembership.userId !== context.user.id ||
+      persistedMembership.status !== "ACTIVE" ||
+      persistedMembership.suspendedAt !== null ||
+      persistedMembership.collegeStatus !== "ACTIVE" ||
+      persistedMembership.organizationStatus !== "ACTIVE"
     ) {
       throw new AuthorizationError(permission);
     }
@@ -153,9 +165,12 @@ export async function assertPersistedPlatformPermission(
       id: context.user.id,
       identityUid: context.user.identityUid,
       platformStatus: actor.platformStatus,
-      systemRoles: persistedSystemRoles.map(
-        ({ role }) => role,
-      ),
+      // Do not add a platform grant acquired after the request context was
+      // authenticated. Revocations take effect immediately; elevations must
+      // be observed through a fresh authenticated request context.
+      systemRoles: persistedSystemRoles
+        .map(({ role }) => role)
+        .filter(role => context.user.systemRoles.includes(role)),
     },
     membership,
     adminScope: context.adminScope ?? null,
