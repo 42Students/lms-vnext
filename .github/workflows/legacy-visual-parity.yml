@@ -74,3 +74,26 @@ jobs:
           name: legacy-visual-reference-inventory
           path: ${{ runner.temp }}/legacy-visual-inventory.json
           if-no-files-found: ignore
+      - name: Measure captured learner and admin visual baselines (expected differences)
+        if: always()
+        run: |
+          mkdir -p "$RUNNER_TEMP/visual-gap-artifacts/learner-001" "$RUNNER_TEMP/visual-gap-artifacts/admin-001"
+          code=0
+          node scripts/audit/legacy-pixel-compare.mjs \
+            --old .reference/old/learner/_learn_allAssignments__base__67d5d6264c.png \
+            --new .reference/vnext/learner/_learn_allAssignments__base__7a987c859d.png \
+            --out "$RUNNER_TEMP/visual-gap-artifacts/learner-001" || code=$?
+          test "$code" -eq 1 || { echo "Expected visual mismatch learner-001 (exit 1); got $code"; exit 1; }
+          code=0
+          node scripts/audit/legacy-pixel-compare.mjs \
+            --old .reference/old/admin/_college-admin_assignments__base__3795a67127.png \
+            --new .reference/vnext/admin/_college_assignments__base__784426cf14.png \
+            --out "$RUNNER_TEMP/visual-gap-artifacts/admin-001" || code=$?
+          test "$code" -eq 1 || { echo "Expected visual mismatch admin-001 (exit 1); got $code"; exit 1; }
+      - name: Preserve actual legacy-vNext comparison overlays and heatmaps
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: legacy-vnext-initial-gap-evidence
+          path: ${{ runner.temp }}/visual-gap-artifacts
+          if-no-files-found: ignore
