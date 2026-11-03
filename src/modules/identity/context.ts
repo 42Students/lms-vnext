@@ -64,7 +64,11 @@ export function hasMembershipRole(
   return Boolean(
     context?.user.platformStatus === "ACTIVE" &&
       context.membership?.status === "ACTIVE" &&
-      context.membership.roles.includes(role),
+      // A RequestContext represents exactly ONE selected membership role.
+      // Never union College Admin/TPO powers with a Learner workspace if a
+      // stale or incorrectly constructed context carries multiple roles.
+      context.membership.roles.length === 1 &&
+      context.membership.roles[0] === role,
   );
 }
 
@@ -74,7 +78,8 @@ export function hasActiveMembership(
   return Boolean(
     context &&
       context.user.platformStatus === "ACTIVE" &&
-      context.membership?.status === "ACTIVE",
+      context.membership?.status === "ACTIVE" &&
+      context.membership.roles.length === 1,
   );
 }
 
