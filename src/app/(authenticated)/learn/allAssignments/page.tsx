@@ -1,5 +1,7 @@
 import { Suspense } from "react";
 import Link from "next/link";
+import {CurrentPageRetry} from "@/components/ui/current-page-retry";
+import {reportPageReadFailure} from "@/observability/page-read-failure";
 import {notFound} from "next/navigation";
 import {learnerAssignmentListPage,learnerAssignmentListHref} from "@/modules/courses/learner-assignment-page-model";
 import { AuthorizationError } from "@/modules/permissions/policy";
@@ -53,6 +55,8 @@ async function LearnerAssignmentsContent({searchParams}:{searchParams:Promise<As
   } catch (error) {
     // Never turn permission failures or invalid course scopes into a public list.
     if (error instanceof AuthorizationError || error instanceof CoursesServiceError) throw error;
+    reportPageReadFailure({event:"learner.assignment_list_load_failed",
+      route:"/learn/allAssignments",stage:"assessment_overview"},error);
   }
   if (!overview) {
     // Keep the same keyed client list mounted on a failed router.refresh().
@@ -65,10 +69,7 @@ async function LearnerAssignmentsContent({searchParams}:{searchParams:Promise<As
         <div role="alert" className="space-y-2 rounded-lg border border-destructive/40 p-4">
           <p className="font-semibold">Assignments could not be loaded</p>
           <p className="text-sm">This is a loading problem, not an empty list.</p>
-          <Link href="/learn/allAssignments?retry=1"
-            className="inline-flex items-center rounded-md px-3 py-3 font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-2">
-            Retry loading assignments
-          </Link>
+          <CurrentPageRetry label="Retry loading assignments" />
         </div>
         <LearnerAssessmentOverview
           key={requestedCourse||"all"}
