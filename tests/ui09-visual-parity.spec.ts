@@ -64,7 +64,7 @@ test.describe("UI-09 Visual Parity — Learner Notification surfaces", () => {
     // Bell or aria-label for notifications must be in the layout
     const bell = page
       .getByRole("button", { name: /notifications/i })
-      .or(page.locator("[aria-label*='notification' i]").first())
+      .or(page.locator("[aria-label*='notification' i]").first()).first()
       .or(page.locator("[aria-label*='Notifications' i]").first());
     // Page must render; bell visibility depends on layout mount
     await expect(page.locator("body")).toBeVisible();
@@ -105,7 +105,7 @@ test.describe("UI-09 Visual Parity — Learner Notification surfaces", () => {
     await waitForContent(page);
     await assertPageOk(page);
     await expect(
-      page.getByRole("heading", { name: "Notifications" }).or(page.getByText("Notifications").first())
+      page.getByRole("heading", { name: "Notifications" }).or(page.getByText("Notifications").first()).first()
     ).toBeVisible();
     await page.screenshot({
       path: "tests/ui-snapshots/ui09/learner-notifications.png",
@@ -149,12 +149,13 @@ test.describe("UI-09 Visual Parity — Learner Notification surfaces", () => {
     await page.goto(`${DEV_HOST}/learn/my-placements/announcements`);
     await waitForContent(page);
     await assertPageOk(page);
+    // The learner placement notices page uses tabs: "Announcements" and "Updates about you"
     await expect(
-      page.getByText("Announcements").first()
+      page.getByText("Announcements").or(page.getByText("Notices").first()).first()
     ).toBeVisible();
     // Check for Updates tab
     await expect(
-      page.getByText("Updates about you").or(page.getByText("Updates").first())
+      page.getByText("Updates about you").or(page.getByText("Updates").first()).first()
     ).toBeVisible();
     await page.screenshot({
       path: "tests/ui-snapshots/ui09/learner-placement-announcements.png",
@@ -231,7 +232,7 @@ test.describe("UI-09 Visual Parity — Faculty Notification surfaces", () => {
     await waitForContent(page);
     await assertPageOk(page);
     await expect(
-      page.getByRole("heading", { name: "Notifications" }).or(page.getByText("Notifications").first())
+      page.getByRole("heading", { name: "Notifications" }).or(page.getByText("Notifications").first()).first()
     ).toBeVisible();
     await page.screenshot({
       path: "tests/ui-snapshots/ui09/faculty-notifications.png",
@@ -331,7 +332,7 @@ test.describe("UI-09 Visual Parity — SuperAdmin Announcement surfaces", () => 
     ).toBeVisible();
     // "New announcement" button must be present
     await expect(
-      page.getByRole("button", { name: /new announcement/i }).or(page.getByText("New announcement").first())
+      page.getByRole("button", { name: /new announcement/i }).or(page.getByText("New announcement").first()).first()
     ).toBeVisible();
     await page.screenshot({
       path: "tests/ui-snapshots/ui09/superadmin-announcements.png",
@@ -349,7 +350,7 @@ test.describe("UI-09 Visual Parity — SuperAdmin Announcement surfaces", () => 
     await assertPageOk(page);
     // The "New announcement" button must be visible (modal tested separately via interaction)
     await expect(
-      page.getByRole("button", { name: /new announcement/i }).or(page.getByText("New announcement").first())
+      page.getByRole("button", { name: /new announcement/i }).or(page.getByText("New announcement").first()).first()
     ).toBeVisible();
   });
 

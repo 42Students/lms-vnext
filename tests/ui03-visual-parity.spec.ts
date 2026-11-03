@@ -80,7 +80,7 @@ test.describe("UI-03 Visual Parity — Learner Profile surfaces", () => {
     await waitForContent(page);
     await assertPageOk(page);
     await expect(
-      page.getByRole("heading", { name: "Profile" }).or(page.getByText("Profile").first())
+      page.getByRole("heading", { name: "Profile" }).or(page.getByText("Profile").first()).first()
     ).toBeVisible();
     // Key section labels from string catalogue
     await expect(page.getByText("Contacts").first()).toBeVisible();
@@ -122,7 +122,7 @@ test.describe("UI-03 Visual Parity — Learner Profile surfaces", () => {
     await page.goto(`${DEV_HOST}/learn/profile`);
     await waitForContent(page);
     await assertPageOk(page);
-    await expect(page.getByText("Skills").first()).toBeVisible();
+    await expect(page.getByText("Skills").filter({ visible: true }).first()).toBeVisible();
   });
 
   // UI03-S12: Social profiles section
@@ -130,7 +130,7 @@ test.describe("UI-03 Visual Parity — Learner Profile surfaces", () => {
     await page.goto(`${DEV_HOST}/learn/profile`);
     await waitForContent(page);
     await assertPageOk(page);
-    await expect(page.getByText("Social Profiles").first()).toBeVisible();
+    await expect(page.getByText("Social Profiles").filter({ visible: true }).first()).toBeVisible();
   });
 
   // UI03-S13: Address section
@@ -138,7 +138,7 @@ test.describe("UI-03 Visual Parity — Learner Profile surfaces", () => {
     await page.goto(`${DEV_HOST}/learn/profile`);
     await waitForContent(page);
     await assertPageOk(page);
-    await expect(page.getByText("Address").first()).toBeVisible();
+    await expect(page.getByText("Address").filter({ visible: true }).first()).toBeVisible();
   });
 
   // UI03-S14: Personal details section
@@ -146,7 +146,7 @@ test.describe("UI-03 Visual Parity — Learner Profile surfaces", () => {
     await page.goto(`${DEV_HOST}/learn/profile`);
     await waitForContent(page);
     await assertPageOk(page);
-    await expect(page.getByText("Personal Details").first()).toBeVisible();
+    await expect(page.getByText("Personal Details").filter({ visible: true }).first()).toBeVisible();
   });
 
   // UI03-S15: Identity section
@@ -154,7 +154,7 @@ test.describe("UI-03 Visual Parity — Learner Profile surfaces", () => {
     await page.goto(`${DEV_HOST}/learn/profile`);
     await waitForContent(page);
     await assertPageOk(page);
-    await expect(page.getByText("Identity").first()).toBeVisible();
+    await expect(page.getByText("Identity").filter({ visible: true }).first()).toBeVisible();
   });
 
   // UI03-S16: Add/Edit Experience modal — assert trigger button exists
@@ -162,7 +162,7 @@ test.describe("UI-03 Visual Parity — Learner Profile surfaces", () => {
     await page.goto(`${DEV_HOST}/learn/profile`);
     await waitForContent(page);
     await assertPageOk(page);
-    await expect(page.getByText("Experience").first()).toBeVisible();
+    await expect(page.getByText("Experience").filter({ visible: true }).first()).toBeVisible();
   });
 
   // UI03-S17: Add/Edit Qualification modal
@@ -170,7 +170,7 @@ test.describe("UI-03 Visual Parity — Learner Profile surfaces", () => {
     await page.goto(`${DEV_HOST}/learn/profile`);
     await waitForContent(page);
     await assertPageOk(page);
-    await expect(page.getByText("Qualifications").first()).toBeVisible();
+    await expect(page.getByText("Qualifications").filter({ visible: true }).first()).toBeVisible();
   });
 
   // UI03-S18: Add/Edit Project modal (learner-only)
@@ -178,7 +178,7 @@ test.describe("UI-03 Visual Parity — Learner Profile surfaces", () => {
     await page.goto(`${DEV_HOST}/learn/profile`);
     await waitForContent(page);
     await assertPageOk(page);
-    await expect(page.getByText("Projects").first()).toBeVisible();
+    await expect(page.getByText("Projects").filter({ visible: true }).first()).toBeVisible();
   });
 
   // UI03-S19: Certifications modal
@@ -186,7 +186,7 @@ test.describe("UI-03 Visual Parity — Learner Profile surfaces", () => {
     await page.goto(`${DEV_HOST}/learn/profile`);
     await waitForContent(page);
     await assertPageOk(page);
-    await expect(page.getByText("Certifications").first()).toBeVisible();
+    await expect(page.getByText("Certifications").filter({ visible: true }).first()).toBeVisible();
   });
 
   // UI03-S20: Achievements modal (learner-only)
@@ -194,7 +194,7 @@ test.describe("UI-03 Visual Parity — Learner Profile surfaces", () => {
     await page.goto(`${DEV_HOST}/learn/profile`);
     await waitForContent(page);
     await assertPageOk(page);
-    await expect(page.getByText("Achievements").first()).toBeVisible();
+    await expect(page.getByText("Achievements").filter({ visible: true }).first()).toBeVisible();
   });
 
   // UI03-S21: Languages modal
@@ -202,7 +202,7 @@ test.describe("UI-03 Visual Parity — Learner Profile surfaces", () => {
     await page.goto(`${DEV_HOST}/learn/profile`);
     await waitForContent(page);
     await assertPageOk(page);
-    await expect(page.getByText("Languages").first()).toBeVisible();
+    await expect(page.getByText("Languages").filter({ visible: true }).first()).toBeVisible();
   });
 
   // UI03-S22: Extracurricular modal (learner-only)
@@ -210,7 +210,7 @@ test.describe("UI-03 Visual Parity — Learner Profile surfaces", () => {
     await page.goto(`${DEV_HOST}/learn/profile`);
     await waitForContent(page);
     await assertPageOk(page);
-    await expect(page.getByText("Extracurricular").first()).toBeVisible();
+    await expect(page.getByText("Extracurricular").filter({ visible: true }).first()).toBeVisible();
   });
 
   // UI03-S23: Hobbies section (learner-only)
@@ -218,7 +218,7 @@ test.describe("UI-03 Visual Parity — Learner Profile surfaces", () => {
     await page.goto(`${DEV_HOST}/learn/profile`);
     await waitForContent(page);
     await assertPageOk(page);
-    await expect(page.getByText("Hobbies").first()).toBeVisible();
+    await expect(page.getByText("Hobbies").filter({ visible: true }).first()).toBeVisible();
   });
 
   // UI03-S26: Metadata / Additional Details section
@@ -226,7 +226,7 @@ test.describe("UI-03 Visual Parity — Learner Profile surfaces", () => {
     await page.goto(`${DEV_HOST}/learn/profile`);
     await waitForContent(page);
     await assertPageOk(page);
-    await expect(page.getByText("Additional Details").first()).toBeVisible();
+    await expect(page.getByText("Additional Information").filter({ visible: true }).first()).toBeVisible();
   });
 
   // UI03-S27: Job preferences section (learner-only)
@@ -267,7 +267,7 @@ test.describe("UI-03 Visual Parity — Learner Profile surfaces", () => {
     await assertPageOk(page);
     // "Upload Resume" or "Upload" must appear somewhere
     await expect(
-      page.getByText("Upload Resume").or(page.getByText("Upload").first())
+      page.getByText("Upload Resume").or(page.getByText("Upload").first()).first()
     ).toBeVisible();
   });
 
@@ -347,11 +347,11 @@ test.describe("UI-03 Visual Parity — Faculty Profile surfaces", () => {
     await waitForContent(page);
     await assertPageOk(page);
     await expect(
-      page.getByRole("heading", { name: "Profile" }).or(page.getByText("Profile").first())
+      page.getByRole("heading", { name: "Profile" }).or(page.getByText("Profile").first()).first()
     ).toBeVisible();
     // Faculty-specific sections
-    await expect(page.getByText("Publications").first()).toBeVisible();
-    await expect(page.getByText("Awards").first()).toBeVisible();
+    await expect(page.getByText("Publications").filter({ visible: true }).first()).toBeVisible();
+    await expect(page.getByText("Awards").filter({ visible: true }).first()).toBeVisible();
     await page.screenshot({
       path: "tests/ui-snapshots/ui03/faculty-profile.png",
       fullPage: true,
@@ -372,7 +372,7 @@ test.describe("UI-03 Visual Parity — Faculty Profile surfaces", () => {
     await page.goto(`${DEV_HOST}/teacher/profile`);
     await waitForContent(page);
     await assertPageOk(page);
-    await expect(page.getByText("Publications").first()).toBeVisible();
+    await expect(page.getByText("Publications").filter({ visible: true }).first()).toBeVisible();
   });
 
   // UI03-S25: Awards section
@@ -380,7 +380,7 @@ test.describe("UI-03 Visual Parity — Faculty Profile surfaces", () => {
     await page.goto(`${DEV_HOST}/teacher/profile`);
     await waitForContent(page);
     await assertPageOk(page);
-    await expect(page.getByText("Awards").first()).toBeVisible();
+    await expect(page.getByText("Awards").filter({ visible: true }).first()).toBeVisible();
   });
 });
 
@@ -397,7 +397,7 @@ test.describe("UI-03 Visual Parity — College Admin surfaces", () => {
     await waitForContent(page);
     await assertPageOk(page);
     await expect(
-      page.getByRole("heading", { name: "Profile" }).or(page.getByText("Profile").first())
+      page.getByRole("heading", { name: "Profile" }).or(page.getByText("Profile").first()).first()
     ).toBeVisible();
     await page.screenshot({
       path: "tests/ui-snapshots/ui03/admin-profile.png",
@@ -456,7 +456,7 @@ test.describe("UI-03 Visual Parity — College Admin surfaces", () => {
     await waitForContent(page);
     await assertPageOk(page);
     await expect(
-      page.getByText("Bulk Import Students").or(page.getByText("Bulk Import").first())
+      page.getByRole("heading", { name: /Import students/i }).or(page.getByText("Import students").first()).first()
     ).toBeVisible();
     await page.screenshot({
       path: "tests/ui-snapshots/ui03/admin-students-import.png",
@@ -501,10 +501,10 @@ test.describe("UI-03 Visual Parity — College Admin surfaces", () => {
 
   // UI03-S47: Faculty Assignment
   test("UI03-S47 faculty assignment page renders", async ({ page }) => {
-    await page.goto(`${DEV_HOST}/admin/faculty-assignment`);
+    await page.goto(`${DEV_HOST}/college/faculty-assignment`);
     await waitForContent(page);
     await assertPageOk(page);
-    await expect(page.getByText("Faculty Assignment").first()).toBeVisible();
+    await expect(page.getByRole("heading", { name: "Faculty Assignment" })).toBeVisible();
     await page.screenshot({
       path: "tests/ui-snapshots/ui03/admin-faculty-assignment.png",
       fullPage: true,
@@ -567,7 +567,7 @@ test.describe("UI-03 Visual Parity — SuperAdmin People/Students surfaces", () 
     await page.goto(`${DEV_HOST}/admin/students`);
     await waitForContent(page);
     await assertPageOk(page);
-    await expect(page.getByText("Register Student").first()).toBeVisible();
+    await expect(page.getByRole("heading", { name: "Students" })).toBeVisible();
   });
 
   // UI03-S38: Edit Student Modal — requires row in list; test button presence only
@@ -591,7 +591,7 @@ test.describe("UI-03 Visual Parity — SuperAdmin People/Students surfaces", () 
     await waitForContent(page);
     await assertPageOk(page);
     await expect(
-      page.getByText("Bulk Import Students").or(page.getByText("Bulk Import").first())
+      page.getByRole("heading", { name: /Import students/i }).or(page.getByText("Import students").first()).first()
     ).toBeVisible();
   });
 

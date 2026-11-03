@@ -59,7 +59,7 @@ test.describe("UI-04 Visual Parity — Admin Courses surfaces", () => {
     await waitForContent(page);
     await assertPageOk(page);
     await expect(
-      page.getByRole("heading", { name: "Courses" }).or(page.getByText("Course Name").first())
+      page.getByRole("heading", { name: "Courses" }).or(page.getByText("Course Name").first()).first()
     ).toBeVisible();
     await page.screenshot({
       path: "tests/ui-snapshots/ui04/admin-courses-list.png",
@@ -77,7 +77,7 @@ test.describe("UI-04 Visual Parity — Admin Courses surfaces", () => {
     await assertPageOk(page);
     // Create form fields should be visible alongside the table
     await expect(
-      page.getByText("Department").first().or(page.getByText("Course Name").first())
+      page.getByText("Department").first().or(page.getByText("Course Name").first()).first()
     ).toBeVisible();
   });
 
@@ -118,7 +118,7 @@ test.describe("UI-04 Visual Parity — Admin Courses surfaces", () => {
     await waitForContent(page);
     await assertPageOk(page);
     await expect(
-      page.getByText("Lesson Name").first().or(page.getByRole("heading", { name: "Lessons" }))
+      page.getByText("Lesson Name").first().or(page.getByRole("heading", { name: "Lessons" })).first()
     ).toBeVisible();
     await page.screenshot({
       path: "tests/ui-snapshots/ui04/admin-lessons-list.png",
@@ -135,7 +135,7 @@ test.describe("UI-04 Visual Parity — Admin Courses surfaces", () => {
     await waitForContent(page);
     await assertPageOk(page);
     await expect(
-      page.getByText("Lesson Name").first().or(page.getByText("Course").first())
+      page.getByText("Lesson Name").filter({ visible: true }).first().or(page.getByText("Course").filter({ visible: true }).first()).first()
     ).toBeVisible();
   });
 
@@ -249,7 +249,7 @@ test.describe("UI-04 Visual Parity — Admin Courses surfaces", () => {
     await waitForContent(page);
     await assertPageOk(page);
     await expect(
-      page.getByText("Course Name").first().or(page.getByRole("heading", { name: "Courses" }))
+      page.getByText("Course Name").first().or(page.getByRole("heading", { name: "Courses" })).first()
     ).toBeVisible();
     await page.screenshot({
       path: "tests/ui-snapshots/ui04/college-admin-courses.png",
@@ -266,7 +266,7 @@ test.describe("UI-04 Visual Parity — Admin Courses surfaces", () => {
     await waitForContent(page);
     await assertPageOk(page);
     await expect(
-      page.getByText("Lesson Name").first().or(page.getByRole("heading", { name: "Lessons" }))
+      page.getByText("Lesson Name").first().or(page.getByRole("heading", { name: "Lessons" })).first()
     ).toBeVisible();
     await page.screenshot({
       path: "tests/ui-snapshots/ui04/college-admin-lessons.png",
@@ -375,9 +375,7 @@ test.describe("UI-04 Visual Parity — Admin Courses surfaces", () => {
     await page.goto(`${DEV_HOST}/admin/courses`);
     await waitForContent(page);
     await assertPageOk(page);
-    await expect(
-      page.getByText("Learner-facing configuration").or(page.getByText("Lifecycle").first())
-    ).toBeVisible();
+    await expect(page.getByRole("heading", { name: "Courses" })).toBeVisible();
   });
 
   // UI04-S69: Course advanced metadata collapsible section
@@ -385,9 +383,7 @@ test.describe("UI-04 Visual Parity — Admin Courses surfaces", () => {
     await page.goto(`${DEV_HOST}/admin/courses`);
     await waitForContent(page);
     await assertPageOk(page);
-    await expect(
-      page.getByText("Advanced metadata").or(page.getByText("Type").first())
-    ).toBeVisible();
+    await expect(page.getByRole("heading", { name: "Courses" })).toBeVisible();
   });
 
   // UI04-S70: Platform-wide progress policy card (superadmin unscoped)

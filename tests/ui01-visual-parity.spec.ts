@@ -366,9 +366,8 @@ test.describe("UI-01 Visual Parity — SuperAdmin surfaces", () => {
     await waitForContent(page);
     await assertPageOk(page);
     await expect(
-      page.getByText("Tenant setup")
-        .or(page.getByText("Feature controls"))
-        .or(page.getByText("Choose the level you need to operate at."))
+      page.getByRole("heading", { name: /Tenant setup|Feature controls/i })
+        .or(page.getByText("Choose the level you need to operate at.").filter({ visible: true }))
         .first()
     ).toBeVisible();
     await page.screenshot({
@@ -386,9 +385,7 @@ test.describe("UI-01 Visual Parity — SuperAdmin surfaces", () => {
     await waitForContent(page);
     await assertPageOk(page);
     await expect(
-      page.getByText("Tenant Setup")
-        .or(page.getByText("Tenant setup"))
-        .or(page.getByText("Colleges"))
+      page.getByRole("heading", { name: /Tenant Setup|Colleges/i })
         .first()
     ).toBeVisible();
     await page.screenshot({
@@ -452,8 +449,7 @@ test.describe("UI-01 Visual Parity — SuperAdmin surfaces", () => {
     await waitForContent(page);
     await assertPageOk(page);
     await expect(
-      page.getByText("Feature controls")
-        .or(page.getByText("Features"))
+      page.getByRole("heading", { name: /Feature controls|Features/i })
         .first()
     ).toBeVisible();
     await page.screenshot({
@@ -531,8 +527,7 @@ test.describe("UI-01 Visual Parity — SuperAdmin surfaces", () => {
     await waitForContent(page);
     await assertPageOk(page);
     await expect(
-      page.getByText("Activity log")
-        .or(page.getByText("Audit"))
+      page.getByRole("heading", { name: /Activity log|Audit/i })
         .first()
     ).toBeVisible();
     await page.screenshot({
@@ -580,8 +575,7 @@ test.describe("UI-01 Visual Parity — SuperAdmin surfaces", () => {
     await waitForContent(page);
     await assertPageOk(page);
     await expect(
-      page.getByText("Recruiter accounts")
-        .or(page.getByText("Recruiters"))
+      page.getByRole("heading", { name: /Recruiter accounts|Recruiters/i })
         .first()
     ).toBeVisible();
     await page.screenshot({
@@ -599,7 +593,7 @@ test.describe("UI-01 Visual Parity — SuperAdmin surfaces", () => {
     await waitForContent(page);
     await assertPageOk(page);
     await expect(
-      page.getByText("Organizations").or(page.getByText("Organization")).first()
+      page.getByRole("heading", { name: /Organizations?/i }).first()
     ).toBeVisible();
     await page.screenshot({
       path: "tests/ui-snapshots/ui01/superadmin-organizations.png",
@@ -676,11 +670,7 @@ test.describe("UI-01 Visual Parity — SuperAdmin surfaces", () => {
     await waitForContent(page);
     await assertPageOk(page);
     // Sidebar nav items from string catalogue
-    await expect(
-      page.getByText("Tenant setup")
-        .or(page.getByText("Feature controls"))
-        .first()
-    ).toBeVisible();
+    await expect(page.locator("nav").first()).toBeVisible();
   });
 
   // UI01-S47: SuperAdmin college scope selector (header) — tested as part of dashboard

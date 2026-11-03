@@ -57,7 +57,7 @@ test.describe("UI-07 Visual Parity — Learner placements", () => {
     await waitForContent(page);
     await assertPageOk(page);
     await expect(
-      page.getByText("Drives").or(page.getByText("placements")).first()
+      page.getByRole("heading", { name: "Placement Drives" }).or(page.getByText("Placement Drives").first()).first()
     ).toBeVisible();
     await page.screenshot({
       path: "tests/ui-snapshots/ui07/learner-drives.png",
@@ -137,7 +137,7 @@ test.describe("UI-07 Visual Parity — Admin placements", () => {
     await waitForContent(page);
     await assertPageOk(page);
     await expect(
-      page.getByText("Placements").or(page.getByText("Drives")).first()
+      page.getByRole("heading", { name: "Placement Drives" }).or(page.getByText("Placement Drives").first()).first()
     ).toBeVisible();
     await page.screenshot({
       path: "tests/ui-snapshots/ui07/admin-placements.png",

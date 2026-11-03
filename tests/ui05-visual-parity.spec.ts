@@ -45,7 +45,7 @@ test.describe("UI-05 Visual Parity — Admin assignments", () => {
     await page.goto(`${DEV_HOST}/admin/assignments`);
     await waitForContent(page);
     await assertPageOk(page);
-    await expect(page.getByText("Assignments").first()).toBeVisible();
+    await expect(page.getByRole("heading", { name: "Assignments" })).toBeVisible();
     await page.screenshot({
       path: "tests/ui-snapshots/ui05/admin-assignments.png",
       fullPage: true,
@@ -60,7 +60,7 @@ test.describe("UI-05 Visual Parity — Admin assignments", () => {
     await waitForContent(page);
     await assertPageOk(page);
     await expect(
-      page.getByRole("button", { name: "Create Assignment" }).or(page.getByText("Create Assignment").first())
+      page.getByRole("button", { name: "Create Assignment" }).or(page.getByText("Create Assignment").first()).first()
     ).toBeVisible();
   });
 
@@ -68,7 +68,7 @@ test.describe("UI-05 Visual Parity — Admin assignments", () => {
     await page.goto(`${DEV_HOST}/admin/quizzes`);
     await waitForContent(page);
     await assertPageOk(page);
-    await expect(page.getByText("Quizzes").first()).toBeVisible();
+    await expect(page.getByRole("heading", { name: "Quizzes" })).toBeVisible();
     await page.screenshot({
       path: "tests/ui-snapshots/ui05/admin-quizzes.png",
       fullPage: true,
@@ -82,7 +82,7 @@ test.describe("UI-05 Visual Parity — Admin assignments", () => {
     await page.goto(`${DEV_HOST}/admin/attendance`);
     await waitForContent(page);
     await assertPageOk(page);
-    await expect(page.getByText("Attendance").first()).toBeVisible();
+    await expect(page.getByText("Attendance").filter({ visible: true }).first()).toBeVisible();
     await page.screenshot({
       path: "tests/ui-snapshots/ui05/admin-attendance.png",
       fullPage: true,
@@ -104,7 +104,7 @@ test.describe("UI-05 Visual Parity — Faculty surfaces", () => {
     await page.goto(`${DEV_HOST}/teacher/allAssignments`);
     await waitForContent(page);
     await assertPageOk(page);
-    await expect(page.getByText("Assignments").first()).toBeVisible();
+    await expect(page.getByRole("heading", { name: "All Assignments" })).toBeVisible();
     await page.screenshot({
       path: "tests/ui-snapshots/ui05/teacher-assignments.png",
       fullPage: true,
@@ -118,7 +118,7 @@ test.describe("UI-05 Visual Parity — Faculty surfaces", () => {
     await page.goto(`${DEV_HOST}/teacher/allQuizzes`);
     await waitForContent(page);
     await assertPageOk(page);
-    await expect(page.getByText("Quizzes").first()).toBeVisible();
+    await expect(page.getByRole("heading", { name: "Quizzes" })).toBeVisible();
     await page.screenshot({
       path: "tests/ui-snapshots/ui05/teacher-quizzes.png",
       fullPage: true,
@@ -168,7 +168,7 @@ test.describe("UI-05 Visual Parity — Learner assignments, quizzes, attendance"
     await page.goto(`${DEV_HOST}/learn/allAssignments`);
     await waitForContent(page);
     await assertPageOk(page);
-    await expect(page.getByText("Assignments").first()).toBeVisible();
+    await expect(page.getByRole("heading", { name: "All Assignments" })).toBeVisible();
     await page.screenshot({
       path: "tests/ui-snapshots/ui05/learner-assignments.png",
       fullPage: true,
@@ -182,7 +182,7 @@ test.describe("UI-05 Visual Parity — Learner assignments, quizzes, attendance"
     await page.goto(`${DEV_HOST}/learn/allQuizzes`);
     await waitForContent(page);
     await assertPageOk(page);
-    await expect(page.getByText("Quizzes").first()).toBeVisible();
+    await expect(page.getByRole("heading", { name: "Quizzes" })).toBeVisible();
     await page.screenshot({
       path: "tests/ui-snapshots/ui05/learner-quizzes.png",
       fullPage: true,
@@ -196,7 +196,7 @@ test.describe("UI-05 Visual Parity — Learner assignments, quizzes, attendance"
     await page.goto(`${DEV_HOST}/learn/attendance`);
     await waitForContent(page);
     await assertPageOk(page);
-    await expect(page.getByText("Attendance").first()).toBeVisible();
+    await expect(page.getByText("Attendance").filter({ visible: true }).first()).toBeVisible();
     await page.screenshot({
       path: "tests/ui-snapshots/ui05/learner-attendance.png",
       fullPage: true,

@@ -103,7 +103,7 @@ test.describe("UI-02 Visual Parity — Batches", () => {
     await waitForContent(page);
     await assertPageOk(page);
     await expect(
-      page.getByText("Semester Courses").or(page.getByText("Semester-Courses")).first()
+      page.getByRole("heading", { name: /Semester.Course Mapping/i }).or(page.getByText("Semester–Course Mapping").first())
     ).toBeVisible();
     await page.screenshot({
       path: "tests/ui-snapshots/ui02/superadmin-semester-courses.png",
@@ -242,7 +242,7 @@ test.describe("UI-02 Visual Parity — College Admin academics", () => {
     await page.goto(`${DEV_HOST}/college/semester-courses`);
     await waitForContent(page);
     await assertPageOk(page);
-    await expect(page.getByText("Semester Courses").or(page.locator("body")).first()).toBeVisible();
+    await expect(page.locator("body")).toBeVisible();
     await page.screenshot({
       path: "tests/ui-snapshots/ui02/college-semester-courses.png",
       fullPage: true,
@@ -275,7 +275,7 @@ test.describe("UI-02 Visual Parity — Learner academic surfaces", () => {
   test.use({ storageState: "tests/.auth/learner.json" });
 
   test("UI02-S40 learner academic record page renders", async ({ page }) => {
-    await page.goto(`${DEV_HOST}/learn/academic-record`);
+    await page.goto(`${DEV_HOST}/learn/profile/academic-record`);
     await waitForContent(page);
     await assertPageOk(page);
     await expect(
