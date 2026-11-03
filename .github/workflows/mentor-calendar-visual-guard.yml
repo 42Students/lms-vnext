@@ -1,4 +1,4 @@
-name: Mentor legacy calendar layout guard
+name: Mentor required meeting behavior and overflow guards
 
 on:
   pull_request:
@@ -8,6 +8,8 @@ on:
       - "src/components/projects/mentor-meetings-calendar.tsx"
       - "src/app/(authenticated)/mentor/calendar/page.tsx"
       - "tests/mentor-meetings-calendar-grid-layout.test.mjs"
+      - "src/modules/projects/mentor-calendar-viewer-time-model.ts"
+      - "tests/unit/mentor-calendar-viewer-time-model.test.ts"
   workflow_dispatch:
 
 permissions:
@@ -26,6 +28,8 @@ jobs:
         run: npm ci
       - name: Run meeting detail grid and preserved-controls regression
         run: node --test tests/mentor-meetings-calendar-grid-layout.test.mjs
+      - name: Verify viewer-local meeting date/time and historical meeting status rules
+        run: npx vitest run tests/unit/mentor-calendar-viewer-time-model.test.ts tests/unit/w03-mentor-calendar.test.ts
       - name: Strict application typecheck on updated Mentor JSX
         env:
           NODE_OPTIONS: --max-old-space-size=6144
