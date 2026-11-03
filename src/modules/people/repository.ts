@@ -13,6 +13,9 @@ import {
   sql,
 } from "drizzle-orm";
 import { getDb } from "@/db/client";
+import type { RequestContext } from "@/modules/identity/context";
+import { AuthorizationError, type PlatformPermission } from "@/modules/permissions/policy";
+import { assertPersistedPlatformPermission, type PermissionTransaction } from "@/modules/permissions/persisted-actor";
 import { recordActivityEventInTransaction } from "@/modules/activity/service";
 import { ACTIVITY_EVENT_TYPES } from "@/modules/activity/taxonomy";
 import {
@@ -168,6 +171,33 @@ async function loadMembershipDetailFromDb(
   };
 }
 
+/** Database-owned tenant and live actor grant must be checked inside the write transaction. */
+async function assertAuthorizedCollegeMutation(
+  tx: PermissionTransaction,
+  context: RequestContext,
+  collegeId: string,
+  permission: PlatformPermission,
+) {
+  const [target] = await tx
+    .select({
+      organizationId: colleges.organizationId,
+      collegeStatus: colleges.status,
+      organizationStatus: organizations.status,
+    })
+    .from(colleges)
+    .innerJoin(organizations, eq(organizations.id, colleges.organizationId))
+    .where(eq(colleges.id, collegeId))
+    .for("share")
+    .limit(1);
+  if (!target || target.collegeStatus !== "ACTIVE" || target.organizationStatus !== "ACTIVE") {
+    throw new AuthorizationError(permission);
+  }
+  await assertPersistedPlatformPermission(tx, context, permission, {
+    collegeId,
+    organizationId: target.organizationId,
+  });
+}
+
 export const drizzlePeopleRepository:
   PeopleRepository &
   PeopleReadRepository &
@@ -204,6 +234,11 @@ export const drizzlePeopleRepository:
 
     try {
       return await db.transaction(async (tx) => {
+        // Recheck the active selected role before any identity or membership write.
+        await assertAuthorizedCollegeMutation(tx, mutation.context, input.collegeId, "people.manage");
+        if (input.roles.includes("COLLEGE_ADMIN") || input.roles.includes("TPO")) {
+          await assertPersistedPlatformPermission(tx, mutation.context, "admin-scope.select");
+        }
         const candidateWhere = input.email
           ? or(
               eq(users.identityUid, input.identityUid),
@@ -644,6 +679,11 @@ export const drizzlePeopleRepository:
         throw new PeopleServiceError("MEMBERSHIP_ENDED");
       }
 
+      await assertAuthorizedCollegeMutation(tx, mutation.context, parent.collegeId, "membership.role.manage");
+      if (role === "COLLEGE_ADMIN" || role === "TPO") {
+        await assertPersistedPlatformPermission(tx, mutation.context, "admin-scope.select");
+      }
+
       const currentRows = await tx
         .select({
           role: membershipRoles.role,
@@ -769,6 +809,11 @@ export const drizzlePeopleRepository:
         throw new PeopleServiceError("MEMBERSHIP_ENDED");
       }
 
+      await assertAuthorizedCollegeMutation(tx, mutation.context, parent.collegeId, "membership.role.manage");
+      if (role === "COLLEGE_ADMIN" || role === "TPO") {
+        await assertPersistedPlatformPermission(tx, mutation.context, "admin-scope.select");
+      }
+
       const currentRows = await tx
         .select({ role: membershipRoles.role })
         .from(membershipRoles)
@@ -848,6 +893,8 @@ export const drizzlePeopleRepository:
       const [current] = await tx
         .select({
           status: collegeMemberships.status,
+          userId: collegeMemberships.userId,
+          collegeId: collegeMemberships.collegeId,
           suspendedAt: collegeMemberships.suspendedAt,
           suspensionReason: collegeMemberships.suspensionReason,
         })
@@ -859,6 +906,12 @@ export const drizzlePeopleRepository:
       if (!current) {
         throw new PeopleServiceError("MEMBERSHIP_NOT_FOUND");
       }
+
+      if (current.userId !== mutation.person.user.id ||
+          current.collegeId !== mutation.person.membership.collegeId) {
+        throw new PeopleServiceError("MEMBERSHIP_NOT_FOUND");
+      }
+      await assertAuthorizedCollegeMutation(tx, mutation.context, current.collegeId, "membership.lifecycle.manage");
 
       const lockedRoles=await tx.select({role:membershipRoles.role})
         .from(membershipRoles).where(eq(membershipRoles.membershipId,membershipId))
