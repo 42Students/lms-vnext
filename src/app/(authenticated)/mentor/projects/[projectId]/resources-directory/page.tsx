@@ -111,7 +111,7 @@ export default async function MentorResourceDirectoryPage({params,searchParams}:
      </div>
      {resource.description?<p className="mt-2 whitespace-pre-wrap break-words text-sm text-body leading-[22px]">
       {resource.description}</p>:null}
-     {resource.safeUrl?<Link href={resource.safeUrl} target="_blank" rel="noopener noreferrer"
+     {resource.safeUrl?<Link href={resource.safeUrl} rel="noopener noreferrer"
       className="mt-3 inline-flex min-h-11 items-center text-sm font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] hover:text-[var(--lms-primary-text)]">
       Open HTTPS resource
      </Link>:<p className="mt-2 text-xs text-muted-foreground leading-5">

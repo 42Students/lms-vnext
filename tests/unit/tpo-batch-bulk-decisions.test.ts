@@ -22,7 +22,7 @@ describe("TPO-batches-32 preview/confirm batch bulk actions",()=>{
   const page=readFileSync("src/app/(authenticated)/tpo/batches/[batchId]/students/page.tsx","utf8");
   const confirm=readFileSync("src/modules/placements/tpo-bulk-action-confirm-service.ts","utf8");
   expect(page).toContain("<TpoBulkActionPanel");
-  expect(page).toContain("target=\"STUDENTS\"");
+  expect(page).toContain("bulkTarget=\"STUDENTS\"");
   expect(confirm).toContain('plan.action==="INELIGIBLE"');
   expect(confirm).toContain("decideTpoLearnerParticipation");
  });

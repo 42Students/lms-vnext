@@ -129,7 +129,7 @@ export default async function TpoApplicantPipelinePage({params,searchParams}:Pro
     can(context, "placements.manage", {collegeId: context.membership.collegeId}) ?
     <TpoBulkActionPanel
       key={["applications", jobId, data.page, data.stage, data.search, data.channel, data.eligibility, data.flag, data.sort, data.submittedWithin].join(":")}
-      target="APPLICATIONS" jobId={jobId}
+      bulkTarget="APPLICATIONS" jobId={jobId}
       rows={data.rows.map((row) => ({
         id:row.id,label:(row.student ?? "Applicant") + " · " + row.role,
       }))}

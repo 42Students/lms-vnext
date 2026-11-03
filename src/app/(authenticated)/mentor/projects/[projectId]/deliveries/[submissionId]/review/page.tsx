@@ -70,7 +70,7 @@ export default async function MentorDeliveryVersionPage({params}:{
       <div className="mt-3 flex flex-wrap gap-3">
         {([{label:"Source",href:safeProjectExternalHref(v.sourceUrl)},
           {label:"Demo",href:safeProjectExternalHref(v.demoUrl)}]).map(item=>
-            item.href?<a key={item.label} href={item.href} target="_blank"
+            item.href?<a key={item.label} href={item.href}
               rel="noopener noreferrer" className="inline-flex min-h-11 items-center text-sm font-semibold text-link underline min-[768px]:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-teal-deep)]">
               Open {item.label.toLowerCase()} link ↗</a>:null)}
         {!safeProjectExternalHref(v.sourceUrl)&&!safeProjectExternalHref(v.demoUrl)?
@@ -86,7 +86,7 @@ export default async function MentorDeliveryVersionPage({params}:{
         const href=typeof entry.url==="string" ? safeProjectExternalHref(entry.url) : null;
         return <li key={index} className="py-[var(--lms-space-3)] text-sm">
           <span className="break-words font-semibold">{name}</span> · {kind}
-          {href?<a href={href} target="_blank" rel="noopener noreferrer"
+          {href?<a href={href} rel="noopener noreferrer"
             className="ml-2 inline-flex min-h-11 max-w-full items-center break-all text-link underline min-[768px]:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-teal-deep)]">Open link ↗</a>:null}
           {kind==="File"&&typeof entry["fileId"]==="string"?
             <span className="ml-2 text-muted-foreground">Uploaded file recorded</span>:null}

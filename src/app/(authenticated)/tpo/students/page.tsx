@@ -858,7 +858,7 @@ export default async function TpoStudentsPage({
           }))} />:null}
         <TpoStudentsSelectedNote allowedIds={roster.total<=5000?(data.exportRows??[]).map(student=>student.membershipId):roster.items.map(student=>student.membershipId)}/>
         <TpoBulkActionPanel key={"students:"+query.batchId+":"+query.branchId+":"+roster.page+":"+query.pageSize+":"+query.search+":"+query.journeyState}
-          target="STUDENTS"
+          bulkTarget="STUDENTS"
           rows={roster.items.map(student=>({id:student.membershipId,
             label:student.displayName+" · "+student.branchName}))}
           viewCount={roster.total}

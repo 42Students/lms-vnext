@@ -231,7 +231,7 @@ export default async function HrCompanyPage({ searchParams }: PageProps) {
             <div>
               <dt className="text-xs font-medium uppercase tracking-wide text-muted-foreground">Website</dt>
               <dd className="mt-1 text-sm text-foreground">{result.company.websiteUrl?.startsWith("https://")||result.company.websiteUrl?.startsWith("http://")
-                ? <a href={result.company.websiteUrl} target="_blank" rel="noopener noreferrer" className="max-w-full break-all min-h-11 md:min-h-9 inline-flex items-center text-link underline hover:text-[var(--lms-primary-hover)] active:text-[var(--lms-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">{result.company.websiteUrl}</a>
+                ? <a href={result.company.websiteUrl} rel="noopener noreferrer" className="max-w-full break-all min-h-11 md:min-h-9 inline-flex items-center text-link underline hover:text-[var(--lms-primary-hover)] active:text-[var(--lms-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">{result.company.websiteUrl}</a>
                 : (result.company.websiteUrl??"Not provided")}</dd>
             </div>
             <div>

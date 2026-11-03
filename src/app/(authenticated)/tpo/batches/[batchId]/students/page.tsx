@@ -155,7 +155,7 @@ export default async function BatchStudents({params,searchParams}:{params:Promis
  </Disclosure>
 <div id="batch-student-bulk-actions" data-testid="batch.act" className="min-w-0 border-b border-border py-3">
  {!finished?<TpoBulkActionPanel key={batchId+":"+result.page+":"+filters.q+":"+filters.decision}
-   target="STUDENTS" rows={visible.map(student=>({
+   bulkTarget="STUDENTS" rows={visible.map(student=>({
     id:student.membershipId,label:student.name+" · "+(student.rollNumber??student.membershipId),rollNumber:student.rollNumber,
    }))} />:null}
  </div>

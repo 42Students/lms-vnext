@@ -31,7 +31,7 @@ type PreviewPlan={
  target:"STUDENTS"|"APPLICATIONS";jobId?:string;action:Action;note:string;internalReason?:string;ids:string[];
 };
 type PreviewResponse={rows:BulkPreviewRow[];previewToken:string;counts:{ready:number;skipped:number}};
-export function TpoBulkActionPanel({target,jobId,rows,allRows,viewCount=rows.length}:{target:"STUDENTS"|"APPLICATIONS";
+export function TpoBulkActionPanel({bulkTarget:target,jobId,rows,allRows,viewCount=rows.length}:{bulkTarget:"STUDENTS"|"APPLICATIONS";
  jobId?:string;rows:readonly TpoBulkUiRow[];allRows?:readonly TpoBulkUiRow[];viewCount?:number}){
  const router=useRouter();
  const [localSelection,setLocalSelection]=useState<string[]>([]);
