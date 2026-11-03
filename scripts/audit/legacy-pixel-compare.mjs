@@ -155,6 +155,29 @@ export function encodePng({ width, height, data }) {
     pngChunk("IDAT", deflateSync(raw, { level: 6 })), pngChunk("IEND", Buffer.alloc(0))]);
 }
 
+/** Two original-resolution images separated by a 12px neutral gutter. */
+export function sideBySideImages(reference, candidate) {
+  const gap = 12;
+  const width = reference.width + candidate.width + gap;
+  const height = Math.max(reference.height, candidate.height);
+  if (width < 1 || height < 1 || width * height > LIMIT) {
+    throw Error("Side-by-side image dimensions exceed safe limit");
+  }
+  const data = Buffer.alloc(width * height * 4, 255);
+  for (let y = 0; y < height; y++) {
+    for (let x = reference.width; x < reference.width + gap; x++) {
+      const at = (y * width + x) * 4;
+      data[at] = data[at + 1] = data[at + 2] = 226;
+    }
+    for (const [image, xOffset] of [[reference, 0], [candidate, reference.width + gap]]) {
+      if (y >= image.height) continue;
+      const from = y * image.width * 4;
+      image.data.copy(data, (y * width + xOffset) * 4, from, from + image.width * 4);
+    }
+  }
+  return { width, height, data };
+}
+
 function normalizeRect(rect, width, height) {
   if (!rect || ![rect.x, rect.y, rect.width, rect.height].every(Number.isInteger) ||
       rect.x < 0 || rect.y < 0 || rect.width <= 0 || rect.height <= 0 ||
@@ -273,6 +296,7 @@ function main() {
     mkdirSync(dir, { recursive: true });
     writeFileSync(join(dir, "diff.png"), encodePng(comparison.diff));
     writeFileSync(join(dir, "overlay.png"), encodePng(comparison.overlay));
+    writeFileSync(join(dir, "side-by-side.png"), encodePng(sideBySideImages(reference, candidate)));
     writeFileSync(join(dir, "report.json"), JSON.stringify({
       ...comparison.results, referenceFile: resolve(input.old),
       candidateFile: resolve(input.new), masks,
