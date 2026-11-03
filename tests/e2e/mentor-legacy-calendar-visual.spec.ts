@@ -40,6 +40,13 @@ test.describe("Old LMS Mentor Meetings visual candidate",()=>{
       await expect(page.getByRole("heading",{level:2,name:/^Past & Cancelled \(\d+\)$/})).toBeVisible();
       const primary=page.getByLabel("Meetings list");
       await expect(primary).toBeVisible();
+      // Old reference was captured with the icon rail collapsed. Do not
+      // measure the legitimate hover/focus-expanded 256px navigation state.
+      await page.mouse.move(850,650);
+      await page.evaluate(()=>{
+        if(document.activeElement instanceof HTMLElement)document.activeElement.blur();
+      });
+      await expect(page.locator('[data-slot="legacy-sidebar"]')).toHaveCSS("width","96px");
       const advanced=page.locator("details").filter({
         has:page.locator("summary").getByText("Meeting filters and calendar tools"),
       });
@@ -100,9 +107,9 @@ test.describe("Old LMS Mentor Meetings visual candidate",()=>{
     await expect(details).not.toHaveAttribute("open");
     const summary=details.locator("summary");
     await summary.focus();
-    await page.keyboard.press("Enter");
+    await summary.press("Enter");
     await expect(details).toHaveAttribute("open");
-    await page.keyboard.press("Enter");
+    await summary.press("Enter");
     await expect(details).not.toHaveAttribute("open");
     const scheduling=page.locator("details").filter({
       has:page.locator("summary").getByText("Scheduling and Google Calendar"),
