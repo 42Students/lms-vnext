@@ -1,6 +1,9 @@
 import { NextResponse } from "next/server";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { isSameOriginRequest } from "@/auth/origin";
+import { requireRecentDeviceAuthentication } from "@/auth/recent-device-auth";
+import { membershipRoleMutationInputSchema } from "@/modules/people/validation";
+import { requirePermission } from "@/modules/permissions/policy";
 import { apiErrorResponse } from "@/lib/api-error";
 import { MEMBERSHIP_ROLE_LABELS, type MembershipRole } from "@/modules/identity/constants";
 import {
@@ -75,6 +78,11 @@ export async function POST(
 
   try {
     const context = await getCurrentRequestContext();
+    const input = membershipRoleMutationInputSchema.parse(parsedBody.body);
+    if (input.role === "COLLEGE_ADMIN" || input.role === "TPO") {
+      requirePermission(context, "admin-scope.select");
+      await requireRecentDeviceAuthentication();
+    }
     const { membershipId } = await params;
     const roles = await addMembershipRoleWithRuntime(
       context,
@@ -104,6 +112,11 @@ export async function DELETE(
 
   try {
     const context = await getCurrentRequestContext();
+    const input = membershipRoleMutationInputSchema.parse(parsedBody.body);
+    if (input.role === "COLLEGE_ADMIN" || input.role === "TPO") {
+      requirePermission(context, "admin-scope.select");
+      await requireRecentDeviceAuthentication();
+    }
     const { membershipId } = await params;
     const roles = await removeMembershipRoleWithRuntime(
       context,
