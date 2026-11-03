@@ -1,54 +1,51 @@
 # vNext Deployment Process
 
-## How it works
+Images are built on GitHub Actions, which needs no GCP credentials, then pushed to Artifact Registry and deployed from the developer machine. Cloud Build is not used. Docker is not needed locally.
 
-Builds happen on **GitHub Actions** (free, public repo). Images are downloaded locally and pushed to GCP from the developer machine — no Cloud Build, no GCP compute cost.
+The repository is private, so builds use the GitHub Actions monthly minutes. A build takes about 7 minutes.
 
-```
-GitHub Actions (free)          Developer machine
-──────────────────────         ─────────────────────────────
-docker build migrator   →      gh run download
-docker build runner     →      docker load
-docker save → tar.gz    →      docker tag + docker push → Artifact Registry
-upload artifact         →      kubectl set image → GKE
-```
+## 1. Check first
 
-## Step 1 — Trigger a build
+- `typecheck` passed in CI for that commit. The image build skips the type check because it runs out of memory on GitHub runners, so nothing else catches type errors.
+- Whether migrations changed since the running image:
 
-Go to GitHub → Actions → **Build images** → Run workflow (choose branch/commit).
-
-Or via CLI:
 ```bash
-gh workflow run build-images.yml --ref main
+git diff --name-status <running-sha> <new-sha> -- drizzle
 ```
 
-Wait for it to go green (~10–15 min).
+If they changed, ask the owner before deploying. Run the migrator image as a job before updating the web image.
 
-## Step 2 — Deploy locally
+## 2. Build
 
-```powershell
-.\scripts\deploy-from-artifact.ps1
+```bash
+gh workflow run build-images.yml --ref main -f ref=main
 ```
 
-This automatically:
-- Downloads the latest successful build artifact
-- Loads both images into local Docker
-- Tags and pushes to `asia-south1-docker.pkg.dev/students-384817/lms-vnext/`
-- Runs `kubectl set image` and waits for rollout
+To build a hotfix branch, use the branch name for both `--ref` and `-f ref=`.
 
-To deploy a specific run:
+## 3. Deploy
+
+Always pass the run id. Without it, the script takes the latest successful build, which may not be the one you reviewed.
+
 ```powershell
-.\scripts\deploy-from-artifact.ps1 -RunId 12345678
+.\scripts\deploy-from-artifact.ps1 -RunId <run-id>
+```
+
+The script downloads the artifact, pushes both images with `tools/crane.exe`, then updates `lms-vnext` in `lms-dev-2026` and waits for the rollout. It stops before `kubectl` if a push fails.
+
+To roll back:
+
+```bash
+kubectl rollout undo deployment/lms-vnext -n lms-dev-2026
 ```
 
 ## Prerequisites
 
-- `gh` CLI authenticated (`gh auth status`)
-- `docker` running locally
-- `gcloud` authenticated (`gcloud auth list`)
-- `kubectl` pointed at the right cluster (`kubectl config current-context`)
+- `gh` signed in
+- `gcloud` signed in, with `kubectl` pointed at the dev cluster
+- `tools/crane.exe` from go-containerregistry. It is not committed.
 
-## Namespaces / resources
+## Resources
 
 | Thing | Value |
 |---|---|
@@ -57,7 +54,3 @@ To deploy a specific run:
 | Registry | `asia-south1-docker.pkg.dev/students-384817/lms-vnext/` |
 | Web image | `web:<short-sha>` |
 | Migrator image | `migrator:<short-sha>` |
-
-## Migrations
-
-If there are new migration files, run the migrator job manually after pushing the image — ask before doing this.

@@ -60,6 +60,8 @@ $webTar = $webGz -replace '\.gz$', ''
 Decompress-Gz $webGz $webTar
 
 # --- 6. Push images ---
+# crane logs progress to stderr; each native command is checked through $LASTEXITCODE instead.
+$ErrorActionPreference = "Continue"
 Write-Host "Pushing migrator image..."
 & $CRANE push $migratorTar "$REGISTRY/migrator:$SHA"
 if ($LASTEXITCODE -ne 0) { throw "crane push migrator failed." }
@@ -70,8 +72,11 @@ if ($LASTEXITCODE -ne 0) { throw "crane push web failed." }
 
 # --- 7. Deploy ---
 Write-Host "Deploying web:$SHA to $NS/$DEPLOY ..."
+Remove-Item -Recurse -Force $CraneConfig
 kubectl set image deployment/$DEPLOY "web=$REGISTRY/web:$SHA" -n $NS
-kubectl rollout status deployment/$DEPLOY -n $NS --timeout=120s
+if ($LASTEXITCODE -ne 0) { throw "kubectl set image failed." }
+kubectl rollout status deployment/$DEPLOY -n $NS --timeout=180s
+if ($LASTEXITCODE -ne 0) { throw "Rollout did not finish. Check the pod, or run: kubectl rollout undo deployment/$DEPLOY -n $NS" }
 
 Write-Host ""
 Write-Host "Done. Deployed web:$SHA"
