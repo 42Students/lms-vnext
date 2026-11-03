@@ -30,7 +30,7 @@ const externalLinkSurfaces=[
 describe("UX anti-drift new-tab remediation",()=>{
  it("keeps reviewed links navigable without spawning _blank tabs",()=>{
   for(const path of externalLinkSurfaces)
-    expect(src(path),path).not.toMatch(/\\btarget=["_']_blank["_']/);
+    expect(src(path),path).not.toMatch(/\btarget=["_']_blank["_']/);
  });
  it("separates custom component domain targets from link target attributes",()=>{
   const batch=src("src/components/tpo/tpo-bulk-action-panel.tsx");

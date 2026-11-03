@@ -1,6 +1,6 @@
 // API-10: Global security regression and independent database safety gate.
 // Verifies all 9 domain milestones done, 732 total endpoints classified,
-// 185 MISSING gaps catalogued, auth guard coverage, journal clean.
+// 183 remaining MISSING gaps catalogued, auth guard coverage, journal clean.
 import assert from "node:assert/strict";
 import fs from "node:fs";
 import path from "node:path";
@@ -12,7 +12,7 @@ const tracker = JSON.parse(fs.readFileSync(path.join(root, "docs/tracker.json"),
 
 const FROZEN_SHA = "21bad59d4dfaf2fa11fdeaf9353327ce105697d5";
 const TOTAL_ENDPOINTS = 732;
-const TOTAL_MISSING = 185;
+const TOTAL_MISSING = 183;
 const DOMAIN_MILESTONES = ["API-01","API-02","API-03","API-04","API-05","API-06","API-07","API-08","API-09"];
 
 function loadCrosswalk(n) {
@@ -69,7 +69,7 @@ test("API-10 all MISSING gaps have documented gap reasons", () => {
   }
 });
 
-test("API-10 total MISSING gap count is exactly 185", () => {
+test("API-10 total MISSING gap count is exactly 183", () => {
   let total = 0;
   for (let i = 1; i <= 9; i++) {
     const c = loadCrosswalk(i);
