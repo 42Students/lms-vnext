@@ -98,7 +98,9 @@ export async function capture(opts) {
     });
     page.on("requestfailed", req => {
       const failed = req.failure()?.errorText || "unknown network failure";
-      requestFailures.push({ method: req.method(), url: safeUrl(req.url()),
+      requestFailures.push({ method: req.method(), origin: (() => {
+        try { return new URL(req.url()).origin; } catch { return "unknown"; }
+      })(),
         failure: failed.slice(0, 180) });
     });
     const response = await page.goto(target.toString(), {
