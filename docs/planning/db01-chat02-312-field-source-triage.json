@@ -6,7 +6,7 @@
   "globalPhase": "DATABASE",
   "sourceInventory": {
     "path": "docs/planning/db-pass4-columns-db01_identity_and_tenancy.json",
-    "blobSha": "1f373c95d492a37dbadaedb740bb1e6118bfd6ed",
+    "blobSha": "52f91b969deea6bb6cb9a9f5553688f6805fa26c",
     "legacyBackendSha": "21bad59d4dfaf2fa11fdeaf9353327ce105697d5",
     "legacyFrontendSha": "e6b09e6dd14ac7b6a0dae1697a7c08ddb27cdde2"
   },
