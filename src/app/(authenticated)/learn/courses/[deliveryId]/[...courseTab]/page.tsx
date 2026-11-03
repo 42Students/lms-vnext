@@ -14,6 +14,7 @@ import { getCurrentRequestContext } from "@/auth/request-context";
 import { LearnerCourseAttendance } from "@/components/courses/learner-course-attendance";
 import { LearnerCourseDiscussion } from "@/components/courses/learner-course-discussion";
 import { LearnerCourseOverview } from "@/components/courses/learner-course-overview";
+import { LearnerCourseAnnouncements } from "@/components/courses/learner-course-announcements";
 import { LearnerCourseTabs, learnerCourseTabs } from "@/components/courses/learner-course-tabs";
 import { LearnerCourseWorkspace } from "@/components/courses/learner-course-workspace";
 import { LearnerCourseStateRetry } from "@/components/courses/learner-course-state-retry";
@@ -186,7 +187,10 @@ export default async function LearnerCourseTabPage({
   const courseTitle = workspace.course.name?.trim() || "Unnamed Course";
   let content: ReactNode;
 
-  if (activeTab === "home") {
+  if (activeTab === "announcements") {
+    const announcements = await listLearnerCourseClassAnnouncements(context, courseMeta.sectionId, new Date(), 100);
+    content = <LearnerCourseAnnouncements announcements={announcements} />;
+  } else if (activeTab === "home") {
     const [announcements, displayResult] =
       await Promise.all([
         listLearnerCourseClassAnnouncements(context,courseMeta.sectionId),
@@ -285,41 +289,30 @@ export default async function LearnerCourseTabPage({
 
   return (
     <div role="region" aria-label="Course workspace" className={"learn-projects learn-course-layout learn-course-layout--" + activeTab + " min-w-0 max-w-full space-y-4"}>
-      <PageHeader title={activeTab === "roadmap" ? "Learning Path" : courseTitle}
-        description={activeTab === "roadmap" ? courseTitle : "Course workspace"} />
-      <nav aria-label="Course navigation" className="flex flex-wrap items-center gap-3">
-        <Link
-              href="/learn/courses"
-              className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text hover:text-primary-hover focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9"
-            >
-              {LEARNER_BACK_TO_COURSES}
-            </Link>
-      </nav>
+      <header data-slot="page-header" className="mb-2 flex w-full min-w-0 flex-col gap-1 border-b border-[var(--lms-canvas-border)] pb-4 md:mb-4">
+        <div className="flex w-full min-w-0 items-baseline justify-between gap-4">
+          <h1 className="m-0 min-w-0 max-w-full shrink break-words text-[20px] font-semibold leading-[1.3] tracking-[-0.02em] text-[var(--lms-heading)] md:text-[30px]">
+            {activeTab === "roadmap" ? "Learning Path" : courseTitle}
+          </h1>
+          <Link
+            href="/learn/courses"
+            className="inline-flex shrink-0 min-h-9 items-center rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-[var(--lms-surface)] px-3 text-sm font-semibold text-[var(--lms-primary-text)] hover:bg-[var(--lms-canvas-muted)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]"
+          >
+            {LEARNER_BACK_TO_COURSES}
+          </Link>
+        </div>
+        <p className="text-sm text-[var(--lms-muted-text)]">
+          {activeTab === "roadmap" ? courseTitle : "Course workspace"}
+        </p>
+      </header>
 
       {readOnly?<Banner tone="info">
         Past semester course · Read only. Submitted work remains accessible.
       </Banner>:null}
       <LearnerCourseDocumentTitle courseName={courseTitle}
         tabName={learnerCourseTabs.find(tab=>tab.path===activeTab)?.label??"Overview"}/>
-       <LearnerCourseTabs deliveryId={deliveryId} activeTab={activeTab}
+      <LearnerCourseTabs deliveryId={deliveryId} activeTab={activeTab}
         persistentQuery={learnerCourseTabPersistentQuery(query)}/>
-      <details className="border-b border-border pb-3 text-sm">
-        <summary className="flex min-h-11 cursor-pointer items-center font-semibold text-primary-text hover:text-primary-hover focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Course options</summary>
-        <nav aria-label="Additional course destinations" className="flex flex-col gap-2 pt-2 sm:flex-row sm:flex-wrap">
-          <Link
-              href={`/learn/courses/${encodeURIComponent(deliveryId)}/progress`}
-              className="inline-flex min-h-11 md:min-h-[var(--lms-control-height)] items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-primary-text hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-white active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-hover)] active:text-white focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]"
-            >
-              Detailed progress
-            </Link>
-          <Link
-              href={`/learn/courses/${encodeURIComponent(deliveryId)}/attendance-summary`}
-              className="inline-flex min-h-11 md:min-h-[var(--lms-control-height)] items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-primary-text hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-white active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-hover)] active:text-white focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]"
-            >
-              Attendance history
-            </Link>
-        </nav>
-      </details>
       <div key={deliveryId + ":" + activeTab} className="learn-course-tab-page min-w-0">
         {content}
       </div>

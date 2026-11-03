@@ -10,7 +10,7 @@ import {requireOwnCourseLearnerRead} from "./learner-access-guard";
  * Discussion posts are never reclassified as notices; no course-only
  * audience may be inferred from a class-wide announcement. */
 export async function listLearnerCourseClassAnnouncements(
- context:RequestContext,sectionIdInput:string,now:Date=new Date(),
+ context:RequestContext,sectionIdInput:string,now:Date=new Date(),limit=2,
 ){
  const sectionId=z.string().uuid().parse(sectionIdInput);
  const member=await requireOwnCourseLearnerRead(context);
@@ -45,5 +45,5 @@ export async function listLearnerCourseClassAnnouncements(
    isNull(db10Announcements.deletedAt),
    or(isNull(db10Announcements.scheduledAt),lte(db10Announcements.scheduledAt,now)),
    or(isNull(db10Announcements.expiresAt),gt(db10Announcements.expiresAt,now)),
-  )).orderBy(desc(db10Announcements.createdAt),desc(db10Announcements.id)).limit(2);
+  )).orderBy(desc(db10Announcements.createdAt),desc(db10Announcements.id)).limit(limit);
 }

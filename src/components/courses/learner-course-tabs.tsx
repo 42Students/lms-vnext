@@ -3,6 +3,7 @@ import { Tabs } from "@/components/ui/tabs";
 export const learnerCourseTabs = [
   { label: "Overview", path: "home" },
   { label: "Learning Path", path: "roadmap" },
+  { label: "Announcements", path: "announcements" },
   { label: "Attendance", path: "attendanceDetail" },
   { label: "Discussions", path: "discussions" },
 ] as const;
@@ -16,7 +17,7 @@ export function LearnerCourseTabs({
   activeTab: string;
   persistentQuery?: string;
 }) {
-  return <Tabs ariaLabel="Course sections" value={activeTab} renderPanel={false}
+  return <Tabs ariaLabel="Course sections" value={activeTab} renderPanel={false} variant="pills"
     items={learnerCourseTabs.map(tab => ({
       value: tab.path,
       label: tab.label,
