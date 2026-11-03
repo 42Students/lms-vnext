@@ -35,6 +35,8 @@
     "parity:learner": "tsx scripts/learner-surface-status.ts",
     "parity:clone-gate": "tsx scripts/clone-parity-gate.ts",
     "parity:visual:inventory": "node scripts/audit/visual-baseline-inventory.mjs",
+    "parity:screenshot:census": "node scripts/audit/screenshot-capability-census.mjs",
+    "test:parity:screenshot": "node --test tests/screenshot-capability-census.test.mjs",
     "parity:visual:compare": "node scripts/audit/legacy-pixel-compare.mjs",
     "parity:visual:capture": "node scripts/audit/capture-legacy-parity.mjs",
     "test:parity:visual": "node --test tests/visual-baseline-inventory.test.mjs tests/legacy-pixel-compare.test.mjs tests/capture-legacy-parity-options.test.mjs",
