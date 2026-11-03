@@ -52,10 +52,11 @@ export default defineConfig({
       testDir: "./tests",
       testMatch: "ui*-visual-parity.spec.ts",
       dependencies: ["visual-parity-setup"],
+      // Remote dev server needs longer timeouts than the default 30s per test
+      timeout: 120_000,
       use: {
         ...devices["Desktop Chrome"],
         baseURL: undefined,
-        // Slightly longer timeout for the remote dev server
         actionTimeout: 30_000,
         navigationTimeout: 60_000,
       },
@@ -69,6 +70,7 @@ export default defineConfig({
       testDir: "./tests",
       testMatch: "ui*-global-visual-regression.spec.ts",
       dependencies: ["visual-parity-setup"],
+      timeout: 120_000,
       use: {
         ...devices["Desktop Chrome"],
         baseURL: undefined,
