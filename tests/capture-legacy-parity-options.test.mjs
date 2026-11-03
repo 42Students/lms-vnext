@@ -41,6 +41,18 @@ test("URLs containing secrets, fragments or inline credential strings are reject
   }
 });
 
+test("allowlisted deep-link state queries are accepted and unknown query keys rejected", () => {
+  const permitted = parseOptions([
+    "--url", "http://localhost:3000/mentor/calendar?tab=meetings&status=ALL",
+    "--out", "/tmp/deeplink",
+  ]);
+  assert.match(permitted.url, /tab=meetings/);
+  assert.throws(() => parseOptions([
+    "--url", "http://localhost:3000/mentor/calendar?access_token=unsafe",
+    "--out", "/tmp/deeplink",
+  ]), /not on the non-secret visual state allowlist/);
+});
+
 test("scroll positions must be nonnegative integers and flags require values", () => {
   const args = ["--url", "http://localhost:3000/mentor/calendar", "--out", "/tmp/a"];
   assert.equal(parseOptions([...args, "--scroll-y", "800"])["scroll-y"], "800");
