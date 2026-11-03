@@ -16,6 +16,9 @@ test.describe("Legacy Learner All Assignments visual candidate", () => {
       expect(response?.status()).toBe(200);
       await expect(page.getByRole("heading",{level:1,name:"All Assignments"})).toBeVisible();
       const list=page.getByRole("region",{name:"Assignment list"});
+      await expect(list.locator("article")).toHaveCount(1);
+      await expect(page.getByRole("heading",{level:2,name:"Introduction to Java"})).toBeVisible();
+      await expect(list.getByText("Java Programming",{exact:true})).toBeVisible();
       const empty=page.getByRole("heading",{name:"No assignments yet"});
       // Empty illustration also owns the accessible Assignment list region;
       // require real article rows before asserting populated-only controls.
@@ -36,6 +39,7 @@ test.describe("Legacy Learner All Assignments visual candidate", () => {
         };
       });
       expect(snapshot.documentWidth).toBeLessThanOrEqual(snapshot.viewportWidth+1);
+      expect(snapshot.assignmentRows).toBe(1);
       const file=testInfo.outputPath("learner-all-assignments-1280x800.png");
       const image=await page.screenshot({
         fullPage:false,animations:"disabled",caret:"hide",path:file,
