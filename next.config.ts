@@ -4,6 +4,8 @@ import { BASE_SECURITY_HEADERS } from "./src/security/headers";
 const nextConfig: NextConfig = {
   output: "standalone",
   poweredByHeader: false,
+  // The image build's type check runs out of memory on GitHub runners; CI's typecheck job still gates this.
+  typescript: { ignoreBuildErrors: process.env.SKIP_BUILD_TYPECHECK === "1" },
   async redirects() {
     // Retired mentor paths remain safe for old bookmarks; no token handoff.
     return [
