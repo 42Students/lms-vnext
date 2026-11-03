@@ -1,5 +1,7 @@
 # Old LMS vs vNext screenshots
 
+**Execution plan:** [PIXEL_PARITY_MASTER_PLAN.md](PIXEL_PARITY_MASTER_PLAN.md) — detailed, triple-audited visual matching strategy and strict evidence-based acceptance gates. The owner requested that the plan itself be documented here; the screenshot images and original package reference files remain read-only.
+
 Reference images for matching vNext to the old LMS. Captured 2026-11-03 at 1280x800. Do not merge this branch into `main`.
 
 - `old/<role>/`: the old LMS, which is the source of truth for look and wording.
@@ -27,6 +29,6 @@ Copy this into a lane, replacing `<package>` with the next unclaimed package id 
 >
 > Mark each difference as SHARED (a shared component or style, likely on many pages) or PAGE (this page only). Give the exact old value where you can, using `docs/legacy-source/frontend` on `main`, and do not guess values.
 >
-> Then fix them on a new branch from `main`, in the vNext source. Reuse old LMS styles. Fix SHARED items in the shared component, never per page, and first check whether another open branch already fixed that item. Keep the exact old LMS wording. Do not change server behaviour, permissions, or database code, and never edit anything on `parity-baseline`.
+> Then fix them on a new branch from `main`, in the vNext source. Reuse old LMS styles. Fix SHARED items in the shared component, never per page, and first check whether another open branch already fixed that item. Keep the exact old LMS wording. Do not change server behaviour, permissions, or database code, and never edit the screenshot, coverage or original package reference files on `parity-baseline`; this plan is the only owner-authorized documentation exception.
 >
 > Finish with: the package id, the differences found, what you fixed, what you could not fix and why, and the branch name.
