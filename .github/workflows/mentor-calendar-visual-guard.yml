@@ -1,0 +1,25 @@
+name: Mentor legacy calendar layout guard
+
+on:
+  pull_request:
+    paths:
+      - ".github/workflows/mentor-calendar-visual-guard.yml"
+      - "src/components/projects/mentor-meetings-calendar.module.css"
+      - "src/components/projects/mentor-meetings-calendar.tsx"
+      - "tests/mentor-meetings-calendar-grid-layout.test.mjs"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  mentor-detail-layout:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Run meeting detail grid and preserved-controls regression
+        run: node --test tests/mentor-meetings-calendar-grid-layout.test.mjs
