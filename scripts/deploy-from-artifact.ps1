@@ -7,15 +7,26 @@ param(
     [string]$RunId = ""
 )
 
+$ErrorActionPreference = "Stop"
+
 $REGISTRY = "asia-south1-docker.pkg.dev/students-384817/lms-vnext"
 $NS       = "lms-dev-2026"
 $DEPLOY   = "lms-vnext"
+$CRANE    = "$PSScriptRoot\..\tools\crane.exe"
+
+function Decompress-Gz($src, $dst) {
+    $in  = [System.IO.File]::OpenRead($src)
+    $gz  = [System.IO.Compression.GzipStream]::new($in, [System.IO.Compression.CompressionMode]::Decompress)
+    $out = [System.IO.File]::Create($dst)
+    $gz.CopyTo($out)
+    $out.Close(); $gz.Close(); $in.Close()
+}
 
 # --- 1. Find the run ---
 if ($RunId -eq "") {
     Write-Host "Finding latest successful build-images run..."
-    $RunId = gh run list --workflow=build-images.yml --status=success --limit=1 --json databaseId --jq ".[0].databaseId" 2>&1
-    if (-not $RunId) { Write-Error "No successful build-images run found."; exit 1 }
+    $RunId = gh run list --workflow=build-images.yml --status=success --limit=1 --json databaseId --jq ".[0].databaseId"
+    if (-not $RunId) { throw "No successful build-images run found." }
 }
 Write-Host "Using run: $RunId"
 
@@ -24,31 +35,40 @@ $TmpDir = Join-Path $env:TEMP "lms-deploy-$RunId"
 New-Item -ItemType Directory -Force -Path $TmpDir | Out-Null
 Write-Host "Downloading artifact to $TmpDir ..."
 gh run download $RunId --dir $TmpDir
-if ($LASTEXITCODE -ne 0) { Write-Error "Download failed."; exit 1 }
 
 # --- 3. Read SHA ---
 $SHA = Get-Content (Get-ChildItem -Recurse -Filter sha.txt $TmpDir | Select-Object -First 1).FullName
 Write-Host "SHA: $SHA"
 
-# --- 4. Load images ---
-Write-Host "Loading migrator image..."
-Get-ChildItem -Recurse -Filter migrator.tar.gz $TmpDir | Select-Object -First 1 | ForEach-Object {
-    docker load -i $_.FullName
-}
-Write-Host "Loading web image..."
-Get-ChildItem -Recurse -Filter web.tar.gz $TmpDir | Select-Object -First 1 | ForEach-Object {
-    docker load -i $_.FullName
-}
+# --- 4. Auth crane to Artifact Registry (use isolated config, avoid Docker Desktop credsStore) ---
+Write-Host "Configuring crane auth..."
+$token = gcloud auth print-access-token
+$CraneConfig = Join-Path $env:TEMP "crane-config-$RunId"
+New-Item -ItemType Directory -Force -Path $CraneConfig | Out-Null
+$b64 = [Convert]::ToBase64String([Text.Encoding]::ASCII.GetBytes("oauth2accesstoken:$token"))
+@{ auths = @{ "asia-south1-docker.pkg.dev" = @{ auth = $b64 } } } | ConvertTo-Json | Set-Content "$CraneConfig\config.json"
+$env:DOCKER_CONFIG = $CraneConfig
 
-# --- 5. Tag and push ---
-Write-Host "Tagging and pushing..."
-docker tag "lms-vnext/migrator:$SHA" "$REGISTRY/migrator:$SHA"
-docker push "$REGISTRY/migrator:$SHA"
+# --- 5. Decompress .tar.gz → .tar (crane needs uncompressed tar) ---
+Write-Host "Decompressing images..."
+$migratorGz  = (Get-ChildItem -Recurse -Filter migrator.tar.gz $TmpDir | Select-Object -First 1).FullName
+$migratorTar = $migratorGz -replace '\.gz$', ''
+Decompress-Gz $migratorGz $migratorTar
 
-docker tag "lms-vnext/web:$SHA" "$REGISTRY/web:$SHA"
-docker push "$REGISTRY/web:$SHA"
+$webGz  = (Get-ChildItem -Recurse -Filter web.tar.gz $TmpDir | Select-Object -First 1).FullName
+$webTar = $webGz -replace '\.gz$', ''
+Decompress-Gz $webGz $webTar
 
-# --- 6. Deploy ---
+# --- 6. Push images ---
+Write-Host "Pushing migrator image..."
+& $CRANE push $migratorTar "$REGISTRY/migrator:$SHA"
+if ($LASTEXITCODE -ne 0) { throw "crane push migrator failed." }
+
+Write-Host "Pushing web image..."
+& $CRANE push $webTar "$REGISTRY/web:$SHA"
+if ($LASTEXITCODE -ne 0) { throw "crane push web failed." }
+
+# --- 7. Deploy ---
 Write-Host "Deploying web:$SHA to $NS/$DEPLOY ..."
 kubectl set image deployment/$DEPLOY "web=$REGISTRY/web:$SHA" -n $NS
 kubectl rollout status deployment/$DEPLOY -n $NS --timeout=120s
@@ -57,5 +77,5 @@ Write-Host ""
 Write-Host "Done. Deployed web:$SHA"
 Write-Host "Migrator image $REGISTRY/migrator:$SHA is available if migrations are needed."
 
-# --- 7. Clean up ---
+# --- 8. Clean up ---
 Remove-Item -Recurse -Force $TmpDir
