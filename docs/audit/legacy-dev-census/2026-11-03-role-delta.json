@@ -1,0 +1,99 @@
+{
+  "auditedOn": "2026-11-03",
+  "purpose": "Legacy dev-only role route presence census; not a count of independent missing capabilities",
+  "source": {
+    "legacyFrontendDev": {
+      "repo": "42Students/lms2-fe",
+      "branch": "lms-dev-2026",
+      "sha": "d2d8d4545322af3aaab81a8b523309c40ab04edf"
+    },
+    "legacyFrontendProd": {
+      "repo": "42Students/lms2-fe",
+      "branch": "prod-2026",
+      "sha": "9ca5206dc02fe5de89991d77655f2401934cc854"
+    },
+    "legacyBackendDev": {
+      "repo": "42Students/lms",
+      "branch": "lms-dev-2026",
+      "sha": "fa4c7fad47e332f1e9277dfd349922e9e208fb51"
+    },
+    "legacyBackendProd": {
+      "repo": "42Students/lms",
+      "branch": "prod-2026",
+      "sha": "e18bc100f0a51e51163701da19135c240457f47f"
+    },
+    "vNextAtCensus": {
+      "repo": "42Students/lms-vnext",
+      "branch": "main",
+      "sha": "c4e3264c98765572925549a40bfe6f28237aba93"
+    }
+  },
+  "devOnlyFrontend": {
+    "allExtraFiles": 358,
+    "routePageFiles": 37,
+    "uiComponentFiles": 57,
+    "coordinator": [
+      "src/pages/course-coordinator/assignments.js",
+      "src/pages/course-coordinator/calendar.js",
+      "src/pages/course-coordinator/courses/[courseId].js",
+      "src/pages/course-coordinator/courses/[courseId]/announcements.js",
+      "src/pages/course-coordinator/courses/[courseId]/assessments.js",
+      "src/pages/course-coordinator/courses/[courseId]/attendance.js",
+      "src/pages/course-coordinator/courses/[courseId]/classes.js",
+      "src/pages/course-coordinator/courses/[courseId]/delivery.js",
+      "src/pages/course-coordinator/courses/[courseId]/details.js",
+      "src/pages/course-coordinator/courses/[courseId]/discussions.js",
+      "src/pages/course-coordinator/courses/[courseId]/learners.js",
+      "src/pages/course-coordinator/courses/[courseId]/lessons.js",
+      "src/pages/course-coordinator/courses/[courseId]/lessons/[lessonId]/live-classes.js",
+      "src/pages/course-coordinator/courses/[courseId]/lessons/[lessonId]/resources.js",
+      "src/pages/course-coordinator/courses/[courseId]/lessons/[lessonId]/videos.js",
+      "src/pages/course-coordinator/courses/[courseId]/progress.js",
+      "src/pages/course-coordinator/courses/[courseId]/team.js",
+      "src/pages/course-coordinator/courses/index.js",
+      "src/pages/course-coordinator/files.js",
+      "src/pages/course-coordinator/index.js",
+      "src/pages/course-coordinator/notifications.js",
+      "src/pages/course-coordinator/people.js",
+      "src/pages/course-coordinator/profile.js",
+      "src/pages/course-coordinator/quizzes.js"
+    ],
+    "globalTpo": [
+      "src/pages/global-tpo/calendar.js",
+      "src/pages/global-tpo/colleges/[collegeId].js",
+      "src/pages/global-tpo/colleges/index.js",
+      "src/pages/global-tpo/companies.js",
+      "src/pages/global-tpo/drives/[jobId].js",
+      "src/pages/global-tpo/drives/index.js",
+      "src/pages/global-tpo/drives/new.js",
+      "src/pages/global-tpo/index.js",
+      "src/pages/global-tpo/login.js",
+      "src/pages/global-tpo/reports.js",
+      "src/pages/global-tpo/settings.js",
+      "src/pages/global-tpo/students.js",
+      "src/pages/global-tpo/team.js"
+    ]
+  },
+  "devOnlyBackend": {
+    "allExtraFiles": 249,
+    "coordinatorControllerFiles": 27,
+    "globalTpoAndSuperadminStaffControllerFiles": 18
+  },
+  "vnextAtCensus": {
+    "courseCoordinatorRolePageRoutes": 0,
+    "globalTpoRolePageRoutes": 0
+  },
+  "ownerScope": "Legacy lms-dev-2026 features, especially Course Coordinator and Global TPO, must be explicitly supported or approved retired, not hidden by prod-2026 source-only acceptance.",
+  "trackedUnder": [
+    "UI-11",
+    "UI-12",
+    "UI-13"
+  ],
+  "caveats": [
+    "File count is source files, not unique user jobs",
+    "Legacy prod-2026 does not include these dev-only role routes",
+    "Current vNext may have shared functions but lacks matching discoverable role experiences at cited source SHA",
+    "Runtime and legacy/backend controller behavior must be audited and tested before capability closure",
+    "No new stand-alone tracker: docs/tracker.json remains authoritative"
+  ]
+}
