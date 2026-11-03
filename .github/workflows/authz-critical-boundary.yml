@@ -1,0 +1,51 @@
+# Focused fail-fast guard for changes to account, session, role and tenant authority.
+# Source tests do not replace the PostgreSQL adversarial isolation/revocation gate.
+name: Critical authentication and authorization boundary
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - "src/auth/**"
+      - "src/modules/auth/**"
+      - "src/modules/identity/**"
+      - "src/modules/permissions/**"
+      - "src/app/api/auth/**"
+      - "tests/unit/persisted-workspace-role-and-account-cookie-security.test.ts"
+      - ".github/workflows/authz-critical-boundary.yml"
+  push:
+    branches: [main]
+    paths:
+      - "src/auth/**"
+      - "src/modules/auth/**"
+      - "src/modules/identity/**"
+      - "src/modules/permissions/**"
+      - "src/app/api/auth/**"
+      - "tests/unit/persisted-workspace-role-and-account-cookie-security.test.ts"
+      - ".github/workflows/authz-critical-boundary.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: authz-critical-${{ github.ref }}-${{ github.sha }}
+  cancel-in-progress: false
+
+jobs:
+  authority-regression:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Selected workspace role and device cookie safety
+        run: npx vitest run tests/unit/persisted-workspace-role-and-account-cookie-security.test.ts
+      - name: Platform permissions and active tenant access
+        run: npx vitest run tests/unit/platform-permission-matrix.test.ts tests/unit/auth-tenant-access.test.ts
+      - name: Auth controls and brute-force throttling
+        run: npx vitest run tests/unit/auth-login-service.test.ts tests/unit/auth-ip-rate-limit.test.ts
