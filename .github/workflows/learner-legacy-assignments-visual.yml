@@ -82,6 +82,38 @@ jobs:
             exit "$result"
           fi
           echo "Learner pixel comparison diagnostic code: $result (1 means differences remain)."
+      - name: Checkout approved PNG comparator
+        if: always()
+        uses: actions/checkout@v4
+        with:
+          ref: main
+          path: .compare-tools
+      - name: Checkout independent legacy screenshots
+        if: always()
+        uses: actions/checkout@v4
+        with:
+          ref: parity-baseline
+          path: .reference
+      - name: Measure candidate against frozen learner-001 screenshot
+        if: always()
+        shell: bash
+        run: |
+          candidate=$(find test-results -name learner-all-assignments-1280x800.png -print -quit)
+          if [ -z "$candidate" ]; then
+            echo "No learner candidate PNG was captured; browser tests must be fixed first."
+            exit 0
+          fi
+          mkdir -p test-results/learner-legacy-pixel-comparison
+          result=0
+          node .compare-tools/scripts/audit/legacy-pixel-compare.mjs \
+            --old .reference/old/learner/_learn_allAssignments__base__67d5d6264c.png \
+            --new "$candidate" \
+            --out test-results/learner-legacy-pixel-comparison || result=$?
+          if [ "$result" -gt 1 ]; then
+            echo "Pixel comparator execution error: $result"
+            exit "$result"
+          fi
+          echo "Visual comparison exit $result. Difference is diagnostic until independently reviewed."
       - name: Archive candidate screenshots and browser evidence
         if: always()
         uses: actions/upload-artifact@v4
