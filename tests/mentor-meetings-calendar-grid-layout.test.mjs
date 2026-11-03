@@ -26,3 +26,30 @@ test("request controls, provider status and notes remain in the meeting detail l
   assert.match(component, /Recorded mentor notes and outcome/);
   assert.match(component, /<MentorMeetingFacilitationQuickEdit/);
 });
+
+const pageSource = readFileSync(
+  new URL("../src/app/(authenticated)/mentor/calendar/page.tsx", import.meta.url),
+  "utf8",
+);
+
+test("default meeting page restores old LMS Upcoming and Past & Cancelled lists", () => {
+  assert.match(component, /className=\{styles\.legacyCalendar\}/);
+  assert.match(component, /Upcoming \(\{upcoming\.length\}\)/);
+  assert.match(component, /Past &amp; Cancelled \(\{past\.length\}\)/);
+  assert.match(component, /No upcoming meetings\./);
+  assert.match(component, /No past meetings yet\./);
+  assert.match(component, /Open project/);
+  assert.match(component, /className=\{styles\.legacyMeetingRow\}/);
+  assert.match(css, /\.legacyMeetingRow\s*\{[^}]*flex-direction:\s*column/);
+});
+
+test("new meeting controls remain reachable through native details disclosures", () => {
+  assert.match(component, /<details className=\{styles\.advancedCalendarTools\}>/);
+  assert.match(component, /Meeting filters and calendar tools/);
+  assert.match(component, /Add to my calendar \(\.ics\)/);
+  assert.match(component, /Meeting details/);
+  assert.match(pageSource, /<details className="min-w-0 text-sm">/);
+  assert.match(pageSource, /Scheduling and Google Calendar/);
+  assert.match(pageSource, /<MentorCalendarQuickSchedule projects=\{choices\}/);
+  assert.match(pageSource, /<MentorGoogleCalendarAccount \{\.\.\.googleConnection\}/);
+});
