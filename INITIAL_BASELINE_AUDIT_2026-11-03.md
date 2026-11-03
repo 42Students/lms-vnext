@@ -150,3 +150,18 @@ With a local application checkout and a detached reference worktree:
 | P2 | Screenshot package parity beyond initial pilots | Systematic batch-by-batch execution after pilot and comparator | OPEN |
 
 **Next acceptance objective:** Execute PR #216 inventory test/audit and PR #217 mentor regression/visual capture; then make the first full old-vNext pixel comparison repeatable. Nothing in this report asserts a green screenshot or finished account.
+
+## 7. Executed tooling and visual reference audit — follow-up
+
+This entry is evidence from actual GitHub Actions runs, not a forecast or package-closure claim.
+
+- `PR #216` (https://github.com/42Students/lms-vnext/pull/216) merged into `main` as `e3aa560525eed3bc4efa09d9693df564a278b778`.
+- Source syntax and dedicated image inventory/comparator unit tests passed in GitHub Actions run [41664842036](https://github.com/42Students/lms-vnext/actions/runs/41664842036).
+- A **complete detached checkout** of this branch passed the actual reference inventory tool in [41665218825](https://github.com/42Students/lms-vnext/actions/runs/41665218825): `ok:true`, `packageQueue:783`, `images:3169`, with no required integrity violations.
+- On the 2026-11-03 frozen screenshots, the pixel comparator ran against two actual old/vNext base images in [41665381013](https://github.com/42Students/lms-vnext/actions/runs/41665381013), and the comparison artifact upload passed:
+  - `learner-001` (`/learn/allAssignments`): `525195` differing pixels, ratio `0.5128857421875` (**51.29%**); dimensions match.
+  - `admin-001` (Assignments): `3119217` differing pixels, ratio `0.7937746844462541` (**79.38%**); image dimensions **do not match**.
+- Both examples correctly failed a strict visual parity threshold. These ratios describe the frozen screenshot pairs including legitimate different test data and, for Admin, height differences. **They do not measure the current live vNext or the percentage of remaining work.**
+- The first **source UI** modification is continuing in draft [PR #217](https://github.com/42Students/lms-vnext/pull/217): Mentor meetings default compact legacy lists, original controls preserved in disclosures, and corrected detail grid. Source guards passed; **live pixel proof remains open**.
+
+**Next mandatory work:** run a fresh authenticated candidate screenshot and geometry comparison on the actual post-fix vNext SHA; inspect remaining Mentor sidebar/header/canvas mismatch; execute responsive + functional checks before `mentor-001` can be called CLOSED. Apply the same verified workflow to Learner/Admin and the remaining packages. There is still no claim that any of the 783 visual packages has passed final screenshot acceptance.
