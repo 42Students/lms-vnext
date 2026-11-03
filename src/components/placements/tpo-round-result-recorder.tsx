@@ -8,6 +8,7 @@ import { Input } from "@/components/ui/input";
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import {useConfirmFlow} from "@/components/ui/use-confirm-flow";
 import {
   canApplyTpoRoundResult,
   canEditTpoRoundResult,
@@ -38,6 +39,7 @@ export function TpoRoundResultRecorder({
   row: Row;
 }) {
   const router = useRouter();
+  const {askConfirm,dialog}=useConfirmFlow();
   const [outcome, setOutcome] = useState<Outcome>("PASS");
   const [message, setMessage] = useState("");
   const [rank, setRank] = useState("");
@@ -81,10 +83,10 @@ export function TpoRoundResultRecorder({
       setError("Enter a valid waitlist rank between 1 and 100000.");
       return;
     }
-    if (!window.confirm(
+    if (!(await askConfirm(
       "Stage " + TPO_RESULT_LABELS[outcome] + " for " + row.displayName +
       "? This is not a final published result. After round completion, a TPO must apply it.",
-    )) return;
+    ))) return;
     setBusy(true);
     setError(null);
     try {
@@ -124,10 +126,10 @@ export function TpoRoundResultRecorder({
 
   async function submitApply() {
     if (!applicable || busy) return;
-    if (!window.confirm(
+    if (!(await askConfirm(
       "Apply the staged result for " + row.displayName +
       "? This makes the result visible to the learner and cannot be edited later.",
-    )) return;
+    ))) return;
     setBusy(true);
     setError(null);
     try {
@@ -231,6 +233,7 @@ export function TpoRoundResultRecorder({
         </Button>
       ) : null}
       {error ? <InlineNotice tone="error" message={error}/> : null}
+      {dialog}
     </Disclosure>
   );
 }

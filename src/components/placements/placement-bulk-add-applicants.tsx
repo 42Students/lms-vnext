@@ -6,6 +6,7 @@ import {Select} from "@/components/ui/select";
 import {Button} from "@/components/ui/button";
 import {Checkbox} from "@/components/ui/checkbox";
 import { useRouter } from "next/navigation";
+import {useConfirmFlow} from "@/components/ui/use-confirm-flow";
 import type { BulkDriveResult } from "@/modules/placements/bulk-drive-model";
 
 type Learner = { membershipId: string; displayName: string };
@@ -22,6 +23,7 @@ export function PlacementBulkAddApplicants({
   initial: Candidates;
 }) {
   const router = useRouter();
+  const {askConfirm,dialog}=useConfirmFlow();
   const [candidates, setCandidates] = useState(initial);
   const [selected, setSelected] = useState<Map<string, string>>(() => new Map());
   const [search, setSearch] = useState("");
@@ -66,11 +68,11 @@ export function PlacementBulkAddApplicants({
   async function submit() {
     if (!roleOptionId || selected.size === 0 || selected.size > 200 || busy) return;
     const choice = new Map(selected);
-    if (!window.confirm(
+    if (!(await askConfirm(
       "Add " + choice.size + " selected learner(s) to this drive? " +
       "Only currently eligible learners will be added. " +
       "Existing applications will not be replaced.",
-    )) return;
+    ))) return;
     setBusy(true);
     setError(null);
     setResults([]);
@@ -249,6 +251,7 @@ export function PlacementBulkAddApplicants({
           </ul>
         </div>
       ) : null}
+      {dialog}
     </section>
   );
 }

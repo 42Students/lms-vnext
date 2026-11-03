@@ -10,6 +10,7 @@ import {apiFetch,FriendlyFetchError} from "@/lib/api-fetch";
 import {driveDeadlineIstToIso} from "@/modules/placements/tpo-drive-deadline-ist";
 import {tpoDriveFormErrorMessage} from "@/modules/placements/tpo-drive-form-error-copy";
 import {Button} from "@/components/ui/button";
+import {useConfirmFlow} from "@/components/ui/use-confirm-flow";
 
 type Company = { relationshipId: string; name: string };
 type Season = { id: string; name: string; startDate: string; endDate: string };
@@ -22,6 +23,7 @@ export function TpoDraftDriveStepOneForm({
   companies: readonly Company[];
 }) {
   const router = useRouter();
+  const {askConfirm,dialog}=useConfirmFlow();
   const [companyRelationshipId, setCompanyRelationshipId] = useState(
     companies[0]?.relationshipId ?? "",
   );
@@ -76,11 +78,11 @@ export function TpoDraftDriveStepOneForm({
       setError("The application deadline must be a future date and time in IST.");
       return;
     }
-    if (!window.confirm(
+    if (!(await askConfirm(
       "Save " + title.trim() + " as a DRAFT for " +
       (companies.find((company) => company.relationshipId === companyRelationshipId)?.name ?? "this company") +
       "? This creates one primary role option. It does not publish the drive.",
-    )) return;
+    ))) return;
     setPending(true);
     setError("");
     try {
@@ -189,6 +191,7 @@ export function TpoDraftDriveStepOneForm({
         >
         {pending ? "Saving draft…" : "Review and save draft"}
       </Button>
+      {dialog}
     </form>
   );
 }

@@ -9,6 +9,7 @@ import { Radio } from "@/components/ui/radio";
 import type { ComponentPropsWithRef } from "react";
 import {useState} from "react";
 import {useRouter} from "next/navigation";
+import {useConfirmFlow} from "@/components/ui/use-confirm-flow";
 type Question={type:"SINGLE_CHOICE"|"MULTIPLE_CHOICE";prompt:string;points:number;
  options:{text:string;correct:boolean}[]};
 function CorrectAnswerInput({ multiple, ...props }: Omit<ComponentPropsWithRef<"input">, "type"> & { multiple: boolean }) {
@@ -18,6 +19,7 @@ const empty=():Question=>({type:"SINGLE_CHOICE",prompt:"",points:1,
  options:[{text:"",correct:true},{text:"",correct:false}]});
 export function CollegeQuizQuestionsEditor({quizId}:{quizId:string}){
  const router=useRouter();
+  const {askConfirm,dialog}=useConfirmFlow();
  const [open,setOpen]=useState(false),[loading,setLoading]=useState(false),[busy,setBusy]=useState(false);
  const [questions,setQuestions]=useState<Question[]>([]),[error,setError]=useState(""),[notice,setNotice]=useState("");
  const [dirty,setDirty]=useState(false);
@@ -55,7 +57,7 @@ export function CollegeQuizQuestionsEditor({quizId}:{quizId:string}){
   if(questions.reduce((total,q)=>total+q.points,0)>10000){
    setError("Quiz total points may not exceed 10000.");return;
   }
-  if(!window.confirm("Save changed quiz questions? Draft question edits replace the saved question bank."))return;
+  if(!(await askConfirm("Save changed quiz questions? Draft question edits replace the saved question bank.")))return;
   setBusy(true);setError("");setNotice("");
   try{
    const response=await fetch("/api/courses/quizzes/"+encodeURIComponent(quizId),{
@@ -69,8 +71,13 @@ export function CollegeQuizQuestionsEditor({quizId}:{quizId:string}){
   }catch(cause){setError(cause instanceof Error?cause.message:"Unable to update questions.");}
   finally{setBusy(false);}
  }
+ async function toggleEditor(){
+  if(!open){await load();return;}
+  if(dirty&&!(await askConfirm("Discard unsaved Quiz question changes?")))return;
+  setOpen(false);setDirty(false);
+ }
  return <section className="min-w-0 space-y-2">
-  <Button variant="secondary" type="button" disabled={busy||loading} onClick={()=>open?(dirty?window.confirm("Discard unsaved Quiz question changes?")&&(setOpen(false),setDirty(false)):setOpen(false)):void load()}
+  <Button variant="secondary" type="button" disabled={busy||loading} onClick={()=>void toggleEditor()}
    className="min-h-11 md:min-h-9">
    {loading?"Loading…":open?"Close questions":"Edit questions"}</Button>
   {open&&!loading?<div className="max-h-[32rem] space-y-3 overflow-auto rounded border border-border p-3">
@@ -115,5 +122,6 @@ export function CollegeQuizQuestionsEditor({quizId}:{quizId:string}){
   </div>:null}
   {error?<Alert tone="error">{error}</Alert>:null}
   {notice?<Alert tone="success">{notice}</Alert>:null}
+  {dialog}
  </section>;
 }

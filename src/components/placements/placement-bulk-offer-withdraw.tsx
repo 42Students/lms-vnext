@@ -4,6 +4,7 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { useRouter } from "next/navigation";
+import {useConfirmFlow} from "@/components/ui/use-confirm-flow";
 import type { BulkOfferWithdrawalResult } from "@/modules/placements/bulk-offer-withdrawal-model";
 
 type Choice = {
@@ -21,6 +22,7 @@ export function PlacementBulkOfferWithdraw({
   choices: readonly Choice[];
 }) {
   const router = useRouter();
+  const {askConfirm,dialog}=useConfirmFlow();
   const [selected, setSelected] = useState<string[]>([]);
   const [reason, setReason] = useState("");
   const [busy, setBusy] = useState(false);
@@ -54,11 +56,11 @@ export function PlacementBulkOfferWithdraw({
       setError("Some selected offers changed. Refresh before continuing.");
       return;
     }
-    if (!window.confirm(
+    if (!(await askConfirm(
       "Withdraw " + offers.length + " offer(s)? This is a durable status change. " +
       "Accepted offers are included only while joining is pending. Learners cannot be " +
       "accepted or declined by a TPO. Continue?",
-    )) return;
+    ))) return;
 
     setBusy(true);
     setError(null);
@@ -168,6 +170,7 @@ export function PlacementBulkOfferWithdraw({
           </ul>
         </div>
       ) : null}
+      {dialog}
     </section>
   );
 }

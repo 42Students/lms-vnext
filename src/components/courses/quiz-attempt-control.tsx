@@ -8,6 +8,7 @@ import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Alert } from "@/components/ui/alert";
 import { StatusBadge } from "@/components/ui/status-badge";
+import {useConfirmFlow} from "@/components/ui/use-confirm-flow";
 import { courseApiError } from "./learner-course-api";
 import {
   quizInteractionState,
@@ -94,6 +95,7 @@ export function QuizAttemptControl({
   progressStatus: ProgressStatus;
 }) {
   const router = useRouter();
+  const {askConfirm,dialog}=useConfirmFlow();
   const interaction = quizInteractionState({
     status,
     attemptsUsed,
@@ -237,11 +239,11 @@ export function QuizAttemptControl({
 
     if (
       unanswered > 0 &&
-      !window.confirm(
+      !(await askConfirm(
         `${unanswered} question${
           unanswered === 1 ? "" : "s"
         } are unanswered and will score zero. Submit anyway?`,
-      )
+      ))
     ) {
       return;
     }
@@ -449,6 +451,7 @@ export function QuizAttemptControl({
             submission.
           </span>
         </div>
+        {dialog}
       </div>
     );
   }
