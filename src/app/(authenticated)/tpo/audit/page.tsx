@@ -13,7 +13,7 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 
 import { getCurrentRequestContext } from "@/auth/request-context";
-import { AuthorizationError } from "@/modules/permissions/policy";
+import {reportPageReadFailure} from "@/observability/page-read-failure";
 import { TpoAuditStaleSnapshot, TpoAuditRefreshAction } from "@/components/tpo/tpo-audit-stale-snapshot";
 import {requireTpoBatchActor} from "@/modules/placements/tpo-batch-workspace-read-service";
 import { EmptyState } from "@/components/ui/empty-state";
@@ -126,7 +126,8 @@ export default async function TpoAuditPage({
     result = await getTpoAuditLog(context, parsed.data);
   } catch (error) {
     // Revoked access must invalidate the visible page, never reuse old rows.
-    if (error instanceof AuthorizationError) throw error;
+    reportPageReadFailure({event:"tpo.audit_read_failed",
+      route:"/tpo/audit",stage:"audit_history"},error);
     return (
       <TpoAuditStaleSnapshot key={snapshotKey} failed>
         <div className="min-w-0 space-y-4">
