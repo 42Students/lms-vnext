@@ -1,3 +1,5 @@
+> **SUPERSEDED BY OWNER DECISION — 2026-11-03.** This 22-section plan is retained for historical reference **only**. Exact screenshot resemblance, pixel thresholds, old-shell replication and 783-package pixel certification are **no longer mandatory**. The active policy is [Legacy Capability & UI-Surface Parity Standard](https://github.com/42Students/lms-vnext/blob/main/docs/planning/legacy-capability-parity-standard.md): identify and verify every required legacy UI surface, user job, permission, state and backend result; preserve better vNext UI/UX. The screenshots remain discovery evidence. Do **not** execute the cosmetic work queue below as a parity release gate.
+
 # 42LMS vNext — Pixel-to-Pixel Legacy Visual Parity Master Plan
 
 **Document version:** 1.0  
