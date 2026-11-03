@@ -67,7 +67,7 @@ export function LearnerBoardTaskDetailDialog({
       <div className="mt-3 flex flex-wrap gap-3 text-xs font-semibold text-body">
         <span>{commentCount} comment{commentCount===1?"":"s"}</span>
         {safeProjectExternalHref(submissionUrl)?
-          <a href={safeProjectExternalHref(submissionUrl)??undefined} target="_blank" rel="noopener noreferrer"
+          <a href={safeProjectExternalHref(submissionUrl)??undefined} rel="noopener noreferrer"
             className="text-primary-text underline">Submission link attached ↗</a>:null}
       </div>
       {task.approach?<section className="mt-5" aria-label="Task approach">

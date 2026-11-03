@@ -248,7 +248,7 @@ function OwnResumePreview({applicationId}:{applicationId:string}){
        <p className="p-5 text-sm text-body">
          A preview is not available for this file format. Open the authorized document instead.
        </p>}
-     {grant?<a href={grant.url} target="_blank" rel="noopener noreferrer"
+     {grant?<a href={grant.url} rel="noopener noreferrer"
        referrerPolicy="no-referrer"
        className="inline-flex min-h-11 items-center px-5 text-sm font-semibold text-primary-text underline">
        Open secure resume in a new tab →

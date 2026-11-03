@@ -383,10 +383,10 @@ function AdminDeliveryOverview({workspace}:{workspace:Workspace}){
       return <ProjectDeliveryEvidenceDownload key={index} projectId={workspace.project.id}
        fileId={row["fileId"]} name={typeof row["name"]==="string"?row["name"]:"Open submitted file"}/>;
      })}
-     {source?<a href={source} target="_blank" rel="noopener noreferrer"
+     {source?<a href={source} rel="noopener noreferrer"
       className="font-semibold text-link underline">Open source link</a>:null}
      {safeHttpHref(delivery.demoUrl)?<a href={safeHttpHref(delivery.demoUrl) ?? undefined}
-      target="_blank" rel="noopener noreferrer" className="font-semibold text-link underline">
+      rel="noopener noreferrer" className="font-semibold text-link underline">
       Open demo</a>:null}
      {!source&&!latest?.attachments.some(item=>Boolean(item&&typeof item==="object"&&
       (item as {kind?:unknown}).kind==="FILE"))?
@@ -411,7 +411,7 @@ function AdminDeliveryOverview({workspace}:{workspace:Workspace}){
       <span>{name}</span>
       {row["kind"]==="FILE"&&typeof row["fileId"]==="string"?
        <ProjectDeliveryEvidenceDownload projectId={workspace.project.id} fileId={row["fileId"]} name={name}/>:
-       href?<a href={href} target="_blank" rel="noopener noreferrer" className="text-link underline">Open</a>:
+       href?<a href={href} rel="noopener noreferrer" className="text-link underline">Open</a>:
        <span className="text-muted-foreground">Unavailable link</span>}
      </li>;
     })}</ul>}
@@ -1165,7 +1165,7 @@ export function ProjectWorkspace({
                 <p className="font-semibold text-foreground">{member.academicTitle?.trim()||"Project mentor"}</p>
                 {member.bio?<p className="whitespace-pre-wrap break-words">{member.bio}</p>:
                   <p className="text-xs">No mentor bio yet. Update your faculty profile to introduce your role.</p>}
-                {linkedIn?<a href={linkedIn} target="_blank" rel="noopener noreferrer"
+                {linkedIn?<a href={linkedIn} rel="noopener noreferrer"
                   className="inline-flex min-h-11 md:min-h-9 items-center text-link underline">LinkedIn profile ↗</a>:null}
               </div>:null}
             </article>;
@@ -1697,7 +1697,7 @@ export function ProjectWorkspace({
                               </div> : null}
                               {latestAttempt?.submissionUrl && safeHttpHref(latestAttempt.submissionUrl) ?
                                 <div className="sm:col-span-2"><dt className="font-semibold">Submission</dt>
-                                  <dd><a target="_blank" rel="noopener noreferrer"
+                                  <dd><a rel="noopener noreferrer"
                                     href={safeHttpHref(latestAttempt.submissionUrl)!}
                                     className="text-link underline max-[767px]:inline-flex max-[767px]:min-h-11 max-[767px]:items-center">Open submission</a></dd>
                                 </div> : null}
@@ -1924,7 +1924,7 @@ export function ProjectWorkspace({
                           const href = typeof row["url"] === "string" ? safeHttpHref(row["url"]) : null;
                           return <p key={index} className="text-xs text-body">
                             {href && row["kind"] === "LINK" ?
-                              <a href={href} rel="noopener noreferrer" target="_blank"
+                              <a href={href} rel="noopener noreferrer"
                                 className="text-link hover:underline max-[767px]:inline-flex max-[767px]:min-h-11 max-[767px]:items-center">Open link · {name}</a> :
                               row["kind"] === "FILE" && typeof row["fileId"] === "string"
                                 ? <ProjectDeliveryEvidenceDownload projectId={workspace.project.id}

@@ -59,7 +59,7 @@ export function MentorBoardTaskDetailDialog({projectId,task,sprintTitle,members,
      Version {row.version} · {row.status} · {new Date(row.createdAt).toLocaleDateString("en-IN",{timeZone:"Asia/Kolkata"})}
      {row.submittedByMembershipId ? " · Submitted by "+(members.find(member=>member.membershipId===row.submittedByMembershipId)?.displayName??"Project member") : ""}
      {safeProjectExternalHref(row.submissionUrl)?
-      <a href={safeProjectExternalHref(row.submissionUrl)!} target="_blank" rel="noopener noreferrer"
+      <a href={safeProjectExternalHref(row.submissionUrl)!} rel="noopener noreferrer"
        className="inline-flex min-h-11 max-w-full items-center break-words text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary sm:ml-[var(--lms-space-2)]">Open submitted evidence</a>:null}
     </li>)}</ul>:<p className="text-xs text-muted-foreground">No submissions yet</p>}
    <Link href={"/mentor/projects/"+projectId+"?tab=delivery"}

@@ -305,7 +305,7 @@ export async function ProjectAdminSubmissionsPage({
                 {([row.sourceUrl,row.demoUrl] as const).map((value,index)=>{
                   if(!value)return null;
                   const href=safeProjectExternalHref(value);
-                  return href?<a key={index} href={href} target="_blank"
+                  return href?<a key={index} href={href}
                     rel="noopener noreferrer" className="text-link underline">Open link</a>:
                     <span key={index} role="status" className="text-xs text-error">
                       Could not resolve this submission&apos;s file.</span>;
@@ -314,7 +314,7 @@ export async function ProjectAdminSubmissionsPage({
                   if(!item||typeof item!=="object")return null;
                   const entry=item as Record<string,unknown>;
                   const href=typeof entry["url"]==="string"?safeProjectExternalHref(entry["url"]):null;
-                  return href?<a key={index} href={href} target="_blank" rel="noopener noreferrer"
+                  return href?<a key={index} href={href} rel="noopener noreferrer"
                     className="text-link underline">Open {entry["kind"]==="FILE"?"file":"link"}</a>:
                     <span key={index} role="status" className="text-xs text-error">
                       Could not resolve this submission&apos;s file.</span>;

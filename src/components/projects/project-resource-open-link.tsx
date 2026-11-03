@@ -25,7 +25,7 @@ export function ProjectResourceOpenLink({url,linkText="Open resource ↗"}:{
   <Button variant="ghost" type="button" onClick={open} className="text-link underline">
    {linkText}
   </Button>
-  {notice?<Banner tone="warning" action={<a href={safe} target="_blank" rel="noopener noreferrer"
+  {notice?<Banner tone="warning" action={<a href={safe} rel="noopener noreferrer"
     className="inline-flex min-h-11 max-w-full items-center break-all font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Open safe link</a>}>
    {notice}
   </Banner>:null}
