@@ -115,6 +115,30 @@ test.describe("Mentor meeting capability and UI-surface parity",()=>{
     await expect(scheduling).toHaveAttribute("open");
   });
 
+
+  test("mentor outside India sees meeting times in the browser timezone",
+    async({browser})=>{
+      const localContext=await browser.newContext({
+        viewport:{width:1280,height:800},
+        timezoneId:"America/New_York",
+      });
+      try{
+        await mentorSession(localContext);
+        const page=await localContext.newPage();
+        await page.goto("/mentor/calendar",{waitUntil:"domcontentloaded"});
+        await expect(page.getByText(
+          "Meeting times are shown in America/New_York."
+        )).toBeVisible();
+        // The Oct 24 requested meeting is stored as UTC 10:30, or 06:30 EDT.
+        const requested=page.getByLabel("Upcoming meetings").locator("article").first();
+        await expect(requested).toContainText("87g");
+        await expect(requested).toContainText("06:30 AM");
+        await expect(requested).toContainText("GMT-04:00");
+      }finally{
+        await localContext.close();
+      }
+    });
+
   test("mobile Mentor Meetings view has no whole-document horizontal overflow",
     async({page,context})=>{
       await mentorSession(context);
