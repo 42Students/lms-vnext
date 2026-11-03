@@ -1,6 +1,12 @@
 # vNext tightening plan
 
-Written 2026-11-03. Start after the pixel parity work.
+Written 2026-11-03. Active immediately alongside capability-parity closure.
+
+**2026-11-03 owner decision (supersedes the former pixel gate):** see
+[`legacy-capability-parity-standard.md`](legacy-capability-parity-standard.md).
+The acceptance target is all required old-LMS user jobs and UI surfaces working
+correctly; screenshots are discovery evidence, never a numerical pixel-match
+or visual-difference release gate. Preserve better vNext UX.
 
 **Goal:** when something is wrong, the build or deploy fails before anyone sees it. No set of checks guarantees zero bugs, but these cover every type of error found on 2026-11-03.
 
@@ -62,7 +68,7 @@ Each step depends on the ones before it. Do not start a new check while CI is re
 
 16. **Test the save flows.** On a throwaway database, as each role, actually create, edit and submit things. This is the biggest unknown, because the 2026-11-03 capture only tested viewing. Consider starting this early if a production date gets close.
 17. **Click-through browser tests.** The main journeys for each role, opening real buttons, tabs and popups with real data, and failing on any browser console error or failed request.
-18. **Visual comparison.** Compare key pages with approved old LMS screenshots, and fail above an agreed difference. Add this after pixel parity is reached, otherwise it fails on everything.
+18. **Screenshot-assisted capability census.** Compare old-LMS screenshots with vNext to discover missing controls, sections, modals and states; trace each to the pinned legacy FE handler and BE outcome. Fail acceptance for missing or broken legitimate user jobs, role/tenant escapes, inaccessible actions and clipped controls—not font, color, position or raw pixel differences. Close only with executed desktop/mobile and API/side-effect evidence; record visual-only discrepancies for later optional UX polish.
 
 ### Phase 6: keep it tight
 
@@ -71,4 +77,10 @@ Each step depends on the ones before it. Do not start a new check while CI is re
 
 ## Cost
 
-The repo is private, so all of this uses GitHub Actions minutes. Run fast checks on every push, and run the full page and browser tests nightly or before each deploy. No paid GCP resources are needed.
+The repo is private. GitHub Actions minutes may incur charges, and Actions are
+not a prerequisite while billing is intentionally paused. Run fast checks in
+an approved independent environment against an exact commit; use scheduled
+or pre-deploy full browser/database tests when a runner is available. The
+required evidence is executed checks, not a particular CI provider. Do not
+silently skip lint, typecheck, migration or runtime coverage just because a
+workflow could not start.
