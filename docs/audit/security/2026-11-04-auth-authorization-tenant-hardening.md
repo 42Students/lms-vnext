@@ -76,3 +76,49 @@ psql -X -A -t -v ON_ERROR_STOP=1 '<AUTHORIZED_READONLY_DB_URL>' \
 ## Closure policy
 
 None of the release-blocking RLS, production DB privilege, route completeness, privileged step-up, branch governance or adversarial runtime items is marked complete by this source-level audit. Continue using existing `docs/tracker.json` execution and acceptance rules; attach exact-SHA test/DB evidence to the corresponding tracked work before closure.
+
+
+## 2026-11-04 hardening continuation — implementation evidence and open gates
+
+### How RBAC is actually enforced (not a role-label claim)
+
+1. The browser holds only an opaque first-party device session. The server resolves its persisted user, current platform state, college membership and roles.
+2. One membership role is selected per request: `LEARNER`, `FACULTY`, `MENTOR`, `TPO`, or `COLLEGE_ADMIN`. A stale/forged request context combining membership roles now fails closed. Different colleges require separately active memberships. Role cookies are preferences, not grants.
+3. `can()` / `requirePermission()` use the active role **plus server-resolved** organization, college and relationship facts. A matching role alone cannot authorize an arbitrary learner, course, placement or file.
+4. `SUPER_ADMIN` is a separately stored platform system role. Its platform authority requires `membership === null` and respects explicit admin scope; it no longer overrides a selected Learner/college workspace. Recruiters have company–college relationship grants with separate expiry/verification checks, not a generic college role.
+5. For sensitive mutations, `assertPersistedPlatformPermission()` must be invoked **inside the same transaction** as the protected write, after locking the target, to recheck platform state, selected live role, membership suspension and organization/college status. This is now added to all four people membership mutations, including privileged onboarding.
+6. Future PostgreSQL RLS and least-privilege principals are the *defense-in-depth* boundary against missing SQL filters; they are **NOT YET DEPLOYED OR CERTIFIED**. SQL RLS is not the same as RBAC. Every RLS tenant policy must be derived from a verified server-owned identity/tenant and tested for `USING` and `WITH CHECK` (SELECT/UPDATE/DELETE and INSERT/UPDATE), including parent-resource lineage and pooling.
+
+### Changes in this continuation
+
+- `src/modules/people/repository.ts`: transactional live actor and tenant checks for role grant, role removal, membership lifecycle and onboarding; additional persisted Super Admin requirement for TPO/College Admin grants.
+- `src/modules/identity/context.ts`: reject mixed membership roles; Super Admin authority only in platform workspace.
+- `tests/integration/db01-membership-role-parent-lock.test.ts`: real PostgreSQL adversarial case for role revocation before the four mutations and zero unauthorized side effects.
+- `tests/unit/platform-permission-matrix.test.ts`: selected-role isolation and Super Admin/learner workspace non-escalation.
+- `.github/workflows/people-live-authorization-pg.yml`: exact-SHA PostgreSQL 17 acceptance suite and mandatory typecheck; full TypeScript check originally hit Node 2 GiB default heap; raised heap to 5 GiB, with rerun evidence pending.
+- `scripts/security/pg-rls-readonly-audit.mjs` and `tests/security-pg-rls-catalog.test.mjs`: read-only runtime-principal/catalog inventory for elevated login, effective owner bypass, directly tenant-keyed tables, RLS flags and policy counts. Does not assert policy correctness or indirect tenant ancestry.
+- `scripts/security/api-method-inventory.mjs`, `tests/security-api-method-inventory.test.mjs`, `.github/workflows/security-api-method-coverage.yml`: TypeScript AST per-method HTTP handler census; explicit review required for newly introduced HTTP methods, complete method inventory archived as a CI artifact. Existing methods remain **UNREVIEWED** until evidence-based manual/automated object-level tests are completed.
+- `.github/workflows/authz-critical-boundary.yml`: additional RLS inventory classifier test.
+
+### CI evidence and unresolved items
+
+- Exact-SHA `69c1b2af809097dd55fc928788dc7f8716a1506b`: focused auth critical-boundary workflow **PASS** (GitHub Actions run 41704973409). This does not substitute for a PostgreSQL security integration pass.
+- Exact-SHA `995b81e24cfd76771a233b3f2e7bf5a48e624f05`: PostgreSQL security workflow **FAILED BEFORE DB TESTS** due to TypeScript Node heap exhaustion (run 41704815926); no app test failure or successful PostgreSQL execution can be inferred.
+- The follow-up PostgreSQL workflow with raised heap and new API method census initially had no final conclusion at document update; verify latest identified SHA and job logs before changing test status.
+- **Still open**: live app DB principal and actual `pg_policies` inspection, table-level tenant ancestry and phased RLS migrations, complete legacy API method/object tenant review, multi-tenant adversarial read/write integration, privileged recent-auth step-up, external penetration test, production secret rotation proofs and enforceable protected-main governance.
+
+### Safe diagnostic commands
+
+```bash
+# Run against an explicitly authorized database (catalog metadata only, no row reads)
+DATABASE_URL='<AUTHORIZED_APP_DB_URL>' node scripts/security/pg-rls-readonly-audit.mjs --strict
+
+# Full source census (UNREVIEWED never means authorized)
+node scripts/security/api-method-inventory.mjs --json /tmp/vnext-security-api-census.json
+node scripts/security/api-method-inventory.mjs --enforce-new
+
+# Unit contracts
+node --test tests/security-pg-rls-catalog.test.mjs tests/security-api-method-inventory.test.mjs
+```
+
+The user-facing security status must only claim *code committed*, *CI proven by a completed exact-SHA runner*, or *runtime DB proven by an authorized live catalog + adversarial test*. Do not conflate those evidence levels.
