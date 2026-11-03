@@ -133,4 +133,30 @@ describe("2026-11-04 screenshot capability-first pilot",()=>{
   expect(attendance).toContain("Select class");
   expect(attendance).toContain("shiftAttendanceMonth");
  });
+
+ it("admin-175: old drive settings route maps to real guarded College settings",()=>{
+  const page=source("src/app/(authenticated)/college/placements/jobs/[jobId]/settings/page.tsx");
+  expect(page).toContain("getCollegeDriveOverview(context,jobId)");
+  expect(page).toContain("CollegeLegacyDriveSettings");
+  expect(page).toContain("CollegeDriveArchiveAction");
+ });
+
+ it("admin-250/275: legacy workspace detail and deleted aliases retain true outcomes",()=>{
+  const section=source("src/app/(authenticated)/college/projects/workspaces/[workspaceId]/[section]/page.tsx");
+  expect(section).toContain("legacyWorkspaceSummaryQuery");
+  expect(section).toContain('encodeURIComponent(section)');
+  expect(source("src/app/(authenticated)/college/projects/[projectId]/readiness/page.tsx").length).toBeGreaterThan(0);
+  const deleted=source("src/app/(authenticated)/college/projects/workspaces/deleted/page.tsx");
+  expect(deleted).toContain('redirect("/college/projects/deleted"');
+  expect(deleted).toContain('["10","20","50","100"].includes(value)');
+ });
+
+ it("admin-325/350: TPO legacy new drive and numeric recruiter links remain scoped",()=>{
+  const create=source("src/app/(authenticated)/tpo/drives/new/page.tsx");
+  expect(create).toContain("legacyTpoNewDriveHref");
+  const lead=source("src/app/(authenticated)/tpo/recruiters/[leadId]/page.tsx");
+  expect(lead).toContain("requirePersistedTpoMembership");
+  expect(lead).toContain("placementTpoLeads.legacyLeadId");
+  expect(lead).toContain("context.membership.collegeId");
+ });
 });
