@@ -69,8 +69,11 @@ export default async function CollegeHiringDashboardPage({
     throw workspaceResult.reason;
   if(funnelResult.status==="rejected"&&funnelResult.reason instanceof AuthorizationError)
     throw funnelResult.reason;
-  if(workspaceResult.status==="rejected")logError("college.hiring_report_failed",workspaceResult.reason);
-  if(funnelResult.status==="rejected")logError("college.hiring_funnel_failed",funnelResult.reason);
+  // Static route tags make operational failures attributable without logging
+  // search filters, student/company identifiers or other request data.
+  const pageLogFields={component:"page",route:"/college/hiring-dashboard"};
+  if(workspaceResult.status==="rejected")logError("college.hiring_report_failed",workspaceResult.reason,pageLogFields);
+  if(funnelResult.status==="rejected")logError("college.hiring_funnel_failed",funnelResult.reason,pageLogFields);
   const workspace=workspaceResult.status==="fulfilled"?workspaceResult.value:null;
   const funnel=funnelResult.status==="fulfilled"?funnelResult.value:null;
   return <div className="min-w-0 overflow-x-clip space-y-[var(--lms-space-4)]">
