@@ -81,16 +81,31 @@ async function loginViaApi(
   const startBody = JSON.parse(startText) as { attemptId: string };
   const { attemptId } = startBody;
 
-  // --- Step 2: verify OTP ---
-  const verifyRes = await request.post(`${DEV_HOST}/api/auth/login/verify`, {
-    headers: {
-      "Content-Type": "application/json",
-      Origin: origin,
-    },
+  // --- Step 2: verify OTP (with automatic second-factor handling for super-admins) ---
+  // First attempt — super-admins return SECOND_FACTOR_REQUIRED on this call.
+  const verify1Res = await request.post(`${DEV_HOST}/api/auth/login/verify`, {
+    headers: { "Content-Type": "application/json", Origin: origin },
     data: { attemptId, code: TEST_OTP },
   });
+  const verify1Text = await verify1Res.text();
 
-  const verifyText = await verifyRes.text();
+  let verifyRes = verify1Res;
+  let verifyText = verify1Text;
+
+  if (verify1Res.status() === 401) {
+    const body1 = JSON.parse(verify1Text) as { error?: string };
+    if (body1.error === "SECOND_FACTOR_REQUIRED") {
+      // The email second-factor code was already issued at login/start time.
+      // For test accounts both factors share the same TEST_OTP value.
+      const verify2Res = await request.post(`${DEV_HOST}/api/auth/login/verify`, {
+        headers: { "Content-Type": "application/json", Origin: origin },
+        data: { attemptId, code: TEST_OTP, secondCode: TEST_OTP },
+      });
+      verifyRes = verify2Res;
+      verifyText = await verify2Res.text();
+    }
+  }
+
   expect(
     verifyRes.ok(),
     `login/verify failed for ${email} (${verifyRes.status()}): ${verifyText}`,
