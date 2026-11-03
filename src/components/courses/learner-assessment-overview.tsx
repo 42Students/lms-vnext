@@ -440,7 +440,7 @@ export function LearnerAssessmentOverview({
       {kind==="ASSIGNMENT" ? (
         <>
           <div className={legacyStyles.coursePicker}>{courseSelector}</div>
-          <details className={legacyStyles.advancedTools}>
+          <details className={legacyStyles.advancedTools} aria-describedby="assignment-filter-help">
             <summary>More assignment filters</summary>
             {metricsDisclosure}
             {advancedControls}
