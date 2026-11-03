@@ -1,0 +1,129 @@
+/* Learner /learn/allAssignments — compact legacy list visual contract.
+ * Source: docs/legacy-source/frontend/src/components/Assignments/AssignmentsContent.jsx
+ * This file is intentionally scoped to the assignment-only branch of the
+ * shared learner assessment component. The Quiz presentation is unaffected.
+ */
+.coursePicker {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  min-width: 0;
+}
+.coursePicker label {
+  width: min(100%, 258px);
+}
+.advancedTools {
+  min-width: 0;
+  border-bottom: 1px solid var(--lms-canvas-border);
+  padding: 8px 0;
+}
+.advancedTools > summary {
+  color: var(--lms-link-text);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  width: fit-content;
+}
+.advancedTools[open] > summary {
+  margin-bottom: 12px;
+}
+.list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  min-width: 0;
+}
+.row {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  min-width: 0;
+  min-height: 95px;
+  padding: 16px;
+  border: 1px solid var(--lms-canvas-border);
+  border-radius: var(--lms-control-radius);
+  background: var(--lms-surface);
+}
+.row:hover {
+  border-color: var(--lms-primary);
+  background: var(--lms-primary-subtle);
+}
+.row:focus-within {
+  outline: 2px solid var(--lms-primary);
+  outline-offset: 2px;
+}
+.hitTarget {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  border: 0;
+  border-radius: inherit;
+  background: transparent;
+  cursor: pointer;
+}
+.hitTarget:focus-visible {
+  outline: none;
+}
+.iconWrap {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 40px;
+  width: 40px;
+  height: 40px;
+  border-radius: 9px;
+  background: #e7f8f9;
+  color: #087d89;
+}
+.content {
+  min-width: 0;
+  flex: 1 1 auto;
+  overflow-wrap: anywhere;
+}
+.title {
+  margin: 0;
+  font-size: 15px;
+  line-height: 1.4;
+  font-weight: 700;
+  color: var(--lms-neutral-900);
+}
+.meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin-top: 5px;
+  color: var(--lms-muted-text);
+  font-size: 13px;
+  line-height: 1.45;
+}
+.state {
+  display: inline-block;
+  margin-top: 7px;
+  border-radius: 4px;
+  padding: 3px 8px;
+  background: #edf7ff;
+  color: #175a8b;
+  font-size: 11px;
+  font-weight: 600;
+}
+.state[data-tone="success"] { background: #e7f7e9; color: #197342; }
+.state[data-tone="warning"] { background: #fff4dc; color: #996000; }
+.state[data-tone="error"] { background: #fff0ed; color: #ba3b27; }
+.state[data-tone="neutral"] { background: #f0f2f5; color: #596778; }
+.cta {
+  flex: 0 0 auto;
+  color: var(--lms-link-text);
+  font-size: 14px;
+  font-weight: 650;
+  white-space: nowrap;
+  pointer-events: none;
+}
+@media (max-width: 767px) {
+  .coursePicker { justify-content: stretch; }
+  .coursePicker label { width: 100%; }
+  .row { align-items: flex-start; gap: 10px; padding: 12px; }
+  .iconWrap { flex-basis: 36px; width: 36px; height: 36px; }
+  .cta { align-self: center; font-size: 12px; }
+  .title { font-size: 14px; }
+}
