@@ -1,0 +1,53 @@
+# Per-method source inventory is a triage gate, not a claim that existing
+# endpoints have been fully penetration-tested or database-certified.
+name: Security - API method inventory and new-handler review
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - "src/app/api/**"
+      - "scripts/security/api-method-inventory.mjs"
+      - "tests/security-api-method-inventory.test.mjs"
+      - ".github/workflows/security-api-method-coverage.yml"
+  push:
+    branches: [main]
+    paths:
+      - "src/app/api/**"
+      - "scripts/security/api-method-inventory.mjs"
+      - "tests/security-api-method-inventory.test.mjs"
+      - ".github/workflows/security-api-method-coverage.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: api-method-security-${{ github.sha }}
+  cancel-in-progress: false
+
+jobs:
+  security-method-census:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      # History is required for comparison against the immutable adoption SHA.
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: AST census regression
+        run: node --test tests/security-api-method-inventory.test.mjs
+      - name: Full method census and fail-closed new-handler review
+        run: node scripts/security/api-method-inventory.mjs --json /tmp/vnext-api-method-security-census.json --enforce-new
+      - name: Archive method inventory (unreviewed is NOT a pass)
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: api-method-security-inventory
+          path: /tmp/vnext-api-method-security-census.json
+          if-no-files-found: ignore
