@@ -12,6 +12,8 @@ on:
       - "src/modules/permissions/**"
       - "src/app/api/auth/**"
       - "tests/unit/persisted-workspace-role-and-account-cookie-security.test.ts"
+      - "scripts/security/pg-rls-readonly-audit.mjs"
+      - "tests/security-pg-rls-catalog.test.mjs"
       - ".github/workflows/authz-critical-boundary.yml"
   push:
     branches: [main]
@@ -22,6 +24,8 @@ on:
       - "src/modules/permissions/**"
       - "src/app/api/auth/**"
       - "tests/unit/persisted-workspace-role-and-account-cookie-security.test.ts"
+      - "scripts/security/pg-rls-readonly-audit.mjs"
+      - "tests/security-pg-rls-catalog.test.mjs"
       - ".github/workflows/authz-critical-boundary.yml"
   workflow_dispatch:
 
@@ -49,3 +53,5 @@ jobs:
         run: npx vitest run tests/unit/platform-permission-matrix.test.ts tests/unit/auth-tenant-access.test.ts
       - name: Auth controls and brute-force throttling
         run: npx vitest run tests/unit/auth-login-service.test.ts tests/unit/auth-ip-rate-limit.test.ts
+      - name: RLS catalog and least-privilege classifier contracts
+        run: node --test tests/security-pg-rls-catalog.test.mjs
