@@ -57,6 +57,32 @@ jobs:
           echo "PLATFORM_HOSTS=localhost,127.0.0.1" >> "$GITHUB_ENV"
       - name: Capture real Mentor candidate and verify both desktop and mobile states
         run: npx playwright test --project=chromium tests/e2e/mentor-legacy-calendar-visual.spec.ts tests/e2e/w03-mentor-surfaces.spec.ts
+      - name: Checkout merged screenshot comparator separately
+        uses: actions/checkout@v4
+        with:
+          ref: main
+          path: .compare-tools
+      - name: Checkout detached old LMS screenshot reference
+        uses: actions/checkout@v4
+        with:
+          ref: parity-baseline
+          path: .reference
+      - name: Generate actual old versus new Mentor PNG heatmap and ratio
+        shell: bash
+        run: |
+          candidate=$(find test-results -name mentor-calendar-1280x800-candidate.png -print -quit)
+          test -n "$candidate" || { echo "Candidate screenshot missing"; exit 2; }
+          mkdir -p test-results/mentor-legacy-pixel-comparison
+          result=0
+          node .compare-tools/scripts/audit/legacy-pixel-compare.mjs \
+            --old .reference/old/mentor/_mentor_calendar__base__9def459d92.png \
+            --new "$candidate" \
+            --out test-results/mentor-legacy-pixel-comparison || result=$?
+          if [ "$result" -gt 1 ]; then
+            echo "Comparator failed unexpectedly with exit $result"
+            exit "$result"
+          fi
+          echo "Mentor visual comparison diagnostic code: $result (1 means screenshot still differs)."
       - name: Archive screenshot, geometry and test traces from isolated seed only
         if: always()
         uses: actions/upload-artifact@v4
