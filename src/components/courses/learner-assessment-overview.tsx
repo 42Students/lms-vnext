@@ -260,6 +260,37 @@ export function LearnerAssessmentOverview({
           </Select>
         </label>
   );
+  const metricsDisclosure=(
+<Disclosure title="Assessment totals" className="border-b border-border" contentClassName="pb-4"><div role="group" className={styles["metricGrid"]} aria-label="Assessment totals">
+        <StatTile {...(styles["tile"] === undefined ? {} : {className:styles["tile"]})}
+          label={
+            kind === "ASSIGNMENT"
+              ? "Assignments"
+              : "Quizzes"
+          }
+          value={scopedAttentionItems.length}
+        ><span className={styles["icon"]}><AssessmentMetricGlyph kind="assignment" /></span></StatTile>
+        <StatTile {...(styles["tile"] === undefined ? {} : {className:styles["tile"]})}
+          label="Courses"
+          value={learnerAssessmentCourseScopeCount(courses,activeCourseId)}
+        ><span className={styles["icon"]}><AssessmentMetricGlyph kind="courses" /></span></StatTile>
+        <StatTile {...(styles["tile"] === undefined ? {} : {className:styles["tile"]})} label="Needs action" value={actionCounts.pending}>
+          <span className={styles["icon"]}><AssessmentMetricGlyph kind="pending" /></span>
+        </StatTile>
+        <StatTile {...(styles["tile"] === undefined ? {} : {className:styles["tile"]})} label="Overdue / missed" value={actionCounts.overdue}>
+          <span className={styles["icon"]}><AssessmentMetricGlyph kind="overdue" /></span>
+        </StatTile>
+        <StatTile {...(styles["tile"] === undefined ? {} : {className:styles["tile"]})}
+          label={
+            kind === "ASSIGNMENT"
+              ? "Submitted"
+              : "Attempted"
+          }
+          value={completed}
+        ><span className={styles["icon"]}><AssessmentMetricGlyph kind="submitted" /></span></StatTile>
+      </div></Disclosure>
+
+  );
   const advancedControls=(
     <>
       <NeedsDoingChips
@@ -382,45 +413,19 @@ export function LearnerAssessmentOverview({
             ) : <p className="mt-2 text-xs font-normal">No quizzes submitted yet.</p>}
           </Disclosure>
         </section>
-      ) : (<Disclosure title="Assessment totals" className="border-b border-border" contentClassName="pb-4"><div role="group" className={styles["metricGrid"]} aria-label="Assessment totals">
-        <StatTile {...(styles["tile"] === undefined ? {} : {className:styles["tile"]})}
-          label={
-            kind === "ASSIGNMENT"
-              ? "Assignments"
-              : "Quizzes"
-          }
-          value={scopedAttentionItems.length}
-        ><span className={styles["icon"]}><AssessmentMetricGlyph kind="assignment" /></span></StatTile>
-        <StatTile {...(styles["tile"] === undefined ? {} : {className:styles["tile"]})}
-          label="Courses"
-          value={learnerAssessmentCourseScopeCount(courses,activeCourseId)}
-        ><span className={styles["icon"]}><AssessmentMetricGlyph kind="courses" /></span></StatTile>
-        <StatTile {...(styles["tile"] === undefined ? {} : {className:styles["tile"]})} label="Needs action" value={actionCounts.pending}>
-          <span className={styles["icon"]}><AssessmentMetricGlyph kind="pending" /></span>
-        </StatTile>
-        <StatTile {...(styles["tile"] === undefined ? {} : {className:styles["tile"]})} label="Overdue / missed" value={actionCounts.overdue}>
-          <span className={styles["icon"]}><AssessmentMetricGlyph kind="overdue" /></span>
-        </StatTile>
-        <StatTile {...(styles["tile"] === undefined ? {} : {className:styles["tile"]})}
-          label={
-            kind === "ASSIGNMENT"
-              ? "Submitted"
-              : "Attempted"
-          }
-          value={completed}
-        ><span className={styles["icon"]}><AssessmentMetricGlyph kind="submitted" /></span></StatTile>
-      </div></Disclosure>
-      )}
+      ) : null}
 
       {kind==="ASSIGNMENT" ? (
         <>
           <div className={legacyStyles.coursePicker}>{courseSelector}</div>
           <details className={legacyStyles.advancedTools}>
             <summary>More assignment filters</summary>
+            {metricsDisclosure}
             {advancedControls}
           </details>
         </>
       ) : advancedControls}
+      {(kind==="QUIZ" || learnerAssessmentFiltersActive({courseId:activeCourseId,search,stateFilter,sort})) ? (
       <div className="flex min-w-0 flex-col items-stretch gap-2 sm:flex-row sm:items-center sm:justify-between">
         <p role="status" className="min-w-0 text-sm text-muted-foreground">
           {learnerAssessmentPageSummary({
@@ -437,6 +442,7 @@ export function LearnerAssessmentOverview({
           </Button>
         ) : null}
       </div>
+      ) : null}
       {filtered.length === 0 ? (
         <EmptyState
           {...learnerAssessmentEmptyMessage({kind,courseSelected:Boolean(activeCourseId),search,stateFilter})}
