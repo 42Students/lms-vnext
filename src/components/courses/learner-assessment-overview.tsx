@@ -539,8 +539,9 @@ export function LearnerAssessmentOverview({
                 <div className={legacyStyles.meta}>
                   <span>{item.courseName}</span>
                   <span aria-hidden="true">·</span>
-                  <span>{item.dueAt?"Due "+formatDate(item.dueAt):
-                    "Created: "+formatDate(item.createdAt)}</span>
+                  <span>{item.kind==="ASSIGNMENT"&&!item.dueAt
+                    ?"Created: "+formatDate(item.createdAt)
+                    :"Due "+formatDate(item.dueAt)}</span>
                 </div>
                 <span className={legacyStyles.state} data-tone={state.tone}>
                   {state.label}
