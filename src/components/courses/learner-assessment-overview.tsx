@@ -276,26 +276,7 @@ export function LearnerAssessmentOverview({
       {kind==="QUIZ" ? (
         <section aria-label="Quiz summary" className="flex min-w-0 flex-wrap items-center gap-2 border-b border-border pb-3 text-sm font-semibold text-body">
           <Badge tone="neutral">{scopedAttentionItems.length} {scopedAttentionItems.length===1?"Quiz":"Quizzes"}</Badge>
-          <Badge tone="neutral">{scopedAttentionItems.filter(item=>{
-            const due=item.dueAt?new Date(item.dueAt):new Date(item.createdAt);
-            const today=new Date(currentNowMs);
-            if(!Number.isFinite(due.getTime()))return false;
-            const month=new Intl.DateTimeFormat("en-CA",{timeZone:"Asia/Kolkata",year:"numeric",month:"2-digit"});
-            return month.format(due)===month.format(today);
-          }).length} This month</Badge>
-          <Disclosure title={`${submittedQuizzes.length} Submitted`} className="min-w-0">
-            {submittedQuizzes.length>0 ? (
-              <>
-                <ul role="region" aria-label="Submitted quizzes, scroll for more" tabIndex={0}
-                  className="mt-2 max-h-48 space-y-1 overflow-y-auto overscroll-contain pr-2 text-xs font-normal focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">
-                  {submittedQuizzes.map(item=><li key={item.deliveryId+":"+item.id}>{item.title}</li>)}
-                </ul>
-                {submittedQuizzes.length>5?<p className="mt-1 text-xs font-normal text-muted-foreground">
-                  Scroll to see more submitted quizzes.
-                </p>:null}
-              </>
-            ) : <p className="mt-2 text-xs font-normal">No quizzes submitted yet.</p>}
-          </Disclosure>
+          <Badge tone="neutral">{submittedQuizzes.length} Submitted</Badge>
         </section>
       ) : (<Disclosure title="Assessment totals" className="border-b border-border" contentClassName="pb-4"><div role="group" className={styles["metricGrid"]} aria-label="Assessment totals">
         <StatTile {...(styles["tile"] === undefined ? {} : {className:styles["tile"]})}
@@ -327,20 +308,6 @@ export function LearnerAssessmentOverview({
       </div></Disclosure>
       )}
 
-      <NeedsDoingChips
-        label={kind === "ASSIGNMENT" ? "Assignment quick views:" : "Quiz quick views:"}
-        items={quickCounts.map(quick => ({
-          key: quick.value,
-          label: LEARNER_ASSESSMENT_STATE_OPTIONS.find(option => option.value === quick.value)?.label ?? quick.value,
-          count: quick.count,
-          tone: "neutral",
-        }))}
-        selectedKey={stateFilter}
-        onSelect={(key) => {
-          setStateFilter(value => value === key ? "ALL" : key as LearnerAssessmentStateFilter);
-          setPage(1);
-        }}
-      />
       <div className="grid min-w-0 gap-[var(--lms-space-3)] md:grid-cols-2">
         <label className="w-full text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
           <span className="mb-1.5 block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Search {kind === "ASSIGNMENT" ? "assignments" : "quizzes"}</span>
