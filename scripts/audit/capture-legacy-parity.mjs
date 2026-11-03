@@ -96,7 +96,7 @@ export async function capture(opts) {
     });
     await page.evaluate(async () => { await document.fonts.ready; });
     await page.waitForFunction(() => [...document.images].every(image => image.complete),
-      { timeout: 15_000 }).catch(() => {});
+      undefined, { timeout: 15_000 }).catch(() => {});
     // Wait only for a deterministic layout frame; network-idle can hang on
     // notifications, polling, websockets and observability connections.
     await page.evaluate(() => new Promise(resolve =>
