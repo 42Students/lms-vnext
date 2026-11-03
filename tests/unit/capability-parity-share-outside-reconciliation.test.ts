@@ -50,8 +50,7 @@ describe("2026-11-03 source-backed missing-surface triage",()=>{
     expect(query).toContain("gt(shares.expiresAt");
     expect(query).toContain("projectCompanyShareRows(");
     expect(query).toContain('for("share"');
-    expect(query).toContain("placementCompanyShareSelections") ||
-      expect(query).toContain("selectedShares");
+    expect(query).toContain("placementCompanyShareSelections");
     expect(query).toContain("views");
     const manage=source(path.shareWrite);
     expect(manage).toContain("issueTpoCompanyApplicantShare");
