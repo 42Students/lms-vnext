@@ -16,7 +16,7 @@ import { mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { resolve, join } from "node:path";
 import { createHash } from "node:crypto";
 import { fileURLToPath } from "node:url";
-import { decodePng, compareImages, encodePng } from "./legacy-pixel-compare.mjs";
+import { decodePng, compareImages, encodePng, sideBySideImages } from "./legacy-pixel-compare.mjs";
 
 const flagNames = new Set([
   "--url", "--state", "--out", "--reference", "--masks",
@@ -154,6 +154,7 @@ export async function capture(opts) {
       });
       writeFileSync(join(dir, "diff.png"), encodePng(compared.diff));
       writeFileSync(join(dir, "overlay.png"), encodePng(compared.overlay));
+      writeFileSync(join(dir, "side-by-side.png"), encodePng(sideBySideImages(decodePng(refBuffer), png)));
       manifest.reference = { sha256: digest(refBuffer), file: resolve(opts.reference) };
       manifest.comparison = { ...compared.results,
         pass: compared.results.pass && !badStatus && !manifest.apparentErrorText };
