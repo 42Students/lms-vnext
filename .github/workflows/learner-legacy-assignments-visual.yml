@@ -56,64 +56,38 @@ jobs:
           echo "PLATFORM_HOSTS=localhost,127.0.0.1" >> "$GITHUB_ENV"
       - name: Capture real Learner assignment candidate and test desktop/mobile
         run: npx playwright test --project=chromium tests/e2e/learner-legacy-assignments-visual.spec.ts
-      - name: Checkout merged comparator into isolated directory
-        uses: actions/checkout@v4
-        with:
-          ref: main
-          path: .compare-tools
-      - name: Checkout detached old LMS screenshots
-        uses: actions/checkout@v4
-        with:
-          ref: parity-baseline
-          path: .reference
-      - name: Produce actual baseline-versus-candidate Learner screenshot diff
+      - name: Fetch only frozen Learner PNG and approved comparator
+        if: always()
+        env:
+          GH_TOKEN: ${{ github.token }}
         shell: bash
         run: |
-          candidate=$(find test-results -name learner-all-assignments-1280x800.png -print -quit)
-          test -n "$candidate" || { echo "Candidate screenshot missing"; exit 2; }
-          mkdir -p test-results/learner-legacy-pixel-comparison
-          result=0
-          node .compare-tools/scripts/audit/legacy-pixel-compare.mjs \
-            --old .reference/old/learner/_learn_allAssignments__base__67d5d6264c.png \
-            --new "$candidate" \
-            --out test-results/learner-legacy-pixel-comparison || result=$?
-          if [ "$result" -gt 1 ]; then
-            echo "Unexpected comparator failure: $result"
-            exit "$result"
-          fi
-          echo "Learner pixel comparison diagnostic code: $result (1 means differences remain)."
-      - name: Checkout approved PNG comparator
-        if: always()
-        uses: actions/checkout@v4
-        with:
-          ref: main
-          path: .compare-tools
-      - name: Checkout independent legacy screenshots
-        if: always()
-        uses: actions/checkout@v4
-        with:
-          ref: parity-baseline
-          path: .reference
-      - name: Measure candidate against frozen learner-001 screenshot
+          set -euo pipefail
+          mkdir -p .reference/old/learner .compare-tools/scripts/audit
+          gh api "repos/42Students/lms-vnext/contents/old/learner/_learn_allAssignments__base__67d5d6264c.png?ref=b4f9bdd5767f484169d6da14f615aa9b65a5f265" --jq .content | tr -d '\r\n' | base64 --decode > .reference/old/learner/_learn_allAssignments__base__67d5d6264c.png
+          gh api "repos/42Students/lms-vnext/contents/scripts/audit/legacy-pixel-compare.mjs?ref=e3aa560525eed3bc4efa09d9693df564a278b778" --jq .content | tr -d '\r\n' | base64 --decode > .compare-tools/scripts/audit/legacy-pixel-compare.mjs
+          test -s .reference/old/learner/_learn_allAssignments__base__67d5d6264c.png
+          test -s .compare-tools/scripts/audit/legacy-pixel-compare.mjs
+      - name: Produce old-versus-current Learner screenshot diff and overlay
         if: always()
         shell: bash
         run: |
           candidate=$(find test-results -name learner-all-assignments-1280x800.png -print -quit)
           if [ -z "$candidate" ]; then
-            echo "No learner candidate PNG was captured; browser tests must be fixed first."
+            echo "Candidate screenshot missing; browser capture did not complete."
             exit 0
           fi
           mkdir -p test-results/learner-legacy-pixel-comparison
-          result=0
+          code=0
           node .compare-tools/scripts/audit/legacy-pixel-compare.mjs \
             --old .reference/old/learner/_learn_allAssignments__base__67d5d6264c.png \
             --new "$candidate" \
-            --out test-results/learner-legacy-pixel-comparison || result=$?
-          if [ "$result" -gt 1 ]; then
-            echo "Pixel comparator execution error: $result"
-            exit "$result"
+            --out test-results/learner-legacy-pixel-comparison || code=$?
+          if [ "$code" -gt 1 ]; then
+            echo "Pixel comparator execution failed unexpectedly ($code)"
+            exit "$code"
           fi
-          echo "Visual comparison exit $result. Difference is diagnostic until independently reviewed."
+          echo "Learner visual diff diagnostic code: $code (1 means pixel differences remain)."
       - name: Archive candidate screenshots and browser evidence
         if: always()
         uses: actions/upload-artifact@v4
