@@ -12,11 +12,13 @@ import { scanUxSource } from "./ux-guard-rules.mjs";
 const root=process.cwd();
 const waiver=JSON.parse(readFileSync(join(root,"docs/design-system/UX-GUARD-WAIVERS.json"),"utf8"));
 if(waiver.schemaVersion!==1 || !/^[a-f0-9]{40}$/.test(waiver.baselineCommit) ||
-   !(waiver.expiresOn >= new Date().toISOString().slice(0,10)) ||
    !Array.isArray(waiver.rules)) {
-  process.stderr.write("UX waiver baseline invalid/expired; review residual legacy findings.\n");
+  process.stderr.write("UX waiver baseline invalid; review source approval.\n");
   process.exit(1);
 }
+// An expired waiver is never accepted: continue the scan only to print
+// actionable path/line/rule evidence before exiting nonzero.
+const baselineExpired = waiver.expiresOn < new Date().toISOString().slice(0,10);
 function git(args) {
   return execFileSync("git",args,{cwd:root,encoding:"utf8",maxBuffer:32*1024*1024});
 }
@@ -44,6 +46,7 @@ if(hasBaseline.status!==0){
 }
 const allowedRules=new Set(waiver.rules);
 const violations=[];
+const expiredFindings=[];
 let waivedCount=0;
 const baselineCache=new Map();
 function keyFor(item) {
@@ -73,7 +76,11 @@ for(const path of files) {
     // The immutable source baseline waives ONLY original identical snippets
     // from this path; adding a second identical bad control is still a failure.
     const base=allowedRules.has(item.rule)?baselineFor(path):null;
-    if(base && occurrence<=(base.get(key)??0)) {waivedCount++;continue;}
+    if(base && occurrence<=(base.get(key)??0)) {
+      waivedCount++;
+      if(baselineExpired)expiredFindings.push(path+":"+item.line+": "+item.rule+" (unchanged but expired)");
+      continue;
+    }
     violations.push(path+":"+item.line+": "+item.rule+" (new or modified; no matching baseline waiver)");
   }
 }
@@ -84,10 +91,16 @@ for(const required of [
   "--lms-on-primary: #ffffff",
   "--color-primary-text: var(--lms-link-text)",
 ]) if(!css.includes(required))violations.push("src/app/globals.css: missing "+required);
+if(baselineExpired && expiredFindings.length) {
+  process.stderr.write("UX waiver expired on "+waiver.expiresOn+
+    "; each legacy finding needs remediation or a fresh explicitly reviewed narrow exception:\n"+
+    expiredFindings.join("\n")+"\n");
+  process.exitCode=1;
+}
 if(violations.length) {
   process.stderr.write("UX anti-drift violations:\n"+violations.join("\n")+"\n");
   process.exitCode=1;
-} else {
+} else if(!baselineExpired || !expiredFindings.length) {
   process.stdout.write("UX anti-drift passed: "+files.length+" tracked UI sources; "+
     waivedCount+" unchanged legacy findings match pinned expiring baseline "+
     waiver.baselineCommit.slice(0,12)+". Browser/AT evidence is separate.\n");
