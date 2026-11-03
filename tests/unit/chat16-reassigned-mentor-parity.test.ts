@@ -48,9 +48,11 @@ describe("chat-16 reassigned mentor legacy parity",()=>{
     expect(list).toContain("resource.pinned");
     expect(list).toContain("resource.status");
     expect(list).toContain("ProjectResourceOpenLink");
-    const popup=read("src/components/projects/project-resource-open-link.tsx");
-    expect(popup).toContain("Your browser blocked the new tab.");
-    expect(popup).toContain('<a href={safe} target="_blank" rel="noopener noreferrer"');
+    const link=read("src/components/projects/project-resource-open-link.tsx");
+    expect(link).toContain("safeProjectExternalHref(url)");
+    expect(link).toContain('<a href={safe} rel="noopener noreferrer"');
+    expect(link).not.toContain("window.open(");
+    expect(link).not.toContain('target="_blank"');
   });
   it("MEN-projects-meetings-56 reorders only owned active resources in two collision-safe phases",()=>{
     const service=read("src/modules/projects/resource-service.ts");
