@@ -27,6 +27,11 @@ jobs:
         run: npm ci
       - name: Source layout regression tests
         run: node --test tests/learner-legacy-assignments-layout.test.mjs
+      - name: Existing learner assessment and Quiz regression checks
+        run: |
+          npx vitest run tests/integration/learner-mobile-assignment-card.test.ts \
+            tests/integration/learner-mobile-quiz-list.test.ts \
+            tests/unit/chat7-legacy-learner-assessments-copy.test.ts
       - name: Strict TSX typecheck with repository supported heap
         env:
           NODE_OPTIONS: --max-old-space-size=6144
