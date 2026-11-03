@@ -62,7 +62,7 @@ test('progress CLI displays all database tasks without exclusive ownership filte
   assert.match(p.stdout,/NON|NON_CERTIFYING|evidence-weighted heuristic/);
   assert.match(p.stdout,/DB-019/);
   assert.match(p.stdout,/DB-081/);
-  assert.ok(p.stdout.includes('accepted '+(100*doc.tasks.filter(t=>t.phase==='DATABASE'&&t.done).length/doc.tasks.length).toFixed(1)+'%'));
+  assert.ok(p.stdout.includes('accepted '+(100*doc.tasks.filter(t=>t.phase==='DATABASE'&&t.done).length/doc.tasks.filter(t=>t.phase==='DATABASE').length).toFixed(1)+'%'));
   const domains=spawnSync(process.execPath,[path.join(root,'scripts/tracker.mjs'),'--domains'],{encoding:'utf8'});
   assert.equal(domains.status,0,domains.stderr);
   assert.match(domains.stdout,/DATABASE DOMAIN PACKAGES/);
