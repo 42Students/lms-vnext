@@ -35,7 +35,11 @@
 .row {
   position: relative;
   display: grid;
-  grid-template-columns: minmax(0, 1fr) auto;
+  /* Each meeting detail can contain a request form, provider state, agenda,
+   * notes and follow-up text. A second implicit auto column squeezed those
+   * sections to a few pixels and rendered content one character per line.
+   * Keep the full meeting details on a single, min-width-safe track. */
+  grid-template-columns: minmax(0, 1fr);
   align-items: center;
   column-gap: 20px;
   row-gap: 12px;
@@ -142,4 +146,123 @@
 @media (prefers-reduced-motion: reduce) {
   .row { transition: none; }
   .row:hover { transform: none; }
+}
+
+
+/* Legacy mentor calendar: same simple Upcoming / Past & Cancelled structure
+ * as docs/legacy-source/frontend/src/pages/mentor/calendar.js.
+ * Use a single content column; never place long meeting text in a narrow
+ * implicit grid track. Advanced controls remain in a native disclosure. */
+.legacyCalendar {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  gap: 24px;
+}
+.legacySection {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  gap: 8px;
+}
+.legacySectionHeading {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0;
+  color: var(--lms-neutral-900);
+  font-size: 18px;
+  font-weight: 650;
+  line-height: 1.4;
+}
+.legacyMeetingRow {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  gap: 6px;
+  padding: 4px 16px 0;
+  background: transparent;
+  border: 0;
+  border-radius: 0;
+}
+.legacyMeetingTop {
+  display: flex;
+  min-width: 0;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+.legacyMeetingName {
+  min-width: 0;
+  flex: 1 1 auto;
+  overflow-wrap: anywhere;
+}
+.legacyMeetingName strong {
+  display: block;
+  color: var(--lms-neutral-900);
+  font-size: 14px;
+  font-weight: 650;
+  line-height: 1.5;
+}
+.legacyMeetingName > div,
+.legacyMeetingMeta {
+  color: var(--lms-muted-text);
+  font-size: 13px;
+  line-height: 1.55;
+}
+.legacyMeetingMeta,
+.legacyMeetingActions {
+  display: flex;
+  min-width: 0;
+  gap: 8px 16px;
+  flex-wrap: wrap;
+  overflow-wrap: anywhere;
+}
+.legacyMeetingActions a,
+.legacyShowMore {
+  color: var(--lms-link-text);
+  font-size: 14px;
+  text-decoration: none;
+}
+.legacyMeetingActions a:hover,
+.legacyShowMore:hover {
+  text-decoration: underline;
+}
+.legacyMeetingActions a:focus-visible,
+.legacyShowMore:focus-visible {
+  outline: 2px solid var(--lms-primary);
+  outline-offset: 3px;
+}
+.legacyEmpty {
+  margin: 0;
+  padding: 12px 16px;
+  color: var(--lms-muted-text);
+  font-size: 13px;
+}
+.legacyShowMore {
+  align-self: flex-start;
+  border: 0;
+  padding: 4px 0;
+  background: transparent;
+  cursor: pointer;
+}
+.advancedCalendarTools {
+  min-width: 0;
+  margin-top: 28px;
+  border-top: 1px solid var(--lms-canvas-border);
+  padding-top: 14px;
+}
+.advancedCalendarTools > summary {
+  color: var(--lms-link-text);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+}
+.advancedCalendarTools[open] > summary {
+  margin-bottom: 18px;
+}
+@media (max-width: 767px) {
+  .legacyMeetingRow { padding: 4px 8px; }
+  .legacyMeetingMeta { gap: 5px 12px; }
 }

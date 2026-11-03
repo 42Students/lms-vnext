@@ -1,0 +1,214 @@
+/*
+ * Mentor legacy visual shell — parity-baseline/old/mentor at 1280 x 800.
+ *
+ * The earlier uploaded Mentor prototype used a fixed 200px text sidebar,
+ * upper-right floating toolbar and no white canvas. This is a role-only
+ * correction to the actual old LMS shell: 96px icon rail (256px on
+ * hover/focus), 85px white topbar, and 24px inset white page canvas.
+ *
+ * Scope is deliberately restricted to the authorized /mentor portal.
+ * Mobile retains the app's accessible drawer and responsive layout.
+ * Do not copy these overrides to TPO, Recruiter or another account.
+ */
+.lms-shell-frame[data-prototype-portal="mentor"] {
+  --prototype-bg: #f1f4f9;
+  font-family: Inter, Lato, Arial, sans-serif;
+}
+.lms-shell-frame[data-prototype-portal="mentor"] .lms-shell-page {
+  background: #f1f4f9;
+}
+.lms-shell-frame[data-prototype-portal="mentor"] [data-slot="page-canvas"] {
+  box-sizing: border-box;
+  min-width: 0;
+  min-height: 495px;
+  padding: 24px;
+  background: #fff;
+  border: 1px solid #e5e9f0;
+  border-radius: 12px;
+  box-shadow: none;
+}
+/* Legacy Meetings begins immediately after the header divider; the
+ * inherited space-y-6 introduced an extra 24px before the first section. */
+.lms-shell-frame[data-prototype-portal="mentor"]
+  .prototype-mentor-calendar-heading + .prototype-mentor-meetings-surface {
+  margin-top: 0;
+}
+.lms-shell-frame[data-prototype-portal="mentor"] [data-slot="page-header"] {
+  width: 100%;
+  margin: 0 0 16px;
+  border-bottom: 1px solid #e5e9f0;
+  padding-bottom: 16px;
+}
+.lms-shell-frame[data-prototype-portal="mentor"] [data-slot="page-header"] > div:first-child {
+  display: flex;
+  flex: 1 1 100%;
+  min-width: 0;
+  flex-direction: column;
+  flex-wrap: nowrap;
+  align-items: flex-start;
+  gap: 14px;
+}
+.lms-shell-frame[data-prototype-portal="mentor"] [data-slot="page-header"] h1 {
+  margin: 0;
+  font-size: 30px;
+  font-weight: 600;
+  line-height: 1.33;
+  color: #172033;
+}
+.lms-shell-frame[data-prototype-portal="mentor"] [data-slot="page-header"] > div:first-child > span {
+  display: block;
+  width: 100%;
+  font-size: 13px;
+  line-height: 1.5;
+  color: #5b6b82;
+}
+@media (min-width:768px) {
+  .lms-shell-frame[data-prototype-portal="mentor"] .lms-desktop-sidebar {
+    position: sticky;
+    top: 0;
+    box-sizing: border-box;
+    flex: 0 0 auto;
+    width: 96px;
+    min-width: 96px;
+    max-width: 256px;
+    height: 100dvh;
+    padding-right: 0;
+    background: #fff;
+    border-right: 1px solid #f1f4f9;
+    box-shadow: none;
+    overflow: hidden;
+    transition: width 150ms cubic-bezier(.2,0,0,1);
+  }
+  .lms-shell-frame[data-prototype-portal="mentor"] .lms-desktop-sidebar:is(:hover,:focus-within) {
+    position: sticky;
+    width: 256px;
+    min-width: 256px;
+    max-width: 256px;
+  }
+  .lms-shell-frame[data-prototype-portal="mentor"] .lms-sidebar-logo-row,
+  .lms-shell-frame[data-prototype-portal="mentor"] .lms-desktop-sidebar:is(:hover,:focus-within) .lms-sidebar-logo-row {
+    height: 68px;
+    min-height: 68px;
+    padding: 10px 0 0;
+    justify-content: center;
+    align-items: flex-start;
+    border: 0;
+  }
+  .lms-shell-frame[data-prototype-portal="mentor"] .lms-desktop-sidebar:is(:hover,:focus-within) .lms-sidebar-logo-row {
+    justify-content: flex-start;
+    padding-left: 20px;
+  }
+  .lms-shell-frame[data-prototype-portal="mentor"] .lms-prototype-wordmark {
+    display: none;
+  }
+  .lms-shell-frame[data-prototype-portal="mentor"] .lms-sidebar-brand-mark,
+  .lms-shell-frame[data-prototype-portal="mentor"] .lms-desktop-sidebar:is(:hover,:focus-within) .lms-sidebar-brand-mark {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .lms-shell-frame[data-prototype-portal="mentor"] .lms-sidebar-brand-wordmark {
+    display: none;
+  }
+  .lms-shell-frame[data-prototype-portal="mentor"] .lms-sidebar-nav {
+    padding: 0 8px;
+  }
+  .lms-shell-frame[data-prototype-portal="mentor"] .lms-sidebar-nav .lms-sidebar-item {
+    min-height: 44px;
+    margin-bottom: 6px;
+    padding: 10px 12px;
+    justify-content: center;
+    gap: 0;
+    border-radius: 8px;
+    color: #54505d;
+  }
+  .lms-shell-frame[data-prototype-portal="mentor"] .lms-desktop-sidebar:is(:hover,:focus-within) .lms-sidebar-nav .lms-sidebar-item {
+    justify-content: flex-start;
+    gap: 12px;
+  }
+  .lms-shell-frame[data-prototype-portal="mentor"] .lms-sidebar-nav .lms-sidebar-item-icon {
+    display: flex;
+    flex: 0 0 24px;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    min-width: 24px;
+    height: 24px;
+    color: inherit;
+  }
+  .lms-shell-frame[data-prototype-portal="mentor"] .lms-sidebar-nav .lms-nav-label {
+    opacity: 0;
+    visibility: hidden;
+    width: 0;
+    max-width: 0;
+    overflow: hidden;
+    pointer-events: none;
+  }
+  .lms-shell-frame[data-prototype-portal="mentor"] .lms-desktop-sidebar:is(:hover,:focus-within) .lms-sidebar-nav .lms-nav-label {
+    opacity: 1;
+    visibility: visible;
+    width: auto;
+    max-width: 165px;
+    pointer-events: auto;
+  }
+  .lms-shell-frame[data-prototype-portal="mentor"] .lms-sidebar-role-details {
+    display: none;
+  }
+  .lms-shell-frame[data-prototype-portal="mentor"] .lms-sidebar-nav .lms-sidebar-item[data-active="true"] {
+    background: #eff8fa;
+    box-shadow: inset 3px 0 #26bac7;
+    color: #1a95a1;
+  }
+  .lms-shell-frame[data-prototype-portal="mentor"] .lms-shell-page-main {
+    max-width: none;
+    padding: 16px 24px 28px;
+    /* Tailwind responsive py-[--lms-space-6] otherwise adds an extra 16px
+       above the old screenshot's canvas. Constrain only Mentor desktop. */
+    padding-top: 16px !important;
+  }
+  .lms-shell-frame[data-prototype-portal="mentor"] header[aria-label="Application top bar"] {
+    position: sticky;
+    top: 0;
+    right: auto;
+    z-index: 30;
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    box-sizing: border-box;
+    width: 100%;
+    max-width: none;
+    height: 85px;
+    min-height: 85px;
+    padding: 0 24px;
+    background: #fff;
+    border: 0;
+    border-bottom: 1px solid #e7ecf2;
+    box-shadow: 0 1px 3px rgba(26,45,72,.035);
+  }
+  .lms-shell-frame[data-prototype-portal="mentor"] header[aria-label="Application top bar"] input {
+    font-family: inherit;
+  }
+  .lms-shell-frame[data-prototype-portal="mentor"] header[aria-label="Application top bar"] div:has(>div>input#lms-topbar-command-search) {
+    width: 380px;
+    max-width: 100%;
+  }
+  .lms-shell-frame[data-prototype-portal="mentor"] header[aria-label="Application top bar"] button[aria-label="Open command search"],
+  .lms-shell-frame[data-prototype-portal="mentor"] header[aria-label="Application top bar"] #lms-topbar-command-key-help {
+    display: none;
+  }
+  .lms-shell-frame[data-prototype-portal="mentor"] header[aria-label="Application top bar"] button[aria-label^="Switch workspace"] {
+    padding-inline: 4px;
+    border-color: transparent;
+    background: transparent;
+    box-shadow: none;
+  }
+}
+@media (max-width:767px) {
+  .lms-shell-frame[data-prototype-portal="mentor"] [data-slot="page-canvas"] {
+    min-height: 0;
+    padding: 16px;
+  }
+  .lms-shell-frame[data-prototype-portal="mentor"] [data-slot="page-header"] h1 {
+    font-size: 22px;
+  }
+}

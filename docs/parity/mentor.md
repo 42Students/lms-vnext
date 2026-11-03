@@ -1671,3 +1671,16 @@ Mentor create/edit forms now expose 0090 Estimate, Type, Due date and Blocker re
 ### PR-S2-07 Learner delivery metadata UI / exact legacy Projects copy
 
 The learner final-draft form now preserves existing validated 0091 FILE entries and edits 0091 LINK attachments (Additional files & links / Add link), with a bounded list and registered schema write payload. No browser file picker is added: files must first exist as READY project uploads; direct file-reference authoring remains a follow-up. Removed invented heading descriptions in the shared Mentor/Learner/Admin workspace. Confirmed one workspace section strip plus the account's own route-level strip in source. Browser visual, screen-reader, responsive and full exact-word audit are still open.
+
+
+## 2026-11-03 legacy screenshot visual parity candidate — /mentor/calendar
+
+**Visual oracle:** `parity-baseline/packages/mentor-001.md`, old screenshots under `old/mentor/` at reference commit `b4f9bdd5767f484169d6da14f615aa9b65a5f265`. **Source oracle:** `docs/legacy-source/frontend/src/pages/mentor/calendar.js`. This is a **VISUAL FIXED CANDIDATE**, **NOT a CLOSED/VERIFIED package**.
+
+- Original discrepancy: screenshot showed a prototype-style week-strip / two-column detailed meeting dashboard instead of the legacy “Upcoming (N)” / “Past & Cancelled (N)” compact lists. Long text in a second auto grid track wrapped to extremely narrow columns and stretched the page vertically.
+- Implemented on visual parity PR #217: use a single full-width details grid track; show compact upcoming/past meeting rows with title, project, displayed status, date/time, optional safe Join link and Open project by default; preserve the advanced scheduled meeting controls, filters, ICS export, request actions, calendar provider status and notes in native disclosures.
+- UI safety: the change does not edit server, database, permission or tenant code, nor remove the advanced controls.
+- Initial acceptance evidence: focused regression source tests and UI-06 source parity workflow executed and passed. A dedicated TypeScript typecheck is required on the latest SHA before merge; a previous attempt hit Node's default 2 GB heap and was rerun with a 6 GB heap.
+- Still required to close `mentor-001`: authenticated 1280×800 candidate capture with matched fixture data; old-vNext overlay and pixel-region evaluation; compare shell/sidebar/topbar/canvas and the exact alternate overlay states; mobile and keyboard disclosure checks; validate authorized meeting action workflows; record tested SHA and evidence links. Until this happens, leave the package and Mentor account parity open.
+- Current captured baseline is not the current live candidate: the vNext reference screenshots were taken at `7acef7ec`, and later commits have changed the UI.
+

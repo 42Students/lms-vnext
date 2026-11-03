@@ -217,6 +217,46 @@ function MeetingRow({
   );
 }
 
+
+/** The old LMS calendar displayed two quiet lists, not a dashboard.
+ * Keep this faithful primary view while the richer vNext scheduling tools
+ * remain available in the optional advanced disclosure below. */
+function LegacyMeetingRow({meeting,now}:{
+  meeting:MentorMeetingCalendarItem;now:Date;
+}){
+  const status=mentorMeetingDisplayStatus(meeting,now);
+  const join=Date.parse(meeting.endsAt)>now.getTime()
+    ?safeMentorMeetingJoinUrl(meeting):null;
+  const safeJoin=join?safeProjectExternalHref(join):null;
+  return <article className={styles.legacyMeetingRow}>
+    <div className={styles.legacyMeetingTop}>
+      <div className={styles.legacyMeetingName}>
+        <strong>{meeting.title}</strong>
+        <div>{meeting.projectTitle}</div>
+      </div>
+      <StatusBadge tone={
+        status==="COMPLETED"?"success":
+        status==="MISSED"?"error":
+        status==="CANCELLED"?"neutral":
+        status==="REQUESTED"?"warning":"info"
+      }>{status}</StatusBadge>
+    </div>
+    <div className={styles.legacyMeetingMeta}>
+      <span>{dateLabel(meeting.startsAt)}</span>
+      <span>{meetingTimeLabel(meeting)}</span>
+      {(meeting.linkedSprintTitle||meeting.legacySprintLabel)?
+        <span>{"Sprint: "+(meeting.linkedSprintTitle||meeting.legacySprintLabel)}</span>:null}
+    </div>
+    <div className={styles.legacyMeetingActions}>
+      {safeJoin?<a href={safeJoin} target="_blank" rel="noopener noreferrer">
+        Join link</a>:null}
+      <Link href={"/mentor/projects/"+encodeURIComponent(meeting.projectId)+"?tab=team"}>
+        Open project
+      </Link>
+    </div>
+  </article>;
+}
+
 export function MentorMeetingsCalendar({
   meetings, initialNow,
 }: {meetings: readonly MentorMeetingCalendarItem[]; initialNow: string}) {
@@ -269,6 +309,35 @@ export function MentorMeetingsCalendar({
   });
 
   return <div className="prototype-mentor-meetings" aria-label="Mentor meetings calendar">
+    <div className={styles.legacyCalendar} aria-label="Meetings list">
+      <section className={styles.legacySection} aria-label="Upcoming meetings">
+        <h2 className={styles.legacySectionHeading}>
+          <svg aria-hidden="true" viewBox="0 0 24 24" width="18" height="18"
+            fill="none" stroke="currentColor" strokeWidth="1.8"
+            strokeLinecap="round" strokeLinejoin="round">
+            <rect x="3" y="5" width="18" height="16" rx="1"/>
+            <path d="M7 3v4M17 3v4M3 10h18"/>
+          </svg>
+          Upcoming ({upcoming.length})
+        </h2>
+        {upcoming.length?upcoming.map(item=>
+          <LegacyMeetingRow key={item.id} meeting={item} now={instant}/>):
+          <p className={styles.legacyEmpty}>No upcoming meetings.</p>}
+      </section>
+      <section className={styles.legacySection} aria-label="Past and cancelled meetings">
+        <h2 className={styles.legacySectionHeading}>Past &amp; Cancelled ({past.length})</h2>
+        {past.length?past.slice(0,expanded?past.length:PAST_PREVIEW).map(item=>
+          <LegacyMeetingRow key={item.id} meeting={item} now={instant}/>):
+          <p className={styles.legacyEmpty}>No past meetings yet.</p>}
+        {past.length>PAST_PREVIEW?<button type="button"
+          className={styles.legacyShowMore}
+          onClick={()=>setExpanded(value=>!value)}>
+          {expanded?"Show fewer":"Show all "+past.length+" past meetings"}
+        </button>:null}
+      </section>
+    </div>
+    <details className={styles.advancedCalendarTools}>
+      <summary>Meeting filters and calendar tools</summary>
     <div className="prototype-mentor-calendar-export">
       <span>All your active scheduled meetings · IST</span>
       <Button type="button" size="sm" variant="secondary"
@@ -349,5 +418,6 @@ export function MentorMeetingsCalendar({
         </> : <p className={styles.empty}>Select a meeting to see its details.</p>}
       </section>
     </div>
+    </details>
   </div>;
 }
