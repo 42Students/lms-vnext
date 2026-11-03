@@ -6,6 +6,7 @@ on:
       - ".github/workflows/mentor-calendar-visual-guard.yml"
       - "src/components/projects/mentor-meetings-calendar.module.css"
       - "src/components/projects/mentor-meetings-calendar.tsx"
+      - "src/app/(authenticated)/mentor/calendar/page.tsx"
       - "tests/mentor-meetings-calendar-grid-layout.test.mjs"
   workflow_dispatch:
 
@@ -21,5 +22,9 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: "22"
+      - name: Install dependencies
+        run: npm ci
+      - name: Strict application typecheck on updated Mentor JSX
+        run: npm run typecheck
       - name: Run meeting detail grid and preserved-controls regression
         run: node --test tests/mentor-meetings-calendar-grid-layout.test.mjs
