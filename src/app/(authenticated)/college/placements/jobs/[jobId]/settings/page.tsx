@@ -2,6 +2,7 @@ import Link from "next/link";
 import {ErrorState} from "@/components/ui/error-state";
 import {Tabs} from "@/components/ui/tabs";
 import {AuthorizationError} from "@/modules/permissions/policy";
+import {logError} from "@/observability/logger";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {hasMembershipRole} from "@/modules/identity/context";
 import {resolveOptionalModuleAccess} from "@/modules/module-access/service";
@@ -22,6 +23,16 @@ import { Disclosure } from "@/components/ui/disclosure";
 import { CollegeDriveSettingsDirtyGuard } from "@/components/placements/college-drive-settings-dirty-guard";
 import {listCollegeCompanyDirectory} from "@/modules/placements/college-company-directory-service";
 import {CollegeDraftCompanyPicker} from "@/components/placements/college-draft-company-picker";
+
+// Use a static route template: never put tenant/job IDs or filter values in
+// structured error metadata. Authorization failures must reach the role fence
+// instead of being misreported as a transient data-loading problem.
+function reportSettingsReadFailure(stage:string,error:unknown):void {
+  if(error instanceof AuthorizationError)throw error;
+  logError("college.drive_settings_read_failed",error,{
+    component:"page",route:"/college/placements/jobs/[jobId]/settings",stage,
+  });
+}
 
 export default async function CollegeDriveSettingsPage({
   params,searchParams,
@@ -55,7 +66,7 @@ export default async function CollegeDriveSettingsPage({
     getPlacementJob(context,jobId),
   ]);
   if(jobResult.status==="rejected"){
-    if(jobResult.reason instanceof AuthorizationError)throw jobResult.reason;
+    reportSettingsReadFailure("job",jobResult.reason);
     return <div className="min-w-0 space-y-4">
       <PageHeader title="Settings"/>
       <ErrorState title="Drive details could not be loaded"
@@ -63,8 +74,8 @@ export default async function CollegeDriveSettingsPage({
         action={<Link href={base+"/settings"} className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">Retry</Link>}/>
     </div>;
   }
-  if(overviewResult.status==="rejected"&&overviewResult.reason instanceof AuthorizationError)
-    throw overviewResult.reason;
+  if(overviewResult.status==="rejected")
+    reportSettingsReadFailure("overview",overviewResult.reason);
   const job=jobResult.value;
   const drive=overviewResult.status==="fulfilled"?overviewResult.value.drive:null;
   // Independent failures must not conceal the last saved drive details.
@@ -74,6 +85,10 @@ export default async function CollegeDriveSettingsPage({
     listPrograms(context,job.collegeId),
     listPlacementJobTypeChoices(context,job.collegeId),
   ]):null;
+  setupResults?.forEach((result,index)=>{
+    if(result.status==="rejected")
+      reportSettingsReadFailure(["eligibility_policy","programs","job_types"][index]??"draft_setup",result.reason);
+  });
   const eligibilityPolicy=setupResults?.[0]?.status==="fulfilled"?setupResults[0].value:null;
   const programs=setupResults?.[1]?.status==="fulfilled"?setupResults[1].value:[];
   const jobTypes=setupResults?.[2]?.status==="fulfilled"?setupResults[2].value:[];
@@ -81,6 +96,9 @@ export default async function CollegeDriveSettingsPage({
   const cohortResults=setupReady?await Promise.allSettled(
     programs.map(async program=>({program,cohorts:await listCohorts(context,program.id)})),
   ):null;
+  cohortResults?.forEach(result=>{
+    if(result.status==="rejected")reportSettingsReadFailure("cohorts",result.reason);
+  });
   const cohortGroups=cohortResults?.every(row=>row.status==="fulfilled")
     ?cohortResults.map(row=>row.status==="fulfilled"?row.value:null).filter(
        (row):row is {program:typeof programs[number];cohorts:Awaited<ReturnType<typeof listCohorts>>}=>row!==null)
@@ -90,6 +108,9 @@ export default async function CollegeDriveSettingsPage({
       .filter(cohort=>cohort.status!=="ARCHIVED")
       .map(async cohort=>({program,cohort,sections:await listSections(context,cohort.id)}))),
   ):null;
+  sectionResults?.forEach(result=>{
+    if(result.status==="rejected")reportSettingsReadFailure("sections",result.reason);
+  });
   const sectionGroups=sectionResults?.every(row=>row.status==="fulfilled")
     ?sectionResults.map(row=>row.status==="fulfilled"?row.value:null).filter(
        (row):row is {program:typeof programs[number];cohort:Awaited<ReturnType<typeof listCohorts>>[number];sections:Awaited<ReturnType<typeof listSections>>}=>row!==null)
@@ -99,7 +120,10 @@ export default async function CollegeDriveSettingsPage({
   const companyChoices=job.status==="DRAFT"
     ?await listCollegeCompanyDirectory(context,{
       q:"",page:1,pageSize:100,status:"ACTIVE",sort:"COMPANY",
-     }).catch(()=>null):null;
+     }).catch(error=>{
+       reportSettingsReadFailure("company_choices",error);
+       return null;
+     }):null;
   const applicationCount=overviewResult.status==="fulfilled"
     ?overviewResult.value.counts.applications:null;
   return <CollegeDriveSettingsDirtyGuard className="min-w-0 space-y-[var(--lms-space-4)]">
