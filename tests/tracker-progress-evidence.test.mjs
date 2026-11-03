@@ -15,12 +15,16 @@ test('all 81 database tasks have anchored, unique, stage-specific non-certifying
   assert.deepEqual(result.errors,[]);
   assert.equal(result.items.length,81);
   assert.equal(new Set(result.items.map(x=>x.id)).size,81);
-  assert.equal(result.measurements.accepted.equivalentTasks,doc.tasks.filter(t=>t.done).length);
+  assert.equal(result.measurements.accepted.equivalentTasks,doc.tasks.filter(t=>t.phase==='DATABASE'&&t.done).length);
   assert.equal(result.notPhaseReadiness,true);
   assert.equal(result.equalWeightPerTask,true);
-  assert.ok(result.measurements.discovery.percent>result.measurements.implementation.percent);
-  assert.ok(result.measurements.implementation.percent>result.measurements.verification.percent);
-  assert.ok(result.measurements.verification.percent>=result.measurements.accepted.percent);
+  // Accepted DB tasks now score 100% in every heuristic. That still does
+  // not certify the separate DATABASE global phase gate.
+  for(const metric of ['discovery','implementation','verification','accepted']){
+    assert.equal(result.measurements[metric].percent,100);
+    assert.equal(result.measurements[metric].equivalentTasks,81);
+  }
+  assert.equal(doc.execution.globalPhaseCertificates.DATABASE.certified,false);
   assert.ok(result.items.filter(x=>!x.done).every(x=>x.scores.implementation<1));
 });
 test('missing or duplicate progress rows are rejected without changing done state',()=>{
@@ -38,13 +42,17 @@ test('fake PostgreSQL or task acceptance labels fail closed',()=>{
   assert.ok(invalid(x,'UNSUPPORTED_POSTGRES_PROGRESS_CLAIM'));
   row.runs=[];
   assert.ok(invalid(x,'UNSUPPORTED_POSTGRES_PROGRESS_CLAIM'));
+  // Simulate an unfinished task declaring its own acceptance without
+  // executed proof. Only the canonical task DONE bit can authorize this label.
+  x.tasks.find(t=>t.id==='DB-019').done=false;
   row.verification='NOT_RUN';row.implementation='ACCEPTED_BY_CANONICAL_DONE';
   assert.ok(invalid(x,'PROGRESS_MUST_NOT_DECLARE_ACCEPTANCE'));
 });
 test('historical source notes never unlock phase acceptance',()=>{
   const x=copy(),r=inspectDatabaseProgress(x);
-  assert.ok(r.items.find(t=>t.id==='DB-020').scores.implementation<1);
-  assert.equal(r.measurements.accepted.equivalentTasks,x.tasks.filter(t=>t.done).length);
+  assert.equal(r.items.find(t=>t.id==='DB-020').scores.implementation,1);
+  assert.equal(r.items.find(t=>t.id==='DB-020').done,true);
+  assert.equal(r.measurements.accepted.equivalentTasks,x.tasks.filter(t=>t.phase==='DATABASE'&&t.done).length);
   assert.equal(inspectTracker(x).readyForNextPhase,false);
   assert.equal(x.execution.globalPhaseCertificates.DATABASE.certified,false);
 });
@@ -54,7 +62,7 @@ test('progress CLI displays all database tasks without exclusive ownership filte
   assert.match(p.stdout,/NON|NON_CERTIFYING|evidence-weighted heuristic/);
   assert.match(p.stdout,/DB-019/);
   assert.match(p.stdout,/DB-081/);
-  assert.ok(p.stdout.includes('accepted '+(100*doc.tasks.filter(t=>t.done).length/doc.tasks.length).toFixed(1)+'%'));
+  assert.ok(p.stdout.includes('accepted '+(100*doc.tasks.filter(t=>t.phase==='DATABASE'&&t.done).length/doc.tasks.length).toFixed(1)+'%'));
   const domains=spawnSync(process.execPath,[path.join(root,'scripts/tracker.mjs'),'--domains'],{encoding:'utf8'});
   assert.equal(domains.status,0,domains.stderr);
   assert.match(domains.stdout,/DATABASE DOMAIN PACKAGES/);

@@ -19,16 +19,19 @@ const accepted = (id, extras={}) => ({
   ...extras,
 });
 
-test('sole tracker validates exactly the original 81 tasks and the original core 11',()=>{
+test('sole tracker validates all 101 tasks, database 81 and the original core 11',()=>{
   const x=inspectTracker(actual);
   assert.deepEqual(x.errors,[]);
   const done = actual.tasks.filter(t => t.done).length;
   const coreDone = CORE_ELEVEN.filter(id => actual.tasks.find(t => t.id === id)?.done).length;
-  assert.deepEqual(x.counts,{total:81,done,notDone:81-done});
+  assert.deepEqual(x.counts,{total:101,done,notDone:101-done});
+  assert.equal(actual.tasks.filter(t=>t.phase==='DATABASE').length,81);
+  assert.equal(actual.tasks.filter(t=>t.phase==='API').length,10);
+  assert.equal(actual.tasks.filter(t=>t.phase==='UI').length,10);
   assert.deepEqual(x.core,{total:11,done:coreDone,notDone:11-coreDone});
   assert.deepEqual(x.coreRemaining.map(t => t.id),
     CORE_ELEVEN.filter(id => !actual.tasks.find(t => t.id === id)?.done));
-  assert.equal(x.activePhase,'DATABASE');
+  assert.equal(x.activePhase,'UI');
   assert.equal(x.readyForNextPhase,false);
 });
 test('each task exposes ONLY a binary completion status',()=>{
@@ -54,7 +57,8 @@ test('DB004 and DB005 engineering closures remain distinct from final release re
   const profile = actual.tasks.find(t=>t.id==='DB-007');
   assert.equal(profile.done,true);
   assert.ok(profile.acceptanceEvidence.some(e=>e.kind==='EXECUTED_REGISTERED_PG17_PRIVATE_PROFILE_AND_CONSUMER_SUITE' && e.result==='PASS'));
-  assert.equal(actual.tasks.find(t=>t.id==='DB-020').done,false);
+  assert.equal(actual.tasks.find(t=>t.id==='DB-020').done,true);
+  assert.equal(actual.execution.globalPhaseCertificates.DATABASE.certified,false);
   assert.ok(inspectTracker(actual).deferredRelease.some(t=>t.id==='DB-004'));
   assert.ok(inspectTracker(actual).deferredRelease.some(t=>t.id==='DB-005'));
   assert.equal(inspectTracker(actual).readyForNextPhase,false);
@@ -113,11 +117,15 @@ test('future phases cannot be silently unlocked from the tracker alone',()=>{
   const x=clone(actual); for(const p of PHASES) x.phaseGates[p]=['gate'];
   x.tasks.forEach(t=>{t.done=true; t.acceptedAt='2026-10-12T00:00:00Z';
     t.acceptanceEvidence=accepted(t.id).acceptanceEvidence;});
-  const report=inspectTracker(x);
-  // Closing the parent without closing all 33 scoped DB-019 packages is
-  // invalid even if every top-level task has fabricated acceptance receipts.
-  assert.ok(report.errors.some(e=>e.code==='DB19_PARENT_CLOSED_WITH_OPEN_PACKAGES'));
-  assert.equal(report.readyForNextPhase,false);
+  // All 33 packages are now completed. Reopen one package only in this
+  // adversarial fixture: a still-closed parent must fail closed even when its
+  // top-level task carries fabricated acceptance receipts.
+  const db19=x.tasks.find(t=>t.id==='DB-019');
+  assert.equal(db19.workPlan.packages.length,33);
+  db19.workPlan.packages.find(p=>p.id==='DB19-P30').done=false;
+  const broken=inspectTracker(x);
+  assert.ok(broken.errors.some(e=>e.code==='DB19_PARENT_CLOSED_WITH_OPEN_PACKAGES'));
+  assert.equal(broken.readyForNextPhase,false);
 });
 test('the CLI reads one tracker and no legacy work queue or lane files',()=>{
   const dir=fs.mkdtempSync(path.join(os.tmpdir(),'lms-tracker-'));

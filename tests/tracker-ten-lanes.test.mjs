@@ -20,7 +20,7 @@ test('one execution JSON covers all 81 database tasks with informational domains
   assert.deepEqual(groups.duplicates,[]);
   assert.deepEqual(groups.unknown,[]);
   assert.equal(groups.packages.reduce((n,x)=>n+x.total,0),81);
-  assert.equal(groups.packages.reduce((n,x)=>n+x.done,0),doc.tasks.filter(t=>t.done).length);
+  assert.equal(groups.packages.reduce((n,x)=>n+x.done,0),doc.tasks.filter(t=>t.phase==='DATABASE'&&t.done).length);
   assert.deepEqual(inspectTracker(doc).errors,[]);
 });
 
@@ -82,7 +82,7 @@ test('all five global phases live in one plan in exact gate order',()=>{
     assert.equal(e.globalPhases[i].gateCertified,false);
   }
   assert.equal(e.globalPhases[0].total,81);
-  assert.equal(e.globalPhases[0].accepted,doc.tasks.filter(t=>t.done).length);
+  assert.equal(e.globalPhases[0].accepted,doc.tasks.filter(t=>t.phase==='DATABASE'&&t.done).length);
   assert.deepEqual(inspectTracker(doc).errors,[]);
 });
 
