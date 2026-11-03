@@ -17,12 +17,14 @@ test.describe("Legacy Learner All Assignments visual candidate", () => {
       await expect(page.getByRole("heading",{level:1,name:"All Assignments"})).toBeVisible();
       const list=page.getByRole("region",{name:"Assignment list"});
       const empty=page.getByRole("heading",{name:"No assignments yet"});
-      const hasList=await list.isVisible().catch(()=>false);
+      // Empty illustration also owns the accessible Assignment list region;
+      // require real article rows before asserting populated-only controls.
+      const populated=(await list.locator("article").count())>0;
       const hasEmpty=await empty.isVisible().catch(()=>false);
-      expect(hasList||hasEmpty,"Real data must render assignments or the legacy empty state").toBe(true);
+      expect(populated||hasEmpty,"Real data must render assignments or the legacy empty state").toBe(true);
       await expect(page.locator("details").filter({
         has:page.locator("summary").getByText("More assignment filters"),
-      })).toHaveCount(hasList?1:0);
+      })).toHaveCount(populated?1:0);
       const snapshot=await page.evaluate(async()=>{
         await document.fonts.ready;
         await new Promise<void>(resolve=>requestAnimationFrame(()=>resolve()));
