@@ -4,6 +4,9 @@ import { Alert } from "@/components/ui/alert";
 import { EmptyState } from "@/components/ui/empty-state";
 import { Select } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
+import {Textarea} from "@/components/ui/textarea";
+import {ConfirmDialog} from "@/components/ui/confirm-dialog";
+import {useConfirmFlow} from "@/components/ui/use-confirm-flow";
 import { BoardColumn } from "@/components/ui/board-column";
 import styles from "./legacy-project-board.module.css";
 import {useEffect,useState} from "react";
@@ -24,10 +27,13 @@ export function LearnerBoardInteractive({projectId,initialTasks,filters,sprints,
  sprints:Sprint[];membershipId:string|null;readOnly?:boolean;
 }){
  const router=useRouter();
+ const {askConfirm,dialog}=useConfirmFlow();
  const [tasks,setTasks]=useState(initialTasks),[busy,setBusy]=useState(false),[error,setError]=useState(""),[notice,setNotice]=useState("");
  const [undo,setUndo]=useState<{taskId:string;status:EditableStatus;blockerReason:string|null}|null>(null);
  const [prevInitialTasks,setPrevInitialTasks]=useState(initialTasks);
  const [dragging,setDragging]=useState(false);
+ const [blockedTarget,setBlockedTarget]=useState<{taskId:string;title:string}|null>(null);
+ const [blockerDraft,setBlockerDraft]=useState("");
  if(prevInitialTasks!==initialTasks){setPrevInitialTasks(initialTasks);setTasks(initialTasks);}
  useEffect(()=>{
   if(!undo)return;
@@ -43,7 +49,9 @@ export function LearnerBoardInteractive({projectId,initialTasks,filters,sprints,
     !canLearnerMoveOwnTask(task.status,next))return;
   let note=restoreNote??null;
   if(next==="BLOCKED"&&!note){
-   note=window.prompt("What is blocking this task?",task.blockerReason??"");
+   setBlockerDraft(task.blockerReason??"");
+   setBlockedTarget({taskId,title:task.title});
+   return;
   }
   if(next==="BLOCKED"&&(!note||note.trim().length<3||note.trim().length>2000)){
    setError("Describe the blocker in 3 to 2,000 characters, then try again.");
@@ -66,8 +74,8 @@ export function LearnerBoardInteractive({projectId,initialTasks,filters,sprints,
   finally{setBusy(false);}
  }
  async function pull(task:Task,sprintId:string){
-  if(busy||readOnly||!membershipId||task.assigneeMembershipId!==membershipId||task.sprintId!==null||
-    !window.confirm('Pull "'+task.title+'" into the active sprint?'))return;
+  if(busy||readOnly||!membershipId||task.assigneeMembershipId!==membershipId||task.sprintId!==null)return;
+  if(!(await askConfirm('Pull "'+task.title+'" into the active sprint?'))||busy)return;
   setBusy(true);setError("");
   try{
    const response=await fetch("/api/projects/"+encodeURIComponent(projectId)+"/backlog/pull",{
@@ -156,5 +164,25 @@ export function LearnerBoardInteractive({projectId,initialTasks,filters,sprints,
      </ul>
     </BoardColumn>)}</div>
   </div>
+  {dialog}
+  <ConfirmDialog open={blockedTarget!==null}
+   onOpenChange={open=>{if(!open&&!busy)setBlockedTarget(null);}}
+   title={"What is blocking "+(blockedTarget?.title??"this task")+"?"}
+   description="Describe the blocker before changing the task status."
+   confirmLabel="Mark blocked" pending={busy}
+   confirmDisabled={blockerDraft.trim().length<3||blockerDraft.trim().length>2000}
+   onConfirm={()=>{
+    if(!blockedTarget||busy)return;
+    const targetId=blockedTarget.taskId;
+    const note=blockerDraft.trim();
+    setBlockedTarget(null);
+    void move(targetId,"BLOCKED",note);
+   }}>
+   <label className="block text-sm font-semibold">
+    Blocker reason
+    <Textarea value={blockerDraft} onChange={event=>setBlockerDraft(event.target.value)}
+     maxLength={2000} required rows={4} className="mt-2 w-full" />
+   </label>
+  </ConfirmDialog>
  </section>;
 }
