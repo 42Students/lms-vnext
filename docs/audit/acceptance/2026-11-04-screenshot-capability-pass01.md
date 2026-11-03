@@ -55,7 +55,7 @@ Do **not** create 16 new tasks based on the unpaired files. Add a missing featur
 1. `src/app/(authenticated)/learn/allAssignments/page.tsx`: replace the fixed `?retry=1` link, which could become inert once already on that URL, with `CurrentPageRetry` (`router.refresh`) without altering selected route filters; log backend load failure but **never** swallow authorization/service errors.
 2. `src/app/(authenticated)/tpo/announcements/page.tsx`: attribute failed notice list, unread and audience-target reads using the shared route-safe logger; keep permission denials fail-closed; replace link-based retry with real refresh.
 3. `src/app/(authenticated)/tpo/audit/page.tsx`: add route-tagged read failure logging while preserving the existing scoped stale-snapshot/Retry and authorization exception behavior.
-4. `tests/unit/screenshot-capability-pilot-20261104.test.ts`: 15 tests, including actual pure-model logic for bounded pagination, status filter vocabulary, safe link parsing and error-code allowlisting, alongside source-only discovery guards for the other candidate controls. Authored tests are **not executed tests**, and source checks cannot validate UI/API mutations.
+4. `tests/unit/screenshot-capability-pilot-20261104.test.ts`: 15 Vitest checks plus five standalone Node fixture checks, including actual pure-model logic for bounded pagination, status filter vocabulary, safe link parsing and error-code allowlisting, alongside source-only discovery guards for the other candidate controls. Authored tests are **not executed tests**, and source checks cannot validate UI/API mutations.
 
 ### Numbers and confidence
 
@@ -74,6 +74,9 @@ Run at an exact commit in an approved test runner (not claimed here):
 ```bash
 npm run typecheck
 npx vitest run tests/unit/screenshot-capability-pilot-20261104.test.ts tests/unit/page-read-failure.test.ts
+npm run test:parity:screenshot
+# On a separate detached checkout of origin/parity-baseline:
+npm run parity:screenshot:census -- --baseline ../lms-parity-baseline
 npm run parity:status
 npm run parity:pages
 npm run parity:clone-gate
