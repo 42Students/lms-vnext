@@ -1134,4 +1134,40 @@ describe("DB03 bounded group rule refresh (PostgreSQL)", () => {
     const third=await refreshGroupRule(admin,group);
     expect(third).toMatchObject({added:0,removed:0,active:1});
   });
+
+  it("DB03 issue 214 refuses invalid years on direct slot INSERT/UPDATE and keeps canonical labels", async () => {
+    const {slotId,programId,periodId} = await createElectiveFixture();
+    for(const bad of ["1800-01","9999-00","2024-29","2024-2029","2024/25","not-a-year"]){
+      await expect(pool.query("UPDATE elective_slots SET academic_year=$1 WHERE id=$2",[bad,slotId]))
+        .rejects.toMatchObject({code:"23514"});
+      const persisted=await pool.query("SELECT academic_year FROM elective_slots WHERE id=$1",[slotId]);
+      expect(persisted.rows[0].academic_year).toBeNull();
+    }
+    // Database-level direct INSERT also fails, not merely learner admissions.
+    await expect(pool.query(
+      "INSERT INTO elective_slots (college_id,program_id,academic_period_id,semester_number,name,academic_year) VALUES ($1,$2,$3,1,'Invalid year direct insert',$4)",
+      [SEED_IDS.collegeA,programId,periodId,"1800-01"],
+    )).rejects.toMatchObject({code:"23514"});
+    for(const good of ["2024","2024-25","2024-2025","9998-99",null]){
+      await pool.query("UPDATE elective_slots SET academic_year=$1 WHERE id=$2",[good,slotId]);
+      const persisted=await pool.query("SELECT academic_year FROM elective_slots WHERE id=$1",[slotId]);
+      expect(persisted.rows[0].academic_year).toBe(good);
+    }
+  });
+
+  it("DB03 issue 214 fences direct cross-college reparenting of active elective source courses",async()=>{
+    const {slotId}=await createElectiveFixture();
+    const courseId=fixture.courses[0];
+    await expect(pool.query("UPDATE courses SET department_id=$1 WHERE id=$2",
+      [SEED_IDS.departmentB,courseId])).rejects.toMatchObject({code:"23514"});
+    await expect(pool.query("UPDATE departments SET college_id=$1 WHERE id=$2",
+      [SEED_IDS.collegeB,SEED_IDS.departmentA])).rejects.toMatchObject({code:"23514"});
+    const ownCourse=await pool.query("SELECT department_id FROM courses WHERE id=$1",[courseId]);
+    expect(ownCourse.rows[0].department_id).toBe(SEED_IDS.departmentA);
+    const owner=await pool.query("SELECT college_id FROM elective_slots WHERE id=$1",[slotId]);
+    expect(owner.rows[0].college_id).toBe(SEED_IDS.collegeA);
+    const functionDef=await pool.query(
+      "SELECT pg_get_functiondef('db03_guard_elective_offering_program()'::regprocedure) AS definition");
+    expect(functionDef.rows[0].definition).toContain("source_college IS DISTINCT FROM slot_college");
+  });
 });
