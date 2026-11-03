@@ -1,0 +1,49 @@
+name: Build images
+
+on:
+  workflow_dispatch:
+    inputs:
+      ref:
+        description: Branch or commit SHA to build
+        default: main
+        required: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.inputs.ref || 'main' }}
+
+      - name: Set short SHA
+        run: echo "SHA=$(git rev-parse --short HEAD)" >> $GITHUB_ENV
+
+      - name: Build migrator image
+        run: |
+          docker build --target migrator \
+            -t lms-vnext/migrator:${{ env.SHA }} .
+
+      - name: Build web image
+        run: |
+          docker build --target runner \
+            -t lms-vnext/web:${{ env.SHA }} .
+
+      - name: Save images as tarballs
+        run: |
+          docker save lms-vnext/migrator:${{ env.SHA }} | gzip > migrator.tar.gz
+          docker save lms-vnext/web:${{ env.SHA }}      | gzip > web.tar.gz
+          echo "${{ env.SHA }}" > sha.txt
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: docker-images-${{ env.SHA }}
+          path: |
+            migrator.tar.gz
+            web.tar.gz
+            sha.txt
+          retention-days: 7
