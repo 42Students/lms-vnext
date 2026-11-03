@@ -1,5 +1,21 @@
 # LMS vNext engineering rules
 
+## CURRENT OWNER DIRECTION — 2026-11-03: 100% required capabilities, NOT pixel clone
+
+**Mandatory for every chat, coding task, audit and reviewer from now on.** Read [docs/planning/legacy-capability-parity-standard.md](docs/planning/legacy-capability-parity-standard.md) before any old LMS → vNext UI task.
+
+**North star:** no required old-LMS page surface, section, tab, control, modal, filter, status or real user job may be missing or broken in vNext. Use pinned old FE + BE code as the completeness/behavior oracle; use all 3,169 reference images and 783 packages from the separate `parity-baseline` branch as **discovery evidence**, not 783 pixel acceptance obligations. Preserve better vNext UX, accessibility, working functionality and modern UI architecture.
+
+- **Stop pixel-perfect work immediately:** exact typography, sidebar dimensions, colors, CSS coordinates, pixel-difference thresholds, old card density and screenshot similarity are **not required UI parity gates**. Older pixel-clone master plans/checklists are superseded, including any previous instruction to reproduce the old shell to the pixel. Do not implement, prolong or reject a working feature solely to reduce image-diff percentage.
+- **Preserve everything the old LMS can actually do:** trace FE affordance/handler → BE/API/service → permission/tenant/side effect → corresponding vNext workflow and its UI states. Screenshots miss conditional and post-submit states; audit source too. A better-looking vNext screen with missing actions is not parity, and a different-looking screen with complete verified actions can be parity.
+- **Keep correctness gates:** account matrix, detailed `docs/parity/*.md`, family verification, exact old FE/BE SHAs and current vNext SHA, negative auth/tenant tests, browser/mobile usability, producer→consumer and `npm run parity:clone-gate`. Those are **functional** gates, not color/geometry checks.
+- **Closure first:** select the smallest concrete missing or broken user job with executable evidence; implement the whole UI→API→outcome slice, update existing ledgers (never create another tracker), test, close and move to the next open item. If only appearance differs, mark visual-polish-later and move on.
+- **Existing work:** keep the 3,169 screenshots, the merged image-diff tooling and prior evidence. Re-evaluate old-style UI changes for discoverability and regressions; do not delete working vNext capabilities or force-hide them merely to mirror an old screenshot. Distinct future UX polish is allowed after coverage.
+- **Numbers:** distinguish packages/images from source-backed required actions and VERIFIED actions. No fabricated percentages or “pixel-certified” required count.
+
+This section overrides contradictory historical visual-clone rules in older design docs. It does **not** relax security, data, authorization, runtime, API or release requirements.
+
+
 ## Single authoritative plan — open contribution, 31 October 2026
 
 **Read [docs/tracker.json](docs/tracker.json) first.** Its `execution` section is the sole live roadmap and the 81-task database acceptance tracker. **No worker lanes, claims, exclusive domain ownership, or permission-to-edit handoffs exist.** Domain packages in the tracker are informational categories; anyone may take any OPEN task. Historical lane/coordination documents are archival evidence only and confer no authority.
@@ -9,7 +25,7 @@
 - **Parallel progress without clobbering:** always fetch the latest `main` before editing. Coordinate direct same-file overlaps and serially integrate changes to numbered migrations, journal, snapshots and shared schema barrels. Use a fresh blob SHA or expected-head lease, reconcile conflicts, and never force-overwrite another contributor's changes.
 - **Original scope still controls acceptance:** live persistence/runtime tasks require executed exact-SHA registered PostgreSQL replay, relevant tenant/permission/privacy/FK/state/race tests and real producer/consumer behavior. A staging/disposition-only task can close after actual scoped tests only when named downstream integration tasks remain OPEN with explicit boundaries. Unexecuted CI, authored tests and staging-only passes are not production proof.
 - **Cohesive batches:** prioritize the smallest correct code+test batch that can be accepted, not another inventory round. After two useful passes without acceptance, record an exact blocker and switch to an independent OPEN task.
-- **Global phase gates:** DATABASE → API/user jobs → UI Implementation Green → DESIGN Green → RELEASE. Partial domain work in later phases is allowed but does not certify them. The approved product is greenfield; do not introduce old-LMS production-data migration.
+- **Global phase gates:** DATABASE → API/user jobs → UI **feature and user-job completeness** → RELEASE, as represented in `docs/tracker.json`. Optional later UX/visual polish is a separate improvement phase, not a blocker for functional parity. Partial domain work in later phases is allowed but does not certify them. The approved product is greenfield; do not introduce old-LMS production-data migration.
 
 ## Mandatory closure-first loop
 
@@ -75,7 +91,7 @@ During clone parity, never silently change user-visible legacy behavior merely b
 - Use semantic LMS tokens instead of raw Tailwind zinc/slate/blue palettes for product UI.
 - Never accept shadcn default colors as a substitute for the LMS brand palette.
 - Do not introduce a new raw UI color without a concrete semantic need and a documented parity decision.
-- Treat palette mismatch as an implementation defect in the same batch, not later polish.
+- Keep brand tokens and UI quality coherent; a different pixel/color from the old screenshots is **not** a missing-feature defect. Fix contrast/accessibility/meaningful state colors as usability defects; defer cosmetic pixel matching.
 
 
 ## Greenfield data rule

@@ -4,6 +4,9 @@
 
 This protocol is a release gate. It sits above the account matrix, route manifest, detailed page specs, and account ledgers.
 
+> **Owner direction updated 2026-11-03:** This is now the **Capability & UI-Surface Parity Protocol**. Read [legacy-capability-parity-standard.md](legacy-capability-parity-standard.md). “Clone” here means **all legitimate user-facing capabilities, states, jobs, security constraints and outcomes**, not cloned appearance. A clearly accessible and functional redesigned interface is acceptable even when its screenshot looks different. Exact pixel-diff, font, spacing, colors, shell geometry, animations and old-layout fidelity are **not release or account-parity gates**. The old screenshots remain vital discovery evidence for missing sections/actions; code/API/workflow is the behavior oracle.
+
+
 ## 1. Product oracle
 
 During clone parity, the current production branches are the oracle:
@@ -122,27 +125,25 @@ If either legacy SHA changed:
 
 Global final sign-off is forbidden while any family is `STALE`, `UNVERIFIED`, `IN_PROGRESS`, or `BLOCKED`.
 
-## 6. Browser and visual gate
+## 6. Browser, capability and usability gate
 
-Source comparison is necessary but not sufficient for user-visible parity.
+**Source comparison is necessary but not sufficient.** Browser testing must prove that required actions can be reached and performed correctly in vNext's own UI, regardless of visual resemblance to old screenshots.
 
 Every daily-use family must be checked at minimum at:
 - desktop: 1366×768 or equivalent common laptop viewport;
 - mobile: ~390×844;
-- any breakpoint where legacy changes workflow materially.
+- any breakpoint where a material user job changes.
 
 Browser verification covers:
-- navigation and Back/Forward;
-- focus/keyboard/escape for overlays;
-- scroll restoration/deep-link focus;
-- responsive reflow/overflow;
-- loading→ready transitions;
-- empty/error/retry;
-- modal/drawer positioning and dismissal;
-- browser-local timezone/date behavior;
-- file/open/download flows where configured.
+- legacy-required sections, controls, modals, drawers and actions present **or discoverably relocated** into vNext;
+- full authorized workflows (view/filter/create/update/delete/submit/approve/export/download where applicable), not decorative buttons;
+- navigation and Back/Forward, focus/keyboard/escape for overlays;
+- responsive reflow/overflow and no inaccessible or hidden required controls;
+- loading→ready, empty/error/retry, and permission-denied states;
+- browser-local timezone/date, file/open/download, deep link/session behavior;
+- actual correct API/persistence/audit/notification effects and negative tenant/role tests.
 
-For high-value pages, capture side-by-side screenshots or equivalent visual evidence before final family verification.
+Screenshots and side-by-side comparison can reveal missing elements, clipped actions or state gaps. **A pixel ratio is not a pass/fail threshold.** A working vNext interface may retain better structure, clearer filters, mobile controls and accessibility. Do not create a legacy-style CSS reimplementation just to lower diff ratio.
 
 ## 7. Cross-role workflow gate
 
@@ -182,8 +183,8 @@ A REDESIGNED row must state:
 - exact legacy behavior;
 - exact new behavior;
 - why the same user job/outcome is preserved;
-- whether the change is user-visible;
-- approval/decision reference when user-visible behavior changes.
+- whether the change changes **what the user can do, the meaning or resulting state**;
+- approval/decision reference for changed or removed legitimate functionality, not cosmetic layout changes.
 
 `RETIRED` is allowed only for proven redirect/framework/test/artifact surfaces or an explicitly approved product removal.
 
@@ -203,7 +204,7 @@ A stale manifest blocks release.
 
 ## 11. Required final gates
 
-LMS vNext cannot be called an as-is replacement until all are true:
+LMS vNext cannot be called a **capability-complete, functionally equivalent replacement** until all are true:
 
 - current route manifest matches frozen cutover oracle;
 - master matrix has zero PARTIAL/MISSING/VERIFY/BLOCKED rows;
