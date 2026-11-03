@@ -31,7 +31,7 @@ export async function getCollegeApplicationRetentionReport(
   lt(sql<Date>`coalesce(${placementApplicationScreenings.updatedAt},${placementApplications.updatedAt})`,cutoff));
  const from=db.select({id:placementApplications.id,jobTitle:placementJobs.title,
   learner:users.displayName,status:placementApplications.status,
-  screening:placementApplicationScreenings.status,
+  screening:sql<(typeof placementApplicationScreenings.$inferSelect)["status"]|null>`${placementApplicationScreenings.status}`.as("screening_status"),
   lastChange:sql<Date>`greatest(${placementApplications.updatedAt},
     coalesce(${placementApplicationScreenings.updatedAt},${placementApplications.updatedAt}))`.as("last_change")
  }).from(placementApplications)

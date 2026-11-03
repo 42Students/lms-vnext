@@ -84,7 +84,7 @@ export async function getTpoNonApplicantReminderPreview(context:RequestContext,r
  const recipients=await getDb().transaction(async tx=>{
   await requireTpoJobActor(tx,context);
   return candidateAudience(tx,context,job);
- },{accessMode:"read only"});
+ });
  const disabledReason=past?"This drive was reminded within the past 20 hours.":
   recipients.length===0?"No registered eligible students are awaiting an application.":null;
  return {jobId:job.id,day,count:recipients.length,allowed:true,alreadySent:Boolean(past),
@@ -149,7 +149,7 @@ export async function listTpoEligibleNonApplicants(
  const all=await getDb().transaction(async tx=>{
   await requireTpoJobActor(tx,context);
   return candidateAudience(tx,context,job);
- },{accessMode:"read only"});
+ });
  const selectedUsers=all.slice((page-1)*25,page*25);
  const learners=selectedUsers.length?await getDb().select({
   membershipId:collegeMemberships.id,userId:collegeMemberships.userId,

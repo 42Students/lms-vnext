@@ -49,7 +49,7 @@ export async function getTpoApplicantPipeline(context: RequestContext, raw: unkn
   const oldFacets=oldFacetsSchema.parse(oldRaw);
   await requirePlacementManageScope(context,collegeId);
   const db=getDb();
-  await db.transaction(async(tx)=>{await requireTpoJobActor(tx,context);},{accessMode:"read only"});
+  await db.transaction(async(tx)=>{await requireTpoJobActor(tx,context);});
   const [job]=await db.select({id:placementJobs.id,title:placementJobs.title,status:placementJobs.status})
     .from(placementJobs)
     // Historical placements remain readable after a drive is archived.
