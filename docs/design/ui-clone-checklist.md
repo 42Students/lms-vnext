@@ -1,3 +1,7 @@
+> **ARCHIVED VISUAL CLONE PLAN — SUPERSEDED 2026-11-03.** Do **not** execute the pixel-exact “strict tick” or exclusive owner-lane instructions below. The user changed the vNext objective to **complete legacy user jobs, controls, modals, states, permissions and cross-role workflows**, with freedom to improve UI/UX. Use [the active capability parity standard](../planning/legacy-capability-parity-standard.md), [the release protocol](../planning/clone-parity-protocol.md), existing account ledgers and `docs/tracker.json`. The historical checklist remains useful as an inventory of possible controls to inspect—not as a visual acceptance contract. Do not recreate old colors, font metrics or layout solely to tick a box; keep any working vNext improvements. Exact screenshots/pixel ratios are optional diagnostics.
+
+---
+
 # UI clone checklist: vNext must look like a new module inside the old LMS
 
 Owner goal (2026-10-19): stakeholders must not be able to tell vNext from the old LMS. Page CONTENTS (sections, wording, behaviour) stay as in vNext; EVERYTHING visual around and inside them must be a pixel-level clone. Source of truth: `docs/design/legacy-styles/` (old LMS SCSS), `old-lms-shell.css`, `old-lms-shell-spec.md`, `old-lms-pages.md`. When a value is not covered, read the SCSS and copy it; never guess.
