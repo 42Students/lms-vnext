@@ -3,12 +3,11 @@ import { join } from "node:path";
 import { describe, expect, it } from "vitest";
 import { retainSelectedMembershipRole } from "@/modules/permissions/persisted-actor";
 import { can } from "@/modules/permissions/policy";
-import type { RequestContext } from "@/modules/identity/context";
+import type { ActiveMembership, RequestContext } from "@/modules/identity/context";
 
 describe("persisted actor: one active role, not all stored roles", () => {
   const resource = { collegeId: "college-a", organizationId: "org-a" };
-  const contextFor = (roles: RequestContext["membership"] extends infer M
-    ? NonNullable<M>["roles"] : never): RequestContext => ({
+  const contextFor = (roles: ActiveMembership["roles"]): RequestContext => ({
     user: {
       id: "user-a",
       identityUid: "identity-a",
@@ -58,7 +57,7 @@ describe("account-bound auth cookies", () => {
 
   it("clears the previous person's selected role on successful login", () => {
     const source = read("src/app/api/auth/login/verify/route.ts");
-    expect(source).toMatch(/response\\.cookies\\.set\\(ROLE_COOKIE_NAME,\\s*"",\\s*\\{/);
+    expect(source).toContain('response.cookies.set(ROLE_COOKIE_NAME, "", {');
   });
 
   it("clears the role alongside the device session and membership on logout", () => {
