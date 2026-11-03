@@ -1,5 +1,7 @@
 # LMS vNext — Detailed Page Parity Specs
 
+> **Screenshot capability discovery, 2026-11-04:** [Pass 01 evidence](../audit/acceptance/2026-11-04-screenshot-capability-pass01.md) source-triages the first 24 `parity-baseline` package manifests across 12 page families, with no claim of image/browser acceptance or additional CLOSED rows. `npm run parity:screenshot:census -- --baseline ../lms-parity-baseline` builds a **read-only** package/route capture census for all packages in a detached screenshot worktree; it identifies *review candidates*, **never missing features by itself**. `npm run test:parity:screenshot` runs its fixture tests. Read the canonical [Capability & UI-Surface Parity Standard](../planning/legacy-capability-parity-standard.md); pixel similarity is not an acceptance gate.
+
 > **Closure-first for every UI/account chat:** The single live execution authority
 > is `docs/tracker.json.execution.closureFirstProtocol`, not an open-ended
 > re-audit of already accepted pages. Read `AGENTS.md`; run
