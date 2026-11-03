@@ -63,7 +63,7 @@ test.describe("Legacy Learner All Assignments visual candidate", () => {
         return;
       }
       await expect(details).not.toHaveAttribute("open");
-      const summary=details.locator("summary");
+      const summary=details.locator(":scope > summary");
       await summary.press("Enter");
       await expect(details).toHaveAttribute("open");
       await expect(page.getByText("Assignment quick views:")).toBeVisible();
