@@ -8,6 +8,7 @@ on:
     paths:
       - "src/app/api/internal/operations/notification-scheduler/route.ts"
       - "src/app/api/internal/storage/scan-verdict/route.ts"
+      - "src/modules/storage/scan-verdict-request-guard.ts"
       - "tests/unit/security-machine-only-scheduler-and-scanner.test.ts"
       - "tests/unit/api-origin-guard.test.ts"
       - ".github/workflows/security-machine-workers.yml"
@@ -16,6 +17,7 @@ on:
     paths:
       - "src/app/api/internal/operations/notification-scheduler/route.ts"
       - "src/app/api/internal/storage/scan-verdict/route.ts"
+      - "src/modules/storage/scan-verdict-request-guard.ts"
       - "tests/unit/security-machine-only-scheduler-and-scanner.test.ts"
       - "tests/unit/api-origin-guard.test.ts"
       - ".github/workflows/security-machine-workers.yml"
