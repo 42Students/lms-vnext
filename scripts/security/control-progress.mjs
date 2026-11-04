@@ -96,9 +96,11 @@ export function inspectSecurityProgress(doc,catalogue=readCatalogue()){
         fail(errors,"SECURITY_UNASSESSED_HAS_CLAIMS",id);
     }else{
       if(!Array.isArray(item.evidence)||!item.evidence.length||
-         item.evidence.some(e=>!e||!SHA.test(e.commitSha??"")||
-           !RUN_URL.test(e.runUrl??"")||!valid(e.scope)||
-           e.type!=="EXECUTED_SCOPED_TEST"))
+         item.evidence.some(e=>!e||!SHA.test(e.commitSha??"")||!valid(e.scope)||
+           !((e.type==="EXECUTED_SCOPED_TEST"&&RUN_URL.test(e.runUrl??""))||
+             (e.type==="REPOSITORY_CONFIG_OBSERVED"&&
+              e.sourceUrl==="https://api.github.com/repos/42Students/lms-vnext/branches/main"&&
+              item.state==="GAP_CONFIRMED"))))
         fail(errors,"SECURITY_EVIDENCE_INVALID",id);
       if(!valid(item.assessedAt)||!/^\d{4}-\d{2}-\d{2}$/.test(item.assessedAt))
         fail(errors,"SECURITY_REVIEW_DATE_REQUIRED",id);
