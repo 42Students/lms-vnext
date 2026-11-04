@@ -66,7 +66,7 @@ export async function POST(request: Request) {
     // Provisioning any new membership grants live access to college resources.
     // Always require a fresh OTP-authenticated device session, not only for
     // privileged ADMIN/TPO additions.
-    await requireRecentDeviceAuthentication();
+    await requireRecentDeviceAuthentication(context.user.id);
     // Membership, role grant and optional faculty department/profile now
     // commit together. Never return an active partially registered teacher.
     const person = await onboardPersonWithRuntime(context, body, facultyProfile);
