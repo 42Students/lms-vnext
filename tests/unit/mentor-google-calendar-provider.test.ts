@@ -1,5 +1,6 @@
 import {describe,expect,it,vi} from "vitest";
-import {mentorGoogleConfig,mentorGoogleConsentUrl,
+import {mentorGoogleConfig,mentorGoogleConsentUrl,mentorGooglePkceChallenge,
+ mentorGoogleExchangeCode,
  mentorGoogleEventBody,mentorGoogleUpsertMeeting,mentorGoogleRemoveMeeting,
  mentorGoogleEventId,mentorGoogleRefreshToken,mentorGoogleVerifyCalendarAccess}
  from "@/modules/projects/mentor-google-calendar-provider";
@@ -16,12 +17,38 @@ describe("Mentor Google Calendar real-provider bridge",()=>{
   expect(mentorGoogleConfig({MENTOR_GOOGLE_CLIENT_ID:config.clientId,
    MENTOR_GOOGLE_CLIENT_SECRET:config.clientSecret,
    MENTOR_GOOGLE_REDIRECT_URI:"http://attacker.example/callback"})).toBeNull();
-  const url=new URL(mentorGoogleConsentUrl(config,"x".repeat(64)));
+  const verifier="dBjftJeZ4CVP-mB92K27uhbUJU1p1r_wW1gFWFOEjXk";
+  const challenge=mentorGooglePkceChallenge(verifier);
+  expect(challenge).toBe("E9Melhoa2OwvFrEMTJguCHaoeK1t8URWbuGJSstw-cM");
+  const url=new URL(mentorGoogleConsentUrl(config,"x".repeat(64),challenge));
+  expect(url.searchParams.get("code_challenge")).toBe(challenge);
+  expect(url.searchParams.get("code_challenge_method")).toBe("S256");
   expect(url.origin).toBe("https://accounts.google.com");
   expect(url.searchParams.get("scope")).toBe(
    "https://www.googleapis.com/auth/calendar.events");
   expect(url.searchParams.get("access_type")).toBe("offline");
-  expect(()=>mentorGoogleConsentUrl(config,"unverified")).toThrow();
+  expect(()=>mentorGoogleConsentUrl(config,"unverified",challenge)).toThrow();
+  expect(()=>mentorGoogleConsentUrl(config,"x".repeat(64),"malformed")).toThrow();
+  expect(()=>mentorGooglePkceChallenge("short")).toThrow("GOOGLE_CALENDAR_PKCE_INVALID");
+ });
+ it("requires a PKCE verifier during code exchange and sends it only to Google",async()=>{
+  const verifier="dBjftJeZ4CVP-mB92K27uhbUJU1p1r_wW1gFWFOEjXk";
+  const fetcher=vi.fn(async()=>new Response(JSON.stringify({
+   access_token:"mock-oauth-access",refresh_token:"mock-refresh",
+   expires_in:3600,token_type:"Bearer",
+  }),{status:200,headers:{"Content-Type":"application/json"}}));
+  await expect(mentorGoogleExchangeCode(config,"valid-auth-code",verifier,
+    fetcher as typeof fetch)).resolves.toMatchObject({refreshToken:"mock-refresh"});
+  expect(fetcher).toHaveBeenCalledTimes(1);
+  const [endpoint,request]=fetcher.mock.calls[0] as unknown as [string,RequestInit];
+  expect(endpoint).toBe("https://oauth2.googleapis.com/token");
+  const body=new URLSearchParams(String(request.body));
+  expect(body.get("code_verifier")).toBe(verifier);
+  expect(body.get("grant_type")).toBe("authorization_code");
+  expect(request.redirect).toBe("error");
+  await expect(mentorGoogleExchangeCode(config,"valid-auth-code","missing",
+    fetcher as typeof fetch)).rejects.toThrow("GOOGLE_CALENDAR_PKCE_INVALID");
+  expect(fetcher).toHaveBeenCalledTimes(1);
  });
  it("builds deterministic Meet request, real invites, reminders and recurrence",()=>{
   expect(mentorGoogleEventId(uuid)).toBe("m12345678123441238123123456789abc");
