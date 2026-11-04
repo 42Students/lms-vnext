@@ -13,6 +13,8 @@
 4. [Existing source-level technical audit and remediation evidence](../audit/security/2026-11-04-auth-authorization-tenant-hardening.md) — observed code findings, commits, certain exact-SHA CI results, and limitations.
 5. [Canonical execution tracker](../tracker.json) — **the sole active task/status tracker**. For each implementation slice, reference security control IDs and attach evidence to an existing appropriate canonical task or a properly reviewed new canonical task. Do not mark these Markdown pages as a parallel source of status truth.
 
+**Canonical tracker integration warning (verified 2026-11-04):** `scripts/tracker.mjs::inspectTracker` currently accepts existing `DB-NNN`, `API-NN` and `UI-NN` task identifiers; it does **not** recognize new `RELEASE`/security task IDs. No new security tasks are silently inserted into `docs/tracker.json` by this documentation change. Before tracking standalone security-program tasks, extend and test the canonical tracker schema/milestone contract or link relevant security controls to genuinely matching existing tasks. Do not create a separate live status tracker and do not pretend the 493 controls are individually assigned. See [tracker integration design](tracker-integration.md).
+
 The archive is a snapshot of a conversation on 2026-11-04; its statements about what was "currently" implemented or missing may age. The technical audit itself is explicitly incomplete and must not be marketed as penetration testing or production sign-off.
 
 ## North star and non-negotiable guarantees
