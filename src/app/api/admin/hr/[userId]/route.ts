@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { isSameOriginRequest } from "@/auth/origin";
+import { requireRecentDeviceAuthentication } from "@/auth/recent-device-auth";
 import { apiErrorResponse } from "@/lib/api-error";
 import { readBoundedJsonRequest } from "@/lib/bounded-json-request";
 import {
@@ -71,6 +72,8 @@ export async function PATCH(
         parsed.value,
       );
 
+    // Updating recruiter identity or college grants changes data access.
+    await requireRecentDeviceAuthentication(context.user.id);
     const account =
       await updateSuperAdminHrAccount(
         context,
