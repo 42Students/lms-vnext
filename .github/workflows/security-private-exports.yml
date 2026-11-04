@@ -6,6 +6,11 @@ on:
   pull_request:
     branches: [main]
     paths:
+      - "src/app/api/admin/companies/export/**"
+      - "src/app/api/admin/placements/hiring-report/export/**"
+      - "src/app/api/college/companies/export/**"
+      - "src/app/api/admin/course-progress/students/export/**"
+      - "src/app/api/placements/tpo/audit/export/**"
       - "src/app/api/admin/people/export/**"
       - "src/app/api/admin/tenants/export/**"
       - "src/app/api/college/people/export/**"
@@ -25,6 +30,11 @@ on:
   push:
     branches: [main]
     paths:
+      - "src/app/api/admin/companies/export/**"
+      - "src/app/api/admin/placements/hiring-report/export/**"
+      - "src/app/api/college/companies/export/**"
+      - "src/app/api/admin/course-progress/students/export/**"
+      - "src/app/api/placements/tpo/audit/export/**"
       - "src/app/api/admin/people/export/**"
       - "src/app/api/admin/tenants/export/**"
       - "src/app/api/college/people/export/**"
