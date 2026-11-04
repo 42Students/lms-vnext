@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { isSameOriginRequest } from "@/auth/origin";
+import { requireRecentDeviceAuthentication } from "@/auth/recent-device-auth";
 import { apiErrorResponse } from "@/lib/api-error";
 import { readBoundedJsonRequest } from "@/lib/bounded-json-request";
 import {
@@ -73,6 +74,9 @@ export async function POST(request: Request) {
         parsed.value,
       );
 
+    // A recruiter account can receive real cross-college candidate access.
+    // Never provision it from a stale or different user's device session.
+    await requireRecentDeviceAuthentication(context.user.id);
     const account =
       await createSuperAdminHrAccount(
         context,
