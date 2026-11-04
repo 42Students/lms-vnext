@@ -14,7 +14,7 @@ export async function GET(request:Request) {
   const parsed=parseCollegeCompaniesQuery(raw);
   if(!parsed.success)return NextResponse.json({error:"INVALID_COMPANY_FILTERS"},{status:400});
   const context=await getCurrentRequestContext();
-  await requireRecentDeviceAuthentication();
+  await requireRecentDeviceAuthentication(context.user.id);
   const first=await listCollegeCompanyDirectory(context,parsed.data,{exportAll:true});
   const all=[...first.items];
   // Legacy exported the whole current college scope. Continue bounded,
