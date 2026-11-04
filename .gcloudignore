@@ -12,3 +12,24 @@ tsconfig.tsbuildinfo
 docs
 tests
 tools
+# Exclude local cloud identities and private credential artifacts from build uploads.
+**/.env*
+**/.aws/**
+**/.ssh/**
+**/.kube/**
+**/.config/gcloud/**
+**/*.pem
+**/*.p12
+**/*.pfx
+**/*.jks
+**/*.keystore
+**/*.keytab
+**/*.key
+**/*.tfstate*
+**/*.tfvars
+**/*.tfvars.json
+**/*service-account*.json
+**/*service_account*.json
+**/*credentials*.json
+**/*client_secret*.json
+**/secrets.json
