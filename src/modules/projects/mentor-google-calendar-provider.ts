@@ -1,4 +1,5 @@
 import "server-only";
+import {createHash} from "node:crypto";
 
 /** Google Calendar REST bridge. Does not imply an OAuth connection: callers
  * must supply a refreshable token from encrypted, consented user storage and
@@ -25,9 +26,21 @@ export function mentorGoogleConfig(env:Record<string,string|undefined>=process.e
 /** State is a signed one-time value owned by the callback route, not a
  * browser-supplied user, project or college identifier.
  */
-export function mentorGoogleConsentUrl(config:MentorGoogleConfig,state:string):string{
+/**
+ * RFC 7636 S256 PKCE: an intercepted one-time OAuth code cannot be exchanged
+ * without the HttpOnly, session-bound verifier that initiated the flow.
+ */
+export function mentorGooglePkceChallenge(verifier:string):string{
+ if(!/^[A-Za-z0-9_-]{43}$/.test(verifier))
+  throw new Error("GOOGLE_CALENDAR_PKCE_INVALID");
+ return createHash("sha256").update(verifier,"ascii").digest("base64url");
+}
+export function mentorGoogleConsentUrl(config:MentorGoogleConfig,state:string,
+ codeChallenge:string):string{
  if(!/^[A-Za-z0-9_\-\.]{32,600}$/.test(state))
   throw new Error("GOOGLE_CALENDAR_INVALID_STATE");
+ if(!/^[A-Za-z0-9_-]{43}$/.test(codeChallenge))
+  throw new Error("GOOGLE_CALENDAR_PKCE_INVALID");
  const url=new URL("https://accounts.google.com/o/oauth2/v2/auth");
  url.searchParams.set("response_type","code");
  url.searchParams.set("client_id",config.clientId);
@@ -37,6 +50,8 @@ export function mentorGoogleConsentUrl(config:MentorGoogleConfig,state:string):s
  url.searchParams.set("include_granted_scopes","true");
  url.searchParams.set("scope",MENTOR_CALENDAR_SCOPE);
  url.searchParams.set("state",state);
+ url.searchParams.set("code_challenge",codeChallenge);
+ url.searchParams.set("code_challenge_method","S256");
  return url.toString();
 }
 type TokenJson={access_token?:unknown;refresh_token?:unknown;expires_in?:unknown;
@@ -58,13 +73,17 @@ async function tokenRequest(body:URLSearchParams,fetchImpl:typeof fetch):Promise
    json.refresh_token:null,expiresIn:Math.min(json.expires_in,86400)};
 }
 export async function mentorGoogleExchangeCode(
- config:MentorGoogleConfig,code:string,fetchImpl:typeof fetch=fetch,
+ config:MentorGoogleConfig,code:string,codeVerifier:string,
+ fetchImpl:typeof fetch=fetch,
 ):Promise<MentorGoogleTokens>{
  if(!/^[\w\-/\.]{8,4096}$/.test(code))
   throw new Error("GOOGLE_CALENDAR_CODE_INVALID");
+ if(!/^[A-Za-z0-9_-]{43}$/.test(codeVerifier))
+  throw new Error("GOOGLE_CALENDAR_PKCE_INVALID");
  return tokenRequest(new URLSearchParams({
   client_id:config.clientId,client_secret:config.clientSecret,
-  redirect_uri:config.redirectUri,code,grant_type:"authorization_code",
+  redirect_uri:config.redirectUri,code,code_verifier:codeVerifier,
+  grant_type:"authorization_code",
  }),fetchImpl);
 }
 export async function mentorGoogleRefreshToken(
