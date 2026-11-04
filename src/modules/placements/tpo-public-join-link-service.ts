@@ -5,7 +5,7 @@ import { and, desc, eq, gt, isNull, inArray, sql } from "drizzle-orm";
 import { z } from "zod";
 import { getDb } from "@/db/client";
 import {
-  activityEvents, colleges, placementCompanies,
+  activityEvents, colleges, organizations, placementCompanies,
   placementCompanyRelationships, placementPublicJoinLinks,
   placementJobs, placementPublicExternalJobLinks,
 } from "@/db/schema";
@@ -370,20 +370,31 @@ export async function readPublicExternalJobShare(rawSlug:string){
   }).from(placementPublicExternalJobLinks)
    .innerJoin(placementJobs,and(eq(placementJobs.id,placementPublicExternalJobLinks.jobId),
      eq(placementJobs.collegeId,placementPublicExternalJobLinks.collegeId)))
+   // Revoking or suspending a college/organization must invalidate its
+   // previously distributed public job URLs, even while a job is PUBLISHED.
+   .innerJoin(colleges,eq(colleges.id,placementJobs.collegeId))
+   .innerJoin(organizations,eq(organizations.id,colleges.organizationId))
    .innerJoin(placementCompanyRelationships,and(
     eq(placementCompanyRelationships.id,placementJobs.companyRelationshipId),
     eq(placementCompanyRelationships.collegeId,placementJobs.collegeId)))
    .innerJoin(placementCompanies,eq(placementCompanies.id,placementCompanyRelationships.companyId))
    .where(and(eq(placementPublicExternalJobLinks.slug,rawSlug),
-    isNull(placementPublicExternalJobLinks.revokedAt),eq(placementJobs.status,"PUBLISHED"),
+    isNull(placementPublicExternalJobLinks.revokedAt),
+    eq(colleges.status,"ACTIVE"),eq(organizations.status,"ACTIVE"),
+    eq(placementJobs.status,"PUBLISHED"),
     inArray(placementJobs.applicationMode,["HYBRID","EXTERNAL_ONLY"]),
     eq(placementJobs.publicExternalSlug,rawSlug),
     eq(placementCompanyRelationships.status,"ACTIVE"),eq(placementCompanies.status,"ACTIVE")))
    .limit(1);
   if(!row)throw new TpoPublicJoinLinkError("NOT_FOUND");
-  await tx.update(placementPublicExternalJobLinks)
+  // The public link may have been revoked between lookup and view-count
+  // update. Never serve the payload after that revocation has committed.
+  const [viewed]=await tx.update(placementPublicExternalJobLinks)
    .set({viewsCount:sql`${placementPublicExternalJobLinks.viewsCount}+1`})
-   .where(eq(placementPublicExternalJobLinks.id,row.linkId));
+   .where(and(eq(placementPublicExternalJobLinks.id,row.linkId),
+    isNull(placementPublicExternalJobLinks.revokedAt)))
+   .returning({id:placementPublicExternalJobLinks.id});
+  if(!viewed)throw new TpoPublicJoinLinkError("NOT_FOUND");
   return {job:{id:row.id,title:row.title,description:row.description,
    companyName:row.companyName,applicationMode:row.applicationMode,
    applicationDeadline:row.applicationDeadline?.toISOString()??null,
