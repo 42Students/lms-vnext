@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { tpoRecruiterInviteApiErrorResponse } from "@/lib/tpo-recruiter-invite-api-error";
 import { previewRecruiterInvite } from "@/modules/placements/tpo-recruiter-invite-service";
+import { isRecruiterInviteTokenShape } from "@/modules/placements/tpo-recruiter-invite-policy";
 
 /** Legacy PublicRecruiterInviteController route crosswalk (all five methods):
  * GET /api/v1/public/recruiter-invite/{token} => GET here, now {invite}.
@@ -14,18 +15,25 @@ import { previewRecruiterInvite } from "@/modules/placements/tpo-recruiter-invit
  * and idempotent invite state deliberately replace legacy account assumptions.
  */
 export const runtime = "nodejs";
+export const dynamic = "force-dynamic";
+const privateHeaders = { "Cache-Control": "private, no-store", "Referrer-Policy": "no-referrer", "X-Robots-Tag": "noindex, nofollow" } as const;
 type RouteContext = { params: Promise<{ token: string }> };
 
 export async function GET(_request: Request, { params }: RouteContext) {
   if (process.env["DB09_TPO_API_READY"] !== "DB09_VERIFIED") {
-    return NextResponse.json({ error: "DB09_MIGRATIONS_PENDING" }, { status: 503 });
+    return NextResponse.json({ error: "DB09_MIGRATIONS_PENDING" }, { status: 503, headers: privateHeaders });
   }
   try {
     const { token } = await params;
+    if (!isRecruiterInviteTokenShape(token)) {
+      return NextResponse.json({ error: "INVITE_INVALID" }, { status: 404, headers: privateHeaders });
+    }
     return NextResponse.json({
       invite: await previewRecruiterInvite(token),
-    });
+    }, { headers: privateHeaders });
   } catch (error) {
-    return tpoRecruiterInviteApiErrorResponse(error);
+    const response = tpoRecruiterInviteApiErrorResponse(error);
+    for (const [key, value] of Object.entries(privateHeaders)) response.headers.set(key, value);
+    return response;
   }
 }
