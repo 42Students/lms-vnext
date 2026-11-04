@@ -48,7 +48,7 @@ const tpo: RequestContext = {
     id: SEED_IDS.facultyCollegeAMembership,
     organizationId: SEED_IDS.organization,
     collegeId: SEED_IDS.collegeA, status: "ACTIVE",
-    roles: ["FACULTY", "TPO"],
+    roles: ["TPO"],
   },
 };
 const forgedUser: RequestContext = {
@@ -58,6 +58,13 @@ const forgedUser: RequestContext = {
 
 beforeEach(async () => {
   created.length = 0;
+  // The selected workspace carries exactly one role. The authorization layer
+  // additionally checks this TPO grant against persisted membership_roles.
+  // A separate negative test removes it to prove revocation is effective.
+  await pool.query(
+    "INSERT INTO membership_roles(membership_id,role) VALUES($1,'TPO') ON CONFLICT (membership_id,role) DO NOTHING",
+    [SEED_IDS.facultyCollegeAMembership],
+  );
   await enableSeedLearnerPlacementAccess(pool);
 });
 afterEach(async () => {

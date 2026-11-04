@@ -51,7 +51,7 @@ const tpo: RequestContext = {
   membership: {
     id: SEED_IDS.facultyCollegeAMembership,
     collegeId: SEED_IDS.collegeA, organizationId: SEED_IDS.organization,
-    status: "ACTIVE", roles: ["FACULTY","TPO"],
+    status: "ACTIVE", roles: ["TPO"],
   },
 };
 
@@ -88,8 +88,9 @@ async function clean() {
 
 const extraCohorts: string[] = [];
 
-// SQL permission checks must see the exact persisted TPO role. The mock
-// RequestContext role array is not sufficient authorization.
+// Selected-workspace RBAC requires exactly one TPO role; SQL permission
+// checks must independently see its persisted grant. A fabricated context
+// role array is not sufficient authorization.
 let fixtureTpoRoleId:string|null=null;
 beforeAll(async()=>{
  const granted=await pool.query<{id:string}>(
