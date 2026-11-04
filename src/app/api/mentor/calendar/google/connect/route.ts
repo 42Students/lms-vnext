@@ -3,7 +3,7 @@ import {randomBytes} from "node:crypto";
 import {MENTOR_GOOGLE_OAUTH_RESPONSE_HEADERS} from
  "@/modules/projects/mentor-google-oauth-response-headers";
 import {getCurrentRequestContext} from "@/auth/request-context";
-import {mentorGoogleConfig,mentorGoogleConsentUrl} from
+import {mentorGoogleConfig,mentorGoogleConsentUrl,mentorGooglePkceChallenge} from
  "@/modules/projects/mentor-google-calendar-provider";
 import {mentorGoogleConnectionState} from
  "@/modules/projects/mentor-google-calendar-connection-service";
@@ -20,10 +20,12 @@ export async function GET(request:Request){
    return NextResponse.redirect(new URL("/mentor/calendar?google=unavailable",request.url),
     {headers:MENTOR_GOOGLE_OAUTH_RESPONSE_HEADERS});
   const nonce=randomBytes(32).toString("base64url");
-  const response=NextResponse.redirect(mentorGoogleConsentUrl(config,nonce),
+  const verifier=randomBytes(32).toString("base64url");
+  const response=NextResponse.redirect(
+   mentorGoogleConsentUrl(config,nonce,mentorGooglePkceChallenge(verifier)),
    {headers:MENTOR_GOOGLE_OAUTH_RESPONSE_HEADERS});
   response.cookies.set("mentor-google-oauth",nonce+"."+context.user.id+"."+
-   context.membership.id,{path:"/api/mentor/calendar/google",httpOnly:true,
+   context.membership.id+"."+verifier,{path:"/api/mentor/calendar/google",httpOnly:true,
    sameSite:"lax",secure:process.env.NODE_ENV==="production",maxAge:600});
   return response;
  }catch{
