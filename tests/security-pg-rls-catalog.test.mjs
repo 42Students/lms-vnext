@@ -9,6 +9,9 @@ const safePrincipal = {
   can_create_database: false,
   can_create_schema: false,
   can_create_in_database: false,
+  can_set_privileged_role: false,
+  can_bypass_tenant_rls_by_ownership: false,
+  can_truncate_tenant_tables: false,
 };
 const base = {
   table_name: "course_offerings",
@@ -227,3 +230,18 @@ test("TRUNCATE must be flagged even when RLS is entirely disabled", () => {
     "APP_CAN_TRUNCATE_TENANT_TABLE", "TENANT_KEY_TABLE_NO_RLS",
   ]);
 });
+
+test("flags SET ROLE paths that bypass a restricted initial database login", () => {
+  const capabilities = [
+    ["can_set_privileged_role", "APP_CAN_SET_PRIVILEGED_DB_ROLE"],
+    ["can_bypass_tenant_rls_by_ownership", "APP_ROLE_CAN_BYPASS_TENANT_RLS_BY_OWNERSHIP"],
+    ["can_truncate_tenant_tables", "APP_ROLE_CAN_TRUNCATE_TENANT_TABLES"],
+  ];
+  for (const [capability, code] of capabilities) {
+    const findings = classifySecurityCatalog({ ...safePrincipal, [capability]: true }, []);
+    assert.deepEqual(findings.map(f => [f.severity, f.code, f.table]),
+      [["CRITICAL", code, null]], capability);
+  }
+  assert.deepEqual(classifySecurityCatalog(safePrincipal, []), []);
+});
+

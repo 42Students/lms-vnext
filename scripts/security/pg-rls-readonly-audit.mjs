@@ -6,7 +6,8 @@
  *
  *   DATABASE_URL='...' node scripts/security/pg-rls-readonly-audit.mjs --strict
  *
- * --strict fails for detected privileged app principals, direct-tenant RLS
+ * --strict fails for detected privileged app principals (including SET ROLE
+ * escalation into elevated/owner/truncate-capable roles), direct-tenant RLS
  * omissions, accessible owner-rights views/materialized views, or executable
  * SECURITY DEFINER routines until these are independently reviewed. All
  * indirect tenant-lineage tables still REQUIRE manual FK-lineage review.
@@ -25,6 +26,17 @@ export function classifySecurityCatalog(principal, tables, { views = [], routine
   if (principal.can_create_role || principal.can_create_database ||
       principal.can_create_schema || principal.can_create_in_database) {
     findings.push({ severity: "HIGH", code: "APP_DB_ROLE_CAN_CREATE", table: null });
+  }
+  // The initial current_user is not the entire privilege boundary. A login
+  // may switch to a role whose privileges were deliberately not inherited.
+  if (principal.can_set_privileged_role === true) {
+    findings.push({ severity: "CRITICAL", code: "APP_CAN_SET_PRIVILEGED_DB_ROLE", table: null });
+  }
+  if (principal.can_bypass_tenant_rls_by_ownership === true) {
+    findings.push({ severity: "CRITICAL", code: "APP_ROLE_CAN_BYPASS_TENANT_RLS_BY_OWNERSHIP", table: null });
+  }
+  if (principal.can_truncate_tenant_tables === true) {
+    findings.push({ severity: "CRITICAL", code: "APP_ROLE_CAN_TRUNCATE_TENANT_TABLES", table: null });
   }
   for (const table of tables) {
     if (table.tenant_key_columns.length === 0) continue;
@@ -111,8 +123,71 @@ SELECT current_user::text AS runtime_user, session_user::text AS session_login,
        r.rolbypassrls AS can_bypass_rls,
        r.rolcreaterole AS can_create_role,
        r.rolcreatedb AS can_create_database,
-       has_schema_privilege(current_user, 'public', 'CREATE') AS can_create_schema,
-       has_database_privilege(current_user, current_database(), 'CREATE') AS can_create_in_database
+       -- Review creation privileges throughout the application database,
+       -- including non-public schemas and roles reachable through SET ROLE.
+       EXISTS (
+         SELECT 1 FROM pg_catalog.pg_namespace ns
+         WHERE ns.nspname NOT IN ('pg_catalog','information_schema')
+           AND ns.nspname NOT LIKE 'pg_toast%'
+           AND ns.nspname NOT LIKE 'pg_temp_%'
+           AND (has_schema_privilege(current_user, ns.oid, 'CREATE')
+             OR EXISTS (
+               SELECT 1 FROM pg_catalog.pg_roles candidate
+               WHERE pg_has_role(session_user, candidate.oid, 'SET')
+                 AND has_schema_privilege(candidate.oid, ns.oid, 'CREATE')
+             ))
+       ) AS can_create_schema,
+       (has_database_privilege(current_user, current_database(), 'CREATE')
+         OR EXISTS (
+           SELECT 1 FROM pg_catalog.pg_roles candidate
+           WHERE pg_has_role(session_user, candidate.oid, 'SET')
+             AND has_database_privilege(candidate.oid, current_database(), 'CREATE')
+         )) AS can_create_in_database,
+       -- Non-inherited role membership can still permit an explicit SET ROLE
+       -- into a principal with superuser, BYPASSRLS or DDL attributes.
+       EXISTS (
+         SELECT 1 FROM pg_catalog.pg_roles elevated
+         WHERE (elevated.rolsuper OR elevated.rolbypassrls
+            OR elevated.rolcreatedb OR elevated.rolcreaterole)
+           AND pg_has_role(session_user, elevated.oid, 'SET')
+       ) AS can_set_privileged_role,
+       -- Ownership bypass applies even without BYPASSRLS, unless FORCE RLS.
+       EXISTS (
+         SELECT 1 FROM pg_catalog.pg_class owned
+         JOIN pg_catalog.pg_namespace ns ON ns.oid = owned.relnamespace
+         WHERE owned.relkind IN ('r','p')
+           AND ns.nspname NOT IN ('pg_catalog','information_schema')
+           AND ns.nspname NOT LIKE 'pg_toast%'
+           AND ns.nspname NOT LIKE 'pg_temp_%'
+           AND (NOT owned.relforcerowsecurity OR NOT owned.relrowsecurity)
+           AND EXISTS (
+             SELECT 1 FROM pg_catalog.pg_attribute a
+             WHERE a.attrelid=owned.oid AND a.attnum>0 AND NOT a.attisdropped
+               AND a.attname IN ('college_id','organization_id')
+           )
+           AND (pg_has_role(current_user, owned.relowner, 'USAGE')
+             OR pg_has_role(session_user, owned.relowner, 'SET'))
+       ) AS can_bypass_tenant_rls_by_ownership,
+       -- TRUNCATE bypasses RLS and may also be acquired via SET ROLE.
+       EXISTS (
+         SELECT 1 FROM pg_catalog.pg_class target
+         JOIN pg_catalog.pg_namespace ns ON ns.oid = target.relnamespace
+         WHERE target.relkind IN ('r','p')
+           AND ns.nspname NOT IN ('pg_catalog','information_schema')
+           AND ns.nspname NOT LIKE 'pg_toast%'
+           AND ns.nspname NOT LIKE 'pg_temp_%'
+           AND EXISTS (
+             SELECT 1 FROM pg_catalog.pg_attribute a
+             WHERE a.attrelid=target.oid AND a.attnum>0 AND NOT a.attisdropped
+               AND a.attname IN ('college_id','organization_id')
+           )
+           AND (has_table_privilege(current_user, target.oid, 'TRUNCATE')
+             OR EXISTS (
+               SELECT 1 FROM pg_catalog.pg_roles candidate
+               WHERE pg_has_role(session_user, candidate.oid, 'SET')
+                 AND has_table_privilege(candidate.oid, target.oid, 'TRUNCATE')
+             ))
+       ) AS can_truncate_tenant_tables
 FROM pg_catalog.pg_roles AS r
 WHERE r.rolname = current_user
 `;
@@ -268,7 +343,7 @@ export async function auditPostgresSecurity(databaseUrl) {
       routines,
       limitations: [
         "No table rows were read or altered",
-        "Obvious unconditional SELECT/INSERT/UPDATE/DELETE policies are screened, but predicates, applicable privileges and runtime tenant context require independent proof",
+        "Obvious unconditional SELECT/INSERT/UPDATE/DELETE policies and SET ROLE escalation are screened, but predicates, applicable privileges and runtime tenant context require independent proof",
         "Indirect tenant ownership and policy expressions require manual review",
         "Owner-rights views, materialized views and SECURITY DEFINER routines require reviewed authorization proofs; their presence alone is not a proven leak",
         "Passing is not a substitute for cross-tenant read/write adversarial tests",

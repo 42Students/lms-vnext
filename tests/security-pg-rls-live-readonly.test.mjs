@@ -170,3 +170,68 @@ test("restricted app principal and live SQL identify an unconditional tenant-lea
       }
     }
   });
+
+test("non-inherited SET ROLE into an owner/BYPASSRLS role is a critical tenant boundary",
+  { skip: !enabled }, async () => {
+    requireDisposable();
+    const owner = "lms_security_catalog_escalation_owner";
+    const login = "lms_security_catalog_escalation_login";
+    const table = "security_rls_escalation_fixture";
+    const admin = new pg.Client({ connectionString: connection });
+    let app;
+    await admin.connect();
+    try {
+      await admin.query("CREATE ROLE " + owner +
+        " NOLOGIN NOSUPERUSER NOCREATEDB NOCREATEROLE BYPASSRLS NOREPLICATION");
+      await admin.query("CREATE ROLE " + login +
+        " LOGIN PASSWORD 'disposable-set-role-only' NOINHERIT NOSUPERUSER NOCREATEDB NOCREATEROLE NOREPLICATION");
+      await admin.query("GRANT USAGE ON SCHEMA public TO " + owner);
+      await admin.query("GRANT USAGE ON SCHEMA public TO " + login);
+      await admin.query("CREATE TABLE public." + table +
+        " (id integer PRIMARY KEY, college_id uuid NOT NULL, value text NOT NULL)");
+      await admin.query("INSERT INTO public." + table +
+        " (id,college_id,value) VALUES (1,$1,'college-a'),(2,$2,'college-b')",
+        [collegeA, collegeB]);
+      await admin.query("ALTER TABLE public." + table + " ENABLE ROW LEVEL SECURITY");
+      // Deliberately no FORCE RLS: the owner role can bypass RLS.
+      await admin.query("ALTER TABLE public." + table + " OWNER TO " + owner);
+      await admin.query("GRANT " + owner + " TO " + login + " WITH INHERIT FALSE, SET TRUE");
+
+      const appUrl = new URL(connection);
+      appUrl.username = login;
+      appUrl.password = "disposable-set-role-only";
+      const report = await auditPostgresSecurity(appUrl.toString());
+      assert.equal(report.principal.runtime_user, login);
+      assert.equal(report.principal.is_superuser, false);
+      assert.equal(report.principal.can_bypass_rls, false);
+      assert.equal(report.principal.can_set_privileged_role, true);
+      assert.equal(report.principal.can_bypass_tenant_rls_by_ownership, true);
+      assert.equal(report.principal.can_truncate_tenant_tables, true);
+      for (const code of ["APP_CAN_SET_PRIVILEGED_DB_ROLE",
+        "APP_ROLE_CAN_BYPASS_TENANT_RLS_BY_OWNERSHIP",
+        "APP_ROLE_CAN_TRUNCATE_TENANT_TABLES"]) {
+        assert(report.findings.some(f => f.code === code && f.severity === "CRITICAL"), code);
+      }
+
+      app = new pg.Client({ connectionString: appUrl.toString() });
+      await app.connect();
+      await assert.rejects(app.query("SELECT value FROM public." + table),
+        error => error.code === "42501");
+      await app.query("SET ROLE " + owner);
+      const exposed = await app.query("SELECT value FROM public." + table + " ORDER BY id");
+      assert.deepEqual(exposed.rows.map(row => row.value), ["college-a", "college-b"]);
+      await app.query("RESET ROLE");
+    } finally {
+      if (app) await app.end();
+      try {
+        await admin.query("DROP TABLE IF EXISTS public." + table + " CASCADE");
+        await admin.query("REVOKE " + owner + " FROM " + login).catch(() => {});
+        await admin.query("REVOKE USAGE ON SCHEMA public FROM " + owner).catch(() => {});
+        await admin.query("REVOKE USAGE ON SCHEMA public FROM " + login).catch(() => {});
+        await admin.query("DROP ROLE IF EXISTS " + login);
+        await admin.query("DROP ROLE IF EXISTS " + owner);
+      } finally {
+        await admin.end();
+      }
+    }
+  });
