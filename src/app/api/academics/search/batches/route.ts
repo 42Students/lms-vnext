@@ -3,6 +3,7 @@ import { z } from "zod";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { isSameOriginRequest } from "@/auth/origin";
 import { apiErrorResponse } from "@/lib/api-error";
+import { readBoundedJsonBody } from "@/lib/bounded-json-body";
 import { searchCollegeBatchAutocomplete,recordCollegeBatchSearchSelection } from "@/modules/academics/college-academic-directory-service";
 
 export const runtime = "nodejs";
@@ -32,7 +33,12 @@ export async function POST(request:Request){
  if(!isSameOriginRequest(request))
   return NextResponse.json({error:"INVALID_ORIGIN"},{status:403});
  try{
-  const raw:unknown=await request.json().catch(()=>null);
+  const parsed = await readBoundedJsonBody(request, 16_384);
+  if (parsed.kind !== "OK") return NextResponse.json({ error: "INVALID_REQUEST" }, {
+    status: parsed.kind === "TOO_LARGE" ? 413 : 400,
+    headers: { "Cache-Control": "private, no-store" },
+  });
+  const raw: unknown = parsed.value;
   const parsed=z.strictObject({batchId:z.string().uuid()}).safeParse(raw);
   if(!parsed.success)return NextResponse.json({error:"INVALID_REQUEST"},{status:400});
   return NextResponse.json(await recordCollegeBatchSearchSelection(
