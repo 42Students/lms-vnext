@@ -14,8 +14,9 @@ function section(id){
   return new RegExp(match[1].replace(/^\(\?i\)/,""),"i");
 }
 const synthetic=()=>Array.from({length:88},(_,i)=>"B7z+2fD4_xA9M/0P"[i%16]).join("");
+const syntheticUrlSafe=()=>Array.from({length:88},(_,i)=>"B7z_2fD4-xA9M0PQ"[i%16]).join("");
 const zepto=()=>["Zoho","-enczapikey ",""+synthetic()].join("");
-const openai=(prefix)=>["sk",prefix,synthetic()].join("");
+const openai=(prefix)=>["sk",prefix,syntheticUrlSafe()].join("");
 
 test("security scanner extends all pinned built-ins without any global suppression",()=>{
   assert.match(config,/useDefault\s*=\s*true/);
@@ -49,7 +50,7 @@ test("OpenAI key variants are detected without requiring a variable name",()=>{
 
 test("Google OAuth client-secret tokens are not confused with public Firebase key names",()=>{
   const r=section("42learn-google-oauth-client-secret");
-  const fake=["GOCSPX","-",synthetic()].join("");
+  const fake=["GOCSPX","-",syntheticUrlSafe()].join("");
   assert.ok(r.test("client_secret = "+fake));
   assert.equal(r.test('NEXT_PUBLIC_FIREBASE_API_KEY="not-a-secret"'),false);
   assert.equal(r.test("GOCSPX-short"),false);
@@ -61,5 +62,5 @@ test("provider keys do not rely on only naming a variable or SDK call",()=>{
   assert.ok(section("42learn-openai-key").test(
     "some_log_line="+openai("-proj-")));
   assert.ok(section("42learn-google-oauth-client-secret").test(
-    "some_log_line="+["GOCSPX","-",synthetic()].join("")));
+    "some_log_line="+["GOCSPX","-",syntheticUrlSafe()].join("")));
 });
