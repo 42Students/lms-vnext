@@ -1,0 +1,52 @@
+# Scope-limited checks for untrusted applicant-share POSTs and template APIs.
+name: Security - applicant share and project template boundaries
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - "src/app/company-share/**"
+      - "src/app/api/projects/templates/**"
+      - "src/lib/bounded-utf8-body.ts"
+      - "src/lib/bounded-json-body.ts"
+      - "tests/unit/security-company-share-code-form.test.ts"
+      - "tests/unit/security-project-template-boundaries.test.ts"
+      - ".github/workflows/security-share-template-boundaries.yml"
+  push:
+    branches: [main]
+    paths:
+      - "src/app/company-share/**"
+      - "src/app/api/projects/templates/**"
+      - "src/lib/bounded-utf8-body.ts"
+      - "src/lib/bounded-json-body.ts"
+      - "tests/unit/security-company-share-code-form.test.ts"
+      - "tests/unit/security-project-template-boundaries.test.ts"
+      - ".github/workflows/security-share-template-boundaries.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: security-share-template-${{ github.ref }}-${{ github.sha }}
+  cancel-in-progress: false
+
+jobs:
+  anonymous-and-tenant-boundaries:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Assert exact source revision
+        run: test "$(git rev-parse HEAD)" = "$GITHUB_SHA"
+      - name: Public share form and project-template HTTP regressions
+        run: npx vitest run tests/unit/security-company-share-code-form.test.ts tests/unit/security-project-template-boundaries.test.ts
+      - name: Check TypeScript
+        env:
+          NODE_OPTIONS: --max-old-space-size=6144
+        run: npm run typecheck
