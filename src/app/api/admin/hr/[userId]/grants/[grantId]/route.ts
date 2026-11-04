@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { isSameOriginRequest } from "@/auth/origin";
+import { requireRecentDeviceAuthentication } from "@/auth/recent-device-auth";
 import { apiErrorResponse } from "@/lib/api-error";
 import {
   revokeSuperAdminHrCollegeAccess,
@@ -35,6 +36,9 @@ export async function DELETE(
       grantId,
     } = await params;
 
+    // Company-college recruiter grants are privileged candidate-data access.
+    // A stale or differently authenticated actor cannot change them.
+    await requireRecentDeviceAuthentication(context.user.id);
     const grant =
       await revokeSuperAdminHrCollegeAccess(
         context,
@@ -42,7 +46,7 @@ export async function DELETE(
         grantId,
       );
 
-    return NextResponse.json({ grant });
+    return NextResponse.json({ grant }, { headers: { "Cache-Control": "private, no-store" } });
   } catch (error) {
     return apiErrorResponse(error);
   }
