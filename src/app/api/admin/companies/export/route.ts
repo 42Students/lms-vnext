@@ -1,4 +1,5 @@
 import {getCurrentRequestContext} from "@/auth/request-context";
+import {requireRecentDeviceAuthentication} from "@/auth/recent-device-auth";
 import {apiErrorResponse} from "@/lib/api-error";
 import {adminCompaniesQuerySchema} from "@/modules/placements/admin-company-directory-model";
 import {listSuperAdminCompanyDirectory} from "@/modules/placements/admin-company-directory-service";
@@ -12,6 +13,7 @@ export async function GET(request:Request){
   if(input["collegeId"]==="")delete input["collegeId"];
   const query=adminCompaniesQuerySchema.parse(input);
   const context=await getCurrentRequestContext();
+  await requireRecentDeviceAuthentication();
   const page=await listSuperAdminCompanyDirectory(context,{...query,page:1});
   // The legacy browser export included unrestricted contact columns. Keep
   // this authenticated server export restricted to the already-authorized
