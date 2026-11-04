@@ -1,6 +1,8 @@
 import { NextResponse } from "next/server";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { isSameOriginRequest } from "@/auth/origin";
+import { readBoundedJsonRequest } from "@/lib/bounded-json-request";
+import { updateCourseDisplayContentSchema } from "@/modules/courses/course-display-validation";
 import { apiErrorResponse } from "@/lib/api-error";
 import {
   getAdminCourseDisplayContent,
@@ -63,12 +65,14 @@ export async function PUT(
     const context =
       await getCurrentRequestContext();
     const { courseId } = await params;
-    const display =
-      await updateCourseDisplayContent(
-        context,
-        courseId,
-        await request.json(),
-      );
+    // Rich course text and up to 30 takeaways can legitimately be large,
+    // but an unbounded request.json() lets a caller allocate arbitrary memory.
+    const body = await readBoundedJsonRequest(request, 262144);
+    if (!body.ok) return NextResponse.json({ error: "INVALID_REQUEST" }, {
+      status: 400, headers: { "Cache-Control": "private, no-store" },
+    });
+    const input = updateCourseDisplayContentSchema.parse(body.value);
+    const display = await updateCourseDisplayContent(context, courseId, input);
     return NextResponse.json({ display });
   } catch (error) {
     return apiErrorResponse(error);
