@@ -28,15 +28,17 @@ export function classifySecurityCatalog(principal, tables, { views = [], routine
   }
   for (const table of tables) {
     if (table.tenant_key_columns.length === 0) continue;
+    const relation = table.schema_name
+      ? table.schema_name + "." + table.table_name : table.table_name;
     if (!table.rls_enabled) {
-      findings.push({ severity: "HIGH", code: "TENANT_KEY_TABLE_NO_RLS", table: table.table_name });
+      findings.push({ severity: "HIGH", code: "TENANT_KEY_TABLE_NO_RLS", table: relation });
       continue;
     }
     if (table.policy_count === 0) {
-      findings.push({ severity: "HIGH", code: "TENANT_KEY_TABLE_NO_POLICY", table: table.table_name });
+      findings.push({ severity: "HIGH", code: "TENANT_KEY_TABLE_NO_POLICY", table: relation });
     }
     if (table.is_effective_owner && !table.rls_forced) {
-      findings.push({ severity: "CRITICAL", code: "APP_OWNS_TABLE_WITHOUT_FORCE_RLS", table: table.table_name });
+      findings.push({ severity: "CRITICAL", code: "APP_OWNS_TABLE_WITHOUT_FORCE_RLS", table: relation });
     }
     // A permissive policy with no tenant predicate can expose every row
     // even when a second, seemingly restrictive permissive policy exists:
@@ -46,7 +48,7 @@ export function classifySecurityCatalog(principal, tables, { views = [], routine
     if (table.can_select === true &&
         table.unconditional_select_policy_count > 0 &&
         table.restrictive_select_policy_count === 0) {
-      findings.push({ severity: "CRITICAL", code: "APP_UNSCOPED_PERMISSIVE_SELECT", table: table.table_name });
+      findings.push({ severity: "CRITICAL", code: "APP_UNSCOPED_PERMISSIVE_SELECT", table: relation });
     }
   }
   // PostgreSQL views execute with their owner's permissions by default.
@@ -89,6 +91,7 @@ WHERE r.rolname = current_user
 
 const TABLES_QUERY = `
 SELECT
+  n.nspname::text AS schema_name,
   c.relname::text AS table_name,
   pg_get_userbyid(c.relowner)::text AS table_owner,
   c.relrowsecurity AS rls_enabled,
@@ -131,8 +134,12 @@ SELECT
   has_table_privilege(current_user, c.oid, 'DELETE') AS can_delete
 FROM pg_catalog.pg_class c
 JOIN pg_catalog.pg_namespace n ON n.oid=c.relnamespace
-WHERE n.nspname='public' AND c.relkind IN ('r','p')
-ORDER BY c.relname
+WHERE n.nspname NOT IN ('pg_catalog','information_schema')
+  AND n.nspname NOT LIKE 'pg_toast%'
+  AND n.nspname NOT LIKE 'pg_temp_%'
+  AND has_schema_privilege(current_user, n.oid, 'USAGE')
+  AND c.relkind IN ('r','p')
+ORDER BY n.nspname, c.relname
 `;
 
 const VIEWS_QUERY = `
