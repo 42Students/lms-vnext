@@ -12,6 +12,7 @@ export type DatabasePrincipalCapability = {
   can_create_in_database: boolean | null;
   can_set_privileged_role: boolean | null;
   can_bypass_tenant_rls_by_ownership: boolean | null;
+  can_truncate_tenant_tables: boolean | null;
 };
 
 export const DATABASE_APP_PRINCIPAL_DENIED = "DATABASE_APP_PRINCIPAL_UNSAFE";
@@ -39,6 +40,7 @@ export function assertRuntimeDatabasePrincipal(
       row.can_create_schema !== false ||
       row.can_create_in_database !== false ||
       row.can_set_privileged_role !== false ||
-      row.can_bypass_tenant_rls_by_ownership !== false)
+      row.can_bypass_tenant_rls_by_ownership !== false ||
+      row.can_truncate_tenant_tables !== false)
     throw new Error(DATABASE_APP_PRINCIPAL_DENIED);
 }
