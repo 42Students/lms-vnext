@@ -125,3 +125,82 @@ test("keeps schema-qualified identity for protected tables outside public", () =
       table: "tenant_archive.learner_records" },
   ]);
 });
+
+
+test("flags cross-tenant INSERT when new-row WITH CHECK is unconditionally permissive", () => {
+  const findings = classifySecurityCatalog(safePrincipal, [
+    { ...base, table_name: "college_enrollments", can_insert: true,
+      unconditional_insert_check_policy_count: 1, restrictive_insert_check_policy_count: 0 },
+    { ...base, table_name: "other_college", can_insert: true,
+      unconditional_insert_check_policy_count: 2, restrictive_insert_check_policy_count: 0 },
+  ]);
+  assert.deepEqual(findings.map(f => [f.code, f.table]), [
+    ["APP_UNSCOPED_PERMISSIVE_INSERT", "college_enrollments"],
+    ["APP_UNSCOPED_PERMISSIVE_INSERT", "other_college"],
+  ]);
+});
+
+test("flags broad UPDATE USING and WITH CHECK separately: old and new rows need independent isolation", () => {
+  const findings = classifySecurityCatalog(safePrincipal, [
+    { ...base, table_name: "can_edit_other_colleges", can_update: true,
+      unconditional_update_using_policy_count: 1, restrictive_update_using_policy_count: 0,
+      unconditional_update_check_policy_count: 0, restrictive_update_check_policy_count: 1 },
+    { ...base, table_name: "can_move_rows_to_other_college", can_update: true,
+      unconditional_update_using_policy_count: 0, restrictive_update_using_policy_count: 1,
+      unconditional_update_check_policy_count: 1, restrictive_update_check_policy_count: 0 },
+    { ...base, table_name: "unbounded_both_directions", can_update: true,
+      unconditional_update_using_policy_count: 1, restrictive_update_using_policy_count: 0,
+      unconditional_update_check_policy_count: 1, restrictive_update_check_policy_count: 0 },
+  ]);
+  assert.deepEqual(findings.map(f => [f.code, f.table]), [
+    ["APP_UNSCOPED_PERMISSIVE_UPDATE_USING", "can_edit_other_colleges"],
+    ["APP_UNSCOPED_PERMISSIVE_UPDATE_CHECK", "can_move_rows_to_other_college"],
+    ["APP_UNSCOPED_PERMISSIVE_UPDATE_USING", "unbounded_both_directions"],
+    ["APP_UNSCOPED_PERMISSIVE_UPDATE_CHECK", "unbounded_both_directions"],
+  ]);
+});
+
+test("flags unscoped DELETE with a real runtime role grant, not an unrelated policy", () => {
+  assert.deepEqual(classifySecurityCatalog(safePrincipal, [
+    { ...base, table_name: "college_students", can_delete: true,
+      unconditional_delete_using_policy_count: 1, restrictive_delete_using_policy_count: 0 },
+  ]).map(f => f.code), ["APP_UNSCOPED_PERMISSIVE_DELETE"]);
+  assert.deepEqual(classifySecurityCatalog(safePrincipal, [
+    { ...base, table_name: "college_students", can_delete: false,
+      unconditional_delete_using_policy_count: 1, restrictive_delete_using_policy_count: 0 },
+  ]), []);
+});
+
+test("does not mistake substantive RESTRICTIVE policies, no direct grants or scoped writes for broad writes", () => {
+  const findings = classifySecurityCatalog(safePrincipal, [
+    { ...base, table_name: "no_insert_grant", can_insert: false,
+      unconditional_insert_check_policy_count: 1, restrictive_insert_check_policy_count: 0 },
+    { ...base, table_name: "insert_with_restriction", can_insert: true,
+      unconditional_insert_check_policy_count: 1, restrictive_insert_check_policy_count: 1 },
+    { ...base, table_name: "update_restricted_both", can_update: true,
+      unconditional_update_using_policy_count: 1, restrictive_update_using_policy_count: 1,
+      unconditional_update_check_policy_count: 1, restrictive_update_check_policy_count: 1 },
+    { ...base, table_name: "delete_restricted", can_delete: true,
+      unconditional_delete_using_policy_count: 1, restrictive_delete_using_policy_count: 1 },
+    { ...base, table_name: "scoped_writes", can_insert: true, can_update: true, can_delete: true,
+      unconditional_insert_check_policy_count: 0, restrictive_insert_check_policy_count: 0,
+      unconditional_update_using_policy_count: 0, restrictive_update_using_policy_count: 0,
+      unconditional_update_check_policy_count: 0, restrictive_update_check_policy_count: 0,
+      unconditional_delete_using_policy_count: 0, restrictive_delete_using_policy_count: 0 },
+  ]);
+  assert.deepEqual(findings, []);
+});
+
+test("no-op restrictive CHECK(true) must not mask an unsafe permissive INSERT/UPDATE", () => {
+  const findings = classifySecurityCatalog(safePrincipal, [
+    { ...base, can_insert: true, can_update: true,
+      unconditional_insert_check_policy_count: 1, restrictive_insert_check_policy_count: 0,
+      unconditional_update_using_policy_count: 1, restrictive_update_using_policy_count: 0,
+      unconditional_update_check_policy_count: 1, restrictive_update_check_policy_count: 0 },
+  ]);
+  assert.deepEqual(findings.map(f => f.code), [
+    "APP_UNSCOPED_PERMISSIVE_INSERT",
+    "APP_UNSCOPED_PERMISSIVE_UPDATE_USING",
+    "APP_UNSCOPED_PERMISSIVE_UPDATE_CHECK",
+  ]);
+});
