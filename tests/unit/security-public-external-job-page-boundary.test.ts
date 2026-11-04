@@ -65,7 +65,12 @@ describe("SEC-05 alternate public external job page remains tenant bounded", () 
     const q = new PgDialect().sqlToQuery(tx.readPredicate() as never);
     expect(q.sql).toContain('"colleges"."status"');
     expect(q.sql).toContain('"organizations"."status"');
-    expect(q.params.filter((item) => item === "ACTIVE")).toHaveLength(4);
+    // Three ACTIVE guards are in WHERE; employer relationship status is
+    // constrained independently in its JOIN ON condition.
+    expect(q.params.filter((item) => item === "ACTIVE")).toHaveLength(3);
+    const relationship = tx.selectChain.innerJoin.mock.calls[3]?.[1];
+    const relationshipSql = new PgDialect().sqlToQuery(relationship as never);
+    expect(relationshipSql.params).toContain("ACTIVE");
     expect(q.params).toContain("PUBLISHED");
     expect(q.params).toContain(slug);
     expect(tx.selectChain.innerJoin).toHaveBeenCalledTimes(5);
