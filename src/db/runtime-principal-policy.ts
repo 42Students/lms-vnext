@@ -17,12 +17,15 @@ export type DatabasePrincipalCapability = {
 
 export const DATABASE_APP_PRINCIPAL_DENIED = "DATABASE_APP_PRINCIPAL_UNSAFE";
 
-/** Build-time NODE_ENV alone is not production; explicit APP_ENV is required. */
+/** Enforce in production-mode server runtimes by default. Only a
+ * deliberate local/test harness APP_ENV may opt out; missing APP_ENV must
+ * never silently downgrade a deployed production Next.js service. */
 export function enforceProductionDatabasePrincipal(input: {
   nodeEnv: string | undefined;
   appEnv: string | undefined;
 }) {
-  return input.nodeEnv === "production" && input.appEnv === "production";
+  return input.nodeEnv === "production" &&
+    input.appEnv !== "development" && input.appEnv !== "test";
 }
 
 /**
