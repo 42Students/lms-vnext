@@ -14,6 +14,7 @@ on:
       - "tests/unit/security-academic-program-bounded-body.test.ts"
       - "tests/unit/security-academic-collection-bounded-body.test.ts"
       - "tests/unit/security-academic-query-ambiguity.test.ts"
+      - "tests/unit/security-academic-detail-bounded-body.test.ts"
       - ".github/workflows/security-academic-program-json.yml"
   push:
     branches: [main]
@@ -27,6 +28,7 @@ on:
       - "tests/unit/security-academic-program-bounded-body.test.ts"
       - "tests/unit/security-academic-collection-bounded-body.test.ts"
       - "tests/unit/security-academic-query-ambiguity.test.ts"
+      - "tests/unit/security-academic-detail-bounded-body.test.ts"
       - ".github/workflows/security-academic-program-json.yml"
   workflow_dispatch:
 
@@ -51,7 +53,7 @@ jobs:
       - name: Verify the exact source SHA
         run: test "$(git rev-parse HEAD)" = "$GITHUB_SHA"
       - name: Actual academic JSON size, CSRF, selector and positive-path tests
-        run: npx vitest run tests/unit/security-academic-program-bounded-body.test.ts tests/unit/security-academic-collection-bounded-body.test.ts tests/unit/security-academic-query-ambiguity.test.ts
+        run: npx vitest run tests/unit/security-academic-program-bounded-body.test.ts tests/unit/security-academic-collection-bounded-body.test.ts tests/unit/security-academic-query-ambiguity.test.ts tests/unit/security-academic-detail-bounded-body.test.ts
       - name: Full TypeScript typecheck
         env:
           NODE_OPTIONS: --max-old-space-size=6144
