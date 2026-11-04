@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, it } from "vitest";
-import { validTelegramCallbackChat, validTelegramCallbackOperator, validTelegramWebhookSecret } from "@/modules/log-alerts/telegram-webhook";
+import { validTelegramCallbackChat, validTelegramCallbackOperator, validTelegramAcknowledgementId, validTelegramWebhookSecret } from "@/modules/log-alerts/telegram-webhook";
 import { knownErrorMutationSchema } from "@/modules/log-alerts/validation";
 
 const app = process.env.APP_ENV;
@@ -51,6 +51,24 @@ describe("Telegram acknowledgement", () => {
     expect(validTelegramCallbackOperator(111223344)).toBe(false);
     process.env.TELEGRAM_ALERT_OPERATOR_IDS = "111223344";
     expect(validTelegramCallbackOperator(111223344)).toBe(true);
+  });
+  it("rejects malformed, ambiguous and noncanonical Telegram callback targets", () => {
+    expect(validTelegramAcknowledgementId("ack:11111111-1111-4111-8111-111111111111"))
+      .toBe("11111111-1111-4111-8111-111111111111");
+    expect(validTelegramAcknowledgementId("ack:AAAAAAAA-AAAA-4AAA-8AAA-AAAAAAAAAAAA"))
+      .toBe("aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa");
+    for (const raw of [
+      "ack:------------------------------------",
+      "ack:not-an-incident",
+      "ack:11111111111141118111111111111111",
+      "ack:11111111-1111-0111-8111-111111111111",
+      "ack:11111111-1111-4111-0111-111111111111",
+      "ack:11111111-1111-4111-8111-111111111111%00",
+      "ack:11111111-1111-4111-8111-111111111111;DROP",
+      "ack:11111111-1111-4111-8111-111111111111 ",
+    ]) {
+      expect(validTelegramAcknowledgementId(raw)).toBeNull();
+    }
   });
   it("GR-123 Logs admin action accepts acknowledgement without exposing identities", () => {
     expect(knownErrorMutationSchema.safeParse({ action: "ACKNOWLEDGE" }).success).toBe(true);
