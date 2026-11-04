@@ -219,7 +219,7 @@ export function findExistingGuardEvidenceRegressions(baseRef = GUARD_EVIDENCE_RE
   const changed = git(["diff", "--name-only", "--diff-filter=ACMR",
     baseRef, "HEAD", "--", "src/app/api"]);
   const gaps = [];
-  for (const file of changed ? changed.split("\\n") : []) {
+  for (const file of changed ? changed.split(/\r?\n/) : []) {
     if (!file.endsWith("/route.ts") || !fs.existsSync(file)) continue;
     let before;
     try {
