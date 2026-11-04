@@ -83,9 +83,23 @@ export async function checkDatabaseConnection() {
             WHERE ns.nspname NOT IN ('pg_catalog','information_schema')
               AND ns.nspname NOT LIKE 'pg_toast%'
               AND ns.nspname NOT LIKE 'pg_temp_%'
-              AND has_schema_privilege(current_user, ns.oid, 'CREATE')
+              AND (
+                has_schema_privilege(current_user, ns.oid, 'CREATE')
+                OR EXISTS (
+                  SELECT 1 FROM pg_catalog.pg_roles candidate
+                  WHERE pg_has_role(session_user,candidate.oid,'SET')
+                    AND has_schema_privilege(candidate.oid, ns.oid, 'CREATE')
+                )
+              )
           ) AS can_create_schema,
-          has_database_privilege(current_user, current_database(), 'CREATE') AS can_create_in_database,
+          (
+            has_database_privilege(current_user, current_database(), 'CREATE')
+            OR EXISTS (
+              SELECT 1 FROM pg_catalog.pg_roles candidate
+              WHERE pg_has_role(session_user,candidate.oid,'SET')
+                AND has_database_privilege(candidate.oid,current_database(),'CREATE')
+            )
+          ) AS can_create_in_database,
           -- The login may SET ROLE to an elevated role even if the
           -- initial current_user itself lacks special attributes.
           EXISTS (
