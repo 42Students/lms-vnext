@@ -6,10 +6,12 @@ const mocks = vi.hoisted(() => ({
   context: vi.fn(),
   tenantExport: vi.fn(),
   readiness: vi.fn(),
+  recent: vi.fn(),
 }));
 vi.mock("@/auth/request-context", () => ({
   getCurrentRequestContext: mocks.context,
 }));
+vi.mock("@/auth/recent-device-auth", () => ({ requireRecentDeviceAuthentication: mocks.recent }));
 vi.mock("@/modules/colleges/admin-tenant-lifecycle-service", () => ({
   exportSuperAdminTenantDirectory: mocks.tenantExport,
 }));
@@ -33,6 +35,7 @@ beforeEach(() => {
     user: {id:"superadmin",systemRoles:["SUPER_ADMIN"],platformStatus:"ACTIVE"},
     membership:null,adminScope:null,
   });
+  mocks.recent.mockResolvedValue({userId:"superadmin"});
   mocks.tenantExport.mockResolvedValue({
     csv: "ID,Name\\r\\n1,IIT Dharwad\\r\\n", cap: 1000, truncated:false,
   });
