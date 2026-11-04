@@ -37,8 +37,10 @@ export async function canSubscribeToClassNotificationStream(
 }
 
 function sameList(a: readonly string[], b: readonly string[]): boolean {
-  return a.length === b.length &&
-    [...a].sort().every((value, index) => value === [...b].sort()[index]);
+  if (a.length !== b.length) return false;
+  const left = [...a].sort();
+  const right = [...b].sort();
+  return left.every((value, index) => value === right[index]);
 }
 
 /** Compare the whole selected authority, not only the user ID. A refreshed
