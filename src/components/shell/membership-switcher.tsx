@@ -29,6 +29,18 @@ export function workspaceChoices(memberships: readonly MembershipChoice[]) {
     );
 }
 
+/** Missing or revoked role selection is not the first option. Keeping the
+ * placeholder active lets a user reselect even that first legitimate role. */
+export function selectedWorkspaceChoice(
+  choices: ReturnType<typeof workspaceChoices>,
+  activeMembershipId: string | null,
+  activeRole: string | null,
+) {
+  if (!activeMembershipId || !activeRole) return null;
+  return choices.find(choice =>
+    choice.membershipId === activeMembershipId && choice.role === activeRole) ?? null;
+}
+
 export function MembershipSwitcher({
   memberships,
   activeMembershipId,
@@ -42,9 +54,7 @@ export function MembershipSwitcher({
   const [error, setError] = useState<string | null>(null);
   const [pending, startTransition] = useTransition();
   const choices = workspaceChoices(memberships);
-  const activeValue = `${activeMembershipId ?? ""}|${activeRole ?? ""}`;
-  const active = choices.find((choice) => choice.value === activeValue)
-    ?? choices.find((choice) => choice.membershipId === activeMembershipId);
+  const active = selectedWorkspaceChoice(choices,activeMembershipId,activeRole);
 
   function switchWorkspace(value: string) {
     // PUB-auth-public-23: the placeholder is not a destructive leave-workspace action.
