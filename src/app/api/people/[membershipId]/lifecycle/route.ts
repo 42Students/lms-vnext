@@ -1,6 +1,9 @@
 import { NextResponse } from "next/server";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { isSameOriginRequest } from "@/auth/origin";
+import { requireRecentDeviceAuthentication } from "@/auth/recent-device-auth";
+import { readBoundedAuthJson, AuthRequestBodyTooLarge } from "@/modules/auth/bounded-json";
+import { membershipLifecycleInputSchema } from "@/modules/people/validation";
 import { apiErrorResponse } from "@/lib/api-error";
 import { PeopleServiceError } from "@/modules/people/errors";
 import { updateMembershipLifecycleWithRuntime } from "@/modules/people/runtime";
@@ -35,21 +38,26 @@ export async function PATCH(
 
   let body: unknown;
   try {
-    body = await request.json();
-  } catch {
+    body = await readBoundedAuthJson(request, 2_048);
+  } catch (error) {
+    const tooLarge=error instanceof AuthRequestBodyTooLarge;
     return NextResponse.json(
-      { error: "INVALID_REQUEST" },
-      { status: 400 },
+      { error: tooLarge?"REQUEST_TOO_LARGE":"INVALID_REQUEST" },
+      { status: tooLarge?413:400 },
     );
   }
 
   try {
+    const input=membershipLifecycleInputSchema.parse(body);
     const context = await getCurrentRequestContext();
+    // Suspending, reactivating or ending a college membership changes live
+    // authorization and must not be possible from a stale admin session.
+    await requireRecentDeviceAuthentication();
     const { membershipId } = await params;
     const person = await updateMembershipLifecycleWithRuntime(
       context,
       membershipId,
-      body,
+      input,
     );
 
     // A transition is college-membership scoped, not an account-wide ban.
