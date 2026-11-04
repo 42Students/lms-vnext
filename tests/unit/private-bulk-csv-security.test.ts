@@ -66,6 +66,11 @@ describe("private roster export routes require recent server-side sign-in", () =
     ["src/app/api/admin/tenants/export/route.ts", "exportSuperAdminTenantDirectory("],
     ["src/app/api/college/people/export/route.ts", "exportCollegePeopleCsv("],
     ["src/app/api/college/roles/export/route.ts", "exportCollegeRoleDirectoryCsv("],
+    ["src/app/api/admin/companies/export/route.ts", "listSuperAdminCompanyDirectory("],
+    ["src/app/api/admin/placements/hiring-report/export/route.ts", "getSuperAdminCompanyHiringReport("],
+    ["src/app/api/college/companies/export/route.ts", "listCollegeCompanyDirectory("],
+    ["src/app/api/admin/course-progress/students/export/route.ts", "getSuperAdminStudentCourseProgress("],
+    ["src/app/api/placements/tpo/audit/export/route.ts", "getTpoAuditLog("],
     ["src/modules/admin-ui/super-admin-scoped-csv-service.ts", "config.loader("],
   ] as const;
 
