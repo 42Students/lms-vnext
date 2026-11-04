@@ -1,4 +1,5 @@
 import { getCurrentRequestContext } from "@/auth/request-context";
+import { requireRecentDeviceAuthentication } from "@/auth/recent-device-auth";
 import { apiErrorResponse } from "@/lib/api-error";
 import { exportSuperAdminUsers } from "@/modules/people/admin-users-export-service";
 import { readSuperAdminPeopleExportParams } from "@/modules/people/admin-users-export-model";
@@ -6,6 +7,7 @@ export const runtime = "nodejs";
 export async function GET(request: Request) {
  try {
   const context=await getCurrentRequestContext();
+  await requireRecentDeviceAuthentication();
   const query=readSuperAdminPeopleExportParams(new URL(request.url).searchParams);
   const data=await exportSuperAdminUsers(context,query);
   return new Response(data.csv,{headers:{
