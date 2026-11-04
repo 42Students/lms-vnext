@@ -68,6 +68,22 @@ describe("ambiguous multirole membership switch cannot mint authorization cookie
    roleSelectionRequired:true,membershipSelectionRequired:true,
   });
  });
+ it("does not claim the remaining sole role when the role cookie was revoked",async()=>{
+  vi.mocked(listMembershipChoices).mockResolvedValue([{
+   id:membership,collegeId:college,organizationId:organization,
+   collegeName:"College A",organizationName:"Organization",collegeCode:"A",
+   status:"ACTIVE",roles:["LEARNER"],
+  }] as never);
+  vi.mocked(cookies).mockResolvedValue({get:(name:string)=>
+   name==="lms_membership"?{value:membership}:
+   name==="lms_role"?{value:"COLLEGE_ADMIN"}:undefined,
+  } as never);
+  const response=await GET();
+  expect(response.status).toBe(200);
+  expect(await response.json()).toMatchObject({
+   currentRole:null,roleSelectionRequired:true,membershipSelectionRequired:true,
+  });
+ });
  it("rejects switch without role and writes no membership or role cookies",async()=>{
   const response=await POST(request({membershipId:membership}));
   expect(response.status).toBe(400);
