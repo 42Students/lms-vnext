@@ -11,6 +11,7 @@ vi.mock("@/modules/auth/config",()=>({
 import {
  resolveSession,listActiveSessions,
  SESSION_IDLE_TIMEOUT_SECONDS,SUPER_ADMIN_IDLE_TIMEOUT_SECONDS,
+ SUPER_ADMIN_ABSOLUTE_TIMEOUT_SECONDS,
 } from "@/modules/auth/session-service";
 const dialect=new PgDialect();
 const compiled=(index:number)=>{
@@ -28,6 +29,7 @@ describe("database-enforced device session inactivity limits",()=>{
   expect(SESSION_IDLE_TIMEOUT_SECONDS).toBe(8*3600);
   expect(SUPER_ADMIN_IDLE_TIMEOUT_SECONDS).toBe(30*60);
   expect(SUPER_ADMIN_IDLE_TIMEOUT_SECONDS).toBeLessThan(SESSION_IDLE_TIMEOUT_SECONDS);
+  expect(SUPER_ADMIN_ABSOLUTE_TIMEOUT_SECONDS).toBe(8*3600);
  });
  it("checks last_seen_at, revoked_at, absolute expiry and persisted role in the atomic UPDATE",async()=>{
   fakes.execute.mockResolvedValueOnce({rows:[a]});
@@ -45,6 +47,9 @@ describe("database-enforced device session inactivity limits",()=>{
   expect(sql.sql).toContain("FROM system_roles sr");
   expect(sql.sql).toContain("sr.role = 'SUPER_ADMIN'");
   expect(sql.sql).toContain("make_interval");
+  expect(sql.sql).toContain("privileged.role = 'SUPER_ADMIN'");
+  expect(sql.sql).toContain("s.created_at > clock_timestamp()");
+  expect(sql.params).toContain(SUPER_ADMIN_ABSOLUTE_TIMEOUT_SECONDS);
   expect(sql.params).toEqual(expect.arrayContaining([SESSION_IDLE_TIMEOUT_SECONDS,SUPER_ADMIN_IDLE_TIMEOUT_SECONDS]));
  });
  it("returns SESSION_EXPIRED on idle or future timestamp and never issues a success on fallback",async()=>{
@@ -56,6 +61,9 @@ describe("database-enforced device session inactivity limits",()=>{
   expect(classified.sql).toContain("s.last_seen_at <= clock_timestamp()");
   expect(classified.sql).toContain("s.last_seen_at > clock_timestamp()");
   expect(classified.sql).toContain("FROM system_roles sr");
+  expect(classified.sql).toContain("OR NOT");
+  expect(classified.sql).toContain("privileged.role = 'SUPER_ADMIN'");
+  expect(classified.params).toContain(SUPER_ADMIN_ABSOLUTE_TIMEOUT_SECONDS);
   expect(classified.params).toEqual(expect.arrayContaining([SESSION_IDLE_TIMEOUT_SECONDS,SUPER_ADMIN_IDLE_TIMEOUT_SECONDS]));
   expect(fakes.execute).toHaveBeenCalledTimes(2);
  });
@@ -77,6 +85,8 @@ describe("database-enforced device session inactivity limits",()=>{
   expect(query.sql).toContain("s.last_seen_at > clock_timestamp()");
   expect(query.sql).toContain("s.last_seen_at <= clock_timestamp()");
   expect(query.sql).toContain("FROM system_roles sr");
+  expect(query.sql).toContain("privileged.role = 'SUPER_ADMIN'");
+  expect(query.params).toContain(SUPER_ADMIN_ABSOLUTE_TIMEOUT_SECONDS);
   expect(query.params).toContain(a.user_id);
   expect(query.params).toEqual(expect.arrayContaining([SESSION_IDLE_TIMEOUT_SECONDS,SUPER_ADMIN_IDLE_TIMEOUT_SECONDS]));
  });
