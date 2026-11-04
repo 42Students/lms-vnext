@@ -6,6 +6,8 @@ import {parseCollegeCompaniesQuery} from "@/modules/placements/college-company-d
 import {listCollegeCompanyDirectory} from "@/modules/placements/college-company-directory-service";
 import {collegeCompanyCsv} from "@/modules/placements/college-directory-csv";
 export const runtime="nodejs";
+// Bound memory, database pagination and response size for tenant exports.
+export const COLLEGE_COMPANY_EXPORT_CAP=5000;
 export async function GET(request:Request) {
  try{
   const raw=Object.fromEntries(new URL(request.url).searchParams);
@@ -17,10 +19,10 @@ export async function GET(request:Request) {
   const all=[...first.items];
   // Legacy exported the whole current college scope. Continue bounded,
   // deterministic windows, never returning an apparently complete partial CSV.
-  while(all.length<first.total){
+  while(all.length<Math.min(first.total,COLLEGE_COMPANY_EXPORT_CAP)){
    const batch=await listCollegeCompanyDirectory(context,parsed.data,{exportAll:true,exportOffset:all.length});
    if(batch.items.length===0)break;
-   all.push(...batch.items);
+   all.push(...batch.items.slice(0,COLLEGE_COMPANY_EXPORT_CAP-all.length));
   }
   const incomplete=all.length<first.total;
   return new Response(collegeCompanyCsv(all),{
@@ -30,6 +32,7 @@ export async function GET(request:Request) {
     "X-Export-Scope":"COLLEGE_COMPANY_RELATIONSHIP",
     "X-Export-Contact-Fields":"UNAVAILABLE_IN_CURRENT_SCHEMA",
     "X-Export-Truncated":incomplete?"true":"false",
+    "X-Export-Row-Cap":String(COLLEGE_COMPANY_EXPORT_CAP),
     "X-Export-Total":String(first.total),
     "X-Export-Included":String(all.length)},
   });
