@@ -1,0 +1,57 @@
+# Restricted notification subscriptions must prove the active recipient,
+# class audience and live device/session before every private data read.
+name: Security - notification stream authorization
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - "src/app/api/notifications/stream/route.ts"
+      - "src/modules/activity/notification-stream-authorization.ts"
+      - "src/modules/activity/learner-notification-membership-service.ts"
+      - "src/modules/activity/notification-service.ts"
+      - "src/modules/identity/context-service.ts"
+      - "src/modules/auth/session-service.ts"
+      - "tests/unit/security-notification-stream-authorization.test.ts"
+      - "tests/unit/security-notification-stream-route.test.ts"
+      - ".github/workflows/security-notification-stream.yml"
+  push:
+    branches: [main]
+    paths:
+      - "src/app/api/notifications/stream/route.ts"
+      - "src/modules/activity/notification-stream-authorization.ts"
+      - "src/modules/activity/learner-notification-membership-service.ts"
+      - "src/modules/activity/notification-service.ts"
+      - "src/modules/identity/context-service.ts"
+      - "src/modules/auth/session-service.ts"
+      - "tests/unit/security-notification-stream-authorization.test.ts"
+      - "tests/unit/security-notification-stream-route.test.ts"
+      - ".github/workflows/security-notification-stream.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: security-notification-stream-${{ github.ref }}-${{ github.sha }}
+  cancel-in-progress: false
+
+jobs:
+  session-tenant-class:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Prove exact revision
+        run: test "$(git rev-parse HEAD)" = "$GITHUB_SHA"
+      - name: Class, role, tenant, session revocation and no-side-effect negatives
+        run: npx vitest run tests/unit/security-notification-stream-authorization.test.ts tests/unit/security-notification-stream-route.test.ts
+      - name: TypeScript gate
+        env:
+          NODE_OPTIONS: --max-old-space-size=6144
+        run: npm run typecheck
