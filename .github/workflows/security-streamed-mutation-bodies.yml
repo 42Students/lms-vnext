@@ -15,6 +15,11 @@ on:
       - "src/app/api/projects/**/activity/seen/route.ts"
       - "src/app/api/placements/tpo/settings/cgpa-rule/route.ts"
       - "src/app/api/admin/skills/import/route.ts"
+      - "src/app/api/admin/skills/curated-seed/route.ts"
+      - "src/modules/skills/skill-source-import-service.ts"
+      - "src/modules/skills/curated-synonym-seed-service.ts"
+      - "tests/unit/security-superadmin-skill-import-authority.test.ts"
+      - "tests/unit/security-superadmin-skill-import-stepup.test.ts"
       - "tests/unit/security-streamed-mutation-body-boundaries.test.ts"
       - "tests/unit/db004-self-profile-http-boundary.test.ts"
       - ".github/workflows/security-streamed-mutation-bodies.yml"
@@ -30,6 +35,11 @@ on:
       - "src/app/api/projects/**/activity/seen/route.ts"
       - "src/app/api/placements/tpo/settings/cgpa-rule/route.ts"
       - "src/app/api/admin/skills/import/route.ts"
+      - "src/app/api/admin/skills/curated-seed/route.ts"
+      - "src/modules/skills/skill-source-import-service.ts"
+      - "src/modules/skills/curated-synonym-seed-service.ts"
+      - "tests/unit/security-superadmin-skill-import-authority.test.ts"
+      - "tests/unit/security-superadmin-skill-import-stepup.test.ts"
       - "tests/unit/security-streamed-mutation-body-boundaries.test.ts"
       - "tests/unit/db004-self-profile-http-boundary.test.ts"
       - ".github/workflows/security-streamed-mutation-bodies.yml"
@@ -55,5 +65,7 @@ jobs:
       - run: npm ci
       - name: Run seven staff body-limit negative and positive suites
         run: npx vitest run tests/unit/security-streamed-mutation-body-boundaries.test.ts tests/unit/db004-self-profile-http-boundary.test.ts
+      - name: Live global-catalog permission and fresh-auth regressions
+        run: npx vitest run tests/unit/security-superadmin-skill-import-authority.test.ts tests/unit/security-superadmin-skill-import-stepup.test.ts
       - name: Type-check affected app and test sources
         run: NODE_OPTIONS=--max-old-space-size=5120 npm run typecheck
