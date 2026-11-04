@@ -1,66 +1,65 @@
-# Security Program → Canonical Tracker Integration
+# Security Program — Canonical Control Tracker
 
-**Date:** 2026-11-04  
-**Status:** Design for a future validated tracker-schema change. This document is **not** an additional live tracker and does not mark any security control done.
+**Implemented:** 2026-11-04. Source of execution truth: [`docs/tracker.json`](../tracker.json), under its `security` object. This document explains the working system; **it is not a separate task or status tracker**.
 
-## Why this exists
+The catalogue remains a frozen requirement baseline: [493 control IDs in 26 domains](control-catalog.md). The execution program groups them into **SP-01 through SP-10**. The canonical `tasks` array remains unchanged at 101 previously accepted DB/API/UI tasks. Their engineering acceptance is separate from security certification.
 
-The single canonical task status source for vNext is [docs/tracker.json](../tracker.json). The existing file declares a `RELEASE` phase, but currently has **81 DATABASE, 10 API and 10 UI tasks and zero RELEASE tasks** (101 total at inspection on 2026-11-04). The `scripts/tracker.mjs::inspectTracker` loop recognizes only `DB-###`, `API-##` and `UI-##` identifiers. Adding `SEC-...` or `REL-SEC-...` objects to `tasks` without updating that validator causes `DUPLICATE_OR_INVALID_TASK_ID`. This is a project integration constraint, not an excuse to lose the security requirements.
+## Query the current numbers at any time
 
-The [control catalogue](control-catalog.md) is a complete **requirements index** (493 controls in 26 domains). It intentionally contains no owner, done, picked, or acceptance status. The [program](README.md) and [acceptance matrix](acceptance-matrix.md) define the scope and proofs. **Only** the canonical tracker should record execution and closure.
+The CLI reads the same canonical tracker that regular project checks validate:
 
-## Safe migration proposal
-
-1. Pin main SHA; run the existing tracker inspection and snapshot its current errors, task IDs, phase totals and execution milestone structure.
-2. Extend `scripts/tracker.mjs` with explicit `REL-SEC-01` ... `REL-SEC-10` recognition as `phase: RELEASE`, or choose a consistently validated RELEASE package naming pattern. **Do not loosen checks for existing DB/API/UI tasks.**
-3. Validate unique IDs, title, boolean done, valid dependency list and no cycles. For RELEASE tasks require separately verified code, executed negative tests, deployed-config evidence where relevant and independent review; a saved checklist or authored test cannot satisfy the acceptance gate.
-4. Choose the correct milestone representation. If `execution.milestones` is expanded, enforce exact-ID join and no silent auto-complete. If RELEASE deliberately has different evidence fields, test that schema explicitly. Keep `phaseOrder` unchanged.
-5. Add **10 umbrella RELEASE packages** shown below, all initially **done:false** with no fake acceptance evidence. These may be split into auditable smaller canonical tasks by an authorized change, but do not create a parallel tracker elsewhere.
-6. Connect each package to exact `SEC-<domain>-<ordinal>` controls. Fail coverage validation if any catalogue control is missing or assigned to no package; intentional shared controls may belong to more than one.
-7. Add validator tests: existing 101 tasks unchanged; RELEASE task accepted with required fields; missing/duplicate ID rejected; invalid dependency rejected; no evidence/failed test cannot mark done; cross-program dependencies validated; all 493 controls covered; releasing with P0 blockers open rejected.
-8. Only after an exact-SHA tracker validation pass, update `docs/tracker.json` through concurrency-safe SHA-checked write. Avoid auto-changing `currentPhase` while UI work is ongoing.
-9. Give the existing security-audit chat and other lanes the new IDs and explicit file ownership; document actual commits and test outcomes in canonical acceptance evidence, not this page.
-
-## Suggested canonical work packages
-
-| Future package | Program | Requirement domains | Primary acceptance |
-|---|---|---|---|
-| REL-SEC-01 | SP-01 Identity & Access | SEC-01, 02, 03, 04, 26 | Seven-role policy isolation; secure sessions, admin MFA, step-up and revoked-role tests |
-| REL-SEC-02 | SP-02 Tenant Isolation | SEC-05, 13, 14 | Cross-college, cross-org and same-college ownership test matrix across modules |
-| REL-SEC-03 | SP-03 PostgreSQL | SEC-06, 07 | Real runtime-role catalog, RLS `USING`/`WITH CHECK`, integration and pool isolation |
-| REL-SEC-04 | SP-04 API & Browser | SEC-08, 12 | 100% method classification and negative object, CSRF, output and XSS tests |
-| REL-SEC-05 | SP-05 Secrets, Storage & Privacy | SEC-09, 10, 11, 22 | Rotation proof, protected student data/files, private exports, retention |
-| REL-SEC-06 | SP-06 Integrations & Workers | SEC-15, 16 | Signed/replay-safe webhooks, SSRF protection, tenant-isolated least-privilege jobs |
-| REL-SEC-07 | SP-07 Cloud & Supply Chain | SEC-17, 18 | Protected main, safe CI credentials, scans, network identities and deploy gates |
-| REL-SEC-08 | SP-08 Detection & Resilience | SEC-19, 20, 21 | Audit logs, tested alerts/incidents, isolation/backup/restore drills |
-| REL-SEC-09 | SP-09 Verification | SEC-23, 24 | Comprehensive restricted-database attack tests, external assessment and retest |
-| REL-SEC-10 | SP-10 Governance | SEC-25, plus cross-cutting | Risk/exception ownership, continuing access reviews and measurable assurance |
-
-**Dependency suggestions, not inserted live:** Identity, tenant, DB, API, secrets, workers, infrastructure and detection work can proceed in parallel after their source/baseline dependencies are verified. Independent assessment depends on all critical implementation packages; final continuous-assurance signoff depends on verified controls and operational ownership. Cross-boundary tests must not be delayed until UI parity.
-
-## Closure receipt (proposed)
-
-```json
-{
-  "id": "REL-SEC-03",
-  "phase": "RELEASE",
-  "title": "PostgreSQL RLS and runtime-principal security",
-  "done": false,
-  "dependsOn": [],
-  "securityProgram": "SP-03",
-  "securityControlFamilies": ["SEC-06", "SEC-07"],
-  "acceptanceCriteria": [
-    "Tenant table/ownership matrix and privileged-role inventory reviewed",
-    "Restricted-runtime SQL SELECT/INSERT/UPDATE/DELETE tests pass",
-    "RLS/pool/rollback deployed configuration independently verified"
-  ]
-}
+```bash
+node scripts/tracker.mjs --security
+node scripts/tracker.mjs --security-json
+node scripts/security/control-progress.mjs --markdown
+node scripts/security/control-progress.mjs --check
+node scripts/tracker.mjs --check
+node --test tests/security-control-progress.test.mjs
 ```
 
-This object is **illustrative and must not be inserted until the tracker schema supports it**. For actual closure, require acceptedAt + exact-SHA test/CI proof and protected external evidence references. Sensitive PostgreSQL catalog dumps, secret rotation receipts and student records stay outside Git.
+The human-readable command reports verified, remaining, assessed, unknown/unassessed and program-by-program counts. The JSON command exposes each program and evidence-backed control. **Nothing is counted as done just because a test exists.**
 
-## Immediate human/agent handoff
+[Security control integrity workflow](https://github.com/42Students/lms-vnext/actions/workflows/security-control-progress.yml) reruns on canonical tracker, catalogue, validation-script and test changes. Its GitHub Actions **job summary** is the generated live dashboard; no manually edited dashboard counts can drift. The workflow checks the exact commit SHA and runs negative invariant tests as well as the existing project tracker validation.
 
-A new worker should select a specific *unreviewed* control range and find an existing genuinely matching canonical task, if available. Otherwise, work on clearly isolated implementation/test files while arranging the above canonical tracker extension. Never claim that the entire security program is covered by `API-10 done:true`; the previous API parity acceptance and full current adversarial production-security certification are different claims.
+## Status meanings — do not inflate completion
 
-**Do not change the source blueprint archive to reflect progress.** Dated findings belong in the existing technical audit, requirement wording in the catalogue, and execution truth in the canonical tracker.
+| Canonical state | What it means | Counted completed? |
+|---|---|---|
+| `UNASSESSED` | This control has not been reviewed individually; existing code may or may not cover it | No |
+| `GAP_CONFIRMED` | A concrete defect/missing security guarantee has been observed with traceable proof | No |
+| `PARTIAL_EVIDENCE` | A relevant implementation/test slice passes, but the entire requirement has not been established | No |
+| `IMPLEMENTED_UNVERIFIED` | Implementation is believed present with exact known missing checks listed | No |
+| `VERIFIED` | Control-specific positive and negative checks, configuration/runtime proof and independent review all accepted | **Yes** |
+| `NOT_APPLICABLE` | An exceptional, independently approved, expiring and documented exclusion | Not completed; separately excluded |
+
+The live denominator is always the actual catalogue count, presently **493**. The report separately shows **verified / total**, **assessed / total**, **still requiring closure**, and all six states. Never describe `UNASSESSED` as `NOT_STARTED`, `PARTIAL_EVIDENCE` as `COMPLETE`, or `VERIFIED` as global production-release approval. A focused green workflow proves only its stated scope.
+
+## Baseline receipt
+
+At initialization on 2026-11-04, a targeted read of source and executed security workflows justified **22 partial-evidence controls and 1 confirmed governance gap**. The remaining **470 controls are UNASSESSED**, *not* known-unimplemented. **0 controls have independent completed control certification**. The single confirmed gap is the unprotected `main` branch (SEC-18-002) observed through the GitHub branch API; other gaps may exist but are not silently invented.
+
+Those are **initial numbers only**; use the CLI or workflow summary for all subsequent totals. The underlying focused evidence is stored alongside the relevant control in `docs/tracker.json`, and in the existing [private export](evidence/2026-11-04-private-bulk-export-hardening.md) and [recruiter ZIP/RLS](evidence/2026-11-04-recruiter-zip-ssrf-and-rls-auditor.md) receipts.
+
+## Updating a control while working in parallel
+
+1. Fetch the latest `main` before any write. Do not overwrite another chat's newer tracker revision; use the file's fresh GitHub blob SHA.
+2. Locate the exact catalogue ID under `security.controls` in `docs/tracker.json`. The same control ID must exist exactly once, and the task description is owned by the catalogue.
+3. For a tested partial slice, set `state: PARTIAL_EVIDENCE`, `assessedAt: YYYY-MM-DD`, `nextProof` (remaining independent acceptance), and an `evidence` array containing exact 40-character `commitSha`, successful executed GitHub Actions `runUrl`, and the **narrow exact scope** tested. If an actual gap is discovered, record `GAP_CONFIRMED` and its authoritative observation/evidence.
+4. Only use `IMPLEMENTED_UNVERIFIED` when the remaining validations are explicitly enumerated in `remainingChecks`.
+5. Only use `VERIFIED` after separately checking the entire control (not just one API): require the closure object's independent `reviewer`, `reviewUrl`, `acceptedAt`, exact `commitSha`, positive and negative test proof, deployed configuration review and `releaseEvidence`. The validator rejects unsupported completion. Production secrets, DB catalog exports and personal records must never be committed to Git.
+6. Run `node scripts/tracker.mjs --check` and `node --test tests/security-control-progress.test.mjs`; inspect the workflow at the resulting SHA. Don't edit a report or hardcode percentages.
+7. Where a requirement genuinely does not apply, do **not** simply remove it: `NOT_APPLICABLE` needs an approved, expiring independent exception with documented rationale. This remains separately visible.
+
+## Assurance quality and non-negotiable gates
+
+- A skipped/failed test, source-only claim, simulated role, or unreviewed database configuration cannot be called complete.
+- Security and database evidence must cover multi-tenancy, same-tenant horizontal privacy, selected role, object owner, field, mutation side effects, revocation and deployment-specific permissions **as applicable**.
+- Source and local/disposable PostgreSQL passes do not automatically certify the actual production runtime database principal or all RLS policies.
+- A `security.releaseSignoff.approved` flag with open controls fails validation. Overall release also requires the [separate release gates](acceptance-matrix.md), protected `main`, independent assessment and deployment signoff.
+- The program IDs SP-01…SP-10 map each of the 26 domains exactly once. All per-program counts are derived from the same 493 statuses. Cross-domain controls still need their own explicit closure.
+
+## Future umbrella release work packages (optional, not silently inserted)
+
+The earlier proposed `REL-SEC-01` through `REL-SEC-10` parent release tasks were **not** inserted because the original tracker task validator and milestone system allow only DB/API/UI task identities. A later explicit schema extension may add those umbrella packages, but cannot create a second status source or alter the accepted 101 original tasks. Program rollups already work now through the canonical `security` object.
+
+**Next priority:** Audit and classify the 470 unassessed controls by exploit impact, starting with production DB principals/RLS, per-method API object authorization and branch/release enforcement. Each classification requires concrete implementation and test evidence; do not auto-close broad controls by keyword matching.
