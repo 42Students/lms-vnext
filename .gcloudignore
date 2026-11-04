@@ -33,3 +33,12 @@ tools
 **/*credentials*.json
 **/*client_secret*.json
 **/secrets.json
+**/.npmrc
+**/.pypirc
+**/.netrc
+**/.pgpass
+**/id_rsa
+**/id_dsa
+**/id_ecdsa
+**/id_ed25519
+**/application_default_credentials.json
