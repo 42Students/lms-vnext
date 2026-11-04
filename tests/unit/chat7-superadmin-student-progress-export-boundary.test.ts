@@ -1,8 +1,9 @@
 import {beforeEach,describe,expect,it,vi} from "vitest";
 import {readFileSync} from "node:fs";
 
-const state=vi.hoisted(()=>({context:vi.fn(),reader:vi.fn(),permission:vi.fn(),db:vi.fn()}));
+const state=vi.hoisted(()=>({context:vi.fn(),reader:vi.fn(),permission:vi.fn(),db:vi.fn(),recent:vi.fn()}));
 vi.mock("@/auth/request-context",()=>({getCurrentRequestContext:state.context}));
+vi.mock("@/auth/recent-device-auth",()=>({requireRecentDeviceAuthentication:state.recent}));
 vi.mock("@/modules/permissions/policy",()=>({requirePermission:state.permission}));
 vi.mock("@/db/client",()=>({getDb:state.db}));
 vi.mock("@/modules/courses/super-admin-student-course-progress",()=>({
@@ -15,6 +16,7 @@ const actor={user:{id:"acting-super-admin",platformStatus:"ACTIVE",systemRoles:[
  membership:null,adminScope:{collegeId:"22222222-2222-4222-8222-222222222222"}};
 beforeEach(()=>{
  state.context.mockReset().mockResolvedValue(actor);
+ state.recent.mockReset().mockResolvedValue({userId:"acting-super-admin"});
  state.permission.mockReset();
  state.db.mockReset().mockReturnValue({
   select:()=>({from:()=>({where:()=>({limit:async()=>[{courseId:id}]})})}),
@@ -44,6 +46,7 @@ describe("SA-academics-people-67 course-progress students export boundary",()=>{
   const response=await GET(new Request("https://app.invalid/api/admin/course-progress/students/export?offeringId="+id));
   expect(response.status).toBe(200);
   expect(state.reader).toHaveBeenCalledWith(actor,{offeringId:id,page:1,pageSize:500});
+  expect(state.recent).toHaveBeenCalledOnce();
   // Response.text() uses UTF-8 decoding that can strip a BOM. Inspect the
   // actual exported bytes so the spreadsheet BOM remains an enforced contract.
   const bytes=new Uint8Array(await response.arrayBuffer());
