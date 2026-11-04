@@ -1,5 +1,7 @@
 # vNext Security — Adversarial Acceptance Matrix and Release Gates
 
+**Coverage measurement:** The [ten-axis coverage contract](coverage-contract.md) defines the denominators, evidence quality and release thresholds; this matrix supplies the detailed attack scenarios.
+
 **Purpose:** This document tells implementers and reviewers **what to prove** for every security boundary. It is a test and evidence specification, not a report of tests already run and **not another active status tracker**. Use [the 493-control catalogue](control-catalog.md) for requirements, [the execution program](README.md) for sequencing, and [docs/tracker.json](../tracker.json) for all live ownership and status. Existing audit: [2026-11-04 findings](../audit/security/2026-11-04-auth-authorization-tenant-hardening.md).
 
 ## Test principle and pass/fail semantics
