@@ -70,6 +70,7 @@ describe("Super Admin tenant and readiness CSV routes", () => {
       expect(response.headers.get("cache-control")).toBe("private, no-store");
     }
     expect(mocks.tenantExport).not.toHaveBeenCalled();
+    expect(mocks.recent).not.toHaveBeenCalled();
   });
 
   it("SA-COL-TENANT-ROUTE-03 fails closed on revoked Super Admin authority", async () => {
