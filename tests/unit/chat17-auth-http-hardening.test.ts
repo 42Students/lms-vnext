@@ -83,8 +83,9 @@ describe("WEAK-auth HTTP: guard ordering, errors and no PII logs",()=>{
     expect(await unexpected.json()).toEqual({error:"INTERNAL_ERROR"});
     expect(logError).toHaveBeenCalledTimes(2);
   });
-  it("WEAK-auth-http-07 IP logs are one-way tags, caller fields and raw addresses stay out of structured output",()=>{
-    expect(ipTag("198.51.100.12")).toMatch(/^[a-f0-9]{12}$/);
+  it("WEAK-auth-http-07 IP logs are keyed, bounded tags and omit raw addresses",()=>{
+    vi.stubEnv("AUTH_SECRET", "i".repeat(48));
+    expect(ipTag("198.51.100.12")).toMatch(/^[a-f0-9]{24}$/);
     expect(ipTag("198.51.100.12")).toBe(ipTag("198.51.100.12"));
     expect(ipTag("198.51.100.13")).not.toBe(ipTag("198.51.100.12"));
     auditLogin("auth.attempt",{route:"otp",ip:"198.51.100.12"},{accepted:false});
@@ -92,5 +93,6 @@ describe("WEAK-auth HTTP: guard ordering, errors and no PII logs",()=>{
     const args=vi.mocked(writeStructuredLog).mock.calls[0];
     expect(JSON.stringify(args)).not.toContain("198.51.100.12");
     expect(JSON.stringify(args)).toContain("ipTag");
+    vi.unstubAllEnvs();
   });
 });
