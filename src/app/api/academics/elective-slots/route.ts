@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { isSameOriginRequest } from "@/auth/origin";
 import { apiErrorResponse } from "@/lib/api-error";
+import { readBoundedJsonBody } from "@/lib/bounded-json-body";
 import { CollegeElectiveSlotMutationError, createCollegeElectiveSlot, listCollegeElectiveSlotOptions } from "@/modules/electives/college-slot-mutation-service";
 
 export const runtime = "nodejs";
@@ -32,7 +33,12 @@ export async function POST(request: Request) {
   }
   try {
     const context = await getCurrentRequestContext();
-    const body: unknown = await request.json();
+    const parsed = await readBoundedJsonBody(request, 16_384);
+    if (parsed.kind !== "OK") return NextResponse.json({ error: "INVALID_REQUEST" }, {
+      status: parsed.kind === "TOO_LARGE" ? 413 : 400,
+      headers: { "Cache-Control": "private, no-store" },
+    });
+    const body: unknown = parsed.value;
     const result = await createCollegeElectiveSlot(context, body);
     // Return a complete display view as well as the row; keep the existing
     // {slot} property for clients that refresh after creating the slot.
