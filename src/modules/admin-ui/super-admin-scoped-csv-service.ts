@@ -13,7 +13,7 @@ export async function exportSuperAdminScopedDirectory(request:Request,config:{
  try{
   const context=await getCurrentRequestContext();
   // Bulk roster exports require fresh server-verified authentication.
-  await requireRecentDeviceAuthentication();
+  await requireRecentDeviceAuthentication(context.user.id);
   const query=parseSuperAdminScopedCsvParams(new URL(request.url).searchParams);
   if(!scopedCsvStatusAllowed(query.status,config.statuses)){
    return new Response("Unsupported status filter",{status:400,headers:{"Cache-Control":"private, no-store"}});
