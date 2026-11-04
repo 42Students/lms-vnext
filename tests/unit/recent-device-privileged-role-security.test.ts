@@ -32,7 +32,7 @@ describe("recent first-party OTP authentication for privileged role grants", () 
     expect(guards).toContain("onboardPersonInputSchema.parse(body)");
     expect(guards).toContain('role === "COLLEGE_ADMIN" || role === "TPO"');
     expect(guards).toContain('requirePermission(context, "admin-scope.select")');
-    expect(guards).toContain("await requireRecentDeviceAuthentication()");
+    expect(guards).toContain("await requireRecentDeviceAuthentication(context.user.id)");
   });
 
   it("guards both granting and removal of college admin or TPO role", () => {
@@ -45,7 +45,7 @@ describe("recent first-party OTP authentication for privileged role grants", () 
       const prefix = source.slice(Math.max(0, end - 600), end);
       expect(prefix).toContain('input.role === "COLLEGE_ADMIN" || input.role === "TPO"');
       expect(prefix).toContain('requirePermission(context, "admin-scope.select")');
-      expect(prefix).toContain("await requireRecentDeviceAuthentication()");
+      expect(prefix).toContain("await requireRecentDeviceAuthentication(context.user.id)");
     }
   });
 });
