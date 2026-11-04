@@ -111,13 +111,21 @@ function prefixedKey(config: S3Config, key: string) {
   return `${config.keyPrefix ?? ""}${key}`;
 }
 
+function checkedBucket(bucket: string) {
+  // The empty bucket is intentional for virtual-hosted AWS SigV4 vectors.
+  if (bucket && (!/^[a-z0-9][a-z0-9.-]{1,61}[a-z0-9]$/.test(bucket) ||
+      bucket.includes(".."))) throw new Error("S3_BUCKET_INVALID");
+  return bucket;
+}
+
 function objectLocation(config: S3Config, key: string) {
   const url = checkedEndpoint(config.endpoint);
+  const bucket = checkedBucket(config.bucket);
   const fullKey = prefixedKey(config, key);
   return {
     host: url.host,
     origin: url.origin,
-    path: config.bucket ? `/${config.bucket}/${fullKey}` : `/${fullKey}`,
+    path: bucket ? `/${bucket}/${fullKey}` : `/${fullKey}`,
   };
 }
 
@@ -359,7 +367,7 @@ export async function replaceObjectMetadata(
 ) {
   const response = await signedFetch(config, {
     method: "PUT",
-    path: `/${config.bucket}/${prefixedKey(config, key)}`,
+    path: `/${checkedBucket(config.bucket)}/${prefixedKey(config, key)}`,
     headers: {
       "x-amz-copy-source": `/${config.bucket}/${encodePath(prefixedKey(config, key))}`,
       "x-amz-metadata-directive": "REPLACE",
