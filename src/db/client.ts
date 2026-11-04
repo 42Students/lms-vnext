@@ -76,7 +76,15 @@ export async function checkDatabaseConnection() {
           r.rolbypassrls AS can_bypass_rls,
           r.rolcreaterole AS can_create_role,
           r.rolcreatedb AS can_create_database,
-          has_schema_privilege(current_user, 'public', 'CREATE') AS can_create_schema,
+          -- Creating objects in ANY application schema is unsafe for the
+          -- runtime principal, not only creating them in public.
+          EXISTS (
+            SELECT 1 FROM pg_catalog.pg_namespace ns
+            WHERE ns.nspname NOT IN ('pg_catalog','information_schema')
+              AND ns.nspname NOT LIKE 'pg_toast%'
+              AND ns.nspname NOT LIKE 'pg_temp_%'
+              AND has_schema_privilege(current_user, ns.oid, 'CREATE')
+          ) AS can_create_schema,
           has_database_privilege(current_user, current_database(), 'CREATE') AS can_create_in_database,
           -- The login may SET ROLE to an elevated role even if the
           -- initial current_user itself lacks special attributes.
@@ -95,7 +103,10 @@ export async function checkDatabaseConnection() {
               AND ns.nspname NOT IN ('pg_catalog','information_schema')
               AND ns.nspname NOT LIKE 'pg_toast%'
               AND ns.nspname NOT LIKE 'pg_temp_%'
-              AND pg_has_role(current_user, owned.relowner, 'USAGE')
+              AND (
+                pg_has_role(current_user, owned.relowner, 'USAGE')
+                OR pg_has_role(session_user, owned.relowner, 'SET')
+              )
               AND NOT owned.relforcerowsecurity
               AND EXISTS (
                 SELECT 1 FROM pg_catalog.pg_attribute a
