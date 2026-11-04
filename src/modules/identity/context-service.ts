@@ -207,21 +207,23 @@ export const LEGACY_ACCOUNT_ROLE_DISPOSITION = {
   RECRUITER: { kind: "RECRUITER_PROFILE", role: "RECRUITER" },
 } as const;
 
-/** Role shown first when a person holds several roles and has not picked one yet. */
-const ROLE_PRIORITY: readonly MembershipRole[] = ["COLLEGE_ADMIN", "TPO", "MENTOR", "FACULTY", "LEARNER"];
-
 /**
- * One workspace at a time: a person holding several roles works in exactly one of them.
- * The chosen role (or the highest-priority held role when none is chosen) becomes the only
- * role of the request context, so menus, pages and permission checks never mix roles.
+ * There is no safe privileged-role fallback. A membership with multiple live
+ * roles must have an explicit, persisted, still-granted selected role. A stale
+ * or forged selector cannot cause a higher-priority role to be auto-selected.
+ *
+ * Returning [] leaves the membership visible for recovery / role selection,
+ * but permission checks require exactly one active role and therefore deny.
  */
 export function narrowToActiveRole(
   roles: readonly MembershipRole[],
   activeRole?: MembershipRole | null,
 ): MembershipRole[] {
-  if (roles.length <= 1) return [...roles];
-  if (activeRole && roles.includes(activeRole)) return [activeRole];
-  return [ROLE_PRIORITY.find((role) => roles.includes(role)) ?? roles[0]];
+  if (roles.length === 0) return [];
+  if (activeRole !== null && activeRole !== undefined) {
+    return roles.includes(activeRole) ? [activeRole] : [];
+  }
+  return roles.length === 1 ? [roles[0]!] : [];
 }
 
 export async function resolveRequestContext(
