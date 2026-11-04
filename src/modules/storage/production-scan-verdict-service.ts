@@ -1,6 +1,7 @@
 import "server-only";
 
 import {createHash} from "node:crypto";
+import {validScannerCallbackSecret} from "./scan-verdict-request-guard";
 import {and,eq,isNull} from "drizzle-orm";
 import {z} from "zod";
 import {getDb} from "@/db/client";
@@ -16,10 +17,9 @@ import {headObject} from "./s3-client";
  * operated scanning worker must attest bytes and be deployed/verified.
  * APP_ENV is mandatory; a missing value fails closed like production. */
 export function productionScannerCallbackReady(env:NodeJS.ProcessEnv=process.env){
- const secret=env.PRIVATE_STORAGE_SCANNER_WEBHOOK_SECRET?.trim()??"";
  return env.APP_ENV==="production"&&
   env.PRIVATE_STORAGE_SCANNER_READY==="PROD_VERIFIED"&&
-  secret.length>=32 && !/[\x00-\x20\x7f]/.test(secret);
+  validScannerCallbackSecret(env.PRIVATE_STORAGE_SCANNER_WEBHOOK_SECRET);
 }
 
 export const productionScanVerdictSchema=z.strictObject({
