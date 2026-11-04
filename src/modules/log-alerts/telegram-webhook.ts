@@ -1,5 +1,5 @@
 import { timingSafeEqual } from "node:crypto";
-import { and, eq, isNull } from "drizzle-orm";
+import { and, eq, isNotNull, isNull } from "drizzle-orm";
 import {redactAlertText} from "./redaction";
 import {limitTelegramAlert} from "./telegram-notifier";
 import { z } from "zod";
@@ -13,7 +13,7 @@ const callbackSchema = z.object({
     from: z.object({ id: z.number().int().positive().max(Number.MAX_SAFE_INTEGER) }).passthrough(),
     data: z.string().max(200),
     message: z.object({
-      message_id:z.number().int().positive().optional(),
+      message_id:z.number().int().positive(),
       text:z.string().max(3500).optional(),
       chat: z.object({
         id: z.union([z.number().int(), z.string().min(1).max(40)]),
@@ -38,6 +38,13 @@ export function validTelegramCallbackOperator(userId: number): boolean {
     const id = value.trim();
     return /^[1-9][0-9]{0,15}$/.test(id) && id === String(userId);
   });
+}
+
+/** Only our v4 signature IDs are valid callback targets. Reject garbage before
+ * invoking SQL: invalid PostgreSQL UUID inputs must not cause webhook 503s. */
+export function validTelegramAcknowledgementId(data: string): string | null {
+  const matched = /^ack:([0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12})$/i.exec(data);
+  return matched?.[1]?.toLowerCase() ?? null;
 }
 
 export function validTelegramWebhookSecret(header: string | null): boolean {
@@ -89,15 +96,21 @@ export async function handleTelegramCallback(payload: unknown): Promise<boolean>
       !validTelegramCallbackOperator(parsed.data.callback_query.from.id)) return false;
   const callback=parsed.data.callback_query;
   const value=callback.data;
-  if(!/^ack:[0-9a-f-]{36}$/i.test(value)){
+  const id = validTelegramAcknowledgementId(value);
+  if (!id) {
     // Older non-UUID buttons cannot be attributed to a persisted signature.
     // Always clear an authenticated Telegram callback spinner without mutation.
     await answerTelegramCallback(callback.id,value.startsWith("ack:")?"Alert is no longer available":"Action unavailable");
     return false;
   }
-  const id=value.slice(4);
   const db=getDb();
-  const scope=and(eq(signatures.id,id),eq(signatures.environment,"PRODUCTION"));
+  const scope=and(
+    eq(signatures.id,id),
+    eq(signatures.environment,"PRODUCTION"),
+    // Callback buttons exist only for provider-accepted, persisted incidents.
+    // A known but never-alerted signature is not an acknowledgement target.
+    isNotNull(signatures.alertedAt),
+  );
   const updated=await db.update(signatures).set({acknowledgedAt:new Date()})
     .where(and(scope,isNull(signatures.acknowledgedAt)))
     .returning({id:signatures.id});
