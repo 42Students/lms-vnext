@@ -1,3 +1,4 @@
+import { spreadsheetCsvCell } from "@/security/csv-cell";
 import { z } from "zod";
 import { MEMBERSHIP_ROLES } from "@/modules/identity/constants";
 import type { PersonMembershipView } from "./service";
@@ -24,12 +25,7 @@ export function parsePeopleCsvParams(params: URLSearchParams) {
   return peopleCsvQuery.parse(entries);
 }
 export function neutralizePeopleCsv(value: string) {
-  // Unicode format and combining characters can hide a formula prefix from
-  // a simple whitespace check. Neutralize the entire original cell when the
-  // first visible code point could be evaluated by spreadsheet software.
-  const firstVisible = value.replace(/^[\s\p{Cc}\p{Cf}\p{Mn}\p{Me}]*/u, "");
-  const safe = /^[=+@-]/u.test(firstVisible) ? "'" + value : value;
-  return '"' + safe.replaceAll('"', '""') + '"';
+  return spreadsheetCsvCell(value);
 }
 export function renderPeopleCsv(rows: readonly PersonMembershipView[], truncated: boolean) {
   const header = ["Membership ID", "Name", "Email", "Phone", "Roles", "Status", "Joined UTC"];
