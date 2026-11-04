@@ -112,6 +112,32 @@ FROM pg_catalog.pg_roles AS r
 WHERE r.rolname = current_user
 `;
 
+// Inspect both sides of write policies: INSERT checks new values; UPDATE
+// combines an old-row USING decision with a distinct new-row WITH CHECK
+// decision; DELETE checks old rows. SQL below is generated ONLY from this
+// hardcoded matrix (no user, environment, table-name or DB data interpolation).
+const WRITE_POLICY_MATRIX = Object.freeze([
+  ["insert_check", "a", "COALESCE(pg_get_expr(p.polwithcheck,p.polrelid), pg_get_expr(p.polqual,p.polrelid), 'true')"],
+  ["update_using", "w", "COALESCE(pg_get_expr(p.polqual,p.polrelid), 'true')"],
+  ["update_check", "w", "COALESCE(pg_get_expr(p.polwithcheck,p.polrelid), pg_get_expr(p.polqual,p.polrelid), 'true')"],
+  ["delete_using", "d", "COALESCE(pg_get_expr(p.polqual,p.polrelid), 'true')"],
+]);
+const WRITE_POLICY_COUNTS_QUERY = WRITE_POLICY_MATRIX.flatMap(([name, command, predicate]) =>
+  ["unconditional", "restrictive"].map(kind => {
+    const permissive = kind === "unconditional";
+    return `(SELECT count(*)::integer FROM pg_catalog.pg_policy p
+    WHERE p.polrelid=c.oid
+      AND p.polpermissive = ${permissive}
+      AND p.polcmd IN ('*','${command}')
+      AND ${predicate} ${permissive ? "= 'true'" : "<> 'true'"}
+      AND (0::oid=ANY(p.polroles) OR EXISTS (
+        SELECT 1 FROM unnest(p.polroles) AS role_id(id)
+        WHERE pg_has_role(current_user,role_id.id,'USAGE')
+      ))
+  ) AS ${kind}_${name}_policy_count`;
+  })
+).join(",\n  ") + ",";
+
 const TABLES_QUERY = `
 SELECT
   n.nspname::text AS schema_name,
@@ -145,6 +171,7 @@ SELECT
         WHERE pg_has_role(current_user,role_id.id,'USAGE')
       ))
   ) AS restrictive_select_policy_count,
+  ${WRITE_POLICY_COUNTS_QUERY}
   ARRAY(
     SELECT a.attname::text FROM pg_catalog.pg_attribute a
     WHERE a.attrelid=c.oid AND a.attnum>0 AND NOT a.attisdropped
@@ -235,7 +262,7 @@ export async function auditPostgresSecurity(databaseUrl) {
       routines,
       limitations: [
         "No table rows were read or altered",
-        "Unconditional policy detection is conservative; nontrivial policy predicates and effective role inheritance require independent review",
+        "Obvious unconditional SELECT/INSERT/UPDATE/DELETE policies are screened, but predicates, applicable privileges and runtime tenant context require independent proof",
         "Indirect tenant ownership and policy expressions require manual review",
         "Owner-rights views, materialized views and SECURITY DEFINER routines require reviewed authorization proofs; their presence alone is not a proven leak",
         "Passing is not a substitute for cross-tenant read/write adversarial tests",
