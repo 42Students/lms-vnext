@@ -1,5 +1,6 @@
 import "server-only";
 import {getCurrentRequestContext} from "@/auth/request-context";
+import {requireRecentDeviceAuthentication} from "@/auth/recent-device-auth";
 import {apiErrorResponse} from "@/lib/api-error";
 import type {RequestContext} from "@/modules/identity/context";
 import type {SuperAdminReadQuery,SuperAdminReadResult} from "./super-admin-read-directory-model";
@@ -11,6 +12,8 @@ export async function exportSuperAdminScopedDirectory(request:Request,config:{
 }):Promise<Response>{
  try{
   const context=await getCurrentRequestContext();
+  // Bulk roster exports require fresh server-verified authentication.
+  await requireRecentDeviceAuthentication();
   const query=parseSuperAdminScopedCsvParams(new URL(request.url).searchParams);
   if(!scopedCsvStatusAllowed(query.status,config.statuses)){
    return new Response("Unsupported status filter",{status:400,headers:{"Cache-Control":"private, no-store"}});
