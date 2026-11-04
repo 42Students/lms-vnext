@@ -39,6 +39,30 @@ describe("Telegram alert operator authorization", () => {
     expect(getDb).not.toHaveBeenCalled();
     expect(fetch).not.toHaveBeenCalled();
   });
+  it("malformed callback ID is rejected before SQL", async () => {
+    setup("1234567");
+    const fixture = callback(1234567);
+    fixture.callback_query.data = "ack:------------------------------------";
+    await expect(handleTelegramCallback(fixture)).resolves.toBe(false);
+    expect(getDb).not.toHaveBeenCalled();
+  });
+  it("missing Telegram source message ID is rejected before SQL and network calls", async () => {
+    setup("1234567");
+    const payload = {
+      callback_query: {
+        id: "test-id",
+        from: { id: 1234567 },
+        data: "ack:11111111-1111-4111-8111-111111111111",
+        message: {
+          chat: { id: -1001234567890 },
+          text: "redacted alert",
+        },
+      },
+    };
+    await expect(handleTelegramCallback(payload)).resolves.toBe(false);
+    expect(getDb).not.toHaveBeenCalled();
+    expect(fetch).not.toHaveBeenCalled();
+  });
   it("allows listed actor to proceed to separately protected DB path", async () => {
     setup("1234567");
     await expect(handleTelegramCallback(callback(1234567))).rejects.toThrow("UNAUTHORIZED_DB_USE");
