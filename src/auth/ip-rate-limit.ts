@@ -1,3 +1,5 @@
+import { isIP } from "node:net";
+
 /**
  * Per-process sliding-window limiter for unauthenticated auth endpoints.
  * It is a first defence against brute force; the per-contact send budget and
@@ -41,20 +43,48 @@ export function allowRequest(
 }
 
 /**
+ * Canonicalize the selected address before it is used as a throttle key,
+ * authentication audit tag or recorded session address. An arbitrary string
+ * or equivalent IPv6 spellings must not create independent rate-limit buckets.
+ */
+function canonicalIp(candidate: string): string | null {
+  const family = isIP(candidate);
+  if (family === 4) return candidate;
+  if (family !== 6) return null;
+  try {
+    // URL's IPv6 host serializer produces a stable compressed lowercase form.
+    return new URL(`http://[${candidate}]/`).hostname.slice(1, -1);
+  } catch {
+    return null;
+  }
+}
+
+/**
  * The caller IP behind the Google load balancer. The balancer appends
  * "<client ip>, <balancer ip>" to whatever X-Forwarded-For the caller sent,
  * so the leading entries are attacker-controlled and the trustworthy client
- * address is the second-to-last one. With a single entry (no balancer, as in
- * local development) that entry is used.
+ * address is the second-to-last one. With a single entry (local development)
+ * that entry is used.
+ *
+ * Never filter empty/malformed hops: doing so can shift an attacker-provided
+ * entry into the trusted position. An invalid chain shares the coarse
+ * "unknown" throttle bucket. This does not authenticate proxy provenance:
+ * production must still block direct app access and sanitize edge headers.
  */
-export function clientIp(request: Request) {
-  const parts = (request.headers.get("x-forwarded-for") ?? "")
-    .split(",")
-    .map((part) => part.trim())
-    .filter(Boolean);
+export function clientIp(request: Request): string {
+  const forwarded = request.headers.get("x-forwarded-for") ?? "";
+  if (!forwarded || forwarded.length > 4096) return "unknown";
 
-  if (parts.length >= 2) return parts[parts.length - 2];
-  return parts[0] || "unknown";
+  // Only inspect the two positions added by the trusted edge, avoiding a
+  // potentially long split/array allocation on unauthenticated requests.
+  const lastComma = forwarded.lastIndexOf(",");
+  if (lastComma < 0) return canonicalIp(forwarded.trim()) ?? "unknown";
+
+  const proxy = forwarded.slice(lastComma + 1).trim();
+  if (!canonicalIp(proxy)) return "unknown";
+  const precedingComma = forwarded.lastIndexOf(",", lastComma - 1);
+  const candidate = forwarded.slice(precedingComma + 1, lastComma).trim();
+  return canonicalIp(candidate) ?? "unknown";
 }
 
 /** For tests only. */
