@@ -1,0 +1,50 @@
+# Ensure learner PII is never cached or mutated from an unbounded request.
+name: Security - learner private profile HTTP boundaries
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - "src/app/api/profile/me/route.ts"
+      - "src/lib/bounded-json-body.ts"
+      - "src/lib/bounded-utf8-body.ts"
+      - "src/lib/security-query-selectors.ts"
+      - "tests/unit/security-learner-profile-http-boundaries.test.ts"
+      - ".github/workflows/security-learner-private-profile.yml"
+  push:
+    branches: [main]
+    paths:
+      - "src/app/api/profile/me/route.ts"
+      - "src/lib/bounded-json-body.ts"
+      - "src/lib/bounded-utf8-body.ts"
+      - "src/lib/security-query-selectors.ts"
+      - "tests/unit/security-learner-profile-http-boundaries.test.ts"
+      - ".github/workflows/security-learner-private-profile.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: security-private-profile-${{ github.ref }}-${{ github.sha }}
+  cancel-in-progress: false
+
+jobs:
+  learner-private-profile:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Confirm exact revision
+        run: test "$(git rev-parse HEAD)" = "$GITHUB_SHA"
+      - name: Private profile HTTP security regressions
+        run: npx vitest run tests/unit/security-learner-profile-http-boundaries.test.ts
+      - name: Full TypeScript typecheck
+        env:
+          NODE_OPTIONS: --max-old-space-size=6144
+        run: npm run typecheck

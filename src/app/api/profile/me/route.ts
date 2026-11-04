@@ -2,6 +2,8 @@ import { NextResponse } from "next/server";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { isSameOriginRequest } from "@/auth/origin";
 import { apiErrorResponse } from "@/lib/api-error";
+import { readBoundedJsonBody } from "@/lib/bounded-json-body";
+import { hasAmbiguousQuerySelectors } from "@/lib/security-query-selectors";
 import { hasMembershipRole } from "@/modules/identity/context";
 import {
   getOwnLearnerProfileWithRuntime,
@@ -10,6 +12,8 @@ import {
 import {updateOwnLearnerProfileDocument} from "@/modules/people/learner-profile-document-edit-service";
 
 export const runtime = "nodejs";
+const MAX_PROFILE_DOCUMENT_BYTES = 2 * 1024 * 1024;
+const privateHeaders = { "Cache-Control": "private, no-store" };
 
 export async function GET(request: Request) {
   try {
@@ -17,23 +21,31 @@ export async function GET(request: Request) {
       await getCurrentRequestContext();
     // Existing legacy section links resolve to the learner's OWN profile.
     // Never re-interpret a legacy numeric student ID as an authorization grant.
-    const legacySection = new URL(request.url).searchParams.get("legacySection");
+    const query = new URL(request.url).searchParams;
+    if (hasAmbiguousQuerySelectors(query, ["legacySection"], [], ["legacySection"]))
+      return NextResponse.json({error:"INVALID_SECTION"},
+        {status:400,headers:privateHeaders});
+    const legacySection = query.get("legacySection");
     if (legacySection !== null) {
       if (!hasMembershipRole(context, "LEARNER")) {
-        return NextResponse.json({error:"FORBIDDEN"},{status:403});
+        return NextResponse.json({error:"FORBIDDEN"},{status:403,headers:privateHeaders});
       }
       const validSections = new Set(["about","education","skills","projects","certifications","experiences","jobPreferences"]);
       if (!validSections.has(legacySection)) {
-        return NextResponse.json({error:"INVALID_SECTION"},{status:400});
+        return NextResponse.json({error:"INVALID_SECTION"},{status:400,headers:privateHeaders});
       }
-      return NextResponse.redirect(new URL("/learn/profile?section="+encodeURIComponent(legacySection), request.url), 307);
+      const redirect=NextResponse.redirect(
+        new URL("/learn/profile?section="+encodeURIComponent(legacySection),request.url),307);
+      redirect.headers.set("Cache-Control","private, no-store");
+      redirect.headers.set("Referrer-Policy","no-referrer");
+      return redirect;
     }
     const result =
       await getOwnLearnerProfileWithRuntime(
         context,
       );
 
-    return NextResponse.json(result);
+    return NextResponse.json(result,{headers:privateHeaders});
   } catch (error) {
     return apiErrorResponse(error);
   }
@@ -50,13 +62,14 @@ export async function PUT(request: Request) {
   try {
     const context =
       await getCurrentRequestContext();
-    const profile =
-      await updateOwnLearnerProfileDocument(
-        context,
-        await request.json(),
-      );
-
-    return NextResponse.json({ profile });
+    // A full-document edit may include education and experience history,
+    // but must never buffer an arbitrary-size JSON payload.
+    const body=await readBoundedJsonBody(request,MAX_PROFILE_DOCUMENT_BYTES);
+    if(body.kind!=="OK")
+      return NextResponse.json({error:"INVALID_PROFILE"},
+        {status:body.kind==="TOO_LARGE"?413:400,headers:privateHeaders});
+    const profile=await updateOwnLearnerProfileDocument(context,body.value);
+    return NextResponse.json({profile},{headers:privateHeaders});
   } catch (error) {
     return apiErrorResponse(error);
   }
