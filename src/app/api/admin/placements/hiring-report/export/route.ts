@@ -19,7 +19,7 @@ export async function GET(request:Request){
   if(!parsed.success)
    return Response.json({error:"INVALID_REPORT_FILTERS"},{status:400});
   const context=await getCurrentRequestContext();
-  await requireRecentDeviceAuthentication();
+  await requireRecentDeviceAuthentication(context.user.id);
   const data=await getSuperAdminCompanyHiringReport(context,parsed.data);
   const groups=hiringCompanyRollups(data.rows);
   const stages=["totalApplications","applied","shortlisted","assessment","interview","offered","hired","rejected","withdrawn","waitlisted"] as const;
