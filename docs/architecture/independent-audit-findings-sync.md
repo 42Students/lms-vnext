@@ -23,6 +23,17 @@ a caller-supplied repository, branch, owner ID, or source path.
 - Privileged manual status is GET /api/tracker/audit-findings/sync. Manual
   trigger is POST at the same URL with a same-origin active, unscoped
   Super Admin with persisted platform permission. No sync runs on page load.
+- **Manual mutation safety (2026-11-04):** manual POST requires the current
+  Super Admin's *recent OTP-backed device authentication*. It accepts no
+  query or body options. The importer receives explicit `SUPER_ADMIN` actor
+  provenance and rechecks the actor's persisted platform permission **inside
+  the same PostgreSQL transaction that writes audit results**, retaining
+  database locks until commit. A separately committed preflight authorization
+  check is not sufficient against concurrent privilege revocation.
+  Cloud Scheduler invokes the same importer with explicit `SCHEDULER`
+  provenance and the dedicated machine credential enforced at its route.
+  Source tests and route tests do not replace disposable-PG revocation-race
+  acceptance or provider credential rotation verification.
 - Configure GCP Cloud Scheduler to GET
   /api/internal/audit-findings/sync every five minutes, using the explicit
   five-minute schedule 0/5 * * * * in Asia/Kolkata. Start the initial run
