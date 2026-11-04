@@ -1,11 +1,9 @@
+import { spreadsheetCsvCell } from "@/security/csv-cell";
 import {TPO_AUDIT_KIND_LABELS,formatTpoAuditEventType} from "./tpo-audit-model";
 import type {TpoAuditRow} from "./tpo-audit-service";
 
 /** Export only the same allowlisted fields displayed by the TPO audit UI. */
-function csvCell(value:string){
- const text=/^\s*[=+@\-\t\r]/.test(value)? "'"+value:value;
- return '"'+text.replaceAll('"','""')+'"';
-}
+const csvCell = spreadsheetCsvCell;
 export function tpoAuditCsv(rows:readonly TpoAuditRow[]){
  const header=["Event","About","Detail","Actor","When"];
  const lines=rows.map(row=>[
