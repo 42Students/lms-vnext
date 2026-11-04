@@ -6,9 +6,10 @@
  *
  *   DATABASE_URL='...' node scripts/security/pg-rls-readonly-audit.mjs --strict
  *
- * --strict fails if the principal is privileged or a table with an explicit
- * college_id/organization_id column lacks effective RLS policy coverage.
- * Tables without a direct tenant column still REQUIRE manual FK-lineage review.
+ * --strict fails for detected privileged app principals, direct-tenant RLS
+ * omissions, accessible owner-rights views/materialized views, or executable
+ * SECURITY DEFINER routines until these are independently reviewed. All
+ * indirect tenant-lineage tables still REQUIRE manual FK-lineage review.
  * A green report does NOT certify RLS: policy predicates, privileges,
  * SECURITY DEFINER routines and tenant-context isolation require live tests.
  */
@@ -16,7 +17,7 @@ import { pathToFileURL } from "node:url";
 import pg from "pg";
 const { Pool } = pg;
 
-export function classifySecurityCatalog(principal, tables) {
+export function classifySecurityCatalog(principal, tables, { views = [], routines = [] } = {}) {
   const findings = [];
   if (principal.is_superuser || principal.can_bypass_rls) {
     findings.push({ severity: "CRITICAL", code: "PRIVILEGED_APP_DB_ROLE", table: null });
@@ -46,6 +47,29 @@ export function classifySecurityCatalog(principal, tables) {
         table.unconditional_select_policy_count > 0 &&
         table.restrictive_select_policy_count === 0) {
       findings.push({ severity: "CRITICAL", code: "APP_UNSCOPED_PERMISSIVE_SELECT", table: table.table_name });
+    }
+  }
+  // PostgreSQL views execute with their owner's permissions by default.
+  // A superuser-owned view can bypass the RLS on its underlying tables even
+  // when the application login itself has no BYPASSRLS privilege. Materialized
+  // views hold precomputed rows and do not inherit underlying table RLS.
+  // These are REVIEW REQUIRED findings, not proof of an exploitable leak.
+  for (const view of views) {
+    if (!view.can_select) continue;
+    const viewName = view.schema_name + "." + view.view_name;
+    if (view.relation_kind === "materialized_view") {
+      findings.push({ severity: "HIGH", code: "APP_READABLE_MATERIALIZED_VIEW_REQUIRES_REVIEW", table: viewName });
+    } else if (view.security_invoker !== true) {
+      findings.push({ severity: "HIGH", code: "APP_READABLE_OWNER_RIGHTS_VIEW_REQUIRES_REVIEW", table: viewName });
+    }
+  }
+  // An executable SECURITY DEFINER function/procedure runs under the defining
+  // owner's privileges. It may bypass application role grants and tenant RLS.
+  // Even a safe, deliberately scoped routine needs a separate reviewed proof.
+  for (const routine of routines) {
+    if (routine.can_execute && routine.security_definer) {
+      findings.push({ severity: "HIGH", code: "APP_EXECUTABLE_SECURITY_DEFINER_REQUIRES_REVIEW",
+        table: routine.routine_signature });
     }
   }
   return findings;
@@ -111,6 +135,37 @@ WHERE n.nspname='public' AND c.relkind IN ('r','p')
 ORDER BY c.relname
 `;
 
+const VIEWS_QUERY = `
+SELECT n.nspname::text AS schema_name,
+       c.relname::text AS view_name,
+       CASE WHEN c.relkind = 'm' THEN 'materialized_view' ELSE 'view' END AS relation_kind,
+       COALESCE('security_invoker=true' = ANY(c.reloptions), false) AS security_invoker,
+       has_table_privilege(current_user, c.oid, 'SELECT') AS can_select
+FROM pg_catalog.pg_class c
+JOIN pg_catalog.pg_namespace n ON n.oid = c.relnamespace
+WHERE c.relkind IN ('v','m')
+  AND n.nspname NOT IN ('pg_catalog','information_schema')
+  AND n.nspname NOT LIKE 'pg_toast%'
+  AND n.nspname NOT LIKE 'pg_temp_%'
+  AND has_schema_privilege(current_user, n.oid, 'USAGE')
+ORDER BY n.nspname, c.relname
+`;
+
+const ROUTINES_QUERY = `
+SELECT p.oid::regprocedure::text AS routine_signature,
+       p.prosecdef AS security_definer,
+       has_function_privilege(current_user, p.oid, 'EXECUTE') AS can_execute
+FROM pg_catalog.pg_proc p
+JOIN pg_catalog.pg_namespace n ON n.oid = p.pronamespace
+WHERE p.prosecdef
+  AND p.prokind IN ('f','p')
+  AND n.nspname NOT IN ('pg_catalog','information_schema')
+  AND n.nspname NOT LIKE 'pg_toast%'
+  AND n.nspname NOT LIKE 'pg_temp_%'
+  AND has_schema_privilege(current_user, n.oid, 'USAGE')
+ORDER BY p.oid::regprocedure::text
+`;
+
 export async function auditPostgresSecurity(databaseUrl) {
   if (!databaseUrl) throw new Error("DATABASE_URL_REQUIRED");
   const pool = new Pool({
@@ -127,6 +182,8 @@ export async function auditPostgresSecurity(databaseUrl) {
     await client.query("BEGIN READ ONLY");
     const { rows: principalRows } = await client.query(PRINCIPAL_QUERY);
     const { rows: tables } = await client.query(TABLES_QUERY);
+    const { rows: views } = await client.query(VIEWS_QUERY);
+    const { rows: routines } = await client.query(ROUTINES_QUERY);
     await client.query("COMMIT");
     const principal = principalRows[0];
     if (!principal) throw new Error("DATABASE_PRINCIPAL_NOT_FOUND");
@@ -139,13 +196,18 @@ export async function auditPostgresSecurity(databaseUrl) {
         tables_needing_lineage_review: tables.filter(t => t.tenant_key_columns.length === 0).length,
         rls_enabled: tables.filter(t => t.rls_enabled).length,
         forced_rls: tables.filter(t => t.rls_forced).length,
+        accessible_views: views.filter(v => v.can_select).length,
+        accessible_security_definer_routines: routines.filter(r => r.can_execute).length,
       },
-      findings: classifySecurityCatalog(principal, tables),
+      findings: classifySecurityCatalog(principal, tables, { views, routines }),
       tables,
+      views,
+      routines,
       limitations: [
         "No table rows were read or altered",
         "Unconditional policy detection is conservative; nontrivial policy predicates and effective role inheritance require independent review",
         "Indirect tenant ownership and policy expressions require manual review",
+        "Owner-rights views, materialized views and SECURITY DEFINER routines require reviewed authorization proofs; their presence alone is not a proven leak",
         "Passing is not a substitute for cross-tenant read/write adversarial tests",
       ],
     };
