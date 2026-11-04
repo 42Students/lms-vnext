@@ -68,7 +68,7 @@ describe("SEC-05 alternate public external job page remains tenant bounded", () 
     expect(q.params.filter((item) => item === "ACTIVE")).toHaveLength(4);
     expect(q.params).toContain("PUBLISHED");
     expect(q.params).toContain(slug);
-    expect(tx.selectChain.innerJoin).toHaveBeenCalledTimes(4);
+    expect(tx.selectChain.innerJoin).toHaveBeenCalledTimes(5);
   });
 
   it("reveals nothing when an inactive tenant or unavailable link gives no row", async () => {
