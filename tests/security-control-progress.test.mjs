@@ -14,6 +14,20 @@ const copy=()=>structuredClone(actual);
 const errors=(doc,catalogue)=>inspectSecurityProgress(doc,catalogue??readCatalogue()).errors.map(e=>e.code);
 const first="SEC-01-001";
 const evidenced="SEC-08-014";
+const partialFixture=()=>{
+  const doc=copy();
+  // Synthetic status fixture: tests remain valid even after genuine future
+  // security progress promotes this real control to VERIFIED.
+  doc.security.controls[evidenced]={
+    state:"PARTIAL_EVIDENCE",assessedAt:"2026-11-04",
+    nextProof:"Independent production authorization and scope review",
+    evidence:[{type:"EXECUTED_SCOPED_TEST",
+      commitSha:"8b236bedb51d9afa4ec4f9317171bf4f23afc545",
+      runUrl:"https://github.com/42Students/lms-vnext/actions/runs/41795753719",
+      scope:"Focused export-boundary tests only"}],
+  };
+  return doc;
+};
 
 test("security catalogue has 493 unique requirements across exactly 26 domains",()=>{
   const {rows,byId}=extractControls(readCatalogue());
@@ -53,15 +67,14 @@ test("new catalogued requirements fail CI until explicitly added to the tracker"
   assert.ok(errors(actual,duplicate).includes("SECURITY_CATALOGUE_DUPLICATE_OR_EMPTY"));
 });
 test("unassessed never masquerades as not started or completed",()=>{
-  const doc=copy();doc.security.controls[first].evidence=[{type:"EXECUTED_SCOPED_TEST"}];
+  const doc=copy();doc.security.controls[first]={state:"UNASSESSED",evidence:[{type:"EXECUTED_SCOPED_TEST"}]};
   assert.ok(errors(doc).includes("SECURITY_UNASSESSED_HAS_CLAIMS"));
   delete doc.security.controls[first].evidence;
   doc.security.controls[first].state="DONE";
   assert.ok(errors(doc).includes("SECURITY_INVALID_CONTROL_STATE"));
 });
 test("partial claims require exact-SHA executed evidence and a next proof",()=>{
-  const doc=copy(),item=doc.security.controls[evidenced];
-  assert.equal(item.state,"PARTIAL_EVIDENCE");
+  const doc=partialFixture(),item=doc.security.controls[evidenced];
   item.evidence[0].commitSha="a";
   assert.ok(errors(doc).includes("SECURITY_EVIDENCE_INVALID"));
   item.evidence[0].commitSha="8b236bedb51d9afa4ec4f9317171bf4f23afc545";
@@ -69,14 +82,14 @@ test("partial claims require exact-SHA executed evidence and a next proof",()=>{
   assert.ok(errors(doc).includes("SECURITY_NEXT_PROOF_REQUIRED"));
 });
 test("implemented but unverified demands explicitly outstanding checks",()=>{
-  const doc=copy(),item=doc.security.controls[evidenced];
+  const doc=partialFixture(),item=doc.security.controls[evidenced];
   item.state="IMPLEMENTED_UNVERIFIED";
   assert.ok(errors(doc).includes("SECURITY_IMPLEMENTED_WITHOUT_REMAINING_CHECKS"));
   item.remainingChecks=["Independent tenant isolation review"];
   assert.ok(!errors(doc).includes("SECURITY_IMPLEMENTED_WITHOUT_REMAINING_CHECKS"));
 });
 test("verified is impossible without an independent positive/negative, deployed-config receipt",()=>{
-  const doc=copy();doc.security.controls[evidenced].state="VERIFIED";
+  const doc=partialFixture();doc.security.controls[evidenced].state="VERIFIED";
   assert.ok(errors(doc).includes("SECURITY_VERIFIED_WITHOUT_INDEPENDENT_CLOSURE"));
   doc.security.controls[evidenced].closure={
     reviewer:"Independent reviewer",reviewUrl:"https://github.com/42Students/lms-vnext/pull/1",
@@ -87,7 +100,7 @@ test("verified is impossible without an independent positive/negative, deployed-
   assert.ok(errors(doc).includes("SECURITY_VERIFIED_WITHOUT_INDEPENDENT_CLOSURE"));
 });
 test("never exclude a control as not applicable without review",()=>{
-  const doc=copy();doc.security.controls[evidenced].state="NOT_APPLICABLE";
+  const doc=partialFixture();doc.security.controls[evidenced].state="NOT_APPLICABLE";
   assert.ok(errors(doc).includes("SECURITY_UNAPPROVED_EXCLUSION"));
 });
 test("global release flag cannot bypass 493 open controls",()=>{
