@@ -1,5 +1,6 @@
 import { reportErrorForAlert } from "@/modules/log-alerts/reporter";
 import { createRequestId } from "@/lib/request-id";
+import { privacySafeAuthInfoLogFields } from "./auth-info-field-policy";
 
 export type LogSeverity =
   | "DEBUG"
@@ -108,6 +109,9 @@ const INFO_FIELD_KEYS = new Set([
 export function privacySafeInfoLogFields(
  fields: Record<string, unknown>,
 ):Record<string, string | number | boolean | null> {
+ // Generic INFO policy drops IP tags, user tags and authentication-specific
+ // flags. Only the explicit auth-audit policy may restore those fields.
+ if (fields["component"] === "auth-audit") return privacySafeAuthInfoLogFields(fields);
  const safe:Record<string, string | number | boolean | null>={};
  for(const [key,value] of Object.entries(fields)){
   if(!INFO_FIELD_KEYS.has(key))continue;
