@@ -40,6 +40,7 @@ describe("SA-tenants-directory-export-01 scoped export handler and cache isolati
   expect(result.headers.get("Cache-Control")).toBe("private, no-store");
   expect(result.headers.get("Vary")).toBe("Cookie");
   expect(mocks.export).not.toHaveBeenCalled();
+  expect(mocks.recent).not.toHaveBeenCalled();
   expect(mocks.apiError).toHaveBeenCalledTimes(1);
  });
  it("passes only validated normalized search, organization and state with the same actor context",async()=>{
