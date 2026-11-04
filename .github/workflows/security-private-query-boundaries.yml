@@ -1,0 +1,54 @@
+# Protect private audit/notification filters and global skill-usage aggregates.
+name: Security - private query selectors and skill-usage isolation
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - "src/lib/security-query-selectors.ts"
+      - "src/lib/bounded-json-body.ts"
+      - "src/app/api/activity/route.ts"
+      - "src/app/api/notifications/route.ts"
+      - "src/app/api/skills/route.ts"
+      - "tests/unit/security-private-read-query-boundaries.test.ts"
+      - "tests/unit/security-skills-catalog-boundaries.test.ts"
+      - ".github/workflows/security-private-query-boundaries.yml"
+  push:
+    branches: [main]
+    paths:
+      - "src/lib/security-query-selectors.ts"
+      - "src/lib/bounded-json-body.ts"
+      - "src/app/api/activity/route.ts"
+      - "src/app/api/notifications/route.ts"
+      - "src/app/api/skills/route.ts"
+      - "tests/unit/security-private-read-query-boundaries.test.ts"
+      - "tests/unit/security-skills-catalog-boundaries.test.ts"
+      - ".github/workflows/security-private-query-boundaries.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: private-query-boundaries-${{ github.ref }}-${{ github.sha }}
+  cancel-in-progress: false
+
+jobs:
+  private-query-and-skill-usage:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Pin proof to exact revision
+        run: test "$(git rev-parse HEAD)" = "$GITHUB_SHA"
+      - name: Execute private-read and skill-usage security regressions
+        run: npx vitest run tests/unit/security-private-read-query-boundaries.test.ts tests/unit/security-skills-catalog-boundaries.test.ts
+      - name: Typecheck entire repository
+        env:
+          NODE_OPTIONS: --max-old-space-size=6144
+        run: npm run typecheck
