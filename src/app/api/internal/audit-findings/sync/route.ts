@@ -23,7 +23,7 @@ export async function GET(request:Request){
  if(!independentAuditImporterReady())
   return NextResponse.json({error:"IMPORTER_NOT_READY"},{status:503,headers:noStore});
  try{
-  const report=await syncIndependentAuditInbox();
+  const report=await syncIndependentAuditInbox({kind:"SCHEDULER"});
   return NextResponse.json({result:report},{status:report.busy?409:200,headers:noStore});
  }catch{
   // Do not return GitHub source rows, credentials or database diagnostics.
