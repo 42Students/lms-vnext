@@ -17,6 +17,7 @@ on:
       - "tests/unit/recent-device-privileged-role-security.test.ts"
       - "tests/unit/auth-ip-rate-limit.test.ts"
       - "tests/unit/auth-origin.test.ts"
+      - "tests/unit/db004-self-profile-http-boundary.test.ts"
       - "scripts/security/pg-rls-readonly-audit.mjs"
       - "tests/security-pg-rls-catalog.test.mjs"
       - ".github/workflows/authz-critical-boundary.yml"
@@ -34,6 +35,7 @@ on:
       - "tests/unit/recent-device-privileged-role-security.test.ts"
       - "tests/unit/auth-ip-rate-limit.test.ts"
       - "tests/unit/auth-origin.test.ts"
+      - "tests/unit/db004-self-profile-http-boundary.test.ts"
       - "scripts/security/pg-rls-readonly-audit.mjs"
       - "tests/security-pg-rls-catalog.test.mjs"
       - ".github/workflows/authz-critical-boundary.yml"
@@ -63,6 +65,8 @@ jobs:
         run: npx vitest run tests/unit/platform-permission-matrix.test.ts tests/unit/auth-tenant-access.test.ts
       - name: Origin and target Host authority regression
         run: npx vitest run tests/unit/auth-origin.test.ts
+      - name: DB-004 self-profile streamed-body authorization boundary
+        run: npx vitest run tests/unit/db004-self-profile-http-boundary.test.ts
       - name: Auth controls and brute-force throttling
         run: npx vitest run tests/unit/auth-login-service.test.ts tests/unit/auth-ip-rate-limit.test.ts
       - name: RLS catalog and least-privilege classifier contracts
