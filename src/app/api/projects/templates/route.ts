@@ -2,6 +2,8 @@ import { NextResponse } from "next/server";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { isSameOriginRequest } from "@/auth/origin";
 import { apiErrorResponse } from "@/lib/api-error";
+import { readBoundedJsonBody } from "@/lib/bounded-json-body";
+import { z } from "zod";
 import {
   createProjectTemplate,
   listAssignedProjectTemplates,
@@ -9,13 +11,19 @@ import {
 } from "@/modules/projects/template-service";
 
 export const runtime = "nodejs";
+const TEMPLATE_MAX_BYTES=8 * 1024 * 1024;
+const privateHeaders={"Cache-Control":"private, no-store"};
 
 export async function GET(request: Request) {
   try {
     const context = await getCurrentRequestContext();
-    const collegeId = new URL(
-      request.url,
-    ).searchParams.get("collegeId");
+    const collegeIds=new URL(request.url).searchParams.getAll("collegeId");
+    // Empty/duplicate tenant hints must never degrade into an unscoped list.
+    if(collegeIds.length>1||(collegeIds.length===1 &&
+      !z.string().uuid().safeParse(collegeIds[0]).success))
+      return NextResponse.json({error:"INVALID_COLLEGE_SCOPE"},
+        {status:400,headers:privateHeaders});
+    const collegeId=collegeIds[0]??null;
     const templates = collegeId
       ? await listAssignedProjectTemplates(
           context,
@@ -25,7 +33,8 @@ export async function GET(request: Request) {
 
     // Preserve vNext {templates} and the legacy admin-list envelope.
     return NextResponse.json({ templates, status: "success",
-      message: "Project templates retrieved", data: templates, count: templates.length });
+      message: "Project templates retrieved", data: templates, count: templates.length },
+      {headers:privateHeaders});
   } catch (error) {
     return apiErrorResponse(error);
   }
@@ -41,13 +50,11 @@ export async function POST(request: Request) {
 
   try {
     const context = await getCurrentRequestContext();
-    const body = await request.json().catch(() => null);
-    if (body === null) {
-      return NextResponse.json(
-        { error: "INVALID_TEMPLATE", message: "Template payload is required" },
-        { status: 400 },
-      );
-    }
+    const parsedBody=await readBoundedJsonBody(request,TEMPLATE_MAX_BYTES);
+    if(parsedBody.kind!=="OK")
+      return NextResponse.json({error:"INVALID_TEMPLATE",message:"Template payload is required"},
+        {status:parsedBody.kind==="TOO_LARGE"?413:400,headers:privateHeaders});
+    const body:unknown=parsedBody.value;
     const result = await createProjectTemplate(
       context,
       body,
@@ -56,6 +63,7 @@ export async function POST(request: Request) {
     return NextResponse.json({ ...result, status: "success",
       message: "Project template created", data: result.template }, {
       status: 201,
+      headers: privateHeaders,
     });
   } catch (error) {
     return apiErrorResponse(error);
