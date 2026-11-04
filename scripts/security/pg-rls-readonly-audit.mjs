@@ -50,6 +50,29 @@ export function classifySecurityCatalog(principal, tables, { views = [], routine
         table.restrictive_select_policy_count === 0) {
       findings.push({ severity: "CRITICAL", code: "APP_UNSCOPED_PERMISSIVE_SELECT", table: relation });
     }
+    // PostgreSQL combines PERMISSIVE policies with OR and then applies every
+    // applicable RESTRICTIVE policy with AND. USING controls the OLD row for
+    // UPDATE/DELETE; WITH CHECK controls the NEW row for INSERT/UPDATE.
+    // UPDATE can be dangerous independently in either direction: a scoped
+    // USING with WITH CHECK(true) permits moving a permitted row into another
+    // college; scoped WITH CHECK with USING(true) permits editing other
+    // colleges' existing rows. These are deliberately separate findings.
+    const writeChecks = [
+      ["INSERT", "can_insert", "unconditional_insert_check_policy_count",
+        "restrictive_insert_check_policy_count", "APP_UNSCOPED_PERMISSIVE_INSERT"],
+      ["UPDATE_USING", "can_update", "unconditional_update_using_policy_count",
+        "restrictive_update_using_policy_count", "APP_UNSCOPED_PERMISSIVE_UPDATE_USING"],
+      ["UPDATE_CHECK", "can_update", "unconditional_update_check_policy_count",
+        "restrictive_update_check_policy_count", "APP_UNSCOPED_PERMISSIVE_UPDATE_CHECK"],
+      ["DELETE", "can_delete", "unconditional_delete_using_policy_count",
+        "restrictive_delete_using_policy_count", "APP_UNSCOPED_PERMISSIVE_DELETE"],
+    ];
+    for (const [, grant, unconditional, restriction, code] of writeChecks) {
+      if (table[grant] === true && table[unconditional] > 0 &&
+          table[restriction] === 0) {
+        findings.push({ severity: "CRITICAL", code, table: relation });
+      }
+    }
   }
   // PostgreSQL views execute with their owner's permissions by default.
   // A superuser-owned view can bypass the RLS on its underlying tables even
