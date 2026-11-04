@@ -1,5 +1,6 @@
 import {NextResponse} from "next/server";
 import {getCurrentRequestContext} from "@/auth/request-context";
+import {requireRecentDeviceAuthentication} from "@/auth/recent-device-auth";
 import {apiErrorResponse} from "@/lib/api-error";
 import {parseCollegeCompaniesQuery} from "@/modules/placements/college-company-directory-model";
 import {listCollegeCompanyDirectory} from "@/modules/placements/college-company-directory-service";
@@ -11,6 +12,7 @@ export async function GET(request:Request) {
   const parsed=parseCollegeCompaniesQuery(raw);
   if(!parsed.success)return NextResponse.json({error:"INVALID_COMPANY_FILTERS"},{status:400});
   const context=await getCurrentRequestContext();
+  await requireRecentDeviceAuthentication();
   const first=await listCollegeCompanyDirectory(context,parsed.data,{exportAll:true});
   const all=[...first.items];
   // Legacy exported the whole current college scope. Continue bounded,
