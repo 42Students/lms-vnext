@@ -119,3 +119,50 @@ jobs:
         env:
           NODE_OPTIONS: --max-old-space-size=6144
         run: npm run typecheck
+
+  tenant-export-postgresql:
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    services:
+      postgres:
+        image: postgres:17-alpine
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: lms_vnext_test
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres -d lms_vnext_test"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 20
+    env:
+      # Seed and mutate disposable fixtures only; never connect to production.
+      DATABASE_URL: postgresql://postgres:postgres@127.0.0.1:5432/lms_vnext_test
+      TEST_DATABASE_URL: postgresql://postgres:postgres@127.0.0.1:5432/lms_vnext_test
+      DB03_ISOLATED_TEST_DATABASE: "1"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Check exact source and immutable migration journal
+        run: |
+          test "$(git rev-parse HEAD)" = "$GITHUB_SHA"
+          npm run db:journal:verify
+      - name: Prepare disposable PostgreSQL 17 with current registered migrations
+        env:
+          DATABASE_URL: ""
+        run: npm run db:test:prepare
+      - name: College people export authorization and foreign college exclusion
+        run: npx vitest run --config vitest.db.config.ts tests/integration/college-people-export.test.ts
+      - name: Super Admin tenant export scoped lifecycle and role denial
+        run: npx vitest run --config vitest.db.config.ts tests/integration/super-admin-tenant-directory-export.test.ts
+      - name: Verify no registered migrations were modified by the tests
+        if: always()
+        run: |
+          npm run db:journal:verify
+          test -z "$(git status --porcelain -- drizzle/)"
