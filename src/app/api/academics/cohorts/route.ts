@@ -12,11 +12,12 @@ export const runtime = "nodejs";
 
 export async function GET(request: Request) {
   try {
+    const query = new URL(request.url).searchParams;
+    if (query.getAll("programId").length > 1) return NextResponse.json({
+      error: "INVALID_FILTERS",
+    }, { status: 400, headers: { "Cache-Control": "private, no-store" } });
     const context = await getCurrentRequestContext();
-    const programId =
-      new URL(request.url).searchParams.get(
-        "programId",
-      ) ?? "";
+    const programId = query.get("programId") ?? "";
     const cohorts = await listCohorts(
       context,
       programId,
