@@ -1,3 +1,4 @@
+import { spreadsheetCsvCell } from "@/security/csv-cell";
 import { tenantLifecycleQuerySchema } from "./admin-tenant-lifecycle-model";
 export const TENANT_DIRECTORY_CSV_CAP = 1000;
 export const tenantDirectoryExportQuerySchema = tenantLifecycleQuerySchema.omit({ page: true });
@@ -10,9 +11,7 @@ export type TenantDirectoryExportRow = {
  * formulas before =, +, -, or @. Guard the complete original field so
  * Excel/LibreOffice cannot reinterpret a tenant-controlled name as a formula. */
 export function tenantDirectoryCsvCell(value: string) {
-  const firstVisible = value.replace(/^[\s\p{Cc}\p{Cf}\p{Mn}]*/u, "");
-  const safe = /^[=+@-]/u.test(firstVisible) ? "'" + value : value;
-  return '"' + safe.replaceAll('"', '""') + '"';
+  return spreadsheetCsvCell(value);
 }
 export function buildTenantDirectoryCsv(rows: readonly TenantDirectoryExportRow[], truncated: boolean) {
   const header = ["College ID", "College Name", "College Code", "College Status", "Organization ID", "Organization Name",
