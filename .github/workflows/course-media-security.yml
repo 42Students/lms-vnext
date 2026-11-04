@@ -6,30 +6,40 @@ on:
     paths:
       - "src/modules/courses/course-thumbnail-url-policy.ts"
       - "src/modules/courses/course-display-validation.ts"
+      - "src/modules/courses/course-display-service.ts"
+      - "src/modules/courses/course-image-service.ts"
       - "src/modules/courses/validation.ts"
       - "src/modules/courses/learner-course-card-media-model.ts"
       - "src/app/api/courses/**/image/**"
       - "src/app/api/courses/**/display/route.ts"
+      - "src/app/api/courses/**/display-meta/route.ts"
       - "src/lib/bounded-json-request.ts"
       - "src/lib/bounded-utf8-body.ts"
       - "tests/unit/course-thumbnail-url-security.test.ts"
       - "tests/unit/course-image-bounded-http-security.test.ts"
       - "tests/unit/course-display-bounded-http-security.test.ts"
+      - "tests/unit/course-display-private-cache-security.test.ts"
+      - "tests/unit/course-image-private-response-security.test.ts"
       - ".github/workflows/course-media-security.yml"
   push:
     branches: [main]
     paths:
       - "src/modules/courses/course-thumbnail-url-policy.ts"
       - "src/modules/courses/course-display-validation.ts"
+      - "src/modules/courses/course-display-service.ts"
+      - "src/modules/courses/course-image-service.ts"
       - "src/modules/courses/validation.ts"
       - "src/modules/courses/learner-course-card-media-model.ts"
       - "src/app/api/courses/**/image/**"
       - "src/app/api/courses/**/display/route.ts"
+      - "src/app/api/courses/**/display-meta/route.ts"
       - "src/lib/bounded-json-request.ts"
       - "src/lib/bounded-utf8-body.ts"
       - "tests/unit/course-thumbnail-url-security.test.ts"
       - "tests/unit/course-image-bounded-http-security.test.ts"
       - "tests/unit/course-display-bounded-http-security.test.ts"
+      - "tests/unit/course-display-private-cache-security.test.ts"
+      - "tests/unit/course-image-private-response-security.test.ts"
       - ".github/workflows/course-media-security.yml"
   workflow_dispatch:
 permissions:
@@ -56,6 +66,8 @@ jobs:
           tests/unit/course-display-content.test.ts
           tests/unit/course-image-bounded-http-security.test.ts
           tests/unit/course-display-bounded-http-security.test.ts
+          tests/unit/course-display-private-cache-security.test.ts
+          tests/unit/course-image-private-response-security.test.ts
       - name: TypeScript compile
         env:
           NODE_OPTIONS: --max-old-space-size=6144
