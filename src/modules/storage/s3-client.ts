@@ -143,10 +143,16 @@ type SignInput = {
 
 function prefixedKey(config: S3Config, key: string) {
   // A resource grant may never substitute another bucket, URL or parent path.
+  const prefix = config.keyPrefix ?? "";
+  if (prefix && (!prefix.endsWith("/") || prefix.startsWith("/") ||
+      prefix.includes("\\") || prefix.includes("//") ||
+      /[\x00-\x1f\x7f?#]/.test(prefix) ||
+      prefix.split("/").some(part => part === "." || part === "..")))
+    throw new Error("S3_KEY_PREFIX_INVALID");
   if (!key || key.length > 1024 || key.startsWith("/") || key.includes("\\") ||
       key.split("/").some(part => part === "." || part === "..") ||
       /[\x00-\x1f\x7f]/.test(key)) throw new Error("S3_OBJECT_KEY_INVALID");
-  return `${config.keyPrefix ?? ""}${key}`;
+  return `${prefix}${key}`;
 }
 
 function checkedBucket(bucket: string) {
@@ -186,8 +192,26 @@ export function presignUrl(config: S3Config, input: SignInput) {
   const headerNames = Object.keys(headers).sort();
   const signedHeaders = headerNames.join(";");
 
+  // Never allow caller input to add an ambiguous second SigV4 parameter,
+  // particularly an attacker-supplied X-Amz-Signature. AWS query parameters
+  // are signed once under the server's canonical spelling.
+  const externalQuery: Record<string, string> = {};
+  const seen = new Set<string>();
+  const extraEntries = Object.entries(input.query ?? {});
+  if (extraEntries.length > 16) throw new Error("S3_SIGNED_QUERY_INVALID");
+  for (const [name, value] of extraEntries) {
+    const folded = name.toLowerCase();
+    if (!/^[a-z0-9_.~-]{1,128}$/i.test(name) ||
+        folded.startsWith("x-amz-") || seen.has(folded) ||
+        typeof value !== "string" || value.length > 2048 ||
+        /[\x00-\x1f\x7f]/.test(value)) {
+      throw new Error("S3_SIGNED_QUERY_INVALID");
+    }
+    seen.add(folded);
+    externalQuery[name] = value;
+  }
   const query: Record<string, string> = {
-    ...input.query,
+    ...externalQuery,
     "X-Amz-Algorithm": "AWS4-HMAC-SHA256",
     "X-Amz-Credential": `${config.accessKeyId}/${scope}`,
     "X-Amz-Date": stamp,
@@ -353,7 +377,8 @@ export async function signedFetch(
   const scope = `${dateStamp}/${region}/${SERVICE}/aws4_request`;
   const url = checkedEndpoint(config.endpoint);
   if (!input.path.startsWith("/") || input.path.length > 2048 ||
-      input.path.includes("\\") || /[\x00-\x1f\x7f?#]/.test(input.path) ||
+      input.path.includes("\\") || input.path.includes("//") ||
+      /[\x00-\x1f\x7f?#]/.test(input.path) ||
       input.path.split("/").some(part => part === "." || part === ".."))
     throw new Error("S3_SIGNED_PATH_INVALID");
   const payloadHash = sha256Hex("");
