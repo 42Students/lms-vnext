@@ -43,6 +43,31 @@ describe("Mentor background email dispatch authorization",()=>{
   expect((await POST(req(secret))).status).toBe(503);
   expect(fake.run).not.toHaveBeenCalled();
  });
+ it("rejects a browser Origin even with the correct worker secret",async()=>{
+  const response=await POST(new Request(
+   "https://lms.example/api/internal/mentor-project-email-dispatch",{
+    method:"POST",headers:{authorization:"Bearer "+secret,origin:"https://lms.example"},
+   }));
+  expect(response.status).toBe(403);
+  expect(response.headers.get("Cache-Control")).toContain("no-store");
+  expect(fake.ready).not.toHaveBeenCalled();
+  expect(fake.run).not.toHaveBeenCalled();
+ });
+ it("rejects query-selected jobs and body payloads even with the correct secret",async()=>{
+  const query=await POST(new Request(
+   "https://lms.example/api/internal/mentor-project-email-dispatch?force=true",{
+    method:"POST",headers:{authorization:"Bearer "+secret},
+   }));
+  expect(query.status).toBe(400);
+  const body=await POST(new Request(
+   "https://lms.example/api/internal/mentor-project-email-dispatch",{
+    method:"POST",headers:{authorization:"Bearer "+secret},
+    body:JSON.stringify({mentorId:"foreign"}),
+   }));
+  expect(body.status).toBe(400);
+  expect(fake.ready).not.toHaveBeenCalled();
+  expect(fake.run).not.toHaveBeenCalled();
+ });
  it("runs a bounded internal batch with no source IDs from the caller",async()=>{
   const response=await POST(req(secret));
   expect(response.status).toBe(200);
