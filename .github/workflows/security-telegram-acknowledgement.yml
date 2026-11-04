@@ -1,0 +1,45 @@
+name: Security - Telegram incident acknowledgement authorization
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - "src/modules/log-alerts/telegram-webhook.ts"
+      - "tests/unit/graceful-telegram-webhook.test.ts"
+      - "tests/unit/security-telegram-acknowledgement-authorization.test.ts"
+      - ".github/workflows/security-telegram-acknowledgement.yml"
+  push:
+    branches: [main]
+    paths:
+      - "src/modules/log-alerts/telegram-webhook.ts"
+      - "tests/unit/graceful-telegram-webhook.test.ts"
+      - "tests/unit/security-telegram-acknowledgement-authorization.test.ts"
+      - ".github/workflows/security-telegram-acknowledgement.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: security-telegram-ack-${{ github.ref }}-${{ github.sha }}
+  cancel-in-progress: false
+
+jobs:
+  telegram-acknowledgement:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Verify exact tested revision
+        run: test "$(git rev-parse HEAD)" = "$GITHUB_SHA"
+      - name: Telegram sender, callback and route regression
+        run: npx vitest run tests/unit/graceful-telegram-webhook.test.ts tests/unit/security-telegram-acknowledgement-authorization.test.ts tests/unit/graceful-webhook-route.test.ts
+      - name: Full TypeScript gate
+        env:
+          NODE_OPTIONS: --max-old-space-size=6144
+        run: npm run typecheck
