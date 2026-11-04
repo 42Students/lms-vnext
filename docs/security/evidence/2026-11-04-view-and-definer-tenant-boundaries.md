@@ -10,6 +10,8 @@
 
 **Code commits:** [eb9a300d](https://github.com/42Students/lms-vnext/commit/eb9a300d91297a11709aa4f2c8f38399ea0cac9d), [6d731047](https://github.com/42Students/lms-vnext/commit/6d73104792ba820952b005c38b51e40b1d9f1b46), [26f84c61](https://github.com/42Students/lms-vnext/commit/26f84c61468fc4e578c2c7ef363b2d88f9bd3b26), [01b6180b](https://github.com/42Students/lms-vnext/commit/01b6180b620224f4549719a8b51c13734a7fef72), [7cc277dc](https://github.com/42Students/lms-vnext/commit/7cc277dc86035017d17e75c84169a317620a4e4e).
 
+**Post-evidence fixture correction:** [3db7994d](https://github.com/42Students/lms-vnext/commit/3db7994d6adb85caef81815dd4e52fd49d60d0d) corrected the SQL-language function's quoted body in the PG17 test fixture. This makes the test code ready for re-execution; it does not retroactively validate any tests.
+
 ## Verification and release disposition
 
 The [RLS workflow on 7cc277dc (41832703600)](https://github.com/42Students/lms-vnext/actions/runs/41832703600) concluded FAILURE with **zero steps and no assigned runner** (`runner_id=0`). Neither tests nor code ran there. Do not call this a test failure or a pass. GitHub Actions infrastructure/billing/runner availability must be verified independently. Earlier [successful run 41809840139](https://github.com/42Students/lms-vnext/actions/runs/41809840139) covered only the **previous** auditor version.
