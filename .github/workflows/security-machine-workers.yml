@@ -1,0 +1,43 @@
+# Focused source-level regression gate for two privileged machine-only writers.
+# This is not deployment configuration or malware-scanning certification.
+name: Security - machine scheduler and scanner boundaries
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - "src/app/api/internal/operations/notification-scheduler/route.ts"
+      - "src/app/api/internal/storage/scan-verdict/route.ts"
+      - "tests/unit/security-machine-only-scheduler-and-scanner.test.ts"
+      - "tests/unit/api-origin-guard.test.ts"
+      - ".github/workflows/security-machine-workers.yml"
+  push:
+    branches: [main]
+    paths:
+      - "src/app/api/internal/operations/notification-scheduler/route.ts"
+      - "src/app/api/internal/storage/scan-verdict/route.ts"
+      - "tests/unit/security-machine-only-scheduler-and-scanner.test.ts"
+      - "tests/unit/api-origin-guard.test.ts"
+      - ".github/workflows/security-machine-workers.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: machine-worker-security-${{ github.ref }}-${{ github.sha }}
+  cancel-in-progress: false
+
+jobs:
+  machine-worker-boundary:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Machine-only origin, secret, parameter and body checks
+        run: npx vitest run tests/unit/security-machine-only-scheduler-and-scanner.test.ts tests/unit/api-origin-guard.test.ts
