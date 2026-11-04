@@ -52,7 +52,7 @@ export async function PATCH(
     const context = await getCurrentRequestContext();
     // Suspending, reactivating or ending a college membership changes live
     // authorization and must not be possible from a stale admin session.
-    await requireRecentDeviceAuthentication();
+    await requireRecentDeviceAuthentication(context.user.id);
     const { membershipId } = await params;
     const person = await updateMembershipLifecycleWithRuntime(
       context,
