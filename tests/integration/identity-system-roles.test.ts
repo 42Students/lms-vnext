@@ -6,6 +6,7 @@ import {
   it,
 } from "vitest";
 import { Pool } from "pg";
+import { randomUUID } from "node:crypto";
 import { closeDatabaseConnection } from "@/db/client";
 import type { RequestContext } from "@/modules/identity/context";
 import {
@@ -78,6 +79,9 @@ async function cleanupIdentityState() {
     [SEED_IDS.facultyCollegeBMembership],
   );
 
+  await pool.query(`
+    delete from identity_device_sessions where user_id in
+      (select id from users where identity_uid=$1)`,[bootstrapIdentityUid]);
   await pool.query(
     `delete from system_roles
      where user_id in (
@@ -322,6 +326,76 @@ describe("identity context and system roles against PostgreSQL", () => {
         drizzleSystemRoleRepository,
       ),
     ).rejects.toBeInstanceOf(AuthorizationError);
+  });
+
+  it("DB-SEC-SYSTEMROLE-01 revokes pre-existing target device tokens only on a new Super Admin assignment",async()=>{
+    const previousId=randomUUID();
+    const digest=randomUUID().replaceAll("-","")+randomUUID().replaceAll("-","");
+    const currentId=randomUUID();
+    const secondDigest=randomUUID().replaceAll("-","")+randomUUID().replaceAll("-","");
+    try{
+      await pool.query(`
+        insert into identity_device_sessions(id,user_id,credential_digest,expires_at)
+        values($1,$2,$3,clock_timestamp()+interval '1 day')`,
+        [previousId,SEED_IDS.learnerUser,digest]);
+      const first=await assignSystemRole(superAdmin,
+        {userId:SEED_IDS.learnerUser,role:"SUPER_ADMIN"},drizzleSystemRoleRepository);
+      expect(first).toContain("SUPER_ADMIN");
+      const prior=await pool.query<{revoked_at:Date|null;revocation_reason:string|null}>(`
+        select revoked_at,revocation_reason from identity_device_sessions where id=$1`,
+        [previousId]);
+      expect(prior.rows[0]?.revoked_at).toBeInstanceOf(Date);
+      expect(prior.rows[0]?.revocation_reason).toBe("SYSTEM_ROLE_ASSIGNED");
+      await pool.query(`
+        insert into identity_device_sessions(id,user_id,credential_digest,expires_at)
+        values($1,$2,$3,clock_timestamp()+interval '1 day')`,
+        [currentId,SEED_IDS.learnerUser,secondDigest]);
+      const repeated=await assignSystemRole(superAdmin,
+        {userId:SEED_IDS.learnerUser,role:"SUPER_ADMIN"},drizzleSystemRoleRepository);
+      expect(repeated).toContain("SUPER_ADMIN");
+      const newer=await pool.query<{revoked_at:Date|null}>(`
+        select revoked_at from identity_device_sessions where id=$1`,[currentId]);
+      expect(newer.rows[0]?.revoked_at).toBeNull();
+    }finally{
+      await pool.query("delete from identity_device_sessions where id=any($1::uuid[])",
+        [[previousId,currentId]]);
+      await pool.query("delete from system_roles where user_id=$1 and role='SUPER_ADMIN'",
+        [SEED_IDS.learnerUser]);
+    }
+  });
+
+  it("DB-SEC-SYSTEMROLE-02 bootstrap of an existing identity invalidates prior sessions, not idempotent retries",async()=>{
+    const uid=bootstrapIdentityUid,userId=randomUUID();
+    const oldId=randomUUID(),newId=randomUUID();
+    const d1=randomUUID().replaceAll("-","")+randomUUID().replaceAll("-","");
+    const d2=randomUUID().replaceAll("-","")+randomUUID().replaceAll("-","");
+    await pool.query(`
+      insert into users(id,identity_uid,phone_e164,email,display_name)
+      values($1,$2,$3,$4,$5)`,
+      [userId,uid,bootstrapPhone,bootstrapEmail,"Existing bootstrap account"]);
+    await pool.query(`
+      insert into identity_device_sessions(id,user_id,credential_digest,expires_at)
+      values($1,$2,$3,clock_timestamp()+interval '1 day')`,
+      [oldId,userId,d1]);
+    const directory=createBootstrapDirectory();
+    const input={phoneE164:bootstrapPhone,email:bootstrapEmail,displayName:"Existing bootstrap account"};
+    const initial=await bootstrapSuperAdmin(input,
+      {identityDirectory:directory.directory,repository:drizzleSystemRoleRepository});
+    expect(initial.systemRoles).toContain("SUPER_ADMIN");
+    const prior=await pool.query<{revocation_reason:string|null;revoked_at:Date|null}>(`
+      select revoked_at,revocation_reason from identity_device_sessions where id=$1`,
+      [oldId]);
+    expect(prior.rows[0]?.revoked_at).toBeInstanceOf(Date);
+    expect(prior.rows[0]?.revocation_reason).toBe("SUPER_ADMIN_BOOTSTRAPPED");
+    await pool.query(`
+      insert into identity_device_sessions(id,user_id,credential_digest,expires_at)
+      values($1,$2,$3,clock_timestamp()+interval '1 day')`,[newId,userId,d2]);
+    const repeated=await bootstrapSuperAdmin(input,
+      {identityDirectory:directory.directory,repository:drizzleSystemRoleRepository});
+    expect(repeated.systemRoles).toContain("SUPER_ADMIN");
+    const next=await pool.query<{revoked_at:Date|null}>(`
+      select revoked_at from identity_device_sessions where id=$1`,[newId]);
+    expect(next.rows[0]?.revoked_at).toBeNull();
   });
 
   it("rejects a forged Super Admin snapshot when the persisted user lacks privilege",async()=>{
