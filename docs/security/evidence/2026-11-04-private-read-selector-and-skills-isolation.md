@@ -1,6 +1,6 @@
 # 2026-11-04 — Audit/notification selector ambiguity and global skill-usage isolation
 
-**Repository:** `42Students/lms-vnext` — security changes staged for `main`.  
+**Repository:** `42Students/lms-vnext` — merged into `main` by [PR #225](https://github.com/42Students/lms-vnext/pull/225), merge SHA [`b7bee3e`](https://github.com/42Students/lms-vnext/commit/b7bee3ee3032614ca7d6334a00173419c8055f18).  
 **Status:** Source code committed; adverse/positive unit tests authored; **not yet execution-verified**.  
 **Parallel work:** Independent API-read/privacy lane; no edits to shared `docs/tracker.json` while other security lanes own it.
 
@@ -26,3 +26,7 @@
 - For global skill statistics, add live seven-account cross-tenant checks verifying that no college-specific context can read platform-wide skill usage. Confirm Super Admin grants are valid, selected, and persisted at request time.
 - Validate 4 MiB imports against actual configured ingress limits, valid maximum-size Unicode inputs, and the restricted PostgreSQL application role. Add burst/rate and expensive-query limits at a trusted gateway.
 - Run actual focused workflow, fix failures without removing tests, then link a successful pinned commit/run to the **existing** `docs/tracker.json -> security` controls. Do not create another tracker.
+
+## Post-merge CI receipt (execution remains blocked)
+
+[Security - private query selectors and skill-usage isolation run 41837419626](https://github.com/42Students/lms-vnext/actions/runs/41837419626) was triggered on the exact merge SHA `b7bee3ee3032614ca7d6334a00173419c8055f18` and finished with GitHub `conclusion=failure`. The corresponding job `private-query-and-skill-usage` had **no executable step records** (GitHub response `steps=null`); thus this is **not evidence of a failing or passing Vitest assertion or TypeScript check**. Repair or authorize GitHub runner execution, rerun against a source-pinned SHA, and attach actual output before changing control verification states.
