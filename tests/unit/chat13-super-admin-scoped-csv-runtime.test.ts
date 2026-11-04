@@ -1,6 +1,9 @@
 import {beforeEach,describe,expect,it,vi} from "vitest";
-const mocks=vi.hoisted(()=>({getCurrentRequestContext:vi.fn()}));
+const mocks=vi.hoisted(()=>({getCurrentRequestContext:vi.fn(),requireRecentDeviceAuthentication:vi.fn()}));
 vi.mock("server-only",()=>({}));
+vi.mock("@/auth/recent-device-auth",()=>({
+ requireRecentDeviceAuthentication:mocks.requireRecentDeviceAuthentication,
+}));
 vi.mock("@/auth/request-context",()=>({
  getCurrentRequestContext:mocks.getCurrentRequestContext,
 }));
@@ -18,6 +21,7 @@ describe("SA-ADMIN-CSV-23 scoped export page cap and CSV injection controls",()=
  beforeEach(()=>{
   mocks.getCurrentRequestContext.mockReset();
   mocks.getCurrentRequestContext.mockResolvedValue(actor);
+  mocks.requireRecentDeviceAuthentication.mockReset().mockResolvedValue({userId:"administrator"});
  });
  const url=(q:string)=>new Request("https://local.invalid/api/admin/placements/offers/export?"+q);
  it("exports only first 250 matching rows from 260 despite URL pageSize=100",async()=>{
@@ -44,6 +48,7 @@ describe("SA-ADMIN-CSV-23 scoped export page cap and CSV injection controls",()=
   expect(csv).toContain("'=SUM(1,1)");
   expect(csv).toContain("EXPORT TRUNCATED");
   expect(loader).toHaveBeenCalledTimes(10);
+  expect(mocks.requireRecentDeviceAuthentication).toHaveBeenCalledTimes(1);
   for(const [ctx,query] of loader.mock.calls){
    expect(ctx).toBe(actor);
    expect(query.pageSize).toBe(25);
