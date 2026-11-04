@@ -14,7 +14,7 @@
 
 - `src/modules/auth/auth-audit-privacy.ts`: purpose-separated HMAC-SHA256, 24 lowercase hexadecimal characters (96-bit truncated tag), keyed with the configured `AUTH_SECRET`. Missing/short secret returns `unavailable`, never a raw identifier or guessable fallback hash. The registered `identity_auth_attempts.ip_tag` width is 24, so there is no column migration for this change.
 - `src/modules/auth/http.ts`: IP correlation now uses that keyed tag. `auditLogin` only passes explicitly allowlisted security fields, with bounded numeric values and fixed enums; user IDs are emitted only as keyed `userTag`.
-- `src/observability/auth-info-field-policy.ts`: validates the auth-audit component, static route format, keyed identifiers, booleans, timing metrics, request counts and request IDs. Unapproved fields are removed.
+- `src/observability/auth-info-field-policy.ts`: validates the auth-audit component, explicit registered static route ID, keyed identifiers, booleans, timing metrics, request counts and request IDs. Unapproved fields are removed.
 - `src/observability/logger.ts`: dispatches INFO auth-audit events through the narrowly scoped security policy while leaving generic INFO policy unchanged.
 - `tests/unit/auth-audit-privacy.test.ts` and `tests/unit/auth-audit-logger-fields.test.ts`: keyed identity, purpose/key isolation, invalid-secret, no-PII, metadata allowlist, and generic logging non-regression checks.
 - `tests/unit/chat6-auth-http-guard.test.ts` and `tests/unit/chat17-auth-http-hardening.test.ts`: existing authentication audit tests updated for keyed 96-bit IDs and injection-negative assertions.
@@ -31,10 +31,11 @@
 - [Logger dispatch fix](https://github.com/42Students/lms-vnext/commit/c7e156046a4feb4ff38cfffee2f942cfa64657f4)
 - [Logger regression tests](https://github.com/42Students/lms-vnext/commit/a687d22c88003221b6d9fe2e7068c9363efe004a)
 - [Focused CI wiring](https://github.com/42Students/lms-vnext/commit/0a99dd75182963240cefd254280c0726c3698ccd)
+- [Route ID strict allowlist](https://github.com/42Students/lms-vnext/commit/5f01cccd1d06d92b99fbe299a8c999d07cb0b811)
 
 ## Executed tests and limits
 
-Standalone local Node 22 `--experimental-strip-types` checks exercised both exact-blobs `src/modules/auth/auth-audit-privacy.ts` (blob `302fc22226e042e8cf8297185674aeb92a81bac5`) and `src/observability/auth-info-field-policy.ts` (blob `26b1101ab4064304e6c324d715b99ae8a85dd077`). The local file blob IDs were verified to match GitHub exactly. The checks covered keyed-tag shape, HMAC reference equality, cross-key/purpose separation, invalid-key non-disclosure, field allowlisting, invalid field rejection, and a positive end-to-end pure-function path preserving legitimate auth facts without raw IP/ID/code/contact values. These pure checks passed.
+Standalone local Node 22 `--experimental-strip-types` checks exercised both exact-blobs `src/modules/auth/auth-audit-privacy.ts` (blob `302fc22226e042e8cf8297185674aeb92a81bac5`) and `src/observability/auth-info-field-policy.ts` (blob `26b1101ab4064304e6c324d715b99ae8a85dd077`). The local file blob IDs were verified to match GitHub exactly. After the route allowlist tightening, the local `auth-info-field-policy.ts` blob `3d84d603534bed55872040ae8f869fcfb76c3dae` was also verified byte-for-byte; five production route identifiers and four privacy exclusions per event passed alongside a forged-route negative case. The checks covered keyed-tag shape, HMAC reference equality, cross-key/purpose separation, invalid-key non-disclosure, field allowlisting, invalid field rejection, and a positive end-to-end pure-function path preserving legitimate auth facts without raw IP/ID/code/contact values. These pure checks passed.
 
 The [focused authorization workflow on the final CI-wiring commit](https://github.com/42Students/lms-vnext/actions/runs/41837810077) **failed with zero executed steps**. This is not an assertion failure or a passing test; no full repository Vitest, typecheck, disposable PostgreSQL, deployed logging pipeline or live incident query was executed in this session.
 
