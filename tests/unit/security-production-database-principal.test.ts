@@ -10,9 +10,11 @@ const safe:DatabasePrincipalCapability={
  can_truncate_tenant_tables:false,
 };
 describe("production PostgreSQL app role readiness",()=>{
- it("requires explicit production deployment, not merely Next.js build mode",()=>{
-  expect(enforceProductionDatabasePrincipal({nodeEnv:"production",appEnv:"production"})).toBe(true);
-  expect(enforceProductionDatabasePrincipal({nodeEnv:"production",appEnv:"staging"})).toBe(false);
+ it("enforces least-privileged roles by default on production-mode servers",()=>{
+  for(const appEnv of ["production","staging",undefined])
+   expect(enforceProductionDatabasePrincipal({nodeEnv:"production",appEnv})).toBe(true);
+  for(const appEnv of ["development","test"])
+   expect(enforceProductionDatabasePrincipal({nodeEnv:"production",appEnv})).toBe(false);
   expect(enforceProductionDatabasePrincipal({nodeEnv:"test",appEnv:"production"})).toBe(false);
  });
  it("allows positively attested unprivileged role",()=>{
