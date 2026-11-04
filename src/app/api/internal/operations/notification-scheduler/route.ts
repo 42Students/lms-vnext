@@ -1,6 +1,5 @@
 import { timingSafeEqual } from "node:crypto";
 import { NextResponse } from "next/server";
-import { isSameOriginRequest } from "@/auth/origin";
 import { readBoundedUtf8Body } from "@/lib/bounded-utf8-body";
 import { postgresScheduledJobLeaseStore } from "@/modules/operations/postgres-scheduled-job-lease-store";
 import {
@@ -29,12 +28,14 @@ type WiredJob = "notification.release" | "notification.cleanup"
  * publish notifications. Deployment/IAM is a separate explicit release gate.
  */
 export async function POST(request: Request) {
-  // Scheduled/service callbacks have no browser Origin. Reject a foreign Origin when one is supplied.
-  if (request.headers.has("origin") && !isSameOriginRequest(request))
-    return NextResponse.json({error:"INVALID_ORIGIN"},{status:403});
+  // Browser Origin never authorizes a service scheduler.
+  if (request.headers.has("origin"))
+    return NextResponse.json({error:"INVALID_ORIGIN"},{status:403,headers});
   const secret = process.env["DB10_NOTIFICATION_SCHEDULER_SECRET"] ?? "";
   const supplied = request.headers.get("x-notification-scheduler-key") ?? "";
-  if (Buffer.byteLength(secret, "utf8") < 32) {
+  if (Buffer.byteLength(secret, "utf8") < 32 ||
+      Buffer.byteLength(secret, "utf8") > 256 ||
+      secret !== secret.trim() || /\s/u.test(secret)) {
     return NextResponse.json({ error: "SCHEDULER_NOT_CONFIGURED" },
       { status: 503, headers });
   }
@@ -42,6 +43,9 @@ export async function POST(request: Request) {
   const actual = Buffer.from(supplied, "utf8");
   if (expected.length !== actual.length || !timingSafeEqual(expected, actual)) {
     return NextResponse.json({ error: "FORBIDDEN" }, { status: 403, headers });
+  }
+  if (new URL(request.url).search) {
+    return NextResponse.json({ error: "INVALID_JOB" }, { status: 400, headers });
   }
   if (process.env["DB10_NOTIFICATION_SCHEDULER_READY"] !== "DB10_VERIFIED") {
     return NextResponse.json({ error: "SCHEDULER_NOT_READY" },
