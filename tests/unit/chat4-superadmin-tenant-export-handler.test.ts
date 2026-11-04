@@ -1,9 +1,10 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
 const mocks=vi.hoisted(()=>({
- context:vi.fn(),export:vi.fn(),apiError:vi.fn(),
+ context:vi.fn(),export:vi.fn(),apiError:vi.fn(),recent:vi.fn(),
 }));
 vi.mock("@/auth/request-context",()=>({getCurrentRequestContext:mocks.context}));
+vi.mock("@/auth/recent-device-auth",()=>({requireRecentDeviceAuthentication:mocks.recent}));
 vi.mock("@/modules/colleges/admin-tenant-lifecycle-service",()=>({
  exportSuperAdminTenantDirectory:mocks.export,
 }));
@@ -19,6 +20,7 @@ const request=(query:string)=>new Request("https://lms.example.test/api/admin/te
 beforeEach(()=>{
  for(const fn of Object.values(mocks))fn.mockReset();
  mocks.context.mockResolvedValue(actor);
+ mocks.recent.mockResolvedValue({userId:"authorized-admin"});
  mocks.export.mockResolvedValue({
   csv:"\uFEFF\"College\"\r\n\"Safe School\"",truncated:false,cap:1000,exported:1,
  });
@@ -52,6 +54,7 @@ describe("SA-tenants-directory-export-01 scoped export handler and cache isolati
   expect(result.headers.get("X-Export-Truncated")).toBe("false");
   expect(await result.text()).toContain("Safe School");
   expect(mocks.export).toHaveBeenCalledOnce();
+  expect(mocks.recent).toHaveBeenCalledOnce();
   expect(mocks.export).toHaveBeenCalledWith(actor,{
    q:"college",organizationId:org,status:"ALL",
   });
