@@ -3,13 +3,14 @@ import {NextResponse} from "next/server";
 import {readBoundedUtf8Body} from "@/lib/bounded-utf8-body";
 
 const calls=vi.hoisted(()=>({
- origin:vi.fn(),context:vi.fn(),email:vi.fn(),later:vi.fn(),
+ origin:vi.fn(),context:vi.fn(),recentAuth:vi.fn(),email:vi.fn(),later:vi.fn(),
  mentorRead:vi.fn(),tpoRead:vi.fn(),projectSeen:vi.fn(),
  team:vi.fn(),cgpa:vi.fn(),skills:vi.fn(),
 }));
 vi.mock("server-only",()=>({}));
 vi.mock("@/auth/origin",()=>({isSameOriginRequest:calls.origin}));
 vi.mock("@/auth/request-context",()=>({getCurrentRequestContext:calls.context}));
+vi.mock("@/auth/recent-device-auth",()=>({requireRecentDeviceAuthentication:calls.recentAuth}));
 vi.mock("@/modules/projects/mentor-email-preference-service",
  ()=>({saveMentorEmailPreference:calls.email}));
 vi.mock("@/modules/projects/mentor-attention-later-service",
@@ -64,6 +65,7 @@ beforeEach(()=>{
  vi.resetAllMocks();
  calls.origin.mockReturnValue(true);
  calls.context.mockResolvedValue(context);
+ calls.recentAuth.mockResolvedValue(undefined);
  calls.email.mockResolvedValue({enabled:true,version:null});
  calls.later.mockResolvedValue({hidden:true});
  calls.mentorRead.mockResolvedValue({updated:1});
@@ -128,6 +130,7 @@ describe("bounded request body security across staff and mentor mutations",()=>{
   const skills=await skillsImport(req("/api/admin/skills/import","{}"));
   expect(skills.status).toBe(200);
   expect(calls.skills).toHaveBeenCalledWith(context,{});
+  expect(calls.recentAuth).toHaveBeenCalledWith(userId);
  });
  it("bounded UTF-8 reader rejects missing-Length multi-chunk streams at byte limit",async()=>{
   const stream=new ReadableStream<Uint8Array>({start(controller){
