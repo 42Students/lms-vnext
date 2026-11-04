@@ -7,6 +7,7 @@ import { getAuthConfig, resetAuthConfigForTests } from "@/modules/auth/config";
 import {
   resolveSession, listActiveSessions,
   SESSION_IDLE_TIMEOUT_SECONDS, SUPER_ADMIN_IDLE_TIMEOUT_SECONDS,
+  SUPER_ADMIN_ABSOLUTE_TIMEOUT_SECONDS,
 } from "@/modules/auth/session-service";
 
 /**
@@ -118,6 +119,29 @@ describe("DB-004 atomic device authorization and revocation", () => {
       await pool.query("delete from system_roles where user_id=$1",[userId]);
       await pool.query(`
         update identity_device_sessions set last_seen_at=clock_timestamp()-interval '7 hours'
+         where id=$1`,[sessionId]);
+      expect((await resolveSession(token)).ok).toBe(true);
+    });
+  });
+
+  it("DB-SEC-IDLE-04 expires a continuously active Super Admin session after eight hours absolute",async()=>{
+    expect(SUPER_ADMIN_ABSOLUTE_TIMEOUT_SECONDS).toBe(8*3600);
+    await withDevice(async ({userId,sessionId,token})=>{
+      await pool.query("insert into system_roles(user_id,role) values($1,'SUPER_ADMIN')",[userId]);
+      const saved=await pool.query<{last_seen_at:Date}>(`
+        update identity_device_sessions
+           set created_at=clock_timestamp()-interval '9 hours',
+               last_seen_at=clock_timestamp()-interval '1 minute'
+         where id=$1 returning last_seen_at`,[sessionId]);
+      const heartbeat=saved.rows[0]!.last_seen_at.getTime();
+      expect(await resolveSession(token)).toEqual({ok:false,reason:"SESSION_EXPIRED"});
+      expect(await listActiveSessions(userId)).toEqual([]);
+      const after=await pool.query<{last_seen_at:Date}>(
+        "select last_seen_at from identity_device_sessions where id=$1",[sessionId]);
+      expect(after.rows[0]!.last_seen_at.getTime()).toBe(heartbeat);
+      await pool.query(`
+        update identity_device_sessions
+           set created_at=clock_timestamp()-interval '7 hours'
          where id=$1`,[sessionId]);
       expect((await resolveSession(token)).ok).toBe(true);
     });
