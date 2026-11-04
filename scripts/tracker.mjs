@@ -8,7 +8,8 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { inspectDatabaseProgress, formatDatabaseProgress } from './progress-evidence.mjs';
-import { inspectSecurityProgress, formatSecurityMarkdown } from './security/control-progress.mjs';
+import { inspectSecurityProgress, formatSecurityMarkdown,
+  inspectSecurityClosureQueue, formatSecurityClosureQueue } from './security/control-progress.mjs';
 export {inspectDatabaseProgress,formatDatabaseProgress} from './progress-evidence.mjs';
 
 export const PHASES = Object.freeze(['DATABASE', 'API', 'UI', 'RELEASE']);
@@ -193,6 +194,11 @@ export function inspectTracker(doc) {
   if (doc?.project !== '42Students/lms-vnext' || doc?.branch !== 'main')
     add(errors, 'INVALID_REPOSITORY_IDENTITY');
   if (!PHASES.includes(doc?.currentPhase)) add(errors, 'INVALID_CURRENT_PHASE');
+  // Keep the accepted historical phase order; security is the ACTIVE execution
+  // workstream, not a rewrite of completed DB/API/UI phase acceptance.
+  if(doc?.currentWorkstream!==undefined&&
+     !['ENGINEERING','SECURITY'].includes(doc.currentWorkstream))
+    add(errors,'INVALID_CURRENT_WORKSTREAM');
   if (JSON.stringify(doc?.phaseOrder) !== JSON.stringify(PHASES))
     add(errors, 'INVALID_PHASE_ORDER');
   if (!Array.isArray(doc?.tasks)) {
@@ -270,6 +276,7 @@ export function inspectTracker(doc) {
   errors.push(...inspectDatabaseProgress(doc).errors);
   // Every security control is tracked in the same canonical tracker file.
   const securityProgress=inspectSecurityProgress(doc);
+  const securityClosure=inspectSecurityClosureQueue(doc);
   errors.push(...securityProgress.errors);
   errors.push(...inspectDb019WorkPackages(doc).errors);
   // Thematic domain groups remain exhaustive, but do not assign ownership.
@@ -428,12 +435,14 @@ export function inspectTracker(doc) {
   return {
     mode:'TRACKER_STRUCTURE_ONLY_NOT_DATABASE_ACCEPTANCE',
     activePhase:doc.currentPhase,
+    activeWorkstream:doc.currentWorkstream??'ENGINEERING',
     counts:{total:all.length,done,notDone:all.length-done},
     core:{total:CORE_ELEVEN.length,done:coreDone,notDone:CORE_ELEVEN.length-coreDone},
     coreRemaining,
     currentPhaseOpen:currentOpen.map(t=>t.id),
     deferredRelease,
     security:securityProgress,
+    securityClosure,
     readyForNextPhase:false, // Executed independent phase-gate signoff is separate.
     errors,
   };
@@ -452,6 +461,14 @@ if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.me
     if (process.argv.includes('--security')||process.argv.includes('--security-json')) {
       if(process.argv.includes('--security-json'))console.log(JSON.stringify(report.security,null,2));
       else console.log(formatSecurityMarkdown(report.security));
+      if(report.errors.length)process.exitCode=2;
+    } else if (process.argv.includes('--security-next')) {
+      const doc=JSON.parse(fs.readFileSync(path.join(root??path.resolve(path.dirname(fileURLToPath(import.meta.url)),'..'),'docs/tracker.json'),'utf8'));
+      console.log(formatSecurityClosureQueue(inspectSecurityClosureQueue(doc)));
+      if(report.errors.length)process.exitCode=2;
+    } else if (process.argv.includes('--closure-next')&&report.activeWorkstream==='SECURITY') {
+      const doc=JSON.parse(fs.readFileSync(path.join(root??path.resolve(path.dirname(fileURLToPath(import.meta.url)),'..'),'docs/tracker.json'),'utf8'));
+      console.log(formatSecurityClosureQueue(inspectSecurityClosureQueue(doc)));
       if(report.errors.length)process.exitCode=2;
     } else if (process.argv.includes('--closure-next')) {
       const doc=JSON.parse(fs.readFileSync(path.join(root??path.resolve(path.dirname(fileURLToPath(import.meta.url)),'..'),'docs/tracker.json'),'utf8'));
@@ -517,6 +534,14 @@ if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.me
       }
       if (report.errors.length) {console.error(JSON.stringify(report.errors));process.exitCode=2;}
       console.log('Global DATABASE phase: NOT CERTIFIED by package counts');
+    } else if(report.activeWorkstream==='SECURITY') {
+      const doc=JSON.parse(fs.readFileSync(path.join(root??path.resolve(path.dirname(fileURLToPath(import.meta.url)),'..'),'docs/tracker.json'),'utf8'));
+      console.log('CURRENT WORKSTREAM: SECURITY | Historical engineering phase: '+report.activePhase);
+      console.log(formatSecurityMarkdown(report.security));
+      console.log(formatSecurityClosureQueue(inspectSecurityClosureQueue(doc,{limit:5})));
+      console.log('Engineering acceptance retained: '+report.counts.done+'/'+report.counts.total+
+        ' tasks; this is NOT security certification.');
+      if(report.errors.length){console.error(JSON.stringify(report.errors));process.exitCode=2}
     } else {
       console.log('LMS vNext | ' + report.activePhase);
       console.log('DONE ' + report.counts.done + '/' + report.counts.total +

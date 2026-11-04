@@ -4,7 +4,8 @@ import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { spawnSync } from "node:child_process";
-import { extractControls, readCatalogue, inspectSecurityProgress, PROGRAMS, STATES } from
+import { extractControls, readCatalogue, inspectSecurityProgress, PROGRAMS, STATES,
+  inspectSecurityClosureQueue, SECURITY_CLOSURE_ORDER } from
   "../scripts/security/control-progress.mjs";
 import { inspectTracker } from "../scripts/tracker.mjs";
 
@@ -129,5 +130,56 @@ test("existing tracker CLI exposes security and refuses invalid bookkeeping",()=
     });
     assert.equal(run.status,0,run.stderr);
     assert.match(run.stdout,/493/);
+  }
+});
+
+test("security is the active workstream without reopening the 101 engineering packages",()=>{
+  assert.equal(actual.currentWorkstream,"SECURITY");
+  assert.equal(actual.currentPhase,"UI");
+  assert.equal(actual.tasks.length,101);
+  assert.equal(actual.tasks.filter(t=>t.done===true).length,101);
+  const report=inspectTracker(actual);
+  assert.equal(report.activeWorkstream,"SECURITY");
+  assert.deepEqual(report.errors,[]);
+});
+test("security closure queue prioritizes substantiated gaps and never promotes partial evidence",()=>{
+  const doc=partialFixture();
+  doc.currentWorkstream="SECURITY";
+  const firstControl=doc.security.controls[first];
+  firstControl.state="GAP_CONFIRMED";
+  firstControl.assessedAt="2026-11-05";
+  firstControl.nextProof="Run adversarial and deployed checks on this confirmed gap";
+  firstControl.evidence=[{
+    type:"EXECUTED_SCOPED_TEST",
+    commitSha:"8b236bedb51d9afa4ec4f9317171bf4f23afc545",
+    runUrl:"https://github.com/42Students/lms-vnext/actions/runs/41795753719",
+    scope:"Synthetic failed negative-case fixture",
+  }];
+  const queue=inspectSecurityClosureQueue(doc,{limit:493});
+  assert.equal(queue.total,493);
+  assert.equal(queue.verified,0);
+  assert.equal(queue.open,queue.remaining);
+  assert.equal(queue.priority[0].state,"GAP_CONFIRMED");
+  const ranks=new Map(SECURITY_CLOSURE_ORDER.map((s,i)=>[s,i]));
+  for(let i=1;i<queue.priority.length;i++)
+    assert.ok(ranks.get(queue.priority[i-1].state)<=ranks.get(queue.priority[i].state));
+  assert.ok(queue.priority.every(p=>p.nextProof.length>0));
+  assert.equal(queue.releaseReady,false);
+  assert.deepEqual(queue.errors,[]);
+});
+test("invalid active workstream and invalid closure limits fail closed",()=>{
+  const doc=copy();doc.currentWorkstream="RELEASE_COMPLETE";
+  assert.ok(inspectTracker(doc).errors.some(e=>e.code==="INVALID_CURRENT_WORKSTREAM"));
+  assert.throws(()=>inspectSecurityClosureQueue(actual,{limit:0}),/SECURITY_CLOSURE_LIMIT_INVALID/);
+});
+test("canonical closure-next CLI now shows security and reports the full unverified scope",()=>{
+  for(const args of [["--closure-next"],["--security-next"],[]]){
+    const run=spawnSync(process.execPath,["scripts/tracker.mjs",...args],{
+      cwd:root,encoding:"utf8",maxBuffer:1024*1024,
+    });
+    assert.equal(run.status,0,run.stderr);
+    assert.match(run.stdout,/SECURITY CLOSURE FIRST/);
+    assert.match(run.stdout,/493/);
+    assert.match(run.stdout,/NEXT PROOF/);
   }
 });

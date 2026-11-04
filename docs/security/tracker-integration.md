@@ -4,6 +4,8 @@
 
 The catalogue remains a frozen requirement baseline: [493 control IDs in 26 domains](control-catalog.md). The execution program groups them into **SP-01 through SP-10**. The canonical `tasks` array remains unchanged at 101 previously accepted DB/API/UI tasks. Their engineering acceptance is separate from security certification.
 
+**Current owner direction (2026-11-05):** `currentWorkstream: SECURITY` is the active closure priority in the same canonical tracker. `currentPhase: UI` and the five historical global phase certificates are preserved as prior engineering history, **not** an instruction to keep doing UI work or claim release readiness. For every new security item, use an existing `SEC-XX-YYY` control record and update it only from scoped evidence. Never add competing dashboards, clone tasks, or mark broad controls verified because a focused CI job passes.
+
 ## Query the current numbers at any time
 
 The CLI reads the same canonical tracker that regular project checks validate:
@@ -11,6 +13,8 @@ The CLI reads the same canonical tracker that regular project checks validate:
 ```bash
 node scripts/tracker.mjs --security
 node scripts/tracker.mjs --security-json
+node scripts/tracker.mjs --closure-next  # security priority queue when currentWorkstream=SECURITY
+node scripts/tracker.mjs --security-next  # explicit security queue, regardless of legacy phase
 node scripts/security/control-progress.mjs --markdown
 node scripts/security/control-progress.mjs --check
 node scripts/tracker.mjs --check

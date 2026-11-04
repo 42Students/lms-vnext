@@ -148,6 +148,73 @@ export function inspectSecurityProgress(doc,catalogue=readCatalogue()){
   };
 }
 
+/**
+ * Closure-first selection uses the SAME per-control source of truth as the
+ * security dashboard. These are work suggestions, not completion claims.
+ * Prioritize a demonstrated gap before unverified implementation and partial
+ * evidence, then audit genuinely unassessed controls. No status is inferred
+ * from a passing CI job or a source-code keyword match.
+ */
+export const SECURITY_CLOSURE_ORDER=Object.freeze([
+  "GAP_CONFIRMED","IMPLEMENTED_UNVERIFIED","PARTIAL_EVIDENCE","UNASSESSED",
+]);
+const SECURITY_PROGRAM_PRIORITY=Object.freeze([
+  "SP-02","SP-03","SP-01","SP-04","SP-05","SP-07",
+  "SP-06","SP-09","SP-08","SP-10",
+]);
+
+export function inspectSecurityClosureQueue(doc,{limit=12}={}){
+  if(!Number.isSafeInteger(limit)||limit<1||limit>493)
+    throw new RangeError("SECURITY_CLOSURE_LIMIT_INVALID");
+  const report=inspectSecurityProgress(doc);
+  const {rows}=extractControls(readCatalogue());
+  const controls=doc?.security?.controls??{};
+  const programByDomain=new Map(PROGRAMS.flatMap(p=>p[2].map(domain=>[domain,p[0]])));
+  const rank=new Map(SECURITY_CLOSURE_ORDER.map((state,index)=>[state,index]));
+  const programRank=new Map(SECURITY_PROGRAM_PRIORITY.map((id,index)=>[id,index]));
+  const allOpen=rows.flatMap(({id,domain,title})=>{
+    const state=controls[id]?.state;
+    if(!rank.has(state))return [];
+    const program=programByDomain.get(domain);
+    return [{id,title,program,state,
+      nextProof:typeof controls[id]?.nextProof==="string"?
+        controls[id].nextProof:
+        "Audit this requirement against real code, applicable roles, tenants, tests and runtime configuration; record evidence before changing state.",
+    }];
+  }).sort((a,b)=>
+    rank.get(a.state)-rank.get(b.state)||
+    programRank.get(a.program)-programRank.get(b.program)||
+    a.id.localeCompare(b.id)
+  );
+  return {
+    mode:"SECURITY_CLOSURE_FIRST_NOT_CERTIFICATION",
+    total:report.total,verified:report.verified,remaining:report.remaining,
+    assessed:report.assessed,excluded:report.counts.NOT_APPLICABLE,
+    counts:report.counts,releaseReady:report.releaseReady,
+    priority:allOpen.slice(0,limit),open:allOpen.length,
+    errors:report.errors,
+  };
+}
+
+export function formatSecurityClosureQueue(queue){
+  return [
+    "LMS vNext | SECURITY CLOSURE FIRST | VERIFIED "+queue.verified+"/"+queue.total+
+      " | OPEN "+queue.remaining+" | ASSESSED "+queue.assessed+"/"+queue.total,
+    "Scope: "+queue.counts.GAP_CONFIRMED+" confirmed gaps; "+
+      queue.counts.IMPLEMENTED_UNVERIFIED+" implemented/unverified; "+
+      queue.counts.PARTIAL_EVIDENCE+" partial; "+queue.counts.UNASSESSED+" unassessed; "+
+      queue.excluded+" approved exceptions.",
+    "No auto-promotion: CI passing is evidence, not independent control closure.",
+    ...queue.priority.flatMap((p,i)=>[
+      String(i+1)+". "+p.id+" | "+p.program+" | "+p.state+" | "+p.title,
+      "   NEXT PROOF: "+p.nextProof,
+    ]),
+    "Full scope remains OPEN until positive/negative tests, deployed configuration "+
+      "and independent acceptance prove every applicable control.",
+    "Security release: "+(queue.releaseReady?"REVIEWED READY":"NOT CERTIFIED"),
+  ].join("\n")+"\n";
+}
+
 export function formatSecurityMarkdown(report){
   const lines=[
     "## Security control coverage — evidence based","",

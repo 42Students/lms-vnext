@@ -5,6 +5,7 @@
   "updatedOn": "2026-11-03",
   "policy": "SOLE ACTIVE TRACKER. done:true means scoped ENGINEERING acceptance passed with executed evidence, or (for a task with deferredRelease metadata) engineering acceptance passed and clearly enumerated independent final-release reviews are scheduled later. done:true does NOT certify security/retention signoff, browser/release, or the overall phase. Missing functionality, database migration, tenant/privacy invariants, or failed core tests are NOT deferrable. Agents skip done tasks unless a concrete regression or owner re-scope occurs. No other task status trackers; pending final attestations remain evidence in original registers and task metadata.",
   "currentPhase": "UI",
+  "currentWorkstream": "SECURITY",
   "phaseOrder": [
     "DATABASE",
     "API",

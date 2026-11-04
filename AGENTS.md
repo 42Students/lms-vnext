@@ -1,3 +1,15 @@
+## CURRENT OWNER DIRECTION — 2026-11-05: SECURITY IS THE ACTIVE CLOSURE WORKSTREAM
+
+**Mandatory priority for all vNext chats:** Security hardening and evidence-based security closure now take precedence over UI polish or reopening the previously accepted DB/API/UI engineering work. The only live source of status is [docs/tracker.json](docs/tracker.json), with `currentWorkstream: SECURITY` and 493 individual `security.controls` statuses grouped under SP-01..SP-10. The historical `currentPhase: UI` and five phase certificates remain unchanged; engineering acceptance is **not** security or release certification.
+
+- Start with `npm run progress -- --closure-next` (now security-first), `npm run progress -- --security` or `node scripts/security/control-progress.mjs --check`. The security programme and acceptance contract are in [docs/security/README.md](docs/security/README.md) and [docs/security/tracker-integration.md](docs/security/tracker-integration.md).
+- Prioritize confirmed exploitable or governance gaps, then independently verifiable implementations and partially evidenced boundaries; audit unassessed controls without equating **unassessed** to **unimplemented**.
+- To close a control, capture exact affected code/configuration, successful and adversarial test execution at identified commit/environment, real deployment boundary evidence when applicable, and independent review. Only `VERIFIED` counts as complete. Failed/skipped jobs, green source-only checks, locally authored tests and an unprotected `main` do not satisfy closure.
+- Preserve all 101 previously accepted DB/API/UI packages and previous evidence; do not recertify or reopen completed engineering packages unless a concrete regression demands it. No independent public release security claim until the 493-control requirements and separate release gates are met.
+- Shared `main` has concurrent writers. Fetch and reconcile fresh HEAD before each patch; never overwrite another chat's canonical security-control updates. Never commit credentials, sensitive provider receipts or private production data.
+
+---
+
 # LMS vNext engineering rules
 
 ## CURRENT OWNER DIRECTION — 2026-11-03: 100% required capabilities, NOT pixel clone

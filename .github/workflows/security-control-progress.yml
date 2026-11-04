@@ -46,7 +46,8 @@ jobs:
         run: node --test tests/security-control-progress.test.mjs
       - name: Check full tracker including all security states
         run: node scripts/tracker.mjs --check
-      - name: Print up-to-date security summary from the sole tracker
+      - name: Print up-to-date security summary and priority closure queue
         run: |
           node scripts/security/control-progress.mjs --markdown >> "$GITHUB_STEP_SUMMARY"
+          node scripts/tracker.mjs --closure-next
           node scripts/security/control-progress.mjs --check
