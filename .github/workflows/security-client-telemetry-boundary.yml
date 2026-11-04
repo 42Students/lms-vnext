@@ -9,9 +9,12 @@ on:
       - "src/app/api/client-errors/**"
       - "src/modules/log-alerts/client-error-ip.ts"
       - "src/modules/log-alerts/client-report.ts"
+      - "src/modules/log-alerts/redaction.ts"
       - "src/auth/ip-rate-limit.ts"
       - "tests/unit/client-error-ip-security.test.ts"
       - "tests/unit/client-error-rate-security.test.ts"
+      - "tests/unit/client-log-credential-redaction-security.test.ts"
+      - "tests/unit/chat16-graceful-redaction-r8.test.ts"
       - "tests/unit/graceful-client-error.test.ts"
       - "tests/unit/auth-ip-rate-limit.test.ts"
       - ".github/workflows/security-client-telemetry-boundary.yml"
@@ -21,9 +24,12 @@ on:
       - "src/app/api/client-errors/**"
       - "src/modules/log-alerts/client-error-ip.ts"
       - "src/modules/log-alerts/client-report.ts"
+      - "src/modules/log-alerts/redaction.ts"
       - "src/auth/ip-rate-limit.ts"
       - "tests/unit/client-error-ip-security.test.ts"
       - "tests/unit/client-error-rate-security.test.ts"
+      - "tests/unit/client-log-credential-redaction-security.test.ts"
+      - "tests/unit/chat16-graceful-redaction-r8.test.ts"
       - "tests/unit/graceful-client-error.test.ts"
       - "tests/unit/auth-ip-rate-limit.test.ts"
       - ".github/workflows/security-client-telemetry-boundary.yml"
@@ -52,5 +58,7 @@ jobs:
           npx vitest run
           tests/unit/client-error-ip-security.test.ts
           tests/unit/client-error-rate-security.test.ts
+          tests/unit/client-log-credential-redaction-security.test.ts
+          tests/unit/chat16-graceful-redaction-r8.test.ts
           tests/unit/graceful-client-error.test.ts
           tests/unit/auth-ip-rate-limit.test.ts
