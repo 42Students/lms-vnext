@@ -11,6 +11,7 @@ on:
       - "src/modules/bug-tracker/audit-cron-request-guard.ts"
       - "tests/unit/audit-findings-cron-request-security.test.ts"
       - "tests/unit/audit-findings-cron-route-security.test.ts"
+      - "tests/unit/security-audit-sync-worker-boundary.test.ts"
       - ".github/workflows/security-audit-cron.yml"
   push:
     branches: [main]
@@ -19,6 +20,7 @@ on:
       - "src/modules/bug-tracker/audit-cron-request-guard.ts"
       - "tests/unit/audit-findings-cron-request-security.test.ts"
       - "tests/unit/audit-findings-cron-route-security.test.ts"
+      - "tests/unit/security-audit-sync-worker-boundary.test.ts"
       - ".github/workflows/security-audit-cron.yml"
   workflow_dispatch:
 
@@ -41,4 +43,4 @@ jobs:
           cache: npm
       - run: npm ci
       - name: Audit cron credential, Origin and request-shape negatives
-        run: npx vitest run tests/unit/audit-findings-cron-request-security.test.ts tests/unit/audit-findings-cron-route-security.test.ts
+        run: npx vitest run tests/unit/audit-findings-cron-request-security.test.ts tests/unit/audit-findings-cron-route-security.test.ts tests/unit/security-audit-sync-worker-boundary.test.ts
