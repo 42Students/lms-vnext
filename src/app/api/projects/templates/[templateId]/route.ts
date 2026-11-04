@@ -29,16 +29,16 @@ export async function GET(request:Request,{params}:RouteContext) {
   const context=await getCurrentRequestContext();
   const query=new URL(request.url).searchParams;
   const values=query.getAll("collegeId");
-  if(values.length>1)return NextResponse.json({error:"INVALID_REQUEST"},{status:400});
+  if(values.length>1||(values.length===1 &&
+     !z.string().uuid().safeParse(values[0]).success))
+   return NextResponse.json({error:"INVALID_REQUEST"},
+    {status:400,headers:privateHeaders});
   if(values.length===1){
-   const requested=values[0];
-   if(requested===undefined)return NextResponse.json({error:"INVALID_REQUEST"},{status:400});
-   if(!/^[0-9a-f]{8}-[0-9a-f-]{27}$/i.test(requested))
-    return NextResponse.json({error:"INVALID_REQUEST"},{status:400});
+   const requested=values[0]!;
    if(context.adminScope?.collegeId && context.adminScope.collegeId!==requested)
-    return NextResponse.json({error:"FORBIDDEN"},{status:403});
+    return NextResponse.json({error:"FORBIDDEN"},{status:403,headers:privateHeaders});
    if(context.membership?.collegeId && context.membership.collegeId!==requested)
-    return NextResponse.json({error:"FORBIDDEN"},{status:403});
+    return NextResponse.json({error:"FORBIDDEN"},{status:403,headers:privateHeaders});
   }
   const detail=await getProjectTemplateDetail(context,(await params).templateId);
   return NextResponse.json({detail,data:detail,status:"OK",message:"Project template retrieved"},
