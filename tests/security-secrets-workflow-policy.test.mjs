@@ -5,6 +5,17 @@ import { test } from "node:test";
 const read = (path) => readFileSync(new URL("../" + path, import.meta.url), "utf8");
 const incremental = read(".github/workflows/security-new-commit-secrets.yml");
 const historical = read(".github/workflows/security-full-history-secrets.yml");
+const config = read(".gitleaks.toml");
+
+test("provider rules extend built-in signatures without any blanket allowlist", () => {
+  assert.match(config, /useDefault\s*=\s*true/);
+  assert.match(config, /42learn-provider-api-credential/);
+  assert.match(config, /secretGroup\s*=\s*1/);
+  assert.doesNotMatch(config, /^\s*\[\[?allowlists?\]?\]/m);
+  assert.match(incremental, /--config=\.gitleaks\.toml/);
+  assert.match(historical, /--config=\.gitleaks\.toml/);
+});
+
 
 test("new-commit scanner runs on every PR and main push, without path filters", () => {
   assert.match(incremental, /^on:\s*$/m);
