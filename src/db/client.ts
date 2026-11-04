@@ -114,7 +114,31 @@ export async function checkDatabaseConnection() {
                   AND a.attnum>0 AND NOT a.attisdropped
                   AND a.attname IN ('college_id','organization_id')
               )
-          ) AS can_bypass_tenant_rls_by_ownership
+          ) AS can_bypass_tenant_rls_by_ownership,
+          -- RLS does not apply to TRUNCATE. Even a perfectly restricted
+          -- SELECT/UPDATE/DELETE policy cannot prevent this operation.
+          EXISTS (
+            SELECT 1 FROM pg_catalog.pg_class target
+            JOIN pg_catalog.pg_namespace ns ON ns.oid=target.relnamespace
+            WHERE target.relkind IN ('r','p')
+              AND ns.nspname NOT IN ('pg_catalog','information_schema')
+              AND ns.nspname NOT LIKE 'pg_toast%'
+              AND ns.nspname NOT LIKE 'pg_temp_%'
+              AND EXISTS (
+                SELECT 1 FROM pg_catalog.pg_attribute a
+                WHERE a.attrelid=target.oid
+                  AND a.attnum>0 AND NOT a.attisdropped
+                  AND a.attname IN ('college_id','organization_id')
+              )
+              AND (
+                has_table_privilege(current_user,target.oid,'TRUNCATE')
+                OR EXISTS (
+                  SELECT 1 FROM pg_catalog.pg_roles candidate
+                  WHERE pg_has_role(session_user,candidate.oid,'SET')
+                    AND has_table_privilege(candidate.oid,target.oid,'TRUNCATE')
+                )
+              )
+          ) AS can_truncate_tenant_tables
         FROM pg_catalog.pg_roles r
         WHERE r.rolname = current_user
       `);
