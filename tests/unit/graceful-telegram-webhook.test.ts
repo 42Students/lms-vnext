@@ -1,10 +1,11 @@
 import { afterEach, describe, expect, it } from "vitest";
-import { validTelegramCallbackChat, validTelegramWebhookSecret } from "@/modules/log-alerts/telegram-webhook";
+import { validTelegramCallbackChat, validTelegramCallbackOperator, validTelegramWebhookSecret } from "@/modules/log-alerts/telegram-webhook";
 import { knownErrorMutationSchema } from "@/modules/log-alerts/validation";
 
 const app = process.env.APP_ENV;
 const secret = process.env.TELEGRAM_ALERT_WEBHOOK_SECRET;
 const chat = process.env.TELEGRAM_ALERT_CHAT_ID;
+const operators = process.env.TELEGRAM_ALERT_OPERATOR_IDS;
 afterEach(() => {
   if (app === undefined) delete process.env.APP_ENV;
   else process.env.APP_ENV = app;
@@ -12,6 +13,8 @@ afterEach(() => {
   else process.env.TELEGRAM_ALERT_WEBHOOK_SECRET = secret;
   if (chat === undefined) delete process.env.TELEGRAM_ALERT_CHAT_ID;
   else process.env.TELEGRAM_ALERT_CHAT_ID = chat;
+  if (operators === undefined) delete process.env.TELEGRAM_ALERT_OPERATOR_IDS;
+  else process.env.TELEGRAM_ALERT_OPERATOR_IDS = operators;
 });
 
 describe("Telegram acknowledgement", () => {
@@ -34,6 +37,20 @@ describe("Telegram acknowledgement", () => {
     expect(validTelegramCallbackChat("9999999")).toBe(false);
     delete process.env.TELEGRAM_ALERT_CHAT_ID;
     expect(validTelegramCallbackChat(-1001234567890)).toBe(false);
+  });
+  it("denies Telegram alert acknowledgements by non-allowlisted group members", () => {
+    delete process.env.TELEGRAM_ALERT_OPERATOR_IDS;
+    expect(validTelegramCallbackOperator(111223344)).toBe(false);
+    process.env.TELEGRAM_ALERT_OPERATOR_IDS = "111223344, 555667788";
+    expect(validTelegramCallbackOperator(111223344)).toBe(true);
+    expect(validTelegramCallbackOperator(555667788)).toBe(true);
+    expect(validTelegramCallbackOperator(999999999)).toBe(false);
+    expect(validTelegramCallbackOperator(0)).toBe(false);
+    expect(validTelegramCallbackOperator(Number.MAX_SAFE_INTEGER + 1)).toBe(false);
+    process.env.TELEGRAM_ALERT_OPERATOR_IDS = "invalid, -1, 111223344x";
+    expect(validTelegramCallbackOperator(111223344)).toBe(false);
+    process.env.TELEGRAM_ALERT_OPERATOR_IDS = "111223344";
+    expect(validTelegramCallbackOperator(111223344)).toBe(true);
   });
   it("GR-123 Logs admin action accepts acknowledgement without exposing identities", () => {
     expect(knownErrorMutationSchema.safeParse({ action: "ACKNOWLEDGE" }).success).toBe(true);

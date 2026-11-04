@@ -10,6 +10,7 @@ import { logAlertsRuntimeEnabled } from "./readiness";
 const callbackSchema = z.object({
   callback_query: z.object({
     id: z.string().min(1).max(120),
+    from: z.object({ id: z.number().int().positive().max(Number.MAX_SAFE_INTEGER) }).passthrough(),
     data: z.string().max(200),
     message: z.object({
       message_id:z.number().int().positive().optional(),
@@ -25,6 +26,18 @@ const callbackSchema = z.object({
 export function validTelegramCallbackChat(chatId: string | number): boolean {
   const expected = process.env["TELEGRAM_ALERT_CHAT_ID"];
   return Boolean(expected && String(chatId) === expected);
+}
+
+/** Chat membership is not incident-response authority. Fail closed unless a
+ * Telegram user ID is explicitly allowlisted by the production operator.
+ * Telegram supplies callback_query.from.id from the authenticated tapper. */
+export function validTelegramCallbackOperator(userId: number): boolean {
+  const allowed = process.env["TELEGRAM_ALERT_OPERATOR_IDS"];
+  if (!allowed || !Number.isSafeInteger(userId) || userId <= 0) return false;
+  return allowed.split(",").some((value) => {
+    const id = value.trim();
+    return /^[1-9][0-9]{0,15}$/.test(id) && id === String(userId);
+  });
 }
 
 export function validTelegramWebhookSecret(header: string | null): boolean {
@@ -72,7 +85,8 @@ export async function handleTelegramCallback(payload: unknown): Promise<boolean>
   if (process.env["APP_ENV"] !== "production" || !logAlertsRuntimeEnabled()) return false;
   const parsed = callbackSchema.safeParse(payload);
   if (!parsed.success) return false;
-  if (!validTelegramCallbackChat(parsed.data.callback_query.message.chat.id)) return false;
+  if (!validTelegramCallbackChat(parsed.data.callback_query.message.chat.id) ||
+      !validTelegramCallbackOperator(parsed.data.callback_query.from.id)) return false;
   const callback=parsed.data.callback_query;
   const value=callback.data;
   if(!/^ack:[0-9a-f-]{36}$/i.test(value)){
