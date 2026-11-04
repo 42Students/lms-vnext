@@ -1,0 +1,56 @@
+# Focused fail-fast browser diagnostic trust boundary regression.
+# A green job does NOT prove production proxy provenance or shared edge limits.
+name: Browser telemetry security boundary
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - "src/app/api/client-errors/**"
+      - "src/modules/log-alerts/client-error-ip.ts"
+      - "src/modules/log-alerts/client-report.ts"
+      - "src/auth/ip-rate-limit.ts"
+      - "tests/unit/client-error-ip-security.test.ts"
+      - "tests/unit/client-error-rate-security.test.ts"
+      - "tests/unit/graceful-client-error.test.ts"
+      - "tests/unit/auth-ip-rate-limit.test.ts"
+      - ".github/workflows/security-client-telemetry-boundary.yml"
+  push:
+    branches: [main]
+    paths:
+      - "src/app/api/client-errors/**"
+      - "src/modules/log-alerts/client-error-ip.ts"
+      - "src/modules/log-alerts/client-report.ts"
+      - "src/auth/ip-rate-limit.ts"
+      - "tests/unit/client-error-ip-security.test.ts"
+      - "tests/unit/client-error-rate-security.test.ts"
+      - "tests/unit/graceful-client-error.test.ts"
+      - "tests/unit/auth-ip-rate-limit.test.ts"
+      - ".github/workflows/security-client-telemetry-boundary.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: security-telemetry-${{ github.ref }}-${{ github.sha }}
+  cancel-in-progress: false
+
+jobs:
+  telemetry-regression:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Proxy-chain and telemetry rate-limit security regressions
+        run: >-
+          npx vitest run
+          tests/unit/client-error-ip-security.test.ts
+          tests/unit/client-error-rate-security.test.ts
+          tests/unit/graceful-client-error.test.ts
+          tests/unit/auth-ip-rate-limit.test.ts
