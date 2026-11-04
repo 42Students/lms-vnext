@@ -5,6 +5,7 @@ import {requirePermission} from "@/modules/permissions/policy";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { isSameOriginRequest } from "@/auth/origin";
 import { apiErrorResponse } from "@/lib/api-error";
+import { readBoundedJsonBody } from "@/lib/bounded-json-body";
 import {
   archiveProjectTemplate,
   getProjectTemplateDetail,
@@ -12,6 +13,8 @@ import {
 } from "@/modules/projects/template-service";
 
 export const runtime = "nodejs";
+const TEMPLATE_MAX_BYTES = 8 * 1024 * 1024;
+const privateHeaders = { "Cache-Control": "private, no-store" };
 
 type RouteContext = {
   params: Promise<{ templateId: string }>;
@@ -39,7 +42,7 @@ export async function GET(request:Request,{params}:RouteContext) {
   }
   const detail=await getProjectTemplateDetail(context,(await params).templateId);
   return NextResponse.json({detail,data:detail,status:"OK",message:"Project template retrieved"},
-   {headers:{"Cache-Control":"private, no-store"}});
+   {headers:privateHeaders});
  }catch(error){return apiErrorResponse(error);}
 }
 
@@ -57,7 +60,13 @@ export async function PATCH(
   try {
     const context = await getCurrentRequestContext();
     const { templateId } = await params;
-    const body:unknown = await request.json();
+    const parsedBody = await readBoundedJsonBody(request, TEMPLATE_MAX_BYTES);
+    if (parsedBody.kind !== "OK")
+      return NextResponse.json({ error: "INVALID_TEMPLATE" }, {
+        status: parsedBody.kind === "TOO_LARGE" ? 413 : 400,
+        headers: privateHeaders,
+      });
+    const body: unknown = parsedBody.value;
     // Legacy section-only PUT/PATCH requests omit the template title. Merge
     // only the supplied section onto the immutable current version, retaining
     // metadata and all other sections. The writer enforces expectedVersion
@@ -85,7 +94,7 @@ export async function PATCH(
       const detail=await getProjectTemplateDetail(context,templateId);
       if(!detail.currentVersion ||
          detail.template.currentVersion!==input.expectedVersion)
-        return NextResponse.json({error:"PROJECT_TEMPLATE_STALE_VERSION"},{status:409});
+        return NextResponse.json({error:"PROJECT_TEMPLATE_STALE_VERSION"},{status:409,headers:privateHeaders});
       const current=projectTemplateBlueprintSchema.parse(detail.currentVersion.blueprint);
       const patch=Object.fromEntries(sectionKeys
         .filter(key=>input[key]!==undefined)
@@ -103,7 +112,7 @@ export async function PATCH(
         summary:detail.template.summary??undefined,
         blueprint,changeNote:input.changeNote??"Updated template section",
       });
-      return NextResponse.json({...result,message:"Project template updated"});
+      return NextResponse.json({...result,message:"Project template updated"}, { headers: privateHeaders });
     }
     // Same order as the writer: permission first, then the strict input schema.
     requirePermission(context,"project-template.manage");
@@ -115,7 +124,7 @@ export async function PATCH(
       reviseProjectTemplateInputSchema.parse(body) as ReviseProjectTemplateInput,
     );
 
-    return NextResponse.json({...result,message:"Project template updated"});
+    return NextResponse.json({...result,message:"Project template updated"}, { headers: privateHeaders });
   } catch (error) {
     return apiErrorResponse(error);
   }
@@ -149,7 +158,7 @@ export async function DELETE(
       templateId,
     );
 
-    return NextResponse.json({ template });
+    return NextResponse.json({ template }, { headers: privateHeaders });
   } catch (error) {
     return apiErrorResponse(error);
   }
