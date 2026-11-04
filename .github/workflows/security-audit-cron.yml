@@ -53,6 +53,6 @@ jobs:
       - name: Transaction-scoped actor recheck and explicit machine provenance
         run: node --test tests/security-audit-importer-transaction.test.mjs
       - name: Audit cron and manual Super Admin denial/no-side-effect suite
-        run: npx vitest run tests/unit/audit-findings-cron-request-security.test.ts tests/unit/audit-findings-cron-route-security.test.ts tests/unit/audit-findings-manual-sync-security.test.ts
+        run: npx vitest run tests/unit/audit-findings-cron-request-security.test.ts tests/unit/audit-findings-cron-route-security.test.ts tests/unit/audit-findings-manual-sync-security.test.ts tests/unit/security-audit-sync-worker-boundary.test.ts
       - name: TypeScript authority contract
-        run: NODE_OPTIONS="--max-old-space-size=5120" npm run typecheck tests/unit/security-audit-sync-worker-boundary.test.ts
+        run: NODE_OPTIONS="--max-old-space-size=5120" npm run typecheck
