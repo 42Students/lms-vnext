@@ -28,13 +28,18 @@ export async function GET(request:Request){
   if(!state||!code||!cookie||query.getAll("code").length!==1||
      query.getAll("state").length!==1||state.length!==43||
      !/^[A-Za-z0-9_-]{43}$/.test(state))return response("failed");
+  // Fail closed for legacy nonce-only cookies. The browser must present the
+  // independent S256 verifier generated during this same OAuth initiation.
+  const pieces=cookie.split(".");
+  if(pieces.length!==4||!/^[A-Za-z0-9_-]{43}$/.test(pieces[3]??""))
+   return response("failed");
   const expected=state+"."+context.user.id+"."+context.membership.id;
-  const actual=Buffer.from(cookie),required=Buffer.from(expected);
+  const actual=Buffer.from(pieces.slice(0,3).join(".")),required=Buffer.from(expected);
   if(actual.length!==required.length||!timingSafeEqual(actual,required))
    return response("failed");
   const config=mentorGoogleConfig();
   if(!config)return response("failed");
-  const token=await mentorGoogleExchangeCode(config,code);
+  const token=await mentorGoogleExchangeCode(config,code,pieces[3]!);
   if(!token.refreshToken)return response("failed");
   await saveMentorGoogleConnection(context,token.refreshToken);
   return response("connected");
