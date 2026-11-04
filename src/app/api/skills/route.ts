@@ -22,7 +22,8 @@ import { skillUsageNameSchema } from "@/modules/skills/usage-normalization";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
-const SKILLS_POST_MAX_BYTES = 1024 * 1024;
+// Preserve complete 1,000-row Unicode-rich imports within a finite byte budget.
+const SKILLS_POST_MAX_BYTES = 4 * 1024 * 1024;
 const privateHeaders = { "Cache-Control": "private, no-store" };
 
 // The catalog is not writable while DB10 schema replay is unverified.
