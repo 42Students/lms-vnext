@@ -58,7 +58,9 @@ export async function GET(
       membershipId,
     );
 
-    return NextResponse.json({ roles, roleLabels:roleLabels(roles) });
+    return NextResponse.json({ roles, roleLabels:roleLabels(roles) }, {
+      headers: { "Cache-Control": "private, no-store", "Vary": "Cookie" },
+    });
   } catch (error) {
     return apiErrorResponse(error);
   }
@@ -94,7 +96,9 @@ export async function POST(
       parsedBody.body,
     );
 
-    return NextResponse.json({ roles, roleLabels:roleLabels(roles) });
+    return NextResponse.json({ roles, roleLabels:roleLabels(roles) }, {
+      headers: { "Cache-Control": "private, no-store", "Vary": "Cookie" },
+    });
   } catch (error) {
     return apiErrorResponse(error);
   }
@@ -130,7 +134,9 @@ export async function DELETE(
       parsedBody.body,
     );
 
-    return NextResponse.json({ roles, roleLabels:roleLabels(roles) });
+    return NextResponse.json({ roles, roleLabels:roleLabels(roles) }, {
+      headers: { "Cache-Control": "private, no-store", "Vary": "Cookie" },
+    });
   } catch (error) {
     return apiErrorResponse(error);
   }
