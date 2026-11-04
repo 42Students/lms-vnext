@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { isSameOriginRequest } from "@/auth/origin";
 import { apiErrorResponse } from "@/lib/api-error";
+import { readBoundedJsonBody } from "@/lib/bounded-json-body";
 import {
   CollegeSectionError, createCollegeSection,
 } from "@/modules/academics/college-section-mutation-service";
@@ -18,7 +19,12 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "INVALID_ORIGIN" }, { status: 403 });
   try {
     const context = await getCurrentRequestContext();
-    const body: unknown = await request.json();
+    const parsed = await readBoundedJsonBody(request, 16_384);
+    if (parsed.kind !== "OK") return NextResponse.json({ error: "INVALID_REQUEST" }, {
+      status: parsed.kind === "TOO_LARGE" ? 413 : 400,
+      headers: { "Cache-Control": "private, no-store" },
+    });
+    const body: unknown = parsed.value;
     const section = await createCollegeSection(context, body);
     return NextResponse.json({ status: "OK", message: "OK", data: section },
       { status: 200, headers: { "Cache-Control": "private, no-store" } });
