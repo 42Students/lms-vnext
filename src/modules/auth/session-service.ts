@@ -43,6 +43,7 @@ function clip(value: string | null | undefined, max: number) {
  */
 export const SESSION_IDLE_TIMEOUT_SECONDS = 8 * 60 * 60;
 export const SUPER_ADMIN_IDLE_TIMEOUT_SECONDS = 30 * 60;
+export const SUPER_ADMIN_ABSOLUTE_TIMEOUT_SECONDS = 8 * 60 * 60;
 
 /** Reuse one DB-clock, persisted-role policy in authentication and listings.
  * Do not rely on cookie time, client timestamps or request-provided roles.
@@ -53,6 +54,19 @@ const idleSeconds = sql`CASE WHEN EXISTS (
 ) THEN ${SUPER_ADMIN_IDLE_TIMEOUT_SECONDS}::integer
   ELSE ${SESSION_IDLE_TIMEOUT_SECONDS}::integer END`;
 
+/** Even continual activity cannot extend a privileged account past eight
+ * hours from original OTP issuance. Persisted role, not the selected cookie,
+ * determines the shorter absolute upper bound.
+ */
+const privilegedLifetimeAllowed = sql`(
+  NOT EXISTS (
+    SELECT 1 FROM system_roles privileged
+     WHERE privileged.user_id = s.user_id AND privileged.role = 'SUPER_ADMIN'
+  )
+  OR (s.created_at <= clock_timestamp()
+    AND s.created_at > clock_timestamp() -
+      make_interval(secs => ${SUPER_ADMIN_ABSOLUTE_TIMEOUT_SECONDS}))
+)`;
 
 export async function createSession(
   userId: string,
@@ -115,6 +129,7 @@ export async function resolveSession(
       AND s.last_seen_at <= clock_timestamp()
       AND s.last_seen_at > clock_timestamp() -
         make_interval(secs => (${idleSeconds}))
+      AND ${privilegedLifetimeAllowed}
     RETURNING s.id AS session_id, s.user_id,
               u.identity_uid, u.platform_status
   `);
@@ -137,7 +152,8 @@ export async function resolveSession(
            (s.expires_at <= clock_timestamp()
              OR s.last_seen_at > clock_timestamp()
              OR s.last_seen_at <= clock_timestamp() -
-               make_interval(secs => (${idleSeconds}))) AS expired,
+               make_interval(secs => (${idleSeconds}))
+             OR NOT ${privilegedLifetimeAllowed}) AS expired,
            u.platform_status
       FROM identity_device_sessions s
       JOIN users u ON u.id = s.user_id
@@ -198,6 +214,7 @@ export async function listActiveSessions(
       AND s.last_seen_at <= clock_timestamp()
       AND s.last_seen_at > clock_timestamp() -
         make_interval(secs => (${idleSeconds}))
+      AND ${privilegedLifetimeAllowed}
     ORDER BY s.last_seen_at DESC, s.id DESC
     LIMIT ${safeSize} OFFSET ${(safePage-1)*safeSize}
   `);
