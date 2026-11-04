@@ -113,3 +113,15 @@ test("reviews executable SECURITY DEFINER routines without claiming every routin
       table: "public.allowed_view()" },
   ]);
 });
+
+
+test("keeps schema-qualified identity for protected tables outside public", () => {
+  const findings = classifySecurityCatalog(safePrincipal, [
+    { ...base, schema_name: "tenant_archive", table_name: "learner_records",
+      rls_enabled: false },
+  ]);
+  assert.deepEqual(findings, [
+    { severity: "HIGH", code: "TENANT_KEY_TABLE_NO_RLS",
+      table: "tenant_archive.learner_records" },
+  ]);
+});
