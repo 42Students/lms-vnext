@@ -1,0 +1,51 @@
+name: Security - Mentor Calendar OAuth callback confidentiality
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - "src/app/api/mentor/calendar/google/connect/route.ts"
+      - "src/app/api/mentor/calendar/google/callback/route.ts"
+      - "src/modules/projects/mentor-google-oauth-response-headers.ts"
+      - "src/modules/projects/mentor-google-calendar-provider.ts"
+      - "src/modules/projects/mentor-google-calendar-connection-service.ts"
+      - "tests/unit/security-mentor-google-oauth-redirect.test.ts"
+      - "tests/unit/mentor-google-calendar-provider.test.ts"
+      - ".github/workflows/security-mentor-google-oauth.yml"
+  push:
+    branches: [main]
+    paths:
+      - "src/app/api/mentor/calendar/google/connect/route.ts"
+      - "src/app/api/mentor/calendar/google/callback/route.ts"
+      - "src/modules/projects/mentor-google-oauth-response-headers.ts"
+      - "src/modules/projects/mentor-google-calendar-provider.ts"
+      - "src/modules/projects/mentor-google-calendar-connection-service.ts"
+      - "tests/unit/security-mentor-google-oauth-redirect.test.ts"
+      - "tests/unit/mentor-google-calendar-provider.test.ts"
+      - ".github/workflows/security-mentor-google-oauth.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: security-mentor-google-oauth-${{ github.ref }}-${{ github.sha }}
+  cancel-in-progress: false
+
+jobs:
+  oauth-callback-boundary:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Exact source revision
+        run: test "$(git rev-parse HEAD)" = "$GITHUB_SHA"
+      - name: OAuth redirect, one-time state and provider regression
+        run: npx vitest run tests/unit/security-mentor-google-oauth-redirect.test.ts tests/unit/mentor-google-calendar-provider.test.ts
+      - name: Typecheck
+        run: npm run typecheck
