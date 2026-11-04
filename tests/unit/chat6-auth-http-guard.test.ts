@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import { createHash } from "node:crypto";
+import { createHmac } from "node:crypto";
 import { z } from "zod";
 
 const fakes = vi.hoisted(() => ({
@@ -109,17 +109,28 @@ describe("authentication guard: hostile requests and audit integrity", () => {
     expect(platform).toMatchObject({ ok: true, tenantCollegeId: null });
   });
 
-  it("AUTH-HTTP-06 cannot spoof immutable route, component or IP audit tags through event fields", () => {
-    const ip = "192.0.2.5";
-    const tag = createHash("sha256").update(ip).digest("hex").slice(0, 12);
-    expect(ipTag(ip)).toBe(tag);
-    auditLogin("auth.start", { route: "/api/auth/start", ip }, {
-      component: "spoofed", route: "/api/other", ipTag: "raw-ip", requests: 2,
-    });
-    expect(fakes.structured).toHaveBeenCalledWith("INFO", "auth.start", {
-      requests: 2, component: "auth-audit", route: "/api/auth/start", ipTag: tag,
-    });
-    expect(JSON.stringify(fakes.structured.mock.calls)).not.toContain(ip);
+  it("AUTH-HTTP-06 cannot spoof route/IP provenance or leak arbitrary login audit metadata", () => {
+    vi.stubEnv("AUTH_SECRET", "k".repeat(48));
+    try {
+      const ip = "192.0.2.5";
+      const tag = createHmac("sha256", "k".repeat(48))
+        .update("42lms:auth-audit:ip:v1\\0")
+        .update(ip).digest("hex").slice(0, 24);
+      expect(ipTag(ip)).toBe(tag);
+      auditLogin("auth.start", { route: "/api/auth/start", ip }, {
+        component: "spoofed", route: "/api/other", ipTag: "raw-ip",
+        requests: 2, contact: "someone@example.org", code: "123456",
+        token: "sensitive-token", authorization: "Bearer secret",
+      });
+      expect(fakes.structured).toHaveBeenCalledWith("INFO", "auth.start", {
+        requests: 2, component: "auth-audit", route: "/api/auth/start", ipTag: tag,
+      });
+      const serialized = JSON.stringify(fakes.structured.mock.calls);
+      for (const sensitive of [ip,"someone@example.org","123456","sensitive-token","Bearer secret"])
+        expect(serialized).not.toContain(sensitive);
+    } finally {
+      vi.unstubAllEnvs();
+    }
   });
 
   it("AUTH-HTTP-07 maps known login and configuration failures without exposing internal errors", async () => {
