@@ -1,0 +1,52 @@
+# Verify untrusted program mutation bodies are byte-bounded before DB writes.
+name: Security - academic program JSON boundaries
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - "src/lib/bounded-json-body.ts"
+      - "src/lib/bounded-utf8-body.ts"
+      - "src/app/api/academics/programs/**"
+      - "src/app/api/v1/new-program/**"
+      - "src/app/api/v1/program/**"
+      - "tests/unit/security-academic-program-bounded-body.test.ts"
+      - ".github/workflows/security-academic-program-json.yml"
+  push:
+    branches: [main]
+    paths:
+      - "src/lib/bounded-json-body.ts"
+      - "src/lib/bounded-utf8-body.ts"
+      - "src/app/api/academics/programs/**"
+      - "src/app/api/v1/new-program/**"
+      - "src/app/api/v1/program/**"
+      - "tests/unit/security-academic-program-bounded-body.test.ts"
+      - ".github/workflows/security-academic-program-json.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: security-academic-program-json-${{ github.ref }}-${{ github.sha }}
+  cancel-in-progress: false
+
+jobs:
+  bounded-program-mutations:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Verify the exact source SHA
+        run: test "$(git rev-parse HEAD)" = "$GITHUB_SHA"
+      - name: Oversize, malformed, CSRF and authorized-path tests
+        run: npx vitest run tests/unit/security-academic-program-bounded-body.test.ts
+      - name: Full TypeScript typecheck
+        env:
+          NODE_OPTIONS: --max-old-space-size=6144
+        run: npm run typecheck
