@@ -4,15 +4,28 @@ import {ingestVerifiedInboundMail,VerifiedInboundMailError}
 import {readBoundedRecruiterInboundBody} from "@/modules/placements/recruiter-mail-body-model";
 
 export const runtime="nodejs";
+export const dynamic="force-dynamic";
+const noStore={"Cache-Control":"no-store"} as const;
+
+/**
+ * A dedicated provider worker submits a signed, bounded JSON envelope.
+ * A browser Origin and URL query controls are never part of the protocol.
+ * Reject obviously unsigned input before allocating/parsing request bytes.
+ */
 export async function POST(request:Request){
- const noStore={"Cache-Control":"no-store"};
+ if(request.headers.has("origin"))
+  return NextResponse.json({error:"FORBIDDEN"},{status:403,headers:noStore});
+ const signature=request.headers.get("x-inbound-mail-signature")??"";
+ if(!/^[a-f0-9]{64}$/i.test(signature))
+  return NextResponse.json({error:"FORBIDDEN"},{status:403,headers:noStore});
+ if(new URL(request.url).search)
+  return NextResponse.json({error:"INVALID_REQUEST"},{status:400,headers:noStore});
  try{
   const raw=await readBoundedRecruiterInboundBody(request);
   if(raw.kind!=="OK")
    return NextResponse.json({error:"INVALID_BODY"},
      {status:raw.kind==="TOO_LARGE"?413:400,headers:noStore});
-  const result=await ingestVerifiedInboundMail(raw.body,
-    request.headers.get("x-inbound-mail-signature")??"");
+  const result=await ingestVerifiedInboundMail(raw.body,signature);
   // Private worker ACK: never expose routing status, sender or recipient.
   return NextResponse.json({accepted:result.accepted,replayed:result.replayed},
     {headers:noStore});
