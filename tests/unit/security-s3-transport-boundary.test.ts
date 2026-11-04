@@ -206,3 +206,43 @@ describe("R2 account and bucket settings cannot redirect private signing",()=>{
     expect(fetchMock).not.toHaveBeenCalled();
   });
 });
+
+describe("Streaming object length is enforced against actual delivered bytes",()=>{
+  it("does not accept a chunked object with no authenticated Content-Length",async()=>{
+    fetchMock.mockResolvedValueOnce(new Response(new ReadableStream<Uint8Array>({
+      start(controller){controller.enqueue(new TextEncoder().encode("payload"));controller.close();},
+    }),{status:200,headers:{"content-type":"application/octet-stream"}}));
+    await expect(getObjectStream(config,"private/a"))
+      .rejects.toThrow("S3_CONTENT_LENGTH_INVALID");
+  });
+
+  it("rejects a provider that sends more bytes than its declared length",async()=>{
+    fetchMock.mockResolvedValueOnce(new Response("0123456789EXTRA",{
+      headers:{"content-length":"10"},
+    }));
+    const object=await getObjectStream(config,"private/a");
+    expect(object?.sizeBytes).toBe(10);
+    await expect(new Response(object!.body).arrayBuffer())
+      .rejects.toThrow("S3_BODY_LENGTH_MISMATCH");
+  });
+
+  it("rejects a provider that truncates an object below its declared length",async()=>{
+    fetchMock.mockResolvedValueOnce(new Response("short",{
+      headers:{"content-length":"10"},
+    }));
+    const object=await getObjectStream(config,"private/a");
+    expect(object?.sizeBytes).toBe(10);
+    await expect(new Response(object!.body).arrayBuffer())
+      .rejects.toThrow("S3_BODY_LENGTH_MISMATCH");
+  });
+
+  it("accepts the exact declared content bytes, preserving private file reads",async()=>{
+    fetchMock.mockResolvedValueOnce(new Response("good data",{
+      headers:{"content-length":"9","content-type":"application/pdf"},
+    }));
+    const object=await getObjectStream(config,"private/a");
+    expect(object?.sizeBytes).toBe(9);
+    expect(object?.contentType).toBe("application/pdf");
+    expect(await new Response(object!.body).text()).toBe("good data");
+  });
+});
