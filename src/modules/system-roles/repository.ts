@@ -176,10 +176,24 @@ export const drizzleSystemRoleRepository: SystemRoleRepository = {
           throw new SystemRoleServiceError("IDENTITY_COLLISION");
         }
 
-        await tx
+        const bootstrapGranted = await tx
           .insert(systemRoles)
           .values({ userId: user.id, role: "SUPER_ADMIN" })
-          .onConflictDoNothing();
+          .onConflictDoNothing()
+          .returning({ role: systemRoles.role });
+
+        if (bootstrapGranted.length) {
+          // An operator may bootstrap an existing user who already has a
+          // five-day first-party device cookie. It must not inherit platform
+          // administration without a fresh full authentication ceremony.
+          await tx.execute(sql`
+            UPDATE identity_device_sessions
+            SET revoked_at = clock_timestamp(),
+                revoked_by_user_id = ${user.id}::uuid,
+                revocation_reason = 'SUPER_ADMIN_BOOTSTRAPPED'
+            WHERE user_id = ${user.id}::uuid AND revoked_at IS NULL
+          `);
+        }
 
         const roleRows = await tx
           .select({ role: systemRoles.role })
@@ -233,6 +247,15 @@ export const drizzleSystemRoleRepository: SystemRoleRepository = {
         .values({userId:target.id,role}).onConflictDoNothing()
         .returning({role:systemRoles.role});
       if(inserted.length){
+        // A prior ordinary user session cannot pick up a newly assigned
+        // global role: revoke its existing tokens in this same transaction.
+        await tx.execute(sql`
+          UPDATE identity_device_sessions
+          SET revoked_at = clock_timestamp(),
+              revoked_by_user_id = ${context.user.id}::uuid,
+              revocation_reason = 'SYSTEM_ROLE_ASSIGNED'
+          WHERE user_id = ${target.id}::uuid AND revoked_at IS NULL
+        `);
         // Only a genuinely new grant creates an audit event, not idempotent
         // retries or repeated double-clicks.
         await recordActivityEventInTransaction(tx,context,{
