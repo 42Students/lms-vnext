@@ -10,7 +10,7 @@ export async function GET(request:Request){
  try{
   const {kind,filter}=parseCollegeRoleDirectoryExportQuery(new URL(request.url).searchParams);
   const context=await getCurrentRequestContext();
-  await requireRecentDeviceAuthentication();
+  await requireRecentDeviceAuthentication(context.user.id);
   const report=await exportCollegeRoleDirectoryCsv(context,kind,filter);
   return new Response(report.csv,{headers:{
    "Content-Type":"text/csv; charset=utf-8",
