@@ -1,3 +1,4 @@
+import {assertPersistedPlatformPermission} from "@/modules/permissions/persisted-actor";
 import "server-only";
 
 import { and, eq, sql } from "drizzle-orm";
@@ -88,6 +89,8 @@ export async function reconcileCuratedSkillSynonyms(
   if (!skillsCatalogSchemaReady()) throw new Error("DB10_SCHEMA_REPLAY_NOT_VERIFIED");
 
   return getDb().transaction(async tx => {
+    // A stale or revoked Super Admin must not seed the shared global catalog.
+    await assertPersistedPlatformPermission(tx,context,"admin-scope.select");
     let matchedSkills = 0, addedSynonyms = 0, existingSynonyms = 0;
     let duplicateSourceSynonyms = 0, sourceSynonyms = 0;
     const unmatchedSkills:string[] = [];
