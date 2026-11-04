@@ -1,3 +1,4 @@
+import { spreadsheetCsvCell } from "@/security/csv-cell";
 import { gridExportFilename } from "@/modules/placements/grid-export-filename";
 import {TPO_AUDIT_KIND_LABELS,formatTpoAuditEventType} from "@/modules/placements/tpo-audit-model";
 import {getCurrentRequestContext} from "@/auth/request-context";
@@ -45,11 +46,7 @@ export async function GET(request:Request){
   }
   const selectedIds=new Set(selected);
   const filtered=selected.length?items.filter(row=>selectedIds.has(row.id)):items;
-  const safeCell=(value:string|undefined)=>{
-    const text=value??"";
-    const safe=/^\s*[=+\-@\t\r]/.test(text)?"'"+text:text;
-    return '"'+safe.replaceAll('"','""')+'"';
-  };
+  const safeCell=(value:string|undefined)=>spreadsheetCsvCell(value);
   const exported=columnsInput===null&&selected.length===0?
     tpoAuditCsv(filtered):
     [chosen.map(safeCell).join(","),
