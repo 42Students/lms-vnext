@@ -92,10 +92,16 @@ test("restricted app principal and live SQL identify an unconditional tenant-lea
         await app.end();
       }
     } finally {
-      for (const table of [...tables].reverse()) {
-        await admin.query("DROP TABLE IF EXISTS public." + table + " CASCADE").catch(() => {});
+      try {
+        for (const table of [...tables].reverse()) {
+          await admin.query("DROP TABLE IF EXISTS public." + table + " CASCADE");
+        }
+        // The temporary role also holds an explicit schema USAGE grant.
+        // Revoke it before dropping the role and assert cleanup succeeds.
+        await admin.query("REVOKE USAGE ON SCHEMA public FROM " + role);
+        await admin.query("DROP ROLE IF EXISTS " + role);
+      } finally {
+        await admin.end();
       }
-      await admin.query("DROP ROLE IF EXISTS " + role).catch(() => {});
-      await admin.end();
     }
   });
