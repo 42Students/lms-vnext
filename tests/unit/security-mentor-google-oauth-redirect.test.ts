@@ -1,4 +1,5 @@
 import {beforeEach,describe,expect,it,vi} from "vitest";
+import {createHash} from "node:crypto";
 
 const mock=vi.hoisted(()=>({
  context:vi.fn(),status:vi.fn(),config:vi.fn(),consent:vi.fn(),
@@ -62,6 +63,8 @@ describe("Mentor Calendar OAuth authorization-code URL confidentiality",()=>{
   expect(pieces).toHaveLength(4);
   expect(pieces?.slice(0,3).join(".")).toBe(nonce+"."+actor.user.id+"."+actor.membership.id);
   expect(pieces?.[3]).toMatch(/^[A-Za-z0-9_-]{43}$/);
+  expect(challenge).toBe(createHash("sha256").update(pieces?.[3]??"","ascii")
+   .digest("base64url"));
   expect(oauthCookie?.httpOnly).toBe(true);
   expect(oauthCookie?.path).toBe("/api/mentor/calendar/google");
   expect(oauthCookie?.maxAge).toBe(600);
