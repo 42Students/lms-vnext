@@ -1,10 +1,7 @@
+import { spreadsheetCsvCell } from "@/security/csv-cell";
 export const MAX_VERIFICATION_EXPORT_ROWS=1000;
 export type VerificationExportRow={learnerName:string;section:string;status:string;submittedAt:string;reviewedAt:string;reviewedBy?:string;educationEntryCount?:number;missingDocumentCount?:number;attentionFlags?:string};
-function safeCell(value:string):string {
- const neutral=/^[\s\u0000-\u001f]*[=+@-]/u.test(value);
- const text=neutral?"'"+value:value;
- return '"'+text.replace(/"/g,'""')+'"';
-}
+const safeCell = spreadsheetCsvCell;
 export function verificationCsv(rows:readonly VerificationExportRow[]):{csv:string;truncated:boolean}{
  const selected=rows.slice(0,MAX_VERIFICATION_EXPORT_ROWS);
  const headers=["Learner","Section","Status","Submitted (IST)","Reviewed (IST)","Reviewed by","Education entries submitted","Rows without marksheet","Attention cues"];
