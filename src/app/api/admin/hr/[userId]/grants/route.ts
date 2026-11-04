@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { isSameOriginRequest } from "@/auth/origin";
+import { requireRecentDeviceAuthentication } from "@/auth/recent-device-auth";
 import { apiErrorResponse } from "@/lib/api-error";
 import { readBoundedJsonRequest } from "@/lib/bounded-json-request";
 import {
@@ -48,6 +49,9 @@ export async function POST(
         parsed.value,
       );
 
+    // Company-college recruiter grants are privileged candidate-data access.
+    // A stale or differently authenticated actor cannot change them.
+    await requireRecentDeviceAuthentication(context.user.id);
     const grant =
       await grantSuperAdminHrCollegeAccess(
         context,
@@ -57,7 +61,7 @@ export async function POST(
 
     return NextResponse.json(
       { grant },
-      { status: 201 },
+      { status: 201, headers: { "Cache-Control": "private, no-store" } },
     );
   } catch (error) {
     return apiErrorResponse(error);
