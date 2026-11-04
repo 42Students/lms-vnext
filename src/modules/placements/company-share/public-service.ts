@@ -129,7 +129,7 @@ export async function getPublicCompanyApplicantShare(
   // can produce short-lived read capabilities for an authorized shared row.
   const visibleRecords=await Promise.all(records.map(async row=>{
    if(!selectedColumns.includes("RESUME")||!row.resumeObjectPath||
-     !/^private\/[0-9a-f-]{36}\/[0-9a-f-]{36}\/resume\/[0-9a-f-]{36}$/i.test(row.resumeObjectPath))
+     !/^private\/[0-9a-f-]{36}\/[0-9a-f-]{36}\/placement-document\/[0-9a-f-]{36}$/i.test(row.resumeObjectPath))
      return {...row,resumeSignedUrl:null,resumeExpiresAt:null};
    try{
     const signed=await createPrivateReadGrant({objectKey:row.resumeObjectPath,
