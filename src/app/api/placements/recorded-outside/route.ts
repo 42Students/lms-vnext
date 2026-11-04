@@ -2,15 +2,25 @@ import {NextResponse} from "next/server";
 import {z} from "zod";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {isSameOriginRequest} from "@/auth/origin";
+import {BoundedFormDataError,readBoundedFormData} from "@/lib/bounded-form-data";
 import {recordOutsideDrive} from "@/modules/placements/recorded-outside-service";
 import {parseIstLocalSlot} from "@/modules/placements/hr-interview-slot-model";
 import {PlacementsServiceError} from "@/modules/placements/errors";
 export const runtime="nodejs";
 export async function POST(request:Request){
  if(!isSameOriginRequest(request))return NextResponse.json({error:"INVALID_ORIGIN"},{status:403});
- const form=await request.formData().catch(()=>null);
- if(!form)return NextResponse.json({error:"INVALID_FORM"},{status:400});
  try{
+  // Authenticate first, then enforce the actual stream budget. Preserve
+  // urlencoded HTML form support as well as multipart submissions.
+  const context=await getCurrentRequestContext();
+  let form:FormData;
+  try {form=await readBoundedFormData(request,64*1024);}
+  catch(error){
+   if(!(error instanceof BoundedFormDataError))throw error;
+   return NextResponse.json({
+    error:error.code==="BODY_TOO_LARGE"?"FORM_TOO_LARGE":"INVALID_FORM",
+   },{status:error.code==="BODY_TOO_LARGE"?413:400,headers:{"Cache-Control":"private, no-store"}});
+  }
   const payload={
    collegeId:form.get("collegeId"),
    companyRelationshipId:form.get("companyRelationshipId"),
@@ -18,7 +28,7 @@ export async function POST(request:Request){
    externalReferenceUrl:form.get("externalReferenceUrl")||undefined,
    notes:form.get("notes")||undefined,
   };
-  const saved=await recordOutsideDrive(await getCurrentRequestContext(),payload);
+  const saved=await recordOutsideDrive(context,payload);
   return NextResponse.redirect(new URL(saved.role==="TPO"
    ? "/tpo/placements/recorded-outside?saved="+saved.id
    : "/hr/drives/recorded-outside?collegeId="+saved.collegeId+"&saved="+saved.id,request.url),303);
