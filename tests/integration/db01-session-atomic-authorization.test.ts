@@ -4,7 +4,10 @@ import { Pool } from "pg";
 import { closeDatabaseConnection } from "@/db/client";
 import { generateToken, sessionDigest } from "@/modules/auth/crypto";
 import { getAuthConfig, resetAuthConfigForTests } from "@/modules/auth/config";
-import { resolveSession } from "@/modules/auth/session-service";
+import {
+  resolveSession, listActiveSessions,
+  SESSION_IDLE_TIMEOUT_SECONDS, SUPER_ADMIN_IDLE_TIMEOUT_SECONDS,
+} from "@/modules/auth/session-service";
 
 /**
  * DB-004: registered-migration PostgreSQL acceptance.
@@ -51,6 +54,7 @@ async function withDevice(run: (input: {userId: string; sessionId: string; token
     await run({userId,sessionId,token});
   } finally {
     await pool.query("delete from identity_device_sessions where user_id = $1",[userId]);
+    await pool.query("delete from system_roles where user_id = $1",[userId]);
     await pool.query("delete from users where id = $1",[userId]);
   }
 }
@@ -72,6 +76,64 @@ describe("DB-004 atomic device authorization and revocation", () => {
 
       await pool.query("update users set platform_status='DISABLED' where id=$1",[userId]);
       await expect(resolveSession(token)).resolves.toEqual({ok:false,reason:"SESSION_REVOKED"});
+    });
+  });
+
+  it("DB-SEC-IDLE-01 denies an eight-hour idle token before any heartbeat, despite valid absolute expiry", async () => {
+    expect(SESSION_IDLE_TIMEOUT_SECONDS).toBe(8 * 3600);
+    await withDevice(async ({userId,sessionId,token}) => {
+      const older=await pool.query<{last_seen_at:Date}>(`
+        update identity_device_sessions
+           set created_at=clock_timestamp()-interval '10 hours',
+               last_seen_at=clock_timestamp()-interval '9 hours'
+         where id=$1 returning last_seen_at`,[sessionId]);
+      const lastSeen=older.rows[0]!.last_seen_at.getTime();
+      expect(await resolveSession(token)).toEqual({ok:false,reason:"SESSION_EXPIRED"});
+      expect(await listActiveSessions(userId)).toEqual([]);
+      const after=await pool.query<{last_seen_at:Date}>(
+        "select last_seen_at from identity_device_sessions where id=$1",[sessionId]);
+      expect(after.rows[0]!.last_seen_at.getTime()).toBe(lastSeen);
+      // Recovering a device needs a NEW login, never a read-only refresh.
+      await expect(resolveSession(token)).resolves.toEqual({ok:false,reason:"SESSION_EXPIRED"});
+    });
+  });
+
+  it("DB-SEC-IDLE-02 enforces the shorter Super Admin timeout independent of chosen college workspace", async () => {
+    expect(SUPER_ADMIN_IDLE_TIMEOUT_SECONDS).toBe(30 * 60);
+    await withDevice(async ({userId,sessionId,token}) => {
+      await pool.query("insert into system_roles(user_id,role) values($1,'SUPER_ADMIN')",[userId]);
+      await pool.query(`
+        update identity_device_sessions
+           set created_at=clock_timestamp()-interval '2 hours',
+               last_seen_at=clock_timestamp()-interval '31 minutes'
+         where id=$1`,[sessionId]);
+      expect(await resolveSession(token)).toEqual({ok:false,reason:"SESSION_EXPIRED"});
+      expect(await listActiveSessions(userId)).toEqual([]);
+      // Still-active sessions inside 30m retain their normal operations.
+      await pool.query(`
+        update identity_device_sessions set last_seen_at=clock_timestamp()-interval '29 minutes'
+         where id=$1`,[sessionId]);
+      expect((await resolveSession(token)).ok).toBe(true);
+      // Revoking the Super Admin role does not make a stale credential fresh.
+      await pool.query("delete from system_roles where user_id=$1",[userId]);
+      await pool.query(`
+        update identity_device_sessions set last_seen_at=clock_timestamp()-interval '7 hours'
+         where id=$1`,[sessionId]);
+      expect((await resolveSession(token)).ok).toBe(true);
+    });
+  });
+
+  it("DB-SEC-IDLE-03 rejects future device heartbeats, and won't classify them as valid", async () => {
+    await withDevice(async ({userId,sessionId,token}) => {
+      const last=await pool.query<{last_seen_at:Date}>(`
+        update identity_device_sessions
+           set last_seen_at=clock_timestamp()+interval '6 hours'
+         where id=$1 returning last_seen_at`,[sessionId]);
+      expect(await resolveSession(token)).toEqual({ok:false,reason:"SESSION_EXPIRED"});
+      expect(await listActiveSessions(userId)).toEqual([]);
+      const current=await pool.query<{last_seen_at:Date}>(
+        "select last_seen_at from identity_device_sessions where id=$1",[sessionId]);
+      expect(current.rows[0]!.last_seen_at.getTime()).toBe(last.rows[0]!.last_seen_at.getTime());
     });
   });
 
