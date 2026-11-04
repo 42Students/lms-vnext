@@ -1,4 +1,8 @@
 # 2-minute tick, requires orchestrator-provisioned INTERNAL_ALERT_TICK_SECRET
+# Provision a unique high-entropy >=32-byte secret (Secret Manager/Kubernetes Secret).
+# Rotate any shorter existing value together with the application environment;
+# short or missing values now fail closed with HTTP 403.
+# Restrict this HTTP in-cluster endpoint to the scheduler via network policy/IAM.
 apiVersion: batch/v1
 kind: CronJob
 metadata: { name: vnext-alert-tick, namespace: lms-dev-2026 }
