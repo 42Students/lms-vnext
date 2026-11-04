@@ -72,7 +72,8 @@ describe("SEC-05 alternate public external job page remains tenant bounded", () 
     const relationshipSql = new PgDialect().sqlToQuery(relationship as never);
     expect(relationshipSql.params).toContain("ACTIVE");
     expect(q.params).toContain("PUBLISHED");
-    expect(q.params).toContain(slug);
+    expect(q.sql).toContain('"placement_jobs"."public_external_slug"');
+    expect(q.params.filter((item) => item === slug)).toHaveLength(2);
     expect(tx.selectChain.innerJoin).toHaveBeenCalledTimes(5);
   });
 
