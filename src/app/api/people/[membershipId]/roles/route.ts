@@ -3,6 +3,7 @@ import { getCurrentRequestContext } from "@/auth/request-context";
 import { isSameOriginRequest } from "@/auth/origin";
 import { requireRecentDeviceAuthentication } from "@/auth/recent-device-auth";
 import { membershipRoleMutationInputSchema } from "@/modules/people/validation";
+import { readBoundedAuthJson, AuthRequestBodyTooLarge } from "@/modules/auth/bounded-json";
 import { requirePermission } from "@/modules/permissions/policy";
 import { apiErrorResponse } from "@/lib/api-error";
 import { MEMBERSHIP_ROLE_LABELS, type MembershipRole } from "@/modules/identity/constants";
@@ -31,14 +32,15 @@ async function readJson(request: Request) {
   try {
     return {
       ok: true as const,
-      body: await request.json() as unknown,
+      body: await readBoundedAuthJson(request, 2_048),
     };
-  } catch {
+  } catch (error) {
+    const tooLarge=error instanceof AuthRequestBodyTooLarge;
     return {
       ok: false as const,
       response: NextResponse.json(
-        { error: "INVALID_REQUEST" },
-        { status: 400 },
+        { error: tooLarge?"REQUEST_TOO_LARGE":"INVALID_REQUEST" },
+        { status: tooLarge?413:400 },
       ),
     };
   }
@@ -81,8 +83,10 @@ export async function POST(
     const input = membershipRoleMutationInputSchema.parse(parsedBody.body);
     if (input.role === "COLLEGE_ADMIN" || input.role === "TPO") {
       requirePermission(context, "admin-scope.select");
-      await requireRecentDeviceAuthentication();
     }
+    // Every role grant/revoke changes authorization, even LEARNER or FACULTY.
+    // Reject a stale or E2E-only session before any mutation.
+    await requireRecentDeviceAuthentication();
     const { membershipId } = await params;
     const roles = await addMembershipRoleWithRuntime(
       context,
@@ -115,8 +119,10 @@ export async function DELETE(
     const input = membershipRoleMutationInputSchema.parse(parsedBody.body);
     if (input.role === "COLLEGE_ADMIN" || input.role === "TPO") {
       requirePermission(context, "admin-scope.select");
-      await requireRecentDeviceAuthentication();
     }
+    // Every role grant/revoke changes authorization, even LEARNER or FACULTY.
+    // Reject a stale or E2E-only session before any mutation.
+    await requireRecentDeviceAuthentication();
     const { membershipId } = await params;
     const roles = await removeMembershipRoleWithRuntime(
       context,
