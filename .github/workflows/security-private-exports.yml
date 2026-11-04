@@ -22,6 +22,17 @@ on:
       - "src/modules/people/college-people-export-model.ts"
       - "src/modules/people/admin-users-export-model.ts"
       - "src/modules/admin-ui/super-admin-scoped-csv-service.ts"
+      - "src/security/csv-cell.ts"
+      - "src/modules/placements/tpo-audit-csv-model.ts"
+      - "src/modules/placements/tpo-registration-event-history-csv-model.ts"
+      - "src/modules/verification/queue-export.ts"
+      - "src/modules/projects/mentor-board-review-model.ts"
+      - "src/modules/people/college-role-directory-export.ts"
+      - "src/modules/colleges/admin-tenant-export-model.ts"
+      - "src/modules/placements/admin-company-directory-export-model.ts"
+      - "src/modules/placements/college-directory-csv.ts"
+      - "src/modules/admin-ui/super-admin-scoped-csv-model.ts"
+      - "tests/unit/security-shared-csv-cell.test.ts"
       - "src/auth/recent-device-auth.ts"
       - "tests/unit/private-bulk-csv-security.test.ts"
       - "tests/unit/chat13-super-admin-scoped-csv-runtime.test.ts"
@@ -46,6 +57,17 @@ on:
       - "src/modules/people/college-people-export-model.ts"
       - "src/modules/people/admin-users-export-model.ts"
       - "src/modules/admin-ui/super-admin-scoped-csv-service.ts"
+      - "src/security/csv-cell.ts"
+      - "src/modules/placements/tpo-audit-csv-model.ts"
+      - "src/modules/placements/tpo-registration-event-history-csv-model.ts"
+      - "src/modules/verification/queue-export.ts"
+      - "src/modules/projects/mentor-board-review-model.ts"
+      - "src/modules/people/college-role-directory-export.ts"
+      - "src/modules/colleges/admin-tenant-export-model.ts"
+      - "src/modules/placements/admin-company-directory-export-model.ts"
+      - "src/modules/placements/college-directory-csv.ts"
+      - "src/modules/admin-ui/super-admin-scoped-csv-model.ts"
+      - "tests/unit/security-shared-csv-cell.test.ts"
       - "src/auth/recent-device-auth.ts"
       - "tests/unit/private-bulk-csv-security.test.ts"
       - "tests/unit/chat13-super-admin-scoped-csv-runtime.test.ts"
@@ -75,3 +97,7 @@ jobs:
         run: npx vitest run tests/unit/private-bulk-csv-security.test.ts
       - name: Bulk CSV runtime stale-session and paging regressions
         run: npx vitest run tests/unit/chat13-super-admin-scoped-csv-runtime.test.ts tests/unit/chat13-scoped-csv-export-page-size.test.ts
+      - name: Cross-module CSV encoding integration regressions
+        run: npx vitest run tests/unit/security-shared-csv-cell.test.ts tests/unit/PROJ-BREAK-chat6-export-integrity.test.ts
+      - name: TypeScript contract verification
+        run: npm run typecheck
