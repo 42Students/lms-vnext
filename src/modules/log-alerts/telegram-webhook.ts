@@ -30,7 +30,7 @@ export function validTelegramCallbackChat(chatId: string | number): boolean {
 export function validTelegramWebhookSecret(header: string | null): boolean {
   if (process.env["APP_ENV"] !== "production") return false;
   const expected = process.env["TELEGRAM_ALERT_WEBHOOK_SECRET"];
-  if (!expected || !header) return false;
+  if (!expected || !header || Buffer.byteLength(expected, "utf8") < 32) return false;
   const a = Buffer.from(header);
   const b = Buffer.from(expected);
   return a.length === b.length && timingSafeEqual(a, b);
