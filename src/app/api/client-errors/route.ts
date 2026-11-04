@@ -2,6 +2,7 @@ import { createHash } from "node:crypto";
 import { NextResponse } from "next/server";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { isSameOriginRequest } from "@/auth/origin";
+import { trustedClientErrorIp } from "@/modules/log-alerts/client-error-ip";
 import { logError } from "@/observability/logger";
 import { acceptClientErrorRate, browserErrorSchema, safeBrowserComponent } from "@/modules/log-alerts/client-report";
 import { redactAlertText, safeAlertPath } from "@/modules/log-alerts/redaction";
@@ -56,16 +57,12 @@ export async function POST(request: Request) {
   // NAT must not exhaust a very small IP-only bucket and suppress all learners.
   const context=await getCurrentRequestContext().catch(()=>null);
   if(!context)return NextResponse.json({error:"AUTHENTICATION_REQUIRED"},{status:401});
-  // Forwarded headers are client-spoofable unless trusted ingress ALWAYS
-  // strips incoming copies and overwrites them. Enable this only after
-  // configuring that deployment boundary. Never rate-limit all logged-in
-  // users behind one "unknown" IP/NAT bucket.
-  const trustedIngress=process.env["TRUSTED_CLIENT_IP_HEADERS"]==="true";
-  const claimedIp=trustedIngress?(
-    request.headers.get("x-real-ip")??
-    request.headers.get("x-forwarded-for")?.split(",")[0]?.trim()??null
-  ):null;
-  const ip=claimedIp&&/^[0-9a-fA-F:.]{2,45}$/.test(claimedIp)?claimedIp:null;
+  // The load balancer's trusted XFF positions are canonicalized by the
+  // shared auth parser; never trust X-Real-IP or the caller's first hop.
+  // Unverified ingress still gets the authenticated per-user quota.
+  const ip = trustedClientErrorIp(
+    request, process.env["TRUSTED_CLIENT_IP_HEADERS"] === "true",
+  );
   const ipHash=ip?createHash("sha256").update(ip).digest("hex"):null;
   const userHash=createHash("sha256").update(context.user.id).digest("hex");
   const now=Date.now();
