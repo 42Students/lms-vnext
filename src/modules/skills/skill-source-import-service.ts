@@ -1,3 +1,4 @@
+import {assertPersistedPlatformPermission} from "@/modules/permissions/persisted-actor";
 import "server-only";
 import {getDb} from "@/db/client";
 import {db10Skills} from "@/db/schema/db10-skills-catalog.draft";
@@ -16,6 +17,9 @@ export async function reconcileLegacySkillCatalog(context:RequestContext,raw:unk
  const input=skillImportRequestSchema.parse(raw);
  const parsed=parseLegacySkillSource(input.format,input.source);
  return getDb().transaction(async tx=>{
+  // Lock and reconstruct the live platform role in the same transaction as the
+  // global catalog write. Revocation must win over a stale request context.
+  await assertPersistedPlatformPermission(tx,context,"admin-scope.select");
   const previous=await tx.select({name:db10Skills.name}).from(db10Skills).limit(50001);
   if(previous.length>=50001)throw new Error("Skill catalog requires paged import review");
   const current=new Set(previous.map(item=>item.name.toLocaleLowerCase("en-US")));
