@@ -15,6 +15,7 @@ on:
       - "src/app/api/people/**/roles/route.ts"
       - "src/app/api/people/onboard/route.ts"
       - "tests/unit/recent-device-privileged-role-security.test.ts"
+      - "tests/unit/auth-origin.test.ts"
       - "scripts/security/pg-rls-readonly-audit.mjs"
       - "tests/security-pg-rls-catalog.test.mjs"
       - ".github/workflows/authz-critical-boundary.yml"
@@ -30,6 +31,7 @@ on:
       - "src/app/api/people/**/roles/route.ts"
       - "src/app/api/people/onboard/route.ts"
       - "tests/unit/recent-device-privileged-role-security.test.ts"
+      - "tests/unit/auth-origin.test.ts"
       - "scripts/security/pg-rls-readonly-audit.mjs"
       - "tests/security-pg-rls-catalog.test.mjs"
       - ".github/workflows/authz-critical-boundary.yml"
@@ -57,6 +59,8 @@ jobs:
         run: npx vitest run tests/unit/persisted-workspace-role-and-account-cookie-security.test.ts
       - name: Platform permissions and active tenant access
         run: npx vitest run tests/unit/platform-permission-matrix.test.ts tests/unit/auth-tenant-access.test.ts
+      - name: Origin and target Host authority regression
+        run: npx vitest run tests/unit/auth-origin.test.ts
       - name: Auth controls and brute-force throttling
         run: npx vitest run tests/unit/auth-login-service.test.ts tests/unit/auth-ip-rate-limit.test.ts
       - name: RLS catalog and least-privilege classifier contracts
