@@ -107,7 +107,7 @@ export async function checkDatabaseConnection() {
                 pg_has_role(current_user, owned.relowner, 'USAGE')
                 OR pg_has_role(session_user, owned.relowner, 'SET')
               )
-              AND NOT owned.relforcerowsecurity
+              AND (NOT owned.relforcerowsecurity OR NOT owned.relrowsecurity)
               AND EXISTS (
                 SELECT 1 FROM pg_catalog.pg_attribute a
                 WHERE a.attrelid=owned.oid
