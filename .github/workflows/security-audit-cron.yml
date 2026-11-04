@@ -1,0 +1,44 @@
+# Dedicated control gate for the privileged audit-import scheduler.
+# Static source/test presence alone does not certify deployment credentials
+# or PostgreSQL/GitHub provider isolation.
+name: Security - audit findings scheduler boundary
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - "src/app/api/internal/audit-findings/sync/route.ts"
+      - "src/modules/bug-tracker/audit-cron-request-guard.ts"
+      - "tests/unit/audit-findings-cron-request-security.test.ts"
+      - "tests/unit/audit-findings-cron-route-security.test.ts"
+      - ".github/workflows/security-audit-cron.yml"
+  push:
+    branches: [main]
+    paths:
+      - "src/app/api/internal/audit-findings/sync/route.ts"
+      - "src/modules/bug-tracker/audit-cron-request-guard.ts"
+      - "tests/unit/audit-findings-cron-request-security.test.ts"
+      - "tests/unit/audit-findings-cron-route-security.test.ts"
+      - ".github/workflows/security-audit-cron.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: audit-cron-security-${{ github.ref }}-${{ github.sha }}
+  cancel-in-progress: false
+
+jobs:
+  machine-request-boundary:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Audit cron credential, Origin and request-shape negatives
+        run: npx vitest run tests/unit/audit-findings-cron-request-security.test.ts tests/unit/audit-findings-cron-route-security.test.ts
