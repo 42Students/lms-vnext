@@ -77,7 +77,33 @@ export async function checkDatabaseConnection() {
           r.rolcreaterole AS can_create_role,
           r.rolcreatedb AS can_create_database,
           has_schema_privilege(current_user, 'public', 'CREATE') AS can_create_schema,
-          has_database_privilege(current_user, current_database(), 'CREATE') AS can_create_in_database
+          has_database_privilege(current_user, current_database(), 'CREATE') AS can_create_in_database,
+          -- The login may SET ROLE to an elevated role even if the
+          -- initial current_user itself lacks special attributes.
+          EXISTS (
+            SELECT 1 FROM pg_catalog.pg_roles elevated
+            WHERE (elevated.rolsuper OR elevated.rolbypassrls
+               OR elevated.rolcreatedb OR elevated.rolcreaterole)
+              AND pg_has_role(session_user, elevated.oid, 'SET')
+          ) AS can_set_privileged_role,
+          -- A runtime role with effective ownership rights can bypass
+          -- tenant-key table RLS unless FORCE ROW LEVEL SECURITY is on.
+          EXISTS (
+            SELECT 1 FROM pg_catalog.pg_class owned
+            JOIN pg_catalog.pg_namespace ns ON ns.oid=owned.relnamespace
+            WHERE owned.relkind IN ('r','p')
+              AND ns.nspname NOT IN ('pg_catalog','information_schema')
+              AND ns.nspname NOT LIKE 'pg_toast%'
+              AND ns.nspname NOT LIKE 'pg_temp_%'
+              AND pg_has_role(current_user, owned.relowner, 'USAGE')
+              AND NOT owned.relforcerowsecurity
+              AND EXISTS (
+                SELECT 1 FROM pg_catalog.pg_attribute a
+                WHERE a.attrelid=owned.oid
+                  AND a.attnum>0 AND NOT a.attisdropped
+                  AND a.attname IN ('college_id','organization_id')
+              )
+          ) AS can_bypass_tenant_rls_by_ownership
         FROM pg_catalog.pg_roles r
         WHERE r.rolname = current_user
       `);
