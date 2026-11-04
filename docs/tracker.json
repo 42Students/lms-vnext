@@ -11270,5 +11270,1740 @@
     "retired": 12,
     "missing": 181,
     "total": 732
+  },
+  "security": {
+    "schemaVersion": 1,
+    "authority": "docs/tracker.json",
+    "catalogue": "docs/security/control-catalog.md",
+    "controlCount": 493,
+    "programIds": [
+      "SP-01",
+      "SP-02",
+      "SP-03",
+      "SP-04",
+      "SP-05",
+      "SP-06",
+      "SP-07",
+      "SP-08",
+      "SP-09",
+      "SP-10"
+    ],
+    "initializedOn": "2026-11-04",
+    "initialEvidenceSha": "7a9d57cf66b20faa991e0e77c961e65415fe0888",
+    "statusPolicy": "UNASSESSED means not audited, not necessarily unimplemented. PARTIAL_EVIDENCE means focused evidence exists but complete control acceptance is not proven. VERIFIED requires independent control-scope review, tests and deployed-config evidence. Only VERIFIED counts as completed. Do not infer state from code search.",
+    "releaseSignoff": {
+      "approved": false
+    },
+    "controls": {
+      "SEC-01-001": {
+        "state": "UNASSESSED"
+      },
+      "SEC-01-002": {
+        "state": "UNASSESSED"
+      },
+      "SEC-01-003": {
+        "state": "UNASSESSED"
+      },
+      "SEC-01-004": {
+        "state": "UNASSESSED"
+      },
+      "SEC-01-005": {
+        "state": "UNASSESSED"
+      },
+      "SEC-01-006": {
+        "state": "UNASSESSED"
+      },
+      "SEC-01-007": {
+        "state": "UNASSESSED"
+      },
+      "SEC-01-008": {
+        "state": "UNASSESSED"
+      },
+      "SEC-01-009": {
+        "state": "UNASSESSED"
+      },
+      "SEC-01-010": {
+        "state": "UNASSESSED"
+      },
+      "SEC-01-011": {
+        "state": "UNASSESSED"
+      },
+      "SEC-01-012": {
+        "state": "UNASSESSED"
+      },
+      "SEC-01-013": {
+        "state": "UNASSESSED"
+      },
+      "SEC-01-014": {
+        "state": "UNASSESSED"
+      },
+      "SEC-01-015": {
+        "state": "UNASSESSED"
+      },
+      "SEC-01-016": {
+        "state": "UNASSESSED"
+      },
+      "SEC-01-017": {
+        "state": "UNASSESSED"
+      },
+      "SEC-01-018": {
+        "state": "UNASSESSED"
+      },
+      "SEC-02-001": {
+        "state": "UNASSESSED"
+      },
+      "SEC-02-002": {
+        "state": "UNASSESSED"
+      },
+      "SEC-02-003": {
+        "state": "UNASSESSED"
+      },
+      "SEC-02-004": {
+        "state": "UNASSESSED"
+      },
+      "SEC-02-005": {
+        "state": "UNASSESSED"
+      },
+      "SEC-02-006": {
+        "state": "UNASSESSED"
+      },
+      "SEC-02-007": {
+        "state": "UNASSESSED"
+      },
+      "SEC-02-008": {
+        "state": "UNASSESSED"
+      },
+      "SEC-02-009": {
+        "state": "UNASSESSED"
+      },
+      "SEC-02-010": {
+        "state": "UNASSESSED"
+      },
+      "SEC-02-011": {
+        "state": "UNASSESSED"
+      },
+      "SEC-02-012": {
+        "state": "UNASSESSED"
+      },
+      "SEC-02-013": {
+        "state": "UNASSESSED"
+      },
+      "SEC-02-014": {
+        "state": "UNASSESSED"
+      },
+      "SEC-02-015": {
+        "state": "UNASSESSED"
+      },
+      "SEC-02-016": {
+        "state": "UNASSESSED"
+      },
+      "SEC-03-001": {
+        "state": "UNASSESSED"
+      },
+      "SEC-03-002": {
+        "state": "UNASSESSED"
+      },
+      "SEC-03-003": {
+        "state": "UNASSESSED"
+      },
+      "SEC-03-004": {
+        "state": "UNASSESSED"
+      },
+      "SEC-03-005": {
+        "state": "UNASSESSED"
+      },
+      "SEC-03-006": {
+        "state": "UNASSESSED"
+      },
+      "SEC-03-007": {
+        "state": "UNASSESSED"
+      },
+      "SEC-03-008": {
+        "state": "UNASSESSED"
+      },
+      "SEC-03-009": {
+        "state": "UNASSESSED"
+      },
+      "SEC-03-010": {
+        "state": "UNASSESSED"
+      },
+      "SEC-03-011": {
+        "state": "UNASSESSED"
+      },
+      "SEC-03-012": {
+        "state": "UNASSESSED"
+      },
+      "SEC-03-013": {
+        "state": "UNASSESSED"
+      },
+      "SEC-03-014": {
+        "state": "UNASSESSED"
+      },
+      "SEC-03-015": {
+        "state": "UNASSESSED"
+      },
+      "SEC-03-016": {
+        "state": "UNASSESSED"
+      },
+      "SEC-03-017": {
+        "state": "UNASSESSED"
+      },
+      "SEC-03-018": {
+        "state": "UNASSESSED"
+      },
+      "SEC-03-019": {
+        "state": "UNASSESSED"
+      },
+      "SEC-03-020": {
+        "state": "UNASSESSED"
+      },
+      "SEC-03-021": {
+        "state": "UNASSESSED"
+      },
+      "SEC-03-022": {
+        "state": "UNASSESSED"
+      },
+      "SEC-03-023": {
+        "state": "UNASSESSED"
+      },
+      "SEC-03-024": {
+        "state": "UNASSESSED"
+      },
+      "SEC-03-025": {
+        "state": "UNASSESSED"
+      },
+      "SEC-03-026": {
+        "state": "UNASSESSED"
+      },
+      "SEC-03-027": {
+        "state": "UNASSESSED"
+      },
+      "SEC-04-001": {
+        "state": "UNASSESSED"
+      },
+      "SEC-04-002": {
+        "state": "UNASSESSED"
+      },
+      "SEC-04-003": {
+        "state": "UNASSESSED"
+      },
+      "SEC-04-004": {
+        "state": "UNASSESSED"
+      },
+      "SEC-04-005": {
+        "state": "UNASSESSED"
+      },
+      "SEC-04-006": {
+        "state": "UNASSESSED"
+      },
+      "SEC-04-007": {
+        "state": "UNASSESSED"
+      },
+      "SEC-04-008": {
+        "state": "UNASSESSED"
+      },
+      "SEC-05-001": {
+        "state": "UNASSESSED"
+      },
+      "SEC-05-002": {
+        "state": "UNASSESSED"
+      },
+      "SEC-05-003": {
+        "state": "UNASSESSED"
+      },
+      "SEC-05-004": {
+        "state": "UNASSESSED"
+      },
+      "SEC-05-005": {
+        "state": "UNASSESSED"
+      },
+      "SEC-05-006": {
+        "state": "UNASSESSED"
+      },
+      "SEC-05-007": {
+        "state": "UNASSESSED"
+      },
+      "SEC-05-008": {
+        "state": "UNASSESSED"
+      },
+      "SEC-05-009": {
+        "state": "UNASSESSED"
+      },
+      "SEC-05-010": {
+        "state": "UNASSESSED"
+      },
+      "SEC-05-011": {
+        "state": "UNASSESSED"
+      },
+      "SEC-05-012": {
+        "state": "UNASSESSED"
+      },
+      "SEC-05-013": {
+        "state": "UNASSESSED"
+      },
+      "SEC-05-014": {
+        "state": "PARTIAL_EVIDENCE",
+        "assessedAt": "2026-11-04",
+        "evidence": [
+          {
+            "type": "EXECUTED_SCOPED_TEST",
+            "commitSha": "680624121806434c7a41aae7396814007138823a",
+            "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/41809577504",
+            "scope": "Private R2 signed-resume scopes tested for public recruiter ZIP only"
+          }
+        ],
+        "nextProof": "Audit all storage namespaces, tenant-scoped grants and revocation"
+      },
+      "SEC-05-015": {
+        "state": "PARTIAL_EVIDENCE",
+        "assessedAt": "2026-11-04",
+        "evidence": [
+          {
+            "type": "EXECUTED_SCOPED_TEST",
+            "commitSha": "8b236bedb51d9afa4ec4f9317171bf4f23afc545",
+            "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/41795753719",
+            "scope": "College people and tenant exports tested against disposable PostgreSQL; not all reports"
+          }
+        ],
+        "nextProof": "Review all counts, reports, exports, analytics and cache keys across tenants"
+      },
+      "SEC-05-016": {
+        "state": "UNASSESSED"
+      },
+      "SEC-05-017": {
+        "state": "UNASSESSED"
+      },
+      "SEC-05-018": {
+        "state": "UNASSESSED"
+      },
+      "SEC-05-019": {
+        "state": "UNASSESSED"
+      },
+      "SEC-05-020": {
+        "state": "UNASSESSED"
+      },
+      "SEC-05-021": {
+        "state": "UNASSESSED"
+      },
+      "SEC-05-022": {
+        "state": "UNASSESSED"
+      },
+      "SEC-05-023": {
+        "state": "UNASSESSED"
+      },
+      "SEC-06-001": {
+        "state": "PARTIAL_EVIDENCE",
+        "assessedAt": "2026-11-04",
+        "evidence": [
+          {
+            "type": "EXECUTED_SCOPED_TEST",
+            "commitSha": "24d241d84acba5861ce816a7cfb52cfdd0318915",
+            "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/41809840139",
+            "scope": "Read-only database role and policy auditor tested against local PG17, not production"
+          }
+        ],
+        "nextProof": "Run authorized read-only catalogue against actual production application principal"
+      },
+      "SEC-06-002": {
+        "state": "UNASSESSED"
+      },
+      "SEC-06-003": {
+        "state": "UNASSESSED"
+      },
+      "SEC-06-004": {
+        "state": "PARTIAL_EVIDENCE",
+        "assessedAt": "2026-11-04",
+        "evidence": [
+          {
+            "type": "EXECUTED_SCOPED_TEST",
+            "commitSha": "24d241d84acba5861ce816a7cfb52cfdd0318915",
+            "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/41809840139",
+            "scope": "RLS analyzer detects overly broad read policies in fixture only"
+          }
+        ],
+        "nextProof": "Review every production policy predicate and table lineage independently"
+      },
+      "SEC-06-005": {
+        "state": "UNASSESSED"
+      },
+      "SEC-06-006": {
+        "state": "PARTIAL_EVIDENCE",
+        "assessedAt": "2026-11-04",
+        "evidence": [
+          {
+            "type": "EXECUTED_SCOPED_TEST",
+            "commitSha": "24d241d84acba5861ce816a7cfb52cfdd0318915",
+            "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/41809840139",
+            "scope": "Restricted-role SELECT/USING negative witnesses pass on fixture tables"
+          }
+        ],
+        "nextProof": "Prove SELECT/UPDATE/DELETE for production-equivalent schema and actual runtime role"
+      },
+      "SEC-06-007": {
+        "state": "UNASSESSED"
+      },
+      "SEC-06-008": {
+        "state": "UNASSESSED"
+      },
+      "SEC-06-009": {
+        "state": "UNASSESSED"
+      },
+      "SEC-06-010": {
+        "state": "PARTIAL_EVIDENCE",
+        "assessedAt": "2026-11-04",
+        "evidence": [
+          {
+            "type": "EXECUTED_SCOPED_TEST",
+            "commitSha": "24d241d84acba5861ce816a7cfb52cfdd0318915",
+            "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/41809840139",
+            "scope": "Auditor flags privileged or BYPASSRLS runtime principals in model"
+          }
+        ],
+        "nextProof": "Inspect live runtime grant/ownership and prove BYPASSRLS absent"
+      },
+      "SEC-06-011": {
+        "state": "UNASSESSED"
+      },
+      "SEC-06-012": {
+        "state": "UNASSESSED"
+      },
+      "SEC-06-013": {
+        "state": "UNASSESSED"
+      },
+      "SEC-06-014": {
+        "state": "UNASSESSED"
+      },
+      "SEC-06-015": {
+        "state": "UNASSESSED"
+      },
+      "SEC-06-016": {
+        "state": "UNASSESSED"
+      },
+      "SEC-06-017": {
+        "state": "UNASSESSED"
+      },
+      "SEC-06-018": {
+        "state": "UNASSESSED"
+      },
+      "SEC-06-019": {
+        "state": "UNASSESSED"
+      },
+      "SEC-06-020": {
+        "state": "UNASSESSED"
+      },
+      "SEC-06-021": {
+        "state": "UNASSESSED"
+      },
+      "SEC-06-022": {
+        "state": "UNASSESSED"
+      },
+      "SEC-06-023": {
+        "state": "UNASSESSED"
+      },
+      "SEC-06-024": {
+        "state": "UNASSESSED"
+      },
+      "SEC-06-025": {
+        "state": "UNASSESSED"
+      },
+      "SEC-06-026": {
+        "state": "UNASSESSED"
+      },
+      "SEC-07-001": {
+        "state": "UNASSESSED"
+      },
+      "SEC-07-002": {
+        "state": "UNASSESSED"
+      },
+      "SEC-07-003": {
+        "state": "UNASSESSED"
+      },
+      "SEC-07-004": {
+        "state": "UNASSESSED"
+      },
+      "SEC-07-005": {
+        "state": "UNASSESSED"
+      },
+      "SEC-07-006": {
+        "state": "UNASSESSED"
+      },
+      "SEC-07-007": {
+        "state": "UNASSESSED"
+      },
+      "SEC-07-008": {
+        "state": "UNASSESSED"
+      },
+      "SEC-07-009": {
+        "state": "UNASSESSED"
+      },
+      "SEC-07-010": {
+        "state": "UNASSESSED"
+      },
+      "SEC-07-011": {
+        "state": "UNASSESSED"
+      },
+      "SEC-07-012": {
+        "state": "UNASSESSED"
+      },
+      "SEC-07-013": {
+        "state": "UNASSESSED"
+      },
+      "SEC-07-014": {
+        "state": "UNASSESSED"
+      },
+      "SEC-07-015": {
+        "state": "UNASSESSED"
+      },
+      "SEC-07-016": {
+        "state": "UNASSESSED"
+      },
+      "SEC-07-017": {
+        "state": "UNASSESSED"
+      },
+      "SEC-07-018": {
+        "state": "UNASSESSED"
+      },
+      "SEC-07-019": {
+        "state": "PARTIAL_EVIDENCE",
+        "assessedAt": "2026-11-04",
+        "evidence": [
+          {
+            "type": "EXECUTED_SCOPED_TEST",
+            "commitSha": "24d241d84acba5861ce816a7cfb52cfdd0318915",
+            "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/41809840139",
+            "scope": "RLS drift detector exists and runs targeted CI checks"
+          }
+        ],
+        "nextProof": "Schedule and alert on authoritative production RLS/grant drift"
+      },
+      "SEC-08-001": {
+        "state": "UNASSESSED"
+      },
+      "SEC-08-002": {
+        "state": "UNASSESSED"
+      },
+      "SEC-08-003": {
+        "state": "UNASSESSED"
+      },
+      "SEC-08-004": {
+        "state": "UNASSESSED"
+      },
+      "SEC-08-005": {
+        "state": "UNASSESSED"
+      },
+      "SEC-08-006": {
+        "state": "UNASSESSED"
+      },
+      "SEC-08-007": {
+        "state": "UNASSESSED"
+      },
+      "SEC-08-008": {
+        "state": "UNASSESSED"
+      },
+      "SEC-08-009": {
+        "state": "UNASSESSED"
+      },
+      "SEC-08-010": {
+        "state": "UNASSESSED"
+      },
+      "SEC-08-011": {
+        "state": "UNASSESSED"
+      },
+      "SEC-08-012": {
+        "state": "UNASSESSED"
+      },
+      "SEC-08-013": {
+        "state": "UNASSESSED"
+      },
+      "SEC-08-014": {
+        "state": "PARTIAL_EVIDENCE",
+        "assessedAt": "2026-11-04",
+        "evidence": [
+          {
+            "type": "EXECUTED_SCOPED_TEST",
+            "commitSha": "8b236bedb51d9afa4ec4f9317171bf4f23afc545",
+            "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/41795753719",
+            "scope": "5,000-row college company cap and paging regression tests pass"
+          }
+        ],
+        "nextProof": "Audit every paginated, bulk and export operation for bounded memory and rate limits"
+      },
+      "SEC-08-015": {
+        "state": "UNASSESSED"
+      },
+      "SEC-08-016": {
+        "state": "UNASSESSED"
+      },
+      "SEC-08-017": {
+        "state": "UNASSESSED"
+      },
+      "SEC-08-018": {
+        "state": "UNASSESSED"
+      },
+      "SEC-08-019": {
+        "state": "PARTIAL_EVIDENCE",
+        "assessedAt": "2026-11-04",
+        "evidence": [
+          {
+            "type": "EXECUTED_SCOPED_TEST",
+            "commitSha": "8b236bedb51d9afa4ec4f9317171bf4f23afc545",
+            "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/41795753719",
+            "scope": "Malformed tenant export filters rejected before private reads with safe error cases"
+          }
+        ],
+        "nextProof": "Audit error semantics and leak prevention for all protected API methods"
+      },
+      "SEC-08-020": {
+        "state": "UNASSESSED"
+      },
+      "SEC-08-021": {
+        "state": "PARTIAL_EVIDENCE",
+        "assessedAt": "2026-11-04",
+        "evidence": [
+          {
+            "type": "EXECUTED_SCOPED_TEST",
+            "commitSha": "680624121806434c7a41aae7396814007138823a",
+            "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/41809577504",
+            "scope": "Token-protected applicant ZIP disallows unauthorized resume fetch destinations"
+          }
+        ],
+        "nextProof": "Audit all preview, counts, autocomplete, signed and download endpoints"
+      },
+      "SEC-08-022": {
+        "state": "UNASSESSED"
+      },
+      "SEC-08-023": {
+        "state": "UNASSESSED"
+      },
+      "SEC-08-024": {
+        "state": "UNASSESSED"
+      },
+      "SEC-09-001": {
+        "state": "UNASSESSED"
+      },
+      "SEC-09-002": {
+        "state": "UNASSESSED"
+      },
+      "SEC-09-003": {
+        "state": "UNASSESSED"
+      },
+      "SEC-09-004": {
+        "state": "UNASSESSED"
+      },
+      "SEC-09-005": {
+        "state": "UNASSESSED"
+      },
+      "SEC-09-006": {
+        "state": "UNASSESSED"
+      },
+      "SEC-09-007": {
+        "state": "UNASSESSED"
+      },
+      "SEC-09-008": {
+        "state": "UNASSESSED"
+      },
+      "SEC-09-009": {
+        "state": "UNASSESSED"
+      },
+      "SEC-09-010": {
+        "state": "UNASSESSED"
+      },
+      "SEC-09-011": {
+        "state": "UNASSESSED"
+      },
+      "SEC-09-012": {
+        "state": "UNASSESSED"
+      },
+      "SEC-09-013": {
+        "state": "UNASSESSED"
+      },
+      "SEC-09-014": {
+        "state": "UNASSESSED"
+      },
+      "SEC-09-015": {
+        "state": "UNASSESSED"
+      },
+      "SEC-09-016": {
+        "state": "UNASSESSED"
+      },
+      "SEC-09-017": {
+        "state": "UNASSESSED"
+      },
+      "SEC-09-018": {
+        "state": "UNASSESSED"
+      },
+      "SEC-10-001": {
+        "state": "UNASSESSED"
+      },
+      "SEC-10-002": {
+        "state": "UNASSESSED"
+      },
+      "SEC-10-003": {
+        "state": "UNASSESSED"
+      },
+      "SEC-10-004": {
+        "state": "UNASSESSED"
+      },
+      "SEC-10-005": {
+        "state": "UNASSESSED"
+      },
+      "SEC-10-006": {
+        "state": "UNASSESSED"
+      },
+      "SEC-10-007": {
+        "state": "UNASSESSED"
+      },
+      "SEC-10-008": {
+        "state": "UNASSESSED"
+      },
+      "SEC-10-009": {
+        "state": "UNASSESSED"
+      },
+      "SEC-10-010": {
+        "state": "UNASSESSED"
+      },
+      "SEC-10-011": {
+        "state": "UNASSESSED"
+      },
+      "SEC-10-012": {
+        "state": "PARTIAL_EVIDENCE",
+        "assessedAt": "2026-11-04",
+        "evidence": [
+          {
+            "type": "EXECUTED_SCOPED_TEST",
+            "commitSha": "8b236bedb51d9afa4ec4f9317171bf4f23afc545",
+            "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/41795753719",
+            "scope": "Bulk personal-data CSV endpoints require fresh device session"
+          }
+        ],
+        "nextProof": "Validate strong privileged reauthentication, export approvals, audit and UX across all roles"
+      },
+      "SEC-10-013": {
+        "state": "UNASSESSED"
+      },
+      "SEC-10-014": {
+        "state": "UNASSESSED"
+      },
+      "SEC-10-015": {
+        "state": "UNASSESSED"
+      },
+      "SEC-10-016": {
+        "state": "UNASSESSED"
+      },
+      "SEC-11-001": {
+        "state": "UNASSESSED"
+      },
+      "SEC-11-002": {
+        "state": "UNASSESSED"
+      },
+      "SEC-11-003": {
+        "state": "PARTIAL_EVIDENCE",
+        "assessedAt": "2026-11-04",
+        "evidence": [
+          {
+            "type": "EXECUTED_SCOPED_TEST",
+            "commitSha": "680624121806434c7a41aae7396814007138823a",
+            "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/41809577504",
+            "scope": "Short-lived R2 signed grant checks pass for recruiter ZIP download"
+          }
+        ],
+        "nextProof": "Prove every storage access and expiry/revocation at actual provider boundary"
+      },
+      "SEC-11-004": {
+        "state": "UNASSESSED"
+      },
+      "SEC-11-005": {
+        "state": "PARTIAL_EVIDENCE",
+        "assessedAt": "2026-11-04",
+        "evidence": [
+          {
+            "type": "EXECUTED_SCOPED_TEST",
+            "commitSha": "680624121806434c7a41aae7396814007138823a",
+            "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/41809577504",
+            "scope": "Signed R2 URL host, bucket, namespace, credential and TTL adversarial tests pass"
+          }
+        ],
+        "nextProof": "Prove non-transferability and storage expiry with provider-backed tests"
+      },
+      "SEC-11-006": {
+        "state": "UNASSESSED"
+      },
+      "SEC-11-007": {
+        "state": "UNASSESSED"
+      },
+      "SEC-11-008": {
+        "state": "UNASSESSED"
+      },
+      "SEC-11-009": {
+        "state": "UNASSESSED"
+      },
+      "SEC-11-010": {
+        "state": "UNASSESSED"
+      },
+      "SEC-11-011": {
+        "state": "UNASSESSED"
+      },
+      "SEC-11-012": {
+        "state": "UNASSESSED"
+      },
+      "SEC-11-013": {
+        "state": "UNASSESSED"
+      },
+      "SEC-11-014": {
+        "state": "UNASSESSED"
+      },
+      "SEC-11-015": {
+        "state": "UNASSESSED"
+      },
+      "SEC-11-016": {
+        "state": "UNASSESSED"
+      },
+      "SEC-11-017": {
+        "state": "UNASSESSED"
+      },
+      "SEC-11-018": {
+        "state": "UNASSESSED"
+      },
+      "SEC-11-019": {
+        "state": "UNASSESSED"
+      },
+      "SEC-11-020": {
+        "state": "UNASSESSED"
+      },
+      "SEC-12-001": {
+        "state": "UNASSESSED"
+      },
+      "SEC-12-002": {
+        "state": "UNASSESSED"
+      },
+      "SEC-12-003": {
+        "state": "UNASSESSED"
+      },
+      "SEC-12-004": {
+        "state": "UNASSESSED"
+      },
+      "SEC-12-005": {
+        "state": "UNASSESSED"
+      },
+      "SEC-12-006": {
+        "state": "UNASSESSED"
+      },
+      "SEC-12-007": {
+        "state": "UNASSESSED"
+      },
+      "SEC-12-008": {
+        "state": "UNASSESSED"
+      },
+      "SEC-12-009": {
+        "state": "UNASSESSED"
+      },
+      "SEC-12-010": {
+        "state": "UNASSESSED"
+      },
+      "SEC-12-011": {
+        "state": "UNASSESSED"
+      },
+      "SEC-12-012": {
+        "state": "UNASSESSED"
+      },
+      "SEC-12-013": {
+        "state": "UNASSESSED"
+      },
+      "SEC-12-014": {
+        "state": "UNASSESSED"
+      },
+      "SEC-12-015": {
+        "state": "UNASSESSED"
+      },
+      "SEC-12-016": {
+        "state": "UNASSESSED"
+      },
+      "SEC-12-017": {
+        "state": "UNASSESSED"
+      },
+      "SEC-12-018": {
+        "state": "UNASSESSED"
+      },
+      "SEC-12-019": {
+        "state": "UNASSESSED"
+      },
+      "SEC-13-001": {
+        "state": "UNASSESSED"
+      },
+      "SEC-13-002": {
+        "state": "UNASSESSED"
+      },
+      "SEC-13-003": {
+        "state": "UNASSESSED"
+      },
+      "SEC-13-004": {
+        "state": "UNASSESSED"
+      },
+      "SEC-13-005": {
+        "state": "UNASSESSED"
+      },
+      "SEC-13-006": {
+        "state": "UNASSESSED"
+      },
+      "SEC-13-007": {
+        "state": "UNASSESSED"
+      },
+      "SEC-13-008": {
+        "state": "UNASSESSED"
+      },
+      "SEC-13-009": {
+        "state": "UNASSESSED"
+      },
+      "SEC-13-010": {
+        "state": "UNASSESSED"
+      },
+      "SEC-13-011": {
+        "state": "UNASSESSED"
+      },
+      "SEC-13-012": {
+        "state": "UNASSESSED"
+      },
+      "SEC-13-013": {
+        "state": "UNASSESSED"
+      },
+      "SEC-13-014": {
+        "state": "UNASSESSED"
+      },
+      "SEC-13-015": {
+        "state": "UNASSESSED"
+      },
+      "SEC-13-016": {
+        "state": "UNASSESSED"
+      },
+      "SEC-13-017": {
+        "state": "UNASSESSED"
+      },
+      "SEC-13-018": {
+        "state": "UNASSESSED"
+      },
+      "SEC-14-001": {
+        "state": "UNASSESSED"
+      },
+      "SEC-14-002": {
+        "state": "UNASSESSED"
+      },
+      "SEC-14-003": {
+        "state": "UNASSESSED"
+      },
+      "SEC-14-004": {
+        "state": "UNASSESSED"
+      },
+      "SEC-14-005": {
+        "state": "UNASSESSED"
+      },
+      "SEC-14-006": {
+        "state": "UNASSESSED"
+      },
+      "SEC-14-007": {
+        "state": "UNASSESSED"
+      },
+      "SEC-14-008": {
+        "state": "UNASSESSED"
+      },
+      "SEC-14-009": {
+        "state": "UNASSESSED"
+      },
+      "SEC-14-010": {
+        "state": "UNASSESSED"
+      },
+      "SEC-14-011": {
+        "state": "UNASSESSED"
+      },
+      "SEC-14-012": {
+        "state": "UNASSESSED"
+      },
+      "SEC-14-013": {
+        "state": "UNASSESSED"
+      },
+      "SEC-14-014": {
+        "state": "UNASSESSED"
+      },
+      "SEC-14-015": {
+        "state": "UNASSESSED"
+      },
+      "SEC-14-016": {
+        "state": "UNASSESSED"
+      },
+      "SEC-14-017": {
+        "state": "UNASSESSED"
+      },
+      "SEC-14-018": {
+        "state": "UNASSESSED"
+      },
+      "SEC-14-019": {
+        "state": "UNASSESSED"
+      },
+      "SEC-14-020": {
+        "state": "PARTIAL_EVIDENCE",
+        "assessedAt": "2026-11-04",
+        "evidence": [
+          {
+            "type": "EXECUTED_SCOPED_TEST",
+            "commitSha": "680624121806434c7a41aae7396814007138823a",
+            "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/41809577504",
+            "scope": "Recruiter ZIP uses selected applicant scope and validated signed resumes"
+          }
+        ],
+        "nextProof": "Review recruiter search, profile reads, offers and all access modes"
+      },
+      "SEC-14-021": {
+        "state": "UNASSESSED"
+      },
+      "SEC-14-022": {
+        "state": "UNASSESSED"
+      },
+      "SEC-14-023": {
+        "state": "UNASSESSED"
+      },
+      "SEC-14-024": {
+        "state": "PARTIAL_EVIDENCE",
+        "assessedAt": "2026-11-04",
+        "evidence": [
+          {
+            "type": "EXECUTED_SCOPED_TEST",
+            "commitSha": "8b236bedb51d9afa4ec4f9317171bf4f23afc545",
+            "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/41795753719",
+            "scope": "Security CSV and selected bulk-export paging suites pass"
+          }
+        ],
+        "nextProof": "Enumerate and adversarially test every bulk upload, import, approval and export"
+      },
+      "SEC-15-001": {
+        "state": "UNASSESSED"
+      },
+      "SEC-15-002": {
+        "state": "UNASSESSED"
+      },
+      "SEC-15-003": {
+        "state": "UNASSESSED"
+      },
+      "SEC-15-004": {
+        "state": "UNASSESSED"
+      },
+      "SEC-15-005": {
+        "state": "UNASSESSED"
+      },
+      "SEC-15-006": {
+        "state": "UNASSESSED"
+      },
+      "SEC-15-007": {
+        "state": "UNASSESSED"
+      },
+      "SEC-15-008": {
+        "state": "UNASSESSED"
+      },
+      "SEC-15-009": {
+        "state": "UNASSESSED"
+      },
+      "SEC-15-010": {
+        "state": "PARTIAL_EVIDENCE",
+        "assessedAt": "2026-11-04",
+        "evidence": [
+          {
+            "type": "EXECUTED_SCOPED_TEST",
+            "commitSha": "680624121806434c7a41aae7396814007138823a",
+            "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/41809577504",
+            "scope": "Server-fetching applicant resumes now checks signed destination and blocks SSRF"
+          }
+        ],
+        "nextProof": "Audit all outbound HTTP clients, DNS, redirects, credentials and egress policies"
+      },
+      "SEC-15-011": {
+        "state": "UNASSESSED"
+      },
+      "SEC-15-012": {
+        "state": "UNASSESSED"
+      },
+      "SEC-15-013": {
+        "state": "UNASSESSED"
+      },
+      "SEC-15-014": {
+        "state": "UNASSESSED"
+      },
+      "SEC-15-015": {
+        "state": "UNASSESSED"
+      },
+      "SEC-15-016": {
+        "state": "UNASSESSED"
+      },
+      "SEC-15-017": {
+        "state": "UNASSESSED"
+      },
+      "SEC-16-001": {
+        "state": "UNASSESSED"
+      },
+      "SEC-16-002": {
+        "state": "UNASSESSED"
+      },
+      "SEC-16-003": {
+        "state": "UNASSESSED"
+      },
+      "SEC-16-004": {
+        "state": "UNASSESSED"
+      },
+      "SEC-16-005": {
+        "state": "UNASSESSED"
+      },
+      "SEC-16-006": {
+        "state": "UNASSESSED"
+      },
+      "SEC-16-007": {
+        "state": "UNASSESSED"
+      },
+      "SEC-16-008": {
+        "state": "UNASSESSED"
+      },
+      "SEC-16-009": {
+        "state": "UNASSESSED"
+      },
+      "SEC-16-010": {
+        "state": "UNASSESSED"
+      },
+      "SEC-16-011": {
+        "state": "UNASSESSED"
+      },
+      "SEC-16-012": {
+        "state": "UNASSESSED"
+      },
+      "SEC-16-013": {
+        "state": "UNASSESSED"
+      },
+      "SEC-16-014": {
+        "state": "UNASSESSED"
+      },
+      "SEC-16-015": {
+        "state": "UNASSESSED"
+      },
+      "SEC-17-001": {
+        "state": "UNASSESSED"
+      },
+      "SEC-17-002": {
+        "state": "UNASSESSED"
+      },
+      "SEC-17-003": {
+        "state": "UNASSESSED"
+      },
+      "SEC-17-004": {
+        "state": "UNASSESSED"
+      },
+      "SEC-17-005": {
+        "state": "UNASSESSED"
+      },
+      "SEC-17-006": {
+        "state": "UNASSESSED"
+      },
+      "SEC-17-007": {
+        "state": "UNASSESSED"
+      },
+      "SEC-17-008": {
+        "state": "UNASSESSED"
+      },
+      "SEC-17-009": {
+        "state": "UNASSESSED"
+      },
+      "SEC-17-010": {
+        "state": "UNASSESSED"
+      },
+      "SEC-17-011": {
+        "state": "UNASSESSED"
+      },
+      "SEC-17-012": {
+        "state": "UNASSESSED"
+      },
+      "SEC-17-013": {
+        "state": "UNASSESSED"
+      },
+      "SEC-17-014": {
+        "state": "UNASSESSED"
+      },
+      "SEC-17-015": {
+        "state": "UNASSESSED"
+      },
+      "SEC-17-016": {
+        "state": "UNASSESSED"
+      },
+      "SEC-17-017": {
+        "state": "UNASSESSED"
+      },
+      "SEC-17-018": {
+        "state": "UNASSESSED"
+      },
+      "SEC-17-019": {
+        "state": "UNASSESSED"
+      },
+      "SEC-17-020": {
+        "state": "UNASSESSED"
+      },
+      "SEC-17-021": {
+        "state": "UNASSESSED"
+      },
+      "SEC-17-022": {
+        "state": "UNASSESSED"
+      },
+      "SEC-17-023": {
+        "state": "UNASSESSED"
+      },
+      "SEC-18-001": {
+        "state": "UNASSESSED"
+      },
+      "SEC-18-002": {
+        "state": "GAP_CONFIRMED",
+        "assessedAt": "2026-11-04",
+        "evidence": [
+          {
+            "type": "REPOSITORY_CONFIG_OBSERVED",
+            "commitSha": "7a9d57cf66b20faa991e0e77c961e65415fe0888",
+            "sourceUrl": "https://api.github.com/repos/42Students/lms-vnext/branches/main",
+            "scope": "GitHub branch API reports main protected:false; required CI and PR approval are not enforceable by branch protection."
+          }
+        ],
+        "nextProof": "Repository administrator must enforce protected main with required exact-SHA checks and review; re-query branch protection."
+      },
+      "SEC-18-003": {
+        "state": "UNASSESSED"
+      },
+      "SEC-18-004": {
+        "state": "UNASSESSED"
+      },
+      "SEC-18-005": {
+        "state": "UNASSESSED"
+      },
+      "SEC-18-006": {
+        "state": "UNASSESSED"
+      },
+      "SEC-18-007": {
+        "state": "UNASSESSED"
+      },
+      "SEC-18-008": {
+        "state": "UNASSESSED"
+      },
+      "SEC-18-009": {
+        "state": "UNASSESSED"
+      },
+      "SEC-18-010": {
+        "state": "UNASSESSED"
+      },
+      "SEC-18-011": {
+        "state": "UNASSESSED"
+      },
+      "SEC-18-012": {
+        "state": "UNASSESSED"
+      },
+      "SEC-18-013": {
+        "state": "UNASSESSED"
+      },
+      "SEC-18-014": {
+        "state": "UNASSESSED"
+      },
+      "SEC-18-015": {
+        "state": "UNASSESSED"
+      },
+      "SEC-18-016": {
+        "state": "UNASSESSED"
+      },
+      "SEC-18-017": {
+        "state": "UNASSESSED"
+      },
+      "SEC-18-018": {
+        "state": "UNASSESSED"
+      },
+      "SEC-18-019": {
+        "state": "UNASSESSED"
+      },
+      "SEC-18-020": {
+        "state": "UNASSESSED"
+      },
+      "SEC-18-021": {
+        "state": "UNASSESSED"
+      },
+      "SEC-19-001": {
+        "state": "UNASSESSED"
+      },
+      "SEC-19-002": {
+        "state": "UNASSESSED"
+      },
+      "SEC-19-003": {
+        "state": "UNASSESSED"
+      },
+      "SEC-19-004": {
+        "state": "UNASSESSED"
+      },
+      "SEC-19-005": {
+        "state": "UNASSESSED"
+      },
+      "SEC-19-006": {
+        "state": "UNASSESSED"
+      },
+      "SEC-19-007": {
+        "state": "UNASSESSED"
+      },
+      "SEC-19-008": {
+        "state": "UNASSESSED"
+      },
+      "SEC-19-009": {
+        "state": "UNASSESSED"
+      },
+      "SEC-19-010": {
+        "state": "UNASSESSED"
+      },
+      "SEC-19-011": {
+        "state": "UNASSESSED"
+      },
+      "SEC-19-012": {
+        "state": "UNASSESSED"
+      },
+      "SEC-19-013": {
+        "state": "UNASSESSED"
+      },
+      "SEC-19-014": {
+        "state": "UNASSESSED"
+      },
+      "SEC-19-015": {
+        "state": "UNASSESSED"
+      },
+      "SEC-19-016": {
+        "state": "UNASSESSED"
+      },
+      "SEC-19-017": {
+        "state": "UNASSESSED"
+      },
+      "SEC-19-018": {
+        "state": "UNASSESSED"
+      },
+      "SEC-19-019": {
+        "state": "UNASSESSED"
+      },
+      "SEC-19-020": {
+        "state": "UNASSESSED"
+      },
+      "SEC-19-021": {
+        "state": "UNASSESSED"
+      },
+      "SEC-20-001": {
+        "state": "UNASSESSED"
+      },
+      "SEC-20-002": {
+        "state": "UNASSESSED"
+      },
+      "SEC-20-003": {
+        "state": "UNASSESSED"
+      },
+      "SEC-20-004": {
+        "state": "UNASSESSED"
+      },
+      "SEC-20-005": {
+        "state": "UNASSESSED"
+      },
+      "SEC-20-006": {
+        "state": "UNASSESSED"
+      },
+      "SEC-20-007": {
+        "state": "UNASSESSED"
+      },
+      "SEC-20-008": {
+        "state": "UNASSESSED"
+      },
+      "SEC-20-009": {
+        "state": "UNASSESSED"
+      },
+      "SEC-20-010": {
+        "state": "UNASSESSED"
+      },
+      "SEC-20-011": {
+        "state": "UNASSESSED"
+      },
+      "SEC-20-012": {
+        "state": "UNASSESSED"
+      },
+      "SEC-20-013": {
+        "state": "UNASSESSED"
+      },
+      "SEC-20-014": {
+        "state": "UNASSESSED"
+      },
+      "SEC-20-015": {
+        "state": "UNASSESSED"
+      },
+      "SEC-20-016": {
+        "state": "UNASSESSED"
+      },
+      "SEC-20-017": {
+        "state": "UNASSESSED"
+      },
+      "SEC-20-018": {
+        "state": "UNASSESSED"
+      },
+      "SEC-20-019": {
+        "state": "UNASSESSED"
+      },
+      "SEC-21-001": {
+        "state": "UNASSESSED"
+      },
+      "SEC-21-002": {
+        "state": "UNASSESSED"
+      },
+      "SEC-21-003": {
+        "state": "UNASSESSED"
+      },
+      "SEC-21-004": {
+        "state": "UNASSESSED"
+      },
+      "SEC-21-005": {
+        "state": "UNASSESSED"
+      },
+      "SEC-21-006": {
+        "state": "UNASSESSED"
+      },
+      "SEC-21-007": {
+        "state": "UNASSESSED"
+      },
+      "SEC-21-008": {
+        "state": "UNASSESSED"
+      },
+      "SEC-21-009": {
+        "state": "UNASSESSED"
+      },
+      "SEC-21-010": {
+        "state": "UNASSESSED"
+      },
+      "SEC-21-011": {
+        "state": "UNASSESSED"
+      },
+      "SEC-21-012": {
+        "state": "UNASSESSED"
+      },
+      "SEC-21-013": {
+        "state": "UNASSESSED"
+      },
+      "SEC-21-014": {
+        "state": "UNASSESSED"
+      },
+      "SEC-21-015": {
+        "state": "UNASSESSED"
+      },
+      "SEC-22-001": {
+        "state": "UNASSESSED"
+      },
+      "SEC-22-002": {
+        "state": "UNASSESSED"
+      },
+      "SEC-22-003": {
+        "state": "UNASSESSED"
+      },
+      "SEC-22-004": {
+        "state": "UNASSESSED"
+      },
+      "SEC-22-005": {
+        "state": "UNASSESSED"
+      },
+      "SEC-22-006": {
+        "state": "UNASSESSED"
+      },
+      "SEC-22-007": {
+        "state": "UNASSESSED"
+      },
+      "SEC-22-008": {
+        "state": "UNASSESSED"
+      },
+      "SEC-22-009": {
+        "state": "UNASSESSED"
+      },
+      "SEC-22-010": {
+        "state": "UNASSESSED"
+      },
+      "SEC-22-011": {
+        "state": "UNASSESSED"
+      },
+      "SEC-22-012": {
+        "state": "UNASSESSED"
+      },
+      "SEC-22-013": {
+        "state": "UNASSESSED"
+      },
+      "SEC-22-014": {
+        "state": "UNASSESSED"
+      },
+      "SEC-22-015": {
+        "state": "UNASSESSED"
+      },
+      "SEC-23-001": {
+        "state": "UNASSESSED"
+      },
+      "SEC-23-002": {
+        "state": "UNASSESSED"
+      },
+      "SEC-23-003": {
+        "state": "UNASSESSED"
+      },
+      "SEC-23-004": {
+        "state": "UNASSESSED"
+      },
+      "SEC-23-005": {
+        "state": "UNASSESSED"
+      },
+      "SEC-23-006": {
+        "state": "UNASSESSED"
+      },
+      "SEC-23-007": {
+        "state": "UNASSESSED"
+      },
+      "SEC-23-008": {
+        "state": "UNASSESSED"
+      },
+      "SEC-23-009": {
+        "state": "UNASSESSED"
+      },
+      "SEC-23-010": {
+        "state": "UNASSESSED"
+      },
+      "SEC-23-011": {
+        "state": "UNASSESSED"
+      },
+      "SEC-23-012": {
+        "state": "PARTIAL_EVIDENCE",
+        "assessedAt": "2026-11-04",
+        "evidence": [
+          {
+            "type": "EXECUTED_SCOPED_TEST",
+            "commitSha": "680624121806434c7a41aae7396814007138823a",
+            "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/41809577504",
+            "scope": "Recruiter ZIP SSRF adversarial tests passed in dedicated CI"
+          }
+        ],
+        "nextProof": "Complete SSRF coverage for all server-side HTTP paths"
+      },
+      "SEC-23-013": {
+        "state": "UNASSESSED"
+      },
+      "SEC-23-014": {
+        "state": "UNASSESSED"
+      },
+      "SEC-23-015": {
+        "state": "PARTIAL_EVIDENCE",
+        "assessedAt": "2026-11-04",
+        "evidence": [
+          {
+            "type": "EXECUTED_SCOPED_TEST",
+            "commitSha": "24d241d84acba5861ce816a7cfb52cfdd0318915",
+            "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/41809840139",
+            "scope": "Restricted non-owner PostgreSQL 17 cross-tenant SELECT witness passes"
+          }
+        ],
+        "nextProof": "Run actual production-equivalent principal READ/WRITE RLS tests across schema"
+      },
+      "SEC-23-016": {
+        "state": "UNASSESSED"
+      },
+      "SEC-23-017": {
+        "state": "PARTIAL_EVIDENCE",
+        "assessedAt": "2026-11-04",
+        "evidence": [
+          {
+            "type": "EXECUTED_SCOPED_TEST",
+            "commitSha": "680624121806434c7a41aae7396814007138823a",
+            "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/41809577504",
+            "scope": "Signed-URL scope and recruiter storage tests passed"
+          }
+        ],
+        "nextProof": "Complete malware upload, file format, expiry and authorization suites"
+      },
+      "SEC-23-018": {
+        "state": "UNASSESSED"
+      },
+      "SEC-23-019": {
+        "state": "UNASSESSED"
+      },
+      "SEC-23-020": {
+        "state": "UNASSESSED"
+      },
+      "SEC-23-021": {
+        "state": "UNASSESSED"
+      },
+      "SEC-23-022": {
+        "state": "UNASSESSED"
+      },
+      "SEC-23-023": {
+        "state": "PARTIAL_EVIDENCE",
+        "assessedAt": "2026-11-04",
+        "evidence": [
+          {
+            "type": "EXECUTED_SCOPED_TEST",
+            "commitSha": "24d241d84acba5861ce816a7cfb52cfdd0318915",
+            "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/41809840139",
+            "scope": "Dedicated disposable PostgreSQL 17 adversarial RLS fixture proved cleanup"
+          }
+        ],
+        "nextProof": "Cover seven-account schemas with disposable PG fixtures and CI gating"
+      },
+      "SEC-23-024": {
+        "state": "UNASSESSED"
+      },
+      "SEC-23-025": {
+        "state": "UNASSESSED"
+      },
+      "SEC-24-001": {
+        "state": "UNASSESSED"
+      },
+      "SEC-24-002": {
+        "state": "UNASSESSED"
+      },
+      "SEC-24-003": {
+        "state": "UNASSESSED"
+      },
+      "SEC-24-004": {
+        "state": "UNASSESSED"
+      },
+      "SEC-24-005": {
+        "state": "UNASSESSED"
+      },
+      "SEC-24-006": {
+        "state": "UNASSESSED"
+      },
+      "SEC-24-007": {
+        "state": "UNASSESSED"
+      },
+      "SEC-24-008": {
+        "state": "UNASSESSED"
+      },
+      "SEC-24-009": {
+        "state": "UNASSESSED"
+      },
+      "SEC-24-010": {
+        "state": "UNASSESSED"
+      },
+      "SEC-24-011": {
+        "state": "UNASSESSED"
+      },
+      "SEC-24-012": {
+        "state": "UNASSESSED"
+      },
+      "SEC-24-013": {
+        "state": "UNASSESSED"
+      },
+      "SEC-24-014": {
+        "state": "UNASSESSED"
+      },
+      "SEC-25-001": {
+        "state": "UNASSESSED"
+      },
+      "SEC-25-002": {
+        "state": "UNASSESSED"
+      },
+      "SEC-25-003": {
+        "state": "UNASSESSED"
+      },
+      "SEC-25-004": {
+        "state": "UNASSESSED"
+      },
+      "SEC-25-005": {
+        "state": "UNASSESSED"
+      },
+      "SEC-25-006": {
+        "state": "UNASSESSED"
+      },
+      "SEC-25-007": {
+        "state": "UNASSESSED"
+      },
+      "SEC-25-008": {
+        "state": "UNASSESSED"
+      },
+      "SEC-25-009": {
+        "state": "UNASSESSED"
+      },
+      "SEC-25-010": {
+        "state": "UNASSESSED"
+      },
+      "SEC-25-011": {
+        "state": "UNASSESSED"
+      },
+      "SEC-25-012": {
+        "state": "UNASSESSED"
+      },
+      "SEC-25-013": {
+        "state": "UNASSESSED"
+      },
+      "SEC-25-014": {
+        "state": "UNASSESSED"
+      },
+      "SEC-25-015": {
+        "state": "UNASSESSED"
+      },
+      "SEC-25-016": {
+        "state": "UNASSESSED"
+      },
+      "SEC-26-001": {
+        "state": "UNASSESSED"
+      },
+      "SEC-26-002": {
+        "state": "UNASSESSED"
+      },
+      "SEC-26-003": {
+        "state": "PARTIAL_EVIDENCE",
+        "assessedAt": "2026-11-04",
+        "evidence": [
+          {
+            "type": "EXECUTED_SCOPED_TEST",
+            "commitSha": "680624121806434c7a41aae7396814007138823a",
+            "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/41809577504",
+            "scope": "One-minute recruiter resume signed grants and selected-scope checks tested"
+          }
+        ],
+        "nextProof": "Verify all privileged time-limited grants, replay/revocation and independent context"
+      },
+      "SEC-26-004": {
+        "state": "UNASSESSED"
+      },
+      "SEC-26-005": {
+        "state": "UNASSESSED"
+      },
+      "SEC-26-006": {
+        "state": "UNASSESSED"
+      },
+      "SEC-26-007": {
+        "state": "UNASSESSED"
+      },
+      "SEC-26-008": {
+        "state": "UNASSESSED"
+      },
+      "SEC-26-009": {
+        "state": "UNASSESSED"
+      },
+      "SEC-26-010": {
+        "state": "UNASSESSED"
+      },
+      "SEC-26-011": {
+        "state": "UNASSESSED"
+      },
+      "SEC-26-012": {
+        "state": "UNASSESSED"
+      },
+      "SEC-26-013": {
+        "state": "UNASSESSED"
+      },
+      "SEC-26-014": {
+        "state": "UNASSESSED"
+      },
+      "SEC-26-015": {
+        "state": "PARTIAL_EVIDENCE",
+        "assessedAt": "2026-11-04",
+        "evidence": [
+          {
+            "type": "EXECUTED_SCOPED_TEST",
+            "commitSha": "24d241d84acba5861ce816a7cfb52cfdd0318915",
+            "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/41809840139",
+            "scope": "RLS policy auditor checks bad permissive policies and owner bypass"
+          }
+        ],
+        "nextProof": "Continuously compare actual production policy and privileges with reviewed baseline"
+      },
+      "SEC-26-016": {
+        "state": "UNASSESSED"
+      }
+    }
   }
 }
