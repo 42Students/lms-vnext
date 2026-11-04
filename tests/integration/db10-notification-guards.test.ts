@@ -7,6 +7,7 @@ import {
   deliverInAppNotification,
   listOwnNotifications,
   markOwnNotificationRead,
+  markAllOwnNotificationsRead,
 } from "@/modules/activity/notification-service";
 import { recordActivityEvent } from "@/modules/activity/service";
 import { ACTIVITY_EVENT_TYPES } from "@/modules/activity/taxonomy";
@@ -251,6 +252,80 @@ describe("DB10 notification correctness and privacy", () => {
     expect(reads).toHaveLength(12);
     expect(reads.every((row) => row.readAt instanceof Date)).toBe(true);
     expect(await countOwnUnreadNotifications(learner)).toBe(0);
+  });
+
+  it("denies foreign-college notifications for one human with two memberships", async () => {
+    const memberB = crypto.randomUUID();
+    await pool.query(
+      "insert into college_memberships (id,user_id,college_id,status) values ($1,$2,$3,'ACTIVE')",
+      [memberB, learner.user.id, SEED_IDS.collegeB],
+    );
+    await pool.query(
+      "insert into membership_roles (membership_id,role) values ($1,'LEARNER')",
+      [memberB],
+    );
+    try {
+      const switched: RequestContext = {
+        ...learner,
+        membership: {
+          ...learner.membership!,
+          id: memberB,
+          collegeId: SEED_IDS.collegeB,
+        },
+      };
+      const addReceipt = async (organizationId: string | null, collegeId: string | null) => {
+        const { rows: events } = await pool.query<{ id: string }>(
+          `insert into activity_events (
+            organization_id,college_id,module,event_type,importance,
+            subject_type,subject_id,summary
+          ) values ($1,$2,'PLATFORM','platform.college.created','LOW',$3,$4,'Cross-workspace fixture')
+          returning id`,
+          [organizationId, collegeId, tag, crypto.randomUUID()],
+        );
+        const { rows: receipts } = await pool.query<{ id: string }>(
+          "insert into in_app_notifications (user_id,event_id,title,body) values ($1,$2,'Tenant test','Private notice') returning id",
+          [learner.user.id, events[0]!.id],
+        );
+        return receipts[0]!.id;
+      };
+      const ownA = await addReceipt(SEED_IDS.organization, SEED_IDS.collegeA);
+      const foreignB = await addReceipt(SEED_IDS.organization, SEED_IDS.collegeB);
+      const orgNotice = await addReceipt(SEED_IDS.organization, null);
+      const platformNotice = await addReceipt(null, null);
+
+      const visibleA = (await listOwnNotifications(learner, { limit: 10 }))
+        .map(row => row.notification.id);
+      const visibleB = (await listOwnNotifications(switched, { limit: 10 }))
+        .map(row => row.notification.id);
+      expect(new Set(visibleA)).toEqual(new Set([ownA, orgNotice]));
+      expect(new Set(visibleB)).toEqual(new Set([foreignB, orgNotice]));
+      expect(await countOwnUnreadNotifications(learner)).toBe(2);
+      expect(await countOwnUnreadNotifications(switched)).toBe(2);
+      expect(await listOwnNotifications(learner, {
+        collegeId: SEED_IDS.collegeB, limit: 10,
+      })).toHaveLength(0);
+
+      await expect(markOwnNotificationRead(learner, foreignB))
+        .rejects.toThrow("NOTIFICATION_NOT_FOUND");
+      await expect(markOwnNotificationRead(switched, ownA))
+        .rejects.toThrow("NOTIFICATION_NOT_FOUND");
+
+      expect(await markAllOwnNotificationsRead(learner)).toBe(2);
+      const { rows: afterA } = await pool.query<{ id: string; read_at: Date | null }>(
+        "select id,read_at from in_app_notifications where user_id=$1 and id=any($2::uuid[])",
+        [learner.user.id, [ownA, foreignB, orgNotice, platformNotice]],
+      );
+      const readById = new Map(afterA.map(row => [row.id, row.read_at]));
+      expect(readById.get(ownA)).not.toBeNull();
+      expect(readById.get(orgNotice)).not.toBeNull();
+      expect(readById.get(foreignB)).toBeNull();
+      expect(readById.get(platformNotice)).toBeNull();
+      expect(await markAllOwnNotificationsRead(switched)).toBe(1);
+      expect(await countOwnUnreadNotifications(switched)).toBe(0);
+    } finally {
+      await pool.query("delete from membership_roles where membership_id=$1", [memberB]);
+      await pool.query("delete from college_memberships where id=$1", [memberB]);
+    }
   });
 
 });
