@@ -1,3 +1,4 @@
+import { spreadsheetCsvCell } from "@/security/csv-cell";
 import { adminUsersQuerySchema } from "./admin-user-directory-model";
 export const SUPER_ADMIN_PEOPLE_CSV_CAP = 500;
 export const adminUsersExportQuerySchema = adminUsersQuerySchema.omit({ page: true });
@@ -5,13 +6,7 @@ export type SuperAdminPeopleCsvRow = {
  membershipId: string; displayName: string | null; collegeName: string;
  platformStatus: string; membershipStatus: string; roles: readonly string[]; updatedAt: Date;
 };
-const cell = (raw: string) => {
- // Preserve the original cell while neutralizing hidden formula prefixes
- // behind Unicode formatting, control, and combining characters.
- const firstVisible = raw.replace(/^[\s\p{Cc}\p{Cf}\p{Mn}\p{Me}]*/u, "");
- const safe = /^[=+@-]/u.test(firstVisible) ? "'" + raw : raw;
- return '"' + safe.replaceAll('"', '""') + '"';
-};
+const cell = spreadsheetCsvCell;
 /** Never export phone/email/identity UID, even in a selected college. */
 export function buildSuperAdminPeopleCsv(rows: readonly SuperAdminPeopleCsvRow[], truncated: boolean) {
  const header = ["Membership ID","Name","College","Roles","Platform Status","Membership Status","Updated (IST)"];
