@@ -83,6 +83,39 @@ describe("course thumbnail URL trust boundary", () => {
     expect(learnerCourseCardMedia(value).source).toBe("FALLBACK");
   });
 
+  it.each([
+    "https://cdn.example.edu/cover.png?X-Amz-Signature=unsafe",
+    "https://cdn.example.edu/cover.png?X-Amz-Credential=unsafe",
+    "https://cdn.example.edu/cover.png?X-Goog-Signature=unsafe",
+    "https://cdn.example.edu/cover.png?AWSAccessKeyId=unsafe",
+    "https://cdn.example.edu/cover.png?Signature=unsafe",
+    "https://cdn.example.edu/cover.png?access_token=unsafe",
+    "https://cdn.example.edu/cover.png?api_key=unsafe",
+    "https://cdn.example.edu/cover.png?token=unsafe",
+    "https://cdn.example.edu/cover.png?Expires=120",
+    "https://cdn.example.edu/cover.png?%58-Amz-Signature=unsafe",
+  ])("never persist presigned image download credentials: %s", value => {
+    expect(safePublicCourseThumbnailUrl(value)).toBeNull();
+    expect(courseThumbnailUrlSchema.safeParse(value).success).toBe(false);
+    expect(updateCourseDisplayContentSchema.safeParse(displayInput(value)).success).toBe(false);
+    expect(learnerCourseCardMedia(value).source).toBe("FALLBACK");
+  });
+
+  it("keeps harmless cache-busting query parameters", () => {
+    const image = "https://cdn.example.edu/cover.png?v=2&width=800";
+    expect(safePublicCourseThumbnailUrl(image)).toBe(image);
+    expect(courseThumbnailUrlSchema.safeParse(image).success).toBe(true);
+    expect(learnerCourseCardMedia(image).source).toBe("AUTHORED");
+  });
+
+  it("rejects unknown course display mutation keys rather than silently ignoring them", () => {
+    expect(updateCourseDisplayContentSchema.safeParse({
+      ...displayInput(publicImage),
+      visibility: "PUBLIC",
+      collegeId: "foreign",
+    }).success).toBe(false);
+  });
+
   it("does not permit oversized URLs or embedded control characters", () => {
     for (const value of [
       "https://cdn.example.edu/" + "x".repeat(2048),
