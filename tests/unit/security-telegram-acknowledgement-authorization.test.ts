@@ -30,10 +30,10 @@ afterEach(() => {
 });
 describe("Telegram alert operator authorization", () => {
   it.each([
-    ["unlisted user", "1234567", 9999999],
-    ["missing allowlist", undefined, 1234567],
-    ["missing callback identity", "1234567", undefined],
-  ])("%s denies before DB and provider side effects", async (_label, allow, sender) => {
+    { label: "unlisted user", allow: "1234567", sender: 9999999 },
+    { label: "missing allowlist", allow: undefined, sender: 1234567 },
+    { label: "missing callback identity", allow: "1234567", sender: undefined },
+  ])("$label denies before DB and provider side effects", async ({ allow, sender }) => {
     setup(allow);
     await expect(handleTelegramCallback(callback(sender))).resolves.toBe(false);
     expect(getDb).not.toHaveBeenCalled();
