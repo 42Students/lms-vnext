@@ -24,7 +24,11 @@ export function parsePeopleCsvParams(params: URLSearchParams) {
   return peopleCsvQuery.parse(entries);
 }
 export function neutralizePeopleCsv(value: string) {
-  const safe = /^\s*[=+@\-\t\r]/.test(value) ? "'" + value : value;
+  // Unicode format and combining characters can hide a formula prefix from
+  // a simple whitespace check. Neutralize the entire original cell when the
+  // first visible code point could be evaluated by spreadsheet software.
+  const firstVisible = value.replace(/^[\s\p{Cc}\p{Cf}\p{Mn}\p{Me}]*/u, "");
+  const safe = /^[=+@-]/u.test(firstVisible) ? "'" + value : value;
   return '"' + safe.replaceAll('"', '""') + '"';
 }
 export function renderPeopleCsv(rows: readonly PersonMembershipView[], truncated: boolean) {
