@@ -57,7 +57,7 @@ export async function uploadCollegeLogo(ctx:RequestContext,rawId:unknown,file:Fi
   "x-amz-meta-asset-type":"college-logo","x-amz-meta-image-width":String(width)};
  try{
   const url=presignUrl(config,{method:"PUT",key,expiresSeconds:300,headers});
-  const upload=await fetch(url,{method:"PUT",headers,body:bytes,cache:"no-store"});
+  const upload=await fetch(url,{method:"PUT",headers,body:bytes,cache:"no-store",redirect:"error"});
   if(!upload.ok)throw new CollegeLogoError("LOGO_UPLOAD_FAILED");
   const proof=await headObject(config,key);
   if(!proof||proof.sizeBytes!==bytes.length||proof.contentType!=="image/png"||
