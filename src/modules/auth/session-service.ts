@@ -37,6 +37,23 @@ function clip(value: string | null | undefined, max: number) {
   return value ? value.slice(0, max) : null;
 }
 
+/** Sliding inactivity caps; the five-day cookie is only an absolute limit.
+ * Super Admin identities get the shorter policy across every workspace, not
+ * just after choosing their administrative role.
+ */
+export const SESSION_IDLE_TIMEOUT_SECONDS = 8 * 60 * 60;
+export const SUPER_ADMIN_IDLE_TIMEOUT_SECONDS = 30 * 60;
+
+/** Reuse one DB-clock, persisted-role policy in authentication and listings.
+ * Do not rely on cookie time, client timestamps or request-provided roles.
+ */
+const idleSeconds = sql`CASE WHEN EXISTS (
+  SELECT 1 FROM system_roles sr
+   WHERE sr.user_id = s.user_id AND sr.role = 'SUPER_ADMIN'
+) THEN ${SUPER_ADMIN_IDLE_TIMEOUT_SECONDS}::integer
+  ELSE ${SESSION_IDLE_TIMEOUT_SECONDS}::integer END`;
+
+
 export async function createSession(
   userId: string,
   meta: SessionMeta = {},
@@ -95,6 +112,9 @@ export async function resolveSession(
       AND s.credential_digest = ${digest}
       AND s.revoked_at IS NULL
       AND s.expires_at > clock_timestamp()
+      AND s.last_seen_at <= clock_timestamp()
+      AND s.last_seen_at > clock_timestamp() -
+        make_interval(secs => (${idleSeconds}))
     RETURNING s.id AS session_id, s.user_id,
               u.identity_uid, u.platform_status
   `);
@@ -114,7 +134,10 @@ export async function resolveSession(
   // behavior even if the row changes after the UPDATE above.
   const classified = await getDb().execute(sql`
     SELECT (s.revoked_at IS NOT NULL) AS revoked,
-           (s.expires_at <= clock_timestamp()) AS expired,
+           (s.expires_at <= clock_timestamp()
+             OR s.last_seen_at > clock_timestamp()
+             OR s.last_seen_at <= clock_timestamp() -
+               make_interval(secs => (${idleSeconds}))) AS expired,
            u.platform_status
       FROM identity_device_sessions s
       JOIN users u ON u.id = s.user_id
@@ -169,9 +192,13 @@ export async function listActiveSessions(
   const safeSize = Number.isSafeInteger(pageSize) ? Math.min(100,Math.max(1,pageSize)) : 25;
   const result = await getDb().execute(sql`
     SELECT id, device_name, user_agent, created_at, last_seen_at, expires_at
-    FROM identity_device_sessions
-    WHERE user_id = ${userId} AND revoked_at IS NULL AND expires_at > now()
-    ORDER BY last_seen_at DESC, id DESC
+    FROM identity_device_sessions AS s
+    WHERE s.user_id = ${userId} AND s.revoked_at IS NULL
+      AND s.expires_at > clock_timestamp()
+      AND s.last_seen_at <= clock_timestamp()
+      AND s.last_seen_at > clock_timestamp() -
+        make_interval(secs => (${idleSeconds}))
+    ORDER BY s.last_seen_at DESC, s.id DESC
     LIMIT ${safeSize} OFFSET ${(safePage-1)*safeSize}
   `);
   return rowsOf(result);
