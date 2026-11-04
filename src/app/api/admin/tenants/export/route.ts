@@ -1,4 +1,5 @@
 import { getCurrentRequestContext } from "@/auth/request-context";
+import { requireRecentDeviceAuthentication } from "@/auth/recent-device-auth";
 import { apiErrorResponse } from "@/lib/api-error";
 import { readTenantDirectoryExportParams } from "@/modules/colleges/admin-tenant-export-model";
 import { exportSuperAdminTenantDirectory } from "@/modules/colleges/admin-tenant-lifecycle-service";
@@ -6,6 +7,7 @@ export const runtime = "nodejs";
 export async function GET(request: Request) {
   try {
     const context = await getCurrentRequestContext();
+    await requireRecentDeviceAuthentication();
     const query = readTenantDirectoryExportParams(new URL(request.url).searchParams);
     const result = await exportSuperAdminTenantDirectory(context, query);
     return new Response(result.csv, { headers: {
