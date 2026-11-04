@@ -86,6 +86,10 @@ SELECT
   (SELECT count(*)::integer FROM pg_catalog.pg_policy p
     WHERE p.polrelid=c.oid AND NOT p.polpermissive
       AND p.polcmd IN ('*','r')
+      -- A RESTRICTIVE USING(true) is a no-op and cannot rescue an
+      -- otherwise unscoped permissive read policy.
+      AND p.polqual IS NOT NULL
+      AND pg_get_expr(p.polqual,p.polrelid) <> 'true'
       AND (0::oid=ANY(p.polroles) OR EXISTS (
         SELECT 1 FROM unnest(p.polroles) AS role_id(id)
         WHERE pg_has_role(current_user,role_id.id,'USAGE')
