@@ -1,4 +1,4 @@
-import { beforeEach, describe, expect, it, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { getDb } from "@/db/client";
 import { assertPersistedPlatformPermission } from "@/modules/permissions/persisted-actor";
 import { independentAuditFindingsReady } from "@/modules/bug-tracker/independent-audit-findings-service";
@@ -41,6 +41,8 @@ describe("independent audit importer live authority before SQL effects", () => {
 
   beforeEach(() => {
     vi.resetAllMocks();
+    transaction.mockImplementation(async (callback: (input: typeof tx) => Promise<unknown>) =>
+      callback(tx));
     process.env["DB10_AUDIT_FINDINGS_LEDGER_READY"] = "LEDGER_VERIFIED";
     vi.mocked(independentAuditFindingsReady).mockReturnValue(true);
     vi.mocked(independentAuditGithubConfigured).mockReturnValue(true);
@@ -50,6 +52,11 @@ describe("independent audit importer live authority before SQL effects", () => {
     vi.mocked(getDb).mockReturnValue({ transaction } as never);
     tx.execute.mockResolvedValue({ rows: [{ acquired: true }] });
     vi.mocked(assertPersistedPlatformPermission).mockResolvedValue(actor);
+  });
+
+  afterEach(() => {
+    if (originalLedgerReady === undefined) delete process.env["DB10_AUDIT_FINDINGS_LEDGER_READY"];
+    else process.env["DB10_AUDIT_FINDINGS_LEDGER_READY"] = originalLedgerReady;
   });
 
   // This module is exercised without actual PostgreSQL; the explicit
