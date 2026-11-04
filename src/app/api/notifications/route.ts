@@ -3,6 +3,7 @@ import { getCurrentRequestContext } from "@/auth/request-context";
 import { isSameOriginRequest } from "@/auth/origin";
 import { isSuperAdmin } from "@/modules/identity/context";
 import { apiErrorResponse } from "@/lib/api-error";
+import { hasAmbiguousQuerySelectors } from "@/lib/security-query-selectors";
 import { countOwnUnreadNotifications,listOwnNotifications } from "@/modules/activity/notification-service";
 
 export const runtime = "nodejs";
@@ -16,6 +17,12 @@ export async function GET(
     const params = new URL(
       request.url,
     ).searchParams;
+    if (hasAmbiguousQuerySelectors(params, [
+      "view", "unreadOnly", "query", "q", "classId", "courseId", "limit",
+    ], [["query", "q"]], ["view", "unreadOnly", "classId", "courseId", "limit"]))
+      return NextResponse.json({ error: "INVALID_NOTIFICATION_QUERY" }, {
+        status: 400, headers: { "Cache-Control": "private, no-store" },
+      });
     const view=params.get("view");
     if(view!==null&&!["search","stats"].includes(view))
       return NextResponse.json({error:"INVALID_NOTIFICATION_VIEW"},{
@@ -27,7 +34,12 @@ export async function GET(
         unread,scope:"OWN_NOTIFICATIONS_ONLY",
       }},{headers:{"Cache-Control":"private, no-store"}});
     }
-    const unreadOnly=params.get("unreadOnly")==="true";
+    const unreadOnlyValue=params.get("unreadOnly");
+    if (unreadOnlyValue!==null && unreadOnlyValue!=="true" && unreadOnlyValue!=="false")
+      return NextResponse.json({ error: "INVALID_NOTIFICATION_QUERY" }, {
+        status: 400, headers: { "Cache-Control": "private, no-store" },
+      });
+    const unreadOnly=unreadOnlyValue==="true";
     const query=(params.get("query")??params.get("q")??"").trim();
     const classId=params.get("classId");
     const courseId=params.get("courseId");
@@ -81,7 +93,11 @@ export async function POST(request:Request){
   return NextResponse.json({error:"INVALID_ORIGIN"},{status:403});
  try{
   const context=await getCurrentRequestContext();
-  const view=new URL(request.url).searchParams.get("view");
+  const params=new URL(request.url).searchParams;
+  if (hasAmbiguousQuerySelectors(params, ["view"], [], ["view"]))
+   return NextResponse.json({error:"INVALID_NOTIFICATION_QUERY"},
+    {status:400,headers:{"Cache-Control":"private, no-store"}});
+  const view=params.get("view");
   if(view!=="refresh")return NextResponse.json({error:"METHOD_NOT_ALLOWED"},{status:405});
   if(!isSuperAdmin(context))
    return NextResponse.json({error:"FORBIDDEN"},{status:403});
