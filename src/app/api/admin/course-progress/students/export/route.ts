@@ -3,6 +3,7 @@ import {z} from "zod";
 import {getDb} from "@/db/client";
 import {courseOfferings,courseSectionDeliveries} from "@/db/schema";
 import {getCurrentRequestContext} from "@/auth/request-context";
+import {requireRecentDeviceAuthentication} from "@/auth/recent-device-auth";
 import {requirePermission} from "@/modules/permissions/policy";
 import {parseSuperAdminStudentProgressParams} from "@/modules/courses/super-admin-course-progress-query";
 import {apiErrorResponse} from "@/lib/api-error";
@@ -14,6 +15,7 @@ export async function GET(request:Request){
  try{
   const context=await getCurrentRequestContext();
   requirePermission(context,"admin-scope.select");
+  await requireRecentDeviceAuthentication();
   const search=new URL(request.url).searchParams;
   const keys=[...search.keys()];
   // Offering identifies the course; an optional delivery UUID identifies a
