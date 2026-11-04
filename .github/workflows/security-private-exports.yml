@@ -112,4 +112,6 @@ jobs:
       - name: Existing admin export route positive and negative contracts
         run: npx vitest run tests/unit/chat4-superadmin-tenant-export-handler.test.ts tests/unit/chat4-superadmin-tenant-route-guards.test.ts tests/unit/chat4-superadmin-tenants-readiness-route-gates.test.ts tests/unit/chat7-superadmin-student-progress-export-boundary.test.ts tests/unit/chat13-super-admin-hiring-export-route.test.ts
       - name: TypeScript contract verification
+        env:
+          NODE_OPTIONS: --max-old-space-size=6144
         run: npm run typecheck
