@@ -5,16 +5,16 @@ import {privateAuthJson} from "./private-response";
 import { z } from "zod";
 import { isSameOriginRequest } from "@/auth/origin";
 import { allowRequest, clientIp } from "@/auth/ip-rate-limit";
-import { createHash } from "node:crypto";
+import { authAuditTag, safeAuthAuditFields } from "./auth-audit-privacy";
 import { logError, writeStructuredLog } from "@/observability/logger";
 import { AuthConfigError } from "./config";
 import { LoginError, loginErrorMessage } from "./login-service";
 import { resolveRequestTenant } from "./request-tenant";
 import {readBoundedAuthJson,AuthRequestBodyTooLarge} from "./bounded-json";
 
-/** Short one-way tag so repeated activity can be correlated without storing the address. */
+/** Keyed, purpose-separated privacy tag; fixed 24-hex width fits the DB cap. */
 export function ipTag(ip: string) {
-  return createHash("sha256").update(ip).digest("hex").slice(0, 12);
+  return authAuditTag("ip", ip);
 }
 
 type AuditContext = { route: string; ip: string };
@@ -28,7 +28,7 @@ export function auditLogin(
   // The caller's event fields may include untrusted labels. Never let them
   // overwrite the security-owned route, component or one-way IP tag.
   writeStructuredLog("INFO", event, {
-    ...fields,
+    ...safeAuthAuditFields(fields),
     component: "auth-audit",
     route: context.route,
     ipTag: ipTag(context.ip),
