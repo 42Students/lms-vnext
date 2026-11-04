@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { safePublicCourseThumbnailUrl } from "./course-thumbnail-url-policy";
 import {
   COURSE_OFFERING_TYPES,
   COURSE_TEACHING_ROLES,
@@ -35,16 +36,9 @@ const courseOfficialCodeSchema=z.string().trim().max(40,"Maximum 40 characters")
 export const courseSlugSchema=z.string().trim()
  .regex(/^[a-z0-9][a-z0-9-]{0,63}$/,"Invalid slug format");
 const courseCardColorSchema=z.string().regex(/^#[0-9A-Fa-f]{6}$/,"Use a colour like #0a7c88").nullable();
-export const courseThumbnailUrlSchema=z.string().trim().max(2048).refine(value=>{
-  if(!value)return true;
-  try{
-    const url=new URL(value),host=url.hostname.toLowerCase();
-    return url.protocol==="https:"&&!url.username&&!url.password&&!url.hash&&
-      host!=="localhost"&&!host.endsWith(".localhost")&&
-      host!=="0.0.0.0"&&host!=="[::1]"&&host!=="[::]"&&
-      !/^127\.|^10\.|^192\.168\.|^169\.254\.|^172\.(?:1[6-9]|2\d|3[01])\./.test(host);
-  }catch{return false;}
-},"Enter a valid HTTPS course cover URL").nullable();
+export const courseThumbnailUrlSchema=z.string().trim().max(2048).refine(value =>
+  !value || Boolean(safePublicCourseThumbnailUrl(value)),
+"Enter a public HTTPS course cover URL").nullable();
 
 
 /** Legacy CourseDTO crosswalk (IDs remain tenant-scoped UUIDs): course_name
