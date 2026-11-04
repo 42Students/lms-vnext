@@ -30,15 +30,17 @@ function mockPublicJobTransaction({
 }: { rows?: JobRow[]; updated?: boolean } = {}) {
   let readPredicate: unknown = null;
   let updatePredicate: unknown = null;
-  const joins = vi.fn();
+  const limit = vi.fn(async () => rows);
+  const innerJoin = vi.fn();
   const selectChain = {
-    innerJoin: vi.fn(() => selectChain),
+    innerJoin,
     where: vi.fn((predicate: unknown) => {
       readPredicate = predicate;
-      return selectChain;
+      return { limit };
     }),
-    limit: vi.fn(async () => rows),
+    limit,
   };
+  innerJoin.mockReturnValue(selectChain);
   const read = vi.fn(() => ({ from: vi.fn(() => selectChain) }));
   const writeChain = {
     returning: vi.fn(async () => updated ? [{ id: activeJob.linkId }] : []),
@@ -54,7 +56,7 @@ function mockPublicJobTransaction({
       update,
     }),
   } as never);
-  return { joins, selectChain, read, update, readPredicate: () => readPredicate, updatePredicate: () => updatePredicate };
+  return { selectChain, read, update, readPredicate: () => readPredicate, updatePredicate: () => updatePredicate };
 }
 
 beforeEach(() => vi.resetAllMocks());
@@ -79,7 +81,7 @@ describe("SEC-05 public external placement job bearer-link isolation", () => {
     // with active employer relationship and a non-revoked link are exposed.
     expect(query.params).toContain("PUBLISHED");
     expect(query.params).toContain(slug);
-    expect(tx.selectChain.innerJoin).toHaveBeenCalledTimes(4);
+    expect(tx.selectChain.innerJoin).toHaveBeenCalledTimes(5);
   });
 
   it("returns no details when the link, job, employer or tenant lookup is denied", async () => {
