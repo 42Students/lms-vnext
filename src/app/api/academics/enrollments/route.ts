@@ -12,8 +12,12 @@ export const runtime = "nodejs";
 
 export async function GET(request: Request) {
   try {
-    const context = await getCurrentRequestContext();
     const url = new URL(request.url);
+    if (["programId", "cohortId"].some(key => url.searchParams.getAll(key).length > 1))
+      return NextResponse.json({ error: "INVALID_FILTERS" }, {
+        status: 400, headers: { "Cache-Control": "private, no-store" },
+      });
+    const context = await getCurrentRequestContext();
     const enrollments =
       await listLearnerProgramEnrollments(
         context,
