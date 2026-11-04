@@ -1,11 +1,11 @@
 import {NextResponse} from "next/server";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {isSameOriginRequest} from "@/auth/origin";
+import {requireRecentDeviceAuthentication} from "@/auth/recent-device-auth";
+import {readBoundedUtf8Body} from "@/lib/bounded-utf8-body";
 import {apiErrorResponse} from "@/lib/api-error";
 import {isSuperAdmin} from "@/modules/identity/context";
 import {AuthorizationError,requirePermission} from "@/modules/permissions/policy";
-import {assertPersistedPlatformPermission} from "@/modules/permissions/persisted-actor";
-import {getDb} from "@/db/client";
 import {readIndependentFindingSyncState} from "@/modules/bug-tracker/independent-audit-findings-service";
 import {
  independentAuditImporterReady,syncIndependentAuditInbox,
@@ -39,20 +39,24 @@ export async function GET(){
 }
 
 /** Manual Sync now must satisfy origin, active unscoped Super Admin,
- * platform permission, persisted principal and the verified ledger gate. */
+ * a fresh device session and a persisted grant locked for the real write. */
 export async function POST(request:Request){
  if(!isSameOriginRequest(request))
   return NextResponse.json({error:"INVALID_ORIGIN"},{status:403,headers:noStore});
+ // No caller-supplied tenant/repository/options may affect the sync.
+ if(new URL(request.url).search)
+  return NextResponse.json({error:"INVALID_REQUEST"},{status:400,headers:noStore});
+ const body=await readBoundedUtf8Body(request,0);
+ if(body.kind!=="OK"||body.body!=="")
+  return NextResponse.json({error:"INVALID_REQUEST"},{status:400,headers:noStore});
  try{
   const context=await authorizedContext();
+  await requireRecentDeviceAuthentication(context.user.id);
   if(!independentAuditImporterReady())
    return NextResponse.json({error:"IMPORTER_NOT_READY",message:
     "GitHub credentials and the durable audit file ledger must be verified before importing."},
     {status:503,headers:noStore});
-  await getDb().transaction(async tx=>{
-   await assertPersistedPlatformPermission(tx,context,"admin-scope.select");
-  });
-  const result=await syncIndependentAuditInbox();
+  const result=await syncIndependentAuditInbox({kind:"SUPER_ADMIN",actor:context});
   return NextResponse.json({result},{status:result.busy?409:200,headers:noStore});
  }catch(error){return apiErrorResponse(error);}
 }
