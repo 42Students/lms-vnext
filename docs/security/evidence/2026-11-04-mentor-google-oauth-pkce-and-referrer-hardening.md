@@ -28,6 +28,7 @@ This batch implements the following boundaries:
 - [95fe7f4d](https://github.com/42Students/lms-vnext/commit/95fe7f4d9cb07d2cf2c502bd79443c9fcbe10709) — callback verifier validation and exchange.
 - [563f2b96](https://github.com/42Students/lms-vnext/commit/563f2b96b0944f05b50b4747f484611ac9fa346a) — downgrade, forgery and positive-path OAuth route tests.
 - [346461f4](https://github.com/42Students/lms-vnext/commit/346461f4a8521c36d23259bf55d7a420f2945077) — RFC 7636 known-vector challenge proof and provider POST verifier assertion.
+- [3bf71a96](https://github.com/42Students/lms-vnext/commit/3bf71a96ca40f4e423119cecdd76e78c52b048ce) — independently recompute the cookie verifier's S256 challenge in the route regression.
 
 Focused tests are checked into `tests/unit/security-mentor-google-oauth-redirect.test.ts` and `tests/unit/mentor-google-calendar-provider.test.ts`; CI workflow `.github/workflows/security-mentor-google-oauth.yml` also runs `npm run typecheck`.
 
