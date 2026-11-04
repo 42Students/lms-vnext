@@ -30,9 +30,11 @@ export function safePublicCourseThumbnailUrl(raw: string): string | null {
     // URL canonicalizes alternative IPv4 notation. Requiring a DNS name
     // (not an IP literal) also rejects octal/hex/dword IPv4 and all IPv6.
     if (!/[a-z]/.test(suffix) || PRIVATE_DNS_SUFFIXES.has(suffix)) return null;
-    for (const key of url.searchParams.keys()) {
-      if (PRIVATE_IMAGE_QUERY_KEY.test(key)) return null;
-    }
+    let hasPrivateQuery = false;
+    url.searchParams.forEach((_value, key) => {
+      if (PRIVATE_IMAGE_QUERY_KEY.test(key)) hasPrivateQuery = true;
+    });
+    if (hasPrivateQuery) return null;
     return url.href;
   } catch {
     return null;
