@@ -1,6 +1,7 @@
 import { gridExportFilename } from "@/modules/placements/grid-export-filename";
 import {TPO_AUDIT_KIND_LABELS,formatTpoAuditEventType} from "@/modules/placements/tpo-audit-model";
 import {getCurrentRequestContext} from "@/auth/request-context";
+import {requireRecentDeviceAuthentication} from "@/auth/recent-device-auth";
 import {apiErrorResponse} from "@/lib/api-error";
 import {tpoAuditCsv} from "@/modules/placements/tpo-audit-csv-model";
 import {tpoAuditXlsx} from "@/modules/placements/tpo-audit-xlsx-model";
@@ -31,6 +32,7 @@ export async function GET(request:Request){
   for(const key of ["page","pageSize","format","columns","id"])delete raw[key];
   const filters=tpoAuditQuerySchema.parse({...raw,page:1,pageSize:100});
   const context=await getCurrentRequestContext();
+  await requireRecentDeviceAuthentication();
   const items:TpoAuditRow[]=[];
   let total=0;
   // Legacy bounded export supports up to 5,000 events for a chosen range.
