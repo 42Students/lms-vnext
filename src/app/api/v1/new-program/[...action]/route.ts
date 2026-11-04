@@ -3,6 +3,7 @@ import { z } from "zod";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { isSameOriginRequest } from "@/auth/origin";
 import { apiErrorResponse } from "@/lib/api-error";
+import { readBoundedJsonBody } from "@/lib/bounded-json-body";
 import { GET as canonicalGet, POST as canonicalPost } from "@/app/api/academics/programs/route";
 import {
   GET as canonicalGetDetail, PATCH as canonicalPatch, DELETE as canonicalDelete,
@@ -80,7 +81,12 @@ export async function PUT(request: Request, { params }: Context) {
   if (operation !== "update" || action.length !== 2 || !uuid.safeParse(id).success)
     return NextResponse.json({error:"NOT_FOUND"},{status:404});
   try {
-    const body = z.record(z.string(),z.unknown()).parse(await request.json());
+    const parsedBody = await readBoundedJsonBody(request, 16_384);
+    if (parsedBody.kind !== "OK") return NextResponse.json({ error: "INVALID_REQUEST" }, {
+      status: parsedBody.kind === "TOO_LARGE" ? 413 : 400,
+      headers: { "Cache-Control": "no-store" },
+    });
+    const body = z.record(z.string(),z.unknown()).parse(parsedBody.value);
     const currentResponse = await canonicalGetDetail(request,{
       params:Promise.resolve({programId:id!}),
     });
