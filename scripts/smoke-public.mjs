@@ -116,6 +116,29 @@ if (
   );
 }
 
+// An unknown API route exercises Next's default response path. Even 404s
+// must not become cacheable across colleges or authenticated sessions.
+// This tests the deployed response, not just a source-level configuration.
+const cacheProbe = await fetch(
+  new URL("/api/__private_response_cache_probe__", baseUrl),
+  { headers: { accept: "application/json" }, redirect: "manual" },
+);
+if (cacheProbe.status !== 404) {
+  throw new Error(
+    `API cache probe expected 404, received ${cacheProbe.status}`,
+  );
+}
+const apiCacheDirectives = (
+  cacheProbe.headers.get("cache-control") ?? ""
+).toLowerCase().split(",").map((directive) => directive.trim());
+for (const required of ["private", "no-store"]) {
+  if (!apiCacheDirectives.includes(required)) {
+    throw new Error(
+      `API cache probe missing ${required} Cache-Control directive`,
+    );
+  }
+}
+
 process.stdout.write(
   JSON.stringify({
     severity: "INFO",
@@ -125,6 +148,7 @@ process.stdout.write(
       "health",
       "readiness",
       "security_headers",
+      "private_api_cache_policy",
     ],
   }) + "\n",
 );
