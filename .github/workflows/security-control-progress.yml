@@ -1,0 +1,52 @@
+# Single source of security execution status: docs/tracker.json.
+# Run on every relevant change; never auto-promote statuses from a green job.
+name: Security - canonical 493-control coverage and evidence gate
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - "docs/tracker.json"
+      - "docs/security/control-catalog.md"
+      - "scripts/tracker.mjs"
+      - "scripts/security/control-progress.mjs"
+      - "tests/security-control-progress.test.mjs"
+      - ".github/workflows/security-control-progress.yml"
+  push:
+    branches: [main]
+    paths:
+      - "docs/tracker.json"
+      - "docs/security/control-catalog.md"
+      - "scripts/tracker.mjs"
+      - "scripts/security/control-progress.mjs"
+      - "tests/security-control-progress.test.mjs"
+      - ".github/workflows/security-control-progress.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: security-canonical-progress-${{ github.ref }}-${{ github.sha }}
+  cancel-in-progress: false
+
+jobs:
+  security-progress-integrity:
+    name: Exact-source 493-control completeness, status and evidence
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Verify exact tracked commit
+        run: test "$(git rev-parse HEAD)" = "$GITHUB_SHA"
+      - name: Run adversarial canonical tracker invariants
+        run: node --test tests/security-control-progress.test.mjs
+      - name: Check full tracker including all security states
+        run: node scripts/tracker.mjs --check
+      - name: Print up-to-date security summary from the sole tracker
+        run: |
+          node scripts/security/control-progress.mjs --markdown >> "$GITHUB_STEP_SUMMARY"
+          node scripts/security/control-progress.mjs --check
