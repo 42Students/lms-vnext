@@ -76,6 +76,14 @@ export async function getCurrentRequestContext() {
     adminScope,
   });
 
+  // A live college membership without exactly one selected, still-granted
+  // role is not an authenticated workspace. Reject at the common request
+  // boundary rather than relying on every older handler to notice roles=[].
+  // The session remains valid so /api/auth/memberships can recover the choice.
+  if(context.membership && context.membership.roles.length!==1){
+    throw new SessionAuthenticationError("SESSION_INVALID");
+  }
+
   // A college host serves only that college, whatever cookies are presented.
   const tenant = await resolveRequestTenant(
     (await headers()).get("host"),
