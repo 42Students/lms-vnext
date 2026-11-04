@@ -81,6 +81,9 @@ export async function readPublicExternalJob(rawSlug:string){
     isNull(placementPublicExternalJobLinks.revokedAt),
     eq(colleges.status,"ACTIVE"),eq(organizations.status,"ACTIVE"),
     eq(placementJobs.status,"PUBLISHED"),
+    // Revoking/rotating a share may leave an older row with revoked_at NULL.
+    // Only the slug currently bound to the published job can be public.
+    eq(placementJobs.publicExternalSlug,slug.data),
     sql`${placementJobs.applicationMode} in ('HYBRID','EXTERNAL_ONLY')`,
     eq(placementCompanies.status,"ACTIVE"))).limit(1);
  if(!row)return null;
