@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { isSameOriginRequest } from "@/auth/origin";
 import { apiErrorResponse } from "@/lib/api-error";
+import { readBoundedJsonBody } from "@/lib/bounded-json-body";
 import { CollegePeriodLifecycleError } from "@/modules/academics/college-period-lifecycle-service";
 import {
   transitionAcademicPeriod,
@@ -28,7 +29,12 @@ export async function PATCH(
   try {
     const context = await getCurrentRequestContext();
     const { periodId } = await params;
-    const body = await request.json();
+    const parsedBody = await readBoundedJsonBody(request, 16_384);
+    if (parsedBody.kind !== "OK") return NextResponse.json({ error: "INVALID_REQUEST" }, {
+      status: parsedBody.kind === "TOO_LARGE" ? 413 : 400,
+      headers: { "Cache-Control": "private, no-store" },
+    });
+    const body = parsedBody.value;
 
     const period =
       body &&
