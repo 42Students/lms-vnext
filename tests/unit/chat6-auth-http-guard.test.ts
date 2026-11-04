@@ -114,7 +114,7 @@ describe("authentication guard: hostile requests and audit integrity", () => {
     try {
       const ip = "192.0.2.5";
       const tag = createHmac("sha256", "k".repeat(48))
-        .update("42lms:auth-audit:ip:v1\\0")
+        .update("42lms:auth-audit:ip:v1" + String.fromCharCode(0))
         .update(ip).digest("hex").slice(0, 24);
       expect(ipTag(ip)).toBe(tag);
       auditLogin("auth.start", { route: "/api/auth/start", ip }, {
