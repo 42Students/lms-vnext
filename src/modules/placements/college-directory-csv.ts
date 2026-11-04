@@ -1,9 +1,8 @@
+import { spreadsheetCsvCell } from "@/security/csv-cell";
 /** RFC4180 CSV escaping with spreadsheet-formula protection for untrusted labels. */
 export function safeCollegeCsvCell(value:string|number|Date|null|undefined):string {
  const raw=value instanceof Date?value.toISOString():String(value??"");
- const clean=raw.replaceAll("\u0000","");
- const neutral=/^\s*[=+@-]/.test(clean)?"'"+clean:clean;
- return '"'+neutral.replaceAll('"','""')+'"';
+ return spreadsheetCsvCell(raw.replaceAll("\u0000",""));
 }
 export function collegeDirectoryCsv(headers:readonly string[],rows:readonly (readonly (string|number|Date|null|undefined)[])[]):string {
  return "\uFEFF"+[headers,...rows].map(row=>row.map(safeCollegeCsvCell).join(",")).join("\r\n")+"\r\n";
