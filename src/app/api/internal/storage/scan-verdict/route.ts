@@ -1,6 +1,6 @@
-import {timingSafeEqual} from "node:crypto";
 import {NextResponse} from "next/server";
 import {readBoundedUtf8Body} from "@/lib/bounded-utf8-body";
+import {scannerCallbackRequestRejection} from "@/modules/storage/scan-verdict-request-guard";
 import {
  applyProductionScanVerdict,productionScannerCallbackReady,
 } from "@/modules/storage/production-scan-verdict-service";
@@ -16,20 +16,17 @@ const noStore={"Cache-Control":"no-store"} as const;
  * captured object generation. Never expose this endpoint as a user action.
  */
 export async function POST(request:Request){
-  // A browser must never call the privileged private-object verdict writer.
-  if (request.headers.has("origin"))
-    return NextResponse.json({error:"INVALID_ORIGIN"},{status:403,headers:noStore});
- const secret=process.env["PRIVATE_STORAGE_SCANNER_WEBHOOK_SECRET"]?.trim()??"";
- if(!productionScannerCallbackReady()){
-  return NextResponse.json({error:"SCANNER_NOT_READY"},{status:503,headers:noStore});
- }
- const supplied=request.headers.get("x-private-storage-scanner-key")??"";
- const expected=Buffer.from(secret,"utf8"),actual=Buffer.from(supplied,"utf8");
- if(expected.length!==actual.length||!timingSafeEqual(expected,actual)){
-  return NextResponse.json({error:"FORBIDDEN"},{status:403,headers:noStore});
- }
- if(new URL(request.url).search)
-  return NextResponse.json({error:"INVALID_SCAN_VERDICT"},{status:400,headers:noStore});
+  // One machine-only gate, evaluated before parsing, scanning or database I/O.
+  const rejection=scannerCallbackRequestRejection(
+   request,process.env["PRIVATE_STORAGE_SCANNER_WEBHOOK_SECRET"]);
+  if(rejection==="INVALID_ORIGIN")
+   return NextResponse.json({error:rejection},{status:403,headers:noStore});
+  if(!productionScannerCallbackReady())
+   return NextResponse.json({error:"SCANNER_NOT_READY"},{status:503,headers:noStore});
+  if(rejection==="FORBIDDEN")
+   return NextResponse.json({error:"FORBIDDEN"},{status:403,headers:noStore});
+  if(rejection)
+   return NextResponse.json({error:"INVALID_SCAN_VERDICT"},{status:400,headers:noStore});
  const payload=await readBoundedUtf8Body(request,2048);
  if(payload.kind!=="OK"){
   return NextResponse.json({error:"INVALID_SCAN_VERDICT"},{status:400,headers:noStore});
