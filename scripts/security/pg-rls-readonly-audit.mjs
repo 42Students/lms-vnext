@@ -37,6 +37,16 @@ export function classifySecurityCatalog(principal, tables) {
     if (table.is_effective_owner && !table.rls_forced) {
       findings.push({ severity: "CRITICAL", code: "APP_OWNS_TABLE_WITHOUT_FORCE_RLS", table: table.table_name });
     }
+    // A permissive policy with no tenant predicate can expose every row
+    // even when a second, seemingly restrictive permissive policy exists:
+    // PostgreSQL ORs permissive policies. A separately applicable RESTRICTIVE
+    // policy can still narrow the result and requires manual predicate review.
+    // This checks only obvious unconditional reads, not all unsafe expressions.
+    if (table.can_select === true &&
+        table.unconditional_select_policy_count > 0 &&
+        table.restrictive_select_policy_count === 0) {
+      findings.push({ severity: "CRITICAL", code: "APP_UNSCOPED_PERMISSIVE_SELECT", table: table.table_name });
+    }
   }
   return findings;
 }
@@ -61,6 +71,26 @@ SELECT
   c.relforcerowsecurity AS rls_forced,
   pg_has_role(current_user, c.relowner, 'USAGE') AS is_effective_owner,
   (SELECT count(*)::integer FROM pg_catalog.pg_policy p WHERE p.polrelid=c.oid) AS policy_count,
+  -- Count policies that actually apply to the connected application role.
+  -- PUBLIC (OID 0) always applies, and pg_has_role checks effective role
+  -- inheritance; unrelated policies must not be mistaken for app protection.
+  (SELECT count(*)::integer FROM pg_catalog.pg_policy p
+    WHERE p.polrelid=c.oid AND p.polpermissive
+      AND p.polcmd IN ('*','r')
+      AND (p.polqual IS NULL OR pg_get_expr(p.polqual,p.polrelid)='true')
+      AND (0::oid=ANY(p.polroles) OR EXISTS (
+        SELECT 1 FROM unnest(p.polroles) AS role_id(id)
+        WHERE pg_has_role(current_user,role_id.id,'USAGE')
+      ))
+  ) AS unconditional_select_policy_count,
+  (SELECT count(*)::integer FROM pg_catalog.pg_policy p
+    WHERE p.polrelid=c.oid AND NOT p.polpermissive
+      AND p.polcmd IN ('*','r')
+      AND (0::oid=ANY(p.polroles) OR EXISTS (
+        SELECT 1 FROM unnest(p.polroles) AS role_id(id)
+        WHERE pg_has_role(current_user,role_id.id,'USAGE')
+      ))
+  ) AS restrictive_select_policy_count,
   ARRAY(
     SELECT a.attname::text FROM pg_catalog.pg_attribute a
     WHERE a.attrelid=c.oid AND a.attnum>0 AND NOT a.attisdropped
@@ -110,6 +140,7 @@ export async function auditPostgresSecurity(databaseUrl) {
       tables,
       limitations: [
         "No table rows were read or altered",
+        "Unconditional policy detection is conservative; nontrivial policy predicates and effective role inheritance require independent review",
         "Indirect tenant ownership and policy expressions require manual review",
         "Passing is not a substitute for cross-tenant read/write adversarial tests",
       ],
