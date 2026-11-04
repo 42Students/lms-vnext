@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { z } from "zod";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { isSameOriginRequest } from "@/auth/origin";
+import { readBoundedJsonRequest } from "@/lib/bounded-json-request";
 import { apiErrorResponse } from "@/lib/api-error";
 import { CourseImageError, completeCourseImage } from "@/modules/courses/course-image-service";
 
@@ -15,8 +16,11 @@ export async function POST(request: Request, { params }: RouteContext) {
     return NextResponse.json({ error: "INVALID_ORIGIN" }, { status: 403, headers });
   }
   try {
-    const body: unknown = await request.json().catch(() => null);
-    const parsed = schema.safeParse(body);
+    const body = await readBoundedJsonRequest(request, 2048);
+    if (!body.ok) {
+      return NextResponse.json({ error: "INVALID_REQUEST" }, { status: 400, headers });
+    }
+    const parsed = schema.safeParse(body.value);
     if (!parsed.success) {
       return NextResponse.json({ error: "INVALID_REQUEST" }, { status: 400, headers });
     }
