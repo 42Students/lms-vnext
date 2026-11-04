@@ -30,8 +30,17 @@ export function isRecentDeviceAuthentication(
  * prove authentication freshness. E2E impersonation is not a privileged
  * authentication factor even on a development host.
  */
-export async function requireRecentDeviceAuthentication() {
+export async function requireRecentDeviceAuthentication(expectedUserId: string) {
+  // A valid recent device belonging to user B must NEVER authorize a request
+  // context resolved as user A (e.g. E2E impersonation on a development host,
+  // misbound cookies, or future identity/context regressions).
+  if (!/^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(expectedUserId)) {
+    throw new SessionAuthenticationError("SESSION_INVALID");
+  }
   const session = await getCurrentDeviceSession();
+  if (session.userId !== expectedUserId) {
+    throw new SessionAuthenticationError("SESSION_INVALID");
+  }
   const result = await getDb().execute(sql`
     SELECT created_at
       FROM identity_device_sessions
