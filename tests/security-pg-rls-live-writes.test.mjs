@@ -66,12 +66,12 @@ test("restricted app SQL proves unsafe INSERT, UPDATE old/new and DELETE policy 
       " FOR INSERT TO PUBLIC WITH CHECK (true)");
     await admin.query("CREATE POLICY insert_broad ON "+t("insert_restrict")+
       " FOR INSERT TO PUBLIC WITH CHECK (true)");
-    await admin.query("CREATE POLICY insert_restrict AS RESTRICTIVE ON "+t("insert_restrict")+
-      " FOR INSERT TO "+role+" WITH CHECK "+scoped);
+    await admin.query("CREATE POLICY insert_restrict ON "+t("insert_restrict")+
+      " AS RESTRICTIVE FOR INSERT TO "+role+" WITH CHECK "+scoped);
     await admin.query("CREATE POLICY insert_broad ON "+t("noop_restrict")+
       " FOR INSERT TO PUBLIC WITH CHECK (true)");
-    await admin.query("CREATE POLICY insert_noop AS RESTRICTIVE ON "+t("noop_restrict")+
-      " FOR INSERT TO "+role+" WITH CHECK (true)");
+    await admin.query("CREATE POLICY insert_noop ON "+t("noop_restrict")+
+      " AS RESTRICTIVE FOR INSERT TO "+role+" WITH CHECK (true)");
 
     for(const table of ["update_old","update_both","delete"])
       await admin.query("CREATE POLICY read_all ON "+t(table)+
@@ -103,13 +103,13 @@ test("restricted app SQL proves unsafe INSERT, UPDATE old/new and DELETE policy 
       && f.code!=="APP_UNSCOPED_PERMISSIVE_SELECT")
       .filter(f=>names.some(name=>f.table===name));
     assert.deepEqual(writeFindings.map(f=>[f.code,f.table]),[
+      ["APP_UNSCOPED_PERMISSIVE_DELETE","security_rls_w_delete"],
       ["APP_UNSCOPED_PERMISSIVE_INSERT","security_rls_w_insert"],
+      ["APP_UNSCOPED_PERMISSIVE_INSERT","security_rls_w_noop_restrict"],
       ["APP_UNSCOPED_PERMISSIVE_UPDATE_USING","security_rls_w_update_both"],
       ["APP_UNSCOPED_PERMISSIVE_UPDATE_CHECK","security_rls_w_update_both"],
       ["APP_UNSCOPED_PERMISSIVE_UPDATE_CHECK","security_rls_w_update_move"],
       ["APP_UNSCOPED_PERMISSIVE_UPDATE_USING","security_rls_w_update_old"],
-      ["APP_UNSCOPED_PERMISSIVE_DELETE","security_rls_w_delete"],
-      ["APP_UNSCOPED_PERMISSIVE_INSERT","security_rls_w_noop_restrict"],
     ]);
     for(const table of ["security_rls_w_insert_restrict","security_rls_w_guarded"])
       assert.equal(writeFindings.some(f=>f.table===table),false);
