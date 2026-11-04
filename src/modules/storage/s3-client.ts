@@ -57,6 +57,44 @@ function strictContentLength(header: string | null) {
   return value;
 }
 
+/** Bounds the bytes actually consumed, not only the provider's Content-Length.
+ * A malicious, faulty or misconfigured proxy must never turn an otherwise
+ * authenticated private object stream into an unlimited response. */
+function boundedObjectBody(body: ReadableStream<Uint8Array>, expectedBytes: number) {
+  const reader = body.getReader();
+  let received = 0;
+  return new ReadableStream<Uint8Array>({
+    async pull(controller) {
+      try {
+        const {done,value} = await reader.read();
+        if (done) {
+          if (received !== expectedBytes) {
+            controller.error(new Error("S3_BODY_LENGTH_MISMATCH"));
+          } else {
+            controller.close();
+          }
+          reader.releaseLock();
+          return;
+        }
+        received += value.byteLength;
+        if (!Number.isSafeInteger(received) || received > expectedBytes) {
+          await reader.cancel().catch(() => {});
+          controller.error(new Error("S3_BODY_LENGTH_MISMATCH"));
+          reader.releaseLock();
+          return;
+        }
+        controller.enqueue(value);
+      } catch {
+        controller.error(new Error("S3_OBJECT_STREAM_FAILED"));
+      }
+    },
+    async cancel(reason) {
+      await reader.cancel(reason);
+      reader.releaseLock();
+    },
+  });
+}
+
 function sha256Hex(value: string) {
   return createHash("sha256").update(value).digest("hex");
 }
@@ -253,8 +291,13 @@ export async function getObjectStream(
     throw new Error("S3_RANGE_RESPONSE_INVALID");
   }
   const lengthHeader = response.headers.get("content-length");
-  const receivedLength = lengthHeader === null && !range
-    ? 0 : strictContentLength(lengthHeader);
+  let receivedLength: number;
+  try {
+    receivedLength = strictContentLength(lengthHeader);
+  } catch {
+    await response.body.cancel().catch(() => {});
+    throw new Error("S3_CONTENT_LENGTH_INVALID");
+  }
   if (range) {
     const match = /^bytes ([0-9]+)-([0-9]+)\/([0-9]+)$/.exec(
       response.headers.get("content-range") ?? "",
@@ -270,7 +313,7 @@ export async function getObjectStream(
     }
   }
   return {
-    body: response.body,
+    body: boundedObjectBody(response.body, receivedLength),
     contentType: response.headers.get("content-type") ?? "",
     sizeBytes: receivedLength,
   };
