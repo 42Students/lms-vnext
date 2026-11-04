@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { isSameOriginRequest } from "@/auth/origin";
 import { apiErrorResponse } from "@/lib/api-error";
+import { readBoundedJsonBody } from "@/lib/bounded-json-body";
 import {
   createSection,
   listSections,
@@ -104,7 +105,12 @@ export async function POST(request: Request) {
 
   try {
     const context = await getCurrentRequestContext();
-    const body: unknown = await request.json();
+    const parsed = await readBoundedJsonBody(request, 16_384);
+    if (parsed.kind !== "OK") return NextResponse.json({ error: "INVALID_REQUEST" }, {
+      status: parsed.kind === "TOO_LARGE" ? 413 : 400,
+      headers: { "Cache-Control": "private, no-store" },
+    });
+    const body: unknown = parsed.value;
     // Do not interpret the old no-body refresh or click/select actions as a
     // section create. A typed create payload remains mandatory.
     if(body&&typeof body==="object"&&!Array.isArray(body)&&
