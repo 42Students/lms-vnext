@@ -429,7 +429,7 @@ export const drizzlePeopleRepository:
           throw new PeopleServiceError("MEMBERSHIP_NOT_ACTIVE");
         }
 
-        await tx
+        const insertedRoles = await tx
           .insert(membershipRoles)
           .values(
             input.roles.map((role) => ({
@@ -437,7 +437,21 @@ export const drizzlePeopleRepository:
               role,
             })),
           )
-          .onConflictDoNothing();
+          .onConflictDoNothing()
+          .returning({ role: membershipRoles.role });
+
+        if (insertedRoles.length > 0) {
+          // Re-onboarding can add permissions to an EXISTING identity.
+          // Token possession predating the new grant must not survive it.
+          // The revocation commits with the role rows (or both roll back).
+          await tx.execute(sql`
+            UPDATE identity_device_sessions
+            SET revoked_at = clock_timestamp(),
+                revoked_by_user_id = ${mutation.context.user.id}::uuid,
+                revocation_reason = 'MEMBERSHIP_ROLES_GRANTED_ONBOARDING'
+            WHERE user_id = ${user.id}::uuid AND revoked_at IS NULL
+          `);
+        }
 
         const roleRows = await tx
           .select({ role: membershipRoles.role })
@@ -741,6 +755,17 @@ export const drizzlePeopleRepository:
         inserted.role,
       ].sort();
 
+      // Role grants activate new access; existing device credentials must not
+      // silently inherit it. This UPDATE shares the same transaction as the
+      // row lock, role insert and audit event. If any step fails, all roll back.
+      await tx.execute(sql`
+        UPDATE identity_device_sessions
+        SET revoked_at = clock_timestamp(),
+            revoked_by_user_id = ${mutation.context.user.id}::uuid,
+            revocation_reason = 'MEMBERSHIP_ROLE_ADDED'
+        WHERE user_id = ${parent.userId}::uuid AND revoked_at IS NULL
+      `);
+
       await recordActivityEventInTransaction(
         tx,
         mutation.context,
@@ -847,6 +872,17 @@ export const drizzlePeopleRepository:
             ),
           ),
         );
+
+      // Revocation is mandatory even if other college memberships remain.
+      // The person can sign in again and select their still-authorized roles.
+      // The transaction ensures a failed revocation cannot commit a role edit.
+      await tx.execute(sql`
+        UPDATE identity_device_sessions
+        SET revoked_at = clock_timestamp(),
+            revoked_by_user_id = ${mutation.context.user.id}::uuid,
+            revocation_reason = 'MEMBERSHIP_ROLE_REMOVED'
+        WHERE user_id = ${parent.userId}::uuid AND revoked_at IS NULL
+      `);
 
       await recordActivityEventInTransaction(
         tx,
