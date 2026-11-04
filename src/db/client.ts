@@ -4,6 +4,11 @@ import {
   getDatabaseConnectionConfig,
   getServerEnv,
 } from "@/lib/env";
+import {
+  assertRuntimeDatabasePrincipal,
+  enforceProductionDatabasePrincipal,
+  type DatabasePrincipalCapability,
+} from "./runtime-principal-policy";
 
 type DbState = {
   pool?: Pool | undefined;
@@ -58,6 +63,26 @@ export async function checkDatabaseConnection() {
   const client = await getPool().connect();
 
   try {
+    // Never certify a production application that is connected using a
+    // migration owner, superuser, RLS-bypass or DDL-capable database role.
+    // A failed metadata read also prevents readiness: no unsafe fallback.
+    if (enforceProductionDatabasePrincipal({
+      nodeEnv: process.env.NODE_ENV,
+      appEnv: process.env["APP_ENV"],
+    })) {
+      const principal = await client.query<DatabasePrincipalCapability>(`
+        SELECT
+          r.rolsuper AS is_superuser,
+          r.rolbypassrls AS can_bypass_rls,
+          r.rolcreaterole AS can_create_role,
+          r.rolcreatedb AS can_create_database,
+          has_schema_privilege(current_user, 'public', 'CREATE') AS can_create_schema,
+          has_database_privilege(current_user, current_database(), 'CREATE') AS can_create_in_database
+        FROM pg_catalog.pg_roles r
+        WHERE r.rolname = current_user
+      `);
+      assertRuntimeDatabasePrincipal(principal.rows[0]);
+    }
     const result = await client.query<{
       organizations: string | null;
       users: string | null;
