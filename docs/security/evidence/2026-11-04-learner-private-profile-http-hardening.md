@@ -1,6 +1,6 @@
 # 2026-11-04 — Learner own-profile HTTP privacy and body limits
 
-**Scope:** `src/app/api/profile/me/route.ts` GET, PUT and legacy section redirects.  
+**Scope:** `src/app/api/profile/me/route.ts` GET, PUT and legacy section redirects. Merged via [PR #226](https://github.com/42Students/lms-vnext/pull/226) at exact merge SHA [`09446c1`](https://github.com/42Students/lms-vnext/commit/09446c1111959c58589e7f3bb176b2cb1bd98848).  
 **Status:** Implementation, unit tests and scoped CI workflow committed; **test execution, ingress and live PostgreSQL assurance pending**. This evidence packet is not a second tracker and cannot close ASVS or tenant/RLS controls by itself.
 
 ## Before
@@ -25,3 +25,7 @@
 3. Run the authored workflow and integration tests on an exact-SHA trusted runner. Prior unrelated workflows failing with no job steps are not unit test evidence.
 4. Verify current selected Learner role, active membership and database ownership under the real restricted runtime principal, including cross-college mutation attempts and concurrent membership revocation.
 5. Attach actual verified evidence to matching entries in the canonical `docs/tracker.json -> security` only after live proof. Do not modify that shared tracker concurrently with other security chats.
+
+## Post-merge CI receipt
+
+[Run 41838045469](https://github.com/42Students/lms-vnext/actions/runs/41838045469) targeted merge SHA `09446c1111959c58589e7f3bb176b2cb1bd98848`, and GitHub reported `conclusion=failure`. The sole job `learner-private-profile` returned **no step records** (`steps=null`). This is not an executed Vitest assertion, TypeScript pass, or application failure trace. Its runner/startup cause must be determined by an authorized GitHub Actions operator. Repeat tests at the exact source SHA on a functioning runner, and only then update canonical security proof status.
