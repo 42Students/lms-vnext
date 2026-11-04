@@ -11,6 +11,7 @@ on:
       - "src/components/shell/membership-switcher.tsx"
       - "tests/unit/security-explicit-selected-role.test.ts"
       - "tests/unit/security-explicit-role-switch-http.test.ts"
+      - "tests/unit/security-auth-context-role-boundary.test.ts"
       - ".github/workflows/security-role-selection.yml"
   push:
     branches: [main]
@@ -45,7 +46,7 @@ jobs:
       - name: Verify exact tested SHA
         run: test "$(git rev-parse HEAD)" = "$GITHUB_SHA"
       - name: Selected-role and membership cookie adversarial tests
-        run: npx vitest run tests/unit/security-explicit-selected-role.test.ts tests/unit/security-explicit-role-switch-http.test.ts tests/unit/chat6-auth-memberships-private-16.test.ts tests/unit/mentor-shell-role-skin-matrix.test.ts
+        run: npx vitest run tests/unit/security-explicit-selected-role.test.ts tests/unit/security-explicit-role-switch-http.test.ts tests/unit/security-auth-context-role-boundary.test.ts tests/unit/chat6-auth-memberships-private-16.test.ts tests/unit/mentor-shell-role-skin-matrix.test.ts
       - name: TypeScript
         env:
           NODE_OPTIONS: --max-old-space-size=6144
