@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { apiErrorResponse } from "@/lib/api-error";
+import { hasAmbiguousQuerySelectors } from "@/lib/security-query-selectors";
 import { listActivityEvents } from "@/modules/activity/service";
 
 export const runtime = "nodejs";
@@ -24,6 +25,23 @@ export async function GET(
     const params = new URL(
       request.url,
     ).searchParams;
+    // A duplicate/empty tenant selector must never be silently collapsed to
+    // another scope by URLSearchParams.get() or a legacy alias.
+    if (hasAmbiguousQuerySelectors(params, [
+      "collegeId", "organizationId", "module", "importance", "actorUserId",
+      "actorId", "eventType", "subjectType", "targetType", "from",
+      "startDate", "to", "endDate", "beforeOccurredAt", "beforeId", "limit",
+    ], [
+      ["actorUserId", "actorId"],
+      ["subjectType", "targetType"],
+      ["from", "startDate"],
+      ["to", "endDate"],
+    ], [
+      "collegeId", "organizationId", "actorUserId", "actorId",
+      "beforeOccurredAt", "beforeId", "limit",
+    ])) return NextResponse.json({ error: "INVALID_ACTIVITY_QUERY" }, {
+      status: 400, headers: { "Cache-Control": "private, no-store" },
+    });
     const result =
       await listActivityEvents(
         context,
