@@ -15,7 +15,7 @@ export async function GET(request:Request){
  try{
   const context=await getCurrentRequestContext();
   requirePermission(context,"admin-scope.select");
-  await requireRecentDeviceAuthentication();
+  await requireRecentDeviceAuthentication(context.user.id);
   const search=new URL(request.url).searchParams;
   const keys=[...search.keys()];
   // Offering identifies the course; an optional delivery UUID identifies a
