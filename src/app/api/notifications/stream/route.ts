@@ -1,6 +1,8 @@
 import {NextResponse} from "next/server";
 import {and,count,eq} from "drizzle-orm";
 import {getCurrentRequestContext} from "@/auth/request-context";
+import {cookies} from "next/headers";
+import {SESSION_COOKIE_NAME,verifyIdentitySessionCookie} from "@/auth/session";
 import {resolveRequestContext} from "@/modules/identity/context-service";
 import {canSubscribeToClassNotificationStream,notificationStreamScopeUnchanged}
  from "@/modules/activity/notification-stream-authorization";
@@ -60,6 +62,13 @@ export async function GET(request:Request){
     return NextResponse.json({error:"CLASS_STREAM_TOO_LARGE"},{status:429,
       headers:{"Cache-Control":"private, no-store"}});
   }
+  // Capture only the opaque first-party token in this short-lived server
+  // closure. A session revoked after SSE upgrade must not keep receiving
+  // events until the client disconnects or the 110-second timeout.
+  const sessionToken=(await cookies()).get(SESSION_COOKIE_NAME)?.value??null;
+  if(!sessionToken&&process.env.APP_ENV!=="development")
+   return NextResponse.json({error:"SESSION_MISSING"},{status:401,
+    headers:{"Cache-Control":"private, no-store"}});
   const key=context.user.id;
   const connections=streamsByUser.get(key)??0;
   if(connections>=3)return NextResponse.json({error:"TOO_MANY_STREAMS"},{status:429,
@@ -86,6 +95,14 @@ export async function GET(request:Request){
      if(closed||checking)return;
      checking=true;
      try{
+      // Recheck the live first-party device session, not only a frozen actor
+      // context. resolveSession enforces revocation, idle/absolute expiry and
+      // the persisted account status using an atomic database predicate.
+      // E2E impersonation is possible only in explicitly gated development.
+      if(sessionToken){
+       const identity=await verifyIdentitySessionCookie(sessionToken);
+       if(identity.uid!==context.user.identityUid){stop();return;}
+      }else if(process.env.APP_ENV!=="development"){stop();return;}
       // Reconstruct persisted scope before every poll. Revoke the stream on
       // role, membership, system privilege, recruiter grant or tenant change,
       // including a previously selected role silently falling back to another.
