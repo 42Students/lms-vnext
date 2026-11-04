@@ -316,8 +316,8 @@ describe("DB10 notification correctness and privacy", () => {
         [learner.user.id, [ownA, foreignB, orgNotice, platformNotice]],
       );
       const readById = new Map(afterA.map(row => [row.id, row.read_at]));
-      expect(readById.get(ownA)).not.toBeNull();
-      expect(readById.get(orgNotice)).not.toBeNull();
+      expect(readById.get(ownA)).toBeInstanceOf(Date);
+      expect(readById.get(orgNotice)).toBeInstanceOf(Date);
       expect(readById.get(foreignB)).toBeNull();
       expect(readById.get(platformNotice)).toBeNull();
       expect(await markAllOwnNotificationsRead(switched)).toBe(1);
