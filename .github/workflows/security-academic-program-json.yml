@@ -1,5 +1,5 @@
-# Verify untrusted program mutation bodies are byte-bounded before DB writes.
-name: Security - academic program JSON boundaries
+# Enforce academic API byte limits and unambiguous resource selectors.
+name: Security - academic API input boundaries
 
 on:
   pull_request:
@@ -7,20 +7,26 @@ on:
     paths:
       - "src/lib/bounded-json-body.ts"
       - "src/lib/bounded-utf8-body.ts"
-      - "src/app/api/academics/programs/**"
+      - "src/app/api/academics/**"
+      - "src/app/api/v1/class/**"
       - "src/app/api/v1/new-program/**"
       - "src/app/api/v1/program/**"
       - "tests/unit/security-academic-program-bounded-body.test.ts"
+      - "tests/unit/security-academic-collection-bounded-body.test.ts"
+      - "tests/unit/security-academic-query-ambiguity.test.ts"
       - ".github/workflows/security-academic-program-json.yml"
   push:
     branches: [main]
     paths:
       - "src/lib/bounded-json-body.ts"
       - "src/lib/bounded-utf8-body.ts"
-      - "src/app/api/academics/programs/**"
+      - "src/app/api/academics/**"
+      - "src/app/api/v1/class/**"
       - "src/app/api/v1/new-program/**"
       - "src/app/api/v1/program/**"
       - "tests/unit/security-academic-program-bounded-body.test.ts"
+      - "tests/unit/security-academic-collection-bounded-body.test.ts"
+      - "tests/unit/security-academic-query-ambiguity.test.ts"
       - ".github/workflows/security-academic-program-json.yml"
   workflow_dispatch:
 
@@ -32,7 +38,7 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
-  bounded-program-mutations:
+  academic-input-boundaries:
     runs-on: ubuntu-latest
     timeout-minutes: 20
     steps:
@@ -44,8 +50,8 @@ jobs:
       - run: npm ci
       - name: Verify the exact source SHA
         run: test "$(git rev-parse HEAD)" = "$GITHUB_SHA"
-      - name: Oversize, malformed, CSRF and authorized-path tests
-        run: npx vitest run tests/unit/security-academic-program-bounded-body.test.ts
+      - name: Actual academic JSON size, CSRF, selector and positive-path tests
+        run: npx vitest run tests/unit/security-academic-program-bounded-body.test.ts tests/unit/security-academic-collection-bounded-body.test.ts tests/unit/security-academic-query-ambiguity.test.ts
       - name: Full TypeScript typecheck
         env:
           NODE_OPTIONS: --max-old-space-size=6144
