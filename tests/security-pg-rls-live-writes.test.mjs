@@ -103,20 +103,20 @@ test("restricted app SQL proves unsafe INSERT, UPDATE old/new and DELETE policy 
     assert(relevant.every(row=>row.rls_enabled&&row.rls_forced));
     const writeFindings=report.findings.filter(f=>f.code.startsWith("APP_UNSCOPED_PERMISSIVE_")
       && f.code!=="APP_UNSCOPED_PERMISSIVE_SELECT")
-      .filter(f=>names.some(name=>f.table===name));
+      .filter(f=>names.some(name=>f.table==="public."+name));
     assert.deepEqual(writeFindings.map(f=>[f.code,f.table]),[
-      ["APP_UNSCOPED_PERMISSIVE_DELETE","security_rls_w_delete"],
-      ["APP_UNSCOPED_PERMISSIVE_INSERT","security_rls_w_insert"],
-      ["APP_UNSCOPED_PERMISSIVE_INSERT","security_rls_w_noop_restrict"],
-      ["APP_UNSCOPED_PERMISSIVE_UPDATE_USING","security_rls_w_update_both"],
-      ["APP_UNSCOPED_PERMISSIVE_UPDATE_CHECK","security_rls_w_update_both"],
-      ["APP_UNSCOPED_PERMISSIVE_UPDATE_CHECK","security_rls_w_update_move"],
-      ["APP_UNSCOPED_PERMISSIVE_UPDATE_USING","security_rls_w_update_old"],
+      ["APP_UNSCOPED_PERMISSIVE_DELETE","public.security_rls_w_delete"],
+      ["APP_UNSCOPED_PERMISSIVE_INSERT","public.security_rls_w_insert"],
+      ["APP_UNSCOPED_PERMISSIVE_INSERT","public.security_rls_w_noop_restrict"],
+      ["APP_UNSCOPED_PERMISSIVE_UPDATE_USING","public.security_rls_w_update_both"],
+      ["APP_UNSCOPED_PERMISSIVE_UPDATE_CHECK","public.security_rls_w_update_both"],
+      ["APP_UNSCOPED_PERMISSIVE_UPDATE_CHECK","public.security_rls_w_update_move"],
+      ["APP_UNSCOPED_PERMISSIVE_UPDATE_USING","public.security_rls_w_update_old"],
     ]);
     for(const table of ["security_rls_w_insert_restrict","security_rls_w_guarded"])
-      assert.equal(writeFindings.some(f=>f.table===table),false);
+      assert.equal(writeFindings.some(f=>f.table==="public."+table),false);
     assert(report.findings.some(f=>f.code==="APP_CAN_TRUNCATE_TENANT_TABLE" &&
-      f.table==="security_rls_w_guarded"));
+      f.table==="public.security_rls_w_guarded"));
 
     app=new pg.Client({connectionString:appUrl.toString()});
     await app.connect();
