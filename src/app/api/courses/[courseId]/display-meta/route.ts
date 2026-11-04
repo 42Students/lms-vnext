@@ -9,6 +9,8 @@ import {requirePermission} from "@/modules/permissions/policy";
 import {loadCourseScope} from "@/modules/courses/scope";
 import {legacyCourseMetadataPreview} from "@/modules/courses/legacy-course-metadata-preview";
 export const runtime="nodejs";
+export const dynamic="force-dynamic";
+const privateHeaders={"Cache-Control":"private, no-store",Vary:"Cookie"} as const;
 export async function GET(_request:Request,{params}:{
  params:Promise<{courseId:string}>;
 }){
@@ -28,10 +30,15 @@ export async function GET(_request:Request,{params}:{
   }).from(courses).innerJoin(departments,and(
     eq(departments.id,courses.departmentId),eq(departments.collegeId,scope.collegeId),
   )).where(eq(courses.id,id)).limit(1);
-  if(!metadata)return NextResponse.json({error:"COURSE_NOT_FOUND"},{status:404});
+  if(!metadata)return NextResponse.json({error:"COURSE_NOT_FOUND"},{status:404,headers:privateHeaders});
   const {legacyMetadata,...safeMetadata}=metadata;
   return NextResponse.json({metadata:{...safeMetadata,
    legacyFields:legacyCourseMetadataPreview(legacyMetadata),
-  }},{headers:{"Cache-Control":"private, no-store"}});
- }catch(error){return apiErrorResponse(error);}
+  }},{headers:privateHeaders});
+ }catch(error){
+  const response=apiErrorResponse(error);
+  response.headers.set("Cache-Control","private, no-store");
+  response.headers.set("Vary","Cookie");
+  return response;
+ }
 }
