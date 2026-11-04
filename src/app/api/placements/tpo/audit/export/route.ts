@@ -33,7 +33,7 @@ export async function GET(request:Request){
   for(const key of ["page","pageSize","format","columns","id"])delete raw[key];
   const filters=tpoAuditQuerySchema.parse({...raw,page:1,pageSize:100});
   const context=await getCurrentRequestContext();
-  await requireRecentDeviceAuthentication();
+  await requireRecentDeviceAuthentication(context.user.id);
   const items:TpoAuditRow[]=[];
   let total=0;
   // Legacy bounded export supports up to 5,000 events for a chosen range.
