@@ -67,7 +67,10 @@ jobs:
       - name: RLS classifier unit regression
         run: node --test tests/security-pg-rls-catalog.test.mjs
       - name: Real restricted-role RLS cross-tenant read and WRITE witnesses
-        run: node --test tests/security-pg-rls-live-readonly.test.mjs tests/security-pg-rls-live-writes.test.mjs
+        # Both files create/drop PostgreSQL roles in one disposable database.
+        # Run sequentially: concurrent catalog DDL can raise XX000 without
+        # exercising either security check.
+        run: node --test --test-concurrency=1 tests/security-pg-rls-live-readonly.test.mjs tests/security-pg-rls-live-writes.test.mjs
       - name: Fail-closed production application DB role unit contract
         run: npx vitest run tests/unit/security-production-database-principal.test.ts
       - name: TypeScript typecheck for database principal
