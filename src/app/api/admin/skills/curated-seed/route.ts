@@ -1,3 +1,4 @@
+import {requireRecentDeviceAuthentication} from "@/auth/recent-device-auth";
 import { NextResponse } from "next/server";
 import { z } from "zod";
 import { getCurrentRequestContext } from "@/auth/request-context";
@@ -32,6 +33,7 @@ export async function POST(request: Request) {
     if(!_p.ok)return NextResponse.json({error:"INVALID_REQUEST"},{status:400,headers:{"Cache-Control":"private, no-store"}});
     const raw:unknown=_p.value;
     const input=inputSchema.parse(raw);
+    await requireRecentDeviceAuthentication(context.user.id);
     const report=await reconcileCuratedSkillSynonyms(context,input.dryRun);
     return NextResponse.json({report,requiresVerification:true,
       message:input.dryRun?"Curated skill synonym preview complete":
