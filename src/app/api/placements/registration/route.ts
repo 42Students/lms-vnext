@@ -2,6 +2,8 @@ import { NextResponse } from "next/server";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { isSameOriginRequest } from "@/auth/origin";
 import { apiErrorResponse } from "@/lib/api-error";
+import { BoundedFormDataError, readBoundedFormData } from "@/lib/bounded-form-data";
+import { readBoundedUtf8Body } from "@/lib/bounded-utf8-body";
 import { getOwnLearnerRegistration } from "@/modules/placements/learner-registration-read-service";
 import { requireLearnerPlacementAccess } from "@/modules/placements/learner-participation-guard";
 import {
@@ -25,12 +27,23 @@ export async function POST(request:Request) {
     let payload:unknown;
     if(mime.toLowerCase().includes("application/x-www-form-urlencoded")){
       // Legacy form POSTs use choice and consent; modern UI uses strict JSON.
-      const form=await request.formData();
+      let form:FormData;
+      try {form=await readBoundedFormData(request,8*1024);}
+      catch(error){
+        if(!(error instanceof BoundedFormDataError))throw error;
+        return NextResponse.json({error:error.code==="BODY_TOO_LARGE"?"REQUEST_TOO_LARGE":"INVALID_REQUEST"},
+          {status:error.code==="BODY_TOO_LARGE"?413:400,headers:{"Cache-Control":"private, no-store"}});
+      }
       const consent=form.get("acceptedConsent")??form.get("consent");
       payload={choice:form.get("choice"),
         acceptedConsent:consent==="true"||consent==="on"||consent==="1"};
     }else{
-      payload=await request.json();
+      const raw=await readBoundedUtf8Body(request,8*1024);
+      if(raw.kind!=="OK")return NextResponse.json({
+        error:raw.kind==="TOO_LARGE"?"REQUEST_TOO_LARGE":"INVALID_REQUEST",
+      },{status:raw.kind==="TOO_LARGE"?413:400,headers:{"Cache-Control":"private, no-store"}});
+      try {payload=JSON.parse(raw.body);}
+      catch{return NextResponse.json({error:"INVALID_REQUEST"},{status:400});}
       // Historical JSON bodies used consent, not acceptedConsent. Do not
       // infer consent when the field is omitted or rewrite its version.
       if(payload && typeof payload==="object" && !Array.isArray(payload)){
