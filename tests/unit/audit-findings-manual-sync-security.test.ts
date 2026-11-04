@@ -115,7 +115,8 @@ describe("manual audit synchronization privilege boundary", () => {
     expect(response.status).toBe(200);
     expect(response.headers.get("Cache-Control")).toContain("no-store");
     expect(requireRecentDeviceAuthentication).toHaveBeenCalledWith(actor.user.id);
-    expect(syncIndependentAuditInbox).toHaveBeenCalledExactlyOnceWith({
+    expect(syncIndependentAuditInbox).toHaveBeenCalledOnce();
+    expect(syncIndependentAuditInbox).toHaveBeenCalledWith({
       kind: "SUPER_ADMIN", actor,
     });
   });
