@@ -246,3 +246,60 @@ describe("Streaming object length is enforced against actual delivered bytes",()
     expect(await new Response(object!.body).text()).toBe("good data");
   });
 });
+
+describe("Canonical SigV4 query and object-key prefix integrity",()=>{
+  it.each([
+    "X-Amz-Signature","x-amz-signature",
+    "X-Amz-Algorithm","X-Amz-Date","x-amz-expires",
+    "X-Amz-Credential","X-Amz-Security-Token",
+  ])("never accepts an injected or duplicated reserved SigV4 query parameter %s",key=>{
+    expect(()=>presignUrl(config,{method:"GET",key:"private/a",
+      query:{[key]:"attacker-value"}})).toThrow("S3_SIGNED_QUERY_INVALID");
+    expect(fetchMock).not.toHaveBeenCalled();
+  });
+
+  it("rejects ambiguous case-folded extra query keys and control characters",()=>{
+    for(const query of [
+      {VersionId:"first",versionid:"second"},
+      {"response-content-disposition":"attachment\r\nSet-Cookie: evil"},
+      {"bad query name":"value"},
+      {"x":"x".repeat(2049)},
+    ]){
+      expect(()=>presignUrl(config,{method:"GET",key:"private/a",query}))
+        .toThrow("S3_SIGNED_QUERY_INVALID");
+    }
+  });
+
+  it("still signs an ordinary object-version or response-disposition parameter",()=>{
+    const signed=new URL(presignUrl(config,{
+      method:"GET",key:"private/a",query:{
+        versionId:"opaque-version",
+        "response-content-disposition":"attachment; filename=receipt.pdf",
+      },
+    }));
+    expect(signed.searchParams.get("versionId")).toBe("opaque-version");
+    expect(signed.searchParams.get("response-content-disposition"))
+      .toBe("attachment; filename=receipt.pdf");
+    expect(signed.searchParams.getAll("X-Amz-Signature")).toHaveLength(1);
+  });
+
+  it.each([
+    "../private/","/private/","prefix//","prefix/../private/",
+    "prefix/./","prefix\\","prefix?/", "prefix#/",
+  ])("prevents a configured object prefix from escaping the private namespace: %s",prefix=>{
+    expect(()=>presignUrl({...config,keyPrefix:prefix},{method:"GET",key:"private/a"}))
+      .toThrow("S3_KEY_PREFIX_INVALID");
+  });
+
+  it("does not mistake a valid scoped prefix for a traversal attempt",()=>{
+    const signed=new URL(presignUrl(config,{method:"GET",key:"private/a"}));
+    expect(signed.pathname).toBe("/vnext-private/scoped/private/a");
+  });
+
+  it("refuses doubled path separators in header-authenticated storage operations",async()=>{
+    await expect(signedFetch(config,{
+      method:"HEAD",path:"/vnext-private//private/a",
+    })).rejects.toThrow("S3_SIGNED_PATH_INVALID");
+    expect(fetchMock).not.toHaveBeenCalled();
+  });
+});
