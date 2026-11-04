@@ -1,26 +1,30 @@
 # Enforce persisted session inactivity expiry against real PostgreSQL.
 # This workflow uses only a disposable PG17 service, never a live tenant DB.
-name: Security - database session idle expiry and privileged timeout
+name: Security - session idle and atomic role-change revocation
 
 on:
   pull_request:
     branches: [main]
     paths:
       - "src/modules/auth/session-service.ts"
+      - "src/modules/people/repository.ts"
       - "src/modules/auth/config.ts"
       - "src/db/schema/identity-device-sessions.ts"
       - "tests/unit/security-device-session-idle-policy.test.ts"
       - "tests/integration/db01-session-atomic-authorization.test.ts"
+      - "tests/integration/db01-membership-role-parent-lock.test.ts"
       - "tests/integration/db01-device-session-field-semantics.test.ts"
       - ".github/workflows/security-session-idle.yml"
   push:
     branches: [main]
     paths:
       - "src/modules/auth/session-service.ts"
+      - "src/modules/people/repository.ts"
       - "src/modules/auth/config.ts"
       - "src/db/schema/identity-device-sessions.ts"
       - "tests/unit/security-device-session-idle-policy.test.ts"
       - "tests/integration/db01-session-atomic-authorization.test.ts"
+      - "tests/integration/db01-membership-role-parent-lock.test.ts"
       - "tests/integration/db01-device-session-field-semantics.test.ts"
       - ".github/workflows/security-session-idle.yml"
   workflow_dispatch:
@@ -89,8 +93,8 @@ jobs:
         env:
           DATABASE_URL: ""
         run: npm run db:test:prepare
-      - name: Test idle expiry, short privileged idle, future timestamps and revocation races
-        run: npx vitest run --config vitest.db.config.ts tests/integration/db01-session-atomic-authorization.test.ts tests/integration/db01-device-session-field-semantics.test.ts
+      - name: Test idle expiry, account revocation, atomic role changes and concurrency
+        run: npx vitest run --config vitest.db.config.ts tests/integration/db01-session-atomic-authorization.test.ts tests/integration/db01-device-session-field-semantics.test.ts tests/integration/db01-membership-role-parent-lock.test.ts
       - name: Assert migration journal remains unchanged
         if: always()
         run: |
