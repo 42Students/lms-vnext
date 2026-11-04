@@ -1,5 +1,7 @@
 import {NextResponse} from "next/server";
 import {timingSafeEqual} from "node:crypto";
+import {MENTOR_GOOGLE_OAUTH_RESPONSE_HEADERS} from
+ "@/modules/projects/mentor-google-oauth-response-headers";
 import {cookies} from "next/headers";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {mentorGoogleConfig,mentorGoogleExchangeCode} from
@@ -12,7 +14,7 @@ export async function GET(request:Request){
  const target=new URL("/mentor/calendar",request.url);
  const response=(status:"connected"|"failed")=>{
   target.searchParams.set("google",status);
-  const redirect=NextResponse.redirect(target);
+  const redirect=NextResponse.redirect(target,{headers:MENTOR_GOOGLE_OAUTH_RESPONSE_HEADERS});
   redirect.cookies.set(oauthCookie,"",{maxAge:0,path:"/api/mentor/calendar/google",
     httpOnly:true,secure:process.env.NODE_ENV==="production",sameSite:"lax"});
   return redirect;
