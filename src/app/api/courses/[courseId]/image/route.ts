@@ -10,7 +10,7 @@ import {
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 type RouteContext = { params: Promise<{ courseId: string }> };
-const privateHeaders = { "Cache-Control": "private, no-store" };
+const privateHeaders = { "Cache-Control": "private, no-store", Vary: "Cookie" };
 
 function imageError(error: unknown) {
   if (error instanceof CourseImageError) {
@@ -18,7 +18,10 @@ function imageError(error: unknown) {
       status: error.status, headers: privateHeaders,
     });
   }
-  return apiErrorResponse(error);
+  const response = apiErrorResponse(error);
+  response.headers.set("Cache-Control", "private, no-store");
+  response.headers.set("Vary", "Cookie");
+  return response;
 }
 
 export async function POST(request: Request, { params }: RouteContext) {
