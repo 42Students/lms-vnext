@@ -5,13 +5,15 @@ import { getCurrentRequestContext } from "@/auth/request-context";
 import { isSameOriginRequest } from "@/auth/origin";
 import { getDb } from "@/db/client";
 import { activityEvents } from "@/db/schema";
-import { hasMembershipRole, isSuperAdmin } from "@/modules/identity/context";
+import { isSuperAdmin } from "@/modules/identity/context";
 import {
   db10Skills,
   db10SkillSynonyms,
   db10SkillUsage,
 } from "@/db/schema/db10-skills-catalog.draft";
 import { apiErrorResponse } from "@/lib/api-error";
+import { readBoundedJsonBody } from "@/lib/bounded-json-body";
+import { hasAmbiguousQuerySelectors } from "@/lib/security-query-selectors";
 import { canReadSkillCatalog } from "@/modules/skills/catalog-access";
 import { readSkillCatalog, recordSkillSelection, invalidateSkillCatalogSearchCache } from "@/modules/skills/catalog-service";
 import { skillsCatalogRuntimeEnabled, skillsCatalogSchemaReady, skillsCatalogReadiness } from "@/modules/skills/catalog-readiness";
@@ -20,6 +22,8 @@ import { skillUsageNameSchema } from "@/modules/skills/usage-normalization";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
+const SKILLS_POST_MAX_BYTES = 1024 * 1024;
+const privateHeaders = { "Cache-Control": "private, no-store" };
 
 // The catalog is not writable while DB10 schema replay is unverified.
 // A successful import does not auto-enable GET or certify synonym/source parity.
@@ -50,7 +54,13 @@ export async function POST(request:Request) {
       {status:503,headers:{"Cache-Control":"private, no-store"}});
   try{
     const context=await getCurrentRequestContext();
-    const payload:unknown=await request.json();
+    // Import accepts up to 1,000 bounded entries. Never buffer an
+    // unlimited user-controlled body before Zod or tenant authorization.
+    const parsedBody=await readBoundedJsonBody(request,SKILLS_POST_MAX_BYTES);
+    if(parsedBody.kind!=="OK")
+      return NextResponse.json({error:"INVALID_REQUEST"},
+        {status:parsedBody.kind==="TOO_LARGE"?413:400,headers:privateHeaders});
+    const payload:unknown=parsedBody.value;
     const actionInput=z.strictObject({action:z.string()}).passthrough().safeParse(payload);
     const action=actionInput.success?actionInput.data.action:null;
     if(!action)return recordSelectedSkillIds(context,request,payload);
@@ -144,6 +154,11 @@ function legacyErrorMessage(mode: ReadMode) {
 /** Read-only skill catalog. All DB-backed reads remain disabled until DB10 is verified. */
 export async function GET(request: Request) {
   const firstParams = new URL(request.url).searchParams;
+  if(hasAmbiguousQuerySelectors(firstParams, [
+    "mode","compat","skillName","query","category","limit",
+  ], [], ["mode","compat","skillName","category","limit"]))
+    return NextResponse.json({error:"INVALID_REQUEST"},
+      {status:400,headers:privateHeaders});
   if (firstParams.get("mode")==="readiness") {
     try {
       const context=await getCurrentRequestContext();
@@ -204,9 +219,11 @@ export async function GET(request: Request) {
     }
 
     if (requestedMode === "stats") {
-      // Operational aggregate includes organization-wide tracking data.
-      if (!isSuperAdmin(context) && !hasMembershipRole(context, "COLLEGE_ADMIN"))
-        return NextResponse.json({error:"FORBIDDEN"},{status:403});
+      // Skill usage counters are platform-wide. Do not disclose aggregate
+      // activity from other colleges to a college-scoped administrator.
+      if (!isSuperAdmin(context) || context.user.platformStatus !== "ACTIVE")
+        return NextResponse.json({error:"FORBIDDEN"},
+          {status:403,headers:privateHeaders});
       const db = getDb();
       const [skills] = await db.select({ total: sql<number>`count(*)::integer` })
         .from(db10Skills).where(eq(db10Skills.isActive, true));
