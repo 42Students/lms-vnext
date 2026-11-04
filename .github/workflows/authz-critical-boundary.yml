@@ -16,6 +16,9 @@ on:
       - "src/app/api/people/onboard/route.ts"
       - "tests/unit/recent-device-privileged-role-security.test.ts"
       - "tests/unit/auth-ip-rate-limit.test.ts"
+      - "tests/unit/auth-audit-privacy.test.ts"
+      - "tests/unit/chat6-auth-http-guard.test.ts"
+      - "tests/unit/chat17-auth-http-hardening.test.ts"
       - "tests/unit/auth-origin.test.ts"
       - "tests/unit/db004-self-profile-http-boundary.test.ts"
       - "scripts/security/pg-rls-readonly-audit.mjs"
@@ -34,6 +37,9 @@ on:
       - "src/app/api/people/onboard/route.ts"
       - "tests/unit/recent-device-privileged-role-security.test.ts"
       - "tests/unit/auth-ip-rate-limit.test.ts"
+      - "tests/unit/auth-audit-privacy.test.ts"
+      - "tests/unit/chat6-auth-http-guard.test.ts"
+      - "tests/unit/chat17-auth-http-hardening.test.ts"
       - "tests/unit/auth-origin.test.ts"
       - "tests/unit/db004-self-profile-http-boundary.test.ts"
       - "scripts/security/pg-rls-readonly-audit.mjs"
@@ -69,6 +75,8 @@ jobs:
         run: npx vitest run tests/unit/db004-self-profile-http-boundary.test.ts
       - name: Auth controls and brute-force throttling
         run: npx vitest run tests/unit/auth-login-service.test.ts tests/unit/auth-ip-rate-limit.test.ts
+      - name: Keyed authentication audit privacy and guard metadata
+        run: npx vitest run tests/unit/auth-audit-privacy.test.ts tests/unit/chat6-auth-http-guard.test.ts tests/unit/chat17-auth-http-hardening.test.ts
       - name: RLS catalog and least-privilege classifier contracts
         run: node --test tests/security-pg-rls-catalog.test.mjs
       - name: Recent OTP authentication for privileged role mutations
