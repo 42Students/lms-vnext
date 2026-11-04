@@ -1,0 +1,52 @@
+# Role selection is a server-enforced authorization decision, not a UI hint.
+name: Security - explicit selected-role isolation
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - "src/modules/identity/context-service.ts"
+      - "src/app/api/auth/memberships/route.ts"
+      - "src/auth/request-context.ts"
+      - "src/components/shell/membership-switcher.tsx"
+      - "tests/unit/security-explicit-selected-role.test.ts"
+      - "tests/unit/security-explicit-role-switch-http.test.ts"
+      - ".github/workflows/security-role-selection.yml"
+  push:
+    branches: [main]
+    paths:
+      - "src/modules/identity/context-service.ts"
+      - "src/app/api/auth/memberships/route.ts"
+      - "src/auth/request-context.ts"
+      - "src/components/shell/membership-switcher.tsx"
+      - "tests/unit/security-explicit-selected-role.test.ts"
+      - "tests/unit/security-explicit-role-switch-http.test.ts"
+      - ".github/workflows/security-role-selection.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: security-role-selection-${{ github.ref }}-${{ github.sha }}
+  cancel-in-progress: false
+
+jobs:
+  selected-role-and-recovery:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Verify exact tested SHA
+        run: test "$(git rev-parse HEAD)" = "$GITHUB_SHA"
+      - name: Selected-role and membership cookie adversarial tests
+        run: npx vitest run tests/unit/security-explicit-selected-role.test.ts tests/unit/security-explicit-role-switch-http.test.ts tests/unit/chat6-auth-memberships-private-16.test.ts tests/unit/mentor-shell-role-skin-matrix.test.ts
+      - name: TypeScript
+        env:
+          NODE_OPTIONS: --max-old-space-size=6144
+        run: npm run typecheck
