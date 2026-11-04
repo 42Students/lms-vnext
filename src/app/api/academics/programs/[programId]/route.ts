@@ -8,6 +8,7 @@ import { loadProgramScope } from "@/modules/academics/scope";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { isSameOriginRequest } from "@/auth/origin";
 import { apiErrorResponse } from "@/lib/api-error";
+import { readBoundedJsonBody } from "@/lib/bounded-json-body";
 import {
   archiveCollegeProgram,
   CollegeProgramMutationError,
@@ -115,7 +116,12 @@ export async function PATCH(request: Request, { params }: RouteContext) {
   try {
     const { programId } = await params;
     const context = await getCurrentRequestContext();
-    const body: unknown = await request.json();
+    const parsedBody = await readBoundedJsonBody(request, 16_384);
+    if (parsedBody.kind !== "OK") return NextResponse.json({ error: "INVALID_REQUEST" }, {
+      status: parsedBody.kind === "TOO_LARGE" ? 413 : 400,
+      headers: { "Cache-Control": "no-store" },
+    });
+    const body: unknown = parsedBody.value;
     const program = body && typeof body === "object" && "action" in body && body.action === "RESTORE"
       ? await restoreCollegeProgram(context, programId, body)
       : await updateCollegeProgram(context, programId, body);
@@ -130,7 +136,12 @@ export async function DELETE(request: Request, { params }: RouteContext) {
   try {
     const { programId } = await params;
     const context = await getCurrentRequestContext();
-    const body: unknown = await request.json();
+    const parsedBody = await readBoundedJsonBody(request, 16_384);
+    if (parsedBody.kind !== "OK") return NextResponse.json({ error: "INVALID_REQUEST" }, {
+      status: parsedBody.kind === "TOO_LARGE" ? 413 : 400,
+      headers: { "Cache-Control": "no-store" },
+    });
+    const body: unknown = parsedBody.value;
     const program = await archiveCollegeProgram(context, programId, body);
     // Soft archive is deliberate: unlike legacy hard delete, course and
     // cohort references, history and activity records remain recoverable.
