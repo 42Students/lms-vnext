@@ -1,0 +1,59 @@
+# Bytes are an actual resource boundary; a Content-Length header and a
+# JavaScript string length never prove that a request is bounded.
+name: Security - streamed staff mutation body limits
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - "src/lib/bounded-utf8-body.ts"
+      - "src/app/api/auth/profile/route.ts"
+      - "src/app/api/mentor/preferences/email/route.ts"
+      - "src/app/api/mentor/attention/later/route.ts"
+      - "src/app/api/mentor/notifications/read-all/route.ts"
+      - "src/app/api/tpo/notifications/read-all/route.ts"
+      - "src/app/api/projects/**/activity/seen/route.ts"
+      - "src/app/api/placements/tpo/settings/cgpa-rule/route.ts"
+      - "src/app/api/admin/skills/import/route.ts"
+      - "tests/unit/security-streamed-mutation-body-boundaries.test.ts"
+      - "tests/unit/db004-self-profile-http-boundary.test.ts"
+      - ".github/workflows/security-streamed-mutation-bodies.yml"
+  push:
+    branches: [main]
+    paths:
+      - "src/lib/bounded-utf8-body.ts"
+      - "src/app/api/auth/profile/route.ts"
+      - "src/app/api/mentor/preferences/email/route.ts"
+      - "src/app/api/mentor/attention/later/route.ts"
+      - "src/app/api/mentor/notifications/read-all/route.ts"
+      - "src/app/api/tpo/notifications/read-all/route.ts"
+      - "src/app/api/projects/**/activity/seen/route.ts"
+      - "src/app/api/placements/tpo/settings/cgpa-rule/route.ts"
+      - "src/app/api/admin/skills/import/route.ts"
+      - "tests/unit/security-streamed-mutation-body-boundaries.test.ts"
+      - "tests/unit/db004-self-profile-http-boundary.test.ts"
+      - ".github/workflows/security-streamed-mutation-bodies.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: security-streamed-mutation-${{ github.sha }}
+  cancel-in-progress: false
+
+jobs:
+  bounded-mutation-regressions:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Run seven staff body-limit negative and positive suites
+        run: npx vitest run tests/unit/security-streamed-mutation-body-boundaries.test.ts tests/unit/db004-self-profile-http-boundary.test.ts
+      - name: Type-check affected app and test sources
+        run: NODE_OPTIONS=--max-old-space-size=5120 npm run typecheck
