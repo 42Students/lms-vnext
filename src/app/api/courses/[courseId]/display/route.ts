@@ -11,6 +11,14 @@ import {
 import { courseDisplayRuntimeEnabled } from "@/modules/courses/course-display-readiness";
 
 export const runtime = "nodejs";
+export const dynamic = "force-dynamic";
+const privateHeaders = { "Cache-Control": "private, no-store", Vary: "Cookie" } as const;
+function privateError(error: unknown) {
+  const response = apiErrorResponse(error);
+  response.headers.set("Cache-Control", "private, no-store");
+  response.headers.set("Vary", "Cookie");
+  return response;
+}
 
 type RouteContext = {
   params: Promise<{ courseId: string }>;
@@ -22,7 +30,7 @@ function pending() {
       error:
         "DB05_COURSE_DISPLAY_MIGRATIONS_PENDING",
     },
-    { status: 503 },
+    { status: 503, headers: privateHeaders },
   );
 }
 
@@ -42,9 +50,9 @@ export async function GET(
         context,
         courseId,
       );
-    return NextResponse.json({ display });
+    return NextResponse.json({ display }, { headers: privateHeaders });
   } catch (error) {
-    return apiErrorResponse(error);
+    return privateError(error);
   }
 }
 
@@ -55,7 +63,7 @@ export async function PUT(
   if (!isSameOriginRequest(request)) {
     return NextResponse.json(
       { error: "INVALID_ORIGIN" },
-      { status: 403 },
+      { status: 403, headers: privateHeaders },
     );
   }
   if (!courseDisplayRuntimeEnabled()) {
@@ -69,7 +77,7 @@ export async function PUT(
     // but an unbounded request.json() lets a caller allocate arbitrary memory.
     const body = await readBoundedJsonRequest(request, 262144);
     if (!body.ok) return NextResponse.json({ error: "INVALID_REQUEST" }, {
-      status: 400, headers: { "Cache-Control": "private, no-store" },
+      status: 400, headers: privateHeaders,
     });
     const input = updateCourseDisplayContentSchema.parse(body.value);
     const display = await updateCourseDisplayContent(context, courseId, input);
