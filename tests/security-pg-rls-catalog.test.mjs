@@ -52,3 +52,28 @@ test("does not pretend a table with indirect tenant lineage is certified", () =>
   assert.deepEqual(findings, []);
   assert.deepEqual(classifySecurityCatalog(safePrincipal, [base]), []);
 });
+
+test("flags application-readable tenant tables with unconditional permissive read policies", () => {
+  const findings = classifySecurityCatalog(safePrincipal, [
+    { ...base, table_name: "private_learners", can_select: true,
+      unconditional_select_policy_count: 1, restrictive_select_policy_count: 0 },
+    { ...base, table_name: "private_courses", can_select: true,
+      unconditional_select_policy_count: 2, restrictive_select_policy_count: 0 },
+  ]);
+  assert.deepEqual(findings, [
+    { severity: "CRITICAL", code: "APP_UNSCOPED_PERMISSIVE_SELECT", table: "private_learners" },
+    { severity: "CRITICAL", code: "APP_UNSCOPED_PERMISSIVE_SELECT", table: "private_courses" },
+  ]);
+});
+
+test("does not flag no SELECT grant or separately restrictive policy as a proven broad read", () => {
+  const findings = classifySecurityCatalog(safePrincipal, [
+    { ...base, table_name: "not_readable", can_select: false,
+      unconditional_select_policy_count: 1, restrictive_select_policy_count: 0 },
+    { ...base, table_name: "restrictively_scoped", can_select: true,
+      unconditional_select_policy_count: 1, restrictive_select_policy_count: 1 },
+    { ...base, table_name: "strictly_scoped", can_select: true,
+      unconditional_select_policy_count: 0, restrictive_select_policy_count: 0 },
+  ]);
+  assert.deepEqual(findings, []);
+});
