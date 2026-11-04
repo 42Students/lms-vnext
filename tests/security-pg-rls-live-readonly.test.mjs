@@ -31,7 +31,8 @@ test("restricted app principal and live SQL identify an unconditional tenant-lea
     const { Client } = pg;
     const admin = new Client({ connectionString: connection });
     await admin.connect();
-    const tables = ["security_rls_guarded", "security_rls_unscoped", "security_rls_restrictive"];
+    const tables = ["security_rls_guarded", "security_rls_unscoped", "security_rls_restrictive",
+      "security_rls_noop_restrictive"];
     try {
       await admin.query("CREATE ROLE " + role +
         " LOGIN PASSWORD '" + password + "' NOSUPERUSER NOCREATEDB NOCREATEROLE NOREPLICATION");
@@ -56,6 +57,11 @@ test("restricted app principal and live SQL identify an unconditional tenant-lea
       await admin.query("CREATE POLICY tenant_restriction ON public.security_rls_restrictive " +
         "AS RESTRICTIVE FOR SELECT TO " + role + " USING " + scoped);
 
+      await admin.query("CREATE POLICY broad_select ON public.security_rls_noop_restrictive " +
+        "FOR SELECT TO PUBLIC USING (true)");
+      await admin.query("CREATE POLICY noop_restriction ON public.security_rls_noop_restrictive " +
+        "AS RESTRICTIVE FOR SELECT TO " + role + " USING (true)");
+
       const appUrl = new URL(connection);
       appUrl.username = role;
       appUrl.password = password;
@@ -64,11 +70,14 @@ test("restricted app principal and live SQL identify an unconditional tenant-lea
       assert.equal(report.principal.is_superuser, false);
       assert.equal(report.principal.can_bypass_rls, false);
       const relevant = report.tables.filter(row => tables.includes(row.table_name));
-      assert.equal(relevant.length, 3);
+      assert.equal(relevant.length, 4);
       assert(relevant.every(row => row.rls_enabled && row.rls_forced && row.can_select));
       assert.deepEqual(
         report.findings.filter(f => tables.includes(f.table)).map(f => [f.code, f.table]),
-        [["APP_UNSCOPED_PERMISSIVE_SELECT", "security_rls_unscoped"]],
+        [
+          ["APP_UNSCOPED_PERMISSIVE_SELECT", "security_rls_noop_restrictive"],
+          ["APP_UNSCOPED_PERMISSIVE_SELECT", "security_rls_unscoped"],
+        ],
       );
 
       const app = new Client({ connectionString: appUrl.toString() });
@@ -78,6 +87,9 @@ test("restricted app principal and live SQL identify an unconditional tenant-lea
         // deny it. The audit must flag exactly the defective table.
         const leak = await app.query("SELECT value FROM public.security_rls_unscoped ORDER BY id");
         assert.deepEqual(leak.rows.map(row => row.value),
+          ["college-a-data", "college-b-secret"]);
+        const noOp = await app.query("SELECT value FROM public.security_rls_noop_restrictive ORDER BY id");
+        assert.deepEqual(noOp.rows.map(row => row.value),
           ["college-a-data", "college-b-secret"]);
         const withoutTenant = await app.query("SELECT value FROM public.security_rls_guarded");
         assert.deepEqual(withoutTenant.rows, []);
