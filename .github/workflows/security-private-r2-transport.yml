@@ -1,0 +1,53 @@
+# Exact-SHA storage transport boundary: never follow signed redirects, spoof
+# SigV4 headers, accept unbounded R2 range responses, or trust false lengths.
+name: Security - private R2 transport and streaming boundary
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - "src/modules/storage/s3-client.ts"
+      - "src/modules/storage/r2-config.ts"
+      - "src/modules/colleges/admin-branding-logo-service.ts"
+      - "tests/unit/security-s3-transport-boundary.test.ts"
+      - "tests/unit/s3-client.test.ts"
+      - "tests/unit/r2-private-prefix.test.ts"
+      - ".github/workflows/security-private-r2-transport.yml"
+  push:
+    branches: [main]
+    paths:
+      - "src/modules/storage/s3-client.ts"
+      - "src/modules/storage/r2-config.ts"
+      - "src/modules/colleges/admin-branding-logo-service.ts"
+      - "tests/unit/security-s3-transport-boundary.test.ts"
+      - "tests/unit/s3-client.test.ts"
+      - "tests/unit/r2-private-prefix.test.ts"
+      - ".github/workflows/security-private-r2-transport.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: security-private-r2-transport-${{ github.ref }}-${{ github.sha }}
+  cancel-in-progress: false
+
+jobs:
+  private-storage-no-redirect-and-byte-limits:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Require the exact tested source SHA
+        run: test "$(git rev-parse HEAD)" = "$GITHUB_SHA"
+      - name: Test malicious redirects, forged credentials, range and stream budgets
+        run: npx vitest run tests/unit/security-s3-transport-boundary.test.ts tests/unit/s3-client.test.ts tests/unit/r2-private-prefix.test.ts tests/unit/r2-private-storage.test.ts
+      - name: TypeScript compilation
+        env:
+          NODE_OPTIONS: --max-old-space-size=6144
+        run: npm run typecheck
