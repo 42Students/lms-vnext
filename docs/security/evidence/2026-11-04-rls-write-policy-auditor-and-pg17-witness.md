@@ -35,3 +35,21 @@ This implementation is an **adversarial detection and release-verification mecha
 **Security tracker:** Leave `SEC-06-007` (and other unassessed RLS-write controls) unassessed until test execution. In particular do not mark `SEC-06-006` or `SEC-23-015` fully verified from fixture-only proofs. The 493-control canonical tracker is `docs/tracker.json`.
 
 **Authoritative semantics:** PostgreSQL 17 `CREATE POLICY` documentation distinguishes `USING` on existing rows, `WITH CHECK` on inserted/updated rows, default fallback, permissive OR and restrictive AND; separate SELECT policies can also limit mutations that require SELECT privilege.
+
+## Subsequent deployment hardening — privileged runtime database roles
+
+The application readiness path `src/db/client.ts::checkDatabaseConnection` now fails closed **only when both `NODE_ENV=production` and `APP_ENV=production`** if the connected runtime principal is privileged. This is a real production deployment gate, not merely an audit report. The generic error `DATABASE_APP_PRINCIPAL_UNSAFE` does not print connection strings, usernames or tenant rows.
+
+The policy in `src/db/runtime-principal-policy.ts` requires positive false results for:
+
+- Superuser, BYPASSRLS, CREATEROLE and CREATEDB role attributes.
+- CREATE capability in any nonsystem schema or the current database, including through a role reachable by `SET ROLE`.
+- Any privileged role reachable through `SET ROLE` by the login principal.
+- Effective ownership or `SET ROLE` access to the owner of a direct tenant-key table whose row security is not both **enabled and forced**.
+- `TRUNCATE` on a direct tenant-key table, including through roles the login can `SET ROLE` to. PostgreSQL RLS does **not** restrict `TRUNCATE`, even on otherwise correctly secured tables.
+
+The catalog checks are read-only, operate on the live connection, and precede the existing schema readiness check. Newly added `tests/unit/security-production-database-principal.test.ts` includes a deny matrix for each privilege and missing/unknown catalog values. The RLS fixture now contains an intentionally unsafe TRUNCATE grant on a FORCE RLS table and expects both a detection finding and an actual cross-tenant destructive operation before rolling back.
+
+**Execution remains pending** while GitHub-hosted workflows are failing with zero step output. A successful exact-SHA disposable PostgreSQL witness, typecheck and production-like app-role exercise are required before claiming this batch is accepted. The gate is **not** a substitute for all-table RLS enablement, tenant graph lineage, grants review or independent review of SECURITY DEFINER routines.
+
+**Relevant PostgreSQL 17 specifications:** `CREATE POLICY`, `SET ROLE`, `Row Security Policies`. In production deployment, rotate/migrate away from privileged database credentials before enabling `APP_ENV=production`; never disable the gate merely to make health checks green.
