@@ -1,3 +1,4 @@
+import {readBoundedUtf8Body} from "@/lib/bounded-utf8-body";
 import {NextResponse} from "next/server";
 import {isSameOriginRequest} from "@/auth/origin";
 import {getCurrentRequestContext} from "@/auth/request-context";
@@ -13,11 +14,14 @@ export async function POST(request:Request){
  if(!isSameOriginRequest(request))
   return NextResponse.json({error:"INVALID_ORIGIN"},{status:403,headers});
  try{
-  const raw=await request.text();
-  if(raw.length>256)return NextResponse.json({error:"INVALID_REQUEST"},
-    {status:413,headers});
+  // A streamed byte limit also covers chunked bodies without Content-Length.
+  const decoded=await readBoundedUtf8Body(request,256);
+  if(decoded.kind==="TOO_LARGE")
+   return NextResponse.json({error:"INVALID_REQUEST"},{status:413,headers});
+  if(decoded.kind!=="OK")
+   return NextResponse.json({error:"INVALID_REQUEST"},{status:400,headers});
   let body:unknown;
-  try{body=JSON.parse(raw);}catch{
+  try{body=JSON.parse(decoded.body);}catch{
    return NextResponse.json({error:"INVALID_REQUEST"},{status:400,headers});
   }
   const parsed=mentorEmailPreferenceSaveSchema.safeParse(body);
