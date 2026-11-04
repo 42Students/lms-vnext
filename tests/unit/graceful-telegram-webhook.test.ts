@@ -17,12 +17,15 @@ afterEach(() => {
 describe("Telegram acknowledgement", () => {
   it("GR-122 rejects dev webhook and incorrect/missing production secret", () => {
     process.env.APP_ENV = "development";
-    process.env.TELEGRAM_ALERT_WEBHOOK_SECRET = "fixture-secret";
-    expect(validTelegramWebhookSecret("fixture-secret")).toBe(false);
+    const strongSecret = "fixture-independent-telegram-secret-32bytes";
+    process.env.TELEGRAM_ALERT_WEBHOOK_SECRET = strongSecret;
+    expect(validTelegramWebhookSecret(strongSecret)).toBe(false);
     process.env.APP_ENV = "production";
     expect(validTelegramWebhookSecret(null)).toBe(false);
     expect(validTelegramWebhookSecret("wrong")).toBe(false);
-    expect(validTelegramWebhookSecret("fixture-secret")).toBe(true);
+    expect(validTelegramWebhookSecret(strongSecret)).toBe(true);
+    process.env.TELEGRAM_ALERT_WEBHOOK_SECRET = "fixture-secret";
+    expect(validTelegramWebhookSecret("fixture-secret")).toBe(false);
   });
   it("GR-122 rejects callbacks from any Telegram chat other than the configured alert chat", () => {
     process.env.TELEGRAM_ALERT_CHAT_ID = "-1001234567890";
