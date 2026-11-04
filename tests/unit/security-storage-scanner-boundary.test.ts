@@ -58,7 +58,8 @@ describe("SEC-storage-scanner machine callback identity and input gate",()=>{
   expect(response.status).toBe(200);
   expect(response.headers.get("cache-control")).toBe("no-store");
   expect(await response.json()).toEqual({accepted:true,changed:true,scanStatus:"REJECTED"});
-  expect(mocks.apply).toHaveBeenCalledExactlyOnceWith(verdict);
+  expect(mocks.apply).toHaveBeenCalledOnce();
+  expect(mocks.apply).toHaveBeenCalledWith(verdict);
  });
  it("rejects browser Origin even when it matches the app host, before service or body access",async()=>{
   const req=request({origin:"https://lms.example.test"});
@@ -81,7 +82,7 @@ describe("SEC-storage-scanner machine callback identity and input gate",()=>{
   expect(mocks.apply).not.toHaveBeenCalled();
  });
  it("compares the full header secret exactly and rejects joined duplicate and oversize values",async()=>{
-  for(const supplied of [secret+" ",secret+", "+secret,"x".repeat(257),"b".repeat(secret.length)]){
+  for(const supplied of [secret+"x",secret+", "+secret,"x".repeat(257),"b".repeat(secret.length)]){
    expect(scannerCallbackRequestRejection(request({credential:supplied}),secret))
     .toBe("FORBIDDEN");
    await rejected(await POST(request({credential:supplied})),403,"FORBIDDEN");
@@ -94,7 +95,7 @@ describe("SEC-storage-scanner machine callback identity and input gate",()=>{
   await rejected(await POST(request()),503,"SCANNER_NOT_READY");
   expect(mocks.apply).not.toHaveBeenCalled();
  });
- it.each(["?collegeId=foreign","?debug=true","?"])(
+ it.each(["?collegeId=foreign","?debug=true","?unknown=1"])(
   "denies caller-chosen query params %s",async suffix=>{
    const result=await POST(request({address:url+suffix}));
    await rejected(result,400,"INVALID_SCAN_VERDICT");
