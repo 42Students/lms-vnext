@@ -86,7 +86,7 @@ describe("Telegram webhook request boundary", () => {
   it("rejects invalid UTF-8 and malformed JSON before callback dispatch", async () => {
     process.env["APP_ENV"] = "production";
     process.env["TELEGRAM_ALERT_WEBHOOK_SECRET"] = strongSecret;
-    const malformedUtf8 = new Uint8Array([0xc3, 0x28]).buffer;
+    const malformedUtf8 = new Uint8Array([0xc3, 0x28]).buffer as ArrayBuffer;
     const badEncoding = await POST(incoming({ token: strongSecret, body: malformedUtf8 }));
     expect(badEncoding.status).toBe(400);
     const badJson = await POST(incoming({ token: strongSecret, body: "{not-json" }));
