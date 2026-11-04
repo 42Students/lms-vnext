@@ -1,3 +1,4 @@
+import { spreadsheetCsvCell } from "@/security/csv-cell";
 import { z } from "zod";
 
 export const mentorBoardReviewQuerySchema=z.object({
@@ -84,9 +85,7 @@ export function mentorBoardReviewHref(query:MentorBoardReviewQuery){
     "/board-review"+(suffix?"?"+suffix:"");
 }
 export function csvSafeCell(value:string|number|null){
-  const text=String(value??"");
-  const safe=/^[\s\u200B-\u200F\u2060\u2066-\u2069\uFEFF\u202A-\u202E]*[=+@\-]/u.test(text)?"'"+text:text;
-  return '"'+safe.replaceAll('"','""')+'"';
+  return spreadsheetCsvCell(value);
 }
 export function mentorBoardExportCsv(
   rows:readonly {id:string;title:string;status:string;priority:string;sprintTitle:string}[],
