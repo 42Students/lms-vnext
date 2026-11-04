@@ -10,10 +10,18 @@ const config = read(".gitleaks.toml");
 test("provider rules extend built-in signatures without any blanket allowlist", () => {
   assert.match(config, /useDefault\s*=\s*true/);
   assert.match(config, /42learn-provider-api-credential/);
+  // The historical leaked ZeptoMail value used an Authorization header
+  // format, not a simple TOKEN = "opaque-value" assignment.
+  assert.match(config, /42learn-zeptomail-authorization/);
+  assert.match(config, /42learn-openai-key/);
+  assert.match(config, /42learn-google-oauth-client-secret/);
   assert.match(config, /secretGroup\s*=\s*1/);
   assert.doesNotMatch(config, /^\s*\[\[?allowlists?\]?\]/m);
   assert.match(incremental, /--config=\.gitleaks\.toml/);
   assert.match(historical, /--config=\.gitleaks\.toml/);
+  assert.match(incremental, /security-provider-credential-signatures\.test\.mjs/);
+  assert.match(historical, /security-provider-credential-signatures\.test\.mjs/);
+  assert.match(historical, /- '\.gitleaks\.toml'/);
 });
 
 
