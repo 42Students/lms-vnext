@@ -10,7 +10,7 @@ export function isSameOriginRequest(request: Request): boolean {
   const origin = request.headers.get("origin");
   const host = request.headers.get("host");
   if (!origin || !host || host.trim() !== host ||
-      /[\\s,\\/\\\\@?#%]/u.test(host)) return false;
+      /[\s,\/\\@?#%]/u.test(host)) return false;
 
   try {
     const submitted = new URL(origin);
