@@ -6,9 +6,11 @@ import { exportSuperAdminTenantDirectory } from "@/modules/colleges/admin-tenant
 export const runtime = "nodejs";
 export async function GET(request: Request) {
   try {
+    // Reject malformed/ambiguous filters before spending database reads on
+    // session and privileged step-up; no tenant data is accessed here.
+    const query = readTenantDirectoryExportParams(new URL(request.url).searchParams);
     const context = await getCurrentRequestContext();
     await requireRecentDeviceAuthentication();
-    const query = readTenantDirectoryExportParams(new URL(request.url).searchParams);
     const result = await exportSuperAdminTenantDirectory(context, query);
     return new Response(result.csv, { headers: {
       "Content-Type": "text/csv; charset=utf-8", "Content-Disposition": 'attachment; filename="tenant-directory-ist.csv"',
