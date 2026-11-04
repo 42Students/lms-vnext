@@ -22,6 +22,10 @@ const ALLOWED: Record<string, string> = {
     "Scheduler-only bearer token with timingSafeEqual; no browser session or Origin header.",
   "src/app/api/internal/mentor-project-email-dispatch/route.ts POST":
     "Mentor email worker uses an independent rotated bearer secret, strict length guard and timingSafeEqual; no browser session.",
+  "src/app/api/internal/operations/notification-scheduler/route.ts POST":
+    "Dedicated high-entropy scheduler key and constant-time compare; all browser Origin values are rejected and tested independently.",
+  "src/app/api/internal/storage/scan-verdict/route.ts POST":
+    "Dedicated private scanner webhook key and constant-time compare; all browser Origin values are rejected and tested independently.",
 
   // "src/app/api/example/route.ts POST": "authenticated by provider signature",
   "src/app/api/internal/alerts/tick/route.ts POST":
@@ -154,6 +158,20 @@ describe("state-changing API routes", () => {
     expect(mentorWorker).toContain('actual.startsWith("Bearer ")');
     expect(mentorWorker).toContain('timingSafeEqual(');
     expect(mentorWorker).not.toContain("getCurrentRequestContext");
+  });
+
+  it("machine-only scanner and notification scheduler exceptions require strict origin and secret checks",()=>{
+    for(const [route,secretName,headerName] of [
+      ["api/internal/operations/notification-scheduler/route.ts","DB10_NOTIFICATION_SCHEDULER_SECRET","x-notification-scheduler-key"],
+      ["api/internal/storage/scan-verdict/route.ts","PRIVATE_STORAGE_SCANNER_WEBHOOK_SECRET","x-private-storage-scanner-key"],
+    ]){
+      const source=fs.readFileSync(path.join(ROOT,route),"utf8");
+      expect(source).toContain('request.headers.has("origin")');
+      expect(source).toContain("timingSafeEqual(");
+      expect(source).toContain(secretName);
+      expect(source).toContain(headerName);
+      expect(source).not.toContain("getCurrentRequestContext");
+    }
   });
 
   it("every POST/PUT/PATCH/DELETE handler checks the request origin", () => {
