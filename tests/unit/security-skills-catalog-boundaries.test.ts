@@ -48,7 +48,7 @@ describe("skills API payload and query isolation",()=>{
  });
  it("caps actual streamed import bytes even with a misleading length header",async()=>{
   const req=post(JSON.stringify({action:"IMPORT_SKILLS",items:[],
-    filler:"z".repeat(1024*1024)}));
+    filler:"z".repeat(4*1024*1024)}));
   req.headers.set("content-length","1");
   const res=await POST(req);
   expect(res.status).toBe(413);
