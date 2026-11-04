@@ -1,3 +1,4 @@
+import {readBoundedUtf8Body} from "@/lib/bounded-utf8-body";
 import { NextResponse } from "next/server";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { isSameOriginRequest } from "@/auth/origin";
@@ -12,7 +13,12 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "INVALID_ORIGIN" }, { status: 403 });
   }
   try {
-    parseTpoNotificationReadBody(await request.text());
+    const decoded=await readBoundedUtf8Body(request,512);
+    if (decoded.kind!=="OK") return NextResponse.json(
+      {error:"INVALID_BODY"},{status:decoded.kind==="TOO_LARGE"?413:400,
+        headers:{"Cache-Control":"private, no-store"}},
+    );
+    parseTpoNotificationReadBody(decoded.body);
     const context = await getCurrentRequestContext();
     return NextResponse.json(await markAllOwnTpoNotificationsRead(context));
   } catch (error) {
