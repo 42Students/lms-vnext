@@ -18,8 +18,15 @@ export function scannerCallbackRequestRejection(
  request:Request,configuredSecret:string|undefined,
 ):ScannerCallbackRejection|null{
  if(request.headers.has("origin"))return "INVALID_ORIGIN";
- // A callback chooses its target only through the validated JSON payload;
- // callers may not smuggle new behavior through query parameters.
+ // Authenticate first, before revealing accepted URL or JSON metadata.
+ if(!validScannerCallbackSecret(configuredSecret))return "FORBIDDEN";
+ const supplied=request.headers.get("x-private-storage-scanner-key")??"";
+ if(!validScannerCallbackSecret(supplied))return "FORBIDDEN";
+ const expected=Buffer.from(configuredSecret,"utf8");
+ const provided=Buffer.from(supplied,"utf8");
+ if(expected.length!==provided.length||!timingSafeEqual(expected,provided))
+  return "FORBIDDEN";
+ // The caller may choose its scope only through validated JSON, never a URL.
  if(new URL(request.url).search)return "INVALID_REQUEST";
  const mediaType=request.headers.get("content-type")??"";
  if(!/^application\/json(?:\s*;\s*charset\s*=\s*utf-8)?$/i.test(mediaType.trim()))
@@ -30,12 +37,5 @@ export function scannerCallbackRequestRejection(
    !Number.isSafeInteger(Number(contentLength))||
    Number(contentLength)>2048
  ))return "INVALID_REQUEST";
- if(!validScannerCallbackSecret(configuredSecret))return "FORBIDDEN";
- const supplied=request.headers.get("x-private-storage-scanner-key")??"";
- if(!validScannerCallbackSecret(supplied))return "FORBIDDEN";
- const expected=Buffer.from(configuredSecret,"utf8");
- const provided=Buffer.from(supplied,"utf8");
- if(expected.length!==provided.length||!timingSafeEqual(expected,provided))
-  return "FORBIDDEN";
  return null;
 }
