@@ -3,6 +3,7 @@ import { z, ZodError } from "zod";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { isSameOriginRequest } from "@/auth/origin";
 import { apiErrorResponse } from "@/lib/api-error";
+import { readBoundedJsonBody } from "@/lib/bounded-json-body";
 import { listPrograms, listProgramsPage } from "@/modules/academics/program-service";
 import { scopedProgramPopularity } from "@/modules/academics/legacy-program-popularity";
 import {parseLegacyProgramPage,legacyProgramPage} from "@/modules/admin-ui/legacy-program-page-model";
@@ -160,9 +161,12 @@ export async function POST(request: Request) {
   }
   try {
     const context = await getCurrentRequestContext();
-    let body: unknown;
-    try { body = await request.json(); }
-    catch { return NextResponse.json({error:"INVALID_REQUEST",message:"Enter valid program details."},{status:400}); }
+    const parsedBody = await readBoundedJsonBody(request, 16_384);
+    if (parsedBody.kind !== "OK") return NextResponse.json({
+      error: "INVALID_REQUEST", message: "Enter valid program details.",
+    }, { status: parsedBody.kind === "TOO_LARGE" ? 413 : 400,
+      headers: { "Cache-Control": "no-store" } });
+    const body: unknown = parsedBody.value;
     const legacy=new URL(request.url).searchParams.get("legacy")==="1";
     const program = await createCollegeProgram(context, legacy?legacyProgramCreateInput(body):body);
     return NextResponse.json(legacy
