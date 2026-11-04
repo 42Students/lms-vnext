@@ -81,8 +81,8 @@ export async function PUT(
     });
     const input = updateCourseDisplayContentSchema.parse(body.value);
     const display = await updateCourseDisplayContent(context, courseId, input);
-    return NextResponse.json({ display });
+    return NextResponse.json({ display }, { headers: privateHeaders });
   } catch (error) {
-    return apiErrorResponse(error);
+    return privateError(error);
   }
 }
