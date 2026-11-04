@@ -3,8 +3,9 @@ import { exportSuperAdminScopedDirectory } from "@/modules/admin-ui/super-admin-
 import type { RequestContext } from "@/modules/identity/context";
 import type { SuperAdminReadQuery, SuperAdminReadResult } from "@/modules/admin-ui/super-admin-read-directory-model";
 
-const mocks=vi.hoisted(()=>({getCurrentRequestContext:vi.fn()}));
+const mocks=vi.hoisted(()=>({getCurrentRequestContext:vi.fn(),requireRecentDeviceAuthentication:vi.fn()}));
 vi.mock("server-only",()=>({}));
+vi.mock("@/auth/recent-device-auth",()=>({requireRecentDeviceAuthentication:mocks.requireRecentDeviceAuthentication}));
 vi.mock("@/auth/request-context",()=>({getCurrentRequestContext:mocks.getCurrentRequestContext}));
 vi.mock("@/lib/api-error",()=>({apiErrorResponse:()=>new Response("Service unavailable",{status:503})}));
 
@@ -18,7 +19,10 @@ const config=(loader:(context:RequestContext,query:SuperAdminReadQuery)=>Promise
 });
 
 describe("SA-SCOPED-CSV-CAP-05 honor 250-row export cap, independently of UI page size",()=>{
- beforeEach(()=>mocks.getCurrentRequestContext.mockReset().mockResolvedValue(admin));
+ beforeEach(()=>{
+  mocks.getCurrentRequestContext.mockReset().mockResolvedValue(admin);
+  mocks.requireRecentDeviceAuthentication.mockReset().mockResolvedValue({userId:"admin-a"});
+ });
 
  for(const injectedPageSize of [10,100]){
   it("normalizes the adversarial pageSize="+injectedPageSize+" across all export pages",async()=>{
@@ -40,6 +44,7 @@ describe("SA-SCOPED-CSV-CAP-05 honor 250-row export cap, independently of UI pag
    expect(csv).toContain("EXPORT TRUNCATED");
    expect(csv).not.toContain('"row-11-0"');
    expect(loader).toHaveBeenCalledTimes(10);
+   expect(mocks.requireRecentDeviceAuthentication).toHaveBeenCalledTimes(1);
    for(const [index,call] of loader.mock.calls.entries()){
     const [context,query]=call;
     expect(context).toEqual(admin);
@@ -60,6 +65,16 @@ describe("SA-SCOPED-CSV-CAP-05 honor 250-row export cap, independently of UI pag
   expect((await result.text()).includes("EXPORT TRUNCATED")).toBe(false);
   expect(loader).toHaveBeenCalledTimes(1);
   expect(loader.mock.calls[0]?.[1].pageSize).toBe(25);
+ });
+
+ it("denies a stale privileged session before executing any report query",async()=>{
+  const loader=vi.fn();
+  mocks.requireRecentDeviceAuthentication.mockRejectedValue(new Error("RECENT_SIGN_IN_REQUIRED"));
+  const response=await exportSuperAdminScopedDirectory(
+   new Request("https://example.test/export?status=ALL"),config(loader));
+  expect(response.status).toBe(503); // This test file mocks apiErrorResponse to a generic 503.
+  expect(loader).not.toHaveBeenCalled();
+  expect(mocks.requireRecentDeviceAuthentication).toHaveBeenCalledOnce();
  });
 
  it("rejects an unauthorized status before calling any directory loader",async()=>{
