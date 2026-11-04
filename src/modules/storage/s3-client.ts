@@ -21,6 +21,42 @@ export type S3Config = {
 
 const SERVICE = "s3";
 
+/** Signed storage requests must not follow a provider/proxy redirect. */
+const STORAGE_FETCH_REDIRECT_POLICY = "error" as const;
+
+function checkedEndpoint(endpoint: string) {
+  const url = new URL(endpoint);
+  if (url.protocol !== "https:" || !url.hostname || url.username ||
+      url.password || url.pathname !== "/" || url.search || url.hash) {
+    throw new Error("S3_ENDPOINT_INVALID");
+  }
+  return url;
+}
+
+function signedExtraHeaders(headers: Record<string,string> | undefined,
+  reserved: readonly string[]) {
+  const output: Record<string,string> = {};
+  const entries = Object.entries(headers ?? {});
+  if (entries.length > 32) throw new Error("S3_SIGNED_HEADERS_INVALID");
+  for (const [rawName, value] of entries) {
+    const name = rawName.toLowerCase();
+    if (!/^[a-z0-9-]+$/.test(name) || reserved.includes(name) ||
+        typeof value !== "string" || value.length > 4096 ||
+        /[\x00-\x1f\x7f]/.test(value) || Object.hasOwn(output,name))
+      throw new Error("S3_SIGNED_HEADERS_INVALID");
+    output[name] = value.trim();
+  }
+  return output;
+}
+
+function strictContentLength(header: string | null) {
+  if (header === null || !/^(0|[1-9][0-9]*)$/.test(header))
+    throw new Error("S3_CONTENT_LENGTH_INVALID");
+  const value = Number(header);
+  if (!Number.isSafeInteger(value)) throw new Error("S3_CONTENT_LENGTH_INVALID");
+  return value;
+}
+
 function sha256Hex(value: string) {
   return createHash("sha256").update(value).digest("hex");
 }
@@ -76,7 +112,7 @@ function prefixedKey(config: S3Config, key: string) {
 }
 
 function objectLocation(config: S3Config, key: string) {
-  const url = new URL(config.endpoint);
+  const url = checkedEndpoint(config.endpoint);
   const fullKey = prefixedKey(config, key);
   return {
     host: url.host,
@@ -99,12 +135,7 @@ export function presignUrl(config: S3Config, input: SignInput) {
 
   const headers: Record<string, string> = {
     host,
-    ...Object.fromEntries(
-      Object.entries(input.headers ?? {}).map(([name, value]) => [
-        name.toLowerCase(),
-        value.trim(),
-      ]),
-    ),
+    ...signedExtraHeaders(input.headers, ["host", "authorization"]),
   };
   const headerNames = Object.keys(headers).sort();
   const signedHeaders = headerNames.join(";");
@@ -163,7 +194,8 @@ async function send(
   key: string,
 ) {
   const url = presignUrl(config, { method, key, expiresSeconds: 60 });
-  return fetch(url, { method, cache: "no-store" });
+  return fetch(url, { method, cache: "no-store",
+    redirect: STORAGE_FETCH_REDIRECT_POLICY });
 }
 
 export async function headObject(
@@ -182,7 +214,7 @@ export async function headObject(
   return {
     etag: (response.headers.get("etag") ?? "").replaceAll('"', ""),
     lastModifiedMs: Date.parse(response.headers.get("last-modified") ?? "") || 0,
-    sizeBytes: Number(response.headers.get("content-length") ?? 0),
+    sizeBytes: strictContentLength(response.headers.get("content-length")),
     contentType: response.headers.get("content-type") ?? "",
     metadata,
   };
@@ -199,16 +231,40 @@ export async function getObjectStream(
   const response = await fetch(url, {
     method: "GET",
     cache: "no-store",
+    redirect: STORAGE_FETCH_REDIRECT_POLICY,
     ...(range ? { headers: { range: `bytes=${range.start}-${range.end}` } } : {}),
   });
   if (response.status === 404) return null;
   if (!response.ok || !response.body) {
     throw new Error(`S3_GET_${response.status}`);
   }
+  // Refuse a full-object 200 response when a private file verifier asked
+  // for a bounded range. This is not a best-effort range hint.
+  if (range && response.status !== 206) {
+    await response.body.cancel().catch(() => {});
+    throw new Error("S3_RANGE_RESPONSE_INVALID");
+  }
+  const lengthHeader = response.headers.get("content-length");
+  const receivedLength = lengthHeader === null && !range
+    ? 0 : strictContentLength(lengthHeader);
+  if (range) {
+    const match = /^bytes ([0-9]+)-([0-9]+)\/([0-9]+)$/.exec(
+      response.headers.get("content-range") ?? "",
+    );
+    const first = match ? Number(match[1]) : NaN;
+    const last = match ? Number(match[2]) : NaN;
+    const total = match ? Number(match[3]) : NaN;
+    if (!match || ![first,last,total].every(Number.isSafeInteger) ||
+        first !== range.start || last < first || last > range.end ||
+        total <= last || receivedLength !== last - first + 1) {
+      await response.body.cancel().catch(() => {});
+      throw new Error("S3_RANGE_RESPONSE_INVALID");
+    }
+  }
   return {
     body: response.body,
     contentType: response.headers.get("content-type") ?? "",
-    sizeBytes: Number(response.headers.get("content-length") ?? 0),
+    sizeBytes: receivedLength,
   };
 }
 
@@ -244,19 +300,19 @@ export async function signedFetch(
   const stamp = amzDate(now);
   const dateStamp = stamp.slice(0, 8);
   const scope = `${dateStamp}/${region}/${SERVICE}/aws4_request`;
-  const url = new URL(config.endpoint);
+  const url = checkedEndpoint(config.endpoint);
+  if (!input.path.startsWith("/") || input.path.length > 2048 ||
+      input.path.includes("\\") || /[\x00-\x1f\x7f?#]/.test(input.path) ||
+      input.path.split("/").some(part => part === "." || part === ".."))
+    throw new Error("S3_SIGNED_PATH_INVALID");
   const payloadHash = sha256Hex("");
 
   const headers: Record<string, string> = {
     host: url.host,
     "x-amz-content-sha256": payloadHash,
     "x-amz-date": stamp,
-    ...Object.fromEntries(
-      Object.entries(input.headers ?? {}).map(([name, value]) => [
-        name.toLowerCase(),
-        value.trim(),
-      ]),
-    ),
+    ...signedExtraHeaders(input.headers,
+      ["host", "x-amz-content-sha256", "x-amz-date", "authorization"]),
   };
   const headerNames = Object.keys(headers).sort();
   const signedHeaders = headerNames.join(";");
@@ -286,6 +342,7 @@ export async function signedFetch(
   return fetch(`${url.origin}${encodePath(input.path)}`, {
     method: input.method,
     cache: "no-store",
+    redirect: STORAGE_FETCH_REDIRECT_POLICY,
     headers: {
       ...sendHeaders,
       authorization: `AWS4-HMAC-SHA256 Credential=${config.accessKeyId}/${scope}, SignedHeaders=${signedHeaders}, Signature=${signature}`,
