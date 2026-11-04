@@ -1,6 +1,9 @@
 import {NextResponse} from "next/server";
 import {and,count,eq} from "drizzle-orm";
 import {getCurrentRequestContext} from "@/auth/request-context";
+import {resolveRequestContext} from "@/modules/identity/context-service";
+import {canSubscribeToClassNotificationStream,notificationStreamScopeUnchanged}
+ from "@/modules/activity/notification-stream-authorization";
 import {apiErrorResponse} from "@/lib/api-error";
 import {getDb} from "@/db/client";
 import {academicPeriods,sectionEnrollments,sections} from "@/db/schema";
@@ -19,15 +22,26 @@ export async function GET(request:Request){
  const params=new URL(request.url).searchParams;
  if(params.has("token")||params.has("access_token")||params.has("bearer")||
    params.has("authorization"))
-  return NextResponse.json({error:"BEARER_QUERY_FORBIDDEN"},{status:400});
+  return NextResponse.json({error:"BEARER_QUERY_FORBIDDEN"},{status:400,
+   headers:{"Cache-Control":"private, no-store"}});
+ // No ambiguous duplicate keys, ignored selectors or bearer credentials.
+ if([...params.keys()].some(key=>key!=="classId")||params.getAll("classId").length>1)
+  return NextResponse.json({error:"INVALID_STREAM_QUERY"},{status:400,
+   headers:{"Cache-Control":"private, no-store"}});
+ const classId=params.get("classId");
+ if(classId!==null&&!uuid.test(classId))
+  return NextResponse.json({error:"INVALID_SECTION"},{status:400,
+   headers:{"Cache-Control":"private, no-store"}});
  try{
   const context=await getCurrentRequestContext();
   if(context.user.platformStatus!=="ACTIVE")
    return NextResponse.json({error:"FORBIDDEN"},{status:403});
-  const classId=params.get("classId");
   if(classId){
-   if(!uuid.test(classId)||!context.membership)
-    return NextResponse.json({error:"INVALID_SECTION"},{status:400});
+   // A same-college membership is not proof of class enrollment or teaching
+   // authority. Deny before even querying aggregate class size.
+   if(!(await canSubscribeToClassNotificationStream(context,classId)))
+    return NextResponse.json({error:"NOT_FOUND"},{status:404,
+      headers:{"Cache-Control":"private, no-store"}});
    const [audience]=await getDb().select({
     collegeId:academicPeriods.collegeId,
     recipients:count(sectionEnrollments.id),
@@ -38,8 +52,10 @@ export async function GET(request:Request){
       eq(sectionEnrollments.status,"ACTIVE")))
     .where(eq(sections.id,classId))
     .groupBy(academicPeriods.collegeId).limit(1);
-   if(!audience||audience.collegeId!==context.membership.collegeId)
-    return NextResponse.json({error:"NOT_FOUND"},{status:404});
+   const selectedCollege=context.membership?.collegeId??context.adminScope?.collegeId;
+   if(!audience||audience.collegeId!==selectedCollege)
+    return NextResponse.json({error:"NOT_FOUND"},{status:404,
+      headers:{"Cache-Control":"private, no-store"}});
    if(audience.recipients>3000)
     return NextResponse.json({error:"CLASS_STREAM_TOO_LARGE"},{status:429,
       headers:{"Cache-Control":"private, no-store"}});
@@ -47,7 +63,7 @@ export async function GET(request:Request){
   const key=context.user.id;
   const connections=streamsByUser.get(key)??0;
   if(connections>=3)return NextResponse.json({error:"TOO_MANY_STREAMS"},{status:429,
-    headers:{"Retry-After":"30"}});
+    headers:{"Retry-After":"30","Cache-Control":"private, no-store"}});
   streamsByUser.set(key,connections+1);
   let release=()=>{};
   const source=new ReadableStream<Uint8Array>({
@@ -70,11 +86,24 @@ export async function GET(request:Request){
      if(closed||checking)return;
      checking=true;
      try{
-      // Queries always bind the authenticated user's UUID and never broadcast
-      // application, contact or full notification content.
+      // Reconstruct persisted scope before every poll. Revoke the stream on
+      // role, membership, system privilege, recruiter grant or tenant change,
+      // including a previously selected role silently falling back to another.
+      const live=await resolveRequestContext({
+       identityUid:context.user.identityUid,
+       activeMembershipId:context.membership?.id??null,
+       activeRole:context.membership?.roles[0]??null,
+       adminScope:context.adminScope??null,
+      });
+      if(!notificationStreamScopeUnchanged(context,live) ||
+         (classId&&!(await canSubscribeToClassNotificationStream(live,classId)))){
+       stop();return;
+      }
+      // These queries bind the recipient's own identity, never the class's
+      // recipients or another tenant's notifications.
       const [rows,unread]=await Promise.all([
-       listOwnNotifications(context,{limit:1,...(classId?{classId}:{})}),
-       countOwnUnreadNotifications(context),
+       listOwnNotifications(live,{limit:1,...(classId?{classId}:{})}),
+       countOwnUnreadNotifications(live),
       ]);
       const newest=rows[0]?.notification;
       const version=[newest?.id??"",newest?.readAt?.toISOString()??"",
