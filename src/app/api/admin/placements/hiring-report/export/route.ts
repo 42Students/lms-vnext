@@ -1,4 +1,5 @@
 import {getCurrentRequestContext} from "@/auth/request-context";
+import {requireRecentDeviceAuthentication} from "@/auth/recent-device-auth";
 import {getSuperAdminCompanyHiringReport} from "@/modules/admin-ui/super-admin-hiring-report-service";
 import {superAdminHiringReportQuery,hiringCompanyRollups} from "@/modules/admin-ui/super-admin-hiring-report-model";
 import {placementReportCsv,placementReportCsvCell} from "@/modules/placements/report-model";
@@ -17,7 +18,9 @@ export async function GET(request:Request){
   const parsed=superAdminHiringReportQuery.safeParse(Object.fromEntries(params));
   if(!parsed.success)
    return Response.json({error:"INVALID_REPORT_FILTERS"},{status:400});
-  const data=await getSuperAdminCompanyHiringReport(await getCurrentRequestContext(),parsed.data);
+  const context=await getCurrentRequestContext();
+  await requireRecentDeviceAuthentication();
+  const data=await getSuperAdminCompanyHiringReport(context,parsed.data);
   const groups=hiringCompanyRollups(data.rows);
   const stages=["totalApplications","applied","shortlisted","assessment","interview","offered","hired","rejected","withdrawn","waitlisted"] as const;
   const funnelStages=["applied","shortlisted","assessment","interview","offered","hired"] as const;
