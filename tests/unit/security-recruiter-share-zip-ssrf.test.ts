@@ -175,6 +175,25 @@ describe("SEC-API7 public recruiter ZIP: no arbitrary external fetch", () => {
     expect(bytes.byteLength).toBeGreaterThan(5);
   });
 
+  it("caps the aggregate content of a public resume ZIP at 48 MiB", async () => {
+    const twelveMiB = new Uint8Array(12 * 1024 * 1024);
+    twelveMiB.fill(0x41);
+    const fetcher = vi.fn().mockImplementation(async () => new Response(twelveMiB, {
+      headers: { "content-type": "application/pdf",
+        "content-length": String(twelveMiB.byteLength) },
+    }));
+    vi.stubGlobal("fetch", fetcher);
+    mocks.share.mockResolvedValue(ready(Array.from({ length: 5 }, () => signed())));
+    const response = await route();
+    expect(response.status).toBe(200);
+    // Four 12-MiB documents reach the cap; the fifth never triggers fetch.
+    expect(fetcher).toHaveBeenCalledTimes(4);
+    expect(response.headers.get("Cache-Control")).toBe("private, no-store");
+    const zip = new Uint8Array(await response.arrayBuffer());
+    expect(zip.byteLength).toBeGreaterThan(48 * 1024 * 1024);
+    expect(zip.byteLength).toBeLessThan(49 * 1024 * 1024);
+  });
+
   it("rejects an oversized declared response before reading its body", async () => {
     const fetcher = vi.fn().mockResolvedValue(new Response(
       new Uint8Array([1]),
