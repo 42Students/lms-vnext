@@ -23,7 +23,8 @@ export async function POST(request: Request) {
     return NextResponse.json({error:"INVALID_ORIGIN"},{status:403});
   try {
     const context=await getCurrentRequestContext();
-    if(!isSuperAdmin(context))
+    if(!isSuperAdmin(context)||context.adminScope?.collegeId||
+      context.adminScope?.organizationId)
       return NextResponse.json({error:"FORBIDDEN"},{status:403});
     if(!skillsCatalogReadiness().schemaReplayVerified)
       return NextResponse.json({error:"DB10_SKILLS_MIGRATIONS_PENDING",
