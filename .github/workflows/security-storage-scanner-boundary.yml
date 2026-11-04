@@ -1,0 +1,45 @@
+name: Security - private scanner callback boundary
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - "src/modules/storage/scan-verdict-request-guard.ts"
+      - "src/modules/storage/production-scan-verdict-service.ts"
+      - "src/app/api/internal/storage/scan-verdict/route.ts"
+      - "tests/unit/security-storage-scanner-boundary.test.ts"
+      - ".github/workflows/security-storage-scanner-boundary.yml"
+  push:
+    branches: [main]
+    paths:
+      - "src/modules/storage/scan-verdict-request-guard.ts"
+      - "src/modules/storage/production-scan-verdict-service.ts"
+      - "src/app/api/internal/storage/scan-verdict/route.ts"
+      - "tests/unit/security-storage-scanner-boundary.test.ts"
+      - ".github/workflows/security-storage-scanner-boundary.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: security-scanner-boundary-${{ github.ref }}-${{ github.sha }}
+  cancel-in-progress: false
+
+jobs:
+  scanner-machine-auth:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Exact source revision
+        run: test "$(git rev-parse HEAD)" = "$GITHUB_SHA"
+      - name: Adversarial callback tests
+        run: npx vitest run tests/unit/security-storage-scanner-boundary.test.ts
+      - name: TypeScript compile
+        run: npm run typecheck
