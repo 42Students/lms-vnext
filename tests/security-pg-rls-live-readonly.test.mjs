@@ -103,10 +103,10 @@ test("restricted app principal and live SQL identify an unconditional tenant-lea
         f.table === "security_rls_definer_rows()"));
       assert(relevant.every(row => row.rls_enabled && row.rls_forced && row.can_select));
       assert.deepEqual(
-        report.findings.filter(f => tables.includes(f.table)).map(f => [f.code, f.table]),
+        report.findings.filter(f => tables.some(t => f.table === "public." + t)).map(f => [f.code, f.table]),
         [
-          ["APP_UNSCOPED_PERMISSIVE_SELECT", "security_rls_noop_restrictive"],
-          ["APP_UNSCOPED_PERMISSIVE_SELECT", "security_rls_unscoped"],
+          ["APP_UNSCOPED_PERMISSIVE_SELECT", "public.security_rls_noop_restrictive"],
+          ["APP_UNSCOPED_PERMISSIVE_SELECT", "public.security_rls_unscoped"],
         ],
       );
 
