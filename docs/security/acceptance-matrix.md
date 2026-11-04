@@ -15,7 +15,7 @@ Every protected operation has at least one permitted scenario and a negative adv
 
 ## Fixture graph — create once, reuse across suites
 
-\`\`\`text
+```text
 Organization O1
   College A (active)
     Learner A1 and Learner A2 (distinct owners, same college)
@@ -41,7 +41,7 @@ Special actors
   Suspended/removed/expired/archived tenants, users, grants and sessions
 Service actors
   Scheduler / outbound dispatch / integration callback / storage converter
-\`\`\`
+```
 
 Write fixture factories and cleanup so tenant identity, resource ancestry, grants and timestamps are explicit, reproducible and referentially valid. Do not reuse elevated DB test accounts for RLS acceptance. Use independent tenant and same-tenant object IDs whose formats are valid; invalid UUID rejection is not a BOLA test.
 
@@ -57,7 +57,7 @@ Write fixture factories and cleanup so tenant identity, resource ancestry, grant
 | **College Admin** | Explicit college administration within granted scope | Another college/organization, unauthorized role grant, self-promotion, user data outside approved administrative purpose |
 | **Super Admin** | Explicitly elevated, recent-authenticated platform operation with audit evidence | Ordinary Learner/college workspace silently inheriting platform authority; stale MFA; unapproved cross-tenant bulk access |
 
-Also test **same actor, multiple roles/memberships**: selected Learner must not gain College Admin or Super Admin powers merely because those roles exist in persisted state. Switching a workspace must force live authorization. \`SUPER_ADMIN\` is a separate system authority, and recruiter company–college grants are not normal college memberships.
+Also test **same actor, multiple roles/memberships**: selected Learner must not gain College Admin or Super Admin powers merely because those roles exist in persisted state. Switching a workspace must force live authorization. `SUPER_ADMIN` is a separate system authority, and recruiter company–college grants are not normal college memberships.
 
 ## Cross-boundary scenario families
 
@@ -103,12 +103,12 @@ Enforce CI failure for **new** unclassified methods. Work down existing methods 
 
 ## PostgreSQL RLS and least privilege — executable gate
 
-First collect the authorized **read-only catalogue**, privately: \`current_user\` and inherited roles, owners, superuser and \`BYPASSRLS\`, schema/table/sequence/function grants, \`pg_policies\`, \`relrowsecurity\`, \`relforcerowsecurity\`, unsafe privileged function ownership/\`search_path\`. In the repo the existing audit mentions \`scripts/security/pg-rls-readonly-audit.mjs\` and \`scripts/sql/vnext-readonly-integrity.sql\`; check their current presence/behavior before using.
+First collect the authorized **read-only catalogue**, privately: `current_user` and inherited roles, owners, superuser and `BYPASSRLS`, schema/table/sequence/function grants, `pg_policies`, `relrowsecurity`, `relforcerowsecurity`, unsafe privileged function ownership/`search_path`. In the repo the existing audit mentions `scripts/security/pg-rls-readonly-audit.mjs` and `scripts/sql/vnext-readonly-integrity.sql`; check their current presence/behavior before using.
 
 For each **eligible** tenant/user-owned table, require:
 
 1. Documented trustworthy tenant ancestry (direct column or parent join), shared/global exceptions and cross-tenant administrative purpose.
-2. Tested \`USING\` and \`WITH CHECK\` under a restricted app runtime identity, for SELECT, INSERT, UPDATE and DELETE.
+2. Tested `USING` and `WITH CHECK` under a restricted app runtime identity, for SELECT, INSERT, UPDATE and DELETE.
 3. Tests for empty, invalid, stale, switched and wrong tenant/actor context plus owner/role/BYPASSRLS edge cases.
 4. Verification that connection pooling, transactions, retries and error paths cannot leak or reuse tenant context.
 5. Denial of cross-tenant foreign-key attachment, mass assignment and tenant ownership transfer.
@@ -116,7 +116,7 @@ For each **eligible** tenant/user-owned table, require:
 7. Migration and data compatibility; query plans/performance; incremental deployment and rollback evidence.
 8. Runtime deployment proof: SQL catalog and effective grants **at deployment**, not merely a migration file in source.
 
-Do not blindly \`ENABLE ROW LEVEL SECURITY\` everywhere; doing so without an app principal/context and coverage plan can break valid behavior or offer false protection.
+Do not blindly `ENABLE ROW LEVEL SECURITY` everywhere; doing so without an app principal/context and coverage plan can break valid behavior or offer false protection.
 
 ## Fresh authentication and privileged mutations
 
@@ -137,7 +137,7 @@ Minimum critical CI suites should cover:
 - Full generated API-method classification, dangerous-field rejection, CSRF/schema/body/pagination controls.
 - Private storage/signed URL, files, webhook signing/replay, job reauthorization, cache/report/export isolation.
 - Secure SDLC: typecheck, lint/build, secret history scanning, SCA/SAST and dependency/Action/IaC supply-chain checks.
-- A protected \`main\` release gate with **enforced** required checks and review rules, not a passive green workflow.
+- A protected `main` release gate with **enforced** required checks and review rules, not a passive green workflow.
 
 For release acceptance, also verify staging/live runtime settings, restricted database role, private provider-side token revocation, WAF/network deployment config, backup restoration, monitoring/alerts, security incident escalation and independent source-assisted penetration testing.
 
@@ -145,7 +145,7 @@ For release acceptance, also verify staging/live runtime settings, restricted da
 
 For every critical control bundle attach to **the canonical tracker**, not this document:
 
-\`\`\`text
+```text
 Control IDs:
 Scope: API method(s) / DB table(s) / resource(s) / integration(s)
 Threat/asset/tenant relationships:
@@ -162,7 +162,7 @@ Code owner and independent reviewer:
 Affected release / rollout / rollback procedure:
 Known residual risks and explicit exceptions with expiry:
 Acceptance decision and timestamp:
-\`\`\`
+```
 
 Evidence levels: planned → authored → run on an identified SHA → deployed config verified → independently reviewed → monitored/operationally sustained. Only claim the level that genuinely occurred. Never paste secret material or real row-level personal data into a pull request.
 
