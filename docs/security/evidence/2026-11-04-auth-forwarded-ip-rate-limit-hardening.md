@@ -25,7 +25,7 @@
 
 A local Node 22 test used a standalone copy of the touched pure TypeScript decision logic and exercised five test groups: trusted second-to-last hop, malformed chains, IPv6 canonicalization, unknown-IP budget sharing, and production single-hop rejection. **5/5 passed locally**. This was **not** `npx vitest run` against a checked-out repository at an exact source revision, nor a PostgreSQL or deployed-edge test.
 
-The GitHub Actions [CI run on the production-guard test commit](https://github.com/42Students/lms-vnext/actions/runs/41832636791) concluded failure with all jobs ending without populated step execution. Its result is **not passing security test evidence**. Confirm the precise infrastructure/billing blocker separately; do not infer a code failure or success from this result.
+The GitHub Actions [CI run on the production-guard test commit](https://github.com/42Students/lms-vnext/actions/runs/41832636791) concluded failure with all jobs ending without populated step execution. Its result is **not passing security test evidence**. The [focused critical authorization workflow on the trigger-change commit](https://github.com/42Students/lms-vnext/actions/runs/41832985247) also returned **failure with zero executed job steps**, so it supplies no assertion result. Confirm the precise infrastructure/billing blocker separately; do not infer a code failure or success from these results.
 
 ## Known remaining security boundaries
 
