@@ -15,7 +15,10 @@ export function redactAlertText(value: unknown): string {
     .replace(/\b[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}\b/gi, "[id]")
     .replace(/\b[A-Za-z0-9_-]{28,}\b/g, "[opaque value]")
     .replace(/\b(?:Bearer|Basic)\s+[A-Za-z0-9._~+/-]+=*/gi, "[authorization redacted]")
-    .replace(/\b(?:TELEGRAM_ALERT_BOT_TOKEN|api[_-]?key|access[_-]?token|refresh[_-]?token|password|secret|cookie|authorization|token|otp|session[_-]?id)\b\s*[:=]\s*["']?[^"',;\s}]+/gi, "[credential redacted]")
+    // A credential can be logged under a prefixed env/header name such as
+    // GOOGLE_CLIENT_SECRET or x-provider-api-key. A boundary before only the
+    // terminal "secret"/"key" cannot match those snake-case identifiers.
+    .replace(/\b(?:[A-Za-z][A-Za-z0-9]*[_-])*(?:api[_-]?key|access[_-]?token|refresh[_-]?token|client[_-]?secret|private[_-]?key|password(?:[_-]?hash)?|passphrase|passwd|secret|cookie|authorization|token|otp|session[_-]?id)\s*[:=]\s*(?:"[^"\r\n]*"|'[^'\r\n]*'|[^"',;\s}\r\n]+)/gi, "[credential redacted]")
     .replace(/\b[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}\b/gi, "[email redacted]")
     .replace(/(?:\+?\d[\d\s().-]{8,}\d)/g, "[phone redacted]")
     .replace(/\b(?:parameters|params|bindings|values)\s*[:=]\s*(?:\[[^\]]*\]|\([^)]*\)|\{[^}]*\})/gi, "[sql values redacted]")
