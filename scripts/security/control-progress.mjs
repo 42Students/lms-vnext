@@ -119,6 +119,13 @@ export function inspectSecurityProgress(doc,catalogue=readCatalogue()){
            !item.evidence.some(e=>e.commitSha===closure.commitSha))
           fail(errors,"SECURITY_VERIFIED_WITHOUT_INDEPENDENT_CLOSURE",id);
       }else if(item.closure)fail(errors,"SECURITY_OPEN_CONTROL_HAS_CLOSURE",id);
+      if(item.state==="NOT_APPLICABLE"){
+        const exception=item.exception;
+        if(!exception||!valid(exception.reason)||!valid(exception.reviewer)||
+           !REVIEW_URL.test(exception.reviewUrl??"")||!valid(exception.approvedAt)||
+           !valid(exception.expiresAt))
+          fail(errors,"SECURITY_UNAPPROVED_EXCLUSION",id);
+      }else if(item.exception)fail(errors,"SECURITY_UNAUTHORIZED_EXCLUSION",id);
       priority.push({id,title,state:item.state,nextProof:item.nextProof});
     }
   }
@@ -126,6 +133,10 @@ export function inspectSecurityProgress(doc,catalogue=readCatalogue()){
   const counted=Object.values(counts).reduce((a,b)=>a+b,0);
   if(counted!==rows.length)fail(errors,"SECURITY_PROGRESS_COUNT_MISMATCH");
   const verified=counts.VERIFIED,excluded=counts.NOT_APPLICABLE;
+  if(security?.releaseSignoff?.approved===true&&verified+excluded!==rows.length)
+    fail(errors,"SECURITY_RELEASE_WITH_OPEN_CONTROLS");
+  if(security?.releaseSignoff?.approved!==false&&security?.releaseSignoff?.approved!==true)
+    fail(errors,"SECURITY_RELEASE_STATUS_INVALID");
   const remaining=rows.length-verified-excluded,assessed=rows.length-counts.UNASSESSED;
   return {
     mode:"SECURITY_EVIDENCE_TRACKING_NOT_PRODUCTION_CERTIFICATION",
