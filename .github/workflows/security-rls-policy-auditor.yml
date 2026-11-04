@@ -1,0 +1,62 @@
+# Read-only catalogue checks must detect an enabled-but-unscoped RLS policy.
+# Deliberate insecure fixture exists ONLY inside disposable localhost PG17.
+name: Security - PostgreSQL RLS policy auditor
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - "scripts/security/pg-rls-readonly-audit.mjs"
+      - "tests/security-pg-rls-catalog.test.mjs"
+      - "tests/security-pg-rls-live-readonly.test.mjs"
+      - ".github/workflows/security-rls-policy-auditor.yml"
+  push:
+    branches: [main]
+    paths:
+      - "scripts/security/pg-rls-readonly-audit.mjs"
+      - "tests/security-pg-rls-catalog.test.mjs"
+      - "tests/security-pg-rls-live-readonly.test.mjs"
+      - ".github/workflows/security-rls-policy-auditor.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: security-rls-policy-auditor-${{ github.ref }}-${{ github.sha }}
+  cancel-in-progress: false
+
+jobs:
+  rls-catalog-adversarial:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    services:
+      postgres:
+        image: postgres:17-alpine
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: lms_vnext_rls_test
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres -d lms_vnext_rls_test"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 20
+    env:
+      TEST_DATABASE_URL: postgresql://postgres:postgres@127.0.0.1:5432/lms_vnext_rls_test
+      SECURITY_RLS_DISPOSABLE: "1"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Exact source revision
+        run: test "$(git rev-parse HEAD)" = "$GITHUB_SHA"
+      - name: RLS classifier unit regression
+        run: node --test tests/security-pg-rls-catalog.test.mjs
+      - name: Real restricted-role RLS and cross-tenant read witness
+        run: node --test tests/security-pg-rls-live-readonly.test.mjs
