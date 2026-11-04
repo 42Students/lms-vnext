@@ -84,7 +84,9 @@ export async function reconcileCuratedSkillSynonyms(
   context: RequestContext,
   dryRun: boolean,
 ): Promise<CuratedSeedReport> {
-  if (!isSuperAdmin(context)) throw new AuthorizationError("admin-scope.select");
+  if (!isSuperAdmin(context) || context.adminScope?.collegeId ||
+      context.adminScope?.organizationId)
+    throw new AuthorizationError("admin-scope.select");
   requirePermission(context, "admin-scope.select");
   if (!skillsCatalogSchemaReady()) throw new Error("DB10_SCHEMA_REPLAY_NOT_VERIFIED");
 
