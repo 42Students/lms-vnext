@@ -8,7 +8,7 @@
  *
  *   node scripts/security/api-method-inventory.mjs
  *   node scripts/security/api-method-inventory.mjs --json <output.json>
- *   node scripts/security/api-method-inventory.mjs --enforce-new
+ *   node scripts/security/api-method-inventory.mjs --enforce-new --enforce-guards
  *
  * --enforce-new blocks unreviewed NEW methods since an immutable adoption
  * baseline, rather than pretending the existing 1,001 routes were certified.
@@ -34,6 +34,9 @@ const PERMISSION_CALLS = new Set([
 ]);
 // Adoption snapshot is a commit, not a moving branch or an automatic whitelist.
 const ADOPTION_REF = "2f482a698f61918a0abf4ad27cfb282314f3b851";
+// Known evidence snapshot; direct calls are a regression signal, NOT proof
+// of runtime authorization or tenant/resource ownership.
+const GUARD_EVIDENCE_REF = "3d515ffd7d3a05ca5a0c1fdd3bf0864127f04f8b";
 const API_ROOT = path.resolve("src/app/api");
 
 function exported(node) {
@@ -133,6 +136,33 @@ export function inventoryApi(root = API_ROOT) {
   };
 }
 
+/**
+ * Compare individual method bodies, never a whole route file. Removing a
+ * previously seen guard requires explicit security review even for a legacy
+ * method that was present before the new-handler adoption baseline.
+ * This flags guard-evidence loss, not necessarily an exploitable bypass.
+ */
+export function directGuardEvidenceRegressions(beforeSource, afterSource, fileName = "route.ts") {
+  const oldMethods = new Map(extractApiMethods(beforeSource, fileName)
+    .map(method => [method.method, method]));
+  const checks = [
+    ["has_direct_session_evidence", "DIRECT_SESSION_EVIDENCE_REMOVED"],
+    ["has_direct_origin_evidence", "DIRECT_ORIGIN_EVIDENCE_REMOVED"],
+    ["has_direct_permission_evidence", "DIRECT_PERMISSION_EVIDENCE_REMOVED"],
+  ];
+  const gaps = [];
+  for (const current of extractApiMethods(afterSource, fileName)) {
+    const previous = oldMethods.get(current.method);
+    if (!previous) continue; // genuinely new handlers use --enforce-new.
+    for (const [property, reason] of checks) {
+      if (previous[property] && !current[property]) {
+        gaps.push({ method: current.method, reason });
+      }
+    }
+  }
+  return gaps;
+}
+
 function git(args) {
   return execFileSync("git", args, { cwd: process.cwd(), encoding: "utf8",
     stdio: ["ignore", "pipe", "pipe"], maxBuffer: 20_000_000 }).trim();
@@ -179,6 +209,35 @@ export function findNewMethodReviewGaps(inventory, baseRef = ADOPTION_REF) {
   return gaps;
 }
 
+/**
+ * Compare changed existing handlers against a pinned, immutable known
+ * baseline. This is deliberately independent of --enforce-new, which catches
+ * newly introduced methods but not weakened pre-existing handlers.
+ */
+export function findExistingGuardEvidenceRegressions(baseRef = GUARD_EVIDENCE_REF) {
+  git(["cat-file", "-e", baseRef + "^{commit}"]);
+  const changed = git(["diff", "--name-only", "--diff-filter=ACMR",
+    baseRef, "HEAD", "--", "src/app/api"]);
+  const gaps = [];
+  for (const file of changed ? changed.split("\\n") : []) {
+    if (!file.endsWith("/route.ts") || !fs.existsSync(file)) continue;
+    let before;
+    try {
+      before = git(["show", baseRef + ":" + file]);
+    } catch {
+      // New or renamed route files are handled by the new-method gate.
+      continue;
+    }
+    const after = fs.readFileSync(file, "utf8");
+    for (const gap of directGuardEvidenceRegressions(before, after, file)) {
+      if (!reviewAnnotation(after, gap.method)) {
+        gaps.push({ file, ...gap });
+      }
+    }
+  }
+  return gaps;
+}
+
 if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
   const report = inventoryApi();
   const outputIndex = process.argv.indexOf("--json");
@@ -202,6 +261,14 @@ if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.me
       implementation: m.implementation,
     }));
     console.log(JSON.stringify({ review_candidates: candidates }, null, 2));
+  }
+  if (process.argv.includes("--enforce-guards")) {
+    const gaps = findExistingGuardEvidenceRegressions();
+    for (const gap of gaps) console.error(JSON.stringify(gap));
+    if (gaps.length) {
+      console.error("Existing API method lost direct security guard evidence; review is required.");
+      process.exitCode = 1;
+    }
   }
   if (process.argv.includes("--enforce-new")) {
     const gaps = findNewMethodReviewGaps(report);
