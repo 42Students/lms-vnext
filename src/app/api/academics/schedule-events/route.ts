@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { isSameOriginRequest } from "@/auth/origin";
 import { apiErrorResponse } from "@/lib/api-error";
+import { readBoundedJsonBody } from "@/lib/bounded-json-body";
 import { createSectionScheduleEventInputSchema } from "@/modules/academics/validation";
 import {
   createSectionScheduleEvent,
@@ -43,9 +44,12 @@ export async function POST(request: Request) {
 
   try {
     const context = await getCurrentRequestContext();
-    let body:unknown;
-    try{body=await request.json();}
-    catch{return NextResponse.json({error:"INVALID_REQUEST"},{status:400});}
+    const parsed = await readBoundedJsonBody(request, 16_384);
+    if (parsed.kind !== "OK") return NextResponse.json({ error: "INVALID_REQUEST" }, {
+      status: parsed.kind === "TOO_LARGE" ? 413 : 400,
+      headers: { "Cache-Control": "private, no-store" },
+    });
+    let body: unknown = parsed.value;
     if(typeof body==="object"&&body!==null&&!Array.isArray(body)){
       const record=body as Record<string,unknown>;
       if(record["sectionId"]===undefined&&typeof record["classId"]==="string"){
