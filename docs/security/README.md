@@ -1,14 +1,14 @@
 # 42LMS vNext — High-Assurance Security Program
 
 **Established:** 2026-11-04  
-**Applies to:** \`42Students/lms-vnext\`, all seven user account types, shared internal services, workers, infrastructure, production operations and third-party integrations.  
+**Applies to:** `42Students/lms-vnext`, all seven user account types, shared internal services, workers, infrastructure, production operations and third-party integrations.  
 **Classification:** Security-sensitive engineering requirements. Do not put credentials, secrets, raw production row dumps, unredacted incident artifacts or exploit instructions in Git.  
 **Status:** **Target architecture / execution guidance — NOT certification.** Code already contains meaningful controls. Specific implementation and testing status must be read from evidence at an identified revision, never inferred from this document.
 
 ## Read this first
 
 1. [Original conversation and maximum-security blueprint, preserved unedited](../audit/security/2026-11-04-maximum-security-blueprint-source.md) — history, rationale, 26 domains, threat examples and release gates.
-2. [493-ID security control catalogue](control-catalog.md) — item-by-item traceability: \`SEC-01-001\` through the relevant domain's final number. This is **requirements**, not a second task tracker.
+2. [493-ID security control catalogue](control-catalog.md) — item-by-item traceability: `SEC-01-001` through the relevant domain's final number. This is **requirements**, not a second task tracker.
 3. [Security verification matrix and release gates](acceptance-matrix.md) — adversarial fixtures, seven-account access model, evidence format, and hard stop criteria.
 4. [Existing source-level technical audit and remediation evidence](../audit/security/2026-11-04-auth-authorization-tenant-hardening.md) — observed code findings, commits, certain exact-SHA CI results, and limitations.
 5. [Canonical execution tracker](../tracker.json) — **the sole active task/status tracker**. For each implementation slice, reference security control IDs and attach evidence to an existing appropriate canonical task or a properly reviewed new canonical task. Do not mark these Markdown pages as a parallel source of status truth.
@@ -20,7 +20,7 @@ The archive is a snapshot of a conversation on 2026-11-04; its statements about 
 Security is **an independently verifiable property of every operation**, not a login state or a hidden UI control.
 
 - **Tenant isolation:** College A cannot read, infer, list, download, update, or indirectly expose College B's private records; the same applies across organizations, within a college between unrelated learners, and to storage, search, analytics and jobs.
-- **Role isolation:** A principal acts under exactly the explicitly selected, live and permitted role, tenant and resource relationship for that request. Holding a second powerful role must not implicitly combine its privileges. The \`SUPER_ADMIN\` system context stays separate from the normal workspace.
+- **Role isolation:** A principal acts under exactly the explicitly selected, live and permitted role, tenant and resource relationship for that request. Holding a second powerful role must not implicitly combine its privileges. The `SUPER_ADMIN` system context stays separate from the normal workspace.
 - **Defense in depth:** Server policy + trusted target lookup + transactional authorization + database grants/RLS/integrity constraints + storage/worker boundaries + monitored audit signals. No single check, filter, session, or secret is assumed infallible.
 - **Evidence-backed release:** Meaningful negative tests, real restricted PostgreSQL roles, live-configuration inspection, enforceable deployment gates, independent assessment and operational drills. A code commit, green source-pattern check or authored-but-unexecuted test is not closure.
 - **Privacy and least privilege:** Student, academic, placement, recruiter and administrative data disclosed only for legitimate purpose, minimum fields, retention and authorized sharing.
@@ -31,7 +31,7 @@ Security is **an independently verifiable property of every operation**, not a l
 
 Every protected handler and asynchronous mutation must resolve and retain this chain:
 
-\`\`\`text
+```text
 Verified identity + opaque active device session
     -> selected role and independently verified active college/organization/company grant
     -> explicit action/permission (RBAC)
@@ -40,19 +40,19 @@ Verified identity + opaque active device session
     -> transaction-safe live recheck + constrained app database principal + eligible RLS
     -> minimum necessary response / allowed mutation
     -> tamper-resistant, privacy-minimized security event where material
-\`\`\`
+```
 
 **Deny by default** when actor state, selected role, resource ancestry, grant, tenant, or required auth freshness is absent, ambiguous, expired, inactive or inconsistent. Resolve target ownership from trusted persisted data, not a browser-supplied UUID/tenant field. Recheck live memberships and grants inside the same protected write transaction; address concurrent revocation. An authorized page is not evidence of an authorized API request.
 
-RBAC alone is insufficient: \`courses.read\` does not authorize *every* course, and Faculty status does not authorize *every* learner. Request roles must not automatically union. Recruiter authorization must include live, explicit company–college grants and candidate sharing/eligibility conditions. Cross-college administration requires a deliberate, bounded privileged purpose and auditing, not a silent bypass.
+RBAC alone is insufficient: `courses.read` does not authorize *every* course, and Faculty status does not authorize *every* learner. Request roles must not automatically union. Recruiter authorization must include live, explicit company–college grants and candidate sharing/eligibility conditions. Cross-college administration requires a deliberate, bounded privileged purpose and auditing, not a silent bypass.
 
 ### PostgreSQL decision rule
 
-Do **not** enable blanket RLS merely to satisfy a checkbox. First inspect live app roles and table ownership; determine actual tenant ancestry; separate runtime/migration/worker principals; design a server-authenticated tenant execution context with safe pool transaction boundaries. The regular runtime must not own protected relations or have \`BYPASSRLS\`/superuser privileges. \`USING\` and \`WITH CHECK\` must be tested independently for SELECT/INSERT/UPDATE/DELETE using the same restricted runtime identity. A SQL session variable that arbitrary injected SQL can change is **not** a stand-alone security principal. Use phased domain rollouts, performance checks and reversible migration plans.
+Do **not** enable blanket RLS merely to satisfy a checkbox. First inspect live app roles and table ownership; determine actual tenant ancestry; separate runtime/migration/worker principals; design a server-authenticated tenant execution context with safe pool transaction boundaries. The regular runtime must not own protected relations or have `BYPASSRLS`/superuser privileges. `USING` and `WITH CHECK` must be tested independently for SELECT/INSERT/UPDATE/DELETE using the same restricted runtime identity. A SQL session variable that arbitrary injected SQL can change is **not** a stand-alone security principal. Use phased domain rollouts, performance checks and reversible migration plans.
 
 ## Ten implementation programs
 
-Program IDs \`SP-01\` through \`SP-10\` organize work; individual requirement IDs live in the catalogue. These are **execution groupings, not separate tracker tickets**.
+Program IDs `SP-01` through `SP-10` organize work; individual requirement IDs live in the catalogue. These are **execution groupings, not separate tracker tickets**.
 
 | Program | Priority | Catalogue coverage | Completion contract |
 |---|---|---|---|
@@ -73,12 +73,12 @@ Each program must enumerate all of its catalogue IDs while planning work. Do not
 
 ### Phase 0 — Establish the trustworthy baseline (P0, no risky live DB change)
 
-1. Pin \`main\` SHA and reproduce selected auth, TypeScript, PostgreSQL, migration and route census checks; collect actual job names/results and failures.
+1. Pin `main` SHA and reproduce selected auth, TypeScript, PostgreSQL, migration and route census checks; collect actual job names/results and failures.
 2. Capture read-only, authorized runtime PostgreSQL catalog and privilege inventory. Store sensitive outputs in restricted evidence storage outside Git.
 3. Build per-table trusted tenant ownership/ancestry and role/grant matrices, including all global/shared exceptions; explicitly classify unknowns.
 4. Inventory active credentials, rotate suspected exposures with provider-side evidence and least-privilege replacement; verify old tokens disabled. Do not echo values.
-5. Verify actual protection of \`main\`, review requirements and required checks with repository administrators. Workflow YAML alone is not branch enforcement.
-6. Align/insert atomic scoped tasks into \`docs/tracker.json\` under its existing policy, with links to control IDs. Coordinate with other chats before touching overlapping code or the canonical tracker.
+5. Verify actual protection of `main`, review requirements and required checks with repository administrators. Workflow YAML alone is not branch enforcement.
+6. Align/insert atomic scoped tasks into `docs/tracker.json` under its existing policy, with links to control IDs. Coordinate with other chats before touching overlapping code or the canonical tracker.
 
 ### Phase 1 — Close exploitable permission boundaries (P0)
 
@@ -102,7 +102,7 @@ Harden sessions, OTP/passkeys/recovery, anti-bot distributed limits, XSS/CSP/CSR
 
 ### Phase 4 — Establish durable assurance (P1/P2)
 
-Make mandatory build/test/security/secret/dependency checks enforceable on \`main\`; validate cloud/network/IaC boundaries; implement alerts, runbooks, recovery tests and privacy operations; undertake independent pentesting with all account types and source-assisted RLS/RBAC review; fix/retest high-severity findings. Re-run critical negative suites whenever auth, identity, tenant, database, API, worker, storage or provider trust boundaries change.
+Make mandatory build/test/security/secret/dependency checks enforceable on `main`; validate cloud/network/IaC boundaries; implement alerts, runbooks, recovery tests and privacy operations; undertake independent pentesting with all account types and source-assisted RLS/RBAC review; fix/retest high-severity findings. Re-run critical negative suites whenever auth, identity, tenant, database, API, worker, storage or provider trust boundaries change.
 
 ## Exact-SHA source findings — historical baseline, not live certification
 
@@ -118,7 +118,7 @@ Do not propagate stale counts, release status, or a generic percentage as if the
 
 ## Working contract for parallel chats and engineers
 
-- **Claim before coding:** Pin \`main\` SHA; identify precise canonical tracker scope and catalogue IDs. Avoid overlapping other agents' in-progress files. Keep new docs or tests in isolated paths where possible.
+- **Claim before coding:** Pin `main` SHA; identify precise canonical tracker scope and catalogue IDs. Avoid overlapping other agents' in-progress files. Keep new docs or tests in isolated paths where possible.
 - **Threat model:** For each operation document actor, selected role, tenant, resource, authorization source, negative case, concurrent revocation, expected side effects, and failure semantics.
 - **Implement:** Prefer a shared consistent guard/policy abstraction, but never trade away trusted object-specific lookup. Preserve migration immutability and correct already deployed state via registered forward migrations.
 - **Test:** Execute exact-SHA positive and negative tests including race/no-side-effect checks; use a disposable PostgreSQL instance and the **restricted runtime role**, not just a database owner. Never test attacks on production data.
@@ -148,7 +148,7 @@ Do not propagate stale counts, release status, or a generic percentage as if the
 8. Verify session/factor/recovery expiry, revocation, hijacking and replay protections.
 9. Audit secret exposure across current code/history/builds and prove provider-side revocations.
 10. Verify file/storage, webhooks, queues, workers and exports independently.
-11. Enforce security CI checks, protected releases and critical-change review on \`main\`.
+11. Enforce security CI checks, protected releases and critical-change review on `main`.
 12. Pass restricted-real-role PostgreSQL security suite, external critical-path review, and relevant response/restore drills.
 
 The [acceptance matrix](acceptance-matrix.md) specifies test cases and proof. **Do not declare READY or report a fraction complete from the existence of these 12 lines.** The canonical tracker, actual CI logs, runtime evidence and independent sign-off determine status.
@@ -159,4 +159,4 @@ Release is blocked if any critical tenant isolation, privileged access, secret e
 
 ## Changes to this document
 
-Keep stable control IDs in \`control-catalog.md\`. When adding controls, append IDs without renumbering. Use this document for **design and working method**, [the existing audit](../audit/security/2026-11-04-auth-authorization-tenant-hardening.md) for dated findings, and \`docs/tracker.json\` for sole live ownership and completion state. Update evidence and applicability with each material release.
+Keep stable control IDs in `control-catalog.md`. When adding controls, append IDs without renumbering. Use this document for **design and working method**, [the existing audit](../audit/security/2026-11-04-auth-authorization-tenant-hardening.md) for dated findings, and `docs/tracker.json` for sole live ownership and completion state. Update evidence and applicability with each material release.
