@@ -1,4 +1,4 @@
-# Per-method source inventory is a triage gate, not a claim that existing
+# Per-method census and guard-evidence non-regression are source triage gates.\n# They are NOT runtime object/tenant authorization certification.\n# Existing
 # endpoints have been fully penetration-tested or database-certified.
 name: Security - API method inventory and new-handler review
 
@@ -43,7 +43,7 @@ jobs:
       - name: AST census regression
         run: node --test tests/security-api-method-inventory.test.mjs
       - name: Full method census and fail-closed new-handler review
-        run: node scripts/security/api-method-inventory.mjs --json /tmp/vnext-api-method-security-census.json --enforce-new --triage
+        run: node scripts/security/api-method-inventory.mjs --json /tmp/vnext-api-method-security-census.json --enforce-new --enforce-guards --triage
       - name: Archive method inventory (unreviewed is NOT a pass)
         if: always()
         uses: actions/upload-artifact@v4
