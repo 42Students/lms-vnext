@@ -1,0 +1,67 @@
+# Focused runtime and source regression for sensitive private CSV exports.
+# Not a replacement for full API/tenant/RLS coverage or production step-up UX verification.
+name: Security - private bulk export authorization and CSV encoding
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - "src/app/api/admin/people/export/**"
+      - "src/app/api/admin/tenants/export/**"
+      - "src/app/api/college/people/export/**"
+      - "src/app/api/college/roles/export/**"
+      - "src/app/api/admin/students/export/**"
+      - "src/app/api/admin/faculty/export/**"
+      - "src/app/api/admin/placements/applications/export/**"
+      - "src/app/api/admin/placements/shortlisted/export/**"
+      - "src/modules/people/college-people-export-model.ts"
+      - "src/modules/people/admin-users-export-model.ts"
+      - "src/modules/admin-ui/super-admin-scoped-csv-service.ts"
+      - "src/auth/recent-device-auth.ts"
+      - "tests/unit/private-bulk-csv-security.test.ts"
+      - "tests/unit/chat13-super-admin-scoped-csv-runtime.test.ts"
+      - "tests/unit/chat13-scoped-csv-export-page-size.test.ts"
+      - ".github/workflows/security-private-exports.yml"
+  push:
+    branches: [main]
+    paths:
+      - "src/app/api/admin/people/export/**"
+      - "src/app/api/admin/tenants/export/**"
+      - "src/app/api/college/people/export/**"
+      - "src/app/api/college/roles/export/**"
+      - "src/app/api/admin/students/export/**"
+      - "src/app/api/admin/faculty/export/**"
+      - "src/app/api/admin/placements/applications/export/**"
+      - "src/app/api/admin/placements/shortlisted/export/**"
+      - "src/modules/people/college-people-export-model.ts"
+      - "src/modules/people/admin-users-export-model.ts"
+      - "src/modules/admin-ui/super-admin-scoped-csv-service.ts"
+      - "src/auth/recent-device-auth.ts"
+      - "tests/unit/private-bulk-csv-security.test.ts"
+      - "tests/unit/chat13-super-admin-scoped-csv-runtime.test.ts"
+      - "tests/unit/chat13-scoped-csv-export-page-size.test.ts"
+      - ".github/workflows/security-private-exports.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: security-private-exports-${{ github.ref }}-${{ github.sha }}
+  cancel-in-progress: false
+
+jobs:
+  private-export-regression:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Unicode injection and fresh sign-in contracts
+        run: npx vitest run tests/unit/private-bulk-csv-security.test.ts
+      - name: Bulk CSV runtime stale-session and paging regressions
+        run: npx vitest run tests/unit/chat13-super-admin-scoped-csv-runtime.test.ts tests/unit/chat13-scoped-csv-export-page-size.test.ts
