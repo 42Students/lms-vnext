@@ -6,6 +6,7 @@ import {assertRuntimeDatabasePrincipal,DATABASE_APP_PRINCIPAL_DENIED,enforceProd
 const safe:DatabasePrincipalCapability={
  is_superuser:false,can_bypass_rls:false,can_create_role:false,
  can_create_database:false,can_create_schema:false,can_create_in_database:false,
+ can_set_privileged_role:false,can_bypass_tenant_rls_by_ownership:false,
 };
 describe("production PostgreSQL app role readiness",()=>{
  it("requires explicit production deployment, not merely Next.js build mode",()=>{
@@ -35,5 +36,7 @@ describe("production PostgreSQL app role readiness",()=>{
   expect(fn).toContain("WHERE r.rolname = current_user");
   expect(fn).toContain("has_schema_privilege(current_user");
   expect(fn).toContain("has_database_privilege(current_user");
+  expect(fn).toContain("pg_has_role(session_user, elevated.oid, 'SET')");
+  expect(fn).toContain("AS can_bypass_tenant_rls_by_ownership");
  });
 });
