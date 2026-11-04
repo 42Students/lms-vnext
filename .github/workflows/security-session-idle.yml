@@ -1,0 +1,98 @@
+# Enforce persisted session inactivity expiry against real PostgreSQL.
+# This workflow uses only a disposable PG17 service, never a live tenant DB.
+name: Security - database session idle expiry and privileged timeout
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - "src/modules/auth/session-service.ts"
+      - "src/modules/auth/config.ts"
+      - "src/db/schema/identity-device-sessions.ts"
+      - "tests/unit/security-device-session-idle-policy.test.ts"
+      - "tests/integration/db01-session-atomic-authorization.test.ts"
+      - "tests/integration/db01-device-session-field-semantics.test.ts"
+      - ".github/workflows/security-session-idle.yml"
+  push:
+    branches: [main]
+    paths:
+      - "src/modules/auth/session-service.ts"
+      - "src/modules/auth/config.ts"
+      - "src/db/schema/identity-device-sessions.ts"
+      - "tests/unit/security-device-session-idle-policy.test.ts"
+      - "tests/integration/db01-session-atomic-authorization.test.ts"
+      - "tests/integration/db01-device-session-field-semantics.test.ts"
+      - ".github/workflows/security-session-idle.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: security-session-idle-${{ github.ref }}-${{ github.sha }}
+  cancel-in-progress: false
+
+jobs:
+  session-idle-unit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Verify exact tested source
+        run: test "$(git rev-parse HEAD)" = "$GITHUB_SHA"
+      - name: Positive and negative session idle authorization checks
+        run: |
+          npx vitest run tests/unit/security-device-session-idle-policy.test.ts tests/unit/chat6-auth-session-service-behaviour.test.ts tests/unit/chat6-auth-session-ledger.test.ts
+      - name: Full TypeScript gate
+        env:
+          NODE_OPTIONS: --max-old-space-size=6144
+        run: npm run typecheck
+
+  session-idle-postgres:
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    services:
+      postgres:
+        image: postgres:17-alpine
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: lms_vnext_test
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres -d lms_vnext_test"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 20
+    env:
+      DATABASE_URL: postgresql://postgres:postgres@127.0.0.1:5432/lms_vnext_test
+      TEST_DATABASE_URL: postgresql://postgres:postgres@127.0.0.1:5432/lms_vnext_test
+      DB03_ISOLATED_TEST_DATABASE: "1"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Exact revision and immutable migrations
+        run: |
+          test "$(git rev-parse HEAD)" = "$GITHUB_SHA"
+          npm run db:journal:verify
+      - name: Apply all registered migrations to disposable PostgreSQL
+        env:
+          DATABASE_URL: ""
+        run: npm run db:test:prepare
+      - name: Test idle expiry, short privileged idle, future timestamps and revocation races
+        run: npx vitest run --config vitest.db.config.ts tests/integration/db01-session-atomic-authorization.test.ts tests/integration/db01-device-session-field-semantics.test.ts
+      - name: Assert migration journal remains unchanged
+        if: always()
+        run: |
+          npm run db:journal:verify
+          test -z "$(git status --porcelain -- drizzle/)"
