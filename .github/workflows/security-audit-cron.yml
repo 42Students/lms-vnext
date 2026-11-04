@@ -1,25 +1,33 @@
 # Dedicated control gate for the privileged audit-import scheduler.
 # Static source/test presence alone does not certify deployment credentials
 # or PostgreSQL/GitHub provider isolation.
-name: Security - audit findings scheduler boundary
+name: Security - audit findings sync privilege boundaries
 
 on:
   pull_request:
     branches: [main]
     paths:
       - "src/app/api/internal/audit-findings/sync/route.ts"
+      - "src/app/api/tracker/audit-findings/sync/route.ts"
+      - "src/modules/bug-tracker/independent-audit-inbox-importer.ts"
       - "src/modules/bug-tracker/audit-cron-request-guard.ts"
       - "tests/unit/audit-findings-cron-request-security.test.ts"
       - "tests/unit/audit-findings-cron-route-security.test.ts"
+      - "tests/unit/audit-findings-manual-sync-security.test.ts"
+      - "tests/security-audit-importer-transaction.test.mjs"
       - "tests/unit/security-audit-sync-worker-boundary.test.ts"
       - ".github/workflows/security-audit-cron.yml"
   push:
     branches: [main]
     paths:
       - "src/app/api/internal/audit-findings/sync/route.ts"
+      - "src/app/api/tracker/audit-findings/sync/route.ts"
+      - "src/modules/bug-tracker/independent-audit-inbox-importer.ts"
       - "src/modules/bug-tracker/audit-cron-request-guard.ts"
       - "tests/unit/audit-findings-cron-request-security.test.ts"
       - "tests/unit/audit-findings-cron-route-security.test.ts"
+      - "tests/unit/audit-findings-manual-sync-security.test.ts"
+      - "tests/security-audit-importer-transaction.test.mjs"
       - "tests/unit/security-audit-sync-worker-boundary.test.ts"
       - ".github/workflows/security-audit-cron.yml"
   workflow_dispatch:
@@ -42,5 +50,9 @@ jobs:
           node-version: 22
           cache: npm
       - run: npm ci
-      - name: Audit cron credential, Origin and request-shape negatives
-        run: npx vitest run tests/unit/audit-findings-cron-request-security.test.ts tests/unit/audit-findings-cron-route-security.test.ts tests/unit/security-audit-sync-worker-boundary.test.ts
+      - name: Transaction-scoped actor recheck and explicit machine provenance
+        run: node --test tests/security-audit-importer-transaction.test.mjs
+      - name: Audit cron and manual Super Admin denial/no-side-effect suite
+        run: npx vitest run tests/unit/audit-findings-cron-request-security.test.ts tests/unit/audit-findings-cron-route-security.test.ts tests/unit/audit-findings-manual-sync-security.test.ts
+      - name: TypeScript authority contract
+        run: NODE_OPTIONS="--max-old-space-size=5120" npm run typecheck tests/unit/security-audit-sync-worker-boundary.test.ts
