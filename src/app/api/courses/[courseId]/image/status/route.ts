@@ -8,7 +8,7 @@ export const dynamic = "force-dynamic";
 type RouteContext = { params: Promise<{ courseId: string }> };
 
 export async function GET(_request: Request, { params }: RouteContext) {
-  const headers = { "Cache-Control": "private, no-store" };
+  const headers = { "Cache-Control": "private, no-store", Vary: "Cookie" };
   try {
     const context = await getCurrentRequestContext();
     const { courseId } = await params;
@@ -19,6 +19,9 @@ export async function GET(_request: Request, { params }: RouteContext) {
     if (error instanceof CourseImageError) return NextResponse.json({
       error: error.code,
     }, { status: error.status, headers });
-    return apiErrorResponse(error);
+    const response = apiErrorResponse(error);
+    response.headers.set("Cache-Control", "private, no-store");
+    response.headers.set("Vary", "Cookie");
+    return response;
   }
 }
