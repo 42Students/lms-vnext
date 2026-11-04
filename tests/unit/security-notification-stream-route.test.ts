@@ -1,6 +1,7 @@
 import { beforeEach, afterEach, describe, expect, it, vi } from "vitest";
 import { GET } from "@/app/api/notifications/stream/route";
 import { getCurrentRequestContext } from "@/auth/request-context";
+import { verifyIdentitySessionCookie } from "@/auth/session";
 import { resolveRequestContext } from "@/modules/identity/context-service";
 import { getDb } from "@/db/client";
 import {
@@ -11,6 +12,14 @@ import { listOwnNotifications, countOwnUnreadNotifications } from "@/modules/act
 import type { RequestContext } from "@/modules/identity/context";
 
 vi.mock("@/auth/request-context", () => ({ getCurrentRequestContext:vi.fn() }));
+vi.mock("next/headers", () => ({
+  cookies:vi.fn(async () => ({get: (key:string) =>
+    key==="lms_session"?{value:"valid-opaque-fixture-session"}:undefined})),
+}));
+vi.mock("@/auth/session", () => ({
+  SESSION_COOKIE_NAME:"lms_session",
+  verifyIdentitySessionCookie:vi.fn(),
+}));
 vi.mock("@/modules/identity/context-service", () => ({ resolveRequestContext:vi.fn() }));
 vi.mock("@/db/client", () => ({ getDb:vi.fn() }));
 vi.mock("@/modules/activity/notification-stream-authorization", () => ({
@@ -36,6 +45,9 @@ const openControllers:AbortController[] = [];
 beforeEach(()=>{
   vi.clearAllMocks();
   vi.mocked(getCurrentRequestContext).mockResolvedValue(context);
+  vi.mocked(verifyIdentitySessionCookie).mockResolvedValue({
+    uid:"sse-test-user",sessionId:"77777777-7777-4777-8777-777777777777",
+  });
   vi.mocked(resolveRequestContext).mockResolvedValue(context);
   vi.mocked(notificationStreamScopeUnchanged).mockReturnValue(true);
   vi.mocked(listOwnNotifications).mockResolvedValue([]);
@@ -84,9 +96,34 @@ describe("notifications SSE class probing and live authority",()=>{
    expect(response.headers.get("cache-control")).toContain("no-cache");
    const reader=response.body!.getReader();
    await reader.read();
+   await vi.waitFor(()=>expect(verifyIdentitySessionCookie).toHaveBeenCalledTimes(1));
    await vi.waitFor(()=>expect(resolveRequestContext).toHaveBeenCalledTimes(1));
    await vi.waitFor(()=>expect(listOwnNotifications).toHaveBeenCalledTimes(1));
    expect(countOwnUnreadNotifications).toHaveBeenCalledWith(context);
+   await reader.cancel();
+ });
+ it("closes a stream when device token was revoked before reading private receipts",async()=>{
+   vi.mocked(verifyIdentitySessionCookie).mockRejectedValue(new Error("SESSION_REVOKED"));
+   const response=await GET(request());
+   expect(response.status).toBe(200);
+   const reader=response.body!.getReader();
+   await reader.read();
+   await vi.waitFor(()=>expect(verifyIdentitySessionCookie).toHaveBeenCalledTimes(1));
+   expect(resolveRequestContext).not.toHaveBeenCalled();
+   expect(listOwnNotifications).not.toHaveBeenCalled();
+   await reader.cancel();
+ });
+ it("closes a stream when token subject differs from the selected actor",async()=>{
+   vi.mocked(verifyIdentitySessionCookie).mockResolvedValue({
+     uid:"different-user",sessionId:"77777777-7777-4777-8777-777777777777",
+   });
+   const response=await GET(request());
+   expect(response.status).toBe(200);
+   const reader=response.body!.getReader();
+   await reader.read();
+   await vi.waitFor(()=>expect(verifyIdentitySessionCookie).toHaveBeenCalledTimes(1));
+   expect(resolveRequestContext).not.toHaveBeenCalled();
+   expect(listOwnNotifications).not.toHaveBeenCalled();
    await reader.cancel();
  });
  it("closes a stream on revoked scope without reading private receipts",async()=>{
