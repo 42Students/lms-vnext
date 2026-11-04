@@ -1,3 +1,4 @@
+import {requireRecentDeviceAuthentication} from "@/auth/recent-device-auth";
 import {readBoundedUtf8Body} from "@/lib/bounded-utf8-body";
 import {NextResponse} from "next/server";
 import {getCurrentRequestContext} from "@/auth/request-context";
@@ -21,7 +22,11 @@ export async function POST(request:Request){
   try{body=JSON.parse(decoded.body);}catch{
    return NextResponse.json({error:"INVALID_SOURCE"},{status:400});
   }
-  const result=await reconcileLegacySkillCatalog(await getCurrentRequestContext(),body);
+  // A global catalog import mutates shared data; require recent OTP-backed
+  // authentication rather than accepting an old five-day device cookie.
+  const context=await getCurrentRequestContext();
+  await requireRecentDeviceAuthentication(context.user.id);
+  const result=await reconcileLegacySkillCatalog(context,body);
   return NextResponse.json({report:result},
    {headers:{"Cache-Control":"private, no-store"}});
  }catch(error){return apiErrorResponse(error);}
