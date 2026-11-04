@@ -118,10 +118,14 @@ export async function GET() {
     const activeId=cookieStore.get(MEMBERSHIP_COOKIE_NAME)?.value??null;
     const selected=memberships.find(choice=>choice.id===activeId&&choice.status==="ACTIVE")??null;
     const requestedRole=cookieStore.get(ROLE_COOKIE_NAME)?.value??null;
-    const currentRole=selected?
-      selected.roles.find(role=>role===requestedRole) ??
-        (selected.roles.length===1?selected.roles[0]??null:null):null;
-    const roleSelectionRequired=Boolean(selected&&selected.roles.length>1&&!currentRole);
+    // A stale explicit cookie must never be displayed as a different,
+    // implicitly selected role, even if only one live role remains.
+    const currentRole=selected
+      ? requestedRole
+        ? selected.roles.find(role=>role===requestedRole)??null
+        : selected.roles.length===1?selected.roles[0]??null:null
+      : null;
+    const roleSelectionRequired=Boolean(selected&&selected.roles.length>0&&!currentRole);
     return privateAuthJson({
       memberships:memberships.map(choice=>({...choice,
         label:choice.collegeName+" · "+choice.organizationName,
