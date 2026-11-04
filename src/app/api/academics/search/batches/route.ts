@@ -14,6 +14,10 @@ const schema = z.object({
 
 export async function GET(request: Request) {
   const url = new URL(request.url);
+  if ([...url.searchParams.keys()].some(key => url.searchParams.getAll(key).length > 1))
+    return NextResponse.json({ error: "INVALID_FILTERS" }, {
+      status: 400, headers: { "Cache-Control": "private, no-store" },
+    });
   const input = schema.safeParse(Object.fromEntries(url.searchParams));
   if (!input.success) {
     return NextResponse.json({ error: "INVALID_FILTERS" }, { status: 400 });
