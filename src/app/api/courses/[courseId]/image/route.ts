@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { isSameOriginRequest } from "@/auth/origin";
+import { readBoundedJsonRequest } from "@/lib/bounded-json-request";
 import { apiErrorResponse } from "@/lib/api-error";
 import {
   CourseImageError, grantCourseImage, readCourseImage, removeCourseImage,
@@ -27,7 +28,11 @@ export async function POST(request: Request, { params }: RouteContext) {
   try {
     const context = await getCurrentRequestContext();
     const { courseId } = await params;
-    const data: unknown = await request.json().catch(() => null);
+    const body = await readBoundedJsonRequest(request, 4096);
+    if (!body.ok) return NextResponse.json({ error: "INVALID_REQUEST" }, {
+      status: 400, headers: privateHeaders,
+    });
+    const data: unknown = body.value;
     const grant = await grantCourseImage(context, courseId, data);
     return NextResponse.json({ grant }, { status: 201, headers: privateHeaders });
   } catch (error) { return imageError(error); }
