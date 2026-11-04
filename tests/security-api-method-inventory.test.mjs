@@ -5,6 +5,7 @@ import os from "node:os";
 import path from "node:path";
 import {
   extractApiMethods,
+  directGuardEvidenceRegressions,
   inventoryApi,
 } from "../scripts/security/api-method-inventory.mjs";
 
@@ -75,4 +76,59 @@ test("unsupported handler export names cannot silently become security evidence"
     export function HEAD() {}
   `);
   assert.deepEqual(methods.map(m => m.method), ["HEAD"]);
+});
+
+test("legacy method guard removal is detected independently per HTTP verb", () => {
+  const before = `
+    export async function GET() {
+      await getCurrentRequestContext();
+      return Response.json({ ok: true });
+    }
+    export async function POST(request) {
+      await getCurrentRequestContext();
+      if (!isSameOriginRequest(request)) return new Response(null, { status: 403 });
+      requirePermission(actor, "people.manage", { collegeId: "a" });
+      return Response.json({ ok: true });
+    }
+  `;
+  const after = `
+    export async function GET() {
+      await getCurrentRequestContext();
+      return Response.json({ ok: true });
+    }
+    export async function POST(request) {
+      await getCurrentRequestContext();
+      return Response.json({ ok: true });
+    }
+  `;
+  assert.deepEqual(directGuardEvidenceRegressions(before, after), [
+    { method: "POST", reason: "DIRECT_ORIGIN_EVIDENCE_REMOVED" },
+    { method: "POST", reason: "DIRECT_PERMISSION_EVIDENCE_REMOVED" },
+  ]);
+});
+
+test("removing session evidence is detected without treating new methods as regressions", () => {
+  const before = `export async function GET() {
+    await getCurrentRequestContext();
+    return Response.json({});
+  }`;
+  const after = `
+    export async function GET() { return Response.json({}); }
+    export async function POST() { return Response.json({}); }
+  `;
+  assert.deepEqual(directGuardEvidenceRegressions(before, after), [
+    { method: "GET", reason: "DIRECT_SESSION_EVIDENCE_REMOVED" },
+  ]);
+});
+
+test("no guard evidence loss when a handler retains or strengthens its checks", () => {
+  const before = `export async function POST() {
+    if (!isSameOriginRequest(request)) return new Response(null, { status: 403 });
+  }`;
+  const after = `export async function POST() {
+    await getCurrentRequestContext();
+    if (!isSameOriginRequest(request)) return new Response(null, { status: 403 });
+    requirePermission(actor, "courses.manage", { collegeId: "a" });
+  }`;
+  assert.deepEqual(directGuardEvidenceRegressions(before, after), []);
 });
