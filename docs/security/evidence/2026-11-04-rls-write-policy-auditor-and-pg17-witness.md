@@ -38,7 +38,7 @@ This implementation is an **adversarial detection and release-verification mecha
 
 ## Subsequent deployment hardening — privileged runtime database roles
 
-The application readiness path `src/db/client.ts::checkDatabaseConnection` now fails closed **only when both `NODE_ENV=production` and `APP_ENV=production`** if the connected runtime principal is privileged. This is a real production deployment gate, not merely an audit report. The generic error `DATABASE_APP_PRINCIPAL_UNSAFE` does not print connection strings, usernames or tenant rows.
+The application readiness path `src/db/client.ts::checkDatabaseConnection` now fails closed for **any production-mode server (`NODE_ENV=production`) except deliberate `APP_ENV=development` or `APP_ENV=test` harnesses**; missing `APP_ENV` never disables the guard if the connected runtime principal is privileged. This is a real production deployment gate, not merely an audit report. The generic error `DATABASE_APP_PRINCIPAL_UNSAFE` does not print connection strings, usernames or tenant rows.
 
 The policy in `src/db/runtime-principal-policy.ts` requires positive false results for:
 
