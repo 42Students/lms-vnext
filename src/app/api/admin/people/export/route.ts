@@ -7,7 +7,7 @@ export const runtime = "nodejs";
 export async function GET(request: Request) {
  try {
   const context=await getCurrentRequestContext();
-  await requireRecentDeviceAuthentication();
+  await requireRecentDeviceAuthentication(context.user.id);
   const query=readSuperAdminPeopleExportParams(new URL(request.url).searchParams);
   const data=await exportSuperAdminUsers(context,query);
   return new Response(data.csv,{headers:{
