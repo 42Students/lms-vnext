@@ -2,18 +2,23 @@ import {NextResponse} from "next/server";
 import {ZodError} from "zod";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {isSameOriginRequest} from "@/auth/origin";
+import {BoundedFormDataError,readBoundedFormData} from "@/lib/bounded-form-data";
 import {AuthorizationError} from "@/modules/permissions/policy";
 import {postTpoTeamEveryoneMessage} from "@/modules/placements/tpo-team-everyone-service";
 export const runtime="nodejs";
 export async function POST(request:Request){
  if(!isSameOriginRequest(request))return NextResponse.json({error:"INVALID_ORIGIN"},{status:403});
- const form=await request.formData().catch(()=>null);
  try{
-  const result=await postTpoTeamEveryoneMessage(await getCurrentRequestContext(),{body:form?.get("body")});
+  const context=await getCurrentRequestContext();
+  const form=await readBoundedFormData(request,16*1024);
+  const result=await postTpoTeamEveryoneMessage(context,{body:form.get("body")});
   if(request.headers.get("accept")?.includes("application/json"))
    return NextResponse.json(result,{headers:{"Cache-Control":"no-store"}});
   return NextResponse.redirect(new URL("/tpo/team/everyone",request.url),303);
  }catch(error){
+  if(error instanceof BoundedFormDataError)return NextResponse.json({
+   error:error.code==="BODY_TOO_LARGE"?"REQUEST_TOO_LARGE":"INVALID_BODY",
+  },{status:error.code==="BODY_TOO_LARGE"?413:400,headers:{"Cache-Control":"private, no-store"}});
   if(error instanceof ZodError)return NextResponse.json({error:"INVALID_BODY"},{status:422});
   if(error instanceof AuthorizationError)return NextResponse.json({error:"FORBIDDEN"},{status:403});
   if(error instanceof Error&&error.message==="TEAM_TABLES_PENDING")
