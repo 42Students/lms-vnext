@@ -33,6 +33,8 @@ test("restricted app principal and live SQL identify an unconditional tenant-lea
     await admin.connect();
     const tables = ["security_rls_guarded", "security_rls_unscoped", "security_rls_restrictive",
       "security_rls_noop_restrictive"];
+    const views = ["security_rls_definer_view", "security_rls_invoker_view",
+      "security_rls_materialized"];
     try {
       await admin.query("CREATE ROLE " + role +
         " LOGIN PASSWORD '" + password + "' NOSUPERUSER NOCREATEDB NOCREATEROLE NOREPLICATION");
@@ -62,6 +64,24 @@ test("restricted app principal and live SQL identify an unconditional tenant-lea
       await admin.query("CREATE POLICY noop_restriction ON public.security_rls_noop_restrictive " +
         "AS RESTRICTIVE FOR SELECT TO " + role + " USING (true)");
 
+      // A view owned by the admin login uses that login's privileges by
+      // default, bypassing even correctly configured underlying table RLS.
+      // PostgreSQL 15+ security_invoker views instead honor the app login.
+      await admin.query("CREATE VIEW public.security_rls_definer_view AS " +
+        "SELECT id, college_id, value FROM public.security_rls_guarded");
+      await admin.query("CREATE VIEW public.security_rls_invoker_view " +
+        "WITH (security_invoker = true) AS " +
+        "SELECT id, college_id, value FROM public.security_rls_guarded");
+      await admin.query("CREATE MATERIALIZED VIEW public.security_rls_materialized AS " +
+        "SELECT id, college_id, value FROM public.security_rls_guarded");
+      for (const view of views) {
+        await admin.query("GRANT SELECT ON public." + view + " TO " + role);
+      }
+      await admin.query("CREATE FUNCTION public.security_rls_definer_rows() " +
+        "RETURNS TABLE(value text) LANGUAGE sql SECURITY DEFINER AS " +
+        "$ SELECT value FROM public.security_rls_guarded ORDER BY id $");
+      await admin.query("GRANT EXECUTE ON FUNCTION public.security_rls_definer_rows() TO " + role);
+
       const appUrl = new URL(connection);
       appUrl.username = role;
       appUrl.password = password;
@@ -71,6 +91,16 @@ test("restricted app principal and live SQL identify an unconditional tenant-lea
       assert.equal(report.principal.can_bypass_rls, false);
       const relevant = report.tables.filter(row => tables.includes(row.table_name));
       assert.equal(relevant.length, 4);
+      assert.equal(report.summary.accessible_views, 3);
+      assert.equal(report.summary.accessible_security_definer_routines, 1);
+      assert.deepEqual(report.findings.filter(f => views.some(v => f.table?.endsWith("." + v)))
+        .map(f => [f.code, f.table]), [
+          ["APP_READABLE_OWNER_RIGHTS_VIEW_REQUIRES_REVIEW", "public.security_rls_definer_view"],
+          ["APP_READABLE_MATERIALIZED_VIEW_REQUIRES_REVIEW", "public.security_rls_materialized"],
+        ]);
+      assert(report.findings.some(f =>
+        f.code === "APP_EXECUTABLE_SECURITY_DEFINER_REQUIRES_REVIEW" &&
+        f.table === "security_rls_definer_rows()"));
       assert(relevant.every(row => row.rls_enabled && row.rls_forced && row.can_select));
       assert.deepEqual(
         report.findings.filter(f => tables.includes(f.table)).map(f => [f.code, f.table]),
@@ -93,9 +123,27 @@ test("restricted app principal and live SQL identify an unconditional tenant-lea
           ["college-a-data", "college-b-secret"]);
         const withoutTenant = await app.query("SELECT value FROM public.security_rls_guarded");
         assert.deepEqual(withoutTenant.rows, []);
+        const ownerView = await app.query(
+          "SELECT value FROM public.security_rls_definer_view ORDER BY id");
+        assert.deepEqual(ownerView.rows.map(row => row.value),
+          ["college-a-data", "college-b-secret"]);
+        const materialized = await app.query(
+          "SELECT value FROM public.security_rls_materialized ORDER BY id");
+        assert.deepEqual(materialized.rows.map(row => row.value),
+          ["college-a-data", "college-b-secret"]);
+        const definerFunction = await app.query(
+          "SELECT value FROM public.security_rls_definer_rows()");
+        assert.deepEqual(definerFunction.rows.map(row => row.value),
+          ["college-a-data", "college-b-secret"]);
+        const invokerWithoutTenant = await app.query(
+          "SELECT value FROM public.security_rls_invoker_view");
+        assert.deepEqual(invokerWithoutTenant.rows, []);
         await app.query("BEGIN");
         await app.query("SELECT set_config('app.college_id',$1,true)", [collegeA]);
         const safe = await app.query("SELECT value FROM public.security_rls_guarded ORDER BY id");
+        const invokerWithTenant = await app.query(
+          "SELECT value FROM public.security_rls_invoker_view ORDER BY id");
+        assert.deepEqual(invokerWithTenant.rows.map(row => row.value), ["college-a-data"]);
         const restricted = await app.query("SELECT value FROM public.security_rls_restrictive ORDER BY id");
         assert.deepEqual(safe.rows.map(row => row.value), ["college-a-data"]);
         assert.deepEqual(restricted.rows.map(row => row.value), ["college-a-data"]);
@@ -105,6 +153,11 @@ test("restricted app principal and live SQL identify an unconditional tenant-lea
       }
     } finally {
       try {
+        await admin.query("DROP FUNCTION IF EXISTS public.security_rls_definer_rows()");
+        for (const view of [...views].reverse()) {
+          await admin.query("DROP " + (view === "security_rls_materialized" ?
+            "MATERIALIZED VIEW" : "VIEW") + " IF EXISTS public." + view);
+        }
         for (const table of [...tables].reverse()) {
           await admin.query("DROP TABLE IF EXISTS public." + table + " CASCADE");
         }
