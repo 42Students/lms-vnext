@@ -4,6 +4,7 @@ import { isSameOriginRequest } from "@/auth/origin";
 import { requireRecentDeviceAuthentication } from "@/auth/recent-device-auth";
 import { requirePermission } from "@/modules/permissions/policy";
 import { onboardPersonInputSchema } from "@/modules/people/validation";
+import { readBoundedAuthJson, AuthRequestBodyTooLarge } from "@/modules/auth/bounded-json";
 import { apiErrorResponse } from "@/lib/api-error";
 import { onboardPersonWithRuntime } from "@/modules/people/runtime";
 
@@ -24,11 +25,12 @@ export async function POST(request: Request) {
 
     let body: unknown;
     try {
-      body = await request.json();
-    } catch {
+      body = await readBoundedAuthJson(request, 8_192);
+    } catch (error) {
+      const tooLarge=error instanceof AuthRequestBodyTooLarge;
       return NextResponse.json(
-        { error: "INVALID_REQUEST" },
-        { status: 400 },
+        { error: tooLarge?"REQUEST_TOO_LARGE":"INVALID_REQUEST" },
+        { status: tooLarge?413:400 },
       );
     }
 
@@ -60,8 +62,11 @@ export async function POST(request: Request) {
     if (validatedPerson.roles.some(role =>
       role === "COLLEGE_ADMIN" || role === "TPO")) {
       requirePermission(context, "admin-scope.select");
-      await requireRecentDeviceAuthentication();
     }
+    // Provisioning any new membership grants live access to college resources.
+    // Always require a fresh OTP-authenticated device session, not only for
+    // privileged ADMIN/TPO additions.
+    await requireRecentDeviceAuthentication();
     // Membership, role grant and optional faculty department/profile now
     // commit together. Never return an active partially registered teacher.
     const person = await onboardPersonWithRuntime(context, body, facultyProfile);
