@@ -86,7 +86,7 @@ export async function POST(
     }
     // Every role grant/revoke changes authorization, even LEARNER or FACULTY.
     // Reject a stale or E2E-only session before any mutation.
-    await requireRecentDeviceAuthentication();
+    await requireRecentDeviceAuthentication(context.user.id);
     const { membershipId } = await params;
     const roles = await addMembershipRoleWithRuntime(
       context,
@@ -122,7 +122,7 @@ export async function DELETE(
     }
     // Every role grant/revoke changes authorization, even LEARNER or FACULTY.
     // Reject a stale or E2E-only session before any mutation.
-    await requireRecentDeviceAuthentication();
+    await requireRecentDeviceAuthentication(context.user.id);
     const { membershipId } = await params;
     const roles = await removeMembershipRoleWithRuntime(
       context,
