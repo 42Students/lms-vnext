@@ -46,7 +46,7 @@ function req(route:string,body:string|Uint8Array){
  return new Request("https://college.test"+route,{
   method:"POST",
   headers:{host:"college.test",origin:"https://college.test",
-   "content-type":"application/json"},body,
+   "content-type":"application/json"},body:body as BodyInit,
  });
 }
 const oversized=(max:number)=>" ".repeat(max+1);
