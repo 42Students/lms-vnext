@@ -49,6 +49,7 @@ beforeEach(()=>{
  vi.clearAllMocks();
  vi.stubEnv("DB10_NOTIFICATION_SCHEDULER_SECRET",schedulerKey);
  vi.stubEnv("DB10_NOTIFICATION_SCHEDULER_READY","DB10_VERIFIED");
+ vi.stubEnv("PRIVATE_STORAGE_SCANNER_WEBHOOK_SECRET",scannerKey);
  ready.mockReturnValue(true);
  scanner.mockResolvedValue({accepted:true,changed:true} as never);
  scheduler.mockResolvedValue({ran:false,reason:"LOCKED"} as never);
