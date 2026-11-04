@@ -181,7 +181,7 @@ describe("academic collection POST routes: shared streamed 16 KiB JSON cap", () 
 
   it("continues rejecting invalid UTF-8 before an enrollment write", async () => {
     const invalid = new Request(origin + "/api/academics/enrollments", {
-      method: "POST", body: new Uint8Array([0xff, 0xfe]),
+      method: "POST", body: new Uint8Array([0xff, 0xfe]).buffer as ArrayBuffer,
       headers: { host: "college.example.test", origin, "content-type": "application/json" },
     });
     const response = await enrollment(invalid);
