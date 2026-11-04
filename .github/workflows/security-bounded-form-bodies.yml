@@ -1,0 +1,48 @@
+# Denial-of-service body-stream bound on file upload and placement import routes.
+name: Security - bounded upload and form bodies
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "src/lib/bounded-form-data.ts"
+      - "src/app/api/courses/assignments/**/file-upload/route.ts"
+      - "src/app/api/placements/tpo/jobs/**/import-results/route.ts"
+      - "src/app/api/placements/recorded-outside/route.ts"
+      - "tests/unit/security-bounded-form-data.test.ts"
+      - ".github/workflows/security-bounded-form-bodies.yml"
+  pull_request:
+    branches: [main]
+    paths:
+      - "src/lib/bounded-form-data.ts"
+      - "src/app/api/courses/assignments/**/file-upload/route.ts"
+      - "src/app/api/placements/tpo/jobs/**/import-results/route.ts"
+      - "src/app/api/placements/recorded-outside/route.ts"
+      - "tests/unit/security-bounded-form-data.test.ts"
+      - ".github/workflows/security-bounded-form-bodies.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: security-form-bounds-${{ github.ref }}-${{ github.sha }}
+  cancel-in-progress: false
+
+jobs:
+  bounded-form-negative-tests:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Verify exact tested revision
+        run: test "$(git rev-parse HEAD)" = "$GITHUB_SHA"
+      - name: Stream and route integration negative cases
+        run: npx vitest run tests/unit/security-bounded-form-data.test.ts
+      - name: Typecheck bounded form and API integration
+        run: npm run typecheck
