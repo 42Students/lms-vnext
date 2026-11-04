@@ -10,6 +10,8 @@ export type DatabasePrincipalCapability = {
   can_create_database: boolean | null;
   can_create_schema: boolean | null;
   can_create_in_database: boolean | null;
+  can_set_privileged_role: boolean | null;
+  can_bypass_tenant_rls_by_ownership: boolean | null;
 };
 
 export const DATABASE_APP_PRINCIPAL_DENIED = "DATABASE_APP_PRINCIPAL_UNSAFE";
@@ -35,6 +37,8 @@ export function assertRuntimeDatabasePrincipal(
       row.can_create_role !== false ||
       row.can_create_database !== false ||
       row.can_create_schema !== false ||
-      row.can_create_in_database !== false)
+      row.can_create_in_database !== false ||
+      row.can_set_privileged_role !== false ||
+      row.can_bypass_tenant_rls_by_ownership !== false)
     throw new Error(DATABASE_APP_PRINCIPAL_DENIED);
 }
