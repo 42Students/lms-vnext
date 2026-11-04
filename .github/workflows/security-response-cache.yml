@@ -1,0 +1,52 @@
+# Dedicated API cache-confidentiality gate. Source assertions are paired with
+# the deployed /api/404 smoke probe in scripts/smoke-public.mjs.
+# This does not assert tenant authorization or database RLS compliance.
+name: Security - API response cache confidentiality
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - "next.config.ts"
+      - "src/security/headers.ts"
+      - "tests/unit/security-headers.test.ts"
+      - "tests/unit/private-api-cache-headers.test.ts"
+      - "scripts/smoke-public.mjs"
+      - ".github/workflows/security-response-cache.yml"
+  push:
+    branches: [main]
+    paths:
+      - "next.config.ts"
+      - "src/security/headers.ts"
+      - "tests/unit/security-headers.test.ts"
+      - "tests/unit/private-api-cache-headers.test.ts"
+      - "scripts/smoke-public.mjs"
+      - ".github/workflows/security-response-cache.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: security-response-cache-${{ github.ref }}-${{ github.sha }}
+  cancel-in-progress: false
+
+jobs:
+  api-response-cache-confidentiality:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      NODE_OPTIONS: "--max-old-space-size=5120"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: API and baseline response security header contracts
+        run: npx vitest run tests/unit/private-api-cache-headers.test.ts tests/unit/security-headers.test.ts
+      - name: Deployed smoke probe syntax
+        run: node --check scripts/smoke-public.mjs
+      - name: TypeScript compatibility
+        run: npm run typecheck
