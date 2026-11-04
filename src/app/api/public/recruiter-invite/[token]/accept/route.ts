@@ -8,24 +8,28 @@ import {
 import {acceptPublicTpoRecruiterInviteOtp} from "@/modules/placements/public-recruiter-invite-accept-service";
 
 export const runtime="nodejs";
+export const dynamic="force-dynamic";
+const noStore={"Cache-Control":"private, no-store","Referrer-Policy":"no-referrer"} as const;
 type RouteContext={params:Promise<{token:string}>};
 export async function POST(request:Request,{params}:RouteContext){
  if(!isSameOriginRequest(request))
-  return NextResponse.json({error:"INVALID_ORIGIN"},{status:403});
+  return NextResponse.json({error:"INVALID_ORIGIN"},{status:403,headers:noStore});
  if(!recruiterInviteAcceptReady({
    db09:process.env["DB09_TPO_API_READY"],
    otp:process.env["TPO_RECRUITER_OTP_READY"],
    delivery:process.env["TPO_RECRUITER_OTP_DELIVERY_READY"],
- }))return NextResponse.json({error:"RECRUITER_INVITE_NOT_READY"},{status:503});
+ }))return NextResponse.json({error:"RECRUITER_INVITE_NOT_READY"},{status:503,headers:noStore});
+ if(new URL(request.url).search)
+  return NextResponse.json({error:"INVITE_INVALID"},{status:400,headers:noStore});
  const body=await readBoundedJsonBody(request);
  if(body.kind==="TOO_LARGE")return NextResponse.json({error:"INVITE_INVALID"},
-  {status:413,headers:{"Cache-Control":"no-store"}});
+  {status:413,headers:noStore});
  const input=recruiterInviteAcceptanceBodySchema.safeParse(body.kind==="OK"?body.value:null);
- if(!input.success)return NextResponse.json({error:"INVITE_INVALID"},{status:404});
+ if(!input.success)return NextResponse.json({error:"INVITE_INVALID"},{status:404,headers:noStore});
  try{
   const {token}=await params;
   const accepted=await acceptPublicTpoRecruiterInviteOtp(token,input.data.code,input.data);
-  return NextResponse.json(accepted,{headers:{"Cache-Control":"no-store"}});
+  return NextResponse.json(accepted,{headers:noStore});
  }catch(error){
   return tpoRecruiterInviteApiErrorResponse(error);
  }
