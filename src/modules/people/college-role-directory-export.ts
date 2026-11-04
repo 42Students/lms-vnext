@@ -1,3 +1,4 @@
+import { spreadsheetCsvCell } from "@/security/csv-cell";
 import {z} from "zod";
 import {collegeRoleDirectoryHref,collegeRoleDirectoryQuerySchema,assertCompatibleCollegeRoleDirectoryFilters,roleDirectoryDateWindowValid,type CollegeDirectoryKind,type CollegeRoleDirectoryQuery,type CollegeRoleDirectoryRow} from "./college-role-directory-model";
 
@@ -34,8 +35,7 @@ export function parseCollegeRoleDirectoryExportQuery(params:URLSearchParams){
  return {kind,filter};
 }
 export function escapeRoleDirectoryCsvCell(value:string):string {
- const safe=/^[\s\p{Cf}\p{Mn}\u0000-\u001f]*[-=+@]/u.test(value)?"'"+value:value;
- return '"'+safe.replaceAll('"','""')+'"';
+ return spreadsheetCsvCell(value);
 }
 export function renderCollegeRoleDirectoryCsv(kind:CollegeDirectoryKind,rows:readonly CollegeRoleDirectoryRow[],truncated:boolean):string {
  const header=["Name","Email","Membership","Platform account","Joined (IST)","Program","Batch","Classes","Active teaching assignments"];
