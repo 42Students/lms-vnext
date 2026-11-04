@@ -1,0 +1,61 @@
+# Public recruiter applicant shares are capability URLs. Their ZIP download
+# must never permit arbitrary server-side HTTPS fetches or oversized archives.
+name: Security - recruiter share ZIP SSRF and storage boundary
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - "src/app/api/placements/company-share/**"
+      - "src/modules/placements/company-share/**"
+      - "src/modules/storage/r2-config.ts"
+      - "src/modules/storage/s3-client.ts"
+      - "src/modules/storage/private-object-storage.ts"
+      - "tests/unit/security-recruiter-share-zip-ssrf.test.ts"
+      - "tests/unit/company-share-audit-columns-safety.test.ts"
+      - "tests/unit/company-share-mobile-cards.test.ts"
+      - "tests/unit/chat13-final-sprint-public-share-zip.test.ts"
+      - ".github/workflows/security-recruiter-share-zip.yml"
+  push:
+    branches: [main]
+    paths:
+      - "src/app/api/placements/company-share/**"
+      - "src/modules/placements/company-share/**"
+      - "src/modules/storage/r2-config.ts"
+      - "src/modules/storage/s3-client.ts"
+      - "src/modules/storage/private-object-storage.ts"
+      - "tests/unit/security-recruiter-share-zip-ssrf.test.ts"
+      - "tests/unit/company-share-audit-columns-safety.test.ts"
+      - "tests/unit/company-share-mobile-cards.test.ts"
+      - "tests/unit/chat13-final-sprint-public-share-zip.test.ts"
+      - ".github/workflows/security-recruiter-share-zip.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: security-recruiter-share-zip-${{ github.ref }}-${{ github.sha }}
+  cancel-in-progress: false
+
+jobs:
+  signed-share-boundary:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Exact source SHA
+        run: test "$(git rev-parse HEAD)" = "$GITHUB_SHA"
+      - name: Signed R2 origin, path and attacker-controlled URL denial
+        run: npx vitest run tests/unit/security-recruiter-share-zip-ssrf.test.ts
+      - name: Existing company share column/privacy and UI contracts
+        run: npx vitest run tests/unit/company-share-audit-columns-safety.test.ts tests/unit/company-share-mobile-cards.test.ts tests/unit/chat13-final-sprint-public-share-zip.test.ts
+      - name: Full TypeScript program
+        env:
+          NODE_OPTIONS: --max-old-space-size=6144
+        run: npm run typecheck
