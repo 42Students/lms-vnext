@@ -20,7 +20,7 @@ export const updateCourseDisplayContentSchema =
       Boolean(safeVerifiedCourseImagePath(value) || safePublicCourseThumbnailUrl(value))
     ), "Thumbnail URL must use a public HTTPS image or the verified course image").nullable(),
     expectedVersion: z.number().int().min(0).nullable(),
-  });
+  }).strict();
 
 export type UpdateCourseDisplayContentInput =
   z.infer<typeof updateCourseDisplayContentSchema>;
