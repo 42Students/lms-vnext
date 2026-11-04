@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { getCurrentRequestContext } from "@/auth/request-context";
+import { requireRecentDeviceAuthentication } from "@/auth/recent-device-auth";
 import { apiErrorResponse } from "@/lib/api-error";
 import { parsePeopleCsvParams } from "@/modules/people/college-people-export-model";
 import { exportCollegePeopleCsv } from "@/modules/people/college-people-export-service";
@@ -8,7 +9,9 @@ export const runtime = "nodejs";
 export async function GET(request: Request) {
   try {
     const query = parsePeopleCsvParams(new URL(request.url).searchParams);
-    const report = await exportCollegePeopleCsv(await getCurrentRequestContext(), query);
+    const context = await getCurrentRequestContext();
+    await requireRecentDeviceAuthentication();
+    const report = await exportCollegePeopleCsv(context, query);
     return new Response(report.csv, { headers: {
       "Content-Type": "text/csv; charset=utf-8",
       "Content-Disposition": 'attachment; filename="college-people.csv"',
