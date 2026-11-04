@@ -204,3 +204,26 @@ test("no-op restrictive CHECK(true) must not mask an unsafe permissive INSERT/UP
     "APP_UNSCOPED_PERMISSIVE_UPDATE_CHECK",
   ]);
 });
+
+test("direct tenant TRUNCATE is critical even if SELECT/UPDATE/DELETE policies are perfectly scoped", () => {
+  const findings = classifySecurityCatalog(safePrincipal, [
+    { ...base, table_name: "tenant_grades", can_truncate: true,
+      can_select: true, can_update: true, can_delete: true },
+  ]);
+  assert.deepEqual(findings, [
+    { severity: "CRITICAL", code: "APP_CAN_TRUNCATE_TENANT_TABLE", table: "tenant_grades" },
+  ]);
+  const readOnly = classifySecurityCatalog(safePrincipal, [
+    { ...base, table_name: "tenant_grades", can_truncate: false },
+  ]);
+  assert.deepEqual(readOnly, []);
+});
+
+test("TRUNCATE must be flagged even when RLS is entirely disabled", () => {
+  const findings = classifySecurityCatalog(safePrincipal, [
+    { ...base, table_name: "unprotected_tenant", rls_enabled: false, can_truncate: true },
+  ]);
+  assert.deepEqual(findings.map(f=>f.code), [
+    "APP_CAN_TRUNCATE_TENANT_TABLE", "TENANT_KEY_TABLE_NO_RLS",
+  ]);
+});
