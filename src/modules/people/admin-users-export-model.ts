@@ -6,7 +6,10 @@ export type SuperAdminPeopleCsvRow = {
  platformStatus: string; membershipStatus: string; roles: readonly string[]; updatedAt: Date;
 };
 const cell = (raw: string) => {
- const safe = /^\s*[=+@\-\t\r]/.test(raw) ? "'" + raw : raw;
+ // Preserve the original cell while neutralizing hidden formula prefixes
+ // behind Unicode formatting, control, and combining characters.
+ const firstVisible = raw.replace(/^[\s\p{Cc}\p{Cf}\p{Mn}\p{Me}]*/u, "");
+ const safe = /^[=+@-]/u.test(firstVisible) ? "'" + raw : raw;
  return '"' + safe.replaceAll('"', '""') + '"';
 };
 /** Never export phone/email/identity UID, even in a selected college. */
