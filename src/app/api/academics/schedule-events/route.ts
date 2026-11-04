@@ -15,6 +15,10 @@ export async function GET(request: Request) {
   try {
     const context = await getCurrentRequestContext();
     const params=new URL(request.url).searchParams;
+    if (["sectionId", "classId"].some(key => params.getAll(key).length > 1))
+      return NextResponse.json({ error: "INVALID_FILTERS" }, {
+        status: 400, headers: { "Cache-Control": "private, no-store" },
+      });
     const section=params.get("sectionId"),oldClass=params.get("classId");
     if(section&&oldClass&&section!==oldClass)
       return NextResponse.json({error:"AMBIGUOUS_SECTION"},{status:400});
