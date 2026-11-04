@@ -75,6 +75,9 @@ export async function syncIndependentAuditInbox(
   if(lock.rows[0]?.acquired!==true)
    return {ran:false,busy:true,commit:null,...stats,
     message:"Another audit importer already holds the sync lease"};
+  // Bound the actor-lock wait too: a revoked or contended platform permission
+  // may hold a PostgreSQL lock before any importer row is read or written.
+  await tx.execute(sql`set local statement_timeout = '230s'`);
   // Do not release a separate preflight transaction before the actual
   // importer writes. Lock the live human principal and system grant for the
   // lifetime of this same transaction, blocking concurrent revocation races.
@@ -86,7 +89,6 @@ export async function syncIndependentAuditInbox(
     throw new AuthorizationError("admin-scope.select");
    await assertPersistedPlatformPermission(tx,actor,"admin-scope.select");
   }
-  await tx.execute(sql`set local statement_timeout = '230s'`);
   const historical=await tx.select().from(db10AuditFindingFiles)
    .where(eq(db10AuditFindingFiles.source,SOURCE))
    .orderBy(desc(db10AuditFindingFiles.checkedAt)).limit(20000);
