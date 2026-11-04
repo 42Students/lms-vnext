@@ -11,7 +11,7 @@ const schema = z.object({ receiptId: z.string().uuid() }).strict();
 type RouteContext = { params: Promise<{ courseId: string }> };
 
 export async function POST(request: Request, { params }: RouteContext) {
-  const headers = { "Cache-Control": "private, no-store" };
+  const headers = { "Cache-Control": "private, no-store", Vary: "Cookie" };
   if (!isSameOriginRequest(request)) {
     return NextResponse.json({ error: "INVALID_ORIGIN" }, { status: 403, headers });
   }
@@ -32,6 +32,9 @@ export async function POST(request: Request, { params }: RouteContext) {
     if (error instanceof CourseImageError) return NextResponse.json({
       error: error.code,
     }, { status: error.status, headers });
-    return apiErrorResponse(error);
+    const response = apiErrorResponse(error);
+    response.headers.set("Cache-Control", "private, no-store");
+    response.headers.set("Vary", "Cookie");
+    return response;
   }
 }
