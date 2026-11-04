@@ -47,6 +47,7 @@ import {
 import { requirePermission } from "@/modules/permissions/policy";
 import {assertPersistedPlatformPermission,type PermissionTransaction} from "@/modules/permissions/persisted-actor";
 import { ActivityServiceError } from "./errors";
+import { ownNotificationEventScope } from "./own-notification-scope";
 import { sanitizeActivityMetadata } from "./metadata-sanitizer";
 import { safeExternalAssessmentUrl, safeNotificationActionHref } from "./notification-action";
 import { ACTIVITY_IMPORTANCE, ACTIVITY_MODULES } from "./taxonomy";
@@ -1018,6 +1019,7 @@ export async function listOwnNotifications(
     eq(inAppNotifications.userId, context.user.id),
     releasedNotificationEvent,
     releasedNotificationReceipt,
+    ownNotificationEventScope(context),
   ];
   if (options.collegeId) {
     conditions.push(eq(activityEvents.collegeId, z.string().uuid().parse(options.collegeId)));
@@ -1091,6 +1093,7 @@ export async function countOwnUnreadNotifications(
           eq(activityEvents.collegeId, collegeId),
           releasedNotificationEvent,
           releasedNotificationReceipt,
+          ownNotificationEventScope(context),
         ))
     : await db.select({ total: count() }).from(inAppNotifications)
         .innerJoin(activityEvents, eq(activityEvents.id, inAppNotifications.eventId))
@@ -1099,6 +1102,7 @@ export async function countOwnUnreadNotifications(
           isNull(inAppNotifications.readAt),
           releasedNotificationEvent,
           releasedNotificationReceipt,
+          ownNotificationEventScope(context),
         ));
   return row?.total ?? 0;
 }
@@ -1113,7 +1117,9 @@ export async function markOwnNotificationRead(
     .parse(notificationIdInput);
   // Keep acknowledgements consistent with the live inbox visibility policy.
   const releasedEventIds = getDb().select({ id: activityEvents.id })
-    .from(activityEvents).where(releasedNotificationEvent);
+    .from(activityEvents).where(and(
+      releasedNotificationEvent, ownNotificationEventScope(context),
+    ));
 
   const [current] = await getDb()
     .select()
@@ -1211,11 +1217,12 @@ export async function markAllOwnNotificationsRead(
       ...(ownCollege ? [
         inArray(inAppNotifications.eventId,
           getDb().select({ id: activityEvents.id }).from(activityEvents)
-            .where(and(eq(activityEvents.collegeId, ownCollege), releasedNotificationEvent))),
+            .where(and(eq(activityEvents.collegeId, ownCollege), releasedNotificationEvent,
+              ownNotificationEventScope(context)))),
       ] : [
         inArray(inAppNotifications.eventId,
           getDb().select({ id: activityEvents.id }).from(activityEvents)
-            .where(releasedNotificationEvent)),
+            .where(and(releasedNotificationEvent, ownNotificationEventScope(context)))),
       ]),
     ))
     .returning({ id: inAppNotifications.id });
@@ -1267,7 +1274,7 @@ export async function countOwnUnreadNotificationCategory(
  .innerJoin(activityEvents,eq(activityEvents.id,inAppNotifications.eventId))
  .where(and(eq(inAppNotifications.userId,context.user.id),
   isNull(inAppNotifications.readAt),
-  releasedNotificationEvent,releasedNotificationReceipt,
+  releasedNotificationEvent,releasedNotificationReceipt,ownNotificationEventScope(context),
   ownCategoryCondition(category)));
  return Number(row?.total??0);
 }
@@ -1302,6 +1309,7 @@ export async function listOwnNotificationPage(
     eq(inAppNotifications.userId, context.user.id),
     releasedNotificationEvent,
     releasedNotificationReceipt,
+    ownNotificationEventScope(context),
   ];
   if (options.collegeId) conditions.push(eq(activityEvents.collegeId, z.string().uuid().parse(options.collegeId)));
   if(options.eventVisibilityCondition)conditions.push(options.eventVisibilityCondition);
