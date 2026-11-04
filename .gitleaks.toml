@@ -13,3 +13,37 @@ secretGroup = 1
 entropy = 3.0
 keywords = ["zeptomail", "zoho", "exotel", "bulksmsapps", "sendgrid"]
 tags = ["provider", "credential", "42learn"]
+
+
+# A prior leaked Java constant used "Zoho-enczapikey <opaque-token>".
+# The provider-assignment rule above does NOT match that format because its
+# secretGroup begins at "Zoho-" rather than the actual long token. Detect
+# this first-party Authorization header shape explicitly, in any file type.
+[[rules]]
+id = "42learn-zeptomail-authorization"
+description = "ZeptoMail Zoho-enczapikey authorization credential"
+regex = '''(?i)zoho-enczapikey[ \t]+([a-z0-9+/_=-]{40,})'''
+secretGroup = 1
+entropy = 3.0
+keywords = ["zoho-enczapikey"]
+tags = ["provider", "zeptomail", "credential"]
+
+# Defense in depth beyond pinned Gitleaks default OpenAI provider signatures.
+[[rules]]
+id = "42learn-openai-key"
+description = "OpenAI API or service-account credential"
+regex = '''\b(sk-(?:proj-|svcacct-|admin-)?[a-zA-Z0-9_-]{24,})\b'''
+secretGroup = 1
+entropy = 3.0
+keywords = ["sk-proj-", "sk-svcacct-", "sk-admin-", "sk-"]
+tags = ["provider", "openai", "credential"]
+
+# Google OAuth client secrets, distinct from PUBLIC Firebase API config.
+[[rules]]
+id = "42learn-google-oauth-client-secret"
+description = "Google OAuth client secret GOCSPX"
+regex = '''\b(GOCSPX-[a-zA-Z0-9_-]{20,})\b'''
+secretGroup = 1
+entropy = 3.0
+keywords = ["GOCSPX-"]
+tags = ["provider", "google", "oauth", "credential"]
