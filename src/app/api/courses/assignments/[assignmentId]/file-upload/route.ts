@@ -2,6 +2,8 @@ import { NextResponse } from "next/server";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { isSameOriginRequest } from "@/auth/origin";
 import { apiErrorResponse } from "@/lib/api-error";
+import { readBoundedUtf8Body } from "@/lib/bounded-utf8-body";
+import { BoundedFormDataError, readBoundedFormData } from "@/lib/bounded-form-data";
 import {guessContentTypeFromName,isSafeSignedUrl} from "@/modules/storage/ui-models";
 import {
   issueSubmissionFileUploadGrant,
@@ -53,13 +55,18 @@ export async function POST(
     // authenticated same-origin endpoint rather than needing cross-origin
     // storage CORS. Large files must use a browser-to-storage signed PUT.
     if(request.headers.get("content-type")?.toLowerCase().startsWith("multipart/form-data")){
-      const declaredLength=Number(request.headers.get("content-length")??0);
-      if(declaredLength>MAX_PROXY_UPLOAD_BYTES+1024*1024)
+      let form: FormData;
+      try {
+        form=await readBoundedFormData(request, MAX_PROXY_UPLOAD_BYTES + 1024 * 1024);
+      } catch (error) {
+        if (!(error instanceof BoundedFormDataError)) throw error;
         return NextResponse.json({
-          error:"UPLOAD_PROXY_TOO_LARGE",
-          message:"Server-assisted upload supports files up to 10 MiB. Use the signed direct upload for larger files.",
-        },{status:413});
-      const form=await request.formData();
+          error:error.code==="BODY_TOO_LARGE"?"UPLOAD_PROXY_TOO_LARGE":"INVALID_REQUEST",
+          message:error.code==="BODY_TOO_LARGE"
+            ?"Server-assisted upload supports files up to 10 MiB. Use the signed direct upload for larger files."
+            :"Invalid upload form.",
+        },{status:error.code==="BODY_TOO_LARGE"?413:400,headers:{"Cache-Control":"private, no-store"}});
+      }
       const file=form.get("file");
       if(!(file instanceof File))
         return NextResponse.json({error:"INVALID_REQUEST",message:"Choose a file to upload."},{status:400});
@@ -102,7 +109,15 @@ export async function POST(
         message:"Transfer complete. Verify the upload receipt before submitting this assignment.",
       },{status:201,headers:{"Cache-Control":"private, no-store"}});
     }
-    const body:unknown=await request.json();
+    const bounded=await readBoundedUtf8Body(request, 8 * 1024);
+    if (bounded.kind!=="OK") {
+      return NextResponse.json({
+        error:bounded.kind==="TOO_LARGE"?"REQUEST_TOO_LARGE":"INVALID_REQUEST",
+      },{status:bounded.kind==="TOO_LARGE"?413:400,headers:{"Cache-Control":"private, no-store"}});
+    }
+    let body:unknown;
+    try { body=JSON.parse(bounded.body); }
+    catch { return NextResponse.json({error:"INVALID_REQUEST"},{status:400}); }
     if(!body||typeof body!=="object"||Array.isArray(body))
       return NextResponse.json({error:"INVALID_REQUEST"},{status:400});
     const data=body as Record<string,unknown>;
