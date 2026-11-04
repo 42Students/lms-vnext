@@ -42,10 +42,10 @@ const actor: RequestContext = {
   adminScope: null,
 };
 
-function request(body?: string, search = "") {
+function request(body?: string, search = "", extraHeaders: Record<string, string> = {}) {
   return new Request(`https://lms.example.com/api/tracker/audit-findings/sync${search}`, {
     method: "POST",
-    headers: { origin: "https://lms.example.com", host: "lms.example.com" },
+    headers: { origin: "https://lms.example.com", host: "lms.example.com", ...extraHeaders },
     ...(body === undefined ? {} : { body }),
   });
 }
@@ -74,7 +74,12 @@ describe("manual audit synchronization privilege boundary", () => {
   });
 
   it("rejects caller-supplied query or body before identity and writes", async () => {
-    for (const input of [request(undefined, "?source=foreign"), request("{}")]) {
+    for (const input of [
+      request(undefined, "?source=foreign"),
+      request("{}"),
+      request(undefined, "", { "content-length": "7" }),
+      request(undefined, "", { "transfer-encoding": "chunked" }),
+    ]) {
       const response = await POST(input);
       expect(response.status).toBe(400);
       expect(await response.json()).toEqual({ error: "INVALID_REQUEST" });
