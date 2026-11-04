@@ -39,3 +39,10 @@ The scanner implementation is not supplied by this change; no live R2 provider, 
 - Preserve the existing upload-expiry-plus-skew safety check and do not turn scanner or provider outages into `CLEAN`.
 
 **Security verdict:** Smaller abuse surface and deterministic pre-I/O machine guard committed. No complete storage security certification and no canonical task marked accepted.
+
+
+## Follow-up hardening at latest scanner source revision
+
+- [f4898f9d](https://github.com/42Students/lms-vnext/commit/f4898f9d074d0c21a987abfead9f60fea9f75f32): authenticate the exact scanner secret *before* reporting request-shape errors, to avoid exposing payload-schema behavior to unauthenticated callers.
+- [6a083f93](https://github.com/42Students/lms-vnext/commit/6a083f937a0290d019ab8b592ce8009eae447a64): regression for authorization-before-input checks; use a concrete `ArrayBuffer` for invalid UTF-8 fixture to stay compatible with TypeScript BodyInit typing.
+- The [updated scanner workflow run 41836202489](https://github.com/42Students/lms-vnext/actions/runs/41836202489) again reported failure with `runner_id=0` and `steps=[]`. This is not executed-test evidence. No storage or scanner production certification is claimed.
