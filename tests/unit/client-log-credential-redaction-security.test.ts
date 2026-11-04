@@ -16,6 +16,8 @@ describe("provider and diagnostic credential redaction", () => {
     ["AUTHORIZATION: Basic c2hvcnQ=", "c2hvcnQ="],
     ['DATABASE_PASSWORD="short with spaces"', "short with spaces"],
     ["API_KEY='short quoted value'", "short quoted value"],
+    ["GOOGLE_APPLICATION_OAUTH_CLIENT_SECRET=xs", "xs"],
+    ["ENTERPRISE_PRIVATE_STORAGE_SCANNER_WEBHOOK_SECRET=shrt", "shrt"],
   ])("never emits a short sensitive value in %s", (input, secret) => {
     const safe = redactAlertText("Provider request failed: " + input);
     expect(safe).not.toContain(secret);
