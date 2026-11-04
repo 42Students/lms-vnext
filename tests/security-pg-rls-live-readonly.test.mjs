@@ -79,7 +79,7 @@ test("restricted app principal and live SQL identify an unconditional tenant-lea
       }
       await admin.query("CREATE FUNCTION public.security_rls_definer_rows() " +
         "RETURNS TABLE(value text) LANGUAGE sql SECURITY DEFINER AS " +
-        "$ SELECT value FROM public.security_rls_guarded ORDER BY id $");
+        "'SELECT t.value FROM public.security_rls_guarded AS t ORDER BY t.id'");
       await admin.query("GRANT EXECUTE ON FUNCTION public.security_rls_definer_rows() TO " + role);
 
       const appUrl = new URL(connection);
