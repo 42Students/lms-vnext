@@ -32,6 +32,11 @@ on:
       - "src/modules/placements/admin-company-directory-export-model.ts"
       - "src/modules/placements/college-directory-csv.ts"
       - "src/modules/admin-ui/super-admin-scoped-csv-model.ts"
+      - "tests/unit/chat4-superadmin-tenant-export-handler.test.ts"
+      - "tests/unit/chat4-superadmin-tenant-route-guards.test.ts"
+      - "tests/unit/chat4-superadmin-tenants-readiness-route-gates.test.ts"
+      - "tests/unit/chat7-superadmin-student-progress-export-boundary.test.ts"
+      - "tests/unit/chat13-super-admin-hiring-export-route.test.ts"
       - "tests/unit/security-shared-csv-cell.test.ts"
       - "src/auth/recent-device-auth.ts"
       - "tests/unit/private-bulk-csv-security.test.ts"
@@ -67,6 +72,11 @@ on:
       - "src/modules/placements/admin-company-directory-export-model.ts"
       - "src/modules/placements/college-directory-csv.ts"
       - "src/modules/admin-ui/super-admin-scoped-csv-model.ts"
+      - "tests/unit/chat4-superadmin-tenant-export-handler.test.ts"
+      - "tests/unit/chat4-superadmin-tenant-route-guards.test.ts"
+      - "tests/unit/chat4-superadmin-tenants-readiness-route-gates.test.ts"
+      - "tests/unit/chat7-superadmin-student-progress-export-boundary.test.ts"
+      - "tests/unit/chat13-super-admin-hiring-export-route.test.ts"
       - "tests/unit/security-shared-csv-cell.test.ts"
       - "src/auth/recent-device-auth.ts"
       - "tests/unit/private-bulk-csv-security.test.ts"
@@ -99,5 +109,7 @@ jobs:
         run: npx vitest run tests/unit/chat13-super-admin-scoped-csv-runtime.test.ts tests/unit/chat13-scoped-csv-export-page-size.test.ts
       - name: Cross-module CSV encoding integration regressions
         run: npx vitest run tests/unit/security-shared-csv-cell.test.ts tests/unit/PROJ-BREAK-chat6-export-integrity.test.ts
+      - name: Existing admin export route positive and negative contracts
+        run: npx vitest run tests/unit/chat4-superadmin-tenant-export-handler.test.ts tests/unit/chat4-superadmin-tenant-route-guards.test.ts tests/unit/chat4-superadmin-tenants-readiness-route-gates.test.ts tests/unit/chat7-superadmin-student-progress-export-boundary.test.ts tests/unit/chat13-super-admin-hiring-export-route.test.ts
       - name: TypeScript contract verification
         run: npm run typecheck
