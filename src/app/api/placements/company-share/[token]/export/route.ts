@@ -4,6 +4,8 @@ import {getPublicCompanyApplicantShare} from "@/modules/placements/company-share
 import {companyShareSelectedCsv} from "@/modules/placements/company-share/column-model";
 import {companyShareCsvResponseHeaders} from "@/modules/placements/company-share/export-headers-model";
 import {makeStoredZip,type ZipEntry} from "@/modules/placements/company-share/zip-model";
+import {getPrivateR2Config} from "@/modules/storage/r2-config";
+import {isAllowedCompanyShareResumeDownload} from "@/modules/placements/company-share/signed-resume-guard";
 
 export const runtime="nodejs";
 export const dynamic="force-dynamic";
@@ -11,25 +13,29 @@ const privateHeaders={"Cache-Control":"private, no-store","Referrer-Policy":"no-
  "X-Content-Type-Options":"nosniff","X-Robots-Tag":"noindex, nofollow, noarchive"};
 const maxResumeBytes=12*1024*1024;
 const maxZipFiles=20;
+const maxZipResumeBytes=48*1024*1024; // Total admitted resume bytes, not per-file.
 const mimeExtensions:Record<string,string>={
  "application/pdf":"pdf",
  "application/msword":"doc",
  "application/vnd.openxmlformats-officedocument.wordprocessingml.document":"docx",
  "application/octet-stream":"bin",
 };
-async function boundedSignedResume(url:string):Promise<{bytes:Uint8Array;extension:string}|null>{
- // These URLs are minted only by the attested private read-grant service,
- // never accepted directly from user query params or filename headers.
- let parsed:URL;
- try{parsed=new URL(url);}
+async function boundedSignedResume(url:string,remainingBytes:number):Promise<{bytes:Uint8Array;extension:string}|null>{
+ // A verified applicant-share projection is necessary but not sufficient:
+ // never let any external HTTPS URL become a server-side arbitrary fetch.
+ // Only a current, signed, exactly-namespaced private R2 GET is permitted.
+ let config:ReturnType<typeof getPrivateR2Config>;
+ try{config=getPrivateR2Config();}
  catch{return null;}
- if(parsed.protocol!=="https:"||parsed.username||parsed.password)return null;
+ if(!isAllowedCompanyShareResumeDownload(url,config))return null;
+ const allowedBytes=Math.min(maxResumeBytes,remainingBytes);
+ if(!Number.isSafeInteger(allowedBytes)||allowedBytes<=0)return null;
  try{
   const res=await fetch(url,{redirect:"error",cache:"no-store",
    signal:AbortSignal.timeout(10000),headers:{Accept:"application/octet-stream"}});
   if(!res.ok||!res.body)return null;
   const declared=Number(res.headers.get("content-length"));
-  if(Number.isFinite(declared)&&declared>maxResumeBytes)return null;
+  if(Number.isFinite(declared)&&declared>allowedBytes)return null;
   const mime=(res.headers.get("content-type")??"application/octet-stream").split(";")[0]!.trim().toLowerCase();
   const extension=mimeExtensions[mime];
   if(!extension)return null;
@@ -41,7 +47,7 @@ async function boundedSignedResume(url:string):Promise<{bytes:Uint8Array;extensi
     const {done,value}=await reader.read();
     if(done)break;
     size+=value.byteLength;
-    if(size>maxResumeBytes){await reader.cancel();return null;}
+    if(size>allowedBytes){await reader.cancel();return null;}
     chunks.push(value);
    }
   }finally{reader.releaseLock();}
@@ -85,13 +91,15 @@ export async function GET(request:Request,{params}:{params:Promise<{token:string
  });
  const entries:ZipEntry[]=[];
  let unavailable=0;
+ let admittedResumeBytes=0;
  // Limit memory and provider reads; additional rows are explicitly reported
  // in the included manifest rather than silently interpreted as all files.
  for(const row of selected.slice(0,maxZipFiles)){
   const link=row.cells.RESUME;
   if(typeof link!=="string"){unavailable++;continue;}
-  const resume=await boundedSignedResume(link);
+  const resume=await boundedSignedResume(link,maxZipResumeBytes-admittedResumeBytes);
   if(!resume){unavailable++;continue;}
+  admittedResumeBytes+=resume.bytes.byteLength;
   entries.push({name:"applicant-"+row.applicationId+"."+resume.extension,bytes:resume.bytes});
  }
  if(!entries.length)return NextResponse.json({error:"NO_READABLE_RESUMES"},{
@@ -103,6 +111,7 @@ export async function GET(request:Request,{params}:{params:Promise<{token:string
   "Read failed or exceeded size limit: "+unavailable,
   "Selected verified links: "+selected.length,
   "Maximum attempted in this ZIP: "+maxZipFiles,
+  "Total resume bytes in ZIP (max 48 MiB): "+admittedResumeBytes,
   "Additional verified links not attempted: "+Math.max(0,selected.length-maxZipFiles),
   "Only explicitly shared, CLEAN-scanned files are included.",
   "This export is not a complete applicant history.",
