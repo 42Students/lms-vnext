@@ -42,6 +42,9 @@ export const browserErrorSchema = z.object({
 }));
 
 const hits = new Map<string, { count: number; at: number }>();
+const MAX_CLIENT_ERROR_BUCKETS = 5_000;
+const CLIENT_ERROR_WINDOW_MS = 60_000;
+let nextExpiredSweepAt = 0;
 
 /** Untrusted component/name fields may be personal data; allow only known categories. */
 export function safeBrowserComponent(input: { component?: string; name?: string }): string {
@@ -55,24 +58,28 @@ export function safeBrowserComponent(input: { component?: string; name?: string 
     name && candidates.has(name) ? name : "browser";
 }
 
-/** Per-pod protection. Cloud Run replicas still require a shared ingress
- * token bucket; client-side 60-second fingerprint dedupe is complementary.
- * Keep oldest eviction bounded, never reset every actor's rate budget when
- * one pod exceeds 5,000 identities (legacy's process-map clear-all flaw).
+/** Per-process, best-effort telemetry protection. Distributed protection must
+ * also exist at the trusted ingress. Never evict a live bucket to admit a new
+ * identity: that would let identity churn reset someone else's active quota.
+ * When full, only expired buckets are reclaimed, at a bounded cadence.
+ * Authenticated application requests are not blocked; only optional error
+ * telemetry is suppressed if the process-local table is saturated.
  */
 export function acceptClientErrorRate(key: string, now: number, max = 20): boolean {
-  if (!Number.isFinite(now) || !Number.isInteger(max) || max < 1) return false;
-  if (!hits.has(key) && hits.size >= 5000) {
-    for (const [id, value] of hits) {
-      if (now - value.at >= 60_000) hits.delete(id);
+  if (!key || !Number.isFinite(now) || !Number.isInteger(max) || max < 1) return false;
+  if (!hits.has(key) && hits.size >= MAX_CLIENT_ERROR_BUCKETS) {
+    if (now >= nextExpiredSweepAt) {
+      for (const [id, value] of hits) {
+        if (now - value.at >= CLIENT_ERROR_WINDOW_MS) hits.delete(id);
+      }
+      nextExpiredSweepAt = now + CLIENT_ERROR_WINDOW_MS / 4;
     }
-    if (hits.size >= 5000) {
-      const oldest = hits.keys().next().value;
-      if (oldest !== undefined) hits.delete(oldest);
-    }
+    // Fail closed for new telemetry identities. Existing identities retain
+    // their current budgets, even when a flood fills the bounded table.
+    if (hits.size >= MAX_CLIENT_ERROR_BUCKETS) return false;
   }
   const item = hits.get(key);
-  if (!item || now - item.at >= 60_000) {
+  if (!item || now - item.at >= CLIENT_ERROR_WINDOW_MS) {
     hits.delete(key);
     hits.set(key, { count: 1, at: now });
     return true;
@@ -80,6 +87,12 @@ export function acceptClientErrorRate(key: string, now: number, max = 20): boole
   if (item.count >= max) return false;
   item.count++;
   return true;
+}
+
+/** Test-only isolation for deterministic rate-limit security regressions. */
+export function resetClientErrorRateForTests() {
+  hits.clear();
+  nextExpiredSweepAt = 0;
 }
 
 /** The new safe report limit is 300 characters (legacy 1000): rejecting
