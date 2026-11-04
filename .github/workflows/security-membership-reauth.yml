@@ -1,6 +1,6 @@
 # Prove membership provisioning, role changes and lifecycle writes cannot be
 # committed by a stale/impersonated session or oversized/CSRF request.
-name: Security - Fresh device authentication for membership privilege writes
+name: Security - actor-bound authentication for privileged account writes
 
 on:
   pull_request:
@@ -9,10 +9,14 @@ on:
       - "src/app/api/people/onboard/route.ts"
       - "src/app/api/people/**/roles/route.ts"
       - "src/app/api/people/**/lifecycle/route.ts"
+      - "src/app/api/admin/hr/route.ts"
+      - "src/app/api/admin/hr/**/route.ts"
+      - "src/app/api/admin/people/platform/**/route.ts"
       - "src/auth/recent-device-auth.ts"
       - "src/modules/auth/bounded-json.ts"
       - "tests/unit/security-membership-reauth-http.test.ts"
       - "tests/unit/security-recent-device-subject-binding.test.ts"
+      - "tests/unit/security-super-admin-account-reauth.test.ts"
       - "tests/unit/recent-device-privileged-role-security.test.ts"
       - ".github/workflows/security-membership-reauth.yml"
   push:
@@ -21,10 +25,14 @@ on:
       - "src/app/api/people/onboard/route.ts"
       - "src/app/api/people/**/roles/route.ts"
       - "src/app/api/people/**/lifecycle/route.ts"
+      - "src/app/api/admin/hr/route.ts"
+      - "src/app/api/admin/hr/**/route.ts"
+      - "src/app/api/admin/people/platform/**/route.ts"
       - "src/auth/recent-device-auth.ts"
       - "src/modules/auth/bounded-json.ts"
       - "tests/unit/security-membership-reauth-http.test.ts"
       - "tests/unit/security-recent-device-subject-binding.test.ts"
+      - "tests/unit/security-super-admin-account-reauth.test.ts"
       - "tests/unit/recent-device-privileged-role-security.test.ts"
       - ".github/workflows/security-membership-reauth.yml"
   workflow_dispatch:
@@ -50,7 +58,7 @@ jobs:
       - name: Exact tested source revision
         run: test "$(git rev-parse HEAD)" = "$GITHUB_SHA"
       - name: Actual API role, lifecycle and onboarding negative/positive tests
-        run: npx vitest run tests/unit/security-membership-reauth-http.test.ts tests/unit/security-recent-device-subject-binding.test.ts tests/unit/recent-device-privileged-role-security.test.ts
+        run: npx vitest run tests/unit/security-membership-reauth-http.test.ts tests/unit/security-recent-device-subject-binding.test.ts tests/unit/security-super-admin-account-reauth.test.ts tests/unit/recent-device-privileged-role-security.test.ts tests/unit/private-bulk-csv-security.test.ts
       - name: TypeScript typecheck
         env:
           NODE_OPTIONS: --max-old-space-size=6144
