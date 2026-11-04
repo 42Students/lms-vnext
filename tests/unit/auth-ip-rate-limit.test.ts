@@ -1,4 +1,4 @@
-import { beforeEach, describe, expect, it } from "vitest";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 import {
   allowRequest,
   clientIp,
@@ -51,7 +51,19 @@ describe("clientIp untrusted forwarding chains", () => {
     expect(clientIp(request("::ffff:203.0.113.9, 130.211.0.1"))).toBe("::ffff:cb00:7109");
   });
 
+  it("ignores a single untrusted forwarding value in production", () => {
+    vi.stubEnv("NODE_ENV", "production");
+    try {
+      expect(clientIp(request("198.51.100.4"))).toBe("unknown");
+      expect(clientIp(request("192.0.2.44"))).toBe("unknown");
+      expect(clientIp(request("203.0.113.9, 130.211.0.1"))).toBe("203.0.113.9");
+    } finally {
+      vi.unstubAllEnvs();
+    }
+  });
+
   it("shares a bounded unknown-address budget rather than allowing malformed key rotation", () => {
+    resetIpRateLimitForTests();
     const key = (forwarded: string) => `login-start:${clientIp(request(forwarded))}`;
     expect(allowRequest(key("not-an-ip"), 2, 60_000, 1_000)).toBe(true);
     expect(allowRequest(key("198.51.100.9, invalid-proxy"), 2, 60_000, 1_001)).toBe(true);
