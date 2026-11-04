@@ -116,6 +116,7 @@ async function withFixture(run: (f: Fixture) => Promise<void>) {
     await run(fixture);
   } finally {
     // Only delete rows created by this fixture, never seeded membership rows.
+    await pool.query("delete from identity_device_sessions where user_id=$1",[fixture.userId]);
     await pool.query(
       "delete from activity_events where subject_type = 'college_membership' and subject_id = $1",
       [fixture.membershipId],
@@ -239,6 +240,92 @@ describe("DB01 parent-lock role mutation against membership END", () => {
   });
 
 
+
+  it("DB-SEC-ROLE-01 revokes all target sessions atomically on a real role grant, not on an idempotent grant",async()=>{
+    await withFixture(async(f)=>{
+      const initialId=randomUUID();
+      const initialDigest=randomUUID().replaceAll("-","")+randomUUID().replaceAll("-","");
+      await pool.query(`
+        insert into identity_device_sessions(id,user_id,credential_digest,expires_at)
+        values($1,$2,$3,clock_timestamp()+interval '1 day')`,
+        [initialId,f.userId,initialDigest]);
+      const mutation=mutationFor(f);
+      expect(await drizzlePeopleRepository.addMembershipRole(f.membershipId,"MENTOR",mutation))
+       .toContain("MENTOR");
+      const revoked=await pool.query<{revoked_at:Date|null;revocation_reason:string|null}>(`
+        select revoked_at,revocation_reason from identity_device_sessions where id=$1`,[initialId]);
+      expect(revoked.rows[0]?.revoked_at).toBeInstanceOf(Date);
+      expect(revoked.rows[0]?.revocation_reason).toBe("MEMBERSHIP_ROLE_ADDED");
+
+      const newDeviceId=randomUUID(),newDigest=randomUUID().replaceAll("-","")+randomUUID().replaceAll("-","");
+      await pool.query(`
+        insert into identity_device_sessions(id,user_id,credential_digest,expires_at)
+        values($1,$2,$3,clock_timestamp()+interval '1 day')`,
+        [newDeviceId,f.userId,newDigest]);
+      expect(await drizzlePeopleRepository.addMembershipRole(f.membershipId,"MENTOR",mutation))
+       .toEqual(["FACULTY","MENTOR"]);
+      const noOp=await pool.query<{revoked_at:Date|null}>(`
+        select revoked_at from identity_device_sessions where id=$1`,[newDeviceId]);
+      expect(noOp.rows[0]?.revoked_at).toBeNull();
+    });
+  });
+
+  it("DB-SEC-ROLE-02 revokes all target sessions on role removal and keeps actor and other users signed in",async()=>{
+    await withFixture(async(f)=>{
+      await pool.query("insert into membership_roles(membership_id,role) values($1,'MENTOR')",[f.membershipId]);
+      const ownId=randomUUID(),ownDigest=randomUUID().replaceAll("-","")+randomUUID().replaceAll("-","");
+      await pool.query(`
+        insert into identity_device_sessions(id,user_id,credential_digest,expires_at)
+        values($1,$2,$3,clock_timestamp()+interval '1 day')`,
+        [ownId,f.userId,ownDigest]);
+      const other=await pool.query<{id:string}>(`
+        select id from identity_device_sessions where user_id=$1 and revoked_at is null limit 1`,
+        [SEED_IDS.collegeAdminUser]);
+      expect(await drizzlePeopleRepository.removeMembershipRole(
+        f.membershipId,"MENTOR",mutationFor(f))).toEqual(["FACULTY"]);
+      const revoked=await pool.query<{revoked_at:Date|null;revocation_reason:string|null}>(`
+        select revoked_at,revocation_reason from identity_device_sessions where id=$1`,[ownId]);
+      expect(revoked.rows[0]?.revoked_at).toBeInstanceOf(Date);
+      expect(revoked.rows[0]?.revocation_reason).toBe("MEMBERSHIP_ROLE_REMOVED");
+      // Only target user sessions are touched. Other users are never in UPDATE scope.
+      if(other.rows[0]) {
+        const unaffected=await pool.query<{revoked_at:Date|null}>(`
+          select revoked_at from identity_device_sessions where id=$1`,[other.rows[0].id]);
+        expect(unaffected.rows[0]?.revoked_at).toBeNull();
+      }
+    });
+  });
+
+  it("DB-SEC-ROLE-03 onboarding a new role on an existing identity revokes sessions, while repeated onboarding does not",async()=>{
+    await withFixture(async(f)=>{
+      const initialId=randomUUID(),digest=randomUUID().replaceAll("-","")+randomUUID().replaceAll("-","");
+      await pool.query(`
+        insert into identity_device_sessions(id,user_id,credential_digest,expires_at)
+        values($1,$2,$3,clock_timestamp()+interval '1 day')`,[initialId,f.userId,digest]);
+      const input={
+        identityUid:f.identityUid,phoneE164:`+1${randomInt(2_000_000_000,9_000_000_000)}`,
+        displayName:"Re-onboarded member",collegeId:SEED_IDS.collegeA,
+        roles:["FACULTY","MENTOR"] as Array<"FACULTY"|"MENTOR">,
+      };
+      const writer={context:actor,organizationId:SEED_IDS.organization};
+      const first=await drizzlePeopleRepository.persistPersonMembership(input,writer);
+      expect(first.membership.roles).toContain("MENTOR");
+      const firstDevice=await pool.query<{revoked_at:Date|null;revocation_reason:string|null}>(`
+        select revoked_at,revocation_reason from identity_device_sessions where id=$1`,[initialId]);
+      expect(firstDevice.rows[0]?.revoked_at).toBeInstanceOf(Date);
+      expect(firstDevice.rows[0]?.revocation_reason).toBe("MEMBERSHIP_ROLES_GRANTED_ONBOARDING");
+
+      const newId=randomUUID(),newDigest=randomUUID().replaceAll("-","")+randomUUID().replaceAll("-","");
+      await pool.query(`
+        insert into identity_device_sessions(id,user_id,credential_digest,expires_at)
+        values($1,$2,$3,clock_timestamp()+interval '1 day')`,[newId,f.userId,newDigest]);
+      const second=await drizzlePeopleRepository.persistPersonMembership(input,writer);
+      expect(second.membership.roles).toContain("MENTOR");
+      const secondDevice=await pool.query<{revoked_at:Date|null}>(`
+        select revoked_at from identity_device_sessions where id=$1`,[newId]);
+      expect(secondDevice.rows[0]?.revoked_at).toBeNull();
+    });
+  });
 
   it("rejects a stale role-grant snapshot with the wrong canonical user", async () => {
     await withFixture(async (f) => {
