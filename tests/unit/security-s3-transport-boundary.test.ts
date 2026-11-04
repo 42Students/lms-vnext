@@ -96,8 +96,8 @@ describe("Signed URL boundaries and protected headers",()=>{
   });
   it.each(["host","x-amz-content-sha256","x-amz-date","authorization"])
     ("protects computed Authorization signer header %s",header=>{
-      expect(()=>signedFetch(config,{method:"HEAD",path:"/vnext-private/private/a",
-        headers:{[header]:"spoofed"}})).rejects.toThrow("S3_SIGNED_HEADERS_INVALID");
+      expect(signedFetch(config,{method:"HEAD",path:"/vnext-private/private/a",
+        headers:{[header]:"spoofed"})).rejects.toThrow("S3_SIGNED_HEADERS_INVALID");
       expect(fetchMock).not.toHaveBeenCalled();
     });
   it.each([
@@ -107,7 +107,7 @@ describe("Signed URL boundaries and protected headers",()=>{
     "/vnext-private/private#fragment",
     "/vnext-private/private\\file",
   ])("refuses a signed storage path escape or query: %s",path=>{
-    expect(()=>signedFetch(config,{method:"HEAD",path}))
+    expect(signedFetch(config,{method:"HEAD",path}))
       .rejects.toThrow("S3_SIGNED_PATH_INVALID");
     expect(fetchMock).not.toHaveBeenCalled();
   });
@@ -130,7 +130,7 @@ describe("Private-range verification refuses unbounded or lying provider replies
   it.each([
     ["bytes 1-10/20","10"],
     ["bytes 0-11/20","12"],
-    ["bytes 0-9/10","10"],
+    ["bytes 0-9/9","10"],
     ["bytes */20","10"],
     ["bytes 0-9/*","10"],
     ["bytes 0-9/20","9"],
