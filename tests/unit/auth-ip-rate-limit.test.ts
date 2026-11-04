@@ -26,6 +26,39 @@ describe("clientIp", () => {
   });
 });
 
+describe("clientIp untrusted forwarding chains", () => {
+  it("rejects missing, empty, malformed and untrusted final proxy hops", () => {
+    for (const chain of [
+      "",
+      "198.51.100.9, ",
+      "198.51.100.9, not-an-ip",
+      "198.51.100.9, , 130.211.0.1",
+      "198.51.100.9:4567, 130.211.0.1",
+      "198.51.100.9, 130.211.0.1:443",
+      "198.51.100.9, 999.999.999.999",
+    ]) {
+      expect(clientIp(request(chain))).toBe("unknown");
+    }
+    expect(clientIp(request("198.51.100.9, 130.211.0.1,"))).toBe("unknown");
+    expect(clientIp(request("198.51.100.9, 130.211.0.1, ".repeat(150)))).toBe("unknown");
+  });
+
+  it("canonicalizes equivalent IPv6 spellings before allocating a throttle bucket", () => {
+    const canonical = "2001:db8::1";
+    expect(clientIp(request("2001:0DB8:0000:0:0:0:0:1, 130.211.0.1"))).toBe(canonical);
+    expect(clientIp(request("2001:db8::1, 130.211.0.1"))).toBe(canonical);
+    expect(clientIp(request("2001:DB8::1"))).toBe(canonical);
+    expect(clientIp(request("::ffff:203.0.113.9, 130.211.0.1"))).toBe("::ffff:cb00:7109");
+  });
+
+  it("shares a bounded unknown-address budget rather than allowing malformed key rotation", () => {
+    const key = (forwarded: string) => `login-start:${clientIp(request(forwarded))}`;
+    expect(allowRequest(key("not-an-ip"), 2, 60_000, 1_000)).toBe(true);
+    expect(allowRequest(key("198.51.100.9, invalid-proxy"), 2, 60_000, 1_001)).toBe(true);
+    expect(allowRequest(key("198.51.100.8, invalid-proxy"), 2, 60_000, 1_002)).toBe(false);
+  });
+});
+
 describe("allowRequest", () => {
   beforeEach(() => resetIpRateLimitForTests());
 
