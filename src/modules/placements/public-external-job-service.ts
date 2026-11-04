@@ -4,7 +4,7 @@ import {and,eq,sql,isNull} from "drizzle-orm";
 import {z} from "zod";
 import {getDb} from "@/db/client";
 import {placementPublicExternalJobLinks,placementJobs,
- placementCompanyRelationships,placementCompanies} from "@/db/schema";
+ placementCompanyRelationships,placementCompanies,colleges,organizations} from "@/db/schema";
 import {type RequestContext,hasMembershipRole} from "@/modules/identity/context";
 import {AuthorizationError,requirePermission} from "@/modules/permissions/policy";
 import {assertPersistedPlatformPermission} from "@/modules/permissions/persisted-actor";
@@ -68,6 +68,10 @@ export async function readPublicExternalJob(rawSlug:string){
   .innerJoin(placementJobs,and(
     eq(placementJobs.id,placementPublicExternalJobLinks.jobId),
     eq(placementJobs.collegeId,placementPublicExternalJobLinks.collegeId)))
+  // A published job is not publicly visible after its college or parent
+  // organization has been suspended, even if a share URL still exists.
+  .innerJoin(colleges,eq(colleges.id,placementJobs.collegeId))
+  .innerJoin(organizations,eq(organizations.id,colleges.organizationId))
   .innerJoin(placementCompanyRelationships,and(
     eq(placementCompanyRelationships.id,placementJobs.companyRelationshipId),
     eq(placementCompanyRelationships.collegeId,placementJobs.collegeId),
@@ -75,16 +79,21 @@ export async function readPublicExternalJob(rawSlug:string){
   .innerJoin(placementCompanies,eq(placementCompanies.id,placementCompanyRelationships.companyId))
   .where(and(eq(placementPublicExternalJobLinks.slug,slug.data),
     isNull(placementPublicExternalJobLinks.revokedAt),
+    eq(colleges.status,"ACTIVE"),eq(organizations.status,"ACTIVE"),
     eq(placementJobs.status,"PUBLISHED"),
     sql`${placementJobs.applicationMode} in ('HYBRID','EXTERNAL_ONLY')`,
     eq(placementCompanies.status,"ACTIVE"))).limit(1);
  if(!row)return null;
  const link=publicExternalHref(row.externalUrl);
  if(!link)return null;
- await getDb().update(placementPublicExternalJobLinks).set({
+ // Revalidate the bearer link at the write point; a concurrent revocation
+ // must not return the previously selected job details.
+ const [viewed]=await getDb().update(placementPublicExternalJobLinks).set({
   viewsCount:sql`${placementPublicExternalJobLinks.viewsCount}+1`,
  }).where(and(eq(placementPublicExternalJobLinks.slug,slug.data),
-  isNull(placementPublicExternalJobLinks.revokedAt)));
+  isNull(placementPublicExternalJobLinks.revokedAt)))
+  .returning({id:placementPublicExternalJobLinks.id});
+ if(!viewed)return null;
  return {title:row.jobTitle,companyName:row.companyName,description:row.roleDescription,
   workMode:row.workMode,applicationMode:row.applicationMode,applyHref:link};
 }
