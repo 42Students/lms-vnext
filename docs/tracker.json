@@ -11386,7 +11386,17 @@
         "state": "UNASSESSED"
       },
       "SEC-02-013": {
-        "state": "UNASSESSED"
+        "state": "PARTIAL_EVIDENCE",
+        "assessedAt": "2026-11-04",
+        "evidence": [
+          {
+            "type": "EXECUTED_SCOPED_TEST",
+            "commitSha": "eb3f4a852a5f94e4c09ac08e894dc0356004d362",
+            "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/41815543839",
+            "scope": "Actor-bound 10-minute OTP-backed sign-in checked on membership grants, lifecycle, onboarding and sensitive exports; five unit suites and TypeScript passed."
+          }
+        ],
+        "nextProof": "Implement independent phishing-resistant step-up challenge and recovery UX; cover all privileged operations and production sessions."
       },
       "SEC-02-014": {
         "state": "UNASSESSED"
@@ -11440,10 +11450,30 @@
         "state": "UNASSESSED"
       },
       "SEC-03-015": {
-        "state": "UNASSESSED"
+        "state": "PARTIAL_EVIDENCE",
+        "assessedAt": "2026-11-04",
+        "evidence": [
+          {
+            "type": "EXECUTED_SCOPED_TEST",
+            "commitSha": "eb3f4a852a5f94e4c09ac08e894dc0356004d362",
+            "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/41815543839",
+            "scope": "Protected membership roles use admin-scope permission before fresh actor-bound proof; route-level negative tests confirm no writer on rejection."
+          }
+        ],
+        "nextProof": "Prove every system, college, company and delegated grant uses persisted actor permission and row-lock negative tests."
       },
       "SEC-03-016": {
-        "state": "UNASSESSED"
+        "state": "PARTIAL_EVIDENCE",
+        "assessedAt": "2026-11-04",
+        "evidence": [
+          {
+            "type": "EXECUTED_SCOPED_TEST",
+            "commitSha": "eb3f4a852a5f94e4c09ac08e894dc0356004d362",
+            "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/41815543839",
+            "scope": "Membership role add/revoke and Super Admin permission route ordering covered by targeted HTTP tests."
+          }
+        ],
+        "nextProof": "Verify full grant/revoke/delegation matrix for every membership/system/recruiter role and concurrency."
       },
       "SEC-03-017": {
         "state": "UNASSESSED"
@@ -11452,7 +11482,17 @@
         "state": "UNASSESSED"
       },
       "SEC-03-019": {
-        "state": "UNASSESSED"
+        "state": "PARTIAL_EVIDENCE",
+        "assessedAt": "2026-11-04",
+        "evidence": [
+          {
+            "type": "EXECUTED_SCOPED_TEST",
+            "commitSha": "eb3f4a852a5f94e4c09ac08e894dc0356004d362",
+            "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/41815543839",
+            "scope": "All membership role changes require recent matching device session; negative tests for learner, faculty, mentor and protected roles passed."
+          }
+        ],
+        "nextProof": "Validate production-grade independent step-up, per-role server policy and revocation-aware SQL on the actual DB principal."
       },
       "SEC-03-020": {
         "state": "UNASSESSED"
@@ -11473,7 +11513,17 @@
         "state": "UNASSESSED"
       },
       "SEC-03-026": {
-        "state": "UNASSESSED"
+        "state": "PARTIAL_EVIDENCE",
+        "assessedAt": "2026-11-04",
+        "evidence": [
+          {
+            "type": "EXECUTED_SCOPED_TEST",
+            "commitSha": "eb3f4a852a5f94e4c09ac08e894dc0356004d362",
+            "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/41815543839",
+            "scope": "Scoped actor-role HTTP negatives tested for protected grants, stale-session role changes, CSRF and invalid mutations."
+          }
+        ],
+        "nextProof": "Exhaustively test all seven accounts and every role/resource/action combination with persisted tenant data."
       },
       "SEC-03-027": {
         "state": "UNASSESSED"
