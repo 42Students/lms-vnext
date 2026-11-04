@@ -1,3 +1,4 @@
+import {readBoundedUtf8Body} from "@/lib/bounded-utf8-body";
 import {NextResponse} from "next/server";
 import {z} from "zod";
 import {getCurrentRequestContext} from "@/auth/request-context";
@@ -11,10 +12,13 @@ export async function POST(request:Request){
  if(!isSameOriginRequest(request))
   return NextResponse.json({error:"INVALID_ORIGIN"},{status:403});
  try{
-  const text=await request.text();
-  if(text.length>1024)return NextResponse.json({error:"INVALID_BODY"},{status:413});
+  const decoded=await readBoundedUtf8Body(request,1024);
+  if(decoded.kind==="TOO_LARGE")
+   return NextResponse.json({error:"INVALID_BODY"},{status:413});
+  if(decoded.kind!=="OK")
+   return NextResponse.json({error:"INVALID_BODY"},{status:400});
   let input:unknown;
-  try{input=JSON.parse(text);}catch{
+  try{input=JSON.parse(decoded.body);}catch{
    return NextResponse.json({error:"INVALID_BODY"},{status:400});
   }
   const {key}=inputSchema.parse(input);
