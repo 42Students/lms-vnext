@@ -1,3 +1,4 @@
+import { spreadsheetCsvCell } from "@/security/csv-cell";
 import {superAdminReadQuerySchema, type SuperAdminReadQuery, type SuperAdminReadRow} from "./super-admin-read-directory-model";
 export const SUPER_ADMIN_SCOPED_CSV_CAP=250;
 export const superAdminScopedCsvQuerySchema=superAdminReadQuerySchema.omit({page:true});
@@ -19,10 +20,7 @@ export function superAdminScopedCsvHref(path:string,query:SuperAdminReadQuery){
  for(const key of ["jobId","departmentId","programId","cohortId","sectionId","employmentType"] as const){if(query[key])params.set(key,query[key]);}
  return path+(params.size?"?"+params.toString():"");
 }
-function csvCell(value:string){
- const neutral=/^[\s\p{Cc}\p{Cf}\p{Mn}\p{Me}]*[=+@-]/u.test(value)?"'"+value:value;
- return '"'+neutral.replaceAll('"','""')+'"';
-}
+const csvCell = spreadsheetCsvCell;
 export function buildSuperAdminScopedCsv(rows:readonly SuperAdminReadRow[],truncated:boolean){
  const columns=["Record ID","Name","Context","Status","Additional persisted fields"];
  const lines=[columns.map(csvCell).join(",")];
