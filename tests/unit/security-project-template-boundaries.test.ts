@@ -24,7 +24,7 @@ vi.mock("@/lib/api-error",()=>({
 
 import {GET as listTemplates,POST as createTemplate}
  from "@/app/api/projects/templates/route";
-import {PATCH as reviseTemplate,PUT as reviseLegacyTemplate,DELETE as archiveTemplate}
+import {GET as getTemplate,PATCH as reviseTemplate,PUT as reviseLegacyTemplate,DELETE as archiveTemplate}
  from "@/app/api/projects/templates/[templateId]/route";
 
 const base="https://college.example.test";
@@ -66,6 +66,24 @@ describe("project-template API resource selectors and body limits",()=>{
    expect(mocks.list).not.toHaveBeenCalled();
    expect(mocks.assigned).not.toHaveBeenCalled();
   });
+ it.each(["?collegeId=","?collegeId=broken",
+  "?collegeId="+id+"&collegeId="+id])(
+  "rejects invalid/detail duplicate tenant hints without resolving the private record %s",
+  async suffix=>{
+   const response=await getTemplate(make("GET","/api/projects/templates/"+id+suffix),
+     detailArgs);
+   expect(response.status).toBe(400);
+   expect(response.headers.get("cache-control")).toContain("no-store");
+   expect(mocks.detail).not.toHaveBeenCalled();
+  });
+ it("denies a foreign detail tenant hint before protected detail lookup",async()=>{
+  mocks.context.mockResolvedValue({user:ctx.user,membership:{collegeId:id}});
+  const other="33333333-3333-4333-8333-333333333333";
+  const response=await getTemplate(
+    make("GET","/api/projects/templates/"+id+"?collegeId="+other),detailArgs);
+  expect(response.status).toBe(403);
+  expect(mocks.detail).not.toHaveBeenCalled();
+ });
  it("preserves explicitly scoped and no-selector authenticated template reads",async()=>{
   const scoped=await listTemplates(make("GET","/api/projects/templates?collegeId="+id));
   expect(scoped.status).toBe(200);
