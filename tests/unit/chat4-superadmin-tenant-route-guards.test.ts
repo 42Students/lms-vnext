@@ -107,6 +107,8 @@ describe("Super Admin tenant API authenticated routes, origin and validation",()
    expect(invalid.status).toBe(400);
   }
   expect(mock.export).not.toHaveBeenCalled();
+  expect(mock.context).not.toHaveBeenCalled();
+  expect(mock.recent).not.toHaveBeenCalled();
   mock.export.mockResolvedValue({csv:"test,csv\r\n",truncated:false,cap:1000});
   const ok=await exportTenants(new Request(base+"?status=ACTIVE"));
   expect(ok.status).toBe(200);
