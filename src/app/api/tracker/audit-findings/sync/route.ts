@@ -46,6 +46,11 @@ export async function POST(request:Request){
  // No caller-supplied tenant/repository/options may affect the sync.
  if(new URL(request.url).search)
   return NextResponse.json({error:"INVALID_REQUEST"},{status:400,headers:noStore});
+ // A forged Content-Length: 0 is not proof of an empty streamed body;
+ // reject both inconsistent metadata and actual bytes.
+ const length=request.headers.get("content-length");
+ if((length!==null&&length!=="0")||request.headers.has("transfer-encoding"))
+  return NextResponse.json({error:"INVALID_REQUEST"},{status:400,headers:noStore});
  const body=await readBoundedUtf8Body(request,0);
  if(body.kind!=="OK"||body.body!=="")
   return NextResponse.json({error:"INVALID_REQUEST"},{status:400,headers:noStore});
