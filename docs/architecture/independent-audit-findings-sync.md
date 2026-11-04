@@ -29,6 +29,16 @@ a caller-supplied repository, branch, owner ID, or source path.
   only after deployment has stabilized for one minute. Supply
   Authorization: Bearer via a managed dedicated secret matching
   AUDIT_FINDINGS_CRON_SECRET. Never put secrets in URLs, git or browser props.
+- **Security hardening (2026-11-04):** Provision a dedicated random bearer
+  value of **32–256 UTF-8 bytes**, without leading/trailing whitespace.
+  Previous short secrets will now be denied; rotate them in the secret manager
+  before relying on the cron. The scheduler must send no `Origin` header,
+  no query string, and no request body (an explicit `Content-Length: 0` is
+  accepted). A user session or browser request never substitutes for the
+  dedicated bearer credential. Rotate the secret and update the scheduler
+  and service together; confirm the old credential is rejected.
+  These are deployment requirements, **not proof** that live secrets were
+  rotated or that a scheduler invocation passed.
 - Competing triggers use a PostgreSQL transaction-scoped exclusive advisory
   lock with a 230-second SQL timeout. Max new files per run is 40; a partial
   run indicates that additional passes are needed. Never widen that limit
