@@ -30,6 +30,11 @@ export function classifySecurityCatalog(principal, tables, { views = [], routine
     if (table.tenant_key_columns.length === 0) continue;
     const relation = table.schema_name
       ? table.schema_name + "." + table.table_name : table.table_name;
+    // PostgreSQL RLS does NOT restrict TRUNCATE. A runtime role with that
+    // table privilege can delete every tenant row regardless of USING/CHECK.
+    if (table.can_truncate === true) {
+      findings.push({ severity: "CRITICAL", code: "APP_CAN_TRUNCATE_TENANT_TABLE", table: relation });
+    }
     if (!table.rls_enabled) {
       findings.push({ severity: "HIGH", code: "TENANT_KEY_TABLE_NO_RLS", table: relation });
       continue;
@@ -181,7 +186,8 @@ SELECT
   has_table_privilege(current_user, c.oid, 'SELECT') AS can_select,
   has_table_privilege(current_user, c.oid, 'INSERT') AS can_insert,
   has_table_privilege(current_user, c.oid, 'UPDATE') AS can_update,
-  has_table_privilege(current_user, c.oid, 'DELETE') AS can_delete
+  has_table_privilege(current_user, c.oid, 'DELETE') AS can_delete,
+  has_table_privilege(current_user, c.oid, 'TRUNCATE') AS can_truncate
 FROM pg_catalog.pg_class c
 JOIN pg_catalog.pg_namespace n ON n.oid=c.relnamespace
 WHERE n.nspname NOT IN ('pg_catalog','information_schema')
