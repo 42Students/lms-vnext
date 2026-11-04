@@ -36,3 +36,16 @@ test(".env.example is the only Git-tracked .env family exception", () => {
   const exceptions = lines.filter((line) => line.startsWith("!") && line.includes(".env"));
   assert.deepEqual(exceptions, ["!.env.example"]);
 });
+test(".gitignore prevents accidental staging of sensitive identity files", () => {
+  const lines = new Set(read(".gitignore").split(/\r?\n/).map((line) => line.trim()));
+  for (const pattern of [
+    "**/.aws/", "**/.ssh/", "**/.kube/", "**/.config/gcloud/",
+    "**/.npmrc", "**/.netrc", "**/id_rsa", "**/id_ed25519",
+    "**/*.pem", "**/*.p12", "**/*.pfx", "**/*.keystore",
+    "**/*.key", "**/*.tfstate*", "**/*.tfvars",
+    "**/*service-account*.json", "**/*service_account*.json",
+    "**/*credentials*.json", "**/secrets.json",
+  ]) {
+    assert.ok(lines.has(pattern), "Git staging guard missing credential exclusion: " + pattern);
+  }
+});
