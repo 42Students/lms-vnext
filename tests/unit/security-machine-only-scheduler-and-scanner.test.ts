@@ -87,6 +87,22 @@ describe("machine-only notification scheduler",()=>{
   expect(query.status).toBe(400);
   expect(scheduler).not.toHaveBeenCalled();
  });
+ it("denies unknown jobs, extra tenant selectors, invalid JSON and oversized worker bodies",async()=>{
+  for(const [payload,expectedStatus] of [
+   ['{"jobName":"unknown"}',503],
+   ['{"jobName":"notification.cleanup","collegeId":"foreign"}',503],
+   ['{"jobName":123}',503],
+   ['not-json',400],
+   ['x'.repeat(1025),400],
+  ] as const){
+   const result=await scheduledNotification(req(schedulerUrl,{
+    headers:{"x-notification-scheduler-key":schedulerKey},body:payload,
+   }));
+   expect(result.status).toBe(expectedStatus);
+   expect(result.headers.get("cache-control")).toBe("no-store");
+  }
+  expect(scheduler).not.toHaveBeenCalled();
+ });
  it("preserves the legitimate single allowlisted scheduler job contract",async()=>{
   const response=await scheduledNotification(req(schedulerUrl,{
    headers:{"x-notification-scheduler-key":schedulerKey},body,
@@ -136,6 +152,21 @@ describe("machine-only scanner callback",()=>{
   }));
   expect(large.status).toBe(400);
   expect(scanner).not.toHaveBeenCalled();
+ });
+ it("never accepts non-JSON scanner callbacks or exposes provider failure details",async()=>{
+  const nonJson=await scannerVerdict(req(scannerUrl,{
+   headers:{"x-private-storage-scanner-key":scannerKey,"content-type":"text/plain"},body:"{}",
+  }));
+  expect(nonJson.status).toBe(400);
+  expect(scanner).not.toHaveBeenCalled();
+  scanner.mockRejectedValueOnce(new Error("private-scanner-secret-object-key"));
+  const failed=await scannerVerdict(req(scannerUrl,{
+   headers:{"x-private-storage-scanner-key":scannerKey},body:"{}",
+  }));
+  expect(failed.status).toBe(409);
+  const response=await failed.text();
+  expect(response).not.toContain("private-scanner-secret-object-key");
+  expect(failed.headers.get("cache-control")).toBe("no-store");
  });
  it("retains authenticated valid scanner webhook behavior",async()=>{
   const input={kind:"PROJECT_RESOURCE_FILE",fileId:"11111111-1111-4111-8111-111111111111",
