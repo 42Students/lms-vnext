@@ -166,10 +166,15 @@ describe("state-changing API routes", () => {
       ["api/internal/storage/scan-verdict/route.ts","PRIVATE_STORAGE_SCANNER_WEBHOOK_SECRET","x-private-storage-scanner-key"],
     ]){
       const source=fs.readFileSync(path.join(ROOT,route),"utf8");
-      expect(source).toContain('request.headers.has("origin")');
-      expect(source).toContain("timingSafeEqual(");
-      expect(source).toContain(secretName);
-      expect(source).toContain(headerName);
+      const delegate=route.includes("scan-verdict")
+        ?fs.readFileSync(path.join(process.cwd(),
+          "src/modules/storage/scan-verdict-request-guard.ts"),"utf8"):"";
+      if(delegate)expect(source).toContain("scannerCallbackRequestRejection(");
+      const implementation=source+"\\n"+delegate;
+      expect(implementation).toContain('request.headers.has("origin")');
+      expect(implementation).toContain("timingSafeEqual(");
+      expect(implementation).toContain(secretName);
+      expect(implementation).toContain(headerName);
       expect(source).not.toContain("getCurrentRequestContext");
     }
   });
