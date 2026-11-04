@@ -119,7 +119,9 @@ export async function GET() {
     const selected=memberships.find(choice=>choice.id===activeId&&choice.status==="ACTIVE")??null;
     const requestedRole=cookieStore.get(ROLE_COOKIE_NAME)?.value??null;
     const currentRole=selected?
-      selected.roles.find(role=>role===requestedRole)??selected.roles[0]??null:null;
+      selected.roles.find(role=>role===requestedRole) ??
+        (selected.roles.length===1?selected.roles[0]??null:null):null;
+    const roleSelectionRequired=Boolean(selected&&selected.roles.length>1&&!currentRole);
     return privateAuthJson({
       memberships:memberships.map(choice=>({...choice,
         label:choice.collegeName+" · "+choice.organizationName,
@@ -129,7 +131,8 @@ export async function GET() {
       currentMembershipKey:selected?.id??null,
       currentMembership:selected,
       currentRole,
-      membershipSelectionRequired:!selected,
+      roleSelectionRequired,
+      membershipSelectionRequired:!selected||roleSelectionRequired,
       // Domain authority is checked by the server, not a client boolean flag.
       hostNavigation:"FIRST_PARTY_COOKIE",
       nativeSwitchTransport:MEMBERSHIP_SWITCH_TRANSPORT,
@@ -204,6 +207,17 @@ export async function POST(request: Request) {
       // Verified membership is owned by this user but cannot be activated
       // on the current host. Do not mint raw JWT or URL handoff tokens.
       throw new MembershipHostChangeRequired();
+    }
+    if(membership.roles.length!==1){
+      // Never establish a workspace cookie from a null/stale/forged role when
+      // the persisted membership has multiple available roles. Require a new
+      // explicit role selection on this same-origin endpoint.
+      return privateAuthJson({
+        error:parsed.data.role?"ROLE_NOT_GRANTED":"ROLE_SELECTION_REQUIRED",
+        message:parsed.data.role
+          ?"This role is not currently assigned to your membership."
+          :"Choose one role for this college before continuing.",
+      },{status:parsed.data.role?403:400});
     }
     if (parsed.data.role && !membership.roles.includes(parsed.data.role)) {
       throw new ContextResolutionError("MEMBERSHIP_NOT_FOUND");
