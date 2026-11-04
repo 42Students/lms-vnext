@@ -7,7 +7,11 @@ const mocks=vi.hoisted(()=>({getCurrentRequestContext:vi.fn(),requireRecentDevic
 vi.mock("server-only",()=>({}));
 vi.mock("@/auth/recent-device-auth",()=>({requireRecentDeviceAuthentication:mocks.requireRecentDeviceAuthentication}));
 vi.mock("@/auth/request-context",()=>({getCurrentRequestContext:mocks.getCurrentRequestContext}));
-vi.mock("@/lib/api-error",()=>({apiErrorResponse:()=>new Response("Service unavailable",{status:503})}));
+vi.mock("@/lib/api-error",()=>({apiErrorResponse:(error:unknown)=>
+ error instanceof Error&&error.message==="RECENT_SIGN_IN_REQUIRED"
+  ?new Response(JSON.stringify({error:"RECENT_SIGN_IN_REQUIRED"}),{status:401,
+    headers:{"Cache-Control":"private, no-store","Content-Type":"application/json"}})
+  :new Response("Service unavailable",{status:503})}));
 
 const admin:RequestContext={
  user:{id:"admin-a",identityUid:"admin-a",systemRoles:["SUPER_ADMIN"],platformStatus:"ACTIVE"},
@@ -72,7 +76,8 @@ describe("SA-SCOPED-CSV-CAP-05 honor 250-row export cap, independently of UI pag
   mocks.requireRecentDeviceAuthentication.mockRejectedValue(new Error("RECENT_SIGN_IN_REQUIRED"));
   const response=await exportSuperAdminScopedDirectory(
    new Request("https://example.test/export?status=ALL"),config(loader));
-  expect(response.status).toBe(503); // This test file mocks apiErrorResponse to a generic 503.
+  expect(response.status).toBe(401);
+  expect(await response.json()).toEqual({error:"RECENT_SIGN_IN_REQUIRED"});
   expect(loader).not.toHaveBeenCalled();
   expect(mocks.requireRecentDeviceAuthentication).toHaveBeenCalledOnce();
  });
