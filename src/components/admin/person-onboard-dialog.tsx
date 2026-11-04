@@ -166,7 +166,9 @@ export function PersonOnboardDialog({
 
       if (!response.ok) {
         const message=
-            payload?.error === "IDENTITY_COLLISION"
+            payload?.error === "RECENT_SIGN_IN_REQUIRED"
+              ? "For security, sign in again before onboarding new college members."
+              : payload?.error === "IDENTITY_COLLISION"
               ? "Mobile or email is linked to another canonical identity. Check existing memberships before creating a duplicate."
               : payload?.error === "EMAIL_ALREADY_EXISTS"
               ? "Email already exists in this college. Check the linked user before creating a duplicate."
