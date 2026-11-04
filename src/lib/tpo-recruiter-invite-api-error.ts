@@ -12,8 +12,13 @@ export function tpoRecruiterInviteApiErrorResponse(error: unknown) {
           ? "This invitation is no longer available."
           : "The invitation cannot be completed. Check the recruiter details or ask the placement cell." },
       { status: error.code === "TPO_RECRUITER_INVITE_NOT_FOUND" ? 404 : 400,
-        headers: { "Cache-Control": "private, no-store" } },
+        headers: { "Cache-Control": "private, no-store", "Referrer-Policy": "no-referrer" } },
     );
   }
-  return apiErrorResponse(error);
+  // The generic handler also handles unexpected errors. A bearer-token
+  // invitation must never become cacheable on that fallback path.
+  const response = apiErrorResponse(error);
+  response.headers.set("Cache-Control", "private, no-store");
+  response.headers.set("Referrer-Policy", "no-referrer");
+  return response;
 }
