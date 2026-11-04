@@ -52,6 +52,14 @@ export function getPrivateR2Config(
   if (!accountId || !accessKeyId || !secretAccessKey || !bucket) {
     throw new PrivateObjectStorageError("PRIVATE_STORAGE_NOT_CONFIGURED");
   }
+  // These values become URL and S3 path components. A malformed account ID
+  // (e.g. "trusted@internal-host") or bucket path must never redirect a
+  // signed private-object request outside the intended R2 namespace.
+  if (!/^[a-z0-9]{1,64}$/i.test(accountId) ||
+      !/^[a-z0-9](?:[a-z0-9.-]{1,61})[a-z0-9]$/.test(bucket) ||
+      bucket.includes("..")) {
+    throw new PrivateObjectStorageError("PRIVATE_STORAGE_BUCKET_UNSAFE");
+  }
   const keyPrefix = env.R2_PRIVATE_PREFIX?.trim() ?? "";
   if (keyPrefix && (!keyPrefix.endsWith("/") || keyPrefix.startsWith("/") ||
       keyPrefix.includes("..") || keyPrefix.includes("\\") ||
