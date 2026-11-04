@@ -11394,6 +11394,12 @@
             "commitSha": "eb3f4a852a5f94e4c09ac08e894dc0356004d362",
             "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/41815543839",
             "scope": "Actor-bound 10-minute OTP-backed sign-in checked on membership grants, lifecycle, onboarding and sensitive exports; five unit suites and TypeScript passed."
+          },
+          {
+            "type": "EXECUTED_SCOPED_TEST",
+            "commitSha": "53ba088fc89dd22a8d1a337ac4c79e94933c33a6",
+            "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/41815744141",
+            "scope": "66 passing tests include recent-session same-user identity match and stale authorization denial for membership, recruiter and platform-account writes; not independent phishing-resistant MFA."
           }
         ],
         "nextProof": "Implement independent phishing-resistant step-up challenge and recovery UX; cover all privileged operations and production sessions."
@@ -11458,6 +11464,12 @@
             "commitSha": "eb3f4a852a5f94e4c09ac08e894dc0356004d362",
             "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/41815543839",
             "scope": "Protected membership roles use admin-scope permission before fresh actor-bound proof; route-level negative tests confirm no writer on rejection."
+          },
+          {
+            "type": "EXECUTED_SCOPED_TEST",
+            "commitSha": "53ba088fc89dd22a8d1a337ac4c79e94933c33a6",
+            "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/41815744141",
+            "scope": "Super Admin recruiter grant add/revoke and platform status HTTP tests establish fresh authorized actor identity before service-side grant mutation; persisted SQL rights still need live testing."
           }
         ],
         "nextProof": "Prove every system, college, company and delegated grant uses persisted actor permission and row-lock negative tests."
@@ -11471,6 +11483,12 @@
             "commitSha": "eb3f4a852a5f94e4c09ac08e894dc0356004d362",
             "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/41815543839",
             "scope": "Membership role add/revoke and Super Admin permission route ordering covered by targeted HTTP tests."
+          },
+          {
+            "type": "EXECUTED_SCOPED_TEST",
+            "commitSha": "53ba088fc89dd22a8d1a337ac4c79e94933c33a6",
+            "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/41815744141",
+            "scope": "Super Admin recruiter college grant issuance/revocation route tests now cover actor-bound recent authentication on both directions; seven-role delegation matrix remains."
           }
         ],
         "nextProof": "Verify full grant/revoke/delegation matrix for every membership/system/recruiter role and concurrency."
@@ -11490,6 +11508,12 @@
             "commitSha": "eb3f4a852a5f94e4c09ac08e894dc0356004d362",
             "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/41815543839",
             "scope": "All membership role changes require recent matching device session; negative tests for learner, faculty, mentor and protected roles passed."
+          },
+          {
+            "type": "EXECUTED_SCOPED_TEST",
+            "commitSha": "53ba088fc89dd22a8d1a337ac4c79e94933c33a6",
+            "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/41815744141",
+            "scope": "Recruiter-account creation/editing, college relationship grants/revocation, platform disable/reactivate and membership role mutations now require matching recent device."
           }
         ],
         "nextProof": "Validate production-grade independent step-up, per-role server policy and revocation-aware SQL on the actual DB principal."
@@ -11521,6 +11545,12 @@
             "commitSha": "eb3f4a852a5f94e4c09ac08e894dc0356004d362",
             "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/41815543839",
             "scope": "Scoped actor-role HTTP negatives tested for protected grants, stale-session role changes, CSRF and invalid mutations."
+          },
+          {
+            "type": "EXECUTED_SCOPED_TEST",
+            "commitSha": "53ba088fc89dd22a8d1a337ac4c79e94933c33a6",
+            "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/41815744141",
+            "scope": "Negative cross-site, stale-session and invalid account/grant write paths proved side-effect-free at mocked HTTP writer boundary; full role × tenant matrix still outstanding."
           }
         ],
         "nextProof": "Exhaustively test all seven accounts and every role/resource/action combination with persisted tenant data."
@@ -12253,7 +12283,17 @@
         "state": "UNASSESSED"
       },
       "SEC-14-008": {
-        "state": "UNASSESSED"
+        "state": "PARTIAL_EVIDENCE",
+        "assessedAt": "2026-11-04",
+        "nextProof": "Validate real recruiter company/college grants, target ownership, object-level candidate read restrictions, malicious invites and active revocation against PostgreSQL.",
+        "evidence": [
+          {
+            "type": "EXECUTED_SCOPED_TEST",
+            "commitSha": "53ba088fc89dd22a8d1a337ac4c79e94933c33a6",
+            "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/41815744141",
+            "scope": "Super Admin recruiter-college grant issue/revoke now denies stale or non-matching session before reaching privileged writer; unauthorized candidate access still requires full persisted tests."
+          }
+        ]
       },
       "SEC-14-009": {
         "state": "UNASSESSED"
