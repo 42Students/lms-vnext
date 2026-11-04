@@ -13,7 +13,7 @@ export async function GET(request:Request){
   if(input["collegeId"]==="")delete input["collegeId"];
   const query=adminCompaniesQuerySchema.parse(input);
   const context=await getCurrentRequestContext();
-  await requireRecentDeviceAuthentication();
+  await requireRecentDeviceAuthentication(context.user.id);
   const page=await listSuperAdminCompanyDirectory(context,{...query,page:1});
   // The legacy browser export included unrestricted contact columns. Keep
   // this authenticated server export restricted to the already-authorized
