@@ -23,6 +23,7 @@ const actor={user:{id:"11111111-1111-4111-8111-111111111111"},
  membership:{id:"22222222-2222-4222-8222-222222222222"}};
 const url="https://lms.example/api/mentor/calendar/google/callback";
 const state="a".repeat(43);
+const verifier="v".repeat(43);
 
 function assertSecretSafeRedirect(response:Response){
  expect(response.status).toBe(307);
@@ -42,9 +43,9 @@ describe("Mentor Calendar OAuth authorization-code URL confidentiality",()=>{
   mock.context.mockResolvedValue(actor);
   mock.status.mockResolvedValue({available:true,connected:false});
   mock.config.mockReturnValue({clientId:"test-id",clientSecret:"test-secret",redirectUri:url});
-  mock.consent.mockImplementation((_config:unknown,nonce:string)=>
-   "https://accounts.google.com/o/oauth2/v2/auth?state="+nonce);
-  mock.cookie.mockReturnValue({value:state+"."+actor.user.id+"."+actor.membership.id});
+  mock.consent.mockImplementation((_config:unknown,nonce:string,challenge:string)=>
+   "https://accounts.google.com/o/oauth2/v2/auth?state="+nonce+"&code_challenge="+challenge);
+  mock.cookie.mockReturnValue({value:state+"."+actor.user.id+"."+actor.membership.id+"."+verifier});
   mock.exchange.mockResolvedValue({accessToken:"access-token",refreshToken:"encrypted-at-rest-later",expiresIn:3600});
   mock.save.mockResolvedValue(undefined);
  });
@@ -55,7 +56,12 @@ describe("Mentor Calendar OAuth authorization-code URL confidentiality",()=>{
   const nonce=mock.consent.mock.calls[0]?.[1] as string;
   expect(nonce).toMatch(/^[A-Za-z0-9_-]{43}$/);
   const oauthCookie=response.cookies.get("mentor-google-oauth");
-  expect(oauthCookie?.value).toBe(nonce+"."+actor.user.id+"."+actor.membership.id);
+  const challenge=mock.consent.mock.calls[0]?.[2] as string;
+  expect(challenge).toMatch(/^[A-Za-z0-9_-]{43}$/);
+  const pieces=oauthCookie?.value.split(".");
+  expect(pieces).toHaveLength(4);
+  expect(pieces?.slice(0,3).join(".")).toBe(nonce+"."+actor.user.id+"."+actor.membership.id);
+  expect(pieces?.[3]).toMatch(/^[A-Za-z0-9_-]{43}$/);
   expect(oauthCookie?.httpOnly).toBe(true);
   expect(oauthCookie?.path).toBe("/api/mentor/calendar/google");
   expect(oauthCookie?.maxAge).toBe(600);
@@ -94,7 +100,22 @@ describe("Mentor Calendar OAuth authorization-code URL confidentiality",()=>{
   expect(response.headers.get("location")).not.toContain("valid-auth-code");
   expect(response.cookies.get("mentor-google-oauth")?.maxAge).toBe(0);
   expect(mock.exchange).toHaveBeenCalledTimes(1);
+  expect(mock.exchange).toHaveBeenCalledWith(expect.any(Object),"valid-auth-code",verifier);
   expect(mock.save).toHaveBeenCalledWith(actor,"encrypted-at-rest-later");
+ });
+ it("rejects legacy nonce-only cookies and malformed PKCE verifiers",async()=>{
+  for(const value of [
+   state+"."+actor.user.id+"."+actor.membership.id,
+   state+"."+actor.user.id+"."+actor.membership.id+".short",
+   state+"."+actor.user.id+"."+actor.membership.id+"."+"=".repeat(43),
+  ]){
+   mock.cookie.mockReturnValueOnce({value});
+   const response=await callback(callbackRequest("state="+state+"&code=valid-auth-code"));
+   assertSecretSafeRedirect(response);
+   expect(response.headers.get("location")).toContain("google=failed");
+  }
+  expect(mock.exchange).not.toHaveBeenCalled();
+  expect(mock.save).not.toHaveBeenCalled();
  });
  it("fails closed when the provider omits a refresh token",async()=>{
   mock.exchange.mockResolvedValueOnce({accessToken:"access-token",refreshToken:null,expiresIn:3600});
