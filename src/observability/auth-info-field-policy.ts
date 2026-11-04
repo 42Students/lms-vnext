@@ -1,7 +1,11 @@
 /** INFO logs only admit fixed authentication-audit facts after sanitization. */
 type SafeField = string | number | boolean | null;
 const AUTH_AUDIT_TAG = /^[a-f0-9]{24}$/;
-const AUTH_ROUTE = /^(?:[a-z][a-z0-9-]{0,63}|\/api\/auth\/[a-z0-9\-/]{1,96})$/;
+const AUTH_ROUTES = new Set([
+  "login-start", "login-verify", "login-email",
+  "roll-number-login-start", "recruiter-email-login-start",
+  "otp", "/api/auth/start", "/api/auth/verify",
+]);
 
 export function privacySafeAuthInfoLogFields(
   fields: Record<string, unknown>,
@@ -11,8 +15,7 @@ export function privacySafeAuthInfoLogFields(
   for (const [key, value] of Object.entries(fields)) {
     switch (key) {
       case "route":
-        if (typeof value === "string" && AUTH_ROUTE.test(value) &&
-            !value.includes("..")) safe.route = value;
+        if (typeof value === "string" && AUTH_ROUTES.has(value)) safe.route = value;
         break;
       case "ipTag":
       case "userTag":
