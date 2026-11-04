@@ -4,10 +4,13 @@ import { isValidTickSecret } from "@/app/api/internal/alerts/tick/route";
 
 describe("scheduled Telegram alerts", () => {
   it("GR-118 refuses missing and invalid tick secrets", () => {
-    expect(isValidTickSecret("expected", undefined)).toBe(false);
-    expect(isValidTickSecret(null, "expected")).toBe(false);
-    expect(isValidTickSecret("wrong", "expected")).toBe(false);
-    expect(isValidTickSecret("expected", "expected")).toBe(true);
+    const strongSecret = "correct-machine-only-alert-key-32-bytes";
+    expect(isValidTickSecret(strongSecret, undefined)).toBe(false);
+    expect(isValidTickSecret(null, strongSecret)).toBe(false);
+    expect(isValidTickSecret("wrong", strongSecret)).toBe(false);
+    expect(isValidTickSecret("expected", "expected")).toBe(false);
+    expect(isValidTickSecret("short", "short")).toBe(false);
+    expect(isValidTickSecret(strongSecret, strongSecret)).toBe(true);
   });
   it("GR-118 sweeps fixed signatures only after 24 hours and never marks them reported before send", async () => {
     const { decideAlert } = await import("@/modules/log-alerts/policy");
