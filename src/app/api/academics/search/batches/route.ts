@@ -33,12 +33,12 @@ export async function POST(request:Request){
  if(!isSameOriginRequest(request))
   return NextResponse.json({error:"INVALID_ORIGIN"},{status:403});
  try{
-  const parsed = await readBoundedJsonBody(request, 16_384);
-  if (parsed.kind !== "OK") return NextResponse.json({ error: "INVALID_REQUEST" }, {
-    status: parsed.kind === "TOO_LARGE" ? 413 : 400,
+  const bounded = await readBoundedJsonBody(request, 16_384);
+  if (bounded.kind !== "OK") return NextResponse.json({ error: "INVALID_REQUEST" }, {
+    status: bounded.kind === "TOO_LARGE" ? 413 : 400,
     headers: { "Cache-Control": "private, no-store" },
   });
-  const raw: unknown = parsed.value;
+  const raw: unknown = bounded.value;
   const parsed=z.strictObject({batchId:z.string().uuid()}).safeParse(raw);
   if(!parsed.success)return NextResponse.json({error:"INVALID_REQUEST"},{status:400});
   return NextResponse.json(await recordCollegeBatchSearchSelection(
