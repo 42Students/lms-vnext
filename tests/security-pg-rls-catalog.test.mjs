@@ -77,3 +77,39 @@ test("does not flag no SELECT grant or separately restrictive policy as a proven
   ]);
   assert.deepEqual(findings, []);
 });
+
+
+test("reviews app-readable owner-rights and materialized views, but not invoker views", () => {
+  const findings = classifySecurityCatalog(safePrincipal, [base], {
+    views: [
+      { schema_name: "public", view_name: "unsafe_default", relation_kind: "view",
+        security_invoker: false, can_select: true },
+      { schema_name: "public", view_name: "safe_invoker", relation_kind: "view",
+        security_invoker: true, can_select: true },
+      { schema_name: "public", view_name: "internal_owner_view", relation_kind: "view",
+        security_invoker: false, can_select: false },
+      { schema_name: "reporting", view_name: "private_rollup", relation_kind: "materialized_view",
+        security_invoker: false, can_select: true },
+    ],
+  });
+  assert.deepEqual(findings, [
+    { severity: "HIGH", code: "APP_READABLE_OWNER_RIGHTS_VIEW_REQUIRES_REVIEW",
+      table: "public.unsafe_default" },
+    { severity: "HIGH", code: "APP_READABLE_MATERIALIZED_VIEW_REQUIRES_REVIEW",
+      table: "reporting.private_rollup" },
+  ]);
+});
+
+test("reviews executable SECURITY DEFINER routines without claiming every routine leaks", () => {
+  const findings = classifySecurityCatalog(safePrincipal, [], {
+    routines: [
+      { routine_signature: "public.allowed_view()", security_definer: true, can_execute: true },
+      { routine_signature: "public.private_admin()", security_definer: true, can_execute: false },
+      { routine_signature: "public.safe_invoker()", security_definer: false, can_execute: true },
+    ],
+  });
+  assert.deepEqual(findings, [
+    { severity: "HIGH", code: "APP_EXECUTABLE_SECURITY_DEFINER_REQUIRES_REVIEW",
+      table: "public.allowed_view()" },
+  ]);
+});
