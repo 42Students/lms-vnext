@@ -12,11 +12,12 @@ export const runtime = "nodejs";
 
 export async function GET(request: Request) {
   try {
+    const query = new URL(request.url).searchParams;
+    if (query.getAll("collegeId").length > 1) return NextResponse.json({
+      error: "INVALID_FILTERS",
+    }, { status: 400, headers: { "Cache-Control": "private, no-store" } });
     const context = await getCurrentRequestContext();
-    const collegeId =
-      new URL(request.url).searchParams.get(
-        "collegeId",
-      ) ?? "";
+    const collegeId = query.get("collegeId") ?? "";
     const periods = await listAcademicPeriods(
       context,
       collegeId,
