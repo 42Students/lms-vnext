@@ -47,7 +47,7 @@ describe("actor-owned notification event scope", () => {
   it("rejects suspended users, ambiguous selected roles and inactive memberships", () => {
     expect(() => compiled({
       ...membership,
-      user: { ...membership.user, platformStatus: "SUSPENDED" },
+      user: { ...membership.user, platformStatus: "DISABLED" },
     })).toThrow();
     expect(() => compiled({
       ...membership,
