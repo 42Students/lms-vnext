@@ -94,7 +94,9 @@ export function PersonMembershipActions({
           tone: "error",
           title: "Role update failed",
           description:
-            payload?.error==="MEMBERSHIP_PROTECTED"
+            payload?.error==="RECENT_SIGN_IN_REQUIRED"
+              ? "For security, sign in again to change membership roles."
+              : payload?.error==="MEMBERSHIP_PROTECTED"
               ? "Only a Super Admin can manage College Admin or TPO accounts."
               : payload?.error==="MEMBERSHIP_SELF_LOCKOUT"
                 ? "You cannot remove your own protected access."
@@ -162,7 +164,9 @@ export function PersonMembershipActions({
             tone: "error",
             title: "Membership update failed",
             description:
-              payload?.error === "MEMBERSHIP_ENDED"
+              payload?.error === "RECENT_SIGN_IN_REQUIRED"
+                ? "For security, sign in again before changing a membership's status."
+                : payload?.error === "MEMBERSHIP_ENDED"
                 ? "Ended memberships cannot be reactivated or suspended."
                 : payload?.error==="MEMBERSHIP_PROTECTED"
                   ? "Only a Super Admin can manage College Admin or TPO accounts."
