@@ -1,5 +1,7 @@
-# Per-method census and guard-evidence non-regression are source triage gates.\n# They are NOT runtime object/tenant authorization certification.\n# Existing
-# endpoints have been fully penetration-tested or database-certified.
+# Per-method census and guard-evidence non-regression are source triage gates.
+# They are NOT runtime object/tenant authorization certification.
+# Existing endpoints remain UNREVIEWED until independently verified.
+
 name: Security - API method inventory and new-handler review
 
 on:
