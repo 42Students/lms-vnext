@@ -3,10 +3,14 @@ import {beforeEach,describe,expect,it,vi} from "vitest";
 const mocks=vi.hoisted(()=>({
   getCurrentRequestContext:vi.fn(),
   getSuperAdminCompanyHiringReport:vi.fn(),
+  requireRecentDeviceAuthentication:vi.fn(),
 }));
 vi.mock("server-only",()=>({}));
 vi.mock("@/auth/request-context",()=>({
   getCurrentRequestContext:mocks.getCurrentRequestContext,
+}));
+vi.mock("@/auth/recent-device-auth",()=>({
+  requireRecentDeviceAuthentication:mocks.requireRecentDeviceAuthentication,
 }));
 vi.mock("@/modules/admin-ui/super-admin-hiring-report-service",()=>({
   getSuperAdminCompanyHiringReport:mocks.getSuperAdminCompanyHiringReport,
@@ -20,6 +24,7 @@ describe("SA-HIRING-EXPORT-13 protected Super Admin CSV route",()=>{
       user:{id:"admin",identityUid:"admin",platformStatus:"ACTIVE",systemRoles:["SUPER_ADMIN"]},
       membership:null,adminScope:{organizationId:"org-a",collegeId:"college-a"},
     });
+    mocks.requireRecentDeviceAuthentication.mockResolvedValue({userId:"admin"});
     mocks.getSuperAdminCompanyHiringReport.mockResolvedValue({
       rows:[],truncated:false,fullShortlistMeanHours:null,
       fullTotals:{totalApplications:0,applied:0,shortlisted:0,assessment:0,
@@ -61,6 +66,7 @@ describe("SA-HIRING-EXPORT-13 protected Super Admin CSV route",()=>{
     expect(response.headers.get("Content-Disposition")).toContain("hiring-report-");
     expect(await response.text()).toContain("Total Applications");
     expect(mocks.getSuperAdminCompanyHiringReport).toHaveBeenCalledTimes(1);
+    expect(mocks.requireRecentDeviceAuthentication).toHaveBeenCalledOnce();
     expect(mocks.getSuperAdminCompanyHiringReport.mock.calls[0]?.[1]).toMatchObject({
       appliedFrom:"2026-10-01",appliedTo:"2026-10-31",q:"graduate",
     });
