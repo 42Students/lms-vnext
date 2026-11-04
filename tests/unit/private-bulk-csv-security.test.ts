@@ -78,7 +78,7 @@ describe("private roster export routes require recent server-side sign-in", () =
     const source = readFileSync(path, "utf8");
     expect(source).toContain('from "@/auth/recent-device-auth"');
     const context = source.indexOf("getCurrentRequestContext()");
-    const recent = source.indexOf("await requireRecentDeviceAuthentication()");
+    const recent = source.indexOf("await requireRecentDeviceAuthentication(context.user.id)");
     const firstRead = source.indexOf(lookup);
     expect(context, path + ": no request actor").toBeGreaterThan(0);
     expect(recent, path + ": no recent-auth guard").toBeGreaterThan(context);
