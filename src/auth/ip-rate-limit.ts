@@ -78,7 +78,12 @@ export function clientIp(request: Request): string {
   // Only inspect the two positions added by the trusted edge, avoiding a
   // potentially long split/array allocation on unauthenticated requests.
   const lastComma = forwarded.lastIndexOf(",");
-  if (lastComma < 0) return canonicalIp(forwarded.trim()) ?? "unknown";
+  // A real production Google LB must append both client and proxy addresses.
+  // A lone, caller-writable forwarded value must never buy a fresh bucket.
+  if (lastComma < 0) {
+    if (process.env.NODE_ENV === "production") return "unknown";
+    return canonicalIp(forwarded.trim()) ?? "unknown";
+  }
 
   const proxy = forwarded.slice(lastComma + 1).trim();
   if (!canonicalIp(proxy)) return "unknown";
