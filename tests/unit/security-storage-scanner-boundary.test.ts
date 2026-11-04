@@ -72,6 +72,13 @@ describe("SEC-storage-scanner machine callback identity and input gate",()=>{
    await rejected(await POST(request({origin})),403,"INVALID_ORIGIN");
    expect(mocks.apply).not.toHaveBeenCalled();
   });
+ it("authenticates before reporting the accepted request shape",async()=>{
+  const malformed=request({address:url+"?collegeId=foreign",contentType:"text/plain",
+   credential:"invalid-scanner-key"});
+  expect(scannerCallbackRequestRejection(malformed,secret)).toBe("FORBIDDEN");
+  await rejected(await POST(malformed),403,"FORBIDDEN");
+  expect(mocks.apply).not.toHaveBeenCalled();
+ });
  it("does not treat a padded or too-short deployment credential as a valid equivalent",async()=>{
   expect(validScannerCallbackSecret(secret)).toBe(true);
   for(const configured of [secret+" "," "+secret,"short","","x".repeat(257),"x".repeat(31)]){
@@ -117,7 +124,9 @@ describe("SEC-storage-scanner machine callback identity and input gate",()=>{
  });
  it("rejects malformed JSON and invalid UTF-8 without invoking the scanner state writer",async()=>{
   await rejected(await POST(request({body:"{bad-json"})),400,"INVALID_SCAN_VERDICT");
-  await rejected(await POST(request({body:new Uint8Array([0xff,0xfe])})),400,
+  const invalidBytes=new ArrayBuffer(2);
+  new Uint8Array(invalidBytes).set([0xff,0xfe]);
+  await rejected(await POST(request({body:invalidBytes})),400,
    "INVALID_SCAN_VERDICT");
   expect(mocks.apply).not.toHaveBeenCalled();
  });
