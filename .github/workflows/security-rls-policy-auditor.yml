@@ -7,6 +7,9 @@ on:
     branches: [main]
     paths:
       - "scripts/security/pg-rls-readonly-audit.mjs"
+      - "src/db/runtime-principal-policy.ts"
+      - "src/db/client.ts"
+      - "tests/unit/security-production-database-principal.test.ts"
       - "tests/security-pg-rls-catalog.test.mjs"
       - "tests/security-pg-rls-live-readonly.test.mjs"
       - "tests/security-pg-rls-live-writes.test.mjs"
@@ -15,6 +18,9 @@ on:
     branches: [main]
     paths:
       - "scripts/security/pg-rls-readonly-audit.mjs"
+      - "src/db/runtime-principal-policy.ts"
+      - "src/db/client.ts"
+      - "tests/unit/security-production-database-principal.test.ts"
       - "tests/security-pg-rls-catalog.test.mjs"
       - "tests/security-pg-rls-live-readonly.test.mjs"
       - "tests/security-pg-rls-live-writes.test.mjs"
@@ -62,3 +68,9 @@ jobs:
         run: node --test tests/security-pg-rls-catalog.test.mjs
       - name: Real restricted-role RLS cross-tenant read and WRITE witnesses
         run: node --test tests/security-pg-rls-live-readonly.test.mjs tests/security-pg-rls-live-writes.test.mjs
+      - name: Fail-closed production application DB role unit contract
+        run: npx vitest run tests/unit/security-production-database-principal.test.ts
+      - name: TypeScript typecheck for database principal
+        env:
+          NODE_OPTIONS: --max-old-space-size=6144
+        run: npm run typecheck
