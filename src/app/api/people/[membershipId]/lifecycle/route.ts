@@ -76,7 +76,7 @@ export async function PATCH(
       status: person.membership.status,
       suspendedAt: person.membership.suspendedAt,
       suspensionReason: person.membership.suspensionReason,
-    });
+    }, { headers: { "Cache-Control": "private, no-store", "Vary": "Cookie" } });
   } catch (error) {
     if (error instanceof PeopleServiceError && error.code === "MEMBERSHIP_NOT_FOUND") {
       return NextResponse.json({
