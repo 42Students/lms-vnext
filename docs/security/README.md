@@ -9,9 +9,10 @@
 
 1. [Original conversation and maximum-security blueprint, preserved unedited](../audit/security/2026-11-04-maximum-security-blueprint-source.md) — history, rationale, 26 domains, threat examples and release gates.
 2. [493-ID security control catalogue](control-catalog.md) — item-by-item traceability: `SEC-01-001` through the relevant domain's final number. This is **requirements**, not a second task tracker.
-3. [Security verification matrix and release gates](acceptance-matrix.md) — adversarial fixtures, seven-account access model, evidence format, and hard stop criteria.
-4. [Existing source-level technical audit and remediation evidence](../audit/security/2026-11-04-auth-authorization-tenant-hardening.md) — observed code findings, commits, certain exact-SHA CI results, and limitations.
-5. [Canonical execution tracker](../tracker.json) — **the sole active task/status tracker**. For each implementation slice, reference security control IDs and attach evidence to an existing appropriate canonical task or a properly reviewed new canonical task. Do not mark these Markdown pages as a parallel source of status truth.
+3. [Security coverage contract and dated baseline](coverage-contract.md) — ten measurable denominators, ASVS mapping, uncovered evidence and no-go thresholds.
+4. [Security verification matrix and release gates](acceptance-matrix.md) — adversarial fixtures, seven-account access model, evidence format, and hard stop criteria.
+5. [Existing source-level technical audit and remediation evidence](../audit/security/2026-11-04-auth-authorization-tenant-hardening.md) — observed code findings, commits, certain exact-SHA CI results, and limitations.
+6. [Canonical execution tracker](../tracker.json) — **the sole active task/status tracker**. For each implementation slice, reference security control IDs and attach evidence to an existing appropriate canonical task or a properly reviewed new canonical task. Do not mark these Markdown pages as a parallel source of status truth.
 
 **Canonical tracker integration warning (verified 2026-11-04):** `scripts/tracker.mjs::inspectTracker` currently accepts existing `DB-NNN`, `API-NN` and `UI-NN` task identifiers; it does **not** recognize new `RELEASE`/security task IDs. No new security tasks are silently inserted into `docs/tracker.json` by this documentation change. Before tracking standalone security-program tasks, extend and test the canonical tracker schema/milestone contract or link relevant security controls to genuinely matching existing tasks. Do not create a separate live status tracker and do not pretend the 493 controls are individually assigned. See [tracker integration design](tracker-integration.md).
 
