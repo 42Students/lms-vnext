@@ -8,6 +8,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { inspectDatabaseProgress, formatDatabaseProgress } from './progress-evidence.mjs';
+import { inspectSecurityProgress, formatSecurityMarkdown } from './security/control-progress.mjs';
 export {inspectDatabaseProgress,formatDatabaseProgress} from './progress-evidence.mjs';
 
 export const PHASES = Object.freeze(['DATABASE', 'API', 'UI', 'RELEASE']);
@@ -267,6 +268,9 @@ export function inspectTracker(doc) {
   }
   // Stage labels are evidence-informed estimates, never proof of task acceptance.
   errors.push(...inspectDatabaseProgress(doc).errors);
+  // Every security control is tracked in the same canonical tracker file.
+  const securityProgress=inspectSecurityProgress(doc);
+  errors.push(...securityProgress.errors);
   errors.push(...inspectDb019WorkPackages(doc).errors);
   // Thematic domain groups remain exhaustive, but do not assign ownership.
   const coverage=inspectDomainPackages(doc);
@@ -429,6 +433,7 @@ export function inspectTracker(doc) {
     coreRemaining,
     currentPhaseOpen:currentOpen.map(t=>t.id),
     deferredRelease,
+    security:securityProgress,
     readyForNextPhase:false, // Executed independent phase-gate signoff is separate.
     errors,
   };
@@ -444,7 +449,11 @@ if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.me
     const root = process.argv[2] && !process.argv[2].startsWith('--')
       ? path.resolve(process.argv[2]) : undefined;
     const report = inspectCheckout(root);
-    if (process.argv.includes('--closure-next')) {
+    if (process.argv.includes('--security')||process.argv.includes('--security-json')) {
+      if(process.argv.includes('--security-json'))console.log(JSON.stringify(report.security,null,2));
+      else console.log(formatSecurityMarkdown(report.security));
+      if(report.errors.length)process.exitCode=2;
+    } else if (process.argv.includes('--closure-next')) {
       const doc=JSON.parse(fs.readFileSync(path.join(root??path.resolve(path.dirname(fileURLToPath(import.meta.url)),'..'),'docs/tracker.json'),'utf8'));
       const queue=inspectClosureFirst(doc);
       console.log('LMS vNext | CLOSURE FIRST | '+queue.accepted+'/'+queue.total+
