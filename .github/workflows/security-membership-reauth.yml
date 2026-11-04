@@ -12,6 +12,7 @@ on:
       - "src/auth/recent-device-auth.ts"
       - "src/modules/auth/bounded-json.ts"
       - "tests/unit/security-membership-reauth-http.test.ts"
+      - "tests/unit/security-recent-device-subject-binding.test.ts"
       - "tests/unit/recent-device-privileged-role-security.test.ts"
       - ".github/workflows/security-membership-reauth.yml"
   push:
@@ -23,6 +24,7 @@ on:
       - "src/auth/recent-device-auth.ts"
       - "src/modules/auth/bounded-json.ts"
       - "tests/unit/security-membership-reauth-http.test.ts"
+      - "tests/unit/security-recent-device-subject-binding.test.ts"
       - "tests/unit/recent-device-privileged-role-security.test.ts"
       - ".github/workflows/security-membership-reauth.yml"
   workflow_dispatch:
@@ -48,7 +50,7 @@ jobs:
       - name: Exact tested source revision
         run: test "$(git rev-parse HEAD)" = "$GITHUB_SHA"
       - name: Actual API role, lifecycle and onboarding negative/positive tests
-        run: npx vitest run tests/unit/security-membership-reauth-http.test.ts tests/unit/recent-device-privileged-role-security.test.ts
+        run: npx vitest run tests/unit/security-membership-reauth-http.test.ts tests/unit/security-recent-device-subject-binding.test.ts tests/unit/recent-device-privileged-role-security.test.ts
       - name: TypeScript typecheck
         env:
           NODE_OPTIONS: --max-old-space-size=6144
