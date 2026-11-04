@@ -1,3 +1,4 @@
+import {readBoundedUtf8Body} from "@/lib/bounded-utf8-body";
 import {NextResponse} from "next/server";
 import {z} from "zod";
 import {getCurrentRequestContext} from "@/auth/request-context";
@@ -15,9 +16,10 @@ export async function POST(request:Request,{params}:{
  try{
   const {projectId}=await params;
   const id=z.string().uuid().parse(projectId);
-  if(Number(request.headers.get("content-length")??0)>256)
+  const decoded=await readBoundedUtf8Body(request,256);
+  if(decoded.kind==="TOO_LARGE")
    return NextResponse.json({error:"INVALID_REQUEST"},{status:413});
-  if((await request.text()).trim().length)
+  if(decoded.kind!=="OK"||decoded.body.trim().length)
    return NextResponse.json({error:"INVALID_BODY"},{status:400});
   const result=await markMentorProjectActivitySeen(
     await getCurrentRequestContext(),id);
