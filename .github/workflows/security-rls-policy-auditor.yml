@@ -9,6 +9,7 @@ on:
       - "scripts/security/pg-rls-readonly-audit.mjs"
       - "tests/security-pg-rls-catalog.test.mjs"
       - "tests/security-pg-rls-live-readonly.test.mjs"
+      - "tests/security-pg-rls-live-writes.test.mjs"
       - ".github/workflows/security-rls-policy-auditor.yml"
   push:
     branches: [main]
@@ -16,6 +17,7 @@ on:
       - "scripts/security/pg-rls-readonly-audit.mjs"
       - "tests/security-pg-rls-catalog.test.mjs"
       - "tests/security-pg-rls-live-readonly.test.mjs"
+      - "tests/security-pg-rls-live-writes.test.mjs"
       - ".github/workflows/security-rls-policy-auditor.yml"
   workflow_dispatch:
 
@@ -58,5 +60,5 @@ jobs:
         run: test "$(git rev-parse HEAD)" = "$GITHUB_SHA"
       - name: RLS classifier unit regression
         run: node --test tests/security-pg-rls-catalog.test.mjs
-      - name: Real restricted-role RLS and cross-tenant read witness
-        run: node --test tests/security-pg-rls-live-readonly.test.mjs
+      - name: Real restricted-role RLS cross-tenant read and WRITE witnesses
+        run: node --test tests/security-pg-rls-live-readonly.test.mjs tests/security-pg-rls-live-writes.test.mjs
