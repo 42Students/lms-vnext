@@ -4,10 +4,11 @@ import {GET as listSessions,POST as revokeSessions} from "@/app/api/admin/colleg
 import {GET as exportTenants} from "@/app/api/admin/tenants/export/route";
 
 const mock=vi.hoisted(()=>({
- origin:vi.fn(),context:vi.fn(),save:vi.fn(),list:vi.fn(),revoke:vi.fn(),export:vi.fn(),
+ origin:vi.fn(),context:vi.fn(),save:vi.fn(),list:vi.fn(),revoke:vi.fn(),export:vi.fn(),recent:vi.fn(),
 }));
 vi.mock("@/auth/origin",()=>({isSameOriginRequest:mock.origin}));
 vi.mock("@/auth/request-context",()=>({getCurrentRequestContext:mock.context}));
+vi.mock("@/auth/recent-device-auth",()=>({requireRecentDeviceAuthentication:mock.recent}));
 vi.mock("@/modules/colleges/admin-signin-policy-service",()=>({
  CollegeSignInPolicyError:class CollegeSignInPolicyError extends Error {
   constructor(readonly code:string){super(code);}
@@ -34,6 +35,7 @@ beforeEach(()=>{
  for(const fn of Object.values(mock))fn.mockReset();
  mock.origin.mockReturnValue(true);
  mock.context.mockResolvedValue(actor);
+ mock.recent.mockResolvedValue({userId:"admin"});
 });
 
 describe("Super Admin tenant API authenticated routes, origin and validation",()=>{
@@ -113,6 +115,7 @@ describe("Super Admin tenant API authenticated routes, origin and validation",()
   expect(ok.headers.get("X-Export-Row-Cap")).toBe("1000");
   expect(await ok.text()).toBe("test,csv\r\n");
   expect(mock.export).toHaveBeenCalledOnce();
+  expect(mock.recent).toHaveBeenCalledOnce();
   expect(mock.revoke).not.toHaveBeenCalled();
  });
 });
