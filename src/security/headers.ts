@@ -23,6 +23,19 @@ export const CONTENT_SECURITY_POLICY = [
   "frame-ancestors 'none'",
 ].join("; ");
 
+/**
+ * Conservative default for all API responses. Even public-looking endpoints
+ * can carry user/college-specific data or short-lived signed resources as
+ * their implementations evolve; do not leave confidentiality to individual
+ * route authors remembering a Cache-Control header.
+ *
+ * This is cache isolation, NOT a substitute for authentication, RLS or
+ * object-level authorization.
+ */
+export const PRIVATE_API_HEADERS = [
+  { key: "Cache-Control", value: "private, no-store, max-age=0" },
+] as const;
+
 export const BASE_SECURITY_HEADERS = [
   {
     key: "X-Content-Type-Options",
