@@ -60,7 +60,9 @@ test("restricted app SQL proves unsafe INSERT, UPDATE old/new and DELETE policy 
     for(const table of ["update_old","update_move","update_both"])
       await admin.query("GRANT SELECT, UPDATE ON "+t(table)+" TO "+role);
     await admin.query("GRANT SELECT, DELETE ON "+t("delete")+" TO "+role);
-    await admin.query("GRANT SELECT, INSERT, UPDATE, DELETE ON "+t("guarded")+" TO "+role);
+    // TRUNCATE ignores RLS, even on FORCE RLS tables. Expose this grant
+    // only in the disposable fixture and prove the audit catches it.
+    await admin.query("GRANT SELECT, INSERT, UPDATE, DELETE, TRUNCATE ON "+t("guarded")+" TO "+role);
 
     await admin.query("CREATE POLICY insert_open ON "+t("insert")+
       " FOR INSERT TO PUBLIC WITH CHECK (true)");
@@ -113,6 +115,8 @@ test("restricted app SQL proves unsafe INSERT, UPDATE old/new and DELETE policy 
     ]);
     for(const table of ["security_rls_w_insert_restrict","security_rls_w_guarded"])
       assert.equal(writeFindings.some(f=>f.table===table),false);
+    assert(report.findings.some(f=>f.code==="APP_CAN_TRUNCATE_TENANT_TABLE" &&
+      f.table==="security_rls_w_guarded"));
 
     app=new pg.Client({connectionString:appUrl.toString()});
     await app.connect();
@@ -166,6 +170,11 @@ test("restricted app SQL proves unsafe INSERT, UPDATE old/new and DELETE policy 
       await app.query("ROLLBACK TO SAVEPOINT guarded_insert_denial");
       assert.equal((await app.query("INSERT INTO "+t("guarded")+
         " (id,college_id,note) VALUES (3,$1,'allowed')",[collegeA])).rowCount,1);
+      // This is why the app runtime must NEVER have TRUNCATE on tenant tables:
+      // even a correct RLS policy cannot stop destruction of college B data.
+      await app.query("TRUNCATE TABLE "+t("guarded"));
+      assert.equal((await app.query("SELECT count(*) AS count FROM "+t("guarded")))
+        .rows[0].count,"0");
     } finally {
       // Never persist intentionally malicious fixture writes.
       await app.query("ROLLBACK");
