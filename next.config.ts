@@ -1,5 +1,5 @@
 import type { NextConfig } from "next";
-import { BASE_SECURITY_HEADERS } from "./src/security/headers";
+import { BASE_SECURITY_HEADERS, PRIVATE_API_HEADERS } from "./src/security/headers";
 
 const nextConfig: NextConfig = {
   output: "standalone",
@@ -33,8 +33,10 @@ const nextConfig: NextConfig = {
         headers: [...BASE_SECURITY_HEADERS],
       },
       {
-        source: "/api/auth/:path*",
-        headers: [{ key: "Cache-Control", value: "no-store" }],
+        // Fail closed for every API method, not just authentication endpoints.
+        // Reverse proxies and browsers must not retain tenant-bound responses.
+        source: "/api/:path*",
+        headers: [...PRIVATE_API_HEADERS],
       },
     ];
   },
