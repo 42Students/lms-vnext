@@ -1,4 +1,8 @@
 import "server-only";
+import type { RequestContext } from "@/modules/identity/context";
+import { isSuperAdmin } from "@/modules/identity/context";
+import { AuthorizationError } from "@/modules/permissions/policy";
+import { assertPersistedPlatformPermission } from "@/modules/permissions/persisted-actor";
 import {desc,eq,inArray,sql} from "drizzle-orm";
 import {getDb} from "@/db/client";
 import {
@@ -10,6 +14,15 @@ import {
  validateIndependentAuditInboxFile,type IndependentAuditInboxPayload,
 } from "./independent-audit-inbox-model";
 import {independentAuditFindingsReady} from "./independent-audit-findings-service";
+
+/**
+ * The automated scheduler and a human Super Admin have different authority.
+ * Mandatory explicit provenance prevents callers from silently dropping a
+ * manual actor when migrating to this shared importer.
+ */
+export type AuditImportAuthority =
+  | { kind: "SCHEDULER" }
+  | { kind: "SUPER_ADMIN"; actor: RequestContext };
 
 const SOURCE="42Students/lms-findings";
 const RUN_MAX_FILES=40;
@@ -37,7 +50,10 @@ function ledgerAction(item:IndependentAuditInboxPayload):LedgerAction{
 /** Importer updates only *authorized, validated* immutable files. A change to
  * an already accepted file is never replayed, even when SHA has changed.
  * A new valid agent update can append history and merge commits. */
-export async function syncIndependentAuditInbox():Promise<AuditImportResult>{
+export async function syncIndependentAuditInbox(
+ authority: AuditImportAuthority,
+):Promise<AuditImportResult>{
+
  if(!independentAuditImporterReady())
   return {ran:false,busy:false,commit:null,imported:0,updates:0,
    refused:0,tampered:0,deleted:0,message:"Sync is not set up on this server"};
@@ -59,6 +75,17 @@ export async function syncIndependentAuditInbox():Promise<AuditImportResult>{
   if(lock.rows[0]?.acquired!==true)
    return {ran:false,busy:true,commit:null,...stats,
     message:"Another audit importer already holds the sync lease"};
+  // Do not release a separate preflight transaction before the actual
+  // importer writes. Lock the live human principal and system grant for the
+  // lifetime of this same transaction, blocking concurrent revocation races.
+  // The dedicated scheduler is authorized by its separately guarded route.
+  if(authority.kind==="SUPER_ADMIN"){
+   const actor=authority.actor;
+   if(!isSuperAdmin(actor)||actor.adminScope?.organizationId||
+      actor.adminScope?.collegeId)
+    throw new AuthorizationError("admin-scope.select");
+   await assertPersistedPlatformPermission(tx,actor,"admin-scope.select");
+  }
   await tx.execute(sql`set local statement_timeout = '230s'`);
   const historical=await tx.select().from(db10AuditFindingFiles)
    .where(eq(db10AuditFindingFiles.source,SOURCE))
