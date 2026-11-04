@@ -1,0 +1,62 @@
+# Focused security gate. Does not replace database/RLS or scanner acceptance.
+name: Course media security boundaries
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - "src/modules/courses/course-thumbnail-url-policy.ts"
+      - "src/modules/courses/course-display-validation.ts"
+      - "src/modules/courses/validation.ts"
+      - "src/modules/courses/learner-course-card-media-model.ts"
+      - "src/app/api/courses/**/image/**"
+      - "src/app/api/courses/**/display/route.ts"
+      - "src/lib/bounded-json-request.ts"
+      - "src/lib/bounded-utf8-body.ts"
+      - "tests/unit/course-thumbnail-url-security.test.ts"
+      - "tests/unit/course-image-bounded-http-security.test.ts"
+      - "tests/unit/course-display-bounded-http-security.test.ts"
+      - ".github/workflows/course-media-security.yml"
+  push:
+    branches: [main]
+    paths:
+      - "src/modules/courses/course-thumbnail-url-policy.ts"
+      - "src/modules/courses/course-display-validation.ts"
+      - "src/modules/courses/validation.ts"
+      - "src/modules/courses/learner-course-card-media-model.ts"
+      - "src/app/api/courses/**/image/**"
+      - "src/app/api/courses/**/display/route.ts"
+      - "src/lib/bounded-json-request.ts"
+      - "src/lib/bounded-utf8-body.ts"
+      - "tests/unit/course-thumbnail-url-security.test.ts"
+      - "tests/unit/course-image-bounded-http-security.test.ts"
+      - "tests/unit/course-display-bounded-http-security.test.ts"
+      - ".github/workflows/course-media-security.yml"
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: course-media-security-${{ github.ref }}-${{ github.sha }}
+  cancel-in-progress: false
+jobs:
+  media-security:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Course media negative regressions
+        run: >-
+          npx vitest run
+          tests/unit/course-thumbnail-url-security.test.ts
+          tests/unit/learner-course-card-media-model.test.ts
+          tests/unit/course-display-content.test.ts
+          tests/unit/course-image-bounded-http-security.test.ts
+          tests/unit/course-display-bounded-http-security.test.ts
+      - name: TypeScript compile
+        env:
+          NODE_OPTIONS: --max-old-space-size=6144
+        run: npm run typecheck
