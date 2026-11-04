@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
+import { readBoundedAuthJson, AuthRequestBodyTooLarge } from "@/modules/auth/bounded-json";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { isSameOriginRequest } from "@/auth/origin";
 import { apiErrorResponse } from "@/lib/api-error";
@@ -26,16 +27,15 @@ export async function PATCH(request:Request){
   return NextResponse.json({error:"INVALID_ORIGIN"},{status:403,
    headers:{"Cache-Control":"private, no-store"}});
  try{
-  if(Number(request.headers.get("content-length")??0)>8192)
-   return NextResponse.json({error:"REQUEST_TOO_LARGE"},{status:413,
-    headers:{"Cache-Control":"private, no-store"}});
-  const body=await request.text();
-  if(body.length>8192)return NextResponse.json({error:"REQUEST_TOO_LARGE"},{status:413,
-   headers:{"Cache-Control":"private, no-store"}});
+  // Decode only a bounded UTF-8 stream, even with missing or forged
+  // Content-Length. request.text() buffers before checking a character count.
   let raw:unknown;
-  try{raw=JSON.parse(body);}
-  catch{return NextResponse.json({error:"INVALID_REQUEST"},{status:400,
-   headers:{"Cache-Control":"private, no-store"}});}
+  try { raw=await readBoundedAuthJson(request,8_192); }
+  catch(error) {
+   const tooLarge=error instanceof AuthRequestBodyTooLarge;
+   return NextResponse.json({error:tooLarge?"REQUEST_TOO_LARGE":"INVALID_REQUEST"},
+    {status:tooLarge?413:400,headers:{"Cache-Control":"private, no-store"}});
+  }
   const parsed=input.parse(raw);
   const profile=await updateOwnIdentityName(
    await getCurrentRequestContext(),parsed.name,parsed.expectedVersion);
