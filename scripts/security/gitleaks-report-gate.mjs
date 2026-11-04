@@ -4,7 +4,7 @@
  * Known historical findings are NOT proof that their underlying credentials
  * are safe: rotation, investigation and history remediation are separate work.
  */
-import { readFileSync } from "node:fs";
+import { readFileSync, statSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 
 export function validateRedactedBaseline(findings) {
@@ -46,6 +46,10 @@ export function main(args) {
       !["--validate-baseline", "--fail-on-findings"].includes(args[0])) {
     throw new Error("Usage: gitleaks-report-gate.mjs --validate-baseline|--fail-on-findings FILE");
   }
+  // Bound even malformed/adversarial reports before allocating the parser input.
+  if (statSync(args[1]).size > 16 * 1024 * 1024) {
+    throw new Error("Gitleaks report exceeds the safe parsing limit");
+  }
   const findings = JSON.parse(readFileSync(args[1], "utf8"));
   if (args[0] === "--validate-baseline") {
     const entries = validateRedactedBaseline(findings);
@@ -62,7 +66,7 @@ export function main(args) {
     ...summary,
   }) + "\n");
   if (summary.findings) {
-    process.stderr.write("::error::Potential newly committed credential found. Review the private scanner report and rotate confirmed secrets.\n");
+    process.stderr.write("::error::Potential newly committed credential found. Reproduce findings privately, investigate and rotate confirmed secrets.\n");
     return 1;
   }
   return 0;
