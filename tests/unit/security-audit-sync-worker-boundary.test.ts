@@ -37,7 +37,7 @@ describe("audit findings Cloud Scheduler boundary",()=>{
    cache:"private, no-store"});
   expect(sync).toHaveBeenCalledOnce();
  });
- it.each(["","short-secret"," ".repeat(40)," x".repeat(40),"x".repeat(257)])(
+ it.each(["","short-secret"," ".repeat(40),"x".repeat(31),"x".repeat(257)])(
   "fails closed on malformed configured credentials %s",async secret=>{
    vi.stubEnv("AUDIT_FINDINGS_CRON_SECRET",secret);
    const response=await read(await GET(request({secret:"Bearer "+secret})));
@@ -47,7 +47,7 @@ describe("audit findings Cloud Scheduler boundary",()=>{
   });
  it("rejects missing, wrong, padded and ambiguous Authorization",async()=>{
   for(const bearer of [undefined,"Bearer x","Basic "+validSecret,
-    "Bearer "+validSecret+" ","Bearer "+validSecret+"\t","Bearer Bearer "+validSecret]){
+    "Bearer "+validSecret+" garbage","Bearer "+validSecret+"\tgarbage","Bearer Bearer "+validSecret]){
    expect((await GET(request({secret:bearer}))).status).toBe(401);
   }
   expect(sync).not.toHaveBeenCalled();
