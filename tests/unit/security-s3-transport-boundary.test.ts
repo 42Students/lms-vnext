@@ -3,6 +3,7 @@ import {
   deleteObject,getObjectStream,headObject,presignUrl,replaceObjectMetadata,
   signedFetch,
 } from "@/modules/storage/s3-client";
+import {getPrivateR2Config} from "@/modules/storage/r2-config";
 
 const config={
   endpoint:"https://acct.r2.cloudflarestorage.com",
@@ -163,5 +164,45 @@ describe("Private-range verification refuses unbounded or lying provider replies
       etag:"sha",lastModifiedMs:Date.parse("Wed, 21 Oct 2015 07:28:00 GMT"),
       sizeBytes:10,contentType:"application/pdf",metadata:{"college-id":"college-a"},
     });
+  });
+});
+
+describe("R2 account and bucket settings cannot redirect private signing",()=>{
+  const env={
+    APP_ENV:"production",
+    R2_ACCOUNT_ID:"acct",
+    R2_ACCESS_KEY:"test-access-key",
+    R2_SECRET_KEY:"test-secret-key",
+    R2_PRIVATE_BUCKET:"vnext-private",
+    R2_BUCKET_NAME:"public-legacy",
+  } as NodeJS.ProcessEnv;
+
+  it("continues signing with a valid separated private bucket",()=>{
+    expect(getPrivateR2Config(env)).toMatchObject({
+      endpoint:"https://acct.r2.cloudflarestorage.com",bucket:"vnext-private",
+    });
+  });
+
+  it.each([
+    "acct.r2.cloudflarestorage.com@127.0.0.1",
+    "acct/../other",
+    "acct.evil",
+    "acct:443",
+    "a".repeat(65),
+    "ac\nt",
+  ])("rejects URL authority/path injection from R2_ACCOUNT_ID %s",account=>{
+    expect(()=>getPrivateR2Config({...env,R2_ACCOUNT_ID:account}))
+      .toThrowError(expect.objectContaining({code:"PRIVATE_STORAGE_BUCKET_UNSAFE"}));
+    expect(fetchMock).not.toHaveBeenCalled();
+  });
+  it.each([
+    "../public","private/../public","private\\data",
+    "PRIVATE","a..b","a@b","-private","private.","private\nbucket",
+  ])("rejects unsafe private bucket component %s",bucket=>{
+    expect(()=>getPrivateR2Config({...env,R2_PRIVATE_BUCKET:bucket}))
+      .toThrowError(expect.objectContaining({code:"PRIVATE_STORAGE_BUCKET_UNSAFE"}));
+    expect(()=>presignUrl({...config,bucket},{method:"GET",key:"private/a"}))
+      .toThrow("S3_BUCKET_INVALID");
+    expect(fetchMock).not.toHaveBeenCalled();
   });
 });
