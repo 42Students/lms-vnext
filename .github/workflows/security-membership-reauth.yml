@@ -1,0 +1,55 @@
+# Prove membership provisioning, role changes and lifecycle writes cannot be
+# committed by a stale/impersonated session or oversized/CSRF request.
+name: Security - Fresh device authentication for membership privilege writes
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - "src/app/api/people/onboard/route.ts"
+      - "src/app/api/people/**/roles/route.ts"
+      - "src/app/api/people/**/lifecycle/route.ts"
+      - "src/auth/recent-device-auth.ts"
+      - "src/modules/auth/bounded-json.ts"
+      - "tests/unit/security-membership-reauth-http.test.ts"
+      - "tests/unit/recent-device-privileged-role-security.test.ts"
+      - ".github/workflows/security-membership-reauth.yml"
+  push:
+    branches: [main]
+    paths:
+      - "src/app/api/people/onboard/route.ts"
+      - "src/app/api/people/**/roles/route.ts"
+      - "src/app/api/people/**/lifecycle/route.ts"
+      - "src/auth/recent-device-auth.ts"
+      - "src/modules/auth/bounded-json.ts"
+      - "tests/unit/security-membership-reauth-http.test.ts"
+      - "tests/unit/recent-device-privileged-role-security.test.ts"
+      - ".github/workflows/security-membership-reauth.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: security-membership-reauth-${{ github.ref }}-${{ github.sha }}
+  cancel-in-progress: false
+
+jobs:
+  privilege-write-authentication:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Exact tested source revision
+        run: test "$(git rev-parse HEAD)" = "$GITHUB_SHA"
+      - name: Actual API role, lifecycle and onboarding negative/positive tests
+        run: npx vitest run tests/unit/security-membership-reauth-http.test.ts tests/unit/recent-device-privileged-role-security.test.ts
+      - name: TypeScript typecheck
+        env:
+          NODE_OPTIONS: --max-old-space-size=6144
+        run: npm run typecheck
