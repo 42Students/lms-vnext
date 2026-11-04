@@ -1,0 +1,98 @@
+# Verify actor-owned notification reads and writes cannot cross an
+# explicitly selected college, even for the same human in both colleges.
+name: Security - notification selected-workspace isolation
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - "src/modules/activity/own-notification-scope.ts"
+      - "src/modules/activity/notification-service.ts"
+      - "tests/unit/security-own-notification-workspace-scope.test.ts"
+      - "tests/integration/db10-notification-guards.test.ts"
+      - "tests/integration/db10-notification-read-all.test.ts"
+      - ".github/workflows/security-notification-workspace.yml"
+  push:
+    branches: [main]
+    paths:
+      - "src/modules/activity/own-notification-scope.ts"
+      - "src/modules/activity/notification-service.ts"
+      - "tests/unit/security-own-notification-workspace-scope.test.ts"
+      - "tests/integration/db10-notification-guards.test.ts"
+      - "tests/integration/db10-notification-read-all.test.ts"
+      - ".github/workflows/security-notification-workspace.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: security-notification-workspace-${{ github.ref }}-${{ github.sha }}
+  cancel-in-progress: false
+
+jobs:
+  notification-scope-unit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Exact source revision
+        run: test "$(git rev-parse HEAD)" = "$GITHUB_SHA"
+      - name: Actor role and notification SQL scope contracts
+        run: npx vitest run tests/unit/security-own-notification-workspace-scope.test.ts
+      - name: Full TypeScript check
+        env:
+          NODE_OPTIONS: --max-old-space-size=6144
+        run: npm run typecheck
+
+  notification-scope-postgres:
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    services:
+      postgres:
+        image: postgres:17-alpine
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: lms_vnext_test
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres -d lms_vnext_test"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 20
+    env:
+      DATABASE_URL: postgresql://postgres:postgres@127.0.0.1:5432/lms_vnext_test
+      TEST_DATABASE_URL: postgresql://postgres:postgres@127.0.0.1:5432/lms_vnext_test
+      DB03_ISOLATED_TEST_DATABASE: "1"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Pin revision and registered schema
+        run: |
+          test "$(git rev-parse HEAD)" = "$GITHUB_SHA"
+          npm run db:journal:verify
+      - name: Reset and seed explicitly disposable PostgreSQL 17 only
+        env:
+          DATABASE_URL: ""
+        run: npm run db:test:prepare
+      - name: Same-user cross-college access, negative read and write assertions
+        run: >
+          npx vitest run --config vitest.db.config.ts
+          tests/integration/db10-notification-guards.test.ts
+          tests/integration/db10-notification-read-all.test.ts
+      - name: Registered Drizzle journal remains untouched
+        if: always()
+        run: |
+          npm run db:journal:verify
+          test -z "$(git status --porcelain -- drizzle/)"
