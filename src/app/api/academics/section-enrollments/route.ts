@@ -15,6 +15,12 @@ export async function GET(request: Request) {
   try {
     const context = await getCurrentRequestContext();
     const url = new URL(request.url);
+    const query = url.searchParams;
+    if (["sectionId", "learnerEnrollmentId"].some(key => query.getAll(key).length > 1) ||
+        (query.has("sectionId") && query.has("learnerEnrollmentId")))
+      return NextResponse.json({ error: "AMBIGUOUS_ENROLLMENT_SCOPE" }, {
+        status: 400, headers: { "Cache-Control": "private, no-store" },
+      });
     const sectionId =
       url.searchParams.get("sectionId");
     const learnerEnrollmentId =
