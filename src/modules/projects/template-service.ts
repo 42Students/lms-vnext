@@ -36,7 +36,6 @@ import {
   projectTemplateIdSchema,
   publishableProjectTemplateBlueprintSchema,
   reviseProjectTemplateInputSchema,
-  type CreateProjectTemplateInput,
   type DuplicateProjectTemplateInput,
   type ReviseProjectTemplateInput,
 } from "./validation";
@@ -302,7 +301,7 @@ export async function getAssignedProjectTemplateDetail(
 
 export async function createProjectTemplate(
   context: RequestContext,
-  rawInput: CreateProjectTemplateInput,
+  rawInput: unknown,
 ) {
   requirePermission(
     context,

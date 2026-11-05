@@ -34,8 +34,6 @@ import {
   createCohortInputSchema,
   programIdSchema,
   updateCohortInputSchema,
-  type CreateCohortInput,
-  type UpdateCohortInput,
 } from "./validation";
 
 /** Legacy batch names are unique per program, ignoring case. */
@@ -240,7 +238,7 @@ export async function listCollegeCohortsPage(
 
 export async function createCohort(
   context: RequestContext,
-  rawInput: CreateCohortInput,
+  rawInput: unknown,
 ) {
   const input = createCohortInputSchema.parse(rawInput);
   // These optional historical fields preserve the legacy BatchDTO data without
@@ -341,7 +339,7 @@ export async function createCohort(
 export async function updateCohort(
   context: RequestContext,
   cohortIdInput: string,
-  rawInput: UpdateCohortInput,
+  rawInput: unknown,
 ) {
   const cohortId =
     cohortIdSchema.parse(cohortIdInput);

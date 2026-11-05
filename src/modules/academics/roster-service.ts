@@ -37,7 +37,6 @@ import {
   sectionEnrollmentIdSchema,
   sectionEnrollmentTransitionSchema,
   sectionIdSchema,
-  type AssignLearnerSectionInput,
 } from "./validation";
 
 function mapSectionEnrollmentConstraint(
@@ -184,7 +183,7 @@ export async function listLearnerSectionHistory(
 
 export async function assignLearnerToSection(
   context: RequestContext,
-  rawInput: AssignLearnerSectionInput,
+  rawInput: unknown,
 ) {
   const input =
     assignLearnerSectionInputSchema.parse(rawInput);

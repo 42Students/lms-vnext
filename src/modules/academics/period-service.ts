@@ -27,8 +27,6 @@ import {
   collegeIdSchema,
   createAcademicPeriodInputSchema,
   updateAcademicPeriodInputSchema,
-  type CreateAcademicPeriodInput,
-  type UpdateAcademicPeriodInput,
 } from "./validation";
 
 async function assertPeriodCodeUnique(
@@ -106,7 +104,7 @@ export async function listAcademicPeriods(
 
 export async function createAcademicPeriod(
   context: RequestContext,
-  rawInput: CreateAcademicPeriodInput,
+  rawInput: unknown,
 ) {
   const input =
     createAcademicPeriodInputSchema.parse(
@@ -153,7 +151,7 @@ export async function createAcademicPeriod(
 export async function updateAcademicPeriod(
   context: RequestContext,
   periodIdInput: string,
-  rawInput: UpdateAcademicPeriodInput,
+  rawInput: unknown,
 ) {
   const periodId =
     academicPeriodIdSchema.parse(periodIdInput);

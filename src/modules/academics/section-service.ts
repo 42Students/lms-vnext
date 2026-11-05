@@ -34,7 +34,6 @@ import {
   sectionIdSchema,
   updateSectionInputSchema,
   type CreateSectionInput,
-  type UpdateSectionInput,
 } from "./validation";
 
 async function assertSectionUnique(
@@ -424,7 +423,7 @@ export async function createSection(
 export async function updateSection(
   context: RequestContext,
   sectionIdInput: string,
-  rawInput: UpdateSectionInput,
+  rawInput: unknown,
 ) {
   const sectionId =
     sectionIdSchema.parse(sectionIdInput);

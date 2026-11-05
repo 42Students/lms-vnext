@@ -35,7 +35,6 @@ import {
   learnerEnrollmentIdSchema,
   learnerProgramEnrollmentTransitionSchema,
   programIdSchema,
-  type CreateLearnerProgramEnrollmentInput,
 } from "./validation";
 
 function mapEnrollmentConstraint(error: unknown) {
@@ -135,7 +134,7 @@ export async function listLearnerProgramEnrollments(
 
 export async function createLearnerProgramEnrollment(
   context: RequestContext,
-  rawInput: CreateLearnerProgramEnrollmentInput,
+  rawInput: unknown,
 ) {
   const input =
     createLearnerProgramEnrollmentInputSchema.parse(
