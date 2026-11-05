@@ -48,7 +48,7 @@ describe("chat-19 route progress and shell ownership", () => {
   });
   it("keeps the legacy large AntD four-dot delay pattern", () => {
     const source = css();
-    expect(source).toContain("font-size:32px");
+    expect(source).toContain("font-size:30px");
     expect(source).toContain("width:16px");
     expect(source).toContain("height:16px");
     expect(source).toContain("transform:scale(.75)");

@@ -111,7 +111,7 @@
  padding:12px 12px;
  border-radius:8px;
  color:var(--lms-neutral-700);
- font-size:15px;
+ font-size:16px;
  line-height:20px;
  font-weight:600;
  text-decoration:none;
@@ -158,7 +158,7 @@
  overflow:hidden;
  text-overflow:ellipsis;
  white-space:nowrap;
- font-size:15px;
+ font-size:16px;
  line-height:20px;
 }
 .lms-sidebar-nav .lms-sidebar-badge {
@@ -171,7 +171,7 @@
  background:var(--lms-primary);
  padding:0 6px;
  color:var(--lms-white);
- font-size:10px;
+ font-size:12px;
  line-height:18px;
  font-weight:700;
  white-space:nowrap;
@@ -251,7 +251,7 @@
  .lms-mobile-sidebar .lms-nav-heading {
   justify-content:flex-start;
   margin:12px 12px 6px 48px;
-  font-size:9px;
+  font-size:12px;
  }
  .lms-mobile-sidebar .lms-nav-heading-text {display:block;}
  .lms-mobile-sidebar .lms-nav-heading::after {display:none;}

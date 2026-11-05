@@ -50,7 +50,7 @@ describe("chat-19 TPO five-icon mobile footer",()=>{
     expect(css()).toContain("width:24px;height:24px");
     expect(css()).toContain("opacity:.5;transition:opacity var(--lms-motion-fast) var(--lms-motion-ease)");
     expect(css()).toContain("transform:scale(.93)");
-    expect(css()).toContain("font-size:10px;font-weight:500;color:var(--lms-neutral-400)");
+    expect(css()).toContain("font-size:12px;font-weight:500;color:var(--lms-neutral-400)");
     expect(css()).toContain(".lms-tpo-mobile-footer-item.active .lms-tpo-mobile-footer-label");
     expect(css()).toContain("color:var(--lms-primary);");
   });

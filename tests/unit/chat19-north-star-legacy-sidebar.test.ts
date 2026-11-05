@@ -183,7 +183,7 @@ describe("NORTH-STAR-SIDEBAR-01: old LMS 96px rail, hover push and icons",()=>{
   expect(css).toContain("box-shadow:var(--lms-accent-bar-start)");
   expect(css).toContain("color:var(--lms-primary-text)");
   expect(css).toContain("background:color-mix(in srgb, var(--lms-primary) 7%, transparent)");
-  expect(css).toContain("font-size:15px");
+  expect(css).toContain("font-size:16px");
   expect(css).toContain("scrollbar-width:none");
   expect(css).toContain("transform:scale(.72)");
  });
@@ -194,7 +194,7 @@ describe("NORTH-STAR-SIDEBAR-01: old LMS 96px rail, hover push and icons",()=>{
   const glyphs=source("src/components/shell/shell-nav-icons.tsx");
   for(const value of ["min-height:44px","margin-bottom:6px","padding:12px 12px",
    "border-radius:8px","width:24px","height:24px","opacity:.6",
-   "font-size:15px","line-height:20px","letter-spacing:.08em",
+   "font-size:16px","line-height:20px","letter-spacing:.08em",
    "margin:8px 12px 4px","width:24px","top:4px","left:50%",
    "margin-left:6px","transform:scale(.72)","outline-offset:-2px"]) {
    expect(css,value).toContain(value);

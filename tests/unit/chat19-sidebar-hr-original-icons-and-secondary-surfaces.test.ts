@@ -26,7 +26,7 @@ describe("NORTH-STAR-SIDEBAR-03: measured original icons and mobile group parity
   expect(css).toContain("@media (max-width:767px)");
   expect(css).toContain(".lms-mobile-sidebar .lms-nav-heading");
   expect(css).toContain("margin:12px 12px 6px 48px");
-  expect(css).toContain("font-size:9px");
+  expect(css).toContain("font-size:12px");
   expect(mobile).toContain("lms-mobile-sidebar");
   const drawer=read("src/components/ui/drawer.tsx");
   expect(mobile).toContain('import { Drawer } from "@/components/ui/drawer"');
