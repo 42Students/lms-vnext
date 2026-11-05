@@ -183,3 +183,14 @@ test("canonical closure-next CLI now shows security and reports the full unverif
     assert.match(run.stdout,/NEXT PROOF/);
   }
 });
+
+
+test("canonical security workflow runs for every pull request and main push",()=>{
+  const source=fs.readFileSync(path.join(root,".github/workflows/security-control-progress.yml"),"utf8");
+  const triggers=source.split(/^permissions:/m)[0];
+  assert.match(triggers,/^on:\s*$/m);
+  assert.match(triggers,/^  pull_request:\s*\n    branches: \[main\]/m);
+  assert.match(triggers,/^  push:\s*\n    branches: \[main\]/m);
+  // Path filtering makes a nominally required check never report on some PRs.
+  assert.doesNotMatch(triggers,/^    paths(?:-ignore)?:/m);
+});
