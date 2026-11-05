@@ -1,0 +1,15 @@
+# UI consistency rules
+
+One system everywhere. `npm run ux:consistency` (part of `npm run lint`, so part of CI) fails if any file gets worse.
+
+| Rule | Meaning |
+|---|---|
+| `raw-control` | No raw `<button>`, `<input>`, `<select>`, `<textarea>`, `<table>`, `<h1>` outside `src/components/ui/`. Use `Button`, `Input`, `Select`, `Textarea`, `DataTable`, `PageHeader`. |
+| `hex-color` | No hex literals outside the token files. Use a `--lms-*` token. |
+| `font-size-off-scale` | 12, 13, 14, 16, 18, 20, 24, 30, 36 px only. |
+| `radius-off-scale` | 0, 2, 4, 6, 8, 10, 12, 14, 18, 20, 999 px (or 50%). |
+| `font-family-off` | Inter stack, `inherit`, or the mono token only. |
+
+Rules live in `scripts/ui-consistency-rules.mjs`. The debt is in `UI-CONSISTENCY-BASELINE.json`, per file and rule. It can only go down: `node scripts/check-ui-consistency.mjs --update` refuses to raise a count. `--report` prints the totals. The goal is an empty baseline.
+
+New code may not add a violation. If a shared component is missing something, extend the component, not the page.

@@ -52,7 +52,11 @@ export function scanUxSource(path, source) {
     if(ts.isJsxAttribute(node)){
       if(node.name.text==="target" && node.initializer) {
         const init=node.initializer;
-        if(ts.isStringLiteral(init) ? !["_self","_parent","_top"].includes(init.text) :
+        const hasNoopener=ts.isStringLiteral(init)&&init.text==="_blank"&&
+          node.parent.properties.some(attr=>ts.isJsxAttribute(attr)&&attr.name.text==="rel"&&
+            attr.initializer&&ts.isStringLiteral(attr.initializer)&&/\bnoopener\b/.test(attr.initializer.text));
+        if(hasNoopener) { /* a new tab with rel=noopener cannot reach window.opener */ }
+        else if(ts.isStringLiteral(init) ? !["_self","_parent","_top"].includes(init.text) :
            ts.isJsxExpression(init) ? !isStaticSafeTarget(init.expression) : true)
           add(node,"unsafe-target"); // Unknown computed target must be reviewed, not assumed _self.
       }
