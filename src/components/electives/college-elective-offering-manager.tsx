@@ -145,8 +145,8 @@ export function CollegeElectiveOfferingManager({ slotId }: { slotId: string }) {
     <Dialog open={opened} onOpenChange={next=>{if(!next)close();}}
       title="Elective slot details"
       description="Offerings, seat allocation and faculty access for the selected elective slot."
-      className="!max-w-[1100px] max-md:!w-[calc(100vw_-_16px)]"
-      bodyClassName="max-md:!px-3">
+      className="max-w-[1100px] max-md:w-[calc(100vw_-_16px)]"
+      bodyClassName="max-md:px-3">
     <section aria-label="Elective course offerings"
       className="min-w-0 w-full space-y-[var(--lms-space-3)]">
       {loading && <p role="status">Loading eligible courses and groups…</p>}

@@ -86,7 +86,7 @@ export function CollegeDriveEditDialog({jobId,title,fullEditorHref}:{
  }
  const formId="college-drive-edit-"+jobId;
  return <>
-  <Button type="button" variant="link" size="sm" className="min-h-11 !px-0 md:min-h-9"
+  <Button type="button" variant="link" size="sm" className="min-h-11 md:min-h-9 px-0"
     aria-label={"Edit "+title} onClick={()=>void launch()}>Edit</Button>
   <Dialog open={open} onOpenChange={next=>{if(!next)requestClose();}}
    title="Edit Job" description={title} className="max-w-[800px]"

@@ -631,8 +631,8 @@ export function LoginForm({
                 }}
                 className={
                   channel === value
-                    ? "relative z-(--lms-z-raised) min-h-11 rounded-[var(--lms-control-radius)] !bg-transparent text-sm font-semibold text-primary-text shadow-none md:min-h-9 "
-                    : "relative z-(--lms-z-raised) min-h-11 rounded-[var(--lms-control-radius)] !bg-transparent text-sm font-medium text-body hover:text-primary-text md:min-h-9 "
+                    ? "relative z-(--lms-z-raised) min-h-11 rounded-[var(--lms-control-radius)] text-sm font-semibold text-primary-text shadow-none md:min-h-9 bg-transparent "
+                    : "relative z-(--lms-z-raised) min-h-11 rounded-[var(--lms-control-radius)] text-sm font-medium text-body hover:text-primary-text md:min-h-9 bg-transparent "
                 }
               >
                 {value === "PHONE" ? "Phone" : "Email"}

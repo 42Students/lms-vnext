@@ -15,7 +15,7 @@ export function TpoNoticeComposerDialog({children,mode="NEW",initialOpen=false}:
   </Button>
   <Dialog open={open} onOpenChange={setOpen} title={title}
    className="max-w-[42rem]"
-   bodyClassName="!min-w-0 !overflow-x-hidden !p-4 md:!p-[var(--lms-canvas-padding)] [&_form]:min-w-0 [&_input]:max-w-full [&_textarea]:max-w-full">
+   bodyClassName="[&_form]:min-w-0 [&_input]:max-w-full [&_textarea]:max-w-full min-w-0 overflow-x-hidden p-4 md:p-[var(--lms-canvas-padding)]">
    {children}
   </Dialog>
  </>;

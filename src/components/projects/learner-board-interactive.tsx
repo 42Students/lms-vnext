@@ -108,7 +108,7 @@ export function LearnerBoardInteractive({projectId,initialTasks,filters,sprints,
   {notice?<p role="status" aria-live="polite" className="text-sm text-success-text leading-[22px]">{notice}</p>:null}
   {error?<Alert tone="error">{error}</Alert>:null}
   {undo&&tasks.some(task=>task.id===undo.taskId&&canLearnerMoveOwnTask(task.status,undo.status))?
-   <Button type="button" disabled={busy||readOnly} variant="ghost" className="min-h-11 !text-[var(--lms-primary-text)] underline focus-ring"
+   <Button type="button" disabled={busy||readOnly} variant="ghost" className="min-h-11 underline focus-ring text-[var(--lms-primary-text)]"
     onClick={()=>{const last=undo;void move(last.taskId,last.status,last.blockerReason,true)}}>
     Undo last task move
   </Button>:null}

@@ -102,7 +102,7 @@ function AcademicActionMenu({ children }: { children: ReactNode }) {
   return <Dropdown
     align="end" mobileSheet label="More actions"
     trigger={<svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><circle cx="5" cy="12" r="1.75" /><circle cx="12" cy="12" r="1.75" /><circle cx="19" cy="12" r="1.75" /></svg>}
-    triggerClassName="!min-h-11 !w-11 justify-center !p-0 md:!min-h-9 md:!w-9"
+    triggerClassName="justify-center min-h-11 w-11 p-0 md:min-h-9 md:w-9"
   ><Menu className="w-full min-w-0">{children}</Menu></Dropdown>;
 }
 
@@ -213,7 +213,7 @@ export function ProgramActions({
         onOpenChange={requestEditOpenChange}
         title={`Edit “${program.name}”`}
         description="You can change the department before any semesters, batches or learners are linked."
-        className="!max-w-[520px]" dismissible={!pending}
+        className="max-w-[520px]" dismissible={!pending}
         footer={
           <AcademicDialogFooter>
             <Button
@@ -609,7 +609,7 @@ export function CohortActions({
     <>
       {compactActions && cohort.status === "PLANNED" ? (
         <div className="flex min-w-0 justify-end">
-          <Dropdown trigger="Actions" align="end" mobileSheet triggerClassName="md:!min-h-9">
+          <Dropdown trigger="Actions" align="end" mobileSheet triggerClassName="md:min-h-9">
             <Menu>
               <MenuItem disabled={pending} onClick={openEdit}>Edit</MenuItem>
               <MenuItem disabled={pending} onClick={() =>
@@ -848,7 +848,7 @@ export function SectionActions({
         >
           Open
         </ButtonLink>
-          <Dropdown trigger="Actions" align="end" mobileSheet triggerClassName="md:!min-h-9">
+          <Dropdown trigger="Actions" align="end" mobileSheet triggerClassName="md:min-h-9">
             <Menu>
               <MenuItem disabled={pending} onClick={openEdit}>Edit</MenuItem>
               <MenuItem disabled={pending} onClick={() => setArchiveOpen(true)}>Archive</MenuItem>

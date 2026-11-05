@@ -107,7 +107,7 @@ export function MultiSelect({
                   <Button type="button" variant="ghost" size="icon-sm"
                     disabled={!canRemove} aria-label={`Remove ${displayLabel}`}
                     onClick={() => remove(item)}
-                    className="!h-9 !w-9 !min-w-9 !rounded-[6px] !p-0 max-md:!h-11 max-md:!w-11 max-md:!min-w-11">
+                    className="h-9 w-9 min-w-9 rounded-[6px] p-0 max-md:h-11 max-md:w-11 max-md:min-w-11">
                     <span aria-hidden="true">×</span>
                   </Button>
                 </li>

@@ -119,7 +119,7 @@ export function AdminPlacementStudentSearch({ collegeId, initialQuery, choices, 
         />
         {text ? <Button type="button" variant="ghost" size="sm"
           aria-label="Clear student search" onClick={clear}
-          className="absolute right-1 top-1/2 -translate-y-1/2 !min-h-8 !w-8 !p-1">
+          className="absolute right-1 top-1/2 -translate-y-1/2 min-h-8 w-8 p-1">
           <X size={14} aria-hidden={true} />
         </Button> : null}
       </div>

@@ -60,7 +60,7 @@ export function FacultyFindSuggestions({query,onOpen}:{
    return entries.length?<div key={group.label}>
     <p className="border-t border-[color:var(--lms-neutral-100)] px-3 pt-3 text-xs font-bold uppercase tracking-wide text-[color:var(--lms-text-muted)]">{group.label}</p>
     {entries.map(item=><Button key={item.key} type="button" variant="ghost"
-      role="option" aria-selected={false} className={style["suggestion"]+" !w-full !justify-start"}
+      role="option" aria-selected={false} className={style["suggestion"]+" w-full justify-start"}
       onClick={()=>onOpen(item.href)}>
       {item.group==="Students"||item.group==="Colleagues"?
        <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-[color:var(--lms-primary-subtle)] text-xs font-bold text-[color:var(--lms-button-primary)]">

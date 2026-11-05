@@ -36,7 +36,7 @@ export function ListToolbar({
   onFiltersClick, onViewsClick, onColumnsClick, onExportClick, filterCount,
   viewCount, bulkAction, className,
 }: ListToolbarProps) {
-  const toolbarButtonClass = "!border-[var(--lms-canvas-border)] hover:!border-[var(--lms-primary)] hover:!bg-[var(--lms-primary-subtle)] hover:!text-[var(--lms-primary-text)]";
+  const toolbarButtonClass = "border-[var(--lms-canvas-border)] hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary-subtle)] hover:text-[var(--lms-primary-text)]";
   const count = typeof viewCount === "number" && Number.isFinite(viewCount) ? Math.max(0, Math.trunc(viewCount)) : null;
   const activeFilters = typeof filterCount === "number" && Number.isFinite(filterCount) ?
     Math.max(0, Math.trunc(filterCount)) : 0;

@@ -189,8 +189,8 @@ export function FacultyPrototypeAttendance({workspace,deliveryId,selectedSession
       {(["PRESENT","ABSENT"] as const).map(option=><Button variant="bare" key={option} type="button"
        onClick={()=>setMark(student.membershipId,option)} disabled={!writable}
        aria-pressed={mark===option} className={"faculty-proto-pill min-h-11 px-3 "+
-        (mark===option?(option==="PRESENT"?"!border-[color:var(--lms-success-strong)] !bg-[color:var(--lms-success-surface)] !text-[color:var(--lms-success-strong)]":
-         "!border-[color:var(--lms-error)] !bg-[color:var(--lms-error-surface)] !text-[color:var(--lms-error-text)]"):"")}>
+        (mark===option?(option==="PRESENT"?"border-[color:var(--lms-success-strong)] bg-[color:var(--lms-success-surface)] text-[color:var(--lms-success-strong)]":
+         "border-[color:var(--lms-error)] bg-[color:var(--lms-error-surface)] text-[color:var(--lms-error-text)]"):"")}>
         {option==="PRESENT"?"Present":"Absent"}</Button>)}
      </div>
     </li>;

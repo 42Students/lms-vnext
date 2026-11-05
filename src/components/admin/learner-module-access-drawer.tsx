@@ -204,7 +204,7 @@ export function LearnerModuleAccessDrawer({collegeId}:{collegeId:string}){
     <Button type="button" variant="secondary" disabled={loading}
       onClick={()=>void lookup(search,failedMemberId??undefined)}>Retry</Button>
    </div>:null}
-  <Drawer open={rosterOpen} className="md:!w-[min(520px,100vw)]" title="Student overrides"
+  <Drawer open={rosterOpen} className="md:w-[min(520px,100vw)]" title="Student overrides"
     onOpenChange={opened=>{if(!opened)setRosterOpen(false);}}>
     <section className="min-w-0 space-y-3">
      <div className="flex flex-wrap items-center gap-2">
@@ -246,7 +246,7 @@ export function LearnerModuleAccessDrawer({collegeId}:{collegeId:string}){
     </section>
   </Drawer>
   <Drawer open={traceOpen} onOpenChange={open=>{if(!open)close();}}
-    title="Why this student sees what they see" className="md:!w-[min(520px,100vw)]">
+    title="Why this student sees what they see" className="md:w-[min(520px,100vw)]">
    {loading?<p role="status" className="text-sm text-body">Loading student access trace…</p>:null}
    {message&&!detail?<div role="alert" className="space-y-2"><p>{message}</p>
     <Button type="button" variant="secondary" onClick={()=>void lookup(search,failedMemberId??undefined)}>Retry</Button>

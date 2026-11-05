@@ -260,7 +260,7 @@ export function FacultyQuizReview({
         open={open}
         onOpenChange={value=>{setOpen(value);if(!value)activeController.current?.abort();}}
         title={quizTitle?`${quizTitle} — Submissions`:"Submissions"}
-        className="!max-w-[720px]"
+        className="max-w-[720px]"
         description="Review submissions for the selected class. Each saved attempt is an immutable learner snapshot."
       >
       <div className="min-w-0 space-y-4">

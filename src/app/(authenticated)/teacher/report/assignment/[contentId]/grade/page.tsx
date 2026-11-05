@@ -83,12 +83,12 @@ export default async function FacultyAssignmentGradePage({params,searchParams}:{
       <div><Heading level={2} size="lg" className="text-heading">{selected.learnerDisplayName??"Student"}</Heading>
        <p className="faculty-proto-subtitle">Handed in {stamp(selected.submittedAt)} IST · {selected.gradingStatus==="GRADED"?"Graded":"To grade"}</p></div>
       <nav aria-label="Submission navigation" className="flex shrink-0 gap-2">
-       {previous?<TextLink variant="bare" className="faculty-proto-secondary !min-h-9 !px-3 !py-1.5 !text-xs"
+       {previous?<TextLink variant="bare" className="faculty-proto-secondary min-h-9 px-3 py-1.5 text-xs"
          href={href(filter,previous.id)}>‹ Previous</TextLink>:
-        <span className="faculty-proto-secondary !min-h-9 !px-3 !py-1.5 !text-xs opacity-50">‹ Previous</span>}
-       {next?<TextLink variant="bare" className="faculty-proto-secondary !min-h-9 !px-3 !py-1.5 !text-xs"
+        <span className="faculty-proto-secondary opacity-50 min-h-9 px-3 py-1.5 text-xs">‹ Previous</span>}
+       {next?<TextLink variant="bare" className="faculty-proto-secondary min-h-9 px-3 py-1.5 text-xs"
          href={href(filter,next.id)}>Next ›</TextLink>:
-        <span className="faculty-proto-secondary !min-h-9 !px-3 !py-1.5 !text-xs opacity-50">Next ›</span>}
+        <span className="faculty-proto-secondary opacity-50 min-h-9 px-3 py-1.5 text-xs">Next ›</span>}
       </nav>
      </header>
      <div className="min-h-56 border-b border-[color:var(--lms-border)] px-5 py-5">

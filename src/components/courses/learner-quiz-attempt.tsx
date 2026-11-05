@@ -591,7 +591,7 @@ export function LearnerQuizAttempt() {
                 ).label+", "+question.points+" points"}
                 aria-current={index === step ? "step" : undefined}
                 variant={index === step ? "primary" : "secondary"}
-                className={`min-h-11 md:min-h-9 ${index !== step && learnerQuizQuestionNavState(index,step,answers[question.id] ?? [],question.options.map(option=>option.id)).answered ? "!border-[var(--lms-success)] !bg-[var(--lms-success-subtle)] !text-[var(--lms-body-text)]" : ""}`}
+                className={`min-h-11 md:min-h-9 ${index !== step && learnerQuizQuestionNavState(index,step,answers[question.id] ?? [],question.options.map(option=>option.id)).answered ? "border-[var(--lms-success)] bg-[var(--lms-success-subtle)] text-[var(--lms-body-text)]" : ""}`}
               >
                 <span className="flex w-full items-center justify-between gap-2 text-xs">
                   <span>Question {index+1}</span>

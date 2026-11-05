@@ -10,7 +10,7 @@ export function ModuleHistoryDrawer({collegeId,children}:{
 }){
  const router=useRouter(),back="/admin/features/"+encodeURIComponent(collegeId);
  return <Drawer open title="Recent changes" description="History of stored Projects, Placements and Electives access rules"
-  historyMode="route" className="md:!w-[min(640px,100vw)]"
+  historyMode="route" className="md:w-[min(640px,100vw)]"
   onOpenChange={next=>{if(!next)router.replace(back);}}>
   {children}
  </Drawer>;

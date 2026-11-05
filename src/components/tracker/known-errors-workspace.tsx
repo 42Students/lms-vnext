@@ -289,7 +289,7 @@ export function KnownErrorsWorkspace({
       </Button>
       <Dialog open={drawerOpen} onOpenChange={setDrawerOpen} title="Known errors"
         description="Stored signatures, acknowledgements and triage controls, separate from live logs."
-        className="!max-w-[1120px]" bodyClassName="space-y-5">
+        className="max-w-[1120px]" bodyClassName="space-y-5">
       {backendStartedAt?<p className="m-0 text-xs text-muted-foreground">Backend started {backendStartedAt} IST</p>:null}
       {unseenCount > 0 && !dismissed ? <div role="status"
         className="flex flex-wrap items-center justify-between gap-3 border border-[var(--lms-info-border)] bg-[var(--lms-info-subtle)] px-4 py-3 text-sm text-body">

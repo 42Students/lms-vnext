@@ -461,7 +461,7 @@ export function LearnerCareerRoundsWorkspace({
           </p>
           <Button type="button" onClick={()=>{
             setFilters(defaults);setDueBucket("all");
-          }} variant="ghost" className="mt-2 min-h-11 md:min-h-9 !text-[var(--lms-primary-text)] underline">
+          }} variant="ghost" className="mt-2 min-h-11 md:min-h-9 underline text-[var(--lms-primary-text)]">
             Show linked interview
           </Button>
         </aside>
@@ -478,7 +478,7 @@ export function LearnerCareerRoundsWorkspace({
           </p>
           <Button type="button"
             onClick={() => { setFilters(defaults); setDueBucket("all"); setMissingLinkOnly(false); }}
-            variant="ghost" className="mt-3 min-h-11 md:min-h-9 !text-[var(--lms-primary-text)] underline">
+            variant="ghost" className="mt-3 min-h-11 md:min-h-9 underline text-[var(--lms-primary-text)]">
             Clear filters
           </Button>
         </div>
@@ -586,7 +586,7 @@ export function LearnerCareerRoundsWorkspace({
             <div className="flex flex-wrap gap-3">
               {externalAssessment ? (
                 <Button type="button" onClick={()=>setConfirmExternalTest(externalAssessment.href)}
-                  variant="ghost" className="min-h-11 md:min-h-9 !text-[var(--lms-primary-text)] underline underline-offset-4">
+                  variant="ghost" className="min-h-11 md:min-h-9 underline underline-offset-4 text-[var(--lms-primary-text)]">
                   Open employer assessment ↗
                 </Button>
               ) : null}

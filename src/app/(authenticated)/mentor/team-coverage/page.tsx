@@ -119,7 +119,7 @@ export default async function MentorTeamCoveragePage({
              ["Projects with no active learners",data.summary.zeroLearnerProjects],
              ["Projects without primary Mentor",data.summary.withoutPrimaryMentor],
            ] as const).map(([label,value])=>
-             <StatTile key={label} label={label} value={value} className="!min-h-0 !rounded-none !border-0 !bg-transparent !px-0 !py-2" />)}
+             <StatTile key={label} label={label} value={value} className="min-h-0 rounded-none border-0 bg-transparent px-0 py-2" />)}
          </section>
         <p className="text-sm text-body leading-[22px]">
           {data.total.toLocaleString("en-IN")} matching project{data.total === 1 ? "" : "s"}

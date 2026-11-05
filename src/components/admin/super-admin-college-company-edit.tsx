@@ -144,7 +144,7 @@ export function SuperAdminCollegeCompanyEdit({relationshipId,company}:{
   <Button type="button" variant="secondary" className="min-h-11 md:min-h-9"
    onClick={()=>void showEditor()} aria-label={"Edit "+company.name+" company details"}>Edit</Button>
   <Dialog open={open} onOpenChange={next=>{if(!next)requestClose();}}
-   title={"Edit "+company.name} className="!max-w-[560px]" dismissible={!pending&&!loading}>
+   title={"Edit "+company.name} className="max-w-[560px]" dismissible={!pending&&!loading}>
    {loading?<p role="status" className="py-4 text-sm">Loading contact details…</p>:
     error&&!dirty&&!canonicalSaved?<div className="space-y-3">
      <Alert role="alert" tone="error">{error}</Alert>

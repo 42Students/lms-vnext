@@ -297,7 +297,7 @@ export function CollegeSemesterRowActions({ row }: { row: SemesterRow }) {
         <Dialog open={editing} onOpenChange={next=>{if(!next)closeEditor();}}
           title={SEMESTER_COPY.editTitle}
           description={SEMESTER_COPY.promotionNote}
-          className="!max-w-[520px]" dismissible={!pending}>
+          className="max-w-[520px]" dismissible={!pending}>
         <form noValidate onSubmit={save} className="grid min-w-0 gap-[var(--lms-space-4)]">
           {editError ? <div role="alert" className="flex items-center justify-between gap-3 rounded-[var(--lms-control-radius)] border border-error p-3 text-sm">
             <p><strong>{SEMESTER_COPY.updateFailed}</strong>: {editError}</p>

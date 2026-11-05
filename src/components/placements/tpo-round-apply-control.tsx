@@ -77,7 +77,7 @@ export function TpoRoundApplyControl({jobId,roundId}:{jobId:string;roundId:strin
    {busy?"Working…":"Review and apply round results"}</Button>
   {preview?<Dialog open={true} onOpenChange={open=>{if(!open&&!busy)setPreview(null);}}
     title={"Apply "+(preview.roundName??"round")+" results"}
-    description="Review the results and choose whether to notify learners." className="!max-w-[900px]">
+    description="Review the results and choose whether to notify learners." className="max-w-[900px]">
    <div role="region" aria-label="Round application preview" className="space-y-3">
    <Heading level={3}>Consequence preview</Heading>
    <p className="text-sm leading-[22px]">{preview.staged} staged results to apply; {preview.applied} already applied (unchanged).</p>

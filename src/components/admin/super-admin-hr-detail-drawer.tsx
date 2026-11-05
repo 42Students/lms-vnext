@@ -140,7 +140,7 @@ export function SuperAdminHrDetailDrawer({
   return (
     <Drawer
       open
-      className="md:!w-[min(640px,100vw)]"
+      className="md:w-[min(640px,100vw)]"
       dismissible={!pending&&!lifecyclePending}
       onOpenChange={(open) => {
         if (!open && !pending&&!lifecyclePending) {

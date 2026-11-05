@@ -137,26 +137,17 @@
    "link-bare": 2,
    "handrolled-skeleton": 1
   },
-  "src/app/(authenticated)/mentor/projects/[projectId]/activity-history/page.tsx": {
-   "important": 4
-  },
   "src/app/(authenticated)/mentor/projects/[projectId]/loading.tsx": {
    "handrolled-skeleton": 1
   },
   "src/app/(authenticated)/mentor/projects/[projectId]/page.tsx": {
    "link-bare": 2
   },
-  "src/app/(authenticated)/mentor/projects/[projectId]/resources-directory/page.tsx": {
-   "important": 4
-  },
   "src/app/(authenticated)/mentor/projects/page.tsx": {
    "link-bare": 1
   },
   "src/app/(authenticated)/mentor/reviews/page.tsx": {
    "link-bare": 1
-  },
-  "src/app/(authenticated)/mentor/team-coverage/page.tsx": {
-   "important": 6
   },
   "src/app/(authenticated)/superadmin/[...legacy]/loading.tsx": {
    "handrolled-skeleton": 1
@@ -168,8 +159,7 @@
    "handrolled-skeleton": 1
   },
   "src/app/(authenticated)/teacher/calendar/page.tsx": {
-   "link-bare": 3,
-   "important": 1
+   "link-bare": 3
   },
   "src/app/(authenticated)/teacher/contacts/[contactsTab]/loading.tsx": {
    "handrolled-skeleton": 1
@@ -187,14 +177,10 @@
    "link-bare": 1
   },
   "src/app/(authenticated)/teacher/report/assignment/[contentId]/grade/page.tsx": {
-   "link-bare": 6,
-   "important": 16
+   "link-bare": 6
   },
   "src/app/(authenticated)/teacher/report/quiz/[quizId]/loading.tsx": {
    "handrolled-skeleton": 1
-  },
-  "src/app/(authenticated)/teacher/report/quiz/[quizId]/page.tsx": {
-   "important": 4
   },
   "src/app/(authenticated)/teacher/results/page.tsx": {
    "link-bare": 1
@@ -248,9 +234,6 @@
   "src/app/(authenticated)/tracker/logs/page.tsx": {
    "raw-details": 1
   },
-  "src/app/api/tracker/logs/known-errors/[signatureId]/route.ts": {
-   "important": 1
-  },
   "src/app/college-join/[token]/loading.tsx": {
    "handrolled-skeleton": 2
   },
@@ -266,40 +249,17 @@
   "src/app/verify-email/page.tsx": {
    "button-bare": 1
   },
-  "src/components/academics/academics-actions.tsx": {
-   "important": 8
-  },
-  "src/components/academics/academics-create-panel.tsx": {
-   "important": 8
-  },
-  "src/components/academics/college-cohort-management.tsx": {
-   "important": 2
-  },
-  "src/components/academics/college-semester-management.tsx": {
-   "important": 1
-  },
   "src/components/academics/college-term-mapping-manager.tsx": {
-   "handrolled-skeleton": 1,
-   "important": 1
+   "handrolled-skeleton": 1
   },
   "src/components/academics/learner-class-schedule.module.css": {
    "important": 41
   },
   "src/components/academics/learner-class-schedule.tsx": {
-   "link-bare": 1,
-   "important": 8
+   "link-bare": 1
   },
   "src/components/academics/legacy-class-month-grid.module.css": {
    "important": 3
-  },
-  "src/components/academics/section-operations.tsx": {
-   "important": 1
-  },
-  "src/components/activity/learner-notifications-inbox.tsx": {
-   "important": 33
-  },
-  "src/components/activity/notification-list.tsx": {
-   "important": 1
   },
   "src/components/activity/notification-toolbar.tsx": {
    "link-bare": 3
@@ -307,122 +267,36 @@
   "src/components/admin/admin-dashboard-actions.tsx": {
    "link-bare": 1
   },
-  "src/components/admin/college-branding-form.tsx": {
-   "important": 2
-  },
   "src/components/admin/college-branding-preview.tsx": {
    "button-bare": 1
-  },
-  "src/components/admin/college-logo-uploader.tsx": {
-   "important": 18
   },
   "src/components/admin/college-signin-method-form.tsx": {
    "button-bare": 1
   },
-  "src/components/admin/inbound-mail-list.tsx": {
-   "important": 1
-  },
-  "src/components/admin/learner-module-access-drawer.tsx": {
-   "important": 2
-  },
   "src/components/admin/legacy-college-stat.module.css": {
    "important": 17
-  },
-  "src/components/admin/managed-college-subdomain.tsx": {
-   "important": 2
-  },
-  "src/components/admin/module-history-drawer.tsx": {
-   "important": 1
-  },
-  "src/components/admin/person-membership-actions.tsx": {
-   "important": 1
-  },
-  "src/components/admin/super-admin-batch-students-dialog.tsx": {
-   "important": 1
-  },
-  "src/components/admin/super-admin-college-company-actions.tsx": {
-   "important": 1
-  },
-  "src/components/admin/super-admin-college-company-edit.tsx": {
-   "important": 1
-  },
-  "src/components/admin/super-admin-faculty-assignment-create.tsx": {
-   "important": 1
-  },
-  "src/components/admin/super-admin-hr-detail-drawer.tsx": {
-   "important": 1
   },
   "src/components/admin/super-admin-today-board.tsx": {
    "handrolled-skeleton": 1
   },
-  "src/components/admin/tenant-domain-manager.tsx": {
-   "important": 1
-  },
   "src/components/attendance/faculty-attendance-workspace.tsx": {
-   "raw-details": 1,
-   "important": 12
+   "raw-details": 1
   },
   "src/components/attendance/faculty-prototype-attendance.tsx": {
    "button-bare": 2,
-   "link-bare": 4,
-   "important": 6
-  },
-  "src/components/auth/login-form.tsx": {
-   "important": 2
+   "link-bare": 4
   },
   "src/components/auth/session-response-guard.tsx": {
    "button-bare": 1
   },
-  "src/components/college/college-person-profile-overview-modal.tsx": {
-   "important": 1
-  },
-  "src/components/courses/add-lesson-content-drawer.tsx": {
-   "important": 1
-  },
-  "src/components/courses/admin-course-actions.tsx": {
-   "important": 2
-  },
-  "src/components/courses/admin-course-create-panel.tsx": {
-   "important": 3
-  },
   "src/components/courses/admin-course-overview.tsx": {
    "link-bare": 1
-  },
-  "src/components/courses/admin-learning-structure-actions.tsx": {
-   "important": 1
-  },
-  "src/components/courses/assignment-submission-control.tsx": {
-   "important": 1
-  },
-  "src/components/courses/college-archived-lesson-restore.tsx": {
-   "important": 1
   },
   "src/components/courses/college-learner-progress-report.module.css": {
    "important": 2
   },
-  "src/components/courses/college-quiz-create.tsx": {
-   "important": 2
-  },
-  "src/components/courses/expandable-course-description.tsx": {
-   "important": 1
-  },
-  "src/components/courses/expandable-course-update.tsx": {
-   "important": 1
-  },
-  "src/components/courses/faculty-assessment-create.tsx": {
-   "important": 1
-  },
-  "src/components/courses/faculty-assessment-editor.tsx": {
-   "important": 5
-  },
-  "src/components/courses/faculty-assignment-editor.tsx": {
-   "important": 1
-  },
   "src/components/courses/faculty-assignment-review.tsx": {
    "button-bare": 1
-  },
-  "src/components/courses/faculty-content-editor.tsx": {
-   "important": 4
   },
   "src/components/courses/faculty-course-home-signals.module.css": {
    "important": 6
@@ -431,41 +305,30 @@
    "button-bare": 1,
    "link-bare": 1
   },
-  "src/components/courses/faculty-course-item-viewer.tsx": {
-   "important": 2
-  },
   "src/components/courses/faculty-course-list.tsx": {
    "link-bare": 1
   },
   "src/components/courses/faculty-course-workspace.tsx": {
    "link-bare": 4
   },
-  "src/components/courses/faculty-item-actions.tsx": {
-   "important": 1
-  },
   "src/components/courses/faculty-prototype-assessment-directory.tsx": {
    "link-bare": 2,
-   "raw-control": 1,
-   "important": 6
+   "raw-control": 1
   },
   "src/components/courses/faculty-prototype-assignment-report.tsx": {
    "link-bare": 4,
-   "raw-control": 1,
-   "important": 17
+   "raw-control": 1
   },
   "src/components/courses/faculty-prototype-blueprint.tsx": {
    "button-bare": 2,
-   "link-bare": 1,
-   "important": 8
+   "link-bare": 1
   },
   "src/components/courses/faculty-prototype-course-directory.tsx": {
    "link-bare": 2,
-   "raw-control": 1,
-   "important": 4
+   "raw-control": 1
   },
   "src/components/courses/faculty-prototype-course-priorities.tsx": {
-   "link-bare": 2,
-   "important": 3
+   "link-bare": 2
   },
   "src/components/courses/faculty-prototype-lesson-items.tsx": {
    "button-bare": 2
@@ -475,20 +338,13 @@
   },
   "src/components/courses/faculty-prototype-student-directory.tsx": {
    "button-bare": 2,
-   "raw-control": 1,
-   "important": 4
-  },
-  "src/components/courses/faculty-quiz-review.tsx": {
-   "important": 1
+   "raw-control": 1
   },
   "src/components/courses/faculty-report-legacy-charts.module.css": {
    "important": 13
   },
   "src/components/courses/learner-assessment-metrics.module.css": {
    "important": 17
-  },
-  "src/components/courses/learner-course-discussion.tsx": {
-   "important": 19
   },
   "src/components/courses/learner-course-list.tsx": {
    "link-bare": 1
@@ -499,20 +355,11 @@
   "src/components/courses/learner-course-workspace.tsx": {
    "link-bare": 1
   },
-  "src/components/courses/learner-live-class-link.tsx": {
-   "important": 5
-  },
   "src/components/courses/learner-live-session-status.tsx": {
    "handrolled-skeleton": 1
   },
   "src/components/courses/learner-quiz-attempt.module.css": {
    "important": 6
-  },
-  "src/components/courses/learner-quiz-attempt.tsx": {
-   "important": 3
-  },
-  "src/components/courses/learner-roadmap-item-dialog.tsx": {
-   "important": 1
   },
   "src/components/courses/legacy-upload-meter.module.css": {
    "important": 5
@@ -523,18 +370,8 @@
   "src/components/courses/super-admin-section-syllabus-order.tsx": {
    "button-bare": 1
   },
-  "src/components/electives/college-elective-offering-manager.tsx": {
-   "important": 3
-  },
   "src/components/faculty/faculty-today-panel.tsx": {
-   "link-bare": 4,
-   "important": 4
-  },
-  "src/components/hr/hr-drive-draft-form.tsx": {
-   "important": 2
-  },
-  "src/components/hr/hr-recruiter-bell.tsx": {
-   "important": 13
+   "link-bare": 4
   },
   "src/components/hr/recruiter-calendar-legacy.module.css": {
    "important": 8
@@ -552,12 +389,6 @@
   "src/components/hr/recruiter-drive-funnel.module.css": {
    "important": 7
   },
-  "src/components/hr/recruiter-general-drawer.tsx": {
-   "important": 13
-  },
-  "src/components/hr/recruiter-notification-bell.tsx": {
-   "important": 11
-  },
   "src/components/hr/recruiter-today-prototype.module.css": {
    "important": 5
   },
@@ -571,24 +402,8 @@
   "src/components/marketing/marketing-layout.tsx": {
    "link-bare": 7
   },
-  "src/components/placements/admin-placement-create-dialog.tsx": {
-   "important": 1
-  },
-  "src/components/placements/admin-placement-student-search.tsx": {
-   "important": 3
-  },
-  "src/components/placements/college-company-create.tsx": {
-   "important": 2
-  },
   "src/components/placements/college-drive-attention-cards.tsx": {
-   "link-bare": 1,
-   "important": 1
-  },
-  "src/components/placements/college-drive-create-dialog.tsx": {
-   "important": 4
-  },
-  "src/components/placements/college-drive-edit-dialog.tsx": {
-   "important": 1
+   "link-bare": 1
   },
   "src/components/placements/college-drive-pipeline-overview.tsx": {
    "link-bare": 1
@@ -601,18 +416,6 @@
   },
   "src/components/placements/learner-career-calendar.module.css": {
    "important": 68
-  },
-  "src/components/placements/learner-career-calendar.tsx": {
-   "important": 3
-  },
-  "src/components/placements/learner-career-rounds-workspace.tsx": {
-   "important": 3
-  },
-  "src/components/placements/learner-career-rounds.tsx": {
-   "important": 1
-  },
-  "src/components/placements/learner-jobs-browse.tsx": {
-   "important": 26
   },
   "src/components/placements/learner-placement-jobs.tsx": {
    "button-bare": 1
@@ -644,13 +447,7 @@
   "src/components/placements/placement-role-options.tsx": {
    "raw-details": 1
   },
-  "src/components/placements/public-recruiter-join-form.tsx": {
-   "important": 1
-  },
   "src/components/placements/report-bar-chart.module.css": {
-   "important": 3
-  },
-  "src/components/placements/super-admin-bulk-drive-actions.tsx": {
    "important": 3
   },
   "src/components/placements/super-admin-hiring-funnel.module.css": {
@@ -660,14 +457,7 @@
    "handrolled-skeleton": 1
   },
   "src/components/placements/tpo-drive-workspace-nav.tsx": {
-   "link-bare": 1,
-   "important": 3
-  },
-  "src/components/placements/tpo-request-bulk-decision.tsx": {
-   "important": 3
-  },
-  "src/components/placements/tpo-round-apply-control.tsx": {
-   "important": 1
+   "link-bare": 1
   },
   "src/components/placements/tpo-round-calendar-control.tsx": {
    "raw-details": 1
@@ -679,23 +469,13 @@
    "important": 25
   },
   "src/components/placements/tpo-week-hour-calendar.tsx": {
-   "link-bare": 1,
-   "important": 2
-  },
-  "src/components/profile/learner-skill-catalog-input.tsx": {
-   "important": 8
+   "link-bare": 1
   },
   "src/components/projects/college-project-delivery-overview.tsx": {
    "link-bare": 8
   },
-  "src/components/projects/learner-board-interactive.tsx": {
-   "important": 1
-  },
   "src/components/projects/learner-board-task-index.tsx": {
    "link-bare": 1
-  },
-  "src/components/projects/learner-own-task-controls.tsx": {
-   "important": 1
   },
   "src/components/projects/legacy-project-board.module.css": {
    "important": 20
@@ -708,27 +488,17 @@
   },
   "src/components/projects/mentor-lane-board.tsx": {
    "button-bare": 1,
-   "raw-details": 1,
-   "important": 4
+   "raw-details": 1
   },
   "src/components/projects/mentor-meetings-calendar.tsx": {
    "button-bare": 1,
    "link-bare": 5
-  },
-  "src/components/projects/mentor-product-backlog.tsx": {
-   "important": 2
   },
   "src/components/projects/mentor-prototype-home.tsx": {
    "link-bare": 2
   },
   "src/components/projects/mentor-prototype-project-summaries.tsx": {
    "link-bare": 2
-  },
-  "src/components/projects/mentor-release-editor.tsx": {
-   "important": 2
-  },
-  "src/components/projects/mentor-task-delete-control.tsx": {
-   "important": 3
   },
   "src/components/projects/project-admin-at-risk-page.tsx": {
    "link-bare": 1
@@ -739,9 +509,6 @@
   "src/components/projects/project-admin-submissions-page.tsx": {
    "link-bare": 1
   },
-  "src/components/projects/project-admin-workspace-quick-view.tsx": {
-   "important": 10
-  },
   "src/components/projects/project-list.tsx": {
    "link-bare": 3
   },
@@ -750,12 +517,6 @@
   },
   "src/components/projects/project-participant-list-controls.tsx": {
    "link-bare": 3
-  },
-  "src/components/projects/project-resource-files-panel.tsx": {
-   "important": 1
-  },
-  "src/components/projects/project-resource-list.tsx": {
-   "important": 1
   },
   "src/components/projects/project-workspace.tsx": {
    "link-bare": 2
@@ -794,21 +555,14 @@
   "src/components/shell/learner-topbar-tools.tsx": {
    "link-bare": 1
   },
-  "src/components/shell/mobile-navigation.tsx": {
-   "important": 5
-  },
   "src/components/shell/sidebar-nav.tsx": {
    "link-bare": 1
   },
   "src/components/shell/topbar/account-menu.tsx": {
-   "link-bare": 2,
-   "important": 3
+   "link-bare": 2
   },
   "src/components/shell/topbar/command-search.tsx": {
    "link-bare": 4
-  },
-  "src/components/shell/topbar/faculty-find-suggestions.tsx": {
-   "important": 2
   },
   "src/components/shell/topbar/legacy-topbar.tsx": {
    "link-bare": 2
@@ -822,15 +576,11 @@
   "src/components/shell/topbar/topbar.module.css": {
    "important": 51
   },
-  "src/components/shell/topbar/tpo-find-model.ts": {
-   "important": 2
-  },
   "src/components/shell/topbar/tpo-notification-cluster.tsx": {
    "link-bare": 2
   },
   "src/components/shell/topbar/tpo-quick-create.tsx": {
-   "link-bare": 1,
-   "important": 2
+   "link-bare": 1
   },
   "src/components/tpo/legacy-batch-eligibility.module.css": {
    "important": 4
@@ -845,8 +595,7 @@
    "important": 10
   },
   "src/components/tpo/recruiter-invite-landing.tsx": {
-   "link-bare": 3,
-   "important": 1
+   "link-bare": 3
   },
   "src/components/tpo/recruiter-lead-detail-workspace.tsx": {
    "link-bare": 5
@@ -863,9 +612,6 @@
   },
   "src/components/tpo/recruiter-prototype-stage-ribbon.tsx": {
    "button-bare": 1
-  },
-  "src/components/tpo/tpo-academic-import-workspace.tsx": {
-   "important": 1
   },
   "src/components/tpo/tpo-audit-grid.tsx": {
    "handrolled-skeleton": 1
@@ -896,9 +642,6 @@
   "src/components/tpo/tpo-drive-students-prototype-review.tsx": {
    "button-bare": 1
   },
-  "src/components/tpo/tpo-find-shortcut.tsx": {
-   "important": 4
-  },
   "src/components/tpo/tpo-header-indicators.tsx": {
    "link-bare": 1
   },
@@ -917,17 +660,8 @@
   "src/components/tpo/tpo-notice-audience-picker.tsx": {
    "button-bare": 1
   },
-  "src/components/tpo/tpo-notice-composer-dialog.tsx": {
-   "important": 4
-  },
-  "src/components/tpo/tpo-notice-delete-confirm.tsx": {
-   "important": 1
-  },
   "src/components/tpo/tpo-notice-prototype-sidebar.tsx": {
    "link-bare": 1
-  },
-  "src/components/tpo/tpo-notice-read-progress.tsx": {
-   "important": 2
   },
   "src/components/tpo/tpo-prototype-section-tabs.tsx": {
    "link-bare": 1
@@ -944,9 +678,6 @@
   "src/components/tpo/tpo-student-roster-inspector.tsx": {
    "button-bare": 1
   },
-  "src/components/tpo/tpo-team-message-actions.tsx": {
-   "important": 1
-  },
   "src/components/tpo/tpo-team-messages-directory.tsx": {
    "link-bare": 3
   },
@@ -960,95 +691,17 @@
   "src/components/tpo/tpo-topbar-new-menu.tsx": {
    "link-bare": 1
   },
-  "src/components/tracker/independent-audit-findings-board.tsx": {
-   "important": 1
-  },
-  "src/components/tracker/known-errors-workspace.tsx": {
-   "important": 1
-  },
   "src/components/tracker/tracker-admin-nav.tsx": {
    "link-bare": 1
   },
   "src/components/tracker/tracker-issue-logs-panel.tsx": {
    "handrolled-skeleton": 1
   },
-  "src/components/tracker/tracker-live-logs-explorer.tsx": {
-   "important": 10
-  },
-  "src/components/tracker/tracker-screenshot-gallery.tsx": {
-   "important": 1
-  },
-  "src/components/ui/button.tsx": {
-   "important": 1
-  },
-  "src/components/ui/confirm-action-dialog.tsx": {
-   "important": 5
-  },
-  "src/components/ui/date-input.tsx": {
-   "important": 58
-  },
-  "src/components/ui/dialog.tsx": {
-   "important": 6
-  },
-  "src/components/ui/drawer.tsx": {
-   "important": 16
-  },
-  "src/components/ui/dropdown.tsx": {
-   "important": 9
-  },
-  "src/components/ui/file-dropzone.tsx": {
-   "important": 3
-  },
-  "src/components/ui/file-upload.tsx": {
-   "important": 3
-  },
-  "src/components/ui/filter-chip.tsx": {
-   "important": 8
-  },
   "src/components/ui/legacy-overlays.css": {
-   "important": 4
-  },
-  "src/components/ui/list-toolbar.tsx": {
-   "important": 4
-  },
-  "src/components/ui/multi-select.tsx": {
-   "important": 8
-  },
-  "src/components/ui/search-field.tsx": {
-   "important": 6
-  },
-  "src/components/ui/searchable-select.tsx": {
-   "important": 35
-  },
-  "src/components/ui/segmented-control.tsx": {
-   "important": 2
-  },
-  "src/components/ui/split-button.tsx": {
-   "important": 3
-  },
-  "src/components/ui/tabs.tsx": {
    "important": 4
   },
   "src/components/verification/TpoVerificationPrototypeQueue.tsx": {
    "button-bare": 1
-  },
-  "src/modules/activity/college-activity-model.ts": {
-   "important": 1
-  },
-  "src/modules/courses/course-image-service.ts": {
-   "important": 1
-  },
-  "src/modules/messaging/model.ts": {
-   "important": 1
-  },
-  "src/modules/messaging/unsubscribe-model.ts": {
-   "important": 2
-  },
-  "src/modules/placements/tpo-participation-service.ts": {
-   "important": 2
-  },
-  "src/modules/projects/mentor-sprint-signoff-snapshot-model.ts": {
-   "important": 1
   },
   "src/styles/legacy-skin.css": {
    "important": 168

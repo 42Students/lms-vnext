@@ -186,7 +186,7 @@ export function InboundMailList({rows}:{rows:readonly InboundMailRow[]}){
      </tbody>
     </Table>
    </div>}
-  {selected?<Drawer open side="right" className="md:!w-[min(640px,100vw)]"
+  {selected?<Drawer open side="right" className="md:w-[min(640px,100vw)]"
     onOpenChange={opened=>{if(!opened)close();}}
     title={selected.subject?.trim()||"(no subject)"}
     description={selected.toAddress+" · "+receivedLabel(selected.receivedAt)}>

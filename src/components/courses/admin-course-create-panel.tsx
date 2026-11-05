@@ -549,7 +549,7 @@ export function AdminCourseCreatePanel({
               <div className="flex flex-wrap items-center gap-3">
                 <Input id="course-card-color" value={cardColor} onChange={event=>{setCardColor(event.target.value);setCreateErrors(previous=>{const updated={...previous};delete updated.cardColor;return updated;});}}
                   maxLength={7} pattern="#[0-9A-Fa-f]{6}" placeholder="Optional #RRGGBB" className="min-w-0 flex-1"/>
-                <Input type="color" aria-label="Choose card colour" className="!h-11 !w-14 !p-1"
+                <Input type="color" aria-label="Choose card colour" className="h-11 w-14 p-1"
                   value={/^#[0-9a-fA-F]{6}$/.test(cardColor)?cardColor:"#e4eef4"} /* ui-consistency-allow-hex */
                   onChange={event=>{setCardColor(event.target.value);setCreateErrors(previous=>{const updated={...previous};delete updated.cardColor;return updated;});}}/>
               </div>

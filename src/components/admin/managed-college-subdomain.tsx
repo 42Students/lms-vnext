@@ -156,7 +156,7 @@ export function ManagedCollegeSubdomain({collegeId,initial}:{collegeId:string;in
         setLabel(e.target.value.toLowerCase().replace(/[^a-z0-9-]/g,"").slice(0,30));
         if(message)setMessage("");
        }}
-       className="h-full min-w-0 flex-1 !rounded-none !border-0"/>
+       className="h-full min-w-0 flex-1 rounded-none border-0"/>
       <span className="inline-flex shrink-0 items-center border-l border-border bg-[var(--lms-neutral-50)] px-2 text-xs text-muted-foreground">
        .{state.baseDomain}
       </span>

@@ -33,8 +33,8 @@ export function FilterChip({
    data-slot="filter-chip" data-selected={selected}
    className={cx(
     filterChipGeometry,
-    "enabled:hover:!border-[var(--lms-primary)] enabled:hover:!bg-[var(--lms-primary-subtle)] enabled:hover:!text-[var(--lms-primary-text)] focus-ring",
-    "disabled:!cursor-not-allowed disabled:!border-[var(--lms-neutral-200)] disabled:!bg-[var(--lms-neutral-200)] disabled:!text-[var(--lms-neutral-500)] disabled:!opacity-100",
+    "focus-ring enabled:hover:border-[var(--lms-primary)] enabled:hover:bg-[var(--lms-primary-subtle)] enabled:hover:text-[var(--lms-primary-text)]",
+    "disabled:cursor-not-allowed disabled:border-[var(--lms-neutral-200)] disabled:bg-[var(--lms-neutral-200)] disabled:text-[var(--lms-neutral-500)] disabled:opacity-100",
     tones[tone],
     selected&&"border-[var(--lms-primary)] bg-[var(--lms-primary-subtle)] text-[var(--lms-primary-text)]",
     className,

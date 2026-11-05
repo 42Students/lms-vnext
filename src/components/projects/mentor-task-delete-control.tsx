@@ -29,7 +29,7 @@ export function MentorTaskDeleteControl({projectId,taskId,title,updatedAt}:{
  }
  return <>
   <Button variant="link" type="button" disabled={pending} onClick={()=>{setError("");setConfirmOpen(true);}}
-    className="min-h-11 max-w-full !justify-start !px-1 !text-[var(--lms-error)] md:min-h-9">
+    className="min-h-11 max-w-full md:min-h-9 justify-start px-1 text-[var(--lms-error)]">
     {pending?"Deleting…":"Delete task"}
   </Button>
   <ConfirmDialog open={confirmOpen} onOpenChange={next=>{if(!pending)setConfirmOpen(next);}}

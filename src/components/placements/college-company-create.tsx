@@ -129,7 +129,7 @@ export function CollegeCompanyCreate({collegeId}:{collegeId:string}){
   <Dialog open={open} onOpenChange={value=>{if(!value)requestClose();else setOpen(true);}}
     title="Add Company"
     description="Link a canonical company identity with this college."
-    className="max-w-[560px] max-md:!max-h-[100dvh] max-md:!rounded-t-[var(--lms-canvas-radius)]"
+    className="max-w-[560px] max-md:max-h-[100dvh] max-md:rounded-t-[var(--lms-canvas-radius)]"
     footer={<>
       <Button variant="secondary" type="button" disabled={pending} onClick={requestClose}>Cancel</Button>
       <Button form={formId} variant="primary" type="submit" disabled={pending}>

@@ -230,7 +230,7 @@ export function PersonMembershipActions({
           roles={currentRoles}
           disabled={currentStatus === "ENDED"}
         />
-        <Dropdown label="Membership actions" trigger="Actions" align="end" mobileSheet triggerClassName="md:!min-h-9">
+        <Dropdown label="Membership actions" trigger="Actions" align="end" mobileSheet triggerClassName="md:min-h-9">
           <Menu className="w-full min-w-0">
             <MenuItem
           

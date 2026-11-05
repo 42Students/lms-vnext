@@ -88,7 +88,7 @@ export function TpoFindShortcut(){
       onChange={event=>changeQuery(event.target.value)} placeholder="Type at least 2 characters"
       maxLength={100} className="mt-2 min-h-11 w-full min-w-0 md:min-h-9"/>
    </Label>
-   <PopoverListbox id="tpo-find-results" label="Matching records" aria-busy={loading} className="mt-3 !min-h-0 max-h-72 space-y-0 overflow-y-auto !border-0 !p-0 !shadow-none" onDismiss={() => setOpen(false)}>
+   <PopoverListbox id="tpo-find-results" label="Matching records" aria-busy={loading} className="mt-3 max-h-72 space-y-0 overflow-y-auto min-h-0 border-0 p-0 shadow-none" onDismiss={() => setOpen(false)}>
     {query.trim().length<2?<div role="presentation" className="px-3 pb-2 pt-2 text-xs font-semibold text-muted-foreground">Recently opened</div>:null}
     {showing.map((row,index)=><Button variant="ghost" type="button" key={row.href}
       id={"tpo-find-result-"+index} role="option" aria-selected={active===index}

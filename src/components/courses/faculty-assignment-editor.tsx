@@ -206,7 +206,7 @@ export function FacultyAssignmentEditor({deliveryId,lessons,assignments,methodsE
      onClick={()=>void submit("EDIT")} variant={existing.status==="DRAFT"?"secondary":"primary"}>Save draft</Button>
     {existing.status==="DRAFT"?<Button type="button" loading={pending} disabled={pending||existing.status!=="DRAFT"}
      onClick={()=>void submit("PUBLISH")} variant="primary">Publish</Button>:null}
-    <Dropdown trigger="More" label="Assignment actions" align="end" mobileSheet triggerClassName="w-full md:!min-h-9">
+    <Dropdown trigger="More" label="Assignment actions" align="end" mobileSheet triggerClassName="w-full md:min-h-9">
       <Menu className="w-full min-w-0">
         <MenuItem disabled={pending||!assignmentActionAvailable(existing.status,"ARCHIVE")} onClick={()=>void submit("ARCHIVE")}>Archive</MenuItem>
       </Menu>

@@ -21,7 +21,7 @@ export function CollegeDriveCreateDialog({children}:{children:ReactNode}){
   </Button>
   <Dialog title="Create Job" open={open} onOpenChange={change}
    className="max-w-[800px]"
-   bodyClassName="!min-w-0 !overflow-x-hidden !p-4 md:!p-6">
+   bodyClassName="min-w-0 overflow-x-hidden p-4 md:p-6">
    <div onInput={()=>setDirty(true)} onChange={()=>setDirty(true)} className="min-w-0">
     {children}
    </div>

@@ -106,7 +106,7 @@ export function SuperAdminCollegeCompanyCreate({collegeId}:{collegeId:string}){
   {notice?<Alert tone="info" role="status" className="mt-3">{notice}</Alert>:null}
   <Dialog open={open} onOpenChange={next=>{if(!next)requestClose();}}
    title="Add company" description="Create or link a company in this college. Global company identity is shared."
-   dismissible={!pending} className="!max-w-[560px]">
+   dismissible={!pending} className="max-w-[560px]">
    <form noValidate onSubmit={submit} className="min-w-0 space-y-4">
     <fieldset className="min-w-0 space-y-3" disabled={pending}>
      <legend className="font-semibold text-[var(--lms-heading)]">Identity</legend>

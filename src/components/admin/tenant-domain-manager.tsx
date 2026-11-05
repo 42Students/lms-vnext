@@ -405,7 +405,7 @@ export function TenantDomainManager({
                           : "Make primary"}
                       </Button>
                     ) : null}
-                    <Dropdown trigger="More" label="Domain actions" align="end" mobileSheet triggerClassName="md:!min-h-9">
+                    <Dropdown trigger="More" label="Domain actions" align="end" mobileSheet triggerClassName="md:min-h-9">
                     <Button role="menuitem" variant="secondary" size="sm"
                       className="min-h-11 w-full sm:w-auto md:min-h-9"
                       disabled={busy}

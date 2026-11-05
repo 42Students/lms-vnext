@@ -1108,7 +1108,7 @@ export function FacultyAttendanceWorkspace({
                               <Button
                                 size="md"
                                 className={"min-h-11 rounded-lg border px-[16px] text-[13px] font-semibold md:min-h-9 " +
-                                  (!isAbsent ? "!border-[color-mix(in_srgb,var(--lms-success-strong)_28%,transparent)] !bg-[color-mix(in_srgb,var(--lms-success-strong)_8%,transparent)] !text-[color:var(--lms-success-strong)]" : "!border-[color:var(--lms-neutral-300)] !bg-[color:var(--lms-neutral-50)] !text-[color:var(--lms-text-muted)]")}
+                                  (!isAbsent ? "border-[color-mix(in_srgb,var(--lms-success-strong)_28%,transparent)] bg-[color-mix(in_srgb,var(--lms-success-strong)_8%,transparent)] text-[color:var(--lms-success-strong)]" : "border-[color:var(--lms-neutral-300)] bg-[color:var(--lms-neutral-50)] text-[color:var(--lms-text-muted)]")}
                                 variant="secondary"
                                 disabled={markingWindow !== "OPEN" || submitting}
                                 aria-pressed={!isAbsent}
@@ -1127,7 +1127,7 @@ export function FacultyAttendanceWorkspace({
                               <Button
                                 size="md"
                                 className={"min-h-11 rounded-lg border px-[16px] text-[13px] font-semibold md:min-h-9 " +
-                                  (isAbsent ? "!border-[color-mix(in_srgb,var(--lms-error)_28%,transparent)] !bg-[color-mix(in_srgb,var(--lms-error)_8%,transparent)] !text-[color:var(--lms-error)]" : "!border-[color:var(--lms-neutral-300)] !bg-[color:var(--lms-neutral-50)] !text-[color:var(--lms-text-muted)]")}
+                                  (isAbsent ? "border-[color-mix(in_srgb,var(--lms-error)_28%,transparent)] bg-[color-mix(in_srgb,var(--lms-error)_8%,transparent)] text-[color:var(--lms-error)]" : "border-[color:var(--lms-neutral-300)] bg-[color:var(--lms-neutral-50)] text-[color:var(--lms-text-muted)]")}
                                 variant="secondary"
                                 disabled={markingWindow !== "OPEN" || submitting}
                                 aria-pressed={isAbsent}

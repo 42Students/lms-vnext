@@ -145,12 +145,12 @@ export function HrRecruiterBell(){
    aria-expanded={open} aria-haspopup="dialog" aria-busy={loading}
    aria-controls={open?"hr-topbar-notifications":undefined}
    onClick={()=>setOpen(value=>!value)}
-   variant="secondary" className="relative !h-11 !w-11 !min-w-11 !p-0 md:!h-9 md:!w-9 md:!min-w-9 hover:!bg-[color-mix(in_srgb,var(--lms-black)_4%,transparent)] active:!bg-[color-mix(in_srgb,var(--lms-black)_6%,transparent)] transition-[background-color] duration-[var(--lms-motion-fast)] ease-[var(--lms-motion-ease)] motion-reduce:transition-none">
+   variant="secondary" className="relative transition-[background-color] duration-[var(--lms-motion-fast)] ease-[var(--lms-motion-ease)] motion-reduce:transition-none h-11 w-11 min-w-11 p-0 md:h-9 md:w-9 md:min-w-9 hover:bg-[color-mix(in_srgb,var(--lms-black)_4%,transparent)] active:bg-[color-mix(in_srgb,var(--lms-black)_6%,transparent)]">
    <ShellNavGlyph name="bell"/>
    {unread>0?<span aria-hidden="true" className="absolute -right-1 -top-1 inline-flex min-h-4 min-w-4 items-center justify-center rounded-[var(--lms-radius-pill)] bg-[var(--lms-error)] px-1 text-xs leading-4 text-[color:var(--lms-on-primary)]">{unread>99?"99+":unread}</span>:null}
   </Button>
   <Drawer id="hr-topbar-notifications" open={open} onOpenChange={setOpen}
-   title="Notifications" className="!left-auto !right-0 !w-[min(400px,100vw)] !max-w-[400px]"
+   title="Notifications" className="left-auto right-0 w-[min(400px,100vw)] max-w-[400px]"
    bodyClassName="min-w-0 overscroll-contain" footer={panelFooter}>
    {panelBody}
   </Drawer>

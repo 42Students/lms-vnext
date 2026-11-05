@@ -64,7 +64,7 @@ export default async function MentorProjectActivityHistoryPage({
       </section> : <>
       <FilterBar title="Filters"><form method="get" role="search" aria-label="Recorded project activity filters"
         action={"/mentor/projects/"+encodeURIComponent(projectId)+"/activity-history"}
-        className={mentorProjectActivityMobileFilters+" !rounded-none !border-0 !bg-transparent !p-0 max-md:[&_label]:w-full"}>
+        className={mentorProjectActivityMobileFilters+" max-md:[&_label]:w-full rounded-none border-0 bg-transparent p-0"}>
         <div className="grid min-w-0 w-full items-end gap-3 md:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_auto]">
         <Label stack>Event importance
           <Select name="importance" defaultValue={data.query.importance}

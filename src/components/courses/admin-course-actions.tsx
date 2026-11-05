@@ -437,7 +437,7 @@ export function CourseActions({
               <div className="flex flex-wrap items-center gap-2">
                 {/* ui-consistency-allow-hex: native colour input needs a hex value */}
                 <Input type="color" aria-label="Choose card colour"
-                  className="h-11 !w-20 cursor-pointer md:h-9"
+                  className="h-11 cursor-pointer md:h-9 w-20"
                   value={/^#[0-9A-Fa-f]{6}$/.test(cardColor)?cardColor:"var(--lms-button-primary)"}
                   onChange={event=>setCardColor(event.target.value)}/>
                 <Input aria-label="Card colour HEX value" value={cardColor}
@@ -567,7 +567,7 @@ export function OfferingActions({
         >
           Edit
         </Button>
-        {!hideArchive ? <Dropdown trigger="More" label="Offering actions" mobileSheet align="end" triggerClassName="md:!min-h-9"><Menu><MenuItem disabled={pending} onClick={()=>setArchiveOpen(true)}>Archive</MenuItem></Menu></Dropdown> : null}
+        {!hideArchive ? <Dropdown trigger="More" label="Offering actions" mobileSheet align="end" triggerClassName="md:min-h-9"><Menu><MenuItem disabled={pending} onClick={()=>setArchiveOpen(true)}>Archive</MenuItem></Menu></Dropdown> : null}
       </div>
 
       <Dialog

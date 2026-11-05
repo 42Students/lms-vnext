@@ -352,7 +352,7 @@ export function scanFile(path, rawSource) {
       if (!body || body.length < 7 || !body.includes(" ")) continue;
       for (const c of conflictsIn(body)) add("class-conflict", m.index, c);
     }
-    T(/(?:^|[\s"'`:])!(?=[a-z]+(?:-[a-z0-9[]|[[]))/g, (m) => add("important", m.index, source.slice(m.index, m.index + 24)));
+    T(/(?:^|[\s"'`:])!(?=[a-z]+-[a-z0-9[(])/g, (m) => add("important", m.index, source.slice(m.index, m.index + 24)));
   }
   return found;
 }

@@ -318,7 +318,7 @@ function Metric({
 }) {
   return <Button type="button" variant="secondary" onClick={onClick}
     aria-label={label + ": " + value} aria-haspopup="dialog" aria-expanded={expanded}
-    className={"!min-h-9 gap-2 rounded-full border px-3 py-1 text-xs font-semibold " +
+    className={"gap-2 rounded-full border px-3 py-1 text-xs font-semibold min-h-9 " +
       (label === "Today" ? "border-primary/30 text-primary-text" : "border-success/30 text-success")}>
     {label === "Today" ? <svg viewBox="0 0 20 20" width="16" height="16" fill="none" aria-hidden="true">
       <rect x="2.5" y="4" width="15" height="13.5" rx="2.5" stroke="currentColor" strokeWidth="1.6"/>
@@ -572,7 +572,7 @@ export function LearnerClassSchedule({
             {upcoming.map(event => (
               <Button key={event.id} type="button" variant="ghost"
                 aria-label={"View next class: " + (event.courseName || event.title || "Scheduled Class")}
-                className="!h-auto !min-h-14 !w-full !justify-start !whitespace-normal rounded-md border-b border-border py-3 text-left last:border-0"
+                className="rounded-md border-b border-border py-3 text-left last:border-0 h-auto min-h-14 w-full justify-start whitespace-normal"
                 onClick={() => { setSelectedEvent(event); setMetricDialog("NEXT"); }}>
                 <span className="grid w-full min-w-0 grid-cols-[minmax(6rem,auto)_minmax(0,1fr)_minmax(6rem,auto)] items-center gap-3">
                   <span className="text-xs font-semibold text-primary-text">
@@ -788,7 +788,7 @@ export function LearnerClassSchedule({
                           });
                         }
                       }}
-                      className={styles.monthDay+" !block !w-full [min-height:4rem] md:[min-height:6rem] !justify-start"}>
+                      className={styles.monthDay+" !block [min-height:4rem] md:[min-height:6rem] w-full justify-start"}>
                       <span className="block text-xs font-semibold">{Number(day.slice(8))}</span>
                       {dayItems.length ? <span aria-hidden="true" className="mt-1 flex flex-wrap gap-0.5">
                         {dayItems.slice(0,3).map(event=><span key={event.id} className={"size-1.5 rounded-[50%] bg-primary " +

@@ -236,7 +236,7 @@ export function NotificationList({
     <Dialog open={selected!==null} onOpenChange={next=>{if(!next)setSelected(null);}}
       title={selected?.title||"Notification"}
       {...(selected ? { description: notificationCategory(selected)+" · "+formatWhen(selected.createdAt) } : {})}
-      className="!max-w-[min(520px,calc(100vw-32px))]"
+      className="max-w-[min(520px,calc(100vw-32px))]"
       footer={<>
         {selected&&safeInternalAction(selected.actionHref)?<ButtonLink variant="primary" href={safeInternalAction(selected.actionHref)!}
           onClick={()=>setSelected(null)}>{legacyActionLabel(selected)}</ButtonLink>:null}

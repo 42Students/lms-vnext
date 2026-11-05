@@ -105,7 +105,7 @@ export function FacultyPrototypeCoursePriorities({signals,workspace,display}:{
     <div className="flex items-center justify-between gap-2">
      <Heading level={2} size="xs" className="uppercase tracking-wide text-[color:var(--lms-text-muted)]">About this course</Heading>
      <TextLink variant="bare" href={base+"/home?advanced=1#course-details"}
-      className="faculty-proto-secondary !min-h-9 !px-3 !py-1.5 text-xs">Details</TextLink>
+      className="faculty-proto-secondary text-xs min-h-9 px-3 py-1.5">Details</TextLink>
     </div>
     <Heading level={3} size="sm" className="mt-3 text-[color:var(--lms-heading)]">{course.courseName}</Heading>
     <p className="faculty-proto-subtitle line-clamp-3">{description??"No course description has been provided."}</p>

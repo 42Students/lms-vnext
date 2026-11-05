@@ -250,7 +250,7 @@ export function LearningPathActions({
             Unpublish
           </Button>
         ) : null}
-        <Dropdown trigger="More" label="Learning structure actions" mobileSheet align="end" triggerClassName="md:!min-h-9"><Menu className="w-full min-w-0"><MenuItem onClick={() => setArchiveOpen(true)}>Archive</MenuItem></Menu></Dropdown>
+        <Dropdown trigger="More" label="Learning structure actions" mobileSheet align="end" triggerClassName="md:min-h-9"><Menu className="w-full min-w-0"><MenuItem onClick={() => setArchiveOpen(true)}>Archive</MenuItem></Menu></Dropdown>
       </div>
 
       <Dialog

@@ -376,7 +376,7 @@ export function CollegeBrandingForm({
                   value={validColor(values[key]) ?? LMS_BRANDING_DEFAULT_HEX}
                   onChange={(event) => set(key, event.target.value.toUpperCase())}
                   disabled={!canEdit}
-                  className="h-11 !w-12 !min-w-12 shrink-0 cursor-pointer p-1"
+                  className="h-11 shrink-0 cursor-pointer p-1 w-12 min-w-12"
                 />
                 <Input
                   value={values[key] ?? ""}

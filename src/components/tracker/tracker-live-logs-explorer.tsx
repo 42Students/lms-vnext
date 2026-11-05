@@ -480,7 +480,7 @@ export function TrackerLiveLogsExplorer({initialQuery="",initialDetailId=""}:{
     <Dialog open={detailEntry!==null} onOpenChange={open=>{if(!open)closeDetails();}}
       title={detailEntry?displayTime(detailEntry.time)+" · "+detailEntry.event:"Log details"}
       description="Redacted Cloud Logging details"
-      className="!left-auto !right-0 !top-0 !h-[var(--lms-visual-height)] !max-h-[var(--lms-visual-height)] !w-[min(100vw,760px)] !max-w-[760px] !translate-x-0 !translate-y-0 !rounded-none"
+      className="left-auto right-0 top-0 h-[var(--lms-visual-height)] max-h-[var(--lms-visual-height)] w-[min(100vw,760px)] max-w-[760px] translate-x-0 translate-y-0 rounded-none"
       footer={<Button type="button" variant="secondary" onClick={closeDetails}>Close</Button>}>
       {detailEntry?<div className="space-y-3 text-sm">
         {detailLoading?<p role="status" className="text-xs text-muted-foreground">Verifying the provider entry…</p>:null}

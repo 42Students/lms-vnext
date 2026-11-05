@@ -175,7 +175,7 @@ export function TpoAcademicImportWorkspace() {
     <Dialog open={open} onOpenChange={value=>{if(!value)requestClose();else setOpen(true);}}
       dismissible={!busy&&!guardedPending} title="Import academic details"
       description="Preview matched academic details before saving any changes."
-      className="!max-w-[820px]" bodyClassName="max-h-[75dvh] space-y-3 overflow-y-auto">
+      className="max-w-[820px]" bodyClassName="max-h-[75dvh] space-y-3 overflow-y-auto">
       <p className="text-sm text-body">Match learners using their college roll numbers before importing CGPA, marks, backlogs, gaps or passing-year values. Verified corrections may include CGPA, marks, backlogs, gap years and passing year. Only selected matched learners are updated.</p>
       <Disclosure title="Academic CSV requirements"><p>
         Upload up to 5,000 rows of .xlsx or CSV for a scoped preview.

@@ -139,7 +139,7 @@ export function LearnerCareerRounds({
                 <Button
                   type="button" variant="ghost"
                   onClick={() => onSelect(round)}
-                  className="min-h-11 w-full justify-start !text-[var(--lms-primary-text)] underline md:w-auto"
+                  className="min-h-11 w-full justify-start underline md:w-auto text-[var(--lms-primary-text)]"
                 >
                   Round details
                 </Button>

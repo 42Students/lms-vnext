@@ -161,7 +161,7 @@ export default async function FacultyCalendarPage({
         No persisted scheduled sessions in this IST month for the selected teaching Sections.
       </Alert>:null}
       <ScrollCue axis="x" label="IST month schedule grid; scroll horizontally for all weekdays" className={monthStyles.scroll}>
-        <CalendarGrid variant="hairline" className={monthStyles.grid+" max-md:!min-w-[772px]"}>
+        <CalendarGrid variant="hairline" className={monthStyles.grid+" max-md:min-w-[772px]"}>
           {names.map((name,index)=><div key={name} className={monthStyles.weekday+" "+(index===0?calendarStyles.calendarSunday:"")}>{name}</div>)}
           {grid.days.map(day=><section key={day.key}
             aria-label={day.key+" IST"} data-outside={!day.inMonth} data-today={day.key===todayIst} className={monthStyles.day}>

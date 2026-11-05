@@ -86,8 +86,8 @@ export function FacultyPrototypeAssessmentDirectory({rows,lessonChoices,initialK
      <td><span className={"rounded-full px-2 py-1 text-xs font-semibold "+(draft?
       "bg-[color:var(--lms-gold-subtle)] text-[color:var(--lms-warning-strong)]":pending?"bg-[color:var(--lms-error-surface)] text-[color:var(--lms-error-text)]":"bg-[color:var(--lms-success-surface)] text-[color:var(--lms-success-strong)]")}>{status}</span></td>
      <td><div className="flex justify-end gap-2">
-      <TextLink variant="bare" href={primary} className="faculty-proto-action !min-h-9 !px-3 !py-1.5">{action}</TextLink>
-      <TextLink variant="bare" href={item.reportHref} className="faculty-proto-secondary !min-h-9 !px-3 !py-1.5">Report</TextLink>
+      <TextLink variant="bare" href={primary} className="faculty-proto-action min-h-9 px-3 py-1.5">{action}</TextLink>
+      <TextLink variant="bare" href={item.reportHref} className="faculty-proto-secondary min-h-9 px-3 py-1.5">Report</TextLink>
      </div></td>
     </tr>;
    })}</tbody>

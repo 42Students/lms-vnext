@@ -76,7 +76,7 @@ export function FileDropzone({label,onFiles,accept,multiple,maxBytes,progress,sh
         </ul> : null}
     {showSelectedFiles && droppedNames.length > 0 && !unavailable
       ? <Button type="button" variant="ghost" size="sm" onClick={clearDropped}
-          aria-label="Remove dropped files" className="mt-1 !min-h-9 !px-2 max-md:!min-h-11">
+          aria-label="Remove dropped files" className="mt-1 min-h-9 px-2 max-md:min-h-11">
           Remove dropped files
         </Button> : null}
     {showImagePreview&&dropPreviewFile&&dropPreviewUrl&&!unavailable

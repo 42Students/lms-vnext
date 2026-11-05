@@ -194,7 +194,7 @@ export function MentorProductBacklog({projectId,tasks,sprints,readOnly=false}:{
     <div className="mt-2 space-y-2">
      {returnable.map(task=><Button variant="secondary" key={task.id} type="button" disabled={busy}
         onClick={()=>setMoveRequest({task,targetSprintId:null})}
-        className="min-h-11 w-full !justify-start p-2 !text-left">
+        className="min-h-11 w-full p-2 justify-start text-left">
         {task.title} · Return to backlog
        </Button>)}
     </div>

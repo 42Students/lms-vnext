@@ -51,7 +51,7 @@ export function FacultyPrototypeAssignmentReport({report}:{report:Report}){
       "due "+dayLabel(assignment.dueAt):"No due date"}</p>
    </div>
    <nav aria-label="Assessment report type" className="flex flex-wrap gap-2">
-    <span className="faculty-proto-pill !border-[color:var(--lms-button-primary)] !bg-[color:var(--lms-primary-subtle)] !text-[color:var(--lms-button-primary)]" aria-current="page">
+    <span className="faculty-proto-pill border-[color:var(--lms-button-primary)] bg-[color:var(--lms-primary-subtle)] text-[color:var(--lms-button-primary)]" aria-current="page">
       Assignment report</span>
     <TextLink className="faculty-proto-pill" href="/teacher/allQuizzes">Quiz report</TextLink>
    </nav>
@@ -89,11 +89,11 @@ export function FacultyPrototypeAssignmentReport({report}:{report:Report}){
   <section className="overflow-hidden rounded-xl border border-[color:var(--lms-border)]">
    <header className="flex flex-wrap items-center justify-between gap-2 border-b border-[color:var(--lms-border)] px-[20px] py-4">
     <Heading level={2} size="xs" className="uppercase tracking-wide text-[color:var(--lms-text-muted)]">Student scores</Heading>
-    <TextLink variant="bare" className="faculty-proto-secondary !min-h-9 !px-3 !py-1.5 !text-xs"
+    <TextLink variant="bare" className="faculty-proto-secondary min-h-9 px-3 py-1.5 text-xs"
      href={csvHref}>Download as spreadsheet</TextLink>
    </header>
    <div className="faculty-proto-table-wrap">
-    <table className="faculty-proto-table !rounded-none !border-0">
+    <table className="faculty-proto-table rounded-none border-0">
      <thead><tr><th>Student</th><th>Score</th><th>Handed in</th><th><span className="sr-only">Actions</span></th></tr></thead>
      <tbody>{submissions.map(item=>{
       const graded=item.gradingStatus==="GRADED"&&item.pointsAwarded!==null;
@@ -105,14 +105,14 @@ export function FacultyPrototypeAssignmentReport({report}:{report:Report}){
         <span className="rounded-full bg-[color:var(--lms-error-surface)] px-2 py-1 text-xs font-bold text-[color:var(--lms-error-text)]">To grade</span>}</td>
        <td>{dayLabel(item.submittedAt)}</td>
        <td className="text-right"><TextLink variant="bare" className={(graded?"faculty-proto-secondary":"faculty-proto-action")+
-        " !min-h-9 !px-3 !py-1.5 !text-xs"} href={href}>{graded?"Open":"Grade"}</TextLink></td>
+        " min-h-9 px-3 py-1.5 text-xs"} href={href}>{graded?"Open":"Grade"}</TextLink></td>
       </tr>;
      })}
      {!report.rosterUnavailable?missingLearners.map(student=><tr key={"missing-"+student.membershipId}>
       <td>{student.displayName?.trim()||"Student"}</td>
       <td><span className="rounded-full bg-[color:var(--lms-neutral-100)] px-2 py-1 text-xs font-bold text-[color:var(--lms-text-muted)]">Missing</span></td>
       <td>—</td>
-      <td className="text-right"><TextLink variant="bare" className="faculty-proto-secondary !min-h-9 !px-3 !py-1.5 !text-xs"
+      <td className="text-right"><TextLink variant="bare" className="faculty-proto-secondary min-h-9 px-3 py-1.5 text-xs"
        href={"/teacher/courses/"+encodeURIComponent(assignment.deliveryId)+"/students/"+
         encodeURIComponent(student.membershipId)}>View student</TextLink></td>
      </tr>):null}

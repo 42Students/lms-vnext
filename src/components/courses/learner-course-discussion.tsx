@@ -693,7 +693,7 @@ export function LearnerCourseDiscussion({
                     {(canPost || moderate) ? (
                       <div className={"flex shrink-0 items-center gap-1 "+(moderate?"opacity-100":"opacity-100 sm:opacity-0 sm:group-hover:opacity-100 sm:group-focus-within:opacity-100")}>
                         {canPost && !moderate ? <Button type="button" variant="ghost"
-                          className="min-h-11 !text-[var(--lms-primary-text)] underline md:min-h-9"
+                          className="min-h-11 underline md:min-h-9 text-[var(--lms-primary-text)]"
                           aria-label={"Reply to "+(row.item.isMine?"your":row.item.senderName+"'s")+" message"}
                           title={"Reply to "+(row.item.isMine?"your":row.item.senderName+"'s")+" message"}
                           onClick={() => {
@@ -705,7 +705,7 @@ export function LearnerCourseDiscussion({
                           title={row.item.pinned?"Unpin this message":"Pin this message"}
                           disabled={pinningId!==null}
                           onClick={()=>void togglePin(row.item.id)}
-                          className={moderate?"!min-h-9 !rounded-md !border !border-[color:var(--lms-border)] !px-3 !text-xs !text-[color:var(--lms-text-muted)]":"min-h-9 min-w-9 p-2 !text-[var(--lms-primary-text)]"}>
+                          className={moderate?"!border min-h-9 rounded-md border-[color:var(--lms-border)] px-3 text-xs text-[color:var(--lms-text-muted)]":"min-h-9 min-w-9 p-2 text-[var(--lms-primary-text)]"}>
                           {moderate?(row.item.pinned?"Unpin":"Pin"):<DiscussionPinIcon filled={row.item.pinned}/>}
                         </Button> : null}
                         {(moderate || row.item.isMine) ? <Button
@@ -713,7 +713,7 @@ export function LearnerCourseDiscussion({
                           aria-label={"Delete "+(row.item.isMine?"your":row.item.senderName+"'s")+" message"} title="Delete this message"
                           disabled={deletingId===row.item.id}
                           onClick={()=>{setModerationError(null);setDeleteTarget(row.item.id);}}
-                          className={moderate?"!min-h-9 !rounded-md !border !border-[color:var(--lms-border)] !px-3 !text-xs !text-[color:var(--lms-text-muted)]":"min-h-9 min-w-9 p-2 !text-[var(--lms-error)]"}>
+                          className={moderate?"!border min-h-9 rounded-md border-[color:var(--lms-border)] px-3 text-xs text-[color:var(--lms-text-muted)]":"min-h-9 min-w-9 p-2 text-[var(--lms-error)]"}>
                           {moderate?"Delete":<DiscussionDeleteIcon/>}
                         </Button> : null}
                       </div>
@@ -760,7 +760,7 @@ export function LearnerCourseDiscussion({
           </div>:null}
           {replyTo ? <div className="mb-3 flex min-w-0 flex-col gap-2 border-l-2 border-border bg-surface-subtle p-3 sm:flex-row sm:items-center sm:justify-between">
             <p className="min-w-0 break-words text-xs text-body">Replying to: {replyTo.text}</p>
-            <Button type="button" variant="ghost" className="min-h-11 !text-[var(--lms-primary-text)] underline md:min-h-9"
+            <Button type="button" variant="ghost" className="min-h-11 underline md:min-h-9 text-[var(--lms-primary-text)]"
               onClick={() => setReplyTo(null)}>Cancel reply</Button>
           </div> : null}
           <Label className={moderate?"sr-only":"text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]"} htmlFor="course-discussion-message">
@@ -783,7 +783,7 @@ export function LearnerCourseDiscussion({
             rows={moderate?1:2}
             maxLength={LEARNER_DISCUSSION_MESSAGE_MAX_LENGTH}
             placeholder="Write a message..."
-            className={moderate?"!min-h-11 min-w-0 flex-[1_1_220px] resize-none !rounded-lg border-[color:var(--lms-border)] !py-2":"mt-1.5 w-full"}
+            className={moderate?"min-w-0 flex-[1_1_220px] resize-none border-[color:var(--lms-border)] min-h-11 rounded-lg py-2":"mt-1.5 w-full"}
             aria-describedby="course-discussion-compose-hint"
           />
           <div className={moderate?"flex shrink-0 items-center":"mt-3 flex min-w-0 flex-col gap-2 sm:flex-row sm:items-center sm:justify-between"}>

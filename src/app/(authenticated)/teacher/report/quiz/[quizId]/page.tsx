@@ -231,7 +231,7 @@ export default async function FacultyQuizReportPage({
             {questions.map((question, index) => (
               <li
                 key={question.id}
-                className={styles["accuracyRow"]+" !rounded-none !bg-transparent !px-0 !py-3 "+(question.accuracyPercent===null?"":question.accuracyPercent<50?styles["accuracyRowPoor"]:question.accuracyPercent<75?styles["accuracyRowFair"]:"")}
+                className={styles["accuracyRow"]+" rounded-none bg-transparent px-0 py-3 "+(question.accuracyPercent===null?"":question.accuracyPercent<50?styles["accuracyRowPoor"]:question.accuracyPercent<75?styles["accuracyRowFair"]:"")}
               >
                 <div className="flex flex-wrap items-start justify-between gap-3">
                   <div className="min-w-0">

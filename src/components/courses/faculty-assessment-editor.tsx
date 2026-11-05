@@ -234,7 +234,7 @@ export function FacultyAssessmentEditor({
         size="md"
         
         variant="secondary"
-        className={compact?"!min-h-9 !px-3 !py-1.5 !text-xs":undefined}
+        className={compact?"min-h-9 px-3 py-1.5 text-xs":undefined}
         aria-label={"Edit "+assessment.kind.toLowerCase()+" "+assessment.title}
         aria-busy={saving||deleting}
         onClick={() => {
@@ -272,7 +272,7 @@ export function FacultyAssessmentEditor({
       </div>:null}
       {success?<Alert tone="success">{success}</Alert>:null}
       <Drawer
-        className="md:!w-[min(640px,100vw)]"
+        className="md:w-[min(640px,100vw)]"
         open={open}
         onOpenChange={(next) => {
           if (!next && (saving || deleting)) return;

@@ -21,7 +21,7 @@ export function ExpandableCourseUpdate({ body }: { body: string }) {
           aria-controls={contentId}
           aria-expanded={expanded}
           onClick={() => setExpanded((value) => !value)}
-          variant="ghost" className="min-h-11 !text-[var(--lms-primary-text)] hover:underline md:min-h-9"
+          variant="ghost" className="min-h-11 hover:underline md:min-h-9 text-[var(--lms-primary-text)]"
         >
           {expanded ? "Show less" : "Read more"}
         </Button>

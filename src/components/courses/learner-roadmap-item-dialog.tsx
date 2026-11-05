@@ -64,7 +64,7 @@ export function LearnerRoadmapItemDialog({
   </Alert>:null}
   <Dialog open={open} onOpenChange={change} title={title}
    description={(caption??kind)+" · "+progress.replaceAll("_"," ")}
-   className="!max-w-[760px]"
+   className="max-w-[760px]"
    footer={<Button type="button" variant="secondary" onClick={()=>change(false)}>Got it</Button>}>
    {open?<div className="min-w-0 break-words [overflow-wrap:anywhere]">{children}</div>:null}
   </Dialog>

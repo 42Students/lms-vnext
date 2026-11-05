@@ -166,7 +166,7 @@ export function AddLessonContentDrawer({
       }}
       title={getDrawerTitle(contentMode)}
       side="right"
-      className="md:!w-[min(640px,100vw)]"
+      className="md:w-[min(640px,100vw)]"
     >
       {/* ── Step 1: Category picker ── */}
       {showCategoryPicker ? (

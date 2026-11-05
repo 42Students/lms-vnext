@@ -1,11 +1,14 @@
+import { twMerge } from "tailwind-merge";
+
 export type ClassNameValue =
   | string
   | false
   | null
   | undefined;
 
+/** Joins class names; when two utilities set the same property the later one wins (no !important needed). */
 export function cx(...values: ClassNameValue[]) {
-  return values.filter(Boolean).join(" ");
+  return twMerge(values.filter(Boolean).join(" "));
 }
 
 // shadcn/custom registries conventionally expect a cn helper.

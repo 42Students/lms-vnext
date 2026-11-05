@@ -108,7 +108,7 @@ export function FacultyItemActions({
               : actionLabel(action)}
           </Button>
         ))}
-        {actions.includes("ARCHIVE") && actions.length > 1 ? <Dropdown trigger="More" label="Item actions" align="end" mobileSheet triggerClassName="w-full md:!min-h-9">
+        {actions.includes("ARCHIVE") && actions.length > 1 ? <Dropdown trigger="More" label="Item actions" align="end" mobileSheet triggerClassName="w-full md:min-h-9">
           <Menu className="w-full min-w-0"><MenuItem disabled={active !== null} onClick={() => {setError(null);setConfirmAction("ARCHIVE");}}>Archive</MenuItem></Menu>
         </Dropdown> : null}
       </div>

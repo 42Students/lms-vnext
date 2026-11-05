@@ -167,7 +167,7 @@ export function FacultyAssessmentCreate({kind,lessons,lessonsLoadError=null,
   </>:<Drawer open={open} onOpenChange={requestClose}
     title="Create New Assignment"
     description="Choose your course and lesson, then prepare the assignment."
-    side="right" className="md:!w-[640px]"
+    side="right" className="md:w-[640px]"
     footer={<div className="flex w-full flex-wrap justify-end gap-2">
      <Button variant="secondary" disabled={editorBusy} type="button" onClick={()=>requestClose(false)}>Cancel</Button>
      <Button type="submit" form={formId} loading={editorBusy} disabled={!lesson||!course||editorBusy}>

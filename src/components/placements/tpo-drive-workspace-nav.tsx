@@ -41,7 +41,7 @@ export function TpoDriveWorkspaceNav({ jobId }: { jobId: string }) {
         }))}/>
       <Dropdown className="shrink-0" align="end" label="More drive sections"
         trigger="More sections ▾"
-        {...(moreActive ? {triggerClassName:"!border-[var(--lms-primary)] !bg-[var(--lms-primary-subtle)] !text-[var(--lms-primary-text)]"} : {})}>
+        {...(moreActive ? {triggerClassName:"border-[var(--lms-primary)] bg-[var(--lms-primary-subtle)] text-[var(--lms-primary-text)]"} : {})}>
         <div className="grid min-w-52 gap-1">
           {moreTabs.map(tab=>(
             <TextLink variant="bare" key={tab.href} href={tab.href}

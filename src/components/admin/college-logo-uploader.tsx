@@ -167,13 +167,13 @@ export function CollegeLogoUploader({collegeId,currentUrl,canEdit}:{
       </div>
       <div className="grid min-w-0 max-w-[480px] gap-[var(--lms-space-3)]">
         <Label stack className="min-w-0">Horizontal crop position ({positionX}%)
-          <Input aria-label="Horizontal crop position" className="!min-h-11 !w-full !min-w-0 !border-0 !bg-transparent !px-0 accent-[var(--lms-primary)]" type="range" min={0} max={100} value={positionX} onChange={e=>setPositionX(Number(e.target.value))}/>
+          <Input aria-label="Horizontal crop position" className="accent-[var(--lms-primary)] min-h-11 w-full min-w-0 border-0 bg-transparent px-0" type="range" min={0} max={100} value={positionX} onChange={e=>setPositionX(Number(e.target.value))}/>
         </Label>
         <Label stack className="min-w-0">Vertical crop position ({positionY}%)
-          <Input aria-label="Vertical crop position" className="!min-h-11 !w-full !min-w-0 !border-0 !bg-transparent !px-0 accent-[var(--lms-primary)]" type="range" min={0} max={100} value={positionY} onChange={e=>setPositionY(Number(e.target.value))}/>
+          <Input aria-label="Vertical crop position" className="accent-[var(--lms-primary)] min-h-11 w-full min-w-0 border-0 bg-transparent px-0" type="range" min={0} max={100} value={positionY} onChange={e=>setPositionY(Number(e.target.value))}/>
         </Label>
         <Label stack className="min-w-0">Zoom ({Math.round(zoom*100)}%)
-          <Input aria-label="Crop zoom" className="!min-h-11 !w-full !min-w-0 !border-0 !bg-transparent !px-0 accent-[var(--lms-primary)]" type="range" min={1} max={2} step={0.1} value={zoom} onChange={e=>setZoom(Number(e.target.value))}/>
+          <Input aria-label="Crop zoom" className="accent-[var(--lms-primary)] min-h-11 w-full min-w-0 border-0 bg-transparent px-0" type="range" min={1} max={2} step={0.1} value={zoom} onChange={e=>setZoom(Number(e.target.value))}/>
         </Label>
       </div>
     </div>

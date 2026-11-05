@@ -301,7 +301,7 @@ export function LearnerCareerCalendar({
                   </span>
                   {(surface==="schedule"?dayEvents:chips.visible.map(chip=>({...chip,eventType:undefined as CareerCalendarEvent["eventType"]}))).map((chip) => (
                     <span key={chip.key} data-kind={chip.kind}
-                      className={styles["chip"]+(chip.eventType==="EXAM_BLOCK"?" !border-error !bg-error-subtle":"")}
+                      className={styles["chip"]+(chip.eventType==="EXAM_BLOCK"?" border-error bg-error-subtle":"")}
                       title={chip.title + " · " + (chip.eventType==="EXAM_BLOCK"?"No drives (exams)":chip.kind)}>
                       {chip.eventType==="EXAM_BLOCK"?"No drives (exams)":chip.eventType==="APPLICATION_DEADLINE"?"Application deadline":
                         chip.eventType==="JOB_IMPORTANT_DATE"?"Talk":chip.kind === "ASSESSMENT" ? "Assessment" : chip.kind === "INTERVIEW" ? "Interview" : chip.kind === "TALK" ? "Talk" : "Other"} · {chip.title}
@@ -416,7 +416,7 @@ export function LearnerCareerCalendar({
       </section>
       <Drawer open={selectedDayKey!==null}
         onOpenChange={(open)=>{if(!open)setSelectedDayKey(null);}}
-        className="md:!w-[min(440px,100vw)]"
+        className="md:w-[min(440px,100vw)]"
         title={dayDrawerTitle}
         description="Your full scheduled placement day in Indian Standard Time."
         footer={<Button type="button" variant="secondary"

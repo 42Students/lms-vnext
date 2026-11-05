@@ -412,7 +412,7 @@ export function CollegeCohortRowActions({ row, periods }: {
       title={row.status !== "PLANNED" ? "Only planned batches may be archived." :
         "Archive this batch; historical records remain available."}
       onClick={retire}><span aria-hidden="true">×</span> Archive</Button>
-    <Dropdown trigger="More" label="Batch lifecycle actions" align="end" mobileSheet triggerClassName="md:!min-h-9">
+    <Dropdown trigger="More" label="Batch lifecycle actions" align="end" mobileSheet triggerClassName="md:min-h-9">
       <Menu className="w-full min-w-0">
     {row.status === "ACTIVE" && <MenuItem type="button"
       disabled={pending || !row.currentTermNumber || (row.durationTerms !== undefined && row.currentTermNumber < row.durationTerms)}
@@ -448,7 +448,7 @@ export function CollegeCohortRowActions({ row, periods }: {
       Archived batches cannot be edited.
     </p> : null}
     {editing ? <Dialog open={editing} onOpenChange={next=>{if(!next)close();}}
-      title={"Edit batch " + row.name} className="!max-w-[520px]">
+      title={"Edit batch " + row.name} className="max-w-[520px]">
       <form onSubmit={save} className="grid min-w-0 grid-cols-1 items-start gap-[var(--lms-space-4)] md:grid-cols-2">
         
         <p className="text-sm text-muted-foreground md:col-span-2 leading-[22px]">Program and starting period cannot change after creation. Status: {row.status}. Planned batches can be archived only before class or student records exist; active batches may be marked Completed after their final term. The legacy Inactive transition is not supported by this progression model.</p>

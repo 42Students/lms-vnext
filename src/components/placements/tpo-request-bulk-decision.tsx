@@ -188,7 +188,7 @@ export function TpoRequestBulkDecision({rows}:{rows:readonly Row[]}){
    description={action==="APPROVE"?
     "Students are told straight away. Each approval may change a placement record and cannot be undone here.":
     "Each selected student will receive your recorded rejection reason."}
-   bodyClassName="!px-[var(--lms-space-4)] !py-[var(--lms-space-4)] sm:!p-[var(--lms-canvas-padding)]"
+   bodyClassName="px-[var(--lms-space-4)] py-[var(--lms-space-4)] sm:p-[var(--lms-canvas-padding)]"
    footer={<div className="flex w-full flex-col-reverse gap-[var(--lms-space-2)] sm:flex-row sm:justify-end">
     <Button variant="secondary" className="w-full sm:w-auto" disabled={pending} onClick={()=>setConfirmOpen(false)}>Cancel</Button>
     <Button className="w-full sm:w-auto" disabled={!valid||!acknowledged||pending} onClick={()=>void submit()}>

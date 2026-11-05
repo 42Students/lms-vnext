@@ -50,7 +50,7 @@ export function FacultyCourseItemViewer({title,kind,notes,externalHref,youtubeEm
     footer={<Button variant="secondary" onClick={()=>setOpen(false)}>Close</Button>}>
     {content}
   </Drawer>:<Dialog title={title} description="Lesson content" open={open}
-    onOpenChange={setOpen} className={isVideo?"!max-w-[1120px]":"!max-w-[760px]"}
+    onOpenChange={setOpen} className={isVideo?"max-w-[1120px]":"max-w-[760px]"}
     footer={<Button variant="secondary" onClick={()=>setOpen(false)}>Close</Button>}>
     {content}
   </Dialog>}

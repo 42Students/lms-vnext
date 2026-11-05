@@ -46,7 +46,7 @@ export default async function MentorResourceDirectoryPage({params,searchParams}:
     {" "}{data.linkableCount} with HTTPS links.
    </p>
    <FilterBar title="Filters"><form method="get" action={base+"/resources-directory"} role="search" aria-label="Project resources filters"
-    className={mentorResourceDirectoryFilterLayout+" !rounded-none !border-0 !bg-transparent !p-0 max-md:[&_label]:w-full [&_button]:max-md:w-full"}>
+    className={mentorResourceDirectoryFilterLayout+" max-md:[&_label]:w-full [&_button]:max-md:w-full rounded-none border-0 bg-transparent p-0"}>
     <div className="grid min-w-0 w-full items-end gap-3 md:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_auto]">
     <Label stack>Resource title or description
      <Input type="search" name="search" maxLength={100} defaultValue={data.query.search}

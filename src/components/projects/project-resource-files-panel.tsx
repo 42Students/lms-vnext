@@ -375,7 +375,7 @@ export function ProjectResourceFilesPanel({projectId,initialFiles,resources=[],c
           </section>:null}
           {canManage?<Disclosure title="Manage file" className="mt-2" contentClassName="flex min-w-0 flex-wrap gap-2 pt-2">
             <Button variant="secondary" aria-label={"Edit resource "+file.title} disabled={busy} onClick={()=>beginEdit(file)} className="min-h-11 w-full md:min-h-9 md:w-auto">Edit resource</Button>
-            <Button variant="link" aria-label={"Delete resource "+file.title} disabled={busy} onClick={()=>{setFeedback(null);setDeleteTarget(file);}} className="min-h-11 w-full !text-[var(--lms-error)] md:min-h-9 md:w-auto">Delete</Button>
+            <Button variant="link" aria-label={"Delete resource "+file.title} disabled={busy} onClick={()=>{setFeedback(null);setDeleteTarget(file);}} className="min-h-11 w-full md:min-h-9 md:w-auto text-[var(--lms-error)]">Delete</Button>
           </Disclosure>:null}
           {editing===file.id&&canManage&&<form onSubmit={event=>void saveEdit(event,file)}
             className="mt-3 grid min-w-0 gap-3 border-t border-[var(--lms-canvas-border)] pt-3 md:grid-cols-2">

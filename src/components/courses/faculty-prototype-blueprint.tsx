@@ -89,7 +89,7 @@ export function FacultyPrototypeBlueprint({workspace,selectedLessonId,engagement
     <Heading level={2} size="xs" className="uppercase tracking-wider text-[color:var(--lms-text-muted)]">{lessons.length} lessons</Heading>
     <span className="group relative">
      <Button variant="bare" type="button" disabled title="Only the college admin can add shared syllabus lessons"
-      className="faculty-proto-secondary !min-h-8 !px-3 !py-1.5 !text-xs disabled:cursor-not-allowed disabled:opacity-60">
+      className="faculty-proto-secondary disabled:cursor-not-allowed disabled:opacity-60 min-h-8 px-3 py-1.5 text-xs">
       + Lesson
      </Button>
     </span>
@@ -125,7 +125,7 @@ export function FacultyPrototypeBlueprint({workspace,selectedLessonId,engagement
     <p className="faculty-proto-subtitle mt-1">{items.length} items · {currentLive?"Live":"Draft"}</p></div>
     {current?<div className="flex flex-wrap items-center gap-2">
      <Button variant="bare" type="button" disabled title="The college admin manages the shared lesson name"
-      className="faculty-proto-secondary !min-h-9 !px-3 !py-1.5 !text-xs disabled:cursor-not-allowed disabled:opacity-60">Rename</Button>
+      className="faculty-proto-secondary disabled:cursor-not-allowed disabled:opacity-60 min-h-9 px-3 py-1.5 text-xs">Rename</Button>
      <Disclosure title="+ Add content ▾" className="relative">
       <div className="absolute right-0 z-(--lms-z-sticky-inline) mt-2 min-w-52 overflow-hidden rounded-lg border border-[color:var(--lms-border)] bg-surface py-1 shadow-lg">
        {FACULTY_BLUEPRINT_ADD_KINDS.map(label=><TextLink variant="bare"

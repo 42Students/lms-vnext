@@ -149,7 +149,7 @@ export function SuperAdminBulkDriveActions({drives}: {drives: Drive[]}) {
       {result.results.filter(x=>x.status==="SKIPPED").map(x=>
         <p key={x.jobId}>{drives.find(d=>d.id===x.jobId)?.title??"Drive"}: {x.reason}</p>)}
       {result.skipped>0?<Button type="button" variant="link" onClick={()=>void send(false)}
-        className="!min-h-11 !px-0 !text-primary-text">Preview failed drives for retry</Button>:null}
+        className="min-h-11 px-0 text-primary-text">Preview failed drives for retry</Button>:null}
     </div>:null}
     {error?<div className="space-y-2" role="alert">
       <InlineNotice tone="error" message={error}/>

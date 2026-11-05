@@ -50,7 +50,7 @@ export function TpoTeamMessageActions({threadId,messageId,body,expectedBodyHash,
   </Dialog>
   <Dialog open={mode==="DELETE"} onOpenChange={next=>{if(!next&&!busy)setMode(null);}} dismissible={!busy} role="alertdialog"
     title="Delete this message?" description="Other team members will see Message removed." className="max-w-md"
-    bodyClassName="!p-0"
+    bodyClassName="p-0"
     footer={<div className="flex w-full flex-col-reverse gap-2 sm:flex-row sm:justify-end">
      <Button variant="secondary" className="min-h-11 w-full sm:w-auto md:min-h-9" type="button" disabled={busy} onClick={()=>{setMode(null);setError("");}}>Cancel</Button>
      <Button variant="danger" className="min-h-11 w-full sm:w-auto md:min-h-9" type="button" loading={busy} disabled={busy}

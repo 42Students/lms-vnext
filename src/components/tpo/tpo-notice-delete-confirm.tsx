@@ -20,7 +20,7 @@ export function TpoNoticeDeleteConfirm({id,version}:{id:string;version:number}){
    Delete
   </Button>
   <Dialog open={open} onOpenChange={next=>{if(!pending.current){if(!next)dismiss();else setOpen(true);}}} dismissible={!pending.current}
-    role="alertdialog" className="max-w-sm" bodyClassName="!p-0"
+    role="alertdialog" className="max-w-sm" bodyClassName="p-0"
     title="Delete this announcement?" description="Students stop seeing it, and its notices are taken back."
     footer={<form method="post" action={"/api/placements/tpo/announcements/"+encodeURIComponent(id)+"/lifecycle"}
       className="flex w-full flex-col-reverse gap-2 sm:flex-row sm:justify-end"

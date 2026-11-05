@@ -400,7 +400,7 @@ export function AssignmentSubmissionControl({
     </Button>
     <Drawer open={drawerOpen} onOpenChange={closeDrawer} dismissible={!submitting}
       title="Submit Your Work" description={"Submitting for "+(assignmentTitle?.trim()||"This assignment")}
-      className="md:!w-[720px]">
+      className="md:w-[720px]">
       {form}
     </Drawer>
   </>;

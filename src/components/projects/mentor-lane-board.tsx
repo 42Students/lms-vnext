@@ -362,7 +362,7 @@ export function MentorLaneBoard({projectId,initialTasks,sprints,releases,members
        onDragEnd={()=>setDragging(false)}
       className={"prototype-mentor-board-task space-y-2 border p-3 text-sm "+styles["card"]}>
       <Button variant="ghost" type="button" onClick={()=>setFocusedId(task.id)}
-        className="min-h-11 w-full !justify-start !text-left">{task.title}</Button>
+        className="min-h-11 w-full justify-start text-left">{task.title}</Button>
       <p className="prototype-mentor-board-meta">
         <span>{task.taskType??"Task"} · {task.estimatePoints??"—"} pts</span>
         <span>{members.find(member=>member.membershipId===task.assigneeMembershipId)?.displayName??"Unassigned"}</span>
@@ -458,7 +458,7 @@ export function MentorLaneBoard({projectId,initialTasks,sprints,releases,members
       return <div key={task.id} className="prototype-mentor-board-list-row"
         draggable={canReassign}
         onDragStart={event=>event.dataTransfer.setData("text/plain",task.id)}>
-        <Button type="button" variant="ghost" size="sm" className="!justify-start !text-left"
+        <Button type="button" variant="ghost" size="sm" className="justify-start text-left"
           onClick={()=>setFocusedId(task.id)}>{task.title}</Button>
         <span>{members.find(member=>member.membershipId===task.assigneeMembershipId)?.displayName??"Unassigned"}</span>
         {canReassign?<Select value={task.sprintId??"BACKLOG"} disabled={busy}

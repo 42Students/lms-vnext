@@ -114,7 +114,7 @@ export function FacultyPrototypeCourseDirectory({rows,totalAssignments,pendingBy
      </span></td>
      <td>{course.classLinks.length===1?<TextLink className="text-sm text-[color:var(--lms-heading)]" href={"/teacher/courses/"+encodeURIComponent(course.deliveries[0]!)+"/attendanceDetail"}>{course.attendancePossible>0?Math.round(course.attendancePresent*100/course.attendancePossible)+"% this month":"Not recorded"}</TextLink>
       :<span className="text-sm text-body">{course.classLinks.length} classes · Select a class to view attendance</span>}</td>
-     <td>{course.classLinks.length===1?<TextLink variant="bare" className="faculty-proto-secondary !min-h-9 !px-3 !py-1.5 !text-xs" href={"/teacher/courses/"+encodeURIComponent(course.deliveries[0]!)+"/home"}>Open</TextLink>
+     <td>{course.classLinks.length===1?<TextLink variant="bare" className="faculty-proto-secondary min-h-9 px-3 py-1.5 text-xs" href={"/teacher/courses/"+encodeURIComponent(course.deliveries[0]!)+"/home"}>Open</TextLink>
       :<span className="text-sm font-semibold text-[color:var(--lms-button-primary)]">Choose class</span>}</td>
     </tr>)}</tbody>
    </table>

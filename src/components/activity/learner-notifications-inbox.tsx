@@ -209,10 +209,10 @@ export function LearnerNotificationsInbox({
               aria-pressed={active === key}
               aria-label={label+", "+categoryCounts[key]+" notifications"}
               onClick={() => selectCategory(key)}
- className={"!min-h-11 shrink-0 rounded-[8px] px-4 py-2 !text-[14px] !font-medium !leading-[1.3] whitespace-nowrap focus-ring "+
+ className={"shrink-0 rounded-[8px] px-4 py-2 whitespace-nowrap focus-ring min-h-11 text-[14px] font-medium leading-[1.3] "+
                 (active===key
-                  ? "!border-[var(--lms-primary)] !bg-[var(--lms-primary)] !text-[color:var(--lms-on-primary)] enabled:hover:!border-[var(--lms-primary-hover)] enabled:hover:!bg-[var(--lms-primary-hover)] enabled:hover:!text-[color:var(--lms-on-primary)]"
-                  : "!border-[var(--lms-canvas-border)] !bg-transparent !text-[var(--lms-neutral-500)] enabled:hover:!border-[color-mix(in_srgb,var(--lms-primary)_40%,transparent)] enabled:hover:!bg-[color-mix(in_srgb,var(--lms-primary)_5%,transparent)] enabled:hover:!text-[var(--lms-primary)]")}
+                  ? "border-[var(--lms-primary)] bg-[var(--lms-primary)] text-[color:var(--lms-on-primary)] enabled:hover:border-[var(--lms-primary-hover)] enabled:hover:bg-[var(--lms-primary-hover)] enabled:hover:text-[color:var(--lms-on-primary)]"
+                  : "border-[var(--lms-canvas-border)] bg-transparent text-[var(--lms-neutral-500)] enabled:hover:border-[color-mix(in_srgb,var(--lms-primary)_40%,transparent)] enabled:hover:bg-[color-mix(in_srgb,var(--lms-primary)_5%,transparent)] enabled:hover:text-[var(--lms-primary)]")}
             >
               <span className="inline-flex items-center gap-2">
                 <NotificationCategoryIcon category={key}/>
@@ -234,10 +234,10 @@ export function LearnerNotificationsInbox({
         </Label>
         <FilterChip type="button" aria-pressed={unread==="unread"}
           onClick={()=>selectUnread(unread==="unread"?"all":"unread")}
-          className={"!min-h-11 w-full md:w-auto rounded-[8px] px-4 py-2 !text-[14px] !font-medium !leading-[1.3] "+
+          className={"w-full md:w-auto rounded-[8px] px-4 py-2 min-h-11 text-[14px] font-medium leading-[1.3] "+
             (unread==="unread"
-              ? "!border-[var(--lms-primary)] !bg-[var(--lms-primary)] !text-[color:var(--lms-on-primary)] enabled:hover:!border-[var(--lms-primary-hover)] enabled:hover:!bg-[var(--lms-primary-hover)] enabled:hover:!text-[color:var(--lms-on-primary)]"
-              : "!border-[var(--lms-canvas-border)] !bg-transparent !text-[var(--lms-neutral-500)] enabled:hover:!border-[color-mix(in_srgb,var(--lms-primary)_40%,transparent)] enabled:hover:!bg-[color-mix(in_srgb,var(--lms-primary)_5%,transparent)] enabled:hover:!text-[var(--lms-primary)]")}>
+              ? "border-[var(--lms-primary)] bg-[var(--lms-primary)] text-[color:var(--lms-on-primary)] enabled:hover:border-[var(--lms-primary-hover)] enabled:hover:bg-[var(--lms-primary-hover)] enabled:hover:text-[color:var(--lms-on-primary)]"
+              : "border-[var(--lms-canvas-border)] bg-transparent text-[var(--lms-neutral-500)] enabled:hover:border-[color-mix(in_srgb,var(--lms-primary)_40%,transparent)] enabled:hover:bg-[color-mix(in_srgb,var(--lms-primary)_5%,transparent)] enabled:hover:text-[var(--lms-primary)]")}>
           {unread==="unread"?"Unread only ✓":"Unread only"}
         </FilterChip>
         <Button type="button" onClick={applySearch}
@@ -328,7 +328,7 @@ export function LearnerNotificationsInbox({
         open={selected !== null}
         onOpenChange={(open) => { if (!open) setSelected(null); }}
         title={selected?.title ?? "Notification"}
-        className="!max-w-[min(520px,calc(100vw-32px))]"
+        className="max-w-[min(520px,calc(100vw-32px))]"
         description={selected?.source === "ANNOUNCEMENT" ? "College announcement" : "Personal notification"}
         footer={
           <div className="flex w-full flex-col gap-[var(--lms-space-2)] md:flex-row md:flex-wrap md:justify-end">

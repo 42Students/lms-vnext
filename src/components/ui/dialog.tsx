@@ -104,8 +104,8 @@ export function PdfViewerDialog({
  const accepted=trustedPdfViewerUrl(securePdfUrl,source,trustedSignedHost);
  return <Dialog open={open} onOpenChange={onOpenChange} title={title}
    dismissible={dismissible}
-   className="!max-w-[1400px] max-md:!w-[100vw] max-md:!max-h-[100dvh] max-md:!rounded-none"
-   bodyClassName="!overflow-hidden !p-0"
+   className="max-w-[1400px] max-md:w-[100vw] max-md:max-h-[100dvh] max-md:rounded-none"
+   bodyClassName="overflow-hidden p-0"
    footer={<Button type="button" variant="secondary" onClick={()=>onOpenChange(false)}>Got it</Button>}>
    {accepted?<iframe src={accepted} title={title+" PDF preview"}
      allowFullScreen loading="lazy"

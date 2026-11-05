@@ -137,7 +137,7 @@ export function FileUpload({ label, maxBytes, onFiles, helper, fallback, pickerU
         </ul> : null}
     {showSelectedFiles && selectedNames.length > 0 && !unavailable
       ? <Button type="button" variant="ghost" size="sm" onClick={clearSelection}
-          className="!min-h-9 !px-2 max-md:!min-h-11" aria-label="Remove selected files">
+          className="min-h-9 px-2 max-md:min-h-11" aria-label="Remove selected files">
           Remove selected files
         </Button> : null}
     {showImagePreview && previewFile && previewUrl && !pickerUnavailable && !disabled

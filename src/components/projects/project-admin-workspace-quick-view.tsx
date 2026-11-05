@@ -79,7 +79,7 @@ export function ProjectAdminWorkspaceQuickView({item,href}:{
   </Button>
   <Dialog open={open} onOpenChange={setOpen} title="Workspace details"
    description="Quick view · Selected college"
-   className="!left-auto !right-0 !top-0 !h-[100dvh] !max-h-[100dvh] !w-[min(520px,100vw)] !max-w-[520px] !translate-x-0 !translate-y-0 !rounded-none"
+   className="left-auto right-0 top-0 h-[100dvh] max-h-[100dvh] w-[min(520px,100vw)] max-w-[520px] translate-x-0 translate-y-0 rounded-none"
    footer={<div className="flex flex-wrap gap-2">
     <Button variant="secondary" onClick={()=>setOpen(false)}>Close</Button>
     <ButtonLink variant="primary" href={href}>

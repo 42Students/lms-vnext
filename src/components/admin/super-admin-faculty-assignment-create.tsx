@@ -291,7 +291,7 @@ export function SuperAdminTeachingRoleEdit({
   <Dialog open={open} onOpenChange={next=>{if(!next)requestClose();}}
    title={"Edit assignment: "+selectedFacultyName+" · "+selectedCourseName}
    description="Update faculty, course, program, batch, semester, class, academic year and role."
-   className="!max-w-[500px]" dismissible={!pending}
+   className="max-w-[500px]" dismissible={!pending}
    footer={<div className="flex flex-col-reverse gap-2 sm:flex-row sm:justify-end">
     <Button variant="secondary" type="button" disabled={pending} onClick={requestClose}>Cancel</Button>
     <Button variant="primary" type="button" loading={pending} disabled={pending||!changed}

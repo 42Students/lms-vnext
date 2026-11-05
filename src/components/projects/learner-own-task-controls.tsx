@@ -126,7 +126,7 @@ export function LearnerDeleteOwnTask({projectId,taskId}:{projectId:string;taskId
   finally{setBusy(false);}
  }
  return <div><Button type="button" disabled={busy} onClick={()=>setConfirmDelete(true)}
-  variant="ghost" className="mt-2 min-h-11 md:min-h-9 text-xs !text-[var(--lms-error)] underline">
+  variant="ghost" className="mt-2 min-h-11 md:min-h-9 text-xs underline text-[var(--lms-error)]">
   {busy?"Deleting…":"Delete my task"}</Button>
   <ConfirmDialog open={confirmDelete} onOpenChange={setConfirmDelete}
    title="Delete your task?" description="This cannot be undone."

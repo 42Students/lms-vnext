@@ -71,10 +71,10 @@ export function FacultyPrototypeStudentDirectory({learners,signals,deliveryId}:{
     placeholder="Search by name, roll no, phone or email"/>
    <div className="flex shrink-0 flex-wrap gap-2" role="group" aria-label="Roster filter">
     <Button variant="bare" type="button" aria-pressed={effectiveView==="ALL"} onClick={()=>setView("ALL")}
-     className={"faculty-proto-pill"+(view==="ALL"?" !border-[color:var(--lms-button-primary)] !text-[color:var(--lms-button-primary)]":"")}>All {learners.length}</Button>
+     className={"faculty-proto-pill"+(view==="ALL"?" border-[color:var(--lms-button-primary)] text-[color:var(--lms-button-primary)]":"")}>All {learners.length}</Button>
     <Button variant="bare" type="button" aria-pressed={effectiveView==="BEHIND"} disabled={!hasMeasurableProgress}
      onClick={()=>setView("BEHIND")}
-     className={"faculty-proto-pill"+(view==="BEHIND"?" !border-[color:var(--lms-button-primary)] !text-[color:var(--lms-button-primary)]":"")}>
+     className={"faculty-proto-pill"+(view==="BEHIND"?" border-[color:var(--lms-button-primary)] text-[color:var(--lms-button-primary)]":"")}>
       Behind {completion?.behindTotal??"—"}</Button>
    </div>
    <Button variant="secondary" className="shrink-0" aria-label="Download roster CSV"

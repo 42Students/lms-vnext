@@ -139,7 +139,7 @@ export function MentorReleaseEditor({
      className="min-h-11 w-auto px-3 py-2 md:min-h-9">Cancel</Button>
    </div>
    {canRemove?<div className="border-t border-[var(--lms-canvas-border)] pt-3"><Button variant="link" type="button" disabled={pending} onClick={()=>{setError("");setConfirmDelete(true);}}
-     className="min-h-11 w-full !justify-start !text-[var(--lms-error)] sm:w-auto md:min-h-9">Delete release</Button></div>:null}
+     className="min-h-11 w-full sm:w-auto md:min-h-9 justify-start text-[var(--lms-error)]">Delete release</Button></div>:null}
    {release&&linkedSprints>0?<p className="text-xs text-muted-foreground leading-[20px]">
     Release cannot be deleted until its {linkedSprints} linked sprint(s) are removed.
    </p>:null}

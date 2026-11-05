@@ -818,7 +818,7 @@ export function SectionOperations({
         <Button type="button" variant="primary" onClick={()=>setScheduleOpen(true)} className="min-h-11 w-full sm:w-auto md:min-h-9">+ Schedule class</Button>
         <Dialog open={scheduleOpen} onOpenChange={next=>next?setScheduleOpen(true):closeSchedule()}
           title="Schedule class" description={"Set a schedule for "+section.name+" · "+section.programName}
-          dismissible={!pending} className="!max-w-[620px]" bodyClassName="max-h-[75dvh] overflow-y-auto"
+          dismissible={!pending} className="max-w-[620px]" bodyClassName="max-h-[75dvh] overflow-y-auto"
           footer={<div className="flex flex-wrap justify-end gap-2">
             <Button type="button" variant="secondary" disabled={pending} onClick={closeSchedule}>Cancel</Button>
             <Button type="button" disabled={pending||!eventTitle.trim()||!eventStart||!eventEnd}

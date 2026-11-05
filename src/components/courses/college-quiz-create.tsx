@@ -200,7 +200,7 @@ export function CollegeQuizCreate({lessons,deliveries}:{
   </Banner>:null}
   <Dialog open={opened} onOpenChange={open=>{if(!open)void close();}}
    title="Create quiz" description="Build and publish a quiz for the selected Course and Section."
-   className="!w-[min(820px,94vw)] !max-w-[820px]" dismissible={!busy}>
+   className="w-[min(820px,94vw)] max-w-[820px]" dismissible={!busy}>
    <div className="min-w-0 space-y-4">
    <div className="grid min-w-0 gap-4 md:grid-cols-2">
     <Label stack>Lesson for new quiz

@@ -343,7 +343,7 @@ export function CollegeTermMappingManager({ data, readOnly = false }: { data: Ma
             const course = data.courses.find(item => item.id === id);
             return <Button key={id} type="button" size="sm" variant="secondary"
               disabled={pending || refreshing || mappingStale || draggedId !== null} aria-label={"Remove " + (course?.name ?? id) + " from selection"}
-              onClick={() => toggleCourse(id, false)} className="!min-h-7 rounded-full px-2 py-0 text-xs">
+              onClick={() => toggleCourse(id, false)} className="rounded-full px-2 py-0 text-xs min-h-7">
               {course?.name ?? id} <span aria-hidden="true">×</span>
             </Button>;
           })}
