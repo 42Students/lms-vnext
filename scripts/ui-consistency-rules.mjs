@@ -40,6 +40,9 @@ export const RULES = {
   "important": "Do not use !important; fix the cascade or the component API.",
   "breakpoint-off": `Use the named breakpoints (sm/md/lg/xl and max-*), or media queries at ${MIN_BREAKPOINTS_PX.join("/")}px.`,
   "motion-literal": "Use --lms-motion-* durations/easings, not literals.",
+  "size-off-grid": "Width, height, offsets and insets must be on the 4px grid (plus 1, 2 and 6px).",
+  "focus-style-off": "Use the shared focus-ring / focus-ring-inset / focus-ring-error utility, not custom outline or ring classes.",
+  "icon-size-off": "SVG icons must be 12, 14, 16, 18, 20, 24 or 32px.",
   "keyframes-local": "Define @keyframes only in src/styles/motion.css.",
 };
 
@@ -139,7 +142,8 @@ export function scanFile(path, rawSource) {
   }
 
   // --- colors
-  if (!isToken && !path.endsWith(".ts")) {
+  if (!isToken) {
+    if (!path.endsWith(".ts")) {
     for (const m of source.matchAll(/#(?:[0-9a-fA-F]{8}|[0-9a-fA-F]{6}|[0-9a-fA-F]{3})\b/g)) {
       const before = source.slice(Math.max(0, m.index - 8), m.index);
       if (/(href|to|url|src)=["'{`]*$/.test(before) || /\burl\(\s*["']?$/.test(before) || before.endsWith("&")) continue;
@@ -154,14 +158,15 @@ export function scanFile(path, rawSource) {
     for (const m of source.matchAll(colorDecl)) {
       if (new RegExp(`(?:^|[\\s,(])(?:${NAMED_COLORS})(?=[\\s,;)!]|$)`).test(m[2])) add("color-literal", m.index, m[0].trim());
     }
-    if (isTsx) {
+    }
+    if (isCode && !isCss) {
       const pal = new RegExp(`(?<![\\w-])(?:[a-z0-9-]+:)*(?:text|bg|border(?:-[xytrblse])?|ring|ring-offset|fill|stroke|from|to|via|divide|outline|decoration|accent|caret|placeholder|shadow)-(?:(?:${PALETTE})-\\d{2,3}|white|black)(?:/\\d+)?(?![\\w-])`, "g");
       for (const m of source.matchAll(pal)) add("palette-class", m.index, m[0]);
     }
   }
 
   // --- css declarations (real css files, css strings in tsx, and style={{}} objects)
-  const decls = [...declarationsOf(source), ...(isTsx ? styleObjectsToCss(source) : [])];
+  const decls = [...declarationsOf(source), ...(isCode && !isCss ? styleObjectsToCss(source) : [])];
   for (const [prop, value, at] of decls) {
     const v = value.replace(/\s*!important\s*$/i, "");
     const isVar = /^var\(/.test(v);
@@ -257,7 +262,7 @@ export function scanFile(path, rawSource) {
       const okMin = MIN_BREAKPOINTS_PX.includes(w), okMax = MIN_BREAKPOINTS_PX.map((x) => x - 1).includes(w);
       if (m[1] === "min" ? !okMin : !okMax) add("breakpoint-off", m.index, m[0].slice(0, 60));
     }
-  } else if (isTsx) {
+  } else if (isCode) {
     const T = (re, fn) => { for (const m of source.matchAll(re)) fn(m); };
     T(/\b(?:[a-z0-9-]+:)*(?:min|max)-\[[0-9.]+(?:px|rem|em)\]:/g, (m) => add("breakpoint-off", m.index, m[0]));
     T(/\btext-\[([0-9.]+)px\]/g, (m) => { if (!inSet(FONT_SIZE_SCALE_PX, num(m[1]))) add("font-size-off-scale", m.index, m[0]); });
@@ -284,6 +289,10 @@ export function scanFile(path, rawSource) {
     T(/(?<![\w-])(?:duration|delay)-(?:\[[0-9.]+m?s\]|[0-9]+)(?![\w-])/g, (m) => add("motion-literal", m.index, m[0]));
     T(/(?<![\w-])ease-(?:in|out|in-out|\[(?!var\()[^\]]+\])(?![\w-])/g, (m) => add("motion-literal", m.index, m[0]));
     T(/(?<![\w-])animate-(?!pulse\b|spin\b|none\b)[a-z[]/g, (m) => add("motion-literal", m.index, m[0]));
+    T(/(?<![\w-])(?:[a-z0-9-]+:)*-?(?:w|h|min-w|min-h|max-w|max-h|size|top|left|right|bottom|inset|inset-x|inset-y|basis)-\[(-?[0-9.]+)px\]/g, (m) => { const n = Math.abs(num(m[1])); if (!(n % 4 === 0 || n === 1 || n === 2 || n === 6)) add("size-off-grid", m.index, m[0]); });
+    T(/(?<![\w-])(?:[a-z0-9-]+:)*(?:outline(?:-offset)?|ring(?:-offset)?)-(?!none\b|hidden\b)(?:\[|[0-9]|inset\b)[^\s"'`]*/g, (m) => add("focus-style-off", m.index, m[0]));
+    T(/(?<![\w-])(?:[a-z0-9-]+:)*text-\[(?:clamp|[0-9.]+(?:vw|vh|rem|em))[^\]]*\]/g, (m) => add("font-size-off-scale", m.index, m[0]));
+    for (const m of source.matchAll(/<svg[^>]*?\b(?:width|height)="([0-9.]+)"/g)) { if (![12, 14, 16, 18, 20, 24, 32, 48, 64].includes(num(m[1])) && num(m[1]) < 40) add("icon-size-off", m.index, m[0].slice(0, 40)); }
     T(/(?:^|[\s"'`:])!(?=[a-z]+(?:-[a-z0-9[]|[[]))/g, (m) => add("important", m.index, source.slice(m.index, m.index + 24)));
   }
   return found;
