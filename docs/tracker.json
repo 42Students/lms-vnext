@@ -12543,17 +12543,17 @@
         "state": "UNASSESSED"
       },
       "SEC-18-002": {
-        "state": "GAP_CONFIRMED",
-        "assessedAt": "2026-11-04",
+        "state": "PARTIAL_EVIDENCE",
+        "assessedAt": "2026-11-05",
         "evidence": [
           {
-            "type": "REPOSITORY_CONFIG_OBSERVED",
-            "commitSha": "7a9d57cf66b20faa991e0e77c961e65415fe0888",
-            "sourceUrl": "https://api.github.com/repos/42Students/lms-vnext/branches/main",
-            "scope": "GitHub branch API reports main protected:false; required CI and PR approval are not enforceable by branch protection."
+            "type": "EXECUTED_SCOPED_TEST",
+            "commitSha": "b3992dd99a154255e1aa62163e3ad0478ee57639",
+            "runUrl": "https://github.com/42Students/lms-vnext/actions/runs/41994349474",
+            "scope": "PR #227 clean exact-SHA canonical security evidence job passed after intentionally failing red-phase job 41994101617; the red run is documented in docs/security/evidence/2026-11-05-sec-18-002-required-checks-enforcement.md. No claim of blocked merge proven or full CI green."
           }
         ],
-        "nextProof": "Repository administrator must enforce protected main with required exact-SHA checks and review; re-query branch protection."
+        "nextProof": "Independently verify active main ruleset and GitHub's blocked-merge UI on failing required check, confirm all nine required checks pass on final PR SHA, obtain one eligible reviewer approval, verify no unapproved/bypass merge, and independently attest repository configuration before VERIFIED."
       },
       "SEC-18-003": {
         "state": "UNASSESSED"
